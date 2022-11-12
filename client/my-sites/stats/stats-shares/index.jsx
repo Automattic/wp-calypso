@@ -11,7 +11,6 @@ import {
 	hasSiteStatsQueryFailed,
 } from 'calypso/state/stats/lists/selectors';
 import ErrorPanel from '../stats-error';
-import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 
@@ -53,8 +52,7 @@ const StatShares = ( { siteId } ) => {
 								);
 							}
 						} ) }
-					<StatsModulePlaceholder isLoading={ isLoading } />
-					{ ! isLoading && ! siteStats?.stats.shares && (
+					{ ! isLoading && ! siteStats?.stats?.shares && (
 						<ErrorPanel message={ translate( 'No shares recorded' ) } />
 					) }
 				</StatsTabs>

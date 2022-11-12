@@ -178,7 +178,7 @@ export const shouldForceLogin = ( flowName, userLoggedIn ) => {
 };
 
 export const isReskinnedFlow = ( flowName ) => {
-	return config.isEnabled( 'signup/reskin' ) && config( 'reskinned_flows' ).includes( flowName );
+	return config( 'reskinned_flows' ).includes( flowName );
 };
 
 export const isP2Flow = ( flowName ) => {
@@ -186,7 +186,7 @@ export const isP2Flow = ( flowName ) => {
 };
 
 export const isVideoPressFlow = ( flowName ) => {
-	return flowName === 'videopress';
+	return flowName === 'videopress' || flowName === 'videopress-account';
 };
 
 export const isWpccFlow = ( flowName ) => {

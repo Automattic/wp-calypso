@@ -98,15 +98,18 @@ class StatsDatePicker extends Component {
 		const today = moment();
 		const date = moment( queryDate );
 		const isToday = today.isSame( date, 'day' );
+
 		return (
-			<span>
-				{ translate( '{{b}}Last update: %(time)s{{/b}} (Updates every 30 minutes)', {
-					args: { time: isToday ? date.format( 'LT' ) : date.fromNow() },
-					components: {
-						b: <span className="stats-date-picker__last-update" />,
-					},
-				} ) }
-			</span>
+			<div className="stats-date-picker__refresh-status">
+				<span className="stats-date-picker__update-date">
+					{ translate( '{{b}}Last update: %(time)s{{/b}} (Updates every 30 minutes)', {
+						args: { time: isToday ? date.format( 'LT' ) : date.fromNow() },
+						components: {
+							b: <span className="stats-date-picker__last-update" />,
+						},
+					} ) }
+				</span>
+			</div>
 		);
 	}
 
@@ -164,11 +167,7 @@ class StatsDatePicker extends Component {
 				) : (
 					<div className="stats-section-title">
 						<h3>{ sectionTitle }</h3>
-						{ showQueryDate && isAutoRefreshAllowedForQuery( query ) && (
-							<div className="stats-date-picker__refresh-status">
-								<span className="stats-date-picker__update-date">{ this.renderQueryDate() }</span>
-							</div>
-						) }
+						{ showQueryDate && isAutoRefreshAllowedForQuery( query ) && this.renderQueryDate() }
 					</div>
 				) }
 			</div>

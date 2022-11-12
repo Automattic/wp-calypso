@@ -845,6 +845,16 @@ ul.module-content-list-legend {
 	opacity: 1;
 }
 
-.list-posts-pages {
-	margin-bottom: 32px; // to be replaced with sibling CSS once there are more modules swapped
+.list-countryviews {
+	.stats-list__flag-icon {
+		position: relative;
+		display: inline-block;
+		background-size: contain;
+		background-position: 50%;
+		background-repeat: no-repeat;
+		width: 24px;
+		height: 18px;
+		top: 3px;
+		margin-right: 8px;
+	}
 }

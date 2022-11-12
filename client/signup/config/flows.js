@@ -1,5 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { englishLocales } from '@automattic/i18n-utils';
 import { get, includes, reject } from 'lodash';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -59,7 +57,7 @@ function getRedirectDestination( dependencies ) {
 	return '/';
 }
 
-function getSignupDestination( { domainItem, siteId, siteSlug, refParameter }, localeSlug ) {
+function getSignupDestination( { domainItem, siteId, siteSlug, refParameter } ) {
 	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
@@ -78,17 +76,7 @@ function getSignupDestination( { domainItem, siteId, siteSlug, refParameter }, l
 		queryParam.ref = refParameter;
 	}
 
-	if ( isEnabled( 'signup/stepper-flow' ) ) {
-		return addQueryArgs( queryParam, '/setup' );
-	}
-
-	// Initially ship to English users only, then ship to all users when translations complete
-	if ( englishLocales.includes( localeSlug ) || isEnabled( 'signup/hero-flow-non-en' ) ) {
-		queryParam.loading_ellipsis = 1;
-		return addQueryArgs( queryParam, '/start/setup-site' );
-	}
-
-	return `/home/${ siteSlug }`;
+	return addQueryArgs( queryParam, '/setup' );
 }
 
 function getLaunchDestination( dependencies ) {

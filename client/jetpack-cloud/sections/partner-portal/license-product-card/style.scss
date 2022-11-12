@@ -4,6 +4,14 @@
 .license-product-card {
 	width: 100%;
 
+	&.disabled {
+		opacity: 0.5;
+
+		.license-product-card__inner {
+			cursor: not-allowed;
+		}
+	}
+
 	@include break-xlarge {
 		width: 50%;
 	}

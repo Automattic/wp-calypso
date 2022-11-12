@@ -68,6 +68,7 @@ export class Banner extends Component {
 		tracksDismissProperties: PropTypes.object,
 		customerType: PropTypes.string,
 		isSiteWPForTeams: PropTypes.bool,
+		displayAsLink: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -264,6 +265,7 @@ export class Banner extends Component {
 			jetpack,
 			isAtomic,
 			plan,
+			displayAsLink,
 		} = this.props;
 
 		// For P2 sites, only show banners if they have the 'p2-banner' class.
@@ -310,6 +312,7 @@ export class Banner extends Component {
 				className={ classes }
 				href={ ( disableHref || callToAction ) && ! forceHref ? null : this.getHref() }
 				onClick={ callToAction && ! forceHref ? null : this.handleClick }
+				displayAsLink={ displayAsLink }
 			>
 				{ dismissWithoutSavingPreference && (
 					<Gridicon icon="cross" className="banner__close-icon" onClick={ this.handleDismiss } />
