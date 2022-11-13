@@ -285,7 +285,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		yield saveSiteSettings( siteId, { blogdescription } );
 	}
 
-	function* installTheme( siteSlugOrId: string, themeSlug: string ) {
+	function* installTheme( siteSlugOrId: string | number, themeSlug: string ) {
 		yield wpcomRequest( {
 			path: `/sites/${ siteSlugOrId }/themes/${ themeSlug }/install`,
 			apiVersion: '1.1',

@@ -36,7 +36,6 @@ interface SetupOnboardingSiteOptions {
 }
 
 export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSiteOptions ) {
-	const { resetOnboardStore } = dispatch( ONBOARD_STORE );
 	const { saveSiteSettings, setIntentOnSite, setStaticHomepageOnSite } = dispatch( SITE_STORE );
 	const selectedPatternContent = select( ONBOARD_STORE ).getPatternContent();
 	const siteTitle = select( ONBOARD_STORE ).getSelectedSiteTitle();
@@ -105,7 +104,12 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 				has_site_title: !! siteTitle,
 				has_tagline: !! siteDescription,
 			} );
-			resetOnboardStore();
+			/**
+			 * We need to wait the site being created, then go to checkout and wait for the user
+			 * to buy the plan before we can set a premium theme to the site. If we reset the store
+			 * here we loose this information.
+			 **/
+			// resetOnboardStore();
 		} );
 	}
 }

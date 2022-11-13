@@ -50,6 +50,7 @@ export { default as domains } from './domains';
 export { default as storeProfiler } from './store-profiler';
 export { default as designCarousel } from './design-carousel';
 export { default as setThemeStep } from './set-theme-step';
+export { default as waitForAtomic } from './wait-for-atomic';
 
 export type StepPath =
 	| 'courses'
@@ -81,6 +82,7 @@ export type StepPath =
 	| 'vertical'
 	| 'wooTransfer'
 	| 'wooInstallPlugins'
+	| 'waitForAtomic'
 	| 'error'
 	| 'wooConfirm'
 	| 'wooVerifyEmail'

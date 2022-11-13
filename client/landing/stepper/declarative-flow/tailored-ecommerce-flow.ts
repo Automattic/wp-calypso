@@ -10,6 +10,7 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
+import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { StepPath } from './internals/steps-repository';
@@ -30,20 +31,20 @@ export const ecommerceFlow: Flow = {
 			'designCarousel',
 			'siteCreationStep',
 			'processing',
+			'waitForAtomic',
 			'setThemeStep',
 		] as StepPath[];
 	},
 
 	useStepNavigation( _currentStepName, navigate ) {
 		const flowName = this.name;
-		const { setStepProgress, setPlanCartItem } = useDispatch( ONBOARD_STORE );
+		const { setStepProgress, setPlanCartItem, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStepName, flowName } );
 		setStepProgress( flowProgress );
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
-		// eslint-disable-next-line no-console
-		console.log( { selectedDesign } );
 		const locale = useLocale();
+		const siteSlugParam = useSiteSlugParam();
 
 		const getStartUrl = () => {
 			return locale && locale !== 'en'
@@ -54,6 +55,7 @@ export const ecommerceFlow: Flow = {
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepName );
 			const logInUrl = getStartUrl();
+			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
 
 			switch ( _currentStepName ) {
 				case 'domains':
@@ -70,12 +72,16 @@ export const ecommerceFlow: Flow = {
 
 				case 'processing':
 					// Coming from setThemeStep
-					if ( ! providedDependencies?.siteSlug ) {
-						return;
+					if ( providedDependencies?.selectedDesign ) {
+						resetOnboardStore();
+						return window.location.assign( `/home/${ siteSlug }` );
+					}
+
+					if ( providedDependencies?.finishedWaitingForAtomic ) {
+						return navigate( 'setThemeStep' );
 					}
 
 					if ( providedDependencies?.siteSlug ) {
-						const siteSlug = ( providedDependencies?.siteSlug as string ) || '';
 						const destination = `/setup/${ flowName }/intro?siteSlug=${ siteSlug }`;
 						persistSignupDestination( destination );
 						setSignupCompleteSlug( siteSlug );
@@ -84,10 +90,9 @@ export const ecommerceFlow: Flow = {
 						// The site is coming from the checkout already Atomic (and with the new URL)
 						// There's probably a better way of handling this change
 						const returnUrl = encodeURIComponent(
-							`/setup/${ flowName }/setThemeStep?siteSlug=${ siteSlug.replace(
-								'.wordpress.com',
-								'.wpcomstaging.com'
-							) }`
+							`/setup/${ flowName }/waitForAtomic?theme=${
+								selectedDesign?.slug
+							}&siteSlug=${ siteSlug.replace( '.wordpress.com', '.wpcomstaging.com' ) }`
 						);
 
 						return window.location.assign(
@@ -96,7 +101,7 @@ export const ecommerceFlow: Flow = {
 							) }?redirect_to=${ returnUrl }&signup=1`
 						);
 					}
-					return navigate( `setThemeStep?siteSlug=${ providedDependencies.siteSlug }` );
+					return navigate( `waitForAtomic?siteSlug=${ providedDependencies.siteSlug }` );
 
 				case 'intro':
 					if ( userIsLoggedIn ) {
@@ -111,6 +116,9 @@ export const ecommerceFlow: Flow = {
 					return navigate( 'domains' );
 
 				case 'setThemeStep':
+					return navigate( 'processing' );
+
+				case 'waitForAtomic':
 					return navigate( 'processing' );
 			}
 			return providedDependencies;
