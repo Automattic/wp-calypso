@@ -36,10 +36,9 @@ $font-family: "SF Pro Text", $sans;
 
 		button {
 			background-color: $videopress-theme-border-color;
-			outline: 10px solid $videopress-theme-border-color;
 			/* stylelint-disable-next-line scales/radii */
 			border-radius: 8px;
-			padding: 0;
+			padding: 8px;
 			margin: 0;
 			transition: all 0.2s ease-in-out;
 			transform: scale(1);
@@ -60,7 +59,6 @@ $font-family: "SF Pro Text", $sans;
 				transform: scale(1.05);
 				z-index: 1;
 				background-color: $videopress-theme-yellow;
-				outline: 8px solid $videopress-theme-yellow;
 			}
 		}
 
