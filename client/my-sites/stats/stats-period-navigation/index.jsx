@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
+import { Icon, arrowLeft, arrowRight } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, withRtl } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -80,7 +81,7 @@ class StatsPeriodNavigation extends PureComponent {
 					href={ `${ url }${ previousDayQuery }` }
 					onClick={ this.handleClickPrevious }
 				>
-					<Gridicon icon="arrow-left" size={ 24 } />
+					<Icon className="gridicon" icon={ arrowLeft } />
 				</a>
 				<a
 					className={ classNames( 'stats-period-navigation__next', {
@@ -89,7 +90,7 @@ class StatsPeriodNavigation extends PureComponent {
 					href={ `${ url }${ nextDayQuery }` }
 					onClick={ this.handleClickNext }
 				>
-					<Gridicon icon="arrow-right" size={ 24 } />
+					<Icon className="gridicon" icon={ arrowRight } />
 				</a>
 			</div>
 		) : (
