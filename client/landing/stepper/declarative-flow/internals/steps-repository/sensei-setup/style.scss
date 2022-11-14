@@ -26,6 +26,9 @@ $sensei-color: #43af99;
 		@media ( max-width: $break-xlarge ) {
 			width: $break-large;
 		}
+		@media ( max-width: $break-large ) {
+			width: 100%;
+		}
 	}
 
 	.sensei-onboarding-main-content {
