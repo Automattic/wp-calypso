@@ -81,6 +81,7 @@ const PatternAssemblerPreview = ( { header, sections = [], footer, scrollToSelec
 								disable_viewport_height: true,
 								site_title: site?.name,
 								site_tagline: SITE_TAGLINE,
+								remove_assets: true,
 						  } )
 						: 'about:blank'
 				}

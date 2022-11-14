@@ -9,7 +9,7 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Pagination from 'calypso/components/pagination';
 import TileGrid from 'calypso/components/tile-grid';
 import Tile from 'calypso/components/tile-grid/tile';
-import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
+import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import ActivityLogItem from 'calypso/my-sites/activity/activity-log-item';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -184,7 +184,7 @@ class ClonePointStep extends Component {
 function withActivityLog( Inner ) {
 	return ( props ) => {
 		const { siteId } = props;
-		const { data: logs } = useActivityLogQuery( siteId, {}, { enabled: !! siteId } );
+		const { data: logs } = useRewindableActivityLogQuery( siteId, {}, { enabled: !! siteId } );
 		return <Inner { ...props } logs={ logs ?? [] } />;
 	};
 }

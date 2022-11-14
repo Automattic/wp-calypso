@@ -1,8 +1,11 @@
 $videopress-mobile-layout-width: 1200px;
+$videopress-link-color: #c377ff;
+$videopress-background: #010101;
 
 .videopress.choose-adomain {
 	--color-text-subtle: #a7aaad;
-	--studio-green-60: #1ed15a;
+	// Silly override, but easily replaces green with purple as desired for VideoPress flow
+	--studio-green-60: #c377ff;
 
 	.chooseADomain.is-wide-layout {
 		max-width: 1160px;
@@ -149,12 +152,12 @@ $videopress-mobile-layout-width: 1200px;
 
 		.domain-registration-suggestion__badges {
 			.badge--info-green {
-				background-color: #b8e6bf;
-				color: #00450c;
+				background-color: $videopress-link-color;
+				color: $videopress-background;
 			}
 			.badge--info-purple {
-				background-color: #e5cfe8;
-				color: #3c2861;
+				background-color: #646970;
+				color: #fff;
 			}
 		}
 

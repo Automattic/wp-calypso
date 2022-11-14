@@ -33,10 +33,15 @@ export default function IssueMultipleLicensesForm( {
 
 	// If the user comes from the flow for adding a new payment method during an attempt to issue a license
 	// after the payment method is added, we will make an attempt to issue the chosen license automatically.
-	const defaultProducts = getQueryArg( window.location.href, 'products' )?.toString().split( ',' );
+	const defaultProductSlugs = getQueryArg( window.location.href, 'products' )
+		?.toString()
+		.split( ',' );
 
-	const [ selectedProducts, setSelectedProducts ] = useState( defaultProducts ?? [] );
-	const [ issueLicenses, isLoading ] = useIssueMultipleLicenses( selectedProducts, selectedSite );
+	const [ selectedProductSlugs, setSelectedProductSlugs ] = useState( defaultProductSlugs ?? [] );
+	const [ issueLicenses, isLoading ] = useIssueMultipleLicenses(
+		selectedProductSlugs,
+		selectedSite
+	);
 
 	const onSelectProduct = useCallback(
 		( product ) => {
@@ -46,7 +51,7 @@ export default function IssueMultipleLicensesForm( {
 				} )
 			);
 
-			setSelectedProducts( ( previousValue ) => {
+			setSelectedProductSlugs( ( previousValue ) => {
 				const allProducts = [ ...previousValue ];
 
 				// A bundle cannot be combined with other products.
@@ -56,23 +61,39 @@ export default function IssueMultipleLicensesForm( {
 
 				! allProducts.includes( product.slug )
 					? allProducts.push( product.slug )
-					: allProducts.splice( selectedProducts.indexOf( product.slug ), 1 );
+					: allProducts.splice( selectedProductSlugs.indexOf( product.slug ), 1 );
 
 				return allProducts;
 			} );
 		},
-		[ dispatch, selectedProducts ]
+		[ dispatch, selectedProductSlugs ]
 	);
 
 	useEffect( () => {
 		// In the case of a bundle, we want to take the user immediately to the next step since
 		// they can't select any additional item after selecting a bundle.
-		if ( selectedProducts.find( ( product ) => isJetpackBundle( product ) ) ) {
+		if ( selectedProductSlugs.find( ( product ) => isJetpackBundle( product ) ) ) {
 			issueLicenses();
 		}
-	}, [ selectedProducts ] );
+	}, [ selectedProductSlugs, issueLicenses ] );
 
 	const selectedSiteDomain = selectedSite?.domain;
+
+	const disabledProductSlugs = selectedProductSlugs
+		// Get the product objects corresponding to the selected product slugs
+		.map( ( selectedProductSlug ) =>
+			allProducts?.find( ( product ) => product.slug === selectedProductSlug )
+		)
+		// Get all the product slugs of products within the same product family as the selected product
+		.flatMap( ( selectedProduct ) =>
+			allProducts
+				?.filter(
+					( product ) =>
+						product.family_slug === selectedProduct?.family_slug &&
+						product.slug !== selectedProduct.slug
+				)
+				.map( ( product ) => product.slug )
+		);
 
 	return (
 		<div className="issue-multiple-licenses-form">
@@ -98,7 +119,7 @@ export default function IssueMultipleLicensesForm( {
 							<Button
 								primary
 								className="issue-multiple-licenses-form__select-license"
-								disabled={ ! selectedProducts.length }
+								disabled={ ! selectedProductSlugs.length }
 								busy={ isLoading }
 								onClick={ issueLicenses }
 							>
@@ -114,7 +135,8 @@ export default function IssueMultipleLicensesForm( {
 									key={ productOption.slug }
 									product={ productOption }
 									onSelectProduct={ onSelectProduct }
-									isSelected={ selectedProducts.includes( productOption.slug ) }
+									isSelected={ selectedProductSlugs.includes( productOption.slug ) }
+									isDisabled={ disabledProductSlugs.includes( productOption.slug ) }
 									tabIndex={ 100 + i }
 									suggestedProduct={ suggestedProduct }
 								/>

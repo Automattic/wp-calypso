@@ -1,3 +1,4 @@
+import { Dialog } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { FormFileUpload } from '@wordpress/components';
 import { Icon, upload } from '@wordpress/icons';
@@ -54,12 +55,22 @@ export function SiteIconWithPicker( {
 
 	return (
 		<>
-			{ editingFile && imageEditorOpen && (
+			<Dialog
+				className="site-icon-with-picker__background"
+				isVisible={ Boolean( editingFile && imageEditorOpen ) }
+				isBackdropVisible={ true }
+				onClose={ () => {
+					setImageEditorOpen( false );
+				} }
+				shouldCloseOnEsc={ true }
+			>
 				<ImageEditor
 					className={ classNames( 'site-icon-with-picker__image-editor', imageEditorClassName ) }
 					siteId={ site?.ID }
 					media={ {
-						src: editingFile,
+						src:
+							editingFile ??
+							'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
 					} }
 					allowedAspectRatios={ [ 'ASPECT_1X1' ] }
 					onDone={ ( _error: Error | null, image: Blob ) => {
@@ -75,9 +86,12 @@ export function SiteIconWithPicker( {
 						}
 						setImageEditorOpen( false );
 					} }
+					doneButtonText={ __( ' Apply ' ) }
+					displayOnlyIcon={ true }
 					widthLimit={ 512 }
 				/>
-			) }
+			</Dialog>
+
 			<FormFieldset
 				className={ classNames( 'site-icon-with-picker__site-icon', uploadFieldClassName ) }
 				disabled={ disabled }

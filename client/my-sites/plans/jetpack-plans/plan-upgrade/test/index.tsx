@@ -67,7 +67,8 @@ describe( '<PlanUpgradeSection />', () => {
 		);
 
 		const sectionHeader = screen.getByRole( 'heading', { level: 2 } );
-		expect( sectionHeader.outerHTML ).toContain( 'Anti-spam &amp; Backup' );
+		expect( sectionHeader.outerHTML ).toContain( 'Anti-spam' );
+		expect( sectionHeader.outerHTML ).toContain( 'Backup' );
 
 		const productHeaders = screen.getAllByRole( 'heading', { level: 3 } );
 

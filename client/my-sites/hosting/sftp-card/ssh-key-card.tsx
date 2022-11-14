@@ -1,8 +1,8 @@
-import { Button, Card } from '@automattic/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import i18n from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
+import * as SSHKeyCard from 'calypso/components/ssh-key-card';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { AtomicKey } from './use-atomic-ssh-keys';
@@ -54,13 +54,13 @@ function SshKeyCard( { deleteText, siteId, sshKey }: SshKeyCardProps ) {
 	);
 	const { sha256, user_login, name, attached_at } = sshKey;
 	return (
-		<Card className="ssh-keys-card">
-			<div className="ssh-keys-card__info">
-				<span className="ssh-keys-card__name">
+		<SSHKeyCard.Root>
+			<SSHKeyCard.Details>
+				<SSHKeyCard.KeyName>
 					{ user_login }-{ name }
-				</span>
-				<code className="ssh-keys-card__fingerprint">{ sha256 }</code>
-				<span className="ssh-keys-card__date">
+				</SSHKeyCard.KeyName>
+				<SSHKeyCard.PublicKey>{ sha256 }</SSHKeyCard.PublicKey>
+				<SSHKeyCard.Date>
 					{ sprintf(
 						// translators: attachedOn is when the SSH key was attached.
 						__( 'Attached on %(attachedOn)s' ),
@@ -71,19 +71,16 @@ function SshKeyCard( { deleteText, siteId, sshKey }: SshKeyCardProps ) {
 							} ).format( new Date( attached_at ) ),
 						}
 					) }
-				</span>
-			</div>
-			<div className="ssh-keys-card__actions">
-				<Button
-					scary
-					onClick={ () => detachSshKey( { user_login, name } ) }
-					busy={ isLoading }
-					disabled={ isLoading }
-				>
-					{ deleteText }
-				</Button>
-			</div>
-		</Card>
+				</SSHKeyCard.Date>
+			</SSHKeyCard.Details>
+			<SSHKeyCard.Button
+				onClick={ () => detachSshKey( { user_login, name } ) }
+				busy={ isLoading }
+				disabled={ isLoading }
+			>
+				{ deleteText }
+			</SSHKeyCard.Button>
+		</SSHKeyCard.Root>
 	);
 }
 
