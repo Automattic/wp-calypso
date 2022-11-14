@@ -27,8 +27,6 @@ type MostPopularData = {
 	hourPercent: number;
 };
 
-const STATS_QUERY = {};
-
 const FORMATTER = new Intl.NumberFormat( 'en-GB' );
 const COMPACT_FORMATTER = new Intl.NumberFormat( 'en-GB', {
 	notation: 'compact',
@@ -42,34 +40,49 @@ function formatNumber( number: number | null, isCompact = false ) {
 	return Number.isFinite( number ) ? formatter.format( number as number ) : '-';
 }
 
+function percentCalculator( part: number | null, whole: number | null ) {
+	if ( part === null || whole === null ) {
+		return null;
+	}
+
+	const divisor = whole === 0 ? 1 : whole;
+
+	return Math.round( ( part / divisor ) * 100 );
+}
+
 export default function AllTimeHighlightsSection( { siteId }: { siteId: number } ) {
 	const translate = useTranslate();
 
-	const isRequesting = useSelector( ( state ) =>
-		isRequestingSiteStatsForQuery( state, siteId, 'stats', STATS_QUERY )
+	const isStatsRequesting = useSelector( ( state ) =>
+		isRequestingSiteStatsForQuery( state, siteId, 'stats', {} )
+	);
 
 	const isInsightsRequesting = useSelector( ( state ) =>
 		isRequestingSiteStatsForQuery( state, siteId, 'statsInsights', {} )
 	);
 
 	const { comments, posts, views, visitors, viewsBestDay, viewsBestDayTotal } = useSelector(
-		( state ) => getSiteStatsNormalizedData( state, siteId, 'stats', STATS_QUERY ) || {}
+		( state ) => getSiteStatsNormalizedData( state, siteId, 'stats', {} ) || {}
 	) as AllTimeData;
 
 	const { day, percent, hour, hourPercent } = useSelector(
 		( state ) => getSiteStatsNormalizedData( state, siteId, 'statsInsights', {} ) || {}
 	) as MostPopularData;
 
-	const isLoading = isRequesting && ! views;
+	const isStatsLoading = isStatsRequesting && ! views;
 	const isInsightsLoading = isInsightsRequesting && ! percent;
 
 	let bestViewsEverMonthDay;
 	let bestViewsEverYear;
 
-	if ( viewsBestDay && ! isLoading ) {
+	if ( viewsBestDay && ! isStatsLoading ) {
 		bestViewsEverMonthDay = moment( viewsBestDay ).format( 'MMMM D' );
 		bestViewsEverYear = moment( viewsBestDay ).format( 'YYYY' );
 	}
+
+	const bestViewsEverPercent = Number.isFinite( viewsBestDayTotal )
+		? percentCalculator( viewsBestDayTotal, views )
+		: 0;
 
 	const infoItems = [
 		{
@@ -133,14 +146,17 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 				id: 'views',
 				header: translate( 'Views' ),
 				content: formatNumber( viewsBestDayTotal, true ),
-				footer: translate( '%p% of views', { args: [ 25 ] } ),
+				footer: translate( '%(percent)d%% of views', {
+					args: { percent: bestViewsEverPercent || 0 },
+					context: 'Stats: Percentage of views',
+				} ),
 			},
 		],
 	};
 
 	return (
 		<div className="stats__all-time-highlights-section">
-			{ siteId && <QuerySiteStats siteId={ siteId } statType="stats" query={ STATS_QUERY } /> }
+			{ siteId && <QuerySiteStats siteId={ siteId } statType="stats" query={ {} } /> }
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsInsights" /> }
 
 			<div className="highlight-cards">
