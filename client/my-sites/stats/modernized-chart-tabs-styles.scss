@@ -17,6 +17,7 @@ $yearBarChartBorderRadius: 4px;
 
 		.chart__legend-options {
 			text-transform: none;
+			letter-spacing: inherit;
 
 			@media ( max-width: $break-mobile ) {
 				display: none;
@@ -35,6 +36,13 @@ $yearBarChartBorderRadius: 4px;
 			font-weight: 400;
 			line-height: 18px;
 			padding: 0;
+
+			&.is-selectable {
+				&:hover,
+				&:focus {
+					color: var(--studio-black);
+				}
+			}
 
 			.chart__legend-checkbox {
 				width: 20px;
