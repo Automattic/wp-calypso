@@ -1,3 +1,6 @@
+$barChartBorderRadius: 2px;
+$yearBarChartBorderRadius: 4px;
+
 // For feature `stats/new-main-chart`
 .stats--new-main-chart {
 	background-color: var(--color-surface);
@@ -82,8 +85,13 @@
 
 		.chart__bar-section {
 			background-color: var(--color-primary);
-			border-top-left-radius: 2px;
-			border-top-right-radius: 2px;
+			border-top-left-radius: $barChartBorderRadius;
+			border-top-right-radius: $barChartBorderRadius;
+		}
+
+		.chart__bar-section-inner {
+			border-top-left-radius: $barChartBorderRadius;
+			border-top-right-radius: $barChartBorderRadius;
 		}
 
 		.chart__x-axis-label:not(.chart__x-axis-width-spacer) {
@@ -197,8 +205,13 @@
 
 	&.is-period-year {
 		.chart__bar-section {
-			border-top-left-radius: 4px;
-			border-top-right-radius: 4px;
+			border-top-left-radius: $yearBarChartBorderRadius;
+			border-top-right-radius: $yearBarChartBorderRadius;
+		}
+
+		.chart__bar-section-inner {
+			border-top-left-radius: $yearBarChartBorderRadius;
+			border-top-right-radius: $yearBarChartBorderRadius;
 		}
 	}
 }
