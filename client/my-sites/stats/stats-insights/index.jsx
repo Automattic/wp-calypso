@@ -16,6 +16,7 @@ import AllTime from 'calypso/my-sites/stats/all-time/';
 import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import MostPopular from 'calypso/my-sites/stats/most-popular';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import AllTimelHighlightsSection from '../all-time-highlights-section';
 import AnnualHighlightsSection from '../annual-highlights-section';
 import LatestPostSummary from '../post-performance';
 import PostingActivity from '../post-trends';
@@ -32,6 +33,7 @@ const StatsInsights = ( props ) => {
 	const moduleStrings = statsStrings();
 
 	const showNewAnnualHighlights = config.isEnabled( 'stats/new-annual-highlights' );
+	const showAllTimeHighlights = config.isEnabled( 'stats/new-all-time-highlights' );
 
 	const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
 
@@ -56,6 +58,7 @@ const StatsInsights = ( props ) => {
 			<div>
 				<div className="stats__module--insights-unified">
 					{ showNewAnnualHighlights && <AnnualHighlightsSection siteId={ siteId } /> }
+					{ showAllTimeHighlights && <AllTimelHighlightsSection /> }
 					<PostingActivity />
 					<SectionHeader label={ translate( 'All-time views' ) } />
 					<StatsViews />

@@ -9,6 +9,11 @@ import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
+export const ecommerceFlowRecurTypes = {
+	YEARLY: 'yearly',
+	MONTHLY: 'monthly',
+};
+
 export const ecommerceFlow: Flow = {
 	name: ECOMMERCE_FLOW,
 	useSteps() {
@@ -17,7 +22,7 @@ export const ecommerceFlow: Flow = {
 			recordFullStoryEvent( 'calypso_signup_start_ecommerce', { flow: this.name } );
 		}, [] );
 
-		return [ 'intro', 'storeProfiler', 'designCarousel' ] as StepPath[];
+		return [ 'intro', 'storeProfiler', 'designCarousel', 'processing' ] as StepPath[];
 	},
 
 	useStepNavigation( _currentStepName, navigate ) {
@@ -48,7 +53,9 @@ export const ecommerceFlow: Flow = {
 				case 'storeProfiler':
 					return navigate( 'designCarousel' );
 				case 'designCarousel':
-					return navigate( 'designCarousel' );
+					return navigate( 'processing' );
+				case 'processing':
+					return navigate( 'intro' );
 			}
 			return providedDependencies;
 		}

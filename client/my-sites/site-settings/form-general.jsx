@@ -1,9 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
-import {
-	isDotComPlan,
-	PLAN_BUSINESS,
-	WPCOM_FEATURES_NO_WPCOM_BRANDING,
-} from '@automattic/calypso-products';
+import { PLAN_BUSINESS, WPCOM_FEATURES_NO_WPCOM_BRANDING } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_SUBSCRIPTION_GIFTING } from '@automattic/calypso-products/src';
 import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
 import { guessTimezone } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
@@ -40,7 +37,6 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import { launchSite } from 'calypso/state/sites/launch/actions';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteOption,
 	isJetpackSite,
@@ -635,14 +631,14 @@ export class SiteSettingsFormGeneral extends Component {
 			isRequestingSettings,
 			isSavingSettings,
 			handleSubmitForm,
-			currentPlan,
+			hasSubscriptionGifting,
 		} = this.props;
 
 		if ( ! isEnabled( 'subscription-gifting' ) ) {
 			return;
 		}
 
-		if ( currentPlan && isDotComPlan( currentPlan ) && ! currentPlan?.autoRenew ) {
+		if ( hasSubscriptionGifting ) {
 			return (
 				<>
 					<div className="site-settings__gifting-container">
@@ -818,7 +814,7 @@ const connectComponent = connect( ( state ) => {
 		siteDomains: getDomainsBySiteId( state, siteId ),
 		siteIsJetpack: isJetpackSite( state, siteId ),
 		siteSlug: getSelectedSiteSlug( state ),
-		currentPlan: getCurrentPlan( state, siteId ),
+		hasSubscriptionGifting: siteHasFeature( state, siteId, WPCOM_FEATURES_SUBSCRIPTION_GIFTING ),
 	};
 }, mapDispatchToProps );
 
@@ -831,7 +827,7 @@ const getFormSettings = ( settings ) => {
 		blog_public: '',
 		wpcom_coming_soon: '',
 		wpcom_public_coming_soon: '',
-		wpcom_gifting_subscription: true,
+		wpcom_gifting_subscription: false,
 		admin_url: '',
 	};
 

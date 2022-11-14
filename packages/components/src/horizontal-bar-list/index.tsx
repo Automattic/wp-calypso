@@ -13,3 +13,7 @@ const HorizontalBarList = ( { children, className }: HorizontalBarListProps ) =>
 };
 
 export default HorizontalBarList;
+export { HorizontalBarList };
+export { default as HorizontalBarListItem } from './horizontal-bar-grid-item';
+export { default as StatsCard } from './stats-card';
+export { default as StatsCardAvatar } from './sideElements/avatar';
