@@ -1,6 +1,8 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { useLocale } from '@automattic/i18n-utils';
+import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
 import { Plans } from 'calypso/../packages/data-stores/src';
@@ -178,6 +180,29 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 			submit?.();
 		};
 
+		const getVideoPressFeaturesList = ( plan: Plans.Plan ) => {
+			const isBusiness = 'business' === plan.periodAgnosticSlug;
+			return [
+				plan.storage && {
+					/* translators: A label displaying the amount of storage space available in the plan, eg: "13GB" or "200GB" */
+					name: sprintf( __( '%s storage space' ), plan.storage ),
+					requiresAnnuallyBilledPlan: false,
+				},
+				{ name: __( 'High-quality 4K video' ), requiresAnnuallyBilledPlan: false },
+				{ name: __( 'Ad-free video playback' ), requiresAnnuallyBilledPlan: false },
+				{ name: __( 'Video subtitles and chapters' ), requiresAnnuallyBilledPlan: false },
+				{ name: __( 'Background videos' ), requiresAnnuallyBilledPlan: false },
+				{ name: __( 'Private videos' ), requiresAnnuallyBilledPlan: false },
+				{ name: __( 'Adaptive video streaming' ), requiresAnnuallyBilledPlan: false },
+				isBusiness && {
+					name: __( 'Business features (incl. SEO)' ),
+					requiresAnnuallyBilledPlan: false,
+				},
+				isBusiness && { name: __( 'Upload themes' ), requiresAnnuallyBilledPlan: false },
+				isBusiness && { name: __( 'Install plugins' ), requiresAnnuallyBilledPlan: false },
+			].filter( isValueTruthy );
+		};
+
 		return (
 			<div className="plans-grid">
 				<PlansIntervalToggle
@@ -204,7 +229,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 											slug={ plan.periodAgnosticSlug }
 											domain={ domain }
 											CTAVariation="NORMAL"
-											features={ plan.features ?? [] }
+											features={ getVideoPressFeaturesList( plan ) }
 											billingPeriod={ billingPeriod }
 											isPopular={ 'business' === plan.periodAgnosticSlug }
 											isFree={ plan.isFree }
