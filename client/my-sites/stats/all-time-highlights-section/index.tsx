@@ -20,6 +20,13 @@ type AllTimeData = {
 	viewsBestDayTotal: number;
 };
 
+type MostPopularData = {
+	day: string;
+	percent: number;
+	hour: string;
+	hourPercent: number;
+};
+
 const STATS_QUERY = {};
 
 const FORMATTER = new Intl.NumberFormat( 'en-GB' );
@@ -40,14 +47,21 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 
 	const isRequesting = useSelector( ( state ) =>
 		isRequestingSiteStatsForQuery( state, siteId, 'stats', STATS_QUERY )
+
+	const isInsightsRequesting = useSelector( ( state ) =>
+		isRequestingSiteStatsForQuery( state, siteId, 'statsInsights', {} )
 	);
 
 	const { comments, posts, views, visitors, viewsBestDay, viewsBestDayTotal } = useSelector(
 		( state ) => getSiteStatsNormalizedData( state, siteId, 'stats', STATS_QUERY ) || {}
 	) as AllTimeData;
 
+	const { day, percent, hour, hourPercent } = useSelector(
+		( state ) => getSiteStatsNormalizedData( state, siteId, 'statsInsights', {} ) || {}
+	) as MostPopularData;
 
 	const isLoading = isRequesting && ! views;
+	const isInsightsLoading = isInsightsRequesting && ! percent;
 
 	let bestViewsEverMonthDay;
 	let bestViewsEverYear;
@@ -81,19 +95,26 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 
 	const mostPopularTimeItems = {
 		id: 'mostPopularTime',
+		loading: isInsightsLoading,
 		heading: translate( 'Most popular time' ),
 		items: [
 			{
 				id: 'bestDay',
 				header: translate( 'Best day' ),
-				content: 'Thursday',
-				footer: translate( '%p% of views', { args: [ 25 ] } ),
+				content: day,
+				footer: translate( '%(percent)d%% of views', {
+					args: { percent: percent || 0 },
+					context: 'Stats: Percentage of views',
+				} ),
 			},
 			{
 				id: 'bestHour',
 				header: translate( 'Best hour' ),
-				content: '2 PM',
-				footer: translate( '%p% of views', { args: [ 18 ] } ),
+				content: hour,
+				footer: translate( '%(percent)d%% of views', {
+					args: { percent: hourPercent || 0 },
+					context: 'Stats: Percentage of views',
+				} ),
 			},
 		],
 	};
@@ -120,6 +141,7 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 	return (
 		<div className="stats__all-time-highlights-section">
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="stats" query={ STATS_QUERY } /> }
+			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsInsights" /> }
 
 			<div className="highlight-cards">
 				<h1 className="highlight-cards-heading">{ translate( 'All-time highlights' ) }</h1>
