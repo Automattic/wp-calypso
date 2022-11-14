@@ -21,6 +21,7 @@ const HelpIcon = ( { newItems }: Props ) => {
 		} ),
 		[]
 	);
+
 	const { setHasSeenPromotionalPopover } = useDispatch( HELP_CENTER_STORE );
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const { __ } = useI18n();

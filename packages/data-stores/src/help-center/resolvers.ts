@@ -7,15 +7,15 @@ export const getHasSeenPromotionalPopover =
 	() =>
 	async ( { dispatch }: Dispatch ) => {
 		const response = canAccessWpcomApis()
-			? await wpcomRequest< { [ HAS_SEEN_PREF_KEY ]: boolean } >( {
+			? await wpcomRequest< boolean >( {
 					path: `me/preferences?preference_key=${ HAS_SEEN_PREF_KEY }`,
 					apiNamespace: 'wpcom/v2/',
 					apiVersion: '2',
 			  } )
-			: await apiFetch< { [ HAS_SEEN_PREF_KEY ]: boolean } >( {
+			: await apiFetch< boolean >( {
 					global: true,
 					path: `/help-center/has-seen-promotion?preference_key=${ HAS_SEEN_PREF_KEY }`,
 			  } as APIFetchOptions );
 
-		dispatch.receiveHasSeenPromotionalPopover( response[ HAS_SEEN_PREF_KEY ] );
+		dispatch.receiveHasSeenPromotionalPopover( response );
 	};
