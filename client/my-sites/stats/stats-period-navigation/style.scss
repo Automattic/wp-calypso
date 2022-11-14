@@ -52,6 +52,7 @@
 			&.is-disabled {
 				visibility: visible;
 				opacity: 0.2;
+				pointer-events: none;
 			}
 		}
 
