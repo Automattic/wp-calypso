@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import i18n from 'i18n-calypso';
@@ -17,6 +18,18 @@ interface SshKeyCardProps {
 const noticeOptions = {
 	duration: 3000,
 };
+
+const MEDIA_QUERIES = {
+	wide: '@media screen and ( min-width: 1280px )',
+};
+
+const SSHKeyCardRoot = styled( SSHKeyCard.Root )( {
+	[ MEDIA_QUERIES.wide ]: {
+		'&&': {
+			paddingLeft: '24px',
+		},
+	},
+} );
 
 const sshKeyDetachFailureNoticeId = 'ssh-key-detach-failure';
 
@@ -54,7 +67,7 @@ function SshKeyCard( { deleteText, siteId, sshKey }: SshKeyCardProps ) {
 	);
 	const { sha256, user_login, name, attached_at } = sshKey;
 	return (
-		<SSHKeyCard.Root>
+		<SSHKeyCardRoot>
 			<SSHKeyCard.Details>
 				<SSHKeyCard.KeyName>
 					{ user_login }-{ name }
@@ -80,7 +93,7 @@ function SshKeyCard( { deleteText, siteId, sshKey }: SshKeyCardProps ) {
 			>
 				{ deleteText }
 			</SSHKeyCard.Button>
-		</SSHKeyCard.Root>
+		</SSHKeyCardRoot>
 	);
 }
 
