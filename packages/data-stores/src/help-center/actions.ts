@@ -1,6 +1,10 @@
+import { apiFetch } from '@wordpress/data-controls';
+import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
-import { Location, HelpCenterSite } from './types';
+import { wpcomRequest } from '../wpcom-request-controls';
+import { HAS_SEEN_PREF_KEY } from './constants';
+import type { Location, APIFetchOptions, HelpCenterSite } from './types';
 
 export const setRouterState = ( history: Location[], index: number ) =>
 	( {
@@ -8,6 +12,42 @@ export const setRouterState = ( history: Location[], index: number ) =>
 		history,
 		index,
 	} as const );
+
+export const receiveHasSeenPromotionalPopover = ( value: boolean | undefined ) =>
+	( {
+		type: 'HELP_CENTER_SET_SEEN_PROMOTIONAL_POPOVER',
+		value,
+	} as const );
+
+export function* setHasSeenPromotionalPopover( value: boolean ) {
+	let response: { [ HAS_SEEN_PREF_KEY ]: boolean };
+
+	if ( canAccessWpcomApis() ) {
+		response = yield wpcomRequest( {
+			path: `me/preferences`,
+			apiNamespace: 'wpcom/v2/',
+			apiVersion: '2',
+			method: 'POST',
+			body: {
+				calypso_preferences: {
+					[ HAS_SEEN_PREF_KEY ]: value,
+				},
+			},
+		} );
+	} else {
+		response = yield apiFetch( {
+			global: true,
+			path: `/help-center/has-seen-promotion`,
+			body: {
+				calypso_preferences: {
+					[ HAS_SEEN_PREF_KEY ]: value,
+				},
+			},
+		} as APIFetchOptions );
+	}
+
+	return receiveHasSeenPromotionalPopover( response[ HAS_SEEN_PREF_KEY ] );
+}
 
 export const resetRouterState = () =>
 	( {
@@ -100,6 +140,7 @@ export type HelpCenterAction =
 			| typeof setRouterState
 			| typeof resetRouterState
 			| typeof resetStore
+			| typeof receiveHasSeenPromotionalPopover
 			| typeof setMessage
 			| typeof setUserDeclaredSite
 			| typeof setUserDeclaredSiteUrl
@@ -108,4 +149,4 @@ export type HelpCenterAction =
 			| typeof setUnreadCount
 			| typeof setIsMinimized
 	  >
-	| GeneratorReturnType< typeof setShowHelpCenter >;
+	| GeneratorReturnType< typeof setHasSeenPromotionalPopover | typeof setShowHelpCenter >;
