@@ -24,17 +24,21 @@ export default function LicenseBundleCardDescription( { product }: Props ) {
 			);
 			break;
 		case 'jetpack-security-t1':
-			textDescription = translate( 'Includes Backup 10GB, Scan Daily and Akismet Anti-spam.' );
+			textDescription = translate(
+				'Includes VaultPress Backup 10GB, Scan Daily and Akismet Anti-spam.'
+			);
 			features.push(
-				translate( 'Backup 10GB' ),
+				translate( 'VaultPress Backup 10GB' ),
 				translate( 'Scan Daily' ),
 				translate( 'Akismet Anti-spam*' )
 			);
 			break;
 		case 'jetpack-security-t2':
-			textDescription = translate( 'Includes Backup 1TB, Scan Daily and Akismet Anti-spam.' );
+			textDescription = translate(
+				'Includes VaultPress Backup 1TB, Scan Daily and Akismet Anti-spam.'
+			);
 			features.push(
-				translate( 'Backup 1TB' ),
+				translate( 'VaultPress Backup 1TB' ),
 				translate( 'Scan Daily' ),
 				translate( 'Akismet Anti-spam*' )
 			);

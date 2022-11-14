@@ -97,7 +97,7 @@ export default function jetpackMenu( { siteDomain } ) {
 				{
 					parent: 'jetpack',
 					slug: 'jetpack-backup',
-					title: translate( 'Backup' ),
+					title: translate( 'VaultPress Backup' ),
 					type: 'submenu-item',
 					url: `/backup/${ siteDomain }`,
 				},

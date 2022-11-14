@@ -228,12 +228,12 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 					{ ( ( hasBackups && hasScan && isRewindAvailable ) || forceShowJetpackBackupTask ) && (
 						<Task
 							id="jetpack_rewind"
-							title={ translate( 'Backup and Scan' ) }
+							title={ translate( 'VaultPress Backup and Scan' ) }
 							description={ translate(
 								"Connect your site's server to Jetpack to perform backups, restores, and security scans."
 							) }
 							completedButtonText={ translate( 'Change', { context: 'verb' } ) }
-							completedTitle={ translate( 'You turned on Backup and Scan.' ) }
+							completedTitle={ translate( 'You turned on VaultPress Backup and Scan.' ) }
 							duration={ this.getDuration( 3 ) }
 							completed={ isRewindActive }
 							href={ settingsPath( siteSlug ) }
