@@ -952,21 +952,16 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 
 // Similar to createSite but also sets the site title and description
 export function createVideoPressSite( callback, dependencies, stepData, reduxStore ) {
-	const { site, themeSlugWithRepo, siteTitle = '', siteDescription = '' } = stepData;
-	const signupDependencies = getSignupDependencyStore( reduxStore.getState() );
+	const { site, siteTitle = '', siteDescription = '' } = stepData;
 	const locale = getLocaleSlug();
-
-	const theme =
-		dependencies?.themeSlugWithRepo ||
-		themeSlugWithRepo ||
-		get( signupDependencies, 'themeSlugWithRepo', false );
 
 	const data = {
 		blog_name: site,
 		blog_title: siteTitle,
 		public: Visibility.PublicNotIndexed,
 		options: {
-			theme,
+			theme: 'pub/twentytwentytwo',
+			site_vertical_name: 'videomaker',
 			timezone_string: guessTimezone(),
 			wpcom_public_coming_soon: 1,
 		},

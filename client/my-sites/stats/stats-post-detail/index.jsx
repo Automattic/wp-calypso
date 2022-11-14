@@ -1,8 +1,6 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -11,13 +9,11 @@ import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
-import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import WebPreview from 'calypso/components/web-preview';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
-import hasNavigated from 'calypso/state/selectors/has-navigated';
 import {
 	getSiteOption,
 	getSiteSlug,
@@ -45,21 +41,10 @@ class StatsPostDetail extends Component {
 		siteSlug: PropTypes.string,
 		showViewLink: PropTypes.bool,
 		previewUrl: PropTypes.string,
-		hasNavigated: PropTypes.bool,
 	};
 
 	state = {
 		showPreview: false,
-	};
-
-	goBack = () => {
-		if ( window.history.length > 1 && this.props.hasNavigated ) {
-			window.history.back();
-			return;
-		}
-
-		const pathParts = this.props.path.split( '/' );
-		page( '/stats/' + pathParts[ pathParts.length - 1 ] );
 	};
 
 	getNavigationItemsWithTitle = ( title ) => {
@@ -80,7 +65,7 @@ class StatsPostDetail extends Component {
 		const backLabel = localizedTabNames[ lastClickedTab ] || localizedTabNames.traffic;
 		let backLink = possibleBackLinks[ lastClickedTab ] || possibleBackLinks.traffic;
 		// Append the domain as needed.
-		const domain = this.props.path?.split( '/' ).pop();
+		const domain = this.props.siteSlug;
 		if ( domain?.length > 0 ) {
 			backLink += domain;
 		}
@@ -149,13 +134,8 @@ class StatsPostDetail extends Component {
 			noViewsLabel = translate( 'Your post has not received any views yet!' );
 		}
 
-		// Set up for FixedNavigationHeader.
-		const title = this.getTitle();
-		const isFixedNavHeadersEnabled = config.isEnabled( 'stats/fixed-nav-headers' );
-		const className = isFixedNavHeadersEnabled ? 'has-fixed-nav' : undefined;
-
 		return (
-			<Main className={ className } wideLayout>
+			<Main className="has-fixed-nav" wideLayout>
 				<PageViewTracker
 					path={ `/stats/${ postType }/:post_id/:site` }
 					title={ `Stats > Single ${ titlecase( postType ) }` }
@@ -163,18 +143,15 @@ class StatsPostDetail extends Component {
 				{ siteId && ! isLatestPostsHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
 
-				{ isFixedNavHeadersEnabled ? (
-					<FixedNavigationHeader navigationItems={ this.getNavigationItemsWithTitle( title ) } />
-				) : (
-					<HeaderCake
-						onClick={ this.goBack }
-						actionIcon={ showViewLink ? 'visible' : null }
-						actionText={ showViewLink ? actionLabel : null }
-						actionOnClick={ showViewLink ? this.openPreview : null }
-					>
-						{ title }
-					</HeaderCake>
-				) }
+				<FixedNavigationHeader
+					navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }
+				>
+					{ showViewLink && (
+						<Button onClick={ this.openPreview }>
+							<span>{ actionLabel }</span>
+						</Button>
+					) }
+				</FixedNavigationHeader>
 
 				<StatsPlaceholder isLoading={ isLoading } />
 
@@ -247,7 +224,6 @@ const connectComponent = connect( ( state, { postId } ) => {
 		siteSlug: getSiteSlug( state, siteId ),
 		showViewLink: ! isJetpack && ! isLatestPostsHomepage && isPreviewable,
 		previewUrl: getPostPreviewUrl( state, siteId, postId ),
-		hasNavigated: hasNavigated( state ),
 		siteId,
 	};
 } );

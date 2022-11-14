@@ -3,12 +3,14 @@ import cx from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	hasAmountAvailableToRefund,
 	isRefundable,
 	maybeWithinRefundPeriod,
 } from 'calypso/lib/purchases';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { SiteScreenshot } from '../site-screenshot';
 import getPlanCancellationFeatures from './get-plan-cancellation-features';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import './style.scss';
@@ -31,14 +33,12 @@ interface PreCancellationDialogProps {
  */
 interface FeaturesListProps {
 	productSlug: string | undefined;
-	subTitle: string | undefined;
 	domainFeature: JSX.Element | null;
 	isPurchaseRefundable: boolean;
 	isPurchaseAutoRenewing: boolean;
 }
 export const FeaturesList = ( {
 	productSlug,
-	subTitle,
 	domainFeature,
 	isPurchaseRefundable,
 	isPurchaseAutoRenewing,
@@ -51,7 +51,6 @@ export const FeaturesList = ( {
 
 	return (
 		<>
-			<p>{ subTitle }</p>
 			<ul
 				className={
 					'pre-cancellation-dialog__list-plan-features' +
@@ -111,39 +110,24 @@ interface RenderFooterTextProps {
 }
 
 export const RenderFooterText = ( { purchase }: RenderFooterTextProps ) => {
-	const { refundText } = purchase;
 	const translate = useTranslate();
 
 	return (
-		<div className="pre-cancellation-dialog--footer">
-			<div className="pre-cancellation-dialog--footer--support">
-				<strong className="pre-cancellation-dialog--footer--support-information">
-					{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase )
-						? translate(
-								'Have a question? Want to request a refund? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
-								{
-									components: {
-										contactLink: <a href={ CALYPSO_CONTACT } />,
-									},
-								}
-						  )
-						: translate(
-								'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
-								{
-									components: {
-										contactLink: <a href={ CALYPSO_CONTACT } />,
-									},
-								}
-						  ) }
-				</strong>
-			</div>
-			<div className="pre-cancellation-dialog--footer--refund">
-				{ hasAmountAvailableToRefund( purchase ) &&
-					translate( '%(refundText)s to be refunded', {
-						args: { refundText },
-						context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
-					} ) }
-			</div>
+		<div className="pre-cancellation-dialog--support">
+			{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase )
+				? translate(
+						'Have a question? Want to request a refund? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
+						{
+							components: {
+								contactLink: <a href={ CALYPSO_CONTACT } />,
+							},
+						}
+				  )
+				: translate( 'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}', {
+						components: {
+							contactLink: <a href={ CALYPSO_CONTACT } />,
+						},
+				  } ) }
 		</div>
 	);
 };
@@ -162,24 +146,62 @@ export const PreCancellationDialog = ( {
 	wpcomURL,
 }: PreCancellationDialogProps ) => {
 	const translate = useTranslate();
-
 	/**
-	 * Instantiate site's plan variables.
+	 * Instantiate site's variables.
 	 */
+	const siteName = site.name ?? '';
 	const productSlug = site.plan?.product_slug;
 	const planLabel = site.plan?.product_name_short;
-	const subTitle = translate( 'Subtitle' );
+	const isComingSoon = site.is_coming_soon;
+	const isPrivate = site.is_private;
+	const launchedStatus = site.launch_status === 'launched' ? true : false;
+	const shouldUseSiteThumbnail =
+		isComingSoon === false && isPrivate === false && launchedStatus === true;
+
+	/**
+	 * Instantiate purchase variables.
+	 */
 	const isPurchaseRefundable = isRefundable( purchase );
 	const isPurchaseAutoRenewing = purchase.isAutoRenewEnabled;
+
+	/**
+	 * Determine dialog subtitle.
+	 */
+	const { refundText } = purchase;
+	const subTitle =
+		isPurchaseRefundable && hasAmountAvailableToRefund( purchase ) ? (
+			<div className="pre-cancellation-dialog--refund">
+				{ hasAmountAvailableToRefund( purchase ) &&
+					translate( '%(refundText)s to be refunded', {
+						args: { refundText },
+						context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
+					} ) }
+			</div>
+		) : (
+			<>Subtitle</>
+		);
 
 	/**
 	 * Click events, buttons tracking and action.
 	 */
 	const clickCancelPlan = () => {
+		recordTracksEvent( 'calypso_pre_cancellation_modal_cancel_plan', {
+			product_slug: productSlug,
+			has_domain: hasDomain ? true : false,
+			has_autorenew: isPurchaseAutoRenewing,
+			is_refundable: isPurchaseRefundable,
+		} );
+
 		removePlan();
 	};
 
 	const clickCloseDialog = () => {
+		recordTracksEvent( 'calypso_pre_cancellation_modal_keep_plan', {
+			product_slug: productSlug,
+			has_domain: hasDomain ? true : false,
+			has_autorenew: isPurchaseAutoRenewing,
+			is_refundable: isPurchaseRefundable,
+		} );
 		closeDialog();
 	};
 
@@ -196,14 +218,14 @@ export const PreCancellationDialog = ( {
 	 */
 	const buttons = [
 		{
-			action: 'cancel',
-			label: translate( 'Cancel my plan' ),
-			onClick: clickCancelPlan,
-		},
-		{
 			action: 'close',
 			label: translate( 'Keep my plan' ),
 			onClick: clickCloseDialog,
+		},
+		{
+			action: 'cancel',
+			label: translate( 'Cancel my plan' ),
+			onClick: clickCancelPlan,
 			isPrimary: true,
 		},
 	];
@@ -217,6 +239,7 @@ export const PreCancellationDialog = ( {
 			className={ cx( {
 				'pre-cancellation-dialog': true,
 				'--with-domain-feature': domainFeature !== null,
+				'--with-screenshot': shouldUseSiteThumbnail,
 			} ) }
 			isVisible={ isDialogVisible }
 			onClose={ closeDialog }
@@ -238,16 +261,29 @@ export const PreCancellationDialog = ( {
 							} ) }
 							align="left"
 						/>
+						<h2>{ subTitle }</h2>
 						<FeaturesList
 							productSlug={ productSlug }
-							subTitle={ subTitle }
 							domainFeature={ domainFeature }
 							isPurchaseRefundable={ isPurchaseRefundable }
 							isPurchaseAutoRenewing={ isPurchaseAutoRenewing }
 						/>
-						<RenderFooterText purchase={ purchase } />
 					</div>
+					{ shouldUseSiteThumbnail && (
+						<div className="pre-cancellation-dialog__grid-colmn">
+							<SiteScreenshot
+								className="pre-cancellation-dialog__site-screenshot"
+								site={ site }
+								alt={ String(
+									translate( 'The screenshot of the site: %(site)s', {
+										args: { site: siteName },
+									} )
+								) }
+							/>
+						</div>
+					) }
 				</div>
+				<RenderFooterText purchase={ purchase } />
 			</>
 		</Dialog>
 	);

@@ -636,15 +636,12 @@ class Signup extends Component {
 			const domainItem = get( this.props, 'signupDependencies.domainItem', {} );
 			const hasPaidDomain = isDomainRegistration( domainItem );
 			const destination = this.signupFlowController.getDestination();
-			const setupSiteFlowPath = config.isEnabled( 'signup/stepper-flow' )
-				? '/setup'
-				: '/start/setup-site';
 
 			return (
 				<ReskinnedProcessingScreen
 					flowName={ this.props.flowName }
 					hasPaidDomain={ hasPaidDomain }
-					isDestinationSetupSiteFlow={ destination.startsWith( setupSiteFlowPath ) }
+					isDestinationSetupSiteFlow={ destination.startsWith( '/setup' ) }
 				/>
 			);
 		}

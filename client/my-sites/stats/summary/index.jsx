@@ -1,19 +1,16 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import QueryMedia from 'calypso/components/data/query-media';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
-import HeaderCake from 'calypso/components/header-cake';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Countries from '../stats-countries';
 import StatsModule from '../stats-module';
 import statsStringsFactory from '../stats-strings';
@@ -24,21 +21,6 @@ import VideoPressStatsModule from '../videopress-stats-module';
 const StatsStrings = statsStringsFactory();
 
 class StatsSummary extends Component {
-	goBack = () => {
-		const pathParts = this.props.path.split( '/' );
-		const queryString = this.props.context.querystring
-			? '?' + this.props.context.querystring
-			: null;
-
-		if ( history.length ) {
-			history.back();
-		} else {
-			setTimeout( () => {
-				page.show( '/stats/' + pathParts[ pathParts.length - 1 ] + queryString );
-			} );
-		}
-	};
-
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
 	}
@@ -240,36 +222,26 @@ class StatsSummary extends Component {
 				break;
 		}
 
-		// Append the site domain as needed.
-		const isFixedNavHeadersEnabled = config.isEnabled( 'stats/fixed-nav-headers' );
-		const domain = this.props.path?.split( '/' ).pop();
-		if ( domain?.length > 0 ) {
-			backLink += domain;
-		}
-		// Set up for FixedNavigationHeader.
-		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
-		const dynamicClassName = isFixedNavHeadersEnabled ? 'has-fixed-nav' : '';
-
 		summaryViews.push( summaryView );
 
 		const { module } = this.props.context.params;
 
+		// Set up for FixedNavigationHeader.
+		const domain = this.props.siteSlug;
+		if ( domain?.length > 0 ) {
+			backLink += domain;
+		}
+		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
+
 		return (
-			<Main className={ dynamicClassName } wideLayout>
+			<Main className="has-fixed-nav" wideLayout>
 				<PageViewTracker
 					path={ `/stats/${ period }/${ module }/:site` }
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
 				/>
-				{ isFixedNavHeadersEnabled && (
-					<FixedNavigationHeader navigationItems={ navigationItems } />
-				) }
+				<FixedNavigationHeader navigationItems={ navigationItems } />
 
-				<div id="my-stats-content">
-					{ ! isFixedNavHeadersEnabled && (
-						<HeaderCake onClick={ this.goBack }>{ title }</HeaderCake>
-					) }
-					{ summaryViews }
-				</div>
+				<div id="my-stats-content">{ summaryViews }</div>
 				<JetpackColophon />
 			</Main>
 		);
@@ -280,6 +252,7 @@ export default connect( ( state, { context, postId } ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
 		siteId: getSelectedSiteId( state ),
+		siteSlug: getSelectedSiteSlug( state, siteId ),
 		media: context.params.module === 'videodetails' ? getMediaItem( state, siteId, postId ) : false,
 	};
 } )( localize( StatsSummary ) );
