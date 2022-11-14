@@ -400,6 +400,7 @@ export const setDomainCartItem = ( domainCartItem: MinimalRequestCartProduct | u
 export const setHideFreePlan = ( hideFreePlan: boolean ) => ( {
 	type: 'SET_HIDE_FREE_PLAN' as const,
 	hideFreePlan,
+} );
 
 export const setEcommerceFlowRecurType = ( ecommerceFlowRecurType: string ) => ( {
 	type: 'SET_ECOMMERCE_FLOW_RECUR_TYPE' as const,
