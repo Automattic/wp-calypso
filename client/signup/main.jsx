@@ -743,9 +743,15 @@ class Signup extends Component {
 	shouldShowZendeskPresalesChat() {
 		const isEnglishLocale = config( 'english_locales' ).includes( getLocaleSlug() ?? '' );
 
-		// Zendesk presales chat is only open in signup between 15 and 23 UTC;
+		// Zendesk presales chat is only open in signup between 15 and 23 UTC, Monday through Friday.
 		const currentTime = new Date();
-		return isEnglishLocale && currentTime.getUTCHours() >= 15 && currentTime.getUTCHours() < 23;
+		return (
+			isEnglishLocale &&
+			currentTime.getUTCHours() >= 15 &&
+			currentTime.getUTCHours() < 23 &&
+			currentTime.getUTCDay() !== 0 &&
+			currentTime.getUTCDay() !== 6
+		);
 	}
 
 	getPageTitle() {
