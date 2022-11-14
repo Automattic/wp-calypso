@@ -52,30 +52,33 @@ import type { TranslateResult } from 'i18n-calypso';
 // Translatable strings
 export const getJetpackProductsShortNames = (): Record< string, TranslateResult > => {
 	return {
-		[ PRODUCT_JETPACK_BACKUP_DAILY ]: translate( 'Backup {{em}}Daily{{/em}}', {
+		[ PRODUCT_JETPACK_BACKUP_DAILY ]: translate( 'VaultPress Backup {{em}}Daily{{/em}}', {
 			components: {
 				em: createElement( 'em' ),
 			},
 		} ),
-		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: translate( 'Backup {{em}}Daily{{/em}}', {
+		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: translate( 'VaultPress Backup {{em}}Daily{{/em}}', {
 			components: {
 				em: createElement( 'em' ),
 			},
 		} ),
-		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: translate( 'Backup {{em}}Real-time{{/em}}', {
+		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: translate( 'VaultPress Backup {{em}}Real-time{{/em}}', {
 			components: {
 				em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
 			},
 		} ),
-		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate( 'Backup {{em}}Real-time{{/em}}', {
-			components: {
-				em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
-			},
-		} ),
-		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: translate( 'Backup' ),
-		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: translate( 'Backup' ),
-		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: translate( 'Backup' ),
-		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: translate( 'Backup' ),
+		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate(
+			'VaultPress Backup {{em}}Real-time{{/em}}',
+			{
+				components: {
+					em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
+				},
+			}
+		),
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: translate( 'VaultPress Backup' ),
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: translate( 'VaultPress Backup' ),
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: translate( 'VaultPress Backup' ),
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: translate( 'VaultPress Backup' ),
 		[ PRODUCT_JETPACK_BOOST ]: translate( 'Boost' ),
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: translate( 'Boost' ),
 		[ PRODUCT_JETPACK_SCAN_REALTIME ]: translate( 'Scan {{em}}Real-time{{/em}}', {
@@ -95,8 +98,16 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Search' ),
 		[ PRODUCT_WPCOM_SEARCH ]: translate( 'Search' ),
 		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: translate( 'Search' ),
-		[ PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Anti-spam' ),
-		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Anti-spam' ),
+		[ PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Akismet {{s}}Anti-spam{{/s}}', {
+			components: {
+				s: <span style={ { whiteSpace: 'nowrap' } } />,
+			},
+		} ),
+		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Akismet {{s}}Anti-spam{{/s}}', {
+			components: {
+				s: <span style={ { whiteSpace: 'nowrap' } } />,
+			},
+		} ),
 		[ PRODUCT_JETPACK_VIDEOPRESS ]: translate( 'VideoPress' ),
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: translate( 'VideoPress' ),
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: translate( 'Social' ),
@@ -105,22 +116,22 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 };
 
 export const getJetpackProductsDisplayNames = (): Record< string, TranslateResult > => {
-	const backupDaily = translate( 'Backup {{em}}Daily{{/em}}', {
+	const backupDaily = translate( 'VaultPress Backup {{em}}Daily{{/em}}', {
 		components: {
 			em: <em />,
 		},
 	} );
 	const backupRealtime = (
 		<>
-			{ translate( 'Backup {{em}}Real-time{{/em}}', {
+			{ translate( 'VaultPress Backup {{em}}Real-time{{/em}}', {
 				components: {
 					em: <em style={ { whiteSpace: 'nowrap' } } />,
 				},
 			} ) }
 		</>
 	);
-	const backupT1 = translate( 'Backup' );
-	const backupT2 = translate( 'Backup' );
+	const backupT1 = translate( 'VaultPress Backup' );
+	const backupT2 = translate( 'VaultPress Backup' );
 	const search = translate( 'Site Search' );
 	const scan = translate( 'Scan' );
 	const scanRealtime = (
@@ -133,7 +144,11 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		</>
 	);
 	const videoPress = translate( 'VideoPress' );
-	const antiSpam = translate( 'Anti-spam' );
+	const antiSpam = translate( 'Akismet {{s}}Anti-spam{{/s}}', {
+		components: {
+			s: <span style={ { whiteSpace: 'nowrap' } } />,
+		},
+	} );
 	const boost = translate( 'Boost' );
 	const social = translate( 'Social' );
 
@@ -204,26 +219,30 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 };
 
 export const getJetpackProductsCallToAction = (): Record< string, TranslateResult > => {
-	const backupDaily = translate( 'Get Backup {{em}}Daily{{/em}}', {
+	const backupDaily = translate( 'Get VaultPress Backup {{em}}Daily{{/em}}', {
 		components: {
 			em: <em />,
 		},
 	} );
 	const backupRealtime = (
 		<>
-			{ translate( 'Get Backup {{em}}Real-time{{/em}}', {
+			{ translate( 'Get VaultPress Backup {{em}}Real-time{{/em}}', {
 				components: {
 					em: <em style={ { whiteSpace: 'nowrap' } } />,
 				},
 			} ) }
 		</>
 	);
-	const backupT1 = translate( 'Get Backup' );
-	const backupT2 = translate( 'Get Backup' );
+	const backupT1 = translate( 'Get VaultPress Backup' );
+	const backupT2 = translate( 'Get VaultPress Backup' );
 	const search = translate( 'Get Site Search' );
 	const scan = translate( 'Get Scan' );
 	const videoPress = translate( 'Get VideoPress' );
-	const antiSpam = translate( 'Get Anti-spam' );
+	const antiSpam = translate( 'Get Akismet {{s}}Anti-spam{{/s}}', {
+		components: {
+			s: <span style={ { whiteSpace: 'nowrap' } } />,
+		},
+	} );
 	const boost = translate( 'Get Boost' );
 	const social = translate( 'Get Social' );
 
