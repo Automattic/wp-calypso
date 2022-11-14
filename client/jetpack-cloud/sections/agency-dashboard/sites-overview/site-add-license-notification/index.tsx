@@ -82,11 +82,15 @@ export default function SiteAddLicenseNotification() {
 							// We are not using the same translate method for plural form since we have different arguments.
 							assignedLicenses.length > 1
 								? translate(
-										'{{strong}}%(initialLicenseList)s%(conjunction)s %(lastLicenseItem)s{{/strong}} were succesfully assigned to {{em}}%(selectedSite)s{{/em}}. Please allow a few minutes for your features to activate.',
+										'{{strong}}%(initialLicenseList)s%(conjunction)s %(lastLicenseItem)s{{/strong}} ' +
+											'were succesfully assigned to {{em}}%(selectedSite)s{{/em}}. ' +
+											'Please allow a few minutes for your features to activate.',
 										getMessageArgs( assignedLicenses )
 								  )
 								: translate(
-										'{{strong}}%(licenseItem)s{{/strong}} was succesfully assigned to {{em}}%(selectedSite)s{{/em}}. Please allow a few minutes for your features to activate.',
+										'{{strong}}%(licenseItem)s{{/strong}} was succesfully assigned to ' +
+											'{{em}}%(selectedSite)s{{/em}}. Please allow a few minutes ' +
+											'for your features to activate.',
 										getMessageArgs( assignedLicenses )
 								  )
 						}
@@ -100,11 +104,13 @@ export default function SiteAddLicenseNotification() {
 							// We are not using the same translate method for plural form since we have different arguments.
 							rejectedLicenses.length > 1
 								? translate(
-										`An error occurred and your {{strong}}%(initialLicenseList)s%(conjunction)s %(lastLicenseItem)s{{/strong}} weren't assigned to {{em}}%(selectedSite)s{{/em}}.`,
+										'An error occurred and your {{strong}}%(initialLicenseList)s%(conjunction)s %(lastLicenseItem)s{{/strong}} ' +
+											"weren't assigned to {{em}}%(selectedSite)s{{/em}}.",
 										getMessageArgs( rejectedLicenses )
 								  )
 								: translate(
-										`An error occurred and your {{strong}}%(licenseItem)s{{/strong}} wasn't assigned to {{em}}%(selectedSite)s{{/em}}.`,
+										'An error occurred and your {{strong}}%(licenseItem)s{{/strong}} ' +
+											"wasn't assigned to {{em}}%(selectedSite)s{{/em}}.",
 										getMessageArgs( rejectedLicenses )
 								  )
 						}
