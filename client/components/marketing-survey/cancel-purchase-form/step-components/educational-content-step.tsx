@@ -18,21 +18,15 @@ type ContentProps = {
 	image: string;
 	title: TranslateResult;
 	declineButtonText?: TranslateResult;
-	imgWidth?: number;
 	onAccept?: () => void;
 	onDecline: () => void;
 };
 
-function Content( { image, imgWidth, ...props }: ContentProps ) {
+function Content( { image, ...props }: ContentProps ) {
 	const translate = useTranslate();
 	const declineButtonText = props.declineButtonText || translate( 'Cancel my current plan' );
 	const [ isBusy, setIsBusy ] = useState( false );
 	const styles: Record< string, string > = {};
-
-	if ( imgWidth ) {
-		styles.width = `${ imgWidth }px`;
-		styles.flexBasis = styles.width;
-	}
 
 	return (
 		<div className="cancel-purchase-form__edu">
@@ -144,8 +138,7 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 			return (
 				<Content
 					image={ imgFreeDomain }
-					imgWidth={ 185 }
-					title={ translate( 'How to get a free domain' ) }
+					title={ translate( 'Step-by-step guide to get a free domain' ) }
 					onDecline={ props.onDecline }
 				>
 					<p>
@@ -198,7 +191,6 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 			return (
 				<Content
 					image={ imgConnectDomain }
-					imgWidth={ 185 }
 					title={ translate( 'Connect a domain guidelines' ) }
 					onDecline={ props.onDecline }
 				>
