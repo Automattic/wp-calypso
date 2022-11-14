@@ -55,6 +55,11 @@
 			// Icon size 24x24
 			width: 24px;
 			height: 24px;
+
+			&.is-disabled {
+				visibility: visible;
+				opacity: 0.2;
+			}
 		}
 
 		.stats-period-navigation__next {
