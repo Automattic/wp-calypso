@@ -37,7 +37,7 @@ const SSHKey = ( {
 			__( 'Are you sure you want to update this SSH key? It will affect all attached sites.' ),
 			( updated: boolean ) => {
 				if ( updated ) {
-					onUpdate( sshKey.name, sshKey.key );
+					onUpdate( sshKey.name, sshKey.sha256 );
 				}
 			}
 		);
@@ -85,7 +85,7 @@ const SSHKey = ( {
 interface ManageSSHKeyProps {
 	sshKeys: SSHKeyData[];
 	onDelete( name: string ): void;
-	onUpdate( name: string, key: string ): void;
+	onUpdate( name: string, keyFingerprint: string ): void;
 	keyBeingDeleted: string | null;
 	keyBeingUpdated: boolean | null;
 	userLogin: string;

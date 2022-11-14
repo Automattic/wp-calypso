@@ -1,4 +1,4 @@
-import { Button, FormInputValidation } from '@automattic/components';
+import { Button, Card, FormInputValidation } from '@automattic/components';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -6,11 +6,11 @@ import i18n from 'i18n-calypso';
 import { ChangeEvent, useReducer, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
+import * as SSHKeyCard from 'calypso/components/ssh-key-card';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
 import { SSH_KEY_FORMATS } from './use-ssh-key-query';
 
 const PUBLIC_SSH_KEY_INPUT_ID = 'public_ssh_key';
-const OLD_PUBLIC_SSH_KEY_INPUT_ID = 'old_public_ssh_key';
 
 const initialState = {
 	touched: false,
@@ -36,7 +36,7 @@ const sshKeyFormReducer = ( state = initialState, action: ReducerAction ): typeo
 	}
 };
 
-const UpdateTextContainer = styled.p`
+const UpdateTextContainer = styled.div`
 	margin-top: 1.5rem;
 `;
 
@@ -48,7 +48,8 @@ interface UpdateSSHKeyFormProps {
 	updateSSHKey( args: { name: string; key: string } ): void;
 	isUpdating: boolean;
 	updateText?: string;
-	oldSSHKey: string;
+	oldSSHFingerprint: string;
+	userLogin: string;
 	keyName: string;
 }
 
@@ -56,11 +57,12 @@ export const UpdateSSHKeyForm = ( {
 	updateSSHKey,
 	isUpdating,
 	updateText,
-	oldSSHKey,
+	userLogin,
+	oldSSHFingerprint,
 	keyName,
 }: UpdateSSHKeyFormProps ) => {
 	const [ { isValid, touched, value }, dispatch ] = useReducer( sshKeyFormReducer, initialState );
-	const [ initialSSHKeyValue ] = useState( oldSSHKey );
+	const [ initialSSHFingerprint ] = useState( oldSSHFingerprint );
 
 	const { __ } = useI18n();
 	const formats = new Intl.ListFormat( i18n.getLocaleSlug() ?? 'en', {
@@ -73,9 +75,11 @@ export const UpdateSSHKeyForm = ( {
 	return (
 		<>
 			<UpdateTextContainer>
-				{ __(
-					"Updating an SSH key won't detach it from the sites that particular key is being used."
-				) }
+				<Card highlight="warning">
+					{ __(
+						"Updating an SSH key won't detach it from the sites that particular key is being used."
+					) }
+				</Card>
 			</UpdateTextContainer>
 			<form
 				onSubmit={ ( event ) => {
@@ -84,16 +88,15 @@ export const UpdateSSHKeyForm = ( {
 				} }
 			>
 				<FormFieldset>
-					<FormLabel htmlFor={ OLD_PUBLIC_SSH_KEY_INPUT_ID }>
-						{ __( 'Old SSH Public Key' ) }
-					</FormLabel>
-
-					<TextareaAutosize
-						required
-						id={ OLD_PUBLIC_SSH_KEY_INPUT_ID }
-						disabled={ true }
-						value={ initialSSHKeyValue }
-					/>
+					<FormLabel>{ __( 'Old SSH Public Key' ) }</FormLabel>
+					<SSHKeyCard.Root>
+						<SSHKeyCard.Details>
+							<SSHKeyCard.KeyName>
+								{ userLogin }-{ keyName }
+							</SSHKeyCard.KeyName>
+							<SSHKeyCard.PublicKey>{ initialSSHFingerprint }</SSHKeyCard.PublicKey>
+						</SSHKeyCard.Details>
+					</SSHKeyCard.Root>
 					<NewSSHFormFieldContainer>
 						<FormLabel htmlFor={ PUBLIC_SSH_KEY_INPUT_ID }>{ __( 'SSH Public Key' ) }</FormLabel>
 						<TextareaAutosize
@@ -128,13 +131,7 @@ export const UpdateSSHKeyForm = ( {
 					</NewSSHFormFieldContainer>
 				</FormFieldset>
 				<Button busy={ isUpdating } primary type="submit" disabled={ ! isValid || isUpdating }>
-					{ sprintf(
-						// translators: "sshText" is the text of the ssh save button.
-						__( '%(sshText)s.' ),
-						{
-							sshText: updateText || 'Save SSH Key',
-						}
-					) }
+					{ updateText || __( 'Save SSH Key' ) }
 				</Button>
 			</form>
 		</>

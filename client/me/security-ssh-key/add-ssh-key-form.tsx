@@ -91,13 +91,7 @@ export const AddSSHKeyForm = ( { addSSHKey, isAdding, saveText }: AddSSHKeyFormP
 				) }
 			</FormFieldset>
 			<Button busy={ isAdding } primary type="submit" disabled={ ! isValid || isAdding }>
-				{ sprintf(
-					// translators: "sshText" is the text of the ssh save button.
-					__( '%(sshText)s.' ),
-					{
-						sshText: saveText || 'Save SSH Key',
-					}
-				) }
+				{ saveText || __( 'Save SSH Key' ) }
 			</Button>
 		</form>
 	);

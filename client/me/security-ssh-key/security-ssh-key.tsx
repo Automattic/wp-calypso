@@ -49,12 +49,22 @@ const noticeOptions = {
 const sshKeySaveFailureNoticeId = 'ssh-key-save-failure';
 const sshKeyUpdateFailureNoticeId = 'ssh-key-update-failure';
 
+const UpdateSSHModalTitle = styled.h1`
+	margin: 0 0 16px;
+	line-height: 1.3;
+`;
+
+const UpdateSSHModalDescription = styled.p`
+	margin: 0 0 16px;
+	line-height: 1.3;
+`;
+
 export const SecuritySSHKey = () => {
 	const { data, isLoading } = useSSHKeyQuery();
 	const dispatch = useDispatch();
 	const currentUser = useSelector( getCurrentUser );
 	const [ sshKeyNameToUpdate, setSSHKeyNameToUpdate ] = useState( '' );
-	const [ oldSSHKey, setOldSSHKey ] = useState( '' );
+	const [ oldSSHFingerprint, setOldSSHFingerprint ] = useState( '' );
 	const [ showDialog, setShowDialog ] = useState( false );
 
 	const { __ } = useI18n();
@@ -116,7 +126,7 @@ export const SecuritySSHKey = () => {
 			dispatch( recordTracksEvent( 'calypso_security_ssh_key_update_success' ) );
 			dispatch( successNotice( __( 'SSH key updated to account.' ), noticeOptions ) );
 			setSSHKeyNameToUpdate( '' );
-			setOldSSHKey( '' );
+			setOldSSHFingerprint( '' );
 			setShowDialog( false );
 		},
 		onError: ( error ) => {
@@ -193,22 +203,29 @@ export const SecuritySSHKey = () => {
 					</p>
 				</div>
 
-				<Dialog
-					isVisible={ showDialog }
-					onClose={ () => setShowDialog( false ) }
-					showCloseIcon={ true }
-					shouldCloseOnEsc={ true }
-				>
-					<div style={ { minWidth: '400px' } }>
-						<UpdateSSHKeyForm
-							oldSSHKey={ oldSSHKey }
-							keyName={ sshKeyNameToUpdate }
-							updateSSHKey={ updateSSHKey }
-							isUpdating={ keyBeingUpdated }
-							updateText="Update SSH Key"
-						/>
-					</div>
-				</Dialog>
+				{ currentUser?.username && (
+					<Dialog
+						isVisible={ showDialog }
+						onClose={ () => setShowDialog( false ) }
+						showCloseIcon={ true }
+						shouldCloseOnEsc={ true }
+					>
+						<div style={ { width: '600px' } }>
+							<UpdateSSHModalTitle>{ __( 'Update SSH Key' ) }</UpdateSSHModalTitle>
+							<UpdateSSHModalDescription>
+								{ __( 'Update current SSH key for your Wordpress.com account.' ) }
+							</UpdateSSHModalDescription>
+							<UpdateSSHKeyForm
+								userLogin={ currentUser.username }
+								oldSSHFingerprint={ oldSSHFingerprint }
+								keyName={ sshKeyNameToUpdate }
+								updateSSHKey={ updateSSHKey }
+								isUpdating={ keyBeingUpdated }
+								updateText={ __( 'Update SSH Key' ) }
+							/>
+						</div>
+					</Dialog>
+				) }
 
 				{ isLoading ? (
 					<Placeholders />
@@ -224,9 +241,9 @@ export const SecuritySSHKey = () => {
 					userLogin={ currentUser.username }
 					sshKeys={ data }
 					onDelete={ ( sshKeyName ) => deleteSSHKey( { sshKeyName } ) }
-					onUpdate={ ( sshKeyName, key ) => {
+					onUpdate={ ( sshKeyName, keyFingerprint ) => {
 						setSSHKeyNameToUpdate( sshKeyName );
-						setOldSSHKey( key );
+						setOldSSHFingerprint( keyFingerprint );
 						setShowDialog( true );
 					} }
 					keyBeingUpdated={ keyBeingUpdated }
