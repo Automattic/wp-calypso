@@ -163,7 +163,6 @@ class StoreStatsChart extends Component {
 					loading={ isLoading }
 					data={ chartData }
 					barClick={ this.barClick }
-					chartXPadding={ 0 }
 					minBarWidth={ 35 }
 				/>
 				{ ! isLoading &&

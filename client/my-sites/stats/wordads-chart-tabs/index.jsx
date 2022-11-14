@@ -155,7 +155,6 @@ class WordAdsChartTabs extends Component {
 						<Chart
 							barClick={ this.props.barClick }
 							data={ this.buildChartData() }
-							chartXPadding={ 0 }
 							minBarWidth={ 35 }
 						/>
 						<StatTabs
