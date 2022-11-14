@@ -42,14 +42,30 @@ export default function SiteAddLicenseNotification() {
 
 	function getMessageArgs( licenses: Array< ProductInfo > ) {
 		const licenseNames = licenses.map( ( license ) => license.name );
-		const lastItem = licenseNames.slice( -1 )[ 0 ];
-		const remainingItems = licenseNames.slice( 0, -1 );
+		const initialLicenseList = licenseNames.slice( 0, -1 );
+		const lastLicenseItem = licenseNames.slice( -1 )[ 0 ];
+		const commaCharacter = translate( ',' );
+		const conjunction =
+			licenses.length > 2
+				? translate( `%(commaCharacter)s and`, { args: { commaCharacter } } )
+				: translate( ' and' );
 		return {
 			args: {
-				lastItem: lastItem,
 				selectedSite,
-				remainingItems: remainingItems.join( ', ' ),
+				...( licenses.length > 1
+					? {
+							initialLicenseList: initialLicenseList.join( `${ commaCharacter } ` ),
+							lastLicenseItem: lastLicenseItem,
+							conjunction,
+					  }
+					: { licenseItem: lastLicenseItem } ),
 			},
+			...( licenses.length > 1 && {
+				comment: `%(initialLicenseList)s is a list of n-1 license names
+						seperated by a translated comma character, %(lastLicenseItem)
+						is the nth license name, and %(conjunction) is a translated "and"
+						text with or without a serial comma based on the licenses count`,
+			} ),
 			components: {
 				strong: <strong />,
 				em: <em />,
@@ -66,11 +82,11 @@ export default function SiteAddLicenseNotification() {
 							// We are not using the same translate method for plural form since we have different arguments.
 							assignedLicenses.length > 1
 								? translate(
-										'{{strong}}%(remainingItems)s and %(lastItem)s{{/strong}} were succesfully assigned to {{em}}%(selectedSite)s{{/em}}. Please allow a few minutes for your features to activate.',
+										'{{strong}}%(initialLicenseList)s%(conjunction)s %(lastLicenseItem)s{{/strong}} were succesfully assigned to {{em}}%(selectedSite)s{{/em}}. Please allow a few minutes for your features to activate.',
 										getMessageArgs( assignedLicenses )
 								  )
 								: translate(
-										'{{strong}}%(lastItem)s{{/strong}} was succesfully assigned to {{em}}%(selectedSite)s{{/em}}. Please allow a few minutes for your features to activate.',
+										'{{strong}}%(licenseItem)s{{/strong}} was succesfully assigned to {{em}}%(selectedSite)s{{/em}}. Please allow a few minutes for your features to activate.',
 										getMessageArgs( assignedLicenses )
 								  )
 						}
@@ -84,11 +100,11 @@ export default function SiteAddLicenseNotification() {
 							// We are not using the same translate method for plural form since we have different arguments.
 							rejectedLicenses.length > 1
 								? translate(
-										`An error occurred and your {{strong}}%(remainingItems)s and %(lastItem)s{{/strong}} weren't assigned to {{em}}%(selectedSite)s{{/em}}.`,
+										`An error occurred and your {{strong}}%(initialLicenseList)s%(conjunction)s %(lastLicenseItem)s{{/strong}} weren't assigned to {{em}}%(selectedSite)s{{/em}}.`,
 										getMessageArgs( rejectedLicenses )
 								  )
 								: translate(
-										`An error occurred and your {{strong}}%(lastItem)s{{/strong}} wasn't assigned to {{em}}%(selectedSite)s{{/em}}.`,
+										`An error occurred and your {{strong}}%(licenseItem)s{{/strong}} wasn't assigned to {{em}}%(selectedSite)s{{/em}}.`,
 										getMessageArgs( rejectedLicenses )
 								  )
 						}
