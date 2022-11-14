@@ -418,6 +418,11 @@ export const setStoreLocationCountryCode = ( storeLocationCountryCode: string ) 
 	storeLocationCountryCode,
 } );
 
+export const setEcommerceFlowRecurType = ( ecommerceFlowRecurType: string ) => ( {
+	type: 'SET_ECOMMERCE_FLOW_RECUR_TYPE' as const,
+	ecommerceFlowRecurType,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -464,4 +469,5 @@ export type OnboardAction = ReturnType<
 	| typeof setSiteAccentColor
 	| typeof setVerticalId
 	| typeof setStoreLocationCountryCode
+	| typeof setEcommerceFlowRecurType
 >;
