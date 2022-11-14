@@ -1,8 +1,26 @@
 import { Card } from '@automattic/components';
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
+import { useSelector } from 'react-redux';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import {
+	isRequestingSiteStatsForQuery,
+	getSiteStatsNormalizedData,
+} from 'calypso/state/stats/lists/selectors';
 
 import './style.scss';
+
+type AllTimeData = {
+	comments: number;
+	posts: number;
+	views: number;
+	visitors: number;
+	viewsBestDay: string;
+	viewsBestDayTotal: number;
+};
+
+const STATS_QUERY = {};
 
 const FORMATTER = new Intl.NumberFormat( 'en-GB' );
 const COMPACT_FORMATTER = new Intl.NumberFormat( 'en-GB', {
@@ -17,8 +35,27 @@ function formatNumber( number: number | null, isCompact = false ) {
 	return Number.isFinite( number ) ? formatter.format( number as number ) : '-';
 }
 
-export default function AllTimeHighlightsSection() {
+export default function AllTimeHighlightsSection( { siteId }: { siteId: number } ) {
 	const translate = useTranslate();
+
+	const isRequesting = useSelector( ( state ) =>
+		isRequestingSiteStatsForQuery( state, siteId, 'stats', STATS_QUERY )
+	);
+
+	const { comments, posts, views, visitors, viewsBestDay, viewsBestDayTotal } = useSelector(
+		( state ) => getSiteStatsNormalizedData( state, siteId, 'stats', STATS_QUERY ) || {}
+	) as AllTimeData;
+
+
+	const isLoading = isRequesting && ! views;
+
+	let bestViewsEverMonthDay;
+	let bestViewsEverYear;
+
+	if ( viewsBestDay && ! isLoading ) {
+		bestViewsEverMonthDay = moment( viewsBestDay ).format( 'MMMM D' );
+		bestViewsEverYear = moment( viewsBestDay ).format( 'YYYY' );
+	}
 
 	const infoItems = [
 		{
@@ -34,12 +71,12 @@ export default function AllTimeHighlightsSection() {
 				</svg>
 			),
 			title: translate( 'Views' ),
-			count: 47865778,
+			count: views,
 		},
-		{ id: 'visitors', icon: people, title: translate( 'Visitors' ), count: 22787774 },
-		{ id: 'posts', icon: postContent, title: translate( 'Posts' ), count: 2582 },
+		{ id: 'visitors', icon: people, title: translate( 'Visitors' ), count: visitors },
+		{ id: 'posts', icon: postContent, title: translate( 'Posts' ), count: posts },
 		{ id: 'likes', icon: starEmpty, title: translate( 'Likes' ), count: 13092212 },
-		{ id: 'comments', icon: commentContent, title: translate( 'Comments' ), count: 45130 },
+		{ id: 'comments', icon: commentContent, title: translate( 'Comments' ), count: comments },
 	];
 
 	const mostPopularTimeItems = {
@@ -68,13 +105,13 @@ export default function AllTimeHighlightsSection() {
 			{
 				id: 'day',
 				header: translate( 'Day' ),
-				content: 'June 23',
-				footer: 2022,
+				content: bestViewsEverMonthDay,
+				footer: bestViewsEverYear,
 			},
 			{
 				id: 'views',
 				header: translate( 'Views' ),
-				content: formatNumber( 32823, true ),
+				content: formatNumber( viewsBestDayTotal, true ),
 				footer: translate( '%p% of views', { args: [ 25 ] } ),
 			},
 		],
@@ -82,6 +119,8 @@ export default function AllTimeHighlightsSection() {
 
 	return (
 		<div className="stats__all-time-highlights-section">
+			{ siteId && <QuerySiteStats siteId={ siteId } statType="stats" query={ STATS_QUERY } /> }
+
 			<div className="highlight-cards">
 				<h1 className="highlight-cards-heading">{ translate( 'All-time highlights' ) }</h1>
 
