@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import type { StatsCardProps } from './types';
 
@@ -18,27 +18,31 @@ const StatsCard = ( {
 	heroElement,
 }: StatsCardProps ) => {
 	const translate = useTranslate();
-	const baseClass = classnames( className, BASE_CLASS_NAME );
-	const columnLaebl = metricLabel ?? translate( 'Views' );
-	const titleNode = titleURL ? (
-		<a href={ `${ titleURL }` } className={ `${ BASE_CLASS_NAME }--header--title` }>
-			{ title }
-		</a>
-	) : (
-		<div className={ `${ BASE_CLASS_NAME }--header--title` }> { title } </div>
-	);
 
 	return (
-		<div className={ baseClass }>
+		<div className={ classNames( className, BASE_CLASS_NAME ) }>
 			{ !! heroElement && <div className={ `${ BASE_CLASS_NAME }--hero` }>{ heroElement }</div> }
-			{ title && (
-				<div className={ `${ BASE_CLASS_NAME }--header` }>
-					{ titleNode }
-					{ ! isEmpty && <div> { columnLaebl } </div> }
+			<div className={ `${ BASE_CLASS_NAME }--header-and-body` }>
+				{ title && (
+					<div className={ `${ BASE_CLASS_NAME }--header` }>
+						{ titleURL ? (
+							<a href={ `${ titleURL }` } className={ `${ BASE_CLASS_NAME }--header--title` }>
+								{ title }
+							</a>
+						) : (
+							<div className={ `${ BASE_CLASS_NAME }--header--title` }>{ title }</div>
+						) }
+						{ ! isEmpty && <div>{ metricLabel ?? translate( 'Views' ) }</div> }
+					</div>
+				) }
+				<div
+					className={ classNames( `${ BASE_CLASS_NAME }--body`, {
+						[ `${ BASE_CLASS_NAME }--body-empty` ]: isEmpty,
+					} ) }
+				>
+					{ isEmpty ? emptyMessage : children }
 				</div>
-			) }
-			{ isEmpty && <div className={ `${ BASE_CLASS_NAME }--body-empty` }>{ emptyMessage }</div> }
-			{ ! isEmpty && children }
+			</div>
 			{ footerAction && (
 				<a className={ `${ BASE_CLASS_NAME }--footer` } href={ footerAction?.url }>
 					{ footerAction.label || translate( 'View all' ) }
