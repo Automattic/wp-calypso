@@ -102,7 +102,7 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 		},
 		{ id: 'visitors', icon: people, title: translate( 'Visitors' ), count: visitors },
 		{ id: 'posts', icon: postContent, title: translate( 'Posts' ), count: posts },
-		{ id: 'likes', icon: starEmpty, title: translate( 'Likes' ), count: 13092212 },
+		{ id: 'likes', icon: starEmpty, title: translate( 'Likes' ), count: 13092212, hidden: true },
 		{ id: 'comments', icon: commentContent, title: translate( 'Comments' ), count: comments },
 	];
 
@@ -166,22 +166,24 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 					<Card className="highlight-card">
 						<div className="highlight-card-heading">{ translate( 'All-time stats' ) }</div>
 						<div className="highlight-card-info-item-list">
-							{ infoItems.map( ( info ) => {
-								return (
-									<div key={ info.id } className="highlight-card-info-item">
-										<Icon icon={ info.icon } />
+							{ infoItems
+								.filter( ( i ) => ! i.hidden )
+								.map( ( info ) => {
+									return (
+										<div key={ info.id } className="highlight-card-info-item">
+											<Icon icon={ info.icon } />
 
-										<span className="highlight-card-info-item-title">{ info.title }</span>
+											<span className="highlight-card-info-item-title">{ info.title }</span>
 
-										<span
-											className="highlight-card-info-item-count"
-											title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
-										>
-											{ formatNumber( info.count ) }
-										</span>
-									</div>
-								);
-							} ) }
+											<span
+												className="highlight-card-info-item-count"
+												title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
+											>
+												{ formatNumber( info.count ) }
+											</span>
+										</div>
+									);
+								} ) }
 						</div>
 					</Card>
 
