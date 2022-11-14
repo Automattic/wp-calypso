@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { getPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/selectors';
+import { ProductInfo } from '../types';
 
 import './style.scss';
 
@@ -39,9 +40,7 @@ export default function SiteAddLicenseNotification() {
 		dispatch( setPurchasedLicense( license.selectedProducts.length ? license : undefined ) );
 	};
 
-	function getMessageArgs(
-		licenses: Array< { name: string; key: string; status: 'rejected' | 'fulfilled' } >
-	) {
+	function getMessageArgs( licenses: Array< ProductInfo > ) {
 		const licenseNames = licenses.map( ( license ) => license.name );
 		const lastItem = licenseNames.slice( -1 )[ 0 ];
 		const remainingItems = licenseNames.slice( 0, -1 );
