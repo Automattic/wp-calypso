@@ -312,6 +312,12 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	 */
 	credits_display: string;
 
+	/**
+	 * Gift Details
+	 */
+	gift_details?: ResponseCartGiftDetails;
+	is_gift_purchase?: boolean;
+
 	currency: string;
 	allowed_payment_methods: string[];
 	coupon: string;
@@ -588,9 +594,16 @@ export interface ResponseCartProductExtra {
 	is_marketplace_product?: boolean;
 }
 
+export interface ResponseCartGiftDetails {
+	receiver_blog_id: number;
+	receiver_blog_slug?: string;
+	receiver_blog_url?: string;
+}
+
 export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	purchaseId?: string;
 	isJetpackCheckout?: boolean;
+	isGiftPurchase?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	auth_code?: string;

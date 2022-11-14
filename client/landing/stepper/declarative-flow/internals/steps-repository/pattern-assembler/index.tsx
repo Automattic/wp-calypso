@@ -1,7 +1,7 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
@@ -27,7 +27,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
 	const incrementIndexRef = useRef( 0 );
 	const [ scrollToSelector, setScrollToSelector ] = useState< string | null >( null );
-	const { goBack, goNext, submit } = navigation;
+	const { goBack, goNext, submit, goToStep } = navigation;
 	const { setThemeOnSite, runThemeSetupOnSite, createCustomTemplate } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
@@ -36,6 +36,13 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
+
+	useEffect( () => {
+		// Require to start the flow from the first step
+		if ( ! selectedDesign ) {
+			goToStep?.( 'goals' );
+		}
+	}, [] );
 
 	const getPatterns = () =>
 		[ header, ...sections, footer ].filter( ( pattern ) => pattern ) as Pattern[];

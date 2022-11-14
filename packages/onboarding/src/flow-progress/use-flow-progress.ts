@@ -23,6 +23,16 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		plans: 4,
 		launchpad: 5,
 	},
+	videopress: {
+		intro: 0,
+		user: 1,
+		options: 2,
+		videomakerSetup: 3,
+		chooseADomain: 4,
+		chooseAPlan: 5,
+		processing: 6,
+		launchpad: 7,
+	},
 };
 
 export const useFlowProgress = ( { stepName, flowName }: FlowProgress = {} ) => {

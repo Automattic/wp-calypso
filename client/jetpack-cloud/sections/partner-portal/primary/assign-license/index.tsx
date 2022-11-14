@@ -1,3 +1,4 @@
+import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useLayoutEffect } from 'react';
 import CardHeading from 'calypso/components/card-heading';
@@ -17,6 +18,9 @@ export default function AssignLicense( {
 	search: string;
 } ) {
 	const translate = useTranslate();
+	const licenseKey = getQueryArg( window.location.href, 'key' ) as string;
+	const products = getQueryArg( window.location.href, 'products' ) as string;
+	const licenseKeysArray = products !== undefined ? products.split( ',' ) : [ licenseKey ];
 
 	const scrollToTop = () => {
 		window.scrollTo( 0, 0 );
@@ -39,10 +43,18 @@ export default function AssignLicense( {
 
 	return (
 		<Main wideLayout className="assign-license">
-			<DocumentHead title={ translate( 'Assign your License' ) } />
+			<DocumentHead
+				title={ translate( 'Assign your license', 'Assign your licenses', {
+					count: licenseKeysArray.length,
+				} ) }
+			/>
 			<SidebarNavigation />
 			<AssignLicenseStepProgress currentStep="assignLicense" />
-			<CardHeading size={ 36 }>{ translate( 'Assign your License' ) }</CardHeading>
+			<CardHeading size={ 36 }>
+				{ translate( 'Assign your license', 'Assign your licenses', {
+					count: licenseKeysArray.length,
+				} ) }
+			</CardHeading>
 
 			<AssignLicenseForm sites={ sites } currentPage={ currentPage } search={ search } />
 		</Main>

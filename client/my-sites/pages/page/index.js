@@ -18,6 +18,7 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import PopoverMenuItemClipboard from 'calypso/components/popover-menu/item-clipboard';
 import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
 import PostActionsEllipsisMenuPromote from 'calypso/my-sites/post-type-list/post-actions-ellipsis-menu/promote';
+import PostActionsEllipsisMenuQRCode from 'calypso/my-sites/post-type-list/post-actions-ellipsis-menu/qrcode';
 import { preloadEditor } from 'calypso/sections-preloaders';
 import { getEditorDuplicatePostPath } from 'calypso/state/editor/selectors';
 import { infoNotice } from 'calypso/state/notices/actions';
@@ -351,6 +352,13 @@ class Page extends Component {
 		);
 	}
 
+	getQRCodeItem() {
+		if ( ! config.isEnabled( 'post-list/qr-code-link' ) ) {
+			return null;
+		}
+		return <PostActionsEllipsisMenuQRCode globalId={ this.props.page.global_ID } key="qrcode" />;
+	}
+
 	getCopyLinkItem() {
 		const { page, translate } = this.props;
 		return (
@@ -459,6 +467,7 @@ class Page extends Component {
 		const statsItem = this.getStatsItem();
 		const moreInfoItem = this.popoverMoreInfo();
 		const exportItem = this.getExportItem();
+		const qrCodeItem = this.getQRCodeItem();
 		const hasMenuItems =
 			viewItem ||
 			publishItem ||
@@ -469,7 +478,8 @@ class Page extends Component {
 			frontPageItem ||
 			sendToTrashItem ||
 			moreInfoItem ||
-			exportItem;
+			exportItem ||
+			qrCodeItem;
 
 		return (
 			hasMenuItems && (
@@ -491,6 +501,7 @@ class Page extends Component {
 						{ postsPageItem }
 						{ exportItem }
 						{ sendToTrashItem }
+						{ qrCodeItem }
 						{ moreInfoItem }
 					</EllipsisMenu>
 				</PageEllipsisMenuWrapper>

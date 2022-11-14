@@ -22,6 +22,7 @@ export interface RedirectForTransactionStatusArgs {
 	receiptId?: number;
 	redirectTo?: string;
 	siteSlug?: string;
+	saasRedirectUrl?: string;
 }
 
 /**
@@ -310,9 +311,18 @@ export function getRedirectFromPendingPage( {
 	receiptId,
 	redirectTo,
 	siteSlug,
+	saasRedirectUrl,
 }: RedirectForTransactionStatusArgs ): RedirectInstructions | undefined {
 	const defaultFailUrl = siteSlug ? `/checkout/${ siteSlug }` : '/';
 	const planRoute = siteSlug ? `/plans/my-plan/${ siteSlug }` : '/pricing';
+
+	// If SaaS Product Redirect URL was passed then just return as redirect instruction so that
+	// we can redirect user immediately to vendor application.
+	if ( saasRedirectUrl ) {
+		return {
+			url: saasRedirectUrl,
+		};
+	}
 
 	// If there is a receipt ID, then the order must already be complete. In
 	// that case, we can redirect immediately.

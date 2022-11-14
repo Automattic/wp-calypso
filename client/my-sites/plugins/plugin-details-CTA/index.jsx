@@ -17,6 +17,7 @@ import { ManageSitePluginsDialog } from 'calypso/my-sites/plugins/manage-site-pl
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { isUserLoggedIn, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
@@ -288,7 +289,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 												<span className="plugin-details-cta__period">{ period }</span>
 											</>
 										) : (
-											translate( 'Free' )
+											<FreePrice />
 										) }
 									</>
 								)
@@ -371,13 +372,24 @@ function PrimaryButton( {
 	plugin,
 	saasRedirectHRef,
 } ) {
+	const dispatch = useDispatch();
+	const onClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_plugin_details_get_started_click', {
+				plugin: plugin?.slug,
+				is_logged_in: isLoggedIn,
+				is_saas_product: plugin?.isSaasProduct,
+			} )
+		);
+	}, [ dispatch ] );
+
 	if ( ! isLoggedIn ) {
 		return (
 			<Button
 				type="a"
 				className="plugin-details-cta__install-button"
 				primary
-				onClick={ ( e ) => e.stopPropagation() }
+				onClick={ onClick }
 				href={ localizeUrl( 'https://wordpress.com/start/business' ) }
 			>
 				{ translate( 'Get started' ) }
@@ -390,6 +402,7 @@ function PrimaryButton( {
 				className="plugin-details-cta__install-button"
 				primary={ ! shouldUpgrade }
 				href={ saasRedirectHRef }
+				onClick={ onClick }
 			>
 				{ translate( 'Get started' ) }
 				<Gridicon icon="external" />
@@ -404,6 +417,22 @@ function PrimaryButton( {
 			disabled={ incompatiblePlugin || userCantManageTheSite }
 		/>
 	);
+}
+
+function FreePrice() {
+	const translate = useTranslate();
+	const isLoggedIn = useSelector( isUserLoggedIn );
+
+	if ( ! isLoggedIn ) {
+		return (
+			<>
+				{ translate( 'Free' ) }
+				<span className="plugin-details-cta__notice">{ translate( 'on Business plan' ) }</span>
+			</>
+		);
+	}
+
+	return translate( 'Free' );
 }
 
 function UpgradeRequiredContent( { translate } ) {

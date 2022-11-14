@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -29,7 +28,6 @@ type TracksGoalsSelectEventProperties = {
 const SiteGoal = Onboard.SiteGoal;
 const { serializeGoals, goalsToIntent } = Onboard.utils;
 
-const displayAllGoals = isEnabled( 'signup/goals-step-2' );
 const refGoals: Record< string, Onboard.SiteGoal[] > = {
 	'create-blog-lp': [ SiteGoal.Write ],
 	'smp-import': [ SiteGoal.Import ],
@@ -45,16 +43,10 @@ const GoalsStep: Step = ( { navigation } ) => {
 	const subHeaderText = translate( 'Tell us what would you like to accomplish with your website.' );
 
 	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
-	const { setGoals, setIntent, clearImportGoal, clearDIFMGoal, resetIntent } =
-		useDispatch( ONBOARD_STORE );
+	const { setGoals, setIntent, resetIntent } = useDispatch( ONBOARD_STORE );
 	const refParameter = getQueryArgs()?.ref as string;
 
 	useEffect( () => {
-		if ( ! displayAllGoals ) {
-			clearDIFMGoal();
-			clearImportGoal();
-		}
-
 		resetIntent();
 
 		// Delibirately not including all deps in the deps array
@@ -111,12 +103,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 	};
 
 	const stepContent = (
-		<SelectGoals
-			displayAllGoals={ displayAllGoals }
-			selectedGoals={ goals }
-			onChange={ setGoals }
-			onSubmit={ handleSubmit }
-		/>
+		<SelectGoals selectedGoals={ goals } onChange={ setGoals } onSubmit={ handleSubmit } />
 	);
 
 	useEffect( () => {
@@ -135,7 +122,6 @@ const GoalsStep: Step = ( { navigation } ) => {
 			<DocumentHead title={ whatAreYourGoalsText } />
 
 			<GoalsCaptureContainer
-				displayAllGoals={ displayAllGoals }
 				welcomeText={ welcomeText }
 				whatAreYourGoalsText={ whatAreYourGoalsText }
 				subHeaderText={ subHeaderText }

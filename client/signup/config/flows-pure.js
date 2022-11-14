@@ -134,6 +134,18 @@ export function generateFlows( {
 			},
 		},
 		{
+			name: 'import',
+			steps: [ 'domains', 'plans-import' ],
+			destination: ( dependencies ) =>
+				`/setup/import?flow=import-focused&siteSlug=${ dependencies.siteSlug }`,
+			description: 'Beginning of the flow to import content',
+			lastModified: '2022-10-03',
+			showRecaptcha: true,
+			get pageTitle() {
+				return translate( 'Import' );
+			},
+		},
+		{
 			name: 'with-add-ons',
 			steps: isEnabled( 'signup/professional-email-step' )
 				? [ 'user', 'domains', 'emails', 'plans', 'add-ons' ]
@@ -269,9 +281,23 @@ export function generateFlows( {
 		{
 			name: 'videopress',
 			steps: VIDEOPRESS_ONBOARDING_FLOW_STEPS,
-			destination: ( dependencies ) => `/site-editor/${ dependencies.siteSlug }`,
+			destination: ( dependencies ) =>
+				`/setup/completingPurchase?flow=videopress&siteSlug=${ encodeURIComponent(
+					dependencies.siteSlug
+				) }`,
 			description: 'VideoPress signup flow',
 			lastModified: '2022-07-06',
+			showRecaptcha: true,
+		},
+		{
+			name: 'videopress-account',
+			steps: [ 'user' ],
+			destination: getRedirectDestination,
+			description: 'VideoPress onboarding signup flow',
+			lastModified: '2022-10-19',
+			get pageTitle() {
+				return translate( 'Create an account' );
+			},
 			showRecaptcha: true,
 		},
 		{

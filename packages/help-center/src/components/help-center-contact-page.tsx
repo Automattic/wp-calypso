@@ -4,6 +4,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Spinner, GMClosureNotice } from '@automattic/components';
+import { useSupportAvailability } from '@automattic/data-stores';
 import { Notice } from '@wordpress/components';
 import { useEffect } from '@wordpress/element';
 import { comment, Icon } from '@wordpress/icons';
@@ -42,6 +43,7 @@ export const HelpCenterContactPage: React.FC = () => {
 	const { data: tickets, isLoading: isLoadingTickets } = useActiveSupportTicketsQuery( email, {
 		staleTime: 30 * 60 * 1000,
 	} );
+	const { data: supportAvailability } = useSupportAvailability( 'CHAT' );
 	const isLoading = renderChat.isLoading || renderEmail.isLoading || isLoadingTickets;
 
 	useEffect( () => {
@@ -63,6 +65,10 @@ export const HelpCenterContactPage: React.FC = () => {
 		);
 	}
 
+	const hasAccessToLivechat = ! [ 'free', 'personal', 'starter' ].includes(
+		supportAvailability?.supportLevel || ''
+	);
+
 	return (
 		<div className="help-center-contact-page">
 			<BackButton />
@@ -73,7 +79,7 @@ export const HelpCenterContactPage: React.FC = () => {
 					displayAt="2022-10-29 00:00Z"
 					closesAt="2022-11-05 00:00Z"
 					reopensAt="2022-11-14 07:00Z"
-					enabled={ renderChat.render }
+					enabled={ hasAccessToLivechat }
 				/>
 				<div
 					className={ classnames( 'help-center-contact-page__boxes', {
