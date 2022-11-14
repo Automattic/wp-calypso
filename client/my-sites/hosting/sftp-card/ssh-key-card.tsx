@@ -54,7 +54,7 @@ function SshKeyCard( { deleteText, siteId, sshKey }: SshKeyCardProps ) {
 	);
 	const { sha256, user_login, name, attached_at } = sshKey;
 	return (
-		<SSHKeyCard.Root>
+		<SSHKeyCard.Root className="ssh-keys-card">
 			<SSHKeyCard.Details>
 				<SSHKeyCard.KeyName>
 					{ user_login }-{ name }
