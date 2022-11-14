@@ -1,4 +1,4 @@
-import { Button, Card, FormInputValidation } from '@automattic/components';
+import { Button, FormInputValidation } from '@automattic/components';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -36,10 +36,6 @@ const sshKeyFormReducer = ( state = initialState, action: ReducerAction ): typeo
 	}
 };
 
-const UpdateTextContainer = styled.div`
-	margin-top: 1.5rem;
-`;
-
 const NewSSHFormFieldContainer = styled.div`
 	margin-top: 20px;
 `;
@@ -73,67 +69,58 @@ export const UpdateSSHKeyForm = ( {
 	const showSSHKeyError = touched && ! isValid;
 
 	return (
-		<>
-			<UpdateTextContainer>
-				<Card highlight="warning">
-					{ __(
-						"Updating an SSH key won't detach it from the sites that particular key is being used."
-					) }
-				</Card>
-			</UpdateTextContainer>
-			<form
-				onSubmit={ ( event ) => {
-					event.preventDefault();
-					updateSSHKey( { name: keyName || 'default', key: value } );
-				} }
-			>
-				<FormFieldset>
-					<FormLabel>{ __( 'Old SSH Public Key' ) }</FormLabel>
-					<SSHKeyCard.Root>
-						<SSHKeyCard.Details>
-							<SSHKeyCard.KeyName>
-								{ userLogin }-{ keyName }
-							</SSHKeyCard.KeyName>
-							<SSHKeyCard.PublicKey>{ initialSSHFingerprint }</SSHKeyCard.PublicKey>
-						</SSHKeyCard.Details>
-					</SSHKeyCard.Root>
-					<NewSSHFormFieldContainer>
-						<FormLabel htmlFor={ PUBLIC_SSH_KEY_INPUT_ID }>{ __( 'SSH Public Key' ) }</FormLabel>
-						<TextareaAutosize
-							required
-							id={ PUBLIC_SSH_KEY_INPUT_ID }
-							disabled={ isUpdating }
-							value={ value }
-							isError={ showSSHKeyError }
-							placeholder={ sprintf(
+		<form
+			onSubmit={ ( event ) => {
+				event.preventDefault();
+				updateSSHKey( { name: keyName || 'default', key: value } );
+			} }
+		>
+			<FormFieldset>
+				<FormLabel>{ __( 'Old SSH Public Key' ) }</FormLabel>
+				<SSHKeyCard.Root>
+					<SSHKeyCard.Details>
+						<SSHKeyCard.KeyName>
+							{ userLogin }-{ keyName }
+						</SSHKeyCard.KeyName>
+						<SSHKeyCard.PublicKey>{ initialSSHFingerprint }</SSHKeyCard.PublicKey>
+					</SSHKeyCard.Details>
+				</SSHKeyCard.Root>
+				<NewSSHFormFieldContainer>
+					<FormLabel htmlFor={ PUBLIC_SSH_KEY_INPUT_ID }>{ __( 'SSH Public Key' ) }</FormLabel>
+					<TextareaAutosize
+						required
+						id={ PUBLIC_SSH_KEY_INPUT_ID }
+						disabled={ isUpdating }
+						value={ value }
+						isError={ showSSHKeyError }
+						placeholder={ sprintf(
+							// translators: "formats" is a list of SSH-key formats.
+							__( 'Paste your SSH public key here. It should begin with %(formats)s…' ),
+							{
+								formats,
+							}
+						) }
+						onChange={ ( event: ChangeEvent< HTMLTextAreaElement > ) =>
+							dispatch( { type: 'setValue', value: event.target.value } )
+						}
+					/>
+					{ showSSHKeyError && (
+						<FormInputValidation
+							isError
+							text={ sprintf(
 								// translators: "formats" is a list of SSH-key formats.
-								__( 'Paste your SSH public key here. It should begin with %(formats)s…' ),
+								__( 'Invalid SSH public key. It should begin with %(formats)s.' ),
 								{
 									formats,
 								}
 							) }
-							onChange={ ( event: ChangeEvent< HTMLTextAreaElement > ) =>
-								dispatch( { type: 'setValue', value: event.target.value } )
-							}
 						/>
-						{ showSSHKeyError && (
-							<FormInputValidation
-								isError
-								text={ sprintf(
-									// translators: "formats" is a list of SSH-key formats.
-									__( 'Invalid SSH public key. It should begin with %(formats)s.' ),
-									{
-										formats,
-									}
-								) }
-							/>
-						) }
-					</NewSSHFormFieldContainer>
-				</FormFieldset>
-				<Button busy={ isUpdating } primary type="submit" disabled={ ! isValid || isUpdating }>
-					{ updateText || __( 'Save SSH Key' ) }
-				</Button>
-			</form>
-		</>
+					) }
+				</NewSSHFormFieldContainer>
+			</FormFieldset>
+			<Button busy={ isUpdating } primary type="submit" disabled={ ! isValid || isUpdating }>
+				{ updateText || __( 'Save SSH Key' ) }
+			</Button>
+		</form>
 	);
 };

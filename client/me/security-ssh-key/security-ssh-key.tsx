@@ -51,12 +51,10 @@ const sshKeyUpdateFailureNoticeId = 'ssh-key-update-failure';
 
 const UpdateSSHModalTitle = styled.h1`
 	margin: 0 0 16px;
-	line-height: 1.3;
 `;
 
-const UpdateSSHModalDescription = styled.p`
+const UpdateSSHModalDescription = styled.div`
 	margin: 0 0 16px;
-	line-height: 1.3;
 `;
 
 export const SecuritySSHKey = () => {
@@ -214,6 +212,11 @@ export const SecuritySSHKey = () => {
 							<UpdateSSHModalTitle>{ __( 'Update SSH Key' ) }</UpdateSSHModalTitle>
 							<UpdateSSHModalDescription>
 								{ __( 'Update current SSH key for your Wordpress.com account.' ) }
+								<p>
+									{ __(
+										"Updating an SSH key won't detach it from the sites that particular key is being used."
+									) }
+								</p>
 							</UpdateSSHModalDescription>
 							<UpdateSSHKeyForm
 								userLogin={ currentUser.username }
