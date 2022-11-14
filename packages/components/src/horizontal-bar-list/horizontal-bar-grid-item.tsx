@@ -67,11 +67,12 @@ const HorizontalBarListItem = ( {
 	return (
 		<>
 			<li
-				className={ classnames( `${ BASE_CLASS_NAME }-item`, {
-					[ `${ BASE_CLASS_NAME }-item--indicated` ]: hasIndicator,
-					[ `${ BASE_CLASS_NAME }-item--link` ]: isLink || hasChildren,
-					[ `${ BASE_CLASS_NAME }-item--static` ]: isStatic,
-				} ) }
+				className={ classnames(
+					`${ BASE_CLASS_NAME }-item`,
+					isLink && `${ BASE_CLASS_NAME }-item--link`,
+					hasIndicator && `${ BASE_CLASS_NAME }-item--indicated`,
+					isStatic && `${ BASE_CLASS_NAME }-item--static`
+				) }
 				style={ {
 					[ `--${ BASE_CLASS_NAME }-fill` ]: `${ fillPercentage }%`,
 				} }
