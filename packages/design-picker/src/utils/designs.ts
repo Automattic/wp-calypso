@@ -34,6 +34,7 @@ export const getDesignPreviewUrl = (
 			: undefined,
 		source_site: 'patternboilerplates.wordpress.com',
 		use_screenshot_overrides: options.use_screenshot_overrides,
+		remove_assets: options.remove_assets,
 	} );
 
 	// The preview url is sometimes used in a `background-image: url()` CSS rule and unescaped

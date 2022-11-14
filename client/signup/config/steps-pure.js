@@ -715,8 +715,8 @@ export function generateSteps( {
 			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
 			optionalDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
 			props: {
-				showDesignPickerCategories: config.isEnabled( 'signup/design-picker-categories' ),
-				showDesignPickerCategoriesAllFilter: config.isEnabled( 'signup/design-picker-categories' ),
+				showDesignPickerCategories: true,
+				showDesignPickerCategoriesAllFilter: true,
 			},
 		},
 

@@ -1,8 +1,9 @@
-import { comment, Icon, navigation, people, starEmpty } from '@wordpress/icons';
+import { commentContent, Icon, people, starEmpty } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import './style.scss';
+import eye from './eye';
 import HighlightCard from './highlight-card';
+import './style.scss';
 
 export type HighlightCardsProps = {
 	className?: string;
@@ -39,7 +40,7 @@ export default function HighlightCards( {
 		<div className={ classNames( 'highlight-cards', className ?? null ) }>
 			<h1 className="highlight-cards-heading">
 				{ translate( '7-day highlights' ) }{ ' ' }
-				<small>{ translate( 'compared to the last seven days' ) }</small>
+				<small>{ translate( 'Compared to previous 7 days' ) }</small>
 			</h1>
 
 			<div className="highlight-cards-list">
@@ -52,7 +53,7 @@ export default function HighlightCards( {
 				/>
 				<HighlightCard
 					heading={ translate( 'Views' ) }
-					icon={ <Icon icon={ navigation } /> }
+					icon={ <Icon icon={ eye } /> }
 					count={ counts?.views ?? null }
 					previousCount={ previousCounts?.views ?? null }
 					onClick={ onClickViews }
@@ -66,7 +67,7 @@ export default function HighlightCards( {
 				/>
 				<HighlightCard
 					heading={ translate( 'Comments' ) }
-					icon={ <Icon icon={ comment } /> }
+					icon={ <Icon icon={ commentContent } /> }
 					count={ counts?.comments ?? null }
 					previousCount={ previousCounts?.comments ?? null }
 					onClick={ onClickComments }

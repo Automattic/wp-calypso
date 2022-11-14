@@ -1,4 +1,4 @@
-import { Icon, trendingDown, trendingUp } from '@wordpress/icons';
+import { arrowDown, arrowUp, Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { Card } from '../';
 
@@ -15,10 +15,19 @@ function subtract( a: number | null, b: number | null | undefined ): number | nu
 }
 
 function percent( part: number | null, whole: number | null ) {
-	return part === null || whole === null ? null : Math.round( ( part / whole ) * 100 );
+	if ( part === null || whole === null ) {
+		return null;
+	}
+	// Handle NaN case.
+	if ( part === 0 && whole === 0 ) {
+		return 0;
+	}
+	const answer = ( part / whole ) * 100;
+	// Handle Infinities.
+	return Math.abs( answer ) === Infinity ? 100 : Math.round( answer );
 }
 
-const FORMATTER = new Intl.NumberFormat( 'en-GB', {
+const FORMATTER = new Intl.NumberFormat( 'en-US', {
 	notation: 'compact',
 	compactDisplay: 'short',
 } );
@@ -55,8 +64,8 @@ export default function HighlightCard( {
 						} ) }
 					>
 						<span className="highlight-card-difference-icon" title={ String( difference ) }>
-							{ difference < 0 && <Icon icon={ trendingDown } /> }
-							{ difference > 0 && <Icon icon={ trendingUp } /> }
+							{ difference < 0 && <Icon size={ 18 } icon={ arrowDown } /> }
+							{ difference > 0 && <Icon size={ 18 } icon={ arrowUp } /> }
 						</span>
 						<span className="highlight-card-difference-absolute-value">
 							{ Math.abs( difference ) }

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Card, Ribbon, Button, Gridicon } from '@automattic/components';
 import { Button as LinkButton } from '@wordpress/components';
@@ -374,9 +373,7 @@ export class Theme extends Component {
 		} );
 
 		const themeNeedsPurchase = isPremiumTheme && ! hasPremiumThemesFeature && ! didPurchaseTheme;
-		const showUpsell = ! isEnabled( 'signup/seller-upgrade-modal' )
-			? themeNeedsPurchase && upsellUrl
-			: upsellUrl && theme.price && ! active;
+		const showUpsell = upsellUrl && theme.price && ! active;
 		const priceClass = classNames( 'theme__badge-price', {
 			'theme__badge-price-upgrade': ! themeNeedsPurchase,
 			'theme__badge-price-upsell': showUpsell,
@@ -401,21 +398,7 @@ export class Theme extends Component {
 		const upsellEventProperties = { cta_name: 'theme-upsell', theme: theme.id };
 		const upsellPopupEventProperties = { cta_name: 'theme-upsell-popup', theme: theme.id };
 
-		const upsellContent = ! isEnabled( 'signup/seller-upgrade-modal' ) ? (
-			<div className="theme__upsell-popover">
-				<h2 className="theme__upsell-heading">
-					{ translate( 'Use this theme at no extra cost on our Premium or Business Plan' ) }
-				</h2>
-				<Button
-					onClick={ this.onUpsellClick }
-					className="theme__upsell-cta"
-					primary
-					href={ upsellUrl }
-				>
-					{ translate( 'Upgrade Now' ) }
-				</Button>
-			</div>
-		) : (
+		const upsellContent = (
 			<div>
 				<div data-testid="upsell-header" className="theme__upsell-header">
 					{ ( ! doesThemeBundleSoftwareSet || isExternallyManagedTheme ) &&
@@ -436,14 +419,12 @@ export class Theme extends Component {
 				/>
 				<InfoPopover
 					icon="star"
-					showOnHover={ isEnabled( 'signup/seller-upgrade-modal' ) }
+					showOnHover={ true }
 					className={ classNames(
-						! isEnabled( 'signup/seller-upgrade-modal' )
-							? 'theme__upsell-icon'
-							: 'theme__upsell-popover',
+						'theme__upsell-popover',
 						isPremiumThemeAvailable || showPremiumBadge ? 'active' : null
 					) }
-					position={ ! isEnabled( 'signup/seller-upgrade-modal' ) ? 'top left' : 'top' }
+					position="top"
 				>
 					<TrackComponentView
 						eventName={ impressionEventName }
@@ -516,12 +497,7 @@ export class Theme extends Component {
 								} ) }
 							</span>
 						) }
-						{ showPremiumBadge && ! isEnabled( 'signup/seller-upgrade-modal' ) && (
-							<span className="theme__badge-premium">{ translate( 'Premium' ) }</span>
-						) }
-						{ ( ! isEnabled( 'signup/seller-upgrade-modal' ) || active ) && (
-							<span className={ priceClass }>{ price }</span>
-						) }
+						{ active && <span className={ priceClass }>{ price }</span> }
 						{ upsell }
 						{ ! isEmpty( this.props.buttonContents ) ? (
 							<ThemeMoreButton

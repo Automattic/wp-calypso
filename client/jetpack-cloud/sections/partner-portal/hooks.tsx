@@ -294,6 +294,8 @@ export function useIssueMultipleLicenses(
 		select: selectAlphaticallySortedProductOptions,
 	} );
 
+	const sites = useSelector( getSites ).length;
+
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 
 	const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
@@ -367,8 +369,7 @@ export function useIssueMultipleLicenses(
 				},
 				partnerPortalBasePath( '/payment-methods/add' )
 			);
-			page( nextStep );
-			return;
+			return page( nextStep );
 		}
 
 		const issueLicenseRequests: any[] = [];
@@ -376,7 +377,62 @@ export function useIssueMultipleLicenses(
 		selectedProducts.forEach( ( product ) => {
 			issueLicenseRequests.push( issueLicense.mutateAsync( { product } ) );
 		} );
-		const issueLicensePromises = await Promise.allSettled( issueLicenseRequests );
+		const issueLicensePromises: any[] = await Promise.allSettled( issueLicenseRequests );
+
+		if ( ! selectedSiteId ) {
+			let nextStep = partnerPortalBasePath( '/licenses' );
+			if ( sites > 0 ) {
+				const licenseKeys = issueLicensePromises
+					.filter( ( { status } ) => status === 'fulfilled' )
+					.map( ( { value } ) => value.license_key );
+				nextStep = addQueryArgs(
+					{
+						products: licenseKeys.join( ',' ),
+					},
+					partnerPortalBasePath( '/assign-license' )
+				);
+			}
+
+			const assignedLicenses = selectedProducts
+				.map(
+					( product ) =>
+						products.data?.find( ( productOption ) => productOption.slug === product )?.name
+				)
+				.filter( ( license ) => license );
+
+			if ( assignedLicenses.length > 0 ) {
+				const lastItem = assignedLicenses.slice( -1 )[ 0 ];
+				const remainingItems = assignedLicenses.slice( 0, -1 );
+				const messageArgs = {
+					args: {
+						lastItem: lastItem,
+						remainingItems: remainingItems.join( ', ' ),
+					},
+					components: {
+						strong: <strong />,
+					},
+				};
+
+				dispatch(
+					successNotice(
+						// We are not using the same translate method for plural form since we have different arguments.
+						assignedLicenses.length > 1
+							? translate(
+									'{{strong}}%(remainingItems)s and %(lastItem)s{{/strong}} were succesfully issued',
+									messageArgs
+							  )
+							: translate(
+									'{{strong}}%(lastItem)s{{/strong}} was succesfully issued',
+									messageArgs
+							  ),
+						{
+							displayOnNextPage: true,
+						}
+					)
+				);
+			}
+			return page.redirect( nextStep );
+		}
 
 		const assignLicenseRequests: any = [];
 
@@ -440,15 +496,19 @@ export function useIssueMultipleLicenses(
 		if ( fromDashboard ) {
 			return page.redirect( '/dashboard' );
 		}
+		return page.redirect( partnerPortalBasePath( '/licenses' ) );
 	}, [
 		isLoading,
-		dispatch,
 		selectedProducts,
+		dispatch,
+		selectedSite?.ID,
+		selectedSite?.domain,
 		paymentMethodRequired,
-		selectedSite,
 		fromDashboard,
 		issueLicense,
-		products?.data,
+		sites,
+		translate,
+		products.data,
 		assignLicense,
 	] );
 

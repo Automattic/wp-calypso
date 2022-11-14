@@ -4,8 +4,6 @@ import { useTranslate } from 'i18n-calypso';
 import type { Goal } from './types';
 
 const SiteGoal = Onboard.SiteGoal;
-const HIDE_GOALS = [ SiteGoal.DIFM, SiteGoal.Import ];
-const shouldDisplayGoal = ( { key }: Goal ) => ! HIDE_GOALS.includes( key );
 
 // export const CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME =
 // 	'calypso_builtbyexpress_goal_copy_change_202210';
@@ -44,7 +42,7 @@ const useBBEGoal = () => {
 	return translate( 'Get a website quickly' );
 };
 
-export const useGoals = ( displayAllGoals = false ): Goal[] => {
+export const useGoals = (): Goal[] => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const builtByExpressGoalDisplayText = useBBEGoal();
@@ -84,5 +82,5 @@ export const useGoals = ( displayAllGoals = false ): Goal[] => {
 		return true;
 	};
 
-	return displayAllGoals ? goals.filter( hideDIFMGoalForNonEN ) : goals.filter( shouldDisplayGoal );
+	return goals.filter( hideDIFMGoalForNonEN );
 };
