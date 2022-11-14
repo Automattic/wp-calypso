@@ -16,6 +16,11 @@ import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
+export const ecommerceFlowRecurTypes = {
+	YEARLY: 'yearly',
+	MONTHLY: 'monthly',
+};
+
 export const ecommerceFlow: Flow = {
 	name: ECOMMERCE_FLOW,
 	useSteps() {

@@ -450,6 +450,16 @@ const storeLocationCountryCode: Reducer< string, OnboardAction > = ( state = '',
 	return state;
 };
 
+const ecommerceFlowRecurType: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_ECOMMERCE_FLOW_RECUR_TYPE' ) {
+		return action.ecommerceFlowRecurType;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	anchorPodcastId,
 	anchorEpisodeId,
@@ -490,6 +500,7 @@ const reducer = combineReducers( {
 	planCartItem,
 	verticalId,
 	storeLocationCountryCode,
+	ecommerceFlowRecurType,
 } );
 
 export type State = ReturnType< typeof reducer >;

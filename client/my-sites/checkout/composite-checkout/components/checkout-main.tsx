@@ -375,7 +375,6 @@ export default function CheckoutMain( {
 		: filterAppropriatePaymentMethods( {
 				paymentMethodObjects,
 				allowedPaymentMethods,
-				responseCart,
 		  } );
 	debug( 'filtered payment method objects', paymentMethods );
 
