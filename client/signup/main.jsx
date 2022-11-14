@@ -740,6 +740,14 @@ class Signup extends Component {
 		}
 	}
 
+	shouldShowZendeskPresalesChat() {
+		const isEnglishLocale = config( 'english_locales' ).includes( getLocaleSlug() ?? '' );
+
+		// Zendesk presales chat is only open in signup between 15 and 23 UTC;
+		const currentTime = new Date();
+		return isEnglishLocale && currentTime.getUTCHours() >= 15 && currentTime.getUTCHours() < 23;
+	}
+
 	getPageTitle() {
 		if ( isNewsletterOrLinkInBioFlow( this.props.flowName ) ) {
 			return this.props.pageTitle;
@@ -763,7 +771,7 @@ class Signup extends Component {
 
 		const isReskinned = isReskinnedFlow( this.props.flowName );
 		const zendeskChatKey = config( 'zendesk_presales_chat_key' );
-		const isEnglishLocale = config( 'english_locales' ).includes( getLocaleSlug() ?? '' );
+		const shouldShowZendeskPresalesChat = this.shouldShowZendeskPresalesChat();
 
 		return (
 			<>
@@ -798,7 +806,7 @@ class Signup extends Component {
 						/>
 					) }
 				</div>
-				{ isEnglishLocale && <ZendeskChat chatId={ zendeskChatKey } /> }
+				{ shouldShowZendeskPresalesChat && <ZendeskChat chatId={ zendeskChatKey } /> }
 			</>
 		);
 	}
