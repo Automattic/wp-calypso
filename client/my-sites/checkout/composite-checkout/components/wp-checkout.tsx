@@ -30,6 +30,7 @@ import {
 	hasGoogleApps,
 	hasDomainRegistration,
 	hasTransferProduct,
+	hasDIFMProduct,
 } from 'calypso/lib/cart-values/cart-items';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
@@ -290,6 +291,8 @@ export default function WPCheckout( {
 		);
 	}
 
+	const isDIFMInCart = hasDIFMProduct( responseCart );
+
 	return (
 		<CheckoutStepGroup
 			stepAreaHeader={
@@ -314,14 +317,14 @@ export default function WPCheckout( {
 								onChangePlanLength={ changePlanLength }
 								nextDomainIsFree={ responseCart?.next_domain_is_free }
 							/>
-							{ ! isWcMobile && <CheckoutSidebarPlanUpsell /> }
+							{ ! isWcMobile && ! isDIFMInCart && <CheckoutSidebarPlanUpsell /> }
 							<SecondaryCartPromotions
 								responseCart={ responseCart }
 								addItemToCart={ addItemToCart }
 								isCartPendingUpdate={ isCartPendingUpdate }
 							/>
 							<CheckoutHelpLink />
-							<CheckoutNextSteps responseCart={ responseCart } />
+							{ isDIFMInCart && <CheckoutNextSteps responseCart={ responseCart } /> }
 						</CheckoutSummaryBody>
 					</CheckoutErrorBoundary>
 				</CheckoutSummaryArea>
