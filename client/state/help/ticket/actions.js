@@ -29,7 +29,7 @@ export const ticketSupportConfigurationRequest = () => ( dispatch ) => {
 	dispatch( requestAction );
 
 	return wpcom.req
-		.get( '/help/tickets/kayako/mine' )
+		.get( '/help/tickets/zendesk/mine' )
 		.then( ( configuration ) => {
 			dispatch( ticketSupportConfigurationRequestSuccess( configuration ) );
 		} )
