@@ -139,12 +139,7 @@ export function DefaultPageDetails( {
 			<HorizontalGrid>
 				{ page.media.map( ( media, i ) => (
 					<WordpressMediaUpload
-						mediaType={ media.mediaType }
-						thumbnailUrl={ media.thumbnailUrl }
-						key={ media.uploadID ?? i }
-						initialCaption={ media.caption }
-						initialUrl={ media.url }
-						caption={ media.caption }
+						media={ media }
 						mediaIndex={ i }
 						site={ site }
 						onMediaUploadStart={ onMediaUploadStart }

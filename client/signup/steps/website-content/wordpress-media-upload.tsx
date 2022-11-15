@@ -8,7 +8,7 @@ import imagePlaceholder from 'calypso/assets/images/difm/placeholder.svg';
 import { useAddMedia } from 'calypso/data/media/use-add-media';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { Label, SubLabel } from 'calypso/signup/accordion-form/form-components';
-import { MediaUploadType } from 'calypso/state/signup/steps/website-content/schema';
+import { Media } from 'calypso/state/signup/steps/website-content/schema';
 import {
 	getAllowedImageExtensionsString,
 	getAllowedVideoExtensionsString,
@@ -92,8 +92,8 @@ const CroppedLabel = styled.div`
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	width: 182px;
-	height: 32px;
+	width: 90%;
+	height: 45px;
 `;
 
 function CrossButton( { onClick }: { onClick: ( e: MouseEvent< SVGSVGElement > ) => void } ) {
@@ -119,11 +119,7 @@ interface WordpressMediaUploadProps {
 	onRemoveImage: ( imageData: MediaUploadData ) => void;
 	mediaIndex: number;
 	site?: SiteDetails | null;
-	initialUrl: string;
-	initialCaption?: string;
-	mediaType: MediaUploadType;
-	thumbnailUrl?: string;
-	caption?: string;
+	media?: Media;
 }
 
 export function WordpressMediaUpload( {
@@ -133,16 +129,13 @@ export function WordpressMediaUpload( {
 	onMediaUploadStart,
 	onMediaUploadFailed,
 	onRemoveImage,
-	initialUrl,
-	initialCaption,
-	mediaType,
-	thumbnailUrl,
-	caption,
+	media = { caption: '', url: '', mediaType: 'IMAGE', thumbnailUrl: '', uploadID: '' },
 }: WordpressMediaUploadProps ) {
+	const { url, caption, mediaType, thumbnailUrl } = media ?? {};
 	const [ uploadState, setUploadState ] = useState(
-		initialUrl ? UPLOAD_STATES.COMPLETED : UPLOAD_STATES.NOT_SELECTED
+		url ? UPLOAD_STATES.COMPLETED : UPLOAD_STATES.NOT_SELECTED
 	);
-	const [ imageCaption, setImageCaption ] = useState( initialCaption );
+	const [ imageCaption, setImageCaption ] = useState( caption );
 	const [ isImageLoading, setIsImageLoading ] = useState( false );
 	const translate = useTranslate();
 	const addMedia = useAddMedia();
@@ -202,12 +195,12 @@ export function WordpressMediaUpload( {
 				<>
 					<FileSelectThumbnailContainer>
 						<FileInput type="file" onChange={ onPick } accept={ allowedFileTypes } />
+						{ ! isImageLoading && <CrossButton onClick={ onClickRemoveImage } /> }
 						<CroppedImage>
 							{ /* Fixes small UI glitch where cross icon switches on load */ }
-							{ ! isImageLoading && <CrossButton onClick={ onClickRemoveImage } /> }
 							<img
 								style={ { opacity: isImageLoading ? 0.2 : 1 } }
-								src={ thumbnailUrl ?? initialUrl }
+								src={ thumbnailUrl ?? url }
 								alt={ imageCaption }
 								onLoad={ () => setIsImageLoading( false ) }
 							/>
