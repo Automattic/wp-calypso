@@ -5,13 +5,13 @@
  * @returns filtered content of source file.
  */
 export default function loader( source ) {
-	const configObject = JSON.parse( source );
+	const sourceObject = JSON.parse( source );
 	const targetObject = {};
 	const options = this.getOptions();
-	if ( options.keys.length > 0 ) {
+	if ( options.keys && options.keys.length > 0 ) {
 		let key;
 		for ( key of options.keys ) {
-			targetObject[ key ] = configObject[ key ] ?? null;
+			targetObject[ key ] = sourceObject[ key ];
 		}
 	}
 
