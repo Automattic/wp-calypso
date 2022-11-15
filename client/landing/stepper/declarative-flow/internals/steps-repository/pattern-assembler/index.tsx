@@ -194,11 +194,14 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		return null;
 	};
 
-	const stepContent = (
-		<BlocksRendererProvider siteId={ site?.ID }>
+	const stylesheet = selectedDesign?.recipe?.stylesheet;
+
+	const stepContent = selectedDesign && (
+		<BlocksRendererProvider siteId={ site?.ID } stylesheet={ stylesheet }>
 			<div className="pattern-assembler__wrapper">
 				<div className="pattern-assembler__sidebar">
 					<PatternSelectorLoader
+						stylesheet={ stylesheet }
 						showPatternSelectorType={ showPatternSelectorType }
 						onSelect={ onSelect }
 						onBack={ () => setShowPatternSelectorType( null ) }

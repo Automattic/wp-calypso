@@ -6,5 +6,20 @@ module.exports = {
 				'jest/no-mocks-import': 'off',
 			},
 		},
+		{
+			files: [ '**/*.js' ],
+			rules: {
+				'wpcalypso/no-unsafe-wp-apis': [
+					1,
+					{
+						'@wordpress/block-editor': [
+							'__unstableIframe',
+							'__unstableEditorStyles',
+							'__unstablePresetDuotoneFilter',
+						],
+					},
+				],
+			},
+		},
 	],
 };

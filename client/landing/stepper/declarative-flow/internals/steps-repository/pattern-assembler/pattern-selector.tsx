@@ -3,11 +3,14 @@ import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
+import { useSite } from '../../../../hooks/use-site';
+import useQueryPatterns from './use-query-patterns';
 import { handleKeyboard } from './utils';
 import type { Pattern } from './types';
 
 type PatternSelectorProps = {
-	patterns: Pattern[];
+	stylesheet?: string;
+	patternIds: number[];
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 	onBack: () => void;
 	title: string | null;
@@ -16,7 +19,8 @@ type PatternSelectorProps = {
 };
 
 const PatternSelector = ( {
-	patterns,
+	stylesheet = '',
+	patternIds,
 	onSelect,
 	onBack,
 	title,
@@ -25,6 +29,8 @@ const PatternSelector = ( {
 }: PatternSelectorProps ) => {
 	const patternSelectorRef = useRef< HTMLDivElement >( null );
 	const translate = useTranslate();
+	const site = useSite();
+	const { data: patterns } = useQueryPatterns( site?.ID, stylesheet, patternIds );
 
 	useEffect( () => {
 		if ( show ) {
@@ -32,6 +38,10 @@ const PatternSelector = ( {
 			patternSelectorRef.current?.removeAttribute( 'tabindex' );
 		}
 	}, [ show ] );
+
+	if ( ! patterns ) {
+		return null;
+	}
 
 	return (
 		<div
@@ -66,7 +76,11 @@ const PatternSelector = ( {
 							onClick={ () => onSelect( pattern ) }
 							onKeyUp={ handleKeyboard( () => onSelect( pattern ) ) }
 						>
-							<BlocksRenderer html={ pattern.html } />
+							<BlocksRenderer
+								html={ pattern.html }
+								styles={ pattern.styles }
+								viewportWidth={ 1060 }
+							/>
 						</div>
 					) ) }
 				</div>

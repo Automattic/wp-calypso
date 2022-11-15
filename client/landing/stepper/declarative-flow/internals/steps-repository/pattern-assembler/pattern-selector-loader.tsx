@@ -1,11 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
 import PatternSelector from './pattern-selector';
-import { HEADER_PATTERN_LIST, FOOTER_PATTERN_LIST, SECTION_PATTERN_LIST } from './patterns-data';
-import useQueryPatterns from './use-query-patterns';
+import { headerPatterns, footerPatterns, sectionPatterns } from './patterns-data';
 import type { Pattern } from './types';
 
 type PatternSelectorLoaderProps = {
+	stylesheet?: string;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 	onBack: () => void;
 	showPatternSelectorType: string | null;
@@ -13,54 +12,38 @@ type PatternSelectorLoaderProps = {
 };
 
 const PatternSelectorLoader = ( {
+	stylesheet,
 	showPatternSelectorType,
 	onSelect,
 	onBack,
 	selectedPattern,
 }: PatternSelectorLoaderProps ) => {
 	const translate = useTranslate();
-	const { data: patterns } = useQueryPatterns();
-	const { headerPatterns, footerPatterns, sectionPatterns } = useMemo( () => {
-		const patternsById: { [ key: number ]: Pattern } = ( patterns || [] ).reduce(
-			( acc, pattern ) => ( {
-				...acc,
-				[ pattern.ID ]: pattern,
-			} ),
-			{}
-		);
-
-		return {
-			headerPatterns: HEADER_PATTERN_LIST.map( ( id ) => patternsById[ id ] ).filter( Boolean ),
-			footerPatterns: FOOTER_PATTERN_LIST.map( ( id ) => patternsById[ id ] ).filter( Boolean ),
-			sectionPatterns: SECTION_PATTERN_LIST.map( ( id ) => patternsById[ id ] ).filter( Boolean ),
-		};
-	}, [ patterns ] );
-
-	if ( ! patterns ) {
-		return null;
-	}
 
 	return (
 		<>
 			<PatternSelector
+				stylesheet={ stylesheet }
 				show={ showPatternSelectorType === 'header' }
-				patterns={ headerPatterns }
+				patternIds={ headerPatterns.map( ( pattern ) => pattern.id ) }
 				onSelect={ onSelect }
 				onBack={ onBack }
 				title={ translate( 'Add a header' ) }
 				selectedPattern={ selectedPattern }
 			/>
 			<PatternSelector
+				stylesheet={ stylesheet }
 				show={ showPatternSelectorType === 'footer' }
-				patterns={ footerPatterns }
+				patternIds={ footerPatterns.map( ( pattern ) => pattern.id ) }
 				onSelect={ onSelect }
 				onBack={ onBack }
 				title={ translate( 'Add a footer' ) }
 				selectedPattern={ selectedPattern }
 			/>
 			<PatternSelector
+				stylesheet={ stylesheet }
 				show={ showPatternSelectorType === 'section' }
-				patterns={ sectionPatterns }
+				patternIds={ sectionPatterns.map( ( pattern ) => pattern.id ) }
 				onSelect={ onSelect }
 				onBack={ onBack }
 				title={ translate( 'Add sections' ) }

@@ -1,7 +1,7 @@
-import type { Pattern } from './types';
+import type { PatternData } from './types';
 
 // All headers in dotcompatterns
-const headerPatterns: Pattern[] = [
+export const headerPatterns: PatternData[] = [
 	{
 		id: 5579,
 		name: 'Centered header',
@@ -54,7 +54,7 @@ const headerPatterns: Pattern[] = [
 
 // All footers in dotcompatterns
 // Missing footers in dotcomfsepatterns
-const footerPatterns: Pattern[] = [
+export const footerPatterns: PatternData[] = [
 	{
 		id: 5316,
 		name: 'Footer with social icons, address, e-mail, and telephone number',
@@ -101,7 +101,7 @@ const footerPatterns: Pattern[] = [
 	},
 ];
 
-const sectionPatterns: Pattern[] = [
+export const sectionPatterns: PatternData[] = [
 	{
 		id: 7156,
 		name: 'Media and text with image on the right',

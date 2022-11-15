@@ -11,6 +11,15 @@ export type Pattern = {
 	pattern_meta: PatternMeta;
 	site_id: number;
 
+	/** Rendered attribute if `use_rendered_html` is true */
+	styles?: string;
+
 	/** Local attribute */
+	key?: string;
+};
+
+export type PatternData = {
+	id: number;
+	name: string;
 	key?: string;
 };
