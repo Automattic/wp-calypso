@@ -26,13 +26,12 @@ export const useUpdateSSHKeyMutation = (
 		async ( { name, key }: MutationVariables ) =>
 			wp.req.put(
 				{
-					path: '/me/ssh-keys',
+					path: `/me/ssh-keys/${ name }`,
 					apiNamespace: 'wpcom/v2',
 
 					method: 'PUT',
 				},
 				{
-					name,
 					key,
 				}
 			),
