@@ -207,7 +207,6 @@ export default function CheckoutHelpLink() {
 
 	const hasDirectSupport = supportVariation !== SUPPORT_FORUM;
 
-	// Only show the zendesk presales chat button (when available) if user is not elligible for regular chat.
 	const shouldRenderZendeskChatButton =
 		isPresalesZendeskChatEligible && ! isPresalesChatEligible && ! hasDirectSupport;
 
