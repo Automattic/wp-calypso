@@ -1078,6 +1078,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/notifications@workspace:apps/notifications"
   dependencies:
+    "@automattic/babel-plugin-preserve-i18n": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
@@ -1085,6 +1086,13 @@ __metadata:
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
+    "@babel/core": ^7.16.0
+    "@babel/helpers": ^7.16.3
+    "@babel/plugin-proposal-class-properties": ^7.16.0
+    "@babel/plugin-transform-runtime": ^7.16.4
+    "@babel/preset-env": ^7.16.4
+    "@babel/preset-react": ^7.16.0
+    "@babel/preset-typescript": ^7.16.0
     autoprefixer: ^10.2.5
     calypso: "workspace:^"
     classnames: ^2.3.1
@@ -1096,6 +1104,8 @@ __metadata:
     page: ^1.11.5
     postcss: ^8.4.5
     postcss-custom-properties: ^11.0.0
+    preact: ^10.6.2
+    preact-render-to-string: ^5.1.19
     prop-types: ^15.7.2
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -28075,6 +28085,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"preact-render-to-string@npm:^5.1.19":
+  version: 5.1.19
+  resolution: "preact-render-to-string@npm:5.1.19"
+  dependencies:
+    pretty-format: ^3.8.0
+  peerDependencies:
+    preact: ">=10"
+  checksum: 560670ad725fc22ef80c37f38b2b2959313f53b9b52e988260365d7be158fbaebb24ddee391f41e4c353365b2c59a36e27e3e5c84cb692016c5adbb4c9a7a055
+  languageName: node
+  linkType: hard
+
+"preact@npm:^10.6.2":
+  version: 10.6.2
+  resolution: "preact@npm:10.6.2"
+  checksum: 00b57e486c89e491c1ab6f7255be8f0dc0f36fa8b7208027eda4c801f74de12362a47b19361a9fcd066adc6ce6da33eaa957fb652a0505a2dfd9d574ca58162c
+  languageName: node
+  linkType: hard
+
 "prebuild-install@npm:^6.0.0, prebuild-install@npm:^6.1.2":
   version: 6.1.3
   resolution: "prebuild-install@npm:6.1.3"
@@ -28195,6 +28223,13 @@ __metadata:
     ansi-styles: ^5.0.0
     react-is: ^17.0.1
   checksum: 0cbda1031aa30c659e10921fa94e0dd3f903ecbbbe7184a729ad66f2b6e7f17891e8c7d7654c458fa4ccb1a411ffb695b4f17bbcd3fe075fabe181027c4040ed
+  languageName: node
+  linkType: hard
+
+"pretty-format@npm:^3.8.0":
+  version: 3.8.0
+  resolution: "pretty-format@npm:3.8.0"
+  checksum: 69f12937bfb7b2a537a7463b9f875a16322401f1e44d7702d643faa0d21991126c24c093217ef6da403b54c15942a834174fa1c016b72e2cb9edaae6bb3729b6
   languageName: node
   linkType: hard
 
