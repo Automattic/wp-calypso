@@ -193,35 +193,3 @@ function populate_wp_template_data() {
 register_activation_hook( __FILE__, __NAMESPACE__ . '\populate_wp_template_data' );
 add_action( 'switch_theme', __NAMESPACE__ . '\populate_wp_template_data' );
 
-/**
- * Shows a confirm prompt when the plugin is about to be deactivated on a unlaunched site.
- *
- * This will filter the FSE actions on the plugin manager list to add the confirm
- * prompt on the click event of the action=deactivate.
- *
- * The option launch-status exists only on wpcom sites.
- */
-add_filter(
-	'plugin_action_links_full-site-editing/full-site-editing-plugin.php',
-	function ( $actions ) {
-		$unlaunched = get_option( 'launch-status' ) === 'unlaunched';
-
-		if ( $unlaunched ) {
-			$actions = array_map(
-				function ( $action ) {
-					$message = __( 'Disabling this plugin will make your site public.', 'full-site-editing' );
-					$confirm = "confirm('$message') ? null : event.preventDefault()";
-
-					return str_replace(
-						'<a href="plugins.php?action=deactivate',
-						"<a onclick=\"$confirm\" href=\"plugins.php?action=deactivate",
-						$action
-					);
-				},
-				$actions
-			);
-		}
-
-		return $actions;
-	}
-);
