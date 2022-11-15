@@ -11,6 +11,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import type { Step } from '../../types';
+import type { Design } from '@automattic/design-picker/src/types';
 
 const DesignCarousel: Step = function DesignCarousel( { navigation } ) {
 	const { goNext, goBack, submit } = navigation;
@@ -27,7 +28,7 @@ const DesignCarousel: Step = function DesignCarousel( { navigation } ) {
 	const siteSlugOrId = siteId || siteSlug;
 	const isJetpackSite = useSelect( ( select ) => select( SITE_STORE ).isJetpackSite( site?.ID ) );
 
-	function pickDesign( _selectedDesign: any | undefined = selectedDesign ) {
+	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlugOrId && _selectedDesign ) {
 			setPendingAction( async () => {
