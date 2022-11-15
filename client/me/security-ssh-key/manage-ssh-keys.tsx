@@ -33,14 +33,7 @@ const SSHKey = ( {
 	};
 
 	const handleUpdateClick = () => {
-		accept(
-			__( 'Are you sure you want to update this SSH key? It will affect all attached sites.' ),
-			( updated: boolean ) => {
-				if ( updated ) {
-					onUpdate( sshKey.name, sshKey.sha256 );
-				}
-			}
-		);
+		onUpdate( sshKey.name, sshKey.sha256 );
 	};
 
 	return (

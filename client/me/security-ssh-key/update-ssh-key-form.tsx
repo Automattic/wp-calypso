@@ -47,6 +47,7 @@ interface UpdateSSHKeyFormProps {
 	oldSSHFingerprint: string;
 	userLogin: string;
 	keyName: string;
+	children?: React.ReactNode;
 }
 
 export const UpdateSSHKeyForm = ( {
@@ -56,6 +57,7 @@ export const UpdateSSHKeyForm = ( {
 	userLogin,
 	oldSSHFingerprint,
 	keyName,
+	children,
 }: UpdateSSHKeyFormProps ) => {
 	const [ { isValid, touched, value }, dispatch ] = useReducer( sshKeyFormReducer, initialState );
 	const [ initialSSHFingerprint ] = useState( oldSSHFingerprint );
@@ -121,6 +123,7 @@ export const UpdateSSHKeyForm = ( {
 			<Button busy={ isUpdating } primary type="submit" disabled={ ! isValid || isUpdating }>
 				{ updateText || __( 'Save SSH Key' ) }
 			</Button>
+			{ children }
 		</form>
 	);
 };

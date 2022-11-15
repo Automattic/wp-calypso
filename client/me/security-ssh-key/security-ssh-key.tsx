@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import { CompactCard, Dialog, LoadingPlaceholder } from '@automattic/components';
+import { Button, CompactCard, Dialog, LoadingPlaceholder } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
@@ -55,6 +55,10 @@ const UpdateSSHModalTitle = styled.h1( {
 
 const UpdateSSHModalDescription = styled.div( {
 	margin: '0 0 16px',
+} );
+
+const CancelDialogButton = styled( Button )( {
+	marginLeft: '10px',
 } );
 
 export const SecuritySSHKey = () => {
@@ -150,6 +154,8 @@ export const SecuritySSHKey = () => {
 	const redirectToHosting =
 		queryArgs.source && queryArgs.source === 'hosting-config' && queryArgs.siteSlug;
 
+	const closeDialog = () => setShowDialog( false );
+
 	return (
 		<Main wideLayout className="security">
 			<PageViewTracker path="/me/security/ssh-key" title="Me > SSH Key" />
@@ -204,7 +210,7 @@ export const SecuritySSHKey = () => {
 				{ currentUser?.username && (
 					<Dialog
 						isVisible={ showDialog }
-						onClose={ () => setShowDialog( false ) }
+						onClose={ closeDialog }
 						showCloseIcon={ true }
 						shouldCloseOnEsc={ true }
 					>
@@ -224,7 +230,9 @@ export const SecuritySSHKey = () => {
 								updateSSHKey={ updateSSHKey }
 								isUpdating={ keyBeingUpdated }
 								updateText={ __( 'Update SSH Key' ) }
-							/>
+							>
+								<CancelDialogButton onClick={ closeDialog }>Cancel</CancelDialogButton>
+							</UpdateSSHKeyForm>
 						</div>
 					</Dialog>
 				) }
