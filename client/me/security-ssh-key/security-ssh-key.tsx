@@ -240,7 +240,9 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 								isUpdating={ keyBeingUpdated }
 								updateText={ __( 'Update SSH Key' ) }
 							>
-								<CancelDialogButton onClick={ closeDialog }>Cancel</CancelDialogButton>
+								<CancelDialogButton disabled={ keyBeingUpdated } onClick={ closeDialog }>
+									Cancel
+								</CancelDialogButton>
 							</UpdateSSHKeyForm>
 						</UpdateSSHDialogContainer>
 					</Dialog>
