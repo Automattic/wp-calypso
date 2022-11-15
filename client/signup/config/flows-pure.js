@@ -144,10 +144,10 @@ export function generateFlows( {
 			name: LINK_IN_BIO_TLD_FLOW,
 			steps: [ 'domains', 'user', 'plans-link-in-bio' ],
 			middleDestination: {
-				user: ( dependencies ) => `/setup/patterns?flow=link-in-bio&tld=${ dependencies.tld }`,
+				user: ( dependencies ) => `/setup/link-in-bio/patterns?tld=${ dependencies.tld }`,
 			},
 			destination: ( dependencies ) =>
-				`/setup/launchpad?flow=link-in-bio&siteSlug=${ encodeURIComponent( dependencies.siteSlug ) }`,
+				`/setup/link-in-bio/launchpad?siteSlug=${ encodeURIComponent( dependencies.siteSlug ) }`,
 			description: 'Beginning of the flow to create a link in bio',
 			lastModified: '2022-11-03',
 			showRecaptcha: true,

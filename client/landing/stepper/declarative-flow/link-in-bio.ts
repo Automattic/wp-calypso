@@ -30,27 +30,14 @@ export const linkInBio: Flow = {
 		const locale = useLocale();
 		const queryParams = useQuery();
 
-		// trigger guides on step movement, we don't care about failures or response
-		wpcom.req.post(
-			'guides/trigger',
-			{
-				apiNamespace: 'wpcom/v2/',
-			},
-			{
-				flow: flowName,
-				step: _currentStep,
-			}
-		);
-
 		const tld = queryParams.get( 'tld' );
-		const newDomainSearch = queryParams.get( 'new' ); // be consistent with how the Domain step works
 
 		// for the standard Link in Bio flow
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			const logInUrl =
 				locale && locale !== 'en'
-					? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ flowName }`
-					: `/start/account/user?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ flowName }`;
+					? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=/setup/${ flowName }/patterns`
+					: `/start/account/user?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=/setup/${ flowName }/patterns`;
 
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
 
@@ -82,8 +69,8 @@ export const linkInBio: Flow = {
 		function submitDomainFirst( providedDependencies: ProvidedDependencies = {} ) {
 			const logInUrl =
 				locale && locale !== 'en'
-					? `/start/link-in-bio-tld/${ locale }?variationName=${ flowName }&pageTitle=Link%20in%20Bio&tld=${ tld }&new=${ newDomainSearch }`
-					: `/start/link-in-bio-tld?variationName=${ flowName }&pageTitle=Link%20in%20Bio&tld=${ tld }&new=${ newDomainSearch }`;
+					? `/start/link-in-bio-tld/${ locale }?variationName=${ flowName }&pageTitle=Link%20in%20Bio&tld=${ tld }`
+					: `/start/link-in-bio-tld?variationName=${ flowName }&pageTitle=Link%20in%20Bio&tld=${ tld }`;
 
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
 
@@ -103,7 +90,7 @@ export const linkInBio: Flow = {
 
 				case 'linkInBioSetup':
 					return window.location.assign(
-						`/start/link-in-bio-tld/plans-link-in-bio?variationName=${ flowName }&pageTitle=Link%20in%20Bio&tld=${ tld }&new=${ newDomainSearch }`
+						`/start/link-in-bio-tld/plans-link-in-bio?variationName=${ flowName }&pageTitle=Link%20in%20Bio&tld=${ tld }`
 					);
 
 				case 'launchpad': {
