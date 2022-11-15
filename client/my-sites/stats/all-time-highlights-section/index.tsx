@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, PercentCalculator as percentCalculator } from '@automattic/components';
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -38,16 +38,6 @@ function formatNumber( number: number | null, isCompact = false ) {
 	const formatter = isCompact ? COMPACT_FORMATTER : FORMATTER;
 
 	return Number.isFinite( number ) ? formatter.format( number as number ) : '-';
-}
-
-function percentCalculator( part: number | null, whole: number | null ) {
-	if ( part === null || whole === null ) {
-		return null;
-	}
-
-	const divisor = whole === 0 ? 1 : whole;
-
-	return Math.round( ( part / divisor ) * 100 );
 }
 
 export default function AllTimeHighlightsSection( { siteId }: { siteId: number } ) {
