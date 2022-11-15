@@ -13,7 +13,7 @@ export default function PromoCard( { className, isMobile }: PromoCardProps ) {
 	// https://wpcalypso.wordpress.com/devdocs/packages/i18n-calypso/README.md
 	const translate = useTranslate();
 	const components = {
-		a: <a href="https://wp.com/apps" />,
+		a: <a href="https://jetpack.com/app/" />,
 	};
 	// TODO: Fix mobile logic.
 	// Should this maybe come via a media query in the CSS?
@@ -36,7 +36,7 @@ export default function PromoCard( { className, isMobile }: PromoCardProps ) {
 								'Check your stats on-the-go and get real-time notifications with the Jetpack mobile app.'
 						  )
 						: translate(
-								'Visit {{a}}wp.com/app{{/a}} or scan the QR code to download the Jetpack mobile app.',
+								'Visit {{a}}jetpack.com/app{{/a}} or scan the QR code to download the Jetpack mobile app.',
 								{ components }
 						  ) }
 				</p>
