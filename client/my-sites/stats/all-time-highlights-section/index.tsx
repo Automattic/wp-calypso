@@ -1,7 +1,6 @@
 import { Card } from '@automattic/components';
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -130,8 +129,14 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 		let bestViewsEverYear = '';
 
 		if ( viewsBestDay && ! isStatsLoading ) {
-			bestViewsEverMonthDay = moment( viewsBestDay ).format( 'MMMM D' );
-			bestViewsEverYear = moment( viewsBestDay ).format( 'YYYY' );
+			const theDay = new Date( viewsBestDay );
+			bestViewsEverMonthDay = theDay.toLocaleDateString( undefined, {
+				month: 'long',
+				day: 'numeric',
+			} );
+			bestViewsEverYear = theDay.toLocaleDateString( undefined, {
+				year: 'numeric',
+			} );
 		}
 
 		const bestViewsEverPercent = Number.isFinite( viewsBestDayTotal )
