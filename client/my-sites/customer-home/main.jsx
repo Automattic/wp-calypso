@@ -15,10 +15,10 @@ import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { preventWidows } from 'calypso/lib/formatting';
+import Modals from 'calypso/my-sites/customer-home/locations/modal';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
-import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
@@ -29,7 +29,6 @@ import {
 	getSiteOption,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-
 import './style.scss';
 
 const Home = ( {
@@ -118,7 +117,7 @@ const Home = ( {
 			) : (
 				<>
 					<Primary cards={ layout.primary } />
-					<PluginsAnnouncementModal />
+					<Modals />
 					<div className="customer-home__layout">
 						<div className="customer-home__layout-col customer-home__layout-col-left">
 							<Secondary cards={ layout.secondary } />
