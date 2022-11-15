@@ -9,7 +9,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo } from 'react';
+import { createRef, useEffect, useMemo, useRef } from 'react';
 import {
 	SHOW_ALL_SLUG,
 	SHOW_GENERATED_DESIGNS_SLUG,
@@ -71,20 +71,58 @@ interface TrackDesignViewProps {
 
 const TrackDesignView: React.FC< TrackDesignViewProps > = ( {
 	category,
+	children,
 	design,
 	isPremiumThemeAvailable,
 } ) => {
-	useEffect( () => {
-		recordTracksEvent( 'calypso_design_picker_design_display', {
-			category,
-			design_type: design.design_type,
-			is_premium: design.is_premium,
-			is_premium_available: isPremiumThemeAvailable,
-			slug: design.slug,
-		} );
-	} );
+	const ref = createRef< HTMLDivElement >();
+	const observerRef = useRef< IntersectionObserver >();
+	const viewedRef = useRef< boolean >( false );
 
-	return null;
+	useEffect( () => {
+		// If we've already viewed the current element, or we've set up the observer, we can skip processing
+		if ( viewedRef.current || observerRef.current || ! ref.current ) {
+			return;
+		}
+
+		const intersectionHandler = ( entries: IntersectionObserverEntry[] ) => {
+			// Only fire once per element
+			if ( viewedRef.current || ! ref.current ) {
+				return;
+			}
+
+			const [ entry ] = entries;
+			if ( ! entry.isIntersecting ) {
+				return;
+			}
+
+			recordTracksEvent( 'calypso_design_picker_design_display', {
+				category,
+				design_type: design.design_type,
+				is_premium: design.is_premium,
+				is_premium_available: isPremiumThemeAvailable,
+				slug: design.slug,
+			} );
+
+			// Mark the current element as displayed
+			viewedRef.current = true;
+		};
+
+		observerRef.current = new IntersectionObserver( intersectionHandler ); /*, {
+			// Only fire the event when 80% of the element becomes visible
+			//threshold: [ 0.8 ],
+		} );
+		*/
+
+		observerRef.current.observe( ref.current );
+
+		// When the effect is dismounted, stop observing
+		return () => {
+			observerRef.current?.disconnect?.();
+		};
+	}, [ observerRef, ref, viewedRef ] );
+
+	return <div ref={ ref }>{ children }</div>;
 };
 
 interface DesignButtonProps {
@@ -216,14 +254,13 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	);
 
 	return (
-		<>
-			<TrackDesignView
-				category={ categorization }
-				design={ props.design }
-				isPremiumThemeAvailable={ props.isPremiumThemeAvailable }
-			/>
+		<TrackDesignView
+			category={ categorization }
+			design={ props.design }
+			isPremiumThemeAvailable={ props.isPremiumThemeAvailable }
+		>
 			{ designButtonContents }
-		</>
+		</TrackDesignView>
 	);
 };
 
@@ -288,14 +325,16 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 } ) => (
 	<div className="design-picker__grid">
 		{ designs.map( ( design ) => (
-			<GeneratedDesignButtonContainer
-				key={ `generated-design__${ design.slug }` }
-				design={ design }
-				locale={ locale }
-				verticalId={ verticalId }
-				isShowing
-				onPreview={ onPreview }
-			/>
+			<TrackDesignView design={ design }>
+				<GeneratedDesignButtonContainer
+					key={ `generated-design__${ design.slug }` }
+					design={ design }
+					locale={ locale }
+					verticalId={ verticalId }
+					isShowing
+					onPreview={ onPreview }
+				/>
+			</TrackDesignView>
 		) ) }
 	</div>
 );
@@ -366,14 +405,16 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					/>
 				) ) }
 				{ generatedDesigns.map( ( design ) => (
-					<GeneratedDesignButtonContainer
-						key={ `generated-design__${ design.slug }` }
-						design={ design }
-						locale={ locale }
-						verticalId={ verticalId }
-						isShowing={ categorization?.selection === SHOW_GENERATED_DESIGNS_SLUG }
-						onPreview={ onPreview }
-					/>
+					<TrackDesignView design={ design }>
+						<GeneratedDesignButtonContainer
+							key={ `generated-design__${ design.slug }` }
+							design={ design }
+							locale={ locale }
+							verticalId={ verticalId }
+							isShowing={ categorization?.selection === SHOW_GENERATED_DESIGNS_SLUG }
+							onPreview={ onPreview }
+						/>
+					</TrackDesignView>
 				) ) }
 			</div>
 		</div>
@@ -394,71 +435,6 @@ export interface UnifiedDesignPickerProps {
 	purchasedThemes?: string[];
 	currentPlanFeatures?: string[];
 }
-
-interface StaticDesignPickerProps {
-	locale: string;
-	verticalId?: string;
-	onSelect: ( design: Design ) => void;
-	onPreview: ( design: Design, variation?: StyleVariation ) => void;
-	designs: Design[];
-	categorization?: Categorization;
-	isPremiumThemeAvailable?: boolean;
-	onCheckout?: any;
-	purchasedThemes?: string[];
-	currentPlanFeatures?: string[];
-}
-
-const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
-	locale,
-	onSelect,
-	onPreview,
-	designs,
-	categorization,
-	isPremiumThemeAvailable,
-	onCheckout,
-	verticalId,
-	purchasedThemes,
-	currentPlanFeatures,
-} ) => {
-	const hasCategories = !! categorization?.categories.length;
-
-	const filteredDesigns = useMemo( () => {
-		if ( categorization?.selection ) {
-			return filterDesignsByCategory( designs, categorization.selection );
-		}
-
-		return designs;
-	}, [ designs, categorization?.selection ] );
-
-	return (
-		<div>
-			{ categorization && hasCategories && (
-				<UnifiedDesignPickerCategoryFilter
-					categories={ categorization.categories }
-					onSelect={ categorization.onSelect }
-					selectedSlug={ categorization.selection }
-				/>
-			) }
-			<div className="design-picker__grid">
-				{ filteredDesigns.map( ( design ) => (
-					<DesignButtonContainer
-						key={ design.slug }
-						design={ design }
-						locale={ locale }
-						onSelect={ onSelect }
-						onPreview={ onPreview }
-						isPremiumThemeAvailable={ isPremiumThemeAvailable }
-						onCheckout={ onCheckout }
-						verticalId={ verticalId }
-						hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
-						currentPlanFeatures={ currentPlanFeatures }
-						categorization={ categorization?.selection }
-					/>
-				) ) }
-			</div>
-		</div>
-	);
-};
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	locale,
