@@ -25,7 +25,7 @@ const MEDIA_QUERIES = {
 
 const SSHKeyCardRoot = styled( SSHKeyCard.Root )( {
 	[ MEDIA_QUERIES.wide ]: {
-		'&&': {
+		'&&&': {
 			paddingLeft: '24px',
 		},
 	},
