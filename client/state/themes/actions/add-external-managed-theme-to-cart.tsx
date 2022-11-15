@@ -45,6 +45,11 @@ export function addExternalManagedThemeToCart( themeId: string, siteId: number )
 		}
 
 		const siteSlug = getSiteSlug( getState(), siteId );
+
+		if ( ! siteSlug ) {
+			throw new Error( 'Site could not be found matching id ' + siteId );
+		}
+
 		// TODO: use the marketplaceThemeProduct function from #69831
 		const externalManagedThemeProduct = {
 			product_slug: themeId,
@@ -77,7 +82,7 @@ export function addExternalManagedThemeToCart( themeId: string, siteId: number )
 		} );
 
 		dispatch( isLoadingCart( true ) );
-		const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug as string );
+		const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug );
 		cartManagerClient
 			.forCartKey( cartKey )
 			.actions.addProductsToCart( cartItems )
