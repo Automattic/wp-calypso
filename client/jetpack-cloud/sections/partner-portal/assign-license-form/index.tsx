@@ -2,16 +2,13 @@ import { Button, Card } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useCallback, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useState } from 'react';
 import FormRadio from 'calypso/components/forms/form-radio';
 import Pagination from 'calypso/components/pagination';
 import SearchCard from 'calypso/components/search-card';
 import { SITE_CARDS_PER_PAGE } from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-form/constants';
+import { useAssignMultipleLicenses } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { addQueryArgs } from 'calypso/lib/url';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
-import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
 import './style.scss';
 
 function setPage( pageNumber: number ): void {
@@ -46,14 +43,15 @@ export default function AssignLicenseForm( {
 	search: string;
 } ) {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 	const [ selectedSite, setSelectedSite ] = useState( false );
-	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const licenseKey = getQueryArg( window.location.href, 'key' ) as string;
 	const products = getQueryArg( window.location.href, 'products' ) as string;
 	const licenseKeysArray = products !== undefined ? products.split( ',' ) : [ licenseKey ];
 	const onSelectSite = ( site: any ) => setSelectedSite( site );
-	const notificationId = 'partner-portal-assign-license-form';
+	const [ onAssignLicense, isLoading ] = useAssignMultipleLicenses(
+		licenseKeysArray,
+		selectedSite
+	);
 
 	let results = sites;
 
@@ -67,50 +65,19 @@ export default function AssignLicenseForm( {
 				<Card
 					key={ site.ID }
 					className="assign-license-form__site-card"
-					onClick={ () => onSelectSite( site.ID ) }
+					onClick={ () => onSelectSite( site ) }
 				>
 					<FormRadio
 						className="assign-license-form__site-card-radio"
 						label={ site.domain }
 						name="site_select"
-						disabled={ isSubmitting }
+						disabled={ isLoading }
 						checked={ selectedSite === site.ID }
 					/>
 				</Card>
 			);
 		}
 	} );
-
-	const assignLicense = useAssignLicenseMutation( {
-		onSuccess: ( license: any ) => {
-			setIsSubmitting( false );
-			page.redirect(
-				addQueryArgs( { highlight: license.license_key }, '/partner-portal/licenses' )
-			);
-		},
-		onError: ( error: Error ) => {
-			setIsSubmitting( false );
-			dispatch(
-				errorNotice( error.message, {
-					id: notificationId,
-				} )
-			);
-		},
-	} );
-
-	const onAssignLicense = useCallback( () => {
-		setIsSubmitting( true );
-		dispatch( removeNotice( notificationId ) );
-		licenseKeysArray.forEach( ( licenseKey ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_partner_portal_assign_license_submit', {
-					license_key: licenseKey,
-					selected_site: selectedSite,
-				} )
-			);
-			assignLicense.mutate( { licenseKey, selectedSite } );
-		} );
-	}, [ dispatch, licenseKeysArray, selectedSite, assignLicense.mutate ] );
 
 	const onAssignLater = () => {
 		if ( licenseKeysArray.length > 1 ) {
@@ -135,7 +102,7 @@ export default function AssignLicenseForm( {
 					<Button
 						borderless
 						onClick={ onAssignLater }
-						disabled={ isSubmitting }
+						disabled={ isLoading }
 						className="assign-license-form__assign-later"
 					>
 						{ translate( 'Assign later' ) }
@@ -144,7 +111,7 @@ export default function AssignLicenseForm( {
 						primary
 						className="assign-license-form__assign-now"
 						disabled={ ! selectedSite }
-						busy={ isSubmitting }
+						busy={ isLoading }
 						onClick={ onAssignLicense }
 					>
 						{ translate( 'Assign %(numLicenses)d License', 'Assign %(numLicenses)d Licenses', {

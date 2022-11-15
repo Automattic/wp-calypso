@@ -514,3 +514,73 @@ export function useIssueMultipleLicenses(
 
 	return [ issue, isLoading ];
 }
+
+/**
+ * Handle multiple license assignment
+ *
+ */
+export function useAssignMultipleLicenses(
+	selectedLicenseKeys: Array< string >,
+	selectedSite: { ID: number; domain: string } | null
+): [ () => void, boolean ] {
+	const products = useProductsQuery( {
+		select: selectAlphaticallySortedProductOptions,
+	} );
+	const dispatch = useDispatch();
+	const assignLicense = useAssignLicenseMutation( {
+		onSuccess: () => {
+			page.redirect( partnerPortalBasePath( '/licenses' ) );
+		},
+		onError: () => {
+			page.redirect( partnerPortalBasePath( '/licenses' ) );
+		},
+	} );
+	const isLoading = assignLicense.isLoading;
+	const selectedSiteId = selectedSite?.ID as number;
+	const assign = useCallback( async () => {
+		// setIsSubmitting( true );
+		const assignLicenseRequests: any = [];
+		// dispatch( removeNotice( notificationId ) );
+		selectedLicenseKeys.forEach( ( licenseKey ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_partner_portal_assign_license_submit', {
+					license_key: licenseKey,
+					selected_site: selectedSite,
+				} )
+			);
+			assignLicenseRequests.push(
+				assignLicense.mutateAsync( { licenseKey, selectedSite: selectedSiteId } )
+			);
+		} );
+
+		const assignLicensePromises = await Promise.allSettled( assignLicenseRequests );
+		const allSelectedProducts: { key: 'string'; name: string; status: 'rejected' | 'fulfilled' }[] =
+			[];
+
+		assignLicensePromises.forEach( ( promise: any ) => {
+			const { status, value: license } = promise;
+			if ( license ) {
+				const licenseKey = license.license_key;
+				const productSlug = licenseKey.split( '_' )[ 0 ];
+				const selectedProduct = products?.data?.find( ( p ) => p.slug === productSlug );
+				if ( selectedProduct ) {
+					const item = {
+						key: licenseKey,
+						name: getProductTitle( selectedProduct.name ),
+						status,
+					};
+					allSelectedProducts.push( item );
+				}
+			}
+		} );
+
+		const assignLicenseStatus = {
+			selectedSite: selectedSite?.domain || '',
+			selectedProducts: allSelectedProducts,
+		};
+		dispatch( resetSite() );
+		dispatch( setPurchasedLicense( assignLicenseStatus ) );
+	}, [ dispatch, selectedLicenseKeys, selectedSite, assignLicense, products ] );
+
+	return [ assign, isLoading ];
+}
