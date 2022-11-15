@@ -130,7 +130,7 @@ export function getEnhancedTasks(
 				case 'videopress_setup':
 					taskData = {
 						completed: true,
-						title: translate( 'Set up your Video site' ),
+						title: translate( 'Set up your video site' ),
 					};
 					break;
 				case 'videopress_upload':
@@ -146,7 +146,7 @@ export function getEnhancedTasks(
 					break;
 				case 'videopress_launched':
 					taskData = {
-						title: translate( 'Launch Video site' ),
+						title: translate( 'Launch site' ),
 						completed: siteLaunchCompleted,
 						disabled: ! videoPressUploadCompleted,
 						actionDispatch: () => {
@@ -155,7 +155,7 @@ export function getEnhancedTasks(
 								const { launchSite } = dispatch( SITE_STORE );
 
 								setPendingAction( async () => {
-									setProgressTitle( __( 'Launching Video Site' ) );
+									setProgressTitle( __( 'Launching video site' ) );
 									await launchSite( site.ID );
 
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
