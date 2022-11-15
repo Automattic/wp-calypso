@@ -15,9 +15,7 @@ export function getThemeSignupUrl( state, themeId ) {
 		return null;
 	}
 
-	const flow = ! doesThemeBundleSoftwareSet( state, themeId )
-		? 'with-theme'
-		: 'with-business-theme';
+	const flow = doesThemeBundleSoftwareSet( state, themeId ) ? 'with-business-theme' : 'with-theme';
 
 	let url = `/start/${ flow }?ref=calypshowcase&theme=${ themeId }`;
 
