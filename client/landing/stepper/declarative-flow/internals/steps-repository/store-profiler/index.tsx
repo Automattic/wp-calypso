@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { Button, FormInputValidation } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -92,22 +92,13 @@ const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 		}
 	};
 
-	const siteTitleError = null;
-
 	const stepContent = (
 		<form className="store-profiler__form" onSubmit={ handleSubmit }>
 			<FormFieldset disabled={ isLoading } className="store-profiler__form-fieldset">
 				<FormLabel htmlFor="siteTitle" optional>
 					{ translate( 'Name of your store' ) }{ ' ' }
 				</FormLabel>
-				<FormInput
-					name="siteTitle"
-					id="siteTitle"
-					value={ siteTitle }
-					isError={ siteTitleError }
-					onChange={ onChange }
-				/>
-				{ siteTitleError && <FormInputValidation isError text={ siteTitleError } /> }
+				<FormInput name="siteTitle" id="siteTitle" value={ siteTitle } onChange={ onChange } />
 			</FormFieldset>
 			<FormFieldset disabled={ isLoading } className="store-profiler__form-fieldset">
 				<FormLabel htmlFor="siteVertical" optional>

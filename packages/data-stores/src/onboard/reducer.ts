@@ -397,6 +397,16 @@ const storeLocationCountryCode: Reducer< string, OnboardAction > = ( state = '',
 	return state;
 };
 
+const businessNeed: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_BUSINESS_NEED' ) {
+		return action.businessNeed;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	anchorPodcastId,
 	anchorEpisodeId,
@@ -433,6 +443,7 @@ const reducer = combineReducers( {
 	siteAccentColor,
 	verticalId,
 	storeLocationCountryCode,
+	businessNeed,
 } );
 
 export type State = ReturnType< typeof reducer >;

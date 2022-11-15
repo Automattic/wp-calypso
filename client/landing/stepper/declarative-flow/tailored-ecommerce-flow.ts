@@ -17,7 +17,13 @@ export const ecommerceFlow: Flow = {
 			recordFullStoryEvent( 'calypso_signup_start_ecommerce', { flow: this.name } );
 		}, [] );
 
-		return [ 'intro', 'storeProfiler', 'designCarousel', 'processing' ] as StepPath[];
+		return [
+			'intro',
+			'storeProfiler',
+			'businessNeeds',
+			'designCarousel',
+			'processing',
+		] as StepPath[];
 	},
 
 	useStepNavigation( _currentStepName, navigate ) {
@@ -46,6 +52,8 @@ export const ecommerceFlow: Flow = {
 					return window.location.assign( logInUrl );
 
 				case 'storeProfiler':
+					return navigate( 'businessNeeds' );
+				case 'businessNeeds':
 					return navigate( 'designCarousel' );
 				case 'designCarousel':
 					return navigate( 'processing' );
@@ -57,8 +65,10 @@ export const ecommerceFlow: Flow = {
 
 		const goBack = () => {
 			switch ( _currentStepName ) {
-				case 'designCarousel':
+				case 'businessNeeds':
 					return navigate( 'storeProfiler' );
+				case 'designCarousel':
+					return navigate( 'businessNeeds' );
 				default:
 					return navigate( 'intro' );
 			}
@@ -70,6 +80,8 @@ export const ecommerceFlow: Flow = {
 				case 'intro':
 					return navigate( 'storeProfiler' );
 				case 'storeProfiler':
+					return navigate( 'businessNeeds' );
+				case 'businessNeeds':
 					return navigate( 'designCarousel' );
 				case 'designCarousel':
 					return navigate( 'designCarousel' );

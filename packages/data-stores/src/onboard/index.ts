@@ -52,6 +52,7 @@ export function register(): typeof STORE_KEY {
 			'storeType',
 			'verticalId',
 			'storeLocationCountryCode',
+			'businessNeed',
 		],
 	} );
 	isRegistered = true;

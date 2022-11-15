@@ -377,6 +377,11 @@ export const setStoreLocationCountryCode = ( storeLocationCountryCode: string ) 
 	storeLocationCountryCode,
 } );
 
+export const setBusinessNeed = ( businessNeed: string ) => ( {
+	type: 'SET_BUSINESS_NEED' as const,
+	businessNeed,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -423,4 +428,5 @@ export type OnboardAction = ReturnType<
 	| typeof setSiteAccentColor
 	| typeof setVerticalId
 	| typeof setStoreLocationCountryCode
+	| typeof setBusinessNeed
 >;
