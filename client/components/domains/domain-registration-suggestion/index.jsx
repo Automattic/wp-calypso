@@ -25,7 +25,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
-import PremiumBadge from '../premium-badge';
+import PremiumBadge from './premium-badge';
 
 class DomainRegistrationSuggestion extends Component {
 	static propTypes = {
