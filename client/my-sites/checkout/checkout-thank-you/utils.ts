@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_BOOST_PRODUCTS,
@@ -74,7 +75,10 @@ export function getJetpackPluginSupportDocLink( productSlug: string ): string {
 }
 
 export function getJetpackPluginImage( productSlug: string ): string {
-	return JETPACK_PLUGIN_IMAGE_MAP[ productSlug ] ?? JetpackPluginImage;
+	return isEnabled( 'jetpack/standalone-plugin-onboarding-update-v1' ) &&
+		JETPACK_PLUGIN_IMAGE_MAP[ productSlug ]
+		? JETPACK_PLUGIN_IMAGE_MAP[ productSlug ]
+		: JetpackPluginImage;
 }
 
 export function getDomainManagementUrl(

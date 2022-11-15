@@ -24,8 +24,8 @@ import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-u
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { useHelpSearchQuery } from '../hooks/use-help-search-query';
-import { SearchResult } from '../types';
 import PlaceholderLines from './placeholder-lines';
+import type { SearchResult } from '../types';
 
 interface SearchResultsSection {
 	type: string;

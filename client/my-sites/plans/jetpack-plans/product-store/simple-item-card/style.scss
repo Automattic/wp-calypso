@@ -35,6 +35,7 @@
 .simple-item-card__header {
 	display: flex;
 	flex-direction: row;
+	column-gap: 1em;
 	font-size: $font-body-small;
 	justify-content: space-between;
 	align-items: flex-start;
@@ -49,10 +50,6 @@
 	line-height: rem(29px);
 	margin-bottom: 0 !important;
 	color: var(--studio-gray-100);
-	display: flex;
-	flex-direction: row;
-	gap: 0.5rem;
-	align-items: center;
 }
 
 .simple-item-card__cta {
