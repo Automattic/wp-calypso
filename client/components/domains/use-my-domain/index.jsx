@@ -111,7 +111,7 @@ function UseMyDomain( props ) {
 	}, [] );
 
 	const filterDomainName = useCallback( ( domain ) => {
-		return domain.replace( /(?:^http(?:s)?:)?(?:[/]*)([^/?]*)(?:.*)$/gi, '$1' );
+		return domain.replace( /(?:^http(?:s)?:)?(?:[/]*)(?:www\.)?([^/?]*)(?:.*)$/gi, '$1' );
 	}, [] );
 
 	const setTransferStepsAndLockStatus = useCallback(
@@ -250,6 +250,7 @@ function UseMyDomain( props ) {
 				baseClassName={ baseClassName }
 				domainName={ domainName }
 				isBusy={ isFetchingAvailability }
+				isSignupStep={ isSignupStep }
 				onChange={ onDomainNameChange }
 				onClear={ onClearInput }
 				onNext={ onNext }
