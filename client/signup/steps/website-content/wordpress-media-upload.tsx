@@ -40,8 +40,8 @@ const StyledGridIcon = styled( Gridicon )`
 const FileSelectThumbnailContainer = styled.div< { disabled?: boolean } >`
 	cursor: ${ ( props ) => ( props.disabled ? 'default' : 'pointer' ) };
 	position: relative;
-	width: 195px;
-	height: 145px;
+	width: 140px;
+	height: 98px;
 	background: rgba( 187, 224, 250, 0.12 );
 	border: 1px dashed var( --studio-gray-5 );
 	border-radius: 5px;
