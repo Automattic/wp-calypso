@@ -172,7 +172,7 @@ const PrePurchaseNotices = () => {
 	if (
 		currentSitePlan &&
 		cartProductThatOverlapsSitePlan &&
-		! currentSitePlan.product_slug === 'jetpack_free'
+		currentSitePlan.product_slug !== 'jetpack_free'
 	) {
 		return (
 			<SitePlanIncludesCartProductNotice
