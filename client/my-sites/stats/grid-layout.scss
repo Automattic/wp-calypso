@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 $grid-horizontal-gutters: 24px;
 $grid-vertical-gutters: 32px;
 
@@ -17,7 +19,6 @@ $grid-vertical-gutters: 32px;
 	@media ( max-width: $break-large ) {
 		grid-template-columns: repeat(8, 1fr);
 		grid-template-rows: repeat(5, min-content);
-		gap: $grid-vertical-gutters $grid-horizontal-gutters;
 		grid-template-areas:
 			"posts posts posts posts referrers referrers referrers referrers"
 			"country country country country country country country country"
@@ -30,7 +31,7 @@ $grid-vertical-gutters: 32px;
 	@media ( max-width: $break-medium ) {
 		grid-template-columns: repeat(4, 1fr);
 		grid-template-rows: repeat(8, min-content);
-		gap: $grid-vertical-gutters $grid-horizontal-gutters;
+		gap: 0;
 		grid-template-areas:
 			"posts posts posts posts"
 			"referrers referrers referrers referrers"

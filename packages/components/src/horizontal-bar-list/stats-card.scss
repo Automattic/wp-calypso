@@ -1,6 +1,7 @@
 // ==========================================================================
 // Horizontal bar list
 // ==========================================================================
+@import "@wordpress/base-styles/breakpoints";
 @import "../styles/typography.scss";
 @import "./stats-variables.scss";
 
@@ -13,6 +14,14 @@
 	line-height: $row-line-height;
 	color: $font-color;
 	background-color: var(--studio-white);
+
+
+	@media ( max-width: $break-medium ) {
+		border-radius: 0;
+		border-left: 0;
+		border-right: 0;
+		border-bottom: 0;
+	}
 
 	.stats-card--hero {
 		padding-bottom: $card-vertical-space;
