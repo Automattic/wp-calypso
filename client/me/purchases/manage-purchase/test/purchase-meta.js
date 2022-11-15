@@ -8,13 +8,6 @@
 import { render, screen } from '@testing-library/react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
-import {
-	getSitePurchases,
-	getByPurchaseId,
-	hasLoadedUserPurchasesFromServer,
-	hasLoadedSitePurchasesFromServer,
-	getRenewableSitePurchases,
-} from 'calypso/state/purchases/selectors';
 import PurchaseMeta from '../purchase-meta';
 
 describe( 'PurchaseMetaPrice', () => {
