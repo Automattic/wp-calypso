@@ -2,7 +2,9 @@ import { useEffect } from 'react';
 
 const ZendeskChat = ( { chatId } ) => {
 	useEffect( () => {
-		if ( chatId ) {
+		if ( ! chatId ) {
+			return;
+		}
 			const script = document.createElement( 'script' );
 			script.src = 'https://static.zdassets.com/ekr/snippet.js?key=' + chatId;
 			script.type = 'text/javascript';
