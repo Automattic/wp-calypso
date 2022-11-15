@@ -124,6 +124,10 @@ $head-foot-height: 50px;
 			&.is-minimized {
 				min-height: $head-foot-height;
 				top: calc(100vh - #{$head-foot-height});
+
+				@supports ( height: 100svh ) {
+					top: calc(100svh - #{$head-foot-height});
+				}
 			}
 		}
 
