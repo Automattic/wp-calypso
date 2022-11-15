@@ -501,7 +501,10 @@ class Signup extends Component {
 			return;
 		}
 
-		window.location.href = destination;
+		// When this state is available, it will be the login form component's job to handle the redirect.
+		if ( ! this.state.redirectTo ) {
+			window.location.href = destination;
+		}
 	}
 
 	handleLogin( dependencies, destination, resetSignupFlowController = true ) {

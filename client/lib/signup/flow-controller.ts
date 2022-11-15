@@ -344,7 +344,7 @@ export default class SignupFlowController {
 			this._assertFlowProvidedRequiredDependencies();
 			// deferred to ensure that the onComplete function is called after the stores have
 			// emitted their final change events.
-			this._onComplete( dependencies, this._destination( dependencies ) );
+			defer( () => this._onComplete( dependencies, this._destination( dependencies ) ) );
 		}
 	}
 
