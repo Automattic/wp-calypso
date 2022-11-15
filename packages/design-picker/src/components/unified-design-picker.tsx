@@ -65,6 +65,7 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 
 interface TrackDesignViewProps {
 	category?: string | null;
+	className: string;
 	design: Design;
 	isPremiumThemeAvailable?: boolean;
 }
@@ -72,6 +73,7 @@ interface TrackDesignViewProps {
 const TrackDesignView: React.FC< TrackDesignViewProps > = ( {
 	category,
 	children,
+	className,
 	design,
 	isPremiumThemeAvailable,
 } ) => {
@@ -132,7 +134,7 @@ const TrackDesignView: React.FC< TrackDesignViewProps > = ( {
 	);
 
 	return (
-		<div className="track-design-view" ref={ wrapperDivRefCallback }>
+		<div className={ className } ref={ wrapperDivRefCallback }>
 			{ children }
 		</div>
 	);
@@ -256,23 +258,18 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	onSelect,
 	...props
 } ) => {
-	const isBlankCanvas = isBlankCanvasDesign( props.design );
-
-	const designButtonContents = isBlankCanvas ? (
-		<PatternAssemblerCta onButtonClick={ () => onSelect( props.design ) } />
-	) : (
-		<div className="design-button-container">
-			<DesignButton { ...props } />
-		</div>
-	);
+	if ( isBlankCanvasDesign( props.design ) ) {
+		return <PatternAssemblerCta onButtonClick={ () => onSelect( props.design ) } />;
+	}
 
 	return (
 		<TrackDesignView
+			className="design-button-container"
 			category={ category }
 			design={ props.design }
 			isPremiumThemeAvailable={ props.isPremiumThemeAvailable }
 		>
-			{ designButtonContents }
+			<DesignButton { ...props } />
 		</TrackDesignView>
 	);
 };
@@ -302,11 +299,13 @@ const GeneratedDesignButtonContainer: React.FC< GeneratedDesignButtonContainerPr
 	} );
 
 	return (
-		<div
-			key={ `generated-design__${ design.slug }` }
+		<TrackDesignView
+			category={ `__generated_vertical_${ verticalId }` }
 			className={ classnames( 'design-button-container', 'design-button-container--is-generated', {
 				'design-button-container--is-generated--is-showing': isShowing,
 			} ) }
+			design={ design }
+			isPremiumThemeAvailable={ true }
 		>
 			<div className="design-picker__design-option">
 				<button className="generated-design-thumbnail" onClick={ () => onPreview( design ) }>
@@ -319,7 +318,7 @@ const GeneratedDesignButtonContainer: React.FC< GeneratedDesignButtonContainerPr
 					</span>
 				</button>
 			</div>
-		</div>
+		</TrackDesignView>
 	);
 };
 
@@ -338,16 +337,14 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 } ) => (
 	<div className="design-picker__grid">
 		{ designs.map( ( design ) => (
-			<TrackDesignView category="__generated" design={ design }>
-				<GeneratedDesignButtonContainer
-					key={ `generated-design__${ design.slug }` }
-					design={ design }
-					locale={ locale }
-					verticalId={ verticalId }
-					isShowing
-					onPreview={ onPreview }
-				/>
-			</TrackDesignView>
+			<GeneratedDesignButtonContainer
+				key={ `generated-design__${ design.slug }` }
+				design={ design }
+				locale={ locale }
+				verticalId={ verticalId }
+				isShowing
+				onPreview={ onPreview }
+			/>
 		) ) }
 	</div>
 );
@@ -419,16 +416,14 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					/>
 				) ) }
 				{ generatedDesigns.map( ( design ) => (
-					<TrackDesignView design={ design }>
-						<GeneratedDesignButtonContainer
-							key={ `generated-design__${ design.slug }` }
-							design={ design }
-							locale={ locale }
-							verticalId={ verticalId }
-							isShowing={ categorization?.selection === SHOW_GENERATED_DESIGNS_SLUG }
-							onPreview={ onPreview }
-						/>
-					</TrackDesignView>
+					<GeneratedDesignButtonContainer
+						key={ `generated-design__${ design.slug }` }
+						design={ design }
+						locale={ locale }
+						verticalId={ verticalId }
+						isShowing={ categorization?.selection === SHOW_GENERATED_DESIGNS_SLUG }
+						onPreview={ onPreview }
+					/>
 				) ) }
 			</div>
 		</div>
