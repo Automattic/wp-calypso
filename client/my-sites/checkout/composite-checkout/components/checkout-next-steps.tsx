@@ -2,6 +2,7 @@ import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactChild } from 'react';
@@ -76,33 +77,35 @@ const NextStepIcon = styled( BaseIcon )`
 export default function CheckoutNextSteps( { responseCart, headerText }: Props ) {
 	const translate = useTranslate();
 
-	const steps: NextStepsStep[] = useMemo(
-		() => [
-			{
-				text: translate( 'Submit business information' ),
-				icon: <CompletedStepIcon />,
-			},
-			{
-				text: translate( 'Choose a design' ),
-				icon: <CompletedStepIcon />,
-			},
-			{
-				text: <b>{ translate( 'Checkout' ) }</b>,
-				icon: <CurrentStepIcon />,
-			},
-			{
-				text: translate( 'Submit content for new site' ),
-				icon: <NextStepIcon />,
-			},
-			{
-				text: translate( 'Receive your finished site in under %d business days!', {
-					args: [ 4 ],
-				} ),
-				icon: <NextStepIcon />,
-			},
-		],
-		[ responseCart, translate ]
-	);
+	const steps: NextStepsStep[] = useMemo( () => {
+		if ( hasDIFMProduct( responseCart ) ) {
+			return [
+				{
+					text: translate( 'Submit business information' ),
+					icon: <CompletedStepIcon />,
+				},
+				{
+					text: translate( 'Choose a design' ),
+					icon: <CompletedStepIcon />,
+				},
+				{
+					text: <b>{ translate( 'Checkout' ) }</b>,
+					icon: <CurrentStepIcon />,
+				},
+				{
+					text: translate( 'Submit content for new site' ),
+					icon: <NextStepIcon />,
+				},
+				{
+					text: translate( 'Receive your finished site in under %d business days!', {
+						args: [ 4 ],
+					} ),
+					icon: <NextStepIcon />,
+				},
+			];
+		}
+		return [];
+	}, [ responseCart, translate ] );
 
 	return steps && steps.length ? (
 		<CheckoutNextStepsWrapper>

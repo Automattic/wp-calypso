@@ -324,7 +324,7 @@ export default function WPCheckout( {
 								isCartPendingUpdate={ isCartPendingUpdate }
 							/>
 							<CheckoutHelpLink />
-							{ isDIFMInCart && <CheckoutNextSteps responseCart={ responseCart } /> }
+							<CheckoutNextSteps responseCart={ responseCart } />
 						</CheckoutSummaryBody>
 					</CheckoutErrorBoundary>
 				</CheckoutSummaryArea>
