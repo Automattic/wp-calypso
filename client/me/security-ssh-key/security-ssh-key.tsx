@@ -63,7 +63,7 @@ const UpdateSSHModalDescription = styled.div( {
 } );
 
 const CancelDialogButton = styled( Button )( {
-	marginLeft: '10px',
+	marginInlineStart: '10px',
 } );
 
 const UpdateSSHDialogContainer = styled.div( {

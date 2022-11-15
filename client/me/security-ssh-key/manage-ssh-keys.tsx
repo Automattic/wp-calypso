@@ -61,12 +61,12 @@ const SSHKey = ( {
 				scary={ false }
 				disabled={ !! keyBeingDeleted || !! keyBeingUpdated }
 				onClick={ handleUpdateClick }
-				style={ { marginLeft: 'auto' } }
+				style={ { marginInlineStart: 'auto' } }
 			>
 				{ __( 'Update SSH key' ) }
 			</SSHKeyCard.Button>
 			<SSHKeyCard.Button
-				style={ { marginLeft: '10px' } }
+				style={ { marginInlineStart: '10px' } }
 				busy={ keyBeingDeleted === sshKey.name }
 				disabled={ !! keyBeingDeleted || !! keyBeingUpdated }
 				onClick={ handleDeleteClick }
