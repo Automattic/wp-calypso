@@ -59,6 +59,7 @@ const SSHKey = ( {
 			<SSHKeyCard.Button
 				primary={ true }
 				scary={ false }
+				disabled={ !! keyBeingDeleted || !! keyBeingUpdated }
 				onClick={ handleUpdateClick }
 				style={ { marginLeft: 'auto' } }
 			>
