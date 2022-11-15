@@ -737,6 +737,18 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 		},
 
+		'auto-site-generation': {
+			stepName: 'auto-site-generation',
+			props: {
+				headerText: i18n.translate( 'Automatic site generation' ),
+			},
+			apiRequestFunction: () => {},
+			fulfilledStepCallback: () => {},
+			// Audit need for dependencies
+			// dependencies: [ 'siteSlug' ],
+			// providesDependencies: [ 'cartItem' ],
+		},
+
 		'difm-site-picker': {
 			stepName: 'difm-site-picker',
 			props: {

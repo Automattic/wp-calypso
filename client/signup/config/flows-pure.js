@@ -71,7 +71,9 @@ export function generateFlows( {
 		},
 		{
 			name: 'free',
-			steps: [ 'user', 'domains' ],
+			steps: isEnabled( 'signup/free-onboarding-flow' )
+				? [ 'user', 'auto-site-generation' ]
+				: [ 'user', 'domains' ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and default to the free plan.',
 			lastModified: '2020-08-11',

@@ -1,5 +1,6 @@
 const stepNameToModuleName = {
 	'add-ons': 'add-ons',
+	'auto-site-generation': 'auto-site-generation',
 	'clone-start': 'clone-start',
 	'clone-destination': 'clone-destination',
 	'clone-credentials': 'clone-credentials',
