@@ -14,6 +14,10 @@
 	color: $font-color;
 	background-color: var(--studio-white);
 
+	.stats-card--hero {
+		padding-bottom: $card-vertical-space;
+	}
+
 	.stats-card--header {
 		display: flex;
 		justify-content: space-between;
@@ -44,5 +48,16 @@
 		&:visited {
 			color: $font-color;
 		}
+	}
+}
+
+.stats-card-avatar {
+	display: flex;
+	padding-right: $stats-avatar-spacer;
+
+	.stats-card-avatar-image {
+		width: $stats-avatar-size;
+		height: $stats-avatar-size;
+		border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 	}
 }

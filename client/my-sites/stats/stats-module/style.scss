@@ -679,7 +679,7 @@ ul.module-header-actions {
 		margin: 0;
 
 		&:last-child {
-			padding-bottom: 24px;
+			margin-bottom: 24px;
 		}
 
 		&.module-content-list-sublist {
@@ -689,7 +689,7 @@ ul.module-header-actions {
 
 	.stats-module__expand,
 	.stats-module .module-expand {
-		padding: 20px 0;
+		margin: 20px 0;
 
 		a {
 			border: 0;
@@ -739,8 +739,4 @@ ul.module-header-actions {
 		height: auto;
 		line-height: normal;
 	}
-}
-
-.old-stats-module-hidden {
-	display: none;
 }

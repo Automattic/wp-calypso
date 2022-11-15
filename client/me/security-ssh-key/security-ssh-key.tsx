@@ -22,20 +22,26 @@ import { useAddSSHKeyMutation } from './use-add-ssh-key-mutation';
 import { useDeleteSSHKeyMutation } from './use-delete-ssh-key-mutation';
 import { useSSHKeyQuery } from './use-ssh-key-query';
 
-const SSHKeyLoadingPlaceholder = styled( LoadingPlaceholder )( {
-	':not(:last-child)': {
-		marginBlockEnd: '0.5rem',
-	},
-} );
+const SSHKeyLoadingPlaceholder = styled( LoadingPlaceholder )< { width?: string } >`
+	:not( :last-child ) {
+		margin-block-end: 0.5rem;
+	}
+	width: ${ ( props ) => ( props.width ? props.width : '100%' ) };
+`;
+interface SecuritySSHKeyQueryParams {
+	siteSlug?: string;
+	source?: string;
+}
+interface SecuritySSHKeyProps {
+	queryParams: SecuritySSHKeyQueryParams;
+}
 
 const Placeholders = () => (
-	<>
-		{ Array( 5 )
-			.fill( null )
-			.map( ( _, i ) => (
-				<SSHKeyLoadingPlaceholder key={ i } />
-			) ) }
-	</>
+	<CompactCard>
+		<SSHKeyLoadingPlaceholder width="18%" />
+		<SSHKeyLoadingPlaceholder width="45%" />
+		<SSHKeyLoadingPlaceholder width="25%" />
+	</CompactCard>
 );
 
 const noticeOptions = {
@@ -44,7 +50,7 @@ const noticeOptions = {
 
 const sshKeySaveFailureNoticeId = 'ssh-key-save-failure';
 
-export const SecuritySSHKey = () => {
+export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 	const { data, isLoading } = useSSHKeyQuery();
 	const dispatch = useDispatch();
 	const currentUser = useSelector( getCurrentUser );
@@ -99,6 +105,8 @@ export const SecuritySSHKey = () => {
 	} );
 
 	const hasKeys = data && data.length > 0;
+	const redirectToHosting =
+		queryParams.source && queryParams.source === 'hosting-config' && queryParams.siteSlug;
 
 	return (
 		<Main wideLayout className="security">
@@ -107,7 +115,12 @@ export const SecuritySSHKey = () => {
 
 			<FormattedHeader brandFont headerText={ __( 'Security' ) } align="left" />
 
-			<HeaderCake backText={ __( 'Back' ) } backHref="/me/security">
+			<HeaderCake
+				backText={ redirectToHosting ? __( 'Back to Hosting Configuration' ) : __( 'Back' ) }
+				backHref={
+					redirectToHosting ? `/${ queryParams.source }/${ queryParams.siteSlug }` : '/me/security'
+				}
+			>
 				{ __( 'SSH Key' ) }
 			</HeaderCake>
 
@@ -125,7 +138,7 @@ export const SecuritySSHKey = () => {
 							'Once added, attach the SSH key to a site with a Business or eCommerce plan to enable SSH key authentication for that site.'
 						) }
 					</p>
-					<p style={ hasKeys ? { marginBlockEnd: 0 } : undefined }>
+					<p style={ isLoading || hasKeys ? { marginBlockEnd: 0 } : undefined }>
 						{ createInterpolateElement(
 							__(
 								'If the SSH key is removed from your WordPress.com account, it will also be removed from all attached sites. <a>Read more.</a>'
@@ -146,15 +159,14 @@ export const SecuritySSHKey = () => {
 					</p>
 				</div>
 
-				{ isLoading ? (
-					<Placeholders />
-				) : ! hasKeys ? (
+				{ ! isLoading && ! hasKeys ? (
 					<AddSSHKeyForm
 						addSSHKey={ ( { name, key } ) => addSSHKey( { name, key } ) }
 						isAdding={ isAdding }
 					/>
 				) : null }
 			</CompactCard>
+			{ isLoading && <Placeholders /> }
 			{ hasKeys && currentUser?.username && (
 				<ManageSSHKeys
 					userLogin={ currentUser.username }

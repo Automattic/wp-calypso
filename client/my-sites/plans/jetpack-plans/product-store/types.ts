@@ -1,5 +1,6 @@
 import React from 'react';
 import { useStoreItemInfo } from './hooks/use-store-item-info';
+import type { PlanRecommendation } from '../plan-upgrade/types';
 import type {
 	QueryArgs,
 	SelectorProduct,
@@ -25,6 +26,7 @@ export interface ProductStoreProps {
 	duration: Duration;
 	createCheckoutURL: PurchaseURLCallback;
 	onClickPurchase: PurchaseCallback;
+	planRecommendation?: PlanRecommendation;
 	urlQueryArgs: ProductStoreQueryArgs;
 	header: React.ReactNode;
 }

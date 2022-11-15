@@ -13,6 +13,9 @@ export const getPostType = ( type: string ) => {
 		case 'page': {
 			return __( 'Page' );
 		}
+		case 'product': {
+			return __( 'Product' );
+		}
 		default:
 			return type;
 	}

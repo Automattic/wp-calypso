@@ -1,0 +1,6 @@
+.hb-support-page-embed-placeholder {
+	// Restore the default placeholder styles, broken by bbpress
+	.components-placeholder__input[type="url"] {
+		margin: 0 8px 0 0 !important;
+	}
+}

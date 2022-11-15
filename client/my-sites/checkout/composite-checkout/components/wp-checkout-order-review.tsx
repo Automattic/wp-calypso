@@ -124,7 +124,11 @@ export default function WPCheckoutOrderReview( {
 		( product ) =>
 			isDomainTransfer( product ) || isDomainRegistration( product ) || isDomainMapping( product )
 	);
-	const domainUrl = primaryDomain ?? firstDomainProduct?.meta ?? siteUrl;
+	const domainUrl =
+		primaryDomain ??
+		firstDomainProduct?.meta ??
+		responseCart?.gift_details?.receiver_blog_url ??
+		siteUrl;
 
 	const removeCouponAndClearField = () => {
 		couponFieldStateProps.setCouponFieldValue( '' );

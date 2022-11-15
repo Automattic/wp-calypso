@@ -50,6 +50,8 @@ export default function AssignLicenseForm( {
 	const [ selectedSite, setSelectedSite ] = useState( false );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const licenseKey = getQueryArg( window.location.href, 'key' ) as string;
+	const products = getQueryArg( window.location.href, 'products' ) as string;
+	const licenseKeysArray = products !== undefined ? products.split( ',' ) : [ licenseKey ];
 	const onSelectSite = ( site: any ) => setSelectedSite( site );
 	const notificationId = 'partner-portal-assign-license-form';
 
@@ -108,14 +110,24 @@ export default function AssignLicenseForm( {
 		assignLicense.mutate( { licenseKey, selectedSite } );
 	}, [ dispatch, licenseKey, selectedSite, assignLicense.mutate ] );
 
-	const onAssignLater = () =>
+	const onAssignLater = () => {
+		if ( licenseKeysArray.length > 1 ) {
+			page.redirect( '/partner-portal/licenses' );
+		}
 		page.redirect( addQueryArgs( { highlight: licenseKey }, '/partner-portal/licenses' ) );
+	};
 
 	return (
 		<div className="assign-license-form">
 			<div className="assign-license-form__top">
 				<p className="assign-license-form__description">
-					{ translate( 'Select the website you would like to assign the license to.' ) }
+					{ translate(
+						'Select the website you would like to assign the license to.',
+						'Select the website you would like to assign the licenses to.',
+						{
+							count: licenseKeysArray.length,
+						}
+					) }
 				</p>
 				<div className="assign-license-form__controls">
 					<Button
@@ -133,7 +145,12 @@ export default function AssignLicenseForm( {
 						busy={ isSubmitting }
 						onClick={ onAssignLicense }
 					>
-						{ translate( 'Assign to website' ) }
+						{ translate( 'Assign %(numLicenses)d License', 'Assign %(numLicenses)d Licenses', {
+							count: licenseKeysArray.length,
+							args: {
+								numLicenses: licenseKeysArray.length,
+							},
+						} ) }
 					</Button>
 				</div>
 			</div>

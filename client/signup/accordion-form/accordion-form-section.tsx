@@ -22,6 +22,9 @@ interface SectionHeaderProps {
 const Section = styled.div`
 	border-bottom: 1px solid var( --studio-gray-5 );
 	padding: 0 20px;
+	@media ( min-width: 600px ) {
+		width: 775px;
+	}
 `;
 
 const SectionHeader = styled.div< SectionHeaderProps >`

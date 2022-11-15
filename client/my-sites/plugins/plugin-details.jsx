@@ -1,4 +1,5 @@
 import { useBreakpoint } from '@automattic/viewport-react';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -305,7 +306,7 @@ function PluginDetails( props ) {
 				</Notice>
 			) }
 			<div className="plugin-details__page">
-				<div className="plugin-details__layout">
+				<div className={ classnames( 'plugin-details__layout', { 'is-logged-in': isLoggedIn } ) }>
 					<div className="plugin-details__header">
 						<PluginDetailsHeader plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
 					</div>

@@ -1,6 +1,7 @@
 import { isPlan } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
+import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -27,6 +28,7 @@ export function CheckoutSidebarPlanUpsell() {
 	const reduxDispatch = useDispatch();
 	const isFormLoading = FormStatus.READY !== formStatus;
 	const { __, hasTranslation } = useI18n();
+	const locale = useLocale();
 	const cartKey = useCartKey();
 	const { responseCart, replaceProductInCart } = useShoppingCart( cartKey );
 	const siteId = useSelector( getSelectedSiteId );
@@ -94,7 +96,11 @@ export function CheckoutSidebarPlanUpsell() {
 		{ strong: createElement( 'strong' ) }
 	);
 
-	if ( ! hasTranslation( '<strong>Save %(percentSavings)d%%</strong> by paying for two years' ) ) {
+	if (
+		'en' !== locale &&
+		! hasTranslation( '<strong>Save %(percentSavings)d%%</strong> by paying for two years' )
+	) {
+		debug( "not 'en' and does not have translation", locale );
 		return null;
 	}
 

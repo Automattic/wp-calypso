@@ -95,6 +95,8 @@ const blockLinks: { [ key: string ]: string } = {
 	'core/table-of-contents':
 		'https://wordpress.com/support/wordpress-editor/table-of-contents-block/',
 
+	'core/comments': 'https://wordpress.com/support/full-site-editing/theme-blocks/comments-block/',
+
 	/**
 	 * A8C and CO Blocks
 	 */

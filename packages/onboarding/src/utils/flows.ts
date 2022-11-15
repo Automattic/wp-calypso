@@ -1,5 +1,5 @@
 export const NEWSLETTER_FLOW = 'newsletter';
-export const NEWSLETTER_POST_SETUP_FLOW = 'newsletter';
+export const NEWSLETTER_POST_SETUP_FLOW = 'newsletter-post-setup';
 export const LINK_IN_BIO_FLOW = 'link-in-bio';
 export const LINK_IN_BIO_POST_SETUP_FLOW = 'link-in-bio-post-setup';
 export const VIDEOPRESS_FLOW = 'videopress';

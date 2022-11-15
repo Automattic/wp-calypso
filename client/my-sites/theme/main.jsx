@@ -63,6 +63,8 @@ import {
 	getThemeForumUrl,
 	getThemeDemoUrl,
 	shouldShowTryAndCustomize,
+	isExternallyManagedTheme as getIsExternallyManagedTheme,
+	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
 } from 'calypso/state/themes/selectors';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -144,6 +146,10 @@ class ThemeSheet extends Component {
 		}
 		return !! this.props.screenshots;
 	};
+
+	// If a theme has been removed by a theme shop, then the theme will still exist and a8c will take over any support responsibilities.
+	isRemoved = () =>
+		!! this.props.taxonomies?.theme_status?.find( ( status ) => status.slug === 'removed' );
 
 	onButtonClick = () => {
 		const { defaultOption, id } = this.props;
@@ -552,6 +558,8 @@ class ThemeSheet extends Component {
 			isPurchased,
 			translate,
 			isBundledSoftwareSet,
+			isExternallyManagedTheme,
+			isSiteEligibleForManagedExternalThemes,
 		} = this.props;
 		if ( isActive ) {
 			// Customize site
@@ -565,7 +573,12 @@ class ThemeSheet extends Component {
 			if ( isPremium && ! isPurchased && ! isBundledSoftwareSet ) {
 				// purchase
 				return translate( 'Pick this design' );
-			} else if ( isPremium && ! isPurchased && isBundledSoftwareSet ) {
+			} else if (
+				isPremium &&
+				! isPurchased &&
+				( isBundledSoftwareSet ||
+					( isExternallyManagedTheme && ! isSiteEligibleForManagedExternalThemes ) )
+			) {
 				// upgrade plan
 				return translate( 'Upgrade to activate', {
 					comment:
@@ -600,6 +613,15 @@ class ThemeSheet extends Component {
 					</Button>
 				</Card>
 
+				{ this.isRemoved() && (
+					<Card>
+						<p>
+							{ this.props.translate(
+								'This theme has been renamed to reflect that support for it is now provided directly by WordPress.com. The theme will continue to work as before.'
+							) }
+						</p>
+					</Card>
+				) }
 				<div className="theme__sheet-footer-line">
 					<Gridicon icon="my-sites" />
 				</div>
@@ -783,7 +805,12 @@ class ThemeSheet extends Component {
 			} );
 		}
 
+		const isRemoved = this.isRemoved();
+
 		const className = classNames( 'theme__sheet', { 'is-with-upsell-banner': hasUpsellBanner } );
+		const columnsClassName = classNames( 'theme__sheet-columns', {
+			'is-removed': isRemoved,
+		} );
 
 		return (
 			<Main className={ className }>
@@ -813,12 +840,14 @@ class ThemeSheet extends Component {
 				>
 					{ ! retired && ! hasWpOrgThemeUpsellBanner && ! isWPForTeamsSite && this.renderButton() }
 				</HeaderCake>
-				<div className="theme__sheet-columns">
+				<div className={ columnsClassName }>
 					<div className="theme__sheet-column-left">
 						{ ! retired && this.renderSectionContent( section ) }
 						{ retired && this.renderRetired() }
 					</div>
-					<div className="theme__sheet-column-right">{ this.renderScreenshot() }</div>
+					{ ! isRemoved && (
+						<div className="theme__sheet-column-right">{ this.renderScreenshot() }</div>
+					) }
 				</div>
 				<ThemePreview belowToolbar={ previewUpsellBanner } />
 				<PerformanceTrackerStop />
@@ -847,6 +876,8 @@ const ThemeSheetWithOptions = ( props ) => {
 		demoUrl,
 		showTryAndCustomize,
 		isBundledSoftwareSet,
+		isExternallyManagedTheme,
+		isSiteEligibleForManagedExternalThemes,
 	} = props;
 
 	let defaultOption;
@@ -864,6 +895,8 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'customize';
 	} else if ( needsJetpackPlanUpgrade ) {
 		defaultOption = 'upgradePlan';
+	} else if ( isExternallyManagedTheme && ! isSiteEligibleForManagedExternalThemes ) {
+		defaultOption = 'upgradePlanForExternallyManagedThemes';
 	} else if ( isPremium && ! isPurchased && ! isBundledSoftwareSet ) {
 		defaultOption = 'purchase';
 	} else if ( isPremium && ! isPurchased && isBundledSoftwareSet ) {
@@ -930,6 +963,11 @@ export default connect(
 			demoUrl: getThemeDemoUrl( state, id, siteId ),
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 			softLaunched: theme?.soft_launched,
+			isExternallyManagedTheme: getIsExternallyManagedTheme( state, theme?.id ),
+			isSiteEligibleForManagedExternalThemes: getIsSiteEligibleForManagedExternalThemes(
+				state,
+				siteId
+			),
 		};
 	},
 	{

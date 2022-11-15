@@ -30,8 +30,10 @@ import {
 	hasGoogleApps,
 	hasDomainRegistration,
 	hasTransferProduct,
+	hasDIFMProduct,
 } from 'calypso/lib/cart-values/cart-items';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
@@ -243,6 +245,8 @@ export default function WPCheckout( {
 		return true;
 	};
 
+	const isWcMobile = isWcMobileApp();
+
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
 		debug( 'rendering post-checkout redirecting page' );
 		return (
@@ -287,6 +291,8 @@ export default function WPCheckout( {
 		);
 	}
 
+	const isDIFMInCart = hasDIFMProduct( responseCart );
+
 	return (
 		<CheckoutStepGroup
 			stepAreaHeader={
@@ -311,7 +317,7 @@ export default function WPCheckout( {
 								onChangePlanLength={ changePlanLength }
 								nextDomainIsFree={ responseCart?.next_domain_is_free }
 							/>
-							<CheckoutSidebarPlanUpsell />
+							{ ! isWcMobile && ! isDIFMInCart && <CheckoutSidebarPlanUpsell /> }
 							<SecondaryCartPromotions
 								responseCart={ responseCart }
 								addItemToCart={ addItemToCart }

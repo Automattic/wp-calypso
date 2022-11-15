@@ -1,5 +1,5 @@
-import classnames from 'classnames';
-import React from 'react';
+import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import type { StatsCardProps } from './types';
 
 import './stats-card.scss';
@@ -10,33 +10,42 @@ const StatsCard = ( {
 	children,
 	className,
 	title,
+	titleURL,
 	footerAction,
 	isEmpty,
 	emptyMessage,
-	titleURL,
+	metricLabel,
+	heroElement,
 }: StatsCardProps ) => {
-	const baseClass = classnames( className, BASE_CLASS_NAME );
-	const titleNode = titleURL ? (
-		<a href={ `${ titleURL }` } className={ `${ BASE_CLASS_NAME }--header--title` }>
-			{ title }
-		</a>
-	) : (
-		<div className={ `${ BASE_CLASS_NAME }--header--title` }> { title } </div>
-	);
+	const translate = useTranslate();
 
 	return (
-		<div className={ baseClass }>
-			{ title && (
-				<div className={ `${ BASE_CLASS_NAME }--header` }>
-					{ titleNode }
-					{ ! isEmpty && <div>Views</div> }
+		<div className={ classNames( className, BASE_CLASS_NAME ) }>
+			{ !! heroElement && <div className={ `${ BASE_CLASS_NAME }--hero` }>{ heroElement }</div> }
+			<div className={ `${ BASE_CLASS_NAME }--header-and-body` }>
+				{ title && (
+					<div className={ `${ BASE_CLASS_NAME }--header` }>
+						{ titleURL ? (
+							<a href={ `${ titleURL }` } className={ `${ BASE_CLASS_NAME }--header--title` }>
+								{ title }
+							</a>
+						) : (
+							<div className={ `${ BASE_CLASS_NAME }--header--title` }>{ title }</div>
+						) }
+						{ ! isEmpty && <div>{ metricLabel ?? translate( 'Views' ) }</div> }
+					</div>
+				) }
+				<div
+					className={ classNames( `${ BASE_CLASS_NAME }--body`, {
+						[ `${ BASE_CLASS_NAME }--body-empty` ]: isEmpty,
+					} ) }
+				>
+					{ isEmpty ? emptyMessage : children }
 				</div>
-			) }
-			{ isEmpty && <div className={ `${ BASE_CLASS_NAME }--body-empty` }>{ emptyMessage }</div> }
-			{ ! isEmpty && children }
+			</div>
 			{ footerAction && (
 				<a className={ `${ BASE_CLASS_NAME }--footer` } href={ footerAction?.url }>
-					{ footerAction.label || 'View all' }
+					{ footerAction.label || translate( 'View all' ) }
 				</a>
 			) }
 		</div>

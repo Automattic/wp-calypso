@@ -7,9 +7,9 @@ import { User as UserStore } from '@automattic/data-stores';
 import { useDispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
 import ReactDom from 'react-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, useLocation, Redirect } from 'react-router-dom';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { setupErrorLogger } from 'calypso/boot/common';
 import { setupLocale } from 'calypso/boot/locale';
@@ -23,6 +23,7 @@ import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import { loadPersistedState } from 'calypso/state/persisted-state';
+import { createQueryClient, hydrateBrowserState } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { requestSites } from 'calypso/state/sites/actions';
@@ -38,11 +39,12 @@ import { newsletterPostSetup } from './declarative-flow/newsletter-post-setup';
 import { pluginBundleFlow } from './declarative-flow/plugin-bundle-flow';
 import { podcasts } from './declarative-flow/podcasts';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
-import { ecommerceFlow } from './declarative-flow/tailored-ecommerce-flow';
+import { ecommerceFlow, ecommerceFlowRecurTypes } from './declarative-flow/tailored-ecommerce-flow';
+import { videopress } from './declarative-flow/videopress';
 import 'calypso/components/environment-badge/style.scss';
 import { useAnchorFmParams } from './hooks/use-anchor-fm-params';
 import { useQuery } from './hooks/use-query';
-import { USER_STORE } from './stores';
+import { ONBOARD_STORE, USER_STORE } from './stores';
 import type { Flow } from './declarative-flow/internals/types';
 
 function generateGetSuperProps() {
@@ -54,6 +56,7 @@ function generateGetSuperProps() {
 	} );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
 	config.isEnabled( 'signup/inline-help' ) && reduxStore.dispatch( requestHappychatEligibility() );
 	reduxStore.dispatch( setCurrentUser( user ) );
@@ -68,6 +71,9 @@ interface configurableFlows {
 const availableFlows: Array< configurableFlows > = [
 	{ flowName: 'newsletter', pathToFlow: newsletter },
 	{ flowName: 'import-focused', pathToFlow: importFlow },
+	config.isEnabled( 'videopress/tailored-onboarding' )
+		? { flowName: 'videopress', pathToFlow: videopress }
+		: null,
 	{ flowName: 'link-in-bio', pathToFlow: linkInBio },
 	{ flowName: 'podcasts', pathToFlow: podcasts },
 	{ flowName: 'link-in-bio-post-setup', pathToFlow: linkInBioPostSetup },
@@ -81,24 +87,44 @@ const availableFlows: Array< configurableFlows > = [
 ].filter( ( item ) => item !== null ) as Array< configurableFlows >;
 
 const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { user } ) => {
+	const { receiveCurrentUser } = useDispatch( USER_STORE );
+	const { setEcommerceFlowRecurType } = useDispatch( ONBOARD_STORE );
+	const location = useLocation();
 	const { anchorFmPodcastId } = useAnchorFmParams();
-	const flowName = useQuery().get( 'flow' );
 
+	const flowNameFromParam = useQuery().get( 'flow' );
+	const flowNameFromPathName = location.pathname.split( '/' )[ 1 ];
+	const recurType = useQuery().get( 'recur' );
 	let flow = siteSetupFlow;
+
+	// keep supporting the `flow` query param for backwards compatibility
+	if ( availableFlows.find( ( flow ) => flow.flowName === flowNameFromParam ) ) {
+		return <Redirect to={ `/${ flowNameFromParam }` } />;
+	}
 
 	if ( anchorFmPodcastId ) {
 		flow = anchorFmFlow;
+	} else if ( flowNameFromPathName === ecommerceFlow.name ) {
+		flow = ecommerceFlow;
+		const isValidRecurType =
+			recurType && Object.values( ecommerceFlowRecurTypes ).includes( recurType );
+		if ( isValidRecurType ) {
+			setEcommerceFlowRecurType( recurType );
+		} else {
+			setEcommerceFlowRecurType( ecommerceFlowRecurTypes.YEARLY );
+		}
 	} else {
 		availableFlows.forEach( ( currentFlow ) => {
-			if ( currentFlow.flowName === flowName ) {
+			if ( currentFlow.flowName === flowNameFromPathName ) {
 				flow = currentFlow.pathToFlow;
 			}
 		} );
 	}
 
-	const { receiveCurrentUser } = useDispatch( USER_STORE );
 	user && receiveCurrentUser( user as UserStore.CurrentUser );
 
+	// console.log(flow);
+	// return;
 	return <FlowRenderer flow={ flow } />;
 };
 interface AppWindow extends Window {
@@ -118,17 +144,12 @@ window.AppBoot = async () => {
 	// Add accessible-focus listener.
 	accessibleFocus();
 
-	const queryClient = new QueryClient( {
-		defaultOptions: {
-			queries: {
-				refetchOnWindowFocus: false,
-			},
-		},
-	} );
-
 	await loadPersistedState();
 	const user = ( await initializeCurrentUser() ) as unknown;
 	const userId = ( user as CurrentUser ).ID;
+
+	const queryClient = createQueryClient();
+	await hydrateBrowserState( queryClient, userId );
 
 	initializeAnalytics( user, generateGetSuperProps() );
 

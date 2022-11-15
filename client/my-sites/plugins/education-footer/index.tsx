@@ -85,7 +85,7 @@ export const MarketplaceFooter = () => {
 			>
 				<>
 					{ ! isLoggedIn && (
-						<Button className="is-primary marketplace-cta" href="/start">
+						<Button className="is-primary marketplace-cta" href="/start/business">
 							{ __( 'Get Started' ) }
 						</Button>
 					) }

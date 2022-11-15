@@ -16,6 +16,7 @@
 			}
 		}
 	}
+
 	&.is-unfavorable {
 		.delta__icon {
 			&.gridicon {
@@ -28,6 +29,7 @@
 			}
 		}
 	}
+
 	&.is-neutral {
 		.delta__icon {
 			&.gridicon {
@@ -71,6 +73,24 @@
 		}
 		.delta__value {
 			margin-right: 6px;
+		}
+	}
+
+	&.delta--new-main-chart {
+		&.is-favorable {
+			.delta__labels {
+				.delta__suffix {
+					color: var(--color-success);
+				}
+			}
+		}
+
+		&.is-unfavorable {
+			.delta__labels {
+				.delta__suffix {
+					color: var(--color-error);
+				}
+			}
 		}
 	}
 }

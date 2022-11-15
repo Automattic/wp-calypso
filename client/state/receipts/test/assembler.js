@@ -49,6 +49,7 @@ const standardAssembledReceipt = {
 			productType: 'domain',
 			registrarSupportUrl: 'something.com',
 			willAutoRenew: true,
+			saasRedirectUrl: '',
 		},
 	],
 	receiptId: '12345',
@@ -91,5 +92,19 @@ describe( 'createReceiptObject', () => {
 			...standardAssembledReceipt,
 			purchases: [],
 		} );
+	} );
+
+	it( 'returns an expected object for standard receipt data when saas redirect key is supplied', () => {
+		const url = 'http://example.com';
+
+		const clonedStandardRawReceipt = { ...standardRawReceipt };
+		clonedStandardRawReceipt.purchases.one.saas_redirect_url = url;
+
+		const actual = createReceiptObject( clonedStandardRawReceipt );
+
+		const clonedStandardAssembledReceipt = { ...standardAssembledReceipt };
+		clonedStandardAssembledReceipt.purchases[ 0 ].saasRedirectUrl = url;
+
+		expect( actual ).toEqual( clonedStandardAssembledReceipt );
 	} );
 } );

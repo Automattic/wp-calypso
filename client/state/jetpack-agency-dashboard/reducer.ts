@@ -8,15 +8,15 @@ import {
 	JETPACK_AGENCY_DASHBOARD_UNSELECT_LICENSE,
 	JETPACK_AGENCY_DASHBOARD_RESET_SITE,
 } from './action-types';
-import type { PurchasedProduct } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import type { PurchasedProductsInfo } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
-const purchasedLicense: Reducer< { purchasedLicense: PurchasedProduct | null }, AnyAction > = (
-	state = { purchasedLicense: null },
-	action: AnyAction
-): AppState => {
+const purchasedLicense: Reducer<
+	{ purchasedLicenseInfo: PurchasedProductsInfo | null },
+	AnyAction
+> = ( state = { purchasedLicenseInfo: null }, action: AnyAction ): AppState => {
 	switch ( action?.type ) {
 		case JETPACK_AGENCY_DASHBOARD_PURCHASED_LICENSE_CHANGE:
-			return { ...state, purchasedLicense: action.payload };
+			return { ...state, purchasedLicenseInfo: action.payload };
 	}
 	return state;
 };

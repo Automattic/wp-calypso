@@ -65,7 +65,7 @@ const PromotePost = ( props ) => {
 					>
 						<Gridicon icon="speaker" size={ 18 } />
 						<span className="stats-list__item-action-label module-content-list-item-action-label module-content-list-item-action-label-view">
-							{ translate( 'View', { context: 'Stats: List item action to view content' } ) }
+							{ translate( 'Promote', { context: 'Stats: List item action to view content' } ) }
 						</span>
 					</button>
 				</li>

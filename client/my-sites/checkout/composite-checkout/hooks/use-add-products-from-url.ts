@@ -11,6 +11,15 @@ const debug = debugFactory( 'calypso:composite-checkout:use-add-products-from-ur
 
 export type isPendingAddingProductsFromUrl = boolean;
 
+/**
+ * Product requests can be sent to checkout using various methods including URL
+ * or localStorage. Those requests are turned into `RequestCartProduct` objects
+ * by `usePrepareProductsForCart()` and then they are added to the cart by this
+ * hook.
+ *
+ * This hook will return true when its adding process is complete or if there is
+ * nothing to add.
+ */
 export default function useAddProductsFromUrl( {
 	isLoadingCart,
 	isCartPendingUpdate,

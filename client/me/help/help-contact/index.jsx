@@ -47,6 +47,7 @@ import {
 } from 'calypso/state/happychat/connection/actions';
 import getHappychatEnv from 'calypso/state/happychat/selectors/get-happychat-env';
 import getHappychatUserInfo from 'calypso/state/happychat/selectors/get-happychat-userinfo';
+import getSupportLevel from 'calypso/state/happychat/selectors/get-support-level';
 import hasHappychatLocalizedSupport from 'calypso/state/happychat/selectors/has-happychat-localized-support';
 import isHappychatUserEligible from 'calypso/state/happychat/selectors/is-happychat-user-eligible';
 import { openChat as openHappychat } from 'calypso/state/happychat/ui/actions';
@@ -564,6 +565,10 @@ class HelpContact extends Component {
 		const isUserAffectedByLiveChatClosure =
 			[ SUPPORT_FORUM, SUPPORT_UPWORK_TICKET ].indexOf( supportVariation ) === -1;
 
+		const hasAccessToLivechat = ! [ 'free', 'personal', 'starter' ].includes(
+			this.props.supportLevel
+		);
+
 		return (
 			<div>
 				{ activeSupportTicketCount > 0 && (
@@ -585,7 +590,7 @@ class HelpContact extends Component {
 							displayAt="2022-10-29 00:00Z"
 							closesAt="2022-11-05 00:00Z"
 							reopensAt="2022-11-14 07:00Z"
-							enabled={ this.props.isHappychatUserEligible }
+							enabled={ hasAccessToLivechat }
 						/>
 						<ChatHolidayClosureNotice
 							holidayName={ translate( 'Christmas', {
@@ -668,6 +673,7 @@ export default withDispatch( ( dispatch ) => {
 				hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
 				shouldStartHappychatConnection: ! isRequestingSites( state ) && isChatEligible,
 				isRequestingSites: isRequestingSites( state ),
+				supportLevel: getSupportLevel( state ),
 				supportVariation: getInlineHelpSupportVariation( state ),
 				shouldShowHelpCenterToUser: shouldShowHelpCenterToUser( getCurrentUserId( state ) ),
 				happychatEnv: getHappychatEnv( state ),

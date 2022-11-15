@@ -30,6 +30,14 @@ const Container = styled( FoldableCard )`
 		padding: ${ ( props ) => ( props.first ? '0 0 32px' : '32px 0' ) };
 		${ ( props ) => props.showAsAccordion && 'padding: 0' };
 	}
+
+	&:last-child.is-expanded {
+		margin-bottom: 0;
+
+		&.is-expanded .foldable-card__content {
+			padding-bottom: 0;
+		}
+	}
 `;
 
 const Icon = styled.img`
@@ -40,13 +48,14 @@ const Icon = styled.img`
 `;
 const Title = styled.div`
 	color: var( --studio-gray-100 );
-	font-size: 16px;
+	font-size: 14px;
 	${ ( props ) => ! props.showAsAccordion && 'font-weight: 600' };
-	${ ( props ) => ! props.showAsAccordion && 'margin-bottom: 4px;' };
+	${ ( props ) => ! props.showAsAccordion && 'margin-bottom: 8px;' };
 `;
 const Description = styled.div`
 	color: var( --studio-gray-60 );
 	margin-bottom: 12px;
+	font-size: 14px;
 `;
 
 const PluginDetailsSidebarUSP = ( {

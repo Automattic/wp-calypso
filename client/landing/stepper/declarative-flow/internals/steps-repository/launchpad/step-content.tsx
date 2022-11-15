@@ -18,13 +18,14 @@ type StepContentProps = {
 	submit: NavigationControls[ 'submit' ];
 	goNext: NavigationControls[ 'goNext' ];
 	goToStep?: NavigationControls[ 'goToStep' ];
+	flow: string | null;
 };
 
 function sortByRegistrationDate( domainObjectA: ResponseDomain, domainObjectB: ResponseDomain ) {
 	return domainObjectA.registrationDate > domainObjectB.registrationDate ? -1 : 1;
 }
 
-const StepContent = ( { siteSlug, submit, goNext, goToStep }: StepContentProps ) => {
+const StepContent = ( { siteSlug, submit, goNext, goToStep, flow }: StepContentProps ) => {
 	const site = useSite();
 
 	const { data: allDomains = [] } = useGetDomainsQuery( site?.ID ?? null, {
@@ -71,8 +72,9 @@ const StepContent = ( { siteSlug, submit, goNext, goToStep }: StepContentProps )
 					submit={ submit }
 					goNext={ goNext }
 					goToStep={ goToStep }
+					flow={ flow }
 				/>
-				<LaunchpadSitePreview siteSlug={ iFrameURL } />
+				<LaunchpadSitePreview flow={ flow } siteSlug={ iFrameURL } />
 			</div>
 		</div>
 	);

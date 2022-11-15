@@ -16,12 +16,13 @@ import {
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Geochart from '../geochart';
 import DatePicker from '../stats-date-picker';
 import DownloadCsv from '../stats-download-csv';
 import ErrorPanel from '../stats-error';
 import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
-import StatsListPosts from '../stats-list/stats-list-posts';
+import StatsListCard from '../stats-list/stats-list-card';
 import AllTimeNav from './all-time-nav';
 import StatsModuleAvailabilityWarning from './availability-warning';
 import StatsModuleExpand from './expand';
@@ -127,6 +128,7 @@ class StatsModule extends Component {
 			period,
 			translate,
 			useShortLabel,
+			showNewModules,
 		} = this.props;
 
 		const noData = data && this.state.loaded && ! data.length;
@@ -154,16 +156,17 @@ class StatsModule extends Component {
 			'is-refreshing': requesting && ! isLoading,
 		} );
 
-		const shouldHideOldModule = isEnabled( 'stats/new-stats-module-component' ) && path === 'posts';
+		const shouldShowNewModule =
+			showNewModules && isEnabled( 'stats/new-stats-module-component' ) && ! summary;
 
 		return (
 			<>
 				{ siteId && statType && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
-				{ isEnabled( 'stats/new-stats-module-component' ) && ! summary && path === 'posts' && (
-					<StatsListPosts
-						moduleName={ path }
+				{ shouldShowNewModule && (
+					<StatsListCard
+						moduleType={ path }
 						data={ data }
 						useShortLabel={ useShortLabel }
 						title={ this.getModuleLabel() }
@@ -181,29 +184,28 @@ class StatsModule extends Component {
 						titleURL={ this.getHref() }
 						error={ hasError && <ErrorPanel /> }
 						loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
-					>
-						{ this.props.children }
-					</StatsListPosts>
+						heroElement={ path === 'countryviews' && <Geochart query={ query } /> }
+					/>
 				) }
 
-				<div className={ classNames( { 'old-stats-module-hidden': shouldHideOldModule } ) }>
-					{ ! isAllTime && (
-						<SectionHeader
-							className={ headerClass }
-							label={ this.getModuleLabel() }
-							href={ ! summary ? summaryLink : null }
-						>
-							{ summary && (
-								<DownloadCsv
-									statType={ statType }
-									query={ query }
-									path={ path }
-									period={ period }
-								/>
-							) }
-						</SectionHeader>
-					) }
-					{ ! shouldHideOldModule && (
+				{ ! shouldShowNewModule && (
+					<div className={ `stats__module-wrapper stats__module-wrapper--${ path }` }>
+						{ ! isAllTime && (
+							<SectionHeader
+								className={ headerClass }
+								label={ this.getModuleLabel() }
+								href={ ! summary ? summaryLink : null }
+							>
+								{ summary && (
+									<DownloadCsv
+										statType={ statType }
+										query={ query }
+										path={ path }
+										period={ period }
+									/>
+								) }
+							</SectionHeader>
+						) }
 						<Card compact className={ cardClasses }>
 							{ statType === 'statsFileDownloads' && (
 								<StatsModuleAvailabilityWarning
@@ -215,9 +217,11 @@ class StatsModule extends Component {
 							{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
 							{ hasError && <ErrorPanel /> }
 							{ this.props.children }
-							<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
-							<StatsModulePlaceholder isLoading={ isLoading } />
-							<StatsList moduleName={ path } data={ data } useShortLabel={ useShortLabel } />
+							<div className="stats__list-wrapper">
+								<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
+								<StatsModulePlaceholder isLoading={ isLoading } />
+								<StatsList moduleName={ path } data={ data } useShortLabel={ useShortLabel } />
+							</div>
 							{ this.props.showSummaryLink && displaySummaryLink && (
 								<StatsModuleExpand href={ summaryLink } />
 							) }
@@ -236,19 +240,19 @@ class StatsModule extends Component {
 								/>
 							) }
 						</Card>
-					) }
-					{ isAllTime && (
-						<div className="stats-module__footer-actions">
-							<DownloadCsv
-								statType={ statType }
-								query={ query }
-								path={ path }
-								borderless
-								period={ period }
-							/>
-						</div>
-					) }
-				</div>
+						{ isAllTime && (
+							<div className="stats-module__footer-actions">
+								<DownloadCsv
+									statType={ statType }
+									query={ query }
+									path={ path }
+									borderless
+									period={ period }
+								/>
+							</div>
+						) }
+					</div>
+				) }
 			</>
 		);
 	}

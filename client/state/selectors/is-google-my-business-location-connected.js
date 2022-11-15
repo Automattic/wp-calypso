@@ -4,9 +4,9 @@ import 'calypso/state/site-keyrings/init';
 
 export default function isGoogleMyBusinessLocationConnected( state, siteId ) {
 	const siteKeyrings = state.siteKeyrings.items[ siteId ] ?? [];
-	const googleMyBusinessSiteKeyring = siteKeyrings.find(
-		( keyring ) => keyring.service === 'google_my_business'
-	);
+	const googleMyBusinessSiteKeyring =
+		siteKeyrings.find &&
+		siteKeyrings.find( ( keyring ) => keyring.service === 'google_my_business' );
 
 	if ( ! googleMyBusinessSiteKeyring ) {
 		return false;

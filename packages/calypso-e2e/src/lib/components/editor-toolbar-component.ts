@@ -33,6 +33,11 @@ const selectors = {
 	// Details popover
 	detailsButton: `${ panel } button[aria-label="Details"]`,
 
+	// Document Actions dropdown
+	documentActionsDropdown: `${ panel } button[aria-label="Show template details"]`,
+	documentActionsDropdownItem: ( itemSelector: string ) => `.popover-slot ${ itemSelector }`,
+	documentActionsDropdownShowAll: `.popover-slot .edit-site-template-details__show-all-button`,
+
 	// Editor settings
 	settingsButton: ( label = settingsButtonLabel ) =>
 		`${ panel } .edit-post-header__settings .interface-pinned-items button[aria-label="${ label }"]`,
@@ -379,6 +384,22 @@ export class EditorToolbarComponent {
 	 */
 	async saveSiteEditor(): Promise< void > {
 		const locator = this.editor.locator( selectors.saveSiteEditorButton );
+		await locator.click();
+	}
+
+	/**
+	 * Click the document actions icon for the full site editor.
+	 */
+	async clickDocumentActionsIcon(): Promise< void > {
+		const locator = this.editor.locator( selectors.documentActionsDropdown );
+		await locator.click();
+	}
+
+	/**
+	 * Click the document actions icon for the full site editor.
+	 */
+	async clickDocumentActionsDropdownItem( itemName: string ): Promise< void > {
+		const locator = this.editor.locator( selectors.documentActionsDropdownItem( itemName ) );
 		await locator.click();
 	}
 }

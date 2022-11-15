@@ -29,6 +29,7 @@ const props = {
 	submit: () => {},
 	goNext: () => {},
 	goToStep: () => {},
+	flow: 'link-in-bio',
 	/* eslint-enable @typescript-eslint/no-empty-function */
 };
 
@@ -44,9 +45,7 @@ function renderSidebar( props, siteDetails = defaultSiteDetails ) {
 		receiveSite( siteDetails.ID, siteDetails );
 
 		return (
-			<MemoryRouter
-				initialEntries={ [ `/setup/launchpad?flow=link-in-bio&siteSlug=${ siteSlug }` ] }
-			>
+			<MemoryRouter initialEntries={ [ `/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }` ] }>
 				<Sidebar { ...props } />
 			</MemoryRouter>
 		);

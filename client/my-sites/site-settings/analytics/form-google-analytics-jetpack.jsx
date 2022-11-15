@@ -171,7 +171,7 @@ const GoogleAnalyticsJetpackForm = ( {
 							<p>
 								{ translate(
 									'Google Analytics is a free service that complements our {{a}}built-in stats{{/a}} ' +
-										'with different insights into your traffic. WordPress.com stats and Google Analytics ' +
+										'with different insights into your traffic. Jetpack Stats and Google Analytics ' +
 										'use different methods to identify and track activity on your site, so they will ' +
 										'normally show slightly different totals for your visits, views, etc.',
 									{

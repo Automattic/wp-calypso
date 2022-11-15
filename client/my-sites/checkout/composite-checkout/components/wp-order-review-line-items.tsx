@@ -1,5 +1,5 @@
 import { isJetpackPurchasableItem, isPremium } from '@automattic/calypso-products';
-import { FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
+import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import {
 	canItemBeRemovedFromCart,
 	getCouponLineItemFromCart,
@@ -12,11 +12,16 @@ import {
 	getPartnerCoupon,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
-import { useGetProductVariants } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
+import {
+	canVariantBePurchased,
+	getVariantPlanProductSlugs,
+	useGetProductVariants,
+} from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
+import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
@@ -87,6 +92,8 @@ export function WPOrderReviewLineItems( {
 		products: responseCart.products,
 	} );
 
+	const [ initialProducts ] = useState( () => responseCart.products );
+
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ responseCart.products.map( ( product ) => (
@@ -105,6 +112,12 @@ export function WPOrderReviewLineItems( {
 					onRemoveProductCancel={ onRemoveProductCancel }
 					hasPartnerCoupon={ hasPartnerCoupon }
 					isDisabled={ isDisabled }
+					initialVariantTerm={
+						initialProducts.find( ( initialProduct ) => {
+							const variants = getVariantPlanProductSlugs( initialProduct.product_slug );
+							return variants.includes( product.product_slug );
+						} )?.months_per_bill_period
+					}
 				/>
 			) ) }
 			{ couponLineItem && (
@@ -146,6 +159,7 @@ function LineItemWrapper( {
 	onRemoveProductCancel,
 	hasPartnerCoupon,
 	isDisabled,
+	initialVariantTerm,
 }: {
 	product: ResponseCartProduct;
 	siteId?: number | undefined;
@@ -160,23 +174,44 @@ function LineItemWrapper( {
 	onRemoveProductCancel?: ( label: string ) => void;
 	hasPartnerCoupon: boolean;
 	isDisabled: boolean;
+	initialVariantTerm: number | null | undefined;
 } ) {
 	const isRenewal = isWpComProductRenewal( product );
-	const shouldShowVariantSelector =
-		onChangePlanLength &&
-		! isRenewal &&
-		! isPremiumPlanWithDIFMInTheCart( product, responseCart ) &&
-		! hasPartnerCoupon;
-	const [ isEditingTerm, setEditingTerm ] = useState( false );
-	const variants = useGetProductVariants( siteId, product.product_slug );
-	const areThereVariants = variants.length > 1;
-
 	const isWooMobile = isWcMobileApp();
 	const isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
 
+	const shouldShowVariantSelector =
+		onChangePlanLength &&
+		! isWooMobile &&
+		! isRenewal &&
+		! isPremiumPlanWithDIFMInTheCart( product, responseCart ) &&
+		! hasPartnerCoupon;
 	const isJetpack = responseCart.products.some( ( product ) =>
 		isJetpackPurchasableItem( product.product_slug )
 	);
+
+	const sitePlans = useSelector( ( state ) => getPlansBySiteId( state, siteId ) );
+	const activePlan = sitePlans?.data?.find( ( plan ) => plan.currentPlan );
+
+	const variants = useGetProductVariants( siteId, product.product_slug, ( variant ) => {
+		if ( ! canVariantBePurchased( variant, activePlan?.interval, activePlan?.productSlug ) ) {
+			return false;
+		}
+
+		// Only show term variants which are equal to or longer than the variant that
+		// was in the cart when checkout finished loading (not necessarily the
+		// current variant). For WordPress.com only, not Jetpack. See
+		// https://github.com/Automattic/wp-calypso/issues/69633
+		if ( ! initialVariantTerm ) {
+			return true;
+		}
+		if ( isJetpack ) {
+			return true;
+		}
+		return variant.termIntervalInMonths >= initialVariantTerm;
+	} );
+
+	const areThereVariants = variants.length > 1;
 
 	return (
 		<WPOrderReviewListItem key={ product.uuid }>
@@ -192,12 +227,7 @@ function LineItemWrapper( {
 				onRemoveProductClick={ onRemoveProductClick }
 				onRemoveProductCancel={ onRemoveProductCancel }
 			>
-				{ ! isJetpack &&
-					! isWooMobile &&
-					areThereVariants &&
-					shouldShowVariantSelector &&
-					! isEditingTerm && <TermVariantEditButton onClick={ () => setEditingTerm( true ) } /> }
-				{ areThereVariants && shouldShowVariantSelector && ( isJetpack || isEditingTerm ) && (
+				{ areThereVariants && shouldShowVariantSelector && (
 					<ItemVariationPicker
 						selectedItem={ product }
 						onChangeItemVariant={ onChangePlanLength }
@@ -207,27 +237,6 @@ function LineItemWrapper( {
 				) }
 			</LineItem>
 		</WPOrderReviewListItem>
-	);
-}
-
-const EditTerm = styled( Button )< { theme?: Theme } >`
-	display: inline-block;
-	width: auto;
-	font-size: 0.75rem;
-	color: ${ ( props ) => props.theme.colors.textColorLight };
-	margin-top: 4px;
-`;
-
-function TermVariantEditButton( { onClick }: { onClick: () => void } ) {
-	const translate = useTranslate();
-	return (
-		<EditTerm
-			buttonType="text-button"
-			onClick={ onClick }
-			aria-label={ translate( 'Change the billing term for this product' ) }
-		>
-			{ translate( 'Edit' ) }
-		</EditTerm>
 	);
 }
 
