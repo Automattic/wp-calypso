@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { getUrlParts } from '@automattic/calypso-url';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
@@ -47,9 +48,18 @@ import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import statsStrings from './stats-strings';
 
-function updateQueryString( query = {} ) {
+function getPageUrl() {
+	return getUrlParts( page.current );
+}
+
+function updateQueryString( url = null, query = {} ) {
+	let search = window.location.search;
+	if ( url ) {
+		search = url.search;
+	}
+
 	return {
-		...parseQs( window.location.search.substring( 1 ) ),
+		...parseQs( search.substring( 1 ) ),
 		...query,
 	};
 }
@@ -131,8 +141,9 @@ class StatsSite extends Component {
 
 	barClick = ( bar ) => {
 		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
-		const updatedQs = stringifyQs( updateQueryString( { startDate: bar.data.period } ) );
-		page.redirect( `${ window.location.pathname }?${ updatedQs }` );
+		const parsed = getPageUrl();
+		const updatedQs = stringifyQs( updateQueryString( parsed, { startDate: bar.data.period } ) );
+		page.redirect( `${ parsed.pathname }?${ updatedQs }` );
 	};
 
 	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
@@ -141,8 +152,8 @@ class StatsSite extends Component {
 		if ( ! tab.loading && tab.attr !== this.props.chartTab ) {
 			this.props.recordGoogleEvent( 'Stats', 'Clicked ' + titlecase( tab.attr ) + ' Tab' );
 			// switch the tab by navigating to route with updated query string
-			const updatedQs = stringifyQs( updateQueryString( { tab: tab.attr } ) );
-			page.show( `${ window.location.pathname }?${ updatedQs }` );
+			const updatedQs = stringifyQs( updateQueryString( getPageUrl(), { tab: tab.attr } ) );
+			page.show( `${ getPageUrl().pathname }?${ updatedQs }` );
 		}
 	};
 
@@ -173,24 +184,10 @@ class StatsSite extends Component {
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
-		let fileDownloadList;
 
 		const query = memoizedQuery( period, endOf );
 
-		// File downloads are not yet supported in Jetpack Stats
-		if ( ! isJetpack ) {
-			fileDownloadList = (
-				<StatsModule
-					path="filedownloads"
-					moduleStrings={ moduleStrings.filedownloads }
-					period={ this.props.period }
-					query={ query }
-					statType="statsFileDownloads"
-					showSummaryLink
-					useShortLabel={ true }
-				/>
-			);
-		}
+		const showNewModules = config.isEnabled( 'stats/new-stats-module-component' );
 
 		// For period option links
 		const traffic = {
@@ -218,7 +215,13 @@ class StatsSite extends Component {
 						"Learn more about the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
 						{
 							components: {
-								learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
+								learnMoreLink: (
+									<InlineSupportLink
+										supportContext="stats"
+										showIcon={ false }
+										showSupportModal={ !! config( 'is_running_in_jetpack_site' ) }
+									/>
+								),
 							},
 						}
 					) }
@@ -305,69 +308,88 @@ class StatsSite extends Component {
 						</>
 					) }
 
-					<div className="stats__module-list is-events stats__module--unified">
-						<div className="stats__module-column">
-							<StatsModule
-								path="posts"
-								moduleStrings={ moduleStrings.posts }
-								period={ this.props.period }
-								query={ query }
-								statType="statsTopPosts"
-								showSummaryLink
-							/>
-							<StatsModule
-								path="searchterms"
-								moduleStrings={ moduleStrings.search }
-								period={ this.props.period }
-								query={ query }
-								statType="statsSearchTerms"
-								showSummaryLink
-							/>
-							{ fileDownloadList }
-						</div>
-						<div className="stats__module-column">
-							<Countries
-								path="countries"
-								period={ this.props.period }
-								query={ query }
-								summary={ false }
-							/>
-							<StatsModule
-								path="clicks"
-								moduleStrings={ moduleStrings.clicks }
-								period={ this.props.period }
-								query={ query }
-								statType="statsClicks"
-								showSummaryLink
-							/>
-						</div>
-						<div className="stats__module-column">
-							<StatsModule
-								path="referrers"
-								moduleStrings={ moduleStrings.referrers }
-								period={ this.props.period }
-								query={ query }
-								statType="statsReferrers"
-								showSummaryLink
-							/>
-							<StatsModule
-								path="authors"
-								moduleStrings={ moduleStrings.authors }
-								period={ this.props.period }
-								query={ query }
-								statType="statsTopAuthors"
-								className="stats__author-views"
-								showSummaryLink
-							/>
-							<StatsModule
-								path="videoplays"
-								moduleStrings={ moduleStrings.videoplays }
-								period={ this.props.period }
-								query={ query }
-								statType="statsVideoPlays"
-								showSummaryLink
-							/>
-						</div>
+					<div className="stats__module-list stats__module-list--traffic is-events stats__module--unified">
+						<StatsModule
+							path="posts"
+							moduleStrings={ moduleStrings.posts }
+							period={ this.props.period }
+							query={ query }
+							statType="statsTopPosts"
+							showSummaryLink
+							showNewModules={ showNewModules }
+						/>
+						<StatsModule
+							path="referrers"
+							moduleStrings={ moduleStrings.referrers }
+							period={ this.props.period }
+							query={ query }
+							statType="statsReferrers"
+							showSummaryLink
+							showNewModules={ showNewModules }
+						/>
+
+						<Countries
+							path="countries"
+							period={ this.props.period }
+							query={ query }
+							summary={ false }
+							showNewModules={ showNewModules }
+						/>
+
+						<StatsModule
+							path="authors"
+							moduleStrings={ moduleStrings.authors }
+							period={ this.props.period }
+							query={ query }
+							statType="statsTopAuthors"
+							className="stats__author-views"
+							showSummaryLink
+							showNewModules={ showNewModules }
+						/>
+						<StatsModule
+							path="searchterms"
+							moduleStrings={ moduleStrings.search }
+							period={ this.props.period }
+							query={ query }
+							statType="statsSearchTerms"
+							showSummaryLink
+							showNewModules={ showNewModules }
+						/>
+
+						<StatsModule
+							path="clicks"
+							moduleStrings={ moduleStrings.clicks }
+							period={ this.props.period }
+							query={ query }
+							statType="statsClicks"
+							showSummaryLink
+							showNewModules={ showNewModules }
+						/>
+						<StatsModule
+							path="videoplays"
+							moduleStrings={ moduleStrings.videoplays }
+							period={ this.props.period }
+							query={ query }
+							statType="statsVideoPlays"
+							showSummaryLink
+							showNewModules={ showNewModules }
+						/>
+						{
+							// File downloads are not yet supported in Jetpack Stats
+							// TODO: Confirm the above statement.
+							! isJetpack && (
+								<StatsModule
+									path="filedownloads"
+									moduleStrings={ moduleStrings.filedownloads }
+									period={ this.props.period }
+									query={ query }
+									statType="statsFileDownloads"
+									showSummaryLink
+									useShortLabel={ true }
+									showNewModules={ showNewModules }
+								/>
+							)
+						}
 					</div>
 				</div>
 

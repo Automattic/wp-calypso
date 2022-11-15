@@ -2,41 +2,12 @@
 	max-width: calc(100vw - 32px);
 }
 
-.ssh-keys-card,
-.hosting__main-layout-col .card.ssh-keys-card {
-	padding-left: 16px;
-	padding-right: 8px;
-	display: flex;
-	gap: 8px;
-}
-
-.ssh-keys-card__info {
-	display: flex;
-	flex-direction: column;
-	overflow: hidden;
-}
-
-.ssh-keys-card__name {
-	font-weight: bold;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-.ssh-keys-card__fingerprint {
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-.ssh-keys-card__date {
-	display: block;
-	font-style: italic;
-	font-size: 0.875rem;
-	color: var(--color-text-subtle);
-}
-
-.ssh-keys-card__actions {
-	margin-left: auto;
-	flex-shrink: 0;
+@include breakpoint-deprecated( ">1280px" ) {
+	.hosting__main-layout-col {
+		.card.ssh-keys-card {
+			padding-left: 24px;
+		}
+	}
 }
 
 .ssh-keys__form {

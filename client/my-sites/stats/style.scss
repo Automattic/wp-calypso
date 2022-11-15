@@ -1,6 +1,7 @@
-@import "client/my-sites/stats/modernized-tooltip-styles.scss";
-@import "client/my-sites/stats/modernized-chart-tabs-styles.scss";
-@import "client/my-sites/stats/modernized-page-header-styles.scss";
+@import "@wordpress/base-styles/breakpoints";
+@import "calypso/my-sites/stats/modernized-tooltip-styles.scss";
+@import "calypso/my-sites/stats/modernized-chart-tabs-styles.scss";
+@import "calypso/my-sites/stats/modernized-page-header-styles.scss";
 
 // Module container
 @include breakpoint-deprecated( ">960px" ) {
@@ -234,3 +235,5 @@
 		}
 	}
 }
+
+@import "calypso/my-sites/stats/grid-layout.scss";

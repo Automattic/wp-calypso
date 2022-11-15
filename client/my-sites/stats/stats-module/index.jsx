@@ -128,6 +128,7 @@ class StatsModule extends Component {
 			period,
 			translate,
 			useShortLabel,
+			showNewModules,
 		} = this.props;
 
 		const noData = data && this.state.loaded && ! data.length;
@@ -156,13 +157,7 @@ class StatsModule extends Component {
 		} );
 
 		const shouldShowNewModule =
-			isEnabled( 'stats/new-stats-module-component' ) &&
-			! summary &&
-			( path === 'posts' ||
-				path === 'videoplays' ||
-				path === 'filedownloads' ||
-				path === 'searchterms' ||
-				path === 'countryviews' );
+			showNewModules && isEnabled( 'stats/new-stats-module-component' ) && ! summary;
 
 		return (
 			<>
@@ -194,7 +189,7 @@ class StatsModule extends Component {
 				) }
 
 				{ ! shouldShowNewModule && (
-					<div>
+					<div className={ `stats__module-wrapper stats__module-wrapper--${ path }` }>
 						{ ! isAllTime && (
 							<SectionHeader
 								className={ headerClass }
@@ -222,9 +217,11 @@ class StatsModule extends Component {
 							{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
 							{ hasError && <ErrorPanel /> }
 							{ this.props.children }
-							<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
-							<StatsModulePlaceholder isLoading={ isLoading } />
-							<StatsList moduleName={ path } data={ data } useShortLabel={ useShortLabel } />
+							<div className="stats__list-wrapper">
+								<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
+								<StatsModulePlaceholder isLoading={ isLoading } />
+								<StatsList moduleName={ path } data={ data } useShortLabel={ useShortLabel } />
+							</div>
 							{ this.props.showSummaryLink && displaySummaryLink && (
 								<StatsModuleExpand href={ summaryLink } />
 							) }
