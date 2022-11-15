@@ -66,6 +66,11 @@ const CancelDialogButton = styled( Button )( {
 	marginLeft: '10px',
 } );
 
+const UpdateSSHDialogContainer = styled.div( {
+	width: '900px',
+	maxWidth: '100%',
+} );
+
 export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 	const { data, isLoading } = useSSHKeyQuery();
 	const dispatch = useDispatch();
@@ -218,7 +223,7 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 						showCloseIcon={ true }
 						shouldCloseOnEsc={ true }
 					>
-						<div style={ { width: '600px' } }>
+						<UpdateSSHDialogContainer>
 							<UpdateSSHModalTitle>{ __( 'Update SSH Key' ) }</UpdateSSHModalTitle>
 							<UpdateSSHModalDescription>
 								<p>
@@ -237,7 +242,7 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 							>
 								<CancelDialogButton onClick={ closeDialog }>Cancel</CancelDialogButton>
 							</UpdateSSHKeyForm>
-						</div>
+						</UpdateSSHDialogContainer>
 					</Dialog>
 				) }
 				{ ! isLoading && ! hasKeys ? (
