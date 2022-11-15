@@ -18,6 +18,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import type { Step } from '../../types';
+import type { PlanSimplifiedFeature } from 'calypso/../packages/data-stores/src/plans';
 
 import 'calypso/../packages/plans-grid/src/plans-grid/style.scss';
 import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
@@ -181,11 +182,15 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 		};
 
 		const getVideoPressFeaturesList = ( plan: Plans.Plan ) => {
-			const isBusiness = 'business' === plan.periodAgnosticSlug;
+			/* translators: A label displaying the amount of storage space available in the plan, eg: "13GB" or "200GB" */
+			const storageString = plan.storage ? sprintf( __( '%s storage space' ), plan.storage ) : null;
+
+			const filterStorageString = ( feature: PlanSimplifiedFeature ) =>
+				storageString !== feature.name;
+
 			return [
-				plan.storage && {
-					/* translators: A label displaying the amount of storage space available in the plan, eg: "13GB" or "200GB" */
-					name: sprintf( __( '%s storage space' ), plan.storage ),
+				null !== storageString && {
+					name: storageString,
 					requiresAnnuallyBilledPlan: false,
 				},
 				{ name: __( 'High-quality 4K video' ), requiresAnnuallyBilledPlan: false },
@@ -194,12 +199,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 				{ name: __( 'Background videos' ), requiresAnnuallyBilledPlan: false },
 				{ name: __( 'Private videos' ), requiresAnnuallyBilledPlan: false },
 				{ name: __( 'Adaptive video streaming' ), requiresAnnuallyBilledPlan: false },
-				isBusiness && {
-					name: __( 'Business features (incl. SEO)' ),
-					requiresAnnuallyBilledPlan: false,
-				},
-				isBusiness && { name: __( 'Upload themes' ), requiresAnnuallyBilledPlan: false },
-				isBusiness && { name: __( 'Install plugins' ), requiresAnnuallyBilledPlan: false },
+				...( plan.features.filter( filterStorageString ) ?? [] ),
 			].filter( isValueTruthy );
 		};
 
