@@ -81,7 +81,7 @@ const CroppedImage = styled.div`
 	justify-content: center;
 	height: 100%;
 	position: relative;
-	min-width: 150px;
+	min-width: 140px;
 	img {
 		max-height: 100%;
 		max-width: 100%;

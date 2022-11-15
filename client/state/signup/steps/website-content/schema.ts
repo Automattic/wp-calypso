@@ -96,7 +96,7 @@ export const MEDIA_UPLOAD_STATES = {
 export type MediaUploadType = 'IMAGE' | 'VIDEO';
 
 export type Media = {
-	caption: string;
+	caption?: string;
 	url: string;
 	mediaType: MediaUploadType;
 	thumbnailUrl?: string;

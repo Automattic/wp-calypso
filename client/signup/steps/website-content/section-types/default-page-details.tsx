@@ -139,6 +139,7 @@ export function DefaultPageDetails( {
 			<HorizontalGrid>
 				{ page.media.map( ( media, i ) => (
 					<WordpressMediaUpload
+						key={ media.uploadID ?? i }
 						media={ media }
 						mediaIndex={ i }
 						site={ site }

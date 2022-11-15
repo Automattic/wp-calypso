@@ -59,11 +59,17 @@ export function ContactPageDetails( {
 		);
 	};
 
-	const onMediaUploadComplete = ( { title, URL, uploadID, mediaIndex }: MediaUploadData ) => {
+	const onMediaUploadComplete = ( {
+		title,
+		URL,
+		uploadID,
+		mediaIndex,
+		thumbnailUrl,
+	}: MediaUploadData ) => {
 		dispatch(
 			mediaUploaded( {
 				pageId: page.id,
-				media: { url: URL as string, caption: title as string, uploadID },
+				media: { url: URL as string, caption: title as string, uploadID, thumbnailUrl },
 				mediaIndex,
 			} )
 		);
@@ -128,15 +134,13 @@ export function ContactPageDetails( {
 			<HorizontalGrid>
 				{ page.media.map( ( media, i ) => (
 					<WordpressMediaUpload
-						mediaType={ media.mediaType }
+						media={ media }
 						key={ media.uploadID ?? i }
 						mediaIndex={ i }
 						site={ site }
 						onMediaUploadStart={ onMediaUploadStart }
 						onMediaUploadFailed={ onMediaUploadFailed }
 						onMediaUploadComplete={ onMediaUploadComplete }
-						initialCaption={ media.caption }
-						initialUrl={ media.url }
 						onRemoveImage={ onMediaRemoved }
 					/>
 				) ) }
