@@ -1,6 +1,6 @@
 import { getPlans, getPlanClass } from '@automattic/calypso-products';
 import { getCurrencyObject } from '@automattic/format-currency';
-import { NEWSLETTER_FLOW, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
+import { NEWSLETTER_FLOW, LINK_IN_BIO_FLOW, isTailoredSignupFlow } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import PlanPill from 'calypso/components/plans/plan-pill';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
+import { isMarketplaceFlow } from '../plugins/flows';
 
 const PLANS_LIST = getPlans();
 
@@ -31,7 +32,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 	}
 
 	renderPlansHeaderNoTabs() {
-		const { planType, popular, selectedPlan, title } = this.props;
+		const { planType, popular, selectedPlan, title, flow } = this.props;
 
 		const headerClasses = classNames(
 			'plan-features-comparison__header',
@@ -42,7 +43,12 @@ export class PlanFeaturesComparisonHeader extends Component {
 			<span>
 				<div>
 					{ popular && ! selectedPlan && (
-						<PlanPill isInSignup={ true }>{ this.getPlanPillText() }</PlanPill>
+						<PlanPill
+							isInSignup={ isTailoredSignupFlow( flow ) || 'onboarding' === flow }
+							isInMarketplace={ isMarketplaceFlow( flow ) }
+						>
+							{ this.getPlanPillText() }
+						</PlanPill>
 					) }
 				</div>
 				<header className={ headerClasses }>
