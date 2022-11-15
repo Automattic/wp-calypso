@@ -76,7 +76,7 @@ export const UpdateSSHKeyForm = ( {
 			} }
 		>
 			<FormFieldset>
-				<FormLabel>{ __( 'Old SSH Public Key' ) }</FormLabel>
+				<FormLabel>{ __( 'Current SSH Public Key' ) }</FormLabel>
 				<SSHKeyCard.Root>
 					<SSHKeyCard.Details>
 						<SSHKeyCard.KeyName>
@@ -86,7 +86,7 @@ export const UpdateSSHKeyForm = ( {
 					</SSHKeyCard.Details>
 				</SSHKeyCard.Root>
 				<NewSSHFormFieldContainer>
-					<FormLabel htmlFor={ PUBLIC_SSH_KEY_INPUT_ID }>{ __( 'SSH Public Key' ) }</FormLabel>
+					<FormLabel htmlFor={ PUBLIC_SSH_KEY_INPUT_ID }>{ __( 'New SSH Public Key' ) }</FormLabel>
 					<TextareaAutosize
 						required
 						id={ PUBLIC_SSH_KEY_INPUT_ID }

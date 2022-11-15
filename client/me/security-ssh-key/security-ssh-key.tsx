@@ -122,7 +122,7 @@ export const SecuritySSHKey = () => {
 		},
 		onSuccess: () => {
 			dispatch( recordTracksEvent( 'calypso_security_ssh_key_update_success' ) );
-			dispatch( successNotice( __( 'SSH key updated to account.' ), noticeOptions ) );
+			dispatch( successNotice( __( 'SSH key updated for account.' ), noticeOptions ) );
 			setSSHKeyNameToUpdate( '' );
 			setOldSSHFingerprint( '' );
 			setShowDialog( false );
@@ -211,10 +211,9 @@ export const SecuritySSHKey = () => {
 						<div style={ { width: '600px' } }>
 							<UpdateSSHModalTitle>{ __( 'Update SSH Key' ) }</UpdateSSHModalTitle>
 							<UpdateSSHModalDescription>
-								{ __( 'Update current SSH key for your Wordpress.com account.' ) }
 								<p>
 									{ __(
-										"Updating an SSH key won't detach it from the sites that particular key is being used."
+										'Replace your current SSH key with a new SSH key to use the new SSH key with all attached sites.'
 									) }
 								</p>
 							</UpdateSSHModalDescription>
