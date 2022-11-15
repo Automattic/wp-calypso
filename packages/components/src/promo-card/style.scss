@@ -35,6 +35,11 @@
 	// Right-hand side.
 	// Contains the QR code or App Store button.
 	margin: auto 0;
+
+	.jetpack-qr-code {
+		height: auto;
+		max-width: 114px;
+	}
 }
 
 .promo-card__icons {
