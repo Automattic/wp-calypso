@@ -9,7 +9,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { createRef, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import {
 	SHOW_ALL_SLUG,
 	SHOW_GENERATED_DESIGNS_SLUG,
@@ -75,54 +75,67 @@ const TrackDesignView: React.FC< TrackDesignViewProps > = ( {
 	design,
 	isPremiumThemeAvailable,
 } ) => {
-	const ref = createRef< HTMLDivElement >();
 	const observerRef = useRef< IntersectionObserver >();
-	const viewedRef = useRef< boolean >( false );
+	const [ viewedCategories, setViewedCategory ] = useState< string[] >( [] );
 
-	useEffect( () => {
-		// If we've already viewed the current element, or we've set up the observer, we can skip processing
-		if ( viewedRef.current || observerRef.current || ! ref.current ) {
-			return;
-		}
-
-		const intersectionHandler = ( entries: IntersectionObserverEntry[] ) => {
-			// Only fire once per element
-			if ( viewedRef.current || ! ref.current ) {
+	// Use a callback as the ref so we get called for both mount and unmount events
+	// We don't get that if we use useRef() and useEffect() together.
+	const wrapperDivRefCallback = useCallback(
+		( wrapperDiv ) => {
+			// If we've already viewed the design in this category,
+			// we can skip setting up the handler
+			if ( category && viewedCategories.includes( category ) ) {
 				return;
 			}
 
-			const [ entry ] = entries;
-			if ( ! entry.isIntersecting ) {
+			// If we don't have a wrapper div, we aren't mounted and should remove the observer
+			if ( ! wrapperDiv ) {
+				observerRef.current?.disconnect?.();
 				return;
 			}
 
-			recordTracksEvent( 'calypso_design_picker_design_display', {
-				category,
-				design_type: design.design_type,
-				is_premium: design.is_premium,
-				is_premium_available: isPremiumThemeAvailable,
-				slug: design.slug,
+			const intersectionHandler = ( entries: IntersectionObserverEntry[] ) => {
+				// Only fire once per category
+				if ( ! wrapperDiv || ( category && viewedCategories.includes( category ) ) ) {
+					return;
+				}
+
+				const [ entry ] = entries;
+				if ( ! entry.isIntersecting ) {
+					return;
+				}
+
+				const trackingCategory = category === SHOW_ALL_SLUG ? undefined : category;
+
+				recordTracksEvent( 'calypso_design_picker_design_display', {
+					category: trackingCategory,
+					design_type: design.design_type,
+					is_premium: design.is_premium,
+					is_premium_available: isPremiumThemeAvailable,
+					slug: design.slug,
+				} );
+
+				if ( category ) {
+					// Mark the current and category as viewed
+					setViewedCategory( ( existingCategories ) => [ ...existingCategories, category ] );
+				}
+			};
+
+			observerRef.current = new IntersectionObserver( intersectionHandler, {
+				// Only fire the event when 60% of the element becomes visible
+				threshold: [ 0.6 ],
 			} );
 
-			// Mark the current element as displayed
-			viewedRef.current = true;
-		};
+			observerRef.current.observe( wrapperDiv );
+		},
+		[ category, design, isPremiumThemeAvailable, observerRef, setViewedCategory, viewedCategories ]
+	);
 
-		observerRef.current = new IntersectionObserver( intersectionHandler ); /*, {
-			// Only fire the event when 80% of the element becomes visible
-			//threshold: [ 0.8 ],
-		} );
-		*/
-
-		observerRef.current.observe( ref.current );
-
-		// When the effect is dismounted, stop observing
-		return () => {
-			observerRef.current?.disconnect?.();
-		};
-	}, [ observerRef, ref, viewedRef ] );
-
-	return <div ref={ ref }>{ children }</div>;
+	return (
+		<div className="track-design-view" ref={ wrapperDivRefCallback }>
+			{ children }
+		</div>
+	);
 };
 
 interface DesignButtonProps {
@@ -234,12 +247,12 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 };
 
 interface DesignButtonContainerProps extends DesignButtonProps {
-	categorization?: string | null;
+	category?: string | null;
 	onSelect: ( design: Design ) => void;
 }
 
 const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
-	categorization,
+	category,
 	onSelect,
 	...props
 } ) => {
@@ -255,7 +268,7 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 
 	return (
 		<TrackDesignView
-			category={ categorization }
+			category={ category }
 			design={ props.design }
 			isPremiumThemeAvailable={ props.isPremiumThemeAvailable }
 		>
@@ -325,7 +338,7 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 } ) => (
 	<div className="design-picker__grid">
 		{ designs.map( ( design ) => (
-			<TrackDesignView design={ design }>
+			<TrackDesignView category="__generated" design={ design }>
 				<GeneratedDesignButtonContainer
 					key={ `generated-design__${ design.slug }` }
 					design={ design }
@@ -392,6 +405,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 			<div className="design-picker__grid">
 				{ filteredStaticDesigns.map( ( design ) => (
 					<DesignButtonContainer
+						category={ categorization?.selection }
 						key={ design.slug }
 						design={ design }
 						locale={ locale }
