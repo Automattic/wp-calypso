@@ -149,7 +149,7 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 					<ul>
 						<li>
 							{ translate(
-								'Go to Upgrades → Domains and click {{link}}Add a Domain{{/link}} to register your plan free domain',
+								'Go to Upgrades → Domains and click {{link}}Add a Domain{{/link}} to register your plan’s free domain',
 								{
 									components: {
 										link: <Button href={ `/domains/add/${ site.slug }` } isLink />,
