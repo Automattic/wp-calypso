@@ -4,6 +4,8 @@
 $search-border-radius: 4px;
 
 .search-themes-card {
+	background: var(--color-surface);
+
 	.search {
 		border: 1px solid var(--color-neutral-10);
 		border-radius: $search-border-radius;

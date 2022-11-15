@@ -90,6 +90,9 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch } ) => {
 
 	const onKeyDown = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
 		suggestionsRef.current?.handleKeyEvent( event );
+		if ( event.key === 'Enter' ) {
+			searchRef.current?.blur();
+		}
 	};
 
 	return (
@@ -105,7 +108,7 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch } ) => {
 						initialValue={ searchInput }
 						value={ searchInput }
 						ref={ searchRef }
-						placeholder={ translate( 'Search all themes…' ) }
+						placeholder={ translate( 'Search themes…' ) }
 						analyticsGroup="Themes"
 						searchMode={ SEARCH_MODE_ON_ENTER }
 						applySearch={ isApplySearch }
