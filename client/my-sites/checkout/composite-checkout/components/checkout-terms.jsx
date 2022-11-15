@@ -18,6 +18,7 @@ import TitanTermsOfService from './titan-terms-of-service';
 class CheckoutTerms extends Component {
 	render() {
 		const { cart } = this.props;
+
 		return (
 			<Fragment>
 				<div className="checkout__terms" id="checkout-terms">
@@ -37,7 +38,7 @@ class CheckoutTerms extends Component {
 				<TitanTermsOfService cart={ cart } />
 				<ThirdPartyPluginsTermsOfService cart={ cart } />
 				<EbanxTermsOfService />
-				<InternationalFeeNotice />
+				<InternationalFeeNotice cart={ cart } />
 				<AdditionalTermsOfServiceInCart />
 			</Fragment>
 		);
