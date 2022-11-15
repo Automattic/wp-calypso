@@ -47,6 +47,14 @@ const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout
 								( currentTask.isCompleted && currentTask.actionDisableOnComplete )
 							}
 						>
+							{ currentTask.isCompleted && (
+								<Gridicon
+									aria-label={ translate( 'Task complete' ) }
+									className="site-setup-list__complete-icon"
+									icon="checkmark"
+									size={ 18 }
+								/>
+							) }
 							{ currentTask.actionText }
 						</Button>
 					) }
