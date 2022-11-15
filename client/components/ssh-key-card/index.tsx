@@ -7,7 +7,10 @@ export const Root = styled( CompactCard )( {
 } );
 
 export const Details = styled.div( {
+	display: 'flex',
+	flexDirection: 'column',
 	marginRight: '1rem',
+	overflow: 'hidden',
 } );
 
 export const KeyName = styled.span( {
@@ -18,8 +21,6 @@ export const KeyName = styled.span( {
 } );
 
 export const PublicKey = styled.code( {
-	flex: 1,
-	position: 'relative',
 	overflow: 'hidden',
 	textOverflow: 'ellipsis',
 	whiteSpace: 'nowrap',

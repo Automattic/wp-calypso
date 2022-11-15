@@ -45,6 +45,19 @@
 				"units": [ "px" ]
 			}
 		],
-		"unit-allowed-list": [ "%", "deg", "em", "fr", "ms", "px", "rem", "s", "vh", "vw", "svh" ]
+		"unit-allowed-list": [
+			"%",
+			"deg",
+			"em",
+			"fr",
+			"ms",
+			"px",
+			"rem",
+			"s",
+			"vh",
+			"vw",
+			"svh",
+			"dvh"
+		]
 	}
 }

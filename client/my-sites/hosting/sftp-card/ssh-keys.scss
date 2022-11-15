@@ -2,13 +2,6 @@
 	max-width: calc(100vw - 32px);
 }
 
-.hosting__main-layout-col .card.ssh-keys-card {
-	padding-left: 16px;
-	padding-right: 8px;
-	display: flex;
-	gap: 8px;
-}
-
 .ssh-keys__form {
 	display: flex;
 	flex-direction: column;

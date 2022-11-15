@@ -30,6 +30,7 @@ const initialTestState = {
 					{ caption: '', url: '' },
 					{ caption: '', url: '' },
 					{ caption: '', url: '' },
+					{ caption: '', url: '' },
 				],
 			},
 			{
@@ -40,6 +41,7 @@ const initialTestState = {
 					{ caption: '', url: '' },
 					{ caption: '', url: '' },
 					{ caption: '', url: '' },
+					{ caption: '', url: '' },
 				],
 			},
 			{
@@ -47,6 +49,7 @@ const initialTestState = {
 				title: 'Contact Info',
 				content: '',
 				images: [
+					{ caption: '', url: '' },
 					{ caption: '', url: '' },
 					{ caption: '', url: '' },
 					{ caption: '', url: '' },
@@ -105,6 +108,7 @@ describe( 'reducer', () => {
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 						],
 					},
 					{
@@ -115,6 +119,7 @@ describe( 'reducer', () => {
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 						],
 					},
 					{
@@ -122,6 +127,7 @@ describe( 'reducer', () => {
 						title: 'Page 3',
 						content: '',
 						images: [
+							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
@@ -176,6 +182,7 @@ describe( 'reducer', () => {
 							{ caption: 'sample.jpg', url: 'sample.jpg' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 						],
 					},
 					{
@@ -186,6 +193,7 @@ describe( 'reducer', () => {
 							{ caption: 'sample.jpg', url: 'sample.jpg' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 						],
 					},
 					{
@@ -194,6 +202,7 @@ describe( 'reducer', () => {
 						content: 'Some existing Page 3 content',
 						images: [
 							{ caption: 'sample.jpg', url: 'sample.jpg' },
+							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 						],
@@ -236,6 +245,7 @@ describe( 'reducer', () => {
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 						],
 					},
 					{
@@ -246,6 +256,7 @@ describe( 'reducer', () => {
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 						],
 					},
 					{
@@ -253,6 +264,7 @@ describe( 'reducer', () => {
 						title: 'Page 4',
 						content: '',
 						images: [
+							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
@@ -292,6 +304,7 @@ describe( 'reducer', () => {
 								url: 'www.test.com/test.test.jpg',
 							},
 							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 						],
 					},
 					{
@@ -302,6 +315,7 @@ describe( 'reducer', () => {
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 						],
 					},
 					{
@@ -309,6 +323,7 @@ describe( 'reducer', () => {
 						title: 'Contact Info',
 						content: '',
 						images: [
+							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
@@ -384,6 +399,7 @@ describe( 'reducer', () => {
 								url: 'www.testwo.com/testwo.testwo.jpg',
 							},
 							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 						],
 					},
 					...initialTestState.websiteContent.pages.slice( 1 ),
@@ -421,6 +437,7 @@ describe( 'reducer', () => {
 								caption: '',
 								url: '',
 							},
+							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 						],
 					},
@@ -516,6 +533,7 @@ describe( 'reducer', () => {
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 						],
 					},
 					{
@@ -526,6 +544,7 @@ describe( 'reducer', () => {
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 						],
 					},
 					{
@@ -533,6 +552,7 @@ describe( 'reducer', () => {
 						title: 'Contact Info',
 						content: '',
 						images: [
+							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },

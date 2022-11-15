@@ -56,8 +56,21 @@ import {
 	getRecommendedThemes,
 	receiveRecommendedThemes,
 	updateThemes,
+	addExternalManagedThemeToCart,
 } from '../actions';
 import { themesUpdated } from '../actions/theme-update';
+
+jest.mock( '@automattic/calypso-config', () => {
+	const mock = () => 'development';
+	mock.isEnabled = jest.fn( ( flag ) => {
+		const allowedFlags = [ 'themes/third-party-premium' ];
+		if ( allowedFlags.includes( flag ) ) {
+			return true;
+		}
+		return false;
+	} );
+	return mock;
+} );
 
 expect.extend( {
 	toMatchFunction( received, fn ) {
@@ -1333,6 +1346,78 @@ describe( 'actions', () => {
 				payload: themes,
 				filter,
 			} );
+		} );
+	} );
+
+	describe( 'addExternalManagedThemeToCart', () => {
+		const siteId = 123456;
+		const siteSlug = 'testsite389140927432.wordpress.com';
+		// Externally managed theme
+		const twentyfifteenTheme = {
+			id: 'twentyfifteen',
+			stylesheet: 'premium/twentyfifteen',
+			theme_type: 'managed-external',
+		};
+
+		const themes = {
+			queries: {
+				wpcom: new ThemeQueryManager( {
+					items: {
+						[ twentyfifteenTheme.id ]: twentyfifteenTheme,
+					},
+				} ),
+			},
+		};
+
+		const sites = {
+			items: {
+				[ siteId ]: {
+					ID: siteId,
+					URL: `https://${ siteSlug }`,
+				},
+			},
+		};
+
+		test( 'Should throw error if theme is not externally managed', async () => {
+			const getState = () => ( {
+				themes: {
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: {
+								[ twentyfifteenTheme.id ]: {
+									...twentyfifteenTheme,
+									theme_type: 'manged-internal',
+								},
+							},
+						} ),
+					},
+				},
+			} );
+
+			await expect(
+				addExternalManagedThemeToCart( twentyfifteenTheme.id, siteId )( spy, getState )
+			).rejects.toThrowError( 'Theme is not externally managed' );
+		} );
+
+		test( 'Should throw error if theme is already purchased', async () => {
+			const getState = () => ( {
+				themes,
+				purchases: {
+					data: [
+						{
+							ID: 1234567,
+							blog_id: siteId,
+							meta: twentyfifteenTheme.id,
+							product_type: 'theme',
+						},
+					],
+				},
+				sites,
+			} );
+
+			await expect(
+				addExternalManagedThemeToCart( twentyfifteenTheme.id, siteId )( spy, getState )
+			).rejects.toThrowError( 'Theme is already purchased' );
 		} );
 	} );
 } );
