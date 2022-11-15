@@ -85,6 +85,7 @@ const SenseiSetupStep: Step = ( { navigation } ) => {
 							/>
 						) ) }
 					</div>
+					<div className={ `sensei-theme-small ${ checked }-small` }></div>
 					<Button disabled={ ! siteTitle } onClick={ handleSubmit }>
 						{ __( 'Continue' ) }
 					</Button>
