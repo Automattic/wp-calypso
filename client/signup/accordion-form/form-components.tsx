@@ -245,7 +245,4 @@ export const HorizontalGrid = styled.div`
 	justify-content: space-between;
 	margin-bottom: 20px;
 	flex-wrap: wrap;
-	@media ( min-width: 1100px ) {
-		flex-wrap: wrap;
-	}
 `;
