@@ -40,37 +40,92 @@ export default function SiteAddLicenseNotification() {
 		dispatch( setPurchasedLicense( license.selectedProducts.length ? license : undefined ) );
 	};
 
-	function getMessageArgs( licenses: Array< ProductInfo > ) {
+	function getTranslatedLicenseAssignmentMessage(
+		licenses: Array< ProductInfo >,
+		type: 'fulfilled' | 'rejected'
+	) {
 		const licenseNames = licenses.map( ( license ) => license.name );
 		const initialLicenseList = licenseNames.slice( 0, -1 );
 		const lastLicenseItem = licenseNames.slice( -1 )[ 0 ];
-		const commaCharacter = translate( ',' );
+
+		const commaCharacter = translate( ',', {
+			comment:
+				'The character used to separate items in a list, such as the comma in "Backup, Scan, and Boost".',
+		} );
 		const conjunction =
 			licenses.length > 2
-				? translate( `%(commaCharacter)s and`, { args: { commaCharacter } } )
-				: translate( ' and' );
-		return {
-			args: {
-				selectedSite,
-				...( licenses.length > 1
-					? {
-							initialLicenseList: initialLicenseList.join( `${ commaCharacter } ` ),
-							lastLicenseItem: lastLicenseItem,
-							conjunction,
-					  }
-					: { licenseItem: lastLicenseItem } ),
-			},
-			...( licenses.length > 1 && {
-				comment: `%(initialLicenseList)s is a list of n-1 license names
-						seperated by a translated comma character, %(lastLicenseItem)
-						is the nth license name, and %(conjunction) is a translated "and"
-						text with or without a serial comma based on the licenses count`,
-			} ),
-			components: {
-				strong: <strong />,
-				em: <em />,
-			},
+				? translate( `%(commaCharacter)s and`, {
+						args: {
+							commaCharacter,
+							comment:
+								'The final separator of a delimited list, such as ", and" in "Backup, Scan, and Boost."',
+						},
+				  } )
+				: translate( ' and', {
+						args: {
+							comment:
+								'The way that two words are separated, such as " and" in "Backup and Scan". Note that the space here is important due to the way the final string is constructed.',
+						},
+				  } );
+		const multipleLicensesArgs = {
+			selectedSite,
+			initialLicenseList: initialLicenseList.join( `${ commaCharacter } ` ),
+			lastLicenseItem: lastLicenseItem,
+			conjunction,
 		};
+		const singleLicenseArgs = {
+			selectedSite,
+			licenseItem: lastLicenseItem,
+		};
+		const components = {
+			strong: <strong />,
+			em: <em />,
+		};
+
+		if ( type === 'fulfilled' ) {
+			// We are not using the same translate method for plural form since we have different arguments.
+			return licenses.length > 1
+				? translate(
+						'{{strong}}%(initialLicenseList)s%(conjunction)s %(lastLicenseItem)s{{/strong}} ' +
+							'were succesfully assigned to {{em}}%(selectedSite)s{{/em}}. ' +
+							'Please allow a few minutes for your features to activate.',
+						{
+							args: multipleLicensesArgs,
+							comment:
+								'%(initialLicenseList)s is a list of n-1 license names seperated by a translated comma character, %(lastLicenseItem) is the nth license name, and %(conjunction) is a translated "and" text with or without a serial comma based on the licenses count. An example is "Backup, Scan, and Boost" where the initialLicenseList is "Backup, Scan", the conjunction is ", and", and the lastLicenseItem is "Boost". An alternative example is "Backup and Scan", where initialLicenseList is "Backup", conjunction is " and", and lastLienseItem is "Boost".',
+							components,
+						}
+				  )
+				: translate(
+						'{{strong}}%(licenseItem)s{{/strong}} was succesfully assigned to ' +
+							'{{em}}%(selectedSite)s{{/em}}. Please allow a few minutes ' +
+							'for your features to activate.',
+						{
+							args: singleLicenseArgs,
+							components,
+						}
+				  );
+		}
+		// We are not using the same translate method for plural form since we have different arguments.
+		return licenses.length > 1
+			? translate(
+					'An error occurred and your {{strong}}%(initialLicenseList)s%(conjunction)s %(lastLicenseItem)s{{/strong}} ' +
+						"weren't assigned to {{em}}%(selectedSite)s{{/em}}.",
+					{
+						args: multipleLicensesArgs,
+						comment:
+							'%(initialLicenseList)s is a list of n-1 license names seperated by a translated comma character, %(lastLicenseItem) is the nth license name, and %(conjunction) is a translated "and" text with or without a serial comma based on the licenses count. An example is "Backup, Scan, and Boost" where the initialLicenseList is "Backup, Scan", the conjunction is ", and", and the lastLicenseItem is "Boost". An alternative example is "Backup and Scan", where initialLicenseList is "Backup", conjunction is " and", and lastLienseItem is "Boost".',
+						components,
+					}
+			  )
+			: translate(
+					'An error occurred and your {{strong}}%(licenseItem)s{{/strong}} ' +
+						"wasn't assigned to {{em}}%(selectedSite)s{{/em}}.",
+					{
+						args: singleLicenseArgs,
+						components,
+					}
+			  );
 	}
 
 	return (
@@ -78,42 +133,14 @@ export default function SiteAddLicenseNotification() {
 			{ assignedLicenses.length > 0 && (
 				<div className="site-add-license-notification__license-banner">
 					<Notice onDismissClick={ () => clearLicenses( 'fulfilled' ) } status="is-success">
-						{
-							// We are not using the same translate method for plural form since we have different arguments.
-							assignedLicenses.length > 1
-								? translate(
-										'{{strong}}%(initialLicenseList)s%(conjunction)s %(lastLicenseItem)s{{/strong}} ' +
-											'were succesfully assigned to {{em}}%(selectedSite)s{{/em}}. ' +
-											'Please allow a few minutes for your features to activate.',
-										getMessageArgs( assignedLicenses )
-								  )
-								: translate(
-										'{{strong}}%(licenseItem)s{{/strong}} was succesfully assigned to ' +
-											'{{em}}%(selectedSite)s{{/em}}. Please allow a few minutes ' +
-											'for your features to activate.',
-										getMessageArgs( assignedLicenses )
-								  )
-						}
+						{ getTranslatedLicenseAssignmentMessage( assignedLicenses, 'fulfilled' ) }
 					</Notice>
 				</div>
 			) }
 			{ rejectedLicenses.length > 0 && (
 				<div className="site-add-license-notification__license-banner">
 					<Notice onDismissClick={ () => clearLicenses( 'rejected' ) } status="is-error">
-						{
-							// We are not using the same translate method for plural form since we have different arguments.
-							rejectedLicenses.length > 1
-								? translate(
-										'An error occurred and your {{strong}}%(initialLicenseList)s%(conjunction)s %(lastLicenseItem)s{{/strong}} ' +
-											"weren't assigned to {{em}}%(selectedSite)s{{/em}}.",
-										getMessageArgs( rejectedLicenses )
-								  )
-								: translate(
-										'An error occurred and your {{strong}}%(licenseItem)s{{/strong}} ' +
-											"wasn't assigned to {{em}}%(selectedSite)s{{/em}}.",
-										getMessageArgs( rejectedLicenses )
-								  )
-						}
+						{ getTranslatedLicenseAssignmentMessage( rejectedLicenses, 'rejected' ) }
 					</Notice>
 				</div>
 			) }
