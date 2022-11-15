@@ -23,7 +23,7 @@ const LaunchpadSitePreview = ( {
 
 	if ( isVideoPressFlow ) {
 		const windowWidth = window.innerWidth;
-		defaultDevice = windowWidth >= 1430 ? DEVICE_TYPE.COMPUTER : DEVICE_TYPE.PHONE;
+		defaultDevice = windowWidth >= 1000 ? DEVICE_TYPE.COMPUTER : DEVICE_TYPE.PHONE;
 	}
 
 	function formatPreviewUrl() {
