@@ -125,7 +125,7 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 									'Read more about how to improve your site’s speed and performance {{link}}here{{/link}}.',
 									{
 										components: {
-											link: <Button href="https://wordpress.com/support/site-speed/" />,
+											link: <Button href="https://wordpress.com/support/site-speed/" isLink />,
 										},
 									}
 								) }
@@ -149,7 +149,7 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 					<ul>
 						<li>
 							{ translate(
-								'Go to Upgrades → Domains and click {{link}}Add a Domain{{/link}} to register your plans free domain',
+								'Go to Upgrades → Domains and click {{link}}Add a Domain{{/link}} to register your plan free domain',
 								{
 									components: {
 										link: <Button href={ `/domains/add/${ site.slug }` } isLink />,
