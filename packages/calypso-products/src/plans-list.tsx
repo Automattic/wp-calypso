@@ -1168,7 +1168,13 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 		),
 	getLightboxDescription: () =>
 		translate(
-			'Easy-to-use, comprehensive WordPress site security including backups, malware scanning, and spam protection. Includes VaultPress Backup, Jetpack Scan, and Akismet Anti-spam.'
+			'Easy-to-use, comprehensive WordPress site security including backups, malware scanning, and spam protection.{{br/}}Includes VaultPress Backup, Jetpack Scan, and Akismet Anti-spam.',
+			{
+				components: {
+					br: <br />,
+				},
+				comment: '{{br/}} represents a line break',
+			}
 		),
 	getPlanCardFeatures: () => [
 		FEATURE_JETPACK_PRODUCT_BACKUP,
