@@ -49,13 +49,13 @@ const noticeOptions = {
 const sshKeySaveFailureNoticeId = 'ssh-key-save-failure';
 const sshKeyUpdateFailureNoticeId = 'ssh-key-update-failure';
 
-const UpdateSSHModalTitle = styled.h1`
-	margin: 0 0 16px;
-`;
+const UpdateSSHModalTitle = styled.h1( {
+	margin: '0 0 16px',
+} );
 
-const UpdateSSHModalDescription = styled.div`
-	margin: 0 0 16px;
-`;
+const UpdateSSHModalDescription = styled.div( {
+	margin: '0 0 16px',
+} );
 
 export const SecuritySSHKey = () => {
 	const { data, isLoading } = useSSHKeyQuery();
