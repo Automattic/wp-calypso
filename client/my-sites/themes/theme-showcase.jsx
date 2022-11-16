@@ -133,6 +133,7 @@ class ThemeShowcase extends Component {
 				Object.entries( subjects ).map( ( [ key, filter ] ) => [ key, { key, text: filter.name } ] )
 			)
 		);
+		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
 
 		return {
 			RECOMMENDED: {
@@ -152,10 +153,10 @@ class ThemeShowcase extends Component {
 			},
 			ALL: {
 				key: 'all',
-				text: translate( 'All Themes' ),
+				text: isNewSearchAndFilter ? translate( 'All' ) : translate( 'All Themes' ),
 				order: 4,
 			},
-			...subjectFilters,
+			...( isNewSearchAndFilter && subjectFilters ),
 		};
 	};
 
@@ -277,6 +278,9 @@ class ThemeShowcase extends Component {
 					( this.props.isJetpackSite && ! this.props.isAtomicSite ) ||
 					( this.props.isAtomicSite && this.props.siteCanInstallThemes )
 				);
+			// There are not enough themes in this filter.
+			case this.tabFilters.newsletter?.key:
+				return false;
 		}
 
 		return true;
@@ -446,40 +450,43 @@ class ThemeShowcase extends Component {
 							select={ this.onTierSelect }
 						/>
 					) }
-					{ isLoggedIn && (
-						<SectionNav className="themes__section-nav" selectedText={ this.state.tabFilter.text }>
-							<NavTabs>
-								{ Object.values( this.tabFilters )
-									.sort( ( a, b ) => a.order - b.order )
-									.map(
-										( tabFilter ) =>
-											this.shouldShowTab( tabFilter.key ) && (
-												<NavItem
-													key={ tabFilter.key }
-													onClick={ () => this.onFilterClick( tabFilter ) }
-													selected={ tabFilter.key === this.state.tabFilter.key }
-													count={ this.notificationCount( tabFilter.key ) }
-												>
-													{ tabFilter.text }
-												</NavItem>
-											)
-									) }
-							</NavTabs>
-						</SectionNav>
-					) }
-					{ isLoggedIn && (
-						<ThemesToolbarGroup
-							items={ Object.values( this.tabFilters ).filter( ( tabFilter ) =>
-								this.shouldShowTab( tabFilter.key )
-							) }
-							selectedKey={ this.state.tabFilter.key }
-							onSelect={ ( key ) =>
-								this.onFilterClick(
-									Object.values( this.tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
-								)
-							}
-						/>
-					) }
+					{ isLoggedIn &&
+						( isNewSearchAndFilter ? (
+							<ThemesToolbarGroup
+								items={ Object.values( this.tabFilters ).filter( ( tabFilter ) =>
+									this.shouldShowTab( tabFilter.key )
+								) }
+								selectedKey={ this.state.tabFilter.key }
+								onSelect={ ( key ) =>
+									this.onFilterClick(
+										Object.values( this.tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
+									)
+								}
+							/>
+						) : (
+							<SectionNav
+								className="themes__section-nav"
+								selectedText={ this.state.tabFilter.text }
+							>
+								<NavTabs>
+									{ Object.values( this.tabFilters )
+										.sort( ( a, b ) => a.order - b.order )
+										.map(
+											( tabFilter ) =>
+												this.shouldShowTab( tabFilter.key ) && (
+													<NavItem
+														key={ tabFilter.key }
+														onClick={ () => this.onFilterClick( tabFilter ) }
+														selected={ tabFilter.key === this.state.tabFilter.key }
+														count={ this.notificationCount( tabFilter.key ) }
+													>
+														{ tabFilter.text }
+													</NavItem>
+												)
+										) }
+								</NavTabs>
+							</SectionNav>
+						) ) }
 					{ this.renderBanner() }
 					{ this.renderThemes( themeProps ) }
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }

@@ -24,7 +24,6 @@ const ThemeToolbarGroup: React.FC< ThemesToolbarGroupProps > = ( {
 		<ResponsiveToolbarGroup
 			className="themes-toolbar-group"
 			initialActiveIndex={ activeIndex }
-			rootMargin="0px 32px"
 			onClick={ ( index: number ) => onSelect( items[ index ]?.key ) }
 		>
 			{ items.map( ( item ) => (

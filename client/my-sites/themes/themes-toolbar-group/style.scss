@@ -1,11 +1,18 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.themes-toolbar-group.responsive-toolbar-group__swipe,
 .themes-toolbar-group.responsive-toolbar-group__dropdown {
+	&.responsive-toolbar-group__dropdown {
+		padding: 24px 0;
+	}
+
+	.responsive-toolbar-group__swipe-list,
 	.responsive-toolbar-group__grouped-list {
 		display: flex;
 		gap: 4px;
 		justify-content: flex-start;
+		padding: 0;
 
 		> div {
 			&:first-of-type {
@@ -18,13 +25,8 @@
 		}
 	}
 
-	.responsive-toolbar-group__button-item {
-		border-radius: 4px;
-		font-size: 1rem;
-		line-height: 24px;
-	}
-
 	.components-toolbar {
+		background-color: transparent;
 		min-height: 32px;
 
 		.components-button {
@@ -41,7 +43,7 @@
 			}
 
 			&:focus-visible::before {
-				box-shadow: 0 0 0 2px var(--color-primary-light);
+				box-shadow: inset 0 0 0 2px var(--color-primary-light);
 			}
 
 			&.is-pressed {
@@ -54,7 +56,7 @@
 		}
 	}
 
-	.components-popover__content {
+	.components-dropdown__content {
 		border-radius: 4px;
 
 		.components-menu-group > div {
