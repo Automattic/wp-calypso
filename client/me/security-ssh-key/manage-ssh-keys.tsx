@@ -36,6 +36,8 @@ const SSHKey = ( {
 		onUpdate( sshKey.name, sshKey.sha256 );
 	};
 
+	const areButtonsDisabled = !! keyBeingDeleted || !! keyBeingUpdated;
+
 	return (
 		<SSHKeyCard.Root>
 			<SSHKeyCard.Details>
@@ -59,7 +61,7 @@ const SSHKey = ( {
 			<SSHKeyCard.Button
 				primary={ true }
 				scary={ false }
-				disabled={ !! keyBeingDeleted || !! keyBeingUpdated }
+				disabled={ areButtonsDisabled }
 				onClick={ handleUpdateClick }
 				style={ { marginInlineStart: 'auto' } }
 			>
@@ -68,7 +70,7 @@ const SSHKey = ( {
 			<SSHKeyCard.Button
 				style={ { marginInlineStart: '10px' } }
 				busy={ keyBeingDeleted === sshKey.name }
-				disabled={ !! keyBeingDeleted || !! keyBeingUpdated }
+				disabled={ areButtonsDisabled }
 				onClick={ handleDeleteClick }
 			>
 				{ __( 'Remove SSH key' ) }
