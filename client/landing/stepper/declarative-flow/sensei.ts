@@ -8,6 +8,7 @@ import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { AssertConditionState, Flow } from './internals/types';
 import type { StepPath } from './internals/steps-repository';
+import './internals/sensei.scss';
 
 export const sensei: Flow = {
 	name: SENSEI_FLOW,
