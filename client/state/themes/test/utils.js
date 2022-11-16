@@ -171,7 +171,7 @@ describe( 'utils', () => {
 		test( 'should exclude default values', () => {
 			const query = getNormalizedThemesQuery( {
 				page: 4,
-				number: 20,
+				number: 1000,
 			} );
 
 			expect( query ).toEqual( {
