@@ -1,5 +1,4 @@
 import { select } from '@wordpress/data';
-import { filter, values } from 'lodash';
 import { STORE_KEY } from './constants';
 import { ProductsListItem } from './types';
 import type { State } from './reducer';
@@ -43,6 +42,7 @@ export const getProductsByBillingSlug = (
 	if ( ! products ) {
 		return undefined;
 	}
-
-	return filter( values( products ), { billing_product_slug: billingProductSlug } );
+	return Object.values( products ).filter(
+		( product ) => product.billing_product_slug === billingProductSlug
+	);
 };
