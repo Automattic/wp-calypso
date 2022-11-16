@@ -11,9 +11,7 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import { JetpackMobilePromoCard } from 'calypso/../packages/components/src';
 import rocketImage from 'calypso/assets/images/customer-home/illustration--rocket.svg';
-import wordpressSeoIllustration from 'calypso/assets/images/illustrations/wordpress-seo-premium.svg';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
-import PromoCardBlock from 'calypso/blocks/promo-card-block';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import Banner from 'calypso/components/banner';
@@ -408,20 +406,6 @@ class StatsSite extends Component {
 				</div>
 
 				<JetpackMobilePromoCard />
-				<div className="stats-content-promo">
-					<PromoCardBlock
-						productSlug="wordpress-seo-premium"
-						impressionEvent="calypso_stats_wordpress_seo_premium_banner_view"
-						clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
-						headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
-						contentText={ translate(
-							'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
-						) }
-						ctaText={ translate( 'Learn more' ) }
-						image={ wordpressSeoIllustration }
-						href={ `/plugins/wordpress-seo-premium/${ slug }` }
-					/>
-				</div>
 				<JetpackColophon />
 			</div>
 		);
