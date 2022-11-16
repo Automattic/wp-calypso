@@ -9,6 +9,7 @@ import { parse as parseQs, stringify as stringifyQs } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
+import { JetpackMobilePromoCard } from 'calypso/../packages/components/src';
 import rocketImage from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import wordpressSeoIllustration from 'calypso/assets/images/illustrations/wordpress-seo-premium.svg';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
@@ -406,6 +407,7 @@ class StatsSite extends Component {
 					</div>
 				</div>
 
+				<JetpackMobilePromoCard />
 				<div className="stats-content-promo">
 					<PromoCardBlock
 						productSlug="wordpress-seo-premium"
