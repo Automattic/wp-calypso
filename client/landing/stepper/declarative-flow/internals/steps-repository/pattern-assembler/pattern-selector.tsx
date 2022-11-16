@@ -1,16 +1,15 @@
-import { BlocksRenderer } from '@automattic/blocks-renderer';
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
+import { useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
-import { useSite } from '../../../../hooks/use-site';
-import useQueryPatterns from './use-query-patterns';
-import { handleKeyboard } from './utils';
+import AsyncLoad from 'calypso/components/async-load';
+import { ONBOARD_STORE } from '../../../../stores';
 import type { Pattern } from './types';
 
 type PatternSelectorProps = {
-	stylesheet?: string;
-	patternIds: number[];
+	patterns: Pattern[];
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 	onBack: () => void;
 	title: string | null;
@@ -19,8 +18,7 @@ type PatternSelectorProps = {
 };
 
 const PatternSelector = ( {
-	stylesheet = '',
-	patternIds,
+	patterns,
 	onSelect,
 	onBack,
 	title,
@@ -29,8 +27,15 @@ const PatternSelector = ( {
 }: PatternSelectorProps ) => {
 	const patternSelectorRef = useRef< HTMLDivElement >( null );
 	const translate = useTranslate();
-	const site = useSite();
-	const { data: patterns } = useQueryPatterns( site?.ID, stylesheet, patternIds );
+	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
+	const patternListProps = {
+		stylesheet,
+		patterns,
+		selectedPattern,
+		show,
+		onSelect,
+	};
 
 	useEffect( () => {
 		if ( show ) {
@@ -38,10 +43,6 @@ const PatternSelector = ( {
 			patternSelectorRef.current?.removeAttribute( 'tabindex' );
 		}
 	}, [ show ] );
-
-	if ( ! patterns ) {
-		return null;
-	}
 
 	return (
 		<div
@@ -60,30 +61,11 @@ const PatternSelector = ( {
 				<h1>{ title }</h1>
 			</div>
 			<div className="pattern-selector__body">
-				<div className="pattern-selector__block-list" role="listbox">
-					{ patterns.map( ( pattern: Pattern ) => (
-						<div
-							key={ pattern.ID }
-							aria-label={ pattern.title }
-							tabIndex={ show ? 0 : -1 }
-							role="option"
-							title={ pattern.title }
-							aria-selected={ pattern.ID === selectedPattern?.ID }
-							className={ classnames( 'pattern-selector__block-list-item', {
-								'pattern-selector__block-list-item--selected-pattern':
-									pattern.ID === selectedPattern?.ID,
-							} ) }
-							onClick={ () => onSelect( pattern ) }
-							onKeyUp={ handleKeyboard( () => onSelect( pattern ) ) }
-						>
-							<BlocksRenderer
-								html={ pattern.html }
-								styles={ pattern.styles }
-								viewportWidth={ 1060 }
-							/>
-						</div>
-					) ) }
-				</div>
+				{ isEnabled( 'pattern-assembler/client-side-render' ) ? (
+					<AsyncLoad require="./pattern-list-renderer" { ...patternListProps } />
+				) : (
+					<AsyncLoad require="./pattern-list" { ...patternListProps } />
+				) }
 			</div>
 		</div>
 	);

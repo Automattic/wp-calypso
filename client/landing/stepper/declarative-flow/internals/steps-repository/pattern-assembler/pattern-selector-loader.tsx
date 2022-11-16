@@ -4,7 +4,6 @@ import { headerPatterns, footerPatterns, sectionPatterns } from './patterns-data
 import type { Pattern } from './types';
 
 type PatternSelectorLoaderProps = {
-	stylesheet?: string;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 	onBack: () => void;
 	showPatternSelectorType: string | null;
@@ -12,7 +11,6 @@ type PatternSelectorLoaderProps = {
 };
 
 const PatternSelectorLoader = ( {
-	stylesheet,
 	showPatternSelectorType,
 	onSelect,
 	onBack,
@@ -23,27 +21,24 @@ const PatternSelectorLoader = ( {
 	return (
 		<>
 			<PatternSelector
-				stylesheet={ stylesheet }
 				show={ showPatternSelectorType === 'header' }
-				patternIds={ headerPatterns.map( ( pattern ) => pattern.id ) }
+				patterns={ headerPatterns }
 				onSelect={ onSelect }
 				onBack={ onBack }
 				title={ translate( 'Add a header' ) }
 				selectedPattern={ selectedPattern }
 			/>
 			<PatternSelector
-				stylesheet={ stylesheet }
 				show={ showPatternSelectorType === 'footer' }
-				patternIds={ footerPatterns.map( ( pattern ) => pattern.id ) }
+				patterns={ footerPatterns }
 				onSelect={ onSelect }
 				onBack={ onBack }
 				title={ translate( 'Add a footer' ) }
 				selectedPattern={ selectedPattern }
 			/>
 			<PatternSelector
-				stylesheet={ stylesheet }
 				show={ showPatternSelectorType === 'section' }
-				patternIds={ sectionPatterns.map( ( pattern ) => pattern.id ) }
+				patterns={ sectionPatterns }
 				onSelect={ onSelect }
 				onBack={ onBack }
 				title={ translate( 'Add sections' ) }

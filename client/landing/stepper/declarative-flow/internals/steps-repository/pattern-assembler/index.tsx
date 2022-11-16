@@ -1,4 +1,5 @@
 import { BlocksRendererProvider } from '@automattic/blocks-renderer';
+import { isEnabled } from '@automattic/calypso-config';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -70,13 +71,13 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const trackEventContinue = () => {
 		const patterns = getPatterns();
 		recordTracksEvent( 'calypso_signup_pattern_assembler_continue_click', {
-			pattern_ids: patterns.map( ( { ID } ) => ID ).join( ',' ),
+			pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
 			pattern_count: patterns.length,
 		} );
-		patterns.forEach( ( { ID, name } ) => {
+		patterns.forEach( ( { id, name } ) => {
 			recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_final_select', {
-				pattern_id: ID,
+				pattern_id: id,
 				pattern_name: name,
 			} );
 		} );
@@ -87,9 +88,11 @@ const PatternAssembler: Step = ( { navigation } ) => {
 			...selectedDesign,
 			recipe: {
 				...selectedDesign?.recipe,
-				header_pattern_ids: header ? [ encodePatternId( header.ID ) ] : undefined,
-				pattern_ids: sections.filter( Boolean ).map( ( pattern ) => encodePatternId( pattern.ID ) ),
-				footer_pattern_ids: footer ? [ encodePatternId( footer.ID ) ] : undefined,
+				header_pattern_ids: header ? [ encodePatternId( header.id ) ] : undefined,
+				pattern_ids: sections
+					.filter( Boolean )
+					.map( ( pattern: Pattern ) => encodePatternId( pattern.id ) ),
+				footer_pattern_ids: footer ? [ encodePatternId( footer.id ) ] : undefined,
 			} as DesignRecipe,
 		} as Design );
 
@@ -117,7 +120,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 				...( sections as Pattern[] ),
 				{
 					...pattern,
-					key: `${ incrementIndexRef.current }-${ pattern.ID }`,
+					key: `${ incrementIndexRef.current }-${ pattern.id }`,
 				},
 			] );
 			setScrollToSelectorByPosition( sections.length );
@@ -163,7 +166,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 			if ( showPatternSelectorType ) {
 				trackEventPatternSelect( {
 					patternType: showPatternSelectorType,
-					patternId: pattern.ID,
+					patternId: pattern.id,
 				} );
 			}
 		}
@@ -194,117 +197,116 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		return null;
 	};
 
-	const stylesheet = selectedDesign?.recipe?.stylesheet;
+	const stepContent = (
+		<div className="pattern-assembler__wrapper">
+			<div className="pattern-assembler__sidebar">
+				<PatternSelectorLoader
+					showPatternSelectorType={ showPatternSelectorType }
+					onSelect={ onSelect }
+					onBack={ () => setShowPatternSelectorType( null ) }
+					selectedPattern={ getSelectedPattern() }
+				/>
+				{ ! showPatternSelectorType && (
+					<PatternLayout
+						header={ header }
+						sections={ sections }
+						footer={ footer }
+						onAddHeader={ () => {
+							trackEventPatternAdd( 'header' );
+							setShowPatternSelectorType( 'header' );
+						} }
+						onReplaceHeader={ () => {
+							setShowPatternSelectorType( 'header' );
+							setScrollToSelector( null );
+						} }
+						onDeleteHeader={ () => {
+							setHeader( null );
+							setScrollToSelector( null );
+						} }
+						onAddSection={ () => {
+							trackEventPatternAdd( 'section' );
+							setSectionPosition( null );
+							setShowPatternSelectorType( 'section' );
+							setScrollToSelectorByPosition( sections.length );
+						} }
+						onReplaceSection={ ( position: number ) => {
+							setSectionPosition( position );
+							setShowPatternSelectorType( 'section' );
+						} }
+						onDeleteSection={ ( position: number ) => {
+							deleteSection( position );
+							setScrollToSelectorByPosition( position - 1 );
+						} }
+						onMoveUpSection={ ( position: number ) => {
+							moveUpSection( position );
+							setScrollToSelectorByPosition( position - 1 );
+						} }
+						onMoveDownSection={ ( position: number ) => {
+							moveDownSection( position );
+							setScrollToSelectorByPosition( position + 1 );
+						} }
+						onAddFooter={ () => {
+							trackEventPatternAdd( 'footer' );
+							setShowPatternSelectorType( 'footer' );
+							setScrollToSelectorByPosition( sections.length );
+						} }
+						onReplaceFooter={ () => {
+							setShowPatternSelectorType( 'footer' );
+							setScrollToSelectorByPosition( sections.length );
+						} }
+						onDeleteFooter={ () => {
+							setFooter( null );
+							setScrollToSelector( null );
+						} }
+						onContinueClick={ () => {
+							if ( siteSlugOrId ) {
+								const design = getDesign();
+								const stylesheet = design.recipe!.stylesheet!;
+								const theme = stylesheet?.split( '/' )[ 1 ] || design.theme;
 
-	const stepContent = selectedDesign && (
-		<BlocksRendererProvider siteId={ site?.ID } stylesheet={ stylesheet }>
-			<div className="pattern-assembler__wrapper">
-				<div className="pattern-assembler__sidebar">
-					<PatternSelectorLoader
-						stylesheet={ stylesheet }
-						showPatternSelectorType={ showPatternSelectorType }
-						onSelect={ onSelect }
-						onBack={ () => setShowPatternSelectorType( null ) }
-						selectedPattern={ getSelectedPattern() }
-					/>
-					{ ! showPatternSelectorType && (
-						<PatternLayout
-							header={ header }
-							sections={ sections }
-							footer={ footer }
-							onAddHeader={ () => {
-								trackEventPatternAdd( 'header' );
-								setShowPatternSelectorType( 'header' );
-							} }
-							onReplaceHeader={ () => {
-								setShowPatternSelectorType( 'header' );
-								setScrollToSelector( null );
-							} }
-							onDeleteHeader={ () => {
-								setHeader( null );
-								setScrollToSelector( null );
-							} }
-							onAddSection={ () => {
-								trackEventPatternAdd( 'section' );
-								setSectionPosition( null );
-								setShowPatternSelectorType( 'section' );
-								setScrollToSelectorByPosition( sections.length );
-							} }
-							onReplaceSection={ ( position: number ) => {
-								setSectionPosition( position );
-								setShowPatternSelectorType( 'section' );
-							} }
-							onDeleteSection={ ( position: number ) => {
-								deleteSection( position );
-								setScrollToSelectorByPosition( position - 1 );
-							} }
-							onMoveUpSection={ ( position: number ) => {
-								moveUpSection( position );
-								setScrollToSelectorByPosition( position - 1 );
-							} }
-							onMoveDownSection={ ( position: number ) => {
-								moveDownSection( position );
-								setScrollToSelectorByPosition( position + 1 );
-							} }
-							onAddFooter={ () => {
-								trackEventPatternAdd( 'footer' );
-								setShowPatternSelectorType( 'footer' );
-								setScrollToSelectorByPosition( sections.length );
-							} }
-							onReplaceFooter={ () => {
-								setShowPatternSelectorType( 'footer' );
-								setScrollToSelectorByPosition( sections.length );
-							} }
-							onDeleteFooter={ () => {
-								setFooter( null );
-								setScrollToSelector( null );
-							} }
-							onContinueClick={ () => {
-								if ( siteSlugOrId ) {
-									const design = getDesign();
-									const stylesheet = design.recipe!.stylesheet!;
-									const theme = stylesheet?.split( '/' )[ 1 ] || design.theme;
-
-									setPendingAction( () =>
-										// We have to switch theme first. Otherwise, the unique suffix might append to
-										// the slug of newly created Home template if the current activated theme has
-										// modified Home template.
-										setThemeOnSite( siteSlugOrId, theme, undefined, false )
-											.then( () =>
-												createCustomTemplate(
-													siteSlugOrId,
+								setPendingAction( () =>
+									// We have to switch theme first. Otherwise, the unique suffix might append to
+									// the slug of newly created Home template if the current activated theme has
+									// modified Home template.
+									setThemeOnSite( siteSlugOrId, theme, undefined, false )
+										.then( () =>
+											createCustomTemplate(
+												siteSlugOrId,
+												stylesheet,
+												'home',
+												translate( 'Home' ),
+												createCustomHomeTemplateContent(
 													stylesheet,
-													'home',
-													translate( 'Home' ),
-													createCustomHomeTemplateContent(
-														stylesheet,
-														!! header,
-														!! footer,
-														!! sections.length
-													)
+													!! header,
+													!! footer,
+													!! sections.length
 												)
 											)
-											.then( () => runThemeSetupOnSite( siteSlugOrId, design ) )
-											.then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
-									);
+										)
+										.then( () => runThemeSetupOnSite( siteSlugOrId, design ) )
+										.then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
+								);
 
-									trackEventContinue();
+								trackEventContinue();
 
-									submit?.();
-								}
-							} }
-						/>
-					) }
-				</div>
-				<PatternAssemblerPreview
-					header={ header }
-					sections={ sections }
-					footer={ footer }
-					scrollToSelector={ scrollToSelector }
-				/>
+								submit?.();
+							}
+						} }
+					/>
+				) }
 			</div>
-		</BlocksRendererProvider>
+			<PatternAssemblerPreview
+				header={ header }
+				sections={ sections }
+				footer={ footer }
+				scrollToSelector={ scrollToSelector }
+			/>
+		</div>
 	);
+
+	if ( ! selectedDesign ) {
+		return null;
+	}
 
 	return (
 		<StepContainer
@@ -315,7 +317,18 @@ const PatternAssembler: Step = ( { navigation } ) => {
 			isHorizontalLayout={ false }
 			isFullLayout={ true }
 			hideSkip={ true }
-			stepContent={ stepContent }
+			stepContent={
+				isEnabled( 'pattern-assembler/client-side-render' ) ? (
+					<BlocksRendererProvider
+						siteId={ site?.ID }
+						stylesheet={ selectedDesign?.recipe?.stylesheet }
+					>
+						{ stepContent }
+					</BlocksRendererProvider>
+				) : (
+					stepContent
+				)
+			}
 			recordTracksEvent={ recordTracksEvent }
 			stepSectionName={ showPatternSelectorType ? 'pattern-selector' : undefined }
 		/>

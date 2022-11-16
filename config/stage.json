@@ -87,6 +87,7 @@
 		"onboarding/import-redirect-to-themes": true,
 		"p2/p2-plus": true,
 		"page/export": true,
+		"pattern-assembler/client-side-render": false,
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
