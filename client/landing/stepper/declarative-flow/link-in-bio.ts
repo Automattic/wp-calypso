@@ -24,8 +24,12 @@ export const linkInBio: Flow = {
 		return [ 'intro', 'linkInBioSetup', 'patterns', 'processing', 'launchpad' ] as StepPath[];
 	},
 
-	useSubmit( _currentStep, navigate ) {
+	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
+		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
+		setStepProgress( flowProgress );
+		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const locale = useLocale();
 		const queryParams = useQuery();
@@ -33,7 +37,7 @@ export const linkInBio: Flow = {
 		const tld = queryParams.get( 'tld' );
 
 		// for the standard Link in Bio flow
-		function submit( providedDependencies: ProvidedDependencies = {} ) {
+		const submitDefault = ( providedDependencies: ProvidedDependencies = {} ) => {
 			const logInUrl =
 				locale && locale !== 'en'
 					? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=/setup/${ flowName }/patterns`
@@ -63,10 +67,10 @@ export const linkInBio: Flow = {
 				}
 			}
 			return providedDependencies;
-		}
+		};
 
 		// when there is a designated tld, the domain step will come first, hence altering the flow accordingly
-		function submitDomainFirst( providedDependencies: ProvidedDependencies = {} ) {
+		const submitDomainFirst = ( providedDependencies: ProvidedDependencies = {} ) => {
 			const logInUrl =
 				locale && locale !== 'en'
 					? `/start/link-in-bio-tld/${ locale }?variationName=${ flowName }&pageTitle=Link%20in%20Bio&tld=${ tld }`
@@ -98,22 +102,7 @@ export const linkInBio: Flow = {
 				}
 			}
 			return providedDependencies;
-		}
-
-		if ( tld ) {
-			return submitDomainFirst;
-		}
-
-		return submit;
-	},
-
-	useStepNavigation( _currentStep, navigate ) {
-		const flowName = this.name;
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
-		const siteSlug = useSiteSlug();
-
-		setStepProgress( flowProgress );
+		};
 
 		// trigger guides on step movement, we don't care about failures or response
 		wpcom.req.post(
@@ -127,7 +116,7 @@ export const linkInBio: Flow = {
 			}
 		);
 
-		const submit = this.useSubmit( _currentStep, navigate );
+		const submit = tld ? submitDomainFirst : submitDefault;
 
 		const goBack = () => {
 			return;

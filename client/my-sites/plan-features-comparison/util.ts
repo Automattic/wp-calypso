@@ -77,7 +77,7 @@ export const getPlanDescriptionForMobile = ( {
 		return plan.getNewsletterDescription();
 	}
 
-	if ( isLinkInBioFlow( LINK_IN_BIO_FLOW ) && plan.getLinkInBioDescription ) {
+	if ( isLinkInBioFlow( flowName ) && plan.getLinkInBioDescription ) {
 		return plan.getLinkInBioDescription();
 	}
 
