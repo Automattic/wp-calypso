@@ -12,12 +12,18 @@ export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunc
 	switch ( flow ) {
 		case NEWSLETTER_FLOW:
 			translatedStrings.flowName = translate( 'Newsletter' );
-			translatedStrings.title = translate( 'Your Newsletter is ready!' );
+			translatedStrings.title = translate( "You're all set to start publishing!" );
+			translatedStrings.subtitle = translate(
+				'Why not welcome your readers with your first post?'
+			);
 			break;
 		case LINK_IN_BIO_FLOW:
 			translatedStrings.flowName = translate( 'Link in Bio' );
 			translatedStrings.title = translate( 'Your Link in Bio is almost ready!' );
-			translatedStrings.launchTitle = translate( 'Your Link in Bio is ready to launch!' );
+			translatedStrings.launchTitle = translate( "You're ready to link and launch!" );
+			translatedStrings.subtitle = translate(
+				"All that's left is to add some links and launch your site."
+			);
 			break;
 		case VIDEOPRESS_FLOW:
 			translatedStrings.flowName = translate( 'Video' );
