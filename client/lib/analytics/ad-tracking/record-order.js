@@ -1,6 +1,6 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
 import { costToUSD, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
-import { mayWeTrackByTracker, mayWeTrackByBucket, Bucket } from '../tracker-buckets';
+import { mayWeTrackByTracker } from '../tracker-buckets';
 import { cartToGaPurchase } from '../utils/cart-to-ga-purchase';
 import { splitWpcomJetpackCartInfo } from '../utils/split-wpcom-jetpack-cart-info';
 import {
@@ -33,11 +33,6 @@ import './setup';
  */
 export async function recordOrder( cart, orderId ) {
 	await refreshCountryCodeCookieGdpr();
-
-	if ( ! mayWeTrackByBucket( Bucket.ADVERTISING ) ) {
-		debug( 'recordOrder: [Skipping] ad tracking is not allowed' );
-		return;
-	}
 
 	await loadTrackingScripts();
 

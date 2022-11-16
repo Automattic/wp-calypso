@@ -1,5 +1,5 @@
 import { refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
-import { mayWeTrackByTracker, mayWeTrackByBucket, Bucket } from '../tracker-buckets';
+import { mayWeTrackByTracker } from '../tracker-buckets';
 import { debug, TRACKING_IDS } from './constants';
 import { recordParamsInFloodlightGtag } from './floodlight';
 import { loadTrackingScripts } from './load-tracking-scripts';
@@ -9,11 +9,6 @@ import './setup';
 
 export async function adTrackRegistration() {
 	await refreshCountryCodeCookieGdpr();
-
-	if ( ! mayWeTrackByBucket( Bucket.ADVERTISING ) ) {
-		debug( 'adTrackRegistration: [Skipping] ad tracking is not allowed' );
-		return;
-	}
 
 	await loadTrackingScripts();
 
