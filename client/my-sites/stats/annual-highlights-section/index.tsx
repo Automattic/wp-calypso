@@ -48,10 +48,10 @@ export default function AnnualHighlightsSection( { siteId }: { siteId: number } 
 		return {
 			// TODO: Change `hasYearsData ? 0 : null` to `null` once insights API has been enhanced to
 			//       return `years` data even for inactive years. This is a temporary & hacky fix.
-			comments: currentYearData?.total_comments ?? hasYearsData ? 0 : null,
-			likes: currentYearData?.total_likes ?? hasYearsData ? 0 : null,
-			posts: currentYearData?.total_posts ?? hasYearsData ? 0 : null,
-			words: currentYearData?.total_words ?? hasYearsData ? 0 : null,
+			comments: currentYearData?.total_comments ?? ( hasYearsData ? 0 : null ),
+			likes: currentYearData?.total_likes ?? ( hasYearsData ? 0 : null ),
+			posts: currentYearData?.total_posts ?? ( hasYearsData ? 0 : null ),
+			words: currentYearData?.total_words ?? ( hasYearsData ? 0 : null ),
 			followers: followers?.total_wpcom ?? null,
 		};
 	}, [ year, followers, insights ] );
