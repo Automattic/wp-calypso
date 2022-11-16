@@ -802,6 +802,7 @@ const mapStateToProps = (
 		openSidebar: getQueryArg( window.location.href, 'openSidebar' ),
 		showDraftPostModal,
 		...pressThisData,
+		answer_prompt: getQueryArg( window.location.href, 'answer_prompt' ),
 	} );
 
 	// needed for loading the editor in SU sessions
