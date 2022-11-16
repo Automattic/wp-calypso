@@ -337,6 +337,7 @@ class CancelPurchaseForm extends Component {
 						type={ upsell }
 						site={ site }
 						onDecline={ isLastStep ? this.onSubmit : this.clickNext }
+						cancellationReason={ getReasonLabelByValue( this.state.questionOneText ) }
 					/>
 				);
 			}

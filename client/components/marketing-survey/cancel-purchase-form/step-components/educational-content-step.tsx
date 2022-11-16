@@ -66,6 +66,7 @@ type StepProps = {
 	type: UpsellType;
 	site: SiteDetails;
 	onDecline: () => void;
+	cancellationReason: string;
 };
 
 export default function EducationalCotnentStep( { type, site, ...props }: StepProps ) {
@@ -235,7 +236,9 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 											<Button
 												onClick={ () => {
 													page( `/domains/manage/${ site.slug }` );
-													helpCenter.startHelpCenterChat( site, 'THIS IS A TEST by a11n.' );
+													helpCenter.startHelpCenterChat( site, 'Could you help me?', {
+														cancellationReason: props.cancellationReason,
+													} );
 												} }
 												isLink
 											/>
