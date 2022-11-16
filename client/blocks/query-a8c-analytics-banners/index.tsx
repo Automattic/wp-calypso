@@ -34,19 +34,21 @@ const a8cAnalyticsConfig: A8CAnalyticsConfig = {
 			'https://automattic.com/privacy/',
 			'https://automattic.com/cookies/'
 		),
+		v2EssentialOptionHeading: __( 'Required' ),
 		v2EssentialOptionText: __(
-			'<strong>Required:</strong> These cookies are essential for our websites and services to perform basic functions and are necessary for us to operate certain features. These include those required to allow registered users to authenticate and perform account-related functions, store preferences set by users such as account name, language, and location, and ensure our services are operating properly.'
+			'These cookies are essential for our websites and services to perform basic functions and are necessary for us to operate certain features. These include those required to allow registered users to authenticate and perform account-related functions, store preferences set by users such as account name, language, and location, and ensure our services are operating properly.'
 		),
+		v2AnalyticsOptionHeading: __( 'Analytics' ),
 		v2AnalyticsOptionText: sprintf(
 			// translators: %s is a URL like <https://automattic.com/cookies/>
 			__(
-				'<strong>Analytics:</strong> These cookies allow us to optimize performance by collecting information on how users interact with our websites, including which pages are visited most, as well as other analytical data. We use these details to improve how our websites function and to understand how users interact with them. To learn more about how to control your cookie preferences, go to <a target="_blank" href="%1$s">%2$s</a>.'
+				'These cookies allow us to optimize performance by collecting information on how users interact with our websites, including which pages are visited most, as well as other analytical data. We use these details to improve how our websites function and to understand how users interact with them. To learn more about how to control your cookie preferences, go to <a target="_blank" href="%1$s">%1$s</a>.'
 			),
-			'https://automattic.com/cookies/',
 			'https://automattic.com/cookies/'
 		),
+		v2AdvertisingOptionHeading: __( 'Advertising' ),
 		v2AdvertisingOptionText: __(
-			'<strong>Advertising:</strong> These cookies are set by us and our advertising partners to provide you with relevant content and to understand that content’s effectiveness. They may be used to collect information about your online activities over time and across different websites to predict your preferences and to display more relevant advertisements to you. These cookies also allow a profile to be built about you and your interests, and enable personalized ads to be shown to you based on your profile.'
+			'These cookies are set by us and our advertising partners to provide you with relevant content and to understand that content’s effectiveness. They may be used to collect information about your online activities over time and across different websites to predict your preferences and to display more relevant advertisements to you. These cookies also allow a profile to be built about you and your interests, and enable personalized ads to be shown to you based on your profile.'
 		),
 		v1ButtonText: __( 'Got It!' ),
 		v2CustomizeButtonText: __( 'Customize' ),
