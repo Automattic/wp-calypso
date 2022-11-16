@@ -158,7 +158,6 @@ class Signup extends Component {
 		resumingStep: undefined,
 		previousFlowName: null,
 		signupSiteName: null,
-		transitFromMidpoint: null,
 	};
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
@@ -606,10 +605,9 @@ class Signup extends Component {
 		const midPoint = middleDestination ? middleDestination[ this.props.stepName ] : null;
 
 		if ( midPoint ) {
-			this.setState( {
-				transitFromMidpoint: midPoint( this.props.signupDependencies ),
-			} );
-
+			// save the resuming point and then navigate away.
+			this.setState( { resumingStep: nextStepName } );
+			page( midPoint( this.props.signupDependencies ) );
 			return;
 		}
 
@@ -793,11 +791,6 @@ class Signup extends Component {
 			( this.getPositionInFlow() > 0 && this.props.progress.length === 0 ) ||
 			this.state.resumingStep
 		) {
-			return null;
-		}
-
-		if ( this.state.transitFromMidpoint ) {
-			page( this.state.transitFromMidpoint );
 			return null;
 		}
 
