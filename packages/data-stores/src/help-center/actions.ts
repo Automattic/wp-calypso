@@ -1,5 +1,5 @@
 import { SiteDetails } from '../site';
-import { Location } from './types';
+import { ExtraFields, Location } from './types';
 
 export const setShowHelpCenter = ( show: boolean ) =>
 	( {
@@ -74,10 +74,21 @@ export const setUserDeclaredSite = ( site: SiteDetails | undefined ) =>
 		site,
 	} as const );
 
-export const startHelpCenterChat = function* ( site: SiteDetails, message: string ) {
+export const setExtraFields = ( extraFields: Record< string, string > ) =>
+	( {
+		type: 'HELP_CENTER_SET_EXTRA_FIELDS',
+		extraFields,
+	} as const );
+
+export const startHelpCenterChat = function* (
+	site: SiteDetails,
+	message: string,
+	extraFields: ExtraFields = {}
+) {
 	yield setRouterState( [ { pathname: '/inline-chat' } ], 0 );
 	yield setSite( site );
 	yield setMessage( message );
+	yield setExtraFields( extraFields );
 	yield setShowHelpCenter( true );
 };
 
@@ -100,4 +111,5 @@ export type HelpCenterAction = ReturnType<
 	| typeof setIframe
 	| typeof setUnreadCount
 	| typeof setIsMinimized
+	| typeof setExtraFields
 >;

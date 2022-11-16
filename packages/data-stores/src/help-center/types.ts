@@ -5,3 +5,5 @@ export type Location = {
 	state?: unknown;
 	key?: string;
 };
+
+export type ExtraFields = Record< string, string >;

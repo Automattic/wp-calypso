@@ -104,6 +104,7 @@ type StepProps = {
 	onDeclineUpsell: () => void;
 	onClickFreeMonthOffer?: () => void;
 	onClickDowngrade?: ( upsell: string ) => void;
+	cancellationReason: string;
 };
 
 export default function UpsellStep( { upsell, site, purchase, ...props }: StepProps ) {
@@ -130,7 +131,9 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 							type: upsell,
 						} );
 						page( getLiveChatUrl( upsell, site, purchase ) );
-						helpCenter.startHelpCenterChat( site, 'THIS IS A TEST by a11n.' );
+						helpCenter.startHelpCenterChat( site, 'Could you help me?', {
+							cancellationReason: props.cancellationReason,
+						} );
 						props.closeDialog();
 					} }
 					onDecline={ props.onDeclineUpsell }

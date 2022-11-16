@@ -1,7 +1,7 @@
 import { combineReducers } from '@wordpress/data';
 import { SiteDetails } from '../site';
 import type { HelpCenterAction } from './actions';
-import type { Location } from './types';
+import type { ExtraFields, Location } from './types';
 import type { Reducer } from 'redux';
 
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
@@ -100,6 +100,15 @@ const routerState: Reducer< { history: Location[] | undefined; index: number | u
 	return state;
 };
 
+const extraFields: Reducer< ExtraFields | undefined > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_RESET_STORE' ) {
+		return undefined;
+	} else if ( action.type === 'HELP_CENTER_SET_EXTRA_FIELDS' ) {
+		return { ...action.extraFields };
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	showHelpCenter,
 	site,
@@ -111,6 +120,7 @@ const reducer = combineReducers( {
 	unreadCount,
 	iframe,
 	routerState,
+	extraFields,
 } );
 
 export type State = ReturnType< typeof reducer >;
