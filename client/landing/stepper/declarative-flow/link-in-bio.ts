@@ -36,6 +36,18 @@ export const linkInBio: Flow = {
 
 		const tld = queryParams.get( 'tld' );
 
+		// trigger guides on step movement, we don't care about failures or response
+		wpcom.req.post(
+			'guides/trigger',
+			{
+				apiNamespace: 'wpcom/v2/',
+			},
+			{
+				flow: flowName,
+				step: _currentStep,
+			}
+		);
+
 		// for the standard Link in Bio flow
 		const submitDefault = ( providedDependencies: ProvidedDependencies = {} ) => {
 			const logInUrl =
@@ -104,23 +116,12 @@ export const linkInBio: Flow = {
 			return providedDependencies;
 		};
 
-		// trigger guides on step movement, we don't care about failures or response
-		wpcom.req.post(
-			'guides/trigger',
-			{
-				apiNamespace: 'wpcom/v2/',
-			},
-			{
-				flow: flowName,
-				step: _currentStep,
-			}
-		);
-
 		const submit = tld ? submitDomainFirst : submitDefault;
 
 		const goBack = () => {
 			return;
 		};
+
 		const goNext = () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
@@ -129,9 +130,11 @@ export const linkInBio: Flow = {
 					return navigate( 'intro' );
 			}
 		};
+
 		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
 			navigate( step );
 		};
+
 		return { goNext, goBack, goToStep, submit };
 	},
 };
