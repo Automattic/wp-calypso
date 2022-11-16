@@ -18,6 +18,8 @@ import TitanTermsOfService from './titan-terms-of-service';
 class CheckoutTerms extends Component {
 	render() {
 		const { cart } = this.props;
+		const isGiftPurchase = cart.is_gift_purchase;
+
 		return (
 			<Fragment>
 				<div className="checkout__terms" id="checkout-terms">
@@ -29,16 +31,16 @@ class CheckoutTerms extends Component {
 					</strong>
 				</div>
 				<TermsOfService hasRenewableSubscription={ hasRenewableSubscription( cart ) } />
-				<DomainRegistrationAgreement cart={ cart } />
-				<DomainRegistrationHsts cart={ cart } />
+				{ ! isGiftPurchase && <DomainRegistrationAgreement cart={ cart } /> }
+				{ ! isGiftPurchase && <DomainRegistrationHsts cart={ cart } /> }
 				<RefundPolicies cart={ cart } />
-				<ConciergeRefundPolicy cart={ cart } />
-				<BundledDomainNotice cart={ cart } />
-				<TitanTermsOfService cart={ cart } />
-				<ThirdPartyPluginsTermsOfService cart={ cart } />
+				{ ! isGiftPurchase && <ConciergeRefundPolicy cart={ cart } /> }
+				{ ! isGiftPurchase && <BundledDomainNotice cart={ cart } /> }
+				{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }
+				{ ! isGiftPurchase && <ThirdPartyPluginsTermsOfService cart={ cart } /> }
 				<EbanxTermsOfService />
 				<InternationalFeeNotice />
-				<AdditionalTermsOfServiceInCart />
+				{ ! isGiftPurchase && <AdditionalTermsOfServiceInCart /> }
 			</Fragment>
 		);
 	}
