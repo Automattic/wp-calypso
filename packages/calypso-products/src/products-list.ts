@@ -259,7 +259,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 	},
 	[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: {
-		product_name: translate( 'Backup' ),
+		product_name: translate( 'VaultPress Backup' ),
 		product_slug: PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 		type: PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 		term: TERM_ANNUALLY,
@@ -275,7 +275,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	},
 	[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: {
-		product_name: translate( 'Backup' ),
+		product_name: translate( 'VaultPress Backup' ),
 		product_slug: PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 		type: PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 		term: TERM_MONTHLY,
@@ -291,7 +291,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	},
 	[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: {
-		product_name: translate( 'Backup' ),
+		product_name: translate( 'VaultPress Backup' ),
 		product_slug: PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 		type: PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 		term: TERM_ANNUALLY,
@@ -307,7 +307,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 	},
 	[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: {
-		product_name: translate( 'Backup' ),
+		product_name: translate( 'VaultPress Backup' ),
 		product_slug: PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 		type: PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 		term: TERM_MONTHLY,

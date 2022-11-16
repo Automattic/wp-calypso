@@ -47,25 +47,27 @@ export default function WPCOMUpsellPage() {
 
 	return (
 		<Main className="backup__main backup__wpcom-upsell">
-			<DocumentHead title="Jetpack Backup" />
-			<PageViewTracker path="/backup/:site" title="Backup" />
+			<DocumentHead title="Jetpack VaultPress Backup" />
+			<PageViewTracker path="/backup/:site" title="VaultPress Backup" />
 
 			<FormattedHeader
-				headerText={ translate( 'Jetpack Backup' ) }
+				headerText={ translate( 'Jetpack VaultPress Backup' ) }
 				id="backup-header"
 				align="left"
 				brandFont
 			/>
 
 			<PromoCard
-				title={ preventWidows( translate( 'Get time travel for your site with Jetpack Backup' ) ) }
+				title={ preventWidows(
+					translate( 'Get time travel for your site with Jetpack VaultPress Backup' )
+				) }
 				image={ { path: JetpackBackupSVG } }
 				isPrimary
 			>
 				<p>
 					{ preventWidows(
 						translate(
-							'Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
+							'VaultPress Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
 						)
 					) }
 				</p>

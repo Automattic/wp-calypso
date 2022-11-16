@@ -85,7 +85,7 @@ const BackupPage = ( { queryDate } ) => {
 				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
 				{ ! isJetpackCloud() && (
 					<FormattedHeader
-						headerText="Jetpack Backup"
+						headerText="Jetpack VaultPress Backup"
 						subHeaderText={ translate(
 							'Restore or download a backup of your site from a specific moment in time. {{learnMoreLink/}}',
 							{
