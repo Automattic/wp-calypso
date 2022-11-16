@@ -12,7 +12,6 @@ import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { upsellCardDisplayed as upsellCardDisplayedAction } from 'calypso/state/themes/actions';
-import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
@@ -89,7 +88,7 @@ ThemesList.defaultProps = {
 	wpOrgThemes: [],
 	recordTracksEvent: noop,
 	fetchNextPage: noop,
-	placeholderCount: DEFAULT_THEME_QUERY.number,
+	placeholderCount: 20,
 	optionsGenerator: () => [],
 	getActionLabel: () => '',
 	isActive: () => false,
