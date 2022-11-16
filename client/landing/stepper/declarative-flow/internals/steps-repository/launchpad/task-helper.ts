@@ -177,7 +177,8 @@ export function getEnhancedTasks(
 				case 'sensei_publish_first_course':
 					taskData = {
 						title: translate( 'Publish your first Course' ),
-						completed: false,
+						completed:
+							site?.options?.launchpad_checklist_tasks_statuses?.publish_first_course || false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.replace( `${ site?.URL }/wp-admin/post-new.php?post_type=course` );
