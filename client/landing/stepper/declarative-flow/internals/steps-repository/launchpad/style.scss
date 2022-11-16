@@ -27,6 +27,10 @@
 			display: none;
 		}
 	}
+
+	.button.is-borderless.navigation-link {
+		color: var(--studio-gray-100);
+	}
 }
 
 .launchpad__container {
