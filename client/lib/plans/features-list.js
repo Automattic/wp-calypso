@@ -1390,7 +1390,10 @@ export const FEATURES_LIST = {
 	[ FEATURE_SFTP_DATABASE ]: {
 		getSlug: () => FEATURE_SFTP_DATABASE,
 		getTitle: () => i18n.translate( 'SFTP, SSH, WP-CLI, and Database access' ),
-		getDescription: () => {},
+		getDescription: () =>
+			i18n.translate(
+				'Tweak your design to match your vision, upload custom themes and plugins directly to your site, and manage your database with phpMyAdmin.'
+			),
 	},
 
 	[ PREMIUM_DESIGN_FOR_STORES ]: {
