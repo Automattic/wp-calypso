@@ -13,7 +13,7 @@ import { setStore } from 'calypso/state/redux-store';
 import sites from 'calypso/state/sites/reducer';
 import { setLocale as setLocaleAction } from 'calypso/state/ui/language/actions';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
-// The JSON is filtered with only `features` object with `apps/stats/filter-json-config-loader.js`.
+// The JSON is filtered by `apps/stats/filter-json-config-loader.js`.
 import productionConfig from '../../../config/production.json';
 import { setupContextMiddleware } from './page-middleware/setup-context';
 import registerStatsPages from './routes';
