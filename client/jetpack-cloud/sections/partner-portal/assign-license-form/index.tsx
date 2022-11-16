@@ -44,14 +44,12 @@ export default function AssignLicenseForm( {
 } ) {
 	const translate = useTranslate();
 	const [ selectedSite, setSelectedSite ] = useState( false );
+	const selectedSiteId = selectedSite?.ID;
 	const licenseKey = getQueryArg( window.location.href, 'key' ) as string;
 	const products = getQueryArg( window.location.href, 'products' ) as string;
 	const licenseKeysArray = products !== undefined ? products.split( ',' ) : [ licenseKey ];
 	const onSelectSite = ( site: any ) => setSelectedSite( site );
-	const [ onAssignLicense, isLoading ] = useAssignMultipleLicenses(
-		licenseKeysArray,
-		selectedSite
-	);
+	const [ assignLicenses, isLoading ] = useAssignMultipleLicenses( licenseKeysArray, selectedSite );
 
 	let results = sites;
 
@@ -72,7 +70,7 @@ export default function AssignLicenseForm( {
 						label={ site.domain }
 						name="site_select"
 						disabled={ isLoading }
-						checked={ selectedSite === site.ID }
+						checked={ selectedSiteId === site.ID }
 					/>
 				</Card>
 			);
@@ -112,7 +110,7 @@ export default function AssignLicenseForm( {
 						className="assign-license-form__assign-now"
 						disabled={ ! selectedSite }
 						busy={ isLoading }
-						onClick={ onAssignLicense }
+						onClick={ assignLicenses }
 					>
 						{ translate( 'Assign %(numLicenses)d License', 'Assign %(numLicenses)d Licenses', {
 							count: licenseKeysArray.length,
