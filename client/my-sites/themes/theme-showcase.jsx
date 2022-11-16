@@ -28,6 +28,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
+	arePremiumThemesEnabled,
 	getActiveTheme,
 	getCanonicalTheme,
 	getThemeFilterTerms,
@@ -128,8 +129,7 @@ class ThemeShowcase extends Component {
 		}
 	}
 
-	getTabTiers = () => {
-		const { translate } = this.props;
+	getTabTiers = ( { translate } ) => {
 		return [
 			{ value: 'all', label: translate( 'All' ) },
 			{ value: 'free', label: translate( 'Free' ) },
@@ -137,8 +137,7 @@ class ThemeShowcase extends Component {
 		];
 	};
 
-	getTabFilters = () => {
-		const { subjects = {}, translate } = this.props;
+	getTabFilters = ( { subjects = {}, translate } ) => {
 		const subjectFilters = Object.fromEntries(
 			shuffle(
 				Object.entries( subjects ).map( ( [ key, filter ] ) => [ key, { key, text: filter.name } ] )
@@ -379,6 +378,7 @@ class ThemeShowcase extends Component {
 			filterString,
 			isMultisite,
 			locale,
+			premiumThemesEnabled,
 		} = this.props;
 		const tier = this.props.tier || '';
 
@@ -477,11 +477,14 @@ class ThemeShowcase extends Component {
 										)
 									}
 								/>
-								<SimplifiedSegmentedControl
-									initialSelected={ tier || 'all' }
-									options={ this.tabTiers }
-									onSelect={ this.onTierSelect }
-								/>
+								{ premiumThemesEnabled && ! isMultisite && (
+									<SimplifiedSegmentedControl
+										key={ tier }
+										initialSelected={ tier || 'all' }
+										options={ this.tabTiers }
+										onSelect={ this.onTierSelect }
+									/>
+								) }
 							</div>
 						) : (
 							<SectionNav
@@ -537,6 +540,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 		description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
 		title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
 		subjects: getThemeFilterTerms( state, 'subject' ) || {},
+		premiumThemesEnabled: arePremiumThemesEnabled( state, siteId ),
 		filterString: prependThemeFilterKeys( state, filter ),
 		filterToTermTable: getThemeFilterToTermTable( state ),
 		themesBookmark: getThemesBookmark( state ),
