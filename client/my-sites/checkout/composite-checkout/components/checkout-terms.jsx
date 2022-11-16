@@ -9,7 +9,7 @@ import DomainRegistrationHsts from './domain-registration-hsts';
 import { EbanxTermsOfService } from './ebanx-terms-of-service';
 import { InternationalFeeNotice } from './international-fee-notice';
 import RefundPolicies from './refund-policies';
-import TermsOfService from './terms-of-service';
+import { TermsOfService } from './terms-of-service';
 import ThirdPartyPluginsTermsOfService from './third-party-plugins-terms-of-service';
 import TitanTermsOfService from './titan-terms-of-service';
 
