@@ -19500,6 +19500,7 @@ __metadata:
     "@wordpress/block-editor": ^9.1.0
     "@wordpress/blocks": ^11.8.0
     "@wordpress/components": ^19.15.0
+    "@wordpress/element": ^4.7.0
     "@wordpress/i18n": ^4.9.0
     "@wordpress/readable-js-assets-webpack-plugin": ^1.0.4
     "@wordpress/scripts": ^23.1.0

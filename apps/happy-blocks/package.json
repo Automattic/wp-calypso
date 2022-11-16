@@ -26,6 +26,7 @@
 		"@wordpress/block-editor": "^9.1.0",
 		"@wordpress/blocks": "^11.8.0",
 		"@wordpress/components": "^19.15.0",
+		"@wordpress/element": "^4.7.0",
 		"@wordpress/i18n": "^4.9.0",
 		"lodash": "^4.17.21",
 		"react": "^17.0.2",
