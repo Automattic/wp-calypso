@@ -77,7 +77,7 @@
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
 		"plugins/ssr-categories": true,
-		"plugins/ssr-details": false,
+		"plugins/ssr-details": true,
 		"plugins/ssr-landing": true,
 		"post-editor/checkout-overlay": true,
 		"post-list/qr-code-link": false,
