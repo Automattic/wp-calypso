@@ -725,7 +725,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 	const searchIncludesInfo = [
 		translate( 'Instant search, filtering, and indexing' ),
 		translate( 'Highly relevant search results' ),
-		translate( 'Support for 29 languages' ),
+		translate( 'Supports 38 languages' ),
 		translate( 'Quick and accurate spelling correction' ),
 	];
 	const boostIncludesInfo = [
