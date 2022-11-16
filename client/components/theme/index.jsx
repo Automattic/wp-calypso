@@ -373,7 +373,7 @@ export class Theme extends Component {
 		} );
 
 		const themeNeedsPurchase = isPremiumTheme && ! hasPremiumThemesFeature && ! didPurchaseTheme;
-		const showUpsell = upsellUrl && theme.price && ! active;
+		const showUpsell = upsellUrl && isPremiumTheme && ! active;
 		const priceClass = classNames( 'theme__badge-price', {
 			'theme__badge-price-upgrade': ! themeNeedsPurchase,
 			'theme__badge-price-upsell': showUpsell,
