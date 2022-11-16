@@ -1,4 +1,4 @@
-import { PLAN_ECOMMERCE } from '@automattic/calypso-products';
+import { PLAN_ECOMMERCE, PLAN_ECOMMERCE_MONTHLY } from '@automattic/calypso-products';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, ECOMMERCE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -50,7 +50,13 @@ export const ecommerceFlow: Flow = {
 		const flowProgress = useFlowProgress( { stepName: _currentStepName, flowName } );
 		setStepProgress( flowProgress );
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
-		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+		const { selectedDesign, recurType } = useSelect( ( select ) => ( {
+			selectedDesign: select( ONBOARD_STORE ).getSelectedDesign(),
+			recurType: select( ONBOARD_STORE ).getEcommerceFlowRecurType(),
+		} ) );
+		const selectedPlan =
+			recurType === ecommerceFlowRecurTypes.YEARLY ? PLAN_ECOMMERCE : PLAN_ECOMMERCE_MONTHLY;
+
 		const locale = useLocale();
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
@@ -69,11 +75,11 @@ export const ecommerceFlow: Flow = {
 			switch ( _currentStepName ) {
 				case 'domains':
 					recordTracksEvent( 'calypso_signup_plan_select', {
-						product_slug: PLAN_ECOMMERCE,
+						product_slug: selectedPlan,
 						from_section: 'default',
 					} );
 
-					setPlanCartItem( { product_slug: PLAN_ECOMMERCE } );
+					setPlanCartItem( { product_slug: selectedPlan } );
 					return navigate( 'siteCreationStep' );
 
 				case 'siteCreationStep':
@@ -133,8 +139,9 @@ export const ecommerceFlow: Flow = {
 				case 'checkPlan':
 					// eCommerce Plan
 					if (
-						( providedDependencies?.currentPlan as SiteDetailsPlan )?.product_slug ===
-						PLAN_ECOMMERCE
+						[ PLAN_ECOMMERCE, PLAN_ECOMMERCE_MONTHLY ].includes(
+							( providedDependencies?.currentPlan as SiteDetailsPlan )?.product_slug
+						)
 					) {
 						return navigate( 'waitForAtomic' );
 					}
