@@ -31,6 +31,7 @@ import ThemePreview from './theme-preview';
 import WooCommerceBundledBadge from './woocommerce-bundled-badge';
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design, StyleVariation } from '../types';
+import type { RefCallback } from 'react';
 import './style.scss';
 
 const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name__${ slug }`;
@@ -65,25 +66,31 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 
 interface TrackDesignViewProps {
 	category?: string | null;
-	className: string;
 	design: Design;
 	isPremiumThemeAvailable?: boolean;
 }
 
-const TrackDesignView: React.FC< TrackDesignViewProps > = ( {
+/**
+ * Hook to return a [callback ref](https://reactjs.org/docs/refs-and-the-dom.html#callback-refs)
+ * that MUST be used as the `ref` prop on a `div` element.
+ * The hook ensures that we generate theme display Tracks events when the user views
+ * the underlying `div` element.
+ *
+ * @param { TrackDesignViewProps } designDetails Details around the design and current context.
+ * @returns { Function } A callback ref that MUST be used on a div element for tracking.
+ */
+const useTrackDesignView = ( {
 	category,
-	children,
-	className,
 	design,
 	isPremiumThemeAvailable,
-} ) => {
+}: TrackDesignViewProps ): RefCallback< HTMLDivElement > => {
 	const observerRef = useRef< IntersectionObserver >();
 	const [ viewedCategories, setViewedCategory ] = useState< string[] >( [] );
 
 	// Use a callback as the ref so we get called for both mount and unmount events
-	// We don't get that if we use useRef() and useEffect() together.
-	const wrapperDivRefCallback = useCallback(
-		( wrapperDiv ) => {
+	// We don't get both if we use useRef() and useEffect() together.
+	return useCallback(
+		( wrapperDiv: HTMLDivElement ) => {
 			// If we've already viewed the design in this category,
 			// we can skip setting up the handler
 			if ( category && viewedCategories.includes( category ) ) {
@@ -131,12 +138,6 @@ const TrackDesignView: React.FC< TrackDesignViewProps > = ( {
 			observerRef.current.observe( wrapperDiv );
 		},
 		[ category, design, isPremiumThemeAvailable, observerRef, setViewedCategory, viewedCategories ]
-	);
-
-	return (
-		<div className={ className } ref={ wrapperDivRefCallback }>
-			{ children }
-		</div>
 	);
 };
 
@@ -258,19 +259,20 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	onSelect,
 	...props
 } ) => {
+	const trackingDivRef = useTrackDesignView( {
+		category,
+		design: props.design,
+		isPremiumThemeAvailable: props.isPremiumThemeAvailable,
+	} );
+
 	if ( isBlankCanvasDesign( props.design ) ) {
 		return <PatternAssemblerCta onButtonClick={ () => onSelect( props.design ) } />;
 	}
 
 	return (
-		<TrackDesignView
-			className="design-button-container"
-			category={ category }
-			design={ props.design }
-			isPremiumThemeAvailable={ props.isPremiumThemeAvailable }
-		>
+		<div className="design-button-container" ref={ trackingDivRef }>
 			<DesignButton { ...props } />
-		</TrackDesignView>
+		</div>
 	);
 };
 
@@ -298,14 +300,18 @@ const GeneratedDesignButtonContainer: React.FC< GeneratedDesignButtonContainerPr
 		use_screenshot_overrides: true,
 	} );
 
+	const divTrackingRef = useTrackDesignView( {
+		category: `__generated_vertical_${ verticalId }`,
+		design,
+		isPremiumThemeAvailable: true,
+	} );
+
 	return (
-		<TrackDesignView
-			category={ `__generated_vertical_${ verticalId }` }
+		<div
 			className={ classnames( 'design-button-container', 'design-button-container--is-generated', {
 				'design-button-container--is-generated--is-showing': isShowing,
 			} ) }
-			design={ design }
-			isPremiumThemeAvailable={ true }
+			ref={ divTrackingRef }
 		>
 			<div className="design-picker__design-option">
 				<button className="generated-design-thumbnail" onClick={ () => onPreview( design ) }>
@@ -318,7 +324,7 @@ const GeneratedDesignButtonContainer: React.FC< GeneratedDesignButtonContainerPr
 					</span>
 				</button>
 			</div>
-		</TrackDesignView>
+		</div>
 	);
 };
 
