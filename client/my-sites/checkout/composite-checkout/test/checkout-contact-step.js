@@ -255,7 +255,10 @@ describe( 'Checkout contact step', () => {
 		// Wait for the cart to load
 		await screen.findByText( 'Country' );
 
-		// Wait for the validation to complete, then check we've advanced to the next payment step
+		// Wait for the validation to complete.
+		await screen.findAllByText( 'Please wait…' );
+		await waitForElementToBeRemoved( () => screen.queryAllByText( 'Please wait…' ) );
+
 		expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
 	} );
 
