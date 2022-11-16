@@ -14,11 +14,10 @@ interface APIFetchOptions {
 
 export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'OTHER' >(
 	supportType: SUPPORT_TYPE,
-	plan: string,
 	enabled = true
 ) {
 	return useQuery< ResponseType< SUPPORT_TYPE >, typeof Error >(
-		[ supportType === 'OTHER' ? 'otherSupportAvailability' : 'chatSupportAvailability', plan ],
+		supportType === 'OTHER' ? 'otherSupportAvailability' : 'chatSupportAvailability',
 		async () =>
 			canAccessWpcomApis()
 				? await wpcomRequest( {
