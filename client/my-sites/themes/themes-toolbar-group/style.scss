@@ -3,6 +3,10 @@
 
 .themes-toolbar-group.responsive-toolbar-group__swipe,
 .themes-toolbar-group.responsive-toolbar-group__dropdown {
+	&.responsive-toolbar-group__swipe {
+		padding: 16px 0;
+	}
+
 	&.responsive-toolbar-group__dropdown {
 		padding: 24px 0;
 	}
