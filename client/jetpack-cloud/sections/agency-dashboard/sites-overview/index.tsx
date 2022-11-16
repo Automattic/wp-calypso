@@ -157,6 +157,17 @@ export default function SitesOverview() {
 					primary
 					className="sites-overview__licenses-buttons-issue-license"
 					href={ issueLicenseRedirectUrl }
+					onClick={ () =>
+						dispatch(
+							recordTracksEvent( 'calypso_jetpack_agency_dashboard_licenses_select', {
+								site_id: selectedLicensesSiteId,
+								products: selectedLicenses
+									?.map( ( type: string ) => getProductSlugFromProductType( type ) )
+									// If multiple products are selected, pass them as a comma-separated list.
+									.join( ',' ),
+							} )
+						)
+					}
 				>
 					{ translate( 'Issue %(numLicenses)d new license', 'Issue %(numLicenses)d new licenses', {
 						context: 'button label',
