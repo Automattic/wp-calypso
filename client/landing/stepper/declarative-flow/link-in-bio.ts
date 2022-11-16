@@ -126,6 +126,7 @@ export const linkInBio: Flow = {
 			switch ( _currentStep ) {
 				case 'launchpad':
 					return window.location.assign( `/view/${ siteSlug }` );
+
 				default:
 					return navigate( 'intro' );
 			}
