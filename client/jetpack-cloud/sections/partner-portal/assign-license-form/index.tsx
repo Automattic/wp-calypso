@@ -43,12 +43,15 @@ export default function AssignLicenseForm( {
 	search: string;
 } ) {
 	const translate = useTranslate();
-	const [ selectedSite, setSelectedSite ] = useState( false );
-	const selectedSiteId = selectedSite?.ID;
+	const [ selectedSite, setSelectedSite ] = useState( null );
+	const [ selectedSiteId, setSelectedSiteId ] = useState( null );
 	const licenseKey = getQueryArg( window.location.href, 'key' ) as string;
 	const products = getQueryArg( window.location.href, 'products' ) as string;
 	const licenseKeysArray = products !== undefined ? products.split( ',' ) : [ licenseKey ];
-	const onSelectSite = ( site: any ) => setSelectedSite( site );
+	const onSelectSite = ( site: any ) => {
+		setSelectedSite( site );
+		setSelectedSiteId( site?.ID );
+	};
 	const [ assignLicenses, isLoading ] = useAssignMultipleLicenses( licenseKeysArray, selectedSite );
 
 	let results = sites;

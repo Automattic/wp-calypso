@@ -280,10 +280,10 @@ export function useLicenseIssuing(
 	return [ issue, isLoading ];
 }
 
-const useAssignLicenses = (
+export function useAssignLicenses(
 	licenseKeys: Array< string >,
 	selectedSite: { ID: number; domain: string } | null
-) => {
+): [ () => void, boolean ] {
 	const products = useProductsQuery( {
 		select: selectAlphaticallySortedProductOptions,
 	} );
@@ -296,19 +296,20 @@ const useAssignLicenses = (
 	} );
 	const isLoading = assignLicense.isLoading;
 	const selectedSiteId = selectedSite?.ID as number;
-	const assignMultipleLIcenses = useCallback( async () => {
+	const assignMultipleLicenses = useCallback( async () => {
 		const assignLicenseRequests: any = [];
 		licenseKeys.forEach( ( licenseKey ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_partner_portal_assign_license_submit', {
-					license_key: licenseKey,
-					selected_site: selectedSiteId,
-				} )
-			);
 			assignLicenseRequests.push(
 				assignLicense.mutateAsync( { licenseKey, selectedSite: selectedSiteId } )
 			);
 		} );
+
+		dispatch(
+			recordTracksEvent( 'calypso_partner_portal_assign_multiple_licenses_submit', {
+				products: licenseKeys.join( ',' ),
+				selected_site: selectedSiteId,
+			} )
+		);
 
 		const assignLicensePromises = await Promise.allSettled( assignLicenseRequests );
 		const allSelectedProducts: { key: 'string'; name: string; status: 'rejected' | 'fulfilled' }[] =
@@ -351,8 +352,8 @@ const useAssignLicenses = (
 		selectedSiteId,
 	] );
 
-	return [ assignMultipleLIcenses, isLoading ];
-};
+	return [ assignMultipleLicenses, isLoading ];
+}
 
 /**
  * Handle multiple license issue and assign
@@ -596,7 +597,7 @@ export function useIssueMultipleLicenses(
 export function useAssignMultipleLicenses(
 	selectedLicenseKeys: Array< string >,
 	selectedSite: { ID: number; domain: string } | null
-): [ () => boolean | ( () => Promise< void > ) ] {
+): [ () => void, boolean ] {
 	const [ assign, isLoading ] = useAssignLicenses( selectedLicenseKeys, selectedSite );
 	return [ assign, isLoading ];
 }
