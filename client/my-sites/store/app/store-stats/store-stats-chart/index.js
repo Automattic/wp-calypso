@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
+import { Icon, currencyDollar } from '@wordpress/icons';
 import classNames from 'classnames';
 import { findIndex, find } from 'lodash';
 import page from 'page';
@@ -84,12 +85,30 @@ class StoreStatsChart extends Component {
 			{
 				value,
 				label: selectedTab.label,
+				icon: (
+					<svg
+						className="gridicon"
+						width="25"
+						height="25"
+						viewBox="0 0 25 25"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path
+							fillRule="evenodd"
+							clipRule="evenodd"
+							d="M6 10V8H19V10H6ZM6 13V17H19V13H6ZM4.5 7.5C4.5 6.94772 4.94772 6.5 5.5 6.5H19.5C20.0523 6.5 20.5 6.94772 20.5 7.5V17.5C20.5 18.0523 20.0523 18.5 19.5 18.5H5.5C4.94772 18.5 4.5 18.0523 4.5 17.5V7.5Z"
+							fill="#fff"
+						/>
+					</svg>
+				),
 			},
 		];
 		activeCharts.forEach( ( attr ) => {
 			data.push( {
 				value: formatValue( item[ attr ], selectedTab.type, item.currency ),
 				label: find( tabs, ( tab ) => tab.attr === attr ).label,
+				icon: <Icon className="gridicon" icon={ currencyDollar } />,
 			} );
 		} );
 		return data;
@@ -144,7 +163,6 @@ class StoreStatsChart extends Component {
 					loading={ isLoading }
 					data={ chartData }
 					barClick={ this.barClick }
-					chartXPadding={ 0 }
 					minBarWidth={ 35 }
 				/>
 				{ ! isLoading &&
@@ -155,7 +173,6 @@ class StoreStatsChart extends Component {
 						selectedDate,
 						unit,
 						tabClick: this.tabClick,
-						iconSize: 24,
 					} ) }
 			</div>
 		) : (

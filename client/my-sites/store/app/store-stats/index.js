@@ -47,14 +47,16 @@ class StoreStats extends Component {
 		const store = {
 			label: translate( 'Store' ),
 			path: '/store/stats/orders',
-			showIntervals: true,
 		};
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ store.path }/{{ interval }}${ slugPath }`;
 
 		// New feature gate
 		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
-		const statsWrapperClass = classNames( { 'stats--new-main-chart': isNewMainChart } );
+		const statsWrapperClass = classNames( {
+			'stats--new-main-chart': isNewMainChart,
+			'is-period-year': unit === 'year',
+		} );
 		const mainWrapperClass = classNames( 'store-stats', 'woocommerce', {
 			'stats--new-wrapper': isNewMainChart,
 		} );

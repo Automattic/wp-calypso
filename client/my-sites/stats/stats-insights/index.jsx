@@ -58,7 +58,7 @@ const StatsInsights = ( props ) => {
 			<div>
 				<div className="stats__module--insights-unified">
 					{ showNewAnnualHighlights && <AnnualHighlightsSection siteId={ siteId } /> }
-					{ showAllTimeHighlights && <AllTimelHighlightsSection /> }
+					{ showAllTimeHighlights && <AllTimelHighlightsSection siteId={ siteId } /> }
 					<PostingActivity />
 					<SectionHeader label={ translate( 'All-time views' ) } />
 					<StatsViews />

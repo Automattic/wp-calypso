@@ -26,15 +26,7 @@ class StoreStatsOrdersChart extends Component {
 		slug: PropTypes.string,
 	};
 
-	renderTabs = ( {
-		chartData,
-		selectedIndex,
-		selectedTabIndex,
-		selectedDate,
-		unit,
-		tabClick,
-		iconSize,
-	} ) => {
+	renderTabs = ( { chartData, selectedIndex, selectedTabIndex, selectedDate, unit, tabClick } ) => {
 		const { deltas, moment } = this.props;
 		return (
 			<Tabs data={ chartData }>
@@ -60,8 +52,7 @@ class StoreStatsOrdersChart extends Component {
 							label={ tab.tabLabel || tab.label }
 							selected={ tabIndex === selectedTabIndex }
 							tabClick={ tabClick }
-							iconSize={ iconSize }
-							gridicon={ iconSize && tab.gridicon }
+							icon={ tab.icon }
 						>
 							<span className="store-stats-orders-chart__value value">
 								{ formatValue( value, tab.type, itemChartData.data.currency ) }

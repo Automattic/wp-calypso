@@ -207,7 +207,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 						className="jetpack-product-card__button"
 						onClick={ onButtonClick }
 						href={ isDisabled || buttonDisabled ? '#' : buttonURL }
-						disabled={ isDisabled || buttonDisabled }
+						disabled={ isDisabled || buttonDisabled || isDeprecated }
 					>
 						{ buttonLabel }
 					</Button>

@@ -1,3 +1,4 @@
+import { Icon, currencyDollar, shipping, percent } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 
 const sparkWidgetList1 = [
@@ -120,7 +121,23 @@ export const chartTabs = [
 		type: 'currency',
 		tabLabel: translate( 'Gross Sales' ),
 		availableCharts: [ 'net_sales' ],
-		gridicon: 'credit-card',
+		icon: (
+			<svg
+				className="gridicon"
+				width="25"
+				height="25"
+				viewBox="0 0 25 25"
+				fill="none"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				<path
+					fillRule="evenodd"
+					clipRule="evenodd"
+					d="M6 10V8H19V10H6ZM6 13V17H19V13H6ZM4.5 7.5C4.5 6.94772 4.94772 6.5 5.5 6.5H19.5C20.0523 6.5 20.5 6.94772 20.5 7.5V17.5C20.5 18.0523 20.0523 18.5 19.5 18.5H5.5C4.94772 18.5 4.5 18.0523 4.5 17.5V7.5Z"
+					fill="black"
+				/>
+			</svg>
+		),
 	},
 	{
 		label: translate( 'Net Sales' ),
@@ -128,21 +145,21 @@ export const chartTabs = [
 		isHidden: false,
 		availableCharts: [],
 		type: 'currency',
-		gridicon: 'money',
+		icon: <Icon className="gridicon" icon={ currencyDollar } />,
 	},
 	{
 		label: translate( 'Orders' ),
 		attr: 'orders',
 		type: 'number',
 		availableCharts: [],
-		gridicon: 'shipping',
+		icon: <Icon className="gridicon" icon={ shipping } />,
 	},
 	{
 		label: translate( 'Avg. Order Value' ),
 		attr: 'avg_order_value',
 		type: 'currency',
 		availableCharts: [],
-		gridicon: 'special-character',
+		icon: <Icon className="gridicon" icon={ percent } />,
 	},
 ];
 

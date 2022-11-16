@@ -8,8 +8,9 @@ import React, { useEffect, useRef } from 'react';
 import Swiper from 'swiper';
 import { Item } from './item';
 import 'swiper/dist/css/swiper.css';
+import type { Design } from '@automattic/design-picker/src/types';
 
-type Props = { onPick: ( design: any ) => void };
+type Props = { onPick: ( design: Design ) => void };
 
 export default function DesignCarousel( { onPick }: Props ) {
 	const { __ } = useI18n();
