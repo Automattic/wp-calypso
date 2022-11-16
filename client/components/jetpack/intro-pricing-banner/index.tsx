@@ -16,7 +16,6 @@ import getIsRequestingIntroOffers from 'calypso/state/selectors/get-is-requestin
 import './style.scss';
 import guaranteeBadge from './14-day-badge.svg';
 import people from './people.svg';
-import rocket from './rocket.svg';
 
 interface Props {
 	productSlugs: string[];
@@ -67,18 +66,6 @@ const IntroPricingBanner: FunctionComponent< Props > = ( { productSlugs, siteId 
 			<div className={ `intro-pricing-banner ${ classModifier }` }>
 				{ ( discountPercentage > 0 || isLoading ) && (
 					<div className="intro-pricing-banner__content">
-						<div className="intro-pricing-banner__item">
-							<img className="intro-pricing-banner__item-icon" src={ rocket } alt="" />
-							<span className="intro-pricing-banner__item-label">
-								{ preventWidows(
-									translate( 'Get up to %(percent)d%% off your first year.', {
-										args: {
-											percent: discountPercentage,
-										},
-									} )
-								) }
-							</span>
-						</div>
 						<div className="intro-pricing-banner__item">
 							<img className="intro-pricing-banner__item-icon" src={ guaranteeBadge } alt="" />
 							<span className="intro-pricing-banner__item-label">
