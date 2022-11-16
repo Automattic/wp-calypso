@@ -1392,7 +1392,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'SFTP, SSH, WP-CLI, and Database access' ),
 		getDescription: () =>
 			i18n.translate(
-				'Tweak your design to match your vision, upload custom themes and plugins directly to your site, and manage your database with phpMyAdmin.'
+				'A set of developer tools that give you more control over your site, simplify debugging, and make it easier to integrate with each step of your workflow.'
 			),
 	},
 
