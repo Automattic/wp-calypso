@@ -88,7 +88,7 @@
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
-		"plugins/ssr-categories": false,
+		"plugins/ssr-categories": true,
 		"plugins/ssr-details": false,
 		"plugins/ssr-landing": true,
 		"post-editor/checkout-overlay": true,
