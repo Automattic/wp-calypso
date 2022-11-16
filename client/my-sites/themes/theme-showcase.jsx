@@ -18,6 +18,7 @@ import SearchThemes from 'calypso/components/search-themes';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
@@ -60,6 +61,7 @@ class ThemeShowcase extends Component {
 		super( props );
 		this.scrollRef = createRef();
 		this.bookmarkRef = createRef();
+		this.tabTiers = this.getTabTiers( props );
 		this.tabFilters = this.getTabFilters( props );
 		this.state = {
 			tabFilter:
@@ -125,6 +127,15 @@ class ThemeShowcase extends Component {
 			this.scrollToSearchInput();
 		}
 	}
+
+	getTabTiers = () => {
+		const { translate } = this.props;
+		return [
+			{ value: 'all', label: translate( 'All' ) },
+			{ value: 'free', label: translate( 'Free' ) },
+			{ value: 'premium', label: translate( 'Premium' ) },
+		];
+	};
 
 	getTabFilters = () => {
 		const { subjects = {}, translate } = this.props;
@@ -452,17 +463,26 @@ class ThemeShowcase extends Component {
 					) }
 					{ isLoggedIn &&
 						( isNewSearchAndFilter ? (
-							<ThemesToolbarGroup
-								items={ Object.values( this.tabFilters ).filter( ( tabFilter ) =>
-									this.shouldShowTab( tabFilter.key )
-								) }
-								selectedKey={ this.state.tabFilter.key }
-								onSelect={ ( key ) =>
-									this.onFilterClick(
-										Object.values( this.tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
-									)
-								}
-							/>
+							<div className="theme__filters">
+								<ThemesToolbarGroup
+									items={ Object.values( this.tabFilters ).filter( ( tabFilter ) =>
+										this.shouldShowTab( tabFilter.key )
+									) }
+									selectedKey={ this.state.tabFilter.key }
+									onSelect={ ( key ) =>
+										this.onFilterClick(
+											Object.values( this.tabFilters ).find(
+												( tabFilter ) => tabFilter.key === key
+											)
+										)
+									}
+								/>
+								<SimplifiedSegmentedControl
+									initialSelected={ tier || 'all' }
+									options={ this.tabTiers }
+									onSelect={ this.onTierSelect }
+								/>
+							</div>
 						) : (
 							<SectionNav
 								className="themes__section-nav"
