@@ -9,7 +9,7 @@ export const Root = styled( CompactCard )( {
 export const Details = styled.div( {
 	display: 'flex',
 	flexDirection: 'column',
-	marginRight: '1rem',
+	marginInlineEnd: '1rem',
 	overflow: 'hidden',
 } );
 
@@ -34,7 +34,7 @@ export const Date = styled.span( {
 } );
 
 export const Button = styled( CoreButton )( {
-	marginLeft: 'auto',
+	marginInlineStart: 'auto',
 	flexShrink: 0,
 } );
 

@@ -21,7 +21,8 @@ export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunc
 			break;
 		case VIDEOPRESS_FLOW:
 			translatedStrings.flowName = translate( 'Video' );
-			translatedStrings.launchTitle = translate( 'Your Video site is ready to launch!' );
+			translatedStrings.title = translate( 'Your video site is ready!' );
+			translatedStrings.launchTitle = translate( 'Your video site is ready!' );
 			break;
 	}
 
