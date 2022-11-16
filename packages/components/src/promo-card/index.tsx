@@ -3,12 +3,15 @@ import { useTranslate } from 'i18n-calypso';
 import './style.scss';
 import { AppStoreSVG, WordPressJetpackSVG } from './svg-icons';
 
-export type PromoCardProps = {
+export type JetpackMobilePromoCardProps = {
 	className?: string;
 	isMobile?: boolean;
 };
 
-export default function PromoCard( { className, isMobile }: PromoCardProps ) {
+export default function JetpackMobilePromoCard( {
+	className,
+	isMobile,
+}: JetpackMobilePromoCardProps ) {
 	// Using useTranslate() with interpolation to set up the title/message.
 	// https://wpcalypso.wordpress.com/devdocs/packages/i18n-calypso/README.md
 	const translate = useTranslate();

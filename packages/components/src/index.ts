@@ -37,4 +37,4 @@ export {
 	default as HighlightCard,
 	percentCalculator as PercentCalculator,
 } from './highlight-cards/highlight-card';
-export { default as PromoCard } from './promo-card';
+export { default as JetpackMobilePromoCard } from './promo-card';
