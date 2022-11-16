@@ -14,10 +14,11 @@ interface APIFetchOptions {
 
 export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'OTHER' >(
 	supportType: SUPPORT_TYPE,
+	plan: string,
 	enabled = true
 ) {
 	return useQuery< ResponseType< SUPPORT_TYPE >, typeof Error >(
-		supportType === 'OTHER' ? 'otherSupportAvailability' : 'chatSupportAvailability',
+		[ supportType === 'OTHER' ? 'otherSupportAvailability' : 'chatSupportAvailability', plan ],
 		async () =>
 			canAccessWpcomApis()
 				? await wpcomRequest( {
@@ -33,6 +34,7 @@ export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'OTHER' >(
 			enabled,
 			refetchOnWindowFocus: false,
 			keepPreviousData: true,
+			staleTime: 6 * 60 * 60 * 1000, // 6 hours
 		}
 	);
 }
