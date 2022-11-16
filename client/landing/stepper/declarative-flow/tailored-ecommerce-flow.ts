@@ -10,6 +10,7 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
+import { useSite } from '../hooks/use-site';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -50,6 +51,7 @@ export const ecommerceFlow: Flow = {
 		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 		const locale = useLocale();
 		const siteSlugParam = useSiteSlugParam();
+		const site = useSite();
 
 		const getStartUrl = () => {
 			return locale && locale !== 'en'
@@ -79,7 +81,7 @@ export const ecommerceFlow: Flow = {
 					// Coming from setThemeStep
 					if ( providedDependencies?.selectedDesign ) {
 						resetOnboardStore();
-						return window.location.assign( `/home/${ siteSlug }` );
+						return window.location.assign( `${ site?.URL }/wp-admin/admin.php?page=wc-admin` );
 					}
 
 					if ( providedDependencies?.finishedWaitingForAtomic ) {
