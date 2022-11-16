@@ -2,14 +2,6 @@
 	max-width: calc(100vw - 32px);
 }
 
-@include breakpoint-deprecated( ">1280px" ) {
-	.hosting__main-layout-col {
-		.card.ssh-keys-card {
-			padding-left: 24px;
-		}
-	}
-}
-
 .ssh-keys__form {
 	display: flex;
 	flex-direction: column;

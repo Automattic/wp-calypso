@@ -14,7 +14,7 @@ function subtract( a: number | null, b: number | null | undefined ): number | nu
 	return a === null || b === null || b === undefined ? null : a - b;
 }
 
-function percent( part: number | null, whole: number | null ) {
+export function percentCalculator( part: number | null, whole: number | null ) {
 	if ( part === null || whole === null ) {
 		return null;
 	}
@@ -43,7 +43,7 @@ export default function HighlightCard( {
 }: HighlightCardProps ) {
 	const difference = subtract( count, previousCount );
 	const percentage = Number.isFinite( difference )
-		? percent( Math.abs( difference as number ), count )
+		? percentCalculator( Math.abs( difference as number ), count )
 		: null;
 	return (
 		<Card className="highlight-card">

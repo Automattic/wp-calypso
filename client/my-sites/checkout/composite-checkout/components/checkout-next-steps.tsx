@@ -97,7 +97,7 @@ export default function CheckoutNextSteps( { responseCart, headerText }: Props )
 					icon: <NextStepIcon />,
 				},
 				{
-					text: translate( 'Receive your finished site in under %d business days!', {
+					text: translate( 'Receive your finished site in %d business days or less!', {
 						args: [ 4 ],
 					} ),
 					icon: <NextStepIcon />,
