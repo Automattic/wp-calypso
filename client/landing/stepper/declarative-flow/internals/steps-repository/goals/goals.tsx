@@ -5,6 +5,8 @@ import type { Goal } from './types';
 
 const SiteGoal = Onboard.SiteGoal;
 
+const DIFMSupportedLocales = [ ...englishLocales, 'es' ];
+
 // export const CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME =
 // 	'calypso_builtbyexpress_goal_copy_change_202210';
 // export const VARIATION_CONTROL = 'control';
@@ -76,19 +78,13 @@ export const useGoals = (): Goal[] => {
 	];
 
 	/**
-	 * Hides the DIFM goal for all locales except English and es.
+	 * Hides the DIFM goal for all locales except English and ES.
 	 */
 	const hideDIFMGoalForUnsupportedLocales = ( { key }: Goal ) => {
-		if ( key !== SiteGoal.DIFM ) {
-			return true;
+		if ( key === SiteGoal.DIFM && ! DIFMSupportedLocales.includes( locale ) ) {
+			return false;
 		}
-		if ( englishLocales.includes( locale ) ) {
-			return true;
-		}
-		if ( 'es' === locale ) {
-			return true;
-		}
-		return false;
+		return true;
 	};
 
 	return goals.filter( hideDIFMGoalForUnsupportedLocales );
