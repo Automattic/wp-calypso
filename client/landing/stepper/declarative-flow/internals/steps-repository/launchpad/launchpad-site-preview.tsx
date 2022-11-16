@@ -51,6 +51,7 @@ const LaunchpadSitePreview = ( {
 		<div className="launchpad__site-preview-wrapper" onLoad={ preventTabbingToIFrame }>
 			<WebPreview
 				className="launchpad__-web-preview"
+				disableTabbing
 				showDeviceSwitcher={ true }
 				showPreview
 				showSEO={ true }
