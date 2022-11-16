@@ -246,6 +246,22 @@ describe( 'Checkout contact step', () => {
 		await expect( screen.findByTestId( 'payment-method-step--visible' ) ).toNeverAppear();
 	} );
 
+	it( 'does not show errors when autocompleting the contact step when there are invalid cached details', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: 'US',
+			postal_code: 'ABCD',
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', {
+			success: false,
+			messages: { postal_code: [ 'Postal code error message' ] },
+		} );
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		// Wait for the cart to load
+		await screen.findByText( 'Country' );
+		await expect( screen.findByText( 'Postal code error message' ) ).toNeverAppear();
+	} );
+
 	it.each( [
 		{ complete: 'does', valid: 'valid', name: 'plan', email: 'fails', logged: 'in' },
 		{ complete: 'does not', valid: 'invalid', name: 'plan', email: 'fails', logged: 'in' },
