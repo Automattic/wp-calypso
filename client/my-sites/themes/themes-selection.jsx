@@ -12,6 +12,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
+import { DEFAULT_THEME_QUERY_LIMIT } from 'calypso/state/themes/constants';
 import {
 	arePremiumThemesEnabled,
 	getPremiumThemePrice,
@@ -249,7 +250,9 @@ export const ConnectedThemesSelection = connect(
 		// results and sends all of the themes at once. QueryManager is not expecting such behaviour
 		// and we ended up loosing all of the themes above number 20. Real solution will be pagination on
 		// Jetpack themes endpoint.
-		const number = ! [ 'wpcom', 'wporg' ].includes( sourceSiteId ) ? 2000 : 100;
+		const number = ! [ 'wpcom', 'wporg' ].includes( sourceSiteId )
+			? 2000
+			: DEFAULT_THEME_QUERY_LIMIT;
 		const query = {
 			search,
 			page,
