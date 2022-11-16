@@ -184,9 +184,9 @@ export function WordpressMediaUpload( {
 		onRemoveImage && onRemoveImage( { mediaIndex } );
 	};
 
-	let allowedFileTypes = getAllowedImageExtensionsString();
+	let allowedFileTypes = getAllowedImageExtensionsString( site );
 	if ( mediaType === 'VIDEO' ) {
-		allowedFileTypes = getAllowedVideoExtensionsString();
+		allowedFileTypes = getAllowedVideoExtensionsString( site );
 	}
 
 	switch ( uploadState ) {

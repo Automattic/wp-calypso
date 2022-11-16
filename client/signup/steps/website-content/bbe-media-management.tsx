@@ -1,5 +1,8 @@
 // Information taken from client/lib/media/constants.js
 
+import { getAllowedFileTypesForSite } from 'calypso/lib/media/utils';
+import type { SiteDetails } from '@automattic/data-stores';
+
 const allowedImageMap = {
 	jpg: 'image/jpeg',
 	jpeg: 'image/jpeg',
@@ -33,15 +36,43 @@ const allowedVideoMap = {
 	mkv: 'video/x-matroska',
 };
 
-const allowedImageExtensions = Object.values( allowedImageMap );
-const allowedVideoExtensions = Object.values( allowedVideoMap );
+const allImageExtensions = Object.keys( allowedImageMap );
+const allVideoExtensions = Object.keys( allowedVideoMap );
 
-function getAllowedImageExtensionsString() {
-	return allowedImageExtensions.map( ( type ) => `${ type }` ).join();
+const fallbackAllowedSiteExtensions = [
+	'gif',
+	'heic',
+	'jpeg',
+	'png',
+	'webp',
+	'avi',
+	'mpg',
+	'mp4',
+	'm4v',
+	'mov',
+	'ogv',
+	'wmv',
+	'3gp',
+	'3g2',
+];
+function getAllowedImageExtensionsString( site?: SiteDetails | null ) {
+	const allowedSiteExtensions = site
+		? getAllowedFileTypesForSite( site )
+		: fallbackAllowedSiteExtensions;
+	return allImageExtensions
+		.filter( ( extension ) => allowedSiteExtensions.includes( extension ) )
+		.map( ( type ) => `.${ type }` )
+		.join();
 }
 
-function getAllowedVideoExtensionsString() {
-	return allowedVideoExtensions.map( ( type ) => `${ type }` ).join();
+function getAllowedVideoExtensionsString( site?: SiteDetails | null ) {
+	const allowedSiteExtensions = site
+		? getAllowedFileTypesForSite( site )
+		: fallbackAllowedSiteExtensions;
+	return allVideoExtensions
+		.filter( ( extension ) => allowedSiteExtensions.includes( extension ) )
+		.map( ( type ) => `.${ type }` )
+		.join();
 }
 
 export { getAllowedImageExtensionsString, getAllowedVideoExtensionsString };
