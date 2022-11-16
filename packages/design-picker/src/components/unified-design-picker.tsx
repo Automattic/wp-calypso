@@ -303,7 +303,7 @@ const GeneratedDesignButtonContainer: React.FC< GeneratedDesignButtonContainerPr
 	const divTrackingRef = useTrackDesignView( {
 		category: `__generated_vertical_${ verticalId }`,
 		design,
-		isPremiumThemeAvailable: true,
+		isPremiumThemeAvailable: false,
 	} );
 
 	return (
