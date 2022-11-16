@@ -19496,9 +19496,12 @@ __metadata:
   dependencies:
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
+    "@automattic/color-studio": 2.5.0
+    "@automattic/typography": "workspace:^"
     "@testing-library/react": ^12.1.3
     "@wordpress/block-editor": ^9.1.0
     "@wordpress/blocks": ^11.8.0
+    "@wordpress/components": ^19.15.0
     "@wordpress/i18n": ^4.9.0
     "@wordpress/readable-js-assets-webpack-plugin": ^1.0.4
     "@wordpress/scripts": ^23.1.0

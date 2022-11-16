@@ -6,7 +6,6 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isGSuiteOrGoogleWorkspace,
-	isJetpackPlan,
 	isMonthlyProduct,
 	isPlan,
 	isThemePurchase,
@@ -640,7 +639,6 @@ export function isRemovable( purchase: Purchase ): boolean {
 	}
 
 	return (
-		isJetpackPlan( purchase ) ||
 		isExpiring( purchase ) ||
 		isExpired( purchase ) ||
 		( isDomainTransfer( purchase ) && isPurchaseCancelable( purchase ) ) ||

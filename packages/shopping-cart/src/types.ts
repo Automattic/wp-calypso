@@ -316,6 +316,10 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	 * Gift Details
 	 */
 	gift_details?: ResponseCartGiftDetails;
+
+	/**
+	 * True if the cart contains a purchase for a different user's site.
+	 */
 	is_gift_purchase?: boolean;
 
 	currency: string;

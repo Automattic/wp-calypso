@@ -1,9 +1,11 @@
 import { Onboard } from '@automattic/data-stores';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { useLocale, englishLocales } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import type { Goal } from './types';
 
 const SiteGoal = Onboard.SiteGoal;
+
+const DIFMSupportedLocales = [ ...englishLocales, 'es' ];
 
 // export const CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME =
 // 	'calypso_builtbyexpress_goal_copy_change_202210';
@@ -44,7 +46,7 @@ const useBBEGoal = () => {
 
 export const useGoals = (): Goal[] => {
 	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
+	const locale = useLocale();
 	const builtByExpressGoalDisplayText = useBBEGoal();
 
 	const goals = [
@@ -75,12 +77,15 @@ export const useGoals = (): Goal[] => {
 		},
 	];
 
-	const hideDIFMGoalForNonEN = ( { key }: Goal ) => {
-		if ( key === SiteGoal.DIFM && ! isEnglishLocale ) {
+	/**
+	 * Hides the DIFM goal for all locales except English and ES.
+	 */
+	const hideDIFMGoalForUnsupportedLocales = ( { key }: Goal ) => {
+		if ( key === SiteGoal.DIFM && ! DIFMSupportedLocales.includes( locale ) ) {
 			return false;
 		}
 		return true;
 	};
 
-	return goals.filter( hideDIFMGoalForNonEN );
+	return goals.filter( hideDIFMGoalForUnsupportedLocales );
 };

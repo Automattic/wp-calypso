@@ -55,7 +55,7 @@ export default function GiftThankYou( { site }: { site: number | string } ) {
 					stepKey: 'share_site',
 					stepTitle: translate( 'Share this site' ),
 					stepDescription: translate(
-						'Know someone else who would enjoy the site you just supported? Click the button below so you can send it to your friends.'
+						'Know someone else who would enjoy the site you just supported? Click the button to copy the link and share with friends.'
 					),
 					stepCta: (
 						<ClipboardButton

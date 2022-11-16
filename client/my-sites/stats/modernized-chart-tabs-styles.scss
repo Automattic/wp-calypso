@@ -1,3 +1,8 @@
+@import "@wordpress/base-styles/breakpoints";
+
+$barChartBorderRadius: 2px;
+$yearBarChartBorderRadius: 4px;
+
 // For feature `stats/new-main-chart`
 .stats--new-main-chart {
 	background-color: var(--color-surface);
@@ -6,8 +11,17 @@
 	.chart__legend {
 		margin-bottom: 16px;
 
+		@media ( max-width: $break-medium ) {
+			padding: 0 16px;
+		}
+
 		.chart__legend-options {
 			text-transform: none;
+			letter-spacing: inherit;
+
+			@media ( max-width: $break-mobile ) {
+				display: none;
+			}
 		}
 
 		.chart__legend-option {
@@ -22,6 +36,13 @@
 			font-weight: 400;
 			line-height: 18px;
 			padding: 0;
+
+			&.is-selectable {
+				&:hover,
+				&:focus {
+					color: var(--studio-black);
+				}
+			}
 
 			.chart__legend-checkbox {
 				width: 20px;
@@ -51,7 +72,7 @@
 
 	// Main Chart
 	.chart {
-		padding: 0;
+		padding-left: 20px;
 
 		.chart__bar {
 			// Cancel the chart bar styles
@@ -82,8 +103,18 @@
 
 		.chart__bar-section {
 			background-color: var(--color-primary);
-			border-top-left-radius: 2px;
-			border-top-right-radius: 2px;
+			border-top-left-radius: $barChartBorderRadius;
+			border-top-right-radius: $barChartBorderRadius;
+		}
+
+		.chart__bar-section-inner {
+			border-top-left-radius: $barChartBorderRadius;
+			border-top-right-radius: $barChartBorderRadius;
+		}
+
+		.chart__y-axis,
+		.chart__x-axis-width-spacer {
+			padding: 0 20px;
 		}
 
 		.chart__x-axis-label:not(.chart__x-axis-width-spacer) {
@@ -97,7 +128,7 @@
 	.stats-tabs {
 		width: 100%;
 		display: flex;
-		flex-wrap: nowrap;
+		flex-wrap: wrap;
 		align-items: center;
 		padding: 24px 0 16px;
 		margin-bottom: 32px;
@@ -108,12 +139,18 @@
 		}
 
 		.stats-tab {
-			flex: 1;
-			width: auto;
-			border: 0;
+			width: 100%;
 
-			&:not(:first-child) {
-				margin-left: 16px;
+			// Keep the original mobile stats-tabs styles
+			// Adjust new stats-tabs styling beyond the mobile layout
+			@media ( min-width: $break-mobile ) {
+				flex: 1;
+				width: auto;
+				border: 0;
+
+				&:not(:first-child) {
+					margin-left: 16px;
+				}
 			}
 
 			a {
@@ -122,13 +159,27 @@
 				border: 1.5px solid transparent;
 				border-radius: 4px;
 				overflow: hidden;
-				color: var(--color-neutral-60);
+				color: var(--studio-black);
+				padding: 10px 0;
+
+				@media ( max-width: $break-mobile ) {
+					display: flex;
+					align-items: center;
+					justify-content: space-between;
+				}
 
 				&:hover {
+					color: var(--studio-black);
 					background-color: var(--color-neutral-0);
+
+					.label,
+					.value {
+						color: var(--studio-black);
+					}
 				}
 
 				.label {
+					color: var(--color-neutral-60);
 					font-size: $font-body-small;
 					line-height: 20px;
 					text-transform: none;
@@ -136,17 +187,29 @@
 				}
 
 				.value {
+					color: var(--studio-black);
 					font-size: $font-title-small;
 					font-weight: 500;
 					line-height: 30px;
-				}
+					margin-left: 0;
 
-				.store-stats-orders-chart__value.value {
-					display: block;
+					@media ( max-width: $break-mobile ) {
+						margin-left: auto;
+
+						// For mobile stats-tabs in Store page
+						&:not(.store-stats-orders-chart__value):not(:last-child) {
+							display: none;
+						}
+					}
 				}
 
 				.delta {
 					justify-content: center;
+
+					// For mobile stats-tabs in Store page
+					@media ( max-width: $break-mobile ) {
+						display: none;
+					}
 				}
 			}
 
@@ -165,10 +228,6 @@
 							color: var(--studio-black);
 						}
 					}
-
-					.value {
-						color: var(--studio-black);
-					}
 				}
 			}
 
@@ -179,6 +238,11 @@
 					border-color: var(--color-primary);
 					background-color: var(--color-surface);
 
+					// Keep the original mobile stats-tabs border styles
+					@media ( max-width: $break-mobile ) {
+						border-color: transparent;
+					}
+
 					.label {
 						color: var(--studio-black);
 					}
@@ -188,6 +252,18 @@
 					}
 				}
 			}
+		}
+	}
+
+	&.is-period-year {
+		.chart__bar-section {
+			border-top-left-radius: $yearBarChartBorderRadius;
+			border-top-right-radius: $yearBarChartBorderRadius;
+		}
+
+		.chart__bar-section-inner {
+			border-top-left-radius: $yearBarChartBorderRadius;
+			border-top-right-radius: $yearBarChartBorderRadius;
 		}
 	}
 }

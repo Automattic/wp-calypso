@@ -7,6 +7,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
+import type { Design } from '@automattic/design-picker/src/types';
 
 const DesignCarousel: Step = function DesignCarousel( { navigation } ) {
 	const { goNext, goBack, submit } = navigation;

@@ -14,6 +14,7 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import OlarkChat from 'calypso/components/olark-chat';
+import SearchThemes from 'calypso/components/search-themes';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -385,6 +386,7 @@ class ThemeShowcase extends Component {
 		const cookies = typeof window !== 'undefined' && cookie.parse( document.cookie );
 		const isEligibleForOlarkChat =
 			! isLoggedIn && 'en' === locale && ! cookies?.hasOwnProperty( 'recognized_logins' );
+		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
 
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
@@ -397,13 +399,17 @@ class ThemeShowcase extends Component {
 				/>
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
-					<ThemesSearchCard
-						onSearch={ this.doSearch }
-						search={ filterString + search }
-						tier={ tier }
-						showTierThemesControl={ ! isMultisite }
-						select={ this.onTierSelect }
-					/>
+					{ isNewSearchAndFilter ? (
+						<SearchThemes query={ filterString + search } onSearch={ this.doSearch } />
+					) : (
+						<ThemesSearchCard
+							onSearch={ this.doSearch }
+							search={ filterString + search }
+							tier={ tier }
+							showTierThemesControl={ ! isMultisite }
+							select={ this.onTierSelect }
+						/>
+					) }
 					{ isLoggedIn && (
 						<SectionNav className="themes__section-nav" selectedText={ this.state.tabFilter.text }>
 							<NavTabs>
