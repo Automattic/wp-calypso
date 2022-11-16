@@ -30,7 +30,10 @@ class CheckoutTerms extends Component {
 						} ) }
 					</strong>
 				</div>
-				<TermsOfService hasRenewableSubscription={ hasRenewableSubscription( cart ) } />
+				<TermsOfService
+					hasRenewableSubscription={ hasRenewableSubscription( cart ) }
+					isGiftPurchase={ isGiftPurchase }
+				/>
 				{ ! isGiftPurchase && <DomainRegistrationAgreement cart={ cart } /> }
 				{ ! isGiftPurchase && <DomainRegistrationHsts cart={ cart } /> }
 				<RefundPolicies cart={ cart } />

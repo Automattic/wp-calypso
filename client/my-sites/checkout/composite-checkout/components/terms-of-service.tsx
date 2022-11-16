@@ -6,8 +6,10 @@ import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/comp
 
 export const TermsOfService = ( {
 	hasRenewableSubscription,
+	isGiftPurchase,
 }: {
 	hasRenewableSubscription: boolean;
+	isGiftPurchase: boolean;
 } ) => {
 	const translate = useTranslate();
 	const recordTermsAndConditionsClick = () => {
@@ -27,8 +29,8 @@ export const TermsOfService = ( {
 			},
 		} );
 
-		// Need to add check for subscription products in the cart so we don't show this for one-off purchases like themes
-		if ( hasRenewableSubscription ) {
+		// Don't show the extended ToS notice for one-time purchases or gifts
+		if ( ! isGiftPurchase && hasRenewableSubscription ) {
 			message = <TosText />;
 		}
 
