@@ -3,7 +3,7 @@
 import { getAllowedFileTypesForSite } from 'calypso/lib/media/utils';
 import type { SiteDetails } from '@automattic/data-stores';
 
-const allowedImageMap = {
+const allImageExtensionDataTypeMap = {
 	jpg: 'image/jpeg',
 	jpeg: 'image/jpeg',
 	jpe: 'image/jpeg',
@@ -15,7 +15,7 @@ const allowedImageMap = {
 	ico: 'image/x-icon',
 };
 
-const allowedVideoMap = {
+const allVideoExtensionDataTypeMap = {
 	asf: 'video/x-ms-asf',
 	asx: 'video/x-ms-asf',
 	wmv: 'video/x-ms-wmv',
@@ -36,8 +36,8 @@ const allowedVideoMap = {
 	mkv: 'video/x-matroska',
 };
 
-const allImageExtensions = Object.keys( allowedImageMap );
-const allVideoExtensions = Object.keys( allowedVideoMap );
+const allImageExtensions = Object.keys( allImageExtensionDataTypeMap );
+const allVideoExtensions = Object.keys( allVideoExtensionDataTypeMap );
 
 const fallbackAllowedSiteExtensions = [
 	'gif',
