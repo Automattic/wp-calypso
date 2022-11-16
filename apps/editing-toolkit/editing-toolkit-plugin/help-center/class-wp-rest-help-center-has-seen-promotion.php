@@ -33,23 +33,11 @@ class WP_REST_Help_Center_Has_Seen_Promotion extends \WP_REST_Controller {
 					'methods'             => \WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_me_preferences' ),
 					'permission_callback' => array( $this, 'permission_callback' ),
-					'args'                => array(
-						'preference_key' => array(
-							'type'     => 'string',
-							'required' => true,
-						),
-					),
 				),
 				array(
 					'methods'             => \WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'set_me_preferences' ),
 					'permission_callback' => array( $this, 'permission_callback' ),
-					'args'                => array(
-						'calypso_preferences' => array(
-							'type'     => 'object',
-							'required' => true,
-						),
-					),
 				),
 			)
 		);
@@ -58,11 +46,9 @@ class WP_REST_Help_Center_Has_Seen_Promotion extends \WP_REST_Controller {
 	/**
 	 * Get the calypso prefernce.
 	 *
-	 * @param \WP_REST_Request $request    The request sent to the API.
-	 *
 	 * @return WP_REST_Response
 	 */
-	public function get_me_preferences( \WP_REST_Request $request ) {
+	public function get_me_preferences() {
 		$response = Client::wpcom_json_api_request_as_user(
 			'/me/preferences',
 			'2',
@@ -70,7 +56,7 @@ class WP_REST_Help_Center_Has_Seen_Promotion extends \WP_REST_Controller {
 				'method' => \WP_REST_Server::READABLE,
 			),
 			array(
-				'preference_key' => $request['preference_key'],
+				'preference_key' => 'seen_help_center_promotion',
 			)
 		);
 
@@ -80,11 +66,9 @@ class WP_REST_Help_Center_Has_Seen_Promotion extends \WP_REST_Controller {
 	/**
 	 * Set the calypso prefernce.
 	 *
-	 * @param \WP_REST_Request $request    The request sent to the API.
-	 *
 	 * @return WP_REST_Response
 	 */
-	public function set_me_preferences( \WP_REST_Request $request ) {
+	public function set_me_preferences() {
 		$response = Client::wpcom_json_api_request_as_user(
 			'/me/preferences',
 			'2',
@@ -92,7 +76,7 @@ class WP_REST_Help_Center_Has_Seen_Promotion extends \WP_REST_Controller {
 				'method' => \WP_REST_Server::EDITABLE,
 			),
 			array(
-				'calypso_preferences' => $request['calypso_preferences'],
+				'calypso_preferences' => array( 'seen_help_center_promotion' => true ),
 			)
 		);
 
