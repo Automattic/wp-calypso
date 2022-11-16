@@ -3,7 +3,6 @@ import { Component, Fragment } from 'react';
 import { hasRenewableSubscription } from 'calypso/lib/cart-values/cart-items';
 import AdditionalTermsOfServiceInCart from './additional-terms-of-service-in-cart';
 import BundledDomainNotice from './bundled-domain-notice';
-import ConciergeRefundPolicy from './concierge-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
 import DomainRegistrationHsts from './domain-registration-hsts';
 import { EbanxTermsOfService } from './ebanx-terms-of-service';
@@ -37,7 +36,6 @@ class CheckoutTerms extends Component {
 				{ ! isGiftPurchase && <DomainRegistrationAgreement cart={ cart } /> }
 				{ ! isGiftPurchase && <DomainRegistrationHsts cart={ cart } /> }
 				<RefundPolicies cart={ cart } />
-				{ ! isGiftPurchase && <ConciergeRefundPolicy cart={ cart } /> }
 				{ ! isGiftPurchase && <BundledDomainNotice cart={ cart } /> }
 				{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }
 				{ ! isGiftPurchase && <ThirdPartyPluginsTermsOfService cart={ cart } /> }
