@@ -390,9 +390,14 @@ describe( 'Checkout contact step', () => {
 				screen.getByLabelText( /(Postal|ZIP) code/i ),
 				validContactDetails.postal_code
 			);
-			await user.click( await screen.findByText( 'Continue' ) );
 
-			// Wait for the validation to complete
+			// Do not await this click because we need to capture the 'Please wait'
+			// text that may only be visible very briefly. findByText('Please wait')
+			// will wait for it to appear.
+			user.click( await screen.findByText( 'Continue' ) );
+
+			// Wait for the validation to complete.
+			await screen.findAllByText( 'Please wait…' );
 			await waitForElementToBeRemoved( () => screen.queryAllByText( 'Please wait…' ) );
 
 			if ( complete === 'does' ) {
