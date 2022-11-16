@@ -289,4 +289,14 @@
 		border: 1px solid var(--videopress-color-border);
 		outline: solid 2px var(--videopress-color-link);
 	}
+
+	.button:focus {
+		box-shadow: none;
+		border: 1px solid var(--videopress-color-background-dark);
+		outline: solid 2px var(--videopress-color-link);
+	}
+
+	.button.is-primary:focus {
+		border: none;
+	}
 }
