@@ -1,10 +1,15 @@
+import config from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import i18n, { localize } from 'i18n-calypso';
+import { compose } from '@wordpress/compose';
+import classnames from 'classnames';
+import i18n, { localize, translate, withRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import QRCode from 'qrcode.react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import AppImage from 'calypso/assets/images/jetpack/jetpack-app-graphic.png';
+import AnimatedIcon from 'calypso/components/animated-icon';
 import phoneValidation from 'calypso/lib/phone-validation';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import userAgent from 'calypso/lib/user-agent';
@@ -23,6 +28,8 @@ import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import hasUserSettings from 'calypso/state/selectors/has-user-settings';
 import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 import AppsBadge from './apps-badge';
+
+const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
 
 function sendSMS( phone ) {
 	function onSuccess( dispatch ) {
@@ -47,7 +54,6 @@ function sendSMS( phone ) {
 
 class MobileDownloadCard extends Component {
 	static propTypes = {
-		translate: PropTypes.func,
 		countriesList: PropTypes.array.isRequired,
 		storedPhone: PropTypes.shape( {
 			countryCode: PropTypes.string,
@@ -58,6 +64,7 @@ class MobileDownloadCard extends Component {
 		} ),
 		hasLoadedStoredPhone: PropTypes.bool,
 		hasSendingError: PropTypes.bool,
+		isRtl: PropTypes.bool,
 	};
 
 	state = {
@@ -162,16 +169,89 @@ class MobileDownloadCard extends Component {
 		return this.props.hasUserSettings && this.props.hasLoadedAccountRecoveryPhone;
 	}
 
-	render() {
-		const { translate } = this.props;
+	getAppStoreBadges() {
+		const { isiPad, isiPod, isiPhone } = userAgent;
+		const isIos = isiPad || isiPod || isiPhone;
 
+		return (
+			<div className="get-apps__badges jetpack">
+				<p className="get-apps__card-text jetpack">
+					{ translate(
+						'Everything you need to publish, manage, and grow your site anywhere, any time.'
+					) }
+				</p>
+				<AppsBadge
+					storeName={ isIos ? 'ios' : 'android' }
+					utm_source={ isIos ? 'calypso-get-apps-button' : 'calypso-get-apps' }
+				/>
+			</div>
+		);
+	}
+
+	getQrCode() {
+		return (
+			<div className="get-apps__qr-code-subpanel jetpack">
+				<QRCode
+					value={ localizeUrl( 'https://apps.wordpress.com/get?campaign=calypso-qrcode-apps' ) }
+					size={ 150 }
+				/>
+				<p className="get-apps__card-text jetpack">
+					{ translate(
+						'Visit {{a}}wp.com/app{{/a}} from your mobile device, or scan the code to download the Jetpack mobile app.',
+						{
+							components: {
+								a: (
+									<a
+										className="get-apps__jetpack-branded-link"
+										href="https://apps.wordpress.com/get?campaign=calypso-get-apps-link"
+									/>
+								),
+							},
+						}
+					) }
+				</p>
+			</div>
+		);
+	}
+
+	getJetpackBrandedPanel() {
+		const { isMobile } = userAgent;
+		return (
+			<>
+				<div className="get-apps__store-subpanel">
+					<div className="get-apps__card-text jetpack">
+						<AnimatedIcon
+							icon={ `/calypso/animations/app-promo/wp-to-jp${
+								this.props.isRtl ? '-rtl' : ''
+							}.json` }
+							className="get-apps__mobile-icon"
+						/>
+						<h1 className="get-apps__card-title jetpack">
+							{ translate(
+								'Take WordPress on the go with the {{span}}Jetpack{{/span}} mobile app',
+								{
+									components: {
+										span: <span className="get-apps__jetpack-branded-text" />,
+									},
+								}
+							) }
+						</h1>
+					</div>
+					<div className="get-apps__graphic">
+						<img src={ AppImage } alt="" width="220px" height="212px" />
+					</div>
+				</div>
+				{ isMobile ? this.getAppStoreBadges() : this.getQrCode() }
+			</>
+		);
+	}
+
+	getWordPressBrandedPanel() {
 		const { isMobile } = userAgent;
 		const featureIsEnabled = ! isMobile;
 
 		return (
-			<Card className="get-apps__mobile">
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-
+			<>
 				<div className="get-apps__store-subpanel">
 					<div className="get-apps__card-text">
 						<h3 className="get-apps__card-title">{ translate( 'Mobile Apps' ) }</h3>
@@ -194,9 +274,7 @@ class MobileDownloadCard extends Component {
 						</p>
 
 						<QRCode
-							value={ localizeUrl(
-								'https://apps.wordpress.com/mobile/?campaign=calypso-qrcode-apps'
-							) }
+							value={ localizeUrl( 'https://apps.wordpress.com/get?campaign=calypso-qrcode-apps' ) }
 							size={ 180 }
 						/>
 					</div>
@@ -218,6 +296,21 @@ class MobileDownloadCard extends Component {
 						</Button>
 					</div>
 				</div>
+			</>
+		);
+	}
+
+	render() {
+		return (
+			<Card
+				className={ classnames( 'get-apps__mobile', {
+					jetpack: displayJetpackAppBranding,
+				} ) }
+			>
+				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				{ displayJetpackAppBranding
+					? this.getJetpackBrandedPanel()
+					: this.getWordPressBrandedPanel() }
 			</Card>
 		);
 	}
@@ -257,13 +350,17 @@ const sendMagicLink = ( email ) =>
 		sendEmailLogin( email, { showGlobalNotices: true, isMobileAppLogin: true } )
 	);
 
-export default connect(
-	( state ) => ( {
-		countriesList: getCountries( state, 'sms' ),
-		accountRecoveryPhone: getAccountRecoveryPhone( state ),
-		hasLoadedAccountRecoveryPhone: isAccountRecoverySettingsReady( state ),
-		userSettings: getUserSettings( state ),
-		hasUserSettings: hasUserSettings( state ),
-	} ),
-	{ sendSMS, sendMagicLink, fetchUserSettings, accountRecoverySettingsFetch, recordTracksEvent }
-)( localize( MobileDownloadCard ) );
+export default compose(
+	connect(
+		( state ) => ( {
+			countriesList: getCountries( state, 'sms' ),
+			accountRecoveryPhone: getAccountRecoveryPhone( state ),
+			hasLoadedAccountRecoveryPhone: isAccountRecoverySettingsReady( state ),
+			userSettings: getUserSettings( state ),
+			hasUserSettings: hasUserSettings( state ),
+		} ),
+		{ sendSMS, sendMagicLink, fetchUserSettings, accountRecoverySettingsFetch, recordTracksEvent }
+	),
+	withRtl,
+	localize
+)( MobileDownloadCard );
