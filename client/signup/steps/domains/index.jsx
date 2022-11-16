@@ -643,7 +643,7 @@ class DomainsStep extends Component {
 			};
 			if ( VIDEOPRESS_FLOW === flowName ) {
 				return translate(
-					'Set your Video site apart with a custom domain. Not sure yet? {{span}}Decide later{{/span}}.',
+					'Set your video site apart with a custom domain. Not sure yet? {{span}}Decide later{{/span}}.',
 					{ components }
 				);
 			}

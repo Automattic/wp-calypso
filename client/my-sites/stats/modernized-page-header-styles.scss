@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 // For page header styles behind feature `stats/new-main-chart`
 .stats--new-wrapper {
 	// Page layout
@@ -9,7 +11,11 @@
 	.formatted-header {
 		&.is-left-align,
 		&.is-right-align {
-			margin: 0;
+			margin: 0 0 16px 0;
+
+			@media ( max-width: $break-medium ) {
+				margin: 24px 16px 12px;
+			}
 
 			.formatted-header__title {
 				margin-bottom: 4px;
@@ -35,20 +41,30 @@
 
 	// StatsNavigation styles
 	.stats-navigation {
-		margin-top: 16px;
-
 		.section-nav {
 			margin: 0;
 			box-shadow: none;
 		}
 
+		.section-nav-group__label {
+			padding: 0;
+		}
+
 		.section-nav__panel {
 			padding: 0;
+
+			@media ( max-width: $break-medium ) {
+				padding: 0 16px;
+			}
 		}
 
 		.section-nav-tab {
 			&:not(:first-child) {
 				margin-left: 16px;
+
+				@media ( max-width: $break-mobile ) {
+					margin-left: 0;
+				}
 			}
 
 			.section-nav-tab__link {
@@ -56,6 +72,14 @@
 				font-size: $font-body-small;
 				line-height: 20px;
 				color: var(--color-neutral-60);
+
+				@media ( max-width: $break-medium ) {
+					padding: 8px 0;
+				}
+
+				@media ( max-width: $break-mobile ) {
+					padding: 8px;
+				}
 
 				&:hover {
 					color: var(--color-neutral-60);

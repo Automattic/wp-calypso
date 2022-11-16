@@ -250,9 +250,9 @@ class PurchasesListing extends Component {
 		const planHasScan = planHasFeature( plan.productSlug, PRODUCT_JETPACK_SCAN );
 
 		if ( planHasBackup && planHasScan ) {
-			serviceButtonText = translate( 'View Backup & Scan' );
+			serviceButtonText = translate( 'View VaultPress Backup & Scan' );
 		} else if ( planHasBackup ) {
-			serviceButtonText = translate( 'View Backup' );
+			serviceButtonText = translate( 'View VaultPress Backup' );
 		} else if ( planHasScan ) {
 			serviceButtonText = translate( 'View Scan' );
 		}

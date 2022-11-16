@@ -4,6 +4,10 @@ import { useState, useCallback, MouseEvent, KeyboardEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useFetchTestConnection from 'calypso/data/agency-dashboard/use-fetch-test-connection';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import {
+	getSelectedLicenses,
+	getSelectedLicensesSiteId,
+} from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import SiteActions from '../site-actions';
 import SiteErrorContent from '../site-error-content';
@@ -58,8 +62,24 @@ export default function SiteCard( { rows, columns }: Props ) {
 	const siteUrl = site.value.url;
 	const isFavorite = rows.isFavorite;
 
+	const selectedLicenses = useSelector( getSelectedLicenses );
+	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
+
+	const currentSiteHasSelectedLicenses =
+		selectedLicensesSiteId === blogId && selectedLicenses?.length;
+
+	// We should disable the license selection for all sites, but the active one.
+	const shouldDisableLicenseSelection =
+		selectedLicenses?.length && ! currentSiteHasSelectedLicenses;
+
 	return (
-		<Card className="site-card__card" compact>
+		<Card
+			className={ classNames( 'site-card__card', {
+				'site-card__card-disabled': shouldDisableLicenseSelection,
+				'site-card__card-active': currentSiteHasSelectedLicenses,
+			} ) }
+			compact
+		>
 			<div className="site-card__header">
 				<span
 					className="site-card__title"

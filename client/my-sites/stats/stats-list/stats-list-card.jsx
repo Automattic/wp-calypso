@@ -46,20 +46,13 @@ const StatsListCard = ( {
 	};
 
 	const outputRightItem = ( item, index ) => {
-		let rightSideItem;
-
-		if ( item.link ) {
-			// exception for items without actions
-			rightSideItem = (
-				<StatsListActions>
-					<OpenLink href={ item?.link } key={ `link-${ index }` } moduleName={ moduleType } />
-				</StatsListActions>
-			);
-		} else {
-			rightSideItem = <StatsListActions data={ item } moduleName={ moduleType } />;
-		}
-
-		return rightSideItem;
+		return (
+			<StatsListActions data={ item } moduleName={ moduleType } inStatsListCard>
+				{ item?.link && (
+					<OpenLink href={ item.link } key={ `link-${ index }` } moduleName={ moduleType } />
+				) }
+			</StatsListActions>
+		);
 	};
 
 	// Search doesn't have items sorted by value when there are 'Unknown search terms' present.

@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React from 'react';
 import titlecase from 'to-title-case';
 import Follow from './action-follow';
 import OpenLink from './action-link';
@@ -14,11 +14,7 @@ import Spam from './action-spam';
  * If `data` is not provided, renders `children`.
  */
 const StatsListActions = ( { data, moduleName, children } ) => {
-	const [ isDisabled, setIsDisabled ] = useState( false );
-	const actionMenu = data?.actionMenu;
-	const actionClassSet = classNames( 'stats-list-actions', 'module-content-list-item-actions', {
-		collapsed: actionMenu && ! isDisabled,
-	} );
+	const actionClassSet = classNames( 'stats-list-actions', 'module-content-list-item-actions' );
 	const actionItems = [];
 
 	if ( data?.actions ) {
@@ -49,8 +45,8 @@ const StatsListActions = ( { data, moduleName, children } ) => {
 					actionItem = (
 						<Spam
 							data={ action.data }
+							inHorizontalBarList
 							key={ action.type }
-							afterChange={ setIsDisabled }
 							moduleName={ moduleNameTitle }
 						/>
 					);
@@ -83,8 +79,8 @@ const StatsListActions = ( { data, moduleName, children } ) => {
 		// prevent actions from triggering row click handler and redirect
 		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
 		<ul className={ actionClassSet } onClick={ ( e ) => e.stopPropagation() }>
-			{ !! actionItems?.length && actionItems }
 			{ !! children && children }
+			{ !! actionItems?.length && actionItems }
 		</ul>
 	) : null;
 };

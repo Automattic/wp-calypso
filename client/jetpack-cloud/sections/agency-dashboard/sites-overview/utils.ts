@@ -163,7 +163,7 @@ const getRowEventName = (
 const backupTooltips: StatusTooltip = {
 	failed: translate( 'Latest backup failed' ),
 	warning: translate( 'Latest backup completed with warnings' ),
-	inactive: translate( 'Add Jetpack Backup to this site' ),
+	inactive: translate( 'Add Jetpack VaultPress Backup to this site' ),
 	progress: translate( 'Backup in progress' ),
 	success: translate( 'Latest backup completed successfully' ),
 };

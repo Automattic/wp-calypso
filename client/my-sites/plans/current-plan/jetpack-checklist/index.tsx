@@ -228,12 +228,12 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 					{ ( ( hasBackups && hasScan && isRewindAvailable ) || forceShowJetpackBackupTask ) && (
 						<Task
 							id="jetpack_rewind"
-							title={ translate( 'Backup and Scan' ) }
+							title={ translate( 'VaultPress Backup and Scan' ) }
 							description={ translate(
 								"Connect your site's server to Jetpack to perform backups, restores, and security scans."
 							) }
 							completedButtonText={ translate( 'Change', { context: 'verb' } ) }
-							completedTitle={ translate( 'You turned on Backup and Scan.' ) }
+							completedTitle={ translate( 'You turned on VaultPress Backup and Scan.' ) }
 							duration={ this.getDuration( 3 ) }
 							completed={ isRewindActive }
 							href={ settingsPath( siteSlug ) }
@@ -264,9 +264,9 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 					{ siteSlug && hasAntiSpam && productInstallStatus && (
 						<Task
 							id="jetpack_akismet"
-							title={ translate( "We're automatically turning on Anti-spam." ) }
+							title={ translate( "We're automatically turning on Akismet Anti-spam." ) }
 							completedButtonText={ translate( 'View spam stats' ) }
-							completedTitle={ translate( "We've automatically turned on Anti-spam." ) }
+							completedTitle={ translate( "We've automatically turned on Akismet Anti-spam." ) }
 							completed={ akismetFinished }
 							href={ `//${ siteSlug.replace(
 								'::',

@@ -6,7 +6,11 @@ export default function WpcomBackupUpsellPlaceholder() {
 	const translate = useTranslate();
 	return (
 		<>
-			<FormattedHeader brandFont headerText={ translate( 'Jetpack Backup' ) } align="left" />
+			<FormattedHeader
+				brandFont
+				headerText={ translate( 'Jetpack VaultPress Backup' ) }
+				align="left"
+			/>
 			<WpcomUpsellPlaceholder />
 		</>
 	);

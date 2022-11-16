@@ -60,9 +60,9 @@ const JetpackBenefits: React.FC< Props > = ( { siteId, productSlug } ) => {
 			) }
 			{ productHasAntiSpam( productSlug ) && (
 				<JetpackBenefitsCard
-					headline={ translate( 'Anti-spam' ) }
+					headline={ translate( 'Akismet Anti-spam' ) }
 					description={ translate(
-						'Jetpack Anti-spam automatcally clears spam from comments and forms.'
+						'Jetpack Akismet Anti-spam automatcally clears spam from comments and forms.'
 					) }
 				/>
 			) }

@@ -476,16 +476,31 @@ export function useIssueMultipleLicenses(
 				.filter( ( license ) => license );
 
 			if ( assignedLicenses.length > 0 ) {
-				const lastItem = assignedLicenses.slice( -1 )[ 0 ];
-				const remainingItems = assignedLicenses.slice( 0, -1 );
-				const messageArgs = {
-					args: {
-						lastItem: lastItem,
-						remainingItems: remainingItems.join( ', ' ),
-					},
-					components: {
-						strong: <strong />,
-					},
+				const initialLicenseList = assignedLicenses.slice( 0, -1 );
+				const lastLicenseItem = assignedLicenses.slice( -1 )[ 0 ];
+
+				const commaCharacter = translate( ',', {
+					comment:
+						'The character used to separate items in a list, such as the comma in "Jetpack Backup, Jetpack Scan, and Jetpack Boost".',
+				} );
+				const conjunction =
+					assignedLicenses.length > 2
+						? translate( `%(commaCharacter)s and`, {
+								args: {
+									commaCharacter,
+									comment:
+										'The final separator of a delimited list, such as ", and" in "Jetpack Backup, Jetpack Scan, and Jetpack Boost."',
+								},
+						  } )
+						: translate( ' and', {
+								args: {
+									comment:
+										'The way that two words are separated, such as " and" in "Jetpack Backup and Jetpack Scan". Note that the space here is important due to the way the final string is constructed.',
+								},
+						  } );
+
+				const components = {
+					strong: <strong />,
 				};
 
 				dispatch(
@@ -493,13 +508,24 @@ export function useIssueMultipleLicenses(
 						// We are not using the same translate method for plural form since we have different arguments.
 						assignedLicenses.length > 1
 							? translate(
-									'{{strong}}%(remainingItems)s and %(lastItem)s{{/strong}} were succesfully issued',
-									messageArgs
+									'{{strong}}%(initialLicenseList)s%(conjunction)s %(lastLicenseItem)s{{/strong}} were succesfully issued',
+									{
+										args: {
+											lastLicenseItem,
+											conjunction,
+											initialLicenseList: initialLicenseList.join( ', ' ),
+										},
+										comment:
+											'%(initialLicenseList)s is a list of n-1 license names seperated by a translated comma character, %(lastLicenseItem) is the nth license name, and %(conjunction) is a translated "and" text with or without a serial comma based on the licenses count. An example is "Jetpack Backup, Jetpack Scan, and Jetpack Boost" where the initialLicenseList is "Jetpack Backup, Jetpack Scan", the conjunction is ", and", and the lastLicenseItem is "Jetpack Boost". An alternative example is "Jetpack Backup and Jetpack Scan", where initialLicenseList is "Jetpack Backup", conjunction is " and", and lastLienseItem is "Jetpack Boost".',
+										components,
+									}
 							  )
-							: translate(
-									'{{strong}}%(lastItem)s{{/strong}} was succesfully issued',
-									messageArgs
-							  ),
+							: translate( '{{strong}}%(assignedLicense)s{{/strong}} was succesfully issued', {
+									args: {
+										assignedLicense: lastLicenseItem,
+									},
+									components,
+							  } ),
 						{
 							displayOnNextPage: true,
 						}
