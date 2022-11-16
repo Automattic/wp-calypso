@@ -16,6 +16,7 @@ import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
+import type { SiteDetailsPlan } from '@automattic/data-stores';
 
 export const ecommerceFlowRecurTypes = {
 	YEARLY: 'yearly',
@@ -39,6 +40,7 @@ export const ecommerceFlow: Flow = {
 			'processing',
 			'waitForAtomic',
 			'setThemeStep',
+			'checkPlan',
 		] as StepPath[];
 	},
 
@@ -89,7 +91,7 @@ export const ecommerceFlow: Flow = {
 					}
 
 					if ( providedDependencies?.siteSlug ) {
-						const destination = `/setup/${ flowName }/intro?siteSlug=${ siteSlug }`;
+						const destination = `/setup/${ flowName }/checkPlan?siteSlug=${ siteSlug }`;
 						persistSignupDestination( destination );
 						setSignupCompleteSlug( siteSlug );
 						setSignupCompleteFlowName( flowName );
@@ -97,7 +99,7 @@ export const ecommerceFlow: Flow = {
 						// The site is coming from the checkout already Atomic (and with the new URL)
 						// There's probably a better way of handling this change
 						const returnUrl = encodeURIComponent(
-							`/setup/${ flowName }/waitForAtomic?theme=${
+							`/setup/${ flowName }/checkPlan?theme=${
 								selectedDesign?.slug
 							}&siteSlug=${ siteSlug.replace( '.wordpress.com', '.wpcomstaging.com' ) }`
 						);
@@ -108,7 +110,7 @@ export const ecommerceFlow: Flow = {
 							) }?redirect_to=${ returnUrl }&signup=1`
 						);
 					}
-					return navigate( `waitForAtomic?siteSlug=${ providedDependencies.siteSlug }` );
+					return navigate( `checkPlan?siteSlug=${ siteSlug }` );
 
 				case 'intro':
 					if ( userIsLoggedIn ) {
@@ -127,6 +129,18 @@ export const ecommerceFlow: Flow = {
 
 				case 'waitForAtomic':
 					return navigate( 'processing' );
+
+				case 'checkPlan':
+					// eCommerce Plan
+					if (
+						( providedDependencies?.currentPlan as SiteDetailsPlan )?.product_slug ===
+						PLAN_ECOMMERCE
+					) {
+						return navigate( 'waitForAtomic' );
+					}
+
+					// Not eCommerce Plan
+					return window.location.assign( `/setup/site-setup/goals?siteSlug=${ siteSlug }` );
 			}
 			return providedDependencies;
 		}
@@ -138,7 +152,6 @@ export const ecommerceFlow: Flow = {
 				default:
 					return navigate( 'intro' );
 			}
-			return;
 		};
 
 		const goNext = () => {

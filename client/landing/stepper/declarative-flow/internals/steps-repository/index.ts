@@ -21,6 +21,7 @@ export { default as importerMedium } from './importer-medium';
 export { default as importerSquarespace } from './importer-squarespace';
 export { default as importerWordpress } from './importer-wordpress';
 export { default as businessInfo } from './business-info';
+export { default as checkPlan } from './check-plan';
 export { default as storeAddress } from './store-address';
 export { default as vertical } from './site-vertical';
 export { default as wooTransfer } from './woo-transfer';
@@ -83,6 +84,7 @@ export type StepPath =
 	| 'wooTransfer'
 	| 'wooInstallPlugins'
 	| 'waitForAtomic'
+	| 'checkPlan'
 	| 'error'
 	| 'wooConfirm'
 	| 'wooVerifyEmail'
