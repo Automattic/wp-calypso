@@ -1,5 +1,5 @@
 import { Onboard } from '@automattic/data-stores';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { useLocale, englishLocales } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import type { Goal } from './types';
 
@@ -44,7 +44,7 @@ const useBBEGoal = () => {
 
 export const useGoals = (): Goal[] => {
 	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
+	const locale = useLocale();
 	const builtByExpressGoalDisplayText = useBBEGoal();
 
 	const goals = [
@@ -75,12 +75,21 @@ export const useGoals = (): Goal[] => {
 		},
 	];
 
-	const hideDIFMGoalForNonEN = ( { key }: Goal ) => {
-		if ( key === SiteGoal.DIFM && ! isEnglishLocale ) {
-			return false;
+	/**
+	 * Hides the DIFM goal for all locales except English and es.
+	 */
+	const hideDIFMGoalForUnsupportedLocales = ( { key }: Goal ) => {
+		if ( key !== SiteGoal.DIFM ) {
+			return true;
 		}
-		return true;
+		if ( englishLocales.includes( locale ) ) {
+			return true;
+		}
+		if ( 'es' === locale ) {
+			return true;
+		}
+		return false;
 	};
 
-	return goals.filter( hideDIFMGoalForNonEN );
+	return goals.filter( hideDIFMGoalForUnsupportedLocales );
 };
