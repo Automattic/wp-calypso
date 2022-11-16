@@ -24,13 +24,7 @@ body.is-section-signup {
 		* This is done because the there is usally already a back button displayed to the user (Browser back button)
 		* and the current back button is redundent.
 		*/
-		.signup__step.is-plans-link-in-bio .step-wrapper__navigation,
-		.signup__step.is-plans-newsletter .step-wrapper__navigation,
-		.signup__step.is-mailbox-plan .step-wrapper__navigation,
-		.signup__step.is-plans .step-wrapper__navigation,
-		.signup__step.is-domains .step-wrapper__navigation,
-		.signup__step.is-plans-site-selected .step-wrapper__navigation,
-		.signup__step.is-mailbox-domain .step-wrapper__navigation {
+		.signup__step .plans.plans-step .step-wrapper__navigation {
 			@include breakpoint-deprecated( "<660px" ) {
 				display: none;
 			}
@@ -798,26 +792,23 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 		}
 	}
 
-	.signup__step.is-domains,
-	.signup__step.is-mailbox-domain,
-	.signup__step.is-emails,
-	.signup__step.is-mailbox,
-	.signup__step.is-plans-newsletter,
-	.signup__step.is-plans-link-in-bio,
-	.signup__step.is-mailbox-plan,
-	.signup__step.is-plans-site-selected,
-	.signup__step.is-plans {
+	.signup__step .plans.plans-step {
 		.formatted-header {
 			.formatted-header__title {
 				font-size: 2.25rem;
 				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				line-height: 2.5rem;
-
+				font-weight: 500;
 				@include break-mobile {
 					font-size: 2.75rem;
 					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 					line-height: 3rem;
 				}
+			}
+
+			.formatted-header__subtitle button.is-borderless {
+				font-weight: 500;
+				color: var(--studio-gray-90);
 			}
 		}
 	}
@@ -843,21 +834,6 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 
 		.formatted-header__title {
 			text-align: start;
-		}
-	}
-
-	.signup__step.is-plans-link-in-bio,
-	.signup__step.is-plans-newsletter,
-	.signup__step.is-mailbox-plan,
-	.signup__step.is-plans-site-selected,
-	.signup__step.is-plans {
-		.formatted-header__title {
-			font-weight: 500;
-		}
-
-		.formatted-header__subtitle button.is-borderless {
-			font-weight: 500;
-			color: var(--studio-gray-90);
 		}
 	}
 
