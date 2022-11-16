@@ -321,6 +321,10 @@ describe( 'Checkout contact step', () => {
 				};
 			} )();
 
+			mockCachedContactDetailsEndpoint( {
+				country_code: '',
+				postal_code: '',
+			} );
 			mockContactDetailsValidationEndpoint(
 				name === 'plan' ? 'tax' : name,
 				{
