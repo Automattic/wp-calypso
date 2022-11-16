@@ -217,6 +217,10 @@
 	.button.navigation-link {
 		text-decoration: underline;
 
+		&.is-borderless {
+			color: var(--studio-gray-100);
+		}
+
 		&:hover,
 		&:focus {
 			color: var(--studio-blue-50);
