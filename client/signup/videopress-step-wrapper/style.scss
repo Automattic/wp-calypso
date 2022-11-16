@@ -281,4 +281,12 @@
 			top: 33px;
 		}
 	}
+
+	input[type="email"]:focus,
+	input[type="text"]:focus,
+	input[type="password"]:focus {
+		box-shadow: none;
+		border: 1px solid var(--videopress-color-border);
+		outline: solid 2px var(--videopress-color-link);
+	}
 }
