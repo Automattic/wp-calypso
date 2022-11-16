@@ -4,3 +4,7 @@ export type RenderedPattern = {
 	html: string;
 	styles: string[];
 };
+
+export type RenderedPatterns = {
+	[ key: string ]: RenderedPattern;
+};

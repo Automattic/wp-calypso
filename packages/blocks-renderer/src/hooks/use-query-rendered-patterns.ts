@@ -1,19 +1,19 @@
 import { useQuery, UseQueryResult } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
-import type { RenderedPattern } from '../types';
+import type { RenderedPatterns } from '../types';
 
 const useQueryRenderedPatterns = (
 	siteId: number,
 	stylesheet: string,
 	patternIds: string[]
-): UseQueryResult< RenderedPattern[] > => {
+): UseQueryResult< RenderedPatterns > => {
 	const pattern_ids = patternIds.join( ',' );
 	const params = new URLSearchParams( {
 		stylesheet,
 		pattern_ids,
 	} );
 
-	return useQuery< RenderedPattern[] >(
+	return useQuery< RenderedPatterns >(
 		[ siteId, 'block-patterns', pattern_ids ],
 		() =>
 			wpcomRequest( {
