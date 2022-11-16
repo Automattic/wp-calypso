@@ -107,7 +107,7 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 				/>
 			) }
 
-			<PricingBanner siteId={ siteId } duration={ duration } />
+			<PricingBanner />
 
 			<TabPanel
 				className="jetpack-product-store__items-tabs"
