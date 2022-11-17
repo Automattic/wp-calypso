@@ -9,15 +9,13 @@ describe( 'Translations', () => {
 			it( 'provides flow specific text', () => {
 				const newsletterTranslations = getLaunchpadTranslations( 'newsletter' );
 				expect( newsletterTranslations.flowName ).toEqual( 'Newsletter' );
-				expect( newsletterTranslations.title ).toEqual( 'Your Newsletter is ready!' );
+				expect( newsletterTranslations.title ).toEqual( "You're all set to start publishing" );
 				expect( newsletterTranslations.launchTitle ).toBe( undefined );
 
 				const linkInBioTranslations = getLaunchpadTranslations( 'link-in-bio' );
 				expect( linkInBioTranslations.flowName ).toEqual( 'Link in Bio' );
-				expect( linkInBioTranslations.title ).toEqual( 'Your Link in Bio is almost ready!' );
-				expect( linkInBioTranslations.launchTitle ).toEqual(
-					'Your Link in Bio is ready to launch!'
-				);
+				expect( linkInBioTranslations.title ).toEqual( "You're ready to link and launch" );
+				expect( linkInBioTranslations.launchTitle ).toEqual( "You're ready to link and launch" );
 			} );
 		} );
 
