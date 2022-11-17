@@ -162,7 +162,7 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="stats" query={ {} } /> }
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsInsights" /> }
 
-			<div className="highlight-cards stats__all-time-highlights-mobile">
+			<div className="stats__all-time-highlights-mobile">
 				<h1 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h1>
 				<DotPager>
 					<Card className="highlight-card">
