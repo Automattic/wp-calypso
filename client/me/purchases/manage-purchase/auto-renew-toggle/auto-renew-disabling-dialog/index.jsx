@@ -152,6 +152,19 @@ class AutoRenewDisablingDialog extends Component {
 		}
 	}
 
+	getGiftingCopy() {
+		const { siteDomain, translate } = this.props;
+
+		return translate(
+			"Did you know: You can allow site visitors to help cover the full cost of your site's plan and domain by turning on gifting in {{a}}Settings > General{{/a}}.",
+			{
+				components: {
+					a: <a href={ `/settings/general/${ siteDomain }` } />,
+				},
+			}
+		);
+	}
+
 	onClickAtomicFollowUpConfirm = () => {
 		this.props.onConfirm();
 		this.setState( {
@@ -254,6 +267,7 @@ class AutoRenewDisablingDialog extends Component {
 					{ translate( 'Turn off auto-renew' ) }
 				</h2>
 				<p>{ description }</p>
+				<p>{ this.getGiftingCopy() }</p>
 			</Dialog>
 		);
 	};
