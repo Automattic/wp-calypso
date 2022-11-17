@@ -18,7 +18,7 @@ type ItemProps = {
 	mainItem?: boolean;
 	selected?: boolean;
 	onKeyDown?: React.KeyboardEventHandler< HTMLButtonElement >;
-	logo: { id: string; sizes: string[]; url: string } | undefined;
+	logo: SitePickerSite[ 'logo' ] | undefined;
 	id: string;
 	enabled?: boolean;
 };
@@ -67,16 +67,16 @@ const SitePickerItem: FC< ItemProps > = ( {
 };
 
 export type SitePickerSite = {
-	ID: number;
+	ID: number | string;
 	URL: string;
 	name: string | undefined;
-	logo: { id: string; sizes: string[]; url: string };
+	logo: { id: string | number; sizes: never[]; url: string };
 };
 
 export type Props = {
 	siteId: string | number | undefined | null;
 	options: ( SitePickerSite | undefined )[];
-	onPickSite: ( siteId: number ) => void;
+	onPickSite: ( siteId: number | string ) => void;
 	enabled: boolean;
 };
 

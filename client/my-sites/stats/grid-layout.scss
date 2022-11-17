@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 $grid-horizontal-gutters: 24px;
 $grid-vertical-gutters: 32px;
 
@@ -17,7 +19,6 @@ $grid-vertical-gutters: 32px;
 	@media ( max-width: $break-large ) {
 		grid-template-columns: repeat(8, 1fr);
 		grid-template-rows: repeat(5, min-content);
-		gap: $grid-vertical-gutters $grid-horizontal-gutters;
 		grid-template-areas:
 			"posts posts posts posts referrers referrers referrers referrers"
 			"country country country country country country country country"
@@ -30,7 +31,7 @@ $grid-vertical-gutters: 32px;
 	@media ( max-width: $break-medium ) {
 		grid-template-columns: repeat(4, 1fr);
 		grid-template-rows: repeat(8, min-content);
-		gap: $grid-vertical-gutters $grid-horizontal-gutters;
+		gap: 0;
 		grid-template-areas:
 			"posts posts posts posts"
 			"referrers referrers referrers referrers"
@@ -105,19 +106,5 @@ $grid-vertical-gutters: 32px;
 	.stats__module-wrapper--filedownloads,
 	.list-filedownloads {
 		grid-area: downloads;
-	}
-
-	// Support for legacy action items
-	// TODO: Remove once all traffic stats modules use StatsListCard in StatsModule component.
-	.stats-list__module-content-list-item-value,
-	.stats-list__module-content-list-item-wrapper span,
-	.module-content-list-item-wrapper span {
-		line-height: 40px;
-	}
-	.module-content-list-item-actions {
-		display: none;
-	}
-	.stats-list__module-content-list-item-wrapper:hover .module-content-list-item-actions {
-		display: inline-block;
 	}
 }
