@@ -5,7 +5,9 @@ import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { ReactChild } from 'react';
+
 import './style.scss';
 
 function getStepClassName( currentStep: number, step: number ): any {
@@ -41,9 +43,10 @@ interface Step {
 
 interface Props {
 	currentStep: StepKey;
+	selectedSite?: SiteDetails | null;
 }
 
-export default function AssignLicenseStepProgress( { currentStep }: Props ) {
+export default function AssignLicenseStepProgress( { currentStep, selectedSite }: Props ) {
 	const translate = useTranslate();
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 	const sites = useSelector( getSites ).length;
@@ -54,7 +57,7 @@ export default function AssignLicenseStepProgress( { currentStep }: Props ) {
 		steps.push( { key: 'addPaymentMethod', label: translate( 'Add Payment Method' ) } );
 	}
 
-	if ( sites > 0 ) {
+	if ( sites > 0 && ! selectedSite ) {
 		steps.push( { key: 'assignLicense', label: translate( 'Assign license' ) } );
 	}
 
