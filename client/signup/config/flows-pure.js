@@ -112,7 +112,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'newsletter',
-			steps: [ 'user', 'domains', 'plans-newsletter' ],
+			steps: [ 'domains', 'plans-newsletter' ],
 			destination: ( dependencies ) =>
 				`/setup/newsletter/subscribers?siteSlug=${ dependencies.siteSlug }`,
 			description: 'Beginning of the flow to create a newsletter',
@@ -125,7 +125,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'link-in-bio',
-			steps: [ 'user', 'domains', 'plans-link-in-bio' ],
+			steps: [ 'domains', 'plans-link-in-bio' ],
 			destination: ( dependencies ) =>
 				`/setup/link-in-bio/launchpad?siteSlug=${ encodeURIComponent( dependencies.siteSlug ) }`,
 			description: 'Beginning of the flow to create a link in bio',
