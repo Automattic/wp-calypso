@@ -48,14 +48,19 @@ const getSavingsDescription = (
  * Parse the API response into a more usable format.
  */
 const parsePlans = ( data: ApiPricingPlan[] ): PricingPlansConfiguration | null => {
-	const premiumYearly = data.find( ( plan ) => plan.path_slug === 'premium' );
-	const premiumMonthly = data.find( ( plan ) => plan.path_slug === 'premium-monthly' );
+	const plansByPathSlug = data.reduce< Record< string, ApiPricingPlan > >( ( acc, plan ) => {
+		acc[ plan.path_slug ] = plan;
+		return acc;
+	}, {} );
 
-	const businessYearly = data.find( ( plan ) => plan.path_slug === 'business' );
-	const businessMonthly = data.find( ( plan ) => plan.path_slug === 'business-monthly' );
+	const premiumYearly = plansByPathSlug.premium;
+	const premiumMonthly = plansByPathSlug[ 'premium-monthly' ];
 
-	const eCommerceYearly = data.find( ( plan ) => plan.path_slug === 'ecommerce' );
-	const eCommerceMonthly = data.find( ( plan ) => plan.path_slug === 'ecommerce-monthly' );
+	const businessYearly = plansByPathSlug.business;
+	const businessMonthly = plansByPathSlug[ 'business-monthly' ];
+
+	const eCommerceYearly = plansByPathSlug.ecommerce;
+	const eCommerceMonthly = plansByPathSlug[ 'ecommerce-monthly' ];
 
 	if (
 		! premiumYearly ||
