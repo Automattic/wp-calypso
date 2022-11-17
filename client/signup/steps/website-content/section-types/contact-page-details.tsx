@@ -2,10 +2,10 @@ import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-	Label,
 	TextAreaField,
 	HorizontalGrid,
 	ContactInformation,
+	TextInputLabel,
 } from 'calypso/signup/accordion-form/form-components';
 import {
 	BBE_WEBSITE_CONTENT_FILLING_STEP,
@@ -126,11 +126,15 @@ export function ContactPageDetails( {
 				} }
 				onChange={ onFieldChanged }
 			/>
-			<Label>
-				{ translate( 'Upload up to %(noOfImages)d images to be used on your %(pageTitle)s page.', {
-					args: { pageTitle, noOfImages: page.media.length },
-				} ) }
-			</Label>
+
+			<TextInputLabel
+				labelText={ translate(
+					'Upload up to %(noOfImages)d images to be used on your %(pageTitle)s page.',
+					{
+						args: { pageTitle, noOfImages: page.media.length },
+					}
+				) }
+			/>
 			<HorizontalGrid>
 				{ page.media.map( ( media, i ) => (
 					<WordpressMediaUpload

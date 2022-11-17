@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent } from 'react';
 import { useDispatch } from 'react-redux';
-import { TextAreaField, Label } from 'calypso/signup/accordion-form/form-components';
+import { TextAreaField, TextInputLabel } from 'calypso/signup/accordion-form/form-components';
 import { updateFeedback } from 'calypso/state/signup/steps/website-content/actions';
 import type { WebsiteContent } from 'calypso/state/signup/steps/website-content/schema';
 export function FeedbackSection( {
@@ -32,9 +32,11 @@ export function FeedbackSection( {
 					'Optional: Is there anything else you would like the site builder to know?'
 				) }
 			/>
-			<Label>
-				{ translate( 'Click Submit when you are finished providing content for all pages.' ) }
-			</Label>
+			<TextInputLabel
+				labelText={ translate(
+					'Click Submit when you are finished providing content for all pages.'
+				) }
+			/>
 		</>
 	);
 }

@@ -3,20 +3,23 @@ import styled from '@emotion/styled';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ChangeEvent } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
 import SocialLogo from 'calypso/components/social-logo';
 
 // TODO: This probably should be moved out to a more suitable folder name like difm-components
-export const Label = styled( FormLabel )`
+export const Label = styled.label`
 	color: var( --studio-gray-50 );
-	font-weight: 500;
+	font-weight: 400;
+	font-size: 0.875rem;
 	cursor: inherit;
-	margin-bottom: 24px;
 `;
 
-export const SubLabel = styled( Label )`
+export const LabelContainer = styled.div`
+	margin-bottom: 12px;
+`;
+
+export const SubLabel = styled.label`
 	font-weight: 400;
 	text-decoration-line: none;
 	color: ${ ( props ) => ( props.color ? props.color : 'inherited' ) };
@@ -90,10 +93,24 @@ interface TextInputFieldProps {
 	onChange?: ( event: ChangeEvent< HTMLInputElement > ) => void;
 }
 
+export function TextInputLabel( {
+	inputName,
+	labelText,
+}: {
+	inputName?: string;
+	labelText?: TranslateResult;
+} ) {
+	return (
+		<LabelContainer>
+			<Label htmlFor={ inputName }>{ labelText }</Label>
+		</LabelContainer>
+	);
+}
+
 export function TextInputField( props: TextInputFieldProps ) {
 	return (
 		<FormFieldset>
-			<Label htmlFor={ props.name }>{ props.label }</Label>
+			<TextInputLabel inputName={ props.name } labelText={ props.label } />
 			{ props.sublabel && <SubLabel htmlFor={ props.name }>{ props.sublabel }</SubLabel> }
 			<TextInput { ...props } isError={ !! props.error } />
 			{ props.error && <FormInputValidation isError text={ props.error } /> }
@@ -108,7 +125,7 @@ interface TextAreaFieldProps extends TextInputFieldProps {
 export function TextAreaField( props: TextAreaFieldProps ) {
 	return (
 		<FormFieldset>
-			<Label htmlFor={ props.name }>{ props.label }</Label>
+			<TextInputLabel inputName={ props.name } labelText={ props.label } />
 			{ props.sublabel && <SubLabel htmlFor={ props.name }>{ props.sublabel }</SubLabel> }
 			<TextArea
 				{ ...props }

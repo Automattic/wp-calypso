@@ -2,9 +2,9 @@ import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-	Label,
 	TextAreaField,
 	HorizontalGrid,
+	TextInputLabel,
 } from 'calypso/signup/accordion-form/form-components';
 import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import {
@@ -135,7 +135,7 @@ export function DefaultPageDetails( {
 				error={ formErrors[ fieldName ] }
 				label={ description }
 			/>
-			<Label>{ getMediaCaption() }</Label>
+			<TextInputLabel>{ getMediaCaption() }</TextInputLabel>
 			<HorizontalGrid>
 				{ page.media.map( ( media, i ) => (
 					<WordpressMediaUpload
