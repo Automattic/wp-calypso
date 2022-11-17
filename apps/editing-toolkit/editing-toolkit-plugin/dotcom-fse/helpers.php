@@ -192,4 +192,3 @@ function populate_wp_template_data() {
 }
 register_activation_hook( __FILE__, __NAMESPACE__ . '\populate_wp_template_data' );
 add_action( 'switch_theme', __NAMESPACE__ . '\populate_wp_template_data' );
-

@@ -444,7 +444,7 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_global_styles' );
  * The option launch-status exists only on wpcom sites.
  */
 add_filter(
-	'plugin_action_links_plugin_action_links_full-site-editing/full-site-editing-plugin.php',
+	'plugin_action_links_' . plugin_basename( __FILE__ ),
 	function ( $actions ) {
 		$unlaunched = get_option( 'launch-status' ) === 'unlaunched';
 
