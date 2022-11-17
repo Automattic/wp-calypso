@@ -1,6 +1,7 @@
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose, isEmpty, get } from 'lodash';
+import { connect } from 'react-redux';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import ReaderSubscriptionListItemPlaceholder from 'calypso/blocks/reader-subscription-list-item/placeholder';
@@ -17,6 +18,8 @@ import {
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { getStreamUrl } from 'calypso/reader/route';
 import { recordTrack, recordTrackWithRailcar } from 'calypso/reader/stats';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
 
 import './style.scss';
 
@@ -40,7 +43,7 @@ function ReaderSubscriptionListItem( {
 	const siteExcerpt = getSiteDescription( { feed, site } );
 	const authorName = getSiteAuthorName( site );
 	const siteIcon = get( site, 'icon.img' );
-	const feedIcon = get( feed, 'image' );
+	const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
 	const streamUrl = getStreamUrl( feedId, siteId );
 	const feedUrl = url || getFeedUrl( { feed, site } );
 	const siteUrl = getSiteUrl( { feed, site } );
@@ -127,6 +130,13 @@ function ReaderSubscriptionListItem( {
 								{ translate( 'updated %s', { args: moment( feed.last_update ).fromNow() } ) }
 							</span>
 						) }
+						{ feed && feed.date_subscribed && (
+							<span className="reader-subscription-list-item__date-subscribed">
+								{ translate( 'followed %s', {
+									args: moment( feed.date_subscribed ).format( 'MMM YYYY' ),
+								} ) }
+							</span>
+						) }
 					</div>
 				) }
 			</div>
@@ -146,4 +156,22 @@ function ReaderSubscriptionListItem( {
 	);
 }
 
-export default compose( localize, withLocalizedMoment )( ReaderSubscriptionListItem );
+export default compose(
+	connect( ( state, ownProps ) => {
+		const feed = getFeed( state, ownProps.feedId );
+
+		if ( feed ) {
+			const follow = getReaderFollowForFeed( state, parseInt( ownProps.feedId ) );
+			// Add site icon to feed object so have icon for external feeds
+			feed.site_icon = follow?.site_icon;
+			// Add date_subscribed timestamp to feed object
+			feed.date_subscribed = follow?.date_subscribed;
+		}
+
+		return {
+			feed,
+		};
+	} ),
+	localize,
+	withLocalizedMoment
+)( ReaderSubscriptionListItem );

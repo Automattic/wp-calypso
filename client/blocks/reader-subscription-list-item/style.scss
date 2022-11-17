@@ -67,8 +67,13 @@
 
 .reader-subscription-list-item__site-url,
 .reader-subscription-list-item__site-url:visited,
-.reader-subscription-list-item__timestamp {
+.reader-subscription-list-item__timestamp
+.reader-subscription-list-item__date-subscribed {
 	color: var(--color-text-subtle);
+}
+
+.reader-subscription-list-item__timestamp {
+	margin-right: 8px;
 }
 
 .reader-subscription-list-item__site-title,
