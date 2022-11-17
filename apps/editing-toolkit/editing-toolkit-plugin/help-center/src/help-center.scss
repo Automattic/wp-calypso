@@ -30,6 +30,12 @@
 /**
  * WP-ADMIN Masterbar Styling
  */
+.admin-color-light {
+	#help-center-icon,
+	#help-center-icon-with-notification > path {
+		fill: #333;
+	}
+}
 #wpadminbar #wp-toolbar {
 	#wp-admin-bar-help-center {
 		position: relative;
