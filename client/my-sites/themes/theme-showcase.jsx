@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import cookie from 'cookie';
 import { localize } from 'i18n-calypso';
-import { compact, pickBy, shuffle } from 'lodash';
+import { compact, pickBy } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -139,9 +139,7 @@ class ThemeShowcase extends Component {
 
 	getTabFilters = ( { subjects = {}, translate } ) => {
 		const subjectFilters = Object.fromEntries(
-			shuffle(
-				Object.entries( subjects ).map( ( [ key, filter ] ) => [ key, { key, text: filter.name } ] )
-			)
+			Object.entries( subjects ).map( ( [ key, filter ] ) => [ key, { key, text: filter.name } ] )
 		);
 		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
 

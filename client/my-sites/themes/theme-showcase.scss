@@ -86,7 +86,7 @@
 	justify-content: center;
 	padding: 16px 0 24px;
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@include break-small {
 		flex-direction: row;
 		padding: 24px 0 32px;
 	}

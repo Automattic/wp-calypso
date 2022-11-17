@@ -9,7 +9,7 @@ interface ThemesToolbarGroupProps {
 	onSelect: ( selectedSlug: string | null ) => void;
 }
 
-const ThemeToolbarGroup: React.FC< ThemesToolbarGroupProps > = ( {
+const ThemesToolbarGroup: React.FC< ThemesToolbarGroupProps > = ( {
 	items,
 	selectedKey,
 	onSelect,
@@ -33,4 +33,4 @@ const ThemeToolbarGroup: React.FC< ThemesToolbarGroupProps > = ( {
 	);
 };
 
-export default ThemeToolbarGroup;
+export default ThemesToolbarGroup;
