@@ -795,6 +795,9 @@ class ThemeSheet extends Component {
 					forceDisplay
 					href={ ! siteId ? '/plans' : null }
 					showIcon
+					event="theme_upsell_plan_click"
+					tracksClickName="calypso_theme_upsell_plan_click"
+					tracksClickProperties={ { theme_id: id, theme_name: themeName } }
 				/>
 			);
 		}
