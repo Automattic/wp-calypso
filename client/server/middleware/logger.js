@@ -43,7 +43,7 @@ const logRequest = ( req, res, options ) => {
 
 	// Requests which take longer than one second aren't performing well. We log
 	// extra performance data in this case to troubleshoot the cause.
-	if ( duration > 2 ) {
+	if ( duration > 1000 ) {
 		req.logger.info(
 			// TODO: does warn not exist here for tests?
 			{
