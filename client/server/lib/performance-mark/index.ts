@@ -9,11 +9,11 @@ type PartialContext = {
 	performanceMarks?: PerformanceMark[];
 };
 
-type LogastshMark = {
+type LogstashMark = {
 	total_duration: number;
 } & Record< string, number >;
 
-type LogsatshPerfMarks = Record< string, LogastshMark >;
+type LogstashPerfMarks = Record< string, LogstashMark >;
 
 /**
  * Updates the express request context with a new performance mark.
@@ -75,7 +75,7 @@ export default function performanceMark(
  * @param context The request.context object.
  * @returns object The normalized mark data for logstash in object format.
  */
-export function finalizePerfMarks( context: PartialContext ): LogsatshPerfMarks {
+export function finalizePerfMarks( context: PartialContext ): LogstashPerfMarks {
 	// Do nothing if there are no marks.
 	if ( ! context?.performanceMarks?.length ) {
 		return {};
@@ -85,7 +85,7 @@ export function finalizePerfMarks( context: PartialContext ): LogsatshPerfMarks 
 
 	// Logstash cannot accept arrays, so we transform our array into a more
 	// friendly structure for it.
-	return context.performanceMarks.reduce( ( marks: LogsatshPerfMarks, mark ) => {
+	return context.performanceMarks.reduce( ( marks: LogstashPerfMarks, mark ) => {
 		const markKey = markNameToKey( mark.markName );
 		// A mark like "setup request" becomes "0_setup_request"
 		marks[ markKey ] = {
