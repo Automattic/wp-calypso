@@ -2,22 +2,27 @@ import { __ } from '@wordpress/i18n';
 
 export const SUPPORT_PAGE_PATTERN =
 	/^https?:\/\/wordpress\.com\/((?<lang>[a-z]{2})\/)?support\/(?<slug>\S+)$/i;
+export const FORUM_TOPIC_PATTERN =
+	/^https?:\/\/wordpress\.com\/((?<lang>[a-z]{2})\/)?forums\/(?<slug>\S+)$/i;
 const EMBED_CONTENT_MAXLENGTH = 400;
 const AVERAGE_READING_SPEED = 250; // words per minute
 
 /** Attributes of the Block */
-export type SupportPageBlockAttributes = {
+export type SupportContentBlockAttributes = {
 	url: string;
 	title: string;
 	content: string;
-	minutesToRead: number | null;
+	minutesToRead?: number | null;
 	likes?: number;
+	status?: string;
+	author?: number;
+	created?: number;
 };
 
 /**
  * Fetch the page content via API and parse its data. Return data as block attributes.
  */
-export async function fetchPageAttributes( url: string ): Promise< SupportPageBlockAttributes > {
+export async function fetchPageAttributes( url: string ): Promise< SupportContentBlockAttributes > {
 	const { blog, slug } = getSlugFromUrl( url );
 
 	const apiUrl = `https://public-api.wordpress.com/rest/v1.1/sites/${ blog }/posts/slug:${ encodeURIComponent(

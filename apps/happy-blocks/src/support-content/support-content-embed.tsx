@@ -1,13 +1,13 @@
 import { __, sprintf } from '@wordpress/i18n';
-import { SupportPageBlockAttributes } from './block';
+import { SupportContentBlockAttributes } from './block';
 import { WordPressIcon } from './icon';
 import { InlineSkeleton } from './inline-skeleton';
 
 /**
- * Rendered embed for the Support Page block.
+ * Rendered embed for the Support Content blocks
  */
-export const SupportPageEmbed = ( props: {
-	attributes: SupportPageBlockAttributes;
+export const SupportContentEmbed = ( props: {
+	attributes: SupportContentBlockAttributes;
 	clickable?: boolean;
 } ) => {
 	const loaded = !! props.attributes.content;
