@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import SideloadAnalyticsBanners from 'calypso/blocks/sideload-a8c-analytics-banners';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
@@ -132,9 +133,7 @@ const LayoutLoggedOut = ( {
 					{ secondary }
 				</div>
 			</div>
-			{ config.isEnabled( 'gdpr-banner' ) && (
-				<AsyncLoad require="calypso/blocks/sideload-a8c-analytics-banners" placeholder={ null } />
-			) }
+			{ config.isEnabled( 'gdpr-banner' ) && <SideloadAnalyticsBanners /> }
 			{ sectionName === 'plugins' && (
 				<>
 					<UniversalNavbarFooter />
