@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 interface Props {
-	chatId: string | null;
+	chatId: string | false;
 }
 
 const ZendeskChat = ( { chatId }: Props ) => {
