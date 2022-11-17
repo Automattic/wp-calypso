@@ -126,7 +126,7 @@ const LayoutLoggedOut = ( {
 				</div>
 			</div>
 			{ config.isEnabled( 'gdpr-banner' ) && (
-				<AsyncLoad require="calypso/blocks/query-a8c-analytics-banners" placeholder={ null } />
+				<AsyncLoad require="calypso/blocks/sideload-a8c-analytics-banners" placeholder={ null } />
 			) }
 		</div>
 	);

@@ -146,7 +146,7 @@ window.AppBoot = async () => {
 						<FlowSwitch user={ user as UserStore.CurrentUser } />
 						{ config.isEnabled( 'gdpr-banner' ) && (
 							<AsyncLoad
-								require="calypso/blocks/query-a8c-analytics-banners"
+								require="calypso/blocks/sideload-a8c-analytics-banners"
 								placeholder={ null }
 							/>
 						) }
