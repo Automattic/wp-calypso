@@ -9,13 +9,11 @@ import { useAddMedia } from 'calypso/data/media/use-add-media';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { Label, SubLabel } from 'calypso/signup/accordion-form/form-components';
 import { Media } from 'calypso/state/signup/steps/website-content/schema';
-import {
-	getAllowedImageExtensionsString,
-	getAllowedVideoExtensionsString,
-} from './bbe-media-management';
 import type { SiteDetails } from '@automattic/data-stores';
 
 const debug = debugFactory( 'difm:website-content' );
+const allowedImageExtensions = [ 'gif', 'heic', 'jpeg', 'jpg', 'png', 'webp' ];
+const allowedVideoExtensions = [ 'avi', 'mpg', 'mp4', 'm4v', 'mov', 'ogv', 'wmv', '3gp', '3g2' ];
 
 const UPLOAD_STATES = {
 	NOT_SELECTED: 'NOT_SELECTED',
@@ -184,17 +182,15 @@ export function WordpressMediaUpload( {
 		onRemoveImage && onRemoveImage( { mediaIndex } );
 	};
 
-	let allowedFileTypes = getAllowedImageExtensionsString( site );
-	if ( mediaType === 'VIDEO' ) {
-		allowedFileTypes = getAllowedVideoExtensionsString( site );
-	}
+	const allowedFileTypes = mediaType === 'VIDEO' ? allowedVideoExtensions : allowedImageExtensions;
+	const allowedFileTypesString = allowedFileTypes.map( ( type ) => `.${ type }` ).join();
 
 	switch ( uploadState ) {
 		case UPLOAD_STATES.COMPLETED:
 			return (
 				<>
 					<FileSelectThumbnailContainer>
-						<FileInput type="file" onChange={ onPick } accept={ allowedFileTypes } />
+						<FileInput type="file" onChange={ onPick } accept={ allowedFileTypesString } />
 						{ ! isImageLoading && <CrossButton onClick={ onClickRemoveImage } /> }
 						<CroppedImage>
 							{ /* Fixes small UI glitch where cross icon switches on load */ }
@@ -220,7 +216,7 @@ export function WordpressMediaUpload( {
 			return (
 				<>
 					<FileSelectThumbnailContainer>
-						<FileInput type="file" onChange={ onPick } accept={ allowedFileTypes } />
+						<FileInput type="file" onChange={ onPick } accept={ allowedFileTypesString } />
 						{ /* TODO: Change placeholder to video for video media type */ }
 						<img src={ imagePlaceholder } alt="placeholder" />
 						<Label>{ translate( 'Choose file' ) }</Label>
@@ -234,7 +230,7 @@ export function WordpressMediaUpload( {
 			return (
 				<>
 					<FileSelectThumbnailContainer>
-						<FileInput type="file" onChange={ onPick } accept={ allowedFileTypes } />
+						<FileInput type="file" onChange={ onPick } accept={ allowedFileTypesString } />
 						<img src={ imagePlaceholder } alt="placeholder" />
 						<Label>{ translate( 'Choose file' ) }</Label>
 						{ /* <SubLabel>{ translate( 'or drag here')}</SubLabel> */ }
