@@ -6,10 +6,10 @@ import { ColorPicker } from '@wordpress/components';
 import { Icon, color } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import { Dispatch, SetStateAction, useState, useRef } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useState, useRef } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import { SelectDropdownForwardingRef as SelectDropdown } from 'calypso/components/select-dropdown';
+import SelectDropdown from 'calypso/components/select-dropdown';
 import { tip } from 'calypso/signup/icons';
 import './style.scss';
 import ColorSwatch from './color-swatch';
@@ -97,6 +97,27 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 		setAccentColor( { hex, rgb: rgb as unknown as RGB } );
 	};
 
+	const getMatchingOption = useCallback(
+		() => COLOR_OPTIONS.filter( ( option ) => option.value === accentColor.hex )[ 0 ] || null,
+		[ accentColor.hex ]
+	);
+
+	const getSelectedText = () => getMatchingOption()?.label || 'Custom';
+
+	const getSelectedIcon = () =>
+		customColor ? <ColorSwatch color={ customColor.hex } /> : getMatchingOption()?.icon;
+
+	useEffect( () => {
+		// In later stages of some flows, color for site is already set when this control loads.
+		// If so, and if site color doesn't match a prest option, set customColor to true.
+		if ( ! getMatchingOption() ) {
+			setCustomColor( {
+				hex: accentColor.hex,
+				rgb: hexToRgb( accentColor.hex ),
+			} );
+		}
+	}, [ accentColor, getMatchingOption ] );
+
 	return (
 		<>
 			<Popover
@@ -127,19 +148,27 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 						? __( 'Favorite color' )
 						: __( 'Accent color' ) }
 				</FormLabel>
-
 				<SelectDropdown
 					ref={ accentColorRef }
-					// @ts-expect-error SelectDropdown is defined in .jsx file and has no type definitions generated
 					className="accent-color-control__accent-color-input"
 					id="accentColor"
 					onFocus={ () => setColorPickerOpen( true ) }
 					value={ customColor ? 'custom' : accentColor.hex }
-					onSelect={ handlePredefinedColorSelect }
-					selectedIcon={ customColor && <ColorSwatch color={ customColor.hex } /> }
-					options={ COLOR_OPTIONS }
 					showSelectedOption={ !! customColor } // hide selected option with the exception of "Custom" option
-				/>
+					selectedText={ getSelectedText() }
+					selectedIcon={ getSelectedIcon() }
+				>
+					{ COLOR_OPTIONS.map( ( option ) => (
+						<SelectDropdown.Item
+							key={ option.label }
+							icon={ option.icon }
+							onClick={ () => handlePredefinedColorSelect( { value: option.value } ) }
+							selected={ option.value === accentColor.hex }
+						>
+							{ option.label }
+						</SelectDropdown.Item>
+					) ) }
+				</SelectDropdown>{ ' ' }
 			</FormFieldset>
 			<div
 				className={ classNames( 'accent-color-control__contrast-warning', {
