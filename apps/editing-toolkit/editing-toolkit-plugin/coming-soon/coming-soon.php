@@ -17,6 +17,10 @@ function should_show_coming_soon_page() {
 		return false;
 	}
 
+	if ( is_accessed_by_valid_share_link() ) {
+		return false;
+	}
+
 	$should_show = ( (int) get_option( 'wpcom_public_coming_soon' ) === 1 );
 
 	// Everyone from Administrator to Subscriber will be able to see the site.
@@ -29,6 +33,35 @@ function should_show_coming_soon_page() {
 	// Allow folks to hook into this method to set their own rules.
 	// We'll use to on WordPress.com to check further user privileges.
 	return apply_filters( 'a8c_show_coming_soon_page', $should_show );
+}
+
+/**
+ * Determines whether the coming soon page should be bypassed.
+ *
+ * It checks if share code is provided as GET parameter, or as a cookie.
+ * Then it validates the code against blog option, and if sharing code is valid,
+ * it allows bypassing the Coming Soon page.
+ *
+ * Finally, it sets a code in cookie and sets header that prevents robots from indexing.
+ *
+ * @return bool
+ */
+function is_accessed_by_valid_share_link() {
+	if ( isset( $_GET['share'] ) ) {
+		$share_code = $_GET['share'];
+	} elseif ( isset( $_COOKIE['share_code'] ) ) {
+		$share_code = $_COOKIE['share_code'];
+	}
+
+	// @todo validate $share_code value against blog option value
+	if ( '12345' !== $share_code ) {
+		return false;
+	}
+
+	setcookie( 'share_code', $share_code, time() + 3600, '/', false, is_ssl() );
+	header( 'X-Robots-Tag: noindex, nofollow' );
+
+	return true;
 }
 
 /**
