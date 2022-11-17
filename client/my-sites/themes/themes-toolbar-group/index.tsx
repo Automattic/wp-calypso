@@ -1,5 +1,5 @@
 import { ResponsiveToolbarGroup } from '@automattic/components';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import type { ThemesToolbarGroupItem } from './types';
 import './style.scss';
 
@@ -14,11 +14,14 @@ const ThemesToolbarGroup: React.FC< ThemesToolbarGroupProps > = ( {
 	selectedKey,
 	onSelect,
 } ) => {
-	const [ activeIndex, setActiveIndex ] = useState< number >( 0 );
-	useEffect( () => {
-		const selectedKeyIndex = items.findIndex( ( { key } ) => key === selectedKey );
-		setActiveIndex( Math.max( selectedKeyIndex, 0 ) );
-	}, [ items, selectedKey ] );
+	const activeIndex = useMemo(
+		() =>
+			Math.max(
+				items.findIndex( ( { key } ) => key === selectedKey ),
+				0
+			),
+		[ items, selectedKey ]
+	);
 
 	return (
 		<ResponsiveToolbarGroup

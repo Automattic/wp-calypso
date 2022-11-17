@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import cookie from 'cookie';
 import { localize } from 'i18n-calypso';
-import { compact, pickBy } from 'lodash';
+import { compact, omit, pickBy } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -137,11 +137,16 @@ class ThemeShowcase extends Component {
 		];
 	};
 
-	getTabFilters = ( { subjects = {}, translate } ) => {
+	getTabFilters = ( props ) => {
+		const { subjects, translate } = props;
 		const subjectFilters = Object.fromEntries(
 			Object.entries( subjects ).map( ( [ key, filter ] ) => [ key, { key, text: filter.name } ] )
 		);
+
 		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
+		const shouldShowMyThemesFilter =
+			( props.isJetpackSite && ! props.isAtomicSite ) ||
+			( props.isAtomicSite && props.siteCanInstallThemes );
 
 		return {
 			RECOMMENDED: {
@@ -154,11 +159,13 @@ class ThemeShowcase extends Component {
 				text: translate( 'Trending' ),
 				order: 2,
 			},
-			MYTHEMES: {
-				key: 'my-themes',
-				text: translate( 'My Themes' ),
-				order: 3,
-			},
+			...( shouldShowMyThemesFilter && {
+				MYTHEMES: {
+					key: 'my-themes',
+					text: translate( 'My Themes' ),
+					order: 3,
+				},
+			} ),
 			ALL: {
 				key: 'all',
 				text: isNewSearchAndFilter ? translate( 'All' ) : translate( 'All Themes' ),
@@ -279,24 +286,9 @@ class ThemeShowcase extends Component {
 		);
 	};
 
-	shouldShowTab = ( key ) => {
-		switch ( key ) {
-			case this.tabFilters.MYTHEMES.key:
-				return (
-					( this.props.isJetpackSite && ! this.props.isAtomicSite ) ||
-					( this.props.isAtomicSite && this.props.siteCanInstallThemes )
-				);
-			// There are not enough themes in this filter.
-			case this.tabFilters.newsletter?.key:
-				return false;
-		}
-
-		return true;
-	};
-
 	notificationCount = ( key ) => {
 		switch ( key ) {
-			case this.tabFilters.MYTHEMES.key:
+			case this.tabFilters.MYTHEMES?.key:
 				return this.props.outdatedThemes.length || null;
 			case this.tabFilters.RECOMMENDED.key:
 			case this.tabFilters.TRENDING.key:
@@ -317,7 +309,7 @@ class ThemeShowcase extends Component {
 		const tabKey = this.state.tabFilter.key;
 
 		if (
-			tabKey !== this.tabFilters.MYTHEMES.key &&
+			tabKey !== this.tabFilters.MYTHEMES?.key &&
 			! isExpertBannerDissmissed &&
 			! loggedOutComponent
 		) {
@@ -352,7 +344,7 @@ class ThemeShowcase extends Component {
 		switch ( tabKey ) {
 			case this.tabFilters.RECOMMENDED.key:
 				return <RecommendedThemes { ...themeProps } />;
-			case this.tabFilters.MYTHEMES.key:
+			case this.tabFilters.MYTHEMES?.key:
 				return <ThemesSelection { ...themeProps } />;
 			case this.tabFilters.TRENDING.key:
 				return <TrendingThemes { ...themeProps } />;
@@ -463,9 +455,7 @@ class ThemeShowcase extends Component {
 						( isNewSearchAndFilter ? (
 							<div className="theme__filters">
 								<ThemesToolbarGroup
-									items={ Object.values( this.tabFilters ).filter( ( tabFilter ) =>
-										this.shouldShowTab( tabFilter.key )
-									) }
+									items={ Object.values( this.tabFilters ) }
 									selectedKey={ this.state.tabFilter.key }
 									onSelect={ ( key ) =>
 										this.onFilterClick(
@@ -492,19 +482,16 @@ class ThemeShowcase extends Component {
 								<NavTabs>
 									{ Object.values( this.tabFilters )
 										.sort( ( a, b ) => a.order - b.order )
-										.map(
-											( tabFilter ) =>
-												this.shouldShowTab( tabFilter.key ) && (
-													<NavItem
-														key={ tabFilter.key }
-														onClick={ () => this.onFilterClick( tabFilter ) }
-														selected={ tabFilter.key === this.state.tabFilter.key }
-														count={ this.notificationCount( tabFilter.key ) }
-													>
-														{ tabFilter.text }
-													</NavItem>
-												)
-										) }
+										.map( ( tabFilter ) => (
+											<NavItem
+												key={ tabFilter.key }
+												onClick={ () => this.onFilterClick( tabFilter ) }
+												selected={ tabFilter.key === this.state.tabFilter.key }
+												count={ this.notificationCount( tabFilter.key ) }
+											>
+												{ tabFilter.text }
+											</NavItem>
+										) ) }
 								</NavTabs>
 							</SectionNav>
 						) ) }
@@ -527,6 +514,8 @@ class ThemeShowcase extends Component {
 const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 	const currentThemeId = getActiveTheme( state, siteId );
 	const currentTheme = getCanonicalTheme( state, siteId, currentThemeId );
+	const allowedSubjects = omit( getThemeFilterTerms( state, 'subject' ) || {}, [ 'newsletter' ] );
+
 	return {
 		currentThemeId,
 		currentTheme,
@@ -537,7 +526,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 		siteSlug: getSiteSlug( state, siteId ),
 		description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
 		title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
-		subjects: getThemeFilterTerms( state, 'subject' ) || {},
+		subjects: allowedSubjects,
 		premiumThemesEnabled: arePremiumThemesEnabled( state, siteId ),
 		filterString: prependThemeFilterKeys( state, filter ),
 		filterToTermTable: getThemeFilterToTermTable( state ),
