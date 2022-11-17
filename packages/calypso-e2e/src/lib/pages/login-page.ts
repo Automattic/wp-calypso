@@ -26,7 +26,7 @@ export class LoginPage {
 		// which causes the login to hang on networkidle when running the tests locally.
 		// This continues the route request.
 		// See https://github.com/Automattic/wp-calypso/issues/69294
-		await this.page.route( '**/csreport', ( route ) => route.continue() );
+		await this.page.route( '**/cspreport', ( route ) => route.continue() );
 		return await this.page.goto( getCalypsoURL( targetUrl ) );
 	}
 
