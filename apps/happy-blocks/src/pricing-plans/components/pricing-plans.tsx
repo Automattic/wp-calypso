@@ -32,7 +32,7 @@ const PricingPlans: FunctionComponent<
 	}
 
 	return (
-		<div className="wp-block-a8c-pricing-plans">
+		<div className="hb-pricing-plans-embed">
 			<PricingPlansHeader plan={ currentPlan } />
 			<PricingPlanDetail
 				plan={ currentPlan }

@@ -8,10 +8,10 @@ interface Props {
 
 const PricingPlansHeader: FunctionComponent< Props > = ( { plan } ) => {
 	return (
-		<section className="wp-block-a8c-pricing-plans__header">
-			<div className="wp-block-a8c-pricing-plans__header-label">{ plan.label }</div>
-			<div className="wp-block-a8c-pricing-plans__header-domain">{ plan.domain }</div>
-			<div className="wp-block-a8c-pricing-plans__header-description">
+		<section className="hb-pricing-plans-embed__header">
+			<div className="hb-pricing-plans-embed__header-label">{ plan.label }</div>
+			<div className="hb-pricing-plans-embed__header-domain">{ plan.domain }</div>
+			<div className="hb-pricing-plans-embed__header-description">
 				{ createInterpolateElement( plan.description, {
 					learnMore: <a href={ plan.learnMoreLink } />,
 					p: <p />,

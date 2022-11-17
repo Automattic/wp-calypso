@@ -35,7 +35,7 @@ const BlockSettings: FunctionComponent<
 			<PanelBody title={ __( 'Basic', 'happy-blocks' ) } initialOpen={ true }>
 				<PanelRow>
 					<SelectControl
-						className="wp-block-a8c-pricing-plans__settings-plan"
+						className="hb-pricing-plans-embed__settings-plan"
 						label={ __( 'Plan', 'happy-blocks' ) }
 						value={ value }
 						options={ options }

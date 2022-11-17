@@ -20,7 +20,7 @@ const PricingPlanDetail: FunctionComponent< BlockSaveProps< BlockAttributes > & 
 		plan.billing[ 0 ];
 
 	return (
-		<section className="wp-block-a8c-pricing-plans__detail">
+		<section className="hb-pricing-plans-embed__detail">
 			<BillingInfo billing={ selectedBilling } />
 			<BillingOptions
 				billings={ plan.billing }

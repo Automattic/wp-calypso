@@ -8,7 +8,7 @@ Note:
 	Once this issue is resolved, we can remove the !important declarations.
 */
 
-@keyframes wp-block-a8c-pricing-plans__skeleton__animation {
+@keyframes hb-pricing-plans-embed__skeleton__animation {
 	0% {
 		opacity: 0.5;
 	}
@@ -22,7 +22,7 @@ Note:
 	}
 }
 
-.wp-block-a8c-pricing-plans {
+.hb-pricing-plans-embed {
 	display: flex;
 	padding: 28px;
 	margin: 24px 0;
@@ -45,7 +45,7 @@ Note:
 		margin: 24px 0;
 		min-height: 215px;
 
-		animation: wp-block-a8c-pricing-plans__skeleton__animation 1.6s ease-in-out infinite;
+		animation: hb-pricing-plans-embed__skeleton__animation 1.6s ease-in-out infinite;
 
 		&::after {
 			content: "";
