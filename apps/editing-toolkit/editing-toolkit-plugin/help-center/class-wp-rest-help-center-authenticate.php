@@ -53,7 +53,7 @@ class WP_REST_Help_Center_Authenticate extends \WP_REST_Controller {
 		}
 		$response = json_decode( wp_remote_retrieve_body( $body ) );
 
-		// Return happychat staging for proxied users. This value is not correct when retreiving from AT sites.
+		// Return happychat staging for proxied users. The URL returned from the API request is not correct when coming from atomic sites.
 		$is_proxied    = isset( $_SERVER['A8C_PROXIED_REQUEST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['A8C_PROXIED_REQUEST'] ) ) : false || defined( 'A8C_PROXIED_REQUEST' ) && A8C_PROXIED_REQUEST;
 		$url           = $is_proxied ? 'https://happychat-io-staging.go-vip.co/customer' : 'https://happychat.io/customer';
 		$response->url = $url;
