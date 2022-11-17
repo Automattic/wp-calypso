@@ -66,8 +66,6 @@ function setRouteMiddleware( context, next ) {
 
 function combineMiddlewares( ...middlewares ) {
 	return function ( req, res, expressNext ) {
-		performanceMark( req.context, 'combining middlewares' );
-
 		req.context = getEnhancedContext( req, res );
 		applyMiddlewares(
 			req.context,

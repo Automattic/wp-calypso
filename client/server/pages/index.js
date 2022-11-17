@@ -284,7 +284,7 @@ function setUpLoggedOutRoute( req, res, next ) {
 
 	Promise.all( setupRequests )
 		.then( () => {
-			performanceMark( req.context, 'done with setup requests', true );
+			performanceMark( req.context, 'done with loggedOut setup requests', true );
 			next();
 		} )
 		.catch( ( error ) => next( error ) );

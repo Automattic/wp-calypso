@@ -11,7 +11,7 @@ import { fetchThemeFilters } from './controller';
 
 // Reorder and remove invalid filters to redirect to canonical URL
 export function validateFilters( context, next ) {
-	performanceMark( context, 'validateFilters' );
+	performanceMark( context, 'validateThemeFilters' );
 	if ( ! context.params.filter ) {
 		return next();
 	}
