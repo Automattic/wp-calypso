@@ -28,7 +28,9 @@ const getSavingsDescription = (
 	monthyPlan: ApiPricingPlan
 ): string => {
 	const yearlyPricePerMonth = yearlyPlan.raw_price / MONTHS_IN_YEAR;
-	const savings = Math.round( 100 - ( yearlyPricePerMonth / monthyPlan.raw_price ) * 100 );
+	const savings = Math.round(
+		( 100 * ( monthyPlan.raw_price - yearlyPricePerMonth ) ) / monthyPlan.raw_price
+	);
 
 	if ( savings <= 0 ) {
 		return '';
