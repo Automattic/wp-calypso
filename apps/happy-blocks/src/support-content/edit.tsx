@@ -13,7 +13,7 @@ import { WordPressIcon } from './icon';
 import { SupportContentEmbed } from './support-content-embed';
 
 type EditProps = BlockEditProps< SupportContentBlockAttributes > & {
-	fieldLabel: string;
+	title: string;
 	urlPattern: RegExp;
 };
 
@@ -80,7 +80,7 @@ export const Edit = compose( withNotices )(
 						className={ className }
 						icon={ <WordPressIcon variant="small" marginRight /> }
 						instructions={ instructions }
-						label={ props.fieldLabel }
+						label={ props.title }
 						url={ url }
 						notices={ noticeUI }
 						placeholder={ placeholder }

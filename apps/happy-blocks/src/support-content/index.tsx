@@ -16,7 +16,7 @@ import { Save } from './save';
  * Block variation for support pages
  */
 registerBlockType( 'happy-blocks/support-page', {
-	title: __( 'WordPress Guide', 'happy-blocks' ),
+	title: __( 'WordPress.com Guide', 'happy-blocks' ),
 	icon: <WordPressIcon variant="small" />,
 	category: 'embed',
 	description: __( 'Embed a page from the WordPress Guide', 'happy-blocks' ),
@@ -46,7 +46,7 @@ registerBlockType( 'happy-blocks/support-page', {
 	edit: ( props: BlockEditProps< SupportContentBlockAttributes > ) => (
 		<Edit
 			urlPattern={ SUPPORT_PAGE_PATTERN }
-			fieldLabel={ __( 'WordPress Guide page URL', 'happy-blocks' ) }
+			title={ __( 'WordPress.com Guide page URL', 'happy-blocks' ) }
 			{ ...props }
 		/>
 	),
@@ -97,7 +97,7 @@ registerBlockType( 'happy-blocks/support-page', {
  * Block variation for support pages
  */
 registerBlockType( 'happy-blocks/forum-topic', {
-	title: __( 'WordPress Forum', 'happy-blocks' ),
+	title: __( 'WordPress.com Forums', 'happy-blocks' ),
 	icon: <WordPressIcon variant="small" />,
 	category: 'embed',
 	description: __( 'Embed a topic from the WordPress Forums', 'happy-blocks' ),
@@ -124,7 +124,7 @@ registerBlockType( 'happy-blocks/forum-topic', {
 	edit: ( props: BlockEditProps< SupportContentBlockAttributes > ) => (
 		<Edit
 			urlPattern={ FORUM_TOPIC_PATTERN }
-			fieldLabel={ __( 'WordPress Forums topic URL', 'happy-blocks' ) }
+			title={ __( 'WordPress.com Forums topic URL', 'happy-blocks' ) }
 			{ ...props }
 		/>
 	),
