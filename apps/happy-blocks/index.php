@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin Name: Happy Blocks
  * Version:     0.1.0
@@ -39,9 +40,9 @@
  * Load editor assets.
  */
 function a8c_happyblocks_assets() {
-	$assets = require_once plugin_dir_path( __FILE__ ) . 'dist/editor.min.asset.php';
+	 $assets = require_once plugin_dir_path( __FILE__ ) . 'dist/editor.min.asset.php';
 
-	wp_register_script( 'a8c-happyblocks-pricing-plans', '', array(), '1', true );
+	wp_register_script( 'a8c-happyblocks-pricing-plans', '', array(), '20221117', true );
 	wp_enqueue_script( 'a8c-happyblocks-pricing-plans' );
 	wp_add_inline_script(
 		'a8c-happyblocks-pricing-plans',
@@ -73,24 +74,24 @@ function a8c_happyblocks_assets() {
  * Load front-end view assets.
  */
 function a8c_happyblocks_view_assets() {
-		$assets = require plugin_dir_path( __FILE__ ) . 'dist/view.min.asset.php';
+	$assets = require plugin_dir_path( __FILE__ ) . 'dist/view.min.asset.php';
 
-		$style_file = 'dist/view' . ( is_rtl() ? '.rtl.css' : '.css' );
-		wp_enqueue_style(
-			'a8c-happyblock-view-css',
-			plugins_url( $style_file, __FILE__ ),
-			array(),
-			$assets['version']
-		);
+	$style_file = 'dist/view' . ( is_rtl() ? '.rtl.css' : '.css' );
+	wp_enqueue_style(
+		'a8c-happyblock-view-css',
+		plugins_url( $style_file, __FILE__ ),
+		array(),
+		$assets['version']
+	);
 
-		$script_file = 'dist/view.js';
-		wp_enqueue_script(
-			'a8c-happyblock-view-js',
-			plugins_url( $script_file, __FILE__ ),
-			array( 'wp-element' ),
-			$assets['version'],
-			true
-		);
+	$script_file = 'dist/view.js';
+	wp_enqueue_script(
+		'a8c-happyblock-view-js',
+		plugins_url( $script_file, __FILE__ ),
+		array( 'wp-element' ),
+		$assets['version'],
+		true
+	);
 }
 add_action( 'enqueue_block_editor_assets', 'a8c_happyblocks_assets' );
 add_action( 'wp_enqueue_scripts', 'a8c_happyblocks_view_assets' );
@@ -101,7 +102,7 @@ add_action( 'wp_enqueue_scripts', 'a8c_happyblocks_view_assets' );
  * @return array
  */
 function a8c_happyblocks_get_config() {
-	$domain = wp_parse_url( get_site_url() )['host'];
+	 $domain = wp_parse_url( get_site_url() )['host'];
 	return array(
 		'domain' => $domain,
 		'locale' => get_user_locale(),
@@ -120,7 +121,6 @@ function a8c_happyblocks_render_pricing_plans_callback( $attributes ) {
 	return <<<HTML
 		<div data-attributes="${json_attributes}" class="a8c-happy-tools-pricing-plans-block-placeholder" />
 HTML;
-
 }
 
 /**
@@ -134,6 +134,5 @@ function a8c_happyblocks_register() {
 			'render_callback' => 'a8c_happyblocks_render_pricing_plans_callback',
 		)
 	);
-
 }
 add_action( 'init', 'a8c_happyblocks_register' );
