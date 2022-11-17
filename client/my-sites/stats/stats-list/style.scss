@@ -1,5 +1,7 @@
-// Module Content List
+@use "sass:math";
+@import "@automattic/components/src/horizontal-bar-list/stats-variables.scss";
 
+// Module Content List
 .module-content-list {
 	padding: 0;
 	margin: 0 0 0.5em;
@@ -863,8 +865,10 @@ ul.module-content-list-legend {
 .stats-list-actions__mobile-toggle {
 	cursor: pointer;
 	display: none;
-	min-width: 24px;
-	padding: 0 12px;
+
+	// Ensure large enough target for touch.
+	height: $row-height;
+	width: math.div($row-height * 4, 3);
 
 	.gridicon {
 		fill: var(--color-text-subtle);
