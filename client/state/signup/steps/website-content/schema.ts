@@ -42,7 +42,7 @@ export const schema = {
 										caption: { type: 'string' },
 										url: { type: 'string' },
 										thumbnailUrl: { type: 'string' },
-										uploadID: { type: 'string' },
+										uploadID: { type: 'number' },
 										mediaType: { type: 'string' },
 									},
 								},
