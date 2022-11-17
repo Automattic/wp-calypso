@@ -37,10 +37,17 @@ export default function IssueMultipleLicensesForm( {
 		?.toString()
 		.split( ',' );
 
+	// We need the suggested products (i.e., the products chosen from the dashboard) to properly
+	// track if the user purchases a different set of products.
+	const suggestedProductSlugs = getQueryArg( window.location.href, 'product_slug' )
+		?.toString()
+		.split( ',' );
+
 	const [ selectedProductSlugs, setSelectedProductSlugs ] = useState( defaultProductSlugs ?? [] );
 	const [ issueLicenses, isLoading ] = useIssueMultipleLicenses(
 		selectedProductSlugs,
-		selectedSite
+		selectedSite,
+		suggestedProductSlugs
 	);
 
 	const onSelectProduct = useCallback(

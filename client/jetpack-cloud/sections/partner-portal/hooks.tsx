@@ -1,5 +1,6 @@
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import { isEqual } from 'lodash';
 import page from 'page';
 import { useCallback, useEffect, useState } from 'react';
 import { useQuery, UseQueryOptions } from 'react-query';
@@ -286,7 +287,8 @@ export function useLicenseIssuing(
  */
 export function useIssueMultipleLicenses(
 	selectedProducts: Array< string >,
-	selectedSite?: { ID: number; domain: string } | null
+	selectedSite?: { ID: number; domain: string } | null,
+	suggestedProducts?: Array< string > = []
 ): [ () => void, boolean ] {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -357,6 +359,16 @@ export function useIssueMultipleLicenses(
 				products: selectedProducts.join( ',' ),
 			} )
 		);
+
+		// Track a custom event when the user is trying to purchase a product different than
+		// the one chosen by the dashboard.
+		if ( suggestedProducts?.length && ! isEqual( selectedProducts, suggestedProducts ) ) {
+			dispatch(
+				recordTracksEvent(
+					'calypso_partner_portal_issue_mutiple_licenses_changed_selection_after_dashboard_visit'
+				)
+			);
+		}
 
 		const selectedSiteId = selectedSite?.ID;
 
