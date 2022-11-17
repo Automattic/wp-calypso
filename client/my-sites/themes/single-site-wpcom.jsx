@@ -19,6 +19,7 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
 import ThemesHeader from './themes-header';
+import ThemesHeaderFixed from './themes-header-fixed';
 
 const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 	const { currentPlan, isVip, requestingSitePlans, siteId, siteSlug, translate } = props;
@@ -75,9 +76,12 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 
 	return (
 		<Main fullWidthLayout className="themes">
-			<ThemesHeader />
+			{ isEnabled( 'themes/showcase-i4/search-and-filter' ) ? (
+				<ThemesHeaderFixed />
+			) : (
+				<ThemesHeader />
+			) }
 			<CurrentTheme siteId={ siteId } />
-
 			<ThemeShowcase
 				{ ...props }
 				upsellUrl={ upsellUrl }

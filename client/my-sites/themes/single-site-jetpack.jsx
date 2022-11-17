@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_UPLOAD_THEMES, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { pickBy } from 'lodash';
 import { connect } from 'react-redux';
@@ -13,6 +14,7 @@ import { addTracking } from './helpers';
 import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
 import ThemesHeader from './themes-header';
+import ThemesHeaderFixed from './themes-header-fixed';
 import ThemesSelection from './themes-selection';
 
 const ConnectedThemesSelection = connectOptions( ( props ) => {
@@ -67,7 +69,11 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 
 	return (
 		<Main fullWidthLayout className="themes">
-			<ThemesHeader />
+			{ isEnabled( 'themes/showcase-i4/search-and-filter' ) ? (
+				<ThemesHeaderFixed />
+			) : (
+				<ThemesHeader />
+			) }
 			<CurrentTheme siteId={ siteId } />
 			<ThemeShowcase
 				{ ...props }
