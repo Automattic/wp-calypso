@@ -30,6 +30,12 @@ export function getEnhancedTasks(
 	const videoPressUploadCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.video_uploaded || false;
 
+	const homePageId = site?.options?.page_on_front;
+	// send user to Home page editor, fallback to FSE if page id is not known
+	const launchpadUploadVideoLink = homePageId
+		? `/page/${ siteSlug }/${ homePageId }`
+		: `/site-editor/${ siteSlug }`;
+
 	tasks &&
 		tasks.map( ( task ) => {
 			let taskData = {};
@@ -136,11 +142,11 @@ export function getEnhancedTasks(
 				case 'videopress_upload':
 					taskData = {
 						title: translate( 'Upload your first video' ),
-						actionUrl: `/page/${ siteSlug }/home`,
+						actionUrl: launchpadUploadVideoLink,
 						completed: videoPressUploadCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.replace( `/page/${ siteSlug }/home` );
+							window.location.replace( launchpadUploadVideoLink );
 						},
 					};
 					break;
