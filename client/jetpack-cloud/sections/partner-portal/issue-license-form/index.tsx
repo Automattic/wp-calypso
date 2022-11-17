@@ -70,7 +70,7 @@ export default function IssueLicenseForm( { selectedSite, suggestedProduct }: As
 						<p className="issue-license-form__description">
 							{ selectedSiteDomain
 								? translate(
-										'Select the Jetpack product you would like to add to {{strong}}%(selectedSiteDomian)s{{/strong}}',
+										'Select the Jetpack product you would like to add to {{strong}}%(selectedSiteDomain)s{{/strong}}',
 										{
 											args: { selectedSiteDomain },
 											components: { strong: <strong /> },

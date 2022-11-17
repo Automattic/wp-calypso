@@ -53,7 +53,7 @@ class NavItem extends PureComponent {
 		}
 
 		return (
-			<li className={ itemClassName }>
+			<li className={ itemClassName } role="none">
 				<a
 					href={ this.props.path }
 					target={ target }
@@ -62,8 +62,8 @@ class NavItem extends PureComponent {
 					onMouseEnter={ this.preload }
 					tabIndex={ this.props.tabIndex || 0 }
 					aria-current={ this.props.selected }
-					disabled={ this.props.disabled }
 					role="menuitem"
+					disabled={ this.props.disabled }
 					rel={ this.props.isExternalLink ? 'external' : null }
 					onKeyPress={ this.props.onKeyPress }
 				>

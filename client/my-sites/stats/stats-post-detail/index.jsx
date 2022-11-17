@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -9,17 +8,12 @@ import titlecase from 'to-title-case';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
-import HeaderCake from 'calypso/components/header-cake';
+import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Main from 'calypso/components/main';
 import WebPreview from 'calypso/components/web-preview';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
-import {
-	getSitePost,
-	isRequestingSitePost,
-	getPostPreviewUrl,
-} from 'calypso/state/posts/selectors';
-import hasNavigated from 'calypso/state/selectors/has-navigated';
+import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
 import {
 	getSiteOption,
 	getSiteSlug,
@@ -41,28 +35,42 @@ class StatsPostDetail extends Component {
 		postId: PropTypes.number,
 		translate: PropTypes.func,
 		context: PropTypes.object,
-		isRequestingPost: PropTypes.bool,
 		isRequestingStats: PropTypes.bool,
 		countViews: PropTypes.number,
 		post: PropTypes.object,
 		siteSlug: PropTypes.string,
 		showViewLink: PropTypes.bool,
 		previewUrl: PropTypes.string,
-		hasNavigated: PropTypes.bool,
 	};
 
 	state = {
 		showPreview: false,
 	};
 
-	goBack = () => {
-		if ( window.history.length > 1 && this.props.hasNavigated ) {
-			window.history.back();
-			return;
+	getNavigationItemsWithTitle = ( title ) => {
+		const localizedTabNames = {
+			traffic: this.props.translate( 'Traffic' ),
+			insights: this.props.translate( 'Insights' ),
+			store: this.props.translate( 'Store' ),
+			ads: this.props.translate( 'Ads' ),
+		};
+		const possibleBackLinks = {
+			traffic: '/stats/day/',
+			insights: '/stats/insights/',
+			store: '/stats/store/',
+			ads: '/stats/ads/',
+		};
+		// We track the parent tab via sessionStorage.
+		const lastClickedTab = sessionStorage.getItem( 'jp-stats-last-tab' );
+		const backLabel = localizedTabNames[ lastClickedTab ] || localizedTabNames.traffic;
+		let backLink = possibleBackLinks[ lastClickedTab ] || possibleBackLinks.traffic;
+		// Append the domain as needed.
+		const domain = this.props.siteSlug;
+		if ( domain?.length > 0 ) {
+			backLink += domain;
 		}
-
-		const pathParts = this.props.path.split( '/' );
-		page( '/stats/' + pathParts[ pathParts.length - 1 ] );
+		// Wrap it up!
+		return [ { label: backLabel, href: backLink }, { label: title } ];
 	};
 
 	componentDidMount() {
@@ -81,10 +89,27 @@ class StatsPostDetail extends Component {
 		} );
 	};
 
+	getTitle() {
+		const { isLatestPostsHomepage, post, postFallback, translate } = this.props;
+
+		if ( isLatestPostsHomepage ) {
+			return translate( 'Home page / Archives' );
+		}
+
+		if ( typeof post?.title === 'string' && post.title.length ) {
+			return decodeEntities( stripHTML( post.title ) );
+		}
+
+		if ( typeof postFallback?.post_title === 'string' && postFallback.post_title.length ) {
+			return decodeEntities( stripHTML( postFallback.post_title ) );
+		}
+
+		return null;
+	}
+
 	render() {
 		const {
 			isLatestPostsHomepage,
-			isRequestingPost,
 			isRequestingStats,
 			countViews,
 			post,
@@ -95,23 +120,7 @@ class StatsPostDetail extends Component {
 			showViewLink,
 			previewUrl,
 		} = this.props;
-		const postOnRecord = post && post.title !== null;
 		const isLoading = isRequestingStats && ! countViews;
-		let title;
-
-		if ( postOnRecord ) {
-			if ( typeof post.title === 'string' && post.title.length ) {
-				title = decodeEntities( stripHTML( post.title ) );
-			}
-		}
-
-		if ( ! postOnRecord && ! isLatestPostsHomepage && ! isRequestingPost ) {
-			title = translate( "We don't have that post on record yet." );
-		}
-
-		if ( isLatestPostsHomepage ) {
-			title = translate( 'Home page / Archives' );
-		}
 
 		const postType = post && post.type !== null ? post.type : 'post';
 		let actionLabel;
@@ -126,7 +135,7 @@ class StatsPostDetail extends Component {
 		}
 
 		return (
-			<Main wideLayout>
+			<Main className="has-fixed-nav" wideLayout>
 				<PageViewTracker
 					path={ `/stats/${ postType }/:post_id/:site` }
 					title={ `Stats > Single ${ titlecase( postType ) }` }
@@ -134,14 +143,15 @@ class StatsPostDetail extends Component {
 				{ siteId && ! isLatestPostsHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
 
-				<HeaderCake
-					onClick={ this.goBack }
-					actionIcon={ showViewLink ? 'visible' : null }
-					actionText={ showViewLink ? actionLabel : null }
-					actionOnClick={ showViewLink ? this.openPreview : null }
+				<FixedNavigationHeader
+					navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }
 				>
-					{ title }
-				</HeaderCake>
+					{ showViewLink && (
+						<Button onClick={ this.openPreview }>
+							<span>{ actionLabel }</span>
+						</Button>
+					) }
+				</FixedNavigationHeader>
 
 				<StatsPlaceholder isLoading={ isLoading } />
 
@@ -206,14 +216,14 @@ const connectComponent = connect( ( state, { postId } ) => {
 
 	return {
 		post: getSitePost( state, siteId, postId ),
+		// NOTE: Post object from the stats response does not conform to the data structure returned by getSitePost!
+		postFallback: getPostStat( state, siteId, postId, 'post' ),
 		isLatestPostsHomepage,
-		isRequestingPost: isRequestingSitePost( state, siteId, postId ),
 		countViews: getPostStat( state, siteId, postId, 'views' ),
 		isRequestingStats: isRequestingPostStats( state, siteId, postId ),
 		siteSlug: getSiteSlug( state, siteId ),
 		showViewLink: ! isJetpack && ! isLatestPostsHomepage && isPreviewable,
 		previewUrl: getPostPreviewUrl( state, siteId, postId ),
-		hasNavigated: hasNavigated( state ),
 		siteId,
 	};
 } );

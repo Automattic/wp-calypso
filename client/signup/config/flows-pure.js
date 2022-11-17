@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { setupSiteAfterCreation } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { VIDEOPRESS_ONBOARDING_FLOW_STEPS } from './constants';
 
@@ -113,26 +114,38 @@ export function generateFlows( {
 			name: 'newsletter',
 			steps: [ 'domains', 'plans-newsletter' ],
 			destination: ( dependencies ) =>
-				`/setup/subscribers?flow=newsletter&siteSlug=${ dependencies.siteSlug }`,
+				`/setup/newsletter/subscribers?siteSlug=${ dependencies.siteSlug }`,
 			description: 'Beginning of the flow to create a newsletter',
-			lastModified: '2022-08-15',
+			lastModified: '2022-11-01',
 			showRecaptcha: true,
 			get pageTitle() {
 				return translate( 'Newsletter' );
 			},
+			postCompleteCallback: setupSiteAfterCreation,
 		},
 		{
 			name: 'link-in-bio',
 			steps: [ 'domains', 'plans-link-in-bio' ],
 			destination: ( dependencies ) =>
-				`/setup/launchpad?flow=link-in-bio&siteSlug=${ encodeURIComponent(
-					dependencies.siteSlug
-				) }`,
+				`/setup/link-in-bio/launchpad?siteSlug=${ encodeURIComponent( dependencies.siteSlug ) }`,
 			description: 'Beginning of the flow to create a link in bio',
-			lastModified: '2022-08-16',
+			lastModified: '2022-11-01',
 			showRecaptcha: true,
 			get pageTitle() {
 				return translate( 'Link in Bio' );
+			},
+			postCompleteCallback: setupSiteAfterCreation,
+		},
+		{
+			name: 'import',
+			steps: [ 'domains', 'plans-import' ],
+			destination: ( dependencies ) =>
+				`/setup/import?flow=import-focused&siteSlug=${ dependencies.siteSlug }`,
+			description: 'Beginning of the flow to import content',
+			lastModified: '2022-10-03',
+			showRecaptcha: true,
+			get pageTitle() {
+				return translate( 'Import' );
 			},
 		},
 		{
@@ -271,9 +284,24 @@ export function generateFlows( {
 		{
 			name: 'videopress',
 			steps: VIDEOPRESS_ONBOARDING_FLOW_STEPS,
-			destination: ( dependencies ) => `/site-editor/${ dependencies.siteSlug }`,
+			destination: ( dependencies ) =>
+				`/setup/completingPurchase?flow=videopress&siteSlug=${ encodeURIComponent(
+					dependencies.siteSlug
+				) }`,
 			description: 'VideoPress signup flow',
-			lastModified: '2022-07-06',
+			lastModified: '2022-11-01',
+			showRecaptcha: true,
+			postCompleteCallback: setupSiteAfterCreation,
+		},
+		{
+			name: 'videopress-account',
+			steps: [ 'user' ],
+			destination: getRedirectDestination,
+			description: 'VideoPress onboarding signup flow',
+			lastModified: '2022-10-19',
+			get pageTitle() {
+				return translate( 'Create an account' );
+			},
 			showRecaptcha: true,
 		},
 		{

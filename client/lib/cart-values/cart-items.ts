@@ -280,6 +280,18 @@ export function themeItem( themeSlug: string, source?: string ): MinimalRequestC
 }
 
 /**
+ * Creates a new shopping cart item for a marketplace theme subscription.
+ *
+ * @param productSlug the unique string that identifies the product
+ * @returns {MinimalRequestCartProduct} the new item
+ */
+export function marketplaceThemeProduct( productSlug: string ): MinimalRequestCartProduct {
+	return {
+		product_slug: productSlug,
+	};
+}
+
+/**
  * Creates a new shopping cart item for a domain registration.
  */
 export function domainRegistration( properties: {

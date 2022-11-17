@@ -1,0 +1,157 @@
+@use "sass:math";
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
+@import "../styles/typography";
+
+$font-recoleta: Recoleta, $sans;
+$vertical-margin: 32px;
+// From client/assets/stylesheets/shared/mixins/_breakpoints.scss.
+// Technically deprecated, but majority of Calypso still uses this.
+$custom-mobile-breakpoint: 660px;
+
+.highlight-cards {
+	margin: $vertical-margin 0;
+	color: var(--studio-gray-100);
+	font-size: $font-body-small;
+}
+
+.highlight-cards a.highlight-cards-heading-wrapper {
+	color: var(--color-text);
+	transition: color 100ms linear;
+	&:focus,
+	&:hover {
+		color: var(--color-link);
+	}
+}
+
+.highlight-cards-heading {
+	font-size: 32px; // stylelint-disable-line declaration-property-unit-allowed-list
+	font-weight: 400;
+	line-height: 40px;
+	font-family: $font-recoleta;
+	margin-bottom: math.div($vertical-margin, 2);
+	small {
+		font-family: $sans;
+		font-size: $font-body-small;
+		line-height: 1.5;
+		color: var(--studio-gray-50);
+		font-weight: 400;
+	}
+}
+
+.highlight-cards-list {
+	display: flex;
+	flex-flow: row nowrap;
+	max-width: 100%;
+
+	// Add horizontal scrolling, but without the scrollbar.
+	overflow-x: scroll;
+	scrollbar-width: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+	padding: 1px; // Ensures scrollable content box doesn't cover the highlight card.
+
+	.highlight-card {
+		border-color: var(--studio-gray-5);
+		border-radius: 5px; // stylelint-disable-line scales/radii
+		width: 100%;
+		min-width: 180px; // Minimum mobile width
+		padding: 16px 24px;
+		margin-bottom: 0;
+
+		margin-right: 24px;
+		&:last-child {
+			margin-right: 0;
+		}
+	}
+}
+
+.highlight-card-icon {
+	margin-bottom: 24px;
+}
+
+.highlight-card-heading {
+	font-weight: 500;
+	line-height: 20px;
+	font-family: $sans;
+	margin-bottom: 4px;
+}
+
+.highlight-card-count {
+	align-items: flex-end;
+	display: flex;
+	flex-wrap: wrap;
+	font-size: 36px; // stylelint-disable-line declaration-property-unit-allowed-list
+	font-weight: 400;
+	line-height: 40px;
+}
+
+.highlight-card-count-value {
+	font-family: $font-recoleta;
+	line-height: 1;
+	margin-right: 8px;
+}
+
+.highlight-card-difference {
+	align-items: center;
+	color: var(--studio-gray-20);
+	display: flex;
+	fill: var(--studio-gray-20);
+	font-size: $font-body-small;
+	font-weight: 600;
+	line-height: 24px;
+	&.highlight-card-difference--positive {
+		color: var(--studio-red-50);
+		fill: var(--studio-red-50);
+	}
+	&.highlight-card-difference--negative {
+		color: var(--studio-green-50);
+		fill: var(--studio-green-50);
+	}
+}
+.highlight-card-difference-icon {
+	display: flex;
+	align-content: flex-end;
+}
+.highlight-card-difference-absolute-value {
+	margin-right: 2px;
+}
+
+@media ( max-width: $custom-mobile-breakpoint ) {
+	.highlight-cards-heading {
+		margin-left: $font-body-small;
+		margin-right: $font-body-small;
+	}
+
+	.highlight-cards-list {
+		padding-left: $font-body-small;
+		padding-right: $font-body-small;
+	}
+
+	// Show count and difference on newlines.
+	.highlight-card-count {
+		align-items: flex-start;
+		flex-flow: column;
+	}
+}
+
+@media ( max-width: $break-small ) {
+	.highlight-cards {
+		overflow-y: auto;
+	}
+
+	.card.highlight-card {
+		padding: 16px 24px;
+	}
+
+	.highlight-cards-heading {
+		display: flex;
+		flex-flow: column;
+	}
+
+	.highlight-card-icon {
+		display: none;
+	}
+}

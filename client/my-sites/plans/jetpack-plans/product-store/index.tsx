@@ -1,11 +1,13 @@
 import { TabPanel } from '@wordpress/components';
-import { useCallback, useEffect, useState, useMemo } from '@wordpress/element';
+import { useCallback, useEffect, useState, useMemo, useRef } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
 import { addQueryArgs } from 'calypso/lib/route';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import OpenSourceSection from '../open-source';
+import PlanUpgradeSection from '../plan-upgrade';
 import StoreItemInfoContext from './context/store-item-info-context';
 import { useShowJetpackFree } from './hooks/use-show-jetpack-free';
 import { useStoreItemInfo } from './hooks/use-store-item-info';
@@ -29,16 +31,18 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 	enableUserLicensesDialog,
 	onClickPurchase,
 	urlQueryArgs,
+	planRecommendation,
 	header,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
+	const didMount = useRef( false );
 
 	const [ currentView, setCurrentView ] = useState< ViewType >( () => {
 		return urlQueryArgs?.[ TAB_QUERY_PARAM ] && TABS.includes( urlQueryArgs[ TAB_QUERY_PARAM ] )
 			? urlQueryArgs[ TAB_QUERY_PARAM ]
-			: TABS[ 0 ];
+			: TABS[ 1 ];
 	} );
 
 	const storeItemInfo = useStoreItemInfo( {
@@ -63,29 +67,27 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 
 	const showJetpackFree = useShowJetpackFree();
 
-	const tabs = useMemo(
-		() =>
-			TABS.map( ( name ) => {
-				const titles = {
-					products: translate( 'Products' ),
-					bundles: translate( 'Bundles' ),
-				};
-
-				return {
-					name,
-					title: titles[ name ],
-				};
-			} ),
-		[ translate ]
-	);
+	const tabs = useMemo( () => {
+		const titles = {
+			products: translate( 'Products' ),
+			bundles: translate( 'Bundles' ),
+		};
+		return TABS.map( ( name ) => ( { name, title: titles[ name ] } ) );
+	}, [ translate ] );
 
 	useEffect( () => {
+		if ( ! didMount.current ) {
+			didMount.current = true;
+			return;
+		}
+
 		const { location, history } = window;
 
 		history?.pushState?.(
 			{},
 			'',
-			addQueryArgs( { [ TAB_QUERY_PARAM ]: currentView }, location.pathname + location.search )
+			addQueryArgs( { [ TAB_QUERY_PARAM ]: currentView }, location.pathname + location.search ) +
+				( location.hash ?? '' )
 		);
 	}, [ currentView ] );
 
@@ -95,7 +97,17 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 
 			{ enableUserLicensesDialog && <UserLicensesDialog siteId={ siteId } /> }
 
-			<PricingBanner siteId={ siteId } duration={ duration } />
+			{ planRecommendation && (
+				<PlanUpgradeSection
+					planRecommendation={ planRecommendation }
+					duration={ duration }
+					filterBar={ null }
+					onSelectProduct={ onClickPurchase }
+					createButtonURL={ createCheckoutURL }
+				/>
+			) }
+
+			<PricingBanner />
 
 			<TabPanel
 				className="jetpack-product-store__items-tabs"
@@ -117,6 +129,7 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 			{ showJetpackFree && <JetpackFree urlQueryArgs={ urlQueryArgs } siteId={ siteId } /> }
 
 			<Recommendations />
+			<OpenSourceSection />
 
 			{ currentView === 'bundles' && <NeedMoreInfo /> }
 

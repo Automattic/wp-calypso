@@ -2,8 +2,14 @@
  * @jest-environment jsdom
  */
 
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import deepFreeze from 'deep-freeze';
-import { shallow } from 'enzyme';
+import documentHeadReducer from 'calypso/state/document-head/reducer';
+import happychatReducer from 'calypso/state/happychat/reducer';
+import purchasesReducer from 'calypso/state/purchases/reducer';
+import uiReducer from 'calypso/state/ui/reducer';
+import { renderWithProvider } from '../../../client/test-helpers/testing-library';
 import { JetpackAuthorize } from '../authorize';
 import { JPC_PATH_PLANS } from '../constants';
 import { OFFER_RESET_FLOW_TYPES } from '../flow-types';
@@ -63,6 +69,24 @@ const DEFAULT_PROPS = deepFreeze( {
 	userHasUnattachedLicenses: false,
 } );
 
+const APPROVE_SSO_CLIENT_ID = 99821;
+
+jest.mock( '../persistence-utils', () => ( {
+	...jest.requireActual( '../persistence-utils' ),
+	isSsoApproved: ( clientId ) => clientId === APPROVE_SSO_CLIENT_ID,
+} ) );
+
+function renderWithRedux( ui ) {
+	return renderWithProvider( ui, {
+		reducers: {
+			ui: uiReducer,
+			documentHead: documentHeadReducer,
+			purchases: purchasesReducer,
+			happychat: happychatReducer,
+		},
+	} );
+}
+
 jest.mock( '@automattic/calypso-config', () => {
 	const mock = () => 'development';
 	mock.isEnabled = jest.fn( ( featureFlag ) => {
@@ -76,9 +100,9 @@ jest.mock( '@automattic/calypso-config', () => {
 
 describe( 'JetpackAuthorize', () => {
 	test( 'renders as expected', () => {
-		const wrapper = shallow( <JetpackAuthorize { ...DEFAULT_PROPS } /> );
+		const { container } = renderWithRedux( <JetpackAuthorize { ...DEFAULT_PROPS } /> );
 
-		expect( wrapper ).toMatchSnapshot();
+		expect( container ).toMatchSnapshot();
 	} );
 
 	describe( 'isSso', () => {
@@ -90,7 +114,7 @@ describe( 'JetpackAuthorize', () => {
 			const props = {
 				authQuery: {
 					from: 'sso',
-					clientId: queryDataSiteId,
+					clientId: APPROVE_SSO_CLIENT_ID,
 				},
 			};
 			expect( isSso( props ) ).toBe( true );
@@ -155,55 +179,79 @@ describe( 'JetpackAuthorize', () => {
 	} );
 
 	describe( 'shouldAutoAuthorize', () => {
-		test( 'should return true for sso', () => {
-			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
-			const component = shallow( renderableComponent );
-			component.instance().isSso = () => true;
-			const result = component.instance().shouldAutoAuthorize();
+		let authorizeMock;
 
-			expect( result ).toBe( true );
+		beforeEach( () => {
+			authorizeMock = jest.fn();
 		} );
 
-		test( 'should return true for woo services', () => {
-			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
-			const component = shallow( renderableComponent );
-			component.setProps( {
-				authQuery: {
-					...DEFAULT_PROPS.authQuery,
-					from: 'woocommerce-services-auto-authorize',
-				},
-			} );
-			const result = component.instance().shouldAutoAuthorize();
+		test( 'should authorize if isSso', () => {
+			const authQuery = {
+				...DEFAULT_PROPS.authQuery,
+				from: 'sso',
+				clientId: APPROVE_SSO_CLIENT_ID,
+			};
 
-			expect( result ).toBe( true );
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authorize={ authorizeMock }
+					authQuery={ authQuery }
+				/>
+			);
+
+			expect( authorizeMock ).toHaveBeenCalled();
 		} );
 
-		test( 'should return false for woocommerce onboarding', () => {
-			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
-			const component = shallow( renderableComponent );
-			component.setProps( {
-				authQuery: {
-					...DEFAULT_PROPS.authQuery,
-					from: 'woocommerce-onboarding',
-				},
-			} );
-			const result = component.instance().shouldAutoAuthorize();
+		test( 'should auto-authorize for WOO services', () => {
+			const authQuery = {
+				...DEFAULT_PROPS.authQuery,
+				from: 'woocommerce-services-auto-authorize',
+			};
 
-			expect( result ).toBe( false );
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authorize={ authorizeMock }
+					authQuery={ authQuery }
+				/>
+			);
+
+			expect( authorizeMock ).toHaveBeenCalled();
 		} );
 
-		test( 'should return true for the old woocommerc setup wizard', () => {
-			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
-			const component = shallow( renderableComponent );
-			component.setProps( {
-				authQuery: {
-					...DEFAULT_PROPS.authQuery,
-					from: 'woocommerce-setup-wizard',
-				},
-			} );
-			const result = component.instance().shouldAutoAuthorize();
+		test( 'should not auto-authorize for WOO onboarding', () => {
+			const authQuery = {
+				...DEFAULT_PROPS.authQuery,
+				from: 'woocommerce-onboarding',
+			};
 
-			expect( result ).toBe( true );
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authorize={ authorizeMock }
+					authQuery={ authQuery }
+				/>
+			);
+
+			expect( authorizeMock ).not.toHaveBeenCalled();
+		} );
+
+		test( 'should auto-authorize for the old WOO setup wizard', () => {
+			const authQuery = {
+				...DEFAULT_PROPS.authQuery,
+				from: 'woocommerce-setup-wizard',
+			};
+
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authorize={ authorizeMock }
+					authQuery={ authQuery }
+				/>
+			);
+
+			expect( authorizeMock ).toHaveBeenCalled();
 		} );
 	} );
 
@@ -304,46 +352,107 @@ describe( 'JetpackAuthorize', () => {
 	} );
 
 	describe( 'getRedirectionTarget', () => {
-		test( 'should redirect to pressable if partnerSlug is "pressable"', () => {
-			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
-			const component = shallow( renderableComponent );
-			component.setProps( {
-				partnerSlug: 'pressable',
-			} );
-			const target = component.instance().getRedirectionTarget();
+		let originalWindowLocation;
+
+		beforeEach( () => {
+			originalWindowLocation = global.window.location;
+			delete global.window.location;
+			global.window.location = {
+				href: 'http://wwww.example.com',
+				origin: 'http://www.example.com',
+			};
+		} );
+
+		afterEach( () => {
+			global.window.location = originalWindowLocation;
+		} );
+
+		test( 'should redirect to pressable if partnerSlug is "pressable"', async () => {
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ {
+						...DEFAULT_PROPS.authQuery,
+						alreadyAuthorized: true,
+					} }
+					partnerSlug="pressable"
+					isAlreadyOnSitesList
+					isFetchingSites
+				/>
+			);
+
+			await userEvent.click( screen.getByText( 'Return to your site' ) );
+
+			const target = global.window.location.href;
 
 			expect( target ).toBe( `/start/pressable-nux?blogid=${ DEFAULT_PROPS.authQuery.clientId }` );
 		} );
 
-		test( 'should redirect to /checkout if the selected plan/product is Jetpack plan/product', () => {
-			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
-			const component = shallow( renderableComponent );
-			component.setProps( {
-				selectedPlanSlug: OFFER_RESET_FLOW_TYPES[ 0 ],
-			} );
-			const target = component.instance().getRedirectionTarget();
+		test( 'should redirect to /checkout if the selected plan/product is Jetpack plan/product', async () => {
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ {
+						...DEFAULT_PROPS.authQuery,
+						alreadyAuthorized: true,
+					} }
+					isAlreadyOnSitesList
+					isFetchingSites
+					selectedPlanSlug={ OFFER_RESET_FLOW_TYPES[ 0 ] }
+				/>
+			);
+
+			await userEvent.click( screen.getByText( 'Return to your site' ) );
+
+			const target = global.window.location.href;
 
 			expect( target ).toBe( `/checkout/${ SITE_SLUG }/${ OFFER_RESET_FLOW_TYPES[ 0 ] }` );
 		} );
 
-		test( 'should redirect to wp-admin when site has a purchased plan/product', () => {
-			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
-			const component = shallow( renderableComponent );
-			component.setProps( {
-				siteHasJetpackPaidProduct: true,
-			} );
-			const target = component.instance().getRedirectionTarget();
+		test( 'should redirect to wp-admin when site has a purchased plan/product', async () => {
+			delete global.window.location;
+			global.window.location = {
+				href: 'http://wwww.example.com',
+				origin: 'http://www.example.com',
+			};
+
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ {
+						...DEFAULT_PROPS.authQuery,
+						alreadyAuthorized: true,
+					} }
+					isAlreadyOnSitesList
+					isFetchingSites
+					siteHasJetpackPaidProduct
+				/>
+			);
+
+			await userEvent.click( screen.getByText( 'Return to your site' ) );
+
+			const target = global.window.location.href;
 
 			expect( target ).toBe( DEFAULT_PROPS.authQuery.redirectAfterAuth );
 		} );
 
-		test( 'should redirect to /jetpack/connect/plans when user has an unattached "user"(not partner) license key', () => {
-			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
-			const component = shallow( renderableComponent );
-			component.setProps( {
-				userHasUnattachedLicenses: true,
-			} );
-			const target = component.instance().getRedirectionTarget();
+		test( 'should redirect to /jetpack/connect/plans when user has an unattached "user"(not partner) license key', async () => {
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ {
+						...DEFAULT_PROPS.authQuery,
+						alreadyAuthorized: true,
+					} }
+					isAlreadyOnSitesList
+					isFetchingSites
+					userHasUnattachedLicenses
+				/>
+			);
+
+			await userEvent.click( screen.getByText( 'Return to your site' ) );
+
+			const target = global.window.location.href;
 
 			expect( target ).toBe(
 				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect=${ encodeURIComponent(
@@ -352,13 +461,22 @@ describe( 'JetpackAuthorize', () => {
 			);
 		} );
 
-		test( 'should redirect to redirect to the /jetpack/connect/plans page by default', () => {
-			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
-			const component = shallow( renderableComponent );
-			// component.setProps( {
-			// 	siteHasJetpackPaidProduct: true,
-			// } );
-			const target = component.instance().getRedirectionTarget();
+		test( 'should redirect to the /jetpack/connect/plans page by default', async () => {
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ {
+						...DEFAULT_PROPS.authQuery,
+						alreadyAuthorized: true,
+					} }
+					isAlreadyOnSitesList
+					isFetchingSites
+				/>
+			);
+
+			await userEvent.click( screen.getByText( 'Return to your site' ) );
+
+			const target = global.window.location.href;
 
 			expect( target ).toBe(
 				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect=${ encodeURIComponent(

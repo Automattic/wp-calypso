@@ -106,6 +106,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 							source="wpcom"
 							emptyContent={ emptyContent }
 							upsellUrl={ upsellUrl }
+							forceWpOrgSearch
 						/>
 					</div>
 				) }

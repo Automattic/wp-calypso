@@ -2,6 +2,7 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const chalk = require( 'chalk' );
 const v8Profiler = require( 'v8-profiler-next' );
+const { default: isStaticRequest } = require( 'calypso/server/lib/is-static-request' );
 
 /**
  * This should be dynamically imported:
@@ -30,15 +31,7 @@ module.exports = () => {
 	return ( req, res, next ) => {
 		// Avoid profiling certain requests (like for static files) and don't
 		// start profiling if we already are.
-		if (
-			isProfiling ||
-			! req.originalUrl.startsWith( '/' ) ||
-			req.originalUrl.startsWith( '/calypso/' ) ||
-			req.originalUrl.startsWith( '/service-worker' ) ||
-			req.originalUrl.startsWith( '/nostats.js' ) ||
-			req.originalUrl.startsWith( '/version' ) ||
-			req.originalUrl.startsWith( '/__webpack_hmr' )
-		) {
+		if ( isProfiling || ! req.originalUrl.startsWith( '/' ) || isStaticRequest( req ) ) {
 			next();
 			return;
 		}

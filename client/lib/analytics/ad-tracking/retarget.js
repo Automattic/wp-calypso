@@ -1,5 +1,5 @@
 import { refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
-import { mayWeTrackByTracker, mayWeTrackByBucket, Bucket } from '../tracker-buckets';
+import { mayWeTrackByTracker } from '../tracker-buckets';
 import {
 	debug,
 	TRACKING_IDS,
@@ -27,11 +27,6 @@ let lastRetargetTime = 0;
  */
 export async function retarget( urlPath ) {
 	await refreshCountryCodeCookieGdpr();
-
-	if ( ! mayWeTrackByBucket( Bucket.ADVERTISING ) ) {
-		debug( 'retarget: [Skipping] ad tracking is not allowed', urlPath );
-		return;
-	}
 
 	await loadTrackingScripts();
 

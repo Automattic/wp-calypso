@@ -13,7 +13,7 @@
 	order: 3;
 	align-self: flex-end;
 	width: 100%;
-	margin-left: 44px;
+	margin-left: 52px;
 }
 
 .reader-list-item__byline {
@@ -86,6 +86,7 @@
 .reader-list-item__site-excerpt,
 .reader-list-item__site-url-timestamp {
 	display: block;
+	line-height: 18px;
 	max-height: 16px * 2.6;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -113,7 +114,9 @@
 }
 
 .reader-list-item__site-title {
+	font-size: $font-body;
 	font-weight: 600;
+	line-height: 20px;
 }
 
 .reader-list-item__site-url-timestamp {
@@ -213,7 +216,7 @@
 }
 
 .reader-list-item__avatar {
-	min-width: 44px;
+	min-width: 52px;
 	order: 1;
 	flex: 0;
 }

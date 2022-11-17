@@ -6,6 +6,7 @@ import {
 	PayWithPaypalBlockFlow,
 	OpenTableFlow,
 	PaymentsBlockFlow,
+	envVariables,
 } from '@automattic/calypso-e2e';
 import { createBlockTests } from './shared/block-smoke-testing';
 
@@ -18,7 +19,11 @@ const blockFlows: BlockFlow[] = [
 	new OpenTableFlow( {
 		restaurant: 'Miku Restaurant - Vancouver',
 	} ),
-	new PaymentsBlockFlow( { buttonText: 'Donate to Me' } ),
 ];
+
+// Stripe is not connected to this WordPress.com account, so skipping on Atomic
+if ( ! envVariables.TEST_ON_ATOMIC ) {
+	blockFlows.push( new PaymentsBlockFlow( { buttonText: 'Donate to Me' } ) );
+}
 
 createBlockTests( 'Blocks: Jetpack Earn', blockFlows );

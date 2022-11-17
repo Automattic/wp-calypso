@@ -1,4 +1,6 @@
+import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
+import { Icon, arrowLeft, arrowRight } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, withRtl } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -67,7 +69,31 @@ class StatsPeriodNavigation extends PureComponent {
 			addQueryPrefix: true,
 		} );
 
-		return (
+		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
+
+		return isNewFeatured ? (
+			<div className="stats-period-navigation stats-period-navigation--new-main-chart">
+				<div className="stats-period-navigation__children">{ children }</div>
+				<a
+					className={ classNames( 'stats-period-navigation__previous', {
+						'is-disabled': hidePreviousArrow,
+					} ) }
+					href={ `${ url }${ previousDayQuery }` }
+					onClick={ this.handleClickPrevious }
+				>
+					<Icon className="gridicon" icon={ arrowLeft } />
+				</a>
+				<a
+					className={ classNames( 'stats-period-navigation__next', {
+						'is-disabled': hideNextArrow || isToday,
+					} ) }
+					href={ `${ url }${ nextDayQuery }` }
+					onClick={ this.handleClickNext }
+				>
+					<Icon className="gridicon" icon={ arrowRight } />
+				</a>
+			</div>
+		) : (
 			<div className="stats-period-navigation">
 				<a
 					className={ classNames( 'stats-period-navigation__previous', {

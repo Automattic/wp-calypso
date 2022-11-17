@@ -33,6 +33,13 @@ const getThemeId = ( page ) => {
 
 const ICON_SIZE = 12;
 
+export const PageCardInfoBadge = ( { icon, text } ) => (
+	<span className="page-card-info__badge">
+		<Gridicon icon={ icon } size={ ICON_SIZE } className="page-card-info__badge-icon" />
+		<span className="page-card-info__badge-text">{ text }</span>
+	</span>
+);
+
 function PageCardInfo( {
 	page,
 	showTimestamp,
@@ -61,18 +68,8 @@ function PageCardInfo( {
 						includeBasicStatus={ true }
 					/>
 				) }
-				{ isFront && (
-					<span className="page-card-info__badge">
-						<Gridicon icon="house" size={ ICON_SIZE } className="page-card-info__badge-icon" />
-						<span className="page-card-info__badge-text">{ translate( 'Homepage' ) }</span>
-					</span>
-				) }
-				{ isPosts && (
-					<span className="page-card-info__badge">
-						<Gridicon icon="posts" size={ ICON_SIZE } className="page-card-info__badge-icon" />
-						<span className="page-card-info__badge-text">{ translate( 'Your latest posts' ) }</span>
-					</span>
-				) }
+				{ isFront && <PageCardInfoBadge icon="house" text={ translate( 'Homepage' ) } /> }
+				{ isPosts && <PageCardInfoBadge icon="posts" text={ translate( 'Your latest posts' ) } /> }
 				{ ! isFront && theme && (
 					<span className="page-card-info__item">
 						<Gridicon icon="themes" size={ ICON_SIZE } className="page-card-info__item-icon" />

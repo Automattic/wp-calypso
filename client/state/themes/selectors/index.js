@@ -38,12 +38,14 @@ export { getThemeSignupUrl } from 'calypso/state/themes/selectors/get-theme-sign
 export { getThemesLastPageForQuery } from 'calypso/state/themes/selectors/get-themes-last-page-for-query';
 export { getThemeSupportUrl } from 'calypso/state/themes/selectors/get-theme-support-url';
 export { getOutdatedThemes } from 'calypso/state/themes/selectors/get-outdated-themes';
+export { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 export { getWpcomParentThemeId } from 'calypso/state/themes/selectors/get-wpcom-parent-theme-id';
 export { hasActivatedTheme } from 'calypso/state/themes/selectors/has-activated-theme';
 export { hasAutoLoadingHomepageModalAccepted } from 'calypso/state/themes/selectors/has-auto-loading-homepage-modal-accepted';
 export { isActivatingTheme } from 'calypso/state/themes/selectors/is-activating-theme';
 export { isAmbiguousThemeFilterTerm } from 'calypso/state/themes/selectors/is-ambiguous-theme-filter-term';
 export { isDownloadableFromWpcom } from 'calypso/state/themes/selectors/is-downloadable-from-wpcom';
+export { isExternallyManagedTheme } from 'calypso/state/themes/selectors/is-externally-managed-theme';
 export { isFulfilledThemesForQuery } from 'calypso/state/themes/selectors/is-fulfilled-request-themes-for-query';
 export { isInstallingTheme } from 'calypso/state/themes/selectors/is-installing-theme';
 export { isPremiumThemeAvailable } from 'calypso/state/themes/selectors/is-premium-theme-available';
@@ -52,6 +54,7 @@ export { isRequestingTheme } from 'calypso/state/themes/selectors/is-requesting-
 export { isRequestingThemesForQuery } from 'calypso/state/themes/selectors/is-requesting-themes-for-query';
 export { isRequestingThemesForQueryIgnoringPage } from 'calypso/state/themes/selectors/is-requesting-themes-for-query-ignoring-page';
 export { isSiteEligibleForBundledSoftware } from 'calypso/state/themes/selectors/is-site-eligible-for-bundled-software';
+export { isSiteEligibleForManagedExternalThemes } from 'calypso/state/themes/selectors/is-site-eligible-for-managed-external-themes';
 export { isThemeActive } from 'calypso/state/themes/selectors/is-theme-active';
 export { isThemeGutenbergFirst } from 'calypso/state/themes/selectors/is-theme-gutenberg-first';
 export { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';

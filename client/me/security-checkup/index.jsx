@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -54,7 +53,7 @@ class SecurityCheckupComponent extends Component {
 					<SecurityCheckupTwoFactorBackupCodes />
 					<SecurityCheckupAccountRecoveryEmail />
 					<SecurityCheckupAccountRecoveryPhone />
-					{ isEnabled( 'hosting/ssh-keys' ) && <SecurityCheckupSSHKey /> }
+					<SecurityCheckupSSHKey />
 				</VerticalNav>
 
 				<SectionHeader label={ translate( 'Connections' ) } className="security-checkup__info" />

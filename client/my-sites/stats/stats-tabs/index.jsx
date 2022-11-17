@@ -33,7 +33,7 @@ class StatsTabs extends Component {
 
 				const tabOptions = {
 					attr: tab.attr,
-					gridicon: tab.gridicon,
+					icon: tab.icon,
 					className: tab.className,
 					label: tab.label,
 					loading: ! hasData,

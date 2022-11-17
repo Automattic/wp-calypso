@@ -28,6 +28,7 @@ export { useSubmitForumsMutation } from './support-queries/use-submit-forums-top
 export * from './starter-designs-queries';
 export { useSibylQuery } from './support-queries/use-sibyl-query';
 export * from './site/types';
+export * from './templates';
 
 export {
 	Analyzer,
@@ -57,3 +58,4 @@ export { getContextResults } from './contextual-help/contextual-help';
 export { generateAdminSections } from './contextual-help/admin-sections';
 export type { LinksForSection } from './contextual-help/contextual-help';
 export * from './contextual-help/constants';
+export type { HelpCenterSite } from './help-center/types';

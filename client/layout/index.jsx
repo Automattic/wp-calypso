@@ -16,6 +16,7 @@ import QuerySiteSelectedEditor from 'calypso/components/data/query-site-selected
 import QuerySites from 'calypso/components/data/query-sites';
 import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
 import { withCurrentRoute } from 'calypso/components/route';
+import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
@@ -45,6 +46,7 @@ import {
 import BodySectionCssClass from './body-section-css-class';
 import LayoutLoader from './loader';
 import { handleScroll } from './utils';
+
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
 
@@ -330,7 +332,10 @@ class Layout extends Component {
 					<AsyncLoad require="calypso/components/happychat" />
 				) }
 				{ 'development' === process.env.NODE_ENV && (
-					<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
+					<>
+						<SympathyDevWarning />
+						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
+					</>
 				) }
 				{ loadInlineHelp && (
 					<AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } />

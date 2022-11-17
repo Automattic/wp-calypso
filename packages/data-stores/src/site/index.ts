@@ -21,6 +21,7 @@ export function register( clientCreds: WpcomClientCredentials ): typeof STORE_KE
 		isRegistered = true;
 		registerStore< State >( STORE_KEY, {
 			actions: createActions( clientCreds ),
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			controls: controls as any,
 			reducer,
 			resolvers,

@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isEcommercePlan } from '@automattic/calypso-products/src';
 import { Button, Popover } from '@automattic/components';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
@@ -30,7 +31,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import { updateSiteMigrationMeta } from 'calypso/state/sites/actions';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite, getSitePlanSlug } from 'calypso/state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -64,6 +65,7 @@ class MasterbarLoggedIn extends Component {
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		currentLayoutFocus: PropTypes.string,
 		siteSlug: PropTypes.string,
+		isEcommerce: PropTypes.bool,
 		hasMoreThanOneSite: PropTypes.bool,
 		isCheckout: PropTypes.bool,
 		isCheckoutPending: PropTypes.bool,
@@ -256,7 +258,7 @@ class MasterbarLoggedIn extends Component {
 		const {
 			isCheckoutPending,
 			previousPath,
-			siteSlug,
+			currentSelectedSiteSlug,
 			isJetpackNotAtomic,
 			title,
 			loadHelpCenterIcon,
@@ -269,7 +271,7 @@ class MasterbarLoggedIn extends Component {
 				title={ title }
 				isJetpackNotAtomic={ isJetpackNotAtomic }
 				previousPath={ previousPath }
-				siteSlug={ siteSlug }
+				siteSlug={ currentSelectedSiteSlug }
 				isLeavingAllowed={ ! isCheckoutPending }
 				loadHelpCenterIcon={ loadHelpCenterIcon }
 			/>
@@ -322,8 +324,8 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderPublish() {
-		const { domainOnlySite, translate, isMigrationInProgress } = this.props;
-		if ( ! domainOnlySite && ! isMigrationInProgress ) {
+		const { domainOnlySite, translate, isMigrationInProgress, isEcommerce } = this.props;
+		if ( ! domainOnlySite && ! isMigrationInProgress && ! isEcommerce ) {
 			return (
 				<AsyncLoad
 					require="./publish"
@@ -557,6 +559,7 @@ export default connect(
 		// by the user yet
 		const currentSelectedSiteId = getSelectedSiteId( state );
 		const siteId = currentSelectedSiteId || getPrimarySiteId( state );
+		const sitePlanSlug = getSitePlanSlug( state, siteId );
 		const isMigrationInProgress =
 			isSiteMigrationInProgress( state, currentSelectedSiteId ) ||
 			isSiteMigrationActiveRoute( state );
@@ -564,6 +567,7 @@ export default connect(
 		return {
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
+			isEcommerce: isEcommercePlan( sitePlanSlug ),
 			siteSlug: getSiteSlug( state, siteId ),
 			sectionGroup,
 			domainOnlySite: isDomainOnlySite( state, siteId ),
@@ -578,7 +582,9 @@ export default connect(
 				? getSiteSlug( state, currentSelectedSiteId )
 				: undefined,
 			previousPath: getPreviousRoute( state ),
-			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
+			isJetpackNotAtomic:
+				isJetpackSite( state, currentSelectedSiteId ) &&
+				! isAtomicSite( state, currentSelectedSiteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			hasDismissedThePopover: getPreference( state, MENU_POPOVER_PREFERENCE_KEY ),
 			isFetchingPrefs: isFetchingPreferences( state ),

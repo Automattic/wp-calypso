@@ -36,7 +36,7 @@ export const ALLOWED_CATEGORIES = [
 	'onlinestore',
 ];
 
-export const categories: Record< string, Category > = {
+export const getCategories: () => Record< string, Category > = () => ( {
 	discover: {
 		menu: __( 'Discover' ),
 		title: __( 'Discover' ),
@@ -379,7 +379,7 @@ export const categories: Record< string, Category > = {
 			},
 		],
 	},
-};
+} );
 
 export function useCategories(
 	allowedCategories = ALLOWED_CATEGORIES
@@ -399,6 +399,6 @@ export function useCategories(
 	}
 
 	return Object.fromEntries(
-		Object.entries( categories ).filter( ( [ key ] ) => allowed.includes( key ) )
+		Object.entries( getCategories() ).filter( ( [ key ] ) => allowed.includes( key ) )
 	);
 }

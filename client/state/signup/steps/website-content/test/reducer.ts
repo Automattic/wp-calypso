@@ -19,13 +19,15 @@ const initialTestState = {
 	currentIndex: 0,
 	imageUploadStates: {},
 	websiteContent: {
-		siteLogoUrl: '',
+		siteLogoSection: { siteLogoUrl: '' },
+		feedbackSection: { genericFeedback: '' },
 		pages: [
 			{
 				id: 'Home',
 				title: 'Homepage',
 				content: '',
 				images: [
+					{ caption: '', url: '' },
 					{ caption: '', url: '' },
 					{ caption: '', url: '' },
 					{ caption: '', url: '' },
@@ -39,6 +41,7 @@ const initialTestState = {
 					{ caption: '', url: '' },
 					{ caption: '', url: '' },
 					{ caption: '', url: '' },
+					{ caption: '', url: '' },
 				],
 			},
 			{
@@ -49,10 +52,12 @@ const initialTestState = {
 					{ caption: '', url: '' },
 					{ caption: '', url: '' },
 					{ caption: '', url: '' },
+					{ caption: '', url: '' },
 				],
 			},
 		],
 	},
+	siteId: null,
 };
 
 describe( 'reducer', () => {
@@ -72,20 +77,23 @@ describe( 'reducer', () => {
 		expect(
 			websiteContentCollectionReducer(
 				{ ...initialState },
-				initializePages( [
-					{
-						id: 'page-1',
-						name: 'Page 1',
-					},
-					{
-						id: 'page-2',
-						name: 'Page 2',
-					},
-					{
-						id: 'page-3',
-						name: 'Page 3',
-					},
-				] )
+				initializePages(
+					[
+						{
+							id: 'page-1',
+							name: 'Page 1',
+						},
+						{
+							id: 'page-2',
+							name: 'Page 2',
+						},
+						{
+							id: 'page-3',
+							name: 'Page 3',
+						},
+					],
+					1234
+				)
 			)
 		).toEqual( {
 			...initialTestState,
@@ -100,6 +108,7 @@ describe( 'reducer', () => {
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 						],
 					},
 					{
@@ -107,6 +116,7 @@ describe( 'reducer', () => {
 						title: 'Page 2',
 						content: '',
 						images: [
+							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
@@ -120,14 +130,45 @@ describe( 'reducer', () => {
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 						],
 					},
 				],
 			},
+			siteId: 1234,
 		} );
 	} );
 
-	test( 'When initializing page data existing page data should not be overridden', () => {
+	test( 'When initializing page data existing page data should not be overwritten if the site id is same', () => {
+		const existingState = {
+			...initialState,
+			siteId: 1234,
+		};
+		expect(
+			websiteContentCollectionReducer(
+				existingState,
+				initializePages(
+					[
+						{
+							id: 'page-2',
+							name: 'Page 2',
+						},
+						{
+							id: 'page-3',
+							name: 'Page 3',
+						},
+						{
+							id: 'page-4',
+							name: 'Page 4',
+						},
+					],
+					1234
+				)
+			)
+		).toEqual( existingState );
+	} );
+
+	test( 'When initializing page data existing page data should be overwritten if the site id is different', () => {
 		const existingState = {
 			...initialState,
 			websiteContent: {
@@ -141,6 +182,7 @@ describe( 'reducer', () => {
 							{ caption: 'sample.jpg', url: 'sample.jpg' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 						],
 					},
 					{
@@ -149,6 +191,7 @@ describe( 'reducer', () => {
 						content: 'Some existing Page 2 content',
 						images: [
 							{ caption: 'sample.jpg', url: 'sample.jpg' },
+							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 						],
@@ -161,28 +204,33 @@ describe( 'reducer', () => {
 							{ caption: 'sample.jpg', url: 'sample.jpg' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 						],
 					},
 				],
 			},
+			siteId: 1234,
 		};
 		expect(
 			websiteContentCollectionReducer(
 				existingState,
-				initializePages( [
-					{
-						id: 'page-2',
-						name: 'Page 2',
-					},
-					{
-						id: 'page-3',
-						name: 'Page 3',
-					},
-					{
-						id: 'page-4',
-						name: 'Page 4',
-					},
-				] )
+				initializePages(
+					[
+						{
+							id: 'page-2',
+							name: 'Page 2',
+						},
+						{
+							id: 'page-3',
+							name: 'Page 3',
+						},
+						{
+							id: 'page-4',
+							name: 'Page 4',
+						},
+					],
+					1337
+				)
 			)
 		).toEqual( {
 			...initialTestState,
@@ -192,9 +240,10 @@ describe( 'reducer', () => {
 					{
 						id: 'page-2',
 						title: 'Page 2',
-						content: 'Some existing Page 2 content',
+						content: '',
 						images: [
-							{ caption: 'sample.jpg', url: 'sample.jpg' },
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 						],
@@ -202,9 +251,10 @@ describe( 'reducer', () => {
 					{
 						id: 'page-3',
 						title: 'Page 3',
-						content: 'Some existing Page 3 content',
+						content: '',
 						images: [
-							{ caption: 'sample.jpg', url: 'sample.jpg' },
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 						],
@@ -217,10 +267,12 @@ describe( 'reducer', () => {
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 						],
 					},
 				],
 			},
+			siteId: 1337,
 		} );
 	} );
 
@@ -252,6 +304,7 @@ describe( 'reducer', () => {
 								url: 'www.test.com/test.test.jpg',
 							},
 							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 						],
 					},
 					{
@@ -262,6 +315,7 @@ describe( 'reducer', () => {
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 						],
 					},
 					{
@@ -269,6 +323,7 @@ describe( 'reducer', () => {
 						title: 'Contact Info',
 						content: '',
 						images: [
+							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
@@ -344,6 +399,7 @@ describe( 'reducer', () => {
 								url: 'www.testwo.com/testwo.testwo.jpg',
 							},
 							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 						],
 					},
 					...initialTestState.websiteContent.pages.slice( 1 ),
@@ -382,6 +438,7 @@ describe( 'reducer', () => {
 								url: '',
 							},
 							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 						],
 					},
 					...initialTestState.websiteContent.pages.slice( 1 ),
@@ -408,7 +465,7 @@ describe( 'reducer', () => {
 			},
 			websiteContent: {
 				...initialTestState.websiteContent,
-				siteLogoUrl: 'wp.me/some-random-image.png',
+				siteLogoSection: { siteLogoUrl: 'wp.me/some-random-image.png' },
 			},
 		} );
 	} );
@@ -452,7 +509,7 @@ describe( 'reducer', () => {
 			},
 			websiteContent: {
 				...initialTestState.websiteContent,
-				siteLogoUrl: '',
+				siteLogoSection: { siteLogoUrl: '' },
 			},
 		} );
 	} );
@@ -476,6 +533,7 @@ describe( 'reducer', () => {
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 						],
 					},
 					{
@@ -486,6 +544,7 @@ describe( 'reducer', () => {
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
+							{ caption: '', url: '' },
 						],
 					},
 					{
@@ -493,6 +552,7 @@ describe( 'reducer', () => {
 						title: 'Contact Info',
 						content: '',
 						images: [
+							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },

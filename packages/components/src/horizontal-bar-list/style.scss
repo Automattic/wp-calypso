@@ -1,0 +1,114 @@
+// ==========================================================================
+// Horizontal bar list
+// ==========================================================================
+@import "../styles/typography.scss";
+@import "./stats-variables.scss";
+
+.horizontal-bar-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	font-size: $row-font-size;
+	font-weight: 500;
+	line-height: $row-line-height;
+
+	.horizontal-bar-list-item {
+		display: flex;
+		justify-content: space-between;
+		min-height: $row-height;
+		align-items: stretch;
+		box-sizing: border-box;
+		padding: 0 $padding-outside;
+		transition: background-color $item-transition;
+
+		& + .horizontal-bar-list-item {
+			margin-top: $space-between-rows;
+		}
+
+		&:hover,
+		&:focus,
+		&:focus-within {
+			background-color: var(--studio-gray-0);
+
+			.horizontal-bar-list-item-bar {
+				&::before {
+					background-color: rgba(var(--color-primary-rgb), 40%);
+				}
+			}
+
+			.horizontal-bar-list--hover-action {
+				display: block;
+			}
+		}
+	}
+
+	.horizontal-bar-list-item-bar {
+		padding-left: $bar-left-spacing;
+		position: relative;
+		display: flex;
+		height: auto;
+		width: calc(100% - $value-column-width - $bar-left-spacing);
+		align-items: center;
+		flex: 1 0 auto;
+
+		&::before {
+			width: var(--horizontal-bar-list-fill);
+			height: 100%;
+			content: "";
+			border-radius: 2px;
+			background-color: rgba(var(--color-primary-rgb), 15%);
+			position: absolute;
+			left: 0;
+			z-index: 0;
+			transition: background-color $item-transition;
+		}
+	}
+
+	.horizontal-bar-list--hover-action {
+		display: none;
+		position: relative;
+		z-index: 1;
+	}
+
+	.horizontal-bar-list-label {
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+		z-index: 1;
+		color: var(--color-text);
+		flex: 1;
+	}
+
+	.horizontal-bar-list-label--group-header {
+		display: flex;
+		align-items: center;
+	}
+
+	.value {
+		flex: 0 0 $value-column-width;
+		text-align: right;
+		align-self: center;
+	}
+}
+
+.horizontal-bar-list-item--link {
+	cursor: pointer;
+}
+
+.horizontal-bar-list-item--indicated {
+	box-shadow: inset $item-indicator-width 0 0 var(--color-primary);
+}
+
+.horizontal-bar-list-item--static {
+	cursor: auto;
+}
+
+.horizontal-bar-list-group {
+	list-style: none;
+	margin: $space-between-rows 0 $row-height 0;
+}
+
+.horizontal-bar-list-group-toggle {
+	position: relative;
+	top: 2px;
+}

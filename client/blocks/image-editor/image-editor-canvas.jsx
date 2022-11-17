@@ -108,7 +108,7 @@ export class ImageEditorCanvas extends Component {
 			return getAtomicSiteMediaViaProxyRetry( siteSlug, filePath, { query } );
 		}
 
-		if ( ! src.startsWith( 'blob' ) ) {
+		if ( ! src.startsWith( 'blob' ) && ! src.startsWith( 'data' ) ) {
 			src = src + '?'; // Fix #7991 by forcing Safari to ignore cache and perform valid CORS request
 		}
 

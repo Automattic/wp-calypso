@@ -22,6 +22,19 @@ const jetpackGettingStartedLink = () => {
 	);
 };
 
+const jetpackGDPRLink = () => {
+	return (
+		<a
+			href="https://jetpack.com/gdpr/"
+			target="_blank"
+			rel="noopener noreferrer"
+			onClick={ () => {
+				recordTracksEvent( 'calypso_jetpack_faq_gdpr_click' );
+			} }
+		/>
+	);
+};
+
 const JetpackFAQ: FC = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -86,7 +99,7 @@ const JetpackFAQ: FC = () => {
 					className="jetpack-faq__section"
 				>
 					{ translate(
-						"If your site's Backup storage limit is reached, your older backups will be deleted. Depending on the size of your site and your site's Backup storage limit, your site's backup retention period may be reduced down to 7 days of your most recent backups. You will still be able to restore existing backups, but new site updates will not be backed up until you free up storage or upgrade your storage limit."
+						"If your site's backup storage limit is reached, your older backups will be deleted. Depending on the size of your site and your site's backup storage limit, your site's backup retention period may be reduced down to 7 days of your most recent backups. You will still be able to restore existing backups, but new site updates will not be backed up until you free up storage or upgrade your storage limit."
 					) }
 				</FoldableFAQ>
 				<FoldableFAQ
@@ -130,6 +143,19 @@ const JetpackFAQ: FC = () => {
 					) }
 				</FoldableFAQ>
 				<FoldableFAQ
+					id="multiyear-plans"
+					question={ translate( 'Do you have discounts for multi-year plans?' ) }
+					onToggle={ onFaqToggle }
+					className="jetpack-faq__section"
+				>
+					{ translate(
+						"We currently do not offer multi-year subscriptions or discounts for Jetpack products. However if you're an Enterprise, {{helpLink}}contact us{{/helpLink}}.",
+						{
+							components: { helpLink: getHelpLink( 'multiyear-questions' ) },
+						}
+					) }
+				</FoldableFAQ>
+				<FoldableFAQ
 					id="wpcom-account"
 					question={ translate( 'Why do I need a WordPress.com account?' ) }
 					onToggle={ onFaqToggle }
@@ -159,8 +185,24 @@ const JetpackFAQ: FC = () => {
 				>
 					{ translate(
 						'Jetpack’s free features are compatible with WordPress Multisite networks. Paid features' +
-							' also work with Multisite networks, but each site requires its own subscription. Jetpack Backup' +
+							' also work with Multisite networks, but each site requires its own subscription. Jetpack VaultPress Backup' +
 							' and Jetpack Scan are not currently compatible with Multisite networks.'
+					) }
+				</FoldableFAQ>
+				<FoldableFAQ
+					id="gdpr"
+					question={ translate( 'Does Jetpack comply with the GDPR?', {
+						comment:
+							'GDPR refers to the General Data Protection Regulation in effect in the European Union',
+					} ) }
+					onToggle={ onFaqToggle }
+					className="jetpack-faq__section"
+				>
+					{ translate(
+						'Jetpack understands the General Data Protection Regulation. {{link}}Read more about how Jetpack is committed to operating in accordance with the GDPR.{{/link}}',
+						{
+							components: { link: jetpackGDPRLink() },
+						}
 					) }
 				</FoldableFAQ>
 				<FoldableFAQ

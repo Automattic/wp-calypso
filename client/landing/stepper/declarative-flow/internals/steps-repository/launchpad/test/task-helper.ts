@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { getArrayOfFilteredTasks, getEnhancedTasks, isTaskDisabled } from '../task-helper';
+import { getArrayOfFilteredTasks, getEnhancedTasks } from '../task-helper';
 import { tasks, launchpadFlowTasks } from '../tasks';
 import { buildTask } from './lib/fixtures';
 
@@ -48,38 +48,6 @@ describe( 'Task Helpers', () => {
 				expect( getArrayOfFilteredTasks( tasks, 'newsletter' ) ).toEqual(
 					tasks.filter( ( task ) => launchpadFlowTasks[ 'newsletter' ].includes( task.id ) )
 				);
-			} );
-		} );
-	} );
-	describe( 'isTaskDisabled', () => {
-		describe( 'when a given task has other, dependent tasks that should be completed first', () => {
-			describe( 'and the other tasks are incomplete', () => {
-				it( 'then the given task is disabled', () => {
-					const dependencies = [ true, false ];
-					const task = buildTask( { dependencies, isCompleted: false } );
-					expect( isTaskDisabled( task ) ).toBe( true );
-				} );
-			} );
-			describe( 'and the other tasks are complete', () => {
-				const dependencies = [ true, true ];
-				describe( 'and the task can be revisited', () => {
-					it( 'then the task is enabled', () => {
-						const task = buildTask( { dependencies, keepActive: true, isCompleted: false } );
-						expect( isTaskDisabled( task ) ).toBe( false );
-					} );
-				} );
-				describe( 'and the given task complete', () => {
-					it( 'then the task is disabled', () => {
-						const task = buildTask( { dependencies, keepActive: false, isCompleted: true } );
-						expect( isTaskDisabled( task ) ).toBe( true );
-					} );
-				} );
-				describe( 'and the given task is incomplete', () => {
-					it( 'then the given task is enabled', () => {
-						const task = buildTask( { dependencies, keepActive: false, isCompleted: false } );
-						expect( isTaskDisabled( task ) ).toBe( false );
-					} );
-				} );
 			} );
 		} );
 	} );

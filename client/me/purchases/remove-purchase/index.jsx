@@ -1,4 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import config from '@automattic/calypso-config';
 import {
 	isDomainMapping,
 	isDomainRegistration,
@@ -30,12 +31,14 @@ import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { removePurchase } from 'calypso/state/purchases/actions';
 import { getPurchasesError } from 'calypso/state/purchases/selectors';
+import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { receiveDeletedSite } from 'calypso/state/sites/actions';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { MarketPlaceSubscriptionsDialog } from '../marketplace-subscriptions-dialog';
 import { purchasesRoot } from '../paths';
+import { PreCancellationDialog } from '../pre-cancellation-dialog';
 import { isDataLoading } from '../utils';
 import RemoveDomainDialog from './remove-domain-dialog';
 
@@ -58,6 +61,7 @@ class RemovePurchase extends Component {
 		purchaseListUrl: PropTypes.string,
 		activeSubscriptions: PropTypes.array,
 		linkIcon: PropTypes.string,
+		primaryDomain: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -69,6 +73,7 @@ class RemovePurchase extends Component {
 		isRemoving: false,
 		isShowingNonPrimaryDomainWarning: false,
 		isShowingMarketplaceSubscriptionsDialog: false,
+		isShowingPreCancellationDialog: false,
 	};
 
 	closeDialog = () => {
@@ -76,6 +81,7 @@ class RemovePurchase extends Component {
 			isDialogVisible: false,
 			isShowingNonPrimaryDomainWarning: false,
 			isShowingMarketplaceSubscriptionsDialog: false,
+			isShowingPreCancellationDialog: false,
 		} );
 	};
 
@@ -83,6 +89,7 @@ class RemovePurchase extends Component {
 		this.setState( {
 			isShowingMarketplaceSubscriptionsDialog: false,
 			isShowingNonPrimaryDomainWarning: false,
+			isShowingPreCancellationDialog: false,
 			isDialogVisible: true,
 		} );
 	};
@@ -93,13 +100,21 @@ class RemovePurchase extends Component {
 		if ( this.props.onClickTracks ) {
 			this.props.onClickTracks( event );
 		}
-		if (
+		if ( this.shouldShowPreCancellationDialog() && ! this.state.isShowingPreCancellationDialog ) {
+			this.setState( {
+				isShowingNonPrimaryDomainWarning: false,
+				isShowingMarketplaceSubscriptionsDialog: false,
+				isShowingPreCancellationDialog: true,
+				isDialogVisible: false,
+			} );
+		} else if (
 			this.shouldShowNonPrimaryDomainWarning() &&
 			! this.state.isShowingNonPrimaryDomainWarning
 		) {
 			this.setState( {
 				isShowingNonPrimaryDomainWarning: true,
 				isShowingMarketplaceSubscriptionsDialog: false,
+				isShowingPreCancellationDialog: false,
 				isDialogVisible: false,
 			} );
 		} else if (
@@ -109,12 +124,14 @@ class RemovePurchase extends Component {
 			this.setState( {
 				isShowingNonPrimaryDomainWarning: false,
 				isShowingMarketplaceSubscriptionsDialog: true,
+				isShowingPreCancellationDialog: false,
 				isDialogVisible: false,
 			} );
 		} else {
 			this.setState( {
 				isShowingNonPrimaryDomainWarning: false,
 				isShowingMarketplaceSubscriptionsDialog: false,
+				isShowingPreCancellationDialog: false,
 				isDialogVisible: true,
 			} );
 		}
@@ -208,6 +225,35 @@ class RemovePurchase extends Component {
 				planName={ getName( purchase ) }
 				oldDomainName={ site.domain }
 				newDomainName={ site.wpcom_url }
+			/>
+		);
+	}
+
+	shouldShowPreCancellationDialog() {
+		const { purchase } = this.props;
+		return (
+			config.isEnabled( 'pre-cancellation-modal' ) &&
+			isPlan( purchase ) &&
+			! isJetpackPlan( purchase ) &&
+			! isGSuiteOrGoogleWorkspace( purchase )
+		);
+	}
+
+	renderPreCancellationDialog() {
+		const { site, purchase, primaryDomain, hasCustomPrimaryDomain } = this.props;
+		const customDomain = hasCustomPrimaryDomain && primaryDomain.name;
+		const primaryDomainName = customDomain ? primaryDomain.name : '';
+
+		return (
+			<PreCancellationDialog
+				isDialogVisible={ this.state.isShowingPreCancellationDialog }
+				closeDialog={ this.closeDialog }
+				removePlan={ this.showRemovePlanDialog }
+				site={ site }
+				purchase={ purchase }
+				hasDomain={ customDomain }
+				primaryDomain={ primaryDomainName }
+				wpcomURL={ site.wpcom_url }
 			/>
 		);
 	}
@@ -353,6 +399,21 @@ class RemovePurchase extends Component {
 
 		const wrapperClassName = classNames( 'remove-purchase__card', className );
 		const Wrapper = useVerticalNavItem ? VerticalNavItem : CompactCard;
+		const getWarningDialog = () => {
+			if ( this.shouldShowPreCancellationDialog() ) {
+				return this.renderPreCancellationDialog();
+			}
+
+			if ( this.shouldShowNonPrimaryDomainWarning() ) {
+				return this.renderNonPrimaryDomainWarningDialog();
+			}
+
+			if ( this.shouldHandleMarketplaceSubscriptions() ) {
+				return this.renderMarketplaceSubscriptionsDialog();
+			}
+
+			return null;
+		};
 
 		return (
 			<>
@@ -360,9 +421,7 @@ class RemovePurchase extends Component {
 					{ this.props.children ? this.props.children : defaultContent }
 					<Gridicon className="card__link-indicator" icon={ this.props.linkIcon || 'trash' } />
 				</Wrapper>
-				{ this.shouldShowNonPrimaryDomainWarning() && this.renderNonPrimaryDomainWarningDialog() }
-				{ this.shouldHandleMarketplaceSubscriptions() &&
-					this.renderMarketplaceSubscriptionsDialog() }
+				{ getWarningDialog() }
 				{ this.renderDialog() }
 			</>
 		);
@@ -379,6 +438,7 @@ export default connect(
 			isJetpack,
 			purchasesError: getPurchasesError( state ),
 			userId: getCurrentUserId( state ),
+			primaryDomain: getPrimaryDomainBySiteId( state, purchase.siteId ),
 		};
 	},
 	{

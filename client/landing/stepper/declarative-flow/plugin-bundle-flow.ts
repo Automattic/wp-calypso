@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -58,8 +57,6 @@ export const pluginBundleFlow: Flow = {
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
 		const currentUser = useSelector( getCurrentUser );
-		const isEnglishLocale = useIsEnglishLocale();
-		const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 
 		let siteSlug: string | null = null;
 		if ( siteSlugParam ) {
@@ -79,7 +76,6 @@ export const pluginBundleFlow: Flow = {
 			useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
-		const goalsStepEnabled = isEnabled( 'signup/goals-step' ) && isEnabledFTM;
 
 		// Since we're mimicking a subset of the site-setup-flow, we're safe to use the siteSetupProgress.
 		const flowProgress = useSiteSetupFlowProgress( currentStep, intent, storeType );
@@ -103,11 +99,10 @@ export const pluginBundleFlow: Flow = {
 						return;
 					}
 
-					const pendingActions = [ setIntentOnSite( siteSlug, intent ) ];
-
-					if ( goalsStepEnabled ) {
-						pendingActions.push( setGoalsOnSite( siteSlug, goals ) );
-					}
+					const pendingActions = [
+						setIntentOnSite( siteSlug, intent ),
+						setGoalsOnSite( siteSlug, goals ),
+					];
 					if ( intent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
 						pendingActions.push(
 							setThemeOnSite(

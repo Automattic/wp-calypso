@@ -31,3 +31,5 @@ declare module '@wordpress/data' {
 	function dispatch( key: typeof STORE_KEY ): DispatchFromMap< typeof actions >;
 	function select( key: typeof STORE_KEY ): SelectFromMap< typeof selectors >;
 }
+
+export type { HelpCenterSite } from './types';

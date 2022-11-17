@@ -1,3 +1,7 @@
+@import "calypso/my-sites/stats/modernized-tooltip-styles.scss";
+@import "calypso/my-sites/stats/modernized-chart-tabs-styles.scss";
+@import "calypso/my-sites/stats/modernized-page-header-styles.scss";
+
 // Module container
 @include breakpoint-deprecated( ">960px" ) {
 	.stats__module-column {
@@ -31,9 +35,16 @@
 	margin-left: 4px;
 }
 
-.is-section-stats .followers-count .button {
-	@include breakpoint-deprecated( "<480px" ) {
-		display: none;
+// Compensate for the fixed header.
+.is-section-stats .has-fixed-nav {
+	padding-top: 44px;
+
+	@media ( max-width: 782px ) {
+		padding-top: 65px;
+	}
+
+	@media ( max-width: 660px ) {
+		padding-top: 60px;
 	}
 }
 
@@ -163,7 +174,6 @@
 	}
 }
 
-
 .stats__parsely-banner {
 	display: flex;
 	font-size: $font-body-small;
@@ -213,3 +223,16 @@
 		display: none;
 	}
 }
+
+// Stats section scoped styles
+.is-section-stats {
+	background: var(--studio-white);
+
+	.followers-count .button {
+		@include breakpoint-deprecated( "<480px" ) {
+			display: none;
+		}
+	}
+}
+
+@import "calypso/my-sites/stats/grid-layout.scss";

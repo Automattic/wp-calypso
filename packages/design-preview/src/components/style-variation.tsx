@@ -1,9 +1,9 @@
 import { GlobalStylesContext } from '@wordpress/edit-site/build-module/components/global-styles/context';
 import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/components/global-styles/global-styles-provider';
-import Preview from '@wordpress/edit-site/build-module/components/global-styles/preview';
-import { useMemo } from '@wordpress/element';
+import { useMemo, useState } from '@wordpress/element';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
+import Preview from './style-variation-preview';
 import type { StyleVariation } from '@automattic/design-picker/src/types';
 import './style.scss';
 
@@ -27,6 +27,7 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 	onClick,
 	showGlobalStylesPremiumBadge,
 } ) => {
+	const [ isFocused, setIsFocused ] = useState( false );
 	const context = useMemo( () => {
 		return {
 			user: {
@@ -54,10 +55,12 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 				}
 				onClick={ () => onClick( variation ) }
 				onKeyDown={ ( e ) => e.keyCode === SPACE_BAR_KEYCODE && onClick( variation ) }
+				onFocus={ () => setIsFocused( true ) }
+				onBlur={ () => setIsFocused( false ) }
 			>
 				{ isPremium && showGlobalStylesPremiumBadge() }
 				<GlobalStylesContext.Provider value={ context }>
-					<Preview label={ variation.title } />
+					<Preview label={ variation.title } isFocused={ isFocused } withHoverView />
 				</GlobalStylesContext.Provider>
 			</div>
 		</div>

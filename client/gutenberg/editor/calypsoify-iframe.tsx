@@ -802,6 +802,7 @@ const mapStateToProps = (
 		openSidebar: getQueryArg( window.location.href, 'openSidebar' ),
 		showDraftPostModal,
 		...pressThisData,
+		answer_prompt: getQueryArg( window.location.href, 'answer_prompt' ),
 	} );
 
 	// needed for loading the editor in SU sessions
@@ -816,8 +817,15 @@ const mapStateToProps = (
 
 	// Add new Site Editor params introduced in https://github.com/WordPress/gutenberg/pull/38817.
 	if ( 'site' === editorType && blockEditorSettings?.home_template?.postType ) {
-		queryArgs.postType = blockEditorSettings.home_template.postType;
-		queryArgs.postId = blockEditorSettings.home_template.postId;
+		const templateType = getQueryArg( window.location.href, 'templateType' );
+		const templateId = getQueryArg( window.location.href, 'templateId' );
+		if ( templateType && templateId ) {
+			queryArgs.postType = templateType;
+			queryArgs.postId = templateId;
+		} else if ( blockEditorSettings?.home_template?.postType ) {
+			queryArgs.postType = blockEditorSettings.home_template.postType;
+			queryArgs.postId = blockEditorSettings.home_template.postId;
+		}
 	}
 
 	const noticePattern = /[&?]notice=([\w_-]+)/;

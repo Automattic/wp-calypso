@@ -1,4 +1,5 @@
 import debugFactory from 'debug';
+import { logServerEvent } from 'calypso/lib/analytics/statsd-utils';
 import trackScrollPage from 'calypso/lib/track-scroll-page';
 import { requestThemes, requestThemeFilters } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
@@ -42,7 +43,8 @@ export function loggedOut( context, next ) {
 }
 
 export function fetchThemeData( context, next ) {
-	if ( ! context.isServerSide ) {
+	if ( ! context.isServerSide || context.cachedMarkup ) {
+		debug( 'Skipping theme data fetch' );
 		return next();
 	}
 
@@ -56,6 +58,12 @@ export function fetchThemeData( context, next ) {
 	};
 
 	const themes = getThemesForQuery( context.store.getState(), siteId, query );
+
+	logServerEvent( 'themes', {
+		name: `ssr.get_themes_fetch_cache.${ themes ? 'hit' : 'miss' }`,
+		type: 'counting',
+	} );
+
 	if ( themes ) {
 		debug( 'found theme data in cache' );
 		return next();
@@ -65,9 +73,20 @@ export function fetchThemeData( context, next ) {
 }
 
 export function fetchThemeFilters( context, next ) {
-	const { store } = context;
+	if ( context.cachedMarkup ) {
+		debug( 'Skipping theme filter data fetch' );
+		return next();
+	}
 
-	if ( Object.keys( getThemeFilters( store.getState() ) ).length > 0 ) {
+	const { store } = context;
+	const hasFilters = Object.keys( getThemeFilters( store.getState() ) ).length > 0;
+
+	logServerEvent( 'themes', {
+		name: `ssr.get_theme_filters_fetch_cache.${ hasFilters ? 'hit' : 'miss' }`,
+		type: 'counting',
+	} );
+
+	if ( hasFilters ) {
 		debug( 'found theme filters in cache' );
 		return next();
 	}

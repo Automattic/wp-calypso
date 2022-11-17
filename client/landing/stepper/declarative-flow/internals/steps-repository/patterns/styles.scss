@@ -2,6 +2,11 @@
 
 .link-in-bio.patterns {
 	height: 100vh;
+
+	@supports ( height: 100svh ) {
+		height: 100svh;
+	}
+
 	padding: 25px 0 0;
 
 	@include break-medium {
@@ -9,6 +14,22 @@
 	}
 
 	.step-container {
+		width: 100%;
+		height: 100%;
+
+		@include break-small {
+			height: auto;
+		}
+
+		@include onboarding-break-mobile-landscape {
+			padding: 25px 0 0;
+			height: auto;
+		}
+
+		@media screen and (orientation: landscape) and ( max-height: 720px ) {
+			padding: 5px;
+		}
+
 		.step-container__header {
 			margin-bottom: 20px;
 
@@ -16,9 +37,28 @@
 				margin-bottom: 32px;
 			}
 
-			// very narrow wide screens (mobile land scape)
-			@media screen and ( max-height: 512px ) {
-				margin: 0;
+			@include onboarding-break-mobile-landscape {
+				margin: 10px;
+			}
+		}
+
+		.step-container__content {
+			height: 100%;
+			min-height: 100%;
+			max-height: 100%;
+
+			@include break-small {
+				height: auto;
+			}
+
+			.pattern-picker {
+				height: 100%;
+				position: relative;
+
+				.pattern-picker__carousel {
+					width: 100%;
+					height: calc(100% - 115px);
+				}
 			}
 		}
 
