@@ -65,9 +65,8 @@ export const getPlansToDisplay = ( {
 	return plansToDisplay;
 };
 
-const removeAddons = (
-	product: SelectorProduct | null // eslint-disable-next-line @typescript-eslint/no-explicit-any
-) => ! JETPACK_BACKUP_ADDON_PRODUCTS.includes( product?.productSlug as any );
+const removeAddons = ( product: SelectorProduct ) =>
+	! ( JETPACK_BACKUP_ADDON_PRODUCTS as ReadonlyArray< string > ).includes( product?.productSlug );
 
 export const getProductsToDisplay = ( {
 	duration,
@@ -76,9 +75,9 @@ export const getProductsToDisplay = ( {
 	includedInPlanProducts,
 }: {
 	duration: Duration;
-	availableProducts: ( SelectorProduct | null )[];
-	purchasedProducts: ( SelectorProduct | null )[];
-	includedInPlanProducts: ( SelectorProduct | null )[];
+	availableProducts: SelectorProduct[];
+	purchasedProducts: SelectorProduct[];
+	includedInPlanProducts: SelectorProduct[];
 } ): SelectorProduct[] => {
 	const purchasedProductsWithoutAddOn = purchasedProducts.filter( removeAddons );
 
