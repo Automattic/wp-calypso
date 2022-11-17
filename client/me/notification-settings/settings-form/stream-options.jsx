@@ -15,14 +15,19 @@ export default class extends PureComponent {
 		onToggle: PropTypes.func.isRequired,
 	};
 
+	// Assume a device stream if not timeline or email
+	isDeviceStream = () => {
+		return [ 'timeline', 'email' ].indexOf( this.props.stream ) === -1;
+	};
+
 	render() {
 		return (
 			<ul className="notification-settings-form-stream-options">
 				{ this.props.settingKeys.map( ( setting, index ) => {
 					const isException =
-						this.props.stream in NOTIFICATIONS_EXCEPTIONS &&
-						NOTIFICATIONS_EXCEPTIONS[ this.props.stream ].indexOf( setting ) >= 0;
-
+						( this.props.stream in NOTIFICATIONS_EXCEPTIONS &&
+							NOTIFICATIONS_EXCEPTIONS[ this.props.stream ].indexOf( setting ) >= 0 ) ||
+						( setting === 'blogging_prompt' && this.isDeviceStream() );
 					return (
 						<li className="notification-settings-form-stream-options__item" key={ index }>
 							{ isException ? null : (
