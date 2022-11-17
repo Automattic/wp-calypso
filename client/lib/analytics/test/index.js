@@ -26,6 +26,8 @@ jest.mock( 'cookie', () => ( {
 	serialize: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => () => false );
+
 function logImageLoads() {
 	const imagesLoaded = [];
 	let originalImage;
