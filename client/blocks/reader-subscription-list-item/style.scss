@@ -139,6 +139,15 @@
 	.external-link .gridicons-external {
 		margin-left: 4px;
 	}
+
+	ul {
+		display: flex;
+		justify-content: space-between;
+		list-style-type: disc;
+		color: var(--color-text-subtle);
+		margin: 0;
+		gap: 8px;
+	}
 }
 
 .reader-subscription-list-item__site-url {

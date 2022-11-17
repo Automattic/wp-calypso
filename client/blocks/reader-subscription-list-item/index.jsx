@@ -116,27 +116,37 @@ function ReaderSubscriptionListItem( {
 				) }
 				{ siteUrl && (
 					<div className="reader-subscription-list-item__site-url-timestamp">
-						<ExternalLink
-							href={ siteUrl }
-							className="reader-subscription-list-item__site-url"
-							onClick={ recordSiteUrlClick }
-							icon={ true }
-							iconSize={ 14 }
-						>
-							{ formatUrlForDisplay( siteUrl ) }
-						</ExternalLink>
-						{ showLastUpdatedDate && feed && feed.last_update && (
-							<span className="reader-subscription-list-item__timestamp">
-								{ translate( 'updated %s', { args: moment( feed.last_update ).fromNow() } ) }
-							</span>
-						) }
-						{ feed && feed.date_subscribed && (
-							<span className="reader-subscription-list-item__date-subscribed">
-								{ translate( 'followed %s', {
-									args: moment( feed.date_subscribed ).format( 'MMM YYYY' ),
-								} ) }
-							</span>
-						) }
+						<ul>
+							<li>
+								<ExternalLink
+									href={ siteUrl }
+									className="reader-subscription-list-item__site-url"
+									onClick={ recordSiteUrlClick }
+									icon={ true }
+									iconSize={ 14 }
+								>
+									{ formatUrlForDisplay( siteUrl ) }
+								</ExternalLink>
+							</li>
+							{ showLastUpdatedDate && feed && feed.last_update && (
+								<li>
+									<span className="reader-subscription-list-item__timestamp">
+										{ translate( 'updated %s', {
+											args: moment( feed.last_update ).fromNow(),
+										} ) }
+									</span>
+								</li>
+							) }
+							{ feed && feed.date_subscribed && (
+								<li>
+									<span className="reader-subscription-list-item__date-subscribed">
+										{ translate( 'followed %s', {
+											args: moment( feed.date_subscribed ).format( 'MMM YYYY' ),
+										} ) }
+									</span>
+								</li>
+							) }
+						</ul>
 					</div>
 				) }
 			</div>
