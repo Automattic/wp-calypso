@@ -85,7 +85,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/blocks-renderer@workspace:packages/blocks-renderer"
   dependencies:
-    "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@wordpress/block-editor": ^9.1.0
     "@wordpress/compose": ^5.7.0
