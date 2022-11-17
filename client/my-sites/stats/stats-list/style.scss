@@ -858,3 +858,50 @@ ul.module-content-list-legend {
 		margin-right: 8px;
 	}
 }
+
+// Add support for ellipsis mobile menu using legacy breakpoint.
+.stats-list-actions__mobile-toggle {
+	cursor: pointer;
+	display: none;
+	min-width: 24px;
+	padding: 0 12px;
+
+	.gridicon {
+		fill: var(--color-text-subtle);
+		vertical-align: middle;
+		transition: fill linear 0.1s;
+	}
+}
+
+.horizontal-bar-list-item {
+	&:hover,
+	&:focus,
+	&:focus-within {
+		.stats-list-actions__mobile-toggle .gridicon {
+			fill: var(--color-text);
+		}
+	}
+}
+
+@include breakpoint-deprecated( "<480px" ) {
+	.horizontal-bar-list-item .horizontal-bar-list-item-bar .horizontal-bar-list--hover-action {
+		display: block;
+	}
+	.stats-list-actions.stats-list-actions--expanded {
+		background: var(--color-surface);
+		display: block;
+
+		left: auto;
+		right: 0;
+		top: 100%;
+
+		// Remove tooltip arrow to increase ellipsis touch target size.
+		&::after {
+			display: none;
+		}
+	}
+
+	.stats-list-actions__mobile-toggle {
+		display: block;
+	}
+}
