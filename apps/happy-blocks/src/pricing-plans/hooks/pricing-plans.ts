@@ -8,7 +8,7 @@ const DAYS_IN_MONTH = 31;
 const MONTHS_IN_YEAR = 12;
 
 /**
- * Returns a formatted motnhly price for a plan.
+ * Returns a formatted monthly price for a plan.
  */
 const getMonthlyPrice = ( plan: ApiPricingPlan ): string | null => {
 	return formatCurrency(
