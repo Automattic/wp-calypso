@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Plugin Name: Happy Blocks
  * Version:     0.1.0
@@ -40,7 +39,7 @@
  * Load editor assets.
  */
 function a8c_happyblocks_assets() {
-	 $assets = require_once plugin_dir_path( __FILE__ ) . 'dist/editor.min.asset.php';
+	$assets = require_once plugin_dir_path( __FILE__ ) . 'dist/editor.min.asset.php';
 
 	wp_register_script( 'a8c-happyblocks-pricing-plans', '', array(), '20221117', true );
 	wp_enqueue_script( 'a8c-happyblocks-pricing-plans' );
@@ -102,7 +101,7 @@ add_action( 'wp_enqueue_scripts', 'a8c_happyblocks_view_assets' );
  * @return array
  */
 function a8c_happyblocks_get_config() {
-	 $domain = wp_parse_url( get_site_url() )['host'];
+	$domain = wp_parse_url( get_site_url() )['host'];
 	return array(
 		'domain' => $domain,
 		'locale' => get_user_locale(),
