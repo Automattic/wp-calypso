@@ -12,7 +12,9 @@
 	"discover_logged_out_redirect_url": false,
 	"happychat_pling_noise_path": "/calypso/audio/chat-pling.wav",
 	"facebook_api_key": false,
-	"features": {},
+	"features": {
+		"is_running_in_jetpack_site": false
+	},
 	"google_analytics_key": false,
 	"google_recaptcha_site_key": false,
 	"hotjar_enabled": false,

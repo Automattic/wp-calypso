@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import debugFactory from 'debug';
 import WPCOM from 'wpcom';
 import wpcomProxyRequest from 'wpcom-proxy-request';
@@ -12,9 +12,9 @@ const debug = debugFactory( 'calypso:wp' );
 
 let wpcom;
 
-if ( config.isEnabled( 'oauth' ) ) {
+if ( isEnabled( 'oauth' ) ) {
 	wpcom = new WPCOM( oauthToken.getToken(), wpcomXhrWrapper );
-} else if ( config( 'is_running_in_jetpack_site' ) ) {
+} else if ( isEnabled( 'is_running_in_jetpack_site' ) || config( 'is_running_in_jetpack_site' ) ) {
 	wpcom = new WPCOM( jetpack_site_xhr_wrapper );
 } else {
 	wpcom = new WPCOM( wpcomProxyRequest );
