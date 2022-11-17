@@ -7,6 +7,8 @@ Note:
 	Once this issue is resolved, we can remove the !important declarations.
 */
 
+$brand-text: "SF Pro Text", $sans;
+
 @keyframes hb-pricing-plans-embed__skeleton__animation {
 	0% {
 		opacity: 0.5;
@@ -66,7 +68,7 @@ Note:
 		}
 
 		&-domain {
-			font-family: "SF Pro Text", $sans;
+			font-family: $brand-text;
 			font-weight: 400;
 			font-size: 0.75rem;
 			line-height: 1.66;
@@ -75,7 +77,7 @@ Note:
 		}
 
 		&-description {
-			font-family: "SF Pro Text", $sans;
+			font-family: $brand-text;
 			font-weight: 400;
 			font-size: 0.875rem;
 			line-height: 1.57;
@@ -104,7 +106,7 @@ Note:
 		}
 
 		&-description {
-			font-family: "SF Pro Text", $sans;
+			font-family: $brand-text;
 			font-weight: 400 !important;
 			font-size: 0.75rem !important;
 			line-height: 1.66 !important;
@@ -113,7 +115,7 @@ Note:
 	}
 
 	&__promo {
-		font-family: "SF Pro Text", $sans;
+		font-family: $brand-text;
 		font-weight: 400;
 		font-size: 0.75rem;
 		line-height: 1.66;
@@ -140,7 +142,7 @@ Note:
 		display: flex !important;
 		align-items: center;
 		gap: 8px;
-		font-family: "SF Pro Text", $sans;
+		font-family: $brand-text;
 
 		font-weight: 400;
 		font-size: 0.875rem;
