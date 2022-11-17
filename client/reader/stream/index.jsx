@@ -10,6 +10,7 @@ import ListEnd from 'calypso/components/list-end';
 import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import scrollTo from 'calypso/lib/scroll-to';
+import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
@@ -44,6 +45,7 @@ import ReaderSidebarFollowedSites from './reader-sidebar-followed-sites';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
 import './style.scss';
 
+const WIDE_DISPLAY_CUTOFF = 900;
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
 const noop = () => {};
@@ -405,8 +407,8 @@ class ReaderStream extends Component {
 
 	render() {
 		const { forcePlaceholders, lastPage, streamKey } = this.props;
+		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
-
 		const hasNoPosts = items.length === 0 && ! isRequesting;
 		let body;
 		let showingStream;
@@ -463,7 +465,7 @@ class ReaderStream extends Component {
 				'tag',
 			];
 
-			if ( ! excludesSidebar.includes( streamType ) ) {
+			if ( ! excludesSidebar.includes( streamType ) && wideDisplay ) {
 				body = (
 					<div className="stream__two-column">
 						{ bodyContent }
@@ -493,6 +495,16 @@ class ReaderStream extends Component {
 		);
 	}
 }
+
+/* eslint-disable */
+// wrapping with Main so that we can use withWidth helper to pass down whole width of Main
+const wrapWithMain = ( Component ) => ( props ) =>
+	(
+		<div>
+			<Component { ...props } />
+		</div>
+	);
+/* eslint-enable */
 
 export default connect(
 	( state, { streamKey, recsStreamKey } ) => {
@@ -529,4 +541,4 @@ export default connect(
 		showUpdates,
 		viewStream,
 	}
-)( localize( ReaderStream ) );
+)( localize( wrapWithMain( withDimensions( ReaderStream ) ) ) );
