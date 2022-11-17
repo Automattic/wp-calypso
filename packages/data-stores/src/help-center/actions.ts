@@ -1,12 +1,6 @@
 import { SiteDetails } from '../site';
 import { Location, HelpCenterSite } from './types';
 
-export const setShowHelpCenter = ( show: boolean ) =>
-	( {
-		type: 'HELP_CENTER_SET_SHOW',
-		show,
-	} as const );
-
 export const setRouterState = ( history: Location[], index: number ) =>
 	( {
 		type: 'HELP_CENTER_SET_ROUTER_STATE',
@@ -38,6 +32,17 @@ export const setIsMinimized = ( minimized: boolean ) =>
 		type: 'HELP_CENTER_SET_MINIMIZED',
 		minimized,
 	} as const );
+
+export const setShowHelpCenter = function* ( show: boolean ) {
+	if ( ! show ) {
+		yield setIsMinimized( false );
+	}
+
+	return {
+		type: 'HELP_CENTER_SET_SHOW',
+		show,
+	};
+};
 
 export const setSubject = ( subject: string ) =>
 	( {
