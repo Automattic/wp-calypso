@@ -27,7 +27,7 @@ class WP_REST_Help_Center_Search extends \WP_REST_Controller {
 	public function register_rest_route() {
 		register_rest_route(
 			$this->namespace,
-			'/' . $this->rest_base,
+			$this->rest_base,
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_search_results' ),

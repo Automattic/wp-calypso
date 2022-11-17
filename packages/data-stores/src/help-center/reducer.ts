@@ -1,7 +1,7 @@
 import { combineReducers } from '@wordpress/data';
 import { SiteDetails } from '../site';
 import type { HelpCenterAction } from './actions';
-import type { Location } from './types';
+import type { Location, HelpCenterSite } from './types';
 import type { Reducer } from 'redux';
 
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
@@ -20,7 +20,7 @@ const isMinimized: Reducer< boolean, HelpCenterAction > = ( state = false, actio
 	return state;
 };
 
-const site: Reducer< SiteDetails | undefined, HelpCenterAction > = ( state, action ) => {
+const site: Reducer< HelpCenterSite | undefined, HelpCenterAction > = ( state, action ) => {
 	if ( action.type === 'HELP_CENTER_RESET_STORE' ) {
 		return undefined;
 	} else if ( action.type === 'HELP_CENTER_SET_SITE' ) {
