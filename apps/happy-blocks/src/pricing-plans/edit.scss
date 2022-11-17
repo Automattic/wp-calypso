@@ -30,6 +30,7 @@ Note:
 	gap: 32px;
 	background-color: $studio-white;
 
+
 	&__settings-plan select {
 		min-height: 30px !important;
 		height: 30px !important;
@@ -38,8 +39,8 @@ Note:
 	}
 
 	&__skeleton {
-		color: #eee;
-		background-color: #eee;
+		color: $studio-gray-0;
+		background-color: $studio-gray-0;
 		width: 100%;
 		margin: 24px 0;
 		min-height: 215px;
