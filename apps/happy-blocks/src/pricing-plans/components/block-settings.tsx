@@ -1,6 +1,7 @@
 import { InspectorControls } from '@wordpress/block-editor';
 import { BlockEditProps } from '@wordpress/blocks';
 import { SelectControl, PanelRow, PanelBody } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { FunctionComponent } from 'react';
 import { BlockAttributes, PricingPlan, PricingPlansConfiguration } from '../types';
 
@@ -31,11 +32,11 @@ const BlockSettings: FunctionComponent<
 
 	return (
 		<InspectorControls>
-			<PanelBody title="Basic" initialOpen={ true }>
+			<PanelBody title={ __( 'Basic', 'happy-blocks' ) } initialOpen={ true }>
 				<PanelRow>
 					<SelectControl
 						className="wp-block-a8c-pricing-plans__settings-plan"
-						label="Plan"
+						label={ __( 'Plan', 'happy-blocks' ) }
 						value={ value }
 						options={ options }
 						onChange={ ( planSlug ) => setAttributes( { planSlug } ) }
