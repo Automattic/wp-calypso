@@ -6,7 +6,6 @@
 	padding: 0 20px;
 
 	.stats-period-navigation__children {
-		text-align: center;
 		flex-grow: 1;
 	}
 
@@ -25,6 +24,40 @@
 
 		&.is-disabled {
 			visibility: hidden;
+		}
+	}
+
+	// For feature `stats/new-main-chart`
+	&.stats-period-navigation--new-main-chart {
+
+		.stats-section-title {
+			font-size: $font-title-large;
+			line-height: 40px;
+			color: var(--studio-gray-100);
+			text-align: left;
+		}
+
+		.stats-date-picker__refresh-status {
+			font-size: $font-body-small;
+			line-height: 16px;
+		}
+
+		.stats-period-navigation__previous,
+		.stats-period-navigation__next {
+			color: #1e1e1e;
+			// Icon size 24x24
+			width: 24px;
+			height: 24px;
+
+			&.is-disabled {
+				visibility: visible;
+				opacity: 0.2;
+				pointer-events: none;
+			}
+		}
+
+		.stats-period-navigation__next {
+			margin-left: 4px;
 		}
 	}
 }

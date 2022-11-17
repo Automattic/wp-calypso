@@ -38,7 +38,7 @@ class ImporterError extends PureComponent {
 	everythingImport = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
-		Page( addQueryArgs( { siteSlug: this.props.siteSlug }, '/setup/import' ) );
+		Page( addQueryArgs( { siteSlug: this.props.siteSlug }, '/setup/site-setup/import' ) );
 	};
 
 	getImportError = () => {

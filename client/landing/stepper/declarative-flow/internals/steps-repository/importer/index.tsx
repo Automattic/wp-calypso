@@ -40,7 +40,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 	const ImporterWrapper = ( props: Props & StepProps ) => {
 		const { __ } = useI18n();
 		const dispatch = useDispatch();
-		const { importer, navigation } = props;
+		const { importer, navigation, flow } = props;
 		const currentSearchParams = useQuery();
 
 		/**
@@ -58,7 +58,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 
 		const fromSite = currentSearchParams.get( 'from' ) || '';
 		const fromSiteData = useSelector( getUrlData );
-		const stepNavigator = useStepNavigator( navigation, siteId, siteSlug, fromSite );
+		const stepNavigator = useStepNavigator( flow, navigation, siteId, siteSlug, fromSite );
 
 		/**
 	 	↓ Effects

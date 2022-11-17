@@ -10,8 +10,7 @@ import {
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_ACTIVITY_LOG,
 	FEATURE_ACTIVITY_LOG_1_YEAR_V2,
-	FEATURE_ADVANCED_CUSTOMIZATION,
-	FEATURE_ADVANCED_DESIGN,
+	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 	FEATURE_ADVANCED_SEO,
 	FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
 	FEATURE_ADVANCED_SEO_TOOLS,
@@ -33,7 +32,6 @@ import {
 	FEATURE_BACKUP_DAILY_V2,
 	FEATURE_BACKUP_REALTIME_V2,
 	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
-	FEATURE_BASIC_DESIGN,
 	FEATURE_BLANK,
 	FEATURE_BLOG_DOMAIN,
 	FEATURE_CLOUDFLARE_ANALYTICS,
@@ -45,6 +43,7 @@ import {
 	FEATURE_CRM_PROPOSALS_AND_INVOICES,
 	FEATURE_CRM_TRACK_TRANSACTIONS,
 	FEATURE_CRM_V2,
+	FEATURE_CSS_CUSTOMIZATION,
 	FEATURE_CUSTOM_DOMAIN,
 	FEATURE_EARN_AD,
 	FEATURE_EASY_SITE_MIGRATION,
@@ -176,8 +175,9 @@ import {
 	FEATURE_INSTALL_THEMES_PLUGINS,
 	FEATURE_DEVELOPER_TOOLS_V1,
 	FEATURE_PRODUCT_LISTINGS,
-	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS,
 	/* END - PLAN TAGLINE EXPERIMENT */
+	WPCOM_FEATURES_NO_ADVERTS,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -287,12 +287,21 @@ export const FEATURES_LIST = {
 		},
 	},
 
-	[ FEATURE_ADVANCED_CUSTOMIZATION ]: {
-		getSlug: () => FEATURE_ADVANCED_CUSTOMIZATION,
-		getTitle: () => i18n.translate( 'Advanced customization' ),
+	[ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION ]: {
+		getSlug: () => FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+		getTitle: () => i18n.translate( 'Advanced design customization' ),
 		getDescription: () =>
 			i18n.translate(
-				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
+				"Access extended color schemes and customization tools. Change all of your site's fonts, colors and more."
+			),
+	},
+
+	[ FEATURE_CSS_CUSTOMIZATION ]: {
+		getSlug: () => FEATURE_CSS_CUSTOMIZATION,
+		getTitle: () => i18n.translate( 'CSS customization' ),
+		getDescription: () =>
+			i18n.translate(
+				'Add your own CSS code, giving you complete control over how your site looks.'
 			),
 	},
 
@@ -602,34 +611,8 @@ export const FEATURES_LIST = {
 		getStoreSlug: () => 'videopress',
 	},
 
-	[ FEATURE_BASIC_DESIGN ]: {
-		getSlug: () => FEATURE_BASIC_DESIGN,
-		getTitle: () => i18n.translate( 'Basic design customization' ),
-		getDescription: () =>
-			i18n.translate(
-				'Customize your selected theme with pre-set color schemes, ' +
-					'background designs, and font styles.'
-			),
-		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
-	},
-
-	[ FEATURE_ADVANCED_DESIGN ]: {
-		getSlug: () => FEATURE_ADVANCED_DESIGN,
-		getTitle: () =>
-			i18n.translate( '{{strong}}Advanced{{/strong}} design customization', {
-				components: {
-					strong: <strong />,
-				},
-			} ),
-		getDescription: () =>
-			i18n.translate(
-				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
-			),
-		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
-	},
-
 	[ FEATURE_NO_ADS ]: {
-		getSlug: () => FEATURE_NO_ADS,
+		getSlug: () => WPCOM_FEATURES_NO_ADVERTS,
 		getTitle: () => i18n.translate( 'Remove WordPress.com ads' ),
 		getDescription: () =>
 			i18n.translate(
@@ -849,7 +832,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_SITE_STATS ]: {
 		getSlug: () => FEATURE_SITE_STATS,
-		getTitle: () => i18n.translate( 'Site Stats and Analytics' ),
+		getTitle: () => i18n.translate( 'Jetpack Stats' ),
 		getDescription: () => i18n.translate( 'The most important metrics for your site.' ),
 	},
 	[ FEATURE_TRAFFIC_TOOLS ]: {
@@ -1064,12 +1047,12 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_BACKUP_REALTIME_V2 ]: {
 		getSlug: () => FEATURE_BACKUP_REALTIME_V2,
-		getTitle: () => i18n.translate( 'Backup (real-time, off-site)' ),
+		getTitle: () => i18n.translate( 'VaultPress Backup (real-time, off-site)' ),
 	},
 	[ FEATURE_PRODUCT_BACKUP_DAILY_V2 ]: {
 		getSlug: () => FEATURE_PRODUCT_BACKUP_DAILY_V2,
 		getIcon: () => 'cloud-upload',
-		getTitle: () => i18n.translate( 'All Backup Daily features' ),
+		getTitle: () => i18n.translate( 'All VaultPress Backup Daily features' ),
 		getDescription: () =>
 			i18n.translate(
 				'Automatic daily backups of your entire site, with unlimited, WordPress-optimized secure storage. {{link}}Learn more{{/link}}.',
@@ -1084,7 +1067,7 @@ export const FEATURES_LIST = {
 	[ FEATURE_PRODUCT_BACKUP_REALTIME_V2 ]: {
 		getSlug: () => FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 		getIcon: () => 'cloud-upload',
-		getTitle: () => i18n.translate( 'Backup Real-time (off-site)' ),
+		getTitle: () => i18n.translate( 'VaultPress Backup Real-time (off-site)' ),
 		getDescription: () =>
 			i18n.translate(
 				'Real-time backups of your entire site and database with unlimited secure storage. {{link}}Learn more{{/link}}.',
@@ -1158,7 +1141,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Activity log: 1-year archive' ),
 		getDescription: () =>
 			i18n.translate(
-				'View every change to your site in the last year. Pairs with Backup to restore your site to any earlier version. {{link}}Learn more.{{/link}}',
+				'View every change to your site in the last year. Pairs with VaultPress Backup to restore your site to any earlier version. {{link}}Learn more.{{/link}}',
 				{
 					components: {
 						link: <ExternalLink icon href="https://jetpack.com/features/security/activity-log/" />,
@@ -1467,7 +1450,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_JETPACK_PRODUCT_BACKUP ]: {
 		getSlug: () => FEATURE_JETPACK_PRODUCT_BACKUP,
-		getTitle: () => i18n.translate( 'All Backup features' ),
+		getTitle: () => i18n.translate( 'All VaultPress Backup features' ),
 	},
 	[ FEATURE_JETPACK_PRODUCT_VIDEOPRESS ]: {
 		getSlug: () => FEATURE_JETPACK_PRODUCT_VIDEOPRESS,
@@ -1475,7 +1458,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_JETPACK_ALL_BACKUP_SECURITY_FEATURES ]: {
 		getSlug: () => FEATURE_JETPACK_ALL_BACKUP_SECURITY_FEATURES,
-		getTitle: () => i18n.translate( 'All Backup & Security features' ),
+		getTitle: () => i18n.translate( 'All VaultPress Backup & Security features' ),
 	},
 	[ FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS ]: {
 		getSlug: () => FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS,
@@ -1625,8 +1608,8 @@ export const FEATURES_LIST = {
 		getTitle: () => 'Unlimited product listings',
 		getDescription: () => {},
 	},
-	[ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION ]: {
-		getSlug: () => FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+	[ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS ]: {
+		getSlug: () => FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS,
 		getTitle: () => i18n.translate( 'Advanced design customization' ),
 		getDescription: () =>
 			i18n.translate(

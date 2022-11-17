@@ -69,7 +69,7 @@ class SiteSettingsFormSecurity extends Component {
 							isSaving={ isSavingSettings }
 							onButtonClick={ handleSubmitForm }
 							showButton
-							title={ translate( 'Anti-spam' ) }
+							title={ translate( 'Akismet Anti-spam' ) }
 						/>
 						<SpamFilteringSettings
 							dirtyFields={ dirtyFields }

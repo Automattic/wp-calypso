@@ -1,4 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_INSTALL_PLUGINS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
@@ -6,18 +7,19 @@ import {
 import { Gridicon, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useState, useCallback } from 'react';
+import { Fragment, useState, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import { getPluginPurchased, getSoftwareSlug } from 'calypso/lib/plugins/utils';
+import { getPluginPurchased, getSoftwareSlug, getSaasRedirectUrl } from 'calypso/lib/plugins/utils';
 import { userCan } from 'calypso/lib/site/utils';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
 import { ManageSitePluginsDialog } from 'calypso/my-sites/plugins/manage-site-plugins-dialog';
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import {
@@ -48,11 +50,14 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const selectedSite = useSelector( getSelectedSite );
 	const billingPeriod = useSelector( getBillingInterval );
 
+	const currentUserId = useSelector( getCurrentUserId );
+
 	const isMarketplaceProduct = useSelector( ( state ) =>
 		isMarketplaceProductSelector( state, plugin.slug )
 	);
 	const softwareSlug = getSoftwareSlug( plugin, isMarketplaceProduct );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
+	const currentPurchase = getPluginPurchased( plugin, purchases, isMarketplaceProduct );
 
 	// Site type
 	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
@@ -83,9 +88,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const isPluginInstalledOnsite =
 		sitesWithPlugins.length && ! requestingPluginsForSites ? !! sitePlugin : false;
 	const isPluginInstalledOnsiteWithSubscription =
-		isPluginInstalledOnsite && ! isMarketplaceProduct
-			? true
-			: getPluginPurchased( plugin, purchases, isMarketplaceProduct )?.active;
+		isPluginInstalledOnsite && ! isMarketplaceProduct ? true : currentPurchase?.active;
 	const sitesWithPlugin = useSelector( ( state ) =>
 		getSiteObjectsWithPlugin( state, siteIds, softwareSlug )
 	);
@@ -99,6 +102,19 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		getEligibility( state, selectedSite?.ID )
 	);
 
+	const upgradeToBusinessHref = useMemo( () => {
+		const pluginsPlansPageFlag = isEnabled( 'plugins-plans-page' );
+
+		const siteSlug = selectedSite?.slug;
+
+		const pluginsPlansPage = `/plugins/plans/yearly/${ siteSlug }`;
+		const checkoutPage = siteSlug ? `/checkout/${ siteSlug }/business` : `/checkout/business`;
+		return pluginsPlansPageFlag ? pluginsPlansPage : checkoutPage;
+	}, [ selectedSite?.slug ] );
+
+	const saasRedirectHRef = useMemo( () => {
+		return getSaasRedirectUrl( plugin, currentUserId, selectedSite?.ID );
+	}, [ currentUserId, plugin, selectedSite?.ID ] );
 	/*
 	 * Remove 'NO_BUSINESS_PLAN' holds if the INSTALL_PURCHASED_PLUGINS feature is present.
 	 *
@@ -130,8 +146,23 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 			<div className="plugin-details-cta__container">
 				<div className="plugin-details-cta__price">{ translate( 'Free' ) }</div>
 				<span className="plugin-details-cta__preinstalled">
-					{ translate( '%s is automatically managed for you.', { args: plugin.name } ) }
+					{ selectedSite
+						? translate(
+								'%s is automatically managed for you. Upgrade your plan and get access to another 50,000 WordPress plugins to extend functionality for your site.',
+								{ args: plugin.name }
+						  )
+						: translate( '%s is automatically managed for you.', { args: plugin.name } ) }
 				</span>
+
+				{ selectedSite && (
+					<Button
+						href={ upgradeToBusinessHref }
+						className="plugin-details-cta__install-button"
+						primary
+					>
+						{ translate( 'Upgrade my plan' ) }
+					</Button>
+				) }
 			</div>
 		);
 	}
@@ -202,6 +233,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						</span>
 					}
 					isMarketplaceProduct={ plugin.isMarketplaceProduct }
+					productPurchase={ currentPurchase }
 					wporg
 				/>
 			</div>
@@ -243,27 +275,29 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		<Fragment>
 			<QuerySitePurchases siteId={ selectedSite?.ID } />
 			<div className="plugin-details-cta__container">
-				<div className="plugin-details-cta__price">
-					<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
-						{ ( { isFetching, price, period } ) =>
-							isFetching ? (
-								<div className="plugin-details-cta__price-placeholder">...</div>
-							) : (
-								<>
-									{ price ? (
-										<>
-											{ price + ' ' }
-											<span className="plugin-details-cta__period">{ period }</span>
-										</>
-									) : (
-										translate( 'Free' )
-									) }
-								</>
-							)
-						}
-					</PluginPrice>
-				</div>
-				{ isMarketplaceProduct && (
+				{ ! plugin.isSaasProduct && (
+					<div className="plugin-details-cta__price">
+						<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
+							{ ( { isFetching, price, period } ) =>
+								isFetching ? (
+									<div className="plugin-details-cta__price-placeholder">...</div>
+								) : (
+									<>
+										{ price ? (
+											<>
+												{ price + ' ' }
+												<span className="plugin-details-cta__period">{ period }</span>
+											</>
+										) : (
+											<FreePrice />
+										) }
+									</>
+								)
+							}
+						</PluginPrice>
+					</div>
+				) }
+				{ isMarketplaceProduct && ! plugin.isSaasProduct && (
 					<BillingIntervalSwitcher
 						billingPeriod={ billingPeriod }
 						onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
@@ -271,23 +305,16 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 					/>
 				) }
 				<div className="plugin-details-cta__install">
-					{ isLoggedIn ? (
-						<CTAButton
-							plugin={ plugin }
-							hasEligibilityMessages={ hasEligibilityMessages }
-							disabled={ incompatiblePlugin || userCantManageTheSite }
-						/>
-					) : (
-						<Button
-							type="a"
-							className="plugin-details-CTA__install-button"
-							primary
-							onClick={ ( e ) => e.stopPropagation() }
-							href={ localizeUrl( 'https://wordpress.com/pricing/' ) }
-						>
-							{ translate( 'View plans' ) }
-						</Button>
-					) }
+					<PrimaryButton
+						isLoggedIn={ isLoggedIn }
+						shouldUpgrade={ shouldUpgrade }
+						hasEligibilityMessages={ hasEligibilityMessages }
+						incompatiblePlugin={ incompatiblePlugin }
+						userCantManageTheSite={ userCantManageTheSite }
+						translate={ translate }
+						plugin={ plugin }
+						saasRedirectHRef={ saasRedirectHRef }
+					/>
 				</div>
 				{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
 					<div className="plugin-details-cta__t-and-c">
@@ -314,22 +341,114 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						) }
 					</div>
 				) }
-				{ shouldUpgrade && isLoggedIn && (
-					<div className="plugin-details-cta__upgrade-required">
-						<span className="plugin-details-cta__upgrade-required-icon">
-							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-							<Gridicon icon="notice-outline" size={ 20 } />
-							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-						</span>
-						<span className="plugin-details-cta__upgrade-required-text">
-							{ translate( 'You need to upgrade your plan to install plugins.' ) }
-						</span>
+				{ ! plugin.isSaasProduct && shouldUpgrade && isLoggedIn && (
+					<UpgradeRequiredContent translate={ translate } />
+				) }
+				{ plugin.isSaasProduct && shouldUpgrade && isLoggedIn && (
+					<div className="plugin-details-cta__upgrade-required-card">
+						<UpgradeRequiredContent translate={ translate } />
+						<Button
+							href={ upgradeToBusinessHref }
+							className="plugin-details-cta__install-button"
+							primary
+							onClick={ () => {} }
+						>
+							{ translate( 'Upgrade to Business' ) }
+						</Button>
 					</div>
 				) }
 			</div>
 		</Fragment>
 	);
 };
+
+function PrimaryButton( {
+	isLoggedIn,
+	shouldUpgrade,
+	hasEligibilityMessages,
+	incompatiblePlugin,
+	userCantManageTheSite,
+	translate,
+	plugin,
+	saasRedirectHRef,
+} ) {
+	const dispatch = useDispatch();
+	const onClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_plugin_details_get_started_click', {
+				plugin: plugin?.slug,
+				is_logged_in: isLoggedIn,
+				is_saas_product: plugin?.isSaasProduct,
+			} )
+		);
+	}, [ dispatch ] );
+
+	if ( ! isLoggedIn ) {
+		return (
+			<Button
+				type="a"
+				className="plugin-details-cta__install-button"
+				primary
+				onClick={ onClick }
+				href={ localizeUrl( 'https://wordpress.com/start/business' ) }
+			>
+				{ translate( 'Get started' ) }
+			</Button>
+		);
+	}
+	if ( plugin.isSaasProduct ) {
+		return (
+			<Button
+				className="plugin-details-cta__install-button"
+				primary={ ! shouldUpgrade }
+				href={ saasRedirectHRef }
+				onClick={ onClick }
+			>
+				{ translate( 'Get started' ) }
+				<Gridicon icon="external" />
+			</Button>
+		);
+	}
+
+	return (
+		<CTAButton
+			plugin={ plugin }
+			hasEligibilityMessages={ hasEligibilityMessages }
+			disabled={ incompatiblePlugin || userCantManageTheSite }
+		/>
+	);
+}
+
+function FreePrice() {
+	const translate = useTranslate();
+	const isLoggedIn = useSelector( isUserLoggedIn );
+
+	if ( ! isLoggedIn ) {
+		return (
+			<>
+				{ translate( 'Free' ) }
+				<span className="plugin-details-cta__notice">{ translate( 'on Business plan' ) }</span>
+			</>
+		);
+	}
+
+	return translate( 'Free' );
+}
+
+function UpgradeRequiredContent( { translate } ) {
+	return (
+		<div className="plugin-details-cta__upgrade-required">
+			<span className="plugin-details-cta__upgrade-required-icon">
+				{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+				<Gridicon icon="notice-outline" size={ 20 } />
+				{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
+			</span>
+			<span className="plugin-details-cta__upgrade-required-text">
+				{ translate( 'You need to upgrade your plan to install plugins.' ) }
+			</span>
+		</div>
+	);
+}
 
 function PluginDetailsCTAPlaceholder() {
 	return (

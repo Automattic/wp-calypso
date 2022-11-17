@@ -214,7 +214,7 @@ function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
 					<ExternalLink
 						target="_blank"
 						icon={ false }
-						href="https://apps.wordpress.com/get/?campaign=login-qr-code"
+						href="https://jetpack.com/app?campaign=login-qr-code"
 					/>
 				),
 			},

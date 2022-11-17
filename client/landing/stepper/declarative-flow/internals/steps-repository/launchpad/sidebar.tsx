@@ -1,15 +1,17 @@
-import { ProgressBar } from '@automattic/components';
+import { Gridicon, ProgressBar } from '@automattic/components';
+import { useRef, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
 import Badge from 'calypso/components/badge';
+import ClipboardButton from 'calypso/components/forms/clipboard-button';
+import Tooltip from 'calypso/components/tooltip';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
-import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import Checklist from './checklist';
-import { getArrayOfFilteredTasks, getEnhancedTasks, isTaskDisabled } from './task-helper';
+import { getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
 import { tasks } from './tasks';
 import { getLaunchpadTranslations } from './translations';
 import { Task } from './types';
@@ -20,6 +22,7 @@ type SidebarProps = {
 	submit: NavigationControls[ 'submit' ];
 	goNext: NavigationControls[ 'goNext' ];
 	goToStep?: NavigationControls[ 'goToStep' ];
+	flow: string | null;
 };
 
 function getUrlInfo( url: string ) {
@@ -39,18 +42,22 @@ function getChecklistCompletionProgress( tasks: Task[] | null ) {
 	}
 
 	const totalCompletedTasks = tasks.reduce( ( total, currentTask ) => {
-		return currentTask.isCompleted ? total + 1 : total;
+		return currentTask.completed ? total + 1 : total;
 	}, 0 );
 
 	return Math.round( ( totalCompletedTasks / tasks.length ) * 100 );
 }
 
-const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: SidebarProps ) => {
+const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: SidebarProps ) => {
 	let siteName = '';
 	let topLevelDomain = '';
-	const flow = useFlowParam();
+	let showClipboardButton = false;
+	let isDomainSSLProcessing: boolean | null = false;
 	const translate = useTranslate();
 	const site = useSite();
+	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
+	const [ clipboardCopied, setClipboardCopied ] = useState( false );
+
 	const { flowName, title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
 	const enhancedTasks =
@@ -58,10 +65,15 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 
 	const taskCompletionProgress = site && getChecklistCompletionProgress( enhancedTasks );
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
-	const showLaunchTitle = launchTask && ! isTaskDisabled( launchTask );
+	const showLaunchTitle = launchTask && ! launchTask.disabled;
 
 	if ( sidebarDomain ) {
-		[ siteName, topLevelDomain ] = getUrlInfo( sidebarDomain?.domain );
+		const { domain, isPrimary, isWPCOMDomain, sslStatus } = sidebarDomain;
+
+		[ siteName, topLevelDomain ] = getUrlInfo( domain );
+
+		isDomainSSLProcessing = sslStatus && sslStatus !== 'active';
+		showClipboardButton = isWPCOMDomain ? true : ! isDomainSSLProcessing && isPrimary;
 	}
 
 	return (
@@ -89,9 +101,34 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 				<p className="launchpad__sidebar-description">{ subtitle }</p>
 				<div className="launchpad__url-box">
 					{ /* Google Chrome is adding an extra space after highlighted text. This extra wrapping div prevents that */ }
-					<div className="launchpad__url-box-domain-text">
-						<span>{ siteName }</span>
-						<span className="launchpad__url-box-top-level-domain">{ topLevelDomain }</span>
+					<div className="launchpad__url-box-domain">
+						<div className="launchpad__url-box-domain-text">
+							<span>{ siteName }</span>
+							<span className="launchpad__url-box-top-level-domain">{ topLevelDomain }</span>
+						</div>
+						{ showClipboardButton && (
+							<>
+								<ClipboardButton
+									aria-label={ translate( 'Copy URL' ) }
+									text={ siteSlug }
+									className="launchpad__clipboard-button"
+									borderless
+									compact
+									onCopy={ () => setClipboardCopied( true ) }
+									onMouseLeave={ () => setClipboardCopied( false ) }
+									ref={ clipboardButtonEl }
+								>
+									<Gridicon icon="clipboard" />
+								</ClipboardButton>
+								<Tooltip
+									context={ clipboardButtonEl.current }
+									isVisible={ clipboardCopied }
+									position="top"
+								>
+									{ translate( 'Copied to clipboard!' ) }
+								</Tooltip>
+							</>
+						) }
 					</div>
 					{ sidebarDomain?.isWPCOMDomain && (
 						<a href={ `/domains/add/${ siteSlug }` }>
@@ -101,6 +138,16 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 						</a>
 					) }
 				</div>
+				{ isDomainSSLProcessing && (
+					<div className="launchpad__domain-notification">
+						<Gridicon className="launchpad__domain-checkmark-icon" icon="checkmark-circle" />
+						<p>
+							{ translate(
+								'We are currently setting up your new domain! It may take a few minutes before it is ready.'
+							) }
+						</p>
+					</div>
+				) }
 				<Checklist tasks={ enhancedTasks } />
 			</div>
 			<div className="launchpad__sidebar-admin-link">

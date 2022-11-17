@@ -1,12 +1,10 @@
 export interface Task {
 	id: string;
-	isCompleted: boolean;
-	keepActive?: boolean;
+	completed: boolean;
+	disabled: boolean;
 	taskType: string;
 	title?: string;
-	displayBadge: boolean;
 	badgeText?: string;
-	dependencies?: boolean[];
 	actionDispatch?: () => void;
 	isLaunchTask?: boolean;
 }

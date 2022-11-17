@@ -38,7 +38,7 @@ class SegmentedControlItem extends Component {
 		} );
 
 		return (
-			<li className={ itemClassName }>
+			<li className={ itemClassName } role="none">
 				<a
 					href={ this.props.path }
 					className={ linkClassName }

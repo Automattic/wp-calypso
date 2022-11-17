@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';
 import { Card, Button, Gridicon, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -13,6 +12,8 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import MaterialIcon from 'calypso/components/material-icon';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import ReauthRequired from 'calypso/me/reauth-required';
 import {
 	withAnalytics,
 	composeAnalytics,
@@ -33,7 +34,7 @@ import {
 import { getAtomicHostingSftpUsers } from 'calypso/state/selectors/get-atomic-hosting-sftp-users';
 import { getAtomicHostingSshAccess } from 'calypso/state/selectors/get-atomic-hosting-ssh-access';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import SshKeys from './ssh-keys';
 
 import './style.scss';
@@ -47,6 +48,7 @@ export const SftpCard = ( {
 	username,
 	password,
 	siteId,
+	siteSlug,
 	disabled,
 	currentUserId,
 	requestSftpUsers,
@@ -387,9 +389,15 @@ export const SftpCard = ( {
 						<FormLabel className="sftp-card__ssh-label">{ translate( 'SSH Access' ) }</FormLabel>
 					) }
 					{ siteHasSshFeature && renderSshField() }
-					{ siteHasSshFeature && isSshAccessEnabled && isEnabled( 'hosting/ssh-keys' ) && (
-						<SshKeys disabled={ disabled } siteId={ siteId } />
-					) }
+					<ReauthRequired twoStepAuthorization={ twoStepAuthorization }>
+						{ () => (
+							<>
+								{ siteHasSshFeature && isSshAccessEnabled && (
+									<SshKeys disabled={ disabled } siteId={ siteId } siteSlug={ siteSlug } />
+								) }
+							</>
+						) }
+					</ReauthRequired>
 				</FormFieldset>
 			) }
 			{ isLoading && <Spinner /> }
@@ -441,6 +449,7 @@ const disableSshAccess = ( siteId ) =>
 export default connect(
 	( state, { disabled } ) => {
 		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSelectedSiteSlug( state );
 		const currentUserId = getCurrentUserId( state );
 		let username;
 		let password;
@@ -462,6 +471,7 @@ export default connect(
 
 		return {
 			siteId,
+			siteSlug,
 			currentUserId,
 			username,
 			password,

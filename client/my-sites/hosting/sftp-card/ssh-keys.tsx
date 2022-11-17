@@ -1,12 +1,16 @@
 import { Button, Spinner } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { useMemo, useState } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import { useSSHKeyQuery } from 'calypso/me/security-ssh-key/use-ssh-key-query';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import SshKeyCard from './ssh-key-card';
 import { useAtomicSshKeys } from './use-atomic-ssh-keys';
 import { useAttachSshKeyMutation } from './use-attach-ssh-key';
@@ -15,17 +19,54 @@ import './ssh-keys.scss';
 
 interface SshKeysProps {
 	siteId: number;
+	siteSlug: string;
 	username: string;
 	disabled: boolean;
 }
 
-function SshKeys( { siteId, username, disabled }: SshKeysProps ) {
+const noticeOptions = {
+	duration: 3000,
+};
+
+const sshKeyAttachFailureNoticeId = 'ssh-key-attach-failure';
+
+function SshKeys( { siteId, siteSlug, username, disabled }: SshKeysProps ) {
 	const { __ } = useI18n();
-	const { data: keys, isLoading: isLoadingKeys } = useAtomicSshKeys( siteId, {
+	const dispatch = useDispatch();
+	const {
+		data: keys,
+		isLoading: isLoadingKeys,
+		isFetching: isFetchingKeys,
+	} = useAtomicSshKeys( siteId, {
 		enabled: ! disabled,
 	} );
 	const { data: userKeys, isLoading: isLoadingUserKeys } = useSSHKeyQuery();
-	const { mutate: attachSshKey, isLoading: attachingKey } = useAttachSshKeyMutation( siteId );
+	const { attachSshKey, isLoading: attachingKey } = useAttachSshKeyMutation( siteId, {
+		onMutate: () => {
+			dispatch( removeNotice( sshKeyAttachFailureNoticeId ) );
+		},
+		onSuccess: () => {
+			dispatch( recordTracksEvent( 'calypso_hosting_configuration_ssh_key_attach_success' ) );
+			dispatch( successNotice( __( 'SSH key attached to site.' ), noticeOptions ) );
+		},
+		onError: ( error ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_ssh_key_attach_failure', {
+					code: error.code,
+				} )
+			);
+			dispatch(
+				errorNotice(
+					// translators: "reason" is why adding the ssh key failed.
+					sprintf( __( 'Failed to attach SSH key: %(reason)s' ), { reason: error.message } ),
+					{
+						...noticeOptions,
+						id: sshKeyAttachFailureNoticeId,
+					}
+				)
+			);
+		},
+	} );
 
 	const [ selectedKey, setSelectedKey ] = useState( 'default' );
 	function onChangeSelectedKey( event: React.ChangeEvent< HTMLSelectElement > ) {
@@ -39,9 +80,21 @@ function SshKeys( { siteId, username, disabled }: SshKeysProps ) {
 		return !! keys.find( ( { user_login } ) => user_login === username );
 	}, [ keys, username ] );
 
-	const isLoading = isLoadingKeys || isLoadingUserKeys;
+	/*
+	 * isFetching keys is needed here, because when we update a key from me/security/ssh-key page,
+	 * and return to this page, the keys, although the query reruns, are not cleared.
+	 * isFetching returns true when refetching in the background. Happens when there is stale cache to display as a placeholder.
+	 * So we rely on that to display the loader.
+	 * Same goes with the map of the keys in the view below. We don't want to show the old keys
+	 * until the refetching is completed.
+	 * */
+	const isLoading = isLoadingKeys || isLoadingUserKeys || isFetchingKeys;
 	const showKeysSelect = ! isLoading && ! userKeyIsAttached && userKeys && userKeys.length > 0;
 	const showLinkToAddUserKey = ! isLoading && ! userKeyIsAttached && userKeys?.length === 0;
+	const SSH_ADD_URL = addQueryArgs( '/me/security/ssh-key', {
+		source: 'hosting-config',
+		siteSlug,
+	} );
 
 	return (
 		<div className="ssh-keys">
@@ -49,14 +102,15 @@ function SshKeys( { siteId, username, disabled }: SshKeysProps ) {
 				{ __( 'SSH Keys' ) }
 			</label>
 
-			{ keys?.map( ( sshKey ) => (
-				<SshKeyCard
-					key={ sshKey.sha256 }
-					sshKey={ sshKey }
-					deleteText={ __( 'Detach' ) }
-					siteId={ siteId }
-				/>
-			) ) }
+			{ ! isFetchingKeys &&
+				keys?.map( ( sshKey ) => (
+					<SshKeyCard
+						key={ sshKey.sha256 }
+						sshKey={ sshKey }
+						deleteText={ __( 'Detach' ) }
+						siteId={ siteId }
+					/>
+				) ) }
 
 			{ isLoading && <Spinner /> }
 
@@ -89,7 +143,16 @@ function SshKeys( { siteId, username, disabled }: SshKeysProps ) {
 					{ createInterpolateElement(
 						__( '<a>Add an SSH key to your account</a> in order to use it with this site.' ),
 						{
-							a: <a href="/me/security/ssh-key" />,
+							a: (
+								<a
+									href={ SSH_ADD_URL }
+									onClick={ () => {
+										dispatch(
+											recordTracksEvent( 'calypso_hosting_configuration_add_ssh_key_link_click' )
+										);
+									} }
+								/>
+							),
 						}
 					) }
 				</div>

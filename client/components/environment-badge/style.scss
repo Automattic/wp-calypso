@@ -5,7 +5,8 @@
 	right: 86px;
 	z-index: z-index("root", ".environment-badge");
 
-	&:hover .environment {
+	// The hovered class is toggled in load-dev-helpers/index.js
+	&.hovered .environment {
 		display: inline-block;
 
 		// hide everything inside each tab

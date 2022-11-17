@@ -840,3 +840,21 @@ ul.module-content-list-legend {
 		}
 	}
 }
+
+.stats-list-actions .module-content-list-item-action .module-content-list-item-action-wrapper {
+	opacity: 1;
+}
+
+.list-countryviews {
+	.stats-list__flag-icon {
+		position: relative;
+		display: inline-block;
+		background-size: contain;
+		background-position: 50%;
+		background-repeat: no-repeat;
+		width: 24px;
+		height: 18px;
+		top: 3px;
+		margin-right: 8px;
+	}
+}

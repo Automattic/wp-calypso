@@ -32,7 +32,7 @@ function isNotInstalled( plugin, installedPlugins ) {
 	);
 }
 
-const SingleListView = ( { category, plugins, isFetching, siteSlug, sites } ) => {
+const SingleListView = ( { category, plugins, isFetching, siteSlug, sites, noHeader } ) => {
 	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId );
@@ -65,6 +65,7 @@ const SingleListView = ( { category, plugins, isFetching, siteSlug, sites } ) =>
 		<PluginsBrowserList
 			plugins={ plugins.slice( 0, SHORT_LIST_LENGTH ) }
 			listName={ category }
+			listType="discovery"
 			title={ categoryName }
 			subtitle={ categoryDescription }
 			site={ siteSlug }
@@ -74,6 +75,7 @@ const SingleListView = ( { category, plugins, isFetching, siteSlug, sites } ) =>
 			currentSites={ sites }
 			variant={ PluginsBrowserListVariant.Fixed }
 			extended
+			noHeader={ noHeader }
 		/>
 	);
 };

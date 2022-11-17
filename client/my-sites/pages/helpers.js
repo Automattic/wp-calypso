@@ -1,4 +1,5 @@
 import { forEach, groupBy, includes, map, reduce, sortBy } from 'lodash';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 // Helpers used by sortPagesHierarchically but not exposed externally
 const sortByMenuOrder = ( list ) => sortBy( list, 'menu_order' );
@@ -53,3 +54,5 @@ export const sortPagesHierarchically = ( pages, homepageId = 0 ) => {
 
 	return sortedPages;
 };
+
+export const recordEvent = ( action ) => recordGoogleEvent( 'Pages', action );

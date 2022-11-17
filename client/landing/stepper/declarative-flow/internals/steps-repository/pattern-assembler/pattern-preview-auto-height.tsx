@@ -57,7 +57,8 @@ const PatternPreviewAutoHeight = ( {
 			aria-hidden
 			tabIndex={ -1 }
 			style={ {
-				height,
+				// The extra 2px are required to avoid the scrollbars on some patterns
+				height: height + 2,
 				top: verticalPadding / 2,
 			} }
 			src={ addQueryArgs( url, { calypso_token } ) }

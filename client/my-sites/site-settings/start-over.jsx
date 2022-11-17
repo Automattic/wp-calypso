@@ -8,6 +8,7 @@ import ActionPanelFigure from 'calypso/components/action-panel/figure';
 import ActionPanelFooter from 'calypso/components/action-panel/footer';
 import ActionPanelTitle from 'calypso/components/action-panel/title';
 import HeaderCake from 'calypso/components/header-cake';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { EMPTY_SITE } from 'calypso/lib/url/support';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -18,6 +19,7 @@ const StartOver = ( { translate, selectedSiteSlug } ) => {
 			className="main main-column" // eslint-disable-line wpcalypso/jsx-classname-namespace
 			role="main"
 		>
+			<PageViewTracker path="/settings/start-over/:site" title="Settings > Start Over" />
 			<HeaderCake backHref={ '/settings/general/' + selectedSiteSlug }>
 				<h1>{ translate( 'Start Over' ) }</h1>
 			</HeaderCake>

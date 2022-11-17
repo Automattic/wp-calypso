@@ -1,42 +1,93 @@
-import { CONTACT_PAGE } from 'calypso/signup/difm/constants';
+import { BLOG_PAGE, CONTACT_PAGE } from 'calypso/signup/difm/constants';
+import {
+	ContactPageDetails,
+	FeedbackSection,
+	LogoUploadSection,
+} from 'calypso/signup/steps/website-content/section-types';
 import { LOGO_SECTION_ID } from 'calypso/state/signup/steps/website-content/reducer';
 import { WebsiteContent } from 'calypso/state/signup/steps/website-content/schema';
-import { ContactPageDetails } from './contact-page-details';
-import { LogoUploadSection } from './logo-upload-section';
-import { CONTENT_SUFFIX, PageDetails } from './page-details';
+import { CONTENT_SUFFIX, DefaultPageDetails } from './section-types/default-page-details';
 import type {
 	AccordionSectionProps,
 	SectionGeneratorReturnType,
 } from 'calypso/signup/accordion-form/types';
+import type { PageId } from 'calypso/signup/difm/constants';
 import type { TranslateResult } from 'i18n-calypso';
 
-const getPageDetailsComponentFromPageId = ( pageId: string ) => {
+interface SectionProcessedResult {
+	sectionsDetails: Array< {
+		title: TranslateResult;
+		component: React.ReactElement;
+		showSkip: boolean;
+		validate?: () => { result: boolean; errors: Record< string, TranslateResult | null > };
+	} >;
+	elapsedSections: number;
+}
+
+const generateLogoSection = (
+	params: SectionGeneratorReturnType< WebsiteContent >,
+	elapsedSections = 0
+): SectionProcessedResult => {
+	const { translate, formValues } = params;
+
+	const fieldNumber = elapsedSections + 1;
+	return {
+		sectionsDetails: [
+			{
+				title: translate( '%(fieldNumber)d. Site Logo', {
+					args: {
+						fieldNumber,
+					},
+					comment: 'This is the serial number: 1',
+				} ),
+				component: (
+					<LogoUploadSection
+						sectionID={ LOGO_SECTION_ID }
+						// The structure of the state tree changed and can generate errors for stale data where siteLogoUrl lived in the root of this state tree
+						// So the optional parameter was added to safegaurd for any errors.
+						// This should eventually be removed with a fix that prevents this type of bug
+						logoUrl={ formValues.siteLogoSection?.siteLogoUrl }
+					/>
+				),
+				showSkip: true,
+			},
+		],
+		elapsedSections: elapsedSections + 1,
+	};
+};
+
+const resolveDisplayedComponent = ( pageId: string ) => {
 	switch ( pageId ) {
 		case CONTACT_PAGE:
 			return ContactPageDetails;
 		default:
-			return PageDetails;
+			return DefaultPageDetails;
 	}
 };
 
 const generateWebsiteContentSections = (
 	params: SectionGeneratorReturnType< WebsiteContent >,
 	elapsedSections = 0
-) => {
+): SectionProcessedResult => {
 	const { translate, formValues, formErrors, onChangeField } = params;
 
-	const OPTIONAL_PAGES: Record< string, boolean > = { [ CONTACT_PAGE ]: true };
-	const PAGE_LABELS: Record< string, TranslateResult > = {
-		[ CONTACT_PAGE ]: translate(
-			"We'll add a standard contact form on this page, plus a comment box. " +
-				'If you would like text to appear above this form, please enter it below.'
-		),
+	const OPTIONAL_PAGES: Partial< Record< PageId, boolean > > = {
+		[ CONTACT_PAGE ]: true,
+		[ BLOG_PAGE ]: true,
 	};
 
 	const websiteContentSections = formValues.pages.map( ( page, index ) => {
 		const fieldNumber = elapsedSections + index + 1;
 		const { title: pageTitle } = page;
-		const PageComponent = getPageDetailsComponentFromPageId( page.id );
+		const DisplayedPageComponent = resolveDisplayedComponent( page.id );
+
+		switch ( page.id ) {
+			case CONTACT_PAGE:
+				break;
+
+			default:
+				break;
+		}
 		return {
 			title: translate( '%(fieldNumber)d. %(pageTitle)s', {
 				args: {
@@ -47,10 +98,9 @@ const generateWebsiteContentSections = (
 			} ),
 			summary: page.content,
 			component: (
-				<PageComponent
+				<DisplayedPageComponent
 					page={ page }
 					formErrors={ formErrors }
-					label={ PAGE_LABELS[ page.id ] }
 					onChangeField={ onChangeField }
 				/>
 			),
@@ -72,38 +122,51 @@ const generateWebsiteContentSections = (
 			},
 		};
 	} );
-	return { elapsedSections: elapsedSections + formValues.pages.length, websiteContentSections };
+	return {
+		elapsedSections: elapsedSections + formValues.pages.length,
+		sectionsDetails: websiteContentSections,
+	};
 };
-const generateLogoSection = (
+
+const generateFeedbackSection = (
 	params: SectionGeneratorReturnType< WebsiteContent >,
 	elapsedSections = 0
-) => {
+): SectionProcessedResult => {
 	const { translate, formValues } = params;
 
 	const fieldNumber = elapsedSections + 1;
 	return {
-		title: translate( '%(fieldNumber)d. Site Logo', {
-			args: {
-				fieldNumber,
+		sectionsDetails: [
+			{
+				title: translate( '%(fieldNumber)d. Submit Content', {
+					args: {
+						fieldNumber,
+					},
+					comment: 'This is the serial number: 1',
+				} ),
+				component: <FeedbackSection data={ formValues.feedbackSection } />,
+				showSkip: true,
 			},
-			comment: 'This is the serial number: 1',
-		} ),
-		component: (
-			<LogoUploadSection sectionID={ LOGO_SECTION_ID } logoUrl={ formValues.siteLogoUrl } />
-		),
-		showSkip: true,
+		],
 		elapsedSections: elapsedSections + 1,
 	};
 };
 
-export const sectionGenerator = ( params: SectionGeneratorReturnType< WebsiteContent > ) => {
-	const { elapsedSections, ...logoSection } = generateLogoSection( params );
+export const sectionGenerator = (
+	params: SectionGeneratorReturnType< WebsiteContent >
+): AccordionSectionProps< any >[] => {
+	const { elapsedSections: elapsedSectionsAfterLogo, sectionsDetails: logoSection } =
+		generateLogoSection( params );
 
 	const {
-		websiteContentSections,
-	}: {
-		websiteContentSections: AccordionSectionProps< WebsiteContent >[];
-	} = generateWebsiteContentSections( params, elapsedSections );
+		sectionsDetails: websiteContentSections,
+		elapsedSections: elapsedSectionAfterWebsiteContent,
+	} = generateWebsiteContentSections( params, elapsedSectionsAfterLogo );
 
-	return [ logoSection, ...websiteContentSections ];
+	const { sectionsDetails: feedbackSection } = generateFeedbackSection(
+		params,
+		elapsedSectionAfterWebsiteContent
+	);
+
+	return [ ...logoSection, ...websiteContentSections, ...feedbackSection ];
 };

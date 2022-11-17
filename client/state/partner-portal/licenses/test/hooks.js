@@ -140,6 +140,7 @@ describe( 'useProductsQuery', () => {
 				slug: 'jetpack-scan',
 				products: [
 					{
+						family_slug: 'jetpack-scan',
 						name: 'Jetpack Scan Daily',
 						product_id: 2106,
 						slug: 'jetpack-scan',
@@ -151,11 +152,13 @@ describe( 'useProductsQuery', () => {
 				slug: 'jetpack-backup',
 				products: [
 					{
+						family_slug: 'jetpack-backup',
 						name: 'Jetpack Backup (10GB)',
 						product_id: 2112,
 						slug: 'jetpack-backup-t1',
 					},
 					{
+						family_slug: 'jetpack-backup',
 						name: 'Jetpack Backup (1TB)',
 						product_id: 2114,
 						slug: 'jetpack-backup-t2',
@@ -167,6 +170,7 @@ describe( 'useProductsQuery', () => {
 				slug: 'jetpack-anti-spam',
 				products: [
 					{
+						family_slug: 'jetpack-anti-spam',
 						name: 'Jetpack Anti-Spam',
 						product_id: 2110,
 						slug: 'jetpack-anti-spam',
@@ -178,6 +182,7 @@ describe( 'useProductsQuery', () => {
 				slug: 'jetpack-videopress',
 				products: [
 					{
+						family_slug: 'jetpack-videopress',
 						name: 'Jetpack VideoPress',
 						product_id: 2116,
 						slug: 'jetpack-videopress',
@@ -189,16 +194,19 @@ describe( 'useProductsQuery', () => {
 				slug: 'jetpack-packs',
 				products: [
 					{
+						family_slug: 'jetpack-packs',
 						name: 'Jetpack Complete',
 						product_id: 2014,
 						slug: 'jetpack-complete',
 					},
 					{
+						family_slug: 'jetpack-packs',
 						name: 'Jetpack Security (10GB)',
 						product_id: 2016,
 						slug: 'jetpack-security-t1',
 					},
 					{
+						family_slug: 'jetpack-packs',
 						name: 'Jetpack Security (1TB)',
 						product_id: 2019,
 						slug: 'jetpack-security-t2',

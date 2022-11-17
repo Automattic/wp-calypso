@@ -10,8 +10,7 @@ import {
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_ACTIVITY_LOG,
 	FEATURE_ACTIVITY_LOG_1_YEAR_V2,
-	FEATURE_ADVANCED_CUSTOMIZATION,
-	FEATURE_ADVANCED_DESIGN,
+	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 	FEATURE_ADVANCED_SEO,
 	FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
 	FEATURE_ADVANCED_SEO_TOOLS,
@@ -31,13 +30,13 @@ import {
 	FEATURE_BACKUP_DAILY_V2,
 	FEATURE_BACKUP_REALTIME_V2,
 	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
-	FEATURE_BASIC_DESIGN,
 	FEATURE_BLANK,
 	FEATURE_BLOG_DOMAIN,
 	FEATURE_CLOUDFLARE_ANALYTICS,
 	FEATURE_COLLECT_PAYMENTS_V2,
 	FEATURE_COMMUNITY_SUPPORT,
 	FEATURE_CRM_V2,
+	FEATURE_CSS_CUSTOMIZATION,
 	FEATURE_CUSTOM_DOMAIN,
 	FEATURE_EARN_AD,
 	FEATURE_EASY_SITE_MIGRATION,
@@ -232,7 +231,7 @@ import {
 	FEATURE_INSTALL_THEMES_PLUGINS,
 	FEATURE_DEVELOPER_TOOLS_V1,
 	FEATURE_PRODUCT_LISTINGS,
-	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS,
 	/* END - PLAN TAGLINE EXPERIMENT */
 } from './constants';
 import type {
@@ -323,7 +322,6 @@ const getPlanBloggerDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_JETPACK_ESSENTIAL,
 		FEATURE_EMAIL_SUPPORT,
 		FEATURE_FREE_THEMES,
-		FEATURE_BASIC_DESIGN,
 		FEATURE_6GB_STORAGE,
 		FEATURE_NO_ADS,
 		FEATURE_MEMBERSHIPS,
@@ -378,7 +376,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_JETPACK_ESSENTIAL,
 			FEATURE_EMAIL_SUPPORT,
 			FEATURE_FREE_THEMES,
-			FEATURE_BASIC_DESIGN,
+			FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 			FEATURE_6GB_STORAGE,
 			FEATURE_NO_ADS,
 			FEATURE_MEMBERSHIPS,
@@ -493,11 +491,12 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_JETPACK_ADVANCED,
 			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
-			FEATURE_ADVANCED_DESIGN,
+			FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 			FEATURE_200GB_STORAGE,
 			FEATURE_NO_ADS,
 			FEATURE_MEMBERSHIPS,
 			FEATURE_PREMIUM_CONTENT_BLOCK,
+			FEATURE_CSS_CUSTOMIZATION,
 			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			FEATURE_SIMPLE_PAYMENTS,
 			FEATURE_GOOGLE_ANALYTICS,
@@ -519,7 +518,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_200GB_STORAGE,
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_NO_ADS,
-		FEATURE_ADVANCED_DESIGN,
+		FEATURE_CSS_CUSTOMIZATION,
 	],
 	getSignupFeatures: () => [
 		FEATURE_ACCEPT_PAYMENTS,
@@ -607,11 +606,12 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_JETPACK_ESSENTIAL,
 			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
-			FEATURE_ADVANCED_DESIGN,
+			FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 			FEATURE_13GB_STORAGE,
 			FEATURE_NO_ADS,
 			FEATURE_MEMBERSHIPS,
 			FEATURE_PREMIUM_CONTENT_BLOCK,
+			FEATURE_CSS_CUSTOMIZATION,
 			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 			FEATURE_SIMPLE_PAYMENTS,
 			FEATURE_GOOGLE_ANALYTICS,
@@ -622,12 +622,12 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	getPromotedFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_NO_ADS,
-		FEATURE_ADVANCED_DESIGN,
+		FEATURE_CSS_CUSTOMIZATION,
 		FEATURE_13GB_STORAGE,
 	],
 	getSignupFeatures: () => [
 		FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-		FEATURE_ADVANCED_CUSTOMIZATION,
+		FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS,
 		FEATURE_ALL_PERSONAL_FEATURES,
 	],
 	getNewsletterDescription: () =>
@@ -692,7 +692,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		].filter( isValueTruthy ),
 	getPortfolioSignupFeatures: () =>
 		[
-			FEATURE_ADVANCED_CUSTOMIZATION,
+			FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS,
 			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
 			FEATURE_ALL_PERSONAL_FEATURES,
 		].filter( isValueTruthy ),
@@ -710,7 +710,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		].filter( isValueTruthy ),
 	getOnboardingHighlightedFeatures: () => [
 		FEATURE_PREMIUM_THEMES,
-		FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+		FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS,
 		FEATURE_UNLTD_LIVE_CHAT_SUPPORT,
 	],
 	// Features not displayed but used for checking plan abilities
@@ -757,11 +757,12 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_JETPACK_ADVANCED,
 			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
-			FEATURE_ADVANCED_DESIGN,
+			FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 			FEATURE_200GB_STORAGE,
 			FEATURE_NO_ADS,
 			FEATURE_MEMBERSHIPS,
 			FEATURE_PREMIUM_CONTENT_BLOCK,
+			FEATURE_CSS_CUSTOMIZATION,
 			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			FEATURE_SIMPLE_PAYMENTS,
 			FEATURE_GOOGLE_ANALYTICS,
@@ -778,7 +779,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_200GB_STORAGE,
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_NO_ADS,
-		FEATURE_ADVANCED_DESIGN,
+		FEATURE_CSS_CUSTOMIZATION,
 		FEATURE_VIDEO_UPLOADS,
 	],
 	getSignupFeatures: () => [
@@ -870,7 +871,7 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_GOOGLE_ANALYTICS,
 	],
 	getIncludedFeatures: () => [
-		FEATURE_ADVANCED_DESIGN,
+		FEATURE_CSS_CUSTOMIZATION,
 		FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
 		FEATURE_AUDIO_UPLOADS,
 		FEATURE_CLOUDFLARE_ANALYTICS,
@@ -880,6 +881,7 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_GOOGLE_MY_BUSINESS,
 		FEATURE_HOSTING,
+		FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 		FEATURE_MEMBERSHIPS,
 		FEATURE_NO_BRANDING,
 		FEATURE_REPUBLICIZE,
@@ -1068,7 +1070,7 @@ const getPlanJetpackSecurityDailyDetails = (): IncompleteJetpackPlan => ( {
 	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getDescription: () =>
 		translate(
-			'All of the essential Jetpack Security features in one package including Backup, Scan, Anti-spam and more.'
+			'All of the essential Jetpack Security features in one package including VaultPress Backup, Scan, Akismet Anti-spam and more.'
 		),
 	getTagline: () => translate( 'Best for sites with occasional updates' ),
 	getPlanCardFeatures: () => [
@@ -1166,7 +1168,13 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 		),
 	getLightboxDescription: () =>
 		translate(
-			'Easy-to-use, comprehensive WordPress site security including backups, malware scanning, and spam protection.'
+			'Easy-to-use, comprehensive WordPress site security including backups, malware scanning, and spam protection.{{br/}}Includes VaultPress Backup, Jetpack Scan, and Akismet Anti-spam.',
+			{
+				components: {
+					br: <br />,
+				},
+				comment: '{{br/}} represents a line break',
+			}
 		),
 	getPlanCardFeatures: () => [
 		FEATURE_JETPACK_PRODUCT_BACKUP,
@@ -1336,7 +1344,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			FEATURE_JETPACK_ESSENTIAL,
 			FEATURE_COMMUNITY_SUPPORT,
 			FEATURE_FREE_THEMES,
-			FEATURE_BASIC_DESIGN,
 			FEATURE_3GB_STORAGE,
 		],
 		getSignupFeatures: () => [
@@ -1779,15 +1786,17 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getPathSlug: () => 'complete',
 		getProductId: () => 2014,
 		getWhatIsIncluded: () => [
-			translate( 'Real-time backups as you edit' ),
+			translate( 'VaultPress Backup: Real-time backups as you edit' ),
 			translate( '1TB (1,000GB) of cloud storage' ),
 			translate( '1-year activity log archive' ),
 			translate( 'Unlimited one-click restores from the last 1 year' ),
-			translate( 'Real-time malware scanning and one-click fixes' ),
-			translate( 'Comment and form spam protection (60k API calls/mo)' ),
-			translate( 'VideoPress with 1TB of ad-free video hosting' ),
-			translate( 'Site Search up to 100k records' ),
-			translate( 'CRM Entrepreneur' ),
+			translate( 'Scan: Real-time malware scanning and one-click fixes' ),
+			translate( 'Akismet: Comment and form spam protection (60k API calls/mo)' ),
+			translate( 'VideoPress: 1TB of ad-free video hosting' ),
+			translate( 'Boost: Automatic CSS generation' ),
+			translate( 'Site Search: Up to 100k records' ),
+			translate( 'Social: Basic with 1,000 shares/mo' ),
+			translate( 'CRM: Entrepreneur with 30 extensions' ),
 		],
 	},
 
@@ -1798,15 +1807,17 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getPathSlug: () => 'complete-monthly',
 		getProductId: () => 2015,
 		getWhatIsIncluded: () => [
-			translate( 'Real-time backups as you edit' ),
+			translate( 'VaultPress Backup: Real-time backups as you edit' ),
 			translate( '1TB (1,000GB) of cloud storage' ),
 			translate( '1-year activity log archive' ),
 			translate( 'Unlimited one-click restores from the last 1-year' ),
-			translate( 'Real-time malware scanning and one-click fixes' ),
-			translate( 'Comment and form spam protection (60k API calls/mo)' ),
-			translate( 'VideoPress with 1TB of ad-free video hosting' ),
-			translate( 'Site Search up to 100k records' ),
-			translate( 'CRM Entrepreneur' ),
+			translate( 'Scan: Real-time malware scanning and one-click fixes' ),
+			translate( 'Akismet: Comment and form spam protection (60k API calls/mo)' ),
+			translate( 'VideoPress: 1TB of ad-free video hosting' ),
+			translate( 'Boost: Automatic CSS generation' ),
+			translate( 'Site Search: Up to 100k records' ),
+			translate( 'Social: Basic with 1,000 shares/mo' ),
+			translate( 'CRM: Entrepreneur with 30 extensions' ),
 		],
 	},
 
@@ -1817,12 +1828,12 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getPathSlug: () => 'security-20gb-yearly',
 		getProductId: () => 2016,
 		getWhatIsIncluded: () => [
-			translate( 'Real-time backups as you edit' ),
+			translate( 'VaultPress Backup: Real-time backups as you edit' ),
 			translate( '10GB of cloud storage' ),
 			translate( '30-day activity log archive' ),
 			translate( 'Unlimited one-click restores from the last 30 days' ),
-			translate( 'Real-time malware scanning and one-click fixes' ),
-			translate( 'Comment and form spam protection (10k API calls/mo)' ),
+			translate( 'Scan: Real-time malware scanning and one-click fixes' ),
+			translate( 'Akismet: Comment and form spam protection (10k API calls/mo)' ),
 		],
 	},
 
@@ -1833,12 +1844,12 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getPathSlug: () => 'security-20gb-monthly',
 		getProductId: () => 2017,
 		getWhatIsIncluded: () => [
-			translate( 'Real-time backups as you edit' ),
+			translate( 'VaultPress Backup: Real-time backups as you edit' ),
 			translate( '10GB of cloud storage' ),
 			translate( '30-day activity log archive' ),
 			translate( 'Unlimited one-click restores from the last 30 days' ),
-			translate( 'Real-time malware scanning and one-click fixes' ),
-			translate( 'Comment and form spam protection (10k API calls/mo)' ),
+			translate( 'Scan: Real-time malware scanning and one-click fixes' ),
+			translate( 'Akismet: Comment and form spam protection (10k API calls/mo)' ),
 		],
 	},
 
@@ -1849,7 +1860,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getPathSlug: () => 'security-1tb-yearly',
 		getProductId: () => 2019,
 		getWhatIsIncluded: () => [
-			translate( 'Real-time backups as you edit' ),
+			translate( 'VaultPress Backup: Real-time backups as you edit' ),
 			translate( '{{strong}}1TB (1,000GB){{/strong}} of cloud storage', {
 				components: {
 					strong: <strong />,
@@ -1865,8 +1876,8 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 					strong: <strong />,
 				},
 			} ),
-			translate( 'Real-time malware scanning and one-click fixes' ),
-			translate( 'Comment and form spam protection (10k API calls/mo)' ),
+			translate( 'Scan: Real-time malware scanning and one-click fixes' ),
+			translate( 'Akismet: Comment and form spam protection (10k API calls/mo)' ),
 		],
 	},
 
@@ -1877,7 +1888,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getPathSlug: () => 'security-1tb-monthly',
 		getProductId: () => 2020,
 		getWhatIsIncluded: () => [
-			translate( 'Real-time backups as you edit' ),
+			translate( 'VaultPress Backup: Real-time backups as you edit' ),
 			translate( '{{strong}}1TB (1,000GB){{/strong}} of cloud storage', {
 				components: {
 					strong: <strong />,
@@ -1893,8 +1904,8 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 					strong: <strong />,
 				},
 			} ),
-			translate( 'Real-time malware scanning and one-click fixes' ),
-			translate( 'Comment and form spam protection (10k API calls/mo)' ),
+			translate( 'Scan: Real-time malware scanning and one-click fixes' ),
+			translate( 'Akismet: Comment and form spam protection (10k API calls/mo)' ),
 		],
 	},
 

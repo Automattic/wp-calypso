@@ -25,8 +25,15 @@ export interface SSHKeyData {
 export const SSH_KEY_QUERY_KEY = [ 'me', 'ssh-keys' ];
 
 export const useSSHKeyQuery = () =>
-	useQuery( SSH_KEY_QUERY_KEY, (): SSHKeyData[] =>
-		wp.req.get( '/me/ssh-keys', {
-			apiNamespace: 'wpcom/v2',
-		} )
+	useQuery(
+		SSH_KEY_QUERY_KEY,
+		(): SSHKeyData[] =>
+			wp.req.get( '/me/ssh-keys', {
+				apiNamespace: 'wpcom/v2',
+			} ),
+		{
+			meta: {
+				persist: false,
+			},
+		}
 	);

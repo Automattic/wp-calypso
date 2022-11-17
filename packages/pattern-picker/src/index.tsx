@@ -20,7 +20,6 @@ export default function PatternPicker( { onPick }: Props ) {
 	useEffect( () => {
 		if ( patterns ) {
 			swiperInstance.current = new Swiper( '.swiper-container', {
-				autoHeight: true,
 				mousewheel: true,
 				keyboard: true,
 				threshold: 5,

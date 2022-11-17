@@ -46,7 +46,7 @@ function fetchForKey( postKey, isHelpCenter = false ) {
 				  } )
 				: apiFetch( {
 						global: true,
-						path: `/wpcom/v2/help-center/fetch-post?post_id=${ encodeURIComponent(
+						path: `/help-center/fetch-post?post_id=${ encodeURIComponent(
 							postKey.postId
 						) }&blog_id=${ encodeURIComponent( postKey.blogId ) }`,
 				  } );

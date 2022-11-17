@@ -10,6 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { appendBreadcrumb, resetBreadcrumbs } from 'calypso/state/breadcrumb/actions';
@@ -123,7 +124,12 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 					href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
 					id: 'plugins',
 					helpBubble: translate(
-						'Add new functionality and integrations to your site with plugins.'
+						'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="plugins" showIcon={ false } />,
+							},
+						}
 					),
 				} )
 			);

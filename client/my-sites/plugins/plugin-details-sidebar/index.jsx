@@ -18,6 +18,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const PluginDetailsSidebar = ( {
 	plugin: {
+		slug,
 		active_installs,
 		tested,
 		isMarketplaceProduct = false,
@@ -89,6 +90,7 @@ const PluginDetailsSidebar = ( {
 
 			{ selectedSite && (
 				<PlanUSPS
+					pluginSlug={ slug }
 					shouldUpgrade={ shouldUpgrade }
 					isFreePlan={ isFreePlan }
 					isMarketplaceProduct={ isMarketplaceProduct }
