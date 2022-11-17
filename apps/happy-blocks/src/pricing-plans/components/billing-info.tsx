@@ -7,11 +7,9 @@ interface Props {
 
 const BillingInfo: FunctionComponent< Props > = ( { billing } ) => {
 	return (
-		<div className="wp-block-a8c-pricing-plans__detail-current-billing">
-			<span className="wp-block-a8c-pricing-plans__detail-current-billing-value">
-				{ billing.price }
-			</span>
-			<span className="wp-block-a8c-pricing-plans__detail-current-billing-description">
+		<div className="wp-block-a8c-pricing-plans__billing-info">
+			<span className="wp-block-a8c-pricing-plans__billing-info-value">{ billing.price }</span>
+			<span className="wp-block-a8c-pricing-plans__billing-info-description">
 				/{ billing.period }
 			</span>
 		</div>

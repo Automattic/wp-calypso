@@ -3,7 +3,7 @@ import { FunctionComponent } from 'react';
 import { PricingPlanBilling } from '../types';
 
 const Promo: FunctionComponent = ( { children } ) => (
-	<span className="wp-block-a8c-pricing-plans__detail-billings-item-promo">({ children })</span>
+	<span className="wp-block-a8c-pricing-plans__promo">({ children })</span>
 );
 
 interface Props {
@@ -14,15 +14,12 @@ interface Props {
 
 const BillingOptions: FunctionComponent< Props > = ( { billings, value, onChange } ) => {
 	return (
-		<fieldset className="wp-block-a8c-pricing-plans__detail-billings">
+		<fieldset className="wp-block-a8c-pricing-plans__billing-options">
 			{ billings.map( ( planBilling ) => (
-				<div
-					key={ planBilling.planSlug }
-					className="wp-block-a8c-pricing-plans__detail-billings-item"
-				>
-					<label className="wp-block-a8c-pricing-plans__detail-billings-item-label">
+				<div key={ planBilling.planSlug }>
+					<label className="wp-block-a8c-pricing-plans__billing-option-label">
 						<input
-							className="wp-block-a8c-pricing-plans__detail-billings-item-input"
+							className="wp-block-a8c-pricing-plans__billing-option-input"
 							type="radio"
 							name="price"
 							value={ planBilling.planSlug }
