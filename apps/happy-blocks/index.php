@@ -101,7 +101,7 @@ add_action( 'wp_enqueue_scripts', 'a8c_happyblocks_view_assets' );
  * @return array
  */
 function a8c_happyblocks_get_config() {
-	$domain = wp_parse_url( get_site_url() )['host'];
+	$domain = wp_parse_url( home_url() )['host'];
 	return array(
 		'domain' => $domain,
 		'locale' => get_user_locale(),
