@@ -377,7 +377,7 @@ class DomainRow extends PureComponent {
 							: translate( 'View settings' ) }
 					</PopoverMenuItem>
 					{ canSetAsPrimary( domain, isManagingAllSites, shouldUpgradeToMakePrimary ) &&
-						isRecentlyRegisteredAndDoesNotPointToWpcom( domain ) && (
+						! isRecentlyRegisteredAndDoesNotPointToWpcom( domain ) && (
 							<PopoverMenuItem onClick={ this.makePrimary }>
 								<Icon icon={ home } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
 								{ translate( 'Make primary site address' ) }
