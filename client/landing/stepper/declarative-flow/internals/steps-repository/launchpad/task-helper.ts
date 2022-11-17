@@ -103,7 +103,7 @@ export function getEnhancedTasks(
 					break;
 				case 'link_in_bio_launched':
 					taskData = {
-						title: translate( 'Launch Link in bio' ),
+						title: translate( 'Launch your site' ),
 						completed: siteLaunchCompleted,
 						disabled: ! linkInBioLinksEditCompleted,
 						isLaunchTask: true,
