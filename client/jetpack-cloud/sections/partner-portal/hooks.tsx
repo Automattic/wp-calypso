@@ -410,14 +410,14 @@ export function useIssueMultipleLicenses(
 				} );
 				const conjunction =
 					assignedLicenses.length > 2
-						? translate( `%(commaCharacter)s and`, {
+						? translate( '%(commaCharacter)s and ', {
 								args: {
 									commaCharacter,
 									comment:
 										'The final separator of a delimited list, such as ", and" in "Jetpack Backup, Jetpack Scan, and Jetpack Boost."',
 								},
 						  } )
-						: translate( ' and', {
+						: translate( ' and ', {
 								args: {
 									comment:
 										'The way that two words are separated, such as " and" in "Jetpack Backup and Jetpack Scan". Note that the space here is important due to the way the final string is constructed.',
@@ -433,7 +433,7 @@ export function useIssueMultipleLicenses(
 						// We are not using the same translate method for plural form since we have different arguments.
 						assignedLicenses.length > 1
 							? translate(
-									'{{strong}}%(initialLicenseList)s%(conjunction)s %(lastLicenseItem)s{{/strong}} were succesfully issued',
+									'{{strong}}%(initialLicenseList)s%(conjunction)s%(lastLicenseItem)s{{/strong}} were succesfully issued',
 									{
 										args: {
 											lastLicenseItem,

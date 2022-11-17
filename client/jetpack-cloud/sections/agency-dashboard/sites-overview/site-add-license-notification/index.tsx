@@ -54,14 +54,14 @@ export default function SiteAddLicenseNotification() {
 		} );
 		const conjunction =
 			licenses.length > 2
-				? translate( `%(commaCharacter)s and`, {
+				? translate( '%(commaCharacter)s and ', {
 						args: {
 							commaCharacter,
 							comment:
 								'The final separator of a delimited list, such as ", and" in "Backup, Scan, and Boost."',
 						},
 				  } )
-				: translate( ' and', {
+				: translate( ' and ', {
 						args: {
 							comment:
 								'The way that two words are separated, such as " and" in "Backup and Scan". Note that the space here is important due to the way the final string is constructed.',
@@ -86,7 +86,7 @@ export default function SiteAddLicenseNotification() {
 			// We are not using the same translate method for plural form since we have different arguments.
 			return licenses.length > 1
 				? translate(
-						'{{strong}}%(initialLicenseList)s%(conjunction)s %(lastLicenseItem)s{{/strong}} ' +
+						'{{strong}}%(initialLicenseList)s%(conjunction)s%(lastLicenseItem)s{{/strong}} ' +
 							'were succesfully assigned to {{em}}%(selectedSite)s{{/em}}. ' +
 							'Please allow a few minutes for your features to activate.',
 						{
@@ -109,7 +109,7 @@ export default function SiteAddLicenseNotification() {
 		// We are not using the same translate method for plural form since we have different arguments.
 		return licenses.length > 1
 			? translate(
-					'An error occurred and your {{strong}}%(initialLicenseList)s%(conjunction)s %(lastLicenseItem)s{{/strong}} ' +
+					'An error occurred and your {{strong}}%(initialLicenseList)s%(conjunction)s%(lastLicenseItem)s{{/strong}} ' +
 						"weren't assigned to {{em}}%(selectedSite)s{{/em}}.",
 					{
 						args: multipleLicensesArgs,
