@@ -264,7 +264,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 								const stylesheet = design.recipe!.stylesheet!;
 								const theme = stylesheet?.split( '/' )[ 1 ] || design.theme;
 
-								setPendingAction( () =>
+								setPendingAction(
 									// We have to switch theme first. Otherwise, the unique suffix might append to
 									// the slug of newly created Home template if the current activated theme has
 									// modified Home template.

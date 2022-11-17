@@ -49,9 +49,14 @@ const ProcessingStep: Step = function ( props ) {
 
 	useEffect( () => {
 		( async () => {
-			if ( typeof action === 'function' ) {
+			if ( typeof action === 'function' || action instanceof Promise ) {
 				try {
-					const destination = await action();
+					let destination;
+					if ( typeof action === 'function' ) {
+						destination = await action();
+					} else {
+						destination = await action;
+					}
 					// Don't call submit() directly; instead, turn on a flag that signals we should call submit() next.
 					// This allows us to call the newest submit() created. Otherwise, we would be calling a submit()
 					// that is frozen from before we called action().

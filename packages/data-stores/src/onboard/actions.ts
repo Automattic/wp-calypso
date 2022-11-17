@@ -316,7 +316,9 @@ export const setStoreAddressValue = (
 } );
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const setPendingAction = ( pendingAction: undefined | ( () => Promise< any > ) ) => ( {
+export const setPendingAction = (
+	pendingAction: undefined | Promise< any > | ( () => Promise< any > )
+) => ( {
 	type: 'SET_PENDING_ACTION' as const,
 	pendingAction,
 } );

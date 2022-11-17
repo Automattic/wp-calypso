@@ -306,10 +306,10 @@ const storeType: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
-const pendingAction: Reducer< undefined | ( () => Promise< any > ), OnboardAction > = (
-	state,
-	action
-) => {
+const pendingAction: Reducer<
+	undefined | Promise< any > | ( () => Promise< any > ),
+	OnboardAction
+> = ( state, action ) => {
 	if ( action.type === 'SET_PENDING_ACTION' ) {
 		return action.pendingAction;
 	}
