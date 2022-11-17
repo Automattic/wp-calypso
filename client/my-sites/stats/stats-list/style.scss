@@ -895,10 +895,17 @@ ul.module-content-list-legend {
 		right: 0;
 		top: 100%;
 
-		// Remove tooltip arrow to increase ellipsis touch target size.
-		&::after {
-			display: none;
+		.stats-list__item-action {
+			transition: background-color linear 0.1s;
+			&:hover,
+			&:focus {
+				background: var(--color-neutral-0);
+			}
 		}
+	}
+
+	.horizontal-bar-list-item .stats-list__item-action-wrapper {
+		width: 100%;
 	}
 
 	.stats-list-actions__mobile-toggle {
