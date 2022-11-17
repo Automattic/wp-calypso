@@ -47,8 +47,8 @@ function should_show_coming_soon_page() {
  * @return bool
  */
 function is_accessed_by_valid_share_link() {
-	if ( isset( $_GET['share'] ) ) {
-		$share_code = $_GET['share'];
+	if ( isset( $_GET['share'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$share_code = $_GET['share']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	} elseif ( isset( $_COOKIE['share_code'] ) ) {
 		$share_code = $_COOKIE['share_code'];
 	}
