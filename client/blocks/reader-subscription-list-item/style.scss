@@ -107,6 +107,7 @@
 }
 
 .reader-subscription-list-item__site-title {
+	font-size: $font-body;
 	font-weight: 600;
 }
 
@@ -147,6 +148,12 @@
 		color: var(--color-text-subtle);
 		margin: 0;
 		gap: 8px;
+		li {
+			margin-right: 4px;
+		}
+		li:first-child {
+			list-style: none;
+		}
 	}
 }
 
@@ -217,5 +224,5 @@
 }
 
 .reader-subscription-list-item__avatar {
-	min-width: 44px;
+	min-width: 52px;
 }
