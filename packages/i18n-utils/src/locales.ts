@@ -26,6 +26,7 @@ export const englishLocales: Locale[] = [ 'en', 'en-gb' ];
 
 // replaces config( 'livechat_support_locales' )
 export const livechatSupportLocales: Locale[] = [ 'en' ];
+export const emailSupportLocales: Locale[] = [ 'fr', 'de', 'it', 'ja', 'pt-br', 'es', 'sv' ];
 
 // replaces config( 'support_site_locales' )
 export const supportSiteLocales: Locale[] = [

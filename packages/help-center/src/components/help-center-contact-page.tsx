@@ -5,8 +5,14 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Spinner, GMClosureNotice } from '@automattic/components';
 import { useSupportAvailability } from '@automattic/data-stores';
+import {
+	isDefaultLocale,
+	getLanguage,
+	useLocale,
+	emailSupportLocales,
+} from '@automattic/i18n-utils';
 import { Notice } from '@wordpress/components';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useMemo } from '@wordpress/element';
 import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -36,6 +42,7 @@ const ConditionalLink: React.FC< { active: boolean } & LinkProps > = ( { active,
 
 export const HelpCenterContactPage: React.FC = () => {
 	const { __ } = useI18n();
+	const locale = useLocale();
 
 	const renderEmail = useShouldRenderEmailOption();
 	const renderChat = useShouldRenderChatOption();
@@ -56,6 +63,26 @@ export const HelpCenterContactPage: React.FC = () => {
 			email_available: renderEmail.render,
 		} );
 	}, [ isLoading, renderChat.state, renderEmail.render ] );
+
+	const liveChatHeaderText = useMemo( () => {
+		if ( isDefaultLocale( locale ) ) {
+			return __( 'Live chat', __i18n_text_domain__ );
+		}
+
+		return __( 'Live chat (English)', __i18n_text_domain__ );
+	}, [ __, locale ] );
+
+	const emailHeaderText = useMemo( () => {
+		if ( isDefaultLocale( locale ) ) {
+			return __( 'Email', __i18n_text_domain__ );
+		}
+
+		if ( emailSupportLocales.includes( locale ) ) {
+			return `${ __( 'Email', __i18n_text_domain__ ) } (${ getLanguage( locale )?.name })`;
+		}
+
+		return __( 'Email (English)', __i18n_text_domain__ );
+	}, [ __, locale ] );
 
 	if ( isLoading ) {
 		return (
@@ -103,7 +130,7 @@ export const HelpCenterContactPage: React.FC = () => {
 										<Icon icon={ comment } />
 									</div>
 									<div>
-										<h2>{ __( 'Live chat', __i18n_text_domain__ ) }</h2>
+										<h2>{ liveChatHeaderText }</h2>
 										<p>
 											{ renderChat.state !== 'AVAILABLE'
 												? __( 'Chat is unavailable right now', __i18n_text_domain__ )
@@ -143,7 +170,7 @@ export const HelpCenterContactPage: React.FC = () => {
 									<Icon icon={ <Mail /> } />
 								</div>
 								<div>
-									<h2>{ __( 'Email', __i18n_text_domain__ ) }</h2>
+									<h2>{ emailHeaderText }</h2>
 									<p>{ __( 'An expert will get back to you soon', __i18n_text_domain__ ) }</p>
 								</div>
 							</div>
