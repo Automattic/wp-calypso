@@ -288,7 +288,7 @@ export function useLicenseIssuing(
 export function useIssueMultipleLicenses(
 	selectedProducts: Array< string >,
 	selectedSite?: { ID: number; domain: string } | null,
-	suggestedProducts?: Array< string > = []
+	suggestedProducts: Array< string > = []
 ): [ () => void, boolean ] {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
