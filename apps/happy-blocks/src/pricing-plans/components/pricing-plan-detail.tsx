@@ -1,5 +1,4 @@
 import { BlockSaveProps } from '@wordpress/blocks';
-import { find } from 'lodash';
 import { FunctionComponent } from 'react';
 import { BlockAttributes, PricingPlan } from '../types';
 import BillingButton from './billing-button';
@@ -17,7 +16,8 @@ const PricingPlanDetail: FunctionComponent< BlockSaveProps< BlockAttributes > & 
 	setPlan,
 } ) => {
 	const selectedBilling =
-		find( plan.billing, { planSlug: attributes.planSlug } ) ?? plan.billing[ 0 ];
+		plan.billing.find( ( billing ) => billing.planSlug === attributes.planSlug ) ??
+		plan.billing[ 0 ];
 
 	return (
 		<section className="wp-block-a8c-pricing-plans__detail">
