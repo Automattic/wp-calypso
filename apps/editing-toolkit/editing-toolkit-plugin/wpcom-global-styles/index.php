@@ -181,7 +181,7 @@ add_action( 'save_post_wp_global_styles', 'wpcom_track_global_styles', 10, 3 );
  */
 function wpcom_global_styles_in_use() {
 	if ( class_exists( 'WP_Theme_JSON_Resolver' ) ) {
-		$user_cpt = WP_Theme_JSON_Resolver::get_user_data_from_wp_global_styles();
+		$user_cpt = WP_Theme_JSON_Resolver::get_user_data_from_wp_global_styles( null );
 	} else {
 		do_action( 'global_styles_log', 'global_styles_not_in_use' );
 		return false;
