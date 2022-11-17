@@ -12,9 +12,6 @@ import Spam from './action-spam';
 
 function useStatefulMobileMenu() {
 	const [ isMobileMenuVisible, setIsMobileMenuVisible ] = useState( false );
-	const hideMobileMenu = useCallback( () => {
-		isMobileMenuVisible && setIsMobileMenuVisible( false );
-	}, [ isMobileMenuVisible, setIsMobileMenuVisible ] );
 	const toggleMobileMenu = useCallback(
 		( event ) => {
 			event.stopPropagation();
@@ -24,7 +21,6 @@ function useStatefulMobileMenu() {
 		[ isMobileMenuVisible, setIsMobileMenuVisible ]
 	);
 	return {
-		hideMobileMenu,
 		isMobileMenuVisible,
 		setIsMobileMenuVisible,
 		toggleMobileMenu,
@@ -103,7 +99,7 @@ function useActionItems( { data, moduleName } ) {
 const StatsListActions = ( { data, moduleName, children } ) => {
 	const translate = useTranslate();
 	const actionItems = useActionItems( { data, moduleName } );
-	const { hideMobileMenu, isMobileMenuVisible, toggleMobileMenu } = useStatefulMobileMenu();
+	const { isMobileMenuVisible, toggleMobileMenu } = useStatefulMobileMenu();
 
 	return actionItems?.length || children ? (
 		<>
@@ -126,7 +122,6 @@ const StatsListActions = ( { data, moduleName, children } ) => {
 					'stats-list-actions--expanded': isMobileMenuVisible,
 				} ) }
 				onClick={ ( e ) => e.stopPropagation() }
-				onBlur={ hideMobileMenu }
 			>
 				{ !! children && children }
 				{ !! actionItems?.length && actionItems }
