@@ -211,3 +211,5 @@ export const setupAllTrackingScripts = () => {
 		}
 	}
 };
+
+setupAllTrackingScripts();
