@@ -57,13 +57,13 @@ export default function JetpackMobilePromoCard( {
 				{ isMobile && <AppStoreSVG /> }
 				{ ! isMobile && ! isWoo && (
 					<img
-						className="jetpack-qr-code"
+						className="promo-qr-code"
 						src={ qrCodeJetpack }
 						alt="QR Code for Jetpack mobile app"
 					/>
 				) }
 				{ isWoo && (
-					<img className="jetpack-qr-code" src={ qrCodeWoo } alt="QR Code for Woo mobile app" />
+					<img className="promo-qr-code" src={ qrCodeWoo } alt="QR Code for Woo mobile app" />
 				) }
 			</div>
 		</div>
