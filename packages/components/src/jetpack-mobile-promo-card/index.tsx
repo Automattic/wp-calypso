@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import './style.scss';
+import qrCodeJetpack from './images/qr-code-jetpack.png';
 import qrCodeWoo from './images/qr-code-woo.png';
 import { AppStoreSVG, WordPressJetpackSVG } from './svg-icons';
 
@@ -58,7 +59,7 @@ export default function JetpackMobilePromoCard( {
 					<a href={ redirectLink }>
 						<img
 							className="jetpack-qr-code"
-							src="https://s0.wp.com/wp-content/themes/a8c/jetpackme-new/images/landing-pages/jetpack-app-get-2x.png"
+							src={ qrCodeJetpack }
 							alt="QR Code for Jetpack mobile app"
 						/>
 					</a>
