@@ -3,14 +3,10 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { Spinner, GMClosureNotice } from '@automattic/components';
 import { useSupportAvailability } from '@automattic/data-stores';
-import {
-	isDefaultLocale,
-	getLanguage,
-	useLocale,
-	emailSupportLocales,
-} from '@automattic/i18n-utils';
+import { isDefaultLocale, getLanguage, useLocale } from '@automattic/i18n-utils';
 import { Notice } from '@wordpress/components';
 import { useEffect, useMemo } from '@wordpress/element';
 import { comment, Icon } from '@wordpress/icons';
@@ -77,8 +73,15 @@ export const HelpCenterContactPage: React.FC = () => {
 			return __( 'Email', __i18n_text_domain__ );
 		}
 
-		if ( emailSupportLocales.includes( locale ) ) {
-			return `${ __( 'Email', __i18n_text_domain__ ) } (${ getLanguage( locale )?.name })`;
+		const isLanguageSupported = ( config( 'upwork_support_locales' ) as Array< string > ).includes(
+			locale
+		);
+
+		if ( isLanguageSupported ) {
+			const language = getLanguage( locale );
+			return language
+				? `${ __( 'Email', __i18n_text_domain__ ) } (${ language.name })`
+				: __( 'Email', __i18n_text_domain__ );
 		}
 
 		return __( 'Email (English)', __i18n_text_domain__ );
