@@ -454,12 +454,16 @@ export function useIssueMultipleLicenses(
 		} );
 		const issueLicensePromises: any[] = await Promise.allSettled( issueLicenseRequests );
 
+		const issuedLicenses = issueLicensePromises.filter( ( { status } ) => status === 'fulfilled' );
+
+		if ( ! issuedLicenses.length ) {
+			return;
+		}
+
 		if ( ! selectedSiteId ) {
 			let nextStep = partnerPortalBasePath( '/licenses' );
 			if ( sites > 0 ) {
-				const licenseKeys = issueLicensePromises
-					.filter( ( { status } ) => status === 'fulfilled' )
-					.map( ( { value } ) => value.license_key );
+				const licenseKeys = issuedLicenses.map( ( { value } ) => value.license_key );
 				nextStep = addQueryArgs(
 					{
 						products: licenseKeys.join( ',' ),
@@ -539,20 +543,18 @@ export function useIssueMultipleLicenses(
 
 		const assignedProducts: Array< any > = [];
 
-		issueLicensePromises.forEach( ( promise: any ) => {
-			const { status, value: license } = promise;
-			if ( status === 'fulfilled' ) {
-				const licenseKey = license.license_key;
-				const productSlug = licenseKey.split( '_' )[ 0 ];
-				const selectedProduct = products?.data?.find( ( p ) => p.slug === productSlug );
-				if ( selectedProduct ) {
-					assignedProducts.push( getProductTitle( selectedProduct.name ) );
-				}
-				if ( selectedSiteId ) {
-					assignLicenseRequests.push(
-						assignLicense.mutateAsync( { licenseKey, selectedSite: selectedSiteId } )
-					);
-				}
+		issuedLicenses.forEach( ( promise: any ) => {
+			const { value: license } = promise;
+			const licenseKey = license.license_key;
+			const productSlug = licenseKey.split( '_' )[ 0 ];
+			const selectedProduct = products?.data?.find( ( p ) => p.slug === productSlug );
+			if ( selectedProduct ) {
+				assignedProducts.push( getProductTitle( selectedProduct.name ) );
+			}
+			if ( selectedSiteId ) {
+				assignLicenseRequests.push(
+					assignLicense.mutateAsync( { licenseKey, selectedSite: selectedSiteId } )
+				);
 			}
 		} );
 
