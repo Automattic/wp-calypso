@@ -280,6 +280,81 @@ export function useLicenseIssuing(
 	return [ issue, isLoading ];
 }
 
+export function useAssignLicenses(
+	licenseKeys: Array< string >,
+	selectedSite: { ID: number; domain: string } | null
+): [ () => void, boolean ] {
+	const products = useProductsQuery( {
+		select: selectAlphaticallySortedProductOptions,
+	} );
+	const dispatch = useDispatch();
+	const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
+	const assignLicense = useAssignLicenseMutation( {
+		onError: ( error: Error ) => {
+			dispatch( errorNotice( error.message, { isPersistent: true } ) );
+		},
+	} );
+	const isLoading = assignLicense.isLoading;
+	const selectedSiteId = selectedSite?.ID as number;
+	const assignMultipleLicenses = useCallback( async () => {
+		const assignLicenseRequests: any = [];
+		licenseKeys.forEach( ( licenseKey ) => {
+			assignLicenseRequests.push(
+				assignLicense.mutateAsync( { licenseKey, selectedSite: selectedSiteId } )
+			);
+		} );
+
+		dispatch(
+			recordTracksEvent( 'calypso_partner_portal_assign_multiple_licenses_submit', {
+				products: licenseKeys.join( ',' ),
+				selected_site: selectedSiteId,
+			} )
+		);
+
+		const assignLicensePromises = await Promise.allSettled( assignLicenseRequests );
+		const allSelectedProducts: { key: 'string'; name: string; status: 'rejected' | 'fulfilled' }[] =
+			[];
+
+		assignLicensePromises.forEach( ( promise: any ) => {
+			const { status, value: license } = promise;
+			if ( license ) {
+				const licenseKey = license.license_key;
+				const productSlug = licenseKey.split( '_' )[ 0 ];
+				const selectedProduct = products?.data?.find( ( p ) => p.slug === productSlug );
+				if ( selectedProduct ) {
+					const item = {
+						key: licenseKey,
+						name: getProductTitle( selectedProduct.name ),
+						status,
+					};
+					allSelectedProducts.push( item );
+				}
+			}
+		} );
+
+		const assignLicenseStatus = {
+			selectedSite: selectedSite?.domain || '',
+			selectedProducts: allSelectedProducts,
+		};
+		dispatch( resetSite() );
+		dispatch( setPurchasedLicense( assignLicenseStatus ) );
+		if ( fromDashboard ) {
+			return page.redirect( '/dashboard' );
+		}
+		return page.redirect( partnerPortalBasePath( '/licenses' ) );
+	}, [
+		dispatch,
+		licenseKeys,
+		selectedSite,
+		assignLicense,
+		products,
+		fromDashboard,
+		selectedSiteId,
+	] );
+
+	return [ assignMultipleLicenses, isLoading ];
+}
+
 /**
  * Handle multiple license issue and assign
  *
@@ -539,4 +614,16 @@ export function useIssueMultipleLicenses(
 	] );
 
 	return [ issue, isLoading ];
+}
+
+/**
+ * Handle multiple license assignment
+ *
+ */
+export function useAssignMultipleLicenses(
+	selectedLicenseKeys: Array< string >,
+	selectedSite: { ID: number; domain: string } | null
+): [ () => void, boolean ] {
+	const [ assign, isLoading ] = useAssignLicenses( selectedLicenseKeys, selectedSite );
+	return [ assign, isLoading ];
 }
