@@ -29,6 +29,7 @@ import {
 	shouldShowTryAndCustomize,
 	isExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes,
+	isWporgTheme,
 } from 'calypso/state/themes/selectors';
 
 const identity = ( theme ) => theme;
@@ -172,6 +173,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			! isUserLoggedIn( state ) ||
 			isJetpackSiteMultiSite( state, siteId ) ||
 			isThemeActive( state, themeId, siteId ) ||
+			( isWporgTheme( state, themeId ) && ! isSiteWpcomAtomic( state, siteId ) ) ||
 			( isThemePremium( state, themeId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) ),
 	};
 
