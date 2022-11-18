@@ -9,17 +9,11 @@ const Template = ( args ) => <JetpackMobilePromoCard { ...args } />;
 
 export const Default = Template.bind( {} );
 Default.args = {
-	isMobile: false,
-};
-
-export const Mobile = Template.bind( {} );
-Mobile.args = {
-	className: 'example-extra-classname',
-	isMobile: true,
+	className: 'jetpack-promo',
 };
 
 export const WooPromo = Template.bind( {} );
 WooPromo.args = {
 	className: 'woo-promo',
-	promoType: 'woo',
+	isWoo: true,
 };
