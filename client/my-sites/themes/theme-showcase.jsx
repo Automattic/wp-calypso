@@ -186,7 +186,7 @@ class ThemeShowcase extends Component {
 			}, {} );
 	};
 
-	getTabFilterFromUrl = ( filterString ) => {
+	getTabFilterFromUrl = ( filterString = '' ) => {
 		const matches = Object.values( this.tabSubjectTermTable ).filter(
 			( value ) => filterString.indexOf( value ) >= 0
 		);
