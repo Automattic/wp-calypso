@@ -83,6 +83,8 @@ function UseMyDomainInput( {
 						onKeyDown={ keyDown }
 						isError={ !! validationError }
 						ref={ domainNameInput }
+						autocapitalize="none"
+						autocorrect="off"
 					/>
 					{ domainName && (
 						<Button
