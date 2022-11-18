@@ -18,14 +18,14 @@ export const Title = styled( 'h3' )( {
 	margin: 0,
 } );
 
-Title.defaultProps = { children: __( 'Your digital identity' ) };
+Title.defaultProps = { children: __( 'Stand out' ) };
 
 export const Description = styled( 'p' )( {
 	margin: 0,
 } );
 
 Description.defaultProps = {
-	children: __( 'Show the world what you have to offer with a Link to Bio site.' ),
+	children: __( 'All of your links in one beautiful, shareable site.' ),
 };
 
 export const Image = ( { src }: { src: string } ) => {
@@ -76,7 +76,7 @@ export const CreateButton = () => {
 			className="create-button"
 			onClick={ handleBannerCtaClick }
 		>
-			{ __( 'Create your bio site' ) }
+			{ __( 'Launch a link in bio' ) }
 		</LinkButton>
 	);
 };
