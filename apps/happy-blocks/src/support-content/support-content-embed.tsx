@@ -1,3 +1,5 @@
+import { useBlockProps } from '@wordpress/block-editor';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { SupportContentBlockAttributes } from './block';
 import { WordPressIcon } from './icon';
@@ -12,6 +14,8 @@ export const SupportContentEmbed = ( props: {
 } ) => {
 	const loaded = !! props.attributes.content;
 
+	const blockProps = useBlockProps();
+
 	const minToRead = sprintf(
 		/* translators: Minutes it takes to read embedded support page, eg: "5 min to read" */
 		__( '%1$d min read', 'happy-blocks' ),
@@ -23,6 +27,9 @@ export const SupportContentEmbed = ( props: {
 		__( '%1$d people have found this useful!', 'happy-blocks' ),
 		props.attributes.minutesToRead ?? 0
 	);
+
+	/* translators: Link to resource from where the embed is loaded, eg: "in WordPress.com Forums" */
+	const source = sprintf( 'in <a>%s</a>', blockProps[ 'data-title' ] );
 
 	return (
 		<div className="hb-support-page-embed">
@@ -42,10 +49,9 @@ export const SupportContentEmbed = ( props: {
 					</div>
 					<div className="hb-support-page-embed__source">
 						<InlineSkeleton hidden loaded={ loaded }>
-							<span>in</span>
-							<a className="hb-support-page-embed__link" href={ props.attributes.url }>
-								WordPress.com Support
-							</a>
+							{ createInterpolateElement( source, {
+								a: <a className="hb-support-page-embed__link" href={ props.attributes.url } />,
+							} ) }
 						</InlineSkeleton>
 					</div>
 					{ ( ! loaded || props.attributes.minutesToRead ) && (
