@@ -271,10 +271,22 @@ function recordPaymentCompleteAnalytics( {
 			device,
 		} )
 	);
-	recordPurchase( {
-		cart: responseCart,
-		orderId: transactionResult?.receipt_id,
-	} );
+
+	try {
+		recordPurchase( {
+			cart: responseCart,
+			orderId: transactionResult?.receipt_id,
+		} );
+	} catch ( err ) {
+		// eslint-disable-next-line no-console
+		console.error( err );
+		reduxDispatch(
+			recordCompositeCheckoutErrorDuringAnalytics( {
+				errorObject: err as Error,
+				failureDescription: 'useCreatePaymentCompleteCallback',
+			} )
+		);
+	}
 
 	return reduxDispatch(
 		recordTracksEvent( 'calypso_checkout_composite_payment_complete', {
