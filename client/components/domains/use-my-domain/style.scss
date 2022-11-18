@@ -1,6 +1,7 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/colors";
 
 .use-my-domain {
 	display: flex;
@@ -79,14 +80,14 @@
 			margin-right: 4px !important;
 
 			path {
-				fill: #000;
+				fill: $black;
 			}
 		}
 	}
 
 	& &__domain-input-fieldset::before {
 		content: "https://";
-		color: #000;
+		color: $black;
 		position: absolute;
 		left: 16px;
 		top: 10px;
