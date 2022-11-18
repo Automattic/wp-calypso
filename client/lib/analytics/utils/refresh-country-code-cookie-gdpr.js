@@ -47,7 +47,7 @@ function requestGeoData() {
 		} )
 		.catch( ( err ) => {
 			debug( 'refreshCountryCodeCookieGdpr: error: ', err );
-			return { country_code: 'unknown', region: 'unknown' };
+			return { countryCode: 'unknown', region: 'unknown' };
 		} );
 }
 
