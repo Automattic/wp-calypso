@@ -47,7 +47,6 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	private testFilename: string;
 	private testFilePath: string;
 	private testArtifactsPath: string;
-	private testFailureArtifacts: string[];
 	private failure?: {
 		type: 'hook' | 'test';
 		name: string;
@@ -66,7 +65,6 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 		this.testFilePath = context.testPath;
 		this.testFilename = path.parse( context.testPath ).name;
 		this.testArtifactsPath = '';
-		this.testFailureArtifacts = [];
 		this.allure = this.initializeAllureReporter( config );
 	}
 
@@ -255,11 +253,26 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 			case 'hook_failure':
 				this.allure?.endHook( event.error ?? event.hook.asyncError );
 				this.failure = { type: 'hook', name: event.hook.type };
+				// Jest does not treat hook failures as actual failures, so output are
+				// suppressed. Manually display the error.
+				console.error(
+					`ERROR: ${ event.hook.parent.name } > ${ event.hook.type }\n\n`,
+					event.error,
+					'\n'
+				);
 				break;
+			case 'test_start':
+				// This includes not only the test steps but also the hooks.
+				// Precisely speaking, this event is fired after the `beforeAll` hooks
+				// but prior to the `beforeEach` hooks.
+				if ( this.failure?.type === 'test' ) {
+					event.test.mode = 'skip';
+				}
 			case 'test_fn_start': {
 				// Use `test_fn_start` event instead of `test_start` to filter
 				// out hooks.
 				// See https://github.com/facebook/jest/blob/main/packages/jest-types/src/Circus.ts#L132-L133
+				// As per upstream, this event is the most reliable detection of a test step.
 				this.allure?.startTestStep( event.test, state, this.testFilename );
 				// If a test has failed, skip rest of the steps.
 				if ( this.failure?.type === 'test' ) {
@@ -278,10 +291,6 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 			case 'test_fn_failure': {
 				this.failure = { type: 'test', name: event.test.name };
 				this.allure?.failTestStep( event.error );
-				// Store the failing test's artifact path if it hasn't yet.
-				if ( ! this.testFailureArtifacts.includes( this.testArtifactsPath ) ) {
-					this.testFailureArtifacts.push( this.testArtifactsPath );
-				}
 				break;
 			}
 			case 'test_done': {
@@ -330,8 +339,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 						contextIndex++;
 					}
 					// Print paths to captured artifacts for faster triaging.
-					console.log( `Artifacts for failed tests:` );
-					this.testFailureArtifacts.forEach( ( path ) => console.log( path ) );
+					console.error( `Artifacts for ${ this.testFilename }: ${ this.testArtifactsPath }` );
 				}
 
 				// Regardless of pass/fail status, close the browser instance.
