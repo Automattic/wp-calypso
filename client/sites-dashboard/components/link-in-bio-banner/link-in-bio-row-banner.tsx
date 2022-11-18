@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import image from 'calypso/assets/images/onboarding/link-in-bio-banner-small.jpg';
+import image from 'calypso/assets/images/onboarding/link-in-bio-banner-small.png';
 import * as Banner from './link-in-bio-banner-parts';
 
 const Root = styled( Banner.Root )( {
