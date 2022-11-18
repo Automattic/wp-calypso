@@ -51,7 +51,7 @@
 	// 272 is the --sidebar-width-max value that can't be used in media queries.
 	// 1224 is the max-width for the stats content
 	@media ( min-width: calc(272px + 1224px) ) {
-		padding: 0 calc(50% - 612px);
+		padding: 0 max(calc(50% - 612px), 32px);
 	}
 }
 
