@@ -9,8 +9,6 @@ $yearBarChartBorderRadius: 4px;
 
 // For feature `stats/new-main-chart`
 .stats--new-main-chart {
-	background-color: #fdfdfd;
-
 	// Common Legend options
 	.chart__legend {
 		margin-bottom: 16px;
@@ -77,7 +75,7 @@ $yearBarChartBorderRadius: 4px;
 	// Main Chart
 	.chart {
 		padding-left: 20px;
-		background-color: #fdfdfd;
+		background-color: inherit;
 
 		.chart__bar {
 			// Cancel the chart bar styles

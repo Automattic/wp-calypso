@@ -3,6 +3,9 @@
 @import "calypso/my-sites/stats/modernized-page-header-styles.scss";
 @import "@automattic/components/src/highlight-cards/variables.scss";
 
+$stats-background-color: #fdfdfd;
+$stats-sections-max-width: 1224px;
+
 // Module container
 @include breakpoint-deprecated( ">960px" ) {
 	.stats__module-column {
@@ -31,35 +34,31 @@
 	}
 }
 
-.stats .jetpack-colophon {
-	background-color: #fdfdfd;
-}
-
-.stats .stats-content-promo {
-	background-color: #fdfdfd;
-
-	.promo-card-block {
-		margin: 0;
-	}
-}
-
-.stats > * {
-	@media ( min-width: 660px ) {
-		padding: 0 32px;
-	}
-
-	// 272 is the --sidebar-width-max value that can't be used in media queries.
-	// 1224 is the max-width for the stats content
-	@media ( min-width: calc(272px + 1224px) ) {
-		padding: 0 max(calc(50% - 612px), 32px);
-	}
+.stats__section-header,
+.stats-navigation {
+	background-color: var(--studio-white);
 }
 
 .stats {
+	background-color: $stats-background-color;
+
+	// Ensures vertical padding for certain sections.
 	> .highlight-cards,
 	> .stats__all-time-highlights-section {
 		padding-top: $vertical-margin;
 		padding-bottom: $vertical-margin;
+	}
+
+	// Ensures horizontal padding for all sections.
+	> * {
+		@media ( min-width: 660px ) {
+			padding: 0 32px;
+		}
+
+		// 272 is --sidebar-width-max value. Note that CSS variables can't be used in media queries.
+		@media ( min-width: calc(272px + #{$stats-sections-max-width}) ) {
+			padding: 0 max(calc(50% - #{$stats-sections-max-width / 2}), 32px);
+		}
 	}
 }
 
