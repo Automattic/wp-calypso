@@ -5,6 +5,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import useBloggingPrompt from 'calypso/data/blogging-prompt/use-blogging-prompt';
+import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
+import { SECTION_BLOGGING_PROMPT } from 'calypso/my-sites/customer-home/cards/constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import BellOffIcon from './bell-off-icon';
@@ -18,7 +20,16 @@ export const BloggingPromptCard = () => {
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 	const prompt = useBloggingPrompt( selectedSiteId );
+	const { skipCard } = useSkipCurrentViewMutation( selectedSiteId );
 
+	const hidePrompts = () => {
+		skipCard( SECTION_BLOGGING_PROMPT );
+		dispatch(
+			recordTracksEvent( 'calypso_customer_home_task_skip', {
+				task: SECTION_BLOGGING_PROMPT,
+			} )
+		);
+	};
 	const trackBloggingPromptClick = () => {
 		dispatch(
 			recordTracksEvent( `calypso_customer_home_answer_prompt`, {
@@ -35,6 +46,7 @@ export const BloggingPromptCard = () => {
 
 	const newPostLink = `/post/${ siteSlug }?answer_prompt=${ prompt.id }`;
 	const notificationSettingsLink = `/me/notifications#${ siteSlug }`;
+
 	return (
 		<div className="blogging-prompt">
 			<Card className={ classnames( 'customer-home__card', 'blogging-prompt__card' ) }>
@@ -42,7 +54,7 @@ export const BloggingPromptCard = () => {
 					<LightbulbIcon />
 					{ translate( 'Daily Prompt' ) }
 					<EllipsisMenu className="blogging-prompt__menu" position="bottom">
-						<Button className="popover__menu-item">
+						<Button className="popover__menu-item" onClick={ hidePrompts }>
 							<Gridicon icon="not-visible" className="gridicons-not-visible" />
 							{ translate( 'Hide Daily Prompts' ) }
 						</Button>
