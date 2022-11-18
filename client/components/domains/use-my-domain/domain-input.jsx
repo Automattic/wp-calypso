@@ -48,9 +48,9 @@ function UseMyDomainInput( {
 	};
 
 	const hasDomainPlaceholderLabel =
-		englishLocales.includes( locale ) || hasTranslation( 'yoursiteaddress.com' );
+		englishLocales.includes( locale ) || hasTranslation( 'yourgroovydomain.com' );
 	const domainPlaceholderLabel = hasDomainPlaceholderLabel
-		? __( 'yoursiteaddress.com' )
+		? __( 'yourgroovydomain.com' )
 		: __( 'mydomain.com' );
 
 	return (
