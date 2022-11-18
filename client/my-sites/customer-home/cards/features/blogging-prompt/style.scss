@@ -19,3 +19,23 @@
 		padding-bottom: 20px;
 	}
 }
+
+.blogging-prompt__menu {
+	float: right;
+	.button {
+		text-align: left;
+		.gridicon {
+			margin-right: 10px;
+		}
+	}
+	.blogging-prompt__bell-icon {
+		display: inline-block;
+		height: 18px;
+		width: 18px;
+		margin-right: 10px;
+		.gridicon {
+			width: 24px;
+			height: 24px;
+		}
+	}
+}
