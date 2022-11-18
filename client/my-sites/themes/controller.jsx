@@ -101,7 +101,7 @@ export function fetchThemeFilters( context, next ) {
 		if ( getNotice( store.getState(), 'fetch-theme-filters-error' ) ) {
 			debug( 'error fetching theme filters' );
 			unsubscribe();
-			return next(); // TODO: handle error???????
+			return next( new Error( 'Error fetching theme filters.' ) );
 		}
 
 		if ( Object.keys( getThemeFilters( store.getState() ) ).length > 0 ) {
