@@ -50,15 +50,18 @@ $stats-sections-max-width: 1224px;
 	}
 
 	// Ensures horizontal padding for all sections.
-	> * {
-		@media ( min-width: 660px ) {
-			padding: 0 32px;
-		}
-
-		// 272 is --sidebar-width-max value. Note that CSS variables can't be used in media queries.
-		@media ( min-width: calc(272px + #{$stats-sections-max-width}) ) {
+	@media ( min-width: 660px ) {
+		> * {
 			padding: 0 max(calc(50% - #{$stats-sections-max-width / 2}), 32px);
 		}
+
+		> .card.banner.jetpack-backup-creds-banner {
+			margin: 0 max(calc(50% - #{$stats-sections-max-width / 2}), 32px);
+		}
+	}
+
+	> .card.banner.jetpack-backup-creds-banner {
+		margin-bottom: 1em;
 	}
 }
 
