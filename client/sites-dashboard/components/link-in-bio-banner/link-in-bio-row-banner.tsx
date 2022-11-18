@@ -12,11 +12,6 @@ const Root = styled( Banner.Root )( {
 	'.create-button': {
 		whiteSpace: 'nowrap',
 	},
-	[ '@media screen and ( max-width: 960px )' ]: {
-		'.banner-image': {
-			display: 'none',
-		},
-	},
 } );
 
 const Title = styled( Banner.Title )( {

@@ -1,3 +1,4 @@
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { BannerType, LinkInBioBanners } from './link-in-bio-banners';
@@ -17,6 +18,7 @@ const hasLinkInBioSite = ( sites: SiteExcerptData[] ) => {
 
 export const LinkInBioBanner = ( props: Props ) => {
 	const { displayMode } = props;
+	const isMobile = useMobileBreakpoint();
 	const { data: sites = [], isLoading } = useSiteExcerptsQuery();
 	const siteCount = sites.length;
 	const doesNotAlreadyHaveALinkInBioSite = ! hasLinkInBioSite( sites );
@@ -25,7 +27,7 @@ export const LinkInBioBanner = ( props: Props ) => {
 	let bannerType: BannerType = 'none';
 
 	if ( showBanner ) {
-		bannerType = displayMode === 'grid' ? 'tile' : 'row';
+		bannerType = displayMode === 'grid' || isMobile ? 'tile' : 'row';
 	}
 
 	return LinkInBioBanners[ bannerType ];
