@@ -140,7 +140,7 @@ export class AppBanner extends Component {
 				case NOTES:
 					return `intent://details?id=${ packageName }&url=${ scheme }://notifications&referrer=calypso#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case READER:
-					return `intent://details?id=${ packageName }&url=${ scheme }://reader&referrer=calypso#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
+					return `intent://details?id=${ packageName }&url=${ scheme }://read&referrer=calypso#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case STATS:
 					return `intent://details?id=${ packageName }&url=${ scheme }://stats&referrer=calypso#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 			}
