@@ -102,6 +102,8 @@ const LayoutLoggedOut = ( {
 		masterbar = null;
 	} else if ( sectionName === 'plugins' ) {
 		masterbar = <UniversalNavbarHeader />;
+	} else if ( sectionName === 'themes' || sectionName === 'theme' ) {
+		masterbar = <UniversalNavbarHeader />;
 	} else {
 		masterbar = (
 			<MasterbarLoggedOut
