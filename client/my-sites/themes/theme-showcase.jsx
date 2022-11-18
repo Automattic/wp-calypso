@@ -64,6 +64,7 @@ class ThemeShowcase extends Component {
 		this.bookmarkRef = createRef();
 		this.tabTiers = this.getTabTiers( props );
 		this.tabFilters = this.getTabFilters( props );
+		this.tabSubjectTermTable = this.getSubjectTermTable( props );
 		this.state = {
 			tabFilter: this.tabFilters.ALL,
 		};
@@ -176,6 +177,15 @@ class ThemeShowcase extends Component {
 		};
 	};
 
+	getSubjectTermTable = ( { filterToTermTable } ) => {
+		return Object.keys( filterToTermTable )
+			.filter( ( key ) => key.indexOf( 'subject:' ) !== -1 )
+			.reduce( ( obj, key ) => {
+				obj[ key ] = filterToTermTable[ key ];
+				return obj;
+			}, {} );
+	};
+
 	scrollToSearchInput = () => {
 		if ( ! this.props.loggedOutComponent && this.scrollRef && this.scrollRef.current ) {
 			// If you are a larger screen where the theme info is displayed horizontally.
@@ -284,10 +294,20 @@ class ThemeShowcase extends Component {
 		}
 
 		if ( isNewSearchAndFilter ) {
-			const url = this.constructUrl( {
-				filter: this.props.filterToTermTable[ `subject:${ tabFilter.key }` ],
-			} );
-			page( url );
+			const { filter, search, filterToTermTable } = this.props;
+			const subjectTerm = filterToTermTable[ `subject:${ tabFilter.key }` ];
+			const subjectFilters = Object.values( this.tabSubjectTermTable );
+			const filterWithoutSubjects = filter
+				.split( '+' )
+				.filter( ( key ) => ! subjectFilters.includes( key ) )
+				.join( '+' );
+
+			const newFilter =
+				tabFilter.key !== this.tabFilters.ALL.key
+					? [ filterWithoutSubjects, subjectTerm ].join( '+' )
+					: filterWithoutSubjects;
+
+			page( this.constructUrl( { filter: newFilter, searchString: search } ) );
 		}
 
 		this.setState( { tabFilter }, callback );
