@@ -38,7 +38,6 @@ export const LinkInBioRowBanner = () => {
 				<Banner.Description />
 			</Details>
 			<Banner.CreateButton />
-			<Banner.DismissButton />
 		</Root>
 	);
 };

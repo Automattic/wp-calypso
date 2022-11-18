@@ -1,14 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
-import { Button as IconButton } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { close } from '@wordpress/icons';
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { savePreference } from 'calypso/state/preferences/actions';
-
-export const LINK_IN_BIO_BANNER_PREFERENCE = `link-in-bio-banner`;
 
 export const Root = styled( 'div' )( {
 	position: 'relative',
@@ -32,16 +26,6 @@ export const Description = styled( 'p' )( {
 
 Description.defaultProps = {
 	children: __( 'Show the world what you have to offer with a Link to Bio site.' ),
-};
-
-export const DismissButton = () => {
-	const dispatch = useDispatch();
-
-	const handleDismissBanner = () => {
-		recordTracksEvent( 'calypso_link_in_bio_banner_dismiss_click' );
-		dispatch( savePreference( LINK_IN_BIO_BANNER_PREFERENCE, false ) );
-	};
-	return <IconButton icon={ close } onClick={ handleDismissBanner } className="dismiss-button" />;
 };
 
 export const Image = ( { src }: { src: string } ) => {
