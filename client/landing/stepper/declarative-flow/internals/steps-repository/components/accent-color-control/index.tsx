@@ -140,7 +140,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 		const matchingOption = getMatchingOption();
 
 		if ( matchingOption?.isPremium || ( customColor && ! matchingOption ) ) {
-			return <Gridicon icon="lock" size={ 18 } color="gray" className="extra-gridicon" />;
+			return <Gridicon icon="lock" size={ 18 } className="extra-gridicon" />;
 		}
 		return null;
 	};
@@ -154,7 +154,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 				selected={ option.value === accentColor.hex }
 				extra={
 					shouldLimitGlobalStyles && option.isPremium ? (
-						<Gridicon icon="lock" size={ 18 } color="gray" className="extra-gridicon" />
+						<Gridicon icon="lock" size={ 18 } className="extra-gridicon" />
 					) : null
 				}
 			>
