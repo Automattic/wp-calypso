@@ -18,6 +18,8 @@ import type { Pattern } from './types';
 import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import './style.scss';
 
+let pendingAction: Promise< unknown > = Promise.resolve();
+
 const PatternAssembler: Step = ( { navigation } ) => {
 	const translate = useTranslate();
 	const patternAssemblerData = useSelect( ( select ) =>
@@ -264,23 +266,27 @@ const PatternAssembler: Step = ( { navigation } ) => {
 								const stylesheet = design.recipe!.stylesheet!;
 								const theme = stylesheet?.split( '/' )[ 1 ] || design.theme;
 
-								setPendingAction(
+								// Ensure the previous requests are finished when the user goes back to this step
+								// and submit the selected patterns again. If we want to bail out the previous
+								// requests, it might probably lead to the race condition
+								pendingAction = pendingAction
 									// We have to switch theme first. Otherwise, the unique suffix might append to
 									// the slug of newly created Home template if the current activated theme has
 									// modified Home template.
-									setThemeOnSite( siteSlugOrId, theme, undefined, false )
-										.then( () =>
-											createCustomTemplate(
-												siteSlugOrId,
-												stylesheet,
-												'home',
-												translate( 'Home' ),
-												createCustomHomeTemplateContent( stylesheet, !! header, !! footer )
-											)
+									.then( () => setThemeOnSite( siteSlugOrId, theme, undefined, false ) )
+									.then( () =>
+										createCustomTemplate(
+											siteSlugOrId,
+											stylesheet,
+											'home',
+											translate( 'Home' ),
+											createCustomHomeTemplateContent( stylesheet, !! header, !! footer )
 										)
-										.then( () => runThemeSetupOnSite( siteSlugOrId, design ) )
-										.then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
-								);
+									)
+									.then( () => runThemeSetupOnSite( siteSlugOrId, design ) )
+									.then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) );
+
+								setPendingAction( pendingAction );
 
 								setPatternAssemblerData( { header, sections, footer } );
 
