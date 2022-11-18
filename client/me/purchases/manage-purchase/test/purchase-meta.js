@@ -10,21 +10,60 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import PurchaseMeta from '../purchase-meta';
 
-describe( 'PurchaseMetaPrice', () => {
-	const store = createReduxStore();
+describe( 'PurchaseMeta', () => {
+	// const store = createReduxStore(
+	// 	{
+	// 		purchases: {
+	// 			data: [
+	// 				{
+	// 					id: 1,
+	// 					expiryStatus: 'included',
+	// 				},
+	// 			],
+	// 		},
+	// 		currentUser: {
+	// 			id: 1,
+	// 			user: {
+	// 				primary_blog: 'example',
+	// 			},
+	// 		},
+	// 		sites: {
+	// 			requestingAll: false,
+	// 		},
+	// 	},
+	// 	( state ) => state
+	// );
+	const store = createReduxStore(
+		{
+			purchases: {
+				data: [
+					{
+						ID: 1,
+						expiry_status: 'included',
+					},
+				],
+			},
+			sites: {
+				requestingAll: false,
+			},
+			currentUser: {
+				id: 1,
+				user: {
+					primary_blog: 'example',
+				},
+			},
+		},
+		( state ) => state
+	);
 	it( 'does render "Free with Plan"', () => {
-		const purchase = {
-			expiryStatus: 'included',
-			productSlug: 'wp_titan_mail_monthly',
-			productDisplayPrice: '<abbr title="United States Dollars">$</abbr>3.50',
-		};
 		render(
 			<ReduxProvider store={ store }>
 				<PurchaseMeta
-					purchase={ purchase }
 					hasLoadedPurchasesFromServer={ false }
 					purchaseId={ false }
 					siteSlug="test"
+					//purchase={ purchase }
+					isDataLoading={ false }
 				/>
 			</ReduxProvider>
 		);

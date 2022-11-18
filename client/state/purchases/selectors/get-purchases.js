@@ -10,6 +10,6 @@ import 'calypso/state/purchases/init';
  * @returns {Array} Purchases
  */
 export const getPurchases = createSelector(
-	( state ) => createPurchasesArray( state.purchases.data ),
-	( state ) => [ state.purchases.data ]
+	( state ) => createPurchasesArray( state.purchases?.data ),
+	( state ) => [ state.purchases?.data ]
 );
