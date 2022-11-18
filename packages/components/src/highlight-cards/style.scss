@@ -4,11 +4,6 @@
 @import "../styles/typography";
 @import "./variables.scss";
 
-.stats > .highlight-cards {
-	padding-top: $vertical-margin;
-	padding-bottom: $vertical-margin;
-}
-
 .highlight-cards {
 	color: var(--studio-gray-100);
 	font-size: $font-body-small;

@@ -1,6 +1,7 @@
 @import "calypso/my-sites/stats/modernized-tooltip-styles.scss";
 @import "calypso/my-sites/stats/modernized-chart-tabs-styles.scss";
 @import "calypso/my-sites/stats/modernized-page-header-styles.scss";
+@import "@automattic/components/src/highlight-cards/variables.scss";
 
 // Module container
 @include breakpoint-deprecated( ">960px" ) {
@@ -51,6 +52,14 @@
 	// 1224 is the max-width for the stats content
 	@media ( min-width: calc(272px + 1224px) ) {
 		padding: 0 calc(50% - 612px);
+	}
+}
+
+.stats {
+	> .highlight-cards,
+	> .stats__all-time-highlights-section {
+		padding-top: $vertical-margin;
+		padding-bottom: $vertical-margin;
 	}
 }
 
