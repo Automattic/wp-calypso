@@ -66,7 +66,7 @@ class ThemeShowcase extends Component {
 		this.tabFilters = this.getTabFilters( props );
 		this.tabSubjectTermTable = this.getSubjectTermTable( props );
 		this.state = {
-			tabFilter: this.tabFilters.ALL,
+			tabFilter: this.getTabFilterFromUrl( props.filter ),
 		};
 	}
 
@@ -186,6 +186,26 @@ class ThemeShowcase extends Component {
 			}, {} );
 	};
 
+	getTabFilterFromUrl = ( filterString ) => {
+		const matches = Object.values( this.tabSubjectTermTable ).filter(
+			( value ) => filterString.indexOf( value ) >= 0
+		);
+
+		let tabFilter = this.tabFilters.ALL;
+		if ( ! matches.length ) {
+			return tabFilter;
+		}
+
+		const filterKey = matches[ matches.length - 1 ].split( ':' ).pop();
+		Object.values( this.tabFilters ).map( ( filter ) => {
+			if ( filter.key === filterKey ) {
+				tabFilter = filter;
+			}
+		} );
+
+		return tabFilter;
+	};
+
 	scrollToSearchInput = () => {
 		if ( ! this.props.loggedOutComponent && this.scrollRef && this.scrollRef.current ) {
 			// If you are a larger screen where the theme info is displayed horizontally.
@@ -213,13 +233,15 @@ class ThemeShowcase extends Component {
 
 		const filters = searchBoxContent.match( filterRegex ) || [];
 		const validFilters = filters.map( ( filter ) => filterToTermTable[ filter ] );
+		const filterString = compact( validFilters ).join( '+' );
 
 		const url = this.constructUrl( {
-			filter: compact( validFilters ).join( '+' ),
+			filter: filterString,
 			// Strip filters and excess whitespace
 			searchString: searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim(),
 		} );
-		this.setState( { tabFilter: this.tabFilters.ALL } );
+
+		this.setState( { tabFilter: this.getTabFilterFromUrl( filterString ) } );
 		page( url );
 		this.scrollToSearchInput();
 	};
