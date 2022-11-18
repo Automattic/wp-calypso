@@ -100,8 +100,8 @@ const StatsInsights = ( props ) => {
 						</div>
 					</div>
 				</div>
+				<JetpackColophon />
 			</div>
-			<JetpackColophon />
 		</Main>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
