@@ -39,12 +39,6 @@ export const importFlow: Flow = {
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 
-		const appendFlowQueryParam = ( path: string ) => {
-			const joinChar = path.includes( '?' ) ? '&' : '?';
-
-			return `${ path }${ joinChar }flow=${ this.name }`;
-		};
-
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
 				return new Promise( () => {
@@ -73,14 +67,10 @@ export const importFlow: Flow = {
 						return exitFlow( providedDependencies?.url as string );
 					}
 
-					return navigate(
-						appendFlowQueryParam( providedDependencies?.url as string ) as StepPath
-					);
+					return navigate( providedDependencies?.url as StepPath );
 				}
 				case 'importReadyPreview': {
-					return navigate(
-						appendFlowQueryParam( providedDependencies?.url as string ) as StepPath
-					);
+					return navigate( providedDependencies?.url as StepPath );
 				}
 
 				case 'importerWix':
@@ -92,9 +82,7 @@ export const importFlow: Flow = {
 						return exitFlow( providedDependencies?.url as string );
 					}
 
-					return navigate(
-						appendFlowQueryParam( providedDependencies?.url as string ) as StepPath
-					);
+					return navigate( providedDependencies?.url as StepPath );
 				}
 
 				case 'designSetup': {
@@ -134,7 +122,7 @@ export const importFlow: Flow = {
 					if ( backToStep ) {
 						const path = `${ backToStep }?siteSlug=${ siteSlugParam }`;
 
-						return navigate( appendFlowQueryParam( path ) as StepPath );
+						return navigate( path as StepPath );
 					}
 
 					return navigate( 'import' );
