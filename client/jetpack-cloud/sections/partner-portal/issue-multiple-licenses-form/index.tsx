@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useIssueMultipleLicenses } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import LicenseBundleCard from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
@@ -12,6 +12,7 @@ import {
 } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
+import { getAssignedPlanAndProductIDsForSite } from 'calypso/state/partner-portal/licenses/selectors';
 import { AssignLicenceProps } from '../types';
 
 import './style.scss';
@@ -22,9 +23,21 @@ export default function IssueMultipleLicensesForm( {
 }: AssignLicenceProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { data: allProducts, isLoading: isLoadingProducts } = useProductsQuery( {
+	const { data, isLoading: isLoadingProducts } = useProductsQuery( {
 		select: selectAlphaticallySortedProductOptions,
 	} );
+
+	let allProducts = data;
+	const addedPlanAndProducts = useSelector( ( state ) =>
+		selectedSite ? getAssignedPlanAndProductIDsForSite( state, selectedSite.ID ) : null
+	);
+
+	// Filter products & plan that are already assigned to a site
+	if ( selectedSite && addedPlanAndProducts && allProducts ) {
+		allProducts = allProducts.filter(
+			( product ) => ! addedPlanAndProducts.includes( product.product_id )
+		);
+	}
 
 	const bundles =
 		allProducts?.filter( ( { family_slug } ) => family_slug === 'jetpack-packs' ) || [];
