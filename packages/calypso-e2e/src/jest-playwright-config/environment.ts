@@ -262,24 +262,29 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 				);
 				break;
 			case 'test_start':
-				// This includes not only the test steps but also the hooks.
+				// This event is fired not only for test steps but also the hooks.
 				// Precisely speaking, this event is fired after the `beforeAll` hooks
-				// but prior to the `beforeEach` hooks.
+				// but prior to the `beforeEach` as well.
+				// This means that stats for test results will be muddled if any `beforeEach`
+				// hooks are present.
+				// In addition, the following code snippet is replicated from `test_fn_start`
+				// due to https://github.com/Automattic/wp-calypso/pull/70154.
+				// Without this snippet, Jest will continue executing test steps within the
+				// nested `describe` block despite a failure in an earlier step.
 				if ( this.failure?.type === 'test' ) {
 					event.test.mode = 'skip';
 				}
-			case 'test_fn_start': {
-				// Use `test_fn_start` event instead of `test_start` to filter
-				// out hooks.
+			case 'test_fn_start':
+				// This event is fired after both the `beforeAll` and `beforeEach` hooks.
+				// Since this event fires after `beforeEach` hooks, it is the best way to detect
+				// an actual `it/test` step as having started.
 				// See https://github.com/facebook/jest/blob/main/packages/jest-types/src/Circus.ts#L132-L133
-				// As per upstream, this event is the most reliable detection of a test step.
 				this.allure?.startTestStep( event.test, state, this.testFilename );
 				// If a test has failed, skip rest of the steps.
 				if ( this.failure?.type === 'test' ) {
 					event.test.mode = 'skip';
 				}
 				break;
-			}
 			case 'test_skip':
 				this.allure?.startTestStep( event.test, state, this.testFilename );
 				this.allure?.pendingTestStep( event.test );
