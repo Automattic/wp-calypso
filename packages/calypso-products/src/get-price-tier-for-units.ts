@@ -7,6 +7,10 @@ export interface PriceTierEntry {
 	maximum_price: number;
 	maximum_price_display?: string | null | undefined;
 	maximum_price_monthly_display?: string | null | undefined;
+	transform_quantity_divide_by?: number | null | undefined;
+	transform_quantity_round?: string | null | undefined;
+	per_unit_fee?: number | null | undefined;
+	flat_fee?: number | null | undefined;
 }
 
 export function getPriceTierForUnits(
