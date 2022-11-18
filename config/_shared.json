@@ -4,6 +4,7 @@
 	"favicon_url": "//s1.wp.com/i/favicon.ico",
 	"boom_analytics_enabled": false,
 	"server_side_boom_analytics_enabled": false,
+	"server_side_memcached": false,
 	"boom_analytics_key": false,
 	"client_slug": false,
 	"discover_blog_id": 53424024,
