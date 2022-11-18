@@ -1,4 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
+import {
+	LINK_IN_BIO_FLOW,
+	LINK_IN_BIO_TLD_FLOW,
+	setupSiteAfterCreation,
+} from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { VIDEOPRESS_ONBOARDING_FLOW_STEPS } from './constants';
 
@@ -115,23 +120,42 @@ export function generateFlows( {
 			destination: ( dependencies ) =>
 				`/setup/newsletter/subscribers?siteSlug=${ dependencies.siteSlug }`,
 			description: 'Beginning of the flow to create a newsletter',
-			lastModified: '2022-08-15',
+			lastModified: '2022-11-01',
 			showRecaptcha: true,
 			get pageTitle() {
 				return translate( 'Newsletter' );
 			},
+			postCompleteCallback: setupSiteAfterCreation,
 		},
 		{
-			name: 'link-in-bio',
+			name: LINK_IN_BIO_FLOW,
 			steps: [ 'domains', 'plans-link-in-bio' ],
 			destination: ( dependencies ) =>
 				`/setup/link-in-bio/launchpad?siteSlug=${ encodeURIComponent( dependencies.siteSlug ) }`,
 			description: 'Beginning of the flow to create a link in bio',
-			lastModified: '2022-08-16',
+			lastModified: '2022-11-01',
 			showRecaptcha: true,
 			get pageTitle() {
 				return translate( 'Link in Bio' );
 			},
+			postCompleteCallback: setupSiteAfterCreation,
+		},
+		{
+			name: LINK_IN_BIO_TLD_FLOW,
+			steps: [ 'domains', 'user', 'plans-link-in-bio' ],
+			middleDestination: {
+				user: ( dependencies ) => `/setup/link-in-bio/patterns?tld=${ dependencies.tld }`,
+			},
+			destination: ( dependencies ) =>
+				`/setup/link-in-bio/launchpad?siteSlug=${ encodeURIComponent( dependencies.siteSlug ) }`,
+			description: 'Beginning of the flow to create a link in bio',
+			lastModified: '2022-11-03',
+			showRecaptcha: true,
+			get pageTitle() {
+				return translate( 'Link in Bio' );
+			},
+			providesDependenciesInQuery: [ 'tld' ],
+			postCompleteCallback: setupSiteAfterCreation,
 		},
 		{
 			name: 'import',
@@ -286,8 +310,9 @@ export function generateFlows( {
 					dependencies.siteSlug
 				) }`,
 			description: 'VideoPress signup flow',
-			lastModified: '2022-07-06',
+			lastModified: '2022-11-01',
 			showRecaptcha: true,
+			postCompleteCallback: setupSiteAfterCreation,
 		},
 		{
 			name: 'videopress-account',

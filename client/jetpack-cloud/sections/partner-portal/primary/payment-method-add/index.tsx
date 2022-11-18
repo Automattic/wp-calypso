@@ -39,10 +39,11 @@ import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import { fetchStoredCards } from 'calypso/state/partner-portal/stored-cards/actions';
 import getSites from 'calypso/state/selectors/get-sites';
+import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
-function PaymentMethodAdd() {
+function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null } ) {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
@@ -198,8 +199,8 @@ function PaymentMethodAdd() {
 			<DocumentHead title={ translate( 'Payment Methods' ) } />
 			<SidebarNavigation />
 
-			{ ( !! returnQueryArg || product ) && (
-				<AssignLicenseStepProgress currentStep="addPaymentMethod" />
+			{ ( !! returnQueryArg || product || products ) && (
+				<AssignLicenseStepProgress currentStep="addPaymentMethod" selectedSite={ selectedSite } />
 			) }
 
 			<div className="payment-method-add__header">
@@ -279,13 +280,17 @@ function PaymentMethodAdd() {
 	);
 }
 
-export default function PaymentMethodAddWrapper() {
+export default function PaymentMethodAddWrapper( {
+	selectedSite,
+}: {
+	selectedSite?: SiteDetails | null;
+} ) {
 	const locale = useSelector( getCurrentUserLocale );
 
 	return (
 		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ getStripeConfiguration }>
 			<StripeSetupIntentIdProvider fetchStipeSetupIntentId={ getStripeConfiguration }>
-				<PaymentMethodAdd />
+				<PaymentMethodAdd selectedSite={ selectedSite } />
 			</StripeSetupIntentIdProvider>
 		</StripeHookProvider>
 	);

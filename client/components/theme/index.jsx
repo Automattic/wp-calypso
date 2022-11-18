@@ -265,6 +265,27 @@ export class Theme extends Component {
 		}
 	};
 
+	parseThemePrice = ( price ) => {
+		/*
+		theme.price on "Recommended" themes tab
+		Premium theme: "$50"
+		Free theme:    undefined
+
+		theme.price on Trending themes tab
+		Premium theme: { value: 50, currency: "USD", display: "<abbr title=\"United States Dollars\">US$</abbr>50" }
+		Free theme:    { value: 0, currency: "USD", display: "Free" }
+
+		Try to correctly parse the price for both cases.
+		*/
+		if ( typeof price === 'object' && 'display' in price ) {
+			let parsedThemePrice = price.display;
+			// Remove all html tags from the price string
+			parsedThemePrice = parsedThemePrice.replace( /(<([^>]+)>)/gi, '' );
+			return parsedThemePrice;
+		}
+		return price;
+	};
+
 	getUpsellMessage() {
 		const {
 			hasPremiumThemesFeature,
@@ -283,6 +304,8 @@ export class Theme extends Component {
 		const isUsableBundledTheme =
 			doesThemeBundleSoftwareSet && hasPremiumThemesFeature && isSiteEligibleForBundledSoftware;
 
+		const parsedThemePrice = this.parseThemePrice( theme.price );
+
 		if ( didPurchaseTheme && ! isUsablePremiumTheme && ! isUsableBundledTheme ) {
 			return translate( 'You have purchased an annual subscription for this theme' );
 		} else if ( isExternallyManagedTheme && ! isSiteEligibleForManagedExternalThemes ) {
@@ -291,7 +314,7 @@ export class Theme extends Component {
 				translate(
 					'This premium theme costs %(price)s per year and can only be purchased if you have the <Link>Business plan</Link> on your site.',
 					{
-						args: { price: theme.price },
+						args: { price: parsedThemePrice },
 					}
 				),
 				{
@@ -303,7 +326,7 @@ export class Theme extends Component {
 			return translate(
 				'This premium theme is only available while your current plan is active and costs %(price)s per year.',
 				{
-					args: { price: theme.price },
+					args: { price: parsedThemePrice },
 				}
 			);
 		} else if ( isUsablePremiumTheme ) {
@@ -326,7 +349,7 @@ export class Theme extends Component {
 					'This premium theme is included in the <Link>Premium plan</Link>, or you can purchase individually for %(price)s a year'
 				),
 				{
-					price: theme.price,
+					price: parsedThemePrice,
 				}
 			),
 			{
@@ -373,7 +396,7 @@ export class Theme extends Component {
 		} );
 
 		const themeNeedsPurchase = isPremiumTheme && ! hasPremiumThemesFeature && ! didPurchaseTheme;
-		const showUpsell = upsellUrl && theme.price && ! active;
+		const showUpsell = upsellUrl && isPremiumTheme && ! active;
 		const priceClass = classNames( 'theme__badge-price', {
 			'theme__badge-price-upgrade': ! themeNeedsPurchase,
 			'theme__badge-price-upsell': showUpsell,

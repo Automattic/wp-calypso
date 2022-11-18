@@ -58,7 +58,7 @@ export class PurchasePlanDetails extends Component {
 			case 'vaultpress':
 				return this.props.translate( 'Backups and security scanning API key' );
 			case 'akismet':
-				return this.props.translate( 'Anti-spam API key' );
+				return this.props.translate( 'Akismet Anti-spam API key' );
 		}
 	}
 

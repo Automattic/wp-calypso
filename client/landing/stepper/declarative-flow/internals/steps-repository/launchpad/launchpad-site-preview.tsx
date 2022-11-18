@@ -23,7 +23,7 @@ const LaunchpadSitePreview = ( {
 
 	if ( isVideoPressFlow ) {
 		const windowWidth = window.innerWidth;
-		defaultDevice = windowWidth >= 1430 ? DEVICE_TYPE.COMPUTER : DEVICE_TYPE.PHONE;
+		defaultDevice = windowWidth >= 1000 ? DEVICE_TYPE.COMPUTER : DEVICE_TYPE.PHONE;
 	}
 
 	function formatPreviewUrl() {
@@ -47,6 +47,7 @@ const LaunchpadSitePreview = ( {
 		<div className="launchpad__site-preview-wrapper">
 			<WebPreview
 				className="launchpad__-web-preview"
+				disableTabbing
 				showDeviceSwitcher={ true }
 				showPreview
 				showSEO={ true }

@@ -47,7 +47,7 @@ const logRequest = ( req, res, options ) => {
 		req.logger.info(
 			// TODO: does warn not exist here for tests?
 			{
-				performanceMarks: finalizePerfMarks( req ),
+				performanceMarks: finalizePerfMarks( req.context ),
 				didTimeout: duration > 49500, // A timeout occurs at 50s, so anything close to that is likely a timeout.
 				duration,
 			},

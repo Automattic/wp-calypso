@@ -258,7 +258,7 @@ class MasterbarLoggedIn extends Component {
 		const {
 			isCheckoutPending,
 			previousPath,
-			siteSlug,
+			currentSelectedSiteSlug,
 			isJetpackNotAtomic,
 			title,
 			loadHelpCenterIcon,
@@ -271,7 +271,7 @@ class MasterbarLoggedIn extends Component {
 				title={ title }
 				isJetpackNotAtomic={ isJetpackNotAtomic }
 				previousPath={ previousPath }
-				siteSlug={ siteSlug }
+				siteSlug={ currentSelectedSiteSlug }
 				isLeavingAllowed={ ! isCheckoutPending }
 				loadHelpCenterIcon={ loadHelpCenterIcon }
 			/>
@@ -582,7 +582,9 @@ export default connect(
 				? getSiteSlug( state, currentSelectedSiteId )
 				: undefined,
 			previousPath: getPreviousRoute( state ),
-			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
+			isJetpackNotAtomic:
+				isJetpackSite( state, currentSelectedSiteId ) &&
+				! isAtomicSite( state, currentSelectedSiteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			hasDismissedThePopover: getPreference( state, MENU_POPOVER_PREFERENCE_KEY ),
 			isFetchingPrefs: isFetchingPreferences( state ),

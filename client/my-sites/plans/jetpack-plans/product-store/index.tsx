@@ -6,6 +6,8 @@ import StoreFooter from 'calypso/jetpack-connect/store-footer';
 import { addQueryArgs } from 'calypso/lib/route';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import OpenSourceSection from '../open-source';
+import PlanUpgradeSection from '../plan-upgrade';
 import StoreItemInfoContext from './context/store-item-info-context';
 import { useShowJetpackFree } from './hooks/use-show-jetpack-free';
 import { useStoreItemInfo } from './hooks/use-store-item-info';
@@ -29,6 +31,7 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 	enableUserLicensesDialog,
 	onClickPurchase,
 	urlQueryArgs,
+	planRecommendation,
 	header,
 } ) => {
 	const translate = useTranslate();
@@ -94,7 +97,17 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 
 			{ enableUserLicensesDialog && <UserLicensesDialog siteId={ siteId } /> }
 
-			<PricingBanner siteId={ siteId } duration={ duration } />
+			{ planRecommendation && (
+				<PlanUpgradeSection
+					planRecommendation={ planRecommendation }
+					duration={ duration }
+					filterBar={ null }
+					onSelectProduct={ onClickPurchase }
+					createButtonURL={ createCheckoutURL }
+				/>
+			) }
+
+			<PricingBanner />
 
 			<TabPanel
 				className="jetpack-product-store__items-tabs"
@@ -116,6 +129,7 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 			{ showJetpackFree && <JetpackFree urlQueryArgs={ urlQueryArgs } siteId={ siteId } /> }
 
 			<Recommendations />
+			<OpenSourceSection />
 
 			{ currentView === 'bundles' && <NeedMoreInfo /> }
 
