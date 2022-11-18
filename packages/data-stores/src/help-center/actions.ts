@@ -35,6 +35,7 @@ export const setIsMinimized = ( minimized: boolean ) =>
 
 export const setShowHelpCenter = function* ( show: boolean ) {
 	if ( ! show ) {
+		// reset minimized state when the help center is closed
 		yield setIsMinimized( false );
 	}
 
@@ -92,7 +93,6 @@ export const resetStore = () =>
 	} as const );
 
 export type HelpCenterAction = ReturnType<
-	| typeof setShowHelpCenter
 	| typeof setSite
 	| typeof setSubject
 	| typeof setRouterState
