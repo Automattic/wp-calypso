@@ -1,20 +1,24 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import './style.scss';
+import qrCodeWoo from './images/qr-code-woo.png';
 import { AppStoreSVG, WordPressJetpackSVG } from './svg-icons';
 
 export type JetpackMobilePromoCardProps = {
 	className?: string;
 	isMobile?: boolean;
+	promoType?: string;
 };
 
 export default function JetpackMobilePromoCard( {
 	className,
 	isMobile,
+	promoType,
 }: JetpackMobilePromoCardProps ) {
 	// Using useTranslate() with interpolation to set up the title/message.
 	// https://wpcalypso.wordpress.com/devdocs/packages/i18n-calypso/README.md
 	const translate = useTranslate();
+	const isWoo = promoType === 'woo';
 	const redirectLink = 'https://jetpack.com/app/';
 	const components = {
 		a: <a href={ redirectLink } />,
@@ -50,7 +54,7 @@ export default function JetpackMobilePromoCard( {
 			</div>
 			<div className="promo-rhs">
 				{ isMobile && <AppStoreSVG /> }
-				{ ! isMobile && (
+				{ ! isMobile && ! isWoo && (
 					<a href={ redirectLink }>
 						<img
 							className="jetpack-qr-code"
@@ -58,6 +62,9 @@ export default function JetpackMobilePromoCard( {
 							alt="QR Code for Jetpack mobile app"
 						/>
 					</a>
+				) }
+				{ isWoo && (
+					<img className="jetpack-qr-code" src={ qrCodeWoo } alt="QR Code for Woo mobile app" />
 				) }
 			</div>
 		</div>
