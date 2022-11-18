@@ -216,7 +216,7 @@ class StatsSite extends Component {
 		} );
 
 		return (
-			<div>
+			<div className="stats">
 				<JetpackBackupCredsBanner event="stats-backup-credentials" />
 
 				<FormattedHeader
@@ -456,7 +456,7 @@ class StatsSite extends Component {
 		const mainWrapperClass = classNames( { 'stats--new-wrapper': isNewMainChart } );
 
 		return (
-			<Main className={ mainWrapperClass } wideLayout>
+			<Main className={ mainWrapperClass } fullWidthLayout>
 				<QueryKeyringConnections />
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				<QuerySiteKeyrings siteId={ siteId } />
