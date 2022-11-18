@@ -24,6 +24,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+// Monthly plans don't have free domains
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 import {
 	domainAddEmailUpsell,
@@ -38,6 +39,7 @@ import {
 } from 'calypso/state/domains/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
+import isSiteOnMonthlyPlan from 'calypso/state/selectors/is-site-on-monthly-plan';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
@@ -150,7 +152,11 @@ class DomainSearch extends Component {
 				// Nothing needs to be done here. CartMessages will display the error to the user.
 				return;
 			}
-			page( `/plans/${ this.props.selectedSiteSlug }?domainAndPlanPackage=true` );
+			// Monthly plans don't have free domains
+			const intervalTypePath = this.props.isSiteOnMonthlyPlan ? 'yearly/' : '';
+			page(
+				`/plans/${ intervalTypePath }${ this.props.selectedSiteSlug }?domainAndPlanPackage=true`
+			);
 			return;
 		}
 
@@ -300,6 +306,7 @@ export default connect(
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 			isSiteUpgradeable: isSiteUpgradeable( state, siteId ),
+			isSiteOnMonthlyPlan: isSiteOnMonthlyPlan( state, siteId ),
 			productsList: getProductsList( state ),
 			userCanPurchaseGSuite: canUserPurchaseGSuite( state ),
 		};
