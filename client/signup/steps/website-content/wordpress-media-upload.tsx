@@ -4,11 +4,10 @@ import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, MouseEvent, useState } from 'react';
-import imagePlaceholder from 'calypso/assets/images/difm/placeholder.svg';
 import { useAddMedia } from 'calypso/data/media/use-add-media';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { Label, SubLabel } from 'calypso/signup/accordion-form/form-components';
-import { Media } from 'calypso/state/signup/steps/website-content/schema';
+import { Media, MediaUploadType } from 'calypso/state/signup/steps/website-content/schema';
 import type { SiteDetails } from '@automattic/data-stores';
 
 const debug = debugFactory( 'difm:website-content' );
@@ -21,6 +20,19 @@ const UPLOAD_STATES = {
 	COMPLETED: 'COMPLETED',
 	FAILED: 'FAILED',
 };
+
+const MediaPlaceholderIcon = styled( Gridicon )`
+	color: #e9eff6;
+	width: 45px;
+	height: 45px;
+`;
+
+const MediaPlaceholder = ( { mediaType }: { mediaType: MediaUploadType } ) =>
+	mediaType === 'VIDEO' ? (
+		<MediaPlaceholderIcon icon="video-camera" />
+	) : (
+		<MediaPlaceholderIcon icon="image" />
+	);
 
 const StyledGridIcon = styled( Gridicon )`
 	z-index: 101;
@@ -183,6 +195,7 @@ export function WordpressMediaUpload( {
 	};
 
 	const allowedFileTypes = mediaType === 'VIDEO' ? allowedVideoExtensions : allowedImageExtensions;
+
 	const allowedFileTypesString = allowedFileTypes.map( ( type ) => `.${ type }` ).join();
 
 	switch ( uploadState ) {
@@ -191,9 +204,9 @@ export function WordpressMediaUpload( {
 				<>
 					<FileSelectThumbnailContainer>
 						<FileInput type="file" onChange={ onPick } accept={ allowedFileTypesString } />
+						{ /* Fixes small UI glitch where cross icon switches on load */ }
 						{ ! isImageLoading && <CrossButton onClick={ onClickRemoveImage } /> }
 						<CroppedImage>
-							{ /* Fixes small UI glitch where cross icon switches on load */ }
 							<img
 								style={ { opacity: isImageLoading ? 0.2 : 1 } }
 								src={ thumbnailUrl ?? url }
@@ -217,8 +230,7 @@ export function WordpressMediaUpload( {
 				<>
 					<FileSelectThumbnailContainer>
 						<FileInput type="file" onChange={ onPick } accept={ allowedFileTypesString } />
-						{ /* TODO: Change placeholder to video for video media type */ }
-						<img src={ imagePlaceholder } alt="placeholder" />
+						<MediaPlaceholder mediaType={ mediaType } />
 						<Label>{ translate( 'Choose file' ) }</Label>
 						<SubLabel color="red">{ translate( 'Image upload failed' ) }</SubLabel>
 					</FileSelectThumbnailContainer>
@@ -231,7 +243,7 @@ export function WordpressMediaUpload( {
 				<>
 					<FileSelectThumbnailContainer>
 						<FileInput type="file" onChange={ onPick } accept={ allowedFileTypesString } />
-						<img src={ imagePlaceholder } alt="placeholder" />
+						<MediaPlaceholder mediaType={ mediaType } />
 						<Label>{ translate( 'Choose file' ) }</Label>
 						{ /* <SubLabel>{ translate( 'or drag here')}</SubLabel> */ }
 					</FileSelectThumbnailContainer>
