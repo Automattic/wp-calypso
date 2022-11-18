@@ -99,7 +99,6 @@ export function fetchThemeFilters( context, next ) {
 	const unsubscribe = store.subscribe( () => {
 		// A notice is added to the state as the "on error" handler in the getThemeFilters action.
 		if ( getNotice( store.getState(), 'fetch-theme-filters-error' ) ) {
-			debug( 'error fetching theme filters' );
 			unsubscribe();
 			return next( new Error( 'Error fetching theme filters.' ) );
 		}
