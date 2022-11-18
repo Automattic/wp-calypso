@@ -10,20 +10,10 @@ export type ConfigData = Record< string, any > & {
  * data then this will report the failure with either an
  * error or a console warning.
  *
- * When in the 'development' NODE_ENV it will raise an error
- * to crash execution early. However, because many modules
- * call this function in the module-global scope a failure
- * here can not only crash that module but also entire
- * application flows as well as trigger unexpected and
- * unwanted behaviors. Therefore if the NODE_ENV is not
- * 'development' we will return `undefined` and log a message
- * to the console instead of halting the execution thread.
- *
  * The config files are loaded in sequence: _shared.json, {env}.json, {env}.local.json
  *
  * @see server/config/parser.js
  * @param data Configurat data.
- * @throws {ReferenceError} when key not defined in the config (NODE_ENV=development only)
  * @returns A function that gets the value of property named by the key
  */
 const config =
@@ -33,16 +23,9 @@ const config =
 			return data[ key ] as T;
 		}
 
-		if ( 'development' === process.env.NODE_ENV ) {
-			throw new ReferenceError(
-				`Could not find config value for key '${ key }'\n` +
-					"Please make sure that if you need it then it has a default value assigned in 'config/_shared.json'"
-			);
-		}
-
-		// display console error only in a browser
+		// Display console error in a browser during development
 		// (not in tests, for example)
-		if ( 'undefined' !== typeof window ) {
+		if ( 'development' === process.env.NODE_ENV && 'undefined' !== typeof window ) {
 			// eslint-disable-next-line no-console
 			console.error(
 				'%cCore Error: ' +
