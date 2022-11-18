@@ -1,5 +1,5 @@
 import { Card, Button, FormInputValidation, Gridicon } from '@automattic/components';
-import { useLocale } from '@automattic/i18n-utils';
+import { englishLocales, useLocale } from '@automattic/i18n-utils';
 import { __, hasTranslation } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
 import PropTypes from 'prop-types';
@@ -47,25 +47,12 @@ function UseMyDomainInput( {
 		}
 	};
 
-	const hasDomainInputLabel =
-		[ 'en', 'en-gb' ].includes( locale ) ||
-		hasTranslation( 'Enter the domain you would like to use:' );
-	const domainInputLabel = hasDomainInputLabel
-		? __( 'Enter the domain you would like to use:' )
-		: __( 'Enter your domain here' );
-
-	const hasDomainInputNoteLabel =
-		[ 'en', 'en-gb' ].includes( locale ) ||
-		hasTranslation( 'Enter the domain you would like to use:' );
-	const domainInputNote = hasDomainInputNoteLabel
-		? __( 'This won’t affect your existing site.' )
-		: '';
-
 	const hasDomainPlaceholderLabel =
-		[ 'en', 'en-gb' ].includes( locale ) || hasTranslation( 'yoursiteaddress.com' );
+		englishLocales.includes( locale ) || hasTranslation( 'yoursiteaddress.com' );
 	const domainPlaceholderLabel = hasDomainPlaceholderLabel
 		? __( 'yoursiteaddress.com' )
 		: __( 'mydomain.com' );
+
 	return (
 		<Card className={ baseClassName }>
 			{ ! isSignupStep && (
@@ -74,7 +61,7 @@ function UseMyDomainInput( {
 				</div>
 			) }
 			<div className={ baseClassName + '__domain-input' }>
-				<label>{ domainInputLabel }</label>
+				<label>{ __( 'Enter the domain you would like to use:' ) }</label>
 				<FormFieldset className={ baseClassName + '__domain-input-fieldset' }>
 					<FormTextInput
 						placeholder={ domainPlaceholderLabel }
@@ -101,16 +88,16 @@ function UseMyDomainInput( {
 					) }
 					{ validationError && <FormInputValidation isError text={ validationError } icon="" /> }
 				</FormFieldset>
-				{ domainInputNote && (
-					<p className={ baseClassName + '__domain-input-note' }>
-						<Icon
-							className={ baseClassName + '__domain-input-note-icon' }
-							icon={ bulb }
-							size={ 14 }
-						/>
-						{ domainInputNote }
-					</p>
-				) }
+
+				<p className={ baseClassName + '__domain-input-note' }>
+					<Icon
+						className={ baseClassName + '__domain-input-note-icon' }
+						icon={ bulb }
+						size={ 14 }
+					/>
+					{ __( 'This won’t affect your existing site.' ) }
+				</p>
+
 				<FormButton
 					className={ baseClassName + '__domain-input-button' }
 					primary
