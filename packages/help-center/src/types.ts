@@ -1,4 +1,4 @@
-import type { SiteDetails } from '@automattic/data-stores';
+import type { HelpCenterSite } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
 export interface Container {
@@ -14,8 +14,9 @@ export interface Header {
 	onMaximize?: () => void;
 	onDismiss: () => void;
 }
+
 export interface SitePicker {
-	currentSite: SiteDetails | undefined;
+	currentSite: HelpCenterSite | undefined;
 	onSelect: ( siteId: number | string ) => void;
 	siteId: string | number | null | undefined;
 	enabled: boolean;

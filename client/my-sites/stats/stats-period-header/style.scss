@@ -1,9 +1,11 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .stats__period-header {
 	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
-	justify-content: space-between;
-	background-color: var(--color-surface);
-	margin: 48px 0 16px;
+	justify-content: center;
+	margin-bottom: 16px;
 
 	.period {
 		font-family: Recoleta, sans-serif;
@@ -11,11 +13,17 @@
 
 	.stats-period-navigation {
 		flex: 1;
+		min-width: 320px;
+		padding: 0 24px 0 0;
+		margin: 0;
+
+		@media ( max-width: $break-mobile ) {
+			margin: 16px 0;
+			min-width: unset;
+		}
 	}
 
 	.segmented-control {
-		margin-left: 24px;
-
 		&.is-primary {
 			.segmented-control__item.is-selected {
 				.segmented-control__link {
@@ -48,5 +56,33 @@
 		color: var(--studio-black);
 		width: 100px;
 		box-sizing: border-box;
+
+		@media ( max-width: $break-mobile ) {
+			width: auto;
+		}
+	}
+
+	// Make the content break line earlier than 660px
+	@media ( max-width: $break-large ) {
+		.stats-period-navigation {
+			margin: 0 0 24px 0;
+			padding: 0;
+		}
+
+		.segmented-control {
+			width: 100%;
+		}
+
+		.segmented-control__link {
+			width: unset;
+		}
+	}
+
+	@media ( max-width: $break-medium ) {
+		padding: 0 16px;
+	}
+
+	@media ( max-width: $break-mobile ) {
+		margin-top: 0;
 	}
 }

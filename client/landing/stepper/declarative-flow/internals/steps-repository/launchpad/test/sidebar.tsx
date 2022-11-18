@@ -221,7 +221,7 @@ describe( 'Sidebar', () => {
 				} );
 				renderSidebar( props, siteDetails );
 
-				const title = screen.getByRole( 'heading', { name: /ready to launch/i } );
+				const title = screen.getByRole( 'heading', { name: /link and launch/i } );
 				expect( title ).toBeVisible();
 			} );
 		} );
@@ -230,7 +230,7 @@ describe( 'Sidebar', () => {
 			it( 'shows a normal title', () => {
 				renderSidebar( props );
 
-				const title = screen.getByRole( 'heading', { name: /almost ready/i } );
+				const title = screen.getByRole( 'heading', { name: /link and launch/i } );
 				expect( title ).toBeVisible();
 			} );
 		} );

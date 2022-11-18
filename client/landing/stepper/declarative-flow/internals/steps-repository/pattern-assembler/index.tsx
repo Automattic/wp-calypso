@@ -302,6 +302,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 			goBack={ onBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
+			isFullLayout={ true }
 			hideSkip={ true }
 			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }

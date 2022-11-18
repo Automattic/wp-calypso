@@ -1,6 +1,8 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { useLocale } from '@automattic/i18n-utils';
+import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
 import { Plans } from 'calypso/../packages/data-stores/src';
@@ -16,6 +18,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import type { Step } from '../../types';
+import type { PlanSimplifiedFeature } from 'calypso/../packages/data-stores/src/plans';
 
 import 'calypso/../packages/plans-grid/src/plans-grid/style.scss';
 import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
@@ -40,6 +43,9 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
+	const siteDescription = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getSelectedSiteDescription()
+	);
 	const getPlanProduct = useSelect( ( select ) => select( PLANS_STORE ).getPlanProduct );
 	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
 
@@ -122,7 +128,10 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 				const newSite = getNewSite();
 				setSelectedSite( newSite?.blogid );
 				setIntentOnSite( newSite?.site_slug as string, flow as string );
-				saveSiteSettings( newSite?.blogid as number, { launchpad_screen: 'full' } );
+				saveSiteSettings( newSite?.blogid as number, {
+					launchpad_screen: 'full',
+					blogdescription: siteDescription,
+				} );
 
 				const planObject = supportedPlans.find(
 					( plan ) => plan.productIds.indexOf( planId as number ) >= 0
@@ -172,6 +181,28 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 			submit?.();
 		};
 
+		const getVideoPressFeaturesList = ( plan: Plans.Plan ) => {
+			/* translators: A label displaying the amount of storage space available in the plan, eg: "13GB" or "200GB" */
+			const storageString = plan.storage ? sprintf( __( '%s storage space' ), plan.storage ) : null;
+
+			const filterStorageString = ( feature: PlanSimplifiedFeature ) =>
+				storageString !== feature.name;
+
+			return [
+				null !== storageString && {
+					name: storageString,
+					requiresAnnuallyBilledPlan: false,
+				},
+				{ name: __( 'High-quality 4K video' ), requiresAnnuallyBilledPlan: false },
+				{ name: __( 'Ad-free video playback' ), requiresAnnuallyBilledPlan: false },
+				{ name: __( 'Video subtitles and chapters' ), requiresAnnuallyBilledPlan: false },
+				{ name: __( 'Background videos' ), requiresAnnuallyBilledPlan: false },
+				{ name: __( 'Private videos' ), requiresAnnuallyBilledPlan: false },
+				{ name: __( 'Adaptive video streaming' ), requiresAnnuallyBilledPlan: false },
+				...( plan.features.filter( filterStorageString ) ?? [] ),
+			].filter( isValueTruthy );
+		};
+
 		return (
 			<div className="plans-grid">
 				<PlansIntervalToggle
@@ -198,7 +229,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 											slug={ plan.periodAgnosticSlug }
 											domain={ domain }
 											CTAVariation="NORMAL"
-											features={ plan.features ?? [] }
+											features={ getVideoPressFeaturesList( plan ) }
 											billingPeriod={ billingPeriod }
 											isPopular={ 'business' === plan.periodAgnosticSlug }
 											isFree={ plan.isFree }

@@ -525,6 +525,11 @@ class DomainsStep extends Component {
 		}
 
 		const includeWordPressDotCom = this.props.includeWordPressDotCom ?? ! this.props.isDomainOnly;
+		const promoTlds = this.props?.queryObject?.tld?.split( ',' ) ?? [];
+
+		// the .link tld comes with the w.link subdomain from our partnership.
+		// see pau2Xa-4tC-p2#comment-12869 for more details
+		const managedSubdomains = promoTlds.includes( 'link' ) ? 'link' : null;
 
 		return (
 			<CalypsoShoppingCartProvider>
@@ -535,8 +540,9 @@ class DomainsStep extends Component {
 					onAddDomain={ this.handleAddDomain }
 					products={ this.props.productsList }
 					basePath={ this.props.path }
-					promoTlds={ this.props?.queryObject?.tld?.split( ',' ) }
+					promoTlds={ promoTlds }
 					mapDomainUrl={ this.getUseYourDomainUrl() }
+					managedSubdomains={ managedSubdomains }
 					transferDomainUrl={ this.getUseYourDomainUrl() }
 					useYourDomainUrl={ this.getUseYourDomainUrl() }
 					onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
@@ -643,7 +649,7 @@ class DomainsStep extends Component {
 			};
 			if ( VIDEOPRESS_FLOW === flowName ) {
 				return translate(
-					'Set your Video site apart with a custom domain. Not sure yet? {{span}}Decide later{{/span}}.',
+					'Set your video site apart with a custom domain. Not sure yet? {{span}}Decide later{{/span}}.',
 					{ components }
 				);
 			}
