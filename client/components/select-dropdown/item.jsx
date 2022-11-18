@@ -64,7 +64,7 @@ class SelectDropdownItem extends Component {
 							<Count count={ this.props.count } compact={ this.props.compactCount } />
 						</span>
 					) }
-					{ this.props.extra && <>{ this.props.extra }</> }
+					{ this.props.extra }
 				</a>
 			</li>
 		);

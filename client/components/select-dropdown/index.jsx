@@ -233,7 +233,7 @@ class SelectDropdown extends Component {
 				>
 					<div id={ 'select-dropdown-' + this.instanceId } className="select-dropdown__header">
 						<span className="select-dropdown__header-text" aria-label={ this.props.ariaLabel }>
-							{ selectedExtra && <>{ selectedExtra }</> }
+							{ selectedExtra }
 							{ selectedIcon }
 							{ selectedText }
 						</span>
