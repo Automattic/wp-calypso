@@ -23,7 +23,7 @@ export function createMemcachedClient() {
  * @returns The normalized memcached key
  */
 function normalizeKey( key: string ): string {
-	return ( ENV + key ).replace( /\s/g, '_' );
+	return ( ENV + key ).replace( /\s+/g, '_' );
 }
 
 // note: should probably not be awaited, to avoid blocking.
