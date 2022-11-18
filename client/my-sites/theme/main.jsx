@@ -21,6 +21,7 @@ import Badge from 'calypso/components/badge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
@@ -41,6 +42,7 @@ import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -902,6 +904,7 @@ class ThemeSheet extends Component {
 		return (
 			<Main className={ className }>
 				<QueryCanonicalTheme themeId={ this.props.id } siteId={ siteId } />
+				<QueryProductsList />
 				<QueryUserPurchases />
 				{
 					siteId && (
@@ -1026,6 +1029,11 @@ export default connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		const isStandaloneJetpack = isJetpack && ! isAtomic;
 
+		const isExternallyManagedTheme = getIsExternallyManagedTheme( state, theme?.id );
+		const isLoading =
+			getIsLoadingCart( state ) ||
+			( isExternallyManagedTheme && Object.values( getProductsList( state ) ).length === 0 );
+
 		return {
 			...theme,
 			id,
@@ -1056,12 +1064,12 @@ export default connect(
 			demoUrl: getThemeDemoUrl( state, id, siteId ),
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 			softLaunched: theme?.soft_launched,
-			isExternallyManagedTheme: getIsExternallyManagedTheme( state, theme?.id ),
+			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes: getIsSiteEligibleForManagedExternalThemes(
 				state,
 				siteId
 			),
-			isLoading: getIsLoadingCart( state ),
+			isLoading,
 		};
 	},
 	{
