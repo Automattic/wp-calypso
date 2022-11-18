@@ -61,7 +61,7 @@ export async function retarget( urlPath ) {
 	if ( mayWeTrackByTracker( 'googleAds' ) ) {
 		const params = [ 'config', TRACKING_IDS.wpcomGoogleAdsGtag, { page_path: urlPath } ];
 		debug( 'retarget: [Google Ads] WPCom', params );
-		window.gtag( ...params );
+		window.gtag?.( ...params );
 	}
 
 	// Floodlight

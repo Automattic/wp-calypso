@@ -32,7 +32,7 @@ export async function recordAddToCart( cartItem ) {
 			},
 		];
 		debug( 'recordAddToCart: [Google Ads Gtag] WPCom', params );
-		window.gtag( ...params );
+		window.gtag?.( ...params );
 	}
 
 	// Facebook
