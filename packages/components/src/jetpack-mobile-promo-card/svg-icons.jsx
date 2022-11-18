@@ -49,7 +49,7 @@ export function WordPressJetpackSVG() {
 				d="M74.5 2C59.3497 2 47 14.316 47 29.5C47 44.6841 59.316 57 74.5 57C89.6841 57 102 44.6841 102 29.5C102 14.316 89.6841 2 74.5 2ZM73.0828 34.0552H59.3834L73.0828 7.39877V34.0552ZM75.8834 51.5337V24.8773H89.5491L75.8834 51.5337Z"
 				fill="#069E08"
 			/>
-			<rect x="46" y="1" width="57" height="57" rx="28.5" stroke="white" stroke-width="2" />
+			<rect x="46" y="1" width="57" height="57" rx="28.5" stroke="white" strokeWidth="2" />
 		</svg>
 	);
 }
