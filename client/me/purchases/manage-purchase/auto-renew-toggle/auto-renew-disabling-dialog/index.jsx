@@ -163,7 +163,6 @@ class AutoRenewDisablingDialog extends Component {
 					strong: <strong />,
 				},
 			}
-			}
 		);
 	}
 
