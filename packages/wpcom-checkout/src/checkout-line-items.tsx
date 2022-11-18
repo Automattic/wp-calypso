@@ -562,23 +562,17 @@ function JetpackSearchMeta( { product }: { product: ResponseCartProduct } ) {
 function ProductTier( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 
-	if ( isJetpackSearch( product ) && product.current_quantity ) {
-		const tierMaximum = product.price_tier_maximum_units;
-		const tierMinimum = product.price_tier_minimum_units;
-		if ( tierMaximum ) {
-			return (
-				<LineItemMeta>
-					{ translate( 'Up to %(tierMaximum)s records', { args: { tierMaximum } } ) }
-				</LineItemMeta>
-			);
-		}
-		if ( tierMinimum ) {
-			return (
-				<LineItemMeta>
-					{ translate( 'More than %(tierMinimum) records', { args: { tierMinimum } } ) }
-				</LineItemMeta>
-			);
-		}
+	if ( isJetpackSearch( product ) ) {
+		const productQuantity = product.current_quantity || 10_000;
+		const productQuantityDividedByThousand = productQuantity / 1000;
+		return (
+			<LineItemMeta>
+				{ translate(
+					'Up to %(productQuantityDividedByThousand)sk records and/or requests per month',
+					{ args: { productQuantityDividedByThousand } }
+				) }
+			</LineItemMeta>
+		);
 	}
 	return null;
 }
