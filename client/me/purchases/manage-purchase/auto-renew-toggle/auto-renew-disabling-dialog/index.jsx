@@ -156,11 +156,13 @@ class AutoRenewDisablingDialog extends Component {
 		const { siteDomain, translate } = this.props;
 
 		return translate(
-			"Did you know: You can allow site visitors to help cover the full cost of your site's plan and domain by turning on gifting in {{a}}Settings > General{{/a}}.",
+			"{{strong}}Did you know:{{/strong}} You can allow site visitors to help cover the cost of your site's plan by enabling gift subscriptions in {{a}}Settings > General{{/a}}.",
 			{
 				components: {
 					a: <a href={ `/settings/general/${ siteDomain }` } />,
+					strong: <strong />,
 				},
+			}
 			}
 		);
 	}
