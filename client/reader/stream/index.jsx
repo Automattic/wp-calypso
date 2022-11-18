@@ -7,6 +7,9 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
 import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import scrollTo from 'calypso/lib/scroll-to';
@@ -54,6 +57,7 @@ const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
 
 class ReaderStream extends Component {
 	static propTypes = {
+		translate: PropTypes.func,
 		trackScrollPage: PropTypes.func.isRequired,
 		suppressSiteNameLink: PropTypes.bool,
 		showPostHeader: PropTypes.bool,
@@ -86,6 +90,20 @@ class ReaderStream extends Component {
 		useCompactCards: false,
 		intro: null,
 		forcePlaceholders: false,
+	};
+
+	constructor( props ) {
+		super( props );
+		this.state = {
+			selectedTab: 'posts',
+		};
+	}
+
+	handlePostsSelected = () => {
+		this.setState( { selectedTab: 'posts' } );
+	};
+	handleSitesSelected = () => {
+		this.setState( { selectedTab: 'sites' } );
 	};
 
 	listRef = createRef();
@@ -406,7 +424,7 @@ class ReaderStream extends Component {
 	};
 
 	render() {
-		const { forcePlaceholders, lastPage, streamKey } = this.props;
+		const { translate, forcePlaceholders, lastPage, streamKey } = this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
 		const hasNoPosts = items.length === 0 && ! isRequesting;
@@ -465,7 +483,9 @@ class ReaderStream extends Component {
 				'tag',
 			];
 
-			if ( ! excludesSidebar.includes( streamType ) && wideDisplay ) {
+			if ( excludesSidebar.includes( streamType ) ) {
+				body = bodyContent;
+			} else if ( wideDisplay ) {
 				body = (
 					<div className="stream__two-column">
 						{ bodyContent }
@@ -474,7 +494,36 @@ class ReaderStream extends Component {
 				);
 				baseClassnames = classnames( 'reader-two-column', baseClassnames );
 			} else {
-				body = bodyContent;
+				body = (
+					<>
+						<div className="stream__header">
+							<SectionNav selectedText={ this.state.selectedTab }>
+								<NavTabs label="Status">
+									<NavItem
+										key="posts"
+										selected={ this.state.selectedTab === 'posts' }
+										onClick={ this.handlePostsSelected }
+									>
+										{ translate( 'Posts' ) }
+									</NavItem>
+									<NavItem
+										key="sites"
+										selected={ this.state.selectedTab === 'sites' }
+										onClick={ this.handleSitesSelected }
+									>
+										{ translate( 'Sites' ) }
+									</NavItem>
+								</NavTabs>
+							</SectionNav>
+						</div>
+						{ this.state.selectedTab === 'posts' && bodyContent }
+						{ this.state.selectedTab === 'sites' && (
+							<div className="stream__two-column">
+								<div className="stream__right-column">{ sidebarContent }</div>
+							</div>
+						) }
+					</>
+				);
 			}
 			showingStream = true;
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
