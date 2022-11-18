@@ -69,6 +69,12 @@ function UseMyDomainInput( {
 	const domainInputNote = hasDomainInputNoteLabel
 		? __( 'This won’t affect your existing site.' )
 		: '';
+
+	const hasDomainPlaceholderLabel =
+		[ 'en', 'en-gb' ].includes( locale ) || hasTranslation( 'yoursiteaddress.com' );
+	const domainPlaceholderLabel = hasDomainPlaceholderLabel
+		? __( 'yoursiteaddress.com' )
+		: __( 'mydomain.com' );
 	return (
 		<Card className={ baseClassName }>
 			{ ! isSignupStep && (
@@ -80,7 +86,7 @@ function UseMyDomainInput( {
 				<label>{ domainInputLabel }</label>
 				<FormFieldset className={ baseClassName + '__domain-input-fieldset' }>
 					<FormTextInput
-						placeholder={ __( 'mydomain.com' ) }
+						placeholder={ domainPlaceholderLabel }
 						value={ domainName }
 						onChange={ onChange }
 						onKeyDown={ keyDown }

@@ -45,7 +45,7 @@
 		max-width: 370px;
 
 		.form-text-input {
-			padding: 9px 14px;
+			padding: 9px 14px 9px 68px;
 			margin-bottom: 9px;
 
 			&::placeholder {
@@ -82,6 +82,14 @@
 				fill: #000;
 			}
 		}
+	}
+
+	& &__domain-input-fieldset::before {
+		content: "https://";
+		color: #000;
+		position: absolute;
+		left: 16px;
+		top: 10px;
 	}
 }
 
