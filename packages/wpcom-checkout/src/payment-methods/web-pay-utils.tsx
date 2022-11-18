@@ -1,8 +1,9 @@
 import { useTotal } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import debugFactory from 'debug';
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { getLabel } from '../checkout-labels';
+import { useStableCallback } from '../use-stable-callback';
 import type { StripeConfiguration, PaymentRequestOptions } from '@automattic/calypso-stripe';
 import type { LineItem } from '@automattic/composite-checkout';
 import type { CartKey, ResponseCartProduct } from '@automattic/shopping-cart';
@@ -82,15 +83,12 @@ export function useStripePaymentRequest( {
 	);
 
 	// We have to memoize this to prevent re-creating the paymentRequest
-	const callback = useCallback(
-		( paymentMethodResponse ) => {
-			completePaymentMethodTransaction( {
-				onSubmit,
-				...paymentMethodResponse,
-			} );
-		},
-		[ onSubmit ]
-	);
+	const callback = useStableCallback( ( paymentMethodResponse ) => {
+		completePaymentMethodTransaction( {
+			onSubmit,
+			...paymentMethodResponse,
+		} );
+	} );
 
 	useEffect( () => {
 		if ( ! stripe || ! paymentRequestOptions ) {
