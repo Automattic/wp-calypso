@@ -60,6 +60,21 @@ describe( 'index', () => {
 					expect( () => config( fakeKey ) ).not.toThrow( Error );
 				} );
 			} );
+
+			test( "should only log to the console in development when a given key doesn't exist", () => {
+				const spy = jest.spyOn( console, 'error' );
+				config( fakeKey );
+				expect( spy ).not.toHaveBeenCalled();
+
+				// Force a browser-like, development environment.
+				global.window = true;
+				process.env.NODE_ENV = 'development';
+				config( fakeKey );
+				expect( spy ).toHaveBeenCalled();
+
+				delete global.window;
+				jest.restoreAllMocks();
+			} );
 		} );
 	} );
 
