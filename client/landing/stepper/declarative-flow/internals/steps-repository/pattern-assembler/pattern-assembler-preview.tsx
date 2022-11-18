@@ -46,7 +46,7 @@ const PatternAssemblerPreview = ( { header, sections = [], footer, scrollToSelec
 			// of the content.
 			pattern_ids: [ header, ...sections, footer ]
 				.filter( Boolean )
-				.map( ( pattern ) => encodePatternId( pattern!.ID ) ),
+				.map( ( pattern ) => encodePatternId( pattern!.id ) ),
 		},
 	} as Design;
 
