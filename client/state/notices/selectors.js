@@ -25,3 +25,8 @@ export const getNoticeLastTimeShown = createSelector(
 	( state, noticeId ) => state.notices.lastTimeShown[ noticeId ] || 0,
 	( state ) => state.notices.lastTimeShown
 );
+
+export const getNotice = createSelector(
+	( state, noticeId ) => state.notices.items[ noticeId ],
+	( state ) => state.notices.items
+);

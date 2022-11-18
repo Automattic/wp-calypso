@@ -20,7 +20,10 @@ const storeFilters = ( action, data ) => {
 	return { type: THEME_FILTERS_ADD, filters: data };
 };
 
-const reportError = () => errorNotice( i18n.translate( 'Problem fetching theme filters.' ) );
+const reportError = () =>
+	errorNotice( i18n.translate( 'Problem fetching theme filters.' ), {
+		id: 'fetch-theme-filters-error',
+	} );
 
 const themeFiltersHandlers = dispatchRequest( {
 	fetch: fetchFilters,

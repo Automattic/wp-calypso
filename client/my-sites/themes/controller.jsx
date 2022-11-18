@@ -2,6 +2,7 @@ import debugFactory from 'debug';
 import { logServerEvent } from 'calypso/lib/analytics/statsd-utils';
 import trackScrollPage from 'calypso/lib/track-scroll-page';
 import performanceMark from 'calypso/server/lib/performance-mark';
+import { getNotice } from 'calypso/state/notices/selectors';
 import { requestThemes, requestThemeFilters } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 import { getThemeFilters, getThemesForQuery } from 'calypso/state/themes/selectors';
@@ -96,6 +97,13 @@ export function fetchThemeFilters( context, next ) {
 	}
 
 	const unsubscribe = store.subscribe( () => {
+		// A notice is added to the state as the "on error" handler in the getThemeFilters action.
+		if ( getNotice( store.getState(), 'fetch-theme-filters-error' ) ) {
+			debug( 'error fetching theme filters' );
+			unsubscribe();
+			return next(); // TODO: handle error???????
+		}
+
 		if ( Object.keys( getThemeFilters( store.getState() ) ).length > 0 ) {
 			unsubscribe();
 			return next();
