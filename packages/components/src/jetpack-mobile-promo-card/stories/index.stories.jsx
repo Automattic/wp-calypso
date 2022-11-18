@@ -17,3 +17,9 @@ Mobile.args = {
 	className: 'example-extra-classname',
 	isMobile: true,
 };
+
+export const WooPromo = Template.bind( {} );
+WooPromo.args = {
+	className: 'woo-promo',
+	promoType: 'woo',
+};
