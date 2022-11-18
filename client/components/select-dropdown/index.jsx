@@ -21,6 +21,7 @@ class SelectDropdown extends Component {
 		selectedText: TranslatableString,
 		selectedIcon: PropTypes.element,
 		selectedCount: PropTypes.number,
+		selectedExtra: PropTypes.element,
 		initialSelected: PropTypes.string,
 		className: PropTypes.string,
 		style: PropTypes.object,
@@ -35,6 +36,7 @@ class SelectDropdown extends Component {
 				label: PropTypes.oneOfType( [ TranslatableString, PropTypes.node ] ).isRequired,
 				path: PropTypes.string,
 				icon: PropTypes.element,
+				extra: PropTypes.element,
 			} )
 		),
 		isLoading: PropTypes.bool,
@@ -132,6 +134,17 @@ class SelectDropdown extends Component {
 		return get( find( options, { value: selected } ), 'icon' );
 	}
 
+	getSelectedExtra() {
+		const { options, selectedExtra } = this.props;
+		const { selected } = this.state;
+
+		if ( selectedExtra ) {
+			return selectedExtra;
+		}
+
+		return get( find( options, { value: selected } ), 'extra' );
+	}
+
 	dropdownOptions() {
 		let refIndex = 0;
 
@@ -181,6 +194,7 @@ class SelectDropdown extends Component {
 						onClick={ this.onSelectItem( item ) }
 						path={ item.path }
 						icon={ item.icon }
+						extra={ item.extra }
 					>
 						{ item.label }
 					</DropdownItem>
@@ -199,6 +213,7 @@ class SelectDropdown extends Component {
 
 		const selectedText = this.getSelectedText();
 		const selectedIcon = this.getSelectedIcon();
+		const selectedExtra = this.getSelectedExtra();
 
 		return (
 			<div id={ this.props.id } style={ this.props.style } className={ dropdownClassName }>
@@ -218,6 +233,7 @@ class SelectDropdown extends Component {
 				>
 					<div id={ 'select-dropdown-' + this.instanceId } className="select-dropdown__header">
 						<span className="select-dropdown__header-text" aria-label={ this.props.ariaLabel }>
+							{ selectedExtra && <>{ selectedExtra }</> }
 							{ selectedIcon }
 							{ selectedText }
 						</span>

@@ -15,6 +15,7 @@ class SelectDropdownItem extends Component {
 		disabled: PropTypes.bool,
 		icon: PropTypes.element,
 		ariaLabel: PropTypes.string,
+		extra: PropTypes.element,
 	};
 
 	static defaultProps = {
@@ -63,6 +64,7 @@ class SelectDropdownItem extends Component {
 							<Count count={ this.props.count } compact={ this.props.compactCount } />
 						</span>
 					) }
+					{ this.props.extra && <>{ this.props.extra }</> }
 				</a>
 			</li>
 		);

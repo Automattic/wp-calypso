@@ -143,6 +143,10 @@ $compact-header-height: 35;
 	text-overflow: ellipsis;
 	overflow: hidden;
 
+	.extra-gridicon {
+		fill: var(--color-neutral);
+	}
+
 	.has-count & {
 		padding-right: 40px;
 	}
@@ -242,6 +246,13 @@ $compact-header-height: 35;
 		&.is-selected:hover {
 			color: var(--color-text-inverted);
 		}
+	}
+
+	.extra-gridicon {
+		fill: var(--color-neutral);
+		position: absolute;
+		top: #{( $option-height - 18 ) * 0.5}px;
+		right: #{$side-margin - 8 }px;
 	}
 
 	.gridicon {
