@@ -52,23 +52,27 @@ export function usePaymentRequestOptions(
 
 export interface PaymentRequestState {
 	paymentRequest: PaymentRequest | undefined | null;
-	canMakePayment: boolean;
+	allowedPaymentTypes: {
+		applePay: boolean;
+		googlePay: boolean;
+	};
 	isLoading: boolean;
 }
 
 const initialPaymentRequestState: PaymentRequestState = {
 	paymentRequest: undefined,
-	canMakePayment: false,
+	allowedPaymentTypes: {
+		applePay: false,
+		googlePay: false,
+	},
 	isLoading: true,
 };
 
 export function useStripePaymentRequest( {
-	webPaymentType,
 	paymentRequestOptions,
 	onSubmit,
 	stripe,
 }: {
-	webPaymentType: 'google-pay' | 'apple-pay';
 	paymentRequestOptions: PaymentRequestOptions | null;
 	stripe: Stripe;
 	onSubmit: SubmitCompletePaymentMethodTransaction;
@@ -102,11 +106,12 @@ export function useStripePaymentRequest( {
 					return;
 				}
 				debug( 'canMakePayment returned from stripe paymentRequest', result );
-				const canMakePayment =
-					webPaymentType === 'google-pay' ? result?.googlePay : result?.applePay;
 				setPaymentRequestState( ( state ) => ( {
 					...state,
-					canMakePayment: !! canMakePayment,
+					allowedPaymentTypes: {
+						applePay: Boolean( result?.applePay ),
+						googlePay: Boolean( result?.googlePay ),
+					},
 					isLoading: false,
 				} ) );
 			} )
@@ -118,7 +123,10 @@ export function useStripePaymentRequest( {
 				console.error( 'Error while creating stripe payment request', error );
 				setPaymentRequestState( ( state ) => ( {
 					...state,
-					canMakePayment: false,
+					allowedPaymentTypes: {
+						applePay: false,
+						googlePay: false,
+					},
 					isLoading: false,
 				} ) );
 			} );
@@ -130,13 +138,13 @@ export function useStripePaymentRequest( {
 		return () => {
 			isSubscribed = false;
 		};
-	}, [ stripe, paymentRequestOptions, callback, webPaymentType ] );
+	}, [ stripe, paymentRequestOptions, callback ] );
 
 	debug(
 		'returning stripe payment request; isLoading:',
 		paymentRequestState.isLoading,
-		'canMakePayment:',
-		paymentRequestState.canMakePayment
+		'allowedPaymentTypes:',
+		paymentRequestState.allowedPaymentTypes
 	);
 	return paymentRequestState;
 }
