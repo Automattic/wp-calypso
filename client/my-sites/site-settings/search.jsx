@@ -1,6 +1,5 @@
 import {
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
-	PRODUCT_WPCOM_SEARCH_MONTHLY,
 	WPCOM_FEATURES_CLASSIC_SEARCH,
 	WPCOM_FEATURES_INSTANT_SEARCH,
 } from '@automattic/calypso-products';
@@ -108,11 +107,9 @@ class Search extends Component {
 	}
 
 	renderUpgradeNotice() {
-		const { siteIsJetpack, siteSlug, translate, hasClassicSearch } = this.props;
+		const { siteSlug, translate, hasClassicSearch } = this.props;
 
-		const href = siteIsJetpack
-			? `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_SEARCH_MONTHLY }`
-			: `/checkout/${ siteSlug }/${ PRODUCT_WPCOM_SEARCH_MONTHLY }`;
+		const href = `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_SEARCH_MONTHLY }`;
 
 		return (
 			<Fragment>
@@ -128,7 +125,7 @@ class Search extends Component {
 					href={ href }
 					event="calypso_jetpack_search_settings_upgrade_nudge"
 					feature={ WPCOM_FEATURES_INSTANT_SEARCH }
-					plan={ siteIsJetpack ? PRODUCT_JETPACK_SEARCH_MONTHLY : PRODUCT_WPCOM_SEARCH_MONTHLY }
+					plan={ PRODUCT_JETPACK_SEARCH_MONTHLY }
 					showIcon={ true }
 				/>
 			</Fragment>

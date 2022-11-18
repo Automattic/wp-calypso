@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UpgradeBlock/Edit should render 1`] = `
+<div>
+  <div>
+    Upgrade plans placeholder
+  </div>
+</div>
+`;

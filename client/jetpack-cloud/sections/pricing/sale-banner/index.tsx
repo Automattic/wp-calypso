@@ -62,12 +62,9 @@ const SaleBanner: React.FC< Props > = ( { coupon } ) => {
 						<div>
 							<b>{ saleTitle }</b>
 							&nbsp;
-							{ translate(
-								'Get up to %(discount)d%% off your first year on all Jetpack products & plans.',
-								{
-									args: { discount: coupon.final_discount },
-								}
-							) }
+							{ translate( 'Take %(discount)d%% off all annual Jetpack bundles and products.', {
+								args: { discount: coupon.final_discount },
+							} ) }
 						</div>
 						<span className="sale-banner__countdown-timer">
 							{ translate( 'Sale ends in: %(days)dd %(hours)dh %(minutes)dm %(seconds)ss', {

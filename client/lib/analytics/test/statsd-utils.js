@@ -29,9 +29,24 @@ describe( 'StatsD Analytics Utils', () => {
 			expect( sdUrl.searchParams.get( 'json' ) ).toEqual(
 				JSON.stringify( {
 					beacons: [
-						'calypso.development.my_section_name.response_time:100|ms',
-						'calypso.development.my_section_name.page_load:1|c',
+						'calypso.development.server.my_section_name.response_time:100|ms',
+						'calypso.development.server.my_section_name.page_load:1|c',
 					],
+				} )
+			);
+		} );
+
+		test( 'does not include server hierarchy in legacy events', () => {
+			const sdUrl = new URL(
+				createStatsdURL( 'my-section-name', {
+					name: 'test',
+					type: 'counting',
+					isLegacy: true,
+				} )
+			);
+			expect( sdUrl.searchParams.get( 'json' ) ).toEqual(
+				JSON.stringify( {
+					beacons: [ 'calypso.development.my_section_name.test:1|c' ],
 				} )
 			);
 		} );
@@ -48,7 +63,7 @@ describe( 'StatsD Analytics Utils', () => {
 			expect( sdUrl.searchParams.get( 'u' ) ).toEqual( 'my_section_name' );
 			expect( sdUrl.searchParams.get( 'json' ) ).toEqual(
 				JSON.stringify( {
-					beacons: [ 'calypso.development.my_section_name.response_time:100|ms' ],
+					beacons: [ 'calypso.development.server.my_section_name.response_time:100|ms' ],
 				} )
 			);
 		} );
@@ -79,6 +94,12 @@ describe( 'StatsD Analytics Utils', () => {
 			logServerEvent( { name: 'foo', type: 'counting' } );
 
 			expect( superagent.get ).not.toHaveBeenCalled();
+		} );
+
+		test( 'sets calypso section to unknown if undefined', () => {
+			config.mockReturnValue( true ); // server_side_boom_analytics_enabled
+			logServerEvent( undefined, { name: 'foo', type: 'counting' } );
+			expect( superagent.get ).toHaveBeenCalledWith( expect.stringContaining( 'u=unknown' ) );
 		} );
 	} );
 } );

@@ -1,21 +1,19 @@
+import config from '@automattic/calypso-config';
 import PropTypes from 'prop-types';
 import { Children, cloneElement } from 'react';
-import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
-import BlazePressWidget, { goToOriginalEndpoint } from 'calypso/components/blazepress-widget';
+import BlazePressWidget from 'calypso/components/blazepress-widget';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import { getPost } from 'calypso/state/posts/selectors';
-import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PostActionsEllipsisMenuComments from './comments';
 import PostActionsEllipsisMenuCopyLink from './copy-link';
 import PostActionsEllipsisMenuDuplicate from './duplicate';
 import PostActionsEllipsisMenuEdit from './edit';
 import PostActionsEllipsisMenuPromote from './promote';
 import PostActionsEllipsisMenuPublish from './publish';
+import PostActionsEllipsisMenuQRCode from './qrcode';
 import PostActionsEllipsisMenuRestore from './restore';
 import PostActionsEllipsisMenuShare from './share';
 import PostActionsEllipsisMenuStats from './stats';
@@ -27,12 +25,8 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 	let actions = [];
 
 	const keyValue = globalId;
-	const { isModalOpen, value, closeModal } = useRouteModal( 'blazepress-widget', keyValue );
+	const { isModalOpen, value } = useRouteModal( 'blazepress-widget', keyValue );
 	const post = useSelector( ( state ) => getPost( state, globalId ) );
-	const queryClient = useQueryClient();
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSiteId ) );
-	const previousRoute = useSelector( getPreviousRoute );
 
 	if ( includeDefaultActions ) {
 		actions.push(
@@ -48,6 +42,10 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 			<PostActionsEllipsisMenuCopyLink key="copyLink" />,
 			<PostActionsEllipsisMenuTrash key="trash" />
 		);
+
+		if ( config.isEnabled( 'post-list/qr-code-link' ) ) {
+			actions.push( <PostActionsEllipsisMenuQRCode key="qrcode" /> );
+		}
 	}
 
 	children = Children.toArray( children );
@@ -66,15 +64,6 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 					isVisible={ isModalOpen && value === keyValue }
 					siteId={ post.site_ID }
 					postId={ post.ID }
-					onClose={ () => {
-						queryClient &&
-							queryClient.invalidateQueries( [ 'promote-post-campaigns', post.site_ID ] );
-						if ( previousRoute ) {
-							closeModal();
-						} else if ( siteSlug ) {
-							goToOriginalEndpoint();
-						}
-					} }
 				/>
 			) }
 			<EllipsisMenu position="bottom left" disabled={ ! globalId }>

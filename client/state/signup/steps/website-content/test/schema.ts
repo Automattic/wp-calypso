@@ -41,6 +41,7 @@ const initialTestState = {
 		feedbackSection: { genericFeedback: '' },
 	},
 	imageUploadStates: {},
+	siteId: 1337,
 };
 
 describe( 'schema', () => {

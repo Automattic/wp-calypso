@@ -23,9 +23,11 @@ const noCampaignListMessage = translate(
 export default function CampaignsList( {
 	isLoading,
 	isError,
+	hasLocalUser,
 	campaigns,
 }: {
 	isLoading: boolean;
+	hasLocalUser: boolean;
 	isError: boolean;
 	campaigns: Campaign[];
 } ) {
@@ -33,7 +35,7 @@ export default function CampaignsList( {
 
 	const isEmpty = ! memoCampaigns.length;
 
-	if ( isError ) {
+	if ( isError && hasLocalUser ) {
 		return (
 			<Notice status="is-error" icon="mention">
 				{ noCampaignListMessage }

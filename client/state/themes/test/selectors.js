@@ -1,9 +1,11 @@
 import {
+	FEATURE_WOOP,
 	PLAN_FREE,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
 	WPCOM_FEATURES_PREMIUM_THEMES,
+	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
@@ -45,6 +47,8 @@ import {
 	areRecommendedThemesLoading,
 	shouldShowTryAndCustomize,
 	isExternallyManagedTheme,
+	isSiteEligibleForManagedExternalThemes,
+	getIsLoadingCart,
 } from '../selectors';
 
 const twentyfifteen = {
@@ -2548,6 +2552,55 @@ describe( 'themes selectors', () => {
 				expect( isAvailable ).toBe( true );
 			} );
 		} );
+
+		test( "Should return false when the customer has a premium plan but didn't purchase a externally managed theme", () => {
+			const active = [ WPCOM_FEATURES_PREMIUM_THEMES ];
+			const isAvailable = isPremiumThemeAvailable(
+				{
+					sites: {
+						items: {
+							2916284: {},
+						},
+						plans: {
+							2916284: {
+								data: [
+									{
+										currentPlan: true,
+										productSlug: PLAN_PREMIUM,
+									},
+								],
+							},
+						},
+						features: {
+							2916284: {
+								data: {
+									active,
+								},
+							},
+						},
+					},
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: {
+									mood: {
+										...mood,
+										theme_type: 'managed-external',
+									},
+								},
+							} ),
+						},
+					},
+					purchases: {
+						data: [],
+					},
+				},
+				'mood',
+				2916284
+			);
+
+			expect( isAvailable ).toBe( false );
+		} );
 	} );
 
 	describe( 'getWpcomParentThemeId', () => {
@@ -2594,6 +2647,44 @@ describe( 'themes selectors', () => {
 			);
 			expect( parentId ).toEqual( 'superhero' );
 		} );
+	} );
+
+	test( 'has managed-external theme features', () => {
+		const isSiteEligible = isSiteEligibleForManagedExternalThemes(
+			{
+				sites: {
+					features: {
+						1234: {
+							data: {
+								active: [ FEATURE_WOOP, WPCOM_FEATURES_ATOMIC ],
+							},
+						},
+					},
+				},
+			},
+			1234
+		);
+
+		expect( isSiteEligible ).toEqual( true );
+	} );
+
+	test( 'does not have managed-external theme features', () => {
+		const isSiteEligible = isSiteEligibleForManagedExternalThemes(
+			{
+				sites: {
+					features: {
+						1234: {
+							data: {
+								active: [ 'i-can-has-feature' ],
+							},
+						},
+					},
+				},
+			},
+			1234
+		);
+
+		expect( isSiteEligible ).toEqual( false );
 	} );
 } );
 
@@ -3054,5 +3145,25 @@ describe( '#isExternallyManagedTheme()', () => {
 		);
 
 		expect( isExternallyManaged ).toEqual( false );
+	} );
+
+	describe( 'getIsLoadingCart', () => {
+		test( 'should return true if the cart is loading', () => {
+			const isLoading = getIsLoadingCart( {
+				themes: {
+					isLoadingCart: true,
+				},
+			} );
+			expect( isLoading ).toBe( true );
+		} );
+
+		test( 'should return false if the cart has loaded', () => {
+			const isLoading = getIsLoadingCart( {
+				themes: {
+					isLoadingCart: false,
+				},
+			} );
+			expect( isLoading ).toBe( false );
+		} );
 	} );
 } );

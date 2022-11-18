@@ -30,7 +30,7 @@ export default function BackupGettingStarted() {
 	const translate = useTranslate();
 	const videoPreviewProps: VideoPreviewProps = {
 		srcs: [ videoThumbnail, videoThumbnail2x ],
-		description: translate( 'Getting started with Jetpack Backup video thumbnail', {
+		description: translate( 'Getting started with Jetpack VaultPress Backup video thumbnail', {
 			textOnly: true,
 		} ),
 		timeLength: '2:55',
@@ -41,7 +41,7 @@ export default function BackupGettingStarted() {
 			<VideoPreview { ...videoPreviewProps } hiddenOn="mobile" />
 			<div className="backup-getting-started__content">
 				<div className="backup-getting-started__header">
-					{ preventWidows( translate( 'Getting started with Jetpack Backup' ) ) }
+					{ preventWidows( translate( 'Getting started with Jetpack VaultPress Backup' ) ) }
 				</div>
 				<p className="backup-getting-started__text">
 					{ preventWidows(

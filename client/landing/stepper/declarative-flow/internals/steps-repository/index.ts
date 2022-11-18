@@ -37,12 +37,15 @@ export { default as letsGetStarted } from './lets-get-started';
 export { default as intro } from './intro';
 export { default as linkInBioSetup } from './link-in-bio-setup';
 export { default as linkInBioPostSetup } from './link-in-bio-post-setup';
+export { default as videomakerSetup } from './videomaker-setup';
 export { default as chooseADomain } from './choose-a-domain';
+export { default as chooseAPlan } from './choose-a-plan';
 export { default as launchpad } from './launchpad';
 export { default as subscribers } from './subscribers';
 export { default as patterns } from './patterns';
 export { default as getCurrentThemeSoftwareSets } from './get-current-theme-software-sets';
 export { default as storeProfiler } from './store-profiler';
+export { default as designCarousel } from './design-carousel';
 
 export type StepPath =
 	| 'courses'
@@ -89,4 +92,7 @@ export type StepPath =
 	| 'launchpad'
 	| 'subscribers'
 	| 'getCurrentThemeSoftwareSets'
-	| 'storeProfiler';
+	| 'designCarousel'
+	| 'storeProfiler'
+	| 'chooseAPlan'
+	| 'videomakerSetup';

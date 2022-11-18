@@ -5,6 +5,7 @@ import * as statsdUtils from 'calypso/lib/analytics/statsd-utils';
 import { logSectionResponse } from 'calypso/server/pages/analytics';
 
 const TWO_SECONDS = 2000;
+const THREE_SECONDS = 3000;
 
 const noop = () => {};
 
@@ -58,12 +59,32 @@ describe( 'index', () => {
 			test( 'logs response analytics', () => {
 				logSectionResponse( request, response, next );
 
-				// Move time forward and mock the "finish" event
+				// Move time forward and mock the "close" event
 				jest.advanceTimersByTime( TWO_SECONDS );
-				response.emit( 'finish' );
+				response.emit( 'close' );
 
 				// Check the information sent to boom.gif.
 				expect( includesBeacon( `reader.response_time:${ TWO_SECONDS }` ) );
+			} );
+
+			test( 'logs granular analytics', () => {
+				// Make the request authenticated
+				request.context.user = { foo: 'bar' };
+				logSectionResponse( request, response, next );
+
+				// Move time forward and mock the "close" event
+				jest.advanceTimersByTime( THREE_SECONDS );
+				response.emit( 'close' );
+
+				// Check the information sent to boom.gif.
+				expect(
+					includesBeacon( `response_time.logged_in.ssr_pipeline_false:${ THREE_SECONDS }` )
+				).toBe( true );
+
+				// Double check the loggedin/ssr flags are set correctly.
+				expect(
+					includesBeacon( `response_time.logged_out.ssr_pipeline_true:${ THREE_SECONDS }` )
+				).toBe( false );
 			} );
 
 			test( 'throttles calls to log analytics', () => {
@@ -74,14 +95,14 @@ describe( 'index', () => {
 				logSectionResponse( request, response, next );
 				logSectionResponse( request2, response2, next );
 
-				response.emit( 'finish' );
-				response2.emit( 'finish' );
+				response.emit( 'close' );
+				response2.emit( 'close' );
 
 				expect( statsdUtils.logServerEvent ).toBeCalledTimes( 1 );
 
 				jest.advanceTimersByTime( TWO_SECONDS );
-				response.emit( 'finish' );
-				response2.emit( 'finish' );
+				response.emit( 'close' );
+				response2.emit( 'close' );
 
 				expect( statsdUtils.logServerEvent ).toBeCalledTimes( 2 );
 				analyticsMock.mockRestore();

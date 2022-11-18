@@ -54,7 +54,7 @@ const RichTextJustifyButton = ( { blockId, isBlockJustified, updateBlockAttribut
 
 const ConnectedRichTextJustifyButton = compose(
 	withSelect( ( wpSelect ) => {
-		const selectedBlock = wpSelect( 'core/editor' ).getSelectedBlock();
+		const selectedBlock = wpSelect( 'core/block-editor' ).getSelectedBlock();
 		if ( ! selectedBlock ) {
 			return {};
 		}

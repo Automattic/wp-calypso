@@ -170,7 +170,12 @@ export default function CampaignItem( { campaign }: Props ) {
 				<p>{ __( 'Please try again later or contact support if the problem persists.' ) }</p>
 			</Dialog>
 
-			<FoldableCard header={ header } hideSummary={ true } className="campaign-item__foldable-card">
+			<FoldableCard
+				clickableHeader
+				header={ header }
+				hideSummary={ true }
+				className="campaign-item__foldable-card"
+			>
 				{ campaignStatus === 'rejected' && moderation_reason && (
 					<Notice isDismissible={ false } className="campaign-item__notice" status="warning">
 						<Gridicon className="campaign-item__notice-icon" icon="info-outline" />

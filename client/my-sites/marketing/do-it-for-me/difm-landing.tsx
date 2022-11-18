@@ -17,15 +17,14 @@ import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import FoldableFAQComponent from 'calypso/components/foldable-faq';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { incrementCounter } from 'calypso/state/persistent-counter/actions';
-import { requestProductsList } from 'calypso/state/products-list/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import type { TranslateResult } from 'i18n-calypso';
@@ -235,7 +234,6 @@ export default function DIFMLanding( {
 	siteId?: number | null;
 } ) {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
 	const product = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
 	const productCost = product?.cost;
@@ -245,8 +243,6 @@ export default function DIFMLanding( {
 
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const hasPriceDataLoaded = productCost && extraPageCost && currencyCode;
-
-	const [ isLoading, setIsLoading ] = useState( true );
 
 	const displayCost = hasPriceDataLoaded
 		? formatCurrency( productCost, currencyCode, { stripZeros: true } )
@@ -274,14 +270,6 @@ export default function DIFMLanding( {
 		}
 	}, [ isFAQSectionOpen ] );
 
-	useEffect( () => {
-		( async () => {
-			await dispatch( incrementCounter( 'VIEWED_DIFM_LANDING' ) );
-			await dispatch( requestProductsList( { type: 'all' } ) );
-			setIsLoading( false );
-		} )();
-	}, [ dispatch ] );
-
 	const planTitle = isEnabled( 'plans/pro-plan' )
 		? getPlan( PLAN_WPCOM_PRO )?.getTitle()
 		: getPlan( PLAN_PREMIUM )?.getTitle();
@@ -290,7 +278,7 @@ export default function DIFMLanding( {
 		'Hire a professional to set up your site for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
 		{
 			components: {
-				PriceWrapper: isLoading ? <Placeholder /> : <span />,
+				PriceWrapper: ! hasPriceDataLoaded ? <Placeholder /> : <span />,
 				sup: <sup />,
 			},
 			args: {
@@ -335,6 +323,7 @@ export default function DIFMLanding( {
 
 	return (
 		<>
+			{ ! hasPriceDataLoaded && <QueryProductsList /> }
 			<Wrapper>
 				<ContentSection>
 					<Header align="left" headerText={ headerText } subHeaderText={ subHeaderText } />
@@ -408,7 +397,7 @@ export default function DIFMLanding( {
 						<FoldableFAQ
 							id="faq-1"
 							expanded={ true }
-							question={ translate( 'What is Do It For Me: Website Design Service?' ) }
+							question={ translate( 'What is Built By WordPress.com Express?' ) }
 						>
 							<p>
 								{ translate(

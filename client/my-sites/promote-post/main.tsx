@@ -38,6 +38,15 @@ const queryPage = {
 	type: 'page',
 };
 
+const queryProducts = {
+	...queryPost,
+	type: 'product',
+};
+
+export type DSPMessage = {
+	errorCode?: string;
+};
+
 function sortItemsByPublishedDate( items: Post[] ) {
 	return items.slice( 0 ).sort( function ( a, b ) {
 		if ( a.date && b.date ) {
@@ -50,6 +59,8 @@ function sortItemsByPublishedDate( items: Post[] ) {
 		return b.ID - a.ID;
 	} );
 }
+
+const ERROR_NO_LOCAL_USER = 'no_local_user';
 
 export default function PromotedPosts( { tab }: Props ) {
 	const selectedTab = tab === 'campaigns' ? 'campaigns' : 'posts';
@@ -67,15 +78,26 @@ export default function PromotedPosts( { tab }: Props ) {
 		return pages?.filter( ( page: any ) => ! page.password );
 	} );
 
+	const products = useSelector( ( state ) => {
+		const products = getPostsForQuery( state, selectedSiteId, queryProducts );
+		return products?.filter( ( product: any ) => ! product.password );
+	} );
+
 	const isLoadingPost = useSelector( ( state ) =>
 		isRequestingPostsForQuery( state, selectedSiteId, queryPost )
 	);
 	const isLoadingPage = useSelector( ( state ) =>
 		isRequestingPostsForQuery( state, selectedSiteId, queryPage )
 	);
+	const isLoadingProducts = useSelector( ( state ) =>
+		isRequestingPostsForQuery( state, selectedSiteId, queryProducts )
+	);
 
 	const campaigns = useCampaignsQuery( selectedSiteId ?? 0 );
-	const { isLoading: campaignsIsLoading, data: campaignsData, isError } = campaigns;
+	const { isLoading: campaignsIsLoading, isError, error: campaignError } = campaigns;
+	const { data: campaignsData } = campaigns;
+
+	const hasLocalUser = ( campaignError as DSPMessage )?.errorCode !== ERROR_NO_LOCAL_USER;
 
 	const translate = useTranslate();
 
@@ -131,9 +153,13 @@ export default function PromotedPosts( { tab }: Props ) {
 		);
 	}
 
-	const content = sortItemsByPublishedDate( [ ...( posts || [] ), ...( pages || [] ) ] );
+	const content = sortItemsByPublishedDate( [
+		...( posts || [] ),
+		...( pages || [] ),
+		...( products || [] ),
+	] );
 
-	const isLoading = isLoadingPage && isLoadingPost;
+	const isLoading = isLoadingPage && isLoadingPost && isLoadingProducts;
 
 	return (
 		<Main wideLayout className="promote-post">
@@ -152,6 +178,7 @@ export default function PromotedPosts( { tab }: Props ) {
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
 			{ selectedTab === 'campaigns' && (
 				<CampaignsList
+					hasLocalUser={ hasLocalUser }
 					isError={ isError }
 					isLoading={ campaignsIsLoading }
 					campaigns={ campaignsData || [] }
@@ -160,6 +187,7 @@ export default function PromotedPosts( { tab }: Props ) {
 
 			<QueryPosts siteId={ selectedSiteId } query={ queryPost } postId={ null } />
 			<QueryPosts siteId={ selectedSiteId } query={ queryPage } postId={ null } />
+			<QueryPosts siteId={ selectedSiteId } query={ queryProducts } postId={ null } />
 
 			{ selectedTab === 'posts' && <PostsList content={ content } isLoading={ isLoading } /> }
 		</Main>

@@ -86,7 +86,7 @@ function progressStoreListener(
 	};
 }
 
-type OnCompleteCallback = ( dependencies: Dependencies, destination: string ) => void;
+type OnCompleteCallback = ( dependencies: Dependencies, destination: string ) => Promise< void >;
 
 interface SignupFlowControllerOptions {
 	flowName: string;

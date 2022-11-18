@@ -3,7 +3,9 @@
 
 .signup {
 	&.is-newsletter,
-	&.is-link-in-bio {
+	&.is-link-in-bio,
+	&.is-link-in-bio-tld,
+	&.is-import {
 		.signup-header {
 			z-index: 1;
 
@@ -87,7 +89,8 @@
 		}
 	}
 
-	&.is-link-in-bio {
+	&.is-link-in-bio,
+	&.is-link-in-bio-tld {
 		.reskinned-processing-screen__container {
 			background-color: #d0cce3;
 			background-image:

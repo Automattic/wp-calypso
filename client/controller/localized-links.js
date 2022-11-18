@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl, getLanguageSlugs } from '@automattic/i18n-utils';
 import { getLocaleSlug } from 'i18n-calypso';
+import performanceMark from 'calypso/server/lib/performance-mark';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setDocumentHeadLink } from 'calypso/state/document-head/actions';
 
@@ -21,6 +22,7 @@ const getLocalizedCanonicalUrl = ( path, locale ) => {
 };
 
 export const setLocalizedCanonicalUrl = ( context, next ) => {
+	performanceMark( context, 'setLocalizedCanonicalUrl' );
 	if ( ! context.isServerSide || isUserLoggedIn( context.store.getState() ) ) {
 		next();
 		return;
@@ -41,6 +43,7 @@ export const setHrefLangLinks = ( context, next ) => {
 		next();
 		return;
 	}
+	performanceMark( context, 'setHrefLangLinks' );
 
 	const langCodes = [ 'x-default', 'en', ...config( 'magnificent_non_en_locales' ) ];
 	const hrefLangBlock = langCodes.map( ( hrefLang ) => {

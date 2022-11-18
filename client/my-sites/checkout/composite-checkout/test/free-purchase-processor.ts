@@ -16,6 +16,21 @@ describe( 'freePurchaseProcessor', () => {
 		...getEmptyResponseCartProduct(),
 		meta: 'example.com',
 		is_domain_registration: true,
+		currency: 'USD',
+		item_original_cost_integer: 100,
+		item_original_cost_display: '$100',
+		item_original_cost_for_quantity_one_integer: 100,
+		item_original_cost_for_quantity_one_display: '$100',
+		item_subtotal_integer: 100,
+		item_subtotal_display: '$100',
+		product_cost_integer: 100,
+		product_cost_display: '$100',
+		item_subtotal_monthly_cost_display: '$100',
+		item_subtotal_monthly_cost_integer: 100,
+		item_original_subtotal_integer: 100,
+		item_original_subtotal_display: '$100',
+		uuid: 'product002',
+		cost: 100,
 	};
 	const cart = { ...getEmptyResponseCart(), products: [ product ] };
 	const options = {
@@ -111,7 +126,7 @@ describe( 'freePurchaseProcessor', () => {
 		} );
 	} );
 
-	it( 'sends the correct data to the endpoint with empty tax information', async () => {
+	it( 'sends the correct data to the endpoint with empty tax information if the cart total is 0', async () => {
 		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
 		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 		await expect(
@@ -143,6 +158,55 @@ describe( 'freePurchaseProcessor', () => {
 				cart_key: '1234567',
 				coupon: '',
 				create_new_blog: false,
+			},
+		} );
+	} );
+
+	it( 'sends the correct data to the endpoint with tax information if it is a full-credits purchase', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
+		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
+		await expect(
+			freePurchaseProcessor( {
+				...options,
+				siteSlug: 'example.wordpress.com',
+				siteId: 1234567,
+				contactDetails: {
+					countryCode,
+					postalCode,
+				},
+				responseCart: {
+					...options.responseCart,
+					products: [ domainProduct ],
+					credits_integer: 100,
+					sub_total_integer: 100,
+					total_tax_integer: 0,
+					tax: {
+						display_taxes: true,
+						location: {
+							postal_code: 'pr267ry',
+							country_code: 'GB',
+						},
+					},
+				},
+			} )
+		).resolves.toStrictEqual( expected );
+		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
+			...basicExpectedStripeRequest,
+			cart: {
+				...basicExpectedStripeRequest.cart,
+				blog_id: '1234567',
+				cart_key: '1234567',
+				coupon: '',
+				create_new_blog: false,
+				products: [ domainProduct ],
+				tax: { location: { postal_code: 'pr267ry', country_code: 'GB' } },
+			},
+			payment: {
+				...basicExpectedStripeRequest.payment,
+				country: 'US',
+				country_code: 'US',
+				postal_code: '10001',
+				zip: '10001',
 			},
 		} );
 	} );

@@ -1,6 +1,7 @@
 // ==========================================================================
 // Horizontal bar list
 // ==========================================================================
+@import "@wordpress/base-styles/breakpoints";
 @import "../styles/typography.scss";
 @import "./stats-variables.scss";
 
@@ -12,6 +13,19 @@
 	font-weight: 500;
 	line-height: $row-line-height;
 	color: $font-color;
+	background-color: var(--studio-white);
+
+
+	@media ( max-width: $break-medium ) {
+		border-radius: 0;
+		border-left: 0;
+		border-right: 0;
+		border-bottom: 0;
+	}
+
+	.stats-card--hero {
+		padding-bottom: $card-vertical-space;
+	}
 
 	.stats-card--header {
 		display: flex;
@@ -19,19 +33,40 @@
 		align-items: center;
 		padding: 0 $padding-outside $header-spacer $padding-outside;
 
-		.stats-card--header--title {
+		.stats-card--header--title,
+		.stats-card--header--title:visited {
 			font-size: $header-font-size;
 			line-height: $header-line-height;
+			color: var(--color-text);
 		}
+	}
+
+	.stats-card--body-empty {
+		padding: 0 $padding-outside;
+		font-weight: 400;
+		padding-top: 4px;
+		color: var(--studio-gray-60);
 	}
 
 	.stats-card--footer {
 		font-weight: 600;
-		padding: $padding-outside $padding-outside 0;
+		margin: $padding-outside $padding-outside 0;
 		display: block;
+		color: var(--color-text);
 
 		&:visited {
 			color: $font-color;
 		}
+	}
+}
+
+.stats-card-avatar {
+	display: flex;
+	padding-right: $stats-avatar-spacer;
+
+	.stats-card-avatar-image {
+		width: $stats-avatar-size;
+		height: $stats-avatar-size;
+		border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 	}
 }

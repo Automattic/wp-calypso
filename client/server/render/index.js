@@ -8,12 +8,12 @@ import Lru from 'lru';
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
+import { logServerEvent } from 'calypso/lib/analytics/statsd-utils';
 import {
 	getLanguageFileUrl,
 	getLanguageManifestFileUrl,
 	getTranslationChunkFileUrl,
 } from 'calypso/lib/i18n-utils/switch-locale';
-import { logToLogstash } from 'calypso/lib/logstash';
 import { getCacheKey } from 'calypso/server/isomorphic-routing';
 import performanceMark from 'calypso/server/lib/performance-mark';
 import stateCache from 'calypso/server/state-cache';
@@ -29,7 +29,7 @@ import { serialize } from 'calypso/state/utils';
 
 const debug = debugFactory( 'calypso:server-render' );
 const HOUR_IN_MS = 3600000;
-const markupCache = new Lru( {
+export const markupCache = new Lru( {
 	max: 3000,
 	maxAge: HOUR_IN_MS,
 } );
@@ -81,7 +81,8 @@ function render( element, key, req ) {
 		const startTime = Date.now();
 		debug( 'cache access for key', key );
 
-		let renderedLayout = markupCache.get( key );
+		// If the cached layout was stored earlier in the request, no need to get it again.
+		let renderedLayout = req.context.cachedMarkup ?? markupCache.get( key );
 		if ( ! renderedLayout ) {
 			bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
 			debug( 'cache miss for key', key );
@@ -90,7 +91,7 @@ function render( element, key, req ) {
 				config.isEnabled( 'ssr/always-log-cache-misses' )
 			) {
 				// Log 0.1% of cache misses
-				logToLogstash( {
+				req.logger.warn( {
 					feature: 'calypso_ssr',
 					message: 'render cache miss',
 					extra: {
@@ -106,6 +107,18 @@ function render( element, key, req ) {
 		}
 		const rtsTimeMs = Date.now() - startTime;
 		debug( 'Server render time (ms)', rtsTimeMs );
+
+		logServerEvent( req.context.sectionName, [
+			{
+				name: `ssr.markup_cache.${ renderedLayout ? 'hit' : 'miss' }`,
+				type: 'counting',
+			},
+			{
+				name: 'ssr.react_render.duration',
+				type: 'timing',
+				value: rtsTimeMs,
+			},
+		] );
 
 		if ( rtsTimeMs > 100 ) {
 			// Server renders should probably never take longer than 100ms
@@ -214,7 +227,7 @@ export function attachBuildTimestamp( context ) {
 }
 
 export function serverRender( req, res ) {
-	performanceMark( req, 'serverRender' );
+	performanceMark( req.context, 'serverRender' );
 	const context = req.context;
 
 	let cacheKey = false;
@@ -222,25 +235,21 @@ export function serverRender( req, res ) {
 	attachI18n( context );
 
 	if ( shouldServerSideRender( context ) ) {
-		performanceMark( req, 'render layout', true );
+		performanceMark( req.context, 'render layout', true );
 		cacheKey = getCacheKey( req );
 		debug( `SSR render with cache key ${ cacheKey }.` );
 
-		context.renderedLayout = render(
-			context.layout,
-			req.error ? req.error.message : cacheKey,
-			req
-		);
+		context.renderedLayout = render( context.layout, req.error?.message ?? cacheKey, req );
 	}
 
-	performanceMark( req, 'dehydrateQueryClient', true );
+	performanceMark( req.context, 'dehydrateQueryClient', true );
 	context.initialQueryState = dehydrateQueryClient( context.queryClient );
 
 	if ( context.store ) {
-		performanceMark( req, 'redux store', true );
+		performanceMark( req.context, 'redux store', true );
 		attachHead( context );
 
-		const isomorphicSubtrees = context.section?.isomorphic ? [ 'themes', 'ui' ] : [];
+		const isomorphicSubtrees = context.section?.isomorphic ? [ 'themes', 'ui', 'plugins' ] : [];
 		const initialClientStateTrees = [ 'documentHead', ...isomorphicSubtrees ];
 
 		// Send state to client
@@ -258,18 +267,22 @@ export function serverRender( req, res ) {
 		 * (like /es/themes), that applies to every user.
 		 */
 		if ( cacheKey ) {
-			const { documentHead, themes } = context.store.getState();
-			const serverState = serialize( context.store.getCurrentReducer(), { documentHead, themes } );
+			const { documentHead, themes, plugins } = context.store.getState();
+			const serverState = serialize( context.store.getCurrentReducer(), {
+				documentHead,
+				themes,
+				plugins,
+			} );
 			stateCache.set( cacheKey, serverState.get() );
 		}
 	}
-	performanceMark( req, 'final render', true );
+	performanceMark( req.context, 'final render', true );
 	context.clientData = config.clientData;
 
 	attachBuildTimestamp( context );
 
 	res.send( renderJsx( 'index', context ) );
-	performanceMark( req, 'post-sending JSX' );
+	performanceMark( req.context, 'post-sending JSX' );
 }
 
 /**
@@ -312,7 +325,7 @@ function isServerSideRenderCompatible( context ) {
 	return Boolean(
 		context.section?.isomorphic &&
 			! context.user && // logged out only
-			context.layout
+			( context.layout || context.cachedMarkup ) // A layout was generated or we have one cached.
 	);
 }
 

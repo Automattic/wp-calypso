@@ -6,51 +6,47 @@ const headerPatterns: Pattern[] = [
 		name: 'Centered header',
 	},
 	{
-		id: 5608,
-		name: 'Centred Header with Logo and Navigation',
-	},
-	{
 		id: 5582,
-		name: 'Simple Header With Large Font Size',
+		name: 'Simple header with large font size',
 	},
 	{
 		id: 5605,
-		name: 'Header with Site Title and Vertical Navigation',
+		name: 'Header with site title and vertical navigation',
 	},
 	{
 		id: 5603,
-		name: 'Header with Site Title and Menu Button',
+		name: 'Header with site title and menu button',
 	},
 	{
 		id: 7914,
-		name: 'Header with Button',
+		name: 'Header with button',
 	},
 	{
 		id: 5588,
-		name: 'Simple Header',
+		name: 'Simple header',
 	},
 	{
 		id: 5601,
-		name: 'Simple Header With Tagline',
+		name: 'Simple header with tagline',
 	},
 	{
 		id: 5590,
-		name: 'Simple Header With Image Background',
+		name: 'Simple header with image background',
 	},
 	{
 		id: 5595,
-		name: 'Simple Header With Image',
+		name: 'Simple header with image',
 	},
 	{
 		id: 5593,
-		name: 'Simple Header With Dark background',
+		name: 'Simple header with dark background',
 	},
 ];
 
 const footerPatterns: Pattern[] = [
 	{
 		id: 5316,
-		name: 'Footer with Social Icons, Address, E-mail, and Telephone Number',
+		name: 'Footer with social icons, address, e-mail, and telephone number',
 	},
 	{
 		id: 5886,
@@ -78,7 +74,7 @@ const footerPatterns: Pattern[] = [
 	},
 	{
 		id: 5047,
-		name: 'Footer with Navigation, Contact Details, Social Links, and Subscription Form',
+		name: 'Footer with navigation, contact details, social links, and subscription form',
 	},
 	{
 		id: 5880,
@@ -113,7 +109,7 @@ const sectionPatterns: Pattern[] = [
 	},
 	{
 		id: 5691,
-		name: 'Three Logos, Heading, and Paragraphs',
+		name: 'Three logos, heading, and paragraphs',
 	},
 	{
 		id: 7143,
@@ -133,11 +129,11 @@ const sectionPatterns: Pattern[] = [
 	},
 	{
 		id: 1585,
-		name: 'Quote and Logos',
+		name: 'Quote and logos',
 	},
 	{
 		id: 789,
-		name: 'Numbered List',
+		name: 'Numbered list',
 	},
 	{
 		id: 5666,
@@ -149,7 +145,7 @@ const sectionPatterns: Pattern[] = [
 	},
 	{
 		id: 5663,
-		name: 'Large Headline',
+		name: 'Large headline',
 	},
 	{
 		id: 7140,

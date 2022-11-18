@@ -2,6 +2,7 @@ import { Button, Spinner } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { useMemo, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -18,6 +19,7 @@ import './ssh-keys.scss';
 
 interface SshKeysProps {
 	siteId: number;
+	siteSlug: string;
 	username: string;
 	disabled: boolean;
 }
@@ -28,10 +30,14 @@ const noticeOptions = {
 
 const sshKeyAttachFailureNoticeId = 'ssh-key-attach-failure';
 
-function SshKeys( { siteId, username, disabled }: SshKeysProps ) {
+function SshKeys( { siteId, siteSlug, username, disabled }: SshKeysProps ) {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
-	const { data: keys, isLoading: isLoadingKeys } = useAtomicSshKeys( siteId, {
+	const {
+		data: keys,
+		isLoading: isLoadingKeys,
+		isFetching: isFetchingKeys,
+	} = useAtomicSshKeys( siteId, {
 		enabled: ! disabled,
 	} );
 	const { data: userKeys, isLoading: isLoadingUserKeys } = useSSHKeyQuery();
@@ -74,9 +80,21 @@ function SshKeys( { siteId, username, disabled }: SshKeysProps ) {
 		return !! keys.find( ( { user_login } ) => user_login === username );
 	}, [ keys, username ] );
 
-	const isLoading = isLoadingKeys || isLoadingUserKeys;
+	/*
+	 * isFetching keys is needed here, because when we update a key from me/security/ssh-key page,
+	 * and return to this page, the keys, although the query reruns, are not cleared.
+	 * isFetching returns true when refetching in the background. Happens when there is stale cache to display as a placeholder.
+	 * So we rely on that to display the loader.
+	 * Same goes with the map of the keys in the view below. We don't want to show the old keys
+	 * until the refetching is completed.
+	 * */
+	const isLoading = isLoadingKeys || isLoadingUserKeys || isFetchingKeys;
 	const showKeysSelect = ! isLoading && ! userKeyIsAttached && userKeys && userKeys.length > 0;
 	const showLinkToAddUserKey = ! isLoading && ! userKeyIsAttached && userKeys?.length === 0;
+	const SSH_ADD_URL = addQueryArgs( '/me/security/ssh-key', {
+		source: 'hosting-config',
+		siteSlug,
+	} );
 
 	return (
 		<div className="ssh-keys">
@@ -84,14 +102,15 @@ function SshKeys( { siteId, username, disabled }: SshKeysProps ) {
 				{ __( 'SSH Keys' ) }
 			</label>
 
-			{ keys?.map( ( sshKey ) => (
-				<SshKeyCard
-					key={ sshKey.sha256 }
-					sshKey={ sshKey }
-					deleteText={ __( 'Detach' ) }
-					siteId={ siteId }
-				/>
-			) ) }
+			{ ! isFetchingKeys &&
+				keys?.map( ( sshKey ) => (
+					<SshKeyCard
+						key={ sshKey.sha256 }
+						sshKey={ sshKey }
+						deleteText={ __( 'Detach' ) }
+						siteId={ siteId }
+					/>
+				) ) }
 
 			{ isLoading && <Spinner /> }
 
@@ -126,7 +145,7 @@ function SshKeys( { siteId, username, disabled }: SshKeysProps ) {
 						{
 							a: (
 								<a
-									href="/me/security/ssh-key"
+									href={ SSH_ADD_URL }
 									onClick={ () => {
 										dispatch(
 											recordTracksEvent( 'calypso_hosting_configuration_add_ssh_key_link_click' )

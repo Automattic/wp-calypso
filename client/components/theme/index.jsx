@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Card, Ribbon, Button, Gridicon } from '@automattic/components';
 import { Button as LinkButton } from '@wordpress/components';
@@ -24,6 +23,8 @@ import {
 	doesThemeBundleSoftwareSet as getDoesThemeBundleSoftwareSet,
 	isSiteEligibleForBundledSoftware as getIsSiteEligibleForBundledSoftware,
 	isPremiumThemeAvailable as getIsPremiumThemeAvailable,
+	isExternallyManagedTheme as getIsExternallyManagedTheme,
+	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
 } from 'calypso/state/themes/selectors';
 import { isThemePremium as getIsThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
@@ -264,6 +265,27 @@ export class Theme extends Component {
 		}
 	};
 
+	parseThemePrice = ( price ) => {
+		/*
+		theme.price on "Recommended" themes tab
+		Premium theme: "$50"
+		Free theme:    undefined
+
+		theme.price on Trending themes tab
+		Premium theme: { value: 50, currency: "USD", display: "<abbr title=\"United States Dollars\">US$</abbr>50" }
+		Free theme:    { value: 0, currency: "USD", display: "Free" }
+
+		Try to correctly parse the price for both cases.
+		*/
+		if ( typeof price === 'object' && 'display' in price ) {
+			let parsedThemePrice = price.display;
+			// Remove all html tags from the price string
+			parsedThemePrice = parsedThemePrice.replace( /(<([^>]+)>)/gi, '' );
+			return parsedThemePrice;
+		}
+		return price;
+	};
+
 	getUpsellMessage() {
 		const {
 			hasPremiumThemesFeature,
@@ -272,6 +294,8 @@ export class Theme extends Component {
 			translate,
 			doesThemeBundleSoftwareSet,
 			isSiteEligibleForBundledSoftware,
+			isExternallyManagedTheme,
+			isSiteEligibleForManagedExternalThemes,
 		} = this.props;
 
 		// Premium themes (non-bundled): Only require premium themes feature (Premium or higher plans)
@@ -280,8 +304,31 @@ export class Theme extends Component {
 		const isUsableBundledTheme =
 			doesThemeBundleSoftwareSet && hasPremiumThemesFeature && isSiteEligibleForBundledSoftware;
 
+		const parsedThemePrice = this.parseThemePrice( theme.price );
+
 		if ( didPurchaseTheme && ! isUsablePremiumTheme && ! isUsableBundledTheme ) {
 			return translate( 'You have purchased an annual subscription for this theme' );
+		} else if ( isExternallyManagedTheme && ! isSiteEligibleForManagedExternalThemes ) {
+			// This is a third-party theme but the user doesn't have an eligible plan.
+			return createInterpolateElement(
+				translate(
+					'This premium theme costs %(price)s per year and can only be purchased if you have the <Link>Business plan</Link> on your site.',
+					{
+						args: { price: parsedThemePrice },
+					}
+				),
+				{
+					Link: <LinkButton isLink onClick={ () => this.goToCheckout( 'business' ) } />,
+				}
+			);
+		} else if ( isExternallyManagedTheme && isSiteEligibleForManagedExternalThemes ) {
+			// This is a third-party theme and the user has an eligible plan.
+			return translate(
+				'This premium theme is only available while your current plan is active and costs %(price)s per year.',
+				{
+					args: { price: parsedThemePrice },
+				}
+			);
 		} else if ( isUsablePremiumTheme ) {
 			return translate( 'The premium theme is included in your plan.' );
 		} else if ( isUsableBundledTheme ) {
@@ -302,7 +349,7 @@ export class Theme extends Component {
 					'This premium theme is included in the <Link>Premium plan</Link>, or you can purchase individually for %(price)s a year'
 				),
 				{
-					price: theme.price,
+					price: parsedThemePrice,
 				}
 			),
 			{
@@ -339,6 +386,7 @@ export class Theme extends Component {
 			didPurchaseTheme,
 			doesThemeBundleSoftwareSet,
 			isPremiumThemeAvailable,
+			isExternallyManagedTheme,
 		} = this.props;
 		const { name, description, screenshot } = theme;
 		const isActionable = this.props.screenshotClickUrl || this.props.onScreenshotClick;
@@ -348,9 +396,7 @@ export class Theme extends Component {
 		} );
 
 		const themeNeedsPurchase = isPremiumTheme && ! hasPremiumThemesFeature && ! didPurchaseTheme;
-		const showUpsell = ! isEnabled( 'signup/seller-upgrade-modal' )
-			? themeNeedsPurchase && upsellUrl
-			: upsellUrl && theme.price && ! active;
+		const showUpsell = upsellUrl && isPremiumTheme && ! active;
 		const priceClass = classNames( 'theme__badge-price', {
 			'theme__badge-price-upgrade': ! themeNeedsPurchase,
 			'theme__badge-price-upsell': showUpsell,
@@ -375,25 +421,14 @@ export class Theme extends Component {
 		const upsellEventProperties = { cta_name: 'theme-upsell', theme: theme.id };
 		const upsellPopupEventProperties = { cta_name: 'theme-upsell-popup', theme: theme.id };
 
-		const upsellContent = ! isEnabled( 'signup/seller-upgrade-modal' ) ? (
-			<div className="theme__upsell-popover">
-				<h2 className="theme__upsell-heading">
-					{ translate( 'Use this theme at no extra cost on our Premium or Business Plan' ) }
-				</h2>
-				<Button
-					onClick={ this.onUpsellClick }
-					className="theme__upsell-cta"
-					primary
-					href={ upsellUrl }
-				>
-					{ translate( 'Upgrade Now' ) }
-				</Button>
-			</div>
-		) : (
+		const upsellContent = (
 			<div>
 				<div data-testid="upsell-header" className="theme__upsell-header">
-					{ ! doesThemeBundleSoftwareSet && translate( 'Premium theme' ) }
-					{ doesThemeBundleSoftwareSet && translate( 'WooCommerce theme' ) }
+					{ ( ! doesThemeBundleSoftwareSet || isExternallyManagedTheme ) &&
+						translate( 'Premium theme' ) }
+					{ doesThemeBundleSoftwareSet &&
+						! isExternallyManagedTheme &&
+						translate( 'WooCommerce theme' ) }
 				</div>
 				<div data-testid="upsell-message">{ this.getUpsellMessage() }</div>
 			</div>
@@ -407,14 +442,12 @@ export class Theme extends Component {
 				/>
 				<InfoPopover
 					icon="star"
-					showOnHover={ isEnabled( 'signup/seller-upgrade-modal' ) }
+					showOnHover={ true }
 					className={ classNames(
-						! isEnabled( 'signup/seller-upgrade-modal' )
-							? 'theme__upsell-icon'
-							: 'theme__upsell-popover',
+						'theme__upsell-popover',
 						isPremiumThemeAvailable || showPremiumBadge ? 'active' : null
 					) }
-					position={ ! isEnabled( 'signup/seller-upgrade-modal' ) ? 'top left' : 'top' }
+					position="top"
 				>
 					<TrackComponentView
 						eventName={ impressionEventName }
@@ -426,8 +459,8 @@ export class Theme extends Component {
 		);
 
 		const fit = '479,360';
-		const themeImgSrc = photon( screenshot, { fit } );
-		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } );
+		const themeImgSrc = photon( screenshot, { fit } ) || screenshot;
+		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } ) || screenshot;
 		const e2eThemeName = name.toLowerCase().replace( /\s+/g, '-' );
 
 		const bookmarkRef = this.props.bookmarkRef ? { ref: this.props.bookmarkRef } : {};
@@ -487,12 +520,7 @@ export class Theme extends Component {
 								} ) }
 							</span>
 						) }
-						{ showPremiumBadge && ! isEnabled( 'signup/seller-upgrade-modal' ) && (
-							<span className="theme__badge-premium">{ translate( 'Premium' ) }</span>
-						) }
-						{ ( ! isEnabled( 'signup/seller-upgrade-modal' ) || active ) && (
-							<span className={ priceClass }>{ price }</span>
-						) }
+						{ active && <span className={ priceClass }>{ price }</span> }
 						{ upsell }
 						{ ! isEmpty( this.props.buttonContents ) ? (
 							<ThemeMoreButton
@@ -530,6 +558,11 @@ export default connect(
 			siteSlug: getSiteSlug( state, siteId ),
 			didPurchaseTheme: isThemePurchased( state, theme.id, siteId ),
 			isPremiumThemeAvailable: getIsPremiumThemeAvailable( state, theme.id, siteId ),
+			isExternallyManagedTheme: getIsExternallyManagedTheme( state, theme.id ),
+			isSiteEligibleForManagedExternalThemes: getIsSiteEligibleForManagedExternalThemes(
+				state,
+				siteId
+			),
 		};
 	},
 	{ recordTracksEvent, setThemesBookmark, updateThemes }

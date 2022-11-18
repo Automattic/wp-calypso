@@ -416,13 +416,15 @@ export function noSite( context, next ) {
 	const hasSite = currentUser && currentUser.visible_site_count >= 1;
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
 	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
+	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
 
-	if ( ! isDomainOnlyFlow && ! isJetpackCheckoutFlow && hasSite ) {
+	if ( ! isDomainOnlyFlow && ! isJetpackCheckoutFlow && ! isGiftCheckoutFlow && hasSite ) {
 		siteSelection( context, next );
-	} else {
-		context.store.dispatch( setSelectedSiteId( null ) );
-		return next();
+		return;
 	}
+
+	context.store.dispatch( setSelectedSiteId( null ) );
+	return next();
 }
 
 /*

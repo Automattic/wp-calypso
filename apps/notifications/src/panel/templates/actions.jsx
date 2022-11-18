@@ -1,9 +1,12 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getActions, getReferenceId } from '../helpers/notes';
 import getIsNoteApproved from '../state/selectors/get-is-note-approved';
 import getIsNoteLiked from '../state/selectors/get-is-note-liked';
+import AnswerPromptButton from './button-answer-prompt';
 import ApproveButton from './button-approve';
 import EditButton from './button-edit';
 import LikeButton from './button-like';
@@ -51,6 +54,7 @@ const ActionsPane = ( { global, isApproved, isLiked, note, translate } ) => {
 				{ hasAction( 'trash-comment' ) && <TrashButton note={ note } /> }
 				{ hasAction( [ 'like-post', 'like-comment' ] ) && <LikeButton { ...{ note, isLiked } } /> }
 				{ hasAction( 'edit-comment' ) && <EditButton note={ note } /> }
+				{ hasAction( 'answer-prompt' ) && <AnswerPromptButton note={ note } /> }
 			</div>
 			{ !! actions[ 'replyto-comment' ] && (
 				<ReplyInput

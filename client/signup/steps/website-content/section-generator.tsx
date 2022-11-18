@@ -1,4 +1,4 @@
-import { CONTACT_PAGE } from 'calypso/signup/difm/constants';
+import { BLOG_PAGE, CONTACT_PAGE } from 'calypso/signup/difm/constants';
 import {
 	ContactPageDetails,
 	FeedbackSection,
@@ -11,6 +11,7 @@ import type {
 	AccordionSectionProps,
 	SectionGeneratorReturnType,
 } from 'calypso/signup/accordion-form/types';
+import type { PageId } from 'calypso/signup/difm/constants';
 import type { TranslateResult } from 'i18n-calypso';
 
 interface SectionProcessedResult {
@@ -70,12 +71,9 @@ const generateWebsiteContentSections = (
 ): SectionProcessedResult => {
 	const { translate, formValues, formErrors, onChangeField } = params;
 
-	const OPTIONAL_PAGES: Record< string, boolean > = { [ CONTACT_PAGE ]: true };
-	const PAGE_LABELS: Record< string, TranslateResult > = {
-		[ CONTACT_PAGE ]: translate(
-			"We'll add a standard contact form on this page, plus a comment box. " +
-				'If you would like text to appear above this form, please enter it below.'
-		),
+	const OPTIONAL_PAGES: Partial< Record< PageId, boolean > > = {
+		[ CONTACT_PAGE ]: true,
+		[ BLOG_PAGE ]: true,
 	};
 
 	const websiteContentSections = formValues.pages.map( ( page, index ) => {
@@ -103,7 +101,6 @@ const generateWebsiteContentSections = (
 				<DisplayedPageComponent
 					page={ page }
 					formErrors={ formErrors }
-					label={ PAGE_LABELS[ page.id ] }
 					onChangeField={ onChangeField }
 				/>
 			),

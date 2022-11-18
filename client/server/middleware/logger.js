@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import uaParser from 'ua-parser-js';
 import { v4 as uuidv4 } from 'uuid';
+import isStaticRequest from 'calypso/server/lib/is-static-request';
 import { getLogger } from 'calypso/server/lib/logger';
 import { finalizePerfMarks } from 'calypso/server/lib/performance-mark';
 
@@ -17,6 +18,11 @@ const parseUA = ( rawUA ) => {
 
 const logRequest = ( req, res, options ) => {
 	const { requestStart } = options;
+
+	// Let's not log static file requests in dev mode, since it adds a ton of unhelpful noise.
+	if ( process.env.NODE_ENV === 'development' && isStaticRequest( req ) ) {
+		return;
+	}
 
 	const message = res.finished ? 'request finished' : 'request closed';
 	// Duration in ms.
@@ -41,7 +47,7 @@ const logRequest = ( req, res, options ) => {
 		req.logger.info(
 			// TODO: does warn not exist here for tests?
 			{
-				performanceMarks: finalizePerfMarks( req ),
+				performanceMarks: finalizePerfMarks( req.context ),
 				didTimeout: duration > 49500, // A timeout occurs at 50s, so anything close to that is likely a timeout.
 				duration,
 			},

@@ -5,10 +5,8 @@ import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils';
-import { setupSiteAfterCreation, isTailoredSignupFlow } from '@automattic/onboarding';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
-import { CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/goals/goals';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
@@ -16,7 +14,6 @@ import {
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'calypso/lib/cart-values/cart-items';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
@@ -268,8 +265,12 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	}
 
 	const locale = getLocaleSlug();
+
+	// ************************************************************************
+	// ****  Experiment skeleton left in for future BBE copy change tests  ****
+	// ************************************************************************
 	// Pre Load Experiment relevant to the post site creation goal screen
-	loadExperimentAssignment( CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME );
+	// loadExperimentAssignment( CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME );
 
 	wpcom.req.post(
 		'/sites/new',
@@ -296,29 +297,16 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 				domainItem,
 				themeItem,
 			};
-			if ( isTailoredSignupFlow( flowToCheck ) ) {
-				setupSiteAfterCreation( { siteId, flowName: flowToCheck } ).then( () => {
-					processItemCart(
-						providedDependencies,
-						newCartItems,
-						callback,
-						reduxStore,
-						siteSlug,
-						isFreeThemePreselected,
-						themeSlugWithRepo
-					);
-				} );
-			} else {
-				processItemCart(
-					providedDependencies,
-					newCartItems,
-					callback,
-					reduxStore,
-					siteSlug,
-					isFreeThemePreselected,
-					themeSlugWithRepo
-				);
-			}
+
+			processItemCart(
+				providedDependencies,
+				newCartItems,
+				callback,
+				reduxStore,
+				siteSlug,
+				isFreeThemePreselected,
+				themeSlugWithRepo
+			);
 		}
 	);
 }
@@ -345,9 +333,7 @@ function addDIFMLiteToCart( callback, dependencies, step, reduxStore ) {
 		extra,
 	};
 
-	if ( config.isEnabled( 'difm/allow-extra-pages' ) ) {
-		cartItem.quantity = dependencies.selectedPageTitles.length;
-	}
+	cartItem.quantity = dependencies.selectedPageTitles.length;
 
 	const providedDependencies = {
 		selectedDesign,
@@ -879,8 +865,11 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 		client_secret: config( 'wpcom_signup_key' ),
 	};
 
+	// ************************************************************************
+	// ****  Experiment skeleton left in for future BBE copy change tests  ****
+	// ************************************************************************
 	// Pre Load Experiment relevant to the post site creation goal screen
-	loadExperimentAssignment( CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME );
+	// loadExperimentAssignment( CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME );
 
 	wpcom.req.post( '/sites/new', data, function ( errors, response ) {
 		let providedDependencies;
@@ -949,21 +938,16 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 
 // Similar to createSite but also sets the site title and description
 export function createVideoPressSite( callback, dependencies, stepData, reduxStore ) {
-	const { site, themeSlugWithRepo, siteTitle = '', siteDescription = '' } = stepData;
-	const signupDependencies = getSignupDependencyStore( reduxStore.getState() );
+	const { site, siteTitle = '', siteDescription = '' } = stepData;
 	const locale = getLocaleSlug();
-
-	const theme =
-		dependencies?.themeSlugWithRepo ||
-		themeSlugWithRepo ||
-		get( signupDependencies, 'themeSlugWithRepo', false );
 
 	const data = {
 		blog_name: site,
 		blog_title: siteTitle,
 		public: Visibility.PublicNotIndexed,
 		options: {
-			theme,
+			theme: 'pub/twentytwentytwo',
+			site_vertical_name: 'videomaker',
 			timezone_string: guessTimezone(),
 			wpcom_public_coming_soon: 1,
 		},

@@ -50,6 +50,9 @@ export function register(): typeof STORE_KEY {
 			'siteLogo',
 			'siteAccentColor',
 			'storeType',
+			'verticalId',
+			'storeLocationCountryCode',
+			'ecommerceFlowRecurType',
 		],
 	} );
 	isRegistered = true;

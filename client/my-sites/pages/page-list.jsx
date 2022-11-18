@@ -182,7 +182,7 @@ class Pages extends Component {
 	}
 
 	showBlogPostsPage() {
-		const { site, homepageType, isFSEActive } = this.props;
+		const { site, homepageType, homepageId, isFSEActive } = this.props;
 		const { search, status } = this.props.query;
 
 		return (
@@ -190,7 +190,7 @@ class Pages extends Component {
 				/** Blog posts page is for themes that don't support FSE */
 				! isFSEActive ) &&
 			site &&
-			homepageType === 'posts' &&
+			( homepageType === 'posts' || ( homepageType === 'page' && ! homepageId ) ) &&
 			/** Under the "Published" tab */
 			status === 'publish,private' &&
 			/** Without any search term */
@@ -202,7 +202,8 @@ class Pages extends Component {
 	 * Show the virtual homepage
 	 */
 	showVirtualHomepage() {
-		const { site, homepageType, blockEditorSettings, isFSEActive, translate } = this.props;
+		const { site, homepageType, homepageId, blockEditorSettings, isFSEActive, translate } =
+			this.props;
 		const { search, status } = this.props.query;
 
 		return (
@@ -210,7 +211,7 @@ class Pages extends Component {
 			/** Virtual homepage is for themes that support FSE */
 			isFSEActive &&
 			site &&
-			homepageType === 'posts' &&
+			( homepageType === 'posts' || ( homepageType === 'page' && ! homepageId ) ) &&
 			blockEditorSettings?.home_template &&
 			/** Under the "Published" tab without any search term or the search term is matched */
 			( ( status === 'publish,private' && ! search ) ||

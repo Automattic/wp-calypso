@@ -1,0 +1,46 @@
+.checkout-sidebar-plan-upsell {
+	margin-top: 24px;
+}
+
+.promo-card.checkout-sidebar-plan-upsell .action-panel__title {
+	color: var(--studio-blue-50);
+	display: block;
+	font-size: $font-title-medium;
+	font-weight: 400;
+	line-height: 1.2;
+}
+
+.checkout-sidebar-plan-upsell__plan-grid {
+	display: grid;
+	grid-template-rows: 1fr 1fr;
+	grid-template-columns: 1fr 1fr;
+}
+
+.checkout-sidebar-plan-upsell__plan-grid > div:nth-child(even) {
+	text-align: right;
+}
+
+.checkout-sidebar-plan-upsell__plan-grid > div {
+	border-top: 1px solid #ccc;
+	padding: 0.5em 0;
+
+	&:nth-of-type(1),
+	&:nth-of-type(2) {
+		border-top: none;
+	}
+}
+
+.checkout-sidebar-plan-upsell__do-not-pay {
+	text-decoration: line-through;
+	margin-right: 8px;
+	color: #646970;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 8px;
+	}
+}
+
+.promo-card.checkout-sidebar-plan-upsell .button {
+	width: 100%;
+}

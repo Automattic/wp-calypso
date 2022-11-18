@@ -5,13 +5,13 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useState, ChangeEvent, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import errorIllustration from 'calypso/assets/images/customer-home/disconnected.svg';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import wpcom from 'calypso/lib/wp';
 import AccordionForm from 'calypso/signup/accordion-form/accordion-form';
 import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import { useTranslatedPageTitles } from 'calypso/signup/difm/translation-hooks';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import getDIFMLiteSitePageTitles from 'calypso/state/selectors/get-difm-lite-site-page-titles';
-import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
-import isDIFMLiteWebsiteContentSubmitted from 'calypso/state/selectors/is-difm-lite-website-content-submitted';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
 import {
 	initializePages,
@@ -23,9 +23,11 @@ import {
 	isImageUploadInProgress,
 	WebsiteContentStateModel,
 } from 'calypso/state/signup/steps/website-content/selectors';
-import { requestSite } from 'calypso/state/sites/actions';
-import { getSiteId, isRequestingSite } from 'calypso/state/sites/selectors';
+import { getSiteId } from 'calypso/state/sites/selectors';
+import { SiteId } from 'calypso/types';
 import { sectionGenerator } from './section-generator';
+import type { PageId } from 'calypso/signup/difm/constants';
+
 import './style.scss';
 
 const debug = debugFactory( 'calypso:difm' );
@@ -49,6 +51,25 @@ const DialogButton = styled( Button )`
 	}
 `;
 
+const LoadingContainer = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	width: 100%;
+	height: 90vh;
+	h1 {
+		font-size: 24px;
+	}
+`;
+
+const PagesNotAvailable = styled( LoadingContainer )`
+	img {
+		max-height: 200px;
+		padding: 24px;
+	}
+`;
+
 interface WebsiteContentStepProps {
 	additionalStepData: object;
 	submitSignupStep: ( step: { stepName: string } ) => void;
@@ -56,10 +77,8 @@ interface WebsiteContentStepProps {
 	flowName: string;
 	stepName: string;
 	positionInFlow: string;
-	queryObject: {
-		siteSlug?: string;
-		siteId?: string;
-	};
+	pageTitles: PageId[];
+	siteId: SiteId | null;
 }
 
 function WebsiteContentStep( {
@@ -67,15 +86,14 @@ function WebsiteContentStep( {
 	stepName,
 	submitSignupStep,
 	goToNextStep,
-	queryObject,
+	pageTitles,
+	siteId,
 }: WebsiteContentStepProps ) {
 	const [ formErrors, setFormErrors ] = useState< ValidationErrors >( {} );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 	const websiteContent = useSelector( getWebsiteContent );
 	const currentIndex = useSelector( getWebsiteContentDataCollectionIndex );
-	const pageTitles = useSelector( ( state ) => getDIFMLiteSitePageTitles( state, siteId ) );
 	const isImageUploading = useSelector( ( state ) =>
 		isImageUploadInProgress( state as WebsiteContentStateModel )
 	);
@@ -84,19 +102,14 @@ function WebsiteContentStep( {
 	const translatedPageTitles = useTranslatedPageTitles();
 
 	useEffect( () => {
-		if ( websiteContent.pages.length > 0 ) {
-			// Already initialized.
-			return;
-		}
-
-		if ( pageTitles && pageTitles.length > 0 ) {
+		if ( siteId && pageTitles && pageTitles.length > 0 ) {
 			const pages = pageTitles.map( ( pageTitle ) => ( {
 				id: pageTitle,
 				name: translatedPageTitles[ pageTitle ],
 			} ) );
-			dispatch( initializePages( pages ) );
+			dispatch( initializePages( pages, siteId ) );
 		}
-	}, [ dispatch, pageTitles, translatedPageTitles, websiteContent.pages.length ] );
+	}, [ dispatch, pageTitles, siteId, translatedPageTitles ] );
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
@@ -147,10 +160,10 @@ function WebsiteContentStep( {
 				buttons={ dialogButtons }
 			>
 				<DialogContent>
-					<h1>{ translate( 'Submit Content?' ) }</h1>
+					<h1>{ translate( 'Are you ready to submit your content?' ) }</h1>
 					<p>
 						{ translate(
-							'Click "Submit" to start your site build or "Cancel" to make further edits.'
+							'Click the Submit button if you have finished adding content. We will build your new website and then email you within 4 business days with details about your new site.'
 						) }
 					</p>
 				</DialogContent>
@@ -171,6 +184,16 @@ function WebsiteContentStep( {
 	);
 }
 
+function Loader() {
+	const translate = useTranslate();
+	return (
+		<LoadingContainer>
+			<h1 className="wp-brand-font">{ translate( 'Loading your site information' ) }</h1>
+			<LoadingEllipsis />
+		</LoadingContainer>
+	);
+}
+
 export default function WrapperWebsiteContent(
 	props: {
 		flowName: string;
@@ -184,48 +207,64 @@ export default function WrapperWebsiteContent(
 ) {
 	const { flowName, stepName, positionInFlow, queryObject } = props;
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 	const headerText = translate( 'Website Content' );
 	const subHeaderText = translate(
-		'Add your logo, page text and media to be used on your website.'
+		'Provide content for your website build. You will be able to edit all content later using the WordPress editor.'
 	);
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 
-	const isWebsiteContentSubmitted = useSelector( ( state ) =>
-		isDIFMLiteWebsiteContentSubmitted( state, siteId )
-	);
-	const isLoadingSiteInformation = useSelector( ( state ) =>
-		isRequestingSite( state, siteId as number )
-	);
-
-	// We assume that difm lite is purchased when the is_difm_lite_in_progress sticker is active in a given blog
-	const isDifmLitePurchased = useSelector( ( state ) => isDIFMLiteInProgress( state, siteId ) );
-
-	//Make sure the most up to date site information is loaded so that we can validate access to this page
-	useEffect( () => {
-		siteId && dispatch( requestSite( siteId ) );
-	}, [ dispatch, siteId ] );
+	const [ pageTitles, setPageTitles ] = useState< PageId[] >( [] );
+	const [ isLoading, setIsLoading ] = useState( true );
 
 	useEffect( () => {
-		if ( ! isLoadingSiteInformation ) {
-			if ( ! isDifmLitePurchased ) {
-				debug( 'DIFM not purchased yet, redirecting to DIFM purchase flow' );
-				// Due to a bug related to a  race condition this redirection is currently disabled
-				// Read pdh1Xd-xv-p2#comment-869 for more context (Submission loop with existing site)
-				// page( `/start/do-it-for-me` );
-			} else if ( isWebsiteContentSubmitted ) {
-				debug( 'Website content content already submitted, redirecting to home' );
-				page( `/home/${ queryObject.siteSlug }` );
+		async function fetchSelectedPageTitles() {
+			try {
+				const response: { selected_page_titles: PageId[]; is_website_content_submitted: boolean } =
+					await wpcom.req.get( {
+						path: `/sites/${ queryObject.siteSlug }/do-it-for-me/website-content`,
+						apiNamespace: 'wpcom/v2',
+					} );
+
+				setIsLoading( false );
+				setPageTitles( response.selected_page_titles );
+
+				if ( response.is_website_content_submitted ) {
+					debug( 'Website content content already submitted, redirecting to home' );
+					page( `/home/${ queryObject.siteSlug }` );
+				}
+			} catch ( error ) {
+				setIsLoading( false );
 			}
 		}
-	}, [
-		isLoadingSiteInformation,
-		isDifmLitePurchased,
-		isWebsiteContentSubmitted,
-		queryObject.siteSlug,
-	] );
 
-	return isWebsiteContentSubmitted || isLoadingSiteInformation ? null : (
+		fetchSelectedPageTitles();
+	}, [ queryObject.siteSlug ] );
+
+	if ( isLoading ) {
+		return <Loader />;
+	}
+
+	if ( ! ( pageTitles && pageTitles.length ) ) {
+		return (
+			<PagesNotAvailable>
+				<img src={ errorIllustration } alt="" />
+				<div>
+					{ translate(
+						'We could not retrieve your site information. Please {{SupportLink}}contact support{{/SupportLink}}.',
+						{
+							components: {
+								SupportLink: (
+									<a className="subtitle-link" rel="noopener noreferrer" href="/help/contact" />
+								),
+							},
+						}
+					) }
+				</div>
+			</PagesNotAvailable>
+		);
+	}
+
+	return (
 		<StepWrapper
 			headerText={ headerText }
 			subHeaderText={ subHeaderText }
@@ -234,7 +273,9 @@ export default function WrapperWebsiteContent(
 			flowName={ flowName }
 			stepName={ stepName }
 			positionInFlow={ positionInFlow }
-			stepContent={ <WebsiteContentStep { ...props } /> }
+			stepContent={
+				<WebsiteContentStep { ...props } pageTitles={ pageTitles } siteId={ siteId } />
+			}
 			goToNextStep={ false }
 			hideFormattedHeader={ false }
 			hideBack={ false }
