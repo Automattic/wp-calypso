@@ -26,8 +26,8 @@ const PAYMENT_REQUEST_OPTIONS = {
 };
 
 export function usePaymentRequestOptions(
-	stripeConfiguration: StripeConfiguration,
-	cartKey: CartKey
+	stripeConfiguration: StripeConfiguration | undefined | null,
+	cartKey: CartKey | undefined
 ): PaymentRequestOptions | null {
 	const total = useTotal();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -74,7 +74,7 @@ export function useStripePaymentRequest( {
 	stripe,
 }: {
 	paymentRequestOptions: PaymentRequestOptions | null;
-	stripe: Stripe;
+	stripe: Stripe | null;
 	onSubmit: SubmitCompletePaymentMethodTransaction;
 } ): PaymentRequestState {
 	const [ paymentRequestState, setPaymentRequestState ] = useState< PaymentRequestState >(
@@ -178,7 +178,9 @@ function completePaymentMethodTransaction( {
 	complete( 'success' );
 }
 
-function getProcessorCountryFromStripeConfiguration( stripeConfiguration: StripeConfiguration ) {
+function getProcessorCountryFromStripeConfiguration(
+	stripeConfiguration: StripeConfiguration | undefined | null
+) {
 	let countryCode = 'US';
 
 	if ( stripeConfiguration ) {
