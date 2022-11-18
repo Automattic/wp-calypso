@@ -17,7 +17,7 @@ export function createMemcachedClient() {
 }
 
 /**
- * Adds the environment to the memcached key removes whitespace.
+ * Prepends the environment to the memcached key and removes whitespace.
  *
  * @param key The memcached key
  * @returns The normalized memcached key
