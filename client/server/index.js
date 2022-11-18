@@ -3,9 +3,11 @@ import '@automattic/calypso-polyfills';
 
 import fs from 'fs';
 import config from '@automattic/calypso-config';
+import { createMemcachedClient } from 'calypso/server/lib/memcached';
 import boot from './boot';
 import { getLogger } from './lib/logger';
 
+createMemcachedClient(); // Only creates client in certain environments.
 const logger = getLogger();
 const start = Date.now();
 const protocol = config( 'protocol' );
