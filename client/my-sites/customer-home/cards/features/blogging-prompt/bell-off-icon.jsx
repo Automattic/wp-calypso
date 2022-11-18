@@ -4,11 +4,11 @@ export default function BellOffIcon() {
 			<svg
 				className="gridicon"
 				xmlns="http://www.w3.org/2000/svg"
-				viewBox="6 0 24 24"
+				viewBox="4 0 24 24"
 				height="24px"
 				width="24px"
 			>
-				<g opacity="0.48">
+				<g>
 					<mask
 						id="mask0_766_4208"
 						style={ { maskType: 'alpha' } }
@@ -26,21 +26,20 @@ export default function BellOffIcon() {
 						/>
 					</mask>
 					<g mask="url(#mask0_766_4208)">
-						<rect
-							y="14.1422"
-							width="20"
-							height="20"
-							transform="rotate(-45 0 14.1422)"
-							fill="#797C82"
-						/>
+						<rect y="14.1422" width="20" height="20" transform="rotate(-45 0 14.1422)" />
 					</g>
 					<path
 						className="bell"
 						d="M21.1406 6.14215L7.14062 20.1422"
-						stroke="#797C82"
+						stroke="var(--color-neutral-70)"
 						strokeWidth="1.5"
 					/>
-					<path d="M20.1406 5.14215L5.14062 20.1421" stroke="white" strokeWidth="1.5" />
+					<path
+						className="strike-through"
+						d="M20.1406 5.14215L5.14062 20.1421"
+						stroke="white"
+						strokeWidth="1.5"
+					/>
 				</g>
 			</svg>
 		</span>
