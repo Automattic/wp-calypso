@@ -45,10 +45,9 @@ describe( 'index', () => {
 
 			afterEach( () => ( process.env.NODE_ENV = NODE_ENV ) );
 
-			test( "should throw an error when given key doesn't exist (NODE_ENV == development)", () => {
+			test( "should not throw an error even when a given key doesn't exist", () => {
 				process.env.NODE_ENV = 'development';
-
-				expect( () => config( fakeKey ) ).toThrowError( ReferenceError );
+				expect( () => config( fakeKey ) ).not.toThrow( Error );
 			} );
 
 			test( "should not throw an error when given key doesn't exist (NODE_ENV != development)", () => {
