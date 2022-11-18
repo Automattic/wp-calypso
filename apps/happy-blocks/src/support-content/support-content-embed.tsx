@@ -16,12 +16,6 @@ export const SupportContentEmbed = ( props: {
 
 	const blockProps = useBlockProps();
 
-	const minToRead = sprintf(
-		/* translators: Minutes it takes to read embedded support page, eg: "5 min to read" */
-		__( '%1$d min read', 'happy-blocks' ),
-		props.attributes.minutesToRead ?? 0
-	);
-
 	const likes = sprintf(
 		/* translators: Number of people marked this page useful, eg: "25332 people have found this useful" */
 		__( '%1$d people have found this useful!', 'happy-blocks' ),
@@ -30,6 +24,45 @@ export const SupportContentEmbed = ( props: {
 
 	/* translators: Link to resource from where the embed is loaded, eg: "in WordPress.com Forums" */
 	const source = sprintf( 'in <a>%s</a>', blockProps[ 'data-title' ] );
+
+	const detailsPresent =
+		props.attributes.minutesToRead || props.attributes.author || props.attributes.created;
+
+	const getDetails = () => {
+		if ( ! loaded ) {
+			return null;
+		}
+
+		const minToRead = props.attributes.minutesToRead
+			? sprintf(
+					/* translators: Minutes it takes to read embedded support page, eg: "5 min to read" */
+					__( '%1$d min read', 'happy-blocks' ),
+					props.attributes.minutesToRead
+			  )
+			: '';
+
+		// window.moment is exposed as a dependency of `wp.date`
+		const moment: any = window[ 'moment' as any ];
+		const createdRelative = moment( props.attributes.created ).fromNow();
+
+		if ( props.attributes.author ) {
+			const startedby = sprintf(
+				/* translators: Person who created forum topic, eg: "Started by davidgonzalezwp" */
+				__( 'Started by %s', 'happy-blocks' ),
+				props.attributes.minutesToRead
+			);
+
+			return startedby + createdRelative + minToRead;
+		} else if ( props.attributes.created ) {
+			const startedOn = sprintf(
+				/* translators: Date when forum topic was created, eg: "Started 5 days ago" */
+				__( 'Started %s', 'happy-blocks' ),
+				createdRelative
+			);
+			return startedOn + minToRead;
+		}
+		return minToRead;
+	};
 
 	return (
 		<div className="hb-support-page-embed">
@@ -54,9 +87,9 @@ export const SupportContentEmbed = ( props: {
 							} ) }
 						</InlineSkeleton>
 					</div>
-					{ ( ! loaded || props.attributes.minutesToRead ) && (
-						<div className="hb-support-page-embed__time-to-read">
-							<InlineSkeleton loaded={ loaded }>{ minToRead }</InlineSkeleton>
+					{ ( ! loaded || detailsPresent ) && (
+						<div className="hb-support-page-embed__details">
+							<InlineSkeleton loaded={ loaded }>{ getDetails() }</InlineSkeleton>
 						</div>
 					) }
 				</div>
