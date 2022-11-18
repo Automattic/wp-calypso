@@ -3,7 +3,8 @@ import { dispatch } from '@wordpress/data';
 import { renderToString } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
-	fetchPageAttributes,
+	fetchForumTopicAttributes,
+	fetchSupportPageAttributes,
 	FORUM_TOPIC_PATTERN,
 	SUPPORT_PAGE_PATTERN,
 	SupportContentBlockAttributes,
@@ -47,6 +48,7 @@ registerBlockType( 'happy-blocks/support-page', {
 		<Edit
 			urlPattern={ SUPPORT_PAGE_PATTERN }
 			title={ __( 'WordPress.com Guide page URL', 'happy-blocks' ) }
+			fetch={ fetchSupportPageAttributes }
 			{ ...props }
 		/>
 	),
@@ -70,7 +72,7 @@ registerBlockType( 'happy-blocks/support-page', {
 						url: nodeText,
 					} );
 
-					fetchPageAttributes( nodeText ).then( ( attributes ) => {
+					fetchSupportPageAttributes( nodeText ).then( ( attributes ) => {
 						dispatch( 'core/block-editor' ).updateBlockAttributes( block.clientId, attributes );
 					} );
 
@@ -125,6 +127,7 @@ registerBlockType( 'happy-blocks/forum-topic', {
 		<Edit
 			urlPattern={ FORUM_TOPIC_PATTERN }
 			title={ __( 'WordPress.com Forums topic URL', 'happy-blocks' ) }
+			fetch={ fetchSupportPageAttributes }
 			{ ...props }
 		/>
 	),
@@ -148,7 +151,7 @@ registerBlockType( 'happy-blocks/forum-topic', {
 						url: nodeText,
 					} );
 
-					fetchPageAttributes( nodeText ).then( ( attributes ) => {
+					fetchForumTopicAttributes( nodeText ).then( ( attributes ) => {
 						dispatch( 'core/block-editor' ).updateBlockAttributes( block.clientId, attributes );
 					} );
 

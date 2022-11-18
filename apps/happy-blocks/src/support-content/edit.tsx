@@ -7,7 +7,7 @@ import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { edit } from '@wordpress/icons';
 import React from 'react';
-import { fetchPageAttributes, SupportContentBlockAttributes } from './block';
+import { SupportContentBlockAttributes } from './block';
 import { EmbedPlaceHolder } from './embed-placeholder';
 import { WordPressIcon } from './icon';
 import { SupportContentEmbed } from './support-content-embed';
@@ -15,6 +15,7 @@ import { SupportContentEmbed } from './support-content-embed';
 type EditProps = BlockEditProps< SupportContentBlockAttributes > & {
 	title: string;
 	urlPattern: RegExp;
+	fetch: ( url: string ) => Promise< SupportContentBlockAttributes >;
 };
 
 /**
@@ -45,7 +46,7 @@ export const Edit = compose( withNotices )(
 			try {
 				setAttributes( { url } );
 
-				const fetchedAttributes = await fetchPageAttributes( url );
+				const fetchedAttributes = await props.fetch( url );
 
 				noticeOperations.removeAllNotices();
 				setEditing( false );

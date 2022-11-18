@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 export const SUPPORT_PAGE_PATTERN =
 	/^https?:\/\/wordpress\.com\/((?<lang>[a-z]{2})\/)?support\/(?<slug>\S+)$/i;
 export const FORUM_TOPIC_PATTERN =
-	/^https?:\/\/wordpress\.com\/((?<lang>[a-z]{2})\/)?forums\/(?<slug>\S+)$/i;
+	/^https?:\/\/wordpress\.com\/((?<lang>[a-z]{2})\/)?forums\/topic\/(?<slug>\S+)$/i;
 const EMBED_CONTENT_MAXLENGTH = 400;
 const AVERAGE_READING_SPEED = 250; // words per minute
 
@@ -16,25 +16,27 @@ export type SupportContentBlockAttributes = {
 	likes?: number;
 	status?: string;
 	author?: number;
-	created?: number;
+	created?: string;
 };
 
 /**
- * Fetch the page content via API and parse its data. Return data as block attributes.
+ * Fetch the support page via API and parse its data into block attributes
  */
-export async function fetchPageAttributes( url: string ): Promise< SupportContentBlockAttributes > {
-	const { blog, slug } = getSlugFromUrl( url );
+export async function fetchSupportPageAttributes(
+	url: string
+): Promise< SupportContentBlockAttributes > {
+	const { blog, slug } = getSupportPageSlugFromUrl( url );
 
 	const apiUrl = `https://public-api.wordpress.com/rest/v1.1/sites/${ blog }/posts/slug:${ encodeURIComponent(
 		slug
 	) }`;
-	const pageResponse = await fetch( apiUrl );
+	const response = await fetch( apiUrl );
 
-	if ( ! pageResponse.ok ) {
+	if ( ! response.ok ) {
 		throw new Error( __( 'Failed to load the page. Check URL', 'happy-blocks' ) );
 	}
 
-	const page = await pageResponse.json();
+	const page = await response.json();
 
 	const title = page.parent?.title ? `${ page.parent.title } » ${ page.title }` : page.title;
 
@@ -47,18 +49,43 @@ export async function fetchPageAttributes( url: string ): Promise< SupportConten
 		content = content.substring( 0, EMBED_CONTENT_MAXLENGTH );
 	}
 
-	return { url, content: content, title, minutesToRead };
-}
-
-function stripHtml( html: string ): string {
-	const doc = new DOMParser().parseFromString( html, 'text/html' );
-	return doc.body.textContent || '';
+	return { url, content, title, minutesToRead };
 }
 
 /**
- * Get WP blog & slug from the page URL
+ * Fetch forum topic via API and parse its data into block attributes
  */
-function getSlugFromUrl( url: string ): { blog: string; slug: string } {
+export async function fetchForumTopicAttributes(
+	url: string
+): Promise< SupportContentBlockAttributes > {
+	const { blog, slug } = getForumTopicSlugFromUrl( url );
+
+	const apiUrl = `https://public-api.wordpress.com/wp/v2/sites/${ blog }/topic?slug=${ encodeURIComponent(
+		slug
+	) }`;
+	const response = await fetch( apiUrl );
+
+	if ( ! response.ok ) {
+		throw new Error( __( 'Failed to load the page. Check URL', 'happy-blocks' ) );
+	}
+
+	const topic = ( await response.json() )[ 0 ];
+
+	const title = stripHtml( topic.title.rendered );
+
+	let content = stripHtml( topic.content.rendered );
+
+	if ( content.length > EMBED_CONTENT_MAXLENGTH ) {
+		content = content.substring( 0, EMBED_CONTENT_MAXLENGTH );
+	}
+
+	return { url, content, title, status: topic.status, created: topic.date };
+}
+
+/**
+ * Get WP blog & slug from the support page URL
+ */
+function getSupportPageSlugFromUrl( url: string ): { blog: string; slug: string } {
 	const urlMatches = url.match( SUPPORT_PAGE_PATTERN );
 	const lang = urlMatches?.groups?.lang ?? 'en';
 	let slug = urlMatches?.groups?.slug ?? '';
@@ -71,4 +98,27 @@ function getSlugFromUrl( url: string ): { blog: string; slug: string } {
 		blog: `${ lang }.support.wordpress.com`,
 		slug,
 	};
+}
+
+/**
+ * Get WP blog & slug from the forum topic URL
+ */
+function getForumTopicSlugFromUrl( url: string ): { blog: string; slug: string } {
+	const urlMatches = url.match( FORUM_TOPIC_PATTERN );
+	const lang = urlMatches?.groups?.lang ?? 'en';
+	let slug = urlMatches?.groups?.slug ?? '';
+
+	if ( slug.indexOf( '/' ) >= 0 ) {
+		slug = slug.slice( 0, slug.indexOf( '/' ) );
+	}
+
+	return {
+		blog: `${ lang }.forums.wordpress.com`,
+		slug,
+	};
+}
+
+function stripHtml( html: string ): string {
+	const doc = new DOMParser().parseFromString( html, 'text/html' );
+	return doc.body.textContent || '';
 }
