@@ -65,10 +65,7 @@ class ThemeShowcase extends Component {
 		this.tabTiers = this.getTabTiers( props );
 		this.tabFilters = this.getTabFilters( props );
 		this.state = {
-			tabFilter:
-				this.props.loggedOutComponent || this.props.search || this.props.filter || this.props.tier
-					? this.tabFilters.ALL
-					: this.tabFilters.RECOMMENDED,
+			tabFilter: this.tabFilters.ALL,
 		};
 	}
 
@@ -149,16 +146,20 @@ class ThemeShowcase extends Component {
 			( props.isAtomicSite && props.siteCanInstallThemes );
 
 		return {
-			RECOMMENDED: {
-				key: 'recommended',
-				text: translate( 'Recommended' ),
-				order: 1,
-			},
-			TRENDING: {
-				key: 'trending',
-				text: translate( 'Trending' ),
-				order: 2,
-			},
+			...( ! isNewSearchAndFilter && {
+				RECOMMENDED: {
+					key: 'recommended',
+					text: translate( 'Recommended' ),
+					order: 1,
+				},
+			} ),
+			...( ! isNewSearchAndFilter && {
+				TRENDING: {
+					key: 'trending',
+					text: translate( 'Trending' ),
+					order: 2,
+				},
+			} ),
 			...( shouldShowMyThemesFilter && {
 				MYTHEMES: {
 					key: 'my-themes',
@@ -247,9 +248,15 @@ class ThemeShowcase extends Component {
 	onTierSelect = ( { value: tier } ) => {
 		// In this state: tabFilter = [ ##Recommended## | All(1) ]   tier = [ All(2) | Free | Premium ]
 		// Clicking "Free" or "Premium" forces tabFilter from "Recommended" to "All"
-		if ( tier !== '' && tier !== 'all' && this.state.tabFilter.key !== this.tabFilters.ALL.key ) {
+		if (
+			! config.isEnabled( 'themes/showcase-i4/search-and-filter' ) &&
+			tier !== '' &&
+			tier !== 'all' &&
+			this.state.tabFilter.key !== this.tabFilters.ALL.key
+		) {
 			this.setState( { tabFilter: this.tabFilters.ALL } );
 		}
+
 		trackClick( 'search bar filter', tier );
 		const url = this.constructUrl( { tier } );
 		page( url );
@@ -258,18 +265,31 @@ class ThemeShowcase extends Component {
 
 	onFilterClick = ( tabFilter ) => {
 		const scrollPos = window.pageYOffset;
+		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
 		trackClick( 'section nav filter', tabFilter );
 		this.setState( { tabFilter } );
 
 		let callback = () => null;
 		// In this state: tabFilter = [ Recommended | ##All(1)## ]  tier = [ All(2) | Free | ##Premium## ]
 		// Clicking "Recommended" forces tier to be "all", since Recommend themes cannot filter on tier.
-		if ( tabFilter.key !== this.tabFilters.ALL.key && 'all' !== this.props.tier ) {
+		if (
+			! isNewSearchAndFilter &&
+			tabFilter.key !== this.tabFilters.ALL.key &&
+			'all' !== this.props.tier
+		) {
 			callback = () => {
 				this.onTierSelect( { value: 'all' } );
 				window.scrollTo( 0, scrollPos );
 			};
 		}
+
+		if ( isNewSearchAndFilter ) {
+			const url = this.constructUrl( {
+				filter: this.props.filterToTermTable[ `subject:${ tabFilter.key }` ],
+			} );
+			page( url );
+		}
+
 		this.setState( { tabFilter }, callback );
 	};
 
@@ -290,8 +310,8 @@ class ThemeShowcase extends Component {
 		switch ( key ) {
 			case this.tabFilters.MYTHEMES?.key:
 				return this.props.outdatedThemes.length || null;
-			case this.tabFilters.RECOMMENDED.key:
-			case this.tabFilters.TRENDING.key:
+			case this.tabFilters.RECOMMENDED?.key:
+			case this.tabFilters.TRENDING?.key:
 			case this.tabFilters.ALL.key:
 				return null;
 		}
@@ -320,11 +340,11 @@ class ThemeShowcase extends Component {
 
 			// See p2-pau2Xa-4nq#comment-12458 for the context regarding the utm campaign value.
 			switch ( tabKey ) {
-				case this.tabFilters.RECOMMENDED.key:
+				case this.tabFilters.RECOMMENDED?.key:
 					location = 'recommended-theme-banner';
 					utmCampaign = 'theme-rec-tre';
 					break;
-				case this.tabFilters.TRENDING.key:
+				case this.tabFilters.TRENDING?.key:
 					location = 'trending-theme-banner';
 					utmCampaign = 'theme-rec-tre';
 					break;
@@ -342,11 +362,11 @@ class ThemeShowcase extends Component {
 	renderThemes = ( themeProps ) => {
 		const tabKey = this.state.tabFilter.key;
 		switch ( tabKey ) {
-			case this.tabFilters.RECOMMENDED.key:
+			case this.tabFilters.RECOMMENDED?.key:
 				return <RecommendedThemes { ...themeProps } />;
 			case this.tabFilters.MYTHEMES?.key:
 				return <ThemesSelection { ...themeProps } />;
-			case this.tabFilters.TRENDING.key:
+			case this.tabFilters.TRENDING?.key:
 				return <TrendingThemes { ...themeProps } />;
 			case this.tabFilters.ALL.key:
 				return this.allThemes( { themeProps } );
