@@ -414,13 +414,13 @@ export function useIssueMultipleLicenses(
 								args: {
 									commaCharacter,
 									comment:
-										'The final separator of a delimited list, such as ", and" in "Jetpack Backup, Jetpack Scan, and Jetpack Boost."',
+										'The final separator of a delimited list, such as ", and " in "Jetpack Backup, Jetpack Scan, and Jetpack Boost". Note that the spaces here are important due to the way the final string is constructed.',
 								},
 						  } )
 						: translate( ' and ', {
 								args: {
 									comment:
-										'The way that two words are separated, such as " and" in "Jetpack Backup and Jetpack Scan". Note that the space here is important due to the way the final string is constructed.',
+										'The way that two words are separated, such as " and " in "Jetpack Backup and Jetpack Scan". Note that the spaces here are important due to the way the final string is constructed.',
 								},
 						  } );
 

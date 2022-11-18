@@ -58,7 +58,7 @@ export default function SiteAddLicenseNotification() {
 						args: {
 							commaCharacter,
 							comment:
-								'The final separator of a delimited list, such as ", and " in "Backup, Scan, and Boost." Note that the spaces here are important due to the way the final string is constructed.',
+								'The final separator of a delimited list, such as ", and " in "Backup, Scan, and Boost". Note that the spaces here are important due to the way the final string is constructed.',
 						},
 				  } )
 				: translate( ' and ', {
