@@ -74,7 +74,7 @@ const StatsInsights = ( props ) => {
 					<div className="stats__module-list stats__module--unified">
 						<div className="stats__module-column">
 							<LatestPostSummary />
-							<MostPopular />
+							{ ! showAllTimeHighlights && <MostPopular /> }
 
 							<StatsModule
 								path="tags-categories"
@@ -90,7 +90,7 @@ const StatsInsights = ( props ) => {
 							<Followers path="followers" />
 						</div>
 						<div className="stats__module-column">
-							<AllTime />
+							{ ! showAllTimeHighlights && <AllTime /> }
 							<Comments path="comments" />
 							<StatsModule
 								path="publicize"

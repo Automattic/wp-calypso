@@ -123,7 +123,7 @@
 		"ssr/log-prefetch-errors": true,
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
-		"stats/new-all-time-highlights": false,
+		"stats/new-all-time-highlights": true,
 		"stats/new-annual-highlights": true,
 		"stats/new-main-chart": true,
 		"stats/new-stats-module-component": true,
