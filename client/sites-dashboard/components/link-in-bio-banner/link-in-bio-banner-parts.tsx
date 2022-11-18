@@ -7,14 +7,13 @@ import { useEffect } from 'react';
 export const Root = styled( 'div' )( {
 	position: 'relative',
 	display: 'flex',
-	backgroundColor: '#D0CCE3',
-	borderRadius: '3px',
+	backgroundColor: '#D9D7E6',
 } );
 
 export const Title = styled( 'h3' )( {
 	fontWeight: 500,
 	fontSize: 20,
-	color: '#000000',
+	color: 'var(--studio-gray-100)',
 	margin: 0,
 } );
 
@@ -22,6 +21,7 @@ Title.defaultProps = { children: __( 'Stand out' ) };
 
 export const Description = styled( 'p' )( {
 	margin: 0,
+	fontSize: '14px',
 } );
 
 Description.defaultProps = {

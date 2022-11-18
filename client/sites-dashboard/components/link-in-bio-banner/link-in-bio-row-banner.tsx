@@ -3,11 +3,11 @@ import image from 'calypso/assets/images/onboarding/link-in-bio-banner-small.png
 import * as Banner from './link-in-bio-banner-parts';
 
 const Root = styled( Banner.Root )( {
-	padding: 32,
-	gap: 32,
+	padding: 16,
+	gap: 16,
 	alignItems: 'center',
 	'.banner-image': {
-		width: 185,
+		width: 93,
 	},
 	'.create-button': {
 		whiteSpace: 'nowrap',
@@ -16,17 +16,18 @@ const Root = styled( Banner.Root )( {
 		'.banner-image': {
 			display: 'none',
 		},
-		h3: {
-			fontSize: 16,
-		},
-		fontSize: 'smaller',
 	},
+} );
+
+const Title = styled( Banner.Title )( {
+	fontSize: '14px',
 } );
 
 const Details = styled( 'div' )( {
 	display: 'flex',
 	flexDirection: 'column',
 	flexGrow: 1,
+	gap: '8px',
 } );
 
 export const LinkInBioRowBanner = () => {
@@ -34,7 +35,7 @@ export const LinkInBioRowBanner = () => {
 		<Root data-testid="row-banner">
 			<Banner.Image src={ image } />
 			<Details>
-				<Banner.Title />
+				<Title />
 				<Banner.Description />
 			</Details>
 			<Banner.CreateButton />
