@@ -4,6 +4,7 @@ import {
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
+	JETPACK_BACKUP_ADDON_PRODUCTS,
 	getMonthlyPlanByYearly,
 	getYearlyPlanByMonthly,
 } from '@automattic/calypso-products';
@@ -64,6 +65,9 @@ export const getPlansToDisplay = ( {
 	return plansToDisplay;
 };
 
+const removeAddons = ( product: SelectorProduct ) =>
+	! ( JETPACK_BACKUP_ADDON_PRODUCTS as ReadonlyArray< string > ).includes( product?.productSlug );
+
 export const getProductsToDisplay = ( {
 	duration,
 	availableProducts,
@@ -71,16 +75,21 @@ export const getProductsToDisplay = ( {
 	includedInPlanProducts,
 }: {
 	duration: Duration;
-	availableProducts: ( SelectorProduct | null )[];
-	purchasedProducts: ( SelectorProduct | null )[];
-	includedInPlanProducts: ( SelectorProduct | null )[];
+	availableProducts: SelectorProduct[];
+	purchasedProducts: SelectorProduct[];
+	includedInPlanProducts: SelectorProduct[];
 } ): SelectorProduct[] => {
-	const purchasedSlugs =
-		purchasedProducts?.map( ( p ) => p?.productSlug )?.filter( ( slug ) => slug ) || [];
+	const purchasedProductsWithoutAddOn = purchasedProducts.filter( removeAddons );
+
+	const purchasedSlugs = purchasedProductsWithoutAddOn
+		?.map( ( p ) => p?.productSlug )
+		?.filter( ( slug ) => slug );
 
 	// Products that have not been directly purchased must honor the current filter
 	// selection since they exist in both monthly and yearly version.
 	const filteredProducts = [ ...includedInPlanProducts, ...availableProducts ]
+		// Remove add-on products
+		.filter( removeAddons )
 		// Remove products that don't match the selected duration
 		.filter( ( product ): product is SelectorProduct => product?.term === duration )
 		// Remove duplicates (only happens if the site somehow has the same product
@@ -97,7 +106,7 @@ export const getProductsToDisplay = ( {
 			return true;
 		} );
 	return (
-		[ ...purchasedProducts, ...filteredProducts ]
+		[ ...purchasedProductsWithoutAddOn, ...filteredProducts ]
 			// Make sure we don't allow any null or invalid products
 			.filter( ( product ): product is SelectorProduct => !! product )
 	);

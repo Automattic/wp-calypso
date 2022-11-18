@@ -37,10 +37,17 @@ export default function IssueMultipleLicensesForm( {
 		?.toString()
 		.split( ',' );
 
+	// We need the suggested products (i.e., the products chosen from the dashboard) to properly
+	// track if the user purchases a different set of products.
+	const suggestedProductSlugs = getQueryArg( window.location.href, 'product_slug' )
+		?.toString()
+		.split( ',' );
+
 	const [ selectedProductSlugs, setSelectedProductSlugs ] = useState( defaultProductSlugs ?? [] );
 	const [ issueLicenses, isLoading ] = useIssueMultipleLicenses(
 		selectedProductSlugs,
-		selectedSite
+		selectedSite,
+		suggestedProductSlugs
 	);
 
 	const onSelectProduct = useCallback(
@@ -75,7 +82,10 @@ export default function IssueMultipleLicensesForm( {
 		if ( selectedProductSlugs.find( ( product ) => isJetpackBundle( product ) ) ) {
 			issueLicenses();
 		}
-	}, [ selectedProductSlugs, issueLicenses ] );
+		// Do not update the dependency array with issueLicenses since
+		// it gets changed on every product change, which triggers this `useEffect` to run infinitely.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ selectedProductSlugs ] );
 
 	const selectedSiteDomain = selectedSite?.domain;
 

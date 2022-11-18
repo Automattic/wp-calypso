@@ -13,6 +13,7 @@ import {
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_BACKUP_ADDON_PRODUCTS,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
@@ -360,15 +361,41 @@ class PurchasesListing extends Component {
 		);
 	}
 
+	sortBackupProducts( products ) {
+		//create a new array with the backup products first then the add-ons
+		let backupIndex = -1;
+		const backupSortedArray = [];
+		const addOnProducts = [];
+		products.forEach( ( product ) => {
+			if ( JETPACK_BACKUP_ADDON_PRODUCTS.includes( product.productSlug ) ) {
+				if ( backupIndex === -1 ) {
+					addOnProducts.push( product );
+				} else {
+					backupSortedArray.splice( backupIndex + 1, 0, product );
+				}
+			} else if ( JETPACK_BACKUP_PRODUCTS.includes( product.productSlug ) ) {
+				backupSortedArray.push( product );
+				backupIndex = backupSortedArray.length - 1;
+				if ( addOnProducts.length ) {
+					backupSortedArray.push( ...addOnProducts );
+				}
+			} else {
+				backupSortedArray.push( product );
+			}
+		} );
+		return backupSortedArray;
+	}
+
 	renderProducts() {
 		const { translate } = this.props;
 
 		// Get all products and filter out falsy items.
-		const productPurchases = this.getProductPurchases();
-
+		let productPurchases = this.getProductPurchases();
 		if ( productPurchases.length === 0 ) {
 			return null;
 		}
+
+		productPurchases = this.sortBackupProducts( productPurchases );
 
 		return (
 			<Fragment>

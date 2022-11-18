@@ -33,15 +33,13 @@ export default function HighlightsSection( { siteId }: { siteId: number } ) {
 	);
 
 	return (
-		<div className="stats__highlights-section">
-			<HighlightCards
-				counts={ counts }
-				previousCounts={ previousCounts }
-				onClickComments={ () => null }
-				onClickLikes={ () => null }
-				onClickViews={ () => null }
-				onClickVisitors={ () => null }
-			/>
-		</div>
+		<HighlightCards
+			counts={ counts }
+			previousCounts={ previousCounts }
+			onClickComments={ () => null }
+			onClickLikes={ () => null }
+			onClickViews={ () => null }
+			onClickVisitors={ () => null }
+		/>
 	);
 }

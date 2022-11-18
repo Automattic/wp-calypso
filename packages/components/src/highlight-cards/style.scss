@@ -9,10 +9,17 @@ $vertical-margin: 32px;
 // Technically deprecated, but majority of Calypso still uses this.
 $custom-mobile-breakpoint: 660px;
 
+
+.stats > .highlight-cards {
+	padding-top: $vertical-margin;
+	padding-bottom: $vertical-margin;
+}
+
 .highlight-cards {
-	margin: $vertical-margin 0;
 	color: var(--studio-gray-100);
 	font-size: $font-body-small;
+	background-color: #fbfbfb;
+	box-shadow: inset 0 -1px 0 #0000000d;
 }
 
 .highlight-cards a.highlight-cards-heading-wrapper {
