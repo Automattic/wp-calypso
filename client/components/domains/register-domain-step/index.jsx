@@ -127,6 +127,7 @@ class RegisterDomainStep extends Component {
 		showAlreadyOwnADomain: PropTypes.bool,
 		domainAndPlanUpsellFlow: PropTypes.bool,
 		useProvidedProductsList: PropTypes.bool,
+		managedSubdomains: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -1066,6 +1067,7 @@ class RegisterDomainStep extends Component {
 			only_wordpressdotcom: this.props.includeDotBlogSubdomain,
 			tld_weight_overrides: null,
 			vendor: 'dot',
+			managed_subdomains: this.props.managedSubdomains,
 			...this.getActiveFiltersForAPI(),
 		};
 

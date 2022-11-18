@@ -3,7 +3,7 @@ import { Site, Onboard } from '@automattic/data-stores';
 import { select, dispatch } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
 import { uploadAndSetSiteLogo } from './upload-and-set-site-logo';
-import { isNewsletterOrLinkInBioFlow, LINK_IN_BIO_FLOW } from './utils';
+import { isLinkInBioFlow, isNewsletterOrLinkInBioFlow, LINK_IN_BIO_FLOW } from './utils';
 
 const ONBOARD_STORE = Onboard.register();
 const SITE_STORE = Site.register( { client_id: '', client_secret: '' } );
@@ -64,6 +64,10 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 
 	const setIntent = ( siteId: number, flow: string ) => {
 		if ( isNewsletterOrLinkInBioFlow( flow ) ) {
+			// link-in-bio and link-in-bio-tld are considered the same intent.
+			if ( isLinkInBioFlow( flow ) ) {
+				return setIntentOnSite( siteId.toString(), LINK_IN_BIO_FLOW );
+			}
 			return setIntentOnSite( siteId.toString(), flow );
 		}
 		return Promise.resolve();
@@ -79,7 +83,7 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 	};
 
 	const setPattern = async ( siteId: number, flow: string ) => {
-		if ( flow === LINK_IN_BIO_FLOW ) {
+		if ( isLinkInBioFlow( flow ) ) {
 			await wpcomRequest( {
 				// since this is a new site, its safe to assume that homepage ID is 2
 				path: `/sites/${ siteId }/pages/2`,
