@@ -133,6 +133,7 @@ function ReaderSubscriptionListItem( {
 									<span className="reader-subscription-list-item__timestamp">
 										{ translate( 'updated %s', {
 											args: moment( feed.last_update ).fromNow(),
+											context: 'date feed was last updated',
 										} ) }
 									</span>
 								</li>
@@ -145,6 +146,7 @@ function ReaderSubscriptionListItem( {
 									>
 										{ translate( 'followed %s', {
 											args: moment( feed.date_subscribed ).format( 'MMM YYYY' ),
+											context: 'date feed was followed',
 										} ) }
 									</span>
 								</li>
