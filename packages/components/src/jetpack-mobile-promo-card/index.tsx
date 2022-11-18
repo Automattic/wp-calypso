@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import './style.scss';
+import iconWoo from './images/icon-woo.png';
 import qrCodeJetpack from './images/qr-code-jetpack.png';
 import qrCodeWoo from './images/qr-code-woo.png';
 import { AppStoreSVG, WordPressJetpackSVG } from './svg-icons';
@@ -59,7 +60,8 @@ export default function JetpackMobilePromoCard( {
 		<div className={ classNames( 'promo-card', className ?? null ) }>
 			<div className="promo-lhs">
 				<div className="promo-card__icons">
-					<WordPressJetpackSVG />
+					{ isWoo && <img src={ iconWoo } alt="Icon for the Woo mobile app" /> }
+					{ ! isWoo && <WordPressJetpackSVG /> }
 				</div>
 				<p className="promo-card__title">
 					{ isWoo &&
