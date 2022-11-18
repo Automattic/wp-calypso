@@ -23,18 +23,15 @@ import { HELP_CENTER_STORE, SITE_STORE } from './stores';
  */
 
 export function useHCWindowCommunicator( isMinimized: boolean ) {
-	const { selectedSite, subject, message, userDeclaredSite, iframe, extraFields } = useSelect(
-		( select ) => {
-			return {
-				selectedSite: select( HELP_CENTER_STORE ).getSite(),
-				userDeclaredSite: select( HELP_CENTER_STORE ).getUserDeclaredSite(),
-				subject: select( HELP_CENTER_STORE ).getSubject(),
-				message: select( HELP_CENTER_STORE ).getMessage(),
-				iframe: select( HELP_CENTER_STORE ).getIframe(),
-				extraFields: select( HELP_CENTER_STORE ).getExtraFields(),
-			};
-		}
-	);
+	const { selectedSite, subject, message, userDeclaredSite, iframe } = useSelect( ( select ) => {
+		return {
+			selectedSite: select( HELP_CENTER_STORE ).getSite(),
+			userDeclaredSite: select( HELP_CENTER_STORE ).getUserDeclaredSite(),
+			subject: select( HELP_CENTER_STORE ).getSubject(),
+			message: select( HELP_CENTER_STORE ).getMessage(),
+			iframe: select( HELP_CENTER_STORE ).getIframe(),
+		};
+	} );
 	const queryClient = useQueryClient();
 	const [ unreadCount, setUnreadCount ] = useState( 0 );
 	const [ chatStatus, setChatStatus ] = useState( '' );

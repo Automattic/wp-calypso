@@ -2,7 +2,6 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { Button } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { useTranslate, numberFormat } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
@@ -15,6 +14,7 @@ import imgMonthlyPayments from 'calypso/assets/images/cancellation/monthly-payme
 import imgSwitchPlan from 'calypso/assets/images/cancellation/switch-plan.png';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import useHappyChat from '../use-happychat';
 import type { UpsellType } from '../get-upsell-type';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { Purchase } from 'calypso/lib/purchases/types';
@@ -110,7 +110,7 @@ type StepProps = {
 export default function UpsellStep( { upsell, site, purchase, ...props }: StepProps ) {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
-	const helpCenter = useDispatch( 'automattic/help-center' );
+	const happyChat = useHappyChat();
 	const numberOfPluginsThemes = numberFormat( 50000, 0 );
 	const discountRate = '25%';
 	const couponCode = 'BIZC25';
@@ -131,9 +131,11 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 							type: upsell,
 						} );
 						page( getLiveChatUrl( upsell, site, purchase ) );
-						helpCenter.startHelpCenterChat( site, 'Could you help me?', {
-							cancellationReason: props.cancellationReason,
-						} );
+
+						const userInfo = happyChat.getUserInfo( { site } );
+
+						happyChat.open();
+						happyChat.sendUserInfo( { ...userInfo, cancellationReason: props.cancellationReason } );
 						props.closeDialog();
 					} }
 					onDecline={ props.onDeclineUpsell }

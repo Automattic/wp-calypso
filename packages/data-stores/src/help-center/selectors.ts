@@ -10,4 +10,3 @@ export const getUserDeclaredSite = ( state: State ) => state.userDeclaredSite;
 export const getUnreadCount = ( state: State ) => state.unreadCount;
 export const getIsMinimized = ( state: State ) => state.isMinimized;
 export const getRouterState = ( state: State ) => state.routerState;
-export const getExtraFields = ( state: State ) => state.extraFields;

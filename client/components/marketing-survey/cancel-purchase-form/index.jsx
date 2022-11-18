@@ -37,7 +37,6 @@ import getSiteImportEngine from 'calypso/state/selectors/get-site-import-engine'
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import getSite from 'calypso/state/sites/selectors/get-site';
-import { getReasonLabelByValue } from './cancellation-reasons';
 import { CANCEL_FLOW_TYPE } from './constants';
 import enrichedSurveyData from './enriched-survey-data';
 import { getUpsellType } from './get-upsell-type';
@@ -334,7 +333,7 @@ class CancelPurchaseForm extends Component {
 			return (
 				<UpsellStep
 					upsell={ this.state.upsell }
-					cancellationReason={ getReasonLabelByValue( this.state.questionOneText ) }
+					cancellationReason={ this.state.questionOneText }
 					purchase={ purchase }
 					site={ site }
 					disabled={ this.state.isSubmitting }
