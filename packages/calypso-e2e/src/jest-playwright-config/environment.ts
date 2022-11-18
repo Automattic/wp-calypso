@@ -339,7 +339,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 						contextIndex++;
 					}
 					// Print paths to captured artifacts for faster triaging.
-					console.log( `Artifacts for ${ this.testFilename }: ${ this.testArtifactsPath }` );
+					console.error( `Artifacts for ${ this.testFilename }: ${ this.testArtifactsPath }` );
 				}
 
 				// Regardless of pass/fail status, close the browser instance.
