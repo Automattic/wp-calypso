@@ -9,7 +9,7 @@ import './setup';
 export function setupGoogleAnalyticsGtag( params ) {
 	GA4.setup( params );
 
-	window.gtag( 'config', getGaGtag(), params );
+	window.gtag?.( 'config', getGaGtag(), params );
 }
 
 /**
@@ -55,7 +55,7 @@ export function fireGoogleAnalyticsPageView(
 		page_title: pageTitle,
 	};
 
-	window.gtag( 'config', getGaGtag( useJetpackGoogleAnalytics ), params );
+	window.gtag?.( 'config', getGaGtag( useJetpackGoogleAnalytics ), params );
 }
 
 /**
@@ -67,7 +67,7 @@ export function fireGoogleAnalyticsPageView(
  * @param {number} value Is a non-negative integer that will appear as the event value.
  */
 export function fireGoogleAnalyticsEvent( category, action, label, value ) {
-	window.gtag( 'event', action, {
+	window.gtag?.( 'event', action, {
 		event_category: category,
 		event_label: label,
 		value: value,
