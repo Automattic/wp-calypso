@@ -75,7 +75,10 @@ export default function IssueMultipleLicensesForm( {
 		if ( selectedProductSlugs.find( ( product ) => isJetpackBundle( product ) ) ) {
 			issueLicenses();
 		}
-	}, [ selectedProductSlugs, issueLicenses ] );
+		// Do not update the dependency array with issueLicenses since
+		// it gets changed on every product change, which triggers this `useEffect` to run infinitely.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ selectedProductSlugs ] );
 
 	const selectedSiteDomain = selectedSite?.domain;
 
