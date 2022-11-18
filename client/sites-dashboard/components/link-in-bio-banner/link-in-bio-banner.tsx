@@ -1,4 +1,3 @@
-import { useDesktopBreakpoint, useMobileBreakpoint } from '@automattic/viewport-react';
 import { useSelector } from 'react-redux';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
@@ -24,33 +23,19 @@ export const LinkInBioBanner = ( props: Props ) => {
 	const { data: sites = [], isLoading } = useSiteExcerptsQuery();
 	const siteCount = sites.length;
 	const doesNotAlreadyHaveALinkInBioSite = ! hasLinkInBioSite( sites );
-	const isMobile = useMobileBreakpoint();
-	const isDesktop = useDesktopBreakpoint();
 	const isBannerVisible = useSelector( ( state ) =>
 		getPreference( state, LINK_IN_BIO_BANNER_PREFERENCE )
 	);
 	const showBanner =
 		! isLoading &&
 		doesNotAlreadyHaveALinkInBioSite &&
-		( isBannerVisible == null || isBannerVisible );
+		( isBannerVisible == null || isBannerVisible ) &&
+		siteCount < 3;
 
 	let bannerType: BannerType = 'none';
+
 	if ( showBanner ) {
-		if ( isMobile ) {
-			bannerType = 'tile';
-		} else if ( displayMode === 'row' && siteCount === 1 ) {
-			bannerType = 'row';
-		} else if ( displayMode === 'grid' ) {
-			if ( siteCount === 1 ) {
-				if ( isDesktop ) {
-					bannerType = 'double-tile';
-				} else {
-					bannerType = 'tile';
-				}
-			} else if ( siteCount === 2 && isDesktop ) {
-				bannerType = 'tile';
-			}
-		}
+		bannerType = displayMode === 'grid' ? 'tile' : 'row';
 	}
 
 	return LinkInBioBanners[ bannerType ];
