@@ -316,7 +316,7 @@ class ThemeShowcase extends Component {
 		}
 
 		if ( isNewSearchAndFilter ) {
-			const { filter, search, filterToTermTable } = this.props;
+			const { filter = '', search, filterToTermTable } = this.props;
 			const subjectTerm = filterToTermTable[ `subject:${ tabFilter.key }` ];
 			const subjectFilters = Object.values( this.tabSubjectTermTable );
 			const filterWithoutSubjects = filter
