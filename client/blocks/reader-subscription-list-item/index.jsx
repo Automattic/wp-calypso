@@ -128,7 +128,7 @@ function ReaderSubscriptionListItem( {
 									{ formatUrlForDisplay( siteUrl ) }
 								</ExternalLink>
 							</li>
-							{ showLastUpdatedDate && feed && feed.last_update && (
+							{ showLastUpdatedDate && feed && feed.last_update && ! isNaN( feed.last_update ) && (
 								<li>
 									<span className="reader-subscription-list-item__timestamp">
 										{ translate( 'updated %s', {
@@ -137,9 +137,12 @@ function ReaderSubscriptionListItem( {
 									</span>
 								</li>
 							) }
-							{ feed && feed.date_subscribed && (
+							{ feed && feed.date_subscribed && ! isNaN( feed.date_subscribed ) && (
 								<li>
-									<span className="reader-subscription-list-item__date-subscribed">
+									<span
+										className="reader-subscription-list-item__date-subscribed"
+										title={ moment( feed.date_subscribed ).format( 'll' ) }
+									>
 										{ translate( 'followed %s', {
 											args: moment( feed.date_subscribed ).format( 'MMM YYYY' ),
 										} ) }
@@ -172,10 +175,21 @@ export default compose(
 
 		if ( feed ) {
 			const follow = getReaderFollowForFeed( state, parseInt( ownProps.feedId ) );
-			// Add site icon to feed object so have icon for external feeds
-			feed.site_icon = follow?.site_icon;
-			// Add date_subscribed timestamp to feed object
-			feed.date_subscribed = follow?.date_subscribed;
+
+			if ( follow ) {
+				// Add site icon to feed object so have icon for external feeds when not set
+				if ( feed.site_icon === undefined ) {
+					feed.site_icon = follow.site_icon;
+				}
+				// Add date_subscribed timestamp to feed object when not set
+				if ( feed.date_subscribed === undefined || isNaN( feed.date_subscribed ) ) {
+					feed.date_subscribed = follow.date_subscribed;
+				}
+				// Add last_update timestamp to feed object when not set
+				if ( feed.last_update === undefined || isNaN( feed.last_update ) ) {
+					feed.last_update = follow.last_updated;
+				}
+			}
 		}
 
 		return {
