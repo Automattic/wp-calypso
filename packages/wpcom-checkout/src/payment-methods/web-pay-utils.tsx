@@ -1,11 +1,10 @@
-import { useTotal } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useState, useEffect, useMemo } from 'react';
 import { getLabel } from '../checkout-labels';
 import { useStableCallback } from '../use-stable-callback';
 import type { StripeConfiguration, PaymentRequestOptions } from '@automattic/calypso-stripe';
-import type { LineItem } from '@automattic/composite-checkout';
 import type { CartKey, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { PaymentRequest, Stripe } from '@stripe/stripe-js';
 
@@ -30,23 +29,27 @@ export function usePaymentRequestOptions(
 	stripeConfiguration: StripeConfiguration | undefined | null,
 	cartKey: CartKey | undefined
 ): PaymentRequestOptions | null {
-	const total = useTotal();
 	const { responseCart } = useShoppingCart( cartKey );
 	const country = getProcessorCountryFromStripeConfiguration( stripeConfiguration );
 	const currency = responseCart.currency;
+	const { __ } = useI18n();
 	const paymentRequestOptions = useMemo( () => {
 		debug( 'generating payment request options' );
-		if ( ! currency || ! total.amount.value ) {
+		if ( ! currency || ! responseCart.total_cost_integer ) {
 			return null;
 		}
+		const total = {
+			label: __( 'Total' ),
+			amount: responseCart.total_cost_integer,
+		};
 		return {
 			country,
 			currency: currency?.toLowerCase(),
-			total: getPaymentRequestTotalFromTotal( total ),
+			total,
 			displayItems: getDisplayItemsForLineItems( responseCart.products ),
 			...PAYMENT_REQUEST_OPTIONS,
 		};
-	}, [ country, currency, total, responseCart.products ] );
+	}, [ country, currency, responseCart.total_cost_integer, responseCart.products, __ ] );
 	debug( 'returning stripe payment request options', paymentRequestOptions );
 	return paymentRequestOptions;
 }
@@ -152,13 +155,6 @@ function getDisplayItemsForLineItems( products: ResponseCartProduct[] ) {
 		label: getLabel( product ),
 		amount: product.item_subtotal_integer,
 	} ) );
-}
-
-function getPaymentRequestTotalFromTotal( total: LineItem ) {
-	return {
-		label: total.label,
-		amount: total.amount.value,
-	};
 }
 
 function completePaymentMethodTransaction( {
