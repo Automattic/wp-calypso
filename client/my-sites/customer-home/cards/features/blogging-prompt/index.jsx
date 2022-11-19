@@ -19,7 +19,7 @@ export const BloggingPromptCard = () => {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
-	const prompt = useBloggingPrompt( selectedSiteId );
+	const { data: prompt } = useBloggingPrompt( selectedSiteId );
 	const { skipCard } = useSkipCurrentViewMutation( selectedSiteId );
 
 	const hidePrompts = () => {
