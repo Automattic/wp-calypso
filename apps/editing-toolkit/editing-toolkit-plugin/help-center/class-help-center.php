@@ -168,7 +168,7 @@ class Help_Center {
 		$controller->register_rest_route();
 
 		require_once __DIR__ . '/class-wp-rest-help-center-has-seen-promotion.php';
-		$controller = new WP_REST_Help_Center_Support_Availability();
+		$controller = new WP_REST_Help_Center_Has_Seen_Promotion();
 		$controller->register_rest_route();
 
 		require_once __DIR__ . '/class-wp-rest-help-center-search.php';

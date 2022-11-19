@@ -21,7 +21,6 @@ export const receiveHasSeenPromotionalPopover = ( value: boolean | undefined ) =
 
 export function* setHasSeenPromotionalPopover( value: boolean ) {
 	let response: { [ HAS_SEEN_PREF_KEY ]: boolean };
-
 	if ( canAccessWpcomApis() ) {
 		response = yield wpcomRequest( {
 			path: `me/preferences`,
@@ -37,12 +36,8 @@ export function* setHasSeenPromotionalPopover( value: boolean ) {
 	} else {
 		response = yield apiFetch( {
 			global: true,
-			path: `/help-center/has-seen-promotion`,
-			body: {
-				calypso_preferences: {
-					[ HAS_SEEN_PREF_KEY ]: value,
-				},
-			},
+			path: '/help-center/has-seen-promotion',
+			method: 'POST',
 		} as APIFetchOptions );
 	}
 

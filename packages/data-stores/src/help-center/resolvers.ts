@@ -14,7 +14,7 @@ export const getHasSeenPromotionalPopover =
 			  } )
 			: await apiFetch< boolean >( {
 					global: true,
-					path: `/help-center/has-seen-promotion?preference_key=${ HAS_SEEN_PREF_KEY }`,
+					path: '/help-center/has-seen-promotion',
 			  } as APIFetchOptions );
 
 		dispatch.receiveHasSeenPromotionalPopover( response );

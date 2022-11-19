@@ -49,7 +49,7 @@ class WP_REST_Help_Center_Has_Seen_Promotion extends \WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function get_me_preferences() {
-		$response = Client::wpcom_json_api_request_as_user(
+		$body = Client::wpcom_json_api_request_as_user(
 			'/me/preferences',
 			'2',
 			array(
@@ -60,6 +60,11 @@ class WP_REST_Help_Center_Has_Seen_Promotion extends \WP_REST_Controller {
 			)
 		);
 
+		if ( is_wp_error( $body ) ) {
+			return $body;
+		}
+		$response = json_decode( wp_remote_retrieve_body( $body ) );
+
 		return rest_ensure_response( $response );
 	}
 
@@ -69,7 +74,7 @@ class WP_REST_Help_Center_Has_Seen_Promotion extends \WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function set_me_preferences() {
-		$response = Client::wpcom_json_api_request_as_user(
+		$body = Client::wpcom_json_api_request_as_user(
 			'/me/preferences',
 			'2',
 			array(
@@ -79,6 +84,11 @@ class WP_REST_Help_Center_Has_Seen_Promotion extends \WP_REST_Controller {
 				'calypso_preferences' => array( 'seen_help_center_promotion' => true ),
 			)
 		);
+
+		if ( is_wp_error( $body ) ) {
+			return $body;
+		}
+		$response = json_decode( wp_remote_retrieve_body( $body ) );
 
 		return rest_ensure_response( $response );
 	}
