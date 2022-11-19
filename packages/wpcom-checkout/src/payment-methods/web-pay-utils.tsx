@@ -35,7 +35,7 @@ export function usePaymentRequestOptions(
 	const { __ } = useI18n();
 	const paymentRequestOptions = useMemo( () => {
 		debug( 'generating payment request options' );
-		if ( ! currency || ! responseCart.total_cost_integer ) {
+		if ( ! currency ) {
 			return null;
 		}
 		const total = {
@@ -50,7 +50,12 @@ export function usePaymentRequestOptions(
 			...PAYMENT_REQUEST_OPTIONS,
 		};
 	}, [ country, currency, responseCart.total_cost_integer, responseCart.products, __ ] );
-	debug( 'returning stripe payment request options', paymentRequestOptions );
+	debug(
+		'returning stripe payment request options',
+		paymentRequestOptions,
+		'from currency',
+		currency
+	);
 	return paymentRequestOptions;
 }
 
