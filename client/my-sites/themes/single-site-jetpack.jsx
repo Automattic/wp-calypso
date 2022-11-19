@@ -14,7 +14,6 @@ import { addTracking } from './helpers';
 import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
 import ThemesHeader from './themes-header';
-import ThemesHeaderFixed from './themes-header-fixed';
 import ThemesSelection from './themes-selection';
 
 const ConnectedThemesSelection = connectOptions( ( props ) => {
@@ -69,11 +68,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 
 	return (
 		<Main fullWidthLayout className="themes">
-			{ isEnabled( 'themes/showcase-i4/search-and-filter' ) ? (
-				<ThemesHeaderFixed />
-			) : (
-				<ThemesHeader />
-			) }
+			<ThemesHeader isReskinned={ isEnabled( 'themes/showcase-i4/search-and-filter' ) } />
 			<CurrentTheme siteId={ siteId } />
 			<ThemeShowcase
 				{ ...props }
