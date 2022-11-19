@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -13,11 +12,7 @@ interface ThemesHeaderProps {
 
 const ThemesHeader: React.FC< ThemesHeaderProps > = ( { isReskinned } ) => {
 	return (
-		<div
-			className={ classNames( 'themes__header', {
-				'is-reskinned': isReskinned,
-			} ) }
-		>
+		<div className="themes__header">
 			<ScreenOptionsTab wpAdminPath="themes.php" />
 			{ isReskinned ? (
 				<div className="themes__page-heading">
