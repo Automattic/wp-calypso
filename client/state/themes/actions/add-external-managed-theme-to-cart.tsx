@@ -3,7 +3,9 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { addQueryArgs } from '@wordpress/url';
 import page from 'page';
 import 'calypso/state/themes/init';
+import { marketplaceThemeProduct } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
+import { marketplaceThemeBillingProductSlug } from 'calypso/my-sites/themes/helpers';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
@@ -50,10 +52,10 @@ export function addExternalManagedThemeToCart( themeId: string, siteId: number )
 			throw new Error( 'Site could not be found matching id ' + siteId );
 		}
 
+		const productSlug: string = marketplaceThemeBillingProductSlug( themeId );
+
 		// TODO: use the marketplaceThemeProduct function from #69831
-		const externalManagedThemeProduct = {
-			product_slug: themeId,
-		};
+		const externalManagedThemeProduct = marketplaceThemeProduct( productSlug );
 
 		/**
 		 * This holds the products that will be added to the cart. We always want to add the
