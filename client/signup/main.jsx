@@ -6,7 +6,9 @@ import {
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { isNewsletterOrLinkInBioFlow, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
+import { isCurrentPlanFlow } from '@automattic/onboarding/src';
 import debugModule from 'debug';
+import { getLocaleSlug } from 'i18n-calypso';
 import {
 	clone,
 	defer,
@@ -28,6 +30,7 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import ZendeskChat from 'calypso/components/zendesk-chat-widget';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import {
 	recordSignupStart,
@@ -779,6 +782,21 @@ class Signup extends Component {
 		}
 	}
 
+	shouldShowZendeskPresalesChat() {
+		const isEnglishLocale = config( 'english_locales' ).includes( getLocaleSlug() ?? '' );
+		const currentTime = new Date();
+
+		return (
+			! this.props.isLoggedIn &&
+			isCurrentPlanFlow( this.props.flowName ) &&
+			isEnglishLocale &&
+			currentTime.getUTCHours() >= 15 &&
+			currentTime.getUTCHours() < 21 &&
+			currentTime.getUTCDay() !== 0 &&
+			currentTime.getUTCDay() !== 6
+		);
+	}
+
 	getPageTitle() {
 		if ( isNewsletterOrLinkInBioFlow( this.props.flowName ) ) {
 			return this.props.pageTitle;
@@ -801,6 +819,8 @@ class Signup extends Component {
 		}
 
 		const isReskinned = isReskinnedFlow( this.props.flowName );
+		const zendeskChatKey = config( 'zendesk_presales_chat_key' );
+		const shouldShowZendeskPresalesChat = this.shouldShowZendeskPresalesChat();
 
 		return (
 			<>
@@ -835,6 +855,7 @@ class Signup extends Component {
 						/>
 					) }
 				</div>
+				{ shouldShowZendeskPresalesChat && <ZendeskChat chatId={ zendeskChatKey } /> }
 			</>
 		);
 	}
