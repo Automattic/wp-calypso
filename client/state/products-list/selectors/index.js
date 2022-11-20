@@ -10,6 +10,7 @@ export { getProductDescription } from './get-product-description';
 export { getProductDisplayCost } from './get-product-display-cost';
 export { getProductPriceTierList } from './get-product-price-tiers';
 export { getProductTerm } from './get-product-term';
+export { getProductsByBillingSlug } from './get-products-by-billing-slug';
 export { getProductsList } from './get-products-list';
 export { getProductsListType } from './get-products-list-type';
 export { isProductsListFetching } from './is-products-list-fetching';
