@@ -11,28 +11,6 @@ import { createReduxStore } from 'calypso/state';
 import PurchaseMeta from '../purchase-meta';
 
 describe( 'PurchaseMeta', () => {
-	// const store = createReduxStore(
-	// 	{
-	// 		purchases: {
-	// 			data: [
-	// 				{
-	// 					id: 1,
-	// 					expiryStatus: 'included',
-	// 				},
-	// 			],
-	// 		},
-	// 		currentUser: {
-	// 			id: 1,
-	// 			user: {
-	// 				primary_blog: 'example',
-	// 			},
-	// 		},
-	// 		sites: {
-	// 			requestingAll: false,
-	// 		},
-	// 	},
-	// 	( state ) => state
-	// );
 	const store = createReduxStore(
 		{
 			purchases: {
