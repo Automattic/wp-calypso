@@ -9,7 +9,7 @@ import BillingOptions from './billing-options';
 interface Props {
 	plan: BlockPlan;
 	plans: BlockPlan[];
-	setPlan: ( planSlug?: string ) => void;
+	setPlan: ( productSlug?: string ) => void;
 }
 
 const PricingPlanDetail: FunctionComponent< BlockSaveProps< BlockAttributes > & Props > = ( {
@@ -22,7 +22,7 @@ const PricingPlanDetail: FunctionComponent< BlockSaveProps< BlockAttributes > & 
 		<section className="hb-pricing-plans-embed__detail">
 			<div>
 				<BillingInfo plan={ plan } />
-				<BillingOptions plans={ plans } value={ attributes.planSlug } onChange={ setPlan } />
+				<BillingOptions plans={ plans } value={ attributes.productSlug } onChange={ setPlan } />
 			</div>
 			<BillingButton href={ plan.upgradeLink }>{ plan.upgradeLabel }</BillingButton>
 		</section>

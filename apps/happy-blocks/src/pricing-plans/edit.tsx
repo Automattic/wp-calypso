@@ -20,9 +20,9 @@ export const Edit: FunctionComponent< BlockEditProps< BlockAttributes > > = ( {
 	// See https://github.com/WordPress/gutenberg/issues/7342
 	useEffect( () => {
 		setAttributes( {
-			planSlug: attributes.planSlug ?? config.plans[ 0 ],
+			productSlug: attributes.productSlug ?? config.plans[ 0 ],
 		} );
-	}, [ attributes.planSlug, setAttributes ] );
+	}, [ attributes.productSlug, setAttributes ] );
 
 	const blockProps = useBlockProps();
 

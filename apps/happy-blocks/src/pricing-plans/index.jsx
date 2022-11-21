@@ -4,7 +4,7 @@ import config from './config';
 import { Edit } from './edit';
 
 const blockAttributes = {
-	planSlug: {
+	productSlug: {
 		enum: config.plans,
 	},
 };

@@ -1,5 +1,5 @@
 export interface BlockAttributes {
-	planSlug: string;
+	productSlug: string;
 }
 
 /**

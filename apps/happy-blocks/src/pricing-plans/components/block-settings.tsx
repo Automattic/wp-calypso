@@ -23,9 +23,9 @@ const BlockSettings: FunctionComponent<
 					<SelectControl
 						className="hb-pricing-plans-embed__settings-plan"
 						label={ __( 'Plan', 'happy-blocks' ) }
-						value={ attributes.planSlug }
+						value={ attributes.productSlug }
 						options={ options }
-						onChange={ ( planSlug ) => setAttributes( { planSlug } ) }
+						onChange={ ( productSlug ) => setAttributes( { productSlug } ) }
 					/>
 				</PanelRow>
 			</PanelBody>

@@ -1,4 +1,5 @@
 import { BlockEditProps } from '@wordpress/blocks';
+import { __ } from '@wordpress/i18n';
 import { FunctionComponent } from 'react';
 import { BlockPlan } from '../hooks/pricing-plans';
 import { BlockAttributes } from '../types';
@@ -12,10 +13,10 @@ interface Props {
 const PricingPlans: FunctionComponent<
 	Pick< BlockEditProps< BlockAttributes >, 'attributes' | 'setAttributes' > & Props
 > = ( { attributes, setAttributes, plans } ) => {
-	const currentPlan = plans?.find( ( plan ) => plan.productSlug === attributes.planSlug );
+	const currentPlan = plans?.find( ( plan ) => plan.productSlug === attributes.productSlug );
 
 	if ( ! currentPlan ) {
-		return null;
+		return <div>{ __( 'The selected plan is not available at this moment', 'happy-blocks' ) }</div>;
 	}
 
 	return (
@@ -25,7 +26,7 @@ const PricingPlans: FunctionComponent<
 				plan={ currentPlan }
 				plans={ plans }
 				attributes={ attributes }
-				setPlan={ ( planSlug ) => setAttributes( { planSlug } ) }
+				setPlan={ ( productSlug ) => setAttributes( { productSlug } ) }
 			/>
 		</div>
 	);
