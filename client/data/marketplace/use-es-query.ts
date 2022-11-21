@@ -27,8 +27,14 @@ import type { ESHits, ESResponse, Plugin, PluginQueryOptions, Icon } from './typ
  */
 const createIconUrl = ( pluginSlug: string, icons?: string ): string => {
 	const defaultIconUrl = buildDefaultIconUrl( pluginSlug );
-	if ( ! icons ) {
+	if ( ! icons || 'null' === icons ) {
 		return defaultIconUrl;
+	}
+
+	// WC.com results only contain the icon url, not the icon object
+	// TODO move this logic to the backend, see https://github.com/Automattic/wp-calypso/issues/70233
+	if ( icons.startsWith( 'http' ) ) {
+		return icons;
 	}
 
 	let iconsObject: Record< string, Icon > = {};
@@ -125,7 +131,7 @@ export const getESPluginsInfiniteQueryParams = (
 		search( {
 			query: searchTerm,
 			author,
-			groupId: 'marketplace',
+			groupId: 'woocommerce',
 			category: options.category,
 			pageHandle: pageParam + '',
 			pageSize,
