@@ -20,6 +20,9 @@
 	}
 
 	.plans-feature-list {
+		&__item {
+			margin: 12px 0;
+		}
 		&__item-group {
 			list-style: none;
 		}
@@ -30,8 +33,17 @@
 			fill: #008a20;
 			stroke: #008a20;
 		}
+		&__item--requires-annual-enabled,
+		&__item--requires-annual-disabled {
+			.plans-feature-list__item-description {
+				font-weight: 700;
+			}
+		}
 		&__item--requires-annual-disabled {
 			.plans-feature-list {
+				&__item-description {
+					color: #888;
+				}
 				&__item-annual-nudge {
 					display: block;
 				}
