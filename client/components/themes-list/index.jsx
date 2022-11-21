@@ -172,6 +172,7 @@ function Empty( props ) {
 				selectedSite={ selectedSite }
 				searchTerm={ searchTerm }
 				translate={ translate }
+				recordTracksEvent={ props.recordTracksEvent }
 			/>
 		</div>
 	) : (
