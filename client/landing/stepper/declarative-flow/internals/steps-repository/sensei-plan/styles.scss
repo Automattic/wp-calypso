@@ -23,15 +23,31 @@
 		&__item-group {
 			list-style: none;
 		}
+		&__item-annual-nudge {
+			display: none;
+		}
 		&__item-bullet-icon path {
 			fill: #008a20;
 			stroke: #008a20;
 		}
 		&__item--requires-annual-disabled {
-			.plans-feature-list__item-bullet-icon path {
-				fill: var(--studio-orange-40);
-				stroke: var(--studio-orange-40);
+			.plans-feature-list {
+				&__item-annual-nudge {
+					display: block;
+				}
+				&__item-bullet-icon path {
+					fill: var(--studio-orange-40);
+					stroke: var(--studio-orange-40);
+				}
 			}
+		}
+	}
+
+
+	.plans-interval-toggle__popover:not(.plans-interval-toggle__popover--mobile) {
+		display: none;
+		@media ( min-width: 780px ) {
+			display: block;
 		}
 	}
 }
