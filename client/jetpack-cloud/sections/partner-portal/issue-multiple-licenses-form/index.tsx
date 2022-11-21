@@ -16,6 +16,7 @@ import {
 } from 'calypso/state/partner-portal/licenses/selectors';
 import {
 	addSelectedProductSlugs,
+	clearSelectedProductSlugs,
 	removeSelectedProductSlugs,
 } from 'calypso/state/partner-portal/products/actions';
 import {
@@ -68,7 +69,13 @@ export default function IssueMultipleLicensesForm( {
 		.split( ',' );
 
 	useEffect( () => {
+		// Select the slugs included in the URL
 		defaultProductSlugs && dispatch( addSelectedProductSlugs( defaultProductSlugs ) );
+
+		// Clear all selected slugs when navigating away from the page to avoid persisting the data.
+		return () => {
+			dispatch( clearSelectedProductSlugs() );
+		};
 	}, [ dispatch, defaultProductSlugs ] );
 
 	const selectedProductSlugs = useSelector( getSelectedProductSlugs );
