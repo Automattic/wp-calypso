@@ -49,23 +49,15 @@ class WP_REST_Help_Center_Has_Seen_Promotion extends \WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function get_me_preferences() {
-		$body = Client::wpcom_json_api_request_as_user(
-			'/me/preferences',
-			'2',
-			array(
-				'method' => \WP_REST_Server::READABLE,
-			),
-			array(
-				'preference_key' => 'seen_help_center_promotion',
-			)
-		);
+		$response = Client::wpcom_json_api_request_as_user( '/me/preferences?preference_key=seen_help_center_promotion' );
 
-		if ( is_wp_error( $body ) ) {
-			return $body;
+		if ( is_wp_error( $response ) ) {
+			return $response;
 		}
-		$response = json_decode( wp_remote_retrieve_body( $body ) );
 
-		return rest_ensure_response( $response );
+		$body = json_decode( wp_remote_retrieve_body( $response ) );
+
+		return rest_ensure_response( $body );
 	}
 
 	/**
@@ -74,23 +66,24 @@ class WP_REST_Help_Center_Has_Seen_Promotion extends \WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function set_me_preferences() {
-		$body = Client::wpcom_json_api_request_as_user(
+		$response = Client::wpcom_json_api_request_as_user(
 			'/me/preferences',
 			'2',
 			array(
-				'method' => \WP_REST_Server::EDITABLE,
+				'method' => 'POST',
 			),
 			array(
 				'calypso_preferences' => array( 'seen_help_center_promotion' => true ),
 			)
 		);
 
-		if ( is_wp_error( $body ) ) {
-			return $body;
+		if ( is_wp_error( $response ) ) {
+			return $response;
 		}
-		$response = json_decode( wp_remote_retrieve_body( $body ) );
 
-		return rest_ensure_response( $response );
+		$body = json_decode( wp_remote_retrieve_body( $response ) );
+
+		return rest_ensure_response( $body );
 	}
 
 	/**
