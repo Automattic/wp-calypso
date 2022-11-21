@@ -4,7 +4,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { getPlanTermLabel } from '@automattic/calypso-products';
+import { getPlan, getPlanTermLabel } from '@automattic/calypso-products';
 import { Button, FormInputValidation, Popover } from '@automattic/components';
 import {
 	useSubmitTicketMutation,
@@ -13,9 +13,11 @@ import {
 	useUserSites,
 	AnalysisReport,
 	useSibylQuery,
+	SiteDetails,
+	HelpCenterSite,
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
-import { SitePickerDropDown } from '@automattic/site-picker';
+import { SitePickerDropDown, SitePickerSite } from '@automattic/site-picker';
 import { TextControl, CheckboxControl, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -26,7 +28,7 @@ import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 import { getCurrentUserEmail, getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
@@ -64,15 +66,15 @@ const HelpCenterSitePicker: React.FC< SitePicker > = ( {
 	const otherSite = {
 		name: __( 'Other site', __i18n_text_domain__ ),
 		ID: 0,
-		logo: { id: '', sizes: [], url: '' },
+		logo: { id: '', sizes: [] as never[], url: '' },
 		URL: '',
-	};
+	} as const;
 
-	function pickSite( ID: number ) {
+	function pickSite( ID: number | string ) {
 		onSelect( ID );
 	}
 
-	const options = [ currentSite, otherSite ];
+	const options: ( SitePickerSite | undefined )[] = [ currentSite, otherSite ];
 
 	return (
 		<SitePickerDropDown
@@ -161,9 +163,9 @@ export const HelpCenterContactForm = () => {
 	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
 		'CURRENT_SITE'
 	);
-	const { selectedSite, subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
+	const { currentSite, subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
 		return {
-			selectedSite: select( HELP_CENTER_STORE ).getSite(),
+			currentSite: select( HELP_CENTER_STORE ).getSite(),
 			subject: select( HELP_CENTER_STORE ).getSubject(),
 			message: select( HELP_CENTER_STORE ).getMessage(),
 			userDeclaredSiteUrl: select( HELP_CENTER_STORE ).getUserDeclaredSiteUrl(),
@@ -196,9 +198,6 @@ export const HelpCenterContactForm = () => {
 
 	const formTitles = useFormTitles( mode );
 
-	const siteId = useSelector( getSelectedSiteId );
-	const currentSite = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
-
 	let ownershipResult: AnalysisReport = useSiteAnalysis(
 		// pass user email as query cache key
 		userId,
@@ -222,29 +221,26 @@ export const HelpCenterContactForm = () => {
 	// record the resolved site
 	useEffect( () => {
 		if ( ownershipResult?.site && sitePickerChoice === 'OTHER_SITE' ) {
-			setUserDeclaredSite( ownershipResult?.site );
+			setUserDeclaredSite( ownershipResult?.site as SiteDetails );
 		}
 	}, [ ownershipResult, setUserDeclaredSite, sitePickerChoice ] );
 
-	let supportSite: typeof currentSite;
+	let supportSite: SiteDetails | HelpCenterSite;
 
 	// if the user picked "other site", force them to declare a site
 	if ( sitePickerChoice === 'OTHER_SITE' ) {
-		supportSite = ownershipResult?.site;
+		supportSite = ownershipResult?.site as SiteDetails;
 	} else {
-		supportSite = selectedSite || currentSite;
+		supportSite = currentSite as HelpCenterSite;
 	}
-
-	const isAtomic = Boolean(
-		useSelect( ( select ) => supportSite && select( SITE_STORE ).isSiteAtomic( supportSite?.ID ) )
-	);
-	const isJetpack = Boolean(
-		useSelect( ( select ) => select( SITE_STORE ).isJetpackSite( supportSite?.ID ) )
-	);
 
 	const [ debouncedMessage ] = useDebounce( message || '', 500 );
 
-	const { data: sibylArticles } = useSibylQuery( debouncedMessage, isJetpack, isAtomic );
+	const { data: sibylArticles } = useSibylQuery(
+		debouncedMessage,
+		Boolean( supportSite?.jetpack ),
+		Boolean( supportSite?.is_wpcom_atomic )
+	);
 
 	const showingSibylResults = params.get( 'show-results' ) === 'true';
 
@@ -257,6 +253,12 @@ export const HelpCenterContactForm = () => {
 			} );
 			return;
 		}
+		const productSlug = ( supportSite as HelpCenterSite )?.plan.product_slug;
+		const plan = getPlan( productSlug );
+		const productId = plan?.getProductId();
+		const productName = plan?.getTitle();
+		const productTerm = getPlanTermLabel( productSlug, ( text ) => text );
+
 		switch ( mode ) {
 			case 'CHAT':
 				if ( supportSite ) {
@@ -267,8 +269,8 @@ export const HelpCenterContactForm = () => {
 					} );
 
 					recordTracksEvent( 'calypso_help_live_chat_begin', {
-						site_plan_product_id: supportSite ? supportSite.plan?.product_id : null,
-						is_automated_transfer: supportSite ? supportSite.options.is_automated_transfer : null,
+						site_plan_product_id: productId,
+						is_automated_transfer: supportSite.is_wpcom_atomic,
 						location: 'help-center',
 						section: sectionName,
 					} );
@@ -279,18 +281,10 @@ export const HelpCenterContactForm = () => {
 
 			case 'EMAIL':
 				if ( supportSite ) {
-					let planName = supportSite.plan?.product_slug;
-
-					if ( supportSite.plan ) {
-						planName = `${ supportSite.plan.product_id } - ${
-							supportSite.plan.product_name_short
-						} (${ getPlanTermLabel(
-							supportSite.plan.product_slug,
-							( val ) => val // Passing an identity function instead of `translate` to always return the English string
-						) })`;
-					}
-
-					const ticketMeta = [ 'Site I need help with: ' + supportSite.URL, 'Plan: ' + planName ];
+					const ticketMeta = [
+						'Site I need help with: ' + supportSite.URL,
+						`Plan: ${ productId } - ${ productName } (${ productTerm })`,
+					];
 
 					const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
 
@@ -327,7 +321,6 @@ export const HelpCenterContactForm = () => {
 			case 'FORUM':
 				submitTopic( {
 					ownershipResult,
-					site: supportSite,
 					message: message ?? '',
 					subject: subject ?? '',
 					locale,

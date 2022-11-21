@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
-import './style.scss';
 
 type Insights = {
 	day?: string;
@@ -43,13 +42,15 @@ export default function AnnualHighlightsSection( { siteId }: { siteId: number } 
 		getSiteStatsNormalizedData( state, siteId, 'statsFollowers', FOLLOWERS_QUERY )
 	) as Followers;
 	const counts = useMemo( () => {
-		const currentYearData =
-			insights?.years && insights.years?.find( ( y ) => y.year === year.toString() );
+		const hasYearsData = Array.isArray( insights?.years );
+		const currentYearData = insights?.years?.find( ( y ) => y.year === year.toString() );
 		return {
-			comments: currentYearData?.total_comments ?? null,
-			likes: currentYearData?.total_likes ?? null,
-			posts: currentYearData?.total_posts ?? null,
-			words: currentYearData?.total_words ?? null,
+			// TODO: Change `hasYearsData ? 0 : null` to `null` once insights API has been enhanced to
+			//       return `years` data even for inactive years. This is a temporary & hacky fix.
+			comments: currentYearData?.total_comments ?? ( hasYearsData ? 0 : null ),
+			likes: currentYearData?.total_likes ?? ( hasYearsData ? 0 : null ),
+			posts: currentYearData?.total_posts ?? ( hasYearsData ? 0 : null ),
+			words: currentYearData?.total_words ?? ( hasYearsData ? 0 : null ),
 			followers: followers?.total_wpcom ?? null,
 		};
 	}, [ year, followers, insights ] );
@@ -58,7 +59,7 @@ export default function AnnualHighlightsSection( { siteId }: { siteId: number } 
 	const viewMoreHref = siteSlug ? `/stats/annualstats/${ siteSlug }` : null;
 
 	return (
-		<div className="stats__annual-highlights-section">
+		<>
 			{ siteId && (
 				<>
 					<QuerySiteStats siteId={ siteId } statType="statsInsights" />
@@ -66,6 +67,6 @@ export default function AnnualHighlightsSection( { siteId }: { siteId: number } 
 				</>
 			) }
 			<AnnualHighlightCards counts={ counts } titleHref={ viewMoreHref } year={ year } />
-		</div>
+		</>
 	);
 }

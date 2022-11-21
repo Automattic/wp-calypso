@@ -21,7 +21,6 @@ const buildConnection: ( socket: string | Socket ) => Socket = ( socket ) =>
 
 //The second one is an identity function, used in 'use-happychat-available' hook
 export type Dispatch = ( ( arg: unknown ) => void ) | ( < T >( value: T ) => T );
-
 export class Connection {
 	receiveAccept?: ( accept: boolean ) => void;
 	receiveConnect?: () => void;
@@ -50,16 +49,23 @@ export class Connection {
 	/**
 	 * Init the SocketIO connection: check user authorization and bind socket events
 	 *
-	 * @param dispatch Redux dispatch function
+	 * @param originalDispatch Redux dispatch function
 	 * @param auth Authentication promise, will return the user info upon fulfillment
 	 * @returns Fulfilled (returns the opened socket)
 	 *                   	 or rejected (returns an error message)
 	 */
-	init( dispatch: Dispatch, auth: Promise< HappychatAuth > ) {
+	init( originalDispatch: Dispatch, auth: Promise< HappychatAuth > ) {
 		if ( this.openSocket ) {
 			debug( 'socket is already connected' );
 			return this.openSocket;
 		}
+
+		const dispatch = ( action: unknown ) => {
+			if ( action ) {
+				return originalDispatch( action );
+			}
+		};
+
 		this.dispatch = dispatch;
 
 		this.openSocket = new Promise( ( resolve, reject ) => {

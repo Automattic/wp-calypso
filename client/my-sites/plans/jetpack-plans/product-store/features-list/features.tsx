@@ -27,12 +27,12 @@ export function useBundleFeaturesList( planSlug: string ) {
 			slug: 'security',
 			title: translate( 'Security' ),
 			features: [
-				translate( 'Real-time backups as you edit' ),
+				translate( 'VaultPress Backup: Real-time backups as you edit' ),
 				translate( '10GB of cloud storage' ),
 				translate( '30-day activity log archive' ),
 				translate( 'Unlimited one-click restores from the last 30 days' ),
-				translate( 'Real-time malware scanning and one-click fixes' ),
-				translate( 'Comment and form spam protection (10k API calls/mo)' ),
+				translate( 'Scan: Real-time malware scanning and one-click fixes' ),
+				translate( 'Akismet: Comment and form spam protection (10k API calls/mo)' ),
 			],
 		},
 		{
@@ -47,7 +47,10 @@ export function useBundleFeaturesList( planSlug: string ) {
 			included: false,
 			slug: 'growth',
 			title: translate( 'Growth' ),
-			features: [ translate( 'CRM: with 30 extensions' ) ],
+			features: [
+				translate( 'Social: Basic with 1,000 shares/mo' ),
+				translate( 'CRM: with 30 extensions' ),
+			],
 		},
 	];
 
@@ -58,7 +61,7 @@ export function useBundleFeaturesList( planSlug: string ) {
 			slug: 'security',
 			title: translate( 'Security' ),
 			features: [
-				translate( 'Real-time backups as you edit' ),
+				translate( 'VaultPress Backup: Real-time backups as you edit' ),
 				translate( '{{b}}1TB (1,000GB){{/b}} of cloud storage', {
 					components: {
 						b: <b />,
@@ -74,8 +77,8 @@ export function useBundleFeaturesList( planSlug: string ) {
 						b: <b />,
 					},
 				} ),
-				translate( 'Real-time malware scanning and one-click fixes' ),
-				translate( 'Comment and form spam protection ({{b}}60k API calls/mo{{/b}})', {
+				translate( 'Scan: Real-time malware scanning and one-click fixes' ),
+				translate( 'Akismet: Comment and form spam protection ({{b}}60k API calls/mo{{/b}})', {
 					components: {
 						b: <b />,
 					},
@@ -98,7 +101,10 @@ export function useBundleFeaturesList( planSlug: string ) {
 			included: true,
 			slug: 'growth',
 			title: translate( 'Growth' ),
-			features: [ <b>{ translate( 'CRM: Entrepreneur with 30 extensions' ) }</b> ],
+			features: [
+				translate( 'Social: Basic with 1,000 shares/mo' ),
+				<b>{ translate( 'CRM: Entrepreneur with 30 extensions' ) }</b>,
+			],
 		},
 	];
 

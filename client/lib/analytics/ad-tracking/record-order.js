@@ -1,30 +1,10 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
-import {
-	costToUSD,
-	isAdTrackingAllowed,
-	refreshCountryCodeCookieGdpr,
-} from 'calypso/lib/analytics/utils';
+import { costToUSD, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
+import { mayWeTrackByTracker } from '../tracker-buckets';
 import { cartToGaPurchase } from '../utils/cart-to-ga-purchase';
 import { splitWpcomJetpackCartInfo } from '../utils/split-wpcom-jetpack-cart-info';
 import {
 	debug,
-	isCriteoEnabled,
-	isFacebookEnabled,
-	isBingEnabled,
-	isQuantcastEnabled,
-	isWpcomGoogleAdsGtagEnabled,
-	isJetpackGoogleAdsGtagEnabled,
-	isFloodlightEnabled,
-	isTwitterEnabled,
-	isPinterestEnabled,
-	isIconMediaEnabled,
-	isExperianEnabled,
-	isGeminiEnabled,
-	isPandoraEnabled,
-	isQuoraEnabled,
-	isAdRollEnabled,
-	isGoogleAnalyticsEnabled,
-	isGoogleAnalyticsEnhancedEcommerceEnabled,
 	TRACKING_IDS,
 	EXPERIAN_CONVERSION_PIXEL_URL,
 	YAHOO_GEMINI_CONVERSION_PIXEL_URL,
@@ -54,11 +34,6 @@ import './setup';
 export async function recordOrder( cart, orderId ) {
 	await refreshCountryCodeCookieGdpr();
 
-	if ( ! isAdTrackingAllowed() ) {
-		debug( 'recordOrder: [Skipping] ad tracking is not allowed' );
-		return;
-	}
-
 	await loadTrackingScripts();
 
 	if ( cart.is_signup ) {
@@ -87,31 +62,31 @@ export async function recordOrder( cart, orderId ) {
 	// Fire a single tracking event without any details about what was purchased
 
 	// Experian / One 2 One Media
-	if ( isExperianEnabled ) {
+	if ( mayWeTrackByTracker( 'experian' ) ) {
 		debug( 'recordOrder: [Experian]', EXPERIAN_CONVERSION_PIXEL_URL );
 		new window.Image().src = EXPERIAN_CONVERSION_PIXEL_URL;
 	}
 
 	// Yahoo Gemini
-	if ( isGeminiEnabled ) {
+	if ( mayWeTrackByTracker( 'gemini' ) ) {
 		const params =
 			YAHOO_GEMINI_CONVERSION_PIXEL_URL + ( usdTotalCost !== null ? '&gv=' + usdTotalCost : '' );
 		debug( 'recordOrder: [Yahoo Gemini]', params );
 		new window.Image().src = params;
 	}
 
-	if ( isPandoraEnabled ) {
+	if ( mayWeTrackByTracker( 'pandora' ) ) {
 		debug( 'recordOrder: [Pandora]', PANDORA_CONVERSION_PIXEL_URL );
 		new window.Image().src = PANDORA_CONVERSION_PIXEL_URL;
 	}
 
-	if ( isQuoraEnabled ) {
+	if ( mayWeTrackByTracker( 'quora' ) ) {
 		const params = [ 'track', 'Generic' ];
 		debug( 'recordOrder: [Quora]', params );
 		window.qp( ...params );
 	}
 
-	if ( isIconMediaEnabled ) {
+	if ( mayWeTrackByTracker( 'iconMedia' ) ) {
 		const skus = cart.products.map( ( product ) => product.product_slug ).join( ',' );
 		const params =
 			ICON_MEDIA_ORDER_PIXEL_URL + `&tx=${ orderId }&sku=${ skus }&price=${ usdTotalCost }`;
@@ -120,7 +95,7 @@ export async function recordOrder( cart, orderId ) {
 	}
 
 	// Twitter
-	if ( isTwitterEnabled ) {
+	if ( mayWeTrackByTracker( 'twitter' ) ) {
 		const params = [
 			'track',
 			'Purchase',
@@ -139,7 +114,7 @@ export async function recordOrder( cart, orderId ) {
 	}
 
 	// Pinterest
-	if ( isPinterestEnabled ) {
+	if ( mayWeTrackByTracker( 'pinterest' ) ) {
 		const params = [
 			'track',
 			'checkout',
@@ -159,7 +134,7 @@ export async function recordOrder( cart, orderId ) {
 	}
 
 	// AdRoll
-	if ( isAdRollEnabled ) {
+	if ( mayWeTrackByTracker( 'adroll' ) ) {
 		debug( 'recordOrder: [AdRoll]' );
 		window.adRoll.trackPurchase();
 	}
@@ -179,7 +154,7 @@ export async function recordOrder( cart, orderId ) {
  * @returns {void}
  */
 function recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo ) {
-	if ( ! isAdTrackingAllowed() || ! isQuantcastEnabled ) {
+	if ( ! mayWeTrackByTracker( 'quantcast' ) ) {
 		return;
 	}
 
@@ -237,7 +212,7 @@ function recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo ) {
  * @returns {void}
  */
 function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
-	if ( ! isAdTrackingAllowed() || ! isFloodlightEnabled ) {
+	if ( ! mayWeTrackByTracker( 'floodlight' ) ) {
 		return;
 	}
 
@@ -296,7 +271,7 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
  * @returns {void}
  */
 function recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo ) {
-	if ( ! isAdTrackingAllowed() || ! isFacebookEnabled ) {
+	if ( ! mayWeTrackByTracker( 'facebook' ) ) {
 		return;
 	}
 
@@ -358,7 +333,7 @@ function recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo ) {
 function recordOrderInBing( cart, orderId, wpcomJetpackCartInfo ) {
 	// NOTE: `orderId` is not used at this time, but it could be useful in the near future.
 
-	if ( ! isAdTrackingAllowed() || ! isBingEnabled ) {
+	if ( ! mayWeTrackByTracker( 'bing' ) ) {
 		return;
 	}
 
@@ -402,14 +377,14 @@ function recordOrderInBing( cart, orderId, wpcomJetpackCartInfo ) {
  * @returns {void}
  */
 function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
-	if ( ! isAdTrackingAllowed() ) {
+	if ( ! mayWeTrackByTracker( 'googleAds' ) ) {
 		debug( 'recordOrderInGoogleAds: skipping as ad tracking is disallowed' );
 		return;
 	}
 
 	// MCC-level event.
 	// @TODO Separate WPCOM from Jetpack events.
-	if ( isWpcomGoogleAdsGtagEnabled ) {
+	if ( mayWeTrackByTracker( 'googleAds' ) ) {
 		const params = [
 			'event',
 			'conversion',
@@ -421,10 +396,10 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 			},
 		];
 		debug( 'recordOrderInGoogleAds: Record WPCom Purchase', params );
-		window.gtag( ...params );
+		window.gtag?.( ...params );
 	}
 
-	if ( isJetpackGoogleAdsGtagEnabled && wpcomJetpackCartInfo.containsJetpackProducts ) {
+	if ( mayWeTrackByTracker( 'googleAds' ) && wpcomJetpackCartInfo.containsJetpackProducts ) {
 		const params = [
 			'event',
 			'conversion',
@@ -436,17 +411,17 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 			},
 		];
 		debug( 'recordOrderInGoogleAds: Record Jetpack Purchase', params );
-		window.gtag( ...params );
+		window.gtag?.( ...params );
 	}
 }
 
 function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo ) {
-	if ( ! isAdTrackingAllowed() ) {
+	if ( ! mayWeTrackByTracker( 'gaEnhancedEcommerce' ) ) {
 		debug( 'recordOrderInGAEnhancedEcommerce: [Skipping] ad tracking is disallowed' );
 		return;
 	}
 
-	if ( ! isGoogleAnalyticsEnabled || ! isGoogleAnalyticsEnhancedEcommerceEnabled ) {
+	if ( ! mayWeTrackByTracker( 'ga' ) || ! mayWeTrackByTracker( 'gaEnhancedEcommerce' ) ) {
 		debug( 'recordOrderInGAEnhancedEcommerce: [Skipping] Google Analytics is not enabled' );
 		return;
 	}
@@ -493,7 +468,7 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 		},
 	];
 
-	window.gtag( ...params );
+	window.gtag?.( ...params );
 
 	debug( 'recordOrderInGAEnhancedEcommerce: Record WPCom Purchase', params );
 }
@@ -507,6 +482,10 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
  * @returns {void}
  */
 function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
+	if ( ! mayWeTrackByTracker( 'ga' ) ) {
+		return;
+	}
+
 	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
 		fireEcommercePurchaseGA4(
 			cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo ),
@@ -534,7 +513,7 @@ function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
 			},
 		];
 		debug( 'recordOrderInJetpackGA: Record Jetpack Purchase', jetpackParams );
-		window.gtag( ...jetpackParams );
+		window.gtag?.( ...jetpackParams );
 	}
 }
 
@@ -547,6 +526,10 @@ function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
  * @returns {void}
  */
 function recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo ) {
+	if ( ! mayWeTrackByTracker( 'ga' ) ) {
+		return;
+	}
+
 	if (
 		! wpcomJetpackCartInfo.containsWpcomProducts &&
 		! wpcomJetpackCartInfo.containsJetpackProducts
@@ -570,7 +553,7 @@ function recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo ) {
  * @returns {void}
  */
 function recordOrderInCriteo( cart, orderId ) {
-	if ( ! isAdTrackingAllowed() || ! isCriteoEnabled ) {
+	if ( ! mayWeTrackByTracker( 'criteo' ) ) {
 		return;
 	}
 

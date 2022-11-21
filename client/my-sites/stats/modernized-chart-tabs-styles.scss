@@ -3,10 +3,12 @@
 $barChartBorderRadius: 2px;
 $yearBarChartBorderRadius: 4px;
 
+.stats > .stats--new-main-chart {
+	padding-top: 48px;
+}
+
 // For feature `stats/new-main-chart`
 .stats--new-main-chart {
-	background-color: var(--color-surface);
-
 	// Common Legend options
 	.chart__legend {
 		margin-bottom: 16px;
@@ -73,6 +75,7 @@ $yearBarChartBorderRadius: 4px;
 	// Main Chart
 	.chart {
 		padding-left: 20px;
+		background-color: inherit;
 
 		.chart__bar {
 			// Cancel the chart bar styles
@@ -135,7 +138,7 @@ $yearBarChartBorderRadius: 4px;
 		border: 0;
 
 		&.is-enabled {
-			background-color: var(--color-surface);
+			background-color: inherit;
 		}
 
 		.stats-tab {

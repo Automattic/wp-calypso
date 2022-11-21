@@ -21,6 +21,7 @@ import {
 import { type as domainTypes, domainInfoContext } from 'calypso/lib/domains/constants';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { canSetAsPrimary } from 'calypso/lib/domains/utils/can-set-as-primary';
+import { isRecentlyRegisteredAndDoesNotPointToWpcom } from 'calypso/lib/domains/utils/is-recently-registered-and-does-not-point-to-wpcom';
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
 import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
@@ -375,12 +376,13 @@ class DomainRow extends PureComponent {
 							? translate( 'View transfer' )
 							: translate( 'View settings' ) }
 					</PopoverMenuItem>
-					{ canSetAsPrimary( domain, isManagingAllSites, shouldUpgradeToMakePrimary ) && (
-						<PopoverMenuItem onClick={ this.makePrimary }>
-							<Icon icon={ home } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
-							{ translate( 'Make primary site address' ) }
-						</PopoverMenuItem>
-					) }
+					{ canSetAsPrimary( domain, isManagingAllSites, shouldUpgradeToMakePrimary ) &&
+						! isRecentlyRegisteredAndDoesNotPointToWpcom( domain ) && (
+							<PopoverMenuItem onClick={ this.makePrimary }>
+								<Icon icon={ home } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
+								{ translate( 'Make primary site address' ) }
+							</PopoverMenuItem>
+						) }
 					{ domain.type === domainTypes.MAPPED && domain.isEligibleForInboundTransfer && (
 						<PopoverMenuItem
 							href={ domainUseMyDomain(

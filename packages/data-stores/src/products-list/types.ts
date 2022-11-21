@@ -7,6 +7,7 @@ export interface Dispatch {
 
 export interface ProductsListItem {
 	available: boolean;
+	billing_product_slug: string;
 	combined_cost_display: string;
 	cost: number;
 	currency_code: string;

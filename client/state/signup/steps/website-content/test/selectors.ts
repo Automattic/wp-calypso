@@ -1,9 +1,9 @@
-import { IMAGE_UPLOAD_STATES } from '../reducer';
-import { initialState } from '../schema';
+import { ABOUT_PAGE, HOME_PAGE, PORTFOLIO_PAGE } from '../../../../../signup/difm/constants';
+import { initialState, MEDIA_UPLOAD_STATES } from '../schema';
 import {
 	getWebsiteContent,
 	getWebsiteContentDataCollectionIndex,
-	isImageUploadInProgress,
+	isMediaUploadInProgress,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -30,22 +30,22 @@ describe( 'selectors', () => {
 		).toEqual( 100 );
 	} );
 
-	test( 'isImageUploadInProgress should return true if at least one image is uploading', () => {
+	test( 'ismediaUploadInProgress should return true if at least one image is uploading', () => {
 		expect(
-			isImageUploadInProgress( {
+			isMediaUploadInProgress( {
 				signup: {
 					steps: {
 						websiteContentCollection: {
 							...initialState,
-							imageUploadStates: {
-								Page1: { 0: IMAGE_UPLOAD_STATES.UPLOAD_STARTED },
-								Page2: {
-									0: IMAGE_UPLOAD_STATES.UPLOAD_FAILED,
-									1: IMAGE_UPLOAD_STATES.UPLOAD_FAILED,
+							mediaUploadStates: {
+								[ PORTFOLIO_PAGE ]: { 0: MEDIA_UPLOAD_STATES.UPLOAD_STARTED },
+								[ HOME_PAGE ]: {
+									0: MEDIA_UPLOAD_STATES.UPLOAD_FAILED,
+									1: MEDIA_UPLOAD_STATES.UPLOAD_FAILED,
 								},
-								Page3: {
-									0: IMAGE_UPLOAD_STATES.UPLOAD_COMPLETED,
-									2: IMAGE_UPLOAD_STATES.UPLOAD_COMPLETED,
+								[ ABOUT_PAGE ]: {
+									0: MEDIA_UPLOAD_STATES.UPLOAD_COMPLETED,
+									2: MEDIA_UPLOAD_STATES.UPLOAD_COMPLETED,
 								},
 							},
 						},
@@ -54,22 +54,22 @@ describe( 'selectors', () => {
 			} )
 		).toEqual( true );
 
-		// Should return false since no images are currently uploading
+		// Should return false since no media are currently uploading
 		expect(
-			isImageUploadInProgress( {
+			isMediaUploadInProgress( {
 				signup: {
 					steps: {
 						websiteContentCollection: {
 							...initialState,
-							imageUploadStates: {
-								Page1: { 0: IMAGE_UPLOAD_STATES.UPLOAD_COMPLETED },
+							mediaUploadStates: {
+								Page1: { 0: MEDIA_UPLOAD_STATES.UPLOAD_COMPLETED },
 								Page2: {
-									0: IMAGE_UPLOAD_STATES.UPLOAD_FAILED,
-									1: IMAGE_UPLOAD_STATES.UPLOAD_FAILED,
+									0: MEDIA_UPLOAD_STATES.UPLOAD_FAILED,
+									1: MEDIA_UPLOAD_STATES.UPLOAD_FAILED,
 								},
 								Page3: {
-									0: IMAGE_UPLOAD_STATES.UPLOAD_COMPLETED,
-									2: IMAGE_UPLOAD_STATES.UPLOAD_COMPLETED,
+									0: MEDIA_UPLOAD_STATES.UPLOAD_COMPLETED,
+									2: MEDIA_UPLOAD_STATES.UPLOAD_COMPLETED,
 								},
 							},
 						},
