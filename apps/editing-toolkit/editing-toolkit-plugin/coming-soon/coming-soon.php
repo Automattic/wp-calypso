@@ -51,10 +51,17 @@ function is_accessed_by_valid_share_link() {
 		$share_code = $_GET['share']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	} elseif ( isset( $_COOKIE['share_code'] ) ) {
 		$share_code = $_COOKIE['share_code'];
+	} else {
+		$share_code = '';
 	}
 
-	// @todo validate $share_code value against blog option value
-	if ( '12345' !== $share_code ) {
+	$preview_links_option = get_option( 'wpcom_public_preview_links' );
+
+	if ( ! is_array( $preview_links_option ) || ! count( $preview_links_option ) || ! $share_code ) {
+		return false;
+	}
+
+	if ( ! in_array( $share_code, array_column( $preview_links_option, 'code' ), true ) ) {
 		return false;
 	}
 
