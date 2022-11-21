@@ -4,7 +4,6 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-
 	margin-bottom: 40px;
 
 	@include breakpoint-deprecated( "<660px" ) {
