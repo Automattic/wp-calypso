@@ -15,6 +15,10 @@
 		grid-column: 1 / span 3;
 	}
 
+	@media ( max-width: $break-mobile ) {
+		padding: 32px;
+	}
+
 	.pattern-assembler-cta__title {
 		margin-top: 32px;
 		margin-bottom: 8px;
