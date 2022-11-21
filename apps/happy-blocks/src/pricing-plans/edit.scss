@@ -25,6 +25,7 @@ $brand-text: "SF Pro Text", $sans;
 
 .hb-pricing-plans-embed {
 	display: flex;
+	flex-wrap: wrap;
 	padding: 28px;
 	margin: 24px 0;
 	border: 1px solid $studio-gray-5;
