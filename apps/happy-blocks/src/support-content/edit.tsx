@@ -89,7 +89,7 @@ export const Edit = compose( withNotices )(
 						updateUrl={ setUrl }
 					/>
 				) : (
-					<SupportContentEmbed attributes={ attributes } hasCreatedDate />
+					<SupportContentEmbed attributes={ attributes } showRelativeDate />
 				) }
 			</div>
 		);

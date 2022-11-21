@@ -11,7 +11,7 @@ import { getRelativeDate } from './view';
 export const SupportContentEmbed = ( props: {
 	attributes: SupportContentBlockAttributes;
 	clickable?: boolean;
-	hasCreatedDate?: boolean;
+	showRelativeDate?: boolean;
 } ) => {
 	const loaded = !! props.attributes.content;
 
@@ -42,7 +42,9 @@ export const SupportContentEmbed = ( props: {
 
 		const createdDateElement = (
 			<span className="hb-support-page-embed__relative-created">
-				{ props.attributes.created ? getRelativeDate( props.attributes.created ) : '' }
+				{ props.attributes.created && props.showRelativeDate
+					? getRelativeDate( props.attributes.created )
+					: '' }
 			</span>
 		);
 
