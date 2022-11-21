@@ -1,28 +1,6 @@
 import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
 
-// Enable/disable ad-tracking
-// These should not be put in the json config as they must not differ across environments
-export const isGoogleAnalyticsEnabled = true;
-export const isGoogleAnalyticsEnhancedEcommerceEnabled = true;
-export const isFloodlightEnabled = true;
-export const isFacebookEnabled = true;
-export const isBingEnabled = true;
-export const isGeminiEnabled = false;
-export const isWpcomGoogleAdsGtagEnabled = true;
-export const isJetpackGoogleAdsGtagEnabled = true;
-export const isQuantcastEnabled = false;
-export const isExperianEnabled = true;
-export const isOutbrainEnabled = true;
-export const isPinterestEnabled = true;
-export const isIconMediaEnabled = false;
-export const isTwitterEnabled = true;
-export const isLinkedinEnabled = false;
-export const isCriteoEnabled = false;
-export const isPandoraEnabled = false;
-export const isQuoraEnabled = false;
-export const isAdRollEnabled = false;
-
 /**
  * Module variables
  */
@@ -73,7 +51,7 @@ export const TRACKING_IDS = {
 	quantcast: 'p-3Ma3jHaQMB_bS',
 	quoraPixelId: '420845cb70e444938cf0728887a74ca1',
 	twitterPixelId: 'nvzbs',
-	wpcomGoogleAnalyticsGtag: config( 'google_analytics_key' ),
+	wpcomGoogleAnalyticsGtag: config( 'google_analytics_key' ), // google_analytics_key is only used in wpcom env
 	wpcomFloodlightGtag: 'DC-6355556',
 	wpcomGoogleAdsGtag: 'AW-946162814',
 	wpcomGoogleAdsGtagSignupStart: 'AW-946162814/baDICKzQiq4BEP6YlcMD', // "WordPress.com Signup Start"

@@ -44,21 +44,21 @@ const StatsInsights = ( props ) => {
 	// TODO: should be refactored into separate components
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<Main className={ isNewMainChart ? 'stats--new-wrapper' : undefined } wideLayout>
+		<Main className={ isNewMainChart ? 'stats--new-wrapper' : undefined } fullWidthLayout>
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
-			<FormattedHeader
-				brandFont
-				className="stats__section-header"
-				headerText={ translate( 'Jetpack Stats' ) }
-				subHeaderText={ translate( "View your site's performance and learn from trends." ) }
-				align="left"
-			/>
-			<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
-			<div>
+			<div className="stats">
+				<FormattedHeader
+					brandFont
+					className="stats__section-header"
+					headerText={ translate( 'Jetpack Stats' ) }
+					subHeaderText={ translate( "View your site's performance and learn from trends." ) }
+					align="left"
+				/>
+				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
+				{ showNewAnnualHighlights && <AnnualHighlightsSection siteId={ siteId } /> }
+				{ showAllTimeHighlights && <AllTimelHighlightsSection siteId={ siteId } /> }
 				<div className="stats__module--insights-unified">
-					{ showNewAnnualHighlights && <AnnualHighlightsSection siteId={ siteId } /> }
-					{ showAllTimeHighlights && <AllTimelHighlightsSection siteId={ siteId } /> }
 					<PostingActivity />
 					<SectionHeader label={ translate( 'All-time views' ) } />
 					<StatsViews />
@@ -74,7 +74,7 @@ const StatsInsights = ( props ) => {
 					<div className="stats__module-list stats__module--unified">
 						<div className="stats__module-column">
 							<LatestPostSummary />
-							<MostPopular />
+							{ ! showAllTimeHighlights && <MostPopular /> }
 
 							<StatsModule
 								path="tags-categories"
@@ -90,7 +90,7 @@ const StatsInsights = ( props ) => {
 							<Followers path="followers" />
 						</div>
 						<div className="stats__module-column">
-							<AllTime />
+							{ ! showAllTimeHighlights && <AllTime /> }
 							<Comments path="comments" />
 							<StatsModule
 								path="publicize"
@@ -100,8 +100,8 @@ const StatsInsights = ( props ) => {
 						</div>
 					</div>
 				</div>
+				<JetpackColophon />
 			</div>
-			<JetpackColophon />
 		</Main>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */

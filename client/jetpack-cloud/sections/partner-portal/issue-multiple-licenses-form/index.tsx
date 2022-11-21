@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useIssueMultipleLicenses } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import LicenseBundleCard from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
@@ -12,6 +12,10 @@ import {
 } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
+import {
+	getAssignedPlanAndProductIDsForSite,
+	hasPurchasedProductsOnly,
+} from 'calypso/state/partner-portal/licenses/selectors';
 import { AssignLicenceProps } from '../types';
 
 import './style.scss';
@@ -22,14 +26,30 @@ export default function IssueMultipleLicensesForm( {
 }: AssignLicenceProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { data: allProducts, isLoading: isLoadingProducts } = useProductsQuery( {
+	const { data, isLoading: isLoadingProducts } = useProductsQuery( {
 		select: selectAlphaticallySortedProductOptions,
 	} );
+
+	let allProducts = data;
+	const addedPlanAndProducts = useSelector( ( state ) =>
+		selectedSite ? getAssignedPlanAndProductIDsForSite( state, selectedSite.ID ) : null
+	);
+
+	// Filter products & plan that are already assigned to a site
+	if ( selectedSite && addedPlanAndProducts && allProducts ) {
+		allProducts = allProducts.filter(
+			( product ) => ! addedPlanAndProducts.includes( product.product_id )
+		);
+	}
 
 	const bundles =
 		allProducts?.filter( ( { family_slug } ) => family_slug === 'jetpack-packs' ) || [];
 	const products =
 		allProducts?.filter( ( { family_slug } ) => family_slug !== 'jetpack-packs' ) || [];
+
+	const hasPurchasedProductsWithoutBundle = useSelector( ( state ) =>
+		selectedSite ? hasPurchasedProductsOnly( state, selectedSite.ID ) : false
+	);
 
 	// If the user comes from the flow for adding a new payment method during an attempt to issue a license
 	// after the payment method is added, we will make an attempt to issue the chosen license automatically.
@@ -37,10 +57,17 @@ export default function IssueMultipleLicensesForm( {
 		?.toString()
 		.split( ',' );
 
+	// We need the suggested products (i.e., the products chosen from the dashboard) to properly
+	// track if the user purchases a different set of products.
+	const suggestedProductSlugs = getQueryArg( window.location.href, 'product_slug' )
+		?.toString()
+		.split( ',' );
+
 	const [ selectedProductSlugs, setSelectedProductSlugs ] = useState( defaultProductSlugs ?? [] );
 	const [ issueLicenses, isLoading ] = useIssueMultipleLicenses(
 		selectedProductSlugs,
-		selectedSite
+		selectedSite,
+		suggestedProductSlugs
 	);
 
 	const onSelectProduct = useCallback(
@@ -73,9 +100,20 @@ export default function IssueMultipleLicensesForm( {
 		// In the case of a bundle, we want to take the user immediately to the next step since
 		// they can't select any additional item after selecting a bundle.
 		if ( selectedProductSlugs.find( ( product ) => isJetpackBundle( product ) ) ) {
+			// Identify if a user had an existing standalone product license already before purchased a bundle.
+			if ( hasPurchasedProductsWithoutBundle ) {
+				dispatch(
+					recordTracksEvent(
+						'calypso_partner_portal_issue_bundle_license_with_existing_standalone_products'
+					)
+				);
+			}
 			issueLicenses();
 		}
-	}, [ selectedProductSlugs, issueLicenses ] );
+		// Do not update the dependency array with issueLicenses since
+		// it gets changed on every product change, which triggers this `useEffect` to run infinitely.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ selectedProductSlugs ] );
 
 	const selectedSiteDomain = selectedSite?.domain;
 

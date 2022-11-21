@@ -20,7 +20,7 @@ import {
 import {
 	getWebsiteContent,
 	getWebsiteContentDataCollectionIndex,
-	isImageUploadInProgress,
+	isMediaUploadInProgress,
 	WebsiteContentStateModel,
 } from 'calypso/state/signup/steps/website-content/selectors';
 import { getSiteId } from 'calypso/state/sites/selectors';
@@ -95,7 +95,7 @@ function WebsiteContentStep( {
 	const websiteContent = useSelector( getWebsiteContent );
 	const currentIndex = useSelector( getWebsiteContentDataCollectionIndex );
 	const isImageUploading = useSelector( ( state ) =>
-		isImageUploadInProgress( state as WebsiteContentStateModel )
+		isMediaUploadInProgress( state as WebsiteContentStateModel )
 	);
 
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );

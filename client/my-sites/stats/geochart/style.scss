@@ -10,3 +10,9 @@
 		display: none;
 	}
 }
+
+.stats-geochart,
+.stats-geochart.stats-module__placeholder {
+	height: 100%;
+	min-height: 300px;
+}

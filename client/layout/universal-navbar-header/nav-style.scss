@@ -28,6 +28,24 @@ $studio-blue-30: #0675c4;
 	}
 }
 
+.is-section-themes,
+.is-section-theme {
+	&.has-no-sidebar {
+		.masterbar {
+			height: 56px;
+			position: relative;
+			background: $studio-blue-15;
+			border-bottom: 1px solid $studio-blue-15;
+			.x-nav {
+				height: 56px;
+			}
+		}
+		.layout__content {
+			overflow: visible;
+		}
+	}
+}
+
 %x-list {
 	list-style: none;
 	margin: 0;

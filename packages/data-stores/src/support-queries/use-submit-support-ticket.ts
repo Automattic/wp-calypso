@@ -1,5 +1,6 @@
+import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import { useMutation } from 'react-query';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 
 type Ticket = {
 	subject: string;
@@ -13,11 +14,19 @@ type Ticket = {
 
 export function useSubmitTicketMutation() {
 	return useMutation( ( newTicket: Ticket ) =>
-		wpcomRequest( {
-			path: '/help/tickets/kayako/new',
-			apiVersion: '1.1',
-			method: 'POST',
-			body: newTicket,
-		} )
+		canAccessWpcomApis()
+			? wpcomRequest( {
+					path: 'help/ticket/new',
+					apiNamespace: 'wpcom/v2/',
+					apiVersion: '2',
+					method: 'POST',
+					body: newTicket,
+			  } )
+			: apiFetch( {
+					global: true,
+					path: '/help-center/ticket/new',
+					method: 'POST',
+					data: newTicket,
+			  } as APIFetchOptions )
 	);
 }
