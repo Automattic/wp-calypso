@@ -6,7 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, MouseEvent, useState } from 'react';
 import { useAddMedia } from 'calypso/data/media/use-add-media';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { Label, LabelLink, SubLabel } from 'calypso/signup/accordion-form/form-components';
+import { LabelLink, SubLabel } from 'calypso/signup/accordion-form/form-components';
 import { Media, MediaUploadType } from 'calypso/state/signup/steps/website-content/schema';
 import type { SiteDetails } from '@automattic/data-stores';
 

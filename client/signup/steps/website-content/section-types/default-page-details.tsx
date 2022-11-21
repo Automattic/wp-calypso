@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
 	TextAreaField,
 	HorizontalGrid,
-	TextInputLabel,
+	LabelBlock,
 } from 'calypso/signup/accordion-form/form-components';
 import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import {
@@ -120,8 +120,8 @@ export function DefaultPageDetails( {
 			case 'VIDEO':
 				return videoCaption;
 			case 'IMAGE':
-				return imageCaption;
 			default:
+				return imageCaption;
 				break;
 		}
 	};
@@ -135,7 +135,7 @@ export function DefaultPageDetails( {
 				error={ formErrors[ fieldName ] }
 				label={ description }
 			/>
-			<TextInputLabel>{ getMediaCaption() }</TextInputLabel>
+			<LabelBlock>{ getMediaCaption() }</LabelBlock>
 			<HorizontalGrid>
 				{ page.media.map( ( media, i ) => (
 					<WordpressMediaUpload

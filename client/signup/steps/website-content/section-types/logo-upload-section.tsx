@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { HorizontalGrid, TextInputLabel } from 'calypso/signup/accordion-form/form-components';
+import { HorizontalGrid, LabelBlock } from 'calypso/signup/accordion-form/form-components';
 import {
 	MediaUploadData,
 	WordpressMediaUpload,
@@ -48,11 +48,9 @@ export function LogoUploadSection( {
 
 	return (
 		<LogoUploadSectionContainer>
-			<TextInputLabel
-				labelText={ translate(
-					'Upload a logo for your website, transparent backgrounds work best.'
-				) }
-			/>
+			<LabelBlock>
+				{ translate( 'Upload a logo for your website, transparent backgrounds work best.' ) }
+			</LabelBlock>
 			<HorizontalGrid>
 				<WordpressMediaUpload
 					media={ { mediaType: 'IMAGE', url: logoUrl } }

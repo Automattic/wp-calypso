@@ -1,7 +1,7 @@
 import { FormInputValidation } from '@automattic/components';
 import styled from '@emotion/styled';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, ReactChild } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
@@ -98,16 +98,16 @@ interface TextInputFieldProps {
 	onChange?: ( event: ChangeEvent< HTMLInputElement > ) => void;
 }
 
-export function TextInputLabel( {
+export function LabelBlock( {
 	inputName,
-	labelText,
+	children,
 }: {
 	inputName?: string;
-	labelText?: TranslateResult;
+	children: ReactChild | ReactChild[];
 } ) {
 	return (
 		<LabelContainer>
-			<Label htmlFor={ inputName }>{ labelText }</Label>
+			<Label htmlFor={ inputName }>{ children }</Label>
 		</LabelContainer>
 	);
 }
@@ -115,7 +115,7 @@ export function TextInputLabel( {
 export function TextInputField( props: TextInputFieldProps ) {
 	return (
 		<FormFieldset>
-			<TextInputLabel inputName={ props.name } labelText={ props.label } />
+			{ props.label && <LabelBlock inputName={ props.name }>{ props.label } </LabelBlock> }
 			{ props.sublabel && <SubLabel htmlFor={ props.name }>{ props.sublabel }</SubLabel> }
 			<TextInput { ...props } isError={ !! props.error } />
 			{ props.error && <FormInputValidation isError text={ props.error } /> }
@@ -130,7 +130,7 @@ interface TextAreaFieldProps extends TextInputFieldProps {
 export function TextAreaField( props: TextAreaFieldProps ) {
 	return (
 		<FormFieldset>
-			<TextInputLabel inputName={ props.name } labelText={ props.label } />
+			{ props.label && <LabelBlock inputName={ props.name }>{ props.label } </LabelBlock> }
 			{ props.sublabel && <SubLabel htmlFor={ props.name }>{ props.sublabel }</SubLabel> }
 			<TextArea
 				{ ...props }

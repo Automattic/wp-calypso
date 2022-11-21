@@ -5,7 +5,7 @@ import {
 	TextAreaField,
 	HorizontalGrid,
 	ContactInformation,
-	TextInputLabel,
+	LabelBlock,
 } from 'calypso/signup/accordion-form/form-components';
 import {
 	BBE_WEBSITE_CONTENT_FILLING_STEP,
@@ -127,14 +127,11 @@ export function ContactPageDetails( {
 				onChange={ onFieldChanged }
 			/>
 
-			<TextInputLabel
-				labelText={ translate(
-					'Upload up to %(noOfImages)d images to be used on your %(pageTitle)s page.',
-					{
-						args: { pageTitle, noOfImages: page.media.length },
-					}
-				) }
-			/>
+			<LabelBlock>
+				{ translate( 'Upload up to %(noOfImages)d images to be used on your %(pageTitle)s page.', {
+					args: { pageTitle, noOfImages: page.media.length },
+				} ) }
+			</LabelBlock>
 			<HorizontalGrid>
 				{ page.media.map( ( media, i ) => (
 					<WordpressMediaUpload
