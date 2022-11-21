@@ -280,7 +280,13 @@ describe( 'useProductsQuery', () => {
 	} );
 
 	it( 'dispatches an error notice on failure', async () => {
-		const queryClient = new QueryClient();
+		const queryClient = new QueryClient( {
+			defaultOptions: {
+				queries: {
+					retry: false,
+				},
+			},
+		} );
 		const wrapper = ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
@@ -295,7 +301,7 @@ describe( 'useProductsQuery', () => {
 		// Prevent console.error from being loud during testing because of the test 500 error.
 		const consoleError = global.console.error;
 		global.console.error = jest.fn();
-		const { result, waitFor } = renderHook( () => useProductsQuery( { retry: false } ), {
+		const { result, waitFor } = renderHook( () => useProductsQuery(), {
 			wrapper,
 		} );
 
