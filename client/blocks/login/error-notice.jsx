@@ -23,6 +23,7 @@ class ErrorNotice extends Component {
 		requestAccountError: PropTypes.object,
 		requestError: PropTypes.object,
 		twoFactorAuthRequestError: PropTypes.object,
+		isGutenboarding: PropTypes.bool.isRequired,
 		locale: PropTypes.string,
 	};
 
@@ -61,10 +62,17 @@ class ErrorNotice extends Component {
 	}
 
 	getSignupUrl() {
-		const { currentQuery, currentRoute, oauth2Client, locale } = this.props;
+		const { currentQuery, currentRoute, oauth2Client, locale, isGutenboarding } = this.props;
 		const { pathname } = getUrlParts( window.location.href );
 
-		return getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
+		return getSignupUrl(
+			currentQuery,
+			currentRoute,
+			oauth2Client,
+			locale,
+			pathname,
+			isGutenboarding
+		);
 	}
 
 	render() {
