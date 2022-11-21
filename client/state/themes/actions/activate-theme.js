@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
@@ -35,6 +36,7 @@ export function activateTheme(
 			.post( `/sites/${ siteId }/themes/mine`, {
 				theme: themeId,
 				...( dontChangeHomepage && { dont_change_homepage: true } ),
+				...( isEnabled( 'themes/template-persistent' ) && { persistTemplate: true } ),
 			} )
 			.then( ( theme ) => {
 				// Fall back to ID for Jetpack sites which don't return a stylesheet attr.
