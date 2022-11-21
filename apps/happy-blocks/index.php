@@ -46,7 +46,8 @@ function a8c_happyblocks_assets() {
 	wp_add_inline_script(
 		'a8c-happyblocks-pricing-plans',
 		sprintf(
-			'window.A8C_HAPPY_BLOCKS_CONFIG = %s; window.configData = {};',
+			'window.A8C_HAPPY_BLOCKS_CONFIG = %s;
+			window.configData ||= {};',
 			wp_json_encode( a8c_happyblocks_get_config() )
 		),
 		'before'
