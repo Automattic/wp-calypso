@@ -1,31 +1,18 @@
 import { BlockEditProps } from '@wordpress/blocks';
 import { FunctionComponent } from 'react';
-import { BlockAttributes, PricingPlan, PricingPlansConfiguration } from '../types';
+import { BlockPlan } from '../hooks/pricing-plans';
+import { BlockAttributes } from '../types';
 import PricingPlanDetail from './pricing-plan-detail';
 import PricingPlansHeader from './pricing-plans-header';
 
-const useCurrentPlan = (
-	plans: PricingPlansConfiguration,
-	planSlug: string
-): PricingPlan | null => {
-	for ( const plan of Object.values( plans ) ) {
-		for ( const billing of plan.billing ) {
-			if ( billing.planSlug === planSlug ) {
-				return plan;
-			}
-		}
-	}
-	return null;
-};
-
 interface Props {
-	plans: PricingPlansConfiguration;
+	plans: BlockPlan[];
 }
 
 const PricingPlans: FunctionComponent<
 	Pick< BlockEditProps< BlockAttributes >, 'attributes' | 'setAttributes' > & Props
 > = ( { attributes, setAttributes, plans } ) => {
-	const currentPlan = useCurrentPlan( plans, attributes.planSlug );
+	const currentPlan = plans?.find( ( plan ) => plan.productSlug === attributes.planSlug );
 
 	if ( ! currentPlan ) {
 		return null;
@@ -36,6 +23,7 @@ const PricingPlans: FunctionComponent<
 			<PricingPlansHeader plan={ currentPlan } />
 			<PricingPlanDetail
 				plan={ currentPlan }
+				plans={ plans }
 				attributes={ attributes }
 				setPlan={ ( planSlug ) => setAttributes( { planSlug } ) }
 			/>

@@ -1,15 +1,17 @@
 import { FunctionComponent } from 'react';
-import { PricingPlanBilling } from '../types';
+import { BlockPlan } from '../hooks/pricing-plans';
 
 interface Props {
-	billing: PricingPlanBilling;
+	plan: BlockPlan;
 }
 
-const BillingInfo: FunctionComponent< Props > = ( { billing } ) => {
+const BillingInfo: FunctionComponent< Props > = ( { plan } ) => {
 	return (
 		<div className="hb-pricing-plans-embed__billing-info">
-			<span className="hb-pricing-plans-embed__billing-info-value">{ billing.price }</span>
-			<span className="hb-pricing-plans-embed__billing-info-description">/{ billing.period }</span>
+			<span className="hb-pricing-plans-embed__billing-info-value">{ plan.price }</span>
+			<span className="hb-pricing-plans-embed__billing-info-description">
+				/{ plan.getBillingTimeFrame() }
+			</span>
 		</div>
 	);
 };

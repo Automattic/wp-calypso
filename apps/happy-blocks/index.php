@@ -46,16 +46,16 @@ function a8c_happyblocks_assets() {
 	wp_add_inline_script(
 		'a8c-happyblocks-pricing-plans',
 		sprintf(
-			'window.A8C_HAPPY_BLOCKS_CONFIG = %s;',
+			'window.A8C_HAPPY_BLOCKS_CONFIG = %s; window.configData = {};',
 			wp_json_encode( a8c_happyblocks_get_config() )
 		),
 		'before'
 	);
 
 	wp_enqueue_script(
-		'a8c-happyblocks-js',
+		'a8c-happyblocks-edit-js',
 		plugins_url( 'dist/editor.min.js', __FILE__ ),
-		array_merge( $assets['dependencies'], array( 'a8c-happyblocks-pricing-plans' ) ),
+		array( 'a8c-happyblocks-pricing-plans' ),
 		$assets['version'],
 		true
 	);

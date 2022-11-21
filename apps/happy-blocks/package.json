@@ -20,6 +20,8 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-config": "workspace:^",
+		"@automattic/calypso-products": "workspace:^",
 		"@automattic/color-studio": "2.5.0",
 		"@automattic/format-currency": "workspace:^",
 		"@automattic/typography": "workspace:^",

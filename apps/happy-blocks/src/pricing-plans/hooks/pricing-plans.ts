@@ -1,182 +1,41 @@
+import { calculateMonthlyPriceForPlan, getPlan, Plan } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { useEffect, useState } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { sprintf, __ } from '@wordpress/i18n';
 import config from '../config';
-import { ApiPricingPlan, PricingPlansConfiguration } from '../types.js';
+import { ApiPricingPlan } from '../types.js';
 
-const DAYS_IN_MONTH = 31;
-const MONTHS_IN_YEAR = 12;
+export interface BlockPlan extends Plan {
+	productSlug: string;
+	rawPrice: number;
+	price: string;
+	upgradeLink: string;
+	upgradeLabel: string;
+}
 
-/**
- * Returns a formatted monthly price for a plan.
- */
-const getMonthlyPrice = ( plan: ApiPricingPlan ): string | null => {
-	return formatCurrency(
-		Math.round( ( plan.raw_price / plan.bill_period ) * DAYS_IN_MONTH ),
-		plan.currency_code,
-		{
-			stripZeros: true,
-		}
-	);
-};
-
-/**
- * Returns a description of the savings of the yearly plan over the monthly plan.
- */
-const getSavingsDescription = (
-	yearlyPlan: ApiPricingPlan,
-	monthyPlan: ApiPricingPlan
-): string => {
-	const yearlyPricePerMonth = yearlyPlan.raw_price / MONTHS_IN_YEAR;
-	const savings = Math.round(
-		( 100 * ( monthyPlan.raw_price - yearlyPricePerMonth ) ) / monthyPlan.raw_price
-	);
-
-	if ( savings <= 0 ) {
-		return '';
-	}
-
-	// eslint-disable-next-line @wordpress/valid-sprintf
-	return sprintf(
-		// translators: %s is a percentage, e.g. "16%"
-		__( 'save %s%%', 'happy-blocks' ),
-		savings
-	);
-};
-
-/**
- * Parse the API response into a more usable format.
- */
-const parsePlans = ( data: ApiPricingPlan[] ): PricingPlansConfiguration | null => {
-	const plansByPathSlug = data.reduce< Record< string, ApiPricingPlan > >( ( acc, plan ) => {
-		acc[ plan.path_slug ] = plan;
-		return acc;
-	}, {} );
-
-	const premiumYearly = plansByPathSlug.premium;
-	const premiumMonthly = plansByPathSlug[ 'premium-monthly' ];
-
-	const businessYearly = plansByPathSlug.business;
-	const businessMonthly = plansByPathSlug[ 'business-monthly' ];
-
-	const eCommerceYearly = plansByPathSlug.ecommerce;
-	const eCommerceMonthly = plansByPathSlug[ 'ecommerce-monthly' ];
-
-	if (
-		! premiumYearly ||
-		! premiumMonthly ||
-		! businessYearly ||
-		! businessMonthly ||
-		! eCommerceYearly ||
-		! eCommerceMonthly
-	) {
-		return null;
-	}
-
-	return {
-		premium: {
-			label: __( 'Premium', 'happy-blocks' ),
-			domain: sprintf(
-				// translators: %s is a domain name, e.g. "example.wordpress.com"
-				__( 'For %s', 'happy-blocks' ),
-				config.domain
-			),
-			description: __(
-				'<p>Build a unique website with advanced design tools.</p><p><learnMore>Learn more.</learnMore></p>',
-				'happy-blocks'
-			),
-			learnMoreLink: `https://wordpress.com/plans/${ config.domain }`,
-			upgradeLabel: __( 'Upgrade to Premium', 'happy-tools' ),
-			billing: [
-				{
-					label: __( 'Monthly', 'happy-blocks' ),
-					price: getMonthlyPrice( premiumMonthly ) ?? '',
-					period: __( 'month', 'happy-blocks' ),
-					planSlug: premiumMonthly.path_slug,
-					upgradeLink: `https://wordpress.com/checkout/${ config.domain }/${ premiumMonthly.path_slug }`,
-				},
-				{
-					label: sprintf(
-						// translators: %s is a promotional string, e.g. "save 16%"
-						__( 'Annually <promo>%s</promo>', 'happy-blocks' ),
-						getSavingsDescription( premiumYearly, premiumMonthly )
-					),
-					price: getMonthlyPrice( premiumYearly ) ?? '',
-					period: __( 'month billed annually', 'happy-blocks' ),
-					planSlug: premiumYearly.path_slug,
-					upgradeLink: `https://wordpress.com/checkout/${ config.domain }/${ premiumYearly.path_slug }`,
-				},
-			],
-		},
-		business: {
-			label: __( 'Business', 'happy-blocks' ),
-			domain: sprintf(
-				// translators: %s is a domain name, e.g. "example.wordpress.com"
-				__( 'For %s', 'happy-blocks' ),
-				config.domain
-			),
-			description: __(
-				'<p>Power your business website with custom plugins and themes.</p><p><learnMore>Learn more.</learnMore></p>',
-				'happy-blocks'
-			),
-			learnMoreLink: `https://wordpress.com/plans/${ config.domain }`,
-			upgradeLabel: __( 'Upgrade to Business', 'happy-tools' ),
-			billing: [
-				{
-					label: __( 'Monthly', 'happy-blocks' ),
-					price: getMonthlyPrice( businessMonthly ) ?? '',
-					period: __( 'month', 'happy-blocks' ),
-					planSlug: businessMonthly.path_slug,
-					upgradeLink: `https://wordpress.com/checkout/${ config.domain }/${ businessMonthly.path_slug }`,
-				},
-				{
-					label: sprintf(
-						// translators: %s is a promotional string, e.g. "save 16%"
-						__( 'Annually <promo>%s</promo>', 'happy-blocks' ),
-						getSavingsDescription( businessYearly, businessMonthly )
-					),
-					price: getMonthlyPrice( businessYearly ) ?? '',
-					period: __( 'month billed annually', 'happy-blocks' ),
-					planSlug: businessYearly.path_slug,
-					upgradeLink: `https://wordpress.com/checkout/${ config.domain }/${ businessYearly.path_slug }`,
-				},
-			],
-		},
-		ecommerce: {
-			label: __( 'Commerce', 'happy-blocks' ),
-			domain: sprintf(
-				// translators: %s is a domain name, e.g. "example.wordpress.com"
-				__( 'For %s', 'happy-blocks' ),
-				config.domain
-			),
-			description: __(
-				'<p>Sell products or services with this powerful, all-in-one online store experience.</p><p><learnMore>Learn more.</learnMore></p>',
-				'happy-blocks'
-			),
-			learnMoreLink: `https://wordpress.com/plans/${ config.domain }`,
-			upgradeLabel: __( 'Upgrade to Commerce', 'happy-tools' ),
-			billing: [
-				{
-					label: __( 'Monthly', 'happy-blocks' ),
-					price: getMonthlyPrice( eCommerceMonthly ) ?? '',
-					period: __( 'month', 'happy-blocks' ),
-					planSlug: eCommerceMonthly.path_slug,
-					upgradeLink: `https://wordpress.com/checkout/${ config.domain }/${ eCommerceMonthly.path_slug }`,
-				},
-				{
-					label: sprintf(
-						// translators: %s is a promotional string, e.g. "save 16%"
-						__( 'Annually <promo>%s</promo>', 'happy-blocks' ),
-						getSavingsDescription( eCommerceYearly, eCommerceMonthly )
-					),
-					price: getMonthlyPrice( eCommerceYearly ) ?? '',
-					period: __( 'month billed annually', 'happy-blocks' ),
-					planSlug: eCommerceYearly.path_slug,
-					upgradeLink: `https://wordpress.com/checkout/${ config.domain }/${ eCommerceYearly.path_slug }`,
-				},
-			],
-		},
-	};
+const parsePlans = ( data: ApiPricingPlan[] ): BlockPlan[] => {
+	return data
+		.filter( ( apiPlan ) => config.plans.includes( apiPlan.product_slug ) )
+		.map( ( apiPlan ): BlockPlan => {
+			const plan: Plan = getPlan( apiPlan.product_slug ) as Plan;
+			return {
+				...plan,
+				productSlug: apiPlan.product_slug,
+				rawPrice: apiPlan.raw_price,
+				price:
+					formatCurrency(
+						calculateMonthlyPriceForPlan( apiPlan.product_slug, apiPlan.raw_price ),
+						apiPlan.currency_code,
+						{ stripZeros: true }
+					) ?? '',
+				upgradeLink: `https://wordpress.com/checkout/${ config.domain }/${ apiPlan.path_slug }`,
+				upgradeLabel: sprintf(
+					// translators: %s is the plan name
+					__( 'Upgrade to %s', 'happy-tools' ),
+					plan.getTitle()
+				),
+			};
+		} );
 };
 
 /**
@@ -184,7 +43,7 @@ const parsePlans = ( data: ApiPricingPlan[] ): PricingPlansConfiguration | null 
  *  the rest of the block's component tree.
  */
 const usePricingPlans = () => {
-	const [ plans, setPlans ] = useState< PricingPlansConfiguration | null >( null );
+	const [ plans, setPlans ] = useState< BlockPlan[] >( [] );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ error, setError ] = useState< unknown >( null );
 
