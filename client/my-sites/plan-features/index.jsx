@@ -764,12 +764,12 @@ export class PlanFeatures extends Component {
 		} );
 		const isMobileNewsletterLinkinBio =
 			isInVerticalScrollingPlansExperiment && isNewsletterOrLinkInBioFlow( flowName );
-
+		const hideInfoPopover = isMobileNewsletterLinkinBio || feature.hideInfoPopover || ! description;
 		return (
 			<PlanFeaturesItem
 				key={ index }
 				description={ description }
-				hideInfoPopover={ feature.hideInfoPopover || isMobileNewsletterLinkinBio }
+				hideInfoPopover={ hideInfoPopover }
 				hideGridicon={ this.props.isReskinned ? false : this.props.withScroll }
 				availableForCurrentPlan={ feature.availableForCurrentPlan }
 			>
