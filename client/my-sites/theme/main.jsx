@@ -576,8 +576,8 @@ class ThemeSheet extends Component {
 			} else if (
 				isPremium &&
 				! isPurchased &&
-				( isBundledSoftwareSet ||
-					( isExternallyManagedTheme && ! isSiteEligibleForManagedExternalThemes ) )
+				isBundledSoftwareSet &&
+				! isExternallyManagedTheme
 			) {
 				// upgrade plan
 				return translate( 'Upgrade to activate', {
