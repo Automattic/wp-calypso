@@ -36,7 +36,7 @@ export function activateTheme(
 			.post( `/sites/${ siteId }/themes/mine`, {
 				theme: themeId,
 				...( dontChangeHomepage && { dont_change_homepage: true } ),
-				...( isEnabled( 'themes/template-persistent' ) && { persist_template: true } ),
+				...( isEnabled( 'themes/theme-switch-persist-template' ) && { persist_template: true } ),
 			} )
 			.then( ( theme ) => {
 				// Fall back to ID for Jetpack sites which don't return a stylesheet attr.
