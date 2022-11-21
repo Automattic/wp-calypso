@@ -13,7 +13,7 @@ interface Props {
 	onChange: ( value?: string ) => void;
 }
 
-const getAnnyallyDiscount = ( annuallyPlan?: BlockPlan, monthlyPlan?: BlockPlan ) => {
+const getAnnuallyDiscount = ( annuallyPlan?: BlockPlan, monthlyPlan?: BlockPlan ) => {
 	if ( ! annuallyPlan || ! monthlyPlan ) {
 		return null;
 	}
@@ -48,7 +48,7 @@ const BillingOptions: FunctionComponent< Props > = ( { plans, value, onChange } 
 			? selectedPlan
 			: plans.find( ( plan ) => plan.term === TERM_ANNUALLY && plan.type === selectedPlan.type );
 
-	const annuallyDiscount = getAnnyallyDiscount( annuallyPlan, monthlyPlan );
+	const annuallyDiscount = getAnnuallyDiscount( annuallyPlan, monthlyPlan );
 
 	const billings = [ monthlyPlan, annuallyPlan ].filter( Boolean );
 
