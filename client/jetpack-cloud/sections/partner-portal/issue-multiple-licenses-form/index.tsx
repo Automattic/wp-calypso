@@ -12,7 +12,10 @@ import {
 } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import { getAssignedPlanAndProductIDsForSite } from 'calypso/state/partner-portal/licenses/selectors';
+import {
+	getAssignedPlanAndProductIDsForSite,
+	hasPurchasedProductsOnly,
+} from 'calypso/state/partner-portal/licenses/selectors';
 import { AssignLicenceProps } from '../types';
 
 import './style.scss';
@@ -43,6 +46,10 @@ export default function IssueMultipleLicensesForm( {
 		allProducts?.filter( ( { family_slug } ) => family_slug === 'jetpack-packs' ) || [];
 	const products =
 		allProducts?.filter( ( { family_slug } ) => family_slug !== 'jetpack-packs' ) || [];
+
+	const hasPurchasedProductsWithoutBundle = useSelector( ( state ) =>
+		selectedSite ? hasPurchasedProductsOnly( state, selectedSite.ID ) : false
+	);
 
 	// If the user comes from the flow for adding a new payment method during an attempt to issue a license
 	// after the payment method is added, we will make an attempt to issue the chosen license automatically.
@@ -93,6 +100,14 @@ export default function IssueMultipleLicensesForm( {
 		// In the case of a bundle, we want to take the user immediately to the next step since
 		// they can't select any additional item after selecting a bundle.
 		if ( selectedProductSlugs.find( ( product ) => isJetpackBundle( product ) ) ) {
+			// Identify if a user had an existing standalone product license already before purchased a bundle.
+			if ( hasPurchasedProductsWithoutBundle ) {
+				dispatch(
+					recordTracksEvent(
+						'calypso_partner_portal_issue_bundle_license_with_existing_standalone_products'
+					)
+				);
+			}
 			issueLicenses();
 		}
 		// Do not update the dependency array with issueLicenses since
