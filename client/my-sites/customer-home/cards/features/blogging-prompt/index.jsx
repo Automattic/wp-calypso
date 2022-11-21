@@ -53,7 +53,12 @@ export const BloggingPromptCard = () => {
 				<CardHeading>
 					<LightbulbIcon />
 					{ translate( 'Daily Prompt' ) }
-					<EllipsisMenu className="blogging-prompt__menu" position="bottom">
+					{ /* `key` is neccessary due to behavior of preventWidows function in CardHeading component. */ }
+					<EllipsisMenu
+						className="blogging-prompt__menu"
+						position="bottom"
+						key="blogging-prompt__menu"
+					>
 						<Button className="popover__menu-item" onClick={ hidePrompts }>
 							<Gridicon icon="not-visible" className="gridicons-not-visible" />
 							{ translate( 'Hide Daily Prompts' ) }
