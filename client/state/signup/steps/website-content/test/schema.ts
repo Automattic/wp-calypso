@@ -1,38 +1,42 @@
 import validator from 'is-my-json-valid';
-import { initialState, schema } from '../schema';
+import { ABOUT_PAGE, CONTACT_PAGE, HOME_PAGE } from '../../../../../signup/difm/constants';
+import { initialState, schema, WebsiteContentCollection } from '../schema';
 
-const initialTestState = {
+const initialTestState: WebsiteContentCollection = {
 	currentIndex: 0,
 	websiteContent: {
 		pages: [
 			{
-				id: 'Home',
+				id: HOME_PAGE,
 				title: 'Homepage',
 				content: '',
-				images: [
-					{ caption: '', url: '' },
-					{ caption: '', url: '' },
-					{ caption: '', url: '' },
+				media: [
+					{ caption: '', url: '', mediaType: 'IMAGE', thumbnailUrl: '' },
+					{ caption: '', url: '', mediaType: 'IMAGE', thumbnailUrl: '' },
+					{ caption: '', url: '', mediaType: 'IMAGE', thumbnailUrl: '' },
+					{ caption: '', url: '', mediaType: 'IMAGE', thumbnailUrl: '' },
 				],
 			},
 			{
-				id: 'About',
+				id: ABOUT_PAGE,
 				title: 'Information About You',
 				content: '',
-				images: [
-					{ caption: '', url: '' },
-					{ caption: '', url: '' },
-					{ caption: '', url: '' },
+				media: [
+					{ caption: '', url: '', mediaType: 'IMAGE', thumbnailUrl: '' },
+					{ caption: '', url: '', mediaType: 'IMAGE', thumbnailUrl: '' },
+					{ caption: '', url: '', mediaType: 'IMAGE', thumbnailUrl: '' },
+					{ caption: '', url: '', mediaType: 'IMAGE', thumbnailUrl: '' },
 				],
 			},
 			{
-				id: 'Contact',
+				id: CONTACT_PAGE,
 				title: 'Contact Info',
 				content: '',
-				images: [
-					{ caption: '', url: '' },
-					{ caption: '', url: '' },
-					{ caption: '', url: '' },
+				media: [
+					{ caption: '', url: '', mediaType: 'IMAGE', thumbnailUrl: '' },
+					{ caption: '', url: '', mediaType: 'IMAGE', thumbnailUrl: '' },
+					{ caption: '', url: '', mediaType: 'IMAGE', thumbnailUrl: '' },
+					{ caption: '', url: '', mediaType: 'IMAGE', thumbnailUrl: '' },
 				],
 			},
 		],
@@ -40,7 +44,7 @@ const initialTestState = {
 		siteLogoSection: { siteLogoUrl: '' },
 		feedbackSection: { genericFeedback: '' },
 	},
-	imageUploadStates: {},
+	mediaUploadStates: {},
 	siteId: 1337,
 };
 
