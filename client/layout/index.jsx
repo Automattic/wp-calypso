@@ -45,6 +45,7 @@ import {
 } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import LayoutLoader from './loader';
+import { MainBanner } from './main-banner';
 import { handleScroll } from './utils';
 
 // goofy import for environment badge, which is SSR'd
@@ -324,6 +325,9 @@ class Layout extends Component {
 						{ this.props.secondary }
 					</div>
 					<div id="primary" className="layout__primary">
+						{ config.isEnabled( 'layout/launchpad-banner' ) && (
+							<MainBanner sectionName={ this.props.sectionName } />
+						) }
 						{ this.props.primary }
 					</div>
 				</div>
