@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 export const Container = styled.div`
+	position: relative;
 	height: 100vh;
 	width: 100%;
 	display: flex;
@@ -17,6 +18,7 @@ export const TitleContainer = styled.div`
 	justify-content: flex-start;
 	align-items: flex-start;
 	margin: 32px auto 0 24px;
+	z-index: 1000;
 `;
 
 export const Title = styled.h1`

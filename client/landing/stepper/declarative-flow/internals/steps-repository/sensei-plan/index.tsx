@@ -21,7 +21,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
-import { ProgressingTitle } from '../sensei-launch/components';
+import { SenseiStepProgress } from '../sensei-setup/sensei-step-progress';
 import type { Step } from '../../types';
 import 'calypso/../packages/plans-grid/src/plans-grid/style.scss';
 import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
@@ -119,7 +119,7 @@ const SenseiPlan: Step = ( { flow } ) => {
 	return (
 		<SenseiStepContainer stepName="senseiPlan" recordTracksEvent={ recordTracksEvent }>
 			{ isBundling ? (
-				<ProgressingTitle>{ __( 'Preparing Your Bundle' ) }</ProgressingTitle>
+				<SenseiStepProgress>{ __( 'Preparing Your Bundle' ) }</SenseiStepProgress>
 			) : (
 				<div className="plans-grid">
 					<PlansIntervalToggle
