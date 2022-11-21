@@ -701,7 +701,7 @@ class ThemeSheet extends Component {
 			return translate( 'Access this WooCommerce theme with a Business plan!' );
 		} else if ( isExternallyManagedTheme ) {
 			if ( ! isPurchased && ! isSiteEligibleForManagedExternalThemes ) {
-				return translate( 'Upgrade to a Business Plan and subscribe to this theme!' );
+				return translate( 'Upgrade to a Business plan and subscribe to this theme!' );
 			}
 			return translate( 'Subscribe to this premium theme!' );
 		}
