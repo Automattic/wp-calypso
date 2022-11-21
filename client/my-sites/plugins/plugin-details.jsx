@@ -1,7 +1,7 @@
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
@@ -55,6 +55,7 @@ import {
 } from 'calypso/state/products-list/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
@@ -209,46 +210,54 @@ function PluginDetails( props ) {
 		requestingPluginsForSites,
 	] );
 
-	const setBreadcrumbs = useCallback(
-		( isBreadcrumbsPopulated ) => {
-			if ( ! isBreadcrumbsPopulated ) {
-				dispatch(
-					appendBreadcrumb( {
-						label: translate( 'Plugins' ),
-						href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
-						id: 'plugins',
-						helpBubble: translate(
-							'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-							{
-								components: {
-									learnMoreLink: <InlineSupportLink supportContext="plugins" showIcon={ false } />,
-								},
-							}
-						),
-					} )
-				);
-			}
+	const setBreadcrumbs = ( breadcrumbs = [] ) => {
+		if ( breadcrumbs?.length === 0 ) {
+			dispatch(
+				appendBreadcrumb( {
+					label: translate( 'Plugins' ),
+					href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
+					id: 'plugins',
+					helpBubble: translate(
+						'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="plugins" showIcon={ false } />,
+							},
+						}
+					),
+				} )
+			);
+		}
 
-			if ( fullPlugin.name && props.pluginSlug ) {
-				dispatch(
-					appendBreadcrumb( {
-						label: fullPlugin.name,
-						href: localizePath( `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }` ),
-						id: `plugin-${ props.pluginSlug }`,
-					} )
-				);
-			}
-		},
-		[ fullPlugin.name, props.pluginSlug, selectedSite, dispatch, translate, localizePath ]
-	);
-	useServerEffect( setBreadcrumbs );
+		if ( fullPlugin.name && props.pluginSlug ) {
+			dispatch(
+				appendBreadcrumb( {
+					label: fullPlugin.name,
+					href: localizePath( `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }` ),
+					id: `plugin-${ props.pluginSlug }`,
+				} )
+			);
+		}
+	};
 
-	// We need to get the breadcrumbs here, after initial append dispatches on server.
+	const previousRoute = useSelector( getPreviousRoute );
+	useEffect( () => {
+		/* If translatations change, reset and update the breadcrumbs */
+		if ( ! previousRoute ) {
+			setBreadcrumbs();
+		}
+	}, [ translate ] );
+
+	useServerEffect( () => {
+		setBreadcrumbs();
+	} );
+
+	/* We need to get the breadcrumbs after the server has set them */
 	const breadcrumbs = useSelector( getBreadcrumbs );
 
 	useEffect( () => {
-		setBreadcrumbs( ( breadcrumbs || [] ).length !== 0 );
-	}, [ setBreadcrumbs, breadcrumbs ] );
+		setBreadcrumbs( breadcrumbs );
+	}, [ fullPlugin.name, props.pluginSlug, selectedSite, dispatch, localizePath ] );
 
 	const getPageTitle = () => {
 		return translate( '%(pluginName)s Plugin', {
