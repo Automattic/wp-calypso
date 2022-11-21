@@ -168,6 +168,11 @@
 	}
 }
 
+.eligibility-warnings__inline-link {
+	color: var(--color-text-subtle);
+	text-decoration: underline;
+}
+
 .eligibility-warnings__action a,
 .eligibility-warnings__hold-action a {
 	.gridicons-help-outline {
@@ -221,6 +226,16 @@
 		position: absolute;
 		right: 20px;
 		border-radius: 4px;
+	}
+}
+
+.eligibility-warnings__datacenter-picker {
+	margin-top: 10px;
+	form {
+		margin-top: 10px;
+	}
+	label {
+		display: block;
 	}
 }
 
