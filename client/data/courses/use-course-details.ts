@@ -6,8 +6,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal Dependencies
  */
 import { COURSE_SLUGS } from './constants';
-
-type CourseSlug = keyof typeof COURSE_SLUGS;
+import type { CourseSlug } from './types';
 
 interface CourseDetails {
 	headerTitle: string;
@@ -38,6 +37,17 @@ const useCourseDetails = ( courseSlug: CourseSlug ): CourseDetails | undefined =
 				translate( 'Accept donations or sell services' ),
 				translate( 'Setup paid, subscriber-only content' ),
 				translate( 'Run a fully featured ecommerce store' ),
+			],
+		};
+	} else if ( courseSlug === COURSE_SLUGS.SITE_EDITOR_QUICK_START ) {
+		return {
+			headerTitle: translate( 'Watch four videos.' ),
+			headerSubtitle: translate( 'Save yourself hours.' ),
+			headerSummary: [
+				translate( 'Learn the building blocks of site building' ),
+				translate( 'Understand how to add your style to your site' ),
+				translate( 'Upskill now to save hours later' ),
+				translate( 'Set yourself up for creative success' ),
 			],
 		};
 	}
