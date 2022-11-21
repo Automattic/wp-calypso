@@ -141,6 +141,7 @@
 		"themes/premium": true,
 		"themes/showcase-i4/search-and-filter": false,
 		"themes/subscription-purchases": false,
+		"themes/theme-switch-persist-template": false,
 		"themes/third-party-premium": false,
 		"unified-pages/virtual-home-page": false,
 		"upgrades/redirect-payments": true,
