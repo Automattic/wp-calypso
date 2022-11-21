@@ -54,21 +54,21 @@ const BillingOptions: FunctionComponent< Props > = ( { plans, value, onChange } 
 
 	return (
 		<fieldset className="hb-pricing-plans-embed__billing-options">
-			{ planChoices.map( ( planBilling ) => (
-				<div key={ planBilling?.productSlug }>
+			{ planChoices.map( ( plan ) => (
+				<div key={ plan?.productSlug }>
 					<label className="hb-pricing-plans-embed__billing-option-label">
 						<input
 							className="hb-pricing-plans-embed__billing-option-input"
 							type="radio"
 							name="price"
-							value={ planBilling?.productSlug }
-							checked={ planBilling?.productSlug === value }
-							onChange={ () => onChange( planBilling?.productSlug ) }
+							value={ plan?.productSlug }
+							checked={ plan?.productSlug === value }
+							onChange={ () => onChange( plan?.productSlug ) }
 						/>
-						{ planBilling?.term === TERM_MONTHLY
+						{ plan?.term === TERM_MONTHLY
 							? __( 'Monthly', 'happy-blocks' )
 							: __( 'Annually', 'happy-blocks' ) }
-						{ annualDiscount && planBilling?.term === TERM_ANNUALLY && (
+						{ annualDiscount && plan?.term === TERM_ANNUALLY && (
 							<Promo>({ annualDiscount })</Promo>
 						) }
 					</label>
