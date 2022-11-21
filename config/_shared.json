@@ -12,15 +12,12 @@
 	"discover_logged_out_redirect_url": false,
 	"happychat_pling_noise_path": "/calypso/audio/chat-pling.wav",
 	"facebook_api_key": false,
-	"features": {
-		"is_running_in_jetpack_site": false
-	},
+	"features": {},
 	"google_analytics_key": false,
 	"google_recaptcha_site_key": false,
 	"hotjar_enabled": false,
 	"hostname": false,
 	"i18n_default_locale_slug": "en",
-	"is_running_in_jetpack_site": false,
 	"lasagna_url": "wss://rt-api.wordpress.com/socket",
 	"login_url": false,
 	"logout_url": false,

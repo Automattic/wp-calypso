@@ -27,9 +27,13 @@ const setLocale = ( dispatch ) => {
 };
 
 async function AppBoot() {
-	// Use feature locks for Calypso production `config/production.json`.
+	// Note: configData hydrated in https://github.com/Automattic/jetpack/blob/d4d0f987cbf63a864b03b542b7813aabe87e0ed3/projects/packages/stats-admin/src/class-dashboard.php#L214
+	// Use feature locks for Calypso production `config/production.json`
 	window.configData = window.configData || {};
 	window.configData.features = productionConfig.features;
+	// Set is_running_in_jetpack_site to true if not specified (undefined or null).
+	window.configData.features.is_running_in_jetpack_site =
+		window.configData.features.is_running_in_jetpack_site ?? true;
 
 	const siteId = config( 'blog_id' );
 
