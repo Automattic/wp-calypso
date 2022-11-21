@@ -300,7 +300,7 @@ const GeneratedDesignButtonContainer: React.FC< GeneratedDesignButtonContainerPr
 		use_screenshot_overrides: true,
 	} );
 
-	const divTrackingRef = useTrackDesignView( {
+	const trackingDivRef = useTrackDesignView( {
 		category: `__generated_vertical_${ verticalId }`,
 		design,
 		isPremiumThemeAvailable: false,
@@ -311,7 +311,7 @@ const GeneratedDesignButtonContainer: React.FC< GeneratedDesignButtonContainerPr
 			className={ classnames( 'design-button-container', 'design-button-container--is-generated', {
 				'design-button-container--is-generated--is-showing': isShowing,
 			} ) }
-			ref={ divTrackingRef }
+			ref={ trackingDivRef }
 		>
 			<div className="design-picker__design-option">
 				<button className="generated-design-thumbnail" onClick={ () => onPreview( design ) }>
