@@ -23,13 +23,13 @@ describe( DataHelper.createSuiteTitle( 'VideoPress Tailored Onboarding' ), () =>
 	} );
 	const emailClient = new EmailClient();
 	let page: Page;
-	let selectedDomain: string;
 	let domainSearchComponent: DomainSearchComponent;
 	let cartCheckoutPage: CartCheckoutPage;
 	let newUserDetails: NewUserResponse;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
+		await BrowserManager.setStoreCookie( page, { currency: 'EUR' } );
 	} );
 
 	describe( 'Signup via /setup/videopress', function () {
@@ -38,19 +38,12 @@ describe( DataHelper.createSuiteTitle( 'VideoPress Tailored Onboarding' ), () =>
 			await page.goto( DataHelper.getCalypsoURL( '/setup/videopress' ) );
 		} );
 
-		it( 'Set store cookie', async function () {
-			await BrowserManager.setStoreCookie( page, { currency: 'EUR' } );
-		} );
-
 		it( 'Click Get Started', async function () {
 			await Promise.all( [ page.waitForNavigation(), page.click( 'text=Get started' ) ] );
 		} );
 
-		it( 'Navigate to videopress-account', async function () {
-			await page.waitForSelector( 'div.is-videopress-account' );
-		} );
-
 		it( 'Enter account details', async function () {
+			await page.waitForURL( /.*videopress-account.*/ );
 			const userSignupPage = new UserSignupPage( page );
 			newUserDetails = await userSignupPage.signup(
 				testUser.email,
@@ -80,16 +73,15 @@ describe( DataHelper.createSuiteTitle( 'VideoPress Tailored Onboarding' ), () =>
 		} );
 		it( 'Search for a domain', async function () {
 			domainSearchComponent = new DomainSearchComponent( page );
-			await domainSearchComponent.search( testUser.username + '.live' );
+			await domainSearchComponent.search( testUser.username );
 		} );
 
-		it( 'Select a .live domain', async function () {
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			selectedDomain = await domainSearchComponent.selectDomain( '.wordpress.com' );
+		it( 'Skip selecting a domain', async function () {
+			await Promise.all( [ page.waitForNavigation(), page.click( 'text=Decide later' ) ] );
 		} );
 
 		it( 'Navigate to choose a plan', async function () {
-			await page.waitForSelector( 'button.plan-item__select-button' );
+			await page.waitForURL( /.*chooseAPlan.*/ );
 			await page.click( 'button.plan-item__select-button' );
 		} );
 
@@ -121,7 +113,7 @@ describe( DataHelper.createSuiteTitle( 'VideoPress Tailored Onboarding' ), () =>
 		} );
 
 		it( 'Navigate to launchpad', async function () {
-			await page.waitForSelector( 'div.launchpad__sidebar' );
+			await page.waitForURL( /.*launchpad.*/ );
 		} );
 
 		// This happens after we finish signup.
