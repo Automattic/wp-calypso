@@ -217,7 +217,9 @@ class StatsSite extends Component {
 
 		return (
 			<div className="stats">
-				<JetpackBackupCredsBanner event="stats-backup-credentials" />
+				<div className="stats-banner-wrapper">
+					<JetpackBackupCredsBanner event="stats-backup-credentials" />
+				</div>
 
 				<FormattedHeader
 					brandFont

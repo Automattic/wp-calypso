@@ -35,7 +35,8 @@ $stats-sections-max-width: 1224px;
 }
 
 .stats__section-header,
-.stats-navigation {
+.stats-navigation,
+.stats-banner-wrapper {
 	background-color: var(--studio-white);
 }
 
@@ -54,14 +55,10 @@ $stats-sections-max-width: 1224px;
 		> * {
 			padding: 0 max(calc(50% - #{$stats-sections-max-width / 2}), 32px);
 		}
-
-		> .card.banner.jetpack-backup-creds-banner {
-			margin: 0 max(calc(50% - #{$stats-sections-max-width / 2}), 32px);
-		}
 	}
 
-	> .card.banner.jetpack-backup-creds-banner {
-		margin-bottom: 1em;
+	> .stats-banner-wrapper {
+		padding-bottom: 1em;
 	}
 }
 
