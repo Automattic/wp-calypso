@@ -1,7 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/onboarding/styles/mixins";
 
-.intro {
+body.is-videopress-stepper .intro {
 	&.newsletter {
 		background-color: rgb(162 218 254);
 
