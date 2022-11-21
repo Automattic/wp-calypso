@@ -2,19 +2,14 @@
 
 // For page header styles behind feature `stats/new-main-chart`
 .stats--new-wrapper {
-	// Page layout
-	&.main {
-		// padding-top: 82px;
-	}
-
-	// FormattedHeader styles
 	.formatted-header {
 		&.is-left-align,
 		&.is-right-align {
-			margin: 0 0 16px 0;
+			margin: 0;
+			padding-bottom: 16px;
 
 			@media ( max-width: $break-medium ) {
-				margin: 24px 16px 12px;
+				margin: 0 16px;
 			}
 
 			.formatted-header__title {
@@ -43,7 +38,7 @@
 	.stats-navigation {
 		.section-nav {
 			margin: 0;
-			box-shadow: none;
+			box-shadow: inset 0 -1px 0 #0000000d;
 		}
 
 		.section-nav-group__label {

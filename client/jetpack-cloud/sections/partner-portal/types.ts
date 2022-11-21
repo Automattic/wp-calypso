@@ -1,3 +1,5 @@
+import type { SiteDetails } from '@automattic/data-stores';
+
 export enum LicenseState {
 	Detached = 'detached',
 	Attached = 'attached',
@@ -23,6 +25,6 @@ export enum LicenseSortDirection {
 }
 
 export interface AssignLicenceProps {
-	selectedSite?: { ID: number; domain: string } | null;
+	selectedSite?: SiteDetails | null;
 	suggestedProduct?: string;
 }

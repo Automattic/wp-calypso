@@ -1,5 +1,5 @@
 import { SiteDetails } from '../site';
-import { Location } from './types';
+import { Location, HelpCenterSite } from './types';
 
 export const setShowHelpCenter = ( show: boolean ) =>
 	( {
@@ -21,7 +21,7 @@ export const resetRouterState = () =>
 		index: undefined,
 	} as const );
 
-export const setSite = ( site: SiteDetails | undefined ) =>
+export const setSite = ( site: HelpCenterSite | undefined ) =>
 	( {
 		type: 'HELP_CENTER_SET_SITE',
 		site,
@@ -74,7 +74,7 @@ export const setUserDeclaredSite = ( site: SiteDetails | undefined ) =>
 		site,
 	} as const );
 
-export const startHelpCenterChat = function* ( site: SiteDetails, message: string ) {
+export const startHelpCenterChat = function* ( site: HelpCenterSite, message: string ) {
 	yield setRouterState( [ { pathname: '/inline-chat' } ], 0 );
 	yield setSite( site );
 	yield setMessage( message );

@@ -49,24 +49,54 @@ const JetpackComFooter: React.FC = () => {
 				category: translate( 'WordPress Plugins' ),
 				items: [
 					{
+						label: translate( 'Akismet Anti-spam' ),
+						href: 'https://wordpress.org/plugins/akismet/',
+						trackId: 'jetpack_antispam',
+					},
+					{
 						label: translate( 'Jetpack' ),
-						href: 'https://jetpack.com/',
+						href: 'https://wordpress.org/plugins/jetpack/',
 						trackId: 'jetpack',
 					},
 					{
-						label: translate( 'Jetpack Backup' ),
-						href: 'https://jetpack.com/upgrade/backup/',
-						trackId: 'jetpack_backup',
+						label: translate( 'Jetpack Boost' ),
+						href: 'https://wordpress.org/plugins/jetpack-boost/',
+						trackId: 'jetpack_boost',
 					},
 					{
 						label: translate( 'Jetpack CRM' ),
-						href: addQueryArgs( utmParams, 'https://jetpackcrm.com/' ),
+						href: 'https://wordpress.org/plugins/zero-bs-crm/',
 						trackId: 'jetpack_crm',
 					},
 					{
-						label: translate( 'Jetpack Boost' ),
-						href: 'https://jetpack.com/boost/',
-						trackId: 'jetpack_boost',
+						label: translate( 'Jetpack Protect' ),
+						href: 'https://wordpress.org/plugins/jetpack-protect/',
+						trackId: 'jetpack_protect',
+					},
+					{
+						label: translate( 'Jetpack Search' ),
+						href: 'https://wordpress.org/plugins/jetpack-search/',
+						trackId: 'jetpack_search',
+					},
+					{
+						label: translate( 'Jetpack Social' ),
+						href: 'https://wordpress.org/plugins/jetpack-social/',
+						trackId: 'jetpack_social',
+					},
+					{
+						label: translate( 'Jetpack VideoPress' ),
+						href: 'https://wordpress.org/plugins/jetpack-videopress/',
+						trackId: 'jetpack_videopress',
+					},
+					{
+						label: translate( 'VaultPress Backup' ),
+						href: 'https://wordpress.org/plugins/jetpack-backup/',
+						trackId: 'jetpack_backup',
+					},
+					{
+						label: translate( 'WP Super Cache' ),
+						href: 'https://wordpress.org/plugins/wp-super-cache/',
+						trackId: 'wp_supercache',
 					},
 				],
 			},

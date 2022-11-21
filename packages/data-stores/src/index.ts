@@ -58,3 +58,4 @@ export { getContextResults } from './contextual-help/contextual-help';
 export { generateAdminSections } from './contextual-help/admin-sections';
 export type { LinksForSection } from './contextual-help/contextual-help';
 export * from './contextual-help/constants';
+export type { HelpCenterSite } from './help-center/types';

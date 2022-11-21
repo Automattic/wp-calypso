@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import DotPager from 'calypso/components/dot-pager';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
@@ -160,6 +161,56 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 		<div className="stats__all-time-highlights-section">
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="stats" query={ {} } /> }
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsInsights" /> }
+
+			<div className="stats__all-time-highlights-mobile">
+				<h1 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h1>
+				<DotPager>
+					<Card className="highlight-card">
+						<div className="highlight-card-heading">{ translate( 'All-time stats' ) }</div>
+						<div className="highlight-card-info-item-list">
+							{ infoItems
+								.filter( ( i ) => ! i.hidden )
+								.map( ( info ) => {
+									return (
+										<div key={ info.id } className="highlight-card-info-item">
+											<Icon icon={ info.icon } />
+
+											<span className="highlight-card-info-item-title">{ info.title }</span>
+
+											<span
+												className="highlight-card-info-item-count"
+												title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
+											>
+												{ formatNumber( info.count ) }
+											</span>
+										</div>
+									);
+								} ) }
+						</div>
+					</Card>
+
+					{ [ mostPopularTimeItems, bestViewsEverItems ].map( ( card ) => {
+						return (
+							<Card key={ card.id } className="highlight-card">
+								<div className="highlight-card-heading">{ card.heading }</div>
+								<div className="highlight-card-detail-item-list">
+									{ card.items.map( ( item ) => {
+										return (
+											<div key={ item.id } className="highlight-card-detail-item">
+												<div className="highlight-card-detail-item-header">{ item.header }</div>
+
+												<div className="highlight-card-detail-item-content">{ item.content }</div>
+
+												<div className="highlight-card-detail-item-footer">{ item.footer }</div>
+											</div>
+										);
+									} ) }
+								</div>
+							</Card>
+						);
+					} ) }
+				</DotPager>
+			</div>
 
 			<div className="highlight-cards">
 				<h1 className="highlight-cards-heading">{ translate( 'All-time highlights' ) }</h1>

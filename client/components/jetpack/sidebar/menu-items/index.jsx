@@ -60,7 +60,7 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 			{ isAdmin && ! isWPForTeamsSite && (
 				<SidebarItem
 					customIcon={ showIcons && <JetpackIcons icon="backup" /> }
-					label={ translate( 'Backup', {
+					label={ translate( 'VaultPress Backup', {
 						comment: 'Jetpack sidebar menu item',
 					} ) }
 					link={ backupPath( siteSlug ) }

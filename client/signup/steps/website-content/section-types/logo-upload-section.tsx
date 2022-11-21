@@ -53,12 +53,12 @@ export function LogoUploadSection( {
 			</Label>
 			<HorizontalGrid>
 				<WordpressMediaUpload
+					media={ { mediaType: 'IMAGE', url: logoUrl } }
 					mediaIndex={ 0 }
 					site={ site }
 					onMediaUploadStart={ () => dispatch( logoUploadStarted() ) }
 					onMediaUploadFailed={ () => dispatch( logoUploadFailed() ) }
 					onMediaUploadComplete={ onMediaUploadComplete }
-					initialUrl={ logoUrl }
 					onRemoveImage={ onMediaRemoved }
 				/>
 			</HorizontalGrid>

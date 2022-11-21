@@ -174,13 +174,13 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 	} );
 
 	//Backup Add-on products
-	const backupAddon10gb = translate( 'Backup Add-on Storage (%(storageAmount)s)', {
+	const backupAddon10gb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
 		args: { storageAmount: text10gb },
 	} );
-	const backupAddon100gb = translate( 'Backup Add-on Storage (%(storageAmount)s)', {
+	const backupAddon100gb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
 		args: { storageAmount: text100gb },
 	} );
-	const backupAddon1tb = translate( 'Backup Add-on Storage (%(storageAmount)s)', {
+	const backupAddon1tb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
 		args: { storageAmount: text1tb },
 	} );
 
@@ -287,9 +287,11 @@ export const getJetpackProductsTaglines = (): Record<
 	const socialTagLine = translate(
 		'Easily share your website content on your social media channels'
 	);
-	const backupAddonTagLine = translate( 'Additional storage for your Jetpack Backup plan.' );
+	const backupAddonTagLine = translate(
+		'Additional storage for your Jetpack VaultPress Backup plan.'
+	);
 	const backupAddonOwnedTagLine = translate(
-		'Your site has additional storage for Jetpack Backup.'
+		'Your site has additional storage for Jetpack VaultPress Backup.'
 	);
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
@@ -723,7 +725,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 	const searchIncludesInfo = [
 		translate( 'Instant search, filtering, and indexing' ),
 		translate( 'Highly relevant search results' ),
-		translate( 'Support for 29 languages' ),
+		translate( 'Supports 38 languages' ),
 		translate( 'Quick and accurate spelling correction' ),
 	];
 	const boostIncludesInfo = [
