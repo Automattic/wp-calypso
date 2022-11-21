@@ -14,7 +14,7 @@ function useSite( siteSlug ) {
 	return site;
 }
 
-export default function VisitSite( { linkWithSiteName = true, siteSlug } ) {
+export default function VisitSite( { siteSlug } ) {
 	const translate = useTranslate();
 	const site = useSite( siteSlug );
 
@@ -22,7 +22,7 @@ export default function VisitSite( { linkWithSiteName = true, siteSlug } ) {
 		return null;
 	}
 
-	const siteLink = <a href={ site.URL }>{ linkWithSiteName ? site.name.trim() : siteSlug }</a>;
+	const siteLink = <a href={ site.URL }>{ siteSlug }</a>;
 
 	return (
 		<div className="visit-site">
