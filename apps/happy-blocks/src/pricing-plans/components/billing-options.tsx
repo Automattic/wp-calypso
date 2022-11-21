@@ -50,11 +50,11 @@ const BillingOptions: FunctionComponent< Props > = ( { plans, value, onChange } 
 
 	const annualDiscount = getAnnualDiscount( annualPlan, monthlyPlan );
 
-	const billings = [ monthlyPlan, annualPlan ].filter( Boolean );
+	const planChoices = [ monthlyPlan, annualPlan ].filter( Boolean );
 
 	return (
 		<fieldset className="hb-pricing-plans-embed__billing-options">
-			{ billings.map( ( planBilling ) => (
+			{ planChoices.map( ( planBilling ) => (
 				<div key={ planBilling?.productSlug }>
 					<label className="hb-pricing-plans-embed__billing-option-label">
 						<input
