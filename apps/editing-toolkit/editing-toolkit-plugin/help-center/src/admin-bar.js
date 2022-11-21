@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import HelpCenter from '@automattic/help-center';
+import HelpCenter, { PromotionalPopover } from '@automattic/help-center';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import * as ReactDOM from 'react-dom';
@@ -37,7 +37,12 @@ function AdminHelpCenterContent() {
 
 	button.onclick = handleToggleHelpCenter;
 
-	return <HelpCenter handleClose={ () => setShowHelpCenter( false ) } />;
+	return (
+		<>
+			<HelpCenter handleClose={ () => setShowHelpCenter( false ) } />
+			<PromotionalPopover contextRef={ button } />
+		</>
+	);
 }
 
 if ( window?.helpCenterAdminBar?.isLoaded ) {
