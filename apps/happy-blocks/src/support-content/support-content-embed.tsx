@@ -1,4 +1,3 @@
-import { useBlockProps } from '@wordpress/block-editor';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { SupportContentBlockAttributes } from './block';
@@ -14,8 +13,6 @@ export const SupportContentEmbed = ( props: {
 } ) => {
 	const loaded = !! props.attributes.content;
 
-	const blockProps = useBlockProps();
-
 	const likes = sprintf(
 		/* translators: Number of people marked this page useful, eg: "25332 people have found this useful" */
 		__( '%1$d people have found this useful!', 'happy-blocks' ),
@@ -23,7 +20,7 @@ export const SupportContentEmbed = ( props: {
 	);
 
 	/* translators: Link to resource from where the embed is loaded, eg: "in WordPress.com Forums" */
-	const source = sprintf( 'in <a>%s</a>', blockProps[ 'data-title' ] );
+	const source = sprintf( 'in <a>%s</a>', props.attributes.source );
 
 	const detailsPresent =
 		props.attributes.minutesToRead || props.attributes.author || props.attributes.created;

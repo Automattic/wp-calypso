@@ -36,7 +36,15 @@ registerBlockType( 'happy-blocks/support-page', {
 			source: 'text',
 			selector: '.hb-support-page-embed__content',
 		},
+		source: {
+			type: 'string',
+			source: 'text',
+			selector: '.hb-support-page-embed__link',
+		},
 		minutesToRead: {
+			type: 'number',
+		},
+		likes: {
 			type: 'number',
 		},
 	},
@@ -117,6 +125,20 @@ registerBlockType( 'happy-blocks/forum-topic', {
 			type: 'string',
 			source: 'text',
 			selector: '.hb-support-page-embed__content',
+		},
+		source: {
+			type: 'string',
+			source: 'text',
+			selector: '.hb-support-page-embed__link',
+		},
+		status: {
+			type: 'string',
+		},
+		author: {
+			type: 'string',
+		},
+		created: {
+			type: 'string',
 		},
 	},
 	supports: {

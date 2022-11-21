@@ -12,6 +12,7 @@ export type SupportContentBlockAttributes = {
 	url: string;
 	title: string;
 	content: string;
+	source: string;
 	minutesToRead?: number | null;
 	likes?: number;
 	status?: string;
@@ -49,7 +50,7 @@ export async function fetchSupportPageAttributes(
 		content = content.substring( 0, EMBED_CONTENT_MAXLENGTH );
 	}
 
-	return { url, content, title, minutesToRead };
+	return { url, content, title, source: 'WordPress.com Guide', minutesToRead };
 }
 
 /**
@@ -79,7 +80,14 @@ export async function fetchForumTopicAttributes(
 		content = content.substring( 0, EMBED_CONTENT_MAXLENGTH );
 	}
 
-	return { url, content, title, status: topic.status, created: topic.date };
+	return {
+		url,
+		content,
+		title,
+		source: 'WordPress.com Forums',
+		status: topic.status,
+		created: topic.date,
+	};
 }
 
 /**
