@@ -5,6 +5,7 @@ $stats-sections-max-width: 1224px;
 
 // Elements above main layout content per pages
 .stats__section-header,
+.store-stats__section-header,
 .stats-navigation,
 .stats-banner-wrapper {
 	background-color: var(--studio-white);
@@ -34,7 +35,8 @@ $stats-sections-max-width: 1224px;
 }
 
 // this overrides the default .layout__content that adds unwanted padding
-.is-section-stats {
+.is-section-stats,
+.is-section-woocommerce {
 	& .layout__content,
 	&.theme-default .focus-content .layout__content {
 		padding: 79px 0 0 0;
