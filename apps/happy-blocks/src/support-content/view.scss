@@ -22,6 +22,10 @@
 	font-size: $font-body-small;
 	line-height: var(--line-height-content);
 
+	&__created {
+		display: none;
+	}
+
 	&__opener {
 		position: absolute;
 		left: 0;

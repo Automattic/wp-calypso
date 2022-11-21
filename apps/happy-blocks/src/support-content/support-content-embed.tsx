@@ -3,6 +3,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { SupportContentBlockAttributes } from './block';
 import { WordPressIcon } from './icon';
 import { InlineSkeleton } from './inline-skeleton';
+import { getRelativeDate } from './view';
 
 /**
  * Rendered embed for the Support Content blocks
@@ -10,6 +11,7 @@ import { InlineSkeleton } from './inline-skeleton';
 export const SupportContentEmbed = ( props: {
 	attributes: SupportContentBlockAttributes;
 	clickable?: boolean;
+	hasCreatedDate?: boolean;
 } ) => {
 	const loaded = !! props.attributes.content;
 
@@ -38,9 +40,11 @@ export const SupportContentEmbed = ( props: {
 			  )
 			: '';
 
-		// window.moment is exposed as a dependency of `wp.date`
-		const moment: any = window[ 'moment' as any ];
-		const createdRelative = moment( props.attributes.created ).fromNow();
+		const createdDateElement = (
+			<span className="hb-support-page-embed__relative-created">
+				{ props.attributes.created ? getRelativeDate( props.attributes.created ) : '' }
+			</span>
+		);
 
 		if ( props.attributes.author ) {
 			const startedby = sprintf(
@@ -49,20 +53,30 @@ export const SupportContentEmbed = ( props: {
 				props.attributes.minutesToRead
 			);
 
-			return startedby + createdRelative + minToRead;
-		} else if ( props.attributes.created ) {
-			const startedOn = sprintf(
-				/* translators: Date when forum topic was created, eg: "Started 5 days ago" */
-				__( 'Started %s', 'happy-blocks' ),
-				createdRelative
+			return (
+				<>
+					{ startedby } { createdDateElement } { minToRead }
+				</>
 			);
-			return startedOn + minToRead;
+		} else if ( props.attributes.created ) {
+			/* translators: Date when forum topic was created, eg: "Started 5 days ago" */
+			const startedOn = __( 'Started', 'happy-blocks' );
+
+			return (
+				<>
+					{ startedOn } { createdDateElement } { minToRead }
+				</>
+			);
 		}
 		return minToRead;
 	};
 
 	return (
 		<div className="hb-support-page-embed">
+			{ !! props.attributes.created && (
+				<div className="hb-support-page-embed__created">{ props.attributes.created }</div>
+			) }
+
 			{ /* Only make embed clickable while viewing content for author not to lose unsaved changes */ }
 			{ props.clickable && (
 				<a className="hb-support-page-embed__opener" href={ props.attributes.url } />

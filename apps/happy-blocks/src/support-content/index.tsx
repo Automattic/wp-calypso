@@ -139,6 +139,8 @@ registerBlockType( 'happy-blocks/forum-topic', {
 		},
 		created: {
 			type: 'string',
+			source: 'text',
+			selector: '.hb-support-page-embed__created',
 		},
 	},
 	supports: {
