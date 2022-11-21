@@ -79,8 +79,8 @@ export default function IssueMultipleLicensesForm( {
 	}, [ dispatch, defaultProductSlugs ] );
 
 	const selectedProductSlugs = useSelector( getSelectedProductSlugs );
-	const disabledProductSlugs = useSelector< PartnerPortalStore >( ( state ) =>
-		getDisabledProductSlugs( state, allProducts )
+	const disabledProductSlugs = useSelector< PartnerPortalStore, string[] >( ( state ) =>
+		getDisabledProductSlugs( state, allProducts ?? [] )
 	);
 
 	// We need the suggested products (i.e., the products chosen from the dashboard) to properly

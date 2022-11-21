@@ -282,9 +282,7 @@ export function useAssignLicenses(
 	licenseKeys: Array< string >,
 	selectedSite: { ID: number; domain: string } | null
 ): [ () => void, boolean ] {
-	const products = useProductsQuery( {
-		select: selectAlphaticallySortedProductOptions,
-	} );
+	const products = useProductsQuery();
 	const dispatch = useDispatch();
 	const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
 	const assignLicense = useAssignLicenseMutation( {

@@ -12,8 +12,8 @@ const TotalCost = () => {
 
 	const { data: allProducts } = useProductsQuery();
 
-	const totalCost = useSelector< PartnerPortalStore >( ( state ) =>
-		getTotalSelectedCost( state, allProducts )
+	const totalCost = useSelector< PartnerPortalStore, number >( ( state ) =>
+		getTotalSelectedCost( state, allProducts ?? [] )
 	);
 	const currencyCode = allProducts && allProducts.length ? allProducts[ 0 ].currency : 'USD';
 	const formattedTotalCost = formatCurrency( totalCost, currencyCode );
