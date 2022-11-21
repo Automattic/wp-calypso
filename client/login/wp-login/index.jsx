@@ -37,7 +37,7 @@ export class Login extends Component {
 		isLoggedIn: PropTypes.bool.isRequired,
 		isLoginView: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
-		isWhiteLogin: PropTypes.bool.isRequired,
+		isGutenboarding: PropTypes.bool.isRequired,
 		isPartnerSignup: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
@@ -52,7 +52,7 @@ export class Login extends Component {
 		action: PropTypes.string,
 	};
 
-	static defaultProps = { isJetpack: false, isWhiteLogin: false, isLoginView: true };
+	static defaultProps = { isJetpack: false, isGutenboarding: false, isLoginView: true };
 
 	state = {
 		usernameOrEmail: '',
@@ -141,10 +141,10 @@ export class Login extends Component {
 	}
 
 	renderFooter() {
-		const { isJetpack, isWhiteLogin, isP2Login, translate } = this.props;
+		const { isJetpack, isGutenboarding, isP2Login, translate } = this.props;
 		const isOauthLogin = !! this.props.oauth2Client;
 
-		if ( isJetpack || isWhiteLogin || isP2Login ) {
+		if ( isJetpack || isGutenboarding || isP2Login ) {
 			return null;
 		}
 
@@ -221,7 +221,7 @@ export class Login extends Component {
 			domain,
 			isLoggedIn,
 			isJetpack,
-			isWhiteLogin,
+			isGutenboarding,
 			isP2Login,
 			oauth2Client,
 			privateSite,
@@ -257,11 +257,10 @@ export class Login extends Component {
 						locale={ locale }
 						privateSite={ privateSite }
 						twoFactorAuthType={ twoFactorAuthType }
-						isWhiteLogin={ isWhiteLogin }
+						isGutenboarding={ isGutenboarding }
 						isP2Login={ isP2Login }
 						signupUrl={ signupUrl }
 						usernameOrEmail={ this.state.usernameOrEmail }
-						oauth2ClientId={ this.props.oauth2Client?.id }
 					/>
 				) }
 				{ isLoginView && <TranslatorInvite path={ path } /> }
@@ -276,7 +275,7 @@ export class Login extends Component {
 				privateSite={ privateSite }
 				clientId={ clientId }
 				isJetpack={ isJetpack }
-				isWhiteLogin={ isWhiteLogin }
+				isGutenboarding={ isGutenboarding }
 				isP2Login={ isP2Login }
 				oauth2Client={ oauth2Client }
 				socialService={ socialService }

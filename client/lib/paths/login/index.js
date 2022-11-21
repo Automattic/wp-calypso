@@ -4,6 +4,8 @@ import { addQueryArgs } from 'calypso/lib/url';
 /**
  * @param {{
 	isJetpack?: boolean;
+	isGutenboarding?: boolean;
+	isWhiteLogin?: boolean;
 	locale?: string;
 	redirectTo?: string;
 	twoFactorAuthType?: string;
@@ -22,6 +24,8 @@ import { addQueryArgs } from 'calypso/lib/url';
  */
 export function login( {
 	isJetpack = undefined,
+	isGutenboarding = undefined,
+	isWhiteLogin = undefined,
 	locale = undefined,
 	redirectTo = undefined,
 	twoFactorAuthType = undefined,
@@ -46,12 +50,16 @@ export function login( {
 		url += '/' + socialService + '/callback';
 	} else if ( twoFactorAuthType && isJetpack ) {
 		url += '/jetpack/' + twoFactorAuthType;
+	} else if ( twoFactorAuthType && ( isGutenboarding || isWhiteLogin ) ) {
+		url += '/new/' + twoFactorAuthType;
 	} else if ( twoFactorAuthType ) {
 		url += '/' + twoFactorAuthType;
 	} else if ( socialConnect ) {
 		url += '/social-connect';
 	} else if ( isJetpack ) {
 		url += '/jetpack';
+	} else if ( isGutenboarding || isWhiteLogin ) {
+		url += '/new';
 	} else if ( useMagicLink ) {
 		url += '/link';
 	} else if ( useQRCode ) {

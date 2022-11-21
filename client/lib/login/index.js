@@ -43,7 +43,14 @@ export function pathWithLeadingSlash( path ) {
 	return path ? `/${ path.replace( /^\/+/, '' ) }` : '';
 }
 
-export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname ) {
+export function getSignupUrl(
+	currentQuery,
+	currentRoute,
+	oauth2Client,
+	locale,
+	pathname,
+	isGutenboarding
+) {
 	let signupUrl = config( 'signup_url' );
 
 	const redirectTo = get( currentQuery, 'redirect_to', '' );
@@ -101,6 +108,17 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 			oauth2Params.set( 'wccom-from', wccomFrom );
 		}
 		signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
+	}
+
+	if ( isGutenboarding ) {
+		const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
+		const defaultSignupUrl = `/new/plans${ langFragment }?signup`;
+		signupUrl = get( currentQuery, 'signup_url', defaultSignupUrl );
+
+		// Sanitize the url if it doesn't start with /new
+		if ( ! startsWith( signupUrl, '/new' ) ) {
+			signupUrl = defaultSignupUrl;
+		}
 	}
 
 	if ( oauth2Client && isJetpackCloudOAuth2Client( oauth2Client ) ) {

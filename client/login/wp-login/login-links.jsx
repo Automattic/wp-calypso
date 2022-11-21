@@ -104,11 +104,12 @@ export class LoginLinks extends Component {
 			locale: this.props.locale,
 			twoFactorAuthType: 'link',
 			signupUrl: this.props.query?.signup_url,
-			oauth2ClientId: this.props.oauth2ClientId,
 		};
 
 		if ( this.props.currentRoute === '/log-in/jetpack' ) {
 			loginParameters.twoFactorAuthType = 'jetpack/link';
+		} else if ( this.props.isGutenboarding ) {
+			loginParameters.twoFactorAuthType = 'new/link';
 		}
 
 		return login( loginParameters );
@@ -126,7 +127,7 @@ export class LoginLinks extends Component {
 		if (
 			isCrowdsignalOAuth2Client( this.props.oauth2Client ) ||
 			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
-			this.props.isWhiteLogin ||
+			this.props.isGutenboarding ||
 			this.props.isP2Login ||
 			this.props.isPartnerSignup
 		) {
@@ -314,6 +315,7 @@ export class LoginLinks extends Component {
 		// Taken from client/layout/masterbar/logged-out.jsx
 		const {
 			currentRoute,
+			isGutenboarding,
 			isP2Login,
 			locale,
 			oauth2Client,
@@ -326,7 +328,7 @@ export class LoginLinks extends Component {
 		// use '?signup_url' if explicitly passed as URL query param
 		const signupUrl = this.props.signupUrl
 			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
-			: getSignupUrl( query, currentRoute, oauth2Client, locale, pathname );
+			: getSignupUrl( query, currentRoute, oauth2Client, locale, pathname, isGutenboarding );
 
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {
 			return null;
