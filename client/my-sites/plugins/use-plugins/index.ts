@@ -117,25 +117,22 @@ const usePlugins = ( {
 	);
 
 	switch ( category ) {
-		case 'paid':
+		case 'test':
 			plugins = dotComPlugins;
 			isFetching = isFetchingDotCom;
 			results = dotComPlugins?.length ?? 0;
-			break;
-		case 'popular':
-			plugins = ESPlugins;
-			isFetching = isFetchingES;
-			results = ESPagination?.results ?? 0;
 			break;
 		case 'featured':
 			plugins = featuredPlugins;
 			isFetching = isFetchingDotComFeatured;
 			results = featuredPlugins?.length ?? 0;
 			break;
+		case 'paid':
+		case 'popular':
 		default:
-			plugins = [ ...dotComPlugins, ...ESPlugins ];
-			isFetching = isFetchingDotCom || isFetchingES;
-			results = ( ESPagination?.results ?? 0 ) + dotComPlugins.length;
+			plugins = ESPlugins;
+			isFetching = isFetchingES;
+			results = ESPagination?.results ?? 0;
 			break;
 	}
 
