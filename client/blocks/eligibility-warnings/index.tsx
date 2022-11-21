@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	FEATURE_UPLOAD_PLUGINS,
 	FEATURE_PERFORMANCE,
@@ -17,6 +18,7 @@ import page from 'page';
 import { connect, useSelector } from 'react-redux';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
+import FoldableCard from 'calypso/components/foldable-card';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -31,6 +33,7 @@ import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import DatacenterPicker from './datacenter-picker';
 import HoldList, { hasBlockingHold, HardBlockingNotice, getBlockingMessages } from './hold-list';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 import WarningList from './warning-list';
@@ -192,6 +195,17 @@ export const EligibilityWarnings = ( {
 					<WarningList context={ context } warnings={ warnings } showContact={ false } />
 				</CompactCard>
 			) }
+
+			{ config.isEnabled( 'hosting/datacenter-picker' ) && (
+				<FoldableCard
+					className="eligibility-warnings__advanced-options-card"
+					compact={ true }
+					header={ translate( 'Advanced Options' ) }
+				>
+					<DatacenterPicker />
+				</FoldableCard>
+			) }
+
 			<CompactCard>
 				<div className="eligibility-warnings__confirm-buttons">
 					<div className="support-block">
