@@ -11,6 +11,7 @@ window.configData = {
 	upwork_support_locales: [ 'de' ],
 	jetpack_support_blog: 'jetpackme.wordpress.com',
 	wpcom_support_blog: 'en.support.wordpress.com',
+	is_running_in_jetpack_site: false,
 	gutenboarding_url: '/new',
 	features: {
 		happychat: true,
@@ -18,7 +19,6 @@ window.configData = {
 	signup_url: '/',
 	discover_blog_id: 53424024,
 	discover_feed_id: 41325786,
-	is_running_in_jetpack_site: false,
 };
 window.process = {
 	env: {
