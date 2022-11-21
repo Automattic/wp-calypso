@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { localize, LocalizeProps, translate } from 'i18n-calypso';
-import { map } from 'lodash';
 import { Fragment, useState } from 'react';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import Badge from 'calypso/components/badge';
@@ -54,7 +53,7 @@ export const WarningList = ( { context, translate, warnings, showContact = true 
 				</div>
 			) }
 
-			{ map( warnings, ( { name, description, supportUrl, domainNames }, index ) => (
+			{ warnings.map( ( { name, description, supportUrl, domainNames }, index ) => (
 				<div className="eligibility-warnings__warning" key={ index }>
 					<div className="eligibility-warnings__message">
 						{ context !== 'plugin-details' && (
