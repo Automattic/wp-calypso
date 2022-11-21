@@ -7,16 +7,17 @@
 	justify-content: center;
 	text-align: center;
 	align-items: center;
-	padding: 64px;
+	padding: 16px;
 	background-color: #f6f7f7;
 	color: #50575e;
 
-	@include break-medium {
-		grid-column: 1 / span 3;
+	@include break-small {
+		padding: 32px;
 	}
 
-	@media ( max-width: $break-mobile ) {
-		padding: 32px;
+	@include break-medium {
+		grid-column: 1 / span 3;
+		padding: 64px;
 	}
 
 	.pattern-assembler-cta__title {
