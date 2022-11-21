@@ -5,7 +5,7 @@ import { LocaleProvider } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useRef, useEffect, useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { PinnedItems } from '@wordpress/interface';
 import { registerPlugin } from '@wordpress/plugins';
 import cx from 'classnames';
@@ -16,7 +16,7 @@ import { whatsNewQueryClient } from '../../common/what-new-query-client';
 import CalypsoStateProvider from './CalypsoStateProvider';
 
 function HelpCenterContent() {
-	const helpIconRef = useRef();
+	const [ helpIconRef, setHelpIconRef ] = useState();
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
 	const sectionName = useSelector( getSectionName );
 	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
@@ -51,12 +51,21 @@ function HelpCenterContent() {
 			<Button
 				className={ cx( 'entry-point-button', 'help-center', { 'is-active': show } ) }
 				onClick={ handleToggleHelpCenter }
-				icon={ <HelpIcon ref={ helpIconRef } newItems={ showHelpIconDot } /> }
+				icon={
+					<HelpIcon
+						ref={ ( ref ) => {
+							if ( ref !== helpIconRef ) {
+								setHelpIconRef( ref );
+							}
+						} }
+						newItems={ showHelpIconDot }
+					/>
+				}
 				label="Help"
 				aria-pressed={ show ? true : false }
 				aria-expanded={ show ? true : false }
 			/>
-			<PromotionalPopover contextRef={ helpIconRef.current } />
+			<PromotionalPopover contextRef={ helpIconRef } />
 		</>
 	);
 
