@@ -24,7 +24,7 @@ const PatternAssemblerCta = ( { onButtonClick }: PatternAssemblerCtaProps ) => {
 							"Can't find something you like? Jump right into the editor to design your homepage from scratch."
 					  )
 					: translate(
-							"Can't find something you like? Start with a blank canvas and design your own homepage using our library of patterns"
+							"Can't find something you like? Start with a blank canvas and design your own homepage using our library of patterns."
 					  ) }
 			</p>
 			<Button className="pattern-assembler-cta__button" onClick={ onButtonClick } primary>
