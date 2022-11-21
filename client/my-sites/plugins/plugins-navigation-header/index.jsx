@@ -5,7 +5,6 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { __ } from '@wordpress/i18n';
 import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
@@ -120,7 +119,7 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 			dispatch( resetBreadcrumbs() );
 			dispatch(
 				appendBreadcrumb( {
-					label: __( 'Plugins' ),
+					label: translate( 'Plugins' ),
 					href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
 					id: 'plugins',
 					helpBubble: translate(
