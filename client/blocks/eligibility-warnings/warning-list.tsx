@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { localize, LocalizeProps, translate } from 'i18n-calypso';
 import { Fragment, useState } from 'react';
@@ -74,7 +75,7 @@ export const WarningList = ( { context, translate, warnings, showContact = true 
 				</div>
 			) ) }
 
-			{ hasAdvancedOptions && (
+			{ hasAdvancedOptions && config.isEnabled( 'hosting/datacenter-picker' ) && (
 				<div className="eligibility-warnings__warning">
 					<div className="eligibility-warnings__message">
 						{ showingAdvancedOptions && (
