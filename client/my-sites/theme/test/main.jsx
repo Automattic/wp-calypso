@@ -1,7 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-import { render } from '@testing-library/react';
+import { renderToString } from 'react-dom/server';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
@@ -50,9 +47,9 @@ describe( 'main', () => {
 		setStore( store );
 		let markup;
 		expect( () => {
-			markup = render( <TestComponent store={ store } themeId="twentysixteen" /> )?.container;
+			markup = renderToString( <TestComponent store={ store } themeId="twentysixteen" /> );
 		} ).not.toThrow();
-		expect( markup.getElementsByClassName( 'theme__sheet' ) ).toHaveLength( 1 );
+		expect( markup.includes( 'theme__sheet' ) ).toBeTruthy();
 	} );
 
 	test( "doesn't throw an exception with theme data", () => {
@@ -61,9 +58,9 @@ describe( 'main', () => {
 		store.dispatch( receiveTheme( themeData ) );
 		let markup;
 		expect( () => {
-			markup = render( <TestComponent store={ store } themeId="twentysixteen" /> )?.container;
+			markup = renderToString( <TestComponent store={ store } themeId="twentysixteen" /> );
 		} ).not.toThrow();
-		expect( markup.getElementsByClassName( 'theme__sheet' ) ).toHaveLength( 1 );
+		expect( markup.includes( 'theme__sheet' ) ).toBeTruthy();
 	} );
 
 	test( "doesn't throw an exception with invalid theme data", () => {
@@ -72,8 +69,8 @@ describe( 'main', () => {
 		store.dispatch( themeRequestFailure( 'wpcom', 'invalidthemeid', 'not found' ) );
 		let markup;
 		expect( () => {
-			markup = render( <TestComponent store={ store } themeId="invalidthemeid" /> )?.container;
+			markup = renderToString( <TestComponent store={ store } themeId="invalidthemeid" /> );
 		} ).not.toThrow();
-		expect( markup.getElementsByClassName( 'empty-content' ) ).toHaveLength( 1 );
+		expect( markup.includes( 'empty-content' ) ).toBeTruthy();
 	} );
 } );
