@@ -1,16 +1,13 @@
 .layout__launchpad-banner {
-	// TODO: FIX THIS
 	position: fixed;
 	top: var(--masterbar-height);
-	// margin-top: 40px;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	padding: 16px;
 	left: 0;
 	right: 0;
-	// background: var(--studio-gray-0);
-	background: #fff;
+	background: var(--studio-gray-0);
 	z-index: 179;
 
 	p {

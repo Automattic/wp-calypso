@@ -35,7 +35,7 @@ import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteOptions, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
@@ -307,9 +307,6 @@ class Layout extends Component {
 				{ isJetpackCloud() && (
 					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'layout/launchpad-banner' ) && (
-					<MainBanner sectionName={ this.props.sectionName } />
-				) }
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
 					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
@@ -324,6 +321,13 @@ class Layout extends Component {
 						placeholder={ null }
 						id="notices"
 					/>
+					{ config.isEnabled( 'layout/launchpad-banner' ) && (
+						<MainBanner
+							sectionName={ this.props.sectionName }
+							siteIntent={ this.props.siteIntent }
+							siteSlug={ this.props.siteSlug }
+						/>
+					) }
 					<div id="secondary" className="layout__secondary" role="navigation">
 						{ this.props.secondary }
 					</div>
@@ -413,6 +417,9 @@ export default withCurrentRoute(
 			config.isEnabled( 'calypso/help-center' ) &&
 			shouldShowHelpCenterToUser( getCurrentUserId( state ) );
 
+		const siteIntent = getSiteOptions( state, siteId )?.site_intent;
+		const siteSlug = getSiteSlug( state, siteId );
+
 		return {
 			masterbarIsHidden,
 			sidebarIsHidden,
@@ -440,6 +447,8 @@ export default withCurrentRoute(
 			// request to lack the newly authorized site, and when the request finishes after
 			// authorization, it would remove the newly connected site that has been fetched separately.
 			// See https://github.com/Automattic/wp-calypso/pull/31277 for more details.
+			siteIntent,
+			siteSlug,
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 			sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
 			userAllowedToHelpCenter,

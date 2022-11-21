@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import './style.scss';
 
-export function MainBanner( { sectionName } ) {
+export function MainBanner( { sectionName, siteIntent, siteSlug } ) {
 	const allowList = [ 'posts', 'media', 'pages', 'home' ];
 	if ( ! allowList.includes( sectionName ) ) {
 		return null;
@@ -12,7 +12,7 @@ export function MainBanner( { sectionName } ) {
 				🚀
 				<p>
 					Finish onboarding in the Launchpad. Return by clicking
-					<a href="/setup/launchpad?flow=newsletter"> here</a>
+					<a href={ `/setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }` }> here</a>
 				</p>
 			</div>
 			<button
