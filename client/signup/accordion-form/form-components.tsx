@@ -15,6 +15,11 @@ export const Label = styled.label`
 	cursor: inherit;
 `;
 
+export const LabelLink = styled( Label )`
+	text-decoration: underline;
+	font-weight: bold;
+`;
+
 export const LabelContainer = styled.div`
 	margin-bottom: 12px;
 `;
