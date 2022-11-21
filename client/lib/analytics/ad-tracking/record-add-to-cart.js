@@ -1,14 +1,6 @@
-import { isAdTrackingAllowed, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
-import {
-	debug,
-	isFacebookEnabled,
-	isBingEnabled,
-	isCriteoEnabled,
-	isWpcomGoogleAdsGtagEnabled,
-	isFloodlightEnabled,
-	isPinterestEnabled,
-	TRACKING_IDS,
-} from './constants';
+import { refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
+import { mayWeTrackByTracker } from '../tracker-buckets';
+import { debug, TRACKING_IDS } from './constants';
 import { recordInCriteo } from './criteo';
 import { recordParamsInFloodlightGtag } from './floodlight';
 import { loadTrackingScripts } from './load-tracking-scripts';
@@ -25,18 +17,13 @@ import './setup';
 export async function recordAddToCart( cartItem ) {
 	await refreshCountryCodeCookieGdpr();
 
-	if ( ! isAdTrackingAllowed() ) {
-		debug( 'recordAddToCart: [Skipping] ad tracking is not allowed' );
-		return;
-	}
-
 	await loadTrackingScripts();
 
 	debug( 'recordAddToCart:', cartItem );
 
 	// Google Ads Gtag
 
-	if ( isWpcomGoogleAdsGtagEnabled ) {
+	if ( mayWeTrackByTracker( 'googleAds' ) ) {
 		const params = [
 			'event',
 			'conversion',
@@ -45,12 +32,12 @@ export async function recordAddToCart( cartItem ) {
 			},
 		];
 		debug( 'recordAddToCart: [Google Ads Gtag] WPCom', params );
-		window.gtag( ...params );
+		window.gtag?.( ...params );
 	}
 
 	// Facebook
 
-	if ( isFacebookEnabled ) {
+	if ( mayWeTrackByTracker( 'facebook' ) ) {
 		// Fire both WP and JP pixels.
 
 		// WP
@@ -82,7 +69,7 @@ export async function recordAddToCart( cartItem ) {
 
 	// Bing
 
-	if ( isBingEnabled ) {
+	if ( mayWeTrackByTracker( 'bing' ) ) {
 		const params = {
 			ec: 'addtocart',
 			el: cartItem.product_slug,
@@ -93,7 +80,7 @@ export async function recordAddToCart( cartItem ) {
 
 	// DCM Floodlight
 
-	if ( isFloodlightEnabled ) {
+	if ( mayWeTrackByTracker( 'floodlight' ) ) {
 		debug( 'recordAddToCart: [Floodlight]' );
 		recordParamsInFloodlightGtag( {
 			u2: cartItem.product_name,
@@ -103,7 +90,7 @@ export async function recordAddToCart( cartItem ) {
 
 	// Criteo
 
-	if ( isCriteoEnabled ) {
+	if ( mayWeTrackByTracker( 'criteo' ) ) {
 		const params = [
 			'viewItem',
 			{
@@ -116,7 +103,7 @@ export async function recordAddToCart( cartItem ) {
 
 	// Pinterest
 
-	if ( isPinterestEnabled ) {
+	if ( mayWeTrackByTracker( 'pinterest' ) ) {
 		const params = [
 			'track',
 			'addtocart',

@@ -1,11 +1,47 @@
 @import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+
 $header-font: Recoleta, $sans;
+$mobile-layout-breakpoint: $break-small;
 
 .stats__all-time-highlights-section {
-	margin: 32px 0;
+	.highlight-cards {
+		background-color: inherit;
+		box-shadow: none;
+
+		@media ( max-width: $mobile-layout-breakpoint ) {
+			display: none;
+		}
+	}
+
+	.stats__all-time-highlights-mobile {
+		display: none;
+		margin: 16px 0;
+
+		@media ( max-width: $mobile-layout-breakpoint ) {
+			display: block;
+		}
+
+		.highlight-cards-heading {
+			margin: 16px 16px 24px;
+		}
+
+		.dot-pager {
+			padding: 24px;
+			border: 1px var(--color-border-subtle);
+			border-style: solid none;
+		}
+
+		.card.highlight-card {
+			padding: 0;
+			margin: 0;
+			box-shadow: none;
+		}
+	}
 
 	.highlight-cards-list .highlight-card {
 		padding: 24px;
+		min-width: 320px;
 	}
 
 	.highlight-card-heading {

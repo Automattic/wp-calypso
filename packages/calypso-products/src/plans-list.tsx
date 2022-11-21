@@ -1070,7 +1070,7 @@ const getPlanJetpackSecurityDailyDetails = (): IncompleteJetpackPlan => ( {
 	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getDescription: () =>
 		translate(
-			'All of the essential Jetpack Security features in one package including Backup, Scan, Anti-spam and more.'
+			'All of the essential Jetpack Security features in one package including VaultPress Backup, Scan, Akismet Anti-spam and more.'
 		),
 	getTagline: () => translate( 'Best for sites with occasional updates' ),
 	getPlanCardFeatures: () => [
@@ -1168,7 +1168,13 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 		),
 	getLightboxDescription: () =>
 		translate(
-			'Easy-to-use, comprehensive WordPress site security including backups, malware scanning, and spam protection.'
+			'Easy-to-use, comprehensive WordPress site security including backups, malware scanning, and spam protection.{{br/}}Includes VaultPress Backup, Jetpack Scan, and Akismet Anti-spam.',
+			{
+				components: {
+					br: <br />,
+				},
+				comment: '{{br/}} represents a line break',
+			}
 		),
 	getPlanCardFeatures: () => [
 		FEATURE_JETPACK_PRODUCT_BACKUP,
@@ -1780,15 +1786,17 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getPathSlug: () => 'complete',
 		getProductId: () => 2014,
 		getWhatIsIncluded: () => [
-			translate( 'Real-time backups as you edit' ),
+			translate( 'VaultPress Backup: Real-time backups as you edit' ),
 			translate( '1TB (1,000GB) of cloud storage' ),
 			translate( '1-year activity log archive' ),
 			translate( 'Unlimited one-click restores from the last 1 year' ),
-			translate( 'Real-time malware scanning and one-click fixes' ),
-			translate( 'Comment and form spam protection (60k API calls/mo)' ),
-			translate( 'VideoPress with 1TB of ad-free video hosting' ),
-			translate( 'Site Search up to 100k records' ),
-			translate( 'CRM Entrepreneur' ),
+			translate( 'Scan: Real-time malware scanning and one-click fixes' ),
+			translate( 'Akismet: Comment and form spam protection (60k API calls/mo)' ),
+			translate( 'VideoPress: 1TB of ad-free video hosting' ),
+			translate( 'Boost: Automatic CSS generation' ),
+			translate( 'Site Search: Up to 100k records' ),
+			translate( 'Social: Basic with 1,000 shares/mo' ),
+			translate( 'CRM: Entrepreneur with 30 extensions' ),
 		],
 	},
 
@@ -1799,15 +1807,17 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getPathSlug: () => 'complete-monthly',
 		getProductId: () => 2015,
 		getWhatIsIncluded: () => [
-			translate( 'Real-time backups as you edit' ),
+			translate( 'VaultPress Backup: Real-time backups as you edit' ),
 			translate( '1TB (1,000GB) of cloud storage' ),
 			translate( '1-year activity log archive' ),
 			translate( 'Unlimited one-click restores from the last 1-year' ),
-			translate( 'Real-time malware scanning and one-click fixes' ),
-			translate( 'Comment and form spam protection (60k API calls/mo)' ),
-			translate( 'VideoPress with 1TB of ad-free video hosting' ),
-			translate( 'Site Search up to 100k records' ),
-			translate( 'CRM Entrepreneur' ),
+			translate( 'Scan: Real-time malware scanning and one-click fixes' ),
+			translate( 'Akismet: Comment and form spam protection (60k API calls/mo)' ),
+			translate( 'VideoPress: 1TB of ad-free video hosting' ),
+			translate( 'Boost: Automatic CSS generation' ),
+			translate( 'Site Search: Up to 100k records' ),
+			translate( 'Social: Basic with 1,000 shares/mo' ),
+			translate( 'CRM: Entrepreneur with 30 extensions' ),
 		],
 	},
 
@@ -1818,12 +1828,12 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getPathSlug: () => 'security-20gb-yearly',
 		getProductId: () => 2016,
 		getWhatIsIncluded: () => [
-			translate( 'Real-time backups as you edit' ),
+			translate( 'VaultPress Backup: Real-time backups as you edit' ),
 			translate( '10GB of cloud storage' ),
 			translate( '30-day activity log archive' ),
 			translate( 'Unlimited one-click restores from the last 30 days' ),
-			translate( 'Real-time malware scanning and one-click fixes' ),
-			translate( 'Comment and form spam protection (10k API calls/mo)' ),
+			translate( 'Scan: Real-time malware scanning and one-click fixes' ),
+			translate( 'Akismet: Comment and form spam protection (10k API calls/mo)' ),
 		],
 	},
 
@@ -1834,12 +1844,12 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getPathSlug: () => 'security-20gb-monthly',
 		getProductId: () => 2017,
 		getWhatIsIncluded: () => [
-			translate( 'Real-time backups as you edit' ),
+			translate( 'VaultPress Backup: Real-time backups as you edit' ),
 			translate( '10GB of cloud storage' ),
 			translate( '30-day activity log archive' ),
 			translate( 'Unlimited one-click restores from the last 30 days' ),
-			translate( 'Real-time malware scanning and one-click fixes' ),
-			translate( 'Comment and form spam protection (10k API calls/mo)' ),
+			translate( 'Scan: Real-time malware scanning and one-click fixes' ),
+			translate( 'Akismet: Comment and form spam protection (10k API calls/mo)' ),
 		],
 	},
 
@@ -1850,7 +1860,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getPathSlug: () => 'security-1tb-yearly',
 		getProductId: () => 2019,
 		getWhatIsIncluded: () => [
-			translate( 'Real-time backups as you edit' ),
+			translate( 'VaultPress Backup: Real-time backups as you edit' ),
 			translate( '{{strong}}1TB (1,000GB){{/strong}} of cloud storage', {
 				components: {
 					strong: <strong />,
@@ -1866,8 +1876,8 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 					strong: <strong />,
 				},
 			} ),
-			translate( 'Real-time malware scanning and one-click fixes' ),
-			translate( 'Comment and form spam protection (10k API calls/mo)' ),
+			translate( 'Scan: Real-time malware scanning and one-click fixes' ),
+			translate( 'Akismet: Comment and form spam protection (10k API calls/mo)' ),
 		],
 	},
 
@@ -1878,7 +1888,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getPathSlug: () => 'security-1tb-monthly',
 		getProductId: () => 2020,
 		getWhatIsIncluded: () => [
-			translate( 'Real-time backups as you edit' ),
+			translate( 'VaultPress Backup: Real-time backups as you edit' ),
 			translate( '{{strong}}1TB (1,000GB){{/strong}} of cloud storage', {
 				components: {
 					strong: <strong />,
@@ -1894,8 +1904,8 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 					strong: <strong />,
 				},
 			} ),
-			translate( 'Real-time malware scanning and one-click fixes' ),
-			translate( 'Comment and form spam protection (10k API calls/mo)' ),
+			translate( 'Scan: Real-time malware scanning and one-click fixes' ),
+			translate( 'Akismet: Comment and form spam protection (10k API calls/mo)' ),
 		],
 	},
 

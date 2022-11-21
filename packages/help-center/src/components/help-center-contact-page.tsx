@@ -111,17 +111,17 @@ export const HelpCenterContactPage: React.FC = () => {
 										</p>
 									</div>
 								</div>
-								{ renderChat.env === 'staging' && (
-									<Notice
-										status="warning"
-										actions={ [ { label: 'HUD', url: 'https://hud-staging.happychat.io/' } ] }
-										className="help-center-contact-page__staging-notice"
-										isDismissible={ false }
-									>
-										Using HappyChat staging
-									</Notice>
-								) }
 							</ConditionalLink>
+							{ renderChat.env === 'staging' && (
+								<Notice
+									status="warning"
+									actions={ [ { label: 'HUD', url: 'https://hud-staging.happychat.io/' } ] }
+									className="help-center-contact-page__staging-notice"
+									isDismissible={ false }
+								>
+									Using HappyChat staging
+								</Notice>
+							) }
 						</div>
 					) }
 

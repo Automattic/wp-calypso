@@ -58,7 +58,7 @@ const SenseiDomain: Step = ( { navigation } ) => {
 				/>
 				<div className="container domains__step-content domains__step-content-domain-step">
 					<RegisterDomainStep
-						// vendor={ SENSEI_FLOW }
+						vendor="sensei"
 						key="domainForm"
 						suggestion={ domainSuggestion }
 						domainsWithPlansOnly={ true }

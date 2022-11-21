@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { NEWSLETTER_FLOW } from 'calypso/../packages/onboarding/src';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -52,7 +53,8 @@ const StepContent = ( { siteSlug, submit, goNext, goToStep, flow }: StepContentP
 
 	useEffect( () => {
 		// check if the current user's email hasn't been verified yet
-		if ( email && ! isEmailVerified ) {
+		// only show the email banner for newsletter flow
+		if ( email && ! isEmailVerified && flow === NEWSLETTER_FLOW ) {
 			setShowEmailValidationBanner( true );
 		}
 	}, [ email, isEmailVerified ] );

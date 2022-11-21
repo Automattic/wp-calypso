@@ -17,10 +17,10 @@ const isEnabledImportLight = isEnabled( 'onboarding/import-light-url-screen' );
 
 export const ImportWrapper: Step = function ( props ) {
 	const { __ } = useI18n();
-	const { navigation, children, stepName, flow: flowName } = props;
+	const { navigation, children, stepName } = props;
 	const currentRoute = useCurrentRoute();
 	const shouldHideSkipBtn = currentRoute !== BASE_ROUTE;
-	const shouldHideBackBtn = flowName === IMPORT_FOCUSED_FLOW && currentRoute === BASE_ROUTE;
+	const shouldHideBackBtn = currentRoute === `${ IMPORT_FOCUSED_FLOW }/${ BASE_ROUTE }`;
 
 	return (
 		<>

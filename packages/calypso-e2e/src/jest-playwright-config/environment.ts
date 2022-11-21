@@ -47,7 +47,6 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	private testFilename: string;
 	private testFilePath: string;
 	private testArtifactsPath: string;
-	private testFailureArtifacts: string[];
 	private failure?: {
 		type: 'hook' | 'test';
 		name: string;
@@ -66,7 +65,6 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 		this.testFilePath = context.testPath;
 		this.testFilename = path.parse( context.testPath ).name;
 		this.testArtifactsPath = '';
-		this.testFailureArtifacts = [];
 		this.allure = this.initializeAllureReporter( config );
 	}
 
@@ -255,10 +253,31 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 			case 'hook_failure':
 				this.allure?.endHook( event.error ?? event.hook.asyncError );
 				this.failure = { type: 'hook', name: event.hook.type };
+				// Jest does not treat hook failures as actual failures, so output are
+				// suppressed. Manually display the error.
+				console.error(
+					`ERROR: ${ event.hook.parent.name } > ${ event.hook.type }\n\n`,
+					event.error,
+					'\n'
+				);
 				break;
-			case 'test_fn_start': {
-				// Use `test_fn_start` event instead of `test_start` to filter
-				// out hooks.
+			case 'test_start':
+				// This event is fired not only for test steps but also the hooks.
+				// Precisely speaking, this event is fired after the `beforeAll` hooks
+				// but prior to the `beforeEach` as well.
+				// This means that stats for test results will be muddled if any `beforeEach`
+				// hooks are present.
+				// In addition, the following code snippet is replicated from `test_fn_start`
+				// due to https://github.com/Automattic/wp-calypso/pull/70154.
+				// Without this snippet, Jest will continue executing test steps within the
+				// nested `describe` block despite a failure in an earlier step.
+				if ( this.failure?.type === 'test' ) {
+					event.test.mode = 'skip';
+				}
+			case 'test_fn_start':
+				// This event is fired after both the `beforeAll` and `beforeEach` hooks.
+				// Since this event fires after `beforeEach` hooks, it is the best way to detect
+				// an actual `it/test` step as having started.
 				// See https://github.com/facebook/jest/blob/main/packages/jest-types/src/Circus.ts#L132-L133
 				this.allure?.startTestStep( event.test, state, this.testFilename );
 				// If a test has failed, skip rest of the steps.
@@ -266,7 +285,6 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 					event.test.mode = 'skip';
 				}
 				break;
-			}
 			case 'test_skip':
 				this.allure?.startTestStep( event.test, state, this.testFilename );
 				this.allure?.pendingTestStep( event.test );
@@ -278,10 +296,6 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 			case 'test_fn_failure': {
 				this.failure = { type: 'test', name: event.test.name };
 				this.allure?.failTestStep( event.error );
-				// Store the failing test's artifact path if it hasn't yet.
-				if ( ! this.testFailureArtifacts.includes( this.testArtifactsPath ) ) {
-					this.testFailureArtifacts.push( this.testArtifactsPath );
-				}
 				break;
 			}
 			case 'test_done': {
@@ -330,8 +344,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 						contextIndex++;
 					}
 					// Print paths to captured artifacts for faster triaging.
-					console.log( `Artifacts for failed tests:` );
-					this.testFailureArtifacts.forEach( ( path ) => console.log( path ) );
+					console.error( `Artifacts for ${ this.testFilename }: ${ this.testArtifactsPath }` );
 				}
 
 				// Regardless of pass/fail status, close the browser instance.
