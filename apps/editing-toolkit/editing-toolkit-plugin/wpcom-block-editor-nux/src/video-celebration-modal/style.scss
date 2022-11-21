@@ -24,4 +24,14 @@
 			}
 		}
 	}
+
+	.components-modal__header {
+		button {
+			svg {
+				path {
+					transform: scale(1);
+				}
+			}
+		}
+	}
 }
