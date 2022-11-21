@@ -424,7 +424,7 @@ class Login extends Component {
 			);
 		} else if ( fromSite ) {
 			// if redirected from Calypso URL with a site slug, offer a link to that site's frontend
-			postHeader = <VisitSite siteSlug={ fromSite } />;
+			postHeader = <VisitSite linkWithSiteName={ false } siteSlug={ fromSite } />;
 		} else if ( isP2Login ) {
 			headerText = translate( 'Log in' );
 			postHeader = (
