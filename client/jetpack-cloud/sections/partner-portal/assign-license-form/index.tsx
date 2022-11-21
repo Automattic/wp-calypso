@@ -43,7 +43,7 @@ export default function AssignLicenseForm( {
 	search: string;
 } ) {
 	const translate = useTranslate();
-	const [ selectedSite, setSelectedSite ] = useState( { ID: 1, domain: '' } );
+	const [ selectedSite, setSelectedSite ] = useState( { ID: null, domain: null } );
 	const licenseKey = getQueryArg( window.location.href, 'key' ) as string;
 	const products = getQueryArg( window.location.href, 'products' ) as string;
 	const licenseKeysArray = products !== undefined ? products.split( ',' ) : [ licenseKey ];
@@ -109,7 +109,7 @@ export default function AssignLicenseForm( {
 					<Button
 						primary
 						className="assign-license-form__assign-now"
-						disabled={ ! selectedSite }
+						disabled={ ! selectedSite?.ID }
 						busy={ isLoading }
 						onClick={ assignLicenses }
 					>
