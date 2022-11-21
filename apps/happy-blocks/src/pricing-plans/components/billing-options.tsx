@@ -13,12 +13,12 @@ interface Props {
 	onChange: ( value?: string ) => void;
 }
 
-const getAnnuallyDiscount = ( annuallyPlan?: BlockPlan, monthlyPlan?: BlockPlan ) => {
-	if ( ! annuallyPlan || ! monthlyPlan ) {
+const getAnnualDiscount = ( annualPlan?: BlockPlan, monthlyPlan?: BlockPlan ) => {
+	if ( ! annualPlan || ! monthlyPlan ) {
 		return null;
 	}
 
-	const annualPricePerMonth = annuallyPlan.rawPrice / 12;
+	const annualPricePerMonth = annualPlan.rawPrice / 12;
 
 	const discountRate = Math.round(
 		( 100 * ( monthlyPlan.rawPrice - annualPricePerMonth ) ) / monthlyPlan.rawPrice
@@ -43,14 +43,14 @@ const BillingOptions: FunctionComponent< Props > = ( { plans, value, onChange } 
 			? selectedPlan
 			: plans.find( ( plan ) => plan.term === TERM_MONTHLY && plan.type === selectedPlan.type );
 
-	const annuallyPlan =
+	const annualPlan =
 		selectedPlan.term === TERM_ANNUALLY
 			? selectedPlan
 			: plans.find( ( plan ) => plan.term === TERM_ANNUALLY && plan.type === selectedPlan.type );
 
-	const annuallyDiscount = getAnnuallyDiscount( annuallyPlan, monthlyPlan );
+	const annualDiscount = getAnnualDiscount( annualPlan, monthlyPlan );
 
-	const billings = [ monthlyPlan, annuallyPlan ].filter( Boolean );
+	const billings = [ monthlyPlan, annualPlan ].filter( Boolean );
 
 	return (
 		<fieldset className="hb-pricing-plans-embed__billing-options">
@@ -68,8 +68,8 @@ const BillingOptions: FunctionComponent< Props > = ( { plans, value, onChange } 
 						{ planBilling?.term === TERM_MONTHLY
 							? __( 'Monthly', 'happy-blocks' )
 							: __( 'Annually', 'happy-blocks' ) }
-						{ annuallyDiscount && planBilling?.term === TERM_ANNUALLY && (
-							<Promo>({ annuallyDiscount })</Promo>
+						{ annualDiscount && planBilling?.term === TERM_ANNUALLY && (
+							<Promo>({ annualDiscount })</Promo>
 						) }
 					</label>
 				</div>
