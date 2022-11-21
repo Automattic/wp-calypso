@@ -4,11 +4,12 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 16px;
+	padding: 12px 16px 12px 16px;
 	left: 0;
 	right: 0;
-	background: var(--studio-gray-0);
+	background: #fff;
 	z-index: 179;
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
 
 	p {
 		margin-bottom: 0;

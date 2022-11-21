@@ -11,7 +11,7 @@ export function MainBanner( { sectionName, siteIntent, siteSlug } ) {
 			<div className="layout__launchpad-banner-content">
 				🚀
 				<p>
-					Finish onboarding in the Launchpad. Return by clicking
+					Finish your onboarding in the Launchpad! Return by clicking
 					<a href={ `/setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }` }> here</a>
 				</p>
 			</div>
