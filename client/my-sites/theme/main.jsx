@@ -753,6 +753,9 @@ class ThemeSheet extends Component {
 			canUserUploadThemes,
 			isWPForTeamsSite,
 			isLoggedIn,
+			isExternallyManagedTheme,
+			isPurchased,
+			isSiteEligibleForManagedExternalThemes,
 		} = this.props;
 
 		const analyticsPath = `/theme/${ id }${ section ? '/' + section : '' }${
@@ -987,8 +990,6 @@ export default connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		const isStandaloneJetpack = isJetpack && ! isAtomic;
 
-		const isExternallyManagedTheme = getIsExternallyManagedTheme( state, theme?.id );
-
 		return {
 			...theme,
 			id,
@@ -1019,7 +1020,7 @@ export default connect(
 			demoUrl: getThemeDemoUrl( state, id, siteId ),
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 			softLaunched: theme?.soft_launched,
-			isExternallyManagedTheme,
+			isExternallyManagedTheme: getIsExternallyManagedTheme( state, theme?.id ),
 			isSiteEligibleForManagedExternalThemes: getIsSiteEligibleForManagedExternalThemes(
 				state,
 				siteId
