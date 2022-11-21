@@ -12,7 +12,6 @@ interface Props {
 const PromotionalPopover = ( { contextRef }: Props ) => {
 	const { hasSeenPromotion, doneLoading } = useSelect(
 		( select ) => ( {
-			unreadCount: select( HELP_CENTER_STORE ).getUnreadCount(),
 			hasSeenPromotion: select( HELP_CENTER_STORE ).getHasSeenPromotionalPopover(),
 			doneLoading: select( 'core/data' ).hasFinishedResolution(
 				HELP_CENTER_STORE,
@@ -32,6 +31,10 @@ const PromotionalPopover = ( { contextRef }: Props ) => {
 			location,
 		} );
 	};
+
+	if ( ! contextRef ) {
+		return null;
+	}
 
 	return (
 		<>
