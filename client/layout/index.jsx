@@ -307,6 +307,9 @@ class Layout extends Component {
 				{ isJetpackCloud() && (
 					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
 				) }
+				{ config.isEnabled( 'layout/launchpad-banner' ) && (
+					<MainBanner sectionName={ this.props.sectionName } />
+				) }
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
 					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
@@ -325,9 +328,6 @@ class Layout extends Component {
 						{ this.props.secondary }
 					</div>
 					<div id="primary" className="layout__primary">
-						{ config.isEnabled( 'layout/launchpad-banner' ) && (
-							<MainBanner sectionName={ this.props.sectionName } />
-						) }
 						{ this.props.primary }
 					</div>
 				</div>
