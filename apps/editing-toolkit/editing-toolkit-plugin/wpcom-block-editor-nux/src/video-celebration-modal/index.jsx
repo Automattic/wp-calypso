@@ -93,20 +93,20 @@ const VideoCelebrationModalInner = () => {
 			className="wpcom-site-editor-seller-celebration-modal"
 			title={ __( "You've added your first video!", 'full-site-editing' ) }
 			description={ __(
-				'Feel free to continue editing or go back to setup and launch your site.',
+				'Feel free to keep editing or continue and launch your site.',
 				'full-site-editing'
 			) }
 			imageSrc={ fireworksImage }
 			actionButtons={
 				<>
-					<Button onClick={ closeModal }>{ __( 'Continue editing', 'full-site-editing' ) }</Button>
+					<Button onClick={ closeModal }>{ __( 'Keep editing', 'full-site-editing' ) }</Button>
 					<Button
 						isPrimary
 						href={ `https://wordpress.com/setup/videopress/launchpad?siteSlug=${ window.location.hostname }` }
 						target="__blank"
 						rel="noopener noreferrer"
 					>
-						{ __( 'Back to setup', 'full-site-editing' ) }
+						{ __( 'Continue and launch', 'full-site-editing' ) }
 					</Button>
 				</>
 			}
