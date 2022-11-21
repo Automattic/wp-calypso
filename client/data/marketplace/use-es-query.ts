@@ -131,7 +131,7 @@ export const getESPluginsInfiniteQueryParams = (
 		search( {
 			query: searchTerm,
 			author,
-			groupId: 'woocommerce',
+			groupId: 'marketplace',
 			category: options.category,
 			pageHandle: pageParam + '',
 			pageSize,
