@@ -11,6 +11,8 @@ const initialState: ProductsStore = {
 	selectedProductSlugs: [],
 };
 
+const EMPTY_ARRAY: string[] = [];
+
 const selectedProductSlugs = ( state = initialState.selectedProductSlugs, action: AnyAction ) => {
 	switch ( action.type ) {
 		case JETPACK_PARTNER_PORTAL_SELECTED_PRODUCT_SLUGS_ADD:
@@ -18,7 +20,7 @@ const selectedProductSlugs = ( state = initialState.selectedProductSlugs, action
 		case JETPACK_PARTNER_PORTAL_SELECTED_PRODUCT_SLUGS_REMOVE:
 			return state.filter( ( productSlug ) => ! action.productSlugs.includes( productSlug ) );
 		case JETPACK_PARTNER_PORTAL_SELECTED_PRODUCT_SLUGS_CLEAR:
-			return [];
+			return EMPTY_ARRAY;
 	}
 
 	return state;
