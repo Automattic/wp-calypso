@@ -151,7 +151,7 @@ registerBlockType( 'happy-blocks/forum-topic', {
 		<Edit
 			urlPattern={ FORUM_TOPIC_PATTERN }
 			title={ __( 'WordPress.com Forums topic URL', 'happy-blocks' ) }
-			fetch={ fetchSupportPageAttributes }
+			fetch={ fetchForumTopicAttributes }
 			{ ...props }
 		/>
 	),
