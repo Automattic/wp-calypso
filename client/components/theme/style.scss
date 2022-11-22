@@ -4,7 +4,7 @@ $soft-launch-badge-font-size: 0.725rem;
 .theme {
 	padding: 0;
 	margin: 0 10px 20px;
-	width: 230px; // Fixed width gives desired wrapping...
+	width: 320px; // Fixed width gives desired wrapping...
 	flex-grow: 1; // ...grow allows expansion to fill space after wrap.
 	transition: all 100ms ease-in-out;
 
