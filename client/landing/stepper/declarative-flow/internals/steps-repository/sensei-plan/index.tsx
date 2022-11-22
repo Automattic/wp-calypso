@@ -1,11 +1,10 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useState } from '@wordpress/element';
+import { useCallback, useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { Plans } from 'calypso/../packages/data-stores/src';
 import { SENSEI_FLOW, SenseiStepContainer } from 'calypso/../packages/onboarding/src';
-import { PlansIntervalToggle } from 'calypso/../packages/plans-grid/src';
 import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
 import PlanItem from 'calypso/../packages/plans-grid/src/plans-table/plan-item';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
@@ -21,14 +20,22 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
+import { SenseiStepError } from '../sensei-setup/sensei-step-error';
 import { SenseiStepProgress } from '../sensei-setup/sensei-step-progress';
+import { Tagline, Title, PlansIntervalToggle } from './components';
 import type { Step } from '../../types';
-import 'calypso/../packages/plans-grid/src/plans-grid/style.scss';
-import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
+import type { Props as PlanItemProps } from 'calypso/../packages/plans-grid/src/plans-table/plan-item';
+import './styles.scss';
 
-const SenseiPlan: Step = ( { flow } ) => {
+enum Status {
+	Initial,
+	Bundling,
+	Error,
+}
+
+const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 	const [ billingPeriod, setBillingPeriod ] = useState< Plans.PlanBillingPeriod >( 'ANNUALLY' );
-	const [ isBundling, setIsBundling ] = useState< boolean >( false );
+	const [ status, setStatus ] = useState< Status >( Status.Initial );
 
 	const { __ } = useI18n();
 	const locale = useLocale();
@@ -57,9 +64,15 @@ const SenseiPlan: Step = ( { flow } ) => {
 		woothemesSenseiData?.variations?.[ billingPeriod === 'ANNUALLY' ? 'yearly' : 'monthly' ];
 	const woothemesSenseiProductSlug = getProductSlugByPeriodVariation( variation, productList );
 
+	const goToDomainStep = useCallback( () => {
+		if ( goToStep ) {
+			goToStep( 'senseiDomain' );
+		}
+	}, [ goToStep ] );
+
 	const onPlanSelect = async () => {
 		try {
-			setIsBundling( true );
+			setStatus( Status.Bundling );
 			await createSenseiSite( {
 				username: currentUser?.username || '',
 				languageSlug: locale,
@@ -110,48 +123,79 @@ const SenseiPlan: Step = ( { flow } ) => {
 				`/checkout/${ newSite?.site_slug }?signup=1&redirect_to=${ redirectTo }`
 			);
 		} catch ( err ) {
-			/**
-			 * @todo Need to report user that something went wrong.
-			 */
+			setStatus( Status.Error );
 		}
 	};
 
+	const features: PlanItemProps[ 'features' ] = [
+		{
+			name: __( 'Priority live chat support' ),
+			requiresAnnuallyBilledPlan: true,
+		},
+		{
+			name: __( 'Unlimited courses and students' ),
+			requiresAnnuallyBilledPlan: false,
+		},
+		{
+			name: __( 'Interactive videos and lessons' ),
+			requiresAnnuallyBilledPlan: false,
+		},
+		{
+			name: __( 'Quizzes and certificates' ),
+			requiresAnnuallyBilledPlan: false,
+		},
+		{
+			name: __( 'Sell courses and subscriptions' ),
+			requiresAnnuallyBilledPlan: false,
+		},
+		{
+			name: __( '200GB file and video storage' ),
+			requiresAnnuallyBilledPlan: false,
+		},
+		{
+			name: __( 'Best-in-class hosting' ),
+			requiresAnnuallyBilledPlan: false,
+		},
+		{
+			name: __( 'Advanced Jetpack features' ),
+			requiresAnnuallyBilledPlan: false,
+		},
+	];
+
 	return (
 		<SenseiStepContainer stepName="senseiPlan" recordTracksEvent={ recordTracksEvent }>
-			{ isBundling ? (
-				<SenseiStepProgress>{ __( 'Preparing Your Bundle' ) }</SenseiStepProgress>
-			) : (
-				<div className="plans-grid">
+			{ status === Status.Initial && (
+				<>
+					<Title>{ __( 'Choose Monthly or Annually' ) }</Title>
+
+					<Tagline>
+						{ __( 'Sensei + WooCommerce + Jetpack + WordPress.com in the ultimate Course Bundle' ) }
+					</Tagline>
+
 					<PlansIntervalToggle
 						intervalType={ billingPeriod }
 						onChange={ handlePlanBillingPeriodChange }
 						maxMonthlyDiscountPercentage={ maxAnnualDiscount }
-						className="plans-grid__toggle"
 					/>
 
-					<div className="plans-grid__table">
-						<div className="plans-grid__table-container">
-							<div className="plans-table">
-								<span>
-									<PlanItem
-										popularBadgeVariation="ON_TOP"
-										allPlansExpanded
-										slug="business"
-										domain={ domain }
-										CTAVariation="NORMAL"
-										features={ planObject?.features ?? [] }
-										billingPeriod={ billingPeriod }
-										name="business"
-										onSelect={ onPlanSelect }
-										onPickDomainClick={ undefined }
-										popularBadgeText={ __( 'Best for Video' ) }
-									/>
-								</span>
-							</div>
-						</div>
-					</div>
-				</div>
+					<PlanItem
+						allPlansExpanded
+						slug="business"
+						domain={ domain }
+						CTAVariation="NORMAL"
+						features={ features }
+						billingPeriod={ billingPeriod }
+						name={ __( 'Sensei Pro Bundle' ) }
+						onSelect={ onPlanSelect }
+						onPickDomainClick={ goToDomainStep }
+						CTAButtonLabel={ __( 'Get Sensei Pro Bundle' ) }
+					/>
+				</>
 			) }
+			{ status === Status.Bundling && (
+				<SenseiStepProgress>{ __( 'Preparing Your Bundle' ) }</SenseiStepProgress>
+			) }
+			{ status === Status.Error && <SenseiStepError /> }
 		</SenseiStepContainer>
 	);
 };
