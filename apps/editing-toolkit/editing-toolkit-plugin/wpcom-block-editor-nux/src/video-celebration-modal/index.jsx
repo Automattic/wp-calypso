@@ -92,7 +92,7 @@ const VideoCelebrationModalInner = () => {
 		<NuxModal
 			isOpen={ isModalOpen }
 			className="wpcom-site-editor-video-celebration-modal"
-			title={ __( "You've added your first video!", 'full-site-editing' ) }
+			title={ __( 'You’ve added your first video!', 'full-site-editing' ) }
 			description={ __(
 				'Feel free to keep editing or continue and launch your site.',
 				'full-site-editing'
