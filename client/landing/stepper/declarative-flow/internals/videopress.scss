@@ -171,6 +171,12 @@ body.is-videopress-stepper {
 			gap: 10px;
 		}
 
+		.launchpad__task:nth-last-child(2) {
+			.launchpad__checklist-item {
+				border-bottom: none;
+			}
+		}
+
 		.launchpad__checklist-item {
 			color: $videopress-theme-base-text-color;
 			border-bottom: 1px solid rgba(255, 255, 255, 0.2);
@@ -179,10 +185,6 @@ body.is-videopress-stepper {
 				color: $videopress-theme-yellow;
 				fill: $videopress-theme-yellow;
 				border-color: #474747;
-			}
-
-			&:last-of-type {
-				border-bottom: none;
 			}
 		}
 
