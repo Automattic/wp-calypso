@@ -23,6 +23,7 @@ const TotalCost = () => {
 			args: {
 				formattedTotalCost,
 			},
+			comment: `%(formattedTotalCost)s is a price formatted for display in the user's locale. In en-us it would be like "$4.00"`,
 			components: {
 				b: <b />,
 			},
