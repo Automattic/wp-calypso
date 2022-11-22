@@ -33,14 +33,14 @@ describe( 'PurchaseMeta', () => {
 		},
 		( state ) => state
 	);
+
 	it( 'does render "Free with Plan"', () => {
 		render(
 			<ReduxProvider store={ store }>
 				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ false }
-					purchaseId={ false }
+					hasLoadedPurchasesFromServer={ true }
+					purchaseId={ 1 }
 					siteSlug="test"
-					//purchase={ purchase }
 					isDataLoading={ false }
 				/>
 			</ReduxProvider>
