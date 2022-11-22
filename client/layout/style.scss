@@ -64,6 +64,7 @@ body.is-focus-sites {
 
 	// Tablets
 	@include breakpoint-deprecated( "<960px" ) {
+		// We need to change top padding conditionally to 119px when launchpad banner is shown.
 		padding: 71px 24px 24px calc(var(--sidebar-width-min) + 24px + 1px);
 
 		.has-no-sidebar & {
@@ -124,6 +125,8 @@ body.is-focus-sites {
 
 	@include breakpoint-deprecated( "<960px" ) {
 		width: var(--sidebar-width-min);
+		// We need to change top padding conditionally to 48px when launchpad banner is shown.
+		padding-top: 48px;
 	}
 
 	@include breakpoint-deprecated( "<660px" ) {
