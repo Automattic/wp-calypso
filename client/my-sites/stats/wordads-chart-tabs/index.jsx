@@ -145,7 +145,7 @@ class WordAdsChartTabs extends Component {
 		];
 
 		return (
-			<div>
+			<>
 				{ siteId && <QuerySiteStats statType="statsAds" siteId={ siteId } query={ query } /> }
 
 				{ isNewFeatured ? (
@@ -187,7 +187,7 @@ class WordAdsChartTabs extends Component {
 						/>
 					</Card>
 				) }
-			</div>
+			</>
 		);
 	}
 }

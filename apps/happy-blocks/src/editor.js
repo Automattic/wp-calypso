@@ -1,2 +1,2 @@
 import './pricing-plans';
-import './support-page';
+import './support-content';

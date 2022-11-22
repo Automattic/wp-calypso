@@ -183,7 +183,7 @@ class WordAds extends Component {
 				<div className="stats">
 					<FormattedHeader
 						brandFont
-						className="wordads__section-header"
+						className="stats__section-header"
 						headerText={ translate( 'Jetpack Stats' ) }
 						subHeaderText={ translate( 'See how ads are performing on your site.' ) }
 						align="left"
