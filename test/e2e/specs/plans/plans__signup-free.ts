@@ -38,7 +38,7 @@ describe(
 			it( 'Navigate to Signup page', async function () {
 				const loginPage = new LoginPage( page );
 				await loginPage.visit();
-				await loginPage.clickSignUp();
+				await loginPage.clickCreateNewAccount();
 			} );
 
 			it( 'Sign up as new user', async function () {

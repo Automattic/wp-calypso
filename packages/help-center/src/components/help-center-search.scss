@@ -285,7 +285,7 @@
 				}
 
 				> svg:last-child {
-					fill: unset;
+					fill: var(--studio-gray-20);
 					margin-left: auto;
 				}
 			}

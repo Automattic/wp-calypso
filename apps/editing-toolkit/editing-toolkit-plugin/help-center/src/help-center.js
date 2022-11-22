@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
-import HelpCenter, { HelpIcon } from '@automattic/help-center';
+import HelpCenter, { HelpIcon, PromotionalPopover } from '@automattic/help-center';
 import { LocaleProvider } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
@@ -16,6 +16,7 @@ import { whatsNewQueryClient } from '../../common/what-new-query-client';
 import CalypsoStateProvider from './CalypsoStateProvider';
 
 function HelpCenterContent() {
+	const [ helpIconRef, setHelpIconRef ] = useState();
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
 	const sectionName = useSelector( getSectionName );
 	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
@@ -46,14 +47,26 @@ function HelpCenterContent() {
 	}, [] );
 
 	const content = (
-		<Button
-			className={ cx( 'entry-point-button', 'help-center', { 'is-active': show } ) }
-			onClick={ handleToggleHelpCenter }
-			icon={ <HelpIcon newItems={ showHelpIconDot } /> }
-			label="Help"
-			aria-pressed={ show ? true : false }
-			aria-expanded={ show ? true : false }
-		></Button>
+		<>
+			<Button
+				className={ cx( 'entry-point-button', 'help-center', { 'is-active': show } ) }
+				onClick={ handleToggleHelpCenter }
+				icon={
+					<HelpIcon
+						ref={ ( ref ) => {
+							if ( ref !== helpIconRef ) {
+								setHelpIconRef( ref );
+							}
+						} }
+						newItems={ showHelpIconDot }
+					/>
+				}
+				label="Help"
+				aria-pressed={ show ? true : false }
+				aria-expanded={ show ? true : false }
+			/>
+			<PromotionalPopover contextRef={ helpIconRef } />
+		</>
 	);
 
 	return (

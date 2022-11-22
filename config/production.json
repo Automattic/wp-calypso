@@ -12,7 +12,6 @@
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"facebook_app_id": "2373049596",
 	"bilmur_url": "/wp-content/js/bilmur.min.js",
-	"olark_chat_identity": "7089-503-10-5123",
 	"dsp_stripe_pub_key": "pk_live_51LYYzQF53KN4RFN0ePTwefdm7seki4pRuc4a19gPMGUba5mzuosz0IBR0cp4T57FiBgxK911ky0LNwlX2IHbm0SS00uPHEQNBO",
 	"dsp_widget_js_src": "https://widgets.wp.com/promote/widget.js",
 	"features": {
@@ -90,7 +89,7 @@
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
-		"plugins/ssr-categories": false,
+		"plugins/ssr-categories": true,
 		"plugins/ssr-details": false,
 		"plugins/ssr-landing": true,
 		"post-editor/checkout-overlay": true,

@@ -98,17 +98,19 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { 
 	const flowNameFromParam = useQuery().get( 'flow' );
 	const flowNameFromPathName = location.pathname.split( '/' )[ 1 ];
 	const recurType = useQuery().get( 'recur' );
-	let flow = siteSetupFlow;
 
 	// keep supporting the `flow` query param for backwards compatibility
 	if ( availableFlows.find( ( flow ) => flow.flowName === flowNameFromParam ) ) {
 		return <Redirect to={ `/${ flowNameFromParam }` } />;
 	}
 
+	let flow =
+		availableFlows.find( ( f ) => f.flowName === flowNameFromPathName )?.pathToFlow ||
+		siteSetupFlow;
 	if ( anchorFmPodcastId ) {
 		flow = anchorFmFlow;
-	} else if ( flowNameFromPathName === ecommerceFlow.name ) {
-		flow = ecommerceFlow;
+	}
+	if ( flow?.name === ecommerceFlow.name ) {
 		const isValidRecurType =
 			recurType && Object.values( ecommerceFlowRecurTypes ).includes( recurType );
 		if ( isValidRecurType ) {
@@ -116,12 +118,6 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { 
 		} else {
 			setEcommerceFlowRecurType( ecommerceFlowRecurTypes.YEARLY );
 		}
-	} else {
-		availableFlows.forEach( ( currentFlow ) => {
-			if ( currentFlow.flowName === flowNameFromPathName ) {
-				flow = currentFlow.pathToFlow;
-			}
-		} );
 	}
 
 	user && receiveCurrentUser( user as UserStore.CurrentUser );

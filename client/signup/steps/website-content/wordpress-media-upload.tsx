@@ -6,7 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, MouseEvent, useState } from 'react';
 import { useAddMedia } from 'calypso/data/media/use-add-media';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { Label, SubLabel } from 'calypso/signup/accordion-form/form-components';
+import { LabelLink, SubLabel } from 'calypso/signup/accordion-form/form-components';
 import { Media, MediaUploadType } from 'calypso/state/signup/steps/website-content/schema';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -215,7 +215,7 @@ export function WordpressMediaUpload( {
 							/>
 						</CroppedImage>
 						{ mediaType === 'VIDEO' && <CroppedLabel>{ caption }</CroppedLabel> }
-						<Label>{ translate( 'Replace' ) }</Label>
+						<LabelLink>{ translate( 'Replace' ) }</LabelLink>
 					</FileSelectThumbnailContainer>
 				</>
 			);
@@ -231,7 +231,7 @@ export function WordpressMediaUpload( {
 					<FileSelectThumbnailContainer>
 						<FileInput type="file" onChange={ onPick } accept={ allowedFileTypesString } />
 						<MediaPlaceholder mediaType={ mediaType } />
-						<Label>{ translate( 'Choose file' ) }</Label>
+						<LabelLink>{ translate( 'Choose file' ) }</LabelLink>
 						<SubLabel color="red">{ translate( 'Image upload failed' ) }</SubLabel>
 					</FileSelectThumbnailContainer>
 				</>
@@ -244,7 +244,7 @@ export function WordpressMediaUpload( {
 					<FileSelectThumbnailContainer>
 						<FileInput type="file" onChange={ onPick } accept={ allowedFileTypesString } />
 						<MediaPlaceholder mediaType={ mediaType } />
-						<Label>{ translate( 'Choose file' ) }</Label>
+						<LabelLink>{ translate( 'Choose file' ) }</LabelLink>
 						{ /* <SubLabel>{ translate( 'or drag here')}</SubLabel> */ }
 					</FileSelectThumbnailContainer>
 				</>
