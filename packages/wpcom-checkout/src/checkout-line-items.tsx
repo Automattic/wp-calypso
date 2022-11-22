@@ -25,6 +25,7 @@ import {
 } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
+import { useViewportMatch } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren } from 'react';
 import { getLabel, getSublabel } from './checkout-labels';
@@ -103,7 +104,9 @@ export const CouponLineItem = styled( WPCouponLineItem )< {
 `;
 
 const GiftBadgeWrapper = styled.span`
-	width: 100%;
+	@media ( max-width: 660px ) {
+		width: 100%;
+	}
 `;
 
 const GiftBadge = styled.span`
@@ -871,6 +874,7 @@ function WPLineItem( {
 } > ) {
 	const id = product.uuid;
 	const translate = useTranslate();
+	const isMobile = useViewportMatch( 'small', '<' );
 	const hasBundledDomainsInCart = responseCart.products.some(
 		( product ) =>
 			( product.is_domain_registration || product.product_slug === 'domain_transfer' ) &&
@@ -916,6 +920,12 @@ function WPLineItem( {
 		products: [ product ],
 	} );
 
+	const giftBadgeElement = (
+		<GiftBadgeWrapper>
+			<GiftBadge>{ translate( 'Gift' ) }</GiftBadge>
+		</GiftBadgeWrapper>
+	);
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
@@ -923,13 +933,10 @@ function WPLineItem( {
 			data-e2e-product-slug={ productSlug }
 			data-product-type={ isPlan( product ) ? 'plan' : product.product_slug }
 		>
-			{ responseCart.is_gift_purchase && (
-				<GiftBadgeWrapper>
-					<GiftBadge>{ translate( 'Gift' ) }</GiftBadge>
-				</GiftBadgeWrapper>
-			) }
+			{ isMobile && responseCart.is_gift_purchase && giftBadgeElement }
 			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
 				{ label }
+				{ ! isMobile && responseCart.is_gift_purchase && giftBadgeElement }
 			</LineItemTitle>
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 				<LineItemPrice
