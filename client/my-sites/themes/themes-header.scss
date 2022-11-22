@@ -3,17 +3,22 @@
 
 .themes__header {
 	display: flex;
-
+	background: white;
 	.themes__page-heading {
 		width: 100%;
 	}
+}
+
+.page-sub-header {
+	font-size: $font-body-small;
+	margin-bottom: 0;
 }
 
 .themes__install-theme-button-container {
 	margin: auto;
 	margin-right: 16px;
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@include breakpoint-deprecated(">660px") {
 		margin-right: 0;
 		margin-bottom: 17px;
 	}
@@ -32,10 +37,9 @@ body.is-section-themes-i4 .themes__header {
 	border-bottom: 1px solid var(--color-neutral-5);
 	box-sizing: border-box;
 	display: flex;
-	margin: 32px 0;
-	min-height: 70px;
+	margin: 0 0 32px;
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@include breakpoint-deprecated(">660px") {
 		margin-left: -24px;
 		margin-right: -24px;
 		padding: 0 48px;
@@ -44,18 +48,18 @@ body.is-section-themes-i4 .themes__header {
 	@include break-large {
 		margin-left: -32px;
 		margin-right: -32px;
-		padding: 0 64px;
+		padding: 24px 32px;
 	}
 
 	.themes__page-heading h1 {
 		color: var(--color-neutral-100);
-		font-size: 0.875rem;
+		font-size: $font-title-small;
 		font-weight: 500;
 		line-height: 20px;
-		margin: 0;
+		margin-bottom: 8px;
 		margin-left: 16px;
 
-		@include breakpoint-deprecated( ">660px" ) {
+		@include breakpoint-deprecated(">660px") {
 			margin-left: 0;
 		}
 	}
@@ -64,7 +68,7 @@ body.is-section-themes-i4 .themes__header {
 		margin: 0;
 		margin-right: 16px;
 
-		@include breakpoint-deprecated( ">660px" ) {
+		@include breakpoint-deprecated(">660px") {
 			margin-right: 0;
 		}
 
