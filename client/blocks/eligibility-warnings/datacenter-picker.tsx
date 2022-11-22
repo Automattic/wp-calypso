@@ -3,7 +3,7 @@ import { localize, LocalizeProps, translate } from 'i18n-calypso';
 
 const DatacenterOptions = [
 	{
-		value: undefined,
+		value: '',
 		label: translate( 'Automatically place my site in the best datacenter' ),
 	},
 	{
@@ -24,7 +24,7 @@ const DatacenterOptions = [
 	},
 ];
 
-const Form = styled.form( {
+const Container = styled.div( {
 	marginTop: '10px',
 } );
 
@@ -32,21 +32,33 @@ const Label = styled.label( {
 	display: 'block',
 } );
 
-const DatacenterPicker = ( { translate }: { translate: LocalizeProps[ 'translate' ] } ) => {
+interface ExternalProps {
+	value: string;
+	onChange: () => void;
+}
+
+type Props = ExternalProps & LocalizeProps;
+
+const DatacenterPicker = ( { translate, value, onChange }: Props ) => {
 	return (
-		<div>
+		<Container role="radiogroup">
 			{ translate( 'Choose a datacenter for your site:' ) }
-			<Form>
-				{ DatacenterOptions.map( ( option ) => {
-					return (
-						<Label key={ option.label }>
-							<input className="form-radio" name="datacenter" type="radio" value={ option.value } />
-							{ option.label }
-						</Label>
-					);
-				} ) }
-			</Form>
-		</div>
+			{ DatacenterOptions.map( ( option ) => {
+				return (
+					<Label key={ option.label }>
+						<input
+							className="form-radio"
+							name="geo_affinity"
+							type="radio"
+							value={ option.value }
+							checked={ value === option.value }
+							onChange={ () => onChange( option.value ) }
+						/>
+						{ option.label }
+					</Label>
+				);
+			} ) }
+		</Container>
 	);
 };
 

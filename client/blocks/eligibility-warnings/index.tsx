@@ -15,6 +15,7 @@ import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { includes } from 'lodash';
 import page from 'page';
+import { useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
@@ -85,6 +86,8 @@ export const EligibilityWarnings = ( {
 		isEligibleForProPlan( state, siteId || undefined )
 	);
 
+	const [ selectedGeoAffinity, setSelectedGeoAffinity ] = useState( '' );
+
 	const showWarnings = warnings.length > 0 && ! hasBlockingHold( listHolds );
 	const classes = classNames(
 		'eligibility-warnings',
@@ -101,8 +104,9 @@ export const EligibilityWarnings = ( {
 	const makeCurrentSitePublic = () => makeSitePublic( siteId );
 
 	const logEventAndProceed = () => {
+		const options = { geo_affinity: selectedGeoAffinity };
 		if ( standaloneProceed ) {
-			onProceed();
+			onProceed( options );
 			return;
 		}
 		if ( siteRequiresUpgrade( listHolds ) ) {
@@ -119,7 +123,7 @@ export const EligibilityWarnings = ( {
 			makeCurrentSitePublic();
 			return;
 		}
-		onProceed();
+		onProceed( options );
 	};
 
 	const showThisSiteIsEligibleMessage =
@@ -204,7 +208,9 @@ export const EligibilityWarnings = ( {
 					compact={ true }
 					header={ translate( 'Advanced Options' ) }
 				>
-					<DatacenterPicker />
+					<form>
+						<DatacenterPicker value={ selectedGeoAffinity } onChange={ setSelectedGeoAffinity } />
+					</form>
 				</FoldableCard>
 			) }
 
@@ -411,8 +417,8 @@ function mergeProps(
 		ctaName = 'calypso-performance-features-activate-nudge';
 	}
 
-	const onProceed = () => {
-		ownProps.onProceed();
+	const onProceed = ( options ) => {
+		ownProps.onProceed( options );
 		dispatchProps.trackProceed( { context } );
 	};
 

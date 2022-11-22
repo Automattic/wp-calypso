@@ -11,8 +11,8 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 const HostingActivate = ( { initiateTransfer, siteId, siteSlug, translate } ) => {
 	const backUrl = `/hosting-config/${ siteSlug }`;
 
-	const transferInitiate = () => {
-		initiateTransfer( siteId, null, null );
+	const transferInitiate = ( { geo_affinity = null } ) => {
+		initiateTransfer( siteId, null, null, geo_affinity );
 		page( backUrl );
 	};
 
