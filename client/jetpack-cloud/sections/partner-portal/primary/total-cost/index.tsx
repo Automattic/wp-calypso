@@ -16,16 +16,16 @@ const TotalCost = () => {
 		getTotalSelectedCost( state, allProducts ?? [] )
 	);
 	const currencyCode = allProducts && allProducts.length ? allProducts[ 0 ].currency : 'USD';
-	const formattedTotalCost = formatCurrency( totalCost, currencyCode );
+	const formattedTotalCost = <strong>{ formatCurrency( totalCost, currencyCode ) }</strong>;
 
 	const getTotalCostDisplayString = () => {
-		return translate( 'Total: {{b}}%(formattedTotalCost)s{{/b}}', {
+		return translate( 'Total: {{formattedTotalCost/}}', {
 			args: {
 				formattedTotalCost,
 			},
 			comment: `%(formattedTotalCost)s is a price formatted for display in the user's locale. In en-us it would be like "$4.00"`,
 			components: {
-				b: <b />,
+				formattedTotalCost,
 			},
 		} );
 	};
