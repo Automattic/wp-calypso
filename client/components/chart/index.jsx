@@ -109,10 +109,6 @@ function Chart( {
 
 	// Memoize data calculations to avoid performing them too often.
 	const { chartData, isEmptyChart, yMax } = useMemo( () => {
-		if ( ! hasResized ) {
-			return {};
-		}
-
 		const nextData = data.length <= maxBars ? data : data.slice( 0 - maxBars );
 		const nextVals = data.map( ( { value } ) => value );
 
@@ -123,10 +119,11 @@ function Chart( {
 		};
 	}, [ data, maxBars, hasResized ] );
 
+	// Recover the chart with data even if no sizing is updated on the first loading.
 	// If we don't have any sizing info yet, render an empty chart with the ref.
-	if ( ! hasResized ) {
-		return <div ref={ resizeRef } className="chart" />;
-	}
+	// if ( ! hasResized ) {
+	// 	return <div ref={ resizeRef } className="chart" />;
+	// }
 
 	// Otherwise, render full chart.
 	const { isTooltipVisible, tooltipContext, tooltipPosition, tooltipData } = tooltip;
