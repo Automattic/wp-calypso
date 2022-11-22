@@ -9,6 +9,7 @@ import { parse as parseQs, stringify as stringifyQs } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
+import { JetpackMobilePromoCard } from 'calypso/../packages/components/src/';
 import rocketImage from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import wordpressSeoIllustration from 'calypso/assets/images/illustrations/wordpress-seo-premium.svg';
@@ -21,6 +22,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
+import DotPager from 'calypso/components/dot-pager';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -409,20 +411,28 @@ class StatsSite extends Component {
 					</div>
 				</div>
 
-				<div className="stats-content-promo">
-					<PromoCardBlock
-						productSlug="wordpress-seo-premium"
-						impressionEvent="calypso_stats_wordpress_seo_premium_banner_view"
-						clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
-						headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
-						contentText={ translate(
-							'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
-						) }
-						ctaText={ translate( 'Learn more' ) }
-						image={ wordpressSeoIllustration }
-						href={ `/plugins/wordpress-seo-premium/${ slug }` }
-					/>
+				<div className="stats-traffic-promo-container">
+					<DotPager className="stats-traffic-promo-pager">
+						<div className="stats-content-promo-card">
+							<PromoCardBlock
+								productSlug="wordpress-seo-premium"
+								impressionEvent="calypso_stats_wordpress_seo_premium_banner_view"
+								clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
+								headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
+								contentText={ translate(
+									'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
+								) }
+								ctaText={ translate( 'Learn more' ) }
+								image={ wordpressSeoIllustration }
+								href={ `/plugins/wordpress-seo-premium/${ slug }` }
+							/>
+						</div>
+						<div className="stats-content-promo-card">
+							<JetpackMobilePromoCard className="mobile-apps-promo-card" />
+						</div>
+					</DotPager>
 				</div>
+
 				<JetpackColophon />
 			</div>
 		);
