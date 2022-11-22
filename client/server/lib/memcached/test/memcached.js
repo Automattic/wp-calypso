@@ -1,4 +1,7 @@
-import { cacheSet, cacheGet, createMemcachedClient, removeMemcachedClient } from '../';
+import { mockProcessStdout } from 'jest-mock-process';
+import { cacheSet, cacheGet, createMemcachedClient, removeMemcachedClient, doOperation } from '../';
+
+const mockStdout = mockProcessStdout();
 
 const TEST_ENV = 'test-memcached';
 let MOCK_SERVER_MEMCACHED_ENABLED = true;
@@ -43,6 +46,7 @@ describe( 'server memcached client enabled', () => {
 		MOCK_CACHE = {}; // Flush the cache.
 		MOCK_SIMULATE_ERROR = false;
 		MOCK_SERVER_MEMCACHED_ENABLED = true;
+		mockStdout.mockClear();
 	} );
 
 	it( 'should normalize cache keys with the environment', () => {
@@ -105,6 +109,43 @@ describe( 'server memcached client enabled', () => {
 		expect( await cacheGet( 'foo' ) ).toBeUndefined();
 
 		expect( await cacheSet( 'bar', 2 ) ).toBe( false );
+	} );
+
+	it( 'should log errors', async () => {
+		MOCK_SIMULATE_ERROR = true;
+		await cacheGet( 'foo' );
+
+		// The logger, bunyan, goes through stdout.
+		expect( mockStdout ).toHaveBeenCalledTimes( 1 );
+		const loggedMsg = mockStdout.mock.calls[ 0 ][ 0 ];
+		expect( JSON.parse( loggedMsg ) ).toEqual(
+			expect.objectContaining( {
+				err: expect.objectContaining( { message: 'Memcached get fail!!!' } ),
+			} )
+		);
+	} );
+
+	it( 'doOperation should throw an error if the operation takes too long', async () => {
+		const longOperation = () => new Promise( ( resolve ) => setTimeout( resolve, 1000000 ) );
+		let res;
+
+		try {
+			await doOperation( longOperation(), 'test' );
+		} catch ( e ) {
+			res = e.message;
+		}
+
+		expect( res ).toEqual( 'Memcached test operation timed out.' );
+	} );
+
+	it( "doOperation should resolve the value if it's fast enough", async () => {
+		const shortOperation = () =>
+			new Promise( ( resolve ) => setTimeout( () => resolve( 'test' ), 1 ) );
+		let res;
+		try {
+			res = await doOperation( shortOperation(), 'test' );
+		} catch ( e ) {}
+		expect( res ).toEqual( 'test' );
 	} );
 } );
 
