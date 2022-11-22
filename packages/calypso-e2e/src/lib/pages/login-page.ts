@@ -24,9 +24,13 @@ export class LoginPage {
 		const targetUrl = path ? `log-in/${ path }` : 'log-in';
 		// We are getting a pending status for https://wordpress.com/cspreport intermittently
 		// which causes the login to hang on networkidle when running the tests locally.
-		// This continues the route request.
+		// This fulfill's the route request with status 200.
 		// See https://github.com/Automattic/wp-calypso/issues/69294
-		await this.page.route( '**/cspreport', ( route ) => route.continue() );
+		await this.page.route( '**/cspreport', ( route ) => {
+			route.fulfill( {
+				status: 200,
+			} );
+		} );
 		return await this.page.goto( getCalypsoURL( targetUrl ) );
 	}
 
