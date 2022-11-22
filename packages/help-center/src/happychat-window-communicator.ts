@@ -90,7 +90,6 @@ export function useHCWindowCommunicator( isMinimized: boolean ) {
 									message,
 									planSlug: supportSite?.plan?.product_slug,
 									siteUrl: supportSite?.URL,
-									extraFields,
 								},
 								{ targetOrigin: event.origin }
 							);

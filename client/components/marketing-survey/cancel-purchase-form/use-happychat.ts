@@ -28,7 +28,7 @@ export default function useHappyChat() {
 		if ( isUninitialized ) {
 			dispatch( initConnection( getAuth() ) );
 		}
-	} );
+	}, [] );
 
 	return {
 		isInitialized: ! isUninitialized,
