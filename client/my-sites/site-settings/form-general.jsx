@@ -360,6 +360,8 @@ export class SiteSettingsFormGeneral extends Component {
 			siteIsAtomic,
 			translate,
 			shouldShowPremiumStylesNotice,
+			isSavingSettings,
+			hasSitePreviewLink,
 		} = this.props;
 
 		const blogPublic = parseInt( fields.blog_public, 10 );
@@ -377,6 +379,7 @@ export class SiteSettingsFormGeneral extends Component {
 				'is-coming-soon-disabled': isComingSoonDisabled,
 			}
 		);
+		const showPreviewLink = isEnabled( 'dev/share-site-for-preview' ) && hasSitePreviewLink;
 		return (
 			<FormFieldset>
 				{ ! isNonAtomicJetpackSite &&
@@ -406,6 +409,11 @@ export class SiteSettingsFormGeneral extends Component {
 									'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
 								) }
 							</FormSettingExplanation>
+							{ showPreviewLink && (
+								<div className="site-settings__visibility-label is-checkbox">
+									<SitePreviewLink disabled={ ! isAnyComingSoonEnabled || isSavingSettings } />
+								</div>
+							) }
 						</>
 					) }
 				{ ! isNonAtomicJetpackSite && (
