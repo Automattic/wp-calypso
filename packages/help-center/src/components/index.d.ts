@@ -90,6 +90,11 @@ declare module 'calypso/state/sites/hooks' {
 	export const useSiteOption: ( state: unknown ) => string;
 }
 
+declare module 'calypso/state/selectors/get-primary-site-id' {
+	const getPrimarySiteId: ( state: unknown ) => number;
+	export default getPrimarySiteId;
+}
+
 declare module 'calypso/state/selectors/has-cancelable-user-purchases' {
 	const hasCancelableUserPurchases: ( state: unknown ) => boolean;
 	export default hasCancelableUserPurchases;

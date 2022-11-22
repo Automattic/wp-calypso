@@ -12,6 +12,17 @@ const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state
 	return state;
 };
 
+const hasSeenPromotionalPopover: Reducer< boolean | undefined, HelpCenterAction > = (
+	state,
+	action
+) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_SEEN_PROMOTIONAL_POPOVER':
+			return action.value;
+	}
+	return state;
+};
+
 const isMinimized: Reducer< boolean, HelpCenterAction > = ( state = false, action ) => {
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_MINIMIZED':
@@ -107,6 +118,7 @@ const reducer = combineReducers( {
 	message,
 	userDeclaredSite,
 	userDeclaredSiteUrl,
+	hasSeenPromotionalPopover,
 	isMinimized,
 	unreadCount,
 	iframe,

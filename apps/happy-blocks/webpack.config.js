@@ -12,7 +12,7 @@ function getWebpackConfig( env, argv ) {
 		...webpackConfig,
 		entry: {
 			editor: './src/editor.js',
-			view: './src/view.js',
+			view: './src/view.jsx',
 		},
 		output: {
 			...webpackConfig.output,

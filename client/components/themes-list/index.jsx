@@ -162,7 +162,11 @@ function Empty( props ) {
 	return shouldUpgradeToInstallThemes ? (
 		<div className="themes-list__empty-container">
 			{ matchingThemes.length ? (
-				<WPOrgMatchingThemes matchingThemes={ matchingThemes } { ...props } />
+				<WPOrgMatchingThemes
+					matchingThemes={ matchingThemes }
+					selectedSite={ selectedSite }
+					{ ...props }
+				/>
 			) : (
 				<div className="themes-list__not-found-text">
 					{ translate( 'No themes match your search' ) }
@@ -192,15 +196,31 @@ function Empty( props ) {
 function WPOrgMatchingThemes( props ) {
 	const { matchingThemes } = props;
 
+	const onWPOrgCardClick = useCallback(
+		( theme ) => {
+			props.recordTracksEvent( 'calypso_themeshowcase_search_empty_wp_org_card_click', {
+				site_plan: props.selectedSite?.plan?.product_slug,
+				theme_id: theme?.id,
+			} );
+		},
+		[ props.recordTracksEvent, props.selectedSite ]
+	);
+
 	return (
-		<>
-			<div className="themes-list">
-				{ matchingThemes.map( ( theme, index ) => (
-					<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
-				) ) }
-				<TrailingItems />
-			</div>
-		</>
+		<div className="themes-list">
+			{ matchingThemes.map( ( theme, index ) => (
+				<div
+					onClick={ () => onWPOrgCardClick( theme ) }
+					key={ 'theme-block' + index }
+					role="button"
+					tabIndex={ 0 }
+					onKeyUp={ () => onWPOrgCardClick( theme ) }
+				>
+					<ThemeBlock theme={ theme } index={ index } { ...props } />
+				</div>
+			) ) }
+			<TrailingItems />
+		</div>
 	);
 }
 

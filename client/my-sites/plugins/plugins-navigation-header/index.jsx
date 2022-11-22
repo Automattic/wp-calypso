@@ -11,10 +11,11 @@ import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
+import { useLocalizedPlugins, useServerEffect } from 'calypso/my-sites/plugins/utils';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { appendBreadcrumb, resetBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -97,8 +98,6 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, selectedSite?.ID ) );
 
-	const breadcrumbs = useSelector( getBreadcrumbs );
-
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 
 	const isMobile = useBreakpoint( '<960px' );
@@ -115,7 +114,7 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 	}, [ jetpackNonAtomic, isJetpack, hasInstallPurchasedPlugins, hasManagePlugins ] );
 	const { localizePath } = useLocalizedPlugins();
 
-	useEffect( () => {
+	const setBreadcrumbs = ( breadcrumbs = [] ) => {
 		if ( breadcrumbs?.length === 0 || ( ! category && ! search ) ) {
 			dispatch( resetBreadcrumbs() );
 			dispatch(
@@ -154,7 +153,26 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 				} )
 			);
 		}
-	}, [ selectedSite?.slug, search, category, categoryName, dispatch, translate, localizePath ] );
+	};
+
+	const previousRoute = useSelector( getPreviousRoute );
+	useEffect( () => {
+		/* If translatations change, reset and update the breadcrumbs */
+		if ( ! previousRoute ) {
+			setBreadcrumbs();
+		}
+	}, [ translate ] );
+
+	useServerEffect( () => {
+		setBreadcrumbs();
+	} );
+
+	/* We need to get the breadcrumbs after the server has set them */
+	const breadcrumbs = useSelector( getBreadcrumbs );
+
+	useEffect( () => {
+		setBreadcrumbs( breadcrumbs );
+	}, [ selectedSite?.slug, search, category, categoryName, dispatch, localizePath ] );
 
 	return (
 		<FixedNavigationHeader

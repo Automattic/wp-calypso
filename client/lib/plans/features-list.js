@@ -1382,7 +1382,19 @@ export const FEATURES_LIST = {
 	[ FEATURE_SFTP_DATABASE ]: {
 		getSlug: () => FEATURE_SFTP_DATABASE,
 		getTitle: () => i18n.translate( 'SFTP, SSH, WP-CLI, and Database access' ),
-		getDescription: () => {},
+		getDescription: () => {
+			const hasTranslation =
+				config( 'english_locales' ).includes( i18n.getLocaleSlug() ) ||
+				i18n.hasTranslation(
+					'A set of developer tools that give you more control over your site, simplify debugging, and make it easier to integrate with each step of your workflow.'
+				);
+
+			return hasTranslation
+				? i18n.translate(
+						'A set of developer tools that give you more control over your site, simplify debugging, and make it easier to integrate with each step of your workflow.'
+				  )
+				: '';
+		},
 	},
 
 	[ PREMIUM_DESIGN_FOR_STORES ]: {
