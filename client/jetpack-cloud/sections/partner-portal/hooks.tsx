@@ -202,7 +202,7 @@ export function useLicenseIssuing(
 
 			dispatch(
 				successNotice(
-					translate( `Your %(product)s license was successfuly issued `, {
+					translate( `Your %(product)s license was successfully issued `, {
 						args: {
 							product:
 								products.data?.find( ( productOption ) => productOption.slug === product )?.name ||
