@@ -1,3 +1,4 @@
+import { encodePatternId } from './utils';
 import type { Pattern } from './types';
 
 // All headers in dotcompatterns
@@ -183,3 +184,7 @@ export const sectionPatterns: Pattern[] = [
 		name: 'Three column text and links',
 	},
 ];
+
+export const allPatterns = [ ...headerPatterns, ...footerPatterns, ...sectionPatterns ].map(
+	( pattern ) => encodePatternId( pattern.id )
+);

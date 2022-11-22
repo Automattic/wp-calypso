@@ -30,7 +30,6 @@ const PatternSelector = ( {
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
 	const patternListProps = {
-		stylesheet,
 		patterns,
 		selectedPattern,
 		show,
@@ -64,7 +63,7 @@ const PatternSelector = ( {
 				{ isEnabled( 'pattern-assembler/client-side-render' ) ? (
 					<AsyncLoad require="./pattern-list-renderer" { ...patternListProps } />
 				) : (
-					<AsyncLoad require="./pattern-list" { ...patternListProps } />
+					<AsyncLoad require="./pattern-list" { ...patternListProps } stylesheet={ stylesheet } />
 				) }
 			</div>
 		</div>

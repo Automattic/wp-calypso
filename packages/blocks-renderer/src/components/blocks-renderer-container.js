@@ -8,15 +8,15 @@ import {
 import { useResizeObserver, useRefEffect } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
 import React, { useMemo } from 'react';
+import { BLOCK_MAX_HEIGHT } from '../constants';
 import './blocks-renderer.scss';
 
-const MAX_HEIGHT = 2000;
-
-const ScaledBlocksRenderer = ( {
-	html,
+const ScaledBlocksRendererContainer = ( {
+	children,
 	styles: customStyles = [],
 	viewportWidth = 1200,
 	containerWidth,
+	maxHeight = BLOCK_MAX_HEIGHT,
 } ) => {
 	const [ contentResizeListener, { height: contentHeight } ] = useResizeObserver();
 	const { styles, assets, duotone } = useSelect( ( select ) => {
@@ -64,17 +64,13 @@ const ScaledBlocksRenderer = ( {
 
 	const scale = containerWidth / viewportWidth;
 
-	if ( ! html ) {
-		return null;
-	}
-
 	return (
 		<div
 			className="scaled-blocks-renderer"
 			style={ {
 				transform: `scale(${ scale })`,
 				height: contentHeight * scale,
-				maxHeight: contentHeight > MAX_HEIGHT ? MAX_HEIGHT * scale : undefined,
+				maxHeight: contentHeight > maxHeight ? maxHeight * scale : undefined,
 				minHeight: '1px',
 			} }
 		>
@@ -96,7 +92,7 @@ const ScaledBlocksRenderer = ( {
 					pointerEvents: 'none',
 					// This is a catch-all max-height for patterns.
 					// See: https://github.com/WordPress/gutenberg/pull/38175.
-					maxHeight: MAX_HEIGHT,
+					maxHeight,
 				} }
 			>
 				{ contentResizeListener }
@@ -106,16 +102,13 @@ const ScaledBlocksRenderer = ( {
 						<PresetDuotoneFilter preset={ preset } key={ preset.slug } />
 					) )
 				}
-				<div
-					// eslint-disable-next-line react/no-danger
-					dangerouslySetInnerHTML={ { __html: html } }
-				/>
+				{ children }
 			</Iframe>
 		</div>
 	);
 };
 
-const BlocksRenderer = ( props ) => {
+const BlocksRendererContainer = ( props ) => {
 	const [ containerResizeListener, { width: containerWidth } ] = useResizeObserver();
 
 	return (
@@ -125,11 +118,11 @@ const BlocksRenderer = ( props ) => {
 			</div>
 			<div className="blocks-renderer">
 				{ !! containerWidth && (
-					<ScaledBlocksRenderer { ...props } containerWidth={ containerWidth } />
+					<ScaledBlocksRendererContainer { ...props } containerWidth={ containerWidth } />
 				) }
 			</div>
 		</>
 	);
 };
 
-export default BlocksRenderer;
+export default BlocksRendererContainer;

@@ -1,6 +1,6 @@
 import React from 'react';
 import useQueryRenderedPatterns from '../hooks/use-query-rendered-patterns';
-import PatternRendererContext from './pattern-renderer-context';
+import PatternsRendererContext from './patterns-renderer-context';
 
 interface Props {
 	siteId: number;
@@ -9,7 +9,7 @@ interface Props {
 	children: JSX.Element;
 }
 
-const PatternRendererProvider = ( { siteId, stylesheet, patternIds, children }: Props ) => {
+const PatternsRendererProvider = ( { siteId, stylesheet, patternIds, children }: Props ) => {
 	const { data: renderedPatterns } = useQueryRenderedPatterns( siteId, stylesheet, patternIds );
 
 	if ( ! renderedPatterns ) {
@@ -17,10 +17,10 @@ const PatternRendererProvider = ( { siteId, stylesheet, patternIds, children }: 
 	}
 
 	return (
-		<PatternRendererContext.Provider value={ renderedPatterns }>
+		<PatternsRendererContext.Provider value={ renderedPatterns }>
 			{ children }
-		</PatternRendererContext.Provider>
+		</PatternsRendererContext.Provider>
 	);
 };
 
-export default PatternRendererProvider;
+export default PatternsRendererProvider;

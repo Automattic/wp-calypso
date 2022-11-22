@@ -1,19 +1,20 @@
-import { BlocksRendererProvider } from '@automattic/blocks-renderer';
+import { BlocksRendererProvider, PatternsRendererProvider } from '@automattic/blocks-renderer';
 import { isEnabled } from '@automattic/calypso-config';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
-import PatternAssemblerPreview from './pattern-assembler-preview';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
+import { allPatterns } from './patterns-data';
 import { encodePatternId, createCustomHomeTemplateContent } from './utils';
 import type { Step } from '../../types';
 import type { Pattern } from './types';
@@ -295,12 +296,24 @@ const PatternAssembler: Step = ( { navigation } ) => {
 					/>
 				) }
 			</div>
-			<PatternAssemblerPreview
-				header={ header }
-				sections={ sections }
-				footer={ footer }
-				scrollToSelector={ scrollToSelector }
-			/>
+			{ isEnabled( 'pattern-assembler/client-side-render' ) ? (
+				<AsyncLoad
+					require="./pattern-large-preview"
+					placeholder={ null }
+					header={ header }
+					sections={ sections }
+					footer={ footer }
+				/>
+			) : (
+				<AsyncLoad
+					require="./pattern-assembler-preview"
+					placeholder={ null }
+					header={ header }
+					sections={ sections }
+					footer={ footer }
+					scrollToSelector={ scrollToSelector }
+				/>
+			) }
 		</div>
 	);
 
@@ -323,7 +336,15 @@ const PatternAssembler: Step = ( { navigation } ) => {
 						siteId={ site?.ID }
 						stylesheet={ selectedDesign?.recipe?.stylesheet }
 					>
-						{ stepContent }
+						{ /* Load patterns at once for now so that we don't need to load patterns again when people select a new pattern.
+							However, if the number of patterns become large, we have to consider them later */ }
+						<PatternsRendererProvider
+							siteId={ site?.ID }
+							stylesheet={ selectedDesign?.recipe?.stylesheet }
+							patternIds={ allPatterns }
+						>
+							{ stepContent }
+						</PatternsRendererProvider>
 					</BlocksRendererProvider>
 				) : (
 					stepContent

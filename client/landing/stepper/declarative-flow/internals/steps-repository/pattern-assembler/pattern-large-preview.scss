@@ -1,0 +1,25 @@
+.pattern-large-preview {
+	box-sizing: border-box;
+	flex: 1;
+	height: 100vh;
+	margin-inline-start: 32px;
+	margin-top: -60px;
+	padding: 32px 0;
+	position: relative;
+	z-index: 1;
+}
+
+.pattern-large-preview__patterns {
+	position: relative;
+	flex-grow: 1;
+	overflow: auto;
+}
+
+.pattern-large-preview__placeholder {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	color: var(--studio-gray-60);
+	background: #f8f8f8;
+}

@@ -11,5 +11,9 @@
 		margin: 0;
 		overflow: visible;
 		min-height: auto;
+
+		iframe {
+			border: none;
+		}
 	}
 }
