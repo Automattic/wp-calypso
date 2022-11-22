@@ -52,6 +52,7 @@ interface ExternalProps {
 	eligibilityData?: EligibilityData;
 	currentContext?: string;
 	isMarketplace?: boolean;
+	showDatacenterPicker?: boolean;
 }
 
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
@@ -68,6 +69,7 @@ export const EligibilityWarnings = ( {
 	onProceed,
 	standaloneProceed,
 	recordUpgradeClick,
+	showDatacenterPicker,
 	siteId,
 	siteSlug,
 	siteIsLaunching,
@@ -196,7 +198,7 @@ export const EligibilityWarnings = ( {
 				</CompactCard>
 			) }
 
-			{ config.isEnabled( 'hosting/datacenter-picker' ) && (
+			{ showDatacenterPicker && config.isEnabled( 'hosting/datacenter-picker' ) && (
 				<FoldableCard
 					className="eligibility-warnings__advanced-options-card"
 					compact={ true }

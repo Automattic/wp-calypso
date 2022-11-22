@@ -29,6 +29,7 @@ const HostingActivate = ( { initiateTransfer, siteId, siteSlug, translate } ) =>
 				className="hosting__activating-warnings"
 				onProceed={ transferInitiate }
 				backUrl={ backUrl }
+				showDatacenterPicker={ true }
 			/>
 		</MainComponent>
 	);
