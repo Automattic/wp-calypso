@@ -72,6 +72,6 @@ export const DEVICE_TYPE = {
 	COMPUTER: 'computer',
 	TABLET: 'tablet',
 	PHONE: 'phone',
-};
+} as const;
 
 export const DEVICES_SUPPORTED = [ DEVICE_TYPE.COMPUTER, DEVICE_TYPE.TABLET, DEVICE_TYPE.PHONE ];
