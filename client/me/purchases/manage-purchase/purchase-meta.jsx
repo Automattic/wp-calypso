@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	getPlan,
 	getProductFromSlug,
@@ -494,7 +495,10 @@ function PurchaseMetaExpiration( {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const isProductOwner = purchase?.userId === useSelector( getCurrentUserId );
+	const isJetpackPurchase = isJetpackPlan( purchase ) || isJetpackProduct( purchase );
 	const isAutorenewalEnabled = purchase?.isAutoRenewEnabled ?? false;
+	const isJetpackPurchaseUsingPrimaryCancellationFlow =
+		isJetpackPurchase && config.isEnabled( 'jetpack/cancel-through-main-flow' );
 	const hideAutoRenew =
 		purchase && JETPACK_LEGACY_PLANS.includes( purchase.productSlug ) && ! isRenewable( purchase );
 
@@ -530,6 +534,12 @@ function PurchaseMetaExpiration( {
 					},
 			  } );
 
+		const subsReEnableText = translate( '{{autoRenewToggle}}Re-enable{{/autoRenewToggle}}', {
+			components: {
+				autoRenewToggle,
+			},
+		} );
+
 		let subsBillingText;
 		if (
 			isAutorenewalEnabled &&
@@ -559,7 +569,7 @@ function PurchaseMetaExpiration( {
 		return (
 			<li className="manage-purchase__meta-expiration">
 				<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
-				{ ! hideAutoRenew && (
+				{ ! hideAutoRenew && ! isJetpackPurchaseUsingPrimaryCancellationFlow && (
 					<div className="manage-purchase__auto-renew">
 						<span className="manage-purchase__detail manage-purchase__auto-renew-text">
 							{ subsRenewText }
@@ -573,6 +583,16 @@ function PurchaseMetaExpiration( {
 				>
 					{ subsBillingText }
 				</span>
+				{ ! isAutorenewalEnabled &&
+					! hideAutoRenew &&
+					shouldRenderToggle &&
+					isJetpackPurchaseUsingPrimaryCancellationFlow && (
+						<div className="manage-purchase__auto-renew">
+							<span className="manage-purchase__detail manage-purchase__auto-renew-text">
+								{ subsReEnableText }
+							</span>
+						</div>
+					) }
 			</li>
 		);
 	}
