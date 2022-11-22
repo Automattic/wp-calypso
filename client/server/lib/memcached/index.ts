@@ -3,17 +3,30 @@ import { Client } from 'memjs';
 
 // Memcached should not be used in the client or environments where the server is
 // not configured.
-const MEMCACHED_DISABLE = typeof document !== 'undefined' || ! config( 'server_side_memcached' );
 let MEMCACHED_CLIENT: Client | undefined;
 
 const ENV = config( 'env_id' ) as string;
 
-export function createMemcachedClient() {
-	if ( MEMCACHED_DISABLE || MEMCACHED_CLIENT ) {
-		return;
+export function createMemcachedClient(): boolean {
+	// Only create clients when operating in the server context, if we allow
+	// memcached in the environment, and if no client exists already.
+	if (
+		typeof document !== 'undefined' ||
+		! config( 'server_side_memcached' ) ||
+		MEMCACHED_CLIENT
+	) {
+		return false;
 	}
 	// todo: do we need to handle disconnects/reconnects?
 	MEMCACHED_CLIENT = Client.create( 'foo:bar' ); // TODO: commit address or no?
+	return true;
+}
+
+/**
+ * This is helpful for tests, but otherwise probably won't be used.
+ */
+export function removeMemcachedClient() {
+	MEMCACHED_CLIENT = undefined;
 }
 
 /**
@@ -27,21 +40,36 @@ function normalizeKey( key: string ): string {
 }
 
 // note: should probably not be awaited, to avoid blocking.
-export async function cacheSet( key: string, value: string | number | object ): Promise< boolean > {
-	if ( MEMCACHED_DISABLE || ! MEMCACHED_CLIENT || value == null ) {
-		return Promise.resolve( false );
+export async function cacheSet(
+	key: string,
+	value: string | number | object | Array< unknown >
+): Promise< boolean > {
+	if ( ! MEMCACHED_CLIENT || value == null ) {
+		return false;
 	}
-	key = normalizeKey( key );
-	return MEMCACHED_CLIENT.set( key, JSON.stringify( value ), {} );
+	try {
+		key = normalizeKey( key );
+		return MEMCACHED_CLIENT.set( key, JSON.stringify( value ), {} );
+	} catch ( e ) {
+		return false;
+	}
 }
 
 // todo: should we set a timeout to shortcut if cache get takes a while?
 export async function cacheGet< T >( key: string ): Promise< T | undefined > {
-	if ( MEMCACHED_DISABLE || ! MEMCACHED_CLIENT ) {
-		return Promise.resolve( undefined );
+	if ( ! MEMCACHED_CLIENT ) {
+		return undefined;
 	}
-	key = normalizeKey( key );
-	const { value } = await MEMCACHED_CLIENT.get( key );
-	// todo: typecheck value?
-	return JSON.parse( value.toString() ) as T;
+	try {
+		key = normalizeKey( key );
+		const response = await MEMCACHED_CLIENT.get( key );
+		if ( response?.value == null ) {
+			return undefined;
+		}
+
+		return JSON.parse( response.value.toString() ) as T;
+	} catch ( e ) {
+		// TODO: log errors.
+		return undefined;
+	}
 }
