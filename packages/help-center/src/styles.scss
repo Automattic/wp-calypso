@@ -394,3 +394,37 @@ $head-foot-height: 50px;
 		color: var(--studio-gray-60);
 	}
 }
+
+.help-center__promotion-popover {
+	width: 350px;
+	max-width: 100%;
+	animation: fadeIn 0.2s;
+}
+
+
+.help-center__promotion-popover-inner {
+	text-align: initial;
+	padding: 16px;
+	box-sizing: border-box;
+	h1 {
+		font-weight: 500;
+		font-size: $font-body;
+		margin: 5px 0;
+	}
+	p {
+		font-size: $font-body-small;
+		margin-top: 4px;
+	}
+	.help-center__promotion-popover-actions {
+		display: flex;
+		justify-content: flex-end;
+		margin-top: 24px;
+		.button {
+			font-size: $font-body-small;
+		}
+	}
+}
+
+.help-center__promotion-popover.is-bottom-left {
+	right: 16px;
+}

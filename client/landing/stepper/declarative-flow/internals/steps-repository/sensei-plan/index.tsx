@@ -127,34 +127,37 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 		}
 	};
 
-	let features: PlanItemProps[ 'features' ] = [];
-	planObject?.features
-		.filter( ( { requiresAnnuallyBilledPlan } ) => requiresAnnuallyBilledPlan )
-		.forEach( ( plan ) => features.push( plan ) );
-	features = [
-		...features,
+	const features: PlanItemProps[ 'features' ] = [
 		{
-			name: __( 'Unlimited courses' ),
+			name: __( 'Priority live chat support' ),
+			requiresAnnuallyBilledPlan: true,
+		},
+		{
+			name: __( 'Unlimited courses and students' ),
 			requiresAnnuallyBilledPlan: false,
 		},
 		{
-			name: __( 'Unlimited students' ),
+			name: __( 'Interactive videos and lessons' ),
 			requiresAnnuallyBilledPlan: false,
 		},
 		{
-			name: __( 'Unlimited quizzes' ),
+			name: __( 'Quizzes and certificates' ),
 			requiresAnnuallyBilledPlan: false,
 		},
 		{
-			name: __( 'Interactive Videos and Content' ),
+			name: __( 'Sell courses and subscriptions' ),
 			requiresAnnuallyBilledPlan: false,
 		},
 		{
-			name: __( 'Low transaction fees' ),
+			name: __( '200GB file and video storage' ),
 			requiresAnnuallyBilledPlan: false,
 		},
 		{
-			name: __( '10 hours of video hosting or 200 GB storage' ),
+			name: __( 'Best-in-class hosting' ),
+			requiresAnnuallyBilledPlan: false,
+		},
+		{
+			name: __( 'Advanced Jetpack features' ),
 			requiresAnnuallyBilledPlan: false,
 		},
 	];
