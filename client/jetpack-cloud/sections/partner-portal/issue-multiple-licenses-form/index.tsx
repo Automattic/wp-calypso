@@ -109,8 +109,8 @@ export default function IssueMultipleLicensesForm( {
 			);
 
 			! selectedProductSlugs.includes( product.slug )
-				? dispatch( addSelectedProductSlugs( product.slug ) )
-				: dispatch( removeSelectedProductSlugs( product.slug ) );
+				? dispatch( addSelectedProductSlugs( [ product.slug ] ) )
+				: dispatch( removeSelectedProductSlugs( [ product.slug ] ) );
 		},
 		[ dispatch, selectedProductSlugs ]
 	);

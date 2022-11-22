@@ -7,11 +7,11 @@ import {
 // Required for modular state.
 import 'calypso/state/partner-portal/init';
 
-export function addSelectedProductSlugs( productSlugs: string | string[] ): AnyAction {
+export function addSelectedProductSlugs( productSlugs: string[] ): AnyAction {
 	return { type: JETPACK_PARTNER_PORTAL_SELECTED_PRODUCT_SLUGS_ADD, productSlugs };
 }
 
-export function removeSelectedProductSlugs( productSlugs: string | string[] ): AnyAction {
+export function removeSelectedProductSlugs( productSlugs: string[] ): AnyAction {
 	return { type: JETPACK_PARTNER_PORTAL_SELECTED_PRODUCT_SLUGS_REMOVE, productSlugs };
 }
 

@@ -14,13 +14,9 @@ const initialState: ProductsStore = {
 const selectedProductSlugs = ( state = initialState.selectedProductSlugs, action: AnyAction ) => {
 	switch ( action.type ) {
 		case JETPACK_PARTNER_PORTAL_SELECTED_PRODUCT_SLUGS_ADD:
-			return Array.isArray( action.productSlugs )
-				? [ ...state, ...action.productSlugs ]
-				: [ ...state, action.productSlugs ];
+			return [ ...state, ...action.productSlugs ];
 		case JETPACK_PARTNER_PORTAL_SELECTED_PRODUCT_SLUGS_REMOVE:
-			return Array.isArray( action.productSlugs )
-				? state.filter( ( productSlug ) => ! action.productSlugs.includes( productSlug ) )
-				: state.filter( ( productSlug ) => productSlug !== action.productSlugs );
+			return state.filter( ( productSlug ) => ! action.productSlugs.includes( productSlug ) );
 		case JETPACK_PARTNER_PORTAL_SELECTED_PRODUCT_SLUGS_CLEAR:
 			return [];
 	}
