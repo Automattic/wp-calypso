@@ -1,3 +1,4 @@
+@use "sass:math";
 @import "calypso/my-sites/stats/modernized-tooltip-styles.scss";
 @import "calypso/my-sites/stats/modernized-chart-tabs-styles.scss";
 @import "calypso/my-sites/stats/modernized-page-header-styles.scss";
@@ -52,11 +53,11 @@ $stats-sections-max-width: 1224px;
 	// Ensures horizontal padding for all sections.
 	@media ( min-width: 660px ) {
 		> * {
-			padding: 0 max(calc(50% - #{$stats-sections-max-width / 2}), 32px);
+			padding: 0 max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
 		}
 
 		> .card.banner.jetpack-backup-creds-banner {
-			margin: 0 max(calc(50% - #{$stats-sections-max-width / 2}), 32px);
+			margin: 0 max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
 		}
 	}
 
