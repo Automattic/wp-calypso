@@ -11,6 +11,7 @@ export type { State };
 
 export { SiteGoal, SiteIntent } from './constants';
 export * as utils from './utils';
+export * from './types';
 let isRegistered = false;
 
 /**
@@ -33,6 +34,7 @@ export function register(): typeof STORE_KEY {
 			'anchorSpotifyUrl',
 			'domain',
 			'domainSearch',
+			'domainForm',
 			'goals',
 			'hasUsedDomainsStep',
 			'hasUsedPlansStep',
@@ -53,6 +55,8 @@ export function register(): typeof STORE_KEY {
 			'verticalId',
 			'storeLocationCountryCode',
 			'ecommerceFlowRecurType',
+			'domainCartItem',
+			'planCartItem',
 		],
 	} );
 	isRegistered = true;
