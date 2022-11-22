@@ -85,8 +85,11 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 
 	return (
 		<Main fullWidthLayout className="themes">
-			<ThemesHeader isReskinned={ isNewSearchAndFilter } />
-			<CurrentTheme siteId={ siteId } />
+			<ThemesHeader
+				siteId={ isNewSearchAndFilter ? siteId : undefined }
+				isReskinned={ isNewSearchAndFilter }
+			/>
+			{ ! isNewSearchAndFilter && <CurrentTheme siteId={ siteId } /> }
 			<ThemeShowcase
 				{ ...props }
 				upsellUrl={ upsellUrl }

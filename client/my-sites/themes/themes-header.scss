@@ -32,10 +32,13 @@ body.is-section-themes-i4 .themes__header {
 	border-bottom: 1px solid var(--color-neutral-5);
 	box-sizing: border-box;
 	display: flex;
+	flex-direction: column;
 	margin: 32px 0;
+	padding: 0 16px;
 	min-height: 70px;
 
 	@include breakpoint-deprecated( ">660px" ) {
+		flex-direction: row;
 		margin-left: -24px;
 		margin-right: -24px;
 		padding: 0 48px;
@@ -53,20 +56,25 @@ body.is-section-themes-i4 .themes__header {
 		font-weight: 500;
 		line-height: 20px;
 		margin: 0;
-		margin-left: 16px;
+	}
 
-		@include breakpoint-deprecated( ">660px" ) {
-			margin-left: 0;
+	.themes__page-actions {
+		align-items: center;
+		display: flex;
+		justify-content: space-between;
+		gap: 32px;
+		width: 100%;
+
+		.themes__page-current-theme {
+			color: var(--color-neutral-60);
+			font-size: 0.875rem;
+			line-height: 20px;
+			white-space: nowrap;
 		}
 	}
 
 	.themes__install-theme-button-container {
 		margin: 0;
-		margin-right: 16px;
-
-		@include breakpoint-deprecated( ">660px" ) {
-			margin-right: 0;
-		}
 
 		.button {
 			border-radius: 4px;
