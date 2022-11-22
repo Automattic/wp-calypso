@@ -159,9 +159,9 @@ export function generateFlows( {
 		},
 		{
 			name: 'import',
-			steps: [ 'domains', 'plans-import' ],
+			steps: [ 'user', 'domains', 'plans-import' ],
 			destination: ( dependencies ) =>
-				`/setup/import?flow=import-focused&siteSlug=${ dependencies.siteSlug }`,
+				`/setup/import-focused/import?siteSlug=${ dependencies.siteSlug }`,
 			description: 'Beginning of the flow to import content',
 			lastModified: '2022-10-03',
 			showRecaptcha: true,

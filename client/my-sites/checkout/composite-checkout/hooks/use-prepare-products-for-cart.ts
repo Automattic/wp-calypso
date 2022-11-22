@@ -4,8 +4,6 @@ import { decodeProductFromUrl, isValueTruthy } from '@automattic/wpcom-checkout'
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useReducer } from 'react';
-import { useSelector } from 'react-redux';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
 import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
 import useStripProductsFromUrl from './use-strip-products-from-url';
@@ -262,7 +260,6 @@ function useAddRenewalItems( {
 	addHandler: AddHandler;
 	isGiftPurchase?: boolean;
 } ) {
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
 
 	useEffect( () => {
@@ -303,15 +300,7 @@ function useAddRenewalItems( {
 		}
 		debug( 'preparing renewals requested in url', productsForCart );
 		dispatch( { type: 'RENEWALS_ADD', products: productsForCart } );
-	}, [
-		addHandler,
-		translate,
-		originalPurchaseId,
-		productAlias,
-		dispatch,
-		selectedSiteSlug,
-		isGiftPurchase,
-	] );
+	}, [ addHandler, translate, originalPurchaseId, productAlias, dispatch, isGiftPurchase ] );
 }
 
 function useAddProductFromSlug( {
@@ -351,7 +340,7 @@ function useAddProductFromSlug( {
 					const productSlug = getProductSlugFromAlias( productAlias );
 					return { productSlug, productAlias };
 				} ) ?? [],
-		[ usesJetpackProducts, productAliasFromUrl ]
+		[ productAliasFromUrl ]
 	);
 
 	useEffect( () => {

@@ -232,7 +232,7 @@ class StatsSite extends Component {
 									<InlineSupportLink
 										supportContext="stats"
 										showIcon={ false }
-										showSupportModal={ !! config( 'is_running_in_jetpack_site' ) }
+										showSupportModal={ config.isEnabled( 'is_running_in_jetpack_site' ) }
 									/>
 								),
 							},
