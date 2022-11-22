@@ -30,6 +30,24 @@
 /**
  * WP-ADMIN Masterbar Styling
  */
+.admin-color-light {
+	#help-center-icon,
+	#help-center-icon-with-notification {
+		path {
+			fill: #333;
+		}
+	}
+}
+
+.active {
+	#help-center-icon,
+	#help-center-icon-with-notification {
+		path {
+			fill: #333;
+		}
+	}
+}
+
 #wpadminbar #wp-toolbar {
 	#wp-admin-bar-help-center {
 		position: relative;
@@ -37,8 +55,13 @@
 		width: 36px;
 		right: 5px;
 		display: none;
+
 		@include breakpoint-deprecated( ">960px" ) {
 			display: block;
+		}
+
+		#help-center-icon-with-notification {
+			display: none;
 		}
 
 		svg {
@@ -48,21 +71,14 @@
 			right: 0;
 			bottom: 0;
 			padding: 4px 6px;
-
-			#notification-bubble {
-				display: none;
-			}
 		}
 
 		&.unseen-notification {
-			svg {
-				> path {
-					display: none;
-				}
-
-				#notification-bubble {
-					display: block;
-				}
+			#help-center-icon-with-notification {
+				display: block;
+			}
+			#help-center-icon {
+				display: none;
 			}
 		}
 
