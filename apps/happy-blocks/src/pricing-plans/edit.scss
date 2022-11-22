@@ -141,7 +141,7 @@ $brand-text: "SF Pro Text", $sans;
 
 	&__billing-option-label {
 		display: flex !important;
-		align-items: center;
+		align-items: baseline;
 		gap: 8px;
 		font-family: $brand-text;
 
