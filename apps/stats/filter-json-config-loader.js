@@ -4,7 +4,7 @@
  * @param {*} source Content of source file.
  * @returns filtered content of source file.
  */
-export default function loader( source ) {
+module.exports = function ( source ) {
 	const sourceObject = JSON.parse( source );
 	const targetObject = {};
 	const options = this.getOptions();
@@ -15,5 +15,5 @@ export default function loader( source ) {
 		}
 	}
 
-	return `export default ${ JSON.stringify( targetObject ) }`;
-}
+	return JSON.stringify( targetObject );
+};
