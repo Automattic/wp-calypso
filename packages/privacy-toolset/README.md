@@ -18,7 +18,7 @@ import { CookieBanner } from '@automattic/privacy-toolset';
 
 const Component = () => (
 	<>
-		<CookieBanner />
+		<CookieBanner content={ ...args } onAccept={ fn } />
 	</>
 );
 ```
@@ -30,7 +30,7 @@ in the root of the repository to get the required `devDependencies`.
 
 ### Tests
 
-TBD
+N/A
 
 ### Using [Storybook](https://storybook.js.org/)
 
