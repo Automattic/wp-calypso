@@ -17,6 +17,16 @@ const ThemesHeader: React.FC< ThemesHeaderProps > = ( { isReskinned } ) => {
 			{ isReskinned ? (
 				<div className="themes__page-heading">
 					<h1>{ translate( 'Themes' ) }</h1>
+					<p className="page-sub-header">
+						{ translate(
+							'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: <InlineSupportLink supportContext="themes" showIcon={ false } />,
+								},
+							}
+						) }
+					</p>
 				</div>
 			) : (
 				<FormattedHeader
