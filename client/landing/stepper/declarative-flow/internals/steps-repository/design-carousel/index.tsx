@@ -68,6 +68,9 @@ const DesignCarousel: Step = function DesignCarousel( { navigation } ) {
 				<FormattedHeader
 					id="seller-step-header"
 					headerText={ __( 'Choose a design to start' ) }
+					subHeaderText={ __(
+						"Don't worry, you can change or customize this at any time in the future."
+					) }
 					align="center"
 				/>
 			}

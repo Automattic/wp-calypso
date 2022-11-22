@@ -67,6 +67,7 @@
 	color: var(--color-neutral-50);
 	font-size: $font-body-small;
 	padding: 0 20px 24px;
+	text-align: center !important;
 
 	@include breakpoint-deprecated( ">480px" ) {
 		padding: 0;
@@ -75,6 +76,13 @@
 	.is-left-align &,
 	.is-right-align & {
 		padding: 0;
+	}
+	.is-left-align & {
+		text-align: start !important;
+	}
+
+	.is-right-align & {
+		text-align: end !important;
 	}
 
 	.tailored-flow-subtitle__cta-text {
@@ -87,7 +95,6 @@
 // Compact header on small screens
 .formatted-header.is-compact-on-mobile {
 	@include breakpoint-deprecated( "<660px" ) {
-		text-align: start;
 
 		.formatted-header__title {
 			/* stylelint-disable-next-line declaration-property-unit-allowed-list */

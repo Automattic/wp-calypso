@@ -33,7 +33,7 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 	box-shadow: 2px 2px 10px 0 rgb(66 68 90 / 23%);
 	transition: transform 0.4s ease-in-out, opacity 0.3s ease-in-out;
 	border: 0.6vh solid #fff;
-	margin: 20px 0;
+	margin: 0 0 32px;
 	cursor: pointer;
 	padding: 0;
 	overflow: hidden;
@@ -161,7 +161,7 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 
 .design-carousel__cta {
 	text-align: center;
-	margin: 10px 20px;
+	margin: 0 20px;
 
 	button {
 		display: inline-flex;
