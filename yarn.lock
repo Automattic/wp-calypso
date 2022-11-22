@@ -1296,7 +1296,10 @@ __metadata:
     "@types/classnames": ^2.3.1
     "@wordpress/components": ^22.1.0
     classnames: ^2.3.1
+    postcss: ^8.4.19
+    require-from-string: ^2.0.2
     typescript: ^4.7.4
+    webpack: ^5.75.0
   peerDependencies:
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -29781,6 +29784,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"postcss@npm:^8.4.19":
+  version: 8.4.19
+  resolution: "postcss@npm:8.4.19"
+  dependencies:
+    nanoid: ^3.3.4
+    picocolors: ^1.0.0
+    source-map-js: ^1.0.2
+  checksum: f33594fa0a2b629043deada34171744891054255baa49150d77f08f68edec1fa7eb9740e64c3a32e6f476c16e9e592af942fcf55f93051673dd208c0aee1d60b
+  languageName: node
+  linkType: hard
+
 "prebuild-install@npm:^6.0.0, prebuild-install@npm:^6.1.2":
   version: 6.1.3
   resolution: "prebuild-install@npm:6.1.3"
@@ -37733,7 +37747,7 @@ swiper@4.5.1:
   languageName: node
   linkType: hard
 
-"webpack@npm:>=4.43.0 <6.0.0":
+"webpack@npm:>=4.43.0 <6.0.0, webpack@npm:^5.75.0":
   version: 5.75.0
   resolution: "webpack@npm:5.75.0"
   dependencies:
