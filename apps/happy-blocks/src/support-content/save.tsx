@@ -1,17 +1,17 @@
 import { useBlockProps } from '@wordpress/block-editor';
-import { SupportPageBlockAttributes } from './block';
-import { SupportPageEmbed } from './support-page-embed';
+import { SupportContentBlockAttributes } from './block';
+import { SupportContentEmbed } from './support-content-embed';
 
 /**
  * Convert block attributes to HTML representation for storing in the post content
  */
-export const Save = ( props: { attributes: SupportPageBlockAttributes } ) => {
+export const Save = ( props: { attributes: SupportContentBlockAttributes } ) => {
 	const blockProps = useBlockProps.save();
 	const { attributes } = props;
 
 	return (
 		<div { ...blockProps }>
-			<SupportPageEmbed attributes={ attributes } clickable />
+			<SupportContentEmbed attributes={ attributes } clickable />
 		</div>
 	);
 };

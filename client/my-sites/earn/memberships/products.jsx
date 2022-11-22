@@ -128,6 +128,7 @@ class MembershipsProductsSection extends Component {
 							closeDialog={ this.closeDialog }
 							product={ Object.assign( this.state.product ?? {}, {
 								subscribe_as_site_subscriber:
+									this.state.product?.subscribe_as_site_subscriber ||
 									window.location.hash === '#add-newsletter-payment-plan',
 							} ) }
 						/>

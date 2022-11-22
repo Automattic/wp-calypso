@@ -44,7 +44,7 @@ const MasterbarHelpCenter = ( { siteId, tooltip } ) => {
 				tooltip={ tooltip }
 				icon={ <HelpIcon ref={ helpIconRef } newItems={ newItems } /> }
 			/>
-			<PromotionalPopover contextRef={ helpIconRef.current } />
+			<PromotionalPopover iconElement={ helpIconRef.current } />
 		</>
 	);
 };

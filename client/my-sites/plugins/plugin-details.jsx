@@ -24,7 +24,11 @@ import PluginDetailsSidebar from 'calypso/my-sites/plugins/plugin-details-sideba
 import PluginDetailsV2 from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details-v2';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
-import { siteObjectsToSiteIds, useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
+import {
+	siteObjectsToSiteIds,
+	useLocalizedPlugins,
+	useServerEffect,
+} from 'calypso/my-sites/plugins/utils';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -51,6 +55,7 @@ import {
 } from 'calypso/state/products-list/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
@@ -66,8 +71,6 @@ import NoPermissionsError from './no-permissions-error';
 function PluginDetails( props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-
-	const breadcrumbs = useSelector( getBreadcrumbs );
 
 	// Site information.
 	const selectedSite = useSelector( getSelectedSite );
@@ -207,7 +210,7 @@ function PluginDetails( props ) {
 		requestingPluginsForSites,
 	] );
 
-	useEffect( () => {
+	const setBreadcrumbs = ( breadcrumbs = [] ) => {
 		if ( breadcrumbs?.length === 0 ) {
 			dispatch(
 				appendBreadcrumb( {
@@ -235,7 +238,26 @@ function PluginDetails( props ) {
 				} )
 			);
 		}
-	}, [ fullPlugin.name, props.pluginSlug, selectedSite, dispatch, translate, localizePath ] );
+	};
+
+	const previousRoute = useSelector( getPreviousRoute );
+	useEffect( () => {
+		/* If translatations change, reset and update the breadcrumbs */
+		if ( ! previousRoute ) {
+			setBreadcrumbs();
+		}
+	}, [ translate ] );
+
+	useServerEffect( () => {
+		setBreadcrumbs();
+	} );
+
+	/* We need to get the breadcrumbs after the server has set them */
+	const breadcrumbs = useSelector( getBreadcrumbs );
+
+	useEffect( () => {
+		setBreadcrumbs( breadcrumbs );
+	}, [ fullPlugin.name, props.pluginSlug, selectedSite, dispatch, localizePath ] );
 
 	const getPageTitle = () => {
 		return translate( '%(pluginName)s Plugin', {

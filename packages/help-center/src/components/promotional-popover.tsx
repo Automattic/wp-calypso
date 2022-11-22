@@ -6,10 +6,10 @@ import { useState } from 'react';
 import { HELP_CENTER_STORE } from '../stores';
 
 interface Props {
-	contextRef: React.RefObject< SVGSVGElement >;
+	iconElement: SVGSVGElement;
 }
 
-const PromotionalPopover = ( { contextRef }: Props ) => {
+const PromotionalPopover = ( { iconElement }: Props ) => {
 	const { hasSeenPromotion, doneLoading } = useSelect(
 		( select ) => ( {
 			hasSeenPromotion: select( HELP_CENTER_STORE ).getHasSeenPromotionalPopover(),
@@ -32,7 +32,14 @@ const PromotionalPopover = ( { contextRef }: Props ) => {
 		} );
 	};
 
-	if ( ! contextRef ) {
+	if ( ! iconElement ) {
+		return null;
+	}
+
+	const iconBox = iconElement.getBoundingClientRect();
+	const visibleElement = document.elementFromPoint( iconBox.left, iconBox.top );
+
+	if ( visibleElement !== iconElement ) {
 		return null;
 	}
 
@@ -41,7 +48,7 @@ const PromotionalPopover = ( { contextRef }: Props ) => {
 			<Popover
 				className="help-center__promotion-popover"
 				isVisible={ doneLoading && ! hasSeenPromotion && ! isDismissed }
-				context={ contextRef }
+				context={ iconElement }
 				onClose={ () => {
 					recordDismiss( 'clicking-outside' );
 					setHasSeenPromotionalPopover( true );
