@@ -20,6 +20,7 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
 import ThemesHeader from './themes-header';
+import '../plugins/plugins-discovery-page/style.scss';
 
 const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 	const { currentPlan, isVip, requestingSitePlans, siteId, siteSlug, translate } = props;
@@ -33,13 +34,14 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 			if ( [ PLAN_PERSONAL, PLAN_FREE ].includes( currentPlan.productSlug ) ) {
 				upsellBanner = (
 					<UpsellNudge
-						className="themes__showcase-banner"
+						className="plugins-discovery-page__upsell themes__showcase-banner"
 						event="calypso_themes_list_premium_themes"
 						feature={ WPCOM_FEATURES_PREMIUM_THEMES }
 						plan={ PLAN_PREMIUM }
 						title={ translate( 'Unlock ALL premium themes with our Premium and Business plans!' ) }
-						forceHref={ true }
 						showIcon={ true }
+						icon="notice-outline"
+						callToAction={ translate( 'Upgrade now' ) }
 					/>
 				);
 			}
@@ -47,26 +49,27 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 			if ( currentPlan.productSlug === PLAN_PREMIUM ) {
 				upsellBanner = (
 					<UpsellNudge
-						className="themes__showcase-banner"
+						className="plugins-discovery-page__upsell themes__showcase-banner"
 						event="calypso_themes_list_install_themes"
 						feature={ FEATURE_UPLOAD_THEMES }
 						plan={ PLAN_BUSINESS }
 						title={ translate( 'Upload your own themes with our Business and eCommerce plans!' ) }
-						forceHref={ true }
 						showIcon={ true }
+						icon="notice-outline"
+						callToAction={ translate( 'Upgrade now' ) }
 					/>
 				);
 			}
 		} else {
 			upsellBanner = (
 				<UpsellNudge
-					className="themes__showcase-banner"
+					className="plugins-discovery-page__upsell themes__showcase-banner"
 					event="calypso_themes_list_install_themes"
 					feature={ FEATURE_UPLOAD_THEMES }
 					plan={ PLAN_BUSINESS }
 					title={ translate( 'Upload your own themes with our Business and eCommerce plans!' ) }
-					forceHref={ true }
 					showIcon={ true }
+					callToAction={ translate( 'Upgrade now' ) }
 				/>
 			);
 		}
