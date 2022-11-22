@@ -6,7 +6,7 @@ export class ReaderSidebarOrganizations extends Component {
 	static propTypes = {
 		organizations: PropTypes.array.isRequired,
 		path: PropTypes.string.isRequired,
-		translate: PropTypes.func,
+		translate: PropTypes.func.isRequired,
 	};
 
 	fetchOrganization() {
@@ -25,12 +25,15 @@ export class ReaderSidebarOrganizations extends Component {
 	}
 
 	renderItems() {
-		const { path } = this.props;
+		const { path, translate } = this.props;
 		const organization = this.fetchOrganization();
+		const organizationSlug = organization.slug === 'a8c' ? translate( 'a8c' ) : translate( 'p2' );
+
 		return (
 			<>
 				<h2>
-					Following ({ organization.slug }) <a href="/following/mark-all">Mark all as seen</a>
+					{ translate( 'Following' ) } ({ organizationSlug }){ ' ' }
+					<a href="/following/mark-all">{ translate( 'Mark all as seen' ) }</a>
 				</h2>
 				<ReaderSidebarOrganizationsList
 					key={ organization.id }

@@ -56,7 +56,7 @@ export class ReaderSidebarFollowedSites extends Component {
 	};
 
 	render() {
-		const { sites, sitesPerPage } = this.props;
+		const { sites, sitesPerPage, translate } = this.props;
 		const { sitePage } = this.state;
 		const sitesToShow = sites.slice( 0, sitesPerPage * sitePage );
 
@@ -67,7 +67,7 @@ export class ReaderSidebarFollowedSites extends Component {
 		return (
 			<>
 				<h2>
-					Following <a href="/following/manage">Manage</a>
+					{ translate( 'Following' ) } <a href="/following/manage">{ translate( 'Manage' ) }</a>
 				</h2>
 				<ul>{ this.renderSites( sitesToShow ) }</ul>
 			</>
