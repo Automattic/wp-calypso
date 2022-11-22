@@ -33,43 +33,54 @@ body.is-section-themes-i4 .themes__header {
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
-	margin: 32px 0;
-	padding: 0 16px;
-	min-height: 70px;
+	gap: 24px;
+	margin: 0 0 32px;
+	padding: 24px 16px;
 
 	@include breakpoint-deprecated( ">660px" ) {
-		flex-direction: row;
 		margin-left: -24px;
 		margin-right: -24px;
-		padding: 0 48px;
+		padding: 24px;
 	}
 
 	@include break-large {
+		flex-direction: row;
 		margin-left: -32px;
 		margin-right: -32px;
-		padding: 0 64px;
+		padding: 24px 32px;
 	}
 
-	.themes__page-heading h1 {
-		color: var(--color-neutral-100);
-		font-size: 0.875rem;
-		font-weight: 500;
-		line-height: 20px;
-		margin: 0;
+	.themes__page-heading {
+		h1 {
+			color: var(--color-neutral-100);
+			font-size: $font-title-small;
+			font-weight: 500;
+			line-height: 20px;
+			margin-bottom: 8px;
+		}
+
+		.page-sub-header {
+			font-size: $font-body-small;
+			margin-bottom: 0;
+		}
 	}
 
 	.themes__page-actions {
 		align-items: center;
 		display: flex;
-		justify-content: space-between;
 		gap: 32px;
+		justify-content: space-between;
+		white-space: nowrap;
 		width: 100%;
+
+		@include break-large {
+			justify-content: center;
+			width: auto;
+		}
 
 		.themes__page-current-theme {
 			color: var(--color-neutral-60);
-			font-size: 0.875rem;
-			line-height: 20px;
-			white-space: nowrap;
+			font-size: $font-body-small;
 		}
 	}
 

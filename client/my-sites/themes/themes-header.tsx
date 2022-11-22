@@ -19,13 +19,13 @@ interface ThemesHeaderProps {
 	isReskinned?: boolean;
 }
 
-const ThemesHeader: React.FC< ThemesHeaderProps > = ( { siteId, isReskinned } ) => {
+const ThemesHeader: React.FC< ThemesHeaderProps > = ( { siteId = -1, isReskinned } ) => {
 	const currentThemeId = useSelector( ( state ) => getActiveTheme( state, siteId ) );
 	const currentTheme = useSelector( ( state ) =>
 		getCanonicalTheme( state, siteId, currentThemeId )
 	);
 	const currentThemeDetailsUrl = useSelector( ( state ) =>
-		getThemeDetailsUrl( state, currentThemeId, siteId )
+		getThemeDetailsUrl( state, currentThemeId || '', siteId )
 	);
 
 	return (
@@ -36,6 +36,16 @@ const ThemesHeader: React.FC< ThemesHeaderProps > = ( { siteId, isReskinned } ) 
 			{ isReskinned ? (
 				<div className="themes__page-heading">
 					<h1>{ translate( 'Themes' ) }</h1>
+					<p className="page-sub-header">
+						{ translate(
+							'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: <InlineSupportLink supportContext="themes" showIcon={ false } />,
+								},
+							}
+						) }
+					</p>
 				</div>
 			) : (
 				<FormattedHeader
@@ -56,7 +66,7 @@ const ThemesHeader: React.FC< ThemesHeaderProps > = ( { siteId, isReskinned } ) 
 			) }
 			<div className="themes__page-actions">
 				<div className="themes__page-current-theme">
-					{ currentTheme && (
+					{ currentTheme && currentThemeDetailsUrl && (
 						<>
 							<span>{ translate( 'Current theme' ) }: </span>
 							<a href={ currentThemeDetailsUrl }>{ currentTheme.name }</a>
