@@ -1,15 +1,8 @@
 import './style.scss';
-import { getUrlParts } from '@automattic/calypso-url';
-import { getPathParts, getLanguage } from '@automattic/i18n-utils';
+import { getRealPathName } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import SocialLogo from 'calypso/components/social-logo';
 import { navigate } from 'calypso/lib/navigate';
-
-function getRealPathName( path: string ) {
-	const urlParts = getUrlParts( path );
-	const locale = getPathParts( urlParts.pathname ).shift();
-	return 'undefined' === typeof getLanguage( locale ) ? path : path.replace( `${ locale }/`, '' );
-}
 
 const UniversalNavbarFooter = () => {
 	const translate = useTranslate();
@@ -119,7 +112,7 @@ const UniversalNavbarFooter = () => {
 									<a href="https://wordpress.com/webinars/">{ translate( 'Daily Webinars' ) }</a>
 								</li>
 								<li>
-									<a href="https://wordpress.com/courses/">{ translate( 'WordPress Courses' ) }</a>
+									<a href="https://wordpress.com/learn/">{ translate( 'Learn WordPress' ) }</a>
 								</li>
 								<li>
 									<a href="https://developer.wordpress.com/" data-is_external="1">
@@ -165,7 +158,7 @@ const UniversalNavbarFooter = () => {
 									className="lp-language-picker__content"
 									title={ translate( 'Change Language' ) }
 									onChange={ ( e ) => navigate( e.target.value ) }
-									defaultValue={ `${ window.location.pathname }` }
+									defaultValue={ window.location.pathname }
 								>
 									<option>{ translate( 'Change Language' ) }</option>
 									<option lang="es" value={ `/es/${ realPathName }` }>

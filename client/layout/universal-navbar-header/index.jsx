@@ -172,9 +172,9 @@ const UniversalNavbarHeader = () => {
 													type="dropdown"
 												/>
 												<UniversalNavbarLiMenuItem
-													titleValue={ translate( 'WordPress Courses' ) }
-													elementContent={ translate( 'WordPress Courses' ) }
-													urlValue="//wordpress.com/courses/"
+													titleValue={ translate( 'Learn WordPress' ) }
+													elementContent={ translate( 'Learn WordPress' ) }
+													urlValue="//wordpress.com/learn/"
 													type="dropdown"
 												/>
 											</ul>
@@ -386,9 +386,9 @@ const UniversalNavbarHeader = () => {
 										type="menu"
 									/>
 									<UniversalNavbarLiMenuItem
-										titleValue={ translate( 'WordPress Courses' ) }
-										elementContent={ translate( 'WordPress Courses' ) }
-										urlValue="//wordpress.com/courses/"
+										titleValue={ translate( 'Learn WordPress' ) }
+										elementContent={ translate( 'Learn WordPress' ) }
+										urlValue="//wordpress.com/learn/"
 										type="menu"
 									/>
 								</ul>
