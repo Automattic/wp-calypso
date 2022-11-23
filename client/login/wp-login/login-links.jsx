@@ -36,7 +36,6 @@ export class LoginLinks extends Component {
 		resetMagicLoginRequestForm: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
-		isGutenboarding: PropTypes.bool.isRequired,
 		usernameOrEmail: PropTypes.string,
 		isPartnerSignup: PropTypes.bool,
 	};
@@ -68,7 +67,7 @@ export class LoginLinks extends Component {
 
 		this.props.recordTracksEvent( 'calypso_login_lost_phone_link_click' );
 
-		page( login( { twoFactorAuthType: 'backup', isGutenboarding: this.props.isGutenboarding } ) );
+		page( login( { twoFactorAuthType: 'backup' } ) );
 	};
 
 	handleMagicLoginLinkClick = ( event ) => {
