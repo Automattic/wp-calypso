@@ -82,7 +82,7 @@ const PriceArea = styled.span`
 	text-align: right;
 `;
 
-const PricePerTermText = styled.div`
+const SubText = styled.div`
 	font-size: small;
 	color: #777;
 `;
@@ -101,9 +101,9 @@ export const ItemVariantPrice: FunctionComponent< {
 	const pricePerYearFormatted = formatCurrency( pricePerYear, variant.currency, {
 		stripZeros: true,
 	} );
-	const perYearText = translate( '%(pricePerYear)s / year x 2', {
+	const subText = translate( 'Billed as one payment of %(totalPrice)s', {
 		args: {
-			pricePerYear: pricePerYearFormatted,
+			totalPrice: formattedCurrentPrice,
 		},
 	} );
 
@@ -111,12 +111,16 @@ export const ItemVariantPrice: FunctionComponent< {
 		<Variant>
 			<Label>
 				{ variant.variantLabel }
-				{ variant.termIntervalInMonths === 24 && (
-					<PricePerTermText>{ perYearText }</PricePerTermText>
-				) }
+				{ variant.termIntervalInMonths === 24 && <SubText>{ subText }</SubText> }
 			</Label>
 			<PriceArea>
-				<Price>{ formattedCurrentPrice }</Price>
+				<Price>
+					{ translate( '%(pricePerYear)s / year', {
+						args: {
+							pricePerYear: pricePerYearFormatted,
+						},
+					} ) }
+				</Price>
 				{ discountPercentage > 0 && <DiscountPercentage percent={ discountPercentage } /> }
 			</PriceArea>
 		</Variant>
