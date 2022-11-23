@@ -36,7 +36,7 @@ export function createGooglePayMethod(
 export function GooglePayLabel() {
 	return (
 		<Fragment>
-			<span>{ 'Google Pay' }</span>
+			<span>Google Pay</span>
 			<PaymentMethodLogos className="google-pay__logo payment-logos">
 				<GooglePayMark fill="#3C4043" />
 			</PaymentMethodLogos>
@@ -75,14 +75,13 @@ export function GooglePaySubmitButton( {
 		},
 		[ onClick, stripe, stripeConfiguration ]
 	);
-	const { paymentRequest, canMakePayment, isLoading } = useStripePaymentRequest( {
-		webPaymentType: 'google-pay',
+	const { paymentRequest, allowedPaymentTypes, isLoading } = useStripePaymentRequest( {
 		paymentRequestOptions,
 		onSubmit,
 		stripe,
 	} );
 
-	if ( ! isLoading && ! canMakePayment ) {
+	if ( ! isLoading && ! allowedPaymentTypes.googlePay ) {
 		// This should never occur because we should not display this payment
 		// method as an option if it is not supported.
 		throw new Error( 'This payment type is not supported' );
@@ -98,5 +97,5 @@ export function GooglePaySubmitButton( {
 }
 
 export function GooglePaySummary() {
-	return <Fragment>{ 'Google Pay' }</Fragment>;
+	return <Fragment>Google Pay</Fragment>;
 }

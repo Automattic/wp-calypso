@@ -1,14 +1,19 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
+import config from './config';
 import { Edit } from './edit';
-import { Save } from './save';
 
-const blockAttributes = {};
+const blockAttributes = {
+	productSlug: {
+		enum: config.plans,
+	},
+};
 
 function registerBlock() {
 	registerBlockType( 'happy-blocks/pricing-plans', {
-		title: __( 'Pricing plans', 'happy-blocks' ),
-		icon: 'cart',
+		apiVersion: 2,
+		title: __( 'Upgrade', 'happy-blocks' ),
+		icon: 'money-alt',
 		category: 'a8c',
 		description: __( 'List of available pricing plans', 'happy-blocks' ),
 		keywords: [
@@ -18,7 +23,6 @@ function registerBlock() {
 		],
 		attributes: blockAttributes,
 		edit: Edit,
-		save: Save,
 	} );
 }
 

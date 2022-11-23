@@ -217,7 +217,9 @@ class StatsSite extends Component {
 
 		return (
 			<div className="stats">
-				<JetpackBackupCredsBanner event="stats-backup-credentials" />
+				<div className="stats-banner-wrapper">
+					<JetpackBackupCredsBanner event="stats-backup-credentials" />
+				</div>
 
 				<FormattedHeader
 					brandFont
@@ -232,7 +234,7 @@ class StatsSite extends Component {
 									<InlineSupportLink
 										supportContext="stats"
 										showIcon={ false }
-										showSupportModal={ !! config( 'is_running_in_jetpack_site' ) }
+										showSupportModal={ config.isEnabled( 'is_running_in_jetpack_site' ) }
 									/>
 								),
 							},

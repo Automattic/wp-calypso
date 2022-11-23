@@ -134,15 +134,15 @@ export class AppBanner extends Component {
 			//TODO: update when section deep links are available.
 			switch ( currentSection ) {
 				case GUTENBERG:
-					return `intent://post/#Intent;scheme=${ scheme };package=${ packageName };end`;
+					return `intent://details?id=${ packageName }&url=${ scheme }://post&referrer=calypso#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case HOME:
-					return `intent://home/#Intent;scheme=${ scheme };package=${ packageName };end`;
+					return `intent://details?id=${ packageName }&url=${ scheme }://home&referrer=calypso#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case NOTES:
-					return `intent://notifications/#Intent;scheme=${ scheme };package=${ packageName };end`;
+					return `intent://details?id=${ packageName }&url=${ scheme }://notifications&referrer=calypso#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case READER:
-					return `intent://read/#Intent;scheme=${ scheme };package=${ packageName };end`;
+					return `intent://details?id=${ packageName }&url=${ scheme }://read&referrer=calypso#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case STATS:
-					return `intent://stats/#Intent;scheme=${ scheme };package=${ packageName };end`;
+					return `intent://details?id=${ packageName }&url=${ scheme }://stats&referrer=calypso#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 			}
 		}
 

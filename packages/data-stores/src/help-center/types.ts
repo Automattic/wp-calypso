@@ -1,3 +1,6 @@
+import * as actions from './actions';
+import type { DispatchFromMap } from '../mapped-types';
+
 export type Location = {
 	pathname: string;
 	search?: string;
@@ -24,4 +27,13 @@ export interface HelpCenterSite {
 	is_wpcom_atomic: boolean;
 	jetpack: boolean;
 	logo: SiteLogo;
+}
+
+export interface Dispatch {
+	dispatch: DispatchFromMap< typeof actions >;
+}
+
+export interface APIFetchOptions {
+	global: boolean;
+	path: string;
 }

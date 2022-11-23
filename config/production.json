@@ -119,6 +119,7 @@
 		"signup/tailored-ecommerce": false,
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
+		"sites-as-landing-page": false,
 		"ssr/log-prefetch-errors": true,
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
@@ -143,7 +144,6 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"upsell/concierge-session": true,
 		"use-translation-chunks": true,
-		"videopress/tailored-onboarding": false,
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true

@@ -1,11 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useHasSeenWhatsNewModalQuery, HelpCenter } from '@automattic/data-stores';
-import { HelpIcon } from '@automattic/help-center';
+import { HelpIcon, PromotionalPopover } from '@automattic/help-center';
 import {
 	useDispatch as useDataStoreDispatch,
 	useSelect as useDateStoreSelect,
 } from '@wordpress/data';
 import classnames from 'classnames';
+import { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import Item from './item';
@@ -13,6 +14,7 @@ import Item from './item';
 const HELP_CENTER_STORE = HelpCenter.register();
 
 const MasterbarHelpCenter = ( { siteId, tooltip } ) => {
+	const helpIconRef = useRef();
 	const { isLoading, data } = useHasSeenWhatsNewModalQuery( siteId );
 	const sectionName = useSelector( getSectionName );
 
@@ -33,14 +35,17 @@ const MasterbarHelpCenter = ( { siteId, tooltip } ) => {
 	};
 
 	return (
-		<Item
-			onClick={ handleToggleHelpCenter }
-			className={ classnames( 'masterbar__item-help', {
-				'is-active': helpCenterVisible,
-			} ) }
-			tooltip={ tooltip }
-			icon={ <HelpIcon newItems={ newItems } /> }
-		/>
+		<>
+			<Item
+				onClick={ handleToggleHelpCenter }
+				className={ classnames( 'masterbar__item-help', {
+					'is-active': helpCenterVisible,
+				} ) }
+				tooltip={ tooltip }
+				icon={ <HelpIcon ref={ helpIconRef } newItems={ newItems } /> }
+			/>
+			<PromotionalPopover iconElement={ helpIconRef.current } />
+		</>
 	);
 };
 

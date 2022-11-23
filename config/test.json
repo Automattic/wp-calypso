@@ -87,6 +87,7 @@
 		"signup/inline-help": false,
 		"signup/social": true,
 		"site-indicator": true,
+		"sites-as-landing-page": true,
 		"ssr/prefetch-timebox": true,
 		"stats/new-all-time-highlights": true,
 		"stats/new-annual-highlights": true,
@@ -98,7 +99,6 @@
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
-		"videopress/tailored-onboarding": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false
 	}

@@ -1,5 +1,7 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_UPLOAD_THEMES, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { pickBy } from 'lodash';
+import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import Main from 'calypso/components/main';
@@ -45,6 +47,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 		requestingSitePlans,
 	} = props;
 
+	const isNewSearchAndFilter = isEnabled( 'themes/showcase-i4/search-and-filter' );
 	const displayUpsellBanner = isAtomic && ! requestingSitePlans && currentPlan;
 	const upsellUrl =
 		isAtomic && `/plans/${ siteId }?feature=${ FEATURE_UPLOAD_THEMES }&plan=${ PLAN_BUSINESS }`;
@@ -65,9 +68,18 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 
 	useRequestSiteChecklistTaskUpdate( siteId, CHECKLIST_KNOWN_TASKS.THEMES_BROWSED );
 
+	useEffect( () => {
+		if ( ! isNewSearchAndFilter ) {
+			return;
+		}
+
+		document.body.classList.add( 'is-section-themes-i4' );
+		return () => document.body.classList.remove( 'is-section-themes-i4' );
+	}, [] );
+
 	return (
 		<Main fullWidthLayout className="themes">
-			<ThemesHeader />
+			<ThemesHeader isReskinned={ isNewSearchAndFilter } />
 			<CurrentTheme siteId={ siteId } />
 			<ThemeShowcase
 				{ ...props }
