@@ -63,7 +63,7 @@ class Coming_Soon_Test extends TestCase {
 	 * Mock valid share code COOKIE request
 	 */
 	private static function set_valid_share_code_cookie_parameter() {
-		$_COOKIE['share_code'] = self::$preview_links[0]['code'];
+		$_COOKIE['wp_share_code'] = self::$preview_links[0]['code'];
 	}
 
 	/**
@@ -71,7 +71,7 @@ class Coming_Soon_Test extends TestCase {
 	 */
 	private static function delete_preview_links_parameters() {
 		unset( $_GET['share'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		unset( $_COOKIE['share_code'] );
+		unset( $_COOKIE['wp_share_code'] );
 	}
 
 	/**

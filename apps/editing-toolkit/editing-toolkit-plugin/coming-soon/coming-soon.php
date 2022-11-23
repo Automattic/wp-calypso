@@ -19,7 +19,7 @@ function should_show_coming_soon_page() {
 
 	$share_code = get_share_code();
 	if ( is_accessed_by_valid_share_link( $share_code ) ) {
-		setcookie( 'share_code', $share_code, time() + 3600, '/', false, is_ssl() );
+		setcookie( 'wp_share_code', $share_code, time() + 3600, '/', false, is_ssl() );
 		header( 'X-Robots-Tag: noindex, nofollow' );
 		return false;
 	}
@@ -46,8 +46,8 @@ function should_show_coming_soon_page() {
 function get_share_code() {
 	if ( isset( $_GET['share'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		return $_GET['share']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	} elseif ( isset( $_COOKIE['share_code'] ) ) {
-		return $_COOKIE['share_code'];
+	} elseif ( isset( $_COOKIE['wp_share_code'] ) ) {
+		return $_COOKIE['wp_share_code'];
 	}
 	return '';
 }
