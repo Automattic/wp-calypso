@@ -22,7 +22,13 @@ const PricingPlansHeader: FunctionComponent< Props > = ( { plan } ) => {
 				<p>{ plan.getDescription() }</p>
 				<p>
 					{ createInterpolateElement( __( '<a>Learn more</a>', 'happy-blocks' ), {
-						a: <a target="_blank" href="https://wordpress.com/pricing" rel="noreferrer" />,
+						a: (
+							<a
+								target="_blank"
+								href={ `https://wordpress.com/plans/${ config.domain }` }
+								rel="noreferrer"
+							/>
+						),
 					} ) }
 				</p>
 			</div>
