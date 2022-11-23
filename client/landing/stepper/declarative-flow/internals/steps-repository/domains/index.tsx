@@ -178,19 +178,30 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				/>
 			),
 		};
-		return flow === 'newsletter'
-			? createInterpolateElement(
+
+		switch ( flow ) {
+			case 'newsletter':
+				return createInterpolateElement(
 					__(
 						'Help your Newsletter stand out with a custom domain. Not sure yet? <decide_later>Decide later</decide_later>.'
 					),
 					decideLaterComponent
-			  )
-			: createInterpolateElement(
+				);
+			case 'link-in-bio':
+				return createInterpolateElement(
 					__(
 						'Set your Link in Bio apart with a custom domain. Not sure yet? <decide_later>Decide later</decide_later>.'
 					),
 					decideLaterComponent
-			  );
+				);
+			default:
+				return createInterpolateElement(
+					__(
+						'Help your site stand out with a custom domain. Not sure yet? <decide_later>Decide later</decide_later>.'
+					),
+					decideLaterComponent
+				);
+		}
 	};
 
 	const getHeaderText = () => {
