@@ -5,6 +5,21 @@
 $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "purple", "yellow", "biba",
 	"chloe-currie", "emily", "luis-carvelleda", "mesh-gradient", "paul-nyberg", "tengfai";
 
+.designCarousel.step-container .step-container__header .formatted-header {
+	text-align: center;
+	.formatted-header__subtitle {
+		text-align: center;
+	}
+	&.is-left-align,
+	&.is-left-align .formatted-header__subtitle {
+		text-align: start;
+	}
+	&.is-right-align,
+	&.is-right-align .formatted-header__subtitle {
+		text-align: end;
+	}
+}
+
 .design-carousel__item {
 	flex: 1;
 
