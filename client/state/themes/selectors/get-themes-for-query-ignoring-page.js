@@ -1,6 +1,7 @@
 import { createSelector } from '@automattic/state-utils';
 import { flatMap } from 'lodash';
 import { getSerializedThemesQueryWithoutPage } from 'calypso/state/themes/utils';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import 'calypso/state/themes/init';
 
@@ -27,13 +28,24 @@ export const getThemesForQueryIgnoringPage = createSelector(
 
 		// If query is default, filter out recommended themes.
 		if ( ! ( query.search || query.filter || query.tier ) ) {
+			const activeThemeId = state.ui
+				? state.themes.activeThemes[ getSelectedSiteId( state ) ]
+				: null;
 			const recommendedThemes = state.themes.recommendedThemes.themes;
-			const themeIds = flatMap( recommendedThemes, ( theme ) => {
-				return theme.id;
-			} );
-			themesForQueryIgnoringPage = themesForQueryIgnoringPage.filter( ( theme ) => {
-				return ! themeIds.includes( theme.id );
-			} );
+			const themeIds = flatMap( recommendedThemes, ( theme ) => theme.id );
+
+			themesForQueryIgnoringPage = themesForQueryIgnoringPage.filter(
+				( theme ) => ! themeIds.includes( theme.id )
+			);
+
+			if ( activeThemeId ) {
+				for ( let i = 0; i < themesForQueryIgnoringPage.length; i++ ) {
+					if ( themesForQueryIgnoringPage[ i ].id === activeThemeId ) {
+						themesForQueryIgnoringPage.unshift( ...themesForQueryIgnoringPage.splice( i, 1 ) );
+						break;
+					}
+				}
+			}
 		}
 
 		// FIXME: The themes endpoint weirdly sometimes returns duplicates (spread
