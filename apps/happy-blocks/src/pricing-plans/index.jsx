@@ -14,7 +14,7 @@ function registerBlock() {
 		apiVersion: 2,
 		title: __( 'Upgrade', 'happy-blocks' ),
 		icon: 'money-alt',
-		category: 'a8c',
+		category: 'embed',
 		description: __( 'List of available pricing plans', 'happy-blocks' ),
 		keywords: [
 			__( 'pricing', 'happy-blocks' ),
