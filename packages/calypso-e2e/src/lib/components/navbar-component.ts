@@ -6,6 +6,7 @@ const selectors = {
 	writeButton: '.masterbar__item-new',
 	notificationsButton: 'a[href="/notifications"]',
 	meButton: 'a[data-tip-target="me"]',
+	helpButton: '[title="Help"]',
 };
 /**
  * Component representing the navbar/masterbar at top of WPCOM.
@@ -29,6 +30,11 @@ export class NavbarComponent {
 	 */
 	private async pageSettled(): Promise< void > {
 		await this.page.waitForLoadState( 'load' );
+
+		// Wait for the last navbar component to load.
+		await this.page.waitForSelector( selectors.helpButton, {
+			state: 'visible',
+		} );
 	}
 
 	/**
