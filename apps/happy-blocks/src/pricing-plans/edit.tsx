@@ -26,7 +26,7 @@ export const Edit: FunctionComponent< BlockEditProps< BlockAttributes > > = ( {
 
 	const blockProps = useBlockProps();
 
-	if ( isLoading || ! plans ) {
+	if ( isLoading || ! plans?.length ) {
 		return <Skeleton />;
 	}
 
