@@ -28,6 +28,20 @@ export default function JetpackMobilePromoCard( {
 	const userAgent = window.navigator.userAgent.toLowerCase();
 	const isApple = userAgent.includes( 'iphone' ) || userAgent.includes( 'ipad' );
 	const isGoogle = userAgent.includes( 'android' );
+	let appStoreLink = '#';
+	if ( isApple ) {
+		if ( isWoo ) {
+			appStoreLink = 'https://apps.apple.com/ca/app/woocommerce/id1389130815';
+		} else {
+			appStoreLink = 'https://apps.apple.com/ca/app/jetpack-website-builder/id1565481562';
+		}
+	} else if ( isGoogle ) {
+		if ( isWoo ) {
+			appStoreLink = 'https://play.google.com/store/apps/details?id=com.woocommerce.android';
+		} else {
+			appStoreLink = 'https://play.google.com/store/apps/details?id=com.jetpack.android';
+		}
+	}
 	return (
 		<div className={ classNames( 'promo-card', className ?? null ) }>
 			<div className="promo-lhs">
@@ -72,18 +86,22 @@ export default function JetpackMobilePromoCard( {
 			</div>
 			<div className="promo-rhs">
 				{ isApple && (
-					<img
-						className="promo-store-badge"
-						src={ storeBadgeApple }
-						alt="Badge for the Apple App Store"
-					/>
+					<a href={ appStoreLink }>
+						<img
+							className="promo-store-badge"
+							src={ storeBadgeApple }
+							alt="Badge for the Apple App Store"
+						/>
+					</a>
 				) }
 				{ isGoogle && (
-					<img
-						className="promo-store-badge"
-						src={ storeBadgeGoogle }
-						alt="Badge for the Google Play Store"
-					/>
+					<a href={ appStoreLink }>
+						<img
+							className="promo-store-badge"
+							src={ storeBadgeGoogle }
+							alt="Badge for the Google Play Store"
+						/>
+					</a>
 				) }
 				{ ! isApple && ! isGoogle && isWoo && (
 					<img className="promo-qr-code" src={ qrCodeWoo } alt="QR Code for Woo mobile app" />
