@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
+import Badge from 'calypso/components/badge';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
@@ -60,6 +61,7 @@ import {
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 import AccountSettingsCloseLink from './close-link';
+import ToggleSitesAsLandingPage from './toggle-sites-as-landing-page';
 
 export const noticeId = 'me-settings-notice';
 const noticeOptions = {
@@ -215,6 +217,12 @@ class Account extends Component {
 
 	updateUserLoginConfirm = ( event ) => {
 		this.setState( { userLoginConfirm: event.target.value } );
+	};
+
+	updateSitesAsLandingPage = ( checked ) => {
+		this.props.recordTracksEvent( 'calypso_sites_as_landing_page_toggled', {
+			sites_as_landing_page: checked,
+		} );
 	};
 
 	validateUsername = debounce( async () => {
@@ -968,6 +976,16 @@ class Account extends Component {
 									/>
 								</FormFieldset>
 							) }
+
+						{ config.isEnabled( 'sites-as-landing-page' ) && (
+							<FormFieldset>
+								<FormLabel id="account__default_landing_page">
+									{ translate( 'Sites Dashboard as landing page' ) }
+									<Badge type="info-blue">beta</Badge>
+								</FormLabel>
+								<ToggleSitesAsLandingPage onToggle={ this.updateSitesAsLandingPage } />
+							</FormFieldset>
+						) }
 					</form>
 				</Card>
 
