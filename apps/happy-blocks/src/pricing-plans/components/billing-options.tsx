@@ -1,4 +1,4 @@
-import { TERM_ANNUALLY, TERM_MONTHLY } from '@automattic/calypso-products';
+import { isWpComMonthlyPlan } from '@automattic/calypso-products';
 import { __ } from '@wordpress/i18n';
 import { FunctionComponent } from 'react';
 import usePlanVariants from '../hooks/plan-variants';
@@ -18,6 +18,10 @@ const BillingOptions: FunctionComponent< Props > = ( { plans, value, onChange } 
 	const selectedPlan = plans?.find( ( plan ) => plan.productSlug === value ) ?? plans[ 0 ];
 	const { monthlyPlan, annualPlan, annualDiscount } = usePlanVariants( plans, selectedPlan );
 
+	if ( ! monthlyPlan || ! annualPlan ) {
+		return null;
+	}
+
 	return (
 		<fieldset className="hb-pricing-plans-embed__billing-options">
 			{ [ monthlyPlan, annualPlan ].map( ( plan ) => (
@@ -31,10 +35,10 @@ const BillingOptions: FunctionComponent< Props > = ( { plans, value, onChange } 
 							checked={ plan?.productSlug === value }
 							onChange={ () => onChange( plan?.productSlug ) }
 						/>
-						{ plan?.term === TERM_MONTHLY
+						{ isWpComMonthlyPlan( plan.productSlug )
 							? __( 'Monthly', 'happy-blocks' )
 							: __( 'Annually', 'happy-blocks' ) }
-						{ annualDiscount && plan?.term === TERM_ANNUALLY && (
+						{ annualDiscount && isWpComMonthlyPlan( plan.productSlug ) && (
 							<Promo>({ annualDiscount })</Promo>
 						) }
 					</label>
