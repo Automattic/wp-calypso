@@ -58,16 +58,18 @@ export class SiteNotice extends Component {
 		return (
 			<UpsellNudge
 				callToAction="Next Steps"
+				className="current-site__launchpad-notice"
 				compact
-				forceHref={ true }
-				forceDisplay={ true }
 				dismissPreferenceName=""
 				dismissTemporary={ true }
+				forceHref={ true }
+				forceDisplay={ true }
 				href={ `/setup/${ site.options.site_intent }/launchpad?siteSlug=${ site.slug }` }
 				// TODO: Add relevant tracks events here
 				// onClick={ onClick }
 				// onDismissClick={ onDismiss }
-				title="🚀 Finish site setup"
+				primaryButton={ false }
+				title="Keep setting up your site"
 			/>
 		);
 	}
