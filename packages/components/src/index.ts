@@ -1,3 +1,4 @@
+export { AkismetLogo } from './akismet-logo';
 export { default as Button } from './button';
 export * as Animation from './animation';
 export { default as Card } from './card';
@@ -17,6 +18,7 @@ export { SiteThumbnail, DEFAULT_THUMBNAIL_SIZE } from './site-thumbnail';
 export { default as Suggestions } from './suggestions';
 export { default as PaginationControl } from './pagination-control';
 export { Gravatar } from './gravatar';
+export { GravatarLogo } from './gravatar-logo';
 export { HappinessEngineersTray } from './happiness-engineers-tray';
 export { Spinner } from './spinner';
 export { SpinnerExample } from './spinner/example';
