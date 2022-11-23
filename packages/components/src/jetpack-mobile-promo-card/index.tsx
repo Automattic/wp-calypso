@@ -25,8 +25,9 @@ export default function JetpackMobilePromoCard( {
 	const components = {
 		a: <a className={ linkClassName } href={ redirectLink } />,
 	};
-	const isApple = window.navigator.userAgent.toLowerCase().includes( 'iphone' );
-	const isGoogle = window.navigator.userAgent.toLowerCase().includes( 'android' );
+	const userAgent = window.navigator.userAgent.toLowerCase();
+	const isApple = userAgent.includes( 'iphone' ) || userAgent.includes( 'ipad' );
+	const isGoogle = userAgent.includes( 'android' );
 	return (
 		<div className={ classNames( 'promo-card', className ?? null ) }>
 			<div className="promo-lhs">
