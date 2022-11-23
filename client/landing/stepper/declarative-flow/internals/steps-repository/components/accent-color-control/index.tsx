@@ -168,7 +168,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 							{ option.label }
 						</SelectDropdown.Item>
 					) ) }
-				</SelectDropdown>{ ' ' }
+				</SelectDropdown>
 			</FormFieldset>
 			<div
 				className={ classNames( 'accent-color-control__contrast-warning', {
