@@ -4,6 +4,8 @@ import './style.scss';
 import iconWoo from './images/icon-woo.png';
 import qrCodeJetpack from './images/qr-code-jetpack.png';
 import qrCodeWoo from './images/qr-code-woo.png';
+import storeBadgeApple from './images/store-apple.png';
+import storeBadgeGoogle from './images/store-google.png';
 import { WordPressJetpackSVG } from './svg-icons';
 
 export type JetpackMobilePromoCardProps = {
@@ -23,6 +25,8 @@ export default function JetpackMobilePromoCard( {
 	const components = {
 		a: <a className={ linkClassName } href={ redirectLink } />,
 	};
+	const isApple = window.navigator.userAgent.toLowerCase().includes( 'iphone' );
+	const isGoogle = window.navigator.userAgent.toLowerCase().includes( 'android' );
 	return (
 		<div className={ classNames( 'promo-card', className ?? null ) }>
 			<div className="promo-lhs">
@@ -41,12 +45,24 @@ export default function JetpackMobilePromoCard( {
 						} ) }
 				</p>
 				<p className="promo-card__message">
-					{ isWoo &&
+					{ isApple &&
+						translate(
+							'Check your stats on-the-go and get real-time notifications with the Jetpack mobile app.'
+						) }
+					{ isGoogle &&
+						translate(
+							'Check your stats on-the-go and get real-time notifications with the Woo mobile app.'
+						) }
+					{ ! isApple &&
+						! isGoogle &&
+						isWoo &&
 						translate(
 							'Visit {{a}}woo.com/mobile{{/a}} or scan the QR code to download the WooCommerce mobile app.',
 							{ components }
 						) }
-					{ ! isWoo &&
+					{ ! isApple &&
+						! isGoogle &&
+						! isWoo &&
 						translate(
 							'Visit {{a}}jetpack.com/app{{/a}} or scan the QR code to download the Jetpack mobile app.',
 							{ components }
@@ -54,15 +70,29 @@ export default function JetpackMobilePromoCard( {
 				</p>
 			</div>
 			<div className="promo-rhs">
-				{ ! isWoo && (
+				{ isApple && (
+					<img
+						className="promo-store-badge"
+						src={ storeBadgeApple }
+						alt="Badge for the Apple App Store"
+					/>
+				) }
+				{ isGoogle && (
+					<img
+						className="promo-store-badge"
+						src={ storeBadgeGoogle }
+						alt="Badge for the Google Play Store"
+					/>
+				) }
+				{ ! isApple && ! isGoogle && isWoo && (
+					<img className="promo-qr-code" src={ qrCodeWoo } alt="QR Code for Woo mobile app" />
+				) }
+				{ ! isApple && ! isGoogle && ! isWoo && (
 					<img
 						className="promo-qr-code"
 						src={ qrCodeJetpack }
 						alt="QR Code for Jetpack mobile app"
 					/>
-				) }
-				{ isWoo && (
-					<img className="promo-qr-code" src={ qrCodeWoo } alt="QR Code for Woo mobile app" />
 				) }
 			</div>
 		</div>
