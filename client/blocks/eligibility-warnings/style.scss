@@ -119,6 +119,7 @@
 	}
 
 	.button,
+	[type="button"],
 	.eligibility-warnings__confirm-buttons {
 		display: none;
 	}
@@ -229,13 +230,12 @@
 	}
 }
 
-.eligibility-warnings__datacenter-picker {
-	margin-top: 10px;
-	form {
-		margin-top: 10px;
-	}
-	label {
-		display: block;
+.eligibility-warnings__datacenter-picker > div {
+	margin-left: 12px;
+	margin-right: 12px;
+	@media ( max-width: 480px ) {
+		margin-left: 6px;
+		margin-right: 6px;
 	}
 }
 
@@ -260,22 +260,5 @@
 
 	.eligibility-warnings__message {
 		border-bottom: none;
-	}
-}
-
-.eligibility-warnings__advanced-options-card.card {
-	border: 1px solid var(--color-border-subtle);
-
-	&.is-expanded,
-	&.is-compact {
-		margin-top: 16px;
-		margin-left: 24px;
-		margin-right: 24px;
-
-		@media ( max-width: 480px ) {
-			margin-top: 8px;
-			margin-left: 24px;
-			margin-right: 24px;
-		}
 	}
 }
