@@ -130,10 +130,9 @@ $font-family: "SF Pro Text", $sans;
 
 			li {
 				list-style: none;
-				height: 40px;
-				line-height: 40px;
+				height: 48px;
+				line-height: 48px;
 				border-bottom: 1px solid #eee;
-				padding: 0 5px 0 35px;
 
 				.pattern-layout__list-item-text {
 					text-overflow: ellipsis;
@@ -148,15 +147,19 @@ $font-family: "SF Pro Text", $sans;
 					border: 0;
 					padding: 0;
 					font-family: inherit;
-					color: var(--studio-blue-50);
+					color: var(--color-link);
+					transition: color 0.2s ease-in;
 				}
 
 				&:hover,
 				&:focus,
 				&:focus-within {
 					button {
-						color: var(--color-accent-60);
-						transition: color 0.2s ease-in;
+						color: var(--color-link-dark);
+					}
+
+					.pattern-layout__add-icon {
+						background-color: var(--color-link-dark);
 					}
 
 					.pattern-layout__list-item-text {
@@ -183,18 +186,6 @@ $font-family: "SF Pro Text", $sans;
 				display: flex;
 				align-items: center;
 
-				&--header {
-					background: url(./images/icon-header.svg) no-repeat 5px center;
-				}
-
-				&--section {
-					background: url(./images/icon-section.svg) no-repeat 5px center;
-				}
-
-				&--footer {
-					background: url(./images/icon-footer.svg) no-repeat 5px center;
-				}
-
 				&--header,
 				&--footer {
 					&:hover .pattern-layout__list-item-text {
@@ -204,10 +195,18 @@ $font-family: "SF Pro Text", $sans;
 			}
 
 			.pattern-layout__add-icon {
-				line-height: 8px;
-				vertical-align: top;
-				padding-right: 4px;
-				height: 10px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				width: 24px;
+				height: 24px;
+				padding: 6px;
+				border-radius: 2px;
+				margin-right: 16px;
+				box-sizing: border-box;
+				color: var(--studio-white);
+				background-color: var(--color-link);
+				transition: background-color 0.2s ease-in;
 			}
 		}
 
