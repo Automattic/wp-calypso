@@ -55,7 +55,7 @@ const BloggingPromptCard = () => {
 			<Card className={ classnames( 'customer-home__card', 'blogging-prompt__card' ) }>
 				<CardHeading>
 					<LightbulbIcon />
-					<span class="blogging-prompt__heading-text">{ translate( 'Daily Prompt' ) }</span>
+					<span className="blogging-prompt__heading-text">{ translate( 'Daily Prompt' ) }</span>
 					{ /* `key` is necessary due to behavior of preventWidows function in CardHeading component. */ }
 					<EllipsisMenu
 						className="blogging-prompt__menu"
