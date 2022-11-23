@@ -97,8 +97,10 @@ export const ItemVariantPrice: FunctionComponent< {
 		stripZeros: true,
 	} );
 
-	const pricePerYear = variant.pricePerYear;
-	const pricePerYearFormatted = formatCurrency( pricePerYear, variant.currency, {
+	const pricePerYearFormatted = formatCurrency( variant.pricePerYear, variant.currency, {
+		stripZeros: true,
+	} );
+	const pricePerMonthFormatted = formatCurrency( variant.pricePerMonth, variant.currency, {
 		stripZeros: true,
 	} );
 	const subText = translate( 'Billed as one payment of %(totalPrice)s', {
@@ -107,6 +109,23 @@ export const ItemVariantPrice: FunctionComponent< {
 		},
 	} );
 
+	const shouldShowMonthlyPrice =
+		compareTo?.termIntervalInMonths === 1 || variant.termIntervalInMonths === 1;
+	const priceDisplay = ( () => {
+		if ( shouldShowMonthlyPrice ) {
+			return translate( '%(pricePerMonth)s / month', {
+				args: {
+					pricePerMonth: pricePerMonthFormatted,
+				},
+			} );
+		}
+		return translate( '%(pricePerYear)s / year', {
+			args: {
+				pricePerYear: pricePerYearFormatted,
+			},
+		} );
+	} )();
+
 	return (
 		<Variant>
 			<Label>
@@ -114,13 +133,7 @@ export const ItemVariantPrice: FunctionComponent< {
 				{ variant.termIntervalInMonths === 24 && <SubText>{ subText }</SubText> }
 			</Label>
 			<PriceArea>
-				<Price>
-					{ translate( '%(pricePerYear)s / year', {
-						args: {
-							pricePerYear: pricePerYearFormatted,
-						},
-					} ) }
-				</Price>
+				<Price>{ priceDisplay }</Price>
 				{ discountPercentage > 0 && <DiscountPercentage percent={ discountPercentage } /> }
 			</PriceArea>
 		</Variant>
