@@ -44,7 +44,7 @@ const useCourseDetails = ( courseSlug: CourseSlug ): CourseDetails | undefined =
 			headerTitle: translate( 'Watch four videos.' ),
 			headerSubtitle: translate( 'Save yourself hours.' ),
 			headerSummary: [
-				translate( 'Learn the building blocks of site building' ),
+				translate( 'Master the building blocks of a WordPress site' ),
 				translate( 'Understand how to add your style to your site' ),
 				translate( 'Upskill now to save hours later' ),
 				translate( 'Set yourself up for creative success' ),
