@@ -5,6 +5,12 @@ import { sprintf, __ } from '@wordpress/i18n';
 import config from '../config';
 import { ApiPricingPlan } from '../types.js';
 
+/**
+ * This URL is broken down into parts due to 119-gh-Automattic/lighthouse-forums
+ */
+const PLANS_API_URL =
+	'https' + '://' + 'public-api.wordpress.com/rest/v1.5/plans?locale=' + config.locale;
+
 export interface BlockPlan extends Plan {
 	productSlug: string;
 	pathSlug: string;
@@ -52,9 +58,7 @@ const usePricingPlans = () => {
 			setIsLoading( true );
 			setError( null );
 			try {
-				const response = await fetch(
-					`https://public-api.wordpress.com/rest/v1.5/plans?locale=${ config.locale }`
-				);
+				const response = await fetch( PLANS_API_URL );
 				const data = await response.json();
 				setPlans( parsePlans( data ) );
 			} catch ( e: unknown ) {
