@@ -1,5 +1,8 @@
 ## next
 
+- Add `AkismetLogo` component.
+- Add `GravatarLogo` component.
+
 ## 2.0.1
 
 - Add missing dependencies: `@automattic/typography` and `wpcom-proxy-request`
