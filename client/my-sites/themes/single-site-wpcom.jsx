@@ -7,6 +7,7 @@ import {
 	PLAN_BUSINESS,
 	WPCOM_FEATURES_PREMIUM_THEMES,
 } from '@automattic/calypso-products';
+import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import Main from 'calypso/components/main';
@@ -23,8 +24,8 @@ import ThemesHeader from './themes-header';
 const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 	const { currentPlan, isVip, requestingSitePlans, siteId, siteSlug, translate } = props;
 
+	const isNewSearchAndFilter = isEnabled( 'themes/showcase-i4/search-and-filter' );
 	const displayUpsellBanner = ! requestingSitePlans && currentPlan && ! isVip;
-
 	const upsellUrl = `/plans/${ siteSlug }`;
 	let upsellBanner = null;
 	if ( displayUpsellBanner ) {
@@ -73,11 +74,19 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 
 	useRequestSiteChecklistTaskUpdate( siteId, CHECKLIST_KNOWN_TASKS.THEMES_BROWSED );
 
+	useEffect( () => {
+		if ( ! isNewSearchAndFilter ) {
+			return;
+		}
+
+		document.body.classList.add( 'is-section-themes-i4' );
+		return () => document.body.classList.remove( 'is-section-themes-i4' );
+	}, [] );
+
 	return (
 		<Main fullWidthLayout className="themes">
-			<ThemesHeader />
+			<ThemesHeader isReskinned={ isNewSearchAndFilter } />
 			<CurrentTheme siteId={ siteId } />
-
 			<ThemeShowcase
 				{ ...props }
 				upsellUrl={ upsellUrl }
