@@ -7,7 +7,7 @@ import {
 	isThemeActive,
 	isThemeGutenbergFirst,
 	isThemePremium,
-	isWporgTheme,
+	isWpcomTheme,
 } from 'calypso/state/themes/selectors';
 
 import 'calypso/state/themes/init';
@@ -44,7 +44,7 @@ export function shouldShowTryAndCustomize( state, themeId, siteId ) {
 	/**
 	 * If displaying a WP.org theme on a non-atomic site, bail
 	 */
-	if ( isWporgTheme( state, themeId ) && ! isSiteWpcomAtomic( state, siteId ) ) {
+	if ( ! isWpcomTheme( state, themeId ) && ! isSiteWpcomAtomic( state, siteId ) ) {
 		return false;
 	}
 
