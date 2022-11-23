@@ -561,15 +561,21 @@ function JetpackSearchMeta( { product }: { product: ResponseCartProduct } ) {
 
 function ProductTier( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
-
-	if ( isJetpackSearch( product ) ) {
-		const productQuantity = product.current_quantity || 10_000;
-		const productQuantityDividedByThousand = productQuantity / 1000;
+	if ( isJetpackSearch( product ) && product.price_tier_transform_quantity_divide_by ) {
+		const currentQuantity = product.current_quantity || 1;
+		let units_used: number;
+		if ( product.price_tier_transform_quantity_round === 'down' ) {
+			units_used = Math.floor( currentQuantity / product.price_tier_transform_quantity_divide_by );
+		} else {
+			units_used = Math.ceil( currentQuantity / product.price_tier_transform_quantity_divide_by );
+		}
+		const purchaseQuantityDividedByThousand =
+			( units_used * product.price_tier_transform_quantity_divide_by ) / 1000;
 		return (
 			<LineItemMeta>
 				{ translate(
-					'Up to %(productQuantityDividedByThousand)sk records and/or requests per month',
-					{ args: { productQuantityDividedByThousand } }
+					'Up to %(purchaseQuantityDividedByThousand)sk records and/or requests per month',
+					{ args: { purchaseQuantityDividedByThousand } }
 				) }
 			</LineItemMeta>
 		);

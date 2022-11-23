@@ -507,6 +507,8 @@ export interface ResponseCartProduct {
 
 	price_tier_minimum_units?: number | null;
 	price_tier_maximum_units?: number | null;
+	price_tier_transform_quantity_divide_by?: number | null;
+	price_tier_transform_quantity_round?: string | null;
 	is_domain_registration: boolean;
 	is_bundled: boolean;
 	is_sale_coupon_applied: boolean;
