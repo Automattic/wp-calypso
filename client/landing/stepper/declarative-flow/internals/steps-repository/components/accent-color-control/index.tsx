@@ -98,7 +98,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 	};
 
 	const getMatchingOption = useCallback(
-		() => COLOR_OPTIONS.filter( ( option ) => option.value === accentColor.hex )[ 0 ] || null,
+		() => COLOR_OPTIONS.find( ( option ) => option.value === accentColor.hex ) || null,
 		[ accentColor.hex ]
 	);
 
