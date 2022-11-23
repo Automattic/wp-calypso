@@ -40,6 +40,8 @@ const PatternLayout = ( {
 	onContinueClick,
 }: PatternLayoutProps ) => {
 	const translate = useTranslate();
+	const headerName = translate( 'Header' );
+	const footerName = translate( 'Footer' );
 
 	return (
 		<div className="pattern-layout">
@@ -56,8 +58,8 @@ const PatternLayout = ( {
 				<ul>
 					{ header ? (
 						<li className="pattern-layout__list-item pattern-layout__list-item--header">
-							<span className="pattern-layout__list-item-text" title={ header.name }>
-								{ header.name }
+							<span className="pattern-layout__list-item-text" title={ headerName }>
+								{ headerName }
 							</span>
 							<PatternActionBar
 								patternType="header"
@@ -112,8 +114,8 @@ const PatternLayout = ( {
 					</li>
 					{ footer ? (
 						<li className="pattern-layout__list-item pattern-layout__list-item--footer">
-							<span className="pattern-layout__list-item-text" title={ footer.name }>
-								{ footer.name }
+							<span className="pattern-layout__list-item-text" title={ footerName }>
+								{ footerName }
 							</span>
 							<PatternActionBar
 								patternType="footer"
