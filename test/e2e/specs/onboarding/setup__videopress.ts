@@ -53,7 +53,7 @@ describe( DataHelper.createSuiteTitle( 'VideoPress Tailored Onboarding' ), () =>
 		} );
 
 		it( 'Navigate to site options', async function () {
-			await page.waitForSelector( 'form.site-options__form' );
+			await page.waitForURL( /.*options.*/ );
 		} );
 
 		it( 'Fill Site Options', async function () {
@@ -64,7 +64,7 @@ describe( DataHelper.createSuiteTitle( 'VideoPress Tailored Onboarding' ), () =>
 		} );
 
 		it( 'Navigate VideoMaker Setup', async function () {
-			await page.waitForSelector( 'div.videomaker-setup' );
+			await page.waitForURL( /.*videomakerSetup.*/ );
 			await page.click( 'button.videomaker-setup__dark-button' );
 		} );
 
