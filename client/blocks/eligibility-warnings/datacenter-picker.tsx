@@ -118,7 +118,7 @@ const DatacenterPicker = ( { onChange, translate, value }: Props ) => {
 					</FormHeadingContainer>
 					<FormDescription>
 						{ translate(
-							'Choose a primary datacenter for your site. Your site will also replicate in real-time to a second datacenter for redundancy. {{supportLink}}Learn more{{/supportLink}}.',
+							'Choose a primary datacenter for your site. For redundancy, your site will replicate in real-time to a second datacenter in different region. {{supportLink}}Learn more{{/supportLink}}.',
 							{
 								components: {
 									supportLink: <ExternalLink icon target="_blank" href={ localizeUrl( '#' ) } />,
