@@ -15,7 +15,7 @@ import LightbulbIcon from './lightbulb-icon';
 
 import './style.scss';
 
-export const BloggingPromptCard = () => {
+const BloggingPromptCard = () => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -80,3 +80,5 @@ export const BloggingPromptCard = () => {
 		</div>
 	);
 };
+
+export default BloggingPromptCard;
