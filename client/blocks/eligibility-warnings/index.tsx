@@ -46,7 +46,7 @@ const noop = () => {};
 interface ExternalProps {
 	isEligible?: boolean;
 	backUrl: string;
-	onProceed: () => void;
+	onProceed: ( options: { geo_affinity?: string } ) => void;
 	standaloneProceed: boolean;
 	className?: string;
 	eligibilityData?: EligibilityData;
@@ -103,7 +103,9 @@ export const EligibilityWarnings = ( {
 	const makeCurrentSitePublic = () => makeSitePublic( siteId );
 
 	const logEventAndProceed = () => {
-		const options = { geo_affinity: selectedGeoAffinity };
+		const options = {
+			geo_affinity: selectedGeoAffinity,
+		};
 		if ( standaloneProceed ) {
 			onProceed( options );
 			return;
@@ -410,7 +412,7 @@ function mergeProps(
 		ctaName = 'calypso-performance-features-activate-nudge';
 	}
 
-	const onProceed = ( options ) => {
+	const onProceed = ( options: { geo_affinity?: string } ) => {
 		ownProps.onProceed( options );
 		dispatchProps.trackProceed( { context } );
 	};

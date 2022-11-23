@@ -8,7 +8,7 @@ import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 
 interface ExternalProps {
 	value: string;
-	onChange: () => void;
+	onChange: ( newValue: string ) => void;
 }
 
 type Props = ExternalProps & LocalizeProps;
