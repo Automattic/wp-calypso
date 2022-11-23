@@ -1,6 +1,35 @@
 import { translate } from 'i18n-calypso';
 import type { Pattern } from './types';
 
+// Category translations with an incremental number
+const categoryNumbers = ( ( count = 0 ) => {
+	return () => translate( 'Numbers %(count)d', { args: { count: ( count += 1 ) } } );
+} )();
+
+const categoryCallToAction = ( ( count = 0 ) => {
+	return () => translate( 'Call To Action %(count)d', { args: { count: ( count += 1 ) } } );
+} )();
+
+const categoryImages = ( ( count = 0 ) => {
+	return () => translate( 'Images %(count)d', { args: { count: ( count += 1 ) } } );
+} )();
+
+const categoryList = ( ( count = 0 ) => {
+	return () => translate( 'List %(count)d', { args: { count: ( count += 1 ) } } );
+} )();
+
+const categoryAbout = ( ( count = 0 ) => {
+	return () => translate( 'About %(count)d', { args: { count: ( count += 1 ) } } );
+} )();
+
+const categoryTestimonials = ( ( count = 0 ) => {
+	return () => translate( 'Testimonials %(count)d', { args: { count: ( count += 1 ) } } );
+} )();
+
+const categoryLinks = ( ( count = 0 ) => {
+	return () => translate( 'Links %(count)d', { args: { count: ( count += 1 ) } } );
+} )();
+
 // All headers in dotcompatterns
 const headerPatterns: Pattern[] = [
 	{
@@ -79,83 +108,83 @@ const footerPatterns: Pattern[] = [
 const sectionPatterns: Pattern[] = [
 	{
 		id: 7156,
-		name: translate( 'Call To Action 1' ),
+		name: categoryCallToAction(),
 	},
 	{
 		id: 7153,
-		name: translate( 'Call To Action 2' ),
+		name: categoryCallToAction(),
 	},
 	{
 		id: 7146,
-		name: translate( 'Call To Action 3' ),
+		name: categoryCallToAction(),
 	},
 	{
 		id: 7132,
-		name: translate( 'Call To Action 4' ),
+		name: categoryCallToAction(),
 	},
 	{
 		id: 7159,
-		name: translate( 'Call To Action 5' ),
+		name: categoryCallToAction(),
 	},
 	{
 		id: 7149,
-		name: translate( 'Images 1' ),
+		name: categoryImages(),
 	},
 	{
 		id: 5691,
-		name: translate( 'Images 2' ),
+		name: categoryImages(),
 	},
 	{
 		id: 7143,
-		name: translate( 'Images 3' ),
+		name: categoryImages(),
 	},
 	{
 		id: 737,
-		name: translate( 'Images 4' ),
+		name: categoryImages(),
 	},
 	{
 		id: 1585,
-		name: translate( 'Images 5' ),
+		name: categoryImages(),
 	},
 	{
 		id: 7135,
-		name: translate( 'List 1' ),
+		name: categoryList(),
 	},
 	{
 		id: 789,
-		name: translate( 'List 2' ),
+		name: categoryList(),
 	},
 	{
 		id: 6712,
-		name: translate( 'List 3' ),
+		name: categoryList(),
 	},
 	{
 		id: 5666,
-		name: translate( 'Numbers 1' ),
+		name: categoryNumbers(),
 	},
 	{
 		id: 462,
-		name: translate( 'Numbers 2' ),
+		name: categoryNumbers(),
 	},
 	{
 		id: 5663,
-		name: translate( 'About 1' ),
+		name: categoryAbout(),
 	},
 	{
 		id: 7140,
-		name: translate( 'About 2' ),
+		name: categoryAbout(),
 	},
 	{
 		id: 7138,
-		name: translate( 'About 3' ),
+		name: categoryAbout(),
 	},
 	{
 		id: 7161,
-		name: translate( 'Testimonials' ),
+		name: categoryTestimonials(),
 	},
 	{
 		id: 1600,
-		name: translate( 'Links' ),
+		name: categoryLinks(),
 	},
 ];
 
