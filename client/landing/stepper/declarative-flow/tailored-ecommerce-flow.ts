@@ -88,7 +88,6 @@ export const ecommerceFlow: Flow = {
 				case 'processing':
 					// Coming from setThemeStep
 					if ( providedDependencies?.selectedDesign ) {
-						resetOnboardStore();
 						return window.location.assign( `${ site?.URL }/wp-admin/admin.php?page=wc-admin` );
 					}
 
@@ -119,6 +118,7 @@ export const ecommerceFlow: Flow = {
 					return navigate( `checkPlan?siteSlug=${ siteSlug }` );
 
 				case 'intro':
+					resetOnboardStore();
 					if ( userIsLoggedIn ) {
 						return navigate( 'storeProfiler' );
 					}
