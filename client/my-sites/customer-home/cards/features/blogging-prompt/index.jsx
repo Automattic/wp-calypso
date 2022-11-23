@@ -4,10 +4,11 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import useBloggingPrompt from 'calypso/data/blogging-prompt/use-blogging-prompt';
+import { useBloggingPrompt } from 'calypso/data/blogging-prompt/use-blogging-prompt';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { SECTION_BLOGGING_PROMPT } from 'calypso/my-sites/customer-home/cards/constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getEditorUrl } from 'calypso/state/selectors/get-editor-url';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import BellOffIcon from './bell-off-icon';
 import LightbulbIcon from './lightbulb-icon';
@@ -17,10 +18,11 @@ import './style.scss';
 export const BloggingPromptCard = () => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
-	const { data: prompt } = useBloggingPrompt( selectedSiteId );
-	const { skipCard } = useSkipCurrentViewMutation( selectedSiteId );
+	const editorUrl = useSelector( ( state ) => getEditorUrl( state, siteId ) );
+	const { data: prompt } = useBloggingPrompt( siteId );
+	const { skipCard } = useSkipCurrentViewMutation( siteId );
 
 	const hidePrompts = () => {
 		skipCard( SECTION_BLOGGING_PROMPT );
@@ -30,10 +32,11 @@ export const BloggingPromptCard = () => {
 			} )
 		);
 	};
+
 	const trackBloggingPromptClick = () => {
 		dispatch(
 			recordTracksEvent( `calypso_customer_home_answer_prompt`, {
-				site_id: selectedSiteId,
+				site_id: siteId,
 				prompt_id: prompt?.id,
 				prompt_text: prompt?.text,
 			} )
@@ -44,7 +47,7 @@ export const BloggingPromptCard = () => {
 		return null;
 	}
 
-	const newPostLink = `/post/${ siteSlug }?answer_prompt=${ prompt.id }`;
+	const newPostLink = `${ editorUrl }?answer_prompt=${ prompt.id }`;
 	const notificationSettingsLink = `/me/notifications#${ siteSlug }`;
 
 	return (
@@ -52,8 +55,8 @@ export const BloggingPromptCard = () => {
 			<Card className={ classnames( 'customer-home__card', 'blogging-prompt__card' ) }>
 				<CardHeading>
 					<LightbulbIcon />
-					{ translate( 'Daily Prompt' ) }
-					{ /* `key` is neccessary due to behavior of preventWidows function in CardHeading component. */ }
+					<span class="blogging-prompt__heading-text">{ translate( 'Daily Prompt' ) }</span>
+					{ /* `key` is necessary due to behavior of preventWidows function in CardHeading component. */ }
 					<EllipsisMenu
 						className="blogging-prompt__menu"
 						position="bottom"
@@ -77,5 +80,3 @@ export const BloggingPromptCard = () => {
 		</div>
 	);
 };
-
-export default BloggingPromptCard;

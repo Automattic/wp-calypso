@@ -31,7 +31,7 @@ export default function BellOffIcon() {
 					<path
 						className="bell"
 						d="M21.1406 6.14215L7.14062 20.1422"
-						stroke="var(--color-neutral-70)"
+						stroke="var(--color-neutral-50)"
 						strokeWidth="1.5"
 					/>
 					<path

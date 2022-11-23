@@ -1,7 +1,11 @@
 import moment from 'moment';
 import { useQuery, UseQueryResult } from 'react-query';
 import wp from 'calypso/lib/wp';
-import { BloggingPrompt } from './blogging-prompt';
+
+export interface BloggingPrompt {
+	id: string;
+	text: string;
+}
 
 const selectPrompt = ( response: any ): BloggingPrompt | null => {
 	const prompt = response && response.prompts && response.prompts[ 0 ];
@@ -14,11 +18,11 @@ const selectPrompt = ( response: any ): BloggingPrompt | null => {
 	};
 };
 
-const useBloggingPrompt = ( siteId: string ): UseQueryResult< BloggingPrompt | null > => {
+export const useBloggingPrompt = ( siteId: string ): UseQueryResult< BloggingPrompt | null > => {
 	const today = moment().format( 'YYYY-MM-DD' );
 
 	return useQuery(
-		[ 'blogging-prompts', siteId, today ],
+		[ 'blogging-prompts', today ],
 		() =>
 			wp.req.get( {
 				path: `/sites/${ siteId }/blogging-prompts?number=1&from=${ today }`,
@@ -31,5 +35,3 @@ const useBloggingPrompt = ( siteId: string ): UseQueryResult< BloggingPrompt | n
 		}
 	);
 };
-
-export default useBloggingPrompt;
