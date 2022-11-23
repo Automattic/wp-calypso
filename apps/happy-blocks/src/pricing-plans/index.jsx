@@ -7,6 +7,9 @@ const blockAttributes = {
 	productSlug: {
 		enum: config.plans,
 	},
+	domain: {
+		type: 'string',
+	},
 };
 
 function registerBlock() {

@@ -15,14 +15,37 @@ export const Edit: FunctionComponent< BlockEditProps< BlockAttributes > > = ( {
 	setAttributes,
 } ) => {
 	const { data: plans, isLoading } = usePricingPlans();
-
 	// Set default values for attributes which are required when rendering the block
 	// See https://github.com/WordPress/gutenberg/issues/7342
 	useEffect( () => {
 		setAttributes( {
 			productSlug: attributes.productSlug ?? config.plans[ 0 ],
+			domain: attributes.domain ?? '',
 		} );
-	}, [ attributes.productSlug, setAttributes ] );
+	}, [ attributes.domain, attributes.productSlug, setAttributes ] );
+
+	useEffect( () => {
+		const blogIdSelect: HTMLSelectElement | null =
+			document.querySelector( 'select[name="blog_id"]' );
+
+		if ( ! blogIdSelect ) {
+			return;
+		}
+
+		const updateBlogId = () => {
+			const url = blogIdSelect.options[ blogIdSelect.selectedIndex ].text;
+			const domain = url.replace( /^https?:\/\//, '' );
+
+			setAttributes( { domain } );
+		};
+
+		updateBlogId();
+		blogIdSelect.addEventListener( 'change', updateBlogId );
+
+		return () => {
+			blogIdSelect.removeEventListener( 'change', updateBlogId );
+		};
+	}, [ setAttributes ] );
 
 	const blockProps = useBlockProps();
 

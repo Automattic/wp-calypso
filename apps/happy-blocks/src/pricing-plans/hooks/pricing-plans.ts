@@ -7,9 +7,9 @@ import { ApiPricingPlan } from '../types.js';
 
 export interface BlockPlan extends Plan {
 	productSlug: string;
+	pathSlug: string;
 	rawPrice: number;
 	price: string;
-	upgradeLink: string;
 	upgradeLabel: string;
 }
 
@@ -21,6 +21,7 @@ const parsePlans = ( data: ApiPricingPlan[] ): BlockPlan[] => {
 			return {
 				...plan,
 				productSlug: apiPlan.product_slug,
+				pathSlug: apiPlan.path_slug,
 				rawPrice: apiPlan.raw_price,
 				price:
 					formatCurrency(
@@ -28,7 +29,6 @@ const parsePlans = ( data: ApiPricingPlan[] ): BlockPlan[] => {
 						apiPlan.currency_code,
 						{ stripZeros: true }
 					) ?? '',
-				upgradeLink: `https://wordpress.com/checkout/${ config.domain }/${ apiPlan.path_slug }`,
 				upgradeLabel: sprintf(
 					// translators: %s is the plan name
 					__( 'Upgrade to %s', 'happy-tools' ),

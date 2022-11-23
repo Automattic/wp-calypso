@@ -24,7 +24,11 @@ const PricingPlanDetail: FunctionComponent< BlockSaveProps< BlockAttributes > & 
 				<BillingInfo plan={ plan } />
 				<BillingOptions plans={ plans } value={ attributes.productSlug } onChange={ setPlan } />
 			</div>
-			<BillingButton href={ plan.upgradeLink }>{ plan.upgradeLabel }</BillingButton>
+			<BillingButton
+				href={ `https://wordpress.com/checkout/${ attributes.domain }/${ plan.pathSlug }` }
+			>
+				{ plan.upgradeLabel }
+			</BillingButton>
 		</section>
 	);
 };
