@@ -2,7 +2,7 @@ import { RadioButton } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import { ItemVariantPrice } from './variant-price';
+import { ItemVariantRadioPrice } from './variant-radio-price';
 import type { ItemVariationPickerProps, WPCOMProductVariant, OnChangeItemVariant } from './types';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
@@ -54,7 +54,7 @@ const ProductVariant: FunctionComponent< ProductVariantProps > = ( {
 					! isDisabled && onChangeItemVariant( selectedItem.uuid, productSlug, productId );
 				} }
 				ariaLabel={ translate( 'Select a different term length' ) as string }
-				label={ <ItemVariantPrice variant={ productVariant } compareTo={ compareTo } /> }
+				label={ <ItemVariantRadioPrice variant={ productVariant } compareTo={ compareTo } /> }
 				children={ [] }
 			/>
 		</TermOptionsItem>
