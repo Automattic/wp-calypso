@@ -42,9 +42,19 @@ const DatacenterOptions = [
 	},
 ];
 
+const Form = styled.form( {
+	maxWidth: '564px',
+} );
+
+const FormHeadingContainer = styled.div( {
+	display: 'flex',
+	alignItems: 'center',
+	marginBottom: '8px',
+} );
+
 const FormHeading = styled.h3( {
 	fontWeight: 600,
-	marginBottom: '8px',
+	marginRight: '8px',
 } );
 
 const FormDescription = styled.p( {
@@ -54,8 +64,8 @@ const FormDescription = styled.p( {
 const AutomaticFormLabel = styled.label( {
 	display: 'block',
 	marginBottom: '10px',
-	width: '543px',
-	maxWidth: '100%',
+	width: '100%',
+	maxWidth: '541px',
 } );
 
 const FormLabelThumbnail = styled.div( {
@@ -74,6 +84,11 @@ const FormLabelThumbnail = styled.div( {
 const DatacenterPicker = ( { onChange, translate, value }: Props ) => {
 	const [ isFormShowing, setIsFormShowing ] = useState( false );
 
+	const onCancel = () => {
+		onChange( '' );
+		setIsFormShowing( false );
+	};
+
 	return (
 		<div>
 			{ ! isFormShowing && (
@@ -89,33 +104,39 @@ const DatacenterPicker = ( { onChange, translate, value }: Props ) => {
 			) }
 
 			{ isFormShowing && (
-				<form>
-					<FormHeading>{ translate( 'Primary datacenter' ) }</FormHeading>
+				<Form>
+					<FormHeadingContainer>
+						<FormHeading>{ translate( 'Primary datacenter' ) }</FormHeading>
+						<Button isTertiary={ true } onClick={ onCancel }>
+							{ translate( 'Cancel' ) }
+						</Button>
+					</FormHeadingContainer>
 					<FormDescription>
 						{ translate(
 							'Choose a primary datacenter for your site. Your site will also replicate to a second datacenter in real-time for redundancy.'
 						) }
 					</FormDescription>
-					<AutomaticFormLabel>
-						<FormLabelThumbnail />
-						<input
-							className="form-radio"
-							name="geo_affinity"
-							type="radio"
-							value=""
-							checked={ value === '' }
-							onChange={ () => onChange( '' ) }
+					<div role="radiogroup">
+						<AutomaticFormLabel>
+							<FormLabelThumbnail />
+							<input
+								className="form-radio"
+								type="radio"
+								value=""
+								checked={ value === '' }
+								onChange={ () => onChange( '' ) }
+							/>
+							<span>{ translate( 'Automatically place my site in the best datacenter' ) }</span>
+						</AutomaticFormLabel>
+						<FormRadiosBar
+							isThumbnail
+							checked={ value }
+							onChange={ ( event ) => onChange( event.currentTarget.value ) }
+							items={ DatacenterOptions }
+							disabled={ false }
 						/>
-						<span>{ translate( 'Automatically place my site in the best datacenter' ) }</span>
-					</AutomaticFormLabel>
-					<FormRadiosBar
-						isThumbnail
-						checked={ value }
-						onChange={ ( event ) => onChange( event.currentTarget.value ) }
-						items={ DatacenterOptions }
-						disabled={ false }
-					/>
-				</form>
+					</div>
+				</Form>
 			) }
 		</div>
 	);
