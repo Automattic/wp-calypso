@@ -91,14 +91,15 @@
 		vertical-align: middle;
 	}
 }
-
+/*
 .dops {
 	.locale-suggestions {
 		margin-top: 0;
 	}
 }
+*/
 
-.crowdsignal {
+.layout__crowdsignal {
 	background: var(--color-surface);
 	color: var(--studio-gray-100);
 
@@ -438,7 +439,7 @@
 	}
 }
 
-.jetpack-cloud {
+.layout__jetpack-cloud {
 	background: var(--studio-gray-0);
 	min-height: 100%;
 
@@ -690,18 +691,5 @@
 		&:focus {
 			color: var(--studio-jetpack-green-60);
 		}
-	}
-}
-
-// Adding some CSS to cover the --color-primary
-// background color in the signup flow for Akismet.
-.layout.dops.akismet {
-	background: var(--color-neutral-0);
-	min-height: 100%;
-
-	// When completing the Akismet signup flow
-	// ensure the text color is legible.
-	.signup-processing__content {
-		color: var(--color-text);
 	}
 }
