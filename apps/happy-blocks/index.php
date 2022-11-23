@@ -102,10 +102,12 @@ add_action( 'wp_enqueue_scripts', 'a8c_happyblocks_view_assets' );
  * @return array
  */
 function a8c_happyblocks_get_config() {
-	$domain = wp_parse_url( home_url() )['host'];
+	$topic_id             = bbp_get_topic_id();
+	$selected_blog_domain = get_post_meta( $topic_id, 'which_blog_domain', true );
+
 	return array(
-		'domain' => $domain,
 		'locale' => get_user_locale(),
+		'domain' => $selected_blog_domain,
 	);
 }
 

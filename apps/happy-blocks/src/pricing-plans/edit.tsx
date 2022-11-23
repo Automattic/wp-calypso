@@ -20,7 +20,7 @@ export const Edit: FunctionComponent< BlockEditProps< BlockAttributes > > = ( {
 	useEffect( () => {
 		setAttributes( {
 			productSlug: attributes.productSlug ?? config.plans[ 0 ],
-			domain: attributes.domain ?? '',
+			domain: attributes.domain ?? config.domain,
 		} );
 	}, [ attributes.domain, attributes.productSlug, setAttributes ] );
 
