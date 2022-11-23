@@ -17,7 +17,14 @@ import UniversalNavbarFooterAutomattic from 'calypso/layout/universal-navbar-foo
 import UniversalNavbarHeader from 'calypso/layout/universal-navbar-header';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isAkismetOAuth2Client,
+	isCrowdsignalOAuth2Client,
+	isGravatarOAuth2Client,
+	isWooOAuth2Client,
+	// isJetpackCloudOAuth2Client,
+	isMailPoetOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import {
 	getCurrentOAuth2Client,
@@ -89,7 +96,7 @@ const LayoutLoggedOut = ( {
 			masterbar = null;
 		} else {
 			classes.dops = true;
-			classes[ oauth2Client.name ] = true;
+			classes[ `layout__${ oauth2Client.name }` ] = true;
 
 			// Force masterbar for all Crowdsignal OAuth pages
 			if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
@@ -169,16 +176,22 @@ export default withCurrentRoute(
 		const isPartnerSignupStart = currentRoute.startsWith( '/start/wpcc' );
 		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
-		const isReskinLoginRoute =
+		const oauth2Client = getCurrentOAuth2Client( state );
+		const isReskinnedOauthClient =
+			isAkismetOAuth2Client( oauth2Client ) ||
+			isGravatarOAuth2Client( oauth2Client ) ||
+			isMailPoetOAuth2Client( oauth2Client );
+		const isNotReskinnedFlow =
+			! isJetpackLogin ||
+			! isP2Login ||
+			! isJetpackWooDnaFlow ||
+			( isPartnerSignup && ! isPartnerSignupStart );
+		const isWhiteLogin =
 			currentRoute.startsWith( '/log-in' ) &&
-			! isJetpackLogin &&
-			! isP2Login &&
-			Boolean( currentQuery?.client_id ) === false;
-		const isWhiteLogin = isReskinLoginRoute || ( isPartnerSignup && ! isPartnerSignupStart );
+			( isReskinnedOauthClient || ! oauth2Client || ! isNotReskinnedFlow );
 		const noMasterbarForRoute =
 			isJetpackLogin || ( isWhiteLogin && ! isPartnerSignup ) || isJetpackWooDnaFlow || isP2Login;
 		const isPopup = '1' === currentQuery?.is_popup;
-		const oauth2Client = getCurrentOAuth2Client( state );
 		const noMasterbarForSection =
 			! isWooOAuth2Client( oauth2Client ) &&
 			[ 'signup', 'jetpack-connect' ].includes( sectionName );
