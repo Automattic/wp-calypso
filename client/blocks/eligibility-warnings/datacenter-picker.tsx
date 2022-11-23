@@ -1,7 +1,9 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { localize, LocalizeProps, translate } from 'i18n-calypso';
 import { useState } from 'react';
+import ExternalLink from 'calypso/components/external-link';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 
 interface ExternalProps {
@@ -79,6 +81,9 @@ const FormLabelThumbnail = styled.div( {
 	boxShadow: '0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5), 0 1px 2px var(--color-neutral-0)',
 	transition: 'all 100ms ease-in-out',
 	overflow: 'hidden',
+	'&:hover': {
+		boxShadow: '0 0 0 1px var(--color-neutral-light), 0 2px 4px var(--color-neutral-10)',
+	},
 } );
 
 const DatacenterPicker = ( { onChange, translate, value }: Props ) => {
@@ -113,7 +118,12 @@ const DatacenterPicker = ( { onChange, translate, value }: Props ) => {
 					</FormHeadingContainer>
 					<FormDescription>
 						{ translate(
-							'Choose a primary datacenter for your site. Your site will also replicate to a second datacenter in real-time for redundancy.'
+							'Choose a primary datacenter for your site. Your site will also replicate in real-time to a second datacenter for redundancy. {{supportLink}}Learn more{{/supportLink}}.',
+							{
+								components: {
+									supportLink: <ExternalLink icon target="_blank" href={ localizeUrl( '#' ) } />,
+								},
+							}
 						) }
 					</FormDescription>
 					<div role="radiogroup">
