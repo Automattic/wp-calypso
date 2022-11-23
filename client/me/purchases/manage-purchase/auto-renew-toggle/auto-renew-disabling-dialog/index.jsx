@@ -3,6 +3,7 @@ import {
 	isGSuiteOrGoogleWorkspace,
 	isPlan,
 	isTitanMail,
+	WPCOM_FEATURES_SUBSCRIPTION_GIFTING,
 } from '@automattic/calypso-products';
 import { Button, Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -12,6 +13,7 @@ import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import CancelAutoRenewalForm from 'calypso/components/marketing-survey/cancel-auto-renewal-form';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSite } from 'calypso/state/sites/selectors';
 import './style.scss';
 
@@ -240,7 +242,7 @@ class AutoRenewDisablingDialog extends Component {
 	};
 
 	renderGeneralDialog = () => {
-		const { isVisible, translate } = this.props;
+		const { isVisible, translate, hasSubscriptionGifting } = this.props;
 		const description = this.getCopy( this.getVariation() );
 
 		const buttons = [
@@ -268,7 +270,7 @@ class AutoRenewDisablingDialog extends Component {
 					{ translate( 'Turn off auto-renew' ) }
 				</h2>
 				<p>{ description }</p>
-				<p>{ this.getGiftingCopy() }</p>
+				{ hasSubscriptionGifting && <p>{ this.getGiftingCopy() }</p> }
 			</Dialog>
 		);
 	};
@@ -301,4 +303,9 @@ class AutoRenewDisablingDialog extends Component {
 export default connect( ( state, { purchase } ) => ( {
 	isAtomicSite: isSiteAtomic( state, purchase.siteId ),
 	selectedSite: getSite( state, purchase.siteId ),
+	hasSubscriptionGifting: siteHasFeature(
+		state,
+		purchase.siteId,
+		WPCOM_FEATURES_SUBSCRIPTION_GIFTING
+	),
 } ) )( localize( withLocalizedMoment( AutoRenewDisablingDialog ) ) );
