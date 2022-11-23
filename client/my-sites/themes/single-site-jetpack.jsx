@@ -4,6 +4,8 @@ import { pickBy } from 'lodash';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import QueryActiveTheme from 'calypso/components/data/query-active-theme';
+import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import Main from 'calypso/components/main';
 import { useRequestSiteChecklistTaskUpdate } from 'calypso/data/site-checklist';
 import CurrentTheme from 'calypso/my-sites/themes/current-theme';
@@ -11,6 +13,7 @@ import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
+import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { addTracking } from './helpers';
 import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
@@ -34,6 +37,7 @@ const ConnectedThemesSelection = connectOptions( ( props ) => {
 const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 	const {
 		currentPlan,
+		currentThemeId,
 		emptyContent,
 		filter,
 		getScreenshotOption,
@@ -80,7 +84,15 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 	return (
 		<Main fullWidthLayout className="themes">
 			<ThemesHeader isReskinned={ isNewSearchAndFilter } />
-			<CurrentTheme siteId={ siteId } />
+			{ ! isNewSearchAndFilter ? (
+				<CurrentTheme siteId={ siteId } />
+			) : (
+				<>
+					<QueryActiveTheme siteId={ siteId } />
+					{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
+				</>
+			) }
+
 			<ThemeShowcase
 				{ ...props }
 				upsellUrl={ upsellUrl }
@@ -129,10 +141,12 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 
 export default connect( ( state, { siteId, tier } ) => {
 	const currentPlan = getCurrentPlan( state, siteId );
+	const currentThemeId = getActiveTheme( state, siteId );
 	const isMultisite = isJetpackSiteMultiSite( state, siteId );
 	const showWpcomThemesList = ! isMultisite;
 	return {
 		currentPlan,
+		currentThemeId,
 		tier,
 		showWpcomThemesList,
 		emptyContent: null,
