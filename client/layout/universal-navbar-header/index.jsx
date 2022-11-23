@@ -1,13 +1,17 @@
 import './nav-style.scss';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import UniversalNavbarBtnMenuItem from 'calypso/layout/universal-navbar-header/btn-menu-item.jsx';
 import UniversalNavbarLiMenuItem from 'calypso/layout/universal-navbar-header/li-menu-item.jsx';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 const UniversalNavbarHeader = () => {
 	const translate = useTranslate();
 	const [ isMobileMenuOpen, setMobileMenuOpen ] = useState( false );
+	const currentRoute = useSelector( getCurrentRoute );
+	const ctaParam = currentRoute.replace( /^\//, '' ) + '-lp';
 
 	return (
 		<div>
@@ -200,7 +204,7 @@ const UniversalNavbarHeader = () => {
 										className="x-nav-item x-nav-item__wide"
 										titleValue={ translate( 'Get Started' ) }
 										elementContent={ translate( 'Get Started' ) }
-										urlValue="/start/business/?ref=plugins-lp"
+										urlValue={ '/start/business/?ref=' + ctaParam }
 										type="nav"
 										typeClassName="x-nav-link x-nav-link__primary x-link cta-btn-nav"
 									/>
