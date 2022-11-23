@@ -119,6 +119,7 @@
 		"signup/tailored-ecommerce": false,
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
+		"sites-as-landing-page": false,
 		"ssr/log-prefetch-errors": true,
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,

@@ -58,6 +58,8 @@ button {
 .plugin-bundle,
 .newsletter-setup,
 .newsletter-post-setup,
+.plans,
+.domains,
 .patterns,
 .link-in-bio-setup,
 .link-in-bio-post-setup,
@@ -142,7 +144,7 @@ button {
  * Tailored flow stylings
  */
 .newsletter,
-.link-in-bio {
+.link-in-bio:not(.domains) {
 	&:not(.launchpad):not(.subscribers) {
 		@include onboarding-break-mobile-landscape {
 			padding: 40px 0 0;
@@ -172,7 +174,7 @@ button {
 			font-weight: 500;
 		}
 
-		&.components-button {
+		&.site-icon-with-picker__upload-button {
 			border-radius: 4px;
 			border: 1px solid rgba($color: #000, $alpha: 0.2);
 

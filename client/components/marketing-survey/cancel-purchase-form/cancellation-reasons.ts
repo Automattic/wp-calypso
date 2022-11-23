@@ -129,6 +129,12 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 					return translate( 'Couldn’t find what I wanted.' );
 				},
 			},
+			{
+				value: 'tooComplicated',
+				get label() {
+					return translate( 'It’s too complicated for me.' );
+				},
+			},
 		],
 	},
 	{
@@ -354,4 +360,24 @@ export function getExtraJetpackReasons(
 			selectOptions,
 		},
 	];
+}
+
+export function getReasonLabelByValue( value: string ) {
+	for ( const first of CANCELLATION_REASONS ) {
+		if ( first.value === value ) {
+			return first.label;
+		}
+
+		if ( ! first.selectOptions ) {
+			continue;
+		}
+
+		for ( const second of first.selectOptions ) {
+			if ( second.value === value ) {
+				return second.label;
+			}
+		}
+	}
+
+	return 'Unknown';
 }

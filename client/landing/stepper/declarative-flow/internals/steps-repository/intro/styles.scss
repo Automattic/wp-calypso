@@ -1,7 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/onboarding/styles/mixins";
 
-body.is-videopress-stepper .intro {
+.intro {
 	&.newsletter {
 		background-color: rgb(162 218 254);
 
@@ -99,10 +99,6 @@ body.is-videopress-stepper .intro {
 		.button.is-primary {
 			background-color: #ffe61c;
 			color: #000;
-		}
-
-		.flow-progress {
-			background: #0003;
 		}
 	}
 

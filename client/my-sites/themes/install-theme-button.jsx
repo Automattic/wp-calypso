@@ -63,7 +63,7 @@ const InstallThemeButton = ( {
 			onClick={ clickHandler }
 			href={ getInstallThemeSlug() }
 		>
-			{ translate( 'Install theme' ) }
+			{ translate( 'Install new theme' ) }
 		</Button>
 	);
 };

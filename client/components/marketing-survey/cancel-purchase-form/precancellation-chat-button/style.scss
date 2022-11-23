@@ -7,14 +7,21 @@
 	right: 1rem;
 	font-size: inherit;
 
+	&.button {
+		display: none;
+	}
+
 	&.at-bottom {
 		display: inline-block;
 		font-size: 0;
 	}
 
 	@include break-small {
-		display: inline-block;
 		transform: translateY(-4px);
+
+		&.button {
+			display: inline-block;
+		}
 
 		&.at-bottom {
 			display: none;
