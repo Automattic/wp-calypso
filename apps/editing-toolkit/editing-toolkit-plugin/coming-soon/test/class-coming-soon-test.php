@@ -16,6 +16,18 @@ require_once __DIR__ . '/../coming-soon.php';
  */
 class Coming_Soon_Test extends TestCase {
 	/**
+	 * Preview links used to test bypassing Coming Soon using the URL with share code provided as GET parameter.
+	 *
+	 * @var \string[][]
+	 */
+	private static $preview_links = array(
+		array(
+			'code'       => 'sharing-code',
+			'created_at' => '2022-11-23',
+		),
+	);
+
+	/**
 	 * Post-test suite actions.
 	 */
 	public static function tearDownAfterClass() {
@@ -38,6 +50,28 @@ class Coming_Soon_Test extends TestCase {
 	private static function delete_coming_soon_site_options() {
 		delete_option( 'blog_public' );
 		delete_option( 'wpcom_public_coming_soon' );
+	}
+
+	/**
+	 * Mock valid share code GET request
+	 */
+	private static function set_valid_share_code_get_parameter() {
+		$_GET['share'] = self::$preview_links[0]['code'];
+	}
+
+	/**
+	 * Mock valid share code COOKIE request
+	 */
+	private static function set_valid_share_code_cookie_parameter() {
+		$_COOKIE['share_code'] = self::$preview_links[0]['code'];
+	}
+
+	/**
+	 * Remove share code from GET and COOKIE.
+	 */
+	private static function delete_preview_links_parameters() {
+		unset( $_GET['share'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		unset( $_COOKIE['share_code'] );
 	}
 
 	/**
@@ -153,5 +187,74 @@ class Coming_Soon_Test extends TestCase {
 
 		do_action( 'wpmu_new_blog', get_current_blog_id(), null, null, null, null, $meta );
 		$this->assertFalse( get_option( 'wpcom_public_coming_soon' ) );
+	}
+
+	/**
+	 * Tests that is_accessed_by_valid_share_link() returns true for requests
+	 * that include valid preview link.
+	 *
+	 * @return void
+	 */
+	public function test_is_accessed_by_valid_share_link_success() {
+		update_option( 'wpcom_public_preview_links', self::$preview_links );
+
+		$result = is_accessed_by_valid_share_link( self::$preview_links[0]['code'] );
+
+		$this->assertTrue( $result );
+	}
+
+	/**
+	 * Tests that is_accessed_by_valid_share_link() returns false for requests
+	 * that include invalid preview link.
+	 *
+	 * @return void
+	 */
+	public function test_is_accessed_by_valid_share_link_failure() {
+		update_option( 'wpcom_public_preview_links', self::$preview_links );
+
+		$result = is_accessed_by_valid_share_link( 'foo-bar' );
+
+		$this->assertFalse( $result );
+	}
+
+	/**
+	 * Tests if get_share_code() return share code from GET param.
+	 *
+	 * @return void
+	 */
+	public function test_get_share_code_gets_code_from_get() {
+		self::set_valid_share_code_get_parameter();
+
+		$share_code = get_share_code();
+
+		$this->assertEquals( 'sharing-code', $share_code );
+
+		self::delete_preview_links_parameters();
+	}
+
+	/**
+	 * Tests if get_share_code() return share code from COOKIE param.
+	 *
+	 * @return void
+	 */
+	public function test_get_share_code_gets_code_from_cookie() {
+		self::set_valid_share_code_cookie_parameter();
+
+		$share_code = get_share_code();
+
+		$this->assertEquals( 'sharing-code', $share_code );
+
+		self::delete_preview_links_parameters();
+	}
+
+	/**
+	 * Tests if get_share_code() return empty share code if it's not set as GET or COOKIE parameter.
+	 *
+	 * @return void
+	 */
+	public function test_get_share_code_gets_empty_code_if_not_set() {
+		$share_code = get_share_code();
+
+		$this->assertSame( '', $share_code );
 	}
 }
