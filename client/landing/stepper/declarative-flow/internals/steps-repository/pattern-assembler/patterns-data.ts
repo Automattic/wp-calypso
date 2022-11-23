@@ -1,48 +1,55 @@
 import type { Pattern } from './types';
 
+// All headers in dotcompatterns
 const headerPatterns: Pattern[] = [
 	{
 		id: 5579,
 		name: 'Centered header',
 	},
 	{
+		id: 5608,
+		name: 'Centered Header with Logo and Navigation',
+	},
+	{
 		id: 5582,
-		name: 'Simple header with large font size',
-	},
-	{
-		id: 5605,
-		name: 'Header with site title and vertical navigation',
-	},
-	{
-		id: 5603,
-		name: 'Header with site title and menu button',
-	},
-	{
-		id: 7914,
-		name: 'Header with button',
+		name: 'Simple Header',
 	},
 	{
 		id: 5588,
-		name: 'Simple header',
-	},
-	{
-		id: 5601,
-		name: 'Simple header with tagline',
+		name: 'Header with site title and vertical navigation',
 	},
 	{
 		id: 5590,
 		name: 'Simple header with image background',
 	},
 	{
+		id: 5593,
+		name: 'Simple header with dark background',
+	},
+	{
 		id: 5595,
 		name: 'Simple header with image',
 	},
 	{
-		id: 5593,
-		name: 'Simple header with dark background',
+		id: 5601,
+		name: 'Simple header with tagline',
+	},
+	{
+		id: 5603,
+		name: 'Header with site title and menu button',
+	},
+	{
+		id: 5605,
+		name: 'Simple header with image',
+	},
+	{
+		id: 7914,
+		name: 'Header with button',
 	},
 ];
 
+// All footers in dotcompatterns
+// Missing footers in dotcomfsepatterns
 const footerPatterns: Pattern[] = [
 	{
 		id: 5316,
@@ -69,12 +76,20 @@ const footerPatterns: Pattern[] = [
 		name: 'Simple centered footer',
 	},
 	{
+		id: 7917,
+		name: 'Footer with Address, Email Address, and Social Links',
+	},
+	{
+		id: 7485,
+		name: 'Footer with Newsletter Subscription Form',
+	},
+	{
 		id: 1622,
-		name: 'Contact',
+		name: 'Footer with Paragraph and Links',
 	},
 	{
 		id: 5047,
-		name: 'Footer with navigation, contact details, social links, and subscription form',
+		name: 'Footer with Navigation, Contact Details, Social Links, and Subscription Form',
 	},
 	{
 		id: 5880,
@@ -96,20 +111,20 @@ const sectionPatterns: Pattern[] = [
 		name: 'Four column list',
 	},
 	{
-		id: 1600,
-		name: 'Three column text and links',
+		id: 7132,
+		name: 'Cover image with left-aligned call to action',
+	},
+	{
+		id: 7159,
+		name: 'Cover image with centered text and a button',
 	},
 	{
 		id: 7149,
 		name: 'Two column image grid',
 	},
 	{
-		id: 7135,
-		name: 'Three columns with images and text',
-	},
-	{
 		id: 5691,
-		name: 'Three logos, heading, and paragraphs',
+		name: 'Three Logos, Heading, and Paragraphs',
 	},
 	{
 		id: 7143,
@@ -120,24 +135,24 @@ const sectionPatterns: Pattern[] = [
 		name: 'Logos',
 	},
 	{
-		id: 7132,
-		name: 'Cover image with left-aligned call to action',
-	},
-	{
-		id: 7159,
-		name: 'Cover image with centered text and a button',
-	},
-	{
 		id: 1585,
 		name: 'Quote and logos',
 	},
 	{
+		id: 7135,
+		name: 'Three columns with images and text',
+	},
+	{
 		id: 789,
-		name: 'Numbered list',
+		name: 'Numbered List',
+	},
+	{
+		id: 6712,
+		name: 'List of events',
 	},
 	{
 		id: 5666,
-		name: 'Large numbers, heading, and paragraphs',
+		name: 'Large Numbers, heading, and paragraphs',
 	},
 	{
 		id: 462,
@@ -145,7 +160,7 @@ const sectionPatterns: Pattern[] = [
 	},
 	{
 		id: 5663,
-		name: 'Large headline',
+		name: 'Large Headline',
 	},
 	{
 		id: 7140,
@@ -160,8 +175,8 @@ const sectionPatterns: Pattern[] = [
 		name: 'Two testimonials side by side',
 	},
 	{
-		id: 6712,
-		name: 'List of events',
+		id: 1600,
+		name: 'Three Column Text and Links',
 	},
 ];
 
