@@ -110,7 +110,7 @@ class Help_Center {
 			'help-center-script',
 			'helpCenterData',
 			array(
-				'currentSiteId' => get_current_blog_id(),
+				'currentSite' => $this->get_current_site(),
 			)
 		);
 
@@ -118,11 +118,57 @@ class Help_Center {
 	}
 
 	/**
+	 * Get current site details.
+	 */
+	public function get_current_site() {
+		$site       = \Jetpack_Options::get_option( 'id' );
+		$logo_id    = get_option( 'site_logo' );
+		$products   = wpcom_get_site_purchases();
+		$at_options = get_option( 'at_options' );
+		$plan       = array_pop(
+			array_filter(
+				$products,
+				function ( $product ) {
+					return 'bundle' === $product->product_type;
+				}
+			)
+		);
+
+		return array(
+			'ID'              => $site,
+			'name'            => get_bloginfo( 'name' ),
+			'URL'             => get_bloginfo( 'url' ),
+			'plan'            => array(
+				'product_slug' => $plan->product_slug,
+			),
+			'is_wpcom_atomic' => boolval( $at_options ),
+			'jetpack'         => true === apply_filters( 'is_jetpack_site', false, $site ),
+			'logo'            => array(
+				'id'    => $logo_id,
+				'sizes' => array(),
+				'url'   => wp_get_attachment_image_src( $logo_id, 'thumbnail' )[0],
+			),
+		);
+	}
+
+	/**
 	 * Register the Help Center endpoints.
 	 */
 	public function register_rest_api() {
+		require_once __DIR__ . '/class-wp-rest-help-center-authenticate.php';
+		$controller = new WP_REST_Help_Center_Authenticate();
+		$controller->register_rest_route();
+
+		require_once __DIR__ . '/class-wp-rest-help-center-sibyl.php';
+		$controller = new WP_REST_Help_Center_Sibyl();
+		$controller->register_rest_route();
+
 		require_once __DIR__ . '/class-wp-rest-help-center-support-availability.php';
 		$controller = new WP_REST_Help_Center_Support_Availability();
+		$controller->register_rest_route();
+
+		require_once __DIR__ . '/class-wp-rest-help-center-has-seen-promotion.php';
+		$controller = new WP_REST_Help_Center_Has_Seen_Promotion();
 		$controller->register_rest_route();
 
 		require_once __DIR__ . '/class-wp-rest-help-center-search.php';
@@ -131,6 +177,10 @@ class Help_Center {
 
 		require_once __DIR__ . '/class-wp-rest-help-center-fetch-post.php';
 		$controller = new WP_REST_Help_Center_Fetch_Post();
+		$controller->register_rest_route();
+
+		require_once __DIR__ . '/class-wp-rest-help-center-ticket.php';
+		$controller = new WP_REST_Help_Center_Ticket();
 		$controller->register_rest_route();
 	}
 

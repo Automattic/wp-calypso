@@ -26,7 +26,7 @@ jest.mock( '@wordpress/compose', () => ( {
 jest.mock( 'react-router-dom', () => ( {
 	...jest.requireActual( 'react-router-dom' ),
 	useLocation: jest.fn().mockImplementation( () => ( {
-		pathname: '/setup/designSetup',
+		pathname: '/setup/site-setup/designSetup',
 		search: '?siteSlug=test.wordpress.com',
 		hash: '',
 		state: undefined,

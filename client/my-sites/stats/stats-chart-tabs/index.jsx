@@ -103,21 +103,22 @@ class StatModuleChartTabs extends Component {
 			{
 				'is-loading': isActiveTabLoading,
 				'stats-module': ! isNewFeatured,
-				'chart-tabs--new-main-chart': isNewFeatured,
 			},
 		];
 
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return isNewFeatured ? (
 			<div className={ classNames( ...classes ) }>
+				<Legend
+					activeCharts={ this.props.activeLegend }
+					activeTab={ this.props.activeTab }
+					availableCharts={ this.props.availableLegend }
+					clickHandler={ this.onLegendClick }
+					tabs={ this.props.charts }
+				/>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
-				<Chart
-					barClick={ this.props.barClick }
-					data={ this.props.chartData }
-					chartXPadding={ 0 }
-					minBarWidth={ 35 }
-				/>
+				<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 } />
 				<StatTabs
 					data={ this.props.counts }
 					tabs={ this.props.charts }
@@ -125,7 +126,6 @@ class StatModuleChartTabs extends Component {
 					selectedTab={ this.props.chartTab }
 					activeIndex={ this.props.queryDate }
 					activeKey="period"
-					iconSize={ 24 }
 				/>
 			</div>
 		) : (

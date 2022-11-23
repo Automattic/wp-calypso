@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -56,7 +55,6 @@ class MagicLogin extends Component {
 
 		const loginParameters = {
 			isJetpack: this.props.isJetpackLogin,
-			isGutenboarding: this.props.isGutenboardingLogin,
 			locale: this.props.locale,
 			emailAddress: this.props.query?.email_address,
 			signupUrl: this.props.query?.signup_url,
@@ -66,10 +64,9 @@ class MagicLogin extends Component {
 	};
 
 	renderLinks() {
-		const { isJetpackLogin, isGutenboardingLogin, locale, showCheckYourEmail, translate } =
-			this.props;
+		const { isJetpackLogin, locale, showCheckYourEmail, translate } = this.props;
 
-		if ( showCheckYourEmail ) {
+		if ( showCheckYourEmail || this.props.query?.client_id ) {
 			return null;
 		}
 
@@ -79,7 +76,6 @@ class MagicLogin extends Component {
 		// paste somewhere else, their email address isn't included in it.
 		const loginParameters = {
 			isJetpack: isJetpackLogin,
-			isGutenboarding: isGutenboardingLogin,
 			locale: locale,
 			signupUrl: this.props.query?.signup_url,
 		};
@@ -133,13 +129,9 @@ class MagicLogin extends Component {
 		};
 
 		return (
-			<Main
-				className={ classNames( 'magic-login', 'magic-login__request-link', {
-					'is-white-login': this.props.isGutenboardingLogin,
-				} ) }
-			>
+			<Main className="magic-login magic-login__request-link is-white-login">
 				{ this.props.isJetpackLogin && <JetpackHeader /> }
-				{ this.props.isGutenboardingLogin && this.renderGutenboardingLogo() }
+				{ this.renderGutenboardingLogo() }
 
 				{ this.renderLocaleSuggestions() }
 
@@ -158,7 +150,6 @@ const mapState = ( state ) => ( {
 	query: getCurrentQueryArguments( state ),
 	showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
 	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
-	isGutenboardingLogin: getCurrentRoute( state )?.startsWith( '/log-in/new/link' ),
 } );
 
 const mapDispatch = {

@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { isWithinBreakpoint } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { getQueryArg, removeQueryArgs, addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
@@ -17,7 +18,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import {
 	checkIfJetpackSiteGotDisconnected,
-	getPurchasedLicense,
 	getSelectedLicenses,
 	getSelectedLicensesSiteId,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
@@ -37,7 +37,7 @@ export default function SitesOverview() {
 	const isMobile = useMobileBreakpoint();
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
-	const purchasedLicense = useSelector( getPurchasedLicense );
+
 	const selectedLicenses = useSelector( getSelectedLicenses );
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
 
@@ -136,9 +136,10 @@ export default function SitesOverview() {
 	const issueLicenseRedirectUrl = useMemo( () => {
 		return addQueryArgs( `/partner-portal/issue-license/`, {
 			site_id: selectedLicensesSiteId,
-			product_slug: selectedLicenses?.map( ( type: string ) =>
-				getProductSlugFromProductType( type )
-			),
+			product_slug: selectedLicenses
+				?.map( ( type: string ) => getProductSlugFromProductType( type ) )
+				// If multiple products are selected, pass them as a comma-separated list.
+				.join( ',' ),
 			source: 'dashboard',
 		} );
 	}, [ selectedLicensesSiteId, selectedLicenses ] );
@@ -157,6 +158,17 @@ export default function SitesOverview() {
 					primary
 					className="sites-overview__licenses-buttons-issue-license"
 					href={ issueLicenseRedirectUrl }
+					onClick={ () =>
+						dispatch(
+							recordTracksEvent( 'calypso_jetpack_agency_dashboard_licenses_select', {
+								site_id: selectedLicensesSiteId,
+								products: selectedLicenses
+									?.map( ( type: string ) => getProductSlugFromProductType( type ) )
+									// If multiple products are selected, pass them as a comma-separated list.
+									.join( ',' ),
+							} )
+						)
+					}
 				>
 					{ translate( 'Issue %(numLicenses)d new license', 'Issue %(numLicenses)d new licenses', {
 						context: 'button label',
@@ -178,9 +190,7 @@ export default function SitesOverview() {
 				<div className="sites-overview__tabs">
 					<div className="sites-overview__content-wrapper">
 						<SiteWelcomeBanner isDashboardView />
-						{ purchasedLicense && data?.sites && (
-							<SiteAddLicenseNotification purchasedLicense={ purchasedLicense } />
-						) }
+						{ data?.sites && <SiteAddLicenseNotification /> }
 						<div className="sites-overview__page-title-container">
 							<div className="sites-overview__page-heading">
 								<h2 className="sites-overview__page-title">{ pageTitle }</h2>
@@ -188,7 +198,9 @@ export default function SitesOverview() {
 									{ translate( 'Manage all your Jetpack sites from one location' ) }
 								</div>
 							</div>
-							{ selectedLicensesCount > 0 && renderIssueLicenseButton() }
+							{ isWithinBreakpoint( '>960px' ) &&
+								selectedLicensesCount > 0 &&
+								renderIssueLicenseButton() }
 						</div>
 						<SectionNav
 							applyUpdatedStyles
@@ -234,6 +246,11 @@ export default function SitesOverview() {
 					</div>
 				</div>
 			</div>
+			{ isWithinBreakpoint( '<960px' ) && selectedLicensesCount > 0 && (
+				<div className="sites-overview__issue-licenses-button-small-screen">
+					{ renderIssueLicenseButton() }
+				</div>
+			) }
 		</div>
 	);
 }

@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import GdprBanner from 'calypso/blocks/gdpr-banner';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
+import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import MasterbarLogin from 'calypso/layout/masterbar/login';
@@ -101,6 +102,8 @@ const LayoutLoggedOut = ( {
 		masterbar = null;
 	} else if ( sectionName === 'plugins' ) {
 		masterbar = <UniversalNavbarHeader />;
+	} else if ( sectionName === 'themes' || sectionName === 'theme' ) {
+		masterbar = <UniversalNavbarHeader />;
 	} else {
 		masterbar = (
 			<MasterbarLoggedOut
@@ -117,6 +120,7 @@ const LayoutLoggedOut = ( {
 
 	return (
 		<div className={ classNames( 'layout', classes ) }>
+			{ 'development' === process.env.NODE_ENV && <SympathyDevWarning /> }
 			<BodySectionCssClass group={ sectionGroup } section={ sectionName } bodyClass={ bodyClass } />
 			{ masterbar }
 			{ isJetpackCloud() && (
@@ -163,10 +167,14 @@ export default withCurrentRoute(
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 		const isPartnerSignup = isPartnerSignupQuery( currentQuery );
 		const isPartnerSignupStart = currentRoute.startsWith( '/start/wpcc' );
-		const isWhiteLogin =
-			currentRoute.startsWith( '/log-in/new' ) || ( isPartnerSignup && ! isPartnerSignupStart );
 		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
+		const isReskinLoginRoute =
+			currentRoute.startsWith( '/log-in' ) &&
+			! isJetpackLogin &&
+			! isP2Login &&
+			Boolean( currentQuery?.client_id ) === false;
+		const isWhiteLogin = isReskinLoginRoute || ( isPartnerSignup && ! isPartnerSignupStart );
 		const noMasterbarForRoute =
 			isJetpackLogin || ( isWhiteLogin && ! isPartnerSignup ) || isJetpackWooDnaFlow || isP2Login;
 		const isPopup = '1' === currentQuery?.is_popup;

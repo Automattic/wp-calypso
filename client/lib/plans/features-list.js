@@ -168,15 +168,7 @@ import {
 	FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
 	FEATURE_UNLIMITED_TRAFFIC,
 	FEATURE_MANAGED_HOSTING,
-	/* START - PLAN TAGLINE EXPERIMENT */
-	FEATURE_STORAGE_BANDWIDTH,
-	FEATURE_EMAIL_SUPPORT_SIGNUP_V2,
-	FEATURE_UNLTD_LIVE_CHAT_SUPPORT,
-	FEATURE_INSTALL_THEMES_PLUGINS,
-	FEATURE_DEVELOPER_TOOLS_V1,
-	FEATURE_PRODUCT_LISTINGS,
 	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS,
-	/* END - PLAN TAGLINE EXPERIMENT */
 	WPCOM_FEATURES_NO_ADVERTS,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -832,7 +824,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_SITE_STATS ]: {
 		getSlug: () => FEATURE_SITE_STATS,
-		getTitle: () => i18n.translate( 'Site Stats and Analytics' ),
+		getTitle: () => i18n.translate( 'Jetpack Stats' ),
 		getDescription: () => i18n.translate( 'The most important metrics for your site.' ),
 	},
 	[ FEATURE_TRAFFIC_TOOLS ]: {
@@ -1047,12 +1039,12 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_BACKUP_REALTIME_V2 ]: {
 		getSlug: () => FEATURE_BACKUP_REALTIME_V2,
-		getTitle: () => i18n.translate( 'Backup (real-time, off-site)' ),
+		getTitle: () => i18n.translate( 'VaultPress Backup (real-time, off-site)' ),
 	},
 	[ FEATURE_PRODUCT_BACKUP_DAILY_V2 ]: {
 		getSlug: () => FEATURE_PRODUCT_BACKUP_DAILY_V2,
 		getIcon: () => 'cloud-upload',
-		getTitle: () => i18n.translate( 'All Backup Daily features' ),
+		getTitle: () => i18n.translate( 'All VaultPress Backup Daily features' ),
 		getDescription: () =>
 			i18n.translate(
 				'Automatic daily backups of your entire site, with unlimited, WordPress-optimized secure storage. {{link}}Learn more{{/link}}.',
@@ -1067,7 +1059,7 @@ export const FEATURES_LIST = {
 	[ FEATURE_PRODUCT_BACKUP_REALTIME_V2 ]: {
 		getSlug: () => FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 		getIcon: () => 'cloud-upload',
-		getTitle: () => i18n.translate( 'Backup Real-time (off-site)' ),
+		getTitle: () => i18n.translate( 'VaultPress Backup Real-time (off-site)' ),
 		getDescription: () =>
 			i18n.translate(
 				'Real-time backups of your entire site and database with unlimited secure storage. {{link}}Learn more{{/link}}.',
@@ -1141,7 +1133,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Activity log: 1-year archive' ),
 		getDescription: () =>
 			i18n.translate(
-				'View every change to your site in the last year. Pairs with Backup to restore your site to any earlier version. {{link}}Learn more.{{/link}}',
+				'View every change to your site in the last year. Pairs with VaultPress Backup to restore your site to any earlier version. {{link}}Learn more.{{/link}}',
 				{
 					components: {
 						link: <ExternalLink icon href="https://jetpack.com/features/security/activity-log/" />,
@@ -1390,7 +1382,19 @@ export const FEATURES_LIST = {
 	[ FEATURE_SFTP_DATABASE ]: {
 		getSlug: () => FEATURE_SFTP_DATABASE,
 		getTitle: () => i18n.translate( 'SFTP, SSH, WP-CLI, and Database access' ),
-		getDescription: () => {},
+		getDescription: () => {
+			const hasTranslation =
+				config( 'english_locales' ).includes( i18n.getLocaleSlug() ) ||
+				i18n.hasTranslation(
+					'A set of developer tools that give you more control over your site, simplify debugging, and make it easier to integrate with each step of your workflow.'
+				);
+
+			return hasTranslation
+				? i18n.translate(
+						'A set of developer tools that give you more control over your site, simplify debugging, and make it easier to integrate with each step of your workflow.'
+				  )
+				: '';
+		},
 	},
 
 	[ PREMIUM_DESIGN_FOR_STORES ]: {
@@ -1450,7 +1454,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_JETPACK_PRODUCT_BACKUP ]: {
 		getSlug: () => FEATURE_JETPACK_PRODUCT_BACKUP,
-		getTitle: () => i18n.translate( 'All Backup features' ),
+		getTitle: () => i18n.translate( 'All VaultPress Backup features' ),
 	},
 	[ FEATURE_JETPACK_PRODUCT_VIDEOPRESS ]: {
 		getSlug: () => FEATURE_JETPACK_PRODUCT_VIDEOPRESS,
@@ -1458,7 +1462,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_JETPACK_ALL_BACKUP_SECURITY_FEATURES ]: {
 		getSlug: () => FEATURE_JETPACK_ALL_BACKUP_SECURITY_FEATURES,
-		getTitle: () => i18n.translate( 'All Backup & Security features' ),
+		getTitle: () => i18n.translate( 'All VaultPress Backup & Security features' ),
 	},
 	[ FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS ]: {
 		getSlug: () => FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS,
@@ -1576,38 +1580,6 @@ export const FEATURES_LIST = {
 				'All plans include world-class managed hosting, including automatic updates, security, backups, and more.'
 			),
 	},
-	/* START - PLAN TAGLINE EXPERIMENT */
-	[ FEATURE_STORAGE_BANDWIDTH ]: {
-		getSlug: () => FEATURE_STORAGE_BANDWIDTH,
-		getTitle: () => 'Increased storage and unlimited bandwidth',
-		getDescription: () => {},
-	},
-	[ FEATURE_EMAIL_SUPPORT_SIGNUP_V2 ]: {
-		getSlug: () => FEATURE_EMAIL_SUPPORT_SIGNUP_V2,
-		getTitle: () => 'Unlimited email support',
-		getDescription: () => {},
-	},
-	[ FEATURE_UNLTD_LIVE_CHAT_SUPPORT ]: {
-		getSlug: () => FEATURE_UNLTD_LIVE_CHAT_SUPPORT,
-		getTitle: () => 'Unlimited live chat support',
-		getDescription: () =>
-			i18n.translate( 'Live chat is available 24 hours a day from Monday through Friday.' ),
-	},
-	[ FEATURE_INSTALL_THEMES_PLUGINS ]: {
-		getSlug: () => FEATURE_INSTALL_THEMES_PLUGINS,
-		getTitle: () => 'Install plugins and custom themes',
-		getDescription: () => i18n.translate( 'Upload custom themes and plugins on your site.' ),
-	},
-	[ FEATURE_DEVELOPER_TOOLS_V1 ]: {
-		getSlug: () => FEATURE_DEVELOPER_TOOLS_V1,
-		getTitle: () => 'SFTP, SSH, and WP-CLI access',
-		getDescription: () => {},
-	},
-	[ FEATURE_PRODUCT_LISTINGS ]: {
-		getSlug: () => FEATURE_PRODUCT_LISTINGS,
-		getTitle: () => 'Unlimited product listings',
-		getDescription: () => {},
-	},
 	[ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS ]: {
 		getSlug: () => FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS,
 		getTitle: () => i18n.translate( 'Advanced design customization' ),
@@ -1616,7 +1588,6 @@ export const FEATURES_LIST = {
 				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
 			),
 	},
-	/* END - PLAN TAGLINE EXPERIMENT */
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList ) => {

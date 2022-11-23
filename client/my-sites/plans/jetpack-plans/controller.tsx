@@ -4,7 +4,6 @@ import JetpackFreeWelcomePage from 'calypso/components/jetpack/jetpack-free-welc
 import JetpackSocialWelcomePage from 'calypso/components/jetpack/jetpack-social-welcome';
 import { JPC_PATH_PLANS } from 'calypso/jetpack-connect/constants';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSlugInTerm } from './convert-slug-terms';
 import getParamsFromContext from './get-params-from-context';
@@ -53,16 +52,14 @@ function getHighlightedProduct( productSlug?: string ): [ string, string ] | nul
 export const productSelect =
 	( rootUrl: string ): PageJS.Callback =>
 	( context, next ) => {
-		// Get the selected site's current plan term, and set it as default duration
+		// If the URL contains a duration, use it to determine the default duration. Ignore selected site's duration.
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 		const urlQueryArgs: QueryArgs = context.query;
 		const { lang } = context.params;
 		const { site: siteParam, duration: durationParam } = getParamsFromContext( context );
-		const duration = siteId && ( getCurrentPlanTerm( state, siteId ) as Duration );
 		const planRecommendation = getPlanRecommendationFromContext( context );
 		const highlightedProducts = getHighlightedProduct( urlQueryArgs.plan ) || undefined;
-
 		const enableUserLicensesDialog = !! (
 			siteId &&
 			( isJetpackCloud() || context.path.startsWith( JPC_PATH_PLANS ) )
@@ -70,9 +67,13 @@ export const productSelect =
 
 		context.primary = (
 			<SelectorPage
-				defaultDuration={ stringToDuration( durationParam ) || duration || TERM_ANNUALLY }
+				defaultDuration={
+					stringToDuration( durationParam ) ||
+					stringToDuration( urlQueryArgs.duration ) ||
+					TERM_ANNUALLY
+				}
 				rootUrl={ rootUrl }
-				siteSlug={ siteParam || context.query.site }
+				siteSlug={ siteParam || urlQueryArgs.site }
 				urlQueryArgs={ urlQueryArgs }
 				highlightedProducts={ highlightedProducts }
 				nav={ context.nav }

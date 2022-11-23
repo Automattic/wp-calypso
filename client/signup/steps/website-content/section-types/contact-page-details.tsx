@@ -2,10 +2,10 @@ import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-	Label,
 	TextAreaField,
 	HorizontalGrid,
 	ContactInformation,
+	LabelBlock,
 } from 'calypso/signup/accordion-form/form-components';
 import {
 	BBE_WEBSITE_CONTENT_FILLING_STEP,
@@ -17,10 +17,10 @@ import {
 } from 'calypso/signup/steps/website-content/wordpress-media-upload';
 import {
 	websiteContentFieldChanged,
-	imageUploaded,
-	imageRemoved,
-	imageUploadFailed,
-	imageUploadInitiated,
+	mediaUploaded,
+	mediaRemoved,
+	mediaUploadFailed,
+	mediaUploadInitiated,
 } from 'calypso/state/signup/steps/website-content/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { PageDetailsParams } from './default-page-details';
@@ -43,7 +43,7 @@ export function ContactPageDetails( {
 
 	const onMediaUploadFailed = ( { mediaIndex }: MediaUploadData ) => {
 		dispatch(
-			imageUploadFailed( {
+			mediaUploadFailed( {
 				pageId: page.id,
 				mediaIndex,
 			} )
@@ -52,18 +52,24 @@ export function ContactPageDetails( {
 
 	const onMediaUploadStart = ( { mediaIndex }: MediaUploadData ) => {
 		dispatch(
-			imageUploadInitiated( {
+			mediaUploadInitiated( {
 				pageId: page.id,
 				mediaIndex,
 			} )
 		);
 	};
 
-	const onMediaUploadComplete = ( { title, URL, uploadID, mediaIndex }: MediaUploadData ) => {
+	const onMediaUploadComplete = ( {
+		title,
+		URL,
+		uploadID,
+		mediaIndex,
+		thumbnailUrl,
+	}: MediaUploadData ) => {
 		dispatch(
-			imageUploaded( {
+			mediaUploaded( {
 				pageId: page.id,
-				image: { url: URL as string, caption: title as string, uploadID },
+				media: { url: URL as string, caption: title as string, uploadID, thumbnailUrl },
 				mediaIndex,
 			} )
 		);
@@ -75,7 +81,7 @@ export function ContactPageDetails( {
 
 	const onMediaRemoved = ( { mediaIndex }: MediaUploadData ) => {
 		dispatch(
-			imageRemoved( {
+			mediaRemoved( {
 				pageId: page.id,
 				mediaIndex,
 			} )
@@ -120,22 +126,22 @@ export function ContactPageDetails( {
 				} }
 				onChange={ onFieldChanged }
 			/>
-			<Label>
-				{ translate( 'Upload up to 3 images to be used on your %(pageTitle)s page.', {
-					args: { pageTitle },
+
+			<LabelBlock>
+				{ translate( 'Upload up to %(noOfImages)d images to be used on your %(pageTitle)s page.', {
+					args: { pageTitle, noOfImages: page.media.length },
 				} ) }
-			</Label>
+			</LabelBlock>
 			<HorizontalGrid>
-				{ page.images.map( ( image, i ) => (
+				{ page.media.map( ( media, i ) => (
 					<WordpressMediaUpload
-						key={ image.uploadID ?? i }
+						media={ media }
+						key={ media.uploadID ?? i }
 						mediaIndex={ i }
 						site={ site }
 						onMediaUploadStart={ onMediaUploadStart }
 						onMediaUploadFailed={ onMediaUploadFailed }
 						onMediaUploadComplete={ onMediaUploadComplete }
-						initialCaption={ image.caption }
-						initialUrl={ image.url }
 						onRemoveImage={ onMediaRemoved }
 					/>
 				) ) }

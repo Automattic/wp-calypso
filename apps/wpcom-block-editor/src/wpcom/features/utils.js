@@ -1,5 +1,5 @@
 import { select } from '@wordpress/data';
-import { isEqual, some, debounce } from 'lodash';
+import { isEqual, some } from 'lodash';
 import tracksRecordEvent from './tracking/track-record-event';
 
 /**
@@ -223,20 +223,54 @@ const buildGlobalStylesEventProps = ( keyMap, value ) => {
 	};
 };
 
+let lastCalled;
+let originalGSObject;
+let functionTimeoutId;
+const debounceTimer = 500;
 /**
- * Builds and sends tracks events for global styles changes.
+ * Creates the Tracks events for global styles changes. The logic is wrapped
+ * in a setTimeout to allow for custom debouncing when invoked.
  *
  * @param {Object} updated   The updated global styles content object.
- * @param {Object} original	 The original global styles content object.
  * @param {string} eventName Name of the tracks event to send.
  */
-export const buildGlobalStylesContentEvents = debounce( ( updated, original, eventName ) => {
-	// Debouncing is necessary to avoid spamming tracks events with updates when sliding inputs
-	// such as a color picker are in use.
-	return findUpdates( updated, original )?.forEach( ( { keyMap, value } ) => {
-		tracksRecordEvent( eventName, buildGlobalStylesEventProps( keyMap, value ) );
-	} );
-}, 100 );
+const trackEventsWithTimer = ( updated, eventName ) => {
+	functionTimeoutId = setTimeout(
+		() =>
+			findUpdates( updated, originalGSObject )?.forEach( ( { keyMap, value } ) => {
+				tracksRecordEvent( eventName, buildGlobalStylesEventProps( keyMap, value ) );
+			} ),
+		debounceTimer
+	);
+};
+
+/**
+ * Builds and sends tracks events for global styles changes. We set and use
+ * some timing variables to allow for custom debouncing. This is needed
+ * to avoid spamming tracks events when using continuous inputs such as a
+ * slider or color picker.
+ *
+ * @param {Object} updated   The updated global styles content object.
+ * @param {Object} original  The original global styles content object.
+ * @param {string} eventName Name of the tracks event to send.
+ */
+export const buildGlobalStylesContentEvents = ( updated, original, eventName ) => {
+	// check timing since last call
+	const hasntBeenCalled = ! lastCalled;
+	const timeCalled = new Date().getTime();
+	const recentlyCalled = timeCalled - lastCalled < debounceTimer;
+	lastCalled = timeCalled;
+
+	if ( hasntBeenCalled || ! recentlyCalled ) {
+		// if not called recently -> set original for later reference
+		originalGSObject = original;
+		trackEventsWithTimer( updated, eventName );
+	} else {
+		// else -> cancel delayed function call - reset it with new updated value
+		clearTimeout( functionTimeoutId );
+		trackEventsWithTimer( updated, eventName );
+	}
+};
 
 export const getFlattenedBlockNames = ( block ) => {
 	const blockNames = [];

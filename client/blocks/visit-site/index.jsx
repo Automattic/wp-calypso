@@ -22,7 +22,7 @@ export default function VisitSite( { siteSlug } ) {
 		return null;
 	}
 
-	const siteLink = <a href={ site.URL }>{ site.name.trim() }</a>;
+	const siteLink = <a href={ site.URL }>{ siteSlug.replace( '::', '/' ) }</a>;
 
 	return (
 		<div className="visit-site">

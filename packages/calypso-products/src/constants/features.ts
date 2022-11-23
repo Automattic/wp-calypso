@@ -95,17 +95,8 @@ export const FEATURE_SITE_BACKUPS_AND_RESTORE = 'site-backups-and-restore';
 export const FEATURE_SECURITY_SETTINGS = 'security-settings';
 export const FEATURE_WOOP = 'woop';
 export const FEATURE_PREMIUM_THEMES = 'unlimited-premium-themes';
-
-/* START - PLAN TAGLINE EXPERIMENT */
-export const FEATURE_STORAGE_BANDWIDTH = 'storage-bandwidth';
-export const FEATURE_EMAIL_SUPPORT_SIGNUP_V2 = 'email-support-signup-v2';
-export const FEATURE_UNLTD_LIVE_CHAT_SUPPORT = 'unltd-live-chat-support';
-export const FEATURE_INSTALL_THEMES_PLUGINS = 'install-themes-plugins';
-export const FEATURE_DEVELOPER_TOOLS_V1 = 'developer-tools-v1';
-export const FEATURE_PRODUCT_LISTINGS = 'product-listings';
 export const FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS =
 	'advanced-design-customization-and-css';
-/* END - PLAN TAGLINE EXPERIMENT */
 
 // Jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';
@@ -249,6 +240,7 @@ export const WPCOM_FEATURES_PRIORITY_SUPPORT = 'priority_support';
 export const WPCOM_FEATURES_REAL_TIME_BACKUPS = 'real-time-backups';
 export const WPCOM_FEATURES_SCAN = 'scan';
 export const WPCOM_FEATURES_SEO_PREVIEW_TOOLS = 'seo-preview-tools';
+export const WPCOM_FEATURES_SUBSCRIPTION_GIFTING = 'subscription-gifting';
 export const WPCOM_FEATURES_UPLOAD_AUDIO_FILES = 'upload-audio-files';
 export const WPCOM_FEATURES_UPLOAD_PLUGINS = 'upload-plugins';
 export const WPCOM_FEATURES_UPLOAD_VIDEO_FILES = 'upload-video-files';

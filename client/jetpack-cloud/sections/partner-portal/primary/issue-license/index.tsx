@@ -28,11 +28,14 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 		<Main wideLayout className="issue-license">
 			<DocumentHead title={ translate( 'Issue a new License' ) } />
 			<SidebarNavigation />
-			<AssignLicenseStepProgress currentStep="issueLicense" />
+			<AssignLicenseStepProgress currentStep="issueLicense" selectedSite={ selectedSite } />
 			<CardHeading size={ 36 }>{ translate( 'Issue a new License' ) }</CardHeading>
 
 			{ isEnabled( 'jetpack/partner-portal-issue-multiple-licenses' ) ? (
-				<IssueMultipleLicensesForm selectedSite={ selectedSite } selectedProductSlugs={ [] } />
+				<IssueMultipleLicensesForm
+					selectedSite={ selectedSite }
+					suggestedProduct={ suggestedProduct }
+				/>
 			) : (
 				<IssueLicenseForm selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
 			) }

@@ -24,8 +24,17 @@ export function getEnhancedTasks(
 	const linkInBioLinksEditCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.links_edited || false;
 
-	const linkInBioSiteLaunchCompleted =
+	const siteLaunchCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.site_launched || false;
+
+	const videoPressUploadCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.video_uploaded || false;
+
+	const homePageId = site?.options?.page_on_front;
+	// send user to Home page editor, fallback to FSE if page id is not known
+	const launchpadUploadVideoLink = homePageId
+		? `/page/${ siteSlug }/${ homePageId }`
+		: `/site-editor/${ siteSlug }`;
 
 	tasks &&
 		tasks.map( ( task ) => {
@@ -37,7 +46,7 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
-								`/setup/newsletterPostSetup?flow=newsletter-post-setup&siteSlug=${ siteSlug }`
+								`/setup/newsletter-post-setup/newsletterPostSetup?siteSlug=${ siteSlug }`
 							);
 						},
 					};
@@ -83,7 +92,7 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
-								`/setup/linkInBioPostSetup?flow=link-in-bio-post-setup&siteSlug=${ siteSlug }`
+								`/setup/link-in-bio-post-setup/linkInBioPostSetup?siteSlug=${ siteSlug }`
 							);
 						},
 					};
@@ -100,8 +109,8 @@ export function getEnhancedTasks(
 					break;
 				case 'link_in_bio_launched':
 					taskData = {
-						title: translate( 'Launch Link in bio' ),
-						completed: linkInBioSiteLaunchCompleted,
+						title: translate( 'Launch your site' ),
+						completed: siteLaunchCompleted,
 						disabled: ! linkInBioLinksEditCompleted,
 						isLaunchTask: true,
 						actionDispatch: () => {
@@ -115,8 +124,49 @@ export function getEnhancedTasks(
 
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
 									await new Promise( ( res ) => setTimeout( res, 500 ) );
-									recordTaskClickTracksEvent( flow, linkInBioSiteLaunchCompleted, task.id );
+									recordTaskClickTracksEvent( flow, siteLaunchCompleted, task.id );
 									window.location.assign( `/home/${ siteSlug }` );
+								} );
+
+								submit?.();
+							}
+						},
+					};
+					break;
+				case 'videopress_setup':
+					taskData = {
+						completed: true,
+						title: translate( 'Set up your video site' ),
+					};
+					break;
+				case 'videopress_upload':
+					taskData = {
+						title: translate( 'Upload your first video' ),
+						actionUrl: launchpadUploadVideoLink,
+						completed: videoPressUploadCompleted,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.replace( launchpadUploadVideoLink );
+						},
+					};
+					break;
+				case 'videopress_launched':
+					taskData = {
+						title: translate( 'Launch site' ),
+						completed: siteLaunchCompleted,
+						disabled: ! videoPressUploadCompleted,
+						actionDispatch: () => {
+							if ( site?.ID ) {
+								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
+								const { launchSite } = dispatch( SITE_STORE );
+
+								setPendingAction( async () => {
+									setProgressTitle( __( 'Launching video site' ) );
+									await launchSite( site.ID );
+
+									// Waits for half a second so that the loading screen doesn't flash away too quickly
+									await new Promise( ( res ) => setTimeout( res, 500 ) );
+									window.location.replace( `/home/${ siteSlug }?forceLoadLaunchpadData=true` );
 								} );
 
 								submit?.();

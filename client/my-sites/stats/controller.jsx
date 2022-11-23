@@ -188,8 +188,8 @@ export function overview( context, next ) {
 	const activeFilter = find( filters(), ( filter ) => {
 		return (
 			context.params.period === filter.period ||
-			context.pathname === filter.path ||
-			( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) )
+			context.path.indexOf( filter.path ) >= 0 ||
+			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )
 		);
 	} );
 
@@ -213,15 +213,18 @@ export function site( context, next ) {
 
 	const filters = getSiteFilters( givenSiteId );
 	const state = store.getState();
+
+	// Why empty??
 	const currentSite = getSite( state, givenSiteId );
 	const siteId = currentSite ? currentSite.ID || 0 : 0;
 
-	const activeFilter = find(
-		filters,
-		( filter ) =>
-			context.pathname === filter.path ||
-			( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) )
-	);
+	const activeFilter = find( filters, ( filter ) => {
+		return (
+			context.path.indexOf( filter.path ) >= 0 ||
+			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )
+		);
+	} );
+
 	if ( ! activeFilter ) {
 		return next();
 	}
@@ -294,8 +297,8 @@ export function summary( context, next ) {
 
 	const activeFilter = find( filters, ( filter ) => {
 		return (
-			context.pathname === filter.path ||
-			( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) )
+			context.path.indexOf( filter.path ) >= 0 ||
+			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )
 		);
 	} );
 

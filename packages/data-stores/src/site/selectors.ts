@@ -21,8 +21,15 @@ export const isNewSite = ( state: State ) => !! state.newSite.data;
  */
 export const getSite = ( state: State, siteId: number | string ) => {
 	return (
+		// Try matching numeric site ID
 		state.sites[ siteId ] ||
-		Object.values( state.sites ).find( ( site ) => site && new URL( site.URL ).host === siteId )
+		// Then try matching primary domain
+		Object.values( state.sites ).find( ( site ) => site && new URL( site.URL ).host === siteId ) ||
+		// Then try matching second domain
+		Object.values( state.sites ).find(
+			( site ) =>
+				site && site.options.unmapped_url && new URL( site.options.unmapped_url ).host === siteId
+		)
 	);
 };
 

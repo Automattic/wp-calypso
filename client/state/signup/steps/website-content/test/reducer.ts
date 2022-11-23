@@ -1,55 +1,71 @@
 import { SIGNUP_COMPLETE_RESET } from 'calypso/state/action-types';
 import {
+	ABOUT_PAGE,
+	CONTACT_PAGE,
+	HOME_PAGE,
+	PORTFOLIO_PAGE,
+	VIDEO_GALLERY_PAGE,
+} from '../../../../../signup/difm/constants';
+import {
 	updateWebsiteContentCurrentIndex,
-	imageUploaded,
+	mediaUploaded,
 	websiteContentFieldChanged,
 	initializePages,
-	imageUploadInitiated,
-	imageUploadFailed,
+	mediaUploadInitiated,
+	mediaUploadFailed,
 	logoUploadStarted,
 	logoUploadFailed,
 	logoUploadCompleted,
-	imageRemoved,
+	mediaRemoved,
 	logoRemoved,
+	getSingleMediaPlaceholder,
 } from '../actions';
-import websiteContentCollectionReducer, { IMAGE_UPLOAD_STATES, LOGO_SECTION_ID } from '../reducer';
-import { initialState } from '../schema';
+import websiteContentCollectionReducer from '../reducer';
+import {
+	initialState,
+	LOGO_SECTION_ID,
+	MEDIA_UPLOAD_STATES,
+	WebsiteContentCollection,
+} from '../schema';
 
-const initialTestState = {
+const initialTestState: WebsiteContentCollection = {
 	currentIndex: 0,
-	imageUploadStates: {},
+	mediaUploadStates: {},
 	websiteContent: {
 		siteLogoSection: { siteLogoUrl: '' },
 		feedbackSection: { genericFeedback: '' },
 		pages: [
 			{
-				id: 'Home',
+				id: HOME_PAGE,
 				title: 'Homepage',
 				content: '',
-				images: [
-					{ caption: '', url: '' },
-					{ caption: '', url: '' },
-					{ caption: '', url: '' },
+				media: [
+					getSingleMediaPlaceholder( 'IMAGE' ),
+					getSingleMediaPlaceholder( 'IMAGE' ),
+					getSingleMediaPlaceholder( 'IMAGE' ),
+					getSingleMediaPlaceholder( 'IMAGE' ),
 				],
 			},
 			{
-				id: 'About',
+				id: ABOUT_PAGE,
 				title: 'Information About You',
 				content: '',
-				images: [
-					{ caption: '', url: '' },
-					{ caption: '', url: '' },
-					{ caption: '', url: '' },
+				media: [
+					getSingleMediaPlaceholder( 'IMAGE' ),
+					getSingleMediaPlaceholder( 'IMAGE' ),
+					getSingleMediaPlaceholder( 'IMAGE' ),
+					getSingleMediaPlaceholder( 'IMAGE' ),
 				],
 			},
 			{
-				id: 'Contact',
+				id: CONTACT_PAGE,
 				title: 'Contact Info',
 				content: '',
-				images: [
-					{ caption: '', url: '' },
-					{ caption: '', url: '' },
-					{ caption: '', url: '' },
+				media: [
+					getSingleMediaPlaceholder( 'IMAGE' ),
+					getSingleMediaPlaceholder( 'IMAGE' ),
+					getSingleMediaPlaceholder( 'IMAGE' ),
+					getSingleMediaPlaceholder( 'IMAGE' ),
 				],
 			},
 		],
@@ -77,15 +93,15 @@ describe( 'reducer', () => {
 				initializePages(
 					[
 						{
-							id: 'page-1',
+							id: CONTACT_PAGE,
 							name: 'Page 1',
 						},
 						{
-							id: 'page-2',
+							id: VIDEO_GALLERY_PAGE,
 							name: 'Page 2',
 						},
 						{
-							id: 'page-3',
+							id: PORTFOLIO_PAGE,
 							name: 'Page 3',
 						},
 					],
@@ -98,33 +114,40 @@ describe( 'reducer', () => {
 				...initialTestState.websiteContent,
 				pages: [
 					{
-						id: 'page-1',
+						id: CONTACT_PAGE,
 						title: 'Page 1',
 						content: '',
-						images: [
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
+						media: [
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
 						],
 					},
 					{
-						id: 'page-2',
+						id: VIDEO_GALLERY_PAGE,
 						title: 'Page 2',
 						content: '',
-						images: [
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
+						media: [
+							getSingleMediaPlaceholder( 'VIDEO' ),
+							getSingleMediaPlaceholder( 'VIDEO' ),
+							getSingleMediaPlaceholder( 'VIDEO' ),
+							getSingleMediaPlaceholder( 'VIDEO' ),
 						],
 					},
 					{
-						id: 'page-3',
+						id: PORTFOLIO_PAGE,
 						title: 'Page 3',
 						content: '',
-						images: [
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
+						media: [
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
 						],
 					},
 				],
@@ -144,16 +167,16 @@ describe( 'reducer', () => {
 				initializePages(
 					[
 						{
-							id: 'page-2',
+							id: CONTACT_PAGE,
+							name: 'Page 1',
+						},
+						{
+							id: VIDEO_GALLERY_PAGE,
 							name: 'Page 2',
 						},
 						{
-							id: 'page-3',
+							id: PORTFOLIO_PAGE,
 							name: 'Page 3',
-						},
-						{
-							id: 'page-4',
-							name: 'Page 4',
 						},
 					],
 					1234
@@ -169,33 +192,40 @@ describe( 'reducer', () => {
 				...initialTestState.websiteContent,
 				pages: [
 					{
-						id: 'page-1',
+						id: CONTACT_PAGE,
 						title: 'Page 1',
 						content: 'Some existing Page 1 content',
-						images: [
-							{ caption: 'sample.jpg', url: 'sample.jpg' },
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
+						media: [
+							{ ...getSingleMediaPlaceholder( 'IMAGE' ), caption: 'sample.jpg', url: 'sample.jpg' },
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
 						],
 					},
 					{
-						id: 'page-2',
+						id: VIDEO_GALLERY_PAGE,
 						title: 'Page 2',
 						content: 'Some existing Page 2 content',
-						images: [
-							{ caption: 'sample.jpg', url: 'sample.jpg' },
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
+						media: [
+							{ ...getSingleMediaPlaceholder( 'IMAGE' ), caption: 'sample.vid', url: 'sample.vid' },
+							getSingleMediaPlaceholder( 'VIDEO' ),
+							getSingleMediaPlaceholder( 'VIDEO' ),
+							getSingleMediaPlaceholder( 'VIDEO' ),
 						],
 					},
 					{
-						id: 'page-3',
+						id: PORTFOLIO_PAGE,
 						title: 'Page 3',
 						content: 'Some existing Page 3 content',
-						images: [
+						media: [
 							{ caption: 'sample.jpg', url: 'sample.jpg' },
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
 						],
 					},
 				],
@@ -208,16 +238,16 @@ describe( 'reducer', () => {
 				initializePages(
 					[
 						{
-							id: 'page-2',
+							id: CONTACT_PAGE,
+							name: 'Page 1',
+						},
+						{
+							id: VIDEO_GALLERY_PAGE,
 							name: 'Page 2',
 						},
 						{
-							id: 'page-3',
+							id: PORTFOLIO_PAGE,
 							name: 'Page 3',
-						},
-						{
-							id: 'page-4',
-							name: 'Page 4',
 						},
 					],
 					1337
@@ -229,33 +259,40 @@ describe( 'reducer', () => {
 				...initialTestState.websiteContent,
 				pages: [
 					{
-						id: 'page-2',
+						id: CONTACT_PAGE,
+						title: 'Page 1',
+						content: '',
+						media: [
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+						],
+					},
+					{
+						id: VIDEO_GALLERY_PAGE,
 						title: 'Page 2',
 						content: '',
-						images: [
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
+						media: [
+							getSingleMediaPlaceholder( 'VIDEO' ),
+							getSingleMediaPlaceholder( 'VIDEO' ),
+							getSingleMediaPlaceholder( 'VIDEO' ),
+							getSingleMediaPlaceholder( 'VIDEO' ),
 						],
 					},
 					{
-						id: 'page-3',
+						id: PORTFOLIO_PAGE,
 						title: 'Page 3',
 						content: '',
-						images: [
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
-						],
-					},
-					{
-						id: 'page-4',
-						title: 'Page 4',
-						content: '',
-						images: [
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
+						media: [
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
 						],
 					},
 				],
@@ -265,53 +302,61 @@ describe( 'reducer', () => {
 	} );
 
 	test( 'image data should be accurately updated', () => {
-		const action = imageUploaded( {
-			pageId: 'Home',
+		const action = mediaUploaded( {
+			pageId: HOME_PAGE,
 			mediaIndex: 1,
-			image: { caption: 'test', url: 'www.test.com/test.test.jpg' },
+			media: {
+				...getSingleMediaPlaceholder( 'IMAGE' ),
+				caption: 'test',
+				url: 'www.test.com/test.test.jpg',
+			},
 		} );
 		const recieved = websiteContentCollectionReducer( { ...initialTestState }, action );
 		expect( recieved ).toEqual( {
 			...initialTestState,
-			imageUploadStates: {
-				Home: {
-					1: IMAGE_UPLOAD_STATES.UPLOAD_COMPLETED,
+			mediaUploadStates: {
+				[ HOME_PAGE ]: {
+					1: MEDIA_UPLOAD_STATES.UPLOAD_COMPLETED,
 				},
 			},
 			websiteContent: {
 				...initialTestState.websiteContent,
 				pages: [
 					{
-						id: 'Home',
+						id: HOME_PAGE,
 						title: 'Homepage',
 						content: '',
-						images: [
-							{ caption: '', url: '' },
+						media: [
+							getSingleMediaPlaceholder( 'IMAGE' ),
 							{
+								...getSingleMediaPlaceholder( 'IMAGE' ),
 								caption: 'test',
 								url: 'www.test.com/test.test.jpg',
 							},
-							{ caption: '', url: '' },
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
 						],
 					},
 					{
-						id: 'About',
+						id: ABOUT_PAGE,
 						title: 'Information About You',
 						content: '',
-						images: [
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
+						media: [
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
 						],
 					},
 					{
-						id: 'Contact',
+						id: CONTACT_PAGE,
 						title: 'Contact Info',
 						content: '',
-						images: [
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
+						media: [
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
 						],
 					},
 				],
@@ -320,30 +365,30 @@ describe( 'reducer', () => {
 	} );
 
 	test( 'should update the image uploading success/failed state correctly', () => {
-		const action = imageUploadInitiated( {
-			pageId: 'About',
+		const action = mediaUploadInitiated( {
+			pageId: ABOUT_PAGE,
 			mediaIndex: 2,
 		} );
 		const nextState = websiteContentCollectionReducer( { ...initialTestState }, action );
 		expect( nextState ).toEqual( {
 			...initialTestState,
-			imageUploadStates: {
-				About: {
-					2: IMAGE_UPLOAD_STATES.UPLOAD_STARTED,
+			mediaUploadStates: {
+				[ ABOUT_PAGE ]: {
+					2: MEDIA_UPLOAD_STATES.UPLOAD_STARTED,
 				},
 			},
 		} );
 
-		const failedAction = imageUploadFailed( { pageId: 'About', mediaIndex: 2 } );
+		const failedAction = mediaUploadFailed( { pageId: ABOUT_PAGE, mediaIndex: 2 } );
 		const nextAfterFailedState = websiteContentCollectionReducer(
 			{ ...initialTestState },
 			failedAction
 		);
 		expect( nextAfterFailedState ).toEqual( {
 			...initialTestState,
-			imageUploadStates: {
-				About: {
-					2: IMAGE_UPLOAD_STATES.UPLOAD_FAILED,
+			mediaUploadStates: {
+				[ ABOUT_PAGE ]: {
+					2: MEDIA_UPLOAD_STATES.UPLOAD_FAILED,
 				},
 			},
 		} );
@@ -351,19 +396,27 @@ describe( 'reducer', () => {
 
 	test( 'should remove the in memory image state details correctly', () => {
 		// First simulate an image upload completion
-		const actionImageUploaded = imageUploaded( {
-			pageId: 'Home',
+		const actionmediaUploaded = mediaUploaded( {
+			pageId: HOME_PAGE,
 			mediaIndex: 0,
-			image: { caption: 'test', url: 'www.test.com/test.test.jpg' },
+			media: {
+				...getSingleMediaPlaceholder( 'IMAGE' ),
+				caption: 'test',
+				url: 'www.test.com/test.test.jpg',
+			},
 		} );
-		const secondActionImageUploaded = imageUploaded( {
-			pageId: 'Home',
+		const secondActionmediaUploaded = mediaUploaded( {
+			pageId: HOME_PAGE,
 			mediaIndex: 1,
-			image: { caption: 'secondtest', url: 'www.testwo.com/testwo.testwo.jpg' },
+			media: {
+				...getSingleMediaPlaceholder( 'IMAGE' ),
+				caption: 'secondtest',
+				url: 'www.testwo.com/testwo.testwo.jpg',
+			},
 		} );
 
-		let nextState = websiteContentCollectionReducer( { ...initialTestState }, actionImageUploaded );
-		nextState = websiteContentCollectionReducer( nextState, secondActionImageUploaded );
+		let nextState = websiteContentCollectionReducer( { ...initialTestState }, actionmediaUploaded );
+		nextState = websiteContentCollectionReducer( nextState, secondActionmediaUploaded );
 
 		expect( nextState ).toEqual( {
 			...initialTestState,
@@ -371,35 +424,38 @@ describe( 'reducer', () => {
 				...initialTestState.websiteContent,
 				pages: [
 					{
-						id: 'Home',
+						id: HOME_PAGE,
 						title: 'Homepage',
 						content: '',
-						images: [
+						media: [
 							{
+								...getSingleMediaPlaceholder( 'IMAGE' ),
 								caption: 'test',
 								url: 'www.test.com/test.test.jpg',
 							},
 							{
+								...getSingleMediaPlaceholder( 'IMAGE' ),
 								caption: 'secondtest',
 								url: 'www.testwo.com/testwo.testwo.jpg',
 							},
-							{ caption: '', url: '' },
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
 						],
 					},
 					...initialTestState.websiteContent.pages.slice( 1 ),
 				],
 			},
-			imageUploadStates: {
-				Home: {
-					0: IMAGE_UPLOAD_STATES.UPLOAD_COMPLETED,
-					1: IMAGE_UPLOAD_STATES.UPLOAD_COMPLETED,
+			mediaUploadStates: {
+				[ HOME_PAGE ]: {
+					0: MEDIA_UPLOAD_STATES.UPLOAD_COMPLETED,
+					1: MEDIA_UPLOAD_STATES.UPLOAD_COMPLETED,
 				},
 			},
 		} );
 
 		// Now remove the image and check state
-		const actionRemoveInMemoryImage = imageRemoved( {
-			pageId: 'Home',
+		const actionRemoveInMemoryImage = mediaRemoved( {
+			pageId: HOME_PAGE,
 			mediaIndex: 1,
 		} );
 		nextState = websiteContentCollectionReducer( nextState, actionRemoveInMemoryImage );
@@ -409,28 +465,27 @@ describe( 'reducer', () => {
 				...initialTestState.websiteContent,
 				pages: [
 					{
-						id: 'Home',
+						id: HOME_PAGE,
 						title: 'Homepage',
 						content: '',
-						images: [
+						media: [
 							{
+								...getSingleMediaPlaceholder( 'IMAGE' ),
 								caption: 'test',
 								url: 'www.test.com/test.test.jpg',
 							},
-							{
-								caption: '',
-								url: '',
-							},
-							{ caption: '', url: '' },
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
 						],
 					},
 					...initialTestState.websiteContent.pages.slice( 1 ),
 				],
 			},
-			imageUploadStates: {
-				Home: {
-					0: IMAGE_UPLOAD_STATES.UPLOAD_COMPLETED,
-					1: IMAGE_UPLOAD_STATES.UPLOAD_REMOVED,
+			mediaUploadStates: {
+				[ HOME_PAGE ]: {
+					0: MEDIA_UPLOAD_STATES.UPLOAD_COMPLETED,
+					1: MEDIA_UPLOAD_STATES.UPLOAD_REMOVED,
 				},
 			},
 		} );
@@ -441,9 +496,9 @@ describe( 'reducer', () => {
 		const nextState = websiteContentCollectionReducer( { ...initialTestState }, action );
 		expect( nextState ).toEqual( {
 			...initialTestState,
-			imageUploadStates: {
+			mediaUploadStates: {
 				[ LOGO_SECTION_ID ]: {
-					0: IMAGE_UPLOAD_STATES.UPLOAD_COMPLETED,
+					0: MEDIA_UPLOAD_STATES.UPLOAD_COMPLETED,
 				},
 			},
 			websiteContent: {
@@ -458,9 +513,9 @@ describe( 'reducer', () => {
 		const nextState = websiteContentCollectionReducer( { ...initialTestState }, action );
 		expect( nextState ).toEqual( {
 			...initialTestState,
-			imageUploadStates: {
+			mediaUploadStates: {
 				[ LOGO_SECTION_ID ]: {
-					0: IMAGE_UPLOAD_STATES.UPLOAD_STARTED,
+					0: MEDIA_UPLOAD_STATES.UPLOAD_STARTED,
 				},
 			},
 		} );
@@ -472,9 +527,9 @@ describe( 'reducer', () => {
 		);
 		expect( nextAfterFailedState ).toEqual( {
 			...initialTestState,
-			imageUploadStates: {
+			mediaUploadStates: {
 				[ LOGO_SECTION_ID ]: {
-					0: IMAGE_UPLOAD_STATES.UPLOAD_FAILED,
+					0: MEDIA_UPLOAD_STATES.UPLOAD_FAILED,
 				},
 			},
 		} );
@@ -485,9 +540,9 @@ describe( 'reducer', () => {
 		const nextState = websiteContentCollectionReducer( { ...initialTestState }, action );
 		expect( nextState ).toEqual( {
 			...initialTestState,
-			imageUploadStates: {
+			mediaUploadStates: {
 				[ LOGO_SECTION_ID ]: {
-					0: IMAGE_UPLOAD_STATES.UPLOAD_REMOVED,
+					0: MEDIA_UPLOAD_STATES.UPLOAD_REMOVED,
 				},
 			},
 			websiteContent: {
@@ -499,7 +554,7 @@ describe( 'reducer', () => {
 
 	test( 'text content should be accurately updated', () => {
 		const action = websiteContentFieldChanged( {
-			pageId: 'About',
+			pageId: ABOUT_PAGE,
 			fieldValue: 'Testing Content',
 			fieldName: 'content',
 		} );
@@ -509,33 +564,36 @@ describe( 'reducer', () => {
 				...initialState.websiteContent,
 				pages: [
 					{
-						id: 'Home',
+						id: HOME_PAGE,
 						title: 'Homepage',
 						content: '',
-						images: [
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
+						media: [
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
 						],
 					},
 					{
-						id: 'About',
+						id: ABOUT_PAGE,
 						title: 'Information About You',
 						content: 'Testing Content',
-						images: [
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
+						media: [
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
 						],
 					},
 					{
-						id: 'Contact',
+						id: CONTACT_PAGE,
 						title: 'Contact Info',
 						content: '',
-						images: [
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
-							{ caption: '', url: '' },
+						media: [
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
+							getSingleMediaPlaceholder( 'IMAGE' ),
 						],
 					},
 				],

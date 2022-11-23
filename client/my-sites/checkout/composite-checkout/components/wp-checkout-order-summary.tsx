@@ -31,6 +31,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
+import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -56,15 +57,13 @@ export default function WPCheckoutOrderSummary( {
 	const { formStatus } = useFormStatus();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
-	const couponLineItem = getCouponLineItemFromCart( responseCart );
-	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
-	const totalLineItem = getTotalLineItemFromCart( responseCart );
 
 	const hasRenewalInCart = responseCart.products.some(
 		( product ) => product.extra.purchaseType === 'renewal'
 	);
 
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
+	const isWcMobile = isWcMobileApp();
 
 	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
 	const hasMonthlyPlanInCart = Boolean( plan && isMonthly( plan?.product_slug ) );
@@ -76,7 +75,9 @@ export default function WPCheckoutOrderSummary( {
 		>
 			<CheckoutSummaryFeatures>
 				<CheckoutSummaryFeaturesTitle>
-					{ translate( 'Included with your purchase' ) }
+					{ responseCart.is_gift_purchase
+						? translate( 'WordPress.com Gift Subscription' )
+						: translate( 'Included with your purchase' ) }
 				</CheckoutSummaryFeaturesTitle>
 				{ isCartUpdating ? (
 					<LoadingCheckoutSummaryFeaturesList />
@@ -84,30 +85,43 @@ export default function WPCheckoutOrderSummary( {
 					<CheckoutSummaryFeaturesWrapper siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />
 				) }
 			</CheckoutSummaryFeatures>
-			{ ! isCartUpdating && ! hasRenewalInCart && plan && hasMonthlyPlanInCart && (
+			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
 				<CheckoutSummaryAnnualUpsell plan={ plan } onChangePlanLength={ onChangePlanLength } />
 			) }
-			<CheckoutSummaryAmountWrapper>
-				{ couponLineItem && (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + couponLineItem.id }>
-						<span>{ couponLineItem.label }</span>
-						<span>{ couponLineItem.amount.displayValue }</span>
-					</CheckoutSummaryLineItem>
-				) }
-				{ taxLineItems.map( ( taxLineItem ) => (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
-						<span>{ taxLineItem.label }</span>
-						<span>{ taxLineItem.amount.displayValue }</span>
-					</CheckoutSummaryLineItem>
-				) ) }
-				<CheckoutSummaryTotal>
-					<span>{ translate( 'Total' ) }</span>
-					<span className="wp-checkout-order-summary__total-price">
-						{ totalLineItem.amount.displayValue }
-					</span>
-				</CheckoutSummaryTotal>
-			</CheckoutSummaryAmountWrapper>
+			<CheckoutSummaryPriceList />
 		</CheckoutSummaryCard>
+	);
+}
+
+function CheckoutSummaryPriceList() {
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
+	const couponLineItem = getCouponLineItemFromCart( responseCart );
+	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
+	const totalLineItem = getTotalLineItemFromCart( responseCart );
+	const translate = useTranslate();
+
+	return (
+		<CheckoutSummaryAmountWrapper>
+			{ couponLineItem && (
+				<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + couponLineItem.id }>
+					<span>{ couponLineItem.label }</span>
+					<span>{ couponLineItem.amount.displayValue }</span>
+				</CheckoutSummaryLineItem>
+			) }
+			{ taxLineItems.map( ( taxLineItem ) => (
+				<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
+					<span>{ taxLineItem.label }</span>
+					<span>{ taxLineItem.amount.displayValue }</span>
+				</CheckoutSummaryLineItem>
+			) ) }
+			<CheckoutSummaryTotal>
+				<span>{ translate( 'Total' ) }</span>
+				<span className="wp-checkout-order-summary__total-price">
+					{ totalLineItem.amount.displayValue }
+				</span>
+			</CheckoutSummaryTotal>
+		</CheckoutSummaryAmountWrapper>
 	);
 }
 
@@ -149,12 +163,31 @@ function CheckoutSummaryFeaturesWrapper( props: {
 	const { siteId, nextDomainIsFree } = props;
 	const signupFlowName = getSignupCompleteFlowName();
 	const shouldUseFlowFeatureList = isNewsletterOrLinkInBioFlow( signupFlowName );
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
+	const giftSiteSlug = responseCart.gift_details?.receiver_blog_slug;
+
+	if ( responseCart.is_gift_purchase && giftSiteSlug ) {
+		return <CheckoutSummaryGiftFeaturesList siteSlug={ giftSiteSlug } />;
+	}
 
 	if ( signupFlowName && shouldUseFlowFeatureList ) {
 		return <CheckoutSummaryFlowFeaturesList flowName={ signupFlowName } />;
 	}
 
 	return <CheckoutSummaryFeaturesList siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />;
+}
+
+function CheckoutSummaryGiftFeaturesList( { siteSlug }: { siteSlug: string } ) {
+	const translate = useTranslate();
+	return (
+		<CheckoutSummaryFeaturesListWrapper>
+			{ translate(
+				'You are showing your appreciation for %(siteSlug)s by gifting them their next subscription.',
+				{ args: { siteSlug } }
+			) }
+		</CheckoutSummaryFeaturesListWrapper>
+	);
 }
 
 function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {

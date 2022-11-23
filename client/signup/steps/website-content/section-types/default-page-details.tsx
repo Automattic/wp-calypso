@@ -2,9 +2,9 @@ import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-	Label,
 	TextAreaField,
 	HorizontalGrid,
+	LabelBlock,
 } from 'calypso/signup/accordion-form/form-components';
 import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import {
@@ -12,10 +12,10 @@ import {
 	useTranslatedPageDescriptions,
 } from 'calypso/signup/difm/translation-hooks';
 import {
-	imageRemoved,
-	imageUploaded,
-	imageUploadFailed,
-	imageUploadInitiated,
+	mediaRemoved,
+	mediaUploaded,
+	mediaUploadFailed,
+	mediaUploadInitiated,
 	websiteContentFieldChanged,
 } from 'calypso/state/signup/steps/website-content/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -43,7 +43,7 @@ export function DefaultPageDetails( {
 
 	const onMediaUploadFailed = ( { mediaIndex }: MediaUploadData ) => {
 		dispatch(
-			imageUploadFailed( {
+			mediaUploadFailed( {
 				pageId: pageID,
 				mediaIndex,
 			} )
@@ -52,18 +52,24 @@ export function DefaultPageDetails( {
 
 	const onMediaUploadStart = ( { mediaIndex }: MediaUploadData ) => {
 		dispatch(
-			imageUploadInitiated( {
+			mediaUploadInitiated( {
 				pageId: page.id,
 				mediaIndex,
 			} )
 		);
 	};
 
-	const onMediaUploadComplete = ( { title, URL, uploadID, mediaIndex }: MediaUploadData ) => {
+	const onMediaUploadComplete = ( {
+		title,
+		URL,
+		uploadID,
+		mediaIndex,
+		thumbnailUrl,
+	}: MediaUploadData ) => {
 		dispatch(
-			imageUploaded( {
+			mediaUploaded( {
 				pageId: page.id,
-				image: { url: URL as string, caption: title as string, uploadID },
+				media: { url: URL as string, caption: title as string, uploadID, thumbnailUrl },
 				mediaIndex,
 			} )
 		);
@@ -75,7 +81,7 @@ export function DefaultPageDetails( {
 
 	const onMediaRemoved = ( { mediaIndex }: MediaUploadData ) => {
 		dispatch(
-			imageRemoved( {
+			mediaRemoved( {
 				pageId: page.id,
 				mediaIndex,
 			} )
@@ -95,6 +101,30 @@ export function DefaultPageDetails( {
 		);
 		onChangeField && onChangeField( e );
 	};
+
+	const imageCaption = translate(
+		'Upload up to %(noOfImages)d images to be used on your %(pageTitle)s page.',
+		{
+			args: { pageTitle, noOfImages: page.media.length },
+		}
+	);
+	const videoCaption = translate(
+		'Upload up to %(noOfVideos)d videos to be used on your %(pageTitle)s page.',
+		{
+			args: { pageTitle, noOfVideos: page.media.length },
+		}
+	);
+	const getMediaCaption = () => {
+		const [ firstMedia ] = page.media;
+		switch ( firstMedia.mediaType ) {
+			case 'VIDEO':
+				return videoCaption;
+			case 'IMAGE':
+			default:
+				return imageCaption;
+				break;
+		}
+	};
 	const fieldName = page.id + CONTENT_SUFFIX;
 	return (
 		<>
@@ -105,22 +135,17 @@ export function DefaultPageDetails( {
 				error={ formErrors[ fieldName ] }
 				label={ description }
 			/>
-			<Label>
-				{ translate( 'Upload up to 3 images to be used on your %(pageTitle)s page.', {
-					args: { pageTitle },
-				} ) }
-			</Label>
+			<LabelBlock>{ getMediaCaption() }</LabelBlock>
 			<HorizontalGrid>
-				{ page.images.map( ( image, i ) => (
+				{ page.media.map( ( media, i ) => (
 					<WordpressMediaUpload
-						key={ image.uploadID ?? i }
+						key={ media.uploadID ?? i }
+						media={ media }
 						mediaIndex={ i }
 						site={ site }
 						onMediaUploadStart={ onMediaUploadStart }
 						onMediaUploadFailed={ onMediaUploadFailed }
 						onMediaUploadComplete={ onMediaUploadComplete }
-						initialCaption={ image.caption }
-						initialUrl={ image.url }
 						onRemoveImage={ onMediaRemoved }
 					/>
 				) ) }

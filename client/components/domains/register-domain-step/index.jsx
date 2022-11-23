@@ -126,6 +126,8 @@ class RegisterDomainStep extends Component {
 		promoTlds: PropTypes.array,
 		showAlreadyOwnADomain: PropTypes.bool,
 		domainAndPlanUpsellFlow: PropTypes.bool,
+		useProvidedProductsList: PropTypes.bool,
+		managedSubdomains: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -142,6 +144,7 @@ class RegisterDomainStep extends Component {
 		showExampleSuggestions: false,
 		onSkip: noop,
 		showSkipButton: false,
+		useProvidedProductsList: false,
 	};
 
 	constructor( props ) {
@@ -1064,6 +1067,7 @@ class RegisterDomainStep extends Component {
 			only_wordpressdotcom: this.props.includeDotBlogSubdomain,
 			tld_weight_overrides: null,
 			vendor: 'dot',
+			managed_subdomains: this.props.managedSubdomains,
 			...this.getActiveFiltersForAPI(),
 		};
 
@@ -1358,6 +1362,7 @@ class RegisterDomainStep extends Component {
 				showSkipButton={ this.props.showSkipButton }
 				isReskinned={ this.props.isReskinned }
 				domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
+				useProvidedProductsList={ this.props.useProvidedProductsList }
 			>
 				{ ! this.props.isReskinned &&
 					hasResults &&

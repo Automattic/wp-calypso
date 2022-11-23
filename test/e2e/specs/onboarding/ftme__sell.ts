@@ -53,7 +53,7 @@ describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
 		it( 'Navigate to Signup page', async function () {
 			const loginPage = new LoginPage( page );
 			await loginPage.visit();
-			await loginPage.clickSignUp();
+			await loginPage.clickCreateNewAccount();
 		} );
 
 		it( 'Sign up as new user', async function () {
@@ -168,7 +168,7 @@ describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
 		// When the flag is turned on for all environments, delete this.
 		// -mreishus 2022-09-13
 		it.skip( 'Continue with simple option', async function () {
-			await page.waitForURL( /.*setup\/storeFeatures.*/ );
+			await page.waitForURL( /.*setup\/site-setup\/storeFeatures.*/ );
 			await startSiteFlow.clickButton( 'Continue' );
 		} );
 

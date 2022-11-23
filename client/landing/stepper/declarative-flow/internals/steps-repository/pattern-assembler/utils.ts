@@ -21,6 +21,7 @@ export const getPatternPreviewUrl = ( {
 		site_title: siteTitle,
 		site_tagline: SITE_TAGLINE,
 		stylesheet,
+		remove_assets: true,
 	} );
 };
 
@@ -39,7 +40,6 @@ export function createCustomHomeTemplateContent(
 	hasFooter: boolean
 ) {
 	const content: string[] = [];
-
 	if ( hasHeader ) {
 		content.push(
 			`<!-- wp:template-part {"slug":"header","tagName":"header","theme":"${ stylesheet }"} /-->`
@@ -49,6 +49,9 @@ export function createCustomHomeTemplateContent(
 	content.push( `
 <!-- wp:group {"tagName":"main"} -->
 	<main class="wp-block-group">
+	<!-- wp:paragraph -->
+	<p></p>
+	<!-- /wp:paragraph -->
 	</main>
 <!-- /wp:group -->` );
 

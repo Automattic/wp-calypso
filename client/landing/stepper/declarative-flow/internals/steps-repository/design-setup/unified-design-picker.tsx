@@ -97,10 +97,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 		const blankCanvasDesignOffset = allDesigns.static.designs.findIndex( isBlankCanvasDesign );
 		if ( blankCanvasDesignOffset !== -1 ) {
-			// Extract the blank canvas design first and then insert it into 4th position for the build intent
+			// Extract the blank canvas design first and then insert it into the last one for the build intent
 			const blankCanvasDesign = allDesigns.static.designs.splice( blankCanvasDesignOffset, 1 );
 			if ( isEnabled( 'signup/design-picker-pattern-assembler' ) && intent === SiteIntent.Build ) {
-				allDesigns.static.designs.splice( 3, 0, ...blankCanvasDesign );
+				allDesigns.static.designs.push( ...blankCanvasDesign );
 			}
 		}
 
@@ -282,10 +282,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			);
 		}
 
-		if ( ! isEnabled( 'signup/seller-upgrade-modal' ) ) {
-			return goToCheckout();
-		}
-
 		recordTracksEvent( 'calypso_signup_design_upgrade_modal_show', {
 			theme: selectedDesign?.slug,
 		} );
@@ -300,15 +296,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	}
 
 	function goToCheckout() {
-		if ( ! isEnabled( 'signup/design-picker-premium-themes-checkout' ) ) {
-			return null;
-		}
-
-		if ( isEnabled( 'signup/seller-upgrade-modal' ) ) {
-			recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
-				theme: selectedDesign?.slug,
-			} );
-		}
+		recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
+			theme: selectedDesign?.slug,
+		} );
 
 		const themeHasWooCommerce = selectedDesign?.software_sets?.find(
 			( set ) => set.slug === 'woo-on-plans'

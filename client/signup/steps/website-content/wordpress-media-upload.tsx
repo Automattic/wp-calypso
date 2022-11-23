@@ -3,15 +3,16 @@ import { Gridicon, Spinner } from '@automattic/components';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { MouseEvent, useState } from 'react';
-import placeholder from 'calypso/assets/images/difm/placeholder.svg';
-import FilePicker from 'calypso/components/file-picker';
+import { ChangeEvent, MouseEvent, useState } from 'react';
 import { useAddMedia } from 'calypso/data/media/use-add-media';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { Label, SubLabel } from 'calypso/signup/accordion-form/form-components';
+import { LabelLink, SubLabel } from 'calypso/signup/accordion-form/form-components';
+import { Media, MediaUploadType } from 'calypso/state/signup/steps/website-content/schema';
 import type { SiteDetails } from '@automattic/data-stores';
 
 const debug = debugFactory( 'difm:website-content' );
+const allowedImageExtensions = [ 'gif', 'heic', 'jpeg', 'jpg', 'png', 'webp' ];
+const allowedVideoExtensions = [ 'avi', 'mpg', 'mp4', 'm4v', 'mov', 'ogv', 'wmv', '3gp', '3g2' ];
 
 const UPLOAD_STATES = {
 	NOT_SELECTED: 'NOT_SELECTED',
@@ -20,7 +21,21 @@ const UPLOAD_STATES = {
 	FAILED: 'FAILED',
 };
 
+const MediaPlaceholderIcon = styled( Gridicon )`
+	color: #e9eff6;
+	width: 45px;
+	height: 45px;
+`;
+
+const MediaPlaceholder = ( { mediaType }: { mediaType: MediaUploadType } ) =>
+	mediaType === 'VIDEO' ? (
+		<MediaPlaceholderIcon icon="video-camera" />
+	) : (
+		<MediaPlaceholderIcon icon="image" />
+	);
+
 const StyledGridIcon = styled( Gridicon )`
+	z-index: 101;
 	position: absolute;
 	top: 5px;
 	right: 5px;
@@ -37,11 +52,20 @@ const StyledGridIcon = styled( Gridicon )`
 	}
 `;
 
+const FileInput = styled.input`
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	z-index: 100;
+	opacity: 0;
+	cursor: pointer;
+`;
+
 const FileSelectThumbnailContainer = styled.div< { disabled?: boolean } >`
 	cursor: ${ ( props ) => ( props.disabled ? 'default' : 'pointer' ) };
 	position: relative;
-	width: 195px;
-	height: 145px;
+	width: 140px;
+	height: 98px;
 	background: rgba( 187, 224, 250, 0.12 );
 	border: 1px dashed var( --studio-gray-5 );
 	border-radius: 5px;
@@ -67,11 +91,19 @@ const CroppedImage = styled.div`
 	justify-content: center;
 	height: 100%;
 	position: relative;
+	min-width: 140px;
 	img {
 		max-height: 100%;
 		max-width: 100%;
 		margin: 0 auto;
 	}
+`;
+const CroppedLabel = styled.div`
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 90%;
+	height: 45px;
 `;
 
 function CrossButton( { onClick }: { onClick: ( e: MouseEvent< SVGSVGElement > ) => void } ) {
@@ -88,6 +120,7 @@ export interface MediaUploadData {
 	URL?: string;
 	uploadID?: string;
 	mediaIndex: number;
+	thumbnailUrl?: string;
 }
 interface WordpressMediaUploadProps {
 	onMediaUploadComplete: ( imageData: MediaUploadData ) => void;
@@ -96,8 +129,7 @@ interface WordpressMediaUploadProps {
 	onRemoveImage: ( imageData: MediaUploadData ) => void;
 	mediaIndex: number;
 	site?: SiteDetails | null;
-	initialUrl: string;
-	initialCaption?: string;
+	media?: Media;
 }
 
 export function WordpressMediaUpload( {
@@ -107,27 +139,33 @@ export function WordpressMediaUpload( {
 	onMediaUploadStart,
 	onMediaUploadFailed,
 	onRemoveImage,
-	initialUrl,
-	initialCaption,
+	media = { caption: '', url: '', mediaType: 'IMAGE', thumbnailUrl: '', uploadID: '' },
 }: WordpressMediaUploadProps ) {
-	const [ uploadedImageUrl, setUploadedImageUrl ] = useState( initialUrl );
+	const { url, caption, mediaType, thumbnailUrl } = media ?? {};
 	const [ uploadState, setUploadState ] = useState(
-		initialUrl ? UPLOAD_STATES.COMPLETED : UPLOAD_STATES.NOT_SELECTED
+		url ? UPLOAD_STATES.COMPLETED : UPLOAD_STATES.NOT_SELECTED
 	);
-	const [ imageCaption, setImageCaption ] = useState( initialCaption );
+	const [ imageCaption, setImageCaption ] = useState( caption );
 	const [ isImageLoading, setIsImageLoading ] = useState( false );
 	const translate = useTranslate();
 	const addMedia = useAddMedia();
-	const onPick = async function ( file: FileList ) {
+	const onPick = async function ( event: ChangeEvent< HTMLInputElement > ) {
+		const file = event.target.files;
 		setIsImageLoading( true );
 		setImageCaption( '' );
 		onMediaUploadStart && onMediaUploadStart( { mediaIndex } );
 		setUploadState( UPLOAD_STATES.IN_PROGRESS );
 		try {
-			const [ { title, URL, ID } ] = await addMedia( file, site );
-			setUploadedImageUrl( URL );
+			const [ media ] = await addMedia( file, site );
+			const { title, URL, ID, thumbnails, icon } = media;
 			setImageCaption( title );
-			onMediaUploadComplete( { title, URL, uploadID: ID, mediaIndex } );
+			onMediaUploadComplete( {
+				title,
+				URL,
+				uploadID: ID,
+				mediaIndex,
+				thumbnailUrl: thumbnails.thumbnail ?? icon,
+			} );
 			setUploadState( UPLOAD_STATES.COMPLETED );
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch ( e: any ) {
@@ -141,9 +179,9 @@ export function WordpressMediaUpload( {
 				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
 				blog_id: site?.ID,
 				extra: {
-					filename: file.item( 0 )?.name,
-					filesize: file.item( 0 )?.size,
-					'files-picked': file.length,
+					filename: file?.item( 0 )?.name,
+					filesize: file?.item( 0 )?.size,
+					'files-picked': file?.length,
 					'error-message': e.message + '; Stack: ' + e.stack,
 				},
 			} );
@@ -151,30 +189,35 @@ export function WordpressMediaUpload( {
 	};
 
 	const onClickRemoveImage = () => {
-		setUploadedImageUrl( '' );
 		setUploadState( UPLOAD_STATES.NOT_SELECTED );
 		setImageCaption( '' );
 		onRemoveImage && onRemoveImage( { mediaIndex } );
 	};
 
+	const allowedFileTypes = mediaType === 'VIDEO' ? allowedVideoExtensions : allowedImageExtensions;
+
+	const allowedFileTypesString = allowedFileTypes.map( ( type ) => `.${ type }` ).join();
+
 	switch ( uploadState ) {
 		case UPLOAD_STATES.COMPLETED:
 			return (
-				<FilePicker key={ mediaIndex } accept="image/*" onPick={ onPick }>
+				<>
 					<FileSelectThumbnailContainer>
+						<FileInput type="file" onChange={ onPick } accept={ allowedFileTypesString } />
+						{ /* Fixes small UI glitch where cross icon switches on load */ }
+						{ ! isImageLoading && <CrossButton onClick={ onClickRemoveImage } /> }
 						<CroppedImage>
-							{ /* Fixes small UI glitch where cross icon switches on load */ }
-							{ ! isImageLoading && <CrossButton onClick={ onClickRemoveImage } /> }
 							<img
 								style={ { opacity: isImageLoading ? 0.2 : 1 } }
-								src={ uploadedImageUrl }
+								src={ thumbnailUrl ?? url }
 								alt={ imageCaption }
 								onLoad={ () => setIsImageLoading( false ) }
 							/>
 						</CroppedImage>
-						<Label>{ translate( 'Replace' ) }</Label>
+						{ mediaType === 'VIDEO' && <CroppedLabel>{ caption }</CroppedLabel> }
+						<LabelLink>{ translate( 'Replace' ) }</LabelLink>
 					</FileSelectThumbnailContainer>
-				</FilePicker>
+				</>
 			);
 		case UPLOAD_STATES.IN_PROGRESS:
 			return (
@@ -184,25 +227,27 @@ export function WordpressMediaUpload( {
 			);
 		case UPLOAD_STATES.FAILED:
 			return (
-				<FilePicker accept="image/*" onPick={ onPick } key={ mediaIndex }>
+				<>
 					<FileSelectThumbnailContainer>
-						<img src={ placeholder } alt="placeholder" />
-						<Label>{ translate( 'Choose file' ) }</Label>
+						<FileInput type="file" onChange={ onPick } accept={ allowedFileTypesString } />
+						<MediaPlaceholder mediaType={ mediaType } />
+						<LabelLink>{ translate( 'Choose file' ) }</LabelLink>
 						<SubLabel color="red">{ translate( 'Image upload failed' ) }</SubLabel>
 					</FileSelectThumbnailContainer>
-				</FilePicker>
+				</>
 			);
 
 		case UPLOAD_STATES.NOT_SELECTED:
 		default:
 			return (
-				<FilePicker accept="image/*" onPick={ onPick } key={ mediaIndex }>
+				<>
 					<FileSelectThumbnailContainer>
-						<img src={ placeholder } alt="placeholder" />
-						<Label>{ translate( 'Choose file' ) }</Label>
+						<FileInput type="file" onChange={ onPick } accept={ allowedFileTypesString } />
+						<MediaPlaceholder mediaType={ mediaType } />
+						<LabelLink>{ translate( 'Choose file' ) }</LabelLink>
 						{ /* <SubLabel>{ translate( 'or drag here')}</SubLabel> */ }
 					</FileSelectThumbnailContainer>
-				</FilePicker>
+				</>
 			);
 	}
 }

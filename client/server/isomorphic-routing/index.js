@@ -2,7 +2,8 @@ import debugFactory from 'debug';
 import { isEmpty } from 'lodash';
 import { stringify } from 'qs';
 import { setSectionMiddleware } from 'calypso/controller';
-import { serverRender, setShouldServerSideRender } from 'calypso/server/render';
+import performanceMark from 'calypso/server/lib/performance-mark';
+import { serverRender, setShouldServerSideRender, markupCache } from 'calypso/server/render';
 import { createQueryClientSSR } from 'calypso/state/query-client-ssr';
 import { setRoute } from 'calypso/state/route/actions';
 
@@ -13,8 +14,16 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 		expressApp.get(
 			route,
 			( req, res, next ) => {
+				const markup = markupCache.get( getCacheKey( req ) );
+				if ( markup ) {
+					req.context.cachedMarkup = markup;
+				}
 				req.context.usedSSRHandler = true;
-				debug( `Using SSR pipeline for path: ${ req.path } with handler ${ route }` );
+				debug(
+					`Using SSR pipeline for path: ${
+						req.path
+					} with handler ${ route }. Cached layout: ${ !! markup }`
+				);
 				next();
 			},
 			setUpRoute,
@@ -31,6 +40,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 			// have changed req.context to include info about the error, and serverRender
 			// will render it.
 			( err, req, res, next ) => {
+				performanceMark( req.context, 'serverRouter error handler' );
 				req.error = err;
 				res.status( err.status || 404 );
 				if ( err.status >= 500 ) {
@@ -39,6 +49,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 					req.logger.warn( err );
 				}
 				serverRender( req, res, next );
+				performanceMark( req.context, 'post-handling serverRouter error' );
 				// Keep propagating the error to ensure regular middleware doesn't get executed.
 				// In particular, without this we'll try to render a 404 page.
 				next( err );

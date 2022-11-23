@@ -6,7 +6,6 @@
 	padding: 0 20px;
 
 	.stats-period-navigation__children {
-		text-align: center;
 		flex-grow: 1;
 	}
 
@@ -30,18 +29,12 @@
 
 	// For feature `stats/new-main-chart`
 	&.stats-period-navigation--new-main-chart {
-		margin: 0;
-		padding: 0;
-		align-items: center;
-
-		.stats-period-navigation__children {
-			text-align: left;
-		}
 
 		.stats-section-title {
 			font-size: $font-title-large;
 			line-height: 40px;
 			color: var(--studio-gray-100);
+			text-align: left;
 		}
 
 		.stats-date-picker__refresh-status {
@@ -55,6 +48,12 @@
 			// Icon size 24x24
 			width: 24px;
 			height: 24px;
+
+			&.is-disabled {
+				visibility: visible;
+				opacity: 0.2;
+				pointer-events: none;
+			}
 		}
 
 		.stats-period-navigation__next {

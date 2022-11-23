@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { NEWSLETTER_FLOW } from 'calypso/../packages/onboarding/src';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -18,13 +19,14 @@ type StepContentProps = {
 	submit: NavigationControls[ 'submit' ];
 	goNext: NavigationControls[ 'goNext' ];
 	goToStep?: NavigationControls[ 'goToStep' ];
+	flow: string | null;
 };
 
 function sortByRegistrationDate( domainObjectA: ResponseDomain, domainObjectB: ResponseDomain ) {
 	return domainObjectA.registrationDate > domainObjectB.registrationDate ? -1 : 1;
 }
 
-const StepContent = ( { siteSlug, submit, goNext, goToStep }: StepContentProps ) => {
+const StepContent = ( { siteSlug, submit, goNext, goToStep, flow }: StepContentProps ) => {
 	const site = useSite();
 
 	const { data: allDomains = [] } = useGetDomainsQuery( site?.ID ?? null, {
@@ -51,7 +53,8 @@ const StepContent = ( { siteSlug, submit, goNext, goToStep }: StepContentProps )
 
 	useEffect( () => {
 		// check if the current user's email hasn't been verified yet
-		if ( email && ! isEmailVerified ) {
+		// only show the email banner for newsletter flow
+		if ( email && ! isEmailVerified && flow === NEWSLETTER_FLOW ) {
 			setShowEmailValidationBanner( true );
 		}
 	}, [ email, isEmailVerified ] );
@@ -71,8 +74,9 @@ const StepContent = ( { siteSlug, submit, goNext, goToStep }: StepContentProps )
 					submit={ submit }
 					goNext={ goNext }
 					goToStep={ goToStep }
+					flow={ flow }
 				/>
-				<LaunchpadSitePreview siteSlug={ iFrameURL } />
+				<LaunchpadSitePreview flow={ flow } siteSlug={ iFrameURL } />
 			</div>
 		</div>
 	);

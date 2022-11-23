@@ -55,7 +55,7 @@
 			width: var(--horizontal-bar-list-fill);
 			height: 100%;
 			content: "";
-			border-radius: $border-radius;
+			border-radius: 2px;
 			background-color: rgba(var(--color-primary-rgb), 15%);
 			position: absolute;
 			left: 0;
@@ -67,16 +67,20 @@
 	.horizontal-bar-list--hover-action {
 		display: none;
 		position: relative;
-		z-index: 1;
 	}
 
-	.label {
+	.horizontal-bar-list-label {
 		text-overflow: ellipsis;
 		overflow: hidden;
 		white-space: nowrap;
 		z-index: 1;
 		color: var(--color-text);
 		flex: 1;
+	}
+
+	.horizontal-bar-list-label--group-header {
+		display: flex;
+		align-items: center;
 	}
 
 	.value {
@@ -92,4 +96,18 @@
 
 .horizontal-bar-list-item--indicated {
 	box-shadow: inset $item-indicator-width 0 0 var(--color-primary);
+}
+
+.horizontal-bar-list-item--static {
+	cursor: auto;
+}
+
+.horizontal-bar-list-group {
+	list-style: none;
+	margin: $space-between-rows 0 $row-height 0;
+}
+
+.horizontal-bar-list-group-toggle {
+	position: relative;
+	top: 2px;
 }

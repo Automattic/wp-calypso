@@ -1,4 +1,4 @@
-import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import { VIDEOPRESS_FLOW, isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
@@ -525,6 +525,11 @@ class DomainsStep extends Component {
 		}
 
 		const includeWordPressDotCom = this.props.includeWordPressDotCom ?? ! this.props.isDomainOnly;
+		const promoTlds = this.props?.queryObject?.tld?.split( ',' ) ?? [];
+
+		// the .link tld comes with the w.link subdomain from our partnership.
+		// see pau2Xa-4tC-p2#comment-12869 for more details
+		const managedSubdomains = promoTlds.includes( 'link' ) ? 'link' : null;
 
 		return (
 			<CalypsoShoppingCartProvider>
@@ -535,8 +540,9 @@ class DomainsStep extends Component {
 					onAddDomain={ this.handleAddDomain }
 					products={ this.props.productsList }
 					basePath={ this.props.path }
-					promoTlds={ this.props?.queryObject?.tld?.split( ',' ) }
+					promoTlds={ promoTlds }
 					mapDomainUrl={ this.getUseYourDomainUrl() }
+					managedSubdomains={ managedSubdomains }
 					transferDomainUrl={ this.getUseYourDomainUrl() }
 					useYourDomainUrl={ this.getUseYourDomainUrl() }
 					onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
@@ -630,7 +636,7 @@ class DomainsStep extends Component {
 			return translate( 'Find the domain that defines you' );
 		}
 
-		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
+		if ( isNewsletterOrLinkInBioFlow( flowName ) || VIDEOPRESS_FLOW === flowName ) {
 			const components = {
 				span: (
 					// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus
@@ -641,6 +647,13 @@ class DomainsStep extends Component {
 					/>
 				),
 			};
+			if ( VIDEOPRESS_FLOW === flowName ) {
+				return translate(
+					'Set your video site apart with a custom domain. Not sure yet? {{span}}Decide later{{/span}}.',
+					{ components }
+				);
+			}
+
 			return flowName === 'newsletter'
 				? translate(
 						'Help your Newsletter stand out with a custom domain. Not sure yet? {{span}}Decide later{{/span}}.',
@@ -701,7 +714,9 @@ class DomainsStep extends Component {
 	}
 
 	isTailoredFlow() {
-		return isNewsletterOrLinkInBioFlow( this.props.flowName );
+		return (
+			isNewsletterOrLinkInBioFlow( this.props.flowName ) || VIDEOPRESS_FLOW === this.props.flowName
+		);
 	}
 
 	renderContent() {

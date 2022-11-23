@@ -45,8 +45,12 @@ export class SlideshowBlockFlow implements BlockFlow {
 			this.preparedImageFileNames.push( testFile.basename );
 
 			const fileInputLocator = context.editorLocator.locator( selectors.fileInput );
-			await fileInputLocator.setInputFiles( testFile.fullpath );
-
+			await Promise.all( [
+				fileInputLocator.setInputFiles( testFile.fullpath ),
+				context.page.waitForResponse(
+					( response ) => response.url().includes( 'media?' ) && response.ok()
+				),
+			] );
 			const uploadingIndicatorLocator = context.editorLocator
 				.locator( selectors.uploadingIndicator )
 				.last();

@@ -68,7 +68,7 @@
 		font-size: 1rem;
 	}
 
-	&-cancel {
+	.sites-overview__licenses-buttons-cancel {
 		text-decoration: underline;
 		padding: 2;
 		margin-inline-end: 32px;
@@ -307,4 +307,29 @@
 	text-align: center;
 	font-size: 1.5rem;
 	margin-top: 16px;
+}
+
+.sites-overview__issue-licenses-button-small-screen {
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding: 1rem;
+	background: var(--studio-white);
+	box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.12);
+	z-index: 20;
+
+	.sites-overview__licenses-buttons-issue-license {
+		width: 70%;
+		max-width: 275px;
+	}
+
+	@include break-mobile {
+		text-align: right;
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		left: var(--sidebar-width-min);
+		padding: 0.5rem;
+	}
 }

@@ -3,7 +3,11 @@ import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { useIsWebPayAvailable, isValueTruthy } from '@automattic/wpcom-checkout';
+import {
+	useStripePaymentRequest,
+	usePaymentRequestOptions,
+	isValueTruthy,
+} from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
@@ -87,6 +91,7 @@ export default function CheckoutMain( {
 	isComingFromUpsell,
 	isLoggedOutCart,
 	isNoSiteCart,
+	isGiftPurchase,
 	infoMessage,
 	isInModal,
 	onAfterPaymentComplete,
@@ -110,6 +115,7 @@ export default function CheckoutMain( {
 	isComingFromUpsell?: boolean;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
+	isGiftPurchase?: boolean;
 	isInModal?: boolean;
 	infoMessage?: JSX.Element;
 	// IMPORTANT NOTE: This will not be called for redirect payment methods like
@@ -136,7 +142,6 @@ export default function CheckoutMain( {
 	const createUserAndSiteBeforeTransaction =
 		Boolean( isLoggedOutCart || isNoSiteCart ) && ! isJetpackCheckout;
 	const reduxDispatch = useDispatch();
-	const isJetpackSitelessCheckout = isJetpackCheckout && ! jetpackSiteSlug;
 	const updatedSiteSlug = isJetpackCheckout ? jetpackSiteSlug : siteSlug;
 
 	const showErrorMessageBriefly = useCallback(
@@ -179,6 +184,7 @@ export default function CheckoutMain( {
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
 		source: productSourceFromUrl,
+		isGiftPurchase,
 	} );
 
 	const cartKey = useCartKey();
@@ -199,7 +205,6 @@ export default function CheckoutMain( {
 	const isInitialCartLoading = useAddProductsFromUrl( {
 		isLoadingCart,
 		isCartPendingUpdate,
-		isJetpackSitelessCheckout,
 		productsForCart,
 		areCartProductsPreparing,
 		couponCodeFromUrl,
@@ -324,17 +329,16 @@ export default function CheckoutMain( {
 		} );
 	} );
 
-	const {
-		isApplePayAvailable,
-		isGooglePayAvailable,
-		isLoading: isWebPayLoading,
-	} = useIsWebPayAvailable(
-		stripe,
-		stripeConfiguration,
-		!! stripeLoadingError,
-		responseCart.currency,
-		responseCart.total_cost_integer
-	);
+	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration, cartKey );
+	const { allowedPaymentTypes: allowedWebPayTypes, isLoading: isWebPayLoading } =
+		useStripePaymentRequest( {
+			paymentRequestOptions,
+			// No callback is needed here; this is being used only to determine what
+			// payment methods are available.
+			onSubmit: () => undefined,
+			stripe,
+		} );
+	const { applePay: isApplePayAvailable, googlePay: isGooglePayAvailable } = allowedWebPayTypes;
 
 	const paymentMethodObjects = useCreatePaymentMethods( {
 		isStripeLoading,
@@ -372,7 +376,6 @@ export default function CheckoutMain( {
 		: filterAppropriatePaymentMethods( {
 				paymentMethodObjects,
 				allowedPaymentMethods,
-				responseCart,
 		  } );
 	debug( 'filtered payment method objects', paymentMethods );
 

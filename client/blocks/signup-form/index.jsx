@@ -163,6 +163,14 @@ class SignupForm extends Component {
 		this.maybeRedirectToSocialConnect();
 	}
 
+	UNSAFE_componentWillReceiveProps( nextProps ) {
+		if ( this.props.step?.status === 'processing' && nextProps.step?.status === 'invalid' ) {
+			this.setState( {
+				submitting: false,
+			} );
+		}
+	}
+
 	componentDidUpdate( prevProps ) {
 		if ( prevProps.step && this.props.step && prevProps.step.status !== this.props.step.status ) {
 			this.maybeRedirectToSocialConnect();
@@ -1023,6 +1031,10 @@ class SignupForm extends Component {
 		this.props.redirectToLogout( window.location.href );
 	};
 
+	isHorizontal = () => {
+		return this.props.horizontal || 'videopress-account' === this.props.flowName;
+	};
+
 	render() {
 		if ( this.getUserExistsError( this.props ) && ! this.props.shouldDisplayUserExistsError ) {
 			return null;
@@ -1121,7 +1133,7 @@ class SignupForm extends Component {
 			return (
 				<div
 					className={ classNames( 'signup-form', this.props.className, {
-						'is-horizontal': this.props.horizontal,
+						'is-horizontal': this.isHorizontal(),
 					} ) }
 				>
 					{ this.getNotice() }
@@ -1138,7 +1150,7 @@ class SignupForm extends Component {
 					/>
 
 					{ ! config.isEnabled( 'desktop' ) &&
-						this.props.horizontal &&
+						this.isHorizontal() &&
 						! this.userCreationComplete() && (
 							<div className="signup-form__separator">
 								<div className="signup-form__separator-text">{ this.props.translate( 'or' ) }</div>
@@ -1160,7 +1172,7 @@ class SignupForm extends Component {
 		return (
 			<div
 				className={ classNames( 'signup-form', this.props.className, {
-					'is-horizontal': this.props.horizontal,
+					'is-horizontal': this.isHorizontal(),
 				} ) }
 			>
 				{ this.getNotice() }
@@ -1175,13 +1187,11 @@ class SignupForm extends Component {
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
 
-				{ ! config.isEnabled( 'desktop' ) &&
-					this.props.horizontal &&
-					! this.userCreationComplete() && (
-						<div className="signup-form__separator">
-							<div className="signup-form__separator-text">{ this.props.translate( 'or' ) }</div>
-						</div>
-					) }
+				{ ! config.isEnabled( 'desktop' ) && this.isHorizontal() && ! this.userCreationComplete() && (
+					<div className="signup-form__separator">
+						<div className="signup-form__separator-text">{ this.props.translate( 'or' ) }</div>
+					</div>
+				) }
 
 				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 					<Fragment>

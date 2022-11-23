@@ -1,22 +1,13 @@
-import {
-	JETPACK_SEARCH_PRODUCTS,
-	PRODUCT_JETPACK_SEARCH,
-	PRODUCT_JETPACK_SEARCH_MONTHLY,
-	PRODUCT_WPCOM_SEARCH,
-	PRODUCT_WPCOM_SEARCH_MONTHLY,
-	getPlanByPathSlug,
-} from '@automattic/calypso-products';
+import { getPlanByPathSlug } from '@automattic/calypso-products';
 import { createRequestCartProduct } from '@automattic/shopping-cart';
 import { decodeProductFromUrl, isValueTruthy } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useReducer } from 'react';
-import { useSelector } from 'react-redux';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
 import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
 import useStripProductsFromUrl from './use-strip-products-from-url';
-import type { RequestCartProduct } from '@automattic/shopping-cart';
+import type { RequestCartProduct, RequestCartProductExtra } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for-cart' );
 
@@ -32,6 +23,17 @@ const initialPreparedProductsState = {
 	error: null,
 };
 
+/**
+ * Hook to collect requested products from places like the URL or localStorage
+ * and turn them into `RequestCartProduct` objects.
+ *
+ * Objects created by this hook will then be added to the cart by
+ * `useAddProductsFromUrl()`.
+ *
+ * Because this process may be async, the return value of this hook includes an
+ * `isLoading` property which should be true before using the `productsForCart`
+ * it produces.
+ */
 export default function usePrepareProductsForCart( {
 	productAliasFromUrl,
 	purchaseId: originalPurchaseId,
@@ -45,6 +47,7 @@ export default function usePrepareProductsForCart( {
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	source,
+	isGiftPurchase,
 }: {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
@@ -58,6 +61,7 @@ export default function usePrepareProductsForCart( {
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	source?: string;
+	isGiftPurchase?: boolean;
 } ): PreparedProductsForCart {
 	const [ state, dispatch ] = useReducer( preparedProductsReducer, initialPreparedProductsState );
 
@@ -113,12 +117,15 @@ export default function usePrepareProductsForCart( {
 		productAlias: productAliasFromUrl,
 		dispatch,
 		addHandler,
+		isGiftPurchase,
 	} );
 	useNothingToAdd( { addHandler, dispatch } );
 
 	// Do not strip products from url until the URL has been parsed
 	const areProductsRetrievedFromUrl = ! state.isLoading && ! isInModal;
-	const doNotStripProducts = Boolean( ! areProductsRetrievedFromUrl || isJetpackCheckout );
+	const doNotStripProducts = Boolean(
+		! areProductsRetrievedFromUrl || isJetpackCheckout || isGiftPurchase
+	);
 	useStripProductsFromUrl( siteSlug, doNotStripProducts );
 
 	return state;
@@ -245,13 +252,14 @@ function useAddRenewalItems( {
 	productAlias,
 	dispatch,
 	addHandler,
+	isGiftPurchase,
 }: {
 	originalPurchaseId: string | number | null | undefined;
 	productAlias: string | null | undefined;
 	dispatch: ( action: PreparedProductsAction ) => void;
 	addHandler: AddHandler;
+	isGiftPurchase?: boolean;
 } ) {
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
 
 	useEffect( () => {
@@ -267,7 +275,11 @@ function useAddRenewalItems( {
 				if ( ! productSlug ) {
 					return null;
 				}
-				return createRenewalItemToAddToCart( productSlug, subscriptionId );
+				return createRenewalItemToAddToCart( {
+					productAlias: productSlug,
+					purchaseId: subscriptionId,
+					isGiftPurchase,
+				} );
 			} )
 			.filter( isValueTruthy );
 
@@ -288,7 +300,7 @@ function useAddRenewalItems( {
 		}
 		debug( 'preparing renewals requested in url', productsForCart );
 		dispatch( { type: 'RENEWALS_ADD', products: productsForCart } );
-	}, [ addHandler, translate, originalPurchaseId, productAlias, dispatch, selectedSiteSlug ] );
+	}, [ addHandler, translate, originalPurchaseId, productAlias, dispatch, isGiftPurchase ] );
 }
 
 function useAddProductFromSlug( {
@@ -321,8 +333,6 @@ function useAddProductFromSlug( {
 		() =>
 			productAliasFromUrl
 				?.split( ',' )
-				// Special treatment for Jetpack Search products
-				.map( ( productAlias ) => getJetpackSearchForSite( productAlias, usesJetpackProducts ) )
 				// Get the product information if it exists, and keep a reference to
 				// its product alias which we may need to get additional information like
 				// the domain name or theme (eg: 'theme:ovation').
@@ -330,7 +340,7 @@ function useAddProductFromSlug( {
 					const productSlug = getProductSlugFromAlias( productAlias );
 					return { productSlug, productAlias };
 				} ) ?? [],
-		[ usesJetpackProducts, productAliasFromUrl ]
+		[ productAliasFromUrl ]
 	);
 
 	useEffect( () => {
@@ -411,10 +421,15 @@ function getProductSlugFromAlias( productAlias: string ): string {
 	return decodedAlias;
 }
 
-function createRenewalItemToAddToCart(
-	productAlias: string,
-	purchaseId: string | number | undefined | null
-): RequestCartProduct | null {
+function createRenewalItemToAddToCart( {
+	productAlias,
+	purchaseId,
+	isGiftPurchase,
+}: {
+	productAlias: string;
+	purchaseId: string | number | undefined | null;
+	isGiftPurchase?: boolean;
+} ): RequestCartProduct | null {
 	const [ slug, meta ] = productAlias.split( ':' );
 	// Some product slugs contain slashes, so we decode them
 	const productSlug = decodeProductFromUrl( slug );
@@ -423,9 +438,10 @@ function createRenewalItemToAddToCart(
 		return null;
 	}
 
-	const renewalItemExtra = {
+	const renewalItemExtra: RequestCartProductExtra = {
 		purchaseId: String( purchaseId ),
 		purchaseType: 'renewal',
+		isGiftPurchase,
 	};
 	return {
 		// Some meta values include slashes, so we decode them
@@ -435,31 +451,6 @@ function createRenewalItemToAddToCart(
 		product_slug: productSlug,
 		extra: renewalItemExtra,
 	};
-}
-
-/*
- * Provides an special handling for search products: Always add Jetpack Search to
- * Jetpack sites and WPCOM Search to WordPress.com sites, regardless of
- * which slug was provided. This allows e.g. code on jetpack.com to
- * redirect to a valid checkout URL for a search purchase without worrying
- * about which type of site the user has.
- */
-function getJetpackSearchForSite( productAlias: string, usesJetpackProducts: boolean ): string {
-	if (
-		productAlias &&
-		JETPACK_SEARCH_PRODUCTS.includes( productAlias as typeof JETPACK_SEARCH_PRODUCTS[ number ] )
-	) {
-		if ( usesJetpackProducts ) {
-			productAlias = productAlias.includes( 'monthly' )
-				? PRODUCT_JETPACK_SEARCH_MONTHLY
-				: PRODUCT_JETPACK_SEARCH;
-		} else {
-			productAlias = productAlias.includes( 'monthly' )
-				? PRODUCT_WPCOM_SEARCH_MONTHLY
-				: PRODUCT_WPCOM_SEARCH;
-		}
-	}
-	return productAlias;
 }
 
 function createItemToAddToCart( {
