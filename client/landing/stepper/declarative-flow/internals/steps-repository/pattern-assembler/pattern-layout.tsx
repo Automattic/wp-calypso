@@ -44,13 +44,12 @@ const PatternLayout = ( {
 	return (
 		<div className="pattern-layout">
 			<div className="pattern-layout__header">
-				<h2>{ translate( 'Design your page' ) }</h2>
+				<h2>{ translate( 'Design your home' ) }</h2>
 				<p>
 					{ translate(
-						'First choose a header for your page layout, then choose at least one content pattern, and finally choose your footer.'
+						'Choose from our library of patterns to quickly put together the structure of your homepage.'
 					) }
 				</p>
-				<p>{ translate( 'You can change this later.' ) }</p>
 			</div>
 			<div className="pattern-layout__body">
 				<ul>
@@ -68,8 +67,7 @@ const PatternLayout = ( {
 					) : (
 						<li className="pattern-layout__list-item pattern-layout__list-item--header">
 							<Button onClick={ onAddHeader }>
-								<span className="pattern-layout__add-icon">+</span>{ ' ' }
-								{ translate( 'Choose a header' ) }
+								<span className="pattern-layout__add-icon">+</span> { translate( 'Add a header' ) }
 							</Button>
 						</li>
 					) }
@@ -104,10 +102,7 @@ const PatternLayout = ( {
 					</AsyncLoad>
 					<li className="pattern-layout__list-item pattern-layout__list-item--section">
 						<Button onClick={ () => onAddSection() }>
-							<span className="pattern-layout__add-icon">+</span>{ ' ' }
-							{ sections?.length
-								? translate( 'Add another pattern' )
-								: translate( 'Add a first pattern' ) }
+							<span className="pattern-layout__add-icon">+</span> { translate( 'Add sections' ) }
 						</Button>
 					</li>
 					{ footer ? (
@@ -124,8 +119,7 @@ const PatternLayout = ( {
 					) : (
 						<li className="pattern-layout__list-item pattern-layout__list-item--footer">
 							<Button onClick={ onAddFooter }>
-								<span className="pattern-layout__add-icon">+</span>{ ' ' }
-								{ translate( 'Choose a footer' ) }
+								<span className="pattern-layout__add-icon">+</span> { translate( 'Add a footer' ) }
 							</Button>
 						</li>
 					) }
