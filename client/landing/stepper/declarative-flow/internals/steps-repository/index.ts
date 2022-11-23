@@ -36,6 +36,7 @@ export { default as difmStartingPoint } from './difm-starting-point';
 export { default as letsGetStarted } from './lets-get-started';
 export { default as intro } from './intro';
 export { default as linkInBioSetup } from './link-in-bio-setup';
+export { default as siteCreationStep } from './site-creation-step';
 export { default as linkInBioPostSetup } from './link-in-bio-post-setup';
 export { default as videomakerSetup } from './videomaker-setup';
 export { default as chooseADomain } from './choose-a-domain';
@@ -43,9 +44,11 @@ export { default as chooseAPlan } from './choose-a-plan';
 export { default as launchpad } from './launchpad';
 export { default as subscribers } from './subscribers';
 export { default as patterns } from './patterns';
+export { default as plans } from './plans';
 export { default as getCurrentThemeSoftwareSets } from './get-current-theme-software-sets';
 export { default as storeProfiler } from './store-profiler';
 export { default as designCarousel } from './design-carousel';
+export { default as domains } from './domains';
 
 export type StepPath =
 	| 'courses'
@@ -85,14 +88,17 @@ export type StepPath =
 	| 'letsGetStarted'
 	| 'chooseADomain'
 	| 'linkInBioSetup'
+	| 'siteCreationStep'
 	| 'linkInBioPostSetup'
 	| 'newsletterSetup'
 	| 'newsletterPostSetup'
 	| 'intro'
 	| 'launchpad'
 	| 'subscribers'
+	| 'plans'
 	| 'getCurrentThemeSoftwareSets'
 	| 'designCarousel'
 	| 'storeProfiler'
 	| 'chooseAPlan'
-	| 'videomakerSetup';
+	| 'videomakerSetup'
+	| 'domains';
