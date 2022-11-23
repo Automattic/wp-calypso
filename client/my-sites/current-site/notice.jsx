@@ -52,6 +52,26 @@ export class SiteNotice extends Component {
 		);
 	}
 
+	getLaunchpadNotice() {
+		const { site } = this.props;
+
+		return (
+			<UpsellNudge
+				callToAction="Next Steps"
+				compact
+				forceHref={ true }
+				forceDisplay={ true }
+				dismissPreferenceName=""
+				dismissTemporary={ true }
+				href={ `/setup/${ site.options.site_intent }/launchpad?siteSlug=${ site.slug }` }
+				// TODO: Add relevant tracks events here
+				// onClick={ onClick }
+				// onDismissClick={ onDismiss }
+				title="🚀 Finish site setup"
+			/>
+		);
+	}
+
 	activeDiscountNotice() {
 		if ( ! this.props.activeDiscount ) {
 			return null;
@@ -101,21 +121,26 @@ export class SiteNotice extends Component {
 
 		const discountOrFreeToPaid = this.activeDiscountNotice();
 		const siteRedirectNotice = this.getSiteRedirectNotice( site );
+		const LaunchpadNotice = this.getLaunchpadNotice();
 
 		const showJitms =
-			! this.props.isSiteWPForTeams && ( discountOrFreeToPaid || config.isEnabled( 'jitms' ) );
+			! this.props.isSiteWPForTeams &&
+			( discountOrFreeToPaid || config.isEnabled( 'jitms' ) ) &&
+			site.options?.launchpad_screen !== 'full';
 
 		return (
 			<div className="current-site__notices">
 				<QueryActivePromotions />
 				{ siteRedirectNotice }
-				{ showJitms && (
+				{ showJitms ? (
 					<AsyncLoad
 						require="calypso/blocks/jitm"
 						placeholder={ null }
 						messagePath="calypso:sites:sidebar_notice"
 						template="sidebar-banner"
 					/>
+				) : (
+					LaunchpadNotice
 				) }
 				<QuerySitePlans siteId={ site.ID } />
 			</div>
