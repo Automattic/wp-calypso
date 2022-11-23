@@ -1,167 +1,184 @@
 import type { Pattern } from './types';
 
+// All headers in dotcompatterns
 const headerPatterns: Pattern[] = [
 	{
 		id: 5579,
-		name: 'Centered header',
+		name: 'Header 1',
+	},
+	// Previously removed because it has a menu item named Blog
+	// and it can be confused as we don't target bloggers in this flow
+	{
+		id: 5608,
+		name: 'Header 2',
 	},
 	{
 		id: 5582,
-		name: 'Simple header with large font size',
-	},
-	{
-		id: 5605,
-		name: 'Header with site title and vertical navigation',
-	},
-	{
-		id: 5603,
-		name: 'Header with site title and menu button',
-	},
-	{
-		id: 7914,
-		name: 'Header with button',
+		name: 'Header 3',
 	},
 	{
 		id: 5588,
-		name: 'Simple header',
-	},
-	{
-		id: 5601,
-		name: 'Simple header with tagline',
+		name: 'Header 4',
 	},
 	{
 		id: 5590,
-		name: 'Simple header with image background',
-	},
-	{
-		id: 5595,
-		name: 'Simple header with image',
+		name: 'Header 5',
 	},
 	{
 		id: 5593,
-		name: 'Simple header with dark background',
+		name: 'Header 6',
+	},
+	{
+		id: 5595,
+		name: 'Header 7',
+	},
+	{
+		id: 5601,
+		name: 'Header 8',
+	},
+	{
+		id: 5603,
+		name: 'Header 9',
+	},
+	{
+		id: 5605,
+		name: 'Header 11',
+	},
+	{
+		id: 7914,
+		name: 'Header 10',
 	},
 ];
 
+// All footers in dotcompatterns
+// Missing footers in dotcomfsepatterns
 const footerPatterns: Pattern[] = [
 	{
 		id: 5316,
-		name: 'Footer with social icons, address, e-mail, and telephone number',
+		name: 'Footer 1',
 	},
 	{
 		id: 5886,
-		name: 'Footer with large font size',
+		name: 'Footer 2',
 	},
 	{
 		id: 5883,
-		name: 'Footer with credit line and navigation',
+		name: 'Footer 3',
 	},
 	{
 		id: 5888,
-		name: 'Footer with navigation and credit line',
+		name: 'Footer 4',
 	},
 	{
 		id: 5877,
-		name: 'Centered footer with social links',
+		name: 'Footer 5',
 	},
 	{
 		id: 5873,
-		name: 'Simple centered footer',
+		name: 'Footer 6',
+	},
+	{
+		id: 7917,
+		name: 'Footer 7',
+	},
+	{
+		id: 7485,
+		name: 'Footer 8',
 	},
 	{
 		id: 1622,
-		name: 'Contact',
+		name: 'Footer 9',
 	},
 	{
 		id: 5047,
-		name: 'Footer with navigation, contact details, social links, and subscription form',
+		name: 'Footer 10',
 	},
 	{
 		id: 5880,
-		name: 'Footer with background color and three columns',
+		name: 'Footer 11',
 	},
 ];
 
 const sectionPatterns: Pattern[] = [
 	{
 		id: 7156,
-		name: 'Media and text with image on the right',
+		name: 'Call To Action 1',
 	},
 	{
 		id: 7153,
-		name: 'Media and text with image on the left',
+		name: 'Call To Action 2',
 	},
 	{
 		id: 7146,
-		name: 'Four column list',
-	},
-	{
-		id: 1600,
-		name: 'Three column text and links',
-	},
-	{
-		id: 7149,
-		name: 'Two column image grid',
-	},
-	{
-		id: 7135,
-		name: 'Three columns with images and text',
-	},
-	{
-		id: 5691,
-		name: 'Three logos, heading, and paragraphs',
-	},
-	{
-		id: 7143,
-		name: 'Full-width image',
-	},
-	{
-		id: 737,
-		name: 'Logos',
+		name: 'Call To Action 3',
 	},
 	{
 		id: 7132,
-		name: 'Cover image with left-aligned call to action',
+		name: 'Call To Action 4',
 	},
 	{
 		id: 7159,
-		name: 'Cover image with centered text and a button',
+		name: 'Call To Action 5',
+	},
+	{
+		id: 7149,
+		name: 'Images 1',
+	},
+	{
+		id: 5691,
+		name: 'Images 2',
+	},
+	{
+		id: 7143,
+		name: 'Images 3',
+	},
+	{
+		id: 737,
+		name: 'Images 4',
 	},
 	{
 		id: 1585,
-		name: 'Quote and logos',
+		name: 'Images 5',
+	},
+	{
+		id: 7135,
+		name: 'List 1',
 	},
 	{
 		id: 789,
-		name: 'Numbered list',
-	},
-	{
-		id: 5666,
-		name: 'Large numbers, heading, and paragraphs',
-	},
-	{
-		id: 462,
-		name: 'Numbers',
-	},
-	{
-		id: 5663,
-		name: 'Large headline',
-	},
-	{
-		id: 7140,
-		name: 'Left-aligned headline',
-	},
-	{
-		id: 7138,
-		name: 'Centered headline and text',
-	},
-	{
-		id: 7161,
-		name: 'Two testimonials side by side',
+		name: 'List 2',
 	},
 	{
 		id: 6712,
-		name: 'List of events',
+		name: 'List 3',
+	},
+	{
+		id: 5666,
+		name: 'Numbers 1',
+	},
+	{
+		id: 462,
+		name: 'Numbers 2',
+	},
+	{
+		id: 7161,
+		name: 'Testimonials',
+	},
+	{
+		id: 1600,
+		name: 'Links',
+	},
+	{
+		id: 5663,
+		name: 'About 1',
+	},
+	{
+		id: 7140,
+		name: 'About 2',
+	},
+	{
+		id: 7138,
+		name: 'About 3',
 	},
 ];
 
