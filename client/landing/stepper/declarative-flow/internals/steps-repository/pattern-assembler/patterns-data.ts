@@ -6,8 +6,6 @@ const headerPatterns: Pattern[] = [
 		id: 5579,
 		name: 'Header 1',
 	},
-	// Previously removed because it has a menu item named Blog
-	// and it can be confused as we don't target bloggers in this flow
 	{
 		id: 5608,
 		name: 'Header 2',
@@ -161,14 +159,6 @@ const sectionPatterns: Pattern[] = [
 		name: 'Numbers 2',
 	},
 	{
-		id: 7161,
-		name: 'Testimonials',
-	},
-	{
-		id: 1600,
-		name: 'Links',
-	},
-	{
 		id: 5663,
 		name: 'About 1',
 	},
@@ -179,6 +169,14 @@ const sectionPatterns: Pattern[] = [
 	{
 		id: 7138,
 		name: 'About 3',
+	},
+	{
+		id: 7161,
+		name: 'Testimonials',
+	},
+	{
+		id: 1600,
+		name: 'Links',
 	},
 ];
 
