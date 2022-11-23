@@ -66,7 +66,7 @@ const PatternLayout = ( {
 						</li>
 					) : (
 						<li className="pattern-layout__list-item pattern-layout__list-item--header">
-							<Button onClick={ onAddHeader }>
+							<Button className="pattern-layout__list-item-button" onClick={ onAddHeader }>
 								<span className="pattern-layout__add-icon">+</span> { translate( 'Add a header' ) }
 							</Button>
 						</li>
@@ -101,7 +101,7 @@ const PatternLayout = ( {
 						}
 					</AsyncLoad>
 					<li className="pattern-layout__list-item pattern-layout__list-item--section">
-						<Button onClick={ () => onAddSection() }>
+						<Button className="pattern-layout__list-item-button" onClick={ () => onAddSection() }>
 							<span className="pattern-layout__add-icon">+</span> { translate( 'Add sections' ) }
 						</Button>
 					</li>
@@ -118,7 +118,7 @@ const PatternLayout = ( {
 						</li>
 					) : (
 						<li className="pattern-layout__list-item pattern-layout__list-item--footer">
-							<Button onClick={ onAddFooter }>
+							<Button className="pattern-layout__list-item-button" onClick={ onAddFooter }>
 								<span className="pattern-layout__add-icon">+</span> { translate( 'Add a footer' ) }
 							</Button>
 						</li>
