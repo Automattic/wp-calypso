@@ -17,7 +17,10 @@ function should_show_coming_soon_page() {
 		return false;
 	}
 
-	if ( is_accessed_by_valid_share_link() ) {
+	$share_code = get_share_code();
+	if ( is_accessed_by_valid_share_link( $share_code ) ) {
+		setcookie( 'share_code', $share_code, time() + 3600, '/', false, is_ssl() );
+		header( 'X-Robots-Tag: noindex, nofollow' );
 		return false;
 	}
 
@@ -36,6 +39,20 @@ function should_show_coming_soon_page() {
 }
 
 /**
+ * Gets share code from URL or Cookie.
+ *
+ * @return string
+ */
+function get_share_code() {
+	if ( isset( $_GET['share'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return $_GET['share']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	} elseif ( isset( $_COOKIE['share_code'] ) ) {
+		return $_COOKIE['share_code'];
+	}
+	return '';
+}
+
+/**
  * Determines whether the coming soon page should be bypassed.
  *
  * It checks if share code is provided as GET parameter, or as a cookie.
@@ -44,17 +61,11 @@ function should_show_coming_soon_page() {
  *
  * Finally, it sets a code in cookie and sets header that prevents robots from indexing.
  *
+ * @param string $share_code Share code to check against blog option value.
+ *
  * @return bool
  */
-function is_accessed_by_valid_share_link() {
-	if ( isset( $_GET['share'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$share_code = $_GET['share']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	} elseif ( isset( $_COOKIE['share_code'] ) ) {
-		$share_code = $_COOKIE['share_code'];
-	} else {
-		$share_code = '';
-	}
-
+function is_accessed_by_valid_share_link( $share_code ) {
 	$preview_links_option = get_option( 'wpcom_public_preview_links' );
 
 	if ( ! is_array( $preview_links_option ) || ! count( $preview_links_option ) || ! $share_code ) {
@@ -64,9 +75,6 @@ function is_accessed_by_valid_share_link() {
 	if ( ! in_array( $share_code, array_column( $preview_links_option, 'code' ), true ) ) {
 		return false;
 	}
-
-	setcookie( 'share_code', $share_code, time() + 3600, '/', false, is_ssl() );
-	header( 'X-Robots-Tag: noindex, nofollow' );
 
 	return true;
 }
