@@ -252,6 +252,11 @@
 				border: none;
 			}
 		}
+		@media ( max-width: 782px ) {
+			border-radius: 0;
+			border-left: none;
+			border-right: none;
+		}
 	}
 }
 
