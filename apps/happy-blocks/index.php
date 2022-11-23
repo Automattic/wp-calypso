@@ -56,8 +56,8 @@ function a8c_happyblocks_assets() {
 	wp_enqueue_script(
 		'a8c-happyblocks-edit-js',
 		plugins_url( 'dist/editor.min.js', __FILE__ ),
-		array( 'a8c-happyblocks-pricing-plans' ),
-		$assets['version'],
+		array_merge( array( 'a8c-happyblocks-pricing-plans' ), $assets['dependencies'] ),
+		assets['version'],
 		true
 	);
 
@@ -88,7 +88,7 @@ function a8c_happyblocks_view_assets() {
 	wp_enqueue_script(
 		'a8c-happyblock-view-js',
 		plugins_url( $script_file, __FILE__ ),
-		array( 'wp-element' ),
+		$assets['dependencies'],
 		$assets['version'],
 		true
 	);
