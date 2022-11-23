@@ -149,6 +149,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 						: __( 'Accent color' ) }
 				</FormLabel>
 				<SelectDropdown
+					// @ts-expect-error SelectDropdown is defined in .jsx file and has no type definitions generated
 					ref={ accentColorRef }
 					className="accent-color-control__accent-color-input"
 					id="accentColor"
