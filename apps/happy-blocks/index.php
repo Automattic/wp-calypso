@@ -57,7 +57,7 @@ function a8c_happyblocks_assets() {
 		'a8c-happyblocks-edit-js',
 		plugins_url( 'dist/editor.min.js', __FILE__ ),
 		array_merge( array( 'a8c-happyblocks-pricing-plans' ), $assets['dependencies'] ),
-		assets['version'],
+		$assets['version'],
 		true
 	);
 
