@@ -125,6 +125,7 @@
 		"signup/tailored-ecommerce": false,
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
+		"sites-as-landing-page": true,
 		"ssr/prefetch-timebox": true,
 		"stats/new-all-time-highlights": true,
 		"stats/new-annual-highlights": true,
