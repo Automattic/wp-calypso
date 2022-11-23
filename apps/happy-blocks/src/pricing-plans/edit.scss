@@ -34,11 +34,29 @@ $brand-text: "SF Pro Text", $sans;
 	background-color: $studio-white;
 
 
-	&__settings-plan select {
-		min-height: 30px !important;
-		height: 30px !important;
-		padding: 0 26px 0 8px !important;
-		margin: 0 !important;
+	&__settings {
+		select {
+			min-height: 30px !important;
+			height: 30px !important;
+			padding: 0 26px 0 8px !important;
+			margin: 0 !important;
+		}
+
+		.components-panel__row {
+			display: block;
+		}
+
+		.components-radio-control__option {
+			display: flex;
+			gap: 10px;
+		}
+
+		.components-flex.components-h-stack.components-v-stack {
+			margin-top: 8px;
+			flex-direction: row;
+			gap: 20px;
+			justify-content: flex-start;
+		}
 	}
 
 	&__skeleton {

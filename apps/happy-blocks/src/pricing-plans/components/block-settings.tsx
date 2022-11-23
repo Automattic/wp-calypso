@@ -33,10 +33,13 @@ const BlockSettings: FunctionComponent<
 
 	return (
 		<InspectorControls>
-			<PanelBody title={ __( 'Basic', 'happy-blocks' ) } initialOpen={ true }>
+			<PanelBody
+				className="hb-pricing-plans-embed__settings"
+				title={ __( 'Basic', 'happy-blocks' ) }
+				initialOpen={ true }
+			>
 				<PanelRow>
 					<SelectControl
-						className="hb-pricing-plans-embed__settings-plan"
 						label={ __( 'Plan', 'happy-blocks' ) }
 						value={ currentPlan?.type }
 						options={ planTypeOptions }
