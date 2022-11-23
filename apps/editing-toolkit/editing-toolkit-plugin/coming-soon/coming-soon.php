@@ -20,7 +20,6 @@ function should_show_coming_soon_page() {
 	$share_code = get_share_code();
 	if ( is_accessed_by_valid_share_link( $share_code ) ) {
 		setcookie( 'wp_share_code', $share_code, time() + 3600, '/', false, is_ssl() );
-		header( 'X-Robots-Tag: noindex, nofollow' );
 		return false;
 	}
 
@@ -78,6 +77,20 @@ function is_accessed_by_valid_share_link( $share_code ) {
 
 	return true;
 }
+
+/**
+ * Add X-Robots-Tag header to prevent from indexing page that includes share code.
+ *
+ * @param array $headers Headers.
+ * @return array Headers.
+ */
+function maybe_add_x_robots_headers( $headers ) {
+	if ( get_share_code() ) {
+		$headers['X-Robots-Tag'] = 'noindex, nofollow';
+	}
+	return $headers;
+}
+add_filter( 'wp_headers', __NAMESPACE__ . '\maybe_add_x_robots_headers' );
 
 /**
  * Renders a fallback coming soon page
