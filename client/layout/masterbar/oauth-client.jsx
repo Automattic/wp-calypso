@@ -28,7 +28,7 @@ const OauthClientLogo = ( { oauth2Client } ) => {
 
 	// Other clients can define their own logos
 	if ( oauth2Client.icon ) {
-		return <img src={ oauth2Client.icon } alt={ oauth2Client.title || '' } />;
+		return <img src={ oauth2Client.icon } alt={ oauth2Client.title } />;
 	}
 
 	return null;
