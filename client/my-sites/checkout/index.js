@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
 import {
 	makeLayout,
+	redirectLoggedOutForGifting,
 	redirectLoggedOut,
 	render as clientRender,
 	setLocaleMiddleware,
@@ -266,7 +267,7 @@ export default function () {
 	// middleware.
 	page(
 		'/checkout/:product/gift/:purchaseId',
-		redirectLoggedOut,
+		redirectLoggedOutForGifting,
 		noSite,
 		checkout,
 		makeLayout,
