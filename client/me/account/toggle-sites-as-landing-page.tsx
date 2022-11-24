@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { successNotice } from 'calypso/state/notices/actions';
-import { savePreference, setPreference } from 'calypso/state/preferences/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 
 type ToggleSitesLandingPageProps = {
@@ -14,16 +14,20 @@ type ToggleSitesLandingPageProps = {
 function ToggleSitesAsLandingPage( { onToggle, className }: ToggleSitesLandingPageProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const isSiteLandingPage = useSelector( ( state ) =>
-		getPreference( state, 'sitesAsLandingPage' )
-	);
+	const useSitesAsLandingPage = useSelector( ( state ) =>
+		getPreference( state, 'sites-landing-page' )
+	)?.useSitesAsLandingPage;
 
 	const [ isDisabled, setIsDisabled ] = useState( false );
 
 	async function handleToggle( isChecked: boolean ) {
 		setIsDisabled( true );
-		dispatch( setPreference( 'sitesAsLandingPage', isChecked ) );
-		await dispatch( savePreference( 'sitesAsLandingPage', isChecked ) );
+		await dispatch(
+			savePreference( 'sites-landing-page', {
+				useSitesAsLandingPage: isChecked,
+				updatedAt: Date.now(),
+			} )
+		);
 		dispatch(
 			successNotice( translate( 'Settings saved successfully!' ), {
 				id: 'sites-landing-page-save',
@@ -37,7 +41,7 @@ function ToggleSitesAsLandingPage( { onToggle, className }: ToggleSitesLandingPa
 	return (
 		<div className={ className }>
 			<ToggleControl
-				checked={ !! isSiteLandingPage }
+				checked={ !! useSitesAsLandingPage }
 				disabled={ isDisabled }
 				onChange={ handleToggle }
 				label={ translate( 'Set sites dasboard as default landing page.' ) }
