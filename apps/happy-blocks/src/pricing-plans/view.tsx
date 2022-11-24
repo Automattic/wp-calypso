@@ -15,7 +15,7 @@ const ViewPricingPlans: FunctionComponent< BlockEditProps< BlockAttributes > > =
 		setDummyAttributes( ( values ) => ( { ...values, ...newValues } ) );
 	};
 
-	if ( isLoading || ! plans ) {
+	if ( isLoading || ! plans?.length ) {
 		return <Skeleton />;
 	}
 

@@ -1,6 +1,8 @@
-import { TERM_ANNUALLY, TERM_MONTHLY } from '@automattic/calypso-products';
-import { sprintf, __ } from '@wordpress/i18n';
+import { isWpComAnnualPlan, isWpComMonthlyPlan } from '@automattic/calypso-products';
+import { useInstanceId } from '@wordpress/compose';
+import { __ } from '@wordpress/i18n';
 import { FunctionComponent } from 'react';
+import usePlanVariants from '../hooks/plan-variants';
 import { BlockPlan } from '../hooks/pricing-plans';
 
 const Promo: FunctionComponent = ( { children } ) => (
@@ -13,62 +15,33 @@ interface Props {
 	onChange: ( value?: string ) => void;
 }
 
-const getAnnualDiscount = ( annualPlan?: BlockPlan, monthlyPlan?: BlockPlan ) => {
-	if ( ! annualPlan || ! monthlyPlan ) {
-		return null;
-	}
-
-	const annualPricePerMonth = annualPlan.rawPrice / 12;
-
-	const discountRate = Math.round(
-		( 100 * ( monthlyPlan.rawPrice - annualPricePerMonth ) ) / monthlyPlan.rawPrice
-	);
-
-	return sprintf(
-		// translators: %s is the discount rate
-		__( 'Save %s', 'happy-blocks' ),
-		`${ discountRate }%`
-	);
-};
-
 const BillingOptions: FunctionComponent< Props > = ( { plans, value, onChange } ) => {
-	const selectedPlan = plans?.find( ( plan ) => plan.productSlug === value );
+	const selectedPlan = plans?.find( ( plan ) => plan.productSlug === value ) ?? plans[ 0 ];
+	const { monthlyPlan, annualPlan, annualDiscount } = usePlanVariants( plans, selectedPlan );
+	const instanceId = useInstanceId( BillingOptions );
+	const id = `hb-plans-radio-control-${ instanceId }`;
 
-	if ( ! plans || ! selectedPlan ) {
+	if ( ! monthlyPlan || ! annualPlan ) {
 		return null;
 	}
-
-	const monthlyPlan =
-		selectedPlan.term === TERM_MONTHLY
-			? selectedPlan
-			: plans.find( ( plan ) => plan.term === TERM_MONTHLY && plan.type === selectedPlan.type );
-
-	const annualPlan =
-		selectedPlan.term === TERM_ANNUALLY
-			? selectedPlan
-			: plans.find( ( plan ) => plan.term === TERM_ANNUALLY && plan.type === selectedPlan.type );
-
-	const annualDiscount = getAnnualDiscount( annualPlan, monthlyPlan );
-
-	const planChoices = [ monthlyPlan, annualPlan ].filter( Boolean );
 
 	return (
 		<fieldset className="hb-pricing-plans-embed__billing-options">
-			{ planChoices.map( ( plan ) => (
+			{ [ monthlyPlan, annualPlan ].map( ( plan ) => (
 				<div key={ plan?.productSlug }>
 					<label className="hb-pricing-plans-embed__billing-option-label">
 						<input
 							className="hb-pricing-plans-embed__billing-option-input"
+							id={ id }
 							type="radio"
-							name="price"
 							value={ plan?.productSlug }
 							checked={ plan?.productSlug === value }
 							onChange={ () => onChange( plan?.productSlug ) }
 						/>
-						{ plan?.term === TERM_MONTHLY
+						{ isWpComMonthlyPlan( plan.productSlug )
 							? __( 'Monthly', 'happy-blocks' )
 							: __( 'Annually', 'happy-blocks' ) }
-						{ annualDiscount && plan?.term === TERM_ANNUALLY && (
+						{ annualDiscount && isWpComAnnualPlan( plan.productSlug ) && (
 							<Promo>({ annualDiscount })</Promo>
 						) }
 					</label>
