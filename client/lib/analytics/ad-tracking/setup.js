@@ -1,4 +1,4 @@
-import { mayWeTrackByTracker } from '../tracker-buckets';
+import { mayWeInitTracker } from '../tracker-buckets';
 import {
 	ADROLL_PAGEVIEW_PIXEL_URL_1,
 	ADROLL_PAGEVIEW_PIXEL_URL_2,
@@ -8,66 +8,66 @@ import {
 } from './constants';
 
 if ( typeof window !== 'undefined' ) {
-	if ( mayWeTrackByTracker( 'ga' ) ) {
+	if ( mayWeInitTracker( 'ga' ) ) {
 		setupGtag();
 	}
 
 	// Facebook
-	if ( mayWeTrackByTracker( 'facebook' ) ) {
+	if ( mayWeInitTracker( 'facebook' ) ) {
 		setupFacebookGlobal();
 	}
 
 	// Bing
-	if ( mayWeTrackByTracker( 'bing' ) && ! window.uetq ) {
+	if ( mayWeInitTracker( 'bing' ) && ! window.uetq ) {
 		window.uetq = [];
 	}
 
 	// Criteo
-	if ( mayWeTrackByTracker( 'criteo' ) && ! window.criteo_q ) {
+	if ( mayWeInitTracker( 'criteo' ) && ! window.criteo_q ) {
 		window.criteo_q = [];
 	}
 
 	// Quantcast
-	if ( mayWeTrackByTracker( 'quantcast' ) && ! window._qevents ) {
+	if ( mayWeInitTracker( 'quantcast' ) && ! window._qevents ) {
 		window._qevents = [];
 	}
 
 	// Google Ads Gtag for wordpress.com
-	if ( mayWeTrackByTracker( 'googleAds' ) ) {
+	if ( mayWeInitTracker( 'googleAds' ) ) {
 		setupWpcomGoogleAdsGtag();
 	}
 
-	if ( mayWeTrackByTracker( 'floodlight' ) ) {
+	if ( mayWeInitTracker( 'floodlight' ) ) {
 		setupWpcomFloodlightGtag();
 	}
 
 	// Twitter
-	if ( mayWeTrackByTracker( 'twitter' ) ) {
+	if ( mayWeInitTracker( 'twitter' ) ) {
 		setupTwitterGlobal();
 	}
 
 	// Linkedin
-	if ( mayWeTrackByTracker( 'linkedin' ) ) {
+	if ( mayWeInitTracker( 'linkedin' ) ) {
 		setupLinkedinGlobal();
 	}
 
 	// Quora
-	if ( mayWeTrackByTracker( 'quora' ) ) {
+	if ( mayWeInitTracker( 'quora' ) ) {
 		setupQuoraGlobal();
 	}
 
 	// Outbrain
-	if ( mayWeTrackByTracker( 'outbrain' ) ) {
+	if ( mayWeInitTracker( 'outbrain' ) ) {
 		setupOutbrainGlobal();
 	}
 
 	// Pinterest
-	if ( mayWeTrackByTracker( 'pinterest' ) ) {
+	if ( mayWeInitTracker( 'pinterest' ) ) {
 		setupPinterestGlobal();
 	}
 
 	// AdRoll
-	if ( mayWeTrackByTracker( 'adroll' ) ) {
+	if ( mayWeInitTracker( 'adroll' ) ) {
 		setupAdRollGlobal();
 	}
 }

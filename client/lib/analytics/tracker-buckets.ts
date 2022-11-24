@@ -65,6 +65,32 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	adroll: null,
 };
 
+const checkGtagInit = (): boolean => 'dataLayer' in window && 'gtag' in window;
+
+export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolean } > = {
+	ga: checkGtagInit,
+	gaEnhancedEcommerce: checkGtagInit,
+	floodlight: checkGtagInit,
+	googleAds: checkGtagInit,
+	fullstory: () => 'FS' in window,
+	hotjar: () => 'hj' in window,
+	bing: () => 'uetq' in window,
+	outbrain: () => 'obApi' in window,
+	pinterest: () => 'pintrk' in window,
+	twitter: () => 'twq' in window,
+	facebook: () => 'fbq' in window,
+	linkedin: () => '_linkedin_data_partner_id' in window,
+	criteo: () => 'criteo_q' in window,
+	quora: () => 'qp' in window,
+	adroll: () => 'adRoll' in window,
+};
+
+const isTrackerIntialized = ( tracker: AdTracker ): boolean => {
+	const guardFunction = AdTrackersInitGuards[ tracker ];
+	// If there is no guard function, assume the tracker is initialized
+	return guardFunction ? guardFunction() : true;
+};
+
 export const mayWeTrackGeneral = () =>
 	! isE2ETest() && ! getDoNotTrack() && ! isPiiUrl() && config.isEnabled( 'ad-tracking' );
 
@@ -82,8 +108,10 @@ export const mayWeTrackByBucket = ( bucket: Bucket ) => {
 	return prefs.ok && prefs.buckets[ bucket ];
 };
 
-export const mayWeTrackByTracker = ( tracker: AdTracker ) => {
+export const mayWeInitTracker = ( tracker: AdTracker ) => {
 	const bucket = AdTrackersBuckets[ tracker ];
-
 	return null !== bucket && mayWeTrackByBucket( bucket );
 };
+
+export const mayWeTrackByTracker = ( tracker: AdTracker ) =>
+	mayWeInitTracker( tracker ) && isTrackerIntialized( tracker );
