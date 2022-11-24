@@ -45,10 +45,6 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordT
 	};
 
 	const updateInput = ( updatedInput: string ) => {
-		// Clean up duplicate criteria
-		updatedInput = updatedInput.replace( /(\b(feature|column|subject):.*[^ ]\b)(?=.*\1)/gi, '' );
-		// Only allow one `subject:` filter
-		updatedInput = updatedInput.replace( /(subject):([\w-]*[\s|$])(?=.*\1)/gi, '' );
 		setSearchInput( updatedInput );
 		setIsApplySearch( true );
 		searchRef.current?.clear();
@@ -87,6 +83,12 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordT
 			updateInput( updatedInput + suggestion );
 			focusOnInput();
 		} else {
+			updatedInput = insertSuggestion( suggestion, searchInput, cursorPosition );
+			// Clean up duplicate criteria
+			updatedInput = updatedInput.replace( /(\b(feature|column|subject):.*[^ ]\b)(?=.*\1)/gi, '' );
+			// Only allow one `subject:` filter
+			updatedInput = updatedInput.replace( /(subject):([\w-]*[\s|$])(?=.*\1)/gi, '' );
+
 			updateInput( insertSuggestion( suggestion, searchInput, cursorPosition ) );
 			closeSearch();
 		}
