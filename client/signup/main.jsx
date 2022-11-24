@@ -5,8 +5,8 @@ import {
 	isDomainMapping,
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
-import { isNewsletterOrLinkInBioFlow, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
-import { isCurrentPlanFlow } from '@automattic/onboarding/src';
+import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import { isCurrentPlanFlow, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding/src';
 import debugModule from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
 import {
@@ -855,7 +855,7 @@ class Signup extends Component {
 
 		return (
 			! this.props.isLoggedIn &&
-			isCurrentPlanFlow( this.props.flowName ) &&
+			( isCurrentPlanFlow( this.props.flowName ) || this.props.flowName === 'onboarding' ) &&
 			isEnglishLocale &&
 			currentTime.getUTCHours() >= 15 &&
 			currentTime.getUTCHours() < 21 &&
