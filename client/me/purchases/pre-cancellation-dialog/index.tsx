@@ -23,18 +23,11 @@ import './style.scss';
 interface FeaturesListProps {
 	productSlug: string | undefined;
 	domainFeature: JSX.Element | null;
-	isPurchaseRefundable: boolean;
-	isPurchaseAutoRenewing: boolean;
 	hasDomain: boolean;
 	wpcomURL: string;
 	primaryDomain: string | undefined;
 }
-export const FeaturesList = ( {
-	productSlug,
-	domainFeature,
-	isPurchaseRefundable,
-	isPurchaseAutoRenewing,
-}: FeaturesListProps ) => {
+export const FeaturesList = ( { productSlug, hasDomain, domainFeature }: FeaturesListProps ) => {
 	const translate = useTranslate();
 
 	if ( typeof productSlug !== 'string' ) {
@@ -42,9 +35,6 @@ export const FeaturesList = ( {
 	}
 
 	const planCancellationFeatures = getPlanCancellationFeatures( productSlug, hasDomain );
-
-	const domainFeature =
-		hasDomain && primaryDomain && wpcomURL ? <p>Debug domain: traffic will be redirected</p> : null;
 
 	return (
 		<>
@@ -91,7 +81,6 @@ export const FeaturesList = ( {
 /**
  * Pre Cancellation Dialog bottom text:
  * - Link to contact support.
- * - If refundable, the amount to be refunded.
  */
 interface RenderFooterTextProps {
 	purchase: Purchase;
@@ -163,9 +152,6 @@ export const PreCancellationDialog = ( {
 	 */
 	const isPurchaseRefundable = isRefundable( purchase );
 	const isPurchaseAutoRenewing = purchase.isAutoRenewEnabled;
-	const subTitle = isPurchaseRefundable
-		? translate( 'Subtitle - refund' )
-		: translate( 'Subtitle' );
 
 	/**
 	 * Determine dialog subtitle.
@@ -212,7 +198,9 @@ export const PreCancellationDialog = ( {
 	 * Domain redirect copy
 	 */
 	const domainFeature =
-		hasDomain && primaryDomain && wpcomURL ? <p>Debug domain: traffic will be redirected</p> : null;
+		hasDomain && primaryDomain && wpcomURL ? (
+			<p>Warning: domain traffic will be redirected</p>
+		) : null;
 
 	/**
 	 * Dialog buttons
@@ -266,8 +254,6 @@ export const PreCancellationDialog = ( {
 						<FeaturesList
 							productSlug={ productSlug }
 							domainFeature={ domainFeature }
-							isPurchaseRefundable={ isPurchaseRefundable }
-							isPurchaseAutoRenewing={ isPurchaseAutoRenewing }
 							hasDomain={ hasDomain }
 							wpcomURL={ wpcomURL }
 							primaryDomain={ primaryDomain }
