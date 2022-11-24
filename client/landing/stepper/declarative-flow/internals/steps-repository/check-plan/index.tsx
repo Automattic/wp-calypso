@@ -11,6 +11,8 @@ const CheckPlan: Step = function CheckPlan( { navigation } ) {
 		if ( ! site ) {
 			return;
 		}
+
+		localStorage.setItem( 's1', JSON.stringify( site?.plan ) );
 		console.log( { site } );
 		submit?.( { currentPlan: site.plan } );
 
