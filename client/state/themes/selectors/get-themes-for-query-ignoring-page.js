@@ -44,7 +44,7 @@ export const getThemesForQueryIgnoringPage = createSelector(
 				const currentTheme = getCanonicalTheme( state, selectedSiteId, currentThemeId );
 
 				if ( currentTheme ) {
-					themesForQueryIgnoringPage.filter = themesForQueryIgnoringPage.filter(
+					themesForQueryIgnoringPage = themesForQueryIgnoringPage.filter(
 						( theme ) => theme.id !== currentTheme.id
 					);
 					themesForQueryIgnoringPage.unshift( currentTheme );
