@@ -1,4 +1,4 @@
-import { mayWeInitTracker } from '../tracker-buckets';
+import { mayWeInitTracker, mayWeTrackByTracker } from '../tracker-buckets';
 import {
 	ADROLL_PAGEVIEW_PIXEL_URL_1,
 	ADROLL_PAGEVIEW_PIXEL_URL_2,
@@ -201,11 +201,15 @@ function setupGtag() {
 function setupWpcomGoogleAdsGtag() {
 	setupGtag();
 
-	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAdsGtag );
+	if ( mayWeTrackByTracker( 'googleAds' ) ) {
+		window.gtag( 'config', TRACKING_IDS.wpcomGoogleAdsGtag );
+	}
 }
 
 function setupWpcomFloodlightGtag() {
 	setupGtag();
 
-	window.gtag( 'config', TRACKING_IDS.wpcomFloodlightGtag );
+	if ( mayWeTrackByTracker( 'floodlight' ) ) {
+		window.gtag( 'config', TRACKING_IDS.wpcomFloodlightGtag );
+	}
 }
