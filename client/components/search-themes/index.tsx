@@ -32,7 +32,7 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordT
 
 	useEffect( () => {
 		// Prevent unnecessary render when there is unfinished filter subject:
-		if ( query.match( /(subject):(\s|$)/i ) ) {
+		if ( ! isSearchOpen ) {
 			setSearchInput( query );
 		}
 	}, [ query ] );
