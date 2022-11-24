@@ -9,6 +9,7 @@ import ActionButton from './action-button';
 // eslint-disable-next-line no-shadow
 const AnswerPromptButton = ( { answerPrompt, note, translate } ) => {
 	const { site: siteId } = note?.meta?.ids ?? {};
+	// Notifications are hosted on widgets.wp.com on WordPress.com
 	const host =
 		document.location.host === 'widgets.wp.com' ? 'wordpress.com' : document.location.host;
 	const newPostLink = document.location.protocol + '//' + host + getNewPostLink( note );
