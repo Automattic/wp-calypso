@@ -8,15 +8,12 @@ import storeBadgeApple from './images/store-apple.png';
 import storeBadgeGoogle from './images/store-google.png';
 import { WordPressJetpackSVG } from './svg-icons';
 
-export type JetpackMobilePromoCardProps = {
+export type MobilePromoCardProps = {
 	className?: string;
 	isWoo?: boolean;
 };
 
-export default function JetpackMobilePromoCard( {
-	className,
-	isWoo,
-}: JetpackMobilePromoCardProps ) {
+export default function MobilePromoCard( { className, isWoo }: MobilePromoCardProps ) {
 	// Using useTranslate() with interpolation to set up the title/message.
 	// https://wpcalypso.wordpress.com/devdocs/packages/i18n-calypso/README.md
 	const translate = useTranslate();

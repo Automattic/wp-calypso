@@ -1,11 +1,11 @@
-import JetpackMobilePromoCard from '../';
+import MobilePromoCard from '../';
 
 export default {
-	component: JetpackMobilePromoCard,
-	title: 'Jetpack Mobile Promo Card',
+	component: MobilePromoCard,
+	title: 'Mobile Promo Card',
 };
 
-const Template = ( args ) => <JetpackMobilePromoCard { ...args } />;
+const Template = ( args ) => <MobilePromoCard { ...args } />;
 
 export const Default = Template.bind( {} );
 Default.args = {
