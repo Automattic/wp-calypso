@@ -1,6 +1,6 @@
 # Components
 
-A library of tools React components designed to unify privacy mechanisms in Automattic products.
+A library of tools created as React components designed to unify privacy mechanism in Automattic products.
 
 ## Installation
 
