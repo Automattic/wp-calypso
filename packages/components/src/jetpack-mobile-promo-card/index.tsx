@@ -25,23 +25,10 @@ export default function JetpackMobilePromoCard( {
 	const components = {
 		a: <a className={ linkClassName } href={ redirectLink } />,
 	};
+	// Basic user agent testing so we can show app store badges on moble.
 	const userAgent = window.navigator.userAgent.toLowerCase();
 	const isApple = userAgent.includes( 'iphone' ) || userAgent.includes( 'ipad' );
 	const isGoogle = userAgent.includes( 'android' );
-	let appStoreLink = '#';
-	if ( isApple ) {
-		if ( isWoo ) {
-			appStoreLink = 'https://apps.apple.com/ca/app/woocommerce/id1389130815';
-		} else {
-			appStoreLink = 'https://apps.apple.com/ca/app/jetpack-website-builder/id1565481562';
-		}
-	} else if ( isGoogle ) {
-		if ( isWoo ) {
-			appStoreLink = 'https://play.google.com/store/apps/details?id=com.woocommerce.android';
-		} else {
-			appStoreLink = 'https://play.google.com/store/apps/details?id=com.jetpack.android';
-		}
-	}
 
 	const getTitle = () => {
 		if ( isWoo ) {
@@ -54,8 +41,8 @@ export default function JetpackMobilePromoCard( {
 		} );
 	};
 
+	// Determines message text based on mobile, tablet, or Desktop.
 	const getMessage = () => {
-		// Determines message text based on mobile, tablet, or Desktop.
 		if ( isApple ) {
 			return translate(
 				'Check your stats on-the-go and get real-time notifications with the Jetpack mobile app.'
@@ -76,9 +63,12 @@ export default function JetpackMobilePromoCard( {
 		);
 	};
 
+	// Returns store badges on mobile (including tablets) and QR codes on the Desktop.
 	const getPromoImage = () => {
-		// Returns store badges on mobile (including tablets) and QR codes on the Desktop.
 		if ( isApple ) {
+			const appStoreLink = isWoo
+				? 'https://apps.apple.com/ca/app/woocommerce/id1389130815'
+				: 'https://apps.apple.com/ca/app/jetpack-website-builder/id1565481562';
 			return (
 				<a href={ appStoreLink }>
 					<img
@@ -89,6 +79,9 @@ export default function JetpackMobilePromoCard( {
 				</a>
 			);
 		} else if ( isGoogle ) {
+			const appStoreLink = isWoo
+				? 'https://play.google.com/store/apps/details?id=com.woocommerce.android'
+				: 'https://play.google.com/store/apps/details?id=com.jetpack.android';
 			return (
 				<a href={ appStoreLink }>
 					<img
