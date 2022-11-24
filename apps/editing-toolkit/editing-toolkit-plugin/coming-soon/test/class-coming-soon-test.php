@@ -36,6 +36,13 @@ class Coming_Soon_Test extends TestCase {
 	}
 
 	/**
+	 * Post-test actions.
+	 */
+	public function tearDown() {
+		self::delete_preview_links_parameters();
+	}
+
+	/**
 	 * Add coming soon options.
 	 */
 	private static function set_site_as_coming_soon() {
@@ -228,8 +235,6 @@ class Coming_Soon_Test extends TestCase {
 		$share_code = get_share_code();
 
 		$this->assertEquals( 'sharing-code', $share_code );
-
-		self::delete_preview_links_parameters();
 	}
 
 	/**
@@ -243,8 +248,6 @@ class Coming_Soon_Test extends TestCase {
 		$share_code = get_share_code();
 
 		$this->assertEquals( 'sharing-code', $share_code );
-
-		self::delete_preview_links_parameters();
 	}
 
 	/**
