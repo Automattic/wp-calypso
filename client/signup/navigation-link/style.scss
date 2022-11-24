@@ -1,11 +1,13 @@
 .button.is-borderless.navigation-link {
-	padding: 0;
-	color: var(--color-text-inverted);
-	font-size: $font-body-small;
-	font-weight: 600;
+	body.is-section-signup & {
+		padding: 0;
+		color: var(--color-text-inverted);
+		font-size: $font-body-small;
+		font-weight: 600;
 
-	svg {
-		fill: var(--color-text-inverted);
+		svg {
+			fill: var(--color-text-inverted);
+		}
 	}
 }
 
