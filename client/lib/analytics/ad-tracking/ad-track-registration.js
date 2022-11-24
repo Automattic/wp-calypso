@@ -23,7 +23,7 @@ export async function adTrackRegistration() {
 			},
 		];
 		debug( 'adTrackRegistration: [Google Ads Gtag]', params );
-		window.gtag?.( ...params );
+		window.gtag( ...params );
 	}
 
 	// Facebook

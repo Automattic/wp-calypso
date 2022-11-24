@@ -70,7 +70,7 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 			},
 		];
 		debug( 'recordSignup: [Google Ads Gtag]', params );
-		window.gtag?.( ...params );
+		window.gtag( ...params );
 	}
 
 	// Bing
