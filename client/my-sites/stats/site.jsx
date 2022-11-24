@@ -413,16 +413,16 @@ class StatsSite extends Component {
 				</div>
 
 				{ isJetpackNonAtomic && (
-					<div className="stats-traffic-promo-container">
-						<div className="stats-content-promo-card">
-							<JetpackMobilePromoCard className="mobile-apps-promo-card" />
+					<div className="stats__promo-container">
+						<div className="stats__promo-card">
+							<JetpackMobilePromoCard className="stats__promo-card-apps" />
 						</div>
 					</div>
 				) }
 				{ ! isJetpackNonAtomic && (
-					<div className="stats-traffic-promo-container">
-						<div className="stats-content-promo-card">
-							<DotPager className="stats-traffic-promo-pager">
+					<div className="stats__promo-container">
+						<div className="stats__promo-card">
+							<DotPager className="stats__promo-pager">
 								<div>
 									<PromoCardBlock
 										productSlug="wordpress-seo-premium"
@@ -438,7 +438,7 @@ class StatsSite extends Component {
 									/>
 								</div>
 								<div>
-									<JetpackMobilePromoCard className="mobile-apps-promo-card" />
+									<JetpackMobilePromoCard className="stats__promo-card-apps" />
 								</div>
 							</DotPager>
 						</div>
