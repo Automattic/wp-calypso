@@ -26,9 +26,9 @@ import { apiCloseAccount } from '../shared';
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
-	const planName = 'Personal';
+	const planName = 'Premium';
 	const testUser = DataHelper.getNewTestUser( {
-		usernamePrefix: 'ftmepersonal',
+		usernamePrefix: 'ftmepremium',
 	} );
 	const blogTagLine = DataHelper.getRandomPhrase();
 
