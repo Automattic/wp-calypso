@@ -187,7 +187,7 @@ export function getEnhancedTasks(
 							site?.options?.launchpad_checklist_tasks_statuses?.publish_first_course || false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.replace( `${ site?.URL }/wp-admin/post-new.php?post_type=course` );
+							window.location.assign( `${ site?.URL }/wp-admin/post-new.php?post_type=course` );
 						},
 					};
 					break;
