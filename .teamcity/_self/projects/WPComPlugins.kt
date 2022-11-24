@@ -155,7 +155,7 @@ private object Notifications : WPComPluginBuild(
 private object CalypsoStats : WPComPluginBuild(
 	buildId = "WPComPlugins_CalypsoStats",
 	buildName = "CalypsoStats",
-	pluginSlug = "CalypsoStats",
+	pluginSlug = "calypso-stats",
 	archiveDir = "./dist/",
 	docsLink = "PCYsg-elI-p2",
 	// This param is executed in bash right before the build script compares
