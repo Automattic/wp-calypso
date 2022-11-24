@@ -19,6 +19,7 @@ function should_show_coming_soon_page() {
 
 	$share_code = get_share_code();
 	if ( is_accessed_by_valid_share_link( $share_code ) ) {
+		track_preview_link_event();
 		setcookie( 'wp_share_code', $share_code, time() + 3600, '/', false, is_ssl() );
 		return false;
 	}
@@ -91,6 +92,21 @@ function maybe_add_x_robots_headers( $headers ) {
 	return $headers;
 }
 add_filter( 'wp_headers', __NAMESPACE__ . '\maybe_add_x_robots_headers' );
+
+/**
+ * Track site preview event.
+ *
+ * @return void
+ */
+function track_preview_link_event() {
+	$event_name = 'wpcom_site_previewed';
+	if ( function_exists( 'wpcomsh_record_tracks_event' ) ) {
+		wpcomsh_record_tracks_event( $event_name, array() );
+	} else {
+		require_lib( 'tracks/client' );
+		tracks_record_event( get_current_user_id(), $event_name, array() );
+	}
+}
 
 /**
  * Renders a fallback coming soon page
