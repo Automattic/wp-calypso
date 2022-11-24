@@ -11,7 +11,7 @@ const headerPatterns: Pattern[] = [
 	and for now the blogger flow is not supported
 	{
 		id: 5608,
-		name: 'Centered Header with Logo and Navigation',
+		name: 'Centered header with logo and navigation',
 	},
 	*/
 	{
@@ -81,19 +81,19 @@ const footerPatterns: Pattern[] = [
 	},
 	{
 		id: 7917,
-		name: 'Footer with Address, Email Address, and Social Links',
+		name: 'Footer with address, email address, and social links',
 	},
 	{
 		id: 7485,
-		name: 'Footer with Newsletter Subscription Form',
+		name: 'Footer with newsletter subscription form',
 	},
 	{
 		id: 1622,
-		name: 'Footer with Paragraph and Links',
+		name: 'Footer with paragraph and links',
 	},
 	{
 		id: 5047,
-		name: 'Footer with Navigation, Contact Details, Social Links, and Subscription Form',
+		name: 'Footer with navigation, contact details, social links, and subscription form',
 	},
 	{
 		id: 5880,
@@ -128,7 +128,7 @@ const sectionPatterns: Pattern[] = [
 	},
 	{
 		id: 5691,
-		name: 'Three Logos, Heading, and Paragraphs',
+		name: 'Three logos, heading, and paragraphs',
 	},
 	{
 		id: 7143,
@@ -156,7 +156,7 @@ const sectionPatterns: Pattern[] = [
 	},
 	{
 		id: 5666,
-		name: 'Large Numbers, heading, and paragraphs',
+		name: 'Large numbers, heading, and paragraphs',
 	},
 	{
 		id: 462,
@@ -164,7 +164,7 @@ const sectionPatterns: Pattern[] = [
 	},
 	{
 		id: 5663,
-		name: 'Large Headline',
+		name: 'Large headline',
 	},
 	{
 		id: 7140,
@@ -180,7 +180,7 @@ const sectionPatterns: Pattern[] = [
 	},
 	{
 		id: 1600,
-		name: 'Three Column Text and Links',
+		name: 'Three column text and links',
 	},
 ];
 
