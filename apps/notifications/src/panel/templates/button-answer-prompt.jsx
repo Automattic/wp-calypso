@@ -10,6 +10,8 @@ import ActionButton from './action-button';
 const AnswerPromptButton = ( { answerPrompt, note, translate } ) => {
 	const { site: siteId } = note?.meta?.ids ?? {};
 	let host = document.location.host;
+	console.log( document );
+	console.log( host );
 	if ( host === 'widgets.wp.com' ) {
 		host = 'wordpress.com';
 	}
