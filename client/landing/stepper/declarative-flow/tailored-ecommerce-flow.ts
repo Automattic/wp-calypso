@@ -104,7 +104,7 @@ export const ecommerceFlow: Flow = {
 						// The site is coming from the checkout already Atomic (and with the new URL)
 						// There's probably a better way of handling this change
 						const returnUrl = encodeURIComponent(
-							`/setup/${ flowName }/checkPlan?theme=${
+							`/setup/${ flowName }/checkPlan?flags=signup/tailored-ecommerce&theme=${
 								selectedDesign?.slug
 							}&siteSlug=${ siteSlug.replace( '.wordpress.com', '.wpcomstaging.com' ) }`
 						);
@@ -138,6 +138,18 @@ export const ecommerceFlow: Flow = {
 
 				case 'checkPlan':
 					// eCommerce Plan
+					// eslint-disable-next-line no-console
+					console.log(
+						'plan',
+						( providedDependencies?.currentPlan as SiteDetailsPlan )?.product_slug
+					);
+
+					alert(
+						JSON.stringify(
+							'3 ' + ( providedDependencies?.currentPlan as SiteDetailsPlan )?.product_slug
+						)
+					);
+
 					if (
 						[ PLAN_ECOMMERCE, PLAN_ECOMMERCE_MONTHLY ].includes(
 							( providedDependencies?.currentPlan as SiteDetailsPlan )?.product_slug
