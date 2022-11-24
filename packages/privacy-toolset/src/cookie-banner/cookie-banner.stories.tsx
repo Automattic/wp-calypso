@@ -16,10 +16,10 @@ Default.args = {
 		simpleConsent: {
 			description: (
 				<>
-					We and our partners process your personal data (such as browsing data, IP addresses,
-					cookie information, and other unique identifiers) based on your consent and/or our
-					legitimate interest to optimize our website, marketing activities, and your user
-					experience.
+					Aliquam mollis malesuada vehicula. Curabitur porta pellentesque diam a posuere. Proin
+					hendrerit a leo et aliquam. Suspendisse dictum pharetra tristique. Quisque hendrerit est
+					dui, eget semper nulla vehicula ut. Sed posuere cursus urna consectetur condimentum.
+					Pellentesque habitant morbi tristique.
 				</>
 			),
 			acceptAllButton: 'Accept All',
@@ -28,20 +28,16 @@ Default.args = {
 		customizedConsent: {
 			description: (
 				<>
-					Your privacy is critically important to us. We and our partners use, store, and process
-					your personal data to optimize: our <strong>website</strong> such as by improving security
-					or conducting analytics, <strong>marketing activities</strong> to help deliver relevant
-					marketing or content, and your <strong>user experience</strong> such as by remembering
-					your account name, language settings, or cart information, where applicable. You can
-					customize your cookie settings below. Learn more in our{ ' ' }
-					<a href="https://automattic.com/privacy/" target="_blank" rel="noreferrer">
-						Privacy Policy
+					Quisque ornare facilisis lacus vitae aliquam. Nunc consequat sapien vel elit luctus, non
+					venenatis dolor sodales. Donec <strong>consequat</strong> dignissim tortor sit amet
+					pulvinar. Ut gravida consequat orci, in tempus ligula facilisis ac. Nulla augue urna,
+					cursus quis sapien et, consectetur venenatis nulla. Nunc <strong>convallis</strong>{ ' ' }
+					dapibus mi vel volutpat. Curabitur augue magna, <strong>lobortis</strong> eget diam ut,
+					tempor gravida velit. Sed sit amet nisi at nunc facilisis fermentum in congue erat. Sed{ ' ' }
+					<a href="https://automattic.com/" target="_blank" rel="noreferrer">
+						interdum sed
 					</a>{ ' ' }
-					and{ ' ' }
-					<a href="https://automattic.com/cookies/" target="_blank" rel="noreferrer">
-						Cookie Policy
-					</a>
-					.
+					felis.
 				</>
 			),
 			categories: {
@@ -49,11 +45,11 @@ Default.args = {
 					name: 'Required',
 					description: (
 						<>
-							These cookies are essential for our websites and services to perform basic functions
-							and are necessary for us to operate certain features. These include those required to
-							allow registered users to authenticate and perform account-related functions, store
-							preferences set by users such as account name, language, and location, and ensure our
-							services are operating properly.
+							Aliquam auctor enim quis tortor malesuada volutpat. Etiam eget eros ut nisl maximus
+							lacinia. Donec interdum nulla ut cursus tempor. Proin porta tempus elit non maximus.
+							Duis eget urna at sem varius fermentum. Suspendisse accumsan imperdiet malesuada.
+							Donec gravida nisl neque, vel eleifend ex pellentesque at. Etiam vulputate mi mauris,
+							quis rutrum massa consequat nec.
 						</>
 					),
 				},
@@ -61,15 +57,14 @@ Default.args = {
 					name: 'Analytics',
 					description: (
 						<>
-							These cookies allow us to optimize performance by collecting information on how users
-							interact with our websites, including which pages are visited most, as well as other
-							analytical data. We use these details to improve how our websites function and to
-							understand how users interact with them. To learn more about how to control your
-							cookie preferences, go to{ ' ' }
-							<a target="_blank" href="https://automattic.com/cookies/" rel="noreferrer">
-								https://automattic.com/cookies/
+							Nunc lorem nulla, aliquet nec tortor et, pharetra maximus odio. Etiam quam felis,
+							dignissim a neque ut, elementum laoreet massa. Integer interdum ornare velit et
+							iaculis. Donec iaculis{ ' ' }
+							<a href="https://automattic.com/" target="_blank" rel="noreferrer">
+								ligula purus
 							</a>
-							.
+							, id blandit sem aliquam et. Fusce eget commodo est. Aliquam non eleifend libero. Ut
+							laoreet sagittis nisi, ac gravida mi porta at. Nam ut eleifend.
 						</>
 					),
 				},
@@ -77,12 +72,11 @@ Default.args = {
 					name: 'Advertising',
 					description: (
 						<>
-							These cookies are set by us and our advertising partners to provide you with relevant
-							content and to understand that content’s effectiveness. They may be used to collect
-							information about your online activities over time and across different websites to
-							predict your preferences and to display more relevant advertisements to you. These
-							cookies also allow a profile to be built about you and your interests, and enable
-							personalized ads to be shown to you based on your profile.
+							Phasellus pretium volutpat lobortis. Duis et imperdiet mauris, at hendrerit arcu. Nunc
+							placerat cursus vestibulum. Orci varius natoque penatibus et magnis dis parturient
+							montes, nascetur ridiculus mus. Morbi aliquet risus at accumsan convallis. Vestibulum
+							tincidunt iaculis ex vel cursus. Aliquam et nisi vitae odio porta faucibus eget non
+							neque. Pellentesque eu scelerisque sem. Nam ut.
 						</>
 					),
 				},
