@@ -1,6 +1,8 @@
 import config from '@automattic/calypso-config';
 import page from 'page';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { fetchPreferences } from 'calypso/state/preferences/actions';
+import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { requestSite } from 'calypso/state/sites/actions';
 import { canCurrentUserUseCustomerHome, getSite, getSiteSlug } from 'calypso/state/sites/selectors';
@@ -51,7 +53,35 @@ const waitForSite = ( siteId ) => async ( dispatch, getState ) => {
 	}
 };
 
+// Helper thunk that ensures that the user preferences has been fetched into Redux state before we
+// continue working with it.
+const waitForPrefs = () => async ( dispatch, getState ) => {
+	if ( hasReceivedRemotePreferences( getState() ) ) {
+		return;
+	}
+
+	try {
+		await dispatch( fetchPreferences() );
+	} catch {
+		// if the fetching of preferences fails, return gracefully and proceed to the next landing page candidate
+	}
+};
+
 async function getLoggedInLandingPage( { dispatch, getState } ) {
+	if ( config.isEnabled( 'sites-as-landing-page' ) ) {
+		await dispatch( waitForPrefs() );
+		const useSitesAsLandingPage = getPreference(
+			getState(),
+			'sites-landing-page'
+		)?.useSitesAsLandingPage;
+
+		const siteCount = getCurrentUser( getState() )?.site_count;
+
+		if ( useSitesAsLandingPage && siteCount > 1 ) {
+			return '/sites';
+		}
+	}
+
 	// determine the primary site ID (it's a property of "current user" object) and then
 	// ensure that the primary site info is loaded into Redux before proceeding.
 	const primarySiteId = getPrimarySiteId( getState() );
