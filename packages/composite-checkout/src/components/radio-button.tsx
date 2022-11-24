@@ -176,6 +176,7 @@ export default function RadioButton( {
 	disabled,
 	id,
 	ariaLabel,
+	...otherProps
 }: RadioButtonProps ) {
 	const [ isFocused, changeFocus ] = useState( false );
 
@@ -197,6 +198,7 @@ export default function RadioButton( {
 				} }
 				readOnly={ ! onChange }
 				aria-label={ ariaLabel }
+				{ ...otherProps }
 			/>
 			<Label checked={ checked } htmlFor={ id } disabled={ disabled }>
 				{ label }
