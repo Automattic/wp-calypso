@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from 'page';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
-import { fetchPreferences } from 'calypso/state/preferences/actions';
+import { fetchPreferences, savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -29,6 +29,19 @@ function handleLoggedOut() {
 }
 
 async function handleLoggedIn( context ) {
+	// Testing code. Remove before merging.
+	// Usage:
+	//    Go to `/?sites-landing-page=true` or `/?sites-landing-page=false` to set the preference.
+	if ( new URLSearchParams( context.querystring ).has( 'sites-landing-page' ) ) {
+		context.store.dispatch(
+			savePreference( 'sites-landing-page', {
+				useSitesAsLandingPage:
+					new URLSearchParams( context.querystring ).get( 'sites-landing-page' ) === 'true',
+				updatedAt: Date.now(),
+			} )
+		);
+	}
+
 	let redirectPath = await getLoggedInLandingPage( context.store );
 
 	if ( context.querystring ) {
