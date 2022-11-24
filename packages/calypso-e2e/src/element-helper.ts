@@ -250,7 +250,7 @@ export async function waitForWPWidgetsIfNecessary( page: Page ): Promise< void >
  *
  * @param {Page} page Page object.
  */
-export async function waitForHomeLoadEnd( page: Page ): Promise< void > {
+export async function waitForHomeLoad( page: Page ): Promise< void > {
 	await Promise.all( [
 		// This call appears to fire close to the end.
 		// While it is not the last request to load, it should be a
