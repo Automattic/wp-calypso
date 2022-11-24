@@ -19,6 +19,7 @@
 		"start": "wp-scripts start"
 	},
 	"dependencies": {
+		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-products": "workspace:^",
