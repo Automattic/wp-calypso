@@ -49,6 +49,7 @@ const ProductVariant: FunctionComponent< ProductVariantProps > = ( {
 				name={ radioButtonGroup }
 				id={ productSlug + variantLabel }
 				value={ productSlug }
+				data-product-slug={ productSlug }
 				checked={ isChecked }
 				disabled={ isDisabled }
 				onChange={ () => {
