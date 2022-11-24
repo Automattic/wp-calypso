@@ -138,6 +138,11 @@ export const ecommerceFlow: Flow = {
 
 				case 'checkPlan':
 					// eCommerce Plan
+					// eslint-disable-next-line no-console
+					console.log(
+						'plan',
+						( providedDependencies?.currentPlan as SiteDetailsPlan )?.product_slug
+					);
 					if (
 						[ PLAN_ECOMMERCE, PLAN_ECOMMERCE_MONTHLY ].includes(
 							( providedDependencies?.currentPlan as SiteDetailsPlan )?.product_slug
