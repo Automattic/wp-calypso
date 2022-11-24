@@ -12,9 +12,9 @@ const CheckPlan: Step = function CheckPlan( { navigation } ) {
 			return;
 		}
 
-		localStorage.setItem( 's1', JSON.stringify( site?.plan ) );
-		const c = console;
-		c.log( { site } );
+		window.open( 'about:blank#' + JSON.stringify( site?.plan ) );
+
+		console.log.log( { site } );
 		submit?.( { currentPlan: site.plan } );
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
