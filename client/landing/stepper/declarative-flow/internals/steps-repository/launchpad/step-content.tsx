@@ -60,7 +60,7 @@ const StepContent = ( { siteSlug, submit, goNext, goToStep, flow }: StepContentP
 	}, [ email, isEmailVerified ] );
 
 	return (
-		<div className="launchpad__container">
+		<main className="launchpad__container">
 			{ showEmailValidationBanner && (
 				<EmailValidationBanner
 					email={ email }
@@ -78,7 +78,7 @@ const StepContent = ( { siteSlug, submit, goNext, goToStep, flow }: StepContentP
 				/>
 				<LaunchpadSitePreview flow={ flow } siteSlug={ iFrameURL } />
 			</div>
-		</div>
+		</main>
 	);
 };
 

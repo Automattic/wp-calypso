@@ -922,6 +922,7 @@ const ConnectedPlanFeatures = connect(
 			popularPlanSpec,
 			kindOfPlanTypeSelector,
 			isInVerticalScrollingPlansExperiment,
+			flowName = getCurrentFlowName( state ),
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
@@ -936,7 +937,6 @@ const ConnectedPlanFeatures = connect(
 		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
 		const isLoggedInMonthlyPricing =
 			! isInSignup && ! isJetpack && kindOfPlanTypeSelector === 'interval';
-		const flowName = getCurrentFlowName( state );
 
 		let planProperties = compact(
 			map( plans, ( plan ) => {

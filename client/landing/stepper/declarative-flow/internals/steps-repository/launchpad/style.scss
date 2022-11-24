@@ -27,6 +27,10 @@
 			display: none;
 		}
 	}
+
+	.button.is-borderless.navigation-link {
+		color: var(--studio-gray-100);
+	}
 }
 
 .launchpad__container {
@@ -216,6 +220,10 @@
 
 	.button.navigation-link {
 		text-decoration: underline;
+
+		&.is-borderless {
+			color: var(--studio-gray-100);
+		}
 
 		&:hover,
 		&:focus {

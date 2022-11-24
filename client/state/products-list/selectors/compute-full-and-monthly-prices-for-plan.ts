@@ -3,8 +3,8 @@ import {
 	GROUP_WPCOM,
 	JETPACK_SEARCH_PRODUCTS,
 } from '@automattic/calypso-products';
+import { getCurrencyDefaults } from '@automattic/format-currency';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
-import { getAllPostCounts } from 'calypso/state/posts/counts/selectors';
 import getIntroOfferIsEligible from 'calypso/state/selectors/get-intro-offer-is-eligible';
 import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';
 import { getPlanPrice } from './get-plan-price';
@@ -35,7 +35,8 @@ export type PlanObject = Optional< Pick< Plan, 'group' | 'getProductId' >, 'grou
 export const computeFullAndMonthlyPricesForPlan = (
 	state: AppState,
 	siteId: number | undefined,
-	planObject: PlanObject
+	planObject: PlanObject,
+	currentQuantity: number | null
 ): FullAndMonthlyPrices => {
 	if ( planObject.group === GROUP_WPCOM ) {
 		return computePricesForWpComPlan( state, siteId, planObject );
@@ -48,7 +49,7 @@ export const computeFullAndMonthlyPricesForPlan = (
 	// eslint-disable-next-line no-nested-ternary
 	const planOrProductPrice = ! getPlanPrice( state, siteId, planObject, false )
 		? isJetpackSearchProduct
-			? getSearchProductTierPrice( state, siteId, planObject.getStoreSlug() )
+			? getSearchProductTierPrice( state, siteId, planObject.getStoreSlug(), currentQuantity ?? 1 )
 			: getProductCost( state, planObject.getStoreSlug() )
 		: getPlanPrice( state, siteId, planObject, false );
 	const introOfferIsEligible = getIntroOfferIsEligible( state, planObject.getProductId(), siteId );
@@ -104,20 +105,34 @@ function computePricesForWpComPlan(
 function getSearchProductTierPrice(
 	state: AppState,
 	siteId: number | undefined,
-	productSlug: string
+	productSlug: string,
+	currentQuantity: number
 ): number | null {
-	const postsCounts = getAllPostCounts( state, siteId, 'post' );
-	const postsCount = postsCounts?.publish || 0;
 	const priceTierList = getProductPriceTierList( state, productSlug );
-	const tier = getPriceTierForUnits( priceTierList, postsCount );
+	const tier = getPriceTierForUnits( priceTierList, currentQuantity );
 	if ( ! tier ) {
 		return null;
 	}
-	const minPrice = tier.minimum_price.toString(); // is missing decimal, ie- $9.95 is returned as 995
-	return (
-		// Inject decimal point into 100ths position.
-		Number(
-			minPrice.substring( 0, minPrice.length - 2 ) + '.' + minPrice.substring( minPrice.length - 2 )
-		)
-	);
+	if ( ! tier.transform_quantity_divide_by || ! tier.per_unit_fee ) {
+		return null;
+	}
+	let units_used: number;
+	if ( tier.transform_quantity_round === 'down' ) {
+		units_used = Math.floor( currentQuantity / tier.transform_quantity_divide_by );
+	} else {
+		units_used = Math.ceil( currentQuantity / tier.transform_quantity_divide_by );
+	}
+	let price = units_used * tier.per_unit_fee;
+
+	if ( tier.flat_fee && tier.flat_fee > 0 ) {
+		price += tier.flat_fee;
+	}
+
+	const currencyDefaults = getCurrencyDefaults( state.currencyCode );
+	if ( ! currencyDefaults || isNaN( price ) ) {
+		return null;
+	}
+
+	// convert price from smallest unit to float (3550 to 35.50)
+	return price / 10 ** currencyDefaults.precision;
 }

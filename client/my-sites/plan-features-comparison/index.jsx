@@ -90,7 +90,7 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	renderPlanHeaders() {
-		const { basePlansPath, planProperties, isReskinned } = this.props;
+		const { basePlansPath, planProperties, isReskinned, flowName } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -138,6 +138,7 @@ export class PlanFeaturesComparison extends Component {
 						title={ planConstantObj.getTitle() }
 						annualPricePerMonth={ annualPricePerMonth }
 						isMonthlyPlan={ isMonthlyPlan }
+						flow={ flowName }
 					/>
 				</th>
 			);
@@ -298,6 +299,7 @@ PlanFeaturesComparison.propTypes = {
 	planProperties: PropTypes.array,
 	selectedFeature: PropTypes.string,
 	purchaseId: PropTypes.number,
+	flowName: PropTypes.string,
 	siteId: PropTypes.number,
 };
 
@@ -330,11 +332,18 @@ const hasPlaceholders = ( planProperties ) =>
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 export default connect(
 	( state, ownProps ) => {
-		const { isInSignup, placeholder, plans, isLandingPage, siteId, visiblePlans, popularPlanSpec } =
-			ownProps;
+		const {
+			isInSignup,
+			placeholder,
+			plans,
+			isLandingPage,
+			siteId,
+			visiblePlans,
+			popularPlanSpec,
+			flowName = getCurrentFlowName( state ),
+		} = ownProps;
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
-		const flowName = getCurrentFlowName( state );
 
 		let planProperties = compact(
 			map( plans, ( plan ) => {

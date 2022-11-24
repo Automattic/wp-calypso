@@ -489,7 +489,7 @@ export class UserStep extends Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
-				headerText={ this.props.translate( "Let's get you signed up" ) }
+				headerText={ this.props.translate( 'Let’s get you signed up' ) }
 				subHeaderText={ this.getSubHeaderText() }
 				stepIndicator={ this.props.translate( 'Step %(currentStep)s of %(totalSteps)s', {
 					args: {
