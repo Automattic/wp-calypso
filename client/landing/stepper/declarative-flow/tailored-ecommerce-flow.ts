@@ -145,7 +145,9 @@ export const ecommerceFlow: Flow = {
 					);
 
 					alert(
-						JSON.stringify( ( providedDependencies?.currentPlan as SiteDetailsPlan )?.product_slug )
+						JSON.stringify(
+							'3 ' + ( providedDependencies?.currentPlan as SiteDetailsPlan )?.product_slug
+						)
 					);
 
 					if (
