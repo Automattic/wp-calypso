@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getFeatureByKey } from 'calypso/lib/plans/features-list';
+import { getCancellationFeatureByKey } from 'calypso/lib/plans/cancellation-features-list';
 import {
 	hasAmountAvailableToRefund,
 	isRefundable,
@@ -62,7 +62,7 @@ export const FeaturesList = ( { productSlug, hasDomain, domainFeature }: Feature
 								size={ 24 }
 								icon="cross-small"
 							/>
-							{ getFeatureByKey( cancellationFeature ) }
+							{ getCancellationFeatureByKey( cancellationFeature ) }
 						</li>
 					);
 				} ) }
