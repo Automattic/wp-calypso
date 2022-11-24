@@ -287,18 +287,19 @@ $stats-sections-max-width: 1224px;
 }
 
 .stats-traffic-promo-container {
-	.stats-traffic-promo-pager {
+	.stats-content-promo-card {
 		background-color: var(--studio-white);
 		border: 1px solid var(--studio-gray-5);
 		border-radius: 5px; /* stylelint-disable-line scales/radii */
 		padding: 20px;
+		margin-bottom: 20px;
 
-		.stats-content-promo-card {
+		.mobile-apps-promo-card {
+			border: none;
+		}
+		.stats-traffic-promo-pager {
 			.card {
 				box-shadow: none;
-			}
-			.mobile-apps-promo-card {
-				border: none;
 			}
 		}
 		@media ( max-width: 782px ) {
