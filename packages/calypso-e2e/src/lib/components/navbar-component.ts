@@ -1,4 +1,5 @@
 import { Page } from 'playwright';
+import { waitForHomeLoad } from '../../element-helper';
 
 const selectors = {
 	// Buttons on navbar
@@ -24,26 +25,12 @@ export class NavbarComponent {
 	}
 
 	/**
-	 * Wait for load state of the page.
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	private async pageSettled(): Promise< void > {
-		await this.page.waitForLoadState( 'load' );
-
-		// Wait for the last navbar component to load.
-		await this.page.waitForSelector( selectors.helpButton, {
-			state: 'visible',
-		} );
-	}
-
-	/**
 	 * Locates and clicks on the new post button on the nav bar.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickNewPost(): Promise< void > {
-		await this.pageSettled();
+		await waitForHomeLoad( this.page );
 		await this.page.click( selectors.writeButton );
 	}
 
@@ -53,7 +40,7 @@ export class NavbarComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickMySites(): Promise< void > {
-		await this.pageSettled();
+		await waitForHomeLoad( this.page );
 		await this.page.click( selectors.mySiteButton );
 	}
 
@@ -61,7 +48,7 @@ export class NavbarComponent {
 	 * Click on `Me` on top right of the Home dashboard.
 	 */
 	async clickMe(): Promise< void > {
-		await this.pageSettled();
+		await waitForHomeLoad( this.page );
 		await Promise.all( [ this.page.waitForNavigation(), this.page.click( selectors.meButton ) ] );
 	}
 
@@ -77,20 +64,14 @@ export class NavbarComponent {
 	async openNotificationsPanel( {
 		useKeyboard = false,
 	}: { useKeyboard?: boolean } = {} ): Promise< void > {
-		await this.pageSettled();
-
-		const notificationsButton = await this.page.waitForSelector( selectors.notificationsButton, {
-			state: 'visible',
-		} );
-		await Promise.all( [
-			this.page.waitForLoadState( 'networkidle' ),
-			notificationsButton.waitForElementState( 'stable' ),
-		] );
+		await waitForHomeLoad( this.page );
 
 		if ( useKeyboard ) {
 			return await this.page.keyboard.type( 'n' );
 		}
 
-		return await this.page.click( selectors.notificationsButton );
+		const notificationsButtonLocator = this.page.locator( selectors.notificationsButton );
+
+		return await notificationsButtonLocator.click();
 	}
 }

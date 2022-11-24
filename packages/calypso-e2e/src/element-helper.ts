@@ -243,3 +243,19 @@ export async function waitForWPWidgetsIfNecessary( page: Page ): Promise< void >
 		} );
 	} );
 }
+
+/**
+ * Reusable method used to wait for the `/home` endpoint to finish
+ * load as much as possible. This method should be Atomic/Simple agnostic.
+ *
+ * @param {Page} page Page object.
+ */
+export async function waitForHomeLoadEnd( page: Page ): Promise< void > {
+	await Promise.all( [
+		// This call appears to fire close to the end.
+		// While it is not the last request to load, it should be a
+		// reasonable stand-in.
+		page.waitForResponse( /async-load-calypso-blocks-jitm.*/ ),
+		page.waitForLoadState( 'networkidle' ),
+	] );
+}
