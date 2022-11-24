@@ -26,6 +26,16 @@ function handleLoggedOut() {
 	}
 }
 
+async function handleLoggedIn( context ) {
+	let redirectPath = await getLoggedInLandingPage( context.store );
+
+	if ( context.querystring ) {
+		redirectPath += `?${ context.querystring }`;
+	}
+
+	page.redirect( redirectPath );
+}
+
 // Helper thunk that ensures that the requested site info is fetched into Redux state before we
 // continue working with it.
 // The `siteSelection` handler in `my-sites/controller` contains similar code.
@@ -41,30 +51,24 @@ const waitForSite = ( siteId ) => async ( dispatch, getState ) => {
 	}
 };
 
-async function handleLoggedIn( context ) {
+async function getLoggedInLandingPage( { dispatch, getState } ) {
 	// determine the primary site ID (it's a property of "current user" object) and then
 	// ensure that the primary site info is loaded into Redux before proceeding.
-	const primarySiteId = getPrimarySiteId( context.store.getState() );
-	await context.store.dispatch( waitForSite( primarySiteId ) );
+	const primarySiteId = getPrimarySiteId( getState() );
+	await dispatch( waitForSite( primarySiteId ) );
 
-	const state = context.store.getState();
-	const primarySiteSlug = getSiteSlug( state, primarySiteId );
-	const isCustomerHomeEnabled = canCurrentUserUseCustomerHome( state, primarySiteId );
-
-	let redirectPath;
+	const primarySiteSlug = getSiteSlug( getState(), primarySiteId );
 
 	if ( ! primarySiteSlug ) {
 		// there is no primary site or the site info couldn't be fetched. Redirect to Reader.
-		redirectPath = '/read';
-	} else if ( isCustomerHomeEnabled ) {
-		redirectPath = `/home/${ primarySiteSlug }`;
-	} else {
-		redirectPath = `/stats/${ primarySiteSlug }`;
+		return '/read';
 	}
 
-	if ( context.querystring ) {
-		redirectPath += `?${ context.querystring }`;
+	const isCustomerHomeEnabled = canCurrentUserUseCustomerHome( getState(), primarySiteId );
+
+	if ( isCustomerHomeEnabled ) {
+		return `/home/${ primarySiteSlug }`;
 	}
 
-	page.redirect( redirectPath );
+	return `/stats/${ primarySiteSlug }`;
 }
