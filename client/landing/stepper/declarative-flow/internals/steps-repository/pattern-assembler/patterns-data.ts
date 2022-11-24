@@ -1,69 +1,50 @@
-import { translate } from 'i18n-calypso';
 import type { Pattern } from './types';
-
-// Category translations with an incremental number
-const categoryNumbers = ( ( count = 0 ) => {
-	return () => translate( 'Numbers %(count)d', { args: { count: ( count += 1 ) } } );
-} )();
-
-const categoryCallToAction = ( ( count = 0 ) => {
-	return () => translate( 'Call To Action %(count)d', { args: { count: ( count += 1 ) } } );
-} )();
-
-const categoryImages = ( ( count = 0 ) => {
-	return () => translate( 'Images %(count)d', { args: { count: ( count += 1 ) } } );
-} )();
-
-const categoryList = ( ( count = 0 ) => {
-	return () => translate( 'List %(count)d', { args: { count: ( count += 1 ) } } );
-} )();
-
-const categoryAbout = ( ( count = 0 ) => {
-	return () => translate( 'About %(count)d', { args: { count: ( count += 1 ) } } );
-} )();
-
-const categoryTestimonials = ( ( count = 0 ) => {
-	return () => translate( 'Testimonials %(count)d', { args: { count: ( count += 1 ) } } );
-} )();
-
-const categoryLinks = ( ( count = 0 ) => {
-	return () => translate( 'Links %(count)d', { args: { count: ( count += 1 ) } } );
-} )();
 
 // All headers in dotcompatterns
 const headerPatterns: Pattern[] = [
 	{
 		id: 5579,
+		name: 'Centered header',
 	},
 	{
 		id: 5608,
+		name: 'Centered Header with Logo and Navigation',
 	},
 	{
 		id: 5582,
+		name: 'Simple header with large font size',
 	},
 	{
 		id: 5588,
+		name: 'Header with site title and vertical navigation',
 	},
 	{
 		id: 5590,
+		name: 'Simple header with image background',
 	},
 	{
 		id: 5593,
+		name: 'Simple header with dark background',
 	},
 	{
 		id: 5595,
+		name: 'Simple header with image',
 	},
 	{
 		id: 5601,
+		name: 'Simple header with tagline',
 	},
 	{
 		id: 5603,
+		name: 'Header with site title and menu button',
 	},
 	{
 		id: 5605,
+		name: 'Simple header with image',
 	},
 	{
 		id: 7914,
+		name: 'Header with button',
 	},
 ];
 
@@ -72,119 +53,130 @@ const headerPatterns: Pattern[] = [
 const footerPatterns: Pattern[] = [
 	{
 		id: 5316,
+		name: 'Footer with social icons, address, e-mail, and telephone number',
 	},
 	{
 		id: 5886,
+		name: 'Footer with large font size',
 	},
 	{
 		id: 5883,
+		name: 'Footer with credit line and navigation',
 	},
 	{
 		id: 5888,
+		name: 'Footer with navigation and credit line',
 	},
 	{
 		id: 5877,
+		name: 'Centered footer with social links',
 	},
 	{
 		id: 5873,
+		name: 'Simple centered footer',
 	},
 	{
 		id: 7917,
+		name: 'Footer with Address, Email Address, and Social Links',
 	},
 	{
 		id: 7485,
+		name: 'Footer with Newsletter Subscription Form',
 	},
 	{
 		id: 1622,
+		name: 'Footer with Paragraph and Links',
 	},
 	{
 		id: 5047,
+		name: 'Footer with Navigation, Contact Details, Social Links, and Subscription Form',
 	},
 	{
 		id: 5880,
+		name: 'Footer with background color and three columns',
 	},
 ];
 
 const sectionPatterns: Pattern[] = [
 	{
 		id: 7156,
-		name: categoryCallToAction(),
+		name: 'Media and text with image on the right',
 	},
 	{
 		id: 7153,
-		name: categoryCallToAction(),
+		name: 'Media and text with image on the left',
 	},
 	{
 		id: 7146,
-		name: categoryCallToAction(),
+		name: 'Four column list',
 	},
 	{
 		id: 7132,
-		name: categoryCallToAction(),
+		name: 'Cover image with left-aligned call to action',
 	},
 	{
 		id: 7159,
-		name: categoryCallToAction(),
+		name: 'Cover image with centered text and a button',
 	},
 	{
 		id: 7149,
-		name: categoryImages(),
+		name: 'Two column image grid',
 	},
 	{
 		id: 5691,
-		name: categoryImages(),
+		name: 'Three Logos, Heading, and Paragraphs',
 	},
 	{
 		id: 7143,
-		name: categoryImages(),
+		name: 'Full-width image',
 	},
 	{
 		id: 737,
-		name: categoryImages(),
+		name: 'Logos',
 	},
 	{
 		id: 1585,
-		name: categoryImages(),
+		name: 'Quote and logos',
 	},
 	{
 		id: 7135,
-		name: categoryList(),
+		name: 'Three columns with images and text',
 	},
 	{
 		id: 789,
-		name: categoryList(),
+		name: 'Numbered List',
 	},
 	{
 		id: 6712,
-		name: categoryList(),
+		name: 'List of events',
 	},
 	{
 		id: 5666,
-		name: categoryNumbers(),
+		name: 'Large Numbers, heading, and paragraphs',
 	},
 	{
 		id: 462,
-		name: categoryNumbers(),
+		name: 'Numbers',
 	},
 	{
 		id: 5663,
-		name: categoryAbout(),
+		name: 'Large Headline',
 	},
 	{
 		id: 7140,
-		name: categoryAbout(),
+		name: 'Left-aligned headline',
 	},
 	{
 		id: 7138,
-		name: categoryAbout(),
+		name: 'Centered headline and text',
 	},
 	{
 		id: 7161,
-		name: categoryTestimonials(),
+		name: 'Two testimonials side by side',
 	},
 	{
 		id: 1600,
-		name: categoryLinks(),
+		name: 'Three Column Text and Links',
 	},
 ];
 
