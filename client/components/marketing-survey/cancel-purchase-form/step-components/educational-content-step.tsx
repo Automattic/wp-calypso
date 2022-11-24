@@ -1,5 +1,4 @@
 import { Button } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
@@ -9,6 +8,7 @@ import imgLoadingTime from 'calypso/assets/images/cancellation/loading-time.png'
 import imgSEO from 'calypso/assets/images/cancellation/seo.png';
 import FormattedHeader from 'calypso/components/formatted-header';
 import MaterialIcon from 'calypso/components/material-icon';
+import useHappyChat from '../use-happychat';
 import type { UpsellType } from '../get-upsell-type';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { TranslateResult } from 'i18n-calypso';
@@ -71,7 +71,7 @@ type StepProps = {
 
 export default function EducationalCotnentStep( { type, site, ...props }: StepProps ) {
 	const translate = useTranslate();
-	const helpCenter = useDispatch( 'automattic/help-center' );
+	const happyChat = useHappyChat();
 
 	switch ( type ) {
 		case 'education:loading-time':
@@ -236,7 +236,10 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 											<Button
 												onClick={ () => {
 													page( `/domains/manage/${ site.slug }` );
-													helpCenter.startHelpCenterChat( site, 'Could you help me?', {
+													const userInfo = happyChat.getUserInfo( { site } );
+													happyChat.open();
+													happyChat.sendUserInfo( {
+														...userInfo,
 														cancellationReason: props.cancellationReason,
 													} );
 												} }
