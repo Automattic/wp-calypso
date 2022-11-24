@@ -41,6 +41,7 @@ import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HighlightsSection from './highlights-section';
@@ -192,7 +193,10 @@ class StatsSite extends Component {
 	}
 
 	renderStats() {
-		const { date, siteId, slug, isJetpack, isSitePrivate } = this.props;
+		const { date, siteId, slug, isAtomic, isJetpack, isSitePrivate } = this.props;
+
+		// Yoast promo card is only shown on Atomic sites.
+		const isJetpackNonAtomic = isJetpack && ! isAtomic;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -411,35 +415,38 @@ class StatsSite extends Component {
 					</div>
 				</div>
 
-				<div className="stats-traffic-promo-container">
-					<div className="stats-content-promo-card">
-						<JetpackMobilePromoCard className="mobile-apps-promo-card" />
+				{ isJetpackNonAtomic && (
+					<div className="stats-traffic-promo-container">
+						<div className="stats-content-promo-card">
+							<JetpackMobilePromoCard className="mobile-apps-promo-card" />
+						</div>
 					</div>
-				</div>
-
-				<div className="stats-traffic-promo-container">
-					<div className="stats-content-promo-card">
-						<DotPager className="stats-traffic-promo-pager">
-							<div>
-								<PromoCardBlock
-									productSlug="wordpress-seo-premium"
-									impressionEvent="calypso_stats_wordpress_seo_premium_banner_view"
-									clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
-									headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
-									contentText={ translate(
-										'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
-									) }
-									ctaText={ translate( 'Learn more' ) }
-									image={ wordpressSeoIllustration }
-									href={ `/plugins/wordpress-seo-premium/${ slug }` }
-								/>
-							</div>
-							<div>
-								<JetpackMobilePromoCard className="mobile-apps-promo-card" />
-							</div>
-						</DotPager>
+				) }
+				{ ! isJetpackNonAtomic && (
+					<div className="stats-traffic-promo-container">
+						<div className="stats-content-promo-card">
+							<DotPager className="stats-traffic-promo-pager">
+								<div>
+									<PromoCardBlock
+										productSlug="wordpress-seo-premium"
+										impressionEvent="calypso_stats_wordpress_seo_premium_banner_view"
+										clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
+										headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
+										contentText={ translate(
+											'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
+										) }
+										ctaText={ translate( 'Learn more' ) }
+										image={ wordpressSeoIllustration }
+										href={ `/plugins/wordpress-seo-premium/${ slug }` }
+									/>
+								</div>
+								<div>
+									<JetpackMobilePromoCard className="mobile-apps-promo-card" />
+								</div>
+							</DotPager>
+						</div>
 					</div>
-				</div>
+				) }
 
 				<JetpackColophon />
 			</div>
@@ -508,6 +515,7 @@ export default connect(
 		const showEnableStatsModule =
 			siteId && isJetpack && isJetpackModuleActive( state, siteId, 'stats' ) === false;
 		return {
+			isAtomic: isAtomicSite( state, siteId ),
 			isJetpack,
 			isSitePrivate: isPrivateSite( state, siteId ),
 			siteId,
