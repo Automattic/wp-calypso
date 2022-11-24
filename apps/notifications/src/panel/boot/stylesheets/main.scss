@@ -820,6 +820,39 @@
 		padding-top: $wpnc__padding-small;
 	}
 
+	.wpnc__blogging_prompts_note {
+		svg.gridicons-bell-off {
+			position: absolute;
+			top: 10px;
+			right: 20px;
+
+			&:hover {
+				path.bell {
+					stroke: var(--color-link);
+				}
+
+				rect {
+					fill: var(--color-link);
+				}
+
+				g {
+					opacity: 1;
+				}
+			}
+		}
+
+		.wpnc__action-link {
+			&:only-child {
+				padding: 0;
+			}
+			&:hover {
+				svg.gridicons-pinned path {
+					fill: var(--color-link);
+				}
+			}
+		}
+	}
+
 	.wpnc__comment .wpnc__body .wpnc__body-content {
 		box-shadow: inset 4px 0 0 var(--color-neutral-0);
 		margin: 0 0 0 $wpnc__padding-medium;
