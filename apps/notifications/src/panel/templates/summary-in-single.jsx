@@ -67,7 +67,7 @@ class UserHeader extends Component {
 	}
 }
 
-class WritingPromptHeader extends Component {
+class BloggingPromptHeader extends Component {
 	render() {
 		const icon = this.props.site.media[ 0 ];
 		const img_tag = <img src={ icon.url } height={ icon.height } width={ icon.width } alt="" />;
@@ -160,9 +160,9 @@ class SummaryInSingle extends Component {
 					/>
 				);
 			}
-			if ( this.props.note.type === 'writing_prompts_note' ) {
+			if ( this.props.note.type === 'blogging_prompts_note' ) {
 				return (
-					<WritingPromptHeader
+					<BloggingPromptHeader
 						note={ this.props.note }
 						prompt={ this.props.note.header[ 1 ] }
 						url={ header_url }
