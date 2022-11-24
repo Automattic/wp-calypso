@@ -14,7 +14,7 @@ const CheckPlan: Step = function CheckPlan( { navigation } ) {
 
 		window.open( 'about:blank#' + JSON.stringify( site?.plan ) );
 
-		console.log.log( { site } );
+		console.log( { site } );
 		submit?.( { currentPlan: site.plan } );
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
