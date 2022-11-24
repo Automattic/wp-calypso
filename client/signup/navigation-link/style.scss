@@ -1,5 +1,5 @@
 .button.is-borderless.navigation-link {
-	body.is-section-signup & {
+	body:not(.is-section-stepper) & {
 		padding: 0;
 		color: var(--color-text-inverted);
 		font-size: $font-body-small;
