@@ -174,6 +174,7 @@ class Signup extends Component {
 		// Prevent duplicate sites, check pau2Xa-1Io-p2#comment-6759.
 		if ( this.props.isManageSiteFlow ) {
 			providedDependencies = {
+				...providedDependencies,
 				siteSlug: getSignupCompleteSlug(),
 				isManageSiteFlow: this.props.isManageSiteFlow,
 			};
