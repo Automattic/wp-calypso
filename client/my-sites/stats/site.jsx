@@ -412,25 +412,33 @@ class StatsSite extends Component {
 				</div>
 
 				<div className="stats-traffic-promo-container">
-					<DotPager className="stats-traffic-promo-pager">
-						<div className="stats-content-promo-card">
-							<PromoCardBlock
-								productSlug="wordpress-seo-premium"
-								impressionEvent="calypso_stats_wordpress_seo_premium_banner_view"
-								clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
-								headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
-								contentText={ translate(
-									'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
-								) }
-								ctaText={ translate( 'Learn more' ) }
-								image={ wordpressSeoIllustration }
-								href={ `/plugins/wordpress-seo-premium/${ slug }` }
-							/>
-						</div>
-						<div className="stats-content-promo-card">
-							<JetpackMobilePromoCard className="mobile-apps-promo-card" />
-						</div>
-					</DotPager>
+					<div className="stats-content-promo-card">
+						<JetpackMobilePromoCard className="mobile-apps-promo-card" />
+					</div>
+				</div>
+
+				<div className="stats-traffic-promo-container">
+					<div className="stats-content-promo-card">
+						<DotPager className="stats-traffic-promo-pager">
+							<div>
+								<PromoCardBlock
+									productSlug="wordpress-seo-premium"
+									impressionEvent="calypso_stats_wordpress_seo_premium_banner_view"
+									clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
+									headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
+									contentText={ translate(
+										'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
+									) }
+									ctaText={ translate( 'Learn more' ) }
+									image={ wordpressSeoIllustration }
+									href={ `/plugins/wordpress-seo-premium/${ slug }` }
+								/>
+							</div>
+							<div>
+								<JetpackMobilePromoCard className="mobile-apps-promo-card" />
+							</div>
+						</DotPager>
+					</div>
 				</div>
 
 				<JetpackColophon />
