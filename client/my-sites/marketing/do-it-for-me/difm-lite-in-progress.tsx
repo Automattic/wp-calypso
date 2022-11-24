@@ -95,7 +95,20 @@ function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ) {
 		<EmptyContent
 			title={ translate( 'Website content not submitted' ) }
 			line={ translate(
-				'Please provide the necessary information for the creation of your website. To access click on the button below.'
+				'Please provide the necessary information for the creation of your website. To access click on the button below.{{br}}{{/br}}' +
+					'{{SupportLink}}Contact support{{/SupportLink}} if you have any questions.',
+				{
+					components: {
+						br: <br />,
+						SupportLink: (
+							<a
+								href={ `mailto:builtby+express@wordpress.com?subject=${ encodeURIComponent(
+									`I need help with my site: ${ primaryDomain.domain }`
+								) }` }
+							/>
+						),
+					},
+				}
 			) }
 			action={ translate( 'Add content to your website' ) }
 			actionURL={ `/start/site-content-collection/website-content?siteSlug=${ slug }` }
