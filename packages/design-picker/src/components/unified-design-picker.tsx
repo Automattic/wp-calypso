@@ -504,7 +504,9 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					} ) }
 				>
 					<div>
-						<h3> { translate( 'Custom designs for your site' ) } </h3>
+						<h3 className="unified-design-picker__title">
+							{ translate( 'Custom designs for your site' ) }
+						</h3>
 						<p className="unified-design-picker__subtitle">
 							{ translate( 'Based on your input, these designs have been tailored for you.' ) }
 						</p>

@@ -20,7 +20,8 @@ interface NonNullablePlanAndProduct extends PlanAndProduct {
 export const computeProductsWithPrices = (
 	state: AppState,
 	siteId: number | undefined,
-	planSlugs: string[]
+	planSlugs: string[],
+	currentQuantity: number | null
 ): AvailableProductVariant[] => {
 	const products = getProductsList( state );
 
@@ -28,7 +29,12 @@ export const computeProductsWithPrices = (
 	const filteredPlanAndProducts = planAndProducts.filter( hasAvailablePlan );
 	const constructedVariants = filteredPlanAndProducts.map( ( availablePlanProduct ) => ( {
 		...availablePlanProduct,
-		...computeFullAndMonthlyPricesForPlan( state, siteId, availablePlanProduct.plan ),
+		...computeFullAndMonthlyPricesForPlan(
+			state,
+			siteId,
+			availablePlanProduct.plan,
+			currentQuantity
+		),
 	} ) );
 	const filteredConstructedVariants = constructedVariants.filter( hasAvailablePrice );
 

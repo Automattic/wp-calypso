@@ -564,24 +564,24 @@ function JetpackSearchMeta( { product }: { product: ResponseCartProduct } ) {
 
 function ProductTier( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
-
-	if ( isJetpackSearch( product ) && product.current_quantity ) {
-		const tierMaximum = product.price_tier_maximum_units;
-		const tierMinimum = product.price_tier_minimum_units;
-		if ( tierMaximum ) {
-			return (
-				<LineItemMeta>
-					{ translate( 'Up to %(tierMaximum)s records', { args: { tierMaximum } } ) }
-				</LineItemMeta>
-			);
+	if ( isJetpackSearch( product ) && product.price_tier_transform_quantity_divide_by ) {
+		const currentQuantity = product.current_quantity || 1;
+		let units_used: number;
+		if ( product.price_tier_transform_quantity_round === 'down' ) {
+			units_used = Math.floor( currentQuantity / product.price_tier_transform_quantity_divide_by );
+		} else {
+			units_used = Math.ceil( currentQuantity / product.price_tier_transform_quantity_divide_by );
 		}
-		if ( tierMinimum ) {
-			return (
-				<LineItemMeta>
-					{ translate( 'More than %(tierMinimum) records', { args: { tierMinimum } } ) }
-				</LineItemMeta>
-			);
-		}
+		const purchaseQuantityDividedByThousand =
+			( units_used * product.price_tier_transform_quantity_divide_by ) / 1000;
+		return (
+			<LineItemMeta>
+				{ translate(
+					'Up to %(purchaseQuantityDividedByThousand)sk records and/or requests per month',
+					{ args: { purchaseQuantityDividedByThousand } }
+				) }
+			</LineItemMeta>
+		);
 	}
 	return null;
 }

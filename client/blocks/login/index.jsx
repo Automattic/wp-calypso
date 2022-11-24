@@ -149,7 +149,6 @@ class Login extends Component {
 			page(
 				login( {
 					isJetpack: this.props.isJetpack,
-					isGutenboarding: this.props.isGutenboarding,
 					// If no notification is sent, the user is using the authenticator for 2FA by default
 					twoFactorAuthType: authType,
 					locale: this.props.locale,

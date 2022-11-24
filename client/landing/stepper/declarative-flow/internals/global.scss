@@ -11,7 +11,8 @@
  * General onboarding styling
  */
 body {
-	background-color: #fdfdfd;
+	--color-body-background: #fdfdfd;
+	background-color: var(--color-body-background);
 }
 
 body,
