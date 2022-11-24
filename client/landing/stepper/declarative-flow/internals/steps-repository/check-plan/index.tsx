@@ -12,7 +12,7 @@ const CheckPlan: Step = function CheckPlan( { navigation } ) {
 			return;
 		}
 
-		window.open( 'about:blank#' + JSON.stringify( site?.plan ) );
+		alert( '2 ' + JSON.stringify( site?.plan ) );
 
 		console.log( { site } );
 		submit?.( { currentPlan: site.plan } );
