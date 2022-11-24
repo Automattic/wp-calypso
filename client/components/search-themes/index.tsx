@@ -13,9 +13,10 @@ import './style.scss';
 interface SearchThemesProps {
 	query: string;
 	onSearch: ( query: string ) => void;
+	recordTracksEvent: ( eventName: string, eventProperties?: object ) => void;
 }
 
-const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch } ) => {
+const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordTracksEvent } ) => {
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const searchRef = useRef< Search | null >( null );
 	const suggestionsRef = useRef< KeyedSuggestions | null >( null );
@@ -94,6 +95,11 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch } ) => {
 		}
 	};
 
+	const onClearIconClick = () => {
+		clearSearch();
+		recordTracksEvent( 'search_clear_icon_click' );
+	};
+
 	return (
 		<div ref={ wrapperRef } { ...useFocusOutside( closeSearch ) }>
 			<div
@@ -133,6 +139,7 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch } ) => {
 							isShowTopLevelTermsOnMount
 							isDisableAutoSelectSuggestion
 							isDisableTextHighlight
+							recordTracksEvent={ recordTracksEvent }
 						/>
 					) }
 					{ searchInput !== '' && (
@@ -143,7 +150,7 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch } ) => {
 								tabIndex={ 0 }
 								aria-controls="search-component-search-themes"
 								aria-label={ translate( 'Clear Search' ) }
-								onClick={ clearSearch }
+								onClick={ onClearIconClick }
 							/>
 						</div>
 					) }

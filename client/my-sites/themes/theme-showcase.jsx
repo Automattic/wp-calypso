@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
@@ -287,7 +288,9 @@ class ThemeShowcase extends Component {
 			this.setState( { tabFilter: this.tabFilters.ALL } );
 		}
 
+		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
 		trackClick( 'search bar filter', tier );
+
 		const url = this.constructUrl( { tier } );
 		page( url );
 		this.scrollToSearchInput();
@@ -296,6 +299,8 @@ class ThemeShowcase extends Component {
 	onFilterClick = ( tabFilter ) => {
 		const scrollPos = window.pageYOffset;
 		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
+
+		recordTracksEvent( 'calypso_themeshowcase_filter_category_click', { category: tabFilter.key } );
 		trackClick( 'section nav filter', tabFilter );
 		this.setState( { tabFilter } );
 
@@ -354,6 +359,31 @@ class ThemeShowcase extends Component {
 			case this.tabFilters.TRENDING?.key:
 			case this.tabFilters.ALL.key:
 				return null;
+		}
+	};
+
+	recordSearchThemesTracksEvent = ( action, props ) => {
+		let eventName;
+		switch ( action ) {
+			case 'search_clear_icon_click':
+				eventName = 'calypso_themeshowcase_search_clear_icon_click';
+				break;
+			case 'search_dropdown_searchby_item_click':
+				eventName = 'calypso_themeshowcase_search_dropdown_searchby_item_click';
+				break;
+			case 'search_dropdown_taxonomy_item_click':
+				eventName = 'calypso_themeshowcase_search_dropdown_taxonomy_item_click';
+				break;
+			case 'search_dropdown_show_all_button_click':
+				eventName = 'calypso_themeshowcase_search_dropdown_show_all_button_click';
+				break;
+			case 'search_dropdown_show_less_button_click':
+				eventName = 'calypso_themeshowcase_search_dropdown_show_less_button_click';
+				break;
+		}
+
+		if ( eventName ) {
+			recordTracksEvent( eventName, props );
 		}
 	};
 
@@ -496,7 +526,11 @@ class ThemeShowcase extends Component {
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
 					{ isNewSearchAndFilter ? (
-						<SearchThemes query={ filterString + search } onSearch={ this.doSearch } />
+						<SearchThemes
+							query={ filterString + search }
+							onSearch={ this.doSearch }
+							recordTracksEvent={ this.recordSearchThemesTracksEvent }
+						/>
 					) : (
 						<ThemesSearchCard
 							onSearch={ this.doSearch }
