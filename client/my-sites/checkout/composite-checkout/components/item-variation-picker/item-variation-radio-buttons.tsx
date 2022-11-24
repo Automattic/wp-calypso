@@ -1,10 +1,10 @@
 import { RadioButton } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
 import { ItemVariantRadioPrice } from './variant-radio-price';
 import type { ItemVariationPickerProps, WPCOMProductVariant, OnChangeItemVariant } from './types';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
+import type { FunctionComponent } from 'react';
 
 const TermOptions = styled.ul`
 	flex-basis: 100%;
@@ -23,6 +23,7 @@ const TermOptionsItem = styled.li`
 `;
 
 interface ProductVariantProps {
+	radioButtonGroup: string;
 	productVariant: WPCOMProductVariant;
 	selectedItem: ResponseCartProduct;
 	onChangeItemVariant: OnChangeItemVariant;
@@ -31,13 +32,13 @@ interface ProductVariantProps {
 }
 
 const ProductVariant: FunctionComponent< ProductVariantProps > = ( {
+	radioButtonGroup,
 	productVariant,
 	selectedItem,
 	onChangeItemVariant,
 	isDisabled,
 	compareTo,
 } ) => {
-	const translate = useTranslate();
 	const { variantLabel, productSlug, productId } = productVariant;
 	const selectedProductSlug = selectedItem.product_slug;
 	const isChecked = productSlug === selectedProductSlug;
@@ -45,7 +46,7 @@ const ProductVariant: FunctionComponent< ProductVariantProps > = ( {
 	return (
 		<TermOptionsItem>
 			<RadioButton
-				name={ productSlug + variantLabel }
+				name={ radioButtonGroup }
 				id={ productSlug + variantLabel }
 				value={ productSlug }
 				checked={ isChecked }
@@ -53,9 +54,8 @@ const ProductVariant: FunctionComponent< ProductVariantProps > = ( {
 				onChange={ () => {
 					! isDisabled && onChangeItemVariant( selectedItem.uuid, productSlug, productId );
 				} }
-				ariaLabel={ translate( 'Select a different term length' ) as string }
+				ariaLabel={ variantLabel }
 				label={ <ItemVariantRadioPrice variant={ productVariant } compareTo={ compareTo } /> }
-				children={ [] }
 			/>
 		</TermOptionsItem>
 	);
@@ -67,6 +67,7 @@ export const ItemVariationRadioButtons: FunctionComponent< ItemVariationPickerPr
 	isDisabled,
 	variants,
 } ) => {
+	const translate = useTranslate();
 	if ( variants.length < 2 ) {
 		return null;
 	}
@@ -74,9 +75,14 @@ export const ItemVariationRadioButtons: FunctionComponent< ItemVariationPickerPr
 	const compareTo = variants[ 0 ];
 
 	return (
-		<TermOptions className="item-variation-picker">
+		<TermOptions
+			role="radiogroup"
+			aria-label={ translate( 'Pick a product term' ) }
+			className="item-variation-picker"
+		>
 			{ variants.map( ( productVariant: WPCOMProductVariant ) => (
 				<ProductVariant
+					radioButtonGroup={ `item-variation-picker ${ selectedItem.product_name } ${ selectedItem.uuid }` }
 					key={ productVariant.productSlug + productVariant.variantLabel }
 					selectedItem={ selectedItem }
 					onChangeItemVariant={ onChangeItemVariant }
