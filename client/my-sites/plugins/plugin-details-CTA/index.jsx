@@ -275,6 +275,11 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		<Fragment>
 			<QuerySitePurchases siteId={ selectedSite?.ID } />
 			<div className="plugin-details-cta__container">
+				{ isPluginInstalledOnsite && sitePlugin && (
+					<div className="plugin-details-cta__manage-plugin-menu-new-purchase">
+						<ManagePluginMenu plugin={ plugin } />
+					</div>
+				) }
 				{ ! plugin.isSaasProduct && (
 					<div className="plugin-details-cta__price">
 						<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
@@ -381,7 +386,7 @@ function PrimaryButton( {
 				is_saas_product: plugin?.isSaasProduct,
 			} )
 		);
-	}, [ dispatch ] );
+	}, [ dispatch, plugin, isLoggedIn ] );
 
 	if ( ! isLoggedIn ) {
 		return (
