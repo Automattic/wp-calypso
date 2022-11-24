@@ -13,6 +13,8 @@ import {
 	JETPACK_SOCIAL_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_VIDEOPRESS_PRODUCTS,
+	PRODUCT_JETPACK_SOCIAL_BASIC,
+	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
 	getPlan,
 } from '@automattic/calypso-products';
 import { useSelector } from 'react-redux';
@@ -119,7 +121,10 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 				( JETPACK_SOCIAL_PRODUCTS as ReadonlyArray< string > ).includes( ownedProduct )
 			)
 		) {
-			availableProducts = [ ...availableProducts, ...JETPACK_SOCIAL_PRODUCTS ];
+			availableProducts = [
+				...availableProducts,
+				...[ PRODUCT_JETPACK_SOCIAL_BASIC, PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ],
+			];
 		}
 	}
 
