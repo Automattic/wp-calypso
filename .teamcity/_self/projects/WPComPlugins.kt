@@ -29,6 +29,7 @@ object WPComPlugins : Project({
 	buildType(EditingToolkit)
 	buildType(WpcomBlockEditor)
 	buildType(Notifications)
+	buildType(CalypsoStats)
 	buildType(O2Blocks)
 	buildType(HappyBlocks)
 	buildType(Happychat)
@@ -46,6 +47,7 @@ object WPComPlugins : Project({
 				withStatus = successful()
 				withTags = anyOf(
 					"notifications-release-build",
+					"calypso-stats-release-build",
 					"etk-release-build",
 					"wpcom-block-editor-release-build",
 					"o2-blocks-release-build",
@@ -138,6 +140,29 @@ private object Notifications : WPComPluginBuild(
 		# instances of the hash in the *old* files with the newest version.
 		sed -i "s~${'$'}old_hash~${'$'}new_hash~g" release-archive/index.html release-archive/rtl.html
 
+		# Replace the old cache buster with the new one in the previous release html files.
+		if [ -f './release-archive/build_meta.json' ] ; then
+			old_cache_buster=`jq -r '.cache_buster' ./release-archive/build_meta.json`
+		else
+			old_cache_buster=`cat ./release-archive/cache-buster.txt`
+		fi
+
+		new_cache_buster=`jq -r '.cache_buster' ./dist/build_meta.json`
+		sed -i "s~${'$'}old_cache_buster~${'$'}new_cache_buster~g" release-archive/index.html release-archive/rtl.html
+	""".trimIndent(),
+)
+
+private object CalypsoStats : WPComPluginBuild(
+	buildId = "WPComPlugins_CalypsoStats",
+	buildName = "CalypsoStats",
+	pluginSlug = "CalypsoStats",
+	archiveDir = "./dist/",
+	docsLink = "PCYsg-elI-p2",
+	// This param is executed in bash right before the build script compares
+	// the build with the previous release version. The purpose of this code
+	// is to remove sources of randomness so that the diff operation only
+	// compares legitimate changes.
+	normalizeFiles = """
 		# Replace the old cache buster with the new one in the previous release html files.
 		if [ -f './release-archive/build_meta.json' ] ; then
 			old_cache_buster=`jq -r '.cache_buster' ./release-archive/build_meta.json`
