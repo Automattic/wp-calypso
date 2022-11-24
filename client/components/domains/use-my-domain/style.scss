@@ -80,14 +80,14 @@
 			margin-right: 4px !important;
 
 			path {
-				fill: $black;
+				fill: var(--color-text);
 			}
 		}
 	}
 
 	& &__domain-input-fieldset::before {
 		content: "https://";
-		color: $black;
+		color: var(--color-text);
 		position: absolute;
 		left: 16px;
 		top: 10px;
