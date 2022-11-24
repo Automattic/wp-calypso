@@ -72,12 +72,8 @@ class BloggingPromptHeader extends Component {
 		const icon = this.props.site.media[ 0 ];
 		const img_tag = <img src={ icon.url } height={ icon.height } width={ icon.width } alt="" />;
 		const home_url = this.props.site.ranges[ 0 ].url;
-		let host = document.location.host;
-		console.log( document );
-		console.log( host );
-		if ( host === 'widgets.wp.com' ) {
-			host = 'wordpress.com';
-		}
+		const host =
+			document.location.host === 'widgets.wp.com' ? 'wordpress.com' : document.location.host;
 		const settings_url =
 			document.location.protocol + '//' + host + '/me/notifications#' + withoutHttp( home_url );
 
