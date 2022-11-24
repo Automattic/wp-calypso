@@ -1,4 +1,4 @@
-import { SimpleConsentContent } from './types';
+import type { SimpleConsentContent } from './types';
 
 type Props = {
 	content: SimpleConsentContent;

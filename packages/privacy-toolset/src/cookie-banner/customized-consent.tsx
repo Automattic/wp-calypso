@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { GranularConsent } from './granular-consent';
-import { Buckets, CustomizedConsentContent } from './types';
+import type { Buckets, CustomizedConsentContent } from './types';
 
 type Props = {
 	content: CustomizedConsentContent;

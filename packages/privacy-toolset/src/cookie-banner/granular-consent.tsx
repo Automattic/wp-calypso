@@ -1,6 +1,6 @@
 import { FormToggle } from '@wordpress/components';
 import { ChangeEvent, useCallback } from 'react';
-import { GranularConsentContent } from './types';
+import type { GranularConsentContent } from './types';
 
 type Props = {
 	content: GranularConsentContent;

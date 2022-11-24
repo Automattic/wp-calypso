@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { CustomizedConsent } from './customized-consent';
 import { SimpleConsent } from './simple-consent';
-import { Buckets, CustomizedConsentContent, SimpleConsentContent } from './types';
+import type { Buckets, CustomizedConsentContent, SimpleConsentContent } from './types';
 
 import './styles.scss';
 
