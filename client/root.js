@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import page from 'page';
+import globalPageInstance from 'page';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { fetchPreferences, savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
@@ -7,18 +7,22 @@ import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { requestSite } from 'calypso/state/sites/actions';
 import { canCurrentUserUseCustomerHome, getSite, getSiteSlug } from 'calypso/state/sites/selectors';
 
-export default function () {
+/**
+ * @param clientRouter Unused. We can't use the isomorphic router because we want to do redirects.
+ * @param page Used to create isolated unit tests. Default behaviour uses the global 'page' router.
+ */
+export default function ( clientRouter, page = globalPageInstance ) {
 	page( '/', ( context ) => {
 		const isLoggedIn = isUserLoggedIn( context.store.getState() );
 		if ( isLoggedIn ) {
-			handleLoggedIn( context );
+			handleLoggedIn( page, context );
 		} else {
-			handleLoggedOut();
+			handleLoggedOut( page );
 		}
 	} );
 }
 
-function handleLoggedOut() {
+function handleLoggedOut( page ) {
 	if ( config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
 		page.redirect( '/devdocs/start' );
 	} else if ( config.isEnabled( 'jetpack-cloud' ) ) {
@@ -28,7 +32,7 @@ function handleLoggedOut() {
 	}
 }
 
-async function handleLoggedIn( context ) {
+async function handleLoggedIn( page, context ) {
 	// Testing code. Remove before merging.
 	// Usage:
 	//    Go to `/?sites-landing-page=true` or `/?sites-landing-page=false` to set the preference.
