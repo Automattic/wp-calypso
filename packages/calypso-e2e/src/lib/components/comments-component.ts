@@ -50,7 +50,8 @@ export class CommentsComponent {
 		}
 
 		await commentField.type( comment );
-		await Promise.all( [ this.page.waitForNavigation(), submitButton.click() ] );
+
+		await submitButton.click();
 	}
 
 	/**
