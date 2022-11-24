@@ -48,18 +48,18 @@ async function handleLoggedIn( context ) {
 	await context.store.dispatch( waitForSite( primarySiteId ) );
 
 	const state = context.store.getState();
-	const siteSlug = getSiteSlug( state, primarySiteId );
+	const primarySiteSlug = getSiteSlug( state, primarySiteId );
 	const isCustomerHomeEnabled = canCurrentUserUseCustomerHome( state, primarySiteId );
 
 	let redirectPath;
 
-	if ( ! siteSlug ) {
+	if ( ! primarySiteSlug ) {
 		// there is no primary site or the site info couldn't be fetched. Redirect to Reader.
 		redirectPath = '/read';
 	} else if ( isCustomerHomeEnabled ) {
-		redirectPath = `/home/${ siteSlug }`;
+		redirectPath = `/home/${ primarySiteSlug }`;
 	} else {
-		redirectPath = `/stats/${ siteSlug }`;
+		redirectPath = `/stats/${ primarySiteSlug }`;
 	}
 
 	if ( context.querystring ) {
