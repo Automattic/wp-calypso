@@ -42,6 +42,70 @@ export default function JetpackMobilePromoCard( {
 			appStoreLink = 'https://play.google.com/store/apps/details?id=com.jetpack.android';
 		}
 	}
+
+	const getTitle = () => {
+		if ( isWoo ) {
+			return translate( 'Bring your Store stats with you using the {{a}}Woo{{/a}} mobile app', {
+				components,
+			} );
+		}
+		return translate( 'Bring your stats with you using the {{a}}Jetpack{{/a}} mobile app', {
+			components,
+		} );
+	};
+
+	const getMessage = () => {
+		// Determines message text based on mobile, tablet, or Desktop.
+		if ( isApple ) {
+			return translate(
+				'Check your stats on-the-go and get real-time notifications with the Jetpack mobile app.'
+			);
+		} else if ( isGoogle ) {
+			return translate(
+				'Check your stats on-the-go and get real-time notifications with the Woo mobile app.'
+			);
+		} else if ( isWoo ) {
+			return translate(
+				'Visit {{a}}woo.com/mobile{{/a}} or scan the QR code to download the WooCommerce mobile app.',
+				{ components }
+			);
+		}
+		return translate(
+			'Visit {{a}}jetpack.com/app{{/a}} or scan the QR code to download the Jetpack mobile app.',
+			{ components }
+		);
+	};
+
+	const getPromoImage = () => {
+		// Returns store badges on mobile (including tablets) and QR codes on the Desktop.
+		if ( isApple ) {
+			return (
+				<a href={ appStoreLink }>
+					<img
+						className="promo-store-badge"
+						src={ storeBadgeApple }
+						alt="Badge for the Apple App Store"
+					/>
+				</a>
+			);
+		} else if ( isGoogle ) {
+			return (
+				<a href={ appStoreLink }>
+					<img
+						className="promo-store-badge"
+						src={ storeBadgeGoogle }
+						alt="Badge for the Google Play Store"
+					/>
+				</a>
+			);
+		} else if ( isWoo ) {
+			return <img className="promo-qr-code" src={ qrCodeWoo } alt="QR Code for Woo mobile app" />;
+		}
+		return (
+			<img className="promo-qr-code" src={ qrCodeJetpack } alt="QR Code for Jetpack mobile app" />
+		);
+	};
+
 	return (
 		<div className={ classNames( 'promo-card', className ?? null ) }>
 			<div className="promo-lhs">
@@ -49,71 +113,10 @@ export default function JetpackMobilePromoCard( {
 					{ isWoo && <img src={ iconWoo } alt="Icon for the Woo mobile app" /> }
 					{ ! isWoo && <WordPressJetpackSVG /> }
 				</div>
-				<p className="promo-card__title">
-					{ isWoo &&
-						translate( 'Bring your Store stats with you using the {{a}}Woo{{/a}} mobile app', {
-							components,
-						} ) }
-					{ ! isWoo &&
-						translate( 'Bring your stats with you using the {{a}}Jetpack{{/a}} mobile app', {
-							components,
-						} ) }
-				</p>
-				<p className="promo-card__message">
-					{ isApple &&
-						translate(
-							'Check your stats on-the-go and get real-time notifications with the Jetpack mobile app.'
-						) }
-					{ isGoogle &&
-						translate(
-							'Check your stats on-the-go and get real-time notifications with the Woo mobile app.'
-						) }
-					{ ! isApple &&
-						! isGoogle &&
-						isWoo &&
-						translate(
-							'Visit {{a}}woo.com/mobile{{/a}} or scan the QR code to download the WooCommerce mobile app.',
-							{ components }
-						) }
-					{ ! isApple &&
-						! isGoogle &&
-						! isWoo &&
-						translate(
-							'Visit {{a}}jetpack.com/app{{/a}} or scan the QR code to download the Jetpack mobile app.',
-							{ components }
-						) }
-				</p>
+				<p className="promo-card__title">{ getTitle() }</p>
+				<p className="promo-card__message">{ getMessage() }</p>
 			</div>
-			<div className="promo-rhs">
-				{ isApple && (
-					<a href={ appStoreLink }>
-						<img
-							className="promo-store-badge"
-							src={ storeBadgeApple }
-							alt="Badge for the Apple App Store"
-						/>
-					</a>
-				) }
-				{ isGoogle && (
-					<a href={ appStoreLink }>
-						<img
-							className="promo-store-badge"
-							src={ storeBadgeGoogle }
-							alt="Badge for the Google Play Store"
-						/>
-					</a>
-				) }
-				{ ! isApple && ! isGoogle && isWoo && (
-					<img className="promo-qr-code" src={ qrCodeWoo } alt="QR Code for Woo mobile app" />
-				) }
-				{ ! isApple && ! isGoogle && ! isWoo && (
-					<img
-						className="promo-qr-code"
-						src={ qrCodeJetpack }
-						alt="QR Code for Jetpack mobile app"
-					/>
-				) }
-			</div>
+			<div className="promo-rhs">{ getPromoImage() }</div>
 		</div>
 	);
 }
