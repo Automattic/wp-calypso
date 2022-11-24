@@ -55,7 +55,6 @@ const ProductVariant: FunctionComponent< ProductVariantProps > = ( {
 				onChange={ () => {
 					! isDisabled && onChangeItemVariant( selectedItem.uuid, productSlug, productId );
 				} }
-				ariaLabel={ variantLabel }
 				label={ <ItemVariantRadioPrice variant={ productVariant } compareTo={ compareTo } /> }
 			/>
 		</TermOptionsItem>
