@@ -1,5 +1,5 @@
 export type Pattern = {
 	id: number;
-	name: any;
+	name: string;
 	key?: string;
 };

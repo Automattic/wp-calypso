@@ -6,10 +6,14 @@ const headerPatterns: Pattern[] = [
 		id: 5579,
 		name: 'Centered header',
 	},
+	/*
+	Discarded because there is a menu option named Blog
+	and for now the blogger flow is not supported
 	{
 		id: 5608,
 		name: 'Centered Header with Logo and Navigation',
 	},
+	*/
 	{
 		id: 5582,
 		name: 'Simple Header',
