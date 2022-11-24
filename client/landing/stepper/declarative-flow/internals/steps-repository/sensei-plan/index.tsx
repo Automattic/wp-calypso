@@ -2,6 +2,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { Plans } from 'calypso/../packages/data-stores/src';
 import { SENSEI_FLOW, SenseiStepContainer } from 'calypso/../packages/onboarding/src';
@@ -21,7 +22,7 @@ import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { SenseiStepError } from '../sensei-setup/sensei-step-error';
-import { SenseiStepProgress } from '../sensei-setup/sensei-step-progress';
+import { SenseiStepProgress, Progress } from '../sensei-setup/sensei-step-progress';
 import { Tagline, Title, PlansIntervalToggle } from './components';
 import type { Step } from '../../types';
 import type { Props as PlanItemProps } from 'calypso/../packages/plans-grid/src/plans-table/plan-item';
@@ -33,9 +34,16 @@ enum Status {
 	Error,
 }
 
+const siteProgressTitle: string = __( 'Laying out the foundations' );
+const cartProgressTitle: string = __( 'Preparing Your Bundle' );
+
 const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 	const [ billingPeriod, setBillingPeriod ] = useState< Plans.PlanBillingPeriod >( 'ANNUALLY' );
 	const [ status, setStatus ] = useState< Status >( Status.Initial );
+	const [ progress, setProgress ] = useState< Progress >( {
+		percentage: 0,
+		title: siteProgressTitle,
+	} );
 
 	const { __ } = useI18n();
 	const locale = useLocale();
@@ -73,16 +81,35 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 	const onPlanSelect = async () => {
 		try {
 			setStatus( Status.Bundling );
+
+			// Wait for a bit to get an animation in the beginning of site creation.
+			await new Promise( ( res ) => setTimeout( res, 100 ) );
+
+			setProgress( {
+				percentage: 33,
+				title: siteProgressTitle,
+			} );
+
 			await createSenseiSite( {
 				username: currentUser?.username || '',
 				languageSlug: locale,
 				visibility,
 			} );
 
+			setProgress( {
+				percentage: 66,
+				title: cartProgressTitle,
+			} );
+
 			const newSite = getNewSite();
 			setSelectedSite( newSite?.blogid );
 			await setIntentOnSite( newSite?.site_slug as string, SENSEI_FLOW );
 			await saveSiteSettings( newSite?.blogid as number, { launchpad_screen: 'full' } );
+
+			setProgress( {
+				percentage: 100,
+				title: cartProgressTitle,
+			} );
 
 			const planProductObject = getPlanProduct( planObject?.periodAgnosticSlug, billingPeriod );
 
@@ -192,9 +219,7 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 					/>
 				</>
 			) }
-			{ status === Status.Bundling && (
-				<SenseiStepProgress>{ __( 'Preparing Your Bundle' ) }</SenseiStepProgress>
-			) }
+			{ status === Status.Bundling && <SenseiStepProgress progress={ progress } /> }
 			{ status === Status.Error && <SenseiStepError /> }
 		</SenseiStepContainer>
 	);

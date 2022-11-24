@@ -1,7 +1,7 @@
 import { SenseiStepContainer } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useCallback, useEffect } from '@wordpress/element';
-import { useI18n } from '@wordpress/react-i18n';
+//import { useI18n } from '@wordpress/react-i18n';
 import { useSelector, useDispatch as useRootDispatch } from 'react-redux';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
@@ -9,7 +9,7 @@ import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPlugins } from 'calypso/state/plugins/installed/selectors';
-import { SenseiStepProgress } from '../sensei-setup/sensei-step-progress';
+//import { SenseiStepProgress } from '../sensei-setup/sensei-step-progress';
 
 interface InstalledPlugin {
 	id: string;
@@ -18,7 +18,7 @@ interface InstalledPlugin {
 }
 
 const SenseiLaunch = () => {
-	const { __ } = useI18n();
+	//const { __ } = useI18n();
 	const site = useSite();
 	const siteId = site?.ID;
 	const launchpadScreen = site?.options.launchpad_screen;
@@ -57,9 +57,10 @@ const SenseiLaunch = () => {
 	}, [ plugins, launchpadUrl, dispatch, siteId, saveSiteSettings, launchpadScreen ] );
 
 	return (
-		<SenseiStepContainer stepName="senseiSetup" recordTracksEvent={ recordTracksEvent }>
-			<SenseiStepProgress>{ __( 'Installing Sensei' ) }</SenseiStepProgress>
-		</SenseiStepContainer>
+		<SenseiStepContainer
+			stepName="senseiSetup"
+			recordTracksEvent={ recordTracksEvent }
+		></SenseiStepContainer>
 	);
 };
 

@@ -71,6 +71,7 @@ export const ProgressValue = styled.div< { progress: number } >`
 	left: 0;
 	background-color: #217d7c;
 	width: ${ ( props ) => props.progress }%;
+	transition: width 800ms ease-out;
 `;
 
 export const TopRightImg = styled.img`
