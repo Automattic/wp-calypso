@@ -127,6 +127,8 @@ class RegisterDomainStep extends Component {
 		showAlreadyOwnADomain: PropTypes.bool,
 		domainAndPlanUpsellFlow: PropTypes.bool,
 		useProvidedProductsList: PropTypes.bool,
+		managedSubdomains: PropTypes.string,
+		handleClickUseYourDomain: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -1066,6 +1068,7 @@ class RegisterDomainStep extends Component {
 			only_wordpressdotcom: this.props.includeDotBlogSubdomain,
 			tld_weight_overrides: null,
 			vendor: 'dot',
+			managed_subdomains: this.props.managedSubdomains,
 			...this.getActiveFiltersForAPI(),
 		};
 
@@ -1336,7 +1339,7 @@ class RegisterDomainStep extends Component {
 				onClickMapping={ this.goToMapDomainStep }
 				onAddTransfer={ this.props.onAddTransfer }
 				onClickTransfer={ this.goToTransferDomainStep }
-				onClickUseYourDomain={ this.useYourDomainFunction() }
+				onClickUseYourDomain={ this.props.handleClickUseYourDomain ?? this.useYourDomainFunction() }
 				tracksButtonClickSource="exact-match-top"
 				suggestions={ suggestions }
 				premiumDomains={ premiumDomains }

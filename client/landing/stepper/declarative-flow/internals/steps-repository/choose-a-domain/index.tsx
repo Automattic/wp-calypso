@@ -100,7 +100,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 				headerText="Choose a domain"
 				subHeaderText={
 					<>
-						{ __( 'Make your video site shine with a custom domain. Not sure yet ?' ) }
+						{ __( 'Make your video site shine with a custom domain. Not sure yet?' ) }
 						<button
 							className="button navigation-link step-container__navigation-link has-underline is-borderless"
 							onClick={ onSkip }

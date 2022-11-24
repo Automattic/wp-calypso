@@ -11,7 +11,18 @@ const OpenSourceSection: React.FC = () => {
 			<h3 className="jetpack-open-source__title">{ translate( 'Five for the Future' ) }</h3>
 			<p className="jetpack-open-source__desc">
 				{ translate(
-					'We invest profits from Jetpack back into the WordPress open source community through projects and event sponsorships.'
+					'Jetpack contributes {{link}}5% of its resources{{/link}} into WordPress development. That means each Jetpack purchase helps improve the sustainability of the WordPress community and the future of the open web.',
+					{
+						components: {
+							link: (
+								<a
+									href="https://wordpress.org/five-for-the-future/"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					}
 				) }
 			</p>
 		</div>

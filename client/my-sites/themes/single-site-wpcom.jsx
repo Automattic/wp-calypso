@@ -7,8 +7,11 @@ import {
 	PLAN_BUSINESS,
 	WPCOM_FEATURES_PREMIUM_THEMES,
 } from '@automattic/calypso-products';
+import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import QueryActiveTheme from 'calypso/components/data/query-active-theme';
+import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import Main from 'calypso/components/main';
 import { useRequestSiteChecklistTaskUpdate } from 'calypso/data/site-checklist';
 import CurrentTheme from 'calypso/my-sites/themes/current-theme';
@@ -16,15 +19,17 @@ import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
 import ThemesHeader from './themes-header';
 
 const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
-	const { currentPlan, isVip, requestingSitePlans, siteId, siteSlug, translate } = props;
+	const { currentPlan, currentThemeId, isVip, requestingSitePlans, siteId, siteSlug, translate } =
+		props;
 
+	const isNewSearchAndFilter = isEnabled( 'themes/showcase-i4/search-and-filter' );
 	const displayUpsellBanner = ! requestingSitePlans && currentPlan && ! isVip;
-
 	const upsellUrl = `/plans/${ siteSlug }`;
 	let upsellBanner = null;
 	if ( displayUpsellBanner ) {
@@ -73,10 +78,26 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 
 	useRequestSiteChecklistTaskUpdate( siteId, CHECKLIST_KNOWN_TASKS.THEMES_BROWSED );
 
+	useEffect( () => {
+		if ( ! isNewSearchAndFilter ) {
+			return;
+		}
+
+		document.body.classList.add( 'is-section-themes-i4' );
+		return () => document.body.classList.remove( 'is-section-themes-i4' );
+	}, [] );
+
 	return (
 		<Main fullWidthLayout className="themes">
-			<ThemesHeader />
-			<CurrentTheme siteId={ siteId } />
+			<ThemesHeader isReskinned={ isNewSearchAndFilter } />
+			{ ! isNewSearchAndFilter ? (
+				<CurrentTheme siteId={ siteId } />
+			) : (
+				<>
+					<QueryActiveTheme siteId={ siteId } />
+					{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
+				</>
+			) }
 
 			<ThemeShowcase
 				{ ...props }
@@ -93,4 +114,5 @@ export default connect( ( state, { siteId } ) => ( {
 	siteSlug: getSiteSlug( state, siteId ),
 	requestingSitePlans: isRequestingSitePlans( state, siteId ),
 	currentPlan: getCurrentPlan( state, siteId ),
+	currentThemeId: getActiveTheme( state, siteId ),
 } ) )( ConnectedSingleSiteWpcom );

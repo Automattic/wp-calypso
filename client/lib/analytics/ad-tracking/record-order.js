@@ -396,7 +396,7 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 			},
 		];
 		debug( 'recordOrderInGoogleAds: Record WPCom Purchase', params );
-		window.gtag( ...params );
+		window.gtag?.( ...params );
 	}
 
 	if ( mayWeTrackByTracker( 'googleAds' ) && wpcomJetpackCartInfo.containsJetpackProducts ) {
@@ -411,7 +411,7 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 			},
 		];
 		debug( 'recordOrderInGoogleAds: Record Jetpack Purchase', params );
-		window.gtag( ...params );
+		window.gtag?.( ...params );
 	}
 }
 
@@ -468,7 +468,7 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 		},
 	];
 
-	window.gtag( ...params );
+	window.gtag?.( ...params );
 
 	debug( 'recordOrderInGAEnhancedEcommerce: Record WPCom Purchase', params );
 }
@@ -513,7 +513,7 @@ function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
 			},
 		];
 		debug( 'recordOrderInJetpackGA: Record Jetpack Purchase', jetpackParams );
-		window.gtag( ...jetpackParams );
+		window.gtag?.( ...jetpackParams );
 	}
 }
 

@@ -22,7 +22,6 @@
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
-	"olark_chat_identity": "7089-503-10-5123",
 	"dsp_stripe_pub_key": "pk_live_51LYYzQF53KN4RFN0ePTwefdm7seki4pRuc4a19gPMGUba5mzuosz0IBR0cp4T57FiBgxK911ky0LNwlX2IHbm0SS00uPHEQNBO",
 	"dsp_widget_js_src": "https://widgets.wp.com/promote/widget.js",
 	"features": {
@@ -156,6 +155,7 @@
 		"signup/tailored-ecommerce": true,
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
+		"sites-as-landing-page": true,
 		"ssr/prefetch-timebox": false,
 		"stats/new-all-time-highlights": true,
 		"stats/new-annual-highlights": true,
@@ -171,6 +171,7 @@
 		"themes/premium": true,
 		"themes/showcase-i4/search-and-filter": true,
 		"themes/subscription-purchases": true,
+		"themes/theme-switch-persist-template": true,
 		"themes/third-party-premium": true,
 		"titan/iframe-control-panel": false,
 		"unified-pages/virtual-home-page": true,
@@ -178,7 +179,6 @@
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"upsell/concierge-session": true,
-		"videopress/tailored-onboarding": true,
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false

@@ -61,9 +61,12 @@ export class WebPreviewModal extends Component {
 		autoHeight: PropTypes.bool,
 		// Fixes the viewport width of the iframe if provided.
 		fixedViewportWidth: PropTypes.number,
+		// Prevents tabbing into the iframe.
+		disableTabbing: PropTypes.bool,
 	};
 
 	static defaultProps = {
+		disableTabbing: false,
 		showExternal: true,
 		showClose: true,
 		showSEO: true,

@@ -45,7 +45,6 @@ import HappychatConnection from 'calypso/components/happychat/connection-connect
 import Notice from 'calypso/components/notice';
 import { getTld } from 'calypso/lib/domains';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
-import PlanComparisonWithHighlights from 'calypso/my-sites/plan-comparison-with-highlights';
 import PlanFeatures from 'calypso/my-sites/plan-features';
 import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
@@ -118,14 +117,12 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			plansWithScroll,
 			isReskinned,
-			isPlanTaglineExperiment,
+			isFAQCondensedExperiment,
+			isPlansInsideStepper,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
-		const FeaturesComponent = isPlanTaglineExperiment
-			? PlanComparisonWithHighlights
-			: PlanFeaturesComparison;
 
 		return (
 			<div
@@ -139,7 +136,7 @@ export class PlansFeaturesMain extends Component {
 				) }
 				data-e2e-plans="wpcom"
 			>
-				<FeaturesComponent
+				<PlanFeaturesComparison
 					basePlansPath={ basePlansPath }
 					domainName={ domainName }
 					isInSignup={ isInSignup }
@@ -147,6 +144,7 @@ export class PlansFeaturesMain extends Component {
 					isLaunchPage={ isLaunchPage }
 					onUpgradeClick={ onUpgradeClick }
 					plans={ plans }
+					flowName={ flowName }
 					redirectTo={ redirectTo }
 					visiblePlans={ visiblePlans }
 					selectedFeature={ selectedFeature }
@@ -162,6 +160,8 @@ export class PlansFeaturesMain extends Component {
 					} ) }
 					siteId={ siteId }
 					isReskinned={ isReskinned }
+					isFAQCondensedExperiment={ isFAQCondensedExperiment }
+					isPlansInsideStepper={ isPlansInsideStepper }
 				/>
 			</div>
 		);
@@ -193,6 +193,7 @@ export class PlansFeaturesMain extends Component {
 			translate,
 			locale,
 			flowName,
+			isPlansInsideStepper,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -262,9 +263,11 @@ export class PlansFeaturesMain extends Component {
 						isJetpack,
 						availablePlans: visiblePlans,
 					} ) }
+					flowName={ flowName }
 					siteId={ siteId }
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					kindOfPlanTypeSelector={ this.getKindOfPlanTypeSelector( this.props ) }
+					isPlansInsideStepper={ isPlansInsideStepper }
 				/>
 			</div>
 		);
@@ -560,6 +563,7 @@ PlansFeaturesMain.propTypes = {
 	plansWithScroll: PropTypes.bool,
 	planTypes: PropTypes.array,
 	isReskinned: PropTypes.bool,
+	isPlansInsideStepper: PropTypes.bool,
 	planTypeSelector: PropTypes.string,
 };
 
@@ -576,6 +580,7 @@ PlansFeaturesMain.defaultProps = {
 	plansWithScroll: false,
 	isReskinned: false,
 	planTypeSelector: 'interval',
+	isPlansInsideStepper: false,
 };
 
 export default connect(

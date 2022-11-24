@@ -365,9 +365,7 @@ export class Theme extends Component {
 			<>
 				{ this.props.softLaunched && (
 					<div className="theme__info-soft-launched">
-						<div className="theme__info-soft-launched-banner">
-							{ translate( 'Available to A8C-only' ) }
-						</div>
+						<div className="theme__info-soft-launched-banner">{ translate( 'A8C Only' ) }</div>
 					</div>
 				) }
 			</>

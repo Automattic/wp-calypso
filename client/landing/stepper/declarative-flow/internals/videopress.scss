@@ -44,6 +44,10 @@ body.is-videopress-stepper {
 			}
 		}
 
+		&.intro .flow-progress {
+			background: #0003;
+		}
+
 		.signup-header {
 			padding: 24px;
 
@@ -171,6 +175,12 @@ body.is-videopress-stepper {
 			gap: 10px;
 		}
 
+		.launchpad__task:nth-last-child(2) {
+			.launchpad__checklist-item {
+				border-bottom: none;
+			}
+		}
+
 		.launchpad__checklist-item {
 			color: $videopress-theme-base-text-color;
 			border-bottom: 1px solid rgba(255, 255, 255, 0.2);
@@ -179,10 +189,6 @@ body.is-videopress-stepper {
 				color: $videopress-theme-yellow;
 				fill: $videopress-theme-yellow;
 				border-color: #474747;
-			}
-
-			&:last-of-type {
-				border-bottom: none;
 			}
 		}
 
@@ -218,6 +224,11 @@ body.is-videopress-stepper {
 			&:hover {
 				color: $videopress-theme-yellow;
 			}
+		}
+
+		.launchpad__task.pending .launchpad__checklist-item-chevron {
+			color: #fff;
+			fill: #fff;
 		}
 
 		.launchpad__task.completed:hover,

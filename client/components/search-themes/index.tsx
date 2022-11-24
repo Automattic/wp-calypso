@@ -5,7 +5,6 @@ import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import KeyedSuggestions from 'calypso/components/keyed-suggestions';
 import Search, { SEARCH_MODE_ON_ENTER } from 'calypso/components/search';
-import StickyPanel from 'calypso/components/sticky-panel';
 import { getThemeFilters } from 'calypso/state/themes/selectors';
 import { allowSomeThemeFilters, computeEditedSearchElement, insertSuggestion } from './utils';
 import type { ThemeFilters } from './types';
@@ -97,61 +96,59 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch } ) => {
 
 	return (
 		<div ref={ wrapperRef } { ...useFocusOutside( closeSearch ) }>
-			<StickyPanel>
-				<div
-					className="search-themes-card"
-					role="presentation"
-					data-tip-target="search-themes-card"
-					onClick={ focusOnInput }
+			<div
+				className="search-themes-card"
+				role="presentation"
+				data-tip-target="search-themes-card"
+				onClick={ focusOnInput }
+			>
+				<Search
+					initialValue={ searchInput }
+					value={ searchInput }
+					ref={ searchRef }
+					placeholder={ translate( 'Search themes…' ) }
+					analyticsGroup="Themes"
+					searchMode={ SEARCH_MODE_ON_ENTER }
+					applySearch={ isApplySearch }
+					hideClose
+					onKeyDown={ onKeyDown }
+					onSearch={ onSearch }
+					onSearchOpen={ () => setIsSearchOpen( true ) }
+					onSearchClose={ closeSearch }
+					onSearchChange={ ( inputValue: string ) => {
+						findTextForSuggestions( inputValue );
+						setSearchInput( inputValue );
+						setIsApplySearch( false );
+					} }
 				>
-					<Search
-						initialValue={ searchInput }
-						value={ searchInput }
-						ref={ searchRef }
-						placeholder={ translate( 'Search themes…' ) }
-						analyticsGroup="Themes"
-						searchMode={ SEARCH_MODE_ON_ENTER }
-						applySearch={ isApplySearch }
-						hideClose
-						onKeyDown={ onKeyDown }
-						onSearch={ onSearch }
-						onSearchOpen={ () => setIsSearchOpen( true ) }
-						onSearchClose={ closeSearch }
-						onSearchChange={ ( inputValue: string ) => {
-							findTextForSuggestions( inputValue );
-							setSearchInput( inputValue );
-							setIsApplySearch( false );
-						} }
-					>
-						{ isSearchOpen && (
-							<KeyedSuggestions
-								ref={ suggestionsRef }
-								input={ editedSearchElement }
-								terms={ filters }
-								suggest={ suggest }
-								exclusions={ [ /twenty.*?two/ ] }
-								showAllLabelText={ translate( 'View all' ) }
-								showLessLabelText={ translate( 'View less' ) }
-								isShowTopLevelTermsOnMount
-								isDisableAutoSelectSuggestion
-								isDisableTextHighlight
+					{ isSearchOpen && (
+						<KeyedSuggestions
+							ref={ suggestionsRef }
+							input={ editedSearchElement }
+							terms={ filters }
+							suggest={ suggest }
+							exclusions={ [ /twenty.*?two/ ] }
+							showAllLabelText={ translate( 'View all' ) }
+							showLessLabelText={ translate( 'View less' ) }
+							isShowTopLevelTermsOnMount
+							isDisableAutoSelectSuggestion
+							isDisableTextHighlight
+						/>
+					) }
+					{ searchInput !== '' && (
+						<div className="search-themes-card__icon">
+							<Gridicon
+								icon="cross"
+								className="search-themes-card__icon-close"
+								tabIndex={ 0 }
+								aria-controls="search-component-search-themes"
+								aria-label={ translate( 'Clear Search' ) }
+								onClick={ clearSearch }
 							/>
-						) }
-						{ searchInput !== '' && (
-							<div className="search-themes-card__icon">
-								<Gridicon
-									icon="cross"
-									className="search-themes-card__icon-close"
-									tabIndex={ 0 }
-									aria-controls="search-component-search-themes"
-									aria-label={ translate( 'Clear Search' ) }
-									onClick={ clearSearch }
-								/>
-							</div>
-						) }
-					</Search>
-				</div>
-			</StickyPanel>
+						</div>
+					) }
+				</Search>
+			</div>
 		</div>
 	);
 };

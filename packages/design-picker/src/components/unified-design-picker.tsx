@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_WOOP } from '@automattic/calypso-products';
 import { MShotsImage } from '@automattic/onboarding';
@@ -8,7 +9,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import {
 	SHOW_ALL_SLUG,
 	SHOW_GENERATED_DESIGNS_SLUG,
@@ -30,6 +31,7 @@ import ThemePreview from './theme-preview';
 import WooCommerceBundledBadge from './woocommerce-bundled-badge';
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design, StyleVariation } from '../types';
+import type { RefCallback } from 'react';
 import './style.scss';
 
 const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name__${ slug }`;
@@ -59,6 +61,83 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 			options={ getMShotOptions( { scrollable: true, highRes: false, isMobile } ) }
 			scrollable={ true }
 		/>
+	);
+};
+
+interface TrackDesignViewProps {
+	category?: string | null;
+	design: Design;
+	isPremiumThemeAvailable?: boolean;
+}
+
+/**
+ * Hook to return a [callback ref](https://reactjs.org/docs/refs-and-the-dom.html#callback-refs)
+ * that MUST be used as the `ref` prop on a `div` element.
+ * The hook ensures that we generate theme display Tracks events when the user views
+ * the underlying `div` element.
+ *
+ * @param { TrackDesignViewProps } designDetails Details around the design and current context.
+ * @returns { Function } A callback ref that MUST be used on a div element for tracking.
+ */
+const useTrackDesignView = ( {
+	category,
+	design,
+	isPremiumThemeAvailable,
+}: TrackDesignViewProps ): RefCallback< HTMLDivElement > => {
+	const observerRef = useRef< IntersectionObserver >();
+	const [ viewedCategories, setViewedCategory ] = useState< string[] >( [] );
+
+	// Use a callback as the ref so we get called for both mount and unmount events
+	// We don't get both if we use useRef() and useEffect() together.
+	return useCallback(
+		( wrapperDiv: HTMLDivElement ) => {
+			// If we've already viewed the design in this category,
+			// we can skip setting up the handler
+			if ( category && viewedCategories.includes( category ) ) {
+				return;
+			}
+
+			// If we don't have a wrapper div, we aren't mounted and should remove the observer
+			if ( ! wrapperDiv ) {
+				observerRef.current?.disconnect?.();
+				return;
+			}
+
+			const intersectionHandler = ( entries: IntersectionObserverEntry[] ) => {
+				// Only fire once per category
+				if ( ! wrapperDiv || ( category && viewedCategories.includes( category ) ) ) {
+					return;
+				}
+
+				const [ entry ] = entries;
+				if ( ! entry.isIntersecting ) {
+					return;
+				}
+
+				const trackingCategory = category === SHOW_ALL_SLUG ? undefined : category;
+
+				recordTracksEvent( 'calypso_design_picker_design_display', {
+					category: trackingCategory,
+					design_type: design.design_type,
+					is_premium: design.is_premium,
+					is_premium_available: isPremiumThemeAvailable,
+					slug: design.slug,
+				} );
+
+				if ( category ) {
+					// Mark the current and category as viewed
+					setViewedCategory( ( existingCategories ) => [ ...existingCategories, category ] );
+				}
+			};
+
+			observerRef.current = new IntersectionObserver( intersectionHandler, {
+				// Only fire the event when 60% of the element becomes visible
+				threshold: [ 0.6 ],
+			} );
+
+			observerRef.current.observe( wrapperDiv );
+		},
+		[ category, design, isPremiumThemeAvailable, observerRef, setViewedCategory, viewedCategories ]
 	);
 };
 
@@ -171,20 +250,27 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 };
 
 interface DesignButtonContainerProps extends DesignButtonProps {
+	category?: string | null;
 	onSelect: ( design: Design ) => void;
 }
 
 const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
+	category,
 	onSelect,
 	...props
 } ) => {
-	const isBlankCanvas = isBlankCanvasDesign( props.design );
-	if ( isBlankCanvas ) {
+	const trackingDivRef = useTrackDesignView( {
+		category,
+		design: props.design,
+		isPremiumThemeAvailable: props.isPremiumThemeAvailable,
+	} );
+
+	if ( isBlankCanvasDesign( props.design ) ) {
 		return <PatternAssemblerCta onButtonClick={ () => onSelect( props.design ) } />;
 	}
 
 	return (
-		<div className="design-button-container">
+		<div className="design-button-container" ref={ trackingDivRef }>
 			<DesignButton { ...props } />
 		</div>
 	);
@@ -214,12 +300,18 @@ const GeneratedDesignButtonContainer: React.FC< GeneratedDesignButtonContainerPr
 		use_screenshot_overrides: true,
 	} );
 
+	const trackingDivRef = useTrackDesignView( {
+		category: `__generated_vertical_${ verticalId }`,
+		design,
+		isPremiumThemeAvailable: false,
+	} );
+
 	return (
 		<div
-			key={ `generated-design__${ design.slug }` }
 			className={ classnames( 'design-button-container', 'design-button-container--is-generated', {
 				'design-button-container--is-generated--is-showing': isShowing,
 			} ) }
+			ref={ trackingDivRef }
 		>
 			<div className="design-picker__design-option">
 				<button className="generated-design-thumbnail" onClick={ () => onPreview( design ) }>
@@ -316,6 +408,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 			<div className="design-picker__grid">
 				{ filteredStaticDesigns.map( ( design ) => (
 					<DesignButtonContainer
+						category={ categorization?.selection }
 						key={ design.slug }
 						design={ design }
 						locale={ locale }
@@ -411,7 +504,9 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					} ) }
 				>
 					<div>
-						<h3> { translate( 'Custom designs for your site' ) } </h3>
+						<h3 className="unified-design-picker__title">
+							{ translate( 'Custom designs for your site' ) }
+						</h3>
 						<p className="unified-design-picker__subtitle">
 							{ translate( 'Based on your input, these designs have been tailored for you.' ) }
 						</p>

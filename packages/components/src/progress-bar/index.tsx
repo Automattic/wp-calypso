@@ -65,6 +65,7 @@ export default class ProgressBar extends React.PureComponent< Props, State > {
 				aria-valuemax={ total }
 				aria-valuemin={ 0 }
 				aria-valuenow={ value }
+				aria-label="progress bar"
 				className="progress-bar__progress"
 				role="progressbar"
 				style={ styles }

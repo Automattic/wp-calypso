@@ -66,6 +66,7 @@ export class PublishedPostPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async likePost(): Promise< void > {
+		await this.page.evaluate( () => window.scrollTo( 0, document.body.scrollHeight ) );
 		const frame = await this.getLikeFrame();
 		await frame.click( selectors.likeButton );
 		await frame.waitForSelector( selectors.likedText, { state: 'visible' } );

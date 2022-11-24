@@ -1,7 +1,8 @@
 import { localizeUrl, useLocale, getRelativeTimeString } from '@automattic/i18n-utils';
-import { ExternalLink, Icon } from '@wordpress/components';
+import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Icon, info } from '@wordpress/icons';
 import type { SupportTicket } from '../types';
 import type { AnalysisReport } from '@automattic/data-stores';
 import type { ReactNode } from 'react';
@@ -117,7 +118,7 @@ export function HelpCenterActiveTicketNotice( {
 							style: 'long',
 						} )
 					) }
-				</strong>
+				</strong>{ ' ' }
 				&nbsp;
 				{ __(
 					`Rest assured that we got your message and we'll be in touch as soon as we can.`,
@@ -132,7 +133,7 @@ export function HelpCenterNotice( { children }: { children: ReactNode } ) {
 	return (
 		<div className="help-center-notice__container">
 			<div>
-				<Icon icon="info-outline"></Icon>
+				<Icon icon={ info } className="info-icon"></Icon>
 			</div>
 			{ children }
 		</div>

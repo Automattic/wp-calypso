@@ -5,7 +5,7 @@ import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 const UseBuiltBy = () => {
 	return (
 		<Task
-			title="Hire experts to build your website"
+			title="Get expert help for your website"
 			description="Whether you want to create an online store, redesign your website, migrate your site or simply showcase your work — we are happy to help."
 			actionText="Get Started"
 			actionUrl="https://builtbywp.com/?utm_medium=automattic_referred&utm_source=WordPresscom&utm_campaign=bb-card-home"
