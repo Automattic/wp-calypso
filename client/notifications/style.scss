@@ -175,6 +175,9 @@
 		}
 
 		.wpnc__action-link {
+			&:only-child {
+				padding: 0;
+			}
 			&:hover {
 				svg.gridicons-pinned path {
 					fill: var(--color-link);
