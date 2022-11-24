@@ -249,19 +249,18 @@ describe( 'CheckoutMain with a variant picker', () => {
 			getPlansBySiteId.mockImplementation( () => ( {
 				data: getActivePersonalPlanDataForType( activePlan ),
 			} ) );
-			const user = userEvent.setup();
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
-			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
-			await user.click( openVariantPicker );
+			const variantPicker = await screen.findByLabelText( 'Pick a product term' );
 
-			const currentVariantItem = await screen.findByRole( 'option', {
+			const currentVariantItem = await screen.findByRole( 'radio', {
 				name: getVariantItemTextForInterval( cartPlan ),
 			} );
-			const variantItem = await screen.findByRole( 'option', {
+			const variantItem = await screen.findByRole( 'radio', {
 				name: getVariantItemTextForInterval( expectedVariant ),
 			} );
+			const variantItemLabel = variantPicker.querySelector( `label[for='${ variantItem.id }']` );
 
 			const currentVariantSlug = currentVariantItem.dataset.productSlug;
 			const variantSlug = variantItem.dataset.productSlug;
@@ -281,7 +280,7 @@ describe( 'CheckoutMain with a variant picker', () => {
 
 			const discountPercentage = Math.floor( 100 - ( finalPrice / priceBeforeDiscount ) * 100 );
 			expect(
-				within( variantItem ).getByText( `Save ${ discountPercentage }%` )
+				within( variantItemLabel as HTMLElement ).getByText( `Save ${ discountPercentage }%` )
 			).toBeInTheDocument();
 		}
 	);
