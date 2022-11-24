@@ -143,6 +143,11 @@ export const ecommerceFlow: Flow = {
 						'plan',
 						( providedDependencies?.currentPlan as SiteDetailsPlan )?.product_slug
 					);
+
+					alert(
+						JSON.stringify( ( providedDependencies?.currentPlan as SiteDetailsPlan )?.product_slug )
+					);
+
 					if (
 						[ PLAN_ECOMMERCE, PLAN_ECOMMERCE_MONTHLY ].includes(
 							( providedDependencies?.currentPlan as SiteDetailsPlan )?.product_slug
