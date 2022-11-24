@@ -20,6 +20,7 @@ import {
 	SitesContentControls,
 	handleQueryParamChange,
 } from './sites-content-controls';
+import { SitesDashboardOptInBanner } from './sites-dashboard-opt-in-banner';
 import { useSitesDisplayMode } from './sites-display-mode-switcher';
 import { SitesGrid } from './sites-grid';
 import { SitesTable } from './sites-table';
@@ -67,7 +68,7 @@ const PageBodyWrapper = styled.div( {
 	marginInline: 'auto',
 } );
 
-const HeaderControls = styled.div( {
+const headerControls = css( {
 	maxWidth: MAX_PAGE_WIDTH,
 	marginBlock: 0,
 	marginInline: 'auto',
@@ -162,7 +163,8 @@ export function SitesDashboard( {
 		<main>
 			<DocumentHead title={ __( 'Sites' ) } />
 			<PageHeader>
-				<HeaderControls>
+				<SitesDashboardOptInBanner sites={ allSites } className={ headerControls } />
+				<div className={ headerControls }>
 					<DashboardHeading>{ __( 'Sites' ) }</DashboardHeading>
 					<SplitButton
 						primary
@@ -201,7 +203,7 @@ export function SitesDashboard( {
 							<span>{ __( 'Import an existing site' ) }</span>
 						</PopoverMenuItem>
 					</SplitButton>
-				</HeaderControls>
+				</div>
 			</PageHeader>
 			<PageBodyWrapper>
 				<SitesDashboardSitesList
