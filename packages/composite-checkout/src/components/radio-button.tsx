@@ -216,7 +216,7 @@ interface RadioButtonProps {
 	checked?: boolean;
 	value: string;
 	onChange?: () => void;
-	ariaLabel: string;
+	ariaLabel?: string;
 	children?: React.ReactNode;
 }
 
@@ -228,7 +228,7 @@ RadioButton.propTypes = {
 	checked: PropTypes.bool,
 	value: PropTypes.string.isRequired,
 	onChange: PropTypes.func,
-	ariaLabel: PropTypes.string.isRequired,
+	ariaLabel: PropTypes.string,
 };
 
 function handleWrapperDisabled( { disabled }: { disabled?: boolean } ) {
