@@ -19491,6 +19491,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "happy-blocks@workspace:apps/happy-blocks"
   dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-config": "workspace:^"

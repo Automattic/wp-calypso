@@ -3,11 +3,18 @@ import { FunctionComponent } from 'react';
 
 interface Props {
 	href: string;
+	onClick?: () => void;
 }
 
-const BillingButton: FunctionComponent< Props > = ( { href, children } ) => {
+const BillingButton: FunctionComponent< Props > = ( { href, children, onClick = () => null } ) => {
 	return (
-		<Button className="hb-pricing-plans-embed__detail-cta" href={ href } target="_blank" isPrimary>
+		<Button
+			onClick={ onClick }
+			className="hb-pricing-plans-embed__detail-cta"
+			href={ href }
+			target="_blank"
+			isPrimary
+		>
 			{ children }
 		</Button>
 	);
