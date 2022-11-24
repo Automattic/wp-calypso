@@ -72,12 +72,12 @@ class BloggingPromptHeader extends Component {
 		const icon = this.props.site.media[ 0 ];
 		const img_tag = <img src={ icon.url } height={ icon.height } width={ icon.width } alt="" />;
 		const home_url = this.props.site.ranges[ 0 ].url;
+		let host = document.location.host;
+		if ( host === 'widgets.wp.com' ) {
+			host = 'wordpress.com';
+		}
 		const settings_url =
-			document.location.protocol +
-			'//' +
-			document.location.host +
-			'/me/notifications#' +
-			withoutHttp( home_url );
+			document.location.protocol + '//' + host + '/me/notifications#' + withoutHttp( home_url );
 
 		const get_home_link = function ( classNames, children ) {
 			if ( home_url ) {

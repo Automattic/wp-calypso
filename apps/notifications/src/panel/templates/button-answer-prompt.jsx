@@ -9,8 +9,11 @@ import ActionButton from './action-button';
 // eslint-disable-next-line no-shadow
 const AnswerPromptButton = ( { answerPrompt, note, translate } ) => {
 	const { site: siteId } = note?.meta?.ids ?? {};
-	const newPostLink =
-		document.location.protocol + '//' + document.location.host + getNewPostLink( note );
+	let host = document.location.host;
+	if ( host === 'widgets.wp.com' ) {
+		host = 'wordpress.com';
+	}
+	const newPostLink = document.location.protocol + '//' + host + getNewPostLink( note );
 	return (
 		<ActionButton
 			{ ...{
