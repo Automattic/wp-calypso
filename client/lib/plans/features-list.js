@@ -1549,7 +1549,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS ]: {
 		getSlug: () => FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS,
-		getTitle: () => i18n.translate( 'Customizable themes, butwqtons, colors' ),
+		getTitle: () => i18n.translate( 'Customizable themes, buttons, colors' ),
 	},
 	[ FEATURE_TRACK_VIEWS_CLICKS ]: {
 		getSlug: () => FEATURE_TRACK_VIEWS_CLICKS,
