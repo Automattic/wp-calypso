@@ -25,6 +25,7 @@ class StatsNavigation extends Component {
 		selectedItem: PropTypes.oneOf( Object.keys( navItems ) ).isRequired,
 		siteId: PropTypes.number,
 		slug: PropTypes.string,
+		isLegacy: PropTypes.bool,
 	};
 
 	isValidItem = ( item ) => {
@@ -50,12 +51,10 @@ class StatsNavigation extends Component {
 	};
 
 	render() {
-		const { slug, selectedItem, interval } = this.props;
+		const { slug, selectedItem, interval, isLegacy } = this.props;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
-
-		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
 
 		return (
 			<div className="stats-navigation">
@@ -80,12 +79,12 @@ class StatsNavigation extends Component {
 								);
 							} ) }
 					</NavTabs>
-					{ ! isNewMainChart && showIntervals && (
+					{ isLegacy && showIntervals && (
 						<Intervals selected={ interval } pathTemplate={ pathTemplate } />
 					) }
 					<FollowersCount />
 				</SectionNav>
-				{ ! isNewMainChart && showIntervals && (
+				{ isLegacy && showIntervals && (
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
 				) }
 			</div>
