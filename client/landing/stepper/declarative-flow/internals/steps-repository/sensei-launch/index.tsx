@@ -36,11 +36,12 @@ const SenseiLaunch = () => {
 	const plugins: InstalledPlugin[] = useSelector( selectSitePlugins );
 	const launchpadUrl = `/setup/sensei/launchpad?siteSlug=${ siteSlug }&siteId=${ siteId }`;
 	const expectedRetries = 15;
+	const maxRetries = 40;
 
 	useEffect( () => {
 		const intervalId = setInterval( () => {
 			const woothemesSensei = plugins.find( ( plugin ) => plugin.slug === 'woothemes-sensei' );
-			if ( ! woothemesSensei?.active ) {
+			if ( ! woothemesSensei?.active && retries < maxRetries ) {
 				setRetries( retries + 1 );
 				dispatch( fetchSitePlugins( siteId ) );
 				return;
