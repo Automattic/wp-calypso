@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import { localize } from 'i18n-calypso';
+import { localize, hasTranslation } from 'i18n-calypso';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -125,7 +125,10 @@ export class SiteNotice extends Component {
 		const showJitms =
 			! this.props.isSiteWPForTeams && ( discountOrFreeToPaid || config.isEnabled( 'jitms' ) );
 
-		const showLaunchpadNotice = site.options?.launchpad_screen === 'full';
+		const showLaunchpadNotice =
+			site.options?.launchpad_screen === 'full' &&
+			hasTranslation( 'Keep setting up your site' ) &&
+			hasTranslation( 'Next Steps' );
 		let SidebarNotice = null;
 
 		if ( showJitms ) {
