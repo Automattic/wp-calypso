@@ -1,6 +1,4 @@
 .store-stats-orders-chart {
-	padding: 0;
-
 	.stats-tabs {
 		display: flex;
 		flex-direction: column;
@@ -37,14 +35,14 @@
 			}
 
 			.store-stats-orders-chart__value.value {
-				display: inline-block;
+				display: block;
 				font-size: $font-title-small;
-				font-weight: 400;
+				font-weight: 500;
 				margin-top: 4px;
 			}
 
 			.delta {
-				margin-top: 8px;
+				margin-top: 4px;
 				width: initial;
 			}
 
