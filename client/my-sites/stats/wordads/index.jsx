@@ -229,6 +229,7 @@ class WordAds extends Component {
 													query={ query }
 													statsType="statsAds"
 													showQueryDate
+													isShort
 												/>
 											</StatsPeriodNavigation>
 											<Intervals
@@ -279,6 +280,7 @@ class WordAds extends Component {
 													query={ query }
 													statsType="statsAds"
 													showQueryDate
+													isShort
 												/>
 											</StatsPeriodNavigation>
 										</StickyPanel>

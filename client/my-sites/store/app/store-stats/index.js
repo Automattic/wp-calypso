@@ -107,6 +107,7 @@ class StoreStats extends Component {
 											query={ orderQuery }
 											statsType="statsOrders"
 											showQueryDate
+											isShort
 										/>
 									</StatsPeriodNavigation>
 									<Intervals selected={ unit } pathTemplate={ pathTemplate } compact={ false } />
@@ -147,6 +148,7 @@ class StoreStats extends Component {
 										query={ orderQuery }
 										statsType="statsOrders"
 										showQueryDate
+										isShort
 									/>
 								</StatsPeriodNavigation>
 							</>

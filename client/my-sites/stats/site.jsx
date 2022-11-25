@@ -267,6 +267,7 @@ class StatsSite extends Component {
 										query={ query }
 										statsType="statsTopPosts"
 										showQueryDate
+										isShort
 									/>
 								</StatsPeriodNavigation>
 								<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
