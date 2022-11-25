@@ -89,7 +89,8 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordT
 			// Only allow one `subject:` filter
 			updatedInput = updatedInput.replace( /(subject):([\w-]*[\s|$])(?=.*\1)/gi, '' );
 
-			updateInput( insertSuggestion( suggestion, searchInput, cursorPosition ) );
+			// Strip filters and excess whitespace
+			updateInput( updatedInput.replace( /\s+/g, ' ' ).trim() );
 			closeSearch();
 		}
 	};
