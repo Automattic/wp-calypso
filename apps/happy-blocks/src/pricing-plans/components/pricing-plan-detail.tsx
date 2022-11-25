@@ -28,7 +28,7 @@ const PricingPlanDetail: FunctionComponent< BlockSaveProps< BlockAttributes > & 
 
 	const CtaLink = attributes.domain
 		? `https://wordpress.com/checkout/${ attributes.domain }/${ plan.pathSlug }`
-		: `https://wordpress.com/checkout`;
+		: `https://wordpress.com/pricing`;
 
 	return (
 		<section className="hb-pricing-plans-embed__detail">
