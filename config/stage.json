@@ -53,7 +53,6 @@
 		"jetpack/plugin-management": true,
 		"jetpack/pricing-add-boost-social": true,
 		"jetpack/pricing-page-annual-only": true,
-		"jetpack/pricing-page-rework-v1": true,
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack/standalone-plugin-onboarding-update-v1": false,
 		"jitms": true,
