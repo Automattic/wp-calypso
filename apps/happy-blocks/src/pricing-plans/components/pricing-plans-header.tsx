@@ -10,15 +10,21 @@ interface Props {
 }
 
 const PricingPlansHeader: FunctionComponent< Props > = ( { plan, attributes } ) => {
+	const learnMoreLink = attributes.domain
+		? `https://wordpress.com/plans/${ attributes.domain }`
+		: `https://wordpress.com/plans`;
+
 	return (
 		<section className="hb-pricing-plans-embed__header">
 			<div className="hb-pricing-plans-embed__header-label">{ plan.getTitle() }</div>
-			<div className="hb-pricing-plans-embed__header-domain">
-				{
-					// translators: %s is the domain name of the plan
-					sprintf( __( 'for %s', 'happy-blocks' ), attributes.domain )
-				}
-			</div>
+			{ attributes.domain && (
+				<div className="hb-pricing-plans-embed__header-domain">
+					{
+						// translators: %s is the domain name of the plan
+						sprintf( __( 'for %s', 'happy-blocks' ), attributes.domain )
+					}
+				</div>
+			) }
 			<div className="hb-pricing-plans-embed__header-description">
 				<p>{ plan.getDescription() }</p>
 				<p>
@@ -26,7 +32,7 @@ const PricingPlansHeader: FunctionComponent< Props > = ( { plan, attributes } ) 
 						a: (
 							<a
 								target="_blank"
-								href={ `https://wordpress.com/plans/${ attributes.domain }` }
+								href={ learnMoreLink }
 								rel="noreferrer"
 							/>
 						),

@@ -26,16 +26,17 @@ const PricingPlanDetail: FunctionComponent< BlockSaveProps< BlockAttributes > & 
 		} );
 	};
 
+	const CtaLink = attributes.domain
+		? `https://wordpress.com/checkout/${ attributes.domain }/${ plan.pathSlug }`
+		: `https://wordpress.com/checkout`;
+
 	return (
 		<section className="hb-pricing-plans-embed__detail">
 			<div>
 				<BillingInfo plan={ plan } />
 				<BillingOptions plans={ plans } value={ attributes.productSlug } onChange={ setPlan } />
 			</div>
-			<BillingButton
-				onClick={ onCtaClick }
-				href={ `https://wordpress.com/checkout/${ attributes.domain }/${ plan.pathSlug }` }
-			>
+			<BillingButton onClick={ onCtaClick } href={ CtaLink }>
 				{ plan.upgradeLabel }
 			</BillingButton>
 		</section>
