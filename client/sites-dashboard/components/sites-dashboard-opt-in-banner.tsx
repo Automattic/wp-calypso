@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { useBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useDispatch } from 'react-redux';
@@ -40,6 +41,7 @@ const NoticeActions = styled.div( {
 	gap: '16px',
 	alignItems: 'center',
 	padding: '16px',
+	flexShrink: 0,
 } );
 
 const EVENT_PREFIX = 'calypso_sites_as_landing_page';
@@ -55,6 +57,7 @@ const hasDismissedTheBannerRecently = ( {
 };
 
 export const SitesDashboardOptInBanner = ( { sites }: SitesDashboardOptInBannerProps ) => {
+	const isSmallScreen = useBreakpoint( '<660px' );
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const [ landingPagePreference, setLandingPagePreference ] = useAsyncPreference( {
@@ -63,6 +66,7 @@ export const SitesDashboardOptInBanner = ( { sites }: SitesDashboardOptInBannerP
 	} );
 
 	if (
+		isSmallScreen ||
 		sites.length < 2 ||
 		landingPagePreference === 'none' ||
 		landingPagePreference.useSitesAsLandingPage ||
