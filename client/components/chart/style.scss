@@ -217,10 +217,6 @@ $y-axis-padding: 0 20px;
 	left: 23.33%;
 	border-top-left-radius: $barChartBorderRadius;
 	border-top-right-radius: $barChartBorderRadius;
-
-	.chart__bar.is-selected & {
-		background-color: var(--color-accent-dark);
-	}
 }
 
 // Chart legend (wrapper)
