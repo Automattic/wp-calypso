@@ -3,6 +3,7 @@ import { Card, Button } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import wpToJpImageRtl from 'calypso/assets/images/jetpack/wp-to-jp-rtl.svg';
 import wpToJpImage from 'calypso/assets/images/jetpack/wp-to-jp.svg';
 import AppsBadge from 'calypso/blocks/get-apps/apps-badge';
 import CardHeading from 'calypso/components/card-heading';
