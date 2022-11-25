@@ -1,11 +1,13 @@
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 
 interface SitesDashboardOptInBannerProps {
 	sites: SiteExcerptData[];
@@ -42,8 +44,10 @@ const EVENT_PREFIX = 'calypso_sites_as_landing_page';
 export const SitesDashboardOptInBanner = ( { sites }: SitesDashboardOptInBannerProps ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
+	const hasReceivedPreferences = useSelector( hasReceivedRemotePreferences );
+	const hasOptedInToSitesAsLandingPage = useSelector( hasSitesAsLandingPage );
 
-	if ( sites.length < 2 ) {
+	if ( sites.length < 2 || ! hasReceivedPreferences || hasOptedInToSitesAsLandingPage ) {
 		return null;
 	}
 
