@@ -51,6 +51,7 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 	const isThirdParty = isEnabled( 'themes/subscription-purchases' ) || false;
 
 	const getStandardPurchaseModalData = (): UpgradeModalContent => {
+		const premiumPlanName = premiumPlanProduct?.product_name;
 		const premiumPlanPrice = premiumPlanProduct?.combined_cost_display;
 
 		return {
@@ -74,7 +75,13 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 								}
 						  )
 						: translate(
-								'You can purchase a subscription to use this theme or join the Premium plan to get it for free.'
+								"This theme requires %(premiumPlanName)s to unlock. It's %(premiumPlanPrice)s a year, risk-free with a 14-day money-back guarantee.",
+								{
+									args: {
+										premiumPlanName,
+										premiumPlanPrice,
+									},
+								}
 						  ) }
 				</p>
 			),
