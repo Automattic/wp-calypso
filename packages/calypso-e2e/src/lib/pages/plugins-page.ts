@@ -79,6 +79,8 @@ export class PluginsPage {
 	async visit( site = '' ): Promise< void > {
 		await this.page.goto( getCalypsoURL( `plugins/${ site }` ), {
 			waitUntil: 'networkidle',
+			// Manual override of the timeout - `networkidle` can take longer
+			// to fire, especially for Simple sites.
 			timeout: 15 * 1000,
 		} );
 	}

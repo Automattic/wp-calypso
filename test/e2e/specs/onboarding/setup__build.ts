@@ -59,8 +59,8 @@ describe(
 			} );
 
 			it( 'Land in Home dashboard', async function () {
-				// This process takes a long time.
 				await page.waitForURL( DataHelper.getCalypsoURL( `/home/${ siteSlug }` ), {
+					// This process takes a long time, uncertain why.
 					timeout: 30 * 1000,
 				} );
 			} );
