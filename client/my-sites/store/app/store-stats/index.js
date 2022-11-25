@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
@@ -51,15 +50,10 @@ class StoreStats extends Component {
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ store.path }/{{ interval }}${ slugPath }`;
 
-		// New feature gate
-		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
 		const statsWrapperClass = classNames( 'stats-content', {
-			'stats--new-main-chart': isNewMainChart,
 			'is-period-year': unit === 'year',
 		} );
-		const mainWrapperClass = classNames( 'store-stats', 'woocommerce', {
-			'stats--new-wrapper': isNewMainChart,
-		} );
+		const mainWrapperClass = classNames( 'store-stats', 'woocommerce' );
 
 		return (
 			<Main className={ mainWrapperClass } fullWidthLayout>
@@ -86,50 +80,8 @@ class StoreStats extends Component {
 					<StatsNavigation selectedItem="store" siteId={ siteId } slug={ slug } interval={ unit } />
 
 					<div id="my-stats-content" className={ statsWrapperClass }>
-						{ isNewMainChart ? (
-							<>
-								<StatsPeriodHeader>
-									<StatsPeriodNavigation
-										date={ selectedDate }
-										period={ unit }
-										url={ `/store/stats/orders/${ unit }/${ slug }` }
-									>
-										<DatePicker
-											period={ unit }
-											// this is needed to counter the +1d adjustment made in DatePicker for weeks
-											date={
-												unit === 'week'
-													? moment( selectedDate, 'YYYY-MM-DD' )
-															.subtract( 1, 'days' )
-															.format( 'YYYY-MM-DD' )
-													: selectedDate
-											}
-											query={ orderQuery }
-											statsType="statsOrders"
-											showQueryDate
-											isShort
-										/>
-									</StatsPeriodNavigation>
-									<Intervals selected={ unit } pathTemplate={ pathTemplate } compact={ false } />
-								</StatsPeriodHeader>
-
-								<Chart
-									query={ orderQuery }
-									selectedDate={ endSelectedDate }
-									siteId={ siteId }
-									unit={ unit }
-									slug={ slug }
-								/>
-							</>
-						) : (
-							<>
-								<Chart
-									query={ orderQuery }
-									selectedDate={ endSelectedDate }
-									siteId={ siteId }
-									unit={ unit }
-									slug={ slug }
-								/>
+						<>
+							<StatsPeriodHeader>
 								<StatsPeriodNavigation
 									date={ selectedDate }
 									period={ unit }
@@ -151,8 +103,17 @@ class StoreStats extends Component {
 										isShort
 									/>
 								</StatsPeriodNavigation>
-							</>
-						) }
+								<Intervals selected={ unit } pathTemplate={ pathTemplate } compact={ false } />
+							</StatsPeriodHeader>
+
+							<Chart
+								query={ orderQuery }
+								selectedDate={ endSelectedDate }
+								siteId={ siteId }
+								unit={ unit }
+								slug={ slug }
+							/>
+						</>
 
 						<div className="store-stats__widgets">
 							{ sparkWidgets.map( ( widget, index ) => (
