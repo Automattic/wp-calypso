@@ -128,6 +128,7 @@ $calypso-header-height: 31px;
 	}
 
 	.plugin-details__actions {
+		position: relative;
 		grid-area: actions;
 		background-color: var(--studio-gray-0);
 		padding: 40px;

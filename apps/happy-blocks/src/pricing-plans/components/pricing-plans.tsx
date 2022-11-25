@@ -21,7 +21,7 @@ const PricingPlans: FunctionComponent<
 
 	return (
 		<div className="hb-pricing-plans-embed">
-			<PricingPlansHeader plan={ currentPlan } />
+			<PricingPlansHeader attributes={ attributes } plan={ currentPlan } />
 			<PricingPlanDetail
 				plan={ currentPlan }
 				plans={ plans }

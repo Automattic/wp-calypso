@@ -92,6 +92,7 @@ const fallbackFilter = () => true;
 export function useGetProductVariants(
 	siteId: number | undefined,
 	productSlug: string,
+	currentQuantity: number | null,
 	filterCallback?: VariantFilterCallback
 ): WPCOMProductVariant[] {
 	const translate = useTranslate();
@@ -102,7 +103,7 @@ export function useGetProductVariants(
 	debug( 'variantProductSlugs', variantProductSlugs );
 
 	const variantsWithPrices: AvailableProductVariant[] = useSelector( ( state ) => {
-		return computeProductsWithPrices( state, siteId, variantProductSlugs );
+		return computeProductsWithPrices( state, siteId, variantProductSlugs, currentQuantity );
 	} );
 
 	const [ haveFetchedProducts, setHaveFetchedProducts ] = useState( false );

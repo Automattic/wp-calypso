@@ -164,9 +164,32 @@ function removeUserStepFromFlow( flow ) {
 		return;
 	}
 
+	// TODO: A more general middle destination fallback mechanism is needed
+	// The `midDestination` mechanism is tied to a specific step in the flow configuration.
+	// If it happens to be the user step, then we the middle destination is also removed.
+	// For addressing Automattic/martech#1260, here we introduce a limited fallback mechanism that only works
+	// for the user step. Whenever a step that provides an auth token is removed, we simply tie the middle destination
+	// to its previous step. If it's the first step, then it will be removed all together atm.
+	const steps = [];
+	let prevStep = flow.steps[ 0 ];
+
+	for ( const curStep of flow.steps ) {
+		if ( stepConfig[ curStep ].providesToken ) {
+			const curStepMiddleDestination = flow.middleDestination && flow.middleDestination[ curStep ];
+			if ( curStepMiddleDestination ) {
+				flow.middleDestination[ prevStep ] = curStepMiddleDestination;
+			}
+			prevStep = curStep;
+			continue;
+		}
+
+		steps.push( curStep );
+		prevStep = curStep;
+	}
+
 	return {
 		...flow,
-		steps: reject( flow.steps, ( stepName ) => stepConfig[ stepName ].providesToken ),
+		steps,
 	};
 }
 
