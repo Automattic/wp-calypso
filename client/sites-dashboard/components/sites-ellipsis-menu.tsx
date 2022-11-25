@@ -1,10 +1,12 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
-import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem } from '@wordpress/components';
+import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem, Modal } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { ComponentType } from 'react';
+import { ComponentType, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import SitePreviewLink from 'calypso/components/site-preview-link';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
@@ -107,6 +109,39 @@ const HostingConfigItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	);
 };
 
+const ModalContent = styled.div`
+	padding: 16px;
+	width: 80vw;
+	max-width: 480px;
+	min-height: 100px;
+	display: flex;
+	flex-direction: column;
+`;
+
+const PreviewSiteModalItem = ( { recordTracks }: SitesMenuItemProps ) => {
+	const { __ } = useI18n();
+	const [ isVisible, setIsVisible ] = useState( false );
+	const openModal = () => setIsVisible( true );
+	const closeModal = () => setIsVisible( false );
+
+	const onSitePreviewClick = () => {
+		recordTracks( 'calypso_sites_dashboard_site_action_preview_link_click' );
+		openModal();
+	};
+	return (
+		<>
+			<MenuItemLink onClick={ onSitePreviewClick }>{ __( 'Share site for preview' ) }</MenuItemLink>
+			{ isVisible && (
+				<Modal title={ __( 'Share site for preview' ) } onRequestClose={ closeModal }>
+					<ModalContent>
+						<SitePreviewLink />
+					</ModalContent>
+				</Modal>
+			) }
+		</>
+	);
+};
+
 const ExternalGridIcon = styled( Gridicon )( {
 	insetBlockStart: '-1px',
 	marginInlineStart: '4px',
@@ -171,6 +206,9 @@ export const SitesEllipsisMenu = ( {
 					<SettingsItem { ...props } />
 					<ManagePluginsItem { ...props } />
 					{ ! isNotAtomicJetpack( site ) && <HostingConfigItem { ...props } /> }
+					{ isEnabled( 'dev/share-site-for-preview' ) && site.is_coming_soon && (
+						<PreviewSiteModalItem { ...props } />
+					) }
 					<WpAdminItem { ...props } />
 				</SiteMenuGroup>
 			) }
