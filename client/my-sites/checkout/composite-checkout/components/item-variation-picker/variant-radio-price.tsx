@@ -32,7 +32,13 @@ const Variant = styled.div`
 	width: 100%;
 `;
 
-const Label = styled.span`
+const VariantTermLabel = styled.span`
+	display: flex;
+	flex-direction: column;
+`;
+
+const PriceArea = styled.span`
+	text-align: right;
 	display: flex;
 	flex-direction: column;
 `;
@@ -50,11 +56,7 @@ const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent
 	);
 };
 
-const PriceArea = styled.span`
-	text-align: right;
-`;
-
-const SubText = styled.div`
+const VariantBillingTotal = styled.div`
 	font-size: small;
 	color: #777;
 `;
@@ -75,11 +77,6 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 	const pricePerMonthFormatted = formatCurrency( variant.pricePerMonth, variant.currency, {
 		stripZeros: true,
 	} );
-	const subText = translate( 'Billed as one payment of %(totalPrice)s', {
-		args: {
-			totalPrice: formattedCurrentPrice,
-		},
-	} );
 
 	const shouldShowMonthlyPrice =
 		compareTo?.termIntervalInMonths === 1 || variant.termIntervalInMonths === 1;
@@ -98,12 +95,19 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 		} );
 	} )();
 
+	const shouldShowBillingTotal = variant.termIntervalInMonths !== compareTo?.termIntervalInMonths;
+	const billingTotal = translate( 'Billed as one payment of %(totalPrice)s', {
+		args: {
+			totalPrice: formattedCurrentPrice,
+		},
+	} );
+
 	return (
 		<Variant>
-			<Label>
+			<VariantTermLabel>
 				{ variant.variantLabel }
-				{ variant.termIntervalInMonths === 24 && <SubText>{ subText }</SubText> }
-			</Label>
+				{ shouldShowBillingTotal && <VariantBillingTotal>{ billingTotal }</VariantBillingTotal> }
+			</VariantTermLabel>
 			<PriceArea>
 				<Price>{ priceDisplay }</Price>
 				{ discountPercentage > 0 && <DiscountPercentage percent={ discountPercentage } /> }
