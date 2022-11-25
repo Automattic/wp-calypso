@@ -1,13 +1,16 @@
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
+import { useAsyncPreference } from 'calypso/state/preferences/use-async-preference';
+import {
+	SITES_AS_LANDING_PAGE_DEFAULT_VALUE,
+	SITES_AS_LANDING_PAGE_PREFERENCE,
+} from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 
 interface SitesDashboardOptInBannerProps {
 	sites: SiteExcerptData[];
@@ -41,21 +44,46 @@ const NoticeActions = styled.div( {
 
 const EVENT_PREFIX = 'calypso_sites_as_landing_page';
 
+const ONE_DAY_IN_MILLISECONDS = 86400 * 1000;
+
+const hasDismissedTheBannerRecently = ( {
+	updatedAt,
+}: typeof SITES_AS_LANDING_PAGE_DEFAULT_VALUE ) => {
+	const fourteenDaysAgo = new Date().valueOf() - ONE_DAY_IN_MILLISECONDS * 14;
+
+	return updatedAt > fourteenDaysAgo;
+};
+
 export const SitesDashboardOptInBanner = ( { sites }: SitesDashboardOptInBannerProps ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
-	const hasReceivedPreferences = useSelector( hasReceivedRemotePreferences );
-	const hasOptedInToSitesAsLandingPage = useSelector( hasSitesAsLandingPage );
+	const [ landingPagePreference, setLandingPagePreference ] = useAsyncPreference( {
+		defaultValue: SITES_AS_LANDING_PAGE_DEFAULT_VALUE,
+		preferenceName: SITES_AS_LANDING_PAGE_PREFERENCE,
+	} );
 
-	if ( sites.length < 2 || ! hasReceivedPreferences || hasOptedInToSitesAsLandingPage ) {
+	if (
+		sites.length < 2 ||
+		landingPagePreference === 'none' ||
+		landingPagePreference.useSitesAsLandingPage ||
+		hasDismissedTheBannerRecently( landingPagePreference )
+	) {
 		return null;
 	}
 
 	const handleAccept = () => {
+		setLandingPagePreference( {
+			useSitesAsLandingPage: true,
+			updatedAt: new Date().valueOf(),
+		} );
 		dispatch( recordTracksEvent( `${ EVENT_PREFIX }_accepted` ) );
 	};
 
 	const handleDismiss = () => {
+		setLandingPagePreference( {
+			useSitesAsLandingPage: false,
+			updatedAt: new Date().valueOf(),
+		} );
 		dispatch( recordTracksEvent( `${ EVENT_PREFIX }_rejected` ) );
 	};
 

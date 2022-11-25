@@ -8,7 +8,9 @@ interface UseAsyncPreferenceOptions< T > {
 	preferenceName: string;
 }
 
-export const useAsyncPreference = < T extends string >( {
+type AllowedPreferenceValues = Parameters< typeof savePreference >[ 1 ];
+
+export const useAsyncPreference = < T extends AllowedPreferenceValues >( {
 	defaultValue,
 	preferenceName,
 }: UseAsyncPreferenceOptions< T > ) => {
