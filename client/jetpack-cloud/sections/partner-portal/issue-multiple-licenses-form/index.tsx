@@ -99,6 +99,8 @@ export default function IssueMultipleLicensesForm( {
 		( product ) => {
 			// A bundle cannot be combined with other products.
 			if ( isJetpackBundle( product.slug ) ) {
+				dispatch( clearSelectedProductSlugs() );
+				dispatch( addSelectedProductSlugs( [ product.slug ] ) );
 				return;
 			}
 
