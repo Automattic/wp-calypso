@@ -58,37 +58,26 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 			text: (
 				<p>
 					{ translate(
-						'You can purchase a subscription to use this theme or join the Premium plan to get it for free.'
+						"Get access to our Premium themes, and a ton of other features, with a subscription to the Premium plan. It's {{strong}}%s{{/strong}} a year, risk-free with a 14-day money-back guarantee.",
+						{
+							components: {
+								strong: <strong />,
+							},
+							args: premiumPlanPrice,
+						}
 					) }
 				</p>
 			),
-			price: (
-				<div className="upgrade-modal__theme-price">
-					{ translate( '{{span}}%(premiumPlanPrice)s{{/span}} per year', {
-						components: {
-							span: <span />,
-						},
-						args: {
-							premiumPlanPrice,
-						},
-					} ) }
-				</div>
-			),
+			price: null,
 			action: (
-				<>
-					<div className="upgrade-modal__actions">
-						<Button className="upgrade-modal__upgrade" primary onClick={ () => checkout() }>
-							{ translate( 'Buy and activate theme' ) }
-						</Button>
-					</div>
-					<p className="upgrade-modal__plan-nudge">
-						{ translate( 'or get it for free when on the {{button}}Premium plan{{/button}}', {
-							components: {
-								button: <Button onClick={ () => checkout() } plain />,
-							},
-						} ) }
-					</p>
-				</>
+				<div className="upgrade-modal__actions bundle">
+					<Button className="upgrade-modal__cancel" onClick={ () => closeModal() }>
+						{ translate( 'Cancel' ) }
+					</Button>
+					<Button className="upgrade-modal__upgrade-plan" primary onClick={ () => checkout() }>
+						{ translate( 'Upgrade to activate' ) }
+					</Button>
+				</div>
 			),
 		};
 	};
