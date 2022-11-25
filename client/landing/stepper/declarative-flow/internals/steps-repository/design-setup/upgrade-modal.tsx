@@ -51,8 +51,8 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 	const isThirdParty = isEnabled( 'themes/subscription-purchases' ) || false;
 
 	const getStandardPurchaseModalData = (): UpgradeModalContent => {
-		const premiumPlanName = premiumPlanProduct?.product_name;
-		const premiumPlanPrice = premiumPlanProduct?.combined_cost_display;
+		const planName = premiumPlanProduct?.product_name;
+		const planPrice = premiumPlanProduct?.combined_cost_display;
 
 		return {
 			header: (
@@ -71,15 +71,15 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 									components: {
 										strong: <strong />,
 									},
-									args: premiumPlanPrice,
+									args: planPrice,
 								}
 						  )
 						: translate(
-								"This theme requires %(premiumPlanName)s to unlock. It's %(premiumPlanPrice)s a year, risk-free with a 14-day money-back guarantee.",
+								"This theme requires %(planName)s to unlock. It's %(planPrice)s a year, risk-free with a 14-day money-back guarantee.",
 								{
 									args: {
-										premiumPlanName,
-										premiumPlanPrice,
+										planName,
+										planPrice,
 									},
 								}
 						  ) }
