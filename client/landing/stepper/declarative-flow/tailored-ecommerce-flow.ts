@@ -96,18 +96,20 @@ export const ecommerceFlow: Flow = {
 					}
 
 					if ( providedDependencies?.siteSlug ) {
-						const destination = `/setup/${ flowName }/checkPlan?siteSlug=${ siteSlug }`;
+						const destination = `/setup/${ flowName }/checkPlan?siteSlug=${ siteSlug }&flags=signup/tailored-ecommerce`;
 						persistSignupDestination( destination );
 						setSignupCompleteSlug( siteSlug );
 						setSignupCompleteFlowName( flowName );
 
 						// The site is coming from the checkout already Atomic (and with the new URL)
 						// There's probably a better way of handling this change
-						const returnUrl = encodeURIComponent(
-							`/setup/${ flowName }/checkPlan?theme=${
-								selectedDesign?.slug
-							}&siteSlug=${ siteSlug.replace( '.wordpress.com', '.wpcomstaging.com' ) }`
-						);
+						const urlParams = new URLSearchParams( {
+							theme: selectedDesign?.slug || '',
+							siteSlug: siteSlug.replace( '.wordpress.com', '.wpcomstaging.com' ),
+							flags: 'signup/tailored-ecommerce',
+						} );
+
+						const returnUrl = encodeURIComponent( `/setup/${ flowName }/checkPlan?${ urlParams }` );
 
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
