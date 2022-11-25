@@ -96,7 +96,7 @@ export const ecommerceFlow: Flow = {
 					}
 
 					if ( providedDependencies?.siteSlug ) {
-						const destination = `/setup/${ flowName }/checkPlan?siteSlug=${ siteSlug }`;
+						const destination = `/setup/${ flowName }/checkPlan?siteSlug=${ siteSlug }&flags=signup/tailored-ecommerce`;
 						persistSignupDestination( destination );
 						setSignupCompleteSlug( siteSlug );
 						setSignupCompleteFlowName( flowName );
@@ -106,7 +106,10 @@ export const ecommerceFlow: Flow = {
 						const returnUrl = encodeURIComponent(
 							`/setup/${ flowName }/checkPlan?theme=${
 								selectedDesign?.slug
-							}&siteSlug=${ siteSlug.replace( '.wordpress.com', '.wpcomstaging.com' ) }`
+							}&flags=signup/tailored-ecommerce&siteSlug=${ siteSlug.replace(
+								'.wordpress.com',
+								'.wpcomstaging.com'
+							) }`
 						);
 
 						return window.location.assign(
