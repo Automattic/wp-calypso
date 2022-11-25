@@ -1,22 +1,28 @@
 import config from '@automattic/calypso-config';
-import page from 'page';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import globalPageInstance from 'page';
+import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { fetchPreferences } from 'calypso/state/preferences/actions';
+import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { requestSite } from 'calypso/state/sites/actions';
 import { canCurrentUserUseCustomerHome, getSite, getSiteSlug } from 'calypso/state/sites/selectors';
 
-export default function () {
+/**
+ * @param clientRouter Unused. We can't use the isomorphic router because we want to do redirects.
+ * @param page Used to create isolated unit tests. Default behaviour uses the global 'page' router.
+ */
+export default function ( clientRouter, page = globalPageInstance ) {
 	page( '/', ( context ) => {
 		const isLoggedIn = isUserLoggedIn( context.store.getState() );
 		if ( isLoggedIn ) {
-			handleLoggedIn( context );
+			handleLoggedIn( page, context );
 		} else {
-			handleLoggedOut();
+			handleLoggedOut( page );
 		}
 	} );
 }
 
-function handleLoggedOut() {
+function handleLoggedOut( page ) {
 	if ( config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
 		page.redirect( '/devdocs/start' );
 	} else if ( config.isEnabled( 'jetpack-cloud' ) ) {
@@ -24,6 +30,16 @@ function handleLoggedOut() {
 			page.redirect( '/connect' );
 		}
 	}
+}
+
+async function handleLoggedIn( page, context ) {
+	let redirectPath = await getLoggedInLandingPage( context.store );
+
+	if ( context.querystring ) {
+		redirectPath += `?${ context.querystring }`;
+	}
+
+	page.redirect( redirectPath );
 }
 
 // Helper thunk that ensures that the requested site info is fetched into Redux state before we
@@ -41,30 +57,52 @@ const waitForSite = ( siteId ) => async ( dispatch, getState ) => {
 	}
 };
 
-async function handleLoggedIn( context ) {
+// Helper thunk that ensures that the user preferences has been fetched into Redux state before we
+// continue working with it.
+const waitForPrefs = () => async ( dispatch, getState ) => {
+	if ( hasReceivedRemotePreferences( getState() ) ) {
+		return;
+	}
+
+	try {
+		await dispatch( fetchPreferences() );
+	} catch {
+		// if the fetching of preferences fails, return gracefully and proceed to the next landing page candidate
+	}
+};
+
+async function getLoggedInLandingPage( { dispatch, getState } ) {
+	if ( config.isEnabled( 'sites-as-landing-page' ) ) {
+		await dispatch( waitForPrefs() );
+		const useSitesAsLandingPage = getPreference(
+			getState(),
+			'sites-landing-page'
+		)?.useSitesAsLandingPage;
+
+		const siteCount = getCurrentUser( getState() )?.site_count;
+
+		if ( useSitesAsLandingPage && siteCount > 1 ) {
+			return '/sites';
+		}
+	}
+
 	// determine the primary site ID (it's a property of "current user" object) and then
 	// ensure that the primary site info is loaded into Redux before proceeding.
-	const primarySiteId = getPrimarySiteId( context.store.getState() );
-	await context.store.dispatch( waitForSite( primarySiteId ) );
+	const primarySiteId = getPrimarySiteId( getState() );
+	await dispatch( waitForSite( primarySiteId ) );
 
-	const state = context.store.getState();
-	const siteSlug = getSiteSlug( state, primarySiteId );
-	const isCustomerHomeEnabled = canCurrentUserUseCustomerHome( state, primarySiteId );
+	const primarySiteSlug = getSiteSlug( getState(), primarySiteId );
 
-	let redirectPath;
-
-	if ( ! siteSlug ) {
+	if ( ! primarySiteSlug ) {
 		// there is no primary site or the site info couldn't be fetched. Redirect to Reader.
-		redirectPath = '/read';
-	} else if ( isCustomerHomeEnabled ) {
-		redirectPath = `/home/${ siteSlug }`;
-	} else {
-		redirectPath = `/stats/${ siteSlug }`;
+		return '/read';
 	}
 
-	if ( context.querystring ) {
-		redirectPath += `?${ context.querystring }`;
+	const isCustomerHomeEnabled = canCurrentUserUseCustomerHome( getState(), primarySiteId );
+
+	if ( isCustomerHomeEnabled ) {
+		return `/home/${ primarySiteSlug }`;
 	}
 
-	page.redirect( redirectPath );
+	return `/stats/${ primarySiteSlug }`;
 }

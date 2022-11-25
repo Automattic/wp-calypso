@@ -3,7 +3,11 @@ import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { useIsWebPayAvailable, isValueTruthy } from '@automattic/wpcom-checkout';
+import {
+	useStripePaymentRequest,
+	usePaymentRequestOptions,
+	isValueTruthy,
+} from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
@@ -325,17 +329,16 @@ export default function CheckoutMain( {
 		} );
 	} );
 
-	const {
-		isApplePayAvailable,
-		isGooglePayAvailable,
-		isLoading: isWebPayLoading,
-	} = useIsWebPayAvailable(
-		stripe,
-		stripeConfiguration,
-		!! stripeLoadingError,
-		responseCart.currency,
-		responseCart.total_cost_integer
-	);
+	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration, cartKey );
+	const { allowedPaymentTypes: allowedWebPayTypes, isLoading: isWebPayLoading } =
+		useStripePaymentRequest( {
+			paymentRequestOptions,
+			// No callback is needed here; this is being used only to determine what
+			// payment methods are available.
+			onSubmit: () => undefined,
+			stripe,
+		} );
+	const { applePay: isApplePayAvailable, googlePay: isGooglePayAvailable } = allowedWebPayTypes;
 
 	const paymentMethodObjects = useCreatePaymentMethods( {
 		isStripeLoading,

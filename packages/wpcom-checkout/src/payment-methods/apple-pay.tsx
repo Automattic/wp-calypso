@@ -77,15 +77,14 @@ export function ApplePaySubmitButton( {
 		},
 		[ onClick, stripe, stripeConfiguration ]
 	);
-	const { paymentRequest, canMakePayment, isLoading } = useStripePaymentRequest( {
-		webPaymentType: 'apple-pay',
+	const { paymentRequest, allowedPaymentTypes, isLoading } = useStripePaymentRequest( {
 		paymentRequestOptions,
 		onSubmit,
 		stripe,
 	} );
 	debug( 'apple-pay button isLoading', isLoading );
 
-	if ( ! isLoading && ! canMakePayment ) {
+	if ( ! isLoading && ! allowedPaymentTypes.applePay ) {
 		// This should never occur because we should not display this payment
 		// method as an option if it is not supported.
 		throw new Error( 'This payment type is not supported' );

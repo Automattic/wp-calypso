@@ -9,6 +9,7 @@ import { parse as parseQs, stringify as stringifyQs } from 'qs';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
+import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -183,7 +184,7 @@ class WordAds extends Component {
 				<div className="stats">
 					<FormattedHeader
 						brandFont
-						className="wordads__section-header"
+						className="stats__section-header"
 						headerText={ translate( 'Jetpack Stats' ) }
 						subHeaderText={ translate( 'See how ads are performing on your site.' ) }
 						align="left"
@@ -191,7 +192,7 @@ class WordAds extends Component {
 
 					{ ! canAccessAds && (
 						<EmptyContent
-							illustration="/calypso/images/illustrations/illustration-404.svg"
+							illustration={ illustration404 }
 							title={
 								! canUpgradeToUseWordAds
 									? translate( 'You are not authorized to view this page' )

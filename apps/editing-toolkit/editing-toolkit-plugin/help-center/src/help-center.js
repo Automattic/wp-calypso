@@ -65,7 +65,7 @@ function HelpCenterContent() {
 				aria-pressed={ show ? true : false }
 				aria-expanded={ show ? true : false }
 			/>
-			<PromotionalPopover contextRef={ helpIconRef } />
+			<PromotionalPopover iconElement={ helpIconRef } />
 		</>
 	);
 

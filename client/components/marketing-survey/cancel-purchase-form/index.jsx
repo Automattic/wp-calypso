@@ -2,13 +2,6 @@ import {
 	isGSuiteOrGoogleWorkspace,
 	isPlan,
 	isWpComMonthlyPlan,
-	isWpComBusinessPlan,
-	isWpComPersonalPlan,
-	isWpComPremiumPlan,
-	planMatches,
-	TERM_ANNUALLY,
-	TERM_BIENNIALLY,
-	GROUP_WPCOM,
 } from '@automattic/calypso-products';
 import { WPCOM_FEATURES_BACKUPS } from '@automattic/calypso-products/src';
 import { getCurrencyDefaults } from '@automattic/format-currency';
@@ -46,6 +39,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import getSite from 'calypso/state/sites/selectors/get-site';
 import { CANCEL_FLOW_TYPE } from './constants';
 import enrichedSurveyData from './enriched-survey-data';
+import { getUpsellType } from './get-upsell-type';
 import initialSurveyState from './initial-survey-state';
 import nextStep from './next-step';
 import {
@@ -53,6 +47,7 @@ import {
 	nextAdventureOptionsForPurchase,
 } from './options-for-product';
 import PrecancellationChatButton from './precancellation-chat-button';
+import EducationContentStep from './step-components/educational-content-step';
 import FeedbackStep from './step-components/feedback-step';
 import NextAdventureStep from './step-components/next-adventure-step';
 import UpsellStep from './step-components/upsell-step';
@@ -84,7 +79,7 @@ class CancelPurchaseForm extends Component {
 		if ( ! isPlan( this.props.purchase ) ) {
 			steps = [ NEXT_ADVENTURE_STEP ];
 		} else if ( this.state.upsell ) {
-			steps = [ FEEDBACK_STEP, UPSELL_STEP ];
+			steps = [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ];
 		} else if ( this.state.questionTwoOrder.length ) {
 			steps = [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ];
 		}
@@ -134,62 +129,6 @@ class CancelPurchaseForm extends Component {
 		};
 	}
 
-	/**
-	 * Get a related upsell nudge for the chosen reason.
-	 *
-	 * @param {string} reason Selected cancellation reason
-	 * @returns {string} Upsell type
-	 */
-	getUpsellType( reason ) {
-		const { purchase, downgradeClick, freeMonthOfferClick } = this.props;
-		const productSlug = purchase?.productSlug || '';
-
-		if ( ! productSlug ) {
-			return '';
-		}
-
-		const canRefund = !! parseFloat( this.getRefundAmount() );
-
-		if (
-			[ 'cannotUsePlugin', 'cannotUseTheme' ].includes( reason ) &&
-			isWpComBusinessPlan( productSlug )
-		) {
-			return 'business-atomic';
-		}
-
-		if (
-			[ 'cannotUsePlugin', 'cannotUseTheme' ].includes( reason ) &&
-			( isWpComPremiumPlan( productSlug ) || isWpComPersonalPlan( productSlug ) )
-		) {
-			return 'upgrade-atomic';
-		}
-
-		if ( [ 'tooExpensive', 'wantCheaperPlan' ].includes( reason ) && !! downgradeClick ) {
-			if ( isWpComPremiumPlan( productSlug ) ) {
-				return 'downgrade-personal';
-			}
-
-			if (
-				canRefund &&
-				( planMatches( productSlug, { term: TERM_ANNUALLY, group: GROUP_WPCOM } ) ||
-					planMatches( productSlug, { term: TERM_BIENNIALLY, group: GROUP_WPCOM } ) )
-			) {
-				return 'downgrade-monthly';
-			}
-		}
-
-		if (
-			[ 'noTime', 'siteIsNotReady' ].includes( reason ) &&
-			isWpComMonthlyPlan( productSlug ) &&
-			!! freeMonthOfferClick &&
-			! this.state.purchaseIsAlreadyExtended
-		) {
-			return 'free-month-offer';
-		}
-
-		return '';
-	}
-
 	recordEvent = ( name, properties = {} ) => {
 		const { purchase, flowType, isAtomicSite } = this.props;
 
@@ -223,10 +162,17 @@ class CancelPurchaseForm extends Component {
 
 	onTextOneChange = ( eventOrValue ) => {
 		const value = eventOrValue?.currentTarget?.value ?? eventOrValue;
+		const { purchaseIsAlreadyExtended } = this.state;
 		const newState = {
 			...this.state,
 			questionOneText: value,
-			upsell: this.getUpsellType( value ) || '',
+			upsell:
+				getUpsellType( value, {
+					productSlug: this.props.purchase?.productSlug || '',
+					canRefund: !! parseFloat( this.getRefundAmount() ),
+					canDowngrade: !! this.props.downgradeClick,
+					canOfferFreeMonth: !! this.props.freeMonthOfferClick && ! purchaseIsAlreadyExtended,
+				} ) || '',
 		};
 		this.setState( newState );
 	};
@@ -366,7 +312,7 @@ class CancelPurchaseForm extends Component {
 	surveyContent() {
 		const { atomicTransfer, translate, isImport, moment, purchase, site, hasBackupsFeature } =
 			this.props;
-		const { atomicRevertCheckOne, atomicRevertCheckTwo, surveyStep } = this.state;
+		const { atomicRevertCheckOne, atomicRevertCheckTwo, surveyStep, upsell } = this.state;
 
 		if ( surveyStep === FEEDBACK_STEP ) {
 			return (
@@ -382,16 +328,36 @@ class CancelPurchaseForm extends Component {
 		}
 
 		if ( surveyStep === UPSELL_STEP ) {
+			const allSteps = this.getAllSurveySteps();
+			const isLastStep = surveyStep === allSteps[ allSteps.length - 1 ];
+
+			if ( upsell.startsWith( 'education:' ) ) {
+				return (
+					<EducationContentStep
+						type={ upsell }
+						site={ site }
+						onDecline={ isLastStep ? this.onSubmit : this.clickNext }
+						cancellationReason={ this.state.questionOneText }
+					/>
+				);
+			}
+
 			return (
 				<UpsellStep
+					upsell={ this.state.upsell }
+					cancellationReason={ this.state.questionOneText }
 					purchase={ purchase }
 					site={ site }
-					upsell={ this.state.upsell }
 					disabled={ this.state.isSubmitting }
 					refundAmount={ this.getRefundAmount() }
 					downgradePlanPrice={ this.props.downgradePlanPrice }
 					downgradeClick={ this.downgradeClick }
+					closeDialog={ this.closeDialog }
 					cancelBundledDomain={ this.props.cancelBundledDomain }
+					includedDomainPurchase={ this.props.includedDomainPurchase }
+					onDeclineUpsell={ isLastStep ? this.onSubmit : this.clickNext }
+					onClickDowngrade={ this.downgradeClick }
+					onClickFreeMonthOffer={ this.freeMonthOfferClick }
 				/>
 			);
 		}
@@ -581,6 +547,10 @@ class CancelPurchaseForm extends Component {
 		const allSteps = this.getAllSurveySteps();
 		const isLastStep = surveyStep === allSteps[ allSteps.length - 1 ];
 
+		if ( surveyStep === UPSELL_STEP ) {
+			return null;
+		}
+
 		if ( ! isLastStep ) {
 			return (
 				<GutenbergButton
@@ -606,17 +576,6 @@ class CancelPurchaseForm extends Component {
 				>
 					{ this.getFinalActionText() }
 				</GutenbergButton>
-				{ surveyStep === UPSELL_STEP && (
-					<UpsellStep.Button
-						disabled={ isCancelling }
-						isBusy={ isSubmitting && solution }
-						siteSlug={ this.props.site.slug }
-						upsell={ this.state.upsell }
-						closeDialog={ this.closeDialog }
-						freeMonthOfferClick={ this.freeMonthOfferClick }
-						downgradeClick={ this.downgradeClick }
-					/>
-				) }
 			</>
 		);
 	};

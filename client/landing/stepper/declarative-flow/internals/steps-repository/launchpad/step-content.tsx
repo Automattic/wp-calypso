@@ -1,9 +1,11 @@
+import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { NEWSLETTER_FLOW } from 'calypso/../packages/onboarding/src';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import {
 	getCurrentUserEmail,
@@ -28,7 +30,9 @@ function sortByRegistrationDate( domainObjectA: ResponseDomain, domainObjectB: R
 
 const StepContent = ( { siteSlug, submit, goNext, goToStep, flow }: StepContentProps ) => {
 	const site = useSite();
-
+	const adminUrl = useSelect(
+		( select ) => site && select( SITE_STORE ).getSiteOption( site.ID, 'admin_url' )
+	);
 	const { data: allDomains = [] } = useGetDomainsQuery( site?.ID ?? null, {
 		retry: false,
 	} );
@@ -45,7 +49,8 @@ const StepContent = ( { siteSlug, submit, goNext, goToStep, flow }: StepContentP
 
 	const sidebarDomain = nonWpcomDomains?.length ? nonWpcomDomains[ 0 ] : wpcomDomains[ 0 ];
 
-	const iFrameURL = wpcomDomains.length ? wpcomDomains[ 0 ]?.domain : nonWpcomDomains[ 0 ]?.domain;
+	// The adminUrl points to the .wordpress.com domain for this site, so we'll use this for the preview.
+	const iFrameURL = adminUrl ? new URL( adminUrl as string ).host : null;
 
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const email = useSelector( getCurrentUserEmail );
@@ -60,7 +65,7 @@ const StepContent = ( { siteSlug, submit, goNext, goToStep, flow }: StepContentP
 	}, [ email, isEmailVerified ] );
 
 	return (
-		<div className="launchpad__container">
+		<main className="launchpad__container">
 			{ showEmailValidationBanner && (
 				<EmailValidationBanner
 					email={ email }
@@ -78,7 +83,7 @@ const StepContent = ( { siteSlug, submit, goNext, goToStep, flow }: StepContentP
 				/>
 				<LaunchpadSitePreview flow={ flow } siteSlug={ iFrameURL } />
 			</div>
-		</div>
+		</main>
 	);
 };
 

@@ -1,6 +1,14 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+body.is-section-themes-i4 {
+	--color-surface-backdrop: #fdfdfd;
+
+	&.theme-default .focus-content .layout__content {
+		padding-top: var(--masterbar-height);
+	}
+}
+
 .themes__upload-button {
 	float: right;
 

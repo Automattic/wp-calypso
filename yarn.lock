@@ -494,6 +494,7 @@ __metadata:
     "@automattic/domain-utils": "workspace:^"
     "@automattic/format-currency": "workspace:^"
     "@automattic/happychat-connection": "workspace:^"
+    "@automattic/shopping-cart": "workspace:^"
     "@types/validator": ^13.7.1
     "@wordpress/api-fetch": ^6.6.0
     "@wordpress/data-controls": ^2.9.0
@@ -516,6 +517,7 @@ __metadata:
   peerDependencies:
     "@wordpress/data": ^6
     react: ^17.0.2
+    react-dom: ^17.0.2
   languageName: unknown
   linkType: soft
 
@@ -1701,6 +1703,7 @@ __metadata:
     "@stripe/stripe-js": ^1.17.1
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
+    "@wordpress/compose": ^5.7.0
     "@wordpress/data": ^6.9.0
     "@wordpress/i18n": ^4.9.0
     "@wordpress/react-i18n": ^3.7.0
@@ -9293,19 +9296,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/element@npm:^4.0.1, @wordpress/element@npm:^4.0.4, @wordpress/element@npm:^4.1.1, @wordpress/element@npm:^4.11.0, @wordpress/element@npm:^4.18.0, @wordpress/element@npm:^4.5.0, @wordpress/element@npm:^4.7.0":
-  version: 4.18.0
-  resolution: "@wordpress/element@npm:4.18.0"
+"@wordpress/element@npm:^4.0.1, @wordpress/element@npm:^4.0.4, @wordpress/element@npm:^4.1.1, @wordpress/element@npm:^4.11.0, @wordpress/element@npm:^4.18.0, @wordpress/element@npm:^4.19.0, @wordpress/element@npm:^4.5.0, @wordpress/element@npm:^4.7.0":
+  version: 4.19.0
+  resolution: "@wordpress/element@npm:4.19.0"
   dependencies:
     "@babel/runtime": ^7.16.0
     "@types/react": ^17.0.37
     "@types/react-dom": ^17.0.11
-    "@wordpress/escape-html": ^2.20.0
+    "@wordpress/escape-html": ^2.21.0
     change-case: ^4.1.2
     is-plain-object: ^5.0.0
     react: ^17.0.2
     react-dom: ^17.0.2
-  checksum: d48240ab46f00344cc23f1c83b2c405046b49e2c59f3c604fae988b2263461c7c956f2e0d561f1ab8494b2d50cf6d344e6022de161df061098fd152b317bfa7a
+  checksum: cde942333d2910491f23953d1421308ff424544660d7e4066383120f18fd53561b917d79d4d9977a5fdb8f0826c9f8083876eaf50d97ce35256c937040ffa0ad
   languageName: node
   linkType: hard
 
@@ -9340,12 +9343,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/escape-html@npm:^2.13.0, @wordpress/escape-html@npm:^2.2.0, @wordpress/escape-html@npm:^2.2.1, @wordpress/escape-html@npm:^2.2.3, @wordpress/escape-html@npm:^2.20.0, @wordpress/escape-html@npm:^2.9.0":
-  version: 2.20.0
-  resolution: "@wordpress/escape-html@npm:2.20.0"
+"@wordpress/escape-html@npm:^2.13.0, @wordpress/escape-html@npm:^2.2.0, @wordpress/escape-html@npm:^2.2.1, @wordpress/escape-html@npm:^2.2.3, @wordpress/escape-html@npm:^2.21.0, @wordpress/escape-html@npm:^2.9.0":
+  version: 2.21.0
+  resolution: "@wordpress/escape-html@npm:2.21.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-  checksum: 860cd7a21c41b0542bd96fc30bc5080ebc73e9f609c5f89c23adc5e4ea1790a2302f6f4063d0d46f4c6163376370482e0878c20fa323fa72b4be32282a7fc21a
+  checksum: 25ab1bd24162945858458f1efffe9642d63a217cd41ebbd01856b9f855110f44c9e47d752744c2ed06715c62a43e2ecc5f8310d2adc4ab88c571cccf095593bf
   languageName: node
   linkType: hard
 
@@ -9416,12 +9419,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/hooks@npm:^3.13.0, @wordpress/hooks@npm:^3.2.0, @wordpress/hooks@npm:^3.2.2, @wordpress/hooks@npm:^3.7.0, @wordpress/hooks@npm:^3.9.0":
-  version: 3.13.0
-  resolution: "@wordpress/hooks@npm:3.13.0"
+"@wordpress/hooks@npm:^3.13.0, @wordpress/hooks@npm:^3.2.0, @wordpress/hooks@npm:^3.2.2, @wordpress/hooks@npm:^3.21.0, @wordpress/hooks@npm:^3.7.0, @wordpress/hooks@npm:^3.9.0":
+  version: 3.21.0
+  resolution: "@wordpress/hooks@npm:3.21.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-  checksum: 3594d5fe9ed39254ba2b58b7596062fe6fda73e2b8a07098069c899eb4c6b0e7b618db7775c6a129988631fb2fd6fbcfa543afc649f9ec1daab3997c2a900b23
+  checksum: 3d63aef536dc382ce926d58877176a33c57976012c8e8a7aeaa54384da309fe7307f1d388f562d5584599db752091f9e3e4b24dcdeb63450a2a4fc9bdc7b94c6
   languageName: node
   linkType: hard
 
@@ -9451,20 +9454,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/i18n@npm:^4.10.0, @wordpress/i18n@npm:^4.13.0, @wordpress/i18n@npm:^4.2.1, @wordpress/i18n@npm:^4.2.4, @wordpress/i18n@npm:^4.7.0, @wordpress/i18n@npm:^4.9.0":
-  version: 4.13.0
-  resolution: "@wordpress/i18n@npm:4.13.0"
+"@wordpress/i18n@npm:^4.10.0, @wordpress/i18n@npm:^4.13.0, @wordpress/i18n@npm:^4.2.1, @wordpress/i18n@npm:^4.2.4, @wordpress/i18n@npm:^4.21.0, @wordpress/i18n@npm:^4.7.0, @wordpress/i18n@npm:^4.9.0":
+  version: 4.21.0
+  resolution: "@wordpress/i18n@npm:4.21.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-    "@wordpress/hooks": ^3.13.0
+    "@wordpress/hooks": ^3.21.0
     gettext-parser: ^1.3.1
-    lodash: ^4.17.21
     memize: ^1.1.0
     sprintf-js: ^1.1.1
     tannin: ^1.2.0
   bin:
     pot-to-php: tools/pot-to-php.js
-  checksum: 29e9cfa003358d262f23019fb26dea0ad1f2bf41ab2c13b146bb617725616cd40b0eaea163f95678bdda983994592e5ef17af01de26371add8e59a5b3673a9a5
+  checksum: 70b4f11acafa42b5d63cdf2fa196813c70dac22d93600aa8df55efc72926902d7a8ce29521b2a80a9aaf464128d25f0543ce723bb14c3eaf33f7b56739219594
   languageName: node
   linkType: hard
 
@@ -9826,14 +9828,14 @@ __metadata:
   linkType: hard
 
 "@wordpress/react-i18n@npm:^3.7.0":
-  version: 3.7.0
-  resolution: "@wordpress/react-i18n@npm:3.7.0"
+  version: 3.19.0
+  resolution: "@wordpress/react-i18n@npm:3.19.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-    "@wordpress/element": ^4.7.0
-    "@wordpress/i18n": ^4.9.0
+    "@wordpress/element": ^4.19.0
+    "@wordpress/i18n": ^4.21.0
     utility-types: ^3.10.0
-  checksum: 83bb2b485e33340a85e58e47aac7cb31141a70ed806bfe5c97b30bb5998be4f37ffbf295d29300bbe9a29b79729c11c004a4c2537c67c69c183cab28696e02ec
+  checksum: 91ba020f48d370679515f880f30c7bdabaf5a4dede01529b682bebdf92bae7e9509f7b7127da014146f18b146549799d328e8e72125213b96c0aef19c84d9779
   languageName: node
   linkType: hard
 
@@ -13384,9 +13386,9 @@ __metadata:
   linkType: hard
 
 "classnames@npm:^2.2.5, classnames@npm:^2.2.6, classnames@npm:^2.3.1":
-  version: 2.3.1
-  resolution: "classnames@npm:2.3.1"
-  checksum: e3b832219042802464e648c41c2e8be96c2c64d2522cfa22fbb5ec088418406c61ab351a682c077c07f691c8b00c9f0ee7939b20fabc6c23da69063252a4ab89
+  version: 2.3.2
+  resolution: "classnames@npm:2.3.2"
+  checksum: cd50ead57b4f97436aaa9f9885c6926323efc7c2bea8e3d4eb10e4e972aa6a1cfca1c7a0e06f8a199ca7498d4339e30bb6002e589e61c9f21248cbf3e8b0b18d
   languageName: node
   linkType: hard
 
@@ -19492,14 +19494,19 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "happy-blocks@workspace:apps/happy-blocks"
   dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-config": "workspace:^"
+    "@automattic/calypso-products": "workspace:^"
     "@automattic/color-studio": 2.5.0
+    "@automattic/format-currency": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@testing-library/react": ^12.1.3
     "@wordpress/block-editor": ^9.1.0
     "@wordpress/blocks": ^11.8.0
     "@wordpress/components": ^19.15.0
+    "@wordpress/element": ^4.7.0
     "@wordpress/i18n": ^4.9.0
     "@wordpress/readable-js-assets-webpack-plugin": ^1.0.4
     "@wordpress/scripts": ^23.1.0
