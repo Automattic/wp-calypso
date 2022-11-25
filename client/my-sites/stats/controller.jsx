@@ -188,8 +188,8 @@ export function overview( context, next ) {
 	const activeFilter = find( filters(), ( filter ) => {
 		return (
 			context.params.period === filter.period ||
-			context.path.indexOf( filter.path ) >= 0 ||
-			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )
+			context.path === filter.path ||
+			( filter.altPaths && filter.altPaths.includes( context.path ) )
 		);
 	} );
 
@@ -220,8 +220,8 @@ export function site( context, next ) {
 
 	const activeFilter = find( filters, ( filter ) => {
 		return (
-			context.path.indexOf( filter.path ) >= 0 ||
-			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )
+			context.path === filter.path ||
+			( filter.altPaths && filter.altPaths.includes( context.path ) )
 		);
 	} );
 
@@ -297,8 +297,8 @@ export function summary( context, next ) {
 
 	const activeFilter = find( filters, ( filter ) => {
 		return (
-			context.path.indexOf( filter.path ) >= 0 ||
-			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )
+			context.path === filter.path ||
+			( filter.altPaths && filter.altPaths.includes( context.path ) )
 		);
 	} );
 
