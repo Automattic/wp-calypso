@@ -157,7 +157,7 @@ class StoreStatsChart extends Component {
 		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
 
 		const classes = [
-			'is-chart-tabs',
+			'main-chart-tabs',
 			{
 				'is-loading': isLoading,
 			},

@@ -164,7 +164,7 @@ class WordAds extends Component {
 
 		// New feature gate
 		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
-		const statsWrapperClass = classNames( 'wordads', {
+		const statsWrapperClass = classNames( 'wordads stats-content', {
 			'stats--new-main-chart': isNewMainChart,
 			'is-period-year': period === 'year',
 		} );

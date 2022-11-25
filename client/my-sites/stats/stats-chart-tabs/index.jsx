@@ -97,9 +97,9 @@ class StatModuleChartTabs extends Component {
 
 		const { isActiveTabLoading } = this.props;
 
-		//TODO Try to retire `.stats-module` and replace it with `.is-chart-tabs`.
+		//TODO Try to retire `.stats-module` and replace it with `.main-chart-tabs`.
 		const classes = [
-			'is-chart-tabs',
+			'main-chart-tabs',
 			{
 				'is-loading': isActiveTabLoading,
 				'stats-module': ! isNewFeatured,
