@@ -123,24 +123,31 @@ export class SiteNotice extends Component {
 		const LaunchpadNotice = this.getLaunchpadNotice();
 
 		const showJitms =
-			! this.props.isSiteWPForTeams &&
-			( discountOrFreeToPaid || config.isEnabled( 'jitms' ) ) &&
-			site.options?.launchpad_screen !== 'full';
+			! this.props.isSiteWPForTeams && ( discountOrFreeToPaid || config.isEnabled( 'jitms' ) );
 
-		return (
-			<div className="current-site__notices">
-				<QueryActivePromotions />
-				{ siteRedirectNotice }
-				{ showJitms ? (
+		const showLaunchpadNotice = site.options?.launchpad_screen === 'full';
+		let SidebarNotice = null;
+
+		if ( showJitms ) {
+			if ( showLaunchpadNotice ) {
+				SidebarNotice = LaunchpadNotice;
+			} else {
+				SidebarNotice = (
 					<AsyncLoad
 						require="calypso/blocks/jitm"
 						placeholder={ null }
 						messagePath="calypso:sites:sidebar_notice"
 						template="sidebar-banner"
 					/>
-				) : (
-					LaunchpadNotice
-				) }
+				);
+			}
+		}
+
+		return (
+			<div className="current-site__notices">
+				<QueryActivePromotions />
+				{ siteRedirectNotice }
+				{ SidebarNotice }
 				<QuerySitePlans siteId={ site.ID } />
 			</div>
 		);
