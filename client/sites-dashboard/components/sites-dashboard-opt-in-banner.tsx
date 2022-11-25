@@ -1,41 +1,40 @@
+import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import Banner from 'calypso/components/banner';
+import Notice from 'calypso/components/notice';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SitesDashboardOptInBannerProps {
 	sites: SiteExcerptData[];
-	className: string;
 }
 
-const SitesBanner = styled( Banner )( {
-	width: 'auto',
-	margin: '0 0 32px 0',
+const SitesNotice = styled( Notice )( {
+	marginBlockStart: '32px',
+	backgroundColor: 'var(--color-neutral-0)',
+	color: 'var(--color-text)',
 
-	'.banner__close-icon': {
-		position: 'static',
-		top: 'unset',
-		left: 'unset',
-		marginLeft: '24px',
-		order: 3,
-		width: '18px',
+	'.notice__icon-wrapper': {
+		paddingInlineStart: '8px',
+		background: 'transparent !important',
+		color: 'var(--color-accent)',
 	},
 
-	'.banner__title': {
-		fontWeight: 'normal',
-	},
-
-	'.banner__action': {
-		marginTop: 0,
-		marginLeft: '32px',
+	'.notice__content': {
+		paddingBlock: '16px',
+		paddingInline: '8px',
 		display: 'flex',
+		alignItems: 'center',
 	},
 } );
 
-export const SitesDashboardOptInBanner = ( {
-	sites,
-	className,
-}: SitesDashboardOptInBannerProps ) => {
+const NoticeActions = styled.div( {
+	display: 'flex',
+	gap: '16px',
+	alignItems: 'center',
+	padding: '16px',
+} );
+
+export const SitesDashboardOptInBanner = ( { sites }: SitesDashboardOptInBannerProps ) => {
 	const { __ } = useI18n();
 
 	if ( sites.length < 2 ) {
@@ -43,21 +42,16 @@ export const SitesDashboardOptInBanner = ( {
 	}
 
 	return (
-		<div className={ className }>
-			<SitesBanner
-				callToAction={ __( 'Yes, make it my landing page' ) }
-				primaryButton={ false }
-				dismissWithoutSavingPreference
-				disableHref
-				event="calypso_sites_as_landing_page"
-				showIcon={ false }
-				onClick={ () => {} }
-				onDismiss={ () => {} }
-				title={ __( 'Do you want to make this page the default when you visit WordPress.com?' ) }
-				tracksImpressionName="calypso_sites_as_landing_page_seen"
-				tracksClickName="calypso_sites_as_landing_page_accepted"
-				tracksDismissName="calypso_sites_as_landing_page_rejected"
-			/>
-		</div>
+		<SitesNotice
+			status="is-info"
+			text={ __( 'Do you want to make this page your default when visiting WordPress.com?' ) }
+			icon="heart"
+			showDismiss={ false }
+		>
+			<NoticeActions>
+				<Button borderless>{ __( 'No, thanks' ) }</Button>
+				<Button>{ __( 'Yes, make it my home' ) }</Button>
+			</NoticeActions>
+		</SitesNotice>
 	);
 };

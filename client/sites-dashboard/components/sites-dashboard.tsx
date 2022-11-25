@@ -68,7 +68,7 @@ const PageBodyWrapper = styled.div( {
 	marginInline: 'auto',
 } );
 
-const headerControls = css( {
+const HeaderControls = styled.div( {
 	maxWidth: MAX_PAGE_WIDTH,
 	marginBlock: 0,
 	marginInline: 'auto',
@@ -163,8 +163,7 @@ export function SitesDashboard( {
 		<main>
 			<DocumentHead title={ __( 'Sites' ) } />
 			<PageHeader>
-				<SitesDashboardOptInBanner sites={ allSites } className={ headerControls } />
-				<div className={ headerControls }>
+				<HeaderControls>
 					<DashboardHeading>{ __( 'Sites' ) }</DashboardHeading>
 					<SplitButton
 						primary
@@ -203,9 +202,10 @@ export function SitesDashboard( {
 							<span>{ __( 'Import an existing site' ) }</span>
 						</PopoverMenuItem>
 					</SplitButton>
-				</div>
+				</HeaderControls>
 			</PageHeader>
 			<PageBodyWrapper>
+				<SitesDashboardOptInBanner sites={ allSites } />
 				<SitesDashboardSitesList
 					sites={ allSites }
 					filtering={ { search } }
