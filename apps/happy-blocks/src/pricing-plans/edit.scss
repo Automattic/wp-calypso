@@ -123,6 +123,7 @@ $brand-text: "SF Pro Text", $sans;
 
 			p {
 				margin: 0 !important;
+				line-height: inherit !important;
 			}
 		}
 	}
