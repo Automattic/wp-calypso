@@ -1,7 +1,7 @@
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -21,10 +21,14 @@ function ToggleSitesAsLandingPage( { onToggle, className }: ToggleSitesLandingPa
 	async function handleToggle( isChecked: boolean ) {
 		const preference = { useSitesAsLandingPage: isChecked, updatedAt: Date.now() };
 		savePreference( 'sites-landing-page', preference );
-		recordTracksEvent( 'calypso_sites_as_landing_page_toggled', {
-			sites_as_landing_page: isChecked,
-		} );
+		dispatch(
+			recordTracksEvent( 'calypso_sites_as_landing_page_toggled', {
+				sites_as_landing_page: isChecked,
+			} )
+		);
+
 		await dispatch( savePreference( 'sites-landing-page', preference ) );
+
 		dispatch(
 			successNotice( translate( 'Settings saved successfully!' ), {
 				id: 'sites-landing-page-save',
