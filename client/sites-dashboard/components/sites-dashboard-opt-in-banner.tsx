@@ -18,13 +18,13 @@ interface SitesDashboardOptInBannerProps {
 
 const SitesNotice = styled( Notice )( {
 	marginBlockStart: '32px',
-	backgroundColor: 'var(--color-neutral-0)',
-	color: 'var(--color-text)',
+	backgroundColor: 'var(--color-neutral-0) !important',
+	color: 'var(--color-text) !important',
 
 	'.notice__icon-wrapper': {
 		paddingInlineStart: '8px',
 		background: 'transparent !important',
-		color: 'var(--color-accent)',
+		color: 'var(--color-accent) !important',
 	},
 
 	'.notice__content': {
