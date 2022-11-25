@@ -1,8 +1,17 @@
+import styled from '@emotion/styled';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import ClipboardButtonInput from '../clipboard-button-input';
+
+const HelpText = styled.p( {
+	display: 'block',
+	margin: '5px 0',
+	fontSize: '0.875rem',
+	fontStyle: 'italic',
+	fontWeight: 400,
+	color: 'var(--color-text-subtle)',
+} );
 
 export default function SitePreviewLink( { disabled = false } ) {
 	const translate = useTranslate();
@@ -20,9 +29,7 @@ export default function SitePreviewLink( { disabled = false } ) {
 				onChange={ onChange }
 				{ ...{ disabled: disabled || loading } } // disabled is not included on ToggleControl props type
 			/>
-			<FormSettingExplanation>
-				{ translate( 'Anyone with this link can view your site.' ) }
-			</FormSettingExplanation>
+			<HelpText>{ translate( 'Anyone with this link can view your site.' ) }</HelpText>
 			{ checkedAndNotDisabled && (
 				<ClipboardButtonInput
 					value="https://mysite.wordpress.com?preview=12kabe45cdp"
