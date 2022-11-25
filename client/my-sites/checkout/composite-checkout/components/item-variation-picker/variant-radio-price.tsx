@@ -35,12 +35,14 @@ const Variant = styled.div`
 const VariantTermLabel = styled.span`
 	display: flex;
 	flex-direction: column;
+	gap: 2px;
 `;
 
 const PriceArea = styled.span`
 	text-align: right;
 	display: flex;
 	flex-direction: column;
+	gap: 2px;
 `;
 
 const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent } ) => {
