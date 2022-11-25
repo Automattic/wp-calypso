@@ -1,13 +1,14 @@
 import { SenseiStepContainer } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { useCallback, useEffect } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import { useSelector, useDispatch } from 'react-redux';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { useSelector, useDispatch as useRootDispatch } from 'react-redux';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPlugins } from 'calypso/state/plugins/installed/selectors';
-import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { SenseiStepProgress } from '../sensei-setup/sensei-step-progress';
 
 interface InstalledPlugin {
@@ -18,34 +19,22 @@ interface InstalledPlugin {
 
 const SenseiLaunch = () => {
 	const { __ } = useI18n();
-	const { siteId } = useSelect( ( select ) => {
-		return {
-			siteId: select( ONBOARD_STORE ).getSelectedSite(),
-		};
-	}, [] );
+	const site = useSite();
+	const siteId = site?.ID;
+	const launchpadScreen = site?.options.launchpad_screen;
+	const siteSlug = useSiteSlugParam();
+
 	const selectSitePlugins = useCallback(
 		( state ) => {
 			return siteId ? getPlugins( state, [ siteId ] ) : [];
 		},
 		[ siteId ]
 	);
-	const selectSenseiLaunchUrl: () => string = useCallback(
-		( state = {} ) => {
-			let url = '/';
-			if ( siteId ) {
-				const siteAdminUrl = getSiteAdminUrl( state, siteId, 'admin.php?page=sensei' );
-				if ( siteAdminUrl ) {
-					url = siteAdminUrl;
-				}
-			}
-			return url;
-		},
-		[ siteId ]
-	);
-
-	const dispatch = useDispatch();
+	const dispatch = useRootDispatch();
+	const { saveSiteSettings } = useDispatch( SITE_STORE );
 	const plugins: InstalledPlugin[] = useSelector( selectSitePlugins );
-	const senseiHomeUrl: string = useSelector( selectSenseiLaunchUrl );
+	const launchpadUrl = `/setup/sensei/launchpad?siteSlug=${ siteSlug }&siteId=${ siteId }`;
+
 	useEffect( () => {
 		const intervalId = setInterval( () => {
 			const woothemesSensei = plugins.find( ( plugin ) => plugin.slug === 'woothemes-sensei' );
@@ -53,11 +42,19 @@ const SenseiLaunch = () => {
 				dispatch( fetchSitePlugins( siteId ) );
 				return;
 			}
+
 			clearInterval( intervalId );
-			window.location.replace( senseiHomeUrl );
+			if ( launchpadScreen !== 'full' ) {
+				saveSiteSettings( siteId as number, { launchpad_screen: 'full' } ).finally( () => {
+					window.location.replace( launchpadUrl );
+				} );
+			} else {
+				window.location.replace( launchpadUrl );
+			}
 		}, 3000 );
+
 		return () => clearInterval( intervalId );
-	}, [ plugins, senseiHomeUrl, dispatch, siteId ] );
+	}, [ plugins, launchpadUrl, dispatch, siteId, saveSiteSettings, launchpadScreen ] );
 
 	return (
 		<SenseiStepContainer stepName="senseiSetup" recordTracksEvent={ recordTracksEvent }>

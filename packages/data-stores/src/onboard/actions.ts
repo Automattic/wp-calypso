@@ -126,7 +126,6 @@ export function* createSenseiSite( {
 			} ),
 			use_patterns: true,
 			selected_features: selectedFeatures,
-			wpcom_public_coming_soon: 1,
 			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),
 		},
 	} );

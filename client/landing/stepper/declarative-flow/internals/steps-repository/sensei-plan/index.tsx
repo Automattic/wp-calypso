@@ -81,8 +81,8 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 
 			const newSite = getNewSite();
 			setSelectedSite( newSite?.blogid );
-			setIntentOnSite( newSite?.site_slug as string, SENSEI_FLOW );
-			saveSiteSettings( newSite?.blogid as number, { launchpad_screen: 'full' } );
+			await setIntentOnSite( newSite?.site_slug as string, SENSEI_FLOW );
+			await saveSiteSettings( newSite?.blogid as number, { launchpad_screen: 'full' } );
 
 			const planProductObject = getPlanProduct( planObject?.periodAgnosticSlug, billingPeriod );
 

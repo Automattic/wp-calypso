@@ -22,9 +22,9 @@ type LaunchpadProps = {
 const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const translate = useTranslate();
 	const almostReadyToLaunchText = translate( 'Almost ready to launch' );
+	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const verifiedParam = useQuery().get( 'verified' );
-	const site = useSite();
 	const launchpadScreenOption = site?.options?.launchpad_screen;
 	const dispatch = useDispatch();
 
@@ -45,7 +45,7 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		if ( launchpadScreenOption !== undefined ) {
 			// The screen option returns false for sites that have never set the option
 			if (
-				( 'videopress' !== flow && launchpadScreenOption === false ) ||
+				( 'sensei' !== flow && 'videopress' !== flow && launchpadScreenOption === false ) ||
 				launchpadScreenOption === 'off'
 			) {
 				window.location.replace( `/home/${ siteSlug }` );

@@ -67,6 +67,24 @@ export const tasks: Task[] = [
 		taskType: 'blog',
 		disabled: true,
 	},
+	{
+		id: 'sensei_setup',
+		completed: true,
+		taskType: 'blog',
+		disabled: false,
+	},
+	{
+		id: 'sensei_publish_first_course',
+		completed: false,
+		taskType: 'blog',
+		disabled: false,
+	},
+	{
+		id: 'site_launched',
+		completed: false,
+		taskType: 'blog',
+		disabled: true,
+	},
 ];
 
 export const launchpadFlowTasks: LaunchpadFlowTaskList = {
@@ -79,4 +97,5 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 		'link_in_bio_launched',
 	],
 	videopress: [ 'videopress_setup', 'plan_selected', 'videopress_upload', 'videopress_launched' ],
+	sensei: [ 'sensei_setup', 'plan_selected', 'sensei_publish_first_course', 'site_launched' ],
 };
