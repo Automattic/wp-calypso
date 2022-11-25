@@ -125,10 +125,12 @@ export class SiteNotice extends Component {
 		const showJitms =
 			! this.props.isSiteWPForTeams && ( discountOrFreeToPaid || config.isEnabled( 'jitms' ) );
 
+		const isEnglish = config( 'english_locales' ).includes( i18n.getLocaleSlug() );
+		const hasNonenTranslation =
+			i18n.hasTranslation( 'Keep setting up your site' ) && i18n.hasTranslation( 'Next Steps' );
 		const showLaunchpadNotice =
-			site.options?.launchpad_screen === 'full' &&
-			i18n.hasTranslation( 'Keep setting up your site' ) &&
-			i18n.hasTranslation( 'Next Steps' );
+			site.options?.launchpad_screen === 'full' && ( isEnglish || hasNonenTranslation );
+
 		let SidebarNotice = null;
 
 		if ( showJitms ) {
