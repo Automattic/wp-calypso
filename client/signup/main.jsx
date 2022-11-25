@@ -191,8 +191,12 @@ class Signup extends Component {
 
 		this.updateShouldShowLoadingScreen();
 
-		if ( canResumeFlow( this.props.flowName, this.props.progress, this.props.isLoggedIn ) ) {
-			// Resume from the current window location
+		// Resume from the current window location if there is stored, completed step progress.
+		// However, if the step is removed, e.g. the user step is removed after logging-in, it can't be resumed.
+		if (
+			canResumeFlow( this.props.flowName, this.props.progress, this.props.isLoggedIn ) &&
+			! this.isCurrentStepRemovedFromFlow()
+		) {
 			return;
 		}
 
@@ -780,11 +784,15 @@ class Signup extends Component {
 		);
 	}
 
-	shouldWaitToRender() {
-		const isStepRemovedFromFlow = ! includes(
+	isCurrentStepRemovedFromFlow() {
+		return ! includes(
 			flows.getFlow( this.props.flowName, this.props.isLoggedIn ).steps,
 			this.props.stepName
 		);
+	}
+
+	shouldWaitToRender() {
+		const isStepRemovedFromFlow = this.isCurrentStepRemovedFromFlow();
 		const isDomainsForSiteEmpty =
 			this.props.isLoggedIn &&
 			this.props.signupDependencies.siteSlug &&
