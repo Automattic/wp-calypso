@@ -25,6 +25,11 @@ export function getSiteFragment( path: URLString ): SiteSlug | SiteId | false {
 		return false;
 	}
 
+	// Avoid confusing the subscription ID for the site ID in gifting checkouts.
+	if ( basePath.includes( '/gift/' ) && basePath.includes( '/checkout/' ) ) {
+		return false;
+	}
+
 	// In some paths, the site fragment could also be in third position.
 	// e.g. /me/purchases/example.wordpress.com/foo/bar
 	if (

@@ -102,46 +102,17 @@ export function clientRouter( route, ...middlewares ) {
 
 export function redirectLoggedOut( context, next ) {
 	const state = context.store.getState();
-	const userLoggedOut = ! isUserLoggedIn( state );
-
-	if ( userLoggedOut ) {
-		const { site, blog, blog_id } = context.params;
-		const siteFragment = site || blog || blog_id || getSiteFragment( context.path );
-
-		const loginParameters = {
-			redirectTo: context.path,
-			site: siteFragment,
-		};
-
-		// Pass along "login_email" and "login_locale" parameters from the
-		// original URL, to ensure the login form is pre-filled with the
-		// correct email address and built with the correct language (when
-		// either of those are requested).
-		const login_email = getImmediateLoginEmail( state );
-		if ( login_email ) {
-			loginParameters.emailAddress = login_email;
-		}
-		const login_locale = getImmediateLoginLocale( state );
-		if ( login_locale ) {
-			loginParameters.locale = login_locale;
-		}
-
-		// force full page reload to avoid SSR hydration issues.
-		window.location = login( loginParameters );
-		return;
-	}
-	next();
-}
-
-export function redirectLoggedOutForGifting( context, next ) {
-	const state = context.store.getState();
 	if ( isUserLoggedIn( state ) ) {
-		next();	
+		next();
 		return;
 	}
+
+	const { site, blog, blog_id } = context.params;
+	const siteFragment = site || blog || blog_id || getSiteFragment( context.path );
 
 	const loginParameters = {
 		redirectTo: context.path,
+		site: siteFragment,
 	};
 
 	// Pass along "login_email" and "login_locale" parameters from the
@@ -159,6 +130,7 @@ export function redirectLoggedOutForGifting( context, next ) {
 
 	// force full page reload to avoid SSR hydration issues.
 	window.location = login( loginParameters );
+	return;
 }
 
 /**
