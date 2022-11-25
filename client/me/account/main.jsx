@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
 import { getLanguage, isLocaleVariant, canBeTranslated } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
+import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { debounce, flowRight as compose, get, map, size } from 'lodash';
@@ -89,6 +90,9 @@ const INTERFACE_FIELDS = [
 	'calypso_preferences',
 ];
 
+const BetaBadge = styled( Badge )`
+	margin-left: 8px;
+`;
 class Account extends Component {
 	constructor( props ) {
 		super( props );
@@ -217,12 +221,6 @@ class Account extends Component {
 
 	updateUserLoginConfirm = ( event ) => {
 		this.setState( { userLoginConfirm: event.target.value } );
-	};
-
-	updateSitesAsLandingPage = ( checked ) => {
-		this.props.recordTracksEvent( 'calypso_sites_as_landing_page_toggled', {
-			sites_as_landing_page: checked,
-		} );
 	};
 
 	validateUsername = debounce( async () => {
@@ -980,10 +978,10 @@ class Account extends Component {
 						{ config.isEnabled( 'sites-as-landing-page' ) && (
 							<FormFieldset>
 								<FormLabel id="account__default_landing_page">
-									{ translate( 'Sites Dashboard as landing page' ) }
-									<Badge type="info-blue">beta</Badge>
+									{ translate( 'Sites as landing page' ) }
+									<BetaBadge type="info-blue">beta</BetaBadge>
 								</FormLabel>
-								<ToggleSitesAsLandingPage onToggle={ this.updateSitesAsLandingPage } />
+								<ToggleSitesAsLandingPage />
 							</FormFieldset>
 						) }
 					</form>
