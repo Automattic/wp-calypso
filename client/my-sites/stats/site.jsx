@@ -416,11 +416,8 @@ class StatsSite extends Component {
 		// Necessary to properly configure the fixed navigation headers.
 		sessionStorage.setItem( 'jp-stats-last-tab', 'traffic' );
 
-		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
-		const mainWrapperClass = classNames( { 'stats--new-wrapper': isNewMainChart } );
-
 		return (
-			<Main className={ mainWrapperClass } fullWidthLayout>
+			<Main fullWidthLayout>
 				<QueryKeyringConnections />
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				<QuerySiteKeyrings siteId={ siteId } />
