@@ -35,7 +35,7 @@ const SenseiLaunch = () => {
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 	const plugins: InstalledPlugin[] = useSelector( selectSitePlugins );
 	const launchpadUrl = `/setup/sensei/launchpad?siteSlug=${ siteSlug }&siteId=${ siteId }`;
-	const expectedRetries = 10;
+	const expectedRetries = 15;
 
 	useEffect( () => {
 		const intervalId = setInterval( () => {
@@ -72,8 +72,9 @@ const SenseiLaunch = () => {
 		progress.title = __( 'Setting up your new Sensei Home' );
 	}
 
+	// Slow down progress bar increase during the last steps.
 	if ( retries > ( expectedRetries * 2 ) / 3 ) {
-		const slowPercentage = 66.6 + ( retries * 10 ) / expectedRetries;
+		const slowPercentage = 66.6 + ( retries * 15 ) / expectedRetries;
 		progress.percentage = slowPercentage > 90 ? 90 : slowPercentage;
 	} else if ( retries < 0 ) {
 		progress.percentage = 100;

@@ -17,6 +17,7 @@ export const Container = styled.div`
 
 export const Content = styled.div`
 	max-width: 520px;
+	width: 100%;
 	margin: auto 24px;
 	padding: 32px 0 60px;
 	flex: 0 0 auto;
@@ -61,6 +62,7 @@ export const Progress = styled.div`
 	left: 0;
 	height: 4px;
 	background-color: #fff;
+	margin: 0 24px;
 `;
 
 export const ProgressValue = styled.div< { progress: number } >`
