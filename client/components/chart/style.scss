@@ -1,7 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 
-$barChartBorderRadius: 2px;
-$yearBarChartBorderRadius: 4px;
+$bar-chart-border-radius: 2px;
+$year-bar-chart-border-radius: 4px;
 
 // Chart
 // Life is a statistical anomaly
@@ -183,13 +183,13 @@ $y-axis-padding: 0 20px;
 // Wider bars for period `Year`
 .is-period-year {
 	.chart__bar-section {
-		border-top-left-radius: $yearBarChartBorderRadius;
-		border-top-right-radius: $yearBarChartBorderRadius;
+		border-top-left-radius: $year-bar-chart-border-radius;
+		border-top-right-radius: $year-bar-chart-border-radius;
 	}
 
 	.chart__bar-section-inner {
-		border-top-left-radius: $yearBarChartBorderRadius;
-		border-top-right-radius: $yearBarChartBorderRadius;
+		border-top-left-radius: $year-bar-chart-border-radius;
+		border-top-right-radius: $year-bar-chart-border-radius;
 	}
 }
 
@@ -205,8 +205,8 @@ $y-axis-padding: 0 20px;
 	transition: transform 0.3s ease-in-out; // 3
 	transform-origin: 0% 100%; // 4
 	z-index: z-index("root", ".chart__bar-section");
-	border-top-left-radius: $barChartBorderRadius;
-	border-top-right-radius: $barChartBorderRadius;
+	border-top-left-radius: $bar-chart-border-radius;
+	border-top-right-radius: $bar-chart-border-radius;
 }
 
 .chart__bar-section-inner {
@@ -215,12 +215,8 @@ $y-axis-padding: 0 20px;
 	right: 23.33%;
 	bottom: 0;
 	left: 23.33%;
-	border-top-left-radius: $barChartBorderRadius;
-	border-top-right-radius: $barChartBorderRadius;
-
-	.chart__bar.is-selected & {
-		background-color: var(--color-accent-dark);
-	}
+	border-top-left-radius: $bar-chart-border-radius;
+	border-top-right-radius: $bar-chart-border-radius;
 }
 
 // Chart legend (wrapper)
@@ -246,7 +242,6 @@ $y-axis-padding: 0 20px;
 	font-size: $font-body-extra-small;
 
 	@media ( max-width: $break-mobile ) {
-		// width: 100%;
 		display: none;
 	}
 }
