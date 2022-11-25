@@ -7,7 +7,6 @@ const selectors = {
 	writeButton: '.masterbar__item-new',
 	notificationsButton: 'a[href="/notifications"]',
 	meButton: 'a[data-tip-target="me"]',
-	helpButton: '[title="Help"]',
 };
 /**
  * Component representing the navbar/masterbar at top of WPCOM.
