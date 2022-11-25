@@ -1,5 +1,6 @@
 @import "~@automattic/typography/styles/variables";
 @import "~@automattic/color-studio/dist/color-variables";
+@import "~@wordpress/base-styles/colors";
 
 /*
 Note:
@@ -37,13 +38,15 @@ $brand-text: "SF Pro Text", $sans;
 	&__settings {
 		select {
 			min-height: 30px !important;
-			height: 30px !important;
-			padding: 0 26px 0 8px !important;
+			height: 36px !important;
+			padding: 0 26px 0 16px !important;
 			margin: 0 !important;
+			border-color: $gray-600 !important;
 		}
 
 		.components-panel__row {
 			display: block;
+			margin-bottom: 15px;
 		}
 
 		.components-radio-control__option {
@@ -52,9 +55,9 @@ $brand-text: "SF Pro Text", $sans;
 		}
 
 		.components-flex.components-h-stack.components-v-stack {
-			margin-top: 8px;
+			margin-top: 12px;
 			flex-direction: row;
-			gap: 20px;
+			gap: 17px;
 			justify-content: flex-start;
 		}
 	}
