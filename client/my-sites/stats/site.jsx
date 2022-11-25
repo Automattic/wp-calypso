@@ -221,7 +221,7 @@ class StatsSite extends Component {
 
 				<FormattedHeader
 					brandFont
-					className="stats__section-header"
+					className="stats__section-header modernized-header"
 					headerText={ translate( 'Jetpack Stats' ) }
 					align="left"
 					subHeaderText={ translate(
