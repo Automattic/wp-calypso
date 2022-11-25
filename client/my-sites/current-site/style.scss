@@ -119,3 +119,9 @@
 .sidebar .current-site .all-sites {
 	border-bottom: 0;
 }
+
+.current-site__launchpad-notice {
+	button {
+		background-color: var(--studio-blue-50);
+	}
+}
