@@ -31,6 +31,7 @@ const PricingPlansHeader: FunctionComponent< Props > = ( { plan, attributes } ) 
 					{ createInterpolateElement( __( '<a>Learn more</a>', 'happy-blocks' ), {
 						a: (
 							<a
+								className="hb-pricing-plans-embed__header-learn-more"
 								target="_blank"
 								href={ learnMoreLink }
 								rel="noreferrer"

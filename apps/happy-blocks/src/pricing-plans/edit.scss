@@ -95,6 +95,14 @@ $brand-text: "SF Pro Text", $sans;
 			margin-bottom: 8px;
 		}
 
+		&-learn-more {
+			text-decoration: none !important;
+
+			&:hover {
+				text-decoration: underline !important;
+			}
+		}
+
 		&-description {
 			font-family: $brand-text;
 			font-weight: 400;
