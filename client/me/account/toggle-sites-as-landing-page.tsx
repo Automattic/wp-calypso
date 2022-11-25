@@ -1,6 +1,6 @@
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useMutation, UseMutationOptions } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { successNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -11,39 +11,47 @@ type ToggleSitesLandingPageProps = {
 	className?: string;
 };
 
-function ToggleSitesAsLandingPage( { onToggle, className }: ToggleSitesLandingPageProps ) {
-	const translate = useTranslate();
+function useLandingPagePreferenceMutation(
+	options: UseMutationOptions< void, unknown, { isChecked: boolean } > = {}
+) {
 	const dispatch = useDispatch();
-	const useSitesAsLandingPage = useSelector( ( state ) =>
-		getPreference( state, 'sites-landing-page' )
-	)?.useSitesAsLandingPage;
 
-	const [ isDisabled, setIsDisabled ] = useState( false );
-
-	async function handleToggle( isChecked: boolean ) {
-		setIsDisabled( true );
+	return useMutation( async ( { isChecked } ) => {
 		await dispatch(
 			savePreference( 'sites-landing-page', {
 				useSitesAsLandingPage: isChecked,
 				updatedAt: Date.now(),
 			} )
 		);
-		dispatch(
-			successNotice( translate( 'Settings saved successfully!' ), {
-				id: 'sites-landing-page-save',
-				duration: 10000,
-			} )
-		);
-		setIsDisabled( false );
-		onToggle?.( isChecked );
-	}
+	}, options );
+}
+
+function ToggleSitesAsLandingPage( { onToggle, className }: ToggleSitesLandingPageProps ) {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const { mutate: saveLandingPagePreference, isLoading } = useLandingPagePreferenceMutation( {
+		onSuccess: ( _, { isChecked } ) => {
+			dispatch(
+				successNotice( translate( 'Settings saved successfully!' ), {
+					id: 'sites-landing-page-save',
+					duration: 10000,
+				} )
+			);
+			onToggle?.( isChecked );
+		},
+	} );
+
+	const useSitesAsLandingPage = useSelector( ( state ) =>
+		getPreference( state, 'sites-landing-page' )
+	)?.useSitesAsLandingPage;
 
 	return (
 		<div className={ className }>
 			<ToggleControl
 				checked={ !! useSitesAsLandingPage }
-				disabled={ isDisabled }
-				onChange={ handleToggle }
+				disabled={ isLoading }
+				onChange={ ( isChecked ) => saveLandingPagePreference( { isChecked } ) }
 				label={ translate( 'Set sites dasboard as default landing page.' ) }
 			/>
 		</div>
