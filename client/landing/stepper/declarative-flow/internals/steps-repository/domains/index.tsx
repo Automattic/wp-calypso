@@ -169,7 +169,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 	const getSubHeaderText = () => {
 		const decideLaterComponent = {
-			decide_later: (
+			span: (
 				// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus
 				<span
 					role="button"
@@ -183,21 +183,21 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			case 'newsletter':
 				return createInterpolateElement(
 					__(
-						'Help your Newsletter stand out with a custom domain. Not sure yet? <decide_later>Decide later</decide_later>.'
+						'Help your Newsletter stand out with a custom domain. Not sure yet? <span>Decide later</span>.'
 					),
 					decideLaterComponent
 				);
 			case 'link-in-bio':
 				return createInterpolateElement(
 					__(
-						'Set your Link in Bio apart with a custom domain. Not sure yet? <decide_later>Decide later</decide_later>.'
+						'Set your Link in Bio apart with a custom domain. Not sure yet? <span>Decide later</span>.'
 					),
 					decideLaterComponent
 				);
 			default:
 				return createInterpolateElement(
 					__(
-						'Help your site stand out with a custom domain. Not sure yet? <decide_later>Decide later</decide_later>.'
+						'Help your site stand out with a custom domain. Not sure yet? <span>Decide later</span>.'
 					),
 					decideLaterComponent
 				);
