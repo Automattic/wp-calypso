@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
 import classnames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, useRtl } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import wpToJpImageRtl from 'calypso/assets/images/jetpack/wp-to-jp-rtl.svg';
 import wpToJpImage from 'calypso/assets/images/jetpack/wp-to-jp.svg';
@@ -15,6 +15,7 @@ import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import './style.scss';
 
 export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
+	const isRtl = useRtl();
 	const translate = useTranslate();
 	const { isDesktop, isiPad, isiPod, isiPhone, isAndroid } = userAgent;
 	const isIos = isiPad || isiPod || isiPhone;
@@ -35,7 +36,7 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 				<div className="go-mobile__row">
 					<img
 						className="go-mobile__icon"
-						src={ wpToJpImage }
+						src={ isRtl ? wpToJpImageRtl : wpToJpImage }
 						width="49"
 						height="29"
 						alt="WordPress and Jetpack app"
