@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import { localize, hasTranslation } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -127,8 +127,8 @@ export class SiteNotice extends Component {
 
 		const showLaunchpadNotice =
 			site.options?.launchpad_screen === 'full' &&
-			hasTranslation( 'Keep setting up your site' ) &&
-			hasTranslation( 'Next Steps' );
+			i18n.hasTranslation( 'Keep setting up your site' ) &&
+			i18n.hasTranslation( 'Next Steps' );
 		let SidebarNotice = null;
 
 		if ( showJitms ) {
