@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import { Button, Popover } from '@automattic/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -27,7 +26,7 @@ const PromotionalPopover = ( { iconElement }: Props ) => {
 	const { setHasSeenPromotionalPopover } = useDispatch( HELP_CENTER_STORE );
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const { __, hasTranslation } = useI18n();
-	const translate = useTranslate();
+	const { localeSlug } = useTranslate();
 
 	const recordDismiss = ( location: 'clicking-button' | 'clicking-outside' ) => {
 		recordTracksEvent( 'calypso_helpcenter_promotion_popover_dismissed', {
@@ -46,7 +45,7 @@ const PromotionalPopover = ( { iconElement }: Props ) => {
 		return null;
 	}
 
-	const isEnglish = config( 'english_locales' ).includes( translate.localeSlug );
+	const isEnglish = [ 'en', 'en-gb' ].includes( localeSlug || '' );
 	const isTranslationComplete =
 		isEnglish ||
 		( hasTranslation( '✨ Our new Help Center', __i18n_text_domain__ ) &&
