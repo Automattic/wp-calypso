@@ -15,7 +15,7 @@ export default class extends PureComponent {
 		onToggle: PropTypes.func.isRequired,
 	};
 
-	// Assume a device stream if not timeline or email
+	// Assume this is a device stream if not timeline or email
 	isDeviceStream = () => {
 		return [ 'timeline', 'email' ].indexOf( this.props.stream ) === -1;
 	};
