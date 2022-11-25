@@ -14,6 +14,8 @@ const stepNameToModuleName = {
 	domains: 'domains',
 	'domain-only': 'domains',
 	'domains-launch': 'domains',
+	'domains-link-in-bio': 'domains',
+	'domains-link-in-bio-tld': 'domains',
 	'domains-store': 'domains',
 	'domains-theme-preselected': 'domains',
 	'mailbox-domain': 'domains',

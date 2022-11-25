@@ -104,6 +104,48 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug' ],
 		},
 
+		'domains-link-in-bio': {
+			stepName: 'domains-link-in-bio',
+			apiRequestFunction: createSiteWithCart,
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+				'shouldHideFreePlan',
+				'isManageSiteFlow',
+			],
+			optionalDependencies: [ 'shouldHideFreePlan', 'isManageSiteFlow' ],
+			props: {
+				isDomainOnly: false,
+				includeWordPressDotCom: true,
+				includeDotLink: true,
+			},
+			delayApiRequestUntilComplete: true,
+		},
+
+		'domains-link-in-bio-tld': {
+			stepName: 'domains-link-in-bio-tld',
+			apiRequestFunction: createSiteWithCart,
+			dependencies: [ 'tld' ],
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+				'shouldHideFreePlan',
+				'isManageSiteFlow',
+			],
+			optionalDependencies: [ 'shouldHideFreePlan', 'isManageSiteFlow' ],
+			props: {
+				isDomainOnly: false,
+				includeWordPressDotCom: false,
+				includeDotLink: true,
+				managedSubdomainQuantity: 2,
+			},
+			delayApiRequestUntilComplete: true,
+		},
+
 		'plans-site-selected': {
 			stepName: 'plans-site-selected',
 			apiRequestFunction: addPlanToCart,

@@ -111,6 +111,7 @@ class RegisterDomainStep extends Component {
 		isSignupStep: PropTypes.bool,
 		includeWordPressDotCom: PropTypes.bool,
 		includeDotBlogSubdomain: PropTypes.bool,
+		includeDotLink: PropTypes.bool,
 		showExampleSuggestions: PropTypes.bool,
 		onSave: PropTypes.func,
 		onAddMapping: PropTypes.func,
@@ -128,6 +129,7 @@ class RegisterDomainStep extends Component {
 		domainAndPlanUpsellFlow: PropTypes.bool,
 		useProvidedProductsList: PropTypes.bool,
 		managedSubdomains: PropTypes.string,
+		managedSubdomainQuantity: PropTypes.number,
 		handleClickUseYourDomain: PropTypes.func,
 	};
 
@@ -188,6 +190,14 @@ class RegisterDomainStep extends Component {
 		}
 	}
 
+	isSubdomainResultsVisible() {
+		return (
+			this.props.includeWordPressDotCom ||
+			this.props.includeDotBlogSubdomain ||
+			this.props.includeDotLink
+		);
+	}
+
 	getState( props ) {
 		const suggestion = getDomainSuggestionSearch( props.suggestion, MIN_QUERY_LENGTH );
 		const loadingResults = Boolean( suggestion );
@@ -206,8 +216,7 @@ class RegisterDomainStep extends Component {
 			lastFilters: this.getInitialFiltersState(),
 			lastQuery: suggestion,
 			loadingResults,
-			loadingSubdomainResults:
-				( props.includeWordPressDotCom || props.includeDotBlogSubdomain ) && loadingResults,
+			loadingSubdomainResults: this.isSubdomainResultsVisible() && loadingResults,
 			pageNumber: 1,
 			pageSize: PAGE_SIZE,
 			premiumDomains: {},
@@ -318,7 +327,11 @@ class RegisterDomainStep extends Component {
 	}
 
 	getFreeSubdomainSuggestionsQuantity() {
-		return this.props.includeWordPressDotCom + this.props.includeDotBlogSubdomain;
+		return (
+			this.props.includeWordPressDotCom +
+			this.props.includeDotBlogSubdomain +
+			this.props.includeDotLink
+		);
 	}
 
 	getNewRailcarId() {
@@ -345,7 +358,7 @@ class RegisterDomainStep extends Component {
 			suggestions = [ ...searchResults ];
 		}
 
-		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
+		if ( this.isSubdomainResultsVisible() ) {
 			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {
 				const freeSubdomainPlaceholders = Array( this.getFreeSubdomainSuggestionsQuantity() ).fill(
 					{ is_placeholder: true }
@@ -1062,13 +1075,14 @@ class RegisterDomainStep extends Component {
 	getSubdomainSuggestions = ( domain, timestamp ) => {
 		const subdomainQuery = {
 			query: domain,
-			quantity: this.getFreeSubdomainSuggestionsQuantity(),
-			include_wordpressdotcom: true,
+			quantity: this.props.managedSubdomainQuantity ?? this.getFreeSubdomainSuggestionsQuantity(),
+			include_wordpressdotcom: this.props.includeWordPressDotCom,
 			include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
 			only_wordpressdotcom: this.props.includeDotBlogSubdomain,
 			tld_weight_overrides: null,
 			vendor: 'dot',
 			managed_subdomains: this.props.managedSubdomains,
+			managed_subdomain_quantity: this.props.managedSubdomainQuantity ?? 1,
 			...this.getActiveFiltersForAPI(),
 		};
 
@@ -1179,10 +1193,7 @@ class RegisterDomainStep extends Component {
 					.catch( () => [] ) // handle the error and return an empty list
 					.then( this.handleDomainSuggestions( domain ) );
 
-				if (
-					shouldQuerySubdomains &&
-					( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain )
-				) {
+				if ( shouldQuerySubdomains && this.isSubdomainResultsVisible() ) {
 					this.getSubdomainSuggestions( domain, timestamp );
 				}
 			}
