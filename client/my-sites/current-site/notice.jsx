@@ -53,11 +53,11 @@ export class SiteNotice extends Component {
 	}
 
 	getLaunchpadNotice() {
-		const { site } = this.props;
+		const { site, translate } = this.props;
 
 		return (
 			<UpsellNudge
-				callToAction="Next Steps"
+				callToAction={ translate( 'Next Steps' ) }
 				className="current-site__launchpad-notice"
 				compact
 				dismissPreferenceName=""
@@ -65,11 +65,8 @@ export class SiteNotice extends Component {
 				forceHref={ true }
 				forceDisplay={ true }
 				href={ `/setup/${ site.options.site_intent }/launchpad?siteSlug=${ site.slug }` }
-				// TODO: Add relevant tracks events here
-				// onClick={ onClick }
-				// onDismissClick={ onDismiss }
 				primaryButton={ false }
-				title="Keep setting up your site"
+				title={ translate( 'Keep setting up your site' ) }
 			/>
 		);
 	}
