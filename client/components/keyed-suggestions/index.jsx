@@ -179,11 +179,11 @@ class KeyedSuggestions extends Component {
 		const suggestion = event.currentTarget.textContent.split( ' ' )[ 0 ];
 		if ( this.state.isShowTopLevelTerms ) {
 			// Clean up suggestion that it's passed as, for example, "feature" instead of "feature:".
-			recordTracksEvent( 'search_dropdown_searchby_item_click', {
-				term: suggestion.split( ':' )[ 0 ],
+			recordTracksEvent( 'search_dropdown_taxonomy_click', {
+				taxonomy: suggestion.split( ':' )[ 0 ],
 			} );
 		} else {
-			recordTracksEvent( 'search_dropdown_taxonomy_item_click', { term: suggestion } );
+			recordTracksEvent( 'search_dropdown_taxonomy_term_click', { term: suggestion } );
 		}
 
 		suggest( suggestion, this.state.isShowTopLevelTerms );
@@ -460,7 +460,7 @@ class KeyedSuggestions extends Component {
 						<SuggestionsButtonAll
 							onClick={ ( category ) => {
 								this.onShowAllClick( category );
-								this.props.recordTracksEvent( 'search_dropdown_show_all_button_click', {
+								this.props.recordTracksEvent( 'search_dropdown_view_all_button_click', {
 									category: key,
 								} );
 							} }
@@ -472,7 +472,7 @@ class KeyedSuggestions extends Component {
 						<SuggestionsButtonAll
 							onClick={ ( category ) => {
 								this.onShowAllClick( category );
-								this.props.recordTracksEvent( 'search_dropdown_show_less_button_click', {
+								this.props.recordTracksEvent( 'search_dropdown_view_less_button_click', {
 									category: key,
 								} );
 							} }

@@ -368,17 +368,17 @@ class ThemeShowcase extends Component {
 			case 'search_clear_icon_click':
 				eventName = 'calypso_themeshowcase_search_clear_icon_click';
 				break;
-			case 'search_dropdown_searchby_item_click':
-				eventName = 'calypso_themeshowcase_search_dropdown_searchby_item_click';
+			case 'search_dropdown_taxonomy_click':
+				eventName = 'calypso_themeshowcase_search_dropdown_taxonomy_click';
 				break;
-			case 'search_dropdown_taxonomy_item_click':
-				eventName = 'calypso_themeshowcase_search_dropdown_taxonomy_item_click';
+			case 'search_dropdown_taxonomy_term_click':
+				eventName = 'calypso_themeshowcase_search_dropdown_taxonomy_term_click';
 				break;
-			case 'search_dropdown_show_all_button_click':
-				eventName = 'calypso_themeshowcase_search_dropdown_show_all_button_click';
+			case 'search_dropdown_view_all_button_click':
+				eventName = 'calypso_themeshowcase_search_dropdown_view_all_button_click';
 				break;
-			case 'search_dropdown_show_less_button_click':
-				eventName = 'calypso_themeshowcase_search_dropdown_show_less_button_click';
+			case 'search_dropdown_view_less_button_click':
+				eventName = 'calypso_themeshowcase_search_dropdown_view_less_button_click';
 				break;
 		}
 
