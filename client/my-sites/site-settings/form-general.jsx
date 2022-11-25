@@ -662,7 +662,7 @@ export class SiteSettingsFormGeneral extends Component {
 								{ translate(
 									"Allow a site visitor to cover the full cost of your site's WordPress.com plan."
 								) }
-								<InlineSupportLink supportContext="gift-a-subscription">
+								<InlineSupportLink supportContext="gift-a-subscription" showIcon="">
 									{ translate( 'Learn more.' ) }
 								</InlineSupportLink>
 							</FormSettingExplanation>
