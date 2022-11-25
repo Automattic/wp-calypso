@@ -62,6 +62,7 @@ class KeyedSuggestions extends Component {
 		isShowTopLevelTermsOnMount: PropTypes.bool,
 		isDisableAutoSelectSuggestion: PropTypes.bool,
 		isDisableTextHighlight: PropTypes.bool,
+		recordTracksEvent: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -69,6 +70,7 @@ class KeyedSuggestions extends Component {
 		terms: {},
 		input: '',
 		exclusions: [],
+		recordTracksEvent: noop,
 	};
 
 	state = {
@@ -172,8 +174,19 @@ class KeyedSuggestions extends Component {
 	onMouseDown = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();
+
+		const { suggest, recordTracksEvent } = this.props;
 		const suggestion = event.currentTarget.textContent.split( ' ' )[ 0 ];
-		this.props.suggest( suggestion, this.state.isShowTopLevelTerms );
+		if ( this.state.isShowTopLevelTerms ) {
+			// Clean up suggestion that it's passed as, for example, "feature" instead of "feature:".
+			recordTracksEvent( 'search_dropdown_taxonomy_click', {
+				taxonomy: suggestion.split( ':' )[ 0 ],
+			} );
+		} else {
+			recordTracksEvent( 'search_dropdown_taxonomy_term_click', { term: suggestion } );
+		}
+
+		suggest( suggestion, this.state.isShowTopLevelTerms );
 	};
 
 	onMouseOver = ( event ) => {
@@ -445,14 +458,24 @@ class KeyedSuggestions extends Component {
 					</span>
 					{ Object.keys( this.props.terms[ key ] ).length > suggestions[ key ].length && (
 						<SuggestionsButtonAll
-							onClick={ this.onShowAllClick }
+							onClick={ ( category ) => {
+								this.onShowAllClick( category );
+								this.props.recordTracksEvent( 'search_dropdown_view_all_button_click', {
+									category: key,
+								} );
+							} }
 							category={ key }
 							label={ this.props.showAllLabelText || i18n.translate( 'Show all' ) }
 						/>
 					) }
 					{ key === this.state.showAll && (
 						<SuggestionsButtonAll
-							onClick={ this.onShowAllClick }
+							onClick={ ( category ) => {
+								this.onShowAllClick( category );
+								this.props.recordTracksEvent( 'search_dropdown_view_less_button_click', {
+									category: key,
+								} );
+							} }
 							category=""
 							label={ this.props.showLessLabelText || i18n.translate( 'Show less' ) }
 						/>
