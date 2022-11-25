@@ -59,7 +59,10 @@ describe(
 			} );
 
 			it( 'Land in Home dashboard', async function () {
-				await page.waitForURL( DataHelper.getCalypsoURL( `/home/${ siteSlug }` ) );
+				// This process takes a long time.
+				await page.waitForURL( DataHelper.getCalypsoURL( `/home/${ siteSlug }` ), {
+					timeout: 30 * 1000,
+				} );
 			} );
 		} );
 	}
