@@ -1,4 +1,4 @@
-import { getPlan, TERM_MONTHLY } from '@automattic/calypso-products';
+import { TERM_MONTHLY } from '@automattic/calypso-products';
 import deepFreeze from 'deep-freeze';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import getIntroOfferIsEligible from 'calypso/state/selectors/get-intro-offer-is-eligible';
@@ -12,7 +12,6 @@ import {
 	getProductSaleCouponDiscount,
 	getProductPriceTierList,
 	isProductsListFetching,
-	planSlugToPlanProduct,
 	getProductsByBillingSlug,
 } from '../selectors';
 
@@ -98,44 +97,6 @@ describe( 'selectors', () => {
 
 			getPlanPrice( {}, 1, { ...plan, term: TERM_MONTHLY }, true );
 			expect( getPlanDiscountedRawPrice.mock.calls[ 2 ][ 3 ] ).toEqual( { isMonthly: true } );
-		} );
-	} );
-
-	describe( '#planSlugToPlanProduct()', () => {
-		test( 'Should return shape { planSlug, plan, product }', () => {
-			const products = {
-				myPlanSlug: {
-					price: 10,
-				},
-			};
-			const planSlug = 'myPlanSlug';
-			const plan = {
-				storeId: 15,
-			};
-			getPlan.mockImplementation( () => plan );
-
-			expect( planSlugToPlanProduct( products, planSlug ) ).toEqual( {
-				planSlug,
-				plan,
-				product: products.myPlanSlug,
-			} );
-		} );
-
-		test( 'Should return shape { planSlug, plan, product } with empty values if plan or product couldnt be found', () => {
-			const planSlug = 'myPlanSlug';
-			getPlan.mockImplementation( () => null );
-
-			expect( planSlugToPlanProduct( {}, planSlug ) ).toEqual( {
-				planSlug,
-				plan: null,
-				product: undefined,
-			} );
-
-			expect( planSlugToPlanProduct( { myPlanSlug: null }, planSlug ) ).toEqual( {
-				planSlug,
-				plan: null,
-				product: null,
-			} );
 		} );
 	} );
 
