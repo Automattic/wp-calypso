@@ -1,5 +1,4 @@
 export { computeFullAndMonthlyPricesForPlan } from './compute-full-and-monthly-prices-for-plan';
-export { computeProductsWithPrices } from './compute-products-with-prices';
 export { getAvailableProductsList } from './get-available-products-list';
 export { getPlanPrice } from './get-plan-price';
 export { getProductBySlug } from './get-product-by-slug';
