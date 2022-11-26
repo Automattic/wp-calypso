@@ -19,24 +19,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useStableCallback } from 'calypso/lib/use-stable-callback';
 import type { WPCOMProductVariant } from '../components/item-variation-picker';
-import type { Plan, Product } from '@automattic/calypso-products';
 import type { ResponseCartProduct, ResponseCartProductVariant } from '@automattic/shopping-cart';
-import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
-
-export interface AvailableProductVariant {
-	planSlug: string;
-	plan: Plan | Product;
-	product: ProductListItem;
-	priceFull: number;
-	priceFinal: number;
-	introductoryOfferPrice: number | null;
-}
-
-export interface AvailableProductVariantAndCompared extends AvailableProductVariant {
-	priceFullBeforeDiscount: number;
-}
 
 export interface SitePlanData {
 	autoRenew?: boolean;
