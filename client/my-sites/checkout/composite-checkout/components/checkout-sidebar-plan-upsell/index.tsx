@@ -33,11 +33,7 @@ export function CheckoutSidebarPlanUpsell() {
 	const { responseCart, replaceProductInCart } = useShoppingCart( cartKey );
 	const siteId = useSelector( getSelectedSiteId );
 	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
-	const variants = useGetProductVariants(
-		siteId ?? undefined,
-		plan?.product_slug ?? '',
-		plan?.current_quantity ?? null
-	);
+	const variants = useGetProductVariants( plan, siteId ?? undefined );
 
 	if ( ! plan ) {
 		debug( 'no plan found in cart' );
