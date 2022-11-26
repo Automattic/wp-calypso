@@ -24,6 +24,7 @@ import { requestProductsList } from 'calypso/state/products-list/actions';
 import { computeProductsWithPrices } from 'calypso/state/products-list/selectors';
 import type { WPCOMProductVariant } from '../components/item-variation-picker';
 import type { Plan, Product } from '@automattic/calypso-products';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
@@ -91,20 +92,25 @@ const fallbackFilter = () => true;
  * is the term interval of the currently active plan, if any.
  */
 export function useGetProductVariants(
+	product: ResponseCartProduct | undefined,
 	siteId: number | undefined,
-	productSlug: string,
-	currentQuantity: number | null,
 	filterCallback?: VariantFilterCallback
 ): WPCOMProductVariant[] {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 	const filterCallbackMemoized = useStableCallback( filterCallback ?? fallbackFilter );
 
-	const variantProductSlugs = useVariantPlanProductSlugs( productSlug );
+	const variantProductSlugs =
+		product?.product_variants.map( ( variant ) => variant.product_slug ) ?? [];
 	debug( 'variantProductSlugs', variantProductSlugs );
 
 	const variantsWithPrices: AvailableProductVariant[] = useSelector( ( state ) => {
-		return computeProductsWithPrices( state, siteId, variantProductSlugs, currentQuantity );
+		return computeProductsWithPrices(
+			state,
+			siteId,
+			variantProductSlugs,
+			product?.current_quantity ?? null
+		);
 	} );
 
 	const [ haveFetchedProducts, setHaveFetchedProducts ] = useState( false );
@@ -227,10 +233,6 @@ export function getVariantPlanProductSlugs( productSlug: string | undefined ): s
 				group: chosenPlan.group,
 				type: chosenPlan.type,
 		  } );
-}
-
-function useVariantPlanProductSlugs( productSlug: string | undefined ): string[] {
-	return useMemo( () => getVariantPlanProductSlugs( productSlug ), [ productSlug ] );
 }
 
 function getTermText( term: string, translate: ReturnType< typeof useTranslate > ): string {
