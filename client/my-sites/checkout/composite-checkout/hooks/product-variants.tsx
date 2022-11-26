@@ -85,23 +85,35 @@ export function useGetProductVariants(
 	debug( 'variantProductSlugs', variantProductSlugs );
 
 	const filteredVariants = useMemo( () => {
-		const convertedVariants = variants.map( ( variant ): WPCOMProductVariant => {
-			const term = getBillingTermForMonths( variant.bill_period_in_months );
-			return {
-				variantLabel: getTermText( term, translate ),
-				productSlug: variant.product_slug,
-				productId: variant.product_id,
-				priceInteger: variant.price_integer,
-				termIntervalInMonths: getBillingMonthsForTerm( term ),
-				termIntervalInDays: getTermDuration( term ) ?? 0,
-				currency: variant.currency,
-			};
-		} );
+		const convertedVariants = variants
+			.sort( sortVariant )
+			.map( ( variant ): WPCOMProductVariant => {
+				const term = getBillingTermForMonths( variant.bill_period_in_months );
+				return {
+					variantLabel: getTermText( term, translate ),
+					productSlug: variant.product_slug,
+					productId: variant.product_id,
+					priceInteger: variant.price_integer,
+					termIntervalInMonths: getBillingMonthsForTerm( term ),
+					termIntervalInDays: getTermDuration( term ) ?? 0,
+					currency: variant.currency,
+				};
+			} );
 
 		return convertedVariants.filter( ( product ) => filterCallbackMemoized( product ) );
 	}, [ translate, variants, filterCallbackMemoized ] );
 
 	return filteredVariants;
+}
+
+function sortVariant( a: ResponseCartProductVariant, b: ResponseCartProductVariant ) {
+	if ( a.bill_period_in_months < b.bill_period_in_months ) {
+		return -1;
+	}
+	if ( a.bill_period_in_months > b.bill_period_in_months ) {
+		return 1;
+	}
+	return 0;
 }
 
 export function canVariantBePurchased(
