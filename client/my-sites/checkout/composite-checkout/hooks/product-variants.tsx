@@ -3,28 +3,24 @@ import {
 	findPlansKeys,
 	findProductKeys,
 	getBillingMonthsForTerm,
-	getBillingYearsForTerm,
 	getPlan,
 	getProductFromSlug,
 	getTermDuration,
 	GROUP_JETPACK,
 	GROUP_WPCOM,
 	objectIsProduct,
+	getBillingTermForMonths,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState, useMemo, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useMemo } from 'react';
 import { useStableCallback } from 'calypso/lib/use-stable-callback';
-import { requestPlans } from 'calypso/state/plans/actions';
-import { requestProductsList } from 'calypso/state/products-list/actions';
-import { computeProductsWithPrices } from 'calypso/state/products-list/selectors';
 import type { WPCOMProductVariant } from '../components/item-variation-picker';
 import type { Plan, Product } from '@automattic/calypso-products';
-import type { ResponseCartProduct } from '@automattic/shopping-cart';
+import type { ResponseCartProduct, ResponseCartProductVariant } from '@automattic/shopping-cart';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
@@ -77,6 +73,7 @@ export interface SitesPlansResult {
 export type VariantFilterCallback = ( variant: WPCOMProductVariant ) => boolean;
 
 const fallbackFilter = () => true;
+const fallbackVariants: ResponseCartProductVariant[] = [];
 
 /**
  * Return all product variants for a particular product.
@@ -93,72 +90,31 @@ const fallbackFilter = () => true;
  */
 export function useGetProductVariants(
 	product: ResponseCartProduct | undefined,
-	siteId: number | undefined,
 	filterCallback?: VariantFilterCallback
 ): WPCOMProductVariant[] {
 	const translate = useTranslate();
-	const reduxDispatch = useDispatch();
 	const filterCallbackMemoized = useStableCallback( filterCallback ?? fallbackFilter );
 
-	const variantProductSlugs =
-		product?.product_variants.map( ( variant ) => variant.product_slug ) ?? [];
+	const variants = product?.product_variants ?? fallbackVariants;
+	const variantProductSlugs = variants.map( ( variant ) => variant.product_slug );
 	debug( 'variantProductSlugs', variantProductSlugs );
 
-	const variantsWithPrices: AvailableProductVariant[] = useSelector( ( state ) => {
-		return computeProductsWithPrices(
-			state,
-			siteId,
-			variantProductSlugs,
-			product?.current_quantity ?? null
-		);
-	} );
-
-	const [ haveFetchedProducts, setHaveFetchedProducts ] = useState( false );
-	const shouldFetchProducts = ! variantsWithPrices;
-
-	useEffect( () => {
-		if ( shouldFetchProducts && ! haveFetchedProducts ) {
-			debug( 'dispatching request for product variant data' );
-			reduxDispatch( requestPlans() );
-			reduxDispatch( requestProductsList() );
-			setHaveFetchedProducts( true );
-		}
-	}, [ shouldFetchProducts, haveFetchedProducts, reduxDispatch ] );
-
-	const getProductVariantFromAvailableVariant = useCallback(
-		( variant: AvailableProductVariant ): WPCOMProductVariant => {
-			const price =
-				variant.introductoryOfferPrice !== null
-					? variant.introductoryOfferPrice
-					: variant.priceFinal || variant.priceFull;
-
-			const termIntervalInMonths = getBillingMonthsForTerm( variant.plan.term );
-			const termIntervalInYears = getBillingYearsForTerm( variant.plan.term );
-			const pricePerMonth = price / termIntervalInMonths;
-			const pricePerYear = price / termIntervalInYears;
-
-			return {
-				variantLabel: getTermText( variant.plan.term, translate ),
-				productSlug: variant.planSlug,
-				productId: variant.product.product_id,
-				price,
-				termIntervalInMonths: getBillingMonthsForTerm( variant.plan.term ),
-				termIntervalInDays: getTermDuration( variant.plan.term ) ?? 0,
-				pricePerMonth,
-				pricePerYear,
-				currency: variant.product.currency_code,
-			};
-		},
-		[ translate ]
-	);
-
-	const convertedVariants = useMemo( () => {
-		return variantsWithPrices.map( getProductVariantFromAvailableVariant );
-	}, [ getProductVariantFromAvailableVariant, variantsWithPrices ] );
-
 	const filteredVariants = useMemo( () => {
+		const convertedVariants = variants.map( ( variant ): WPCOMProductVariant => {
+			const term = getBillingTermForMonths( variant.bill_period_in_months );
+			return {
+				variantLabel: getTermText( term, translate ),
+				productSlug: variant.product_slug,
+				productId: variant.product_id,
+				price: variant.price,
+				termIntervalInMonths: getBillingMonthsForTerm( term ),
+				termIntervalInDays: getTermDuration( term ) ?? 0,
+				currency: variant.currency,
+			};
+		} );
+
 		return convertedVariants.filter( ( product ) => filterCallbackMemoized( product ) );
-	}, [ convertedVariants, filterCallbackMemoized ] );
+	}, [ translate, variants, filterCallbackMemoized ] );
 
 	return filteredVariants;
 }
