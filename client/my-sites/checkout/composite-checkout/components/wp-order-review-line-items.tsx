@@ -203,7 +203,7 @@ function LineItemWrapper( {
 	const sitePlans = useSelector( ( state ) => getPlansBySiteId( state, siteId ) );
 	const activePlan = sitePlans?.data?.find( ( plan ) => plan.currentPlan );
 
-	const variants = useGetProductVariants( product, siteId, ( variant ) => {
+	const variants = useGetProductVariants( product, ( variant ) => {
 		if ( ! canVariantBePurchased( variant, activePlan?.interval, activePlan?.productSlug ) ) {
 			return false;
 		}
