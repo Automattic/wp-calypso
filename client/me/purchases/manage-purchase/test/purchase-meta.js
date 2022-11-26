@@ -80,7 +80,7 @@ describe( 'PurchaseMeta', () => {
 				/>
 			</ReduxProvider>
 		);
-		expect( screen.getByText( /year/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /\/ year\b/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'does render "/ month" in the price column when it is a yearly purchase', () => {
@@ -116,7 +116,7 @@ describe( 'PurchaseMeta', () => {
 				/>
 			</ReduxProvider>
 		);
-		expect( screen.getByText( /month/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /\/ month\b/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'does render "/ week" in the price column when it is a yearly purchase', () => {
@@ -152,7 +152,7 @@ describe( 'PurchaseMeta', () => {
 				/>
 			</ReduxProvider>
 		);
-		expect( screen.getByText( /week/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /\/ week\b/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'does render "/ day" in the price column when it is a daily purchase', () => {
@@ -188,7 +188,7 @@ describe( 'PurchaseMeta', () => {
 				/>
 			</ReduxProvider>
 		);
-		expect( screen.getByText( /day/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /\/ day\b/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'does render "two years" in the price column when it is a bi-annual purchase', () => {
@@ -225,7 +225,7 @@ describe( 'PurchaseMeta', () => {
 			</ReduxProvider>
 		);
 
-		expect( screen.getByText( /two years/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /\/ two years\b/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'does render "Never Expires" in the Renews on column when it is a DIFM purchase', () => {
@@ -263,7 +263,6 @@ describe( 'PurchaseMeta', () => {
 			</ReduxProvider>
 		);
 
-		//screen.debug();
 		expect( screen.getByText( /Never Expires/ ) ).toBeInTheDocument();
 	} );
 } );
