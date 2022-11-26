@@ -47,10 +47,15 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 			blogdescription: string;
 			launchpad_screen?: string;
 			intent?: string;
+			site_icon?: File;
 		} = {
 			blogname: siteTitle,
 			blogdescription: siteDescription,
 		};
+
+		if ( siteLogo ) {
+			settings.site_icon = new File( [ base64ImageToBlob( siteLogo ) ], 'site-logo.png' );
+		}
 
 		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
 			// link-in-bio and link-in-bio-tld are considered the same intent.
@@ -68,13 +73,6 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 
 		formData.push( [ 'settings', JSON.stringify( settings ) ] );
 
-		if ( siteLogo ) {
-			formData.push( [
-				'site_icon',
-				new File( [ base64ImageToBlob( siteLogo ) ], 'site-logo.png' ),
-			] );
-		}
-
 		return wpcomRequest< { updated: object } >( {
 			// since this is a new site, its safe to assume that homepage ID is 2
 			path: `/sites/${ siteId }/sites-setup`,
@@ -82,7 +80,6 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 			apiNamespace: 'wpcom/v2',
 			apiVersion: '2',
 			formData,
-			body: { content: selectedPatternContent, template: 'blank' },
 		} ).then( () => {
 			recordTracksEvent( 'calypso_signup_site_options_submit', {
 				has_site_title: !! siteTitle,
@@ -92,7 +89,7 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 			 * We need to wait the site being created, then go to checkout and wait for the user
 			 * to buy the plan before we can set a premium theme to the site. If we reset the store
 			 * here we loose this information.
-			 **/
+			 */
 			// resetOnboardStore();
 		} );
 	}
