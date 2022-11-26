@@ -230,10 +230,10 @@ $sensei-color: #43af99;
 			border: none;
 			border-radius: 4px;
 			background-color: $sensei-color;
-			color: #000;
+			color: #fff;
 
 			&:hover {
-				background: lighten($sensei-color, 10%);
+				background: darken($sensei-color, 10%);
 			}
 		}
 	}
