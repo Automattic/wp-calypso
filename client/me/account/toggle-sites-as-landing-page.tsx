@@ -20,7 +20,6 @@ function ToggleSitesAsLandingPage( { onToggle, className }: ToggleSitesLandingPa
 
 	async function handleToggle( isChecked: boolean ) {
 		const preference = { useSitesAsLandingPage: isChecked, updatedAt: Date.now() };
-		savePreference( 'sites-landing-page', preference );
 		dispatch(
 			recordTracksEvent( 'calypso_sites_as_landing_page_toggled', {
 				sites_as_landing_page: isChecked,
