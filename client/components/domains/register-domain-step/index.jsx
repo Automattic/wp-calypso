@@ -111,7 +111,6 @@ class RegisterDomainStep extends Component {
 		isSignupStep: PropTypes.bool,
 		includeWordPressDotCom: PropTypes.bool,
 		includeDotBlogSubdomain: PropTypes.bool,
-		includeDotLink: PropTypes.bool,
 		showExampleSuggestions: PropTypes.bool,
 		onSave: PropTypes.func,
 		onAddMapping: PropTypes.func,
@@ -128,8 +127,8 @@ class RegisterDomainStep extends Component {
 		showAlreadyOwnADomain: PropTypes.bool,
 		domainAndPlanUpsellFlow: PropTypes.bool,
 		useProvidedProductsList: PropTypes.bool,
-		managedSubdomains: PropTypes.string,
-		managedSubdomainQuantity: PropTypes.number,
+		otherManagedSubdomains: PropTypes.array,
+		otherManagedSubdomainsCountOverride: PropTypes.number,
 		handleClickUseYourDomain: PropTypes.func,
 	};
 
@@ -194,7 +193,7 @@ class RegisterDomainStep extends Component {
 		return (
 			this.props.includeWordPressDotCom ||
 			this.props.includeDotBlogSubdomain ||
-			this.props.includeDotLink
+			this.props.otherManagedSubdomains.length > 0
 		);
 	}
 
@@ -326,11 +325,24 @@ class RegisterDomainStep extends Component {
 		}
 	}
 
+	getOtherManagedSubdomainsQuantity() {
+		let otherManagedSubdomainsCount = 0;
+		// In order to generate "other" (Not blog or wpcom) subdomains an Array of those subdomains need to be provided
+		if ( Array.isArray( this.props.otherManagedSubdomains ) ) {
+			// If an override is not provided we generate 1 suggestion per 1 other subdomain
+			otherManagedSubdomainsCount = this.props.otherManagedSubdomains.length;
+			if ( typeof this.props.otherManagedSubdomainsCountOverride === 'number' ) {
+				otherManagedSubdomainsCount = this.props.otherManagedSubdomainsCountOverride;
+			}
+		}
+		return otherManagedSubdomainsCount;
+	}
+
 	getFreeSubdomainSuggestionsQuantity() {
 		return (
 			this.props.includeWordPressDotCom +
 			this.props.includeDotBlogSubdomain +
-			this.props.includeDotLink
+			this.getOtherManagedSubdomainsQuantity()
 		);
 	}
 
@@ -1075,14 +1087,14 @@ class RegisterDomainStep extends Component {
 	getSubdomainSuggestions = ( domain, timestamp ) => {
 		const subdomainQuery = {
 			query: domain,
-			quantity: this.props.managedSubdomainQuantity ?? this.getFreeSubdomainSuggestionsQuantity(),
+			quantity: this.getFreeSubdomainSuggestionsQuantity(),
 			include_wordpressdotcom: this.props.includeWordPressDotCom,
 			include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
 			only_wordpressdotcom: this.props.includeDotBlogSubdomain,
 			tld_weight_overrides: null,
 			vendor: 'dot',
-			managed_subdomains: this.props.managedSubdomains,
-			managed_subdomain_quantity: this.props.managedSubdomainQuantity ?? 1,
+			managed_subdomains: this.props.otherManagedSubdomains.join(),
+			managed_subdomain_quantity: this.getOtherManagedSubdomainsQuantity(),
 			...this.getActiveFiltersForAPI(),
 		};
 

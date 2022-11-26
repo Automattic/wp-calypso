@@ -525,11 +525,7 @@ class DomainsStep extends Component {
 		}
 
 		const includeWordPressDotCom = this.props.includeWordPressDotCom ?? ! this.props.isDomainOnly;
-
-		// the .link tld comes with the w.link subdomain from our partnership.
-		// see pau2Xa-4tC-p2#comment-12869 for more details
-		const managedSubdomains = this.props.signupDependencies.tld ?? null;
-		const promoTlds = this.props.signupDependencies.tld?.split( ',' ) ?? [];
+		const promoTlds = this.props?.queryObject?.tld?.split( ',' ) ?? [];
 
 		return (
 			<CalypsoShoppingCartProvider>
@@ -542,8 +538,8 @@ class DomainsStep extends Component {
 					basePath={ this.props.path }
 					promoTlds={ promoTlds }
 					mapDomainUrl={ this.getUseYourDomainUrl() }
-					managedSubdomains={ managedSubdomains }
-					managedSubdomainQuantity={ this.props.managedSubdomainQuantity }
+					otherManagedSubdomains={ this.props.otherManagedSubdomains }
+					otherManagedSubdomainsCountOverride={ this.props.otherManagedSubdomainsCountOverride }
 					transferDomainUrl={ this.getUseYourDomainUrl() }
 					useYourDomainUrl={ this.getUseYourDomainUrl() }
 					onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
@@ -553,7 +549,6 @@ class DomainsStep extends Component {
 					analyticsSection={ this.getAnalyticsSection() }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					includeWordPressDotCom={ includeWordPressDotCom }
-					includeDotLink={ !! this.props.signupDependencies.tld }
 					includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 					isSignupStep
 					isPlanSelectionAvailableInFlow={ this.props.isPlanSelectionAvailableLaterInFlow }

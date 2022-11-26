@@ -119,7 +119,9 @@ export function generateSteps( {
 			props: {
 				isDomainOnly: false,
 				includeWordPressDotCom: true,
-				includeDotLink: true,
+				// the .link tld comes with the w.link subdomain from our partnership.
+				// see pau2Xa-4tC-p2#comment-12869 for more details
+				otherManagedSubdomains: [ 'link' ],
 			},
 			delayApiRequestUntilComplete: true,
 		},
@@ -140,8 +142,10 @@ export function generateSteps( {
 			props: {
 				isDomainOnly: false,
 				includeWordPressDotCom: false,
-				includeDotLink: true,
-				managedSubdomainQuantity: 2,
+				// the .link tld comes with the w.link subdomain from our partnership.
+				// see pau2Xa-4tC-p2#comment-12869 for more details
+				otherManagedSubdomains: [ 'link' ],
+				otherManagedSubdomainsCountOverride: 2,
 			},
 			delayApiRequestUntilComplete: true,
 		},
