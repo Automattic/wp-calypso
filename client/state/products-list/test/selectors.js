@@ -1,16 +1,10 @@
 import { TERM_MONTHLY } from '@automattic/calypso-products';
 import deepFreeze from 'deep-freeze';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
-import getIntroOfferIsEligible from 'calypso/state/selectors/get-intro-offer-is-eligible';
-import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';
 import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
 import {
-	computeFullAndMonthlyPricesForPlan,
 	getPlanPrice,
 	getProductDisplayCost,
-	getProductSaleCouponCost,
-	getProductSaleCouponDiscount,
-	getProductPriceTierList,
 	isProductsListFetching,
 	getProductsByBillingSlug,
 } from '../selectors';
@@ -97,104 +91,6 @@ describe( 'selectors', () => {
 
 			getPlanPrice( {}, 1, { ...plan, term: TERM_MONTHLY }, true );
 			expect( getPlanDiscountedRawPrice.mock.calls[ 2 ][ 3 ] ).toEqual( { isMonthly: true } );
-		} );
-	} );
-
-	describe( '#computeFullAndMonthlyPricesForPlan()', () => {
-		beforeEach( () => {
-			getIntroOfferPrice.mockReset();
-			getIntroOfferPrice.mockImplementation( () => null );
-			getIntroOfferIsEligible.mockReset();
-			getIntroOfferIsEligible.mockImplementation( () => false );
-			getProductSaleCouponCost.mockReset();
-			getProductSaleCouponCost.mockImplementation( () => false );
-			getProductSaleCouponDiscount.mockReset();
-			getProductSaleCouponDiscount.mockImplementation( () => false );
-		} );
-		test( 'Should return shape { priceFull }', () => {
-			getPlanDiscountedRawPrice.mockImplementation( ( a, b, c, { isMonthly } ) =>
-				isMonthly ? 10 : 120
-			);
-			getPlanRawPrice.mockImplementation( () => 150 );
-
-			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
-			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan ) ).toEqual( {
-				introductoryOfferPrice: null,
-				priceFull: 120,
-				priceFinal: 120,
-			} );
-		} );
-
-		test( 'Should return the introductoryOfferPrice value', () => {
-			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
-			getIntroOfferPrice.mockImplementation( () => 60 );
-			getIntroOfferIsEligible.mockImplementation( () => true );
-			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan ) ).toEqual( {
-				introductoryOfferPrice: 60,
-				priceFull: 120,
-				priceFinal: 120,
-			} );
-		} );
-
-		test( 'Should not return the introductoryOfferPrice value if ineligible', () => {
-			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
-			getIntroOfferPrice.mockImplementation( () => 60 );
-			getIntroOfferIsEligible.mockImplementation( () => false );
-			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan ) ).toEqual( {
-				introductoryOfferPrice: null,
-				priceFull: 120,
-				priceFinal: 120,
-			} );
-		} );
-
-		test( 'Should return the correct tier 1 price for Jetpack Search product with < 100 posts', () => {
-			const SEARCH_PRICE_TIER_LIST = [
-				{
-					minimum_units: 0,
-					maximum_units: null,
-					transform_quantity_divide_by: 10000,
-					transform_quantity_round: 'up',
-					per_unit_fee: 896,
-				},
-			];
-			const plan = { getStoreSlug: () => 'jetpack_search', getProductId: () => '2104' };
-			// JP Search is a "product" not a plan, so `getPlanDiscountedRawPrice()` & `getPlanRawPrice()` should return null.
-			getPlanDiscountedRawPrice.mockImplementation( () => null );
-			getPlanRawPrice.mockImplementation( () => null );
-
-			getIntroOfferPrice.mockImplementation( () => null );
-			getIntroOfferIsEligible.mockImplementation( () => false );
-			getProductPriceTierList.mockImplementation( () => SEARCH_PRICE_TIER_LIST );
-			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 10 ) ).toEqual( {
-				introductoryOfferPrice: null,
-				priceFull: 8.96,
-				priceFinal: 8.96,
-			} );
-		} );
-
-		test( 'Should return the correct tier 2 price for Jetpack Search product with > 100 posts', () => {
-			const SEARCH_PRICE_TIER_LIST = [
-				{
-					minimum_units: 0,
-					maximum_units: null,
-					transform_quantity_divide_by: 10000,
-					transform_quantity_round: 'up',
-					per_unit_fee: 896,
-				},
-			];
-			const plan = { getStoreSlug: () => 'jetpack_search', getProductId: () => '2104' };
-			// JP Search is a "product" not a plan, so `getPlanDiscountedRawPrice()` & `getPlanRawPrice()` should return null.
-			getPlanDiscountedRawPrice.mockImplementation( () => null );
-			getPlanRawPrice.mockImplementation( () => null );
-
-			getIntroOfferPrice.mockImplementation( () => null );
-			getIntroOfferIsEligible.mockImplementation( () => false );
-			getProductPriceTierList.mockImplementation( () => SEARCH_PRICE_TIER_LIST );
-			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 10001 ) ).toEqual( {
-				introductoryOfferPrice: null,
-				priceFull: 17.92,
-				priceFinal: 17.92,
-			} );
 		} );
 	} );
 
