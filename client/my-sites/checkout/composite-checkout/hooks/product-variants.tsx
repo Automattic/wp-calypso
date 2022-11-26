@@ -106,7 +106,7 @@ export function useGetProductVariants(
 				variantLabel: getTermText( term, translate ),
 				productSlug: variant.product_slug,
 				productId: variant.product_id,
-				price: variant.price,
+				priceInteger: variant.price_integer,
 				termIntervalInMonths: getBillingMonthsForTerm( term ),
 				termIntervalInDays: getTermDuration( term ) ?? 0,
 				currency: variant.currency,

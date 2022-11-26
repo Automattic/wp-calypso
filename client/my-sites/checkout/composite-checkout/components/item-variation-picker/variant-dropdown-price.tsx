@@ -89,7 +89,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 	const isMobile = useMobileBreakpoint();
 	const compareToPriceForVariantTerm = getItemVariantCompareToPrice( variant, compareTo );
 	const discountPercentage = getItemVariantDiscountPercentage( variant, compareTo );
-	const formattedCurrentPrice = formatCurrency( variant.price, variant.currency, {
+	const formattedCurrentPrice = formatCurrency( variant.priceInteger, variant.currency, {
 		stripZeros: true,
 		isSmallestUnit: true,
 	} );

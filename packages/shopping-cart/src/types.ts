@@ -583,7 +583,7 @@ export interface ResponseCartProductVariant {
 	bill_period_in_months: number;
 	product_slug: string;
 	currency: string;
-	price: number;
+	price_integer: number;
 }
 
 export interface IntroductoryOfferTerms {

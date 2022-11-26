@@ -109,7 +109,10 @@ export function CheckoutSidebarPlanUpsell() {
 					{ currentVariant.variantLabel }
 				</div>
 				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-					{ formatCurrency( currentVariant.price, currentVariant.currency, { stripZeros: true } ) }
+					{ formatCurrency( currentVariant.priceInteger, currentVariant.currency, {
+						stripZeros: true,
+						isSmallestUnit: true,
+					} ) }
 				</div>
 				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 					{ biennialVariant.variantLabel }
@@ -119,11 +122,13 @@ export function CheckoutSidebarPlanUpsell() {
 						<del className="checkout-sidebar-plan-upsell__do-not-pay">
 							{ formatCurrency( compareToPriceForVariantTerm, currentVariant.currency, {
 								stripZeros: true,
+								isSmallestUnit: true,
 							} ) }
 						</del>
 					) }
-					{ formatCurrency( biennialVariant.price, biennialVariant.currency, {
+					{ formatCurrency( biennialVariant.priceInteger, biennialVariant.currency, {
 						stripZeros: true,
+						isSmallestUnit: true,
 					} ) }
 				</div>
 			</div>
