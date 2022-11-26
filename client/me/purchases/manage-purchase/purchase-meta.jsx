@@ -284,6 +284,19 @@ function PurchaseMetaPrice( { purchase } ) {
 	}
 
 	const getPeriod = () => {
+		if ( isEmailMonthly( purchase ) ) {
+			return translate( 'month' );
+		}
+
+		if ( plan && plan.term ) {
+			switch ( plan.term ) {
+				case TERM_BIENNIALLY:
+					return translate( 'two years' );
+				case TERM_MONTHLY:
+					return translate( 'month' );
+			}
+		}
+
 		if ( purchase.billPeriodLabel ) {
 			switch ( purchase.billPeriodLabel ) {
 				case 'per year':
@@ -297,20 +310,7 @@ function PurchaseMetaPrice( { purchase } ) {
 			}
 		}
 
-		if ( plan && plan.term ) {
-			switch ( plan.term ) {
-				case TERM_BIENNIALLY:
-					return translate( 'two years' );
-				case TERM_MONTHLY:
-					return translate( 'month' );
-			}
-		}
-
-		if ( isEmailMonthly( purchase ) ) {
-			return translate( 'month' );
-		}
-
-		throw new Error( 'An unexpected error occured' );
+		throw new Error( `Failed to get a billing term for ${ productSlug }` );
 	};
 
 	const getPriceLabel = ( period ) => {
