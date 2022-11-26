@@ -7,12 +7,11 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import {
 	getItemVariantCompareToPrice,
@@ -31,9 +30,8 @@ export function CheckoutSidebarPlanUpsell() {
 	const locale = useLocale();
 	const cartKey = useCartKey();
 	const { responseCart, replaceProductInCart } = useShoppingCart( cartKey );
-	const siteId = useSelector( getSelectedSiteId );
 	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
-	const variants = useGetProductVariants( plan, siteId ?? undefined );
+	const variants = useGetProductVariants( plan );
 
 	if ( ! plan ) {
 		debug( 'no plan found in cart' );
