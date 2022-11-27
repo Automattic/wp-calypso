@@ -74,6 +74,11 @@ class MembershipsProductsSection extends Component {
 	closeDialog = () => this.setState( { showAddEditDialog: false, showDeleteDialog: false } );
 
 	render() {
+		// This will take the hash into account only when ading a new product
+		const subscribe_as_site_subscriber = this.state.product
+			? this.state.product?.subscribe_as_site_subscriber
+			: window.location.hash === '#add-newsletter-payment-plan';
+
 		return (
 			<div>
 				<QueryMembershipsSettings siteId={ this.props.siteId } />
@@ -127,9 +132,7 @@ class MembershipsProductsSection extends Component {
 						<RecurringPaymentsPlanAddEditModal
 							closeDialog={ this.closeDialog }
 							product={ Object.assign( this.state.product ?? {}, {
-								subscribe_as_site_subscriber:
-									this.state.product?.subscribe_as_site_subscriber ||
-									window.location.hash === '#add-newsletter-payment-plan',
+								subscribe_as_site_subscriber: subscribe_as_site_subscriber,
 							} ) }
 						/>
 					) }

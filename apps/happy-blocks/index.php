@@ -56,7 +56,7 @@ function a8c_happyblocks_assets() {
 	wp_enqueue_script(
 		'a8c-happyblocks-edit-js',
 		plugins_url( 'dist/editor.min.js', __FILE__ ),
-		array( 'a8c-happyblocks-pricing-plans' ),
+		array_merge( array( 'a8c-happyblocks-pricing-plans' ), $assets['dependencies'] ),
 		$assets['version'],
 		true
 	);
@@ -88,7 +88,7 @@ function a8c_happyblocks_view_assets() {
 	wp_enqueue_script(
 		'a8c-happyblock-view-js',
 		plugins_url( $script_file, __FILE__ ),
-		array( 'wp-element' ),
+		$assets['dependencies'],
 		$assets['version'],
 		true
 	);
@@ -97,15 +97,25 @@ add_action( 'enqueue_block_editor_assets', 'a8c_happyblocks_assets' );
 add_action( 'wp_enqueue_scripts', 'a8c_happyblocks_view_assets' );
 
 /**
+ * Get the topic's selected help site's domain.
+ *
+ * @return string
+ */
+function a8c_happyblocks_get_topic_domain() {
+	$topic_id = bbp_get_topic_id();
+	return get_post_meta( $topic_id, 'which_blog_domain', true );
+}
+
+/**
  * Get the pricing plans configuration
  *
  * @return array
  */
 function a8c_happyblocks_get_config() {
-	$domain = wp_parse_url( home_url() )['host'];
+
 	return array(
-		'domain' => $domain,
 		'locale' => get_user_locale(),
+		'domain' => a8c_happyblocks_get_topic_domain(),
 	);
 }
 
@@ -116,7 +126,8 @@ function a8c_happyblocks_get_config() {
  * @return string
  */
 function a8c_happyblocks_render_pricing_plans_callback( $attributes ) {
-	$json_attributes = htmlspecialchars( wp_json_encode( $attributes ), ENT_QUOTES, 'UTF-8' );
+	$attributes['domain'] = a8c_happyblocks_get_topic_domain();
+	$json_attributes      = htmlspecialchars( wp_json_encode( $attributes ), ENT_QUOTES, 'UTF-8' );
 
 	return <<<HTML
 		<div data-attributes="${json_attributes}" class="a8c-happy-tools-pricing-plans-block-placeholder" />

@@ -52,6 +52,25 @@ export class SiteNotice extends Component {
 		);
 	}
 
+	getLaunchpadNotice() {
+		const { site, translate } = this.props;
+
+		return (
+			<UpsellNudge
+				callToAction={ translate( 'Next Steps' ) }
+				className="current-site__launchpad-notice"
+				compact
+				dismissPreferenceName=""
+				dismissTemporary={ true }
+				forceHref={ true }
+				forceDisplay={ true }
+				href={ `/setup/${ site.options.site_intent }/launchpad?siteSlug=${ site.slug }` }
+				primaryButton={ false }
+				title={ translate( 'Keep setting up your site' ) }
+			/>
+		);
+	}
+
 	activeDiscountNotice() {
 		if ( ! this.props.activeDiscount ) {
 			return null;
@@ -101,22 +120,34 @@ export class SiteNotice extends Component {
 
 		const discountOrFreeToPaid = this.activeDiscountNotice();
 		const siteRedirectNotice = this.getSiteRedirectNotice( site );
+		const LaunchpadNotice = this.getLaunchpadNotice();
 
 		const showJitms =
 			! this.props.isSiteWPForTeams && ( discountOrFreeToPaid || config.isEnabled( 'jitms' ) );
 
-		return (
-			<div className="current-site__notices">
-				<QueryActivePromotions />
-				{ siteRedirectNotice }
-				{ showJitms && (
+		const showLaunchpadNotice = site.options?.launchpad_screen === 'full';
+		let SidebarNotice = null;
+
+		if ( showJitms ) {
+			if ( showLaunchpadNotice ) {
+				SidebarNotice = LaunchpadNotice;
+			} else {
+				SidebarNotice = (
 					<AsyncLoad
 						require="calypso/blocks/jitm"
 						placeholder={ null }
 						messagePath="calypso:sites:sidebar_notice"
 						template="sidebar-banner"
 					/>
-				) }
+				);
+			}
+		}
+
+		return (
+			<div className="current-site__notices">
+				<QueryActivePromotions />
+				{ siteRedirectNotice }
+				{ SidebarNotice }
 				<QuerySitePlans siteId={ site.ID } />
 			</div>
 		);

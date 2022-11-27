@@ -1,3 +1,5 @@
+import { isWpComMonthlyPlan } from '@automattic/calypso-products';
+import { __ } from '@wordpress/i18n';
 import { FunctionComponent } from 'react';
 import { BlockPlan } from '../hooks/pricing-plans';
 
@@ -10,7 +12,10 @@ const BillingInfo: FunctionComponent< Props > = ( { plan } ) => {
 		<div className="hb-pricing-plans-embed__billing-info">
 			<span className="hb-pricing-plans-embed__billing-info-value">{ plan.price }</span>
 			<span className="hb-pricing-plans-embed__billing-info-description">
-				/{ plan.getBillingTimeFrame() }
+				/
+				{ isWpComMonthlyPlan( plan.productSlug )
+					? __( 'month', 'happy-blocks' )
+					: __( 'month, billed annually', 'happy-blocks' ) }
 			</span>
 		</div>
 	);

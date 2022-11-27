@@ -66,6 +66,7 @@ class BlogSettings extends Component {
 			'achievement',
 			'mentions',
 			'scheduled_publicize',
+			'blogging_prompt',
 		];
 
 		if ( site.options.woocommerce_is_active ) {

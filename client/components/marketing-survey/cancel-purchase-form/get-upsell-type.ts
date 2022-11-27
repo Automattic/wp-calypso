@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	isWpComMonthlyPlan,
 	isWpComBusinessPlan,
@@ -24,6 +25,10 @@ export type UpsellType =
 	| 'live-chat:plugins'
 	| 'live-chat:themes'
 	| 'live-chat:domains'
+	| 'education:loading-time'
+	| 'education:seo'
+	| 'education:free-domain'
+	| 'education:domain-connection'
 	| 'upgrade-atomic';
 
 /**
@@ -35,6 +40,7 @@ export type UpsellType =
  */
 export function getUpsellType( reason: string, opts: UpsellOptions ): UpsellType {
 	const { productSlug, canRefund, canDowngrade, canOfferFreeMonth } = opts;
+	const liveChatSupported = config.isEnabled( 'livechat_solution' );
 
 	if ( ! productSlug ) {
 		return '';
@@ -72,23 +78,31 @@ export function getUpsellType( reason: string, opts: UpsellOptions ): UpsellType
 			return 'built-by';
 
 		case 'eCommerceFeatures':
-			return 'live-chat:plugins';
+			return liveChatSupported ? 'live-chat:plugins' : '';
 
 		case 'cannotFindWhatIWanted':
 		case 'otherFeatures':
-			return 'live-chat:plans';
+			return liveChatSupported ? 'live-chat:plans' : '';
 
 		case 'cannotUsePlugin':
 		case 'cannotUseTheme':
 			if ( isWpComBusinessPlan( productSlug ) || isWpComEcommercePlan( productSlug ) ) {
-				return reason === 'cannotUsePlugin' ? 'live-chat:plugins' : 'live-chat:themes';
+				if ( liveChatSupported ) {
+					return reason === 'cannotUsePlugin' ? 'live-chat:plugins' : 'live-chat:themes';
+				}
+				return '';
 			}
 			return 'upgrade-atomic';
-
+		case 'seoIssues':
+			return 'education:seo';
+		case 'loadingTime':
+			return 'education:loading-time';
 		case 'didNotGetFreeDomain':
-		case 'otherDomainIssues':
+			return 'education:free-domain';
 		case 'domainConnection':
-			return 'live-chat:domains';
+			return 'education:domain-connection';
+		case 'otherDomainIssues':
+			return liveChatSupported ? 'live-chat:domains' : '';
 	}
 
 	return '';

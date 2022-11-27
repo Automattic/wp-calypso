@@ -1,5 +1,6 @@
 export interface BlockAttributes {
 	productSlug: string;
+	domain: string;
 }
 
 /**

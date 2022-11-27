@@ -1703,6 +1703,7 @@ __metadata:
     "@stripe/stripe-js": ^1.17.1
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
+    "@wordpress/compose": ^5.7.0
     "@wordpress/data": ^6.9.0
     "@wordpress/i18n": ^4.9.0
     "@wordpress/react-i18n": ^3.7.0
@@ -19493,6 +19494,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "happy-blocks@workspace:apps/happy-blocks"
   dependencies:
+    "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-config": "workspace:^"

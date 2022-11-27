@@ -25,6 +25,7 @@ import {
 } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
+import { useViewportMatch } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren } from 'react';
 import { getLabel, getSublabel } from './checkout-labels';
@@ -103,7 +104,9 @@ export const CouponLineItem = styled( WPCouponLineItem )< {
 `;
 
 const GiftBadgeWrapper = styled.span`
-	width: 100%;
+	@media ( max-width: 660px ) {
+		width: 100%;
+	}
 `;
 
 const GiftBadge = styled.span`
@@ -561,24 +564,24 @@ function JetpackSearchMeta( { product }: { product: ResponseCartProduct } ) {
 
 function ProductTier( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
-
-	if ( isJetpackSearch( product ) && product.current_quantity ) {
-		const tierMaximum = product.price_tier_maximum_units;
-		const tierMinimum = product.price_tier_minimum_units;
-		if ( tierMaximum ) {
-			return (
-				<LineItemMeta>
-					{ translate( 'Up to %(tierMaximum)s records', { args: { tierMaximum } } ) }
-				</LineItemMeta>
-			);
+	if ( isJetpackSearch( product ) && product.price_tier_transform_quantity_divide_by ) {
+		const currentQuantity = product.current_quantity || 1;
+		let units_used: number;
+		if ( product.price_tier_transform_quantity_round === 'down' ) {
+			units_used = Math.floor( currentQuantity / product.price_tier_transform_quantity_divide_by );
+		} else {
+			units_used = Math.ceil( currentQuantity / product.price_tier_transform_quantity_divide_by );
 		}
-		if ( tierMinimum ) {
-			return (
-				<LineItemMeta>
-					{ translate( 'More than %(tierMinimum) records', { args: { tierMinimum } } ) }
-				</LineItemMeta>
-			);
-		}
+		const purchaseQuantityDividedByThousand =
+			( units_used * product.price_tier_transform_quantity_divide_by ) / 1000;
+		return (
+			<LineItemMeta>
+				{ translate(
+					'Up to %(purchaseQuantityDividedByThousand)sk records and/or requests per month',
+					{ args: { purchaseQuantityDividedByThousand } }
+				) }
+			</LineItemMeta>
+		);
 	}
 	return null;
 }
@@ -871,6 +874,7 @@ function WPLineItem( {
 } > ) {
 	const id = product.uuid;
 	const translate = useTranslate();
+	const isMobile = useViewportMatch( 'small', '<' );
 	const hasBundledDomainsInCart = responseCart.products.some(
 		( product ) =>
 			( product.is_domain_registration || product.product_slug === 'domain_transfer' ) &&
@@ -916,6 +920,12 @@ function WPLineItem( {
 		products: [ product ],
 	} );
 
+	const giftBadgeElement = (
+		<GiftBadgeWrapper>
+			<GiftBadge>{ translate( 'Gift' ) }</GiftBadge>
+		</GiftBadgeWrapper>
+	);
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
@@ -923,13 +933,10 @@ function WPLineItem( {
 			data-e2e-product-slug={ productSlug }
 			data-product-type={ isPlan( product ) ? 'plan' : product.product_slug }
 		>
-			{ responseCart.is_gift_purchase && (
-				<GiftBadgeWrapper>
-					<GiftBadge>{ translate( 'Gift' ) }</GiftBadge>
-				</GiftBadgeWrapper>
-			) }
+			{ isMobile && responseCart.is_gift_purchase && giftBadgeElement }
 			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
 				{ label }
+				{ ! isMobile && responseCart.is_gift_purchase && giftBadgeElement }
 			</LineItemTitle>
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 				<LineItemPrice
