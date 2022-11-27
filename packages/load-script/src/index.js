@@ -21,13 +21,13 @@ export const JQUERY_URL = 'https://s0.wp.com/wp-includes/js/jquery/jquery.js';
 // loadScript and loadjQueryDependentScript
 //
 
-export function loadScript( url, callback ) {
+export function loadScript( url, callback, args ) {
 	// If this script is not currently being loaded, create a script element and attach to document head.
 	const shouldLoadScript = ! isLoading( url );
 	if ( shouldLoadScript ) {
 		// the onload/onerror callbacks are guaranteed to be called asynchronously, so it's ok to first
 		// add the element and only then attach callbacks, as long as it happens in one event loop tick.
-		attachToHead( createScriptElement( url ) );
+		attachToHead( createScriptElement( url, args ) );
 	}
 
 	// if callback is provided, behave traditionally
@@ -48,15 +48,15 @@ export function loadScript( url, callback ) {
 	} );
 }
 
-export function loadjQueryDependentScript( url, callback ) {
+export function loadjQueryDependentScript( url, callback, args ) {
 	debug( `Loading a jQuery dependent script from "${ url }"` );
 
 	if ( window.jQuery ) {
 		debug( `jQuery found on window, skipping jQuery script loading for "${ url }"` );
-		return loadScript( url, callback );
+		return loadScript( url, callback, args );
 	}
 
-	const loadPromise = loadScript( JQUERY_URL ).then( () => loadScript( url ) );
+	const loadPromise = loadScript( JQUERY_URL ).then( () => loadScript( url, null, args ) );
 
 	// if callback is provided, call it on resolution
 	if ( typeof callback === 'function' ) {
