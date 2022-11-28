@@ -119,6 +119,7 @@
 	}
 
 	.button,
+	[type="button"],
 	.eligibility-warnings__confirm-buttons {
 		display: none;
 	}
@@ -166,6 +167,11 @@
 		color: var(--color-text-subtle);
 		font-size: $font-body;
 	}
+}
+
+.eligibility-warnings__inline-link {
+	color: var(--color-text-subtle);
+	text-decoration: underline;
 }
 
 .eligibility-warnings__action a,
@@ -221,6 +227,15 @@
 		position: absolute;
 		right: 20px;
 		border-radius: 4px;
+	}
+}
+
+.eligibility-warnings__datacenter-picker > div {
+	margin-left: 12px;
+	margin-right: 12px;
+	@media ( max-width: 480px ) {
+		margin-left: 6px;
+		margin-right: 6px;
 	}
 }
 
