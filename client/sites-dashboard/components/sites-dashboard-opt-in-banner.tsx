@@ -44,8 +44,6 @@ const NoticeActions = styled.div( {
 	flexShrink: 0,
 } );
 
-const EVENT_PREFIX = 'calypso_sites_as_landing_page';
-
 const ONE_DAY_IN_MILLISECONDS = 86400 * 1000;
 
 const hasDismissedTheBannerRecently = ( {
@@ -79,7 +77,7 @@ export const SitesDashboardOptInBanner = ( { sites }: SitesDashboardOptInBannerP
 			useSitesAsLandingPage: true,
 			updatedAt: new Date().valueOf(),
 		} );
-		dispatch( recordTracksEvent( `${ EVENT_PREFIX }_accepted` ) );
+		dispatch( recordTracksEvent( 'calypso_sites_as_landing_page_accepted' ) );
 	};
 
 	const handleDismiss = () => {
@@ -87,12 +85,12 @@ export const SitesDashboardOptInBanner = ( { sites }: SitesDashboardOptInBannerP
 			useSitesAsLandingPage: false,
 			updatedAt: new Date().valueOf(),
 		} );
-		dispatch( recordTracksEvent( `${ EVENT_PREFIX }_rejected` ) );
+		dispatch( recordTracksEvent( 'calypso_sites_as_landing_page_rejected' ) );
 	};
 
 	return (
 		<>
-			<TrackComponentView eventName={ `${ EVENT_PREFIX }_seen` } />
+			<TrackComponentView eventName="calypso_sites_as_landing_page_seen" />
 			<SitesNotice
 				status="is-info"
 				text={ __( 'Do you want to make this page your default when visiting WordPress.com?' ) }
