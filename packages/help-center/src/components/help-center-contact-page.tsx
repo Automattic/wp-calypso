@@ -79,7 +79,7 @@ export const HelpCenterContactPage: React.FC = () => {
 		);
 
 		if ( isLanguageSupported ) {
-			const language = getLanguage( locale );
+			const language = getLanguage( locale )?.name;
 			return language
 				? sprintf(
 						/* translators: %s is the language name */
