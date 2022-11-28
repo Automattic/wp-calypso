@@ -26,6 +26,7 @@
 		}
 	],
 	"oauth_client_id": 68663,
+	"zendesk_presales_chat_key": "216bf91d-f10f-4f66-bf65-a0cba220cd38",
 	"features": {
 		"activity-log/v2": true,
 		"always_use_logout_url": true,

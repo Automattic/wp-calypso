@@ -17,6 +17,7 @@ import { NeedMoreInfo } from './need-more-info';
 import { PricingBanner } from './pricing-banner';
 import { Recommendations } from './recommendations';
 import { UserLicensesDialog } from './user-licenses-dialog';
+import { ZendeskPreSalesChat } from './zendesk-presales-chat';
 import type { ViewType, ProductStoreProps } from './types';
 
 import './wpcom-styles.scss';
@@ -129,6 +130,7 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 			{ showJetpackFree && <JetpackFree urlQueryArgs={ urlQueryArgs } siteId={ siteId } /> }
 
 			<Recommendations />
+			<ZendeskPreSalesChat />
 			<OpenSourceSection />
 
 			{ currentView === 'bundles' && <NeedMoreInfo /> }
