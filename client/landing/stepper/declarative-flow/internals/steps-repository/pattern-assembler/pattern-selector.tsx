@@ -8,16 +8,17 @@ import { useSite } from '../../../../hooks/use-site';
 import { ONBOARD_STORE } from '../../../../stores';
 import Delayed from './delayed-render-hook';
 import PatternPreviewAutoHeight from './pattern-preview-auto-height';
-import { getPatternPreviewUrl, handleKeyboard } from './utils';
+import { getPatternPreviewUrl } from './utils';
 import type { Pattern } from './types';
 
 type PatternSelectorProps = {
 	patterns: Pattern[];
-	onSelect: ( selectedPattern: Pattern | null ) => void;
+	onSelect: ( selectedPattern: Pattern ) => void;
 	onBack: () => void;
 	title: string | null;
 	show: boolean;
 	selectedPattern: Pattern | null;
+	multiple?: boolean;
 };
 
 const PatternSelector = ( {
@@ -27,6 +28,7 @@ const PatternSelector = ( {
 	title,
 	show,
 	selectedPattern,
+	multiple,
 }: PatternSelectorProps ) => {
 	const locale = useLocale();
 	const patternSelectorRef = useRef< HTMLDivElement >( null );
@@ -39,6 +41,9 @@ const PatternSelector = ( {
 		if ( show ) {
 			patternSelectorRef.current?.focus();
 			patternSelectorRef.current?.removeAttribute( 'tabindex' );
+		} else {
+			// Scroll to top when it hides
+			patternSelectorRef.current?.querySelector( '.pattern-selector__body' )?.scrollTo( 0, 0 );
 		}
 	}, [ show ] );
 
@@ -55,17 +60,13 @@ const PatternSelector = ( {
 				patternId={ pattern.id }
 				patternName={ pattern.category }
 			>
-				<div
-					aria-label={ pattern.category }
+				<Button
 					tabIndex={ show ? 0 : -1 }
-					role="option"
 					title={ pattern.category }
-					aria-selected={ pattern.id === selectedPattern?.id }
 					className={ classnames( {
 						'pattern-selector__block-list--selected-pattern': pattern.id === selectedPattern?.id,
 					} ) }
 					onClick={ () => onSelect( pattern ) }
-					onKeyUp={ handleKeyboard( () => onSelect( pattern ) ) }
 				/>
 			</PatternPreviewAutoHeight>
 		) );
@@ -93,6 +94,13 @@ const PatternSelector = ( {
 						<>{ renderPatterns( restPatterns ) }</>
 					</Delayed>
 				</div>
+			</div>
+			<div className="pattern-selector__footer">
+				{ multiple && (
+					<Button className="pattern-assembler__button" onClick={ onBack } primary>
+						{ translate( 'Done' ) }
+					</Button>
+				) }
 			</div>
 		</div>
 	);
