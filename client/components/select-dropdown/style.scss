@@ -143,10 +143,6 @@ $compact-header-height: 35;
 	text-overflow: ellipsis;
 	overflow: hidden;
 
-	.extra-gridicon {
-		fill: var(--color-neutral);
-	}
-
 	.has-count & {
 		padding-right: 40px;
 	}

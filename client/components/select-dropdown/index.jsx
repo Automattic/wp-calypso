@@ -21,7 +21,7 @@ class SelectDropdown extends Component {
 		selectedText: TranslatableString,
 		selectedIcon: PropTypes.element,
 		selectedCount: PropTypes.number,
-		selectedExtra: PropTypes.element,
+		selectedSecondaryIcon: PropTypes.element,
 		initialSelected: PropTypes.string,
 		className: PropTypes.string,
 		style: PropTypes.object,
@@ -36,7 +36,7 @@ class SelectDropdown extends Component {
 				label: PropTypes.oneOfType( [ TranslatableString, PropTypes.node ] ).isRequired,
 				path: PropTypes.string,
 				icon: PropTypes.element,
-				extra: PropTypes.element,
+				secondaryIcon: PropTypes.element,
 			} )
 		),
 		isLoading: PropTypes.bool,
@@ -134,15 +134,15 @@ class SelectDropdown extends Component {
 		return get( find( options, { value: selected } ), 'icon' );
 	}
 
-	getSelectedExtra() {
-		const { options, selectedExtra } = this.props;
+	getSelectedSecondaryIcon() {
+		const { options, selectedSecondaryIcon } = this.props;
 		const { selected } = this.state;
 
-		if ( selectedExtra ) {
-			return selectedExtra;
+		if ( selectedSecondaryIcon ) {
+			return selectedSecondaryIcon;
 		}
 
-		return get( find( options, { value: selected } ), 'extra' );
+		return get( find( options, { value: selected } ), 'secondaryIcon' );
 	}
 
 	dropdownOptions() {
@@ -194,7 +194,7 @@ class SelectDropdown extends Component {
 						onClick={ this.onSelectItem( item ) }
 						path={ item.path }
 						icon={ item.icon }
-						extra={ item.extra }
+						secondaryIcon={ item.secondaryIcon }
 					>
 						{ item.label }
 					</DropdownItem>
@@ -213,7 +213,7 @@ class SelectDropdown extends Component {
 
 		const selectedText = this.getSelectedText();
 		const selectedIcon = this.getSelectedIcon();
-		const selectedExtra = this.getSelectedExtra();
+		const selectedSecondaryIcon = this.getSelectedSecondaryIcon();
 
 		return (
 			<div id={ this.props.id } style={ this.props.style } className={ dropdownClassName }>
@@ -233,7 +233,7 @@ class SelectDropdown extends Component {
 				>
 					<div id={ 'select-dropdown-' + this.instanceId } className="select-dropdown__header">
 						<span className="select-dropdown__header-text" aria-label={ this.props.ariaLabel }>
-							{ selectedExtra }
+							{ selectedSecondaryIcon }
 							{ selectedIcon }
 							{ selectedText }
 						</span>

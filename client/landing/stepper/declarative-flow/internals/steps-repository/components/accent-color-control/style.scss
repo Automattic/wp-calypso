@@ -1,6 +1,24 @@
 @import "../../style";
 @import "@automattic/typography/styles/variables";
 
+$option-height: 40;
+$side-margin: 16;
+
+.select-dropdown__header-text {
+	.extra-gridicon {
+		fill: var(--color-neutral);
+	}
+}
+
+.select-dropdown__item {
+	.extra-gridicon {
+		fill: var(--color-neutral);
+		position: absolute;
+		top: #{( $option-height - 18 ) * 0.5}px;
+		right: #{$side-margin - 8 }px;
+	}
+}
+
 .accent-color-control__accent-color-input {
 	background-size: 25px, auto;
 	background-position: left 13px center, 95% !important;

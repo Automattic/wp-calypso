@@ -132,7 +132,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 	const getSelectedIcon = () =>
 		customColor ? <ColorSwatch color={ customColor.hex } /> : getMatchingOption()?.icon;
 
-	const getSelectedExtra = () => {
+	const getSelectedSecondaryIcon = () => {
 		if ( ! shouldLimitGlobalStyles ) {
 			return null;
 		}
@@ -152,7 +152,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 				icon={ option.icon }
 				onClick={ () => handlePredefinedColorSelect( { value: option.value } ) }
 				selected={ option.value === accentColor.hex }
-				extra={
+				secondaryIcon={
 					shouldLimitGlobalStyles && option.isPremium ? (
 						<Gridicon icon="lock" size={ 18 } className="extra-gridicon" />
 					) : null
@@ -233,7 +233,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 					showSelectedOption={ !! customColor } // hide selected option with the exception of "Custom" option
 					selectedText={ getSelectedText() }
 					selectedIcon={ getSelectedIcon() }
-					selectedExtra={ getSelectedExtra() }
+					selectedSecondaryIcon={ getSelectedSecondaryIcon() }
 				>
 					{ getDropdownOptions() }
 				</SelectDropdown>
