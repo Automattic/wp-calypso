@@ -1,11 +1,19 @@
-const pluginBundleSteps = {
+import BusinessInfo from './internals/steps-repository/business-info';
+import ProcessingStep from './internals/steps-repository/processing-step';
+import StoreAddress from './internals/steps-repository/store-address';
+import WooConfirm from './internals/steps-repository/woo-confirm';
+import WooInstallPlugins from './internals/steps-repository/woo-install-plugins';
+import WooTransfer from './internals/steps-repository/woo-transfer';
+import { StepperStep } from './internals/types';
+
+const pluginBundleSteps: Record< string, StepperStep[] > = {
 	'woo-on-plans': [
-		'storeAddress',
-		'businessInfo',
-		'wooConfirm',
-		'wooTransfer',
-		'wooInstallPlugins',
-		'processing',
+		{ slug: 'storeAddress', component: StoreAddress },
+		{ slug: 'businessInfo', component: BusinessInfo },
+		{ slug: 'wooConfirm', component: WooConfirm },
+		{ slug: 'wooTransfer', component: WooTransfer },
+		{ slug: 'wooInstallPlugins', component: WooInstallPlugins },
+		{ slug: 'processing', component: ProcessingStep },
 	],
 };
 

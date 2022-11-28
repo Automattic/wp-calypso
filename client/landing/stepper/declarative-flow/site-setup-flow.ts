@@ -17,15 +17,44 @@ import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import StartingPointStep from './internals/steps-repository/blogger-starting-point';
+import BusinessInfo from './internals/steps-repository/business-info';
+import CoursesStep from './internals/steps-repository/courses';
+import DesignSetup from './internals/steps-repository/design-setup';
+import DIFMStartingPoint from './internals/steps-repository/difm-starting-point';
+import EditEmail from './internals/steps-repository/edit-email';
+import ErrorStep from './internals/steps-repository/error-step';
+import GoalsStep from './internals/steps-repository/goals';
+import ImportStep from './internals/steps-repository/import';
+import ImportLight from './internals/steps-repository/import-light';
+import ImportList from './internals/steps-repository/import-list';
+import ImportReady from './internals/steps-repository/import-ready';
+import ImportReadyNot from './internals/steps-repository/import-ready-not';
+import ImportReadyPreview from './internals/steps-repository/import-ready-preview';
+import ImportReadyWpcom from './internals/steps-repository/import-ready-wpcom';
 import { redirect } from './internals/steps-repository/import/util';
-import { ProcessingResult } from './internals/steps-repository/processing-step';
+import ImporterBlogger from './internals/steps-repository/importer-blogger';
+import ImporterMedium from './internals/steps-repository/importer-medium';
+import ImporterSquarespace from './internals/steps-repository/importer-squarespace';
+import ImporterWix from './internals/steps-repository/importer-wix';
+import ImporterWordpress from './internals/steps-repository/importer-wordpress';
+import IntentStep from './internals/steps-repository/intent-step';
+import PatternAssembler from './internals/steps-repository/pattern-assembler';
+import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
+import SiteOptions from './internals/steps-repository/site-options';
+import SiteVertical from './internals/steps-repository/site-vertical';
+import StoreAddress from './internals/steps-repository/store-address';
+import StoreFeatures from './internals/steps-repository/store-features';
+import WooConfirm from './internals/steps-repository/woo-confirm';
+import WooInstallPlugins from './internals/steps-repository/woo-install-plugins';
+import WooTransfer from './internals/steps-repository/woo-transfer';
+import WooVerifyEmail from './internals/steps-repository/woo-verify-email';
 import {
 	AssertConditionResult,
 	AssertConditionState,
 	Flow,
 	ProvidedDependencies,
 } from './internals/types';
-import type { StepPath } from './internals/steps-repository';
 
 const WRITE_INTENT_DEFAULT_THEME = 'livro';
 const WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION = 'white';
@@ -37,39 +66,45 @@ export const siteSetupFlow: Flow = {
 
 	useSteps() {
 		return [
-			'goals',
-			'vertical',
-			'intent',
-			'options',
-			'designSetup',
-			'patternAssembler',
-			'bloggerStartingPoint',
-			'courses',
-			'storeFeatures',
-			'import',
-			...( isEnabled( 'onboarding/import-light' ) ? [ 'importLight' ] : [] ),
-			'importList',
-			'importReady',
-			'importReadyNot',
-			'importReadyWpcom',
-			'importReadyPreview',
-			'importerWix',
-			'importerBlogger',
-			'importerMedium',
-			'importerSquarespace',
-			'importerWordpress',
-			'businessInfo',
-			'storeAddress',
-			'processing',
-			'error',
-			'wooTransfer',
-			'wooInstallPlugins',
-			...( isEnabled( 'signup/woo-verify-email' ) ? [ 'wooVerifyEmail' ] : [] ),
-			'wooConfirm',
-			'editEmail',
-			...( isEnabled( 'signup/woo-verify-email' ) ? [ 'editEmail' ] : [] ),
-			'difmStartingPoint',
-		] as StepPath[];
+			{ slug: 'goals', component: GoalsStep },
+			{ slug: 'vertical', component: SiteVertical },
+			{ slug: 'intent', component: IntentStep },
+			{ slug: 'options', component: SiteOptions },
+			{ slug: 'designSetup', component: DesignSetup },
+			{ slug: 'patternAssembler', component: PatternAssembler },
+			{ slug: 'bloggerStartingPoint', component: StartingPointStep },
+			{ slug: 'courses', component: CoursesStep },
+			{ slug: 'storeFeatures', component: StoreFeatures },
+			{ slug: 'import', component: ImportStep },
+			...( isEnabled( 'onboarding/import-light' )
+				? [ { slug: 'importLight', component: ImportLight } ]
+				: [] ),
+			{ slug: 'importList', component: ImportList },
+			{ slug: 'importReady', component: ImportReady },
+			{ slug: 'importReadyNot', component: ImportReadyNot },
+			{ slug: 'importReadyWpcom', component: ImportReadyWpcom },
+			{ slug: 'importReadyPreview', component: ImportReadyPreview },
+			{ slug: 'importerWix', component: ImporterWix },
+			{ slug: 'importerBlogger', component: ImporterBlogger },
+			{ slug: 'importerMedium', component: ImporterMedium },
+			{ slug: 'importerSquarespace', component: ImporterSquarespace },
+			{ slug: 'importerWordpress', component: ImporterWordpress },
+			{ slug: 'businessInfo', component: BusinessInfo },
+			{ slug: 'storeAddress', component: StoreAddress },
+			{ slug: 'processing', component: ProcessingStep },
+			{ slug: 'error', component: ErrorStep },
+			{ slug: 'wooTransfer', component: WooTransfer },
+			{ slug: 'wooInstallPlugins', component: WooInstallPlugins },
+			...( isEnabled( 'signup/woo-verify-email' )
+				? [ { slug: 'wooVerifyEmail', component: WooVerifyEmail } ]
+				: [] ),
+			{ slug: 'wooConfirm', component: WooConfirm },
+			{ slug: 'editEmail', component: EditEmail },
+			...( isEnabled( 'signup/woo-verify-email' )
+				? [ { slug: 'editEmail', component: EditEmail } ]
+				: [] ),
+			{ slug: 'difmStartingPoint', component: DIFMStartingPoint },
+		];
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
@@ -253,7 +288,7 @@ export const siteSetupFlow: Flow = {
 							return exitFlow( `/home/${ siteSlug }` );
 						}
 						default: {
-							return navigate( intent as StepPath );
+							return navigate( intent );
 						}
 					}
 				}
@@ -294,7 +329,7 @@ export const siteSetupFlow: Flow = {
 							return navigate( 'difmStartingPoint' );
 						}
 						default: {
-							return navigate( submittedIntent as StepPath );
+							return navigate( submittedIntent );
 						}
 					}
 				}
@@ -383,10 +418,10 @@ export const siteSetupFlow: Flow = {
 						return exitFlow( providedDependencies?.url as string );
 					}
 
-					return navigate( providedDependencies?.url as StepPath );
+					return navigate( providedDependencies?.url as string );
 				}
 				case 'importReadyPreview': {
-					return navigate( providedDependencies?.url as StepPath );
+					return navigate( providedDependencies?.url as string );
 				}
 
 				case 'importerWix':
@@ -398,7 +433,7 @@ export const siteSetupFlow: Flow = {
 						return exitFlow( providedDependencies?.url as string );
 					}
 
-					return navigate( providedDependencies?.url as StepPath );
+					return navigate( providedDependencies?.url as string );
 				}
 
 				case 'difmStartingPoint': {
@@ -460,7 +495,7 @@ export const siteSetupFlow: Flow = {
 					const backToStep = urlQueryParams.get( 'backToStep' );
 
 					if ( backToStep ) {
-						return navigate( `${ backToStep as StepPath }?siteSlug=${ siteSlug }` );
+						return navigate( `${ backToStep }?siteSlug=${ siteSlug }` );
 					}
 
 					return navigate( 'import' );
@@ -528,7 +563,7 @@ export const siteSetupFlow: Flow = {
 			}
 		};
 
-		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
+		const goToStep = ( step: string ) => {
 			navigate( step );
 		};
 

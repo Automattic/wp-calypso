@@ -9,8 +9,11 @@ import wpcom from 'calypso/lib/wp';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import Intro from './internals/steps-repository/intro';
+import Launchpad from './internals/steps-repository/launchpad';
+import NewsletterSetup from './internals/steps-repository/newsletter-setup';
+import Subscribers from './internals/steps-repository/subscribers';
 import { ProvidedDependencies } from './internals/types';
-import type { StepPath } from './internals/steps-repository';
 import type { Flow } from './internals/types';
 
 export const newsletter: Flow = {
@@ -24,7 +27,12 @@ export const newsletter: Flow = {
 			recordFullStoryEvent( 'calypso_signup_start_newsletter', { flow: this.name } );
 		}, [] );
 
-		return [ 'intro', 'newsletterSetup', 'subscribers', 'launchpad' ] as StepPath[];
+		return [
+			{ slug: 'intro', component: Intro },
+			{ slug: 'newsletterSetup', component: NewsletterSetup },
+			{ slug: 'subscribers', component: Subscribers },
+			{ slug: 'launchpad', component: Launchpad },
+		];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -98,7 +106,7 @@ export const newsletter: Flow = {
 			}
 		};
 
-		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
+		const goToStep = ( step: string ) => {
 			navigate( step );
 		};
 

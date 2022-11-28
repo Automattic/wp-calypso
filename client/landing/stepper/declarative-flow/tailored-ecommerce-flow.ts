@@ -14,7 +14,16 @@ import { useSite } from '../hooks/use-site';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import type { StepPath } from './internals/steps-repository';
+import CheckPlan from './internals/steps-repository/check-plan';
+import DesignCarousel from './internals/steps-repository/design-carousel';
+import DomainsStep from './internals/steps-repository/domains';
+import Intro from './internals/steps-repository/intro';
+import ProcessingStep from './internals/steps-repository/processing-step';
+import SetThemeStep from './internals/steps-repository/set-theme-step';
+import SiteCreationStep from './internals/steps-repository/site-creation-step';
+import StoreAddress from './internals/steps-repository/store-address';
+import StoreProfiler from './internals/steps-repository/store-profiler';
+import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { SiteDetailsPlan } from '@automattic/data-stores';
 
@@ -32,17 +41,17 @@ export const ecommerceFlow: Flow = {
 		}, [] );
 
 		return [
-			'intro',
-			'storeProfiler',
-			'storeAddress',
-			'domains',
-			'designCarousel',
-			'siteCreationStep',
-			'processing',
-			'waitForAtomic',
-			'setThemeStep',
-			'checkPlan',
-		] as StepPath[];
+			{ slug: 'intro', component: Intro },
+			{ slug: 'storeProfiler', component: StoreProfiler },
+			{ slug: 'storeAddress', component: StoreAddress },
+			{ slug: 'domains', component: DomainsStep },
+			{ slug: 'designCarousel', component: DesignCarousel },
+			{ slug: 'siteCreationStep', component: SiteCreationStep },
+			{ slug: 'processing', component: ProcessingStep },
+			{ slug: 'waitForAtomic', component: WaitForAtomic },
+			{ slug: 'setThemeStep', component: SetThemeStep },
+			{ slug: 'checkPlan', component: CheckPlan },
+		];
 	},
 
 	useStepNavigation( _currentStepName, navigate ) {
@@ -188,7 +197,7 @@ export const ecommerceFlow: Flow = {
 			}
 		};
 
-		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
+		const goToStep = ( step: string ) => {
 			navigate( step );
 		};
 

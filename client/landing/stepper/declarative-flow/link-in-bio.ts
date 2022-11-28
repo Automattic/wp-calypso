@@ -16,7 +16,14 @@ import { useQuery } from '../hooks/use-query';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import type { StepPath } from './internals/steps-repository';
+import DomainsStep from './internals/steps-repository/domains';
+import Intro from './internals/steps-repository/intro';
+import LaunchPad from './internals/steps-repository/launchpad';
+import LinkInBioSetup from './internals/steps-repository/link-in-bio-setup';
+import PatternsStep from './internals/steps-repository/patterns';
+import PlansStep from './internals/steps-repository/plans';
+import Processing from './internals/steps-repository/processing-step';
+import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
 export const linkInBio: Flow = {
@@ -31,21 +38,21 @@ export const linkInBio: Flow = {
 		}, [] );
 
 		return [
-			'intro',
-			'linkInBioSetup',
-			'domains',
-			'plans',
-			'patterns',
-			'siteCreationStep',
-			'processing',
-			'launchpad',
-		] as StepPath[];
+			{ slug: 'intro', component: Intro },
+			{ slug: 'linkInBioSetup', component: LinkInBioSetup },
+			{ slug: 'domains', component: DomainsStep },
+			{ slug: 'plans', component: PlansStep },
+			{ slug: 'patterns', component: PatternsStep },
+			{ slug: 'siteCreationStep', component: SiteCreationStep },
+			{ slug: 'processing', component: Processing },
+			{ slug: 'launchpad', component: LaunchPad },
+		];
 	},
 
-	useStepNavigation( _currentStep, navigate ) {
+	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
+		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const locale = useLocale();
@@ -68,7 +75,7 @@ export const linkInBio: Flow = {
 			},
 			{
 				flow: flowName,
-				step: _currentStep,
+				step: _currentStepSlug,
 			}
 		);
 
@@ -79,9 +86,9 @@ export const linkInBio: Flow = {
 					? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=/setup/${ flowName }/patterns`
 					: `/start/account/user?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=/setup/${ flowName }/patterns`;
 
-			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
+			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
 
-			switch ( _currentStep ) {
+			switch ( _currentStepSlug ) {
 				case 'intro':
 					clearSignupDestinationCookie();
 
@@ -137,9 +144,9 @@ export const linkInBio: Flow = {
 					? `/start/link-in-bio-tld/${ locale }?variationName=${ flowName }&pageTitle=Link%20in%20Bio&tld=${ tld }`
 					: `/start/link-in-bio-tld?variationName=${ flowName }&pageTitle=Link%20in%20Bio&tld=${ tld }`;
 
-			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
+			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
 
-			switch ( _currentStep ) {
+			switch ( _currentStepSlug ) {
 				case 'intro':
 					if ( userIsLoggedIn ) {
 						return window.location.assign(
@@ -172,7 +179,7 @@ export const linkInBio: Flow = {
 		};
 
 		const goNext = () => {
-			switch ( _currentStep ) {
+			switch ( _currentStepSlug ) {
 				case 'launchpad':
 					return window.location.assign( `/view/${ siteSlug }` );
 
@@ -181,7 +188,7 @@ export const linkInBio: Flow = {
 			}
 		};
 
-		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
+		const goToStep = ( step: string ) => {
 			navigate( step );
 		};
 

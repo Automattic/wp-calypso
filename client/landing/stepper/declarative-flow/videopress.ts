@@ -6,9 +6,15 @@ import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
-import type { StepPath } from './internals/steps-repository';
-import type { Flow, ProvidedDependencies } from './internals/types';
 import './internals/videopress.scss';
+import ChooseADomain from './internals/steps-repository/choose-a-domain';
+import ChooseAPlan from './internals/steps-repository/choose-a-plan';
+import Intro from './internals/steps-repository/intro';
+import Launchpad from './internals/steps-repository/launchpad';
+import ProcessingStep from './internals/steps-repository/processing-step';
+import SiteOptions from './internals/steps-repository/site-options';
+import VideomakerSetup from './internals/steps-repository/videomaker-setup';
+import type { Flow, ProvidedDependencies } from './internals/types';
 
 export const videopress: Flow = {
 	name: VIDEOPRESS_FLOW,
@@ -21,14 +27,14 @@ export const videopress: Flow = {
 		}, [] );
 
 		return [
-			'intro',
-			'options',
-			'videomakerSetup',
-			'chooseADomain',
-			'chooseAPlan',
-			'processing',
-			'launchpad',
-		] as StepPath[];
+			{ slug: 'intro', component: Intro },
+			{ slug: 'options', component: SiteOptions },
+			{ slug: 'videomakerSetup', component: VideomakerSetup },
+			{ slug: 'chooseADomain', component: ChooseADomain },
+			{ slug: 'chooseAPlan', component: ChooseAPlan },
+			{ slug: 'processing', component: ProcessingStep },
+			{ slug: 'launchpad', component: Launchpad },
+		];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -157,7 +163,7 @@ export const videopress: Flow = {
 			}
 		};
 
-		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
+		const goToStep = ( step: string ) => {
 			return navigate( step );
 		};
 

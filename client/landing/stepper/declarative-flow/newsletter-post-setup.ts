@@ -2,8 +2,8 @@ import { NEWSLETTER_POST_SETUP_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import NewsletterPostSetup from './internals/steps-repository/newsletter-post-setup';
 import { ProvidedDependencies } from './internals/types';
-import type { StepPath } from './internals/steps-repository';
 import type { Flow } from './internals/types';
 
 export const newsletterPostSetup: Flow = {
@@ -12,7 +12,7 @@ export const newsletterPostSetup: Flow = {
 		return translate( 'Newsletter' );
 	},
 	useSteps() {
-		return [ 'newsletterPostSetup' ] as StepPath[];
+		return [ { slug: 'newsletterPostSetup', component: NewsletterPostSetup } ];
 	},
 
 	useStepNavigation( currentStep, navigate ) {
@@ -38,7 +38,7 @@ export const newsletterPostSetup: Flow = {
 			return;
 		};
 
-		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
+		const goToStep = ( step: string ) => {
 			navigate( step );
 		};
 

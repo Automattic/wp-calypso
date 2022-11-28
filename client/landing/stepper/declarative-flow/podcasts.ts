@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import type { StepPath } from './internals/steps-repository';
+import ChooseADomain from './internals/steps-repository/choose-a-domain';
+import LetsGetStarted from './internals/steps-repository/lets-get-started';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
 export const podcasts: Flow = {
@@ -11,7 +12,10 @@ export const podcasts: Flow = {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 		}, [] );
 
-		return [ 'letsGetStarted', 'chooseADomain' ] as StepPath[];
+		return [
+			{ slug: 'letsGetStarted', component: LetsGetStarted },
+			{ slug: 'chooseADomain', component: ChooseADomain },
+		];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -35,7 +39,7 @@ export const podcasts: Flow = {
 			}
 		};
 
-		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
+		const goToStep = ( step: string ) => {
 			navigate( step );
 		};
 
