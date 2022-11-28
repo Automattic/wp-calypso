@@ -26,7 +26,7 @@ export function getSiteFragment( path: URLString ): SiteSlug | SiteId | false {
 	}
 
 	// Avoid confusing the subscription ID for the site ID in gifting checkouts.
-	if ( basePath.includes( '/gift/' ) && basePath.includes( '/checkout/' ) ) {
+	if ( basePath.includes( '/gift/' ) && basePath.startsWith( '/checkout/' ) ) {
 		return false;
 	}
 
