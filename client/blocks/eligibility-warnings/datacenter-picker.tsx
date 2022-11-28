@@ -68,6 +68,7 @@ const AutomaticFormLabel = styled.label( {
 	marginBottom: '10px',
 	width: '100%',
 	maxWidth: '541px',
+	cursor: 'pointer',
 } );
 
 const FormLabelThumbnail = styled.div( {
