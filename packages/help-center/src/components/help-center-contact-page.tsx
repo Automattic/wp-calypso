@@ -83,7 +83,7 @@ export const HelpCenterContactPage: React.FC = () => {
 			return language
 				? sprintf(
 						/* translators: %s is the language name */
-						__( 'Email (%s)' ),
+						__( 'Email (%s)', __i18n_text_domain__ ),
 						language
 				  )
 				: __( 'Email', __i18n_text_domain__ );
