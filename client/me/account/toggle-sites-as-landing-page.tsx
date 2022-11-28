@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
-import { getPreference } from 'calypso/state/preferences/selectors';
+import { getPreference, isSavingPreference } from 'calypso/state/preferences/selectors';
 
 type ToggleSitesLandingPageProps = {
 	onToggle?: ( checked: boolean ) => void;
@@ -17,6 +17,7 @@ function ToggleSitesAsLandingPage( { onToggle, className }: ToggleSitesLandingPa
 	const useSitesAsLandingPage = useSelector(
 		( state ) => getPreference( state, 'sites-landing-page' )?.useSitesAsLandingPage
 	);
+	const isSaving = useSelector( ( state ) => isSavingPreference( state ) );
 
 	async function handleToggle( isChecked: boolean ) {
 		const preference = { useSitesAsLandingPage: isChecked, updatedAt: Date.now() };
@@ -42,6 +43,7 @@ function ToggleSitesAsLandingPage( { onToggle, className }: ToggleSitesLandingPa
 			<ToggleControl
 				checked={ !! useSitesAsLandingPage }
 				onChange={ handleToggle }
+				disabled={ isSaving }
 				label={ translate( 'Set the sites management page as the default landing page.' ) }
 			/>
 		</div>
