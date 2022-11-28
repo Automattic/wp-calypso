@@ -9,6 +9,8 @@ import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 interface ExternalProps {
 	value: string;
 	onChange: ( newValue: string ) => void;
+	onClickHidePicker?: () => void;
+	onClickShowPicker?: () => void;
 }
 
 type Props = ExternalProps & LocalizeProps;
@@ -91,11 +93,18 @@ const FormLabelThumbnail = styled.div( {
 	},
 } );
 
-const DatacenterPicker = ( { onChange, translate, value }: Props ) => {
+const DatacenterPicker = ( {
+	onChange,
+	onClickHidePicker = () => null,
+	onClickShowPicker = () => null,
+	translate,
+	value,
+}: Props ) => {
 	const [ isFormShowing, setIsFormShowing ] = useState( false );
 
 	const onCancel = () => {
 		onChange( '' );
+		onClickHidePicker();
 		setIsFormShowing( false );
 	};
 
@@ -107,7 +116,13 @@ const DatacenterPicker = ( { onChange, translate, value }: Props ) => {
 						{ translate( 'Your site will be automatically placed in the best datacenter.' ) }
 					</span>
 					&nbsp;
-					<Button isTertiary={ true } onClick={ () => setIsFormShowing( ! isFormShowing ) }>
+					<Button
+						isTertiary={ true }
+						onClick={ () => {
+							onClickShowPicker();
+							setIsFormShowing( ! isFormShowing );
+						} }
+					>
 						{ translate( 'Choose a datacenter instead' ) }
 					</Button>
 				</div>

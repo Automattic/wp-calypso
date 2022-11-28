@@ -74,6 +74,9 @@ export const EligibilityWarnings = ( {
 	siteSlug,
 	siteIsLaunching,
 	siteIsSavingSettings,
+	trackDatacenterPickerShowClick,
+	trackDatacenterPickerHideClick,
+	trackDatacenterPickerSelect,
 	launchSite: launch,
 	makeSitePublic,
 	translate,
@@ -205,7 +208,15 @@ export const EligibilityWarnings = ( {
 
 			{ showDatacenterPicker && config.isEnabled( 'hosting/datacenter-picker' ) && (
 				<CompactCard className="eligibility-warnings__datacenter-picker">
-					<DatacenterPicker value={ selectedGeoAffinity } onChange={ setSelectedGeoAffinity } />
+					<DatacenterPicker
+						value={ selectedGeoAffinity }
+						onChange={ ( value ) => {
+							trackDatacenterPickerSelect( { geo_affinity: value } );
+							setSelectedGeoAffinity( value );
+						} }
+						onClickShowPicker={ trackDatacenterPickerShowClick }
+						onClickHidePicker={ trackDatacenterPickerHideClick }
+					/>
 				</CompactCard>
 			) }
 
@@ -372,6 +383,12 @@ const mapDispatchToProps = {
 			cta_feature: feature,
 			cta_size: 'regular',
 		} ),
+	trackDatacenterPickerShowClick: ( eventProperties = {} ) =>
+		recordTracksEvent( 'calypso_automated_transfer_datacenter_picker_show_click', eventProperties ),
+	trackDatacenterPickerHideClick: ( eventProperties = {} ) =>
+		recordTracksEvent( 'calypso_automated_transfer_datacenter_picker_hide_click', eventProperties ),
+	trackDatacenterPickerSelect: ( eventProperties = {} ) =>
+		recordTracksEvent( 'calypso_automated_transfer_datacenter_picker_select', eventProperties ),
 	launchSite,
 	makeSitePublic: ( selectedSiteId: number | null ) =>
 		saveSiteSettings( selectedSiteId, {
