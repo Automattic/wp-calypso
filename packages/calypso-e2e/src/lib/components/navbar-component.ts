@@ -1,5 +1,4 @@
 import { Page } from 'playwright';
-import { envVariables } from '../..';
 
 const selectors = {
 	// Buttons on navbar
@@ -60,15 +59,10 @@ export class NavbarComponent {
 	async openNotificationsPanel( {
 		useKeyboard = false,
 	}: { useKeyboard?: boolean } = {} ): Promise< void > {
-		const promises: [ Promise< unknown > ] = [ this.page.waitForLoadState( 'networkidle' ) ];
-
-		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
-			promises.push(
-				this.page.waitForResponse( /async-load-calypso-blocks-jitm.*/, { timeout: 15 * 1000 } )
-			);
-		}
-
-		await Promise.all( promises );
+		await Promise.all( [
+			this.page.waitForLoadState( 'networkidle' ),
+			this.page.waitForResponse( /async-load-calypso-blocks-jitm.*/, { timeout: 15 * 1000 } ),
+		] );
 
 		if ( useKeyboard ) {
 			return await this.page.keyboard.type( 'n' );
