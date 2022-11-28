@@ -3,6 +3,10 @@ import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { localize, LocalizeProps, translate } from 'i18n-calypso';
 import { useState } from 'react';
+import amsImg from 'calypso/assets/images/datacenter-picker/ams-240x180.png';
+import burImg from 'calypso/assets/images/datacenter-picker/bur-240x180.png';
+import dcaImg from 'calypso/assets/images/datacenter-picker/dca-240x180.png';
+import dfwImg from 'calypso/assets/images/datacenter-picker/dfw-240x180.png';
 import ExternalLink from 'calypso/components/external-link';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 
@@ -21,7 +25,7 @@ const DatacenterOptions = [
 		name: 'geo_affinity',
 		label: translate( 'Amsterdam' ),
 		thumbnail: {
-			imageUrl: '',
+			imageUrl: amsImg,
 		},
 	},
 	{
@@ -29,7 +33,7 @@ const DatacenterOptions = [
 		name: 'geo_affinity',
 		label: translate( 'California' ),
 		thumbnail: {
-			imageUrl: '',
+			imageUrl: burImg,
 		},
 	},
 	{
@@ -37,7 +41,7 @@ const DatacenterOptions = [
 		name: 'geo_affinity',
 		label: translate( 'Texas' ),
 		thumbnail: {
-			imageUrl: '',
+			imageUrl: dfwImg,
 		},
 	},
 	{
@@ -45,7 +49,7 @@ const DatacenterOptions = [
 		name: 'geo_affinity',
 		label: translate( 'Washington, D.C.' ),
 		thumbnail: {
-			imageUrl: '',
+			imageUrl: dcaImg,
 		},
 	},
 ];
