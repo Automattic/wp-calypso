@@ -9,6 +9,7 @@ import { useSupportAvailability } from '@automattic/data-stores';
 import { isDefaultLocale, getLanguage, useLocale } from '@automattic/i18n-utils';
 import { Notice } from '@wordpress/components';
 import { useEffect, useMemo } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -80,7 +81,11 @@ export const HelpCenterContactPage: React.FC = () => {
 		if ( isLanguageSupported ) {
 			const language = getLanguage( locale );
 			return language
-				? `${ __( 'Email', __i18n_text_domain__ ) } (${ language.name })`
+				? sprintf(
+						/* translators: %s is the language name */
+						__( 'Email (%s)' ),
+						language
+				  )
 				: __( 'Email', __i18n_text_domain__ );
 		}
 
