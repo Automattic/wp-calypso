@@ -63,7 +63,7 @@ $legacy-break-small: 660px;
 		padding-top: 0;
 		padding-left: 1px;
 	}
-	// Fixed header doesn't work well for WP-Admin, as the master isn't fixed.
+	// Fixed header doesn't work well for WP-Admin, as the masterbar isn't fixed.
 	& .is-section-stats .has-fixed-nav .fixed-navigation-header__header {
 		position: relative;
 		top: initial;
