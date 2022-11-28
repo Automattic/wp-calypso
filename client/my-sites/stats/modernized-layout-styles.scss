@@ -60,7 +60,8 @@ $legacy-break-small: 660px;
 .wp-admin {
 	& .layout__content,
 	&.theme-default .focus-content .layout__content {
-		padding: 0;
+		padding-top: 0;
+		padding-left: 1px;
 	}
 	// Fixed header doesn't work well for WP-Admin, as the master isn't fixed.
 	& .is-section-stats .has-fixed-nav .fixed-navigation-header__header {
