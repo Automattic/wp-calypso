@@ -976,7 +976,7 @@ class Account extends Component {
 								<FormLabel id="account__default_landing_page">
 									{ translate( 'Sites as landing page' ) }
 									<Badge className="account__beta-badge" type="info-blue">
-										beta
+										{ translate( 'beta' ) }
 									</Badge>
 								</FormLabel>
 								<ToggleSitesAsLandingPage />
