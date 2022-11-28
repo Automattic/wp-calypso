@@ -56,3 +56,22 @@ $legacy-break-small: 660px;
 		}
 	}
 }
+
+.wp-admin {
+	& .layout__content,
+	&.theme-default .focus-content .layout__content {
+		padding: 0;
+	}
+	// Fixed header doesn't work well for WP-Admin, as the master isn't fixed.
+	& .is-section-stats .has-fixed-nav .fixed-navigation-header__header {
+		position: relative;
+		top: initial;
+		left: initial;
+	}
+	& .is-section-stats .has-fixed-nav {
+		padding-top: 0;
+	}
+	#wpcontent {
+		padding-left: 1px;
+	}
+}
