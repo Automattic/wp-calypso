@@ -47,15 +47,10 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 			blogdescription: string;
 			launchpad_screen?: string;
 			intent?: string;
-			site_icon?: File;
 		} = {
 			blogname: siteTitle,
 			blogdescription: siteDescription,
 		};
-
-		if ( siteLogo ) {
-			settings.site_icon = new File( [ base64ImageToBlob( siteLogo ) ], 'site-logo.png' );
-		}
 
 		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
 			// link-in-bio and link-in-bio-tld are considered the same intent.
@@ -72,6 +67,13 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 		}
 
 		formData.push( [ 'settings', JSON.stringify( settings ) ] );
+
+		if ( siteLogo ) {
+			formData.push( [
+				'site_icon',
+				new File( [ base64ImageToBlob( siteLogo ) ], 'site-logo.png' ),
+			] );
+		}
 
 		return wpcomRequest< { updated: object } >( {
 			// since this is a new site, its safe to assume that homepage ID is 2
