@@ -128,6 +128,11 @@ class RegisterDomainStep extends Component {
 		domainAndPlanUpsellFlow: PropTypes.bool,
 		useProvidedProductsList: PropTypes.bool,
 		otherManagedSubdomains: PropTypes.array,
+
+		/**
+		 * If an override is not provided we generate 1 suggestion per 1 other subdomain
+		 * Multiple subdomains of .wordpress.com have not been tested
+		 */
 		otherManagedSubdomainsCountOverride: PropTypes.number,
 		handleClickUseYourDomain: PropTypes.func,
 	};
@@ -147,6 +152,7 @@ class RegisterDomainStep extends Component {
 		onSkip: noop,
 		showSkipButton: false,
 		useProvidedProductsList: false,
+		otherManagedSubdomains: null,
 	};
 
 	constructor( props ) {
@@ -193,7 +199,7 @@ class RegisterDomainStep extends Component {
 		return (
 			this.props.includeWordPressDotCom ||
 			this.props.includeDotBlogSubdomain ||
-			this.props.otherManagedSubdomains.length > 0
+			this.props.otherManagedSubdomains?.length > 0
 		);
 	}
 
@@ -1093,7 +1099,7 @@ class RegisterDomainStep extends Component {
 			only_wordpressdotcom: this.props.includeDotBlogSubdomain,
 			tld_weight_overrides: null,
 			vendor: 'dot',
-			managed_subdomains: this.props.otherManagedSubdomains.join(),
+			managed_subdomains: this.props.otherManagedSubdomains?.join(),
 			managed_subdomain_quantity: this.getOtherManagedSubdomainsQuantity(),
 			...this.getActiveFiltersForAPI(),
 		};
