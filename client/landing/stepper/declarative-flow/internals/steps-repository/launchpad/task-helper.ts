@@ -43,6 +43,11 @@ export function getEnhancedTasks(
 		tasks.map( ( task ) => {
 			let taskData = {};
 			switch ( task.id ) {
+				case 'setup_free':
+					taskData = {
+						title: translate( 'Personalize your site' ),
+					};
+					break;
 				case 'setup_newsletter':
 					taskData = {
 						title: translate( 'Personalize Newsletter' ),
@@ -52,6 +57,11 @@ export function getEnhancedTasks(
 								`/setup/newsletter-post-setup/newsletterPostSetup?siteSlug=${ siteSlug }`
 							);
 						},
+					};
+					break;
+				case 'design_edited':
+					taskData = {
+						title: translate( 'Edit site design' ),
 					};
 					break;
 				case 'plan_selected':
@@ -133,6 +143,31 @@ export function getEnhancedTasks(
 
 								setPendingAction( async () => {
 									setProgressTitle( __( 'Launching Link in bio' ) );
+									await launchSite( site.ID );
+
+									// Waits for half a second so that the loading screen doesn't flash away too quickly
+									await new Promise( ( res ) => setTimeout( res, 500 ) );
+									recordTaskClickTracksEvent( flow, siteLaunchCompleted, task.id );
+									window.location.assign( `/home/${ siteSlug }` );
+								} );
+
+								submit?.();
+							}
+						},
+					};
+					break;
+				case 'site_launched':
+					taskData = {
+						title: translate( 'Launch your site' ),
+						completed: siteLaunchCompleted,
+						isLaunchTask: true,
+						actionDispatch: () => {
+							if ( site?.ID ) {
+								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
+								const { launchSite } = dispatch( SITE_STORE );
+
+								setPendingAction( async () => {
+									setProgressTitle( __( 'Launching Website' ) );
 									await launchSite( site.ID );
 
 									// Waits for half a second so that the loading screen doesn't flash away too quickly

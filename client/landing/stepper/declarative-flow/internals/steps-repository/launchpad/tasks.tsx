@@ -67,6 +67,24 @@ export const tasks: Task[] = [
 		taskType: 'blog',
 		disabled: true,
 	},
+	{
+		id: 'setup_free',
+		completed: true,
+		disabled: false,
+		taskType: 'blog',
+	},
+	{
+		id: 'design_edited',
+		completed: false,
+		disabled: false,
+		taskType: 'blog',
+	},
+	{
+		id: 'site_launched',
+		completed: false,
+		disabled: false,
+		taskType: 'blog',
+	},
 ];
 
 export const launchpadFlowTasks: LaunchpadFlowTaskList = {
@@ -77,6 +95,13 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 		'plan_selected',
 		'links_added',
 		'link_in_bio_launched',
+	],
+	free: [
+		'setup_free',
+		'design_selected',
+		'first_post_published',
+		'design_edited',
+		'site_launched',
 	],
 	videopress: [ 'videopress_setup', 'plan_selected', 'videopress_upload', 'videopress_launched' ],
 };
