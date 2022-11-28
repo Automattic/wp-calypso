@@ -99,7 +99,7 @@ add_action( 'wp_enqueue_scripts', 'a8c_happyblocks_view_assets' );
 /**
  * Get the domain to use in the Pricing Plans block.
  *
- * @return string The domain
+ * @return string|null The domain
  */
 function a8c_happyblocks_pricing_plans_get_domain() {
 
