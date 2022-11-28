@@ -320,7 +320,7 @@ class Signup extends Component {
 		const flowName = this.props.flowName;
 		// p2v1 also has a user step at the end but the flow is otherwise broken.
 		// reader also has a user step at the end, but this change doesn't fix that flow.
-		const eligbleFlows = [ 'domain', 'add-domain', 'with-theme' ];
+		const eligbleFlows = [ 'domain', 'add-domain' ];
 		if ( ! eligbleFlows.includes( flowName ) || ! this.props.progress ) {
 			return;
 		}
