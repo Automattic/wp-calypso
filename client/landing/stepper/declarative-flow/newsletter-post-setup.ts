@@ -1,4 +1,5 @@
 import { NEWSLETTER_POST_SETUP_FLOW } from '@automattic/onboarding';
+import { translate } from 'i18n-calypso';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { ProvidedDependencies } from './internals/types';
@@ -7,7 +8,9 @@ import type { Flow } from './internals/types';
 
 export const newsletterPostSetup: Flow = {
 	name: NEWSLETTER_POST_SETUP_FLOW,
-	title: 'Newsletter',
+	get title() {
+		return translate( 'Newsletter' );
+	},
 	useSteps() {
 		return [ 'newsletterPostSetup' ] as StepPath[];
 	},

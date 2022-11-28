@@ -784,7 +784,7 @@ object PreReleaseE2ETests : BuildType({
 		screenshots => screenshots
 		trace => trace
 		allure-results => allure-results.tgz
-	"""
+	""".trimIndent()
 
 	vcs {
 		root(Settings.WpCalypso)

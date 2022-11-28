@@ -3,7 +3,7 @@ import { Button, Gridicon, Dialog, ScreenReaderText } from '@automattic/componen
 import { ExternalLink } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import wooCommerceImage from 'calypso/assets/images/onboarding/woo-commerce.svg';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useThemeDetails } from 'calypso/landing/stepper/hooks/use-theme-details';
@@ -28,6 +28,7 @@ interface UpgradeModalContent {
 
 const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps ) => {
 	const translate = useTranslate();
+	const currentLocale = i18n.getLocaleSlug();
 	const theme = useThemeDetails( slug );
 	const features = theme.data && theme.data.taxonomies.theme_feature;
 	const featuresHeading = translate( 'Theme features' ) as string;
@@ -50,45 +51,50 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 	const isThirdParty = isEnabled( 'themes/subscription-purchases' ) || false;
 
 	const getStandardPurchaseModalData = (): UpgradeModalContent => {
-		const premiumPlanPrice = premiumPlanProduct?.combined_cost_display;
+		const planName = premiumPlanProduct?.product_name;
+		const planPrice = premiumPlanProduct?.combined_cost_display;
+
 		return {
 			header: (
 				<h1 className="upgrade-modal__heading">{ translate( 'Unlock this premium theme' ) }</h1>
 			),
 			text: (
 				<p>
-					{ translate(
-						'You can purchase a subscription to use this theme or join the Premium plan to get it for free.'
-					) }
+					{ currentLocale === 'en' ||
+					currentLocale?.startsWith( 'en-' ) ||
+					i18n.hasTranslation(
+						"Get access to our Premium themes, and a ton of other features, with a subscription to the Premium plan. It's {{strong}}%s{{/strong}} a year, risk-free with a 14-day money-back guarantee."
+					)
+						? translate(
+								"Get access to our Premium themes, and a ton of other features, with a subscription to the Premium plan. It's {{strong}}%s{{/strong}} a year, risk-free with a 14-day money-back guarantee.",
+								{
+									components: {
+										strong: <strong />,
+									},
+									args: planPrice,
+								}
+						  )
+						: translate(
+								"This theme requires %(planName)s to unlock. It's %(planPrice)s a year, risk-free with a 14-day money-back guarantee.",
+								{
+									args: {
+										planName,
+										planPrice,
+									},
+								}
+						  ) }
 				</p>
 			),
-			price: (
-				<div className="upgrade-modal__theme-price">
-					{ translate( '{{span}}%(premiumPlanPrice)s{{/span}} per year', {
-						components: {
-							span: <span />,
-						},
-						args: {
-							premiumPlanPrice,
-						},
-					} ) }
-				</div>
-			),
+			price: null,
 			action: (
-				<>
-					<div className="upgrade-modal__actions">
-						<Button className="upgrade-modal__upgrade" primary onClick={ () => checkout() }>
-							{ translate( 'Buy and activate theme' ) }
-						</Button>
-					</div>
-					<p className="upgrade-modal__plan-nudge">
-						{ translate( 'or get it for free when on the {{button}}Premium plan{{/button}}', {
-							components: {
-								button: <Button onClick={ () => checkout() } plain />,
-							},
-						} ) }
-					</p>
-				</>
+				<div className="upgrade-modal__actions bundle">
+					<Button className="upgrade-modal__cancel" onClick={ () => closeModal() }>
+						{ translate( 'Cancel' ) }
+					</Button>
+					<Button className="upgrade-modal__upgrade-plan" primary onClick={ () => checkout() }>
+						{ translate( 'Upgrade to activate' ) }
+					</Button>
+				</div>
 			),
 		};
 	};

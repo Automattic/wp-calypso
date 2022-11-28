@@ -83,8 +83,10 @@ const mapStateToProps = ( state ) => {
 };
 
 const mapDispatchToProps = ( dispatch ) => ( {
-	dispatchTracksEvent: ( { tracksEventProps } ) =>
-		dispatch( recordTracksEvent( 'calypso_click_theme_upload', tracksEventProps ) ),
+	dispatchTracksEvent: ( { tracksEventProps } ) => {
+		dispatch( recordTracksEvent( 'calypso_click_theme_upload', tracksEventProps ) );
+		dispatch( recordTracksEvent( 'calypso_themeshowcase_install_button_click', tracksEventProps ) );
+	},
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( InstallThemeButton );

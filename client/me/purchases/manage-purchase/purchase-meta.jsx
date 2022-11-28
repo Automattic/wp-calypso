@@ -228,7 +228,6 @@ function PurchaseMetaPrice( { purchase } ) {
 	const translate = useTranslate();
 	const { productSlug, productDisplayPrice } = purchase;
 	const plan = getPlan( productSlug ) || getProductFromSlug( productSlug );
-	let period = translate( 'year' );
 
 	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
 		if ( isDIFMProduct( purchase ) ) {
@@ -284,52 +283,53 @@ function PurchaseMetaPrice( { purchase } ) {
 		return translate( 'Free with Plan' );
 	}
 
-	if ( purchase.billPeriodLabel ) {
-		switch ( purchase.billPeriodLabel ) {
-			case 'per year':
-				period = translate( 'year' );
-				break;
-			case 'per month':
-				period = translate( 'month' );
-				break;
-			case 'per week':
-				period = translate( 'week' );
-				break;
-			case 'per day':
-				period = translate( 'day' );
-				break;
+	const getPeriod = () => {
+		if ( isEmailMonthly( purchase ) ) {
+			return translate( 'month' );
 		}
-	}
 
-	if ( plan && plan.term ) {
-		switch ( plan.term ) {
-			case TERM_BIENNIALLY:
-				period = translate( 'two years' );
-				break;
-
-			case TERM_MONTHLY:
-				period = translate( 'month' );
-				break;
+		if ( plan && plan.term ) {
+			switch ( plan.term ) {
+				case TERM_BIENNIALLY:
+					return translate( 'two years' );
+				case TERM_MONTHLY:
+					return translate( 'month' );
+			}
 		}
-	}
 
-	if ( isEmailMonthly( purchase ) ) {
-		period = translate( 'month' );
-	}
+		if ( purchase.billPeriodLabel ) {
+			switch ( purchase.billPeriodLabel ) {
+				case 'per year':
+					return translate( 'year' );
+				case 'per month':
+					return translate( 'month' );
+				case 'per week':
+					return translate( 'week' );
+				case 'per day':
+					return translate( 'day' );
+			}
+		}
 
-	// translators: displayPrice is the price of the purchase with localized currency (i.e. "C$10"), %(period)s is how long the plan is active (i.e. "year")
-	return translate( '{{displayPrice/}} {{period}}/ %(period)s{{/period}}', {
-		args: { period },
-		components: {
-			displayPrice: (
-				<span
-					// eslint-disable-next-line react/no-danger
-					dangerouslySetInnerHTML={ { __html: productDisplayPrice } }
-				/>
-			),
-			period: <span className="manage-purchase__time-period" />,
-		},
-	} );
+		throw new Error( `Failed to get a billing term for ${ productSlug }` );
+	};
+
+	const getPriceLabel = ( period ) => {
+		//translators: displayPrice is the price of the purchase with localized currency (i.e. "C$10"), %(period)s is how long the plan is active (i.e. "year")
+		return translate( '{{displayPrice/}} {{period}}/ %(period)s{{/period}}', {
+			args: { period },
+			components: {
+				displayPrice: (
+					<span
+						// eslint-disable-next-line react/no-danger
+						dangerouslySetInnerHTML={ { __html: productDisplayPrice } }
+					/>
+				),
+				period: <span className="manage-purchase__time-period" />,
+			},
+		} );
+	};
+
+	return getPriceLabel( getPeriod() );
 }
 
 function PurchaseMetaIntroductoryOfferDetail( { purchase } ) {

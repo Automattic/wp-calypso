@@ -1,6 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -20,7 +21,9 @@ import type { Flow, ProvidedDependencies } from './internals/types';
 
 export const linkInBio: Flow = {
 	name: LINK_IN_BIO_FLOW,
-	title: 'Link in Bio',
+	get title() {
+		return translate( 'Link in Bio' );
+	},
 	useSteps() {
 		useEffect( () => {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
@@ -43,13 +46,19 @@ export const linkInBio: Flow = {
 		const flowName = this.name;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
-		setStepProgress( flowProgress );
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const locale = useLocale();
 		const queryParams = useQuery();
-
 		const tld = queryParams.get( 'tld' );
+
+		// At the moment, the TLD variation relies on going back and forth from the classic signup framework
+		// and the Stepper framework. Since it begins from the former, the Stepper framework doesn't have a chance
+		// to inject the step progress there, which can be quite confusing. Thus, we've decided to just not show it at all.
+		// Once the whole flow is moved into Stepper, this can also be removed. See Automattic/martech#1256
+		if ( ! tld ) {
+			setStepProgress( flowProgress );
+		}
 
 		// trigger guides on step movement, we don't care about failures or response
 		wpcom.req.post(
