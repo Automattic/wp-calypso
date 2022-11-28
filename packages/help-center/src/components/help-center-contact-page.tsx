@@ -89,7 +89,7 @@ export const HelpCenterContactPage: React.FC = () => {
 				: __( 'Email', __i18n_text_domain__ );
 		}
 
-		return __( 'Live chat (English)', __i18n_text_domain__ );
+		return __( 'Email (English)', __i18n_text_domain__ );
 	}, [ __, locale ] );
 
 	if ( isLoading ) {
