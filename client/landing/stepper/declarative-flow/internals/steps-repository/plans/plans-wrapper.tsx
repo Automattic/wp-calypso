@@ -2,7 +2,6 @@
 import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
-import { useLocale } from '@automattic/i18n-utils';
 import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -14,7 +13,6 @@ import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { ProvideExperimentData } from 'calypso/lib/explat';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -39,7 +37,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
 
 	const site = useSite();
-	const locale = useLocale();
 	const { __ } = useI18n();
 
 	const isDesktop = useDesktopBreakpoint();
@@ -107,50 +104,25 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 		return (
 			<div>
-				{ /* check if it can be removed */ }
-				<ProvideExperimentData
-					name="calypso_signup_plans_step_faq_202209_v2"
-					options={ {
-						isEligible:
-							[ 'en-gb', 'en' ].includes( locale ) && 'onboarding' === flowName && isDesktop,
-					} }
-				>
-					{ /*  */ }
-					{ ( isLoading, experimentAssignment ) => {
-						if ( isLoading ) {
-							return renderLoading();
-						}
-
-						return (
-							<PlansFeaturesMain
-								isPlansInsideStepper={ true }
-								site={ site || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-								hideFreePlan={ hideFreePlan }
-								isInSignup={ true }
-								intervalType={ getIntervalType() }
-								onUpgradeClick={ onSelectPlan }
-								showFAQ={ false }
-								domainName={ getDomainName() }
-								customerType={ customerType }
-								plansWithScroll={ isDesktop }
-								planTypes={ planTypes }
-								flowName={ flowName }
-								showTreatmentPlansReorderTest={ false }
-								isAllPaidPlansShown={ true }
-								isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-								shouldShowPlansFeatureComparison={ isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
-								isReskinned={ isReskinned }
-								isFAQCondensedExperiment={
-									experimentAssignment?.variationName === 'treatment_condensed'
-								}
-								isFAQExperiment={
-									experimentAssignment?.variationName === 'treatment_expanded' ||
-									experimentAssignment?.variationName === 'treatment_condensed'
-								}
-							/>
-						);
-					} }
-				</ProvideExperimentData>
+				<PlansFeaturesMain
+					isPlansInsideStepper={ true }
+					site={ site || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+					hideFreePlan={ hideFreePlan }
+					isInSignup={ true }
+					intervalType={ getIntervalType() }
+					onUpgradeClick={ onSelectPlan }
+					showFAQ={ false }
+					domainName={ getDomainName() }
+					customerType={ customerType }
+					plansWithScroll={ isDesktop }
+					planTypes={ planTypes }
+					flowName={ flowName }
+					showTreatmentPlansReorderTest={ false }
+					isAllPaidPlansShown={ true }
+					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
+					shouldShowPlansFeatureComparison={ isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
+					isReskinned={ isReskinned }
+				/>
 			</div>
 		);
 	};
