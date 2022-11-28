@@ -59,12 +59,13 @@ class SelectDropdownItem extends Component {
 						{ this.props.icon }
 						{ this.props.children }
 					</span>
-					{ 'number' === typeof this.props.count && (
+					{ 'number' === typeof this.props.count ? (
 						<span data-text={ this.props.count } className="select-dropdown__item-count">
 							<Count count={ this.props.count } compact={ this.props.compactCount } />
 						</span>
+					) : (
+						<>{ this.props.extra }</>
 					) }
-					{ this.props.extra }
 				</a>
 			</li>
 		);
