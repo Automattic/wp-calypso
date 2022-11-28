@@ -1,3 +1,9 @@
+$sensei-color: #43af99;
+
+.sensei .progress-bar__progress {
+	background-color: $sensei-color;
+}
+
 .step-container.senseiPlan {
 	.plan-item {
 		&__viewport {
@@ -16,6 +22,12 @@
 
 		&__select-button {
 			width: 100%;
+			background-color: $sensei-color;
+			border: 1px solid darken($sensei-color, 10%);
+			&:hover:not(:disabled) {
+				background-color: darken($sensei-color, 10%);
+				border: 1px solid darken($sensei-color, 10%);
+			}
 		}
 	}
 
