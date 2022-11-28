@@ -38,7 +38,7 @@ const ConditionalLink: React.FC< { active: boolean } & LinkProps > = ( { active,
 };
 
 export const HelpCenterContactPage: React.FC = () => {
-	const { __, hasTranslation } = useI18n();
+	const { __ } = useI18n();
 	const locale = useLocale();
 
 	const renderEmail = useShouldRenderEmailOption();
@@ -67,7 +67,7 @@ export const HelpCenterContactPage: React.FC = () => {
 		}
 
 		return __( 'Live chat (English)', __i18n_text_domain__ );
-	}, [ __, locale, hasTranslation ] );
+	}, [ __, locale ] );
 
 	const emailHeaderText = useMemo( () => {
 		if ( isDefaultLocale( locale ) ) {
@@ -89,7 +89,7 @@ export const HelpCenterContactPage: React.FC = () => {
 				: __( 'Email', __i18n_text_domain__ );
 		}
 
-		return __( 'Email', __i18n_text_domain__ );
+		return __( 'Live chat (English)', __i18n_text_domain__ );
 	}, [ __, locale ] );
 
 	if ( isLoading ) {
