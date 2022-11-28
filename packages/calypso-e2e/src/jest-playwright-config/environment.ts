@@ -228,9 +228,60 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	}
 
 	/**
+	 * Teardowns the environment.
+	 *
+	 * If there are any failures noted for the current suite, the teardown
+	 * will save the trace, screenshot and replay video to the artifacts
+	 * directory.
+	 *
+	 * The browser is then shut down at the end regardless of failure status.
+	 */
+	async teardown(): Promise< void > {
+		await super.teardown();
+
+		if ( ! this.global.browser ) {
+			throw new Error( 'Browser instance unavailable' );
+		}
+		const contexts = this.global.browser.contexts();
+		if ( this.failure ) {
+			let contextIndex = 0;
+			let pageIndex = 0;
+			const artifactFilename = `${ this.testFilename }__${ sanitizeString( this.failure.name ) }`;
+			const traceFilePath = path.join(
+				this.testArtifactsPath,
+				`${ artifactFilename }__${ contextIndex }.zip`
+			);
+			for await ( const context of contexts ) {
+				// Traces are saved per context.
+				await context.tracing.stop( { path: traceFilePath } );
+				for await ( const page of context.pages() ) {
+					// Screenshots and video are saved per page, where numerous
+					// pages may exist within a context.
+					const mediaFilePath = path.join(
+						this.testArtifactsPath,
+						`${ artifactFilename }__${ contextIndex }-${ pageIndex }`
+					);
+					await page.screenshot( { path: `${ mediaFilePath }.png` } );
+					await page.close(); // Needed before saving video.
+					await page.video()?.saveAs( `${ mediaFilePath }.webm` );
+					pageIndex++;
+				}
+				contextIndex++;
+			}
+			// Print paths to captured artifacts for faster triaging.
+			console.error( `Artifacts for ${ this.testFilename }: ${ this.testArtifactsPath }` );
+		}
+		// Regardless of pass/fail status, close the browser instance.
+		return await this.global.browser.close();
+	}
+
+	/**
 	 * Handle events emitted by jest-circus.
 	 */
 	async handleTestEvent( event: Circus.Event, state: Circus.State ) {
+		if ( this.testFilename.includes( 'infrastructure__ssr' ) ) {
+			console.log( `Event: ${ event.name }` );
+		}
 		switch ( event.name ) {
 			case 'run_start':
 				this.allure?.startTestFile( this.testFilename );
@@ -306,49 +357,6 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 				break;
 			}
 			case 'teardown': {
-				if ( ! this.global.browser ) {
-					throw new Error( 'Browser instance unavailable' );
-				}
-				const contexts = this.global.browser.contexts();
-
-				if ( this.failure ) {
-					let contextIndex = 0;
-					let pageIndex = 0;
-
-					const artifactFilename = `${ this.testFilename }__${ sanitizeString(
-						this.failure.name
-					) }`;
-					const traceFilePath = path.join(
-						this.testArtifactsPath,
-						`${ artifactFilename }__${ contextIndex }.zip`
-					);
-
-					for await ( const context of contexts ) {
-						// Traces are saved per context.
-						await context.tracing.stop( { path: traceFilePath } );
-
-						for await ( const page of context.pages() ) {
-							// Screenshots and video are saved per page, where numerous
-							// pages may exist within a context.
-							const mediaFilePath = path.join(
-								this.testArtifactsPath,
-								`${ artifactFilename }__${ contextIndex }-${ pageIndex }`
-							);
-
-							await page.screenshot( { path: `${ mediaFilePath }.png` } );
-							await page.close(); // Needed before saving video.
-							await page.video()?.saveAs( `${ mediaFilePath }.webm` );
-
-							pageIndex++;
-						}
-						contextIndex++;
-					}
-					// Print paths to captured artifacts for faster triaging.
-					console.error( `Artifacts for ${ this.testFilename }: ${ this.testArtifactsPath }` );
-				}
-
-				// Regardless of pass/fail status, close the browser instance.
-				await this.global.browser.close();
 				break;
 			}
 			case 'run_finish':
