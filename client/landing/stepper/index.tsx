@@ -104,6 +104,7 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { 
 	let flow =
 		availableFlows.find( ( f ) => f.flowName === flowNameFromPathName )?.pathToFlow ||
 		siteSetupFlow;
+
 	if ( anchorFmPodcastId ) {
 		flow = anchorFmFlow;
 	}
