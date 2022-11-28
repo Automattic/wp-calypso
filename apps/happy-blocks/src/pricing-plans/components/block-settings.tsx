@@ -52,7 +52,7 @@ const BlockSettings: FunctionComponent<
 						selected={ currentPlan?.term }
 						options={ [
 							{ label: __( 'Monthly', 'happy-blocks' ), value: TERM_MONTHLY },
-							{ label: __( 'Annually', 'happy-blocks' ), value: TERM_ANNUALLY },
+							{ label: __( 'Annual', 'happy-blocks' ), value: TERM_ANNUALLY },
 						] }
 						onChange={ onPlanTermChange }
 					/>
