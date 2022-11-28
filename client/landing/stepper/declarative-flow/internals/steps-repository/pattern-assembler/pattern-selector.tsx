@@ -8,16 +8,17 @@ import { useSite } from '../../../../hooks/use-site';
 import { ONBOARD_STORE } from '../../../../stores';
 import Delayed from './delayed-render-hook';
 import PatternPreviewAutoHeight from './pattern-preview-auto-height';
-import { getPatternPreviewUrl, handleKeyboard } from './utils';
+import { getPatternPreviewUrl } from './utils';
 import type { Pattern } from './types';
 
 type PatternSelectorProps = {
 	patterns: Pattern[];
-	onSelect: ( selectedPattern: Pattern | null ) => void;
+	onSelect: ( selectedPattern: Pattern ) => void;
 	onBack: () => void;
 	title: string | null;
 	show: boolean;
 	selectedPattern: Pattern | null;
+	multiple?: boolean;
 };
 
 const PatternSelector = ( {
@@ -27,6 +28,7 @@ const PatternSelector = ( {
 	title,
 	show,
 	selectedPattern,
+	multiple,
 }: PatternSelectorProps ) => {
 	const locale = useLocale();
 	const patternSelectorRef = useRef< HTMLDivElement >( null );
@@ -39,33 +41,32 @@ const PatternSelector = ( {
 		if ( show ) {
 			patternSelectorRef.current?.focus();
 			patternSelectorRef.current?.removeAttribute( 'tabindex' );
+		} else {
+			// Scroll to top when it hides
+			patternSelectorRef.current?.querySelector( '.pattern-selector__body' )?.scrollTo( 0, 0 );
 		}
 	}, [ show ] );
 
 	const renderPatterns = ( patternList: Pattern[] ) =>
-		patternList?.map( ( item: Pattern, index: number ) => (
+		patternList?.map( ( pattern: Pattern, index: number ) => (
 			<PatternPreviewAutoHeight
-				key={ `${ index }-${ item.id }` }
+				key={ `${ index }-${ pattern.id }` }
 				url={ getPatternPreviewUrl( {
-					id: item.id,
+					id: pattern.id,
 					language: locale,
 					siteTitle: site?.name,
 					stylesheet: selectedDesign?.recipe?.stylesheet,
 				} ) }
-				patternId={ item.id }
-				patternName={ item.name }
+				patternId={ pattern.id }
+				patternName={ pattern.name }
 			>
-				<div
-					aria-label={ item.name }
+				<Button
 					tabIndex={ show ? 0 : -1 }
-					role="option"
-					title={ item.name }
-					aria-selected={ item.id === selectedPattern?.id }
+					title={ pattern.name }
 					className={ classnames( {
-						'pattern-selector__block-list--selected-pattern': item.id === selectedPattern?.id,
+						'pattern-selector__block-list--selected-pattern': pattern.id === selectedPattern?.id,
 					} ) }
-					onClick={ () => onSelect( item ) }
-					onKeyUp={ handleKeyboard( () => onSelect( item ) ) }
+					onClick={ () => onSelect( pattern ) }
 				/>
 			</PatternPreviewAutoHeight>
 		) );
@@ -93,6 +94,13 @@ const PatternSelector = ( {
 						<>{ renderPatterns( restPatterns ) }</>
 					</Delayed>
 				</div>
+			</div>
+			<div className="pattern-selector__footer">
+				{ multiple && (
+					<Button className="pattern-assembler__button" onClick={ onBack } primary>
+						{ translate( 'Done' ) }
+					</Button>
+				) }
 			</div>
 		</div>
 	);

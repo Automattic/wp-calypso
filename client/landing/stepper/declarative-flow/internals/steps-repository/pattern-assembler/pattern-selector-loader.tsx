@@ -4,10 +4,10 @@ import { headerPatterns, footerPatterns, sectionPatterns } from './patterns-data
 import type { Pattern } from './types';
 
 type PatternSelectorLoaderProps = {
-	onSelect: ( selectedPattern: Pattern | null ) => void;
-	onBack: () => void;
 	showPatternSelectorType: string | null;
 	selectedPattern: Pattern | null;
+	onSelect: ( selectedPattern: Pattern ) => void;
+	onBack: () => void;
 };
 
 const PatternSelectorLoader = ( {
@@ -41,8 +41,9 @@ const PatternSelectorLoader = ( {
 				patterns={ sectionPatterns }
 				onSelect={ onSelect }
 				onBack={ onBack }
-				title={ translate( 'Add sections' ) }
+				title={ selectedPattern ? translate( 'Add a section' ) : translate( 'Add sections' ) }
 				selectedPattern={ selectedPattern }
+				multiple={ ! selectedPattern }
 			/>
 		</>
 	);
