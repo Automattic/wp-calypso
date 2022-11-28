@@ -1,5 +1,6 @@
 import { useFlowProgress, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
@@ -10,7 +11,9 @@ import './internals/videopress.scss';
 
 export const videopress: Flow = {
 	name: VIDEOPRESS_FLOW,
-	title: 'Video',
+	get title() {
+		return translate( 'Video' );
+	},
 	useSteps() {
 		useEffect( () => {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
