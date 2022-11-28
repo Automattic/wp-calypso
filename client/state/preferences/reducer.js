@@ -6,6 +6,7 @@ import {
 	PREFERENCES_FETCH_SUCCESS,
 	PREFERENCES_FETCH_FAILURE,
 	PREFERENCES_SAVE_SUCCESS,
+	PREFERENCES_SAVE_FAILURE,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { remoteValuesSchema } from './schema';
@@ -77,6 +78,7 @@ export const saving = ( state = false, action ) => {
 		case PREFERENCES_SET:
 			return true;
 		case PREFERENCES_SAVE_SUCCESS:
+		case PREFERENCES_SAVE_FAILURE:
 			return false;
 	}
 	return state;
