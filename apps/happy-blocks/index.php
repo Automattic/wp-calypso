@@ -99,18 +99,18 @@ add_action( 'wp_enqueue_scripts', 'a8c_happyblocks_view_assets' );
 /**
  * Get the domain to use in the Pricing Plans block.
  *
- * @return string|null The domain
+ * @return string|bool The domain host (or false if no domain is available)
  */
 function a8c_happyblocks_pricing_plans_get_domain() {
 
 	// If the user is not authenticated, then we can't get their domain.
 	if ( ! is_user_logged_in() ) {
-		return null;
+		return false;
 	}
 
 	// If BBPress is not active, then just don't return any domain and let the user choose.
 	if ( ! function_exists( 'bbp_get_topic_id' ) ) {
-		return null;
+		return false;
 	}
 
 	$topic_id  = bbp_get_topic_id();
@@ -140,7 +140,7 @@ function a8c_happyblocks_pricing_plans_get_domain() {
 		}
 	}
 
-	return null;
+	return false;
 }
 
 /**
