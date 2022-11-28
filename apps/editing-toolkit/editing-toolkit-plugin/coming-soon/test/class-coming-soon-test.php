@@ -40,6 +40,7 @@ class Coming_Soon_Test extends TestCase {
 	 */
 	public function tearDown() {
 		self::delete_preview_links_parameters();
+		parent::tearDown();
 	}
 
 	/**
