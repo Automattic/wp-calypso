@@ -102,7 +102,10 @@ export class PostsPage {
 	 */
 	async newPost(): Promise< void > {
 		const locator = this.page.locator( selectors.addNewPostButton );
-		await locator.click();
+		await Promise.all( [
+			this.page.waitForNavigation( { url: /post/, timeout: 20 * 1000 } ),
+			locator.click(),
+		] );
 	}
 
 	/* Post actions */
