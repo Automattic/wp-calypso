@@ -1,8 +1,10 @@
+import config from '@automattic/calypso-config';
 import { Button, Card, Spinner } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { useState } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
+import QuerySiteGeoAffinity from 'calypso/components/data/query-site-geo-affinity';
 import QuerySitePhpVersion from 'calypso/components/data/query-site-php-version';
 import QuerySiteStaticFile404 from 'calypso/components/data/query-site-static-file-404';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -11,6 +13,7 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import MaterialIcon from 'calypso/components/material-icon';
 import { updateAtomicPhpVersion, updateAtomicStaticFile404 } from 'calypso/state/hosting/actions';
+import { getAtomicHostingGeoAffinity } from 'calypso/state/selectors/get-atomic-hosting-geo-affinity';
 import { getAtomicHostingPhpVersion } from 'calypso/state/selectors/get-atomic-hosting-php-version';
 import { getAtomicHostingStaticFile404 } from 'calypso/state/selectors/get-atomic-hosting-static-file-404';
 import getRequest from 'calypso/state/selectors/get-request';
@@ -20,11 +23,13 @@ import './style.scss';
 
 const WebServerSettingsCard = ( {
 	disabled,
+	isGettingGeoAffinity,
 	isGettingPhpVersion,
 	isGettingStaticFile404,
 	isUpdatingPhpVersion,
 	isUpdatingStaticFile404,
 	siteId,
+	geoAffinity,
 	staticFile404,
 	translate,
 	updatePhpVersion,
@@ -33,6 +38,74 @@ const WebServerSettingsCard = ( {
 } ) => {
 	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( '' );
 	const [ selectedStaticFile404, setSelectedStaticFile404 ] = useState( '' );
+
+	const getDatacenterOptions = () => {
+		return [
+			{
+				value: 'ams',
+				name: 'geo_affinity',
+				label: translate( 'Amsterdam' ),
+				thumbnail: {
+					imageUrl: '',
+				},
+			},
+			{
+				value: 'bur',
+				name: 'geo_affinity',
+				label: translate( 'California' ),
+				thumbnail: {
+					imageUrl: '',
+				},
+			},
+			{
+				value: 'dfw',
+				name: 'geo_affinity',
+				label: translate( 'Texas' ),
+				thumbnail: {
+					imageUrl: '',
+				},
+			},
+			{
+				value: 'dca',
+				name: 'geo_affinity',
+				label: translate( 'Washington, D.C.' ),
+				thumbnail: {
+					imageUrl: '',
+				},
+			},
+		];
+	};
+
+	const getGeoAffinityContent = () => {
+		if ( isGettingGeoAffinity ) {
+			return;
+		}
+
+		return (
+			<FormFieldset>
+				<FormLabel>{ translate( 'Primary Datacenter' ) }</FormLabel>
+				<FormSelect
+					disabled={ true }
+					className="web-server-settings-card__php-version-select"
+					value={ geoAffinity }
+				>
+					{ getDatacenterOptions().map( ( option ) => {
+						return (
+							<option value={ option.value } key={ option.label }>
+								{ option.label }
+							</option>
+						);
+					} ) }
+				</FormSelect>
+				<FormSettingExplanation>
+					{ translate(
+						'The primary datacenter is where your site is physically located. ' +
+							'For redundancy, your site also replicates in real-time to a second datacenter in different region.'
+					) }
+				</FormSettingExplanation>
+			</FormFieldset>
+		);
+	};
 
 	const recommendedValue = '8.0';
 
@@ -221,14 +294,22 @@ const WebServerSettingsCard = ( {
 
 	return (
 		<Card className="web-server-settings-card">
+			{ config.isEnabled( 'hosting/datacenter-picker' ) && (
+				<QuerySiteGeoAffinity siteId={ siteId } />
+			) }
 			<QuerySitePhpVersion siteId={ siteId } />
 			<QuerySiteStaticFile404 siteId={ siteId } />
 			<MaterialIcon icon="build" size={ 32 } />
 			<CardHeading>{ translate( 'Web Server Settings' ) }</CardHeading>
-			<p>For sites with specialized needs, fine-tune how the web server runs your website.</p>
+			<p>
+				{ translate(
+					'For sites with specialized needs, fine-tune how the web server runs your website.'
+				) }
+			</p>
+			{ config.isEnabled( 'hosting/datacenter-picker' ) && getGeoAffinityContent() }
 			{ getPhpVersionContent() }
 			{ getStaticFile404Content() }
-			{ ( isGettingPhpVersion || isGettingStaticFile404 ) && <Spinner /> }
+			{ ( isGettingGeoAffinity || isGettingPhpVersion || isGettingStaticFile404 ) && <Spinner /> }
 		</Card>
 	);
 };
@@ -236,10 +317,12 @@ const WebServerSettingsCard = ( {
 export default connect(
 	( state, props ) => {
 		const siteId = getSelectedSiteId( state );
+		const geoAffinity = getAtomicHostingGeoAffinity( state, siteId );
 		const phpVersion = getAtomicHostingPhpVersion( state, siteId );
 		const staticFile404 = getAtomicHostingStaticFile404( state, siteId );
 
 		return {
+			isGettingGeoAffinity: ! props.disabled && ! geoAffinity,
 			isGettingPhpVersion: ! props.disabled && ! phpVersion,
 			isGettingStaticFile404: ! props.disabled && ! staticFile404,
 			isUpdatingPhpVersion:
@@ -247,6 +330,7 @@ export default connect(
 			isUpdatingStaticFile404:
 				getRequest( state, updateAtomicStaticFile404( siteId, null ) )?.isLoading ?? false,
 			siteId,
+			geoAffinity,
 			staticFile404,
 			phpVersion,
 		};
