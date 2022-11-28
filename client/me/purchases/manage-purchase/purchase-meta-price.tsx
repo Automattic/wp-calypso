@@ -13,8 +13,9 @@ import {
 	isOneTimePurchase,
 	getDIFMTieredPurchaseDetails,
 } from 'calypso/lib/purchases';
+import { Purchase } from 'calypso/lib/purchases/types';
 
-function PurchaseMetaPrice( { purchase } ) {
+function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 	const translate = useTranslate();
 	const { productSlug, productDisplayPrice } = purchase;
 	const plan = getPlan( productSlug ) || getProductFromSlug( productSlug );
@@ -22,7 +23,10 @@ function PurchaseMetaPrice( { purchase } ) {
 	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
 		if ( isDIFMProduct( purchase ) ) {
 			const difmTieredPurchaseDetails = getDIFMTieredPurchaseDetails( purchase );
-			if ( difmTieredPurchaseDetails && difmTieredPurchaseDetails.extraPageCount > 0 ) {
+			if (
+				difmTieredPurchaseDetails?.extraPageCount &&
+				difmTieredPurchaseDetails.extraPageCount > 0
+			) {
 				const {
 					extraPageCount,
 					formattedCostOfExtraPages: costOfExtraPages,
@@ -78,7 +82,7 @@ function PurchaseMetaPrice( { purchase } ) {
 			return translate( 'month' );
 		}
 
-		if ( plan && plan.term ) {
+		if ( typeof plan === 'object' && plan.term ) {
 			switch ( plan.term ) {
 				case TERM_BIENNIALLY:
 					return translate( 'two years' );
@@ -103,7 +107,7 @@ function PurchaseMetaPrice( { purchase } ) {
 		throw new Error( `Failed to get a billing term for ${ productSlug }` );
 	};
 
-	const getPriceLabel = ( period ) => {
+	const getPriceLabel = ( period: string ) => {
 		//translators: displayPrice is the price of the purchase with localized currency (i.e. "C$10"), %(period)s is how long the plan is active (i.e. "year")
 		return translate( '{{displayPrice/}} {{period}}/ %(period)s{{/period}}', {
 			args: { period },
