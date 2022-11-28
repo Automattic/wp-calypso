@@ -62,7 +62,7 @@ export const HelpCenterContactPage: React.FC = () => {
 	}, [ isLoading, renderChat.state, renderEmail.render ] );
 
 	const liveChatHeaderText = useMemo( () => {
-		if ( isDefaultLocale( locale ) || ! hasTranslation( 'Live chat (English)' ) ) {
+		if ( isDefaultLocale( locale ) ) {
 			return __( 'Live chat', __i18n_text_domain__ );
 		}
 
@@ -83,14 +83,10 @@ export const HelpCenterContactPage: React.FC = () => {
 			return language
 				? sprintf(
 						/* translators: %s is the language name */
-						__( 'Email (%s)' ),
+						__( 'Email (%s)', __i18n_text_domain__ ),
 						language
 				  )
 				: __( 'Email', __i18n_text_domain__ );
-		}
-
-		if ( hasTranslation( 'Email (English)' ) ) {
-			return __( 'Email (English)', __i18n_text_domain__ );
 		}
 
 		return __( 'Email', __i18n_text_domain__ );
