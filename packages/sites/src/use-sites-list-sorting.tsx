@@ -160,6 +160,16 @@ function sortAlphabetically< T extends SiteDetailsForSorting >(
 ) {
 	const normalizedA = a.title.toLocaleLowerCase();
 	const normalizedB = b.title.toLocaleLowerCase();
+	const aIsRetired = 0 === a.title.indexOf( '(Retired)' );
+	const bIsRetired = 0 === b.title.indexOf( '(Retired)' );
+
+	if ( aIsRetired && ! bIsRetired ) {
+		return sortOrder === 'asc' ? 1 : -1;
+	}
+
+	if ( ! aIsRetired && bIsRetired ) {
+		return sortOrder === 'asc' ? -1 : 1;
+	}
 
 	if ( normalizedA > normalizedB ) {
 		return sortOrder === 'asc' ? 1 : -1;
