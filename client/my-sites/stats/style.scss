@@ -237,4 +237,21 @@
 	}
 }
 
+.stats-traffic-promo-container {
+	.stats-traffic-promo-pager {
+		border: 1px solid var(--studio-gray-5);
+		border-radius: 5px; /* stylelint-disable-line scales/radii */
+		padding: 20px;
+
+		.stats-content-promo-card {
+			.card {
+				box-shadow: none;
+			}
+			.mobile-apps-promo-card {
+				border: none;
+			}
+		}
+	}
+}
+
 @import "calypso/my-sites/stats/grid-layout.scss";
