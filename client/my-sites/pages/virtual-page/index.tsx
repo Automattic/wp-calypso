@@ -23,12 +23,11 @@ interface Props {
 	id: string;
 	type: string;
 	title: string;
-	description?: string;
 	previewUrl?: string;
 	isHomepage?: boolean;
 }
 
-const VirtualPage = ( { site, id, type, title, description, previewUrl, isHomepage }: Props ) => {
+const VirtualPage = ( { site, id, type, title, previewUrl, isHomepage }: Props ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const defaultEditorUrl = `/site-editor/${ site.slug }`;
@@ -83,9 +82,11 @@ const VirtualPage = ( { site, id, type, title, description, previewUrl, isHomepa
 					{ isHomepage && (
 						<InfoPopover position="right">
 							{ translate(
-								'The homepage of your site displays the %(title)s template. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+								'You can change the content of this page by editing the %(templateTitle)s template using the Site Editor. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 								{
-									args: { title: decodeEntities( template.title.rendered || template.slug ) },
+									args: {
+										templateTitle: decodeEntities( template.title.rendered || template.slug ),
+									},
 									components: {
 										learnMoreLink: (
 											<ExternalLink
@@ -103,7 +104,11 @@ const VirtualPage = ( { site, id, type, title, description, previewUrl, isHomepa
 					) }
 				</a>
 				<div className="page-card-info">
-					{ description && <span className="page-card-info__description">{ description }</span> }
+					<span className="page-card-info__description">
+						{ translate( 'Showing the %(templateTitle)s template', {
+							args: { templateTitle: decodeEntities( template.title.rendered || template.slug ) },
+						} ) }
+					</span>
 				</div>
 			</div>
 			<EllipsisMenu position="bottom left" onToggle={ handleMenuToggle }>
