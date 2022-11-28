@@ -53,7 +53,7 @@ function initiateTransfer( siteId, plugin, theme, geoAffinity, onProgress ) {
  * @param {string} geoAffinity -- geographic affinity for the new site
  * @returns {Promise} for testing purposes only
  */
-export function initiateThemeTransfer( siteId, file, plugin, geoAffinity = null ) {
+export function initiateThemeTransfer( siteId, file, plugin, geoAffinity = '' ) {
 	let context = plugin ? 'plugins' : 'themes';
 	if ( ! plugin && ! file ) {
 		context = 'hosting';
