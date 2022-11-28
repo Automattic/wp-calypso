@@ -17,12 +17,6 @@ export const ZendeskPreSalesChat: React.VFC = () => {
 		);
 		const currentTime = new Date();
 
-		/**
-		 * This is for testing.. Remove this before merging..
-		 * This forces the time to be within the time span thst the chat wiget will show.
-		 */
-		//currentTime.setUTCHours( 16 );
-
 		return (
 			! isLoggedIn &&
 			isEnglishLocale &&
