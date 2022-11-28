@@ -508,6 +508,7 @@ function PurchaseMetaExpiration( {
 
 	if ( isRenewable( purchase ) && ! isExpired( purchase ) ) {
 		const dateSpan = <span className="manage-purchase__detail-date-span" />;
+		// If a jetpack site has been disconnected, the "site" prop will be null here.
 		const shouldRenderToggle = site && isProductOwner;
 		const autoRenewToggle = shouldRenderToggle ? (
 			<AutoRenewToggle
