@@ -108,6 +108,11 @@ function a8c_happyblocks_pricing_plans_get_domain() {
 		return null;
 	}
 
+	// If BBPress is not active, then just don't return any domain and let the user choose.
+	if ( ! function_exists( 'bbp_get_topic_id' ) ) {
+		return null;
+	}
+
 	$topic_id  = bbp_get_topic_id();
 	$author_id = get_post_field( 'post_author', $topic_id );
 
