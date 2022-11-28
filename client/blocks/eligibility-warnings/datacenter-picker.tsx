@@ -16,6 +16,7 @@ type Props = ExternalProps & LocalizeProps;
 const DatacenterOptions = [
 	{
 		value: 'ams',
+		name: 'geo_affinity',
 		label: translate( 'Amsterdam' ),
 		thumbnail: {
 			imageUrl: '',
@@ -23,6 +24,7 @@ const DatacenterOptions = [
 	},
 	{
 		value: 'bur',
+		name: 'geo_affinity',
 		label: translate( 'California' ),
 		thumbnail: {
 			imageUrl: '',
@@ -30,6 +32,7 @@ const DatacenterOptions = [
 	},
 	{
 		value: 'dfw',
+		name: 'geo_affinity',
 		label: translate( 'Texas' ),
 		thumbnail: {
 			imageUrl: '',
@@ -37,6 +40,7 @@ const DatacenterOptions = [
 	},
 	{
 		value: 'dca',
+		name: 'geo_affinity',
 		label: translate( 'Washington, D.C.' ),
 		thumbnail: {
 			imageUrl: '',
@@ -133,6 +137,7 @@ const DatacenterPicker = ( { onChange, translate, value }: Props ) => {
 							<input
 								className="form-radio"
 								type="radio"
+								name="geo_affinity"
 								value=""
 								checked={ value === '' }
 								onChange={ () => onChange( '' ) }
