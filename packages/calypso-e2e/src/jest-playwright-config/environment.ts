@@ -208,6 +208,10 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 							recordVideo: { dir: os.tmpdir() },
 						} );
 
+						// Set the default timeout for all Playwright methods.
+						// Default value is 15000ms, defined in env-variables.ts.
+						page.setDefaultTimeout( env.TIMEOUT );
+
 						const context = page.context();
 
 						await context.tracing.start( {
