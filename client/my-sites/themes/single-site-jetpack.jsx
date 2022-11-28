@@ -1,13 +1,13 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_UPLOAD_THEMES, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { pickBy } from 'lodash';
-import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import Main from 'calypso/components/main';
 import { useRequestSiteChecklistTaskUpdate } from 'calypso/data/site-checklist';
+import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import CurrentTheme from 'calypso/my-sites/themes/current-theme';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -72,17 +72,9 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 
 	useRequestSiteChecklistTaskUpdate( siteId, CHECKLIST_KNOWN_TASKS.THEMES_BROWSED );
 
-	useEffect( () => {
-		if ( ! isNewSearchAndFilter ) {
-			return;
-		}
-
-		document.body.classList.add( 'is-section-themes-i4' );
-		return () => document.body.classList.remove( 'is-section-themes-i4' );
-	}, [] );
-
 	return (
 		<Main fullWidthLayout className="themes">
+			{ isNewSearchAndFilter && <BodySectionCssClass bodyClass={ [ 'is-section-themes-i4' ] } /> }
 			<ThemesHeader isReskinned={ isNewSearchAndFilter } />
 			{ ! isNewSearchAndFilter ? (
 				<CurrentTheme siteId={ siteId } />
