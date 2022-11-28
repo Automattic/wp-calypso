@@ -32,6 +32,10 @@
 	&.is-selected + .segmented-control__item .segmented-control__link {
 		border-left-color: var(--color-neutral-70);
 	}
+
+	.segmented-control__link:focus {
+		box-shadow: 0 0 0 2px var(--color-primary-light);
+	}
 }
 
 .segmented-control__link {
