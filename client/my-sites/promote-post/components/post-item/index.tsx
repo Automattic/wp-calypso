@@ -30,9 +30,10 @@ export type Post = {
 
 type Props = {
 	post: Post;
+	canCreateCampaigns: boolean;
 };
 
-export default function PostItem( { post }: Props ) {
+export default function PostItem( { post, canCreateCampaigns }: Props ) {
 	const [ loading ] = useState( false );
 	const dispatch = useDispatch();
 	const keyValue = 'post-' + post.ID;
@@ -88,9 +89,10 @@ export default function PostItem( { post }: Props ) {
 					keyValue={ keyValue }
 				/>
 				<Button
+					className="post-item__prmote-button"
 					isPrimary={ true }
 					isBusy={ loading }
-					disabled={ loading }
+					disabled={ loading || ! canCreateCampaigns }
 					onClick={ onClickPromote }
 				>
 					{ __( 'Promote' ) }

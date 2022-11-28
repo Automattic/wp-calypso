@@ -7,9 +7,10 @@ import './style.scss';
 interface Props {
 	content: Post[];
 	isLoading: boolean;
+	canCreateCampaigns: boolean;
 }
 
-export default function PostsList( { content, isLoading }: Props ) {
+export default function PostsList( { content, isLoading, canCreateCampaigns }: Props ) {
 	const isEmpty = ! content || ! content.length;
 	return (
 		<>
@@ -31,7 +32,9 @@ export default function PostsList( { content, isLoading }: Props ) {
 			{ ! isLoading && ! isEmpty && (
 				<>
 					{ content.map( function ( post: Post ) {
-						return <PostItem key={ post.ID } post={ post } />;
+						return (
+							<PostItem key={ post.ID } post={ post } canCreateCampaigns={ canCreateCampaigns } />
+						);
 					} ) }
 				</>
 			) }

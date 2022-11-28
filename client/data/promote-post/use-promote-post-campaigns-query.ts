@@ -51,15 +51,25 @@ export type Campaign = {
 	avatar_url: string;
 };
 
+export type UserStatus = {
+	reason: string;
+	missingPaymentAmount?: number;
+};
+
 const useCampaignsQuery = ( siteId: number, queryOptions = {} ) => {
 	return useQuery(
 		[ 'promote-post-campaigns', siteId ],
 		async () => {
-			const { results: campaigns } = await requestDSP< { results: Campaign[] } >(
-				siteId,
-				`/campaigns/site/${ siteId }/full`
-			);
-			return campaigns;
+			const {
+				results: campaigns,
+				canCreateCampaigns,
+				userStatus,
+			} = await requestDSP< {
+				results: Campaign[];
+				canCreateCampaigns: boolean;
+				userStatus?: UserStatus;
+			} >( siteId, `/campaigns/site/${ siteId }/full` );
+			return { campaigns, canCreateCampaigns, userStatus };
 		},
 		{
 			...queryOptions,
