@@ -1,4 +1,3 @@
-import { keyframes } from '@emotion/css';
 import styled from '@emotion/styled';
 
 export const Container = styled.div`
@@ -24,21 +23,6 @@ export const Content = styled.div`
 	position: relative;
 `;
 
-const ellipsisProgress = keyframes`
-    0% {
-        content: '';
-    }
-    33% {
-        content: '.';
-    }
-    66% {
-        content: '..';
-    }
-    100% {
-        content: '...';
-    }
-`;
-
 export const Text = styled.div`
 	font-family: 'Recoleta';
 	font-size: 32px;
@@ -46,13 +30,6 @@ export const Text = styled.div`
 	position: relative;
 	width: 100%;
 	text-align: center;
-	padding-right: 24px;
-	&::after {
-		display: inline-block;
-		position: absolute;
-		content: '';
-		animation: ${ ellipsisProgress } 2s ease infinite;
-	}
 `;
 
 export const Progress = styled.div`
@@ -62,7 +39,6 @@ export const Progress = styled.div`
 	left: 0;
 	height: 4px;
 	background-color: #fff;
-	margin: 0 24px;
 `;
 
 export const ProgressValue = styled.div< { progress: number } >`

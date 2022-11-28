@@ -1,3 +1,4 @@
+import { Global } from '@emotion/react';
 import React from 'react';
 import bottomLeftImgSrc from 'calypso/assets/images/onboarding/sensei/progress-bg-bottom-left.png';
 import topRightImgSrc from 'calypso/assets/images/onboarding/sensei/progress-bg-top-right.png';
@@ -31,6 +32,7 @@ export const SenseiStepProgress: React.FC< SenseiStepProgressProps > = ( { progr
 				</Progress>
 			</Content>
 			<BottomLeftImg src={ bottomLeftImgSrc } />
+			<Global styles={ { '.sensei .flow-progress.progress-bar': { display: 'none' } } } />
 		</Container>
 	);
 };
