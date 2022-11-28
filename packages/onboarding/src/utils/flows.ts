@@ -15,6 +15,10 @@ export const isLinkInBioFlow = ( flowName: string | null ) => {
 	);
 };
 
+export const isFreeFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && FREE_FLOW === flowName );
+};
+
 export const isNewsletterOrLinkInBioFlow = ( flowName: string | null ) => {
 	return Boolean(
 		flowName &&
