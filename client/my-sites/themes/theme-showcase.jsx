@@ -441,7 +441,7 @@ class ThemeShowcase extends Component {
 			case this.tabFilters.ALL.key:
 				return this.allThemes( { themeProps } );
 			default:
-				return <ThemesSelection { ...themeProps } filter={ tabKey } />;
+				return this.allThemes( { themeProps: { ...themeProps, filter: tabKey } } );
 		}
 	};
 
