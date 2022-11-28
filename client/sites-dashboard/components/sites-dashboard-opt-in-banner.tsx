@@ -2,6 +2,7 @@ import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import moment from 'moment';
 import { useDispatch } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -44,14 +45,12 @@ const NoticeActions = styled.div( {
 	flexShrink: 0,
 } );
 
-const ONE_DAY_IN_MILLISECONDS = 86400 * 1000;
-
 const hasDismissedTheBannerRecently = ( {
 	updatedAt,
 }: typeof SITES_AS_LANDING_PAGE_DEFAULT_VALUE ) => {
-	const fourteenDaysAgo = new Date().valueOf() - ONE_DAY_IN_MILLISECONDS * 14;
+	const fourteenDaysAgo = moment().subtract( 14, 'days' ).startOf( 'day' );
 
-	return updatedAt > fourteenDaysAgo;
+	return moment( updatedAt ).isAfter( fourteenDaysAgo );
 };
 
 export const SitesDashboardOptInBanner = ( { sites }: SitesDashboardOptInBannerProps ) => {
