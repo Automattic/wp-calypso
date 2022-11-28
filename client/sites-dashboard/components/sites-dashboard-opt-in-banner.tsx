@@ -66,7 +66,6 @@ export const SitesDashboardOptInBanner = ( { sites }: SitesDashboardOptInBannerP
 	} );
 
 	if (
-		isSmallScreen ||
 		sites.length < 2 ||
 		landingPagePreference === 'none' ||
 		landingPagePreference.useSitesAsLandingPage ||
@@ -102,9 +101,11 @@ export const SitesDashboardOptInBanner = ( { sites }: SitesDashboardOptInBannerP
 			>
 				<NoticeActions>
 					<Button borderless onClick={ handleDismiss }>
-						{ __( 'No, thanks' ) }
+						{ isSmallScreen ? __( 'No' ) : __( 'No, thanks' ) }
 					</Button>
-					<Button onClick={ handleAccept }>{ __( 'Yes, make it my home' ) }</Button>
+					<Button onClick={ handleAccept }>
+						{ isSmallScreen ? __( 'Yes' ) : __( 'Yes, make it my home' ) }
+					</Button>
 				</NoticeActions>
 			</SitesNotice>
 		</>
