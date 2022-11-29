@@ -17,6 +17,13 @@ function should_show_coming_soon_page() {
 		return false;
 	}
 
+	$share_code = get_share_code();
+	if ( is_accessed_by_valid_share_link( $share_code ) ) {
+		track_preview_link_event();
+		setcookie( 'wp_share_code', $share_code, time() + 3600, '/', false, is_ssl() );
+		return false;
+	}
+
 	$should_show = ( (int) get_option( 'wpcom_public_coming_soon' ) === 1 );
 
 	// Everyone from Administrator to Subscriber will be able to see the site.
@@ -29,6 +36,76 @@ function should_show_coming_soon_page() {
 	// Allow folks to hook into this method to set their own rules.
 	// We'll use to on WordPress.com to check further user privileges.
 	return apply_filters( 'a8c_show_coming_soon_page', $should_show );
+}
+
+/**
+ * Gets share code from URL or Cookie.
+ *
+ * @return string
+ */
+function get_share_code() {
+	if ( isset( $_GET['share'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return $_GET['share']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	} elseif ( isset( $_COOKIE['wp_share_code'] ) ) {
+		return $_COOKIE['wp_share_code'];
+	}
+	return '';
+}
+
+/**
+ * Determines whether the coming soon page should be bypassed.
+ *
+ * It checks if share code is provided as GET parameter, or as a cookie.
+ * Then it validates the code against blog option, and if sharing code is valid,
+ * it allows bypassing the Coming Soon page.
+ *
+ * Finally, it sets a code in cookie and sets header that prevents robots from indexing.
+ *
+ * @param string $share_code Share code to check against blog option value.
+ *
+ * @return bool
+ */
+function is_accessed_by_valid_share_link( $share_code ) {
+	$preview_links_option = get_option( 'wpcom_public_preview_links' );
+
+	if ( ! is_array( $preview_links_option ) || ! count( $preview_links_option ) || ! $share_code ) {
+		return false;
+	}
+
+	if ( ! in_array( $share_code, array_column( $preview_links_option, 'code' ), true ) ) {
+		return false;
+	}
+
+	return true;
+}
+
+/**
+ * Add X-Robots-Tag header to prevent from indexing page that includes share code.
+ *
+ * @param array $headers Headers.
+ * @return array Headers.
+ */
+function maybe_add_x_robots_headers( $headers ) {
+	if ( get_share_code() ) {
+		$headers['X-Robots-Tag'] = 'noindex, nofollow';
+	}
+	return $headers;
+}
+add_filter( 'wp_headers', __NAMESPACE__ . '\maybe_add_x_robots_headers' );
+
+/**
+ * Track site preview event.
+ *
+ * @return void
+ */
+function track_preview_link_event() {
+	$event_name = 'wpcom_site_previewed';
+	if ( function_exists( 'wpcomsh_record_tracks_event' ) ) {
+		wpcomsh_record_tracks_event( $event_name, array() );
+	} else {
+		require_lib( 'tracks/client' );
+		tracks_record_event( get_current_user_id(), $event_name, array() );
+	}
 }
 
 /**
