@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { __experimentalUseFocusOutside as useFocusOutside } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import KeyedSuggestions from 'calypso/components/keyed-suggestions';
 import Search, { SEARCH_MODE_ON_ENTER } from 'calypso/components/search';
@@ -29,6 +29,15 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordT
 	const [ editedSearchElement, setEditedSearchElement ] = useState( '' );
 	const [ isApplySearch, setIsApplySearch ] = useState( false );
 	const [ isSearchOpen, setIsSearchOpen ] = useState( false );
+
+	// Sync the value of the search input with the subject filter,
+	// which is equivalent to adding `subject:<term>` to the search input
+	useEffect( () => {
+		// Prevent unnecessary render when there is unfinished filter subject:
+		if ( ! isSearchOpen ) {
+			setSearchInput( query );
+		}
+	}, [ query ] );
 
 	const findTextForSuggestions = ( inputValue: string ) => {
 		const val = inputValue;
