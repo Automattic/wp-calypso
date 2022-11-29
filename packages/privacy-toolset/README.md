@@ -18,10 +18,12 @@ import { CookieBanner } from '@automattic/privacy-toolset';
 
 const Component = () => (
 	<>
-		<CookieBanner content={ ...args } onAccept={ fn } />
+		<CookieBanner content={ contentDefinition } onAccept={ fn } />
 	</>
 );
 ```
+
+> Disclaimer: see the detailed `content` parameter structure, see `src/cookie-banner/cookie-banner.stories.tsx`.
 
 ## Development Workflow
 
