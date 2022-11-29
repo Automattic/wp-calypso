@@ -83,6 +83,7 @@ const AutomaticFormLabel = styled.label( {
 } );
 
 const FormLabelThumbnail = styled.div( {
+	display: 'flex',
 	width: '100%',
 	height: '90px',
 	margin: '2px 0 8px',
@@ -96,6 +97,10 @@ const FormLabelThumbnail = styled.div( {
 	'&:hover': {
 		boxShadow: '0 0 0 1px var(--color-neutral-light), 0 2px 4px var(--color-neutral-10)',
 	},
+} );
+
+const FormLabelThumbnailImg = styled.img( {
+	objectFit: 'cover',
 } );
 
 const DatacenterPicker = ( {
@@ -154,7 +159,10 @@ const DatacenterPicker = ( {
 					<div role="radiogroup">
 						<AutomaticFormLabel>
 							<FormLabelThumbnail>
-								<img src={ worldImg } alt={ translate( 'Illustration of the world' ) } />
+								<FormLabelThumbnailImg
+									src={ worldImg }
+									alt={ translate( 'Illustration of the world' ) }
+								/>
 							</FormLabelThumbnail>
 							<input
 								className="form-radio"
