@@ -83,6 +83,42 @@ describe( 'PurchaseMeta', () => {
 		expect( screen.getByText( /\/ year\b/ ) ).toBeInTheDocument();
 	} );
 
+	it( 'does render "/ year" in the price column when it is a yearly purchase in French', () => {
+		const store = createReduxStore(
+			{
+				purchases: {
+					data: [
+						{
+							ID: 1,
+							bill_period_label: 'par année',
+						},
+					],
+				},
+				sites: {
+					requestingAll: false,
+				},
+				currentUser: {
+					id: 1,
+					user: {
+						primary_blog: 'example',
+					},
+				},
+			},
+			( state ) => state
+		);
+		render(
+			<ReduxProvider store={ store }>
+				<PurchaseMeta
+					hasLoadedPurchasesFromServer={ true }
+					purchaseId={ 1 }
+					siteSlug="test"
+					isDataLoading={ false }
+				/>
+			</ReduxProvider>
+		);
+		expect( screen.getByText( /\/ year\b/ ) ).toBeInTheDocument();
+	} );
+
 	it( 'does render "/ month" in the price column when it is a yearly purchase', () => {
 		const store = createReduxStore(
 			{
