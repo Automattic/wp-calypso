@@ -40,7 +40,7 @@ const WebServerSettingsCard = ( {
 	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( '' );
 	const [ selectedStaticFile404, setSelectedStaticFile404 ] = useState( '' );
 
-	const getDatacenterOptions = () => {
+	const getDataCenterOptions = () => {
 		return [
 			{
 				value: 'auto',
@@ -92,13 +92,13 @@ const WebServerSettingsCard = ( {
 
 		return (
 			<FormFieldset>
-				<FormLabel>{ translate( 'Primary Datacenter' ) }</FormLabel>
+				<FormLabel>{ translate( 'Primary Data Center' ) }</FormLabel>
 				<FormSelect
 					disabled={ true }
-					className="web-server-settings-card__php-version-select"
+					className="web-server-settings-card__data-center-select"
 					value={ geoAffinity }
 				>
-					{ getDatacenterOptions().map( ( option ) => {
+					{ getDataCenterOptions().map( ( option ) => {
 						return (
 							<option value={ option.value } key={ option.label }>
 								{ option.label }
@@ -108,8 +108,8 @@ const WebServerSettingsCard = ( {
 				</FormSelect>
 				<FormSettingExplanation>
 					{ translate(
-						'The primary datacenter is where your site is physically located. ' +
-							'For redundancy, your site also replicates in real-time to a second datacenter in different region.'
+						'The primary data center is where your site is physically located. ' +
+							'For redundancy, your site also replicates in real-time to a second data center in different region.'
 					) }
 				</FormSettingExplanation>
 			</FormFieldset>
