@@ -8,14 +8,14 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import type { ConfigData } from '@automattic/create-calypso-config';
 
 const isWithinChatHours = ( currentTime: Date ) => {
-	const [ THREE_PM, NINE_PM ] = [ 15, 21 ];
+	const [ NINE_AM, SEVEN_PM ] = [ 9, 19 ];
 	const [ SUNDAY, SATURDAY ] = [ 0, 6 ];
 
 	const utcHour = currentTime.getUTCHours();
 	const utcWeekDay = currentTime.getUTCDay();
 
 	return (
-		utcHour >= THREE_PM && utcHour < NINE_PM && utcWeekDay !== SUNDAY && utcWeekDay !== SATURDAY
+		utcHour >= NINE_AM && utcHour < SEVEN_PM && utcWeekDay !== SUNDAY && utcWeekDay !== SATURDAY
 	);
 };
 
