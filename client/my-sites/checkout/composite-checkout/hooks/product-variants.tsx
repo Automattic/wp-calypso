@@ -1,13 +1,6 @@
 import {
-	findPlansKeys,
-	findProductKeys,
 	getBillingMonthsForTerm,
-	getPlan,
-	getProductFromSlug,
 	getTermDuration,
-	GROUP_JETPACK,
-	GROUP_WPCOM,
-	objectIsProduct,
 	getBillingTermForMonths,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
@@ -112,34 +105,6 @@ function sortVariant( a: ResponseCartProductVariant, b: ResponseCartProductVaria
 		return 1;
 	}
 	return 0;
-}
-
-export function getVariantPlanProductSlugs( productSlug: string | undefined ): string[] {
-	const chosenPlan = getPlan( productSlug ?? '' )
-		? getPlan( productSlug ?? '' )
-		: getProductFromSlug( productSlug ?? '' );
-
-	if ( ! chosenPlan || typeof chosenPlan === 'string' ) {
-		return [];
-	}
-
-	// Only construct variants for WP.com and Jetpack plans
-	if (
-		! objectIsProduct( chosenPlan ) &&
-		chosenPlan.group !== GROUP_WPCOM &&
-		chosenPlan.group !== GROUP_JETPACK
-	) {
-		return [];
-	}
-
-	return objectIsProduct( chosenPlan )
-		? findProductKeys( {
-				type: chosenPlan.type,
-		  } )
-		: findPlansKeys( {
-				group: chosenPlan.group,
-				type: chosenPlan.type,
-		  } );
 }
 
 function getTermText( term: string, translate: ReturnType< typeof useTranslate > ): string {
