@@ -184,6 +184,10 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 	let text;
 
 	switch ( refundPolicy ) {
+		case RefundPolicy.GiftPurchase:
+			//Save this space if we need to add Gift Purchase return policy
+			break;
+
 		case RefundPolicy.DomainNameRegistration:
 			text = translate(
 				'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 96 hours after registration.',
