@@ -1,16 +1,11 @@
 import { useState } from 'react';
+import { allBucketsTrue } from './consts';
 import { GranularConsent } from './granular-consent';
 import type { Buckets, CustomizedConsentContent } from './types';
 
 type Props = {
 	content: CustomizedConsentContent;
 	onAccept: ( buckets: Buckets ) => void;
-};
-
-const allBucketsTrue: Buckets = {
-	essential: true,
-	analytics: true,
-	advertising: true,
 };
 
 export const CustomizedConsent = ( { content, onAccept }: Props ) => {
