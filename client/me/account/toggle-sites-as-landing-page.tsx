@@ -1,4 +1,3 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl as OriginalToggleControl } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -43,7 +42,7 @@ function ToggleSitesAsLandingPage() {
 	const label = createInterpolateElement(
 		translate( 'Make the <a>Sites page</a> my default landing page.' ),
 		{
-			a: <a href={ localizeUrl( '/sites' ) } target="_blank" rel="noopener noreferrer" />,
+			a: <a href="/sites" target="_blank" rel="noopener noreferrer" />,
 		}
 	);
 
