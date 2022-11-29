@@ -40,6 +40,20 @@ describe( '#queueRequest', () => {
 		} );
 	} );
 
+	test( 'should call `onSuccess` when a response returns with an empty string', () => {
+		return new Promise( ( done ) => {
+			const data = '';
+			nock( 'https://public-api.wordpress.com:443' ).get( '/rest/v1.1/me' ).reply( 200, data );
+
+			const dispatch = ( action ) => {
+				expect( action ).toEqual( extendAction( succeeder, successMeta( data ) ) );
+				done();
+			};
+
+			http( { dispatch }, getMe );
+		} );
+	} );
+
 	test( 'should call `onFailure` when a response returns with an error', () => {
 		return new Promise( ( done ) => {
 			const error = { error: 'bad' };
