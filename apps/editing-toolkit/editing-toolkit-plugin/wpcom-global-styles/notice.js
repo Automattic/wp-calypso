@@ -1,15 +1,12 @@
 /* global wpcomGlobalStyles */
-
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button, ExternalLink, Notice } from '@wordpress/components';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { ExternalLink } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import { createInterpolateElement, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
-import './notice.scss';
-
 const GlobalStylesNotice = () => {
-	const { globalStylesConfig, globalStylesId, siteChanges } = useSelect( ( select ) => {
+	const { globalStylesConfig, siteChanges } = useSelect( ( select ) => {
 		const {
 			getEditedEntityRecord,
 			__experimentalGetCurrentGlobalStylesId,
@@ -26,27 +23,10 @@ const GlobalStylesNotice = () => {
 				styles: globalStylesRecord?.styles ?? {},
 				settings: globalStylesRecord?.settings ?? {},
 			},
-			globalStylesId: _globalStylesId,
 			siteChanges: __experimentalGetDirtyEntityRecords ? __experimentalGetDirtyEntityRecords() : [],
 		};
 	}, [] );
 
-	const { editEntityRecord } = useDispatch( 'core' );
-	const canRevertGlobalStyles = !! globalStylesId;
-	const resetGlobalStyles = () => {
-		if ( ! canRevertGlobalStyles ) {
-			return;
-		}
-
-		editEntityRecord( 'root', 'globalStyles', globalStylesId, {
-			styles: {},
-			settings: {},
-		} );
-
-		recordTracksEvent( 'calypso_global_styles_gating_notice_reset_click', {
-			context: 'site-editor',
-		} );
-	};
 	// Do not show the notice if the use is trying to save the default styles.
 	const isVisible =
 		Object.keys( globalStylesConfig.styles ).length ||
@@ -79,33 +59,24 @@ const GlobalStylesNotice = () => {
 		return null;
 	}
 
-	return (
-		<Notice status="warning" isDismissible={ false } className="wpcom-global-styles-notice">
-			{ createInterpolateElement(
-				__(
-					'To publish these styles, and to unlock tons of other features, <a>upgrade to a Premium plan</a>.',
-					'full-site-editing'
-				),
-				{
-					a: (
-						<ExternalLink
-							href={ wpcomGlobalStyles.upgradeUrl }
-							target="_blank"
-							onClick={ () =>
-								recordTracksEvent( 'calypso_global_styles_gating_notice_upgrade_click', {
-									context: 'site-editor',
-								} )
-							}
-						/>
-					),
-				}
-			) }
-			&nbsp;
-			{ canRevertGlobalStyles &&
-				createInterpolateElement( __( 'You can <a>reset your styles</a>.', 'full-site-editing' ), {
-					a: <Button variant="link" onClick={ resetGlobalStyles } />,
-				} ) }
-		</Notice>
+	return createInterpolateElement(
+		__(
+			'To publish these styles, and to unlock tons of other features, <a>upgrade to a Premium plan</a>.',
+			'full-site-editing'
+		),
+		{
+			a: (
+				<ExternalLink
+					href={ wpcomGlobalStyles.upgradeUrl }
+					target="_blank"
+					onClick={ () =>
+						recordTracksEvent( 'calypso_global_styles_gating_notice_upgrade_click', {
+							context: 'site-editor',
+						} )
+					}
+				/>
+			),
+		}
 	);
 };
 
