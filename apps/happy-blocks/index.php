@@ -176,7 +176,21 @@ HTML;
  */
 function a8c_happyblocks_register() {
 	register_block_type(
-		'happy-blocks/pricing-plans',
+		'happy-blocks/pricing-plans-premium',
+		array(
+			'api_version'     => 2,
+			'render_callback' => 'a8c_happyblocks_render_pricing_plans_callback',
+		)
+	);
+	register_block_type(
+		'happy-blocks/pricing-plans-business',
+		array(
+			'api_version'     => 2,
+			'render_callback' => 'a8c_happyblocks_render_pricing_plans_callback',
+		)
+	);
+	register_block_type(
+		'happy-blocks/pricing-plans-ecommerce',
 		array(
 			'api_version'     => 2,
 			'render_callback' => 'a8c_happyblocks_render_pricing_plans_callback',
