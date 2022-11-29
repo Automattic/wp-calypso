@@ -16,7 +16,7 @@ import Subscribers from './internals/steps-repository/subscribers';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
 
-export const newsletter: Flow = {
+const newsletter: Flow = {
 	name: NEWSLETTER_FLOW,
 	get title() {
 		return translate( 'Newsletter' );
@@ -113,3 +113,5 @@ export const newsletter: Flow = {
 		return { goNext, goBack, goToStep, submit };
 	},
 };
+
+export default newsletter;

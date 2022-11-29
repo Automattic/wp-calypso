@@ -61,7 +61,7 @@ const WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION = 'white';
 const SiteIntent = Onboard.SiteIntent;
 const SiteGoal = Onboard.SiteGoal;
 
-export const siteSetupFlow: Flow = {
+const siteSetupFlow: Flow = {
 	name: 'site-setup',
 
 	useSteps() {
@@ -620,3 +620,5 @@ export const siteSetupFlow: Flow = {
 		return result;
 	},
 };
+
+export default siteSetupFlow;

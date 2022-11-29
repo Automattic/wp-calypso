@@ -26,7 +26,7 @@ import Processing from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
-export const linkInBio: Flow = {
+const linkInBio: Flow = {
 	name: LINK_IN_BIO_FLOW,
 	get title() {
 		return translate( 'Link in Bio' );
@@ -195,3 +195,5 @@ export const linkInBio: Flow = {
 		return { goNext, goBack, goToStep, submit };
 	},
 };
+
+export default linkInBio;

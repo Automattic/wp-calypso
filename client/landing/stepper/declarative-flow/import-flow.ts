@@ -24,7 +24,7 @@ import PatternAssembler from './internals/steps-repository/pattern-assembler';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import { Flow, ProvidedDependencies } from './internals/types';
 
-export const importFlow: Flow = {
+const importFlow: Flow = {
 	name: IMPORT_FOCUSED_FLOW,
 
 	useSteps() {
@@ -182,3 +182,5 @@ export const importFlow: Flow = {
 		return { goNext, goBack, goToStep, submit };
 	},
 };
+
+export default importFlow;

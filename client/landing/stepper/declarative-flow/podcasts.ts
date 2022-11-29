@@ -5,7 +5,7 @@ import ChooseADomain from './internals/steps-repository/choose-a-domain';
 import LetsGetStarted from './internals/steps-repository/lets-get-started';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
-export const podcasts: Flow = {
+const podcasts: Flow = {
 	name: 'podcasts',
 	useSteps() {
 		useEffect( () => {
@@ -46,3 +46,5 @@ export const podcasts: Flow = {
 		return { goNext, goBack, goToStep, submit };
 	},
 };
+
+export default podcasts;

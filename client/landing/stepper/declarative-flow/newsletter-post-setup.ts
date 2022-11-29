@@ -6,7 +6,7 @@ import NewsletterPostSetup from './internals/steps-repository/newsletter-post-se
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
 
-export const newsletterPostSetup: Flow = {
+const newsletterPostSetup: Flow = {
 	name: NEWSLETTER_POST_SETUP_FLOW,
 	get title() {
 		return translate( 'Newsletter' );
@@ -45,3 +45,5 @@ export const newsletterPostSetup: Flow = {
 		return { goNext, goBack, goToStep, submit };
 	},
 };
+
+export default newsletterPostSetup;

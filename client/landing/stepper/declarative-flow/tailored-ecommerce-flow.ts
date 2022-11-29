@@ -1,6 +1,6 @@
 import { PLAN_ECOMMERCE, PLAN_ECOMMERCE_MONTHLY } from '@automattic/calypso-products';
 import { useLocale } from '@automattic/i18n-utils';
-import { useFlowProgress, ECOMMERCE_FLOW } from '@automattic/onboarding';
+import { useFlowProgress, ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
@@ -27,12 +27,7 @@ import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { SiteDetailsPlan } from '@automattic/data-stores';
 
-export const ecommerceFlowRecurTypes = {
-	YEARLY: 'yearly',
-	MONTHLY: 'monthly',
-};
-
-export const ecommerceFlow: Flow = {
+const ecommerceFlow: Flow = {
 	name: ECOMMERCE_FLOW,
 	useSteps() {
 		useEffect( () => {
@@ -204,3 +199,5 @@ export const ecommerceFlow: Flow = {
 		return { goNext, goBack, goToStep, submit };
 	},
 };
+
+export default ecommerceFlow;

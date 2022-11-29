@@ -12,7 +12,14 @@ import PodcastTitleStep from './internals/steps-repository/podcast-title';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
-export const anchorFmFlow: Flow = {
+export function isAnchorFmFlow() {
+	const sanitizePodcast = ( id: string ) => id.replace( /[^a-zA-Z0-9]/g, '' );
+	const anchorPodcast = new URLSearchParams( window.location.href ).get( 'anchor_podcast' );
+
+	return Boolean( sanitizePodcast( anchorPodcast || '' ) );
+}
+
+const anchorFmFlow: Flow = {
 	name: 'anchor-fm',
 
 	useSteps() {
@@ -83,3 +90,5 @@ export const anchorFmFlow: Flow = {
 		return { goNext, goBack, goToStep, submit };
 	},
 };
+
+export default anchorFmFlow;

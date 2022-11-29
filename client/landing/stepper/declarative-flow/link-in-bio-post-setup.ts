@@ -6,7 +6,7 @@ import LinkInBioPostSetup from './internals/steps-repository/link-in-bio-post-se
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
 
-export const linkInBioPostSetup: Flow = {
+const linkInBioPostSetup: Flow = {
 	name: LINK_IN_BIO_POST_SETUP_FLOW,
 	get title() {
 		return translate( 'Link in Bio' );
@@ -31,3 +31,5 @@ export const linkInBioPostSetup: Flow = {
 		return { submit };
 	},
 };
+
+export default linkInBioPostSetup;

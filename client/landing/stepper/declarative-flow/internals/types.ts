@@ -83,6 +83,11 @@ export type Flow = {
 	useSideEffect?: () => void;
 };
 
+export type FlowMetaData = {
+	downloadFlow: () => Promise< { default: Flow } >;
+	flowName: string;
+};
+
 export type StepProps = {
 	navigation: NavigationControls;
 	stepName?: string | null;

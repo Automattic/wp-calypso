@@ -28,7 +28,7 @@ const WRITE_INTENT_DEFAULT_THEME = 'livro';
 const WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION = 'white';
 const SiteIntent = Onboard.SiteIntent;
 
-export const pluginBundleFlow: Flow = {
+const pluginBundleFlow: Flow = {
 	name: 'plugin-bundle',
 
 	useSteps() {
@@ -274,3 +274,5 @@ export const pluginBundleFlow: Flow = {
 		return result;
 	},
 };
+
+export default pluginBundleFlow;
