@@ -468,11 +468,7 @@ class ReaderStream extends Component {
 			let sidebarContent = <ReaderSidebarFollowedSites path={ path } />;
 			if ( 'a8c' === streamType || 'p2' === streamType ) {
 				sidebarContent = (
-					<ReaderSidebarOrganizations
-						organizations={ this.props.organizations }
-						path={ path }
-						translate={ translate }
-					/>
+					<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
 				);
 			}
 

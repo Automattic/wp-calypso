@@ -1,3 +1,4 @@
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReaderSidebarOrganizationsList from './list';
@@ -6,7 +7,6 @@ export class ReaderSidebarOrganizations extends Component {
 	static propTypes = {
 		organizations: PropTypes.array.isRequired,
 		path: PropTypes.string.isRequired,
-		translate: PropTypes.func.isRequired,
 	};
 
 	fetchOrganization() {
@@ -56,4 +56,4 @@ export class ReaderSidebarOrganizations extends Component {
 	}
 }
 
-export default ReaderSidebarOrganizations;
+export default localize( ReaderSidebarOrganizations );
