@@ -41,7 +41,10 @@ export class LoginPage {
 		await this.fillUsername( username );
 		await this.clickSubmit();
 		await this.fillPassword( password );
-		await Promise.all( [ this.page.waitForNavigation(), this.clickSubmit() ] );
+		await Promise.all( [
+			this.page.waitForNavigation( { timeout: 15 * 1000 } ),
+			this.clickSubmit(),
+		] );
 	}
 
 	/**
