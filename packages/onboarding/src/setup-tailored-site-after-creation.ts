@@ -52,12 +52,21 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 			blogdescription: siteDescription,
 		};
 
+		const pattern: {
+			content: string | undefined;
+			template?: string | undefined;
+		} = {
+			content: selectedPatternContent,
+		};
+
 		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
 			// link-in-bio and link-in-bio-tld are considered the same intent.
 			if ( isLinkInBioFlow( flowName ) ) {
 				settings.intent = LINK_IN_BIO_FLOW;
 				if ( selectedPatternContent ) {
-					formData.push( [ 'pattern', selectedPatternContent ] );
+					pattern.content = selectedPatternContent;
+					pattern.template = 'blank';
+					formData.push( [ 'pattern', JSON.stringify( pattern ) ] );
 				}
 			} else {
 				settings.intent = flowName;
