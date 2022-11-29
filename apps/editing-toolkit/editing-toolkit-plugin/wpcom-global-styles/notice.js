@@ -83,7 +83,7 @@ const GlobalStylesNotice = () => {
 		<Notice status="warning" isDismissible={ false } className="wpcom-global-styles-notice">
 			{ createInterpolateElement(
 				__(
-					"Your style changes won't be public until you <a>upgrade your plan</a>.",
+					'To publish these styles, and to unlock tons of other features, <a>upgrade to a Premium plan</a>.',
 					'full-site-editing'
 				),
 				{
