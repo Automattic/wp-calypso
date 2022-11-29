@@ -20,6 +20,12 @@
 	}
 }
 
+.jetpack-faq__list {
+	margin: 0;
+
+	list-style-type: none;
+}
+
 // Make sure FAQ's are visible below the sticky header when linked to
 .jetpack-faq__section {
 	button {

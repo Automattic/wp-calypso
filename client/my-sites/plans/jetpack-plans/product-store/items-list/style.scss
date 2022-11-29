@@ -6,6 +6,10 @@
 	column-gap: 80px;
 	row-gap: 32px;
 
+	margin: 0;
+
+	list-style-type: none;
+
 	@include break-medium {
 		grid-template-columns: repeat(2, 1fr);
 	}
