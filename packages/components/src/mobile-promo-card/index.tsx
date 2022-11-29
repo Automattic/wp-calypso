@@ -33,11 +33,13 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 			return translate(
 				'Check your stats on-the-go and get real-time notifications with the Jetpack mobile app.'
 			);
-		} else if ( isGoogle ) {
+		}
+		if ( isGoogle ) {
 			return translate(
 				'Check your stats on-the-go and get real-time notifications with the Woo mobile app.'
 			);
-		} else if ( isWoo ) {
+		}
+		if ( isWoo ) {
 			return translate(
 				'Visit {{a}}woo.com/mobile{{/a}} or scan the QR code to download the WooCommerce mobile app.',
 				{ components }
@@ -64,7 +66,8 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 					/>
 				</a>
 			);
-		} else if ( isGoogle ) {
+		}
+		if ( isGoogle ) {
 			const appStoreLink = isWoo
 				? 'https://play.google.com/store/apps/details?id=com.woocommerce.android'
 				: 'https://play.google.com/store/apps/details?id=com.jetpack.android';
@@ -77,7 +80,8 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 					/>
 				</a>
 			);
-		} else if ( isWoo ) {
+		}
+		if ( isWoo ) {
 			return <img className="promo-qr-code" src={ qrCodeWoo } alt="QR Code for Woo mobile app" />;
 		}
 		return (
