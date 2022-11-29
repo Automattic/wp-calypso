@@ -72,10 +72,10 @@ body.is-section-themes-i4 {
 		.banner__action .button {
 			background-color: var(--studio-blue-50);
 			border: none;
-			border-radius: 4px;
 			font-size: $font-body-small;
-			padding: 10px 14px;
-			line-height: 20px;
+			font-weight: 400;
+			line-height: 22px;
+			padding: 8px 14px;
 			white-space: nowrap;
 		}
 	}
