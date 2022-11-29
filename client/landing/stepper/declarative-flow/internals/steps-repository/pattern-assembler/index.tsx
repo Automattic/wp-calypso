@@ -150,6 +150,13 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	};
 
 	const onSelect = ( selectedPattern: Pattern ) => {
+		if ( showPatternSelectorType ) {
+			trackEventPatternSelect( {
+				patternType: showPatternSelectorType,
+				patternId: selectedPattern.id,
+			} );
+		}
+
 		if ( 'header' === showPatternSelectorType ) {
 			setHeader( selectedPattern );
 		}
@@ -161,19 +168,9 @@ const PatternAssembler: Step = ( { navigation } ) => {
 				replaceSection( selectedPattern );
 			} else {
 				addSection( selectedPattern );
+				// Don't close the pattern selector when in multiple selection
+				return;
 			}
-		}
-
-		if ( showPatternSelectorType ) {
-			trackEventPatternSelect( {
-				patternType: showPatternSelectorType,
-				patternId: selectedPattern.id,
-			} );
-		}
-
-		if ( 'section' === showPatternSelectorType && sectionPosition === null ) {
-			// Don't close the pattern selector when in multiple selection
-			return;
 		}
 
 		setShowPatternSelectorType( null );

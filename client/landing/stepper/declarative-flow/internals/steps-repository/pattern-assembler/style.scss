@@ -281,6 +281,10 @@ $font-family: "SF Pro Text", $sans;
 			overflow-y: scroll;
 			scrollbar-width: none;
 
+			&:last-child {
+				margin-bottom: 0;
+			}
+
 			&::-webkit-scrollbar {
 				display: none;
 			}
