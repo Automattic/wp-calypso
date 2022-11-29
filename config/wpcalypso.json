@@ -144,7 +144,7 @@
 		"themes/subscription-purchases": false,
 		"themes/theme-switch-persist-template": false,
 		"themes/third-party-premium": false,
-		"unified-pages/virtual-home-page": false,
+		"unified-pages/virtual-home-page": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
