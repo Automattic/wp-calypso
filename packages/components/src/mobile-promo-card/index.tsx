@@ -29,13 +29,9 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 
 	const getTitle = () => {
 		if ( isWoo ) {
-			return translate( 'Bring your Store stats with you using the {{a}}Woo{{/a}} mobile app', {
-				components,
-			} );
+			return translate( 'Bring your Store stats with you using the Woo mobile app' );
 		}
-		return translate( 'Bring your stats with you using the {{a}}Jetpack{{/a}} mobile app', {
-			components,
-		} );
+		return translate( 'Bring your stats with you using the Jetpack mobile app' );
 	};
 
 	// Determines message text based on mobile, tablet, or Desktop.
