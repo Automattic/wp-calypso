@@ -2,10 +2,81 @@
 @import "@wordpress/base-styles/mixins";
 
 body.is-section-themes-i4 {
-	--color-surface-backdrop: #fdfdfd;
+	&.theme-default.color-scheme {
+		--color-surface-backdrop: #fdfdfd;
+	}
 
-	&.theme-default .focus-content .layout__content {
+	.layout:not(.has-no-sidebar) .layout__content {
 		padding-top: var(--masterbar-height);
+	}
+
+	.theme__filters {
+		margin-top: 24px;
+		padding: 0;
+	}
+
+	.themes__selection .themes-list {
+		margin-top: 32px;
+	}
+
+	.themes__content .upsell-nudge {
+		background-color: #f0f7fc;
+		border: none;
+		box-shadow: none;
+		margin-top: 32px;
+		margin-bottom: 0;
+		padding: 24px 30px;
+		border-radius: 4px;
+
+		&.is-dismissible {
+			.dismissible-card__close-button {
+				height: 16px;
+				width: 16px;
+
+				svg {
+					height: 16px;
+					width: 16px;
+				}
+			}
+		}
+
+		.banner__content {
+			gap: 16px;
+
+			@include breakpoint-deprecated( ">660px" ) {
+				gap: 32px;
+			}
+		}
+
+		.banner__title,
+		.banner__description {
+			color: var(--color-neutral-80);
+			font-size: $font-body-small;
+			line-height: 20px;
+		}
+
+		.banner__title {
+			font-weight: 500;
+		}
+
+		.banner__icon {
+			background-color: var(--studio-blue-50);
+			display: none;
+		}
+
+		.banner__icon-circle {
+			background-color: var(--studio-blue-50);
+		}
+
+		.banner__action .button {
+			background-color: var(--studio-blue-50);
+			border: none;
+			font-size: $font-body-small;
+			font-weight: 400;
+			line-height: 22px;
+			padding: 8px 14px;
+			white-space: nowrap;
+		}
 	}
 }
 

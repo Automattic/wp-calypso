@@ -2,10 +2,11 @@ import config from '@automattic/calypso-config';
 import globalPageInstance from 'page';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
-import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { requestSite } from 'calypso/state/sites/actions';
 import { canCurrentUserUseCustomerHome, getSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 
 /**
  * @param clientRouter Unused. We can't use the isomorphic router because we want to do redirects.
@@ -74,10 +75,7 @@ const waitForPrefs = () => async ( dispatch, getState ) => {
 async function getLoggedInLandingPage( { dispatch, getState } ) {
 	if ( config.isEnabled( 'sites-as-landing-page' ) ) {
 		await dispatch( waitForPrefs() );
-		const useSitesAsLandingPage = getPreference(
-			getState(),
-			'sites-landing-page'
-		)?.useSitesAsLandingPage;
+		const useSitesAsLandingPage = hasSitesAsLandingPage( getState() );
 
 		const siteCount = getCurrentUser( getState() )?.site_count;
 

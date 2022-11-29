@@ -65,7 +65,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 			title={ translate(
 				'Unlock ALL premium themes and upload your own themes with our Business and eCommerce plans!'
 			) }
-			forceHref={ true }
+			callToAction={ translate( 'Upgrade now' ) }
 			showIcon={ true }
 		/>
 	);

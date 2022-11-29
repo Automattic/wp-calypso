@@ -1,4 +1,4 @@
-import config, { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { urlToSlug } from 'calypso/lib/url';
 import type {
@@ -213,8 +213,7 @@ const getLinks = (
 	type: AllowedTypes,
 	status: string,
 	siteUrl: string,
-	siteUrlWithScheme: string,
-	siteId: number
+	siteUrlWithScheme: string
 ): {
 	link: string;
 	isExternalLink: boolean;
@@ -226,21 +225,13 @@ const getLinks = (
 
 	switch ( type ) {
 		case 'backup': {
-			if ( status === 'inactive' ) {
-				if ( ! isEnabled( 'jetpack/partner-portal-issue-multiple-licenses' ) ) {
-					link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-backup-t2&source=dashboard`;
-				}
-			} else {
+			if ( status !== 'inactive' ) {
 				link = `/backup/${ siteUrlWithMultiSiteSupport }`;
 			}
 			break;
 		}
 		case 'scan': {
-			if ( status === 'inactive' ) {
-				if ( ! isEnabled( 'jetpack/partner-portal-issue-multiple-licenses' ) ) {
-					link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-scan&source=dashboard`;
-				}
-			} else {
+			if ( status !== 'inactive' ) {
 				link = `/scan/${ siteUrlWithMultiSiteSupport }`;
 			}
 			break;
@@ -286,7 +277,7 @@ export const getRowMetaData = (
 	const siteUrlWithScheme = rows.site?.value?.url_with_scheme;
 	const siteError = rows.site.error;
 	const siteId = rows.site?.value?.blog_id;
-	const { link, isExternalLink } = getLinks( type, row.status, siteUrl, siteUrlWithScheme, siteId );
+	const { link, isExternalLink } = getLinks( type, row.status, siteUrl, siteUrlWithScheme );
 	const tooltip = getTooltip( type, row.status );
 	const eventName = getRowEventName( type, row.status, isLargeScreen );
 	return {

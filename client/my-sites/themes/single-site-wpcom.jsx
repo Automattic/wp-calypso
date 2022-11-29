@@ -42,7 +42,7 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 						feature={ WPCOM_FEATURES_PREMIUM_THEMES }
 						plan={ PLAN_PREMIUM }
 						title={ translate( 'Unlock ALL premium themes with our Premium and Business plans!' ) }
-						forceHref={ true }
+						callToAction={ translate( 'Upgrade now' ) }
 						showIcon={ true }
 					/>
 				);
@@ -56,7 +56,7 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 						feature={ FEATURE_UPLOAD_THEMES }
 						plan={ PLAN_BUSINESS }
 						title={ translate( 'Upload your own themes with our Business and eCommerce plans!' ) }
-						forceHref={ true }
+						callToAction={ translate( 'Upgrade now' ) }
 						showIcon={ true }
 					/>
 				);
@@ -69,7 +69,7 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 					feature={ FEATURE_UPLOAD_THEMES }
 					plan={ PLAN_BUSINESS }
 					title={ translate( 'Upload your own themes with our Business and eCommerce plans!' ) }
-					forceHref={ true }
+					callToAction={ translate( 'Upgrade now' ) }
 					showIcon={ true }
 				/>
 			);

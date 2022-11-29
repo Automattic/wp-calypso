@@ -1,7 +1,7 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import config from './config';
-import { Edit } from './edit';
+import { EditBusiness, EditEcommerce, EditPremium } from './edit';
 
 const blockAttributes = {
 	productSlug: {
@@ -12,21 +12,51 @@ const blockAttributes = {
 	},
 };
 
-function registerBlock() {
-	registerBlockType( 'happy-blocks/pricing-plans', {
+function registerBlocks() {
+	registerBlockType( 'happy-blocks/pricing-plans-premium', {
 		apiVersion: 2,
-		title: __( 'Upgrade', 'happy-blocks' ),
+		title: __( 'Upgrade Premium', 'happy-blocks' ),
 		icon: 'money-alt',
 		category: 'embed',
-		description: __( 'List of available pricing plans', 'happy-blocks' ),
+		description: __( 'Premium pricing plan upgrade', 'happy-blocks' ),
 		keywords: [
 			__( 'pricing', 'happy-blocks' ),
 			__( 'plans', 'happy-blocks' ),
 			__( 'upgrade', 'happy-blocks' ),
 		],
 		attributes: blockAttributes,
-		edit: Edit,
+		edit: EditPremium,
+	} );
+
+	registerBlockType( 'happy-blocks/pricing-plans-business', {
+		apiVersion: 2,
+		title: __( 'Upgrade Business', 'happy-blocks' ),
+		icon: 'money-alt',
+		category: 'embed',
+		description: __( 'Business pricing plan upgrade', 'happy-blocks' ),
+		keywords: [
+			__( 'pricing', 'happy-blocks' ),
+			__( 'plans', 'happy-blocks' ),
+			__( 'upgrade', 'happy-blocks' ),
+		],
+		attributes: blockAttributes,
+		edit: EditBusiness,
+	} );
+
+	registerBlockType( 'happy-blocks/pricing-plans-ecommerce', {
+		apiVersion: 2,
+		title: __( 'Upgrade eCommerce', 'happy-blocks' ),
+		icon: 'money-alt',
+		category: 'embed',
+		description: __( 'eCommerce pricing plan upgrade', 'happy-blocks' ),
+		keywords: [
+			__( 'pricing', 'happy-blocks' ),
+			__( 'plans', 'happy-blocks' ),
+			__( 'upgrade', 'happy-blocks' ),
+		],
+		attributes: blockAttributes,
+		edit: EditEcommerce,
 	} );
 }
 
-registerBlock();
+registerBlocks();
