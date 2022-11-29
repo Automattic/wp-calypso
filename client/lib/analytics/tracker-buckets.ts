@@ -1,9 +1,9 @@
 import { getDoNotTrack } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { isPiiUrl, isUrlExcludedForPerformance } from 'calypso/lib/analytics/utils';
+import getTrackingPrefs from 'calypso/lib/analytics/utils/tracking-prefs';
 import { isE2ETest } from 'calypso/lib/e2e';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import getTrackingPrefs from './utils/get-tracking-prefs';
 
 const allAdTrackers = [
 	'bing',
