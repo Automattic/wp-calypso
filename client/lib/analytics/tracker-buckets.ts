@@ -87,7 +87,7 @@ export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolea
 
 const isTrackerIntialized = ( tracker: AdTracker ): boolean => {
 	const guardFunction = AdTrackersInitGuards[ tracker ];
-	// If there is no guard function, assume the tracker is initialized
+	// If there is no guard function, skip the check
 	return guardFunction ? guardFunction() : true;
 };
 
