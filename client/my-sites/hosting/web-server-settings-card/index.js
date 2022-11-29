@@ -93,14 +93,14 @@ const WebServerSettingsCard = ( {
 		return (
 			<FormFieldset>
 				<FormLabel>{ translate( 'Primary Data Center' ) }</FormLabel>
-				<FormSelect
-					disabled={ true }
-					className="web-server-settings-card__data-center-select"
-					value={ geoAffinity }
-				>
+				<FormSelect className="web-server-settings-card__data-center-select" value={ geoAffinity }>
 					{ getDataCenterOptions().map( ( option ) => {
 						return (
-							<option value={ option.value } key={ option.label }>
+							<option
+								disabled={ option.value !== geoAffinity }
+								value={ option.value }
+								key={ option.label }
+							>
 								{ option.label }
 							</option>
 						);
