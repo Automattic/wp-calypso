@@ -30,6 +30,8 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordT
 	const [ isApplySearch, setIsApplySearch ] = useState( false );
 	const [ isSearchOpen, setIsSearchOpen ] = useState( false );
 
+	// Sync the value of the search input with the subject filter,
+	// which is equivalent to adding `subject:<term>` to the search input
 	useEffect( () => {
 		// Prevent unnecessary render when there is unfinished filter subject:
 		if ( ! isSearchOpen ) {
