@@ -62,7 +62,7 @@ const SaleBanner: React.FC< Props > = ( { coupon } ) => {
 						<div>
 							<b>{ saleTitle }</b>
 							&nbsp;
-							{ translate( 'Take %(discount)d%% off all annual Jetpack bundles and products.', {
+							{ translate( 'Take %(discount)d%% off all new annual Jetpack purchases.', {
 								args: { discount: coupon.final_discount },
 							} ) }
 						</div>
