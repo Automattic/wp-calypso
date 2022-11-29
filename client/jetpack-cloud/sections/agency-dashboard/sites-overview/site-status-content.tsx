@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
@@ -177,30 +176,21 @@ export default function SiteStatusContent( {
 			break;
 		}
 		case 'inactive': {
-			if ( ! isEnabled( 'jetpack/partner-portal-issue-multiple-licenses' ) ) {
-				content = (
+			content = ! isLicenseSelected ? (
+				<button onClick={ handleSelectLicenseAction }>
 					<span className="sites-overview__status-select-license">
 						<Gridicon icon="plus-small" size={ 16 } />
 						<span>{ translate( 'Add' ) }</span>
 					</span>
-				);
-			} else {
-				content = ! isLicenseSelected ? (
-					<button onClick={ handleSelectLicenseAction }>
-						<span className="sites-overview__status-select-license">
-							<Gridicon icon="plus-small" size={ 16 } />
-							<span>{ translate( 'Add' ) }</span>
-						</span>
-					</button>
-				) : (
-					<button onClick={ handleDeselectLicenseAction }>
-						<span className="sites-overview__status-unselect-license">
-							<Gridicon icon="checkmark" size={ 16 } />
-							<span>{ translate( 'Selected' ) }</span>
-						</span>
-					</button>
-				);
-			}
+				</button>
+			) : (
+				<button onClick={ handleDeselectLicenseAction }>
+					<span className="sites-overview__status-unselect-license">
+						<Gridicon icon="checkmark" size={ 16 } />
+						<span>{ translate( 'Selected' ) }</span>
+					</span>
+				</button>
+			);
 			break;
 		}
 	}

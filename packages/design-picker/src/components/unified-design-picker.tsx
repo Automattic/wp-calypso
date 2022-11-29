@@ -5,7 +5,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_WOOP } from '@automattic/calypso-products';
 import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
-import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -177,13 +176,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 				? __( 'Included in your plan' )
 				: __( 'Available with WordPress.com Business' );
 		} else if ( isPremium && shouldUpgrade ) {
-			text = sprintf(
-				/* translators: %(price)s - the price of the theme */
-				__( '%(price)s per year or included in WordPress.com Premium' ),
-				{
-					price: design.price,
-				}
-			);
+			text = __( 'Included in WordPress.com Premium' );
 		} else if ( isPremium && ! shouldUpgrade && hasPurchasedTheme ) {
 			text = __( 'Purchased on an annual subscription' );
 		} else if ( isPremium && ! shouldUpgrade && ! hasPurchasedTheme ) {
@@ -504,7 +497,9 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					} ) }
 				>
 					<div>
-						<h3> { translate( 'Custom designs for your site' ) } </h3>
+						<h3 className="unified-design-picker__title">
+							{ translate( 'Custom designs for your site' ) }
+						</h3>
 						<p className="unified-design-picker__subtitle">
 							{ translate( 'Based on your input, these designs have been tailored for you.' ) }
 						</p>

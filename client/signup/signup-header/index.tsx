@@ -43,7 +43,7 @@ const SignupHeader = ( {
 	);
 
 	return (
-		<div className="signup-header">
+		<div className="signup-header" role="banner" aria-label="banner">
 			{ flowProgress && ! shouldShowLoadingScreen && (
 				<ProgressBar
 					className={ variationName ? variationName : progressBar.flowName }
@@ -52,7 +52,7 @@ const SignupHeader = ( {
 				/>
 			) }
 			<WordPressLogo size={ 120 } className={ logoClasses } />
-			{ showPageTitle && <h1>{ variablePageTitle } </h1> }
+			{ showPageTitle && <h1>{ variablePageTitle }</h1> }
 			{ /* This should show a sign in link instead of
 			   the progressIndicator on the account step. */ }
 			<div className="signup-header__right">{ ! shouldShowLoadingScreen && rightComponent }</div>

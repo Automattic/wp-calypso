@@ -1,10 +1,10 @@
-import { useTotal } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { getLabel } from '../checkout-labels';
+import { useStableCallback } from '../use-stable-callback';
 import type { StripeConfiguration, PaymentRequestOptions } from '@automattic/calypso-stripe';
-import type { LineItem } from '@automattic/composite-checkout';
 import type { CartKey, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { PaymentRequest, Stripe } from '@stripe/stripe-js';
 
@@ -26,51 +26,64 @@ const PAYMENT_REQUEST_OPTIONS = {
 };
 
 export function usePaymentRequestOptions(
-	stripeConfiguration: StripeConfiguration,
-	cartKey: CartKey
+	stripeConfiguration: StripeConfiguration | undefined | null,
+	cartKey: CartKey | undefined
 ): PaymentRequestOptions | null {
-	const total = useTotal();
 	const { responseCart } = useShoppingCart( cartKey );
 	const country = getProcessorCountryFromStripeConfiguration( stripeConfiguration );
 	const currency = responseCart.currency;
+	const { __ } = useI18n();
 	const paymentRequestOptions = useMemo( () => {
 		debug( 'generating payment request options' );
-		if ( ! currency || ! total.amount.value ) {
+		if ( ! currency ) {
 			return null;
 		}
+		const total = {
+			label: __( 'Total' ),
+			amount: responseCart.total_cost_integer,
+		};
 		return {
 			country,
 			currency: currency?.toLowerCase(),
-			total: getPaymentRequestTotalFromTotal( total ),
+			total,
 			displayItems: getDisplayItemsForLineItems( responseCart.products ),
 			...PAYMENT_REQUEST_OPTIONS,
 		};
-	}, [ country, currency, total, responseCart.products ] );
-	debug( 'returning stripe payment request options', paymentRequestOptions );
+	}, [ country, currency, responseCart.total_cost_integer, responseCart.products, __ ] );
+	debug(
+		'returning stripe payment request options',
+		paymentRequestOptions,
+		'from currency',
+		currency
+	);
 	return paymentRequestOptions;
 }
 
 export interface PaymentRequestState {
 	paymentRequest: PaymentRequest | undefined | null;
-	canMakePayment: boolean;
+	allowedPaymentTypes: {
+		applePay: boolean;
+		googlePay: boolean;
+	};
 	isLoading: boolean;
 }
 
 const initialPaymentRequestState: PaymentRequestState = {
 	paymentRequest: undefined,
-	canMakePayment: false,
+	allowedPaymentTypes: {
+		applePay: false,
+		googlePay: false,
+	},
 	isLoading: true,
 };
 
 export function useStripePaymentRequest( {
-	webPaymentType,
 	paymentRequestOptions,
 	onSubmit,
 	stripe,
 }: {
-	webPaymentType: 'google-pay' | 'apple-pay';
 	paymentRequestOptions: PaymentRequestOptions | null;
-	stripe: Stripe;
+	stripe: Stripe | null;
 	onSubmit: SubmitCompletePaymentMethodTransaction;
 } ): PaymentRequestState {
 	const [ paymentRequestState, setPaymentRequestState ] = useState< PaymentRequestState >(
@@ -78,15 +91,12 @@ export function useStripePaymentRequest( {
 	);
 
 	// We have to memoize this to prevent re-creating the paymentRequest
-	const callback = useCallback(
-		( paymentMethodResponse ) => {
-			completePaymentMethodTransaction( {
-				onSubmit,
-				...paymentMethodResponse,
-			} );
-		},
-		[ onSubmit ]
-	);
+	const callback = useStableCallback( ( paymentMethodResponse ) => {
+		completePaymentMethodTransaction( {
+			onSubmit,
+			...paymentMethodResponse,
+		} );
+	} );
 
 	useEffect( () => {
 		if ( ! stripe || ! paymentRequestOptions ) {
@@ -102,11 +112,12 @@ export function useStripePaymentRequest( {
 					return;
 				}
 				debug( 'canMakePayment returned from stripe paymentRequest', result );
-				const canMakePayment =
-					webPaymentType === 'google-pay' ? result?.googlePay : result?.applePay;
 				setPaymentRequestState( ( state ) => ( {
 					...state,
-					canMakePayment: !! canMakePayment,
+					allowedPaymentTypes: {
+						applePay: Boolean( result?.applePay ),
+						googlePay: Boolean( result?.googlePay ),
+					},
 					isLoading: false,
 				} ) );
 			} )
@@ -118,7 +129,10 @@ export function useStripePaymentRequest( {
 				console.error( 'Error while creating stripe payment request', error );
 				setPaymentRequestState( ( state ) => ( {
 					...state,
-					canMakePayment: false,
+					allowedPaymentTypes: {
+						applePay: false,
+						googlePay: false,
+					},
 					isLoading: false,
 				} ) );
 			} );
@@ -130,13 +144,13 @@ export function useStripePaymentRequest( {
 		return () => {
 			isSubscribed = false;
 		};
-	}, [ stripe, paymentRequestOptions, callback, webPaymentType ] );
+	}, [ stripe, paymentRequestOptions, callback ] );
 
 	debug(
 		'returning stripe payment request; isLoading:',
 		paymentRequestState.isLoading,
-		'canMakePayment:',
-		paymentRequestState.canMakePayment
+		'allowedPaymentTypes:',
+		paymentRequestState.allowedPaymentTypes
 	);
 	return paymentRequestState;
 }
@@ -146,13 +160,6 @@ function getDisplayItemsForLineItems( products: ResponseCartProduct[] ) {
 		label: getLabel( product ),
 		amount: product.item_subtotal_integer,
 	} ) );
-}
-
-function getPaymentRequestTotalFromTotal( total: LineItem ) {
-	return {
-		label: total.label,
-		amount: total.amount.value,
-	};
 }
 
 function completePaymentMethodTransaction( {
@@ -170,7 +177,9 @@ function completePaymentMethodTransaction( {
 	complete( 'success' );
 }
 
-function getProcessorCountryFromStripeConfiguration( stripeConfiguration: StripeConfiguration ) {
+function getProcessorCountryFromStripeConfiguration(
+	stripeConfiguration: StripeConfiguration | undefined | null
+) {
 	let countryCode = 'US';
 
 	if ( stripeConfiguration ) {

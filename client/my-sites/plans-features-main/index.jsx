@@ -117,6 +117,8 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			plansWithScroll,
 			isReskinned,
+			isFAQCondensedExperiment,
+			isPlansInsideStepper,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -142,6 +144,7 @@ export class PlansFeaturesMain extends Component {
 					isLaunchPage={ isLaunchPage }
 					onUpgradeClick={ onUpgradeClick }
 					plans={ plans }
+					flowName={ flowName }
 					redirectTo={ redirectTo }
 					visiblePlans={ visiblePlans }
 					selectedFeature={ selectedFeature }
@@ -157,6 +160,8 @@ export class PlansFeaturesMain extends Component {
 					} ) }
 					siteId={ siteId }
 					isReskinned={ isReskinned }
+					isFAQCondensedExperiment={ isFAQCondensedExperiment }
+					isPlansInsideStepper={ isPlansInsideStepper }
 				/>
 			</div>
 		);
@@ -188,6 +193,7 @@ export class PlansFeaturesMain extends Component {
 			translate,
 			locale,
 			flowName,
+			isPlansInsideStepper,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -257,9 +263,11 @@ export class PlansFeaturesMain extends Component {
 						isJetpack,
 						availablePlans: visiblePlans,
 					} ) }
+					flowName={ flowName }
 					siteId={ siteId }
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					kindOfPlanTypeSelector={ this.getKindOfPlanTypeSelector( this.props ) }
+					isPlansInsideStepper={ isPlansInsideStepper }
 				/>
 			</div>
 		);
@@ -555,6 +563,7 @@ PlansFeaturesMain.propTypes = {
 	plansWithScroll: PropTypes.bool,
 	planTypes: PropTypes.array,
 	isReskinned: PropTypes.bool,
+	isPlansInsideStepper: PropTypes.bool,
 	planTypeSelector: PropTypes.string,
 };
 
@@ -571,6 +580,7 @@ PlansFeaturesMain.defaultProps = {
 	plansWithScroll: false,
 	isReskinned: false,
 	planTypeSelector: 'interval',
+	isPlansInsideStepper: false,
 };
 
 export default connect(

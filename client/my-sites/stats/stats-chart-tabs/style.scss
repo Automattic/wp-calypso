@@ -231,12 +231,3 @@ ul.module-tabs {
 		}
 	}
 }
-
-.is-chart-tabs {
-	&.is-loading {
-		// Extract .stats-module.is-loading from StatsModulePlaceholder
-		.chart {
-			display: none;
-		}
-	}
-}

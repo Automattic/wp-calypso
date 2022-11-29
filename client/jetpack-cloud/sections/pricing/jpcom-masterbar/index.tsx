@@ -95,7 +95,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 						href: `${ JETPACK_COM_BASE_URL }/features/growth/`,
 						items: [
 							{
-								label: translate( 'Social' ),
+								label: translate( 'Social', { context: 'Jetpack product name' } ),
 								tagline: translate( 'Write once, post everywhere' ),
 								href: `${ JETPACK_COM_BASE_URL }/social/`,
 							},

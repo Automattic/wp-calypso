@@ -188,24 +188,14 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'Should return the correct tier 1 price for Jetpack Search product with < 100 posts', () => {
-			const state = {
-				posts: {
-					counts: {
-						counts: {
-							1: {
-								post: {
-									all: {
-										publish: 10, // only 10 posts
-									},
-								},
-							},
-						},
-					},
-				},
-			};
 			const SEARCH_PRICE_TIER_LIST = [
-				{ minimum_units: 0, maximum_units: 100, minimum_price: 5995 },
-				{ minimum_units: 101, maximum_units: 1000, minimum_price: 11900 },
+				{
+					minimum_units: 0,
+					maximum_units: null,
+					transform_quantity_divide_by: 10000,
+					transform_quantity_round: 'up',
+					per_unit_fee: 896,
+				},
 			];
 			const plan = { getStoreSlug: () => 'jetpack_search', getProductId: () => '2104' };
 			// JP Search is a "product" not a plan, so `getPlanDiscountedRawPrice()` & `getPlanRawPrice()` should return null.
@@ -215,32 +205,22 @@ describe( 'selectors', () => {
 			getIntroOfferPrice.mockImplementation( () => null );
 			getIntroOfferIsEligible.mockImplementation( () => false );
 			getProductPriceTierList.mockImplementation( () => SEARCH_PRICE_TIER_LIST );
-			expect( computeFullAndMonthlyPricesForPlan( state, 1, plan ) ).toEqual( {
+			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 10 ) ).toEqual( {
 				introductoryOfferPrice: null,
-				priceFull: 59.95,
-				priceFinal: 59.95,
+				priceFull: 8.96,
+				priceFinal: 8.96,
 			} );
 		} );
 
 		test( 'Should return the correct tier 2 price for Jetpack Search product with > 100 posts', () => {
-			const state = {
-				posts: {
-					counts: {
-						counts: {
-							1: {
-								post: {
-									all: {
-										publish: 101, // 101 posts
-									},
-								},
-							},
-						},
-					},
-				},
-			};
 			const SEARCH_PRICE_TIER_LIST = [
-				{ minimum_units: 0, maximum_units: 100, minimum_price: 5995 },
-				{ minimum_units: 101, maximum_units: 1000, minimum_price: 11900 },
+				{
+					minimum_units: 0,
+					maximum_units: null,
+					transform_quantity_divide_by: 10000,
+					transform_quantity_round: 'up',
+					per_unit_fee: 896,
+				},
 			];
 			const plan = { getStoreSlug: () => 'jetpack_search', getProductId: () => '2104' };
 			// JP Search is a "product" not a plan, so `getPlanDiscountedRawPrice()` & `getPlanRawPrice()` should return null.
@@ -250,10 +230,10 @@ describe( 'selectors', () => {
 			getIntroOfferPrice.mockImplementation( () => null );
 			getIntroOfferIsEligible.mockImplementation( () => false );
 			getProductPriceTierList.mockImplementation( () => SEARCH_PRICE_TIER_LIST );
-			expect( computeFullAndMonthlyPricesForPlan( state, 1, plan ) ).toEqual( {
+			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 10001 ) ).toEqual( {
 				introductoryOfferPrice: null,
-				priceFull: 119,
-				priceFinal: 119,
+				priceFull: 17.92,
+				priceFinal: 17.92,
 			} );
 		} );
 	} );

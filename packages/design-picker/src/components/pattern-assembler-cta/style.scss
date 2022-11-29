@@ -8,6 +8,7 @@
 	text-align: center;
 	align-items: center;
 	padding: 16px;
+	line-height: 24px;
 	background-color: #f6f7f7;
 	color: #50575e;
 
@@ -23,6 +24,13 @@
 	.pattern-assembler-cta__title {
 		margin-top: 32px;
 		margin-bottom: 8px;
+		font-weight: 500;
+		font-size: 1.25rem;
+		color: var(--studio-gray-100);
+	}
+
+	.pattern-assembler-cta__subtitle {
+		max-width: 600px;
 	}
 
 	.pattern-assembler-cta__button {

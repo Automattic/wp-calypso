@@ -1,33 +1,19 @@
 import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import sortBy from 'lodash/sortBy';
 import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLicenseIssuing } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import { APIProductFamily, APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { AssignLicenceProps } from '../types';
 import './style.scss';
-
-function selectProductOptions( families: APIProductFamily[] ): APIProductFamilyProduct[] {
-	return families.flatMap( ( family ) => family.products );
-}
-
-function alphabeticallySortedProductOptions(
-	families: APIProductFamily[]
-): APIProductFamilyProduct[] {
-	return sortBy( selectProductOptions( families ), ( product ) => product.name );
-}
 
 export default function IssueLicenseForm( { selectedSite, suggestedProduct }: AssignLicenceProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const products = useProductsQuery( {
-		select: alphabeticallySortedProductOptions,
-	} );
+	const products = useProductsQuery();
 
 	const defaultProduct = ( getQueryArg( window.location.href, 'product' ) || '' ).toString();
 	const [ product, setProduct ] = useState( defaultProduct );

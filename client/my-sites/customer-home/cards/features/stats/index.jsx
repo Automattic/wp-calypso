@@ -105,7 +105,7 @@ export const StatsV2 = ( {
 				{ ! isSiteUnlaunched && ! isLoading && views === 0 && (
 					<div className="stats__empty">
 						<div className="stats__empty-illustration">
-							<img src="/calypso/images/stats/illustration-stats-intro.svg" alt="" />
+							<img src="calypso/assets/images/stats/illustration-stats-intro.svg" alt="" />
 						</div>
 						<div className="stats__empty-text">
 							{ translate(

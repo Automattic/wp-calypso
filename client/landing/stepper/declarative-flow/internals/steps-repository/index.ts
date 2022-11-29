@@ -21,6 +21,7 @@ export { default as importerMedium } from './importer-medium';
 export { default as importerSquarespace } from './importer-squarespace';
 export { default as importerWordpress } from './importer-wordpress';
 export { default as businessInfo } from './business-info';
+export { default as checkPlan } from './check-plan';
 export { default as storeAddress } from './store-address';
 export { default as vertical } from './site-vertical';
 export { default as wooTransfer } from './woo-transfer';
@@ -36,6 +37,7 @@ export { default as difmStartingPoint } from './difm-starting-point';
 export { default as letsGetStarted } from './lets-get-started';
 export { default as intro } from './intro';
 export { default as linkInBioSetup } from './link-in-bio-setup';
+export { default as siteCreationStep } from './site-creation-step';
 export { default as linkInBioPostSetup } from './link-in-bio-post-setup';
 export { default as videomakerSetup } from './videomaker-setup';
 export { default as chooseADomain } from './choose-a-domain';
@@ -43,6 +45,7 @@ export { default as chooseAPlan } from './choose-a-plan';
 export { default as launchpad } from './launchpad';
 export { default as subscribers } from './subscribers';
 export { default as patterns } from './patterns';
+export { default as plans } from './plans';
 export { default as getCurrentThemeSoftwareSets } from './get-current-theme-software-sets';
 export { default as senseiSetup } from './sensei-setup';
 export { default as senseiDomain } from './sensei-domain';
@@ -50,6 +53,9 @@ export { default as senseiPlan } from './sensei-plan';
 export { default as senseiLaunch } from './sensei-launch';
 export { default as storeProfiler } from './store-profiler';
 export { default as designCarousel } from './design-carousel';
+export { default as domains } from './domains';
+export { default as setThemeStep } from './set-theme-step';
+export { default as waitForAtomic } from './wait-for-atomic';
 
 export type StepPath =
 	| 'courses'
@@ -81,6 +87,8 @@ export type StepPath =
 	| 'vertical'
 	| 'wooTransfer'
 	| 'wooInstallPlugins'
+	| 'waitForAtomic'
+	| 'checkPlan'
 	| 'error'
 	| 'wooConfirm'
 	| 'wooVerifyEmail'
@@ -89,6 +97,7 @@ export type StepPath =
 	| 'letsGetStarted'
 	| 'chooseADomain'
 	| 'linkInBioSetup'
+	| 'siteCreationStep'
 	| 'linkInBioPostSetup'
 	| 'newsletterSetup'
 	| 'newsletterPostSetup'
@@ -99,8 +108,11 @@ export type StepPath =
 	| 'senseiDomain'
 	| 'senseiPlan'
 	| 'senseiLaunch'
+	| 'plans'
 	| 'getCurrentThemeSoftwareSets'
 	| 'designCarousel'
+	| 'setThemeStep'
 	| 'storeProfiler'
 	| 'chooseAPlan'
-	| 'videomakerSetup';
+	| 'videomakerSetup'
+	| 'domains';
