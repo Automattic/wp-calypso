@@ -80,9 +80,9 @@ export const HelpCenterContactPage: React.FC = () => {
 
 		if ( isLanguageSupported ) {
 			const language = getLanguage( locale )?.name;
-			return language && hasTranslation( `Email (${ language })` )
+			return language && hasTranslation( 'Email (%s)' )
 				? sprintf(
-						/* translators: %s is the language name */
+						// translators: %s is the language name
 						__( 'Email (%s)', __i18n_text_domain__ ),
 						language
 				  )
@@ -94,7 +94,7 @@ export const HelpCenterContactPage: React.FC = () => {
 		}
 
 		return __( 'Email', __i18n_text_domain__ );
-	}, [ __, locale, hasTranslation ] );
+	}, [ __, locale ] );
 
 	if ( isLoading ) {
 		return (
