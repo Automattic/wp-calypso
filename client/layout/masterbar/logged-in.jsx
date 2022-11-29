@@ -278,7 +278,7 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
-	renderReader( showLabel ) {
+	renderReader( showLabel = true ) {
 		const { translate } = this.props;
 		return (
 			<Item
@@ -534,7 +534,7 @@ class MasterbarLoggedIn extends Component {
 				<Masterbar>
 					<div className="masterbar__section masterbar__section--left">
 						{ this.renderMySites() }
-						{ this.renderReader( true ) }
+						{ this.renderReader() }
 						{ this.renderLanguageSwitcher() }
 						{ this.renderSearch() }
 					</div>
