@@ -33,6 +33,10 @@ export enum RefundPolicy {
 }
 
 export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
+	// const giftPolicies: boolean< ResponseCart.is_gift_purchase | undefined >;
+	// console.log( giftPolicies );
+	// dispatchEvent;
+
 	const refundPolicies: Array< RefundPolicy | undefined > = cart.products.map( ( product ) => {
 		if ( isGoogleWorkspaceExtraLicence( product ) ) {
 			return RefundPolicy.NonRefundable;
