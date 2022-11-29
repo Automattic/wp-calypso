@@ -1,5 +1,4 @@
 import {
-	isPlan,
 	findPlansKeys,
 	findProductKeys,
 	getBillingMonthsForTerm,
@@ -64,8 +63,7 @@ const fallbackVariants: ResponseCartProductVariant[] = [];
  * Return all product variants for a particular product.
  *
  * This will return all available variants but you probably want to filter them
- * using the `filterCallback` argument. Consider using `canVariantBePurchased` as
- * the filter if you are using this for a new purchase.
+ * using the `filterCallback` argument.
  *
  * `filterCallback` can safely be an anonymous function without causing
  * identity stability issues (no need to use `useMemo` or `useCallback`).
@@ -114,50 +112,6 @@ function sortVariant( a: ResponseCartProductVariant, b: ResponseCartProductVaria
 		return 1;
 	}
 	return 0;
-}
-
-export function canVariantBePurchased(
-	variant: WPCOMProductVariant,
-	activePlanRenewalInterval: number | undefined,
-	activePlanSlug: string | undefined
-): boolean {
-	// Always allow the variant when the item added to the cart is not a plan.
-	if ( ! isPlan( variant ) ) {
-		return true;
-	}
-
-	// If the variant is a plan and there is no active plan, always allow the variant.
-	if ( ! activePlanRenewalInterval || activePlanRenewalInterval < 1 ) {
-		return true;
-	}
-
-	// If the variant is a plan and the site has an active plan, only allow the
-	// variant if the term of the variant is longer than the term of the active
-	// plan. This is because our backend does not support plan upgrades which are
-	// term downgrades.
-	const variantRenewalInterval = variant.termIntervalInDays;
-	if ( activePlanRenewalInterval > variantRenewalInterval ) {
-		debug(
-			'filtering out plan variant',
-			variant,
-			'with interval',
-			variantRenewalInterval,
-			'because it is a downgrade from',
-			activePlanRenewalInterval
-		);
-		return false;
-	}
-
-	// If the variant is a plan and the site has an active plan, only allow the
-	// variant it is not a variant of the active plan. In other words, do not
-	// show the variant picker when purchasing a term upgrade for the active
-	// plan. This is because such a case is already an upsell and does not
-	// benefit from a term picker.
-	if ( getVariantPlanProductSlugs( activePlanSlug ).includes( variant.productSlug ) ) {
-		return false;
-	}
-
-	return true;
 }
 
 export function getVariantPlanProductSlugs( productSlug: string | undefined ): string[] {
