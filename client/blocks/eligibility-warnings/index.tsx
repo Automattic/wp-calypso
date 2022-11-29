@@ -208,7 +208,7 @@ export const EligibilityWarnings = ( {
 
 			{ showDataCenterPicker && config.isEnabled( 'hosting/datacenter-picker' ) && (
 				<CompactCard className="eligibility-warnings__data-center-picker">
-					<TrackComponentView eventName="calypso_automated_transfer_data-center_picker_display" />
+					<TrackComponentView eventName="calypso_automated_transfer_datacenter_picker_display" />
 					<DataCenterPicker
 						value={ selectedGeoAffinity }
 						onChange={ ( value ) => {
