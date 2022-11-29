@@ -104,7 +104,7 @@ function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 			}
 		}
 
-		throw new Error( `Failed to get a billing term for ${ productSlug }` );
+		return translate( 'year' );
 	};
 
 	const getPriceLabel = ( period: string ) => {
