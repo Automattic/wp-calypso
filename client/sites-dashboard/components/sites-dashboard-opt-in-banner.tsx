@@ -76,7 +76,7 @@ export const SitesDashboardOptInBanner = ( { sites }: SitesDashboardOptInBannerP
 			useSitesAsLandingPage: true,
 			updatedAt: new Date().valueOf(),
 		} );
-		dispatch( recordTracksEvent( 'calypso_sites_as_landing_page_accepted' ) );
+		dispatch( recordTracksEvent( 'calypso_sites_dashboard_landing_page_banner_accept_click' ) );
 	};
 
 	const handleDismiss = () => {
@@ -84,12 +84,12 @@ export const SitesDashboardOptInBanner = ( { sites }: SitesDashboardOptInBannerP
 			useSitesAsLandingPage: false,
 			updatedAt: new Date().valueOf(),
 		} );
-		dispatch( recordTracksEvent( 'calypso_sites_as_landing_page_rejected' ) );
+		dispatch( recordTracksEvent( 'calypso_sites_dashboard_landing_page_banner_reject_click' ) );
 	};
 
 	return (
 		<>
-			<TrackComponentView eventName="calypso_sites_as_landing_page_seen" />
+			<TrackComponentView eventName="calypso_sites_dashboard_landing_page_banner_inview" />
 			<SitesNotice
 				status="is-info"
 				text={ __( 'Do you want to make this page your default when visiting WordPress.com?' ) }
