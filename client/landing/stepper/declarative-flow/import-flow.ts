@@ -150,6 +150,8 @@ export const importFlow: Flow = {
 
 		const goNext = () => {
 			switch ( _currentStep ) {
+				case 'import':
+					return exitFlow( `/home/${ siteSlugParam }` );
 				default:
 					return navigate( 'import' );
 			}
