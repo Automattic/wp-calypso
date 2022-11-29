@@ -34,7 +34,7 @@ function ToggleSitesAsLandingPage() {
 		);
 
 		dispatch(
-			recordTracksEvent( 'calypso_sites_as_landing_page_toggled', {
+			recordTracksEvent( 'calypso_settings_sites_dashboard_landing_page_toggle', {
 				sites_as_landing_page: isChecked,
 			} )
 		);
@@ -43,7 +43,7 @@ function ToggleSitesAsLandingPage() {
 	const label = createInterpolateElement(
 		translate( 'Make the <a>Sites page</a> my default landing page.' ),
 		{
-			a: <a href={ localizeUrl( '/sites' ) } />,
+			a: <a href={ localizeUrl( '/sites' ) } target="_blank" rel="noopener noreferrer" />,
 		}
 	);
 
