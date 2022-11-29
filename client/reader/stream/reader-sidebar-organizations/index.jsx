@@ -27,7 +27,8 @@ export class ReaderSidebarOrganizations extends Component {
 	renderItems() {
 		const { path, translate } = this.props;
 		const organization = this.fetchOrganization();
-		const organizationSlug = organization.slug === 'a8c' ? translate( 'a8c' ) : translate( 'p2' );
+		// Note: No need to translate 'a8c', but 'p2' is a brand so it should be translated
+		const organizationSlug = organization.slug === 'a8c' ? 'a8c' : translate( 'p2' );
 
 		return (
 			<>
