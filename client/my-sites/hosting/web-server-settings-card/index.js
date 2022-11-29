@@ -17,6 +17,7 @@ import { getAtomicHostingGeoAffinity } from 'calypso/state/selectors/get-atomic-
 import { getAtomicHostingPhpVersion } from 'calypso/state/selectors/get-atomic-hosting-php-version';
 import { getAtomicHostingStaticFile404 } from 'calypso/state/selectors/get-atomic-hosting-static-file-404';
 import getRequest from 'calypso/state/selectors/get-request';
+import { isFetchingAtomicHostingGeoAffinity } from 'calypso/state/selectors/is-fetching-atomic-hosting-geo-affinity';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -322,7 +323,7 @@ export default connect(
 		const staticFile404 = getAtomicHostingStaticFile404( state, siteId );
 
 		return {
-			isGettingGeoAffinity: ! props.disabled && ! geoAffinity,
+			isGettingGeoAffinity: isFetchingAtomicHostingGeoAffinity( state, siteId ),
 			isGettingPhpVersion: ! props.disabled && ! phpVersion,
 			isGettingStaticFile404: ! props.disabled && ! staticFile404,
 			isUpdatingPhpVersion:

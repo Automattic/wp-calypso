@@ -1,5 +1,6 @@
 import { withStorageKey } from '@automattic/state-utils';
 import {
+	HOSTING_GEO_AFFINITY_REQUEST,
 	HOSTING_GEO_AFFINITY_SET,
 	HOSTING_PHP_VERSION_SET,
 	HOSTING_SFTP_USER_UPDATE,
@@ -37,6 +38,17 @@ const geoAffinity = ( state = null, { type, setting } ) => {
 	switch ( type ) {
 		case HOSTING_GEO_AFFINITY_SET:
 			return setting;
+	}
+
+	return state;
+};
+
+const isFetchingGeoAffinity = ( state = null, { type } ) => {
+	switch ( type ) {
+		case HOSTING_GEO_AFFINITY_REQUEST:
+			return true;
+		case HOSTING_GEO_AFFINITY_SET:
+			return false;
 	}
 
 	return state;
@@ -83,6 +95,7 @@ export const lastCacheClearTimestamp = withSchemaValidation(
 
 const atomicHostingReducer = combineReducers( {
 	geoAffinity,
+	isFetchingGeoAffinity,
 	phpVersion,
 	sftpUsers,
 	sshAccess,
