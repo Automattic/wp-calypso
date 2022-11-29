@@ -19,6 +19,7 @@ export enum RefundPolicy {
 	DomainNameRegistration = 1,
 	DomainNameRegistrationBundled,
 	DomainNameRenewal,
+	GiftPurchase,
 	GenericBiennial,
 	GenericMonthly,
 	GenericYearly,
@@ -33,11 +34,13 @@ export enum RefundPolicy {
 }
 
 export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
-	// const giftPolicies: boolean< ResponseCart.is_gift_purchase | undefined >;
-	// console.log( giftPolicies );
-	// dispatchEvent;
+	const isGiftPurchase = cart.is_gift_purchase;
 
 	const refundPolicies: Array< RefundPolicy | undefined > = cart.products.map( ( product ) => {
+		if ( isGiftPurchase ) {
+			return RefundPolicy.GiftPurchase;
+		}
+
 		if ( isGoogleWorkspaceExtraLicence( product ) ) {
 			return RefundPolicy.NonRefundable;
 		}
