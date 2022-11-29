@@ -57,6 +57,7 @@ $legacy-break-small: 660px;
 	}
 }
 
+// Overrides paddings for WP Admin pages.
 .wp-admin {
 	& .layout__content,
 	&.theme-default .focus-content .layout__content {
