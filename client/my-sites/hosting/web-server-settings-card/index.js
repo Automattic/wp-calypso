@@ -43,6 +43,14 @@ const WebServerSettingsCard = ( {
 	const getDatacenterOptions = () => {
 		return [
 			{
+				value: 'auto',
+				name: 'geo_affinity',
+				label: translate( 'Automatic' ),
+				thumbnail: {
+					imageUrl: '',
+				},
+			},
+			{
 				value: 'ams',
 				name: 'geo_affinity',
 				label: translate( 'Amsterdam' ),
