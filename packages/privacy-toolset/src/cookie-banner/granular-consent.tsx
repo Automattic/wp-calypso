@@ -3,18 +3,14 @@ import { ChangeEvent, useCallback } from 'react';
 import type { GranularConsentContent } from './types';
 
 type Props = {
+	name: string;
 	content: GranularConsentContent;
 	onChange: ( checked: boolean ) => void;
 	checked: boolean;
 	disabled?: boolean;
 };
 
-export const GranularConsent = ( {
-	content: { name, description },
-	disabled,
-	checked,
-	onChange,
-}: Props ) => {
+export const GranularConsent = ( { name, content, disabled, checked, onChange }: Props ) => {
 	const handleChange = useCallback(
 		( event: ChangeEvent< HTMLInputElement > ) => {
 			onChange( event.target.checked );
@@ -23,10 +19,15 @@ export const GranularConsent = ( {
 	);
 	return (
 		<div className="cookie-banner__bucket-container">
-			<FormToggle onChange={ handleChange } checked={ checked } disabled={ disabled } />
+			<FormToggle
+				onChange={ handleChange }
+				checked={ checked }
+				disabled={ disabled }
+				data-testid={ `${ name }-bucket-toggle` }
+			/>
 			<div className="cookie-banner__option-description">
-				<strong>{ name }</strong>
-				<p>{ description }</p>
+				<strong>{ content.name }</strong>
+				<p>{ content.description }</p>
 			</div>
 		</div>
 	);

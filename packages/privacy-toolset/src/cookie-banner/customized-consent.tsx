@@ -29,17 +29,20 @@ export const CustomizedConsent = ( { content, onAccept }: Props ) => {
 		<div className="cookie-banner__options-selection">
 			<p className="cookie-banner__options-lead-text">{ content.description }</p>
 			<GranularConsent
+				name="essential"
 				content={ content.categories.essential }
 				onChange={ handleChangeBucket( 'essential' ) }
 				checked={ buckets.essential }
 				disabled
 			/>
 			<GranularConsent
+				name="analytics"
 				content={ content.categories.analytics }
 				onChange={ handleChangeBucket( 'analytics' ) }
 				checked={ buckets.analytics }
 			/>
 			<GranularConsent
+				name="advertising"
 				content={ content.categories.advertising }
 				onChange={ handleChangeBucket( 'advertising' ) }
 				checked={ buckets.advertising }
