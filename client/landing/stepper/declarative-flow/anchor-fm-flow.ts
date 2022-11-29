@@ -14,7 +14,7 @@ import type { Flow, ProvidedDependencies } from './internals/types';
 
 export function isAnchorFmFlow() {
 	const sanitizePodcast = ( id: string ) => id.replace( /[^a-zA-Z0-9]/g, '' );
-	const anchorPodcast = new URLSearchParams( window.location.href ).get( 'anchor_podcast' );
+	const anchorPodcast = new URLSearchParams( window.location.search ).get( 'anchor_podcast' );
 
 	return Boolean( sanitizePodcast( anchorPodcast || '' ) );
 }

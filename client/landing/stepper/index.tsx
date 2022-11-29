@@ -107,7 +107,7 @@ interface AppWindow extends Window {
 
 window.AppBoot = async () => {
 	// backward support the old Stepper URL structure (?flow=something)
-	const flowNameFromQueryParam = new URLSearchParams( window.location.href ).get( 'flow' );
+	const flowNameFromQueryParam = new URLSearchParams( window.location.search ).get( 'flow' );
 	if ( availableFlows.find( ( flow ) => flow.flowName === flowNameFromQueryParam ) ) {
 		window.location.href = `/setup/${ flowNameFromQueryParam }`;
 	}
