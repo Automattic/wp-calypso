@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import './style.scss';
@@ -20,6 +21,12 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 	const isApple = userAgent.includes( 'iphone' ) || userAgent.includes( 'ipad' );
 	const isGoogle = userAgent.includes( 'android' );
 
+	const handleClickEvent = ( eventName: string ) => {
+		// This is in addition to the default link behaviour so
+		// we don't call preventDefault() here.
+		recordTracksEvent( eventName );
+	};
+
 	// Determines message text based on mobile, tablet, or Desktop.
 	const getMessage = () => {
 		// The mobile use case. If Apple or Google mobile device, Jetpack or Woo.
@@ -36,8 +43,17 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 		// https://wpcalypso.wordpress.com/devdocs/packages/i18n-calypso/README.md
 		const redirectLink = isWoo ? 'https://woo.com/mobile/' : 'https://jetpack.com/app/';
 		const linkClassName = isWoo ? 'woo' : 'jetpack';
+		const tracksEventName = isWoo
+			? 'calypso_stats_mobile_cta_woo_click'
+			: 'calypso_stats_mobile_cta_jetpack_click';
 		const components = {
-			a: <a className={ linkClassName } href={ redirectLink } />,
+			a: (
+				<a
+					className={ linkClassName }
+					href={ redirectLink }
+					onClick={ () => handleClickEvent( tracksEventName ) }
+				/>
+			),
 		};
 		if ( isWoo ) {
 			return translate(
@@ -57,8 +73,11 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 			const appStoreLink = isWoo
 				? 'https://apps.apple.com/ca/app/woocommerce/id1389130815'
 				: 'https://apps.apple.com/ca/app/jetpack-website-builder/id1565481562';
+			const tracksEventName = isWoo
+				? 'calypso_stats_mobile_cta_woo_apple_click'
+				: 'calypso_stats_mobile_cta_jetpack_apple_click';
 			return (
-				<a href={ appStoreLink }>
+				<a href={ appStoreLink } onClick={ () => handleClickEvent( tracksEventName ) }>
 					<img
 						className="promo-store-badge"
 						src={ storeBadgeApple }
@@ -71,8 +90,11 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 			const appStoreLink = isWoo
 				? 'https://play.google.com/store/apps/details?id=com.woocommerce.android'
 				: 'https://play.google.com/store/apps/details?id=com.jetpack.android';
+			const tracksEventName = isWoo
+				? 'calypso_stats_mobile_cta_woo_google_click'
+				: 'calypso_stats_mobile_cta_jetpack_google_click';
 			return (
-				<a href={ appStoreLink }>
+				<a href={ appStoreLink } onClick={ () => handleClickEvent( tracksEventName ) }>
 					<img
 						className="promo-store-badge"
 						src={ storeBadgeGoogle }
