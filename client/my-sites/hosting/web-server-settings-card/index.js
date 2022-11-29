@@ -44,43 +44,23 @@ const WebServerSettingsCard = ( {
 		return [
 			{
 				value: 'auto',
-				name: 'geo_affinity',
 				label: translate( 'Automatic' ),
-				thumbnail: {
-					imageUrl: '',
-				},
 			},
 			{
 				value: 'ams',
-				name: 'geo_affinity',
 				label: translate( 'Amsterdam' ),
-				thumbnail: {
-					imageUrl: '',
-				},
 			},
 			{
 				value: 'bur',
-				name: 'geo_affinity',
 				label: translate( 'California' ),
-				thumbnail: {
-					imageUrl: '',
-				},
 			},
 			{
 				value: 'dfw',
-				name: 'geo_affinity',
 				label: translate( 'Texas' ),
-				thumbnail: {
-					imageUrl: '',
-				},
 			},
 			{
 				value: 'dca',
-				name: 'geo_affinity',
 				label: translate( 'Washington, D.C.' ),
-				thumbnail: {
-					imageUrl: '',
-				},
 			},
 		];
 	};
