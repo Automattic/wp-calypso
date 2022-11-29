@@ -1,3 +1,4 @@
+import { Global } from '@emotion/react';
 import React from 'react';
 import bottomLeftImgSrc from 'calypso/assets/images/onboarding/sensei/progress-bg-bottom-left.png';
 import topRightImgSrc from 'calypso/assets/images/onboarding/sensei/progress-bg-top-right.png';
@@ -11,21 +12,27 @@ import {
 	BottomLeftImg,
 } from './components';
 
-interface SenseiStepProgressProps {
-	children: string;
-}
+export type Progress = {
+	percentage: number;
+	title: string;
+};
 
-export const SenseiStepProgress: React.FC< SenseiStepProgressProps > = ( { children } ) => {
+type SenseiStepProgressProps = {
+	progress: Progress;
+};
+
+export const SenseiStepProgress: React.FC< SenseiStepProgressProps > = ( { progress } ) => {
 	return (
 		<Container>
 			<TopRightImg src={ topRightImgSrc } />
 			<Content>
-				<Text>{ children }</Text>
+				<Text>{ progress.title }</Text>
 				<Progress>
-					<ProgressValue progress={ 40 } />
+					<ProgressValue progress={ progress.percentage } />
 				</Progress>
 			</Content>
 			<BottomLeftImg src={ bottomLeftImgSrc } />
+			<Global styles={ { '.sensei .flow-progress.progress-bar': { display: 'none' } } } />
 		</Container>
 	);
 };

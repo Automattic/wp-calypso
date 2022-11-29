@@ -1,4 +1,3 @@
-import { keyframes } from '@emotion/css';
 import styled from '@emotion/styled';
 
 export const Container = styled.div`
@@ -17,25 +16,11 @@ export const Container = styled.div`
 
 export const Content = styled.div`
 	max-width: 520px;
+	width: 100%;
 	margin: auto 24px;
 	padding: 32px 0 60px;
 	flex: 0 0 auto;
 	position: relative;
-`;
-
-const ellipsisProgress = keyframes`
-    0% {
-        content: '';
-    }
-    33% {
-        content: '.';
-    }
-    66% {
-        content: '..';
-    }
-    100% {
-        content: '...';
-    }
 `;
 
 export const Text = styled.div`
@@ -45,13 +30,6 @@ export const Text = styled.div`
 	position: relative;
 	width: 100%;
 	text-align: center;
-	padding-right: 24px;
-	&::after {
-		display: inline-block;
-		position: absolute;
-		content: '';
-		animation: ${ ellipsisProgress } 2s ease infinite;
-	}
 `;
 
 export const Progress = styled.div`
@@ -71,6 +49,7 @@ export const ProgressValue = styled.div< { progress: number } >`
 	left: 0;
 	background-color: #217d7c;
 	width: ${ ( props ) => props.progress }%;
+	transition: width 800ms ease-out;
 `;
 
 export const TopRightImg = styled.img`
