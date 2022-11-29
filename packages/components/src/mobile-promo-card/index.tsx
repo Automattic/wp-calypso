@@ -14,14 +14,7 @@ export type MobilePromoCardProps = {
 };
 
 export default function MobilePromoCard( { className, isWoo }: MobilePromoCardProps ) {
-	// Using useTranslate() with interpolation to set up the title/message.
-	// https://wpcalypso.wordpress.com/devdocs/packages/i18n-calypso/README.md
 	const translate = useTranslate();
-	const redirectLink = isWoo ? 'https://woo.com/mobile/' : 'https://jetpack.com/app/';
-	const linkClassName = isWoo ? 'woo' : 'jetpack';
-	const components = {
-		a: <a className={ linkClassName } href={ redirectLink } />,
-	};
 	// Basic user agent testing so we can show app store badges on moble.
 	const userAgent = window.navigator.userAgent.toLowerCase();
 	const isApple = userAgent.includes( 'iphone' ) || userAgent.includes( 'ipad' );
@@ -39,6 +32,13 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 				'Check your stats on-the-go and get real-time notifications with the Woo mobile app.'
 			);
 		}
+		// Using useTranslate() with interpolation to set up the linked message.
+		// https://wpcalypso.wordpress.com/devdocs/packages/i18n-calypso/README.md
+		const redirectLink = isWoo ? 'https://woo.com/mobile/' : 'https://jetpack.com/app/';
+		const linkClassName = isWoo ? 'woo' : 'jetpack';
+		const components = {
+			a: <a className={ linkClassName } href={ redirectLink } />,
+		};
 		if ( isWoo ) {
 			return translate(
 				'Visit {{a}}woo.com/mobile{{/a}} or scan the QR code to download the WooCommerce mobile app.',
