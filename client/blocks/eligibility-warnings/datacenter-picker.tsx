@@ -3,6 +3,11 @@ import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { localize, LocalizeProps, translate } from 'i18n-calypso';
 import { useState } from 'react';
+import amsImg from 'calypso/assets/images/datacenter-picker/ams-240x180.png';
+import burImg from 'calypso/assets/images/datacenter-picker/bur-240x180.png';
+import dcaImg from 'calypso/assets/images/datacenter-picker/dca-240x180.png';
+import dfwImg from 'calypso/assets/images/datacenter-picker/dfw-240x180.png';
+import worldImg from 'calypso/assets/images/datacenter-picker/world-1082x180.png';
 import ExternalLink from 'calypso/components/external-link';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 
@@ -21,7 +26,7 @@ const DatacenterOptions = [
 		name: 'geo_affinity',
 		label: translate( 'Amsterdam' ),
 		thumbnail: {
-			imageUrl: '',
+			imageUrl: amsImg,
 		},
 	},
 	{
@@ -29,7 +34,7 @@ const DatacenterOptions = [
 		name: 'geo_affinity',
 		label: translate( 'California' ),
 		thumbnail: {
-			imageUrl: '',
+			imageUrl: burImg,
 		},
 	},
 	{
@@ -37,7 +42,7 @@ const DatacenterOptions = [
 		name: 'geo_affinity',
 		label: translate( 'Texas' ),
 		thumbnail: {
-			imageUrl: '',
+			imageUrl: dfwImg,
 		},
 	},
 	{
@@ -45,7 +50,7 @@ const DatacenterOptions = [
 		name: 'geo_affinity',
 		label: translate( 'Washington, D.C.' ),
 		thumbnail: {
-			imageUrl: '',
+			imageUrl: dcaImg,
 		},
 	},
 ];
@@ -71,13 +76,14 @@ const FormDescription = styled.p( {
 
 const AutomaticFormLabel = styled.label( {
 	display: 'block',
-	marginBottom: '10px',
+	marginBottom: '12px',
 	width: '100%',
 	maxWidth: '541px',
 	cursor: 'pointer',
 } );
 
 const FormLabelThumbnail = styled.div( {
+	display: 'flex',
 	width: '100%',
 	height: '90px',
 	margin: '2px 0 8px',
@@ -91,6 +97,10 @@ const FormLabelThumbnail = styled.div( {
 	'&:hover': {
 		boxShadow: '0 0 0 1px var(--color-neutral-light), 0 2px 4px var(--color-neutral-10)',
 	},
+} );
+
+const FormLabelThumbnailImg = styled.img( {
+	objectFit: 'cover',
 } );
 
 const DatacenterPicker = ( {
@@ -148,7 +158,12 @@ const DatacenterPicker = ( {
 					</FormDescription>
 					<div role="radiogroup">
 						<AutomaticFormLabel>
-							<FormLabelThumbnail />
+							<FormLabelThumbnail>
+								<FormLabelThumbnailImg
+									src={ worldImg }
+									alt={ translate( 'Illustration of the world' ) }
+								/>
+							</FormLabelThumbnail>
 							<input
 								className="form-radio"
 								type="radio"
