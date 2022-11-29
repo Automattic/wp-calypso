@@ -231,9 +231,14 @@ export interface LicensesStore {
 	hasFetchedLicenseCounts: boolean;
 }
 
+export interface ProductsStore {
+	selectedProductSlugs: string[];
+}
+
 interface CombinedStore {
 	partner: PartnerStore;
 	licenses: LicensesStore;
+	products: ProductsStore;
 }
 
 /**

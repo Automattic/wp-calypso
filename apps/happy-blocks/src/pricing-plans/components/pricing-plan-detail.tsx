@@ -7,6 +7,12 @@ import BillingButton from './billing-button';
 import BillingInfo from './billing-info';
 import BillingOptions from './billing-options';
 
+/**
+ * These URLs are broken down into parts due to 119-gh-Automattic/lighthouse-forums
+ */
+const CHECKOUT_URL = 'https' + '://' + 'wordpress.com/checkout';
+const PRICING_URL = 'https' + '://' + 'wordpress.com/pricing';
+
 interface Props {
 	plan: BlockPlan;
 	plans: BlockPlan[];
@@ -26,16 +32,17 @@ const PricingPlanDetail: FunctionComponent< BlockSaveProps< BlockAttributes > & 
 		} );
 	};
 
+	const CtaLink = attributes.domain
+		? `${ CHECKOUT_URL }/${ attributes.domain }/${ plan.pathSlug }`
+		: PRICING_URL;
+
 	return (
 		<section className="hb-pricing-plans-embed__detail">
 			<div>
 				<BillingInfo plan={ plan } />
 				<BillingOptions plans={ plans } value={ attributes.productSlug } onChange={ setPlan } />
 			</div>
-			<BillingButton
-				onClick={ onCtaClick }
-				href={ `https://wordpress.com/checkout/${ attributes.domain }/${ plan.pathSlug }` }
-			>
+			<BillingButton onClick={ onCtaClick } href={ CtaLink }>
 				{ plan.upgradeLabel }
 			</BillingButton>
 		</section>

@@ -60,6 +60,10 @@
 		margin-top: 16px;
 	}
 
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 0 16px 16px;
+	}
+
 	// Hides Follow button and tags in Conversations stream
 	.follow-button,
 	.reader-post-card__tags {

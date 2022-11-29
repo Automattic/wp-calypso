@@ -83,7 +83,14 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordT
 			updateInput( updatedInput + suggestion );
 			focusOnInput();
 		} else {
-			updateInput( insertSuggestion( suggestion, searchInput, cursorPosition ) );
+			updatedInput = insertSuggestion( suggestion, searchInput, cursorPosition );
+			// Clean up duplicate criteria
+			updatedInput = updatedInput.replace( /(\b(feature|column|subject):.*[^ ]\b)(?=.*\1)/gi, '' );
+			// Only allow one `subject:` filter
+			updatedInput = updatedInput.replace( /(subject):([\w-]*[\s|$])(?=.*\1)/gi, '' );
+
+			// Strip filters and excess whitespace
+			updateInput( updatedInput.replace( /\s+/g, ' ' ).trim() );
 			closeSearch();
 		}
 	};

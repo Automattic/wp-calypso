@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { Button, Gridicon, useScrollToTop, JetpackLogo } from '@automattic/components';
 import { createSitesListComponent } from '@automattic/sites';
 import { css } from '@emotion/css';
@@ -20,6 +21,7 @@ import {
 	SitesContentControls,
 	handleQueryParamChange,
 } from './sites-content-controls';
+import { SitesDashboardOptInBanner } from './sites-dashboard-opt-in-banner';
 import { useSitesDisplayMode } from './sites-display-mode-switcher';
 import { SitesGrid } from './sites-grid';
 import { SitesTable } from './sites-table';
@@ -204,6 +206,9 @@ export function SitesDashboard( {
 				</HeaderControls>
 			</PageHeader>
 			<PageBodyWrapper>
+				{ config.isEnabled( 'sites-as-landing-page' ) && (
+					<SitesDashboardOptInBanner sites={ allSites } />
+				) }
 				<SitesDashboardSitesList
 					sites={ allSites }
 					filtering={ { search } }
