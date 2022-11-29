@@ -33,7 +33,7 @@ import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import DatacenterPicker from './datacenter-picker';
+import DataCenterPicker from './data-center-picker';
 import HoldList, { hasBlockingHold, HardBlockingNotice, getBlockingMessages } from './hold-list';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 import WarningList from './warning-list';
@@ -52,7 +52,7 @@ interface ExternalProps {
 	eligibilityData?: EligibilityData;
 	currentContext?: string;
 	isMarketplace?: boolean;
-	showDatacenterPicker?: boolean;
+	showDataCenterPicker?: boolean;
 }
 
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
@@ -69,14 +69,14 @@ export const EligibilityWarnings = ( {
 	onProceed,
 	standaloneProceed,
 	recordUpgradeClick,
-	showDatacenterPicker,
+	showDataCenterPicker,
 	siteId,
 	siteSlug,
 	siteIsLaunching,
 	siteIsSavingSettings,
-	trackDatacenterPickerShowClick,
-	trackDatacenterPickerHideClick,
-	trackDatacenterPickerSelect,
+	trackDataCenterPickerShowClick,
+	trackDataCenterPickerHideClick,
+	trackDataCenterPickerSelect,
 	launchSite: launch,
 	makeSitePublic,
 	translate,
@@ -206,17 +206,17 @@ export const EligibilityWarnings = ( {
 				</CompactCard>
 			) }
 
-			{ showDatacenterPicker && config.isEnabled( 'hosting/datacenter-picker' ) && (
-				<CompactCard className="eligibility-warnings__datacenter-picker">
-					<TrackComponentView eventName="calypso_automated_transfer_datacenter_picker_display" />
-					<DatacenterPicker
+			{ showDataCenterPicker && config.isEnabled( 'hosting/datacenter-picker' ) && (
+				<CompactCard className="eligibility-warnings__data-center-picker">
+					<TrackComponentView eventName="calypso_automated_transfer_data-center_picker_display" />
+					<DataCenterPicker
 						value={ selectedGeoAffinity }
 						onChange={ ( value ) => {
-							trackDatacenterPickerSelect( { geo_affinity: value } );
+							trackDataCenterPickerSelect( { geo_affinity: value } );
 							setSelectedGeoAffinity( value );
 						} }
-						onClickShowPicker={ trackDatacenterPickerShowClick }
-						onClickHidePicker={ trackDatacenterPickerHideClick }
+						onClickShowPicker={ trackDataCenterPickerShowClick }
+						onClickHidePicker={ trackDataCenterPickerHideClick }
 					/>
 				</CompactCard>
 			) }
@@ -384,11 +384,11 @@ const mapDispatchToProps = {
 			cta_feature: feature,
 			cta_size: 'regular',
 		} ),
-	trackDatacenterPickerShowClick: ( eventProperties = {} ) =>
+	trackDataCenterPickerShowClick: ( eventProperties = {} ) =>
 		recordTracksEvent( 'calypso_automated_transfer_datacenter_picker_show_click', eventProperties ),
-	trackDatacenterPickerHideClick: ( eventProperties = {} ) =>
+	trackDataCenterPickerHideClick: ( eventProperties = {} ) =>
 		recordTracksEvent( 'calypso_automated_transfer_datacenter_picker_hide_click', eventProperties ),
-	trackDatacenterPickerSelect: ( eventProperties = {} ) =>
+	trackDataCenterPickerSelect: ( eventProperties = {} ) =>
 		recordTracksEvent( 'calypso_automated_transfer_datacenter_picker_select', eventProperties ),
 	launchSite,
 	makeSitePublic: ( selectedSiteId: number | null ) =>
