@@ -1,4 +1,3 @@
-import { createSelector } from '@automattic/state-utils';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import type { AppState } from 'calypso/types';
 
@@ -9,9 +8,9 @@ export const SITES_AS_LANDING_PAGE_DEFAULT_VALUE = {
 	updatedAt: 0,
 };
 
-export const hasSitesAsLandingPage = createSelector( ( state: AppState ): boolean => {
+export const hasSitesAsLandingPage = ( state: AppState ): boolean => {
 	const { useSitesAsLandingPage } =
 		getPreference( state, SITES_AS_LANDING_PAGE_PREFERENCE ) ?? SITES_AS_LANDING_PAGE_DEFAULT_VALUE;
 
 	return useSitesAsLandingPage;
-} );
+};
