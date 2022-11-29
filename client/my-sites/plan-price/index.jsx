@@ -116,7 +116,7 @@ export class PlanPrice extends Component {
 		const higherPriceHtml = priceRange[ 1 ] && renderPriceHtml( priceRange[ 1 ] );
 
 		return (
-			<h4 className={ classes }>
+			<span className={ classes }>
 				<sup className="plan-price__currency-symbol">{ priceRange[ 0 ].price.symbol }</sup>
 				{ ! higherPriceHtml && renderPriceHtml( priceRange[ 0 ] ) }
 				{ higherPriceHtml &&
@@ -139,7 +139,7 @@ export class PlanPrice extends Component {
 					</span>
 				) }
 				{ isOnSale && <Badge>{ saleBadgeText }</Badge> }
-			</h4>
+			</span>
 		);
 	}
 }
