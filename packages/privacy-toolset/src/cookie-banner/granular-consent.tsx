@@ -1,9 +1,9 @@
 import { FormToggle } from '@wordpress/components';
 import { ChangeEvent, useCallback } from 'react';
-import type { GranularConsentContent } from './types';
+import type { Buckets, GranularConsentContent } from './types';
 
 type Props = {
-	name: string;
+	name: keyof Buckets;
 	content: GranularConsentContent;
 	onChange: ( checked: boolean ) => void;
 	checked: boolean;
