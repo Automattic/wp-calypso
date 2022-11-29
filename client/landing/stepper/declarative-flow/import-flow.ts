@@ -156,7 +156,12 @@ export const importFlow: Flow = {
 		};
 
 		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
-			navigate( step );
+			switch ( step ) {
+				case 'goals':
+					return exitFlow( `/setup/site-setup/goals?siteSlug=${ siteSlugParam }` );
+				default:
+					return navigate( step );
+			}
 		};
 
 		return { goNext, goBack, goToStep, submit };
