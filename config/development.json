@@ -160,7 +160,6 @@
 		"sites-as-landing-page": true,
 		"ssr/prefetch-timebox": false,
 		"stats/new-all-time-highlights": true,
-		"stats/new-annual-highlights": true,
 		"stats/new-main-chart": true,
 		"stats/new-stats-module-component": true,
 		"stats/show-traffic-highlights": true,
