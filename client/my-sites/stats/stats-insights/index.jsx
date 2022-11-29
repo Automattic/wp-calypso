@@ -13,7 +13,6 @@ import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import AllTime from 'calypso/my-sites/stats/all-time/';
-import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import MostPopular from 'calypso/my-sites/stats/most-popular';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AllTimelHighlightsSection from '../all-time-highlights-section';
@@ -32,7 +31,6 @@ const StatsInsights = ( props ) => {
 	const { siteId, siteSlug, translate } = props;
 	const moduleStrings = statsStrings();
 
-	const showNewAnnualHighlights = config.isEnabled( 'stats/new-annual-highlights' );
 	const showAllTimeHighlights = config.isEnabled( 'stats/new-all-time-highlights' );
 
 	const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
@@ -56,7 +54,7 @@ const StatsInsights = ( props ) => {
 					align="left"
 				/>
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
-				{ showNewAnnualHighlights && <AnnualHighlightsSection siteId={ siteId } /> }
+				<AnnualHighlightsSection siteId={ siteId } />
 				{ showAllTimeHighlights && <AllTimelHighlightsSection siteId={ siteId } /> }
 				<div className="stats__module--insights-unified">
 					<PostingActivity />
@@ -82,7 +80,6 @@ const StatsInsights = ( props ) => {
 								statType="statsTags"
 							/>
 
-							{ ! showNewAnnualHighlights && <AnnualSiteStats isWidget /> }
 							<StatShares siteId={ siteId } />
 						</div>
 						<div className="stats__module-column">
