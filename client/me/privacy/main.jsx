@@ -21,6 +21,7 @@ import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import hasUnsavedUserSettings from 'calypso/state/selectors/has-unsaved-user-settings';
 import { setUserSetting, saveUserSettings } from 'calypso/state/user-settings/actions';
 import { isUpdatingUserSettings } from 'calypso/state/user-settings/selectors';
+import { DoNotSellSetting } from './do-not-sell';
 import DPA from './dpa';
 
 const TRACKS_OPT_OUT_USER_SETTINGS_KEY = 'tracks_opt_out';
@@ -125,6 +126,7 @@ class Privacy extends Component {
 					</form>
 				</Card>
 				<DPA />
+				<DoNotSellSetting />
 			</Main>
 		);
 	}
