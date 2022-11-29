@@ -2,15 +2,14 @@ import { hasAmountAvailableToRefund, isRefundable } from 'calypso/lib/purchases'
 import { cancelPurchaseAsync, cancelAndRefundPurchaseAsync } from 'calypso/lib/purchases/actions';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
-export interface CancellationResponse {
+export interface PurchaseCancellationResponse {
 	status: boolean;
 	message: string;
 }
 
 export default async function cancelSubscriptionAsync(
-	purchase: Purchase /*,
-	// purchaseListUrl: string */
-): Promise< CancellationResponse > {
+	purchase: Purchase
+): Promise< PurchaseCancellationResponse > {
 	const isPlanRefundable = isRefundable( purchase );
 	const isPlanAutoRenewing = purchase?.isAutoRenewEnabled ?? false;
 
@@ -40,16 +39,16 @@ export default async function cancelSubscriptionAsync(
 		};
 
 		try {
-			const res = await cancelAndRefundPurchaseAsync( purchase.id, data );
-			if ( res.status === 'completed' ) {
+			const response = await cancelAndRefundPurchaseAsync( purchase.id, data );
+			if ( response.status === 'completed' ) {
 				return {
 					status: true,
 					message: 'cancel-and-refund',
 				};
 			}
-		} catch ( err ) {
+		} catch ( error ) {
 			return {
-				status: true,
+				status: false,
 				message: 'cancel-and-refund',
 			};
 		}
@@ -57,6 +56,6 @@ export default async function cancelSubscriptionAsync(
 
 	return {
 		status: false,
-		message: '',
+		message: 'remove-purchase',
 	};
 }
