@@ -124,6 +124,7 @@ describe( 'reducer', () => {
 			12345678: {
 				lastCacheClearTimestamp: null,
 				geoAffinity: null,
+				isFetchingGeoAffinity: null,
 				phpVersion: null,
 				sftpUsers: [ 1, 2, 3 ],
 				sshAccess: null,
@@ -137,6 +138,7 @@ describe( 'reducer', () => {
 			12345678: {
 				lastCacheClearTimestamp: null,
 				geoAffinity: null,
+				isFetchingGeoAffinity: null,
 				phpVersion: null,
 				sftpUsers: [ 1, 2, 3 ],
 				sshAccess: null,
@@ -153,6 +155,7 @@ describe( 'reducer', () => {
 			12345678: {
 				lastCacheClearTimestamp: null,
 				geoAffinity: null,
+				isFetchingGeoAffinity: null,
 				phpVersion: null,
 				sftpUsers: [ 1, 2, 3 ],
 				sshAccess: null,
@@ -161,6 +164,7 @@ describe( 'reducer', () => {
 			9876543: {
 				lastCacheClearTimestamp: null,
 				geoAffinity: null,
+				isFetchingGeoAffinity: null,
 				phpVersion: null,
 				sftpUsers: [ 9, 8, 7 ],
 				sshAccess: null,
