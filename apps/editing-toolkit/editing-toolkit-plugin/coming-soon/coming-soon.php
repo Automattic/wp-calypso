@@ -45,9 +45,9 @@ function should_show_coming_soon_page() {
  */
 function get_share_code() {
 	if ( isset( $_GET['share'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		return $_GET['share']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return sanitize_key( wp_unslash( $_GET['share'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	} elseif ( isset( $_COOKIE['wp_share_code'] ) ) {
-		return $_COOKIE['wp_share_code'];
+		return sanitize_key( wp_unslash( $_COOKIE['wp_share_code'] ) );
 	}
 	return '';
 }
