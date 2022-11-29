@@ -33,7 +33,7 @@ export class ReaderSidebarOrganizations extends Component {
 		return (
 			<>
 				<h2>
-					{ translate( 'Following' ) } ({ organizationSlug }){ ' ' }
+					{ translate( 'Following (%s)', { args: organizationSlug } ) }
 					<a href="/following/mark-all">{ translate( 'Mark all as seen' ) }</a>
 				</h2>
 				<ReaderSidebarOrganizationsList
