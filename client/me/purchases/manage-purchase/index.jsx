@@ -59,6 +59,7 @@ import {
 	getDisplayName,
 	getPartnerName,
 	getRenewalPrice,
+	getSubscriptionEndDate,
 	handleRenewMultiplePurchasesClick,
 	handleRenewNowClick,
 	hasAmountAvailableToRefund,
@@ -77,7 +78,6 @@ import {
 	shouldRenderMonthlyRenewalOption,
 	getDIFMTieredPurchaseDetails,
 } from 'calypso/lib/purchases';
-import { disableAutoRenew, cancelAndRefundPurchase } from 'calypso/lib/purchases/actions';
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -94,7 +94,9 @@ import {
 	getCurrentUser,
 	getCurrentUserId,
 } from 'calypso/state/current-user/selectors';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import { clearPurchases } from 'calypso/state/purchases/actions';
 import {
 	getSitePurchases,
 	getByPurchaseId,
@@ -106,10 +108,12 @@ import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain
 import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import cancelSubscriptionAsync from '../cancel-subscription';
 import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
 import PurchaseSiteHeader from '../purchases-site/header';
 import RemovePurchase from '../remove-purchase';
@@ -122,7 +126,6 @@ import {
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
 import PurchaseMeta from './purchase-meta';
-
 import './style.scss';
 
 class ManagePurchase extends Component {
@@ -565,6 +568,66 @@ class ManagePurchase extends Component {
 		}
 	}
 
+	submitCancelSubscription = async () => {
+		const { purchase, translate } = this.props;
+		this.setState( { submitting: true } );
+
+		try {
+			const response = await cancelSubscriptionAsync( purchase );
+			const purchaseName = getName( purchase );
+			refreshSitePlans( purchase.siteId );
+			clearPurchases();
+
+			if ( response.status ) {
+				let success_message;
+				if ( response.message === 'auto-renew' ) {
+					success_message = translate( 'Auto-renewal has been turned off successfully.' );
+				}
+
+				if ( response.message === 'cancel-and-refund' ) {
+					const subscriptionEndDate = getSubscriptionEndDate( purchase );
+					success_message = translate(
+						'%(purchaseName)s was successfully cancelled. It will be available ' +
+							'for use until it expires on %(subscriptionEndDate)s.',
+						{
+							args: {
+								purchaseName,
+								subscriptionEndDate,
+							},
+						}
+					);
+				}
+
+				this.props.successNotice( success_message, { displayOnNextPage: true } );
+				page.redirect( this.props.purchaseListUrl );
+			} else {
+				let error_message;
+				if ( response.message === 'auto-renew' ) {
+					error_message = translate(
+						"We've failed to disable auto-renewal for you. Please try again."
+					);
+				}
+
+				if ( response.message === 'cancel-and-refund' ) {
+					error_message = translate(
+						'There was a problem canceling %(purchaseName)s. ' +
+							'Please try again later or contact support.',
+						{
+							args: { purchaseName },
+						}
+					);
+				}
+
+				this.props.errorNotice( error_message );
+			}
+		} catch ( error ) {
+			this.props.errorNotice( error.message );
+			this.closeDialog();
+		} finally {
+			this.setState( { submitting: false } );
+		}
+	};
+
 	renderCancelSurvey() {
 		const { purchase } = this.props;
 
@@ -575,84 +638,15 @@ class ManagePurchase extends Component {
 				linkedPurchases={ this.getActiveMarketplaceSubscriptions() }
 				isVisible={ this.state.isCancelSurveyVisible }
 				onClose={ this.closeDialog }
-				onClickFinalConfirm={ this.cancelSubscription }
+				onClickFinalConfirm={ this.submitCancelSubscription }
 				flowType={ getPurchaseCancellationFlowType( purchase ) }
 			/>
 		);
 	}
 
-	cancelSubscription = async () => {
-		const { purchase } = this.props;
-		const isPlanRefundable = isRefundable( purchase );
-		const isPlanAutoRenewing = purchase?.isAutoRenewEnabled ?? false;
-
-		this.setState( { submitting: true } );
-
-		if ( isPlanAutoRenewing ) {
-			// If the subscription is not refundable and auto-renew is on turn off auto-renew.
-			disableAutoRenew( purchase.id, ( success ) => {
-				const { translate } = this.props;
-
-				if ( success ) {
-					const successMessage = translate( 'Auto-renewal has been turned off successfully.' );
-
-					this.props.successNotice( successMessage, { displayOnNextPage: true } );
-
-					page.redirect( this.props.purchaseListUrl );
-
-					return;
-				}
-
-				const errorMessage = translate(
-					"We've failed to enable auto-renewal for you. Please try again."
-				);
-
-				this.props.errorNotice( errorMessage, { displayOnNextPage: true } );
-				this.setState( { submitting: false } );
-
-				return;
-			} );
-		}
-
-		if ( isPlanRefundable && hasAmountAvailableToRefund( purchase ) ) {
-			const data = {
-				confirm: true,
-				product_id: purchase.productId,
-				blog_id: purchase.siteId,
-			};
-
-			// If the subscription is refundable the subscription should be removed immediately.
-			cancelAndRefundPurchase( purchase.id, data, ( error ) => {
-				const { translate } = this.props;
-
-				if ( error ) {
-					this.props.errorNotice(
-						error.message ||
-							translate(
-								'Unable to cancel your purchase. Please try again later or contact support.'
-							)
-					);
-
-					return;
-				}
-
-				this.props.refreshSitePlans( purchase.siteId );
-				this.props.clearPurchases();
-
-				const successMessage = translate(
-					'You subscription was successfully cancelled and refunded.'
-				);
-
-				this.setState( { submitting: false } );
-
-				this.props.successNotice( successMessage, { displayOnNextPage: true } );
-
-				page.redirect( this.props.purchaseListUrl );
-
-				return;
-			} );
-		}
-
+	cancelSubscription = () => {
+		this.closeDialog();
+		page.redirect( this.props.purchaseListUrl );
 		return;
 	};
 
@@ -1257,5 +1251,7 @@ export default connect(
 	{
 		handleRenewNowClick,
 		handleRenewMultiplePurchasesClick,
+		errorNotice,
+		successNotice,
 	}
 )( localize( ManagePurchase ) );
