@@ -7,6 +7,18 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import type { ConfigData } from '@automattic/create-calypso-config';
 
+const isWithinChatHours = ( currentTime: Date ) => {
+	const [ THREE_PM, NINE_PM ] = [ 15, 21 ];
+	const [ SUNDAY, SATURDAY ] = [ 0, 6 ];
+
+	const utcHour = currentTime.getUTCHours();
+	const utcWeekDay = currentTime.getUTCDay();
+
+	return (
+		utcHour >= THREE_PM && utcHour < NINE_PM && utcWeekDay !== SUNDAY && utcWeekDay !== SATURDAY
+	);
+};
+
 export const ZendeskPreSalesChat: React.VFC = () => {
 	const zendeskChatKey = config( 'zendesk_presales_chat_key' ) as keyof ConfigData;
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -17,15 +29,7 @@ export const ZendeskPreSalesChat: React.VFC = () => {
 		);
 		const currentTime = new Date();
 
-		return (
-			! isLoggedIn &&
-			isEnglishLocale &&
-			isJetpackCloud() &&
-			currentTime.getUTCHours() >= 15 &&
-			currentTime.getUTCHours() < 21 &&
-			currentTime.getUTCDay() !== 0 &&
-			currentTime.getUTCDay() !== 6
-		);
+		return ! isLoggedIn && isEnglishLocale && isJetpackCloud() && isWithinChatHours( currentTime );
 	}, [ isLoggedIn ] );
 
 	return shouldShowZendeskPresalesChat ? <ZendeskChat chatId={ zendeskChatKey } /> : null;
