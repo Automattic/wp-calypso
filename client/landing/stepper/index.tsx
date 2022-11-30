@@ -164,7 +164,7 @@ window.AppBoot = async () => {
 					<BrowserRouter basename="setup">
 						<FlowSwitch user={ user as UserStore.CurrentUser } />
 						{ config.isEnabled( 'gdpr-banner' ) && (
-							<AsyncLoad require="calypso/blocks/gdpr-banner" placeholder={ null } />
+							<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
 						) }
 						<AsyncLoad
 							require="calypso/components/global-notices"

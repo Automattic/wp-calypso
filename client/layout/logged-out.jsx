@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import GdprBanner from 'calypso/blocks/gdpr-banner';
+import { CookieBannerContainerSSR } from 'calypso/blocks/cookie-banner';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
@@ -136,7 +136,9 @@ const LayoutLoggedOut = ( {
 					{ secondary }
 				</div>
 			</div>
-			{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner showGdprBanner={ showGdprBanner } /> }
+			{ config.isEnabled( 'gdpr-banner' ) && (
+				<CookieBannerContainerSSR serverShow={ showGdprBanner } />
+			) }
 			{ sectionName === 'plugins' && (
 				<>
 					<UniversalNavbarFooter />
