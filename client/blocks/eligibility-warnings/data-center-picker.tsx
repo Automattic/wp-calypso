@@ -123,7 +123,7 @@ const DataCenterPicker = ( {
 			{ ! isFormShowing && (
 				<div>
 					<span>
-						{ translate( 'Your site will be automatically placed in the best data center.' ) }
+						{ translate( 'Your site will be automatically placed in the optimal data center.' ) }
 					</span>
 					&nbsp;
 					<Button
@@ -172,7 +172,7 @@ const DataCenterPicker = ( {
 								checked={ value === '' }
 								onChange={ () => onChange( '' ) }
 							/>
-							<span>{ translate( 'Automatically place my site in the best data center' ) }</span>
+							<span>{ translate( 'Automatically place my site in the optimal data center' ) }</span>
 						</AutomaticFormLabel>
 						<FormRadiosBar
 							isThumbnail
