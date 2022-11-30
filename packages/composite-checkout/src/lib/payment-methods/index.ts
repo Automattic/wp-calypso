@@ -51,3 +51,30 @@ export function useAvailablePaymentMethodIds(): string[] {
 	debug( 'Returning available payment methods', availablePaymentMethodIds );
 	return availablePaymentMethodIds;
 }
+
+export function useTogglePaymentMethod(): ( paymentMethodId: string, available: boolean ) => void {
+	const { allPaymentMethods, disabledPaymentMethodIds, setDisabledPaymentMethodIds } =
+		useContext( CheckoutContext );
+	if ( ! allPaymentMethods ) {
+		throw new Error( 'useTogglePaymentMethod cannot be used outside of CheckoutProvider' );
+	}
+	return ( paymentMethodId: string, available: boolean ) => {
+		const paymentMethod = allPaymentMethods.find( ( { id } ) => id === paymentMethodId );
+		if ( ! paymentMethod ) {
+			debug( `No payment method found matching id '${ paymentMethodId }' in`, allPaymentMethods );
+			return;
+		}
+
+		if ( available && disabledPaymentMethodIds.includes( paymentMethodId ) ) {
+			debug( 'Adding available payment method', paymentMethodId );
+			setDisabledPaymentMethodIds(
+				disabledPaymentMethodIds.filter( ( id ) => id !== paymentMethodId )
+			);
+		}
+
+		if ( ! available && ! disabledPaymentMethodIds.includes( paymentMethodId ) ) {
+			debug( 'Removing available payment method', paymentMethodId );
+			setDisabledPaymentMethodIds( [ ...disabledPaymentMethodIds, paymentMethodId ] );
+		}
+	};
+}
