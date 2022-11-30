@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import ZendeskChatErrorBoundary from './error-boundary';
 
 interface Props {
 	chatId: string | false;
@@ -21,7 +22,11 @@ const ZendeskChat = ( { chatId }: Props ) => {
 		}
 	}, [ chatId ] );
 
-	return <div id="zendesk-chat-container" />;
+	return (
+		<ZendeskChatErrorBoundary>
+			<div id="zendesk-chat-container" />
+		</ZendeskChatErrorBoundary>
+	);
 };
 
 export default ZendeskChat;
