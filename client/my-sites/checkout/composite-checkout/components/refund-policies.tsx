@@ -39,6 +39,20 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 	const isGiftPurchase = cart.is_gift_purchase;
 
 	const refundPolicies: Array< RefundPolicy | undefined > = cart.products.map( ( product ) => {
+		if ( isGiftPurchase ) {
+			if ( isMonthlyProduct( product ) ) {
+				return RefundPolicy.GiftMonthlyPurchase;
+			}
+
+			if ( isYearly( product ) ) {
+				return RefundPolicy.GiftYearlyPurchase;
+			}
+
+			if ( isBiennially( product ) ) {
+				return RefundPolicy.GiftBiennialPurchase;
+			}
+		}
+
 		if ( isGoogleWorkspaceExtraLicence( product ) ) {
 			return RefundPolicy.NonRefundable;
 		}
