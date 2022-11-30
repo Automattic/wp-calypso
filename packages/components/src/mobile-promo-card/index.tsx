@@ -15,19 +15,8 @@ export type MobilePromoCardProps = {
 };
 
 // Slugs as used by Jetpack Redirects.
-// https://jetpack.com/redirect
-//
-// Jetpack URLs:
-// 1. https://jetpack.com/mobile
-// 2. https://apps.apple.com/ca/app/jetpack-website-builder/id1565481562
-// 3. https://play.google.com/store/apps/details?id=com.jetpack.android
-//
-// Woo URLs:
-// 1. https://woo.com/mobile
-// 2. https://apps.apple.com/ca/app/woocommerce/id1389130815
-// 3. https://play.google.com/store/apps/details?id=com.woocommerce.android
-//
-// Two _QRCODE constants are included for refrence only.
+// See https://jetpack.com/redirect for current URLs.
+// Two _QRCODE constants are included for reference only.
 
 const URL_JETPACK_A8C = 'calypso-stats-mobile-cta-jetpack-link';
 const URL_JETPACK_APPLE = 'calypso-stats-mobile-cta-jetpack-apple-badge';
@@ -38,7 +27,7 @@ const URL_WOO_APPLE = 'calypso-stats-mobile-cta-woo-apple-badge';
 const URL_WOO_GOOGLE = 'calypso-stats-mobile-cta-woo-google-badge';
 const URL_WOO_QRCODE = 'calypso-stats-mobile-cta-woo-qrcode';
 
-// Named to match getRedirectUrl '@automattic/jetpack-components'
+// Named to match getRedirectUrl from '@automattic/jetpack-components'
 // which isn't available to us here.
 function getRedirectUrlPrivate( slug: string ) {
 	// Maps the Jetpack Redirect slugs to URLs.
