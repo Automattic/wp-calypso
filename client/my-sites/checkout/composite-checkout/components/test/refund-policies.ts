@@ -61,6 +61,7 @@ describe( 'getRefundPolicies', () => {
 			...getEmptyResponseCartProduct(),
 			item_subtotal_integer: 5,
 			product_slug: PLAN_PREMIUM_2_YEARS,
+			bill_period: String( PLAN_BIENNIAL_PERIOD ),
 		} );
 
 		cart.is_gift_purchase = true;
@@ -91,6 +92,7 @@ describe( 'getRefundPolicies', () => {
 			...getEmptyResponseCartProduct(),
 			item_subtotal_integer: 5,
 			product_slug: PLAN_PREMIUM_MONTHLY,
+			bill_period: String( PLAN_MONTHLY_PERIOD ),
 		} );
 
 		cart.is_gift_purchase = true;
