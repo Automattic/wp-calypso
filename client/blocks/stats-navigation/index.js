@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -56,8 +57,12 @@ class StatsNavigation extends Component {
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
 
+		const wrapperClass = classNames( 'stats-navigation', {
+			'stats-navigation--modernized': ! isLegacy,
+		} );
+
 		return (
-			<div className="stats-navigation">
+			<div className={ wrapperClass }>
 				<SectionNav selectedText={ label }>
 					<NavTabs label="Stats" selectedText={ label }>
 						{ Object.keys( navItems )
