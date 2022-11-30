@@ -35,7 +35,7 @@ $custom-stats-tab-mobile-break: $break-small;
 			text-transform: none;
 			letter-spacing: inherit;
 
-			@media ( max-width: $custom-stats-tab-mobile-break ) {
+			@media ( max-width: $break-mobile ) {
 				display: none;
 			}
 		}
