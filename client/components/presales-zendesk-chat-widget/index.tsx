@@ -11,7 +11,7 @@ const ZendeskChat = ( { chatId }: Props ) => {
 		}
 
 		const script = document.createElement( 'script' );
-		script.src = 'https://static.zdassets.com/ekr/snippet.js?key=' + chatId;
+		script.src = 'https://static.zdassets.com/ekr/snippet.js?key=' + encodeURIComponent( chatId );
 		script.type = 'text/javascript';
 		script.id = 'ze-snippet';
 
