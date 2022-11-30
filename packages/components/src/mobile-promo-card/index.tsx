@@ -14,6 +14,53 @@ export type MobilePromoCardProps = {
 	isWoo?: boolean;
 };
 
+// Slugs as used by Jetpack Redirects.
+// https://jetpack.com/redirect
+//
+// Jetpack URLs:
+// 1. https://jetpack.com/mobile
+// 2. https://apps.apple.com/ca/app/jetpack-website-builder/id1565481562
+// 3. https://play.google.com/store/apps/details?id=com.jetpack.android
+//
+// Woo URLs:
+// 1. https://woo.com/mobile
+// 2. https://apps.apple.com/ca/app/woocommerce/id1389130815
+// 3. https://play.google.com/store/apps/details?id=com.woocommerce.android
+//
+// Two _QRCODE constants are included for refrence only.
+
+const URL_JETPACK_A8C = 'calypso-stats-mobile-cta-jetpack-link';
+const URL_JETPACK_APPLE = 'calypso-stats-mobile-cta-jetpack-apple-badge';
+const URL_JETPACK_GOOGLE = 'calypso-stats-mobile-cta-jetpack-google-badge';
+const URL_JETPACK_QRCODE = 'calypso-stats-mobile-cta-jetpack-qrcode';
+const URL_WOO_A8C = 'calypso-stats-mobile-cta-woo-link';
+const URL_WOO_APPLE = 'calypso-stats-mobile-cta-woo-apple-badge';
+const URL_WOO_GOOGLE = 'calypso-stats-mobile-cta-woo-google-badge';
+const URL_WOO_QRCODE = 'calypso-stats-mobile-cta-woo-qrcode';
+
+// Named to match getRedirectUrl '@automattic/jetpack-components'
+// which isn't available to us here.
+function getRedirectUrlPrivate( slug: string ) {
+	// Maps the Jetpack Redirect slugs to URLs.
+	const slugs = [
+		URL_JETPACK_A8C,
+		URL_JETPACK_APPLE,
+		URL_JETPACK_GOOGLE,
+		URL_JETPACK_QRCODE,
+		URL_WOO_A8C,
+		URL_WOO_APPLE,
+		URL_WOO_GOOGLE,
+		URL_WOO_QRCODE,
+	];
+	// Confirm requested slug is valid.
+	const index = slugs.indexOf( slug );
+	if ( index === -1 ) {
+		return '';
+	}
+	// Return redirect URL.
+	return 'https://jetpack.com/redirect/?source=' + slug;
+}
+
 export default function MobilePromoCard( { className, isWoo }: MobilePromoCardProps ) {
 	const translate = useTranslate();
 	// Basic user agent testing so we can show app store badges on moble.
@@ -41,7 +88,9 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 		}
 		// Using useTranslate() with interpolation to set up the linked message.
 		// https://wpcalypso.wordpress.com/devdocs/packages/i18n-calypso/README.md
-		const redirectLink = isWoo ? 'https://woo.com/mobile/' : 'https://jetpack.com/app/';
+		const redirectLink = isWoo
+			? getRedirectUrlPrivate( URL_WOO_A8C )
+			: getRedirectUrlPrivate( URL_JETPACK_A8C );
 		const linkClassName = isWoo ? 'woo' : 'jetpack';
 		const tracksEventName = isWoo
 			? 'calypso_stats_mobile_cta_woo_click'
@@ -71,8 +120,8 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 	const getPromoImage = () => {
 		if ( isApple ) {
 			const appStoreLink = isWoo
-				? 'https://apps.apple.com/ca/app/woocommerce/id1389130815'
-				: 'https://apps.apple.com/ca/app/jetpack-website-builder/id1565481562';
+				? getRedirectUrlPrivate( URL_WOO_APPLE )
+				: getRedirectUrlPrivate( URL_JETPACK_APPLE );
 			const tracksEventName = isWoo
 				? 'calypso_stats_mobile_cta_woo_apple_click'
 				: 'calypso_stats_mobile_cta_jetpack_apple_click';
@@ -88,8 +137,8 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 		}
 		if ( isGoogle ) {
 			const appStoreLink = isWoo
-				? 'https://play.google.com/store/apps/details?id=com.woocommerce.android'
-				: 'https://play.google.com/store/apps/details?id=com.jetpack.android';
+				? getRedirectUrlPrivate( URL_WOO_GOOGLE )
+				: getRedirectUrlPrivate( URL_JETPACK_GOOGLE );
 			const tracksEventName = isWoo
 				? 'calypso_stats_mobile_cta_woo_google_click'
 				: 'calypso_stats_mobile_cta_jetpack_google_click';
