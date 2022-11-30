@@ -36,7 +36,10 @@ const allBucketsTrue: TrackingPrefs[ 'buckets' ] = {
 export default function getTrackingPrefs(): TrackingPrefs {
 	const cookies = cookie.parse( document.cookie );
 
-	if ( ! isCountryInGdprZone( cookies.country_code ) && ! isRegionInCcpaZone( cookies.region ) ) {
+	if (
+		! isCountryInGdprZone( cookies.country_code ) &&
+		! isRegionInCcpaZone( cookies.country_code, cookies.region )
+	) {
 		return {
 			ok: true,
 			buckets: allBucketsTrue,
