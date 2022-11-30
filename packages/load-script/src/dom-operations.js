@@ -7,15 +7,21 @@ export function createScriptElement( url, args ) {
 	debug( `Creating script element for "${ url }"` );
 	const script = document.createElement( 'script' );
 
-	if ( args ) {
-		Object.entries( args ).forEach( ( [ key, value ] ) => script.setAttribute( key, value ) );
-	}
-
 	script.src = url;
 	script.type = 'text/javascript';
 	script.async = true;
 	script.onload = handleRequestSuccess;
 	script.onerror = handleRequestError;
+
+	if ( args ) {
+		Object.entries( args ).forEach( ( [ key, value ] ) => {
+			if ( ! value ) {
+				script.removeAttribute( key );
+			} else {
+				script.setAttribute( key, value );
+			}
+		} );
+	}
 
 	return script;
 }
