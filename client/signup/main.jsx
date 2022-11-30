@@ -213,7 +213,7 @@ class Signup extends Component {
 					destinationStep,
 					undefined,
 					locale,
-					this.getFilteredQueryArgs()
+					this.getCurrentFlowSupportedQueryParams()
 				)
 			);
 		}
@@ -584,7 +584,7 @@ class Signup extends Component {
 		return window.location.origin + path;
 	};
 
-	getFilteredQueryArgs = () => {
+	getCurrentFlowSupportedQueryParams = () => {
 		const queryObject = this.props.initialContext?.query ?? {};
 		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
 		const { siteId, siteSlug } = queryObject;
@@ -605,7 +605,13 @@ class Signup extends Component {
 		if ( stepName && ! this.isEveryStepSubmitted() ) {
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
 			page(
-				getStepUrl( flowName, stepName, stepSectionName, locale, this.getFilteredQueryArgs() )
+				getStepUrl(
+					flowName,
+					stepName,
+					stepSectionName,
+					locale,
+					this.getCurrentFlowSupportedQueryParams()
+				)
 			);
 		} else if ( this.isEveryStepSubmitted() ) {
 			this.goToFirstInvalidStep();
@@ -664,7 +670,7 @@ class Signup extends Component {
 					firstInvalidStep.stepName,
 					'',
 					locale,
-					this.getFilteredQueryArgs()
+					this.getCurrentFlowSupportedQueryParams()
 				)
 			);
 		}
@@ -775,7 +781,7 @@ class Signup extends Component {
 							positionInFlow={ this.getPositionInFlow() }
 							hideFreePlan={ hideFreePlan }
 							isReskinned={ isReskinned }
-							queryParams={ this.getFilteredQueryArgs() }
+							queryParams={ this.getCurrentFlowSupportedQueryParams() }
 							{ ...propsForCurrentStep }
 						/>
 					) }
