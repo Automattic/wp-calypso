@@ -91,6 +91,13 @@ function getSiteFilters( siteId ) {
 			id: 'stats-year',
 			period: 'year',
 		},
+	];
+
+	return filters;
+}
+
+function getWordAdsFilters( siteId ) {
+	const filters = [
 		{
 			title: i18n.translate( 'WordAds - Days' ),
 			path: '/stats/ads/day/' + siteId,
@@ -404,7 +411,7 @@ export function wordAds( context, next ) {
 
 	const state = store.getState();
 	const siteId = getSelectedSiteId( state );
-	const filters = getSiteFilters( siteId );
+	const filters = getWordAdsFilters( siteId );
 
 	const activeFilter = find( filters, ( filter ) => context.params.period === filter.period );
 
