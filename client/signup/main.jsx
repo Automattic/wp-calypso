@@ -577,7 +577,7 @@ class Signup extends Component {
 			'siteId',
 			'siteSlug',
 			'flags', // for the feature flags
-			...flow.providesDependenciesInQuery,
+			...( flow?.providesDependenciesInQuery ?? [] ),
 		];
 
 		const result = {};
