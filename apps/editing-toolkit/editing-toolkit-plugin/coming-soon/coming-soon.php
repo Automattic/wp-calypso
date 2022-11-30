@@ -109,6 +109,15 @@ function track_preview_link_event() {
 }
 
 /**
+ * Returns the WP.com logo
+ *
+ * @return string
+ */
+function coming_soon_share_image() {
+	return 'https://s1.wp.com/home.logged-out/images/wpcom-og-image.jpg';
+}
+
+/**
  * Renders a fallback coming soon page
  */
 function render_fallback_coming_soon_page() {
@@ -131,7 +140,8 @@ function render_fallback_coming_soon_page() {
 	add_filter( 'wpl_is_enabled_sitewide', '__return_false', 10, 1 ); // Disable likes.
 	add_filter( 'jetpack_implode_frontend_css', '__return_false', 99 ); // Jetpack "implodes" all registered CSS files into one file.
 	add_filter( 'woocommerce_demo_store', '__return_false' ); // Prevent the the wocommerce demo store notice from displaying.
-
+	add_filter( 'jetpack_open_graph_image_default', 'A8C\FSE\Coming_soon\coming_soon_share_image' ); // Set the default OG image.
+	add_filter( 'jetpack_twitter_cards_image_default', 'A8C\FSE\Coming_soon\coming_soon_share_image' ); // Set the default Twitter Card image.
 	wp_enqueue_style( 'recoleta-font', '//s1.wp.com/i/fonts/recoleta/css/400.min.css', array(), A8C_ETK_PLUGIN_VERSION );
 
 	include __DIR__ . '/fallback-coming-soon-page.php';
