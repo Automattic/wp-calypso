@@ -175,7 +175,7 @@ export default function CheckoutHelpLink() {
 	};
 
 	const zendeskPresalesChatKey: string | false = config( 'zendesk_presales_chat_key' );
-	const isPresalesZendeskChatEligible = presalesZendeskChatAvailable && isEnglishLocale;
+	const isPresalesZendeskChatEligible = presalesZendeskChatAvailable && isEnglishLocale && zendeskPresalesChatKey;
 
 	const hasDirectSupport = supportVariation !== SUPPORT_FORUM;
 
