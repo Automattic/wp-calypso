@@ -3,7 +3,11 @@ import wpcom from 'calypso/lib/wp';
 import { SiteId } from 'calypso/types';
 import { PreviewLinksResponse, SITE_PREVIEW_LINKS_QUERY_KEY } from './use-site-preview-links';
 
-export const useCreateSitePreviewLink = ( siteId: SiteId, onError: () => void ) => {
+export const useCreateSitePreviewLink = (
+	siteId: SiteId,
+	onSuccess?: () => void,
+	onError?: () => void
+) => {
 	const queryKey = [ SITE_PREVIEW_LINKS_QUERY_KEY, siteId ];
 	const queryClient = useQueryClient();
 	const createLinkMutation = useMutation(
@@ -13,9 +17,6 @@ export const useCreateSitePreviewLink = ( siteId: SiteId, onError: () => void ) 
 				apiNamespace: 'wpcom/v2',
 			} ),
 		{
-			// onSuccess() {
-			// 	queryClient.invalidateQueries( [ 'use-site-preview-links', siteId ] );
-			// },
 			onError: ( err, code, context ) => {
 				queryClient.setQueryData( queryKey, context );
 				onError?.();
@@ -38,6 +39,7 @@ export const useCreateSitePreviewLink = ( siteId: SiteId, onError: () => void ) 
 			onSettled: ( data ) => {
 				queryClient.setQueryData( queryKey, () => data );
 				queryClient.invalidateQueries( queryKey );
+				onSuccess?.();
 			},
 		}
 	);

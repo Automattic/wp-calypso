@@ -3,6 +3,8 @@ import styled from '@emotion/styled';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { successNotice } from 'calypso/state/notices/actions';
 import ClipboardButtonInput from '../clipboard-button-input';
 import { useCreateSitePreviewLink } from './use-create-site-preview-link';
 import { useDeleteSitePreviewLink } from './use-delete-site-preview-link';
@@ -24,15 +26,26 @@ const HelpText = styled.p( {
 	color: 'var(--color-text-subtle)',
 } );
 
+const NOTICE_OPTIONS = {
+	duration: 5000,
+};
+
 export default function SitePreviewLink( {
 	siteId,
 	siteUrl,
 	disabled = false,
 }: SitePreviewLinkProps ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const { data: previewLinks, isLoading: isFirstLoading } = useSitePreviewLinks( siteId );
-	const { createLink, isLoading: isCreating } = useCreateSitePreviewLink( siteId, () => null );
-	const { deleteLink, isLoading: isDeleting } = useDeleteSitePreviewLink( siteId, () => null );
+	const { createLink, isLoading: isCreating } = useCreateSitePreviewLink( siteId, () => {
+		dispatch( successNotice( translate( 'Preview link created successfully!' ), NOTICE_OPTIONS ) );
+		// TODO: add tracks event
+	} );
+	const { deleteLink, isLoading: isDeleting } = useDeleteSitePreviewLink( siteId, () => {
+		dispatch( successNotice( translate( 'Preview link removed successfully!' ), NOTICE_OPTIONS ) );
+		// TODO: add tracks event
+	} );
 	const [ checked, setChecked ] = useState( false );
 
 	const previewLinkNotRemoving = previewLinks?.filter( ( link ) => ! link.isRemoving );
