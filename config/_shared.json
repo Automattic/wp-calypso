@@ -18,7 +18,6 @@
 	"hotjar_enabled": false,
 	"hostname": false,
 	"i18n_default_locale_slug": "en",
-	"is_running_in_jetpack_site": false,
 	"lasagna_url": "wss://rt-api.wordpress.com/socket",
 	"login_url": false,
 	"logout_url": false,
@@ -34,7 +33,7 @@
 	"google_oauth_client_id": "108380595987-j91sm1alavcdgd81i2655kp8q1lbtvrc.apps.googleusercontent.com",
 	"facebook_app_id": "611241942420191",
 	"livechat_support_locales": [ "en", "en-gb" ],
-	"olark_chat_identity": false,
+	"livechat_solution": false,
 	"dsp_stripe_pub_key": "pk_live_51LYYzQF53KN4RFN0ePTwefdm7seki4pRuc4a19gPMGUba5mzuosz0IBR0cp4T57FiBgxK911ky0LNwlX2IHbm0SS00uPHEQNBO",
 	"dsp_widget_js_src": "https://widgets.wp.com/promote/widget.js",
 	"upwork_support_locales": [

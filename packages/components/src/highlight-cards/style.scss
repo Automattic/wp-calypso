@@ -2,18 +2,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
 @import "../styles/typography";
-
-$font-recoleta: Recoleta, $sans;
-$vertical-margin: 32px;
-// From client/assets/stylesheets/shared/mixins/_breakpoints.scss.
-// Technically deprecated, but majority of Calypso still uses this.
-$custom-mobile-breakpoint: 660px;
-
-
-.stats > .highlight-cards {
-	padding-top: $vertical-margin;
-	padding-bottom: $vertical-margin;
-}
+@import "./variables.scss";
 
 .highlight-cards {
 	color: var(--studio-gray-100);

@@ -12,9 +12,7 @@ import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import AllTime from 'calypso/my-sites/stats/all-time/';
 import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
-import MostPopular from 'calypso/my-sites/stats/most-popular';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AllTimelHighlightsSection from '../all-time-highlights-section';
 import AnnualHighlightsSection from '../annual-highlights-section';
@@ -33,7 +31,6 @@ const StatsInsights = ( props ) => {
 	const moduleStrings = statsStrings();
 
 	const showNewAnnualHighlights = config.isEnabled( 'stats/new-annual-highlights' );
-	const showAllTimeHighlights = config.isEnabled( 'stats/new-all-time-highlights' );
 
 	const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
 
@@ -44,21 +41,21 @@ const StatsInsights = ( props ) => {
 	// TODO: should be refactored into separate components
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<Main className={ isNewMainChart ? 'stats--new-wrapper' : undefined } wideLayout>
+		<Main className={ isNewMainChart ? 'stats--new-wrapper' : undefined } fullWidthLayout>
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
-			<FormattedHeader
-				brandFont
-				className="stats__section-header"
-				headerText={ translate( 'Jetpack Stats' ) }
-				subHeaderText={ translate( "View your site's performance and learn from trends." ) }
-				align="left"
-			/>
-			<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
-			<div>
+			<div className="stats">
+				<FormattedHeader
+					brandFont
+					className="stats__section-header"
+					headerText={ translate( 'Jetpack Stats' ) }
+					subHeaderText={ translate( "View your site's performance and learn from trends." ) }
+					align="left"
+				/>
+				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
+				{ showNewAnnualHighlights && <AnnualHighlightsSection siteId={ siteId } /> }
+				<AllTimelHighlightsSection siteId={ siteId } />
 				<div className="stats__module--insights-unified">
-					{ showNewAnnualHighlights && <AnnualHighlightsSection siteId={ siteId } /> }
-					{ showAllTimeHighlights && <AllTimelHighlightsSection siteId={ siteId } /> }
 					<PostingActivity />
 					<SectionHeader label={ translate( 'All-time views' ) } />
 					<StatsViews />
@@ -74,7 +71,6 @@ const StatsInsights = ( props ) => {
 					<div className="stats__module-list stats__module--unified">
 						<div className="stats__module-column">
 							<LatestPostSummary />
-							{ ! showAllTimeHighlights && <MostPopular /> }
 
 							<StatsModule
 								path="tags-categories"
@@ -90,7 +86,6 @@ const StatsInsights = ( props ) => {
 							<Followers path="followers" />
 						</div>
 						<div className="stats__module-column">
-							{ ! showAllTimeHighlights && <AllTime /> }
 							<Comments path="comments" />
 							<StatsModule
 								path="publicize"
@@ -100,8 +95,8 @@ const StatsInsights = ( props ) => {
 						</div>
 					</div>
 				</div>
+				<JetpackColophon />
 			</div>
-			<JetpackColophon />
 		</Main>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */

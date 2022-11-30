@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
@@ -37,11 +36,7 @@ export default function LicenseProductCard( props: Props ) {
 			return;
 		}
 
-		if ( isEnabled( 'jetpack/partner-portal-issue-multiple-licenses' ) ) {
-			onSelectProduct?.( product );
-		} else {
-			onSelectProduct?.( product.slug );
-		}
+		onSelectProduct?.( product );
 	}, [ onSelectProduct, product ] );
 
 	const onKeyDown = useCallback(

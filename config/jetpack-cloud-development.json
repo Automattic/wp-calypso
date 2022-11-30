@@ -40,7 +40,6 @@
 		"jetpack/activity-log-sharing": true,
 		"jetpack/agency-dashboard": true,
 		"jetpack/backup-messaging-i3": true,
-		"jetpack/partner-portal-issue-multiple-licenses": true,
 		"jetpack/partner-portal-payment": true,
 		"jetpack/plugin-management": true,
 		"jetpack/pricing-add-boost-social": true,
@@ -84,6 +83,5 @@
 	"theme": "jetpack-cloud",
 	"restricted_me_access": false,
 	"theme_color": "#2fb41f",
-	"google_analytics_key": "UA-52447-43",
 	"hotjar_enabled": true
 }

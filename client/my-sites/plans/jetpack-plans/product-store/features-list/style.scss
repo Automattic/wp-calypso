@@ -2,9 +2,12 @@
 @import "@wordpress/base-styles/mixins";
 
 .features-list {
+	margin: 0;
 	padding: 1.5rem;
+
 	border-end-start-radius: 8px; /* stylelint-disable-line scales/radii */
 	border-end-end-radius: 8px; /* stylelint-disable-line scales/radii */
+	list-style-type: none;
 
 	@include break-mobile {
 		padding-bottom: 2.5rem;

@@ -16,7 +16,7 @@ import 'calypso/my-sites/marketing/style.scss';
 import './style.scss';
 
 export const Connections = ( { siteId, translate } ) => {
-	const titleHeader = translate( 'Social' );
+	const titleHeader = translate( 'Social', { context: 'Jetpack product name' } );
 
 	const learnMoreLink = (
 		<a

@@ -129,7 +129,7 @@ export function generateFlows( {
 		},
 		{
 			name: LINK_IN_BIO_FLOW,
-			steps: [ 'domains', 'plans-link-in-bio' ],
+			steps: [ 'domains-link-in-bio', 'plans-link-in-bio' ],
 			destination: ( dependencies ) =>
 				`/setup/link-in-bio/launchpad?siteSlug=${ encodeURIComponent( dependencies.siteSlug ) }`,
 			description: 'Beginning of the flow to create a link in bio',
@@ -142,7 +142,7 @@ export function generateFlows( {
 		},
 		{
 			name: LINK_IN_BIO_TLD_FLOW,
-			steps: [ 'domains', 'user', 'plans-link-in-bio' ],
+			steps: [ 'domains-link-in-bio-tld', 'user', 'plans-link-in-bio' ],
 			middleDestination: {
 				user: ( dependencies ) => `/setup/link-in-bio/patterns?tld=${ dependencies.tld }`,
 			},
@@ -159,9 +159,9 @@ export function generateFlows( {
 		},
 		{
 			name: 'import',
-			steps: [ 'domains', 'plans-import' ],
+			steps: [ 'user', 'domains', 'plans-import' ],
 			destination: ( dependencies ) =>
-				`/setup/import?flow=import-focused&siteSlug=${ dependencies.siteSlug }`,
+				`/setup/import-focused/import?siteSlug=${ dependencies.siteSlug }`,
 			description: 'Beginning of the flow to import content',
 			lastModified: '2022-10-03',
 			showRecaptcha: true,

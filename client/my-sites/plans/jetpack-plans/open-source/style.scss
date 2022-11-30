@@ -34,4 +34,12 @@
 
 	font-size: 1rem;
 	text-align: center;
+
+	a {
+		text-decoration: underline;
+
+		&:hover {
+			text-decoration: none;
+		}
+	}
 }

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	FEATURE_UPLOAD_PLUGINS,
 	FEATURE_PERFORMANCE,
@@ -14,6 +15,7 @@ import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { includes } from 'lodash';
 import page from 'page';
+import { useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
@@ -31,6 +33,7 @@ import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import DataCenterPicker from './data-center-picker';
 import HoldList, { hasBlockingHold, HardBlockingNotice, getBlockingMessages } from './hold-list';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 import WarningList from './warning-list';
@@ -43,12 +46,13 @@ const noop = () => {};
 interface ExternalProps {
 	isEligible?: boolean;
 	backUrl: string;
-	onProceed: () => void;
+	onProceed: ( options: { geo_affinity?: string } ) => void;
 	standaloneProceed: boolean;
 	className?: string;
 	eligibilityData?: EligibilityData;
 	currentContext?: string;
 	isMarketplace?: boolean;
+	showDataCenterPicker?: boolean;
 }
 
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
@@ -65,10 +69,14 @@ export const EligibilityWarnings = ( {
 	onProceed,
 	standaloneProceed,
 	recordUpgradeClick,
+	showDataCenterPicker,
 	siteId,
 	siteSlug,
 	siteIsLaunching,
 	siteIsSavingSettings,
+	trackDataCenterPickerShowClick,
+	trackDataCenterPickerHideClick,
+	trackDataCenterPickerSelect,
 	launchSite: launch,
 	makeSitePublic,
 	translate,
@@ -79,6 +87,8 @@ export const EligibilityWarnings = ( {
 	const eligibleForProPlan = useSelector( ( state ) =>
 		isEligibleForProPlan( state, siteId || undefined )
 	);
+
+	const [ selectedGeoAffinity, setSelectedGeoAffinity ] = useState( '' );
 
 	const showWarnings = warnings.length > 0 && ! hasBlockingHold( listHolds );
 	const classes = classNames(
@@ -96,8 +106,11 @@ export const EligibilityWarnings = ( {
 	const makeCurrentSitePublic = () => makeSitePublic( siteId );
 
 	const logEventAndProceed = () => {
+		const options = {
+			geo_affinity: selectedGeoAffinity,
+		};
 		if ( standaloneProceed ) {
-			onProceed();
+			onProceed( options );
 			return;
 		}
 		if ( siteRequiresUpgrade( listHolds ) ) {
@@ -114,7 +127,7 @@ export const EligibilityWarnings = ( {
 			makeCurrentSitePublic();
 			return;
 		}
-		onProceed();
+		onProceed( options );
 	};
 
 	const showThisSiteIsEligibleMessage =
@@ -192,6 +205,22 @@ export const EligibilityWarnings = ( {
 					<WarningList context={ context } warnings={ warnings } showContact={ false } />
 				</CompactCard>
 			) }
+
+			{ showDataCenterPicker && config.isEnabled( 'hosting/datacenter-picker' ) && (
+				<CompactCard className="eligibility-warnings__data-center-picker">
+					<TrackComponentView eventName="calypso_automated_transfer_datacenter_picker_display" />
+					<DataCenterPicker
+						value={ selectedGeoAffinity }
+						onChange={ ( value ) => {
+							trackDataCenterPickerSelect( { geo_affinity: value } );
+							setSelectedGeoAffinity( value );
+						} }
+						onClickShowPicker={ trackDataCenterPickerShowClick }
+						onClickHidePicker={ trackDataCenterPickerHideClick }
+					/>
+				</CompactCard>
+			) }
+
 			<CompactCard>
 				<div className="eligibility-warnings__confirm-buttons">
 					<div className="support-block">
@@ -355,6 +384,12 @@ const mapDispatchToProps = {
 			cta_feature: feature,
 			cta_size: 'regular',
 		} ),
+	trackDataCenterPickerShowClick: ( eventProperties = {} ) =>
+		recordTracksEvent( 'calypso_automated_transfer_datacenter_picker_show_click', eventProperties ),
+	trackDataCenterPickerHideClick: ( eventProperties = {} ) =>
+		recordTracksEvent( 'calypso_automated_transfer_datacenter_picker_hide_click', eventProperties ),
+	trackDataCenterPickerSelect: ( eventProperties = {} ) =>
+		recordTracksEvent( 'calypso_automated_transfer_datacenter_picker_select', eventProperties ),
 	launchSite,
 	makeSitePublic: ( selectedSiteId: number | null ) =>
 		saveSiteSettings( selectedSiteId, {
@@ -395,8 +430,8 @@ function mergeProps(
 		ctaName = 'calypso-performance-features-activate-nudge';
 	}
 
-	const onProceed = () => {
-		ownProps.onProceed();
+	const onProceed = ( options: { geo_affinity?: string } ) => {
+		ownProps.onProceed( options );
 		dispatchProps.trackProceed( { context } );
 	};
 

@@ -110,8 +110,10 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 		} ),
 		[ PRODUCT_JETPACK_VIDEOPRESS ]: translate( 'VideoPress' ),
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: translate( 'VideoPress' ),
-		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: translate( 'Social' ),
-		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: translate( 'Social' ),
+		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: translate( 'Social', { context: 'Jetpack product name' } ),
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: translate( 'Social', {
+			context: 'Jetpack product name',
+		} ),
 	};
 };
 
@@ -150,7 +152,7 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		},
 	} );
 	const boost = translate( 'Boost' );
-	const social = translate( 'Social' );
+	const social = translate( 'Social', { context: 'Jetpack product name' } );
 
 	const text10gb = translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
 		comment:

@@ -231,7 +231,9 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			isDeprecated={ isDeprecated }
 			isAligned={ isAligned }
 			displayFrom={ ! siteId && priceTierList.length > 0 }
-			tooltipText={ priceTierList.length > 0 && productTooltip( item, priceTierList ) }
+			tooltipText={
+				priceTierList.length > 0 && productTooltip( item, priceTierList, currencyCode ?? 'USD' )
+			}
 			aboveButtonText={ productAboveButtonText( item, siteProduct, isOwned, isItemPlanFeature ) }
 			isDisabled={ isDisabled }
 			disabledMessage={ disabledMessage }

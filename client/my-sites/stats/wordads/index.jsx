@@ -9,6 +9,7 @@ import { parse as parseQs, stringify as stringifyQs } from 'qs';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
+import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -173,123 +174,126 @@ class WordAds extends Component {
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<Main className={ mainWrapperClass } wideLayout>
+			<Main className={ mainWrapperClass } fullWidthLayout>
 				<DocumentHead title={ translate( 'WordAds Stats' ) } />
 				<PageViewTracker
 					path={ `/stats/ads/${ period }/:site` }
 					title={ `WordAds > ${ titlecase( period ) }` }
 				/>
-				<FormattedHeader
-					brandFont
-					className="wordads__section-header"
-					headerText={ translate( 'Jetpack Stats' ) }
-					subHeaderText={ translate( 'See how ads are performing on your site.' ) }
-					align="left"
-				/>
 
-				{ ! canAccessAds && (
-					<EmptyContent
-						illustration="/calypso/images/illustrations/illustration-404.svg"
-						title={
-							! canUpgradeToUseWordAds
-								? translate( 'You are not authorized to view this page' )
-								: translate( 'WordAds is not enabled on your site' )
-						}
-						action={ canUpgradeToUseWordAds ? translate( 'Explore WordAds' ) : false }
-						actionURL={ '/earn/ads-settings/' + slug }
+				<div className="stats">
+					<FormattedHeader
+						brandFont
+						className="stats__section-header"
+						headerText={ translate( 'Jetpack Stats' ) }
+						subHeaderText={ translate( 'See how ads are performing on your site.' ) }
+						align="left"
 					/>
-				) }
 
-				{ canAccessAds && (
-					<Fragment>
-						<StatsNavigation
-							selectedItem="wordads"
-							interval={ period }
-							siteId={ siteId }
-							slug={ slug }
+					{ ! canAccessAds && (
+						<EmptyContent
+							illustration={ illustration404 }
+							title={
+								! canUpgradeToUseWordAds
+									? translate( 'You are not authorized to view this page' )
+									: translate( 'WordAds is not enabled on your site' )
+							}
+							action={ canUpgradeToUseWordAds ? translate( 'Explore WordAds' ) : false }
+							actionURL={ '/earn/ads-settings/' + slug }
 						/>
+					) }
 
-						<div id="my-stats-content" className={ statsWrapperClass }>
-							{ isNewMainChart ? (
-								<>
-									<StatsPeriodHeader>
-										<StatsPeriodNavigation
-											date={ queryDate }
-											hidePreviousArrow={ this.isPrevArrowHidden( period, queryDate ) }
-											hideNextArrow={ yesterday === queryDate }
-											period={ period }
-											url={ `/stats/ads/${ period }/${ slug }` }
-										>
-											<DatePicker
-												period={ period }
+					{ canAccessAds && (
+						<Fragment>
+							<StatsNavigation
+								selectedItem="wordads"
+								interval={ period }
+								siteId={ siteId }
+								slug={ slug }
+							/>
+
+							<div id="my-stats-content" className={ statsWrapperClass }>
+								{ isNewMainChart ? (
+									<>
+										<StatsPeriodHeader>
+											<StatsPeriodNavigation
 												date={ queryDate }
-												query={ query }
-												statsType="statsAds"
-												showQueryDate
+												hidePreviousArrow={ this.isPrevArrowHidden( period, queryDate ) }
+												hideNextArrow={ yesterday === queryDate }
+												period={ period }
+												url={ `/stats/ads/${ period }/${ slug }` }
+											>
+												<DatePicker
+													period={ period }
+													date={ queryDate }
+													query={ query }
+													statsType="statsAds"
+													showQueryDate
+												/>
+											</StatsPeriodNavigation>
+											<Intervals
+												selected={ period }
+												pathTemplate={ pathTemplate }
+												compact={ false }
 											/>
-										</StatsPeriodNavigation>
-										<Intervals
-											selected={ period }
-											pathTemplate={ pathTemplate }
-											compact={ false }
+										</StatsPeriodHeader>
+
+										<WordAdsChartTabs
+											activeTab={ getActiveTab( this.props.chartTab ) }
+											activeLegend={ this.state.activeLegend }
+											availableLegend={ this.getAvailableLegend() }
+											onChangeLegend={ this.onChangeLegend }
+											barClick={ this.barClick }
+											switchTab={ this.switchChart }
+											charts={ CHARTS }
+											queryDate={ queryDate }
+											period={ this.props.period }
+											chartTab={ this.props.chartTab }
 										/>
-									</StatsPeriodHeader>
-
-									<WordAdsChartTabs
-										activeTab={ getActiveTab( this.props.chartTab ) }
-										activeLegend={ this.state.activeLegend }
-										availableLegend={ this.getAvailableLegend() }
-										onChangeLegend={ this.onChangeLegend }
-										barClick={ this.barClick }
-										switchTab={ this.switchChart }
-										charts={ CHARTS }
-										queryDate={ queryDate }
-										period={ this.props.period }
-										chartTab={ this.props.chartTab }
-									/>
-								</>
-							) : (
-								<>
-									<WordAdsChartTabs
-										activeTab={ getActiveTab( this.props.chartTab ) }
-										activeLegend={ this.state.activeLegend }
-										availableLegend={ this.getAvailableLegend() }
-										onChangeLegend={ this.onChangeLegend }
-										barClick={ this.barClick }
-										switchTab={ this.switchChart }
-										charts={ CHARTS }
-										queryDate={ queryDate }
-										period={ this.props.period }
-										chartTab={ this.props.chartTab }
-									/>
-									<StickyPanel className="stats__sticky-navigation">
-										<StatsPeriodNavigation
-											date={ queryDate }
-											hidePreviousArrow={ this.isPrevArrowHidden( period, queryDate ) }
-											hideNextArrow={ yesterday === queryDate }
-											period={ period }
-											url={ `/stats/ads/${ period }/${ slug }` }
-										>
-											<DatePicker
-												period={ period }
+									</>
+								) : (
+									<>
+										<WordAdsChartTabs
+											activeTab={ getActiveTab( this.props.chartTab ) }
+											activeLegend={ this.state.activeLegend }
+											availableLegend={ this.getAvailableLegend() }
+											onChangeLegend={ this.onChangeLegend }
+											barClick={ this.barClick }
+											switchTab={ this.switchChart }
+											charts={ CHARTS }
+											queryDate={ queryDate }
+											period={ this.props.period }
+											chartTab={ this.props.chartTab }
+										/>
+										<StickyPanel className="stats__sticky-navigation">
+											<StatsPeriodNavigation
 												date={ queryDate }
-												query={ query }
-												statsType="statsAds"
-												showQueryDate
-											/>
-										</StatsPeriodNavigation>
-									</StickyPanel>
-								</>
-							) }
+												hidePreviousArrow={ this.isPrevArrowHidden( period, queryDate ) }
+												hideNextArrow={ yesterday === queryDate }
+												period={ period }
+												url={ `/stats/ads/${ period }/${ slug }` }
+											>
+												<DatePicker
+													period={ period }
+													date={ queryDate }
+													query={ query }
+													statsType="statsAds"
+													showQueryDate
+												/>
+											</StatsPeriodNavigation>
+										</StickyPanel>
+									</>
+								) }
 
-							<div className="stats__module-list stats__module-headerless--unified">
-								<WordAdsEarnings site={ site } />
+								<div className="stats__module-list stats__module-headerless--unified">
+									<WordAdsEarnings site={ site } />
+								</div>
 							</div>
-						</div>
 
-						<JetpackColophon />
-					</Fragment>
-				) }
+							<JetpackColophon />
+						</Fragment>
+					) }
+				</div>
 			</Main>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

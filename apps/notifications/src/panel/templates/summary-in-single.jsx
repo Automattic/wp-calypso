@@ -67,12 +67,16 @@ class UserHeader extends Component {
 	}
 }
 
-class WritingPromptHeader extends Component {
+class BloggingPromptHeader extends Component {
 	render() {
 		const icon = this.props.site.media[ 0 ];
 		const img_tag = <img src={ icon.url } height={ icon.height } width={ icon.width } alt="" />;
 		const home_url = this.props.site.ranges[ 0 ].url;
-		const settings_url = '/me/notifications#' + withoutHttp( home_url );
+		// Notifications are hosted on widgets.wp.com on WordPress.com
+		const host =
+			document.location.host === 'widgets.wp.com' ? 'wordpress.com' : document.location.host;
+		const settings_url =
+			document.location.protocol + '//' + host + '/me/notifications#' + withoutHttp( home_url );
 
 		const get_home_link = function ( classNames, children ) {
 			if ( home_url ) {
@@ -155,9 +159,9 @@ class SummaryInSingle extends Component {
 					/>
 				);
 			}
-			if ( this.props.note.type === 'writing_prompts_note' ) {
+			if ( this.props.note.type === 'blogging_prompts_note' ) {
 				return (
-					<WritingPromptHeader
+					<BloggingPromptHeader
 						note={ this.props.note }
 						prompt={ this.props.note.header[ 1 ] }
 						url={ header_url }

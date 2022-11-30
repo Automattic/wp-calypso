@@ -1,6 +1,6 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
-import cookie from 'cookie';
 import { localize } from 'i18n-calypso';
 import { compact, omit, pickBy } from 'lodash';
 import page from 'page';
@@ -13,7 +13,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
-import OlarkChat from 'calypso/components/olark-chat';
 import SearchThemes from 'calypso/components/search-themes';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -289,7 +288,9 @@ class ThemeShowcase extends Component {
 			this.setState( { tabFilter: this.tabFilters.ALL } );
 		}
 
+		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
 		trackClick( 'search bar filter', tier );
+
 		const url = this.constructUrl( { tier } );
 		page( url );
 		this.scrollToSearchInput();
@@ -298,6 +299,8 @@ class ThemeShowcase extends Component {
 	onFilterClick = ( tabFilter ) => {
 		const scrollPos = window.pageYOffset;
 		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
+
+		recordTracksEvent( 'calypso_themeshowcase_filter_category_click', { category: tabFilter.key } );
 		trackClick( 'section nav filter', tabFilter );
 		this.setState( { tabFilter } );
 
@@ -359,6 +362,31 @@ class ThemeShowcase extends Component {
 		}
 	};
 
+	recordSearchThemesTracksEvent = ( action, props ) => {
+		let eventName;
+		switch ( action ) {
+			case 'search_clear_icon_click':
+				eventName = 'calypso_themeshowcase_search_clear_icon_click';
+				break;
+			case 'search_dropdown_taxonomy_click':
+				eventName = 'calypso_themeshowcase_search_dropdown_taxonomy_click';
+				break;
+			case 'search_dropdown_taxonomy_term_click':
+				eventName = 'calypso_themeshowcase_search_dropdown_taxonomy_term_click';
+				break;
+			case 'search_dropdown_view_all_button_click':
+				eventName = 'calypso_themeshowcase_search_dropdown_view_all_button_click';
+				break;
+			case 'search_dropdown_view_less_button_click':
+				eventName = 'calypso_themeshowcase_search_dropdown_view_less_button_click';
+				break;
+		}
+
+		if ( eventName ) {
+			recordTracksEvent( eventName, props );
+		}
+	};
+
 	renderBanner = () => {
 		const { loggedOutComponent, isExpertBannerDissmissed, upsellBanner, isUpsellCardDisplayed } =
 			this.props;
@@ -413,7 +441,7 @@ class ThemeShowcase extends Component {
 			case this.tabFilters.ALL.key:
 				return this.allThemes( { themeProps } );
 			default:
-				return <ThemesSelection { ...themeProps } filter={ tabKey } />;
+				return this.allThemes( { themeProps: { ...themeProps, filter: tabKey } } );
 		}
 	};
 
@@ -484,11 +512,6 @@ class ThemeShowcase extends Component {
 				),
 		};
 
-		const olarkIdentity = config( 'olark_chat_identity' );
-		const olarkSystemsGroupId = '239c0f99c53692d81539f76e86910d52';
-		const cookies = typeof window !== 'undefined' && cookie.parse( document.cookie );
-		const isEligibleForOlarkChat =
-			! isLoggedIn && 'en' === locale && ! cookies?.hasOwnProperty( 'recognized_logins' );
 		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
 
 		// FIXME: Logged-in title should only be 'Themes'
@@ -503,7 +526,11 @@ class ThemeShowcase extends Component {
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
 					{ isNewSearchAndFilter ? (
-						<SearchThemes query={ filterString + search } onSearch={ this.doSearch } />
+						<SearchThemes
+							query={ filterString + search }
+							onSearch={ this.doSearch }
+							recordTracksEvent={ this.recordSearchThemesTracksEvent }
+						/>
 					) : (
 						<ThemesSearchCard
 							onSearch={ this.doSearch }
@@ -513,50 +540,45 @@ class ThemeShowcase extends Component {
 							select={ this.onTierSelect }
 						/>
 					) }
-					{ isLoggedIn &&
-						( isNewSearchAndFilter ? (
-							<div className="theme__filters">
-								<ThemesToolbarGroup
-									items={ Object.values( this.tabFilters ) }
-									selectedKey={ this.state.tabFilter.key }
-									onSelect={ ( key ) =>
-										this.onFilterClick(
-											Object.values( this.tabFilters ).find(
-												( tabFilter ) => tabFilter.key === key
-											)
-										)
-									}
+					{ isNewSearchAndFilter && (
+						<div className="theme__filters">
+							<ThemesToolbarGroup
+								items={ Object.values( this.tabFilters ) }
+								selectedKey={ this.state.tabFilter.key }
+								onSelect={ ( key ) =>
+									this.onFilterClick(
+										Object.values( this.tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
+									)
+								}
+							/>
+							{ premiumThemesEnabled && ! isMultisite && (
+								<SimplifiedSegmentedControl
+									key={ tier }
+									initialSelected={ tier || 'all' }
+									options={ this.tabTiers }
+									onSelect={ this.onTierSelect }
 								/>
-								{ premiumThemesEnabled && ! isMultisite && (
-									<SimplifiedSegmentedControl
-										key={ tier }
-										initialSelected={ tier || 'all' }
-										options={ this.tabTiers }
-										onSelect={ this.onTierSelect }
-									/>
-								) }
-							</div>
-						) : (
-							<SectionNav
-								className="themes__section-nav"
-								selectedText={ this.state.tabFilter.text }
-							>
-								<NavTabs>
-									{ Object.values( this.tabFilters )
-										.sort( ( a, b ) => a.order - b.order )
-										.map( ( tabFilter ) => (
-											<NavItem
-												key={ tabFilter.key }
-												onClick={ () => this.onFilterClick( tabFilter ) }
-												selected={ tabFilter.key === this.state.tabFilter.key }
-												count={ this.notificationCount( tabFilter.key ) }
-											>
-												{ tabFilter.text }
-											</NavItem>
-										) ) }
-								</NavTabs>
-							</SectionNav>
-						) ) }
+							) }
+						</div>
+					) }
+					{ isLoggedIn && ! isNewSearchAndFilter && (
+						<SectionNav className="themes__section-nav" selectedText={ this.state.tabFilter.text }>
+							<NavTabs>
+								{ Object.values( this.tabFilters )
+									.sort( ( a, b ) => a.order - b.order )
+									.map( ( tabFilter ) => (
+										<NavItem
+											key={ tabFilter.key }
+											onClick={ () => this.onFilterClick( tabFilter ) }
+											selected={ tabFilter.key === this.state.tabFilter.key }
+											count={ this.notificationCount( tabFilter.key ) }
+										>
+											{ tabFilter.text }
+										</NavItem>
+									) ) }
+							</NavTabs>
+						</SectionNav>
+					) }
 					{ this.renderBanner() }
 					{ this.renderThemes( themeProps ) }
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
@@ -564,9 +586,6 @@ class ThemeShowcase extends Component {
 					<ThanksModal source="list" />
 					<AutoLoadingHomepageModal source="list" />
 					<ThemePreview />
-					{ isEligibleForOlarkChat && (
-						<OlarkChat identity={ olarkIdentity } systemsGroupId={ olarkSystemsGroupId } />
-					) }
 				</div>
 			</div>
 		);

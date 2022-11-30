@@ -193,23 +193,28 @@ function LineItemWrapper( {
 	const sitePlans = useSelector( ( state ) => getPlansBySiteId( state, siteId ) );
 	const activePlan = sitePlans?.data?.find( ( plan ) => plan.currentPlan );
 
-	const variants = useGetProductVariants( siteId, product.product_slug, ( variant ) => {
-		if ( ! canVariantBePurchased( variant, activePlan?.interval, activePlan?.productSlug ) ) {
-			return false;
-		}
+	const variants = useGetProductVariants(
+		siteId,
+		product.product_slug,
+		product.current_quantity,
+		( variant ) => {
+			if ( ! canVariantBePurchased( variant, activePlan?.interval, activePlan?.productSlug ) ) {
+				return false;
+			}
 
-		// Only show term variants which are equal to or longer than the variant that
-		// was in the cart when checkout finished loading (not necessarily the
-		// current variant). For WordPress.com only, not Jetpack. See
-		// https://github.com/Automattic/wp-calypso/issues/69633
-		if ( ! initialVariantTerm ) {
-			return true;
+			// Only show term variants which are equal to or longer than the variant that
+			// was in the cart when checkout finished loading (not necessarily the
+			// current variant). For WordPress.com only, not Jetpack. See
+			// https://github.com/Automattic/wp-calypso/issues/69633
+			if ( ! initialVariantTerm ) {
+				return true;
+			}
+			if ( isJetpack ) {
+				return true;
+			}
+			return variant.termIntervalInMonths >= initialVariantTerm;
 		}
-		if ( isJetpack ) {
-			return true;
-		}
-		return variant.termIntervalInMonths >= initialVariantTerm;
-	} );
+	);
 
 	const areThereVariants = variants.length > 1;
 

@@ -6,7 +6,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-	selectAlphaticallySortedProductOptions,
 	ensurePartnerPortalReturnUrl,
 	getProductTitle,
 } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
@@ -133,9 +132,7 @@ export function useLicenseIssuing(
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const sites = useSelector( getSites ).length;
-	const products = useProductsQuery( {
-		select: selectAlphaticallySortedProductOptions,
-	} );
+	const products = useProductsQuery();
 
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 
@@ -285,9 +282,7 @@ export function useAssignLicenses(
 	licenseKeys: Array< string >,
 	selectedSite: { ID: number; domain: string } | null
 ): [ () => void, boolean ] {
-	const products = useProductsQuery( {
-		select: selectAlphaticallySortedProductOptions,
-	} );
+	const products = useProductsQuery();
 	const dispatch = useDispatch();
 	const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
 	const assignLicense = useAssignLicenseMutation( {
@@ -367,9 +362,7 @@ export function useIssueMultipleLicenses(
 ): [ () => void, boolean ] {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const products = useProductsQuery( {
-		select: selectAlphaticallySortedProductOptions,
-	} );
+	const products = useProductsQuery();
 
 	const sites = useSelector( getSites ).length;
 

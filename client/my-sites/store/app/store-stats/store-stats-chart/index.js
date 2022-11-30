@@ -156,8 +156,15 @@ class StoreStatsChart extends Component {
 
 		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
 
+		const classes = [
+			'is-chart-tabs',
+			{
+				'is-loading': isLoading,
+			},
+		];
+
 		return isNewFeatured ? (
-			<div>
+			<div className={ classNames( ...classes ) }>
 				{ this.renderLegend( selectedTabIndex ) }
 				<ElementChart
 					loading={ isLoading }

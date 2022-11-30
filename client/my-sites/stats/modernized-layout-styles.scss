@@ -1,0 +1,79 @@
+@use "sass:math";
+@import "@automattic/components/src/highlight-cards/variables.scss";
+
+$stats-background-color: #fdfdfd;
+$stats-sections-max-width: 1224px;
+$stats-layout-contnet-padding-top: 79px;
+$sidebar-appearance-break-point: 783px;
+$legacy-break-small: 660px;
+
+// Elements above main layout content per pages
+.stats__section-header,
+.store-stats__section-header,
+.stats-navigation,
+.stats-banner-wrapper {
+	background-color: var(--studio-white);
+}
+
+// Main layout content
+.stats {
+	background-color: $stats-background-color;
+
+	// Ensures vertical padding for certain sections.
+	> .highlight-cards,
+	> .stats__all-time-highlights-section {
+		padding-top: $vertical-margin;
+		padding-bottom: $vertical-margin;
+	}
+
+	// Ensures horizontal padding for all sections.
+	@media ( min-width: $legacy-break-small ) {
+		> * {
+			padding: 0 max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
+		}
+	}
+
+	> .stats-banner-wrapper {
+		padding-bottom: 1em;
+	}
+}
+
+// this overrides the default .layout__content that adds unwanted padding
+.is-section-stats,
+.is-section-woocommerce {
+	& .layout__content,
+	&.theme-default .focus-content .layout__content {
+		padding: $stats-layout-contnet-padding-top 0 0 0;
+
+		@media ( min-width: $sidebar-appearance-break-point ) {
+			padding: $stats-layout-contnet-padding-top 0 0 calc(var(--sidebar-width-max) + 1px);
+		}
+
+		.jetpack-colophon {
+			padding-top: $vertical-margin;
+			padding-bottom: $vertical-margin;
+			margin-top: 0;
+		}
+	}
+}
+
+// Overrides paddings for WP Admin pages.
+.wp-admin {
+	& .layout__content,
+	&.theme-default .focus-content .layout__content {
+		padding-top: 0;
+		padding-left: 1px;
+	}
+	// Fixed header doesn't work well for WP-Admin, as the masterbar isn't fixed.
+	& .is-section-stats .has-fixed-nav .fixed-navigation-header__header {
+		position: relative;
+		top: initial;
+		left: initial;
+	}
+	& .is-section-stats .has-fixed-nav {
+		padding-top: 0;
+	}
+	#wpcontent {
+		padding-left: 1px;
+	}
+}
