@@ -12,7 +12,7 @@ describe( 'ZendeskChatWidget', () => {
 	} );
 
 	test( 'should contain the script tag and have the correct id', () => {
-		const { container } = render( <ZendeskChatWidget chatId="some-chat-id" /> );
+		const { container } = render( <ZendeskChatWidget chatKey="some-chat-id" /> );
 		const scriptTags = container.getElementsByTagName( 'script' );
 		expect( scriptTags.length ).toBe( 1 );
 		expect( scriptTags[ 0 ].id ).toBe( 'ze-snippet' );

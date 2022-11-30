@@ -32,5 +32,5 @@ export const ZendeskPreSalesChat: React.VFC = () => {
 		return ! isLoggedIn && isEnglishLocale && isJetpackCloud() && isWithinChatHours( currentTime );
 	}, [ isLoggedIn ] );
 
-	return shouldShowZendeskPresalesChat ? <ZendeskChat chatId={ zendeskChatKey } /> : null;
+	return shouldShowZendeskPresalesChat ? <ZendeskChat chatKey={ zendeskChatKey } /> : null;
 };
