@@ -223,7 +223,7 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 
 		case RefundPolicy.GiftDomainPurchase:
 			text = translate(
-				'Please note: to receive a {{refundsSupportPage}}refund for a domain gift{{/refundsSupportPage}}, you must request the refund within 96 hours of the gift purchase',
+				'Please note: to receive a {{refundsSupportPage}}refund{{/refundsSupportPage}} for a domain gift, you must request the refund within 96 hours of the gift purchase',
 				{ components: { cancelDomainSupportPage, refundsSupportPage } }
 			);
 			break;
