@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import FoldableCard from 'calypso/components/foldable-card';
 import { SelectorProduct } from '../types';
 import DescriptionList from './description-list';
+import IncludedProductList from './included-product-list';
 
 type ProductDetailsProps = {
 	product: SelectorProduct;
@@ -26,11 +27,11 @@ const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
 		setContentStyle( { maxHeight: `${ height }px` } );
 	}, [ setContentStyle ] );
 
-	const displayIncludedProducts = product.productsIncluded?.length;
-
 	return (
 		<>
-			{ ! displayIncludedProducts &&
+			{ product.productsIncluded ? (
+				<IncludedProductList products={ product.productsIncluded } />
+			) : (
 				productDetails.map( ( { type, title, items }, index, infoList ) => (
 					<div className="product-lightbox__detail-list" key={ type }>
 						{ isMobile ? (
@@ -53,7 +54,8 @@ const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
 						) }
 						{ index !== infoList.length - 1 && <hr /> }
 					</div>
-				) ) }
+				) )
+			) }
 		</>
 	);
 };

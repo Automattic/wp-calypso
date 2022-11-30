@@ -476,3 +476,39 @@
 .ReactModal__Html--open.lightbox-mode .layout__content {
 	overflow-y: scroll;
 }
+
+.product-lightbox__included-product-list-label {
+	font-weight: 600;
+	margin-bottom: 16px;
+}
+
+.product-lightbox__included-product-list-item {
+	display: flex;
+	gap: 12.57px;
+	margin-bottom: 16px;
+}
+
+.product-lightbox__included-product-list-item-title {
+	font-size: $font-body-extra-small;
+	font-weight: 700;
+}
+
+.product-lightbox__included-product-list-item-description {
+	font-size: $font-body-extra-small;
+	font-weight: 400;
+}
+
+.product-lightbox__included-product-list-item-icon {
+	width: 38.8px;
+	height: 38.8px;
+	background-color: #2c3338;
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.product-lightbox__included-product-list-item-icon img {
+	width: 45%;
+	height: auto;
+}
