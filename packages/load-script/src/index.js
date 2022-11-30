@@ -56,7 +56,7 @@ export function loadjQueryDependentScript( url, callback, args ) {
 		return loadScript( url, callback, args );
 	}
 
-	const loadPromise = loadScript( JQUERY_URL ).then( () => loadScript( url, null, args ) );
+	const loadPromise = loadScript( JQUERY_URL ).then( () => loadScript( url, callback, args ) );
 
 	// if callback is provided, call it on resolution
 	if ( typeof callback === 'function' ) {
