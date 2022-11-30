@@ -122,10 +122,6 @@ $search-border-radius: 4px;
 			justify-content: flex-start;
 			padding: 9px 14px;
 
-			&:first-of-type {
-				margin-top: 2px;
-			}
-
 			&.is-selected {
 				background-color: var(--color-neutral-0);
 				color: inherit;
