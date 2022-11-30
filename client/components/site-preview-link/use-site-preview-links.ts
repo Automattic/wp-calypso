@@ -9,9 +9,7 @@ export interface PreviewLink {
 	isRemoving?: boolean;
 }
 
-export interface PreviewLinksResponse {
-	preview_links: PreviewLink[];
-}
+export type PreviewLinksResponse = PreviewLink[];
 
 export const SITE_PREVIEW_LINKS_QUERY_KEY = 'site-preview-links';
 
@@ -26,7 +24,6 @@ export function useSitePreviewLinks( siteId: SiteId ) {
 		{
 			enabled: !! siteId,
 			meta: { persist: false },
-			select: ( data ) => data.preview_links,
 		}
 	);
 }

@@ -25,15 +25,13 @@ export const useDeleteSitePreviewLink = (
 				await queryClient.cancelQueries( queryKey );
 				const cachedData = queryClient.getQueryData< PreviewLinksResponse >( queryKey );
 				queryClient.setQueryData< PreviewLinksResponse >( queryKey, ( old ) => {
-					const previewLinks = old?.preview_links ?? [];
+					const previewLinks = old ?? [];
 					// Inform the UI the link is being removed
 					const index = previewLinks.findIndex( ( previewLink ) => previewLink.code === code );
 					if ( index >= 0 ) {
 						previewLinks[ index ].isRemoving = true;
 					}
-					return {
-						preview_links: previewLinks,
-					};
+					return previewLinks;
 				} );
 				return cachedData;
 			},
@@ -41,8 +39,11 @@ export const useDeleteSitePreviewLink = (
 				queryClient.setQueryData( queryKey, context );
 				onError?.();
 			},
-			onSettled: ( data ) => {
-				queryClient.setQueryData( queryKey, () => data );
+			onSettled: () => {
+				const cachedData = queryClient.getQueryData< PreviewLinksResponse >( queryKey );
+				queryClient.setQueryData( queryKey, () =>
+					cachedData?.filter( ( previewLink ) => ! previewLink.isRemoving )
+				);
 				queryClient.invalidateQueries( queryKey );
 			},
 		}

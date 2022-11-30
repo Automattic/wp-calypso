@@ -27,20 +27,18 @@ export const useCreateSitePreviewLink = (
 			onMutate: async () => {
 				await queryClient.cancelQueries( queryKey );
 				const cachedData = queryClient.getQueryData( queryKey );
-				queryClient.setQueryData< PreviewLinksResponse >( queryKey, ( old ) => ( {
-					preview_links: [
-						...( old?.preview_links ?? [] ),
-						{
-							code: '',
-							created_at: '',
-							isCreating: true,
-						},
-					],
-				} ) );
+				queryClient.setQueryData< PreviewLinksResponse >( queryKey, ( old ) => [
+					...( old ?? [] ),
+					{
+						code: '',
+						created_at: '',
+						isCreating: true,
+					},
+				] );
 				return cachedData;
 			},
 			onSettled: ( data ) => {
-				queryClient.setQueryData( queryKey, () => data );
+				queryClient.setQueryData( queryKey, () => [ data ] );
 				queryClient.invalidateQueries( queryKey );
 			},
 		}

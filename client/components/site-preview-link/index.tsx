@@ -2,7 +2,7 @@ import { Spinner } from '@automattic/components';
 import styled from '@emotion/styled';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import ClipboardButtonInput from '../clipboard-button-input';
@@ -65,12 +65,6 @@ export default function SitePreviewLink( {
 		}
 	);
 	const [ checked, setChecked ] = useState( false );
-
-	const previewLinkNotRemoving = previewLinks?.filter( ( link ) => ! link.isRemoving );
-	useEffect( () => {
-		const hasLinks = Boolean( previewLinkNotRemoving && previewLinkNotRemoving?.length > 0 );
-		setChecked( hasLinks );
-	}, [ previewLinkNotRemoving ] );
 
 	function onChange( checkedValue: boolean ) {
 		setChecked( checkedValue );
