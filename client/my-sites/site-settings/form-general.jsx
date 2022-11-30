@@ -632,9 +632,15 @@ export class SiteSettingsFormGeneral extends Component {
 			isSavingSettings,
 			handleSubmitForm,
 			hasSubscriptionGifting,
+			siteId,
 		} = this.props;
 
 		if ( ! isEnabled( 'subscription-gifting' ) ) {
+			return;
+		}
+
+		// TODO: remove when we're fully released
+		if ( siteId % 10 !== 0 ) {
 			return;
 		}
 
