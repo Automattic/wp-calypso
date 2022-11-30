@@ -9,8 +9,8 @@ import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
+import AsyncLoad from 'calypso/components/async-load';
 import HappychatButtonUnstyled from 'calypso/components/happychat/button';
-import ZendeskChat from 'calypso/components/zendesk-chat-widget';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import getSupportLevel from 'calypso/state/happychat/selectors/get-support-level';
@@ -185,7 +185,10 @@ export default function CheckoutHelpLink() {
 			<QuerySupportTypes />
 			{ ! isPresalesZendeskChatEligible && ! supportVariationDetermined && <LoadingButton /> }
 			{ isPresalesZendeskChatEligible ? (
-				<ZendeskChat chatId={ zendeskPresalesChatKey } />
+				<AsyncLoad
+					require="calypso/components/zendesk-chat-widget"
+					chatKey={ zendeskPresalesChatKey }
+				/>
 			) : (
 				supportVariationDetermined && (
 					<CheckoutSummaryHelpButton onClick={ handleHelpButtonClicked }>
