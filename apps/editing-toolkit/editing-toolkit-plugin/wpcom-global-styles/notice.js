@@ -1,11 +1,11 @@
 /* global wpcomGlobalStyles */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { ExternalLink } from '@wordpress/components';
+import { ExternalLink, Notice } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { createInterpolateElement, useEffect } from '@wordpress/element';
+import { createInterpolateElement, render, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
-const GlobalStylesNotice = () => {
+function GlobalStylesNoticeComponent() {
 	const { globalStylesConfig, siteChanges } = useSelect( ( select ) => {
 		const {
 			getEditedEntityRecord,
@@ -59,25 +59,64 @@ const GlobalStylesNotice = () => {
 		return null;
 	}
 
-	return createInterpolateElement(
-		__(
-			'To publish these styles, and to unlock tons of other features, <a>upgrade to a Premium plan</a>.',
-			'full-site-editing'
-		),
-		{
-			a: (
-				<ExternalLink
-					href={ wpcomGlobalStyles.upgradeUrl }
-					target="_blank"
-					onClick={ () =>
-						recordTracksEvent( 'calypso_global_styles_gating_notice_upgrade_click', {
-							context: 'site-editor',
-						} )
-					}
-				/>
-			),
-		}
+	return (
+		<Notice status="warning" isDismissible={ false } className="wpcom-global-styles-notice">
+			{ createInterpolateElement(
+				__(
+					'To publish these styles, and to unlock tons of other features, <a>upgrade to a Premium plan</a>.',
+					'full-site-editing'
+				),
+				{
+					a: (
+						<ExternalLink
+							href={ wpcomGlobalStyles.upgradeUrl }
+							target="_blank"
+							onClick={ () =>
+								recordTracksEvent( 'calypso_global_styles_gating_notice_upgrade_click', {
+									context: 'site-editor',
+								} )
+							}
+						/>
+					),
+				}
+			) }
+		</Notice>
 	);
-};
+}
 
-export default GlobalStylesNotice;
+export default function GlobalStylesNotice() {
+	const { globalStylesConfig, isSaveViewOpened } = useSelect( ( select ) => ( {
+		globalStylesConfig: select( 'core' ).getEntityConfig( 'root', 'globalStyles' ),
+		isSaveViewOpened: select( 'core/edit-site' ).isSaveViewOpened(),
+	} ) );
+
+	const [ isNoticeRendered, setIsNoticeRendered ] = useState( false );
+
+	useEffect( () => {
+		if ( ! globalStylesConfig || ! isSaveViewOpened ) {
+			setIsNoticeRendered( false );
+			return;
+		}
+		if ( isNoticeRendered ) {
+			return;
+		}
+
+		const preSavePanelTitles = document.querySelectorAll(
+			'.entities-saved-states__panel .components-panel__body.is-opened .components-panel__body-title'
+		);
+
+		for ( const entityTitle of preSavePanelTitles ) {
+			if ( entityTitle.textContent !== globalStylesConfig.label ) {
+				continue;
+			}
+
+			const noticeContainer = document.createElement( 'div' );
+			entityTitle.parentElement.append( noticeContainer );
+			render( <GlobalStylesNoticeComponent />, noticeContainer );
+			setIsNoticeRendered( true );
+			break;
+		}
+	}, [ globalStylesConfig, isNoticeRendered, isSaveViewOpened ] );
+
+	return null;
+}
