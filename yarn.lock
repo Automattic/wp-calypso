@@ -1290,6 +1290,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/privacy-toolset@workspace:packages/privacy-toolset"
   dependencies:
+    "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@storybook/addon-actions": ^6.4.19
@@ -1299,8 +1300,10 @@ __metadata:
     "@testing-library/react-hooks": 7.0.2
     "@types/classnames": ^2.3.1
     classnames: ^2.3.1
+    postcss: ^8.4.5
     require-from-string: ^2.0.2
     typescript: ^4.7.4
+    webpack: ^5.68.0
   peerDependencies:
     react: ^17.0.2
     react-dom: ^17.0.2
