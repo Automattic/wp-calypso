@@ -253,7 +253,7 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 
 		case RefundPolicy.GiftMonthlyPurchase:
 			text = translate(
-				'You understand that gift {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 7 days after purchase or renewal for products with monthly subscriptions.',
+				'You understand that gift {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 7 days after purchase for products with monthly subscriptions.',
 				{ components: { refundsSupportPage } }
 			);
 			break;
