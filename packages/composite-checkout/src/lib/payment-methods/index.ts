@@ -1,5 +1,5 @@
 import debugFactory from 'debug';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { PaymentMethod } from '../../types';
 import CheckoutContext from '../checkout-context';
 
@@ -36,4 +36,18 @@ export function useAllPaymentMethods() {
 		throw new Error( 'useAllPaymentMethods cannot be used outside of CheckoutProvider' );
 	}
 	return allPaymentMethods;
+}
+
+export function useAvailablePaymentMethodIds(): string[] {
+	const { allPaymentMethods, disabledPaymentMethodIds } = useContext( CheckoutContext );
+	if ( ! allPaymentMethods ) {
+		throw new Error( 'useAvailablePaymentMethodIds cannot be used outside of CheckoutProvider' );
+	}
+	const paymentMethodIds = allPaymentMethods.map( ( method ) => method.id );
+	const availablePaymentMethodIds = useMemo(
+		() => paymentMethodIds.filter( ( id ) => ! disabledPaymentMethodIds.includes( id ) ),
+		[ paymentMethodIds, disabledPaymentMethodIds ]
+	);
+	debug( 'Returning available payment methods', availablePaymentMethodIds );
+	return availablePaymentMethodIds;
 }
