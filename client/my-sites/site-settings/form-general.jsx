@@ -417,6 +417,7 @@ export class SiteSettingsFormGeneral extends Component {
 										siteUrl={ site.URL }
 										siteId={ siteId }
 										disabled={ ! isAnyComingSoonEnabled || isSavingSettings }
+										source="privacy-settings"
 									/>
 								</div>
 							) }
@@ -630,7 +631,7 @@ export class SiteSettingsFormGeneral extends Component {
 				</LaunchCard>
 				{ showPreviewLink && (
 					<Card>
-						<SitePreviewLink siteUrl={ site.URL } siteId={ siteId } />
+						<SitePreviewLink siteUrl={ site.URL } siteId={ siteId } source="launch-settings" />
 					</Card>
 				) }
 

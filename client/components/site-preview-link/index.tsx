@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Spinner } from '@automattic/components';
 import styled from '@emotion/styled';
 import { ToggleControl } from '@wordpress/components';
@@ -14,6 +15,7 @@ import type { SiteId } from 'calypso/types';
 interface SitePreviewLinkProps {
 	siteId: SiteId;
 	siteUrl: string;
+	source: 'launch-settings' | 'privacy-settings' | 'smp-modal';
 	disabled?: boolean;
 }
 
@@ -43,10 +45,12 @@ export default function SitePreviewLink( {
 	siteId,
 	siteUrl,
 	disabled = false,
+	source,
 }: SitePreviewLinkProps ) {
 	const translate = useTranslate();
 	const { showSuccessNotice, showErrorNotice } = useDispatchNotice();
 	const [ checked, setChecked ] = useState( false );
+
 	const { data: previewLinks, isLoading: isFirstLoading } = useSitePreviewLinks( {
 		siteId,
 		onSuccess: ( linksResponse ) => {
@@ -54,26 +58,28 @@ export default function SitePreviewLink( {
 			setChecked( validLinksLength > 0 );
 		},
 	} );
+
 	const { createLink, isLoading: isCreating } = useCreateSitePreviewLink( {
 		siteId,
 		onSuccess: () => {
 			showSuccessNotice( translate( 'Preview link created successfully!' ) );
-			// TODO: add tracks event
+			recordTracksEvent( 'calypso_site_preview_link_created', { source } );
 		},
 		onError: () => {
 			showErrorNotice( translate( 'Error creating the preview link.' ) );
-			// TODO: add tracks event
+			recordTracksEvent( 'calypso_site_preview_link_created_error', { source } );
 		},
 	} );
+
 	const { deleteLink, isLoading: isDeleting } = useDeleteSitePreviewLink( {
 		siteId,
 		onSuccess: () => {
 			showSuccessNotice( translate( 'Preview link removed successfully!' ) );
-			// TODO: add tracks event
+			recordTracksEvent( 'calypso_site_preview_link_deleted', { source } );
 		},
 		onError: () => {
 			showErrorNotice( translate( 'Error removing the preview link.' ) );
-			// TODO: add tracks event
+			recordTracksEvent( 'calypso_site_preview_link_deleted_error', { source } );
 		},
 	} );
 
@@ -89,7 +95,6 @@ export default function SitePreviewLink( {
 	}
 
 	const checkedAndEnabled = checked && ! disabled;
-
 	const isBusy = isFirstLoading || isCreating || isDeleting;
 
 	if ( isFirstLoading ) {
