@@ -973,7 +973,7 @@ class Account extends Component {
 						{ config.isEnabled( 'sites-as-landing-page' ) && (
 							<FormFieldset>
 								<FormLabel id="account__default_landing_page">
-									{ translate( 'Sites as landing page' ) }
+									{ translate( 'Admin home' ) }
 								</FormLabel>
 								<ToggleSitesAsLandingPage />
 							</FormFieldset>
