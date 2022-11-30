@@ -46,7 +46,7 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 			blogname: string;
 			blogdescription: string;
 			launchpad_screen?: string;
-			intent?: string;
+			site_intent?: string;
 		} = {
 			blogname: siteTitle,
 			blogdescription: siteDescription,
@@ -55,7 +55,7 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
 			// link-in-bio and link-in-bio-tld are considered the same intent.
 			if ( isLinkInBioFlow( flowName ) ) {
-				settings.intent = LINK_IN_BIO_FLOW;
+				settings.site_intent = LINK_IN_BIO_FLOW;
 				if ( selectedPatternContent ) {
 					const pattern: {
 						content: string | undefined;
@@ -67,7 +67,7 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 					formData.push( [ 'pattern', JSON.stringify( pattern ) ] );
 				}
 			} else {
-				settings.intent = flowName;
+				settings.site_intent = flowName;
 			}
 
 			settings.launchpad_screen = 'full';
