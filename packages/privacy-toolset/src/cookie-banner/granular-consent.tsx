@@ -25,6 +25,7 @@ export const GranularConsent = ( { name, content, disabled, checked, onChange }:
 					checked={ checked }
 					onChange={ handleChange }
 					disabled={ disabled }
+					data-testid={ `${ name }-bucket-toggle` }
 				/>
 			</div>
 			<div className="cookie-banner__option-description">

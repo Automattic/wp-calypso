@@ -16,23 +16,17 @@ exports[`CookieBanner renders in customized consent correctly (after customize b
       <div
         class="cookie-banner__bucket-container"
       >
-        <span
-          class="components-form-toggle is-checked is-disabled"
+        <div
+          class="cookie-banner__checkbox-container"
         >
           <input
             checked=""
-            class="components-form-toggle__input"
             data-testid="essential-bucket-toggle"
             disabled=""
+            id="essential"
             type="checkbox"
           />
-          <span
-            class="components-form-toggle__track"
-          />
-          <span
-            class="components-form-toggle__thumb"
-          />
-        </span>
+        </div>
         <div
           class="cookie-banner__option-description"
         >
@@ -47,22 +41,16 @@ exports[`CookieBanner renders in customized consent correctly (after customize b
       <div
         class="cookie-banner__bucket-container"
       >
-        <span
-          class="components-form-toggle is-checked"
+        <div
+          class="cookie-banner__checkbox-container"
         >
           <input
             checked=""
-            class="components-form-toggle__input"
             data-testid="analytics-bucket-toggle"
+            id="analytics"
             type="checkbox"
           />
-          <span
-            class="components-form-toggle__track"
-          />
-          <span
-            class="components-form-toggle__thumb"
-          />
-        </span>
+        </div>
         <div
           class="cookie-banner__option-description"
         >
@@ -77,22 +65,16 @@ exports[`CookieBanner renders in customized consent correctly (after customize b
       <div
         class="cookie-banner__bucket-container"
       >
-        <span
-          class="components-form-toggle is-checked"
+        <div
+          class="cookie-banner__checkbox-container"
         >
           <input
             checked=""
-            class="components-form-toggle__input"
             data-testid="advertising-bucket-toggle"
+            id="advertising"
             type="checkbox"
           />
-          <span
-            class="components-form-toggle__track"
-          />
-          <span
-            class="components-form-toggle__thumb"
-          />
-        </span>
+        </div>
         <div
           class="cookie-banner__option-description"
         >
