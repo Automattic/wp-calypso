@@ -1023,10 +1023,8 @@ function WPLineItem( {
 									.map( ( cart_product ) => cart_product.uuid );
 							}
 
-							product_uuids_to_remove.forEach( function ( product_uuid ) {
-								removeProductFromCart( product_uuid ).catch( () => {
-									// Nothing needs to be done here. CartMessages will display the error to the user.
-								} );
+							Promise.all( product_uuids_to_remove.map( removeProductFromCart ) ).catch( () => {
+								// Nothing needs to be done here. CartMessages will display the error to the user.
 							} );
 							onRemoveProduct?.( label );
 						} }
