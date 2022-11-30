@@ -60,11 +60,16 @@ export const ecommerceFlow: Flow = {
 		const locale = useLocale();
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
+		const flags = new URLSearchParams( window.location.search ).get( 'flags' );
 
 		const getStartUrl = () => {
 			return locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=/setup/storeProfiler?flow=${ flowName }`
-				: `/start/account/user?variationName=${ flowName }&redirect_to=/setup/storeProfiler?flow=${ flowName }`;
+				? `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=/setup/ecommerce/storeProfiler${
+						flags ? `?flags=${ flags }` : ''
+				  }`
+				: `/start/account/user?variationName=${ flowName }&redirect_to=/setup/ecommerce/storeProfiler${
+						flags ? `?flags=${ flags }` : ''
+				  }`;
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
