@@ -288,7 +288,7 @@ export class PluginsPage {
 	 * @returns {Promise<boolean>} True if plugin is active on any site. False otherwise.
 	 */
 	async pluginIsInstalled(): Promise< boolean > {
-		await this.page.waitForLoadState( 'networkidle' );
+		await this.page.waitForLoadState( 'networkidle', { timeout: 20 * 1000 } );
 		const locator = this.page.locator( selectors.pluginToggle( 'Active' ) );
 		if ( ( await locator.count() ) > 0 ) {
 			return true;
