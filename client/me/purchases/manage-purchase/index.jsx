@@ -318,7 +318,7 @@ class ManagePurchase extends Component {
 		);
 		return this.renderRenewalNavItem(
 			<div>
-				{ translate( 'Renew Annually' ) }
+				{ translate( 'Renew annually' ) }
 				<Badge className="manage-purchase__savings-badge" type="success">
 					{ translate( '%(savings)d%% cheaper than monthly', {
 						args: {
@@ -333,7 +333,7 @@ class ManagePurchase extends Component {
 
 	renderRenewMonthlyNavItem() {
 		const { translate } = this.props;
-		return this.renderRenewalNavItem( translate( 'Renew Monthly' ), this.handleRenewMonthly );
+		return this.renderRenewalNavItem( translate( 'Renew monthly' ), this.handleRenewMonthly );
 	}
 
 	handleUpgradeClick = () => {
@@ -386,7 +386,7 @@ class ManagePurchase extends Component {
 				: translate( 'Pick another product' );
 		} else {
 			iconName = 'upload';
-			buttonText = translate( 'Upgrade plan' );
+			buttonText = isUpgradeablePlan ? translate( 'Upgrade plan' ) : translate( 'Upgrade product' );
 		}
 
 		const upgradeUrl = this.getUpgradeUrl();
