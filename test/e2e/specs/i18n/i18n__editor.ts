@@ -296,19 +296,14 @@ describe( 'I18N: Editor', function () {
 		describe( 'Editing Toolkit Plugin', function () {
 			it( 'Translations for Welcome Guide', async function () {
 				const frame = await editorPage.getEditorHandle();
-				const timeout = 10 * 1000;
 				// We know these are all defined because of the filtering above. Non-null asserting is safe here.
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 				const etkTranslations = translations[ locale ]!.etkPlugin!;
 
 				await editorPage.openEditorOptionsMenu();
-				await frame.locator( etkTranslations.welcomeGuide.openGuideSelector ).click( { timeout } );
-				await frame.waitForSelector( etkTranslations.welcomeGuide.welcomeTitleSelector, {
-					timeout,
-				} );
-				await frame
-					.locator( etkTranslations.welcomeGuide.closeButtonSelector )
-					.click( { timeout } );
+				await frame.locator( etkTranslations.welcomeGuide.openGuideSelector ).click();
+				await frame.waitForSelector( etkTranslations.welcomeGuide.welcomeTitleSelector );
+				await frame.locator( etkTranslations.welcomeGuide.closeButtonSelector ).click();
 			} );
 		} );
 
@@ -321,8 +316,6 @@ describe( 'I18N: Editor', function () {
 				let frame: Page | Frame;
 				let editorPage: EditorPage;
 
-				const blockTimeout = 10 * 1000;
-
 				it( 'Insert test block', async function () {
 					editorPage = new EditorPage( page, { target: features.siteType } );
 					await editorPage.addBlockFromSidebar( block.blockName, block.blockEditorSelector );
@@ -333,9 +326,7 @@ describe( 'I18N: Editor', function () {
 					// Ensure block contents are translated as expected.
 					await Promise.all(
 						block.blockEditorContent.map( ( content ) =>
-							frame.waitForSelector( `${ block.blockEditorSelector } ${ content }`, {
-								timeout: blockTimeout,
-							} )
+							frame.waitForSelector( `${ block.blockEditorSelector } ${ content }` )
 						)
 					);
 				} );
@@ -346,8 +337,7 @@ describe( 'I18N: Editor', function () {
 
 					// Ensure the block is highlighted.
 					await frame.waitForSelector(
-						`:is( ${ block.blockEditorSelector }.is-selected, ${ block.blockEditorSelector }.has-child-selected)`,
-						{ timeout: blockTimeout }
+						`:is( ${ block.blockEditorSelector }.is-selected, ${ block.blockEditorSelector }.has-child-selected)`
 					);
 
 					// If on block insertion, one of the sub-blocks are selected, click on
@@ -359,8 +349,7 @@ describe( 'I18N: Editor', function () {
 
 					// Ensure the Settings with the block selected shows the expected title.
 					await frame.waitForSelector(
-						`.block-editor-block-card__title:has-text("${ block.blockPanelTitle }")`,
-						{ timeout: blockTimeout }
+						`.block-editor-block-card__title:has-text("${ block.blockPanelTitle }")`
 					);
 				} );
 			}
