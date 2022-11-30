@@ -1,5 +1,4 @@
 import { ToggleControl as OriginalToggleControl } from '@wordpress/components';
-import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -39,20 +38,13 @@ function ToggleSitesAsLandingPage() {
 		);
 	}
 
-	const label = createInterpolateElement(
-		translate( 'Make the <a>Sites page</a> my default landing page.' ),
-		{
-			a: <a href="/sites" target="_blank" rel="noopener noreferrer" />,
-		}
-	);
-
 	return (
 		<div>
 			<ToggleControl
 				checked={ !! useSitesAsLandingPage }
 				onChange={ handleToggle }
 				disabled={ isSaving }
-				label={ label }
+				label={ translate( 'Show me all my sites when logging in to WordPress.com' ) }
 			/>
 		</div>
 	);
