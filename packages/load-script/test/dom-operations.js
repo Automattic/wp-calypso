@@ -23,7 +23,7 @@ describe( 'loadScript/dom-operations', () => {
 
 			expect( script.src ).toBe( url );
 			expect( script.id ).toBe( args.id );
-			expect( script.async ).toBe( args.async );
+			expect( script.async ).toBe( false );
 		} );
 	} );
 } );

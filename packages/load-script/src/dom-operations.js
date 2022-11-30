@@ -9,18 +9,15 @@ export function createScriptElement( url, args ) {
 
 	script.src = url;
 	script.type = 'text/javascript';
-	script.async = true;
 	script.onload = handleRequestSuccess;
 	script.onerror = handleRequestError;
 
+	if ( ! args || ( args && ! ( 'async' in args ) ) ) {
+		script.async = true;
+	}
+
 	if ( args ) {
-		Object.entries( args ).forEach( ( [ key, value ] ) => {
-			if ( ! value ) {
-				script.removeAttribute( key );
-			} else {
-				script.setAttribute( key, value );
-			}
-		} );
+		Object.entries( args ).forEach( ( [ key, value ] ) => ( script[ key ] = value ) );
 	}
 
 	return script;
