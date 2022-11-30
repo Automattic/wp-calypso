@@ -17,6 +17,9 @@ export const useCreateSitePreviewLink = (
 				apiNamespace: 'wpcom/v2',
 			} ),
 		{
+			onSuccess: () => {
+				onSuccess?.();
+			},
 			onError: ( err, code, context ) => {
 				queryClient.setQueryData( queryKey, context );
 				onError?.();
@@ -39,7 +42,6 @@ export const useCreateSitePreviewLink = (
 			onSettled: ( data ) => {
 				queryClient.setQueryData( queryKey, () => data );
 				queryClient.invalidateQueries( queryKey );
-				onSuccess?.();
 			},
 		}
 	);

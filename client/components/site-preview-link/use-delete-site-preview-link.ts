@@ -18,6 +18,9 @@ export const useDeleteSitePreviewLink = (
 				apiNamespace: 'wpcom/v2',
 			} ),
 		{
+			onSuccess: () => {
+				onSuccess?.();
+			},
 			onMutate: async ( code: string ) => {
 				await queryClient.cancelQueries( queryKey );
 				const cachedData = queryClient.getQueryData< PreviewLinksResponse >( queryKey );
@@ -41,7 +44,6 @@ export const useDeleteSitePreviewLink = (
 			onSettled: ( data ) => {
 				queryClient.setQueryData( queryKey, () => data );
 				queryClient.invalidateQueries( queryKey );
-				onSuccess?.();
 			},
 		}
 	);

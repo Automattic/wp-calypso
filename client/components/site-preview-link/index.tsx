@@ -4,7 +4,7 @@ import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { successNotice } from 'calypso/state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import ClipboardButtonInput from '../clipboard-button-input';
 import { useCreateSitePreviewLink } from './use-create-site-preview-link';
 import { useDeleteSitePreviewLink } from './use-delete-site-preview-link';
@@ -38,14 +38,32 @@ export default function SitePreviewLink( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { data: previewLinks, isLoading: isFirstLoading } = useSitePreviewLinks( siteId );
-	const { createLink, isLoading: isCreating } = useCreateSitePreviewLink( siteId, () => {
-		dispatch( successNotice( translate( 'Preview link created successfully!' ), NOTICE_OPTIONS ) );
-		// TODO: add tracks event
-	} );
-	const { deleteLink, isLoading: isDeleting } = useDeleteSitePreviewLink( siteId, () => {
-		dispatch( successNotice( translate( 'Preview link removed successfully!' ), NOTICE_OPTIONS ) );
-		// TODO: add tracks event
-	} );
+	const { createLink, isLoading: isCreating } = useCreateSitePreviewLink(
+		siteId,
+		() => {
+			dispatch(
+				successNotice( translate( 'Preview link created successfully!' ), NOTICE_OPTIONS )
+			);
+			// TODO: add tracks event
+		},
+		() => {
+			dispatch( errorNotice( translate( 'Error creating the preview link.' ), NOTICE_OPTIONS ) );
+			// TODO: add tracks event
+		}
+	);
+	const { deleteLink, isLoading: isDeleting } = useDeleteSitePreviewLink(
+		siteId,
+		() => {
+			dispatch(
+				successNotice( translate( 'Preview link removed successfully!' ), NOTICE_OPTIONS )
+			);
+			// TODO: add tracks event
+		},
+		() => {
+			dispatch( errorNotice( translate( 'Error removing the preview link.' ), NOTICE_OPTIONS ) );
+			// TODO: add tracks event
+		}
+	);
 	const [ checked, setChecked ] = useState( false );
 
 	const previewLinkNotRemoving = previewLinks?.filter( ( link ) => ! link.isRemoving );
