@@ -108,7 +108,7 @@ export class EditorPage {
 	 * Example "new page": {@link https://wordpress.com/page}
 	 */
 	async visit( type: 'post' | 'page' = 'post' ): Promise< Response | null > {
-		const request = await this.page.goto( getCalypsoURL( type ) );
+		const request = await this.page.goto( getCalypsoURL( type ), { timeout: 25 * 1000 } );
 		await this.waitUntilLoaded();
 
 		return request;
