@@ -1,8 +1,19 @@
+import { Spinner } from '@automattic/components';
 import styled from '@emotion/styled';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ClipboardButtonInput from '../clipboard-button-input';
+import { useCreateSitePreviewLink } from './use-create-site-preview-link';
+import { useDeleteSitePreviewLink } from './use-delete-site-preview-link';
+import { useSitePreviewLinks } from './use-site-preview-links';
+import type { SiteId } from 'calypso/types';
+
+interface SitePreviewLinkProps {
+	siteId: SiteId;
+	siteUrl: string;
+	disabled?: boolean;
+}
 
 const HelpText = styled.p( {
 	display: 'block',
@@ -13,30 +24,60 @@ const HelpText = styled.p( {
 	color: 'var(--color-text-subtle)',
 } );
 
-export default function SitePreviewLink( { disabled = false } ) {
+export default function SitePreviewLink( {
+	siteId,
+	siteUrl,
+	disabled = false,
+}: SitePreviewLinkProps ) {
 	const translate = useTranslate();
+	const { data: previewLinks, isLoading: isFirstLoading } = useSitePreviewLinks( siteId );
+	const { createLink, isLoading: isCreating } = useCreateSitePreviewLink( siteId, () => null );
+	const { deleteLink, isLoading: isDeleting } = useDeleteSitePreviewLink( siteId, () => null );
 	const [ checked, setChecked ] = useState( false );
-	const [ loading ] = useState( false );
-	function onChange( value: boolean ) {
-		setChecked( value );
+
+	const previewLinkNotRemoving = previewLinks?.filter( ( link ) => ! link.isRemoving );
+	useEffect( () => {
+		const hasLinks = Boolean( previewLinkNotRemoving && previewLinkNotRemoving?.length > 0 );
+		setChecked( hasLinks );
+	}, [ previewLinkNotRemoving ] );
+
+	function onChange( checkedValue: boolean ) {
+		setChecked( checkedValue );
+		if ( checkedValue ) {
+			createLink();
+		} else {
+			previewLinks?.map( ( { code } ) => {
+				deleteLink( code );
+			} );
+		}
 	}
-	const checkedAndNotDisabled = checked && ! disabled;
+
+	const checkedAndEnabled = checked && ! disabled;
+
+	const isBusy = isFirstLoading || isCreating || isDeleting;
+
+	if ( isFirstLoading ) {
+		return <Spinner />;
+	}
 	return (
 		<div>
 			<ToggleControl
 				label={ translate( 'Create a preview link.' ) }
-				checked={ checkedAndNotDisabled }
+				checked={ checkedAndEnabled }
 				onChange={ onChange }
-				{ ...{ disabled: disabled || loading } } // disabled is not included on ToggleControl props type
+				{ ...{ disabled: disabled || isBusy } } // disabled is not included on ToggleControl props type
 			/>
 			<HelpText>{ translate( 'Anyone with this link can view your site.' ) }</HelpText>
-			{ checkedAndNotDisabled && (
-				<ClipboardButtonInput
-					value="https://mysite.wordpress.com?preview=12kabe45cdp"
-					hideHttp
-					disabled={ loading }
-				/>
-			) }
+			{ ! disabled &&
+				previewLinks?.map( ( { code, isCreating = false, isRemoving = false } ) => {
+					let linkValue = `${ siteUrl }?preview=${ code }`;
+					if ( isCreating ) {
+						linkValue = translate( 'Loading…' );
+					} else if ( isRemoving ) {
+						linkValue = translate( 'Removing…' );
+					}
+					return <ClipboardButtonInput key={ code } value={ linkValue } disabled={ isBusy } />;
+				} ) }
 		</div>
 	);
 }

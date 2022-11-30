@@ -362,6 +362,8 @@ export class SiteSettingsFormGeneral extends Component {
 			shouldShowPremiumStylesNotice,
 			isSavingSettings,
 			hasSitePreviewLink,
+			siteId,
+			site,
 		} = this.props;
 
 		const blogPublic = parseInt( fields.blog_public, 10 );
@@ -411,7 +413,11 @@ export class SiteSettingsFormGeneral extends Component {
 							</FormSettingExplanation>
 							{ showPreviewLink && (
 								<div className="site-settings__visibility-label is-checkbox">
-									<SitePreviewLink disabled={ ! isAnyComingSoonEnabled || isSavingSettings } />
+									<SitePreviewLink
+										siteUrl={ site.URL }
+										siteId={ siteId }
+										disabled={ ! isAnyComingSoonEnabled || isSavingSettings }
+									/>
 								</div>
 							) }
 						</>
@@ -565,6 +571,7 @@ export class SiteSettingsFormGeneral extends Component {
 			isComingSoon,
 			fields,
 			hasSitePreviewLink,
+			site,
 		} = this.props;
 
 		const launchSiteClasses = classNames( 'site-settings__general-settings-launch-site-button', {
@@ -623,7 +630,7 @@ export class SiteSettingsFormGeneral extends Component {
 				</LaunchCard>
 				{ showPreviewLink && (
 					<Card>
-						<SitePreviewLink />
+						<SitePreviewLink siteUrl={ site.URL } siteId={ siteId } />
 					</Card>
 				) }
 
