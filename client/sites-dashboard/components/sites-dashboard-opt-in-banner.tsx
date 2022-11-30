@@ -72,8 +72,8 @@ export const SitesDashboardOptInBanner = ( { sites }: SitesDashboardOptInBannerP
 		return null;
 	}
 
-	const handleAccept = () => {
-		setLandingPagePreference( {
+	const handleAccept = async () => {
+		await setLandingPagePreference( {
 			useSitesAsLandingPage: true,
 			updatedAt: new Date().valueOf(),
 		} );
