@@ -238,7 +238,7 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 
 		case RefundPolicy.GiftBiennialPurchase:
 			text = translate(
-				'You understand that gift {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase for products with two year subscriptions.',
+				'You understand that gift {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase for non-domain products with two year subscriptions.',
 				{ components: { refundsSupportPage } }
 			);
 			break;
@@ -253,7 +253,7 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 
 		case RefundPolicy.GiftMonthlyPurchase:
 			text = translate(
-				'You understand that gift {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 7 days after purchase for products with monthly subscriptions.',
+				'You understand that gift {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 7 days after purchase for non-domain products with monthly subscriptions.',
 				{ components: { refundsSupportPage } }
 			);
 			break;
@@ -268,7 +268,7 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 
 		case RefundPolicy.GiftYearlyPurchase:
 			text = translate(
-				'You understand that gift {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase for products with yearly subscriptions.',
+				'You understand that gift {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase for non-domain products with yearly subscriptions.',
 				{ components: { refundsSupportPage } }
 			);
 			break;
