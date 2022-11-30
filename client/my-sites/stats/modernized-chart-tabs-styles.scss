@@ -4,13 +4,13 @@
 $barChartBorderRadius: 2px;
 $yearBarChartBorderRadius: 4px;
 
-.stats > .stats--new-main-chart {
+.stats > .stats-content {
 	padding-top: $vertical-margin;
 }
 
 // For feature `stats/new-main-chart`
-.stats--new-main-chart {
-	.is-chart-tabs {
+.stats-content {
+	.main-chart-tabs {
 		margin-bottom: $vertical-margin;
 
 		&.is-loading {

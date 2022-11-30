@@ -53,7 +53,7 @@ class StoreStats extends Component {
 
 		// New feature gate
 		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
-		const statsWrapperClass = classNames( {
+		const statsWrapperClass = classNames( 'stats-content', {
 			'stats--new-main-chart': isNewMainChart,
 			'is-period-year': unit === 'year',
 		} );

@@ -213,6 +213,7 @@ class StatsSite extends Component {
 		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
 		const wrapperClass = classNames( {
 			'stats--new-main-chart': isNewMainChart,
+		const wrapperClass = classNames( 'stats-content', {
 			'is-period-year': period === 'year',
 		} );
 
