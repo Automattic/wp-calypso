@@ -50,7 +50,7 @@ const StatsInsights = ( props ) => {
 			<div className="stats">
 				<FormattedHeader
 					brandFont
-					className="stats__section-header"
+					className="stats__section-header modernized-header"
 					headerText={ translate( 'Jetpack Stats' ) }
 					subHeaderText={ translate( "View your site's performance and learn from trends." ) }
 					align="left"

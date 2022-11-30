@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .formatted-header {
 	margin: 16px 0 24px;
 	text-align: center;
@@ -41,6 +43,57 @@
 	&.is-right-align {
 		text-align: end;
 	}
+
+	// Compact header on small screens
+	&.is-compact-on-mobile {
+		@include breakpoint-deprecated( "<660px" ) {
+			text-align: start;
+
+			.formatted-header__title {
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+				font-size: 17px;
+				font-weight: 600;
+				padding: 0 24px;
+			}
+
+			.formatted-header__subtitle {
+				padding: 0 24px 12px;
+			}
+		}
+	}
+
+	// Modernize styles for Stats pages
+	&.modernized-header {
+		&.is-left-align,
+		&.is-right-align {
+			margin: 0;
+			padding-bottom: 16px;
+
+			@media ( max-width: $break-medium ) {
+				margin: 0 16px;
+			}
+
+			.formatted-header__title {
+				margin-bottom: 4px;
+				font-weight: 500;
+				font-size: $font-title-small;
+				line-height: 26px;
+				color: var(--color-neutral-100);
+			}
+
+			.formatted-header__subtitle {
+				margin: 0;
+				font-weight: 400;
+				font-size: $font-body-small;
+				line-height: 20px;
+				color: var(--color-neutral-60);
+			}
+
+			.inline-support-link {
+				color: var(--color-primary);
+			}
+		}
+	}
 }
 
 .formatted-header__title {
@@ -81,23 +134,5 @@
 		text-decoration: underline;
 		cursor: pointer;
 		color: var(--studio-gray-80);
-	}
-}
-
-// Compact header on small screens
-.formatted-header.is-compact-on-mobile {
-	@include breakpoint-deprecated( "<660px" ) {
-		text-align: start;
-
-		.formatted-header__title {
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			font-size: 17px;
-			font-weight: 600;
-			padding: 0 24px;
-		}
-
-		.formatted-header__subtitle {
-			padding: 0 24px 12px;
-		}
 	}
 }
