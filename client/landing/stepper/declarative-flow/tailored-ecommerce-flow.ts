@@ -34,6 +34,7 @@ export const ecommerceFlow: Flow = {
 		return [
 			'intro',
 			'storeProfiler',
+			'storeAddress',
 			'domains',
 			'designCarousel',
 			'siteCreationStep',
@@ -131,6 +132,9 @@ export const ecommerceFlow: Flow = {
 					return window.location.assign( logInUrl );
 
 				case 'storeProfiler':
+					return navigate( 'storeAddress' );
+
+				case 'storeAddress':
 					return navigate( 'designCarousel' );
 
 				case 'designCarousel':
@@ -161,6 +165,8 @@ export const ecommerceFlow: Flow = {
 		const goBack = () => {
 			switch ( _currentStepName ) {
 				case 'designCarousel':
+					return navigate( 'storeAddress' );
+				case 'storeAddress':
 					return navigate( 'storeProfiler' );
 				default:
 					return navigate( 'intro' );
@@ -172,6 +178,8 @@ export const ecommerceFlow: Flow = {
 				case 'intro':
 					return navigate( 'storeProfiler' );
 				case 'storeProfiler':
+					return navigate( 'storeAddress' );
+				case 'storeAddress':
 					return navigate( 'designCarousel' );
 				case 'designCarousel':
 					return navigate( 'designCarousel' );
