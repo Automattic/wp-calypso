@@ -79,7 +79,7 @@ export const SitesDashboardOptInBanner = ( { sites }: SitesDashboardOptInBannerP
 		} );
 		dispatch( recordTracksEvent( 'calypso_sites_dashboard_landing_page_banner_accept_click' ) );
 		dispatch(
-			successNotice( __( 'Default page updated' ), {
+			successNotice( __( 'Default page updated.' ), {
 				id: 'sites-dashboard-opt-in-accept',
 				duration: 10000,
 			} )
