@@ -63,13 +63,12 @@ export const ecommerceFlow: Flow = {
 		const flags = new URLSearchParams( window.location.search ).get( 'flags' );
 
 		const getStartUrl = () => {
-			return locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=/setup/ecommerce/storeProfiler${
-						flags ? `?flags=${ flags }` : ''
-				  }`
-				: `/start/account/user?variationName=${ flowName }&redirect_to=/setup/ecommerce/storeProfiler${
-						flags ? `?flags=${ flags }` : ''
-				  }`;
+			const url =
+				locale && locale !== 'en'
+					? `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=/setup/ecommerce/storeProfiler`
+					: `/start/account/user?variationName=${ flowName }&redirect_to=/setup/ecommerce/storeProfiler`;
+
+			return url + ( flags && `?flags=${ flags }` );
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
