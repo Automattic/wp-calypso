@@ -3,10 +3,12 @@ import {
 	FEATURE_UPLOAD_THEMES,
 	PLAN_BUSINESS,
 	PLAN_PREMIUM,
+	FEATURE_PREMIUM_THEMES,
 	WPCOM_FEATURES_PREMIUM_THEMES,
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import page from 'page';
@@ -765,7 +767,11 @@ class ThemeSheet extends Component {
 			section ? ' > ' + titlecase( section ) : ''
 		}${ siteId ? ' > Site' : '' }`;
 
-		const plansUrl = siteSlug ? `/plans/${ siteSlug }/?plan=value_bundle` : '/plans';
+		const plansUrl = siteSlug ? `/plans/${ siteSlug }/` : '/plans';
+		const plansUrlWithArgs = addQueryArgs( plansUrl, {
+			feature: FEATURE_PREMIUM_THEMES,
+			plan: PLAN_PREMIUM,
+		} );
 
 		const { canonicalUrl, description, name: themeName } = this.props;
 		const title =
@@ -827,9 +833,9 @@ class ThemeSheet extends Component {
 					title={ this.getBannerUpsellTitle() }
 					description={ preventWidows( this.getBannerUpsellDescription() ) }
 					event="themes_plan_particular_free_with_plan"
-					feature={ WPCOM_FEATURES_PREMIUM_THEMES }
+					feature={ FEATURE_PREMIUM_THEMES }
 					forceHref={ true }
-					href={ plansUrl }
+					href={ plansUrlWithArgs }
 					showIcon={ true }
 					forceDisplay={ forceDisplay }
 				/>
@@ -850,7 +856,14 @@ class ThemeSheet extends Component {
 					forceHref
 					feature={ FEATURE_UPLOAD_THEMES }
 					forceDisplay
-					href={ ! siteId ? '/plans' : null }
+					href={
+						! siteId
+							? addQueryArgs( '/plans', {
+									feature: FEATURE_PREMIUM_THEMES,
+									plan: PLAN_BUSINESS,
+							  } )
+							: null
+					}
 					showIcon
 					event="theme_upsell_plan_click"
 					tracksClickName="calypso_theme_upsell_plan_click"
