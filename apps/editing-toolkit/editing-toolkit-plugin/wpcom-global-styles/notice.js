@@ -5,6 +5,8 @@ import { useSelect } from '@wordpress/data';
 import { createInterpolateElement, render, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
+import './notice.scss';
+
 function GlobalStylesNoticeComponent() {
 	const { globalStylesConfig, siteChanges } = useSelect( ( select ) => {
 		const {
