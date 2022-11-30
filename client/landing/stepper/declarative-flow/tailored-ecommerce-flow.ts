@@ -93,7 +93,7 @@ export const ecommerceFlow: Flow = {
 				case 'processing':
 					// Coming from setThemeStep
 					if ( providedDependencies?.selectedDesign ) {
-						return window.location.assign( `${ site?.URL }/wp-admin/admin.php?page=wc-admin` );
+						return navigate( 'storeAddress' );
 					}
 
 					if ( providedDependencies?.finishedWaitingForAtomic ) {
@@ -132,10 +132,10 @@ export const ecommerceFlow: Flow = {
 					return window.location.assign( logInUrl );
 
 				case 'storeProfiler':
-					return navigate( 'storeAddress' );
+					return navigate( 'designCarousel' );
 
 				case 'storeAddress':
-					return navigate( 'designCarousel' );
+					return window.location.assign( `${ site?.URL }/wp-admin/admin.php?page=wc-admin` );
 
 				case 'designCarousel':
 					return navigate( 'domains' );
