@@ -17,6 +17,7 @@ export type MasterbarCartButtonProps = {
 	goToCheckout: ( siteSlug: string ) => void;
 	onRemoveProduct?: ( uuid: string ) => void;
 	onRemoveCoupon?: () => void;
+	forceShow?: boolean;
 };
 
 export function MasterbarCartButton( {
@@ -25,6 +26,7 @@ export function MasterbarCartButton( {
 	goToCheckout,
 	onRemoveProduct,
 	onRemoveCoupon,
+	forceShow = false,
 }: MasterbarCartButtonProps ) {
 	const { responseCart, reloadFromServer } = useShoppingCart(
 		selectedSiteId ? selectedSiteId : undefined
@@ -33,7 +35,8 @@ export function MasterbarCartButton( {
 	const [ isActive, setIsActive ] = useState( false );
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
-	const shouldShowCart = selectedSiteSlug && selectedSiteId && responseCart.products.length > 0;
+	const shouldShowCart =
+		selectedSiteSlug && selectedSiteId && ( responseCart.products.length > 0 || forceShow );
 
 	useEffect( () => {
 		if ( shouldShowCart ) {

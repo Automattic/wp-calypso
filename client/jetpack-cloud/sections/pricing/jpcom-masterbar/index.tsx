@@ -9,10 +9,13 @@ import ExternalLink from 'calypso/components/external-link';
 import Gravatar from 'calypso/components/gravatar';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import JetpackSaleBanner from 'calypso/jetpack-cloud/sections/pricing/sale-banner';
+import MasterbarCartWrapper from 'calypso/layout/masterbar/masterbar-cart/masterbar-cart-wrapper';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { trailingslashit } from 'calypso/lib/route';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
+import { getSiteSlug, isJetpackCloudCartEnabled } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useMobileBtn from './use-mobile-btn';
 import useSubmenuBtn from './use-submenu-btn';
 import useUserMenu from './use-user-menu';
@@ -25,6 +28,10 @@ const JETPACK_COM_BASE_URL = 'https://jetpack.com';
 
 type Props = {
 	pathname?: string;
+};
+
+const goToCheckout = ( siteId: string ) => {
+	page( `/checkout/${ siteId }` );
 };
 
 /**
@@ -127,6 +134,11 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		],
 		[ translate ]
 	);
+
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+
+	const shouldShowCart = useSelector( isJetpackCloudCartEnabled );
 
 	const onLinkClick = useCallback( ( e ) => {
 		recordTracksEvent( 'calypso_jetpack_nav_item_click', {
@@ -246,7 +258,14 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 									);
 								} ) }
 							</ul>
-
+							{ shouldShowCart && (
+								<MasterbarCartWrapper
+									goToCheckout={ goToCheckout }
+									selectedSiteSlug={ siteSlug || undefined }
+									selectedSiteId={ siteId || undefined }
+									forceShow
+								/>
+							) }
 							<ul className="header__actions-list">
 								<li
 									className={ classNames( 'header__user-menu user-menu ', {
