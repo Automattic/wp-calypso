@@ -956,6 +956,15 @@ class Account extends Component {
 
 						{ this.props.canDisplayCommunityTranslator && this.communityTranslator() }
 
+						{ config.isEnabled( 'sites-as-landing-page' ) && (
+							<FormFieldset className="account__settings-admin-home">
+								<FormLabel id="account__default_landing_page">
+									{ translate( 'Admin home' ) }
+								</FormLabel>
+								<ToggleSitesAsLandingPage />
+							</FormFieldset>
+						) }
+
 						{ config.isEnabled( 'me/account/color-scheme-picker' ) &&
 							supportsCssCustomProperties() && (
 								<FormFieldset>
@@ -969,15 +978,6 @@ class Account extends Component {
 									/>
 								</FormFieldset>
 							) }
-
-						{ config.isEnabled( 'sites-as-landing-page' ) && (
-							<FormFieldset>
-								<FormLabel id="account__default_landing_page">
-									{ translate( 'Admin home' ) }
-								</FormLabel>
-								<ToggleSitesAsLandingPage />
-							</FormFieldset>
-						) }
 					</form>
 				</Card>
 
