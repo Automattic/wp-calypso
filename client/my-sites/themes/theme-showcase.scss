@@ -199,6 +199,10 @@ body.is-section-themes-i4 {
 				font-size: 0.875rem;
 				line-height: 20px;
 				padding: 0 16px;
+
+				.accessible-focus &:focus {
+					box-shadow: inset 0 0 0 2px var(--color-primary-light);
+				}
 			}
 		}
 	}
