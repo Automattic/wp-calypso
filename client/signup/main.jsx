@@ -18,7 +18,6 @@ import {
 	kebabCase,
 	map,
 	omit,
-	pick,
 	startsWith,
 } from 'lodash';
 import page from 'page';
@@ -162,14 +161,7 @@ class Signup extends Component {
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
-		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
-		const queryObject = this.props.initialContext?.query ?? {};
-
-		let providedDependencies;
-
-		if ( flow.providesDependenciesInQuery ) {
-			providedDependencies = pick( queryObject, flow.providesDependenciesInQuery );
-		}
+		let providedDependencies = this.getCurrentFlowSupportedQueryParams();
 
 		// Prevent duplicate sites, check pau2Xa-1Io-p2#comment-6759.
 		if ( this.props.isManageSiteFlow ) {
@@ -208,13 +200,7 @@ class Signup extends Component {
 			this.setState( { resumingStep: destinationStep } );
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
 			return page.redirect(
-				getStepUrl(
-					this.props.flowName,
-					destinationStep,
-					undefined,
-					locale,
-					this.getCurrentFlowSupportedQueryParams()
-				)
+				getStepUrl( this.props.flowName, destinationStep, undefined, locale, providedDependencies )
 			);
 		}
 	}
@@ -587,13 +573,22 @@ class Signup extends Component {
 	getCurrentFlowSupportedQueryParams = () => {
 		const queryObject = this.props.initialContext?.query ?? {};
 		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
-		const { siteId, siteSlug } = queryObject;
+		const supportedParams = [
+			'siteId',
+			'siteSlug',
+			'flags', // for the feature flags
+			...flow.providesDependenciesInQuery,
+		];
 
-		return {
-			siteId,
-			siteSlug,
-			...pick( queryObject, flow.providesDependenciesInQuery ),
-		};
+		const result = {};
+		for ( const param of supportedParams ) {
+			const value = queryObject[ param ];
+			if ( value != null ) {
+				result[ param ] = value;
+			}
+		}
+
+		return result;
 	};
 
 	// `flowName` is an optional parameter used to redirect to another flow, i.e., from `main`
