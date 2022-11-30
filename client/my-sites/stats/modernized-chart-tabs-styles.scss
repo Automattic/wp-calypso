@@ -178,6 +178,11 @@ $custom-stats-tab-mobile-break: $break-small;
 			@media ( max-width: $custom-stats-tab-mobile-break ) {
 				width: 100%;
 				float: none;
+				border-bottom: 1px solid var(--color-neutral-5);
+
+				&:first-child {
+					border-top: 1px solid var(--color-neutral-5);
+				}
 
 				&:not(:first-child) {
 					margin: 0;
