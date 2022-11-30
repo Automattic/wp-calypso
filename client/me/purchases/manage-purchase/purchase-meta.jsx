@@ -8,7 +8,6 @@ import {
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { getIntroductoryOfferIntervalDisplay } from '@automattic/wpcom-checkout';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
@@ -34,8 +33,6 @@ import {
 	isSubscription,
 	isCloseToExpiration,
 	isRenewable,
-	isWithinIntroductoryOfferPeriod,
-	isIntroductoryOfferFreeTrial,
 } from 'calypso/lib/purchases';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -46,6 +43,7 @@ import { managePurchase } from '../paths';
 import { canEditPaymentDetails, isJetpackTemporarySitePurchase } from '../utils';
 import AutoRenewToggle from './auto-renew-toggle';
 import PaymentInfoBlock from './payment-info-block';
+import PurchaseMetaIntroductoryOfferDetail from './purchase-meta-introductory-offer-detail';
 import PurchaseMetaPrice from './purchase-meta-price';
 
 export default function PurchaseMeta( {
@@ -215,57 +213,6 @@ function PurchaseMetaOwner( { owner } ) {
 				<UserItem user={ { ...owner, name: owner.display_name } } />
 			</span>
 		</li>
-	);
-}
-
-function PurchaseMetaIntroductoryOfferDetail( { purchase } ) {
-	const translate = useTranslate();
-
-	if ( ! isWithinIntroductoryOfferPeriod( purchase ) ) {
-		return null;
-	}
-
-	const text = getIntroductoryOfferIntervalDisplay(
-		translate,
-		purchase.introductoryOffer.intervalUnit,
-		purchase.introductoryOffer.intervalCount,
-		isIntroductoryOfferFreeTrial( purchase ),
-		'manage-purchases',
-		purchase.introductoryOffer.remainingRenewalsUsingOffer
-	);
-
-	let regularPriceText = null;
-	if ( purchase.introductoryOffer.isNextRenewalUsingOffer ) {
-		regularPriceText = translate(
-			'After the offer ends, the subscription price will be %(regularPrice)s',
-			{
-				args: {
-					regularPrice: purchase.regularPriceText,
-				},
-			}
-		);
-	} else if ( purchase.introductoryOffer.isNextRenewalProrated ) {
-		regularPriceText = translate(
-			'After the first renewal, the subscription price will be %(regularPrice)s',
-			{
-				args: {
-					regularPrice: purchase.regularPriceText,
-				},
-			}
-		);
-	}
-
-	return (
-		<>
-			<br />
-			<small> { text } </small>
-			{ regularPriceText && (
-				<>
-					{ ' ' }
-					<br /> <small> { regularPriceText } </small>{ ' ' }
-				</>
-			) }
-		</>
 	);
 }
 
