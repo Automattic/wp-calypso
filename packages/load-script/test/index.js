@@ -46,8 +46,9 @@ describe( 'loadScript', () => {
 		} );
 	} );
 
-	describe( 'loadjQueryDependentScript( scriptURL, callback )', () => {
+	describe( 'loadjQueryDependentScript( scriptURL, callback, args )', () => {
 		const url = '/';
+		const args = { id: 'scriptId' };
 
 		beforeAll( function () {
 			removeAllScriptCallbacks();
@@ -63,10 +64,10 @@ describe( 'loadScript', () => {
 			window.jQuery = {};
 
 			const callback = jest.fn();
-			loadjQueryDependentScript( url, callback );
+			loadjQueryDependentScript( url, callback, args );
 
 			expect( createScriptElement ).toHaveBeenCalledTimes( 1 );
-			expect( createScriptElement ).toHaveBeenLastCalledWith( url, undefined );
+			expect( createScriptElement ).toHaveBeenLastCalledWith( url, args );
 
 			executeCallbacks( url );
 			expect( callback ).toHaveBeenCalledTimes( 1 );
