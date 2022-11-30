@@ -32,10 +32,6 @@
 	&.is-selected + .segmented-control__item .segmented-control__link {
 		border-left-color: var(--color-neutral-70);
 	}
-
-	.segmented-control__link:focus {
-		box-shadow: 0 0 0 2px var(--color-primary-light);
-	}
 }
 
 .segmented-control__link {
@@ -49,10 +45,15 @@
 	text-align: center;
 	transition: color 0.1s linear, background-color 0.1s linear;
 
-	&:focus {
+	.segmented-control__item:not(.is-selected) &:focus {
 		color: var(--color-neutral-70);
 		outline: none;
 		background-color: var(--color-neutral-0);
+	}
+
+	.accessible-focus &:focus {
+		box-shadow: 0 0 0 2px var(--color-primary-light);
+		outline: none;
 	}
 }
 
