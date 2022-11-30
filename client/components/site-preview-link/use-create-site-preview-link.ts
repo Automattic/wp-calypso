@@ -1,13 +1,20 @@
 import { useMutation, useQueryClient } from 'react-query';
 import wpcom from 'calypso/lib/wp';
 import { SiteId } from 'calypso/types';
-import { PreviewLinksResponse, SITE_PREVIEW_LINKS_QUERY_KEY } from './use-site-preview-links';
+import {
+	PreviewLink,
+	PreviewLinksResponse,
+	SITE_PREVIEW_LINKS_QUERY_KEY,
+} from './use-site-preview-links';
 
-export const useCreateSitePreviewLink = (
-	siteId: SiteId,
-	onSuccess?: () => void,
-	onError?: () => void
-) => {
+interface UseCreateSitePreviewLinkOptions {
+	siteId: SiteId;
+	onSuccess?: () => void;
+	onError?: () => void;
+}
+
+export const useCreateSitePreviewLink = ( options: UseCreateSitePreviewLinkOptions ) => {
+	const { siteId, onSuccess, onError } = options;
 	const queryKey = [ SITE_PREVIEW_LINKS_QUERY_KEY, siteId ];
 	const queryClient = useQueryClient();
 	const createLinkMutation = useMutation(
@@ -37,8 +44,10 @@ export const useCreateSitePreviewLink = (
 				] );
 				return cachedData;
 			},
-			onSettled: ( data ) => {
-				queryClient.setQueryData( queryKey, () => [ data ] );
+			onSettled: ( data: PreviewLink | undefined ) => {
+				if ( data?.code ) {
+					queryClient.setQueryData( queryKey, () => [ data ] );
+				}
 				queryClient.invalidateQueries( queryKey );
 			},
 		}

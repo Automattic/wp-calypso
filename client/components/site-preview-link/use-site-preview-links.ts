@@ -11,9 +11,15 @@ export interface PreviewLink {
 
 export type PreviewLinksResponse = PreviewLink[];
 
+interface UseSitePreviewLinksOptions {
+	siteId: SiteId;
+	onSuccess?: ( previewLinks: PreviewLink[] | undefined ) => void;
+}
+
 export const SITE_PREVIEW_LINKS_QUERY_KEY = 'site-preview-links';
 
-export function useSitePreviewLinks( siteId: SiteId ) {
+export function useSitePreviewLinks( options: UseSitePreviewLinksOptions ) {
+	const { siteId, onSuccess } = options;
 	return useQuery< PreviewLinksResponse, unknown, PreviewLink[] >(
 		[ SITE_PREVIEW_LINKS_QUERY_KEY, siteId ],
 		() =>
@@ -24,6 +30,7 @@ export function useSitePreviewLinks( siteId: SiteId ) {
 		{
 			enabled: !! siteId,
 			meta: { persist: false },
+			onSuccess,
 		}
 	);
 }

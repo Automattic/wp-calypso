@@ -30,41 +30,52 @@ const NOTICE_OPTIONS = {
 	duration: 5000,
 };
 
+function useDispatchNotice() {
+	const dispatch = useDispatch();
+
+	return {
+		showSuccessNotice: ( message: string ) => dispatch( successNotice( message, NOTICE_OPTIONS ) ),
+		showErrorNotice: ( message: string ) => dispatch( errorNotice( message, NOTICE_OPTIONS ) ),
+	};
+}
+
 export default function SitePreviewLink( {
 	siteId,
 	siteUrl,
 	disabled = false,
 }: SitePreviewLinkProps ) {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
-	const { data: previewLinks, isLoading: isFirstLoading } = useSitePreviewLinks( siteId );
-	const { createLink, isLoading: isCreating } = useCreateSitePreviewLink(
-		siteId,
-		() => {
-			dispatch(
-				successNotice( translate( 'Preview link created successfully!' ), NOTICE_OPTIONS )
-			);
-			// TODO: add tracks event
-		},
-		() => {
-			dispatch( errorNotice( translate( 'Error creating the preview link.' ), NOTICE_OPTIONS ) );
-			// TODO: add tracks event
-		}
-	);
-	const { deleteLink, isLoading: isDeleting } = useDeleteSitePreviewLink(
-		siteId,
-		() => {
-			dispatch(
-				successNotice( translate( 'Preview link removed successfully!' ), NOTICE_OPTIONS )
-			);
-			// TODO: add tracks event
-		},
-		() => {
-			dispatch( errorNotice( translate( 'Error removing the preview link.' ), NOTICE_OPTIONS ) );
-			// TODO: add tracks event
-		}
-	);
+	const { showSuccessNotice, showErrorNotice } = useDispatchNotice();
 	const [ checked, setChecked ] = useState( false );
+	const { data: previewLinks, isLoading: isFirstLoading } = useSitePreviewLinks( {
+		siteId,
+		onSuccess: ( linksResponse ) => {
+			const validLinksLength = linksResponse?.filter( ( link ) => ! link.isRemoving ).length || 0;
+			setChecked( validLinksLength > 0 );
+		},
+	} );
+	const { createLink, isLoading: isCreating } = useCreateSitePreviewLink( {
+		siteId,
+		onSuccess: () => {
+			showSuccessNotice( translate( 'Preview link created successfully!' ) );
+			// TODO: add tracks event
+		},
+		onError: () => {
+			showErrorNotice( translate( 'Error creating the preview link.' ) );
+			// TODO: add tracks event
+		},
+	} );
+	const { deleteLink, isLoading: isDeleting } = useDeleteSitePreviewLink( {
+		siteId,
+		onSuccess: () => {
+			showSuccessNotice( translate( 'Preview link removed successfully!' ) );
+			// TODO: add tracks event
+		},
+		onError: () => {
+			showErrorNotice( translate( 'Error removing the preview link.' ) );
+			// TODO: add tracks event
+		},
+	} );
 
 	function onChange( checkedValue: boolean ) {
 		setChecked( checkedValue );

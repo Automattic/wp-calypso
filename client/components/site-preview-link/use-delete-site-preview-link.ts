@@ -1,13 +1,20 @@
 import { useMutation, useQueryClient } from 'react-query';
 import wpcom from 'calypso/lib/wp';
 import { SiteId } from 'calypso/types';
-import { PreviewLinksResponse, SITE_PREVIEW_LINKS_QUERY_KEY } from './use-site-preview-links';
+import {
+	PreviewLink,
+	PreviewLinksResponse,
+	SITE_PREVIEW_LINKS_QUERY_KEY,
+} from './use-site-preview-links';
 
-export const useDeleteSitePreviewLink = (
-	siteId: SiteId,
-	onSuccess?: () => void,
-	onError?: () => void
-) => {
+interface UseDeleteSitePreviewLinkOptions {
+	siteId: SiteId;
+	onSuccess?: () => void;
+	onError?: () => void;
+}
+
+export const useDeleteSitePreviewLink = ( options: UseDeleteSitePreviewLinkOptions ) => {
+	const { siteId, onSuccess, onError } = options;
 	const queryKey = [ SITE_PREVIEW_LINKS_QUERY_KEY, siteId ];
 	const queryClient = useQueryClient();
 	const deleteLinkMutation = useMutation(
@@ -36,14 +43,19 @@ export const useDeleteSitePreviewLink = (
 				return cachedData;
 			},
 			onError: ( err, code, context ) => {
-				queryClient.setQueryData( queryKey, context );
+				queryClient.setQueryData(
+					queryKey,
+					context?.map( ( link ) => ( { ...link, isRemoving: false } ) )
+				);
 				onError?.();
 			},
-			onSettled: () => {
-				const cachedData = queryClient.getQueryData< PreviewLinksResponse >( queryKey );
-				queryClient.setQueryData( queryKey, () =>
-					cachedData?.filter( ( previewLink ) => ! previewLink.isRemoving )
-				);
+			onSettled: ( data: PreviewLink | undefined ) => {
+				if ( data?.code ) {
+					const cachedData = queryClient.getQueryData< PreviewLinksResponse >( queryKey );
+					queryClient.setQueryData( queryKey, () =>
+						cachedData?.filter( ( previewLink ) => ! previewLink.isRemoving )
+					);
+				}
 				queryClient.invalidateQueries( queryKey );
 			},
 		}
