@@ -11,7 +11,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ONBOARD_STORE } from '../../../../stores';
 import { Title, Label, Input, Button } from './components';
 import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
-
 import './style.scss';
 
 type ThemeStyle = {
@@ -89,8 +88,10 @@ const SenseiSetupStep: Step = ( { navigation } ) => {
 						value={ siteTitle }
 					/>
 					<div className="sensei-theme-prompt">
-						<h4>Pick a style</h4>
-						<p>Choose a different theme style now, or customize colors and fonts later.</p>
+						<h4>{ __( 'Pick a style' ) }</h4>
+						<p>
+							{ __( 'Choose a different theme style now, or customize colors and fonts later.' ) }
+						</p>
 					</div>
 					<div className="sensei-theme-style-selector">
 						{ styles.map( ( item, i ) => (
