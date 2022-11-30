@@ -72,7 +72,7 @@
 	height: 100%;
 	width: 60%;
 	overflow-y: auto;
-	background-color: #f6f7f7;
+	background-color: var(--studio-white);
 	border-radius: 8px 0 0 8px; /* stylelint-disable-line scales/radii */
 
 	hr {
@@ -119,11 +119,14 @@
 }
 
 .product-lightbox__detail-tags {
+	background-color: #f6f7f7;
 	margin-bottom: 16px;
+	padding: 5.5px 8px;
+	border-radius: 4px;
 
 	&-label {
 		font-weight: 600;
-		font-size: $font-body-small;
+		font-size: $font-body-extra-small;
 		margin-right: 6px;
 		color: #000;
 	}
@@ -143,7 +146,7 @@
 
 		p {
 			color: #3c434a;
-			font-size: $font-body-small;
+			font-size: $font-body-extra-small;
 			margin: 0;
 			position: relative;
 			top: 2px;
