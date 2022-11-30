@@ -1,7 +1,7 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import config from './config';
-import { EditBusiness, EditEcommerce, EditPremium } from './edit';
+import { EditBusiness, EditEcommerce, EditPersonal, EditPremium } from './edit';
 
 const blockAttributes = {
 	productSlug: {
@@ -13,6 +13,21 @@ const blockAttributes = {
 };
 
 function registerBlocks() {
+	registerBlockType( 'happy-blocks/pricing-plans-personal', {
+		apiVersion: 2,
+		title: __( 'Upgrade Personal', 'happy-blocks' ),
+		icon: 'money-alt',
+		category: 'embed',
+		description: __( 'Personal pricing plan upgrade', 'happy-blocks' ),
+		keywords: [
+			__( 'pricing', 'happy-blocks' ),
+			__( 'plans', 'happy-blocks' ),
+			__( 'upgrade', 'happy-blocks' ),
+		],
+		attributes: blockAttributes,
+		edit: EditPersonal,
+	} );
+
 	registerBlockType( 'happy-blocks/pricing-plans-premium', {
 		apiVersion: 2,
 		title: __( 'Upgrade Premium', 'happy-blocks' ),
