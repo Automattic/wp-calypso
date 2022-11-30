@@ -81,7 +81,7 @@ export class PluginsPage {
 			waitUntil: 'networkidle',
 			// Manual override of the timeout - `networkidle` can take longer
 			// to fire, especially for Simple sites.
-			timeout: 15 * 1000,
+			timeout: 20 * 1000,
 		} );
 	}
 
