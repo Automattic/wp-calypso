@@ -4,13 +4,18 @@ import slugToSelectorProduct from '../slug-to-selector-product';
 
 type IncludedProductsProps = {
 	products: ReadonlyArray< string >;
+	descriptionMap: Record< string, string >;
 };
 
 type IncludedProductListItemProps = {
 	productSlug: string;
+	descriptionMap: Record< string, string >;
 };
 
-const IncludedProductListItem: React.FC< IncludedProductListItemProps > = ( { productSlug } ) => {
+const IncludedProductListItem: React.FC< IncludedProductListItemProps > = ( {
+	productSlug,
+	descriptionMap,
+} ) => {
 	const product = slugToSelectorProduct( productSlug );
 	return (
 		<div className="product-lightbox__included-product-list-item">
@@ -24,14 +29,14 @@ const IncludedProductListItem: React.FC< IncludedProductListItemProps > = ( { pr
 				</h1>
 
 				<p className="product-lightbox__included-product-list-item-description">
-					{ product?.shortDescription }
+					{ descriptionMap[ productSlug ] }
 				</p>
 			</div>
 		</div>
 	);
 };
 
-const IncludedProductList: React.FC< IncludedProductsProps > = ( { products } ) => {
+const IncludedProductList: React.FC< IncludedProductsProps > = ( { products, descriptionMap } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -41,7 +46,11 @@ const IncludedProductList: React.FC< IncludedProductsProps > = ( { products } ) 
 			</h1>
 
 			{ products.map( ( productSlug ) => (
-				<IncludedProductListItem productSlug={ productSlug } key={ productSlug } />
+				<IncludedProductListItem
+					productSlug={ productSlug }
+					descriptionMap={ descriptionMap }
+					key={ productSlug }
+				/>
 			) ) }
 		</div>
 	);

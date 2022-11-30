@@ -2,6 +2,7 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useLayoutEffect, useRef, useState } from 'react';
 import FoldableCard from 'calypso/components/foldable-card';
+import getIncludedProductDescriptionMap from '../product-store/utils/get-included-product-description-map';
 import { SelectorProduct } from '../types';
 import DescriptionList from './description-list';
 import IncludedProductList from './included-product-list';
@@ -30,7 +31,10 @@ const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
 	return (
 		<>
 			{ product.productsIncluded ? (
-				<IncludedProductList products={ product.productsIncluded } />
+				<IncludedProductList
+					products={ product.productsIncluded }
+					descriptionMap={ getIncludedProductDescriptionMap( product.productSlug ) }
+				/>
 			) : (
 				productDetails.map( ( { type, title, items }, index, infoList ) => (
 					<div className="product-lightbox__detail-list" key={ type }>

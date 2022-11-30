@@ -499,8 +499,8 @@
 }
 
 .product-lightbox__included-product-list-item-icon {
-	width: 38.8px;
-	height: 38.8px;
+	min-width: 38.8px;
+	max-height: 38.8px;
 	background-color: #2c3338;
 	border-radius: 4px;
 	display: flex;
