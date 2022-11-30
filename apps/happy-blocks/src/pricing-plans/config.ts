@@ -5,6 +5,8 @@ import {
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ECOMMERCE,
+	PLAN_PERSONAL,
+	PLAN_PERSONAL_MONTHLY,
 } from '@automattic/calypso-products';
 
 /**
@@ -12,6 +14,8 @@ import {
  */
 const config = {
 	plans: [
+		PLAN_PERSONAL,
+		PLAN_PERSONAL_MONTHLY,
 		PLAN_PREMIUM_MONTHLY,
 		PLAN_PREMIUM,
 		PLAN_BUSINESS_MONTHLY,

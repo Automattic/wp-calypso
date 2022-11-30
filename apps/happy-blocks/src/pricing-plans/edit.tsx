@@ -1,5 +1,10 @@
 import './edit.scss';
-import { PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_PREMIUM } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+} from '@automattic/calypso-products';
 import { useBlockProps } from '@wordpress/block-editor';
 import { BlockEditProps } from '@wordpress/blocks';
 import { useEffect } from '@wordpress/element';
@@ -65,6 +70,10 @@ const Edit: FunctionComponent< BlockEditProps< BlockAttributes > & EditProps > =
 			<PricingPlans plans={ plans } attributes={ attributes } setAttributes={ setAttributes } />
 		</div>
 	);
+};
+
+export const EditPersonal = ( props: BlockEditProps< BlockAttributes > ) => {
+	return <Edit { ...props } defaultPlan={ PLAN_PERSONAL } />;
 };
 
 export const EditPremium = ( props: BlockEditProps< BlockAttributes > ) => {

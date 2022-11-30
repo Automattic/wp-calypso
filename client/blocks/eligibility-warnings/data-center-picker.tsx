@@ -3,11 +3,11 @@ import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { localize, LocalizeProps, translate } from 'i18n-calypso';
 import { useState } from 'react';
-import amsImg from 'calypso/assets/images/datacenter-picker/ams-240x180.png';
-import burImg from 'calypso/assets/images/datacenter-picker/bur-240x180.png';
-import dcaImg from 'calypso/assets/images/datacenter-picker/dca-240x180.png';
-import dfwImg from 'calypso/assets/images/datacenter-picker/dfw-240x180.png';
-import worldImg from 'calypso/assets/images/datacenter-picker/world-1082x180.png';
+import amsImg from 'calypso/assets/images/data-center-picker/ams-240x180.png';
+import burImg from 'calypso/assets/images/data-center-picker/bur-240x180.png';
+import dcaImg from 'calypso/assets/images/data-center-picker/dca-240x180.png';
+import dfwImg from 'calypso/assets/images/data-center-picker/dfw-240x180.png';
+import worldImg from 'calypso/assets/images/data-center-picker/world-1082x180.png';
 import ExternalLink from 'calypso/components/external-link';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 
@@ -20,7 +20,7 @@ interface ExternalProps {
 
 type Props = ExternalProps & LocalizeProps;
 
-const DatacenterOptions = [
+const DataCenterOptions = [
 	{
 		value: 'ams',
 		name: 'geo_affinity',
@@ -103,7 +103,7 @@ const FormLabelThumbnailImg = styled.img( {
 	objectFit: 'cover',
 } );
 
-const DatacenterPicker = ( {
+const DataCenterPicker = ( {
 	onChange,
 	onClickHidePicker = () => null,
 	onClickShowPicker = () => null,
@@ -123,7 +123,7 @@ const DatacenterPicker = ( {
 			{ ! isFormShowing && (
 				<div>
 					<span>
-						{ translate( 'Your site will be automatically placed in the best datacenter.' ) }
+						{ translate( 'Your site will be automatically placed in the optimal data center.' ) }
 					</span>
 					&nbsp;
 					<Button
@@ -133,7 +133,7 @@ const DatacenterPicker = ( {
 							setIsFormShowing( ! isFormShowing );
 						} }
 					>
-						{ translate( 'Choose a datacenter instead' ) }
+						{ translate( 'Choose a data center instead' ) }
 					</Button>
 				</div>
 			) }
@@ -141,14 +141,14 @@ const DatacenterPicker = ( {
 			{ isFormShowing && (
 				<Form>
 					<FormHeadingContainer>
-						<FormHeading>{ translate( 'Primary datacenter' ) }</FormHeading>
+						<FormHeading>{ translate( 'Primary data center' ) }</FormHeading>
 						<Button isTertiary={ true } onClick={ onCancel }>
 							{ translate( 'Cancel' ) }
 						</Button>
 					</FormHeadingContainer>
 					<FormDescription>
 						{ translate(
-							'Choose a primary datacenter for your site. For redundancy, your site will replicate in real-time to a second datacenter in different region. {{supportLink}}Learn more{{/supportLink}}.',
+							'Choose a primary data center for your site. For redundancy, your site will replicate in real-time to a second data center in different region. {{supportLink}}Learn more{{/supportLink}}.',
 							{
 								components: {
 									supportLink: <ExternalLink icon target="_blank" href={ localizeUrl( '#' ) } />,
@@ -172,13 +172,13 @@ const DatacenterPicker = ( {
 								checked={ value === '' }
 								onChange={ () => onChange( '' ) }
 							/>
-							<span>{ translate( 'Automatically place my site in the best datacenter' ) }</span>
+							<span>{ translate( 'Automatically place my site in the optimal data center' ) }</span>
 						</AutomaticFormLabel>
 						<FormRadiosBar
 							isThumbnail
 							checked={ value }
 							onChange={ ( event ) => onChange( event.currentTarget.value ) }
-							items={ DatacenterOptions }
+							items={ DataCenterOptions }
 							disabled={ false }
 						/>
 					</div>
@@ -188,4 +188,4 @@ const DatacenterPicker = ( {
 	);
 };
 
-export default localize( DatacenterPicker );
+export default localize( DataCenterPicker );

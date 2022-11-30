@@ -1,6 +1,7 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/colors";
 
 .use-my-domain {
 	display: flex;
@@ -45,7 +46,7 @@
 		max-width: 370px;
 
 		.form-text-input {
-			padding: 9px 14px;
+			padding: 9px 14px 9px 68px;
 			margin-bottom: 9px;
 
 			&::placeholder {
@@ -79,9 +80,17 @@
 			margin-right: 4px !important;
 
 			path {
-				fill: #000;
+				fill: var(--color-text);
 			}
 		}
+	}
+
+	& &__domain-input-fieldset::before {
+		content: "https://";
+		color: var(--color-text);
+		position: absolute;
+		left: 16px;
+		top: 10px;
 	}
 }
 
