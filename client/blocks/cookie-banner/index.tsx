@@ -2,7 +2,11 @@ import { CookieBanner, CookieBannerProps } from '@automattic/privacy-toolset';
 import cookie from 'cookie';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { refreshCountryCodeCookieGdpr, shouldSeeCookieBanner } from 'calypso/lib/analytics/utils';
+import {
+	refreshCountryCodeCookieGdpr,
+	setTrackingPrefs,
+	shouldSeeCookieBanner,
+} from 'calypso/lib/analytics/utils';
 import getTrackingPrefs from 'calypso/lib/analytics/utils/get-tracking-prefs';
 import { bumpStat } from 'calypso/state/analytics/actions';
 import { useCookieBannerContent } from './use-cookie-banner-content';
@@ -11,8 +15,8 @@ const CookieBannerInner = () => {
 	const content = useCookieBannerContent();
 	const dispatch = useDispatch();
 
-	const handleAccept = useCallback< CookieBannerProps[ 'onAccept' ] >( () => {
-		// TODO: Update tracking prefs settings
+	const handleAccept = useCallback< CookieBannerProps[ 'onAccept' ] >( ( buckets ) => {
+		setTrackingPrefs( { ok: true, buckets } );
 	}, [] );
 
 	useEffect( () => {

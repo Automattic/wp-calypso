@@ -14,3 +14,4 @@ export { default as saveCouponQueryArgument } from './save-coupon-query-argument
 export { default as refreshCountryCodeCookieGdpr } from './refresh-country-code-cookie-gdpr';
 export { default as shouldSeeCookieBanner } from './should-see-cookie-banner';
 export { default as getTrackingPrefs, parseTrackingPrefs } from './get-tracking-prefs';
+export { setTrackingPrefs } from './set-tracking-prefs';
