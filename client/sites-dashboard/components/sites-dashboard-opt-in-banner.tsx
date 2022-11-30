@@ -8,6 +8,7 @@ import Notice from 'calypso/components/notice';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 import { useAsyncPreference } from 'calypso/state/preferences/use-async-preference';
 import {
 	SITES_AS_LANDING_PAGE_DEFAULT_VALUE,
@@ -71,12 +72,18 @@ export const SitesDashboardOptInBanner = ( { sites }: SitesDashboardOptInBannerP
 		return null;
 	}
 
-	const handleAccept = () => {
-		setLandingPagePreference( {
+	const handleAccept = async () => {
+		await setLandingPagePreference( {
 			useSitesAsLandingPage: true,
 			updatedAt: new Date().valueOf(),
 		} );
 		dispatch( recordTracksEvent( 'calypso_sites_dashboard_landing_page_banner_accept_click' ) );
+		dispatch(
+			successNotice( __( 'Default page updated.' ), {
+				id: 'sites-dashboard-opt-in-accept',
+				duration: 10000,
+			} )
+		);
 	};
 
 	const handleDismiss = () => {
