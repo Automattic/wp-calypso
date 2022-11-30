@@ -22,6 +22,7 @@ export const useBloggingPrompt = ( siteId: string ): UseQueryResult< BloggingPro
 	const today = moment().format( 'YYYY-MM-DD' );
 
 	return useQuery(
+		// Blogging prompts are the same for all sites, so can be cached only by date.
 		[ 'blogging-prompts', today ],
 		() =>
 			wp.req.get( {

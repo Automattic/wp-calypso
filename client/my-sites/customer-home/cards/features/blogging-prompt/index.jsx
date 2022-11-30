@@ -1,4 +1,5 @@
 import { Card, Button, Gridicon } from '@automattic/components';
+import { addQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
@@ -38,7 +39,6 @@ const BloggingPromptCard = () => {
 			recordTracksEvent( `calypso_customer_home_answer_prompt`, {
 				site_id: siteId,
 				prompt_id: prompt?.id,
-				prompt_text: prompt?.text,
 			} )
 		);
 	};
@@ -47,7 +47,9 @@ const BloggingPromptCard = () => {
 		return null;
 	}
 
-	const newPostLink = `${ editorUrl }?answer_prompt=${ prompt.id }`;
+	const newPostLink = addQueryArgs( editorUrl, {
+		answer_prompt: prompt.id,
+	} );
 	const notificationSettingsLink = `/me/notifications#${ siteSlug }`;
 
 	return (
@@ -74,7 +76,10 @@ const BloggingPromptCard = () => {
 				</CardHeading>
 				<div className="blogging-prompt__prompt-text">{ prompt.text }</div>
 				<Button href={ newPostLink } onClick={ trackBloggingPromptClick } target="_blank">
-					{ translate( 'Post Answer' ) }
+					{ translate( 'Post Answer', {
+						comment:
+							'"Post" here is a verb meaning "to publish", as in "post an answer to this writing prompt"',
+					} ) }
 				</Button>
 			</Card>
 		</div>
