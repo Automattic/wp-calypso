@@ -37,6 +37,10 @@ class PeopleListSectionHeader extends Component {
 			return false;
 		}
 
+		if ( this.isFollowersTab() ) {
+			return '/people/email-followers/' + siteSlug;
+		}
+
 		return '/people/new/' + siteSlug;
 	}
 
@@ -79,8 +83,7 @@ class PeopleListSectionHeader extends Component {
 		const classes = classNames( this.props.className, 'people-list-section-header' );
 
 		const showInviteUserBtn =
-			( siteLink && ! this.isSubscribersTab() && ! this.isFollowersTab() ) ||
-			( siteLink && ! includeSubscriberImporter );
+			( siteLink && ! this.isSubscribersTab() ) || ( siteLink && ! includeSubscriberImporter );
 		const showAddSubscriberBtn =
 			addSubscriberLink && this.isSubscribersTab() && includeSubscriberImporter;
 
