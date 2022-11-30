@@ -68,7 +68,6 @@ import {
 	isExpired,
 	isOneTimePurchase,
 	isPartnerPurchase,
-	isRefundable,
 	isRenewable,
 	isSubscription,
 	isCloseToExpiration,
@@ -495,7 +494,7 @@ class ManagePurchase extends Component {
 		} );
 	}
 
-	showPreCancellationModalDialog = ( cancelLink ) => {
+	showCancelSurvey = ( cancelLink ) => {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: false,
 			showRemoveSubscriptionWarningDialog: false,
@@ -540,23 +539,18 @@ class ManagePurchase extends Component {
 
 	renderRemoveSubscriptionWarningDialog( site, purchase ) {
 		if ( this.state.showRemoveSubscriptionWarningDialog ) {
-			const { hasCustomPrimaryDomain, primaryDomain } = this.props;
-			const customDomain = hasCustomPrimaryDomain && primaryDomain.name;
-			const primaryDomainName = customDomain ? primaryDomain.name : '';
-			const isPlanRefundable = isRefundable( purchase );
-			const actionFunction =
-				isPlanRefundable && customDomain
-					? this.goToCancelLink
-					: this.showPreCancellationModalDialog;
+			const { primaryDomain } = this.props;
+			const hasDomain = primaryDomain !== undefined && primaryDomain.name !== undefined;
+			const primaryDomainName = primaryDomain.name ? primaryDomain.name : '';
 
 			return (
 				<PreCancellationDialog
 					isDialogVisible={ this.state.showRemoveSubscriptionWarningDialog }
 					closeDialog={ this.closeDialog }
-					removePlan={ actionFunction }
+					removePlan={ this.showCancelSurvey }
 					site={ site }
 					purchase={ purchase }
-					hasDomain={ customDomain }
+					hasDomain={ hasDomain }
 					primaryDomain={ primaryDomainName }
 					wpcomURL={ site.wpcom_url }
 				/>
