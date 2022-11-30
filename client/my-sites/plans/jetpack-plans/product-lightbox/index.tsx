@@ -15,6 +15,7 @@ import { PRODUCT_OPTIONS, PRODUCT_OPTIONS_HEADER } from './constants';
 import { Icons } from './icons/icons';
 import { Tags } from './icons/tags';
 import PaymentPlan from './payment-plan';
+import { PricingBreakdown } from './pricing-breakdown';
 import ProductDetails from './product-details';
 
 import './style.scss';
@@ -139,34 +140,37 @@ const ProductLightbox: React.FC< Props > = ( {
 
 					<ProductDetails product={ product } />
 				</div>
-				<div className="product-lightbox__variants">
-					<div className="product-lightbox__variants-content">
-						{ shouldShowOptions && (
-							<div className="product-lightbox__variants-options">
-								<MultipleChoiceQuestion
-									question={ PRODUCT_OPTIONS_HEADER[ product?.productSlug ] }
-									answers={ variantOptions }
-									selectedAnswerId={ product?.productSlug }
-									onAnswerChange={ onChangeOption }
-									shouldShuffleAnswers={ false }
-								/>
-							</div>
-						) }
-						<PaymentPlan
-							isMultiSiteIncompatible={ isMultiSiteIncompatible }
-							siteId={ siteId }
-							product={ product }
-						/>
-						<Button
-							primary
-							onClick={ onCheckoutClick }
-							className="jetpack-product-card__button product-lightbox__checkout-button"
-							href={ isMultiSiteIncompatible ? '#' : getCheckoutURL( product ) }
-							disabled={ isMultiSiteIncompatible }
-						>
-							{ translate( 'Proceed to checkout' ) }
-						</Button>
+				<div className="product-lightbox__sidebar">
+					<div className="product-lightbox__variants">
+						<div className="product-lightbox__variants-content">
+							{ shouldShowOptions && (
+								<div className="product-lightbox__variants-options">
+									<MultipleChoiceQuestion
+										question={ PRODUCT_OPTIONS_HEADER[ product?.productSlug ] }
+										answers={ variantOptions }
+										selectedAnswerId={ product?.productSlug }
+										onAnswerChange={ onChangeOption }
+										shouldShuffleAnswers={ false }
+									/>
+								</div>
+							) }
+							<PaymentPlan
+								isMultiSiteIncompatible={ isMultiSiteIncompatible }
+								siteId={ siteId }
+								product={ product }
+							/>
+							<Button
+								primary
+								onClick={ onCheckoutClick }
+								className="jetpack-product-card__button product-lightbox__checkout-button"
+								href={ isMultiSiteIncompatible ? '#' : getCheckoutURL( product ) }
+								disabled={ isMultiSiteIncompatible }
+							>
+								{ translate( 'Proceed to checkout' ) }
+							</Button>
+						</div>
 					</div>
+					<PricingBreakdown product={ product } siteId={ siteId } />
 				</div>
 			</div>
 		</Modal>
