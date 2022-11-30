@@ -1,9 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import { render, fireEvent, getByText, getByTestId } from '@testing-library/react';
+import { render, fireEvent, getByText, getByTestId, queryByText } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { CookieBanner, CookieBannerProps } from '..';
+import { CookieBanner } from '..';
+import type { CookieBannerProps } from '..';
 
 const genericContent: CookieBannerProps[ 'content' ] = {
 	simpleConsent: {
@@ -36,6 +37,9 @@ describe( 'CookieBanner', () => {
 		const { container } = render(
 			<CookieBanner content={ genericContent } onAccept={ jest.fn } />
 		);
+
+		expect( getByText( container, 'acceptAllButton' ) ).toBeInTheDocument();
+		expect( getByText( container, 'customizeButton' ) ).toBeInTheDocument();
 		expect( container ).toMatchSnapshot();
 	} );
 	test( 'renders in customized consent correctly (after customize button click)', () => {
@@ -43,6 +47,9 @@ describe( 'CookieBanner', () => {
 			<CookieBanner content={ genericContent } onAccept={ jest.fn } />
 		);
 		fireEvent.click( getByText( container, 'customizeButton' ) );
+
+		expect( getByText( container, 'acceptSelectionButton' ) ).toBeInTheDocument();
+		expect( queryByText( container, 'customizeButton' ) ).not.toBeInTheDocument();
 		expect( container ).toMatchSnapshot();
 	} );
 	test( 'fires onAccept with all buckets true (on accept all button click)', () => {

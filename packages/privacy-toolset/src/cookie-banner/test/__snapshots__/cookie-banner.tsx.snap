@@ -24,7 +24,6 @@ exports[`CookieBanner renders in customized consent correctly (after customize b
             class="components-form-toggle__input"
             data-testid="essential-bucket-toggle"
             disabled=""
-            name="essential"
             type="checkbox"
           />
           <span
@@ -55,7 +54,6 @@ exports[`CookieBanner renders in customized consent correctly (after customize b
             checked=""
             class="components-form-toggle__input"
             data-testid="analytics-bucket-toggle"
-            name="analytics"
             type="checkbox"
           />
           <span
@@ -86,7 +84,6 @@ exports[`CookieBanner renders in customized consent correctly (after customize b
             checked=""
             class="components-form-toggle__input"
             data-testid="advertising-bucket-toggle"
-            name="advertising"
             type="checkbox"
           />
           <span
