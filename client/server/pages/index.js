@@ -19,7 +19,7 @@ import { stringify } from 'qs';
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
-import { shouldSeeGdprBanner } from 'calypso/lib/analytics/utils';
+import { shouldSeeCookieBanner, parseTrackingPrefs } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
@@ -99,13 +99,23 @@ function getDefaultContext( request, response, entrypoint = 'entry-main', sectio
 	performanceMark( request.context, 'getDefaultContext' );
 
 	const geoIPCountryCode = request.headers[ 'x-geoip-country-code' ];
-	const showGdprBanner = shouldSeeGdprBanner(
-		request.cookies.country_code || geoIPCountryCode,
+	const geoIPRegionName = request.headers[ 'x-geoip-region-name' ];
+	const trackingPrefs = parseTrackingPrefs(
+		request.cookies.sensitive_pixel_options,
 		request.cookies.sensitive_pixel_option
+	);
+
+	const showGdprBanner = shouldSeeCookieBanner(
+		request.cookies.country_code || geoIPCountryCode,
+		request.cookies.region || geoIPRegionName,
+		trackingPrefs
 	);
 
 	if ( ! request.cookies.country_code && geoIPCountryCode ) {
 		response.cookie( 'country_code', geoIPCountryCode );
+	}
+	if ( ! request.cookies.region && geoIPRegionName ) {
+		response.cookie( 'region', geoIPRegionName );
 	}
 
 	const cacheKey = getCacheKey( {

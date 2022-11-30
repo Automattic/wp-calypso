@@ -12,4 +12,5 @@ export { default as shouldReportOmitBlogId } from './should-report-omit-blog-id'
 export { default as shouldReportOmitSiteMainProduct } from './should-report-omit-site-main-product';
 export { default as saveCouponQueryArgument } from './save-coupon-query-argument';
 export { default as refreshCountryCodeCookieGdpr } from './refresh-country-code-cookie-gdpr';
-export { default as shouldSeeGdprBanner } from './should-see-gdpr-banner';
+export { default as shouldSeeCookieBanner } from './should-see-cookie-banner';
+export { default as getTrackingPrefs, parseTrackingPrefs } from './get-tracking-prefs';

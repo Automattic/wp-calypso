@@ -5,7 +5,7 @@ import isRegionInCcpaZone from './is-region-in-ccpa-zone';
 const v1CookieName = 'sensitive_pixel_option';
 const v2CookieName = 'sensitive_pixel_options';
 
-type TrackingPrefs = {
+export type TrackingPrefs = {
 	ok: boolean;
 	buckets: {
 		essential: boolean;
@@ -24,6 +24,30 @@ const allBucketsTrue: TrackingPrefs[ 'buckets' ] = {
 	essential: true,
 	analytics: true,
 	advertising: true,
+};
+
+export const parseTrackingPrefs = ( cookieV2?: string, cookieV1?: string ): TrackingPrefs => {
+	const { ok, buckets }: Partial< TrackingPrefs > = cookieV2 ? JSON.parse( cookieV2 ) : {};
+
+	if ( typeof ok === 'boolean' ) {
+		return {
+			ok,
+			buckets: {
+				...allBucketsFalse,
+				...buckets,
+			},
+		};
+	} else if ( cookieV1 && [ 'yes', 'no' ].includes( cookieV1 ) ) {
+		return {
+			ok: cookieV1 === 'yes',
+			buckets: allBucketsTrue,
+		};
+	}
+
+	return {
+		ok: false,
+		buckets: allBucketsFalse,
+	};
 };
 
 /**
@@ -46,30 +70,5 @@ export default function getTrackingPrefs(): TrackingPrefs {
 		};
 	}
 
-	const oldUserConsent = cookies[ v1CookieName ];
-	const userOptionsJson = cookies[ v2CookieName ];
-
-	const { ok, buckets }: Partial< TrackingPrefs > = userOptionsJson
-		? JSON.parse( userOptionsJson )
-		: {};
-
-	if ( typeof ok === 'boolean' ) {
-		return {
-			ok,
-			buckets: {
-				...allBucketsFalse,
-				...buckets,
-			},
-		};
-	} else if ( [ 'yes', 'no' ].includes( oldUserConsent ) ) {
-		return {
-			ok: oldUserConsent === 'yes',
-			buckets: allBucketsTrue,
-		};
-	}
-
-	return {
-		ok: false,
-		buckets: allBucketsFalse,
-	};
+	return parseTrackingPrefs( cookies[ v2CookieName ], cookies[ v1CookieName ] );
 }
