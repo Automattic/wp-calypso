@@ -8,7 +8,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import type { ConfigData } from '@automattic/create-calypso-config';
 
 const isWithinChatHours = ( currentTime: Date ) => {
-	const [ NINE_AM, SEVEN_PM ] = [ 9, 19 ];
+	const [ NINE_AM, SEVEN_PM ] = [ 9, 23 ];
 	const [ SUNDAY, SATURDAY ] = [ 0, 6 ];
 
 	const utcHour = currentTime.getUTCHours();
