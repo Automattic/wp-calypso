@@ -62,6 +62,8 @@ function getNumPeriodAgo( momentSiteZone, date, period ) {
 
 function getSiteFilters( siteId ) {
 	const filters = [
+		//TODO: This Insights route could be removed since it has been set routing as below.
+		// statsPage( '/stats/insights/:site', insights );
 		{
 			title: i18n.translate( 'Insights' ),
 			path: '/stats/insights/' + siteId,
