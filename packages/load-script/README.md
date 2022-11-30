@@ -6,22 +6,30 @@ This utility function allows us to use a standardized method of loading remote s
 
 ```js
 import { loadScript, loadjQueryDependentScript } from '@automattic/load-script';
-loadScript( REMOTE_SCRIPT_URL, function ( error ) {
-	if ( error ) {
-		debug( 'Script ' + error.src + ' failed to load.' );
-		return;
-	}
-	debug( 'Script loaded!' );
-}, { id: 'my-script-tag-id' } );
+loadScript(
+	REMOTE_SCRIPT_URL,
+	function ( error ) {
+		if ( error ) {
+			debug( 'Script ' + error.src + ' failed to load.' );
+			return;
+		}
+		debug( 'Script loaded!' );
+	},
+	{ id: 'my-script-tag-id' }
+);
 
 // if we need jQuery, this function will load it (if it's not loaded already)
-loadjQueryDependentScript( REMOTE_SCRIPT_URL, function ( error ) {
-	if ( error ) {
-		debug( 'Script ' + error.src + ' failed to load.' );
-		return;
-	}
-	debug( 'Script and jQuery are loaded!' );
-}, { id: 'my-script-tag-id' } );
+loadjQueryDependentScript(
+	REMOTE_SCRIPT_URL,
+	function ( error ) {
+		if ( error ) {
+			debug( 'Script ' + error.src + ' failed to load.' );
+			return;
+		}
+		debug( 'Script and jQuery are loaded!' );
+	},
+	{ id: 'my-script-tag-id' }
+);
 ```
 
 If the second argument (`callback`) is not provided, then `loadScript()` will return a Promise.

@@ -12,6 +12,8 @@ export function createScriptElement( url, args ) {
 	script.onload = handleRequestSuccess;
 	script.onerror = handleRequestError;
 
+	// Only set the default async attribute if it's not already set in the args,
+	// otherwise in cannot be "unset".
 	if ( ! args || ( args && ! ( 'async' in args ) ) ) {
 		script.async = true;
 	}
