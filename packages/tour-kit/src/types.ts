@@ -135,6 +135,8 @@ export interface WpcomStep extends Step {
 				type: string;
 			};
 		};
+		imgHref?: string;
+		imgPlayable?: boolean;
 	};
 }
 
