@@ -20,6 +20,7 @@ import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
 import PostActionsEllipsisMenuPromote from 'calypso/my-sites/post-type-list/post-actions-ellipsis-menu/promote';
 import PostActionsEllipsisMenuQRCode from 'calypso/my-sites/post-type-list/post-actions-ellipsis-menu/qrcode';
 import { preloadEditor } from 'calypso/sections-preloaders';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEditorDuplicatePostPath } from 'calypso/state/editor/selectors';
 import { infoNotice } from 'calypso/state/notices/actions';
 import { isFrontPage, isPostsPage } from 'calypso/state/pages/selectors';
@@ -72,6 +73,7 @@ class Page extends Component {
 		// connected
 		setPreviewUrl: PropTypes.func.isRequired,
 		setLayoutFocus: PropTypes.func.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
 		recordEvent: PropTypes.func.isRequired,
 		recordMoreOptions: PropTypes.func.isRequired,
 		recordPageTitle: PropTypes.func.isRequired,
@@ -810,7 +812,10 @@ const mapDispatch = {
 	setLayoutFocus,
 	recordEvent,
 	recordMoreOptions: () => recordEvent( 'Clicked More Options Menu' ),
-	recordPageTitle: () => recordEvent( 'Clicked Page Title' ),
+	recordPageTitle: () => {
+		recordTracksEvent( 'calypso_pages_page_edit_click', { page_type: 'real' } );
+		recordEvent( 'Clicked Page Title' );
+	},
 	recordEditPage: () => recordEvent( 'Clicked Edit Page' ),
 	recordViewPage: () => recordEvent( 'Clicked View Page' ),
 	recordStatsPage: () => recordEvent( 'Clicked Stats Page' ),
