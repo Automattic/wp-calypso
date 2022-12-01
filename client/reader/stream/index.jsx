@@ -535,16 +535,6 @@ class ReaderStream extends Component {
 	}
 }
 
-/* eslint-disable no-shadow */
-// wrapping with Main so that we can use withWidth helper to pass down whole this.props.width of Main
-const wrapWithMain = ( Component ) => ( props ) =>
-	(
-		<div>
-			<Component { ...props } />
-		</div>
-	);
-/* eslint-enable no-shadow */
-
 export default connect(
 	( state, { streamKey, recsStreamKey } ) => {
 		const stream = getStream( state, streamKey );
@@ -579,4 +569,4 @@ export default connect(
 		showUpdates,
 		viewStream,
 	}
-)( localize( wrapWithMain( withDimensions( ReaderStream ) ) ) );
+)( localize( withDimensions( ReaderStream ) ) );
