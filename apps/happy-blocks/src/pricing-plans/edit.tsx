@@ -1,10 +1,4 @@
 import './edit.scss';
-import {
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-} from '@automattic/calypso-products';
 import { useBlockProps } from '@wordpress/block-editor';
 import { BlockEditProps } from '@wordpress/blocks';
 import { useEffect } from '@wordpress/element';
@@ -16,12 +10,7 @@ import config from './config';
 import usePricingPlans from './hooks/pricing-plans';
 import { BlockAttributes } from './types';
 
-interface EditProps {
-	defaultPlan: string;
-}
-
-const Edit: FunctionComponent< BlockEditProps< BlockAttributes > & EditProps > = ( {
-	defaultPlan,
+export const Edit: FunctionComponent< BlockEditProps< BlockAttributes > > = ( {
 	attributes,
 	setAttributes,
 } ) => {
@@ -30,10 +19,10 @@ const Edit: FunctionComponent< BlockEditProps< BlockAttributes > & EditProps > =
 	// See https://github.com/WordPress/gutenberg/issues/7342
 	useEffect( () => {
 		setAttributes( {
-			productSlug: attributes.productSlug ?? defaultPlan,
+			productSlug: attributes.productSlug ?? attributes.defaultProductSlug,
 			domain: attributes.domain ?? config.domain,
 		} );
-	}, [ attributes.domain, attributes.productSlug, defaultPlan, setAttributes ] );
+	}, [ attributes.defaultProductSlug, attributes.domain, attributes.productSlug, setAttributes ] );
 
 	useEffect( () => {
 		const blogIdSelect: HTMLSelectElement | null =
@@ -70,20 +59,4 @@ const Edit: FunctionComponent< BlockEditProps< BlockAttributes > & EditProps > =
 			<PricingPlans plans={ plans } attributes={ attributes } setAttributes={ setAttributes } />
 		</div>
 	);
-};
-
-export const EditPersonal = ( props: BlockEditProps< BlockAttributes > ) => {
-	return <Edit { ...props } defaultPlan={ PLAN_PERSONAL } />;
-};
-
-export const EditPremium = ( props: BlockEditProps< BlockAttributes > ) => {
-	return <Edit { ...props } defaultPlan={ PLAN_PREMIUM } />;
-};
-
-export const EditBusiness = ( props: BlockEditProps< BlockAttributes > ) => {
-	return <Edit { ...props } defaultPlan={ PLAN_BUSINESS } />;
-};
-
-export const EditEcommerce = ( props: BlockEditProps< BlockAttributes > ) => {
-	return <Edit { ...props } defaultPlan={ PLAN_ECOMMERCE } />;
 };
