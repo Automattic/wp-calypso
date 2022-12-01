@@ -51,7 +51,7 @@ const ReaderSidebarFollowingItem = ( props ) => {
 				<Favicon site={ site } className="reader-sidebar-site_siteicon" size={ 32 } />
 
 				<span className="reader-sidebar-site_sitename">
-					{ site.name || formatUrlForDisplay( site.URL ) }
+					<span>{ site.name || formatUrlForDisplay( site.URL ) }</span>
 					<span className="reader-sidebar-site_updated">
 						{ site.last_updated > 0 && moment( new Date( site.last_updated ) ).fromNow() }
 					</span>

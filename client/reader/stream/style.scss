@@ -609,6 +609,14 @@
 		&:hover {
 			color: var(--color-neutral-80);
 		}
+
+		span {
+			display: -webkit-box;
+			overflow: hidden;
+			width: 227px;
+			-webkit-line-clamp: 1;
+			-webkit-box-orient: vertical;
+		}
 	}
 
 	.reader-sidebar-site_updated {
