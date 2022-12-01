@@ -581,7 +581,7 @@ class Page extends Component {
 									? translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } )
 									: translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } )
 							}
-							onClick={ this.recordPageTitleClick }
+							onClick={ () => this.recordPageTitleClick( canEdit ) }
 							onMouseOver={ preloadEditor }
 							onFocus={ preloadEditor }
 							data-tip-target={ 'page-' + page.slug }
@@ -737,9 +737,13 @@ class Page extends Component {
 		this.props.recordEvent( 'Clicked Delete Page' );
 	};
 
-	recordPageTitleClick = () => {
-		this.props.recordTracksEvent( 'calypso_pages_page_edit_click', { page_type: 'real' } );
-		this.props.recordEvent( 'Clicked Page Title' );
+	recordPageTitleClick = ( canEdit ) => {
+		this.props.recordTracksEvent( 'calypso_pages_page_edit_click', {
+			page_type: 'real',
+			blog_id: this.props.siteId,
+			can_edit: canEdit,
+		} );
+		this.props.recordPageTitle();
 	};
 
 	copyPage = () => {
@@ -771,6 +775,10 @@ class Page extends Component {
 
 	handleMenuToggle = ( isVisible ) => {
 		if ( isVisible ) {
+			this.props.recordTracksEvent( 'calypso_pages_ellipsismenu_open_click', {
+				page_type: 'real',
+				blog_id: this.props.siteId,
+			} );
 			// record a GA event when the menu is opened
 			this.props.recordMoreOptions();
 			preloadEditor();
@@ -816,6 +824,7 @@ const mapDispatch = {
 	setLayoutFocus,
 	recordTracksEvent,
 	recordEvent,
+	recordPageTitle: () => recordEvent( 'Clicked Page Title' ),
 	recordMoreOptions: () => recordEvent( 'Clicked More Options Menu' ),
 	recordEditPage: () => recordEvent( 'Clicked Edit Page' ),
 	recordViewPage: () => recordEvent( 'Clicked View Page' ),
