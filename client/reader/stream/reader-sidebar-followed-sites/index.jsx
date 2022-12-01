@@ -82,7 +82,9 @@ export class ReaderSidebarFollowedSites extends Component {
 
 		return (
 			<>
-				<h2>{ translate( 'Following' ) }</h2>
+				<h2>
+					{ translate( 'Following' ) } <a href="/following/manage">{ translate( 'Manage' ) }</a>
+				</h2>
 				<ul>
 					{ this.renderSites( sitesToShow ) }
 					{ ! allSitesLoaded && (
