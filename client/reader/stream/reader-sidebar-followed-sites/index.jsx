@@ -1,3 +1,4 @@
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
@@ -22,7 +23,7 @@ export class ReaderSidebarFollowedSites extends Component {
 	}
 
 	static defaultProps = {
-		sitesPerPage: 50,
+		sitesPerPage: 25,
 	};
 
 	static propTypes = {
@@ -37,6 +38,20 @@ export class ReaderSidebarFollowedSites extends Component {
 	isUnseen = () => {
 		const { isWPForTeamsItem, hasOrganization } = this.props;
 		return isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } );
+	};
+
+	loadMoreSites = () => {
+		const { sitePage } = this.state;
+		const { sites, sitesPerPage } = this.props;
+
+		//If we've reached the end of the set of sites, all sites have loaded
+		if ( sitesPerPage * sitePage >= sites.length ) {
+			return;
+		}
+
+		this.setState( {
+			sitePage: this.state.sitePage + 1,
+		} );
 	};
 
 	renderSites = ( sites ) => {
@@ -58,6 +73,7 @@ export class ReaderSidebarFollowedSites extends Component {
 	render() {
 		const { sites, sitesPerPage, translate } = this.props;
 		const { sitePage } = this.state;
+		const allSitesLoaded = sitesPerPage * sitePage >= sites.length;
 		const sitesToShow = sites.slice( 0, sitesPerPage * sitePage );
 
 		if ( ! sitesToShow ) {
@@ -67,7 +83,19 @@ export class ReaderSidebarFollowedSites extends Component {
 		return (
 			<>
 				<h2>{ translate( 'Following' ) }</h2>
-				<ul>{ this.renderSites( sitesToShow ) }</ul>
+				<ul>
+					{ this.renderSites( sitesToShow ) }
+					{ ! allSitesLoaded && (
+						<Button
+							plain
+							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+							className="sidebar-streams__following-load-more"
+							onClick={ this.loadMoreSites }
+						>
+							{ translate( 'Load more sites' ) }
+						</Button>
+					) }
+				</ul>
 			</>
 		);
 	}
