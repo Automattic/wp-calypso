@@ -1,9 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
-	isBusinessPlan,
-	isEcommercePlan,
 	PLAN_BUSINESS,
 	WPCOM_FEATURES_NO_WPCOM_BRANDING,
+	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 } from '@automattic/calypso-products';
 import { WPCOM_FEATURES_SUBSCRIPTION_GIFTING } from '@automattic/calypso-products/src';
 import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
@@ -48,7 +47,6 @@ import {
 	isJetpackSite,
 	isCurrentPlanPaid,
 	getCustomizerUrl,
-	getSitePlan,
 } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
@@ -852,8 +850,6 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const sitePlan = getSitePlan( state, siteId );
-	const productSlug = sitePlan?.product_slug || '';
 	return {
 		customizerUrl: getCustomizerUrl( state, siteId, 'identity' ),
 		hasNoWpcomBranding: siteHasFeature( state, siteId, WPCOM_FEATURES_NO_WPCOM_BRANDING ),
@@ -870,7 +866,7 @@ const connectComponent = connect( ( state ) => {
 		siteIsJetpack: isJetpackSite( state, siteId ),
 		siteSlug: getSelectedSiteSlug( state ),
 		hasSubscriptionGifting: siteHasFeature( state, siteId, WPCOM_FEATURES_SUBSCRIPTION_GIFTING ),
-		hasSitePreviewLink: isBusinessPlan( productSlug ) || isEcommercePlan( productSlug ),
+		hasSitePreviewLink: siteHasFeature( state, siteId, WPCOM_FEATURES_SITE_PREVIEW_LINKS ),
 	};
 }, mapDispatchToProps );
 
