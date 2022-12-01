@@ -1,19 +1,28 @@
 import { useMemo } from 'react';
 import slugToSelectorProduct from '../slug-to-selector-product';
+import useItemPrice from '../use-item-price';
 import { RenderPrice } from './render-price';
 import { PricingBreakdownItem, PricingBreakdownProps } from './types';
 import { useGetOriginalPrice } from './use-get-original-price';
 
-export const usePricingBreakdown = ( { includedProductSlugs, siteId }: PricingBreakdownProps ) => {
+export const usePricingBreakdown = ( {
+	includedProductSlugs,
+	product,
+	siteId,
+}: PricingBreakdownProps ) => {
 	const getOriginalPrice = useGetOriginalPrice( siteId );
+
+	const { originalPrice, discountedPrice } = useItemPrice(
+		siteId,
+		product,
+		product?.monthlyProductSlug || ''
+	);
+
+	const bundlePrice = discountedPrice || originalPrice || 0;
 
 	return useMemo( () => {
 		const items: Array< PricingBreakdownItem > = [];
 		let total = 0;
-
-		if ( ! includedProductSlugs?.length ) {
-			return { items, total };
-		}
 
 		for ( const slug of includedProductSlugs ) {
 			const selectorProduct = slugToSelectorProduct( slug );
@@ -34,6 +43,8 @@ export const usePricingBreakdown = ( { includedProductSlugs, siteId }: PricingBr
 			} );
 		}
 
-		return { items, total };
-	}, [ getOriginalPrice, includedProductSlugs ] );
+		const amountSaved = Number( ( total - bundlePrice ).toFixed( 2 ) );
+
+		return { items, total, amountSaved, bundlePrice };
+	}, [ bundlePrice, getOriginalPrice, includedProductSlugs ] );
 };

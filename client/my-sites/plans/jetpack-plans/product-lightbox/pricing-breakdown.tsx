@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import useItemPrice from '../use-item-price';
 import { RenderPrice } from './render-price';
 import { PricingBreakdownProps } from './types';
 import { usePricingBreakdown } from './use-pricing-breakdown';
@@ -12,21 +11,15 @@ export const PricingBreakdown: React.FC< PricingBreakdownProps > = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const { items, total } = usePricingBreakdown( { includedProductSlugs, product, siteId } );
-
-	const { originalPrice, discountedPrice } = useItemPrice(
-		siteId,
+	const { items, total, amountSaved, bundlePrice } = usePricingBreakdown( {
+		includedProductSlugs,
 		product,
-		product?.monthlyProductSlug || ''
-	);
+		siteId,
+	} );
 
 	if ( ! items.length ) {
 		return null;
 	}
-
-	const bundlePrice = discountedPrice || originalPrice || 0;
-
-	const amountSaved = Number( ( total - bundlePrice ).toFixed( 2 ) );
 
 	return (
 		<div className="product-lightbox__pricing-breakdown">
