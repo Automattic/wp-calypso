@@ -168,12 +168,8 @@ const PatternAssembler: Step = ( { navigation } ) => {
 				replaceSection( selectedPattern );
 			} else {
 				addSection( selectedPattern );
-				// Don't close the pattern selector when in multiple selection
-				return;
 			}
 		}
-
-		setShowPatternSelectorType( null );
 	};
 
 	const onBack = () => {

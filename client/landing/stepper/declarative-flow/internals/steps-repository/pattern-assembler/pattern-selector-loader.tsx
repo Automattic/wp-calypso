@@ -43,7 +43,6 @@ const PatternSelectorLoader = ( {
 				onBack={ onBack }
 				title={ selectedPattern ? translate( 'Add a section' ) : translate( 'Add sections' ) }
 				selectedPattern={ selectedPattern }
-				multiple={ ! selectedPattern }
 			/>
 		</>
 	);

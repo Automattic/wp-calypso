@@ -95,13 +95,11 @@ const PatternSelector = ( {
 					</Delayed>
 				</div>
 			</div>
-			{ multiple && (
-				<div className="pattern-selector__footer">
-					<Button className="pattern-assembler__button" onClick={ onBack } primary>
-						{ translate( 'Done' ) }
-					</Button>
-				</div>
-			) }
+			<div className="pattern-selector__footer">
+				<Button className="pattern-assembler__button" onClick={ onBack } primary>
+					{ translate( 'Done' ) }
+				</Button>
+			</div>
 		</div>
 	);
 };
