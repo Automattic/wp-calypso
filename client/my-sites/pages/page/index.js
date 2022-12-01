@@ -87,6 +87,14 @@ class Page extends Component {
 		showPublishedStatus: false,
 	};
 
+	recordEllipsisMenuItemClickEvent = ( item ) => {
+		this.props.recordTracksEvent( 'calypso_pages_ellipsismenu_item_click', {
+			page_type: 'real',
+			blog_id: this.props.site.ID,
+			item,
+		} );
+	};
+
 	// Construct a link to the Site the page belongs too
 	getSiteDomain() {
 		return ( this.props.site && this.props.site.domain ) || '...';
@@ -210,7 +218,7 @@ class Page extends Component {
 
 		if ( this.props.wpAdminGutenberg ) {
 			return (
-				<PopoverMenuItem onClick={ this.props.recordEditPage } href={ this.props.editorUrl }>
+				<PopoverMenuItem onClick={ this.editPage } href={ this.props.editorUrl }>
 					<Gridicon icon="pencil" size={ 18 } />
 					{ this.props.translate( 'Edit' ) }
 				</PopoverMenuItem>
@@ -402,8 +410,12 @@ class Page extends Component {
 	}
 
 	editPage = () => {
-		this.props.recordEditPage();
-		pageRouter( this.props.editorUrl );
+		this.recordEllipsisMenuItemClickEvent( 'edit' );
+		this.props.recordEvent( 'Clicked Edit Page' );
+
+		if ( this.props.wpAdminGutenberg ) {
+			pageRouter( this.props.editorUrl );
+		}
 	};
 
 	getPageStatusInfo() {
@@ -744,7 +756,7 @@ class Page extends Component {
 			blog_id: this.props.siteId,
 			can_edit: canEdit,
 		} );
-		this.props.recordPageTitle();
+		this.props.recordEvent( 'Clicked Page Title' );
 	};
 
 	copyPage = () => {
@@ -776,8 +788,12 @@ class Page extends Component {
 
 	handleMenuToggle = ( isVisible ) => {
 		if ( isVisible ) {
+			this.props.recordTracksEvent( 'calypso_pages_ellipsismenu_open_click', {
+				page_type: 'real',
+				blog_id: this.props.siteId,
+			} );
 			// record a GA event when the menu is opened
-			this.props.recordMoreOptions();
+			this.props.recordEvent( 'Clicked More Options Menu' );
 			preloadEditor();
 		}
 	};
