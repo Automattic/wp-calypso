@@ -677,9 +677,15 @@ export class SiteSettingsFormGeneral extends Component {
 			isSavingSettings,
 			handleSubmitForm,
 			hasSubscriptionGifting,
+			siteId,
 		} = this.props;
 
 		if ( ! isEnabled( 'subscription-gifting' ) ) {
+			return;
+		}
+
+		// TODO: remove when we're fully released
+		if ( siteId % 10 !== 0 ) {
 			return;
 		}
 
@@ -699,7 +705,7 @@ export class SiteSettingsFormGeneral extends Component {
 							<ToggleControl
 								disabled={ isRequestingSettings || isSavingSettings }
 								className="site-settings__gifting-toggle"
-								label={ translate( 'Allow a site visitor to gift site plan costs.' ) }
+								label={ translate( 'Allow a site visitor to gift you with site plan costs' ) }
 								checked={ fields.wpcom_gifting_subscription }
 								onChange={ this.props.handleToggle( 'wpcom_gifting_subscription' ) }
 							/>
@@ -707,6 +713,9 @@ export class SiteSettingsFormGeneral extends Component {
 								{ translate(
 									"Allow a site visitor to cover the full cost of your site's WordPress.com plan."
 								) }
+								<InlineSupportLink supportContext="gift-a-subscription" showIcon="">
+									{ translate( 'Learn more.' ) }
+								</InlineSupportLink>
 							</FormSettingExplanation>
 						</CompactCard>
 					</div>

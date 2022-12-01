@@ -10,6 +10,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import rocketImage from 'calypso/assets/images/customer-home/illustration--rocket.svg';
+import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import wordpressSeoIllustration from 'calypso/assets/images/illustrations/wordpress-seo-premium.svg';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
 import PromoCardBlock from 'calypso/blocks/promo-card-block';
@@ -217,7 +218,9 @@ class StatsSite extends Component {
 
 		return (
 			<div className="stats">
-				<JetpackBackupCredsBanner event="stats-backup-credentials" />
+				<div className="stats-banner-wrapper">
+					<JetpackBackupCredsBanner event="stats-backup-credentials" />
+				</div>
 
 				<FormattedHeader
 					brandFont
@@ -232,7 +235,7 @@ class StatsSite extends Component {
 									<InlineSupportLink
 										supportContext="stats"
 										showIcon={ false }
-										showSupportModal={ !! config( 'is_running_in_jetpack_site' ) }
+										showSupportModal={ config.isEnabled( 'is_running_in_jetpack_site' ) }
 									/>
 								),
 							},
@@ -433,7 +436,7 @@ class StatsSite extends Component {
 	renderEnableStatsModule() {
 		return (
 			<EmptyContent
-				illustration="/calypso/images/illustrations/illustration-404.svg"
+				illustration={ illustration404 }
 				title={ translate( 'Looking for stats?' ) }
 				line={ translate(
 					'Enable Jetpack Stats to see detailed information about your traffic, likes, comments, and subscribers.'

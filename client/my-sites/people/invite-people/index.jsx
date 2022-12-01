@@ -415,7 +415,7 @@ class InvitePeople extends Component {
 		} = this.props;
 
 		let includeFollower = isPrivate && ! isAtomic;
-		const includeSubscriber = ! includeSubscriberImporter;
+		const includeSubscriber = isAtomic;
 
 		if ( ! includeSubscriberImporter ) {
 			// Atomic private sites don't support Viewers/Followers.

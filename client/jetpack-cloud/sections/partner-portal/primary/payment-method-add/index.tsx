@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	ReloadSetupIntentId,
 	StripeHookProvider,
@@ -94,10 +93,6 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 		[]
 	);
 
-	const isMultipleLicenseIssueEnabled = isEnabled(
-		'jetpack/partner-portal-issue-multiple-licenses'
-	);
-
 	const [ issueLicense, isLoading ] = useLicenseIssuing( product );
 	const [ issueMultipleLicense, isIssuingMultipleLicenses ] = useIssueMultipleLicenses(
 		products ? products.split( ',' ) : [],
@@ -161,7 +156,7 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 	}, [ paymentMethodRequired, product ] );
 
 	useEffect( () => {
-		if ( isMultipleLicenseIssueEnabled && ! paymentMethodRequired && products ) {
+		if ( ! paymentMethodRequired && products ) {
 			issueMultipleLicense();
 		}
 	}, [ paymentMethodRequired ] );

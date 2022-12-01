@@ -527,10 +527,6 @@ class DomainsStep extends Component {
 		const includeWordPressDotCom = this.props.includeWordPressDotCom ?? ! this.props.isDomainOnly;
 		const promoTlds = this.props?.queryObject?.tld?.split( ',' ) ?? [];
 
-		// the .link tld comes with the w.link subdomain from our partnership.
-		// see pau2Xa-4tC-p2#comment-12869 for more details
-		const managedSubdomains = promoTlds.includes( 'link' ) ? 'link' : null;
-
 		return (
 			<CalypsoShoppingCartProvider>
 				<RegisterDomainStep
@@ -542,7 +538,8 @@ class DomainsStep extends Component {
 					basePath={ this.props.path }
 					promoTlds={ promoTlds }
 					mapDomainUrl={ this.getUseYourDomainUrl() }
-					managedSubdomains={ managedSubdomains }
+					otherManagedSubdomains={ this.props.otherManagedSubdomains }
+					otherManagedSubdomainsCountOverride={ this.props.otherManagedSubdomainsCountOverride }
 					transferDomainUrl={ this.getUseYourDomainUrl() }
 					useYourDomainUrl={ this.getUseYourDomainUrl() }
 					onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }

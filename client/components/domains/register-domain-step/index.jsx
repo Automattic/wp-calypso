@@ -127,7 +127,14 @@ class RegisterDomainStep extends Component {
 		showAlreadyOwnADomain: PropTypes.bool,
 		domainAndPlanUpsellFlow: PropTypes.bool,
 		useProvidedProductsList: PropTypes.bool,
-		managedSubdomains: PropTypes.string,
+		otherManagedSubdomains: PropTypes.array,
+
+		/**
+		 * If an override is not provided we generate 1 suggestion per 1 other subdomain
+		 * Multiple subdomains of .wordpress.com have not been tested
+		 */
+		otherManagedSubdomainsCountOverride: PropTypes.number,
+		handleClickUseYourDomain: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -145,6 +152,7 @@ class RegisterDomainStep extends Component {
 		onSkip: noop,
 		showSkipButton: false,
 		useProvidedProductsList: false,
+		otherManagedSubdomains: null,
 	};
 
 	constructor( props ) {
@@ -187,6 +195,14 @@ class RegisterDomainStep extends Component {
 		}
 	}
 
+	isSubdomainResultsVisible() {
+		return (
+			this.props.includeWordPressDotCom ||
+			this.props.includeDotBlogSubdomain ||
+			this.props.otherManagedSubdomains?.length > 0
+		);
+	}
+
 	getState( props ) {
 		const suggestion = getDomainSuggestionSearch( props.suggestion, MIN_QUERY_LENGTH );
 		const loadingResults = Boolean( suggestion );
@@ -205,8 +221,7 @@ class RegisterDomainStep extends Component {
 			lastFilters: this.getInitialFiltersState(),
 			lastQuery: suggestion,
 			loadingResults,
-			loadingSubdomainResults:
-				( props.includeWordPressDotCom || props.includeDotBlogSubdomain ) && loadingResults,
+			loadingSubdomainResults: this.isSubdomainResultsVisible() && loadingResults,
 			pageNumber: 1,
 			pageSize: PAGE_SIZE,
 			premiumDomains: {},
@@ -316,8 +331,25 @@ class RegisterDomainStep extends Component {
 		}
 	}
 
+	getOtherManagedSubdomainsQuantity() {
+		let otherManagedSubdomainsCount = 0;
+		// In order to generate "other" (Not blog or wpcom) subdomains an Array of those subdomains need to be provided
+		if ( Array.isArray( this.props.otherManagedSubdomains ) ) {
+			// If an override is not provided we generate 1 suggestion per 1 other subdomain
+			otherManagedSubdomainsCount = this.props.otherManagedSubdomains.length;
+			if ( typeof this.props.otherManagedSubdomainsCountOverride === 'number' ) {
+				otherManagedSubdomainsCount = this.props.otherManagedSubdomainsCountOverride;
+			}
+		}
+		return otherManagedSubdomainsCount;
+	}
+
 	getFreeSubdomainSuggestionsQuantity() {
-		return this.props.includeWordPressDotCom + this.props.includeDotBlogSubdomain;
+		return (
+			this.props.includeWordPressDotCom +
+			this.props.includeDotBlogSubdomain +
+			this.getOtherManagedSubdomainsQuantity()
+		);
 	}
 
 	getNewRailcarId() {
@@ -344,7 +376,7 @@ class RegisterDomainStep extends Component {
 			suggestions = [ ...searchResults ];
 		}
 
-		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
+		if ( this.isSubdomainResultsVisible() ) {
 			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {
 				const freeSubdomainPlaceholders = Array( this.getFreeSubdomainSuggestionsQuantity() ).fill(
 					{ is_placeholder: true }
@@ -1062,12 +1094,13 @@ class RegisterDomainStep extends Component {
 		const subdomainQuery = {
 			query: domain,
 			quantity: this.getFreeSubdomainSuggestionsQuantity(),
-			include_wordpressdotcom: true,
+			include_wordpressdotcom: this.props.includeWordPressDotCom,
 			include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
 			only_wordpressdotcom: this.props.includeDotBlogSubdomain,
 			tld_weight_overrides: null,
 			vendor: 'dot',
-			managed_subdomains: this.props.managedSubdomains,
+			managed_subdomains: this.props.otherManagedSubdomains?.join(),
+			managed_subdomain_quantity: this.getOtherManagedSubdomainsQuantity(),
 			...this.getActiveFiltersForAPI(),
 		};
 
@@ -1178,10 +1211,7 @@ class RegisterDomainStep extends Component {
 					.catch( () => [] ) // handle the error and return an empty list
 					.then( this.handleDomainSuggestions( domain ) );
 
-				if (
-					shouldQuerySubdomains &&
-					( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain )
-				) {
+				if ( shouldQuerySubdomains && this.isSubdomainResultsVisible() ) {
 					this.getSubdomainSuggestions( domain, timestamp );
 				}
 			}
@@ -1338,7 +1368,7 @@ class RegisterDomainStep extends Component {
 				onClickMapping={ this.goToMapDomainStep }
 				onAddTransfer={ this.props.onAddTransfer }
 				onClickTransfer={ this.goToTransferDomainStep }
-				onClickUseYourDomain={ this.useYourDomainFunction() }
+				onClickUseYourDomain={ this.props.handleClickUseYourDomain ?? this.useYourDomainFunction() }
 				tracksButtonClickSource="exact-match-top"
 				suggestions={ suggestions }
 				premiumDomains={ premiumDomains }

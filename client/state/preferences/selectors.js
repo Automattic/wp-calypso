@@ -3,6 +3,7 @@ import { DEFAULT_PREFERENCE_VALUES } from './constants';
 import 'calypso/state/preferences/init';
 
 export const isFetchingPreferences = ( state ) => !! state.preferences.fetching;
+export const isSavingPreference = ( state ) => !! state.preferences.saving;
 
 /**
  * Returns the preference value associated with the specified key. Attempts to

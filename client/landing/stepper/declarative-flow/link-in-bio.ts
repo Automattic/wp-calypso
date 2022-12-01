@@ -1,10 +1,17 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
+import {
+	clearSignupDestinationCookie,
+	setSignupCompleteSlug,
+	persistSignupDestination,
+	setSignupCompleteFlowName,
+} from 'calypso/signup/storageUtils';
 import { useQuery } from '../hooks/use-query';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
@@ -14,27 +21,44 @@ import type { Flow, ProvidedDependencies } from './internals/types';
 
 export const linkInBio: Flow = {
 	name: LINK_IN_BIO_FLOW,
-	title: 'Link in Bio',
+	get title() {
+		return translate( 'Link in Bio' );
+	},
 	useSteps() {
 		useEffect( () => {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 			recordFullStoryEvent( 'calypso_signup_start_link_in_bio', { flow: this.name } );
 		}, [] );
 
-		return [ 'intro', 'linkInBioSetup', 'patterns', 'processing', 'launchpad' ] as StepPath[];
+		return [
+			'intro',
+			'linkInBioSetup',
+			'domains',
+			'plans',
+			'patterns',
+			'siteCreationStep',
+			'processing',
+			'launchpad',
+		] as StepPath[];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
-		setStepProgress( flowProgress );
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const locale = useLocale();
 		const queryParams = useQuery();
-
 		const tld = queryParams.get( 'tld' );
+
+		// At the moment, the TLD variation relies on going back and forth from the classic signup framework
+		// and the Stepper framework. Since it begins from the former, the Stepper framework doesn't have a chance
+		// to inject the step progress there, which can be quite confusing. Thus, we've decided to just not show it at all.
+		// Once the whole flow is moved into Stepper, this can also be removed. See Automattic/martech#1256
+		if ( ! tld ) {
+			setStepProgress( flowProgress );
+		}
 
 		// trigger guides on step movement, we don't care about failures or response
 		wpcom.req.post(
@@ -59,6 +83,8 @@ export const linkInBio: Flow = {
 
 			switch ( _currentStep ) {
 				case 'intro':
+					clearSignupDestinationCookie();
+
 					if ( userIsLoggedIn ) {
 						return navigate( 'patterns' );
 					}
@@ -68,11 +94,34 @@ export const linkInBio: Flow = {
 					return navigate( 'linkInBioSetup' );
 
 				case 'linkInBioSetup':
-					return window.location.assign(
-						`/start/${ flowName }/domains?new=${ encodeURIComponent(
-							providedDependencies.siteTitle as string
-						) }&search=yes&hide_initial_query=yes`
-					);
+					return navigate( 'domains' );
+
+				case 'domains':
+					return navigate( 'plans' );
+
+				case 'plans':
+					return navigate( 'siteCreationStep' );
+
+				case 'siteCreationStep':
+					return navigate( 'processing' );
+
+				case 'processing':
+					if ( providedDependencies?.goToCheckout ) {
+						const destination = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
+						persistSignupDestination( destination );
+						setSignupCompleteSlug( providedDependencies?.siteSlug );
+						setSignupCompleteFlowName( flowName );
+						const returnUrl = encodeURIComponent(
+							`/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies?.siteSlug }`
+						);
+
+						return window.location.assign(
+							`/checkout/${ encodeURIComponent(
+								( providedDependencies?.siteSlug as string ) ?? ''
+							) }?redirect_to=${ returnUrl }&signup=1`
+						);
+					}
+					return navigate( `launchpad?siteSlug=${ providedDependencies?.siteSlug }` );
 
 				case 'launchpad': {
 					return navigate( 'processing' );

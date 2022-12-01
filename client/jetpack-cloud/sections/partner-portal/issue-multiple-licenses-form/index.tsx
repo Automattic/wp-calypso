@@ -1,21 +1,29 @@
 import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIssueMultipleLicenses } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import LicenseBundleCard from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
-import {
-	isJetpackBundle,
-	selectAlphaticallySortedProductOptions,
-} from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import TotalCost from 'calypso/jetpack-cloud/sections/partner-portal/primary/total-cost';
+import { isJetpackBundle } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import {
 	getAssignedPlanAndProductIDsForSite,
 	hasPurchasedProductsOnly,
 } from 'calypso/state/partner-portal/licenses/selectors';
+import {
+	addSelectedProductSlugs,
+	clearSelectedProductSlugs,
+	removeSelectedProductSlugs,
+} from 'calypso/state/partner-portal/products/actions';
+import {
+	getDisabledProductSlugs,
+	getSelectedProductSlugs,
+} from 'calypso/state/partner-portal/products/selectors';
+import { PartnerPortalStore } from 'calypso/state/partner-portal/types';
 import { AssignLicenceProps } from '../types';
 
 import './style.scss';
@@ -26,9 +34,8 @@ export default function IssueMultipleLicensesForm( {
 }: AssignLicenceProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { data, isLoading: isLoadingProducts } = useProductsQuery( {
-		select: selectAlphaticallySortedProductOptions,
-	} );
+
+	const { data, isLoading: isLoadingProducts } = useProductsQuery();
 
 	let allProducts = data;
 	const addedPlanAndProducts = useSelector( ( state ) =>
@@ -43,9 +50,13 @@ export default function IssueMultipleLicensesForm( {
 	}
 
 	const bundles =
-		allProducts?.filter( ( { family_slug } ) => family_slug === 'jetpack-packs' ) || [];
+		allProducts?.filter(
+			( { family_slug }: { family_slug: string } ) => family_slug === 'jetpack-packs'
+		) || [];
 	const products =
-		allProducts?.filter( ( { family_slug } ) => family_slug !== 'jetpack-packs' ) || [];
+		allProducts?.filter(
+			( { family_slug }: { family_slug: string } ) => family_slug !== 'jetpack-packs'
+		) || [];
 
 	const hasPurchasedProductsWithoutBundle = useSelector( ( state ) =>
 		selectedSite ? hasPurchasedProductsOnly( state, selectedSite.ID ) : false
@@ -57,13 +68,27 @@ export default function IssueMultipleLicensesForm( {
 		?.toString()
 		.split( ',' );
 
+	useEffect( () => {
+		// Select the slugs included in the URL
+		defaultProductSlugs && dispatch( addSelectedProductSlugs( defaultProductSlugs ) );
+
+		// Clear all selected slugs when navigating away from the page to avoid persisting the data.
+		return () => {
+			dispatch( clearSelectedProductSlugs() );
+		};
+	}, [ dispatch, defaultProductSlugs ] );
+
+	const selectedProductSlugs = useSelector( getSelectedProductSlugs );
+	const disabledProductSlugs = useSelector< PartnerPortalStore, string[] >( ( state ) =>
+		getDisabledProductSlugs( state, allProducts ?? [] )
+	);
+
 	// We need the suggested products (i.e., the products chosen from the dashboard) to properly
 	// track if the user purchases a different set of products.
 	const suggestedProductSlugs = getQueryArg( window.location.href, 'product_slug' )
 		?.toString()
 		.split( ',' );
 
-	const [ selectedProductSlugs, setSelectedProductSlugs ] = useState( defaultProductSlugs ?? [] );
 	const [ issueLicenses, isLoading ] = useIssueMultipleLicenses(
 		selectedProductSlugs,
 		selectedSite,
@@ -72,26 +97,22 @@ export default function IssueMultipleLicensesForm( {
 
 	const onSelectProduct = useCallback(
 		( product ) => {
+			// A bundle cannot be combined with other products.
+			if ( isJetpackBundle( product.slug ) ) {
+				dispatch( clearSelectedProductSlugs() );
+				dispatch( addSelectedProductSlugs( [ product.slug ] ) );
+				return;
+			}
+
 			dispatch(
 				recordTracksEvent( 'calypso_partner_portal_issue_license_product_select_multiple', {
 					product: product.slug,
 				} )
 			);
 
-			setSelectedProductSlugs( ( previousValue ) => {
-				const allProducts = [ ...previousValue ];
-
-				// A bundle cannot be combined with other products.
-				if ( isJetpackBundle( product.slug ) ) {
-					return [ product.slug ];
-				}
-
-				! allProducts.includes( product.slug )
-					? allProducts.push( product.slug )
-					: allProducts.splice( selectedProductSlugs.indexOf( product.slug ), 1 );
-
-				return allProducts;
-			} );
+			! selectedProductSlugs.includes( product.slug )
+				? dispatch( addSelectedProductSlugs( [ product.slug ] ) )
+				: dispatch( removeSelectedProductSlugs( [ product.slug ] ) );
 		},
 		[ dispatch, selectedProductSlugs ]
 	);
@@ -117,22 +138,6 @@ export default function IssueMultipleLicensesForm( {
 
 	const selectedSiteDomain = selectedSite?.domain;
 
-	const disabledProductSlugs = selectedProductSlugs
-		// Get the product objects corresponding to the selected product slugs
-		.map( ( selectedProductSlug ) =>
-			allProducts?.find( ( product ) => product.slug === selectedProductSlug )
-		)
-		// Get all the product slugs of products within the same product family as the selected product
-		.flatMap( ( selectedProduct ) =>
-			allProducts
-				?.filter(
-					( product ) =>
-						product.family_slug === selectedProduct?.family_slug &&
-						product.slug !== selectedProduct.slug
-				)
-				.map( ( product ) => product.slug )
-		);
-
 	return (
 		<div className="issue-multiple-licenses-form">
 			{ isLoadingProducts && <div className="issue-multiple-licenses-form__placeholder" /> }
@@ -154,6 +159,7 @@ export default function IssueMultipleLicensesForm( {
 								  ) }
 						</p>
 						<div className="issue-multiple-licenses-form__controls">
+							<TotalCost />
 							<Button
 								primary
 								className="issue-multiple-licenses-form__select-license"

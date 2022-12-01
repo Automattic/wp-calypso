@@ -44,8 +44,6 @@ export function createCustomHomeTemplateContent(
 		content.push(
 			`<!-- wp:template-part {"slug":"header","tagName":"header","theme":"${ stylesheet }"} /-->`
 		);
-	} else {
-		content.push( `<!-- wp:template-part {"area":"header"} /-->` );
 	}
 
 	content.push( `
@@ -61,8 +59,6 @@ export function createCustomHomeTemplateContent(
 		content.push(
 			`<!-- wp:template-part {"slug":"footer","tagName":"footer","theme":"${ stylesheet }","className":"site-footer-container"} /-->`
 		);
-	} else {
-		content.push( `<!-- wp:template-part {"area":"footer"} /-->` );
 	}
 
 	return content.join( '\n' );

@@ -25,10 +25,18 @@ export default function DesignCarousel( { onPick }: Props ) {
 		_locale: locale,
 	} );
 
-	const staticDesigns = allDesigns?.static?.designs.slice( 0, 10 ) || [];
+	// Cherry-picked designs
+	const designSlugs = [ 'tsubaki', 'tazza', 'thriving-artist', 'twentytwentytwo' ];
+
+	const selectedDesigns = designSlugs
+		.map( ( designSlug ) =>
+			allDesigns?.static.designs.find( ( design ) => design.slug === designSlug )
+		)
+		// Remove not found (not launched) items
+		.filter( ( design ) => !! design ) as Design[];
 
 	useEffect( () => {
-		if ( staticDesigns ) {
+		if ( selectedDesigns ) {
 			swiperInstance.current = new Swiper( '.swiper-container', {
 				autoHeight: true,
 				mousewheel: true,
@@ -47,9 +55,9 @@ export default function DesignCarousel( { onPick }: Props ) {
 		return () => {
 			swiperInstance.current?.destroy();
 		};
-	}, [ staticDesigns ] );
+	}, [ selectedDesigns ] );
 
-	if ( ! staticDesigns ) {
+	if ( ! selectedDesigns ) {
 		return null;
 	}
 
@@ -57,7 +65,7 @@ export default function DesignCarousel( { onPick }: Props ) {
 		<div className="design-carousel">
 			<div className="design-carousel__carousel swiper-container">
 				<div className="swiper-wrapper">
-					{ staticDesigns.map( ( design ) => (
+					{ selectedDesigns.map( ( design ) => (
 						<div
 							className="design-carousel__slide swiper-slide"
 							key={ `${ design.slug }-slide-item` }
@@ -82,7 +90,7 @@ export default function DesignCarousel( { onPick }: Props ) {
 					isPrimary
 					onClick={ () => {
 						if ( swiperInstance.current ) {
-							onPick( staticDesigns[ swiperInstance.current?.activeIndex ] );
+							onPick( selectedDesigns[ swiperInstance.current?.activeIndex ] );
 						}
 					} }
 				>

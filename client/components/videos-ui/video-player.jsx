@@ -7,7 +7,7 @@ const VideoPlayer = ( {
 	course,
 	onVideoPlayStatusChanged,
 	onVideoCompleted,
-	intent = undefined,
+	intent,
 } ) => {
 	const [ shouldCheckForVideoComplete, setShouldCheckForVideoComplete ] = useState( true );
 

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
@@ -58,9 +57,7 @@ export default function Licenses( {
 			<DocumentHead title={ translate( 'Licenses' ) } />
 			<SidebarNavigation />
 			{ isAgencyUser && <SiteWelcomeBanner bannerKey="licenses-page" /> }
-			{ isEnabled( 'jetpack/partner-portal-issue-multiple-licenses' ) && (
-				<SiteAddLicenseNotification />
-			) }
+			<SiteAddLicenseNotification />
 			<div className="licenses__header">
 				<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>
 

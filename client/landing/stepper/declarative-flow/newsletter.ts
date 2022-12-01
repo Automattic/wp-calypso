@@ -1,6 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -14,7 +15,9 @@ import type { Flow } from './internals/types';
 
 export const newsletter: Flow = {
 	name: NEWSLETTER_FLOW,
-	title: 'Newsletter',
+	get title() {
+		return translate( 'Newsletter' );
+	},
 	useSteps() {
 		useEffect( () => {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );

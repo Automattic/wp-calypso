@@ -311,13 +311,27 @@ export class SiteSelector extends Component {
 		return sites;
 	}
 
+	mapAllSitesPath = ( path ) => {
+		if ( path.includes( '/posts/my' ) ) {
+			return path.replace( '/posts/my', '/posts' );
+		}
+
+		// We used to show multisite plugins management on /plugins route, but that has changed
+		// and now we show the plugins marketplace on it, which is a single site view.
+		if ( path.match( /^\/plugins\/?/ ) ) {
+			return '/plugins/manage';
+		}
+
+		return path;
+	};
+
 	renderAllSites() {
 		if ( ! this.props.showAllSites || this.state.searchTerm || ! this.props.allSitesPath ) {
 			return null;
 		}
 
 		const multiSiteContext = allSitesMenu().find(
-			( menu ) => menu.url === this.props.allSitesPath.replace( '/posts/my', '/posts' )
+			( menuItem ) => menuItem.url === this.mapAllSitesPath( this.props.allSitesPath )
 		);
 
 		// Let's not display the all sites button if there is no multi-site context.
@@ -492,6 +506,12 @@ const navigateToSite =
 				// There is currently no "all sites" version of the insights page
 				if ( path.match( /^\/stats\/insights\/?/ ) ) {
 					return '/stats/day';
+				}
+
+				// Route /plugins no longer handles the "all sites" view, and is being used by Marketplace plugins.
+				// Until that's resolved let's override it to show the multisite management view for plugins.
+				if ( path.match( /^\/plugins\/?/ ) ) {
+					return '/plugins/manage';
 				}
 
 				// Jetpack Cloud: default to /backups/ when in the details of a particular backup
