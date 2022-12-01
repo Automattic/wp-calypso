@@ -17,6 +17,7 @@ import { Tags } from './icons/tags';
 import PaymentPlan from './payment-plan';
 import { PricingBreakdown } from './pricing-breakdown';
 import ProductDetails from './product-details';
+import { getSlugsOfProductsInludedInBundle } from './utils';
 
 import './style.scss';
 
@@ -101,6 +102,8 @@ const ProductLightbox: React.FC< Props > = ( {
 
 	const isMultiSiteIncompatible = isMultisite && ! getIsMultisiteCompatible( product );
 
+	const includedProductSlugs = getSlugsOfProductsInludedInBundle( product );
+
 	return (
 		<Modal
 			className="product-lightbox__modal"
@@ -170,7 +173,13 @@ const ProductLightbox: React.FC< Props > = ( {
 							</Button>
 						</div>
 					</div>
-					<PricingBreakdown product={ product } siteId={ siteId } />
+					{ includedProductSlugs?.length ? (
+						<PricingBreakdown
+							includedProductSlugs={ includedProductSlugs }
+							product={ product }
+							siteId={ siteId }
+						/>
+					) : null }
 				</div>
 			</div>
 		</Modal>

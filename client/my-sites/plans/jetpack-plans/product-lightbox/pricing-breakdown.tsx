@@ -4,10 +4,14 @@ import { RenderPrice } from './render-price';
 import { PricingBreakdownProps } from './types';
 import { usePricingBreakdown } from './use-pricing-breakdown';
 
-export const PricingBreakdown: React.FC< PricingBreakdownProps > = ( { product, siteId } ) => {
+export const PricingBreakdown: React.FC< PricingBreakdownProps > = ( {
+	includedProductSlugs,
+	product,
+	siteId,
+} ) => {
 	const translate = useTranslate();
 
-	const { items, total } = usePricingBreakdown( { product, siteId } );
+	const { items, total } = usePricingBreakdown( { includedProductSlugs, product, siteId } );
 
 	const { originalPrice, discountedPrice } = useItemPrice(
 		siteId,

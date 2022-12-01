@@ -1,15 +1,10 @@
-import { JETPACK_PRODUCTS_INCLUDED_IN_PLAN_MAP } from '@automattic/calypso-products';
 import { useMemo } from 'react';
 import slugToSelectorProduct from '../slug-to-selector-product';
 import { RenderPrice } from './render-price';
 import { PricingBreakdownItem, PricingBreakdownProps } from './types';
 import { useGetOriginalPrice } from './use-get-original-price';
 
-export const usePricingBreakdown = ( { product, siteId }: PricingBreakdownProps ) => {
-	const productSlug = product.productSlug as keyof typeof JETPACK_PRODUCTS_INCLUDED_IN_PLAN_MAP;
-
-	const includedProductSlugs = JETPACK_PRODUCTS_INCLUDED_IN_PLAN_MAP[ productSlug ];
-
+export const usePricingBreakdown = ( { includedProductSlugs, siteId }: PricingBreakdownProps ) => {
 	const getOriginalPrice = useGetOriginalPrice( siteId );
 
 	return useMemo( () => {
