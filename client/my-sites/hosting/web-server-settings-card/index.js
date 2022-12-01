@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button, Card, Spinner } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { useState } from 'react';
@@ -262,9 +261,7 @@ const WebServerSettingsCard = ( {
 
 	return (
 		<Card className="web-server-settings-card">
-			{ config.isEnabled( 'hosting/datacenter-picker' ) && (
-				<QuerySiteGeoAffinity siteId={ siteId } />
-			) }
+			<QuerySiteGeoAffinity siteId={ siteId } />
 			<QuerySitePhpVersion siteId={ siteId } />
 			<QuerySiteStaticFile404 siteId={ siteId } />
 			<MaterialIcon icon="build" size={ 32 } />
@@ -274,7 +271,7 @@ const WebServerSettingsCard = ( {
 					'For sites with specialized needs, fine-tune how the web server runs your website.'
 				) }
 			</p>
-			{ config.isEnabled( 'hosting/datacenter-picker' ) && getGeoAffinityContent() }
+			{ getGeoAffinityContent() }
 			{ getPhpVersionContent() }
 			{ getStaticFile404Content() }
 			{ ( isGettingGeoAffinity || isGettingPhpVersion || isGettingStaticFile404 ) && <Spinner /> }
