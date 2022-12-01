@@ -157,6 +157,7 @@
 .launchpad__sidebar-header {
 	display: flex;
 	margin-left: 8px;
+	margin-top: 4px;
 
 	@include break-large {
 		margin-left: 0;
