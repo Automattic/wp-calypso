@@ -37,7 +37,7 @@ export function AnimatedCanvas( { className }: { className: string } ) {
 					ctx.strokeStyle = preRandomizedColors[ j ];
 					ctx.lineWidth = j % 15;
 					ctx.beginPath();
-					for ( let x = 0; x < width + 20; x += 10 ) {
+					for ( let x = 0; x < width + 50; x += 30 ) {
 						const y1 =
 							j +
 							Math.sin( ( x + animationFactor * width ) / 100 ) * 30 +

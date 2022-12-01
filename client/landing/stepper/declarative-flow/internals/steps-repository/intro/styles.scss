@@ -11,7 +11,15 @@
 			top: 0;
 			left: 0;
 			z-index: -1;
-			clip-path: polygon(50% 80%, 100% 30%, 100% 100%, 0 100%, 0 30%);
+			clip-path: polygon(50% 80%, 100% 60%, 100% 100%, 0 100%, 0 60%);
+
+			@include break-medium {
+				clip-path: polygon(50% 80%, 100% 40%, 100% 100%, 0 100%, 0 40%);
+			}
+
+			@include break-large {
+				clip-path: polygon(50% 80%, 100% 30%, 100% 100%, 0 100%, 0 30%);
+			}
 		}
 		.intro__description {
 			max-width: 450px;
