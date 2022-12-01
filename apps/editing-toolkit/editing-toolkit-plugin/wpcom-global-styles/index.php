@@ -224,7 +224,7 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 		$site_slug = wp_parse_url( $home_url, PHP_URL_HOST );
 	}
 
-	$upgrade_url = 'https://wordpress.com/plans/' . $site_slug;
+	$upgrade_url = 'https://wordpress.com/plans/' . $site_slug . '?plan=value_bundle';
 
 	if ( wpcom_is_previewing_global_styles() ) {
 		$preview_text     = __( 'Hide premium styles', 'full-site-editing' );
