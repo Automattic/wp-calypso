@@ -2,3 +2,20 @@
 	border-end-start-radius: 0;
 	border-end-end-radius: 0;
 }
+
+.featured-item-card--amount-saved {
+	margin-top: -4px;
+	margin-bottom: 8px;
+
+	.button-plain {
+		font-weight: 600;
+		color: var(--studio-gray-70);
+		display: flex;
+		align-items: center;
+		gap: 2px;
+	}
+
+	.plan-price {
+		font-size: inherit;
+	}
+}

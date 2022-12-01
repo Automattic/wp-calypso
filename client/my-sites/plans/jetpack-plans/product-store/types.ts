@@ -122,3 +122,8 @@ export type PricingBreakdownItem = {
 	originalPrice: number;
 	renderedPrice: React.ReactNode;
 };
+
+export type AmountSavedProps = ProductStoreBaseProps & {
+	product: SelectorProduct;
+	onClick: VoidFunction;
+};
