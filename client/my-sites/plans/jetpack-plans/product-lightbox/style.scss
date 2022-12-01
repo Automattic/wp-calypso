@@ -212,7 +212,7 @@
 	}
 }
 
-.product-lightbox__variants {
+.product-lightbox__sidebar {
 	padding: 40px;
 	width: 40%;
 	background-color: #f6f7f7;
@@ -221,6 +221,10 @@
 
 	@include break-medium {
 		box-shadow: none;
+	}
+
+	@media (max-width: $break-large) {
+		padding: 24px;
 	}
 }
 
@@ -397,7 +401,7 @@
 	}
 }
 
-@media screen and ( max-width: 768px ) and ( orientation: portrait ) {
+@media screen and ( max-width: $break-medium ) and ( orientation: portrait ) {
 	.product-lightbox__modal {
 		display: flex;
 		justify-content: center;
@@ -420,7 +424,7 @@
 		width: auto;
 	}
 
-	.product-lightbox__variants {
+	.product-lightbox__sidebar {
 		border-radius: 0;
 		padding: 24px;
 		position: relative;
@@ -458,8 +462,9 @@
 		margin-bottom: 0.5rem;
 	}
 
-	.product-lightbox__variants {
+	.product-lightbox__sidebar {
 		padding: 1.5rem;
+		background: #f6f7f7;
 	}
 }
 
