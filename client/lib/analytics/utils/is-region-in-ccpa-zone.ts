@@ -9,10 +9,7 @@ const CCPA_US_REGIONS = [
  * @param region The region to look for.
  * @returns Whether the region is in the GDPR zone
  */
-export default function isRegionInCcpaZone(
-	countryCode: string | undefined,
-	region: string | undefined
-): boolean {
+export default function isRegionInCcpaZone( countryCode?: string, region?: string ): boolean {
 	if ( 'US' !== countryCode ) {
 		return false;
 	}

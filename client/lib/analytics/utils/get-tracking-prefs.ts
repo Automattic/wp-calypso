@@ -2,8 +2,8 @@ import cookie from 'cookie';
 import isCountryInGdprZone from './is-country-in-gdpr-zone';
 import isRegionInCcpaZone from './is-region-in-ccpa-zone';
 
-const v1CookieName = 'sensitive_pixel_option';
-const v2CookieName = 'sensitive_pixel_options';
+export const TRACKING_PREFS_COOKIE_V1 = 'sensitive_pixel_option';
+export const TRACKING_PREFS_COOKIE_V2 = 'sensitive_pixel_options';
 
 export type TrackingPrefs = {
 	ok: boolean;
@@ -70,5 +70,8 @@ export default function getTrackingPrefs(): TrackingPrefs {
 		};
 	}
 
-	return parseTrackingPrefs( cookies[ v2CookieName ], cookies[ v1CookieName ] );
+	return parseTrackingPrefs(
+		cookies[ TRACKING_PREFS_COOKIE_V2 ],
+		cookies[ TRACKING_PREFS_COOKIE_V1 ]
+	);
 }

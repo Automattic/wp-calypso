@@ -6,8 +6,8 @@ import {
 	refreshCountryCodeCookieGdpr,
 	setTrackingPrefs,
 	shouldSeeCookieBanner,
+	getTrackingPrefs,
 } from 'calypso/lib/analytics/utils';
-import getTrackingPrefs from 'calypso/lib/analytics/utils/get-tracking-prefs';
 import { bumpStat } from 'calypso/state/analytics/actions';
 import { useCookieBannerContent } from './use-cookie-banner-content';
 

@@ -13,5 +13,11 @@ export { default as shouldReportOmitSiteMainProduct } from './should-report-omit
 export { default as saveCouponQueryArgument } from './save-coupon-query-argument';
 export { default as refreshCountryCodeCookieGdpr } from './refresh-country-code-cookie-gdpr';
 export { default as shouldSeeCookieBanner } from './should-see-cookie-banner';
-export { default as getTrackingPrefs, parseTrackingPrefs } from './get-tracking-prefs';
-export { setTrackingPrefs } from './set-tracking-prefs';
+export {
+	default as getTrackingPrefs,
+	parseTrackingPrefs,
+	TRACKING_PREFS_COOKIE_V1,
+	TRACKING_PREFS_COOKIE_V2,
+} from './get-tracking-prefs';
+export type { TrackingPrefs } from './get-tracking-prefs';
+export { default as setTrackingPrefs } from './set-tracking-prefs';

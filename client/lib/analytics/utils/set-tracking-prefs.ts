@@ -1,10 +1,10 @@
 import cookie from 'cookie';
-import { getTrackingPrefs } from '.';
-import type { TrackingPrefs } from './get-tracking-prefs';
+import { getTrackingPrefs, TRACKING_PREFS_COOKIE_V2 } from '.';
+import type { TrackingPrefs } from '.';
 
-const v2CookieName = 'sensitive_pixel_options';
+const COOKIE_MAX_AGE = 15778800; /* six months */
 
-export const setTrackingPrefs = ( newPrefs: Partial< TrackingPrefs > ): TrackingPrefs => {
+const setTrackingPrefs = ( newPrefs: Partial< TrackingPrefs > ): TrackingPrefs => {
 	const { ok, buckets } = getTrackingPrefs();
 
 	const newOptions = {
@@ -15,10 +15,12 @@ export const setTrackingPrefs = ( newPrefs: Partial< TrackingPrefs > ): Tracking
 		},
 	};
 
-	document.cookie = cookie.serialize( v2CookieName, JSON.stringify( newOptions ), {
+	document.cookie = cookie.serialize( TRACKING_PREFS_COOKIE_V2, JSON.stringify( newOptions ), {
 		path: '/',
-		maxAge: 15778800 /* six months */,
+		maxAge: COOKIE_MAX_AGE,
 	} );
 
 	return newOptions;
 };
+
+export default setTrackingPrefs;
