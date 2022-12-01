@@ -186,7 +186,7 @@ export default function CheckoutHelpLink() {
 			{ ! isPresalesZendeskChatEligible && ! supportVariationDetermined && <LoadingButton /> }
 			{ isPresalesZendeskChatEligible ? (
 				<AsyncLoad
-					require="calypso/components/zendesk-chat-widget"
+					require="calypso/components/presales-zendesk-chat"
 					chatKey={ zendeskPresalesChatKey }
 				/>
 			) : (
