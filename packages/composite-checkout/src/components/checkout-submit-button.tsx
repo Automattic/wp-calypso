@@ -3,7 +3,7 @@ import { cloneElement } from 'react';
 import joinClasses from '../lib/join-classes';
 import { useFormStatus, FormStatus, usePaymentMethod, useProcessPayment } from '../public-api';
 import CheckoutErrorBoundary from './checkout-error-boundary';
-import type { PaymentProcessorSubmitData } from '../types';
+import type { PaymentMethod, PaymentProcessorSubmitData } from '../types';
 
 export default function CheckoutSubmitButton( {
 	validateForm,
@@ -16,10 +16,42 @@ export default function CheckoutSubmitButton( {
 	disabled?: boolean;
 	onLoadError?: ( error: Error ) => void;
 } ) {
+	const paymentMethod = usePaymentMethod();
+	if ( ! paymentMethod ) {
+		return null;
+	}
+	const { submitButton } = paymentMethod;
+	if ( ! submitButton ) {
+		return null;
+	}
+
+	return (
+		<CheckoutSubmitButtonForPaymentMethod
+			paymentMethod={ paymentMethod }
+			validateForm={ validateForm }
+			className={ className }
+			disabled={ disabled }
+			onLoadError={ onLoadError }
+		/>
+	);
+}
+
+function CheckoutSubmitButtonForPaymentMethod( {
+	paymentMethod,
+	validateForm,
+	className,
+	disabled,
+	onLoadError,
+}: {
+	paymentMethod: PaymentMethod;
+	validateForm?: () => Promise< boolean >;
+	className?: string;
+	disabled?: boolean;
+	onLoadError?: ( error: Error ) => void;
+} ) {
 	const { formStatus } = useFormStatus();
 	const { __ } = useI18n();
 	const isDisabled = disabled || formStatus !== FormStatus.READY;
-	const paymentMethod = usePaymentMethod();
 	const onClick = useProcessPayment( paymentMethod?.paymentProcessorId ?? '' );
 	const onClickWithValidation = ( processorData: PaymentProcessorSubmitData ) => {
 		if ( validateForm ) {
@@ -36,9 +68,6 @@ export default function CheckoutSubmitButton( {
 		return onClick( processorData );
 	};
 
-	if ( ! paymentMethod ) {
-		return null;
-	}
 	const { submitButton } = paymentMethod;
 	if ( ! submitButton ) {
 		return null;
