@@ -201,6 +201,9 @@ const SiteDropdownMenu = styled( DropdownMenu )( {
 		height: 'auto',
 		verticalAlign: 'middle',
 	},
+	'.components-popover': {
+		zIndex: 100000,
+	},
 } );
 
 export const SitesEllipsisMenu = ( {
