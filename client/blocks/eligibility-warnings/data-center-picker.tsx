@@ -22,17 +22,9 @@ type Props = ExternalProps & LocalizeProps;
 
 const DataCenterOptions = [
 	{
-		value: 'ams',
-		name: 'geo_affinity',
-		label: translate( 'Amsterdam' ),
-		thumbnail: {
-			imageUrl: amsImg,
-		},
-	},
-	{
 		value: 'bur',
 		name: 'geo_affinity',
-		label: translate( 'California' ),
+		label: translate( 'US West' ),
 		thumbnail: {
 			imageUrl: burImg,
 		},
@@ -40,7 +32,7 @@ const DataCenterOptions = [
 	{
 		value: 'dfw',
 		name: 'geo_affinity',
-		label: translate( 'Texas' ),
+		label: translate( 'US Central' ),
 		thumbnail: {
 			imageUrl: dfwImg,
 		},
@@ -48,9 +40,17 @@ const DataCenterOptions = [
 	{
 		value: 'dca',
 		name: 'geo_affinity',
-		label: translate( 'Washington, D.C.' ),
+		label: translate( 'US East' ),
 		thumbnail: {
 			imageUrl: dcaImg,
+		},
+	},
+	{
+		value: 'ams',
+		name: 'geo_affinity',
+		label: translate( 'EU West' ),
+		thumbnail: {
+			imageUrl: amsImg,
 		},
 	},
 ];
