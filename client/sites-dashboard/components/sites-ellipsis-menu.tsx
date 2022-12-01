@@ -4,6 +4,7 @@ import {
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem, Modal } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
@@ -122,6 +123,11 @@ const ModalContent = styled.div( {
 	flexDirection: 'column',
 } );
 
+const modalOverlayClassName = css( {
+	// golbal-notices has z-index: 179
+	zIndex: 178,
+} );
+
 function useSafeSiteHasFeature( siteId: number, feature: string ) {
 	const dispatch = useDispatch();
 	useEffect( () => {
@@ -157,7 +163,11 @@ const PreviewSiteModalItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 		<>
 			<MenuItemLink onClick={ onSitePreviewClick }>{ __( 'Share site for preview' ) }</MenuItemLink>
 			{ isVisible && (
-				<Modal title={ __( 'Share site for preview' ) } onRequestClose={ closeModal }>
+				<Modal
+					title={ __( 'Share site for preview' ) }
+					onRequestClose={ closeModal }
+					overlayClassName={ modalOverlayClassName }
+				>
 					<ModalContent>
 						<SitePreviewLink siteUrl={ site.URL } siteId={ site.ID } source="smp-modal" />
 					</ModalContent>
@@ -202,7 +212,7 @@ const SiteDropdownMenu = styled( DropdownMenu )( {
 		verticalAlign: 'middle',
 	},
 	'.components-popover': {
-		zIndex: 100000,
+		zIndex: 177,
 	},
 } );
 
