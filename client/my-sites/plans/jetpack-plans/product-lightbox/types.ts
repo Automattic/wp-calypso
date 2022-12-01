@@ -5,6 +5,7 @@ export type PricingBreakdownProps = {
 	product: SelectorProduct;
 	siteId: number | null;
 	includedProductSlugs: ReadonlyArray< string >;
+	showBreakdownHeading?: boolean;
 };
 
 export type PricingBreakdownItem = {

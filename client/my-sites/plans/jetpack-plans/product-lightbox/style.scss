@@ -387,7 +387,7 @@
 	}
 }
 
-@media screen and ( max-width: 768px ) and ( orientation: portrait ) {
+@media screen and ( max-width: $break-medium ) and ( orientation: portrait ) {
 	.product-lightbox__modal {
 		display: flex;
 		justify-content: center;
@@ -466,6 +466,10 @@
 .product-lightbox__pricing-breakdown {
 	padding: 2rem 0;
 
+	@media ( max-width: $break-medium ) {
+		padding: 1rem 0;
+	}
+
 	.product-lightbox__pricing-breakdown--highlight {
 		font-size: $font-body;
 		font-weight: 700;
@@ -475,12 +479,21 @@
 		background: #eaefef;
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 8px;
+	}
 
+	.product-lightbox__pricing-breakdown--heading {
+		font-weight: 600;
+		margin-bottom: 0.5rem;
 	}
 
 	hr {
 		margin-top: 1rem;
 		margin-bottom: 1rem;
+
+		@media ( max-width: $break-medium ) {
+			margin-top: 0.5rem;
+			margin-bottom: 0.5rem;
+		}
 	}
 
 	.plan-price {

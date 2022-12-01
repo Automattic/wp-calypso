@@ -7,6 +7,7 @@ import { usePricingBreakdown } from './use-pricing-breakdown';
 export const PricingBreakdown: React.FC< PricingBreakdownProps > = ( {
 	includedProductSlugs,
 	product,
+	showBreakdownHeading,
 	siteId,
 } ) => {
 	const translate = useTranslate();
@@ -38,6 +39,11 @@ export const PricingBreakdown: React.FC< PricingBreakdownProps > = ( {
 			</div>
 
 			<div className="product-lightbox__pricing-breakdown--details">
+				{ showBreakdownHeading ? (
+					<div className="product-lightbox__pricing-breakdown--heading">
+						{ translate( 'Price breakdown:' ) }
+					</div>
+				) : null }
 				<ul className="product-lightbox__pricing-breakdown--details--items">
 					{ items.map( ( { name, slug, renderedPrice } ) => (
 						<li key={ slug }>

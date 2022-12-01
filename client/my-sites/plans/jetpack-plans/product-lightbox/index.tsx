@@ -1,5 +1,6 @@
 import { JetpackTag, JETPACK_RELATED_PRODUCTS_MAP } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo } from 'react';
 import Modal from 'react-modal';
@@ -104,6 +105,8 @@ const ProductLightbox: React.FC< Props > = ( {
 
 	const includedProductSlugs = getSlugsOfProductsInludedInBundle( product );
 
+	const isLargeScreen = useBreakpoint( '>782px' );
+
 	return (
 		<Modal
 			className="product-lightbox__modal"
@@ -134,6 +137,15 @@ const ProductLightbox: React.FC< Props > = ( {
 						<h2>{ product.displayName }</h2>
 					</div>
 					<div className="product-lightbox__detail-desc">{ product.lightboxDescription }</div>
+
+					{ ! isLargeScreen && includedProductSlugs?.length ? (
+						<PricingBreakdown
+							includedProductSlugs={ includedProductSlugs }
+							product={ product }
+							showBreakdownHeading
+							siteId={ siteId }
+						/>
+					) : null }
 					<div className="product-lightbox__detail-tags">
 						<span className="product-lightbox__detail-tags-label">
 							{ translate( 'Great for:' ) }
@@ -173,7 +185,7 @@ const ProductLightbox: React.FC< Props > = ( {
 							</Button>
 						</div>
 					</div>
-					{ includedProductSlugs?.length ? (
+					{ isLargeScreen && includedProductSlugs?.length ? (
 						<PricingBreakdown
 							includedProductSlugs={ includedProductSlugs }
 							product={ product }
