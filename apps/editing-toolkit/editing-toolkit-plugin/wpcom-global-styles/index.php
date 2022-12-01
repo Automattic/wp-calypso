@@ -205,16 +205,16 @@ function wpcom_global_styles_in_use() {
 }
 
 /**
- * Adds the global style notice banner to the custom launch bar controls.
+ * Adds the global style notice banner to the launch bar controls.
  *
- * @param array $custom_controls List of custom controls.
+ * @param array $bar_controls List of launch bar controls.
  *
- * return array The collection of launch bar custom controls to render.
+ * return array The collection of launch bar controls to render.
  */
-function wpcom_display_global_styles_banner( $custom_controls ) {
+function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 	// Do not show the banner if the user can use global styles.
 	if ( ! wpcom_should_limit_global_styles() || ! wpcom_global_styles_in_use() ) {
-		return;
+		return $bar_controls;
 	}
 
 	if ( method_exists( '\WPCOM_Masterbar', 'get_calypso_site_slug' ) ) {
@@ -226,21 +226,56 @@ function wpcom_display_global_styles_banner( $custom_controls ) {
 
 	$upgrade_url = 'https://wordpress.com/plans/' . $site_slug;
 
-	$custom_controls[] = array(
-		'desktop_message'    => __( 'Styles hidden', 'full-site-editing' ),
-		'mobile_message'     => __( 'Styles', 'full-site-editing' ),
-		'track_button_name'  => 'wpcom_global_styles_gating_notice',
-		'tooltip'            => __( 'You need to be on a paid plan for your style changes to be made public.', 'full-site-editing' ),
-		'tooltip_link_title' => __( 'Upgrade your plan', 'full-site-editing' ),
-		'tooltip_link_url'   => $upgrade_url,
-		'icon_path'          => 'M13 9h-2V7h2v2zm0 2h-2v6h2v-6zm-1-7c-4.411 0-8 3.589-8 8s3.589 8 8 8 8-3.589 8-8-3.589-8-8-8m0-2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2z',
-		'icon_color'         => 'orange',
-		'extra_tooltip'      => 'toggle_global_styles',
-	);
+	if ( wpcom_is_previewing_global_styles() ) {
+		$preview_text     = __( 'Hide premium styles', 'full-site-editing' );
+		$preview_location = remove_query_arg( 'preview-global-styles' );
+	} else {
+		$preview_text     = __( 'Preview styles before upgrading', 'full-site-editing' );
+		$preview_location = add_query_arg( 'preview-global-styles', '' );
+	}
 
-	return $custom_controls;
+	ob_start(); ?>
+		<div class="launch-custom-button">
+			<div class="launch-custom-tooltip hidden-tooltip">
+				<div>
+					<?php echo esc_html__( 'Publish your style changes and unlock tons of other features by upgrading to a Premium plan.', 'full-site-editing' ); ?>
+				</div>
+				<button
+					class="launch-tooltip-button"
+					data-launchbar-tooltip-url="<?php echo esc_url( $upgrade_url ); ?>"
+					data-launchbar-tooltip-button-track="wpcom_global_styles_gating_notice"
+				>
+					<?php echo esc_html__( 'Upgrade your plan', 'full-site-editing' ); ?>
+				</button>
+				<a class="launch-custom-link" href="<?php echo esc_url( $preview_location ); ?>">
+					<?php echo esc_html( $preview_text ); ?>
+				</a>
+			</div>
+			<a data-launchbar-track="wpcom_global_styles_gating_notice">
+				<svg width="25" height="25" viewBox="0 0 30 23" xmlns="http://www.w3.org/2000/svg">
+					<path d="M12 4c-4.4 0-8 3.6-8 8v.1c0 4.1 3.2 7.5 7.2 7.9h.8c4.4 0 8-3.6 8-8s-3.6-8-8-8zm0 15V5c3.9 0 7 3.1 7 7s-3.1 7-7 7z" style="fill: orange" />
+				</svg>
+				<span class="is-mobile">
+					<?php echo esc_html__( 'Styles', 'full-site-editing' ); ?>
+				</span>
+				<span class="is-desktop">
+					<?php echo esc_html__( 'Publish styles', 'full-site-editing' ); ?>
+				</span>
+			</a>
+		</div>
+	<?php
+	$global_styles_bar_control = ob_get_clean();
+
+	$launch_site_control_key = array_search( 'launch-site', array_keys( $bar_controls ), true );
+
+	if ( $launch_site_control_key ) {
+		array_splice( $bar_controls, $launch_site_control_key, 0, $global_styles_bar_control );
+	} else {
+		$bar_controls[] = $global_styles_bar_control;
+	}
+	return $bar_controls;
 }
-add_filter( 'wpcom_custom_launch_bar_controls', 'wpcom_display_global_styles_banner' );
+add_filter( 'wpcom_launch_bar_controls', 'wpcom_display_global_styles_launch_bar' );
 
 /**
  * Include the Rest API that returns the global style information for a give WordPress site.
@@ -266,23 +301,3 @@ function wpcom_is_previewing_global_styles( ?int $user_id = null ) {
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	return isset( $_GET['preview-global-styles'] ) && user_can( $user_id, 'administrator' );
 }
-
-/**
- * Renders the link for previewing global styles in the launch banner.
- *
- * @return void
- */
-function wpcom_display_global_styles_banner_extra_tooltip() {
-	if ( wpcom_is_previewing_global_styles() ) {
-		$text     = __( 'Hide premium styles', 'full-site-editing' );
-		$location = remove_query_arg( 'preview-global-styles' );
-	} else {
-		$text     = __( 'Preview styles before upgrading', 'full-site-editing' );
-		$location = add_query_arg( 'preview-global-styles', '' );
-	}
-
-	?>
-	<a class="launch-custom-link" href="<?php echo esc_url( $location ); ?>"><?php echo esc_html( $text ); ?></a>
-	<?php
-}
-add_action( 'launch_bar_extra_tooltip_toggle_global_styles', 'wpcom_display_global_styles_banner_extra_tooltip' );
