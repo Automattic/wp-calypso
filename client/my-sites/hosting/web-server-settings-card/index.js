@@ -11,6 +11,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import MaterialIcon from 'calypso/components/material-icon';
 import { updateAtomicPhpVersion, updateAtomicStaticFile404 } from 'calypso/state/hosting/actions';
 import { getAtomicHostingGeoAffinity } from 'calypso/state/selectors/get-atomic-hosting-geo-affinity';
@@ -40,52 +41,30 @@ const WebServerSettingsCard = ( {
 	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( '' );
 	const [ selectedStaticFile404, setSelectedStaticFile404 ] = useState( '' );
 
-	const getDataCenterOptions = () => {
-		return [
-			{
-				value: 'auto',
-				label: translate( 'Automatic' ),
-			},
-			{
-				value: 'ams',
-				label: translate( 'Amsterdam' ),
-			},
-			{
-				value: 'bur',
-				label: translate( 'California' ),
-			},
-			{
-				value: 'dfw',
-				label: translate( 'Texas' ),
-			},
-			{
-				value: 'dca',
-				label: translate( 'Washington, D.C.' ),
-			},
-		];
-	};
-
 	const getGeoAffinityContent = () => {
-		if ( isGettingGeoAffinity ) {
+		if ( isGettingGeoAffinity || 'auto' === geoAffinity ) {
 			return;
 		}
+
+		const dataCenterOptions = {
+			bur: translate( 'US West (Burbank, California)' ),
+			dfw: translate( 'US Central (Dallas-Fort Worth, Texas)' ),
+			dca: translate( 'US East (Washington, D.C.)' ),
+			ams: translate( 'EU West (Amsterdam, Netherlands)' ),
+		};
+		const displayValue =
+			dataCenterOptions[ geoAffinity ] !== undefined
+				? dataCenterOptions[ geoAffinity ]
+				: geoAffinity;
 
 		return (
 			<FormFieldset>
 				<FormLabel>{ translate( 'Primary Data Center' ) }</FormLabel>
-				<FormSelect className="web-server-settings-card__data-center-select" value={ geoAffinity }>
-					{ getDataCenterOptions().map( ( option ) => {
-						return (
-							<option
-								disabled={ option.value !== geoAffinity }
-								value={ option.value }
-								key={ option.label }
-							>
-								{ option.label }
-							</option>
-						);
-					} ) }
-				</FormSelect>
+				<FormTextInput
+					className="web-server-settings-card__data-center-input"
+					value={ displayValue }
+					disabled
+				/>
 				<FormSettingExplanation>
 					{ translate(
 						'The primary data center is where your site is physically located. ' +
