@@ -17,7 +17,7 @@ function getValueFromVariationSettingColorPalette(
 }
 
 function getColorBackground( color: StyleVariationPreviewColorPalette ) {
-	return color.base || color.background;
+	return color.base || color.background || '#ffffff';
 }
 
 function getColorText( color: StyleVariationPreviewColorPalette ) {
