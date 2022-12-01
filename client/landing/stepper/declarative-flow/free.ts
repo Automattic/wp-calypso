@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, FREE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -22,11 +23,13 @@ export const free: Flow = {
 	title: 'Free',
 	useSteps() {
 		useEffect( () => {
+			if ( ! isEnabled( 'signup/free-flow' ) ) {
+				return window.location.assign( '/start/free' );
+			}
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 			recordFullStoryEvent( 'calypso_signup_start_free', { flow: this.name } );
 		}, [] );
 
-		// return [ 'intro', 'freeSetup', 'launchpad' ] as StepPath[];
 		return [
 			'intro',
 			'linkInBioSetup',
