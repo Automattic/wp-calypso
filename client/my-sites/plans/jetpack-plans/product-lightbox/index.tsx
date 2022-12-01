@@ -31,14 +31,14 @@ type Props = ProductStoreBaseProps & {
 };
 
 const TagItems: React.FC< { tags: JetpackTag[] } > = ( { tags } ) => (
-	<>
+	<ul className="product-lightbox__detail-tags-list">
 		{ tags.map( ( tag ) => (
-			<div className="product-lightbox__detail-tags-tag" key={ tag.tag }>
+			<li className="product-lightbox__detail-tags-tag" key={ tag.tag }>
 				<span aria-hidden="true">{ Tags[ tag.tag ] }</span>
 				<p>{ tag.label }</p>
-			</div>
+			</li>
 		) ) }
-	</>
+	</ul>
 );
 
 const ProductLightbox: React.FC< Props > = ( {

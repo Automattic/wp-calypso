@@ -5,7 +5,6 @@ $stats-background-color: #fdfdfd;
 $stats-sections-max-width: 1224px;
 $stats-layout-contnet-padding-top: 79px;
 $sidebar-appearance-break-point: 783px;
-$legacy-break-small: 660px;
 
 // Elements above main layout content per pages
 .stats__section-header,
@@ -27,7 +26,7 @@ $legacy-break-small: 660px;
 	}
 
 	// Ensures horizontal padding for all sections.
-	@media ( min-width: $legacy-break-small ) {
+	@media ( min-width: $custom-mobile-breakpoint ) {
 		> * {
 			padding: 0 max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
 		}

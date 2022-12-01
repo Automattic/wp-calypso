@@ -35,7 +35,7 @@ export const useAsyncPreference = < T extends AllowedPreferenceValues >( {
 	const setValue = useCallback(
 		( newValue: T ) => {
 			setLocalValue( newValue );
-			dispatch( savePreference( preferenceName, newValue ) );
+			return dispatch( savePreference( preferenceName, newValue ) );
 		},
 		[ dispatch, preferenceName ]
 	);

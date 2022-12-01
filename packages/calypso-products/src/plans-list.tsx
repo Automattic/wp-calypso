@@ -223,7 +223,6 @@ import {
 	JETPACK_TAG_FOR_WOOCOMMERCE_STORES,
 	JETPACK_TAG_FOR_NEWS_ORGANISATIONS,
 	JETPACK_TAG_FOR_MEMBERSHIP_SITES,
-	JETPACK_TAG_FOR_ONLINE_FORUMS,
 	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS,
 	FEATURE_CANCELLATION_ACCEPT_PAYMENTS,
 	FEATURE_CANCELLATION_AD_FREE_SITE,
@@ -301,7 +300,6 @@ const getJetpackCommonPlanDetails = () => ( {
 		{ tag: JETPACK_TAG_FOR_WOOCOMMERCE_STORES, label: translate( 'WooCommerce stores' ) },
 		{ tag: JETPACK_TAG_FOR_NEWS_ORGANISATIONS, label: translate( 'News organizations' ) },
 		{ tag: JETPACK_TAG_FOR_MEMBERSHIP_SITES, label: translate( 'Membership sites' ) },
-		{ tag: JETPACK_TAG_FOR_ONLINE_FORUMS, label: translate( 'Online forums' ) },
 	],
 } );
 const getDotcomPlanDetails = () => ( {
@@ -2024,7 +2022,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			translate( 'VideoPress: 1TB of ad-free video hosting' ),
 			translate( 'Boost: Automatic CSS generation' ),
 			translate( 'Site Search: Up to 100k records' ),
-			translate( 'Social: Basic with 1,000 shares/mo' ),
+			translate( 'Social: Basic with unlimited shares' ),
 			translate( 'CRM: Entrepreneur with 30 extensions' ),
 		],
 	},
@@ -2055,7 +2053,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			translate( 'VideoPress: 1TB of ad-free video hosting' ),
 			translate( 'Boost: Automatic CSS generation' ),
 			translate( 'Site Search: Up to 100k records' ),
-			translate( 'Social: Basic with 1,000 shares/mo' ),
+			translate( 'Social: Basic with unlimited shares' ),
 			translate( 'CRM: Entrepreneur with 30 extensions' ),
 		],
 	},

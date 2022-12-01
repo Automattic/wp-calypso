@@ -1,0 +1,46 @@
+.blogging-prompt {
+	.card.blogging-prompt__card {
+		padding-bottom: 24px;
+	}
+	.blogging-prompt__lightbulb-icon {
+		display: inline-block;
+		vertical-align: middle;
+		margin-left: -6px;
+		path {
+			fill: var(--studio-gray-50);
+		}
+	}
+	h1.card-heading {
+		font-size: $font-body-small;
+		font-weight: normal;
+		color: var(--color-text-subtle);
+	}
+	.blogging-prompt__heading-text {
+		color: var(--studio-gray-80);
+	}
+	.blogging-prompt__menu {
+		margin-top: -8px;
+	}
+	.blogging-prompt__prompt-text {
+		font-size: $font-title-small;
+		font-weight: 500;
+		padding-bottom: 20px;
+	}
+}
+
+.blogging-prompt__menu {
+	float: right;
+	.button {
+		text-align: left;
+	}
+	.blogging-prompt__bell-icon {
+		display: inline-block;
+		height: 18px;
+		width: 18px;
+		margin-right: 10px;
+		.gridicon {
+			width: 24px;
+			height: 24px;
+		}
+	}
+}

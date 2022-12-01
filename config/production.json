@@ -124,7 +124,6 @@
 		"ssr/log-prefetch-errors": true,
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
-		"stats/new-annual-highlights": true,
 		"stats/new-main-chart": true,
 		"stats/new-stats-module-component": true,
 		"stats/show-traffic-highlights": true,
