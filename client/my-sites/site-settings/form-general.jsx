@@ -768,7 +768,7 @@ export class SiteSettingsFormGeneral extends Component {
 
 	advancedCustomizationNotice() {
 		const { translate, selectedSite, siteSlug } = this.props;
-		const upgradeUrl = `/plans/${ siteSlug }`;
+		const upgradeUrl = `/plans/${ siteSlug }?plan=value_bundle`;
 
 		return (
 			<>
@@ -776,7 +776,9 @@ export class SiteSettingsFormGeneral extends Component {
 					<div className="site-settings__advanced-customization-notice-cta">
 						<Gridicon icon="info-outline" />
 						<span>
-							{ translate( "Your style changes won't be public until you upgrade your plan." ) }
+							{ translate(
+								'Publish your style changes and unlock tons of other features by upgrading to a Premium plan.'
+							) }
 						</span>
 					</div>
 					<div className="site-settings__advanced-customization-notice-buttons">
