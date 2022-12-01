@@ -115,7 +115,7 @@
 		"signup/inline-help": false,
 		"signup/professional-email-step": false,
 		"signup/social": true,
-		"signup/tailored-ecommerce": false,
+		"signup/tailored-ecommerce": true,
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
 		"sites-as-landing-page": true,
