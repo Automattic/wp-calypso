@@ -111,7 +111,7 @@ export default function SitePreviewLink( {
 			<HelpText>{ translate( 'Anyone with this link can view your site.' ) }</HelpText>
 			{ ! disabled &&
 				previewLinks?.map( ( { code, isCreating = false, isRemoving = false } ) => {
-					let linkValue = `${ siteUrl }?preview=${ code }`;
+					let linkValue = `${ siteUrl }?share=${ code }`;
 					if ( isCreating ) {
 						linkValue = translate( 'Loading…' );
 					} else if ( isRemoving ) {
