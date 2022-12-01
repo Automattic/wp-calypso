@@ -94,7 +94,7 @@ function wpcom_global_styles_enqueue_scripts_and_styles() {
 		'wpcomGlobalStyles',
 		array(
 			'assetsUrl'  => plugins_url( 'dist/', __FILE__ ),
-			'upgradeUrl' => "$calypso_domain/plans/$site_slug",
+			'upgradeUrl' => "$calypso_domain/plans/$site_slug?plan=value_bundle",
 		)
 	);
 	wp_enqueue_style(
