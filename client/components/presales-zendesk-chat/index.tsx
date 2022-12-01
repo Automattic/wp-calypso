@@ -1,3 +1,4 @@
+import { loadScript } from '@automattic/load-script';
 import { useEffect } from 'react';
 
 interface Props {
@@ -10,18 +11,16 @@ const ZendeskChat = ( { chatKey }: Props ) => {
 			return;
 		}
 
-		const script = document.createElement( 'script' );
-		script.src = 'https://static.zdassets.com/ekr/snippet.js?key=' + encodeURIComponent( chatKey );
-		script.type = 'text/javascript';
-		script.id = 'ze-snippet';
-
-		const container = document.getElementById( 'zendesk-chat-container' );
-		if ( container ) {
-			container.appendChild( script );
-		}
+		loadScript(
+			'https://static.zdassets.com/ekr/snippet.js?key=' + encodeURIComponent( chatKey ),
+			() => {
+				return null;
+			},
+			{ id: 'ze-snippet' }
+		);
 	}, [ chatKey ] );
 
-	return <div id="zendesk-chat-container" />;
+	return null;
 };
 
 export default ZendeskChat;
