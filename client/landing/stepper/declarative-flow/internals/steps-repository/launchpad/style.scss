@@ -155,6 +155,7 @@
 }
 
 .launchpad__sidebar-header {
+	display: flex;
 	margin-left: 8px;
 
 	@include break-large {
@@ -171,8 +172,8 @@
 	font-style: normal;
 	font-weight: 400;
 	font-size: $font-body-large;
-	line-height: 1.3;
-	margin: 0 0 100px 12px;
+	margin-left: 8px;
+	letter-spacing: -0.4px;
 }
 
 .launchpad__sidebar-description {
