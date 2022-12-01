@@ -151,7 +151,15 @@ const DataCenterPicker = ( {
 							'Choose a primary data center for your site. For redundancy, your site will replicate in real-time to a second data center in different region. {{supportLink}}Learn more{{/supportLink}}.',
 							{
 								components: {
-									supportLink: <ExternalLink icon target="_blank" href={ localizeUrl( '#' ) } />,
+									supportLink: (
+										<ExternalLink
+											icon
+											target="_blank"
+											href={ localizeUrl(
+												'https://wordpress.com/support/choose-your-sites-primary-data-center/'
+											) }
+										/>
+									),
 								},
 							}
 						) }
