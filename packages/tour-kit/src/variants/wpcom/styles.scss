@@ -191,10 +191,42 @@ $wpcom-tour-kit-step-card-overlay-controls-button-bg-color: #32373c; // former $
 	min-width: 85px;
 }
 
+.wpcom-tour-kit-step-card__media {
+	position: relative;
+}
+
 // TODO: Remove once @wordpress/components/src/card/styles/card-styles.js is updated
 .wpcom-tour-kit-step-card__media img {
 	display: block;
 	height: auto;
 	max-width: 100%;
 	width: 100%;
+}
+
+.wpcom-tour-ket-step-card__medida-link {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	svg {
+		display: none;
+		transition: transform 0.15s ease-in-out;
+
+		&:hover {
+			transform: scale(1.05);
+		}
+	}
+
+	&--playable {
+		background-color: rgba(0, 0, 0, 0.5);
+
+		svg {
+			display: block;
+		}
+	}
 }
