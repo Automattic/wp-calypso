@@ -1,5 +1,6 @@
 import { CookieBanner, CookieBannerProps } from '@automattic/privacy-toolset';
 import cookie from 'cookie';
+import { noop } from 'lodash';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {
@@ -11,13 +12,19 @@ import {
 import { bumpStat } from 'calypso/state/analytics/actions';
 import { useCookieBannerContent } from './use-cookie-banner-content';
 
-const CookieBannerInner = () => {
+export const isServer = typeof document === 'undefined';
+
+const CookieBannerInner = ( { onClose }: { onClose: () => void } ) => {
 	const content = useCookieBannerContent();
 	const dispatch = useDispatch();
 
-	const handleAccept = useCallback< CookieBannerProps[ 'onAccept' ] >( ( buckets ) => {
-		setTrackingPrefs( { ok: true, buckets } );
-	}, [] );
+	const handleAccept = useCallback< CookieBannerProps[ 'onAccept' ] >(
+		( buckets ) => {
+			setTrackingPrefs( { ok: true, buckets } );
+			onClose();
+		},
+		[ onClose ]
+	);
 
 	useEffect( () => {
 		dispatch(
@@ -31,9 +38,6 @@ const CookieBannerInner = () => {
 	return <CookieBanner content={ content } onAccept={ handleAccept } />;
 };
 
-export const CookieBannerContainerSSR = ( { serverShow }: { serverShow: boolean } ) =>
-	serverShow ? <CookieBannerInner /> : null;
-
 const CookieBannerContainer = () => {
 	const [ show, setShow ] = useState( false );
 
@@ -46,7 +50,20 @@ const CookieBannerContainer = () => {
 		} );
 	}, [ setShow ] );
 
-	return show ? <CookieBannerInner /> : null;
+	const handleClose = useCallback( () => {
+		setShow( false );
+	}, [ setShow ] );
+
+	return show ? <CookieBannerInner onClose={ handleClose } /> : null;
+};
+
+export const CookieBannerContainerSSR = ( { serverShow }: { serverShow: boolean } ) => {
+	if ( ! isServer ) {
+		// If the already have access to browser api, we can use the regular component
+		return <CookieBannerContainer />;
+	}
+
+	return serverShow ? <CookieBannerInner onClose={ noop } /> : null;
 };
 
 export default CookieBannerContainer;

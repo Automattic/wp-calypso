@@ -1,11 +1,26 @@
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { isServer } from '.';
 import type { CookieBannerProps } from '@automattic/privacy-toolset';
+
+type LinkProps = { href: string };
+
+const LocalizedLink = ( { href }: LinkProps ) => {
+	const localizeUrl = useLocalizeUrl();
+	return <ExternalLink href={ localizeUrl( href ) } target="_blank" />;
+};
+
+const Link = ( { href }: LinkProps ) => {
+	// useLocalizeUrl() does not support SSR yet, so we cannot use it on the server.
+	if ( isServer ) {
+		return <ExternalLink href={ href } target="_blank" />;
+	}
+	return <LocalizedLink href={ href } />;
+};
 
 export const useCookieBannerContent = (): CookieBannerProps[ 'content' ] => {
 	const translate = useTranslate();
-	const localizeUrl = useLocalizeUrl();
 
 	return {
 		simpleConsent: {
@@ -21,18 +36,8 @@ export const useCookieBannerContent = (): CookieBannerProps[ 'content' ] => {
 				{
 					components: {
 						strong: <strong />,
-						privacyPolicyLink: (
-							<ExternalLink
-								href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-								target="_blank"
-							/>
-						),
-						cookiePolicyLink: (
-							<ExternalLink
-								href={ localizeUrl( 'https://automattic.com/cookies/' ) }
-								target="_blank"
-							/>
-						),
+						privacyPolicyLink: <Link href="https://automattic.com/privacy/" />,
+						cookiePolicyLink: <Link href="https://automattic.com/cookies/" />,
 					},
 				}
 			),
