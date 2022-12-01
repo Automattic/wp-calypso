@@ -1,4 +1,6 @@
+import config from '@automattic/calypso-config';
 import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { useStoreItemInfoContext } from '../context/store-item-info-context';
 import { FeaturedItemCard } from '../featured-item-card';
 import { FeaturesList } from '../features-list';
@@ -34,6 +36,11 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 		getOnClickPurchase,
 		isMultisite,
 	} = useStoreItemInfoContext();
+	const translate = useTranslate();
+
+	const isEnglish = config< Array< string | undefined > >( 'english_locales' ).includes(
+		translate.localeSlug
+	);
 
 	return (
 		<div className={ wrapperClassName }>
@@ -83,13 +90,15 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 
 					const ctaAsPrimary = ! ( isOwned || getIsPlanFeature( item ) || isSuperseded );
 
-					const amountSaved = item.productsIncluded?.length ? (
-						<AmountSaved
-							siteId={ siteId }
-							product={ item }
-							onClick={ onClickMoreInfoFactory( item ) }
-						/>
-					) : null;
+					// TODO remove this isEnglish check once we have translations for the new strings
+					const amountSaved =
+						isEnglish && item.productsIncluded?.length ? (
+							<AmountSaved
+								siteId={ siteId }
+								product={ item }
+								onClick={ onClickMoreInfoFactory( item ) }
+							/>
+						) : null;
 
 					return (
 						<li key={ item.productSlug } className="jetpack-product-store__most-popular--item">
