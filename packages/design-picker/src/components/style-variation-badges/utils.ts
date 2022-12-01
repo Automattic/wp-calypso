@@ -1,3 +1,4 @@
+import { hexToRgb, hasMinContrast } from '@automattic/onboarding';
 import type {
 	StyleVariation,
 	StyleVariationSettingsColorPalette,
@@ -5,7 +6,7 @@ import type {
 	StyleVariationPreviewColorPalette,
 } from '../../types';
 
-const COLOR_PALETTE_SUPPORTS = [ 'background', 'foreground', 'primary' ];
+const COLOR_PALETTE_SUPPORTS = [ 'background', 'base', 'contrast', 'foreground', 'primary' ];
 
 function getValueFromVariationSettingColorPalette(
 	variation: StyleVariation,
@@ -15,6 +16,21 @@ function getValueFromVariationSettingColorPalette(
 	return palette.find( ( item: StyleVariationSettingsColorPalette ) => item.slug === name )?.color;
 }
 
+function getColorBackground( color: StyleVariationPreviewColorPalette ) {
+	return color.base || color.background;
+}
+
+function getColorText( color: StyleVariationPreviewColorPalette ) {
+	const { contrast, foreground, primary } = color;
+	if ( contrast ) {
+		const backgroundRgb = hexToRgb( getColorBackground( color ) );
+		const contrastRgb = hexToRgb( contrast );
+		return hasMinContrast( contrastRgb, backgroundRgb, 0.2 ) ? contrast : foreground || primary;
+	}
+
+	return foreground || primary;
+}
+
 export function getPreviewStylesFromVariation( variation: StyleVariation ): StyleVariationPreview {
 	let color: StyleVariationPreviewColorPalette = {};
 	for ( const key of COLOR_PALETTE_SUPPORTS ) {
@@ -22,5 +38,8 @@ export function getPreviewStylesFromVariation( variation: StyleVariation ): Styl
 		color = { ...color, ...( value && { [ key ]: value } ) };
 	}
 
-	return { color };
+	return {
+		background: getColorBackground( color ),
+		text: getColorText( color ),
+	};
 }

@@ -51,8 +51,8 @@ const Badge: React.FC< BadgeProps > = ( { variation, onClick } ) => {
 				style={ {
 					background: `linear-gradient(
 							to right,
-							${ styles.color.background } 0 50%,
-							${ styles.color.foreground || styles.color.primary } 50% 100%)`,
+							${ styles.background } 0 50%,
+							${ styles.text } 50% 100%)`,
 				} }
 			/>
 		</div>
