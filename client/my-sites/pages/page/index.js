@@ -738,7 +738,7 @@ class Page extends Component {
 	};
 
 	recordPageTitleClick = ( canEdit ) => {
-		this.props.recordTracksEvent( 'calypso_pages_page_edit_click', {
+		this.props.recordTracksEvent( 'calypso_pages_page_title_click', {
 			page_type: 'real',
 			blog_id: this.props.siteId,
 			can_edit: canEdit,
