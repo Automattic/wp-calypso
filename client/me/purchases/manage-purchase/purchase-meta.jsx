@@ -535,11 +535,14 @@ function PurchaseMetaExpiration( {
 					},
 			  } );
 
-		const subsReEnableText = translate( '{{autoRenewToggle}}Re-enable{{/autoRenewToggle}}', {
-			components: {
-				autoRenewToggle,
-			},
-		} );
+		const subsReEnableText = translate(
+			'{{autoRenewToggle}}Re-activate subscription{{/autoRenewToggle}}',
+			{
+				components: {
+					autoRenewToggle,
+				},
+			}
+		);
 
 		let subsBillingText;
 		if (

@@ -241,13 +241,18 @@ const CancelPurchaseRefundInformation = ( {
 				showSupportLink = false;
 			} else if ( isJetpackPurchase && config.isEnabled( 'jetpack/cancel-through-main-flow' ) ) {
 				// Refundable Jetpack subscription
-				text = i18n.translate(
-					'Because you are within the %(refundPeriodInDays)d day refund period, ' +
-						'your plan will be cancelled and removed from your site immediately and you will receive a full refund. ' +
-						'If you want to keep the subscription until the renewal date, please cancel after the refund period has ended.',
-					{
-						args: { refundPeriodInDays },
-					}
+				text = [];
+				text.push(
+					i18n.translate(
+						'Because you are within the %(refundPeriodInDays)d day refund period, ' +
+							'your plan will be cancelled and removed from your site immediately and you will receive a full refund. ',
+						{
+							args: { refundPeriodInDays },
+						}
+					),
+					i18n.translate(
+						'If you want to keep the subscription until the renewal date, please cancel after the refund period has ended.'
+					)
 				);
 			} else {
 				text = i18n.translate(
