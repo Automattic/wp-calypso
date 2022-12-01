@@ -582,7 +582,7 @@ class Page extends Component {
 									? translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } )
 									: translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } )
 							}
-							onClick={ () => this.recordPageTitleClick( canEdit ) }
+							onClick={ () => this.clickPageTitle( canEdit ) }
 							onMouseOver={ preloadEditor }
 							onFocus={ preloadEditor }
 							data-tip-target={ 'page-' + page.slug }
@@ -738,7 +738,7 @@ class Page extends Component {
 		this.props.recordEvent( 'Clicked Delete Page' );
 	};
 
-	recordPageTitleClick = ( canEdit ) => {
+	clickPageTitle = ( canEdit ) => {
 		this.props.recordTracksEvent( 'calypso_pages_page_title_click', {
 			page_type: 'real',
 			blog_id: this.props.siteId,
