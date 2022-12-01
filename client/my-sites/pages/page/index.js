@@ -73,10 +73,9 @@ class Page extends Component {
 		// connected
 		setPreviewUrl: PropTypes.func.isRequired,
 		setLayoutFocus: PropTypes.func.isRequired,
-		recordTracksEvent: PropTypes.func.isRequired,
 		recordEvent: PropTypes.func.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
 		recordMoreOptions: PropTypes.func.isRequired,
-		recordPageTitle: PropTypes.func.isRequired,
 		recordEditPage: PropTypes.func.isRequired,
 		recordViewPage: PropTypes.func.isRequired,
 		recordStatsPage: PropTypes.func.isRequired,
@@ -582,7 +581,7 @@ class Page extends Component {
 									? translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } )
 									: translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } )
 							}
-							onClick={ this.props.recordPageTitle }
+							onClick={ this.recordPageTitleClick }
 							onMouseOver={ preloadEditor }
 							onFocus={ preloadEditor }
 							data-tip-target={ 'page-' + page.slug }
@@ -738,6 +737,11 @@ class Page extends Component {
 		this.props.recordEvent( 'Clicked Delete Page' );
 	};
 
+	recordPageTitleClick = () => {
+		this.props.recordTracksEvent( 'calypso_pages_page_edit_click', { page_type: 'real' } );
+		this.props.recordEvent( 'Clicked Page Title' );
+	};
+
 	copyPage = () => {
 		this.props.recordEvent( 'Clicked Copy Page' );
 	};
@@ -810,12 +814,9 @@ const mapDispatch = {
 	restorePost,
 	setPreviewUrl,
 	setLayoutFocus,
+	recordTracksEvent,
 	recordEvent,
 	recordMoreOptions: () => recordEvent( 'Clicked More Options Menu' ),
-	recordPageTitle: () => {
-		recordTracksEvent( 'calypso_pages_page_edit_click', { page_type: 'real' } );
-		recordEvent( 'Clicked Page Title' );
-	},
 	recordEditPage: () => recordEvent( 'Clicked Edit Page' ),
 	recordViewPage: () => recordEvent( 'Clicked View Page' ),
 	recordStatsPage: () => recordEvent( 'Clicked Stats Page' ),
