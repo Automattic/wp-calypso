@@ -113,14 +113,14 @@ const HostingConfigItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	);
 };
 
-const ModalContent = styled.div`
-	padding: 16px;
-	width: 80vw;
-	max-width: 480px;
-	min-height: 100px;
-	display: flex;
-	flex-direction: column;
-`;
+const ModalContent = styled.div( {
+	padding: 16,
+	width: '80vw',
+	maxWidth: '480px',
+	minHeight: '100px',
+	display: 'flex',
+	flexDirection: 'column',
+} );
 
 function useSafeSiteHasFeature( siteId: number, feature: string ) {
 	const dispatch = useDispatch();
