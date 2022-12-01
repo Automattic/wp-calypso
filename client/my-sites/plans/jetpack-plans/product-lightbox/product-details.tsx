@@ -26,31 +26,34 @@ const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
 		setContentStyle( { maxHeight: `${ height }px` } );
 	}, [ setContentStyle ] );
 
+	const displayIncludedProducts = product.productsIncluded?.length;
+
 	return (
 		<>
-			{ productDetails.map( ( { type, title, items }, index, infoList ) => (
-				<div className="product-lightbox__detail-list" key={ type }>
-					{ isMobile ? (
-						<FoldableCard
-							hideSummary
-							header={ title }
-							clickableHeader={ true }
-							smooth
-							contentExpandedStyle={ contentStlye }
-						>
-							<div ref={ ref }>
+			{ ! displayIncludedProducts &&
+				productDetails.map( ( { type, title, items }, index, infoList ) => (
+					<div className="product-lightbox__detail-list" key={ type }>
+						{ isMobile ? (
+							<FoldableCard
+								hideSummary
+								header={ title }
+								clickableHeader={ true }
+								smooth
+								contentExpandedStyle={ contentStlye }
+							>
+								<div ref={ ref }>
+									<DescriptionList items={ items } />
+								</div>
+							</FoldableCard>
+						) : (
+							<>
+								<p>{ title }</p>
 								<DescriptionList items={ items } />
-							</div>
-						</FoldableCard>
-					) : (
-						<>
-							<p>{ title }</p>
-							<DescriptionList items={ items } />
-						</>
-					) }
-					{ index !== infoList.length - 1 && <hr /> }
-				</div>
-			) ) }
+							</>
+						) }
+						{ index !== infoList.length - 1 && <hr /> }
+					</div>
+				) ) }
 		</>
 	);
 };
