@@ -105,9 +105,10 @@ const VirtualPage = ( { site, id, type, title, previewUrl, isHomepage }: Props )
 				</a>
 				<div className="page-card-info">
 					<span className="page-card-info__description">
-						{ translate( 'Showing the %(templateTitle)s template', {
-							args: { templateTitle: decodeEntities( template.title.rendered || template.slug ) },
-						} ) }
+						{ isHomepage &&
+							translate( 'Showing the %(templateTitle)s template', {
+								args: { templateTitle: decodeEntities( template.title.rendered || template.slug ) },
+							} ) }
 					</span>
 				</div>
 			</div>
