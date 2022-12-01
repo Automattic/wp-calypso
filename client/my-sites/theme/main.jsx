@@ -797,11 +797,19 @@ class ThemeSheet extends Component {
 
 		const launchPricing = () => window.open( plansUrl, '_blank' );
 
-		const { canonicalUrl, description, seoDescription, name: themeName, seoTitle } = this.props;
+		const {
+			canonicalUrl,
+			currentUserId,
+			description,
+			name: themeName,
+			seoTitle,
+			seoDescription,
+		} = this.props;
+
 		const title =
 			( seoTitle || themeName ) &&
 			translate( '%(themeName)s Theme', {
-				args: { themeName: seoTitle || themeName },
+				args: { themeName },
 			} );
 
 		const metas = [
