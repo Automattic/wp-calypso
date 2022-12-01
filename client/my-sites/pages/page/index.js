@@ -775,10 +775,6 @@ class Page extends Component {
 
 	handleMenuToggle = ( isVisible ) => {
 		if ( isVisible ) {
-			this.props.recordTracksEvent( 'calypso_pages_ellipsismenu_open_click', {
-				page_type: 'real',
-				blog_id: this.props.siteId,
-			} );
 			// record a GA event when the menu is opened
 			this.props.recordMoreOptions();
 			preloadEditor();
