@@ -23,6 +23,7 @@ export const usePricingBreakdown = ( {
 	return useMemo( () => {
 		const items: Array< PricingBreakdownItem > = [];
 		let total = 0;
+		let amountSaved = 0;
 
 		for ( const slug of includedProductSlugs ) {
 			const selectorProduct = slugToSelectorProduct( slug );
@@ -43,7 +44,9 @@ export const usePricingBreakdown = ( {
 			} );
 		}
 
-		const amountSaved = Number( ( total - bundlePrice ).toFixed( 2 ) );
+		if ( total ) {
+			amountSaved = Number( ( total - bundlePrice ).toFixed( 2 ) );
+		}
 
 		return { items, total, amountSaved, bundlePrice };
 	}, [ bundlePrice, getOriginalPrice, includedProductSlugs ] );
