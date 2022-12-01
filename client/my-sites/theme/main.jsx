@@ -797,14 +797,7 @@ class ThemeSheet extends Component {
 
 		const launchPricing = () => window.open( plansUrl, '_blank' );
 
-		const {
-			canonicalUrl,
-			currentUserId,
-			description,
-			name: themeName,
-			seoTitle,
-			seoDescription,
-		} = this.props;
+		const { canonicalUrl, description, name: themeName, seoTitle, seoDescription } = this.props;
 
 		const title =
 			( seoTitle || themeName ) &&
