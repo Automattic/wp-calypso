@@ -2,8 +2,8 @@ import { hexToRgb, hasMinContrast } from '@automattic/onboarding';
 import type {
 	StyleVariation,
 	StyleVariationSettingsColorPalette,
-	StyleVariationPreview,
 	StyleVariationPreviewColorPalette,
+	StyleVariationStylesColor,
 } from '../../types';
 
 const COLOR_PALETTE_SUPPORTS = [ 'background', 'base', 'contrast', 'foreground', 'primary' ];
@@ -31,7 +31,9 @@ function getColorText( color: StyleVariationPreviewColorPalette ) {
 	return foreground || primary;
 }
 
-export function getPreviewStylesFromVariation( variation: StyleVariation ): StyleVariationPreview {
+export function getStylesColorFromVariation(
+	variation: StyleVariation
+): StyleVariationStylesColor {
 	let color: StyleVariationPreviewColorPalette = {};
 	for ( const key of COLOR_PALETTE_SUPPORTS ) {
 		const value = getValueFromVariationSettingColorPalette( variation, key );

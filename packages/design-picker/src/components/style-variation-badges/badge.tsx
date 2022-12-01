@@ -1,7 +1,7 @@
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
-import { getPreviewStylesFromVariation } from './utils';
+import { getStylesColorFromVariation } from './utils';
 import type { StyleVariation } from '../../types';
 import './style.scss';
 
@@ -14,12 +14,12 @@ interface BadgeProps {
 
 const Badge: React.FC< BadgeProps > = ( { variation, onClick } ) => {
 	const { __ } = useI18n();
-	const styles = useMemo(
-		() => variation && getPreviewStylesFromVariation( variation ),
+	const color = useMemo(
+		() => variation && getStylesColorFromVariation( variation ),
 		[ variation ]
 	);
 
-	if ( ! styles ) {
+	if ( ! color ) {
 		return null;
 	}
 
@@ -51,8 +51,8 @@ const Badge: React.FC< BadgeProps > = ( { variation, onClick } ) => {
 				style={ {
 					background: `linear-gradient(
 							to right,
-							${ styles.background } 0 50%,
-							${ styles.text } 50% 100%)`,
+							${ color.background } 0 50%,
+							${ color.text } 50% 100%)`,
 				} }
 			/>
 		</div>
