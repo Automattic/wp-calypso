@@ -57,13 +57,10 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 			if ( isLinkInBioFlow( flowName ) ) {
 				settings.site_intent = LINK_IN_BIO_FLOW;
 				if ( selectedPatternContent ) {
-					const pattern: {
-						content: string | undefined;
-						template?: string | undefined;
-					} = {
+					const pattern = {
 						content: selectedPatternContent,
+						template: 'blank',
 					};
-					pattern.template = 'blank';
 					formData.push( [ 'pattern', JSON.stringify( pattern ) ] );
 				}
 			} else {
@@ -83,7 +80,6 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 		}
 
 		return wpcomRequest< { updated: object } >( {
-			// since this is a new site, its safe to assume that homepage ID is 2
 			path: `/sites/${ siteId }/sites-setup`,
 			method: 'POST',
 			apiNamespace: 'wpcom/v2',
