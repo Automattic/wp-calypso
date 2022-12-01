@@ -684,7 +684,7 @@ export class SiteSettingsFormGeneral extends Component {
 		}
 
 		// TODO: remove when we're fully released
-		if ( siteId % 10 !== 0 ) {
+		if ( siteId % 2 !== 0 ) {
 			return;
 		}
 
