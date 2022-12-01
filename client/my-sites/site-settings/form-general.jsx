@@ -418,7 +418,7 @@ export class SiteSettingsFormGeneral extends Component {
 									<SitePreviewLink
 										siteUrl={ site.URL }
 										siteId={ siteId }
-										disabled={ ! isAnyComingSoonEnabled && isSavingSettings }
+										disabled={ ! isAnyComingSoonEnabled || isSavingSettings }
 										source="privacy-settings"
 									/>
 								</div>
