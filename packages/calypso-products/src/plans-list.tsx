@@ -244,6 +244,24 @@ import {
 	FEATURE_CANCELLATION_SEO_AND_SOCIAL,
 	FEATURE_CANCELLATION_SFTP_AND_DATABASE,
 	FEATURE_CANCELLATION_SHIPPING_CARRIERS,
+	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
+	PRODUCT_JETPACK_SCAN_MONTHLY,
+	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+	PRODUCT_JETPACK_SCAN,
+	PRODUCT_JETPACK_ANTI_SPAM,
+	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
+	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
+	PRODUCT_JETPACK_VIDEOPRESS,
+	PRODUCT_JETPACK_BOOST,
+	PRODUCT_JETPACK_SOCIAL_BASIC,
+	PRODUCT_JETPACK_SEARCH,
+	PRODUCT_JETPACK_CRM,
+	PRODUCT_JETPACK_CRM_MONTHLY,
+	PRODUCT_JETPACK_SEARCH_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
+	PRODUCT_JETPACK_BOOST_MONTHLY,
+	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 } from './constants';
 import type {
 	BillingTerm,
@@ -1986,6 +2004,16 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_COMPLETE,
 		getPathSlug: () => 'complete',
 		getProductId: () => 2014,
+		getProductsIncluded: () => [
+			PRODUCT_JETPACK_BACKUP_T2_YEARLY,
+			PRODUCT_JETPACK_SCAN,
+			PRODUCT_JETPACK_ANTI_SPAM,
+			PRODUCT_JETPACK_VIDEOPRESS,
+			PRODUCT_JETPACK_BOOST,
+			PRODUCT_JETPACK_SOCIAL_BASIC,
+			PRODUCT_JETPACK_SEARCH,
+			PRODUCT_JETPACK_CRM,
+		],
 		getWhatIsIncluded: () => [
 			translate( 'VaultPress Backup: Real-time backups as you edit' ),
 			translate( '1TB (1,000GB) of cloud storage' ),
@@ -2007,6 +2035,16 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_COMPLETE_MONTHLY,
 		getPathSlug: () => 'complete-monthly',
 		getProductId: () => 2015,
+		getProductsIncluded: () => [
+			PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
+			PRODUCT_JETPACK_SCAN_MONTHLY,
+			PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
+			PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
+			PRODUCT_JETPACK_BOOST_MONTHLY,
+			PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
+			PRODUCT_JETPACK_SEARCH_MONTHLY,
+			PRODUCT_JETPACK_CRM_MONTHLY,
+		],
 		getWhatIsIncluded: () => [
 			translate( 'VaultPress Backup: Real-time backups as you edit' ),
 			translate( '1TB (1,000GB) of cloud storage' ),
@@ -2028,6 +2066,11 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T1_YEARLY,
 		getPathSlug: () => 'security-20gb-yearly',
 		getProductId: () => 2016,
+		getProductsIncluded: () => [
+			PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+			PRODUCT_JETPACK_SCAN,
+			PRODUCT_JETPACK_ANTI_SPAM,
+		],
 		getWhatIsIncluded: () => [
 			translate( 'VaultPress Backup: Real-time backups as you edit' ),
 			translate( '10GB of cloud storage' ),
@@ -2044,6 +2087,11 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T1_MONTHLY,
 		getPathSlug: () => 'security-20gb-monthly',
 		getProductId: () => 2017,
+		getProductsIncluded: () => [
+			PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
+			PRODUCT_JETPACK_SCAN_MONTHLY,
+			PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
+		],
 		getWhatIsIncluded: () => [
 			translate( 'VaultPress Backup: Real-time backups as you edit' ),
 			translate( '10GB of cloud storage' ),
@@ -2060,6 +2108,11 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T2_YEARLY,
 		getPathSlug: () => 'security-1tb-yearly',
 		getProductId: () => 2019,
+		getProductsIncluded: () => [
+			PRODUCT_JETPACK_BACKUP_T2_YEARLY,
+			PRODUCT_JETPACK_SCAN,
+			PRODUCT_JETPACK_ANTI_SPAM,
+		],
 		getWhatIsIncluded: () => [
 			translate( 'VaultPress Backup: Real-time backups as you edit' ),
 			translate( '{{strong}}1TB (1,000GB){{/strong}} of cloud storage', {
@@ -2088,6 +2141,11 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T2_MONTHLY,
 		getPathSlug: () => 'security-1tb-monthly',
 		getProductId: () => 2020,
+		getProductsIncluded: () => [
+			PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
+			PRODUCT_JETPACK_SCAN_MONTHLY,
+			PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
+		],
 		getWhatIsIncluded: () => [
 			translate( 'VaultPress Backup: Real-time backups as you edit' ),
 			translate( '{{strong}}1TB (1,000GB){{/strong}} of cloud storage', {

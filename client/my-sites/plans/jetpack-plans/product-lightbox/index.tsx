@@ -18,7 +18,6 @@ import { Icons } from './icons/icons';
 import { Tags } from './icons/tags';
 import PaymentPlan from './payment-plan';
 import ProductDetails from './product-details';
-import { getSlugsOfProductsInludedInBundle } from './utils';
 
 import './style.scss';
 
@@ -103,7 +102,7 @@ const ProductLightbox: React.FC< Props > = ( {
 
 	const isMultiSiteIncompatible = isMultisite && ! getIsMultisiteCompatible( product );
 
-	const includedProductSlugs = getSlugsOfProductsInludedInBundle( product );
+	const includedProductSlugs = product.productsIncluded || [];
 
 	const isLargeScreen = useBreakpoint( '>782px' );
 
