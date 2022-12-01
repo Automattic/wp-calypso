@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .product-lightbox__modal {
 	padding: 0;
 	border-radius: 8px; /* stylelint-disable-line scales/radii */
@@ -205,6 +208,10 @@
 	width: 40%;
 	background-color: #f6f7f7;
 	border-radius: 0 8px 8px 0; /* stylelint-disable-line scales/radii */
+
+	@media (max-width: $break-large) {
+		padding: 24px;
+	}
 }
 
 .product-lightbox__variants-options {
