@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { useStoreItemInfoContext } from '../product-store/context/store-item-info-context';
-import { PricingBreakdown } from '../product-store/pricing-breakdown/pricing-breakdown';
+import { PricingBreakdown } from '../product-store/pricing-breakdown';
 import { ProductStoreBaseProps } from '../product-store/types';
 import getProductIcon from '../product-store/utils/get-product-icon';
 import slugToSelectorProduct from '../slug-to-selector-product';
