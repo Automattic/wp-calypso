@@ -75,7 +75,7 @@
 	height: 100%;
 	width: 60%;
 	overflow-y: auto;
-	background-color: #fff;
+	background-color: var(--studio-white);
 	border-radius: 8px 0 0 8px; /* stylelint-disable-line scales/radii */
 
 	hr {
