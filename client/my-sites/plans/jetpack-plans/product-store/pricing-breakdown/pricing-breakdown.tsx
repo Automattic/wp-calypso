@@ -3,6 +3,8 @@ import { usePricingBreakdown } from '../hooks/use-pricing-breakdown';
 import { PricingBreakdownProps } from '../types';
 import { RenderPrice } from './render-price';
 
+import './style.scss';
+
 export const PricingBreakdown: React.FC< PricingBreakdownProps > = ( {
 	includedProductSlugs,
 	product,
@@ -22,8 +24,8 @@ export const PricingBreakdown: React.FC< PricingBreakdownProps > = ( {
 	}
 
 	return (
-		<div className="product-lightbox__pricing-breakdown">
-			<div className="product-lightbox__pricing-breakdown--highlight">
+		<div className="product-store__pricing-breakdown">
+			<div className="product-store__pricing-breakdown--highlight">
 				{ translate( 'Save {{amount/}}/mo vs buying individually', {
 					components: {
 						amount: <RenderPrice price={ amountSaved } />,
@@ -31,13 +33,13 @@ export const PricingBreakdown: React.FC< PricingBreakdownProps > = ( {
 				} ) }
 			</div>
 
-			<div className="product-lightbox__pricing-breakdown--details">
+			<div className="product-store__pricing-breakdown--details">
 				{ showBreakdownHeading ? (
-					<div className="product-lightbox__pricing-breakdown--heading">
+					<div className="product-store__pricing-breakdown--heading">
 						{ translate( 'Price breakdown:' ) }
 					</div>
 				) : null }
-				<ul className="product-lightbox__pricing-breakdown--details--items">
+				<ul className="product-store__pricing-breakdown--details--items">
 					{ items.map( ( { name, slug, renderedPrice } ) => (
 						<li key={ slug }>
 							<span>{ name }</span>
@@ -46,8 +48,8 @@ export const PricingBreakdown: React.FC< PricingBreakdownProps > = ( {
 					) ) }
 				</ul>
 				<hr />
-				<div className="product-lightbox__pricing-breakdown--summary">
-					<span className="product-lightbox__pricing-breakdown--summary--item">
+				<div className="product-store__pricing-breakdown--summary">
+					<span className="product-store__pricing-breakdown--summary--item">
 						<span>{ translate( 'Total:' ) }</span>
 						<span>
 							{ translate( '{{amount/}}/mo', {
@@ -57,7 +59,7 @@ export const PricingBreakdown: React.FC< PricingBreakdownProps > = ( {
 							} ) }
 						</span>
 					</span>
-					<span className="product-lightbox__pricing-breakdown--summary--item">
+					<span className="product-store__pricing-breakdown--summary--item">
 						<span>{ translate( 'You pay:' ) }</span>
 						<span>
 							{ translate( '{{amount/}}/mo', {
@@ -67,7 +69,7 @@ export const PricingBreakdown: React.FC< PricingBreakdownProps > = ( {
 							} ) }
 						</span>
 					</span>
-					<span className="product-lightbox__pricing-breakdown--summary--item">
+					<span className="product-store__pricing-breakdown--summary--item">
 						<span>{ translate( 'Your savings:' ) }</span>
 						<span>
 							{ translate( '{{amount/}}/mo', {
