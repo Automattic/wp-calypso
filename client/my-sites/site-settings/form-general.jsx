@@ -364,6 +364,7 @@ export class SiteSettingsFormGeneral extends Component {
 			hasSitePreviewLink,
 			siteId,
 			site,
+			isComingSoon,
 		} = this.props;
 
 		const blogPublic = parseInt( fields.blog_public, 10 );
@@ -381,7 +382,8 @@ export class SiteSettingsFormGeneral extends Component {
 				'is-coming-soon-disabled': isComingSoonDisabled,
 			}
 		);
-		const showPreviewLink = isEnabled( 'dev/share-site-for-preview' ) && hasSitePreviewLink;
+		const showPreviewLink =
+			isEnabled( 'dev/share-site-for-preview' ) && isComingSoon && hasSitePreviewLink;
 		return (
 			<FormFieldset>
 				{ ! isNonAtomicJetpackSite &&
@@ -416,7 +418,7 @@ export class SiteSettingsFormGeneral extends Component {
 									<SitePreviewLink
 										siteUrl={ site.URL }
 										siteId={ siteId }
-										disabled={ ! isAnyComingSoonEnabled || isSavingSettings }
+										disabled={ isSavingSettings }
 										source="privacy-settings"
 									/>
 								</div>
@@ -604,9 +606,7 @@ export class SiteSettingsFormGeneral extends Component {
 		const isPrivateAndUnlaunched = -1 === blogPublic && this.props.isUnlaunchedSite;
 
 		const showPreviewLink =
-			isEnabled( 'dev/share-site-for-preview' ) &&
-			( isComingSoon || isPrivateAndUnlaunched ) &&
-			hasSitePreviewLink;
+			isEnabled( 'dev/share-site-for-preview' ) && isComingSoon && hasSitePreviewLink;
 
 		const LaunchCard = showPreviewLink ? CompactCard : Card;
 
