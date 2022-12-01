@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
+import { usePricingBreakdown } from '../hooks/use-pricing-breakdown';
+import { PricingBreakdownProps } from '../types';
 import { RenderPrice } from './render-price';
-import { PricingBreakdownProps } from './types';
-import { usePricingBreakdown } from './use-pricing-breakdown';
 
 export const PricingBreakdown: React.FC< PricingBreakdownProps > = ( {
 	includedProductSlugs,

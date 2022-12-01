@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
-import slugToSelectorProduct from '../slug-to-selector-product';
-import useItemPrice from '../use-item-price';
-import { RenderPrice } from './render-price';
-import { PricingBreakdownItem, PricingBreakdownProps } from './types';
+import slugToSelectorProduct from '../../slug-to-selector-product';
+import useItemPrice from '../../use-item-price';
+import { RenderPrice } from '../pricing-breakdown/render-price';
+import { PricingBreakdownItem, PricingBreakdownProps } from '../types';
 import { useGetOriginalPrice } from './use-get-original-price';
 
 export const usePricingBreakdown = ( {

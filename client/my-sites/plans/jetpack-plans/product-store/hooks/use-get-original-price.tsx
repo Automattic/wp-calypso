@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { getProductCost } from 'calypso/state/products-list/selectors';
 import { getSiteAvailableProductCost } from 'calypso/state/sites/products/selectors';
-import { SelectorProduct } from '../types';
+import { SelectorProduct } from '../../types';
 
 const getMonthlyPrice = ( yearlyPrice: number ): number => ( yearlyPrice * 100 ) / 12 / 100;
 
