@@ -16,7 +16,7 @@ export const usePricingBreakdown = ( { product, siteId }: PricingBreakdownProps 
 		const items: Array< PricingBreakdownItem > = [];
 		let total = 0;
 
-		if ( ! includedProductSlugs.length ) {
+		if ( ! includedProductSlugs?.length ) {
 			return { items, total };
 		}
 

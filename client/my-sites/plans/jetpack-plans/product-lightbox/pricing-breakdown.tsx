@@ -15,6 +15,10 @@ export const PricingBreakdown: React.FC< PricingBreakdownProps > = ( { product, 
 		product?.monthlyProductSlug || ''
 	);
 
+	if ( ! items.length ) {
+		return null;
+	}
+
 	const bundlePrice = discountedPrice || originalPrice || 0;
 
 	const amountSaved = Number( ( total - bundlePrice ).toFixed( 2 ) );
