@@ -127,19 +127,7 @@ function a8c_happyblocks_pricing_plans_get_domain() {
 		}
 	}
 
-	/*
-	If the user is logged in but not the author of the topic,
-	return the domain of the user's primary blog.
-	*/
-	$user = wp_get_current_user();
-
-	if ( isset( $user->primary_blog ) ) {
-		$primary = get_blog_details( $user->primary_blog );
-		if ( $primary ) {
-			return $primary->domain;
-		}
-	}
-
+	// If the current user is not the author of the topic, then don't return any domain.
 	return false;
 }
 
@@ -176,7 +164,28 @@ HTML;
  */
 function a8c_happyblocks_register() {
 	register_block_type(
-		'happy-blocks/pricing-plans',
+		'happy-blocks/pricing-plans-personal',
+		array(
+			'api_version'     => 2,
+			'render_callback' => 'a8c_happyblocks_render_pricing_plans_callback',
+		)
+	);
+	register_block_type(
+		'happy-blocks/pricing-plans-premium',
+		array(
+			'api_version'     => 2,
+			'render_callback' => 'a8c_happyblocks_render_pricing_plans_callback',
+		)
+	);
+	register_block_type(
+		'happy-blocks/pricing-plans-business',
+		array(
+			'api_version'     => 2,
+			'render_callback' => 'a8c_happyblocks_render_pricing_plans_callback',
+		)
+	);
+	register_block_type(
+		'happy-blocks/pricing-plans-ecommerce',
 		array(
 			'api_version'     => 2,
 			'render_callback' => 'a8c_happyblocks_render_pricing_plans_callback',

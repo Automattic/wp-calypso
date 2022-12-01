@@ -60,6 +60,7 @@ import {
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 import AccountSettingsCloseLink from './close-link';
+import ToggleSitesAsLandingPage from './toggle-sites-as-landing-page';
 
 export const noticeId = 'me-settings-notice';
 const noticeOptions = {
@@ -954,6 +955,15 @@ class Account extends Component {
 						</FormFieldset>
 
 						{ this.props.canDisplayCommunityTranslator && this.communityTranslator() }
+
+						{ config.isEnabled( 'sites-as-landing-page' ) && (
+							<FormFieldset className="account__settings-admin-home">
+								<FormLabel id="account__default_landing_page">
+									{ translate( 'Admin home' ) }
+								</FormLabel>
+								<ToggleSitesAsLandingPage />
+							</FormFieldset>
+						) }
 
 						{ config.isEnabled( 'me/account/color-scheme-picker' ) &&
 							supportsCssCustomProperties() && (

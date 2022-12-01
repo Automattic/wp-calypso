@@ -34,6 +34,7 @@ export const ecommerceFlow: Flow = {
 		return [
 			'intro',
 			'storeProfiler',
+			'storeAddress',
 			'domains',
 			'designCarousel',
 			'siteCreationStep',
@@ -60,11 +61,15 @@ export const ecommerceFlow: Flow = {
 		const locale = useLocale();
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
+		const flags = new URLSearchParams( window.location.search ).get( 'flags' );
 
 		const getStartUrl = () => {
-			return locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=/setup/storeProfiler?flow=${ flowName }`
-				: `/start/account/user?variationName=${ flowName }&redirect_to=/setup/storeProfiler?flow=${ flowName }`;
+			const url =
+				locale && locale !== 'en'
+					? `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=/setup/ecommerce/storeProfiler`
+					: `/start/account/user?variationName=${ flowName }&redirect_to=/setup/ecommerce/storeProfiler`;
+
+			return url + ( flags && `?flags=${ flags }` );
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
@@ -88,7 +93,7 @@ export const ecommerceFlow: Flow = {
 				case 'processing':
 					// Coming from setThemeStep
 					if ( providedDependencies?.selectedDesign ) {
-						return window.location.assign( `${ site?.URL }/wp-admin/admin.php?page=wc-admin` );
+						return navigate( 'storeAddress' );
 					}
 
 					if ( providedDependencies?.finishedWaitingForAtomic ) {
@@ -129,6 +134,9 @@ export const ecommerceFlow: Flow = {
 				case 'storeProfiler':
 					return navigate( 'designCarousel' );
 
+				case 'storeAddress':
+					return window.location.assign( `${ site?.URL }/wp-admin/admin.php?page=wc-admin` );
+
 				case 'designCarousel':
 					return navigate( 'domains' );
 
@@ -157,6 +165,8 @@ export const ecommerceFlow: Flow = {
 		const goBack = () => {
 			switch ( _currentStepName ) {
 				case 'designCarousel':
+					return navigate( 'storeAddress' );
+				case 'storeAddress':
 					return navigate( 'storeProfiler' );
 				default:
 					return navigate( 'intro' );
@@ -168,6 +178,8 @@ export const ecommerceFlow: Flow = {
 				case 'intro':
 					return navigate( 'storeProfiler' );
 				case 'storeProfiler':
+					return navigate( 'storeAddress' );
+				case 'storeAddress':
 					return navigate( 'designCarousel' );
 				case 'designCarousel':
 					return navigate( 'designCarousel' );

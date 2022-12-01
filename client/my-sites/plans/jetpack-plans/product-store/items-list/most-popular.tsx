@@ -37,7 +37,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 	return (
 		<div className={ wrapperClassName }>
 			<h3 className="jetpack-product-store__most-popular--heading">{ heading }</h3>
-			<div className="jetpack-product-store__most-popular--items">
+			<ul className="jetpack-product-store__most-popular--items">
 				{ items.map( ( item ) => {
 					const isOwned = getIsOwned( item );
 					const isSuperseded = getIsSuperseded( item );
@@ -83,7 +83,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 					const ctaAsPrimary = ! ( isOwned || getIsPlanFeature( item ) || isSuperseded );
 
 					return (
-						<div key={ item.productSlug } className="jetpack-product-store__most-popular--item">
+						<li key={ item.productSlug } className="jetpack-product-store__most-popular--item">
 							<FeaturedItemCard
 								ctaAsPrimary={ ctaAsPrimary }
 								ctaHref={ getCheckoutURL( item ) }
@@ -97,10 +97,10 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 								title={ item.displayName }
 							/>
 							<FeaturesList item={ item } />
-						</div>
+						</li>
 					);
 				} ) }
-			</div>
+			</ul>
 		</div>
 	);
 };

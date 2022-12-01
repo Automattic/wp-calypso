@@ -17,10 +17,21 @@ const isEnabledImportLight = isEnabled( 'onboarding/import-light-url-screen' );
 
 export const ImportWrapper: Step = function ( props ) {
 	const { __ } = useI18n();
-	const { navigation, children, stepName } = props;
+	const { navigation, children, stepName, flow } = props;
 	const currentRoute = useCurrentRoute();
-	const shouldHideSkipBtn = currentRoute !== BASE_ROUTE;
 	const shouldHideBackBtn = currentRoute === `${ IMPORT_FOCUSED_FLOW }/${ BASE_ROUTE }`;
+	const skipLabelText =
+		flow === IMPORT_FOCUSED_FLOW ? __( 'Skip to dashboard' ) : __( "I don't have a site address" );
+
+	const shouldHideSkipBtn = () => {
+		switch ( flow ) {
+			case IMPORT_FOCUSED_FLOW:
+				return currentRoute !== `${ flow }/${ BASE_ROUTE }`;
+
+			default:
+				return currentRoute !== `${ flow }/${ BASE_ROUTE }` || isEnabledImportLight;
+		}
+	};
 
 	return (
 		<>
@@ -30,12 +41,12 @@ export const ImportWrapper: Step = function ( props ) {
 				stepName={ stepName || 'import-step' }
 				flowName="importer"
 				className="import__onboarding-page"
-				hideSkip={ isEnabledImportLight || shouldHideSkipBtn }
+				hideSkip={ shouldHideSkipBtn() }
 				hideBack={ shouldHideBackBtn }
 				hideFormattedHeader={ true }
 				goBack={ navigation.goBack }
 				goNext={ navigation.goNext }
-				skipLabelText={ __( "I don't have a site address" ) }
+				skipLabelText={ skipLabelText }
 				isFullLayout={ true }
 				stepContent={ children as ReactElement }
 				recordTracksEvent={ recordTracksEvent }

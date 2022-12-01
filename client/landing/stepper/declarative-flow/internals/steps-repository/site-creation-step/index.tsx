@@ -1,4 +1,10 @@
-import { LINK_IN_BIO_FLOW, addPlanToCart, createSiteWithCart } from '@automattic/onboarding';
+import { Site } from '@automattic/data-stores';
+import {
+	ECOMMERCE_FLOW,
+	LINK_IN_BIO_FLOW,
+	addPlanToCart,
+	createSiteWithCart,
+} from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -28,8 +34,20 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	const theme = flow === LINK_IN_BIO_FLOW ? 'pub/lynx' : 'pub/lettre';
-	const comingSoon = flow === LINK_IN_BIO_FLOW ? 1 : 0;
 	const isPaidDomainItem = Boolean( domainCartItem?.product_slug );
+
+	// Default visibility is public
+	let siteVisibility = Site.Visibility.PublicIndexed;
+
+	// Link-in-bio flow defaults to "Coming Soon"
+	if ( flow === LINK_IN_BIO_FLOW ) {
+		siteVisibility = Site.Visibility.PublicNotIndexed;
+	}
+
+	// Ecommerce flow defaults to Private
+	if ( flow === ECOMMERCE_FLOW ) {
+		siteVisibility = Site.Visibility.Private;
+	}
 
 	const signupDestinationCookieExists = retrieveSignupDestination();
 	const isReEnteringFlow = getSignupCompleteFlowName() === flow;
@@ -52,7 +70,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 			true,
 			isPaidDomainItem,
 			theme,
-			comingSoon,
+			siteVisibility,
 			'',
 			siteAccentColor,
 			true,

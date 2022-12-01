@@ -189,6 +189,7 @@ class Signup extends Component {
 		this.removeFulfilledSteps( this.props );
 
 		this.updateShouldShowLoadingScreen();
+		this.completeFlowAfterLoggingIn();
 
 		if ( canResumeFlow( this.props.flowName, this.props.progress, this.props.isLoggedIn ) ) {
 			// Resume from the current window location
@@ -315,18 +316,22 @@ class Signup extends Component {
 		setTimeout( () => window.scrollTo( 0, 0 ), 0 );
 	}
 
-	completeP2FlowAfterLoggingIn() {
-		if ( ! this.props.flowName !== 'p2v1' || ! this.props.progress ) {
+	completeFlowAfterLoggingIn() {
+		const flowName = this.props.flowName;
+		// p2v1 also has a user step at the end but the flow is otherwise broken.
+		// reader also has a user step at the end, but this change doesn't fix that flow.
+		const eligbleFlows = [ 'domain', 'add-domain' ];
+		if ( ! eligbleFlows.includes( flowName ) || ! this.props.progress ) {
 			return;
 		}
+		const stepName = this.props.stepName;
 
-		const p2SiteStep = this.props.progress[ 'p2-site' ];
-
-		if ( p2SiteStep && p2SiteStep.status === 'pending' && this.props.isLoggedIn ) {
-			// By removing and adding the p2-site step, we trigger the `SignupFlowController` store listener
+		const step = this.props.progress[ stepName ];
+		if ( step && step.status === 'pending' && this.props.isLoggedIn ) {
+			// By removing and adding the step, we trigger the `SignupFlowController` store listener
 			// to process the signup flow.
-			this.props.removeStep( p2SiteStep );
-			this.props.addStep( p2SiteStep );
+			this.props.removeStep( step );
+			this.props.addStep( step );
 		}
 	}
 
