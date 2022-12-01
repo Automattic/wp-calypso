@@ -1,4 +1,7 @@
 import {
+	JETPACK_SITES_FEATURES_FETCH,
+	JETPACK_SITES_FEATURES_FETCH_FAILURE,
+	JETPACK_SITES_FEATURES_FETCH_SUCCESS,
 	SITE_FEATURES_FETCH,
 	SITE_FEATURES_FETCH_COMPLETED,
 	SITE_FEATURES_FETCH_FAILED,
@@ -46,6 +49,11 @@ export function featuresReducer( state = {}, { type, siteId, features, error } )
 				error: error,
 				isRequesting: false,
 			} );
+		case JETPACK_SITES_FEATURES_FETCH:
+			return { ...state, isRequestingJetpackSitesFeatures: true };
+		case JETPACK_SITES_FEATURES_FETCH_SUCCESS:
+		case JETPACK_SITES_FEATURES_FETCH_FAILURE:
+			return { ...state, isRequestingJetpackSitesFeatures: false };
 	}
 
 	return state;

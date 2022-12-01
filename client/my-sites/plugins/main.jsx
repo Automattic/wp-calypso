@@ -14,8 +14,8 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import Count from 'calypso/components/count';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
 import QueryPlugins from 'calypso/components/data/query-plugins';
-import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Search from 'calypso/components/search';
@@ -466,7 +466,7 @@ export class PluginsMain extends Component {
 			<>
 				<DocumentHead title={ pageTitle } />
 				<QueryPlugins siteId={ selectedSite?.ID } />
-				<QuerySiteFeatures siteIds={ this.props.siteIds } />
+				<QueryJetpackSitesFeatures />
 				{ this.renderPageViewTracking() }
 				{ ! isJetpackCloud && (
 					<FixedNavigationHeader
