@@ -12,23 +12,33 @@ import {
 	JETPACK_CRM_PRODUCTS,
 	JETPACK_COMPLETE_PLANS,
 } from '@automattic/calypso-products';
-import { translate } from 'i18n-calypso';
+import { translate, TranslateResult } from 'i18n-calypso';
 
-const setTranslation = ( slugs: ReadonlyArray< string >, value: string ) =>
+const setTranslation = ( slugs: ReadonlyArray< string >, value: TranslateResult ) =>
 	slugs.reduce( ( map, slug ) => ( { ...map, [ slug ]: value } ), {} );
 
-export const INCLUDED_PRODUCT_DESCRIPTION_T1_MAP: Record< string, string > = {
+export const INCLUDED_PRODUCT_DESCRIPTION_T1_MAP: Record< string, TranslateResult > = {
 	...setTranslation(
 		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY, PRODUCT_JETPACK_BACKUP_T1_MONTHLY ],
 		translate(
-			'Real-time backups as you edit. 10GB of cloud storage. 30-day activity log archive. Unlimited one-click restores.'
+			'Real-time backups as you edit. 10GB of cloud storage. {{span}}30-day{{/span}} activity log archive. Unlimited one-click restores.',
+			{
+				components: {
+					span: <span />,
+				},
+			}
 		)
 	),
 
 	...setTranslation(
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY, PRODUCT_JETPACK_BACKUP_T2_MONTHLY ],
 		translate(
-			'Unlimited restores from the last 1 year, 1TB (1,000GB) of cloud storage & 1-year activity log archive.'
+			'Unlimited restores from the last 1 year, 1TB (1,000GB) of cloud storage & {{span}}1-year{{/span}} activity log archive.',
+			{
+				components: {
+					span: <span />,
+				},
+			}
 		)
 	),
 
@@ -73,7 +83,9 @@ export const INCLUDED_PRODUCT_DESCRIPTION_T2_MAP: Record< string, string > = {
 	),
 };
 
-const getIncludedProductDescriptionMap = ( productSlug: string ): Record< string, string > => {
+const getIncludedProductDescriptionMap = (
+	productSlug: string
+): Record< string, TranslateResult > => {
 	const isJetpackCompletePlan = ( JETPACK_COMPLETE_PLANS as ReadonlyArray< string > ).includes(
 		productSlug
 	);

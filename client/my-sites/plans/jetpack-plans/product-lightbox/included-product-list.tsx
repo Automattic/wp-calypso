@@ -1,15 +1,15 @@
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import getProductIcon from '../product-store/utils/get-product-icon';
 import slugToSelectorProduct from '../slug-to-selector-product';
 
 type IncludedProductsProps = {
 	products: ReadonlyArray< string >;
-	descriptionMap: Record< string, string >;
+	descriptionMap: Record< string, TranslateResult >;
 };
 
 type IncludedProductListItemProps = {
 	productSlug: string;
-	descriptionMap: Record< string, string >;
+	descriptionMap: Record< string, TranslateResult >;
 };
 
 const IncludedProductListItem: React.FC< IncludedProductListItemProps > = ( {

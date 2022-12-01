@@ -499,6 +499,10 @@ p.product-lightbox__included-product-list-item-description {
 	margin-bottom: 0;
 }
 
+p.product-lightbox__included-product-list-item-description span {
+	white-space: nowrap;
+}
+
 .product-lightbox__included-product-list-item-icon {
 	min-width: 38.8px;
 	max-height: 38.8px;
