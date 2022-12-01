@@ -53,7 +53,7 @@ export function getUpsellType( reason: string, opts: UpsellOptions ): UpsellType
 				return '';
 			}
 
-			if ( isWpComPremiumPlan( productSlug ) ) {
+			if ( isWpComPremiumPlan( productSlug ) && isWpComAnnualPlan( productSlug ) ) {
 				return 'downgrade-personal';
 			}
 
