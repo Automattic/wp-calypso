@@ -100,7 +100,7 @@ export const SitesDashboardOptInBanner = ( { sites }: SitesDashboardOptInBannerP
 			<SitesNotice
 				status="is-info"
 				text={ __( 'Do you want to make this page your default when visiting WordPress.com?' ) }
-				icon="heart"
+				icon="house"
 				showDismiss={ false }
 			>
 				<NoticeActions>

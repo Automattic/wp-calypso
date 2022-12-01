@@ -69,7 +69,7 @@ export const ecommerceFlow: Flow = {
 					? `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=/setup/ecommerce/storeProfiler`
 					: `/start/account/user?variationName=${ flowName }&redirect_to=/setup/ecommerce/storeProfiler`;
 
-			return url + ( flags && `?flags=${ flags }` );
+			return url + ( flags ? `?flags=${ flags }` : '' );
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {

@@ -12,6 +12,8 @@ export const subscriber: Reducer< SubscriberState, Action > = ( state = {}, acti
 		return Object.assign( {}, state, {
 			import: {
 				inProgress: true,
+				file: action.file,
+				emails: action.emails,
 			},
 		} );
 	} else if ( action.type === 'IMPORT_CSV_SUBSCRIBERS_START_SUCCESS' ) {
@@ -35,13 +37,14 @@ export const subscriber: Reducer< SubscriberState, Action > = ( state = {}, acti
 			},
 		} );
 	} else if ( action.type === 'IMPORT_CSV_SUBSCRIBERS_UPDATE' ) {
-		if ( action.job )
+		if ( action.job ) {
 			return Object.assign( {}, state, {
 				import: {
 					inProgress: true,
 					job: action.job,
 				},
 			} );
+		}
 
 		return Object.assign( {}, state, {
 			import: {

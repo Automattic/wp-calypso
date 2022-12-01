@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
-import Badge from 'calypso/components/badge';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
@@ -957,6 +956,15 @@ class Account extends Component {
 
 						{ this.props.canDisplayCommunityTranslator && this.communityTranslator() }
 
+						{ config.isEnabled( 'sites-as-landing-page' ) && (
+							<FormFieldset className="account__settings-admin-home">
+								<FormLabel id="account__default_landing_page">
+									{ translate( 'Admin home' ) }
+								</FormLabel>
+								<ToggleSitesAsLandingPage />
+							</FormFieldset>
+						) }
+
 						{ config.isEnabled( 'me/account/color-scheme-picker' ) &&
 							supportsCssCustomProperties() && (
 								<FormFieldset>
@@ -970,18 +978,6 @@ class Account extends Component {
 									/>
 								</FormFieldset>
 							) }
-
-						{ config.isEnabled( 'sites-as-landing-page' ) && (
-							<FormFieldset>
-								<FormLabel id="account__default_landing_page">
-									{ translate( 'Sites as landing page' ) }
-									<Badge className="account__beta-badge" type="info-blue">
-										{ translate( 'beta' ) }
-									</Badge>
-								</FormLabel>
-								<ToggleSitesAsLandingPage />
-							</FormFieldset>
-						) }
 					</form>
 				</Card>
 

@@ -14,16 +14,27 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import VideoChapters from './video-chapters';
 import VideoPlayer from './video-player';
 import './style.scss';
+import type { Course, CourseSlug, CourseVideo, VideoSlug } from 'calypso/data/courses';
+
+interface Props {
+	courseSlug: CourseSlug;
+	HeaderBar: React.FC< { course?: Course } >;
+	FooterBar: React.FC< { course?: Course; isCourseComplete: boolean } >;
+	areVideosTranslated?: boolean;
+	intent?: string;
+}
 
 const VideosUi = ( {
 	courseSlug = COURSE_SLUGS.BLOGGING_QUICK_START,
 	HeaderBar,
 	FooterBar,
 	areVideosTranslated = true,
-	intent = undefined,
-} ) => {
+	intent,
+}: Props ) => {
 	const translate = useTranslate();
-	const isEnglish = config( 'english_locales' ).includes( translate.localeSlug );
+	const isEnglish = ( config( 'english_locales' ) as string[] ).includes(
+		translate.localeSlug || ''
+	);
 	const { course, videoSlugs, completedVideoSlugs, isCourseComplete } = useCourseData( courseSlug );
 	const { updateUserCourseProgression } = useUpdateUserCourseProgressionMutation();
 
@@ -33,13 +44,13 @@ const VideosUi = ( {
 
 	const [ selectedChapterIndex, setSelectedChapterIndex ] = useState( 0 );
 	const [ isPreloadAnimationState, setisPreloadAnimationState ] = useState( true );
-	const [ currentVideoKey, setCurrentVideoKey ] = useState( null );
+	const [ currentVideoKey, setCurrentVideoKey ] = useState< VideoSlug >( '' );
 	const [ isPlaying, setIsPlaying ] = useState( false );
-	const currentVideo = course?.videos?.[ currentVideoKey || 0 ];
+	const currentVideo = course?.videos?.[ currentVideoKey ];
 
-	const onVideoPlayClick = ( videoSlug ) => {
+	const onVideoPlayClick = ( videoSlug: VideoSlug ) => {
 		recordTracksEvent( 'calypso_courses_play_click', {
-			course: course.slug,
+			course: course?.slug,
 			video: videoSlug,
 			...( intent ? { intent } : [] ),
 		} );
@@ -66,18 +77,18 @@ const VideosUi = ( {
 		setisPreloadAnimationState( false );
 	}, [ course, videoSlugs, completedVideoSlugs, currentVideoKey ] );
 
-	const isChapterSelected = ( idx ) => {
+	const isChapterSelected = ( idx: number ) => {
 		return selectedChapterIndex === idx;
 	};
 
-	const onChapterSelected = ( idx ) => {
+	const onChapterSelected = ( idx: number ) => {
 		if ( isChapterSelected( idx ) ) {
 			return;
 		}
 		setSelectedChapterIndex( idx );
 	};
 
-	const markVideoCompleted = ( videoData ) => {
+	const markVideoCompleted = ( videoData: CourseVideo & { slug: string } ) => {
 		if ( ! completedVideoSlugs.includes( videoData.slug ) ) {
 			updateUserCourseProgression( courseSlug, videoData.slug );
 		}
@@ -85,7 +96,7 @@ const VideosUi = ( {
 
 	const onVideoTranslationSupportLinkClick = () => {
 		recordTracksEvent( 'calypso_courses_translation_support_link_click', {
-			course: course.slug,
+			course: course?.slug,
 		} );
 	};
 
@@ -97,7 +108,7 @@ const VideosUi = ( {
 			} );
 		}
 	}, [ course ] );
-	const { headerTitle, headerSubtitle, headerSummary } = useCourseDetails( courseSlug );
+	const courseDetails = useCourseDetails( courseSlug );
 
 	return (
 		<div className="videos-ui">
@@ -120,18 +131,19 @@ const VideosUi = ( {
 				) }
 				<div className="videos-ui__header-content">
 					<div className="videos-ui__titles">
-						<h2>{ headerTitle }</h2>
-						<h2>{ headerSubtitle }</h2>
+						<h2>{ courseDetails?.headerTitle }</h2>
+						<h2>{ courseDetails?.headerSubtitle }</h2>
 					</div>
 					<div className="videos-ui__summary">
 						<ul>
-							{ headerSummary.map( ( text ) => {
-								return (
-									<li key={ text }>
-										<Gridicon icon="checkmark" size={ 18 } /> { text }
-									</li>
-								);
-							} ) }
+							{ courseDetails?.headerSummary &&
+								courseDetails?.headerSummary.map( ( text ) => {
+									return (
+										<li key={ text }>
+											<Gridicon icon="checkmark" size={ 18 } /> { text }
+										</li>
+									);
+								} ) }
 						</ul>
 					</div>
 				</div>
@@ -149,7 +161,9 @@ const VideosUi = ( {
 					{ currentVideo && (
 						<VideoPlayer
 							videoData={ { ...currentVideo, ...{ slug: currentVideoKey } } }
-							onVideoPlayStatusChanged={ ( isVideoPlaying ) => setIsPlaying( isVideoPlaying ) }
+							onVideoPlayStatusChanged={ ( isVideoPlaying: boolean ) =>
+								setIsPlaying( isVideoPlaying )
+							}
 							isPlaying={ isPlaying }
 							course={ course }
 							intent={ intent }
