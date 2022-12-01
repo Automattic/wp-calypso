@@ -76,6 +76,7 @@ class Page extends Component {
 		recordEvent: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		recordMoreOptions: PropTypes.func.isRequired,
+		recordPageTitle: PropTypes.func.isRequired,
 		recordEditPage: PropTypes.func.isRequired,
 		recordViewPage: PropTypes.func.isRequired,
 		recordStatsPage: PropTypes.func.isRequired,
