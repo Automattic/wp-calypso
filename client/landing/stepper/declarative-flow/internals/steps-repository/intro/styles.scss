@@ -6,27 +6,12 @@
 	&.newsletter {
 		background-color: rgb(162 218 254);
 
-		.step-container {
-			background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom-mobile.png);
-			background-repeat: no-repeat;
-			background-attachment: fixed;
-			background-position-x: center;
-			background-position-y: bottom;
-			background-size: contain;
-
-			@include break-medium {
-				background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom.png);
-			}
-
-			@media screen and ( max-height: 512px ) and ( orientation: landscape ) {
-				background-size: cover;
-				background-position-y: 35vh;
-			}
-
-			@include break-huge {
-				background-size: cover;
-				background-position-y: 10vh;
-			}
+		.intro__animated-canvas {
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: -1;
+			clip-path: polygon(50% 80%, 100% 30%, 100% 100%, 0 100%, 0 30%);
 		}
 		.intro__description {
 			max-width: 450px;

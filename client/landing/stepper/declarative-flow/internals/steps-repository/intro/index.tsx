@@ -98,7 +98,9 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			isHorizontalLayout={ false }
 			isWideLayout={ true }
 			isLargeSkipLayout={ false }
-			stepContent={ <IntroStep introContent={ introContent } onSubmit={ handleSubmit } /> }
+			stepContent={
+				<IntroStep flow={ flow } introContent={ introContent } onSubmit={ handleSubmit } />
+			}
 			recordTracksEvent={ recordTracksEvent }
 			showHeaderJetpackPowered={ flow === NEWSLETTER_FLOW }
 			showHeaderWooCommercePowered={ flow === ECOMMERCE_FLOW }
