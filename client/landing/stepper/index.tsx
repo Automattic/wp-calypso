@@ -59,19 +59,11 @@ function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
 function determineFlow() {
 	const flowNameFromPathName = window.location.pathname.split( '/' )[ 2 ];
 
-	let flow = availableFlows.find( ( f ) => f.flowName === flowNameFromPathName ) || {
-		flowName: 'site-setup-flow',
-		downloadFlow: () => import( './declarative-flow/site-setup-flow' ),
-	};
-
 	if ( isAnchorFmFlow() ) {
-		flow = {
-			flowName: 'anchor-fm-flow',
-			downloadFlow: () => import( './declarative-flow/anchor-fm-flow' ),
-		};
+		return availableFlows[ 'anchor-fm-flow' ];
 	}
 
-	return flow;
+	return availableFlows[ flowNameFromPathName ] || availableFlows[ 'site-setup-flow' ];
 }
 
 
@@ -108,7 +100,7 @@ interface AppWindow extends Window {
 window.AppBoot = async () => {
 	// backward support the old Stepper URL structure (?flow=something)
 	const flowNameFromQueryParam = new URLSearchParams( window.location.search ).get( 'flow' );
-	if ( availableFlows.find( ( flow ) => flow.flowName === flowNameFromQueryParam ) ) {
+	if ( flowNameFromQueryParam && availableFlows[ flowNameFromQueryParam ] ) {
 		window.location.href = `/setup/${ flowNameFromQueryParam }`;
 	}
 
@@ -142,7 +134,7 @@ window.AppBoot = async () => {
 	setupErrorLogger( reduxStore );
 
 	const flowLoader = determineFlow();
-	const { default: flow } = await flowLoader.downloadFlow();
+	const { default: flow } = await flowLoader();
 
 	ReactDom.render(
 		<CalypsoI18nProvider i18n={ defaultCalypsoI18n }>
