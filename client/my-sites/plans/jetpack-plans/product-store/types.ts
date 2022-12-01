@@ -87,6 +87,7 @@ export type ItemPriceProps = ProductStoreBaseProps &
 	};
 
 export type FeaturedItemCardProps = {
+	amountSaved?: React.ReactNode;
 	ctaAsPrimary?: boolean;
 	ctaHref?: string;
 	ctaLabel: React.ReactNode;

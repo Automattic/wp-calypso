@@ -6,6 +6,7 @@ import { HeroImage } from '../hero-image';
 import { ItemPrice } from '../item-price';
 import { MoreInfoLink } from '../more-info-link';
 import { MostPopularProps } from '../types';
+import { AmountSaved } from './amount-saved';
 
 import './style-most-popular.scss';
 
@@ -82,9 +83,18 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 
 					const ctaAsPrimary = ! ( isOwned || getIsPlanFeature( item ) || isSuperseded );
 
+					const amountSaved = item.productsIncluded?.length ? (
+						<AmountSaved
+							siteId={ siteId }
+							product={ item }
+							onClick={ onClickMoreInfoFactory( item ) }
+						/>
+					) : null;
+
 					return (
 						<li key={ item.productSlug } className="jetpack-product-store__most-popular--item">
 							<FeaturedItemCard
+								amountSaved={ amountSaved }
 								ctaAsPrimary={ ctaAsPrimary }
 								ctaHref={ getCheckoutURL( item ) }
 								ctaLabel={ ctaLabel }
