@@ -6,22 +6,30 @@ This utility function allows us to use a standardized method of loading remote s
 
 ```js
 import { loadScript, loadjQueryDependentScript } from '@automattic/load-script';
-loadScript( REMOTE_SCRIPT_URL, function ( error ) {
-	if ( error ) {
-		debug( 'Script ' + error.src + ' failed to load.' );
-		return;
-	}
-	debug( 'Script loaded!' );
-} );
+loadScript(
+	REMOTE_SCRIPT_URL,
+	function ( error ) {
+		if ( error ) {
+			debug( 'Script ' + error.src + ' failed to load.' );
+			return;
+		}
+		debug( 'Script loaded!' );
+	},
+	{ id: 'my-script-tag-id' }
+);
 
 // if we need jQuery, this function will load it (if it's not loaded already)
-loadjQueryDependentScript( REMOTE_SCRIPT_URL, function ( error ) {
-	if ( error ) {
-		debug( 'Script ' + error.src + ' failed to load.' );
-		return;
-	}
-	debug( 'Script and jQuery are loaded!' );
-} );
+loadjQueryDependentScript(
+	REMOTE_SCRIPT_URL,
+	function ( error ) {
+		if ( error ) {
+			debug( 'Script ' + error.src + ' failed to load.' );
+			return;
+		}
+		debug( 'Script and jQuery are loaded!' );
+	},
+	{ id: 'my-script-tag-id' }
+);
 ```
 
 If the second argument (`callback`) is not provided, then `loadScript()` will return a Promise.
@@ -34,6 +42,13 @@ loadScript( REMOTE_SCRIPT_URL )
 	.catch( function ( error ) {
 		debug( 'Script ' + error.src + ' failed to load.' );
 	} );
+```
+
+Use the optional third argument to pass arbitrary params for the script tag.
+
+```js
+await loadScript( REMOTE_SCRIPT_URL, undefined, { id: 'my-script-tag-id' } );
+// Script tag id will be set to 'my-script-tag-id';
 ```
 
 ## Error handling
