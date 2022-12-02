@@ -28,7 +28,8 @@ export class ReaderListOrganizations extends Component {
 		const { path, translate } = this.props;
 		const organization = this.fetchOrganization();
 		// Note: No need to translate 'a8c', but 'p2' is a brand so it should be translated
-		const organizationSlug = organization.slug === 'a8c' ? 'a8c' : translate( 'p2' );
+		const organizationSlug =
+			organization.slug && organization.slug === 'a8c' ? 'a8c' : translate( 'p2' );
 
 		return (
 			<>
