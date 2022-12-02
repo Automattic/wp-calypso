@@ -37,7 +37,7 @@
 		"devdocs/redirect-loggedout-homepage": true,
 		"difm/allow-extra-pages": false,
 		"fullstory": true,
-		"gdpr-banner": false,
+		"cookie-banner": false,
 		"google-my-business": false,
 		"help": true,
 		"importers/substack": true,

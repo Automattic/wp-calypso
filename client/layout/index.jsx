@@ -356,7 +356,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/app-banner' ) && (
 					<AsyncLoad require="calypso/blocks/app-banner" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'gdpr-banner' ) && (
+				{ config.isEnabled( 'cookie-banner' ) && (
 					<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
 				) }
 				{ config.isEnabled( 'legal-updates-banner' ) && (

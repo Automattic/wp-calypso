@@ -58,7 +58,7 @@
 		"external-media/openverse": true,
 		"full-site-editing/beta-opt-in": true,
 		"fullstory": true,
-		"gdpr-banner": false,
+		"cookie-banner": false,
 		"google-drive": true,
 		"google-my-business": true,
 		"gutenboarding/alpha-templates": false,

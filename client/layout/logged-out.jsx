@@ -136,7 +136,7 @@ const LayoutLoggedOut = ( {
 					{ secondary }
 				</div>
 			</div>
-			{ config.isEnabled( 'gdpr-banner' ) && (
+			{ config.isEnabled( 'cookie-banner' ) && (
 				<CookieBannerContainerSSR serverShow={ showGdprBanner } />
 			) }
 			{ sectionName === 'plugins' && (
