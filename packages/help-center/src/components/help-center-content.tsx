@@ -8,7 +8,7 @@ import { useEffect, useRef } from '@wordpress/element';
 import classnames from 'classnames';
 import { useSelector } from 'react-redux';
 import { Route, useLocation } from 'react-router-dom';
-import { getSectionName } from 'calypso/state/ui/selectors';
+import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
@@ -24,15 +24,17 @@ const HelpCenterContent: React.FC = () => {
 	const className = classnames( 'help-center__container-content' );
 	const containerRef = useRef< HTMLDivElement >( null );
 	const section = useSelector( getSectionName );
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {
 			pathname: location.pathname,
 			search: location.search,
 			section,
+			blog_id: siteId,
 			location: 'help-center',
 		} );
-	}, [ location, section ] );
+	}, [ location, section, siteId ] );
 
 	// reset the scroll location on navigation
 	useEffect( () => {
