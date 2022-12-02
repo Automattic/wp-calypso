@@ -37,6 +37,7 @@ import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { getCategorizationOptions } from './categories';
 import { DEFAULT_VARIATION_SLUG, STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
+import PremiumGlobalStylesModal from './premium-global-styles-modal';
 import PreviewToolbar from './preview-toolbar';
 import UpgradeModal from './upgrade-modal';
 import getThemeIdFromDesign from './utils/get-theme-id-from-design';
@@ -175,6 +176,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	// When the theme query string parameter is present, automatically switch to previewing that theme (if it's a valid theme)
 	const themeFromQueryString = useQuery().get( 'theme' );
+	const styleFromQueryString = useQuery().get( 'style' );
 	useEffect( () => {
 		if ( ! themeFromQueryString || ! allDesigns ) {
 			return;
@@ -189,9 +191,23 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			return;
 		}
 
+		if ( styleFromQueryString ) {
+			const requestedStyleVariation = requestedDesign.style_variations?.find(
+				( styleVariation ) => styleVariation.slug === styleFromQueryString
+			);
+
+			setSelectedStyleVariation( requestedStyleVariation );
+		}
+
 		setSelectedDesign( requestedDesign );
 		setIsPreviewingDesign( true );
-	}, [ themeFromQueryString, allDesigns, setSelectedDesign ] );
+	}, [
+		themeFromQueryString,
+		styleFromQueryString,
+		allDesigns,
+		setSelectedDesign,
+		setSelectedStyleVariation,
+	] );
 
 	function getEventPropsByDesign( design: Design, variation?: StyleVariation ) {
 		const variationSlugSuffix =
@@ -273,8 +289,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		( select ) => site && select( SITE_STORE ).isEligibleForProPlan( site.ID )
 	);
 
-	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
-
 	function upgradePlan() {
 		if ( selectedDesign ) {
 			recordTracksEvent(
@@ -333,6 +347,54 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			window.location.href = `/checkout/${ encodeURIComponent(
 				siteSlug || urlToSlug( site?.URL || '' ) || ''
 			) }/${ plan }?${ params.toString() }`;
+		}
+	}
+
+	// ********** Logic for Premium Global Styles
+
+	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+	const [ showPremiumGlobalStylesModal, setShowPremiumGlobalStylesModal ] = useState( false );
+
+	function unlockPremiumGlobalStyles() {
+		// These conditions should be true at this point, but just in case...
+		if ( selectedDesign && selectedStyleVariation ) {
+			recordTracksEvent(
+				'calypso_signup_design_premium_global_styles_modal_show',
+				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
+			);
+			setShowPremiumGlobalStylesModal( true );
+		}
+	}
+
+	function goToCheckoutForPremiumGlobalStyles() {
+		// These conditions should be true at this point, but just in case...
+		if ( selectedDesign && selectedStyleVariation && siteSlugOrId ) {
+			recordTracksEvent(
+				'calypso_signup_design_premium_global_styles_modal_checkout_button_click',
+				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
+			);
+
+			const params = new URLSearchParams();
+
+			// When the user is done with checkout, send them back to the current url
+			const destUrl = new URL( window.location.href );
+			const destSearchP = destUrl.searchParams;
+
+			// Add &theme=theme_slug&style=style_slug to the query params
+			if ( selectedDesign.slug ) {
+				destSearchP.set( 'theme', selectedDesign.slug );
+				destSearchP.set( 'style', selectedStyleVariation.slug );
+				destUrl.search = destSearchP.toString();
+			}
+
+			const destString = destUrl.toString().replace( window.location.origin, '' );
+			params.append( 'redirect_to', destString );
+
+			// The theme upsell link does not work with siteId and requires a siteSlug.
+			// See https://github.com/Automattic/wp-calypso/pull/64899
+			window.location.href = `/checkout/${ encodeURIComponent(
+				siteSlug || urlToSlug( site?.URL || '' ) || ''
+			) }/premium?${ params.toString() }`;
 		}
 	}
 
@@ -450,7 +512,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			selectedStyleVariation.slug !== DEFAULT_VARIATION_SLUG
 		) {
 			return (
-				<Button primary borderless={ false } onClick={ () => pickDesign() }>
+				<Button primary borderless={ false } onClick={ () => unlockPremiumGlobalStyles() }>
 					{ translate( 'Unlock this style' ) }
 				</Button>
 			);
@@ -506,6 +568,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					isOpen={ showUpgradeModal }
 					closeModal={ closeUpgradeModal }
 					checkout={ goToCheckout }
+				/>
+				<PremiumGlobalStylesModal
+					checkout={ goToCheckoutForPremiumGlobalStyles }
+					closeModal={ () => setShowPremiumGlobalStylesModal( false ) }
+					isOpen={ showPremiumGlobalStylesModal }
+					pickDesign={ pickDesign }
 				/>
 				{ selectedDesignHasStyleVariations ? (
 					<AsyncLoad
