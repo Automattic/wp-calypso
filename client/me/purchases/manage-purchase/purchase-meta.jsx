@@ -516,7 +516,15 @@ function PurchaseMetaExpiration( {
 				getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 			/>
 		) : (
-			<span />
+			<AutoRenewToggle
+				planName={ purchase.product_name }
+				siteDomain={ null }
+				siteSlug={ null }
+				purchase={ purchase }
+				toggleSource="manage-purchase"
+				showLink={ true }
+				getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
+			/>
 		);
 		const subsRenewText = isAutorenewalEnabled
 			? translate( 'Auto-renew is {{autoRenewToggle}}ON{{/autoRenewToggle}}', {
