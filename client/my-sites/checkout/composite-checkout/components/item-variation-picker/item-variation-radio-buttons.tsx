@@ -46,6 +46,7 @@ const ProductVariant: FunctionComponent< ProductVariantProps > = ( {
 	return (
 		<TermOptionsItem>
 			<RadioButton
+				isFixedHeight
 				name={ radioButtonGroup }
 				id={ productSlug + variantLabel }
 				value={ productSlug }
