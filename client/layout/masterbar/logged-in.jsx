@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products/src';
 import { Button, Popover } from '@automattic/components';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { Icon, preformatted, layout, chevronLeft } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -12,7 +13,6 @@ import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import { getStatsPathForTab } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
-import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -207,38 +207,41 @@ class MasterbarLoggedIn extends Component {
 		return 'my-sites';
 	};
 
-	// will render as back button on mobile and in editor
-	renderMySites() {
-		const {
-			domainOnlySite,
-			hasMoreThanOneSite,
-			siteSlug,
-			translate,
-			isCustomerHomeEnabled,
-			section,
-		} = this.props;
-		const { isMenuOpen, isResponsiveMenu } = this.state;
+	renderWordPressIcon() {
+		const { siteSlug, translate, isCustomerHomeEnabled } = this.props;
+		const { isMenuOpen } = this.state;
 
 		const homeUrl = isCustomerHomeEnabled
 			? `/home/${ siteSlug }`
 			: getStatsPathForTab( 'day', siteSlug );
 
-		let mySitesUrl = domainOnlySite ? domainManagementList( siteSlug ) : homeUrl;
-		if ( 'sites' === section && isResponsiveMenu ) {
-			mySitesUrl = '';
-		}
-		const icon =
-			this.state.isMobile && this.props.isInEditor ? 'chevron-left' : this.wordpressIcon();
 		return (
 			<Item
-				url={ mySitesUrl }
+				url={ homeUrl }
+				icon={ this.wordpressIcon() }
+				isActive={ this.isActive( 'sites' ) && ! isMenuOpen }
+				tooltip={ translate( 'View a list of your sites and access their dashboards' ) }
+			/>
+		);
+	}
+
+	// will render as back button on mobile and in editor
+	renderMySites() {
+		const { hasMoreThanOneSite, translate } = this.props;
+		const { isMenuOpen } = this.state;
+
+		//TODO make sure correct WordPress icon is used on Horizon sites
+		const icon = this.state.isMobile && this.props.isInEditor ? chevronLeft : layout;
+		return (
+			<Item
+				url="/sites"
 				tipTarget="my-sites"
-				icon={ icon }
 				onClick={ this.clickMySites }
 				isActive={ this.isActive( 'sites' ) && ! isMenuOpen }
 				tooltip={ translate( 'View a list of your sites and access their dashboards' ) }
 				preloadSection={ this.preloadMySites }
 			>
+				<Icon className="gridicon" icon={ icon } />
 				{ hasMoreThanOneSite
 					? translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
 					: translate( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
@@ -285,12 +288,12 @@ class MasterbarLoggedIn extends Component {
 				tipTarget="reader"
 				className="masterbar__reader"
 				url="/read"
-				icon="reader"
 				onClick={ this.clickReader }
 				isActive={ this.isActive( 'reader' ) }
 				tooltip={ translate( 'Read the blogs and topics you follow' ) }
 				preloadSection={ this.preloadReader }
 			>
+				<Icon icon={ preformatted } className="gridicon" />
 				{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 			</Item>
 		);
@@ -513,6 +516,7 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderPopupSearch() }
 					<Masterbar>
 						<div className="masterbar__section masterbar__section--left">
+							{ this.renderWordPressIcon() }
 							{ this.renderMySites() }
 							{ this.renderLanguageSwitcher() }
 							{ this.renderSearch() }
@@ -532,6 +536,7 @@ class MasterbarLoggedIn extends Component {
 				{ this.renderPopupSearch() }
 				<Masterbar>
 					<div className="masterbar__section masterbar__section--left">
+						{ this.renderWordPressIcon() }
 						{ this.renderMySites() }
 						{ this.renderReader() }
 						{ this.renderLanguageSwitcher() }

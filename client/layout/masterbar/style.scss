@@ -200,6 +200,9 @@ $masterbar-color-secondary: #101517;
 	.masterbar__item-content {
 		white-space: nowrap;
 		color: var(--color-masterbar-text);
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
 	}
 
 	.gridicon {
