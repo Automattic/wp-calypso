@@ -772,7 +772,7 @@ export function useSetStepComplete(): ( stepId: string ) => Promise< boolean > {
 	return useJITCallback( async ( stepId: string ) => {
 		const stepNumber = getStepNumberFromId( stepId );
 		if ( ! stepNumber ) {
-			throw new Error( `Cannot find step with id ${ stepId }` );
+			throw new Error( `Cannot find step with id '${ stepId }' when trying to set step complete.` );
 		}
 		// To try to complete a step, we must try to complete all previous steps
 		// first, ignoring steps that are already complete.
