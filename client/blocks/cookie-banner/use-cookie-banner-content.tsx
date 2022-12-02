@@ -3,20 +3,21 @@ import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { isServer } from '.';
 import type { CookieBannerProps } from '@automattic/privacy-toolset';
+import type { PropsWithChildren } from 'react';
 
-type LinkProps = { href: string };
+type LinkProps = PropsWithChildren< { href: string } >;
 
-const LocalizedLink = ( { href }: LinkProps ) => {
+const LocalizedLink = ( { href, children }: LinkProps ) => {
 	const localizeUrl = useLocalizeUrl();
-	return <ExternalLink href={ localizeUrl( href ) } target="_blank" />;
+	return <ExternalLink href={ localizeUrl( href ) }>{ children }</ExternalLink>;
 };
 
-const Link = ( { href }: LinkProps ) => {
+const Link = ( props: LinkProps ) => {
 	// useLocalizeUrl() does not support SSR yet, so we cannot use it on the server.
 	if ( isServer ) {
-		return <ExternalLink href={ href } target="_blank" />;
+		return <ExternalLink { ...props } />;
 	}
-	return <LocalizedLink href={ href } />;
+	return <LocalizedLink { ...props } />;
 };
 
 export const useCookieBannerContent = (): CookieBannerProps[ 'content' ] => {
