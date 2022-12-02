@@ -43,30 +43,20 @@ const CookieBannerContainer = () => {
 	const [ show, setShow ] = useState( false );
 
 	useEffect( () => {
-		let isMounted = true;
+		const controller = new AbortController();
 
-		refreshCountryCodeCookieGdpr()
+		refreshCountryCodeCookieGdpr( controller.signal )
 			.then( () => {
-				if ( ! isMounted ) {
-					return;
-				}
-
 				const cookies = cookie.parse( document.cookie );
 				setShow(
 					shouldSeeCookieBanner( cookies.country_code, cookies.region, getTrackingPrefs() )
 				);
 			} )
 			.catch( () => {
-				if ( ! isMounted ) {
-					return;
-				}
-
 				setShow( shouldSeeCookieBanner( undefined, undefined, getTrackingPrefs() ) );
 			} );
 
-		return () => {
-			isMounted = false;
-		};
+		return () => controller.abort();
 	}, [ setShow ] );
 
 	const handleClose = useCallback( () => {
