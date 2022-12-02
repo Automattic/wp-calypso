@@ -1,13 +1,17 @@
-import { Card } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import { connect } from 'react-redux';
 import VisitSite from 'calypso/blocks/visit-site';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import SiteSelector from 'calypso/components/site-selector';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import getSites from 'calypso/state/selectors/get-sites';
+import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import { getJetpackActivePlugins, isJetpackSitePred } from 'calypso/state/sites/selectors';
 
 /**
@@ -146,23 +150,52 @@ class Sites extends Component {
 	}
 
 	render() {
-		const { clearPageTitle, fromSite, siteBasePath } = this.props;
+		const { clearPageTitle, fromSite, siteBasePath, sites, translate, hasFetchedSites } =
+			this.props;
+		const filteredSites = sites.filter( this.filterSites );
+
+		const showEmptyContent = hasFetchedSites && ! filteredSites.length;
 
 		return (
 			<>
 				{ clearPageTitle && <DocumentHead title="" /> }
-				<Main className="sites">
-					<div className="sites__select-header">
-						<h2 className="sites__select-heading">{ this.getHeaderText() }</h2>
-						{ fromSite && <VisitSite siteSlug={ fromSite } /> }
-					</div>
-					<Card className="sites__select-wrapper">
-						<SiteSelector filter={ this.filterSites } siteBasePath={ siteBasePath } groups />
-					</Card>
+				<Main className={ classNames( 'sites', { 'sites__main-empty': showEmptyContent } ) }>
+					{ showEmptyContent ? (
+						<div className="sites__empty-state">
+							<h1 className="card-heading-36">{ translate( 'Add a site' ) }</h1>
+							<p>
+								{ translate(
+									'It looks like you don’t have any connected Jetpack sites to manage.'
+								) }
+							</p>
+							<Button
+								primary
+								target="_blank"
+								href="https://jetpack.com/jetpack-agency-beta-instructions/"
+							>
+								{ translate( 'Learn how to add a site' ) }
+							</Button>
+						</div>
+					) : (
+						<>
+							<div className="sites__select-header">
+								<h2 className="sites__select-heading">{ this.getHeaderText() }</h2>
+								{ fromSite && <VisitSite siteSlug={ fromSite } /> }
+							</div>
+							<Card className="sites__select-wrapper">
+								<SiteSelector filter={ this.filterSites } siteBasePath={ siteBasePath } groups />
+							</Card>
+						</>
+					) }
 				</Main>
 			</>
 		);
 	}
 }
 
-export default localize( Sites );
+export default connect( ( state ) => {
+	return {
+		hasFetchedSites: hasLoadedSites( state ),
+		sites: getSites( state, false ),
+	};
+} )( localize( Sites ) );
