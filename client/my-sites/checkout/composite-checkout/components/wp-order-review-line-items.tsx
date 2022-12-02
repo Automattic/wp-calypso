@@ -15,6 +15,7 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
+import { useExperiment } from 'calypso/lib/explat';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import {
 	canVariantBePurchased,
@@ -217,6 +218,13 @@ function LineItemWrapper( {
 	);
 
 	const areThereVariants = variants.length > 1;
+	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
+		'calypso_checkout_variant_picker_radio_2212',
+		{
+			isEligible: areThereVariants && shouldShowVariantSelector && ! isJetpack,
+		}
+	);
+	const shouldUseRadioButtons = isJetpack || experimentAssignment?.variationName === 'treatment';
 
 	return (
 		<WPOrderReviewListItem key={ product.uuid }>
@@ -232,13 +240,13 @@ function LineItemWrapper( {
 				onRemoveProductClick={ onRemoveProductClick }
 				onRemoveProductCancel={ onRemoveProductCancel }
 			>
-				{ areThereVariants && shouldShowVariantSelector && (
+				{ ! isLoadingExperimentAssignment && areThereVariants && shouldShowVariantSelector && (
 					<ItemVariationPicker
 						selectedItem={ product }
 						onChangeItemVariant={ onChangePlanLength }
 						isDisabled={ isDisabled }
 						variants={ variants }
-						type={ isJetpack ? 'dropdown' : 'radio' }
+						type={ shouldUseRadioButtons ? 'radio' : 'dropdown' }
 					/>
 				) }
 			</LineItem>
