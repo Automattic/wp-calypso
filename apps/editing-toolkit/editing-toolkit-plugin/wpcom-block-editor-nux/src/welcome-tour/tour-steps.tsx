@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
 import { ExternalLink } from '@wordpress/components';
@@ -68,6 +69,11 @@ function getTourSteps(
 	const isVideoMaker = 'videomaker' === ( themeName ?? '' );
 	const isPatternAssemblerFlow = 'pattern_assembler' === completedFlow;
 	const siteEditorCourseUrl = `https://wordpress.com/home/${ window.location.hostname }?courseSlug=site-editor-quick-start`;
+	const onSiteEditorCourseLinkClick = () => {
+		recordTracksEvent( 'calypso_editor_wpcom_tour_site_editor_course_link_click', {
+			is_pattern_assembler: isPatternAssemblerFlow,
+		} );
+	};
 
 	return [
 		{
@@ -85,7 +91,12 @@ function getTourSteps(
 									'full-site-editing'
 								),
 								{
-									link_to_site_editor_course: <ExternalLink href={ siteEditorCourseUrl } />,
+									link_to_site_editor_course: (
+										<ExternalLink
+											href={ siteEditorCourseUrl }
+											onClick={ onSiteEditorCourseLinkClick }
+										/>
+									),
 								}
 							);
 						}
@@ -103,13 +114,18 @@ function getTourSteps(
 					mobile: null,
 				},
 				imgSrc: getTourAssets( isVideoMaker ? 'videomakerWelcome' : 'welcome' ),
-				imgHref: isPatternAssemblerFlow ? siteEditorCourseUrl : undefined,
-				imgPlayable: isPatternAssemblerFlow,
+				imgLink: isPatternAssemblerFlow
+					? {
+							href: siteEditorCourseUrl,
+							playable: true,
+							onClick: onSiteEditorCourseLinkClick,
+					  }
+					: undefined,
 			},
 			options: {
 				classNames: {
 					desktop: 'wpcom-editor-welcome-tour__step',
-					mobile: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+					mobile: [ 'is-with-extra-padding', 'calypso_editor_wpcom_draft_post_modal_show' ],
 				},
 			},
 		},
