@@ -17,6 +17,7 @@ interface SitePreviewLinkProps {
 	siteUrl: string;
 	source: 'launch-settings' | 'privacy-settings' | 'smp-modal';
 	disabled?: boolean;
+	forceOff?: boolean;
 }
 
 const HelpText = styled.p( {
@@ -45,6 +46,7 @@ export default function SitePreviewLink( {
 	siteId,
 	siteUrl,
 	disabled = false,
+	forceOff = false,
 	source,
 }: SitePreviewLinkProps ) {
 	const translate = useTranslate();
@@ -94,7 +96,7 @@ export default function SitePreviewLink( {
 		}
 	}
 
-	const checkedAndEnabled = checked && ! disabled;
+	const checkedAndEnabled = checked && ! forceOff;
 	const isBusy = isFirstLoading || isCreating || isDeleting;
 
 	if ( isFirstLoading ) {
@@ -109,7 +111,7 @@ export default function SitePreviewLink( {
 				{ ...{ disabled: disabled || isBusy } } // disabled is not included on ToggleControl props type
 			/>
 			<HelpText>{ translate( 'Anyone with this link can view your site.' ) }</HelpText>
-			{ ! disabled &&
+			{ ! forceOff &&
 				previewLinks?.map( ( { code, isCreating = false, isRemoving = false } ) => {
 					let linkValue = `${ siteUrl }?share=${ code }`;
 					if ( isCreating ) {
@@ -117,7 +119,13 @@ export default function SitePreviewLink( {
 					} else if ( isRemoving ) {
 						linkValue = translate( 'Removing…' );
 					}
-					return <ClipboardButtonInput key={ code } value={ linkValue } disabled={ isBusy } />;
+					return (
+						<ClipboardButtonInput
+							key={ code }
+							value={ linkValue }
+							disabled={ isBusy || disabled }
+						/>
+					);
 				} ) }
 		</div>
 	);
