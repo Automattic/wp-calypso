@@ -251,6 +251,7 @@ export const WPCOM_FEATURES_VIDEO_HOSTING = 'video-hosting';
 export const WPCOM_FEATURES_WORDADS = 'wordads';
 export const WPCOM_FEATURES_CUSTOM_DESIGN = 'custom-design';
 export const WPCOM_FEATURES_GLOBAL_STYLES = 'global-styles';
+export const WPCOM_FEATURES_SITE_PREVIEW_LINKS = 'site-preview-links';
 
 // Signup flow related features
 export const FEATURE_UNLIMITED_EMAILS = 'unlimited-emails';

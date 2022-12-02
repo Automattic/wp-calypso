@@ -73,7 +73,7 @@ const GetCurrentThemeSoftwareSets: Step = function GetCurrentBundledPluginsStep(
 						siteSlug,
 					} )
 				);
-				goNext();
+				goNext?.();
 			} else {
 				debug(
 					'Redirected because theme has no bundled software',

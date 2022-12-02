@@ -176,7 +176,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 			pattern_count: patterns.length,
 		} );
 
-		goBack();
+		goBack?.();
 	};
 
 	const getSelectedPattern = () => {

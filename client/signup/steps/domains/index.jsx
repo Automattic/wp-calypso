@@ -864,7 +864,7 @@ class DomainsStep extends Component {
 				shouldHideNavButtons={ this.isTailoredFlow() }
 				stepContent={
 					<div>
-						{ ! this.props.productsLoaded && <QueryProductsList /> }
+						<QueryProductsList />
 						{ this.renderContent() }
 					</div>
 				}

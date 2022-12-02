@@ -566,6 +566,11 @@ export interface ResponseCartProduct {
 	subscription_id?: string;
 	introductory_offer_terms?: IntroductoryOfferTerms;
 
+	/**
+	 * True if the cart item represents a purchase for a different user's site.
+	 */
+	is_gift_purchase?: boolean;
+
 	// Temporary optional properties for the monthly pricing test
 	related_monthly_plan_cost_display?: string;
 	related_monthly_plan_cost_integer?: number;

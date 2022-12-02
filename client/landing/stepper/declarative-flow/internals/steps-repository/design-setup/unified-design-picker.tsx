@@ -403,7 +403,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			return;
 		}
 
-		goBack();
+		goBack?.();
 	}
 
 	function recordDeviceClick( device: string ) {

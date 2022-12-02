@@ -20,6 +20,7 @@ import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
 import PostActionsEllipsisMenuPromote from 'calypso/my-sites/post-type-list/post-actions-ellipsis-menu/promote';
 import PostActionsEllipsisMenuQRCode from 'calypso/my-sites/post-type-list/post-actions-ellipsis-menu/qrcode';
 import { preloadEditor } from 'calypso/sections-preloaders';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEditorDuplicatePostPath } from 'calypso/state/editor/selectors';
 import { infoNotice } from 'calypso/state/notices/actions';
 import { isFrontPage, isPostsPage } from 'calypso/state/pages/selectors';
@@ -73,6 +74,7 @@ class Page extends Component {
 		setPreviewUrl: PropTypes.func.isRequired,
 		setLayoutFocus: PropTypes.func.isRequired,
 		recordEvent: PropTypes.func.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
 		recordMoreOptions: PropTypes.func.isRequired,
 		recordPageTitle: PropTypes.func.isRequired,
 		recordEditPage: PropTypes.func.isRequired,
@@ -580,7 +582,7 @@ class Page extends Component {
 									? translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } )
 									: translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } )
 							}
-							onClick={ this.props.recordPageTitle }
+							onClick={ () => this.clickPageTitle( canEdit ) }
 							onMouseOver={ preloadEditor }
 							onFocus={ preloadEditor }
 							data-tip-target={ 'page-' + page.slug }
@@ -736,6 +738,15 @@ class Page extends Component {
 		this.props.recordEvent( 'Clicked Delete Page' );
 	};
 
+	clickPageTitle = ( canEdit ) => {
+		this.props.recordTracksEvent( 'calypso_pages_page_title_click', {
+			page_type: 'real',
+			blog_id: this.props.siteId,
+			can_edit: canEdit,
+		} );
+		this.props.recordPageTitle();
+	};
+
 	copyPage = () => {
 		this.props.recordEvent( 'Clicked Copy Page' );
 	};
@@ -808,6 +819,7 @@ const mapDispatch = {
 	restorePost,
 	setPreviewUrl,
 	setLayoutFocus,
+	recordTracksEvent,
 	recordEvent,
 	recordMoreOptions: () => recordEvent( 'Clicked More Options Menu' ),
 	recordPageTitle: () => recordEvent( 'Clicked Page Title' ),
