@@ -97,13 +97,40 @@ add_action( 'enqueue_block_editor_assets', 'a8c_happyblocks_assets' );
 add_action( 'wp_enqueue_scripts', 'a8c_happyblocks_view_assets' );
 
 /**
- * Get the topic's selected help site's domain.
+ * Get the domain to use in the Pricing Plans block.
  *
- * @return string
+ * The function should return false when the domain is not set, see https://github.com/Automattic/wp-calypso/pull/70402#discussion_r1033299970
+ *
+ * @return string|bool The domain host (or false if no domain is available)
  */
-function a8c_happyblocks_get_topic_domain() {
-	$topic_id = bbp_get_topic_id();
-	return get_post_meta( $topic_id, 'which_blog_domain', true );
+function a8c_happyblocks_pricing_plans_get_domain() {
+
+	// If the user is not authenticated, then we can't get their domain.
+	if ( ! is_user_logged_in() ) {
+		return false;
+	}
+
+	// If BBPress is not active, then just don't return any domain and let the user choose.
+	if ( ! function_exists( 'bbp_get_topic_id' ) ) {
+		return false;
+	}
+
+	$topic_id  = bbp_get_topic_id();
+	$author_id = intval( get_post_field( 'post_author', $topic_id ) );
+
+	/*
+	If the current user is the author of the topic, return the topic's domain selected
+	in the "Site you need help with" field.
+	*/
+	if ( get_current_user_id() === $author_id ) {
+		$topic_domain = get_post_meta( $topic_id, 'which_blog_domain', true );
+		if ( $topic_domain ) {
+			return $topic_domain;
+		}
+	}
+
+	// If the current user is not the author of the topic, then don't return any domain.
+	return false;
 }
 
 /**
@@ -115,7 +142,7 @@ function a8c_happyblocks_get_config() {
 
 	return array(
 		'locale' => get_user_locale(),
-		'domain' => a8c_happyblocks_get_topic_domain(),
+		'domain' => a8c_happyblocks_pricing_plans_get_domain(),
 	);
 }
 
@@ -126,7 +153,7 @@ function a8c_happyblocks_get_config() {
  * @return string
  */
 function a8c_happyblocks_render_pricing_plans_callback( $attributes ) {
-	$attributes['domain'] = a8c_happyblocks_get_topic_domain();
+	$attributes['domain'] = a8c_happyblocks_pricing_plans_get_domain();
 	$json_attributes      = htmlspecialchars( wp_json_encode( $attributes ), ENT_QUOTES, 'UTF-8' );
 
 	return <<<HTML
@@ -145,5 +172,6 @@ function a8c_happyblocks_register() {
 			'render_callback' => 'a8c_happyblocks_render_pricing_plans_callback',
 		)
 	);
+
 }
 add_action( 'init', 'a8c_happyblocks_register' );

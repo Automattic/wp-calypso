@@ -46,7 +46,7 @@ export default function allSitesMenu() {
 			title: translate( 'Plugins' ),
 			navigationLabel: translate( 'View plugins for all sites' ),
 			type: 'menu-item',
-			url: '/plugins',
+			url: '/plugins/manage',
 		},
 	];
 }

@@ -9,6 +9,7 @@ jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
 
 jest.mock( 'calypso/lib/analytics/tracker-buckets', () => ( {
 	mayWeTrackByTracker: () => true,
+	mayWeInitTracker: () => true,
 } ) );
 
 describe( 'Google Analytics 4 implementation', () => {

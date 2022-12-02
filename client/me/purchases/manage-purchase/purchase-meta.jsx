@@ -1,20 +1,13 @@
 import {
-	getPlan,
-	getProductFromSlug,
 	isConciergeSession,
-	isDIFMProduct,
 	isDomainRegistration,
 	isDomainTransfer,
-	isEmailMonthly,
 	isJetpackPlan,
 	isJetpackProduct,
 	JETPACK_LEGACY_PLANS,
-	TERM_BIENNIALLY,
-	TERM_MONTHLY,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { getIntroductoryOfferIntervalDisplay } from '@automattic/wpcom-checkout';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
@@ -40,9 +33,6 @@ import {
 	isSubscription,
 	isCloseToExpiration,
 	isRenewable,
-	isWithinIntroductoryOfferPeriod,
-	isIntroductoryOfferFreeTrial,
-	getDIFMTieredPurchaseDetails,
 } from 'calypso/lib/purchases';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -53,6 +43,8 @@ import { managePurchase } from '../paths';
 import { canEditPaymentDetails, isJetpackTemporarySitePurchase } from '../utils';
 import AutoRenewToggle from './auto-renew-toggle';
 import PaymentInfoBlock from './payment-info-block';
+import PurchaseMetaIntroductoryOfferDetail from './purchase-meta-introductory-offer-detail';
+import PurchaseMetaPrice from './purchase-meta-price';
 
 export default function PurchaseMeta( {
 	purchaseId = false,
@@ -221,165 +213,6 @@ function PurchaseMetaOwner( { owner } ) {
 				<UserItem user={ { ...owner, name: owner.display_name } } />
 			</span>
 		</li>
-	);
-}
-
-function PurchaseMetaPrice( { purchase } ) {
-	const translate = useTranslate();
-	const { productSlug, productDisplayPrice } = purchase;
-	const plan = getPlan( productSlug ) || getProductFromSlug( productSlug );
-	let period = translate( 'year' );
-
-	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
-		if ( isDIFMProduct( purchase ) ) {
-			const difmTieredPurchaseDetails = getDIFMTieredPurchaseDetails( purchase );
-			if ( difmTieredPurchaseDetails && difmTieredPurchaseDetails.extraPageCount > 0 ) {
-				const {
-					extraPageCount,
-					formattedCostOfExtraPages: costOfExtraPages,
-					formattedOneTimeFee: oneTimeFee,
-				} = difmTieredPurchaseDetails;
-				return (
-					<div>
-						<div>
-							{ translate( 'Service: %(oneTimeFee)s (one-time)', {
-								args: {
-									oneTimeFee,
-								},
-							} ) }
-						</div>
-						<div>
-							{ translate(
-								'%(extraPageCount)d extra page: %(costOfExtraPages)s (one-time)',
-								'%(extraPageCount)d extra pages: %(costOfExtraPages)s (one-time)',
-								{
-									count: extraPageCount,
-									args: {
-										extraPageCount,
-										costOfExtraPages,
-									},
-								}
-							) }
-						</div>
-					</div>
-				);
-			}
-		}
-
-		// translators: displayPrice is the price of the purchase with localized currency (i.e. "C$10")
-		return translate( '{{displayPrice/}} {{period}}(one-time){{/period}}', {
-			components: {
-				displayPrice: (
-					<span
-						// eslint-disable-next-line react/no-danger
-						dangerouslySetInnerHTML={ { __html: productDisplayPrice } }
-					/>
-				),
-				period: <span className="manage-purchase__time-period" />,
-			},
-		} );
-	}
-
-	if ( isIncludedWithPlan( purchase ) ) {
-		return translate( 'Free with Plan' );
-	}
-
-	if ( purchase.billPeriodLabel ) {
-		switch ( purchase.billPeriodLabel ) {
-			case 'per year':
-				period = translate( 'year' );
-				break;
-			case 'per month':
-				period = translate( 'month' );
-				break;
-			case 'per week':
-				period = translate( 'week' );
-				break;
-			case 'per day':
-				period = translate( 'day' );
-				break;
-		}
-	}
-
-	if ( plan && plan.term ) {
-		switch ( plan.term ) {
-			case TERM_BIENNIALLY:
-				period = translate( 'two years' );
-				break;
-
-			case TERM_MONTHLY:
-				period = translate( 'month' );
-				break;
-		}
-	}
-
-	if ( isEmailMonthly( purchase ) ) {
-		period = translate( 'month' );
-	}
-
-	// translators: displayPrice is the price of the purchase with localized currency (i.e. "C$10"), %(period)s is how long the plan is active (i.e. "year")
-	return translate( '{{displayPrice/}} {{period}}/ %(period)s{{/period}}', {
-		args: { period },
-		components: {
-			displayPrice: (
-				<span
-					// eslint-disable-next-line react/no-danger
-					dangerouslySetInnerHTML={ { __html: productDisplayPrice } }
-				/>
-			),
-			period: <span className="manage-purchase__time-period" />,
-		},
-	} );
-}
-
-function PurchaseMetaIntroductoryOfferDetail( { purchase } ) {
-	const translate = useTranslate();
-
-	if ( ! isWithinIntroductoryOfferPeriod( purchase ) ) {
-		return null;
-	}
-
-	const text = getIntroductoryOfferIntervalDisplay(
-		translate,
-		purchase.introductoryOffer.intervalUnit,
-		purchase.introductoryOffer.intervalCount,
-		isIntroductoryOfferFreeTrial( purchase ),
-		'manage-purchases',
-		purchase.introductoryOffer.remainingRenewalsUsingOffer
-	);
-
-	let regularPriceText = null;
-	if ( purchase.introductoryOffer.isNextRenewalUsingOffer ) {
-		regularPriceText = translate(
-			'After the offer ends, the subscription price will be %(regularPrice)s',
-			{
-				args: {
-					regularPrice: purchase.regularPriceText,
-				},
-			}
-		);
-	} else if ( purchase.introductoryOffer.isNextRenewalProrated ) {
-		regularPriceText = translate(
-			'After the first renewal, the subscription price will be %(regularPrice)s',
-			{
-				args: {
-					regularPrice: purchase.regularPriceText,
-				},
-			}
-		);
-	}
-
-	return (
-		<>
-			<br />
-			<small> { text } </small>
-			{ regularPriceText && (
-				<>
-					{ ' ' }
-					<br /> <small> { regularPriceText } </small>{ ' ' }
-				</>
-			) }
-		</>
 	);
 }
 

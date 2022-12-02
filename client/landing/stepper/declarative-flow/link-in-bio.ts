@@ -1,6 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -20,7 +21,9 @@ import type { Flow, ProvidedDependencies } from './internals/types';
 
 export const linkInBio: Flow = {
 	name: LINK_IN_BIO_FLOW,
-	title: 'Link in Bio',
+	get title() {
+		return translate( 'Link in Bio' );
+	},
 	useSteps() {
 		useEffect( () => {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );

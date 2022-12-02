@@ -53,6 +53,10 @@ export function getUpsellType( reason: string, opts: UpsellOptions ): UpsellType
 				return '';
 			}
 
+			if ( isWpComPremiumPlan( productSlug ) && isWpComAnnualPlan( productSlug ) ) {
+				return 'downgrade-personal';
+			}
+
 			if (
 				canRefund &&
 				( isWpComAnnualPlan( productSlug ) || isWpComBiennialPlan( productSlug ) )
@@ -60,9 +64,6 @@ export function getUpsellType( reason: string, opts: UpsellOptions ): UpsellType
 				return 'downgrade-monthly';
 			}
 
-			if ( isWpComPremiumPlan( productSlug ) && isWpComMonthlyPlan( productSlug ) ) {
-				return 'downgrade-personal';
-			}
 			break;
 
 		case 'noTime':

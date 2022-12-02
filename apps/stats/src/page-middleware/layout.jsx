@@ -28,7 +28,13 @@ export const ProviderWrappedLayout = ( {
 				<QueryClientProvider client={ queryClient }>
 					<ReduxProvider store={ store }>
 						<MomentProvider>
-							<Layout primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+							<Layout
+								primary={ primary }
+								secondary={ secondary }
+								redirectUri={ redirectUri }
+								sectionName="stats"
+								groupName="sites"
+							/>
 						</MomentProvider>
 					</ReduxProvider>
 					<CalypsoReactQueryDevtools />

@@ -186,10 +186,6 @@
 
 		.reader-post-card__post {
 			margin-top: 0;
-
-			@include breakpoint-deprecated( "<960px" ) {
-				flex-direction: row;
-			}
 		}
 
 		.reader-post-card__post-details {
