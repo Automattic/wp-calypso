@@ -58,6 +58,10 @@ export const parseTrackingPrefs = ( cookieV2?: string, cookieV1?: string ): Trac
  * @returns Whether we may track the current user
  */
 export default function getTrackingPrefs(): TrackingPrefs {
+	if ( typeof document === 'undefined' ) {
+		throw new Error( 'getTrackingPrefs() can only be called on the client side' );
+	}
+
 	const cookies = cookie.parse( document.cookie );
 
 	if (
