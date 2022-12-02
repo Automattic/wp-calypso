@@ -20,7 +20,7 @@ const WpcomTourKitStepCard: React.FunctionComponent< WpcomTourStepRendererProps 
 } ) => {
 	const { __ } = useI18n();
 	const lastStepIndex = steps.length - 1;
-	const { descriptions, heading, imgSrc, imgHref, imgPlayable } = steps[ currentStepIndex ].meta;
+	const { descriptions, heading, imgSrc, imgLink } = steps[ currentStepIndex ].meta;
 	const isLastStep = currentStepIndex === lastStepIndex;
 
 	const description = descriptions[ isMobile() ? 'mobile' : 'desktop' ] ?? descriptions.desktop;
@@ -43,14 +43,15 @@ const WpcomTourKitStepCard: React.FunctionComponent< WpcomTourStepRendererProps 
 						) }
 						<img alt={ __( 'Tour Media', __i18n_text_domain__ ) } src={ imgSrc.desktop?.src } />
 					</picture>
-					{ imgHref && (
+					{ imgLink && (
 						<a
 							className={ classnames( 'wpcom-tour-ket-step-card__medida-link', {
-								'wpcom-tour-ket-step-card__medida-link--playable': imgPlayable,
+								'wpcom-tour-ket-step-card__medida-link--playable': imgLink.playable,
 							} ) }
-							href={ imgHref }
+							href={ imgLink.href }
 							target="_blank"
 							rel="noreferrer noopener"
+							onClick={ imgLink.onClick }
 						>
 							<Icon
 								icon={
