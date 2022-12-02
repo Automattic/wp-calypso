@@ -85,6 +85,26 @@ export default function AssignLicenseForm( {
 		page.redirect( addQueryArgs( { highlight: licenseKey }, '/partner-portal/licenses' ) );
 	};
 
+	if ( ! results.length ) {
+		return (
+			<div className="assign-license-form__empty-state">
+				<p>
+					{ translate(
+						'It looks like you don’t have any connected Jetpack sites you can apply this license to.'
+					) }
+				</p>
+				<Button primary onClick={ onAssignLater }>
+					{ translate( 'Assign license later', 'Assign licenses later', {
+						count: licenseKeysArray.length,
+					} ) }
+				</Button>
+				<Button target="_blank" href="https://jetpack.com/jetpack-agency-beta-instructions/">
+					{ translate( 'Learn how to add a site' ) }
+				</Button>
+			</div>
+		);
+	}
+
 	return (
 		<div className="assign-license-form">
 			<div className="assign-license-form__top">
