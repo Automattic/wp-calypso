@@ -42,12 +42,30 @@ const CookieBannerContainer = () => {
 	const [ show, setShow ] = useState( false );
 
 	useEffect( () => {
-		refreshCountryCodeCookieGdpr().then( () => {
-			const cookies = cookie.parse( document.cookie );
-			setShow(
-				shouldSeeCookieBanner( cookies.country_code, cookies.region, getTrackingPrefs() ) ?? false
-			);
-		} );
+		let isMounted = true;
+
+		refreshCountryCodeCookieGdpr()
+			.then( () => {
+				if ( ! isMounted ) {
+					return;
+				}
+
+				const cookies = cookie.parse( document.cookie );
+				setShow(
+					shouldSeeCookieBanner( cookies.country_code, cookies.region, getTrackingPrefs() )
+				);
+			} )
+			.catch( () => {
+				if ( ! isMounted ) {
+					return;
+				}
+
+				setShow( shouldSeeCookieBanner( undefined, undefined, getTrackingPrefs() ) );
+			} );
+
+		return () => {
+			isMounted = false;
+		};
 	}, [ setShow ] );
 
 	const handleClose = useCallback( () => {
