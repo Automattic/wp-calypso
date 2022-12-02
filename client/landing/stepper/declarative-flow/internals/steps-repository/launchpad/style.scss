@@ -135,8 +135,9 @@
 // Launchpad - Sidebar heading text
 
 .newsletter,
-.link-in-bio {
+.link-in-bio:not(.domains) {
 	.step-container {
+		.step-container__content h1,
 		.step-container__content h1.launchpad__sidebar-h1 {
 			color: var(--studio-gray-100);
 			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
