@@ -15,7 +15,11 @@ export function getEnhancedTasks(
 	site: SiteDetails | null,
 	submit: NavigationControls[ 'submit' ],
 	goToStep?: NavigationControls[ 'goToStep' ],
-	flow?: string | null
+	flow?: string | null,
+	globalStylesData?: {
+		siteHasGlobalStyles: boolean;
+		siteLimitsGlobalStyles: boolean;
+	}
 ) {
 	const enhancedTaskList: Task[] = [];
 	const productSlug = site?.plan?.product_slug;
@@ -35,6 +39,9 @@ export function getEnhancedTasks(
 	const launchpadUploadVideoLink = homePageId
 		? `/page/${ siteSlug }/${ homePageId }`
 		: `/site-editor/${ siteSlug }`;
+
+	const displayGlobalStylesWarning =
+		globalStylesData?.siteHasGlobalStyles && globalStylesData?.siteLimitsGlobalStyles;
 
 	tasks &&
 		tasks.map( ( task ) => {
@@ -59,6 +66,8 @@ export function getEnhancedTasks(
 							window.location.assign( `/plans/${ siteSlug }` );
 						},
 						badgeText: translatedPlanName,
+						completed: task.completed && ! displayGlobalStylesWarning,
+						warning: displayGlobalStylesWarning,
 					};
 					break;
 				case 'subscribers_added':
