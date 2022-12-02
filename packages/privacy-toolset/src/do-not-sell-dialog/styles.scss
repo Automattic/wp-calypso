@@ -1,0 +1,122 @@
+@use "sass:math";
+@import "../styles/fonts.scss";
+
+.do-not-sell,
+.do-not-sell * {
+	font-family: $default-font-family;
+	box-sizing: border-box;
+}
+
+.do-not-sell {
+	display: flex;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 50002;
+}
+
+.do-not-sell__dialog {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	margin: auto;
+	width: 100%;
+	max-width: 700px;
+	height: auto;
+	max-height: 90vh;
+	background-color: #fff;
+	z-index: 1;
+	overflow-y: auto;
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.15), 0 1px 0 rgba(0, 0, 0, 0.05);
+	border-radius: 4px;
+}
+
+.do-not-sell__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border-bottom: 1px solid #e0e0e0;
+	padding: 1rem 2rem;
+}
+
+.do-not-sell__close-button {
+	background: none;
+	border: none;
+	margin: 0;
+	padding: 0;
+	cursor: pointer;
+}
+
+.do-not-sell__close-button::after {
+	display: inline-block;
+	content: "\00d7";
+	font-size: 1.75rem;
+	transform: translateX(1px);
+}
+
+.do-not-sell__title {
+	font-size: 1.5rem;
+	margin: 0;
+}
+
+.do-not-sell__content {
+	display: flex;
+	flex-direction: column;
+	margin: 0 2rem 1rem;
+
+	p {
+		font-size: 1rem;
+		font-weight: normal;
+		line-height: 1.5;
+		margin: 1em 0;
+	}
+}
+
+.do-not-sell__footer {
+	display: flex;
+	justify-content: flex-end;
+	border-top: 1px solid #e0e0e0;
+	padding: 1rem 2rem;
+}
+
+.do-not-sell__preference {
+	$font-size: 16px;
+
+	display: flex;
+	align-items: center;
+	border-top: 1px solid #e0e0e0;
+	padding: 1rem 2rem;
+	font-size: $font-size;
+	cursor: pointer;
+
+	.do-not-sell__checkbox {
+		display: inline-flex;
+		margin-right: 1rem;
+
+		input {
+			cursor: pointer;
+		}
+	}
+}
+
+.do-not-sell__button {
+	color: #fff;
+	background-color: rgba(0, 0, 0, 0.8);
+	border: 1px solid #e0e0e0;
+	padding: 10px;
+	border-radius: 4px;
+	text-align: center;
+	cursor: pointer;
+}
+
+.do-not-sell__overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.2);
+	z-index: 0;
+}
