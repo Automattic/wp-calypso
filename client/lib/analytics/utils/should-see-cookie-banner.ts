@@ -1,3 +1,4 @@
+import { isServer } from 'calypso/blocks/cookie-banner';
 import { isE2ETest } from 'calypso/lib/e2e';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { TrackingPrefs } from './get-tracking-prefs';
@@ -21,7 +22,7 @@ export default function shouldSeeCookieBanner(
 	trackingPrefs?: TrackingPrefs
 ): boolean {
 	// the banner is not shown for pages embedded as web view inside the mobile app or during e2e tests
-	if ( isWpMobileApp() || isE2ETest() ) {
+	if ( isWpMobileApp() || ( ! isServer && isE2ETest() ) ) {
 		return false;
 	}
 

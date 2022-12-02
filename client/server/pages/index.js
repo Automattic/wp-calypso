@@ -99,7 +99,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main', sectio
 	performanceMark( request.context, 'getDefaultContext' );
 
 	const geoIPCountryCode = request.headers[ 'x-geoip-country-code' ];
-	const geoIPRegionName = 'unknown'; // We cannot get that information from the header at the moment (See: pMz3w-gsu-p2)
+	const geoIPRegionName = undefined; // We cannot get that information from the header at the moment (See: pMz3w-gsu-p2)
 	const trackingPrefs = parseTrackingPrefs(
 		request.cookies.sensitive_pixel_options,
 		request.cookies.sensitive_pixel_option
