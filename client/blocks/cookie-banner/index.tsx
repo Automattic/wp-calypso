@@ -59,7 +59,7 @@ const CookieBannerContainer = () => {
 
 export const CookieBannerContainerSSR = ( { serverShow }: { serverShow: boolean } ) => {
 	if ( ! isServer ) {
-		// If the already have access to browser api, we can use the regular component
+		// If we already have access to browser API, we can use the regular component
 		return <CookieBannerContainer />;
 	}
 
