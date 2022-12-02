@@ -4,6 +4,9 @@ import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import UrlSearch from 'calypso/lib/url-search';
+import { filterFollowsByQuery } from 'calypso/reader/follow-helpers';
+import FollowingManageSearchFollowed from 'calypso/reader/following-manage/search-followed';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -19,6 +22,7 @@ export class ReaderSidebarFollowedSites extends Component {
 		super( props );
 		this.state = {
 			sitePage: 1,
+			query: '',
 		};
 	}
 
@@ -29,6 +33,7 @@ export class ReaderSidebarFollowedSites extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
 		sites: PropTypes.array,
+		doSearch: PropTypes.func.isRequired,
 		isWPForTeamsItem: PropTypes.bool,
 		hasOrganization: PropTypes.bool,
 		isFollowingOpen: PropTypes.bool,
@@ -70,11 +75,20 @@ export class ReaderSidebarFollowedSites extends Component {
 		);
 	};
 
+	searchEvent = ( query ) => {
+		this.setState( {
+			query: query,
+		} );
+		this.props.doSearch( query );
+	};
+
 	render() {
 		const { sites, sitesPerPage, translate } = this.props;
-		const { sitePage } = this.state;
-		const allSitesLoaded = sitesPerPage * sitePage >= sites.length;
-		const sitesToShow = sites.slice( 0, sitesPerPage * sitePage );
+		const { sitePage, query } = this.state;
+		const searchThreshold = 15;
+		const filteredFollows = filterFollowsByQuery( query, sites );
+		const allSitesLoaded = sitesPerPage * sitePage >= filteredFollows.length;
+		const sitesToShow = filteredFollows.slice( 0, sitesPerPage * sitePage );
 
 		if ( ! sitesToShow ) {
 			return null;
@@ -83,6 +97,9 @@ export class ReaderSidebarFollowedSites extends Component {
 		return (
 			<>
 				<h2>{ translate( 'Following' ) }</h2>
+				{ sites.length >= searchThreshold && (
+					<FollowingManageSearchFollowed onSearch={ this.searchEvent } initialValue={ query } />
+				) }
 				<ul>
 					{ this.renderSites( sitesToShow ) }
 					{ ! allSitesLoaded && (
@@ -119,4 +136,4 @@ export default connect(
 	{
 		recordReaderTracksEvent,
 	}
-)( localize( ReaderSidebarFollowedSites ) );
+)( localize( UrlSearch( ReaderSidebarFollowedSites ) ) );
