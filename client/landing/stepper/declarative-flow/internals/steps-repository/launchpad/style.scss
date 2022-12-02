@@ -140,7 +140,8 @@
 		.step-container__content h1.launchpad__sidebar-h1 {
 			color: var(--studio-gray-100);
 			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
-			font-size: $font-title-large;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 28px;
 			font-weight: 400;
 			line-height: 1.1;
 			margin: 0 0 10px;
@@ -459,11 +460,11 @@
 // Launchpad Site Preview Component
 
 .launchpad__site-preview-wrapper {
-	margin: 16px;
+	margin: 0 16px 16px 16px;
 	flex-grow: 1;
 
 	@include break-large {
-		margin: 73px 40px 12px 20px;
+		margin: 53px 20px 12px 20px;
 	}
 
 	.preview-toolbar__toolbar {
