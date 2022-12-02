@@ -21,7 +21,7 @@ function AdminHelpCenterContent() {
 	}, [ show, button ] );
 
 	const handleToggleHelpCenter = () => {
-		recordTracksEvent( `calypso_inlinehelp_${ show ? 'show' : 'close' }`, {
+		recordTracksEvent( `calypso_inlinehelp_${ show ? 'close' : 'show' }`, {
 			forceSiteId: true,
 			location: 'help-center',
 			section: 'wp-admin',
