@@ -27,6 +27,7 @@
 		"dev/auth-helper": true,
 		"dev/account-settings-helper": true,
 		"dev/preferences-helper": true,
+		"dev/share-site-for-preview": true,
 		"devdocs": true,
 		"devdocs/color-scheme-picker": true,
 		"devdocs/redirect-loggedout-homepage": false,
