@@ -1,9 +1,11 @@
+import config from '@automattic/calypso-config';
 import { useSetStepComplete } from '@automattic/composite-checkout';
 import { getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
 import { useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch as useReduxDispatch } from 'react-redux';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
@@ -108,6 +110,18 @@ function useCachedContactDetailsForCheckoutForm(
 					reduxDispatch( recordTracksEvent( 'calypso_checkout_skip_to_last_step' ) );
 				}
 				setComplete( true );
+			} )
+			.catch( ( error ) => {
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'composite checkout load error',
+					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+					extra: {
+						env: config( 'env_id' ),
+						type: 'checkout_contact_details_autocomplete',
+						message: error.message + '; Stack: ' + error.stack,
+					},
+				} );
 			} );
 	}, [
 		reduxDispatch,
