@@ -12,7 +12,7 @@ import { bumpStat } from 'calypso/state/analytics/actions';
 import { useCookieBannerContent } from './use-cookie-banner-content';
 import type { CookieBannerProps } from '@automattic/privacy-toolset';
 
-export const isServer = typeof document === 'undefined';
+const isServer = typeof document === 'undefined';
 const noop = () => undefined;
 
 const CookieBannerInner = ( { onClose }: { onClose: () => void } ) => {

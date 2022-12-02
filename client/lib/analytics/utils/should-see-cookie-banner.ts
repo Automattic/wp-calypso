@@ -1,9 +1,10 @@
-import { isServer } from 'calypso/blocks/cookie-banner';
 import { isE2ETest } from 'calypso/lib/e2e';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { TrackingPrefs } from './get-tracking-prefs';
 import isCountryInGdprZone from './is-country-in-gdpr-zone';
 import isRegionInCcpaZone from './is-region-in-ccpa-zone';
+
+const isServer = typeof document === 'undefined';
 
 /**
  * Returns a boolean indicating whether a GDPR banner should be shown.
