@@ -104,6 +104,7 @@ export class LoginLinks extends Component {
 			twoFactorAuthType: 'link',
 			signupUrl: this.props.query?.signup_url,
 			oauth2ClientId: this.props.oauth2ClientId,
+			redirect_to: this.props.query?.redirect_to,
 		};
 
 		if ( this.props.currentRoute === '/log-in/jetpack' ) {
@@ -342,6 +343,7 @@ export class LoginLinks extends Component {
 			<a
 				href={ addQueryArgs(
 					{
+						redirect_to: this.props.query?.redirect_to,
 						user_email: usernameOrEmail,
 					},
 					signupUrl
