@@ -75,11 +75,6 @@ class Page extends Component {
 		setLayoutFocus: PropTypes.func.isRequired,
 		recordEvent: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
-		recordMoreOptions: PropTypes.func.isRequired,
-		recordPageTitle: PropTypes.func.isRequired,
-		recordEditPage: PropTypes.func.isRequired,
-		recordViewPage: PropTypes.func.isRequired,
-		recordStatsPage: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -853,11 +848,6 @@ const mapDispatch = {
 	setLayoutFocus,
 	recordTracksEvent,
 	recordEvent,
-	recordMoreOptions: () => recordEvent( 'Clicked More Options Menu' ),
-	recordPageTitle: () => recordEvent( 'Clicked Page Title' ),
-	recordEditPage: () => recordEvent( 'Clicked Edit Page' ),
-	recordViewPage: () => recordEvent( 'Clicked View Page' ),
-	recordStatsPage: () => recordEvent( 'Clicked Stats Page' ),
 	updateSiteFrontPage,
 };
 
