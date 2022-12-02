@@ -2,6 +2,7 @@ import { getDesignPreviewUrl } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+import { Icon, layout } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -65,7 +66,15 @@ const PatternAssemblerPreview = ( { header, sections = [], footer, scrollToSelec
 						) }
 					>
 						{ ! hasSelectedPatterns && (
-							<span>{ translate( 'Your page is blank. Start adding content on the left.' ) }</span>
+							<>
+								<Icon className="pattern-assembler-preview__icon" icon={ layout } size={ 100 } />
+								<h2>{ translate( 'Welcome to your blank canvas' ) }</h2>
+								<span>
+									{ translate(
+										"It's time to get creative. Add your first pattern to get started."
+									) }
+								</span>
+							</>
 						) }
 					</div>,
 					webPreviewFrameContainer
