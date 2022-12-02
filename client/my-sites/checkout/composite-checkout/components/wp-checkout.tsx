@@ -272,6 +272,7 @@ export default function WPCheckout( {
 	}
 
 	const isDIFMInCart = hasDIFMProduct( responseCart );
+	const contactDetailsType = getContactDetailsType( responseCart );
 
 	return (
 		<CheckoutStepGroup
@@ -330,12 +331,14 @@ export default function WPCheckout( {
 				}
 				formStatus={ formStatus }
 			/>
-			<CheckoutContactStep
-				countriesList={ countriesList }
-				isLoggedOutCart={ isLoggedOutCart }
-				showErrorMessageBriefly={ showErrorMessageBriefly }
-				validatingButtonText={ validatingButtonText }
-			/>
+			{ contactDetailsType !== 'none' && (
+				<CheckoutContactStep
+					countriesList={ countriesList }
+					isLoggedOutCart={ isLoggedOutCart }
+					showErrorMessageBriefly={ showErrorMessageBriefly }
+					validatingButtonText={ validatingButtonText }
+				/>
+			) }
 			<PaymentMethodStep
 				activeStepFooter={ <PaymentMethodStepContent /> }
 				editButtonText={ String( translate( 'Edit' ) ) }
@@ -401,10 +404,6 @@ function CheckoutContactStep( {
 
 	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
 		useState( false );
-
-	if ( contactDetailsType === 'none' ) {
-		return null;
-	}
 
 	return (
 		<CheckoutStep
