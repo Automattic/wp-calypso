@@ -28,9 +28,11 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 type Props = {
 	campaign: Campaign;
+	expanded: boolean;
+	onClickCampaign: ( isExpanded: boolean ) => void;
 };
 
-export default function CampaignItem( { campaign }: Props ) {
+export default function CampaignItem( { campaign, expanded, onClickCampaign }: Props ) {
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ showErrorDialog, setShowErrorDialog ] = useState( false );
 	const siteId = useSelector( getSelectedSiteId );
@@ -171,11 +173,23 @@ export default function CampaignItem( { campaign }: Props ) {
 			</Dialog>
 
 			<FoldableCard
+				expanded={ expanded }
 				clickableHeader
 				header={ header }
 				hideSummary={ true }
-				className="campaign-item__foldable-card"
+				onClick={ () => {
+					onClickCampaign( ! expanded );
+				} }
+				className={ `campaign-item__foldable-card promote-post__campaigns_id_${ campaign.campaign_id }` }
 			>
+				{ campaign.has_payment_issues && (
+					<Notice isDismissible={ false } status="warning">
+						{ translate(
+							'We were unable to process your payment, thus this and all other campaigns have to be suspended'
+						) }
+					</Notice>
+				) }
+
 				{ campaignStatus === 'rejected' && moderation_reason && (
 					<Notice isDismissible={ false } className="campaign-item__notice" status="warning">
 						<Gridicon className="campaign-item__notice-icon" icon="info-outline" />

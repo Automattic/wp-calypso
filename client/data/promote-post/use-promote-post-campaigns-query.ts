@@ -49,11 +49,18 @@ export type Campaign = {
 	audience_list: AudienceList;
 	display_name: string;
 	avatar_url: string;
+	has_payment_issues: boolean;
 };
 
 export type UserStatus = {
 	reason: string;
-	missingPaymentAmount?: number;
+	total_missing_payment_account?: number;
+	failed_campaigns?: [
+		{
+			campaign_id: number;
+			name: string;
+		}
+	];
 };
 
 const useCampaignsQuery = ( siteId: number, queryOptions = {} ) => {
@@ -69,7 +76,20 @@ const useCampaignsQuery = ( siteId: number, queryOptions = {} ) => {
 				canCreateCampaigns: boolean;
 				userStatus?: UserStatus;
 			} >( siteId, `/campaigns/site/${ siteId }/full` );
-			return { campaigns, canCreateCampaigns, userStatus };
+
+			// Map campaigns to include if they have issue with paymeny
+			const mappedCampaigns = userStatus?.failed_campaigns?.length
+				? campaigns.map( ( campaign ) => {
+						return {
+							...campaign,
+							has_payment_issues:
+								userStatus?.failed_campaigns?.some(
+									( failedCampaign ) => failedCampaign.campaign_id === campaign.campaign_id
+								) || false,
+						};
+				  } )
+				: campaigns;
+			return { campaigns: mappedCampaigns, canCreateCampaigns, userStatus };
 		},
 		{
 			...queryOptions,

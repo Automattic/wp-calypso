@@ -1,6 +1,8 @@
 import './style.scss';
 import { translate, useTranslate } from 'i18n-calypso';
+import { debounce } from 'lodash';
 import page from 'page';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPosts from 'calypso/components/data/query-posts';
@@ -20,6 +22,7 @@ import PostsList from 'calypso/my-sites/promote-post/components/posts-list';
 import PostsListBanner from 'calypso/my-sites/promote-post/components/posts-list-banner';
 import PromotePostTabBar from 'calypso/my-sites/promote-post/components/promoted-post-filter';
 import { getPostsForQuery, isRequestingPostsForQuery } from 'calypso/state/posts/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 export type TabType = 'posts' | 'campaigns';
@@ -108,6 +111,10 @@ export default function PromotedPosts( { tab }: Props ) {
 		isRequestingPostsForQuery( state, selectedSiteId, queryProducts )
 	);
 
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSiteId ) );
+
+	const [ expandedCampaigns, setExpandedCampaigns ] = useState< number[] >( [] );
+
 	const campaignsData = useCampaignsQuery( selectedSiteId ?? 0 );
 	const {
 		isLoading: campaignsIsLoading,
@@ -145,14 +152,55 @@ export default function PromotedPosts( { tab }: Props ) {
 	const getUserBanReason = ( userStatus: UserStatus ) => {
 		switch ( userStatus.reason ) {
 			case 'CHECKOUT_FAILED':
-				return translate( 'We were unable to process the payment of $%(missingPaymentAmount)s. ', {
-					args: {
-						missingPaymentAmount: userStatus.missingPaymentAmount,
-					},
-					comment: 'The system cannot process the payment of missingPaymentAmount. Eg: $73',
-				} );
+				return translate(
+					'We were unable to process the payment of $%(total_missing_payment_account)s. ',
+					{
+						args: {
+							total_missing_payment_account: userStatus.total_missing_payment_account,
+						},
+						comment:
+							'The system cannot process the payment of total_missing_payment_account. Eg: $73',
+					}
+				);
 		}
 	};
+
+	const debouncedScrollToCampaign = debounce( ( campaignId ) => {
+		const element = document.querySelector( `.promote-post__campaigns_id_${ campaignId }` );
+		if ( element instanceof Element ) {
+			const margin = 50; // Some margin so it keeps below the header in mobile/desktop
+			const dims = element.getBoundingClientRect();
+			window.scrollTo( {
+				top: dims.top - margin,
+				behavior: 'smooth',
+			} );
+		}
+	}, 100 );
+
+	const associatedCampaignsMessage = (
+		<div>
+			<br />
+			<>{ translate( 'Associated campaigns:' ) }</>
+			<ul className="promote-post__notice-campaign-list">
+				{ userStatus?.failed_campaigns?.map( ( campaign ) => {
+					return (
+						<li key={ `campaign-${ campaign.campaign_id }` }>
+							<button
+								onClick={ () => {
+									page( `/advertising/${ siteSlug }/campaigns` );
+
+									setExpandedCampaigns( [ ...expandedCampaigns, campaign.campaign_id ] );
+									debouncedScrollToCampaign( campaign.campaign_id );
+								} }
+							>
+								{ campaign.name }
+							</button>
+						</li>
+					);
+				} ) || [] }
+			</ul>
+		</div>
+	);
 
 	if ( selectedSite?.is_coming_soon ) {
 		return (
@@ -188,7 +236,9 @@ export default function PromotedPosts( { tab }: Props ) {
 		);
 	}
 
-	const userBanReasonMessage = userStatus ? getUserBanReason( userStatus ) : [];
+	const userBanReasonMessage = userStatus?.total_missing_payment_account
+		? getUserBanReason( userStatus )
+		: [];
 
 	const content = sortItemsByPublishedDate( [
 		...( posts || [] ),
@@ -210,11 +260,12 @@ export default function PromotedPosts( { tab }: Props ) {
 			/>
 			{ ! campaignsIsLoading && ! campaigns?.length && <PostsListBanner /> }
 
-			{ isFetched && ! canCreateCampaigns && (
+			{ isFetched && data && ! canCreateCampaigns && (
 				<Notice showDismiss={ false } status="is-warning">
 					<>
 						{ userBanReasonMessage }
 						{ commonBanMessage }
+						{ userStatus?.failed_campaigns?.length ? associatedCampaignsMessage : [] }
 					</>
 				</Notice>
 			) }
@@ -226,6 +277,8 @@ export default function PromotedPosts( { tab }: Props ) {
 					isError={ isError }
 					isLoading={ campaignsIsLoading }
 					campaigns={ campaigns || [] }
+					expandedCampaigns={ expandedCampaigns }
+					setExpandedCampaigns={ setExpandedCampaigns }
 				/>
 			) }
 			<QueryPosts siteId={ selectedSiteId } query={ queryPost } postId={ null } />

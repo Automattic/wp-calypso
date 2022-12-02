@@ -8,7 +8,13 @@ import { useSelector } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WordPressLogo from 'calypso/components/wordpress-logo';
-import { showDSP, usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
+import { Campaign, UserStatus } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import {
+	showDSP,
+	usePromoteWidget,
+	PromoteWidgetStatus,
+	requestDSP,
+} from 'calypso/lib/promote-post';
 import './style.scss';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -67,9 +73,30 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	};
 
 	useEffect( () => {
-		isVisible &&
-			( async () => {
+		if ( isVisible ) {
+			const callDSP = async () => {
 				if ( props.siteId === null || props.postId === null ) {
+					return;
+				}
+				let response;
+				try {
+					const apiUrl = `/campaigns/site/${ props.siteId }/full`;
+					response = await requestDSP< {
+						results: Campaign[];
+						canCreateCampaigns: boolean;
+						userStatus?: UserStatus;
+					} >( +props.siteId, apiUrl );
+				} catch ( e: any ) {
+					if ( e.errorCode !== 'no_local_user' ) {
+						throw new Error( 'DSP Request failed' );
+					}
+				}
+
+				const userIsBanned =
+					response?.hasOwnProperty( 'canCreateCampaigns' ) && ! response.canCreateCampaigns;
+
+				if ( userIsBanned ) {
+					page( `/advertising/${ siteSlug }/campaigns` );
 					return;
 				}
 
@@ -92,7 +119,10 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 					handleShowCancel
 				);
 				setIsLoading( false );
-			} )();
+			};
+
+			callDSP();
+		}
 	}, [ isVisible, props.postId, props.siteId, selectedSiteSlug ] );
 
 	const cancelDialogButtons = [
