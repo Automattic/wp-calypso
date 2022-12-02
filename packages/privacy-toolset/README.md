@@ -31,7 +31,7 @@ const Component = () => (
 );
 ```
 
-> Disclaimer: see the detailed `content` parameter structure, see `src/cookie-banner/cookie-banner.stories.tsx`.
+> Disclaimer: for the detailed `content` parameter structure, see `src/cookie-banner/cookie-banner.stories.tsx`.
 
 ## Development Workflow
 
