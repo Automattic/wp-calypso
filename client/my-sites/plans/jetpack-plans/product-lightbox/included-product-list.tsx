@@ -41,9 +41,9 @@ const IncludedProductList: React.FC< IncludedProductsProps > = ( { products, des
 
 	return (
 		<div className="product-lightbox__included-product-list">
-			<h1 className="product-lightbox__included-product-list-label">
+			<h3 className="product-lightbox__included-product-list-label">
 				{ translate( 'Products included:' ) }
-			</h1>
+			</h3>
 
 			{ products.map( ( productSlug ) => (
 				<IncludedProductListItem
