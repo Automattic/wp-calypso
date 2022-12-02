@@ -1,4 +1,4 @@
-import { CookieBanner, CookieBannerProps } from '@automattic/privacy-toolset';
+import { CookieBanner } from '@automattic/privacy-toolset';
 import cookie from 'cookie';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -10,6 +10,7 @@ import {
 } from 'calypso/lib/analytics/utils';
 import { bumpStat } from 'calypso/state/analytics/actions';
 import { useCookieBannerContent } from './use-cookie-banner-content';
+import type { CookieBannerProps } from '@automattic/privacy-toolset';
 
 export const isServer = typeof document === 'undefined';
 const noop = () => undefined;
