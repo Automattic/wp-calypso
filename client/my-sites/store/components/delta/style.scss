@@ -57,10 +57,10 @@
 	}
 
 	.delta__labels {
-		align-items: left;
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
+		justify-content: flex-start;
 
 		.delta__suffix,
 		.delta__value {
