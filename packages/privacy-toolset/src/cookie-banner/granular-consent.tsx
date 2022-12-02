@@ -1,3 +1,4 @@
+import { FormToggle } from '@wordpress/components';
 import { ChangeEvent, useCallback } from 'react';
 import type { Buckets, GranularConsentContent } from './types';
 
@@ -18,16 +19,12 @@ export const GranularConsent = ( { name, content, disabled, checked, onChange }:
 	);
 	return (
 		<div className="cookie-banner__bucket-container">
-			<div className="cookie-banner__checkbox-container">
-				<input
-					type="checkbox"
-					id={ name }
-					checked={ checked }
-					onChange={ handleChange }
-					disabled={ disabled }
-					data-testid={ `${ name }-bucket-toggle` }
-				/>
-			</div>
+			<FormToggle
+				onChange={ handleChange }
+				checked={ checked }
+				disabled={ disabled }
+				data-testid={ `${ name }-bucket-toggle` }
+			/>
 			<div className="cookie-banner__option-description">
 				<strong>{ content.name }</strong>
 				<p>{ content.description }</p>
