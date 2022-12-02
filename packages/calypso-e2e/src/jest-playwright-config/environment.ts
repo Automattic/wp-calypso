@@ -137,45 +137,15 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	}
 
 	/**
-	 * Set up the environment.
+	 * Proxy our E2E browser to bind our custom default context options.
+	 * We need to it this way because we're not using the first-party Playwright
+	 * and we can't use the playwright.config.js file.
+	 *
+	 * @see {@link  https://playwright.dev/docs/api/class-testoptions}
+	 * @returns {Browser} Proxy-trapped instance of a browser.
 	 */
-	async setup() {
-		await super.setup();
-
-		// Determine the browser that should be used for the spec.
-		const browserType: BrowserType = await this.determineBrowser();
-
-		// Create folders for test artifacts.
-		await fs.mkdir( env.ARTIFACTS_PATH, { recursive: true } );
-		const date = new Date()
-			.toISOString()
-			.split( 'Z' )[ 0 ]
-			.replace( /[.:+]/g, '-' )
-			.replace( 'T', '_' );
-		this.testArtifactsPath = await fs.mkdtemp(
-			path.join( env.ARTIFACTS_PATH, `${ this.testFilename }__${ date }-` )
-		);
-		const logFilePath = path.join( this.testArtifactsPath, `${ this.testFilename }.log` );
-
-		// Start the browser.
-		const browser = await browserType.launch( {
-			...config.launchOptions,
-			logger: {
-				log: async ( name: string, severity: string, message: string ) => {
-					await fs.appendFile(
-						logFilePath,
-						`${ new Date().toISOString() } ${ process.pid } ${ name } ${ severity }: ${ message }\n`
-					);
-				},
-				isEnabled: ( name ) => name === 'api',
-			},
-		} );
-
-		// Proxy our E2E browser to bind our custom default context options.
-		// We need to it this way because we're not using the first-party Playwright
-		// and we can't use the playwright.config.js file.
-		// See https://playwright.dev/docs/api/class-testoptions.
-		const wpBrowser = new Proxy( browser, {
+	private setupBrowserProxyTrap( browser: Browser ): Browser {
+		return new Proxy( browser, {
 			get: function ( target, prop: keyof Browser ) {
 				const orig = target[ prop ];
 
@@ -226,6 +196,45 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 				return orig.bind( target );
 			},
 		} );
+	}
+
+	/**
+	 * Set up the environment.
+	 */
+	async setup() {
+		await super.setup();
+
+		// Determine the browser that should be used for the spec.
+		const browserType: BrowserType = await this.determineBrowser();
+
+		// Create folders for test artifacts.
+		await fs.mkdir( env.ARTIFACTS_PATH, { recursive: true } );
+		const date = new Date()
+			.toISOString()
+			.split( 'Z' )[ 0 ]
+			.replace( /[.:+]/g, '-' )
+			.replace( 'T', '_' );
+		this.testArtifactsPath = await fs.mkdtemp(
+			path.join( env.ARTIFACTS_PATH, `${ this.testFilename }__${ date }-` )
+		);
+		const logFilePath = path.join( this.testArtifactsPath, `${ this.testFilename }.log` );
+
+		// Start the browser.
+		const browser = await browserType.launch( {
+			...config.launchOptions,
+			logger: {
+				log: async ( name: string, severity: string, message: string ) => {
+					await fs.appendFile(
+						logFilePath,
+						`${ new Date().toISOString() } ${ process.pid } ${ name } ${ severity }: ${ message }\n`
+					);
+				},
+				isEnabled: ( name ) => name === 'api',
+			},
+		} );
+
+		// Set up the proxy trap.
+		const wpBrowser = this.setupBrowserProxyTrap( browser );
 
 		// Expose browser globally.
 		this.global.browser = wpBrowser;
@@ -241,8 +250,6 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	 * The browser is then shut down at the end regardless of failure status.
 	 */
 	async teardown(): Promise< void > {
-		await super.teardown();
-
 		if ( ! this.global.browser ) {
 			throw new Error( 'Browser instance unavailable' );
 		}
@@ -276,7 +283,9 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 			console.error( `Artifacts for ${ this.testFilename }: ${ this.testArtifactsPath }` );
 		}
 		// Regardless of pass/fail status, close the browser instance.
-		return await this.global.browser.close();
+		await this.global.browser.close();
+
+		await super.teardown();
 	}
 
 	/**
