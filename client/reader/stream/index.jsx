@@ -43,7 +43,7 @@ import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
-import ReaderSidebarFollowedSites from './reader-sidebar-followed-sites';
+import ReaderListFollowedSites from './reader-list-followed-sites';
 import './style.scss';
 
 const WIDE_DISPLAY_CUTOFF = 900;
@@ -471,7 +471,7 @@ class ReaderStream extends Component {
 					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 				/>
 			);
-			const sidebarContent = <ReaderSidebarFollowedSites path={ path } />;
+			const sidebarContent = <ReaderListFollowedSites path={ path } />;
 
 			if ( excludesSidebar.includes( streamType ) ) {
 				body = bodyContent;
