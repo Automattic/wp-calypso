@@ -38,13 +38,14 @@ export function AnimatedCanvas( { className }: { className: string } ) {
 					ctx.lineWidth = ( 1 + Math.sin( index ) ) * 5;
 					ctx.beginPath();
 					for ( let x = 0; x < width + 150; x += width / 100 ) {
+						const afterHalf = 1000 * ( Math.abs( x - 100 - width / 2 ) / width );
 						const y1 =
 							j +
 							Math.sin( ( x + animationFactor * width ) / 100 ) * ( height / 15 ) +
 							( 1 + Math.sin( animationFactor ) ) * 5;
 						const y2 = Math.sqrt( j * x * ( 1 + 2 * Math.sin( animationFactor ) ) ) - x / 2;
 						const y = y1 + y2;
-						ctx.lineTo( x - 100, y );
+						ctx.lineTo( x - 100, y - afterHalf );
 					}
 					ctx.stroke();
 				}
