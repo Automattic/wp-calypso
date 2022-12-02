@@ -28,9 +28,11 @@ const URL_WOO_GOOGLE = 'calypso-stats-mobile-cta-woo-google-badge';
 const URL_WOO_QRCODE = 'calypso-stats-mobile-cta-woo-qrcode';
 
 // Event names used for Tracks.
+const EVENT_JETPACK_VIEW = 'calypso_stats_mobile_cta_jetpack_view';
 const EVENT_JETPACK_CLICK = 'calypso_stats_mobile_cta_jetpack_click';
 const EVENT_JETPACK_CLICK_APPLE = 'calypso_stats_mobile_cta_jetpack_apple_click';
 const EVENT_JETPACK_CLICK_GOOGLE = 'calypso_stats_mobile_cta_jetpack_google_click';
+const EVENT_WOO_VIEW = 'calypso_stats_mobile_cta_woo_view';
 const EVENT_WOO_CLICK = 'calypso_stats_mobile_cta_woo_click';
 const EVENT_WOO_CLICK_APPLE = 'calypso_stats_mobile_cta_woo_apple_click';
 const EVENT_WOO_CLICK_GOOGLE = 'calypso_stats_mobile_cta_woo_google_click';
@@ -62,9 +64,11 @@ function getRedirectUrlPrivate( slug: string ) {
 function recordTracksEventPrivate( event: string ) {
 	// Limit to known events.
 	const events = [
+		EVENT_JETPACK_VIEW,
 		EVENT_JETPACK_CLICK,
 		EVENT_JETPACK_CLICK_APPLE,
 		EVENT_JETPACK_CLICK_GOOGLE,
+		EVENT_WOO_VIEW,
 		EVENT_WOO_CLICK,
 		EVENT_WOO_CLICK_APPLE,
 		EVENT_WOO_CLICK_GOOGLE,
@@ -164,6 +168,13 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 			<img className="promo-qr-code" src={ qrCodeJetpack } alt="QR Code for Jetpack mobile app" />
 		);
 	};
+
+	// Track "views" of this card.
+	if ( isWoo ) {
+		recordTracksEventPrivate( EVENT_WOO_VIEW );
+	} else {
+		recordTracksEventPrivate( EVENT_JETPACK_VIEW );
+	}
 
 	return (
 		<div className={ classNames( 'promo-card', className ?? null ) }>
