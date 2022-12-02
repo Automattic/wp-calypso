@@ -45,13 +45,17 @@ const IncludedProductList: React.FC< IncludedProductsProps > = ( { products, des
 				{ translate( 'Products included:' ) }
 			</h3>
 
-			{ products.map( ( productSlug ) => (
-				<IncludedProductListItem
-					productSlug={ productSlug }
-					descriptionMap={ descriptionMap }
-					key={ productSlug }
-				/>
-			) ) }
+			<ul>
+				{ products.map( ( productSlug ) => (
+					<li>
+						<IncludedProductListItem
+							productSlug={ productSlug }
+							descriptionMap={ descriptionMap }
+							key={ productSlug }
+						/>
+					</li>
+				) ) }
+			</ul>
 		</div>
 	);
 };

@@ -477,6 +477,15 @@
 	overflow-y: scroll;
 }
 
+.product-lightbox__included-product-list ul {
+	list-style-type: none;
+	margin: 0;
+}
+
+.product-lightbox__included-product-list ul li {
+	margin-bottom: 16px;
+}
+
 .product-lightbox__included-product-list-label {
 	font-weight: 600;
 	font-size: $font-body;
@@ -486,7 +495,6 @@
 .product-lightbox__included-product-list-item {
 	display: flex;
 	gap: 12.57px;
-	margin-bottom: 16px;
 }
 
 .product-lightbox__included-product-list-item-title {
