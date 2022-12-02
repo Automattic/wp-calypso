@@ -30,16 +30,9 @@ export default function shouldSeeCookieBanner(
 	}
 
 	// if we had issues fetching geo cookies (`countryCode` and `region`), fail safe and show the banner
-	if ( countryCode === undefined || region === undefined ) {
+	if ( countryCode === undefined && region === undefined ) {
 		return true;
 	}
 
-	// if the country code is still `unknown`, even after trying to determine it, we fail safely
-	// and show the banner anyway.
-	return (
-		countryCode === 'unknown' ||
-		isCountryInGdprZone( countryCode ) ||
-		region === 'unknown' ||
-		isRegionInCcpaZone( countryCode, region )
-	);
+	return isCountryInGdprZone( countryCode ) || isRegionInCcpaZone( countryCode, region );
 }

@@ -13,6 +13,10 @@ export default function isRegionInCcpaZone( countryCode?: string, region?: strin
 	if ( 'US' !== countryCode ) {
 		return false;
 	}
+	if ( 'unknown' === region ) {
+		// Fail safe: if we don't know the region, assume it's in the CCPA zone.
+		return true;
+	}
 
 	return region !== undefined && CCPA_US_REGIONS.includes( region.toLowerCase() );
 }
