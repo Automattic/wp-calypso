@@ -14,7 +14,7 @@ import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useState, useEffect } from 'react';
+import { ReactChild, useRef, useState, useEffect } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
@@ -35,7 +35,7 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { getCategorizationOptions } from './categories';
-import { STEP_NAME } from './constants';
+import { DEFAULT_VARIATION_SLUG, STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
 import PreviewToolbar from './preview-toolbar';
 import UpgradeModal from './upgrade-modal';
@@ -435,6 +435,34 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		);
 	}
 
+	function getPrimaryActionButton( pickDesignText: ReactChild ) {
+		if ( shouldUpgrade ) {
+			return (
+				<Button primary borderless={ false } onClick={ upgradePlan }>
+					{ translate( 'Unlock theme' ) }
+				</Button>
+			);
+		}
+
+		if (
+			shouldLimitGlobalStyles &&
+			!! selectedStyleVariation &&
+			selectedStyleVariation.slug !== DEFAULT_VARIATION_SLUG
+		) {
+			return (
+				<Button primary borderless={ false } onClick={ () => pickDesign() }>
+					{ translate( 'Unlock this style' ) }
+				</Button>
+			);
+		}
+
+		return (
+			<Button primary borderless={ false } onClick={ () => pickDesign() }>
+				{ pickDesignText }
+			</Button>
+		);
+	}
+
 	// ********** Main render logic
 
 	// Don't render until we've done fetching all the data needed for initial render.
@@ -467,17 +495,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				{ selectedDesignHasStyleVariations && (
 					<div className="action-buttons__title">{ headerDesignTitle }</div>
 				) }
-				<div>
-					{ shouldUpgrade ? (
-						<Button primary borderless={ false } onClick={ upgradePlan }>
-							{ translate( 'Unlock theme' ) }
-						</Button>
-					) : (
-						<Button primary borderless={ false } onClick={ () => pickDesign() }>
-							{ pickDesignText }
-						</Button>
-					) }
-				</div>
+				<div>{ getPrimaryActionButton( pickDesignText ) }</div>
 			</>
 		);
 
