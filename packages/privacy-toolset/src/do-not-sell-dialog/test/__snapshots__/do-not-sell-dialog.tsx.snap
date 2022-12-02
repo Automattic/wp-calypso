@@ -1,0 +1,70 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DoNotSellDialog renders correctly 1`] = `
+<div>
+  <div
+    class="do-not-sell"
+  >
+    <div
+      class="do-not-sell__overlay"
+    />
+    <div
+      class="do-not-sell__dialog"
+    >
+      <div
+        class="do-not-sell__header"
+      >
+        <h3
+          class="do-not-sell__title"
+        >
+          title
+        </h3>
+        <button
+          class="do-not-sell__close-button"
+        />
+      </div>
+      <div
+        class="do-not-sell__content"
+      >
+        <p>
+          paragraph 1
+        </p>
+        <p>
+          paragraph 2
+        </p>
+        <p>
+          paragraph 3
+        </p>
+      </div>
+      <label
+        class="do-not-sell__preference"
+      >
+        <span
+          class="components-form-toggle do-not-sell__checkbox"
+        >
+          <input
+            class="components-form-toggle__input"
+            type="checkbox"
+          />
+          <span
+            class="components-form-toggle__track"
+          />
+          <span
+            class="components-form-toggle__thumb"
+          />
+        </span>
+        toggleLabel
+      </label>
+      <div
+        class="do-not-sell__footer"
+      >
+        <button
+          class="do-not-sell__button"
+        >
+          closeButton
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
