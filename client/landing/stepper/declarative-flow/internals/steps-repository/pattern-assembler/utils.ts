@@ -46,14 +46,13 @@ export function createCustomHomeTemplateContent(
 		);
 	}
 
-	content.push( `
-<!-- wp:group {"tagName":"main"} -->
-	<main class="wp-block-group">
-	<!-- wp:paragraph -->
-	<p></p>
-	<!-- /wp:paragraph -->
-	</main>
-<!-- /wp:group -->` );
+	if ( hasHeader || hasFooter ) {
+		content.push( `
+	<!-- wp:group {"tagName":"main"} -->
+		<main class="wp-block-group">
+		</main>
+	<!-- /wp:group -->` );
+	}
 
 	if ( hasFooter ) {
 		content.push(
