@@ -35,7 +35,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 
 	return (
 		<div className={ wrapperClassName }>
-			<h3 className="jetpack-product-store__all-items--header">{ heading }</h3>
+			<h2 className="jetpack-product-store__all-items--header">{ heading }</h2>
 
 			<ul className="jetpack-product-store__all-items--grid">
 				{ items.map( ( item ) => {

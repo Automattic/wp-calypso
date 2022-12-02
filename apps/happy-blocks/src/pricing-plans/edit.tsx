@@ -36,7 +36,12 @@ export const Edit: FunctionComponent< BlockEditProps< BlockAttributes > > = ( {
 			const url = blogIdSelect.options[ blogIdSelect.selectedIndex ].text;
 			const domain = url.replace( /^https?:\/\//, '' );
 
-			setAttributes( { domain } );
+			if ( domain !== '--' ) {
+				setAttributes( { domain } );
+			} else {
+				// This needs to be 'false' when unset, see https://github.com/Automattic/wp-calypso/pull/70402#discussion_r1033299970
+				setAttributes( { domain: false } );
+			}
 		};
 
 		updateBlogId();

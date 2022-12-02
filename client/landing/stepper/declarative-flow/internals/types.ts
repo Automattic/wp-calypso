@@ -6,20 +6,38 @@ import type { StepPath } from './steps-repository';
 export type NavigationControls = {
 	/**
 	 * Call this function if you want to go to the previous step.
+	 *
+	 * @deprecated Avoid this method. Use submit() instead.
+	 * If you need to navigate back and forth between
+	 * stepper screens, consider adding screen(s) to a new
+	 * stepper flow and linking directly between flows/screens.
 	 */
-	goBack: () => void;
+	goBack?: () => void;
+
 	/**
 	 * Call this function if you want to go to the proceed down the flow.
+	 *
+	 * @deprecated Avoid this method. Use submit() instead.
 	 */
-	goNext: () => void;
+	goNext?: () => void;
+
 	/**
 	 * Call this function if you want to jump to a certain step.
+	 *
+	 * @deprecated Avoid this method. Use submit() instead.
+	 * If you need to skip forward several screens in
+	 * a stepper flow, handle that logic in submit().
+	 * If you need to navigate backwards, consider adding
+	 * screen(s) to a new stepper flow and linking directly
+	 * between flows/screens.
 	 */
 	goToStep?: ( step: StepPath | `${ StepPath }?${ string }` ) => void;
+
 	/**
 	 * Submits the answers provided in the flow
 	 */
 	submit?: ( providedDependencies?: ProvidedDependencies, ...params: string[] ) => void;
+
 	/**
 	 * Exits the flow and continue to the given path
 	 */
