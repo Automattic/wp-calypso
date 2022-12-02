@@ -63,7 +63,7 @@ function determineFlow() {
 
 	const flowNameFromPathName = window.location.pathname.split( '/' )[ 2 ];
 
-	return availableFlows[ flowNameFromPathName ] || availableFlows[ 'site-setup-flow' ];
+	return availableFlows[ flowNameFromPathName ] || availableFlows[ 'site-setup' ];
 }
 
 
