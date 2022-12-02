@@ -80,7 +80,7 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 		}
 
 		return wpcomRequest< { updated: object } >( {
-			path: `/sites/${ siteId }/sites-setup`,
+			path: `/sites/${ siteId }/onboarding-site-customization`,
 			method: 'POST',
 			apiNamespace: 'wpcom/v2',
 			apiVersion: '2',
