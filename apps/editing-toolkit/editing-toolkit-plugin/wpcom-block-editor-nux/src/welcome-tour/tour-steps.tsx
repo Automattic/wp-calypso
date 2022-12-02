@@ -3,6 +3,7 @@ import { isMobile } from '@automattic/viewport';
 import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { getQueryArg } from '@wordpress/url';
 import type { WpcomStep } from '@automattic/tour-kit';
 
 interface TourAsset {
@@ -61,23 +62,23 @@ function getTourSteps(
 	localeSlug: string,
 	referencePositioning = false,
 	isSiteEditor = false,
-	themeName: string | null = null,
-	intent = ''
+	themeName: string | null = null
 ): WpcomStep[] {
+	const completedFlow = getQueryArg( window.location.href, 'completedFlow' );
 	const isVideoMaker = 'videomaker' === ( themeName ?? '' );
-	const isPatternAssembler = 'build' === intent;
+	const isPatternAssemblerFlow = 'pattern_assembler' === completedFlow;
 	const siteEditorCourseUrl = `https://wordpress.com/home/${ window.location.hostname }?courseSlug=site-editor-quick-start`;
 
 	return [
 		{
 			slug: 'welcome',
 			meta: {
-				heading: isPatternAssembler
+				heading: isPatternAssemblerFlow
 					? __( 'Nice job! Your new page is set up.', 'full-site-editing' )
 					: __( 'Welcome to WordPress!', 'full-site-editing' ),
 				descriptions: {
 					desktop: ( () => {
-						if ( isPatternAssembler ) {
+						if ( isPatternAssemblerFlow ) {
 							return createInterpolateElement(
 								__(
 									'This is the Site Editor, it’s where you can change everything about your site, including adding content to your homepage. <link_to_site_editor_course>Watch these short videos</link_to_site_editor_course> or take a tour to get started.',
@@ -102,8 +103,8 @@ function getTourSteps(
 					mobile: null,
 				},
 				imgSrc: getTourAssets( isVideoMaker ? 'videomakerWelcome' : 'welcome' ),
-				imgHref: siteEditorCourseUrl,
-				imgPlayable: true,
+				imgHref: isPatternAssemblerFlow ? siteEditorCourseUrl : undefined,
+				imgPlayable: isPatternAssemblerFlow,
 			},
 			options: {
 				classNames: {
