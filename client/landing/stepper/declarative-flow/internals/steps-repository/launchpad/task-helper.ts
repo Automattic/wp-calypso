@@ -61,6 +61,11 @@ export function getEnhancedTasks(
 				case 'plan_selected':
 					taskData = {
 						title: translate( 'Choose a Plan' ),
+						subtitle: displayGlobalStylesWarning
+							? translate(
+									'Upgrade your plan to publish your colour changes and unlock tons of other features'
+							  )
+							: '',
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign( `/plans/${ siteSlug }` );
