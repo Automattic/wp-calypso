@@ -116,7 +116,7 @@ function a8c_happyblocks_pricing_plans_get_domain() {
 	}
 
 	$topic_id  = bbp_get_topic_id();
-	$author_id = get_post_field( 'post_author', $topic_id );
+	$author_id = intval( get_post_field( 'post_author', $topic_id ) );
 
 	/*
 	If the current user is the author of the topic, return the topic's domain selected
