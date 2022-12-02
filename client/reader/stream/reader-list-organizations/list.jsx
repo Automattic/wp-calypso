@@ -48,7 +48,7 @@ export class ReaderListOrganizationsList extends Component {
 		if ( ! organization.sites_count ) {
 			return null;
 		}
-		return <div>{ this.renderSites() }</div>;
+		return <ul>{ this.renderSites() }</ul>;
 	}
 }
 
