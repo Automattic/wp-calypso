@@ -32,10 +32,7 @@ export class ReaderListOrganizations extends Component {
 
 		return (
 			<>
-				<h2>
-					{ translate( 'Following (%s)', { args: organizationSlug } ) }
-					<a href="/following/mark-all">{ translate( 'Mark all as seen' ) }</a>
-				</h2>
+				<h2>{ translate( 'Following (%s)', { args: organizationSlug } ) }</h2>
 				<ReaderListOrganizationsList
 					key={ organization.id }
 					path={ path }
