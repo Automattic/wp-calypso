@@ -34,7 +34,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const flowSteps = flow.useSteps();
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
 	const location = useLocation();
-	const currentRoute = location.pathname.split( '/' )[ 2 ]?.replace( /\/+$/, '' );
+	const currentStepRoute = location.pathname.split( '/' )[ 2 ]?.replace( /\/+$/, '' );
 	const history = useHistory();
 	const { search } = useLocation();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
@@ -47,21 +47,24 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	);
 	const previousProgressValue = stepProgress ? previousProgress / stepProgress.count : 0;
 
-	const stepNavigation = flow.useStepNavigation( currentRoute, async ( path, extraData = null ) => {
-		// If any extra data is passed to the navigate() function, store it to the stepper-internal store.
-		setStepData( {
-			path: path,
-			intent: intent,
-			...extraData,
-		} );
+	const stepNavigation = flow.useStepNavigation(
+		currentStepRoute,
+		async ( path, extraData = null ) => {
+			// If any extra data is passed to the navigate() function, store it to the stepper-internal store.
+			setStepData( {
+				path: path,
+				intent: intent,
+				...extraData,
+			} );
 
-		const _path = path.includes( '?' ) // does path contain search params
-			? generatePath( `/${ flow.name }/${ path }` )
-			: generatePath( `/${ flow.name }/${ path }${ search }` );
+			const _path = path.includes( '?' ) // does path contain search params
+				? generatePath( `/${ flow.name }/${ path }` )
+				: generatePath( `/${ flow.name }/${ path }${ search }` );
 
-		history.push( _path, stepPaths );
-		setPreviousProgress( stepProgress?.progress ?? 0 );
-	} );
+			history.push( _path, stepPaths );
+			setPreviousProgress( stepProgress?.progress ?? 0 );
+		}
+	);
 	// Retrieve any extra step data from the stepper-internal store. This will be passed as a prop to the current step.
 	const stepData = useSelect( ( select ) => select( STEPPER_INTERNAL_STORE ).getStepData() );
 
@@ -73,14 +76,14 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
-		if ( currentRoute ) {
-			recordStepStart( flow.name, kebabCase( currentRoute ), { intent } );
+		if ( currentStepRoute ) {
+			recordStepStart( flow.name, kebabCase( currentStepRoute ), { intent } );
 		}
 
 		// We leave out intent from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
 		// This causes the intent to become empty, and thus this event being fired again.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ flow.name, currentRoute ] );
+	}, [ flow.name, currentStepRoute ] );
 
 	const assertCondition = flow.useAssertConditions?.() ?? { state: AssertConditionState.SUCCESS };
 

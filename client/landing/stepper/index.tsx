@@ -57,11 +57,11 @@ function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
 }
 
 function determineFlow() {
-	const flowNameFromPathName = window.location.pathname.split( '/' )[ 2 ];
-
 	if ( isAnchorFmFlow() ) {
 		return availableFlows[ 'anchor-fm-flow' ];
 	}
+
+	const flowNameFromPathName = window.location.pathname.split( '/' )[ 2 ];
 
 	return availableFlows[ flowNameFromPathName ] || availableFlows[ 'site-setup-flow' ];
 }
