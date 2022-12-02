@@ -64,7 +64,7 @@ const headerPatterns: Pattern[] = [
 	},
 	{
 		id: 5605,
-		name: 'Simple header with image',
+		name: 'Header with site title and vertical navigation',
 		category: header,
 	},
 	{
