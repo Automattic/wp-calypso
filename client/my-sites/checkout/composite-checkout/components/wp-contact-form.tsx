@@ -1,6 +1,7 @@
 import { FormStatus, useFormStatus, useIsStepActive } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
+import useCachedDomainContactDetails from '../hooks/use-cached-domain-contact-details';
 import ContactDetailsContainer from './contact-details-container';
 import type {
 	CountryListItem,
@@ -41,6 +42,8 @@ export default function WPContactForm( {
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== FormStatus.READY;
+
+	useCachedDomainContactDetails( countriesList );
 
 	return (
 		<BillingFormFields>

@@ -153,9 +153,7 @@ Renders a list of the line items and their `displayValue` properties followed by
 
 ### CheckoutStep
 
-A checkout step. This should be a **direct** child of [CheckoutSteps](#CheckoutSteps) and is itself a wrapper for [CheckoutStepBody](#CheckoutStepBody). If you want to make something that looks like a step but is not connected to other steps, use a [CheckoutStepBody](#CheckoutStepBody) instead.
-
-If you want to create a wrapper around a step, you must set the `isCheckoutStep` property of your wrapper component to identify it as a checkout step; otherwise it will be rendered without any step context and things will probably not work. Example: `function MyWrapper() { return <CheckoutStep /> }; MyWrapper.isCheckoutStep = true;`
+A checkout step. This should be a direct child of [CheckoutSteps](#CheckoutSteps) and is itself a wrapper for [CheckoutStepBody](#CheckoutStepBody). If you want to make something that looks like a step but is not connected to other steps, use a [CheckoutStepBody](#CheckoutStepBody) instead.
 
 This component's props are:
 
