@@ -37,7 +37,7 @@ function useCachedContactDetails( {
 		debug( 'cached domain contact details retrieved', cachedContactDetails );
 		haveRequestedCachedDetails.current = 'done';
 	}
-	return cachedContactDetails;
+	return shouldWait ? null : cachedContactDetails;
 }
 
 /**
