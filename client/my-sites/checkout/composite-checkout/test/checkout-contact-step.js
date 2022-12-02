@@ -3,14 +3,8 @@
  */
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
-import {
-	render,
-	fireEvent,
-	screen,
-	within,
-	waitFor,
-	waitForElementToBeRemoved,
-} from '@testing-library/react';
+import { render, screen, within, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
 import { navigate } from 'calypso/lib/navigate';
@@ -177,11 +171,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders country-specific domain fields when a country has been chosen and a domain is in the cart', async () => {
+		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		await waitFor( () => {
-			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'US' } } );
-		} );
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
 		await waitFor( () => {
 			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
@@ -194,11 +187,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a plan is in the cart', async () => {
+		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		await waitFor( () => {
-			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'US' } } );
-		} );
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
 		await waitFor( () => {
 			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Postal code' ) ).toBeInTheDocument();
@@ -206,11 +198,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a plan is in the cart', async () => {
+		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		await waitFor( () => {
-			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'CW' } } );
-		} );
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'CW' );
 		await waitFor( () => {
 			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
 			expect( screen.queryByText( 'Postal code' ) ).not.toBeInTheDocument();
@@ -218,11 +209,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a domain is in the cart', async () => {
+		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		await waitFor( () => {
-			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'US' } } );
-		} );
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
 		await waitFor( () => {
 			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
@@ -232,11 +222,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a domain is in the cart', async () => {
+		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		await waitFor( () => {
-			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'CW' } } );
-		} );
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'CW' );
 		await waitFor( () => {
 			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
@@ -255,11 +244,7 @@ describe( 'Checkout contact step', () => {
 		expect( screen.queryByTestId( 'payment-method-step--visible' ) ).not.toBeInTheDocument();
 	} );
 
-	/**
-	 * TODO: Restore these tests, which were failing for some reason on #64718
-	 */
-	/* eslint-disable jest/no-disabled-tests */
-	it.skip( 'autocompletes the contact step when there are valid cached details', async () => {
+	it( 'autocompletes the contact step when there are valid cached details', async () => {
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'US',
 			postal_code: '10001',
@@ -269,12 +254,15 @@ describe( 'Checkout contact step', () => {
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		// Wait for the cart to load
 		await screen.findByText( 'Country' );
-		// Wait for the validation to complete
+
+		// Wait for the validation to complete.
+		await screen.findAllByText( 'Please wait…' );
 		await waitForElementToBeRemoved( () => screen.queryAllByText( 'Please wait…' ) );
-		expect( screen.queryByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
+
+		expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
 	} );
 
-	it.skip( 'does not autocomplete the contact step when there are invalid cached details', async () => {
+	it( 'does not autocomplete the contact step when there are invalid cached details', async () => {
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'US',
 			postal_code: 'ABCD',
@@ -284,9 +272,23 @@ describe( 'Checkout contact step', () => {
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		// Wait for the cart to load
 		await screen.findByText( 'Country' );
-		// Wait for the validation to complete
-		await waitForElementToBeRemoved( () => screen.queryAllByText( 'Please wait…' ) );
 		await expect( screen.findByTestId( 'payment-method-step--visible' ) ).toNeverAppear();
+	} );
+
+	it( 'does not show errors when autocompleting the contact step when there are invalid cached details', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: 'US',
+			postal_code: 'ABCD',
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', {
+			success: false,
+			messages: { postal_code: [ 'Postal code error message' ] },
+		} );
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		// Wait for the cart to load
+		await screen.findByText( 'Country' );
+		await expect( screen.findByText( 'Postal code error message' ) ).toNeverAppear();
 	} );
 
 	it.each( [
@@ -303,6 +305,8 @@ describe( 'Checkout contact step', () => {
 	] )(
 		'$complete complete the contact step when validation is $valid with $name in the cart while logged-$logged and signup validation $email',
 		async ( { complete, valid, name, email, logged } ) => {
+			const user = userEvent.setup();
+
 			const product = ( () => {
 				switch ( name ) {
 					case 'plan':
@@ -336,6 +340,10 @@ describe( 'Checkout contact step', () => {
 				};
 			} )();
 
+			mockCachedContactDetailsEndpoint( {
+				country_code: '',
+				postal_code: '',
+			} );
 			mockContactDetailsValidationEndpoint(
 				name === 'plan' ? 'tax' : name,
 				{
@@ -395,19 +403,24 @@ describe( 'Checkout contact step', () => {
 
 			// Fill in the contact form
 			if ( name === 'domain' || logged === 'out' ) {
-				fireEvent.change( screen.getByLabelText( 'Email' ), {
-					target: { value: validContactDetails.email },
-				} );
+				await user.type( screen.getByLabelText( 'Email' ), validContactDetails.email );
 			}
-			fireEvent.change( screen.getByLabelText( 'Country' ), {
-				target: { value: validContactDetails.country_code },
-			} );
-			fireEvent.change( screen.getByLabelText( /(Postal|ZIP) code/i ), {
-				target: { value: validContactDetails.postal_code },
-			} );
-			fireEvent.click( await screen.findByText( 'Continue' ) );
+			await user.selectOptions(
+				await screen.findByLabelText( 'Country' ),
+				validContactDetails.country_code
+			);
+			await user.type(
+				screen.getByLabelText( /(Postal|ZIP) code/i ),
+				validContactDetails.postal_code
+			);
 
-			// Wait for the validation to complete
+			// Do not await this click because we need to capture the 'Please wait'
+			// text that may only be visible very briefly. findByText('Please wait')
+			// will wait for it to appear.
+			user.click( await screen.findByText( 'Continue' ) );
+
+			// Wait for the validation to complete.
+			await screen.findAllByText( 'Please wait…' );
 			await waitForElementToBeRemoved( () => screen.queryAllByText( 'Please wait…' ) );
 
 			if ( complete === 'does' ) {
@@ -444,6 +457,7 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'removes a product from the cart after clicking to remove', async () => {
+		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
@@ -451,10 +465,10 @@ describe( 'Checkout contact step', () => {
 			'Remove WordPress.com Personal from cart'
 		);
 		expect( screen.getAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 1 );
-		fireEvent.click( removeProductButton );
+		await user.click( removeProductButton );
 		const confirmModal = await screen.findByRole( 'dialog' );
 		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
-		fireEvent.click( confirmButton );
+		await user.click( confirmButton );
 		await waitFor( () => {
 			expect( screen.queryByLabelText( 'WordPress.com Personal' ) ).not.toBeInTheDocument();
 		} );
