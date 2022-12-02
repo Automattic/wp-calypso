@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-/* eslint-disable jest/no-conditional-expect */
-/* eslint-disable jest/valid-title */
-
 import { render, screen } from '@testing-library/react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';

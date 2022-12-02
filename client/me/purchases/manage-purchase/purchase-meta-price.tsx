@@ -13,7 +13,7 @@ import {
 	isOneTimePurchase,
 	getDIFMTieredPurchaseDetails,
 } from 'calypso/lib/purchases';
-import { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from 'calypso/lib/purchases/types';
 
 function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 	const translate = useTranslate();
