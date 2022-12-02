@@ -27,10 +27,19 @@ const URL_WOO_APPLE = 'calypso-stats-mobile-cta-woo-apple-badge';
 const URL_WOO_GOOGLE = 'calypso-stats-mobile-cta-woo-google-badge';
 const URL_WOO_QRCODE = 'calypso-stats-mobile-cta-woo-qrcode';
 
+// Event names used for Tracks.
+const EVENT_JETPACK_CLICK = 'calypso_stats_mobile_cta_jetpack_click';
+const EVENT_JETPACK_CLICK_APPLE = 'calypso_stats_mobile_cta_jetpack_apple_click';
+const EVENT_JETPACK_CLICK_GOOGLE = 'calypso_stats_mobile_cta_jetpack_google_click';
+const EVENT_WOO_CLICK = 'calypso_stats_mobile_cta_woo_click';
+const EVENT_WOO_CLICK_APPLE = 'calypso_stats_mobile_cta_woo_apple_click';
+const EVENT_WOO_CLICK_GOOGLE = 'calypso_stats_mobile_cta_woo_google_click';
+
+// Maps the Jetpack Redirect slugs to URLs.
 // Named to match getRedirectUrl from '@automattic/jetpack-components'
 // which isn't available to us here.
 function getRedirectUrlPrivate( slug: string ) {
-	// Maps the Jetpack Redirect slugs to URLs.
+	// Limit to known URL slugs.
 	const slugs = [
 		URL_JETPACK_A8C,
 		URL_JETPACK_APPLE,
@@ -50,18 +59,31 @@ function getRedirectUrlPrivate( slug: string ) {
 	return 'https://jetpack.com/redirect/?source=' + slug;
 }
 
+function recordTracksEventPrivate( event: string ) {
+	// Limit to known events.
+	const events = [
+		EVENT_JETPACK_CLICK,
+		EVENT_JETPACK_CLICK_APPLE,
+		EVENT_JETPACK_CLICK_GOOGLE,
+		EVENT_WOO_CLICK,
+		EVENT_WOO_CLICK_APPLE,
+		EVENT_WOO_CLICK_GOOGLE,
+	];
+	// Confirm requested event is valid.
+	const index = events.indexOf( event );
+	if ( index === -1 ) {
+		return '';
+	}
+	// Forward the Tracks call.
+	recordTracksEvent( event );
+}
+
 export default function MobilePromoCard( { className, isWoo }: MobilePromoCardProps ) {
 	const translate = useTranslate();
 	// Basic user agent testing so we can show app store badges on moble.
 	const userAgent = window.navigator.userAgent.toLowerCase();
 	const isApple = userAgent.includes( 'iphone' ) || userAgent.includes( 'ipad' );
 	const isGoogle = userAgent.includes( 'android' );
-
-	const handleClickEvent = ( eventName: string ) => {
-		// This is in addition to the default link behaviour so
-		// we don't call preventDefault() here.
-		recordTracksEvent( eventName );
-	};
 
 	// Determines message text based on mobile, tablet, or Desktop.
 	const getMessage = () => {
@@ -81,15 +103,13 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 			? getRedirectUrlPrivate( URL_WOO_A8C )
 			: getRedirectUrlPrivate( URL_JETPACK_A8C );
 		const linkClassName = isWoo ? 'woo' : 'jetpack';
-		const tracksEventName = isWoo
-			? 'calypso_stats_mobile_cta_woo_click'
-			: 'calypso_stats_mobile_cta_jetpack_click';
+		const tracksEventName = isWoo ? EVENT_WOO_CLICK : EVENT_JETPACK_CLICK;
 		const components = {
 			a: (
 				<a
 					className={ linkClassName }
 					href={ redirectLink }
-					onClick={ () => handleClickEvent( tracksEventName ) }
+					onClick={ () => recordTracksEventPrivate( tracksEventName ) }
 				/>
 			),
 		};
@@ -111,11 +131,9 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 			const appStoreLink = isWoo
 				? getRedirectUrlPrivate( URL_WOO_APPLE )
 				: getRedirectUrlPrivate( URL_JETPACK_APPLE );
-			const tracksEventName = isWoo
-				? 'calypso_stats_mobile_cta_woo_apple_click'
-				: 'calypso_stats_mobile_cta_jetpack_apple_click';
+			const tracksEventName = isWoo ? EVENT_WOO_CLICK_APPLE : EVENT_JETPACK_CLICK_APPLE;
 			return (
-				<a href={ appStoreLink } onClick={ () => handleClickEvent( tracksEventName ) }>
+				<a href={ appStoreLink } onClick={ () => recordTracksEventPrivate( tracksEventName ) }>
 					<img
 						className="promo-store-badge"
 						src={ storeBadgeApple }
@@ -128,11 +146,9 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 			const appStoreLink = isWoo
 				? getRedirectUrlPrivate( URL_WOO_GOOGLE )
 				: getRedirectUrlPrivate( URL_JETPACK_GOOGLE );
-			const tracksEventName = isWoo
-				? 'calypso_stats_mobile_cta_woo_google_click'
-				: 'calypso_stats_mobile_cta_jetpack_google_click';
+			const tracksEventName = isWoo ? EVENT_WOO_CLICK_GOOGLE : EVENT_JETPACK_CLICK_GOOGLE;
 			return (
-				<a href={ appStoreLink } onClick={ () => handleClickEvent( tracksEventName ) }>
+				<a href={ appStoreLink } onClick={ () => recordTracksEventPrivate( tracksEventName ) }>
 					<img
 						className="promo-store-badge"
 						src={ storeBadgeGoogle }
