@@ -18,7 +18,7 @@ export default function shouldSeeCookieBanner(
 	countryCode?: string,
 	region?: string,
 	trackingPrefs?: TrackingPrefs
-): boolean | null {
+): boolean {
 	// the banner is not shown for pages embedded as web view inside the mobile app
 	if ( isWpMobileApp() ) {
 		return false;
@@ -29,10 +29,9 @@ export default function shouldSeeCookieBanner(
 		return false;
 	}
 
-	// if the country code is unknown, and we haven't yet tried to determine it, return `null`
-	// with the meaning of "result unknown".
-	if ( countryCode === undefined && region === undefined ) {
-		return null;
+	// if we had issues fetching geo cookies (`countryCode` and `region`), fail safe and show the banner
+	if ( countryCode === undefined || region === undefined ) {
+		return true;
 	}
 
 	// if the country code is still `unknown`, even after trying to determine it, we fail safely
