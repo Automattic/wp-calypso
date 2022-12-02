@@ -212,12 +212,9 @@ function getAnchorFmData( query ) {
 	return { anchor_podcast, anchor_episode, spotify_url };
 }
 
-function showDraftPostModal() {
-	const value = window.sessionStorage.getItem( 'wpcom_signup_complete_show_draft_post_modal' );
-	if ( value ) {
-		window.sessionStorage.removeItem( 'wpcom_signup_complete_show_draft_post_modal' );
-	}
-
+function getSessionStorageOneTimeValue( key ) {
+	const value = window.sessionStorage.getItem( key );
+	window.sessionStorage.removeItem( key );
 	return value;
 }
 
@@ -252,7 +249,9 @@ export const post = ( context, next ) => {
 			parentPostId={ parentPostId }
 			creatingNewHomepage={ postType === 'page' && context.query.hasOwnProperty( 'new-homepage' ) }
 			stripeConnectSuccess={ context.query.stripe_connect_success ?? null }
-			showDraftPostModal={ showDraftPostModal() }
+			showDraftPostModal={ getSessionStorageOneTimeValue(
+				'wpcom_signup_complete_show_draft_post_modal'
+			) }
 		/>
 	);
 
@@ -269,6 +268,7 @@ export const siteEditor = ( context, next ) => {
 			// It will force the component to remount completely when the Id changes.
 			key={ siteId }
 			editorType="site"
+			completedFlow={ getSessionStorageOneTimeValue( 'wpcom_signup_completed_flow' ) }
 		/>
 	);
 

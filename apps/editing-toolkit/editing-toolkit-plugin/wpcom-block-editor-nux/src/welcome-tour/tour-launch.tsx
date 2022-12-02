@@ -60,13 +60,7 @@ function WelcomeTour() {
 	const currentTheme = useSelect( ( select ) => select( 'core' ).getCurrentTheme() );
 	const themeName = currentTheme?.name?.raw?.toLowerCase() ?? null;
 
-	const tourSteps = getTourSteps(
-		localeSlug,
-		isWelcomeTourNext(),
-		isSiteEditor,
-		themeName,
-		intent
-	);
+	const tourSteps = getTourSteps( localeSlug, isWelcomeTourNext(), isSiteEditor, themeName );
 
 	// Only keep Payment block step if user comes from seller simple flow
 	if ( ! ( 'sell' === intent && sitePlan && 'ecommerce-bundle' !== sitePlan.product_slug ) ) {

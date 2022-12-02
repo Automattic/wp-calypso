@@ -198,6 +198,7 @@ export const siteSetupFlow: Flow = {
 						isEnabled( 'signup/design-picker-pattern-assembler' ) &&
 						isBlankCanvasDesign( selectedDesign as Design )
 					) {
+						window.sessionStorage.setItem( 'wpcom_signup_completed_flow', 'pattern_assembler' );
 						return exitFlow( `/site-editor/${ siteSlug }` );
 					}
 
