@@ -332,14 +332,19 @@
 	pointer-events: none;
 }
 
-.launchpad__checklist-item-checkmark-container {
+.launchpad__checklist-item-checkmark-container,
+.launchpad__checklist-item-warning-container {
 	margin-right: 8px;
 	width: 20px;
 
-	.launchpad__checklist-item-checkmark {
+	.launchpad__checklist-item-checkmark,
+	.launchpad__checklist-item-warning {
 		top: 2px;
 		vertical-align: text-bottom;
 	}
+}
+.launchpad__checklist-item-warning {
+	fill: var(--color-warning);
 }
 
 // general styles
