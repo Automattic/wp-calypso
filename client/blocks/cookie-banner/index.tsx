@@ -1,6 +1,5 @@
 import { CookieBanner, CookieBannerProps } from '@automattic/privacy-toolset';
 import cookie from 'cookie';
-import { noop } from 'lodash';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {
@@ -13,6 +12,7 @@ import { bumpStat } from 'calypso/state/analytics/actions';
 import { useCookieBannerContent } from './use-cookie-banner-content';
 
 export const isServer = typeof document === 'undefined';
+const noop = () => undefined;
 
 const CookieBannerInner = ( { onClose }: { onClose: () => void } ) => {
 	const content = useCookieBannerContent();
