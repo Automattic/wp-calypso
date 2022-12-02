@@ -6,7 +6,7 @@ import { Task } from './types';
 
 const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction?: boolean } ) => {
 	const isRtl = useRtl();
-	const { id, completed, disabled, title, actionDispatch, warning } = task;
+	const { id, completed, disabled, title, subtitle, actionDispatch, warning } = task;
 
 	// Display chevron if task is incomplete. Don't display chevron and badge at the same time.
 	const shouldDisplayChevron = ! completed && ! disabled && ! task.badgeText;
