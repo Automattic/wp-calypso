@@ -148,7 +148,7 @@ const DataCenterPicker = ( {
 					</FormHeadingContainer>
 					<FormDescription>
 						{ translate(
-							'Choose a primary data center for your site. For redundancy, your site will replicate in real-time to a second data center in different region. {{supportLink}}Learn more{{/supportLink}}.',
+							'Choose a primary data center for your site. For redundancy, your site will replicate in real-time to a second data center in a different region. {{supportLink}}Learn more{{/supportLink}}.',
 							{
 								components: {
 									supportLink: (
