@@ -3,13 +3,12 @@
  */
 
 import {
-	ChangeUILanguageFlow,
-	DataHelper,
 	EditorPage,
 	TestAccount,
 	envVariables,
 	getTestAccountByFeature,
 	envToFeatureKey,
+	RestAPIClient,
 } from '@automattic/calypso-e2e';
 import { Page, Frame, Browser } from 'playwright';
 import type { LanguageSlug } from '@automattic/languages';
@@ -248,6 +247,7 @@ declare const browser: Browser;
 describe( 'I18N: Editor', function () {
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature( { ...features, variant: 'i18n' } );
+	const testAccount = new TestAccount( accountName );
 
 	// Filter out the locales that do not have valid translation content defined above.
 	const locales: LanguageSlug[] = Object.keys( translations ).filter( ( locale ) =>
@@ -255,6 +255,7 @@ describe( 'I18N: Editor', function () {
 	) as LanguageSlug[];
 	let page: Page;
 	let editorPage: EditorPage;
+	let restAPIClient: RestAPIClient;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -265,35 +266,23 @@ describe( 'I18N: Editor', function () {
 			}
 		} );
 
-		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
+		restAPIClient = new RestAPIClient( testAccount.credentials );
 
 		editorPage = new EditorPage( page, { target: features.siteType } );
 	} );
 
 	describe.each( locales )( `Locale: %s`, function ( locale ) {
-		describe( 'Set up', function () {
-			it( `Change UI language to ${ locale }`, async function () {
-				await Promise.all( [
-					page.waitForNavigation( { url: '**/home/**', waitUntil: 'load' } ),
-					page.goto( DataHelper.getCalypsoURL( '/' ) ),
-				] );
-
-				const changeUILanguageFlow = new ChangeUILanguageFlow( page );
-				await changeUILanguageFlow.changeUILanguage( locale as LanguageSlug );
-
-				await Promise.all( [
-					page.waitForNavigation( { url: '**/home/**', waitUntil: 'load' } ),
-					page.goto( DataHelper.getCalypsoURL( '/' ) ),
-				] );
-			} );
-
-			it( 'Go to the new post page', async function () {
-				await editorPage.visit( 'post' );
-			} );
+		beforeAll( async function () {
+			await restAPIClient.setMySettings( { language: locale } );
+			await page.reload( { waitUntil: 'networkidle', timeout: 20 * 1000 } );
 		} );
 
 		describe( 'Editing Toolkit Plugin', function () {
+			it( 'Go to the new post page', async function () {
+				await editorPage.visit( 'post' );
+			} );
+
 			it( 'Translations for Welcome Guide', async function () {
 				const frame = await editorPage.getEditorHandle();
 				// We know these are all defined because of the filtering above. Non-null asserting is safe here.
