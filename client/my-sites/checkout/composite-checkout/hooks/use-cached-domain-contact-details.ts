@@ -2,7 +2,7 @@ import { useSetStepComplete } from '@automattic/composite-checkout';
 import { getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
 import { useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch as useReduxDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
@@ -15,24 +15,17 @@ import type {
 
 const debug = debugFactory( 'calypso:composite-checkout:use-cached-domain-contact-details' );
 
-function useCachedContactDetails( {
-	shouldWait,
-}: {
-	shouldWait?: boolean;
-} ): PossiblyCompleteDomainContactDetails | null {
+function useCachedContactDetails(): PossiblyCompleteDomainContactDetails | null {
 	const reduxDispatch = useReduxDispatch();
 	const haveRequestedCachedDetails = useRef< 'not-started' | 'pending' | 'done' >( 'not-started' );
 	const cachedContactDetails = useSelector( getContactDetailsCache );
 	useEffect( () => {
-		if ( shouldWait ) {
-			return;
-		}
 		if ( haveRequestedCachedDetails.current === 'not-started' ) {
 			debug( 'requesting cached domain contact details' );
 			reduxDispatch( requestContactDetailsCache() );
 			haveRequestedCachedDetails.current = 'pending';
 		}
-	}, [ reduxDispatch, shouldWait ] );
+	}, [ reduxDispatch ] );
 	if ( haveRequestedCachedDetails.current === 'pending' && cachedContactDetails ) {
 		debug( 'cached domain contact details retrieved', cachedContactDetails );
 		haveRequestedCachedDetails.current = 'done';
@@ -40,22 +33,14 @@ function useCachedContactDetails( {
 	return cachedContactDetails;
 }
 
-/**
- * Automatically attempt to populate the checkout contact form and complete the
- * contact step (running validation as normal).
- *
- * Must be run inside a CheckoutStepGroup in order to have the ability to
- * complete steps.
- */
 function useCachedContactDetailsForCheckoutForm(
 	cachedContactDetails: PossiblyCompleteDomainContactDetails | null,
 	overrideCountryList?: CountryListItem[]
-): { isComplete: boolean } {
+): void {
 	const countriesList = useCountryList( overrideCountryList );
 	const reduxDispatch = useReduxDispatch();
 	const setStepCompleteStatus = useSetStepComplete();
 	const didFillForm = useRef( false );
-	const [ isComplete, setComplete ] = useState( false );
 
 	const arePostalCodesSupported =
 		countriesList.length && cachedContactDetails?.countryCode
@@ -107,7 +92,6 @@ function useCachedContactDetailsForCheckoutForm(
 				if ( didSkip ) {
 					reduxDispatch( recordTracksEvent( 'calypso_checkout_skip_to_last_step' ) );
 				}
-				setComplete( true );
 			} );
 	}, [
 		reduxDispatch,
@@ -117,21 +101,15 @@ function useCachedContactDetailsForCheckoutForm(
 		loadDomainContactDetailsFromCache,
 		countriesList,
 	] );
-
-	return { isComplete };
 }
 
 /**
  * Load cached contact details from the server and use them to populate the
  * checkout contact form and the shopping cart tax location.
  */
-export default function useCachedDomainContactDetails( {
-	overrideCountryList,
-	shouldWait,
-}: {
-	overrideCountryList?: CountryListItem[];
-	shouldWait?: boolean;
-} ) {
-	const cachedContactDetails = useCachedContactDetails( { shouldWait } );
-	return useCachedContactDetailsForCheckoutForm( cachedContactDetails, overrideCountryList );
+export default function useCachedDomainContactDetails(
+	overrideCountryList?: CountryListItem[]
+): void {
+	const cachedContactDetails = useCachedContactDetails();
+	useCachedContactDetailsForCheckoutForm( cachedContactDetails, overrideCountryList );
 }
