@@ -3,7 +3,7 @@
  */
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
-import { render, screen, within, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { render, screen, within, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -103,70 +103,56 @@ describe( 'Checkout contact step', () => {
 	it( 'does not render the contact step when the purchase is free', async () => {
 		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
-		await waitFor( () => {
-			expect(
-				screen.queryByText( /Enter your (billing|contact) information/ )
-			).not.toBeInTheDocument();
-		} );
+		await expect( screen.findByText( /Enter your (billing|contact) information/ ) ).toNeverAppear();
 	} );
 
 	it( 'renders the step after the contact step as active if the purchase is free', async () => {
 		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
-		await waitFor( () => {
-			expect( screen.getByText( 'Free Purchase' ) ).toBeVisible();
-		} );
+		expect( await screen.findByText( 'Free Purchase' ) ).toBeVisible();
 	} );
 
 	it( 'renders the contact step when the purchase is not free', async () => {
 		render( <MyCheckout /> );
-		await waitFor( () => {
-			expect( screen.getByText( /Enter your (billing|contact) information/ ) ).toBeInTheDocument();
-		} );
+		expect(
+			await screen.findByText( /Enter your (billing|contact) information/ )
+		).toBeInTheDocument();
 	} );
 
 	it( 'renders the tax fields only when no domain is in the cart', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
-		await waitFor( () => {
-			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Phone' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Email' ) ).not.toBeInTheDocument();
-		} );
+		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Phone' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Email' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders the domain fields when a domain is in the cart', async () => {
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
-		await waitFor( () => {
-			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
-		} );
+		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders the domain fields when a domain transfer is in the cart', async () => {
 		const cartChanges = { products: [ planWithBundledDomain, domainTransferProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
-		await waitFor( () => {
-			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
-		} );
+		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
 	} );
 
 	it( 'does not render country-specific domain fields when no country has been chosen and a domain is in the cart', async () => {
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
-		await waitFor( () => {
-			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Address' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'City' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'State' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'ZIP code' ) ).not.toBeInTheDocument();
-		} );
+		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Address' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'City' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'State' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'ZIP code' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders country-specific domain fields when a country has been chosen and a domain is in the cart', async () => {
@@ -174,15 +160,13 @@ describe( 'Checkout contact step', () => {
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
-		await waitFor( () => {
-			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Address' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'City' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'State' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'ZIP code' ) ).toBeInTheDocument();
-		} );
+		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Address' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'City' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'State' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'ZIP code' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a plan is in the cart', async () => {
@@ -190,10 +174,8 @@ describe( 'Checkout contact step', () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
-		await waitFor( () => {
-			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Postal code' ) ).toBeInTheDocument();
-		} );
+		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Postal code' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a plan is in the cart', async () => {
@@ -201,10 +183,8 @@ describe( 'Checkout contact step', () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'CW' );
-		await waitFor( () => {
-			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Postal code' ) ).not.toBeInTheDocument();
-		} );
+		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Postal code' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a domain is in the cart', async () => {
@@ -212,12 +192,10 @@ describe( 'Checkout contact step', () => {
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
-		await waitFor( () => {
-			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'ZIP code' ) ).toBeInTheDocument();
-		} );
+		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'ZIP code' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a domain is in the cart', async () => {
@@ -225,14 +203,12 @@ describe( 'Checkout contact step', () => {
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'CW' );
-		await waitFor( () => {
-			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Postal Code' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Postal code' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'ZIP code' ) ).not.toBeInTheDocument();
-		} );
+		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Postal Code' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Postal code' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'ZIP code' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'does not complete the contact step when the contact step button has not been clicked and there are no cached details', async () => {
@@ -448,10 +424,8 @@ describe( 'Checkout contact step', () => {
 
 	it( 'renders the checkout summary', async () => {
 		render( <MyCheckout /> );
-		await waitFor( () => {
-			expect( screen.getByText( 'Purchase Details' ) ).toBeInTheDocument();
-			expect( navigate ).not.toHaveBeenCalled();
-		} );
+		expect( await screen.findByText( 'Purchase Details' ) ).toBeInTheDocument();
+		expect( navigate ).not.toHaveBeenCalled();
 	} );
 
 	it( 'removes a product from the cart after clicking to remove', async () => {
@@ -467,8 +441,6 @@ describe( 'Checkout contact step', () => {
 		const confirmModal = await screen.findByRole( 'dialog' );
 		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
 		await user.click( confirmButton );
-		await waitFor( () => {
-			expect( screen.queryByLabelText( 'WordPress.com Personal' ) ).not.toBeInTheDocument();
-		} );
+		await expect( screen.findByLabelText( 'WordPress.com Personal' ) ).toNeverAppear();
 	} );
 } );
