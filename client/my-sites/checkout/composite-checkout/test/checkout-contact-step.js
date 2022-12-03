@@ -34,8 +34,6 @@ import {
 	mockMatchMediaOnWindow,
 } from './util';
 
-/* eslint-disable jest/no-conditional-expect */
-
 jest.mock( 'calypso/state/sites/selectors' );
 jest.mock( 'calypso/state/sites/domains/selectors' );
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
@@ -47,41 +45,39 @@ jest.mock( 'calypso/lib/navigate' );
 
 describe( 'Checkout contact step', () => {
 	let MyCheckout;
+	const mainCartKey = 'foo.com';
+	const initialCart = getBasicCart();
+
+	getPlansBySiteId.mockImplementation( () => ( {
+		data: getActivePersonalPlanDataForType( 'yearly' ),
+	} ) );
+	hasLoadedSiteDomains.mockImplementation( () => true );
+	getDomainsBySiteId.mockImplementation( () => [] );
+	isMarketplaceProduct.mockImplementation( () => false );
+	isJetpackSite.mockImplementation( () => false );
+	useCartKey.mockImplementation( () => mainCartKey );
+	mockMatchMediaOnWindow();
+
+	const mockSetCartEndpoint = mockSetCartEndpointWith( {
+		currency: initialCart.currency,
+		locale: initialCart.locale,
+	} );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		getPlansBySiteId.mockImplementation( () => ( {
-			data: getActivePersonalPlanDataForType( 'yearly' ),
-		} ) );
-		hasLoadedSiteDomains.mockImplementation( () => true );
-		getDomainsBySiteId.mockImplementation( () => [] );
-		isMarketplaceProduct.mockImplementation( () => false );
-		isJetpackSite.mockImplementation( () => false );
-
-		const initialCart = getBasicCart();
-
-		const mockSetCartEndpoint = mockSetCartEndpointWith( {
-			currency: initialCart.currency,
-			locale: initialCart.locale,
-		} );
-
 		const store = createTestReduxStore();
 
-		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps, useUndefinedCartKey } ) => {
+		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps } ) => {
 			const managerClient = createShoppingCartManagerClient( {
 				getCart: mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ),
 				setCart: mockSetCartEndpoint,
 			} );
-			const mainCartKey = 'foo.com';
-			useCartKey.mockImplementation( () => ( useUndefinedCartKey ? undefined : mainCartKey ) );
 			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
-			mockMatchMediaOnWindow();
 			return (
 				<ReduxProvider store={ store }>
 					<ShoppingCartProvider
 						managerClient={ managerClient }
 						options={ {
-							defaultCartKey: useUndefinedCartKey ? undefined : mainCartKey,
+							defaultCartKey: mainCartKey,
 						} }
 						{ ...additionalCartProps }
 					>
@@ -390,6 +386,7 @@ describe( 'Checkout contact step', () => {
 
 			await user.click( screen.getByText( 'Continue' ) );
 
+			/* eslint-disable jest/no-conditional-expect */
 			if ( complete === 'does' ) {
 				expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
 			} else {
@@ -412,6 +409,7 @@ describe( 'Checkout contact step', () => {
 					}
 				}
 			}
+			/* eslint-enable jest/no-conditional-expect */
 		}
 	);
 
