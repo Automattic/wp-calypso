@@ -388,14 +388,7 @@ describe( 'Checkout contact step', () => {
 				validContactDetails.postal_code
 			);
 
-			// Do not await this click because we need to capture the 'Please wait'
-			// text that may only be visible very briefly. findByText('Please wait')
-			// will wait for it to appear.
-			user.click( await screen.findByText( 'Continue' ) );
-
-			// Wait for the validation to complete.
-			await screen.findAllByText( 'Please wait…' );
-			await waitForElementToBeRemoved( () => screen.queryAllByText( 'Please wait…' ) );
+			await user.click( screen.getByText( 'Continue' ) );
 
 			if ( complete === 'does' ) {
 				expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
