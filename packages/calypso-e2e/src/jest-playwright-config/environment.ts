@@ -105,7 +105,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	 *
 	 * 	`@browser firefox`
 	 */
-	async determineBrowser(): Promise< BrowserType > {
+	private async determineBrowser(): Promise< BrowserType > {
 		const parsed = parseDocBlock( await fs.readFile( this.testFilePath, 'utf8' ) );
 		const defaultBrowser = env.BROWSER_NAME;
 
@@ -272,9 +272,17 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 						this.testArtifactsPath,
 						`${ artifactFilename }__${ contextIndex }-${ pageIndex }`
 					);
-					await page.screenshot( { path: `${ mediaFilePath }.png` } );
+					try {
+						await page.screenshot( { path: `${ mediaFilePath }.png`, timeout: env.TIMEOUT } );
+					} catch {
+						console.error( `Failed to capture screenshot for test: ${ this.testFilename }}.` );
+					}
 					await page.close(); // Needed before saving video.
-					await page.video()?.saveAs( `${ mediaFilePath }.webm` );
+					try {
+						await page.video()?.saveAs( `${ mediaFilePath }.webm` );
+					} catch {
+						console.error( `Failed to save replay for test: ${ this.testFilePath }.` );
+					}
 					pageIndex++;
 				}
 				contextIndex++;
