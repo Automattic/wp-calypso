@@ -272,10 +272,11 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 						this.testArtifactsPath,
 						`${ artifactFilename }__${ contextIndex }-${ pageIndex }`
 					);
+					console.log( `Browser is connected: ${ this.global.browser.isConnected() }` );
 					try {
 						await page.screenshot( { path: `${ mediaFilePath }.png`, timeout: env.TIMEOUT } );
 					} catch {
-						console.error( `Failed to capture screenshot for test: ${ this.testFilename }}.` );
+						console.error( `Failed to capture screenshot for test: ${ this.testFilename }.` );
 					}
 					await page.close(); // Needed before saving video.
 					try {
@@ -345,6 +346,9 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 				}
 				break;
 			case 'test_fn_start':
+				console.log(
+					`In test_fn_start, is browser connected: ${ this.global.browser.isConnected() }`
+				);
 				// This event is fired after both the `beforeAll` and `beforeEach` hooks.
 				// Since this event fires after `beforeEach` hooks, it is the best way to detect
 				// an actual `it/test` step as having started.
@@ -364,6 +368,9 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 				break;
 			}
 			case 'test_fn_failure': {
+				console.log(
+					`In test_fn_failure, is browser connected: ${ this.global.browser.isConnected() }`
+				);
 				this.failure = { type: 'test', name: event.test.name };
 				this.allure?.failTestStep( event.error );
 				break;
