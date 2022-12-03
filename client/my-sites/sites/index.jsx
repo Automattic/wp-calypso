@@ -154,7 +154,8 @@ class Sites extends Component {
 			this.props;
 		const filteredSites = sites.filter( this.filterSites );
 
-		const showEmptyContent = hasFetchedSites && ! filteredSites.length;
+		// Show empty content only on Jetpack Cloud
+		const showEmptyContent = isJetpackCloud() && hasFetchedSites && ! filteredSites.length;
 
 		return (
 			<>
