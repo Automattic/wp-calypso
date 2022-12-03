@@ -65,7 +65,11 @@ import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
+import type {
+	ContactDetailsType,
+	CountryListItem,
+	ManagedContactDetails,
+} from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -337,6 +341,7 @@ export default function WPCheckout( {
 					isLoggedOutCart={ isLoggedOutCart }
 					showErrorMessageBriefly={ showErrorMessageBriefly }
 					validatingButtonText={ validatingButtonText }
+					contactDetailsType={ contactDetailsType }
 				/>
 			) }
 			<PaymentMethodStep
@@ -372,20 +377,20 @@ function CheckoutContactStep( {
 	isLoggedOutCart,
 	showErrorMessageBriefly,
 	validatingButtonText,
+	contactDetailsType,
 }: {
 	countriesList: CountryListItem[];
 	isLoggedOutCart: boolean;
 	showErrorMessageBriefly: ( error: string ) => void;
 	validatingButtonText: string;
+	contactDetailsType: Exclude< ContactDetailsType, 'none' >;
 } ) {
 	const translate = useTranslate();
 	const cartKey = useCartKey();
 	const { responseCart, updateLocation } = useShoppingCart( cartKey );
 	const reduxDispatch = useReduxDispatch();
-	const contactDetailsType = getContactDetailsType( responseCart );
 	const { isComplete: isAutoValidationComplete } = useCachedDomainContactDetails( {
 		overrideCountryList: countriesList,
-		shouldWait: contactDetailsType === 'none',
 	} );
 
 	const areThereDomainProductsInCart =
