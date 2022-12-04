@@ -17,13 +17,14 @@ import {
 	CheckoutErrorBoundary,
 	CheckoutFormSubmit,
 	PaymentMethodStep,
+	createCheckoutStepGroupStore,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled } from '@automattic/wpcom-checkout';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
 import {
@@ -221,8 +222,11 @@ export default function WPCheckout( {
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const contactDetailsType = getContactDetailsType( responseCart );
 	const reduxDispatch = useReduxDispatch();
+	const stepGroupStore = useMemo( () => createCheckoutStepGroupStore(), [] );
 	const { isComplete: isAutoValidationComplete } = useCachedDomainContactDetails( {
 		overrideCountryList: countriesList,
+		store: stepGroupStore,
+		shouldWait: contactDetailsType === 'none' || stepGroupStore.state.totalSteps === 0,
 	} );
 
 	const areThereDomainProductsInCart =
@@ -298,6 +302,7 @@ export default function WPCheckout( {
 
 	return (
 		<CheckoutStepGroup
+			store={ stepGroupStore }
 			stepAreaHeader={
 				<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
 					<CheckoutErrorBoundary

@@ -17,22 +17,29 @@ import type {
 
 const debug = debugFactory( 'calypso:composite-checkout:use-cached-domain-contact-details' );
 
-function useCachedContactDetails(): PossiblyCompleteDomainContactDetails | null {
+function useCachedContactDetails( {
+	shouldWait,
+}: {
+	shouldWait?: boolean;
+} ): PossiblyCompleteDomainContactDetails | null {
 	const reduxDispatch = useReduxDispatch();
 	const haveRequestedCachedDetails = useRef< 'not-started' | 'pending' | 'done' >( 'not-started' );
 	const cachedContactDetails = useSelector( getContactDetailsCache );
 	useEffect( () => {
+		if ( shouldWait ) {
+			return;
+		}
 		if ( haveRequestedCachedDetails.current === 'not-started' ) {
 			debug( 'requesting cached domain contact details' );
 			reduxDispatch( requestContactDetailsCache() );
 			haveRequestedCachedDetails.current = 'pending';
 		}
-	}, [ reduxDispatch ] );
+	}, [ reduxDispatch, shouldWait ] );
 	if ( haveRequestedCachedDetails.current === 'pending' && cachedContactDetails ) {
 		debug( 'cached domain contact details retrieved', cachedContactDetails );
 		haveRequestedCachedDetails.current = 'done';
 	}
-	return cachedContactDetails;
+	return shouldWait ? null : cachedContactDetails;
 }
 
 /**
@@ -137,10 +144,12 @@ function useCachedContactDetailsForCheckoutForm(
 export default function useCachedDomainContactDetails( {
 	overrideCountryList,
 	store,
+	shouldWait,
 }: {
 	overrideCountryList?: CountryListItem[];
 	store: CheckoutStepGroupStore;
+	shouldWait?: boolean;
 } ) {
-	const cachedContactDetails = useCachedContactDetails();
+	const cachedContactDetails = useCachedContactDetails( { shouldWait } );
 	return useCachedContactDetailsForCheckoutForm( cachedContactDetails, store, overrideCountryList );
 }
