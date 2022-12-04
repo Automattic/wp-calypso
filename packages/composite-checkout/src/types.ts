@@ -1,4 +1,5 @@
 import '@emotion/react';
+import type { SubscriptionManager } from './lib/subscription-manager';
 import type { Theme as ThemeType } from './lib/theme';
 import type { ReactElement } from 'react';
 
@@ -285,12 +286,24 @@ export type SetStepComplete = ( stepId: string ) => Promise< boolean >;
 
 export type CheckoutStepCompleteStatus = Record< string, boolean >;
 
+export interface CheckoutStepGroupStore {
+	state: CheckoutStepGroupState;
+	actions: CheckoutStepGroupActions;
+	subscription: SubscriptionManager;
+}
+
 export interface CheckoutStepGroupState {
 	activeStepNumber: number;
-	stepCompleteStatus: CheckoutStepCompleteStatus;
 	totalSteps: number;
+	stepCompleteStatus: CheckoutStepCompleteStatus;
+	stepIdMap: StepIdMap;
+	stepCompleteCallbackMap: StepCompleteCallbackMap;
+}
+
+export interface CheckoutStepGroupActions {
 	setActiveStepNumber: ( stepNumber: number ) => void;
 	setStepCompleteStatus: ( newStatus: CheckoutStepCompleteStatus ) => void;
+	setStepComplete: SetStepComplete;
 	getStepNumberFromId: ( stepId: string ) => number | undefined;
 	setStepCompleteCallback: (
 		stepNumber: number,

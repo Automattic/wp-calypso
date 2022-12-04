@@ -21,6 +21,7 @@ import {
 	useIsStepActive,
 	useIsStepComplete,
 	useSetStepComplete,
+	createCheckoutStepGroupStore,
 } from './components/checkout-steps';
 import CheckoutSubmitButton from './components/checkout-submit-button';
 import {
@@ -85,6 +86,7 @@ export {
 	RadioButton,
 	SubmitButtonWrapper,
 	checkoutTheme,
+	createCheckoutStepGroupStore,
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummary,
 	getDefaultOrderSummaryStep,

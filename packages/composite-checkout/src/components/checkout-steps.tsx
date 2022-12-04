@@ -11,14 +11,15 @@ import {
 	useState,
 	createContext,
 	useRef,
-	useLayoutEffect,
+	useMemo,
 } from 'react';
 import { getDefaultPaymentMethodStep } from '../components/default-steps';
 import CheckoutContext from '../lib/checkout-context';
 import { useFormStatus } from '../lib/form-status';
 import joinClasses from '../lib/join-classes';
 import { usePaymentMethod } from '../lib/payment-methods';
-import { FormStatus } from '../types';
+import { SubscriptionManager } from '../lib/subscription-manager';
+import { CheckoutStepGroupActions, FormStatus } from '../types';
 import Button from './button';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import CheckoutNextStepButton from './checkout-next-step-button';
@@ -33,38 +34,13 @@ import type {
 	SetStepComplete,
 	CheckoutStepGroupState,
 	CheckoutStepCompleteStatus,
-	StepIdMap,
-	StepCompleteCallbackMap,
+	CheckoutStepGroupStore,
 } from '../types';
 import type { ReactNode, HTMLAttributes, PropsWithChildren, ReactElement } from 'react';
 
 const debug = debugFactory( 'composite-checkout:checkout-steps' );
 
 const customPropertyForSubmitButtonHeight = '--submit-button-height';
-
-/*
- * Return a stable callback function whose identity does not change.
- *
- * Even if the dependencies of the callback argument change, the returned
- * callback will keep the same identity. In effect, the returned callback will
- * always use the most recent version of the variables in the callback's
- * closure.
- *
- * See https://github.com/reactjs/rfcs/blob/useevent/text/0000-useevent.md for
- * more explanation of why this is helpful.
- */
-function useJITCallback< A, R >( handler: ( ...args: A[] ) => R ): ( ...args: A[] ) => R {
-	const handlerRef = useRef( handler );
-
-	useLayoutEffect( () => {
-		handlerRef.current = handler;
-	} );
-
-	return useCallback( ( ...args: A[] ): R => {
-		const fn = handlerRef.current;
-		return fn( ...args );
-	}, [] );
-}
 
 interface CheckoutSingleStepDataContext {
 	stepNumber: number;
@@ -75,67 +51,131 @@ interface CheckoutSingleStepDataContext {
 }
 
 const noop = () => {
-	throw new Error( 'Cannot use CheckoutStepDataContext without a provider.' );
+	throw new Error( 'Cannot use CheckoutStepGroupContext without a provider.' );
 };
 const noopPromise = () => () =>
-	Promise.reject( 'Cannot use CheckoutStepDataContext without a provider.' );
+	Promise.reject( 'Cannot use CheckoutStepGroupContext without a provider.' );
 const emptyStepCompleteStatus = {};
-const CheckoutStepDataContext = createContext< CheckoutStepGroupState >( {
-	activeStepNumber: 0,
-	stepCompleteStatus: emptyStepCompleteStatus,
-	totalSteps: 0,
-	setActiveStepNumber: noop,
-	setStepCompleteStatus: noop,
-	setStepCompleteCallback: noop,
-	getStepCompleteCallback: noopPromise,
-	getStepNumberFromId: noop,
-	setTotalSteps: noop,
+const CheckoutStepGroupContext = createContext< CheckoutStepGroupStore >( {
+	state: {
+		activeStepNumber: 0,
+		stepCompleteStatus: emptyStepCompleteStatus,
+		totalSteps: 0,
+		stepIdMap: {},
+		stepCompleteCallbackMap: {},
+	},
+	actions: {
+		setStepComplete: noop,
+		setActiveStepNumber: noop,
+		setStepCompleteStatus: noop,
+		setStepCompleteCallback: noop,
+		getStepCompleteCallback: noopPromise,
+		getStepNumberFromId: noop,
+		setTotalSteps: noop,
+	},
+	subscription: new SubscriptionManager(),
 } );
 
-export function createCheckoutStepGroupState(): CheckoutStepGroupState {
-	let activeStepNumber = 0;
-	let totalSteps = 0;
-	let stepCompleteStatus: CheckoutStepCompleteStatus = {};
-	const stepIdMap: StepIdMap = {};
-	const stepCompleteCallbackMap: StepCompleteCallbackMap = {};
+export function createCheckoutStepGroupStore(): CheckoutStepGroupStore {
+	const state = createCheckoutStepGroupState();
+	const subscription = new SubscriptionManager();
+	const actions = createCheckoutStepGroupActions( state, subscription.notifySubscribers );
+	return {
+		state,
+		actions,
+		subscription,
+	};
+}
 
+function createCheckoutStepGroupState(): CheckoutStepGroupState {
+	return {
+		activeStepNumber: 1,
+		totalSteps: 0,
+		stepCompleteStatus: {},
+		stepIdMap: {},
+		stepCompleteCallbackMap: {},
+	};
+}
+
+function createCheckoutStepGroupActions(
+	state: CheckoutStepGroupState,
+	onStateChange: () => void
+): CheckoutStepGroupActions {
 	const setActiveStepNumber = ( stepNumber: number ) => {
-		activeStepNumber = stepNumber;
+		if ( stepNumber < 1 ) {
+			throw new Error( `Cannot set step number to '${ stepNumber }' because it is too low` );
+		}
+		if ( stepNumber > state.totalSteps && state.totalSteps === 0 ) {
+			throw new Error(
+				`Cannot set step number to '${ stepNumber }' because the total number of steps is 0`
+			);
+		}
+		if ( stepNumber > state.totalSteps ) {
+			stepNumber = state.totalSteps;
+		}
+		state.activeStepNumber = stepNumber;
+		onStateChange();
 	};
+
 	const setTotalSteps = ( stepCount: number ) => {
-		totalSteps = stepCount;
+		if ( stepCount < 0 ) {
+			throw new Error( `Cannot set total steps to '${ stepCount }' because it is too low` );
+		}
+		state.totalSteps = stepCount;
+		onStateChange();
 	};
+
 	const setStepCompleteStatus = ( newStatus: CheckoutStepCompleteStatus ) => {
-		stepCompleteStatus = newStatus;
+		state.stepCompleteStatus = newStatus;
+		onStateChange();
 	};
-	const getStepNumberFromId = ( id: string ) => stepIdMap[ id ];
+
+	const getStepNumberFromId = ( id: string ) => state.stepIdMap[ id ];
+
 	const setStepCompleteCallback = (
 		stepNumber: number,
 		stepId: string,
 		callback: StepCompleteCallback
 	) => {
-		stepIdMap[ stepId ] = stepNumber;
-		stepCompleteCallbackMap[ stepNumber ] = callback;
+		state.stepIdMap[ stepId ] = stepNumber;
+		state.stepCompleteCallbackMap[ stepNumber ] = callback;
 	};
+
 	const getStepCompleteCallback = ( stepNumber: number ) => {
 		return (
-			stepCompleteCallbackMap[ stepNumber ] ??
+			state.stepCompleteCallbackMap[ stepNumber ] ??
 			( () => {
 				throw new Error( `No isCompleteCallback found for step '${ stepNumber }'` );
 			} )
 		);
 	};
 
+	const setStepComplete = async ( stepId: string ) => {
+		const stepNumber = getStepNumberFromId( stepId );
+		if ( ! stepNumber ) {
+			throw new Error( `Cannot find step with id '${ stepId }' when trying to set step complete.` );
+		}
+		// To try to complete a step, we must try to complete all previous steps
+		// first, ignoring steps that are already complete.
+		for ( let step = 1; step <= stepNumber; step++ ) {
+			if ( ! state.stepCompleteStatus[ step ] ) {
+				const didStepComplete = await getStepCompleteCallback( step )();
+				if ( ! didStepComplete ) {
+					return false;
+				}
+			}
+		}
+		return true;
+	};
+
 	return {
-		activeStepNumber,
-		totalSteps,
-		stepCompleteStatus,
 		setActiveStepNumber,
-		setTotalSteps,
 		setStepCompleteStatus,
+		getStepNumberFromId,
 		setStepCompleteCallback,
 		getStepCompleteCallback,
-		getStepNumberFromId,
+		setTotalSteps,
+		setStepComplete,
 	};
 }
 
@@ -229,7 +269,7 @@ function isNodeAComponent( el: ReactNode ): el is ReactElement {
 	return childStep?.props !== undefined;
 }
 
-export const CheckoutSteps = ( {
+export const CheckoutStepGroupInner = ( {
 	children,
 	areStepsActive = true,
 }: PropsWithChildren< CheckoutStepsProps > ) => {
@@ -239,8 +279,9 @@ export const CheckoutSteps = ( {
 	const childrenArray = Children.toArray( children );
 	const steps = childrenArray.filter( isElementAStep );
 	const totalSteps = steps.length;
-	const { activeStepNumber, stepCompleteStatus, setTotalSteps } =
-		useContext( CheckoutStepDataContext );
+	const { state, actions } = useContext( CheckoutStepGroupContext );
+	const { activeStepNumber, stepCompleteStatus } = state;
+	const { setTotalSteps } = actions;
 
 	useEffect( () => {
 		setTotalSteps( totalSteps );
@@ -295,37 +336,34 @@ interface CheckoutStepsProps {
 function CheckoutStepGroupWrapper( {
 	children,
 	className,
-}: PropsWithChildren< { className?: string } > ) {
+	store,
+}: PropsWithChildren< {
+	className?: string;
+	store: CheckoutStepGroupStore;
+} > ) {
 	const { isRTL } = useI18n();
 	const { formStatus } = useFormStatus();
-	const [ activeStepNumber, setActiveStepNumber ] = useState< number >( 1 );
-	const [ stepCompleteStatus, setStepCompleteStatus ] = useState< CheckoutStepCompleteStatus >(
-		{}
-	);
-	const stepCompleteCallbackMap = useRef< StepCompleteCallbackMap >( {} );
-	const stepIdMap = useRef< StepIdMap >( {} );
-	const getStepNumberFromId = useCallback( ( id: string ) => stepIdMap.current[ id ], [] );
-	const setStepCompleteCallback = useCallback(
-		( stepNumber: number, stepId: string, callback: StepCompleteCallback ) => {
-			stepIdMap.current[ stepId ] = stepNumber;
-			stepCompleteCallbackMap.current[ stepNumber ] = callback;
-		},
-		[]
-	);
-	const getStepCompleteCallback = useJITCallback( ( stepNumber: number ) => {
-		return (
-			stepCompleteCallbackMap.current[ stepNumber ] ??
-			( () => {
-				throw new Error( `No isCompleteCallback found for step ${ stepNumber }` );
-			} )
-		);
-	} );
-	const [ totalSteps, setTotalSteps ] = useState( 0 );
-	const actualActiveStepNumber =
-		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
+
+	const isMounted = useRef( true );
+	useEffect( () => {
+		isMounted.current = true;
+		return () => {
+			isMounted.current = false;
+		};
+	}, [] );
+	const [ contextValue, setContextValue ] = useState( store );
+	useEffect( () => {
+		return store.subscription.subscribe( () => {
+			// Force a re-render when the state changes by using setState and passing
+			// a duplicate of the store object to the React context. This way all
+			// context consumers get the modified store because its identity has
+			// changed.
+			isMounted.current && setContextValue( { ...store } );
+		} );
+	}, [ store ] );
 
 	// Change the step if the url changes
-	useChangeStepNumberForUrl( setActiveStepNumber );
+	useChangeStepNumberForUrl( store.actions.setActiveStepNumber );
 
 	// Note: the composite-checkout class name is also used by FullStory to avoid recording
 	// WordPress.com checkout session activity. If this class name is changed or removed, we
@@ -349,21 +387,9 @@ function CheckoutStepGroupWrapper( {
 	return (
 		<CheckoutWrapper className={ classNames }>
 			<MainContentWrapper className={ joinClasses( [ className, 'checkout__content' ] ) }>
-				<CheckoutStepDataContext.Provider
-					value={ {
-						activeStepNumber: actualActiveStepNumber,
-						stepCompleteStatus,
-						totalSteps,
-						setActiveStepNumber,
-						setStepCompleteStatus,
-						setStepCompleteCallback,
-						getStepCompleteCallback,
-						getStepNumberFromId,
-						setTotalSteps,
-					} }
-				>
+				<CheckoutStepGroupContext.Provider value={ contextValue }>
 					{ children }
-				</CheckoutStepDataContext.Provider>
+				</CheckoutStepGroupContext.Provider>
 			</MainContentWrapper>
 		</CheckoutWrapper>
 	);
@@ -385,13 +411,14 @@ export const CheckoutStep = ( {
 	validatingButtonAriaLabel,
 }: CheckoutStepProps ) => {
 	const { __ } = useI18n();
+	const { state, actions } = useContext( CheckoutStepGroupContext );
+	const { stepCompleteStatus } = state;
 	const {
 		setActiveStepNumber,
 		setStepCompleteStatus,
-		stepCompleteStatus,
 		setStepCompleteCallback,
 		getStepCompleteCallback,
-	} = useContext( CheckoutStepDataContext );
+	} = actions;
 	const { stepNumber, nextStepNumber, isStepActive, isStepComplete, areStepsActive } = useContext(
 		CheckoutSingleStepDataContext
 	);
@@ -549,7 +576,8 @@ export function CheckoutStepArea( {
 }: PropsWithChildren< {
 	className?: string;
 } > ) {
-	const { activeStepNumber, totalSteps } = useContext( CheckoutStepDataContext );
+	const { state } = useContext( CheckoutStepGroupContext );
+	const { activeStepNumber, totalSteps } = state;
 	const actualActiveStepNumber =
 		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
 	const isThereAnotherNumberedStep = actualActiveStepNumber < totalSteps;
@@ -574,7 +602,8 @@ export function CheckoutFormSubmit( {
 	submitButtonFooter?: ReactNode;
 	disableSubmitButton?: boolean;
 } ) {
-	const { activeStepNumber, totalSteps } = useContext( CheckoutStepDataContext );
+	const { state } = useContext( CheckoutStepGroupContext );
+	const { activeStepNumber, totalSteps } = state;
 	const actualActiveStepNumber =
 		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
 	const isThereAnotherNumberedStep = actualActiveStepNumber < totalSteps;
@@ -781,37 +810,20 @@ CheckoutStepBody.propTypes = {
 };
 
 export function useIsStepActive(): boolean {
-	const { activeStepNumber } = useContext( CheckoutStepDataContext );
+	const { state } = useContext( CheckoutStepGroupContext );
 	const { stepNumber } = useContext( CheckoutSingleStepDataContext );
-	return activeStepNumber === stepNumber;
+	return state.activeStepNumber === stepNumber;
 }
 
 export function useIsStepComplete(): boolean {
-	const { stepCompleteStatus } = useContext( CheckoutStepDataContext );
+	const { state } = useContext( CheckoutStepGroupContext );
 	const { stepNumber } = useContext( CheckoutSingleStepDataContext );
-	return !! stepCompleteStatus[ stepNumber ];
+	return !! state.stepCompleteStatus[ stepNumber ];
 }
 
 export function useSetStepComplete(): SetStepComplete {
-	const { getStepCompleteCallback, stepCompleteStatus, getStepNumberFromId } =
-		useContext( CheckoutStepDataContext );
-	return useJITCallback( async ( stepId: string ) => {
-		const stepNumber = getStepNumberFromId( stepId );
-		if ( ! stepNumber ) {
-			throw new Error( `Cannot find step with id '${ stepId }' when trying to set step complete.` );
-		}
-		// To try to complete a step, we must try to complete all previous steps
-		// first, ignoring steps that are already complete.
-		for ( let step = 1; step <= stepNumber; step++ ) {
-			if ( ! stepCompleteStatus[ step ] ) {
-				const didStepComplete = await getStepCompleteCallback( step )();
-				if ( ! didStepComplete ) {
-					return false;
-				}
-			}
-		}
-		return true;
-	} );
+	const store = useContext( CheckoutStepGroupContext );
+	return store.actions.setStepComplete;
 }
 
 const StepTitle = styled.span< StepTitleProps & HTMLAttributes< HTMLSpanElement > >`
@@ -1131,15 +1143,20 @@ export function CheckoutStepGroup( {
 	children,
 	areStepsActive,
 	stepAreaHeader,
+	store,
 }: PropsWithChildren< {
 	areStepsActive?: boolean;
 	stepAreaHeader?: ReactNode;
+	store?: CheckoutStepGroupStore;
 } > ) {
+	const stepGroupStore = useMemo( () => store || createCheckoutStepGroupStore(), [ store ] );
 	return (
-		<CheckoutStepGroupWrapper>
+		<CheckoutStepGroupWrapper store={ stepGroupStore }>
 			{ stepAreaHeader }
 			<CheckoutStepArea>
-				<CheckoutSteps areStepsActive={ areStepsActive }>{ children }</CheckoutSteps>
+				<CheckoutStepGroupInner areStepsActive={ areStepsActive }>
+					{ children }
+				</CheckoutStepGroupInner>
 			</CheckoutStepArea>
 		</CheckoutStepGroupWrapper>
 	);
