@@ -113,6 +113,9 @@ function createCheckoutStepGroupActions(
 		if ( stepNumber > state.totalSteps ) {
 			stepNumber = state.totalSteps;
 		}
+		if ( stepNumber === state.activeStepNumber ) {
+			return;
+		}
 		state.activeStepNumber = stepNumber;
 		onStateChange();
 	};
@@ -120,6 +123,9 @@ function createCheckoutStepGroupActions(
 	const setTotalSteps = ( stepCount: number ) => {
 		if ( stepCount < 0 ) {
 			throw new Error( `Cannot set total steps to '${ stepCount }' because it is too low` );
+		}
+		if ( stepCount === state.totalSteps ) {
+			return;
 		}
 		state.totalSteps = stepCount;
 		onStateChange();
@@ -283,9 +289,7 @@ export const CheckoutStepGroupInner = ( {
 	const { activeStepNumber, stepCompleteStatus } = state;
 	const { setTotalSteps } = actions;
 
-	useEffect( () => {
-		setTotalSteps( totalSteps );
-	}, [ totalSteps, setTotalSteps ] );
+	setTotalSteps( totalSteps );
 
 	debug(
 		'active step',
@@ -578,9 +582,7 @@ export function CheckoutStepArea( {
 } > ) {
 	const { state } = useContext( CheckoutStepGroupContext );
 	const { activeStepNumber, totalSteps } = state;
-	const actualActiveStepNumber =
-		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
-	const isThereAnotherNumberedStep = actualActiveStepNumber < totalSteps;
+	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
 
 	const classNames = joinClasses( [
 		'checkout__step-wrapper',
@@ -604,9 +606,7 @@ export function CheckoutFormSubmit( {
 } ) {
 	const { state } = useContext( CheckoutStepGroupContext );
 	const { activeStepNumber, totalSteps } = state;
-	const actualActiveStepNumber =
-		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
-	const isThereAnotherNumberedStep = actualActiveStepNumber < totalSteps;
+	const isThereAnotherNumberedStep = activeStepNumber < totalSteps;
 	const { onPageLoadError } = useContext( CheckoutContext );
 	const onSubmitButtonLoadError = useCallback(
 		( error ) => onPageLoadError?.( 'submit_button_load', error ),
