@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { useSetStepComplete } from '@automattic/composite-checkout';
 import { getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
 import { useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
@@ -10,6 +9,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 import useCountryList from './use-country-list';
+import type { CheckoutStepGroupStore } from '@automattic/composite-checkout';
 import type {
 	PossiblyCompleteDomainContactDetails,
 	CountryListItem,
@@ -44,11 +44,11 @@ function useCachedContactDetails(): PossiblyCompleteDomainContactDetails | null 
  */
 function useCachedContactDetailsForCheckoutForm(
 	cachedContactDetails: PossiblyCompleteDomainContactDetails | null,
+	store: CheckoutStepGroupStore,
 	overrideCountryList?: CountryListItem[]
 ): { isComplete: boolean } {
 	const countriesList = useCountryList( overrideCountryList );
 	const reduxDispatch = useReduxDispatch();
-	const setStepCompleteStatus = useSetStepComplete();
 	const didFillForm = useRef( false );
 	const [ isComplete, setComplete ] = useState( false );
 
@@ -94,7 +94,7 @@ function useCachedContactDetailsForCheckoutForm(
 			.then( () => {
 				if ( cachedContactDetails.countryCode ) {
 					debug( 'Contact details are populated; attempting to skip to payment method step' );
-					return setStepCompleteStatus( 'contact-form' );
+					return store.actions.setStepComplete( 'contact-form' );
 				}
 				return false;
 			} )
@@ -105,6 +105,8 @@ function useCachedContactDetailsForCheckoutForm(
 				setComplete( true );
 			} )
 			.catch( ( error ) => {
+				// eslint-disable-next-line no-console
+				console.error( error );
 				logToLogstash( {
 					feature: 'calypso_client',
 					message: 'composite checkout load error',
@@ -118,7 +120,7 @@ function useCachedContactDetailsForCheckoutForm(
 			} );
 	}, [
 		reduxDispatch,
-		setStepCompleteStatus,
+		store,
 		cachedContactDetails,
 		arePostalCodesSupported,
 		loadDomainContactDetailsFromCache,
@@ -134,9 +136,11 @@ function useCachedContactDetailsForCheckoutForm(
  */
 export default function useCachedDomainContactDetails( {
 	overrideCountryList,
+	store,
 }: {
 	overrideCountryList?: CountryListItem[];
+	store: CheckoutStepGroupStore;
 } ) {
 	const cachedContactDetails = useCachedContactDetails();
-	return useCachedContactDetailsForCheckoutForm( cachedContactDetails, overrideCountryList );
+	return useCachedContactDetailsForCheckoutForm( cachedContactDetails, store, overrideCountryList );
 }
