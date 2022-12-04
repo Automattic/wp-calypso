@@ -8,14 +8,11 @@ import CheckoutOrderSummaryStep, {
 import CheckoutPaymentMethods from './components/checkout-payment-methods';
 import { CheckoutProvider } from './components/checkout-provider';
 import {
-	Checkout,
 	CheckoutFormSubmit,
 	CheckoutStep,
-	CheckoutStepArea,
 	CheckoutStepAreaWrapper,
 	CheckoutStepBody,
 	CheckoutStepGroup,
-	CheckoutSteps,
 	CheckoutSummaryArea,
 	CheckoutSummaryCard,
 	MainContentWrapper,
@@ -62,7 +59,6 @@ export type { Theme } from './lib/theme';
 // Re-export the public API
 export {
 	Button,
-	Checkout,
 	CheckoutCheckIcon,
 	CheckoutErrorBoundary,
 	CheckoutFormSubmit,
@@ -73,11 +69,9 @@ export {
 	CheckoutPaymentMethods,
 	CheckoutProvider,
 	CheckoutStep,
-	CheckoutStepArea,
 	CheckoutStepAreaWrapper,
 	CheckoutStepBody,
 	CheckoutStepGroup,
-	CheckoutSteps,
 	CheckoutSubmitButton,
 	CheckoutSummaryArea,
 	CheckoutSummaryCard,

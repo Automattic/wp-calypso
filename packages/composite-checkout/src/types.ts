@@ -1,6 +1,6 @@
 import '@emotion/react';
-import { ReactElement } from 'react';
-import { Theme as ThemeType } from './lib/theme';
+import type { Theme as ThemeType } from './lib/theme';
+import type { Dispatch, SetStateAction, ReactElement } from 'react';
 
 declare module '@emotion/react' {
 	// eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -275,4 +275,26 @@ export interface LineItemsState {
 export interface LineItemsProviderProps {
 	items: LineItem[];
 	total: LineItem;
+}
+
+export type SetStepComplete = ( stepId: string ) => Promise< boolean >;
+
+export interface CheckoutStepCompleteStatus {
+	[ key: string ]: boolean;
+}
+
+export interface CheckoutStepGroupState {
+	activeStepNumber: number;
+	stepCompleteStatus: CheckoutStepCompleteStatus;
+	totalSteps: number;
+	setActiveStepNumber: ( stepNumber: number ) => void;
+	setStepCompleteStatus: Dispatch< SetStateAction< CheckoutStepCompleteStatus > >;
+	getStepNumberFromId: ( stepId: string ) => number | undefined;
+	setStepCompleteCallback: (
+		stepNumber: number,
+		stepId: string,
+		callback: StepCompleteCallback
+	) => void;
+	getStepCompleteCallback: ( stepNumber: number ) => StepCompleteCallback;
+	setTotalSteps: ( totalSteps: number ) => void;
 }

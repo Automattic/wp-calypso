@@ -18,7 +18,7 @@ import CheckoutContext from '../lib/checkout-context';
 import { useFormStatus } from '../lib/form-status';
 import joinClasses from '../lib/join-classes';
 import { usePaymentMethod } from '../lib/payment-methods';
-import { FormStatus, CheckoutStepProps, StepCompleteCallback } from '../types';
+import { FormStatus } from '../types';
 import Button from './button';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import CheckoutNextStepButton from './checkout-next-step-button';
@@ -28,13 +28,13 @@ import { CheckIcon } from './shared-icons';
 import { useCustomPropertyForHeight } from './use-custom-property-for-height';
 import type { Theme } from '../lib/theme';
 import type {
-	Dispatch,
-	ReactNode,
-	HTMLAttributes,
-	PropsWithChildren,
-	SetStateAction,
-	ReactElement,
-} from 'react';
+	CheckoutStepProps,
+	StepCompleteCallback,
+	SetStepComplete,
+	CheckoutStepGroupState,
+	CheckoutStepCompleteStatus,
+} from '../types';
+import type { ReactNode, HTMLAttributes, PropsWithChildren, ReactElement } from 'react';
 
 const debug = debugFactory( 'composite-checkout:checkout-steps' );
 
@@ -64,32 +64,12 @@ function useJITCallback< A, R >( handler: ( ...args: A[] ) => R ): ( ...args: A[
 	}, [] );
 }
 
-interface StepCompleteStatus {
-	[ key: string ]: boolean;
-}
-
 interface StepCompleteCallbackMap {
 	[ key: string ]: StepCompleteCallback;
 }
 
 interface StepIdMap {
 	[ key: string ]: number;
-}
-
-interface CheckoutStepDataContextType {
-	activeStepNumber: number;
-	stepCompleteStatus: StepCompleteStatus;
-	totalSteps: number;
-	setActiveStepNumber: ( stepNumber: number ) => void;
-	setStepCompleteStatus: Dispatch< SetStateAction< StepCompleteStatus > >;
-	getStepNumberFromId: ( stepId: string ) => number | undefined;
-	setStepCompleteCallback: (
-		stepNumber: number,
-		stepId: string,
-		callback: StepCompleteCallback
-	) => void;
-	getStepCompleteCallback: ( stepNumber: number ) => StepCompleteCallback;
-	setTotalSteps: ( totalSteps: number ) => void;
 }
 
 interface CheckoutSingleStepDataContext {
@@ -106,7 +86,7 @@ const noop = () => {
 const noopPromise = () => () =>
 	Promise.reject( 'Cannot use CheckoutStepDataContext without a provider.' );
 const emptyStepCompleteStatus = {};
-const CheckoutStepDataContext = createContext< CheckoutStepDataContextType >( {
+const CheckoutStepDataContext = createContext< CheckoutStepGroupState >( {
 	activeStepNumber: 0,
 	stepCompleteStatus: emptyStepCompleteStatus,
 	totalSteps: 0,
@@ -271,11 +251,16 @@ interface CheckoutStepsProps {
 	areStepsActive?: boolean;
 }
 
-export function Checkout( { children, className }: PropsWithChildren< { className?: string } > ) {
+function CheckoutStepGroupWrapper( {
+	children,
+	className,
+}: PropsWithChildren< { className?: string } > ) {
 	const { isRTL } = useI18n();
 	const { formStatus } = useFormStatus();
 	const [ activeStepNumber, setActiveStepNumber ] = useState< number >( 1 );
-	const [ stepCompleteStatus, setStepCompleteStatus ] = useState< StepCompleteStatus >( {} );
+	const [ stepCompleteStatus, setStepCompleteStatus ] = useState< CheckoutStepCompleteStatus >(
+		{}
+	);
 	const stepCompleteCallbackMap = useRef< StepCompleteCallbackMap >( {} );
 	const stepIdMap = useRef< StepIdMap >( {} );
 	const getStepNumberFromId = useCallback( ( id: string ) => stepIdMap.current[ id ], [] );
@@ -766,7 +751,7 @@ export function useIsStepComplete(): boolean {
 	return !! stepCompleteStatus[ stepNumber ];
 }
 
-export function useSetStepComplete(): ( stepId: string ) => Promise< boolean > {
+export function useSetStepComplete(): SetStepComplete {
 	const { getStepCompleteCallback, stepCompleteStatus, getStepNumberFromId } =
 		useContext( CheckoutStepDataContext );
 	return useJITCallback( async ( stepId: string ) => {
@@ -1110,12 +1095,12 @@ export function CheckoutStepGroup( {
 	stepAreaHeader?: ReactNode;
 } > ) {
 	return (
-		<Checkout>
+		<CheckoutStepGroupWrapper>
 			{ stepAreaHeader }
 			<CheckoutStepArea>
 				<CheckoutSteps areStepsActive={ areStepsActive }>{ children }</CheckoutSteps>
 			</CheckoutStepArea>
-		</Checkout>
+		</CheckoutStepGroupWrapper>
 	);
 }
 
