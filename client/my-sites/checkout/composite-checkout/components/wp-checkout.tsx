@@ -65,11 +65,7 @@ import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type {
-	ContactDetailsType,
-	CountryListItem,
-	ManagedContactDetails,
-} from '@automattic/wpcom-checkout';
+import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -169,6 +165,7 @@ export default function WPCheckout( {
 	const {
 		responseCart,
 		applyCoupon,
+		updateLocation,
 		isPendingUpdate: isCartPendingUpdate,
 	} = useShoppingCart( cartKey );
 	const translate = useTranslate();
@@ -220,6 +217,30 @@ export default function WPCheckout( {
 
 	const [ is3PDAccountConsentAccepted, setIs3PDAccountConsentAccepted ] = useState( false );
 	const [ isSubmitted, setIsSubmitted ] = useState( false );
+
+	const isDIFMInCart = hasDIFMProduct( responseCart );
+	const contactDetailsType = getContactDetailsType( responseCart );
+	const reduxDispatch = useReduxDispatch();
+	const { isComplete: isAutoValidationComplete } = useCachedDomainContactDetails( {
+		overrideCountryList: countriesList,
+	} );
+
+	const areThereDomainProductsInCart =
+		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
+	const isGSuiteInCart = hasGoogleApps( responseCart );
+
+	const contactInfo: ManagedContactDetails = useSelect( ( sel ) =>
+		sel( 'wpcom-checkout' ).getContactInfo()
+	);
+
+	const {
+		touchContactFields,
+		applyDomainContactValidationResults,
+		clearDomainContactErrorMessages,
+	} = useDispatch( 'wpcom-checkout' );
+
+	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
+		useState( false );
 
 	const validateForm = async () => {
 		setIsSubmitted( true );
@@ -274,9 +295,6 @@ export default function WPCheckout( {
 			</MainContentWrapper>
 		);
 	}
-
-	const isDIFMInCart = hasDIFMProduct( responseCart );
-	const contactDetailsType = getContactDetailsType( responseCart );
 
 	return (
 		<CheckoutStepGroup
@@ -336,12 +354,82 @@ export default function WPCheckout( {
 				formStatus={ formStatus }
 			/>
 			{ contactDetailsType !== 'none' && (
-				<CheckoutContactStep
-					countriesList={ countriesList }
-					isLoggedOutCart={ isLoggedOutCart }
-					showErrorMessageBriefly={ showErrorMessageBriefly }
+				<CheckoutStep
+					stepId="contact-form"
+					isCompleteCallback={ async () => {
+						// If checkout is still performing initial contact details
+						// validation, then this validation is
+						// useCachedContactDetailsForCheckoutForm trying to auto-complete
+						// the step and we do not want to report validation errors.
+						setShouldShowContactDetailsValidationErrors( isAutoValidationComplete );
+						if ( isAutoValidationComplete ) {
+							// Touch the fields so they display validation errors
+							touchContactFields();
+						}
+
+						const validationResponse = await validateContactDetails(
+							contactInfo,
+							isLoggedOutCart,
+							responseCart,
+							showErrorMessageBriefly,
+							applyDomainContactValidationResults,
+							clearDomainContactErrorMessages,
+							reduxDispatch,
+							translate,
+							isAutoValidationComplete
+						);
+
+						if ( validationResponse ) {
+							// When the contact details change, update the cart's tax location to match.
+							await updateCartContactDetailsForCheckout(
+								countriesList,
+								responseCart,
+								updateLocation,
+								contactInfo
+							);
+
+							// When the contact details change, update the cached contact details on
+							// the server. This can fail if validation fails but we will silently
+							// ignore failures here because the validation call will handle them better
+							// than this will.
+							reduxDispatch(
+								saveContactDetailsCache( prepareDomainContactValidationRequest( contactInfo ) )
+							);
+
+							reduxDispatch(
+								recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+									step: 1,
+									step_name: 'contact-form',
+								} )
+							);
+						}
+
+						return validationResponse;
+					} }
+					activeStepContent={
+						<WPContactForm
+							countriesList={ countriesList }
+							shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
+							contactDetailsType={ contactDetailsType }
+							isLoggedOutCart={ isLoggedOutCart }
+						/>
+					}
+					completeStepContent={
+						<WPContactFormSummary
+							areThereDomainProductsInCart={ areThereDomainProductsInCart }
+							isGSuiteInCart={ isGSuiteInCart }
+							isLoggedOutCart={ isLoggedOutCart }
+						/>
+					}
+					titleContent={ <ContactFormTitle /> }
+					editButtonText={ String( translate( 'Edit' ) ) }
+					editButtonAriaLabel={ String( translate( 'Edit the contact details' ) ) }
+					nextStepButtonText={ String( translate( 'Continue' ) ) }
+					nextStepButtonAriaLabel={ String(
+						translate( 'Continue with the entered contact details' )
+					) }
 					validatingButtonText={ validatingButtonText }
-					contactDetailsType={ contactDetailsType }
+					validatingButtonAriaLabel={ validatingButtonText }
 				/>
 			) }
 			<PaymentMethodStep
@@ -371,127 +459,6 @@ export default function WPCheckout( {
 		</CheckoutStepGroup>
 	);
 }
-
-function CheckoutContactStep( {
-	countriesList,
-	isLoggedOutCart,
-	showErrorMessageBriefly,
-	validatingButtonText,
-	contactDetailsType,
-}: {
-	countriesList: CountryListItem[];
-	isLoggedOutCart: boolean;
-	showErrorMessageBriefly: ( error: string ) => void;
-	validatingButtonText: string;
-	contactDetailsType: Exclude< ContactDetailsType, 'none' >;
-} ) {
-	const translate = useTranslate();
-	const cartKey = useCartKey();
-	const { responseCart, updateLocation } = useShoppingCart( cartKey );
-	const reduxDispatch = useReduxDispatch();
-	const { isComplete: isAutoValidationComplete } = useCachedDomainContactDetails( {
-		overrideCountryList: countriesList,
-	} );
-
-	const areThereDomainProductsInCart =
-		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
-	const isGSuiteInCart = hasGoogleApps( responseCart );
-
-	const contactInfo: ManagedContactDetails = useSelect( ( sel ) =>
-		sel( 'wpcom-checkout' ).getContactInfo()
-	);
-
-	const {
-		touchContactFields,
-		applyDomainContactValidationResults,
-		clearDomainContactErrorMessages,
-	} = useDispatch( 'wpcom-checkout' );
-
-	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
-		useState( false );
-
-	return (
-		<CheckoutStep
-			stepId="contact-form"
-			isCompleteCallback={ async () => {
-				// If checkout is still performing initial contact details
-				// validation, then this validation is
-				// useCachedContactDetailsForCheckoutForm trying to auto-complete
-				// the step and we do not want to report validation errors.
-				setShouldShowContactDetailsValidationErrors( isAutoValidationComplete );
-				if ( isAutoValidationComplete ) {
-					// Touch the fields so they display validation errors
-					touchContactFields();
-				}
-
-				const validationResponse = await validateContactDetails(
-					contactInfo,
-					isLoggedOutCart,
-					responseCart,
-					showErrorMessageBriefly,
-					applyDomainContactValidationResults,
-					clearDomainContactErrorMessages,
-					reduxDispatch,
-					translate,
-					isAutoValidationComplete
-				);
-
-				if ( validationResponse ) {
-					// When the contact details change, update the cart's tax location to match.
-					await updateCartContactDetailsForCheckout(
-						countriesList,
-						responseCart,
-						updateLocation,
-						contactInfo
-					);
-
-					// When the contact details change, update the cached contact details on
-					// the server. This can fail if validation fails but we will silently
-					// ignore failures here because the validation call will handle them better
-					// than this will.
-					reduxDispatch(
-						saveContactDetailsCache( prepareDomainContactValidationRequest( contactInfo ) )
-					);
-
-					reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_step_complete', {
-							step: 1,
-							step_name: 'contact-form',
-						} )
-					);
-				}
-
-				return validationResponse;
-			} }
-			activeStepContent={
-				<WPContactForm
-					countriesList={ countriesList }
-					shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
-					contactDetailsType={ contactDetailsType }
-					isLoggedOutCart={ isLoggedOutCart }
-				/>
-			}
-			completeStepContent={
-				<WPContactFormSummary
-					areThereDomainProductsInCart={ areThereDomainProductsInCart }
-					isGSuiteInCart={ isGSuiteInCart }
-					isLoggedOutCart={ isLoggedOutCart }
-				/>
-			}
-			titleContent={ <ContactFormTitle /> }
-			editButtonText={ String( translate( 'Edit' ) ) }
-			editButtonAriaLabel={ String( translate( 'Edit the contact details' ) ) }
-			nextStepButtonText={ String( translate( 'Continue' ) ) }
-			nextStepButtonAriaLabel={ String( translate( 'Continue with the entered contact details' ) ) }
-			validatingButtonText={ validatingButtonText }
-			validatingButtonAriaLabel={ validatingButtonText }
-		/>
-	);
-}
-
-// Setting isCheckoutStep is required to identify our custom component as a
-// CheckoutStep so that it will be rendered correctly by CheckoutStepGroup.
-CheckoutContactStep.isCheckoutStep = true;
 
 const CheckoutSummaryArea = styled( CheckoutSummaryAreaUnstyled )`
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
