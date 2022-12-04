@@ -33,6 +33,8 @@ import type {
 	SetStepComplete,
 	CheckoutStepGroupState,
 	CheckoutStepCompleteStatus,
+	StepIdMap,
+	StepCompleteCallbackMap,
 } from '../types';
 import type { ReactNode, HTMLAttributes, PropsWithChildren, ReactElement } from 'react';
 
@@ -64,14 +66,6 @@ function useJITCallback< A, R >( handler: ( ...args: A[] ) => R ): ( ...args: A[
 	}, [] );
 }
 
-interface StepCompleteCallbackMap {
-	[ key: string ]: StepCompleteCallback;
-}
-
-interface StepIdMap {
-	[ key: string ]: number;
-}
-
 interface CheckoutSingleStepDataContext {
 	stepNumber: number;
 	nextStepNumber: number | null;
@@ -97,6 +91,53 @@ const CheckoutStepDataContext = createContext< CheckoutStepGroupState >( {
 	getStepNumberFromId: noop,
 	setTotalSteps: noop,
 } );
+
+export function createCheckoutStepGroupState(): CheckoutStepGroupState {
+	let activeStepNumber = 0;
+	let totalSteps = 0;
+	let stepCompleteStatus: CheckoutStepCompleteStatus = {};
+	const stepIdMap: StepIdMap = {};
+	const stepCompleteCallbackMap: StepCompleteCallbackMap = {};
+
+	const setActiveStepNumber = ( stepNumber: number ) => {
+		activeStepNumber = stepNumber;
+	};
+	const setTotalSteps = ( stepCount: number ) => {
+		totalSteps = stepCount;
+	};
+	const setStepCompleteStatus = ( newStatus: CheckoutStepCompleteStatus ) => {
+		stepCompleteStatus = newStatus;
+	};
+	const getStepNumberFromId = ( id: string ) => stepIdMap[ id ];
+	const setStepCompleteCallback = (
+		stepNumber: number,
+		stepId: string,
+		callback: StepCompleteCallback
+	) => {
+		stepIdMap[ stepId ] = stepNumber;
+		stepCompleteCallbackMap[ stepNumber ] = callback;
+	};
+	const getStepCompleteCallback = ( stepNumber: number ) => {
+		return (
+			stepCompleteCallbackMap[ stepNumber ] ??
+			( () => {
+				throw new Error( `No isCompleteCallback found for step '${ stepNumber }'` );
+			} )
+		);
+	};
+
+	return {
+		activeStepNumber,
+		totalSteps,
+		stepCompleteStatus,
+		setActiveStepNumber,
+		setTotalSteps,
+		setStepCompleteStatus,
+		setStepCompleteCallback,
+		getStepCompleteCallback,
+		getStepNumberFromId,
+	};
+}
 
 const CheckoutSingleStepDataContext = createContext< CheckoutSingleStepDataContext >( {
 	stepNumber: 0,
