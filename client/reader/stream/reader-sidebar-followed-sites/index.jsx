@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
-import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
@@ -31,7 +30,6 @@ export class ReaderSidebarFollowedSites extends Component {
 		sites: PropTypes.array,
 		isWPForTeamsItem: PropTypes.bool,
 		hasOrganization: PropTypes.bool,
-		isFollowingOpen: PropTypes.bool,
 		sitesPerPage: PropTypes.number,
 	};
 
@@ -112,7 +110,6 @@ export default connect(
 				ownProps.feed && ownProps.feed.feed_ID,
 				ownProps.site && ownProps.site.ID
 			),
-			isFollowingOpen: isFollowingOpen( state, ownProps.path ),
 			sites: getReaderFollowedSites( state ),
 		};
 	},
