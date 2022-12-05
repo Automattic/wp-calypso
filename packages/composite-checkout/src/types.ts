@@ -1,6 +1,7 @@
 import '@emotion/react';
-import { ReactElement } from 'react';
-import { Theme as ThemeType } from './lib/theme';
+import type { SubscriptionManager } from './lib/subscription-manager';
+import type { Theme as ThemeType } from './lib/theme';
+import type { ReactElement } from 'react';
 
 declare module '@emotion/react' {
 	// eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -275,4 +276,40 @@ export interface LineItemsState {
 export interface LineItemsProviderProps {
 	items: LineItem[];
 	total: LineItem;
+}
+
+export type StepIdMap = Record< string, number >;
+
+export type StepCompleteCallbackMap = Record< string, StepCompleteCallback >;
+
+export type SetStepComplete = ( stepId: string ) => Promise< boolean >;
+
+export type CheckoutStepCompleteStatus = Record< string, boolean >;
+
+export interface CheckoutStepGroupStore {
+	state: CheckoutStepGroupState;
+	actions: CheckoutStepGroupActions;
+	subscription: SubscriptionManager;
+}
+
+export interface CheckoutStepGroupState {
+	activeStepNumber: number;
+	totalSteps: number;
+	stepCompleteStatus: CheckoutStepCompleteStatus;
+	stepIdMap: StepIdMap;
+	stepCompleteCallbackMap: StepCompleteCallbackMap;
+}
+
+export interface CheckoutStepGroupActions {
+	setActiveStepNumber: ( stepNumber: number ) => void;
+	setStepCompleteStatus: ( newStatus: CheckoutStepCompleteStatus ) => void;
+	setStepComplete: SetStepComplete;
+	getStepNumberFromId: ( stepId: string ) => number | undefined;
+	setStepCompleteCallback: (
+		stepNumber: number,
+		stepId: string,
+		callback: StepCompleteCallback
+	) => void;
+	getStepCompleteCallback: ( stepNumber: number ) => StepCompleteCallback;
+	setTotalSteps: ( totalSteps: number ) => void;
 }
