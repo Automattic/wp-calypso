@@ -380,8 +380,7 @@ export class SiteSettingsFormGeneral extends Component {
 				'is-coming-soon-disabled': isComingSoonDisabled,
 			}
 		);
-		const showPreviewLink =
-			isEnabled( 'dev/share-site-for-preview' ) && isComingSoon && hasSitePreviewLink;
+		const showPreviewLink = isComingSoon && hasSitePreviewLink;
 		return (
 			<FormFieldset>
 				{ ! isNonAtomicJetpackSite &&
@@ -604,8 +603,7 @@ export class SiteSettingsFormGeneral extends Component {
 		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
 		const isPrivateAndUnlaunched = -1 === blogPublic && this.props.isUnlaunchedSite;
 
-		const showPreviewLink =
-			isEnabled( 'dev/share-site-for-preview' ) && isComingSoon && hasSitePreviewLink;
+		const showPreviewLink = isComingSoon && hasSitePreviewLink;
 
 		const LaunchCard = showPreviewLink ? CompactCard : Card;
 
