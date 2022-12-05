@@ -32,7 +32,7 @@ export const free: Flow = {
 
 		return [
 			'intro',
-			'linkInBioSetup',
+			'freeSetup',
 			'domains',
 			'plans',
 			'patterns',
@@ -81,9 +81,9 @@ export const free: Flow = {
 					return window.location.assign( logInUrl );
 
 				case 'patterns':
-					return navigate( 'linkInBioSetup' );
+					return navigate( 'freeSetup' );
 
-				case 'linkInBioSetup':
+				case 'freeSetup':
 					return navigate( 'domains' );
 
 				case 'domains':
