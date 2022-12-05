@@ -4,6 +4,7 @@ import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import googleDriveExample from 'calypso/assets/images/connections/google-drive-screenshot.jpg';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -31,6 +32,7 @@ const SERVICES_WITH_EXAMPLES = [
 	'tumblr',
 	'twitter',
 	'google_photos',
+	'google-drive',
 	'mailchimp',
 	'p2_slack',
 	'p2_github',
@@ -94,6 +96,27 @@ class SharingServiceExamples extends Component {
 				},
 				label: this.props.translate(
 					'{{strong}}Connect{{/strong}} to use photos stored in your Google Photos library directly inside the editor.',
+					{
+						components: {
+							strong: <strong />,
+						},
+					}
+				),
+			},
+		];
+	}
+
+	google_drive() {
+		return [
+			{
+				image: {
+					src: googleDriveExample,
+					alt: this.props.translate( 'Connect to use Google sheets in Jetpack forms.', {
+						textOnly: true,
+					} ),
+				},
+				label: this.props.translate(
+					'{{strong}}Connect{{/strong}} to use Google sheets in Jetpack forms.',
 					{
 						components: {
 							strong: <strong />,

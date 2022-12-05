@@ -37,6 +37,7 @@ export type ProductSlugsProps = Pick< ProductStoreProps, 'duration' > & ProductS
 
 export type productIconProps = {
 	productSlug: string;
+	light?: boolean;
 };
 
 export type ProductsListProps = ProductStoreBaseProps & {

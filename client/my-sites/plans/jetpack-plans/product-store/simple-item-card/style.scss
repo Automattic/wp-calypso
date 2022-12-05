@@ -25,6 +25,11 @@
 	}
 }
 
+.simple-item-card__icon > img {
+	width: 22px;
+	height: auto;
+}
+
 .simple-item-card__body {
 	display: flex;
 	flex-direction: column;
@@ -47,6 +52,7 @@
 
 .simple-item-card__title {
 	font-size: $font-title-medium;
+	font-weight: 600;
 	line-height: rem(29px);
 	margin-bottom: 0 !important;
 	color: var(--studio-gray-100);
