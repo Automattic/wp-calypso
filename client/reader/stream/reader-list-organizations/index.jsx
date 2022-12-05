@@ -11,17 +11,8 @@ export class ReaderListOrganizations extends Component {
 
 	fetchOrganization() {
 		const { organizations, path } = this.props;
-		const slug = path.split( '/' )[ 2 ];
-		let organization = organizations[ 0 ];
-
-		for ( let i = 0; i < organizations.length; i++ ) {
-			if ( organizations[ i ].slug === slug ) {
-				organization = organizations[ i ];
-				break;
-			}
-		}
-
-		return organization;
+		const organizationSlug = path.split( '/' ).pop();
+		return organizations.find( ( organization ) => organization.slug === organizationSlug );
 	}
 
 	fetchOrganizationSlug( slug ) {
