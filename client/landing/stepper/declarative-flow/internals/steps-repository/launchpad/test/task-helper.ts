@@ -34,6 +34,33 @@ describe( 'Task Helpers', () => {
 				expect( enhancedTasks[ 0 ].isLaunchTask ).toEqual( true );
 			} );
 		} );
+		describe( 'when it is plan_selected task', () => {
+			it( 'marks plan_selected as incomplete if styles used but not part of plan', () => {
+				const fakeTasks = [ buildTask( { id: 'plan_selected', completed: true } ) ];
+				const enhancedTasks = getEnhancedTasks(
+					fakeTasks,
+					'fake.wordpress.com',
+					null,
+					// eslint-disable-next-line @typescript-eslint/no-empty-function
+					() => {},
+					true
+				);
+				expect( enhancedTasks[ 0 ].completed ).toEqual( false );
+				expect( enhancedTasks[ 0 ].warning ).toEqual( true );
+			} );
+			it( 'leaves plan_selected if styles warning is unnecessary', () => {
+				const fakeTasks = [ buildTask( { id: 'plan_selected', completed: true } ) ];
+				const enhancedTasks = getEnhancedTasks(
+					fakeTasks,
+					'fake.wordpress.com',
+					null,
+					// eslint-disable-next-line @typescript-eslint/no-empty-function
+					() => {},
+					false
+				);
+				expect( enhancedTasks[ 0 ].completed ).toEqual( true );
+			} );
+		} );
 	} );
 
 	describe( 'getArrayOfFilteredTasks', () => {
