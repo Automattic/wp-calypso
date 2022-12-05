@@ -8,7 +8,7 @@ import { hasTouch } from 'calypso/lib/touch-detect';
 
 import './style.scss';
 
-const PremiumBadge = ( { className, tooltipText } ) => {
+const PremiumBadge = ( { className, labelText = '', tooltipText } ) => {
 	const { __ } = useI18n();
 	const [ popoverAnchor, setPopoverAnchor ] = useState();
 	const [ isPopoverVisible, setIsPopoverVisible ] = useState( false );
@@ -52,7 +52,7 @@ const PremiumBadge = ( { className, tooltipText } ) => {
 			>
 				<Badge type="info">
 					<Icon icon={ starFilled } size={ 18 } />
-					<span>{ __( 'Premium' ) }</span>
+					<span>{ labelText || __( 'Premium' ) }</span>
 				</Badge>
 			</div>
 			<Popover
