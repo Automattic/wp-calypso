@@ -28,7 +28,7 @@ export function Item( { style, design, className, type }: Props ) {
 	let options: MShotsOptions = { w: 400, vpw: 400, vph: 872, format: 'png' };
 
 	if ( type === 'desktop' ) {
-		options = { w: 1280, vpw: 1920, vph: 1280, format: 'png' };
+		options = { w: 1920, vpw: 1920, vph: 1280, format: 'png' };
 	}
 
 	return (
