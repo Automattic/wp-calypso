@@ -5,7 +5,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import { NewsletterSettingsSection } from './newsletter-settings-section';
 import { RssFeedSettingsSection } from './rss-feed-settings-section';
-import { SiteSettingsSection } from './site-settings-section';
+import SiteSettingsSection from './site-settings-section';
 
 const isEnabled = config.isEnabled( 'settings/modernize-reading-settings' );
 
