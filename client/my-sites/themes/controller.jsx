@@ -2,10 +2,13 @@ import debugFactory from 'debug';
 import { logServerEvent } from 'calypso/lib/analytics/statsd-utils';
 import trackScrollPage from 'calypso/lib/track-scroll-page';
 import performanceMark from 'calypso/server/lib/performance-mark';
-import { getNotice } from 'calypso/state/notices/selectors';
 import { requestThemes, requestThemeFilters } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
-import { getThemeFilters, getThemesForQuery } from 'calypso/state/themes/selectors';
+import {
+	getThemeFilters,
+	getThemesForQuery,
+	getThemeFiltersRequestError,
+} from 'calypso/state/themes/selectors';
 import { getAnalyticsData } from './helpers';
 import LoggedOutComponent from './logged-out';
 
@@ -97,8 +100,9 @@ export function fetchThemeFilters( context, next ) {
 	}
 
 	const unsubscribe = store.subscribe( () => {
-		// A notice is added to the state as the "on error" handler in the getThemeFilters action.
-		if ( getNotice( store.getState(), 'fetch-theme-filters-error' ) ) {
+		const fetchErr = getThemeFiltersRequestError( store.getState() );
+		if ( fetchErr ) {
+			debug( `Theme fetch error: ${ JSON.stringify( fetchErr ) }` );
 			unsubscribe();
 			return next( new Error( 'Error fetching theme filters.' ) );
 		}
