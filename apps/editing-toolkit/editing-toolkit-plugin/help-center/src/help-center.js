@@ -34,6 +34,7 @@ function HelpCenterContent() {
 
 	const handleToggleHelpCenter = () => {
 		recordTracksEvent( `calypso_inlinehelp_${ show ? 'close' : 'show' }`, {
+			forceSiteId: true,
 			location: 'help-center',
 			section: sectionName,
 		} );
