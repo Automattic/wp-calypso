@@ -177,7 +177,6 @@ export function overview( context, next ) {
 			{
 				title: i18n.translate( 'Days' ),
 				path: '/stats/day',
-				altPaths: [ '/stats' ],
 				id: 'stats-day',
 				period: 'day',
 			},
@@ -195,11 +194,7 @@ export function overview( context, next ) {
 	window.scrollTo( 0, 0 );
 
 	const activeFilter = find( filters(), ( filter ) => {
-		return (
-			context.params.period === filter.period ||
-			context.pathname === filter.path ||
-			( filter.altPaths && filter.altPaths.includes( context.pathname ) )
-		);
+		return context.params.period === filter.period || context.path.indexOf( filter.path ) >= 0;
 	} );
 
 	// Validate that date filter is legit
@@ -228,10 +223,7 @@ export function site( context, next ) {
 	const siteId = currentSite ? currentSite.ID || 0 : 0;
 
 	const activeFilter = find( filters, ( filter ) => {
-		return (
-			context.pathname === filter.path ||
-			( filter.altPaths && filter.altPaths.includes( context.pathname ) )
-		);
+		return context.path.indexOf( filter.path ) >= 0;
 	} );
 
 	if ( ! activeFilter ) {
@@ -277,8 +269,7 @@ export function summary( context, next ) {
 	const contextModule = context.params.module;
 	const filters = [
 		{
-			path: '/stats/' + contextModule + '/' + siteId,
-			altPaths: [ '/stats/day/' + contextModule + '/' + siteId ],
+			path: '/stats/day/' + contextModule + '/' + siteId,
 			id: 'stats-day',
 			period: 'day',
 		},
@@ -305,10 +296,7 @@ export function summary( context, next ) {
 	siteId = selectedSite ? selectedSite.ID || 0 : 0;
 
 	const activeFilter = find( filters, ( filter ) => {
-		return (
-			context.pathname === filter.path ||
-			( filter.altPaths && filter.altPaths.includes( context.pathname ) )
-		);
+		return context.path.indexOf( filter.path ) >= 0;
 	} );
 
 	if ( siteFragment && 0 === siteId ) {
