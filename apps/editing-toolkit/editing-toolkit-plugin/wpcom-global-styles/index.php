@@ -213,15 +213,15 @@ add_action( 'save_post_wp_global_styles', 'wpcom_track_global_styles', 10, 3 );
  * @return bool Returns true if custom styles are in use.
  */
 function wpcom_global_styles_in_use() {
-	if ( class_exists( 'WP_Theme_JSON_Resolver' ) ) {
-		$user_cpt = WP_Theme_JSON_Resolver::get_user_data_from_wp_global_styles( wp_get_theme() );
-	} else {
-		/*
-		 * If `WP_Theme_JSON_Resolver` is missing, then the site is running an old version
-		 * of WordPress, so we cannot determine whether the site has custom styles.
-		 */
+	/*
+	 * If `WP_Theme_JSON_Resolver` is missing, then the site is running an old version
+	 * of WordPress, so we cannot determine whether the site has custom styles.
+	 */
+	if ( ! class_exists( 'WP_Theme_JSON_Resolver' ) ) {
 		return false;
 	}
+
+	$user_cpt = WP_Theme_JSON_Resolver::get_user_data_from_wp_global_styles( wp_get_theme() );
 
 	if ( ! isset( $user_cpt['post_content'] ) ) {
 		do_action( 'global_styles_log', 'global_styles_not_in_use' );
