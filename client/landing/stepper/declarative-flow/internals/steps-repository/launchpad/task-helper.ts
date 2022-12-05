@@ -54,6 +54,7 @@ export function getEnhancedTasks(
 				case 'plan_selected':
 					taskData = {
 						title: translate( 'Choose a Plan' ),
+						disabled: true,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign( `/plans/${ siteSlug }` );
@@ -136,6 +137,7 @@ export function getEnhancedTasks(
 				case 'videopress_setup':
 					taskData = {
 						completed: true,
+						disabled: true,
 						title: translate( 'Set up your video site' ),
 					};
 					break;
@@ -144,6 +146,7 @@ export function getEnhancedTasks(
 						title: translate( 'Upload your first video' ),
 						actionUrl: launchpadUploadVideoLink,
 						completed: videoPressUploadCompleted,
+						disabled: videoPressUploadCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.replace( launchpadUploadVideoLink );
