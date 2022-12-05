@@ -60,6 +60,8 @@ export interface HappychatAuth {
 	user: {
 		jwt: string;
 	} & HappychatUser;
+	is_existing_session: boolean;
+	availability_url: string;
 	fullUser: User;
 }
 

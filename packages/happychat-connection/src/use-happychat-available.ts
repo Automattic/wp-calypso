@@ -1,5 +1,5 @@
+import apiFetch from '@wordpress/api-fetch';
 import { useQuery } from 'react-query';
-import { buildConnectionForCheckingAvailability } from './connection';
 import { HappychatAuth } from './types';
 import useHappychatAuth from './use-happychat-auth';
 
@@ -8,41 +8,19 @@ type HCAvailability = { available?: boolean; status?: string; env?: 'staging' | 
 const key = Date.now();
 
 function getHCAvailabilityAndStatus( dataAuth: HappychatAuth ) {
+	const result: HCAvailability = {};
 	return new Promise< HCAvailability >( ( resolve ) => {
-		const result: HCAvailability = {};
-		const connection = buildConnectionForCheckingAvailability( {
-			receiveHappychatEnv: ( env ) => {
-				result.env = env;
-
-				if ( Object.keys( result ).length === 3 ) {
-					resolve( result );
-					// close connection after we get accept, status, and env
-					connection.openSocket?.then( ( socket ) => socket.close() );
-				}
-			},
-			receiveAccept: ( receivedAvailability ) => {
-				result.available = receivedAvailability;
-
-				if ( Object.keys( result ).length === 3 ) {
-					resolve( result );
-					// close connection after we get accept, status, and env
-					connection.openSocket?.then( ( socket ) => socket.close() );
-				}
-			},
-			receiveStatus( status ) {
-				result.status = status;
-
-				if ( Object.keys( result ).length === 3 ) {
-					resolve( result );
-					// close connection after we get accept, status, and env
-					connection.openSocket?.then( ( socket ) => socket.close() );
-				}
-			},
-			receiveUnauthorized: () => {
-				resolve( { available: false, status: 'new' } );
-			},
+		apiFetch( {
+			mode: 'cors',
+			method: 'GET',
+			credentials: 'omit',
+			url: dataAuth.availability_url,
+		} ).then( ( response ) => {
+			result.env = response?.env;
+			result.available = response?.available;
+			result.status = dataAuth.is_existing_session ? 'assigned' : 'new';
+			resolve( result );
 		} );
-		connection.init( ( value: unknown ) => value, Promise.resolve( dataAuth ) );
 	} );
 }
 
