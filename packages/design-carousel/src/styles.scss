@@ -37,6 +37,11 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 		@include break-small {
 			display: flex !important;
 		}
+
+		@include break-medium {
+			width: 75%;
+			margin: 0 auto;
+		}
 	}
 
 	// iPhone aspect ratio
@@ -71,6 +76,10 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 		display: block;
 		height: 100%;
 		width: 100%;
+
+		@include break-medium {
+			height: auto;
+		}
 	}
 
 	.mshots-image-visible {
