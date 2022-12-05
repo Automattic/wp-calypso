@@ -155,7 +155,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 					direction="forward"
 					handleClick={ () => {
 						recordTracksEvent( 'calypso_launchpad_go_to_admin_clicked', { flow: flow } );
-						goNext();
+						goNext?.();
 					} }
 					label={ translate( 'Go to Admin' ) }
 					borderless={ true }

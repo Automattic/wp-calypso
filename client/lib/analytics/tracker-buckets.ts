@@ -3,7 +3,6 @@ import config from '@automattic/calypso-config';
 import { isPiiUrl, isUrlExcludedForPerformance } from 'calypso/lib/analytics/utils';
 import getTrackingPrefs from 'calypso/lib/analytics/utils/tracking-prefs';
 import { isE2ETest } from 'calypso/lib/e2e';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 const allAdTrackers = [
 	'bing',
@@ -38,10 +37,9 @@ export enum Bucket {
 
 export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	// Analytics trackers:
-	// 'ga' is categorized as analytics tracker in Jetpack Cloud, but not in Calypso
-	ga: isJetpackCloud() ? Bucket.ANALYTICS : Bucket.ADVERTISING,
 
 	// Advertising trackers:
+	ga: Bucket.ADVERTISING,
 	gaEnhancedEcommerce: Bucket.ADVERTISING,
 	fullstory: Bucket.ADVERTISING,
 	hotjar: Bucket.ADVERTISING,

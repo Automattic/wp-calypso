@@ -27,6 +27,7 @@ const MasterbarHelpCenter = ( { siteId, tooltip } ) => {
 
 	const handleToggleHelpCenter = () => {
 		recordTracksEvent( `calypso_inlinehelp_${ helpCenterVisible ? 'close' : 'show' }`, {
+			forceSiteId: true,
 			location: 'help-center',
 			section: sectionName,
 		} );

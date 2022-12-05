@@ -104,6 +104,52 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug' ],
 		},
 
+		'domains-link-in-bio': {
+			stepName: 'domains-link-in-bio',
+			apiRequestFunction: createSiteWithCart,
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+				'shouldHideFreePlan',
+				'isManageSiteFlow',
+			],
+			optionalDependencies: [ 'shouldHideFreePlan', 'isManageSiteFlow' ],
+			props: {
+				isDomainOnly: false,
+				includeWordPressDotCom: true,
+				// the .link tld comes with the w.link subdomain from our partnership.
+				// see pau2Xa-4tC-p2#comment-12869 for more details
+				otherManagedSubdomains: [ 'link' ],
+			},
+			delayApiRequestUntilComplete: true,
+		},
+
+		'domains-link-in-bio-tld': {
+			stepName: 'domains-link-in-bio-tld',
+			apiRequestFunction: createSiteWithCart,
+			dependencies: [ 'tld' ],
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+				'shouldHideFreePlan',
+				'isManageSiteFlow',
+			],
+			optionalDependencies: [ 'shouldHideFreePlan', 'isManageSiteFlow' ],
+			props: {
+				isDomainOnly: false,
+				includeWordPressDotCom: false,
+				// the .link tld comes with the w.link subdomain from our partnership.
+				// see pau2Xa-4tC-p2#comment-12869 for more details
+				otherManagedSubdomains: [ 'link' ],
+				otherManagedSubdomainsCountOverride: 2,
+			},
+			delayApiRequestUntilComplete: true,
+		},
+
 		'plans-site-selected': {
 			stepName: 'plans-site-selected',
 			apiRequestFunction: addPlanToCart,

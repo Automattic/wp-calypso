@@ -12,9 +12,9 @@ export const NeedMoreInfo: React.FC = () => {
 
 	return (
 		<div className="jetpack-product-store__need-more-info">
-			<h3 className="jetpack-product-store__need-more-info-headline">
+			<h2 className="jetpack-product-store__need-more-info-headline">
 				{ translate( 'Need more info?' ) }
-			</h3>
+			</h2>
 			<div className="jetpack-product-store__need-more-info-buttons">
 				<MoreInfoBox
 					buttonLabel={ translate( 'Compare all product bundles' ) }

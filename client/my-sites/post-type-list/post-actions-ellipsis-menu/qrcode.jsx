@@ -17,7 +17,7 @@ const qrIcon = (
 	/>
 );
 
-function PostActionsEllipsisMenuQRCode( { globalId } ) {
+function PostActionsEllipsisMenuQRCode( { globalId, handleClick } ) {
 	const [ showQRCode, setShowQRCode ] = useState( false );
 
 	const translate = useTranslate();
@@ -25,6 +25,7 @@ function PostActionsEllipsisMenuQRCode( { globalId } ) {
 	const post = useSelector( ( state ) => getPost( state, globalId ) );
 
 	const generateQRCode = () => {
+		handleClick();
 		setShowQRCode( true );
 	};
 

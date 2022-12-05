@@ -22,17 +22,9 @@ type Props = ExternalProps & LocalizeProps;
 
 const DataCenterOptions = [
 	{
-		value: 'ams',
-		name: 'geo_affinity',
-		label: translate( 'Amsterdam' ),
-		thumbnail: {
-			imageUrl: amsImg,
-		},
-	},
-	{
 		value: 'bur',
 		name: 'geo_affinity',
-		label: translate( 'California' ),
+		label: translate( 'US West' ),
 		thumbnail: {
 			imageUrl: burImg,
 		},
@@ -40,7 +32,7 @@ const DataCenterOptions = [
 	{
 		value: 'dfw',
 		name: 'geo_affinity',
-		label: translate( 'Texas' ),
+		label: translate( 'US Central' ),
 		thumbnail: {
 			imageUrl: dfwImg,
 		},
@@ -48,9 +40,17 @@ const DataCenterOptions = [
 	{
 		value: 'dca',
 		name: 'geo_affinity',
-		label: translate( 'Washington, D.C.' ),
+		label: translate( 'US East' ),
 		thumbnail: {
 			imageUrl: dcaImg,
+		},
+	},
+	{
+		value: 'ams',
+		name: 'geo_affinity',
+		label: translate( 'EU West' ),
+		thumbnail: {
+			imageUrl: amsImg,
 		},
 	},
 ];
@@ -123,7 +123,7 @@ const DataCenterPicker = ( {
 			{ ! isFormShowing && (
 				<div>
 					<span>
-						{ translate( 'Your site will be automatically placed in the best data center.' ) }
+						{ translate( 'Your site will be automatically placed in the optimal data center.' ) }
 					</span>
 					&nbsp;
 					<Button
@@ -148,10 +148,18 @@ const DataCenterPicker = ( {
 					</FormHeadingContainer>
 					<FormDescription>
 						{ translate(
-							'Choose a primary data center for your site. For redundancy, your site will replicate in real-time to a second data center in different region. {{supportLink}}Learn more{{/supportLink}}.',
+							'Choose a primary data center for your site. For redundancy, your site will replicate in real-time to a second data center in a different region. {{supportLink}}Learn more{{/supportLink}}.',
 							{
 								components: {
-									supportLink: <ExternalLink icon target="_blank" href={ localizeUrl( '#' ) } />,
+									supportLink: (
+										<ExternalLink
+											icon
+											target="_blank"
+											href={ localizeUrl(
+												'https://wordpress.com/support/choose-your-sites-primary-data-center/'
+											) }
+										/>
+									),
 								},
 							}
 						) }
@@ -172,7 +180,7 @@ const DataCenterPicker = ( {
 								checked={ value === '' }
 								onChange={ () => onChange( '' ) }
 							/>
-							<span>{ translate( 'Automatically place my site in the best data center' ) }</span>
+							<span>{ translate( 'Automatically place my site in the optimal data center' ) }</span>
 						</AutomaticFormLabel>
 						<FormRadiosBar
 							isThumbnail

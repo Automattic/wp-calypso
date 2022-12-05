@@ -1,22 +1,38 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { Popover } from '@automattic/components';
+import { Gridicon, Popover } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { hasMinContrast, hexToRgb, RGB } from '@automattic/onboarding';
 import { ColorPicker } from '@wordpress/components';
 import { Icon, color } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import { Dispatch, SetStateAction, useCallback, useEffect, useState, useRef } from 'react';
+import {
+	Dispatch,
+	ReactElement,
+	SetStateAction,
+	useCallback,
+	useEffect,
+	useState,
+	useRef,
+} from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { tip } from 'calypso/signup/icons';
+import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import './style.scss';
 import ColorSwatch from './color-swatch';
 
 interface AccentColorControlProps {
 	accentColor: AccentColor;
 	setAccentColor: Dispatch< SetStateAction< AccentColor > >;
+}
+
+interface ColorOption {
+	label: string;
+	value: string;
+	icon: ReactElement;
+	isPremium: boolean;
 }
 
 export type AccentColor = {
@@ -32,40 +48,49 @@ enum COLORS {
 	VividPurple = '#9B51E0',
 }
 
-const COLOR_OPTIONS = [
-	{
-		label: 'Lettre',
-		value: COLORS.Lettre,
-		icon: <ColorSwatch color={ COLORS.Lettre } />,
-	},
-	{
-		label: 'Black',
-		value: COLORS.Black,
-		icon: <ColorSwatch color={ COLORS.Black } />,
-	},
-	{
-		label: 'Vivid red',
-		value: COLORS.VividRed,
-		icon: <ColorSwatch color={ COLORS.VividRed } />,
-	},
-	{
-		label: 'Vivid purple',
-		value: COLORS.VividPurple,
-		icon: <ColorSwatch color={ COLORS.VividPurple } />,
-	},
-	{
-		label: 'Custom',
-		value: 'custom',
-		icon: <Icon className="custom_color_icon" icon={ color } width={ 22 } height={ 22 } />,
-	},
-];
-
 const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControlProps ) => {
 	const { __, hasTranslation } = useI18n();
 	const locale = useLocale();
 	const [ customColor, setCustomColor ] = useState< AccentColor | null >( null );
 	const [ colorPickerOpen, setColorPickerOpen ] = useState< boolean >( false );
 	const accentColorRef = useRef< HTMLInputElement >( null );
+	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+
+	const getColorOptions = useCallback(
+		(): ColorOption[] => [
+			{
+				label: 'Lettre',
+				value: COLORS.Lettre,
+				icon: <ColorSwatch color={ COLORS.Lettre } />,
+				isPremium: false,
+			},
+			{
+				label: 'Black',
+				value: COLORS.Black,
+				icon: <ColorSwatch color={ COLORS.Black } />,
+				isPremium: shouldLimitGlobalStyles,
+			},
+			{
+				label: 'Vivid red',
+				value: COLORS.VividRed,
+				icon: <ColorSwatch color={ COLORS.VividRed } />,
+				isPremium: shouldLimitGlobalStyles,
+			},
+			{
+				label: 'Vivid purple',
+				value: COLORS.VividPurple,
+				icon: <ColorSwatch color={ COLORS.VividPurple } />,
+				isPremium: shouldLimitGlobalStyles,
+			},
+			{
+				label: 'Custom',
+				value: 'custom',
+				icon: <Icon className="custom_color_icon" icon={ color } width={ 22 } height={ 22 } />,
+				isPremium: shouldLimitGlobalStyles,
+			},
+		],
+		[ shouldLimitGlobalStyles ]
+	);
 
 	const handlePredefinedColorSelect = ( { value }: { value: string } ) => {
 		if ( value === 'custom' ) {
@@ -98,14 +123,64 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 	};
 
 	const getMatchingOption = useCallback(
-		() => COLOR_OPTIONS.find( ( option ) => option.value === accentColor.hex ) || null,
-		[ accentColor.hex ]
+		() => getColorOptions().find( ( option ) => option.value === accentColor.hex ) || null,
+		[ accentColor.hex, getColorOptions ]
 	);
 
 	const getSelectedText = () => getMatchingOption()?.label || 'Custom';
 
 	const getSelectedIcon = () =>
 		customColor ? <ColorSwatch color={ customColor.hex } /> : getMatchingOption()?.icon;
+
+	const getSelectedSecondaryIcon = () => {
+		if ( ! shouldLimitGlobalStyles ) {
+			return null;
+		}
+
+		const matchingOption = getMatchingOption();
+
+		if ( matchingOption?.isPremium || ( customColor && ! matchingOption ) ) {
+			return <Gridicon icon="lock" size={ 18 } className="extra-gridicon" />;
+		}
+		return null;
+	};
+
+	const getDropdownOption = ( option: ColorOption ) => {
+		return (
+			<SelectDropdown.Item
+				key={ option.label }
+				icon={ option.icon }
+				onClick={ () => handlePredefinedColorSelect( { value: option.value } ) }
+				selected={ option.value === accentColor.hex }
+				secondaryIcon={
+					shouldLimitGlobalStyles && option.isPremium ? (
+						<Gridicon icon="lock" size={ 18 } className="extra-gridicon" />
+					) : null
+				}
+			>
+				{ option.label }
+			</SelectDropdown.Item>
+		);
+	};
+
+	const getDropdownOptions = () => {
+		if ( ! shouldLimitGlobalStyles ) {
+			return getColorOptions().map( ( option ) => getDropdownOption( option ) );
+		}
+
+		const freeColors = getColorOptions().filter( ( { isPremium } ) => ! isPremium );
+		const premiumColors = getColorOptions().filter( ( { isPremium } ) => isPremium );
+
+		const dropdownOptions = [
+			...freeColors.map( ( freeColor ) => getDropdownOption( freeColor ) ),
+			<SelectDropdown.Label key="dropdown-label">
+				{ __( 'Unlock more colors with a Premium plan' ) }
+			</SelectDropdown.Label>,
+			...premiumColors.map( ( premiumColor ) => getDropdownOption( premiumColor ) ),
+		];
+
+		return dropdownOptions;
+	};
 
 	useEffect( () => {
 		// In later stages of some flows, color for site is already set when this control loads.
@@ -158,17 +233,9 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 					showSelectedOption={ !! customColor } // hide selected option with the exception of "Custom" option
 					selectedText={ getSelectedText() }
 					selectedIcon={ getSelectedIcon() }
+					selectedSecondaryIcon={ getSelectedSecondaryIcon() }
 				>
-					{ COLOR_OPTIONS.map( ( option ) => (
-						<SelectDropdown.Item
-							key={ option.label }
-							icon={ option.icon }
-							onClick={ () => handlePredefinedColorSelect( { value: option.value } ) }
-							selected={ option.value === accentColor.hex }
-						>
-							{ option.label }
-						</SelectDropdown.Item>
-					) ) }
+					{ getDropdownOptions() }
 				</SelectDropdown>
 			</FormFieldset>
 			<div

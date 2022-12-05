@@ -99,6 +99,8 @@ add_action( 'wp_enqueue_scripts', 'a8c_happyblocks_view_assets' );
 /**
  * Get the domain to use in the Pricing Plans block.
  *
+ * The function should return false when the domain is not set, see https://github.com/Automattic/wp-calypso/pull/70402#discussion_r1033299970
+ *
  * @return string|bool The domain host (or false if no domain is available)
  */
 function a8c_happyblocks_pricing_plans_get_domain() {
@@ -114,7 +116,7 @@ function a8c_happyblocks_pricing_plans_get_domain() {
 	}
 
 	$topic_id  = bbp_get_topic_id();
-	$author_id = get_post_field( 'post_author', $topic_id );
+	$author_id = intval( get_post_field( 'post_author', $topic_id ) );
 
 	/*
 	If the current user is the author of the topic, return the topic's domain selected
@@ -127,19 +129,7 @@ function a8c_happyblocks_pricing_plans_get_domain() {
 		}
 	}
 
-	/*
-	If the user is logged in but not the author of the topic,
-	return the domain of the user's primary blog.
-	*/
-	$user = wp_get_current_user();
-
-	if ( isset( $user->primary_blog ) ) {
-		$primary = get_blog_details( $user->primary_blog );
-		if ( $primary ) {
-			return $primary->domain;
-		}
-	}
-
+	// If the current user is not the author of the topic, then don't return any domain.
 	return false;
 }
 
@@ -176,25 +166,12 @@ HTML;
  */
 function a8c_happyblocks_register() {
 	register_block_type(
-		'happy-blocks/pricing-plans-premium',
+		'happy-blocks/pricing-plans',
 		array(
 			'api_version'     => 2,
 			'render_callback' => 'a8c_happyblocks_render_pricing_plans_callback',
 		)
 	);
-	register_block_type(
-		'happy-blocks/pricing-plans-business',
-		array(
-			'api_version'     => 2,
-			'render_callback' => 'a8c_happyblocks_render_pricing_plans_callback',
-		)
-	);
-	register_block_type(
-		'happy-blocks/pricing-plans-ecommerce',
-		array(
-			'api_version'     => 2,
-			'render_callback' => 'a8c_happyblocks_render_pricing_plans_callback',
-		)
-	);
+
 }
 add_action( 'init', 'a8c_happyblocks_register' );

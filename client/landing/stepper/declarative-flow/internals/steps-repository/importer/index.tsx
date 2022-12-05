@@ -76,7 +76,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		 */
 		function onGoBack() {
 			resetImportJob( getImportJob( importer ) );
-			navigation.goBack();
+			navigation.goBack?.();
 		}
 
 		function fetchImporters() {

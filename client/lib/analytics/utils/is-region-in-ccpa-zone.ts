@@ -1,5 +1,9 @@
 const CCPA_US_REGIONS = [
 	'california', // CA
+	'colorado', // CO
+	'connecticut', // CT
+	'utah', // UT
+	'virginia', // VA
 ];
 
 /**
