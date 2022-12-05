@@ -237,7 +237,7 @@ class MasterbarLoggedIn extends Component {
 				url="/sites"
 				tipTarget="my-sites"
 				onClick={ this.clickMySites }
-				isActive={ this.isActive( 'sites' ) && ! isMenuOpen }
+				isActive={ this.isActive( 'sites-dashboard' ) && ! isMenuOpen }
 				tooltip={ translate( 'View a list of your sites and access their dashboards' ) }
 				preloadSection={ this.preloadMySites }
 			>
