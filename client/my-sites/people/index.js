@@ -45,6 +45,16 @@ export default function () {
 	);
 
 	page(
+		'/people/team-members/:site_id',
+		peopleController.enforceSiteEnding,
+		siteSelection,
+		navigation,
+		peopleController.teamMembers,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/people/subscribers/:site_id',
 		peopleController.enforceSiteEnding,
 		siteSelection,

@@ -12,6 +12,7 @@ import PeopleAddSubscribers from './people-add-subscribers';
 import PeopleInviteDetails from './people-invite-details';
 import PeopleInvites from './people-invites';
 import Subscribers from './subscribers';
+import TeamMembers from './team-members';
 
 export default {
 	redirectToTeam,
@@ -44,6 +45,10 @@ export default {
 
 	peopleInviteDetails( context, next ) {
 		renderPeopleInviteDetails( context, next );
+	},
+
+	teamMembers( context, next ) {
+		renderTeamMembers( context, next );
 	},
 
 	subscribers( context, next ) {
@@ -110,6 +115,22 @@ function renderPeopleInvites( context, next ) {
 		<>
 			<PeopleInvitesTitle />
 			<PeopleInvites />
+		</>
+	);
+	next();
+}
+
+function renderTeamMembers( context, next ) {
+	const TeamMembersTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'Team Members', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<TeamMembersTitle />
+			<TeamMembers />
 		</>
 	);
 	next();
