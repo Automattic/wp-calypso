@@ -5,9 +5,12 @@ import cookie from 'cookie';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import SectionHeader from 'calypso/components/section-header';
-import { refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
+import {
+	refreshCountryCodeCookieGdpr,
+	setTrackingPrefs,
+	getTrackingPrefs,
+} from 'calypso/lib/analytics/utils';
 import isRegionInCcpaZone from 'calypso/lib/analytics/utils/is-region-in-ccpa-zone';
-import getTrackingPrefs, { updateTrackingPrefs } from 'calypso/lib/analytics/utils/tracking-prefs';
 
 const useDoNotSellHelper = () => {
 	const isCookieBannerAccepted = getTrackingPrefs().ok;
@@ -25,7 +28,7 @@ const useDoNotSellHelper = () => {
 
 	const handleSetDoNotSell = useCallback(
 		( isEnabled ) => {
-			const prefs = updateTrackingPrefs( { buckets: { advertising: ! isEnabled } } );
+			const prefs = setTrackingPrefs( { buckets: { advertising: ! isEnabled } } );
 			setDoNotSellEnabled( ! prefs.buckets.advertising );
 		},
 		[ setDoNotSellEnabled ]
