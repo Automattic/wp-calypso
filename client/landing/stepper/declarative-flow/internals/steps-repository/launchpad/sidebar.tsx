@@ -10,6 +10,7 @@ import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/int
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
+import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import Checklist from './checklist';
 import { getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
 import { tasks } from './tasks';
@@ -58,10 +59,24 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 
+	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+	const globalStylesData = {
+		siteHasGlobalStyles: globalStylesInUse,
+		siteLimitsGlobalStyles: shouldLimitGlobalStyles,
+	};
 	const { flowName, title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
 	const enhancedTasks =
-		site && getEnhancedTasks( arrayOfFilteredTasks, siteSlug, site, submit, goToStep, flow );
+		site &&
+		getEnhancedTasks(
+			arrayOfFilteredTasks,
+			siteSlug,
+			site,
+			submit,
+			goToStep,
+			flow,
+			globalStylesData
+		);
 
 	const taskCompletionProgress = site && getChecklistCompletionProgress( enhancedTasks );
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
