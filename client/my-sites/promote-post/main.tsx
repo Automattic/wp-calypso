@@ -124,7 +124,16 @@ export default function PromotedPosts( { tab }: Props ) {
 		data,
 	} = campaignsData;
 	const campaigns = data?.campaigns || [];
-	const canCreateCampaigns = data?.canCreateCampaigns || false;
+
+	const canUserCreateCampaigns = () => {
+		// - we get an error from the endpoint saying the user is not created: We let them create campaigns anyway
+		// - We received the user object from DSP and says the user can create campaigns: We only restrict users with this flag as false
+		return (
+			isFetched && ( data?.canCreateCampaigns || campaignError?.errorCode === 'no_local_user' )
+		);
+	};
+
+	const canCreateCampaigns = canUserCreateCampaigns();
 	const userStatus = data?.userStatus;
 
 	const hasLocalUser = ( campaignError as DSPMessage )?.errorCode !== ERROR_NO_LOCAL_USER;

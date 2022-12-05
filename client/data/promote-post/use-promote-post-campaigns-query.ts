@@ -92,9 +92,12 @@ const useCampaignsQuery = ( siteId: number, queryOptions = {} ) => {
 			return { campaigns: mappedCampaigns, canCreateCampaigns, userStatus };
 		},
 		{
+			useErrorBoundary: ( error: any ) => {
+				return error?.errorCode !== 'no_local_user';
+			},
 			...queryOptions,
+			retry: false,
 			enabled: !! siteId,
-			retryDelay: 3000,
 			meta: {
 				persist: false,
 			},

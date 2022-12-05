@@ -10,7 +10,7 @@ import './style.scss';
 import CampaignsEmpty from 'calypso/my-sites/promote-post/components/campaigns-empty';
 import EmptyPromotionList from '../empty-promotion-list';
 
-const noCampaignListMessage = translate(
+const campaignFetchError = translate(
 	'There was a problem obtaining the campaign list. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 	{
 		components: {
@@ -42,7 +42,7 @@ export default function CampaignsList( {
 	if ( isError && hasLocalUser ) {
 		return (
 			<Notice status="is-error" icon="mention">
-				{ noCampaignListMessage }
+				{ campaignFetchError }
 			</Notice>
 		);
 	}
