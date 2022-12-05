@@ -5,6 +5,7 @@ import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { trailingslashit } from 'calypso/lib/route';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import ClipboardButtonInput from '../clipboard-button-input';
 import { useCreateSitePreviewLink } from './use-create-site-preview-link';
@@ -117,7 +118,7 @@ export default function SitePreviewLink( {
 			</HelpText>
 			{ ! forceOff &&
 				previewLinks?.map( ( { code, isCreating = false, isRemoving = false } ) => {
-					let linkValue = `${ siteUrl }?share=${ code }`;
+					let linkValue = `${ trailingslashit( siteUrl ) }?share=${ code }`;
 					if ( isCreating ) {
 						linkValue = translate( 'Loading…' );
 					} else if ( isRemoving ) {
