@@ -142,9 +142,12 @@ const VirtualPage = ( {
 					{ isHomepage && template && (
 						<InfoPopover position="right">
 							{ translate(
-								'The homepage of your site displays the %(title)s template. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+								'%(subject)s can change the content of this page by editing the %(templateTitle)s template using the Site Editor. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 								{
-									args: { title: decodeEntities( template.title.rendered || template.slug ) },
+									args: {
+										subject: isAdmin ? 'You' : 'Administrators',
+										templateTitle: decodeEntities( template.title.rendered || template.slug ),
+									},
 									components: {
 										learnMoreLink: (
 											<ExternalLink
