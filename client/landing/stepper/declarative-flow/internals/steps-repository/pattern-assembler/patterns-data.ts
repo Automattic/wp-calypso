@@ -23,7 +23,7 @@ const useHeaderPatterns = () => {
 		*/
 		{
 			id: 5582,
-			name: 'Simple Header',
+			name: 'Simple header',
 			category: header,
 		},
 		{
@@ -206,7 +206,7 @@ const useSectionPatterns = () => {
 		},
 		{
 			id: 789,
-			name: 'Numbered List',
+			name: 'Numbered list',
 			category: list,
 		},
 		{
