@@ -172,6 +172,26 @@ export default function WPCheckout( {
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const total = useTotal();
+	const reduxDispatch = useReduxDispatch();
+
+	const areThereDomainProductsInCart =
+		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
+	const isGSuiteInCart = hasGoogleApps( responseCart );
+
+	const contactDetailsType = getContactDetailsType( responseCart );
+
+	const contactInfo: ManagedContactDetails = useSelect( ( sel ) =>
+		sel( 'wpcom-checkout' ).getContactInfo()
+	);
+
+	const {
+		touchContactFields,
+		applyDomainContactValidationResults,
+		clearDomainContactErrorMessages,
+	} = useDispatch( 'wpcom-checkout' );
+
+	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
+		useState( false );
 
 	// The "Summary" view is displayed in the sidebar at desktop (wide) widths
 	// and before the first step at mobile (smaller) widths. At smaller widths it
@@ -219,32 +239,12 @@ export default function WPCheckout( {
 	const [ is3PDAccountConsentAccepted, setIs3PDAccountConsentAccepted ] = useState( false );
 	const [ isSubmitted, setIsSubmitted ] = useState( false );
 
-	const isDIFMInCart = hasDIFMProduct( responseCart );
-	const contactDetailsType = getContactDetailsType( responseCart );
-	const reduxDispatch = useReduxDispatch();
 	const stepGroupStore = useMemo( () => createCheckoutStepGroupStore(), [] );
 	const { isComplete: isAutoValidationComplete } = useCachedDomainContactDetails( {
 		overrideCountryList: countriesList,
 		store: stepGroupStore,
 		shouldWait: contactDetailsType === 'none' || stepGroupStore.state.totalSteps === 0,
 	} );
-
-	const areThereDomainProductsInCart =
-		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
-	const isGSuiteInCart = hasGoogleApps( responseCart );
-
-	const contactInfo: ManagedContactDetails = useSelect( ( sel ) =>
-		sel( 'wpcom-checkout' ).getContactInfo()
-	);
-
-	const {
-		touchContactFields,
-		applyDomainContactValidationResults,
-		clearDomainContactErrorMessages,
-	} = useDispatch( 'wpcom-checkout' );
-
-	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
-		useState( false );
 
 	const validateForm = async () => {
 		setIsSubmitted( true );
@@ -299,6 +299,8 @@ export default function WPCheckout( {
 			</MainContentWrapper>
 		);
 	}
+
+	const isDIFMInCart = hasDIFMProduct( responseCart );
 
 	return (
 		<CheckoutStepGroup
