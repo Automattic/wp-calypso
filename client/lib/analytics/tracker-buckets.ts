@@ -1,7 +1,10 @@
 import { getDoNotTrack } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { isPiiUrl, isUrlExcludedForPerformance } from 'calypso/lib/analytics/utils';
-import getTrackingPrefs from 'calypso/lib/analytics/utils/tracking-prefs';
+import {
+	isPiiUrl,
+	isUrlExcludedForPerformance,
+	getTrackingPrefs,
+} from 'calypso/lib/analytics/utils';
 import { isE2ETest } from 'calypso/lib/e2e';
 
 const allAdTrackers = [
