@@ -68,6 +68,7 @@ export function getEnhancedTasks(
 						},
 						badgeText: translatedPlanName,
 						completed: task.completed && ! displayGlobalStylesWarning,
+						disabled: ! displayGlobalStylesWarning,
 						warning: displayGlobalStylesWarning,
 					};
 					break;
@@ -146,6 +147,7 @@ export function getEnhancedTasks(
 				case 'videopress_setup':
 					taskData = {
 						completed: true,
+						disabled: true,
 						title: translate( 'Set up your video site' ),
 					};
 					break;
@@ -154,6 +156,7 @@ export function getEnhancedTasks(
 						title: translate( 'Upload your first video' ),
 						actionUrl: launchpadUploadVideoLink,
 						completed: videoPressUploadCompleted,
+						disabled: videoPressUploadCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.replace( launchpadUploadVideoLink );

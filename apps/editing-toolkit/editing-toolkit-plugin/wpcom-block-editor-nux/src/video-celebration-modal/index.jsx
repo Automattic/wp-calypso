@@ -3,7 +3,7 @@ import { useSelect } from '@wordpress/data';
 import { useState, useRef, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import request from 'wpcom-proxy-request';
-import fireworksImage from 'calypso/assets/images/illustrations/fireworks.svg';
+import videoSuccessImage from 'calypso/assets/images/illustrations/video-success.svg';
 import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
 import useHasSeenVideoCelbrationModal from '../../../dotcom-fse/lib/video-celebration-modal/use-has-seen-video-celebration-modal';
 import NuxModal from '../nux-modal';
@@ -94,10 +94,10 @@ const VideoCelebrationModalInner = () => {
 			className="wpcom-site-editor-video-celebration-modal"
 			title={ __( 'You’ve added your first video!', 'full-site-editing' ) }
 			description={ __(
-				'Feel free to keep editing or continue and launch your site.',
+				'Feel free to keep editing your homepage, or continue and launch your site.',
 				'full-site-editing'
 			) }
-			imageSrc={ fireworksImage }
+			imageSrc={ videoSuccessImage }
 			actionButtons={
 				<>
 					<Button onClick={ closeModal }>{ __( 'Keep editing', 'full-site-editing' ) }</Button>
