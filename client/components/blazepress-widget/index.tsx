@@ -60,15 +60,13 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const handleShowCancel = ( show: boolean ) => setShowCancelButton( show );
 
 	const onClose = ( goToCampaigns?: boolean ) => {
+		queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
 		if ( goToCampaigns ) {
 			page( `/advertising/${ siteSlug }/campaigns` );
+		} else if ( previousRoute ) {
+			closeModal();
 		} else {
-			queryClient && queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
-			if ( previousRoute ) {
-				closeModal();
-			} else {
-				goToOriginalEndpoint();
-			}
+			goToOriginalEndpoint();
 		}
 	};
 
