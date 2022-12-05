@@ -42,7 +42,7 @@
 		"external-media/google-photos": true,
 		"external-media/openverse": true,
 		"fullstory": true,
-		"cookie-banner": true,
+		"gdpr-banner": true,
 		"google-my-business": true,
 		"gutenboarding/alpha-templates": false,
 		"happychat": true,
