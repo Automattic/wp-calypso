@@ -27,13 +27,6 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 	const isApple = userAgent.includes( 'iphone' ) || userAgent.includes( 'ipad' );
 	const isGoogle = userAgent.includes( 'android' );
 
-	const getTitle = () => {
-		if ( isWoo ) {
-			return translate( 'Bring your Store stats with you using the Woo mobile app' );
-		}
-		return translate( 'Bring your stats with you using the Jetpack mobile app' );
-	};
-
 	// Determines message text based on mobile, tablet, or Desktop.
 	const getMessage = () => {
 		if ( isApple ) {
@@ -99,7 +92,11 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 					{ isWoo && <img src={ iconWoo } alt="Icon for the Woo mobile app" /> }
 					{ ! isWoo && <WordPressJetpackSVG /> }
 				</div>
-				<p className="promo-card__title">{ getTitle() }</p>
+				<p className="promo-card__title">
+					{ isWoo
+						? translate( 'Bring your Store stats with you using the Woo mobile app' )
+						: translate( 'Bring your stats with you using the Jetpack mobile app' ) }
+				</p>
 				<p className="promo-card__message">{ getMessage() }</p>
 			</div>
 			<div className="promo-rhs">{ getPromoImage() }</div>
