@@ -24,16 +24,32 @@ export class ReaderListOrganizations extends Component {
 		return organization;
 	}
 
+	fetchOrganizationSlug( slug ) {
+		const { translate } = this.props;
+		let organizationSlug = '';
+		// Return empty if slug value is missing
+		if ( ! slug ) {
+			return organizationSlug;
+		}
+		// Note: No need to translate 'a8c', but 'p2' is a brand so it should be translated
+		// Everything else should remain untranslated, since it will be dynamic based on the org name
+		if ( slug === 'p2' ) {
+			organizationSlug = translate( 'p2' );
+		} else {
+			organizationSlug = slug;
+		}
+		return organizationSlug;
+	}
+
 	renderItems() {
 		const { path, translate } = this.props;
 		const organization = this.fetchOrganization();
-		// Note: No need to translate 'a8c', but 'p2' is a brand so it should be translated
-		const organizationSlug =
-			organization.slug && organization.slug === 'a8c' ? 'a8c' : translate( 'p2' );
 
 		return (
 			<>
-				<h2>{ translate( 'Following (%s)', { args: organizationSlug } ) }</h2>
+				<h2>
+					{ translate( 'Following %s', { args: this.fetchOrganizationSlug( organization.slug ) } ) }
+				</h2>
 				<ReaderListOrganizationsList
 					key={ organization.id }
 					path={ path }
