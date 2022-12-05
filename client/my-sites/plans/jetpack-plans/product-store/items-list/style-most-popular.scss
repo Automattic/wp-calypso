@@ -23,6 +23,7 @@
 	display: grid;
 	grid-template-columns: 1fr;
 	grid-gap: 24px;
+	margin: 0;
 
 	@media only screen and (min-width: 821px) {
 		grid-template-columns: 1fr 1fr;

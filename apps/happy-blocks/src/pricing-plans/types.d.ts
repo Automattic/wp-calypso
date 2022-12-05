@@ -1,7 +1,7 @@
 export interface BlockAttributes {
 	defaultProductSlug: string;
 	productSlug: string;
-	domain: string;
+	domain: string | boolean;
 }
 
 /**
