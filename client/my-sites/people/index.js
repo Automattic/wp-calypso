@@ -45,6 +45,16 @@ export default function () {
 	);
 
 	page(
+		'/people/subscribers/:site_id',
+		peopleController.enforceSiteEnding,
+		siteSelection,
+		navigation,
+		peopleController.subscribers,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/people/add-subscribers/:site_id',
 		peopleController.enforceSiteEnding,
 		siteSelection,
