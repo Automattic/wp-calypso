@@ -13,9 +13,7 @@ const ZendeskChat = ( { chatKey }: Props ) => {
 
 		loadScript(
 			'https://static.zdassets.com/ekr/snippet.js?key=' + encodeURIComponent( chatKey ),
-			() => {
-				return null;
-			},
+			undefined,
 			{ id: 'ze-snippet' }
 		);
 	}, [ chatKey ] );

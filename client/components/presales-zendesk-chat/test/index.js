@@ -22,10 +22,8 @@ describe( 'ZendeskChatWidget', () => {
 
 	test( 'should call loadScript with the correct params', () => {
 		render( <ZendeskChatWidget chatKey="some-chat-id" /> );
-		expect( loadScript ).toHaveBeenCalledWith(
-			expect.stringMatching( /\/snippet.js/ ),
-			expect.any( Function ),
-			{ id: 'ze-snippet' }
-		);
+		expect( loadScript ).toHaveBeenCalledWith( expect.stringMatching( /\/snippet.js/ ), undefined, {
+			id: 'ze-snippet',
+		} );
 	} );
 } );
