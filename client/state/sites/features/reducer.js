@@ -2,6 +2,7 @@ import {
 	JETPACK_SITES_FEATURES_FETCH,
 	JETPACK_SITES_FEATURES_FETCH_FAILURE,
 	JETPACK_SITES_FEATURES_FETCH_SUCCESS,
+	JETPACK_SITES_FEATURES_RECEIVE,
 	SITE_FEATURES_FETCH,
 	SITE_FEATURES_FETCH_COMPLETED,
 	SITE_FEATURES_FETCH_FAILED,
@@ -26,6 +27,26 @@ function updateSiteState( state, siteId, attributes ) {
 	return Object.assign( {}, state, {
 		[ siteId ]: Object.assign( {}, initialSiteState, state[ siteId ], attributes ),
 	} );
+}
+
+/**
+ * Given an object of features keyed by siteId, updates all features at once.
+ *
+ * @param {object} state The current features state
+ * @param {object} features An object containing feature arrays keyed by siteId
+ * @returns The new state
+ */
+function updateBulkFeatures( state, features ) {
+	const newState = {};
+	for ( const siteId in features ) {
+		newState[ siteId ] = {
+			error: null,
+			hasLoadedFromServer: true,
+			isRequesting: false,
+			data: features,
+		};
+	}
+	return { ...state, ...newState };
 }
 
 export function featuresReducer( state = {}, { type, siteId, features, error } ) {
@@ -54,6 +75,8 @@ export function featuresReducer( state = {}, { type, siteId, features, error } )
 		case JETPACK_SITES_FEATURES_FETCH_SUCCESS:
 		case JETPACK_SITES_FEATURES_FETCH_FAILURE:
 			return { ...state, isRequestingJetpackSitesFeatures: false };
+		case JETPACK_SITES_FEATURES_RECEIVE:
+			return updateBulkFeatures( state, features );
 	}
 
 	return state;

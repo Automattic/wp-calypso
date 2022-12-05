@@ -5,6 +5,7 @@ import {
 	JETPACK_SITES_FEATURES_FETCH,
 	JETPACK_SITES_FEATURES_FETCH_FAILURE,
 	JETPACK_SITES_FEATURES_FETCH_SUCCESS,
+	JETPACK_SITES_FEATURES_RECEIVE,
 	SITE_FEATURES_FETCH,
 	SITE_FEATURES_FETCH_COMPLETED,
 	SITE_FEATURES_FETCH_FAILED,
@@ -58,9 +59,12 @@ export function fetchJetpackSitesFeatures() {
 		return wpcom.req
 			.get( `/me/sites/features` )
 			.then( ( data ) => {
+				const features = {};
 				for ( const siteId in data.features ) {
-					dispatch( fetchSiteFeaturesCompleted( siteId, { features: data.features[ siteId ] } ) );
+					features[ siteId ] = createSiteFeaturesObject( data.features[ siteId ] );
 				}
+
+				dispatch( fetchJetpackSitesFeaturesReceive( features ) );
 
 				dispatch( {
 					type: JETPACK_SITES_FEATURES_FETCH_SUCCESS,
@@ -78,6 +82,10 @@ export function fetchJetpackSitesFeatures() {
 				} );
 			} );
 	};
+}
+
+function fetchJetpackSitesFeaturesReceive( features ) {
+	return { type: JETPACK_SITES_FEATURES_RECEIVE, features };
 }
 
 /**
