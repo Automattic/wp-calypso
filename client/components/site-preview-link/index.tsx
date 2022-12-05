@@ -64,11 +64,11 @@ export default function SitePreviewLink( {
 	const { createLink, isLoading: isCreating } = useCreateSitePreviewLink( {
 		siteId,
 		onSuccess: () => {
-			showSuccessNotice( translate( 'Preview link created.' ) );
+			showSuccessNotice( translate( 'Preview link enabled.' ) );
 			recordTracksEvent( 'calypso_site_preview_link_created', { source } );
 		},
 		onError: () => {
-			showErrorNotice( translate( 'Unable to create preview link.' ) );
+			showErrorNotice( translate( 'Unable to enable preview link.' ) );
 			recordTracksEvent( 'calypso_site_preview_link_created_error', { source } );
 		},
 	} );
@@ -76,11 +76,11 @@ export default function SitePreviewLink( {
 	const { deleteLink, isLoading: isDeleting } = useDeleteSitePreviewLink( {
 		siteId,
 		onSuccess: () => {
-			showSuccessNotice( translate( 'Preview link removed.' ) );
+			showSuccessNotice( translate( 'Preview link disabled.' ) );
 			recordTracksEvent( 'calypso_site_preview_link_deleted', { source } );
 		},
 		onError: () => {
-			showErrorNotice( translate( 'Unable to remove preview link.' ) );
+			showErrorNotice( translate( 'Unable to disable preview link.' ) );
 			recordTracksEvent( 'calypso_site_preview_link_deleted_error', { source } );
 		},
 	} );
@@ -117,7 +117,7 @@ export default function SitePreviewLink( {
 					if ( isCreating ) {
 						linkValue = translate( 'Loading…' );
 					} else if ( isRemoving ) {
-						linkValue = translate( 'Removing…' );
+						linkValue = translate( 'Disabling…' );
 					}
 					return (
 						<ClipboardButtonInput
