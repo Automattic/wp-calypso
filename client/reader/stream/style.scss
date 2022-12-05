@@ -610,7 +610,8 @@
 			color: var(--color-text-subtle);
 		}
 
-		span {
+		.reader-sidebar-site_nameurl,
+		.reader-sidebar-site_updated {
 			display: -webkit-box;
 			overflow: hidden;
 			width: 227px;
