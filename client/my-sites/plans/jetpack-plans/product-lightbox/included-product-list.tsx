@@ -20,7 +20,7 @@ const IncludedProductListItem: React.FC< IncludedProductListItemProps > = ( {
 	return (
 		<div className="product-lightbox__included-product-list-item">
 			<div className="product-lightbox__included-product-list-item-icon">
-				<img alt="" src={ getProductIcon( { productSlug, light: true } ) } />
+				<img alt="" src={ getProductIcon( { productSlug } ) } />
 			</div>
 
 			<div className="product-lightbox__included-product-list-item-content">

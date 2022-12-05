@@ -25,6 +25,11 @@
 	}
 }
 
+.simple-item-card__icon > img {
+	width: 22px;
+	height: auto;
+}
+
 .simple-item-card__body {
 	display: flex;
 	flex-direction: column;
