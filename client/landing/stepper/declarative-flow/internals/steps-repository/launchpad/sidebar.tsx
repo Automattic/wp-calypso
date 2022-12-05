@@ -60,10 +60,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 
 	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
-	const globalStylesData = {
-		siteHasGlobalStyles: globalStylesInUse,
-		siteLimitsGlobalStyles: shouldLimitGlobalStyles,
-	};
+
 	const { flowName, title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
 	const enhancedTasks =
@@ -73,9 +70,9 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 			siteSlug,
 			site,
 			submit,
+			globalStylesInUse && shouldLimitGlobalStyles,
 			goToStep,
-			flow,
-			globalStylesData
+			flow
 		);
 
 	const taskCompletionProgress = site && getChecklistCompletionProgress( enhancedTasks );

@@ -14,17 +14,23 @@ describe( 'Task Helpers', () => {
 					buildTask( { id: 'fake-task-2' } ),
 					buildTask( { id: 'fake-task-3' } ),
 				];
-				// eslint-disable-next-line @typescript-eslint/no-empty-function
-				expect( getEnhancedTasks( fakeTasks, 'fake.wordpress.com', null, () => {} ) ).toEqual(
-					fakeTasks
-				);
+				expect(
+					// eslint-disable-next-line @typescript-eslint/no-empty-function
+					getEnhancedTasks( fakeTasks, 'fake.wordpress.com', null, () => {}, false )
+				).toEqual( fakeTasks );
 			} );
 		} );
 		describe( 'when it is link_in_bio_launched task', () => {
 			it( 'then it receives launchtask property = true', () => {
 				const fakeTasks = [ buildTask( { id: 'link_in_bio_launched' } ) ];
-				// eslint-disable-next-line @typescript-eslint/no-empty-function
-				const enhancedTasks = getEnhancedTasks( fakeTasks, 'fake.wordpress.com', null, () => {} );
+				const enhancedTasks = getEnhancedTasks(
+					fakeTasks,
+					'fake.wordpress.com',
+					null,
+					// eslint-disable-next-line @typescript-eslint/no-empty-function
+					() => {},
+					false
+				);
 				expect( enhancedTasks[ 0 ].isLaunchTask ).toEqual( true );
 			} );
 		} );

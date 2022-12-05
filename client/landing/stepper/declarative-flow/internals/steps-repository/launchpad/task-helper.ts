@@ -14,12 +14,9 @@ export function getEnhancedTasks(
 	siteSlug: string | null,
 	site: SiteDetails | null,
 	submit: NavigationControls[ 'submit' ],
+	displayGlobalStylesWarning: boolean,
 	goToStep?: NavigationControls[ 'goToStep' ],
-	flow?: string | null,
-	globalStylesData?: {
-		siteHasGlobalStyles: boolean;
-		siteLimitsGlobalStyles: boolean;
-	}
+	flow?: string | null
 ) {
 	const enhancedTaskList: Task[] = [];
 	const productSlug = site?.plan?.product_slug;
@@ -39,9 +36,6 @@ export function getEnhancedTasks(
 	const launchpadUploadVideoLink = homePageId
 		? `/page/${ siteSlug }/${ homePageId }`
 		: `/site-editor/${ siteSlug }`;
-
-	const displayGlobalStylesWarning =
-		globalStylesData?.siteHasGlobalStyles && globalStylesData?.siteLimitsGlobalStyles;
 
 	tasks &&
 		tasks.map( ( task ) => {
