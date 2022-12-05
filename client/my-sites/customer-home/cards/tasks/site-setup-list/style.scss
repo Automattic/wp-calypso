@@ -3,21 +3,24 @@
 @import "../../../grid-mixins.scss";
 
 .site-setup-list {
-	padding: 0;
-	box-shadow: none;
-	border-bottom: 1px solid var(--color-border-subtle);
+	&.card {
+		padding: 0;
+		box-shadow: none;
+		border-bottom: 1px solid var(--color-border-subtle);
 
-	@include display-grid;
-	@include grid-template-columns( 12, 24px, 1fr );
+		@include display-grid;
+		@include grid-template-columns( 12, 24px, 1fr );
 
-	@include breakpoint-deprecated( ">660px" ) {
-		border-bottom: none;
-		border-radius: 3px; /* stylelint-disable-line scales/radii */
+		@include breakpoint-deprecated( ">660px" ) {
+			border-bottom: none;
+			border-radius: 3px; /* stylelint-disable-line scales/radii */
+		}
+
+		@include breakpoint-deprecated( "<960px" ) {
+			display: block;
+		}
 	}
 
-	@include breakpoint-deprecated( "<960px" ) {
-		display: block;
-	}
 
 	.site-setup-list__nav-item-email {
 		display: none;
