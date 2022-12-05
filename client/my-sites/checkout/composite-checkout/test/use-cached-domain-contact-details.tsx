@@ -1,7 +1,13 @@
 /**
  * @jest-environment jsdom
  */
-import { CheckoutProvider, CheckoutStep, CheckoutStepGroup } from '@automattic/composite-checkout';
+import {
+	CheckoutProvider,
+	CheckoutStep,
+	CheckoutStepGroup,
+	CheckoutStepGroupStore,
+	createCheckoutStepGroupStore,
+} from '@automattic/composite-checkout';
 import {
 	ShoppingCartProvider,
 	useShoppingCart,
@@ -10,7 +16,7 @@ import {
 } from '@automattic/shopping-cart';
 import { render, screen, waitFor } from '@testing-library/react';
 import { useSelect } from '@wordpress/data';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import useCachedDomainContactDetails from 'calypso/my-sites/checkout/composite-checkout/hooks/use-cached-domain-contact-details';
 import { useWpcomStore } from 'calypso/my-sites/checkout/composite-checkout/hooks/wpcom-store';
@@ -35,16 +41,19 @@ function MyTestWrapper( {
 	countries: CountryListItem[];
 	reduxStore: ReturnType< typeof createTestReduxStore >;
 } ) {
+	const stepGroupStore = useMemo( () => createCheckoutStepGroupStore(), [] );
 	return (
 		<ReduxProvider store={ reduxStore }>
 			<ShoppingCartProvider managerClient={ cartManagerClient }>
 				<CheckoutProvider paymentMethods={ paymentMethods } paymentProcessors={ paymentProcessors }>
-					<CheckoutStepGroup>
+					<CheckoutStepGroup store={ stepGroupStore }>
 						<CheckoutStep
 							stepId="contact-form"
 							titleContent={ <em>Contact step</em> }
 							isCompleteCallback={ () => false }
-							activeStepContent={ <MyTestContent countries={ countries } /> }
+							activeStepContent={
+								<MyTestContent countries={ countries } stepGroupStore={ stepGroupStore } />
+							}
 						/>
 						<CheckoutStep
 							stepId="other-step"
@@ -58,12 +67,18 @@ function MyTestWrapper( {
 	);
 }
 
-function MyTestContent( { countries }: { countries: CountryListItem[] } ) {
+function MyTestContent( {
+	countries,
+	stepGroupStore,
+}: {
+	countries: CountryListItem[];
+	stepGroupStore: CheckoutStepGroupStore;
+} ) {
 	useWpcomStore();
 	const { responseCart, reloadFromServer, updateLocation } = useShoppingCart(
 		initialCart.cart_key
 	);
-	useCachedDomainContactDetails( { overrideCountryList: countries } );
+	useCachedDomainContactDetails( { overrideCountryList: countries, store: stepGroupStore } );
 	const contactInfo: ManagedContactDetails = useSelect( ( select ) =>
 		select( 'wpcom-checkout' ).getContactInfo()
 	);
