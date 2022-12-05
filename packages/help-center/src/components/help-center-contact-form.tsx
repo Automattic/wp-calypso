@@ -299,7 +299,7 @@ export const HelpCenterContactForm = () => {
 					} )
 						.then( () => {
 							recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
-								support_variation: 'kayako',
+								support_variation: 'email',
 								location: 'help-center',
 								section: sectionName,
 							} );
