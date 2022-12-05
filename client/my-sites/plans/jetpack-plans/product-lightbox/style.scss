@@ -108,6 +108,11 @@
 	margin-right: 1rem;
 }
 
+.product-lightbox__product-icon img {
+	width: 25px;
+	height: auto;
+}
+
 .product-lightbox__detail-desc {
 	margin-bottom: 16px;
 	line-height: 1.5;
@@ -515,7 +520,7 @@ p.product-lightbox__included-product-list-item-description span {
 .product-lightbox__included-product-list-item-icon {
 	min-width: 38px;
 	max-height: 38px;
-	background-color: #2c3338;
+	background: linear-gradient(159.87deg, #f6f6f4 7.24%, #f7f4ea 64.73%, #ddedd5 116.53%);
 	border-radius: 4px;
 	display: flex;
 	align-items: center;
