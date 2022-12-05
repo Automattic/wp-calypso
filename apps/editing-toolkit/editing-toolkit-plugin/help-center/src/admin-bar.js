@@ -21,17 +21,12 @@ function AdminHelpCenterContent() {
 	}, [ show, button ] );
 
 	const handleToggleHelpCenter = () => {
-		if ( show ) {
-			recordTracksEvent( 'calypso_inlinehelp_close', {
-				location: 'help-center',
-				section: 'wp-admin',
-			} );
-		} else {
-			recordTracksEvent( 'calypso_inlinehelp_show', {
-				location: 'help-center',
-				section: 'wp-admin',
-			} );
-		}
+		recordTracksEvent( `calypso_inlinehelp_${ show ? 'close' : 'show' }`, {
+			forceSiteId: true,
+			location: 'help-center',
+			section: 'wp-admin',
+		} );
+
 		setShowHelpCenter( ! show );
 	};
 
