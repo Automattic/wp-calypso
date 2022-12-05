@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
-import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
@@ -99,21 +98,16 @@ export class ReaderSidebarFollowedSites extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		return {
-			isWPForTeamsItem:
-				isSiteWPForTeams( state, ownProps.site && ownProps.site.ID ) ||
-				isFeedWPForTeams( state, ownProps.feed && ownProps.feed.feed_ID ),
-			hasOrganization: hasReaderFollowOrganization(
-				state,
-				ownProps.feed && ownProps.feed.feed_ID,
-				ownProps.site && ownProps.site.ID
-			),
-			sites: getReaderFollowedSites( state ),
-		};
-	},
-	{
-		recordReaderTracksEvent,
-	}
-)( localize( ReaderSidebarFollowedSites ) );
+export default connect( ( state, ownProps ) => {
+	return {
+		isWPForTeamsItem:
+			isSiteWPForTeams( state, ownProps.site && ownProps.site.ID ) ||
+			isFeedWPForTeams( state, ownProps.feed && ownProps.feed.feed_ID ),
+		hasOrganization: hasReaderFollowOrganization(
+			state,
+			ownProps.feed && ownProps.feed.feed_ID,
+			ownProps.site && ownProps.site.ID
+		),
+		sites: getReaderFollowedSites( state ),
+	};
+} )( localize( ReaderSidebarFollowedSites ) );
