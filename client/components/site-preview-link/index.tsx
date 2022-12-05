@@ -105,12 +105,16 @@ export default function SitePreviewLink( {
 	return (
 		<div>
 			<ToggleControl
-				label={ translate( 'Create a preview link.' ) }
+				label={ translate( 'Enable site preview link.' ) }
 				checked={ checkedAndEnabled }
 				onChange={ onChange }
 				{ ...{ disabled: disabled || isBusy } } // disabled is not included on ToggleControl props type
 			/>
-			<HelpText>{ translate( 'Anyone with this link can view your site.' ) }</HelpText>
+			<HelpText>
+				{ translate(
+					'When enabled, anyone with the site preview link can view your Coming Soon site.'
+				) }
+			</HelpText>
 			{ ! forceOff &&
 				previewLinks?.map( ( { code, isCreating = false, isRemoving = false } ) => {
 					let linkValue = `${ siteUrl }?share=${ code }`;
