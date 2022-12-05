@@ -53,7 +53,7 @@ const VirtualPage = ( {
 		? addQueryArgs( { templateId: id, templateType: type }, defaultEditorUrl )
 		: defaultEditorUrl;
 
-	const { data: template } = useTemplate( site.ID, id );
+	const { data: template } = useTemplate( site.ID, id, { enabled: isAdmin } );
 
 	const recordGoogleEvent = ( action: string ) => {
 		props.recordGoogleEvent( 'Pages', action );
@@ -105,7 +105,7 @@ const VirtualPage = ( {
 		props.recordGoogleEvent( 'Pages', 'Clicked Copy Page Link' );
 	};
 
-	if ( ! template ) {
+	if ( isAdmin && ! template ) {
 		return <Placeholder.Page key={ id } multisite={ ! site } />;
 	}
 
@@ -115,7 +115,7 @@ const VirtualPage = ( {
 			<div className="page__main">
 				<a
 					className="page__title"
-					href={ isAdmin ? editorUrl : site.URL }
+					href={ isAdmin ? editorUrl : previewUrl }
 					title={
 						isAdmin
 							? translate( 'Edit %(title)s', { textOnly: true, args: { title } } )
@@ -124,7 +124,7 @@ const VirtualPage = ( {
 					onClick={ clickPageTitle }
 				>
 					<span>{ title }</span>
-					{ isHomepage && (
+					{ isHomepage && template && (
 						<InfoPopover position="right">
 							{ translate(
 								'The homepage of your site displays the %(title)s template. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
@@ -176,7 +176,7 @@ const VirtualPage = ( {
 
 const mapStateToProps = ( state: any, ownProps: Props ) => {
 	return {
-		isAdmin: canCurrentUser( state, ownProps.site.ID, 'manage_options' ),
+		isAdmin: canCurrentUser( state, ownProps.site.ID, 'edit_theme_options' ),
 	};
 };
 
