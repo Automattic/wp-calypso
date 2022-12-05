@@ -210,6 +210,12 @@ This component's props are:
 
 A container for [CheckoutStep](#CheckoutStep) elements.
 
+Available props:
+
+- `areStepsActive?: boolean`. A boolean you can set to explicitly disable all the steps in the group.
+- `stepAreaHeader?: ReactNode`. A slot for additional components that can be injected at the top of the step group.
+- `store?: CheckoutStepGroupStore`. A way to inject a data store for the step group created by [createCheckoutStepGroupStore](#createCheckoutStepGroupStore). If not provided, a store will be created automatically.
+
 ### CheckoutSteps
 
 A wrapper for [CheckoutStep](#CheckoutStep) objects that will connect the steps and provide a way to switch between them. Should be a direct child of [Checkout](#Checkout). It has the following props.
@@ -324,6 +330,10 @@ An enum that holds the values of the [transaction status](#useTransactionStatus)
 ### checkoutTheme
 
 An [@emotion/styled](https://emotion.sh/docs/styled) theme object that can be merged with custom theme variables and passed to [CheckoutProvider](#checkout-provider) in order to customize the default Checkout design.
+
+## createCheckoutStepGroupStore
+
+A function to create a `CheckoutStepGroupStore` which can be passed to [CheckoutStepGroup](#CheckoutStepGroup) if you need additional control over the steps.
 
 ### getDefaultOrderReviewStep
 
