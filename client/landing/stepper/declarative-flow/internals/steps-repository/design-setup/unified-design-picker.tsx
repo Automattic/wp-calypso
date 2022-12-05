@@ -200,6 +200,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		return {
 			flow,
 			intent,
+			category: categorization.selection,
 			slug: design.slug + variationSlugSuffix,
 			theme: design.recipe?.stylesheet,
 			theme_style: design.recipe?.stylesheet + variationSlugSuffix,
