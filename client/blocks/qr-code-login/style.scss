@@ -34,17 +34,24 @@
 			margin-bottom: 0.75em;
 		}
 
-		.qr-code-login__notice {
-			.gridicon {
-				margin-right: 5px;
-				margin-left: -5px;
-				vertical-align: text-bottom;
-				fill: var(--color-error-60);
-			}
+		.qr-code-login__info {
+			border-radius: 2px;
 			font-size: $font-body-small;
+			padding: 8px;
+			align-items: center;
+			background-color: var(--color-neutral-0);
+			display: flex;
+			color: var(--color-neutral-20);
 
-			@include break-small {
-				text-align: left;
+			.gridicon {
+				padding-right: 4px;
+				width: 60px;
+			    text-align: left;
+				fill: var(--color-warning);
+			}
+
+			strong {
+				color: var(--color-neutral-40);
 			}
 		}
 

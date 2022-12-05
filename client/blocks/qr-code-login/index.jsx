@@ -259,10 +259,10 @@ function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
 						</li>
 					) ) }
 				</ol>
-				<h4 className="qr-code-login__notice">
-					<Gridicon icon="notice" size={ 18 } />
-					{ notice }
-				</h4>
+				<div className="qr-code-login__info">
+					<Gridicon icon="info-outline" size={ 18 } />
+					<p>{ notice }</p>
+				</div>
 			</div>
 		</Card>
 	);
