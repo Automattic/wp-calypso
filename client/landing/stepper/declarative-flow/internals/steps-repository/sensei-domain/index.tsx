@@ -70,6 +70,7 @@ const SenseiDomain: Step = ( { navigation } ) => {
 						useProvidedProductsList
 						align="left"
 						isWideLayout={ true }
+						basePath=""
 					/>
 					<div className="domains__domain-side-content-container">
 						<div className="domains__domain-side-content domains__free-domain">
