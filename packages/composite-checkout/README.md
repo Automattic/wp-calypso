@@ -87,12 +87,6 @@ A generic button component that is used internally for almost all buttons (like 
 - `fullWidth?: bool`. The button width defaults to 'auto', but if this is set it will be '100%'.
 - `isBusy?: bool`. If true, the button will be displayed as a loading spinner.
 
-### Checkout
-
-The main wrapper component for Checkout. It has the following props.
-
-- `className?: string`. The className for the component.
-
 ### CheckoutFormSubmit
 
 An element that will display a [CheckoutSubmitButton](#CheckoutSubmitButton) when placed inside a [CheckoutStepGroup](#CheckoutStepGroup).
@@ -153,7 +147,7 @@ Renders a list of the line items and their `displayValue` properties followed by
 
 ### CheckoutStep
 
-A checkout step. This should be a direct child of [CheckoutSteps](#CheckoutSteps) and is itself a wrapper for [CheckoutStepBody](#CheckoutStepBody). If you want to make something that looks like a step but is not connected to other steps, use a [CheckoutStepBody](#CheckoutStepBody) instead.
+A checkout step. This should be a direct child of [CheckoutStepGroup](#CheckoutStepGroup) and is itself a wrapper for [CheckoutStepBody](#CheckoutStepBody). If you want to make something that looks like a step but is not connected to other steps, use a [CheckoutStepBody](#CheckoutStepBody) instead.
 
 This component's props are:
 
@@ -170,13 +164,9 @@ This component's props are:
 - `validatingButtonText?: string`. Used in place of "Please wait…" on the next step button when `isCompleteCallback` returns an unresolved Promise.
 - `validatingButtonAriaLabel:? string`. Used for the `aria-label` attribute on the next step button when `isCompleteCallback` returns an unresolved Promise.
 
-### CheckoutStepArea
-
-Creates the Checkout form and provides a wrapper for [CheckoutStep](#CheckoutStep) and [CheckoutStepBody](#CheckoutStepBody) objects. Should be a direct child of [Checkout](#Checkout).
-
 ### CheckoutStepAreaWrapper
 
-A styled div, controlled by the [theme](#checkoutTheme), that's used as the inner wrapper for the [CheckoutStepArea](#CheckoutStepArea) component. You shouldn't need to use this manually.
+A styled div, controlled by the [theme](#checkoutTheme), that's used as an inner wrapper for the [CheckoutStepGroup](#CheckoutStepGroup) component. You shouldn't need to use this manually.
 
 ### CheckoutStepBody
 
@@ -210,11 +200,11 @@ This component's props are:
 
 A container for [CheckoutStep](#CheckoutStep) elements.
 
-### CheckoutSteps
+Available props:
 
-A wrapper for [CheckoutStep](#CheckoutStep) objects that will connect the steps and provide a way to switch between them. Should be a direct child of [Checkout](#Checkout). It has the following props.
-
-- `areStepsActive?: boolean`. Whether or not the set of steps is active and able to be edited. Defaults to `true`.
+- `areStepsActive?: boolean`. A boolean you can set to explicitly disable all the steps in the group.
+- `stepAreaHeader?: ReactNode`. A slot for additional components that can be injected at the top of the step group.
+- `store?: CheckoutStepGroupStore`. A way to inject a data store for the step group created by [createCheckoutStepGroupStore](#createCheckoutStepGroupStore). If not provided, a store will be created automatically.
 
 ### CheckoutSubmitButton
 
@@ -229,7 +219,7 @@ The props you can provide to this component are as follows.
 
 ### CheckoutSummaryArea
 
-Renders its `children` prop and acts as a wrapper to flow outside of the [`CheckoutSteps`](#CheckoutSteps) wrapper (floated on desktop, collapsed on mobile). It has the following props.
+Renders its `children` prop and acts as a wrapper to flow outside of the [`CheckoutStepGroup`](#CheckoutStepGroup) wrapper (floated on desktop, collapsed on mobile). It has the following props.
 
 - `className?: string`. The className for the component.
 
@@ -249,7 +239,7 @@ An enum that holds the values of the [form status](#useFormStatus).
 
 ### MainContentWrapper
 
-A styled div, controlled by the [theme](#checkoutTheme), that's used as the inner wrapper for the [Checkout](#Checkout) component. You shouldn't need to use this manually.
+A styled div, controlled by the [theme](#checkoutTheme), that's used as an inner wrapper for the [CheckoutStepGroup](#CheckoutStepGroup) component. You shouldn't need to use this manually.
 
 ### OrderReviewLineItems
 
@@ -324,6 +314,10 @@ An enum that holds the values of the [transaction status](#useTransactionStatus)
 ### checkoutTheme
 
 An [@emotion/styled](https://emotion.sh/docs/styled) theme object that can be merged with custom theme variables and passed to [CheckoutProvider](#checkout-provider) in order to customize the default Checkout design.
+
+## createCheckoutStepGroupStore
+
+A function to create a `CheckoutStepGroupStore` which can be passed to [CheckoutStepGroup](#CheckoutStepGroup) if you need additional control over the steps.
 
 ### getDefaultOrderReviewStep
 
