@@ -218,9 +218,11 @@ class StatsSite extends Component {
 
 		return (
 			<div className="stats">
-				<div className="stats-banner-wrapper">
-					<JetpackBackupCredsBanner event="stats-backup-credentials" />
-				</div>
+				{ ! config.isEnabled( 'is_running_in_jetpack_site' ) && (
+					<div className="stats-banner-wrapper">
+						<JetpackBackupCredsBanner event="stats-backup-credentials" />
+					</div>
+				) }
 
 				<FormattedHeader
 					brandFont
@@ -460,9 +462,13 @@ class StatsSite extends Component {
 
 		return (
 			<Main className={ mainWrapperClass } fullWidthLayout>
-				<QueryKeyringConnections />
-				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
-				<QuerySiteKeyrings siteId={ siteId } />
+				{ ! config.isEnabled( 'is_running_in_jetpack_site' ) && <QueryKeyringConnections /> }
+				{ ! config.isEnabled( 'is_running_in_jetpack_site' ) && isJetpack && (
+					<QueryJetpackModules siteId={ siteId } />
+				) }
+				{ ! config.isEnabled( 'is_running_in_jetpack_site' ) && (
+					<QuerySiteKeyrings siteId={ siteId } />
+				) }
 				<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 				<PageViewTracker
 					path={ `/stats/${ period }/:site` }

@@ -74,8 +74,10 @@ const StatsInsights = ( props ) => {
 								moduleStrings={ moduleStrings.tags }
 								statType="statsTags"
 							/>
-
-							<StatShares siteId={ siteId } />
+							{ /** The feature relies on Jetpack Sharing module and is disabled for Odyssey for now. */ }
+							{ ! config.isEnabled( 'is_running_in_jetpack_site' ) && (
+								<StatShares siteId={ siteId } />
+							) }
 						</div>
 						<div className="stats__module-column">
 							<Reach />
