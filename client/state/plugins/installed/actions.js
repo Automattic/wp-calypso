@@ -14,6 +14,7 @@ import {
 	PLUGINS_REQUEST,
 	PLUGINS_REQUEST_SUCCESS,
 	PLUGINS_REQUEST_FAILURE,
+	PLUGINS_ALL_RECEIVE,
 	PLUGINS_ALL_REQUEST,
 	PLUGINS_ALL_REQUEST_SUCCESS,
 	PLUGINS_ALL_REQUEST_FAILURE,
@@ -566,6 +567,13 @@ export function receiveSitePlugins( siteId, plugins ) {
 	};
 }
 
+export function receiveAllSitePlugins( allSitePlugins ) {
+	return {
+		type: PLUGINS_ALL_RECEIVE,
+		allSitePlugins,
+	};
+}
+
 export function fetchSitePlugins( siteId ) {
 	return ( dispatch ) => {
 		const defaultAction = {
@@ -607,11 +615,11 @@ export function fetchAllPlugins() {
 		const receivePluginsDispatchSuccess = ( { sites } ) => {
 			dispatch( { type: PLUGINS_ALL_REQUEST_SUCCESS } );
 
+			dispatch( receiveAllSitePlugins( sites ) );
+
 			Object.entries( sites ).forEach( ( [ siteId, plugins ] ) => {
 				// Cast the enumerable string-keyed property to a number.
 				siteId = Number( siteId );
-
-				dispatch( receiveSitePlugins( siteId, plugins ) );
 
 				plugins.forEach( ( plugin ) => {
 					if ( plugin.update && plugin.autoupdate ) {
