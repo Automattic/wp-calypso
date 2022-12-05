@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .product-lightbox__modal {
 	padding: 0;
 	border-radius: 8px; /* stylelint-disable-line scales/radii */
@@ -72,7 +75,7 @@
 	height: 100%;
 	width: 60%;
 	overflow-y: auto;
-	background-color: #f6f7f7;
+	background-color: var(--studio-white);
 	border-radius: 8px 0 0 8px; /* stylelint-disable-line scales/radii */
 
 	hr {
@@ -105,8 +108,13 @@
 	margin-right: 1rem;
 }
 
+.product-lightbox__product-icon img {
+	width: 25px;
+	height: auto;
+}
+
 .product-lightbox__detail-desc {
-	margin-bottom: 0.5rem;
+	margin-bottom: 16px;
 	line-height: 1.5;
 	color: #2c3338;
 	font-size: 1rem;
@@ -119,11 +127,14 @@
 }
 
 .product-lightbox__detail-tags {
+	background-color: #f6f7f7;
 	margin-bottom: 16px;
+	padding: 5.5px 8px;
+	border-radius: 4px;
 
 	&-label {
 		font-weight: 600;
-		font-size: $font-body-small;
+		font-size: $font-body-extra-small;
 		margin-right: 6px;
 		color: #000;
 	}
@@ -143,7 +154,7 @@
 
 		p {
 			color: #3c434a;
-			font-size: $font-body-small;
+			font-size: $font-body-extra-small;
 			margin: 0;
 			position: relative;
 			top: 2px;
@@ -206,11 +217,20 @@
 	}
 }
 
-.product-lightbox__variants {
+.product-lightbox__sidebar {
 	padding: 40px;
 	width: 40%;
 	background-color: #f6f7f7;
 	border-radius: 0 8px 8px 0; /* stylelint-disable-line scales/radii */
+	box-shadow: 0 4px 8px rgb(0 0 0 / 30%);
+
+	@include break-medium {
+		box-shadow: none;
+	}
+
+	@media (max-width: $break-large) {
+		padding: 24px;
+	}
 }
 
 .product-lightbox__variants-options {
@@ -386,7 +406,7 @@
 	}
 }
 
-@media screen and ( max-width: 768px ) and ( orientation: portrait ) {
+@media screen and ( max-width: $break-medium ) and ( orientation: portrait ) {
 	.product-lightbox__modal {
 		display: flex;
 		justify-content: center;
@@ -409,7 +429,7 @@
 		width: auto;
 	}
 
-	.product-lightbox__variants {
+	.product-lightbox__sidebar {
 		border-radius: 0;
 		padding: 24px;
 		position: relative;
@@ -447,8 +467,9 @@
 		margin-bottom: 0.5rem;
 	}
 
-	.product-lightbox__variants {
+	.product-lightbox__sidebar {
 		padding: 1.5rem;
+		background: #f6f7f7;
 	}
 }
 
@@ -459,4 +480,54 @@
 
 .ReactModal__Html--open.lightbox-mode .layout__content {
 	overflow-y: scroll;
+}
+
+.product-lightbox__included-product-list ul {
+	list-style-type: none;
+	margin: 0;
+}
+
+.product-lightbox__included-product-list ul li {
+	margin-bottom: 16px;
+}
+
+.product-lightbox__included-product-list-label {
+	font-weight: 600;
+	font-size: $font-body;
+	margin-bottom: 16px;
+}
+
+.product-lightbox__included-product-list-item {
+	display: flex;
+	gap: 12px;
+}
+
+.product-lightbox__included-product-list-item-title {
+	font-size: $font-body-small;
+	font-weight: 700;
+}
+
+p.product-lightbox__included-product-list-item-description {
+	font-size: $font-body-small;
+	font-weight: 400;
+	margin-bottom: 0;
+}
+
+p.product-lightbox__included-product-list-item-description span {
+	white-space: nowrap;
+}
+
+.product-lightbox__included-product-list-item-icon {
+	min-width: 38px;
+	max-height: 38px;
+	background: linear-gradient(159.87deg, #f6f6f4 7.24%, #f7f4ea 64.73%, #ddedd5 116.53%);
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.product-lightbox__included-product-list-item-icon img {
+	width: 45%;
+	height: auto;
 }

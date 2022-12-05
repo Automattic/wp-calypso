@@ -23,21 +23,11 @@ export class NavbarComponent {
 	}
 
 	/**
-	 * Wait for load state of the page.
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	private async pageSettled(): Promise< void > {
-		await this.page.waitForLoadState( 'load' );
-	}
-
-	/**
 	 * Locates and clicks on the new post button on the nav bar.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickNewPost(): Promise< void > {
-		await this.pageSettled();
 		await this.page.click( selectors.writeButton );
 	}
 
@@ -47,7 +37,6 @@ export class NavbarComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickMySites(): Promise< void > {
-		await this.pageSettled();
 		await this.page.click( selectors.mySiteButton );
 	}
 
@@ -55,7 +44,6 @@ export class NavbarComponent {
 	 * Click on `Me` on top right of the Home dashboard.
 	 */
 	async clickMe(): Promise< void > {
-		await this.pageSettled();
 		await Promise.all( [ this.page.waitForNavigation(), this.page.click( selectors.meButton ) ] );
 	}
 
@@ -71,20 +59,17 @@ export class NavbarComponent {
 	async openNotificationsPanel( {
 		useKeyboard = false,
 	}: { useKeyboard?: boolean } = {} ): Promise< void > {
-		await this.pageSettled();
-
-		const notificationsButton = await this.page.waitForSelector( selectors.notificationsButton, {
-			state: 'visible',
-		} );
 		await Promise.all( [
 			this.page.waitForLoadState( 'networkidle' ),
-			notificationsButton.waitForElementState( 'stable' ),
+			this.page.waitForResponse( /async-load-calypso-blocks-jitm.*/, { timeout: 15 * 1000 } ),
 		] );
 
 		if ( useKeyboard ) {
 			return await this.page.keyboard.type( 'n' );
 		}
 
-		return await this.page.click( selectors.notificationsButton );
+		const notificationsButtonLocator = this.page.locator( selectors.notificationsButton );
+
+		return await notificationsButtonLocator.click();
 	}
 }

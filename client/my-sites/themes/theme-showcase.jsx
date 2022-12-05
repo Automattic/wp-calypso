@@ -438,10 +438,8 @@ class ThemeShowcase extends Component {
 				return <ThemesSelection { ...themeProps } />;
 			case this.tabFilters.TRENDING?.key:
 				return <TrendingThemes { ...themeProps } />;
-			case this.tabFilters.ALL.key:
-				return this.allThemes( { themeProps } );
 			default:
-				return this.allThemes( { themeProps: { ...themeProps, filter: tabKey } } );
+				return this.allThemes( { themeProps } );
 		}
 	};
 
