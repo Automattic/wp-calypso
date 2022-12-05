@@ -68,7 +68,9 @@ export function getEnhancedTasks(
 							: '',
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.assign( `/plans/${ siteSlug }` );
+							window.location.assign(
+								`/plans/${ siteSlug }${ displayGlobalStylesWarning ? '?plan=value_bundle' : '' }`
+							);
 						},
 						badgeText: translatedPlanName,
 						completed: task.completed && ! displayGlobalStylesWarning,
