@@ -43,6 +43,7 @@ const selectors = {
  */
 export class PlansPage {
 	private page: Page;
+	private receivedActivePromotions = false;
 
 	/**
 	 * Constructs an instance of the Plans POM.
@@ -51,6 +52,11 @@ export class PlansPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+		page.on( 'response', ( res ) => {
+			if ( res.url().includes( 'active-promotions' ) ) {
+				this.receivedActivePromotions = true;
+			}
+		} );
 	}
 
 	/**
@@ -141,7 +147,10 @@ export class PlansPage {
 		// and https://github.com/Automattic/wp-calypso/pull/64421#discussion_r892589761.
 		await Promise.all( [
 			this.page.waitForLoadState( 'networkidle' ),
-			this.page.waitForResponse( /.*active-promotions.*/ ),
+			// don't wait for the response if it's already done in the past
+			this.receivedActivePromotions
+				? Promise.resolve()
+				: this.page.waitForResponse( /.*active-promotions.*/ ),
 		] );
 		await clickNavTab( this.page, targetTab, { force: true } );
 	}
