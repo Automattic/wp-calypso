@@ -75,7 +75,7 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 				} );
 				break;
 			case 'subscriber':
-				text = translate( 'Subscriber', {
+				text = translate( 'Viewer', {
 					context: 'Noun: A user role displayed in a badge',
 				} );
 				break;

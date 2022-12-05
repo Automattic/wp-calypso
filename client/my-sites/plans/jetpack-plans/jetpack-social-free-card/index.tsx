@@ -17,7 +17,7 @@ const useSocialFreeItem = (): SelectorProduct => {
 		() => ( {
 			productSlug: 'jetpack-social-free',
 			isFree: true,
-			displayName: translate( 'Social' ),
+			displayName: translate( 'Social', { context: 'Jetpack product name' } ),
 			features: {
 				items: [
 					{ slug: 'not used', text: translate( 'Auto-publish on popular social media platforms' ) },

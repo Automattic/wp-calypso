@@ -9,8 +9,8 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { forwardRef, useLayoutEffect, useRef, useEffect } from '@wordpress/element';
 import { applyFilters, doAction, hasAction } from '@wordpress/hooks';
 import { decodeEntities } from '@wordpress/html-entities';
-import { __ } from '@wordpress/i18n';
-import { chevronLeft } from '@wordpress/icons';
+import { __, isRTL } from '@wordpress/i18n';
+import { chevronLeft, chevronRight } from '@wordpress/icons';
 import { ESCAPE } from '@wordpress/keycodes';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
@@ -216,7 +216,7 @@ function WpcomBlockEditorNavSidebar() {
 					aria-description={ __( 'Returns to the dashboard', 'full-site-editing' ) }
 					href={ closeUrl }
 					className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button"
-					icon={ chevronLeft }
+					icon={ isRTL() ? chevronRight : chevronLeft }
 					onClick={ handleClose }
 				>
 					{ closeLabel }

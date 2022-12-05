@@ -372,6 +372,19 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		);
 	}
 
+	function renderFollowerNoticeLabel() {
+		return (
+			isSelectedFileValid &&
+			! selectedFile && (
+				<label>
+					{ __(
+						"If you enter an email address that has a WordPress.com account, they'll become a follower."
+					) }
+				</label>
+			)
+		);
+	}
+
 	return (
 		<div className="add-subscriber">
 			{ ( showTitle || showSubtitle ) && (
@@ -426,7 +439,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					{ ! includesHandledError() && renderImportCsvSelectedFileLabel() }
 					{ showCsvUpload && ! includesHandledError() && renderImportCsvLabel() }
 					{ showCsvUpload && ! includesHandledError() && renderImportCsvDisclaimerMsg() }
-
+					{ ! includesHandledError() && renderFollowerNoticeLabel() }
 					<NextButton
 						type="submit"
 						className="add-subscriber__form-submit-btn"

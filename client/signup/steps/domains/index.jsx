@@ -525,6 +525,7 @@ class DomainsStep extends Component {
 		}
 
 		const includeWordPressDotCom = this.props.includeWordPressDotCom ?? ! this.props.isDomainOnly;
+		const promoTlds = this.props?.queryObject?.tld?.split( ',' ) ?? [];
 
 		return (
 			<CalypsoShoppingCartProvider>
@@ -535,8 +536,10 @@ class DomainsStep extends Component {
 					onAddDomain={ this.handleAddDomain }
 					products={ this.props.productsList }
 					basePath={ this.props.path }
-					promoTlds={ this.props?.queryObject?.tld?.split( ',' ) }
+					promoTlds={ promoTlds }
 					mapDomainUrl={ this.getUseYourDomainUrl() }
+					otherManagedSubdomains={ this.props.otherManagedSubdomains }
+					otherManagedSubdomainsCountOverride={ this.props.otherManagedSubdomainsCountOverride }
 					transferDomainUrl={ this.getUseYourDomainUrl() }
 					useYourDomainUrl={ this.getUseYourDomainUrl() }
 					onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
@@ -861,7 +864,7 @@ class DomainsStep extends Component {
 				shouldHideNavButtons={ this.isTailoredFlow() }
 				stepContent={
 					<div>
-						{ ! this.props.productsLoaded && <QueryProductsList /> }
+						<QueryProductsList />
 						{ this.renderContent() }
 					</div>
 				}

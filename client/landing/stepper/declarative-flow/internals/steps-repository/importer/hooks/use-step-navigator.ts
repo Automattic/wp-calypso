@@ -69,7 +69,7 @@ export function useStepNavigator(
 			run: true,
 		};
 
-		return addQueryArgs( queryParams, `/${ BASE_STEPPER_ROUTE }/importerWordpress` );
+		return addQueryArgs( queryParams, `/${ BASE_STEPPER_ROUTE }/${ flow }/importerWordpress` );
 	}
 
 	function getCheckoutUrl() {

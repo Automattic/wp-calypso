@@ -27,7 +27,7 @@ class FollowingManageSubscriptions extends Component {
 		follows: PropTypes.array.isRequired,
 		doSearch: PropTypes.func.isRequired,
 		query: PropTypes.string,
-		sortOrder: PropTypes.oneOf( [ 'date-followed', 'alpha' ] ),
+		sortOrder: PropTypes.oneOf( [ 'date-followed', 'alpha', 'date-updated' ] ),
 		windowScrollerRef: PropTypes.func,
 	};
 
@@ -39,6 +39,22 @@ class FollowingManageSubscriptions extends Component {
 				const displayUrl = formatUrlForDisplay( follow.URL );
 				return getFeedTitle( site, feed, displayUrl ).toLowerCase().trimStart();
 			} );
+		}
+
+		if ( sortOrder === 'date-updated' ) {
+			return sortBy( follows, ( follow ) => {
+				let last_update = 0;
+				if ( follow.date_subscribed && ! isNaN( follow.date_subscribed ) ) {
+					last_update = follow.date_subscribed;
+				}
+				if ( follow.last_updated && ! isNaN( follow.last_updated ) ) {
+					last_update = follow.last_updated;
+				}
+				if ( follow.feed && follow.feed.last_update && ! isNaN( follow.feed.last_update ) ) {
+					last_update = follow.feed.last_update;
+				}
+				return last_update;
+			} ).reverse();
 		}
 
 		return sortBy( follows, [ 'date_subscribed' ] ).reverse();

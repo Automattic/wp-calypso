@@ -41,10 +41,22 @@
 function a8c_happyblocks_assets() {
 	$assets = require_once plugin_dir_path( __FILE__ ) . 'dist/editor.min.asset.php';
 
+	wp_register_script( 'a8c-happyblocks-pricing-plans', '', array(), '20221117', true );
+	wp_enqueue_script( 'a8c-happyblocks-pricing-plans' );
+	wp_add_inline_script(
+		'a8c-happyblocks-pricing-plans',
+		sprintf(
+			'window.A8C_HAPPY_BLOCKS_CONFIG = %s;
+			window.configData ||= {};',
+			wp_json_encode( a8c_happyblocks_get_config() )
+		),
+		'before'
+	);
+
 	wp_enqueue_script(
-		'a8c-happyblocks-js',
+		'a8c-happyblocks-edit-js',
 		plugins_url( 'dist/editor.min.js', __FILE__ ),
-		$assets['dependencies'],
+		array_merge( array( 'a8c-happyblocks-pricing-plans' ), $assets['dependencies'] ),
 		$assets['version'],
 		true
 	);
@@ -62,18 +74,104 @@ function a8c_happyblocks_assets() {
  * Load front-end view assets.
  */
 function a8c_happyblocks_view_assets() {
-	if ( ! is_admin() ) {
-		$assets = require plugin_dir_path( __FILE__ ) . 'dist/view.min.asset.php';
+	$assets = require plugin_dir_path( __FILE__ ) . 'dist/view.min.asset.php';
 
-		$style_file = 'dist/view' . ( is_rtl() ? '.rtl.css' : '.css' );
-		wp_enqueue_style(
-			'a8c-happyblocks-css',
-			plugins_url( $style_file, __FILE__ ),
-			array(),
-			$assets['version']
-		);
-	}
+	$style_file = 'dist/view' . ( is_rtl() ? '.rtl.css' : '.css' );
+	wp_enqueue_style(
+		'a8c-happyblock-view-css',
+		plugins_url( $style_file, __FILE__ ),
+		array(),
+		$assets['version']
+	);
+
+	$script_file = 'dist/view.js';
+	wp_enqueue_script(
+		'a8c-happyblock-view-js',
+		plugins_url( $script_file, __FILE__ ),
+		$assets['dependencies'],
+		$assets['version'],
+		true
+	);
 }
-
 add_action( 'enqueue_block_editor_assets', 'a8c_happyblocks_assets' );
 add_action( 'wp_enqueue_scripts', 'a8c_happyblocks_view_assets' );
+
+/**
+ * Get the domain to use in the Pricing Plans block.
+ *
+ * The function should return false when the domain is not set, see https://github.com/Automattic/wp-calypso/pull/70402#discussion_r1033299970
+ *
+ * @return string|bool The domain host (or false if no domain is available)
+ */
+function a8c_happyblocks_pricing_plans_get_domain() {
+
+	// If the user is not authenticated, then we can't get their domain.
+	if ( ! is_user_logged_in() ) {
+		return false;
+	}
+
+	// If BBPress is not active, then just don't return any domain and let the user choose.
+	if ( ! function_exists( 'bbp_get_topic_id' ) ) {
+		return false;
+	}
+
+	$topic_id  = bbp_get_topic_id();
+	$author_id = intval( get_post_field( 'post_author', $topic_id ) );
+
+	/*
+	If the current user is the author of the topic, return the topic's domain selected
+	in the "Site you need help with" field.
+	*/
+	if ( get_current_user_id() === $author_id ) {
+		$topic_domain = get_post_meta( $topic_id, 'which_blog_domain', true );
+		if ( $topic_domain ) {
+			return $topic_domain;
+		}
+	}
+
+	// If the current user is not the author of the topic, then don't return any domain.
+	return false;
+}
+
+/**
+ * Get the pricing plans configuration
+ *
+ * @return array
+ */
+function a8c_happyblocks_get_config() {
+
+	return array(
+		'locale' => get_user_locale(),
+		'domain' => a8c_happyblocks_pricing_plans_get_domain(),
+	);
+}
+
+/**
+ * Render happy-tools/pricing-plans block view placeholder.
+ *
+ * @param array $attributes Block attributes.
+ * @return string
+ */
+function a8c_happyblocks_render_pricing_plans_callback( $attributes ) {
+	$attributes['domain'] = a8c_happyblocks_pricing_plans_get_domain();
+	$json_attributes      = htmlspecialchars( wp_json_encode( $attributes ), ENT_QUOTES, 'UTF-8' );
+
+	return <<<HTML
+		<div data-attributes="${json_attributes}" class="a8c-happy-tools-pricing-plans-block-placeholder" />
+HTML;
+}
+
+/**
+ * Register happy-blocks.
+ */
+function a8c_happyblocks_register() {
+	register_block_type(
+		'happy-blocks/pricing-plans',
+		array(
+			'api_version'     => 2,
+			'render_callback' => 'a8c_happyblocks_render_pricing_plans_callback',
+		)
+	);
+
+}
+add_action( 'init', 'a8c_happyblocks_register' );

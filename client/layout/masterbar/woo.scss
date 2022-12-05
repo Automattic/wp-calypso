@@ -143,7 +143,8 @@
 		line-height: 20px;
 	}
 
-	.button.is-primary {
+	.button.is-primary,
+	.login .button.is-primary {
 		background: $woo-purple-60;
 		border: none;
 		color: #fff;
@@ -309,6 +310,15 @@
 		padding-left: 0;
 		padding-right: 0;
 		background-color: initial;
+		&.gdpr-banner {
+			background-color: var(--color-neutral-70);
+			padding-left: 24px;
+			padding-right: 24px;
+			.gdpr-banner__buttons button {
+				border: none;
+				background-color: #fff;
+			}
+		}
 	}
 
 	.magic-login {

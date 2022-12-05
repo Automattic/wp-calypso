@@ -1,11 +1,11 @@
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import { isEqual } from 'lodash';
 import page from 'page';
 import { useCallback, useEffect, useState } from 'react';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-	selectAlphaticallySortedProductOptions,
 	ensurePartnerPortalReturnUrl,
 	getProductTitle,
 } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
@@ -121,163 +121,77 @@ export function useCursorPagination(
 	return [ page, showPagination, onNavigate ];
 }
 
-/**
- * Handle license issuing
- *
- */
-export function useLicenseIssuing(
-	product: string,
-	selectedSite?: { ID: number; domain: string } | null
+export function useAssignLicenses(
+	licenseKeys: Array< string >,
+	selectedSite: { ID: number; domain: string } | null
 ): [ () => void, boolean ] {
-	const translate = useTranslate();
+	const products = useProductsQuery();
 	const dispatch = useDispatch();
-	const sites = useSelector( getSites ).length;
-	const products = useProductsQuery( {
-		select: selectAlphaticallySortedProductOptions,
-	} );
-
-	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
-
 	const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
-
-	const handleRedirectToDashboard = ( licenseKey: string ) => {
-		const selectedProduct = products?.data?.find( ( p ) => p.slug === product );
-		if ( selectedSite && selectedProduct ) {
-			dispatch(
-				setPurchasedLicense( {
-					selectedSite: selectedSite?.domain,
-					selectedProducts: [
-						{
-							name: getProductTitle( selectedProduct.name ),
-							key: licenseKey,
-							status: 'fulfilled',
-						},
-					],
-				} )
-			);
-		}
-		return page.redirect( '/dashboard' );
-	};
-
 	const assignLicense = useAssignLicenseMutation( {
-		onSuccess: ( license: any ) => {
-			if ( fromDashboard ) {
-				handleRedirectToDashboard( license.license_key );
-				return;
-			}
-
-			page.redirect(
-				addQueryArgs( { highlight: license.license_key }, partnerPortalBasePath( '/licenses' ) )
-			);
-		},
 		onError: ( error: Error ) => {
-			dispatch( errorNotice( error.message ) );
+			dispatch( errorNotice( error.message, { isPersistent: true } ) );
 		},
 	} );
-
-	const issueLicense = useIssueLicenseMutation( {
-		onSuccess: ( license ) => {
-			dispatch( recordTracksEvent( 'calypso_partner_portal_lincese_issued', { product } ) );
-
-			const licenseKey = license.license_key;
-			const selectedSiteId = selectedSite?.ID;
-
-			if ( selectedSiteId ) {
-				assignLicense.mutate( { licenseKey, selectedSite: selectedSiteId } );
-				return;
-			}
-
-			let nextStep = addQueryArgs(
-				{ highlight: license.license_key },
-				partnerPortalBasePath( '/licenses' )
+	const isLoading = assignLicense.isLoading;
+	const selectedSiteId = selectedSite?.ID as number;
+	const assignMultipleLicenses = useCallback( async () => {
+		const assignLicenseRequests: any = [];
+		licenseKeys.forEach( ( licenseKey ) => {
+			assignLicenseRequests.push(
+				assignLicense.mutateAsync( { licenseKey, selectedSite: selectedSiteId } )
 			);
+		} );
 
-			if ( sites > 0 ) {
-				nextStep = addQueryArgs(
-					{ key: license.license_key },
-					partnerPortalBasePath( '/assign-license' )
-				);
+		dispatch(
+			recordTracksEvent( 'calypso_partner_portal_assign_multiple_licenses_submit', {
+				products: licenseKeys.join( ',' ),
+				selected_site: selectedSiteId,
+			} )
+		);
+
+		const assignLicensePromises = await Promise.allSettled( assignLicenseRequests );
+		const allSelectedProducts: { key: 'string'; name: string; status: 'rejected' | 'fulfilled' }[] =
+			[];
+
+		assignLicensePromises.forEach( ( promise: any ) => {
+			const { status, value: license } = promise;
+			if ( license ) {
+				const licenseKey = license.license_key;
+				const productSlug = licenseKey.split( '_' )[ 0 ];
+				const selectedProduct = products?.data?.find( ( p ) => p.slug === productSlug );
+				if ( selectedProduct ) {
+					const item = {
+						key: licenseKey,
+						name: getProductTitle( selectedProduct.name ),
+						status,
+					};
+					allSelectedProducts.push( item );
+				}
 			}
+		} );
 
-			dispatch(
-				successNotice(
-					translate( `Your %(product)s license was successfuly issued `, {
-						args: {
-							product:
-								products.data?.find( ( productOption ) => productOption.slug === product )?.name ||
-								'',
-						},
-					} ),
-					{
-						displayOnNextPage: true,
-					}
-				)
-			);
-			page.redirect( nextStep );
-		},
-		onError: ( error: APIError ) => {
-			let errorMessage;
-
-			switch ( error.code ) {
-				case 'missing_valid_payment_method':
-					errorMessage = translate(
-						'A primary payment method is required.{{br/}} ' +
-							'{{a}}Try adding a new payment method{{/a}} or contact support.',
-						{
-							components: {
-								a: (
-									<a href="/partner-portal/payment-methods/add?return=/partner-portal/issue-license" />
-								),
-								br: <br />,
-							},
-						}
-					);
-					break;
-
-				default:
-					errorMessage = error.message;
-					break;
-			}
-
-			dispatch( errorNotice( errorMessage ) );
-		},
-		retry: ( errorCount, error ) => {
-			// If the user has just added their payment method it's likely that there's a slight delay before the API
-			// is made aware of this and allows the creation of the license.
-			// In order to make this a smoother experience for the user, we retry a couple of times silently if the
-			// error is missing_valid_payment_method but our local state shows that the user has a payment method.
-			if ( ! paymentMethodRequired && error?.code === 'missing_valid_payment_method' ) {
-				return errorCount < 5;
-			}
-
-			return false;
-		},
-	} );
-
-	const isLoading = assignLicense.isLoading || issueLicense.isLoading;
-
-	const issue = useCallback( () => {
-		if ( isLoading ) {
-			return;
+		const assignLicenseStatus = {
+			selectedSite: selectedSite?.domain || '',
+			selectedProducts: allSelectedProducts,
+		};
+		dispatch( resetSite() );
+		dispatch( setPurchasedLicense( assignLicenseStatus ) );
+		if ( fromDashboard ) {
+			return page.redirect( '/dashboard' );
 		}
+		return page.redirect( partnerPortalBasePath( '/licenses' ) );
+	}, [
+		dispatch,
+		licenseKeys,
+		selectedSite,
+		assignLicense,
+		products,
+		fromDashboard,
+		selectedSiteId,
+	] );
 
-		dispatch( recordTracksEvent( 'calypso_partner_portal_issue_selection_submit', { product } ) );
-
-		if ( paymentMethodRequired ) {
-			const nextStep = addQueryArgs(
-				{
-					product,
-				},
-				partnerPortalBasePath( '/payment-methods/add' )
-			);
-			page( nextStep );
-			return;
-		}
-
-		issueLicense.mutate( { product } );
-	}, [ isLoading, product, paymentMethodRequired, issueLicense.mutate ] );
-
-	return [ issue, isLoading ];
+	return [ assignMultipleLicenses, isLoading ];
 }
 
 /**
@@ -286,13 +200,12 @@ export function useLicenseIssuing(
  */
 export function useIssueMultipleLicenses(
 	selectedProducts: Array< string >,
-	selectedSite?: { ID: number; domain: string } | null
+	selectedSite?: { ID: number; domain: string } | null,
+	suggestedProducts: Array< string > = []
 ): [ () => void, boolean ] {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const products = useProductsQuery( {
-		select: selectAlphaticallySortedProductOptions,
-	} );
+	const products = useProductsQuery();
 
 	const sites = useSelector( getSites ).length;
 
@@ -358,6 +271,16 @@ export function useIssueMultipleLicenses(
 			} )
 		);
 
+		// Track a custom event when the user is trying to purchase a product different than
+		// the one chosen by the dashboard.
+		if ( suggestedProducts?.length && ! isEqual( selectedProducts, suggestedProducts ) ) {
+			dispatch(
+				recordTracksEvent(
+					'calypso_partner_portal_issue_mutiple_licenses_changed_selection_after_dashboard_visit'
+				)
+			);
+		}
+
 		const selectedSiteId = selectedSite?.ID;
 
 		if ( paymentMethodRequired ) {
@@ -379,12 +302,16 @@ export function useIssueMultipleLicenses(
 		} );
 		const issueLicensePromises: any[] = await Promise.allSettled( issueLicenseRequests );
 
+		const issuedLicenses = issueLicensePromises.filter( ( { status } ) => status === 'fulfilled' );
+
+		if ( ! issuedLicenses.length ) {
+			return;
+		}
+
 		if ( ! selectedSiteId ) {
 			let nextStep = partnerPortalBasePath( '/licenses' );
 			if ( sites > 0 ) {
-				const licenseKeys = issueLicensePromises
-					.filter( ( { status } ) => status === 'fulfilled' )
-					.map( ( { value } ) => value.license_key );
+				const licenseKeys = issuedLicenses.map( ( { value } ) => value.license_key );
 				nextStep = addQueryArgs(
 					{
 						products: licenseKeys.join( ',' ),
@@ -410,17 +337,17 @@ export function useIssueMultipleLicenses(
 				} );
 				const conjunction =
 					assignedLicenses.length > 2
-						? translate( `%(commaCharacter)s and`, {
+						? translate( '%(commaCharacter)s and ', {
 								args: {
 									commaCharacter,
 									comment:
-										'The final separator of a delimited list, such as ", and" in "Jetpack Backup, Jetpack Scan, and Jetpack Boost."',
+										'The final separator of a delimited list, such as ", and " in "Jetpack Backup, Jetpack Scan, and Jetpack Boost". Note that the spaces here are important due to the way the final string is constructed.',
 								},
 						  } )
-						: translate( ' and', {
+						: translate( ' and ', {
 								args: {
 									comment:
-										'The way that two words are separated, such as " and" in "Jetpack Backup and Jetpack Scan". Note that the space here is important due to the way the final string is constructed.',
+										'The way that two words are separated, such as " and " in "Jetpack Backup and Jetpack Scan". Note that the spaces here are important due to the way the final string is constructed.',
 								},
 						  } );
 
@@ -433,7 +360,7 @@ export function useIssueMultipleLicenses(
 						// We are not using the same translate method for plural form since we have different arguments.
 						assignedLicenses.length > 1
 							? translate(
-									'{{strong}}%(initialLicenseList)s%(conjunction)s %(lastLicenseItem)s{{/strong}} were succesfully issued',
+									'{{strong}}%(initialLicenseList)s%(conjunction)s%(lastLicenseItem)s{{/strong}} were succesfully issued',
 									{
 										args: {
 											lastLicenseItem,
@@ -464,20 +391,18 @@ export function useIssueMultipleLicenses(
 
 		const assignedProducts: Array< any > = [];
 
-		issueLicensePromises.forEach( ( promise: any ) => {
-			const { status, value: license } = promise;
-			if ( status === 'fulfilled' ) {
-				const licenseKey = license.license_key;
-				const productSlug = licenseKey.split( '_' )[ 0 ];
-				const selectedProduct = products?.data?.find( ( p ) => p.slug === productSlug );
-				if ( selectedProduct ) {
-					assignedProducts.push( getProductTitle( selectedProduct.name ) );
-				}
-				if ( selectedSiteId ) {
-					assignLicenseRequests.push(
-						assignLicense.mutateAsync( { licenseKey, selectedSite: selectedSiteId } )
-					);
-				}
+		issuedLicenses.forEach( ( promise: any ) => {
+			const { value: license } = promise;
+			const licenseKey = license.license_key;
+			const productSlug = licenseKey.split( '_' )[ 0 ];
+			const selectedProduct = products?.data?.find( ( p ) => p.slug === productSlug );
+			if ( selectedProduct ) {
+				assignedProducts.push( getProductTitle( selectedProduct.name ) );
+			}
+			if ( selectedSiteId ) {
+				assignLicenseRequests.push(
+					assignLicense.mutateAsync( { licenseKey, selectedSite: selectedSiteId } )
+				);
 			}
 		} );
 
@@ -539,4 +464,16 @@ export function useIssueMultipleLicenses(
 	] );
 
 	return [ issue, isLoading ];
+}
+
+/**
+ * Handle multiple license assignment
+ *
+ */
+export function useAssignMultipleLicenses(
+	selectedLicenseKeys: Array< string >,
+	selectedSite: { ID: number; domain: string } | null
+): [ () => void, boolean ] {
+	const [ assign, isLoading ] = useAssignLicenses( selectedLicenseKeys, selectedSite );
+	return [ assign, isLoading ];
 }

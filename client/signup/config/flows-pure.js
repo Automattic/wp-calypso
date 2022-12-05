@@ -1,5 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { setupSiteAfterCreation } from '@automattic/onboarding';
+import {
+	LINK_IN_BIO_FLOW,
+	LINK_IN_BIO_TLD_FLOW,
+	setupSiteAfterCreation,
+} from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { VIDEOPRESS_ONBOARDING_FLOW_STEPS } from './constants';
 
@@ -124,8 +128,8 @@ export function generateFlows( {
 			postCompleteCallback: setupSiteAfterCreation,
 		},
 		{
-			name: 'link-in-bio',
-			steps: [ 'domains', 'plans-link-in-bio' ],
+			name: LINK_IN_BIO_FLOW,
+			steps: [ 'domains-link-in-bio', 'plans-link-in-bio' ],
 			destination: ( dependencies ) =>
 				`/setup/link-in-bio/launchpad?siteSlug=${ encodeURIComponent( dependencies.siteSlug ) }`,
 			description: 'Beginning of the flow to create a link in bio',
@@ -137,10 +141,27 @@ export function generateFlows( {
 			postCompleteCallback: setupSiteAfterCreation,
 		},
 		{
-			name: 'import',
-			steps: [ 'domains', 'plans-import' ],
+			name: LINK_IN_BIO_TLD_FLOW,
+			steps: [ 'domains-link-in-bio-tld', 'user', 'plans-link-in-bio' ],
+			middleDestination: {
+				user: ( dependencies ) => `/setup/link-in-bio/patterns?tld=${ dependencies.tld }`,
+			},
 			destination: ( dependencies ) =>
-				`/setup/import?flow=import-focused&siteSlug=${ dependencies.siteSlug }`,
+				`/setup/link-in-bio/launchpad?siteSlug=${ encodeURIComponent( dependencies.siteSlug ) }`,
+			description: 'Beginning of the flow to create a link in bio',
+			lastModified: '2022-11-03',
+			showRecaptcha: true,
+			get pageTitle() {
+				return translate( 'Link in Bio' );
+			},
+			providesDependenciesInQuery: [ 'tld' ],
+			postCompleteCallback: setupSiteAfterCreation,
+		},
+		{
+			name: 'import',
+			steps: [ 'user', 'domains', 'plans-import' ],
+			destination: ( dependencies ) =>
+				`/setup/import-focused/import?siteSlug=${ dependencies.siteSlug }`,
 			description: 'Beginning of the flow to import content',
 			lastModified: '2022-10-03',
 			showRecaptcha: true,

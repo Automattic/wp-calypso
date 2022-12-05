@@ -162,7 +162,7 @@ class StatsPostDetail extends Component {
 						action={ translate( 'Get more traffic!' ) }
 						actionURL="https://wordpress.com/support/getting-more-views-and-traffic/"
 						actionTarget="blank"
-						illustration="/calypso/images/stats/illustration-stats.svg"
+						illustration="calypso/assets/images/stats/illustration-stats.svg"
 						illustrationWidth={ 150 }
 					/>
 				) }

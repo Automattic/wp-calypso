@@ -6,6 +6,9 @@ $mobile-layout-breakpoint: $break-small;
 
 .stats__all-time-highlights-section {
 	.highlight-cards {
+		background-color: inherit;
+		box-shadow: none;
+
 		@media ( max-width: $mobile-layout-breakpoint ) {
 			display: none;
 		}

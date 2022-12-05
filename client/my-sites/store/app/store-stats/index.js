@@ -62,7 +62,7 @@ class StoreStats extends Component {
 		} );
 
 		return (
-			<Main className={ mainWrapperClass } wideLayout>
+			<Main className={ mainWrapperClass } fullWidthLayout>
 				<PageViewTracker
 					path={ `/store/stats/orders/${ unit }/:site` }
 					title={ `Store > Stats > Orders > ${ titlecase( unit ) }` }
@@ -72,22 +72,63 @@ class StoreStats extends Component {
 					<QuerySiteStats statType="statsOrders" siteId={ siteId } query={ orderQuery } />
 				) }
 
-				<FormattedHeader
-					brandFont
-					className="store-stats__section-header"
-					headerText={ translate( 'Jetpack Stats' ) }
-					align="left"
-					subHeaderText={ translate(
-						'Learn valuable insights about the purchases made on your store.'
-					) }
-				/>
+				<div className="stats">
+					<FormattedHeader
+						brandFont
+						className="store-stats__section-header"
+						headerText={ translate( 'Jetpack Stats' ) }
+						align="left"
+						subHeaderText={ translate(
+							'Learn valuable insights about the purchases made on your store.'
+						) }
+					/>
 
-				<StatsNavigation selectedItem="store" siteId={ siteId } slug={ slug } interval={ unit } />
+					<StatsNavigation selectedItem="store" siteId={ siteId } slug={ slug } interval={ unit } />
 
-				<div id="my-stats-content" className={ statsWrapperClass }>
-					{ isNewMainChart ? (
-						<>
-							<StatsPeriodHeader>
+					<div id="my-stats-content" className={ statsWrapperClass }>
+						{ isNewMainChart ? (
+							<>
+								<StatsPeriodHeader>
+									<StatsPeriodNavigation
+										date={ selectedDate }
+										period={ unit }
+										url={ `/store/stats/orders/${ unit }/${ slug }` }
+									>
+										<DatePicker
+											period={ unit }
+											// this is needed to counter the +1d adjustment made in DatePicker for weeks
+											date={
+												unit === 'week'
+													? moment( selectedDate, 'YYYY-MM-DD' )
+															.subtract( 1, 'days' )
+															.format( 'YYYY-MM-DD' )
+													: selectedDate
+											}
+											query={ orderQuery }
+											statsType="statsOrders"
+											showQueryDate
+										/>
+									</StatsPeriodNavigation>
+									<Intervals selected={ unit } pathTemplate={ pathTemplate } compact={ false } />
+								</StatsPeriodHeader>
+
+								<Chart
+									query={ orderQuery }
+									selectedDate={ endSelectedDate }
+									siteId={ siteId }
+									unit={ unit }
+									slug={ slug }
+								/>
+							</>
+						) : (
+							<>
+								<Chart
+									query={ orderQuery }
+									selectedDate={ endSelectedDate }
+									siteId={ siteId }
+									unit={ unit }
+									slug={ slug }
+								/>
 								<StatsPeriodNavigation
 									date={ selectedDate }
 									period={ unit }
@@ -108,108 +149,69 @@ class StoreStats extends Component {
 										showQueryDate
 									/>
 								</StatsPeriodNavigation>
-								<Intervals selected={ unit } pathTemplate={ pathTemplate } compact={ false } />
-							</StatsPeriodHeader>
+							</>
+						) }
 
-							<Chart
-								query={ orderQuery }
-								selectedDate={ endSelectedDate }
-								siteId={ siteId }
-								unit={ unit }
-								slug={ slug }
-							/>
-						</>
-					) : (
-						<>
-							<Chart
-								query={ orderQuery }
-								selectedDate={ endSelectedDate }
-								siteId={ siteId }
-								unit={ unit }
-								slug={ slug }
-							/>
-							<StatsPeriodNavigation
-								date={ selectedDate }
-								period={ unit }
-								url={ `/store/stats/orders/${ unit }/${ slug }` }
-							>
-								<DatePicker
-									period={ unit }
-									// this is needed to counter the +1d adjustment made in DatePicker for weeks
-									date={
-										unit === 'week'
-											? moment( selectedDate, 'YYYY-MM-DD' )
-													.subtract( 1, 'days' )
-													.format( 'YYYY-MM-DD' )
-											: selectedDate
-									}
-									query={ orderQuery }
-									statsType="statsOrders"
-									showQueryDate
-								/>
-							</StatsPeriodNavigation>
-						</>
-					) }
-
-					<div className="store-stats__widgets">
-						{ sparkWidgets.map( ( widget, index ) => (
-							<div
-								className="store-stats__widgets-column widgets stats__module-headerless--unified"
-								key={ index }
-							>
-								<Module
-									siteId={ siteId }
-									emptyMessage={ noDataMsg }
-									query={ orderQuery }
-									statType="statsOrders"
-								>
-									<WidgetList
-										siteId={ siteId }
-										query={ orderQuery }
-										selectedDate={ endSelectedDate }
-										statType="statsOrders"
-										widgets={ widget }
-									/>
-								</Module>
-							</div>
-						) ) }
-						{ topWidgets.map( ( widget ) => {
-							const header = (
-								<SectionHeader href={ widget.basePath + widgetPath } label={ widget.title } />
-							);
-							return (
+						<div className="store-stats__widgets">
+							{ sparkWidgets.map( ( widget, index ) => (
 								<div
-									className="store-stats__widgets-column stats__module--unified"
-									key={ widget.basePath }
+									className="store-stats__widgets-column widgets stats__module-headerless--unified"
+									key={ index }
 								>
-									{ siteId && (
-										<QuerySiteStats
-											statType={ widget.statType }
-											siteId={ siteId }
-											query={ topListQuery }
-										/>
-									) }
 									<Module
 										siteId={ siteId }
-										header={ header }
-										emptyMessage={ widget.empty }
-										query={ topListQuery }
-										statType={ widget.statType }
+										emptyMessage={ noDataMsg }
+										query={ orderQuery }
+										statType="statsOrders"
 									>
-										<List
+										<WidgetList
 											siteId={ siteId }
-											values={ widget.values }
-											query={ topListQuery }
-											statType={ widget.statType }
+											query={ orderQuery }
+											selectedDate={ endSelectedDate }
+											statType="statsOrders"
+											widgets={ widget }
 										/>
 									</Module>
 								</div>
-							);
-						} ) }
+							) ) }
+							{ topWidgets.map( ( widget ) => {
+								const header = (
+									<SectionHeader href={ widget.basePath + widgetPath } label={ widget.title } />
+								);
+								return (
+									<div
+										className="store-stats__widgets-column stats__module--unified"
+										key={ widget.basePath }
+									>
+										{ siteId && (
+											<QuerySiteStats
+												statType={ widget.statType }
+												siteId={ siteId }
+												query={ topListQuery }
+											/>
+										) }
+										<Module
+											siteId={ siteId }
+											header={ header }
+											emptyMessage={ widget.empty }
+											query={ topListQuery }
+											statType={ widget.statType }
+										>
+											<List
+												siteId={ siteId }
+												values={ widget.values }
+												query={ topListQuery }
+												statType={ widget.statType }
+											/>
+										</Module>
+									</div>
+								);
+							} ) }
+						</div>
 					</div>
-				</div>
 
-				<JetpackColophon />
+					<JetpackColophon />
+				</div>
 			</Main>
 		);
 	}

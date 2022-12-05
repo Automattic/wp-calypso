@@ -37,6 +37,7 @@ export type ProductSlugsProps = Pick< ProductStoreProps, 'duration' > & ProductS
 
 export type productIconProps = {
 	productSlug: string;
+	light?: boolean;
 };
 
 export type ProductsListProps = ProductStoreBaseProps & {
@@ -107,4 +108,18 @@ export type MoreInfoLinkProps = {
 	item: SelectorProduct;
 	onClick?: VoidFunction;
 	isExternal?: boolean;
+};
+
+export type PricingBreakdownProps = {
+	product: SelectorProduct;
+	siteId: number | null;
+	includedProductSlugs: ReadonlyArray< string >;
+	showBreakdownHeading?: boolean;
+};
+
+export type PricingBreakdownItem = {
+	name: React.ReactNode;
+	slug: string;
+	originalPrice: number;
+	renderedPrice: React.ReactNode;
 };

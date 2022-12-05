@@ -7,6 +7,7 @@ import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { StepPath } from './internals/steps-repository';
 import { Flow, ProvidedDependencies } from './internals/types';
 
@@ -33,17 +34,17 @@ export const importFlow: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
+		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const urlQueryParams = useQuery();
 		const siteSlugParam = useSiteSlugParam();
 		const isDesktop = useViewportMatch( 'large' );
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+		const flowProgress = useSiteSetupFlowProgress( _currentStep, 'import', '' );
 
-		const appendFlowQueryParam = ( path: string ) => {
-			const joinChar = path.includes( '?' ) ? '&' : '?';
-
-			return `${ path }${ joinChar }flow=${ this.name }`;
-		};
+		if ( flowProgress ) {
+			setStepProgress( flowProgress );
+		}
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
@@ -73,14 +74,10 @@ export const importFlow: Flow = {
 						return exitFlow( providedDependencies?.url as string );
 					}
 
-					return navigate(
-						appendFlowQueryParam( providedDependencies?.url as string ) as StepPath
-					);
+					return navigate( providedDependencies?.url as StepPath );
 				}
 				case 'importReadyPreview': {
-					return navigate(
-						appendFlowQueryParam( providedDependencies?.url as string ) as StepPath
-					);
+					return navigate( providedDependencies?.url as StepPath );
 				}
 
 				case 'importerWix':
@@ -92,9 +89,7 @@ export const importFlow: Flow = {
 						return exitFlow( providedDependencies?.url as string );
 					}
 
-					return navigate(
-						appendFlowQueryParam( providedDependencies?.url as string ) as StepPath
-					);
+					return navigate( providedDependencies?.url as StepPath );
 				}
 
 				case 'designSetup': {
@@ -134,7 +129,7 @@ export const importFlow: Flow = {
 					if ( backToStep ) {
 						const path = `${ backToStep }?siteSlug=${ siteSlugParam }`;
 
-						return navigate( appendFlowQueryParam( path ) as StepPath );
+						return navigate( path as StepPath );
 					}
 
 					return navigate( 'import' );
@@ -155,13 +150,20 @@ export const importFlow: Flow = {
 
 		const goNext = () => {
 			switch ( _currentStep ) {
+				case 'import':
+					return exitFlow( `/home/${ siteSlugParam }` );
 				default:
 					return navigate( 'import' );
 			}
 		};
 
 		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
-			navigate( step );
+			switch ( step ) {
+				case 'goals':
+					return exitFlow( `/setup/site-setup/goals?siteSlug=${ siteSlugParam }` );
+				default:
+					return navigate( step );
+			}
 		};
 
 		return { goNext, goBack, goToStep, submit };

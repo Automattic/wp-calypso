@@ -1065,6 +1065,25 @@ function handleInlineHelpButton( calypsoPort ) {
 }
 
 /**
+ * Handles the back to Dashboard link after the removal of the previously-used Portal in Gutenberg 14.5
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function handleSiteEditorBackButton( calypsoPort ) {
+	// have to do this event delegation style because the Editor isn't fully initialized yet.
+	document.getElementById( 'wpwrap' ).addEventListener( 'click', ( event ) => {
+		const clickedElement = event.target;
+		if ( clickedElement.classList.contains( 'edit-site-navigation-panel__back-to-dashboard' ) ) {
+			event.preventDefault();
+			calypsoPort.postMessage( {
+				action: 'openLinkInParentFrame',
+				payload: { postUrl: clickedElement.href },
+			} );
+		}
+	} );
+}
+
+/**
  * If WelcomeTour is set to show, check if the App Banner is visible.
  * If App Banner is visible, we set the Welcome Tour to not show.
  * When the App Banner gets dismissed, we set the Welcome Tour to show.
@@ -1199,6 +1218,8 @@ function initPort( message ) {
 		handleInlineHelpButton( calypsoPort );
 
 		handleAppBannerShowing( calypsoPort );
+
+		handleSiteEditorBackButton( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

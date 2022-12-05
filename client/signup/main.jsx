@@ -5,7 +5,7 @@ import {
 	isDomainMapping,
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
-import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import { isNewsletterOrLinkInBioFlow, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
 import debugModule from 'debug';
 import {
 	clone,
@@ -18,7 +18,6 @@ import {
 	kebabCase,
 	map,
 	omit,
-	pick,
 	startsWith,
 } from 'lodash';
 import page from 'page';
@@ -120,7 +119,13 @@ function removeLoadingScreenClassNamesFromBody() {
 }
 
 function showProgressIndicator( flowName ) {
-	const DISABLED_PROGRESS_INDICATOR_FLOWS = [ 'pressable-nux', 'setup-site', 'importer', 'domain' ];
+	const DISABLED_PROGRESS_INDICATOR_FLOWS = [
+		'pressable-nux',
+		'setup-site',
+		'importer',
+		'domain',
+		LINK_IN_BIO_TLD_FLOW,
+	];
 
 	return ! DISABLED_PROGRESS_INDICATOR_FLOWS.includes( flowName );
 }
@@ -156,18 +161,12 @@ class Signup extends Component {
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
-		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
-		const queryObject = this.props.initialContext?.query ?? {};
-
-		let providedDependencies;
-
-		if ( flow.providesDependenciesInQuery ) {
-			providedDependencies = pick( queryObject, flow.providesDependenciesInQuery );
-		}
+		let providedDependencies = this.getCurrentFlowSupportedQueryParams();
 
 		// Prevent duplicate sites, check pau2Xa-1Io-p2#comment-6759.
 		if ( this.props.isManageSiteFlow ) {
 			providedDependencies = {
+				...providedDependencies,
 				siteSlug: getSignupCompleteSlug(),
 				isManageSiteFlow: this.props.isManageSiteFlow,
 			};
@@ -183,9 +182,14 @@ class Signup extends Component {
 		this.removeFulfilledSteps( this.props );
 
 		this.updateShouldShowLoadingScreen();
+		this.completeFlowAfterLoggingIn();
 
-		if ( canResumeFlow( this.props.flowName, this.props.progress, this.props.isLoggedIn ) ) {
-			// Resume from the current window location
+		// Resume from the current window location if there is stored, completed step progress.
+		// However, if the step is removed, e.g. the user step is removed after logging-in, it can't be resumed.
+		if (
+			canResumeFlow( this.props.flowName, this.props.progress, this.props.isLoggedIn ) &&
+			! this.isCurrentStepRemovedFromFlow()
+		) {
 			return;
 		}
 
@@ -196,7 +200,9 @@ class Signup extends Component {
 				.steps[ 0 ];
 			this.setState( { resumingStep: destinationStep } );
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
-			return page.redirect( getStepUrl( this.props.flowName, destinationStep, undefined, locale ) );
+			return page.redirect(
+				getStepUrl( this.props.flowName, destinationStep, undefined, locale, providedDependencies )
+			);
 		}
 	}
 
@@ -309,18 +315,22 @@ class Signup extends Component {
 		setTimeout( () => window.scrollTo( 0, 0 ), 0 );
 	}
 
-	completeP2FlowAfterLoggingIn() {
-		if ( ! this.props.flowName !== 'p2v1' || ! this.props.progress ) {
+	completeFlowAfterLoggingIn() {
+		const flowName = this.props.flowName;
+		// p2v1 also has a user step at the end but the flow is otherwise broken.
+		// reader also has a user step at the end, but this change doesn't fix that flow.
+		const eligbleFlows = [ 'domain', 'add-domain' ];
+		if ( ! eligbleFlows.includes( flowName ) || ! this.props.progress ) {
 			return;
 		}
+		const stepName = this.props.stepName;
 
-		const p2SiteStep = this.props.progress[ 'p2-site' ];
-
-		if ( p2SiteStep && p2SiteStep.status === 'pending' && this.props.isLoggedIn ) {
-			// By removing and adding the p2-site step, we trigger the `SignupFlowController` store listener
+		const step = this.props.progress[ stepName ];
+		if ( step && step.status === 'pending' && this.props.isLoggedIn ) {
+			// By removing and adding the step, we trigger the `SignupFlowController` store listener
 			// to process the signup flow.
-			this.props.removeStep( p2SiteStep );
-			this.props.addStep( p2SiteStep );
+			this.props.removeStep( step );
+			this.props.addStep( step );
 		}
 	}
 
@@ -366,8 +376,11 @@ class Signup extends Component {
 	}
 
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
-		if ( isWooOAuth2Client( this.props.oauth2Client ) ) {
-			// We don't want to show the loading screen for the Woo signup flow.
+		if (
+			isWooOAuth2Client( this.props.oauth2Client ) ||
+			'videopress-account' === this.props.flowName
+		) {
+			// We don't want to show the loading screen for the Woo signup and videopress-account flow.
 			return;
 		}
 
@@ -565,6 +578,27 @@ class Signup extends Component {
 		return window.location.origin + path;
 	};
 
+	getCurrentFlowSupportedQueryParams = () => {
+		const queryObject = this.props.initialContext?.query ?? {};
+		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
+		const supportedParams = [
+			'siteId',
+			'siteSlug',
+			'flags', // for the feature flags
+			...( flow?.providesDependenciesInQuery ?? [] ),
+		];
+
+		const result = {};
+		for ( const param of supportedParams ) {
+			const value = queryObject[ param ];
+			if ( value != null ) {
+				result[ param ] = value;
+			}
+		}
+
+		return result;
+	};
+
 	// `flowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToStep = ( stepName, stepSectionName, flowName = this.props.flowName ) => {
@@ -573,8 +607,15 @@ class Signup extends Component {
 		// to invalid step.
 		if ( stepName && ! this.isEveryStepSubmitted() ) {
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
-			const { siteId, siteSlug } = this.props.initialContext?.query ?? {};
-			page( getStepUrl( flowName, stepName, stepSectionName, locale, { siteId, siteSlug } ) );
+			page(
+				getStepUrl(
+					flowName,
+					stepName,
+					stepSectionName,
+					locale,
+					this.getCurrentFlowSupportedQueryParams()
+				)
+			);
 		} else if ( this.isEveryStepSubmitted() ) {
 			this.goToFirstInvalidStep();
 		}
@@ -583,7 +624,10 @@ class Signup extends Component {
 	// `nextFlowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToNextStep = ( nextFlowName = this.props.flowName ) => {
-		const flowSteps = flows.getFlow( nextFlowName, this.props.isLoggedIn ).steps;
+		const { steps: flowSteps, middleDestination } = flows.getFlow(
+			nextFlowName,
+			this.props.isLoggedIn
+		);
 		const currentStepIndex = flowSteps.indexOf( this.props.stepName );
 		const nextStepName = flowSteps[ currentStepIndex + 1 ];
 		const nextProgressItem = get( this.props.progress, nextStepName );
@@ -591,6 +635,15 @@ class Signup extends Component {
 
 		if ( nextFlowName !== this.props.flowName ) {
 			this.setState( { previousFlowName: this.props.flowName } );
+		}
+
+		const midPoint = middleDestination ? middleDestination[ this.props.stepName ] : null;
+
+		if ( midPoint ) {
+			// save the resuming point and then navigate away.
+			this.setState( { resumingStep: nextStepName } );
+			page( midPoint( this.props.signupDependencies ) );
+			return;
 		}
 
 		this.goToStep( nextStepName, nextStepSection, nextFlowName );
@@ -602,7 +655,6 @@ class Signup extends Component {
 			progress,
 			this.props.isLoggedIn
 		);
-		const { siteId, siteSlug } = this.props.initialContext?.query ?? {};
 
 		if ( firstInvalidStep ) {
 			recordSignupInvalidStep( this.props.flowName, this.props.stepName );
@@ -616,10 +668,13 @@ class Signup extends Component {
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
 			debug( `Navigating to the first invalid step: ${ firstInvalidStep.stepName }` );
 			page(
-				getStepUrl( this.props.flowName, firstInvalidStep.stepName, '', locale, {
-					siteId,
-					siteSlug,
-				} )
+				getStepUrl(
+					this.props.flowName,
+					firstInvalidStep.stepName,
+					'',
+					locale,
+					this.getCurrentFlowSupportedQueryParams()
+				)
 			);
 		}
 	};
@@ -689,8 +744,6 @@ class Signup extends Component {
 				isDomainTransfer( domainItem ) ||
 				isDomainMapping( domainItem ) );
 
-		const { siteId, siteSlug } = this.props.initialContext?.query ?? {};
-
 		// Hide the free option in the signup flow
 		const selectedHideFreePlan = get( this.props, 'signupDependencies.shouldHideFreePlan', false );
 		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
@@ -731,7 +784,7 @@ class Signup extends Component {
 							positionInFlow={ this.getPositionInFlow() }
 							hideFreePlan={ hideFreePlan }
 							isReskinned={ isReskinned }
-							queryParams={ { siteId, siteSlug } }
+							queryParams={ this.getCurrentFlowSupportedQueryParams() }
 							{ ...propsForCurrentStep }
 						/>
 					) }
@@ -740,11 +793,15 @@ class Signup extends Component {
 		);
 	}
 
-	shouldWaitToRender() {
-		const isStepRemovedFromFlow = ! includes(
+	isCurrentStepRemovedFromFlow() {
+		return ! includes(
 			flows.getFlow( this.props.flowName, this.props.isLoggedIn ).steps,
 			this.props.stepName
 		);
+	}
+
+	shouldWaitToRender() {
+		const isStepRemovedFromFlow = this.isCurrentStepRemovedFromFlow();
 		const isDomainsForSiteEmpty =
 			this.props.isLoggedIn &&
 			this.props.signupDependencies.siteSlug &&

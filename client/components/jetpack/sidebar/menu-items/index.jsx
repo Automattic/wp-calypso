@@ -100,6 +100,7 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 				<SidebarItem
 					customIcon={ showIcons && <JetpackIcons icon="social" /> }
 					label={ translate( 'Social', {
+						context: 'Jetpack product name',
 						comment: 'Jetpack sidebar menu item',
 					} ) }
 					link={ `/jetpack-social/${ siteSlug }` }
