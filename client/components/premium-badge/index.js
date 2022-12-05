@@ -60,6 +60,7 @@ const PremiumBadge = ( { className, labelText = '', tooltipText } ) => {
 				context={ popoverAnchor }
 				isVisible={ isPopoverVisible }
 				onClose={ () => setIsPopoverVisible( false ) }
+				focusOnShow={ false }
 			>
 				{ tooltipText }
 			</Popover>
