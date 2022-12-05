@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { withLocalizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
@@ -126,7 +127,7 @@ class Privacy extends Component {
 					</form>
 				</Card>
 				<DPA />
-				<DoNotSellSetting />
+				{ config.isEnabled( 'cookie-banner' ) && <DoNotSellSetting /> }
 			</Main>
 		);
 	}
