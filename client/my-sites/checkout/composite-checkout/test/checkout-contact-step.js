@@ -256,7 +256,7 @@ describe( 'Checkout contact step', () => {
 			messages: { postal_code: [ 'Postal code error message' ] },
 		} );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } /> );
 		// Wait for the cart to load
 		await screen.findByText( 'Country' );
 		await expect( screen.findByText( 'Postal code error message' ) ).toNeverAppear();
