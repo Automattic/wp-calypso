@@ -72,6 +72,14 @@ function useCachedContactDetailsForCheckoutForm(
 	}
 	const { loadDomainContactDetailsFromCache } = checkoutStoreActions;
 
+	const isMounted = useRef( true );
+	useEffect( () => {
+		isMounted.current = true;
+		return () => {
+			isMounted.current = false;
+		};
+	}, [] );
+
 	// When we have fetched or loaded contact details, send them to the
 	// `wpcom-checkout` data store for use by the checkout contact form.
 	useEffect( () => {
@@ -99,6 +107,9 @@ function useCachedContactDetailsForCheckoutForm(
 			postalCode: arePostalCodesSupported ? cachedContactDetails.postalCode : '',
 		} )
 			.then( () => {
+				if ( ! isMounted.current ) {
+					return false;
+				}
 				if ( cachedContactDetails.countryCode ) {
 					debug( 'Contact details are populated; attempting to skip to payment method step' );
 					return store.actions.setStepComplete( 'contact-form' );
@@ -106,12 +117,16 @@ function useCachedContactDetailsForCheckoutForm(
 				return false;
 			} )
 			.then( ( didSkip: boolean ) => {
+				if ( ! isMounted.current ) {
+					return false;
+				}
 				if ( didSkip ) {
 					reduxDispatch( recordTracksEvent( 'calypso_checkout_skip_to_last_step' ) );
 				}
 				setComplete( true );
 			} )
 			.catch( ( error ) => {
+				isMounted.current && setComplete( true );
 				// eslint-disable-next-line no-console
 				console.error( error );
 				logToLogstash( {
