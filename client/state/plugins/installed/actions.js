@@ -567,10 +567,10 @@ export function receiveSitePlugins( siteId, plugins ) {
 	};
 }
 
-export function receiveAllSitePlugins( allSitePlugins ) {
+export function receiveAllSitesPlugins( allSitesPlugins ) {
 	return {
 		type: PLUGINS_ALL_RECEIVE,
-		allSitePlugins,
+		allSitesPlugins,
 	};
 }
 
@@ -615,7 +615,7 @@ export function fetchAllPlugins() {
 		const receivePluginsDispatchSuccess = ( { sites } ) => {
 			dispatch( { type: PLUGINS_ALL_REQUEST_SUCCESS } );
 
-			dispatch( receiveAllSitePlugins( sites ) );
+			dispatch( receiveAllSitesPlugins( sites ) );
 
 			Object.entries( sites ).forEach( ( [ siteId, plugins ] ) => {
 				// Cast the enumerable string-keyed property to a number.
