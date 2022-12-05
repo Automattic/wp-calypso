@@ -108,6 +108,11 @@
 	margin-right: 1rem;
 }
 
+.product-lightbox__product-icon img {
+	width: 25px;
+	height: auto;
+}
+
 .product-lightbox__detail-desc {
 	margin-bottom: 16px;
 	line-height: 1.5;
@@ -475,4 +480,54 @@
 
 .ReactModal__Html--open.lightbox-mode .layout__content {
 	overflow-y: scroll;
+}
+
+.product-lightbox__included-product-list ul {
+	list-style-type: none;
+	margin: 0;
+}
+
+.product-lightbox__included-product-list ul li {
+	margin-bottom: 16px;
+}
+
+.product-lightbox__included-product-list-label {
+	font-weight: 600;
+	font-size: $font-body;
+	margin-bottom: 16px;
+}
+
+.product-lightbox__included-product-list-item {
+	display: flex;
+	gap: 12px;
+}
+
+.product-lightbox__included-product-list-item-title {
+	font-size: $font-body-small;
+	font-weight: 700;
+}
+
+p.product-lightbox__included-product-list-item-description {
+	font-size: $font-body-small;
+	font-weight: 400;
+	margin-bottom: 0;
+}
+
+p.product-lightbox__included-product-list-item-description span {
+	white-space: nowrap;
+}
+
+.product-lightbox__included-product-list-item-icon {
+	min-width: 38px;
+	max-height: 38px;
+	background: linear-gradient(159.87deg, #f6f6f4 7.24%, #f7f4ea 64.73%, #ddedd5 116.53%);
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.product-lightbox__included-product-list-item-icon img {
+	width: 45%;
+	height: auto;
 }

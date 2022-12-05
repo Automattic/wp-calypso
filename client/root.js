@@ -73,15 +73,13 @@ const waitForPrefs = () => async ( dispatch, getState ) => {
 };
 
 async function getLoggedInLandingPage( { dispatch, getState } ) {
-	if ( config.isEnabled( 'sites-as-landing-page' ) ) {
-		await dispatch( waitForPrefs() );
-		const useSitesAsLandingPage = hasSitesAsLandingPage( getState() );
+	await dispatch( waitForPrefs() );
+	const useSitesAsLandingPage = hasSitesAsLandingPage( getState() );
 
-		const siteCount = getCurrentUser( getState() )?.site_count;
+	const siteCount = getCurrentUser( getState() )?.site_count;
 
-		if ( useSitesAsLandingPage && siteCount > 1 ) {
-			return '/sites';
-		}
+	if ( useSitesAsLandingPage && siteCount > 1 ) {
+		return '/sites';
 	}
 
 	// determine the primary site ID (it's a property of "current user" object) and then
