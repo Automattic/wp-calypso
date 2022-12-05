@@ -2,6 +2,7 @@ import {
 	StepContainer,
 	isNewsletterOrLinkInBioFlow,
 	LINK_IN_BIO_FLOW,
+	FREE_FLOW,
 } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -117,7 +118,7 @@ const ProcessingStep: Step = function ( props ) {
 	const isJetpackPowered = isNewsletterOrLinkInBioFlow( flowName );
 
 	// Currently we have the Domains and Plans only for link in bio
-	if ( flowName === LINK_IN_BIO_FLOW ) {
+	if ( flowName === LINK_IN_BIO_FLOW || FREE_FLOW ) {
 		return <TailoredFlowPreCheckoutScreen flowName={ flowName } />;
 	}
 
