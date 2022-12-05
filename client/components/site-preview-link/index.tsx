@@ -5,6 +5,7 @@ import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { trailingslashit } from 'calypso/lib/route';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import ClipboardButtonInput from '../clipboard-button-input';
 import { useCreateSitePreviewLink } from './use-create-site-preview-link';
@@ -64,11 +65,11 @@ export default function SitePreviewLink( {
 	const { createLink, isLoading: isCreating } = useCreateSitePreviewLink( {
 		siteId,
 		onSuccess: () => {
-			showSuccessNotice( translate( 'Preview link created successfully!' ) );
+			showSuccessNotice( translate( 'Preview link enabled.' ) );
 			recordTracksEvent( 'calypso_site_preview_link_created', { source } );
 		},
 		onError: () => {
-			showErrorNotice( translate( 'Error creating the preview link.' ) );
+			showErrorNotice( translate( 'Unable to enable preview link.' ) );
 			recordTracksEvent( 'calypso_site_preview_link_created_error', { source } );
 		},
 	} );
@@ -76,11 +77,11 @@ export default function SitePreviewLink( {
 	const { deleteLink, isLoading: isDeleting } = useDeleteSitePreviewLink( {
 		siteId,
 		onSuccess: () => {
-			showSuccessNotice( translate( 'Preview link removed successfully!' ) );
+			showSuccessNotice( translate( 'Preview link disabled.' ) );
 			recordTracksEvent( 'calypso_site_preview_link_deleted', { source } );
 		},
 		onError: () => {
-			showErrorNotice( translate( 'Error removing the preview link.' ) );
+			showErrorNotice( translate( 'Unable to disable preview link.' ) );
 			recordTracksEvent( 'calypso_site_preview_link_deleted_error', { source } );
 		},
 	} );
@@ -105,19 +106,23 @@ export default function SitePreviewLink( {
 	return (
 		<div>
 			<ToggleControl
-				label={ translate( 'Create a preview link.' ) }
+				label={ translate( 'Enable site preview link.' ) }
 				checked={ checkedAndEnabled }
 				onChange={ onChange }
 				{ ...{ disabled: disabled || isBusy } } // disabled is not included on ToggleControl props type
 			/>
-			<HelpText>{ translate( 'Anyone with this link can view your site.' ) }</HelpText>
+			<HelpText>
+				{ translate(
+					'When enabled, anyone with the site preview link can view your Coming Soon site.'
+				) }
+			</HelpText>
 			{ ! forceOff &&
 				previewLinks?.map( ( { code, isCreating = false, isRemoving = false } ) => {
-					let linkValue = `${ siteUrl }?share=${ code }`;
+					let linkValue = `${ trailingslashit( siteUrl ) }?share=${ code }`;
 					if ( isCreating ) {
 						linkValue = translate( 'Loading…' );
 					} else if ( isRemoving ) {
-						linkValue = translate( 'Removing…' );
+						linkValue = translate( 'Disabling…' );
 					}
 					return (
 						<ClipboardButtonInput
