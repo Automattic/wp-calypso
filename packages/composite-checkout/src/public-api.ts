@@ -8,14 +8,11 @@ import CheckoutOrderSummaryStep, {
 import CheckoutPaymentMethods from './components/checkout-payment-methods';
 import { CheckoutProvider } from './components/checkout-provider';
 import {
-	Checkout,
 	CheckoutFormSubmit,
 	CheckoutStep,
-	CheckoutStepArea,
 	CheckoutStepAreaWrapper,
 	CheckoutStepBody,
 	CheckoutStepGroup,
-	CheckoutSteps,
 	CheckoutSummaryArea,
 	CheckoutSummaryCard,
 	MainContentWrapper,
@@ -24,6 +21,7 @@ import {
 	useIsStepActive,
 	useIsStepComplete,
 	useSetStepComplete,
+	createCheckoutStepGroupStore,
 } from './components/checkout-steps';
 import CheckoutSubmitButton from './components/checkout-submit-button';
 import {
@@ -62,7 +60,6 @@ export type { Theme } from './lib/theme';
 // Re-export the public API
 export {
 	Button,
-	Checkout,
 	CheckoutCheckIcon,
 	CheckoutErrorBoundary,
 	CheckoutFormSubmit,
@@ -73,11 +70,9 @@ export {
 	CheckoutPaymentMethods,
 	CheckoutProvider,
 	CheckoutStep,
-	CheckoutStepArea,
 	CheckoutStepAreaWrapper,
 	CheckoutStepBody,
 	CheckoutStepGroup,
-	CheckoutSteps,
 	CheckoutSubmitButton,
 	CheckoutSummaryArea,
 	CheckoutSummaryCard,
@@ -91,6 +86,7 @@ export {
 	RadioButton,
 	SubmitButtonWrapper,
 	checkoutTheme,
+	createCheckoutStepGroupStore,
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummary,
 	getDefaultOrderSummaryStep,
