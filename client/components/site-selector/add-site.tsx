@@ -28,7 +28,7 @@ const SiteSelectorAddSite: FunctionComponent = () => {
 				{
 					ref: 'calypso-selector',
 					source: 'my-home',
-					sourceSiteSlug: siteSlug,
+					siteSlug,
 				},
 				onboardingUrl()
 			) }
