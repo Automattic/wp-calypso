@@ -2,10 +2,10 @@ import cookie from 'cookie';
 import isCountryInGdprZone from './is-country-in-gdpr-zone';
 import isRegionInCcpaZone from './is-region-in-ccpa-zone';
 
-const v1CookieName = 'sensitive_pixel_option';
-const v2CookieName = 'sensitive_pixel_options';
+export const TRACKING_PREFS_COOKIE_V1 = 'sensitive_pixel_option';
+export const TRACKING_PREFS_COOKIE_V2 = 'sensitive_pixel_options';
 
-type TrackingPrefs = {
+export type TrackingPrefs = {
 	ok: boolean;
 	buckets: {
 		essential: boolean;
@@ -26,29 +26,8 @@ const allBucketsTrue: TrackingPrefs[ 'buckets' ] = {
 	advertising: true,
 };
 
-/**
- * Returns consents for every Cookie Jar bucket based on privacy driven approach
- *
- * WARNING: this function only works on the client side.
- *
- * @returns Whether we may track the current user
- */
-export default function getTrackingPrefs(): TrackingPrefs {
-	const cookies = cookie.parse( document.cookie );
-
-	if ( ! isCountryInGdprZone( cookies.country_code ) && ! isRegionInCcpaZone( cookies.region ) ) {
-		return {
-			ok: true,
-			buckets: allBucketsTrue,
-		};
-	}
-
-	const oldUserConsent = cookies[ v1CookieName ];
-	const userOptionsJson = cookies[ v2CookieName ];
-
-	const { ok, buckets }: Partial< TrackingPrefs > = userOptionsJson
-		? JSON.parse( userOptionsJson )
-		: {};
+export const parseTrackingPrefs = ( cookieV2?: string, cookieV1?: string ): TrackingPrefs => {
+	const { ok, buckets }: Partial< TrackingPrefs > = cookieV2 ? JSON.parse( cookieV2 ) : {};
 
 	if ( typeof ok === 'boolean' ) {
 		return {
@@ -58,9 +37,9 @@ export default function getTrackingPrefs(): TrackingPrefs {
 				...buckets,
 			},
 		};
-	} else if ( [ 'yes', 'no' ].includes( oldUserConsent ) ) {
+	} else if ( cookieV1 && [ 'yes', 'no' ].includes( cookieV1 ) ) {
 		return {
-			ok: oldUserConsent === 'yes',
+			ok: cookieV1 === 'yes',
 			buckets: allBucketsTrue,
 		};
 	}
@@ -69,4 +48,34 @@ export default function getTrackingPrefs(): TrackingPrefs {
 		ok: false,
 		buckets: allBucketsFalse,
 	};
+};
+
+/**
+ * Returns consents for every Cookie Jar bucket based on privacy driven approach
+ *
+ * WARNING: this function only works on the client side.
+ *
+ * @returns Whether we may track the current user
+ */
+export default function getTrackingPrefs(): TrackingPrefs {
+	if ( typeof document === 'undefined' ) {
+		throw new Error( 'getTrackingPrefs() can only be called on the client side' );
+	}
+
+	const cookies = cookie.parse( document.cookie );
+
+	if (
+		! isCountryInGdprZone( cookies.country_code ) &&
+		! isRegionInCcpaZone( cookies.country_code, cookies.region )
+	) {
+		return {
+			ok: true,
+			buckets: allBucketsTrue,
+		};
+	}
+
+	return parseTrackingPrefs(
+		cookies[ TRACKING_PREFS_COOKIE_V2 ],
+		cookies[ TRACKING_PREFS_COOKIE_V1 ]
+	);
 }
