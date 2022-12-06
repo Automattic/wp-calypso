@@ -1,5 +1,9 @@
 import config from '@automattic/calypso-config';
-import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
+import {
+	getEmptyResponseCart,
+	getEmptyResponseCartProduct,
+	ResponseCartProductVariant,
+} from '@automattic/shopping-cart';
 import { prettyDOM } from '@testing-library/react';
 import nock from 'nock';
 import { createStore, applyMiddleware } from 'redux';
@@ -674,11 +678,11 @@ export function getPersonalPlanForInterval( type: string ) {
 export function getBusinessPlanForInterval( type: string ) {
 	switch ( type ) {
 		case 'monthly':
-			return planLevel2Monthly;
+			return addVariantsToCartItem( planLevel2Monthly );
 		case 'yearly':
-			return planLevel2;
+			return addVariantsToCartItem( planLevel2 );
 		case 'two-year':
-			return planLevel2Biannual;
+			return addVariantsToCartItem( planLevel2Biannual );
 		default:
 			throw new Error( `Unknown plan type '${ type }'` );
 	}
@@ -1119,4 +1123,66 @@ export function mockUserAgent( agent ) {
 			return agent;
 		},
 	} );
+}
+
+function addVariantsToCartItem( data: ResponseCartProduct ): ResponseCartProduct {
+	return {
+		...data,
+		product_variants: buildVariantsForCartItem( data ),
+	};
+}
+
+function buildVariantsForCartItem( data: ResponseCartProduct ): ResponseCartProductVariant[] {
+	switch ( data.product_slug ) {
+		case planLevel2Monthly.product_slug:
+			return [
+				buildVariant( data ),
+				buildVariant( planLevel2 ),
+				buildVariant( planLevel2Biannual ),
+			];
+		case planLevel2.product_slug:
+			return [ buildVariant( data ), buildVariant( planLevel2Biannual ) ];
+	}
+	return [ buildVariant( data ) ];
+}
+
+function getVariantPrice( data: ResponseCartProduct ): number {
+	const variantData = getPlansItemsState().find(
+		( plan ) => plan.product_slug === data.product_slug
+	);
+	if ( ! variantData ) {
+		throw new Error( `Unknown price for variant ${ data.product_slug }` );
+	}
+	return variantData.raw_price;
+}
+
+function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
+	switch ( data.product_slug ) {
+		case planLevel2Monthly.product_slug:
+			return {
+				product_id: planLevel2Monthly.product_id,
+				bill_period_in_months: planLevel2Monthly.months_per_bill_period,
+				product_slug: data.product_slug,
+				currency: planLevel2Monthly.currency,
+				price_integer: getVariantPrice( planLevel2Monthly ),
+			};
+		case planLevel2.product_slug:
+			return {
+				product_id: planLevel2.product_id,
+				bill_period_in_months: planLevel2.months_per_bill_period,
+				product_slug: data.product_slug,
+				currency: planLevel2.currency,
+				price_integer: getVariantPrice( planLevel2 ),
+			};
+		case planLevel2Biannual.product_slug:
+			return {
+				product_id: planLevel2Biannual.product_id,
+				bill_period_in_months: planLevel2Biannual.months_per_bill_period,
+				product_slug: data.product_slug,
+				currency: planLevel2Biannual.currency,
+				price_integer: getVariantPrice( planLevel2Biannual ),
+			};
+	}
+
+	throw new Error( `No variants found for product_slug ${ data.product_slug }` );
 }
