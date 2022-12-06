@@ -174,9 +174,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		setSelectedStyleVariation( undefined );
 	}, [] );
 
-	// When the theme query string parameter is present, automatically switch to previewing that theme (if it's a valid theme)
-	const themeFromQueryString = useQuery().get( 'theme' );
-	const styleFromQueryString = useQuery().get( 'style' );
+	// When the theme or style query strings parameters are present,
+	// automatically switch to previewing that theme (if it's a valid theme)
+	// and that style variation (if it's a valid style variation).
+	const queryParams = useQuery();
+	const themeFromQueryString = queryParams.get( 'theme' );
+	const styleFromQueryString = queryParams.get( 'style' );
+
 	useEffect( () => {
 		if ( ! themeFromQueryString || ! allDesigns ) {
 			return;
@@ -381,7 +385,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			const destSearchP = destUrl.searchParams;
 
 			// Add &theme=theme_slug&style=style_slug to the query params
-			if ( selectedDesign.slug ) {
+			if ( selectedDesign.slug && selectedStyleVariation.slug ) {
 				destSearchP.set( 'theme', selectedDesign.slug );
 				destSearchP.set( 'style', selectedStyleVariation.slug );
 				destUrl.search = destSearchP.toString();
@@ -508,7 +512,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 		if (
 			shouldLimitGlobalStyles &&
-			!! selectedStyleVariation &&
+			selectedStyleVariation &&
 			selectedStyleVariation.slug !== DEFAULT_VARIATION_SLUG
 		) {
 			return (
