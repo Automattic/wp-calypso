@@ -1,3 +1,4 @@
+import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
@@ -65,7 +66,7 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
-								`/plans/${ siteSlug }${ displayGlobalStylesWarning ? '?plan=value_bundle' : '' }`
+								`/plans/${ siteSlug }${ displayGlobalStylesWarning ? '?plan=' + PLAN_PREMIUM : '' }`
 							);
 						},
 						badgeText: translatedPlanName,
