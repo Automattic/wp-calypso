@@ -137,28 +137,44 @@ const VirtualPage = ( {
 					onClick={ clickPageTitle }
 				>
 					<span>{ title }</span>
-					{ isHomepage && template && (
+					{ isHomepage && (
 						<InfoPopover position="right">
-							{ translate(
-								'%(subject)s can change the content of this page by editing the %(templateTitle)s template using the Site Editor. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-								{
-									args: {
-										subject: isAdmin ? 'You' : 'Administrators',
-										templateTitle: decodeEntities( template.title.rendered || template.slug ),
-									},
-									components: {
-										learnMoreLink: (
-											<ExternalLink
-												href={ localizeUrl(
-													'https://wordpress.com/support/templates/#template-hierarchy'
-												) }
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
-										),
-									},
-								}
-							) }
+							{ isAdmin && template
+								? translate(
+										'You can change the content of this page by editing the %(templateTitle)s template using the Site Editor. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+										{
+											components: {
+												learnMoreLink: (
+													<ExternalLink
+														href={ localizeUrl(
+															'https://wordpress.com/support/templates/#template-hierarchy'
+														) }
+														target="_blank"
+														rel="noopener noreferrer"
+													/>
+												),
+											},
+											args: {
+												templateTitle: decodeEntities( template.title.rendered || template.slug ),
+											},
+										}
+								  )
+								: translate(
+										'Administrators can change the content of this page using the Site Editor. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+										{
+											components: {
+												learnMoreLink: (
+													<ExternalLink
+														href={ localizeUrl(
+															'https://wordpress.com/support/templates/#template-hierarchy'
+														) }
+														target="_blank"
+														rel="noopener noreferrer"
+													/>
+												),
+											},
+										}
+								  ) }
 						</InfoPopover>
 					) }
 				</a>
