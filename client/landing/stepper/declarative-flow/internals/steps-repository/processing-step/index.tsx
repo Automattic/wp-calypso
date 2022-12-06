@@ -7,6 +7,7 @@ import {
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
+import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -123,34 +124,37 @@ const ProcessingStep: Step = function ( props ) {
 	}
 
 	return (
-		<StepContainer
-			shouldHideNavButtons={ true }
-			hideFormattedHeader={ true }
-			stepName="processing-step"
-			isHorizontalLayout={ true }
-			stepContent={
-				<div className="processing-step">
-					<h1 className="processing-step__progress-step">{ getCurrentMessage() }</h1>
-					{ progress >= 0 ? (
-						<div className="processing-step__content woocommerce-install__content">
-							<div
-								className="processing-step__progress-bar"
-								style={
-									{
-										'--progress': simulatedProgress > 1 ? 1 : simulatedProgress,
-									} as React.CSSProperties
-								}
-							/>
-						</div>
-					) : (
-						<LoadingEllipsis />
-					) }
-				</div>
-			}
-			stepProgress={ stepProgress }
-			recordTracksEvent={ recordTracksEvent }
-			showJetpackPowered={ isJetpackPowered }
-		/>
+		<>
+			<DocumentHead title={ __( 'Processing' ) } />
+			<StepContainer
+				shouldHideNavButtons={ true }
+				hideFormattedHeader={ true }
+				stepName="processing-step"
+				isHorizontalLayout={ true }
+				stepContent={
+					<div className="processing-step">
+						<h1 className="processing-step__progress-step">{ getCurrentMessage() }</h1>
+						{ progress >= 0 ? (
+							<div className="processing-step__content woocommerce-install__content">
+								<div
+									className="processing-step__progress-bar"
+									style={
+										{
+											'--progress': simulatedProgress > 1 ? 1 : simulatedProgress,
+										} as React.CSSProperties
+									}
+								/>
+							</div>
+						) : (
+							<LoadingEllipsis />
+						) }
+					</div>
+				}
+				stepProgress={ stepProgress }
+				recordTracksEvent={ recordTracksEvent }
+				showJetpackPowered={ isJetpackPowered }
+			/>
+		</>
 	);
 };
 

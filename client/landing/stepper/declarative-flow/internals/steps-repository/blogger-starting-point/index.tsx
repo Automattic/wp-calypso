@@ -2,6 +2,7 @@
 import { IntentScreen, StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import startingPointImageUrl from 'calypso/assets/images/onboarding/starting-point.svg';
+import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -27,32 +28,35 @@ const StartingPointStep: Step = function StartingPointStep( { navigation } ) {
 	};
 
 	return (
-		<StepContainer
-			stepName="blogger-starting-point"
-			headerImageUrl={ startingPointImageUrl }
-			goBack={ goBack }
-			skipLabelText={ translate( 'Skip to dashboard' ) }
-			goNext={ () => submitIntent( 'skip-to-my-home' ) }
-			skipButtonAlign="top"
-			isHorizontalLayout={ true }
-			formattedHeader={
-				<FormattedHeader
-					id="intent-header"
-					headerText={ headerText }
-					subHeaderText={ subHeaderText }
-					align="left"
-				/>
-			}
-			stepContent={
-				<IntentScreen
-					intents={ intents }
-					intentsAlt={ [] }
-					onSelect={ submitIntent }
-					preventWidows={ preventWidows }
-				/>
-			}
-			recordTracksEvent={ recordTracksEvent }
-		/>
+		<>
+			<DocumentHead title={ translate( 'Blogger Starting Point' ) } />
+			<StepContainer
+				stepName="blogger-starting-point"
+				headerImageUrl={ startingPointImageUrl }
+				goBack={ goBack }
+				skipLabelText={ translate( 'Skip to dashboard' ) }
+				goNext={ () => submitIntent( 'skip-to-my-home' ) }
+				skipButtonAlign="top"
+				isHorizontalLayout={ true }
+				formattedHeader={
+					<FormattedHeader
+						id="intent-header"
+						headerText={ headerText }
+						subHeaderText={ subHeaderText }
+						align="left"
+					/>
+				}
+				stepContent={
+					<IntentScreen
+						intents={ intents }
+						intentsAlt={ [] }
+						onSelect={ submitIntent }
+						preventWidows={ preventWidows }
+					/>
+				}
+				recordTracksEvent={ recordTracksEvent }
+			/>
+		</>
 	);
 };
 
