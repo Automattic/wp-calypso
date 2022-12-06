@@ -48,10 +48,9 @@ const CheckoutMasterbar = ( {
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 
-	const { isShowingHelpCenter, hasSeenWhatsNewModal } = useDataStoreSelect( ( select ) => ( {
-		isShowingHelpCenter: select( HELP_CENTER_STORE ).isHelpCenterShown(),
-		hasSeenWhatsNewModal: select( HELP_CENTER_STORE ).getHasSeenWhatsNewModal(),
-	} ) );
+	const isShowingHelpCenter = useDataStoreSelect( ( select ) =>
+		select( HELP_CENTER_STORE ).isHelpCenterShown()
+	);
 
 	const closeAndLeave = () =>
 		leaveCheckout( {
@@ -80,8 +79,6 @@ const CheckoutMasterbar = ( {
 		closeAndLeave();
 	};
 
-	const newItems = hasSeenWhatsNewModal !== undefined && ! hasSeenWhatsNewModal;
-
 	const showCloseButton = isLeavingAllowed && ! isJetpack;
 
 	return (
@@ -109,7 +106,7 @@ const CheckoutMasterbar = ( {
 					className={ classnames( 'masterbar__item-help', {
 						'is-active': isShowingHelpCenter,
 					} ) }
-					icon={ <HelpIcon newItems={ newItems } /> }
+					icon={ <HelpIcon /> }
 				>
 					{ translate( 'Help' ) }
 				</Item>

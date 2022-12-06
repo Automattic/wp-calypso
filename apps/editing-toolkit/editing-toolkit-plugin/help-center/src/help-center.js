@@ -21,12 +21,7 @@ function HelpCenterContent() {
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
 
-	const { show, hasSeenWhatsNewModal } = useSelect( ( select ) => ( {
-		show: select( 'automattic/help-center' ).isHelpCenterShown(),
-		hasSeenWhatsNewModal: select( 'automattic/help-center' ).getHasSeenWhatsNewModal(),
-	} ) );
-
-	const showHelpIconDot = hasSeenWhatsNewModal !== undefined && ! hasSeenWhatsNewModal;
+	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
 
 	const handleToggleHelpCenter = () => {
 		recordTracksEvent( `calypso_inlinehelp_${ show ? 'close' : 'show' }`, {
@@ -55,7 +50,6 @@ function HelpCenterContent() {
 								setHelpIconRef( ref );
 							}
 						} }
-						newItems={ showHelpIconDot }
 					/>
 				}
 				label="Help"

@@ -36,13 +36,18 @@ export const HelpCenterMoreResources = () => {
 		};
 	} );
 
-	const hasSeenWhatsNewModal = useSelect( ( select ) =>
-		select( HELP_CENTER_STORE ).getHasSeenWhatsNewModal()
-	);
+	const { hasSeenWhatsNewModal, doneLoading } = useSelect( ( select ) => ( {
+		hasSeenWhatsNewModal: select( HELP_CENTER_STORE ).getHasSeenWhatsNewModal(),
+		doneLoading: select( 'core/data' ).hasFinishedResolution(
+			HELP_CENTER_STORE,
+			'getHasSeenWhatsNewModal',
+			[]
+		),
+	} ) );
 
 	const { setHasSeenWhatsNewModal } = useDispatch( HELP_CENTER_STORE );
 
-	const showWhatsNewDot = hasSeenWhatsNewModal !== undefined && ! hasSeenWhatsNewModal;
+	const showWhatsNewDot = doneLoading && ! hasSeenWhatsNewModal;
 
 	const [ showGuide, setShowGuide ] = useState( false );
 

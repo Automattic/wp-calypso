@@ -17,13 +17,10 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 	const helpIconRef = useRef();
 	const sectionName = useSelector( getSectionName );
 
-	const { helpCenterVisible, hasSeenWhatsNewModal } = useDateStoreSelect( ( select ) => ( {
-		helpCenterVisible: select( HELP_CENTER_STORE ).isHelpCenterShown(),
-		hasSeenWhatsNewModal: select( HELP_CENTER_STORE ).getHasSeenWhatsNewModal(),
-	} ) );
+	const helpCenterVisible = useDateStoreSelect( ( select ) =>
+		select( HELP_CENTER_STORE ).isHelpCenterShown()
+	);
 	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
-
-	const newItems = hasSeenWhatsNewModal !== undefined && ! hasSeenWhatsNewModal;
 
 	const handleToggleHelpCenter = () => {
 		recordTracksEvent( `calypso_inlinehelp_${ helpCenterVisible ? 'close' : 'show' }`, {
@@ -43,7 +40,7 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 					'is-active': helpCenterVisible,
 				} ) }
 				tooltip={ tooltip }
-				icon={ <HelpIcon ref={ helpIconRef } newItems={ newItems } /> }
+				icon={ <HelpIcon ref={ helpIconRef } /> }
 			/>
 			<PromotionalPopover iconElement={ helpIconRef.current } />
 		</>
