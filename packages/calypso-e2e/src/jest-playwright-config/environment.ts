@@ -283,9 +283,6 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	 * Handle events emitted by jest-circus.
 	 */
 	async handleTestEvent( event: Circus.Event, state: Circus.State ) {
-		if ( this.testFilename.includes( 'infrastructure__ssr' ) ) {
-			console.log( `Event: ${ event.name }` );
-		}
 		switch ( event.name ) {
 			case 'run_start':
 				this.allure?.startTestFile( this.testFilename );
@@ -329,6 +326,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 				if ( this.failure?.type === 'test' ) {
 					event.test.mode = 'skip';
 				}
+				break;
 			case 'test_fn_start':
 				// This event is fired after both the `beforeAll` and `beforeEach` hooks.
 				// Since this event fires after `beforeEach` hooks, it is the best way to detect
@@ -354,13 +352,18 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 				break;
 			}
 			case 'test_done': {
-				// This will capture events from hooks as well.
+				// Event is fired when the test step is complete, including all pre- and
+				// after-hooks. Therefore we tell Allure that the test step has completely
+				// finished.
 				this.allure?.endTestStep();
+				break;
 			}
 			case 'run_describe_finish': {
 				break;
 			}
 			case 'teardown': {
+				// Teardown is completed in its own function that runs after the spec is
+				// complete.
 				break;
 			}
 			case 'run_finish':
