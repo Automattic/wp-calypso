@@ -20,7 +20,6 @@ export { useHas3PC } from './queries/use-has-3rd-party-cookies';
 export { useSiteAnalysis } from './queries/use-site-analysis';
 export { useUserSites } from './queries/use-user-sites';
 export type { AnalysisReport } from './queries/use-site-analysis';
-export { useHasSeenWhatsNewModalQuery } from './queries/use-has-seen-whats-new-modal-query';
 export { useSiteIntent } from './queries/use-site-intent';
 export { useSupportAvailability } from './support-queries/use-support-availability';
 export { useSubmitTicketMutation } from './support-queries/use-submit-support-ticket';

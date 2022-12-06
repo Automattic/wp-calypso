@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useHasSeenWhatsNewModalQuery, HelpCenter } from '@automattic/data-stores';
+import { HelpCenter } from '@automattic/data-stores';
 import { HelpIcon, PromotionalPopover } from '@automattic/help-center';
 import {
 	useDispatch as useDataStoreDispatch,
@@ -13,17 +13,17 @@ import Item from './item';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-const MasterbarHelpCenter = ( { siteId, tooltip } ) => {
+const MasterbarHelpCenter = ( { tooltip } ) => {
 	const helpIconRef = useRef();
-	const { isLoading, data } = useHasSeenWhatsNewModalQuery( siteId );
 	const sectionName = useSelector( getSectionName );
 
-	const newItems = ! isLoading && ! data?.has_seen_whats_new_modal;
-
-	const helpCenterVisible = useDateStoreSelect( ( select ) =>
-		select( HELP_CENTER_STORE ).isHelpCenterShown()
-	);
+	const { helpCenterVisible, hasSeenWhatsNewModal } = useDateStoreSelect( ( select ) => ( {
+		helpCenterVisible: select( HELP_CENTER_STORE ).isHelpCenterShown(),
+		hasSeenWhatsNewModal: select( HELP_CENTER_STORE ).getHasSeenWhatsNewModal(),
+	} ) );
 	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
+
+	const newItems = hasSeenWhatsNewModal !== undefined && ! hasSeenWhatsNewModal;
 
 	const handleToggleHelpCenter = () => {
 		recordTracksEvent( `calypso_inlinehelp_${ helpCenterVisible ? 'close' : 'show' }`, {

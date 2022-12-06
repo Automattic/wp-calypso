@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
 import HelpCenter, { HelpIcon, PromotionalPopover } from '@automattic/help-center';
 import { LocaleProvider } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
@@ -19,18 +18,15 @@ function HelpCenterContent() {
 	const [ helpIconRef, setHelpIconRef ] = useState();
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
 	const sectionName = useSelector( getSectionName );
-	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
-	const [ showHelpIconDot, setShowHelpIconDot ] = useState( false );
 
-	const { data, isLoading } = useHasSeenWhatsNewModalQuery( window._currentSiteId );
+	const { show, hasSeenWhatsNewModal } = useSelect( ( select ) => ( {
+		show: select( 'automattic/help-center' ).isHelpCenterShown(),
+		hasSeenWhatsNewModal: select( 'automattic/help-center' ).getHasSeenWhatsNewModal(),
+	} ) );
 
-	useEffect( () => {
-		if ( ! isLoading && data ) {
-			setShowHelpIconDot( ! data.has_seen_whats_new_modal );
-		}
-	}, [ data, isLoading ] );
+	const showHelpIconDot = hasSeenWhatsNewModal !== undefined && ! hasSeenWhatsNewModal;
 
 	const handleToggleHelpCenter = () => {
 		recordTracksEvent( `calypso_inlinehelp_${ show ? 'close' : 'show' }`, {
