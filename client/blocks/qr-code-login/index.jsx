@@ -1,6 +1,6 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { Card, Gridicon } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import QRCode from 'qrcode.react';
@@ -229,15 +229,6 @@ function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
 		translate( 'Point your phone to this screen to scan the code.' ),
 	];
 
-	const notice = translate(
-		"Login via the mobile app is {{strong}}not available{{/strong}} if you've enabled two-step authentication on your account.",
-		{
-			components: {
-				strong: <strong />,
-			},
-		}
-	);
-
 	if ( isErrorState ) {
 		return (
 			<QRCodeErrorCard locale={ locale } redirectToAfterLoginUrl={ redirectToAfterLoginUrl } />
@@ -259,10 +250,6 @@ function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
 						</li>
 					) ) }
 				</ol>
-				<div className="qr-code-login__info">
-					<Gridicon icon="info-outline" size={ 18 } />
-					<p>{ notice }</p>
-				</div>
 			</div>
 		</Card>
 	);
