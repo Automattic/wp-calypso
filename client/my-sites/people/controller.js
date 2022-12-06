@@ -130,7 +130,7 @@ function renderTeamMembers( context, next ) {
 	context.primary = (
 		<>
 			<TeamMembersTitle />
-			<TeamMembers />
+			<TeamMembers filter={ context.params.filter } search={ context.query.s } />
 		</>
 	);
 	next();
@@ -146,7 +146,7 @@ function renderSubscribers( context, next ) {
 	context.primary = (
 		<>
 			<SubscribersTitle />
-			<Subscribers />
+			<Subscribers filter={ context.params.filter } search={ context.query.s } />
 		</>
 	);
 	next();
