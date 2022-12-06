@@ -153,12 +153,16 @@ const ProductLightbox: React.FC< Props > = ( {
 							siteId={ siteId }
 						/>
 					) : null }
-					<div className="product-lightbox__detail-tags">
-						<span className="product-lightbox__detail-tags-label">
-							{ translate( 'Great for:' ) }
-						</span>
-						{ product.recommendedFor && <TagItems tags={ product.recommendedFor } /> }
-					</div>
+
+					{ ( ( includedProductSlugs?.length && isLargeScreen ) ||
+						! includedProductSlugs?.length ) && (
+						<div className="product-lightbox__detail-tags">
+							<span className="product-lightbox__detail-tags-label">
+								{ translate( 'Great for:' ) }
+							</span>
+							{ product.recommendedFor && <TagItems tags={ product.recommendedFor } /> }
+						</div>
+					) }
 
 					<ProductDetails product={ product } />
 				</div>

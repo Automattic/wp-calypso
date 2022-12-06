@@ -243,12 +243,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 					image={ imgSwitchPlan }
 				>
 					{ translate(
-						'We get it – building a site takes time. ' +
-							'But we’d love to see you stick around to build on what you started. ' +
-							'How about a free month of your %(currentPlan)s plan subscription to continue building your site?',
-						{
-							args: { currentPlan: 'CURRENT PLAN' },
-						}
+						'WordPress.com Personal still gives you access to customer support via email, removal of ads, and more — and for 50% of the cost of your current plan.'
 					) }
 				</Upsell>
 			);

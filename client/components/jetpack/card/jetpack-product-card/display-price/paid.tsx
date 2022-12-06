@@ -52,7 +52,12 @@ const Paid: React.FC< OwnProps > = ( {
 
 	const renderDiscountedPrice = () => {
 		const theDiscountedPrice = (
-			<PlanPrice discounted rawPrice={ finalPrice as number } currencyCode={ currencyCode } />
+			<PlanPrice
+				discounted
+				rawPrice={ finalPrice as number }
+				currencyCode={ currencyCode }
+				omitHeading
+			/>
 		);
 		/*
 		 * Price should be displayed from left-to-right, even in right-to-left
@@ -68,6 +73,7 @@ const Paid: React.FC< OwnProps > = ( {
 					className="display-price__original-price"
 					rawPrice={ originalPrice as number }
 					currencyCode={ currencyCode }
+					omitHeading
 				/>
 				{ ! discountedPriceFirst && theDiscountedPrice }
 			</>
@@ -75,7 +81,12 @@ const Paid: React.FC< OwnProps > = ( {
 	};
 
 	const renderNonDiscountedPrice = () => (
-		<PlanPrice discounted rawPrice={ finalPrice as number } currencyCode={ currencyCode } />
+		<PlanPrice
+			discounted
+			rawPrice={ finalPrice as number }
+			currencyCode={ currencyCode }
+			omitHeading
+		/>
 	);
 
 	const renderPrice = () =>

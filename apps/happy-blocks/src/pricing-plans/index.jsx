@@ -1,9 +1,18 @@
+import {
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+} from '@automattic/calypso-products';
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import config from './config';
-import { EditBusiness, EditEcommerce, EditPersonal, EditPremium } from './edit';
+import { Edit } from './edit';
 
 const blockAttributes = {
+	defaultProductSlug: {
+		enum: config.plans,
+	},
 	productSlug: {
 		enum: config.plans,
 	},
@@ -13,64 +22,54 @@ const blockAttributes = {
 };
 
 function registerBlocks() {
-	registerBlockType( 'happy-blocks/pricing-plans-personal', {
+	registerBlockType( 'happy-blocks/pricing-plans', {
 		apiVersion: 2,
-		title: __( 'Upgrade Personal', 'happy-blocks' ),
+		title: __( 'Upgrade Pricing Plan', 'happy-blocks' ),
 		icon: 'money-alt',
 		category: 'embed',
-		description: __( 'Personal pricing plan upgrade', 'happy-blocks' ),
+		description: __( 'Pricing Plan upgrade block', 'happy-blocks' ),
 		keywords: [
 			__( 'pricing', 'happy-blocks' ),
 			__( 'plans', 'happy-blocks' ),
 			__( 'upgrade', 'happy-blocks' ),
 		],
 		attributes: blockAttributes,
-		edit: EditPersonal,
-	} );
-
-	registerBlockType( 'happy-blocks/pricing-plans-premium', {
-		apiVersion: 2,
-		title: __( 'Upgrade Premium', 'happy-blocks' ),
-		icon: 'money-alt',
-		category: 'embed',
-		description: __( 'Premium pricing plan upgrade', 'happy-blocks' ),
-		keywords: [
-			__( 'pricing', 'happy-blocks' ),
-			__( 'plans', 'happy-blocks' ),
-			__( 'upgrade', 'happy-blocks' ),
+		edit: Edit,
+		variations: [
+			{
+				isDefault: true,
+				name: 'personal',
+				title: __( 'Upgrade Personal', 'happy-blocks' ),
+				description: __( 'Upgrade to Personal pricing plan', 'happy-blocks' ),
+				attributes: {
+					defaultProductSlug: PLAN_PERSONAL,
+				},
+			},
+			{
+				name: 'premium',
+				title: __( 'Upgrade Premium', 'happy-blocks' ),
+				description: __( 'Upgrade to Premium pricing plan', 'happy-blocks' ),
+				attributes: {
+					defaultProductSlug: PLAN_PREMIUM,
+				},
+			},
+			{
+				name: 'business',
+				title: __( 'Upgrade Business', 'happy-blocks' ),
+				description: __( 'Upgrade to Business pricing plan', 'happy-blocks' ),
+				attributes: {
+					defaultProductSlug: PLAN_BUSINESS,
+				},
+			},
+			{
+				name: 'ecommerce',
+				title: __( 'Upgrade eCommerce', 'happy-blocks' ),
+				description: __( 'Upgrade to eCommerce pricing plan', 'happy-blocks' ),
+				attributes: {
+					defaultProductSlug: PLAN_ECOMMERCE,
+				},
+			},
 		],
-		attributes: blockAttributes,
-		edit: EditPremium,
-	} );
-
-	registerBlockType( 'happy-blocks/pricing-plans-business', {
-		apiVersion: 2,
-		title: __( 'Upgrade Business', 'happy-blocks' ),
-		icon: 'money-alt',
-		category: 'embed',
-		description: __( 'Business pricing plan upgrade', 'happy-blocks' ),
-		keywords: [
-			__( 'pricing', 'happy-blocks' ),
-			__( 'plans', 'happy-blocks' ),
-			__( 'upgrade', 'happy-blocks' ),
-		],
-		attributes: blockAttributes,
-		edit: EditBusiness,
-	} );
-
-	registerBlockType( 'happy-blocks/pricing-plans-ecommerce', {
-		apiVersion: 2,
-		title: __( 'Upgrade eCommerce', 'happy-blocks' ),
-		icon: 'money-alt',
-		category: 'embed',
-		description: __( 'eCommerce pricing plan upgrade', 'happy-blocks' ),
-		keywords: [
-			__( 'pricing', 'happy-blocks' ),
-			__( 'plans', 'happy-blocks' ),
-			__( 'upgrade', 'happy-blocks' ),
-		],
-		attributes: blockAttributes,
-		edit: EditEcommerce,
 	} );
 }
 

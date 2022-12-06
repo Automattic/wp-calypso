@@ -7,6 +7,7 @@ export interface Task {
 	badgeText?: string;
 	actionDispatch?: () => void;
 	isLaunchTask?: boolean;
+	warning?: boolean;
 }
 
 export interface LaunchpadFlowTaskList {

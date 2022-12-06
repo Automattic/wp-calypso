@@ -22,7 +22,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 
 			<div className="featured-item-card--body">
 				<div>
-					<h2 className="featured-item-card--title">{ title }</h2>
+					<h3 className="featured-item-card--title">{ title }</h3>
 					<div className="featured-item-card--price">{ price }</div>
 					{ amountSaved ? (
 						<div className="featured-item-card--amount-saved">{ amountSaved }</div>

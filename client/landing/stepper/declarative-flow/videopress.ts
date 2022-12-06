@@ -1,3 +1,4 @@
+import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
@@ -57,6 +58,7 @@ export const videopress: Flow = {
 		const _siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const _siteTitle = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedSiteTitle() );
+		const locale = useLocale();
 
 		const clearOnboardingSiteOptions = () => {
 			setSiteTitle( '' );
@@ -105,8 +107,9 @@ export const videopress: Flow = {
 					if ( userIsLoggedIn ) {
 						return navigate( 'options' );
 					}
+
 					return window.location.replace(
-						`/start/videopress-account/user?variationName=${ name }&flow=${ name }&pageTitle=Video%20Portfolio&redirect_to=/setup/videopress/options`
+						`/start/videopress-account/user/${ locale }?variationName=${ name }&flow=${ name }&pageTitle=Video%20Portfolio&redirect_to=/setup/videopress/options`
 					);
 
 				case 'options': {
