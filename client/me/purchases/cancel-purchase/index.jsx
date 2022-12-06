@@ -15,6 +15,7 @@ import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
+import HeaderCake from 'calypso/components/header-cake';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	getName,
@@ -189,14 +190,74 @@ class CancelPurchase extends Component {
 
 		let heading;
 
-		if ( isDomainRegistration( purchase ) || isOneTimePurchase( purchase ) ) {
-			heading = this.props.translate( 'Cancel %(purchaseName)s', {
-				args: { purchaseName },
-			} );
-		}
-
 		if ( isSubscription( purchase ) ) {
 			heading = this.props.translate( 'Cancel Your %(purchaseName)s Subscription', {
+				args: { purchaseName },
+			} );
+
+			return (
+				<Fragment>
+					<QueryProductsList />
+					<TrackPurchasePageView
+						eventName="calypso_cancel_purchase_purchase_view"
+						purchaseId={ this.props.purchaseId }
+					/>
+
+					<Button
+						compact
+						borderless
+						className="cancel-purchase__back-link"
+						href={ this.props.getManagePurchaseUrlFor(
+							this.props.siteSlug,
+							this.props.purchaseId
+						) }
+					>
+						<Gridicon icon="chevron-left" size={ 18 } />
+						{ this.props.translate( 'Back' ) }
+					</Button>
+
+					<FormattedHeader brandFont headerText={ titles.cancelingSubscription } align="left" />
+
+					<Card className="cancel-purchase__card">
+						<h2>{ heading }</h2>
+
+						<CancelPurchaseRefundInformation
+							purchase={ purchase }
+							isJetpackPurchase={ isJetpackPurchase }
+							includedDomainPurchase={ this.props.includedDomainPurchase }
+							confirmBundledDomain={ this.state.confirmCancelBundledDomain }
+							cancelBundledDomain={ this.state.cancelBundledDomain }
+							onCancelConfirmationStateChange={ this.onCancelConfirmationStateChange }
+						/>
+					</Card>
+
+					<PurchaseSiteHeader siteId={ siteId } name={ siteName } domain={ siteDomain } />
+					<CompactCard className="cancel-purchase__product-information">
+						<div className="cancel-purchase__purchase-name">{ purchaseName }</div>
+						<div className="cancel-purchase__description">{ purchaseType( purchase ) }</div>
+						<ProductLink purchase={ purchase } selectedSite={ this.props.site } />
+					</CompactCard>
+					<CompactCard className="cancel-purchase__footer">
+						<div className="cancel-purchase__refund-amount">
+							{ this.renderFooterText( this.props ) }
+						</div>
+						<CancelPurchaseButton
+							purchase={ purchase }
+							includedDomainPurchase={ this.props.includedDomainPurchase }
+							disabled={ this.state.cancelBundledDomain && ! this.state.confirmCancelBundledDomain }
+							siteSlug={ this.props.siteSlug }
+							cancelBundledDomain={ this.state.cancelBundledDomain }
+							purchaseListUrl={ this.props.purchaseListUrl }
+							getConfirmCancelDomainUrlFor={ this.props.getConfirmCancelDomainUrlFor }
+							activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
+						/>
+					</CompactCard>
+				</Fragment>
+			);
+		}
+
+		if ( isDomainRegistration( purchase ) || isOneTimePurchase( purchase ) ) {
+			heading = this.props.translate( 'Cancel %(purchaseName)s', {
 				args: { purchaseName },
 			} );
 		}
@@ -209,17 +270,14 @@ class CancelPurchase extends Component {
 					purchaseId={ this.props.purchaseId }
 				/>
 
-				<Button
-					compact
-					borderless
-					className="cancel-purchase__back-link"
-					href={ this.props.getManagePurchaseUrlFor( this.props.siteSlug, this.props.purchaseId ) }
+				<HeaderCake
+					backHref={ this.props.getManagePurchaseUrlFor(
+						this.props.siteSlug,
+						this.props.purchaseId
+					) }
 				>
-					<Gridicon icon="chevron-left" size={ 18 } />
-					{ this.props.translate( 'Back' ) }
-				</Button>
-
-				<FormattedHeader brandFont headerText={ titles.cancelingSubscription } align="left" />
+					{ titles.cancelPurchase }
+				</HeaderCake>
 
 				<Card className="cancel-purchase__card">
 					<h2>{ heading }</h2>
