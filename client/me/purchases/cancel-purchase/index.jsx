@@ -26,6 +26,7 @@ import {
 	isRefundable,
 	isSubscription,
 } from 'calypso/lib/purchases';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import CancelPurchaseLoadingPlaceholder from 'calypso/me/purchases/cancel-purchase/loading-placeholder';
 import { managePurchase, purchasesRoot } from 'calypso/me/purchases/paths';
 import ProductLink from 'calypso/me/purchases/product-link';
@@ -43,6 +44,7 @@ import {
 import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
 import CancelPurchaseButton from './button';
 import CancelPurchaseRefundInformation from './refund-information';
+import CancelPurchaseRefundInformationWithFeatures from './refund-information-with-features';
 
 import './style.scss';
 
@@ -130,6 +132,17 @@ class CancelPurchase extends Component {
 		);
 	}
 
+	supportLink = () => {
+		return this.props.translate(
+			'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
+			{
+				components: {
+					contactLink: <a href={ CALYPSO_CONTACT } />,
+				},
+			}
+		);
+	};
+
 	renderFooterText = () => {
 		const { purchase } = this.props;
 		const { refundText, expiryDate, totalRefundText } = purchase;
@@ -190,11 +203,7 @@ class CancelPurchase extends Component {
 
 		let heading;
 
-		if ( isSubscription( purchase ) ) {
-			heading = this.props.translate( 'Cancel Your %(purchaseName)s Subscription', {
-				args: { purchaseName },
-			} );
-
+		if ( isSubscription( purchase ) && isPlan( purchase ) ) {
 			return (
 				<Fragment>
 					<QueryProductsList />
@@ -218,42 +227,62 @@ class CancelPurchase extends Component {
 
 					<FormattedHeader brandFont headerText={ titles.cancelingSubscription } align="left" />
 
-					<Card className="cancel-purchase__card">
-						<h2>{ heading }</h2>
+					<div className="cancel-purchase__layout">
+						<div className="cancel-purchase__layout-col cancel-purchase__layout-col-left">
+							<PurchaseSiteHeader siteId={ siteId } name={ siteName } domain={ siteDomain } />
+							<CancelPurchaseRefundInformationWithFeatures
+								purchase={ purchase }
+								isJetpackPurchase={ isJetpackPurchase }
+								includedDomainPurchase={ this.props.includedDomainPurchase }
+								confirmBundledDomain={ this.state.confirmCancelBundledDomain }
+								cancelBundledDomain={ this.state.cancelBundledDomain }
+								onCancelConfirmationStateChange={ this.onCancelConfirmationStateChange }
+							/>
 
-						<CancelPurchaseRefundInformation
-							purchase={ purchase }
-							isJetpackPurchase={ isJetpackPurchase }
-							includedDomainPurchase={ this.props.includedDomainPurchase }
-							confirmBundledDomain={ this.state.confirmCancelBundledDomain }
-							cancelBundledDomain={ this.state.cancelBundledDomain }
-							onCancelConfirmationStateChange={ this.onCancelConfirmationStateChange }
-						/>
-					</Card>
+							<div className="purchase-cancel-buttons">
+								<CancelPurchaseButton
+									purchase={ purchase }
+									includedDomainPurchase={ this.props.includedDomainPurchase }
+									disabled={
+										this.state.cancelBundledDomain && ! this.state.confirmCancelBundledDomain
+									}
+									siteSlug={ this.props.siteSlug }
+									cancelBundledDomain={ this.state.cancelBundledDomain }
+									purchaseListUrl={ this.props.purchaseListUrl }
+									getConfirmCancelDomainUrlFor={ this.props.getConfirmCancelDomainUrlFor }
+									activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
+								/>
 
-					<PurchaseSiteHeader siteId={ siteId } name={ siteName } domain={ siteDomain } />
-					<CompactCard className="cancel-purchase__product-information">
-						<div className="cancel-purchase__purchase-name">{ purchaseName }</div>
-						<div className="cancel-purchase__description">{ purchaseType( purchase ) }</div>
-						<ProductLink purchase={ purchase } selectedSite={ this.props.site } />
-					</CompactCard>
-					<CompactCard className="cancel-purchase__footer">
-						<div className="cancel-purchase__refund-amount">
-							{ this.renderFooterText( this.props ) }
+								<Button
+									className="purchase-cancel-keep-plan"
+									href={ this.props.getManagePurchaseUrlFor(
+										this.props.siteSlug,
+										this.props.purchaseId
+									) }
+								>
+									{ this.props.translate( 'Keep plan' ) }
+								</Button>
+							</div>
+
+							<p className="cancel-purchase--support-link cancel-purchase--support-link--main">
+								{ this.supportLink() }
+							</p>
 						</div>
-						<CancelPurchaseButton
-							purchase={ purchase }
-							includedDomainPurchase={ this.props.includedDomainPurchase }
-							disabled={ this.state.cancelBundledDomain && ! this.state.confirmCancelBundledDomain }
-							siteSlug={ this.props.siteSlug }
-							cancelBundledDomain={ this.state.cancelBundledDomain }
-							purchaseListUrl={ this.props.purchaseListUrl }
-							getConfirmCancelDomainUrlFor={ this.props.getConfirmCancelDomainUrlFor }
-							activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
-						/>
-					</CompactCard>
+						<div className="cancel-purchase__layout-col cancel-purchase__layout-col-right">
+							<PurchaseSiteHeader siteId={ siteId } name={ siteName } domain={ siteDomain } />
+							<p className="cancel-purchase--support-link cancel-purchase--support-link--sidebar">
+								{ this.supportLink() }
+							</p>
+						</div>
+					</div>
 				</Fragment>
 			);
+		}
+
+		if ( isSubscription( purchase ) ) {
+			heading = this.props.translate( 'Cancel Your %(purchaseName)s Subscription', {
+				args: { purchaseName },
+			} );
 		}
 
 		if ( isDomainRegistration( purchase ) || isOneTimePurchase( purchase ) ) {

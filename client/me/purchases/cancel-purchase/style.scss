@@ -2,22 +2,10 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-$modal-breakpoint-mobile: 660px;
-
-.purchases__cancel {
-	.cancel-purchase__back-link {
-		margin-bottom: 20px;
-
-		@media ( max-width: $modal-breakpoint-mobile ) {
-			margin-top: 30px;
-			margin-left: 10px;
-		}
-	}
-
-	.formatted-header__title {
-		margin-bottom: 30px;
-	}
-}
+$breakpoint-small: 478px;
+$breakpoint-mobile: 660px;
+$breakpoint-tablet:778px;
+$breakpoint-desktop: 1440px;
 
 .cancel-purchase__card {
 	h2 {
@@ -41,7 +29,7 @@ $modal-breakpoint-mobile: 660px;
 	margin: 0;
 	padding: 0 0 10px;
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@media ( max-width: $breakpoint-mobile ) {
 		width: 55%;
 	}
 
@@ -135,9 +123,24 @@ $modal-breakpoint-mobile: 660px;
 	width: 50%;
 }
 
+.purchases__cancel {
+	.cancel-purchase__back-link {
+		margin-bottom: 20px;
+
+		@media ( max-width: $breakpoint-mobile ) {
+			margin-top: 30px;
+			margin-left: 10px;
+		}
+	}
+
+	.formatted-header__title {
+		margin-bottom: 30px;
+	}
+}
+
 .cancel-purchase__layout {
 	@include grid-row( 4, 1 );
-	@include breakpoint-deprecated( ">1040px" ) {
+	@media ( min-width: $breakpoint-desktop ) {
 		@include grid-column( 1, 12 );
 		@include display-grid;
 		@include grid-template-columns( 12, 24px, 1fr );
@@ -146,13 +149,56 @@ $modal-breakpoint-mobile: 660px;
 }
 
 .cancel-purchase__layout-col-left {
-	@include breakpoint-deprecated( ">1040px" ) {
+	@media ( min-width: $breakpoint-desktop ) {
 		@include grid-column( 1, 8 );
+	}
+
+	.purchases-site__header {
+		box-shadow: none;
+		margin: 0 16px 16px 20px;
+
+		@media ( max-width: $breakpoint-desktop ) {
+			margin: 0 0 16px 0;
+		}
+
+		@media ( max-width: $breakpoint-mobile ) {
+			margin: 0 16px 16px 20px;
+		}
+
+		.site {
+			background-color: #f6f7f7;
+
+			.site__content {
+				padding: 24px 16px;
+			}
+
+			@media ( min-width: $breakpoint-desktop ) {
+				display: none;
+			}
+		}
+	}
+
+	.cancel-purchase__refund-information {
+		@media ( max-width: $breakpoint-desktop ) {
+			margin: 0 0 20px 0;
+		}
+
+		@media ( max-width: $breakpoint-mobile ) {
+			margin: 0 16px 16px 20px;
+		}
+	}
+
+	.cancel-purchase--support-link {
+		margin: 20px 16px;
+
+		@media ( min-width: $breakpoint-desktop ) {
+			display: none;
+		}
 	}
 }
 
 .cancel-purchase__layout-col-right {
-	@include breakpoint-deprecated( ">1040px" ) {
+	@media ( min-width: $breakpoint-desktop ) {
 		@include grid-column( 9, 4 );
 	}
 
@@ -162,9 +208,13 @@ $modal-breakpoint-mobile: 660px;
 		margin-bottom: 30px;
 		margin-top: 0;
 
-		@include breakpoint-deprecated( ">660px" ) {
+		@media ( min-width: $breakpoint-mobile ) {
 			margin-bottom: 16px;
 		}
+	}
+
+	@media ( max-width: $breakpoint-desktop ) {
+		display: none;
 	}
 
 	.purchases-site__header {
@@ -174,19 +224,48 @@ $modal-breakpoint-mobile: 660px;
 			background-color: #f6f7f7;
 
 			.site__content {
-				padding: 24px;
+				padding: 24px 16px;
 			}
 		}
 	}
-}
-
-.cancel-purchase--support-link {
-	font-size: 0.875rem;
 }
 
 .purchase-cancel-buttons {
 	div {
 		display: inline-block;
 		margin-right: 16px;
+
+		@media ( max-width: $breakpoint-small ) {
+			margin: 0;
+			width: 100%;
+		}
+	}
+
+	.cancel-purchase__button {
+		@media ( max-width: $breakpoint-small ) {
+			margin: 20px 0;
+		}
+	}
+
+	.purchase-cancel-keep-plan {
+		@media ( max-width: $breakpoint-small ) {
+			width: 100%;
+		}
+	}
+
+	@media ( max-width: $breakpoint-desktop ) {
+		margin: 20px 16px;
+	}
+
+	@media ( max-width: $breakpoint-small ) {
+		margin: 20px;
+	}
+}
+
+.cancel-purchase--support-link {
+	font-size: 0.875rem;
+
+	@media ( max-width: $breakpoint-small ) {
+		text-align: center;
 	}
 }
