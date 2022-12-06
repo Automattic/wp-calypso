@@ -2,8 +2,7 @@
 /**
  * External Dependencies
  */
-import { useSupportAvailability } from '@automattic/data-stores';
-import { useHappychatAvailable } from '@automattic/happychat-connection';
+import { useHasActiveSupport } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 import { useSelector } from 'react-redux';
@@ -22,8 +21,7 @@ import '../styles.scss';
 
 const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
-	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
-	const { data } = useHappychatAvailable( Boolean( chatStatus?.is_user_eligible ) );
+
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 	const { setUnreadCount } = useDispatch( HELP_CENTER_STORE );
 	const { setSite } = useDispatch( HELP_CENTER_STORE );
@@ -33,6 +31,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 		show: select( HELP_CENTER_STORE ).isHelpCenterShown(),
 	} ) );
 
+	const hasActiveSupport = useHasActiveSupport( 'CHAT', show && ! hidden );
 	const { unreadCount, closeChat } = useHCWindowCommunicator( isMinimized || ! show );
 
 	useEffect( () => {
@@ -40,10 +39,10 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	}, [ unreadCount, setUnreadCount ] );
 
 	useEffect( () => {
-		if ( data?.status === 'assigned' ) {
+		if ( hasActiveSupport ) {
 			setShowHelpCenter( true );
 		}
-	}, [ data, setShowHelpCenter ] );
+	}, [ hasActiveSupport, setShowHelpCenter ] );
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const primarySiteId = useSelector( ( state ) => getPrimarySiteId( state ) );
@@ -54,7 +53,6 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId || primarySiteId ) );
 
 	setSite( currentSite ? currentSite : site );
-	useSupportAvailability( 'CHAT' );
 
 	useStillNeedHelpURL();
 
@@ -75,7 +73,11 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	}, [ portalParent ] );
 
 	return createPortal(
-		<HelpCenterContainer handleClose={ handleClose } hidden={ hidden } />,
+		<HelpCenterContainer
+			showChat={ hasActiveSupport }
+			handleClose={ handleClose }
+			hidden={ hidden }
+		/>,
 		portalParent
 	);
 };

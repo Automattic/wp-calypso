@@ -10,3 +10,4 @@ export { default as Mail } from './icons/mail';
 export { default as NewReleases } from './icons/new-releases';
 export * from './support-variations';
 export { shouldShowHelpCenterToUser, shouldLoadInlineHelp } from './utils';
+export * from './types';

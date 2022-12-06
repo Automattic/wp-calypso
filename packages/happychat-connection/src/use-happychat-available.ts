@@ -1,31 +1,35 @@
+import config, { isCalypsoLive } from '@automattic/calypso-config';
 import apiFetch from '@wordpress/api-fetch';
 import { useQuery } from 'react-query';
-import { HappychatAuth } from './types';
-import useHappychatAuth from './use-happychat-auth';
 
 type HCAvailability = { available?: boolean; status?: string; env?: 'staging' | 'production' };
 
 const key = Date.now();
 
-function getHCAvailabilityAndStatus( dataAuth: HappychatAuth ) {
-	const result: HCAvailability = {};
+const isNonProdEnv =
+	[ 'stage', 'development', 'horizon' ].includes( config( 'env_id' ) ) || isCalypsoLive();
+
+function getHCAvailability() {
+	const url = isNonProdEnv
+		? 'https://happychat-io-staging.go-vip.co/_availability'
+		: 'https://happychat.io/_availability';
 	return new Promise< HCAvailability >( ( resolve ) => {
 		apiFetch( {
 			mode: 'cors',
 			method: 'GET',
 			credentials: 'omit',
-			url: dataAuth.availability_url,
-		} ).then( ( response ) => {
-			result.env = response?.env;
-			result.available = response?.available;
-			result.status = dataAuth.is_existing_session ? 'assigned' : 'new';
-			resolve( result );
+			url: `${ url }?${ Date.now() }`,
+		} ).then( ( response: any ) => {
+			resolve( {
+				env: isNonProdEnv ? 'staging' : 'production',
+				available: response?.available,
+			} );
 		} );
 	} );
 }
 
 /**
- * Opens a socket connection to Happychat to check if it's available and if the user has an active session.
+ * Sends a request to Happychat availability endpoint to check if chat is available.
  * By default, it caches the answer for 10 minutes or until page refresh.
  *
  * @param enabled on/off switch
@@ -33,16 +37,10 @@ function getHCAvailabilityAndStatus( dataAuth: HappychatAuth ) {
  * @returns
  */
 export function useHappychatAvailable( enabled = true, staleTime = 10 * 60 * 1000 ) {
-	const { data: dataAuth, isLoading: isLoadingAuth } = useHappychatAuth();
-
-	return useQuery(
-		'happychat-available' + key,
-		() => getHCAvailabilityAndStatus( dataAuth as HappychatAuth ),
-		{
-			enabled: ! isLoadingAuth && !! dataAuth && enabled,
-			staleTime,
-		}
-	);
+	return useQuery( 'happychat-available' + key, () => getHCAvailability(), {
+		enabled,
+		staleTime,
+	} );
 }
 
 export default useHappychatAvailable;

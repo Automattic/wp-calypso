@@ -1,8 +1,6 @@
 /**
  * External Dependencies
  */
-import { useSupportAvailability } from '@automattic/data-stores';
-import { useHappychatAvailable } from '@automattic/happychat-connection';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -32,7 +30,7 @@ const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props 
 	return <Draggable { ...props } />;
 };
 
-const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) => {
+const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, showChat } ) => {
 	const { show, isMinimized } = useSelect( ( select ) => ( {
 		show: select( HELP_CENTER_STORE ).isHelpCenterShown(),
 		isMinimized: select( HELP_CENTER_STORE ).getIsMinimized(),
@@ -45,8 +43,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 	const classNames = classnames( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,
 	} );
-	const { data: supportAvailability } = useSupportAvailability( 'CHAT' );
-	const { data } = useHappychatAvailable( Boolean( supportAvailability?.is_user_eligible ) );
+
 	const { history, index } = useSelect( ( select ) =>
 		select( HELP_CENTER_STORE ).getRouterState()
 	);
@@ -79,7 +76,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 
 	return (
 		<MemoryRouter initialEntries={ history } initialIndex={ index }>
-			{ data?.status === 'assigned' && <Redirect to="/inline-chat?session=continued" /> }
+			{ showChat && <Redirect to="/inline-chat?session=continued" /> }
 			<HistoryRecorder />
 			<FeatureFlagProvider>
 				<OptionalDraggable

@@ -6,6 +6,7 @@ export interface Container {
 	defaultFooterContent?: ReactElement;
 	isLoading?: boolean;
 	hidden?: boolean;
+	showChat?: boolean;
 }
 
 export interface Header {
