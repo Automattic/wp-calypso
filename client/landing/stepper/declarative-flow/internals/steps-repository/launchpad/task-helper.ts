@@ -5,6 +5,7 @@ import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list'
 import { SiteDetails } from 'calypso/../packages/data-stores/src';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
 import { Task } from './types';
@@ -54,7 +55,7 @@ export function getEnhancedTasks(
 				case 'plan_selected':
 					taskData = {
 						title: translate( 'Choose a Plan' ),
-						disabled: true,
+						disabled: isVideoPressFlow( flow ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign( `/plans/${ siteSlug }` );
