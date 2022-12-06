@@ -133,7 +133,7 @@
 		"themes/atomic-homepage-replace": true,
 		"themes/plugin-bundling": true,
 		"themes/premium": true,
-		"themes/showcase-i4/search-and-filter": false,
+		"themes/showcase-i4/search-and-filter": true,
 		"themes/subscription-purchases": false,
 		"themes/theme-switch-persist-template": false,
 		"themes/third-party-premium": false,
