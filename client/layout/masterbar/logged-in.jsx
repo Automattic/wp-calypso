@@ -243,7 +243,7 @@ class MasterbarLoggedIn extends Component {
 			>
 				<Icon className="gridicon" icon={ icon } />
 				{ hasMoreThanOneSite
-					? translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
+					? translate( 'Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
 					: translate( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 			</Item>
 		);
