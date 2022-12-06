@@ -25,7 +25,7 @@ const PatternSelectorLoader = ( {
 				patterns={ headerPatterns }
 				onSelect={ onSelect }
 				onBack={ onBack }
-				title={ selectedPattern ? translate( 'Replace header' ) : translate( 'Add a header' ) }
+				title={ translate( 'Add a header' ) }
 				selectedPattern={ selectedPattern }
 			/>
 			<PatternSelector
@@ -33,7 +33,7 @@ const PatternSelectorLoader = ( {
 				patterns={ footerPatterns }
 				onSelect={ onSelect }
 				onBack={ onBack }
-				title={ selectedPattern ? translate( 'Replace footer' ) : translate( 'Add a footer' ) }
+				title={ translate( 'Add a footer' ) }
 				selectedPattern={ selectedPattern }
 			/>
 			<PatternSelector
