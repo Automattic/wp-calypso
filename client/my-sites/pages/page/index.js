@@ -366,7 +366,7 @@ class Page extends Component {
 			<PostActionsEllipsisMenuQRCode
 				globalId={ this.props.page.global_ID }
 				key="qrcode"
-				handleClick={ this.viewPageQr }
+				onClick={ this.viewPageQrCode }
 			/>
 		);
 	}
@@ -784,7 +784,7 @@ class Page extends Component {
 		saveAs( blob, fileName );
 	};
 
-	viewPageQr = () => {
+	viewPageQrCode = () => {
 		this.recordEllipsisMenuItemClickEvent( 'qrcode' );
 	};
 
