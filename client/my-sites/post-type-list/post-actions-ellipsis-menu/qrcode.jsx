@@ -7,6 +7,8 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { getPost } from 'calypso/state/posts/selectors';
 import PostActionsQRCode from '../../post-actions-qr-code';
 
+const noop = () => {};
+
 const qrIcon = (
 	<Icon
 		icon={
@@ -17,7 +19,7 @@ const qrIcon = (
 	/>
 );
 
-function PostActionsEllipsisMenuQRCode( { globalId, handleClick } ) {
+function PostActionsEllipsisMenuQRCode( { globalId, handleClick = noop } ) {
 	const [ showQRCode, setShowQRCode ] = useState( false );
 
 	const translate = useTranslate();

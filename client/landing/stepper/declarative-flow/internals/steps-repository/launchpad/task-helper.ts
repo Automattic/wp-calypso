@@ -5,6 +5,7 @@ import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list'
 import { SiteDetails } from 'calypso/../packages/data-stores/src';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
 import { Task } from './types';
@@ -54,6 +55,7 @@ export function getEnhancedTasks(
 				case 'plan_selected':
 					taskData = {
 						title: translate( 'Choose a Plan' ),
+						disabled: isVideoPressFlow( flow ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign( `/plans/${ siteSlug }` );
@@ -136,6 +138,7 @@ export function getEnhancedTasks(
 				case 'videopress_setup':
 					taskData = {
 						completed: true,
+						disabled: true,
 						title: translate( 'Set up your video site' ),
 					};
 					break;
@@ -144,6 +147,7 @@ export function getEnhancedTasks(
 						title: translate( 'Upload your first video' ),
 						actionUrl: launchpadUploadVideoLink,
 						completed: videoPressUploadCompleted,
+						disabled: videoPressUploadCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.replace( launchpadUploadVideoLink );
