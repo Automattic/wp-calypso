@@ -12,6 +12,7 @@ import PopoverMenuItemClipboard from 'calypso/components/popover-menu/item-clipb
 import { addQueryArgs } from 'calypso/lib/route';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice } from 'calypso/state/notices/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { setPreviewUrl } from 'calypso/state/ui/preview/actions';
 import Placeholder from '../placeholder';
@@ -27,6 +28,7 @@ interface Props {
 	previewUrl?: string;
 	isHomepage?: boolean;
 
+	isAdmin: boolean;
 	recordGoogleEvent: any;
 	recordTracksEvent: any;
 	setPreviewUrl: any;
@@ -42,6 +44,7 @@ const VirtualPage = ( {
 	description,
 	previewUrl,
 	isHomepage,
+	isAdmin,
 	...props
 }: Props ) => {
 	const translate = useTranslate();
@@ -50,7 +53,7 @@ const VirtualPage = ( {
 		? addQueryArgs( { templateId: id, templateType: type }, defaultEditorUrl )
 		: defaultEditorUrl;
 
-	const { data: template } = useTemplate( site.ID, id );
+	const { data: template } = useTemplate( site.ID, id, { enabled: isAdmin } );
 
 	const recordGoogleEvent = ( action: string ) => {
 		props.recordGoogleEvent( 'Pages', action );
@@ -102,7 +105,7 @@ const VirtualPage = ( {
 		props.recordGoogleEvent( 'Pages', 'Clicked Copy Page Link' );
 	};
 
-	if ( ! template ) {
+	if ( isAdmin && ! template ) {
 		return <Placeholder.Page key={ id } multisite={ ! site } />;
 	}
 
@@ -112,15 +115,16 @@ const VirtualPage = ( {
 			<div className="page__main">
 				<a
 					className="page__title"
-					href={ editorUrl }
-					title={ translate( 'Edit %(title)s', {
-						textOnly: true,
-						args: { title },
-					} ) }
+					href={ isAdmin ? editorUrl : previewUrl }
+					title={
+						isAdmin
+							? translate( 'Edit %(title)s', { textOnly: true, args: { title } } )
+							: translate( 'View %(title)s', { textOnly: true, args: { title } } )
+					}
 					onClick={ clickPageTitle }
 				>
 					<span>{ title }</span>
-					{ isHomepage && (
+					{ isHomepage && template && (
 						<InfoPopover position="right">
 							{ translate(
 								'The homepage of your site displays the %(title)s template. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
@@ -147,10 +151,12 @@ const VirtualPage = ( {
 				</div>
 			</div>
 			<EllipsisMenu position="bottom left" onToggle={ toggleEllipsisMenu }>
-				<PopoverMenuItem onClick={ editPage } href={ editorUrl }>
-					<Gridicon icon="pencil" size={ 18 } />
-					{ translate( 'Edit' ) }
-				</PopoverMenuItem>
+				{ isAdmin && (
+					<PopoverMenuItem onClick={ editPage } href={ editorUrl }>
+						<Gridicon icon="pencil" size={ 18 } />
+						{ translate( 'Edit' ) }
+					</PopoverMenuItem>
+				) }
 				{ previewUrl && (
 					<PopoverMenuItem onClick={ viewPage }>
 						<Gridicon icon="visible" size={ 18 } />
@@ -168,6 +174,12 @@ const VirtualPage = ( {
 	);
 };
 
+const mapStateToProps = ( state: any, ownProps: Props ) => {
+	return {
+		isAdmin: canCurrentUser( state, ownProps.site.ID, 'edit_theme_options' ),
+	};
+};
+
 const mapDispatchToProps = {
 	recordGoogleEvent,
 	recordTracksEvent,
@@ -176,4 +188,4 @@ const mapDispatchToProps = {
 	infoNotice,
 };
 
-export default connect( null, mapDispatchToProps )( VirtualPage );
+export default connect( mapStateToProps, mapDispatchToProps )( VirtualPage );

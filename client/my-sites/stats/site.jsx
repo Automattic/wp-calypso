@@ -208,8 +208,6 @@ class StatsSite extends Component {
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ traffic.path }/{{ interval }}${ slugPath }`;
 
-		const showHighlights = config.isEnabled( 'stats/show-traffic-highlights' );
-
 		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
 		const wrapperClass = classNames( {
 			'stats--new-main-chart': isNewMainChart,
@@ -250,7 +248,7 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 
-				{ showHighlights && <HighlightsSection siteId={ siteId } /> }
+				<HighlightsSection siteId={ siteId } />
 
 				<div id="my-stats-content" className={ wrapperClass }>
 					{ isNewMainChart ? (

@@ -3,13 +3,12 @@
  */
 
 import {
-	ChangeUILanguageFlow,
-	DataHelper,
 	EditorPage,
 	TestAccount,
 	envVariables,
 	getTestAccountByFeature,
 	envToFeatureKey,
+	RestAPIClient,
 } from '@automattic/calypso-e2e';
 import { Page, Frame, Browser } from 'playwright';
 import type { LanguageSlug } from '@automattic/languages';
@@ -248,6 +247,7 @@ declare const browser: Browser;
 describe( 'I18N: Editor', function () {
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature( { ...features, variant: 'i18n' } );
+	const testAccount = new TestAccount( accountName );
 
 	// Filter out the locales that do not have valid translation content defined above.
 	const locales: LanguageSlug[] = Object.keys( translations ).filter( ( locale ) =>
@@ -255,6 +255,7 @@ describe( 'I18N: Editor', function () {
 	) as LanguageSlug[];
 	let page: Page;
 	let editorPage: EditorPage;
+	let restAPIClient: RestAPIClient;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -265,50 +266,33 @@ describe( 'I18N: Editor', function () {
 			}
 		} );
 
-		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
+		restAPIClient = new RestAPIClient( testAccount.credentials );
 
 		editorPage = new EditorPage( page, { target: features.siteType } );
 	} );
 
 	describe.each( locales )( `Locale: %s`, function ( locale ) {
-		describe( 'Set up', function () {
-			it( `Change UI language to ${ locale }`, async function () {
-				await Promise.all( [
-					page.waitForNavigation( { url: '**/home/**', waitUntil: 'load' } ),
-					page.goto( DataHelper.getCalypsoURL( '/' ) ),
-				] );
-
-				const changeUILanguageFlow = new ChangeUILanguageFlow( page );
-				await changeUILanguageFlow.changeUILanguage( locale as LanguageSlug );
-
-				await Promise.all( [
-					page.waitForNavigation( { url: '**/home/**', waitUntil: 'load' } ),
-					page.goto( DataHelper.getCalypsoURL( '/' ) ),
-				] );
-			} );
-
-			it( 'Go to the new post page', async function () {
-				await editorPage.visit( 'post' );
-			} );
+		beforeAll( async function () {
+			await restAPIClient.setMySettings( { language: locale } );
+			await page.reload( { waitUntil: 'networkidle', timeout: 20 * 1000 } );
 		} );
 
 		describe( 'Editing Toolkit Plugin', function () {
+			it( 'Go to the new post page', async function () {
+				await editorPage.visit( 'post' );
+			} );
+
 			it( 'Translations for Welcome Guide', async function () {
 				const frame = await editorPage.getEditorHandle();
-				const timeout = 10 * 1000;
 				// We know these are all defined because of the filtering above. Non-null asserting is safe here.
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 				const etkTranslations = translations[ locale ]!.etkPlugin!;
 
 				await editorPage.openEditorOptionsMenu();
-				await frame.locator( etkTranslations.welcomeGuide.openGuideSelector ).click( { timeout } );
-				await frame.waitForSelector( etkTranslations.welcomeGuide.welcomeTitleSelector, {
-					timeout,
-				} );
-				await frame
-					.locator( etkTranslations.welcomeGuide.closeButtonSelector )
-					.click( { timeout } );
+				await frame.locator( etkTranslations.welcomeGuide.openGuideSelector ).click();
+				await frame.waitForSelector( etkTranslations.welcomeGuide.welcomeTitleSelector );
+				await frame.locator( etkTranslations.welcomeGuide.closeButtonSelector ).click();
 			} );
 		} );
 
@@ -321,8 +305,6 @@ describe( 'I18N: Editor', function () {
 				let frame: Page | Frame;
 				let editorPage: EditorPage;
 
-				const blockTimeout = 10 * 1000;
-
 				it( 'Insert test block', async function () {
 					editorPage = new EditorPage( page, { target: features.siteType } );
 					await editorPage.addBlockFromSidebar( block.blockName, block.blockEditorSelector );
@@ -333,9 +315,7 @@ describe( 'I18N: Editor', function () {
 					// Ensure block contents are translated as expected.
 					await Promise.all(
 						block.blockEditorContent.map( ( content ) =>
-							frame.waitForSelector( `${ block.blockEditorSelector } ${ content }`, {
-								timeout: blockTimeout,
-							} )
+							frame.waitForSelector( `${ block.blockEditorSelector } ${ content }` )
 						)
 					);
 				} );
@@ -346,8 +326,7 @@ describe( 'I18N: Editor', function () {
 
 					// Ensure the block is highlighted.
 					await frame.waitForSelector(
-						`:is( ${ block.blockEditorSelector }.is-selected, ${ block.blockEditorSelector }.has-child-selected)`,
-						{ timeout: blockTimeout }
+						`:is( ${ block.blockEditorSelector }.is-selected, ${ block.blockEditorSelector }.has-child-selected)`
 					);
 
 					// If on block insertion, one of the sub-blocks are selected, click on
@@ -359,8 +338,7 @@ describe( 'I18N: Editor', function () {
 
 					// Ensure the Settings with the block selected shows the expected title.
 					await frame.waitForSelector(
-						`.block-editor-block-card__title:has-text("${ block.blockPanelTitle }")`,
-						{ timeout: blockTimeout }
+						`.block-editor-block-card__title:has-text("${ block.blockPanelTitle }")`
 					);
 				} );
 			}
