@@ -41,7 +41,7 @@ export function validateFilters( context, next ) {
 }
 
 export function validateVertical( context, next ) {
-	performanceMark( context, 'validateVertical' );
+	performanceMark( context, 'fetchThemeFilters' );
 	const { vertical } = context.params;
 	const { store } = context;
 
