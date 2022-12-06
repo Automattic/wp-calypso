@@ -60,7 +60,7 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 					) }
 					<div className="launchpad__checklist-item-text-container">
 						<span className="launchpad__checklist-item-text">{ title }</span>
-						{ subtitle ? <p className="launchpad__checklist-item-subtext">{ subtitle }</p> : null }
+						{ subtitle && <p className="launchpad__checklist-item-subtext">{ subtitle }</p> }
 					</div>
 					{ task.badgeText ? <Badge type="info-blue">{ task.badgeText }</Badge> : null }
 					{ shouldDisplayChevron && (
