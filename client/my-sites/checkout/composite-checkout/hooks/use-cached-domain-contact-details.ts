@@ -174,24 +174,8 @@ export function useCachedContactDetailsForCheckoutForm( {
 		arePostalCodesSupported,
 		loadDomainContactDetailsFromCache,
 		countriesList,
+		shouldWait,
 	] );
 
 	return { isComplete };
-}
-
-/**
- * Load cached contact details from the server and use them to populate the
- * checkout contact form and the shopping cart tax location.
- */
-export default function useCachedDomainContactDetails( {
-	overrideCountryList,
-	store,
-	shouldWait,
-}: {
-	overrideCountryList?: CountryListItem[];
-	store: CheckoutStepGroupStore;
-	shouldWait?: boolean;
-} ) {
-	const cachedContactDetails = useCachedContactDetails( { shouldWait } );
-	return useCachedContactDetailsForCheckoutForm( cachedContactDetails, store, overrideCountryList );
 }
