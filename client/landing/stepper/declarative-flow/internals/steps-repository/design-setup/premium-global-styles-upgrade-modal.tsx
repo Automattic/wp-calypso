@@ -85,6 +85,10 @@ export default function PremiumGlobalStylesUpgradeModal( {
 								</li>
 								<li className="upgrade-modal__included-item">
 									<Gridicon icon="checkmark" size={ 16 } />
+									{ translate( 'Collect payments' ) }
+								</li>
+								<li className="upgrade-modal__included-item">
+									<Gridicon icon="checkmark" size={ 16 } />
 									{ translate( 'Best-in-class hosting' ) }
 								</li>
 							</ul>
