@@ -5,6 +5,7 @@ import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list'
 import { SiteDetails } from 'calypso/../packages/data-stores/src';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
 import { Task } from './types';
@@ -60,6 +61,7 @@ export function getEnhancedTasks(
 									'Upgrade your plan to publish your colour changes and unlock tons of other features'
 							  )
 							: '',
+						disabled: isVideoPressFlow( flow ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -68,7 +70,6 @@ export function getEnhancedTasks(
 						},
 						badgeText: translatedPlanName,
 						completed: task.completed && ! displayGlobalStylesWarning,
-						disabled: ! displayGlobalStylesWarning,
 						warning: displayGlobalStylesWarning,
 					};
 					break;

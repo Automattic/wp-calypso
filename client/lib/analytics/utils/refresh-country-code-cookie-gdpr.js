@@ -6,10 +6,9 @@ let refreshRequest = null;
 /**
  * Refreshes the GDPR `country_code` cookie every 6 hours (like A8C_Analytics wpcom plugin).
  *
- * @param {AbortSignal} signal optional AbortSignal to cancel the request (use if needed)
  * @returns {Promise<void>} Promise that resolves when the refreshing is done (or immediately)
  */
-export default async function refreshCountryCodeCookieGdpr( signal = undefined ) {
+export default async function refreshCountryCodeCookieGdpr() {
 	const cookies = cookie.parse( document.cookie );
 	if ( cookies.country_code && cookies.region ) {
 		debug(
@@ -21,7 +20,7 @@ export default async function refreshCountryCodeCookieGdpr( signal = undefined )
 	}
 
 	if ( refreshRequest === null ) {
-		refreshRequest = requestGeoData( signal ).then( ( { countryCode, region } ) => {
+		refreshRequest = requestGeoData().then( ( { countryCode, region } ) => {
 			setCountryCodeCookie( countryCode );
 			setRegionCookie( region );
 		} );
@@ -31,10 +30,10 @@ export default async function refreshCountryCodeCookieGdpr( signal = undefined )
 	refreshRequest = null;
 }
 
-function requestGeoData( signal = undefined ) {
+function requestGeoData() {
 	// cache buster
 	const v = new Date().getTime();
-	return fetch( 'https://public-api.wordpress.com/geo/?v=' + v, { signal } )
+	return fetch( 'https://public-api.wordpress.com/geo/?v=' + v )
 		.then( ( res ) => {
 			if ( ! res.ok ) {
 				return res.body().then( ( body ) => {

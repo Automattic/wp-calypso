@@ -14,29 +14,11 @@ export type MobilePromoCardProps = {
 };
 
 export default function MobilePromoCard( { className, isWoo }: MobilePromoCardProps ) {
-	// Using useTranslate() with interpolation to set up the title/message.
-	// https://wpcalypso.wordpress.com/devdocs/packages/i18n-calypso/README.md
 	const translate = useTranslate();
-	const redirectLink = isWoo ? 'https://woo.com/mobile/' : 'https://jetpack.com/app/';
-	const linkClassName = isWoo ? 'woo' : 'jetpack';
-	const components = {
-		a: <a className={ linkClassName } href={ redirectLink } />,
-	};
 	// Basic user agent testing so we can show app store badges on moble.
 	const userAgent = window.navigator.userAgent.toLowerCase();
 	const isApple = userAgent.includes( 'iphone' ) || userAgent.includes( 'ipad' );
 	const isGoogle = userAgent.includes( 'android' );
-
-	const getTitle = () => {
-		if ( isWoo ) {
-			return translate( 'Bring your Store stats with you using the {{a}}Woo{{/a}} mobile app', {
-				components,
-			} );
-		}
-		return translate( 'Bring your stats with you using the {{a}}Jetpack{{/a}} mobile app', {
-			components,
-		} );
-	};
 
 	// Determines message text based on mobile, tablet, or Desktop.
 	const getMessage = () => {
@@ -44,11 +26,20 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 			return translate(
 				'Check your stats on-the-go and get real-time notifications with the Jetpack mobile app.'
 			);
-		} else if ( isGoogle ) {
+		}
+		if ( isGoogle ) {
 			return translate(
 				'Check your stats on-the-go and get real-time notifications with the Woo mobile app.'
 			);
-		} else if ( isWoo ) {
+		}
+		// Using useTranslate() with interpolation to set up the linked message.
+		// https://wpcalypso.wordpress.com/devdocs/packages/i18n-calypso/README.md
+		const redirectLink = isWoo ? 'https://woo.com/mobile/' : 'https://jetpack.com/app/';
+		const linkClassName = isWoo ? 'woo' : 'jetpack';
+		const components = {
+			a: <a className={ linkClassName } href={ redirectLink } />,
+		};
+		if ( isWoo ) {
 			return translate(
 				'Visit {{a}}woo.com/mobile{{/a}} or scan the QR code to download the WooCommerce mobile app.',
 				{ components }
@@ -75,7 +66,8 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 					/>
 				</a>
 			);
-		} else if ( isGoogle ) {
+		}
+		if ( isGoogle ) {
 			const appStoreLink = isWoo
 				? 'https://play.google.com/store/apps/details?id=com.woocommerce.android'
 				: 'https://play.google.com/store/apps/details?id=com.jetpack.android';
@@ -88,7 +80,8 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 					/>
 				</a>
 			);
-		} else if ( isWoo ) {
+		}
+		if ( isWoo ) {
 			return <img className="promo-qr-code" src={ qrCodeWoo } alt="QR Code for Woo mobile app" />;
 		}
 		return (
@@ -103,7 +96,11 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 					{ isWoo && <img src={ iconWoo } alt="Icon for the Woo mobile app" /> }
 					{ ! isWoo && <WordPressJetpackSVG /> }
 				</div>
-				<p className="promo-card__title">{ getTitle() }</p>
+				<p className="promo-card__title">
+					{ isWoo
+						? translate( 'Bring your Store stats with you using the Woo mobile app' )
+						: translate( 'Bring your stats with you using the Jetpack mobile app' ) }
+				</p>
 				<p className="promo-card__message">{ getMessage() }</p>
 			</div>
 			<div className="promo-rhs">{ getPromoImage() }</div>
