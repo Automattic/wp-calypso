@@ -50,6 +50,10 @@ import { handleScroll } from './utils';
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
 
+// Hotfix for card and button styles hierarchy after <GdprBanner /> removal
+import '@automattic/components/src/button/style.scss';
+import '@automattic/components/src/card/style.scss';
+
 import './style.scss';
 
 const HELP_CENTER_STORE = HelpCenter.register();
