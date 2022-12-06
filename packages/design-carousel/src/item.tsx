@@ -1,6 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import './styles.scss';
 import { MShotsImage, MShotsOptions } from '@automattic/onboarding';
+import { useMediaQuery } from '@wordpress/compose';
 import cx from 'classnames';
 
 type Props = {
@@ -26,9 +27,15 @@ const getDesignPreviewUrl = ( design: any ): string => {
 export function Item( { style, design, className, type }: Props ) {
 	// Default to mobile options
 	let options: MShotsOptions = { w: 400, vpw: 400, vph: 872, format: 'png' };
+	const isLargerThan1440px = useMediaQuery( '(min-width: 1440px)' );
 
 	if ( type === 'desktop' ) {
-		options = { w: 1920, vpw: 1920, vph: 1280, format: 'png' };
+		options = {
+			w: isLargerThan1440px ? 1920 : 1280,
+			vpw: 1920,
+			vph: 1280,
+			format: 'png',
+		};
 	}
 
 	return (
