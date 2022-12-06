@@ -66,11 +66,17 @@ export function useCachedContactDetails( { shouldWait }: { shouldWait?: boolean 
  * Must be run inside a CheckoutStepGroup in order to have the ability to
  * complete steps.
  */
-function useCachedContactDetailsForCheckoutForm(
-	cachedContactDetails: PossiblyCompleteDomainContactDetails | null,
-	store: CheckoutStepGroupStore,
-	overrideCountryList?: CountryListItem[]
-): { isComplete: boolean } {
+export function useCachedContactDetailsForCheckoutForm( {
+	shouldWait,
+	cachedContactDetails,
+	store,
+	overrideCountryList,
+}: {
+	shouldWait: boolean;
+	cachedContactDetails: PossiblyCompleteDomainContactDetails | null;
+	store: CheckoutStepGroupStore;
+	overrideCountryList?: CountryListItem[];
+} ): { isComplete: boolean } {
 	const countriesList = useCountryList( overrideCountryList );
 	const reduxDispatch = useReduxDispatch();
 	const didFillForm = useRef( false );
@@ -111,6 +117,10 @@ function useCachedContactDetailsForCheckoutForm(
 		}
 		if ( ! countriesList.length ) {
 			debug( 'cached contact details for form are waiting for the countries list' );
+			return;
+		}
+		if ( shouldWait ) {
+			debug( 'cached contact details for form are waiting' );
 			return;
 		}
 		debug( 'using fetched cached contact details for checkout data store', cachedContactDetails );
