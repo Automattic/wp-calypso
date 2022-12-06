@@ -49,7 +49,6 @@ const selectors = {
 	// Plugin details view
 	pluginDetailsHeaderTitle: ( section: string ) =>
 		`.plugin-details-header__name:text("${ section }")`,
-	loggedOutStartButton: 'a:has-text("Start with this plugin")',
 };
 
 /**
@@ -352,12 +351,5 @@ export class PluginsPage {
 			this.page.waitForResponse( /.*delete\?.*/ ),
 			confirmDialogButton.click(),
 		] );
-	}
-
-	/**
-	 * Clicks on the 'Start with this plugin' button.
-	 */
-	async clickStartOnboarding(): Promise< void > {
-		await this.page.click( selectors.loggedOutStartButton );
 	}
 }
