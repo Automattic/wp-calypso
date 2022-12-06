@@ -93,7 +93,9 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 		<div className={ classNames( 'promo-card', className ?? null ) }>
 			<div className="promo-lhs">
 				<div className="promo-card__icons">
-					{ isWoo && <img src={ iconWoo } alt="Icon for the Woo mobile app" /> }
+					{ isWoo && (
+						<img className="woo-icon" src={ iconWoo } alt="Icon for the Woo mobile app" />
+					) }
 					{ ! isWoo && <WordPressJetpackSVG /> }
 				</div>
 				<p className="promo-card__title">
