@@ -37,7 +37,7 @@ import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { getCategorizationOptions } from './categories';
 import { DEFAULT_VARIATION_SLUG, STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
-import PremiumGlobalStylesModal from './premium-global-styles-modal';
+import PremiumGlobalStylesUpgradeModal from './premium-global-styles-upgrade-modal';
 import PreviewToolbar from './preview-toolbar';
 import UpgradeModal from './upgrade-modal';
 import getThemeIdFromDesign from './utils/get-theme-id-from-design';
@@ -573,7 +573,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					closeModal={ closeUpgradeModal }
 					checkout={ goToCheckout }
 				/>
-				<PremiumGlobalStylesModal
+				<PremiumGlobalStylesUpgradeModal
 					checkout={ goToCheckoutForPremiumGlobalStyles }
 					closeModal={ () => setShowPremiumGlobalStylesModal( false ) }
 					isOpen={ showPremiumGlobalStylesModal }
