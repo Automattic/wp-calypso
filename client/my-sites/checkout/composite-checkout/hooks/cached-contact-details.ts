@@ -16,7 +16,7 @@ import type {
 	CountryListItem,
 } from '@automattic/wpcom-checkout';
 
-const debug = debugFactory( 'calypso:composite-checkout:use-cached-domain-contact-details' );
+const debug = debugFactory( 'calypso:composite-checkout:cached-contact-details' );
 
 /**
  * Fetch the cached contact details from the server.

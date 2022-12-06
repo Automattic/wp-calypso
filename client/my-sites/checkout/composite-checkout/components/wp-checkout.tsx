@@ -43,7 +43,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import { useCachedContactDetailsForCheckoutForm } from '../hooks/use-cached-domain-contact-details';
+import { useCachedContactDetailsForCheckoutForm } from '../hooks/cached-contact-details';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
