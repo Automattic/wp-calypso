@@ -10,6 +10,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormInput from 'calypso/components/forms/form-text-input';
 import useSiteVerticalsFeatured from 'calypso/data/site-verticals/use-site-verticals-featured';
+import useUserSettingsQuery from 'calypso/data/users/use-user-settings-query';
 import { useCountriesAndStates } from 'calypso/jetpack-cloud/sections/partner-portal/company-details-form/hooks/use-countries-and-states';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ONBOARD_STORE, USER_STORE } from '../../../../stores';
@@ -30,7 +31,8 @@ const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 		setStoreLocationCountryCode: saveCountryCodeToStore,
 	} = useDispatch( ONBOARD_STORE );
 
-	const verticals = useSiteVerticalsFeatured();
+	const userSettings = useUserSettingsQuery();
+	const verticals = useSiteVerticalsFeatured( { locale: userSettings?.data?.language || 'en' } );
 	const verticalsOptions = React.useMemo( () => {
 		const sorted = verticals.data?.sort( ( a, b ) => {
 			if ( a.name === b.name ) {
@@ -40,7 +42,7 @@ const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 		} );
 		const options = sorted?.map( ( v ) => (
 			<option value={ v.id } key={ v.id }>
-				{ v.name }
+				{ v.title }
 			</option>
 		) );
 		options?.unshift(
