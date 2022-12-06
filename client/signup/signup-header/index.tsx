@@ -1,6 +1,7 @@
 import { ProgressBar } from '@automattic/components';
 import { useFlowProgress } from '@automattic/onboarding';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import './style.scss';
 
@@ -17,12 +18,6 @@ interface Props {
 	pageTitle?: string;
 }
 
-const VARIATION_TITLES: Record< string, string > = {
-	newsletter: 'Newsletter',
-	'link-in-bio': 'Link in Bio',
-	videopress: 'Video',
-};
-
 const SignupHeader = ( {
 	shouldShowLoadingScreen,
 	isReskinned,
@@ -33,6 +28,12 @@ const SignupHeader = ( {
 	const logoClasses = classnames( 'wordpress-logo', {
 		'is-large': shouldShowLoadingScreen && ! isReskinned,
 	} );
+	const translate = useTranslate();
+	const VARIATION_TITLES: Record< string, string > = {
+		newsletter: translate( 'Newsletter' ),
+		'link-in-bio': translate( 'Link in Bio' ),
+		videopress: translate( 'Video' ),
+	};
 	const params = new URLSearchParams( window.location.search );
 	const variationName = params.get( 'variationName' );
 	const variationTitle = variationName && VARIATION_TITLES[ variationName ];
