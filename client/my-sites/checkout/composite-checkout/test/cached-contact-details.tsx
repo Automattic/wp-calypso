@@ -18,7 +18,10 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { useSelect } from '@wordpress/data';
 import { useMemo, useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import useCachedDomainContactDetails from 'calypso/my-sites/checkout/composite-checkout/hooks/use-cached-domain-contact-details';
+import {
+	useCachedContactDetails,
+	useCachedContactDetailsForCheckoutForm,
+} from 'calypso/my-sites/checkout/composite-checkout/hooks/cached-contact-details';
 import { useWpcomStore } from 'calypso/my-sites/checkout/composite-checkout/hooks/wpcom-store';
 import {
 	countryList,
@@ -78,7 +81,13 @@ function MyTestContent( {
 	const { responseCart, reloadFromServer, updateLocation } = useShoppingCart(
 		initialCart.cart_key
 	);
-	useCachedDomainContactDetails( { overrideCountryList: countries, store: stepGroupStore } );
+	const { isLoading, cachedContactDetails } = useCachedContactDetails( {} );
+	useCachedContactDetailsForCheckoutForm( {
+		cachedContactDetails,
+		overrideCountryList: countries,
+		store: stepGroupStore,
+		shouldWait: isLoading,
+	} );
 	const contactInfo: ManagedContactDetails = useSelect( ( select ) =>
 		select( 'wpcom-checkout' ).getContactInfo()
 	);
