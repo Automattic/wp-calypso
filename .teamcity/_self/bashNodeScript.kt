@@ -33,7 +33,7 @@ fun BuildSteps.bashNodeScript(init: ScriptBuildStep.() -> Unit): ScriptBuildStep
 	result.dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 	result.dockerPull = true
 	result.dockerImage = result.dockerImage ?: "%docker_image%"
-	result.dockerRunParameters = result.dockerRunParameters ?: "-u %env.UID% --disable-dev-shm-usage"
+	result.dockerRunParameters = result.dockerRunParameters ?: "-u %env.UID% --shm-size=1g"
 	step(result)
 	return result
 }
