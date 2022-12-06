@@ -26,8 +26,6 @@ import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 
-// import '@automattic/components/src/card/style.scss';
-
 import './style.scss';
 
 const LayoutLoggedOut = ( {
