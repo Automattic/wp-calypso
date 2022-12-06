@@ -344,6 +344,7 @@ function PurchaseMetaExpiration( {
 		// If a jetpack site has been disconnected, the "site" prop will be null here.
 		const shouldRenderToggle = site && isProductOwner;
 		const autoRenewToggle = shouldRenderToggle ? (
+			//console.log( site )
 			<AutoRenewToggle
 				planName={ site.plan.product_name_short }
 				siteDomain={ site.domain }
@@ -354,7 +355,16 @@ function PurchaseMetaExpiration( {
 				getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 			/>
 		) : (
-			<span />
+			//console.log( purchase )
+			<AutoRenewToggle
+				planName={ purchase.product_name }
+				siteDomain={ purchase.domain }
+				siteSlug={ purchase.domain }
+				purchase={ purchase }
+				toggleSource="manage-purchase"
+				showLink={ true }
+				getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
+			/>
 		);
 		const subsRenewText = isAutorenewalEnabled
 			? translate( 'Auto-renew is {{autoRenewToggle}}ON{{/autoRenewToggle}}', {
