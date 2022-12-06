@@ -72,7 +72,7 @@ export function useCachedContactDetailsForCheckoutForm( {
 	store,
 	overrideCountryList,
 }: {
-	shouldWait: boolean;
+	shouldWait?: boolean;
 	cachedContactDetails: PossiblyCompleteDomainContactDetails | null;
 	store: CheckoutStepGroupStore;
 	overrideCountryList?: CountryListItem[];
