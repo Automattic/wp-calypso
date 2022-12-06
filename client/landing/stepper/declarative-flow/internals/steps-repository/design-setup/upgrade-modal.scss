@@ -149,8 +149,6 @@ $design-button-primary-hover-color: var(--color-primary-60);
 	}
 
 	&__included {
-		margin-bottom: 25px;
-
 		ul,
 		li {
 			font-size: $font-body-small;
@@ -168,8 +166,13 @@ $design-button-primary-hover-color: var(--color-primary-60);
 
 		.gridicon {
 			fill: var(--studio-green-50);
+			flex-shrink: 0;
 			margin-right: 10px;
 		}
+	}
+
+	.theme-features__features-wrap {
+		margin-top: 25px;
 	}
 
 	h2 {
