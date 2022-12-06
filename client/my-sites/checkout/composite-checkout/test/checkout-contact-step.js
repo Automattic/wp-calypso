@@ -48,16 +48,6 @@ describe( 'Checkout contact step', () => {
 	const mainCartKey = 'foo.com';
 	const initialCart = getBasicCart();
 
-	getPlansBySiteId.mockImplementation( () => ( {
-		data: getActivePersonalPlanDataForType( 'yearly' ),
-	} ) );
-	hasLoadedSiteDomains.mockImplementation( () => true );
-	getDomainsBySiteId.mockImplementation( () => [] );
-	isMarketplaceProduct.mockImplementation( () => false );
-	isJetpackSite.mockImplementation( () => false );
-	useCartKey.mockImplementation( () => mainCartKey );
-	mockMatchMediaOnWindow();
-
 	const mockSetCartEndpoint = mockSetCartEndpointWith( {
 		currency: initialCart.currency,
 		locale: initialCart.locale,
@@ -65,6 +55,17 @@ describe( 'Checkout contact step', () => {
 
 	beforeEach( () => {
 		const store = createTestReduxStore();
+		nock.cleanAll();
+
+		getPlansBySiteId.mockImplementation( () => ( {
+			data: getActivePersonalPlanDataForType( 'yearly' ),
+		} ) );
+		hasLoadedSiteDomains.mockImplementation( () => true );
+		getDomainsBySiteId.mockImplementation( () => [] );
+		isMarketplaceProduct.mockImplementation( () => false );
+		isJetpackSite.mockImplementation( () => false );
+		useCartKey.mockImplementation( () => mainCartKey );
+		mockMatchMediaOnWindow();
 
 		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps } ) => {
 			const managerClient = createShoppingCartManagerClient( {
@@ -97,18 +98,30 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'does not render the contact step when the purchase is free', async () => {
+		mockCachedContactDetailsEndpoint( {
+			first_name: null,
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 		await expect( screen.findByText( /Enter your (billing|contact) information/ ) ).toNeverAppear();
 	} );
 
 	it( 'renders the step after the contact step as active if the purchase is free', async () => {
+		mockCachedContactDetailsEndpoint( {
+			first_name: null,
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 		expect( await screen.findByText( 'Free Purchase' ) ).toBeVisible();
 	} );
 
 	it( 'renders the contact step when the purchase is not free', async () => {
+		mockCachedContactDetailsEndpoint( {
+			first_name: null,
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		render( <MyCheckout /> );
 		expect(
 			await screen.findByText( /Enter your (billing|contact) information/ )
@@ -116,6 +129,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders the tax fields only when no domain is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			first_name: null,
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
@@ -124,6 +141,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders the domain fields when a domain is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			first_name: null,
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
@@ -132,6 +153,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders the domain fields when a domain transfer is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			first_name: null,
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		const cartChanges = { products: [ planWithBundledDomain, domainTransferProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
@@ -140,6 +165,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'does not render country-specific domain fields when no country has been chosen and a domain is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			first_name: null,
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
@@ -152,6 +181,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders country-specific domain fields when a country has been chosen and a domain is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			first_name: null,
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
@@ -166,6 +199,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a plan is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			first_name: null,
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
@@ -175,6 +212,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a plan is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			first_name: null,
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
@@ -184,6 +225,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a domain is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			first_name: null,
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
@@ -195,6 +240,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a domain is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			first_name: null,
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
@@ -208,6 +257,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'does not complete the contact step when the contact step button has not been clicked and there are no cached details', async () => {
+		mockCachedContactDetailsEndpoint( {
+			first_name: null,
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 		// Wait for the cart to load
@@ -413,13 +466,23 @@ describe( 'Checkout contact step', () => {
 		}
 	);
 
+	// TODO: I think the following belong in a different test file
+
 	it( 'renders the checkout summary', async () => {
+		mockCachedContactDetailsEndpoint( {
+			first_name: null,
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		render( <MyCheckout /> );
 		expect( await screen.findByText( 'Purchase Details' ) ).toBeInTheDocument();
 		expect( navigate ).not.toHaveBeenCalled();
 	} );
 
 	it( 'removes a product from the cart after clicking to remove', async () => {
+		mockCachedContactDetailsEndpoint( {
+			first_name: null,
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
