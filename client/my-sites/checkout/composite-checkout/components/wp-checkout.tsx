@@ -250,7 +250,8 @@ export default function WPCheckout( {
 		cachedContactDetails,
 		store: stepGroupStore,
 		overrideCountryList: countriesList,
-		shouldWait: contactDetailsType === 'none',
+		// Do not try to autocomplete if there is no contact form or if it hasn't rendered yet.
+		shouldWait: contactDetailsType === 'none' || stepGroupStore.state.totalSteps === 0,
 	} );
 
 	const validateForm = async () => {
