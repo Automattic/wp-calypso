@@ -58,7 +58,7 @@ export function getEnhancedTasks(
 						title: translate( 'Choose a Plan' ),
 						subtitle: displayGlobalStylesWarning
 							? translate(
-									'Upgrade your plan to publish your colour changes and unlock tons of other features'
+									'Upgrade your plan to publish your color changes and unlock tons of other features'
 							  )
 							: '',
 						disabled: isVideoPressFlow( flow ),
