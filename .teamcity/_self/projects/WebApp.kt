@@ -797,6 +797,7 @@ object PreReleaseE2ETests : BuildType({
 		param("env.TEAMCITY_VERSION", "2021")
 		param("env.HEADLESS", "true")
 		param("env.LOCALE", "en")
+		param("env.TIMEOUT", "20000")
 		param("env.VIEWPORT_NAME", "desktop")
 		param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
 		param("env.ALLURE_RESULTS_PATH", "allure-results")
