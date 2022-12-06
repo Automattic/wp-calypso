@@ -20,6 +20,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			const data = { utterance: 'Bork bork' };
 
 			expect( getData( withData( data ) ) ).toEqual( data );
+			expect( getData( withData( [] ) ) ).toEqual( [] );
 		} );
 
 		test( 'should return undefined if no response data available', () => {
@@ -32,7 +33,6 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			expect( getData( withData( null ) ) ).toBe( null );
 			expect( getData( withData( 0 ) ) ).toBe( 0 );
 			expect( getData( withData( false ) ) ).toBe( false );
-			expect( getData( withData( [] ) ) ).toEqual( [] );
 		} );
 	} );
 
