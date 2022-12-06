@@ -116,6 +116,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 	const couponCode = 'BIZC25';
 	const builtByURL =
 		'https://builtbywp.com/get-started/?utm_medium=automattic_referred&utm_source=WordPresscom&utm_campaign=cancel-flow';
+	const refundAmount = { props };
 
 	switch ( upsell ) {
 		case 'live-chat:plans':
@@ -244,7 +245,17 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 				>
 					{ translate(
 						'WordPress.com Personal still gives you access to customer support via email, removal of ads, and more — and for 50% of the cost of your current plan.'
-					) }
+					) }{ ' ' }
+					{ refundAmount &&
+						translate(
+							'You can downgrade and get a partial refund of %(amount)s or ' +
+								'continue to the next step and cancel the plan.',
+							{
+								args: {
+									amount: formatCurrency( parseFloat( props.refundAmount ), currencyCode ),
+								},
+							}
+						) }
 				</Upsell>
 			);
 		case 'free-month-offer':
