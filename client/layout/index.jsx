@@ -49,7 +49,7 @@ import { handleScroll } from './utils';
 
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
-import '@automattic/components/src/card/style.scss';
+// import '@automattic/components/src/card/style.scss';
 
 import './style.scss';
 
