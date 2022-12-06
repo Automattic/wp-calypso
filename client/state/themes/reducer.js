@@ -22,7 +22,6 @@ import {
 	THEME_CLEAR_ACTIVATED,
 	THEME_DELETE_SUCCESS,
 	THEME_FILTERS_ADD,
-	THEME_FILTERS_REQUEST_FAILURE,
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
 	THEME_INSTALL_FAILURE,
@@ -478,20 +477,6 @@ export const themeFilters = withSchemaValidation( themeFiltersSchema, ( state = 
 	return state;
 } );
 
-export function themeFilterRequestError( state = null, action ) {
-	// Stores the error for the theme filter fetch.
-	switch ( action.type ) {
-		case THEME_FILTERS_REQUEST_FAILURE:
-			return action.error;
-		case THEME_FILTERS_ADD: {
-			// Only dispatched on success, which means we can clear the error.
-			return null;
-		}
-	}
-
-	return state;
-}
-
 /**
  * Returns updated state for recommended themes after
  * corresponding actions have been dispatched.
@@ -629,7 +614,6 @@ const combinedReducer = combineReducers( {
 	themePreviewOptions,
 	themePreviewVisibility,
 	themeFilters,
-	themeFilterRequestError,
 	recommendedThemes,
 	trendingThemes,
 	themeHasAutoLoadingHomepageWarning,

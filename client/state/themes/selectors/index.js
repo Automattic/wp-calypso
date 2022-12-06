@@ -69,4 +69,3 @@ export { shouldShowTryAndCustomize } from 'calypso/state/themes/selectors/should
 export { shouldShowHomepageWarning } from 'calypso/state/themes/selectors/should-show-homepage-warning';
 export { themeHasAutoLoadingHomepage } from 'calypso/state/themes/selectors/theme-has-auto-loading-homepage';
 export { themePreviewVisibility } from 'calypso/state/themes/selectors/theme-preview-visibility';
-export { getThemeFiltersRequestError } from 'calypso/state/themes/selectors/get-theme-filters-request-error';
