@@ -43,7 +43,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import useCachedDomainContactDetails from '../hooks/use-cached-domain-contact-details';
+import { useCachedContactDetailsForCheckoutForm } from '../hooks/use-cached-domain-contact-details';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
@@ -66,7 +66,11 @@ import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
+import type {
+	PossiblyCompleteDomainContactDetails,
+	CountryListItem,
+	ManagedContactDetails,
+} from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -130,6 +134,7 @@ const OrderReviewTitle = () => {
 };
 
 export default function WPCheckout( {
+	cachedContactDetails,
 	addItemToCart,
 	changePlanLength,
 	countriesList,
@@ -146,6 +151,7 @@ export default function WPCheckout( {
 	isInitialCartLoading,
 	customizedPreviousPath,
 }: {
+	cachedContactDetails: PossiblyCompleteDomainContactDetails | null;
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	changePlanLength: OnChangeItemVariant;
 	countriesList: CountryListItem[];
@@ -240,10 +246,11 @@ export default function WPCheckout( {
 	const [ isSubmitted, setIsSubmitted ] = useState( false );
 
 	const stepGroupStore = useMemo( () => createCheckoutStepGroupStore(), [] );
-	const { isComplete: isAutoValidationComplete } = useCachedDomainContactDetails( {
-		overrideCountryList: countriesList,
+	const { isComplete: isAutoValidationComplete } = useCachedContactDetailsForCheckoutForm( {
+		cachedContactDetails,
 		store: stepGroupStore,
-		shouldWait: contactDetailsType === 'none' || stepGroupStore.state.totalSteps === 0,
+		overrideCountryList: countriesList,
+		shouldWait: contactDetailsType === 'none',
 	} );
 
 	const validateForm = async () => {
