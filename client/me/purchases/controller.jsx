@@ -85,7 +85,6 @@ export function cancelPurchase( context, next ) {
 		return (
 			<PurchasesWrapper title={ titles.cancelPurchase }>
 				<Main wideLayout className="purchases__cancel">
-					<FormattedHeader brandFont headerText={ titles.cancelingSubscription } align="left" />
 					<CancelPurchase
 						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 						siteSlug={ context.params.site }

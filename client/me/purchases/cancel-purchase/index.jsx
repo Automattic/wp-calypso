@@ -6,7 +6,7 @@ import {
 	isJetpackPlan,
 	isJetpackProduct,
 } from '@automattic/calypso-products';
-import { Card, CompactCard } from '@automattic/components';
+import { Button, Card, CompactCard, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -14,7 +14,7 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import HeaderCake from 'calypso/components/header-cake';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	getName,
@@ -209,14 +209,17 @@ class CancelPurchase extends Component {
 					purchaseId={ this.props.purchaseId }
 				/>
 
-				<HeaderCake
-					backHref={ this.props.getManagePurchaseUrlFor(
-						this.props.siteSlug,
-						this.props.purchaseId
-					) }
+				<Button
+					compact
+					borderless
+					className="cancel-purchase__back-link"
+					href={ this.props.getManagePurchaseUrlFor( this.props.siteSlug, this.props.purchaseId ) }
 				>
-					{ titles.cancelPurchase }
-				</HeaderCake>
+					<Gridicon icon="chevron-left" size={ 18 } />
+					{ this.props.translate( 'Back' ) }
+				</Button>
+
+				<FormattedHeader brandFont headerText={ titles.cancelingSubscription } align="left" />
 
 				<Card className="cancel-purchase__card">
 					<h2>{ heading }</h2>
