@@ -190,7 +190,7 @@ class StatsSite extends Component {
 	}
 
 	renderStats() {
-		const { date, siteId, slug, isJetpack, isSitePrivate } = this.props;
+		const { date, siteId, slug, isJetpack, isSitePrivate, isOdysseyStats } = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -218,7 +218,7 @@ class StatsSite extends Component {
 
 		return (
 			<div className="stats">
-				{ ! config.isEnabled( 'is_running_in_jetpack_site' ) && (
+				{ ! isOdysseyStats && (
 					<div className="stats-banner-wrapper">
 						<JetpackBackupCredsBanner event="stats-backup-credentials" />
 					</div>
@@ -237,7 +237,7 @@ class StatsSite extends Component {
 									<InlineSupportLink
 										supportContext="stats"
 										showIcon={ false }
-										showSupportModal={ config.isEnabled( 'is_running_in_jetpack_site' ) }
+										showSupportModal={ ! isOdysseyStats }
 									/>
 								),
 							},
@@ -411,7 +411,7 @@ class StatsSite extends Component {
 					</div>
 				</div>
 				{ /** Promo Card is temprarily disabled to remove the query sent to `plugins`. */ }
-				{ ! config.isEnabled( 'is_running_in_jetpack_site' ) && (
+				{ ! isOdysseyStats && (
 					<div className="stats-content-promo">
 						<PromoCardBlock
 							productSlug="wordpress-seo-premium"
@@ -452,7 +452,7 @@ class StatsSite extends Component {
 	}
 
 	render() {
-		const { isJetpack, siteId, showEnableStatsModule } = this.props;
+		const { isJetpack, siteId, showEnableStatsModule, isOdysseyStats } = this.props;
 		const { period } = this.props.period;
 
 		// Track the last viewed tab.
@@ -464,13 +464,9 @@ class StatsSite extends Component {
 
 		return (
 			<Main className={ mainWrapperClass } fullWidthLayout>
-				{ ! config.isEnabled( 'is_running_in_jetpack_site' ) && <QueryKeyringConnections /> }
-				{ ! config.isEnabled( 'is_running_in_jetpack_site' ) && isJetpack && (
-					<QueryJetpackModules siteId={ siteId } />
-				) }
-				{ ! config.isEnabled( 'is_running_in_jetpack_site' ) && (
-					<QuerySiteKeyrings siteId={ siteId } />
-				) }
+				{ ! isOdysseyStats && <QueryKeyringConnections /> }
+				{ ! isOdysseyStats && isJetpack && <QueryJetpackModules siteId={ siteId } /> }
+				{ ! isOdysseyStats && <QuerySiteKeyrings siteId={ siteId } /> }
 				<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 				<PageViewTracker
 					path={ `/stats/${ period }/:site` }
@@ -497,6 +493,7 @@ export default connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		const showEnableStatsModule =
 			siteId && isJetpack && isJetpackModuleActive( state, siteId, 'stats' ) === false;
+		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 		return {
 			isJetpack,
 			isSitePrivate: isPrivateSite( state, siteId ),
@@ -504,6 +501,7 @@ export default connect(
 			slug: getSelectedSiteSlug( state ),
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
+			isOdysseyStats,
 		};
 	},
 	{ recordGoogleEvent, enableJetpackStatsModule, recordTracksEvent }
