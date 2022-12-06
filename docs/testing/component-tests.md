@@ -21,14 +21,14 @@ This obviously varies between components, but a few easy things to start out wit
 Like its child components?
 
 ```javascript
-import AnExpectedChildComponent from 'an-expected-child-component';
-import { shallow } from 'enzyme';
+import Dialog from '@automattic/components';
+import { render, screen } from '@testing-library/react';
 import MyComponent from 'my-component';
 
-test( 'should have AnExpectedChildComponent as a child of MyComponent', () => {
-	const wrapper = shallow( <MyComponent /> );
-	expect( wrapper ).toMatchSnapshot();
-	expect( wrapper.find( AnExpectedChildComponent ) ).toHaveLength( 1 );
+test( 'should have Dialog as a child of MyComponent', () => {
+	const { container } = render( <MyComponent /> );
+	expect( container ).toMatchSnapshot();
+	expect( screen.getByRole( 'dialog' ) ).toBeVisible();
 } );
 ```
 
@@ -61,12 +61,15 @@ When a user for example clicks an element does the component react like it shoul
 Example test from `calypso/client/components/token-field`:
 
 ```javascript
-test( 'should remove tokens when X icon clicked', () => {
-	const wrapper = mount( <TokenFieldWrapper /> );
-	const tokenFieldNode = wrapper.find( '.token-field' );
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
-	tokenFieldNode.find( '.token-field__remove-token' ).first().simulate( 'click' );
-	expect( wrapper.state( 'tokens' ) ).toEqual( [ 'bar' ] );
+test( 'should remove tokens when X icon clicked', async () => {
+	const user = userEvent.setup();
+	render( <TokenFieldWrapper /> );
+	await user.click( screen.getAllByRole( 'button', { name: 'Remove' } )[ 0 ] );
+	const tokenField = screen.getByRole( 'textbox', { name: 'Your Field' } );
+	expect( tokenField ).toHaveValue( 'bar' );
 } );
 ```
 
@@ -107,7 +110,7 @@ class ThemesList extends React.Component {
 So we test it like this:
 
 ```javascript
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import EmptyContent from 'calypso/components/empty-content';
 import Theme from 'calypso/components/theme';
 import { ThemesList } from '../';
@@ -121,20 +124,20 @@ const defaultProps = deepFreeze( {
 } );
 
 test( 'should render a div with a className of "themes-list"', () => {
-	const wrapper = shallow( <ThemesList { ...defaultProps } /> );
-	expect( wrapper ).toMatchSnapshot();
-	expect( wrapper.hasClass( 'themes-list' ) ).toBe( true );
-	expect( wrapper.find( Theme ) ).toHaveLength( defaultProps.themes.length );
+	const { container } = render( <ThemesList { ...defaultProps } /> );
+	expect( container ).toMatchSnapshot();
+	expect( container.firstChild ).toHaveClass( 'themes-list' );
+	expect( container.querySelectorAll( '.theme' ) ).toHaveLength( defaultProps.themes.length );
 } );
 
 test( 'should render a <Theme /> child for each provided theme', () => {
-	const wrapper = shallow( <ThemesList { ...defaultProps } /> );
-	expect( wrapper.find( Theme ) ).toHaveLength( defaultProps.themes.length );
+	const { container } = render( <ThemesList { ...defaultProps } /> );
+	expect( container.querySelectorAll( '.theme' ) ).toHaveLength( defaultProps.themes.length );
 } );
 
 test( 'should display the EmptyContent component when no themes are provided', () => {
-	const wrapper = shallow( <ThemesList { ...defaultProps } themes={ [] } /> );
-	expect( wrapper.type() ).toBe( EmptyContent );
+	const { container } = render( <ThemesList { ...defaultProps } themes={ [] } /> );
+	expect( container ).toBeEmptyDOMElement();
 } );
 ```
 
