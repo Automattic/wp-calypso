@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import GdprBanner from 'calypso/blocks/gdpr-banner';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
@@ -27,6 +26,8 @@ import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 
+// import '@automattic/components/src/card/style.scss';
+
 import './style.scss';
 
 const LayoutLoggedOut = ( {
@@ -46,7 +47,6 @@ const LayoutLoggedOut = ( {
 	sectionTitle,
 	redirectUri,
 	useOAuth2Layout,
-	showGdprBanner,
 	isPartnerSignup,
 	isPartnerSignupStart,
 	locale,
@@ -136,7 +136,6 @@ const LayoutLoggedOut = ( {
 					{ secondary }
 				</div>
 			</div>
-			{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner showGdprBanner={ showGdprBanner } /> }
 			{ sectionName === 'plugins' && (
 				<>
 					<UniversalNavbarFooter />
