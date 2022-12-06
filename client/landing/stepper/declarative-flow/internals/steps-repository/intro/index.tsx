@@ -3,6 +3,7 @@ import {
 	NEWSLETTER_FLOW,
 	ECOMMERCE_FLOW,
 	VIDEOPRESS_FLOW,
+	FREE_FLOW,
 } from '@automattic/onboarding';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -53,6 +54,16 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 			return {
 				title: createInterpolateElement(
 					__( 'A home for all your videos.<br />Play. Roll. Share.' ),
+					{ br: <br /> }
+				),
+				buttonText: __( 'Get started' ),
+			};
+		}
+
+		if ( flowName === FREE_FLOW ) {
+			return {
+				title: createInterpolateElement(
+					__( 'You’re 1 minute away from<br />a beautiful, free website.<br />Ready? ' ),
 					{ br: <br /> }
 				),
 				buttonText: __( 'Get started' ),

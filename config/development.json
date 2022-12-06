@@ -153,6 +153,7 @@
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
 		"signup/design-picker-pattern-assembler": true,
+		"signup/free-flow": true,
 		"signup/inline-help": false,
 		"signup/professional-email-step": false,
 		"signup/social": true,
