@@ -9,7 +9,7 @@ export function shouldShowHelpCenterToUser( userId: number ) {
 	const isNonProdEnv =
 		[ 'stage', 'development', 'horizon' ].includes( config( 'env_id' ) ) || isCalypsoLive();
 
-	const currentSegment = 50; //percentage of users that will see the Help Center, not the FAB
+	const currentSegment = 75; //percentage of users that will see the Help Center, not the FAB
 	const userSegment = userId % 100;
 	return isNonProdEnv || userSegment < currentSegment;
 }
