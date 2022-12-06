@@ -152,18 +152,14 @@ function wpcom_block_global_styles_frontend( $theme_json ) {
 
 	if ( class_exists( 'WP_Theme_JSON_Data' ) ) {
 		return new WP_Theme_JSON_Data( array(), 'custom' );
-	} elseif ( class_exists( 'WP_Theme_JSON_Data_Gutenberg' ) ) {
-		return new WP_Theme_JSON_Data_Gutenberg( array(), 'custom' );
 	}
 
 	/*
-	 * If both `WP_Theme_JSON_Data` and `WP_Theme_JSON_Data_Gutenberg` are missing,
-	 * then the site is running an old version of WordPress and Gutenberg where we
-	 * cannot block the user styles properly.
+	 * If `WP_Theme_JSON_Data` is missing, then the site is running an old
+	 * version of WordPress we cannot block the user styles properly.
 	 */
 	return $theme_json;
 }
-add_filter( 'theme_json_user', 'wpcom_block_global_styles_frontend' );
 add_filter( 'wp_theme_json_data_user', 'wpcom_block_global_styles_frontend' );
 
 /**
@@ -217,7 +213,15 @@ add_action( 'save_post_wp_global_styles', 'wpcom_track_global_styles', 10, 3 );
  * @return bool Returns true if custom styles are in use.
  */
 function wpcom_global_styles_in_use() {
-	$user_cpt = WP_Theme_JSON_Resolver_Gutenberg::get_user_data_from_wp_global_styles( wp_get_theme() );
+	/*
+	 * If `WP_Theme_JSON_Resolver` is missing, then the site is running an old version
+	 * of WordPress, so we cannot determine whether the site has custom styles.
+	 */
+	if ( ! class_exists( 'WP_Theme_JSON_Resolver' ) ) {
+		return false;
+	}
+
+	$user_cpt = WP_Theme_JSON_Resolver::get_user_data_from_wp_global_styles( wp_get_theme() );
 
 	if ( ! isset( $user_cpt['post_content'] ) ) {
 		do_action( 'global_styles_log', 'global_styles_not_in_use' );
