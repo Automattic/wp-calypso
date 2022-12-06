@@ -185,6 +185,7 @@ export const HelpCenterContactForm = () => {
 		const supportVariation = getSupportVariationFromMode( mode );
 		recordTracksEvent( 'calypso_inlinehelp_contact_view', {
 			support_variation: supportVariation,
+			forceSiteId: true,
 			location: 'help-center',
 			section: sectionName,
 		} );
@@ -264,6 +265,7 @@ export const HelpCenterContactForm = () => {
 				if ( supportSite ) {
 					recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
 						support_variation: 'happychat',
+						forceSiteId: true,
 						location: 'help-center',
 						section: sectionName,
 					} );
@@ -271,6 +273,7 @@ export const HelpCenterContactForm = () => {
 					recordTracksEvent( 'calypso_help_live_chat_begin', {
 						site_plan_product_id: productId,
 						is_automated_transfer: supportSite.is_wpcom_atomic,
+						forceSiteId: true,
 						location: 'help-center',
 						section: sectionName,
 					} );
@@ -300,6 +303,7 @@ export const HelpCenterContactForm = () => {
 						.then( () => {
 							recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
 								support_variation: 'kayako',
+								forceSiteId: true,
 								location: 'help-center',
 								section: sectionName,
 							} );
@@ -330,6 +334,7 @@ export const HelpCenterContactForm = () => {
 					.then( ( response ) => {
 						recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
 							support_variation: 'forums',
+							forceSiteId: true,
 							location: 'help-center',
 							section: sectionName,
 						} );

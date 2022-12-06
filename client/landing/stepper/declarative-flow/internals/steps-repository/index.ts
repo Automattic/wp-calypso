@@ -52,6 +52,7 @@ export { default as designCarousel } from './design-carousel';
 export { default as domains } from './domains';
 export { default as setThemeStep } from './set-theme-step';
 export { default as waitForAtomic } from './wait-for-atomic';
+export { default as freeSetup } from './free-setup';
 
 export type StepPath =
 	| 'courses'
@@ -107,4 +108,5 @@ export type StepPath =
 	| 'storeProfiler'
 	| 'chooseAPlan'
 	| 'videomakerSetup'
-	| 'domains';
+	| 'domains'
+	| 'freeSetup';

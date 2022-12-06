@@ -60,8 +60,8 @@ export class NavbarComponent {
 		useKeyboard = false,
 	}: { useKeyboard?: boolean } = {} ): Promise< void > {
 		await Promise.all( [
-			this.page.waitForLoadState( 'networkidle' ),
-			this.page.waitForResponse( /async-load-calypso-blocks-jitm.*/, { timeout: 15 * 1000 } ),
+			this.page.waitForLoadState( 'networkidle', { timeout: 20 * 1000 } ),
+			this.page.waitForResponse( /async-load-calypso-blocks-jitm.*/, { timeout: 20 * 1000 } ),
 		] );
 
 		if ( useKeyboard ) {

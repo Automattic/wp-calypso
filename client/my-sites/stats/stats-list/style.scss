@@ -205,7 +205,8 @@
 
 	// Icons
 	.stats-list__icon,
-	.gridicon {
+	.gridicon,
+	.stats-icon {
 		margin-right: 8px;
 	}
 
@@ -251,7 +252,8 @@
 		}
 	}
 
-	.gridicon {
+	.gridicon,
+	.stats-icon {
 		vertical-align: middle;
 	}
 
@@ -438,7 +440,8 @@ ul.module-content-list-item-actions {
 		}
 	}
 
-	.gridicon {
+	.gridicon,
+	.stats-icon {
 		vertical-align: middle;
 	}
 
@@ -514,9 +517,15 @@ ul.module-content-list-item-action-submenu {
 			min-width: 24px;
 			opacity: 1;
 			padding: 0 12px;
+			box-sizing: border-box;
 
 			&.toggle {
 				display: none;
+			}
+
+			&.is-link {
+				line-height: inherit;
+				padding: 0 12px;
 			}
 		}
 
@@ -525,7 +534,7 @@ ul.module-content-list-item-action-submenu {
 		}
 
 		// Hide 'View' label next to icon on 2-column modules
-		@include breakpoint-deprecated( ">960px" ) {
+		@media ( min-width: "783px" ) {
 			.stats__module-list & span.module-content-list-item-action-label-view {
 				display: none;
 			}
@@ -551,7 +560,8 @@ ul.module-content-list-item-action-submenu {
 	}
 
 	// Optically align a bit better
-	.gridicon {
+	.gridicon,
+	.stats-icon {
 		vertical-align: middle;
 		margin-right: 4px;
 		margin-top: -2px;
@@ -744,7 +754,10 @@ ul.module-content-list-legend {
 	// Toggle icon
 	> .stats-list__module-content-list-item-wrapper
 	.stats-list__module-content-list-item-label
-	.gridicons-chevron-down {
+	.gridicons-chevron-down,
+	> .stats-list__module-content-list-item-wrapper
+	.stats-list__module-content-list-item-label
+	.chevron-down {
 		vertical-align: middle;
 		transition: 0.2s transform ease-out;
 		transform: translate3d(0, 0, 0);
@@ -777,7 +790,10 @@ ul.module-content-list-legend {
 	// Rotate toggle icon
 	> .stats-list__module-content-list-item-wrapper
 	.stats-list__module-content-list-item-label
-	.gridicons-chevron-down {
+	.gridicons-chevron-down,
+	> .stats-list__module-content-list-item-wrapper
+	.stats-list__module-content-list-item-label
+	.chevron-down {
 		transform: rotate(180deg);
 	}
 
@@ -870,7 +886,8 @@ ul.module-content-list-legend {
 	height: $row-height;
 	width: math.div($row-height * 4, 3);
 
-	.gridicon {
+	.gridicon,
+	.stats-icon {
 		fill: var(--color-text-subtle);
 		vertical-align: middle;
 		transition: fill linear 0.1s;
@@ -881,8 +898,16 @@ ul.module-content-list-legend {
 	&:hover,
 	&:focus,
 	&:focus-within {
-		.stats-list-actions__mobile-toggle .gridicon {
+		.stats-list-actions__mobile-toggle .gridicon,
+		.stats-list-actions__mobile-toggle .stats-icon {
 			fill: var(--color-text);
+		}
+	}
+
+	@include breakpoint-deprecated( ">480px" ) {
+		.stats-list-actions {
+			display: flex;
+			align-items: center;
 		}
 	}
 }

@@ -107,11 +107,7 @@ export function getEligibleKeyringServices( state, siteId, type ) {
 			return false;
 		}
 
-		if (
-			'google-drive' === service.ID &&
-			( ! config.isEnabled( 'google-drive' ) ||
-				! canCurrentUser( state, siteId, 'manage_options' ) )
-		) {
+		if ( 'google-drive' === service.ID && ! canCurrentUser( state, siteId, 'manage_options' ) ) {
 			return false;
 		}
 

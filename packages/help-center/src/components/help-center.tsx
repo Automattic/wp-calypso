@@ -2,7 +2,6 @@
 /**
  * External Dependencies
  */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useSupportAvailability } from '@automattic/data-stores';
 import { useHappychatAvailable } from '@automattic/happychat-connection';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -67,12 +66,8 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 		portalParent.setAttribute( 'aria-labelledby', 'header-text' );
 
 		document.body.appendChild( portalParent );
-		const start = Date.now();
 
 		return () => {
-			recordTracksEvent( 'calypso_helpcenter_activity_time', {
-				elapsed: ( Date.now() - start ) / 1000,
-			} );
 			document.body.removeChild( portalParent );
 			closeChat();
 			handleClose();
