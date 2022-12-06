@@ -12,9 +12,9 @@ const COLOR_BLUE_20 = PALETTE[ 'WordPress Blue 20' ];
 const COLOR_BLUE_40 = PALETTE[ 'WordPress Blue 40' ];
 const COLOR_BLUE_50 = PALETTE[ 'WordPress Blue 50' ];
 
-const COLOR_GRAY_80 = PALETTE[ 'Gray 80' ];
-const COLOR_GRAY_20 = PALETTE[ 'Gray 20' ];
 const COLOR_GRAY_5 = PALETTE[ 'Gray 5' ];
+const COLOR_GRAY_20 = PALETTE[ 'Gray 20' ];
+const COLOR_GRAY_80 = PALETTE[ 'Gray 80' ];
 
 const COLOR_WHITE = PALETTE[ 'White' ]; // eslint-disable-line dot-notation
 
