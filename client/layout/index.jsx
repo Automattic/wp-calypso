@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { Card, Button } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
 import { shouldShowHelpCenterToUser, shouldLoadInlineHelp } from '@automattic/help-center';
 import { isWithinBreakpoint } from '@automattic/viewport';
@@ -51,6 +50,7 @@ import { handleScroll } from './utils';
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
 // import '@automattic/components/src/card/style.scss';
+// import '@automattic/components/src/button/style.scss';
 
 import './style.scss';
 
@@ -363,11 +363,6 @@ class Layout extends Component {
 				) }
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
-				) }
-				{ config.isEnabled( 'async-load-hotfix' ) && (
-					<Card>
-						<Button></Button>
-					</Card>
 				) }
 			</div>
 		);
