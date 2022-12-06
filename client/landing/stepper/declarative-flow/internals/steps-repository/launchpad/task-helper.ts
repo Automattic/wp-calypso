@@ -1,3 +1,4 @@
+import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
@@ -15,6 +16,7 @@ export function getEnhancedTasks(
 	siteSlug: string | null,
 	site: SiteDetails | null,
 	submit: NavigationControls[ 'submit' ],
+	displayGlobalStylesWarning: boolean,
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow?: string | null
 ) {
@@ -55,12 +57,21 @@ export function getEnhancedTasks(
 				case 'plan_selected':
 					taskData = {
 						title: translate( 'Choose a Plan' ),
+						subtitle: displayGlobalStylesWarning
+							? translate(
+									'Upgrade your plan to publish your color changes and unlock tons of other features'
+							  )
+							: '',
 						disabled: isVideoPressFlow( flow ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.assign( `/plans/${ siteSlug }` );
+							window.location.assign(
+								`/plans/${ siteSlug }${ displayGlobalStylesWarning ? '?plan=' + PLAN_PREMIUM : '' }`
+							);
 						},
 						badgeText: translatedPlanName,
+						completed: task.completed && ! displayGlobalStylesWarning,
+						warning: displayGlobalStylesWarning,
 					};
 					break;
 				case 'subscribers_added':

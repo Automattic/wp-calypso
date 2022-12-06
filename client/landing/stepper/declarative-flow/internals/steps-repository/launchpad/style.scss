@@ -343,7 +343,7 @@
 }
 
 .launchpad__checklist-item {
-	align-items: center;
+	align-items: flex-start;
 	background-color: transparent;
 	border-bottom: 1px solid var(--studio-gray-5);
 	border-left: none;
@@ -392,11 +392,13 @@
 }
 
 // general styles
-.launchpad__checklist-item-text {
+.launchpad__checklist-item-text-container {
 	flex-grow: 1;
 	font-size: $font-body-small;
 	line-height: 20px;
 	text-align: left;
+}
+.launchpad__checklist-item-text {
 	font-weight: 600;
 }
 
