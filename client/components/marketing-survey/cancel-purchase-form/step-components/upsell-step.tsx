@@ -136,6 +136,9 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 
 						happyChat.open();
 						happyChat.sendUserInfo( { ...userInfo, cancellationReason: props.cancellationReason } );
+						happyChat.setChatCustomFields( {
+							isCancellationChat: 'yes',
+						} );
 						props.closeDialog();
 					} }
 					onDecline={ props.onDeclineUpsell }

@@ -69,7 +69,7 @@ type StepProps = {
 	cancellationReason: string;
 };
 
-export default function EducationalCotnentStep( { type, site, ...props }: StepProps ) {
+export default function EducationalContentStep( { type, site, ...props }: StepProps ) {
 	const translate = useTranslate();
 	const happyChat = useHappyChat();
 
@@ -241,6 +241,9 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 													happyChat.sendUserInfo( {
 														...userInfo,
 														cancellationReason: props.cancellationReason,
+													} );
+													happyChat.setChatCustomFields( {
+														isCancellationChat: 'yes',
 													} );
 												} }
 												isLink
