@@ -27,7 +27,6 @@ interface Props {
 	id: string;
 	type: string;
 	title: string;
-	description?: string;
 	previewUrl?: string;
 	isHomepage?: boolean;
 
@@ -44,7 +43,6 @@ const VirtualPage = ( {
 	id,
 	type,
 	title,
-	description,
 	previewUrl,
 	isHomepage,
 	isAdmin,
@@ -164,9 +162,15 @@ const VirtualPage = ( {
 						</InfoPopover>
 					) }
 				</a>
-				<div className="page-card-info">
-					{ description && <span className="page-card-info__description">{ description }</span> }
-				</div>
+				{ isHomepage && template && (
+					<div className="page-card-info">
+						<span className="page-card-info__description">
+							{ translate( 'Your homepage uses the %(templateTitle)s template', {
+								args: { templateTitle: decodeEntities( template.title.rendered || template.slug ) },
+							} ) }
+						</span>
+					</div>
+				) }
 			</div>
 			<EllipsisMenu position="bottom left" onToggle={ toggleEllipsisMenu }>
 				{ isAdmin && (
