@@ -7,5 +7,5 @@ import 'calypso/state/happychat/init';
  * @returns {boolean}        true, when presales_zendesk is available
  */
 export default function isPresalesZendeskChatAvailable( state ) {
-	return state.happychat.user.availability?.presale_zendesk ?? false;
+	return state.happychat?.user?.availability?.presale_zendesk ?? false;
 }
