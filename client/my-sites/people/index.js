@@ -45,7 +45,7 @@ export default function () {
 	);
 
 	page(
-		'/people/team-members/:site_id',
+		'/people/:filter(team-members)/:site_id',
 		peopleController.enforceSiteEnding,
 		siteSelection,
 		navigation,
@@ -55,7 +55,7 @@ export default function () {
 	);
 
 	page(
-		'/people/subscribers/:site_id',
+		'/people/:filter(subscribers)/:site_id',
 		peopleController.enforceSiteEnding,
 		siteSelection,
 		navigation,
