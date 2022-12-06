@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { Card, Button } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
 import { shouldShowHelpCenterToUser, shouldLoadInlineHelp } from '@automattic/help-center';
 import { isWithinBreakpoint } from '@automattic/viewport';
@@ -362,6 +363,11 @@ class Layout extends Component {
 				) }
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
+				) }
+				{ config.isEnabled( 'async-load-hotfix' ) && (
+					<Card>
+						<Button></Button>
+					</Card>
 				) }
 			</div>
 		);
