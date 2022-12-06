@@ -67,7 +67,7 @@ const PatternAssemblerPreview = ( { header, sections = [], footer, scrollToSelec
 					>
 						{ ! hasSelectedPatterns && (
 							<>
-								<Icon className="pattern-assembler-preview__icon" icon={ layout } size={ 100 } />
+								<Icon className="pattern-assembler-preview__icon" icon={ layout } size={ 72 } />
 								<h2>{ translate( 'Welcome to your blank canvas' ) }</h2>
 								<span>
 									{ translate(

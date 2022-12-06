@@ -77,10 +77,11 @@
 		color: var(--studio-gray-100);
 		margin-bottom: 5px;
 		font-size: $font-title-small;
+		font-weight: 500;
 	}
 
 	span {
-		font-size: $font-title-small;
+		font-size: $font-body;
 		padding: 0 30px;
 		text-align: center;
 	}
