@@ -38,6 +38,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
+import { useCachedContactDetails } from '../hooks/use-cached-domain-contact-details';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
 import useCountryList from '../hooks/use-country-list';
 import useCreatePaymentCompleteCallback from '../hooks/use-create-payment-complete-callback';
@@ -504,12 +505,16 @@ export default function CheckoutMain( {
 		: {};
 	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
 
+	const { isLoading: isLoadingCachedContactDetails, cachedContactDetails } =
+		useCachedContactDetails( {} );
+
 	const isLoading: boolean =
 		isInitialCartLoading ||
 		arePaymentMethodsLoading ||
 		paymentMethods.length < 1 ||
 		responseCart.products.length < 1 ||
 		countriesList.length < 1 ||
+		isLoadingCachedContactDetails ||
 		isLoadingIntroOffers;
 	if ( isLoading ) {
 		debug( 'still loading because one of these is true', {
@@ -717,6 +722,7 @@ export default function CheckoutMain( {
 				initiallySelectedPaymentMethodId={ paymentMethods?.length ? paymentMethods[ 0 ].id : null }
 			>
 				<WPCheckout
+					cachedContactDetails={ cachedContactDetails }
 					customizedPreviousPath={ customizedPreviousPath }
 					isRemovingProductFromCart={ isRemovingProductFromCart }
 					areThereErrors={ areThereErrors }
