@@ -657,6 +657,10 @@ export const normalizers = {
 				className: 'module-content-list-item-large',
 			};
 
+			if ( record.label.length === 0 ) {
+				record.label = translate( 'Untracked Author' );
+			}
+
 			if ( item.posts && item.posts.length > 0 ) {
 				record.children = item.posts.map( ( child ) => {
 					return {
