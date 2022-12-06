@@ -8,6 +8,7 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
+import isRequestingContactDetailsCache from 'calypso/state/selectors/is-requesting-contact-details-cache';
 import useCountryList from './use-country-list';
 import type { CheckoutStepGroupStore } from '@automattic/composite-checkout';
 import type {
@@ -17,29 +18,45 @@ import type {
 
 const debug = debugFactory( 'calypso:composite-checkout:use-cached-domain-contact-details' );
 
-function useCachedContactDetails( {
-	shouldWait,
-}: {
-	shouldWait?: boolean;
-} ): PossiblyCompleteDomainContactDetails | null {
+/**
+ * Fetch the cached contact details from the server.
+ */
+export function useCachedContactDetails( { shouldWait }: { shouldWait?: boolean } ): {
+	isLoading: boolean;
+	cachedContactDetails: PossiblyCompleteDomainContactDetails | null;
+} {
 	const reduxDispatch = useReduxDispatch();
 	const haveRequestedCachedDetails = useRef< 'not-started' | 'pending' | 'done' >( 'not-started' );
 	const cachedContactDetails = useSelector( getContactDetailsCache );
+	const isFetching = useSelector( isRequestingContactDetailsCache );
+	const [ detailsToReturn, setDetailsToReturn ] =
+		useState< PossiblyCompleteDomainContactDetails | null >( null );
+
 	useEffect( () => {
 		if ( shouldWait ) {
+			debug( 'waiting to fetch cached contact details' );
 			return;
 		}
+
 		if ( haveRequestedCachedDetails.current === 'not-started' ) {
-			debug( 'requesting cached domain contact details' );
+			debug( 'requesting cached contact details' );
 			reduxDispatch( requestContactDetailsCache() );
 			haveRequestedCachedDetails.current = 'pending';
+			return;
 		}
-	}, [ reduxDispatch, shouldWait ] );
-	if ( haveRequestedCachedDetails.current === 'pending' && cachedContactDetails ) {
-		debug( 'cached domain contact details retrieved', cachedContactDetails );
-		haveRequestedCachedDetails.current = 'done';
-	}
-	return shouldWait ? null : cachedContactDetails;
+
+		if ( haveRequestedCachedDetails.current === 'pending' && isFetching === false ) {
+			debug( 'cached contact details retrieved' );
+			haveRequestedCachedDetails.current = 'done';
+			setDetailsToReturn( cachedContactDetails );
+			return;
+		}
+	}, [ reduxDispatch, shouldWait, isFetching, cachedContactDetails ] );
+
+	return {
+		isLoading: haveRequestedCachedDetails.current !== 'done',
+		cachedContactDetails: detailsToReturn,
+	};
 }
 
 /**
