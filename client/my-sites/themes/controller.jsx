@@ -99,13 +99,12 @@ export function fetchThemeFilters( context, next ) {
 		return next();
 	}
 
+	store.dispatch( requestThemeFilters( context.lang ) );
 	waitForFilters( store, next );
 }
 
 // Function which calls next when the store has been updated or a timeout has occured.
 function waitForFilters( store, next ) {
-	store.dispatch( requestThemeFilters( context.lang ) );
-
 	// We need to define these variables here so that we can use them in the onResult closure.
 	let timeout; // eslint-disable-line prefer-const
 	let unsubscribe; // eslint-disable-line prefer-const
@@ -136,7 +135,7 @@ function waitForFilters( store, next ) {
 	// not be happening frequently, and if it is, it should be investigated.
 	timeout = setTimeout( () => {
 		onResult( 'theme-filter-fetch-err: timeout' );
-	}, 500 );
+	}, 1 );
 }
 
 // Legacy (Atlas-based Theme Showcase v4) route redirects
