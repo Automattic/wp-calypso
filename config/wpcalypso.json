@@ -74,6 +74,7 @@
 		"layout/support-article-dialog": true,
 		"legal-updates-banner": false,
 		"limit-global-styles": true,
+		"livechat_solution": true,
 		"login/magic-login": true,
 		"logmein": true,
 		"mailchimp": true,
