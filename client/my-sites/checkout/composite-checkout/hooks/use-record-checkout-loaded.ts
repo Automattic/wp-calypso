@@ -23,7 +23,7 @@ export default function useRecordCheckoutLoaded( {
 	storedCards: StoredCard[];
 	productAliasFromUrl: string | undefined | null;
 	checkoutFlow: string;
-	isGiftPurchase: boolean;
+	isGiftPurchase?: boolean;
 } ): void {
 	const reduxDispatch = useDispatch();
 	const hasRecordedCheckoutLoad = useRef( false );
