@@ -273,8 +273,9 @@ $breakpoint-desktop: 1440px;
 	}
 }
 
-.cancel-purchase__refund-information-subtitle {
-	@media ( max-width: $breakpoint-small ) {
+.cancel-purchase__refund-information-subtitle,
+.cancel-purchase__refund-information-description-header {
+	@media ( max-width: $breakpoint-mobile ) {
 		padding: 0 16px;
 	}
 }
@@ -285,6 +286,11 @@ $breakpoint-desktop: 1440px;
 	text-align: left;
 	column-count: 2;
 	column-gap: 0;
+
+	@media ( max-width: $breakpoint-mobile ) {
+		padding: 0 16px;
+		column-count: 1;
+	}
 
 	li {
 		display: grid;
