@@ -537,6 +537,8 @@ const CheckoutSummaryBody = styled.div`
 		max-width: 328px;
 		position: fixed;
 		width: 100%;
+		overflow-y: auto;
+		height: 100vh;
 	}
 `;
 
