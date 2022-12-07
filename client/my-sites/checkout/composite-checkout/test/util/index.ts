@@ -1153,7 +1153,7 @@ function buildVariantsForCartItem( data: ResponseCartProduct ): ResponseCartProd
 				buildVariant( planWithoutDomainBiannual ),
 			];
 	}
-	return [ buildVariant( data ) ];
+	return [];
 }
 
 function getVariantPrice( data: ResponseCartProduct ): number {
