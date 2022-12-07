@@ -155,22 +155,8 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 		width: 28vh;
 	}
 
-	svg {
-		display: none;
-	}
-
 	use {
 		fill: #fff;
-	}
-
-	&:not(:disabled):hover {
-		svg {
-			display: inline;
-		}
-
-		span {
-			display: none;
-		}
 	}
 }
 

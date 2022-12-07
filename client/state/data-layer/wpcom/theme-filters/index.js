@@ -3,7 +3,11 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { THEME_FILTERS_REQUEST, THEME_FILTERS_ADD } from 'calypso/state/themes/action-types';
+import {
+	THEME_FILTERS_REQUEST,
+	THEME_FILTERS_ADD,
+	THEME_FILTERS_REQUEST_FAILURE,
+} from 'calypso/state/themes/action-types';
 
 const fetchFilters = ( action ) =>
 	http(
@@ -20,7 +24,14 @@ const storeFilters = ( action, data ) => {
 	return { type: THEME_FILTERS_ADD, filters: data };
 };
 
-const reportError = () => errorNotice( i18n.translate( 'Problem fetching theme filters.' ) );
+// Note: the request handler will dispatch multiple actions if an array is returned.
+const reportError = ( action, error ) => [
+	{
+		type: THEME_FILTERS_REQUEST_FAILURE,
+		error,
+	},
+	errorNotice( i18n.translate( 'Problem fetching theme filters.' ) ),
+];
 
 const themeFiltersHandlers = dispatchRequest( {
 	fetch: fetchFilters,

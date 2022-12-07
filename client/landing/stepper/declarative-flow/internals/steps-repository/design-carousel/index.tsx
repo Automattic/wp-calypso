@@ -12,12 +12,11 @@ import './style.scss';
 const DesignCarousel: Step = function DesignCarousel( { navigation } ) {
 	const { goNext, goBack, submit } = navigation;
 	const { __ } = useI18n();
-
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
 	function pickDesign( _selectedDesign: Design ) {
 		setSelectedDesign( _selectedDesign );
-		submit?.();
+		submit?.( { theme: _selectedDesign.slug, theme_type: _selectedDesign.design_type } );
 	}
 
 	return (
@@ -39,9 +38,6 @@ const DesignCarousel: Step = function DesignCarousel( { navigation } ) {
 				<FormattedHeader
 					id="seller-step-header"
 					headerText={ __( 'Choose a design to start' ) }
-					subHeaderText={ __(
-						"Don't worry, you can change or customize this at any time in the future."
-					) }
 					align="center"
 				/>
 			}

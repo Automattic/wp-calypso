@@ -1,5 +1,5 @@
 import { ProgressBar } from '@automattic/components';
-import { useFlowProgress } from '@automattic/onboarding';
+import { useFlowProgress, FREE_FLOW } from '@automattic/onboarding';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import WordPressLogo from 'calypso/components/wordpress-logo';
@@ -42,10 +42,11 @@ const SignupHeader = ( {
 	const flowProgress = useFlowProgress(
 		variationName ? { flowName: variationName, stepName: progressBar.stepName } : progressBar
 	);
+	const showProgressBar = progressBar.flowName !== FREE_FLOW;
 
 	return (
 		<div className="signup-header" role="banner" aria-label="banner">
-			{ flowProgress && ! shouldShowLoadingScreen && (
+			{ flowProgress && ! shouldShowLoadingScreen && showProgressBar && (
 				<ProgressBar
 					className={ variationName ? variationName : progressBar.flowName }
 					value={ flowProgress.progress }

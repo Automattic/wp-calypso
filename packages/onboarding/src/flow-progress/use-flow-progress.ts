@@ -23,6 +23,13 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		plans: 4,
 		launchpad: 5,
 	},
+	free: {
+		intro: 0,
+		user: 0,
+		patterns: 1,
+		freeSetup: 2,
+		launchpad: 3,
+	},
 	videopress: {
 		intro: 0,
 		user: 1,

@@ -31,6 +31,7 @@ import { requestSites } from 'calypso/state/sites/actions';
 import { WindowLocaleEffectManager } from '../gutenboarding/components/window-locale-effect-manager';
 import { setupWpDataDebug } from '../gutenboarding/devtools';
 import { anchorFmFlow } from './declarative-flow/anchor-fm-flow';
+import { free } from './declarative-flow/free';
 import { importFlow } from './declarative-flow/import-flow';
 import { FlowRenderer } from './declarative-flow/internals';
 import { linkInBio } from './declarative-flow/link-in-bio';
@@ -79,6 +80,7 @@ const availableFlows: Array< configurableFlows > = [
 	{ flowName: 'podcasts', pathToFlow: podcasts },
 	{ flowName: 'link-in-bio-post-setup', pathToFlow: linkInBioPostSetup },
 	{ flowName: 'newsletter-post-setup', pathToFlow: newsletterPostSetup },
+	{ flowName: 'free', pathToFlow: free },
 	config.isEnabled( 'themes/plugin-bundling' )
 		? { flowName: 'plugin-bundle', pathToFlow: pluginBundleFlow }
 		: null,
