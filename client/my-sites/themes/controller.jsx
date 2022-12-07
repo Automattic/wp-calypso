@@ -1,14 +1,12 @@
 import debugFactory from 'debug';
 import { logServerEvent } from 'calypso/lib/analytics/statsd-utils';
 import trackScrollPage from 'calypso/lib/track-scroll-page';
+import wpcom from 'calypso/lib/wp';
 import performanceMark from 'calypso/server/lib/performance-mark';
-import { requestThemes, requestThemeFilters } from 'calypso/state/themes/actions';
+import { THEME_FILTERS_ADD } from 'calypso/state/themes/action-types';
+import { requestThemes } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
-import {
-	getThemeFilters,
-	getThemesForQuery,
-	getThemeFiltersRequestError,
-} from 'calypso/state/themes/selectors';
+import { getThemeFilters, getThemesForQuery } from 'calypso/state/themes/selectors';
 import { getAnalyticsData } from './helpers';
 import LoggedOutComponent from './logged-out';
 
@@ -99,20 +97,24 @@ export function fetchThemeFilters( context, next ) {
 		return next();
 	}
 
-	const unsubscribe = store.subscribe( () => {
-		const fetchErr = getThemeFiltersRequestError( store.getState() );
-		if ( fetchErr ) {
-			debug( `Theme fetch error: ${ JSON.stringify( fetchErr ) }` );
-			unsubscribe();
-			return next( new Error( 'Error fetching theme filters.' ) );
-		}
-
-		if ( Object.keys( getThemeFilters( store.getState() ) ).length > 0 ) {
-			unsubscribe();
-			return next();
-		}
+	const filtersRequest = wpcom.req.get( {
+		path: '/theme-filters',
+		apiVersion: '1.2',
+		query: context.lang ? { locale: context.lang } : {},
 	} );
-	store.dispatch( requestThemeFilters( context.lang ) );
+
+	const timeout = new Promise( ( _, reject ) => {
+		setTimeout( () => {
+			reject( new Error( 'Theme filters request timed out' ) );
+		}, 500 );
+	} );
+
+	Promise.race( [ filtersRequest, timeout ] )
+		.then( ( filters ) => {
+			store.dispatch( { type: THEME_FILTERS_ADD, filters } );
+			next();
+		} )
+		.catch( next );
 }
 
 // Legacy (Atlas-based Theme Showcase v4) route redirects
