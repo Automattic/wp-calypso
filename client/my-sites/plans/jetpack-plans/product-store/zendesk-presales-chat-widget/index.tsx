@@ -32,5 +32,5 @@ export const ZendeskPreSalesChat: React.VFC = () => {
 		);
 	}, [ isLoggedIn ] );
 
-	return shouldShowZendeskPresalesChat ? <ZendeskChat chatId={ zendeskChatKey } /> : null;
+	return shouldShowZendeskPresalesChat ? <ZendeskChat chatKey={ zendeskChatKey } /> : null;
 };
