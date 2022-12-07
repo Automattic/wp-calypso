@@ -65,7 +65,7 @@ function GlobalStylesNoticeComponent() {
 		<Notice status="warning" isDismissible={ false } className="wpcom-global-styles-notice">
 			{ createInterpolateElement(
 				__(
-					'To publish these styles, and to unlock tons of other features, <a>upgrade to a Premium plan</a>.',
+					'Your changes include customised styles that will only be visible once you <a>upgrade to a Premium plan</a>.',
 					'full-site-editing'
 				),
 				{
