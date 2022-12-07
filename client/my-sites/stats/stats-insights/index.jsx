@@ -74,7 +74,7 @@ const StatsInsights = ( props ) => {
 								moduleStrings={ moduleStrings.tags }
 								statType="statsTags"
 							/>
-							{ /** The feature depends on Jetpack Sharing module and is disabled for Odyssey for now. */ }
+							{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for Odyssey for now. */ }
 							{ ! isOdysseyStats && <StatShares siteId={ siteId } /> }
 						</div>
 						<div className="stats__module-column">
