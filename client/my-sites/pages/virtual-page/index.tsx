@@ -122,7 +122,7 @@ const VirtualPage = ( {
 		return <Placeholder.Page key={ id } multisite={ ! site } />;
 	}
 
-	const popoverLearnMoreLink = (
+	const homepageLearnMoreLink = (
 		<ExternalLink
 			href={ localizeUrl( 'https://wordpress.com/support/templates/#template-hierarchy' ) }
 			target="_blank"
@@ -152,7 +152,7 @@ const VirtualPage = ( {
 										'You can change the content of this page by editing the %(templateTitle)s template using the Site Editor. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 										{
 											components: {
-												learnMoreLink: popoverLearnMoreLink,
+												learnMoreLink: homepageLearnMoreLink,
 											},
 											args: {
 												templateTitle: decodeEntities( template.title.rendered || template.slug ),
@@ -163,7 +163,7 @@ const VirtualPage = ( {
 										'Administrators can change the content of this page using the Site Editor. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 										{
 											components: {
-												learnMoreLink: popoverLearnMoreLink,
+												learnMoreLink: homepageLearnMoreLink,
 											},
 										}
 								  ) }
