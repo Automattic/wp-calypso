@@ -167,7 +167,7 @@ export const ecommerceFlow: Flow = {
 				case 'designCarousel':
 					return navigate( 'storeProfiler' );
 				case 'storeAddress':
-					return navigate( 'designCarousel' );
+					return navigate( 'domains' );
 				default:
 					return navigate( 'intro' );
 			}
