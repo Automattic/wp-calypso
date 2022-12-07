@@ -43,7 +43,6 @@ import {
 	FEATURE_CRM_PROPOSALS_AND_INVOICES,
 	FEATURE_CRM_TRACK_TRANSACTIONS,
 	FEATURE_CRM_V2,
-	FEATURE_CSS_CUSTOMIZATION,
 	FEATURE_CUSTOM_DOMAIN,
 	FEATURE_EARN_AD,
 	FEATURE_EASY_SITE_MIGRATION,
@@ -168,7 +167,6 @@ import {
 	FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
 	FEATURE_UNLIMITED_TRAFFIC,
 	FEATURE_MANAGED_HOSTING,
-	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS,
 	WPCOM_FEATURES_NO_ADVERTS,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -284,16 +282,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Advanced design customization' ),
 		getDescription: () =>
 			i18n.translate(
-				"Access extended color schemes and customization tools. Change all of your site's fonts, colors and more."
-			),
-	},
-
-	[ FEATURE_CSS_CUSTOMIZATION ]: {
-		getSlug: () => FEATURE_CSS_CUSTOMIZATION,
-		getTitle: () => i18n.translate( 'CSS customization' ),
-		getDescription: () =>
-			i18n.translate(
-				'Add your own CSS code, giving you complete control over how your site looks.'
+				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
 			),
 	},
 
@@ -1578,14 +1567,6 @@ export const FEATURES_LIST = {
 		getDescription: () =>
 			i18n.translate(
 				'All plans include world-class managed hosting, including automatic updates, security, backups, and more.'
-			),
-	},
-	[ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS ]: {
-		getSlug: () => FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS,
-		getTitle: () => i18n.translate( 'Advanced design customization' ),
-		getDescription: () =>
-			i18n.translate(
-				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
 			),
 	},
 };
