@@ -5,8 +5,11 @@ import {
 	isDomainMapping,
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
-import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
-import { isCurrentPlanFlow, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding/src';
+import {
+	isNewsletterOrLinkInBioFlow,
+	LINK_IN_BIO_TLD_FLOW,
+	isCurrentPlanFlow,
+} from '@automattic/onboarding';
 import debugModule from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
 import {

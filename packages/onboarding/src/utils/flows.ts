@@ -15,7 +15,6 @@ export const BUSINESS_MONTHLY_FLOW = 'business-monthly';
 export const PREMIUM_MONTHLY_FLOW = 'premium-monthly';
 export const PERSONAL_MONTHLY_FLOW = 'personal-monthly';
 
-
 export const isLinkInBioFlow = ( flowName: string | null ) => {
 	return Boolean(
 		flowName &&
