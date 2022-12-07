@@ -469,14 +469,12 @@ function PluginDetailsCTAPlaceholder() {
 	);
 }
 
-function getSignupURL( pluginSlug, billingPeriod ) {
+function getSignupURL( pluginSlug, billingPeriod = 'NONE' ) {
 	const url = new URL( '/start/with-plugin', location.href );
 
 	url.searchParams.set( 'pluginSlug', pluginSlug );
 
-	if ( billingPeriod ) {
-		url.searchParams.set( 'period', billingPeriod );
-	}
+	url.searchParams.set( 'period', billingPeriod );
 
 	return url.href;
 }

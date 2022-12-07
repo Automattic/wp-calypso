@@ -29,7 +29,7 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { buildDIFMCartExtrasObject } from 'calypso/state/difm/assemblers';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { getProductsList } from 'calypso/state/products-list/selectors';
+import { getMarketplaceProducts, getProductsList } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'calypso/state/signup/steps/site-title/selectors';
@@ -491,16 +491,36 @@ export function setIntentOnSite( callback, { siteSlug, intent } ) {
 		} );
 }
 
+function findMarketplacePlugin( state, pluginSlug, billingPeriod = '' ) {
+	const plugins = getMarketplaceProducts( state, pluginSlug );
+	const billingPeriodToTerm = {
+		MONTHLY: 'month',
+		YEARLY: 'year',
+	};
+	const term = ( billingPeriod && billingPeriodToTerm[ billingPeriod ] ) || '';
+
+	if ( ! term ) {
+		return plugins?.[ 0 ] || null;
+	}
+
+	return plugins?.find( ( plugin ) => plugin.product_term === term ) || null;
+}
+
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
 	// Note that we pull in emailItem to avoid race conditions from multiple step API functions
 	// trying to fetch and update the cart simultaneously, as both of those actions are asynchronous.
-	const { emailItem, siteSlug, pluginItem } = dependencies;
+	const { emailItem, siteSlug, pluginSlug, billingPeriod } = dependencies;
 	const { cartItem, lastKnownFlow } = stepProvidedItems;
 	if ( isEmpty( cartItem ) && isEmpty( emailItem ) ) {
 		// the user selected the free plan
 		defer( callback );
 
 		return;
+	}
+
+	let pluginItem;
+	if ( pluginSlug ) {
+		pluginItem = findMarketplacePlugin( reduxStore, pluginSlug, billingPeriod );
 	}
 
 	const providedDependencies = { cartItem };

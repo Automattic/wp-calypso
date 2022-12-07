@@ -520,7 +520,7 @@ export function generateFlows( {
 			steps: [ 'domains-plugin-preselected', 'plans-plugin', 'user' ],
 			destination: getPluginInstallDestination,
 			description: 'A flow for adding a plugin preselected from the logged-out plugins page',
-			providesDependenciesInQuery: [ 'pluginSlug' ],
+			providesDependenciesInQuery: [ 'pluginSlug', 'period' ],
 			lastModified: '2022-09-22',
 		},
 	];
