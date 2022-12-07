@@ -122,15 +122,13 @@ const VirtualPage = ( {
 		return <Placeholder.Page key={ id } multisite={ ! site } />;
 	}
 
-	const popoverTranslationComps = {
-		learnMoreLink: (
-			<ExternalLink
-				href={ localizeUrl( 'https://wordpress.com/support/templates/#template-hierarchy' ) }
-				target="_blank"
-				rel="noopener noreferrer"
-			/>
-		),
-	};
+	const popoverLearnMoreLink = (
+		<ExternalLink
+			href={ localizeUrl( 'https://wordpress.com/support/templates/#template-hierarchy' ) }
+			target="_blank"
+			rel="noopener noreferrer"
+		/>
+	);
 
 	return (
 		<CompactCard key={ id } className="page is-virtual">
@@ -149,11 +147,13 @@ const VirtualPage = ( {
 					<span>{ title }</span>
 					{ isHomepage && (
 						<InfoPopover position="right">
-							{ isAdmin && template
+							{ ! isAdmin && template
 								? translate(
 										'You can change the content of this page by editing the %(templateTitle)s template using the Site Editor. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 										{
-											components: popoverTranslationComps,
+											components: {
+												learnMoreLink: popoverLearnMoreLink,
+											},
 											args: {
 												templateTitle: decodeEntities( template.title.rendered || template.slug ),
 											},
@@ -162,7 +162,9 @@ const VirtualPage = ( {
 								: translate(
 										'Administrators can change the content of this page using the Site Editor. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 										{
-											components: popoverTranslationComps,
+											components: {
+												learnMoreLink: popoverLearnMoreLink,
+											},
 										}
 								  ) }
 						</InfoPopover>
