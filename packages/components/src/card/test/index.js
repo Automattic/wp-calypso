@@ -1,78 +1,99 @@
-import { shallow } from 'enzyme';
+/**
+ * @jest-environment jsdom
+ */
+
+import '@testing-library/jest-dom';
+import { render, screen } from '@testing-library/react';
 import Card from '../';
 import CompactCard from '../compact';
 
 describe( 'Card', () => {
 	// it should have a class of `card`
 	test( 'should have `card` class', () => {
-		const card = shallow( <Card /> );
-		expect( card.is( '.card' ) ).toBe( true );
-		expect( card ).toMatchSnapshot();
+		const { container } = render( <Card /> );
+
+		expect( container.firstChild ).toBeVisible();
+		expect( container.firstChild ).toMatchSnapshot();
 	} );
 
 	// it should accept a custom class of `test__ace`
 	test( 'should have custom class of `test__ace`', () => {
-		const card = shallow( <Card className="test__ace" /> );
-		expect( card.is( '.test__ace' ) ).toBe( true );
-		expect( card ).toMatchSnapshot();
+		const { container } = render( <Card className="test__ace" /> );
+
+		expect( container.firstChild ).toHaveClass( 'test__ace' );
+		expect( container.firstChild ).toMatchSnapshot();
 	} );
 
 	// check that content within a card renders correctly
 	test( 'should render children', () => {
-		const card = shallow( <Card>This is a card</Card> );
-		expect( card.contains( 'This is a card' ) ).toBe( true );
-		expect( card ).toMatchSnapshot();
+		const { container } = render( <Card>This is a card</Card> );
+
+		expect( container.firstChild ).toHaveTextContent( 'This is a card' );
+		expect( container.firstChild ).toMatchSnapshot();
 	} );
 
 	// check it will accept a href
 	test( 'should be linkable', () => {
-		const card = shallow( <Card href="/test">This is a linked card</Card> );
-		expect( card.find( 'a[href="/test"]' ) ).toHaveLength( 1 );
-		expect( card.props().href ).toBe( '/test' );
-		expect( card.is( '.is-card-link' ) ).toBe( true );
-		expect( card ).toMatchSnapshot();
+		const { container } = render( <Card href="/test">This is a linked card</Card> );
+
+		const link = screen.getByRole( 'link', { name: 'This is a linked card' } );
+
+		expect( link ).toBeVisible();
+		expect( link ).toHaveAttribute( 'href', '/test' );
+		expect( link ).toHaveClass( 'is-card-link' );
+		expect( container.firstChild ).toMatchSnapshot();
+
+		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
 	} );
+
 	// check that it can be rendered as a clickable button displaying as a link
 	test( 'should render as a clickable button which looks like a link', () => {
-		const card = shallow(
-			<Card tagName="button" displayAsLink onClick="test">
+		const { container } = render(
+			<Card tagName="button" displayAsLink onClick={ () => {} }>
 				This is a button which looks like a link
 			</Card>
 		);
-		expect( card.is( 'a' ) ).toBe( false );
-		expect( card.is( 'button' ) ).toBe( true );
-		expect( card.is( '.is-card-link' ) ).toBe( true );
-		expect( card.is( '.is-clickable' ) ).toBe( true );
-		expect( card ).toMatchSnapshot();
+
+		const card = screen.getByRole( 'button', { name: 'This is a button which looks like a link' } );
+
+		expect( card.tagName ).toBe( 'BUTTON' );
+		expect( card ).toHaveClass( 'is-card-link' );
+		expect( card ).toHaveClass( 'is-clickable' );
+		expect( container.firstChild ).toMatchSnapshot();
+
+		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
 	} );
 } );
 
 describe( 'CompactCard', () => {
 	// the inner `Card` should have a `compact` prop
 	test( 'should have `compact` prop', () => {
-		const compactCard = shallow( <CompactCard /> );
-		expect( compactCard.prop( 'compact' ) ).toBe( true );
-		expect( compactCard ).toMatchSnapshot();
+		const { container } = render( <CompactCard /> );
+
+		expect( container.firstChild ).toHaveClass( 'is-compact' );
+		expect( container.firstChild ).toMatchSnapshot();
 	} );
 
 	// it should accept a custom class of `test__ace`
 	test( 'should have custom class of `test__ace`', () => {
-		const compactCard = shallow( <CompactCard className="test__ace" /> );
-		expect( compactCard.is( '.test__ace' ) ).toBe( true );
-		expect( compactCard ).toMatchSnapshot();
+		const { container } = render( <CompactCard className="test__ace" /> );
+
+		expect( container.firstChild ).toHaveClass( 'test__ace' );
+		expect( container.firstChild ).toMatchSnapshot();
 	} );
 
 	// check that content within a CompactCard renders correctly
 	test( 'should render children', () => {
-		const compactCard = shallow( <CompactCard>This is a compact card</CompactCard> );
-		expect( compactCard.contains( 'This is a compact card' ) ).toBe( true );
-		expect( compactCard ).toMatchSnapshot();
+		const { container } = render( <CompactCard>This is a compact card</CompactCard> );
+		expect( container.firstChild ).toHaveTextContent( 'This is a compact card' );
+		expect( container.firstChild ).toMatchSnapshot();
 	} );
 
 	// test for card component
 	test( 'should use the card component', () => {
-		const compactCard = shallow( <CompactCard /> );
-		expect( compactCard.find( Card ) ).toHaveLength( 1 );
-		expect( compactCard ).toMatchSnapshot();
+		const { container } = render( <CompactCard /> );
+
+		expect( container.firstChild ).toHaveClass( 'card' );
+		expect( container.firstChild ).toMatchSnapshot();
 	} );
 } );
