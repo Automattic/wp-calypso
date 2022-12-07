@@ -158,21 +158,6 @@ private object CalypsoStats : WPComPluginBuild(
 	pluginSlug = "calypso-stats",
 	archiveDir = "./dist/",
 	docsLink = "PCYsg-elI-p2",
-	// This param is executed in bash right before the build script compares
-	// the build with the previous release version. The purpose of this code
-	// is to remove sources of randomness so that the diff operation only
-	// compares legitimate changes.
-	normalizeFiles = """
-		# Replace the old cache buster with the new one in the previous release html files.
-		if [ -f './release-archive/build_meta.json' ] ; then
-			old_cache_buster=`jq -r '.cache_buster' ./release-archive/build_meta.json`
-		else
-			old_cache_buster=`cat ./release-archive/cache-buster.txt`
-		fi
-
-		new_cache_buster=`jq -r '.cache_buster' ./dist/build_meta.json`
-		sed -i "s~${'$'}old_cache_buster~${'$'}new_cache_buster~g" release-archive/index.html release-archive/rtl.html
-	""".trimIndent(),
 )
 
 private object O2Blocks : WPComPluginBuild(
