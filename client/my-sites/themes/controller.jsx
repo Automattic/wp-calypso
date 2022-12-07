@@ -99,20 +99,44 @@ export function fetchThemeFilters( context, next ) {
 		return next();
 	}
 
-	const unsubscribe = store.subscribe( () => {
-		const fetchErr = getThemeFiltersRequestError( store.getState() );
-		if ( fetchErr ) {
-			debug( `Theme fetch error: ${ JSON.stringify( fetchErr ) }` );
-			unsubscribe();
-			return next( new Error( 'Error fetching theme filters.' ) );
+	waitForFilters( store, next );
+}
+
+// Function which calls next when the store has been updated or a timeout has occured.
+function waitForFilters( store, next ) {
+	store.dispatch( requestThemeFilters( context.lang ) );
+
+	// We need to define these variables here so that we can use them in the onResult closure.
+	let timeout; // eslint-disable-line prefer-const
+	let unsubscribe; // eslint-disable-line prefer-const
+
+	// This function exists so that both the timeout and subscription loop can be
+	// stopped at once when a result exists. If the subscription stops first, for
+	// example, we don't want the timeout to call next() again afterwards.
+	const onResult = ( err ) => {
+		if ( timeout ) {
+			clearTimeout( timeout );
+		}
+		unsubscribe?.();
+		err ? next( new Error( err ) ) : next();
+	};
+
+	unsubscribe = store.subscribe( () => {
+		if ( Object.keys( getThemeFilters( store.getState() ) ).length > 0 ) {
+			onResult();
 		}
 
-		if ( Object.keys( getThemeFilters( store.getState() ) ).length > 0 ) {
-			unsubscribe();
-			return next();
+		const fetchErr = getThemeFiltersRequestError( store.getState() );
+		if ( fetchErr ) {
+			onResult( `theme-filter-fetch-err: ${ JSON.stringify( fetchErr ) }` );
 		}
 	} );
-	store.dispatch( requestThemeFilters( context.lang ) );
+
+	// 500ms is high, but much lower than the 50,000 timeout. This should really
+	// not be happening frequently, and if it is, it should be investigated.
+	timeout = setTimeout( () => {
+		onResult( 'theme-filter-fetch-err: timeout' );
+	}, 500 );
 }
 
 // Legacy (Atlas-based Theme Showcase v4) route redirects
