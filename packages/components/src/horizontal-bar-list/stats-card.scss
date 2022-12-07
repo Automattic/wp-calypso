@@ -38,6 +38,22 @@
 			font-size: $header-font-size;
 			line-height: $header-line-height;
 			color: var(--color-text);
+			display: flex;
+			align-items: center;
+
+			.link-icon {
+				transition: $link-icon-transition;
+				transform: translateX(0);
+			}
+
+			&:hover,
+			&:focus,
+			&:focus-within {
+				.link-icon {
+					transition: $link-icon-transition;
+					transform: translateX($link-icon-active-offset);
+				}
+			}
 		}
 	}
 

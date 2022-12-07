@@ -18,6 +18,22 @@
 	&:hover {
 		color: var(--color-link);
 	}
+
+	.link-icon {
+		transition: $link-icon-transition;
+		transform: translateX(0);
+	}
+
+	&:hover,
+	&:focus,
+	&:focus-within {
+
+		.link-icon {
+			transition: $link-icon-transition;
+			transform: translateX($link-icon-active-offset);
+		}
+
+	}
 }
 
 .highlight-cards-heading {
@@ -26,6 +42,9 @@
 	line-height: 40px;
 	font-family: $font-recoleta;
 	margin-bottom: math.div($vertical-margin, 2);
+	display: flex;
+	align-items: center;
+
 	small {
 		font-family: $sans;
 		font-size: $font-body-small;
