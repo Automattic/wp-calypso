@@ -295,7 +295,7 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 					<?php echo esc_html__( 'Styles', 'full-site-editing' ); ?>
 				</span>
 				<span class="is-desktop">
-					<?php echo esc_html__( 'Publish styles', 'full-site-editing' ); ?>
+					<?php echo esc_html__( 'Custom styles', 'full-site-editing' ); ?>
 				</span>
 			</a>
 		</div>
