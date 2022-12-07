@@ -22,15 +22,15 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 
 	// Determines message text based on mobile, tablet, or Desktop.
 	const getMessage = () => {
-		if ( isApple ) {
-			return translate(
-				'Check your stats on-the-go and get real-time notifications with the Jetpack mobile app.'
-			);
-		}
-		if ( isGoogle ) {
-			return translate(
-				'Check your stats on-the-go and get real-time notifications with the Woo mobile app.'
-			);
+		// The mobile use case. If Apple or Google mobile device, Jetpack or Woo.
+		if ( isApple || isGoogle ) {
+			return isWoo
+				? translate(
+						'Check your stats on-the-go and get real-time notifications with the Woo mobile app.'
+				  )
+				: translate(
+						'Check your stats on-the-go and get real-time notifications with the Jetpack mobile app.'
+				  );
 		}
 		// Using useTranslate() with interpolation to set up the linked message.
 		// https://wpcalypso.wordpress.com/devdocs/packages/i18n-calypso/README.md
