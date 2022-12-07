@@ -63,7 +63,7 @@ const JetpackStandaloneActivationInstructions: React.FC< Props > = ( { product, 
 			},
 			{
 				id: 3,
-				content: translate( 'Go to {{strong}}Jetpack > Dashboard > My Jetpack{{/strong}}.', {
+				content: translate( 'Go to {{strong}}Jetpack > My Jetpack{{/strong}}.', {
 					components: { strong: <strong /> },
 				} ),
 			},
