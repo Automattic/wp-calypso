@@ -37,21 +37,14 @@
 
 .two-factor-authentication__illustration-notification {
 	position: absolute;
-	top: -57px;
+	top: -75px;
 	width: 264px;
-	height: 57px;
+	height: 70px;
 	will-change: transform;
-	animation: two-factor-authentication__illustration-slide 0.65s ease-out;
-	animation-timing-function: cubic-bezier(0.35, 0.65, 0.15, 1.15);
+	animation: two-factor-authentication__illustration-slide 1.5s ease-out;
+	animation-timing-function: cubic-bezier(0.86, 0, 0.07, 1);
 	animation-fill-mode: forwards;
 	animation-delay: 1s;
-
-	&.jetpack {
-		top: -75px;
-		height: 70px;
-		animation: two-factor-authentication__illustration-slide 1.5s ease-out;
-		animation-timing-function: cubic-bezier(0.86, 0, 0.07, 1);
-	}
 }
 
 @keyframes two-factor-authentication__illustration-slide {
