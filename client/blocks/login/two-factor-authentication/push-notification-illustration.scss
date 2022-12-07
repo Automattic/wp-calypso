@@ -47,16 +47,39 @@
 	animation-delay: 1s;
 
 	&.jetpack {
-		height: 68px;
+		top: -75px;
+		height: 70px;
+		animation: two-factor-authentication__illustration-slide 1.5s ease-out;
+		animation-timing-function: cubic-bezier(0.86, 0, 0.07, 1);
 	}
 }
 
 @keyframes two-factor-authentication__illustration-slide {
 	0% {
-		transform: translate3d(0, 0, 0);
+		transform: scale(1) translate3d(0, 0, 0);
+	}
+
+	10% {
+		transform: scale(1.02, 0.98) translate3d(0, 75px, 0);
+	}
+
+	30% {
+		transform: scale(0.98, 1.02) translate3d(0, 60px, 0);
+	}
+
+	50% {
+		transform: scale(1) translate3d(0, 78px, 0);
+	}
+
+	57% {
+		transform: translate3d(0, 74px, 0);
+	}
+
+	64% {
+		transform: translate3d(0, 78px, 0);
 	}
 
 	100% {
-		transform: translate3d(0, 61px, 0);
+		transform: translate3d(0, 78px, 0);
 	}
 }
