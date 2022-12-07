@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
@@ -24,7 +25,14 @@ const FeaturedImageTemplateToggle = ( props ) => {
 				/>
 				<FormSettingExplanation>
 					{ translate(
-						"Includes your post's featured image in the email sent out to your readers."
+						"Includes your post's featured image in the email sent out to your readers. {{link}}Learn more about the featured image{{/link}}.",
+						{
+							components: {
+								link: (
+									<a href={ localizeUrl( 'https://wordpress.com/support/featured-images/' ) } />
+								),
+							},
+						}
 					) }
 				</FormSettingExplanation>
 			</Card>
