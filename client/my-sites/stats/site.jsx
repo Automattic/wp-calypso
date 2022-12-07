@@ -19,8 +19,6 @@ import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
-import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
-import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -190,7 +188,7 @@ class StatsSite extends Component {
 	}
 
 	renderStats() {
-		const { date, siteId, slug, isJetpack, isSitePrivate } = this.props;
+		const { date, siteId, slug, isJetpack, isSitePrivate, isOdysseyStats } = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -216,9 +214,11 @@ class StatsSite extends Component {
 
 		return (
 			<div className="stats">
-				<div className="stats-banner-wrapper">
-					<JetpackBackupCredsBanner event="stats-backup-credentials" />
-				</div>
+				{ ! isOdysseyStats && (
+					<div className="stats-banner-wrapper">
+						<JetpackBackupCredsBanner event="stats-backup-credentials" />
+					</div>
+				) }
 
 				<FormattedHeader
 					brandFont
@@ -233,7 +233,7 @@ class StatsSite extends Component {
 									<InlineSupportLink
 										supportContext="stats"
 										showIcon={ false }
-										showSupportModal={ config.isEnabled( 'is_running_in_jetpack_site' ) }
+										showSupportModal={ ! isOdysseyStats }
 									/>
 								),
 							},
@@ -406,21 +406,23 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
-
-				<div className="stats-content-promo">
-					<PromoCardBlock
-						productSlug="wordpress-seo-premium"
-						impressionEvent="calypso_stats_wordpress_seo_premium_banner_view"
-						clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
-						headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
-						contentText={ translate(
-							'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
-						) }
-						ctaText={ translate( 'Learn more' ) }
-						image={ wordpressSeoIllustration }
-						href={ `/plugins/wordpress-seo-premium/${ slug }` }
-					/>
-				</div>
+				{ /** Promo Card is disabled for Odyssey because it doesn't make much sense in the context, which also removes an API call to `plugins`. */ }
+				{ ! isOdysseyStats && (
+					<div className="stats-content-promo">
+						<PromoCardBlock
+							productSlug="wordpress-seo-premium"
+							impressionEvent="calypso_stats_wordpress_seo_premium_banner_view"
+							clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
+							headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
+							contentText={ translate(
+								'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
+							) }
+							ctaText={ translate( 'Learn more' ) }
+							image={ wordpressSeoIllustration }
+							href={ `/plugins/wordpress-seo-premium/${ slug }` }
+						/>
+					</div>
+				) }
 				<JetpackColophon />
 			</div>
 		);
@@ -446,7 +448,7 @@ class StatsSite extends Component {
 	}
 
 	render() {
-		const { isJetpack, siteId, showEnableStatsModule } = this.props;
+		const { isJetpack, siteId, showEnableStatsModule, isOdysseyStats } = this.props;
 		const { period } = this.props.period;
 
 		// Track the last viewed tab.
@@ -458,9 +460,8 @@ class StatsSite extends Component {
 
 		return (
 			<Main className={ mainWrapperClass } fullWidthLayout>
-				<QueryKeyringConnections />
-				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
-				<QuerySiteKeyrings siteId={ siteId } />
+				{ /* Odyssey: if Stats module is not enabled, the page will not be rendered. */ }
+				{ ! isOdysseyStats && isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 				<PageViewTracker
 					path={ `/stats/${ period }/:site` }
@@ -485,8 +486,13 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
+		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+		// Odyssey: if Stats is not enabled, the page will not be rendered.
 		const showEnableStatsModule =
-			siteId && isJetpack && isJetpackModuleActive( state, siteId, 'stats' ) === false;
+			! isOdysseyStats &&
+			siteId &&
+			isJetpack &&
+			isJetpackModuleActive( state, siteId, 'stats' ) === false;
 		return {
 			isJetpack,
 			isSitePrivate: isPrivateSite( state, siteId ),
@@ -494,6 +500,7 @@ export default connect(
 			slug: getSelectedSiteSlug( state ),
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
+			isOdysseyStats,
 		};
 	},
 	{ recordGoogleEvent, enableJetpackStatsModule, recordTracksEvent }
