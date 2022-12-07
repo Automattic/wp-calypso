@@ -135,7 +135,7 @@ function waitForFilters( store, next ) {
 	// not be happening frequently, and if it is, it should be investigated.
 	timeout = setTimeout( () => {
 		onResult( 'theme-filter-fetch-err: timeout' );
-	}, 1 );
+	}, 500 );
 }
 
 // Legacy (Atlas-based Theme Showcase v4) route redirects
