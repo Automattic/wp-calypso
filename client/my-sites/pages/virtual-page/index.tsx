@@ -147,7 +147,7 @@ const VirtualPage = ( {
 					<span>{ title }</span>
 					{ isHomepage && (
 						<InfoPopover position="right">
-							{ ! isAdmin && template
+							{ isAdmin && template
 								? translate(
 										'You can change the content of this page by editing the %(templateTitle)s template using the Site Editor. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 										{
