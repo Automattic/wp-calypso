@@ -9,13 +9,7 @@ import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import { getCancellationFeatureByKey } from 'calypso/lib/plans/cancellation-features-list';
-import {
-	getName,
-	isRefundable,
-	isSubscription,
-	isOneTimePurchase,
-	maybeWithinRefundPeriod,
-} from 'calypso/lib/purchases';
+import { getName, isRefundable, isSubscription, isOneTimePurchase } from 'calypso/lib/purchases';
 import { UPDATE_NAMESERVERS } from 'calypso/lib/url/support';
 import { getIncludedDomainPurchase } from 'calypso/state/purchases/selectors';
 import getPlanCancellationFeatures from './get-plan-cancellation-features';
@@ -57,7 +51,7 @@ const CancelPurchaseRefundInformationWithFeatures = ( {
 				{ planCancellationFeatures.andMore && (
 					<li className="cancel-purchase__refund-information--item-more" key="cancellationAndMore">
 						<span className="cancel-purchase__refund-information--item-more-span">
-							{ i18n.translate( 'and more…' ) }
+							{ i18n.translate( 'And more' ) }
 						</span>
 					</li>
 				) }
@@ -67,7 +61,7 @@ const CancelPurchaseRefundInformationWithFeatures = ( {
 
 	const descriptionText = () => {
 		return (
-			<>
+			<div>
 				<p className="cancel-purchase__refund-information-subtitle">
 					{ i18n.translate(
 						'If you cancel your plan subscription your site may appear broken and things may not work properly.'
@@ -83,7 +77,7 @@ const CancelPurchaseRefundInformationWithFeatures = ( {
 					</div>
 					{ featuresList( planSlug, includedDomainPurchase ) }
 				</div>
-			</>
+			</div>
 		);
 	};
 
@@ -116,16 +110,8 @@ const CancelPurchaseRefundInformationWithFeatures = ( {
 		}
 
 		if ( isSubscription( purchase ) ) {
-			text = [
-				i18n.translate(
-					"We're sorry to hear the %(productName)s plan didn't fit your current needs, but thank you for giving it a try.",
-					{
-						args: {
-							productName: getName( purchase ),
-						},
-					}
-				),
-			];
+			text = [];
+
 			if ( includedDomainPurchase && isDomainMapping( includedDomainPurchase ) ) {
 				text.push(
 					i18n.translate(
@@ -380,7 +366,6 @@ const CancelPurchaseRefundInformationWithFeatures = ( {
 
 	return (
 		<div className="cancel-purchase__info">
-			{ maybeWithinRefundPeriod && <p>Debug: refund period</p> }
 			{ descriptionText() }
 			{ Array.isArray( text ) ? (
 				text.map( ( paragraph, index ) => (

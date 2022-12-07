@@ -273,10 +273,18 @@ $breakpoint-desktop: 1440px;
 	}
 }
 
+.cancel-purchase__refund-information-subtitle {
+	@media ( max-width: $breakpoint-small ) {
+		padding: 0 16px;
+	}
+}
+
 .cancel-purchase__refund-information--list-plan-features {
 	list-style-type: none;
 	margin: 10px 0;
 	text-align: left;
+	column-count: 2;
+	column-gap: 0;
 
 	li {
 		display: grid;
@@ -289,7 +297,7 @@ $breakpoint-desktop: 1440px;
 			margin-right: 10px;
 		}
 
-		&.cancel-purchase__refund-information--item-moremore {
+		&.cancel-purchase__refund-information--item-more {
 			display: block;
 
 			span {
