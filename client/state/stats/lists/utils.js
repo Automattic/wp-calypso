@@ -649,17 +649,13 @@ export const normalizers = {
 
 		return authorsData.map( ( item ) => {
 			const record = {
-				label: item.name,
+				label: item.name || translate( 'Untracked Authors' ),
 				iconClassName: 'avatar-user',
 				icon: parseAvatar( item.avatar ),
 				children: null,
 				value: item.views,
 				className: 'module-content-list-item-large',
 			};
-
-			if ( record.label.length === 0 ) {
-				record.label = translate( 'Untracked Author' );
-			}
 
 			if ( item.posts && item.posts.length > 0 ) {
 				record.children = item.posts.map( ( child ) => {
