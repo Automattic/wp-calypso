@@ -237,6 +237,7 @@ class CancelPurchase extends Component {
 								confirmBundledDomain={ this.state.confirmCancelBundledDomain }
 								cancelBundledDomain={ this.state.cancelBundledDomain }
 								onCancelConfirmationStateChange={ this.onCancelConfirmationStateChange }
+								site={ this.props.site }
 							/>
 
 							<div className="purchase-cancel-buttons">

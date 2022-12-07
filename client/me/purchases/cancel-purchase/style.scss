@@ -57,7 +57,9 @@ $breakpoint-desktop: 1440px;
 }
 
 .cancel-purchase__refund-information,
-.cancel-purchase__support-information {
+.cancel-purchase__support-information,
+.cancel-purchase__refund-information-subtitle,
+.cancel-purchase__refund-information-description {
 	font-size: $font-body-small;
 }
 
@@ -125,6 +127,7 @@ $breakpoint-desktop: 1440px;
 
 .purchases__cancel {
 	.cancel-purchase__back-link {
+		font-weight: bold;
 		margin-bottom: 20px;
 
 		@media ( max-width: $breakpoint-mobile ) {
@@ -268,4 +271,31 @@ $breakpoint-desktop: 1440px;
 	@media ( max-width: $breakpoint-small ) {
 		text-align: center;
 	}
+}
+
+.cancel-purchase__refund-information--list-plan-features {
+	list-style-type: none;
+	margin: 10px 0;
+	text-align: left;
+
+	li {
+		display: grid;
+		grid-template-columns: 32px 1fr;
+		margin-bottom: 5px;
+
+		.cancel-purchase__refund-information--item-cross-small {
+			color: #e65054;
+			vertical-align: middle;
+			margin-right: 10px;
+		}
+
+		&.cancel-purchase__refund-information--item-moremore {
+			display: block;
+
+			span {
+				margin-left: 32px;
+			}
+		}
+	}
+
 }
