@@ -53,11 +53,11 @@
 	}
 
 	10% {
-		transform: scale(1.02, 0.98) translate3d(0, 75px, 0);
+		transform: scale(1.02, 0.98) translate3d(0, 78px, 0);
 	}
 
 	30% {
-		transform: scale(0.98, 1.02) translate3d(0, 60px, 0);
+		transform: scale(0.98, 1.02) translate3d(0, 70px, 0);
 	}
 
 	50% {
@@ -65,14 +65,14 @@
 	}
 
 	57% {
-		transform: translate3d(0, 74px, 0);
+		transform: scale(0.99, 1.01) translate3d(0, 75px, 0);
 	}
 
 	64% {
-		transform: translate3d(0, 78px, 0);
+		transform: scale(1) translate3d(0, 78px, 0);
 	}
 
 	100% {
-		transform: translate3d(0, 78px, 0);
+		transform: scale(1) translate3d(0, 78px, 0);
 	}
 }
