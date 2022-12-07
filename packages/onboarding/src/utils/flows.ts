@@ -7,6 +7,7 @@ export const VIDEOPRESS_FLOW = 'videopress';
 export const IMPORT_FOCUSED_FLOW = 'import-focused';
 export const ECOMMERCE_FLOW = 'ecommerce';
 export const FREE_FLOW = 'free';
+export const FREE_POST_SETUP_FLOW = 'free-post-setup';
 
 export const isLinkInBioFlow = ( flowName: string | null ) => {
 	return Boolean(
@@ -16,7 +17,7 @@ export const isLinkInBioFlow = ( flowName: string | null ) => {
 };
 
 export const isFreeFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && FREE_FLOW === flowName );
+	return Boolean( flowName && [ FREE_FLOW, FREE_POST_SETUP_FLOW ].includes( flowName ) );
 };
 
 export const isNewsletterOrLinkInBioFlow = ( flowName: string | null ) => {

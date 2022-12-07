@@ -74,6 +74,12 @@ export function getEnhancedTasks(
 				case 'setup_free':
 					taskData = {
 						title: translate( 'Personalize your site' ),
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign(
+								`/setup/free-post-setup/freePostSetup?siteSlug=${ siteSlug }`
+							);
+						},
 					};
 					break;
 				case 'setup_newsletter':
