@@ -66,7 +66,6 @@ function determineFlow() {
 	return availableFlows[ flowNameFromPathName ] || availableFlows[ 'site-setup' ];
 }
 
-
 /**
  * TODO: this is no longer a switch and should be removed
  */
