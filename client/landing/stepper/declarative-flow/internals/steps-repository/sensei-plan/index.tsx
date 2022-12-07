@@ -6,6 +6,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { Plans } from 'calypso/../packages/data-stores/src';
+import formatCurrency from 'calypso/../packages/format-currency/src';
 import { SENSEI_FLOW, SenseiStepContainer } from 'calypso/../packages/onboarding/src';
 import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
 import PlanItem from 'calypso/../packages/plans-grid/src/plans-table/plan-item';
@@ -76,6 +77,7 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 					yearlyPrice: 0,
 					price: 0,
 					productSlug: '',
+					currencyCode: '',
 				};
 			}
 
@@ -84,6 +86,7 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 				yearlyPrice: yearly.cost,
 				price: billingPeriodIsAnnually ? Math.ceil( yearly.cost / 12 ) : monthly.cost,
 				productSlug: billingPeriodIsAnnually ? yearly.product_slug : monthly.product_slug,
+				currencyCode: yearly.currency_code,
 			};
 		},
 		[ billingPeriodIsAnnually ]
@@ -235,11 +238,15 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 		},
 	];
 
+	const currencyCode = woothemesProduct.currencyCode;
 	const isLoading = ! planProduct.monthlyPrice || ! woothemesProduct.monthlyPrice;
 	const price = planProduct.price + woothemesProduct.price;
+	const priceStr = formatCurrency( price, currencyCode, { stripZeros: true } );
 	const monthlyPrice = planProduct.monthlyPrice + woothemesProduct.monthlyPrice;
 	const annualPrice = planProduct.yearlyPrice + woothemesProduct.yearlyPrice;
+	const annualPriceStr = formatCurrency( annualPrice, currencyCode, { stripZeros: true } );
 	const annualSavings = monthlyPrice * 12 - annualPrice;
+	const annualSavingsStr = formatCurrency( annualSavings, currencyCode, { stripZeros: true } );
 	const domainSavings = domain?.raw_price || 0;
 	const annualDiscount =
 		100 - Math.floor( ( annualPrice / ( monthlyPrice * 12 + domainSavings ) ) * 100 );
@@ -254,10 +261,11 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 
 	const planItemPriceLabelAnnually =
 		locale === 'en' || hasTranslation?.( 'per month, billed as %s annually' )
-			? sprintf( newPlanItemPriceLabelAnnually, `$${ annualPrice }` )
+			? sprintf( newPlanItemPriceLabelAnnually, annualPriceStr )
 			: fallbackPlanItemPriceLabelAnnually;
 
 	const planItemPriceLabelMonthly = __( 'per month, billed monthly', __i18n_text_domain__ );
+	const title = __( 'Sensei Pro Bundle' );
 
 	return (
 		<SenseiStepContainer stepName="senseiPlan" recordTracksEvent={ recordTracksEvent }>
@@ -281,8 +289,11 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 						} ) }
 					>
 						<div tabIndex={ 0 } role="button" className="plan-item__summary">
+							<div className="plan-item__heading">
+								<div className="plan-item__name">{ title }</div>
+							</div>
 							<div className="plan-item__price">
-								<div className="plan-item__price-amount">{ ! isLoading && `$${ price }` }</div>
+								<div className="plan-item__price-amount">{ ! isLoading && priceStr }</div>
 							</div>
 						</div>
 						<div className="plan-item__price-note">
@@ -305,7 +316,7 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 								sprintf(
 									// Translators: will be like "Save 30% by paying annually".  Make sure the % symbol is kept.
 									__( `You're saving %s by paying annually`, __i18n_text_domain__ ),
-									`$${ annualSavings }`
+									annualSavingsStr
 								) }
 						</div>
 					</div>
@@ -316,7 +327,7 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 						CTAVariation="NORMAL"
 						features={ features }
 						billingPeriod={ billingPeriod }
-						name={ __( 'Sensei Pro Bundle' ) }
+						name={ title }
 						onSelect={ onPlanSelect }
 						onPickDomainClick={ goToDomainStep }
 						CTAButtonLabel={ __( 'Get Sensei Pro Bundle' ) }

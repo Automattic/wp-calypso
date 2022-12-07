@@ -14,7 +14,9 @@ $sensei-color: #43af99;
 			border: none;
 		}
 
-		&__heading {
+		&__heading,
+		&__price {
+			display: flex;
 			justify-content: center;
 		}
 		&__price-amount,
@@ -22,6 +24,11 @@ $sensei-color: #43af99;
 		&__price-discount,
 		&__actions {
 			text-align: center;
+		}
+
+		&__price-amount {
+			margin-top: 20px;
+			color: $black;
 		}
 
 		&__select-button {
@@ -59,7 +66,7 @@ $sensei-color: #43af99;
 
 		&--is-loading {
 			.plan-item {
-				&__summary {
+				&__price-amount {
 					@include onboarding-placeholder();
 					width: 30%;
 				}
@@ -98,9 +105,6 @@ $sensei-color: #43af99;
 		}
 		&__item--requires-annual-disabled {
 			.plans-feature-list {
-				&__item-description {
-					color: #888;
-				}
 				&__item-annual-nudge {
 					display: block;
 				}
