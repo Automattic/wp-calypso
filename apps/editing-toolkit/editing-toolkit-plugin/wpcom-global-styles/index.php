@@ -275,7 +275,7 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 		<div class="launch-bar-global-styles-button">
 			<div class="launch-bar-global-styles-popover hidden">
 				<div>
-					<?php echo esc_html__( 'Your site contains customised styles that will only be visible once you upgrade to a Premium plan.', 'full-site-editing' ); ?>
+					<?php echo esc_html__( 'Your site contains customized styles that will only be visible once you upgrade to a Premium plan.', 'full-site-editing' ); ?>
 				</div>
 				<a
 					class="launch-bar-global-styles-upgrade-button"
