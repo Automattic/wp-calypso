@@ -256,7 +256,7 @@ $breakpoint-desktop: 1440px;
 		}
 	}
 
-	@media ( max-width: $breakpoint-desktop ) {
+	@media ( max-width: $breakpoint-mobile ) {
 		margin: 20px 16px;
 	}
 
