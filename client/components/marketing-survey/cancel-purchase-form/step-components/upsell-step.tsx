@@ -116,7 +116,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 	const couponCode = 'BIZC25';
 	const builtByURL =
 		'https://builtbywp.com/get-started/?utm_medium=automattic_referred&utm_source=WordPresscom&utm_campaign=cancel-flow';
-	const refundAmount = { props };
+	const { refundAmount } = props;
 
 	switch ( upsell ) {
 		case 'live-chat:plans':
@@ -221,13 +221,13 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 							translate(
 								'You will lose your free domain registration since that feature is only included in annual/biannual plans.'
 							) }
-						{ props.refundAmount && <br /> }
-						{ props.refundAmount &&
+						{ refundAmount && <br /> }
+						{ refundAmount &&
 							translate(
 								'You can downgrade immediately and get a partial refund of %(refundAmount)s.',
 								{
 									args: {
-										refundAmount: formatCurrency( parseFloat( props.refundAmount ), currencyCode ),
+										refundAmount: formatCurrency( parseFloat( refundAmount ), currencyCode ),
 									},
 								}
 							) }
@@ -253,7 +253,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 									'continue to the next step and cancel the plan.',
 								{
 									args: {
-										amount: formatCurrency( parseFloat( props.refundAmount ), currencyCode ),
+										amount: formatCurrency( parseFloat( refundAmount ), currencyCode ),
 									},
 								}
 							) }
