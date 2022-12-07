@@ -9,6 +9,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { logToLogstash } from 'calypso/lib/logstash';
 import AddNewPaymentMethod from 'calypso/me/purchases/add-new-payment-method';
@@ -84,6 +85,7 @@ export function cancelPurchase( context, next ) {
 	const CancelPurchaseWrapper = localize( () => {
 		return (
 			<PurchasesWrapper title={ titles.cancelPurchase }>
+				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 				<Main wideLayout className="purchases__cancel">
 					<CancelPurchase
 						purchaseId={ parseInt( context.params.purchaseId, 10 ) }

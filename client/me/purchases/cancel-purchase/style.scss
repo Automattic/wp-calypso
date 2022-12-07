@@ -7,6 +7,10 @@ $breakpoint-mobile: 660px;
 $breakpoint-tablet:778px;
 $breakpoint-desktop: 1440px;
 
+body.edit__body-white.theme-default.color-scheme {
+	--color-surface-backdrop: var(--studio-white);
+}
+
 .cancel-purchase__card {
 	h2 {
 		color: var(--color-neutral-70);
