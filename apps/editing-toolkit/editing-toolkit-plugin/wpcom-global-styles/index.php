@@ -267,7 +267,7 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 		$preview_text     = __( 'Hide premium styles', 'full-site-editing' );
 		$preview_location = remove_query_arg( 'preview-global-styles' );
 	} else {
-		$preview_text     = __( 'Preview styles before upgrading', 'full-site-editing' );
+		$preview_text     = __( 'Preview custom styles', 'full-site-editing' );
 		$preview_location = add_query_arg( 'preview-global-styles', '' );
 	}
 
@@ -275,7 +275,7 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 		<div class="launch-bar-global-styles-button">
 			<div class="launch-bar-global-styles-popover hidden">
 				<div>
-					<?php echo esc_html__( 'Publish your style changes and unlock tons of other features by upgrading to a Premium plan.', 'full-site-editing' ); ?>
+					<?php echo esc_html__( 'Your site contains customised styles that will only be visible once you upgrade to a Premium plan.', 'full-site-editing' ); ?>
 				</div>
 				<a
 					class="launch-bar-global-styles-upgrade-button"
