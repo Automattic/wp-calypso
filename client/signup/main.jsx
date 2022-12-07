@@ -29,10 +29,10 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
-import ZendeskChat from 'calypso/components/zendesk-chat-widget';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import {
 	recordSignupStart,
@@ -925,7 +925,12 @@ class Signup extends Component {
 						/>
 					) }
 				</div>
-				{ shouldShowZendeskPresalesChat && <ZendeskChat chatId={ zendeskChatKey } /> }
+				{ shouldShowZendeskPresalesChat && (
+					<AsyncLoad
+						require="calypso/components/presales-zendesk-chat"
+						chatKey={ zendeskChatKey }
+					/>
+				) }
 			</>
 		);
 	}
