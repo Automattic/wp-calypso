@@ -29,6 +29,7 @@ object WPComPlugins : Project({
 	buildType(EditingToolkit)
 	buildType(WpcomBlockEditor)
 	buildType(Notifications)
+	buildType(CalypsoStats)
 	buildType(O2Blocks)
 	buildType(HappyBlocks)
 	buildType(Happychat)
@@ -46,6 +47,7 @@ object WPComPlugins : Project({
 				withStatus = successful()
 				withTags = anyOf(
 					"notifications-release-build",
+					"calypso-stats-release-build",
 					"etk-release-build",
 					"wpcom-block-editor-release-build",
 					"o2-blocks-release-build",
@@ -148,6 +150,14 @@ private object Notifications : WPComPluginBuild(
 		new_cache_buster=`jq -r '.cache_buster' ./dist/build_meta.json`
 		sed -i "s~${'$'}old_cache_buster~${'$'}new_cache_buster~g" release-archive/index.html release-archive/rtl.html
 	""".trimIndent(),
+)
+
+private object CalypsoStats : WPComPluginBuild(
+	buildId = "WPComPlugins_CalypsoStats",
+	buildName = "CalypsoStats",
+	pluginSlug = "calypso-stats",
+	archiveDir = "./dist/",
+	docsLink = "PCYsg-elI-p2",
 )
 
 private object O2Blocks : WPComPluginBuild(
