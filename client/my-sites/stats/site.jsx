@@ -408,7 +408,7 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
-				{ /** Promo Card is temprarily disabled to remove the query sent to `plugins`. */ }
+				{ /** Promo Card is disabled for Odyssey because it doesn't make much sense in the context, which also removes an API call to `plugins`. */ }
 				{ ! isOdysseyStats && (
 					<div className="stats-content-promo">
 						<PromoCardBlock
@@ -462,6 +462,7 @@ class StatsSite extends Component {
 
 		return (
 			<Main className={ mainWrapperClass } fullWidthLayout>
+				{ /* Odyssey: if Stats module is not enabled, the page will not be rendered. */ }
 				{ ! isOdysseyStats && isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 				<PageViewTracker
@@ -487,9 +488,13 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
-		const showEnableStatsModule =
-			siteId && isJetpack && isJetpackModuleActive( state, siteId, 'stats' ) === false;
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+		// Odyssey: if Stats is not enabled, the page will not be rendered.
+		const showEnableStatsModule =
+			! isOdysseyStats &&
+			siteId &&
+			isJetpack &&
+			isJetpackModuleActive( state, siteId, 'stats' ) === false;
 		return {
 			isJetpack,
 			isSitePrivate: isPrivateSite( state, siteId ),
