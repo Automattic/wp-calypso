@@ -66,6 +66,9 @@ export const getCampaignStatus = ( status: string ) => {
 		case 'finished': {
 			return __( 'Finished' );
 		}
+		case 'suspended': {
+			return __( 'Suspended' );
+		}
 		default:
 			return status;
 	}

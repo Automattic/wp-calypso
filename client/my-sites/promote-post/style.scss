@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/colors";
+
 .promote-post__loading-container {
 	text-align: center;
 }
@@ -19,6 +21,23 @@
 	a {
 		color: var(--studio-gray-60);
 		text-decoration: underline;
+	}
+}
+
+.promote-post {
+
+	.promote-post__notice-campaign-list {
+		list-style: none;
+	}
+
+	.notice__content .notice__text li {
+		margin-left: 0;
+
+		button {
+			cursor: pointer;
+			color: $white;
+			text-decoration: underline;
+		}
 	}
 }
 

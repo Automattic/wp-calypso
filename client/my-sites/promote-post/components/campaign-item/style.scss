@@ -3,6 +3,10 @@
 	.campaign-item__foldable-card {
 		margin-bottom: 0;
 
+		.components-notice {
+			margin: 0;
+		}
+
 		.campaign-item__header {
 			display: flex;
 			justify-content: space-between;

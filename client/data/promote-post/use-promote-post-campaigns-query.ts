@@ -49,22 +49,52 @@ export type Campaign = {
 	audience_list: AudienceList;
 	display_name: string;
 	avatar_url: string;
+	has_payment_issues: boolean;
+};
+
+export type UserStatus = {
+	reason: string;
+	total_missing_payment_account?: number;
+	failed_campaigns?: [
+		{
+			campaign_id: number;
+			name: string;
+		}
+	];
 };
 
 const useCampaignsQuery = ( siteId: number, queryOptions = {} ) => {
 	return useQuery(
 		[ 'promote-post-campaigns', siteId ],
 		async () => {
-			const { results: campaigns } = await requestDSP< { results: Campaign[] } >(
-				siteId,
-				`/campaigns/site/${ siteId }/full`
-			);
-			return campaigns;
+			const {
+				results: campaigns,
+				canCreateCampaigns,
+				userStatus,
+			} = await requestDSP< {
+				results: Campaign[];
+				canCreateCampaigns: boolean;
+				userStatus?: UserStatus;
+			} >( siteId, `/campaigns/site/${ siteId }/full` );
+
+			// Map campaigns to include if they have issue with paymeny
+			const mappedCampaigns = userStatus?.failed_campaigns?.length
+				? campaigns.map( ( campaign ) => {
+						return {
+							...campaign,
+							has_payment_issues:
+								userStatus?.failed_campaigns?.some(
+									( failedCampaign ) => failedCampaign.campaign_id === campaign.campaign_id
+								) || false,
+						};
+				  } )
+				: campaigns;
+			return { campaigns: mappedCampaigns, canCreateCampaigns, userStatus };
 		},
 		{
 			...queryOptions,
+			retry: false,
 			enabled: !! siteId,
-			retryDelay: 3000,
 			meta: {
 				persist: false,
 			},

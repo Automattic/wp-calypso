@@ -10,7 +10,7 @@ import './style.scss';
 import CampaignsEmpty from 'calypso/my-sites/promote-post/components/campaigns-empty';
 import EmptyPromotionList from '../empty-promotion-list';
 
-const noCampaignListMessage = translate(
+const campaignFetchError = translate(
 	'There was a problem obtaining the campaign list. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 	{
 		components: {
@@ -25,11 +25,15 @@ export default function CampaignsList( {
 	isError,
 	hasLocalUser,
 	campaigns,
+	expandedCampaigns,
+	setExpandedCampaigns,
 }: {
 	isLoading: boolean;
 	hasLocalUser: boolean;
 	isError: boolean;
 	campaigns: Campaign[];
+	expandedCampaigns: number[];
+	setExpandedCampaigns: ( campaigns: number[] ) => void;
 } ) {
 	const memoCampaigns = useMemo< Campaign[] >( () => campaigns || [], [ campaigns ] );
 
@@ -38,7 +42,7 @@ export default function CampaignsList( {
 	if ( isError && hasLocalUser ) {
 		return (
 			<Notice status="is-error" icon="mention">
-				{ noCampaignListMessage }
+				{ campaignFetchError }
 			</Notice>
 		);
 	}
@@ -61,7 +65,22 @@ export default function CampaignsList( {
 			{ ! isEmpty && ! isError && (
 				<>
 					{ memoCampaigns.map( function ( campaign ) {
-						return <CampaignItem key={ campaign.campaign_id } campaign={ campaign } />;
+						return (
+							<CampaignItem
+								key={ campaign.campaign_id }
+								campaign={ campaign }
+								expanded={ expandedCampaigns.includes( campaign.campaign_id ) }
+								onClickCampaign={ ( isExpanded ) => {
+									if ( isExpanded ) {
+										setExpandedCampaigns( [ ...expandedCampaigns, campaign.campaign_id ] );
+									} else {
+										setExpandedCampaigns(
+											expandedCampaigns.filter( ( id ) => id !== campaign.campaign_id )
+										);
+									}
+								} }
+							/>
+						);
 					} ) }
 					<ListEnd />
 				</>

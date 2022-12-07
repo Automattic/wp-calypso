@@ -1,6 +1,8 @@
 import './style.scss';
-import { useTranslate } from 'i18n-calypso';
+import { translate, useTranslate } from 'i18n-calypso';
+import { debounce } from 'lodash';
 import page from 'page';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPosts from 'calypso/components/data/query-posts';
@@ -8,14 +10,19 @@ import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
-import useCampaignsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import Notice from 'calypso/components/notice';
+import useCampaignsQuery, {
+	UserStatus,
+} from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import CampaignsList from 'calypso/my-sites/promote-post/components/campaigns-list';
 import { Post } from 'calypso/my-sites/promote-post/components/post-item';
 import PostsList from 'calypso/my-sites/promote-post/components/posts-list';
 import PostsListBanner from 'calypso/my-sites/promote-post/components/posts-list-banner';
 import PromotePostTabBar from 'calypso/my-sites/promote-post/components/promoted-post-filter';
 import { getPostsForQuery, isRequestingPostsForQuery } from 'calypso/state/posts/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 export type TabType = 'posts' | 'campaigns';
@@ -62,6 +69,17 @@ function sortItemsByPublishedDate( items: Post[] ) {
 
 const ERROR_NO_LOCAL_USER = 'no_local_user';
 
+const commonBanMessage = translate(
+	'Please {{contactSupportLink}}contact support{{/contactSupportLink}} to fix the issue and continue using the service. ' +
+		'Until this problem is resolved, all of your active campaigns will be suspended, as will your ability to start new one.',
+	{
+		components: {
+			contactSupportLink: <a href={ CALYPSO_CONTACT } />,
+		},
+		comment: 'Validation error when trying to create a campaign if the user is banned',
+	}
+);
+
 export default function PromotedPosts( { tab }: Props ) {
 	const selectedTab = tab === 'campaigns' ? 'campaigns' : 'posts';
 	const selectedSite = useSelector( getSelectedSite );
@@ -93,9 +111,30 @@ export default function PromotedPosts( { tab }: Props ) {
 		isRequestingPostsForQuery( state, selectedSiteId, queryProducts )
 	);
 
-	const campaigns = useCampaignsQuery( selectedSiteId ?? 0 );
-	const { isLoading: campaignsIsLoading, isError, error: campaignError } = campaigns;
-	const { data: campaignsData } = campaigns;
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSiteId ) );
+
+	const [ expandedCampaigns, setExpandedCampaigns ] = useState< number[] >( [] );
+
+	const campaignsData = useCampaignsQuery( selectedSiteId ?? 0 );
+	const {
+		isLoading: campaignsIsLoading,
+		isError,
+		isFetched,
+		error: campaignError,
+		data,
+	} = campaignsData;
+	const campaigns = data?.campaigns || [];
+
+	const canUserCreateCampaigns = () => {
+		// - we get an error from the endpoint saying the user is not created: We let them create campaigns anyway
+		// - We received the user object from DSP and says the user can create campaigns: We only restrict users with this flag as false
+		return (
+			isFetched && ( data?.canCreateCampaigns || campaignError?.errorCode === 'no_local_user' )
+		);
+	};
+
+	const canCreateCampaigns = canUserCreateCampaigns();
+	const userStatus = data?.userStatus;
 
 	const hasLocalUser = ( campaignError as DSPMessage )?.errorCode !== ERROR_NO_LOCAL_USER;
 
@@ -117,6 +156,59 @@ export default function PromotedPosts( { tab }: Props ) {
 				learnMoreLink: <InlineSupportLink supportContext="advertising" showIcon={ false } />,
 			},
 		}
+	);
+
+	const getUserBanReason = ( userStatus: UserStatus ) => {
+		switch ( userStatus.reason ) {
+			case 'CHECKOUT_FAILED':
+				return translate(
+					'We were unable to process the payment of $%(total_missing_payment_account)s. ',
+					{
+						args: {
+							total_missing_payment_account: userStatus.total_missing_payment_account,
+						},
+						comment:
+							'The system cannot process the payment of total_missing_payment_account. Eg: $73',
+					}
+				);
+		}
+	};
+
+	const debouncedScrollToCampaign = debounce( ( campaignId ) => {
+		const element = document.querySelector( `.promote-post__campaigns_id_${ campaignId }` );
+		if ( element instanceof Element ) {
+			const margin = 50; // Some margin so it keeps below the header in mobile/desktop
+			const dims = element.getBoundingClientRect();
+			window.scrollTo( {
+				top: dims.top - margin,
+				behavior: 'smooth',
+			} );
+		}
+	}, 100 );
+
+	const associatedCampaignsMessage = (
+		<div>
+			<br />
+			<>{ translate( 'Associated campaigns:' ) }</>
+			<ul className="promote-post__notice-campaign-list">
+				{ userStatus?.failed_campaigns?.map( ( campaign ) => {
+					return (
+						<li key={ `campaign-${ campaign.campaign_id }` }>
+							<button
+								onClick={ () => {
+									page( `/advertising/${ siteSlug }/campaigns` );
+
+									setExpandedCampaigns( [ ...expandedCampaigns, campaign.campaign_id ] );
+									debouncedScrollToCampaign( campaign.campaign_id );
+								} }
+							>
+								{ campaign.name }
+							</button>
+						</li>
+					);
+				} ) || [] }
+			</ul>
+		</div>
 	);
 
 	if ( selectedSite?.is_coming_soon ) {
@@ -153,6 +245,10 @@ export default function PromotedPosts( { tab }: Props ) {
 		);
 	}
 
+	const userBanReasonMessage = userStatus?.total_missing_payment_account
+		? getUserBanReason( userStatus )
+		: [];
+
 	const content = sortItemsByPublishedDate( [
 		...( posts || [] ),
 		...( pages || [] ),
@@ -164,7 +260,6 @@ export default function PromotedPosts( { tab }: Props ) {
 	return (
 		<Main wideLayout className="promote-post">
 			<DocumentHead title={ translate( 'Advertising' ) } />
-
 			<FormattedHeader
 				brandFont
 				className="advertising__page-header"
@@ -172,8 +267,17 @@ export default function PromotedPosts( { tab }: Props ) {
 				subHeaderText={ subtitle }
 				align="left"
 			/>
+			{ ! campaignsIsLoading && ! campaigns?.length && <PostsListBanner /> }
 
-			{ ! campaignsIsLoading && ! campaignsData?.length && <PostsListBanner /> }
+			{ isFetched && data && ! canCreateCampaigns && (
+				<Notice showDismiss={ false } status="is-warning">
+					<>
+						{ userBanReasonMessage }
+						{ commonBanMessage }
+						{ userStatus?.failed_campaigns?.length ? associatedCampaignsMessage : [] }
+					</>
+				</Notice>
+			) }
 
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
 			{ selectedTab === 'campaigns' && (
@@ -181,15 +285,21 @@ export default function PromotedPosts( { tab }: Props ) {
 					hasLocalUser={ hasLocalUser }
 					isError={ isError }
 					isLoading={ campaignsIsLoading }
-					campaigns={ campaignsData || [] }
+					campaigns={ campaigns || [] }
+					expandedCampaigns={ expandedCampaigns }
+					setExpandedCampaigns={ setExpandedCampaigns }
 				/>
 			) }
-
 			<QueryPosts siteId={ selectedSiteId } query={ queryPost } postId={ null } />
 			<QueryPosts siteId={ selectedSiteId } query={ queryPage } postId={ null } />
 			<QueryPosts siteId={ selectedSiteId } query={ queryProducts } postId={ null } />
-
-			{ selectedTab === 'posts' && <PostsList content={ content } isLoading={ isLoading } /> }
+			{ selectedTab === 'posts' && (
+				<PostsList
+					content={ content }
+					isLoading={ isLoading }
+					canCreateCampaigns={ canCreateCampaigns }
+				/>
+			) }
 		</Main>
 	);
 }
