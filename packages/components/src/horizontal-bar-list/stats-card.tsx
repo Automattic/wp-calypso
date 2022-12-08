@@ -1,4 +1,3 @@
-import { Icon, chevronRight } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import type { StatsCardProps } from './types';
@@ -28,8 +27,7 @@ const StatsCard = ( {
 					<div className={ `${ BASE_CLASS_NAME }--header` }>
 						{ titleURL ? (
 							<a href={ `${ titleURL }` } className={ `${ BASE_CLASS_NAME }--header--title` }>
-								<span>{ title }</span>
-								<Icon className="link-icon" icon={ chevronRight } />
+								{ title }
 							</a>
 						) : (
 							<div className={ `${ BASE_CLASS_NAME }--header--title` }>{ title }</div>

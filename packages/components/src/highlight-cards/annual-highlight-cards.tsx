@@ -1,12 +1,4 @@
-import {
-	comment,
-	Icon,
-	paragraph,
-	people,
-	postContent,
-	starEmpty,
-	chevronRight,
-} from '@wordpress/icons';
+import { comment, Icon, paragraph, people, postContent, starEmpty } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import HighlightCard from './highlight-card';
@@ -35,12 +27,9 @@ export default function AnnualHighlightCards( {
 
 	const header = (
 		<h1 className="highlight-cards-heading">
-			<span>
-				{ Number.isFinite( year )
-					? translate( '%(year)s in review', { args: { year } } )
-					: translate( 'Year in review' ) }
-			</span>
-			{ titleHref ? <Icon className="link-icon" icon={ chevronRight } size={ 32 } /> : null }
+			{ Number.isFinite( year )
+				? translate( '%(year)s in review', { args: { year } } )
+				: translate( 'Year in review' ) }
 		</h1>
 	);
 
