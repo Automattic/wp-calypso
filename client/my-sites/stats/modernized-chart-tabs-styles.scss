@@ -2,7 +2,9 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/highlight-cards/variables.scss";
 
-.stats > .stats--new-main-chart {
+$custom-stats-tab-mobile-break: $break-small;
+
+.stats > .stats-content {
 	padding-top: $vertical-margin;
 }
 
