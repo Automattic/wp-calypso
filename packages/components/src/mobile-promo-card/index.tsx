@@ -31,8 +31,8 @@ const REDIRECT_SLUGS = {
 // Similar to getRedirectUrl from '@automattic/jetpack-components'.
 function getRedirectUrlFromSlug( slug: string ) {
 	// Confirm requested slug is valid.
-	const keys = Object.values( REDIRECT_SLUGS );
-	if ( ! keys.includes( slug ) ) {
+	const slugs = Object.values( REDIRECT_SLUGS );
+	if ( ! slugs.includes( slug ) ) {
 		return '';
 	}
 	// Return redirect URL.
