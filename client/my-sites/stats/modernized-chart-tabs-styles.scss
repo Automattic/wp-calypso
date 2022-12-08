@@ -1,8 +1,10 @@
+@use "sass:math";
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/highlight-cards/variables.scss";
 
 $barChartBorderRadius: 2px;
 $yearBarChartBorderRadius: 4px;
+$custom-stats-tab-mobile-break: $break-small;
 
 .stats > .stats-content {
 	padding-top: $vertical-margin;
@@ -25,7 +27,7 @@ $yearBarChartBorderRadius: 4px;
 	.chart__legend {
 		margin-bottom: 16px;
 
-		@media ( max-width: $break-medium ) {
+		@media ( max-width: $custom-mobile-breakpoint ) {
 			padding: 0 16px;
 		}
 
@@ -142,28 +144,55 @@ $yearBarChartBorderRadius: 4px;
 	// Chart Tabs
 	.stats-tabs {
 		width: 100%;
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
 		padding: 24px 0 16px;
 		border: 0;
+		box-sizing: border-box;
+
+		display: flex;
+		align-items: center;
+
+		@media (max-width: $custom-mobile-breakpoint) {
+			padding: 24px math.div($vertical-margin, 2) 16px;
+		}
+
+		@media (max-width: $custom-stats-tab-mobile-break) {
+			display: block;
+			padding: 24px 0 16px;
+		}
 
 		&.is-enabled {
 			background-color: inherit;
 		}
 
+		// Adjust new stats-tabs styling beyond the mobile layout
 		.stats-tab {
-			width: 100%;
+			flex: 1;
+			width: auto;
+			border: 0;
+
+			&:not(:first-child) {
+				margin-left: 16px;
+			}
 
 			// Keep the original mobile stats-tabs styles
-			// Adjust new stats-tabs styling beyond the mobile layout
-			@media ( min-width: $break-mobile ) {
-				flex: 1;
-				width: auto;
-				border: 0;
+			@media ( max-width: $custom-stats-tab-mobile-break ) {
+				width: 100%;
+				float: none;
+				border-bottom: 1px solid var(--color-neutral-5);
+
+				&:first-child {
+					border-top: 1px solid var(--color-neutral-5);
+				}
 
 				&:not(:first-child) {
-					margin-left: 16px;
+					margin: 0;
+				}
+			}
+
+			.gridicon {
+				@media ( max-width: $custom-stats-tab-mobile-break ) {
+					float: left;
+					margin: 3px 8px 0 20px;
 				}
 			}
 
@@ -174,9 +203,9 @@ $yearBarChartBorderRadius: 4px;
 				border-radius: 4px;
 				overflow: hidden;
 				color: var(--studio-black);
-				padding: 10px 0;
+				padding: 10px 6px;
 
-				@media ( max-width: $break-mobile ) {
+				@media ( max-width: $custom-stats-tab-mobile-break ) {
 					display: flex;
 					align-items: center;
 					justify-content: space-between;
@@ -207,8 +236,10 @@ $yearBarChartBorderRadius: 4px;
 					line-height: 30px;
 					margin-left: 0;
 
-					@media ( max-width: $break-mobile ) {
+					@media ( max-width: $custom-stats-tab-mobile-break ) {
 						margin-left: auto;
+						padding: 0 20px 0 10px;
+						font-size: $font-body-small;
 
 						// For mobile stats-tabs in Store page
 						&:not(.store-stats-orders-chart__value):not(:last-child) {
@@ -221,7 +252,7 @@ $yearBarChartBorderRadius: 4px;
 					justify-content: center;
 
 					// For mobile stats-tabs in Store page
-					@media ( max-width: $break-mobile ) {
+					@media ( max-width: $custom-stats-tab-mobile-break ) {
 						display: none;
 					}
 				}
@@ -253,7 +284,7 @@ $yearBarChartBorderRadius: 4px;
 					background-color: var(--color-surface);
 
 					// Keep the original mobile stats-tabs border styles
-					@media ( max-width: $break-mobile ) {
+					@media ( max-width: $custom-stats-tab-mobile-break ) {
 						border-color: transparent;
 					}
 

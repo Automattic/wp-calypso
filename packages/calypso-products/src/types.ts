@@ -131,6 +131,7 @@ export type Plan = BillingTerm & {
 	getShortDescription?: () => TranslateResult;
 	getFeaturedDescription?: () => TranslateResult;
 	getLightboxDescription?: () => TranslateResult;
+	getProductsIncluded?: () => ReadonlyArray< string >;
 	getWhatIsIncluded?: () => Array< TranslateResult >;
 	getBenefits?: () => Array< TranslateResult >;
 	getRecommendedFor?: () => Array< JetpackTag >;

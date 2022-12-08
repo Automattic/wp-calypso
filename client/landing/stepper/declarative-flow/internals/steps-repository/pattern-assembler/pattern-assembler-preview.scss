@@ -53,6 +53,7 @@
 
 .pattern-assembler-preview__placeholder {
 	display: flex;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	position: absolute;
@@ -71,6 +72,24 @@
 	background-color: #f8f8f8;
 	opacity: 1;
 	z-index: -1;
+
+	h2 {
+		color: var(--studio-gray-100);
+		margin-bottom: 5px;
+		font-size: $font-title-small;
+		font-weight: 500;
+	}
+
+	span {
+		font-size: $font-body;
+		padding: 0 30px;
+		text-align: center;
+	}
+}
+
+.pattern-assembler-preview__icon {
+	margin-bottom: 28px;
+	fill: #c9c9c9;
 }
 
 .pattern-assembler-preview__spinner {

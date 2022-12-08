@@ -12,12 +12,19 @@
 
 	font-size: 1.5rem;
 	font-weight: 700;
+	line-height: 1.5;
 	letter-spacing: -1px;
 	text-align: center;
 
 	@include break-mobile {
 		font-size: 2.25rem;
 	}
+}
+
+.jetpack-faq__list {
+	margin: 0;
+
+	list-style-type: none;
 }
 
 // Make sure FAQ's are visible below the sticky header when linked to

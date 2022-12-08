@@ -23,6 +23,7 @@
 			"content": "https://i1.wp.com/s0.wp.com/wp-content/themes/a8c/jetpackme-new/images-2019/jetpack-logo.png?ssl=1"
 		}
 	],
+	"zendesk_presales_chat_key": "d729d42c-b547-4750-a6f6-8b30534a5f12",
 	"features": {
 		"activity-log/v2": true,
 		"always_use_logout_url": false,
@@ -43,7 +44,7 @@
 		"jetpack/search-product": true,
 		"jetpack/server-credentials-advanced-flow": true,
 		"jetpack/simplify-pricing-structure": false,
-		"jetpack/standalone-plugin-onboarding-update-v1": false,
+		"jetpack/standalone-plugin-onboarding-update-v1": true,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/query-selected-editor": false,

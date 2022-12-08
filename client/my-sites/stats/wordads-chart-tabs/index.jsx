@@ -65,6 +65,7 @@ class WordAdsChartTabs extends Component {
 					label: this.props.translate( 'Ads Served' ),
 					value: this.props.numberFormat( item.data.impressions ),
 					className: 'is-impressions',
+					//TODO: replace with an icon when available.
 					icon: (
 						<svg
 							className="gridicon"

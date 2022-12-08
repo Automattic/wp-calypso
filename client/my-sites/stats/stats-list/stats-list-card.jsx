@@ -60,6 +60,13 @@ const StatsListCard = ( {
 		? Math.max( ...data.map( ( item ) => item?.value || 0 ).filter( Number.isFinite ) )
 		: 0;
 
+	let sortedData = data;
+
+	// Include 'Unknown search terms' at a proper place according to its value.
+	if ( moduleType === 'searchterms' ) {
+		sortedData = data?.sort( ( a, b ) => b.value - a.value );
+	}
+
 	return (
 		<StatsCard
 			title={ title }
@@ -81,7 +88,7 @@ const StatsListCard = ( {
 			{ !! loader && loader }
 			{ !! error && error }
 			<HorizontalBarList>
-				{ data?.map( ( item, index ) => {
+				{ sortedData?.map( ( item, index ) => {
 					let leftSideItem;
 					const isInteractive = item?.link || item?.page || item?.children;
 

@@ -1,5 +1,7 @@
+import config from '@automattic/calypso-config';
 import { JetpackTag, JETPACK_RELATED_PRODUCTS_MAP } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo } from 'react';
 import Modal from 'react-modal';
@@ -7,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { useStoreItemInfoContext } from '../product-store/context/store-item-info-context';
+import { PricingBreakdown } from '../product-store/pricing-breakdown';
 import { ProductStoreBaseProps } from '../product-store/types';
 import getProductIcon from '../product-store/utils/get-product-icon';
 import slugToSelectorProduct from '../slug-to-selector-product';
@@ -29,14 +32,14 @@ type Props = ProductStoreBaseProps & {
 };
 
 const TagItems: React.FC< { tags: JetpackTag[] } > = ( { tags } ) => (
-	<>
+	<ul className="product-lightbox__detail-tags-list">
 		{ tags.map( ( tag ) => (
-			<div className="product-lightbox__detail-tags-tag" key={ tag.tag }>
+			<li className="product-lightbox__detail-tags-tag" key={ tag.tag }>
 				<span aria-hidden="true">{ Tags[ tag.tag ] }</span>
 				<p>{ tag.label }</p>
-			</div>
+			</li>
 		) ) }
-	</>
+	</ul>
 );
 
 const ProductLightbox: React.FC< Props > = ( {
@@ -100,6 +103,17 @@ const ProductLightbox: React.FC< Props > = ( {
 
 	const isMultiSiteIncompatible = isMultisite && ! getIsMultisiteCompatible( product );
 
+	const includedProductSlugs = product.productsIncluded || [];
+
+	const isLargeScreen = useBreakpoint( '>782px' );
+
+	const isEnglish = config< Array< string | undefined > >( 'english_locales' ).includes(
+		translate.localeSlug
+	);
+
+	// TODO remove this isEnglish check once we have translations for the new strings
+	const showPricingBreakdown = includedProductSlugs?.length && isEnglish;
+
 	return (
 		<Modal
 			className="product-lightbox__modal"
@@ -130,43 +144,65 @@ const ProductLightbox: React.FC< Props > = ( {
 						<h2>{ product.displayName }</h2>
 					</div>
 					<div className="product-lightbox__detail-desc">{ product.lightboxDescription }</div>
-					<div className="product-lightbox__detail-tags">
-						<span className="product-lightbox__detail-tags-label">
-							{ translate( 'Great for:' ) }
-						</span>
-						{ product.recommendedFor && <TagItems tags={ product.recommendedFor } /> }
-					</div>
+
+					{ showPricingBreakdown && ! isLargeScreen ? (
+						<PricingBreakdown
+							includedProductSlugs={ includedProductSlugs }
+							product={ product }
+							showBreakdownHeading
+							siteId={ siteId }
+						/>
+					) : null }
+
+					{ ( ( includedProductSlugs?.length && isLargeScreen ) ||
+						! includedProductSlugs?.length ) && (
+						<div className="product-lightbox__detail-tags">
+							<span className="product-lightbox__detail-tags-label">
+								{ translate( 'Great for:' ) }
+							</span>
+							{ product.recommendedFor && <TagItems tags={ product.recommendedFor } /> }
+						</div>
+					) }
 
 					<ProductDetails product={ product } />
 				</div>
-				<div className="product-lightbox__variants">
-					<div className="product-lightbox__variants-content">
-						{ shouldShowOptions && (
-							<div className="product-lightbox__variants-options">
-								<MultipleChoiceQuestion
-									question={ PRODUCT_OPTIONS_HEADER[ product?.productSlug ] }
-									answers={ variantOptions }
-									selectedAnswerId={ product?.productSlug }
-									onAnswerChange={ onChangeOption }
-									shouldShuffleAnswers={ false }
-								/>
-							</div>
-						) }
-						<PaymentPlan
-							isMultiSiteIncompatible={ isMultiSiteIncompatible }
-							siteId={ siteId }
-							product={ product }
-						/>
-						<Button
-							primary
-							onClick={ onCheckoutClick }
-							className="jetpack-product-card__button product-lightbox__checkout-button"
-							href={ isMultiSiteIncompatible ? '#' : getCheckoutURL( product ) }
-							disabled={ isMultiSiteIncompatible }
-						>
-							{ translate( 'Proceed to checkout' ) }
-						</Button>
+				<div className="product-lightbox__sidebar">
+					<div className="product-lightbox__variants">
+						<div className="product-lightbox__variants-content">
+							{ shouldShowOptions && (
+								<div className="product-lightbox__variants-options">
+									<MultipleChoiceQuestion
+										question={ PRODUCT_OPTIONS_HEADER[ product?.productSlug ] }
+										answers={ variantOptions }
+										selectedAnswerId={ product?.productSlug }
+										onAnswerChange={ onChangeOption }
+										shouldShuffleAnswers={ false }
+									/>
+								</div>
+							) }
+							<PaymentPlan
+								isMultiSiteIncompatible={ isMultiSiteIncompatible }
+								siteId={ siteId }
+								product={ product }
+							/>
+							<Button
+								primary
+								onClick={ onCheckoutClick }
+								className="jetpack-product-card__button product-lightbox__checkout-button"
+								href={ isMultiSiteIncompatible ? '#' : getCheckoutURL( product ) }
+								disabled={ isMultiSiteIncompatible }
+							>
+								{ translate( 'Proceed to checkout' ) }
+							</Button>
+						</div>
 					</div>
+					{ showPricingBreakdown && isLargeScreen ? (
+						<PricingBreakdown
+							includedProductSlugs={ includedProductSlugs }
+							product={ product }
+							siteId={ siteId }
+						/>
+					) : null }
 				</div>
 			</div>
 		</Modal>
