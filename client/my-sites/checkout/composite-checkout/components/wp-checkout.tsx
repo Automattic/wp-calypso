@@ -539,10 +539,10 @@ const CheckoutSummaryBody = styled.div`
 		width: 100%;
 		overflow-y: auto;
 		height: 100vh;
-	}
-	& .card {
-		border-left: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-		border-right: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+		& .card {
+			border-left: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+			border-right: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+		}
 	}
 `;
 
