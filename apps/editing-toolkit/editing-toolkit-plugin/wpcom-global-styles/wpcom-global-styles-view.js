@@ -9,11 +9,14 @@ function recordEvent( button ) {
 	} );
 }
 
-( function () {
-	const popoverToggle = document.querySelector( '.launch-bar-global-styles-toggle' );
-	const popover = document.querySelector( '.launch-bar-global-styles-popover' );
-	const upgradeButton = document.querySelector( '.launch-bar-global-styles-upgrade-button' );
-	const previewButton = document.querySelector( '.launch-bar-global-styles-preview-link' );
+document.addEventListener( 'DOMContentLoaded', () => {
+	const container = document.querySelector( '#wpcom-launch-banner-wrapper' )
+		? document.querySelector( '#wpcom-launch-banner-wrapper' ).shadowRoot
+		: document;
+	const popoverToggle = container.querySelector( '.launch-bar-global-styles-toggle' );
+	const popover = container.querySelector( '.launch-bar-global-styles-popover' );
+	const upgradeButton = container.querySelector( '.launch-bar-global-styles-upgrade-button' );
+	const previewButton = container.querySelector( '.launch-bar-global-styles-preview-link' );
 
 	popoverToggle?.addEventListener( 'click', ( event ) => {
 		event.preventDefault();
@@ -32,4 +35,4 @@ function recordEvent( button ) {
 		recordEvent( 'wpcom_global_styles_gating_notice_preview' );
 		window.location = previewButton.href;
 	} );
-} )();
+} );

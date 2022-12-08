@@ -15,6 +15,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	box-sizing: border-box;
 
 	@media screen and ( max-width: 960px ) {
 		margin-left: -100px;
@@ -34,6 +35,7 @@
 		border-radius: 2px;
 		width: 100%;
 		justify-content: center;
+		height: auto;
 
 		&:hover {
 			background: #006ba1;
@@ -47,6 +49,7 @@
 		color: #0675c4;
 		font-weight: 500;
 		font-size: 12px;
+		height: auto;
 
 		&:hover {
 			background: #fff;

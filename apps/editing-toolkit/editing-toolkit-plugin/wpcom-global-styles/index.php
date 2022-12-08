@@ -273,6 +273,27 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 
 	ob_start(); ?>
 		<div class="launch-bar-global-styles-button">
+			<?php if ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) : // Workaround for the shadow DOM used on Atomic sites. ?>
+				<style id="wpcom-launch-bar-global-styles-button-style">
+					<?php include __DIR__ . '/dist/wpcom-global-styles-view.css'; ?>
+					.hidden { display: none; }
+				</style>
+				<script id="wpcom-launch-bar-global-styles-button-script">
+					<?php include __DIR__ . '/dist/wpcom-global-styles-view.min.js'; ?>
+					<?php
+					$asset_file   = plugin_dir_path( __FILE__ ) . 'dist/wpcom-global-styles-view.asset.php';
+					$asset        = file_exists( $asset_file ) ? require $asset_file : null;
+					$dependencies = $asset['dependencies'] ?? array();
+					foreach ( $dependencies as $dep ) {
+						$dep_script = wp_scripts()->registered[ $dep ];
+						if ( ! $dep_script ) {
+							continue;
+						}
+						include $dep_script;
+					}
+					?>
+				</script>
+			<?php endif; ?>
 			<div class="launch-bar-global-styles-popover hidden">
 				<div>
 					<?php echo esc_html__( 'Your site contains customized styles that will only be visible once you upgrade to a Premium plan.', 'full-site-editing' ); ?>
