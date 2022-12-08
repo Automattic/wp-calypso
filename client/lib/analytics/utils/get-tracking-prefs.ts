@@ -70,18 +70,31 @@ export default function getTrackingPrefs(): TrackingPrefs {
 	}
 
 	const cookies = cookie.parse( document.cookie );
+	const isCountryGdpr = isCountryInGdprZone( cookies.country_code );
+	const isCountryCcpa = isRegionInCcpaZone( cookies.country_code, cookies.region );
 
-	if (
-		! isCountryInGdprZone( cookies.country_code ) &&
-		! isRegionInCcpaZone( cookies.country_code, cookies.region )
-	) {
+	if ( ! isCountryGdpr && ! isCountryCcpa ) {
 		return allowTrackingPrefs;
 	}
 
-	return parseTrackingPrefs(
+	const { ok, buckets } = parseTrackingPrefs(
 		cookies[ TRACKING_PREFS_COOKIE_V2 ],
 		cookies[ TRACKING_PREFS_COOKIE_V1 ],
 		// default tracking mechanism for GDPR is opt-in, for CCPA is opt-out:
-		isCountryInGdprZone( cookies.country_code ) ? disallowTrackingPrefs : allowTrackingPrefs
+		isCountryGdpr ? disallowTrackingPrefs : allowTrackingPrefs
 	);
+
+	if ( isCountryCcpa ) {
+		// For CCPA, only the advertising bucket is relevant, the rest are always true
+		return {
+			ok,
+			buckets: {
+				...allowTrackingPrefs.buckets,
+				advertising: buckets.advertising,
+			},
+		};
+	}
+
+	// For CCPA, only the advertising bucket is relevant, the rest are always true
+	return { ok, buckets };
 }
