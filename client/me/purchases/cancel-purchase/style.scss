@@ -172,15 +172,15 @@ body.edit__body-white.theme-default.color-scheme {
 			margin: 0 16px 16px 20px;
 		}
 
+		@media ( min-width: $breakpoint-desktop ) {
+			display: none;
+		}
+
 		.site {
 			background-color: #f6f7f7;
 
 			.site__content {
 				padding: 24px 16px;
-			}
-
-			@media ( min-width: $breakpoint-desktop ) {
-				display: none;
 			}
 		}
 	}
