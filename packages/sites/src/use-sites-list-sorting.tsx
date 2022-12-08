@@ -4,10 +4,13 @@ import { MinimumSite } from './site-type';
 
 type SiteDetailsForSortingWithOptionalUserInteractions = Pick<
 	MinimumSite,
-	'title' | 'user_interactions' | 'options'
+	'title' | 'user_interactions' | 'options' | 'visible'
 >;
 
-type SiteDetailsForSortingWithUserInteractions = Pick< MinimumSite, 'title' | 'options' > &
+type SiteDetailsForSortingWithUserInteractions = Pick<
+	MinimumSite,
+	'title' | 'options' | 'visible'
+> &
 	Required< Pick< MinimumSite, 'user_interactions' > >;
 
 export type SiteDetailsForSorting =
@@ -139,15 +142,20 @@ function sortSitesByLastInteractedWith< T extends SiteDetailsForSorting >(
 	sites: T[],
 	sortOrder: SitesSortOrder
 ) {
-	const interactedItems = ( sites as SiteDetailsForSorting[] ).filter( hasInteractions );
+	const interactedItems = ( sites as SiteDetailsForSorting[] )
+		.filter( hasInteractions )
+		.filter( ( site ) => site?.visible !== false );
 
-	const remainingItems = sites.filter(
-		( site ) => ! site.user_interactions || site.user_interactions.length === 0
-	);
+	const remainingItems = sites
+		.filter( ( site ) => ! site.user_interactions || site.user_interactions.length === 0 )
+		.filter( ( site ) => site?.visible !== false );
+
+	const hiddenItems = sites.filter( ( site ) => site?.visible === false );
 
 	const sortedItems = [
 		...( sortInteractedItems( interactedItems ) as T[] ),
 		...remainingItems.sort( ( a, b ) => sortAlphabetically( a, b, 'asc' ) ),
+		...hiddenItems.sort( ( a, b ) => sortAlphabetically( a, b, 'asc' ) ),
 	];
 
 	return sortOrder === 'desc' ? sortedItems : sortedItems.reverse();
