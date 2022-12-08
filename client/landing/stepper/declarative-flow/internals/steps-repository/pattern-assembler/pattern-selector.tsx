@@ -18,7 +18,6 @@ type PatternSelectorProps = {
 	title: string | null;
 	show: boolean;
 	selectedPattern: Pattern | null;
-	multiple?: boolean;
 };
 
 const PatternSelector = ( {
@@ -28,7 +27,6 @@ const PatternSelector = ( {
 	title,
 	show,
 	selectedPattern,
-	multiple,
 }: PatternSelectorProps ) => {
 	const locale = useLocale();
 	const patternSelectorRef = useRef< HTMLDivElement >( null );
@@ -95,13 +93,11 @@ const PatternSelector = ( {
 					</Delayed>
 				</div>
 			</div>
-			{ multiple && (
-				<div className="pattern-selector__footer">
-					<Button className="pattern-assembler__button" onClick={ onBack } primary>
-						{ translate( 'Done' ) }
-					</Button>
-				</div>
-			) }
+			<div className="pattern-selector__footer">
+				<Button className="pattern-assembler__button" onClick={ onBack } primary>
+					{ translate( 'Done' ) }
+				</Button>
+			</div>
 		</div>
 	);
 };
