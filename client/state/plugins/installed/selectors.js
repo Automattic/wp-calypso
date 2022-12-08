@@ -109,9 +109,7 @@ export const getPlugins = createSelector(
 	getPluginsSelector,
 	( state ) => [ state.plugins.installed.plugins ],
 	( state, siteIds, pluginFilter ) => {
-		const pluginIds = Object.keys( state.plugins.installed.plugins );
-
-		return [ siteIds, pluginIds, pluginFilter ].join();
+		return [ siteIds, pluginFilter ].flat().join( '-' );
 	}
 );
 
