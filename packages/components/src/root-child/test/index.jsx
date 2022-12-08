@@ -44,7 +44,9 @@ describe( 'RootChild', () => {
 		} );
 
 		test( 'should update the children if parent is re-rendered', () => {
-			render( <Greeting toWhom="Universe" />, { container } );
+			const { rerender } = render( <Greeting />, { container } );
+
+			rerender( <Greeting toWhom="Universe" /> );
 
 			expect( screen.getByTestId( 'root-child' ) ).toHaveTextContent( 'Hello Universe!' );
 		} );
