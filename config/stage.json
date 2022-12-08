@@ -26,6 +26,7 @@
 		"current-site/stale-cart-notice": false,
 		"desktop-promo": true,
 		"dev/preferences-helper": true,
+		"dev/share-site-for-preview": true,
 		"domains/gdpr-consent-page": true,
 		"domains/kracken-ui/exact-match-filter": true,
 		"domains/kracken-ui/pagination": true,
