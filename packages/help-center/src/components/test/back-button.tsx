@@ -1,10 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/no-extraneous-dependencies */
-import { Button } from '@automattic/components';
-import { shallow } from 'enzyme';
-import { BackButton, Props } from '../back-button';
+
+import '@testing-library/jest-dom';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { BackButton } from '../back-button';
 
 const mockHistoryPush = jest.fn();
 const mockHistoryGoBack = jest.fn();
@@ -16,40 +17,39 @@ jest.mock( 'react-router-dom', () => ( {
 	} ),
 } ) );
 
-function renderWrapper( props: Props ) {
-	return shallow( <BackButton { ...props } /> );
-}
-
 describe( 'BackButton', () => {
-	describe( 'when the user clicks the back button', () => {
-		describe( 'and the system decides to navigate back home', () => {
-			it( 'navigates back home', () => {
-				const wrapper = renderWrapper( { backToRoot: true } );
-				const button = wrapper.find( Button );
-				button.simulate( 'click' );
-				expect( mockHistoryPush.mock.calls.length ).toBe( 1 );
-			} );
-		} );
+	afterEach( () => {
+		mockHistoryGoBack.mockClear();
+		mockHistoryPush.mockClear();
+	} );
 
-		describe( 'and the system decides to navigate to the previous page', () => {
-			it( 'navigates to the previous page', () => {
-				const wrapper = renderWrapper( { backToRoot: false } );
-				const button = wrapper.find( Button );
-				button.simulate( 'click' );
-				expect( mockHistoryGoBack.mock.calls.length ).toBe( 1 );
-			} );
-		} );
+	it( 'navigates to the root when back to root is true', async () => {
+		render( <BackButton backToRoot /> );
 
-		describe( 'and the system decides to navigate to a custom page', () => {
-			it( 'navigates to the custom page', () => {
-				const onClickSpy = jest.fn();
-				const wrapper = renderWrapper( { onClick: onClickSpy } );
+		const btn = screen.getByRole( 'button' );
+		await userEvent.click( btn );
 
-				const button = wrapper.find( Button );
-				button.simulate( 'click' );
+		expect( mockHistoryPush ).toHaveBeenCalledWith( '/' );
+	} );
 
-				expect( onClickSpy.mock.calls.length ).toBe( 1 );
-			} );
-		} );
+	it( 'navigates to the previous page by default', async () => {
+		render( <BackButton /> );
+
+		const btn = screen.getByRole( 'button' );
+		await userEvent.click( btn );
+
+		expect( mockHistoryGoBack ).toHaveBeenCalled();
+	} );
+
+	it( 'calls a custom onClick handler when defined instead of modifying history', async () => {
+		const onClickSpy = jest.fn();
+		render( <BackButton onClick={ onClickSpy } /> );
+
+		const btn = screen.getByRole( 'button' );
+		await userEvent.click( btn );
+
+		expect( onClickSpy ).toHaveBeenCalled();
+		expect( mockHistoryGoBack ).not.toHaveBeenCalled();
+		expect( mockHistoryPush ).not.toHaveBeenCalled();
 	} );
 } );
