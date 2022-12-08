@@ -21,7 +21,6 @@ This obviously varies between components, but a few easy things to start out wit
 Like its child components?
 
 ```javascript
-import Dialog from '@automattic/components';
 import { render, screen } from '@testing-library/react';
 import MyComponent from 'my-component';
 
