@@ -94,14 +94,10 @@ export function HelpCenterOwnershipNotice( { ownershipResult }: Props ) {
 	return null;
 }
 
-export function HelpCenterActiveTicketNotice( {
-	tickets,
-}: {
-	tickets: SupportSession[] | undefined;
-} ) {
+export function HelpCenterActiveTicketNotice( { tickets }: { tickets: SupportSession } ) {
 	const locale = useLocale();
 
-	if ( ! tickets || ! tickets.length ) {
+	if ( ! tickets ) {
 		return null;
 	}
 
@@ -113,7 +109,7 @@ export function HelpCenterActiveTicketNotice( {
 						/* translators: %s humanized date ex: 2 hours ago */
 						__( 'You submitted a request %s.', __i18n_text_domain__ ),
 						getRelativeTimeString( {
-							timestamp: tickets[ 0 ].timestamp * 1000,
+							timestamp: tickets.timestamp * 1000,
 							locale,
 							style: 'long',
 						} )

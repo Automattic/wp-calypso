@@ -20,7 +20,7 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
-import { BackButton } from '..';
+import { BackButton, SupportSession } from '..';
 import { useShouldRenderChatOption } from '../hooks/use-should-render-chat-option';
 import { useShouldRenderEmailOption } from '../hooks/use-should-render-email-option';
 import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
@@ -109,7 +109,7 @@ export const HelpCenterContactPage: React.FC = () => {
 			<BackButton />
 			<div className="help-center-contact-page__content">
 				<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
-				<HelpCenterActiveTicketNotice tickets={ tickets } />
+				{ tickets && <HelpCenterActiveTicketNotice tickets={ tickets as SupportSession } /> }
 				<GMClosureNotice
 					displayAt="2022-10-29 00:00Z"
 					closesAt="2022-11-05 00:00Z"
@@ -147,7 +147,7 @@ export const HelpCenterContactPage: React.FC = () => {
 									</div>
 								</div>
 							</ConditionalLink>
-							{ renderChat.env === 'staging' && (
+							{ renderChat.proxied && (
 								<Notice
 									status="warning"
 									actions={ [ { label: 'HUD', url: 'https://hud-staging.happychat.io/' } ] }

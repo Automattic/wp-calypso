@@ -6,16 +6,13 @@ type Result = {
 	state: 'AVAILABLE' | 'UNAVAILABLE' | 'CLOSED';
 	isLoading: boolean;
 	eligible: boolean;
-	env?: 'staging' | 'production';
+	proxied?: boolean;
 };
 
 export function useShouldRenderChatOption(): Result {
 	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
-	// when the user is looking at the help page, we want to be extra sure they don't start a chat without available operators
-	// so in this case, let's make stale time 1 minute.
-	const { data, isLoading } = useHappychatAvailable(
-		Boolean( chatStatus?.is_user_eligible ),
-		60 * 1000
+	const { data: chatAvailability, isLoading } = useHappychatAvailable(
+		Boolean( chatStatus?.is_user_eligible )
 	);
 
 	if ( ! chatStatus?.is_user_eligible ) {
@@ -24,7 +21,7 @@ export function useShouldRenderChatOption(): Result {
 			isLoading,
 			state: chatStatus?.is_chat_closed ? 'CLOSED' : 'UNAVAILABLE',
 			eligible: false,
-			env: data?.env,
+			proxied: chatAvailability?.proxied,
 		};
 	} else if ( chatStatus?.is_chat_closed ) {
 		return {
@@ -32,15 +29,15 @@ export function useShouldRenderChatOption(): Result {
 			state: 'CLOSED',
 			isLoading,
 			eligible: true,
-			env: data?.env,
+			proxied: chatAvailability?.proxied,
 		};
-	} else if ( data?.available ) {
+	} else if ( chatAvailability?.available ) {
 		return {
 			render: true,
 			state: 'AVAILABLE',
 			isLoading,
 			eligible: true,
-			env: data.env,
+			proxied: chatAvailability?.proxied,
 		};
 	}
 	return {
@@ -48,6 +45,6 @@ export function useShouldRenderChatOption(): Result {
 		state: 'UNAVAILABLE',
 		isLoading,
 		eligible: true,
-		env: data?.env,
+		proxied: chatAvailability?.proxied,
 	};
 }
