@@ -1,7 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { render, fireEvent, getByText } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
+import { unmountComponentAtNode } from 'react-dom';
+import Modal from 'react-modal';
 import '@testing-library/jest-dom';
 import { DoNotSellDialog } from '..';
 
@@ -19,8 +21,25 @@ const genericContent = {
 };
 
 describe( 'DoNotSellDialog', () => {
+	let modalRoot: HTMLDivElement | null = null;
+
+	beforeEach( () => {
+		modalRoot = document.createElement( 'div' );
+		modalRoot.setAttribute( 'id', 'modal-root' );
+		document.body.appendChild( modalRoot );
+		Modal.setAppElement( modalRoot );
+	} );
+
+	afterEach( () => {
+		if ( null !== modalRoot ) {
+			unmountComponentAtNode( modalRoot );
+			document.body.removeChild( modalRoot );
+			modalRoot = null;
+		}
+	} );
+
 	test( 'renders correctly', () => {
-		const { container } = render(
+		const { container, getByText } = render(
 			<DoNotSellDialog
 				content={ genericContent }
 				onToggleActive={ jest.fn() }
@@ -29,17 +48,17 @@ describe( 'DoNotSellDialog', () => {
 			/>
 		);
 
-		expect( getByText( container, 'title' ) ).toBeInTheDocument();
-		expect( getByText( container, 'paragraph 1' ) ).toBeInTheDocument();
-		expect( getByText( container, 'paragraph 2' ) ).toBeInTheDocument();
-		expect( getByText( container, 'paragraph 3' ) ).toBeInTheDocument();
-		expect( getByText( container, 'toggleLabel' ) ).toBeInTheDocument();
-		expect( getByText( container, 'closeButton' ) ).toBeInTheDocument();
+		expect( getByText( 'title' ) ).toBeInTheDocument();
+		expect( getByText( 'paragraph 1' ) ).toBeInTheDocument();
+		expect( getByText( 'paragraph 2' ) ).toBeInTheDocument();
+		expect( getByText( 'paragraph 3' ) ).toBeInTheDocument();
+		expect( getByText( 'toggleLabel' ) ).toBeInTheDocument();
+		expect( getByText( 'closeButton' ) ).toBeInTheDocument();
 		expect( container ).toMatchSnapshot();
 	} );
 	test( 'fires onClose() on text button click', () => {
 		const onClose = jest.fn();
-		const { container } = render(
+		const { getByText } = render(
 			<DoNotSellDialog
 				content={ genericContent }
 				onToggleActive={ jest.fn() }
@@ -47,12 +66,13 @@ describe( 'DoNotSellDialog', () => {
 				isOpen
 			/>
 		);
-		fireEvent.click( getByText( container, 'closeButton' ) );
+
+		fireEvent.click( getByText( 'closeButton' ) );
 		expect( onClose ).toHaveBeenCalled();
 	} );
 	test( 'fires onClose() on "x" button click', () => {
 		const onClose = jest.fn();
-		const { container } = render(
+		const { baseElement: container } = render(
 			<DoNotSellDialog
 				content={ genericContent }
 				onToggleActive={ jest.fn() }
@@ -60,6 +80,7 @@ describe( 'DoNotSellDialog', () => {
 				isOpen
 			/>
 		);
+
 		const closeButton = container.querySelector( '.do-not-sell__close-button' );
 		expect( closeButton ).not.toBeNull();
 
@@ -68,7 +89,7 @@ describe( 'DoNotSellDialog', () => {
 	} );
 	test( 'fires onToggleActive(true) on toggle click when isActive=false', () => {
 		const onToggleActive = jest.fn();
-		const { container } = render(
+		const { getByText } = render(
 			<DoNotSellDialog
 				content={ genericContent }
 				isActive={ false }
@@ -77,12 +98,13 @@ describe( 'DoNotSellDialog', () => {
 				isOpen
 			/>
 		);
-		fireEvent.click( getByText( container, 'toggleLabel' ) );
+
+		fireEvent.click( getByText( 'toggleLabel' ) );
 		expect( onToggleActive ).toHaveBeenCalledWith( true );
 	} );
 	test( 'fires onToggleActive(false) on toggle click when isActive=true', () => {
 		const onToggleActive = jest.fn();
-		const { container } = render(
+		const { getByText } = render(
 			<DoNotSellDialog
 				content={ genericContent }
 				isActive={ true }
@@ -91,7 +113,8 @@ describe( 'DoNotSellDialog', () => {
 				isOpen
 			/>
 		);
-		fireEvent.click( getByText( container, 'toggleLabel' ) );
+
+		fireEvent.click( getByText( 'toggleLabel' ) );
 		expect( onToggleActive ).toHaveBeenCalledWith( false );
 	} );
 } );
