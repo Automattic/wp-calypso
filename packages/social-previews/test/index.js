@@ -21,6 +21,7 @@ describe( 'Facebook previews', () => {
 		);
 
 		const titleEl = container.querySelector( '.facebook-preview__title' );
+
 		expect( titleEl ).toBeVisible();
 		expect( titleEl ).toHaveTextContent(
 			"I am the very model of a modern Major-General, I've information vegetable, anima…"
@@ -34,11 +35,11 @@ describe( 'Facebook previews', () => {
 		);
 
 		const descEl = container.querySelector( '.facebook-preview__description' );
+
 		expect( descEl ).toBeVisible();
 		expect( descEl ).toHaveTextContent(
 			"I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both …"
 		);
-
 		expect( descEl.textContent.replace( '…', '' ) ).toHaveLength( 200 );
 	} );
 
@@ -48,11 +49,11 @@ describe( 'Facebook previews', () => {
 		);
 
 		const descEl = container.querySelector( '.facebook-preview__description' );
+
 		expect( descEl ).toBeVisible();
 		expect( descEl ).toHaveTextContent(
 			"I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both …"
 		);
-
 		expect( descEl.textContent.replace( '…', '' ) ).toHaveLength( 200 );
 	} );
 
@@ -85,6 +86,7 @@ describe( 'Facebook previews', () => {
 			const { container } = render( <Facebook url="https://wordpress.com" author="Jane Doe" /> );
 
 			const urlEl = container.querySelector( '.facebook-preview__url' );
+
 			expect( urlEl ).toBeVisible();
 			expect( urlEl ).toHaveTextContent( 'wordpress.com | Jane Doe' );
 		} );
@@ -93,6 +95,7 @@ describe( 'Facebook previews', () => {
 			const { container } = render( <Facebook url="https://wordpress.com" /> );
 
 			const urlEl = container.querySelector( '.facebook-preview__url' );
+
 			expect( urlEl ).toBeVisible();
 			expect( urlEl ).toHaveTextContent( 'wordpress.com' );
 			expect( urlEl.textContent ).not.toContain( '|' );
@@ -102,6 +105,7 @@ describe( 'Facebook previews', () => {
 			const { container } = render( <Facebook author="Jane Doe" /> );
 
 			const urlEl = container.querySelector( '.facebook-preview__url' );
+
 			expect( urlEl ).toBeVisible();
 			expect( urlEl ).toHaveTextContent( 'Jane Doe' );
 			expect( urlEl.textContent ).not.toContain( '|' );
@@ -142,18 +146,14 @@ describe( 'Twitter previews', () => {
 		urls: [],
 	};
 
-	it( 'should expose a Twitter preview component', () => {
-		expect( Twitter ).not.toBe( undefined );
-	} );
-
 	it( 'should display an untruncated title', () => {
 		const { container } = render(
 			<Twitter title="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral." />
 		);
 
 		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
-
 		const titleEl = tweetWrapper.querySelector( '.twitter-preview__card-title' );
+
 		expect( titleEl ).toBeVisible();
 		expect( titleEl ).toHaveTextContent(
 			"I am the very model of a modern Major-General, I've information vegetable, animal, and mineral."
@@ -166,13 +166,12 @@ describe( 'Twitter previews', () => {
 		);
 
 		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
-
 		const descEl = tweetWrapper.querySelector( '.twitter-preview__card-description' );
+
 		expect( descEl ).toBeVisible();
 		expect( descEl ).toHaveTextContent(
 			"I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both …"
 		);
-
 		expect( descEl.textContent.replace( '…', '' ) ).toHaveLength( 200 );
 	} );
 
@@ -209,6 +208,7 @@ describe( 'Twitter previews', () => {
 
 		// Has image
 		const imageEl = tweetWrapperWithImage.querySelector( '.twitter-preview__card-image' );
+
 		expect( imageEl ).toBeVisible();
 		expect( imageEl ).toHaveAttribute( 'src', IMAGE_SRC_FIXTURE );
 	} );
@@ -239,7 +239,6 @@ describe( 'Twitter previews', () => {
 		const name = 'WordPress';
 		const screenName = '@WordPress';
 		const date = Date.now();
-
 		const tweets = [
 			{
 				...emptyTweet,
@@ -251,10 +250,10 @@ describe( 'Twitter previews', () => {
 		];
 
 		const { container } = render( <Twitter tweets={ tweets } /> );
+
 		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
 
 		expect( tweetWrapper ).toBeVisible();
-
 		expect( tweetWrapper.querySelector( '.twitter-preview__profile-image > img' ) ).toHaveAttribute(
 			'src',
 			profileImage
@@ -283,6 +282,7 @@ describe( 'Twitter previews', () => {
 		];
 
 		const { container } = render( <Twitter tweets={ tweets } /> );
+
 		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
 
 		expect( tweetWrapper ).toBeVisible();
@@ -297,7 +297,6 @@ describe( 'Twitter previews', () => {
 
 	it( 'should render a quoted tweet', () => {
 		const tweet = 'https://twitter.com/GaryPendergast/status/934003415507546112';
-
 		const tweets = [
 			{
 				...emptyTweet,
@@ -314,7 +313,6 @@ describe( 'Twitter previews', () => {
 		const quoteEl = tweetWrapper.querySelector( '.twitter-preview__quote-tweet' );
 
 		expect( quoteEl ).toBeVisible();
-
 		expect( quoteEl.children.item( 0 ).contentWindow.document.body ).toContainHTML(
 			`<blockquote class="twitter-tweet" data-conversation="none" data-dnt="true"><a href="${ tweet }"></a></blockquote>`
 		);
@@ -332,6 +330,7 @@ describe( 'Twitter previews', () => {
 			},
 		];
 		const { container } = render( <Twitter tweets={ tweets } /> );
+
 		const tweetWrappers = container.querySelectorAll( '.twitter-preview__container' );
 
 		expect( tweetWrappers ).toHaveLength( 2 );
@@ -342,7 +341,6 @@ describe( 'Twitter previews', () => {
 		expect( tweetWrappers.item( 1 ).querySelector( '.twitter-preview__text' ) ).toHaveTextContent(
 			'tweet-2'
 		);
-
 		expect( tweetWrappers.item( 0 ).querySelector( '.twitter-preview__connector' ) ).toBeVisible();
 		expect(
 			tweetWrappers.item( 1 ).querySelector( '.twitter-preview__connector' )
@@ -471,6 +469,7 @@ describe( 'Twitter previews', () => {
 		];
 
 		const { container } = render( <Twitter tweets={ tweets } /> );
+
 		const tweetWrappers = container.querySelectorAll( '.twitter-preview__container' );
 
 		expect( tweetWrappers ).toHaveLength( tweets.length );
@@ -509,10 +508,6 @@ describe( 'Twitter previews', () => {
 } );
 
 describe( 'Search previews', () => {
-	it( 'should expose a Search preview component', () => {
-		expect( Search ).not.toBe( undefined );
-	} );
-
 	describe( 'Title truncation', () => {
 		it( 'should display entire title if short enough', () => {
 			const { container } = render(
@@ -520,6 +515,7 @@ describe( 'Search previews', () => {
 			);
 
 			const titleEl = container.querySelector( '.search-preview__title' );
+
 			expect( titleEl ).toBeVisible();
 			expect( titleEl ).toHaveTextContent( 'I am the very model of a modern Major-General' );
 			expect( titleEl.textContent.replace( '…', '' ).length ).toBeLessThanOrEqual( 63 );
@@ -531,6 +527,7 @@ describe( 'Search previews', () => {
 			);
 
 			const titleEl = container.querySelector( '.search-preview__title' );
+
 			expect( titleEl ).toBeVisible();
 			expect( titleEl ).toHaveTextContent(
 				"I am the very model of a modern Major-General, I've information…"
@@ -544,6 +541,7 @@ describe( 'Search previews', () => {
 			);
 
 			const titleEl = container.querySelector( '.search-preview__title' );
+
 			expect( titleEl ).toBeVisible();
 			expect( titleEl ).toHaveTextContent(
 				'IamtheverymodelofamodernMajorGeneralIveinformationvegetableanim…'
@@ -559,6 +557,7 @@ describe( 'Search previews', () => {
 			);
 
 			const descriptionEl = container.querySelector( '.search-preview__description' );
+
 			expect( descriptionEl ).toBeVisible();
 			expect( descriptionEl ).toHaveTextContent(
 				"I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical."
@@ -568,11 +567,13 @@ describe( 'Search previews', () => {
 
 		it( 'should truncate description at suitable space character where possible', () => {
 			const descriptionUpperBound = 160 + 10;
+
 			const { container } = render(
 				<Search description="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
 			);
 
 			const descriptionEl = container.querySelector( '.search-preview__description' );
+
 			expect( descriptionEl ).toBeVisible();
 			expect( descriptionEl ).toHaveTextContent(
 				"I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical, From…"
@@ -588,6 +589,7 @@ describe( 'Search previews', () => {
 			);
 
 			const descriptionEl = container.querySelector( '.search-preview__description' );
+
 			expect( descriptionEl ).toBeVisible();
 			expect( descriptionEl ).toHaveTextContent(
 				"IamtheverymodelofamodernMajor-General,I'veinformationvegetable,animal,andmineral.IknowthekingsofEngland,andIquotethefightshistorical,FromMarathontoWaterloo,inor…"
@@ -597,11 +599,13 @@ describe( 'Search previews', () => {
 
 		it( 'should strip html tags from the description', () => {
 			const descriptionUpperBound = 160 + 10;
+
 			const { container } = render(
 				<Search description="<p style='color:red'>I am the very model</p> of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical, <span>From</span> Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
 			);
 
 			const descriptionEl = container.querySelector( '.search-preview__description' );
+
 			expect( descriptionEl ).toBeVisible();
 			expect( descriptionEl ).toHaveTextContent(
 				"I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical, From…"
@@ -614,11 +618,13 @@ describe( 'Search previews', () => {
 
 	it( 'should display truncated url', () => {
 		const downArrowChar = '▾';
+
 		const { container } = render(
 			<Search url="https://wordpress.com/alongpathnameheretoensuretruncationoccursbutitdoesneedtobequitelongtomakethathappen" />
 		);
 
 		const urlEl = container.querySelector( '.search-preview__url' );
+
 		expect( urlEl ).toBeVisible();
 		expect( urlEl ).toHaveTextContent(
 			'wordpress.com › alongpathnameheretoensuretruncationoccursbutitdoesne' +
