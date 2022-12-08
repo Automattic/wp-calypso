@@ -20,12 +20,6 @@ exports[`Card should be linkable 1`] = `
 </a>
 `;
 
-exports[`Card should have \`card\` class 1`] = `
-<div
-  class="card"
-/>
-`;
-
 exports[`Card should have custom class of \`test__ace\` 1`] = `
 <div
   class="card test__ace"
@@ -57,6 +51,12 @@ exports[`Card should render children 1`] = `
 >
   This is a card
 </div>
+`;
+
+exports[`Card should render properly and match snapshot 1`] = `
+<div
+  class="card"
+/>
 `;
 
 exports[`CompactCard should have \`compact\` prop 1`] = `

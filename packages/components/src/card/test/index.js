@@ -9,7 +9,7 @@ import CompactCard from '../compact';
 
 describe( 'Card', () => {
 	// it should have a class of `card`
-	test( 'should have `card` class', () => {
+	test( 'should render properly and match snapshot', () => {
 		const { container } = render( <Card /> );
 
 		expect( container.firstChild ).toBeVisible();
