@@ -1,6 +1,6 @@
 # Stats App
 
-The Stats App is built to refresh the Stats experience in Jetpack. The counterpart of the project is in [here](https://github.com/Automattic/jetpack/tree/trunk/projects/packages/stats-admin).
+Odyssey Stats is built to refresh the Stats experience in Jetpack. The counterpart of the project is in [here](https://github.com/Automattic/jetpack/tree/trunk/projects/packages/stats-admin).
 
 ## Hiarachy
 
@@ -57,4 +57,4 @@ STATS_PACKAGE_PATH=/path/to/jetpack/projects/packages/stats-admin yarn dev
 
 ## Uploading to CDN
 
-The path is `widgets.wp.com/calypso-stats`.
+The path is `widgets.wp.com/odyssey-stats`.

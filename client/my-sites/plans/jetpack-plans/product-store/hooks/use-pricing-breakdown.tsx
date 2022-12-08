@@ -12,7 +12,7 @@ export const usePricingBreakdown = ( {
 }: PricingBreakdownProps ) => {
 	const getOriginalPrice = useGetOriginalPrice( siteId );
 
-	const { originalPrice, discountedPrice } = useItemPrice(
+	const { originalPrice, discountedPrice, isFetching } = useItemPrice(
 		siteId,
 		product,
 		product?.monthlyProductSlug || ''
@@ -48,6 +48,6 @@ export const usePricingBreakdown = ( {
 			amountSaved = Number( ( total - bundlePrice ).toFixed( 2 ) );
 		}
 
-		return { items, total, amountSaved, bundlePrice };
-	}, [ bundlePrice, getOriginalPrice, includedProductSlugs ] );
+		return { items, total, amountSaved, bundlePrice, isFetching };
+	}, [ bundlePrice, getOriginalPrice, includedProductSlugs, isFetching ] );
 };

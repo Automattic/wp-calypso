@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIssueMultipleLicenses } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import LicenseBundleCard from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card';
@@ -34,6 +34,7 @@ export default function IssueMultipleLicensesForm( {
 }: AssignLicenceProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const [ selectedBundle, setSelectedBundle ] = useState( null );
 
 	const { data, isLoading: isLoadingProducts } = useProductsQuery();
 
@@ -64,13 +65,20 @@ export default function IssueMultipleLicensesForm( {
 
 	// If the user comes from the flow for adding a new payment method during an attempt to issue a license
 	// after the payment method is added, we will make an attempt to issue the chosen license automatically.
-	const defaultProductSlugs = getQueryArg( window.location.href, 'products' )
-		?.toString()
-		.split( ',' );
+	const defaultProductSlugs = useMemo(
+		() => getQueryArg( window.location.href, 'products' )?.toString().split( ',' ),
+		[]
+	);
 
 	useEffect( () => {
 		// Select the slugs included in the URL
-		defaultProductSlugs && dispatch( addSelectedProductSlugs( defaultProductSlugs ) );
+		defaultProductSlugs &&
+			dispatch(
+				addSelectedProductSlugs(
+					// Filter the bundles and select only individual products
+					defaultProductSlugs.filter( ( slug ) => ! isJetpackBundle( slug ) )
+				)
+			);
 
 		// Clear all selected slugs when navigating away from the page to avoid persisting the data.
 		return () => {
@@ -90,7 +98,7 @@ export default function IssueMultipleLicensesForm( {
 		.split( ',' );
 
 	const [ issueLicenses, isLoading ] = useIssueMultipleLicenses(
-		selectedProductSlugs,
+		selectedBundle ? [ selectedBundle ] : selectedProductSlugs,
 		selectedSite,
 		suggestedProductSlugs
 	);
@@ -100,7 +108,7 @@ export default function IssueMultipleLicensesForm( {
 			// A bundle cannot be combined with other products.
 			if ( isJetpackBundle( product.slug ) ) {
 				dispatch( clearSelectedProductSlugs() );
-				dispatch( addSelectedProductSlugs( [ product.slug ] ) );
+				setSelectedBundle( product.slug );
 				return;
 			}
 
@@ -120,7 +128,7 @@ export default function IssueMultipleLicensesForm( {
 	useEffect( () => {
 		// In the case of a bundle, we want to take the user immediately to the next step since
 		// they can't select any additional item after selecting a bundle.
-		if ( selectedProductSlugs.find( ( product ) => isJetpackBundle( product ) ) ) {
+		if ( selectedBundle ) {
 			// Identify if a user had an existing standalone product license already before purchased a bundle.
 			if ( hasPurchasedProductsWithoutBundle ) {
 				dispatch(
@@ -134,7 +142,7 @@ export default function IssueMultipleLicensesForm( {
 		// Do not update the dependency array with issueLicenses since
 		// it gets changed on every product change, which triggers this `useEffect` to run infinitely.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ selectedProductSlugs ] );
+	}, [ selectedBundle ] );
 
 	const selectedSiteDomain = selectedSite?.domain;
 

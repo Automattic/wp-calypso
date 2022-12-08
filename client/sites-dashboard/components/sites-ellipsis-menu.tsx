@@ -1,12 +1,19 @@
-import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
+import { isEnabled } from '@automattic/calypso-config';
+import {
+	WPCOM_FEATURES_MANAGE_PLUGINS,
+	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
+} from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import { css } from '@emotion/css';
 import styled from '@emotion/styled';
-import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem } from '@wordpress/components';
+import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem, Modal } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { ComponentType } from 'react';
+import { ComponentType, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import SitePreviewLink from 'calypso/components/site-preview-link';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
 import {
 	getHostingConfigUrl,
@@ -107,6 +114,69 @@ const HostingConfigItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	);
 };
 
+const ModalContent = styled.div( {
+	padding: 16,
+	width: '80vw',
+	maxWidth: '480px',
+	minHeight: '100px',
+	display: 'flex',
+	flexDirection: 'column',
+} );
+
+const modalOverlayClassName = css( {
+	// golbal-notices has z-index: 179
+	zIndex: 178,
+} );
+
+function useSafeSiteHasFeature( siteId: number, feature: string ) {
+	const dispatch = useDispatch();
+	useEffect( () => {
+		dispatch( fetchSiteFeatures( siteId ) );
+	}, [ dispatch, siteId ] );
+
+	return useSelector( ( state ) => {
+		return siteHasFeature( state, siteId, feature );
+	} );
+}
+
+const PreviewSiteModalItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
+	const { __ } = useI18n();
+	const [ isVisible, setIsVisible ] = useState( false );
+	const openModal = () => setIsVisible( true );
+	const closeModal = () => setIsVisible( false );
+
+	const onSitePreviewClick = () => {
+		recordTracks( 'calypso_sites_dashboard_site_action_preview_link_click' );
+		openModal();
+	};
+
+	const hasSitePreviewLinksFeature = useSafeSiteHasFeature(
+		site.ID,
+		WPCOM_FEATURES_SITE_PREVIEW_LINKS
+	);
+
+	if ( ! hasSitePreviewLinksFeature ) {
+		return null;
+	}
+
+	return (
+		<>
+			<MenuItemLink onClick={ onSitePreviewClick }>{ __( 'Share site for preview' ) }</MenuItemLink>
+			{ isVisible && (
+				<Modal
+					title={ __( 'Share site for preview' ) }
+					onRequestClose={ closeModal }
+					overlayClassName={ modalOverlayClassName }
+				>
+					<ModalContent>
+						<SitePreviewLink siteUrl={ site.URL } siteId={ site.ID } source="smp-modal" />
+					</ModalContent>
+				</Modal>
+			) }
+		</>
+	);
+};
+
 const ExternalGridIcon = styled( Gridicon )( {
 	insetBlockStart: '-1px',
 	marginInlineStart: '4px',
@@ -141,6 +211,9 @@ const SiteDropdownMenu = styled( DropdownMenu )( {
 		height: 'auto',
 		verticalAlign: 'middle',
 	},
+	'.components-popover': {
+		zIndex: 177,
+	},
 } );
 
 export const SitesEllipsisMenu = ( {
@@ -158,6 +231,7 @@ export const SitesEllipsisMenu = ( {
 			dispatch( recordTracksEvent( eventName, extraProps ) );
 		},
 	};
+	const showPreviewLinkAction = isEnabled( 'dev/share-site-for-preview' ) && site.is_coming_soon;
 
 	return (
 		<SiteDropdownMenu
@@ -171,6 +245,7 @@ export const SitesEllipsisMenu = ( {
 					<SettingsItem { ...props } />
 					<ManagePluginsItem { ...props } />
 					{ ! isNotAtomicJetpack( site ) && <HostingConfigItem { ...props } /> }
+					{ showPreviewLinkAction && <PreviewSiteModalItem { ...props } /> }
 					<WpAdminItem { ...props } />
 				</SiteMenuGroup>
 			) }

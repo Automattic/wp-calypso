@@ -1035,7 +1035,7 @@ object KPIDashboardTests : BuildType({
 		param("env.NODE_CONFIG_ENV", "test")
 		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
 		param("env.TEAMCITY_VERSION", "2021")
-		param("env.HEADLESS", "false")
+		param("env.HEADLESS", "true")
 		param("env.LOCALE", "en")
 		param("env.DEBUG", "")
 		param("env.VIEWPORT_NAME", "desktop")

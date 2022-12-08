@@ -44,6 +44,37 @@ export function* setHasSeenPromotionalPopover( value: boolean ) {
 	return receiveHasSeenPromotionalPopover( response[ HAS_SEEN_PREF_KEY ] );
 }
 
+export const receiveHasSeenWhatsNewModal = ( value: boolean | undefined ) =>
+	( {
+		type: 'HELP_CENTER_SET_SEEN_WHATS_NEW_MODAL',
+		value,
+	} as const );
+
+export function* setHasSeenWhatsNewModal( value: boolean ) {
+	let response: {
+		has_seen_whats_new_modal: boolean;
+	};
+	if ( canAccessWpcomApis() ) {
+		response = yield wpcomRequest( {
+			path: `/block-editor/has-seen-whats-new-modal`,
+			apiNamespace: 'wpcom/v2',
+			method: 'PUT',
+			body: {
+				has_seen_whats_new_modal: value,
+			},
+		} );
+	} else {
+		response = yield apiFetch( {
+			global: true,
+			path: `/wpcom/v2/block-editor/has-seen-whats-new-modal`,
+			method: 'PUT',
+			data: { has_seen_whats_new_modal: value },
+		} as APIFetchOptions );
+	}
+
+	return receiveHasSeenWhatsNewModal( response.has_seen_whats_new_modal );
+}
+
 export const resetRouterState = () =>
 	( {
 		type: 'HELP_CENTER_SET_ROUTER_STATE',
@@ -136,6 +167,7 @@ export type HelpCenterAction =
 			| typeof resetRouterState
 			| typeof resetStore
 			| typeof receiveHasSeenPromotionalPopover
+			| typeof receiveHasSeenWhatsNewModal
 			| typeof setMessage
 			| typeof setUserDeclaredSite
 			| typeof setUserDeclaredSiteUrl
@@ -144,4 +176,8 @@ export type HelpCenterAction =
 			| typeof setUnreadCount
 			| typeof setIsMinimized
 	  >
-	| GeneratorReturnType< typeof setHasSeenPromotionalPopover | typeof setShowHelpCenter >;
+	| GeneratorReturnType<
+			| typeof setHasSeenPromotionalPopover
+			| typeof setShowHelpCenter
+			| typeof setHasSeenWhatsNewModal
+	  >;

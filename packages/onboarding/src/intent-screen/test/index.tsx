@@ -1,4 +1,11 @@
-import { mount } from 'enzyme';
+/**
+ * @jest-environment jsdom
+ */
+
+import '@testing-library/jest-dom';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import React from 'react';
 import IntentScreen from '../';
 import { SelectItem } from '../../select-items';
 import { SelectItemAlt } from '../../select-items-alt';
@@ -24,7 +31,7 @@ const intents: SelectItem< string >[] = [
 		key: '1',
 		title: 'Title',
 		icon: icon,
-		description: <p>{ 'Description' }</p>,
+		description: <p>Description</p>,
 		value: 'value',
 		actionText: 'Action Text',
 	},
@@ -32,7 +39,7 @@ const intents: SelectItem< string >[] = [
 		key: '2',
 		title: 'Title',
 		icon: icon,
-		description: <p>{ 'Description' }</p>,
+		description: <p>Description</p>,
 		value: 'value',
 		actionText: 'Action Text',
 	},
@@ -68,58 +75,123 @@ const intentsAlt: SelectItemAlt< string >[] = [
 	},
 ];
 
-const wrapper = mount(
-	<IntentScreen
-		intents={ intents }
-		intentsAlt={ intentsAlt }
-		onSelect={ onSelect }
-		preventWidows={ preventWidow }
-	/>
-);
-
 describe( 'IntentScreen', () => {
 	describe( 'SelectItem', () => {
-		it( 'should have an H2 title', () => {
-			expect( wrapper.find( 'h2' ) ).toHaveLength( 2 );
-		} );
-
-		it( 'should have a working button', () => {
-			wrapper
-				.find( 'button.select-items__item-button' )
-				.forEach( ( button ) => button.simulate( 'click' ) );
-			expect( onSelect.mock.calls ).toEqual( [ [ 'value' ], [ 'value' ] ] );
-			expect( wrapper.find( 'button.select-items__item-button' ).first().text() ).toBe(
-				'Action Text'
+		it( 'should render H2 titles', () => {
+			render(
+				<IntentScreen
+					intents={ intents }
+					intentsAlt={ intentsAlt }
+					onSelect={ onSelect }
+					preventWidows={ preventWidow }
+				/>
 			);
+
+			expect( screen.getAllByRole( 'heading', { level: 2 } ) ).toHaveLength( 2 );
 		} );
 
-		it( 'should have an icon', () => {
-			expect( wrapper.find( '.select-items__item svg' ) ).toHaveLength( 2 );
+		it( 'should render a working button', async () => {
+			const user = userEvent.setup();
+
+			render(
+				<IntentScreen
+					intents={ intents }
+					intentsAlt={ intentsAlt }
+					onSelect={ onSelect }
+					preventWidows={ preventWidow }
+				/>
+			);
+
+			const button = screen.getAllByRole( 'button', { name: 'Action Text' } )[ 0 ];
+
+			expect( button ).toBeVisible();
+
+			await user.click( button );
+
+			expect( onSelect ).toHaveBeenCalledTimes( 1 );
+			expect( onSelect ).toHaveBeenCalledWith( 'value' );
+		} );
+
+		it( 'should render icons', () => {
+			const { container } = render(
+				<IntentScreen
+					intents={ intents }
+					intentsAlt={ intentsAlt }
+					onSelect={ onSelect }
+					preventWidows={ preventWidow }
+				/>
+			);
+
+			expect( container.querySelectorAll( '.select-items__item svg' ) ).toHaveLength( 2 );
 		} );
 	} );
 
 	describe( 'SelectItemAlt', () => {
-		it( 'should have a description', () => {
-			expect( wrapper.find( 'p.select-items-alt__item-description' ) ).toHaveLength( 2 );
-		} );
+		it( 'should render descriptions', () => {
+			const { container } = render(
+				<IntentScreen
+					intents={ intents }
+					intentsAlt={ intentsAlt }
+					onSelect={ onSelect }
+					preventWidows={ preventWidow }
+				/>
+			);
 
-		it( 'should have a working button', () => {
-			wrapper
-				.find( 'button.select-items-alt__item-button' )
-				.forEach( ( alt ) => alt.simulate( 'click' ) );
-			expect( onSelect.mock.calls ).toEqual( [ [ 'value-alt' ] ] );
-			expect( wrapper.find( 'button.select-items-alt__item-button' ).first().text() ).toBe(
-				'Action Text Alt'
+			expect( container.querySelectorAll( 'p.select-items-alt__item-description' ) ).toHaveLength(
+				2
 			);
 		} );
 
-		it( 'able to be hidden', () => {
-			expect( wrapper.find( '.select-items-alt__item' ) ).toHaveLength( 2 );
+		it( 'should render a working button', async () => {
+			const user = userEvent.setup();
+
+			render(
+				<IntentScreen
+					intents={ intents }
+					intentsAlt={ intentsAlt }
+					onSelect={ onSelect }
+					preventWidows={ preventWidow }
+				/>
+			);
+
+			const button = screen.getAllByRole( 'button', { name: 'Action Text Alt' } )[ 0 ];
+
+			expect( button ).toBeVisible();
+
+			await user.click( button );
+
+			expect( onSelect ).toHaveBeenCalledTimes( 1 );
+			expect( onSelect ).toHaveBeenCalledWith( 'value-alt' );
 		} );
 
-		it( 'able to be disabled', () => {
-			expect( wrapper.find( 'button.select-items-alt__item-button' ).last() ).toBeDisabled;
-			expect( wrapper.find( '.select-items-alt__item-disabled-info' ) ).toHaveLength( 1 );
+		it( 'should be able to be hidden', () => {
+			const { container } = render(
+				<IntentScreen
+					intents={ intents }
+					intentsAlt={ intentsAlt }
+					onSelect={ onSelect }
+					preventWidows={ preventWidow }
+				/>
+			);
+
+			expect( container.querySelectorAll( '.select-items-alt__item' ) ).toHaveLength( 2 );
+		} );
+
+		it( 'should be able to be disabled', () => {
+			const { container } = render(
+				<IntentScreen
+					intents={ intents }
+					intentsAlt={ intentsAlt }
+					onSelect={ onSelect }
+					preventWidows={ preventWidow }
+				/>
+			);
+
+			const buttons = screen.getAllByRole( 'button', { name: 'Action Text Alt' } );
+			const lastButton = buttons[ buttons.length - 1 ];
+
+			expect( lastButton ).toBeDisabled();
+			expect( container.querySelector( '.select-items-alt__item-disabled-info' ) ).toBeVisible();
 		} );
 	} );
 } );
