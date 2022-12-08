@@ -2,6 +2,7 @@ import {
 	TERM_MONTHLY,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
+	TERM_TRIENNIALLY,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
 	TYPE_PRO,
@@ -244,6 +245,14 @@ export function getBiennialPlan( planSlug: string ): string {
 }
 
 /**
+ * Returns the triennial slug which corresponds to the provided slug or "" if the slug is
+ * not recognized or cannot be converted.
+ */
+export function getTriennialPlan( planSlug: string ): string {
+	return findFirstSimilarPlanKey( planSlug, { term: TERM_TRIENNIALLY } ) || '';
+}
+
+/**
  * Returns true if plan "types" match regardless of their interval.
  *
  * For example (fake plans):
@@ -357,6 +366,10 @@ export function isWpComAnnualPlan( planSlug: string ): boolean {
 
 export function isWpComBiennialPlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { term: TERM_BIENNIALLY, group: GROUP_WPCOM } );
+}
+
+export function isWpComTriennialPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { term: TERM_TRIENNIALLY, group: GROUP_WPCOM } );
 }
 
 export function isWpComMonthlyPlan( planSlug: string ): boolean {
@@ -492,6 +505,8 @@ export function getBillingMonthsForTerm( term: string ): number {
 		return 12;
 	} else if ( term === TERM_BIENNIALLY ) {
 		return 24;
+	} else if ( term === TERM_TRIENNIALLY ) {
+		return 36;
 	}
 	throw new Error( `Unknown term: ${ term }` );
 }
@@ -624,6 +639,8 @@ export function getPlanTermLabel(
 			return translate( 'Annual subscription' );
 		case TERM_BIENNIALLY:
 			return translate( 'Two year subscription' );
+		case TERM_TRIENNIALLY:
+			return translate( 'Three year subscription' );
 	}
 }
 
@@ -705,10 +722,13 @@ export const chooseDefaultCustomerType = ( {
 	const businessPlanSlugs = [
 		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_PREMIUM } )[ 0 ],
 		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_PREMIUM } )[ 0 ],
+		findPlansKeys( { group, term: TERM_TRIENNIALLY, type: TYPE_PREMIUM } )[ 0 ],
 		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_BUSINESS } )[ 0 ],
 		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_BUSINESS } )[ 0 ],
+		findPlansKeys( { group, term: TERM_TRIENNIALLY, type: TYPE_BUSINESS } )[ 0 ],
 		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_ECOMMERCE } )[ 0 ],
 		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_ECOMMERCE } )[ 0 ],
+		findPlansKeys( { group, term: TERM_TRIENNIALLY, type: TYPE_ECOMMERCE } )[ 0 ],
 		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_PRO } )[ 0 ],
 		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_PRO } )[ 0 ],
 	]

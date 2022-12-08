@@ -186,6 +186,7 @@ import {
 	PREMIUM_DESIGN_FOR_STORES,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
+	TERM_TRIENNIALLY,
 	TERM_MONTHLY,
 	TYPE_ALL,
 	TYPE_BLOGGER,
@@ -311,6 +312,10 @@ import {
 	FEATURE_PREMIUM_CONTENT_JP,
 	FEATURE_ONE_CLICK_RESTORE_V2,
 	FEATURE_SITE_ACTIVITY_LOG_JP,
+	PLAN_PERSONAL_3_YEARS,
+	PLAN_PREMIUM_3_YEARS,
+	PLAN_BUSINESS_3_YEARS,
+	PLAN_ECOMMERCE_3_YEARS,
 } from './constants';
 import type {
 	BillingTerm,
@@ -335,6 +340,8 @@ const WPComGetBillingTimeframe = (): TranslateResult =>
 	i18n.translate( 'per month, billed annually' );
 const WPComGetBiennialBillingTimeframe = (): TranslateResult =>
 	i18n.translate( '/month, billed every two years' );
+const WPComGetTriennialBillingTimeframe = (): TranslateResult =>
+	i18n.translate( '/month, billed every three years' );
 
 const getAnnualTimeframe = (): BillingTerm => ( {
 	term: TERM_ANNUALLY,
@@ -1798,6 +1805,24 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getPathSlug: () => 'personal-2-years',
 	},
 
+	[ PLAN_PERSONAL_3_YEARS ]: {
+		...getPlanPersonalDetails(),
+		term: TERM_TRIENNIALLY,
+		getBillingTimeFrame: WPComGetTriennialBillingTimeframe,
+		availableFor: ( plan ) =>
+			[
+				PLAN_FREE,
+				PLAN_BLOGGER,
+				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_MONTHLY,
+				PLAN_PERSONAL,
+				PLAN_PERSONAL_2_YEARS,
+			].includes( plan ),
+		getProductId: () => 100000, // Update this
+		getStoreSlug: () => PLAN_PERSONAL_3_YEARS,
+		getPathSlug: () => 'personal-3-years',
+	},
+
 	[ PLAN_PREMIUM_MONTHLY ]: {
 		...getPlanPremiumDetails(),
 		...getMonthlyTimeframe(),
@@ -1853,6 +1878,27 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 1023,
 		getStoreSlug: () => PLAN_PREMIUM_2_YEARS,
 		getPathSlug: () => 'premium-2-years',
+	},
+
+	[ PLAN_PREMIUM_3_YEARS ]: {
+		...getPlanPremiumDetails(),
+		term: TERM_TRIENNIALLY,
+		getBillingTimeFrame: WPComGetTriennialBillingTimeframe,
+		availableFor: ( plan ) =>
+			[
+				PLAN_FREE,
+				PLAN_BLOGGER,
+				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_MONTHLY,
+				PLAN_PERSONAL,
+				PLAN_PERSONAL_2_YEARS,
+				PLAN_PREMIUM_MONTHLY,
+				PLAN_PREMIUM,
+				PLAN_PREMIUM_2_YEARS,
+			].includes( plan ),
+		getProductId: () => 100000, // Update this
+		getStoreSlug: () => PLAN_PREMIUM_3_YEARS,
+		getPathSlug: () => 'premium-3-years',
 	},
 
 	[ PLAN_BUSINESS_MONTHLY ]: {
@@ -1926,6 +1972,35 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 1028,
 		getStoreSlug: () => PLAN_BUSINESS_2_YEARS,
 		getPathSlug: () => 'business-2-years',
+	},
+
+	[ PLAN_BUSINESS_3_YEARS ]: {
+		...getPlanBusinessDetails(),
+		term: TERM_TRIENNIALLY,
+		getBillingTimeFrame: WPComGetTriennialBillingTimeframe,
+		availableFor: ( plan ) =>
+			[
+				PLAN_FREE,
+				PLAN_WPCOM_STARTER,
+				PLAN_WPCOM_PRO,
+				PLAN_BLOGGER,
+				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_MONTHLY,
+				PLAN_PERSONAL,
+				PLAN_PERSONAL_2_YEARS,
+				PLAN_PERSONAL_3_YEARS,
+				PLAN_PREMIUM_MONTHLY,
+				PLAN_PREMIUM,
+				PLAN_PREMIUM_2_YEARS,
+				PLAN_PREMIUM_3_YEARS,
+				PLAN_BUSINESS,
+				PLAN_BUSINESS_MONTHLY,
+				PLAN_BUSINESS_2_YEARS,
+				PLAN_WPCOM_PRO_MONTHLY,
+			].includes( plan ),
+		getProductId: () => 100000, // Update this.
+		getStoreSlug: () => PLAN_BUSINESS_3_YEARS,
+		getPathSlug: () => 'business-3-years',
 	},
 
 	[ PLAN_ECOMMERCE_MONTHLY ]: {
@@ -2018,6 +2093,40 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 0,
 		getStoreSlug: () => PLAN_ENTERPRISE_GRID_WPCOM,
 		getPathSlug: () => 'enterprise',
+	},
+
+	[ PLAN_ECOMMERCE_3_YEARS ]: {
+		...getPlanEcommerceDetails(),
+		term: TERM_TRIENNIALLY,
+		getBillingTimeFrame: WPComGetTriennialBillingTimeframe,
+		availableFor: ( plan ) =>
+			[
+				PLAN_FREE,
+				PLAN_WPCOM_STARTER,
+				PLAN_WPCOM_PRO,
+				PLAN_BLOGGER,
+				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_MONTHLY,
+				PLAN_PERSONAL,
+				PLAN_PERSONAL_2_YEARS,
+				PLAN_PERSONAL_3_YEARS,
+				PLAN_PREMIUM_MONTHLY,
+				PLAN_PREMIUM,
+				PLAN_PREMIUM_2_YEARS,
+				PLAN_PREMIUM_3_YEARS,
+				PLAN_BUSINESS_MONTHLY,
+				PLAN_BUSINESS,
+				PLAN_BUSINESS_2_YEARS,
+				PLAN_BUSINESS_3_YEARS,
+				PLAN_ECOMMERCE_MONTHLY,
+				PLAN_ECOMMERCE,
+				PLAN_ECOMMERCE_2_YEARS,
+				PLAN_WPCOM_PRO_MONTHLY,
+			].includes( plan ),
+		getProductId: () => 100000, // Update this.
+		getStoreSlug: () => PLAN_ECOMMERCE_3_YEARS,
+		getPathSlug: () => 'ecommerce-3-years',
+>>>>>>> 7c67435efb (Adding selectors and utils for triennial plans in calypso-products)
 	},
 
 	[ PLAN_JETPACK_FREE ]: {
