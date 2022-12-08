@@ -138,7 +138,7 @@ class WordAdsChartTabs extends Component {
 
 		const { siteId, query, isDataLoading } = this.props;
 		const classes = [
-			'is-chart-tabs',
+			'main-chart-tabs',
 			{
 				'stats-module': ! isNewFeatured,
 				'is-loading': isDataLoading,

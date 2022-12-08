@@ -687,11 +687,11 @@ export function getBusinessPlanForInterval( type: string ) {
 export function getVariantItemTextForInterval( type: string ) {
 	switch ( type ) {
 		case 'monthly':
-			return 'One month';
+			return /One month/;
 		case 'yearly':
-			return 'One year';
+			return /One year/;
 		case 'two-year':
-			return 'Two years';
+			return /Two years/;
 		default:
 			throw new Error( `Unknown plan type '${ type }'` );
 	}

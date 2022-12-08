@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useEffect, useState } from 'react';
-import { ItemVariantPrice } from './variant-price';
+import { ItemVariantDropDownPrice } from './variant-dropdown-price';
 import type { ItemVariationPickerProps, WPCOMProductVariant } from './types';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
@@ -197,7 +197,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 				role="button"
 			>
 				{ selectedVariantIndex !== null ? (
-					<ItemVariantPrice variant={ variants[ selectedVariantIndex ] } />
+					<ItemVariantDropDownPrice variant={ variants[ selectedVariantIndex ] } />
 				) : (
 					<span>{ translate( 'Pick a product term' ) }</span>
 				) }
@@ -266,7 +266,7 @@ function ItemVariantOption( {
 			onClick={ onSelect }
 			selected={ isSelected }
 		>
-			<ItemVariantPrice variant={ variant } compareTo={ compareTo } />
+			<ItemVariantDropDownPrice variant={ variant } compareTo={ compareTo } />
 		</Option>
 	);
 }
