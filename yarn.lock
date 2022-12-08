@@ -434,7 +434,6 @@ __metadata:
     "@wordpress/base-styles": ^4.5.0
     "@wordpress/icons": ^9.11.0
     classnames: ^2.3.1
-    enzyme: ^3.11.0
     framer-motion: 6.2.8
     gridicons: ^3.4.0
     i18n-calypso: "workspace:^"
@@ -943,7 +942,6 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    enzyme: ^3.11.0
     jest: ^27.3.1
     postcss: ^8.4.5
     react: ^17.0.2
