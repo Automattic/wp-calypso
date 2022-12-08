@@ -226,7 +226,7 @@ class StatsModule extends Component {
 								<StatsModulePlaceholder isLoading={ isLoading } />
 								<StatsList moduleName={ path } data={ data } useShortLabel={ useShortLabel } />
 							</div>
-							{ this.props.showSummaryLink && data && data.length >= 10 && (
+							{ this.props.showSummaryLink && data?.length >= 10 && (
 								<StatsModuleExpand href={ summaryLink } />
 							) }
 							{ summary && 'countryviews' === path && (
