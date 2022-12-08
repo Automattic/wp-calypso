@@ -459,8 +459,10 @@ __metadata:
     "@emotion/react": ^11.4.1
     "@emotion/styled": ^11.3.0
     "@storybook/react": ^6.4.18
+    "@testing-library/dom": ^8.13.0
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
+    "@testing-library/user-event": ^14.2.0
     "@wordpress/i18n": ^4.9.0
     "@wordpress/react-i18n": ^3.7.0
     debug: ^4.3.3

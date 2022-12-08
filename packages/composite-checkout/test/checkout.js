@@ -3,11 +3,9 @@ import {
 	getAllByLabelText as getAllByLabelTextInNode,
 	getByText as getByTextInNode,
 	queryByText as queryByTextInNode,
-	fireEvent,
-	act,
 	screen,
-	waitFor,
 } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { createContext, useState, useContext } from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import {
@@ -157,9 +155,8 @@ describe( 'Checkout', () => {
 				const renderResult = render( <MyCheckout /> );
 				container = renderResult.container;
 				const firstStepContinue = renderResult.getAllByText( 'Continue' )[ 0 ];
-				await act( async () => {
-					return fireEvent.click( firstStepContinue );
-				} );
+				const user = userEvent.setup();
+				await user.click( firstStepContinue );
 			} );
 
 			it( 'makes the first step invisible', () => {
@@ -317,9 +314,8 @@ describe( 'Checkout', () => {
 			const firstStep = container.querySelector( '.' + steps[ 0 ].className );
 			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
-			await act( async () => {
-				return fireEvent.click( firstStepContinue );
-			} );
+			const user = userEvent.setup();
+			await user.click( firstStepContinue );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 		} );
 
@@ -332,9 +328,8 @@ describe( 'Checkout', () => {
 			const firstStep = container.querySelector( '.custom-summary-step-class' );
 			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
-			await act( async () => {
-				return fireEvent.click( firstStepContinue );
-			} );
+			const user = userEvent.setup();
+			await user.click( firstStepContinue );
 			expect( firstStepContent ).toHaveStyle( 'display: none' );
 		} );
 
@@ -348,9 +343,8 @@ describe( 'Checkout', () => {
 			);
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
 			expect( firstStepContinue ).not.toBeDisabled();
-			await act( async () => {
-				return fireEvent.click( firstStepContinue );
-			} );
+			const user = userEvent.setup();
+			await user.click( firstStepContinue );
 			expect( firstStepContinue ).toBeDisabled();
 		} );
 
@@ -366,9 +360,8 @@ describe( 'Checkout', () => {
 			const firstStep = container.querySelector( '.' + steps[ 1 ].className );
 			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
-			await act( async () => {
-				return fireEvent.click( firstStepContinue );
-			} );
+			const user = userEvent.setup();
+			await user.click( firstStepContinue );
 			expect( firstStepContent ).toHaveStyle( 'display: none' );
 		} );
 
@@ -405,9 +398,8 @@ describe( 'Checkout', () => {
 			const thirdStepContent = thirdStep.querySelector( '.checkout-steps__step-content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 			expect( secondStepContent ).toHaveStyle( 'display: none' );
-			await act( async () => {
-				return fireEvent.click( manualContinue );
-			} );
+			const user = userEvent.setup();
+			await user.click( manualContinue );
 			expect( firstStepContent ).toHaveStyle( 'display: none' );
 			expect( secondStepContent ).toHaveStyle( 'display: none' );
 			expect( thirdStepContent ).toHaveStyle( 'display: block' );
@@ -444,9 +436,8 @@ describe( 'Checkout', () => {
 			const secondStepContent = secondStep.querySelector( '.checkout-steps__step-content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 			expect( secondStepContent ).toHaveStyle( 'display: none' );
-			await act( async () => {
-				return fireEvent.click( manualContinue );
-			} );
+			const user = userEvent.setup();
+			await user.click( manualContinue );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 			expect( secondStepContent ).toHaveStyle( 'display: none' );
 		} );
@@ -463,9 +454,8 @@ describe( 'Checkout', () => {
 			const firstStep = container.querySelector( '.' + steps[ 1 ].className );
 			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
-			await act( async () => {
-				return fireEvent.click( firstStepContinue );
-			} );
+			const user = userEvent.setup();
+			await user.click( firstStepContinue );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 		} );
 
@@ -491,18 +481,18 @@ describe( 'Checkout', () => {
 			const firstStep = container.querySelector( '.' + steps[ 1 ].className );
 			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
-			await act( async () => {
-				return fireEvent.click( manualContinue );
-			} );
+			const user = userEvent.setup();
+			await user.click( manualContinue );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 		} );
 
-		it( 'renders the continue button enabled if the step is active and complete', () => {
+		it( 'renders the continue button enabled if the step is active and complete', async () => {
 			const { container, getByLabelText } = render(
 				<MyCheckout steps={ [ steps[ 0 ], steps[ 4 ], steps[ 1 ] ] } />
 			);
 
-			fireEvent.change( getByLabelText( 'User Name' ), { target: { value: 'Lyra' } } );
+			const user = userEvent.setup();
+			await user.type( getByLabelText( 'User Name' ), 'Lyra' );
 			const step = container.querySelector( '.' + steps[ 4 ].className );
 			expect( getByTextInNode( step, 'Continue' ) ).not.toBeDisabled();
 		} );
@@ -528,9 +518,8 @@ describe( 'Checkout', () => {
 		it( 'renders the edit button for editable steps with a lower index than the active step', async () => {
 			const { container, getAllByText } = render( <MyCheckout /> );
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
-			await act( async () => {
-				return fireEvent.click( firstStepContinue );
-			} );
+			const user = userEvent.setup();
+			await user.click( firstStepContinue );
 			const step = container.querySelector( '.' + steps[ 1 ].className );
 			expect( getByTextInNode( step, 'Edit' ) ).toBeInTheDocument();
 		} );
@@ -540,14 +529,11 @@ describe( 'Checkout', () => {
 				<MyCheckout steps={ [ steps[ 0 ], steps[ 1 ], steps[ 2 ] ] } />
 			);
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
-			await act( async () => {
-				return fireEvent.click( firstStepContinue );
-			} );
+			const user = userEvent.setup();
+			await user.click( firstStepContinue );
 			expect( queryByText( 'Edit' ) ).toBeInTheDocument();
 			const submitButton = getAllByText( 'Pay Please' )[ 0 ];
-			await act( async () => {
-				return fireEvent.click( submitButton );
-			} );
+			await user.click( submitButton );
 			expect( queryByText( 'Edit' ) ).not.toBeInTheDocument();
 		} );
 
@@ -586,14 +572,11 @@ describe( 'Checkout', () => {
 			);
 			expect( getByText( 'Possibly Complete isComplete false' ) ).toBeInTheDocument();
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
-			await act( async () => {
-				return fireEvent.click( firstStepContinue );
-			} );
-			fireEvent.change( getByLabelText( 'User Name' ), { target: { value: 'Lyra' } } );
-			await act( async () => {
-				// isComplete does not update until we press continue
-				return fireEvent.click( firstStepContinue );
-			} );
+			const user = userEvent.setup();
+			await user.click( firstStepContinue );
+			await user.type( getByLabelText( 'User Name' ), 'Lyra' );
+			// isComplete does not update until we press continue
+			await user.click( firstStepContinue );
 			expect( getByText( 'Possibly Complete isComplete true' ) ).toBeInTheDocument();
 		} );
 	} );
@@ -644,9 +627,8 @@ describe( 'Checkout', () => {
 			);
 			const submitButton = screen.getByText( 'Pay Please' );
 
-			await waitFor( () => {
-				fireEvent.click( submitButton );
-			} );
+			const user = userEvent.setup();
+			await user.click( submitButton );
 
 			expect( processor ).not.toHaveBeenCalled();
 		} );
@@ -664,9 +646,8 @@ describe( 'Checkout', () => {
 			);
 			const submitButton = screen.getByText( 'Pay Please' );
 
-			await waitFor( () => {
-				fireEvent.click( submitButton );
-			} );
+			const user = userEvent.setup();
+			await user.click( submitButton );
 
 			expect( processor ).toHaveBeenCalled();
 		} );
@@ -676,9 +657,8 @@ describe( 'Checkout', () => {
 			render( <MyCheckout steps={ [ steps[ 0 ] ] } paymentProcessor={ processor } /> );
 			const submitButton = screen.getByText( 'Pay Please' );
 
-			await waitFor( () => {
-				fireEvent.click( submitButton );
-			} );
+			const user = userEvent.setup();
+			await user.click( submitButton );
 
 			expect( processor ).toHaveBeenCalled();
 		} );
@@ -786,7 +766,7 @@ function createStepObjectConverter( paymentData ) {
 		}
 		return (
 			<CheckoutStepBody
-				errorMessage={ 'error' }
+				errorMessage="error"
 				editButtonAriaLabel={ stepObject.getEditButtonAriaLabel() }
 				nextStepButtonAriaLabel={ stepObject.getNextStepButtonAriaLabel() }
 				isStepActive={ false }
