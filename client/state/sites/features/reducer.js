@@ -40,9 +40,8 @@ function updateBulkFeatures( state, features ) {
 	const newState = {};
 	for ( const siteId in features ) {
 		newState[ siteId ] = {
-			error: null,
+			...initialSiteState,
 			hasLoadedFromServer: true,
-			isRequesting: false,
 			data: features,
 		};
 	}
