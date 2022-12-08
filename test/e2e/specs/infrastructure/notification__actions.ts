@@ -11,6 +11,7 @@ import {
 	SecretsManager,
 	TestAccount,
 	NewCommentResponse,
+	MyHomePage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -21,6 +22,7 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	const notificationsUser = 'notificationsUser';
 	const comment = DataHelper.getRandomPhrase() + ' notification-actions-spec';
 
+	let testAccount: TestAccount;
 	let notificationsComponent: NotificationsComponent;
 	let restAPIClient: RestAPIClient;
 	let siteID: number;
@@ -46,12 +48,15 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 
 		// Log in as the notification user.
 		page = await browser.newPage();
-		const testAccount = new TestAccount( notificationsUser );
+		testAccount = new TestAccount( notificationsUser );
 		await testAccount.authenticate( page );
 	} );
 
 	describe( `View notification as ${ notificationsUser }`, function () {
 		it( 'Open notification using keyboard shortcut', async function () {
+			const myHomePage = new MyHomePage( page );
+			await myHomePage.visit( testAccount.credentials.testSites?.primary.url as string );
+
 			const navbarComponent = new NavbarComponent( page );
 			await navbarComponent.openNotificationsPanel( { useKeyboard: true } );
 		} );
