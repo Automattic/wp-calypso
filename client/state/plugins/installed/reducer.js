@@ -102,7 +102,7 @@ export const plugins = withSchemaValidation( pluginsSchema, ( state = {}, action
 			return { ...state, [ action.siteId ]: action.data };
 		}
 		case PLUGINS_ALL_RECEIVE:
-			return { ...state, ...action.allSitesPlugins };
+			return { ...action.allSitesPlugins };
 		case PLUGIN_ACTIVATE_REQUEST_SUCCESS:
 		case PLUGIN_DEACTIVATE_REQUEST_SUCCESS:
 		case PLUGIN_UPDATE_REQUEST_SUCCESS:
