@@ -14,22 +14,28 @@ export type TrackingPrefs = {
 	};
 };
 
-const allBucketsFalse: TrackingPrefs[ 'buckets' ] = {
-	essential: false,
-	analytics: false,
-	advertising: false,
+const allowTrackingPrefs: TrackingPrefs = {
+	ok: true,
+	buckets: {
+		essential: true,
+		analytics: true,
+		advertising: true,
+	},
 };
 
-const allBucketsTrue: TrackingPrefs[ 'buckets' ] = {
-	essential: true,
-	analytics: true,
-	advertising: true,
+const disallowTrackingPrefs: TrackingPrefs = {
+	ok: false,
+	buckets: {
+		essential: false,
+		analytics: false,
+		advertising: false,
+	},
 };
 
 export const parseTrackingPrefs = (
 	cookieV2?: string,
 	cookieV1?: string,
-	defaultBuckets = allBucketsFalse
+	defaultPrefs = disallowTrackingPrefs
 ): TrackingPrefs => {
 	const { ok, buckets }: Partial< TrackingPrefs > = cookieV2 ? JSON.parse( cookieV2 ) : {};
 
@@ -37,21 +43,18 @@ export const parseTrackingPrefs = (
 		return {
 			ok,
 			buckets: {
-				...defaultBuckets,
+				...defaultPrefs.buckets,
 				...buckets,
 			},
 		};
 	} else if ( cookieV1 && [ 'yes', 'no' ].includes( cookieV1 ) ) {
 		return {
+			...allowTrackingPrefs,
 			ok: cookieV1 === 'yes',
-			buckets: allBucketsTrue,
 		};
 	}
 
-	return {
-		ok: false,
-		buckets: defaultBuckets,
-	};
+	return defaultPrefs;
 };
 
 /**
@@ -72,16 +75,13 @@ export default function getTrackingPrefs(): TrackingPrefs {
 		! isCountryInGdprZone( cookies.country_code ) &&
 		! isRegionInCcpaZone( cookies.country_code, cookies.region )
 	) {
-		return {
-			ok: true,
-			buckets: allBucketsTrue,
-		};
+		return allowTrackingPrefs;
 	}
 
 	return parseTrackingPrefs(
 		cookies[ TRACKING_PREFS_COOKIE_V2 ],
 		cookies[ TRACKING_PREFS_COOKIE_V1 ],
 		// default tracking mechanism for GDPR is opt-in, for CCPA is opt-out:
-		isCountryInGdprZone( cookies.country_code ) ? allBucketsFalse : allBucketsTrue
+		isCountryInGdprZone( cookies.country_code ) ? disallowTrackingPrefs : allowTrackingPrefs
 	);
 }
