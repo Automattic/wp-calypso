@@ -39,6 +39,10 @@ describe( '<Suggestions>', () => {
 
 		const suggestions = screen.getAllByRole( 'button' );
 
+		expect( suggestions[ 0 ] ).toHaveTextContent( 'Apple' );
+		expect( suggestions[ 1 ] ).toHaveTextContent( 'Pear' );
+		expect( suggestions[ 2 ] ).toHaveTextContent( 'Orange' );
+
 		expect( suggestions[ 0 ] ).toHaveClass( 'has-highlight' );
 		expect( suggestions[ 1 ] ).not.toHaveClass( 'has-highlight' );
 		expect( suggestions[ 2 ] ).not.toHaveClass( 'has-highlight' );
