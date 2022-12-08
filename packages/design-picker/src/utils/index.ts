@@ -3,6 +3,7 @@ export * from './available-designs';
 export * from './designs';
 export * from './fonts';
 import { SHOW_ALL_SLUG } from '../constants';
+import { isBlankCanvasDesign } from './available-designs';
 import type { Category, Design } from '../types';
 
 export function gatherCategories( designs: Design[] ): Category[] {
@@ -30,8 +31,10 @@ export function filterDesignsByCategory(
 	}
 
 	return designs.filter(
-		( { categories, showFirst } ) =>
-			showFirst || categories.find( ( { slug } ) => slug === categorySlug )
+		( design ) =>
+			design.showFirst ||
+			isBlankCanvasDesign( design ) ||
+			design.categories.find( ( { slug } ) => slug === categorySlug )
 	);
 }
 

@@ -67,7 +67,8 @@ button {
 .anchor-fm,
 .subscribers,
 .ecommerce,
-.intro {
+.intro,
+.free-setup {
 	padding: 60px 0 0;
 	box-sizing: border-box;
 
@@ -284,5 +285,14 @@ button {
 		.inline-help {
 			bottom: 74px;
 		}
+	}
+}
+
+.ecommerce {
+	.step-container.processing-step {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-top: 25vh;
 	}
 }

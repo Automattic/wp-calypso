@@ -58,7 +58,7 @@ export class EditorGutenbergComponent {
 	async enterTitle( title: string ): Promise< void > {
 		const sanitizedTitle = title.trim();
 		const locator = this.editor.locator( selectors.title );
-		await locator.fill( sanitizedTitle );
+		await locator.fill( sanitizedTitle, { timeout: 20 * 1000 } );
 	}
 
 	/**

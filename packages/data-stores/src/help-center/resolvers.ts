@@ -19,3 +19,23 @@ export const getHasSeenPromotionalPopover =
 
 		dispatch.receiveHasSeenPromotionalPopover( response );
 	};
+
+interface HasSeenWhatsNewModalResult {
+	has_seen_whats_new_modal: boolean;
+}
+
+export const getHasSeenWhatsNewModal =
+	() =>
+	async ( { dispatch }: Dispatch ) => {
+		const response = canAccessWpcomApis()
+			? await wpcomRequest< HasSeenWhatsNewModalResult >( {
+					path: `/block-editor/has-seen-whats-new-modal`,
+					apiNamespace: 'wpcom/v2',
+			  } )
+			: await apiFetch< HasSeenWhatsNewModalResult >( {
+					global: true,
+					path: `/wpcom/v2/block-editor/has-seen-whats-new-modal`,
+			  } as APIFetchOptions );
+
+		dispatch.receiveHasSeenWhatsNewModal( response.has_seen_whats_new_modal );
+	};

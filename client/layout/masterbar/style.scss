@@ -151,6 +151,14 @@ $masterbar-color-secondary: #101517;
 		}
 	}
 
+	&--left {
+		@include breakpoint-deprecated( "<660px" ) {
+			a .masterbar__item-content {
+				display: none;
+			}
+		}
+	}
+
 	&--right {
 		flex: 1;
 		justify-content: flex-end;

@@ -1,0 +1,16 @@
+@import "../style";
+
+$font-family: "SF Pro Text", $sans;
+
+.free-setup {
+	.step-container__content {
+		display: flex;
+		justify-content: center;
+		margin-bottom: 30px;
+		min-height: unset;
+	}
+
+	.step-container__header {
+		margin-bottom: 32px;
+	}
+}

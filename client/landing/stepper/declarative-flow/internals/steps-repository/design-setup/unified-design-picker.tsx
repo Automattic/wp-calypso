@@ -14,7 +14,7 @@ import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useState, useEffect } from 'react';
+import { ReactChild, useRef, useState, useEffect } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
@@ -35,8 +35,9 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { getCategorizationOptions } from './categories';
-import { STEP_NAME } from './constants';
+import { DEFAULT_VARIATION_SLUG, STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
+import PremiumGlobalStylesUpgradeModal from './premium-global-styles-upgrade-modal';
 import PreviewToolbar from './preview-toolbar';
 import UpgradeModal from './upgrade-modal';
 import getThemeIdFromDesign from './utils/get-theme-id-from-design';
@@ -173,8 +174,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		setSelectedStyleVariation( undefined );
 	}, [] );
 
-	// When the theme query string parameter is present, automatically switch to previewing that theme (if it's a valid theme)
-	const themeFromQueryString = useQuery().get( 'theme' );
+	// When the theme or style query strings parameters are present,
+	// automatically switch to previewing that theme (if it's a valid theme)
+	// and that style variation (if it's a valid style variation).
+	const queryParams = useQuery();
+	const themeFromQueryString = queryParams.get( 'theme' );
+	const styleFromQueryString = queryParams.get( 'style' );
+
 	useEffect( () => {
 		if ( ! themeFromQueryString || ! allDesigns ) {
 			return;
@@ -189,9 +195,23 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			return;
 		}
 
+		if ( styleFromQueryString ) {
+			const requestedStyleVariation = requestedDesign.style_variations?.find(
+				( styleVariation ) => styleVariation.slug === styleFromQueryString
+			);
+
+			setSelectedStyleVariation( requestedStyleVariation );
+		}
+
 		setSelectedDesign( requestedDesign );
 		setIsPreviewingDesign( true );
-	}, [ themeFromQueryString, allDesigns, setSelectedDesign ] );
+	}, [
+		themeFromQueryString,
+		styleFromQueryString,
+		allDesigns,
+		setSelectedDesign,
+		setSelectedStyleVariation,
+	] );
 
 	function getEventPropsByDesign( design: Design, variation?: StyleVariation ) {
 		const variationSlugSuffix =
@@ -273,8 +293,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		( select ) => site && select( SITE_STORE ).isEligibleForProPlan( site.ID )
 	);
 
-	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
-
 	function upgradePlan() {
 		if ( selectedDesign ) {
 			recordTracksEvent(
@@ -333,6 +351,54 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			window.location.href = `/checkout/${ encodeURIComponent(
 				siteSlug || urlToSlug( site?.URL || '' ) || ''
 			) }/${ plan }?${ params.toString() }`;
+		}
+	}
+
+	// ********** Logic for Premium Global Styles
+
+	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+	const [ showPremiumGlobalStylesModal, setShowPremiumGlobalStylesModal ] = useState( false );
+
+	function unlockPremiumGlobalStyles() {
+		// These conditions should be true at this point, but just in case...
+		if ( selectedDesign && selectedStyleVariation ) {
+			recordTracksEvent(
+				'calypso_signup_design_premium_global_styles_modal_show',
+				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
+			);
+			setShowPremiumGlobalStylesModal( true );
+		}
+	}
+
+	function goToCheckoutForPremiumGlobalStyles() {
+		// These conditions should be true at this point, but just in case...
+		if ( selectedDesign && selectedStyleVariation && siteSlugOrId ) {
+			recordTracksEvent(
+				'calypso_signup_design_premium_global_styles_modal_checkout_button_click',
+				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
+			);
+
+			const params = new URLSearchParams();
+
+			// When the user is done with checkout, send them back to the current url
+			const destUrl = new URL( window.location.href );
+			const destSearchP = destUrl.searchParams;
+
+			// Add &theme=theme_slug&style=style_slug to the query params
+			if ( selectedDesign.slug && selectedStyleVariation.slug ) {
+				destSearchP.set( 'theme', selectedDesign.slug );
+				destSearchP.set( 'style', selectedStyleVariation.slug );
+				destUrl.search = destSearchP.toString();
+			}
+
+			const destString = destUrl.toString().replace( window.location.origin, '' );
+			params.append( 'redirect_to', destString );
+
+			// The theme upsell link does not work with siteId and requires a siteSlug.
+			// See https://github.com/Automattic/wp-calypso/pull/64899
+			window.location.href = `/checkout/${ encodeURIComponent(
+				siteSlug || urlToSlug( site?.URL || '' ) || ''
+			) }/premium?${ params.toString() }`;
 		}
 	}
 
@@ -428,10 +494,39 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		return (
 			<PremiumBadge
 				className="design-picker__premium-badge"
+				labelText={ translate( 'Upgrade' ) }
 				tooltipText={ translate(
-					'You can try this premium style out before upgrading your plan.'
+					'Unlock this style, and tons of other features, by upgrading to a Premium plan before launching your site.'
 				) }
 			/>
+		);
+	}
+
+	function getPrimaryActionButton( pickDesignText: ReactChild ) {
+		if ( shouldUpgrade ) {
+			return (
+				<Button primary borderless={ false } onClick={ upgradePlan }>
+					{ translate( 'Unlock theme' ) }
+				</Button>
+			);
+		}
+
+		if (
+			shouldLimitGlobalStyles &&
+			selectedStyleVariation &&
+			selectedStyleVariation.slug !== DEFAULT_VARIATION_SLUG
+		) {
+			return (
+				<Button primary borderless={ false } onClick={ () => unlockPremiumGlobalStyles() }>
+					{ translate( 'Unlock this style' ) }
+				</Button>
+			);
+		}
+
+		return (
+			<Button primary borderless={ false } onClick={ () => pickDesign() }>
+				{ pickDesignText }
+			</Button>
 		);
 	}
 
@@ -467,17 +562,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				{ selectedDesignHasStyleVariations && (
 					<div className="action-buttons__title">{ headerDesignTitle }</div>
 				) }
-				<div>
-					{ shouldUpgrade ? (
-						<Button primary borderless={ false } onClick={ upgradePlan }>
-							{ translate( 'Unlock theme' ) }
-						</Button>
-					) : (
-						<Button primary borderless={ false } onClick={ () => pickDesign() }>
-							{ pickDesignText }
-						</Button>
-					) }
-				</div>
+				<div>{ getPrimaryActionButton( pickDesignText ) }</div>
 			</>
 		);
 
@@ -488,6 +573,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					isOpen={ showUpgradeModal }
 					closeModal={ closeUpgradeModal }
 					checkout={ goToCheckout }
+				/>
+				<PremiumGlobalStylesUpgradeModal
+					checkout={ goToCheckoutForPremiumGlobalStyles }
+					closeModal={ () => setShowPremiumGlobalStylesModal( false ) }
+					isOpen={ showPremiumGlobalStylesModal }
+					pickDesign={ pickDesign }
 				/>
 				{ selectedDesignHasStyleVariations ? (
 					<AsyncLoad

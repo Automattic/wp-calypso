@@ -102,7 +102,7 @@ export function useBundleFeaturesList( planSlug: string ) {
 			slug: 'growth',
 			title: translate( 'Growth' ),
 			features: [
-				translate( 'Social: Basic with unlimited shares' ),
+				<b>{ translate( 'Social: Basic with unlimited shares' ) }</b>,
 				<b>{ translate( 'CRM: Entrepreneur with 30 extensions' ) }</b>,
 			],
 		},

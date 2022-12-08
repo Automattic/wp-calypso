@@ -146,7 +146,6 @@
 		"@automattic/help-center": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/languages": "workspace:^",
-		"@automattic/privacy-toolset": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@automattic/whats-new": "workspace:^",

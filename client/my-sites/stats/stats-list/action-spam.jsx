@@ -1,4 +1,5 @@
-import { Button, Dialog, Gridicon } from '@automattic/components';
+import { Button, Dialog } from '@automattic/components';
+import { Icon, warning } from '@wordpress/icons';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -92,7 +93,7 @@ class StatsActionSpam extends Component {
 					title={ title }
 					aria-label={ title }
 				>
-					<Gridicon icon="spam" size={ 18 } />
+					<Icon className="stats-icon" icon={ warning } size={ 22 } />
 					<span className="stats-list__spam-label module-content-list-item-action-label">
 						{ label }
 					</span>

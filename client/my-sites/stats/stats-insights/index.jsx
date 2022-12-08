@@ -26,7 +26,7 @@ import statsStrings from '../stats-strings';
 import StatsViews from '../stats-views';
 
 const StatsInsights = ( props ) => {
-	const { siteId, siteSlug, translate } = props;
+	const { siteId, siteSlug, translate, isOdysseyStats } = props;
 	const moduleStrings = statsStrings();
 
 	const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
@@ -74,8 +74,8 @@ const StatsInsights = ( props ) => {
 								moduleStrings={ moduleStrings.tags }
 								statType="statsTags"
 							/>
-
-							<StatShares siteId={ siteId } />
+							{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for Odyssey for now. */ }
+							{ ! isOdysseyStats && <StatShares siteId={ siteId } /> }
 						</div>
 						<div className="stats__module-column">
 							<Reach />
@@ -104,9 +104,11 @@ StatsInsights.propTypes = {
 
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	return {
 		siteId,
 		siteSlug: getSelectedSiteSlug( state, siteId ),
+		isOdysseyStats,
 	};
 } );
 

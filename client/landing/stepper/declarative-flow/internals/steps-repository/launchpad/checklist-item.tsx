@@ -6,7 +6,7 @@ import { Task } from './types';
 
 const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction?: boolean } ) => {
 	const isRtl = useRtl();
-	const { id, completed, disabled, title, actionDispatch, warning } = task;
+	const { id, completed, disabled, title, subtitle, actionDispatch, warning } = task;
 
 	// Display chevron if task is incomplete. Don't display chevron and badge at the same time.
 	const shouldDisplayChevron = ! completed && ! disabled && ! task.badgeText;
@@ -58,7 +58,10 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 							/>
 						</div>
 					) }
-					<span className="launchpad__checklist-item-text">{ title }</span>
+					<div className="launchpad__checklist-item-text-container">
+						<span className="launchpad__checklist-item-text">{ title }</span>
+						{ subtitle && <p className="launchpad__checklist-item-subtext">{ subtitle }</p> }
+					</div>
 					{ task.badgeText ? <Badge type="info-blue">{ task.badgeText }</Badge> : null }
 					{ shouldDisplayChevron && (
 						<Gridicon
