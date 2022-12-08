@@ -19,6 +19,8 @@ import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
+import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -460,6 +462,13 @@ class StatsSite extends Component {
 
 		return (
 			<Main className={ mainWrapperClass } fullWidthLayout>
+				{ /* Odyssey: Google My Business pages are currently unsupported. */ }
+				{ ! isOdysseyStats && (
+					<>
+						<QueryKeyringConnections />
+						<QuerySiteKeyrings siteId={ siteId } />
+					</>
+				) }
 				{ /* Odyssey: if Stats module is not enabled, the page will not be rendered. */ }
 				{ ! isOdysseyStats && isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				<DocumentHead title={ translate( 'Jetpack Stats' ) } />
