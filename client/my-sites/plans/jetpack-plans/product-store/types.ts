@@ -88,6 +88,7 @@ export type ItemPriceProps = ProductStoreBaseProps &
 	};
 
 export type FeaturedItemCardProps = {
+	amountSaved?: React.ReactNode;
 	ctaAsPrimary?: boolean;
 	ctaHref?: string;
 	ctaLabel: React.ReactNode;
@@ -122,4 +123,8 @@ export type PricingBreakdownItem = {
 	slug: string;
 	originalPrice: number;
 	renderedPrice: React.ReactNode;
+};
+
+export type AmountSavedProps = ProductStoreBaseProps & {
+	product: SelectorProduct;
 };

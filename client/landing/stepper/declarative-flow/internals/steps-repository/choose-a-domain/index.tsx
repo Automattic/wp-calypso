@@ -98,7 +98,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		return (
 			<FormattedHeader
 				id="choose-a-domain-header"
-				headerText="Choose a domain"
+				headerText={ __( 'Choose a domain' ) }
 				subHeaderText={
 					<>
 						{ __( 'Make your video site shine with a custom domain. Not sure yet?' ) }

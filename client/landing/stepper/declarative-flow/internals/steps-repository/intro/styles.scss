@@ -2,6 +2,7 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .intro {
+	&.free,
 	&.newsletter {
 		background-color: rgb(162 218 254);
 

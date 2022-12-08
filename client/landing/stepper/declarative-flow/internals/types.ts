@@ -1,4 +1,4 @@
-import type { StepPath } from './steps-repository';
+import React from 'react';
 
 /**
  * This is the return type of useStepNavigation hook
@@ -31,8 +31,7 @@ export type NavigationControls = {
 	 * screen(s) to a new stepper flow and linking directly
 	 * between flows/screens.
 	 */
-	goToStep?: ( step: StepPath | `${ StepPath }?${ string }` ) => void;
-
+	goToStep?: ( step: string ) => void;
 	/**
 	 * Submits the answers provided in the flow
 	 */
@@ -44,15 +43,29 @@ export type NavigationControls = {
 	exitFlow?: ( to: string ) => void;
 };
 
+export type StepperStep = {
+	/**
+	 * The step slug is what appears as part of the pathname. Eg the intro in /setup/link-in-bio/intro
+	 */
+	slug: string;
+	/**
+	 * The component that will be rendered for this step
+	 */
+	component: React.FC< StepProps >;
+};
+
 /**
  * This is the return type of useSteps hook
  */
-export type UseStepHook = () => StepPath[];
+export type UseStepsHook = () => StepperStep[];
 
-export type UseStepNavigationHook = (
-	currentStep: StepPath,
-	navigate: ( stepName: StepPath | `${ StepPath }?${ string }`, extraData?: any ) => void,
-	steps?: StepPath[]
+export type UseStepNavigationHook< FlowSteps extends StepperStep[] > = (
+	currentStepSlug: FlowSteps[ number ][ 'slug' ],
+	navigate: (
+		stepName: FlowSteps[ number ][ 'slug' ] | `${ FlowSteps[ number ][ 'slug' ] }?${ string }`,
+		extraData?: any
+	) => void,
+	steps?: FlowSteps[ number ][ 'slug' ][]
 ) => NavigationControls;
 
 export type UseAssertConditionsHook = () => AssertConditionResult;
@@ -61,8 +74,8 @@ export type Flow = {
 	name: string;
 	title?: string;
 	classnames?: string | [ string ];
-	useSteps: UseStepHook;
-	useStepNavigation: UseStepNavigationHook;
+	useSteps: UseStepsHook;
+	useStepNavigation: UseStepNavigationHook< ReturnType< Flow[ 'useSteps' ] > >;
 	useAssertConditions?: UseAssertConditionsHook;
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..

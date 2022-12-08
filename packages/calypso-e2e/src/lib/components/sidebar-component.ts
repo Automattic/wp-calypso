@@ -35,9 +35,12 @@ export class SidebarComponent {
 	 * Waits for the WordPress.com Calypso sidebar to be ready on the page.
 	 */
 	async waitForSidebarInitialization(): Promise< void > {
-		await this.page.waitForLoadState( 'load' );
 		const sidebarLocator = this.page.locator( selectors.sidebar );
-		await sidebarLocator.waitFor();
+
+		await Promise.all( [
+			this.page.waitForLoadState( 'load', { timeout: 20 * 1000 } ),
+			sidebarLocator.waitFor( { timeout: 20 * 1000 } ),
+		] );
 
 		// If the sidebar is collapsed (via the Collapse Menu toggle),
 		// re-expand the sidebar.

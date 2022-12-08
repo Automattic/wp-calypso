@@ -44,7 +44,7 @@ See [testing-overview.md](testing-overview.md) on how to run Calypso tests.
 
 ## Writing tests
 
-We use [Jest](https://facebook.github.io/jest) testing framework for unit tests, and [Enzyme](https://github.com/airbnb/enzyme) for testing React components. You can find more information on testing components at [component tests](component-tests.md).
+We use [Jest](https://facebook.github.io/jest) testing framework for unit tests, and [Testing Library](https://testing-library.com/) for testing React components. You can find more information on testing components at [component tests](component-tests.md).
 
 Though you'll still see Chai assertions and Sinon spies/mocks throughout the code base, for all new tests we use the Jest API for [globals](https://facebook.github.io/jest/docs/en/api.html) (`describe`, `test`, `beforeEach` and so on) [assertions](http://facebook.github.io/jest/docs/en/expect.html), [mocks](http://facebook.github.io/jest/docs/en/mock-functions.html), [spies](http://facebook.github.io/jest/docs/en/jest-object.html#jestspyonobject-methodname) and [mock functions](https://facebook.github.io/jest/docs/en/mock-function-api.html).
 
@@ -259,6 +259,6 @@ jest.mock( 'lib/wp', () => ( {
 ## Further reading
 
 - [React testing with Jest](https://facebook.github.io/jest/docs/en/tutorial-react.html)
-- [Enyzme API](https://github.com/airbnb/enzyme/tree/HEAD/docs/api)
+- [Testing Library documentation](https://testing-library.com/docs/)
 - [Test Contra-variance](http://blog.cleancoder.com/uncle-bob/2017/10/03/TestContravariance.html)
 - [The Failures of "Into to TDD"](http://blog.testdouble.com/posts/2014-01-25-the-failures-of-intro-to-tdd.html)

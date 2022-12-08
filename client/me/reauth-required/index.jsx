@@ -35,6 +35,7 @@ class ReauthRequired extends Component {
 			smsRequestsAllowed: true, // Can the user request another SMS code?
 			twoFactorAuthType: 'authenticator',
 			isReauthRequired: props.twoStepAuthorization.isReauthRequired(),
+			isTwoStepInitialized: props.twoStepAuthorization.initialized,
 		};
 	}
 
@@ -281,7 +282,9 @@ class ReauthRequired extends Component {
 		return (
 			<>
 				{ this.renderDialog() }
-				{ ! this.state.isReauthRequired && this.props.children?.() }
+				{ this.state.isTwoStepInitialized &&
+					! this.state.isReauthRequired &&
+					this.props.children?.() }
 			</>
 		);
 	}
