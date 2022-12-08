@@ -713,7 +713,7 @@ describe( 'findSimilarPlansKeys', () => {
 			PLAN_PREMIUM,
 		] );
 		expect( findSimilarPlansKeys( PLAN_ECOMMERCE_3_YEARS, { term: TERM_ANNUALLY } ) ).toEqual( [
-			PLAN_BLOGGER,
+			PLAN_ECOMMERCE,
 		] );
 		expect( findSimilarPlansKeys( PLAN_PERSONAL_3_YEARS, { term: TERM_ANNUALLY } ) ).toEqual( [
 			PLAN_PERSONAL,

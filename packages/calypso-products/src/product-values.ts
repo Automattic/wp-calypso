@@ -92,6 +92,7 @@ export { isJetpackSecuritySlug } from './is-jetpack-security-slug';
 export { isThemePurchase } from './is-theme-purchase';
 export { isTitanMail } from './is-titan-mail';
 export { isTitanMailMonthly } from './is-titan-mail-monthly';
+export { isTriennially } from './is-triennially';
 export { isUnlimitedSpace } from './is-unlimited-space';
 export { isUnlimitedThemes } from './is-unlimited-themes';
 export { isVideoPress } from './is-video-press';

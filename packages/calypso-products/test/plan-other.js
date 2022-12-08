@@ -29,9 +29,9 @@ describe( 'calculateMonthlyPrice', () => {
 		expect( calculateMonthlyPrice( TERM_BIENNIALLY, 131 ) ).toBe( 5.46 );
 	} );
 	test( 'should calculate proper result for triennial term', () => {
-		expect( calculateMonthlyPrice( TERM_BIENNIALLY, 36 ) ).toBe( 1.0 );
-		expect( calculateMonthlyPrice( TERM_BIENNIALLY, 72 ) ).toBe( 2.0 );
-		expect( calculateMonthlyPrice( TERM_BIENNIALLY, 252 ) ).toBe( 6.0 );
+		expect( calculateMonthlyPrice( TERM_TRIENNIALLY, 36 ) ).toBe( 1.0 );
+		expect( calculateMonthlyPrice( TERM_TRIENNIALLY, 72 ) ).toBe( 2.0 );
+		expect( calculateMonthlyPrice( TERM_TRIENNIALLY, 252 ) ).toBe( 7.0 );
 	} );
 } );
 
@@ -45,8 +45,8 @@ describe( 'getBillingMonthsForTerm', () => {
 	test( 'should 24 for biennial term', () => {
 		expect( getBillingMonthsForTerm( TERM_BIENNIALLY ) ).toBe( 24 );
 	} );
-	test( 'should 36 for biennial term', () => {
-		expect( getBillingMonthsForTerm( TERM_BIENNIALLY ) ).toBe( 36 );
+	test( 'should 36 for triennial term', () => {
+		expect( getBillingMonthsForTerm( TERM_TRIENNIALLY ) ).toBe( 36 );
 	} );
 	test( 'should throw an error for unknown term', () => {
 		expect( () => getBillingMonthsForTerm( 'fake' ) ).toThrowError();
