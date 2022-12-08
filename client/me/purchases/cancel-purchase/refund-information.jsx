@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getCancellationFeatureByKey } from 'calypso/lib/plans/cancellation-features-list';
 import { getName, isRefundable, isSubscription, isOneTimePurchase } from 'calypso/lib/purchases';
 import { UPDATE_NAMESERVERS } from 'calypso/lib/url/support';
@@ -25,6 +26,8 @@ const CancelPurchaseRefundInformation = ( {
 	site,
 } ) => {
 	const { refundPeriodInDays } = purchase;
+	const moment = useLocalizedMoment();
+	const expiryDate = moment( purchase.expiryDate ).format( 'LL' );
 
 	let text;
 
@@ -87,7 +90,7 @@ const CancelPurchaseRefundInformation = ( {
 		);
 	};
 
-	const cancelDescriptionText = () => {
+	const cancelSubscriptionDescription = () => {
 		const planSlug = site.plan.product_slug;
 
 		return (
@@ -153,7 +156,7 @@ const CancelPurchaseRefundInformation = ( {
 				if ( isRefundable( includedDomainPurchase ) ) {
 					text.push(
 						i18n.translate(
-							'Your plan includes the custom domain %(domain)s. What would you like to do with the domain?',
+							'Your plan includes the custom domain “%(domain)s”. What would you like to do with the domain?',
 							{
 								args: {
 									domain: includedDomainPurchase.meta,
@@ -230,13 +233,14 @@ const CancelPurchaseRefundInformation = ( {
 							/>
 						</FormLabel>,
 						i18n.translate(
-							"Since you are cancelling your plan within 7 days of purchasing you'll receive a {{span}}refund of %(refundAmount)s{{/span}} and it will be removed from your site immediately.",
+							"Since you are cancelling your plan within %(refundPeriodInDays)d days of purchasing you'll receive a {{spanRefund}}refund of %(refundAmount)s{{/spanRefund}} and it will be removed from your site immediately.",
 							{
 								args: {
 									refundAmount: purchase.refundText,
+									refundPeriodInDays: refundPeriodInDays,
 								},
 								components: {
-									span: <span class="refundAmount" />,
+									spanRefund: <span class="refund-amount" />,
 								},
 							}
 						)
@@ -283,23 +287,29 @@ const CancelPurchaseRefundInformation = ( {
 				} else {
 					text.push(
 						i18n.translate(
-							'This plan includes the custom domain, %(domain)s, normally a %(domainCost)s purchase. ' +
-								'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ',
+							'This plan subscription includes the custom domain, %(domain)s' +
+								'{{strong}}The domain will not be removed{{/strong}} along with the plan, to avoid any interruptions for your visitors. ',
 							{
 								args: {
 									domain: includedDomainPurchase.meta,
 									domainCost: includedDomainPurchase.priceText,
 								},
+								components: {
+									strong: <strong />,
+								},
 							}
 						),
 						i18n.translate(
-							'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
+							'You will receive a partial {{spanRefund}}refund of %(refundAmount)s{{/spanRefund}} which is %(planCost)s for the plan ' +
 								'minus %(domainCost)s for the domain.',
 							{
 								args: {
 									domainCost: includedDomainPurchase.priceText,
 									planCost: planCostText,
 									refundAmount: purchase.refundText,
+								},
+								components: {
+									spanRefund: <span className="refund-amount" />,
 								},
 							}
 						)
@@ -350,15 +360,28 @@ const CancelPurchaseRefundInformation = ( {
 		includedDomainPurchase &&
 		isDomainMapping( includedDomainPurchase )
 	) {
-		text = i18n.translate(
-			'This plan includes the custom domain mapping for %(mappedDomain)s. ' +
-				'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ',
-			{
-				args: {
-					mappedDomain: includedDomainPurchase.meta,
-					mappingCost: includedDomainPurchase.priceText,
-				},
-			}
+		text.push(
+			i18n.translate(
+				'This plan subscription includes the custom domain, %(domain)s' +
+					'{{strong}}The domain will not be removed{{/strong}} along with the plan, to avoid any interruptions for your visitors. ',
+				{
+					args: {
+						domain: includedDomainPurchase.meta,
+						domainCost: includedDomainPurchase.priceText,
+					},
+					components: {
+						strong: <strong />,
+					},
+				}
+			),
+			i18n.translate(
+				'If you cancel your plan subscription your plan will be removed on %(expireDate)s.',
+				{
+					args: {
+						expiryDate: expiryDate,
+					},
+				}
+			)
 		);
 	} else if (
 		isSubscription( purchase ) &&
@@ -366,22 +389,24 @@ const CancelPurchaseRefundInformation = ( {
 		isDomainRegistration( includedDomainPurchase )
 	) {
 		text = i18n.translate(
-			'This plan includes the custom domain, %(domain)s. ' +
-				'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ',
+			'This plan subscription includes the custom domain, %(domain)s' +
+				'{{strong}}The domain will not be removed{{/strong}} along with the plan, to avoid any interruptions for your visitors. ',
 			{
 				args: {
 					domain: includedDomainPurchase.meta,
 					domainCost: includedDomainPurchase.priceText,
 				},
+				components: {
+					strong: <strong />,
+				},
 			}
 		);
 	} else {
 		text = i18n.translate(
-			"When you cancel your subscription, you'll be able to use %(productName)s until your subscription expires. " +
-				'Once it expires, it will be automatically removed from your site.',
+			'If you cancel your plan subscription your plan will be removed on %(expireDate)s.',
 			{
 				args: {
-					productName: getName( purchase ),
+					expiryDate: expiryDate,
 				},
 			}
 		);
@@ -389,7 +414,7 @@ const CancelPurchaseRefundInformation = ( {
 
 	return (
 		<div className="cancel-purchase__info">
-			{ isSubscription( purchase ) && ! isJetpackPurchase && cancelDescriptionText() }
+			{ isSubscription( purchase ) && ! isJetpackPurchase && cancelSubscriptionDescription() }
 			{ Array.isArray( text ) ? (
 				text.map( ( paragraph, index ) => (
 					<p
