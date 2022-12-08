@@ -119,11 +119,11 @@ $custom-stats-tab-mobile-break: $break-small;
 						margin-left: auto;
 						padding: 0 20px 0 10px;
 						font-size: $font-body-small;
+					}
 
-						// For mobile stats-tabs in Store page
-						&:not(.store-stats-orders-chart__value):not(:last-child) {
-							display: none;
-						}
+					// For stats-tabs in Store page
+					&:not(.store-stats-orders-chart__value):not(:last-child) {
+						display: none;
 					}
 				}
 
