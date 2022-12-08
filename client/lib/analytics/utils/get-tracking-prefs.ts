@@ -26,7 +26,7 @@ const allowTrackingPrefs: TrackingPrefs = {
 const disallowTrackingPrefs: TrackingPrefs = {
 	ok: false,
 	buckets: {
-		essential: false,
+		essential: true,
 		analytics: false,
 		advertising: false,
 	},
