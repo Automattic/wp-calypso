@@ -33,14 +33,14 @@ const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 	const verticals = useSiteVerticalsFeatured();
 	const verticalsOptions = React.useMemo( () => {
 		const sorted = verticals.data?.sort( ( a, b ) => {
-			if ( a.name === b.name ) {
+			if ( a.title === b.title ) {
 				return 0;
 			}
-			return a.name > b.name ? 1 : -1;
+			return a.title > b.title ? 1 : -1;
 		} );
 		const options = sorted?.map( ( v ) => (
 			<option value={ v.id } key={ v.id }>
-				{ v.name }
+				{ v.title }
 			</option>
 		) );
 		options?.unshift(

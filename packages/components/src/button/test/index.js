@@ -1,97 +1,116 @@
-import { shallow } from 'enzyme';
+/**
+ * @jest-environment jsdom
+ */
+
+import '@testing-library/jest-dom';
+import { render, screen } from '@testing-library/react';
 import Button from '..';
 import Gridicon from '../../gridicon'; // eslint-disable-line no-restricted-imports
 
 describe( 'Button', () => {
 	describe( 'renders', () => {
 		test( 'with modifiers', () => {
-			const button = shallow( <Button scary primary borderless compact /> );
-			expect( button ).toHaveClassName( 'is-compact' );
-			expect( button ).toHaveClassName( 'is-primary' );
-			expect( button ).toHaveClassName( 'is-scary' );
-			expect( button ).toHaveClassName( 'is-borderless' );
+			render( <Button scary primary borderless compact /> );
+
+			const button = screen.getByRole( 'button' );
+
+			expect( button ).toHaveClass( 'is-compact' );
+			expect( button ).toHaveClass( 'is-primary' );
+			expect( button ).toHaveClass( 'is-scary' );
+			expect( button ).toHaveClass( 'is-borderless' );
 		} );
 
 		test( 'without modifiers', () => {
-			const button = shallow( <Button /> );
-			expect( button ).toHaveClassName( 'button' );
-			expect( button ).not.toHaveClassName( 'is-compact' );
-			expect( button ).not.toHaveClassName( 'is-primary' );
-			expect( button ).not.toHaveClassName( 'is-scary' );
-			expect( button ).not.toHaveClassName( 'is-borderless' );
+			render( <Button /> );
+
+			const button = screen.getByRole( 'button' );
+
+			expect( button ).toHaveClass( 'button' );
+			expect( button ).not.toHaveClass( 'is-compact' );
+			expect( button ).not.toHaveClass( 'is-primary' );
+			expect( button ).not.toHaveClass( 'is-scary' );
+			expect( button ).not.toHaveClass( 'is-borderless' );
 		} );
 
 		test( 'disabled', () => {
-			const button = shallow( <Button disabled /> );
-			expect( button ).toBeDisabled();
+			render( <Button disabled /> );
+
+			expect( screen.getByRole( 'button' ) ).toBeDisabled();
 		} );
 
 		test( 'with child', () => {
-			const iconType = 'arrow-left';
-			const icon = <Gridicon size={ 18 } icon={ iconType } />;
-			const button = shallow( <Button>{ icon }</Button> );
-			expect( button ).toContainReact( icon );
-			expect( button.find( Gridicon ) ).toHaveProp( 'icon', iconType );
+			const icon = <Gridicon size={ 18 } icon="arrow-left" />;
+
+			const { container, rerender } = render( icon );
+
+			rerender( <Button>{ icon }</Button> );
+
+			expect( screen.getByRole( 'button' ) ).toContainElement( container.firstChild );
 		} );
 	} );
 
 	describe( 'with href prop', () => {
 		test( 'renders as a link', () => {
-			const button = shallow( <Button href="https://wordpress.com/" /> );
+			render( <Button href="https://wordpress.com/" /> );
 
-			expect( button ).toMatchSelector( 'a' );
-			expect( button ).toHaveProp( 'href', 'https://wordpress.com/' );
+			expect( screen.getByRole( 'link' ) ).toHaveAttribute( 'href', 'https://wordpress.com/' );
 		} );
 
 		test( 'ignores type prop and renders a link without type attribute', () => {
-			const button = shallow( <Button href="https://wordpress.com/" type="submit" /> );
+			render( <Button href="https://wordpress.com/" type="submit" /> );
 
-			expect( button ).not.toHaveProp( 'type' );
+			expect( screen.getByRole( 'link' ) ).not.toHaveAttribute( 'type' );
 		} );
 
 		test( 'including target and rel props renders a link with target and rel attributes', () => {
-			const button = shallow(
-				<Button href="https://wordpress.com/" target="_blank" rel="noopener noreferrer" />
-			);
+			render( <Button href="https://wordpress.com/" target="_blank" rel="noopener noreferrer" /> );
 
-			expect( button ).toHaveProp( 'target', '_blank' );
-			expect( button ).toHaveProp( 'rel', expect.stringMatching( /\bnoopener\b/ ) );
-			expect( button ).toHaveProp( 'rel', expect.stringMatching( /\bnoreferrer\b/ ) );
+			const button = screen.getByRole( 'link' );
+
+			expect( button ).toHaveAttribute( 'target', '_blank' );
+			expect( button ).toHaveAttribute( 'rel', expect.stringMatching( /\bnoopener\b/ ) );
+			expect( button ).toHaveAttribute( 'rel', expect.stringMatching( /\bnoreferrer\b/ ) );
 		} );
 
 		test( 'adds noopener noreferrer rel if target is specified', () => {
-			const button = shallow( <Button href="https://wordpress.com/" target="_blank" /> );
+			render( <Button href="https://wordpress.com/" target="_blank" /> );
 
-			expect( button ).toHaveProp( 'target', '_blank' );
-			expect( button ).toHaveProp( 'rel', expect.stringMatching( /\bnoopener\b/ ) );
-			expect( button ).toHaveProp( 'rel', expect.stringMatching( /\bnoreferrer\b/ ) );
+			const button = screen.getByRole( 'link' );
+
+			expect( button ).toHaveAttribute( 'target', '_blank' );
+			expect( button ).toHaveAttribute( 'rel', expect.stringMatching( /\bnoopener\b/ ) );
+			expect( button ).toHaveAttribute( 'rel', expect.stringMatching( /\bnoreferrer\b/ ) );
 		} );
 	} );
 
 	describe( 'without href prop', () => {
-		const button = shallow( <Button target="_blank" rel="noopener noreferrer" /> );
-
 		test( 'renders as a button', () => {
-			expect( button ).toMatchSelector( 'button' );
-			expect( button ).not.toHaveProp( 'href' );
+			render( <Button target="_blank" rel="noopener noreferrer" /> );
+
+			expect( screen.getByRole( 'button' ) ).not.toHaveAttribute( 'href' );
 		} );
 
 		test( 'renders button with type attribute set to "button" by default', () => {
-			expect( button ).toHaveProp( 'type', 'button' );
+			render( <Button target="_blank" rel="noopener noreferrer" /> );
+
+			expect( screen.getByRole( 'button' ) ).toHaveAttribute( 'type', 'button' );
 		} );
 
 		test( 'renders button with type attribute set to type prop if specified', () => {
 			const typeProp = 'submit';
-			const submitButton = shallow(
-				<Button target="_blank" rel="noopener noreferrer" type={ typeProp } />
-			);
 
-			expect( submitButton ).toHaveProp( 'type', typeProp );
+			render( <Button target="_blank" rel="noopener noreferrer" type={ typeProp } /> );
+
+			expect( screen.getByRole( 'button' ) ).toHaveAttribute( 'type', typeProp );
 		} );
 
 		test( 'renders button without rel and target attributes', () => {
-			expect( button ).not.toHaveProp( 'target' );
-			expect( button ).not.toHaveProp( 'rel' );
+			render( <Button target="_blank" rel="noopener noreferrer" /> );
+
+			const button = screen.getByRole( 'button' );
+
+			expect( button ).not.toHaveAttribute( 'target' );
+			expect( button ).not.toHaveAttribute( 'rel' );
 		} );
 	} );
 } );

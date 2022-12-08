@@ -67,7 +67,7 @@ const WebServerSettingsCard = ( {
 				<FormSettingExplanation>
 					{ translate(
 						'The primary data center is where your site is physically located. ' +
-							'For redundancy, your site also replicates in real-time to a second data center in different region.'
+							'For redundancy, your site also replicates in real-time to a second data center in a different region.'
 					) }
 				</FormSettingExplanation>
 			</FormFieldset>
@@ -112,6 +112,12 @@ const WebServerSettingsCard = ( {
 					comment: 'PHP Version for a version switcher',
 				} ),
 				value: '8.1',
+			},
+			{
+				label: translate( '8.2', {
+					comment: 'PHP Version for a version switcher',
+				} ),
+				value: '8.2',
 			},
 		];
 	};
