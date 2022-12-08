@@ -120,6 +120,17 @@ describe( 'Facebook previews', () => {
 } );
 
 describe( 'Twitter previews', () => {
+	let originalConsoleError;
+
+	beforeAll( () => {
+		originalConsoleError = global.console.error;
+		global.console.error = jest.fn();
+	} );
+
+	afterAll( () => {
+		global.console.error = originalConsoleError;
+	} );
+
 	const emptyTweet = {
 		profileImage: '',
 		name: '',
@@ -295,6 +306,7 @@ describe( 'Twitter previews', () => {
 		];
 
 		const { container } = render( <Twitter tweets={ tweets } /> );
+
 		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
 
 		expect( tweetWrapper ).toBeVisible();
