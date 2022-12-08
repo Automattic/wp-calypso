@@ -77,7 +77,7 @@ const intentsAlt: SelectItemAlt< string >[] = [
 
 describe( 'IntentScreen', () => {
 	describe( 'SelectItem', () => {
-		it( 'should have an H2 title', () => {
+		it( 'should render H2 titles', () => {
 			render(
 				<IntentScreen
 					intents={ intents }
@@ -90,7 +90,7 @@ describe( 'IntentScreen', () => {
 			expect( screen.getAllByRole( 'heading', { level: 2 } ) ).toHaveLength( 2 );
 		} );
 
-		it( 'should have a working button', async () => {
+		it( 'should render a working button', async () => {
 			const user = userEvent.setup();
 
 			render(
@@ -112,7 +112,7 @@ describe( 'IntentScreen', () => {
 			expect( onSelect ).toHaveBeenCalledWith( 'value' );
 		} );
 
-		it( 'should have an icon', () => {
+		it( 'should render icons', () => {
 			const { container } = render(
 				<IntentScreen
 					intents={ intents }
@@ -127,7 +127,7 @@ describe( 'IntentScreen', () => {
 	} );
 
 	describe( 'SelectItemAlt', () => {
-		it( 'should have a description', () => {
+		it( 'should render descriptions', () => {
 			const { container } = render(
 				<IntentScreen
 					intents={ intents }
@@ -142,7 +142,7 @@ describe( 'IntentScreen', () => {
 			);
 		} );
 
-		it( 'should have a working button', async () => {
+		it( 'should render a working button', async () => {
 			const user = userEvent.setup();
 
 			render(
@@ -164,7 +164,7 @@ describe( 'IntentScreen', () => {
 			expect( onSelect ).toHaveBeenCalledWith( 'value-alt' );
 		} );
 
-		it( 'able to be hidden', () => {
+		it( 'should be able to be hidden', () => {
 			const { container } = render(
 				<IntentScreen
 					intents={ intents }
@@ -177,7 +177,7 @@ describe( 'IntentScreen', () => {
 			expect( container.querySelectorAll( '.select-items-alt__item' ) ).toHaveLength( 2 );
 		} );
 
-		it( 'able to be disabled', () => {
+		it( 'should be able to be disabled', () => {
 			const { container } = render(
 				<IntentScreen
 					intents={ intents }
