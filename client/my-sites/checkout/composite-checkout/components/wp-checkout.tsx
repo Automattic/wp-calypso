@@ -540,8 +540,9 @@ const CheckoutSummaryBody = styled.div`
 		overflow-y: auto;
 		height: 100vh;
 	}
-	.card {
-		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	& .card {
+		border-left: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+		border-right: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	}
 `;
 
