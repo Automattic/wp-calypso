@@ -13,9 +13,13 @@
  */
 function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 	if ( ! $blog_id ) {
-		$blog_id = defined( 'IS_WPCOM' ) && IS_WPCOM
-			? get_current_blog_id()
-			: (int) Jetpack_Options::get_option( 'id' );
+		if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
+			$blog_id = get_current_blog_id();
+		} elseif ( method_exists( 'Jetpack_Options', 'get_option' ) ) {
+			$blog_id = (int) Jetpack_Options::get_option( 'id' );
+		} else {
+			return false;
+		}
 	}
 
 	// Do not limit Global Styles on sites created before we made it a paid feature. This cutoff
