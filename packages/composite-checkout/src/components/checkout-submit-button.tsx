@@ -61,9 +61,12 @@ function CheckoutSubmitButtonForPaymentMethod( {
 	const isActive = paymentMethod.id === activePaymentMethodId;
 	const { formStatus } = useFormStatus();
 	const { __ } = useI18n();
-	const isDisabled = disabled || formStatus !== FormStatus.READY;
+	const isDisabled = disabled || formStatus !== FormStatus.READY || ! isActive;
 	const onClick = useProcessPayment( paymentMethod?.paymentProcessorId ?? '' );
 	const onClickWithValidation = ( processorData: PaymentProcessorSubmitData ) => {
+		if ( ! isActive ) {
+			return;
+		}
 		if ( validateForm ) {
 			validateForm().then( ( validationResult: boolean ) => {
 				if ( validationResult ) {
