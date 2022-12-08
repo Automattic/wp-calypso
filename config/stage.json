@@ -37,7 +37,7 @@
 		"external-media/google-photos": true,
 		"external-media/openverse": true,
 		"fullstory": true,
-		"gdpr-banner": false,
+		"cookie-banner": false,
 		"google-my-business": true,
 		"happychat": true,
 		"help": true,
