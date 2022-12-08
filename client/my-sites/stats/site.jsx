@@ -26,7 +26,6 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
-import StickyPanel from 'calypso/components/sticky-panel';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { StatsNoContentBanner } from 'calypso/my-sites/stats/stats-no-content-banner';
@@ -208,9 +207,7 @@ class StatsSite extends Component {
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ traffic.path }/{{ interval }}${ slugPath }`;
 
-		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
-		const wrapperClass = classNames( {
-			'stats--new-main-chart': isNewMainChart,
+		const wrapperClass = classNames( 'stats-content', {
 			'is-period-year': period === 'year',
 		} );
 
@@ -253,76 +250,40 @@ class StatsSite extends Component {
 				<HighlightsSection siteId={ siteId } />
 
 				<div id="my-stats-content" className={ wrapperClass }>
-					{ isNewMainChart ? (
-						<>
-							<StatsPeriodHeader>
-								<StatsPeriodNavigation
-									date={ date }
+					<>
+						<StatsPeriodHeader>
+							<StatsPeriodNavigation
+								date={ date }
+								period={ period }
+								url={ `/stats/${ period }/${ slug }` }
+							>
+								<DatePicker
 									period={ period }
-									url={ `/stats/${ period }/${ slug }` }
-								>
-									<DatePicker
-										period={ period }
-										date={ date }
-										query={ query }
-										statsType="statsTopPosts"
-										showQueryDate
-									/>
-								</StatsPeriodNavigation>
-								<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
-							</StatsPeriodHeader>
-
-							<ChartTabs
-								activeTab={ getActiveTab( this.props.chartTab ) }
-								activeLegend={ this.state.activeLegend }
-								availableLegend={ this.getAvailableLegend() }
-								onChangeLegend={ this.onChangeLegend }
-								barClick={ this.barClick }
-								switchTab={ this.switchChart }
-								charts={ CHARTS }
-								queryDate={ queryDate }
-								period={ this.props.period }
-								chartTab={ this.props.chartTab }
-							/>
-
-							{ isSitePrivate ? this.renderPrivateSiteBanner( siteId, slug ) : null }
-							{ ! isSitePrivate && <StatsNoContentBanner siteId={ siteId } siteSlug={ slug } /> }
-						</>
-					) : (
-						<>
-							{ isSitePrivate ? this.renderPrivateSiteBanner( siteId, slug ) : null }
-							{ ! isSitePrivate && <StatsNoContentBanner siteId={ siteId } siteSlug={ slug } /> }
-
-							<ChartTabs
-								activeTab={ getActiveTab( this.props.chartTab ) }
-								activeLegend={ this.state.activeLegend }
-								availableLegend={ this.getAvailableLegend() }
-								onChangeLegend={ this.onChangeLegend }
-								barClick={ this.barClick }
-								switchTab={ this.switchChart }
-								charts={ CHARTS }
-								queryDate={ queryDate }
-								period={ this.props.period }
-								chartTab={ this.props.chartTab }
-							/>
-
-							<StickyPanel className="stats__sticky-navigation">
-								<StatsPeriodNavigation
 									date={ date }
-									period={ period }
-									url={ `/stats/${ period }/${ slug }` }
-								>
-									<DatePicker
-										period={ period }
-										date={ date }
-										query={ query }
-										statsType="statsTopPosts"
-										showQueryDate
-									/>
-								</StatsPeriodNavigation>
-							</StickyPanel>
-						</>
-					) }
+									query={ query }
+									statsType="statsTopPosts"
+									showQueryDate
+								/>
+							</StatsPeriodNavigation>
+							<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
+						</StatsPeriodHeader>
+
+						<ChartTabs
+							activeTab={ getActiveTab( this.props.chartTab ) }
+							activeLegend={ this.state.activeLegend }
+							availableLegend={ this.getAvailableLegend() }
+							onChangeLegend={ this.onChangeLegend }
+							barClick={ this.barClick }
+							switchTab={ this.switchChart }
+							charts={ CHARTS }
+							queryDate={ queryDate }
+							period={ this.props.period }
+							chartTab={ this.props.chartTab }
+						/>
+
+						{ isSitePrivate ? this.renderPrivateSiteBanner( siteId, slug ) : null }
+						{ ! isSitePrivate && <StatsNoContentBanner siteId={ siteId } siteSlug={ slug } /> }
+					</>
 
 					<div className="stats__module-list stats__module-list--traffic is-events stats__module--unified">
 						<StatsModule
