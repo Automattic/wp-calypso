@@ -9,6 +9,11 @@ const requestFeatures = () => ( dispatch: any, getState: any ) => {
 	}
 };
 
+/**
+ * Makes an API request to fetch all features on all Jetpack sites for the current user.
+ * This is the same data as QuerySiteFeatures, but this retrieves it for all Jetpack sites in
+ * a single request whereas QuerySiteFeatures would have to make one request per site.
+ */
 export default function QueryJetpackSitesFeatures() {
 	const dispatch = useDispatch();
 
