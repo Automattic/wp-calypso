@@ -1,14 +1,17 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { CompactCard, Gridicon } from '@automattic/components';
 import { useTemplate } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
 import { decodeEntities } from '@wordpress/html-entities';
 import { useTranslate } from 'i18n-calypso';
+import pageRouter from 'page';
 import { connect } from 'react-redux';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import InfoPopover from 'calypso/components/info-popover';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import PopoverMenuItemClipboard from 'calypso/components/popover-menu/item-clipboard';
+import PopoverMenuItemQrCode from 'calypso/components/popover-menu/item-qr-code';
 import { addQueryArgs } from 'calypso/lib/route';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice } from 'calypso/state/notices/actions';
@@ -97,6 +100,18 @@ const VirtualPage = ( {
 		props.setLayoutFocus( 'preview' );
 	};
 
+	const viewStats = () => {
+		recordEllipsisMenuItemClickEvent( 'viewstats' );
+
+		if ( isHomepage ) {
+			pageRouter( `/stats/post/0/${ site.slug }` );
+		}
+	};
+
+	const viewPageQrCode = () => {
+		recordEllipsisMenuItemClickEvent( 'qrcode' );
+	};
+
 	const copyPageLink = () => {
 		props.infoNotice( translate( 'Link copied to clipboard.' ), {
 			duration: 3000,
@@ -168,6 +183,17 @@ const VirtualPage = ( {
 					<PopoverMenuItemClipboard text={ previewUrl } onCopy={ copyPageLink } icon="link">
 						{ translate( 'Copy link' ) }
 					</PopoverMenuItemClipboard>
+				) }
+				{ previewUrl && (
+					<PopoverMenuItem onClick={ viewStats }>
+						<Gridicon icon="stats" size={ 18 } />
+						{ translate( 'Stats' ) }
+					</PopoverMenuItem>
+				) }
+				{ previewUrl && isEnabled( 'post-list/qr-code-link' ) && (
+					<PopoverMenuItemQrCode url={ previewUrl } handleClick={ viewPageQrCode }>
+						{ translate( 'QR Code' ) }
+					</PopoverMenuItemQrCode>
 				) }
 			</EllipsisMenu>
 		</CompactCard>
