@@ -2,23 +2,21 @@ import { useSelect } from '@wordpress/data';
 import { forwardRef } from 'react';
 import { HELP_CENTER_STORE } from '../stores';
 
-interface Props {
-	newItems: boolean;
-}
-
-const HelpIcon = forwardRef< SVGSVGElement, Props >( ( { newItems }: Props, ref ) => {
-	const { unreadCount } = useSelect(
+const HelpIcon = forwardRef< SVGSVGElement >( ( _, ref ) => {
+	const { unreadCount, doneLoading, hasSeenWhatsNewModal } = useSelect(
 		( select ) => ( {
 			unreadCount: select( HELP_CENTER_STORE ).getUnreadCount(),
-			hasSeenPromotion: select( HELP_CENTER_STORE ).getHasSeenPromotionalPopover(),
 			doneLoading: select( 'core/data' ).hasFinishedResolution(
 				HELP_CENTER_STORE,
-				'getHasSeenPromotionalPopover',
+				'getHasSeenWhatsNewModal',
 				[]
 			),
+			hasSeenWhatsNewModal: select( HELP_CENTER_STORE ).getHasSeenWhatsNewModal(),
 		} ),
 		[]
 	);
+
+	const newItems = doneLoading && ! hasSeenWhatsNewModal;
 
 	return (
 		<>
