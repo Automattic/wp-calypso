@@ -2,142 +2,20 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/highlight-cards/variables.scss";
 
-$barChartBorderRadius: 2px;
-$yearBarChartBorderRadius: 4px;
 $custom-stats-tab-mobile-break: $break-small;
 
 .stats > .stats-content {
 	padding-top: $vertical-margin;
 }
 
-// For feature `stats/new-main-chart`
-.stats-content {
-	.main-chart-tabs {
-		margin-bottom: $vertical-margin;
+// For modernized main charts with tabs inside the Traffic, Store, and Ads pages
+.is-chart-tabs {
+	margin-bottom: $vertical-margin;
 
-		&.is-loading {
-			// Extract .stats-module.is-loading from StatsModulePlaceholder
-			.chart {
-				display: none;
-			}
-		}
-	}
-
-	// Common Legend options
-	.chart__legend {
-		margin-bottom: 16px;
-
-		@media ( max-width: $custom-mobile-breakpoint ) {
-			padding: 0 16px;
-		}
-
-		.chart__legend-options {
-			text-transform: none;
-			letter-spacing: inherit;
-
-			@media ( max-width: $break-mobile ) {
-				display: none;
-			}
-		}
-
-		.chart__legend-option {
-			&:not(:first-child) {
-				margin-left: 24px;
-			}
-		}
-
-		.chart__legend-label {
-			color: var(--studio-black);
-			font-size: $font-body-small;
-			font-weight: 400;
-			line-height: 18px;
-			padding: 0;
-
-			&.is-selectable {
-				&:hover,
-				&:focus {
-					color: var(--studio-black);
-				}
-			}
-
-			.chart__legend-checkbox {
-				width: 20px;
-				height: 20px;
-				background-color: var(--color-surface);
-				border: 1px solid var(--color-neutral-10);
-				border-radius: 2px;
-				margin-right: 8px;
-
-				&:checked::before {
-					margin: 3px auto;
-				}
-			}
-		}
-
-		.chart__legend-color {
-			width: 20px;
-			height: 20px;
-			margin: 0 8px 0 0;
-			border-radius: 4px;
-		}
-	}
-
-	.stats-module__placeholder.is-chart {
-		height: 228px;
-	}
-
-	// Main Chart
-	.chart {
-		padding: 0 0 0 20px;
-		background-color: inherit;
-
-		.chart__bar {
-			// Cancel the chart bar styles
-			&.is-weekend {
-				background: none;
-			}
-
-			&:hover {
-				background-color: rgba(var(--color-neutral-rgb), 0.1);
-
-				.chart__bar-section.is-bar {
-					background-color: var(--color-primary);
-				}
-			}
-
-			&.is-selected {
-				background-color: rgba(var(--color-primary-rgb), 0.1);
-
-				.chart__bar-section.is-bar {
-					background-color: var(--color-primary);
-				}
-
-				.chart__bar-section-inner {
-					background-color: var(--color-primary-dark);
-				}
-			}
-		}
-
-		.chart__bar-section {
-			background-color: var(--color-primary);
-			border-top-left-radius: $barChartBorderRadius;
-			border-top-right-radius: $barChartBorderRadius;
-		}
-
-		.chart__bar-section-inner {
-			border-top-left-radius: $barChartBorderRadius;
-			border-top-right-radius: $barChartBorderRadius;
-		}
-
-		.chart__y-axis,
-		.chart__x-axis-width-spacer {
-			padding: 0 20px;
-		}
-
-		.chart__x-axis-label:not(.chart__x-axis-width-spacer) {
-			font-weight: 400;
-			line-height: 24px;
-			color: var(--color-neutral-40);
+	&.is-loading {
+		// Extract .stats-module.is-loading from StatsModulePlaceholder
+		.chart {
+			display: none;
 		}
 	}
 
@@ -207,6 +85,7 @@ $custom-stats-tab-mobile-break: $break-small;
 
 				@media ( max-width: $custom-stats-tab-mobile-break ) {
 					display: flex;
+					flex-direction: row;
 					align-items: center;
 					justify-content: space-between;
 				}
@@ -240,11 +119,11 @@ $custom-stats-tab-mobile-break: $break-small;
 						margin-left: auto;
 						padding: 0 20px 0 10px;
 						font-size: $font-body-small;
+					}
 
-						// For mobile stats-tabs in Store page
-						&:not(.store-stats-orders-chart__value):not(:last-child) {
-							display: none;
-						}
+					// For stats-tabs in Store page
+					&:not(.store-stats-orders-chart__value):not(:last-child) {
+						display: none;
 					}
 				}
 
@@ -258,20 +137,10 @@ $custom-stats-tab-mobile-break: $break-small;
 				}
 			}
 
-			&.is-low,
-			&.is-selected,
-			&.is-selected.is-low {
+			&.is-low {
 				a {
-					&:hover {
-						color: var(--studio-black);
-
-						.label {
-							color: var(--studio-black);
-						}
-
-						.value {
-							color: var(--studio-black);
-						}
+					.value {
+						color: var(--color-neutral-60);
 					}
 				}
 			}
@@ -297,18 +166,24 @@ $custom-stats-tab-mobile-break: $break-small;
 					}
 				}
 			}
-		}
-	}
 
-	&.is-period-year {
-		.chart__bar-section {
-			border-top-left-radius: $yearBarChartBorderRadius;
-			border-top-right-radius: $yearBarChartBorderRadius;
-		}
+			&.is-low,
+			&.is-selected,
+			&.is-selected.is-low {
+				a {
+					&:hover {
+						color: var(--studio-black);
 
-		.chart__bar-section-inner {
-			border-top-left-radius: $yearBarChartBorderRadius;
-			border-top-right-radius: $yearBarChartBorderRadius;
+						.label {
+							color: var(--studio-black);
+						}
+
+						.value {
+							color: var(--studio-black);
+						}
+					}
+				}
+			}
 		}
 	}
 }

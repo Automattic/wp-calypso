@@ -1,5 +1,3 @@
-import config from '@automattic/calypso-config';
-import { Card } from '@automattic/components';
 import { Icon, currencyDollar } from '@wordpress/icons';
 import classNames from 'classnames';
 import { findIndex, find } from 'lodash';
@@ -15,6 +13,7 @@ import { getWidgetPath, formatValue } from '../utils';
 
 class StoreStatsChart extends Component {
 	static propTypes = {
+		className: PropTypes.string,
 		basePath: PropTypes.string.isRequired,
 		data: PropTypes.array.isRequired,
 		renderTabs: PropTypes.func.isRequired,
@@ -154,17 +153,12 @@ class StoreStatsChart extends Component {
 		const chartData = data.map( ( item ) => this.buildChartData( item, selectedTab, chartFormat ) );
 		const selectedIndex = findIndex( data, ( d ) => d.period === selectedDate );
 
-		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
+		const classes = classNames( 'is-chart-tabs', className, {
+			'is-loading': isLoading,
+		} );
 
-		const classes = [
-			'main-chart-tabs',
-			{
-				'is-loading': isLoading,
-			},
-		];
-
-		return isNewFeatured ? (
-			<div className={ classNames( ...classes ) }>
+		return (
+			<div className={ classes }>
 				{ this.renderLegend( selectedTabIndex ) }
 				<ElementChart
 					loading={ isLoading }
@@ -182,20 +176,6 @@ class StoreStatsChart extends Component {
 						tabClick: this.tabClick,
 					} ) }
 			</div>
-		) : (
-			<Card className={ classNames( className, 'stats-module' ) }>
-				{ this.renderLegend( selectedTabIndex ) }
-				<ElementChart loading={ isLoading } data={ chartData } barClick={ this.barClick } />
-				{ ! isLoading &&
-					renderTabs( {
-						chartData,
-						selectedIndex,
-						selectedTabIndex,
-						selectedDate,
-						unit,
-						tabClick: this.tabClick,
-					} ) }
-			</Card>
 		);
 	}
 }
