@@ -13,7 +13,6 @@ import {
 import isRegionInCcpaZone from 'calypso/lib/analytics/utils/is-region-in-ccpa-zone';
 
 const useDoNotSellHelper = () => {
-	const isCookieBannerAccepted = getTrackingPrefs().ok;
 	const [ shouldShowSetting, setShouldShowSetting ] = useState( false );
 	const [ isDoNotSellEnabled, setDoNotSellEnabled ] = useState(
 		! getTrackingPrefs().buckets.advertising
@@ -28,7 +27,7 @@ const useDoNotSellHelper = () => {
 
 	const handleSetDoNotSell = useCallback(
 		( isEnabled ) => {
-			const prefs = setTrackingPrefs( { buckets: { advertising: ! isEnabled } } );
+			const prefs = setTrackingPrefs( { ok: true, buckets: { advertising: ! isEnabled } } );
 			setDoNotSellEnabled( ! prefs.buckets.advertising );
 		},
 		[ setDoNotSellEnabled ]
@@ -38,15 +37,13 @@ const useDoNotSellHelper = () => {
 		shouldShowSetting,
 		handleSetDoNotSell,
 		isDoNotSellEnabled,
-		isCookieBannerAccepted,
 	};
 };
 
 export const DoNotSellSetting = () => {
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
-	const { shouldShowSetting, handleSetDoNotSell, isDoNotSellEnabled, isCookieBannerAccepted } =
-		useDoNotSellHelper();
+	const { shouldShowSetting, handleSetDoNotSell, isDoNotSellEnabled } = useDoNotSellHelper();
 
 	const cookiePolicyLink = (
 		<ExternalLink href={ localizeUrl( 'https://automattic.com/cookies/' ) } target="_blank" />
@@ -106,7 +103,6 @@ export const DoNotSellSetting = () => {
 					checked={ isDoNotSellEnabled }
 					onChange={ handleSetDoNotSell }
 					label={ translate( 'Do Not Sell or Share My Data' ) }
-					disabled={ ! isCookieBannerAccepted }
 				/>
 			</Card>
 		</>
