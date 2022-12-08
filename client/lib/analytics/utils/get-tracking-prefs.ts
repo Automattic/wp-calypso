@@ -26,14 +26,18 @@ const allBucketsTrue: TrackingPrefs[ 'buckets' ] = {
 	advertising: true,
 };
 
-export const parseTrackingPrefs = ( cookieV2?: string, cookieV1?: string ): TrackingPrefs => {
+export const parseTrackingPrefs = (
+	cookieV2?: string,
+	cookieV1?: string,
+	defaultBuckets = allBucketsFalse
+): TrackingPrefs => {
 	const { ok, buckets }: Partial< TrackingPrefs > = cookieV2 ? JSON.parse( cookieV2 ) : {};
 
 	if ( typeof ok === 'boolean' ) {
 		return {
 			ok,
 			buckets: {
-				...allBucketsFalse,
+				...defaultBuckets,
 				...buckets,
 			},
 		};
@@ -46,7 +50,7 @@ export const parseTrackingPrefs = ( cookieV2?: string, cookieV1?: string ): Trac
 
 	return {
 		ok: false,
-		buckets: allBucketsFalse,
+		buckets: defaultBuckets,
 	};
 };
 
@@ -76,6 +80,8 @@ export default function getTrackingPrefs(): TrackingPrefs {
 
 	return parseTrackingPrefs(
 		cookies[ TRACKING_PREFS_COOKIE_V2 ],
-		cookies[ TRACKING_PREFS_COOKIE_V1 ]
+		cookies[ TRACKING_PREFS_COOKIE_V1 ],
+		// default tracking mechanism for GDPR is opt-in, for CCPA is opt-out:
+		isCountryInGdprZone( cookies.country_code ) ? allBucketsFalse : allBucketsTrue
 	);
 }
