@@ -31,7 +31,6 @@ export class MyHomePage {
 	 */
 	async visit( siteSlug: string ): Promise< void > {
 		await this.page.goto( getCalypsoURL( `/home/${ siteSlug }` ), {
-			waitUntil: 'networkidle',
 			timeout: 20 * 1000,
 		} );
 	}

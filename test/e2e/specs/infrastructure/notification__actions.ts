@@ -12,6 +12,7 @@ import {
 	TestAccount,
 	NewCommentResponse,
 	MyHomePage,
+	SidebarComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -53,10 +54,18 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	} );
 
 	describe( `View notification as ${ notificationsUser }`, function () {
-		it( 'Open notification using keyboard shortcut', async function () {
+		beforeAll( async function () {
+			// Wait for the initial loading of MyHomePage to be fully complete.
+			// Without waiting for all components to be fully loaded, the
+			// NavbarComponent ignores the command (click/keyboard) to open the
+			// notification panel.
 			const myHomePage = new MyHomePage( page );
 			await myHomePage.visit( testAccount.credentials.testSites?.primary.url as string );
+			const sidebarComponent = new SidebarComponent( page );
+			await sidebarComponent.waitForSidebarInitialization();
+		} );
 
+		it( 'Open notification using keyboard shortcut', async function () {
 			const navbarComponent = new NavbarComponent( page );
 			await navbarComponent.openNotificationsPanel( { useKeyboard: true } );
 		} );
