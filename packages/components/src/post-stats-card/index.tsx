@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import { Card } from '../';
 import './style.scss';
 
@@ -22,12 +23,20 @@ export default function PostStatsCard( {
 	viewCount,
 }: PostStatsCardProps ) {
 	const translate = useTranslate();
+	const parsedDate = useMemo( () => new Date( post?.date ).toLocaleDateString(), [ post?.date ] );
 	return (
 		<Card className="post-stats-card">
 			<div className="post-stats-card__heading">{ heading }</div>
 			<div className="post-stats-card__post-info">
 				<div className="post-stats-card__post-title">{ post?.title }</div>
-				<div className="post-stats-card__post-date">{ post?.date }</div>
+				{ post?.date && (
+					<div className="post-stats-card__post-date">
+						{ translate( 'Published %(date)s', {
+							// TODO: Show relative duration instead of published date
+							args: { date: parsedDate },
+						} ) }
+					</div>
+				) }
 			</div>
 			<div className="post-stats-card__counts">
 				<div className="post-stats-card__view-count">
