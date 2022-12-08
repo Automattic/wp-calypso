@@ -18,6 +18,7 @@ import {
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import SelectDropdown from 'calypso/components/select-dropdown';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import './style.scss';
@@ -111,6 +112,11 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 		// Hence ensure the color picker is closed after predefined color selection
 		setColorPickerOpen( false );
 
+		recordTracksEvent( 'calypso_signup_accent_color_select', {
+			color: value,
+			global_styles_gating: shouldLimitGlobalStyles,
+		} );
+
 		setAccentColor( {
 			hex: value,
 			rgb: hexToRgb( value ),
@@ -118,6 +124,11 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 	};
 
 	const handleCustomColorSelect = ( { hex, rgb }: ColorPicker.OnChangeCompleteValue ) => {
+		recordTracksEvent( 'calypso_signup_accent_color_select', {
+			color: 'custom',
+			global_styles_gating: shouldLimitGlobalStyles,
+		} );
+
 		setCustomColor( { hex, rgb: rgb as unknown as RGB } );
 		setAccentColor( { hex, rgb: rgb as unknown as RGB } );
 	};

@@ -79,6 +79,11 @@ export function getEnhancedTasks(
 						disabled: isVideoPressFlow( flow ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							if ( displayGlobalStylesWarning ) {
+								recordTracksEvent(
+									'calypso_launchpad_global_styles_gating_plan_selected_task_clicked'
+								);
+							}
 							const plansUrl = addQueryArgs( `/plans/${ siteSlug }`, {
 								...( displayGlobalStylesWarning && {
 									plan: PLAN_PREMIUM,
