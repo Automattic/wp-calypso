@@ -430,6 +430,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				device: resolveDeviceTypeByViewPort(),
 			} );
 
+			if ( shouldLimitGlobalStyles ) {
+				recordTracksEvent(
+					'calypso_signup_design_global_styles_gating_modal_try_button_click',
+					getEventPropsByDesign( _selectedDesign, selectedStyleVariation )
+				);
+			}
+
 			if ( _selectedDesign.verticalizable ) {
 				recordTracksEvent(
 					'calypso_signup_select_verticalized_design',
