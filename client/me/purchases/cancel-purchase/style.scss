@@ -51,8 +51,10 @@ body.edit__body-white.theme-default.color-scheme {
 	}
 }
 
-.cancel-purchase__product-information .product-link {
-	font-size: $font-body-small;
+.cancel-purchase__product-information {
+	.product-link {
+		font-size: $font-body-small;
+	}
 }
 
 .cancel-purchase__purchase-name {
@@ -61,7 +63,6 @@ body.edit__body-white.theme-default.color-scheme {
 }
 
 .cancel-purchase__refund-information,
-.cancel-purchase__support-information,
 .cancel-purchase__refund-information-subtitle,
 .cancel-purchase__refund-information-description {
 	font-size: $font-body-small;
@@ -192,6 +193,12 @@ body.edit__body-white.theme-default.color-scheme {
 
 		@media ( max-width: $breakpoint-mobile ) {
 			margin: 0 16px 30px 20px;
+		}
+
+		.form-label {
+			padding: 10px;
+			border: solid 1px #dcdcde;
+			border-radius: 4px;
 		}
 	}
 
@@ -327,5 +334,4 @@ body.edit__body-white.theme-default.color-scheme {
 			}
 		}
 	}
-
 }

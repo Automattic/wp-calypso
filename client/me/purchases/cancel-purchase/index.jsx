@@ -200,8 +200,14 @@ class CancelPurchase extends Component {
 
 		let heading;
 
-		if ( isSubscription( purchase ) ) {
+		if ( isSubscription( purchase ) && isPlan( purchase ) ) {
 			heading = this.props.translate( 'Canceling your plan subscription', {
+				args: { purchaseName },
+			} );
+		}
+
+		if ( isSubscription( purchase ) && ! isPlan( purchase ) ) {
+			heading = this.props.translate( 'Cancel Your %(purchaseName)s Subscription', {
 				args: { purchaseName },
 			} );
 		}
