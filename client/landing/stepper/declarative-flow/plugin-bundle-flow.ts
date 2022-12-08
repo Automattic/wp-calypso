@@ -11,6 +11,7 @@ import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import GetCurrentThemeSoftwareSets from './internals/steps-repository/get-current-theme-software-sets';
 import { redirect } from './internals/steps-repository/import/util';
 import { ProcessingResult } from './internals/steps-repository/processing-step';
 import {
@@ -18,16 +19,16 @@ import {
 	AssertConditionState,
 	Flow,
 	ProvidedDependencies,
+	StepperStep,
 } from './internals/types';
 import pluginBundleData from './plugin-bundle-data';
-import type { StepPath } from './internals/steps-repository';
 import type { BundledPlugin } from './plugin-bundle-data';
 
 const WRITE_INTENT_DEFAULT_THEME = 'livro';
 const WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION = 'white';
 const SiteIntent = Onboard.SiteIntent;
 
-export const pluginBundleFlow: Flow = {
+const pluginBundleFlow: Flow = {
 	name: 'plugin-bundle',
 
 	useSteps() {
@@ -40,11 +41,17 @@ export const pluginBundleFlow: Flow = {
 			window.location.replace( `/home/${ siteSlugParam }` );
 		}
 
-		const steps: StepPath[] = [ 'getCurrentThemeSoftwareSets' ];
-		let bundlePluginSteps: StepPath[] = [];
+		const steps = [
+			{
+				slug: 'getCurrentThemeSoftwareSets',
+				component: GetCurrentThemeSoftwareSets,
+			},
+		];
+
+		let bundlePluginSteps: StepperStep[] = [];
 
 		if ( pluginSlug && pluginBundleData.hasOwnProperty( pluginSlug ) ) {
-			bundlePluginSteps = pluginBundleData[ pluginSlug ] as StepPath[];
+			bundlePluginSteps = pluginBundleData[ pluginSlug ];
 		}
 		return steps.concat( bundlePluginSteps );
 	},
@@ -210,7 +217,7 @@ export const pluginBundleFlow: Flow = {
 			}
 		};
 
-		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
+		const goToStep = ( step: string ) => {
 			navigate( step );
 		};
 
@@ -267,3 +274,5 @@ export const pluginBundleFlow: Flow = {
 		return result;
 	},
 };
+
+export default pluginBundleFlow;
