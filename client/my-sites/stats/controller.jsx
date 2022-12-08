@@ -194,7 +194,7 @@ export function overview( context, next ) {
 	window.scrollTo( 0, 0 );
 
 	const activeFilter = find( filters(), ( filter ) => {
-		return context.params.period === filter.period || context.path.indexOf( filter.path ) >= 0;
+		return context.params.period === filter.period || context.path.includes( filter.path );
 	} );
 
 	// Validate that date filter is legit
@@ -223,7 +223,7 @@ export function site( context, next ) {
 	const siteId = currentSite ? currentSite.ID || 0 : 0;
 
 	const activeFilter = find( filters, ( filter ) => {
-		return context.path.indexOf( filter.path ) >= 0;
+		return context.path.includes( filter.path );
 	} );
 
 	if ( ! activeFilter ) {
@@ -296,7 +296,7 @@ export function summary( context, next ) {
 	siteId = selectedSite ? selectedSite.ID || 0 : 0;
 
 	const activeFilter = find( filters, ( filter ) => {
-		return context.path.indexOf( filter.path ) >= 0;
+		return context.path.includes( filter.path );
 	} );
 
 	if ( siteFragment && 0 === siteId ) {
@@ -304,7 +304,7 @@ export function summary( context, next ) {
 		return ( window.location = '/stats' );
 	}
 
-	if ( ! activeFilter || -1 === validModules.indexOf( context.params.module ) ) {
+	if ( ! activeFilter || ! validModules.includes( context.params.module ) ) {
 		return next();
 	}
 
