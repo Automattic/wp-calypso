@@ -10,7 +10,7 @@ export default {
 
 export const Default: Story< DoNotSellDialogProps > = ( args ) => {
 	const [ isActive, setActive ] = useState( false );
-	return <DoNotSellDialog { ...args } isActive={ isActive } onToggleActive={ setActive } />;
+	return <DoNotSellDialog { ...args } isActive={ isActive } onToggleActive={ setActive } isOpen />;
 };
 
 Default.args = {

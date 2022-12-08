@@ -25,6 +25,7 @@ describe( 'DoNotSellDialog', () => {
 				content={ genericContent }
 				onToggleActive={ jest.fn() }
 				onClose={ jest.fn() }
+				isOpen
 			/>
 		);
 
@@ -43,6 +44,7 @@ describe( 'DoNotSellDialog', () => {
 				content={ genericContent }
 				onToggleActive={ jest.fn() }
 				onClose={ onClose }
+				isOpen
 			/>
 		);
 		fireEvent.click( getByText( container, 'closeButton' ) );
@@ -55,6 +57,7 @@ describe( 'DoNotSellDialog', () => {
 				content={ genericContent }
 				onToggleActive={ jest.fn() }
 				onClose={ onClose }
+				isOpen
 			/>
 		);
 		const closeButton = container.querySelector( '.do-not-sell__close-button' );
@@ -71,6 +74,7 @@ describe( 'DoNotSellDialog', () => {
 				isActive={ false }
 				onToggleActive={ onToggleActive }
 				onClose={ jest.fn() }
+				isOpen
 			/>
 		);
 		fireEvent.click( getByText( container, 'toggleLabel' ) );
@@ -84,6 +88,7 @@ describe( 'DoNotSellDialog', () => {
 				isActive={ true }
 				onToggleActive={ onToggleActive }
 				onClose={ jest.fn() }
+				isOpen
 			/>
 		);
 		fireEvent.click( getByText( container, 'toggleLabel' ) );

@@ -1,24 +1,17 @@
 @use "sass:math";
 @import "../styles/fonts.scss";
 
-.do-not-sell,
-.do-not-sell * {
+.do-not-sell__dialog,
+.do-not-sell__dialog * {
 	font-family: $default-font-family;
 	box-sizing: border-box;
 }
 
-.do-not-sell {
-	display: flex;
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	z-index: 50002;
-}
-
 .do-not-sell__dialog {
-	position: relative;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 	display: flex;
 	flex-direction: column;
 	margin: auto;
