@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
-import { pick } from 'lodash';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
@@ -14,7 +13,17 @@ const isEnabled = config.isEnabled( 'settings/modernize-reading-settings' );
 // Settings are not typed yet, so we need to use `unknown` for now.
 type Settings = unknown;
 
-const getFormSettings = ( settings: Settings ) => pick( settings, [ 'posts_per_page' ] );
+const getFormSettings = ( settings: Settings = {} ) => {
+	if ( ! settings ) {
+		return {};
+	}
+
+	// @ts-expect-error Settings are not typed yet, so we need to use `unknown` for now.
+	const { posts_per_page } = settings;
+	return {
+		...( posts_per_page && { posts_per_page } ),
+	};
+};
 
 type Fields = {
 	posts_per_page?: number;
