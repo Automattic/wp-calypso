@@ -1,7 +1,7 @@
 import debugFactory from 'debug';
 import { useContext, useMemo } from 'react';
-import { PaymentMethod } from '../../types';
 import CheckoutContext from '../checkout-context';
+import type { PaymentMethod, TogglePaymentMethod } from '../../types';
 
 const debug = debugFactory( 'composite-checkout:payment-methods' );
 
@@ -52,7 +52,7 @@ export function useAvailablePaymentMethodIds(): string[] {
 	return availablePaymentMethodIds;
 }
 
-export function useTogglePaymentMethod(): ( paymentMethodId: string, available: boolean ) => void {
+export function useTogglePaymentMethod(): TogglePaymentMethod {
 	const { allPaymentMethods, disabledPaymentMethodIds, setDisabledPaymentMethodIds } =
 		useContext( CheckoutContext );
 	if ( ! allPaymentMethods ) {
