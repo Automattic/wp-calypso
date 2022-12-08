@@ -1,30 +1,66 @@
-import { localize } from 'i18n-calypso';
+import { Button, Gridicon } from '@automattic/components';
+import { useTranslate, localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
-import LoadingPlaceholderCancelPurchasePage from 'calypso/me/purchases/components/loading-placeholder/cancel-purchase-page';
+// import LoadingPlaceholderCancelPurchasePage from 'calypso/me/purchases/components/loading-placeholder/cancel-purchase-page';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import titles from 'calypso/me/purchases/titles';
 
+import '../components/loading-placeholder/style.scss';
+
 const CancelPurchaseLoadingPlaceholder = ( { purchaseId, siteSlug, getManagePurchaseUrlFor } ) => {
+	const translate = useTranslate();
+	const title = titles.cancelPurchase;
+	const isFullWidth = true;
 	let path;
 
 	if ( siteSlug ) {
 		path = getManagePurchaseUrlFor( siteSlug, purchaseId );
 	}
 
+	function goBack() {
+		page.back( path || '/' );
+	}
+
+	function supportLink() {
+		return translate( 'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}', {
+			components: {
+				contactLink: <a href={ CALYPSO_CONTACT } />,
+			},
+		} );
+	}
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace, jsx-a11y/heading-has-content */
 	return (
-		<LoadingPlaceholderCancelPurchasePage
-			title={ titles.cancelPurchase }
-			path={ path }
-			isFullWidth={ true }
-		>
-			<h2 className="loading-placeholder__content cancel-purchase-loading-placeholder__header" />
-			<div className="loading-placeholder__content cancel-purchase-loading-placeholder__subheader" />
-			<div className="loading-placeholder__content cancel-purchase-loading-placeholder__reason" />
-			<div className="loading-placeholder__content cancel-purchase-loading-placeholder__reason" />
-		</LoadingPlaceholderCancelPurchasePage>
+		<Main wideLayout={ isFullWidth } className="loading-placeholder">
+			<Button compact borderless className="cancel-purchase__back-link" onClick={ goBack }>
+				<Gridicon icon="chevron-left" size={ 18 } />
+				{ translate( 'Back' ) }
+			</Button>
+
+			<FormattedHeader brandFont headerText={ title } align="left" />
+
+			<div className="cancel-purchase__layout">
+				<div className="cancel-purchase__layout-col cancel-purchase__layout-col-left">
+					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__site" />
+					<h2 className="loading-placeholder__content cancel-purchase-loading-placeholder__header" />
+					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__subheader" />
+					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__reason" />
+					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__reason" />
+				</div>
+				<div className="cancel-purchase__layout-col cancel-purchase__layout-col-right">
+					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__site" />
+
+					<p className="cancel-purchase--support-link cancel-purchase--support-link--sidebar">
+						{ supportLink() }
+					</p>
+				</div>
+			</div>
+		</Main>
 	);
 };
-/* eslint-enable wpcalypso/jsx-classname-namespace, jsx-a11y/heading-has-content */
 
 CancelPurchaseLoadingPlaceholder.propTypes = {
 	purchaseId: PropTypes.number.isRequired,
