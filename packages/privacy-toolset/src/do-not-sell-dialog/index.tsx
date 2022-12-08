@@ -1,4 +1,5 @@
 import { FormToggle } from '@wordpress/components';
+import { FormEventHandler } from 'react';
 
 import './styles.scss';
 
@@ -20,6 +21,8 @@ export const DoNotSellDialog = ( {
 	onToggleActive,
 }: DoNotSellDialogProps ) => {
 	const { title, longDescription, toggleLabel, closeButton } = content;
+	const onFormToggleChange: FormEventHandler< HTMLInputElement > = ( e ) =>
+		onToggleActive( e.currentTarget.checked );
 	return (
 		<div
 			className="do-not-sell"
@@ -46,7 +49,7 @@ export const DoNotSellDialog = ( {
 				<label className="do-not-sell__preference">
 					<FormToggle
 						className="do-not-sell__checkbox"
-						onChange={ ( e ) => onToggleActive( e.currentTarget.checked ) }
+						onChange={ onFormToggleChange }
 						checked={ isActive }
 					/>
 					{ toggleLabel }
