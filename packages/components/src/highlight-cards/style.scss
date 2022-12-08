@@ -4,8 +4,6 @@
 @import "../styles/typography";
 @import "./variables.scss";
 
-$font-hover-transition: 100ms linear;
-
 .highlight-cards {
 	color: var(--studio-gray-100);
 	font-size: $font-body-small;
@@ -15,7 +13,7 @@ $font-hover-transition: 100ms linear;
 
 .highlight-cards a.highlight-cards-heading-wrapper {
 	color: var(--color-text);
-	transition: color $font-hover-transition;
+	transition: color 100ms linear;
 	&:focus,
 	&:hover {
 		color: var(--color-link);
@@ -29,10 +27,10 @@ $font-hover-transition: 100ms linear;
 	&:hover,
 	&:focus,
 	&:focus-within {
+
 		.link-icon {
-			transition: $link-icon-transition, fill $font-hover-transition;
+			transition: $link-icon-transition;
 			transform: translateX($link-icon-active-offset);
-			fill: var(--color-link);
 		}
 
 	}
