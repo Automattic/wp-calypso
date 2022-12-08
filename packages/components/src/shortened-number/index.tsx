@@ -1,4 +1,4 @@
-export type TruncatedNumberProps = {
+export type ShortenedNumberProps = {
 	value: number | null;
 };
 
@@ -16,10 +16,10 @@ function formatNumber( value: number | null ) {
 	return Number.isFinite( value ) ? FORMATTER.format( value as number ) : '-';
 }
 
-export default function TruncatedNumber( { value }: TruncatedNumberProps ) {
+export default function ShortenedNumber( { value }: ShortenedNumberProps ) {
 	return (
 		<span
-			className="truncated-number"
+			className="shortened-number"
 			title={ Number.isFinite( value ) ? String( value ) : undefined }
 		>
 			{ formatNumber( value ) }

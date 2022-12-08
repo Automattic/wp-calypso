@@ -1,7 +1,7 @@
 import {
 	Card,
 	PercentCalculator as percentCalculator,
-	TruncatedNumber,
+	ShortenedNumber,
 } from '@automattic/components';
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -144,7 +144,7 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 				{
 					id: 'views',
 					header: translate( 'Views' ),
-					content: <TruncatedNumber value={ viewsBestDayTotal } />,
+					content: <ShortenedNumber value={ viewsBestDayTotal } />,
 					footer: translate( '%(percent)d%% of views', {
 						args: { percent: bestViewsEverPercent || 0 },
 						context: 'Stats: Percentage of views',

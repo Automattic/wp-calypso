@@ -1,6 +1,6 @@
 import { arrowDown, arrowUp, Icon } from '@wordpress/icons';
 import classNames from 'classnames';
-import { Card, TruncatedNumber } from '../';
+import { Card, ShortenedNumber } from '../';
 
 export type HighlightCardProps = {
 	count: number | null;
@@ -46,7 +46,7 @@ export default function HighlightCard( {
 					className="highlight-card-count-value"
 					title={ Number.isFinite( count ) ? String( count ) : undefined }
 				>
-					<TruncatedNumber value={ count } />
+					<ShortenedNumber value={ count } />
 				</span>{ ' ' }
 				{ difference !== null ? (
 					<span

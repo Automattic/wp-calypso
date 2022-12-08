@@ -38,4 +38,4 @@ export {
 	percentCalculator as PercentCalculator,
 } from './highlight-cards/highlight-card';
 export { default as MobilePromoCard } from './mobile-promo-card';
-export { default as TruncatedNumber } from './truncated-number';
+export { default as ShortenedNumber } from './shortened-number';
