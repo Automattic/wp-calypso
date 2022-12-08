@@ -48,12 +48,10 @@ const CookieBannerContainer = () => {
 		refreshCountryCodeCookieGdpr( controller.signal )
 			.then( () => {
 				const cookies = cookie.parse( document.cookie );
-				setShow(
-					shouldSeeCookieBanner( cookies.country_code, cookies.region, getTrackingPrefs() )
-				);
+				setShow( shouldSeeCookieBanner( cookies.country_code, getTrackingPrefs() ) );
 			} )
 			.catch( () => {
-				setShow( shouldSeeCookieBanner( undefined, undefined, getTrackingPrefs() ) );
+				setShow( shouldSeeCookieBanner( undefined, getTrackingPrefs() ) );
 			} );
 
 		return () => controller.abort();

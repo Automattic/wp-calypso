@@ -2,7 +2,6 @@ import { isE2ETest } from 'calypso/lib/e2e';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { TrackingPrefs } from './get-tracking-prefs';
 import isCountryInGdprZone from './is-country-in-gdpr-zone';
-import isRegionInCcpaZone from './is-region-in-ccpa-zone';
 
 const isServer = typeof document === 'undefined';
 
@@ -12,14 +11,12 @@ const isServer = typeof document === 'undefined';
  * Defaults to `false` if the country code is unknown.
  *
  * @param countryCode Country code determined either from cookie or from a special header
- * @param region Region determined either from cookie or from a special header
  * @param trackingPrefs Parsed object based on `sensitive_pixel_options` (v2) cookie structure
- * @returns Whether the current user could be in the GDPR/CCPA zone. When the `countryCode` and `region` are
+ * @returns Whether the current user could be in the GDPR zone. When the `countryCode` are
  * `undefined`, we return `null` which has a meaning of "result unknown".
  */
 export default function shouldSeeCookieBanner(
 	countryCode?: string,
-	region?: string,
 	trackingPrefs?: TrackingPrefs
 ): boolean {
 	// the banner is not shown for pages embedded as web view inside the mobile app or during e2e tests
@@ -32,10 +29,10 @@ export default function shouldSeeCookieBanner(
 		return false;
 	}
 
-	// if we had issues fetching geo cookies (`countryCode` and `region`), fail safe and show the banner
-	if ( countryCode === undefined && region === undefined ) {
+	// if we had issues fetching geo cookies (`countryCode`), fail safe and show the banner
+	if ( countryCode === undefined ) {
 		return true;
 	}
 
-	return isCountryInGdprZone( countryCode ) || isRegionInCcpaZone( countryCode, region );
+	return isCountryInGdprZone( countryCode );
 }
