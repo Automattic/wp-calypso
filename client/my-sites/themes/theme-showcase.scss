@@ -16,7 +16,20 @@ body.is-section-themes-i4 {
 	}
 
 	.themes__selection .themes-list {
-		margin-top: 32px;
+		margin: 32px -16px 0;
+
+		.theme,
+		.themes-list__spacer {
+			width: 320px;
+		}
+
+		.theme {
+			margin: 0 16px 32px;
+		}
+
+		.themes-list__spacer {
+			margin: 0 16px;
+		}
 	}
 
 	.themes__content .upsell-nudge {

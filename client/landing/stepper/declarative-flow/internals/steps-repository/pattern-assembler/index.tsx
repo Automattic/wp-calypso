@@ -176,7 +176,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 			pattern_count: patterns.length,
 		} );
 
-		goBack();
+		goBack?.();
 	};
 
 	const getSelectedPattern = () => {
@@ -271,7 +271,12 @@ const PatternAssembler: Step = ( { navigation } ) => {
 												stylesheet,
 												'home',
 												translate( 'Home' ),
-												createCustomHomeTemplateContent( stylesheet, !! header, !! footer )
+												createCustomHomeTemplateContent(
+													stylesheet,
+													!! header,
+													!! footer,
+													!! sections.length
+												)
 											)
 										)
 										.then( () => runThemeSetupOnSite( siteSlugOrId, design ) )

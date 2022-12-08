@@ -649,7 +649,7 @@ export const normalizers = {
 
 		return authorsData.map( ( item ) => {
 			const record = {
-				label: item.name,
+				label: item.name || translate( 'Untracked Authors' ),
 				iconClassName: 'avatar-user',
 				icon: parseAvatar( item.avatar ),
 				children: null,
