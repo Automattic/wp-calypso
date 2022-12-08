@@ -42,7 +42,7 @@ export const BlogsPostsSetting = ( { value = 10, onChange, disabled }: BlogsPost
 			</div>
 			<FormSettingExplanation>
 				{ translate(
-					'The number of posts displayed on your selected posts page. Displaying 10 or less can improve usability, SEO, and page speed.'
+					'The number of posts displayed on your selected posts page. Displaying 10 or less can improve usability, SEO, and page speed. May not apply to themes with infinite scrolling.'
 				) }
 			</FormSettingExplanation>
 		</FormFieldset>
