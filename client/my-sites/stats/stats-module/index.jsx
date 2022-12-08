@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
@@ -128,7 +127,6 @@ class StatsModule extends Component {
 			period,
 			translate,
 			useShortLabel,
-			showNewModules,
 		} = this.props;
 
 		const noData = data && this.state.loaded && ! data.length;
@@ -156,8 +154,7 @@ class StatsModule extends Component {
 			'is-refreshing': requesting && ! isLoading,
 		} );
 
-		const shouldShowNewModule =
-			showNewModules && isEnabled( 'stats/new-stats-module-component' ) && ! summary;
+		const shouldShowNewModule = ! summary;
 
 		return (
 			<>
