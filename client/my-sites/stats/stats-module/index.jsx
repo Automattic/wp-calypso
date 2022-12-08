@@ -150,7 +150,7 @@ class StatsModule extends Component {
 		);
 
 		const summaryLink = this.getHref();
-		const displaySummaryLink = data && data.length >= 10;
+		const displaySummaryLink = data && ! this.props.hideSummaryLink;
 		const isAllTime = this.isAllTimeList();
 		const headerClass = classNames( 'stats-module__header', {
 			'is-refreshing': requesting && ! isLoading,
@@ -172,16 +172,20 @@ class StatsModule extends Component {
 						title={ this.getModuleLabel() }
 						emptyMessage={ moduleStrings.empty }
 						showMore={
-							this.props.showSummaryLink && displaySummaryLink
+							displaySummaryLink
 								? {
 										url: this.getHref(),
-										label: this.props.translate( 'View all', {
-											context: 'Stats: Button label to expand a panel',
-										} ),
+										label:
+											data.length >= 10
+												? this.props.translate( 'View all', {
+														context: 'Stats: Button label to expand a panel',
+												  } )
+												: this.props.translate( 'View details', {
+														context: 'Stats: Button label to see the detailed content of a panel',
+												  } ),
 								  }
 								: undefined
 						}
-						titleURL={ this.getHref() }
 						error={ hasError && <ErrorPanel /> }
 						loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
 						heroElement={ path === 'countryviews' && <Geochart query={ query } /> }
@@ -222,7 +226,7 @@ class StatsModule extends Component {
 								<StatsModulePlaceholder isLoading={ isLoading } />
 								<StatsList moduleName={ path } data={ data } useShortLabel={ useShortLabel } />
 							</div>
-							{ this.props.showSummaryLink && displaySummaryLink && (
+							{ this.props.showSummaryLink && data && data.length >= 10 && (
 								<StatsModuleExpand href={ summaryLink } />
 							) }
 							{ summary && 'countryviews' === path && (

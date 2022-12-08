@@ -29,7 +29,8 @@ export default function AnnualHighlightCards( {
 		<h1 className="highlight-cards-heading">
 			{ Number.isFinite( year )
 				? translate( '%(year)s in review', { args: { year } } )
-				: translate( 'Year in review' ) }
+				: translate( 'Year in review' ) }{ ' ' }
+			{ titleHref ? <small>{ translate( 'View all annual insights' ) }</small> : null }
 		</h1>
 	);
 
