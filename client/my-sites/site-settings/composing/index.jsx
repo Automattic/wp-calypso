@@ -52,7 +52,7 @@ const Composing = ( {
 		/>
 
 		{
-			// Blogging prompts is a Jetpack editor extension that's enabled for Simple and Atomic sites only.
+			// Blogging prompts is a Jetpack editor extension that's enabled for Simple and Atomic sites only
 			( ! siteIsJetpack || isAtomic ) && (
 				<BloggingPrompts
 					fields={ fields }
