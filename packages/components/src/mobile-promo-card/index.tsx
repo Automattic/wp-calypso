@@ -41,8 +41,7 @@ function getRedirectUrlPrivate( slug: string ) {
 		URL_WOO_QRCODE,
 	];
 	// Confirm requested slug is valid.
-	const index = slugs.indexOf( slug );
-	if ( index === -1 ) {
+	if ( ! slugs.includes( slug ) ) {
 		return '';
 	}
 	// Return redirect URL.
