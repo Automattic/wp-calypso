@@ -14,7 +14,16 @@ export type TrackingPrefs = {
 	};
 };
 
-const allowTrackingPrefs: TrackingPrefs = {
+const prefsDisallowAll: TrackingPrefs = {
+	ok: false,
+	buckets: {
+		essential: true, // essential bucket is always allowed
+		analytics: false,
+		advertising: false,
+	},
+};
+
+const prefsAllowAll: TrackingPrefs = {
 	ok: true,
 	buckets: {
 		essential: true,
@@ -23,19 +32,10 @@ const allowTrackingPrefs: TrackingPrefs = {
 	},
 };
 
-const disallowTrackingPrefs: TrackingPrefs = {
-	ok: false,
-	buckets: {
-		essential: true,
-		analytics: false,
-		advertising: false,
-	},
-};
-
 export const parseTrackingPrefs = (
 	cookieV2?: string,
 	cookieV1?: string,
-	defaultPrefs = disallowTrackingPrefs
+	defaultPrefs = prefsDisallowAll
 ): TrackingPrefs => {
 	const { ok, buckets }: Partial< TrackingPrefs > = cookieV2 ? JSON.parse( cookieV2 ) : {};
 
@@ -49,7 +49,7 @@ export const parseTrackingPrefs = (
 		};
 	} else if ( cookieV1 && [ 'yes', 'no' ].includes( cookieV1 ) ) {
 		return {
-			...allowTrackingPrefs,
+			...prefsAllowAll,
 			ok: cookieV1 === 'yes',
 		};
 	}
@@ -74,14 +74,14 @@ export default function getTrackingPrefs(): TrackingPrefs {
 	const isCountryCcpa = isRegionInCcpaZone( cookies.country_code, cookies.region );
 
 	if ( ! isCountryGdpr && ! isCountryCcpa ) {
-		return allowTrackingPrefs;
+		return prefsAllowAll;
 	}
 
 	const { ok, buckets } = parseTrackingPrefs(
 		cookies[ TRACKING_PREFS_COOKIE_V2 ],
 		cookies[ TRACKING_PREFS_COOKIE_V1 ],
 		// default tracking mechanism for GDPR is opt-in, for CCPA is opt-out:
-		isCountryGdpr ? disallowTrackingPrefs : allowTrackingPrefs
+		isCountryGdpr ? prefsDisallowAll : prefsAllowAll
 	);
 
 	if ( isCountryCcpa ) {
@@ -89,7 +89,7 @@ export default function getTrackingPrefs(): TrackingPrefs {
 		return {
 			ok,
 			buckets: {
-				...allowTrackingPrefs.buckets,
+				...prefsAllowAll.buckets,
 				advertising: buckets.advertising,
 			},
 		};
