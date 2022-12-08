@@ -36,6 +36,7 @@ $sensei-color: #43af99;
 		flex-direction: column;
 		padding: 0 40px 0 0;
 		position: relative;
+		width: 415px;
 
 		h1 {
 			width: 60%;
@@ -46,9 +47,11 @@ $sensei-color: #43af99;
 		}
 		@media ( max-width: $break-large ) {
 			margin: 0 auto;
-			width: 375px;
 			padding: 0;
+			width: 375px;
 		}
+
+		// Thumbnails
 
 		.green {
 			background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-style-1.png);
@@ -67,7 +70,7 @@ $sensei-color: #43af99;
 			}
 		}
 
-		.black {
+		.dark {
 			background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-style-3.png);
 			margin-right: 15px;
 
@@ -76,7 +79,7 @@ $sensei-color: #43af99;
 			}
 		}
 
-		.sepia {
+		.gold {
 			background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-style-4.png);
 
 			@media ( max-width: $break-large ) {
@@ -130,19 +133,46 @@ $sensei-color: #43af99;
 		}
 	}
 
-	.sensei-theme {
-		background-size: cover;
-		width: 100%;
-		height: 822px;
+	.sensei-theme-previews {
+		flex: 1;
+		overflow: hidden;
 		border-radius: 36px; /* stylelint-disable-line scales/radii */
 		border: 15px solid #f8f8f8;
 		box-shadow: 0 15px 20px rgba(0, 0, 0, 0.04), 0 13px 10px rgba(0, 0, 0, 0.03), 0 6px 6px rgba(0, 0, 0, 0.02);
+		position: relative;
+		align-self: flex-start;
 
-		@media ( max-width: $break-wide ) {
-			background-size: contain;
-			background-repeat: no-repeat;
-			background-position: center;
+		@media ( max-width: $break-large ) {
+			width: 80%;
+			height: 205px;
+			margin: 10px auto 0 auto;
+			border-bottom: 0;
+			border-radius: 36px 36px 0 0; /* stylelint-disable-line scales/radii */
 		}
+
+	}
+
+	.sensei-theme-item {
+		width: 100%;
+		transition: all 0.36s ease-in-out;
+		display: inline-block;
+		&:not(.selected) {
+			transform: scale(0.75);
+		}
+	}
+
+	.sensei-theme-list {
+		position: relative;
+		transition: all 0.36s ease-in-out;
+		white-space: nowrap;
+		left: calc((var(--index) - 1) * -100%);
+	}
+
+	.sensei-theme {
+		width: 100%;
+		height: 822px;
+		background-size: cover;
+		background-repeat: no-repeat;
 
 		&.green {
 			background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-green.jpg);
@@ -176,7 +206,7 @@ $sensei-color: #43af99;
 			}
 		}
 
-		&.black {
+		&.dark {
 			background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-black.jpg);
 
 			@media ( max-width: $break-huge ) {
@@ -192,7 +222,7 @@ $sensei-color: #43af99;
 			}
 		}
 
-		&.sepia {
+		&.gold {
 			background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-sepia.jpg);
 
 			@media ( max-width: $break-huge ) {
@@ -209,32 +239,7 @@ $sensei-color: #43af99;
 		}
 
 		@media ( max-width: $break-large ) {
-			display: none;
-		}
-	}
-
-	.sensei-theme-small {
-		@media ( max-width: $break-large ) {
-			width: 80%;
-			height: 205px;
-			margin: 10px auto 0 auto;
-			background-size: cover;
-			box-shadow: 0 15px 20px rgb(0 0 0 / 4%), 0 13px 10px rgb(0 0 0 / 3%), 0 6px 6px rgb(0 0 0 / 2%);
-			border: 15px solid #f8f8f8;
-			border-bottom: 0;
-
-			&.green-small {
-				background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-green-1080.jpg);
-			}
-			&.black-small {
-				background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-black-1080.jpg);
-			}
-			&.sepia-small {
-				background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-sepia-1080.jpg);
-			}
-			&.blue-small {
-				background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-blue-1080.jpg);
-			}
+			background-size: contain;
 		}
 	}
 
