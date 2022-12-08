@@ -29,7 +29,7 @@ export const DoNotSellDialog = ( {
 	return (
 		<Modal
 			className="do-not-sell__dialog"
-			overlayClassName="do-not-sell__overlay"
+			overlayClassName="do-not-sell"
 			aria={ {
 				modal: true,
 				labelledby: 'do-not-sell-title',
