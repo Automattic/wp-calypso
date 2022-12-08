@@ -26,10 +26,9 @@ const URL_WOO_APPLE = 'calypso-stats-mobile-cta-woo-apple-badge';
 const URL_WOO_GOOGLE = 'calypso-stats-mobile-cta-woo-google-badge';
 const URL_WOO_QRCODE = 'calypso-stats-mobile-cta-woo-qrcode';
 
-// Named to match getRedirectUrl from '@automattic/jetpack-components'
-// which isn't available to us here.
-function getRedirectUrlPrivate( slug: string ) {
-	// Maps the Jetpack Redirect slugs to URLs.
+// Generate a Jetpack Redirect URL based on the provided slug.
+// Similar to getRedirectUrl from '@automattic/jetpack-components'.
+function getRedirectUrlFromSlug( slug: string ) {
 	const slugs = [
 		URL_JETPACK_A8C,
 		URL_JETPACK_APPLE,
@@ -70,8 +69,8 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 		// Using useTranslate() with interpolation to set up the linked message.
 		// https://wpcalypso.wordpress.com/devdocs/packages/i18n-calypso/README.md
 		const redirectLink = isWoo
-			? getRedirectUrlPrivate( URL_WOO_A8C )
-			: getRedirectUrlPrivate( URL_JETPACK_A8C );
+			? getRedirectUrlFromSlug( URL_WOO_A8C )
+			: getRedirectUrlFromSlug( URL_JETPACK_A8C );
 		const linkClassName = isWoo ? 'woo' : 'jetpack';
 		const components = {
 			a: <a className={ linkClassName } href={ redirectLink } />,
@@ -92,8 +91,8 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 	const getPromoImage = () => {
 		if ( isApple ) {
 			const appStoreLink = isWoo
-				? getRedirectUrlPrivate( URL_WOO_APPLE )
-				: getRedirectUrlPrivate( URL_JETPACK_APPLE );
+				? getRedirectUrlFromSlug( URL_WOO_APPLE )
+				: getRedirectUrlFromSlug( URL_JETPACK_APPLE );
 			return (
 				<a href={ appStoreLink }>
 					<img
@@ -106,8 +105,8 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 		}
 		if ( isGoogle ) {
 			const appStoreLink = isWoo
-				? getRedirectUrlPrivate( URL_WOO_GOOGLE )
-				: getRedirectUrlPrivate( URL_JETPACK_GOOGLE );
+				? getRedirectUrlFromSlug( URL_WOO_GOOGLE )
+				: getRedirectUrlFromSlug( URL_JETPACK_GOOGLE );
 			return (
 				<a href={ appStoreLink }>
 					<img
