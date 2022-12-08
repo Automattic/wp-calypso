@@ -4,9 +4,9 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import { NewsletterSettingsSection } from '../reading-newsletter-settings';
+import { RssFeedSettingsSection } from '../reading-rss-feed-settings';
 import { SiteSettingsSection } from '../reading-site-settings';
 import wrapSettingsForm from '../wrap-settings-form';
-import { RssFeedSettingsSection } from './rss-feed-settings-section';
 
 const isEnabled = config.isEnabled( 'settings/modernize-reading-settings' );
 
@@ -19,15 +19,17 @@ const getFormSettings = ( settings: Settings = {} ) => {
 	}
 
 	// @ts-expect-error Settings are not typed yet, so we need to use `unknown` for now.
-	const { posts_per_page, featured_image_email_enabled } = settings;
+	const { posts_per_page, posts_per_rss, featured_image_email_enabled } = settings;
 	return {
 		...( posts_per_page && { posts_per_page } ),
+		...( posts_per_rss && { posts_per_rss } ),
 		...( featured_image_email_enabled && { featured_image_email_enabled } ),
 	};
 };
 
 type Fields = {
 	posts_per_page?: number;
+	posts_per_rss?: number;
 	featured_image_email_enabled?: boolean;
 };
 
@@ -49,20 +51,26 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 		isRequestingSettings,
 		isSavingSettings,
 	}: ReadingSettingsFormProps ) => {
+		const disabled = isRequestingSettings || isSavingSettings;
 		return (
 			<form onSubmit={ handleSubmitForm }>
 				<SiteSettingsSection
 					fields={ fields }
 					onChangeField={ onChangeField }
 					handleSubmitForm={ handleSubmitForm }
-					disabled={ isRequestingSettings || isSavingSettings }
+					disabled={ disabled }
 				/>
-				<RssFeedSettingsSection />
+				<RssFeedSettingsSection
+					fields={ fields }
+					onChangeField={ onChangeField }
+					handleSubmitForm={ handleSubmitForm }
+					disabled={ disabled }
+				/>
 				<NewsletterSettingsSection
 					fields={ fields }
 					handleToggle={ handleToggle }
 					handleSubmitForm={ handleSubmitForm }
-					disabled={ isRequestingSettings || isSavingSettings }
+					disabled={ disabled }
 					isSavingSettings={ isSavingSettings }
 				/>
 			</form>
