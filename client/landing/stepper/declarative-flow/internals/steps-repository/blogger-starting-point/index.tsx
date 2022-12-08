@@ -29,7 +29,7 @@ const StartingPointStep: Step = function StartingPointStep( { navigation } ) {
 
 	return (
 		<>
-			<DocumentHead title={ translate( 'Blogger Starting Point' ) } />
+			<DocumentHead title={ translate( 'Nice job! Now it’s time to get creative.' ) } />
 			<StepContainer
 				stepName="blogger-starting-point"
 				headerImageUrl={ startingPointImageUrl }

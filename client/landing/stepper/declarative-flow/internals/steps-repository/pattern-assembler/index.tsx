@@ -304,7 +304,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 
 	return (
 		<>
-			<DocumentHead title={ translate( 'Pattern Assembler' ) } />
+			<DocumentHead title={ translate( 'Design your home' ) } />
 			<StepContainer
 				stepName="pattern-assembler"
 				hideBack={ showPatternSelectorType !== null }

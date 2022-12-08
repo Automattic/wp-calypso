@@ -10,7 +10,7 @@ import type { Step } from '../../types';
 const DesignSetup: Step = ( props ) => {
 	const translate = useTranslate();
 
-	const headerText = translate( 'Design Picker' );
+	const headerText = translate( 'Pick a design' );
 
 	if ( 'anchor-fm' === props.flow ) {
 		return (
