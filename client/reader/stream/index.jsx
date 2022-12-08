@@ -57,6 +57,7 @@ const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
 const excludesSidebar = [
 	'conversations',
 	'conversations-a8c',
+	'feed',
 	'likes',
 	'search',
 	'custom_recs_posts_with_images',

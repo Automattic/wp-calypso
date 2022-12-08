@@ -19,6 +19,10 @@ export class ReaderListOrganizations extends Component {
 		const { path, translate } = this.props;
 		const organization = this.fetchOrganization();
 
+		if ( ! organization ) {
+			return null;
+		}
+
 		return (
 			<>
 				<h2>{ translate( 'Following' ) }</h2>
