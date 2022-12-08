@@ -11,7 +11,6 @@ import {
 	SecretsManager,
 	TestAccount,
 	NewCommentResponse,
-	MyHomePage,
 	SidebarComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
@@ -55,12 +54,8 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 
 	describe( `View notification as ${ notificationsUser }`, function () {
 		beforeAll( async function () {
-			// Wait for the initial loading of MyHomePage to be fully complete.
-			// Without waiting for all components to be fully loaded, the
-			// NavbarComponent ignores the command (click/keyboard) to open the
-			// notification panel.
-			const myHomePage = new MyHomePage( page );
-			await myHomePage.visit( testAccount.credentials.testSites?.primary.url as string );
+			// Wait for the `SidebarComponent` to fully render and be ready
+			// before attempting to interact with the notifications button.
 			const sidebarComponent = new SidebarComponent( page );
 			await sidebarComponent.waitForSidebarInitialization();
 		} );
