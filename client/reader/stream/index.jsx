@@ -493,7 +493,7 @@ class ReaderStream extends Component {
 					<>
 						<div className="stream__header">
 							<SectionNav selectedText={ this.state.selectedTab }>
-								<NavTabs label="Status">
+								<NavTabs label={ translate( 'Status' ) }>
 									<NavItem
 										key="posts"
 										selected={ this.state.selectedTab === 'posts' }

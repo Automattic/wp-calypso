@@ -1,4 +1,6 @@
+import config from '@automattic/calypso-config';
 import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { useStoreItemInfoContext } from '../context/store-item-info-context';
 import { FeaturedItemCard } from '../featured-item-card';
 import { FeaturesList } from '../features-list';
@@ -6,6 +8,7 @@ import { HeroImage } from '../hero-image';
 import { ItemPrice } from '../item-price';
 import { MoreInfoLink } from '../more-info-link';
 import { MostPopularProps } from '../types';
+import { AmountSaved } from './amount-saved';
 
 import './style-most-popular.scss';
 
@@ -33,10 +36,15 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 		getOnClickPurchase,
 		isMultisite,
 	} = useStoreItemInfoContext();
+	const translate = useTranslate();
+
+	const isEnglish = config< Array< string | undefined > >( 'english_locales' ).includes(
+		translate.localeSlug
+	);
 
 	return (
 		<div className={ wrapperClassName }>
-			<h3 className="jetpack-product-store__most-popular--heading">{ heading }</h3>
+			<h2 className="jetpack-product-store__most-popular--heading">{ heading }</h2>
 			<ul className="jetpack-product-store__most-popular--items">
 				{ items.map( ( item ) => {
 					const isOwned = getIsOwned( item );
@@ -82,9 +90,16 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 
 					const ctaAsPrimary = ! ( isOwned || getIsPlanFeature( item ) || isSuperseded );
 
+					// TODO remove this isEnglish check once we have translations for the new strings
+					const amountSaved =
+						isEnglish && item.productsIncluded?.length ? (
+							<AmountSaved siteId={ siteId } product={ item } />
+						) : null;
+
 					return (
 						<li key={ item.productSlug } className="jetpack-product-store__most-popular--item">
 							<FeaturedItemCard
+								amountSaved={ amountSaved }
 								ctaAsPrimary={ ctaAsPrimary }
 								ctaHref={ getCheckoutURL( item ) }
 								ctaLabel={ ctaLabel }

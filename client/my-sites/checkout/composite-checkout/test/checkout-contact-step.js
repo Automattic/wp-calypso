@@ -3,14 +3,8 @@
  */
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
-import {
-	render,
-	fireEvent,
-	screen,
-	within,
-	waitFor,
-	waitForElementToBeRemoved,
-} from '@testing-library/react';
+import { render, screen, within, waitForElementToBeRemoved } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
 import { navigate } from 'calypso/lib/navigate';
@@ -40,8 +34,6 @@ import {
 	mockMatchMediaOnWindow,
 } from './util';
 
-/* eslint-disable jest/no-conditional-expect */
-
 jest.mock( 'calypso/state/sites/selectors' );
 jest.mock( 'calypso/state/sites/domains/selectors' );
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
@@ -52,46 +44,40 @@ jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
 
 describe( 'Checkout contact step', () => {
-	let container;
 	let MyCheckout;
+	const mainCartKey = 'foo.com';
+	const initialCart = getBasicCart();
+
+	getPlansBySiteId.mockImplementation( () => ( {
+		data: getActivePersonalPlanDataForType( 'yearly' ),
+	} ) );
+	hasLoadedSiteDomains.mockImplementation( () => true );
+	getDomainsBySiteId.mockImplementation( () => [] );
+	isMarketplaceProduct.mockImplementation( () => false );
+	isJetpackSite.mockImplementation( () => false );
+	useCartKey.mockImplementation( () => mainCartKey );
+	mockMatchMediaOnWindow();
+
+	const mockSetCartEndpoint = mockSetCartEndpointWith( {
+		currency: initialCart.currency,
+		locale: initialCart.locale,
+	} );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		getPlansBySiteId.mockImplementation( () => ( {
-			data: getActivePersonalPlanDataForType( 'yearly' ),
-		} ) );
-		hasLoadedSiteDomains.mockImplementation( () => true );
-		getDomainsBySiteId.mockImplementation( () => [] );
-		isMarketplaceProduct.mockImplementation( () => false );
-		isJetpackSite.mockImplementation( () => false );
-
-		container = document.createElement( 'div' );
-		document.body.appendChild( container );
-
-		const initialCart = getBasicCart();
-
-		const mockSetCartEndpoint = mockSetCartEndpointWith( {
-			currency: initialCart.currency,
-			locale: initialCart.locale,
-		} );
-
 		const store = createTestReduxStore();
 
-		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps, useUndefinedCartKey } ) => {
+		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps } ) => {
 			const managerClient = createShoppingCartManagerClient( {
 				getCart: mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ),
 				setCart: mockSetCartEndpoint,
 			} );
-			const mainCartKey = 'foo.com';
-			useCartKey.mockImplementation( () => ( useUndefinedCartKey ? undefined : mainCartKey ) );
 			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
-			mockMatchMediaOnWindow();
 			return (
 				<ReduxProvider store={ store }>
 					<ShoppingCartProvider
 						managerClient={ managerClient }
 						options={ {
-							defaultCartKey: useUndefinedCartKey ? undefined : mainCartKey,
+							defaultCartKey: mainCartKey,
 						} }
 						{ ...additionalCartProps }
 					>
@@ -110,182 +96,153 @@ describe( 'Checkout contact step', () => {
 		};
 	} );
 
-	afterEach( () => {
-		document.body.removeChild( container );
-		container = null;
-	} );
-
 	it( 'does not render the contact step when the purchase is free', async () => {
 		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		await waitFor( () => {
-			expect(
-				screen.queryByText( /Enter your (billing|contact) information/ )
-			).not.toBeInTheDocument();
-		} );
+		render( <MyCheckout cartChanges={ cartChanges } /> );
+		await expect( screen.findByText( /Enter your (billing|contact) information/ ) ).toNeverAppear();
+	} );
+
+	it( 'renders the step after the contact step as active if the purchase is free', async () => {
+		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
+		render( <MyCheckout cartChanges={ cartChanges } /> );
+		expect( await screen.findByText( 'Free Purchase' ) ).toBeVisible();
 	} );
 
 	it( 'renders the contact step when the purchase is not free', async () => {
-		render( <MyCheckout />, container );
-		await waitFor( () => {
-			expect( screen.getByText( /Enter your (billing|contact) information/ ) ).toBeInTheDocument();
-		} );
+		render( <MyCheckout /> );
+		expect(
+			await screen.findByText( /Enter your (billing|contact) information/ )
+		).toBeInTheDocument();
 	} );
 
 	it( 'renders the tax fields only when no domain is in the cart', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		await waitFor( () => {
-			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Phone' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Email' ) ).not.toBeInTheDocument();
-		} );
+		render( <MyCheckout cartChanges={ cartChanges } /> );
+		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Phone' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Email' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders the domain fields when a domain is in the cart', async () => {
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		await waitFor( () => {
-			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
-		} );
+		render( <MyCheckout cartChanges={ cartChanges } /> );
+		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders the domain fields when a domain transfer is in the cart', async () => {
 		const cartChanges = { products: [ planWithBundledDomain, domainTransferProduct ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		await waitFor( () => {
-			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
-		} );
+		render( <MyCheckout cartChanges={ cartChanges } /> );
+		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
 	} );
 
 	it( 'does not render country-specific domain fields when no country has been chosen and a domain is in the cart', async () => {
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		await waitFor( () => {
-			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Address' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'City' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'State' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'ZIP code' ) ).not.toBeInTheDocument();
-		} );
+		render( <MyCheckout cartChanges={ cartChanges } /> );
+		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Address' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'City' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'State' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'ZIP code' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders country-specific domain fields when a country has been chosen and a domain is in the cart', async () => {
+		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		await waitFor( () => {
-			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'US' } } );
-		} );
-		await waitFor( () => {
-			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Address' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'City' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'State' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'ZIP code' ) ).toBeInTheDocument();
-		} );
+		render( <MyCheckout cartChanges={ cartChanges } /> );
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
+		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Address' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'City' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'State' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'ZIP code' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a plan is in the cart', async () => {
+		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		await waitFor( () => {
-			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'US' } } );
-		} );
-		await waitFor( () => {
-			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Postal code' ) ).toBeInTheDocument();
-		} );
+		render( <MyCheckout cartChanges={ cartChanges } /> );
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
+		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Postal code' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a plan is in the cart', async () => {
+		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		await waitFor( () => {
-			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'CW' } } );
-		} );
-		await waitFor( () => {
-			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Postal code' ) ).not.toBeInTheDocument();
-		} );
+		render( <MyCheckout cartChanges={ cartChanges } /> );
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'CW' );
+		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Postal code' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a domain is in the cart', async () => {
+		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		await waitFor( () => {
-			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'US' } } );
-		} );
-		await waitFor( () => {
-			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'ZIP code' ) ).toBeInTheDocument();
-		} );
+		render( <MyCheckout cartChanges={ cartChanges } /> );
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
+		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'ZIP code' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a domain is in the cart', async () => {
+		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		await waitFor( () => {
-			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'CW' } } );
-		} );
-		await waitFor( () => {
-			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Postal Code' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Postal code' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'ZIP code' ) ).not.toBeInTheDocument();
-		} );
+		render( <MyCheckout cartChanges={ cartChanges } /> );
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'CW' );
+		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Postal Code' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Postal code' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'ZIP code' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'does not complete the contact step when the contact step button has not been clicked and there are no cached details', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } /> );
 		// Wait for the cart to load
 		await screen.findByText( 'Country' );
 		expect( screen.queryByTestId( 'payment-method-step--visible' ) ).not.toBeInTheDocument();
 	} );
 
-	/**
-	 * TODO: Restore these tests, which were failing for some reason on #64718
-	 */
-	/* eslint-disable jest/no-disabled-tests */
-	it.skip( 'autocompletes the contact step when there are valid cached details', async () => {
+	it( 'autocompletes the contact step when there are valid cached details', async () => {
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'US',
 			postal_code: '10001',
 		} );
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } /> );
 		// Wait for the cart to load
 		await screen.findByText( 'Country' );
-		// Wait for the validation to complete
+
+		// Wait for the validation to complete.
+		await screen.findAllByText( 'Please wait…' );
 		await waitForElementToBeRemoved( () => screen.queryAllByText( 'Please wait…' ) );
-		expect( screen.queryByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
+
+		expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
 	} );
 
-	it.skip( 'does not autocomplete the contact step when there are invalid cached details', async () => {
+	it( 'does not autocomplete the contact step when there are invalid cached details', async () => {
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'US',
 			postal_code: 'ABCD',
 		} );
 		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } /> );
 		// Wait for the cart to load
 		await screen.findByText( 'Country' );
-		// Wait for the validation to complete
-		await waitForElementToBeRemoved( () => screen.queryAllByText( 'Please wait…' ) );
 		await expect( screen.findByTestId( 'payment-method-step--visible' ) ).toNeverAppear();
 	} );
 
@@ -303,6 +260,8 @@ describe( 'Checkout contact step', () => {
 	] )(
 		'$complete complete the contact step when validation is $valid with $name in the cart while logged-$logged and signup validation $email',
 		async ( { complete, valid, name, email, logged } ) => {
+			const user = userEvent.setup();
+
 			const product = ( () => {
 				switch ( name ) {
 					case 'plan':
@@ -336,6 +295,10 @@ describe( 'Checkout contact step', () => {
 				};
 			} )();
 
+			mockCachedContactDetailsEndpoint( {
+				country_code: '',
+				postal_code: '',
+			} );
 			mockContactDetailsValidationEndpoint(
 				name === 'plan' ? 'tax' : name,
 				{
@@ -386,8 +349,7 @@ describe( 'Checkout contact step', () => {
 				<MyCheckout
 					cartChanges={ { products: [ product ] } }
 					additionalProps={ { isLoggedOutCart: logged === 'out' } }
-				/>,
-				container
+				/>
 			);
 
 			// Wait for the cart to load
@@ -395,21 +357,20 @@ describe( 'Checkout contact step', () => {
 
 			// Fill in the contact form
 			if ( name === 'domain' || logged === 'out' ) {
-				fireEvent.change( screen.getByLabelText( 'Email' ), {
-					target: { value: validContactDetails.email },
-				} );
+				await user.type( screen.getByLabelText( 'Email' ), validContactDetails.email );
 			}
-			fireEvent.change( screen.getByLabelText( 'Country' ), {
-				target: { value: validContactDetails.country_code },
-			} );
-			fireEvent.change( screen.getByLabelText( /(Postal|ZIP) code/i ), {
-				target: { value: validContactDetails.postal_code },
-			} );
-			fireEvent.click( await screen.findByText( 'Continue' ) );
+			await user.selectOptions(
+				await screen.findByLabelText( 'Country' ),
+				validContactDetails.country_code
+			);
+			await user.type(
+				screen.getByLabelText( /(Postal|ZIP) code/i ),
+				validContactDetails.postal_code
+			);
 
-			// Wait for the validation to complete
-			await waitForElementToBeRemoved( () => screen.queryAllByText( 'Please wait…' ) );
+			await user.click( screen.getByText( 'Continue' ) );
 
+			/* eslint-disable jest/no-conditional-expect */
 			if ( complete === 'does' ) {
 				expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
 			} else {
@@ -432,31 +393,29 @@ describe( 'Checkout contact step', () => {
 					}
 				}
 			}
+			/* eslint-enable jest/no-conditional-expect */
 		}
 	);
 
 	it( 'renders the checkout summary', async () => {
-		render( <MyCheckout />, container );
-		await waitFor( () => {
-			expect( screen.getByText( 'Purchase Details' ) ).toBeInTheDocument();
-			expect( navigate ).not.toHaveBeenCalled();
-		} );
+		render( <MyCheckout /> );
+		expect( await screen.findByText( 'Purchase Details' ) ).toBeInTheDocument();
+		expect( navigate ).not.toHaveBeenCalled();
 	} );
 
 	it( 'removes a product from the cart after clicking to remove', async () => {
+		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } /> );
 		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
 		const removeProductButton = await within( activeSection ).findByLabelText(
 			'Remove WordPress.com Personal from cart'
 		);
 		expect( screen.getAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 1 );
-		fireEvent.click( removeProductButton );
+		await user.click( removeProductButton );
 		const confirmModal = await screen.findByRole( 'dialog' );
 		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
-		fireEvent.click( confirmButton );
-		await waitFor( () => {
-			expect( screen.queryByLabelText( 'WordPress.com Personal' ) ).not.toBeInTheDocument();
-		} );
+		await user.click( confirmButton );
+		await expect( screen.findByLabelText( 'WordPress.com Personal' ) ).toNeverAppear();
 	} );
 } );

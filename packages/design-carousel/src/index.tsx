@@ -1,4 +1,3 @@
-import { Gridicon } from '@automattic/components';
 import { useStarterDesignsQuery } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
@@ -95,7 +94,6 @@ export default function DesignCarousel( { onPick }: Props ) {
 					} }
 				>
 					<span>{ __( 'Continue' ) }</span>
-					<Gridicon icon="heart" size={ 18 } />
 				</Button>
 			</div>
 		</div>

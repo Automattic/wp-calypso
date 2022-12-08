@@ -2,7 +2,6 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Popover } from '@automattic/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { HELP_CENTER_STORE } from '../stores';
 
@@ -25,8 +24,7 @@ const PromotionalPopover = ( { iconElement }: Props ) => {
 
 	const { setHasSeenPromotionalPopover } = useDispatch( HELP_CENTER_STORE );
 	const [ isDismissed, setIsDismissed ] = useState( false );
-	const { __, hasTranslation } = useI18n();
-	const { localeSlug } = useTranslate();
+	const { __ } = useI18n();
 
 	const recordDismiss = ( location: 'clicking-button' | 'clicking-outside' ) => {
 		recordTracksEvent( 'calypso_helpcenter_promotion_popover_dismissed', {
@@ -42,20 +40,6 @@ const PromotionalPopover = ( { iconElement }: Props ) => {
 	const visibleElement = document.elementFromPoint( iconBox.left, iconBox.top );
 
 	if ( visibleElement !== iconElement ) {
-		return null;
-	}
-
-	const isEnglish = [ 'en', 'en-gb' ].includes( localeSlug || '' );
-	const isTranslationComplete =
-		isEnglish ||
-		( hasTranslation( '✨ Our new Help Center', __i18n_text_domain__ ) &&
-			hasTranslation(
-				'We moved our help resources! You can always find it in the top bar.',
-				__i18n_text_domain__
-			) &&
-			hasTranslation( 'Got it', __i18n_text_domain__ ) );
-
-	if ( ! isTranslationComplete ) {
 		return null;
 	}
 
