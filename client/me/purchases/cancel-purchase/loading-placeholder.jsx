@@ -32,6 +32,20 @@ const CancelPurchaseLoadingPlaceholder = ( { purchaseId, siteSlug, getManagePurc
 		} );
 	}
 
+	function siteHeader() {
+		return (
+			<div class="site">
+				<div class="site__content">
+					<div class="site-icon is-blank" />
+					<div class="site__info">
+						<div class="site__title"></div>
+						<div class="site__domain"></div>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace, jsx-a11y/heading-has-content */
 	return (
 		<Main wideLayout={ isFullWidth } className="loading-placeholder">
@@ -44,14 +58,23 @@ const CancelPurchaseLoadingPlaceholder = ( { purchaseId, siteSlug, getManagePurc
 
 			<div className="cancel-purchase__layout">
 				<div className="cancel-purchase__layout-col cancel-purchase__layout-col-left">
-					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__site" />
+					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__site">
+						{ siteHeader() }
+					</div>
 					<h2 className="loading-placeholder__content cancel-purchase-loading-placeholder__header" />
 					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__subheader" />
 					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__reason" />
 					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__reason" />
+					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__reason" />
+
+					<p className="cancel-purchase--support-link cancel-purchase--support-link--main">
+						{ supportLink() }
+					</p>
 				</div>
 				<div className="cancel-purchase__layout-col cancel-purchase__layout-col-right">
-					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__site" />
+					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__site">
+						{ siteHeader() }
+					</div>
 
 					<p className="cancel-purchase--support-link cancel-purchase--support-link--sidebar">
 						{ supportLink() }
