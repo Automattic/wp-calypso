@@ -49,8 +49,8 @@ export const parseTrackingPrefs = (
 		};
 	} else if ( cookieV1 && [ 'yes', 'no' ].includes( cookieV1 ) ) {
 		return {
-			...prefsAllowAll,
 			ok: cookieV1 === 'yes',
+			buckets: prefsAllowAll.buckets,
 		};
 	}
 
@@ -77,11 +77,13 @@ export default function getTrackingPrefs(): TrackingPrefs {
 		return prefsAllowAll;
 	}
 
+	// default tracking mechanism for GDPR is opt-in, for CCPA is opt-out:
+	const defaultPrefs = isCountryGdpr ? prefsDisallowAll : prefsAllowAll;
+
 	const { ok, buckets } = parseTrackingPrefs(
 		cookies[ TRACKING_PREFS_COOKIE_V2 ],
 		cookies[ TRACKING_PREFS_COOKIE_V1 ],
-		// default tracking mechanism for GDPR is opt-in, for CCPA is opt-out:
-		isCountryGdpr ? prefsDisallowAll : prefsAllowAll
+		defaultPrefs
 	);
 
 	if ( isCountryCcpa ) {
