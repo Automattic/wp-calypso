@@ -1284,7 +1284,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/privacy-toolset@workspace:packages/privacy-toolset":
+"@automattic/privacy-toolset@workspace:^, @automattic/privacy-toolset@workspace:packages/privacy-toolset":
   version: 0.0.0-use.local
   resolution: "@automattic/privacy-toolset@workspace:packages/privacy-toolset"
   dependencies:
@@ -36203,6 +36203,7 @@ swiper@4.5.1:
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
+    "@automattic/privacy-toolset": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/whats-new": "workspace:^"

@@ -50,6 +50,13 @@ import { handleScroll } from './utils';
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
 
+/*
+ * Hotfix for card and button styles hierarchy after <GdprBanner /> removal (see: #70601)
+ * TODO: Find a way to improve our async loading that will not require these imports in the global scope (context: pbNhbs-4xL-p2)
+ */
+import '@automattic/components/src/button/style.scss';
+import '@automattic/components/src/card/style.scss';
+
 import './style.scss';
 
 const HELP_CENTER_STORE = HelpCenter.register();
@@ -356,8 +363,8 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/app-banner' ) && (
 					<AsyncLoad require="calypso/blocks/app-banner" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'gdpr-banner' ) && (
-					<AsyncLoad require="calypso/blocks/gdpr-banner" placeholder={ null } />
+				{ config.isEnabled( 'cookie-banner' ) && (
+					<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
 				) }
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
