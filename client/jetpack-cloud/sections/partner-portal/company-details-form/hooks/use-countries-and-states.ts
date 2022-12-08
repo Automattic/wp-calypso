@@ -100,7 +100,7 @@ export function useCountriesAndStates() {
 		const countries = Object.values( countryOptions );
 		countries.unshift( {
 			value: '',
-			label: translate( '- Select Country -' ),
+			label: translate( 'Type to find country' ),
 			isLabel: false,
 		} );
 

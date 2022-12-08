@@ -160,7 +160,8 @@ export default function CompanyDetailsForm( {
 					{ showCountryFields && (
 						<SearchableDropdown
 							className="company-details-form__dropdown"
-							value={ country }
+							placeholder={ translate( 'Type to find country' ) }
+							value={ country.value.length < 1 ? 'default' : country }
 							options={ countryOptions }
 							isDisabled={ isLoading }
 							onChange={ ( option: any ) => {

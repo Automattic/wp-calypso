@@ -19,7 +19,7 @@ const colourStyles: StylesConfig = {
 		color: 'green',
 		padding: '0 8px 0 4px',
 	} ),
-	singleValue: ( styles ) => ( { ...styles, color: 'var(--color-neutral-70)', fontWeight: 600 } ),
+	singleValue: ( styles ) => ( { ...styles, color: 'var(--color-neutral-70)' } ),
 	indicatorSeparator: ( styles ) => ( { ...styles, display: 'none' } ),
 	dropdownIndicator: ( styles ) => ( { ...styles, color: 'var(--color-neutral-50)' } ),
 };
@@ -37,6 +37,7 @@ const SearchableDropdown: React.FC< Props > = ( {
 	onChange,
 	isDisabled,
 	isLoading,
+	placeholder,
 } ) => {
 	return (
 		<Select
@@ -48,6 +49,7 @@ const SearchableDropdown: React.FC< Props > = ( {
 			onChange={ onChange }
 			styles={ colourStyles }
 			components={ { DropdownIndicator } }
+			placeholder={ placeholder }
 		/>
 	);
 };
