@@ -48,7 +48,7 @@ export function useBundleFeaturesList( planSlug: string ) {
 			slug: 'growth',
 			title: translate( 'Growth' ),
 			features: [
-				translate( 'Social: Basic with 1,000 shares/mo' ),
+				translate( 'Social: Basic with unlimited shares' ),
 				translate( 'CRM: with 30 extensions' ),
 			],
 		},
@@ -102,7 +102,7 @@ export function useBundleFeaturesList( planSlug: string ) {
 			slug: 'growth',
 			title: translate( 'Growth' ),
 			features: [
-				translate( 'Social: Basic with 1,000 shares/mo' ),
+				<b>{ translate( 'Social: Basic with unlimited shares' ) }</b>,
 				<b>{ translate( 'CRM: Entrepreneur with 30 extensions' ) }</b>,
 			],
 		},

@@ -23,7 +23,6 @@ import CreditCardLoading from 'calypso/jetpack-cloud/sections/partner-portal/cre
 import PaymentMethodImage from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/payment-method-image';
 import {
 	useReturnUrl,
-	useLicenseIssuing,
 	useIssueMultipleLicenses,
 } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { assignNewCardProcessor } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/assignment-processor-functions';
@@ -73,11 +72,6 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 		[ window.location.href, getQueryArg ]
 	);
 
-	const product = useMemo(
-		() => ( getQueryArg( window.location.href, 'product' ) || '' ).toString(),
-		[ window.location.href, getQueryArg ]
-	);
-
 	const products = useMemo(
 		() => ( getQueryArg( window.location.href, 'products' ) || '' ).toString(),
 		[]
@@ -93,7 +87,6 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 		[]
 	);
 
-	const [ issueLicense, isLoading ] = useLicenseIssuing( product );
 	const [ issueMultipleLicense, isIssuingMultipleLicenses ] = useIssueMultipleLicenses(
 		products ? products.split( ',' ) : [],
 		siteId ? sites.find( ( site ) => site?.ID === parseInt( siteId ) ) : null
@@ -137,7 +130,7 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 		// assign the license after adding a payment method.
 		//
 		// product - will make sure there will be a license issuing for that product
-		if ( returnQueryArg || product || products ) {
+		if ( returnQueryArg || products ) {
 			reduxDispatch(
 				fetchStoredCards( {
 					startingAfter: '',
@@ -147,18 +140,15 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 		} else {
 			page( partnerPortalBasePath( '/payment-methods' ) );
 		}
-	}, [ returnQueryArg, product, products, reduxDispatch ] );
-
-	useEffect( () => {
-		if ( product && ! paymentMethodRequired ) {
-			issueLicense();
-		}
-	}, [ paymentMethodRequired, product ] );
+	}, [ returnQueryArg, products, reduxDispatch ] );
 
 	useEffect( () => {
 		if ( ! paymentMethodRequired && products ) {
 			issueMultipleLicense();
 		}
+		// Do not update the dependency array with issueMultipleLicense since
+		// it gets changed on every product change, which triggers this `useEffect` to run infinitely.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ paymentMethodRequired ] );
 
 	useEffect( () => {
@@ -176,10 +166,10 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 	const elements = useElements();
 
 	const getPreviousPageLink = () => {
-		if ( products || product ) {
+		if ( products ) {
 			return addQueryArgs(
 				{
-					product: product || products,
+					products,
 					...( siteId && { site_id: siteId } ),
 					...( source && { source } ),
 				},
@@ -194,7 +184,7 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 			<DocumentHead title={ translate( 'Payment Methods' ) } />
 			<SidebarNavigation />
 
-			{ ( !! returnQueryArg || product || products ) && (
+			{ ( !! returnQueryArg || products ) && (
 				<AssignLicenseStepProgress currentStep="addPaymentMethod" selectedSite={ selectedSite } />
 			) }
 
@@ -256,7 +246,7 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 								<Button
 									className="payment-method-add__back-button"
 									href={ getPreviousPageLink() }
-									disabled={ isStripeLoading || isLoading || isIssuingMultipleLicenses }
+									disabled={ isStripeLoading || isIssuingMultipleLicenses }
 									onClick={ onGoToPaymentMethods }
 								>
 									{ translate( 'Go back' ) }

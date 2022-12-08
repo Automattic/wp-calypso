@@ -6,6 +6,10 @@
 	column-gap: 80px;
 	row-gap: 32px;
 
+	margin: 0;
+
+	list-style-type: none;
+
 	@include break-medium {
 		grid-template-columns: repeat(2, 1fr);
 	}
@@ -15,11 +19,6 @@
 	margin-top: 4em;
 	margin-bottom: 48px;
 
-
-	.simple-item-card__icon > img {
-		width: 28px;
-		height: auto;
-	}
 
 	/*
 	* on small screens, if the product is already owned,
@@ -34,11 +33,6 @@
 	}
 }
 
-
-.jetpack-product-store__all-items h3 {
-	margin-bottom: 2.5em;
-}
-
 .jetpack-product-store__all-items--header {
 	margin-top: rem(32px);
 	margin-bottom: rem(24px);
@@ -47,7 +41,7 @@
 
 	@include break-medium {
 		margin-top: rem(72px);
-		margin-bottom: rem(48px);
+		margin-bottom: rem(60px);
 		font-size: $font-title-medium;
 		line-height: rem(29px);
 		font-weight: 600;

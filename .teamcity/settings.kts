@@ -80,8 +80,9 @@ project {
 		password("E2E_CONFIG_ENCRYPTION_KEY_JANUARY_22", "credentialsJSON:b06c1dcd-2188-45e2-b08b-dd97b06e2be6", display = ParameterDisplay.HIDDEN)
 		password("E2E_SECRETS_ENCRYPTION_KEY_MARCH_01_22", "credentialsJSON:5631ff82-dd5d-4eb7-bb08-bdb7e51d4ff6", display = ParameterDisplay.HIDDEN)
 		password("E2E_SECRETS_ENCRYPTION_KEY_AUG_22_22", "credentialsJSON:e74f4821-2033-4ef2-b9f9-95c1d7c3898a", display = ParameterDisplay.HIDDEN)
+		password("E2E_SECRETS_ENCRYPTION_KEY_NOV_30_22", "credentialsJSON:d9abde26-f565-4d21-bdf3-e2e00d3e45ec", display = ParameterDisplay.HIDDEN)
 		password("CONFIG_E2E_ENCRYPTION_KEY_LEGACY", "credentialsJSON:819c139c-90a1-4803-8367-00e5aa5fdb07", display = ParameterDisplay.HIDDEN)
-		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_AUG_22_22%", display = ParameterDisplay.HIDDEN)
+		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_NOV_30_22%", display = ParameterDisplay.HIDDEN)
 
 		// Calypso dashboard AWS secrets for S3 bucket.
 		password("CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID", "credentialsJSON:1f324549-3795-43e5-a8c2-fb81d6e7c15d", display = ParameterDisplay.HIDDEN)

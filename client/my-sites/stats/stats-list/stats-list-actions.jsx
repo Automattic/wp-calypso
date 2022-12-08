@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { Icon, moreHorizontalMobile } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -112,7 +112,7 @@ const StatsListActions = ( { data, moduleName, children } ) => {
 					context: 'Label for hidden menu in a list on the Stats page.',
 				} ) }
 			>
-				<Gridicon icon="ellipsis" />
+				<Icon className="stats-icon" icon={ moreHorizontalMobile } size={ 22 } />
 			</button>
 
 			{ /* prevent actions from triggering row click handler and redirect */ }
