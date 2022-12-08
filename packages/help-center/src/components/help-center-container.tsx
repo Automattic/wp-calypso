@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+import { useHasActiveSupport } from '@automattic/data-stores';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -30,11 +31,13 @@ const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props 
 	return <Draggable { ...props } />;
 };
 
-const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, showChat } ) => {
+const HelpCenterContainer: React.FC< Container > = ( { handleClose } ) => {
 	const { show, isMinimized } = useSelect( ( select ) => ( {
 		show: select( HELP_CENTER_STORE ).isHelpCenterShown(),
 		isMinimized: select( HELP_CENTER_STORE ).getIsMinimized(),
 	} ) );
+
+	const { data: hasActiveChat } = useHasActiveSupport( 'CHAT', show );
 
 	const { setIsMinimized } = useDispatch( HELP_CENTER_STORE );
 
@@ -70,13 +73,13 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, show
 	// https://github.com/react-grid-layout/react-draggable/blob/781ef77c86be9486400da9837f43b96186166e38/README.md
 	const nodeRef = useRef( null );
 
-	if ( ! show || hidden ) {
+	if ( ! show ) {
 		return null;
 	}
 
 	return (
 		<MemoryRouter initialEntries={ history } initialIndex={ index }>
-			{ showChat && <Redirect to="/inline-chat?session=continued" /> }
+			{ hasActiveChat && <Redirect to="/inline-chat?session=continued" /> }
 			<HistoryRecorder />
 			<FeatureFlagProvider>
 				<OptionalDraggable

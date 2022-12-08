@@ -13,42 +13,33 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  */
 import { useHCWindowCommunicator } from '../happychat-window-communicator';
 import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
-import { HELP_CENTER_STORE, USER_STORE, SITE_STORE } from '../stores';
+import { HELP_CENTER_STORE, SITE_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
 
 import '../styles.scss';
 
-const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
+const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
-
-	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
-	const { setUnreadCount } = useDispatch( HELP_CENTER_STORE );
-	const { setSite } = useDispatch( HELP_CENTER_STORE );
-
+	const { setSite, setUnreadCount, setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 	const { show, isMinimized } = useSelect( ( select ) => ( {
 		isMinimized: select( HELP_CENTER_STORE ).getIsMinimized(),
 		show: select( HELP_CENTER_STORE ).isHelpCenterShown(),
 	} ) );
-
-	const hasActiveSupport = useHasActiveSupport( 'CHAT', show && ! hidden );
 	const { unreadCount, closeChat } = useHCWindowCommunicator( isMinimized || ! show );
-
 	useEffect( () => {
 		setUnreadCount( unreadCount );
 	}, [ unreadCount, setUnreadCount ] );
 
+	const { data: hasActiveSupport, isRefetching } = useHasActiveSupport( 'CHAT' );
 	useEffect( () => {
-		if ( hasActiveSupport ) {
+		if ( hasActiveSupport && ! isRefetching ) {
 			setShowHelpCenter( true );
 		}
-	}, [ hasActiveSupport, setShowHelpCenter ] );
+	}, [ hasActiveSupport, setShowHelpCenter, isRefetching ] );
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const primarySiteId = useSelector( ( state ) => getPrimarySiteId( state ) );
-
-	useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
-
 	const currentSite = window?.helpCenterData?.currentSite;
 	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId || primarySiteId ) );
 
@@ -72,14 +63,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 		};
 	}, [ portalParent ] );
 
-	return createPortal(
-		<HelpCenterContainer
-			showChat={ hasActiveSupport }
-			handleClose={ handleClose }
-			hidden={ hidden }
-		/>,
-		portalParent
-	);
+	return createPortal( <HelpCenterContainer handleClose={ handleClose } />, portalParent );
 };
 
 export default HelpCenter;

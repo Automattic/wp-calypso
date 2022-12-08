@@ -3,7 +3,7 @@ import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
-import type { SupportTicket } from '../types';
+import type { SupportSession } from '../types';
 import type { AnalysisReport } from '@automattic/data-stores';
 import type { ReactNode } from 'react';
 
@@ -97,7 +97,7 @@ export function HelpCenterOwnershipNotice( { ownershipResult }: Props ) {
 export function HelpCenterActiveTicketNotice( {
 	tickets,
 }: {
-	tickets: SupportTicket[] | undefined;
+	tickets: SupportSession[] | undefined;
 } ) {
 	const locale = useLocale();
 

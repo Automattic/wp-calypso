@@ -5,7 +5,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Spinner, GMClosureNotice } from '@automattic/components';
-import { useSupportAvailability } from '@automattic/data-stores';
+import { useSupportAvailability, useHasActiveSupport } from '@automattic/data-stores';
 import { isDefaultLocale, getLanguage, useLocale } from '@automattic/i18n-utils';
 import { Notice } from '@wordpress/components';
 import { useEffect, useMemo } from '@wordpress/element';
@@ -16,8 +16,6 @@ import classnames from 'classnames';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link, LinkProps } from 'react-router-dom';
-import { useActiveSupportTicketsQuery } from 'calypso/data/help/use-active-support-tickets-query';
-import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
@@ -43,10 +41,7 @@ export const HelpCenterContactPage: React.FC = () => {
 
 	const renderEmail = useShouldRenderEmailOption();
 	const renderChat = useShouldRenderChatOption();
-	const email = useSelector( getCurrentUserEmail );
-	const { data: tickets, isLoading: isLoadingTickets } = useActiveSupportTicketsQuery( email, {
-		staleTime: 30 * 60 * 1000,
-	} );
+	const { data: tickets, isLoading: isLoadingTickets } = useHasActiveSupport( 'TICKET' );
 	const { data: supportAvailability } = useSupportAvailability( 'CHAT' );
 	const isLoading = renderChat.isLoading || renderEmail.isLoading || isLoadingTickets;
 

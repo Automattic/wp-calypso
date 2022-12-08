@@ -1,4 +1,4 @@
-import apiFetch from '@wordpress/api-fetch';
+import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import { useQuery } from 'react-query';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { OtherSupportAvailability, HappyChatAvailability } from './types';
@@ -6,11 +6,6 @@ import { OtherSupportAvailability, HappyChatAvailability } from './types';
 type ResponseType< T extends 'CHAT' | 'OTHER' > = T extends 'CHAT'
 	? HappyChatAvailability
 	: OtherSupportAvailability;
-
-interface APIFetchOptions {
-	global: boolean;
-	path: string;
-}
 
 export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'OTHER' >(
 	supportType: SUPPORT_TYPE,

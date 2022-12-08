@@ -50,7 +50,7 @@ export interface SearchResult {
 	blog_id?: number;
 }
 
-export interface SupportTicket {
+export interface SupportSession {
 	id?: number;
 	status: string;
 	subject: string;
