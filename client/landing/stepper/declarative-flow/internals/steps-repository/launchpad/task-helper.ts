@@ -25,8 +25,7 @@ export function getEnhancedTasks(
 	const productSlug = site?.plan?.product_slug;
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
-	const linkInBioLinksEditCompleted =
-		site?.options?.launchpad_checklist_tasks_statuses?.links_edited || false;
+	const siteEditCompleted = site?.options?.launchpad_checklist_tasks_statuses?.site_edited || false;
 
 	const siteLaunchCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.site_launched || false;
@@ -66,6 +65,11 @@ export function getEnhancedTasks(
 				case 'design_edited':
 					taskData = {
 						title: translate( 'Edit site design' ),
+						completed: siteEditCompleted,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, siteEditCompleted, task.id );
+							window.location.assign( `/site-editor/${ siteSlug }` );
+						},
 					};
 					break;
 				case 'plan_selected':
@@ -132,9 +136,9 @@ export function getEnhancedTasks(
 				case 'links_added':
 					taskData = {
 						title: translate( 'Add links' ),
-						completed: linkInBioLinksEditCompleted,
+						completed: siteEditCompleted,
 						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, linkInBioLinksEditCompleted, task.id );
+							recordTaskClickTracksEvent( flow, siteEditCompleted, task.id );
 							window.location.assign( `/site-editor/${ siteSlug }` );
 						},
 					};
@@ -143,7 +147,7 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Launch your site' ),
 						completed: siteLaunchCompleted,
-						disabled: ! linkInBioLinksEditCompleted,
+						disabled: ! siteEditCompleted,
 						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
@@ -169,6 +173,7 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Launch your site' ),
 						completed: siteLaunchCompleted,
+						disabled: ! siteEditCompleted,
 						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {

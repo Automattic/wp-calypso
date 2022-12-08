@@ -454,7 +454,7 @@ export interface GlobalStyles {
 
 export interface LaunchPadCheckListTasksStatuses {
 	first_post_published?: boolean;
-	links_edited?: boolean;
+	site_edited?: boolean;
 	site_launched?: boolean;
 	video_uploaded?: boolean;
 }

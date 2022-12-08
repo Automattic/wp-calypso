@@ -144,7 +144,7 @@ export const defaultSiteDetails: SiteDetails = {
 		site_vertical_id: null,
 		launchpad_screen: 'full',
 		launchpad_checklist_tasks_statuses: {
-			links_edited: false,
+			site_edited: false,
 		},
 	},
 	plan: {
