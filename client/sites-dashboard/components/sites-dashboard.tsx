@@ -20,6 +20,7 @@ import {
 	SitesContentControls,
 	handleQueryParamChange,
 } from './sites-content-controls';
+import { SitesDashboardOptInBanner } from './sites-dashboard-opt-in-banner';
 import { useSitesDisplayMode } from './sites-display-mode-switcher';
 import { SitesGrid } from './sites-grid';
 import { SitesTable } from './sites-table';
@@ -204,6 +205,7 @@ export function SitesDashboard( {
 				</HeaderControls>
 			</PageHeader>
 			<PageBodyWrapper>
+				<SitesDashboardOptInBanner sites={ allSites } />
 				<SitesDashboardSitesList
 					sites={ allSites }
 					filtering={ { search } }

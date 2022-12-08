@@ -9,7 +9,7 @@ import { useSupportAvailability } from '@automattic/data-stores';
 import { isDefaultLocale, getLanguage, useLocale } from '@automattic/i18n-utils';
 import { Notice } from '@wordpress/components';
 import { useEffect, useMemo } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
+import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -55,6 +55,7 @@ export const HelpCenterContactPage: React.FC = () => {
 			return;
 		}
 		recordTracksEvent( 'calypso_helpcenter_contact_options_impression', {
+			forceSiteId: true,
 			location: 'help-center',
 			chat_available: renderChat.state === 'AVAILABLE',
 			email_available: renderEmail.render,
@@ -62,7 +63,7 @@ export const HelpCenterContactPage: React.FC = () => {
 	}, [ isLoading, renderChat.state, renderEmail.render ] );
 
 	const liveChatHeaderText = useMemo( () => {
-		if ( isDefaultLocale( locale ) ) {
+		if ( isDefaultLocale( locale ) || ! hasTranslation( 'Live chat (English)' ) ) {
 			return __( 'Live chat', __i18n_text_domain__ );
 		}
 
@@ -80,16 +81,20 @@ export const HelpCenterContactPage: React.FC = () => {
 
 		if ( isLanguageSupported ) {
 			const language = getLanguage( locale )?.name;
-			return language
+			return language && hasTranslation( 'Email (%s)' )
 				? sprintf(
-						/* translators: %s is the language name */
-						__( 'Email (%s)' ),
+						// translators: %s is the language name
+						__( 'Email (%s)', __i18n_text_domain__ ),
 						language
 				  )
 				: __( 'Email', __i18n_text_domain__ );
 		}
 
-		return __( 'Email (English)', __i18n_text_domain__ );
+		if ( hasTranslation( 'Email (English)' ) ) {
+			return __( 'Email (English)', __i18n_text_domain__ );
+		}
+
+		return __( 'Email', __i18n_text_domain__ );
 	}, [ __, locale ] );
 
 	if ( isLoading ) {
@@ -199,6 +204,7 @@ export const HelpCenterContactButton: React.FC = () => {
 
 	const trackContactButtonClicked = () => {
 		recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
+			forceSiteId: true,
 			location: 'help-center',
 			section: sectionName,
 		} );

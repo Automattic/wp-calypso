@@ -97,7 +97,7 @@ export class StartSiteFlow {
 	 * @param {string} vertical Name of the vertical to select
 	 */
 	async enterVertical( vertical: string ): Promise< void > {
-		await this.page.waitForLoadState( 'networkidle' );
+		await this.page.waitForLoadState( 'networkidle', { timeout: 20 * 1000 } );
 
 		const input = this.page.locator( selectors.verticalInput );
 		await input.fill( vertical );

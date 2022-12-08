@@ -16,6 +16,7 @@ import { Page, Browser } from 'playwright';
 import uploadScreenshotsToBlog from '../../lib/martech-tos-helper';
 
 declare const browser: Browser;
+const EXTENDED_TIMEOUT = 20 * 1000;
 
 describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), function () {
 	let page: Page;
@@ -32,7 +33,7 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 		restAPIClient = new RestAPIClient( SecretsManager.secrets.testAccounts.martechTosUser );
 
 		await restAPIClient.setMySettings( { language: 'en' } );
-		await page.reload( { waitUntil: 'networkidle' } );
+		await page.reload( { waitUntil: 'networkidle', timeout: EXTENDED_TIMEOUT } );
 	} );
 
 	it( 'Navigate to Upgrades > Plans', async function () {
@@ -56,7 +57,7 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 				cartCheckoutPage = new CartCheckoutPage( page );
 
 				await restAPIClient.setMySettings( { language: locale } );
-				await page.reload( { waitUntil: 'networkidle' } );
+				await page.reload( { waitUntil: 'networkidle', timeout: EXTENDED_TIMEOUT } );
 			} );
 
 			it( `Screenshot checkout page for ${ locale }`, async function () {

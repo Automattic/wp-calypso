@@ -249,7 +249,7 @@ __metadata:
     mailosaur: ^8.4.0
     nock: ^12.0.3
     node-fetch: ^2.6.7
-    playwright: ^1.26
+    playwright: ^1.28
     totp-generator: ^0.0.12
     typescript: ^4.7.4
   languageName: unknown
@@ -318,9 +318,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/calypso-stats@workspace:apps/stats":
+"@automattic/calypso-stats@workspace:apps/odyssey-stats":
   version: 0.0.0-use.local
-  resolution: "@automattic/calypso-stats@workspace:apps/stats"
+  resolution: "@automattic/calypso-stats@workspace:apps/odyssey-stats"
   dependencies:
     "@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"
@@ -1283,6 +1283,30 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     events: ^3.3.0
     lodash: ^4.17.21
+  languageName: unknown
+  linkType: soft
+
+"@automattic/privacy-toolset@workspace:packages/privacy-toolset":
+  version: 0.0.0-use.local
+  resolution: "@automattic/privacy-toolset@workspace:packages/privacy-toolset"
+  dependencies:
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-storybook": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@storybook/addon-actions": ^6.4.19
+    "@storybook/react": ^6.4.18
+    "@testing-library/jest-dom": ^5.16.2
+    "@testing-library/react": ^12.1.3
+    "@testing-library/react-hooks": 7.0.2
+    "@types/classnames": ^2.3.1
+    classnames: ^2.3.1
+    postcss: ^8.4.5
+    require-from-string: ^2.0.2
+    typescript: ^4.7.4
+    webpack: ^5.68.0
+  peerDependencies:
+    react: ^17.0.2
+    react-dom: ^17.0.2
   languageName: unknown
   linkType: soft
 
@@ -6792,6 +6816,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/classnames@npm:^2.3.1":
+  version: 2.3.1
+  resolution: "@types/classnames@npm:2.3.1"
+  dependencies:
+    classnames: "*"
+  checksum: 6b71e5220aa3f04dbe1eba910f7755b880a2c6e3ba0ebf71fe73db99d58628022de06340a029c97db093e31d7981bc695b6c2ce65b2a58492d245e2cbe44a47d
+  languageName: node
+  linkType: hard
+
 "@types/color-convert@npm:^2.0.0":
   version: 2.0.0
   resolution: "@types/color-convert@npm:2.0.0"
@@ -10286,7 +10319,7 @@ __metadata:
     keytar: ^7.7.0
     lodash: ^4.17.21
     make-dir: ^3.1.0
-    playwright: ^1.26
+    playwright: ^1.28
     postcss: ^8.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -12811,7 +12844,6 @@ __metadata:
     duplicate-package-checker-webpack-plugin: ^3.0.0
     email-validator: ^2.0.4
     emoji-text: ^0.2.6
-    enzyme: ^3.11.0
     express: ^4.17.1
     express-async-handler: ^1.1.4
     express-useragent: ^1.0.15
@@ -13385,7 +13417,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"classnames@npm:^2.2.5, classnames@npm:^2.2.6, classnames@npm:^2.3.1":
+"classnames@npm:*, classnames@npm:^2.2.5, classnames@npm:^2.2.6, classnames@npm:^2.3.1":
   version: 2.3.2
   resolution: "classnames@npm:2.3.2"
   checksum: cd50ead57b4f97436aaa9f9885c6926323efc7c2bea8e3d4eb10e4e972aa6a1cfca1c7a0e06f8a199ca7498d4339e30bb6002e589e61c9f21248cbf3e8b0b18d
@@ -27348,23 +27380,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.27.0":
-  version: 1.27.0
-  resolution: "playwright-core@npm:1.27.0"
+"playwright-core@npm:1.28.1":
+  version: 1.28.1
+  resolution: "playwright-core@npm:1.28.1"
   bin:
     playwright: cli.js
-  checksum: b0e3be60e733e82f6e1f65d1f14a59c98120fb9a82aec93db379f0074cf41dfc2a981a61da87a61f0893f68fdd9665154860add3d63b60889dbcc1a57895718c
+  checksum: ad6dcdd57b1be811443a352eab3ce7b6adb06204a784a76dfa5b41c15e84d96c0bfff931573da2d04f15f4a4f3dd26995afbe84c2cb377576de84168f51c3723
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.26":
-  version: 1.27.0
-  resolution: "playwright@npm:1.27.0"
+"playwright@npm:^1.28":
+  version: 1.28.1
+  resolution: "playwright@npm:1.28.1"
   dependencies:
-    playwright-core: 1.27.0
+    playwright-core: 1.28.1
   bin:
     playwright: cli.js
-  checksum: 063e239793e9f8f35f170e9501861f94a5253d32bf34360fa67371a309bda66a66fab449e8ef76e250f84744a968f22866516d20c37829b19ef3ae02dff6f51b
+  checksum: 308a6053de7de012141bbdedeb3fb28dc6dcce0fa5bd4879da42a77d9b6f445495c6717783854ada8184585c9b0650e012a103e0fa70b3e164a3f358c638866f
   languageName: node
   linkType: hard
 
@@ -36347,7 +36379,7 @@ swiper@4.5.1:
     lodash: ^4.17.20
     mailosaur: ^8.4.0
     node-fetch: ^2.6.1
-    playwright: ^1.26
+    playwright: ^1.28
     postcss: ^8.3.11
     webpack: ^5.63.0
   languageName: unknown

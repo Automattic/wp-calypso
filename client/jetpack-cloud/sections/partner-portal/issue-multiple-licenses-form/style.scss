@@ -31,6 +31,25 @@
 
 .issue-multiple-licenses-form__controls {
 	@include licensing-portal-bottom-action-bar;
+
+	@include breakpoint-deprecated("<660px") {
+		display: flex;
+
+		.issue-multiple-licenses-form__select-license {
+			width: auto;
+			flex-grow: 1;
+		}
+
+		.total-cost {
+			margin-right: 8px;
+		}
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		.total-cost {
+			display: none;
+		}
+	}
 }
 
 .issue-multiple-licenses-form__top {

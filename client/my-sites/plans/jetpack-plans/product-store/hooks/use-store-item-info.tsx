@@ -20,7 +20,7 @@ import {
 	getSiteProducts,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
-import { EXTERNAL_PRODUCTS_LIST } from '../../constants';
+import { EXTERNAL_PRODUCTS_LIST, ITEM_TYPE_PLAN } from '../../constants';
 import productButtonLabel from '../../product-card/product-button-label';
 import { SelectorProduct } from '../../types';
 import { UseStoreItemInfoProps } from '../types';
@@ -74,9 +74,14 @@ export const useStoreItemInfo = ( {
 		[ sitePlan, siteProducts ]
 	);
 
+	//Standalone products are currently not upgradable to yearly
+	//Once the feature is enabled, remove the last condition to enable the upgrade button
 	const getIsUpgradeableToYearly = useCallback(
 		( item: SelectorProduct ) =>
-			getIsOwned( item ) && selectedTerm === TERM_ANNUALLY && item.term === TERM_MONTHLY,
+			getIsOwned( item ) &&
+			selectedTerm === TERM_ANNUALLY &&
+			item.term === TERM_MONTHLY &&
+			item.type === ITEM_TYPE_PLAN,
 		[ getIsOwned, selectedTerm ]
 	);
 

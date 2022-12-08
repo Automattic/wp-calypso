@@ -51,6 +51,12 @@
 
 .promo-card__icons {
 	margin-bottom: 24px;
+	max-height: 55px;
+
+	.woo-icon {
+		height: 55px;
+		border-radius: 12px; // stylelint-disable-line scales/radii
+	}
 }
 
 .promo-card__title {

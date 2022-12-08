@@ -241,13 +241,18 @@ class ManagePurchase extends Component {
 		}
 
 		return (
-			<Button className="manage-purchase__renew-button" onClick={ this.handleRenew } compact>
+			<Button
+				primary
+				className="manage-purchase__renew-button"
+				onClick={ this.handleRenew }
+				compact
+			>
 				{ translate( 'Renew now' ) }
 			</Button>
 		);
 	}
 
-	renderUpgradeButton() {
+	renderUpgradeButton( preventRenewal ) {
 		const { purchase, translate } = this.props;
 
 		const isUpgradeablePlan =
@@ -269,8 +274,10 @@ class ManagePurchase extends Component {
 
 		const upgradeUrl = this.getUpgradeUrl();
 
+		// If the "renew now" button is showing, it will be using primary styles
+		// Show the upgrade button without the primary style if both buttons are present
 		return (
-			<Button primary compact href={ upgradeUrl }>
+			<Button primary={ !! preventRenewal } compact href={ upgradeUrl }>
 				{ translate( 'Upgrade' ) }
 			</Button>
 		);
@@ -318,7 +325,7 @@ class ManagePurchase extends Component {
 		);
 		return this.renderRenewalNavItem(
 			<div>
-				{ translate( 'Renew Annually' ) }
+				{ translate( 'Renew annually' ) }
 				<Badge className="manage-purchase__savings-badge" type="success">
 					{ translate( '%(savings)d%% cheaper than monthly', {
 						args: {
@@ -333,7 +340,7 @@ class ManagePurchase extends Component {
 
 	renderRenewMonthlyNavItem() {
 		const { translate } = this.props;
-		return this.renderRenewalNavItem( translate( 'Renew Monthly' ), this.handleRenewMonthly );
+		return this.renderRenewalNavItem( translate( 'Renew monthly' ), this.handleRenewMonthly );
 	}
 
 	handleUpgradeClick = () => {
@@ -386,7 +393,7 @@ class ManagePurchase extends Component {
 				: translate( 'Pick another product' );
 		} else {
 			iconName = 'upload';
-			buttonText = translate( 'Upgrade plan' );
+			buttonText = isUpgradeablePlan ? translate( 'Upgrade plan' ) : translate( 'Upgrade product' );
 		}
 
 		const upgradeUrl = this.getUpgradeUrl();
@@ -966,7 +973,7 @@ class ManagePurchase extends Component {
 					{ isProductOwner && ! purchase.isLocked && (
 						<div className="manage-purchase__renew-upgrade-buttons">
 							{ preventRenewal && this.renderSelectNewButton() }
-							{ this.renderUpgradeButton() }
+							{ this.renderUpgradeButton( preventRenewal ) }
 							{ ! preventRenewal && this.renderRenewButton() }
 						</div>
 					) }

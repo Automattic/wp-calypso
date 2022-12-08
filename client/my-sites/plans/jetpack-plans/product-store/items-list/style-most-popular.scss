@@ -9,7 +9,7 @@
 	margin-bottom: rem(24px);
 	font-size: $font-title-small;
 	font-weight: 700;
-	line-height: rem(29px);
+	line-height: 1.2;
 
 	@include break-medium {
 		margin-bottom: rem(32px);
@@ -23,6 +23,7 @@
 	display: grid;
 	grid-template-columns: 1fr;
 	grid-gap: 24px;
+	margin: 0;
 
 	@media only screen and (min-width: 821px) {
 		grid-template-columns: 1fr 1fr;

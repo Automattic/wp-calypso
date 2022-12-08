@@ -81,7 +81,6 @@ $search-border-radius: 4px;
 			background-color: var(--color-surface);
 			display: flex;
 			flex-direction: column;
-			gap: 2px;
 		}
 
 		.keyed-suggestions__category {
@@ -121,7 +120,7 @@ $search-border-radius: 4px;
 			font-size: 0;
 			gap: 16px;
 			justify-content: flex-start;
-			padding: 8px 14px;
+			padding: 9px 14px;
 
 			&.is-selected {
 				background-color: var(--color-neutral-0);

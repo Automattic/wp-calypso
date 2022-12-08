@@ -67,6 +67,7 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 		return [
 			{
 				id: 'views',
+				//TODO: replace with an icon when available.
 				icon: (
 					<svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path
@@ -159,8 +160,12 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 
 	return (
 		<div className="stats__all-time-highlights-section">
-			{ siteId && <QuerySiteStats siteId={ siteId } statType="stats" query={ {} } /> }
-			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsInsights" /> }
+			{ siteId && (
+				<>
+					<QuerySiteStats siteId={ siteId } statType="stats" query={ {} } />
+					<QuerySiteStats siteId={ siteId } statType="statsInsights" />
+				</>
+			) }
 
 			<div className="stats__all-time-highlights-mobile">
 				<h1 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h1>

@@ -8,7 +8,8 @@
 		}
 	}
 	.newsletter,
-	.link-in-bio {
+	.link-in-bio,
+	.free {
 		.signup-header {
 			.signup-header__right {
 				visibility: hidden;
@@ -66,7 +67,8 @@
 		}
 	}
 
-	.newsletter {
+	.newsletter,
+	.free {
 		.processing-step__container {
 			background-color: #a2dafe;
 			background-image:

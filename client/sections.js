@@ -144,6 +144,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'settings-reading',
+		paths: [ '/settings/reading' ],
+		module: 'calypso/my-sites/site-settings/settings-reading',
+		group: 'sites',
+	},
+	{
 		name: 'settings-discussion',
 		paths: [ '/settings/discussion' ],
 		module: 'calypso/my-sites/site-settings/settings-discussion',

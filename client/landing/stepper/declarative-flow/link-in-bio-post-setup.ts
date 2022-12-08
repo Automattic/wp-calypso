@@ -2,20 +2,20 @@ import { LINK_IN_BIO_POST_SETUP_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import LinkInBioPostSetup from './internals/steps-repository/link-in-bio-post-setup';
 import { ProvidedDependencies } from './internals/types';
-import type { StepPath } from './internals/steps-repository';
 import type { Flow } from './internals/types';
 
-export const linkInBioPostSetup: Flow = {
+const linkInBioPostSetup: Flow = {
 	name: LINK_IN_BIO_POST_SETUP_FLOW,
 	get title() {
 		return translate( 'Link in Bio' );
 	},
 	useSteps() {
-		return [ 'linkInBioPostSetup' ] as StepPath[];
+		return [ { slug: 'linkInBioPostSetup', component: LinkInBioPostSetup } ];
 	},
 
-	useStepNavigation( currentStep, navigate ) {
+	useStepNavigation( currentStep ) {
 		const flowName = this.name;
 		const siteSlug = useSiteSlug();
 
@@ -28,18 +28,8 @@ export const linkInBioPostSetup: Flow = {
 			}
 		}
 
-		const goBack = () => {
-			return;
-		};
-
-		const goNext = () => {
-			return;
-		};
-
-		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
-			navigate( step );
-		};
-
-		return { goNext, goBack, goToStep, submit };
+		return { submit };
 	},
 };
+
+export default linkInBioPostSetup;
