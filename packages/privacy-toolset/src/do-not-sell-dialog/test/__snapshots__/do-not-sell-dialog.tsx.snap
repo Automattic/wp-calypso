@@ -3,7 +3,11 @@
 exports[`DoNotSellDialog renders correctly 1`] = `
 <div>
   <div
+    aria-describedby="do-not-sell-description"
+    aria-labelledby="do-not-sell-title"
+    aria-modal="true"
     class="do-not-sell"
+    role="dialog"
   >
     <div
       class="do-not-sell__overlay"
@@ -16,15 +20,18 @@ exports[`DoNotSellDialog renders correctly 1`] = `
       >
         <h3
           class="do-not-sell__title"
+          id="do-not-sell-title"
         >
           title
         </h3>
         <button
+          aria-label="Close dialog"
           class="do-not-sell__close-button"
         />
       </div>
       <div
         class="do-not-sell__content"
+        id="do-not-sell-description"
       >
         <p>
           paragraph 1

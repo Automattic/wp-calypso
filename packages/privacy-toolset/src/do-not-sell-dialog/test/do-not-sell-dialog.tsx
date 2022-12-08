@@ -7,7 +7,13 @@ import { DoNotSellDialog } from '..';
 
 const genericContent = {
 	title: 'title',
-	longDescription: [ 'paragraph 1', 'paragraph 2', 'paragraph 3' ],
+	longDescription: (
+		<>
+			<p>paragraph 1</p>
+			<p>paragraph 2</p>
+			<p>paragraph 3</p>
+		</>
+	),
 	toggleLabel: 'toggleLabel',
 	closeButton: 'closeButton',
 };
