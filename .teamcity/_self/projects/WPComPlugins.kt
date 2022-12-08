@@ -29,7 +29,7 @@ object WPComPlugins : Project({
 	buildType(EditingToolkit)
 	buildType(WpcomBlockEditor)
 	buildType(Notifications)
-	buildType(CalypsoStats)
+	buildType(OdysseyStats)
 	buildType(O2Blocks)
 	buildType(HappyBlocks)
 	buildType(Happychat)
@@ -47,7 +47,7 @@ object WPComPlugins : Project({
 				withStatus = successful()
 				withTags = anyOf(
 					"notifications-release-build",
-					"calypso-stats-release-build",
+					"odyssey-stats-release-build",
 					"etk-release-build",
 					"wpcom-block-editor-release-build",
 					"o2-blocks-release-build",
@@ -152,9 +152,9 @@ private object Notifications : WPComPluginBuild(
 	""".trimIndent(),
 )
 
-private object CalypsoStats : WPComPluginBuild(
-	buildId = "WPComPlugins_CalypsoStats",
-	buildName = "Calypso Stats",
+private object OdysseyStats : WPComPluginBuild(
+	buildId = "WPComPlugins_OdysseyStats",
+	buildName = "Odyssey Stats",
 	pluginSlug = "stats",
 	archiveDir = "./dist/",
 	docsLink = "PCYsg-elI-p2",
