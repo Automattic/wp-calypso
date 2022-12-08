@@ -13,15 +13,9 @@
  */
 function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 	if ( ! $blog_id ) {
-		$blog_id = get_current_blog_id();
-	}
-
-	// Do not limit Global Styles on Atomic sites for now, because blog stickers are not exposed
-	// to these sites and the project is still in a development stage that requires sites to have
-	// a certain blog sticker before restricting the feature. This is a temporary check that will
-	// be removed as part of the public launch.
-	if ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) {
-		return false;
+		$blog_id = defined( 'IS_WPCOM' ) && IS_WPCOM
+			? get_current_blog_id()
+			: (int) Jetpack_Options::get_option( 'id' );
 	}
 
 	// Do not limit Global Styles on sites created before we made it a paid feature. This cutoff
@@ -34,8 +28,13 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 		return false;
 	}
 
-	// During the development stage, we only limit Global Styles on sites that have opted in. This
-	// is a temporary check that will be removed as part of the public launch.
+	// During the development stage, we only limit Global Styles on sites that have opted in via
+	// a blog sticker. This is a temporary check that will be removed as part of the public launch.
+	// Note that block stickers are not exposed by default to Atomic sites, so we're not limiting
+	// Global Styles on Atomic sites for now.
+	if ( ! function_exists( 'has_blog_sticker' ) ) {
+		return false;
+	}
 	return has_blog_sticker( 'wpcom-limit-global-styles', $blog_id );
 }
 
