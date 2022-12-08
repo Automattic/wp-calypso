@@ -198,6 +198,10 @@ body.edit__body-white.theme-default.color-scheme {
 	.cancel-purchase--support-link {
 		margin: 20px 16px;
 
+		@media ( min-width: $breakpoint-mobile ) {
+			margin-left: 0;
+		}
+
 		@media ( min-width: $breakpoint-desktop ) {
 			display: none;
 		}
@@ -282,6 +286,14 @@ body.edit__body-white.theme-default.color-scheme {
 	@media ( max-width: $breakpoint-mobile ) {
 		padding: 0 16px;
 	}
+}
+
+.cancel-purchase__refund-information-subtitle {
+	margin-bottom: 30px;
+}
+
+.cancel-purchase__refund-information-description-header {
+	margin-bottom: 16px;
 }
 
 .cancel-purchase__refund-information--list-plan-features {

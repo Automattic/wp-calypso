@@ -1,21 +1,19 @@
 import config from '@automattic/calypso-config';
 import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import { Fragment } from 'react';
 import { connect } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
-import {
-	getName,
-	isRefundable,
-	isSubscription,
-	isOneTimePurchase,
-	maybeWithinRefundPeriod,
-} from 'calypso/lib/purchases';
-import { CALYPSO_CONTACT, UPDATE_NAMESERVERS } from 'calypso/lib/url/support';
+import { getCancellationFeatureByKey } from 'calypso/lib/plans/cancellation-features-list';
+import { getName, isRefundable, isSubscription, isOneTimePurchase } from 'calypso/lib/purchases';
+import { UPDATE_NAMESERVERS } from 'calypso/lib/url/support';
 import { getIncludedDomainPurchase } from 'calypso/state/purchases/selectors';
+import getPlanCancellationFeatures from './get-plan-cancellation-features';
 
 const CancelPurchaseRefundInformation = ( {
 	purchase,
@@ -24,10 +22,12 @@ const CancelPurchaseRefundInformation = ( {
 	cancelBundledDomain,
 	confirmCancelBundledDomain,
 	onCancelConfirmationStateChange,
+	site,
 } ) => {
 	const { refundPeriodInDays } = purchase;
+
 	let text;
-	let showSupportLink = true;
+
 	const onCancelBundledDomainChange = ( event ) => {
 		const newCancelBundledDomainValue = event.currentTarget.value === 'cancel';
 		onCancelConfirmationStateChange( {
@@ -43,6 +43,67 @@ const CancelPurchaseRefundInformation = ( {
 		} );
 	};
 
+	const featuresList = ( productSlug, hasDomain ) => {
+		if ( typeof productSlug !== 'string' ) {
+			return null;
+		}
+
+		const planCancellationFeatures = getPlanCancellationFeatures( productSlug, hasDomain );
+
+		return (
+			<Fragment>
+				<div className="cancel-purchase__refund-information-description-header">
+					{ i18n.translate( 'When your %(productName)s plan expires you will loose access to:', {
+						args: {
+							productName: getName( purchase ),
+						},
+					} ) }
+				</div>
+				<ul className="cancel-purchase__refund-information--list-plan-features">
+					{ planCancellationFeatures.featureList.map( ( cancellationFeature ) => {
+						return (
+							<li key={ cancellationFeature }>
+								<Gridicon
+									className="cancel-purchase__refund-information--item-cross-small"
+									size={ 24 }
+									icon="cross-small"
+								/>
+								{ getCancellationFeatureByKey( cancellationFeature ) }
+							</li>
+						);
+					} ) }
+					{ planCancellationFeatures.andMore && (
+						<li
+							className="cancel-purchase__refund-information--item-more"
+							key="cancellationAndMore"
+						>
+							<span className="cancel-purchase__refund-information--item-more-span">
+								{ i18n.translate( 'And more' ) }
+							</span>
+						</li>
+					) }
+				</ul>
+			</Fragment>
+		);
+	};
+
+	const cancelDescriptionText = () => {
+		const planSlug = site.plan.product_slug;
+
+		return (
+			<div>
+				<p className="cancel-purchase__refund-information-subtitle">
+					{ i18n.translate(
+						'If you cancel your plan subscription your site may appear broken and things may not work properly.'
+					) }
+				</p>
+				<div className="cancel-purchase__refund-information-description">
+					{ featuresList( planSlug, includedDomainPurchase ) }
+				</div>
+			</div>
+		);
+	};
+
 	if ( isRefundable( purchase ) ) {
 		if ( isDomainRegistration( purchase ) ) {
 			text = i18n.translate(
@@ -55,16 +116,8 @@ const CancelPurchaseRefundInformation = ( {
 		}
 
 		if ( isSubscription( purchase ) ) {
-			text = [
-				i18n.translate(
-					"We're sorry to hear the %(productName)s plan didn't fit your current needs, but thank you for giving it a try.",
-					{
-						args: {
-							productName: getName( purchase ),
-						},
-					}
-				),
-			];
+			text = [];
+
 			if ( includedDomainPurchase && isDomainMapping( includedDomainPurchase ) ) {
 				text.push(
 					i18n.translate(
@@ -95,8 +148,6 @@ const CancelPurchaseRefundInformation = ( {
 						}
 					)
 				);
-
-				showSupportLink = false;
 			} else if ( includedDomainPurchase && isDomainRegistration( includedDomainPurchase ) ) {
 				const planCostText = purchase.totalRefundText;
 				if ( isRefundable( includedDomainPurchase ) ) {
@@ -119,7 +170,7 @@ const CancelPurchaseRefundInformation = ( {
 								checked={ ! cancelBundledDomain }
 								onChange={ onCancelBundledDomainChange }
 								label={
-									<>
+									<Fragment>
 										{ i18n.translate( 'Cancel the plan, but keep %(domain)s.', {
 											args: {
 												domain: includedDomainPurchase.meta,
@@ -138,7 +189,7 @@ const CancelPurchaseRefundInformation = ( {
 												},
 											}
 										) }
-									</>
+									</Fragment>
 								}
 							/>
 						</FormLabel>,
@@ -149,7 +200,7 @@ const CancelPurchaseRefundInformation = ( {
 								checked={ cancelBundledDomain }
 								onChange={ onCancelBundledDomainChange }
 								label={
-									<>
+									<Fragment>
 										{ i18n.translate( 'Cancel the plan {{em}}and{{/em}} the domain "%(domain)s."', {
 											args: {
 												domain: includedDomainPurchase.meta,
@@ -168,7 +219,7 @@ const CancelPurchaseRefundInformation = ( {
 												},
 											}
 										) }
-									</>
+									</Fragment>
 								}
 							/>
 						</FormLabel>
@@ -237,8 +288,6 @@ const CancelPurchaseRefundInformation = ( {
 						)
 					);
 				}
-
-				showSupportLink = false;
 			} else if ( isJetpackPurchase && config.isEnabled( 'jetpack/cancel-through-main-flow' ) ) {
 				// Refundable Jetpack subscription
 				text = [];
@@ -323,6 +372,7 @@ const CancelPurchaseRefundInformation = ( {
 
 	return (
 		<div className="cancel-purchase__info">
+			{ isSubscription( purchase ) && ! isJetpackPurchase && cancelDescriptionText() }
 			{ Array.isArray( text ) ? (
 				text.map( ( paragraph, index ) => (
 					<p
@@ -335,28 +385,6 @@ const CancelPurchaseRefundInformation = ( {
 			) : (
 				<p className="cancel-purchase__refund-information">{ text }</p>
 			) }
-
-			{ showSupportLink && (
-				<strong className="cancel-purchase__support-information">
-					{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase )
-						? i18n.translate(
-								'Have a question? Want to request a refund? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
-								{
-									components: {
-										contactLink: <a href={ CALYPSO_CONTACT } />,
-									},
-								}
-						  )
-						: i18n.translate(
-								'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
-								{
-									components: {
-										contactLink: <a href={ CALYPSO_CONTACT } />,
-									},
-								}
-						  ) }
-				</strong>
-			) }
 		</div>
 	);
 };
@@ -368,6 +396,7 @@ CancelPurchaseRefundInformation.propTypes = {
 	cancelBundledDomain: PropTypes.bool,
 	confirmCancelBundledDomain: PropTypes.bool,
 	onCancelConfirmationStateChange: PropTypes.func,
+	site: PropTypes.object.isRequired,
 };
 
 export default connect( ( state, props ) => ( {
