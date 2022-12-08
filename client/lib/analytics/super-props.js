@@ -15,7 +15,7 @@ const getSuperProps = ( reduxStore ) => ( eventProperties ) => {
 	};
 
 	const omitSelectedSite =
-		! eventProperties.forceSiteId && shouldReportOmitBlogId( eventProperties.path );
+		! eventProperties.force_site_id && shouldReportOmitBlogId( eventProperties.path );
 	const selectedSite = omitSelectedSite ? null : getSelectedSite( state );
 
 	if ( selectedSite ) {

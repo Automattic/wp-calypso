@@ -3,6 +3,7 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
+import { getItemVariantDiscountPercentage, getItemVariantCompareToPrice } from './util';
 import type { WPCOMProductVariant } from './types';
 
 const Discount = styled.span`
@@ -81,36 +82,7 @@ const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent
 	);
 };
 
-export function getItemVariantCompareToPrice(
-	variant: WPCOMProductVariant,
-	compareTo?: WPCOMProductVariant
-): number | undefined {
-	// This is the price that the compareTo variant would be if it was using the
-	// billing term of the variant. For example, if the price of the compareTo
-	// variant was 120 per year, and the variant we are displaying here is 5 per
-	// month, then `compareToPriceForVariantTerm` would be (120 / 12) * 1,
-	// or 10 (per month). In this case, selecting the variant would save the user
-	// 50% (5 / 10).
-	const compareToPriceForVariantTerm = compareTo
-		? compareTo.pricePerMonth * variant.termIntervalInMonths
-		: undefined;
-	return compareToPriceForVariantTerm;
-}
-
-export function getItemVariantDiscountPercentage(
-	variant: WPCOMProductVariant,
-	compareTo?: WPCOMProductVariant
-): number {
-	const compareToPriceForVariantTerm = getItemVariantCompareToPrice( variant, compareTo );
-	// Extremely low "discounts" are possible if the price of the longer term has been rounded
-	// if they cannot be rounded to at least a percentage point we should not show them.
-	const discountPercentage = compareToPriceForVariantTerm
-		? Math.floor( 100 - ( variant.price / compareToPriceForVariantTerm ) * 100 )
-		: 0;
-	return discountPercentage;
-}
-
-export const ItemVariantPrice: FunctionComponent< {
+export const ItemVariantDropDownPrice: FunctionComponent< {
 	variant: WPCOMProductVariant;
 	compareTo?: WPCOMProductVariant;
 } > = ( { variant, compareTo } ) => {
