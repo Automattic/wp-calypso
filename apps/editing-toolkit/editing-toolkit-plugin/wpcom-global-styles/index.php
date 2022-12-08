@@ -152,18 +152,14 @@ function wpcom_block_global_styles_frontend( $theme_json ) {
 
 	if ( class_exists( 'WP_Theme_JSON_Data' ) ) {
 		return new WP_Theme_JSON_Data( array(), 'custom' );
-	} elseif ( class_exists( 'WP_Theme_JSON_Data_Gutenberg' ) ) {
-		return new WP_Theme_JSON_Data_Gutenberg( array(), 'custom' );
 	}
 
 	/*
-	 * If both `WP_Theme_JSON_Data` and `WP_Theme_JSON_Data_Gutenberg` are missing,
-	 * then the site is running an old version of WordPress and Gutenberg where we
-	 * cannot block the user styles properly.
+	 * If `WP_Theme_JSON_Data` is missing, then the site is running an old
+	 * version of WordPress we cannot block the user styles properly.
 	 */
 	return $theme_json;
 }
-add_filter( 'theme_json_user', 'wpcom_block_global_styles_frontend' );
 add_filter( 'wp_theme_json_data_user', 'wpcom_block_global_styles_frontend' );
 
 /**
@@ -217,7 +213,15 @@ add_action( 'save_post_wp_global_styles', 'wpcom_track_global_styles', 10, 3 );
  * @return bool Returns true if custom styles are in use.
  */
 function wpcom_global_styles_in_use() {
-	$user_cpt = WP_Theme_JSON_Resolver_Gutenberg::get_user_data_from_wp_global_styles( wp_get_theme() );
+	/*
+	 * If `WP_Theme_JSON_Resolver` is missing, then the site is running an old version
+	 * of WordPress, so we cannot determine whether the site has custom styles.
+	 */
+	if ( ! class_exists( 'WP_Theme_JSON_Resolver' ) ) {
+		return false;
+	}
+
+	$user_cpt = WP_Theme_JSON_Resolver::get_user_data_from_wp_global_styles( wp_get_theme() );
 
 	if ( ! isset( $user_cpt['post_content'] ) ) {
 		do_action( 'global_styles_log', 'global_styles_not_in_use' );
@@ -260,10 +264,10 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 	$upgrade_url = 'https://wordpress.com/plans/' . $site_slug . '?plan=value_bundle';
 
 	if ( wpcom_is_previewing_global_styles() ) {
-		$preview_text     = __( 'Hide premium styles', 'full-site-editing' );
+		$preview_text     = __( 'Hide custom styles', 'full-site-editing' );
 		$preview_location = remove_query_arg( 'preview-global-styles' );
 	} else {
-		$preview_text     = __( 'Preview styles before upgrading', 'full-site-editing' );
+		$preview_text     = __( 'Preview custom styles', 'full-site-editing' );
 		$preview_location = add_query_arg( 'preview-global-styles', '' );
 	}
 
@@ -271,7 +275,7 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 		<div class="launch-bar-global-styles-button">
 			<div class="launch-bar-global-styles-popover hidden">
 				<div>
-					<?php echo esc_html__( 'Publish your style changes and unlock tons of other features by upgrading to a Premium plan.', 'full-site-editing' ); ?>
+					<?php echo esc_html__( 'Your site contains customized styles that will only be visible once you upgrade to a Premium plan.', 'full-site-editing' ); ?>
 				</div>
 				<a
 					class="launch-bar-global-styles-upgrade-button"
@@ -291,7 +295,7 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 					<?php echo esc_html__( 'Styles', 'full-site-editing' ); ?>
 				</span>
 				<span class="is-desktop">
-					<?php echo esc_html__( 'Publish styles', 'full-site-editing' ); ?>
+					<?php echo esc_html__( 'Custom styles', 'full-site-editing' ); ?>
 				</span>
 			</a>
 		</div>

@@ -267,7 +267,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 		return (
 			<FormattedHeader
 				id="choose-a-plan-header"
-				headerText="Choose a plan"
+				headerText={ __( 'Choose a plan' ) }
 				subHeaderText={ __( 'Unlock a powerful bundle of features for your video site.' ) }
 				align="center"
 			/>

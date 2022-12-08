@@ -2,7 +2,13 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Onboard } from '@automattic/data-stores';
 import { select } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
-import { isLinkInBioFlow, isNewsletterOrLinkInBioFlow, LINK_IN_BIO_FLOW } from './utils';
+import {
+	isLinkInBioFlow,
+	isNewsletterOrLinkInBioFlow,
+	LINK_IN_BIO_FLOW,
+	FREE_FLOW,
+	isFreeFlow,
+} from './utils';
 
 const ONBOARD_STORE = Onboard.register();
 
@@ -52,10 +58,10 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 			blogdescription: siteDescription,
 		};
 
-		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
+		if ( isNewsletterOrLinkInBioFlow( flowName ) || isFreeFlow( flowName ) ) {
 			// link-in-bio and link-in-bio-tld are considered the same intent.
-			if ( isLinkInBioFlow( flowName ) ) {
-				settings.site_intent = LINK_IN_BIO_FLOW;
+			if ( isLinkInBioFlow( flowName ) || isFreeFlow( flowName ) ) {
+				settings.site_intent = isLinkInBioFlow( flowName ) ? LINK_IN_BIO_FLOW : FREE_FLOW;
 				if ( selectedPatternContent ) {
 					const pattern = {
 						content: selectedPatternContent,

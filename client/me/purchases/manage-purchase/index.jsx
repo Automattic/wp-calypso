@@ -241,13 +241,18 @@ class ManagePurchase extends Component {
 		}
 
 		return (
-			<Button className="manage-purchase__renew-button" onClick={ this.handleRenew } compact>
+			<Button
+				primary
+				className="manage-purchase__renew-button"
+				onClick={ this.handleRenew }
+				compact
+			>
 				{ translate( 'Renew now' ) }
 			</Button>
 		);
 	}
 
-	renderUpgradeButton() {
+	renderUpgradeButton( preventRenewal ) {
 		const { purchase, translate } = this.props;
 
 		const isUpgradeablePlan =
@@ -269,8 +274,10 @@ class ManagePurchase extends Component {
 
 		const upgradeUrl = this.getUpgradeUrl();
 
+		// If the "renew now" button is showing, it will be using primary styles
+		// Show the upgrade button without the primary style if both buttons are present
 		return (
-			<Button primary compact href={ upgradeUrl }>
+			<Button primary={ !! preventRenewal } compact href={ upgradeUrl }>
 				{ translate( 'Upgrade' ) }
 			</Button>
 		);
@@ -966,7 +973,7 @@ class ManagePurchase extends Component {
 					{ isProductOwner && ! purchase.isLocked && (
 						<div className="manage-purchase__renew-upgrade-buttons">
 							{ preventRenewal && this.renderSelectNewButton() }
-							{ this.renderUpgradeButton() }
+							{ this.renderUpgradeButton( preventRenewal ) }
 							{ ! preventRenewal && this.renderRenewButton() }
 						</div>
 					) }

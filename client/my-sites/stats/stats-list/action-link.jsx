@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { Icon, external } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -38,7 +38,7 @@ class StatsActionLink extends PureComponent {
 						context: 'Stats ARIA label: View content in new window action',
 					} ) }
 				>
-					<Gridicon icon="external" size={ 18 } />
+					<Icon className="stats-icon" icon={ external } size={ 18 } />
 					<span className="stats-list__item-action-label module-content-list-item-action-label module-content-list-item-action-label-view">
 						{ translate( 'View', { context: 'Stats: List item action to view content' } ) }
 					</span>

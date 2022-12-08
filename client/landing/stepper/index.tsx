@@ -4,12 +4,13 @@ import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
 import { User as UserStore } from '@automattic/data-stores';
+import { ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
 import ReactDom from 'react-dom';
 import { QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
-import { BrowserRouter, useLocation, Redirect } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { setupErrorLogger } from 'calypso/boot/common';
 import { setupLocale } from 'calypso/boot/locale';
@@ -29,23 +30,15 @@ import { setStore } from 'calypso/state/redux-store';
 import { requestSites } from 'calypso/state/sites/actions';
 import { WindowLocaleEffectManager } from '../gutenboarding/components/window-locale-effect-manager';
 import { setupWpDataDebug } from '../gutenboarding/devtools';
-import { anchorFmFlow } from './declarative-flow/anchor-fm-flow';
-import { importFlow } from './declarative-flow/import-flow';
+import { isAnchorFmFlow } from './declarative-flow/anchor-fm-flow';
 import { FlowRenderer } from './declarative-flow/internals';
-import { linkInBio } from './declarative-flow/link-in-bio';
-import { linkInBioPostSetup } from './declarative-flow/link-in-bio-post-setup';
-import { newsletter } from './declarative-flow/newsletter';
-import { newsletterPostSetup } from './declarative-flow/newsletter-post-setup';
-import { pluginBundleFlow } from './declarative-flow/plugin-bundle-flow';
-import { podcasts } from './declarative-flow/podcasts';
-import { siteSetupFlow } from './declarative-flow/site-setup-flow';
-import { ecommerceFlow, ecommerceFlowRecurTypes } from './declarative-flow/tailored-ecommerce-flow';
-import { videopress } from './declarative-flow/videopress';
 import 'calypso/components/environment-badge/style.scss';
-import { useAnchorFmParams } from './hooks/use-anchor-fm-params';
+import availableFlows from './declarative-flow/registered-flows';
 import { useQuery } from './hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from './stores';
 import type { Flow } from './declarative-flow/internals/types';
+
+declare const window: AppWindow;
 
 function generateGetSuperProps() {
 	return () => ( {
@@ -63,49 +56,29 @@ function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
 	reduxStore.dispatch( requestSites() );
 }
 
-interface configurableFlows {
-	flowName: string;
-	pathToFlow: Flow;
+function determineFlow() {
+	if ( isAnchorFmFlow() ) {
+		return availableFlows[ 'anchor-fm-flow' ];
+	}
+
+	const flowNameFromPathName = window.location.pathname.split( '/' )[ 2 ];
+
+	return availableFlows[ flowNameFromPathName ] || availableFlows[ 'site-setup' ];
 }
 
-const availableFlows: Array< configurableFlows > = [
-	{ flowName: 'newsletter', pathToFlow: newsletter },
-	{ flowName: 'import-focused', pathToFlow: importFlow },
-	{ flowName: 'videopress', pathToFlow: videopress },
-	{ flowName: 'link-in-bio', pathToFlow: linkInBio },
-	{ flowName: 'podcasts', pathToFlow: podcasts },
-	{ flowName: 'link-in-bio-post-setup', pathToFlow: linkInBioPostSetup },
-	{ flowName: 'newsletter-post-setup', pathToFlow: newsletterPostSetup },
-	config.isEnabled( 'themes/plugin-bundling' )
-		? { flowName: 'plugin-bundle', pathToFlow: pluginBundleFlow }
-		: null,
-	config.isEnabled( 'signup/tailored-ecommerce' )
-		? { flowName: 'ecommerce', pathToFlow: ecommerceFlow }
-		: null,
-].filter( ( item ) => item !== null ) as Array< configurableFlows >;
-
-const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { user } ) => {
+/**
+ * TODO: this is no longer a switch and should be removed
+ */
+const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flow } > = ( {
+	user,
+	flow,
+} ) => {
 	const { receiveCurrentUser } = useDispatch( USER_STORE );
 	const { setEcommerceFlowRecurType } = useDispatch( ONBOARD_STORE );
-	const location = useLocation();
-	const { anchorFmPodcastId } = useAnchorFmParams();
 
-	const flowNameFromParam = useQuery().get( 'flow' );
-	const flowNameFromPathName = location.pathname.split( '/' )[ 1 ];
 	const recurType = useQuery().get( 'recur' );
 
-	// keep supporting the `flow` query param for backwards compatibility
-	if ( availableFlows.find( ( flow ) => flow.flowName === flowNameFromParam ) ) {
-		return <Redirect to={ `/${ flowNameFromParam }` } />;
-	}
-
-	let flow =
-		availableFlows.find( ( f ) => f.flowName === flowNameFromPathName )?.pathToFlow ||
-		siteSetupFlow;
-	if ( anchorFmPodcastId ) {
-		flow = anchorFmFlow;
-	}
-	if ( flow?.name === ecommerceFlow.name ) {
+	if ( flow.name === ECOMMERCE_FLOW ) {
 		const isValidRecurType =
 			recurType && Object.values( ecommerceFlowRecurTypes ).includes( recurType );
 		if ( isValidRecurType ) {
@@ -117,17 +90,19 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { 
 
 	user && receiveCurrentUser( user as UserStore.CurrentUser );
 
-	// console.log(flow);
-	// return;
 	return <FlowRenderer flow={ flow } />;
 };
 interface AppWindow extends Window {
 	BUILD_TARGET?: string;
 }
 
-declare const window: AppWindow;
-
 window.AppBoot = async () => {
+	// backward support the old Stepper URL structure (?flow=something)
+	const flowNameFromQueryParam = new URLSearchParams( window.location.search ).get( 'flow' );
+	if ( flowNameFromQueryParam && availableFlows[ flowNameFromQueryParam ] ) {
+		window.location.href = `/setup/${ flowNameFromQueryParam }`;
+	}
+
 	// put the proxy iframe in "all blog access" mode
 	// see https://github.com/Automattic/wp-calypso/pull/60773#discussion_r799208216
 	requestAllBlogsAccess();
@@ -135,6 +110,7 @@ window.AppBoot = async () => {
 	setupWpDataDebug();
 	addHotJarScript();
 	retargetFullStory();
+
 	// Add accessible-focus listener.
 	accessibleFocus();
 
@@ -156,13 +132,16 @@ window.AppBoot = async () => {
 
 	setupErrorLogger( reduxStore );
 
+	const flowLoader = determineFlow();
+	const { default: flow } = await flowLoader();
+
 	ReactDom.render(
 		<CalypsoI18nProvider i18n={ defaultCalypsoI18n }>
 			<Provider store={ reduxStore }>
 				<QueryClientProvider client={ queryClient }>
 					<WindowLocaleEffectManager />
 					<BrowserRouter basename="setup">
-						<FlowSwitch user={ user as UserStore.CurrentUser } />
+						<FlowSwitch user={ user as UserStore.CurrentUser } flow={ flow } />
 						{ config.isEnabled( 'cookie-banner' ) && (
 							<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
 						) }
