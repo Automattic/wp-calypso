@@ -10,8 +10,7 @@ const PostStatsCardVariations = ( props ) => (
 		viewCount={ 912 }
 		post={ {
 			date: '2022-12-07T14:24:48+00:00',
-			post_thumbnail:
-				'https://s0.wp.com/wp-content/themes/a8c/jetpackme-new/images/2021/home/security-2x.webp',
+			post_thumbnail: 'https://images.unsplash.com/photo-1670510521067-2e94183f9803',
 			title: 'The moody trail',
 		} }
 		{ ...props }
