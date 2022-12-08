@@ -363,7 +363,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		// These conditions should be true at this point, but just in case...
 		if ( selectedDesign && selectedStyleVariation ) {
 			recordTracksEvent(
-				'calypso_signup_design_premium_global_styles_modal_show',
+				'calypso_signup_design_global_styles_gating_modal_show',
 				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
 			);
 			setShowPremiumGlobalStylesModal( true );
@@ -374,7 +374,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		// These conditions should be true at this point, but just in case...
 		if ( selectedDesign && selectedStyleVariation && siteSlugOrId ) {
 			recordTracksEvent(
-				'calypso_signup_design_premium_global_styles_modal_checkout_button_click',
+				'calypso_signup_design_global_styles_gating_modal_checkout_button_click',
 				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
 			);
 
