@@ -91,6 +91,7 @@ export default function usePrepareProductsForCart( {
 		isLoggedOutCart,
 		isNoSiteCart,
 		isJetpackCheckout,
+		isGiftPurchase,
 	} );
 	debug( 'isLoading', state.isLoading );
 	debug( 'handler is', addHandler );
@@ -167,6 +168,7 @@ function chooseAddHandler( {
 	isLoggedOutCart,
 	isNoSiteCart,
 	isJetpackCheckout,
+	isGiftPurchase,
 }: {
 	isLoading: boolean;
 	originalPurchaseId: string | number | null | undefined;
@@ -174,6 +176,7 @@ function chooseAddHandler( {
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
 	isJetpackCheckout?: boolean;
+	isGiftPurchase?: boolean;
 } ): AddHandler {
 	if ( isJetpackCheckout ) {
 		return 'addProductFromSlug';
@@ -183,7 +186,11 @@ function chooseAddHandler( {
 		return 'doNotAdd';
 	}
 
-	if ( isLoggedOutCart || isNoSiteCart ) {
+	/*
+	 * As Gifting purchases are actually renewals and validate the subscriptionID + product
+	 * with the server, we have to avoid using localStorage.
+	 */
+	if ( ( ! isGiftPurchase && isLoggedOutCart ) || isNoSiteCart ) {
 		return 'addFromLocalStorage';
 	}
 

@@ -459,8 +459,10 @@ __metadata:
     "@emotion/react": ^11.4.1
     "@emotion/styled": ^11.3.0
     "@storybook/react": ^6.4.18
+    "@testing-library/dom": ^8.13.0
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
+    "@testing-library/user-event": ^14.2.0
     "@wordpress/i18n": ^4.9.0
     "@wordpress/react-i18n": ^3.7.0
     debug: ^4.3.3
@@ -1284,7 +1286,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/privacy-toolset@workspace:packages/privacy-toolset":
+"@automattic/privacy-toolset@workspace:^, @automattic/privacy-toolset@workspace:packages/privacy-toolset":
   version: 0.0.0-use.local
   resolution: "@automattic/privacy-toolset@workspace:packages/privacy-toolset"
   dependencies:
@@ -36203,6 +36205,7 @@ swiper@4.5.1:
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
+    "@automattic/privacy-toolset": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/whats-new": "workspace:^"
