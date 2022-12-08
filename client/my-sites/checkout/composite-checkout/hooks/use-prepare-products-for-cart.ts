@@ -186,6 +186,10 @@ function chooseAddHandler( {
 		return 'doNotAdd';
 	}
 
+	/*
+	 * As Gifting purchases are actually renewals and validate the subscriptionID + product
+	 * with the server, we have to avoid using localStorage.
+	 */
 	if ( ( ! isGiftPurchase && isLoggedOutCart ) || isNoSiteCart ) {
 		return 'addFromLocalStorage';
 	}

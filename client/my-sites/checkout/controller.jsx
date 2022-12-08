@@ -141,10 +141,9 @@ export function checkout( context, next ) {
 
 	const isLoggedOutCart =
 		isJetpackCheckout ||
-		( isLoggedOut && context.pathname.includes( '/checkout/no-site' ) ) ||
 		( isLoggedOut &&
-			context.pathname.includes( '/gift/' ) &&
-			context.pathname.startsWith( '/checkout/' ) );
+			( context.pathname.includes( '/checkout/no-site' ) ||
+				context.pathname.includes( '/gift/' ) ) );
 	const isNoSiteCart =
 		isJetpackCheckout ||
 		( ! isLoggedOut &&
