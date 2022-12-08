@@ -27,8 +27,7 @@ describe( 'BackButton', () => {
 	it( 'navigates to the root when back to root is true', async () => {
 		render( <BackButton backToRoot /> );
 
-		const btn = screen.getByRole( 'button' );
-		await userEvent.click( btn );
+		await userEvent.click( screen.getByRole( 'button' ) );
 
 		expect( mockHistoryPush ).toHaveBeenCalledWith( '/' );
 	} );
@@ -36,8 +35,7 @@ describe( 'BackButton', () => {
 	it( 'navigates to the previous page by default', async () => {
 		render( <BackButton /> );
 
-		const btn = screen.getByRole( 'button' );
-		await userEvent.click( btn );
+		await userEvent.click( screen.getByRole( 'button' ) );
 
 		expect( mockHistoryGoBack ).toHaveBeenCalled();
 	} );
@@ -46,8 +44,7 @@ describe( 'BackButton', () => {
 		const onClickSpy = jest.fn();
 		render( <BackButton onClick={ onClickSpy } /> );
 
-		const btn = screen.getByRole( 'button' );
-		await userEvent.click( btn );
+		await userEvent.click( screen.getByRole( 'button' ) );
 
 		expect( onClickSpy ).toHaveBeenCalled();
 		expect( mockHistoryGoBack ).not.toHaveBeenCalled();
