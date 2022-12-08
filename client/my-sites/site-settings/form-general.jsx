@@ -592,7 +592,7 @@ export class SiteSettingsFormGeneral extends Component {
 		} else {
 			btnComponent = (
 				<Button
-					href={ `/start/launch-site?siteSlug=${ siteSlug }&source=general-settings&hide_initial_query=yes` }
+					href={ `/start/launch-site?siteSlug=${ siteSlug }&source=general-settings&sourceSiteSlug=${ siteSlug }&hide_initial_query=yes` }
 				>
 					{ btnText }
 				</Button>

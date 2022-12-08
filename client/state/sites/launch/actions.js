@@ -39,9 +39,13 @@ export const launchSiteOrRedirectToLaunchSignupFlow =
 
 		const siteSlug = getSiteSlug( getState(), siteId );
 
+		// If we're telling the launch flow where we're coming from, then we should also
+		// say which site it's from too.
+		const sourceSiteSlug = source && siteSlug;
+
 		// TODO: consider using the `page` library instead of calling using `location.href` here
 		window.location.href = addQueryArgs(
-			{ siteSlug, source, hide_initial_query: 'yes' },
+			{ siteSlug, source, sourceSiteSlug, hide_initial_query: 'yes' },
 			'/start/launch-site'
 		);
 	};
