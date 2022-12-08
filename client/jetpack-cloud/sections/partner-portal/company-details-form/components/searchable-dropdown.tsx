@@ -22,6 +22,7 @@ const colourStyles: StylesConfig = {
 	singleValue: ( styles ) => ( { ...styles, color: 'var(--color-neutral-70)' } ),
 	indicatorSeparator: ( styles ) => ( { ...styles, display: 'none' } ),
 	dropdownIndicator: ( styles ) => ( { ...styles, color: 'var(--color-neutral-50)' } ),
+	placeholder: ( styles ) => ( { ...styles, color: 'var(--color-neutral-10)' } ),
 };
 
 const DropdownIndicator = ( props: DropdownIndicatorProps ) => (
