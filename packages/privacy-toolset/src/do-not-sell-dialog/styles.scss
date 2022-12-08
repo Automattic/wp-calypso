@@ -1,6 +1,8 @@
 @use "sass:math";
 @import "../styles/fonts.scss";
 
+$zIndexBase: 50002;
+
 .do-not-sell__dialog,
 .do-not-sell__dialog * {
 	font-family: $default-font-family;
@@ -20,10 +22,10 @@
 	height: auto;
 	max-height: 90vh;
 	background-color: #fff;
-	z-index: 1;
 	overflow-y: auto;
 	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.15), 0 1px 0 rgba(0, 0, 0, 0.05);
 	border-radius: 4px;
+	z-index: $zIndexBase;
 }
 
 .do-not-sell__header {
@@ -109,5 +111,5 @@
 	width: 100%;
 	height: 100%;
 	background-color: rgba(0, 0, 0, 0.2);
-	z-index: 0;
+	z-index: $zIndexBase - 1;
 }
