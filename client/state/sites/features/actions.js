@@ -57,7 +57,7 @@ export function fetchJetpackSitesFeatures() {
 		} );
 
 		return wpcom.req
-			.get( `/me/sites/features` )
+			.get( '/me/sites/features' )
 			.then( ( data ) => {
 				const features = {};
 				for ( const siteId in data.features ) {
