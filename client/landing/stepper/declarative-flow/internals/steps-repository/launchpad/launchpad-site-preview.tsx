@@ -4,7 +4,6 @@ import { useTranslate } from 'i18n-calypso';
 import { DEVICE_TYPE } from 'calypso/../packages/design-picker/src/constants';
 import { Device } from 'calypso/../packages/design-picker/src/types';
 import WebPreview from 'calypso/components/web-preview/component';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import PreviewToolbar from '../design-setup/preview-toolbar';
 
@@ -16,7 +15,6 @@ const LaunchpadSitePreview = ( {
 	flow: string | null;
 } ) => {
 	const translate = useTranslate();
-	const color = useQuery().get( 'color' );
 	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 
 	const previewUrl = siteSlug ? 'https://' + siteSlug : null;
@@ -42,7 +40,6 @@ const LaunchpadSitePreview = ( {
 			// hide cookies popup
 			preview: true,
 			do_preview_no_interactions: ! isVideoPressFlow,
-			...( color && { preview_accent_color: color } ),
 			...( globalStylesInUse && shouldLimitGlobalStyles && { 'preview-global-styles': true } ),
 		} );
 	}
