@@ -69,7 +69,7 @@ export function getEnhancedTasks(
 						title: translate( 'Choose a Plan' ),
 						subtitle: displayGlobalStylesWarning
 							? translate(
-									'Upgrade to a Premium plan to publish your color changes and unlock tons of other features.'
+									'Your site contains custom colors that will only be visible once you upgrade to a Premium plan.'
 							  )
 							: '',
 						disabled: isVideoPressFlow( flow ),

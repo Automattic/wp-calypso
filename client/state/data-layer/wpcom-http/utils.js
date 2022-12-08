@@ -211,12 +211,12 @@ function createRequestAction( options, action ) {
 	} = options;
 
 	const error = getError( action );
-	if ( error ) {
+	if ( undefined !== error ) {
 		return onError( action, error );
 	}
 
 	const data = getData( action );
-	if ( data ) {
+	if ( undefined !== data ) {
 		try {
 			return onSuccess( action, fromApi( data ) );
 		} catch ( err ) {
@@ -225,12 +225,12 @@ function createRequestAction( options, action ) {
 	}
 
 	const progress = getProgress( action );
-	if ( progress ) {
+	if ( undefined !== progress ) {
 		return onProgress( action, progress );
 	}
 
 	const record = getStreamRecord( action );
-	if ( record ) {
+	if ( undefined !== record ) {
 		return onStreamRecord( action, record );
 	}
 
