@@ -153,16 +153,13 @@ const CancelPurchaseRefundInformation = ( {
 				if ( isRefundable( includedDomainPurchase ) ) {
 					text.push(
 						i18n.translate(
-							'Your plan included the custom domain %(domain)s. You can cancel your domain as well as the plan, but keep ' +
-								'in mind that when you cancel a domain you risk losing it forever, and visitors to your site may ' +
-								'experience difficulties accessing it.',
+							'Your plan includes the custom domain %(domain)s. What would you like to do with the domain?',
 							{
 								args: {
 									domain: includedDomainPurchase.meta,
 								},
 							}
 						),
-						i18n.translate( "We'd like to offer you two options to choose from:" ),
 						<FormLabel key="keep_bundled_domain">
 							<FormRadio
 								name="keep_bundled_domain_false"
@@ -171,24 +168,27 @@ const CancelPurchaseRefundInformation = ( {
 								onChange={ onCancelBundledDomainChange }
 								label={
 									<Fragment>
-										{ i18n.translate( 'Cancel the plan, but keep %(domain)s.', {
-											args: {
-												domain: includedDomainPurchase.meta,
-											},
-										} ) }
-										<br />
-										{ i18n.translate(
-											"You'll receive a partial refund of %(refundAmount)s -- the cost of the %(productName)s " +
-												'plan, minus %(domainCost)s for the domain. There will be no change to your domain ' +
-												"registration, and you're free to use it on WordPress.com or transfer it elsewhere.",
-											{
+										<span className="cancel-budnled-domain__option-header">
+											{ i18n.translate( 'Cancel the plan, but keep “%(domain)s”', {
 												args: {
-													productName: getName( purchase ),
-													domainCost: includedDomainPurchase.costToUnbundleText,
-													refundAmount: purchase.refundText,
+													domain: includedDomainPurchase.meta,
 												},
-											}
-										) }
+											} ) }
+										</span>
+										<span className="cancel-budnled-domain__option-description">
+											{ i18n.translate(
+												"You'll receive a partial refund of %(refundAmount)s -- the cost of the %(productName)s " +
+													'plan, minus %(domainCost)s for the domain. There will be no change to your domain ' +
+													"registration, and you're free to use it on WordPress.com or transfer it elsewhere.",
+												{
+													args: {
+														productName: getName( purchase ),
+														domainCost: includedDomainPurchase.costToUnbundleText,
+														refundAmount: purchase.refundText,
+													},
+												}
+											) }
+										</span>
 									</Fragment>
 								}
 							/>
@@ -201,28 +201,45 @@ const CancelPurchaseRefundInformation = ( {
 								onChange={ onCancelBundledDomainChange }
 								label={
 									<Fragment>
-										{ i18n.translate( 'Cancel the plan {{em}}and{{/em}} the domain "%(domain)s."', {
-											args: {
-												domain: includedDomainPurchase.meta,
-											},
-											components: {
-												em: <em />,
-											},
-										} ) }
-										<br />
-										{ i18n.translate(
-											"You'll receive a full refund of %(planCost)s. The domain will be cancelled, and it's possible " +
-												"you'll lose it permanently.",
-											{
-												args: {
-													planCost: planCostText,
-												},
-											}
-										) }
+										<span className="cancel-budnled-domain__option-header">
+											{ i18n.translate(
+												'Cancel the plan {{strong}}and{{/strong}} the domain “%(domain)s”',
+												{
+													args: {
+														domain: includedDomainPurchase.meta,
+													},
+													components: {
+														strong: <strong />,
+													},
+												}
+											) }
+										</span>
+										<span className="cancel-budnled-domain__option-description">
+											{ i18n.translate(
+												"You'll receive a partial refund of %(planCost)s. The domain will be cancelled, you risk losaing it forever," +
+													'and visitors to your site may experience difficulties accessing it.',
+												{
+													args: {
+														planCost: planCostText,
+													},
+												}
+											) }
+										</span>
 									</Fragment>
 								}
 							/>
-						</FormLabel>
+						</FormLabel>,
+						i18n.translate(
+							"Since you are cancelling your plan within 7 days of purchasing you'll receive a {{span}}refund of %(refundAmount)s{{/span}} and it will be removed from your site immediately.",
+							{
+								args: {
+									refundAmount: purchase.refundText,
+								},
+								components: {
+									span: <span class="refundAmount" />,
+								},
+							}
+						)
 					);
 
 					if ( cancelBundledDomain ) {

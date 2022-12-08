@@ -196,9 +196,20 @@ body.edit__body-white.theme-default.color-scheme {
 		}
 
 		.form-label {
-			padding: 10px;
+			padding: 20px 10px;
 			border: solid 1px #dcdcde;
 			border-radius: 4px;
+
+			span {
+				display: block;
+				&.cancel-budnled-domain__option-header {
+					margin-bottom: 10px;
+				}
+			}
+		}
+
+		.refundAmount {
+			color: #48a03e;
 		}
 	}
 
