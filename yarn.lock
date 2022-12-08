@@ -318,9 +318,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/calypso-stats@workspace:apps/stats":
+"@automattic/calypso-stats@workspace:apps/odyssey-stats":
   version: 0.0.0-use.local
-  resolution: "@automattic/calypso-stats@workspace:apps/stats"
+  resolution: "@automattic/calypso-stats@workspace:apps/odyssey-stats"
   dependencies:
     "@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"

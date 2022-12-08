@@ -155,7 +155,7 @@ private object Notifications : WPComPluginBuild(
 private object OdysseyStats : WPComPluginBuild(
 	buildId = "WPComPlugins_OdysseyStats",
 	buildName = "Odyssey Stats",
-	pluginSlug = "stats",
+	pluginSlug = "odyssey-stats",
 	archiveDir = "./dist/",
 	docsLink = "PCYsg-elI-p2",
 )
