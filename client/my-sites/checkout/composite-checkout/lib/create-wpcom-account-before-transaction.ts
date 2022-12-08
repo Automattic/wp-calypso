@@ -15,8 +15,8 @@ export async function createWpcomAccountBeforeTransaction(
 	);
 
 	/*
-	 * Temporarily, we treat Gifting as jetpack-userless-checkout to
-	 * avoid user email validation
+	 * We treat Gifting as jetpack-userless-checkout to create and verify the user
+	 * on success checkout.
 	 */
 	return createAccount( {
 		signupFlowName:

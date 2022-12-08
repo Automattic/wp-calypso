@@ -87,6 +87,9 @@ export default function CheckoutMainWrapper( {
 	if ( ! siteSlug ) {
 		siteSlug = 'no-site';
 
+		/*
+		 * As Gifting purchases are for sites, we avoid to use no-user.
+		 */
 		if ( ( ! isGiftPurchase && isLoggedOutCart ) || isNoSiteCart ) {
 			siteSlug = 'no-user';
 		}
