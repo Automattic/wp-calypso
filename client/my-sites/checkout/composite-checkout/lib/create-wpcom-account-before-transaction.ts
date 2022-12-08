@@ -10,11 +10,15 @@ export async function createWpcomAccountBeforeTransaction(
 	const isJetpackUserLessCheckout = transactionCart.products.some(
 		( product ) => product.extra.isJetpackCheckout
 	);
+	const isGiftingCheckout = transactionCart.products.some(
+		( product ) => product.extra.isGiftPurchase
+	);
 
 	return createAccount( {
-		signupFlowName: isJetpackUserLessCheckout
-			? 'jetpack-userless-checkout'
-			: 'onboarding-registrationless',
+		signupFlowName:
+			isJetpackUserLessCheckout || isGiftingCheckout
+				? 'jetpack-userless-checkout'
+				: 'onboarding-registrationless',
 		email: transactionOptions.contactDetails?.email?.value,
 		siteId: transactionOptions.siteId,
 		recaptchaClientId: transactionOptions.recaptchaClientId,

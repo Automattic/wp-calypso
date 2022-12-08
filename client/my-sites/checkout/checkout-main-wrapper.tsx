@@ -87,7 +87,7 @@ export default function CheckoutMainWrapper( {
 	if ( ! siteSlug ) {
 		siteSlug = 'no-site';
 
-		if ( isLoggedOutCart || isNoSiteCart ) {
+		if ( ( ! isGiftPurchase && isLoggedOutCart ) || isNoSiteCart ) {
 			siteSlug = 'no-user';
 		}
 	}
