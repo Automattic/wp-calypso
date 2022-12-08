@@ -154,7 +154,7 @@ private object Notifications : WPComPluginBuild(
 
 private object CalypsoStats : WPComPluginBuild(
 	buildId = "WPComPlugins_CalypsoStats",
-	buildName = "CalypsoStats",
+	buildName = "Calypso Stats",
 	pluginSlug = "stats",
 	archiveDir = "./dist/",
 	docsLink = "PCYsg-elI-p2",
