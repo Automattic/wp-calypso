@@ -82,13 +82,11 @@
 }
 
 .do-not-sell__preference {
-	$font-size: 16px;
-
 	display: flex;
 	align-items: center;
 	border-top: 1px solid #e0e0e0;
 	padding: 1rem 2rem;
-	font-size: $font-size;
+	font-size: 1rem;
 	cursor: pointer;
 
 	.do-not-sell__checkbox {
