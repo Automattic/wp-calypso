@@ -1,3 +1,4 @@
+@import "@wordpress/base-styles/breakpoints";
 @import "../styles/typography";
 
 $card-padding: 24px;
@@ -9,14 +10,15 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 	display: grid;
 	font-family: $font-sf-pro-text;
 	font-size: $font-body-small;
-	grid-template-columns: 337px 227px;
+	grid-template-columns: minmax(10px, 1.5fr) minmax(0, auto);
 	grid-template-areas:
 		"heading thumbnail"
 		"post thumbnail"
 		"counts thumbnail";
 	margin-bottom: 0;
-	max-width: 600px;
+	max-width: 100%;
 	min-width: 180px; // Minimum mobile width
+	max-height: 255px;
 	padding: $card-padding;
 }
 
@@ -76,10 +78,33 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 }
 
 .post-stats-card__thumbnail {
+	border-radius: 0 $border-radius $border-radius 0;
 	grid-area: thumbnail;
 	height: calc(100% + #{$card-padding * 2});
-	width: calc(100% + #{$card-padding});
-	object-fit: cover;
 	margin: -1 * $card-padding -1 * $card-padding -1 * $card-padding 0;
-	border-radius: 0 $border-radius $border-radius 0;
+	max-width: 300px;
+	object-fit: cover;
+	width: calc(100% + #{$card-padding});
+}
+
+@media ( max-width: $break-small ) {
+	.post-stats-card {
+		border-bottom: 1px solid var(--color-border-subtle);
+		border-radius: 0;
+		border-top: 1px solid var(--color-border-subtle);
+		box-shadow: none;
+		grid-template-areas:
+			"heading heading"
+			"post thumbnail"
+			"counts counts";
+		max-height: initial;
+		padding: $card-padding 0;
+	}
+	.post-stats-card__thumbnail {
+		height: 84px;
+		margin: 0;
+		width: 84px;
+		border-radius: $border-radius;
+		margin-bottom: $card-padding;
+	}
 }

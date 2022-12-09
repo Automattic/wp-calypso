@@ -17,14 +17,26 @@ const PostStatsCardVariations = ( props ) => (
 	/>
 );
 
-export const Default = () => <PostStatsCardVariations />;
+export const Default = () => (
+	<div className="post-stats-card-story" style={ { margin: 'auto', maxWidth: '700px' } }>
+		<PostStatsCardVariations />
+	</div>
+);
+
+export const FullWidth = () => (
+	<div className="post-stats-card-story">
+		<PostStatsCardVariations />
+	</div>
+);
 
 export const WithoutAThumbnail = () => (
-	<PostStatsCardVariations
-		post={ {
-			date: '2022-12-07T14:24:48+00:00',
-			post_thumbnail: null,
-			title: 'The moody trail',
-		} }
-	/>
+	<div className="post-stats-card-story">
+		<PostStatsCardVariations
+			post={ {
+				date: '2022-12-07T14:24:48+00:00',
+				post_thumbnail: null,
+				title: 'The moody trail',
+			} }
+		/>
+	</div>
 );
