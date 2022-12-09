@@ -2,7 +2,8 @@ export type ShortenedNumberProps = {
 	value: number | null;
 };
 
-const FORMATTER = new Intl.NumberFormat( navigator?.language || 'en-US', {
+const LOCALE = ( typeof window === 'undefined' ? null : window.navigator?.language ) ?? 'en-US';
+const FORMATTER = new Intl.NumberFormat( LOCALE, {
 	notation: 'compact',
 	compactDisplay: 'short',
 	maximumFractionDigits: 1,
