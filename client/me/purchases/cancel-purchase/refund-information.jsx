@@ -240,7 +240,7 @@ const CancelPurchaseRefundInformation = ( {
 									refundPeriodInDays: refundPeriodInDays,
 								},
 								components: {
-									spanRefund: <span class="refund-amount" />,
+									spanRefund: <span className="refund-amount" />,
 								},
 							}
 						)
