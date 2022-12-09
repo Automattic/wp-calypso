@@ -236,7 +236,12 @@ class CancelPurchase extends Component {
 					{ this.props.translate( 'Back' ) }
 				</Button>
 
-				<FormattedHeader brandFont headerText={ heading } align="left" />
+				<FormattedHeader
+					className="cancel-purchase__formatter-header"
+					brandFont
+					headerText={ heading }
+					align="left"
+				/>
 
 				<div className="cancel-purchase__layout">
 					<div className="cancel-purchase__layout-col cancel-purchase__layout-col-left">

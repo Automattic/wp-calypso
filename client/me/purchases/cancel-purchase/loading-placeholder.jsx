@@ -54,7 +54,12 @@ const CancelPurchaseLoadingPlaceholder = ( { purchaseId, siteSlug, getManagePurc
 				{ translate( 'Back' ) }
 			</Button>
 
-			<FormattedHeader brandFont headerText={ title } align="left" />
+			<FormattedHeader
+				className="cancel-purchase__formatter-header"
+				brandFont
+				headerText={ title }
+				align="left"
+			/>
 
 			<div className="cancel-purchase__layout">
 				<div className="cancel-purchase__layout-col cancel-purchase__layout-col-left">

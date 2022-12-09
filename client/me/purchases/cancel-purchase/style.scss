@@ -108,6 +108,16 @@ body.edit__body-white.theme-default.color-scheme {
 	}
 }
 
+.cancel-purchase__back-link {
+	font-weight: bold;
+	margin-bottom: 20px;
+
+	@media ( max-width: $breakpoint-mobile ) {
+		margin-top: 30px;
+		margin-left: 10px;
+	}
+}
+.purchases,
 .purchases__cancel {
 	.cancel-purchase__back-link {
 		font-weight: bold;
@@ -119,8 +129,10 @@ body.edit__body-white.theme-default.color-scheme {
 		}
 	}
 
-	.formatted-header__title {
-		margin-bottom: 30px;
+	.cancel-purchase__formatter-header {
+		.formatted-header__title {
+			margin-bottom: 30px;
+		}
 	}
 }
 
