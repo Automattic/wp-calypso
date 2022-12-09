@@ -10,10 +10,6 @@ const FORMATTER = new Intl.NumberFormat( LOCALE, {
 } );
 
 function formatNumber( value: number | null ) {
-	if ( ! Number.isFinite( value ) ) {
-		return '-';
-	}
-
 	return Number.isFinite( value ) ? FORMATTER.format( value as number ) : '-';
 }
 
