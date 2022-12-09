@@ -41,7 +41,7 @@
 	width: 264px;
 	height: 70px;
 	will-change: transform;
-	animation: two-factor-authentication__illustration-slide 2.5s ease-out;
+	animation: two-factor-authentication__illustration-slide 0.65s ease-out;
 	animation-timing-function: cubic-bezier(0.86, 0, 0.07, 1);
 	animation-fill-mode: forwards;
 	animation-delay: 1s;
@@ -49,52 +49,10 @@
 
 @keyframes two-factor-authentication__illustration-slide {
 	0% {
-		transform: scale(0) translateY(0%);
-		opacity: 0;
-	}
-
-	12% {
-		transform: scale(0.11) translateY(10.89%);
-		opacity: 0.11;
-	}
-
-	24% {
-		transform: scale(0.44) translateY(43.56%);
-		opacity: 0.44;
-	}
-
-	36% {
-		transform: scale(0.98) translateY(98.01%);
-		opacity: 0.98;
-	}
-
-	54% {
-		transform: scale(0.75) translateY(75.02%);
-		opacity: 0.75;
-	}
-
-	74% {
-		transform: scale(0.98) translateY(98.37%);
-		opacity: 0.98;
-	}
-
-	82% {
-		transform: scale(0.94) translateY(93.75%);
-		opacity: 0.94;
-	}
-
-	92% {
-		transform: scale(0.99) translateY(99.34%);
-		opacity: 0.99;
-	}
-
-	96% {
-		transform: scale(0.98) translateY(98.46%);
-		opacity: 0.98;
+		transform: translate3d(0, 0, 0);
 	}
 
 	100% {
-		transform: scale(1) translateY(100%);
-		opacity: 1;
+		transform: translate3d(0, 70px, 0);
 	}
 }
