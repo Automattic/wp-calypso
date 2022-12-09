@@ -5,9 +5,10 @@
 	width: 260px;
 	top: 48px;
 	font-size: 14px;
+	left: 50%;
+	transform: translateX(-50%);
 	background-color: #fff;
 	padding: 16px;
-	margin-left: -70px;
 	line-height: 20px;
 	color: #24282d;
 	box-shadow: 0 3px 10px rgb(0 0 0 / 20%);
@@ -15,15 +16,6 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-
-	@media screen and ( max-width: 960px ) {
-		margin-left: -100px;
-	}
-	@media screen and ( max-width: 550px ) {
-		width: 70%;
-		margin-left: 10%;
-		left: 0;
-	}
 
 	.launch-bar-global-styles-upgrade-button {
 		font-size: 14px;
