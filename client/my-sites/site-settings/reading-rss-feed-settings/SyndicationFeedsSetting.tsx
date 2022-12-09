@@ -26,7 +26,7 @@ export const SyndicationFeedsSetting = ( {
 			<div>
 				{ translate( 'Show the most recent {{field /}} items', {
 					comment:
-						'The field value is a number that defines how many posts are shown on the posts, or the archive, page at a time.',
+						'The field value is a number of most recent posts that will be sent out at once to RSS feed subscribers.'
 					components: {
 						field: (
 							<FormTextInput
