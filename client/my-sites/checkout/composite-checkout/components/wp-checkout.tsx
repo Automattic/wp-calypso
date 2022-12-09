@@ -193,7 +193,7 @@ export default function WPCheckout( {
 	} = useDispatch( 'wpcom-checkout' );
 
 	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
-		useState( false );
+		useState( true );
 
 	// The "Summary" view is displayed in the sidebar at desktop (wide) widths
 	// and before the first step at mobile (smaller) widths. At smaller widths it
@@ -359,9 +359,8 @@ export default function WPCheckout( {
 				<CheckoutStep
 					stepId="contact-form"
 					isCompleteCallback={ async () => {
-						setShouldShowContactDetailsValidationErrors( true );
 						// Touch the fields so they display validation errors
-						touchContactFields();
+						shouldShowContactDetailsValidationErrors && touchContactFields();
 						const validationResponse = await validateContactDetails(
 							contactInfo,
 							isLoggedOutCart,
@@ -371,7 +370,7 @@ export default function WPCheckout( {
 							clearDomainContactErrorMessages,
 							reduxDispatch,
 							translate,
-							true
+							shouldShowContactDetailsValidationErrors
 						);
 						if ( validationResponse ) {
 							// When the contact details change, update the cart's tax location to match.
