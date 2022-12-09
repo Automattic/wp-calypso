@@ -370,6 +370,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		}
 	}
 
+	function closePremiumGlobalStylesModal() {
+		// These conditions should be true at this point, but just in case...
+		if ( selectedDesign && selectedStyleVariation ) {
+			recordTracksEvent(
+				'calypso_signup_design_global_styles_gating_modal_close_button_click',
+				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
+			);
+			setShowPremiumGlobalStylesModal( false );
+		}
+	}
+
 	function goToCheckoutForPremiumGlobalStyles() {
 		// These conditions should be true at this point, but just in case...
 		if ( selectedDesign && selectedStyleVariation && siteSlugOrId ) {
@@ -402,6 +413,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		}
 	}
 
+	function tryPremiumGlobalStyles() {
+		// These conditions should be true at this point, but just in case...
+		if ( selectedDesign && selectedStyleVariation ) {
+			recordTracksEvent(
+				'calypso_signup_design_global_styles_gating_modal_try_button_click',
+				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
+			);
+			pickDesign();
+		}
+	}
+
 	// ********** Logic for submitting the selected design
 
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
@@ -429,13 +451,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				...( positionIndex >= 0 && { position_index: positionIndex } ),
 				device: resolveDeviceTypeByViewPort(),
 			} );
-
-			if ( shouldLimitGlobalStyles ) {
-				recordTracksEvent(
-					'calypso_signup_design_global_styles_gating_modal_try_button_click',
-					getEventPropsByDesign( _selectedDesign, selectedStyleVariation )
-				);
-			}
 
 			if ( _selectedDesign.verticalizable ) {
 				recordTracksEvent(
@@ -583,9 +598,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				/>
 				<PremiumGlobalStylesUpgradeModal
 					checkout={ goToCheckoutForPremiumGlobalStyles }
-					closeModal={ () => setShowPremiumGlobalStylesModal( false ) }
+					closeModal={ closePremiumGlobalStylesModal }
 					isOpen={ showPremiumGlobalStylesModal }
-					pickDesign={ pickDesign }
+					tryStyle={ tryPremiumGlobalStyles }
 				/>
 				{ selectedDesignHasStyleVariations ? (
 					<AsyncLoad
