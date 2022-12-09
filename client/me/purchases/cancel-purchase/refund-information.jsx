@@ -219,7 +219,7 @@ const CancelPurchaseRefundInformation = ( {
 										</span>
 										<span className="cancel-budnled-domain__option-description">
 											{ i18n.translate(
-												"You'll receive a partial refund of %(planCost)s. The domain will be cancelled, you risk losing it forever," +
+												"You'll receive a full refund of %(planCost)s. The domain will be cancelled, you risk losing it forever," +
 													'and visitors to your site may experience difficulties accessing it.',
 												{
 													args: {
@@ -236,7 +236,7 @@ const CancelPurchaseRefundInformation = ( {
 							"Since you are cancelling your plan within %(refundPeriodInDays)d days of purchasing you'll receive a {{spanRefund}}refund of %(refundAmount)s{{/spanRefund}} and it will be removed from your site immediately.",
 							{
 								args: {
-									refundAmount: purchase.refundText,
+									refundAmount: cancelBundledDomain ? planCostText : purchase.refundText,
 									refundPeriodInDays: refundPeriodInDays,
 								},
 								components: {
