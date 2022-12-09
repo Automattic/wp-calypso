@@ -93,7 +93,11 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 					// TODO remove this isEnglish check once we have translations for the new strings
 					const amountSaved =
 						isEnglish && item.productsIncluded?.length ? (
-							<AmountSaved siteId={ siteId } product={ item } />
+							<AmountSaved
+								siteId={ siteId }
+								product={ item }
+								onClickMoreInfo={ onClickMoreInfoFactory( item ) }
+							/>
 						) : null;
 
 					return (
