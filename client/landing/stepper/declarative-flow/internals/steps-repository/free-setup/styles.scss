@@ -76,9 +76,9 @@ $font-family: "SF Pro Text", $sans;
 		.setup-form-domain-name__url-box-domain-text {
 			flex: 1;
 			text-overflow: ellipsis;
-			padding-right: 14px;
 			letter-spacing: -0.24px;
 			font-size: $font-body-small;
+			overflow: hidden;
 		}
 
 		.setup-form-domain-name__url-box-site-name {

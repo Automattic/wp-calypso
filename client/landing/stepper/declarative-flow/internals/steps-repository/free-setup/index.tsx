@@ -4,7 +4,6 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { FormEvent, useEffect } from 'react';
-import Gridicon from 'calypso/../packages/components/src/gridicon';
 import { DomainSuggestion } from 'calypso/../packages/data-stores/src';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -71,10 +70,10 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 	};
 
 	// Removing until API issues are resolved
-	// useEffect( () => {
-	// 	//Generates new domain when screen loads
-	// 	//generateNewRandomDomain();
-	// }, [] );
+	useEffect( () => {
+		//Generates new domain when screen loads
+		generateNewRandomDomain();
+	}, [] );
 
 	useEffect( () => {
 		const { siteTitle, siteDescription, siteLogo } = state;
@@ -130,11 +129,6 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 		return [ siteName ? siteName[ 0 ] : '', topLevelDomain ? topLevelDomain[ 0 ] : '' ];
 	}
 
-	const handleGenerateNewRandomDomain = async ( event: FormEvent ) => {
-		event.preventDefault();
-		generateNewRandomDomain();
-	};
-
 	useEffect( () => {
 		if ( generatedDomainSuggestion ) {
 			const [ siteName, topLevelDomain ] = getUrlInfo( generatedDomainSuggestion?.domain_name );
@@ -156,11 +150,6 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 							<span className="setup-form-domain-name__url-box-top-level-domain">
 								{ generatedTopLevelDomain }
 							</span>
-						</div>
-						<div className="setup-form-domain-name__url-box-icon">
-							<button onClick={ handleGenerateNewRandomDomain }>
-								<Gridicon size={ 18 } icon="refresh" />
-							</button>
 						</div>
 					</div>
 				</div>
