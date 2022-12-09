@@ -345,7 +345,7 @@ body.edit__body-white.theme-default.color-scheme {
 
 .loading-placeholder__content {
 	@media ( max-width: $breakpoint-mobile ) {
-		margin: 0 24px;
+		margin: 0 16px;
 	}
 }
 
@@ -357,6 +357,10 @@ body.edit__body-white.theme-default.color-scheme {
 	height: 80px;
 	margin-bottom: 15px;
 	width: 100%;
+
+	@media ( max-width: $breakpoint-mobile ) {
+		width: calc(100% - 32px);
+	}
 }
 
 .cancel-purchase-loading-placeholder__site_icon {
@@ -368,16 +372,28 @@ body.edit__body-white.theme-default.color-scheme {
 	height: 36px;
 	margin-bottom: 15px;
 	width: 100%;
+
+	@media ( max-width: $breakpoint-mobile ) {
+		width: calc(100% - 32px);
+	}
 }
 
 .cancel-purchase-loading-placeholder__reason {
 	height: 12px;
 	margin-bottom: 5px;
 	width: 60%;
+
+	@media ( max-width: $breakpoint-mobile ) {
+		width: calc(60% - 32px);
+	}
 }
 
 .cancel-purchase-loading-placeholder__subheader {
 	height: 24px;
 	margin-bottom: 10px;
 	width: 75%;
+
+	@media ( max-width: $breakpoint-mobile ) {
+		width: calc(75% - 32px);
+	}
 }
