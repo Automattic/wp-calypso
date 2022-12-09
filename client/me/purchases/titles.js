@@ -29,9 +29,6 @@ Object.defineProperties( titles, {
 	cancelPurchase: {
 		get: () => i18n.translate( 'Cancel Purchase' ),
 	},
-	cancelingSubscription: {
-		get: () => i18n.translate( 'Canceling your plan subscription' ),
-	},
 	confirmCancelDomain: {
 		get: () => i18n.translate( 'Cancel Domain' ),
 	},
