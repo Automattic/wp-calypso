@@ -42,7 +42,7 @@ function NotificationSvg() {
 			xmlns="http://www.w3.org/2000/svg"
 			fill="none"
 			viewBox="0 0 310 80"
-			className="two-factor-authentication__illustration-notification jetpack"
+			className="two-factor-authentication__illustration-notification"
 		>
 			<g filter="url(#a)">
 				<rect width="300" height="70" x="5" y="3" fill={ COLOR_WHITE } rx="6" />
