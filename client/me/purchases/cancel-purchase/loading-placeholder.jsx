@@ -34,12 +34,12 @@ const CancelPurchaseLoadingPlaceholder = ( { purchaseId, siteSlug, getManagePurc
 
 	function siteHeader() {
 		return (
-			<div class="site">
-				<div class="site__content">
-					<div class="site-icon is-blank" />
-					<div class="site__info">
-						<div class="site__title"></div>
-						<div class="site__domain"></div>
+			<div className="site">
+				<div className="site__content">
+					<div className="site-icon is-blank" />
+					<div className="site__info">
+						<div className="site__title"></div>
+						<div className="site__domain"></div>
 					</div>
 				</div>
 			</div>
