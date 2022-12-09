@@ -250,22 +250,49 @@ body.is-videopress-stepper {
 			}
 		}
 
+		.launchpad__checklist-item-chevron {
+			align-self: center;
+		}
+
 		.launchpad__task.pending .launchpad__checklist-item-chevron {
 			color: #fff;
 			fill: #fff;
 		}
 
-		.launchpad__task.pending:hover .launchpad__checklist-item-text,
-		.launchpad__task.pending > a:focus .launchpad__checklist-item-text,
-		.launchpad__task.pending:hover .launchpad__checklist-item-chevron,
-		.launchpad__task.pending:hover .launchpad__checklist-item-checkmark,
-		.launchpad__task.pending > a:focus .launchpad__checklist-item-chevron,
-		.launchpad__task.pending > a:focus .launchpad__checklist-item-checkmark,
+		.launchpad__task.pending:hover .launchpad__checklist-item:not([disabled]) .launchpad__checklist-item-text,
+		.launchpad__task.pending .launchpad__checklist-item:not([disabled]) > a:focus .launchpad__checklist-item-text,
+		.launchpad__task.pending:hover .launchpad__checklist-item:not([disabled]) .launchpad__checklist-item-chevron,
+		.launchpad__task.pending:hover .launchpad__checklist-item:not([disabled]) .launchpad__checklist-item-checkmark,
+		.launchpad__task.pending > a:focus .launchpad__checklist-item:not([disabled]) .launchpad__checklist-item-chevron,
+		.launchpad__task.pending > a:focus .launchpad__checklist-item:not([disabled]) .launchpad__checklist-item-checkmark,
+		.launchpad__task.completed.enabled:hover .launchpad__checklist-item-text,
+		.launchpad__task.completed.enabled:hover .launchpad__checklist-item-checkmark,
 		.button.launchpad__checklist-item:hover:not([disabled]),
 		.button.launchpad__checklist-item:focus:not([disabled]) {
 			color: $videopress-theme-yellow;
 			fill: $videopress-theme-yellow;
 		}
 
+		.launchpad__task.completed.enabled {
+			&:hover {
+				.badge {
+					background-color: $videopress-theme-yellow;
+					color: $videopress-theme-background-color;
+					border-color: $videopress-theme-yellow;
+				}
+			}
+
+			.launchpad__checklist-item-text {
+				color: $videopress-theme-header-subtitle-text-color;
+			}
+
+			.launchpad__checklist-item-checkmark {
+				fill: $videopress-theme-header-subtitle-text-color;
+			}
+		}
+
+		.launchpad__checklist-item-warning-container {
+			display: none;
+		}
 	}
 }

@@ -1,4 +1,9 @@
-import { PLAN_PREMIUM, FEATURE_ADVANCED_DESIGN_CUSTOMIZATION } from '@automattic/calypso-products';
+import {
+	FEATURE_VIDEO_UPLOADS,
+	planHasFeature,
+	PLAN_PREMIUM,
+	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+} from '@automattic/calypso-products';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -17,7 +22,7 @@ export function getEnhancedTasks(
 	siteSlug: string | null,
 	site: SiteDetails | null,
 	submit: NavigationControls[ 'submit' ],
-	displayGlobalStylesWarning: boolean,
+	displayWarning: boolean,
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow?: string | null
 ) {
@@ -42,6 +47,20 @@ export function getEnhancedTasks(
 	const launchpadUploadVideoLink = homePageId
 		? `/page/${ siteSlug }/${ homePageId }`
 		: `/site-editor/${ siteSlug }`;
+
+	let planWarningText = displayWarning
+		? translate(
+				'Your site contains custom colors that will only be visible once you upgrade to a Premium plan.'
+		  )
+		: '';
+
+	const isVideoPressFlowWithUnsupportedPlan =
+		isVideoPressFlow( flow ) && ! planHasFeature( productSlug as string, FEATURE_VIDEO_UPLOADS );
+
+	if ( isVideoPressFlowWithUnsupportedPlan ) {
+		planWarningText = translate( 'Purchase a plan that supports VideoPress.' );
+		displayWarning = true;
+	}
 
 	tasks &&
 		tasks.map( ( task ) => {
@@ -71,12 +90,7 @@ export function getEnhancedTasks(
 				case 'plan_selected':
 					taskData = {
 						title: translate( 'Choose a Plan' ),
-						subtitle: displayGlobalStylesWarning
-							? translate(
-									'Your site contains custom colors that will only be visible once you upgrade to a Premium plan.'
-							  )
-							: '',
-						disabled: isVideoPressFlow( flow ),
+						subtitle: planWarningText,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							if ( displayGlobalStylesWarning ) {
@@ -85,16 +99,16 @@ export function getEnhancedTasks(
 								);
 							}
 							const plansUrl = addQueryArgs( `/plans/${ siteSlug }`, {
-								...( displayGlobalStylesWarning && {
+								...( displayWarning && {
 									plan: PLAN_PREMIUM,
 									feature: FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 								} ),
 							} );
 							window.location.assign( plansUrl );
 						},
-						badgeText: translatedPlanName,
-						completed: task.completed && ! displayGlobalStylesWarning,
-						warning: displayGlobalStylesWarning,
+						badgeText: isVideoPressFlowWithUnsupportedPlan ? null : translatedPlanName,
+						completed: task.completed && ! displayWarning,
+						warning: displayWarning,
 					};
 					break;
 				case 'subscribers_added':
@@ -207,7 +221,7 @@ export function getEnhancedTasks(
 						title: translate( 'Upload your first video' ),
 						actionUrl: launchpadUploadVideoLink,
 						completed: videoPressUploadCompleted,
-						disabled: videoPressUploadCompleted,
+						disabled: isVideoPressFlowWithUnsupportedPlan || videoPressUploadCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.replace( launchpadUploadVideoLink );
