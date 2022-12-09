@@ -291,6 +291,7 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsTopPosts"
 							showSummaryLink
+							showNewModules
 						/>
 						<StatsModule
 							path="referrers"
@@ -299,6 +300,7 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsReferrers"
 							showSummaryLink
+							showNewModules
 						/>
 
 						<Countries
@@ -306,6 +308,7 @@ class StatsSite extends Component {
 							period={ this.props.period }
 							query={ query }
 							summary={ false }
+							showNewModules
 						/>
 
 						<StatsModule
@@ -316,6 +319,7 @@ class StatsSite extends Component {
 							statType="statsTopAuthors"
 							className="stats__author-views"
 							showSummaryLink
+							showNewModules
 						/>
 						<StatsModule
 							path="searchterms"
@@ -324,6 +328,7 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsSearchTerms"
 							showSummaryLink
+							showNewModules
 						/>
 
 						<StatsModule
@@ -333,6 +338,7 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsClicks"
 							showSummaryLink
+							showNewModules
 						/>
 						<StatsModule
 							path="videoplays"
@@ -341,6 +347,7 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsVideoPlays"
 							showSummaryLink
+							showNewModules
 						/>
 						{
 							// File downloads are not yet supported in Jetpack Stats
@@ -354,6 +361,7 @@ class StatsSite extends Component {
 									statType="statsFileDownloads"
 									showSummaryLink
 									useShortLabel={ true }
+									showNewModules
 								/>
 							)
 						}
