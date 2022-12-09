@@ -289,7 +289,7 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 						if ( ! $dep_script ) {
 							continue;
 						}
-						include $dep_script;
+						include ABSPATH . $dep_script->src;
 					}
 					?>
 				</script>
