@@ -5,7 +5,7 @@ import {
 	JITM_DISMISS,
 	JITM_FETCH,
 	JITM_SET,
-	HELP_CENTER_OPEN_FROM_JITM,
+	JITM_OPEN_HELP_CENTER,
 } from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/sites/jitm';
 import 'calypso/state/jitm/init';
@@ -95,6 +95,6 @@ export const openHelpCenterFromJITM = ( pathname ) => ( dispatch ) => {
 	dataStoreDispatch( HELP_CENTER_STORE ).setRouterState( [ { pathname }, 0 ] );
 	dataStoreDispatch( HELP_CENTER_STORE ).setShowHelpCenter( true );
 	dispatch( {
-		type: HELP_CENTER_OPEN_FROM_JITM,
+		type: JITM_OPEN_HELP_CENTER,
 	} );
 };

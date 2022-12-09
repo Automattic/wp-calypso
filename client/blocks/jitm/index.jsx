@@ -5,7 +5,7 @@ import { connect, useDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryJITM from 'calypso/components/data/query-jitm';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { HELP_CENTER_OPEN_FROM_JITM } from 'calypso/state/action-types';
+import { JITM_OPEN_HELP_CENTER } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { dismissJITM, openHelpCenterFromJITM, setupDevTool } from 'calypso/state/jitm/actions';
 import { getTopJITM } from 'calypso/state/jitm/selectors';
@@ -91,7 +91,7 @@ function getEventHandlers( props, dispatch ) {
 		if ( jitm.action ) {
 			switch ( jitm.action.type ) {
 				// Cases for dispatching action thunks
-				case HELP_CENTER_OPEN_FROM_JITM:
+				case JITM_OPEN_HELP_CENTER:
 					dispatch( openHelpCenterFromJITM( jitm.action.payload ) );
 					break;
 				default:
