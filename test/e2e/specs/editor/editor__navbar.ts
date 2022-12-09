@@ -43,6 +43,12 @@ describe( DataHelper.createSuiteTitle( `Editor: Navbar` ), function () {
 	} );
 
 	it( 'Return to Calypso dashboard', async function () {
-		await editorPage.exitEditor();
+		const isMobileClassicView =
+			envVariables.VIEWPORT_NAME === 'mobile' && ( await page.isVisible( '#wpadminbar' ) );
+
+		// The Classic View on mobile viewport doesn't have the "return" button.
+		if ( ! isMobileClassicView ) {
+			await editorPage.exitEditor();
+		}
 	} );
 } );
