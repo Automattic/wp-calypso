@@ -2,7 +2,6 @@ import { DoNotSellDialog } from '@automattic/privacy-toolset';
 import { useState } from 'react';
 import { useDoNotSellContent } from './use-do-not-sell-content';
 import { usePreventScroll } from './use-prevent-scroll';
-import type { DoNotSellDialogProps } from '@uatomattic/privacy-toolset';
 
 export const useDialogHelper = () => {
 	const [ isDialogOpen, setIsDialogOpen ] = useState( false );
@@ -17,7 +16,13 @@ export const useDialogHelper = () => {
 	return { isDialogOpen, openDialog, closeDialog };
 };
 
-type Props = Omit< DoNotSellDialogProps, 'content' | 'modalProps' >;
+type Props = {
+	isOpen: boolean;
+	onClose: () => void;
+	onToggleActive: ( isActive: boolean ) => void;
+	isActive: boolean;
+};
+
 const DoNotSellDialogContainer = ( { isOpen, ...props }: Props ) => {
 	usePreventScroll( isOpen );
 	const content = useDoNotSellContent();
