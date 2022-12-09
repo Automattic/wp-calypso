@@ -404,6 +404,9 @@ export default function WPCheckout( {
 							shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
 							contactDetailsType={ contactDetailsType }
 							isLoggedOutCart={ isLoggedOutCart }
+							setShouldShowContactDetailsValidationErrors={
+								setShouldShowContactDetailsValidationErrors
+							}
 						/>
 					}
 					completeStepContent={
