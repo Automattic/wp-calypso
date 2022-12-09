@@ -16,14 +16,14 @@ describe( '#getMappedLanguageSlug', () => {
 
 describe( '#getRealPathName', () => {
 	test( 'should correctly return the real path when locale is at the beginning of the path', () => {
-		expect( getRealPathName( '/en/themes' ) ).toBe( 'themes' );
-		expect( getRealPathName( '/themes' ) ).toBe( 'themes' );
-		expect( getRealPathName( '/de/themes' ) ).toBe( 'themes' );
+		expect( getRealPathName( '/en/themes' ) ).toBe( '/themes' );
+		expect( getRealPathName( '/themes' ) ).toBe( '/themes' );
+		expect( getRealPathName( '/de/themes' ) ).toBe( '/themes' );
 	} );
 
 	test( 'should correctly return the real path when locale is at the end of the path', () => {
-		expect( getRealPathName( '/themes/en' ) ).toBe( 'themes' );
-		expect( getRealPathName( '/themes' ) ).toBe( 'themes' );
-		expect( getRealPathName( '/themes/de' ) ).toBe( 'themes' );
+		expect( getRealPathName( '/themes/en' ) ).toBe( '/themes' );
+		expect( getRealPathName( '/themes' ) ).toBe( '/themes' );
+		expect( getRealPathName( '/themes/de' ) ).toBe( '/themes' );
 	} );
 } );
