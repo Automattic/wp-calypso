@@ -33,7 +33,7 @@ export const AmountSaved: React.FC< AmountSavedProps > = ( {
 				screenReaderText={ translate( 'Learn more' ) }
 				className="amount-saved--popover"
 			>
-				{ translate( 'If purchased individually, all products would cost {{amount/}}/month', {
+				{ translate( 'If purchased individually, all products would cost {{amount/}}/month.', {
 					components: {
 						amount: <RenderPrice price={ total } />,
 					},
