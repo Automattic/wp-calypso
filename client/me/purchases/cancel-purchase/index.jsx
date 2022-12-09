@@ -283,7 +283,9 @@ class CancelPurchase extends Component {
 											this.props.purchaseId
 										) }
 									>
-										{ this.props.translate( 'Keep plan' ) }
+										{ i18n.hasTranslation( 'Keep plan' ) || locale === 'en'
+											? this.props.translate( 'Keep plan' )
+											: this.props.translate( 'Cancel and go back' ) }
 									</Button>
 								</div>
 
