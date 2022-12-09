@@ -16,7 +16,7 @@ export type DoNotSellDialogProps = {
 	onClose: () => void;
 	isActive?: boolean;
 	onToggleActive: ( isActive: boolean ) => void;
-	modalProps: Omit<
+	modalProps?: Omit<
 		ModalProps,
 		'className' | 'overlayClassName' | 'aria' | 'onRequestClose' | 'isOpen' | 'children'
 	>;
