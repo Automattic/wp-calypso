@@ -163,7 +163,7 @@ export function getEnhancedTasks(
 
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
 									await new Promise( ( res ) => setTimeout( res, 500 ) );
-									recordTaskClickTracksEvent( flow, linkInBioLinksEditCompleted, task.id );
+									recordTaskClickTracksEvent( flow, siteLaunchCompleted, task.id );
 									window.location.assign( `/home/${ siteSlug }` );
 								} );
 
