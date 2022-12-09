@@ -93,7 +93,13 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 		[ shouldLimitGlobalStyles ]
 	);
 
-	const handlePredefinedColorSelect = ( { value }: { value: string } ) => {
+	const handlePredefinedColorSelect = ( {
+		value,
+		isPremium,
+	}: {
+		value: string;
+		isPremium: boolean;
+	} ) => {
 		if ( value === 'custom' ) {
 			/**
 			 * Color picker is opened with the current accentColor selected by default
@@ -114,7 +120,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 
 		recordTracksEvent( 'calypso_signup_accent_color_select', {
 			color: value,
-			global_styles_gating: shouldLimitGlobalStyles,
+			is_premium: isPremium,
 		} );
 
 		setAccentColor( {
@@ -126,7 +132,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 	const handleCustomColorSelect = ( { hex, rgb }: ColorPicker.OnChangeCompleteValue ) => {
 		recordTracksEvent( 'calypso_signup_accent_color_select', {
 			color: 'custom',
-			global_styles_gating: shouldLimitGlobalStyles,
+			is_premium: shouldLimitGlobalStyles,
 		} );
 
 		setCustomColor( { hex, rgb: rgb as unknown as RGB } );
@@ -161,7 +167,9 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 			<SelectDropdown.Item
 				key={ option.label }
 				icon={ option.icon }
-				onClick={ () => handlePredefinedColorSelect( { value: option.value } ) }
+				onClick={ () =>
+					handlePredefinedColorSelect( { value: option.value, isPremium: option.isPremium } )
+				}
 				selected={ option.value === accentColor.hex }
 				secondaryIcon={
 					shouldLimitGlobalStyles && option.isPremium ? (
