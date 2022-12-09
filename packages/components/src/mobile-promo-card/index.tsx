@@ -16,7 +16,9 @@ export type MobilePromoCardProps = {
 // Slugs as used by Jetpack Redirects.
 // See https://jetpack.com/redirect for current URLs.
 // Two _QRCode constants are included for reference only.
-const REDIRECT_SLUGS = {
+const REDIRECT_SLUGS: {
+	[ key: string ]: string | undefined;
+} = {
 	jetpackA8C: 'calypso-stats-mobile-cta-jetpack-link',
 	jetpackApple: 'calypso-stats-mobile-cta-jetpack-apple-badge',
 	jetpackGoogle: 'calypso-stats-mobile-cta-jetpack-google-badge',
@@ -29,14 +31,13 @@ const REDIRECT_SLUGS = {
 
 // Generate a Jetpack Redirect URL based on the provided slug.
 // Similar to getRedirectUrl from '@automattic/jetpack-components'.
-function getRedirectUrlFromSlug( slug: string ) {
+function getRedirectUrl( key: string ): string | null {
 	// Confirm requested slug is valid.
-	const slugs = Object.values( REDIRECT_SLUGS );
-	if ( ! slugs.includes( slug ) ) {
-		return '';
+	if ( ! REDIRECT_SLUGS.hasOwnProperty( key ) ) {
+		return null;
 	}
 	// Return redirect URL.
-	return 'https://jetpack.com/redirect/?source=' + slug;
+	return 'https://jetpack.com/redirect/?source=' + REDIRECT_SLUGS[ key ];
 }
 
 export default function MobilePromoCard( { className, isWoo }: MobilePromoCardProps ) {
@@ -66,10 +67,7 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 				{
 					components: {
 						a: (
-							<a
-								className="woo"
-								href={ getRedirectUrlFromSlug( REDIRECT_SLUGS.wooA8C ) ?? 'https://woo.com/mobile' }
-							/>
+							<a className="woo" href={ getRedirectUrl( 'wooA8C' ) ?? 'https://woo.com/mobile' } />
 						),
 					},
 				}
@@ -82,9 +80,7 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 					a: (
 						<a
 							className="jetpack"
-							href={
-								getRedirectUrlFromSlug( REDIRECT_SLUGS.jetpackA8C ) ?? 'https://jetpack.com/app'
-							}
+							href={ getRedirectUrl( 'jetpackA8C' ) ?? 'https://jetpack.com/app' }
 						/>
 					),
 				},
@@ -96,9 +92,7 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 	const getPromoImage = () => {
 		const fallbackLink = isWoo ? 'https://woo.com/mobile' : 'https://jetpack.com/app';
 		if ( isApple ) {
-			const appStoreLink = isWoo
-				? getRedirectUrlFromSlug( REDIRECT_SLUGS.wooApple )
-				: getRedirectUrlFromSlug( REDIRECT_SLUGS.jetpackApple );
+			const appStoreLink = isWoo ? getRedirectUrl( 'wooApple' ) : getRedirectUrl( 'jetpackApple' );
 			return (
 				<a href={ appStoreLink ?? fallbackLink }>
 					<img
@@ -111,8 +105,8 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 		}
 		if ( isGoogle ) {
 			const appStoreLink = isWoo
-				? getRedirectUrlFromSlug( REDIRECT_SLUGS.wooGoogle )
-				: getRedirectUrlFromSlug( REDIRECT_SLUGS.jetpackGoogle );
+				? getRedirectUrl( 'wooGoogle' )
+				: getRedirectUrl( 'jetpackGoogle' );
 			return (
 				<a href={ appStoreLink ?? fallbackLink }>
 					<img
