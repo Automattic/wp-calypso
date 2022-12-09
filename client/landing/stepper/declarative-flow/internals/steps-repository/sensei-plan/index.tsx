@@ -2,13 +2,14 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
 import { Plans } from 'calypso/../packages/data-stores/src';
+import formatCurrency from 'calypso/../packages/format-currency/src';
 import { SENSEI_FLOW, SenseiStepContainer } from 'calypso/../packages/onboarding/src';
 import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
 import PlanItem from 'calypso/../packages/plans-grid/src/plans-table/plan-item';
-import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { useNewSiteVisibility } from 'calypso/landing/gutenboarding/hooks/use-selected-plan';
 import { PLANS_STORE } from 'calypso/landing/gutenboarding/stores/plans';
 import {
@@ -19,7 +20,6 @@ import {
 } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
-import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { SenseiStepError } from '../sensei-setup/sensei-step-error';
 import { SenseiStepProgress, Progress } from '../sensei-setup/sensei-step-progress';
@@ -39,23 +39,22 @@ const cartProgressTitle: string = __( 'Preparing Your Bundle' );
 
 const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 	const [ billingPeriod, setBillingPeriod ] = useState< Plans.PlanBillingPeriod >( 'ANNUALLY' );
+	const billingPeriodIsAnnually = billingPeriod === 'ANNUALLY';
 	const [ status, setStatus ] = useState< Status >( Status.Initial );
 	const [ progress, setProgress ] = useState< Progress >( {
 		percentage: 0,
 		title: siteProgressTitle,
 	} );
 
-	const { __ } = useI18n();
+	const { hasTranslation } = useI18n();
 	const locale = useLocale();
 	const visibility = useNewSiteVisibility();
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
-	const { supportedPlans, maxAnnualDiscount } = useSupportedPlans( locale, billingPeriod );
+	const { supportedPlans } = useSupportedPlans( locale, billingPeriod );
 	const { createSenseiSite, setSelectedSite } = useDispatch( ONBOARD_STORE );
 	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
-	const productList =
-		useSelect( ( select ) => select( PRODUCTS_LIST_STORE ).getProductsList(), [] ) || {};
-	const getPlanProduct = useSelect( ( select ) => select( PLANS_STORE ).getPlanProduct );
 	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
+	const { getPlanProduct } = useSelect( ( select ) => select( PLANS_STORE ) );
 
 	const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 
@@ -67,10 +66,60 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 		setBillingPeriod( newBillingPeriod );
 	};
 
-	const { data: woothemesSenseiData } = useWPCOMPlugin( 'woothemes-sensei' );
-	const variation =
-		woothemesSenseiData?.variations?.[ billingPeriod === 'ANNUALLY' ? 'yearly' : 'monthly' ];
-	const woothemesSenseiProductSlug = getProductSlugByPeriodVariation( variation, productList );
+	const woothemesProduct = useSelect(
+		( select ) => {
+			const yearly = select( PRODUCTS_LIST_STORE ).getProductBySlug( 'woothemes_sensei_yearly' );
+			const monthly = select( PRODUCTS_LIST_STORE ).getProductBySlug( 'woothemes_sensei_monthly' );
+
+			if ( ! yearly || ! monthly ) {
+				return {
+					monthlyPrice: 0,
+					yearlyPrice: 0,
+					price: 0,
+					productSlug: '',
+					currencyCode: '',
+				};
+			}
+
+			return {
+				monthlyPrice: monthly.cost,
+				yearlyPrice: yearly.cost,
+				price: billingPeriodIsAnnually ? Math.ceil( yearly.cost / 12 ) : monthly.cost,
+				productSlug: billingPeriodIsAnnually ? yearly.product_slug : monthly.product_slug,
+				currencyCode: yearly.currency_code,
+			};
+		},
+		[ billingPeriodIsAnnually ]
+	);
+
+	const planProduct = useSelect(
+		( select ) => {
+			const monthly = select( PLANS_STORE ).getPlanProduct(
+				planObject?.periodAgnosticSlug,
+				'MONTHLY'
+			);
+			const yearly = select( PLANS_STORE ).getPlanProduct(
+				planObject?.periodAgnosticSlug,
+				'ANNUALLY'
+			);
+			if ( ! yearly || ! monthly ) {
+				return {
+					monthlyPrice: 0,
+					yearlyPrice: 0,
+					price: 0,
+					productSlug: '',
+				};
+			}
+
+			return {
+				monthlyPrice: monthly.rawPrice,
+				yearlyPrice: yearly.rawPrice,
+				price: billingPeriodIsAnnually ? Math.ceil( yearly.rawPrice / 12 ) : monthly.rawPrice,
+				productSlug: '',
+			};
+		},
+		[ billingPeriodIsAnnually, planObject ]
+	);
 
 	const goToDomainStep = useCallback( () => {
 		if ( goToStep ) {
@@ -124,7 +173,7 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 					},
 				},
 				{
-					product_slug: woothemesSenseiProductSlug,
+					product_slug: woothemesProduct.productSlug,
 					extra: {
 						signup_flow: flow,
 					},
@@ -189,6 +238,35 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 		},
 	];
 
+	const currencyCode = woothemesProduct.currencyCode;
+	const isLoading = ! planProduct.monthlyPrice || ! woothemesProduct.monthlyPrice;
+	const price = planProduct.price + woothemesProduct.price;
+	const priceStr = formatCurrency( price, currencyCode, { stripZeros: true } );
+	const monthlyPrice = planProduct.monthlyPrice + woothemesProduct.monthlyPrice;
+	const annualPrice = planProduct.yearlyPrice + woothemesProduct.yearlyPrice;
+	const annualPriceStr = formatCurrency( annualPrice, currencyCode, { stripZeros: true } );
+	const annualSavings = monthlyPrice * 12 - annualPrice;
+	const annualSavingsStr = formatCurrency( annualSavings, currencyCode, { stripZeros: true } );
+	const domainSavings = domain?.raw_price || 0;
+	const annualDiscount =
+		100 - Math.floor( ( annualPrice / ( monthlyPrice * 12 + domainSavings ) ) * 100 );
+
+	// translators: %s is the cost per year (e.g "billed as 96$ annually")
+	const newPlanItemPriceLabelAnnually = __(
+		'per month, billed as %s annually',
+		__i18n_text_domain__
+	);
+
+	const fallbackPlanItemPriceLabelAnnually = __( 'billed annually', __i18n_text_domain__ );
+
+	const planItemPriceLabelAnnually =
+		locale === 'en' || hasTranslation?.( 'per month, billed as %s annually' )
+			? sprintf( newPlanItemPriceLabelAnnually, annualPriceStr )
+			: fallbackPlanItemPriceLabelAnnually;
+
+	const planItemPriceLabelMonthly = __( 'per month, billed monthly', __i18n_text_domain__ );
+	const title = __( 'Sensei Pro Bundle' );
+
 	return (
 		<SenseiStepContainer stepName="senseiPlan" recordTracksEvent={ recordTracksEvent }>
 			{ status === Status.Initial && (
@@ -202,9 +280,46 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 					<PlansIntervalToggle
 						intervalType={ billingPeriod }
 						onChange={ handlePlanBillingPeriodChange }
-						maxMonthlyDiscountPercentage={ maxAnnualDiscount }
+						maxMonthlyDiscountPercentage={ annualDiscount }
 					/>
 
+					<div
+						className={ classnames( 'plan-item plan-item--sensei', {
+							'plan-item--is-loading': isLoading,
+						} ) }
+					>
+						<div tabIndex={ 0 } role="button" className="plan-item__summary">
+							<div className="plan-item__heading">
+								<div className="plan-item__name">{ title }</div>
+							</div>
+							<div className="plan-item__price">
+								<div className="plan-item__price-amount">{ ! isLoading && priceStr }</div>
+							</div>
+						</div>
+						<div className="plan-item__price-note">
+							{ ! isLoading && billingPeriod === 'ANNUALLY'
+								? planItemPriceLabelAnnually
+								: planItemPriceLabelMonthly }
+						</div>
+
+						{ /*
+							For the free plan, the following div is still rendered invisible
+							and ignored by screen readers (via aria-hidden) to ensure the same
+							vertical spacing as the rest of the plan cards
+						 */ }
+						<div
+							className={ classnames( 'plan-item__price-discount', {
+								'plan-item__price-discount--disabled': billingPeriod !== 'ANNUALLY',
+							} ) }
+						>
+							{ ! isLoading &&
+								sprintf(
+									// Translators: will be like "Save 30% by paying annually".  Make sure the % symbol is kept.
+									__( `You're saving %s by paying annually`, __i18n_text_domain__ ),
+									annualSavingsStr
+								) }
+						</div>
+					</div>
 					<PlanItem
 						allPlansExpanded
 						slug="business"
@@ -212,7 +327,7 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 						CTAVariation="NORMAL"
 						features={ features }
 						billingPeriod={ billingPeriod }
-						name={ __( 'Sensei Pro Bundle' ) }
+						name={ title }
 						onSelect={ onPlanSelect }
 						onPickDomainClick={ goToDomainStep }
 						CTAButtonLabel={ __( 'Get Sensei Pro Bundle' ) }

@@ -1,3 +1,5 @@
+@import "@automattic/onboarding/styles/mixins";
+
 $sensei-color: #43af99;
 
 .sensei .progress-bar__progress {
@@ -6,11 +8,15 @@ $sensei-color: #43af99;
 
 .step-container.senseiPlan {
 	.plan-item {
+		margin-top: 0;
+
 		&__viewport {
 			border: none;
 		}
 
-		&__heading {
+		&__heading,
+		&__price {
+			display: flex;
 			justify-content: center;
 		}
 		&__price-amount,
@@ -18,6 +24,11 @@ $sensei-color: #43af99;
 		&__price-discount,
 		&__actions {
 			text-align: center;
+		}
+
+		&__price-amount {
+			margin-top: 20px;
+			color: $black;
 		}
 
 		&__select-button {
@@ -29,7 +40,48 @@ $sensei-color: #43af99;
 				border: 1px solid darken($sensei-color, 10%);
 			}
 		}
+
+		&__summary,
+		&__price-note,
+		&__price-discount {
+			display: none;
+		}
+
+		&--sensei {
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-end;
+			align-items: center;
+			margin-top: 48px;
+
+			.plan-item {
+				&__summary,
+				&__price-note,
+				&__price-discount {
+					display: block;
+					text-transform: unset;
+				}
+			}
+		}
+
+		&--is-loading {
+			.plan-item {
+				&__price-amount {
+					@include onboarding-placeholder();
+					width: 30%;
+				}
+				&__price-note {
+					@include onboarding-placeholder();
+					width: 80%;
+				}
+				&__price-discount {
+					@include onboarding-placeholder();
+					width: 90%;
+				}
+			}
+		}
 	}
+
 
 	.plans-feature-list {
 		&__item {
@@ -53,9 +105,6 @@ $sensei-color: #43af99;
 		}
 		&__item--requires-annual-disabled {
 			.plans-feature-list {
-				&__item-description {
-					color: #888;
-				}
 				&__item-annual-nudge {
 					display: block;
 				}
