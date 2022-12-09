@@ -207,8 +207,6 @@ class CancelPurchase extends Component {
 				i18n.hasTranslation( 'Canceling your plan subscription' ) || locale === 'en'
 					? this.props.translate( 'Canceling your plan subscription' )
 					: this.props.translate( 'Cancel %(purchaseName)s', { args: { purchaseName } } );
-
-			// heading = this.props.translate( 'Canceling your plan subscription' );
 		}
 
 		if ( isSubscription( purchase ) && ! isPlan( purchase ) ) {
