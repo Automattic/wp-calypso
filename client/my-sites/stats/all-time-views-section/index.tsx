@@ -29,7 +29,7 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 	}, [ translate ] );
 
 	const toggleViews = ( option?: chartOption ) => {
-		setChartOption( option?.value || '' );
+		setChartOption( option?.value || 'total' );
 	};
 
 	return (
