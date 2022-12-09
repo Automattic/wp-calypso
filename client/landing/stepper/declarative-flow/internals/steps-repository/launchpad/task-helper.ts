@@ -30,6 +30,9 @@ export function getEnhancedTasks(
 	const siteLaunchCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.site_launched || false;
 
+	const firstPostPublishedCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.first_post_published || false;
+
 	const videoPressUploadCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.video_uploaded || false;
 
@@ -98,6 +101,7 @@ export function getEnhancedTasks(
 				case 'first_post_published':
 					taskData = {
 						title: translate( 'Write your first post' ),
+						completed: firstPostPublishedCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign( `/post/${ siteSlug }` );
