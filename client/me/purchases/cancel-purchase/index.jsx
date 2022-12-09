@@ -7,7 +7,7 @@ import {
 	isJetpackProduct,
 } from '@automattic/calypso-products';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -39,6 +39,7 @@ import {
 	hasLoadedUserPurchasesFromServer,
 	getIncludedDomainPurchase,
 } from 'calypso/state/purchases/selectors';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
 import CancelPurchaseButton from './button';
 import CancelPurchaseRefundInformation from './refund-information';
@@ -195,15 +196,19 @@ class CancelPurchase extends Component {
 		}
 
 		const { purchase, isJetpackPurchase } = this.props;
+		const locale = getCurrentLocaleSlug();
 		const purchaseName = getName( purchase );
 		const { siteName, domain: siteDomain, siteId } = purchase;
 
 		let heading;
 
 		if ( isSubscription( purchase ) && isPlan( purchase ) ) {
-			heading = this.props.translate( 'Canceling your plan subscription', {
-				args: { purchaseName },
-			} );
+			heading =
+				i18n.hasTranslation( 'Canceling your plan subscription' ) || locale === 'en'
+					? this.props.translate( 'Canceling your plan subscription' )
+					: this.props.translate( 'Cancel %(purchaseName)s', { args: { purchaseName } } );
+
+			// heading = this.props.translate( 'Canceling your plan subscription' );
 		}
 
 		if ( isSubscription( purchase ) && ! isPlan( purchase ) ) {
