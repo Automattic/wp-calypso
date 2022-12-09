@@ -74,6 +74,7 @@ export default function WPCheckoutOrderReview( {
 	siteId,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
+	forceRadioButtons,
 }: {
 	className?: string;
 	removeProductFromCart?: RemoveProductFromCart;
@@ -83,6 +84,9 @@ export default function WPCheckoutOrderReview( {
 	siteId?: number | undefined;
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
+	// TODO: This is just for unit tests. Remove forceRadioButtons everywhere
+	// when calypso_checkout_variant_picker_radio_2212 ExPlat test completes.
+	forceRadioButtons?: boolean;
 } ) {
 	const translate = useTranslate();
 	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
@@ -163,6 +167,7 @@ export default function WPCheckoutOrderReview( {
 
 			<WPOrderReviewSection>
 				<WPOrderReviewLineItems
+					forceRadioButtons={ forceRadioButtons }
 					siteId={ siteId }
 					removeProductFromCart={ removeProductFromCart }
 					removeCoupon={ removeCouponAndClearField }

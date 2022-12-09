@@ -55,7 +55,7 @@ export const HelpCenterMoreResources = () => {
 		recordTracksEvent( 'calypso_help_moreresources_click', {
 			is_business_or_ecommerce_plan_user: isBusinessOrEcomPlanUser,
 			resource: resource,
-			forceSiteId: true,
+			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
 		} );
@@ -64,7 +64,7 @@ export const HelpCenterMoreResources = () => {
 	const trackWebinairsButtonClick = () => {
 		recordTracksEvent( 'calypso_help_courses_click', {
 			is_business_or_ecommerce_plan_user: isBusinessOrEcomPlanUser,
-			forceSiteId: true,
+			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
 		} );

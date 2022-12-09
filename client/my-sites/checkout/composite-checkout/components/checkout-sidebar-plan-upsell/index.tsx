@@ -17,7 +17,7 @@ import { useGetProductVariants } from '../../hooks/product-variants';
 import {
 	getItemVariantCompareToPrice,
 	getItemVariantDiscountPercentage,
-} from '../item-variation-picker/variant-price';
+} from '../item-variation-picker/util';
 
 import './style.scss';
 
