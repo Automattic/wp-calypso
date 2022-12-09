@@ -104,7 +104,6 @@ export function* createSenseiSite( {
 
 	const siteUrl = domain?.domain_name || siteTitle || username;
 	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
-	const defaultTheme = 'twentytwentytwo';
 	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
 
 	const success: NewSiteBlogDetails | undefined = yield dispatch( SITE_STORE, 'createSite', {
@@ -118,7 +117,7 @@ export function* createSenseiSite( {
 			lang_id: lang_id,
 			site_creation_flow: 'sensei',
 			enable_fse: true,
-			theme: `pub/${ selectedDesign?.theme || defaultTheme }`,
+			theme: 'pub/course',
 			timezone_string: guessTimezone(),
 			...( selectedDesign?.template && { template: selectedDesign.template } ),
 			...( selectedFonts && {

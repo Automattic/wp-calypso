@@ -10,6 +10,7 @@ import FormRadioWithThumbnail from 'calypso/components/forms/form-radio-with-thu
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ONBOARD_STORE } from '../../../../stores';
 import { Title, Label, Input, Button } from './components';
+import type { StyleVariation } from 'calypso/../packages/design-picker/src/types';
 import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import './style.scss';
 
@@ -70,8 +71,13 @@ const SenseiSetup: Step = ( { navigation } ) => {
 	const dispatch = useDispatch( ONBOARD_STORE );
 	const handleSubmit = useCallback( () => {
 		dispatch.setSiteTitle( siteTitle );
+		const variation = styles.find( ( style ) => style.name === checked ) || styles[ 0 ];
+		dispatch.setSelectedStyleVariation( {
+			slug: variation.name,
+			title: variation.title,
+		} as StyleVariation );
 		goNext?.();
-	}, [ siteTitle, dispatch, goNext ] );
+	}, [ siteTitle, dispatch, goNext, checked ] );
 
 	const preview = <ThemeStylePreviews styles={ styles } active={ checked } />;
 

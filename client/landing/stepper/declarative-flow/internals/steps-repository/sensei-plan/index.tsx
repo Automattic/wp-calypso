@@ -5,6 +5,7 @@ import { useCallback, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import wpcomProxyRequest from 'wpcom-proxy-request';
 import { Plans } from 'calypso/../packages/data-stores/src';
 import formatCurrency from 'calypso/../packages/format-currency/src';
 import { SENSEI_FLOW, SenseiStepContainer } from 'calypso/../packages/onboarding/src';
@@ -25,6 +26,7 @@ import { SenseiStepError } from '../sensei-setup/sensei-step-error';
 import { SenseiStepProgress, Progress } from '../sensei-setup/sensei-step-progress';
 import { Tagline, Title, PlansIntervalToggle } from './components';
 import type { Step } from '../../types';
+import type { StyleVariation } from 'calypso/../packages/design-picker/src/types';
 import type { Props as PlanItemProps } from 'calypso/../packages/plans-grid/src/plans-table/plan-item';
 import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
 import './styles.scss';
@@ -37,6 +39,36 @@ enum Status {
 
 const siteProgressTitle: string = __( 'Laying out the foundations' );
 const cartProgressTitle: string = __( 'Preparing Your Bundle' );
+const styleProgressTitle: string = __( 'Applying your site styles' );
+
+const getStyleVariations = ( siteId: number, stylesheet: string ): Promise< StyleVariation[] > =>
+	wpcomProxyRequest( {
+		path: `/sites/${ siteId }/global-styles/themes/${ stylesheet }/variations`,
+		apiNamespace: 'wp/v2',
+	} );
+
+type Theme = {
+	_links: {
+		'wp:user-global-styles': { href: string }[];
+	};
+};
+const getSiteTheme = ( siteId: number, stylesheet: string ): Promise< Theme > =>
+	wpcomProxyRequest( {
+		path: `/sites/${ siteId }/themes/${ stylesheet }`,
+		apiNamespace: 'wp/v2',
+	} );
+
+const updateGlobalStyles = (
+	siteId: number,
+	globalStylesId: number,
+	styleVariation: StyleVariation
+) =>
+	wpcomProxyRequest( {
+		path: `/sites/${ siteId }/global-styles/${ globalStylesId }`,
+		apiNamespace: 'wp/v2',
+		body: styleVariation,
+		method: 'POST',
+	} );
 
 const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 	const [ billingPeriod, setBillingPeriod ] = useState< Plans.PlanBillingPeriod >( 'ANNUALLY' );
@@ -53,7 +85,10 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const { supportedPlans } = useSupportedPlans( locale, billingPeriod );
 	const { createSenseiSite, setSelectedSite } = useDispatch( ONBOARD_STORE );
-	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
+	const { getSelectedDomain, getSelectedStyleVariation } = useSelect( ( select ) =>
+		select( ONBOARD_STORE )
+	);
+	const domain = getSelectedDomain();
 	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
 	const { getPlanProduct } = useSelect( ( select ) => select( PLANS_STORE ) );
 
@@ -136,7 +171,7 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 			await new Promise( ( res ) => setTimeout( res, 100 ) );
 
 			setProgress( {
-				percentage: 33,
+				percentage: 25,
 				title: siteProgressTitle,
 			} );
 
@@ -147,18 +182,38 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 			} );
 
 			setProgress( {
-				percentage: 66,
+				percentage: 50,
 				title: cartProgressTitle,
 			} );
 
 			const newSite = getNewSite();
+			const siteId = newSite?.blogid;
 			setSelectedSite( newSite?.blogid );
 			await setIntentOnSite( newSite?.site_slug as string, SENSEI_FLOW );
 			await saveSiteSettings( newSite?.blogid as number, { launchpad_screen: 'full' } );
 
 			setProgress( {
+				percentage: 75,
+				title: styleProgressTitle,
+			} );
+
+			if ( siteId ) {
+				const selectedStyleVariationTitle = getSelectedStyleVariation()?.title;
+				const styleVariations: StyleVariation[] = await getStyleVariations( siteId, 'pub/course' );
+				const theme: Theme = await getSiteTheme( siteId, 'pub/course' );
+				const userGlobalStylesLink: string =
+					theme?._links?.[ 'wp:user-global-styles' ]?.[ 0 ]?.href || '';
+				const userGlobalStylesId = parseInt( userGlobalStylesLink.split( '/' ).pop() || '', 10 );
+				const styleVariation = styleVariations.find(
+					( variation ) => variation.title === selectedStyleVariationTitle
+				);
+				if ( styleVariation && userGlobalStylesId && ! isNaN( userGlobalStylesId ) ) {
+					await updateGlobalStyles( siteId, userGlobalStylesId, styleVariation );
+				}
+			}
+			setProgress( {
 				percentage: 100,
-				title: cartProgressTitle,
+				title: styleProgressTitle,
 			} );
 
 			const planProductObject = getPlanProduct( planObject?.periodAgnosticSlug, billingPeriod );
