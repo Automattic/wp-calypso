@@ -1,3 +1,120 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`DoNotSellDialog renders correctly 1`] = `<div />`;
+exports[`DoNotSellDialog renders correctly 1`] = `
+<body
+  class="ReactModal__Body--open"
+>
+  <div
+    data-react-modal-body-trap=""
+    style="position: absolute; opacity: 0;"
+    tabindex="0"
+  />
+  <p
+    class="a11y-speak-intro-text"
+    hidden="hidden"
+    id="a11y-speak-intro-text"
+    style="position: absolute;margin: -1px;padding: 0;height: 1px;width: 1px;overflow: hidden;clip: rect(1px, 1px, 1px, 1px);-webkit-clip-path: inset(50%);clip-path: inset(50%);border: 0;word-wrap: normal !important;"
+  >
+    Notifications
+  </p>
+  <div
+    aria-atomic="true"
+    aria-live="assertive"
+    aria-relevant="additions text"
+    class="a11y-speak-region"
+    id="a11y-speak-assertive"
+    style="position: absolute;margin: -1px;padding: 0;height: 1px;width: 1px;overflow: hidden;clip: rect(1px, 1px, 1px, 1px);-webkit-clip-path: inset(50%);clip-path: inset(50%);border: 0;word-wrap: normal !important;"
+  />
+  <div
+    aria-atomic="true"
+    aria-live="polite"
+    aria-relevant="additions text"
+    class="a11y-speak-region"
+    id="a11y-speak-polite"
+    style="position: absolute;margin: -1px;padding: 0;height: 1px;width: 1px;overflow: hidden;clip: rect(1px, 1px, 1px, 1px);-webkit-clip-path: inset(50%);clip-path: inset(50%);border: 0;word-wrap: normal !important;"
+  />
+  <div
+    aria-hidden="true"
+    id="modal-root"
+  />
+  <div />
+  <div
+    data-react-modal-body-trap=""
+    style="position: absolute; opacity: 0;"
+    tabindex="0"
+  />
+  <div
+    class="ReactModalPortal"
+  >
+    <div
+      class="ReactModal__Overlay do-not-sell"
+    >
+      <div
+        aria-describedby="do-not-sell-description"
+        aria-labelledby="do-not-sell-title"
+        aria-modal="true"
+        class="ReactModal__Content do-not-sell__dialog"
+        role="dialog"
+        tabindex="-1"
+      >
+        <div
+          class="do-not-sell__header"
+        >
+          <h3
+            class="do-not-sell__title"
+            id="do-not-sell-title"
+          >
+            title
+          </h3>
+          <button
+            aria-label="Close dialog"
+            class="do-not-sell__close-button"
+          />
+        </div>
+        <div
+          class="do-not-sell__content"
+          id="do-not-sell-description"
+        >
+          <p>
+            paragraph 1
+          </p>
+          <p>
+            paragraph 2
+          </p>
+          <p>
+            paragraph 3
+          </p>
+        </div>
+        <label
+          class="do-not-sell__preference"
+        >
+          <span
+            class="components-form-toggle do-not-sell__checkbox"
+          >
+            <input
+              class="components-form-toggle__input"
+              type="checkbox"
+            />
+            <span
+              class="components-form-toggle__track"
+            />
+            <span
+              class="components-form-toggle__thumb"
+            />
+          </span>
+          toggleLabel
+        </label>
+        <div
+          class="do-not-sell__footer"
+        >
+          <button
+            class="do-not-sell__button"
+          >
+            closeButton
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;

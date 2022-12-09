@@ -39,7 +39,7 @@ describe( 'DoNotSellDialog', () => {
 	} );
 
 	test( 'renders correctly', () => {
-		const { container, getByText } = render(
+		const { baseElement, getByText } = render(
 			<DoNotSellDialog
 				content={ genericContent }
 				onToggleActive={ jest.fn() }
@@ -54,7 +54,7 @@ describe( 'DoNotSellDialog', () => {
 		expect( getByText( 'paragraph 3' ) ).toBeInTheDocument();
 		expect( getByText( 'toggleLabel' ) ).toBeInTheDocument();
 		expect( getByText( 'closeButton' ) ).toBeInTheDocument();
-		expect( container ).toMatchSnapshot();
+		expect( baseElement ).toMatchSnapshot();
 	} );
 	test( 'fires onClose() on text button click', () => {
 		const onClose = jest.fn();
