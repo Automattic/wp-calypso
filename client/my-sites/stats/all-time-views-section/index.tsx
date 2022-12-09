@@ -48,9 +48,10 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 							) }
 						</div>
 
-						<StatsModulePlaceholder isLoading={ ! viewData } />
-
-						<Months dataKey={ chartOption } data={ viewData } siteSlug={ slug } showYearTotal />
+						<div className="stats__all-time-views-table-wrapper">
+							<StatsModulePlaceholder isLoading={ ! viewData } />
+							<Months dataKey={ chartOption } data={ viewData } siteSlug={ slug } showYearTotal />
+						</div>
 
 						<div className="stats-views__key-container">
 							<span className="stats-views__key-label">

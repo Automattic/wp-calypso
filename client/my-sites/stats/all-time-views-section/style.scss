@@ -1,23 +1,40 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/components/src/highlight-cards/variables.scss";
 
 $header-font: Recoleta, $sans;
 $mobile-layout-breakpoint: $break-small;
 $common-border-radius: 4px;
 
 .stats__all-time-views-section {
+
+	.stats__all-time-views-table-wrapper {
+		width: 100%;
+		overflow-x: auto;
+	}
+
 	.highlight-cards {
 		background-color: inherit;
 		box-shadow: none;
-
-		@media ( max-width: $mobile-layout-breakpoint ) {
-			display: none;
-		}
 	}
 
-	.highlight-cards-list .highlight-card {
-		padding: 24px;
-		min-width: 320px;
+	.highlight-cards-list {
+		.highlight-card {
+			padding: 24px;
+			min-width: 380px;
+		}
+
+		@media ( max-width: $custom-mobile-breakpoint ) {
+			padding: 0;
+			border: 1px solid var(--color-neutral-5);
+			border-left: 0;
+			border-right: 0;
+
+			.highlight-card {
+				padding: 24px 16px;
+				border-radius: 0;
+			}
+		}
 	}
 
 	.highlight-card-heading {
@@ -30,6 +47,10 @@ $common-border-radius: 4px;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+
+		@media ( max-width: $custom-mobile-breakpoint ) {
+			display: block;
+		}
 	}
 
 	.segmented-control {
@@ -65,10 +86,19 @@ $common-border-radius: 4px;
 				border-left: 0;
 			}
 		}
+
+		@media ( max-width: $custom-mobile-breakpoint ) {
+			margin-top: 16px;
+
+			.segmented-control__link {
+				padding: 6px 26px;
+			}
+		}
 	}
 
 	table.stats-views__months {
 		table-layout: fixed;
+		min-width: 900px;
 
 		td,
 		th {
@@ -96,6 +126,10 @@ $common-border-radius: 4px;
 
 			&:last-child {
 				text-align: right;
+			}
+
+			@media ( max-width: $custom-mobile-breakpoint ) {
+				padding-bottom: 12px;
 			}
 		}
 
@@ -126,6 +160,10 @@ $common-border-radius: 4px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
+
+		@media ( max-width: $break-large ) {
+			margin-bottom: 0;
+		}
 	}
 
 	.stats-views__key-label {
