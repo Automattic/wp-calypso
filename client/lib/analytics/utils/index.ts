@@ -21,3 +21,4 @@ export {
 } from './get-tracking-prefs';
 export type { TrackingPrefs } from './get-tracking-prefs';
 export { default as setTrackingPrefs } from './set-tracking-prefs';
+export { default as useDoNotSell } from './use-do-not-sell';
