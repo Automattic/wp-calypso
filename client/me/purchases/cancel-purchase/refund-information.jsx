@@ -219,7 +219,7 @@ const CancelPurchaseRefundInformation = ( {
 										</span>
 										<span className="cancel-budnled-domain__option-description">
 											{ i18n.translate(
-												"You'll receive a partial refund of %(planCost)s. The domain will be cancelled, you risk losaing it forever," +
+												"You'll receive a partial refund of %(planCost)s. The domain will be cancelled, you risk losing it forever," +
 													'and visitors to your site may experience difficulties accessing it.',
 												{
 													args: {
