@@ -93,6 +93,10 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 		[ shouldLimitGlobalStyles ]
 	);
 
+	const isCustomColorPremium = useCallback( () => {
+		return !! getColorOptions().find( ( { value } ) => value === 'custom' )?.isPremium;
+	}, [ getColorOptions ] );
+
 	const handlePredefinedColorSelect = ( {
 		value,
 		isPremium,
@@ -132,7 +136,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 	const handleCustomColorSelect = ( { hex, rgb }: ColorPicker.OnChangeCompleteValue ) => {
 		recordTracksEvent( 'calypso_signup_accent_color_select', {
 			color: 'custom',
-			is_premium: shouldLimitGlobalStyles,
+			is_premium: isCustomColorPremium(),
 		} );
 
 		setCustomColor( { hex, rgb: rgb as unknown as RGB } );
