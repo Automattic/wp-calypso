@@ -87,6 +87,7 @@ const CancelPurchaseLoadingPlaceholder = ( { purchaseId, siteSlug, getManagePurc
 			</div>
 		</Main>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace, jsx-a11y/heading-has-content */
 };
 
 CancelPurchaseLoadingPlaceholder.propTypes = {
