@@ -1,10 +1,16 @@
 import './style.scss';
 import { useTranslate } from 'i18n-calypso';
+import DoNotSellDialogContainer, { useDialogHelper } from 'calypso/blocks/do-not-sell-dialog';
 import SocialLogo from 'calypso/components/social-logo';
+import { useDoNotSell } from 'calypso/lib/analytics/utils';
+import { preventWidows } from 'calypso/lib/formatting';
 import { navigate } from 'calypso/lib/navigate';
 
 const UniversalNavbarFooter = () => {
 	const translate = useTranslate();
+	const { shouldSeeDoNotSell, isDoNotSell, onSetDoNotSell } = useDoNotSell();
+	const { isDialogOpen, closeDialog, openDialog } = useDialogHelper();
+
 	return (
 		<>
 			<section
@@ -142,6 +148,13 @@ const UniversalNavbarFooter = () => {
 										<span className="lp-link-chevron-external">{ translate( 'Policy' ) }</span>
 									</a>
 								</li>
+								{ shouldSeeDoNotSell && (
+									<li>
+										<button onClick={ openDialog }>
+											{ preventWidows( translate( 'Do Not Sell or Share My Data' ) ) }
+										</button>
+									</li>
+								) }
 							</ul>
 						</div>
 					</div>
@@ -355,6 +368,14 @@ const UniversalNavbarFooter = () => {
 					</div>
 				</div>
 			</section>
+			{ shouldSeeDoNotSell && (
+				<DoNotSellDialogContainer
+					isOpen={ isDialogOpen }
+					isActive={ isDoNotSell }
+					onToggleActive={ onSetDoNotSell }
+					onClose={ closeDialog }
+				/>
+			) }
 		</>
 	);
 };
