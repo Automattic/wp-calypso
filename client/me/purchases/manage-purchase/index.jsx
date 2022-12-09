@@ -457,6 +457,10 @@ class ManagePurchase extends Component {
 			translate,
 		} = this.props;
 
+		if ( isCancelable( purchase ) ) {
+			return null;
+		}
+
 		let text = translate( 'Remove subscription' );
 		if ( isPlan( purchase ) ) {
 			text = translate( 'Remove plan' );
