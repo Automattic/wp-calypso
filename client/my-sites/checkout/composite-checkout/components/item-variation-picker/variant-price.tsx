@@ -1,3 +1,4 @@
+import { isJetpackProduct } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { styled } from '@automattic/wpcom-checkout';
@@ -114,7 +115,12 @@ export const ItemVariantPrice: FunctionComponent< {
 	variant: WPCOMProductVariant;
 	compareTo?: WPCOMProductVariant;
 } > = ( { variant, compareTo } ) => {
+	const planTerm = variant.termIntervalInDays > 31 ? 'year' : 'month';
+	const introTerm = variant.introIntervalUnit;
+	const introCount = variant.introIntervalCount;
 	const isMobile = useMobileBreakpoint();
+	const isJetpackIntroductoryOffer = isJetpackProduct( variant ) && introCount > 0;
+	const formattedRegularPrice = formatCurrency( variant.regularPrice, variant.currency );
 	const compareToPriceForVariantTerm = getItemVariantCompareToPrice( variant, compareTo );
 	const discountPercentage = getItemVariantDiscountPercentage( variant, compareTo );
 	const formattedCurrentPrice = formatCurrency( variant.price, variant.currency, {
@@ -123,6 +129,17 @@ export const ItemVariantPrice: FunctionComponent< {
 	const formattedCompareToPriceForVariantTerm = compareToPriceForVariantTerm
 		? formatCurrency( compareToPriceForVariantTerm, variant.currency, { stripZeros: true } )
 		: undefined;
+	const translate = useTranslate();
+	const translatedIntroOfferPrice = translate(
+		' for the first %(introTerm)s then %(formattedRegularPrice)s per %(planTerm)s',
+		{
+			args: {
+				formattedRegularPrice,
+				planTerm,
+				introTerm,
+			},
+		}
+	);
 
 	return (
 		<Variant>
@@ -133,13 +150,16 @@ export const ItemVariantPrice: FunctionComponent< {
 				) }
 			</Label>
 			<span>
-				{ discountPercentage > 0 && ! isMobile && (
+				{ discountPercentage > 0 && ! isMobile && ! isJetpackIntroductoryOffer && (
 					<DiscountPercentage percent={ discountPercentage } />
 				) }
-				{ discountPercentage > 0 && (
+				{ discountPercentage > 0 && ! isJetpackIntroductoryOffer && (
 					<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
 				) }
-				<Price>{ formattedCurrentPrice }</Price>
+				<Price>
+					{ formattedCurrentPrice }
+					{ isJetpackIntroductoryOffer && translatedIntroOfferPrice }
+				</Price>
 			</span>
 		</Variant>
 	);

@@ -125,6 +125,9 @@ export function useGetProductVariants(
 					? variant.introductoryOfferPrice
 					: variant.priceFinal || variant.priceFull;
 
+			const regularPrice = variant.priceFull ? variant.priceFull : price;
+			const introIntervalCount = variant.product.introductory_offer?.interval_count ?? 0;
+			const introIntervalUnit = variant.product.introductory_offer?.interval_unit ?? 'month';
 			const termIntervalInMonths = getBillingMonthsForTerm( variant.plan.term );
 			const pricePerMonth = price / termIntervalInMonths;
 
@@ -133,6 +136,9 @@ export function useGetProductVariants(
 				productSlug: variant.planSlug,
 				productId: variant.product.product_id,
 				price,
+				regularPrice,
+				introIntervalCount,
+				introIntervalUnit,
 				termIntervalInMonths: getBillingMonthsForTerm( variant.plan.term ),
 				termIntervalInDays: getTermDuration( variant.plan.term ) ?? 0,
 				pricePerMonth,

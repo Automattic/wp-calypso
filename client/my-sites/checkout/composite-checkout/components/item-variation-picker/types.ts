@@ -5,6 +5,9 @@ export type WPCOMProductSlug = string;
 export type WPCOMProductVariant = {
 	price: number;
 	pricePerMonth: number;
+	regularPrice: number;
+	introIntervalCount: number;
+	introIntervalUnit: string;
 	termIntervalInMonths: number;
 	termIntervalInDays: number;
 	currency: string;
