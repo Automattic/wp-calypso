@@ -642,7 +642,11 @@ class Signup extends Component {
 		if ( midPoint ) {
 			// save the resuming point and then navigate away.
 			this.setState( { resumingStep: nextStepName } );
-			page( midPoint( this.props.signupDependencies ) );
+
+			// We need to defer this so that the state update cycle can be fully completed before navigating away.
+			// Navigating away before the state update cycle completion can cause the progress store to appear to
+			// revert back to an older stage. e.g. p2-pdtkmj-Sc#comment-1393
+			defer( () => page( midPoint( this.props.signupDependencies ) ) );
 			return;
 		}
 
