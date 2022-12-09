@@ -55,13 +55,6 @@ const CancelPurchaseRefundInformation = ( {
 
 		return (
 			<Fragment>
-				<div className="cancel-purchase__refund-information-description-header">
-					{ i18n.translate( 'When your %(productName)s plan expires you will loose access to:', {
-						args: {
-							productName: getName( purchase ),
-						},
-					} ) }
-				</div>
 				<ul className="cancel-purchase__refund-information--list-plan-features">
 					{ planCancellationFeatures.featureList.map( ( cancellationFeature ) => {
 						return (
