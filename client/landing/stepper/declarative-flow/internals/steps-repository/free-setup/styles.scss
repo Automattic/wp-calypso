@@ -3,6 +3,21 @@
 $font-family: "SF Pro Text", $sans;
 
 .free-setup {
+	.signup-header {
+		h1 {
+			@include break-small {
+				display: none;
+			}
+		}
+	}
+
+	.step-container .step-container__navigation.action-buttons {
+		display: none;
+		@include break-small {
+			display: flex;
+		}
+	}
+
 	.step-container__content {
 		display: flex;
 		justify-content: center;
@@ -13,4 +28,74 @@ $font-family: "SF Pro Text", $sans;
 	.step-container__header {
 		margin-bottom: 32px;
 	}
+
+	.setup-form-domain-name__url-box-icon {
+		svg {
+			&:hover {
+				cursor: pointer;
+			}
+		}
+	}
+
+	.setup-form-field-set-domain-name .form-setting-explanation {
+		margin: 8px 0;
+		font-style: normal;
+		display: flex;
+		color: var(--studio-gray-40);
+
+		svg {
+			margin-right: 10px;
+			margin-left: 3px;
+			color: var(--studio-gray-20);
+		}
+	}
+
+	.step-container__jetpack-powered {
+		margin-top: 128px;
+		margin-bottom: 60px;
+		@include break-small {
+			margin-top: 228px;
+		}
+	}
+
+	.setup-form-domain-name__url-box {
+		background: var(--studio-gray-0);
+		border: 1px solid var(--studio-gray-0);
+		border-radius: 4px;
+		display: flex;
+		align-items: center;
+		height: 44px;
+		padding: 0 16px;
+
+		.setup-form-domain-name__url-box-domain {
+			display: flex;
+			flex: 1;
+			width: 0;
+		}
+
+		.setup-form-domain-name__url-box-domain-text {
+			flex: 1;
+			text-overflow: ellipsis;
+			padding-right: 14px;
+			letter-spacing: -0.24px;
+			font-size: $font-body-small;
+		}
+
+		.setup-form-domain-name__url-box-site-name {
+			font-weight: 600;
+		}
+
+		.setup-form-domain-name__url-box-icon {
+			display: flex;
+
+			button {
+				display: flex;
+				align-items: center;
+				padding: 0;
+			}
+
+		}
+
+	}
+
 }

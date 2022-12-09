@@ -16,9 +16,9 @@ import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import DomainsStep from './internals/steps-repository/domains';
+import FreeSetup from './internals/steps-repository/free-setup';
 import Intro from './internals/steps-repository/intro';
 import LaunchPad from './internals/steps-repository/launchpad';
-import LinkInBioSetup from './internals/steps-repository/link-in-bio-setup';
 import PatternsStep from './internals/steps-repository/patterns';
 import PlansStep from './internals/steps-repository/plans';
 import Processing from './internals/steps-repository/processing-step';
@@ -27,7 +27,7 @@ import type { Flow, ProvidedDependencies } from './internals/types';
 
 const free: Flow = {
 	name: FREE_FLOW,
-	title: 'Free',
+	title: 'WordPress',
 	useSteps() {
 		useEffect( () => {
 			if ( ! isEnabled( 'signup/free-flow' ) ) {
@@ -39,7 +39,7 @@ const free: Flow = {
 
 		return [
 			{ slug: 'intro', component: Intro },
-			{ slug: 'freeSetup', component: LinkInBioSetup },
+			{ slug: 'freeSetup', component: FreeSetup },
 			{ slug: 'domains', component: DomainsStep },
 			{ slug: 'plans', component: PlansStep },
 			{ slug: 'patterns', component: PatternsStep },
@@ -91,7 +91,7 @@ const free: Flow = {
 					return navigate( 'freeSetup' );
 
 				case 'freeSetup':
-					return navigate( 'domains' );
+					return navigate( `domains` );
 
 				case 'domains':
 					return navigate( 'plans' );

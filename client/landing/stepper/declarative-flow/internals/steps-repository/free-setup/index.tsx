@@ -1,15 +1,22 @@
 import { StepContainer, base64ImageToBlob } from '@automattic/onboarding';
+import { Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { FormEvent, useEffect } from 'react';
+import Gridicon from 'calypso/../packages/components/src/gridicon';
+import { DomainSuggestion } from 'calypso/../packages/data-stores/src';
 import FormattedHeader from 'calypso/components/formatted-header';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wpcom from 'calypso/lib/wp';
+import { tip } from 'calypso/signup/icons';
 import { useSite } from '../../../../hooks/use-site';
 import SetupForm from '../components/setup-form';
 import type { Step } from '../../types';
-
 import './styles.scss';
 
 const FreeSetup: Step = function FreeSetup( { navigation } ) {
@@ -29,8 +36,45 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 	const [ base64Image, setBase64Image ] = React.useState< string | null >();
 	const [ siteTitle, setComponentSiteTitle ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( '' );
+	const [ generatedDomainSuggestion, setGeneratedDomainSuggestion ] =
+		React.useState< DomainSuggestion | null >();
+	const [ generatedTopLevelDomain, setGeneratedTopLevelDomain ] = React.useState< string >( '' );
+	const [ generatedSiteName, setGeneratedSiteName ] = React.useState< string >( '' );
 	const { setSiteTitle, setSiteDescription, setSiteLogo } = useDispatch( ONBOARD_STORE );
 	const state = useSelect( ( select ) => select( ONBOARD_STORE ) ).getState();
+
+	const generateNewRandomDomain = async () => {
+		await wpcom.req
+			.get(
+				{
+					path: '/domains/suggestions',
+					apiNamespace: 'rest/v1.1',
+				},
+				{
+					managed_subdomains: 'wordpress.com',
+					managed_subdomain_options: 'random_name',
+					managed_subdomain_quantity: 1,
+					quantity: 1,
+					http_envelope: 1,
+				}
+			)
+			.then( ( result: DomainSuggestion[] ) => {
+				if ( result[ 0 ] ) {
+					setGeneratedDomainSuggestion( result[ 0 ] );
+				} else {
+					setGeneratedDomainSuggestion( null );
+				}
+			} )
+			.catch( () => {
+				setGeneratedDomainSuggestion( null );
+			} );
+	};
+
+	// Removing until API issues are resolved
+	// useEffect( () => {
+	// 	//Generates new domain when screen loads
+	// 	//generateNewRandomDomain();
+	// }, [] );
 
 	useEffect( () => {
 		const { siteTitle, siteDescription, siteLogo } = state;
@@ -67,21 +111,83 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 			}
 		}
 
-		if ( siteTitle.trim().length ) {
-			submit?.( { siteTitle, tagline } );
+		if ( siteTitle.trim().length && generatedDomainSuggestion?.domain_name ) {
+			// Add logic to create new site and then pass the site slug to submit() as a providedDependency
+			// DesignSetup page may need the siteSlug param
+			submit?.( { siteTitle, tagline, siteSlug: generatedDomainSuggestion.domain_name } );
 		}
+	};
+
+	// TODO: Move into new file and export to reuse in Launchpad
+	function getUrlInfo( url: string ) {
+		const urlWithoutProtocol = url.replace( /^https?:\/\//, '' );
+
+		// Ex. mytest.wordpress.com matches mytest
+		const siteName = urlWithoutProtocol.match( /^[^.]*/ );
+		// Ex. mytest.wordpress.com matches .wordpress.com
+		const topLevelDomain = urlWithoutProtocol.match( /\..*/ ) || [];
+
+		return [ siteName ? siteName[ 0 ] : '', topLevelDomain ? topLevelDomain[ 0 ] : '' ];
+	}
+
+	const handleGenerateNewRandomDomain = async ( event: FormEvent ) => {
+		event.preventDefault();
+		generateNewRandomDomain();
+	};
+
+	useEffect( () => {
+		if ( generatedDomainSuggestion ) {
+			const [ siteName, topLevelDomain ] = getUrlInfo( generatedDomainSuggestion?.domain_name );
+			topLevelDomain && setGeneratedTopLevelDomain( topLevelDomain );
+			siteName && setGeneratedSiteName( siteName );
+		}
+	}, [ generatedDomainSuggestion ] );
+
+	const domainGeneratorFormField = () => {
+		return (
+			<FormFieldset className="setup-form-field-set-domain-name">
+				<FormLabel htmlFor="setup-form-domain-name">{ __( 'Site address' ) }</FormLabel>
+				<div className="setup-form-domain-name__url-box">
+					<div className="setup-form-domain-name__url-box-domain">
+						<div className="setup-form-domain-name__url-box-domain-text">
+							<span className="setup-form-domain-name__url-box-site-name">
+								{ generatedSiteName }
+							</span>
+							<span className="setup-form-domain-name__url-box-top-level-domain">
+								{ generatedTopLevelDomain }
+							</span>
+						</div>
+						<div className="setup-form-domain-name__url-box-icon">
+							<button onClick={ handleGenerateNewRandomDomain }>
+								<Gridicon size={ 18 } icon="refresh" />
+							</button>
+						</div>
+					</div>
+				</div>
+				<FormSettingExplanation>
+					<Icon className="setup-form-domain-name-explaination" icon={ tip } size={ 20 } />
+					{ __( 'You can customize your domain later' ) }
+				</FormSettingExplanation>
+			</FormFieldset>
+		);
+	};
+
+	const handleBackButton = () => {
+		return window.location.assign( '/setup/free/intro' );
 	};
 
 	return (
 		<StepContainer
 			stepName="free-setup"
 			isWideLayout={ true }
-			hideBack={ true }
+			hideBack={ false }
 			flowName="free"
+			goBack={ handleBackButton }
+			showJetpackPowered={ true }
 			formattedHeader={
 				<FormattedHeader
 					id="free-setup-header"
-					headerText={ createInterpolateElement( __( 'Personalize your<br />Website' ), {
+					headerText={ createInterpolateElement( __( 'Personalize your site' ), {
 						br: <br />,
 					} ) }
 					align="center"
@@ -101,6 +207,7 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 					setBase64Image={ setBase64Image }
 					handleSubmit={ handleSubmit }
 					translatedText={ formText }
+					children={ domainGeneratorFormField() }
 				/>
 			}
 			recordTracksEvent={ recordTracksEvent }
