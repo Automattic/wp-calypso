@@ -2,16 +2,20 @@ import { Gridicon } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState, useCallback } from 'react';
+import DoNotSellDialogContainer, { useDialogHelper } from 'calypso/blocks/do-not-sell-dialog';
 import ExternalLink from 'calypso/components/external-link';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import SocialLogo from 'calypso/components/social-logo';
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useDoNotSell } from 'calypso/lib/analytics/utils';
+import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
 import appStoreBadge from './assets/app-store-badge.png';
 import googlePlayBadge from './assets/google-play-badge.png';
 import a8cLogo from './assets/logo-a8c-white.svg';
 import LocalSwitcher from './locale-switcher';
+
 import './style.scss';
 
 const JPCOM_HOME = 'https://jetpack.com';
@@ -41,6 +45,9 @@ const JetpackComFooter: React.FC = () => {
 		() => region && region.toLowerCase() !== 'california',
 		[ region ]
 	);
+	const { shouldSeeDoNotSell, isDoNotSell, onSetDoNotSell } = useDoNotSell();
+	const { isDialogOpen, closeDialog, openDialog } = useDialogHelper();
+
 	const defaultLocale = useLocale();
 	const [ isLocaleSwitcherVisible, setLocaleSwitcherVisibility ] = useState( false );
 	const { sitemap, socialProps } = useMemo( () => {
@@ -171,6 +178,12 @@ const JetpackComFooter: React.FC = () => {
 								),
 								trackId: 'privacy_policy_california',
 						  },
+					shouldSeeDoNotSell
+						? {
+								label: translate( 'Do Not Sell or Share My Data' ),
+								onClick: openDialog,
+						  }
+						: null,
 				],
 			},
 			{
@@ -240,7 +253,7 @@ const JetpackComFooter: React.FC = () => {
 			sitemap,
 			socialProps,
 		};
-	}, [ translate, hideCaliforniaNotice ] );
+	}, [ translate, hideCaliforniaNotice, shouldSeeDoNotSell, openDialog ] );
 
 	const onLanguageClick = useCallback(
 		() => setLocaleSwitcherVisibility( true ),
@@ -290,7 +303,17 @@ const JetpackComFooter: React.FC = () => {
 												return;
 											}
 
-											const { label, href, trackId } = item;
+											const { label, href, trackId, onClick } = item;
+
+											if ( onClick ) {
+												return (
+													<li key={ label as string }>
+														<ExternalLink className="sitemap__link" onClick={ onClick }>
+															{ preventWidows( label ) }
+														</ExternalLink>
+													</li>
+												);
+											}
 
 											return (
 												<li key={ label as string }>
@@ -299,7 +322,7 @@ const JetpackComFooter: React.FC = () => {
 														className="sitemap__link"
 														onClick={ trackId ? getTrackLinkClick( trackId ) : null }
 													>
-														{ label }
+														{ preventWidows( label ) }
 													</ExternalLink>
 												</li>
 											);
@@ -400,6 +423,14 @@ const JetpackComFooter: React.FC = () => {
 					</li>
 				</ul>
 			</div>
+			{ shouldSeeDoNotSell && (
+				<DoNotSellDialogContainer
+					isOpen={ isDialogOpen }
+					isActive={ isDoNotSell }
+					onToggleActive={ onSetDoNotSell }
+					onClose={ closeDialog }
+				/>
+			) }
 		</footer>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
