@@ -416,8 +416,8 @@ function PurchaseMetaExpiration( {
 		return (
 			<li className="manage-purchase__meta-expiration">
 				<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
-				{ ! hideAutoRenew && ! isJetpackPurchaseUsingPrimaryCancellationFlow && (
-					<div className="manage-purchase__auto-renew">
+				{ ! hideAutoRenew && (
+					/*! isJetpackPurchaseUsingPrimaryCancellationFlow && */ <div className="manage-purchase__auto-renew">
 						<span className="manage-purchase__detail manage-purchase__auto-renew-text">
 							{ subsRenewText }
 						</span>
