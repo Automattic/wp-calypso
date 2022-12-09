@@ -123,10 +123,9 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 				</a>
 			);
 		}
-		if ( isWoo ) {
-			return <img className="promo-qr-code" src={ qrCodeWoo } alt="QR Code for Woo mobile app" />;
-		}
-		return (
+		return isWoo ? (
+			<img className="promo-qr-code" src={ qrCodeWoo } alt="QR Code for Woo mobile app" />
+		) : (
 			<img className="promo-qr-code" src={ qrCodeJetpack } alt="QR Code for Jetpack mobile app" />
 		);
 	};
