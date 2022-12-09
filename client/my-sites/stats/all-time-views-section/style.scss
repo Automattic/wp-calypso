@@ -20,7 +20,7 @@ $common-border-radius: 4px;
 
 	.highlight-cards-list {
 		.highlight-card {
-			padding: 24px;
+			padding: 32px;
 			min-width: 380px;
 		}
 
@@ -43,7 +43,7 @@ $common-border-radius: 4px;
 		font-size: $font-title-small;
 		line-height: 26px;
 		color: var(--color-neutral-100);
-		margin-bottom: 16px;
+		margin-bottom: 32px;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -97,7 +97,6 @@ $common-border-radius: 4px;
 	}
 
 	table.stats-views__months {
-		table-layout: fixed;
 		min-width: 900px;
 
 		td,
@@ -155,7 +154,7 @@ $common-border-radius: 4px;
 	}
 
 	.stats-views__key-container {
-		padding: 0;
+		padding: 16px;
 		float: none;
 		display: flex;
 		align-items: center;
