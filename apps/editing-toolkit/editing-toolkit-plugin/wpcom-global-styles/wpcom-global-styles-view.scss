@@ -1,5 +1,9 @@
 /* stylelint-disable declaration-property-unit-allowed-list */
 
+.launch-bar-global-styles-button {
+	position: relative;
+}
+
 .launch-bar-global-styles-popover {
 	position: absolute;
 	width: 260px;
@@ -44,5 +48,18 @@
 			background: #fff;
 			color: #044b7a;
 		}
+	}
+}
+
+@media screen and (max-width: 460px) {
+	.launch-bar-global-styles-button {
+		position: static;
+	}
+
+	.launch-bar-global-styles-popover {
+		width: auto;
+		left: 20px;
+		right: 20px;
+		transform: none;
 	}
 }
