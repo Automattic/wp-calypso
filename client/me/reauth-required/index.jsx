@@ -51,6 +51,7 @@ class ReauthRequired extends Component {
 	update = () => {
 		this.setState( {
 			isReauthRequired: this.props.twoStepAuthorization.isReauthRequired(),
+			isTwoStepInitialized: this.props.twoStepAuthorization.initialized,
 		} );
 	};
 
