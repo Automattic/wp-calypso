@@ -139,9 +139,9 @@ export function getEnhancedTasks(
 				case 'links_added':
 					taskData = {
 						title: translate( 'Add links' ),
-						completed: siteEditCompleted,
+						completed: linkInBioLinksEditCompleted,
 						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, siteEditCompleted, task.id );
+							recordTaskClickTracksEvent( flow, linkInBioLinksEditCompleted, task.id );
 							window.location.assign( `/site-editor/${ siteSlug }` );
 						},
 					};
@@ -149,7 +149,7 @@ export function getEnhancedTasks(
 				case 'link_in_bio_launched':
 					taskData = {
 						title: translate( 'Launch your site' ),
-						completed: linkInBioLinksEditCompleted,
+						completed: siteLaunchCompleted,
 						disabled: ! linkInBioLinksEditCompleted,
 						isLaunchTask: true,
 						actionDispatch: () => {
