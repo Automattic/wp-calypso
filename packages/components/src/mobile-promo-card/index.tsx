@@ -94,12 +94,13 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 
 	// Returns store badges on mobile (including tablets) and QR codes on the Desktop.
 	const getPromoImage = () => {
+		const fallbackLink = isWoo ? 'https://woo.com/mobile' : 'https://jetpack.com/app';
 		if ( isApple ) {
 			const appStoreLink = isWoo
 				? getRedirectUrlFromSlug( REDIRECT_SLUGS.wooApple )
 				: getRedirectUrlFromSlug( REDIRECT_SLUGS.jetpackApple );
 			return (
-				<a href={ appStoreLink }>
+				<a href={ appStoreLink ?? fallbackLink }>
 					<img
 						className="promo-store-badge"
 						src={ storeBadgeApple }
@@ -113,7 +114,7 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 				? getRedirectUrlFromSlug( REDIRECT_SLUGS.wooGoogle )
 				: getRedirectUrlFromSlug( REDIRECT_SLUGS.jetpackGoogle );
 			return (
-				<a href={ appStoreLink }>
+				<a href={ appStoreLink ?? fallbackLink }>
 					<img
 						className="promo-store-badge"
 						src={ storeBadgeGoogle }
