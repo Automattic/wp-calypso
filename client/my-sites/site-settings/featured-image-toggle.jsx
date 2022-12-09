@@ -29,7 +29,11 @@ const FeaturedImageTemplateToggle = ( props ) => {
 						{
 							components: {
 								link: (
-									<a href={ localizeUrl( 'https://wordpress.com/support/featured-images/' ) } />
+									<a
+										href={ localizeUrl( 'https://wordpress.com/support/featured-images/' ) }
+										target="_blank"
+										rel="noreferrer"
+									/>
 								),
 							},
 						}
