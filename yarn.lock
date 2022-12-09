@@ -434,7 +434,6 @@ __metadata:
     "@wordpress/base-styles": ^4.5.0
     "@wordpress/icons": ^9.11.0
     classnames: ^2.3.1
-    enzyme: ^3.11.0
     framer-motion: 6.2.8
     gridicons: ^3.4.0
     i18n-calypso: "workspace:^"
@@ -460,8 +459,10 @@ __metadata:
     "@emotion/react": ^11.4.1
     "@emotion/styled": ^11.3.0
     "@storybook/react": ^6.4.18
+    "@testing-library/dom": ^8.13.0
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
+    "@testing-library/user-event": ^14.2.0
     "@wordpress/i18n": ^4.9.0
     "@wordpress/react-i18n": ^3.7.0
     debug: ^4.3.3
@@ -943,7 +944,6 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    enzyme: ^3.11.0
     jest: ^27.3.1
     postcss: ^8.4.5
     react: ^17.0.2
@@ -1286,7 +1286,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/privacy-toolset@workspace:packages/privacy-toolset":
+"@automattic/privacy-toolset@workspace:^, @automattic/privacy-toolset@workspace:packages/privacy-toolset":
   version: 0.0.0-use.local
   resolution: "@automattic/privacy-toolset@workspace:packages/privacy-toolset"
   dependencies:
@@ -12844,7 +12844,6 @@ __metadata:
     duplicate-package-checker-webpack-plugin: ^3.0.0
     email-validator: ^2.0.4
     emoji-text: ^0.2.6
-    enzyme: ^3.11.0
     express: ^4.17.1
     express-async-handler: ^1.1.4
     express-useragent: ^1.0.15
@@ -36206,6 +36205,7 @@ swiper@4.5.1:
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
+    "@automattic/privacy-toolset": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/whats-new": "workspace:^"

@@ -183,14 +183,16 @@ export class CartCheckoutPage {
 	 * If optional parameter `rawString` is specified, the string as obtained is returned.
 	 *
 	 * @param param0 Object parameter.
-	 * @param {boolean} param0.rawString If true, the raw string is returned.
+	 * @param {boolean} param0.rawString If true, the string as displayed is returned.
 	 * @returns {Promise<number|string>} Total value of items in cart.
 	 */
 	async getCheckoutTotalAmount( { rawString = false }: { rawString?: boolean } = {} ): Promise<
 		number | string
 	> {
-		const elementHandle = await this.page.waitForSelector( selectors.totalAmount );
-		const stringAmount = await elementHandle.innerText();
+		const totalAmountLocator = this.page.locator( selectors.totalAmount );
+		await totalAmountLocator.waitFor( { timeout: 20 * 1000 } );
+
+		const stringAmount = await totalAmountLocator.innerText();
 		if ( rawString ) {
 			// Returns the raw string.
 			return stringAmount;

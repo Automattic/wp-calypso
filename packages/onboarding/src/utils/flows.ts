@@ -42,3 +42,8 @@ export const isTailoredSignupFlow = ( flowName: string | null ) => {
 				FREE_FLOW === flowName )
 	);
 };
+
+export const ecommerceFlowRecurTypes = {
+	YEARLY: 'yearly',
+	MONTHLY: 'monthly',
+};

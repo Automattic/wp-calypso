@@ -55,7 +55,7 @@ export const HelpCenterContactPage: React.FC = () => {
 			return;
 		}
 		recordTracksEvent( 'calypso_helpcenter_contact_options_impression', {
-			forceSiteId: true,
+			force_site_id: true,
 			location: 'help-center',
 			chat_available: renderChat.state === 'AVAILABLE',
 			email_available: renderEmail.render,
@@ -204,7 +204,7 @@ export const HelpCenterContactButton: React.FC = () => {
 
 	const trackContactButtonClicked = () => {
 		recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
-			forceSiteId: true,
+			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
 		} );

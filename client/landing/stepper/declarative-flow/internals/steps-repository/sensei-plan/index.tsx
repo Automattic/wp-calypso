@@ -26,6 +26,7 @@ import { SenseiStepProgress, Progress } from '../sensei-setup/sensei-step-progre
 import { Tagline, Title, PlansIntervalToggle } from './components';
 import type { Step } from '../../types';
 import type { Props as PlanItemProps } from 'calypso/../packages/plans-grid/src/plans-table/plan-item';
+import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
 import './styles.scss';
 
 enum Status {

@@ -2,79 +2,100 @@
  * @jest-environment jsdom
  */
 
-import { shallow } from 'enzyme';
+import '@testing-library/jest-dom';
+import { render, screen } from '@testing-library/react';
 import ProgressBar from '../';
 
 describe( 'ProgressBar', () => {
 	test( 'should show the title', () => {
-		const progressBar = shallow( <ProgressBar value={ 20 } title="foo" /> );
+		render( <ProgressBar value={ 20 } title="foo" /> );
 
-		expect( progressBar.find( '.progress-bar__progress' ).contains( 'foo' ) ).toBe( true );
+		const progressBar = screen.getByRole( 'progressbar', { name: 'progress bar' } );
+
+		expect( progressBar ).toBeVisible();
+		expect( progressBar ).toHaveClass( 'progress-bar__progress' );
+		expect( progressBar ).toHaveTextContent( 'foo' );
 	} );
 
 	test( 'should add is-pulsing class when isPulsing property is true', () => {
-		const progressBar = shallow( <ProgressBar value={ 20 } isPulsing={ true } /> );
+		const { container } = render( <ProgressBar value={ 20 } isPulsing /> );
 
-		expect( progressBar.hasClass( 'is-pulsing' ) ).toBe( true );
+		expect( container.firstChild ).toHaveClass( 'is-pulsing' );
 	} );
 
 	test( 'should not add is-pulsing class when isPulsing property is false', () => {
-		const progressBar = shallow( <ProgressBar value={ 20 } isPulsing={ false } /> );
+		const { container } = render( <ProgressBar value={ 20 } isPulsing={ false } /> );
 
-		expect( progressBar.hasClass( 'is-pulsing' ) ).toBe( false );
+		expect( container.firstChild ).not.toHaveClass( 'is-pulsing' );
 	} );
 
 	test( 'should add is-compact class when compact property is true', () => {
-		const progressBar = shallow( <ProgressBar value={ 20 } compact={ true } /> );
+		const { container } = render( <ProgressBar value={ 20 } compact /> );
 
-		expect( progressBar.hasClass( 'is-compact' ) ).toBe( true );
+		expect( container.firstChild ).toHaveClass( 'is-compact' );
 	} );
 
 	test( 'should not add is-compact class when compact property is false', () => {
-		const progressBar = shallow( <ProgressBar value={ 20 } compact={ false } /> );
+		const { container } = render( <ProgressBar value={ 20 } compact={ false } /> );
 
-		expect( ! progressBar.hasClass( 'is-compact' ) ).toBe( true );
+		expect( container.firstChild ).not.toHaveClass( 'is-compact' );
 	} );
 
 	test( 'should properly calculate the width percentage', () => {
-		const progressBar = shallow( <ProgressBar value={ 20 } total={ 40 } /> );
+		render( <ProgressBar value={ 20 } total={ 40 } /> );
 
-		expect( progressBar.find( '.progress-bar__progress' ).props().style.width ).toBe( '50%' );
+		expect( screen.getByRole( 'progressbar', { name: 'progress bar' } ) ).toHaveStyle(
+			'width: 50%'
+		);
 	} );
 
 	test( 'should have correct aria values', () => {
-		const progressBar = shallow( <ProgressBar value={ 20 } total={ 40 } /> );
-		const props = progressBar.find( '.progress-bar__progress' ).props();
+		render( <ProgressBar value={ 20 } total={ 40 } /> );
 
-		expect( props[ 'aria-valuenow' ] ).toBe( 20 );
-		expect( props[ 'aria-valuemax' ] ).toBe( 40 );
+		const progressBar = screen.getByRole( 'progressbar', { name: 'progress bar' } );
+
+		expect( progressBar ).toHaveAttribute( 'aria-valuenow', '20' );
+		expect( progressBar ).toHaveAttribute( 'aria-valuemax', '40' );
 	} );
 
 	test( 'should have the color provided by the color property', () => {
-		const progressBar = shallow( <ProgressBar value={ 20 } color="red" /> );
+		render( <ProgressBar value={ 20 } color="red" /> );
 
-		expect( progressBar.find( '.progress-bar__progress' ).props().style.backgroundColor ).toBe(
-			'red'
+		expect( screen.getByRole( 'progressbar', { name: 'progress bar' } ) ).toHaveStyle(
+			'background-color: red'
 		);
 	} );
 
 	test( 'should not be able to be more than 100% complete', () => {
-		const progressBar = shallow( <ProgressBar value={ 240 } /> );
-		expect( progressBar.find( '.progress-bar__progress' ).props().style.width ).toBe( '100%' );
+		render( <ProgressBar value={ 240 } /> );
+		expect( screen.getByRole( 'progressbar', { name: 'progress bar' } ) ).toHaveStyle(
+			'width: 100%'
+		);
 	} );
 
 	test( 'should never jump back', () => {
-		const progressBar = shallow( <ProgressBar value={ 10 } /> );
-		expect( progressBar.find( '.progress-bar__progress' ).props().style.width ).toBe( '10%' );
-		progressBar.setProps( { value: 20 } );
-		expect( progressBar.find( '.progress-bar__progress' ).props().style.width ).toBe( '20%' );
-		progressBar.setProps( { value: 15 } );
-		expect( progressBar.find( '.progress-bar__progress' ).props().style.width ).toBe( '20%' );
-		progressBar.setProps( { value: 30 } );
-		expect( progressBar.find( '.progress-bar__progress' ).props().style.width ).toBe( '30%' );
+		const { container, rerender } = render( <ProgressBar value={ 10 } /> );
 
-		// Other props should update the component
-		progressBar.setProps( { isPulsing: true } );
-		expect( progressBar.hasClass( 'is-pulsing' ) ).toBe( true );
+		const progressBar = screen.getByRole( 'progressbar', { name: 'progress bar' } );
+
+		expect( progressBar ).toHaveStyle( 'width: 10%' );
+
+		rerender( <ProgressBar value={ 20 } /> );
+
+		expect( progressBar ).toHaveStyle( 'width: 20%' );
+
+		rerender( <ProgressBar value={ 15 } /> );
+
+		expect( progressBar ).toHaveStyle( 'width: 20%' );
+
+		rerender( <ProgressBar value={ 30 } /> );
+
+		expect( progressBar ).toHaveStyle( 'width: 30%' );
+
+		expect( container.firstChild ).not.toHaveClass( 'is-pulsing' );
+
+		rerender( <ProgressBar value={ 30 } isPulsing /> );
+
+		expect( container.firstChild ).toHaveClass( 'is-pulsing' );
 	} );
 } );

@@ -278,7 +278,7 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
-	renderReader() {
+	renderReader( showLabel = true ) {
 		const { translate } = this.props;
 		return (
 			<Item
@@ -291,7 +291,8 @@ class MasterbarLoggedIn extends Component {
 				tooltip={ translate( 'Read the blogs and topics you follow' ) }
 				preloadSection={ this.preloadReader }
 			>
-				{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
+				{ showLabel &&
+					translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 			</Item>
 		);
 	}
@@ -424,7 +425,6 @@ class MasterbarLoggedIn extends Component {
 				/>
 				<MasterBarMobileMenu onClose={ this.handleToggleMenu } open={ this.state.isMenuOpen }>
 					{ this.renderPublish() }
-					{ this.renderReader() }
 					{ this.renderMe() }
 				</MasterBarMobileMenu>
 				{ menuBtnRef && (
@@ -514,6 +514,7 @@ class MasterbarLoggedIn extends Component {
 					<Masterbar>
 						<div className="masterbar__section masterbar__section--left">
 							{ this.renderMySites() }
+							{ this.renderReader( false ) }
 							{ this.renderLanguageSwitcher() }
 							{ this.renderSearch() }
 						</div>

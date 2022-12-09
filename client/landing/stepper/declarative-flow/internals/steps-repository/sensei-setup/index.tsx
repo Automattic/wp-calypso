@@ -49,7 +49,7 @@ const ThemeStylePreviews = ( {
 	);
 };
 
-const SenseiSetupStep: Step = ( { navigation } ) => {
+const SenseiSetup: Step = ( { navigation } ) => {
 	const { __ } = useI18n();
 	const isDesktop = useDesktopBreakpoint();
 
@@ -123,4 +123,4 @@ const SenseiSetupStep: Step = ( { navigation } ) => {
 	);
 };
 
-export default SenseiSetupStep;
+export default SenseiSetup;

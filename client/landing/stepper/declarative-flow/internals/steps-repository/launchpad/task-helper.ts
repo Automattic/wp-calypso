@@ -30,6 +30,9 @@ export function getEnhancedTasks(
 	const siteLaunchCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.site_launched || false;
 
+	const firstPostPublishedCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.first_post_published || false;
+
 	const videoPressUploadCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.video_uploaded || false;
 
@@ -98,6 +101,7 @@ export function getEnhancedTasks(
 				case 'first_post_published':
 					taskData = {
 						title: translate( 'Write your first post' ),
+						completed: firstPostPublishedCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign( `/post/${ siteSlug }` );
@@ -238,32 +242,6 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign( `${ site?.URL }/wp-admin/post-new.php?post_type=course` );
-						},
-					};
-					break;
-				case 'site_launched':
-					taskData = {
-						title: translate( 'Launch Your site' ),
-						completed: site?.launch_status === 'launched',
-						disabled: site?.launch_status === 'launched',
-						actionDispatch: () => {
-							if ( site?.ID ) {
-								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
-								const { launchSite } = dispatch( SITE_STORE );
-
-								setPendingAction( async () => {
-									setProgressTitle( __( 'Launching Your Site' ) );
-									await launchSite( site.ID );
-
-									// Waits for half a second so that the loading screen doesn't flash away too quickly
-									await new Promise( ( res ) => setTimeout( res, 500 ) );
-									if ( siteSlug ) {
-										window.location.replace( `https://${ siteSlug }` );
-									}
-								} );
-
-								submit?.();
-							}
 						},
 					};
 					break;

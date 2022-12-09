@@ -6,11 +6,16 @@ import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
+import Launchpad from './internals/steps-repository/launchpad';
+import ProcessingStep from './internals/steps-repository/processing-step';
+import SenseiDomain from './internals/steps-repository/sensei-domain';
+import SenseiLaunch from './internals/steps-repository/sensei-launch';
+import SenseiPlan from './internals/steps-repository/sensei-plan';
+import SenseiSetup from './internals/steps-repository/sensei-setup';
 import { AssertConditionState, Flow } from './internals/types';
-import type { StepPath } from './internals/steps-repository';
 import './internals/sensei.scss';
 
-export const sensei: Flow = {
+const sensei: Flow = {
 	name: SENSEI_FLOW,
 	title: 'Sensei',
 	useSteps() {
@@ -20,13 +25,13 @@ export const sensei: Flow = {
 		}, [] );
 
 		return [
-			'senseiSetup',
-			'senseiDomain',
-			'senseiPlan',
-			'senseiLaunch',
-			'launchpad',
-			'processing',
-		] as StepPath[];
+			{ slug: 'senseiSetup', component: SenseiSetup },
+			{ slug: 'senseiDomain', component: SenseiDomain },
+			{ slug: 'senseiPlan', component: SenseiPlan },
+			{ slug: 'senseiLaunch', component: SenseiLaunch },
+			{ slug: 'launchpad', component: Launchpad },
+			{ slug: 'processing', component: ProcessingStep },
+		];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -66,7 +71,7 @@ export const sensei: Flow = {
 			}
 		};
 
-		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
+		const goToStep = ( step: string ) => {
 			navigate( step );
 		};
 
@@ -92,3 +97,5 @@ export const sensei: Flow = {
 		};
 	},
 };
+
+export default sensei;

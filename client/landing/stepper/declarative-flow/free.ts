@@ -15,10 +15,17 @@ import {
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import type { StepPath } from './internals/steps-repository';
+import DomainsStep from './internals/steps-repository/domains';
+import Intro from './internals/steps-repository/intro';
+import LaunchPad from './internals/steps-repository/launchpad';
+import LinkInBioSetup from './internals/steps-repository/link-in-bio-setup';
+import PatternsStep from './internals/steps-repository/patterns';
+import PlansStep from './internals/steps-repository/plans';
+import Processing from './internals/steps-repository/processing-step';
+import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
-export const free: Flow = {
+const free: Flow = {
 	name: FREE_FLOW,
 	title: 'Free',
 	useSteps() {
@@ -31,15 +38,15 @@ export const free: Flow = {
 		}, [] );
 
 		return [
-			'intro',
-			'freeSetup',
-			'domains',
-			'plans',
-			'patterns',
-			'siteCreationStep',
-			'processing',
-			'launchpad',
-		] as StepPath[];
+			{ slug: 'intro', component: Intro },
+			{ slug: 'freeSetup', component: LinkInBioSetup },
+			{ slug: 'domains', component: DomainsStep },
+			{ slug: 'plans', component: PlansStep },
+			{ slug: 'patterns', component: PatternsStep },
+			{ slug: 'siteCreationStep', component: SiteCreationStep },
+			{ slug: 'processing', component: Processing },
+			{ slug: 'launchpad', component: LaunchPad },
+		];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -134,10 +141,12 @@ export const free: Flow = {
 			}
 		};
 
-		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
+		const goToStep = ( step: string ) => {
 			navigate( step );
 		};
 
 		return { goNext, goBack, goToStep, submit };
 	},
 };
+
+export default free;

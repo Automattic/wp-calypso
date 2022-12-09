@@ -9,7 +9,6 @@ import {
 } from 'calypso/blocks/import/util';
 import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
 import { BASE_ROUTE } from './config';
-import type { StepPath } from '../../steps-repository';
 
 export function getFinalImporterUrl(
 	targetSlug: string,
@@ -51,10 +50,7 @@ export function getFinalImporterUrl(
  * Stepper's redirection handlers
  * generateStepPath share the same interface/params between 'signup' & 'stepper' frameworks
  */
-export function generateStepPath(
-	stepName: string | StepPath,
-	stepSectionName?: string
-): StepPath {
+export function generateStepPath( stepName: string, stepSectionName?: string ) {
 	if ( stepName === 'intent' ) {
 		return 'goals';
 	} else if ( stepName === 'capture' ) {
@@ -64,5 +60,5 @@ export function generateStepPath(
 	const routes = [ BASE_ROUTE, stepName, stepSectionName ];
 	const path = routes.join( '_' );
 
-	return camelCase( path ) as StepPath;
+	return camelCase( path ) as string;
 }

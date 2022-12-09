@@ -1,15 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import type { StepPath } from '../declarative-flow/internals/steps-repository';
 
 const SiteIntent = Onboard.SiteIntent;
 const MAX_STEPS = 10;
 
-export function useSiteSetupFlowProgress(
-	currentStep: StepPath,
-	intent: string,
-	storeType: string
-) {
+export function useSiteSetupFlowProgress( currentStep: string, intent: string, storeType: string ) {
 	const beginningSteps = [ 'goals', 'vertical' ];
 
 	let beginningSegment = ( beginningSteps.length - 1 ) / MAX_STEPS;
