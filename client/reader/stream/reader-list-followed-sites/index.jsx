@@ -12,10 +12,10 @@ import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/select
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import ReaderSidebarFollowingItem from './item';
+import ReaderListFollowingItem from './item';
 import '../style.scss';
 
-export class ReaderSidebarFollowedSites extends Component {
+export class ReaderListFollowedSites extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
@@ -62,7 +62,7 @@ export class ReaderSidebarFollowedSites extends Component {
 			sites,
 			( site ) =>
 				site && (
-					<ReaderSidebarFollowingItem
+					<ReaderListFollowingItem
 						key={ site.ID }
 						path={ path }
 						site={ site }
@@ -131,4 +131,4 @@ export default connect( ( state, ownProps ) => {
 		),
 		sites: getReaderFollowedSites( state ),
 	};
-} )( localize( UrlSearch( ReaderSidebarFollowedSites ) ) );
+} )( localize( UrlSearch( ReaderListFollowedSites ) ) );
