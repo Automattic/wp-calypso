@@ -35,10 +35,6 @@ const selectors = {
 	scheduleMeridianButton: ( meridian: 'am' | 'pm' ) => `role=button[name="${ meridian }"i]`,
 	scheduleMonthSelect: `role=combobox[name="month"i]`,
 
-	// Permalink
-	permalinkInput: '.components-base-control__field:has-text("URL Slug") input',
-	permalinkGeneratedURL: 'a.edit-post-post-link__link',
-
 	// Category
 	categoryCheckbox: ( categoryName: string ) =>
 		`${ panel } div[aria-label=Categories] label:text("${ categoryName }")`,
@@ -341,16 +337,9 @@ export class EditorSettingsSidebarComponent {
 	 * @param {string} slug URL slug to set.
 	 */
 	async enterUrlSlug( slug: string ) {
-		const inputLocator = this.editor.locator( selectors.permalinkInput );
-		await inputLocator.fill( slug );
-		// Hit the Tab key to confirm URL slug input and update the Post URL
-		// shown in this section.
-		await this.page.keyboard.press( 'Tab' );
-
-		const generatedURL = this.editor.locator(
-			`${ selectors.permalinkGeneratedURL } > text=/${ slug }`
-		);
-		await generatedURL.waitFor();
+		await this.editor.getByRole( 'button', { name: /Change URL:/ } ).click();
+		await this.editor.getByLabel( 'Permalink' ).fill( slug );
+		await this.editor.getByRole( 'button', { name: 'Close' } ).click();
 	}
 
 	/**
