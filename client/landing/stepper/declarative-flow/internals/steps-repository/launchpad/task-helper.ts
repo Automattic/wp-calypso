@@ -1,6 +1,7 @@
-import { PLAN_PREMIUM } from '@automattic/calypso-products';
+import { PLAN_PREMIUM, FEATURE_ADVANCED_DESIGN_CUSTOMIZATION } from '@automattic/calypso-products';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list';
 import { SiteDetails } from 'calypso/../packages/data-stores/src';
@@ -78,9 +79,13 @@ export function getEnhancedTasks(
 						disabled: isVideoPressFlow( flow ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.assign(
-								`/plans/${ siteSlug }${ displayGlobalStylesWarning ? '?plan=' + PLAN_PREMIUM : '' }`
-							);
+							const plansUrl = addQueryArgs( `/plans/${ siteSlug }`, {
+								...( displayGlobalStylesWarning && {
+									plan: PLAN_PREMIUM,
+									feature: FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+								} ),
+							} );
+							window.location.assign( plansUrl );
 						},
 						badgeText: translatedPlanName,
 						completed: task.completed && ! displayGlobalStylesWarning,
