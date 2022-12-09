@@ -2,7 +2,6 @@ import { Button, Gridicon } from '@automattic/components';
 import { useTranslate, localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-// import LoadingPlaceholderCancelPurchasePage from 'calypso/me/purchases/components/loading-placeholder/cancel-purchase-page';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
