@@ -25,6 +25,9 @@ export function getEnhancedTasks(
 	const productSlug = site?.plan?.product_slug;
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
+	const linkInBioLinksEditCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.links_edited || false;
+
 	const siteEditCompleted = site?.options?.launchpad_checklist_tasks_statuses?.site_edited || false;
 
 	const siteLaunchCompleted =
@@ -146,8 +149,8 @@ export function getEnhancedTasks(
 				case 'link_in_bio_launched':
 					taskData = {
 						title: translate( 'Launch your site' ),
-						completed: siteLaunchCompleted,
-						disabled: ! siteEditCompleted,
+						completed: linkInBioLinksEditCompleted,
+						disabled: ! linkInBioLinksEditCompleted,
 						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
@@ -160,7 +163,7 @@ export function getEnhancedTasks(
 
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
 									await new Promise( ( res ) => setTimeout( res, 500 ) );
-									recordTaskClickTracksEvent( flow, siteLaunchCompleted, task.id );
+									recordTaskClickTracksEvent( flow, linkInBioLinksEditCompleted, task.id );
 									window.location.assign( `/home/${ siteSlug }` );
 								} );
 

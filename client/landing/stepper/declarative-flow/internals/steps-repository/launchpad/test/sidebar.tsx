@@ -222,7 +222,7 @@ describe( 'Sidebar', () => {
 					options: {
 						...defaultSiteDetails.options,
 						launchpad_checklist_tasks_statuses: {
-							site_edited: true,
+							links_edited: true,
 						},
 					},
 				} );
