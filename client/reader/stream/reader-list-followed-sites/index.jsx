@@ -4,9 +4,10 @@ import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import UrlSearch from 'calypso/lib/url-search';
+import { filterFollowsByQuery } from 'calypso/reader/follow-helpers';
+import FollowingManageSearchFollowed from 'calypso/reader/following-manage/search-followed';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
-import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
-import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
@@ -19,6 +20,7 @@ export class ReaderListFollowedSites extends Component {
 		super( props );
 		this.state = {
 			sitePage: 1,
+			query: '',
 		};
 	}
 
@@ -29,9 +31,9 @@ export class ReaderListFollowedSites extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
 		sites: PropTypes.array,
+		doSearch: PropTypes.func.isRequired,
 		isWPForTeamsItem: PropTypes.bool,
 		hasOrganization: PropTypes.bool,
-		isFollowingOpen: PropTypes.bool,
 		sitesPerPage: PropTypes.number,
 	};
 
@@ -70,11 +72,20 @@ export class ReaderListFollowedSites extends Component {
 		);
 	};
 
+	searchEvent = ( query ) => {
+		this.setState( {
+			query: query,
+		} );
+		this.props.doSearch( query );
+	};
+
 	render() {
 		const { sites, sitesPerPage, translate } = this.props;
-		const { sitePage } = this.state;
-		const allSitesLoaded = sitesPerPage * sitePage >= sites.length;
-		const sitesToShow = sites.slice( 0, sitesPerPage * sitePage );
+		const { sitePage, query } = this.state;
+		const searchThreshold = 15;
+		const filteredFollows = filterFollowsByQuery( query, sites );
+		const allSitesLoaded = sitesPerPage * sitePage >= filteredFollows.length;
+		const sitesToShow = filteredFollows.slice( 0, sitesPerPage * sitePage );
 
 		if ( ! sitesToShow ) {
 			return null;
@@ -82,18 +93,25 @@ export class ReaderListFollowedSites extends Component {
 
 		return (
 			<>
-				<h2>{ translate( 'Following' ) }</h2>
+				<h2>
+					{ translate( 'Following' ) } <a href="/following/manage">{ translate( 'Manage' ) }</a>
+				</h2>
+				{ sites.length >= searchThreshold && (
+					<FollowingManageSearchFollowed onSearch={ this.searchEvent } initialValue={ query } />
+				) }
 				<ul>
 					{ this.renderSites( sitesToShow ) }
 					{ ! allSitesLoaded && (
-						<Button
-							plain
-							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-							className="sidebar-streams__following-load-more"
-							onClick={ this.loadMoreSites }
-						>
-							{ translate( 'Load more sites' ) }
-						</Button>
+						<li className="reader-sidebar-more">
+							<Button
+								plain
+								// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+								className="sidebar-streams__following-load-more"
+								onClick={ this.loadMoreSites }
+							>
+								{ translate( 'Load more sites' ) }
+							</Button>
+						</li>
 					) }
 				</ul>
 			</>
@@ -101,22 +119,16 @@ export class ReaderListFollowedSites extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		return {
-			isWPForTeamsItem:
-				isSiteWPForTeams( state, ownProps.site && ownProps.site.ID ) ||
-				isFeedWPForTeams( state, ownProps.feed && ownProps.feed.feed_ID ),
-			hasOrganization: hasReaderFollowOrganization(
-				state,
-				ownProps.feed && ownProps.feed.feed_ID,
-				ownProps.site && ownProps.site.ID
-			),
-			isFollowingOpen: isFollowingOpen( state, ownProps.path ),
-			sites: getReaderFollowedSites( state ),
-		};
-	},
-	{
-		recordReaderTracksEvent,
-	}
-)( localize( ReaderListFollowedSites ) );
+export default connect( ( state, ownProps ) => {
+	return {
+		isWPForTeamsItem:
+			isSiteWPForTeams( state, ownProps.site && ownProps.site.ID ) ||
+			isFeedWPForTeams( state, ownProps.feed && ownProps.feed.feed_ID ),
+		hasOrganization: hasReaderFollowOrganization(
+			state,
+			ownProps.feed && ownProps.feed.feed_ID,
+			ownProps.site && ownProps.site.ID
+		),
+		sites: getReaderFollowedSites( state ),
+	};
+} )( localize( UrlSearch( ReaderListFollowedSites ) ) );
