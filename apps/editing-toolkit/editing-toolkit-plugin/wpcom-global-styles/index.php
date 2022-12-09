@@ -15,7 +15,7 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 	if ( ! $blog_id ) {
 		if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
 			$blog_id = get_current_blog_id();
-		} elseif ( method_exists( 'Jetpack_Options', 'get_option' ) ) {
+		} elseif ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
 			$blog_id = (int) Jetpack_Options::get_option( 'id' );
 		} else {
 			return false;
