@@ -273,7 +273,7 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 
 	ob_start(); ?>
 		<div class="launch-bar-global-styles-button">
-			<?php if ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) : // Workaround for the shadow DOM used on Atomic sites. ?>
+			<?php if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) : // Workaround for the shadow DOM used on Atomic sites. ?>
 				<style id="wpcom-launch-bar-global-styles-button-style">
 					<?php include __DIR__ . '/dist/wpcom-global-styles-view.css'; ?>
 					.hidden { display: none; }
