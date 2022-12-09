@@ -2,19 +2,28 @@
  * @jest-environment jsdom
  */
 
+import { loadScript } from '@automattic/load-script';
 import { render } from '@testing-library/react';
 import ZendeskChatWidget from '../index';
 
+jest.mock( '@automattic/load-script', () => ( {
+	loadScript: jest.fn( () => Promise.resolve() ),
+} ) );
+
 describe( 'ZendeskChatWidget', () => {
-	test( 'should not include a script tag when no chat id is passed', () => {
-		const { container } = render( <ZendeskChatWidget /> );
-		expect( container.getElementsByTagName( 'script' ).length ).toBe( 0 );
+	beforeEach( () => {
+		loadScript.mockReset();
 	} );
 
-	test( 'should contain the script tag and have the correct id', () => {
-		const { container } = render( <ZendeskChatWidget chatId="some-chat-id" /> );
-		const scriptTags = container.getElementsByTagName( 'script' );
-		expect( scriptTags.length ).toBe( 1 );
-		expect( scriptTags[ 0 ].id ).toBe( 'ze-snippet' );
+	test( 'should not call loadScript when no chat key is passed', () => {
+		render( <ZendeskChatWidget /> );
+		expect( loadScript ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should call loadScript with the correct params', () => {
+		render( <ZendeskChatWidget chatKey="some-chat-id" /> );
+		expect( loadScript ).toHaveBeenCalledWith( expect.stringMatching( /\/snippet.js/ ), undefined, {
+			id: 'ze-snippet',
+		} );
 	} );
 } );

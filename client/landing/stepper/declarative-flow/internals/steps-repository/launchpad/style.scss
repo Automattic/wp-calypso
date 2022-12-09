@@ -135,7 +135,8 @@
 // Launchpad - Sidebar heading text
 
 .newsletter,
-.link-in-bio:not(.domains) {
+.link-in-bio:not(.domains),
+.free {
 	.step-container {
 		.step-container__content h1,
 		.step-container__content h1.launchpad__sidebar-h1 {

@@ -95,6 +95,7 @@ const Radio = styled.input`
 interface LabelProps {
 	disabled?: boolean;
 	checked?: boolean;
+	isFixedHeight?: boolean;
 }
 
 const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelElement > >`
@@ -106,8 +107,9 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	align-items: flex-start;
+	align-items: ${ ( props ) => ( props.isFixedHeight ? 'center' : 'flex-start' ) };
 	font-size: 14px;
+	height: ${ ( props ) => ( props.isFixedHeight ? '72px' : 'auto' ) };
 
 	.rtl & {
 		padding: 16px 40px 16px 14px;
@@ -124,7 +126,7 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 		content: '';
 		border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
 		border-radius: 100%;
-		top: 19px;
+		top: ${ ( props ) => ( props.isFixedHeight ? '28px' : '19px' ) };
 		left: 16px;
 		position: absolute;
 		background: ${ ( props ) => props.theme.colors.surface };
@@ -143,7 +145,7 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 		height: 8px;
 		content: '';
 		border-radius: 100%;
-		top: 23px;
+		top: ${ ( props ) => ( props.isFixedHeight ? '32px' : '23px' ) };
 		left: 20px;
 		position: absolute;
 		background: ${ getRadioColor };
@@ -174,7 +176,9 @@ export default function RadioButton( {
 	label,
 	disabled,
 	id,
+	isFixedHeight,
 	ariaLabel,
+	...otherProps
 }: RadioButtonProps ) {
 	const [ isFocused, changeFocus ] = useState( false );
 
@@ -196,8 +200,14 @@ export default function RadioButton( {
 				} }
 				readOnly={ ! onChange }
 				aria-label={ ariaLabel }
+				{ ...otherProps }
 			/>
-			<Label checked={ checked } htmlFor={ id } disabled={ disabled }>
+			<Label
+				checked={ checked }
+				htmlFor={ id }
+				disabled={ disabled }
+				isFixedHeight={ isFixedHeight }
+			>
 				{ label }
 			</Label>
 			{ children && <RadioButtonChildren checked={ checked }>{ children }</RadioButtonChildren> }
@@ -213,7 +223,8 @@ interface RadioButtonProps {
 	checked?: boolean;
 	value: string;
 	onChange?: () => void;
-	ariaLabel: string;
+	ariaLabel?: string;
+	isFixedHeight?: boolean;
 	children?: React.ReactNode;
 }
 
@@ -225,7 +236,7 @@ RadioButton.propTypes = {
 	checked: PropTypes.bool,
 	value: PropTypes.string.isRequired,
 	onChange: PropTypes.func,
-	ariaLabel: PropTypes.string.isRequired,
+	ariaLabel: PropTypes.string,
 };
 
 function handleWrapperDisabled( { disabled }: { disabled?: boolean } ) {

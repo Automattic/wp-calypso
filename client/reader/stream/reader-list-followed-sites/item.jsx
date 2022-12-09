@@ -5,10 +5,10 @@ import Favicon from 'calypso/reader/components/favicon';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import ReaderSidebarHelper from '../helper';
+import ReaderSidebarHelper from '../../sidebar/helper';
 import '../style.scss';
 
-const ReaderSidebarFollowingItem = ( props ) => {
+const ReaderListFollowingItem = ( props ) => {
 	const { site, path, isUnseen } = props;
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
@@ -40,19 +40,21 @@ const ReaderSidebarFollowingItem = ( props ) => {
 		<li
 			key={ props.title }
 			className={ ReaderSidebarHelper.itemLinkClass( streamLink, path, {
-				'sidebar-dynamic-menu__blog': true,
+				'reader-sidebar-site': true,
 			} ) }
 		>
 			<a
-				className="sidebar__menu-link sidebar__menu-link-reader"
+				className="reader-sidebar-site_link"
 				href={ streamLink }
 				onClick={ () => handleSidebarClick( site ) }
 			>
-				<Favicon site={ site } className="sidebar__menu-item-siteicon" size={ 18 } />
+				<Favicon site={ site } className="reader-sidebar-site_siteicon" size={ 32 } />
 
-				<span className="sidebar__menu-item-sitename">
-					{ site.name || formatUrlForDisplay( site.URL ) }
-					<span className="sidebar__menu-item-last-updated">
+				<span className="reader-sidebar-site_sitename">
+					<span className="reader-sidebar-site_nameurl">
+						{ site.name || formatUrlForDisplay( site.URL ) }
+					</span>
+					<span className="reader-sidebar-site_updated">
 						{ site.last_updated > 0 && moment( new Date( site.last_updated ) ).fromNow() }
 					</span>
 				</span>
@@ -63,4 +65,4 @@ const ReaderSidebarFollowingItem = ( props ) => {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
-export default ReaderSidebarFollowingItem;
+export default ReaderListFollowingItem;

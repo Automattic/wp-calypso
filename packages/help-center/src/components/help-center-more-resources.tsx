@@ -2,17 +2,18 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
-import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import WhatsNewGuide from '@automattic/whats-new';
 import { Button, SVG, Circle } from '@wordpress/components';
-import { useState, useEffect } from '@wordpress/element';
+import { useSelect, useDispatch } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 import { Icon, captureVideo, desktop, formatListNumbered, video, external } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
-import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSectionName } from 'calypso/state/ui/selectors';
 import NewReleases from '../icons/new-releases';
+import { HELP_CENTER_STORE } from '../stores';
 
 const circle = (
 	<SVG viewBox="0 0 24 24">
@@ -22,29 +23,31 @@ const circle = (
 
 export const HelpCenterMoreResources = () => {
 	const { __ } = useI18n();
-	const [ showWhatsNewDot, setShowWhatsNewDot ] = useState( false );
 	const sectionName = useSelector( getSectionName );
 
-	const { isBusinessOrEcomPlanUser, siteId } = useSelector( ( state ) => {
+	const { isBusinessOrEcomPlanUser } = useSelector( ( state ) => {
 		const purchases = getUserPurchases( state );
 		const purchaseSlugs = purchases && purchases.map( ( purchase ) => purchase.productSlug );
-		const siteId = getSelectedSiteId( state );
 		return {
 			isBusinessOrEcomPlanUser: !! (
 				purchaseSlugs &&
 				( purchaseSlugs.some( isWpComBusinessPlan ) || purchaseSlugs.some( isWpComEcommercePlan ) )
 			),
-			siteId: siteId,
 		};
 	} );
 
-	const { data, isLoading, setHasSeenWhatsNewModal } = useHasSeenWhatsNewModalQuery( siteId );
+	const { hasSeenWhatsNewModal, doneLoading } = useSelect( ( select ) => ( {
+		hasSeenWhatsNewModal: select( HELP_CENTER_STORE ).getHasSeenWhatsNewModal(),
+		doneLoading: select( 'core/data' ).hasFinishedResolution(
+			HELP_CENTER_STORE,
+			'getHasSeenWhatsNewModal',
+			[]
+		),
+	} ) );
 
-	useEffect( () => {
-		if ( ! isLoading && data ) {
-			setShowWhatsNewDot( ! data.has_seen_whats_new_modal );
-		}
-	}, [ data, isLoading ] );
+	const { setHasSeenWhatsNewModal } = useDispatch( HELP_CENTER_STORE );
+
+	const showWhatsNewDot = doneLoading && ! hasSeenWhatsNewModal;
 
 	const [ showGuide, setShowGuide ] = useState( false );
 
@@ -52,7 +55,7 @@ export const HelpCenterMoreResources = () => {
 		recordTracksEvent( 'calypso_help_moreresources_click', {
 			is_business_or_ecommerce_plan_user: isBusinessOrEcomPlanUser,
 			resource: resource,
-			forceSiteId: true,
+			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
 		} );
@@ -61,7 +64,7 @@ export const HelpCenterMoreResources = () => {
 	const trackWebinairsButtonClick = () => {
 		recordTracksEvent( 'calypso_help_courses_click', {
 			is_business_or_ecommerce_plan_user: isBusinessOrEcomPlanUser,
-			forceSiteId: true,
+			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
 		} );
@@ -69,7 +72,7 @@ export const HelpCenterMoreResources = () => {
 	};
 
 	const handleWhatsNewClick = () => {
-		if ( ! data?.has_seen_whats_new_modal ) {
+		if ( ! hasSeenWhatsNewModal ) {
 			setHasSeenWhatsNewModal( true );
 		}
 		setShowGuide( true );

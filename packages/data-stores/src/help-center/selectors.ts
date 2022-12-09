@@ -11,3 +11,4 @@ export const getUnreadCount = ( state: State ) => state.unreadCount;
 export const getIsMinimized = ( state: State ) => state.isMinimized;
 export const getRouterState = ( state: State ) => state.routerState;
 export const getHasSeenPromotionalPopover = ( state: State ) => state.hasSeenPromotionalPopover;
+export const getHasSeenWhatsNewModal = ( state: State ) => state.hasSeenWhatsNewModal;

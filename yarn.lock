@@ -249,7 +249,7 @@ __metadata:
     mailosaur: ^8.4.0
     nock: ^12.0.3
     node-fetch: ^2.6.7
-    playwright: ^1.26
+    playwright: ^1.28
     totp-generator: ^0.0.12
     typescript: ^4.7.4
   languageName: unknown
@@ -318,9 +318,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/calypso-stats@workspace:apps/stats":
+"@automattic/calypso-stats@workspace:apps/odyssey-stats":
   version: 0.0.0-use.local
-  resolution: "@automattic/calypso-stats@workspace:apps/stats"
+  resolution: "@automattic/calypso-stats@workspace:apps/odyssey-stats"
   dependencies:
     "@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"
@@ -336,7 +336,6 @@ __metadata:
     calypso: "workspace:^"
     classnames: ^2.3.1
     debug: ^4.3.4
-    enzyme: ^3.11.0
     html-webpack-plugin: ^5.0.0-beta.4
     jest: ^27.2.4
     page: ^1.11.5
@@ -434,7 +433,6 @@ __metadata:
     "@wordpress/base-styles": ^4.5.0
     "@wordpress/icons": ^9.11.0
     classnames: ^2.3.1
-    enzyme: ^3.11.0
     framer-motion: 6.2.8
     gridicons: ^3.4.0
     i18n-calypso: "workspace:^"
@@ -460,8 +458,10 @@ __metadata:
     "@emotion/react": ^11.4.1
     "@emotion/styled": ^11.3.0
     "@storybook/react": ^6.4.18
+    "@testing-library/dom": ^8.13.0
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
+    "@testing-library/user-event": ^14.2.0
     "@wordpress/i18n": ^4.9.0
     "@wordpress/react-i18n": ^3.7.0
     debug: ^4.3.3
@@ -751,7 +751,6 @@ __metadata:
     autoprefixer: ^10.2.5
     calypso: "workspace:^"
     copy-webpack-plugin: ^10.1.0
-    enzyme: ^3.11.0
     html-webpack-plugin: ^5.0.0-beta.4
     jest: ^27.2.4
     postcss: ^8.3.11
@@ -857,7 +856,6 @@ __metadata:
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     autoprefixer: ^10.2.5
     calypso: "workspace:^"
-    enzyme: ^3.11.0
     html-webpack-plugin: ^5.0.0-beta.4
     jest: ^27.2.4
     path-browserify: ^1.0.1
@@ -943,7 +941,6 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    enzyme: ^3.11.0
     jest: ^27.3.1
     postcss: ^8.4.5
     react: ^17.0.2
@@ -1091,7 +1088,6 @@ __metadata:
     calypso: "workspace:^"
     classnames: ^2.3.1
     debug: ^4.3.3
-    enzyme: ^3.11.0
     html-webpack-plugin: ^5.0.0-beta.4
     i18n-calypso: "workspace:^"
     jest: ^27.3.1
@@ -1135,7 +1131,6 @@ __metadata:
     "@wordpress/primitives": ^3.7.0
     "@wordpress/readable-js-assets-webpack-plugin": ^1.0.4
     classnames: ^2.3.1
-    enzyme: ^3.11.0
     jest: ^27.3.1
     lodash: ^4.17.21
     moment: ^2.26.0
@@ -1286,7 +1281,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/privacy-toolset@workspace:packages/privacy-toolset":
+"@automattic/privacy-toolset@workspace:^, @automattic/privacy-toolset@workspace:packages/privacy-toolset":
   version: 0.0.0-use.local
   resolution: "@automattic/privacy-toolset@workspace:packages/privacy-toolset"
   dependencies:
@@ -1431,6 +1426,8 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@emotion/react": ^11.4.1
+    "@testing-library/jest-dom": ^5.16.2
+    "@testing-library/react": ^12.1.3
     "@wordpress/components": ^19.15.0
     "@wordpress/i18n": ^4.9.0
     classnames: ^2.3.1
@@ -1700,7 +1697,6 @@ __metadata:
     "@wordpress/rich-text": ^5.7.0
     "@wordpress/url": ^3.10.0
     debug: ^4.3.3
-    enzyme: ^3.11.0
     jest: ^27.3.1
     lodash: ^4.17.21
     npm-run-all: ^4.1.5
@@ -1817,7 +1813,6 @@ __metadata:
     babel-jest: ^27.5.1
     calypso: "workspace:^"
     classnames: ^2.3.1
-    enzyme: ^3.11.0
     eslint: ^8.6.0
     jest: ^27.3.1
     jest-teamcity: ^1.9.0
@@ -10313,13 +10308,12 @@ __metadata:
     electron-notarize: ^0.1.1
     electron-rebuild: ^2.3.5
     electron-updater: ^4.2.5
-    enzyme: ^3.11.0
     jest: ^27.3.1
     js-yaml: ^4.0.0
     keytar: ^7.7.0
     lodash: ^4.17.21
     make-dir: ^3.1.0
-    playwright: ^1.26
+    playwright: ^1.28
     postcss: ^8.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -12844,7 +12838,6 @@ __metadata:
     duplicate-package-checker-webpack-plugin: ^3.0.0
     email-validator: ^2.0.4
     emoji-text: ^0.2.6
-    enzyme: ^3.11.0
     express: ^4.17.1
     express-async-handler: ^1.1.4
     express-useragent: ^1.0.15
@@ -27381,23 +27374,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.27.0":
-  version: 1.27.0
-  resolution: "playwright-core@npm:1.27.0"
+"playwright-core@npm:1.28.1":
+  version: 1.28.1
+  resolution: "playwright-core@npm:1.28.1"
   bin:
     playwright: cli.js
-  checksum: b0e3be60e733e82f6e1f65d1f14a59c98120fb9a82aec93db379f0074cf41dfc2a981a61da87a61f0893f68fdd9665154860add3d63b60889dbcc1a57895718c
+  checksum: ad6dcdd57b1be811443a352eab3ce7b6adb06204a784a76dfa5b41c15e84d96c0bfff931573da2d04f15f4a4f3dd26995afbe84c2cb377576de84168f51c3723
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.26":
-  version: 1.27.0
-  resolution: "playwright@npm:1.27.0"
+"playwright@npm:^1.28":
+  version: 1.28.1
+  resolution: "playwright@npm:1.28.1"
   dependencies:
-    playwright-core: 1.27.0
+    playwright-core: 1.28.1
   bin:
     playwright: cli.js
-  checksum: 063e239793e9f8f35f170e9501861f94a5253d32bf34360fa67371a309bda66a66fab449e8ef76e250f84744a968f22866516d20c37829b19ef3ae02dff6f51b
+  checksum: 308a6053de7de012141bbdedeb3fb28dc6dcce0fa5bd4879da42a77d9b6f445495c6717783854ada8184585c9b0650e012a103e0fa70b3e164a3f358c638866f
   languageName: node
   linkType: hard
 
@@ -36206,6 +36199,7 @@ swiper@4.5.1:
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
+    "@automattic/privacy-toolset": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/whats-new": "workspace:^"
@@ -36380,7 +36374,7 @@ swiper@4.5.1:
     lodash: ^4.17.20
     mailosaur: ^8.4.0
     node-fetch: ^2.6.1
-    playwright: ^1.26
+    playwright: ^1.28
     postcss: ^8.3.11
     webpack: ^5.63.0
   languageName: unknown

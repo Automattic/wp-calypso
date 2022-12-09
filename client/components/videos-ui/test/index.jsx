@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
@@ -10,12 +10,20 @@ import ModalFooterBar from 'calypso/components/videos-ui/modal-footer-bar';
 import ModalHeaderBar from 'calypso/components/videos-ui/modal-header-bar';
 import { COURSE_SLUGS } from '../../../data/courses';
 import VideoUI from '../index';
-import VideoChapters from '../video-chapters';
 
 const useCourseData = () => {
 	return {
 		course: {
-			videos: [],
+			completions: {
+				testvideo: false,
+			},
+			videos: {
+				testvideo: {
+					title: 'Video',
+					duration_seconds: 60,
+					description: 'Test description',
+				},
+			},
 			cta: {
 				action: 'action',
 			},
@@ -55,7 +63,8 @@ describe( 'Video-UI', () => {
 		};
 	} );
 
-	test( 'Track event with intent prop', () => {
+	test( 'Track event with intent prop', async () => {
+		const user = userEvent.setup();
 		const useStateMock = ( useState ) => [ useState, jest.fn() ];
 		jest.spyOn( React, 'useState' ).mockImplementation( useStateMock );
 		const initialState = {
@@ -64,7 +73,7 @@ describe( 'Video-UI', () => {
 		};
 		const store = createStore( ( state ) => state, initialState );
 
-		const result = mount(
+		render(
 			<Provider store={ store }>
 				<VideoUI
 					store={ store }
@@ -75,7 +84,7 @@ describe( 'Video-UI', () => {
 			</Provider>
 		);
 
-		result.find( VideoChapters ).first().prop( 'onVideoPlayClick' )();
+		await user.click( screen.getByRole( 'button', { name: 'Play video' } ) );
 
 		expect( window._tkq.push ).toHaveBeenCalledWith( [
 			'recordEvent',
@@ -92,11 +101,13 @@ describe( 'Video-UI', () => {
 			{
 				course: COURSE_SLUGS.BLOGGING_QUICK_START,
 				intent: 'build',
+				video: 'testvideo',
 			},
 		] );
 	} );
 
-	test( 'Track event without intent prop', () => {
+	test( 'Track event without intent prop', async () => {
+		const user = userEvent.setup();
 		const useStateMock = ( useState ) => [ useState, jest.fn() ];
 		jest.spyOn( React, 'useState' ).mockImplementation( useStateMock );
 		const initialState = {
@@ -105,7 +116,7 @@ describe( 'Video-UI', () => {
 		};
 		const store = createStore( ( state ) => state, initialState );
 
-		const result = mount(
+		render(
 			<Provider store={ store }>
 				<VideoUI
 					store={ store }
@@ -115,7 +126,7 @@ describe( 'Video-UI', () => {
 			</Provider>
 		);
 
-		result.find( VideoChapters ).first().prop( 'onVideoPlayClick' )();
+		await user.click( screen.getByRole( 'button', { name: 'Play video' } ) );
 
 		expect( window._tkq.push ).toHaveBeenCalledWith( [
 			'recordEvent',
@@ -130,6 +141,7 @@ describe( 'Video-UI', () => {
 			'calypso_courses_play_click',
 			{
 				course: COURSE_SLUGS.BLOGGING_QUICK_START,
+				video: 'testvideo',
 			},
 		] );
 	} );

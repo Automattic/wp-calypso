@@ -310,15 +310,6 @@
 		padding-left: 0;
 		padding-right: 0;
 		background-color: initial;
-		&.gdpr-banner {
-			background-color: var(--color-neutral-70);
-			padding-left: 24px;
-			padding-right: 24px;
-			.gdpr-banner__buttons button {
-				border: none;
-				background-color: #fff;
-			}
-		}
 	}
 
 	.magic-login {
