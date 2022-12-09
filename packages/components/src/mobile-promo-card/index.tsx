@@ -60,22 +60,35 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 		}
 		// Using useTranslate() with interpolation to set up the linked message.
 		// https://wpcalypso.wordpress.com/devdocs/packages/i18n-calypso/README.md
-		const redirectLink = isWoo
-			? getRedirectUrlFromSlug( REDIRECT_SLUGS.wooA8C )
-			: getRedirectUrlFromSlug( REDIRECT_SLUGS.jetpackA8C );
-		const linkClassName = isWoo ? 'woo' : 'jetpack';
-		const components = {
-			a: <a className={ linkClassName } href={ redirectLink } />,
-		};
 		if ( isWoo ) {
 			return translate(
 				'Visit {{a}}woo.com/mobile{{/a}} or scan the QR code to download the WooCommerce mobile app.',
-				{ components }
+				{
+					components: {
+						a: (
+							<a
+								className="woo"
+								href={ getRedirectUrlFromSlug( REDIRECT_SLUGS.wooA8C ) ?? 'https://woo.com/mobile' }
+							/>
+						),
+					},
+				}
 			);
 		}
 		return translate(
 			'Visit {{a}}jetpack.com/app{{/a}} or scan the QR code to download the Jetpack mobile app.',
-			{ components }
+			{
+				components: {
+					a: (
+						<a
+							className="jetpack"
+							href={
+								getRedirectUrlFromSlug( REDIRECT_SLUGS.jetpackA8C ) ?? 'https://jetpack.com/app'
+							}
+						/>
+					),
+				},
+			}
 		);
 	};
 
