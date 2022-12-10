@@ -1,6 +1,6 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
 import { v4 as uuid } from 'uuid';
-import { costToUSD, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
+import { costToUSD, refreshGeoCookies } from 'calypso/lib/analytics/utils';
 import { mayWeTrackByTracker } from '../tracker-buckets';
 import { debug, TRACKING_IDS, ICON_MEDIA_SIGNUP_PIXEL_URL } from './constants';
 import { recordParamsInFloodlightGtag } from './floodlight';
@@ -16,7 +16,7 @@ import './setup';
  * @returns {void}
  */
 export async function adTrackSignupComplete( { isNewUserSite } ) {
-	await refreshCountryCodeCookieGdpr();
+	await refreshGeoCookies();
 
 	await loadTrackingScripts();
 

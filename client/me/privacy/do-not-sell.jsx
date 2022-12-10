@@ -1,14 +1,13 @@
 import { Card } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl, ExternalLink } from '@wordpress/components';
-import cookie from 'cookie';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import SectionHeader from 'calypso/components/section-header';
 import {
-	refreshCountryCodeCookieGdpr,
 	setTrackingPrefs,
 	getTrackingPrefs,
+	useRefreshGeoCookies,
 } from 'calypso/lib/analytics/utils';
 import isRegionInCcpaZone from 'calypso/lib/analytics/utils/is-region-in-ccpa-zone';
 
@@ -17,13 +16,13 @@ const useDoNotSellHelper = () => {
 	const [ isDoNotSellEnabled, setDoNotSellEnabled ] = useState(
 		! getTrackingPrefs().buckets.advertising
 	);
+	const geoCookies = useRefreshGeoCookies();
 
 	useEffect( () => {
-		refreshCountryCodeCookieGdpr().then( () => {
-			const cookies = cookie.parse( document.cookie );
-			setShouldShowSetting( isRegionInCcpaZone( cookies.country_code, cookies.region ) );
-		} );
-	}, [ setShouldShowSetting ] );
+		if ( geoCookies ) {
+			setShouldShowSetting( isRegionInCcpaZone( geoCookies.countryCode, geoCookies.region ) );
+		}
+	}, [ geoCookies ] );
 
 	const handleSetDoNotSell = useCallback(
 		( isEnabled ) => {

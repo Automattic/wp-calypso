@@ -1,4 +1,4 @@
-import { refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
+import { refreshGeoCookies } from 'calypso/lib/analytics/utils';
 import { mayWeTrackByTracker } from '../tracker-buckets';
 import { debug, TRACKING_IDS } from './constants';
 import { recordInCriteo } from './criteo';
@@ -15,7 +15,7 @@ import './setup';
  * @returns {void}
  */
 export async function recordAddToCart( cartItem ) {
-	await refreshCountryCodeCookieGdpr();
+	await refreshGeoCookies();
 
 	await loadTrackingScripts();
 

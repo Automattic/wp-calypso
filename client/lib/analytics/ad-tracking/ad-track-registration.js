@@ -1,4 +1,4 @@
-import { refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
+import { refreshGeoCookies } from 'calypso/lib/analytics/utils';
 import { mayWeTrackByTracker } from '../tracker-buckets';
 import { debug, TRACKING_IDS } from './constants';
 import { recordParamsInFloodlightGtag } from './floodlight';
@@ -8,7 +8,7 @@ import { loadTrackingScripts } from './load-tracking-scripts';
 import './setup';
 
 export async function adTrackRegistration() {
-	await refreshCountryCodeCookieGdpr();
+	await refreshGeoCookies();
 
 	await loadTrackingScripts();
 
