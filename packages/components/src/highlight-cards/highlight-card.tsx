@@ -1,6 +1,6 @@
 import { arrowDown, arrowUp, Icon } from '@wordpress/icons';
 import classNames from 'classnames';
-import { Card } from '../';
+import { Card, ShortenedNumber } from '../';
 
 export type HighlightCardProps = {
 	count: number | null;
@@ -27,14 +27,6 @@ export function percentCalculator( part: number | null, whole: number | null ) {
 	return Math.abs( answer ) === Infinity ? 100 : Math.round( answer );
 }
 
-const FORMATTER = new Intl.NumberFormat( 'en-US', {
-	notation: 'compact',
-	compactDisplay: 'short',
-} );
-function formatNumber( number: number | null ) {
-	return Number.isFinite( number ) ? FORMATTER.format( number as number ) : '-';
-}
-
 export default function HighlightCard( {
 	count,
 	previousCount,
@@ -54,7 +46,7 @@ export default function HighlightCard( {
 					className="highlight-card-count-value"
 					title={ Number.isFinite( count ) ? String( count ) : undefined }
 				>
-					{ formatNumber( count ) }
+					<ShortenedNumber value={ count } />
 				</span>{ ' ' }
 				{ difference !== null ? (
 					<span
