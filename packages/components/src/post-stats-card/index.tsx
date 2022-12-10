@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { Card } from '../';
+import { Card, ShortenedNumber } from '../';
 import './style.scss';
 
 type PostStatsCardProps = {
@@ -41,18 +41,21 @@ export default function PostStatsCard( {
 			<div className="post-stats-card__counts">
 				<div className="post-stats-card__count post-stats-card__count--view">
 					<div className="post-stats-card__count-header">{ translate( 'Views' ) }</div>
-					{ /* TODO: Use shortened numbers */ }
-					<div className="post-stats-card__count-value">{ viewCount }</div>
+					<div className="post-stats-card__count-value">
+						<ShortenedNumber value={ viewCount } />
+					</div>
 				</div>
 				<div className="post-stats-card__count post-stats-card__count--like">
 					<div className="post-stats-card__count-header">{ translate( 'Likes' ) }</div>
-					{ /* TODO: Use shortened numbers */ }
-					<div className="post-stats-card__count-value">{ likeCount }</div>
+					<div className="post-stats-card__count-value">
+						<ShortenedNumber value={ likeCount } />
+					</div>
 				</div>
 				<div className="post-stats-card__count post-stats-card__count--comment">
 					<div className="post-stats-card__count-header">{ translate( 'Comments' ) }</div>
-					{ /* TODO: Use shortened numbers */ }
-					<div className="post-stats-card__count-value">{ commentCount }</div>
+					<div className="post-stats-card__count-value">
+						<ShortenedNumber value={ commentCount } />
+					</div>
 				</div>
 			</div>
 			{ post?.post_thumbnail && (
