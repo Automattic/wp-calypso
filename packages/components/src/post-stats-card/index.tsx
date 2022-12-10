@@ -32,7 +32,7 @@ export default function PostStatsCard( {
 				{ post?.date && (
 					<div className="post-stats-card__post-date">
 						{ translate( 'Published %(date)s', {
-							// TODO: Show relative duration instead of published date
+							// TODO: Show relative duration instead of published date. Show actual date in a tooltip.
 							args: { date: parsedDate },
 						} ) }
 					</div>
