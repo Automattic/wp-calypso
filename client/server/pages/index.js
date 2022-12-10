@@ -545,6 +545,10 @@ const setUpSectionContext = ( section, entrypoint ) => ( req, res, next ) => {
 		req.context.chunkFiles = req.getEmptyAssets();
 	}
 
+	if ( req.preloadedAssets ) {
+		req.context.preloadedAssets = req.preloadedAssets;
+	}
+
 	if ( section.group && req.context ) {
 		req.context.sectionGroup = section.group;
 	}
@@ -798,6 +802,24 @@ function wpcomPages( app ) {
 	} );
 }
 
+export function middlewareStepper() {
+	return function ( req, res, next ) {
+		const assets = req.getAssets();
+		const flowFromPathName = req.path.split( '/' )[ 1 ];
+		const flowAssets =
+			assets.assetsByChunkName[ flowFromPathName ] ||
+			assets.assetsByChunkName[ flowFromPathName + '-flow' ];
+
+		if ( req.preloadedAssets ) {
+			req.preloadedAssets.push( ...flowAssets );
+		} else {
+			req.preloadedAssets = flowAssets;
+		}
+
+		next();
+	};
+}
+
 export default function pages() {
 	const app = express();
 
@@ -806,6 +828,7 @@ export default function pages() {
 	app.use( logSectionResponse );
 	app.use( cookieParser() );
 	app.use( middlewareAssets() );
+	app.use( '/setup', middlewareStepper() );
 	app.use( middlewareCache() );
 	app.use( setupLoggedInContext );
 	app.use( middlewareUnsupportedBrowser() );

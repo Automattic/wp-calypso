@@ -26,6 +26,7 @@ class Document extends Component {
 			app,
 			accountSettingsHelper,
 			authHelper,
+			preloadedAssets,
 			chunkFiles,
 			commitSha,
 			buildTimestamp,
@@ -114,6 +115,10 @@ class Document extends Component {
 					) ) }
 					{ chunkCssLinks( entrypoint, isRTL ) }
 					{ chunkCssLinks( chunkFiles, isRTL ) }
+
+					{ preloadedAssets?.map( ( asset ) => (
+						<link rel="preload" key={ asset } href={ asset } />
+					) ) }
 				</Head>
 				<body
 					className={ classNames( {

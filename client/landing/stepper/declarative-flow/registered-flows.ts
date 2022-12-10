@@ -1,6 +1,9 @@
 import config from '@automattic/calypso-config';
 import type { Flow } from '../declarative-flow/internals/types';
 
+/**
+ * NOTE: passing webpackChunkName will let Calypso preload your flow in parallel during page load, making it faster. I should be <flow-name>-flow
+ */
 const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'site-setup': () =>
 		import( /* webpackChunkName: "site-setup-flow" */ '../declarative-flow/site-setup-flow' ),
