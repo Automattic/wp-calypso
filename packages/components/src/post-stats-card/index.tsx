@@ -40,17 +40,17 @@ export default function PostStatsCard( {
 			</div>
 			<div className="post-stats-card__counts">
 				<div className="post-stats-card__count post-stats-card__count--view">
-					<div className="post-stats-card__count-header">Views</div>
+					<div className="post-stats-card__count-header">{ translate( 'Views' ) }</div>
 					{ /* TODO: Use shortened numbers */ }
 					<div className="post-stats-card__count-value">{ viewCount }</div>
 				</div>
 				<div className="post-stats-card__count post-stats-card__count--like">
-					<div className="post-stats-card__count-header">Likes</div>
+					<div className="post-stats-card__count-header">{ translate( 'Likes' ) }</div>
 					{ /* TODO: Use shortened numbers */ }
 					<div className="post-stats-card__count-value">{ likeCount }</div>
 				</div>
 				<div className="post-stats-card__count post-stats-card__count--comment">
-					<div className="post-stats-card__count-header">Comments</div>
+					<div className="post-stats-card__count-header">{ translate( 'Comments' ) }</div>
 					{ /* TODO: Use shortened numbers */ }
 					<div className="post-stats-card__count-value">{ commentCount }</div>
 				</div>
