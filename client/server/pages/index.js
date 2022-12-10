@@ -808,12 +808,16 @@ export function middlewareStepper() {
 		const flowFromPathName = req.path.split( '/' )[ 1 ];
 		const flowAssets =
 			assets.assetsByChunkName[ flowFromPathName ] ||
-			assets.assetsByChunkName[ flowFromPathName + '-flow' ];
+			assets.assetsByChunkName[ flowFromPathName + '-flow' ] ||
+			[];
+
+		// webpack already takes care of the CSS
+		const jsAssets = flowAssets.filter( ( asset ) => asset.endsWith( '.js' ) );
 
 		if ( req.preloadedAssets ) {
-			req.preloadedAssets.push( ...flowAssets );
+			req.preloadedAssets.push( ...jsAssets );
 		} else {
-			req.preloadedAssets = flowAssets;
+			req.preloadedAssets = jsAssets;
 		}
 
 		next();

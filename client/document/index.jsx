@@ -117,7 +117,7 @@ class Document extends Component {
 					{ chunkCssLinks( chunkFiles, isRTL ) }
 
 					{ preloadedAssets?.map( ( asset ) => (
-						<link rel="preload" key={ asset } href={ asset } />
+						<link rel="preload" as="script" key={ asset } href={ asset } />
 					) ) }
 				</Head>
 				<body
