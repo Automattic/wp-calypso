@@ -25,6 +25,7 @@ import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/like
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
+import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import {
@@ -43,7 +44,8 @@ import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
-import ReaderSidebarFollowedSites from './reader-sidebar-followed-sites';
+import ReaderListFollowedSites from './reader-list-followed-sites';
+import ReaderListOrganizations from './reader-list-organizations';
 import './style.scss';
 
 const WIDE_DISPLAY_CUTOFF = 900;
@@ -53,14 +55,13 @@ const noop = () => {};
 const pagesByKey = new Map();
 const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
 const excludesSidebar = [
-	'a8c',
 	'conversations',
 	'conversations-a8c',
+	'feed',
 	'likes',
 	'search',
 	'custom_recs_posts_with_images',
 	'list',
-	'p2',
 	'tag',
 ];
 
@@ -471,7 +472,12 @@ class ReaderStream extends Component {
 					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 				/>
 			);
-			const sidebarContent = <ReaderSidebarFollowedSites path={ path } />;
+			let sidebarContent = <ReaderListFollowedSites path={ path } />;
+			if ( 'a8c' === streamType || 'p2' === streamType ) {
+				sidebarContent = (
+					<ReaderListOrganizations organizations={ this.props.organizations } path={ path } />
+				);
+			}
 
 			if ( excludesSidebar.includes( streamType ) ) {
 				body = bodyContent;
@@ -555,6 +561,7 @@ export default connect(
 			isRequesting: stream.isRequesting,
 			shouldRequestRecs: shouldRequestRecs( state, streamKey, recsStreamKey ),
 			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
+			organizations: getReaderOrganizations( state ),
 		};
 	},
 	{

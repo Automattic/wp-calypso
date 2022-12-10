@@ -160,6 +160,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 		// Start the browser.
 		const browser = await browserType.launch( {
 			...config.launchOptions,
+			args: browserType === chromium ? [ '--disable-dev-shm-usage' ] : [], // Disable shm usage only for Chromium
 			logger: {
 				log: async ( name: string, severity: string, message: string ) => {
 					await fs.appendFile(
