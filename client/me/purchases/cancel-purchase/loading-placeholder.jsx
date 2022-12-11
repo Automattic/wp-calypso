@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import { useTranslate, localize } from 'i18n-calypso';
+import { i18n, localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -9,8 +9,32 @@ import titles from 'calypso/me/purchases/titles';
 
 import '../components/loading-placeholder/style.scss';
 
+const supportLink = () => {
+	return i18n.translate(
+		'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
+		{
+			components: {
+				contactLink: <a href={ CALYPSO_CONTACT } />,
+			},
+		}
+	);
+};
+
+const siteHeader = () => {
+	return (
+		<div className="site">
+			<div className="site__content">
+				<div className="site-icon is-blank" />
+				<div className="site__info">
+					<div className="site__title"></div>
+					<div className="site__domain"></div>
+				</div>
+			</div>
+		</div>
+	);
+};
+
 const CancelPurchaseLoadingPlaceholder = ( { purchaseId, siteSlug, getManagePurchaseUrlFor } ) => {
-	const translate = useTranslate();
 	const title = titles.cancelPurchase;
 	const isFullWidth = true;
 	let path;
@@ -19,38 +43,17 @@ const CancelPurchaseLoadingPlaceholder = ( { purchaseId, siteSlug, getManagePurc
 		path = getManagePurchaseUrlFor( siteSlug, purchaseId );
 	}
 
-	function goBack() {
-		page.back( path || '/' );
-	}
-
-	function supportLink() {
-		return translate( 'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}', {
-			components: {
-				contactLink: <a href={ CALYPSO_CONTACT } />,
-			},
-		} );
-	}
-
-	function siteHeader() {
-		return (
-			<div className="site">
-				<div className="site__content">
-					<div className="site-icon is-blank" />
-					<div className="site__info">
-						<div className="site__title"></div>
-						<div className="site__domain"></div>
-					</div>
-				</div>
-			</div>
-		);
-	}
-
 	/* eslint-disable wpcalypso/jsx-classname-namespace, jsx-a11y/heading-has-content */
 	return (
 		<Main wideLayout={ isFullWidth } className="loading-placeholder">
-			<Button compact borderless className="cancel-purchase__back-link" onClick={ goBack }>
+			<Button
+				compact
+				borderless
+				className="cancel-purchase__back-link"
+				onClick={ page.back( path || '/' ) }
+			>
 				<Gridicon icon="chevron-left" size={ 18 } />
-				{ translate( 'Back' ) }
+				{ i18n.translate( 'Back' ) }
 			</Button>
 
 			<FormattedHeader
@@ -87,7 +90,6 @@ const CancelPurchaseLoadingPlaceholder = ( { purchaseId, siteSlug, getManagePurc
 			</div>
 		</Main>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace, jsx-a11y/heading-has-content */
 };
 
 CancelPurchaseLoadingPlaceholder.propTypes = {
