@@ -30,19 +30,17 @@ export default function AnnualHighlightCards( {
 			{ Number.isFinite( year )
 				? translate( '%(year)s in review', { args: { year } } )
 				: translate( 'Year in review' ) }{ ' ' }
-			{ titleHref ? <small>{ translate( 'View all annual insights' ) }</small> : null }
+			{ titleHref ? (
+				<a className="highlight-cards-heading-wrapper" href={ titleHref }>
+					<small>{ translate( 'View all annual insights' ) }</small>
+				</a>
+			) : null }
 		</h1>
 	);
 
 	return (
 		<div className={ classNames( 'highlight-cards', className ?? null ) }>
-			{ titleHref ? (
-				<a className="highlight-cards-heading-wrapper" href={ titleHref }>
-					{ header }
-				</a>
-			) : (
-				header
-			) }
+			{ header }
 
 			<div className="highlight-cards-list">
 				<HighlightCard

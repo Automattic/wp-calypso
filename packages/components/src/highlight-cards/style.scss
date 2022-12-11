@@ -30,8 +30,11 @@
 		font-family: $sans;
 		font-size: $font-body-small;
 		line-height: 1.5;
-		color: var(--color-link);
 		font-weight: 400;
+
+		a & {
+			color: var(--color-link);
+		}
 	}
 }
 
