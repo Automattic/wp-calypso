@@ -311,9 +311,6 @@ class CancelPurchase extends Component {
 									<CancelPurchaseButton
 										purchase={ purchase }
 										includedDomainPurchase={ this.props.includedDomainPurchase }
-										disabled={
-											this.state.cancelBundledDomain && ! this.state.confirmCancelBundledDomain
-										}
 										siteSlug={ this.props.siteSlug }
 										cancelBundledDomain={ this.state.cancelBundledDomain }
 										purchaseListUrl={ this.props.purchaseListUrl }
