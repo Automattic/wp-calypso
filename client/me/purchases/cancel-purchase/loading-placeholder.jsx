@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import { i18n, localize } from 'i18n-calypso';
+import { useTranslate, localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -9,15 +9,12 @@ import titles from 'calypso/me/purchases/titles';
 
 import '../components/loading-placeholder/style.scss';
 
-const supportLink = () => {
-	return i18n.translate(
-		'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
-		{
-			components: {
-				contactLink: <a href={ CALYPSO_CONTACT } />,
-			},
-		}
-	);
+const supportLink = ( translate ) => {
+	return translate( 'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}', {
+		components: {
+			contactLink: <a href={ CALYPSO_CONTACT } />,
+		},
+	} );
 };
 
 const siteHeader = () => {
@@ -35,6 +32,7 @@ const siteHeader = () => {
 };
 
 const CancelPurchaseLoadingPlaceholder = ( { purchaseId, siteSlug, getManagePurchaseUrlFor } ) => {
+	const translate = useTranslate();
 	const title = titles.cancelPurchase;
 	const isFullWidth = true;
 	let path;
@@ -43,17 +41,16 @@ const CancelPurchaseLoadingPlaceholder = ( { purchaseId, siteSlug, getManagePurc
 		path = getManagePurchaseUrlFor( siteSlug, purchaseId );
 	}
 
+	function goBack() {
+		page.back( path || '/' );
+	}
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace, jsx-a11y/heading-has-content */
 	return (
 		<Main wideLayout={ isFullWidth } className="loading-placeholder">
-			<Button
-				compact
-				borderless
-				className="cancel-purchase__back-link"
-				onClick={ page.back( path || '/' ) }
-			>
+			<Button compact borderless className="cancel-purchase__back-link" onClick={ goBack }>
 				<Gridicon icon="chevron-left" size={ 18 } />
-				{ i18n.translate( 'Back' ) }
+				{ translate( 'Back' ) }
 			</Button>
 
 			<FormattedHeader
@@ -75,7 +72,7 @@ const CancelPurchaseLoadingPlaceholder = ( { purchaseId, siteSlug, getManagePurc
 					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__reason" />
 
 					<p className="cancel-purchase--support-link cancel-purchase--support-link--main">
-						{ supportLink() }
+						{ supportLink( translate ) }
 					</p>
 				</div>
 				<div className="cancel-purchase__layout-col cancel-purchase__layout-col-right">
@@ -84,7 +81,7 @@ const CancelPurchaseLoadingPlaceholder = ( { purchaseId, siteSlug, getManagePurc
 					</div>
 
 					<p className="cancel-purchase--support-link cancel-purchase--support-link--sidebar">
-						{ supportLink() }
+						{ supportLink( translate ) }
 					</p>
 				</div>
 			</div>
