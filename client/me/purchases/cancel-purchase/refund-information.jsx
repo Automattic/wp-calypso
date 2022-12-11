@@ -16,6 +16,69 @@ import { UPDATE_NAMESERVERS } from 'calypso/lib/url/support';
 import { getIncludedDomainPurchase } from 'calypso/state/purchases/selectors';
 import getPlanCancellationFeatures from './get-plan-cancellation-features';
 
+const featuresList = ( translate, purchase, productSlug, hasDomain ) => {
+	if ( typeof productSlug !== 'string' ) {
+		return null;
+	}
+
+	const planCancellationFeatures = getPlanCancellationFeatures( productSlug, hasDomain );
+
+	return (
+		<Fragment>
+			<div className="cancel-purchase__refund-information-description-header">
+				{ translate( 'When your %(productName)s plan expires you will loose access to:', {
+					args: {
+						productName: getName( purchase ),
+					},
+				} ) }
+			</div>
+			<ul className="cancel-purchase__refund-information--list-plan-features">
+				{ planCancellationFeatures.featureList.map( ( cancellationFeature ) => {
+					return (
+						<li key={ cancellationFeature }>
+							<Gridicon
+								className="cancel-purchase__refund-information--item-cross-small"
+								size={ 24 }
+								icon="cross-small"
+							/>
+							{ getCancellationFeatureByKey( cancellationFeature ) }
+						</li>
+					);
+				} ) }
+				{ planCancellationFeatures.andMore && (
+					<li className="cancel-purchase__refund-information--item-more" key="cancellationAndMore">
+						<Gridicon
+							className="cancel-purchase__refund-information--item-cross-small"
+							size={ 24 }
+							icon="cross-small"
+						/>
+						<span className="cancel-purchase__refund-information--item-more-span">
+							{ translate( 'And more' ) }
+						</span>
+					</li>
+				) }
+			</ul>
+		</Fragment>
+	);
+};
+
+const cancelSubscriptionDescription = ( site, translate, purchase, includedDomainPurchase ) => {
+	const planSlug = site.plan.product_slug;
+
+	return (
+		<div>
+			<p className="cancel-purchase__refund-information-subtitle">
+				{ translate(
+					'If you cancel your plan subscription your site may appear broken and things may not work properly.'
+				) }
+			</p>
+			<div className="cancel-purchase__refund-information-description">
+				{ featuresList( translate, purchase, planSlug, includedDomainPurchase ) }
+			</div>
+		</div>
+	);
+};
+
 const CancelPurchaseRefundInformation = ( {
 	purchase,
 	isJetpackPurchase,
@@ -45,72 +108,6 @@ const CancelPurchaseRefundInformation = ( {
 			cancelBundledDomain,
 			confirmCancelBundledDomain: event.target.checked,
 		} );
-	};
-
-	const featuresList = ( productSlug, hasDomain ) => {
-		if ( typeof productSlug !== 'string' ) {
-			return null;
-		}
-
-		const planCancellationFeatures = getPlanCancellationFeatures( productSlug, hasDomain );
-
-		return (
-			<Fragment>
-				<div className="cancel-purchase__refund-information-description-header">
-					{ translate( 'When your %(productName)s plan expires you will loose access to:', {
-						args: {
-							productName: getName( purchase ),
-						},
-					} ) }
-				</div>
-				<ul className="cancel-purchase__refund-information--list-plan-features">
-					{ planCancellationFeatures.featureList.map( ( cancellationFeature ) => {
-						return (
-							<li key={ cancellationFeature }>
-								<Gridicon
-									className="cancel-purchase__refund-information--item-cross-small"
-									size={ 24 }
-									icon="cross-small"
-								/>
-								{ getCancellationFeatureByKey( cancellationFeature ) }
-							</li>
-						);
-					} ) }
-					{ planCancellationFeatures.andMore && (
-						<li
-							className="cancel-purchase__refund-information--item-more"
-							key="cancellationAndMore"
-						>
-							<Gridicon
-								className="cancel-purchase__refund-information--item-cross-small"
-								size={ 24 }
-								icon="cross-small"
-							/>
-							<span className="cancel-purchase__refund-information--item-more-span">
-								{ translate( 'And more' ) }
-							</span>
-						</li>
-					) }
-				</ul>
-			</Fragment>
-		);
-	};
-
-	const cancelSubscriptionDescription = () => {
-		const planSlug = site.plan.product_slug;
-
-		return (
-			<div>
-				<p className="cancel-purchase__refund-information-subtitle">
-					{ translate(
-						'If you cancel your plan subscription your site may appear broken and things may not work properly.'
-					) }
-				</p>
-				<div className="cancel-purchase__refund-information-description">
-					{ featuresList( planSlug, includedDomainPurchase ) }
-				</div>
-			</div>
-		);
 	};
 
 	if ( isRefundable( purchase ) ) {
@@ -420,7 +417,9 @@ const CancelPurchaseRefundInformation = ( {
 
 	return (
 		<div className="cancel-purchase__info">
-			{ isSubscription( purchase ) && ! isJetpackPurchase && cancelSubscriptionDescription() }
+			{ isSubscription( purchase ) &&
+				! isJetpackPurchase &&
+				cancelSubscriptionDescription( site, translate, purchase, includedDomainPurchase ) }
 			{ Array.isArray( text ) ? (
 				text.map( ( paragraph, index ) => (
 					<p
