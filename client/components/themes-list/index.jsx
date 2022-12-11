@@ -128,7 +128,14 @@ function ThemeBlock( props ) {
 }
 
 function Empty( props ) {
-	const { wpOrgThemes, emptyContent, searchTerm, upsellCardDisplayed, translate } = props;
+	const {
+		wpOrgThemes,
+		emptyContent,
+		searchTerm,
+		upsellCardDisplayed,
+		translate,
+		recordTracksEvent,
+	} = props;
 	const selectedSite = useSelector( getSelectedSite );
 	const shouldUpgradeToInstallThemes = useSelector(
 		( state ) => ! siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_THEMES )
@@ -172,7 +179,7 @@ function Empty( props ) {
 				selectedSite={ selectedSite }
 				searchTerm={ searchTerm }
 				translate={ translate }
-				recordTracksEvent={ props.recordTracksEvent }
+				recordTracksEvent={ recordTracksEvent }
 			/>
 		</div>
 	) : (
