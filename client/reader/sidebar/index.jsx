@@ -179,9 +179,7 @@ export class ReaderSidebar extends Component {
 					link="/read"
 				/>
 
-				<li>
-					<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
-				</li>
+				<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
 				<SidebarSeparator />
 
 				<SidebarItem
