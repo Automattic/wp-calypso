@@ -171,14 +171,14 @@ const CancelPurchaseRefundInformation = ( {
 								onChange={ onCancelBundledDomainChange }
 								label={
 									<Fragment>
-										<span className="cancel-budnled-domain__option-header">
+										<span className="cancel-bundled-domain__option-header">
 											{ i18n.translate( 'Cancel the plan, but keep “%(domain)s”', {
 												args: {
 													domain: includedDomainPurchase.meta,
 												},
 											} ) }
 										</span>
-										<span className="cancel-budnled-domain__option-description">
+										<span className="cancel-bundled-domain__option-description">
 											{ i18n.translate(
 												"You'll receive a partial refund of %(refundAmount)s -- the cost of the %(productName)s " +
 													'plan, minus %(domainCost)s for the domain. There will be no change to your domain ' +
@@ -204,7 +204,7 @@ const CancelPurchaseRefundInformation = ( {
 								onChange={ onCancelBundledDomainChange }
 								label={
 									<Fragment>
-										<span className="cancel-budnled-domain__option-header">
+										<span className="cancel-bundled-domain__option-header">
 											{ i18n.translate(
 												'Cancel the plan {{strong}}and{{/strong}} the domain “%(domain)s”',
 												{
@@ -217,10 +217,9 @@ const CancelPurchaseRefundInformation = ( {
 												}
 											) }
 										</span>
-										<span className="cancel-budnled-domain__option-description">
+										<span className="cancel-bundled-domain__option-description">
 											{ i18n.translate(
-												"You'll receive a full refund of %(planCost)s. The domain will be cancelled, you risk losing it forever," +
-													'and visitors to your site may experience difficulties accessing it.',
+												"You'll receive a full refund of %(planCost)s. The domain will be cancelled, you risk losing it forever, and visitors to your site may experience difficulties accessing it.",
 												{
 													args: {
 														planCost: planCostText,
@@ -287,7 +286,7 @@ const CancelPurchaseRefundInformation = ( {
 				} else {
 					text.push(
 						i18n.translate(
-							'This plan subscription includes the custom domain, %(domain)s' +
+							'This plan subscription includes the custom domain, %(domain)s.{{br/}}' +
 								'{{strong}}The domain will not be removed{{/strong}} along with the plan, to avoid any interruptions for your visitors. ',
 							{
 								args: {
@@ -296,6 +295,7 @@ const CancelPurchaseRefundInformation = ( {
 								},
 								components: {
 									strong: <strong />,
+									br: <br />,
 								},
 							}
 						),
