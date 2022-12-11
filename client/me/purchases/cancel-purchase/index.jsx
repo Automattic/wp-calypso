@@ -195,8 +195,7 @@ class CancelPurchase extends Component {
 			);
 		}
 
-		const { purchase, isJetpackPurchase } = this.props;
-		const locale = getCurrentLocaleSlug();
+		const { locale, purchase, isJetpackPurchase } = this.props;
 		const purchaseName = getName( purchase );
 		const { siteName, domain: siteDomain, siteId } = purchase;
 
@@ -348,6 +347,7 @@ export default connect( ( state, props ) => {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		isJetpackPurchase,
+		locale: getCurrentLocaleSlug( state ),
 		purchase,
 		purchases,
 		productsList,
