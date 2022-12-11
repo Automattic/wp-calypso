@@ -9,7 +9,6 @@ import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
-import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import CheckoutMain from '../components/checkout-main';
@@ -52,7 +51,6 @@ describe( 'CheckoutMain with a variant picker', () => {
 		hasLoadedSiteDomains.mockImplementation( () => true );
 		getDomainsBySiteId.mockImplementation( () => [] );
 		isMarketplaceProduct.mockImplementation( () => false );
-		getIntroOfferPrice.mockImplementation( () => null );
 
 		const initialCart = {
 			coupon: '',
