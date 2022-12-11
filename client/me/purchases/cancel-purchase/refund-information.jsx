@@ -80,6 +80,11 @@ const CancelPurchaseRefundInformation = ( {
 							className="cancel-purchase__refund-information--item-more"
 							key="cancellationAndMore"
 						>
+							<Gridicon
+								className="cancel-purchase__refund-information--item-cross-small"
+								size={ 24 }
+								icon="cross-small"
+							/>
 							<span className="cancel-purchase__refund-information--item-more-span">
 								{ i18n.translate( 'And more' ) }
 							</span>
