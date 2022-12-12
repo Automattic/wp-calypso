@@ -768,7 +768,7 @@ class ThemeSheet extends Component {
 		let plansUrl = '/plans';
 
 		if ( ! isLoggedIn ) {
-			plansUrl = localizeUrl( 'https://wordpress.com/pricing' );
+			plansUrl = localizeUrl( '/pricing' );
 		} else if ( siteSlug ) {
 			plansUrl = plansUrl + `/${ siteSlug }/?plan=value_bundle`;
 		}
