@@ -19,10 +19,12 @@ export async function createWpcomAccountBeforeTransaction(
 	 * on success checkout.
 	 */
 	return createAccount( {
-		signupFlowName:
-			isJetpackUserLessCheckout || isGiftingCheckout
-				? 'jetpack-userless-checkout'
-				: 'onboarding-registrationless',
+		// eslint-disable-next-line no-nested-ternary
+		signupFlowName: isJetpackUserLessCheckout
+			? 'jetpack-userless-checkout'
+			: isGiftingCheckout
+			? 'gifting-userless-checkout'
+			: 'onboarding-registrationless',
 		email: transactionOptions.contactDetails?.email?.value,
 		siteId: transactionOptions.siteId,
 		recaptchaClientId: transactionOptions.recaptchaClientId,

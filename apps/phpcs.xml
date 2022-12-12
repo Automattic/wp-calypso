@@ -2,6 +2,14 @@
 <ruleset name="editing-toolkit">
 	<description>Editing Toolkit Plugin Rules</description>
 
+	<!--
+	Suppress all PHP run-time notices across all PHP versions, thus preventing
+	errors caused by WordPress Coding Standards not supporting PHP 8.0+ yet.
+	Once WPCS supports PHP8, this can be removed.
+	See https://github.com/WordPress/WordPress-Coding-Standards/issues/2035
+	-->
+	<ini name="error_reporting" value="E_ALL &#38; ~E_DEPRECATED" />
+
 	<rule ref="Jetpack"/>
 	<rule ref="WordPress.Utils.I18nTextDomainFixer">
 		<properties>
