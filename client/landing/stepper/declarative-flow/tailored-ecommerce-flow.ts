@@ -120,7 +120,7 @@ const ecommerceFlow: Flow = {
 					}
 
 					if ( providedDependencies?.siteSlug ) {
-						const destination = `/setup/${ flowName }/checkPlan?siteSlug=${ siteSlug }&flags=signup/tailored-ecommerce`;
+						const destination = `/setup/${ flowName }/checkPlan?siteSlug=${ siteSlug }`;
 						persistSignupDestination( destination );
 						setSignupCompleteSlug( siteSlug );
 						setSignupCompleteFlowName( flowName );
@@ -130,7 +130,6 @@ const ecommerceFlow: Flow = {
 						const urlParams = new URLSearchParams( {
 							theme: selectedDesign?.slug || '',
 							siteSlug: siteSlug.replace( '.wordpress.com', '.wpcomstaging.com' ),
-							flags: 'signup/tailored-ecommerce',
 						} );
 
 						const returnUrl = encodeURIComponent( `/setup/${ flowName }/checkPlan?${ urlParams }` );
