@@ -64,6 +64,5 @@ export function localizeThemesPath( path, locale, isLoggedOut = true ) {
  * @returns string
  */
 export function marketplaceThemeBillingProductSlug( themeId ) {
-	// @TODO: remove -test suffix.
-	return `wp-mp-theme-${ themeId }-test`;
+	return `wp-mp-theme-${ themeId }`;
 }
