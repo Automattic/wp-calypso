@@ -58,7 +58,8 @@
 		"purchases/new-payment-methods": true,
 		"realtime-site-count": true,
 		"site-indicator": false,
-		"upgrades/redirect-payments": false
+		"upgrades/redirect-payments": false,
+		"jetpack/pricing-page-cart": false
 	},
 	"enable_all_sections": false,
 	"sections": {

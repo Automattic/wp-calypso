@@ -1,3 +1,5 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getSiteSlug from './get-site-slug';
 
@@ -9,6 +11,10 @@ import getSiteSlug from './get-site-slug';
 export default function isJetpackCloudCartEnabled( state ) {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, siteId );
-	// We would want to change `true` to the param from A/B testing
-	return true && siteSlug;
+	return (
+		isEnabled( 'jetpack/pricing-page-rework-v1' ) &&
+		isEnabled( 'jetpack/pricing-page-cart' ) &&
+		isUserLoggedIn( state ) &&
+		siteSlug
+	);
 }
