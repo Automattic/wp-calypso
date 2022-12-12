@@ -155,6 +155,23 @@ export interface NewCommentResponse {
 	ID: number;
 }
 
+export interface PluginResponse {
+	id: string;
+	slug: string;
+	active: boolean;
+	name: string;
+}
+export interface AllPluginsResponse {
+	plugins: Array< PluginResponse >;
+}
+
+export interface PluginParams {
+	[ key: string ]: string | number | boolean;
+}
+export interface PluginRemovalResponse {
+	log: string[];
+}
+
 /* Error Responses */
 
 export interface BearerTokenErrorResponse {
