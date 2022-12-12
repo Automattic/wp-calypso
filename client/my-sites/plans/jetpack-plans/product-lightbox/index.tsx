@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { JetpackTag, JETPACK_RELATED_PRODUCTS_MAP } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -107,12 +106,7 @@ const ProductLightbox: React.FC< Props > = ( {
 
 	const isLargeScreen = useBreakpoint( '>782px' );
 
-	const isEnglish = config< Array< string | undefined > >( 'english_locales' ).includes(
-		translate.localeSlug
-	);
-
-	// TODO remove this isEnglish check once we have translations for the new strings
-	const showPricingBreakdown = includedProductSlugs?.length && isEnglish;
+	const showPricingBreakdown = includedProductSlugs?.length;
 
 	return (
 		<Modal

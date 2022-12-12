@@ -4,16 +4,16 @@ import { connect } from 'react-redux';
 import Count from 'calypso/components/count';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Favicon from 'calypso/reader/components/favicon';
+import ReaderSidebarHelper from 'calypso/reader/sidebar/helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import ReaderSidebarHelper from '../helper';
 
 /**
  * Styles
  */
 import '../style.scss';
 
-export class ReaderSidebarOrganizationsListItem extends Component {
+export class ReaderListOrganizationsListItem extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		path: PropTypes.string,
@@ -35,19 +35,19 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 			<li
 				key={ this.props.title }
 				className={ ReaderSidebarHelper.itemLinkClass( '/read/feeds/' + site.feed_ID, path, {
-					'sidebar-dynamic-menu__blog': true,
+					'reader-sidebar-site': true,
 				} ) }
 			>
 				<a
-					className="sidebar__menu-link sidebar__menu-link-reader"
+					className="reader-sidebar-site_link"
 					href={ `/read/feeds/${ site.feed_ID }` }
 					onClick={ this.handleSidebarClick }
 				>
-					<Favicon site={ site } className="sidebar__menu-item-siteicon" size={ 18 } />
+					<Favicon site={ site } className="reader-sidebar-site_siteicon" size={ 32 } />
 
-					<span className="sidebar__menu-item-sitename">
-						{ site.name }
-						<span className="sidebar__menu-item-last-updated">
+					<span className="reader-sidebar-site_sitename">
+						<span className="reader-sidebar-site_nameurl">{ site.name }</span>
+						<span className="reader-sidebar-site_updated">
 							{ site.last_updated > 0 && moment( new Date( site.last_updated ) ).fromNow() }
 						</span>
 					</span>
@@ -61,4 +61,4 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 
 export default connect( null, {
 	recordReaderTracksEvent,
-} )( withLocalizedMoment( ReaderSidebarOrganizationsListItem ) );
+} )( withLocalizedMoment( ReaderListOrganizationsListItem ) );

@@ -170,8 +170,6 @@ const ecommerceFlow: Flow = {
 			switch ( _currentStepName ) {
 				case 'designCarousel':
 					return navigate( 'storeProfiler' );
-				case 'storeAddress':
-					return navigate( 'domains' );
 				default:
 					return navigate( 'intro' );
 			}

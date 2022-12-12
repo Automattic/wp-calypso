@@ -7,7 +7,7 @@
 	margin-top: -4px;
 	margin-bottom: 8px;
 
-	.amount-saved--tooltip-text {
+	.amount-saved--text {
 		font-weight: 600;
 		color: var(--studio-gray-70);
 		display: flex;
@@ -17,5 +17,15 @@
 
 	.plan-price {
 		font-size: inherit;
+	}
+}
+
+.amount-saved--popover {
+	.plan-price {
+		font-size: inherit;
+		color: inherit;
+	}
+	hr {
+		margin-bottom: 1rem;
 	}
 }

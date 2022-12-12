@@ -496,7 +496,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				className="design-picker__premium-badge"
 				labelText={ translate( 'Upgrade' ) }
 				tooltipText={ translate(
-					'Unlock this style, and tons of other features, by upgrading to a Premium plan before launching your site.'
+					'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
 				) }
 			/>
 		);

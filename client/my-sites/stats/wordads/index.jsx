@@ -17,7 +17,6 @@ import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
-import StickyPanel from 'calypso/components/sticky-panel';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -164,8 +163,7 @@ class WordAds extends Component {
 
 		// New feature gate
 		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
-		const statsWrapperClass = classNames( 'wordads', {
-			'stats--new-main-chart': isNewMainChart,
+		const statsWrapperClass = classNames( 'wordads stats-content', {
 			'is-period-year': period === 'year',
 		} );
 		const mainWrapperClass = classNames( {
@@ -213,77 +211,44 @@ class WordAds extends Component {
 							/>
 
 							<div id="my-stats-content" className={ statsWrapperClass }>
-								{ isNewMainChart ? (
-									<>
-										<StatsPeriodHeader>
-											<StatsPeriodNavigation
-												date={ queryDate }
-												hidePreviousArrow={ this.isPrevArrowHidden( period, queryDate ) }
-												hideNextArrow={ yesterday === queryDate }
+								<>
+									<StatsPeriodHeader>
+										<StatsPeriodNavigation
+											date={ queryDate }
+											hidePreviousArrow={ this.isPrevArrowHidden( period, queryDate ) }
+											hideNextArrow={ yesterday === queryDate }
+											period={ period }
+											url={ `/stats/ads/${ period }/${ slug }` }
+										>
+											<DatePicker
 												period={ period }
-												url={ `/stats/ads/${ period }/${ slug }` }
-											>
-												<DatePicker
-													period={ period }
-													date={ queryDate }
-													query={ query }
-													statsType="statsAds"
-													showQueryDate
-												/>
-											</StatsPeriodNavigation>
-											<Intervals
-												selected={ period }
-												pathTemplate={ pathTemplate }
-												compact={ false }
+												date={ queryDate }
+												query={ query }
+												statsType="statsAds"
+												showQueryDate
+												isShort
 											/>
-										</StatsPeriodHeader>
+										</StatsPeriodNavigation>
+										<Intervals
+											selected={ period }
+											pathTemplate={ pathTemplate }
+											compact={ false }
+										/>
+									</StatsPeriodHeader>
 
-										<WordAdsChartTabs
-											activeTab={ getActiveTab( this.props.chartTab ) }
-											activeLegend={ this.state.activeLegend }
-											availableLegend={ this.getAvailableLegend() }
-											onChangeLegend={ this.onChangeLegend }
-											barClick={ this.barClick }
-											switchTab={ this.switchChart }
-											charts={ CHARTS }
-											queryDate={ queryDate }
-											period={ this.props.period }
-											chartTab={ this.props.chartTab }
-										/>
-									</>
-								) : (
-									<>
-										<WordAdsChartTabs
-											activeTab={ getActiveTab( this.props.chartTab ) }
-											activeLegend={ this.state.activeLegend }
-											availableLegend={ this.getAvailableLegend() }
-											onChangeLegend={ this.onChangeLegend }
-											barClick={ this.barClick }
-											switchTab={ this.switchChart }
-											charts={ CHARTS }
-											queryDate={ queryDate }
-											period={ this.props.period }
-											chartTab={ this.props.chartTab }
-										/>
-										<StickyPanel className="stats__sticky-navigation">
-											<StatsPeriodNavigation
-												date={ queryDate }
-												hidePreviousArrow={ this.isPrevArrowHidden( period, queryDate ) }
-												hideNextArrow={ yesterday === queryDate }
-												period={ period }
-												url={ `/stats/ads/${ period }/${ slug }` }
-											>
-												<DatePicker
-													period={ period }
-													date={ queryDate }
-													query={ query }
-													statsType="statsAds"
-													showQueryDate
-												/>
-											</StatsPeriodNavigation>
-										</StickyPanel>
-									</>
-								) }
+									<WordAdsChartTabs
+										activeTab={ getActiveTab( this.props.chartTab ) }
+										activeLegend={ this.state.activeLegend }
+										availableLegend={ this.getAvailableLegend() }
+										onChangeLegend={ this.onChangeLegend }
+										barClick={ this.barClick }
+										switchTab={ this.switchChart }
+										charts={ CHARTS }
+										queryDate={ queryDate }
+										period={ this.props.period }
+										chartTab={ this.props.chartTab }
+									/>
+								</>
 
 								<div className="stats__module-list stats__module-headerless--unified">
 									<WordAdsEarnings site={ site } />
