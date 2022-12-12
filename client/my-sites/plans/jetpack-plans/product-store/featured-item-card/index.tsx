@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { FeaturedItemCardProps } from '../types';
 
 import './style.scss';
@@ -12,7 +12,6 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 	hero,
 	isCtaDisabled,
 	isCtaExternal,
-	isProductInCart,
 	onClickCta,
 	price,
 	title,
@@ -39,7 +38,6 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 						target={ isCtaExternal ? '_blank' : undefined }
 						href={ isCtaDisabled ? '#' : ctaHref }
 					>
-						{ isProductInCart && <Gridicon icon="checkmark" /> }
 						{ ctaLabel }
 					</Button>
 				</div>
