@@ -302,15 +302,15 @@ const CancelPurchaseRefundInformation = ( {
 					text.push(
 						translate(
 							'This plan subscription includes the custom domain, %(domain)s.{{br/}}' +
-								'{{strong}}The domain will not be removed{{/strong}} along with the plan, to avoid any interruptions for your visitors. ',
+								'{{strong}}The domain will not be removed{{/strong}} along with the plan, to avoid any interruptions for your visitors.{{}}',
 							{
 								args: {
 									domain: includedDomainPurchase.meta,
 									domainCost: includedDomainPurchase.priceText,
 								},
 								components: {
-									strong: <strong />,
 									br: <br />,
+									strong: <strong />,
 								},
 							}
 						),
@@ -385,7 +385,7 @@ const CancelPurchaseRefundInformation = ( {
 	) {
 		text.push(
 			translate(
-				'This plan subscription includes the custom domain, %(domain)s' +
+				'This plan subscription includes the custom domain, %(domain)s.{{br/}}' +
 					'{{strong}}The domain will not be removed{{/strong}} along with the plan, to avoid any interruptions for your visitors. ',
 				{
 					args: {
@@ -393,6 +393,7 @@ const CancelPurchaseRefundInformation = ( {
 						domainCost: includedDomainPurchase.priceText,
 					},
 					components: {
+						br: <br />,
 						strong: <strong />,
 					},
 				}
@@ -415,7 +416,7 @@ const CancelPurchaseRefundInformation = ( {
 
 		text.push(
 			translate(
-				'This plan subscription includes the custom domain, %(domain)s' +
+				'This plan subscription includes the custom domain, %(domain)s.{{br/}}' +
 					'{{strong}}The domain will not be removed{{/strong}} along with the plan, to avoid any interruptions for your visitors. ',
 				{
 					args: {
@@ -423,6 +424,7 @@ const CancelPurchaseRefundInformation = ( {
 						domainCost: includedDomainPurchase.priceText,
 					},
 					components: {
+						br: <br />,
 						strong: <strong />,
 					},
 				}
