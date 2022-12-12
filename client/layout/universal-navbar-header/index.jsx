@@ -47,30 +47,35 @@ const UniversalNavbarHeader = () => {
 													elementContent={ translate( 'WordPress Hosting' ) }
 													urlValue="//wordpress.com/hosting/"
 													type="dropdown"
+													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Domain Names' ) }
 													elementContent={ translate( 'Domain Names' ) }
 													urlValue="//wordpress.com/domains/"
 													type="dropdown"
+													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Website Builder' ) }
 													elementContent={ translate( 'Website Builder' ) }
 													urlValue="//wordpress.com/website-builder/"
 													type="dropdown"
+													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Create a Blog' ) }
 													elementContent={ translate( 'Create a Blog' ) }
 													urlValue="//wordpress.com/create-blog/"
 													type="dropdown"
+													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Professional Email' ) }
 													elementContent={ translate( 'Professional Email' ) }
 													urlValue="//wordpress.com/professional-email/"
 													type="dropdown"
+													target="_self"
 												/>
 											</ul>
 											<div className="x-dropdown-content-separator"></div>
@@ -102,6 +107,7 @@ const UniversalNavbarHeader = () => {
 													elementContent={ translate( 'Overview' ) }
 													urlValue="//wordpress.com/features/"
 													type="dropdown"
+													target="_self"
 												/>
 											</ul>
 											<div className="x-dropdown-content-separator"></div>
@@ -123,6 +129,7 @@ const UniversalNavbarHeader = () => {
 													elementContent={ translate( 'Google Apps' ) }
 													urlValue="//wordpress.com/google/"
 													type="dropdown"
+													target="_self"
 												/>
 											</ul>
 										</div>
@@ -151,36 +158,42 @@ const UniversalNavbarHeader = () => {
 													elementContent={ translate( 'News' ) }
 													urlValue="//wordpress.com/blog/"
 													type="dropdown"
+													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Website Building Tips' ) }
 													elementContent={ translate( 'Website Building Tips' ) }
 													urlValue="//wordpress.com/go/"
 													type="dropdown"
+													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Business Name Generator' ) }
 													elementContent={ translate( 'Business Name Generator' ) }
 													urlValue="//wordpress.com/business-name-generator/"
 													type="dropdown"
+													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Logo Maker' ) }
 													elementContent={ translate( 'Logo Maker' ) }
 													urlValue="//wordpress.com/logo-maker/"
 													type="dropdown"
+													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Daily Webinars' ) }
 													elementContent={ translate( 'Daily Webinars' ) }
 													urlValue="//wordpress.com/webinars/"
 													type="dropdown"
+													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'WordPress Courses' ) }
 													elementContent={ translate( 'WordPress Courses' ) }
 													urlValue="//wordpress.com/courses/"
 													type="dropdown"
+													target="_self"
 												/>
 											</ul>
 										</div>
@@ -191,6 +204,7 @@ const UniversalNavbarHeader = () => {
 										elementContent={ translate( 'Plans & Pricing' ) }
 										urlValue="//wordpress.com/pricing/"
 										type="nav"
+										target="_self"
 									/>
 								</ul>
 								<ul className="x-nav-list x-nav-list__right">
