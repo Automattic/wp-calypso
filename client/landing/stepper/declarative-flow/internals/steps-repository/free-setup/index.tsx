@@ -5,16 +5,19 @@ import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { FormEvent, useEffect } from 'react';
 import { DomainSuggestion } from 'calypso/../packages/data-stores/src';
+import { setDomainCartItem } from 'calypso/../packages/data-stores/src/onboard/actions';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import wpcom from 'calypso/lib/wp';
 import { tip } from 'calypso/signup/icons';
 import { useSite } from '../../../../hooks/use-site';
 import SetupForm from '../components/setup-form';
+import { getUrlInfo } from '../launchpad/helper';
 import type { Step } from '../../types';
 import './styles.scss';
 
@@ -60,16 +63,22 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 			.then( ( result: DomainSuggestion[] ) => {
 				if ( result[ 0 ] ) {
 					setGeneratedDomainSuggestion( result[ 0 ] );
+					const domainCartItem = domainRegistration( {
+						domain: result[ 0 ].domain_name,
+						productSlug: '',
+					} );
+					setDomainCartItem( domainCartItem );
 				} else {
 					setGeneratedDomainSuggestion( null );
+					setDomainCartItem( undefined );
 				}
 			} )
 			.catch( () => {
 				setGeneratedDomainSuggestion( null );
+				setDomainCartItem( undefined );
 			} );
 	};
 
-	// Removing until API issues are resolved
 	useEffect( () => {
 		//Generates new domain when screen loads
 		generateNewRandomDomain();
@@ -111,24 +120,11 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 		}
 
 		if ( siteTitle.trim().length && generatedDomainSuggestion?.domain_name ) {
-			// Add logic to create new site and then pass the site slug to submit() as a providedDependency
-			// DesignSetup page may need the siteSlug param
 			submit?.( { siteTitle, tagline, siteSlug: generatedDomainSuggestion.domain_name } );
 		}
 	};
 
-	// TODO: Move into new file and export to reuse in Launchpad
-	function getUrlInfo( url: string ) {
-		const urlWithoutProtocol = url.replace( /^https?:\/\//, '' );
-
-		// Ex. mytest.wordpress.com matches mytest
-		const siteName = urlWithoutProtocol.match( /^[^.]*/ );
-		// Ex. mytest.wordpress.com matches .wordpress.com
-		const topLevelDomain = urlWithoutProtocol.match( /\..*/ ) || [];
-
-		return [ siteName ? siteName[ 0 ] : '', topLevelDomain ? topLevelDomain[ 0 ] : '' ];
-	}
-
+	// Splits generated domain suggestion for styling purposes
 	useEffect( () => {
 		if ( generatedDomainSuggestion ) {
 			const [ siteName, topLevelDomain ] = getUrlInfo( generatedDomainSuggestion?.domain_name );

@@ -15,6 +15,7 @@ import {
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import DesignSetup from './internals/steps-repository/design-setup';
 import DomainsStep from './internals/steps-repository/domains';
 import FreeSetup from './internals/steps-repository/free-setup';
 import Intro from './internals/steps-repository/intro';
@@ -46,6 +47,7 @@ const free: Flow = {
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'processing', component: Processing },
 			{ slug: 'launchpad', component: LaunchPad },
+			{ slug: 'designSetup', component: DesignSetup },
 		];
 	},
 
@@ -91,7 +93,7 @@ const free: Flow = {
 					return navigate( 'freeSetup' );
 
 				case 'freeSetup':
-					return navigate( `domains` );
+					return navigate( 'designSetup' );
 
 				case 'domains':
 					return navigate( 'plans' );
