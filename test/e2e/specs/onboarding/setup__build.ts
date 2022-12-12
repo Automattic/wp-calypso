@@ -1,5 +1,5 @@
 /**
- * @group quarantined
+ * @group calypso-pr
  */
 
 import { DataHelper, SecretsManager, StartSiteFlow, TestAccount } from '@automattic/calypso-e2e';
@@ -30,7 +30,9 @@ describe(
 			} );
 
 			it( 'Enter Onboarding flow', async function () {
-				await page.goto( DataHelper.getCalypsoURL( '/setup/site-setup', { siteSlug } ) );
+				await page.goto( DataHelper.getCalypsoURL( '/setup/site-setup', { siteSlug } ), {
+					timeout: 30 * 1000,
+				} );
 			} );
 
 			it( 'Select "Promote" goal', async function () {

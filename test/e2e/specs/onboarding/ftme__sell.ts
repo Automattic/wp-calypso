@@ -135,6 +135,10 @@ describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
 			startSiteFlow = new StartSiteFlow( page );
 		} );
 
+		it( 'Land on goal selection step', async function () {
+			page.waitForURL( /setup\/site-setup\/goals\?/, { timeout: 30 * 1000 } );
+		} );
+
 		it( 'Select "Sell" goal', async function () {
 			await startSiteFlow.selectGoal( 'Sell' );
 			await startSiteFlow.clickButton( 'Continue' );
