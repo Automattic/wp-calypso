@@ -87,6 +87,7 @@ import {
 	getDestination,
 	getFirstInvalidStep,
 	getStepUrl,
+	processDependencyInQuery,
 	isReskinnedFlow,
 	isP2Flow,
 } from './utils';
@@ -599,7 +600,7 @@ class Signup extends Component {
 		for ( const dependencyKey of dependenciesInQuery ) {
 			const value = queryObject[ dependencyKey ];
 			if ( value != null ) {
-				result[ dependencyKey ] = value;
+				result[ dependencyKey ] = processDependencyInQuery( dependencyKey, value );
 			}
 		}
 
