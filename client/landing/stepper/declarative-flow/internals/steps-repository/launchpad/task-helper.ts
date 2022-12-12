@@ -58,7 +58,9 @@ export function getEnhancedTasks(
 		isVideoPressFlow( flow ) && ! planHasFeature( productSlug as string, FEATURE_VIDEO_UPLOADS );
 
 	if ( isVideoPressFlowWithUnsupportedPlan ) {
-		planWarningText = translate( 'Purchase a plan that supports VideoPress.' );
+		planWarningText = translate(
+			'Upgrade to a plan with VideoPress support to upload your videos.'
+		);
 		displayWarning = true;
 	}
 
@@ -101,7 +103,9 @@ export function getEnhancedTasks(
 							const plansUrl = addQueryArgs( `/plans/${ siteSlug }`, {
 								...( displayWarning && {
 									plan: PLAN_PREMIUM,
-									feature: FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+									feature: isVideoPressFlowWithUnsupportedPlan
+										? FEATURE_VIDEO_UPLOADS
+										: FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 								} ),
 							} );
 							window.location.assign( plansUrl );
