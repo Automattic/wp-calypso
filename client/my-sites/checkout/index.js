@@ -96,13 +96,7 @@ export default function () {
 
 	// The no-site post-checkout route is for purchases not tied to a site so do
 	// not include the `siteSelection` middleware.
-	page(
-		'/checkout/gift/thank-you/:site',
-		redirectLoggedOut,
-		giftThankYou,
-		makeLayout,
-		clientRender
-	);
+	page( '/checkout/gift/thank-you/:site', giftThankYou, makeLayout, clientRender );
 
 	page(
 		'/checkout/thank-you/no-site/pending/:orderId',
@@ -264,14 +258,7 @@ export default function () {
 
 	// Gift purchases work without a site, so do not include the `siteSelection`
 	// middleware.
-	page(
-		'/checkout/:product/gift/:purchaseId',
-		redirectLoggedOut,
-		noSite,
-		checkout,
-		makeLayout,
-		clientRender
-	);
+	page( '/checkout/:product/gift/:purchaseId', noSite, checkout, makeLayout, clientRender );
 
 	page(
 		'/checkout/:site/with-gsuite/:domain/:receiptId?',

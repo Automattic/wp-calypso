@@ -18,7 +18,6 @@ import {
 	kebabCase,
 	map,
 	omit,
-	pick,
 	startsWith,
 } from 'lodash';
 import page from 'page';
@@ -162,18 +161,17 @@ class Signup extends Component {
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
-		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
-		const queryObject = this.props.initialContext?.query ?? {};
-
-		let providedDependencies;
-
-		if ( flow.providesDependenciesInQuery ) {
-			providedDependencies = pick( queryObject, flow.providesDependenciesInQuery );
-		}
+		let providedDependencies = this.getDependenciesInQuery();
 
 		// Prevent duplicate sites, check pau2Xa-1Io-p2#comment-6759.
+		// Note that there are in general three ways of touching this code that can be obscured:
+		// 1. signup as a new user through any of the /start/* flows.
+		// 2. log in and go through a /start/* flow to add a new site under the logged-in account.
+		// 3. signup as a new user, and then navigate back by the browser's back button.
+		// *Only* in the 3rd conditon will isManageSiteFlow be true.
 		if ( this.props.isManageSiteFlow ) {
 			providedDependencies = {
+				...providedDependencies,
 				siteSlug: getSignupCompleteSlug(),
 				isManageSiteFlow: this.props.isManageSiteFlow,
 			};
@@ -191,8 +189,12 @@ class Signup extends Component {
 		this.updateShouldShowLoadingScreen();
 		this.completeFlowAfterLoggingIn();
 
-		if ( canResumeFlow( this.props.flowName, this.props.progress, this.props.isLoggedIn ) ) {
-			// Resume from the current window location
+		// Resume from the current window location if there is stored, completed step progress.
+		// However, if the step is removed, e.g. the user step is removed after logging-in, it can't be resumed.
+		if (
+			canResumeFlow( this.props.flowName, this.props.progress, this.props.isLoggedIn ) &&
+			! this.isCurrentStepRemovedFromFlow()
+		) {
 			return;
 		}
 
@@ -203,7 +205,15 @@ class Signup extends Component {
 				.steps[ 0 ];
 			this.setState( { resumingStep: destinationStep } );
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
-			return page.redirect( getStepUrl( this.props.flowName, destinationStep, undefined, locale ) );
+			return page.redirect(
+				getStepUrl(
+					this.props.flowName,
+					destinationStep,
+					undefined,
+					locale,
+					this.getCurrentFlowSupportedQueryParams()
+				)
+			);
 		}
 	}
 
@@ -579,6 +589,44 @@ class Signup extends Component {
 		return window.location.origin + path;
 	};
 
+	getDependenciesInQuery = () => {
+		const queryObject = this.props.initialContext?.query ?? {};
+		const dependenciesInQuery =
+			flows.getFlow( this.props.flowName, this.props.isLoggedIn )?.providesDependenciesInQuery ??
+			[];
+
+		const result = {};
+		for ( const dependencyKey of dependenciesInQuery ) {
+			const value = queryObject[ dependencyKey ];
+			if ( value != null ) {
+				result[ dependencyKey ] = value;
+			}
+		}
+
+		return result;
+	};
+
+	getCurrentFlowSupportedQueryParams = () => {
+		const queryObject = this.props.initialContext?.query ?? {};
+		const dependenciesInQuery = this.getDependenciesInQuery( queryObject );
+
+		// TODO
+		// siteSlug and siteId are currently both being used as either just a query parameter in some area or dependencies data recognized by the signup framework.
+		// The confusion caused by this naming conflict could lead to the breakage that first introduced by
+		// https://github.com/Automattic/wp-calypso/commit/1d5968a3df62f849c58ea1d0854f472021214ff3 and then fixed by https://github.com/Automattic/wp-calypso/pull/70760
+		// For now, we simply make sure they are considered as dependency data when they are explicitly designated.
+		// It works, but the code could have been cleaner if there is no naming conflict.
+		// We should do a query parameter audit to make sure each query parameter means one and only one thing, and then seek for a future-proof solution.
+		const { siteId, siteSlug, flags } = queryObject;
+
+		return {
+			siteId,
+			siteSlug,
+			flags,
+			...dependenciesInQuery,
+		};
+	};
+
 	// `flowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToStep = ( stepName, stepSectionName, flowName = this.props.flowName ) => {
@@ -587,8 +635,15 @@ class Signup extends Component {
 		// to invalid step.
 		if ( stepName && ! this.isEveryStepSubmitted() ) {
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
-			const { siteId, siteSlug } = this.props.initialContext?.query ?? {};
-			page( getStepUrl( flowName, stepName, stepSectionName, locale, { siteId, siteSlug } ) );
+			page(
+				getStepUrl(
+					flowName,
+					stepName,
+					stepSectionName,
+					locale,
+					this.getCurrentFlowSupportedQueryParams()
+				)
+			);
 		} else if ( this.isEveryStepSubmitted() ) {
 			this.goToFirstInvalidStep();
 		}
@@ -628,7 +683,6 @@ class Signup extends Component {
 			progress,
 			this.props.isLoggedIn
 		);
-		const { siteId, siteSlug } = this.props.initialContext?.query ?? {};
 
 		if ( firstInvalidStep ) {
 			recordSignupInvalidStep( this.props.flowName, this.props.stepName );
@@ -642,10 +696,13 @@ class Signup extends Component {
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
 			debug( `Navigating to the first invalid step: ${ firstInvalidStep.stepName }` );
 			page(
-				getStepUrl( this.props.flowName, firstInvalidStep.stepName, '', locale, {
-					siteId,
-					siteSlug,
-				} )
+				getStepUrl(
+					this.props.flowName,
+					firstInvalidStep.stepName,
+					'',
+					locale,
+					this.getCurrentFlowSupportedQueryParams()
+				)
 			);
 		}
 	};
@@ -715,8 +772,6 @@ class Signup extends Component {
 				isDomainTransfer( domainItem ) ||
 				isDomainMapping( domainItem ) );
 
-		const { siteId, siteSlug } = this.props.initialContext?.query ?? {};
-
 		// Hide the free option in the signup flow
 		const selectedHideFreePlan = get( this.props, 'signupDependencies.shouldHideFreePlan', false );
 		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
@@ -757,7 +812,7 @@ class Signup extends Component {
 							positionInFlow={ this.getPositionInFlow() }
 							hideFreePlan={ hideFreePlan }
 							isReskinned={ isReskinned }
-							queryParams={ { siteId, siteSlug } }
+							queryParams={ this.getCurrentFlowSupportedQueryParams() }
 							{ ...propsForCurrentStep }
 						/>
 					) }
@@ -766,11 +821,15 @@ class Signup extends Component {
 		);
 	}
 
-	shouldWaitToRender() {
-		const isStepRemovedFromFlow = ! includes(
+	isCurrentStepRemovedFromFlow() {
+		return ! includes(
 			flows.getFlow( this.props.flowName, this.props.isLoggedIn ).steps,
 			this.props.stepName
 		);
+	}
+
+	shouldWaitToRender() {
+		const isStepRemovedFromFlow = this.isCurrentStepRemovedFromFlow();
 		const isDomainsForSiteEmpty =
 			this.props.isLoggedIn &&
 			this.props.signupDependencies.siteSlug &&

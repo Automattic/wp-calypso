@@ -4,7 +4,11 @@ import trackScrollPage from 'calypso/lib/track-scroll-page';
 import performanceMark from 'calypso/server/lib/performance-mark';
 import { requestThemes, requestThemeFilters } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
-import { getThemeFilters, getThemesForQuery } from 'calypso/state/themes/selectors';
+import {
+	getThemeFilters,
+	getThemesForQuery,
+	getThemeFiltersRequestError,
+} from 'calypso/state/themes/selectors';
 import { getAnalyticsData } from './helpers';
 import LoggedOutComponent from './logged-out';
 
@@ -96,6 +100,13 @@ export function fetchThemeFilters( context, next ) {
 	}
 
 	const unsubscribe = store.subscribe( () => {
+		const fetchErr = getThemeFiltersRequestError( store.getState() );
+		if ( fetchErr ) {
+			debug( `Theme fetch error: ${ JSON.stringify( fetchErr ) }` );
+			unsubscribe();
+			return next( new Error( 'Error fetching theme filters.' ) );
+		}
+
 		if ( Object.keys( getThemeFilters( store.getState() ) ).length > 0 ) {
 			unsubscribe();
 			return next();

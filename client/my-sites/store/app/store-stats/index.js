@@ -53,8 +53,7 @@ class StoreStats extends Component {
 
 		// New feature gate
 		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
-		const statsWrapperClass = classNames( {
-			'stats--new-main-chart': isNewMainChart,
+		const statsWrapperClass = classNames( 'stats-content', {
 			'is-period-year': unit === 'year',
 		} );
 		const mainWrapperClass = classNames( 'store-stats', 'woocommerce', {
@@ -86,50 +85,8 @@ class StoreStats extends Component {
 					<StatsNavigation selectedItem="store" siteId={ siteId } slug={ slug } interval={ unit } />
 
 					<div id="my-stats-content" className={ statsWrapperClass }>
-						{ isNewMainChart ? (
-							<>
-								<StatsPeriodHeader>
-									<StatsPeriodNavigation
-										date={ selectedDate }
-										period={ unit }
-										url={ `/store/stats/orders/${ unit }/${ slug }` }
-									>
-										<DatePicker
-											period={ unit }
-											// this is needed to counter the +1d adjustment made in DatePicker for weeks
-											date={
-												unit === 'week'
-													? moment( selectedDate, 'YYYY-MM-DD' )
-															.subtract( 1, 'days' )
-															.format( 'YYYY-MM-DD' )
-													: selectedDate
-											}
-											query={ orderQuery }
-											statsType="statsOrders"
-											showQueryDate
-											isShort
-										/>
-									</StatsPeriodNavigation>
-									<Intervals selected={ unit } pathTemplate={ pathTemplate } compact={ false } />
-								</StatsPeriodHeader>
-
-								<Chart
-									query={ orderQuery }
-									selectedDate={ endSelectedDate }
-									siteId={ siteId }
-									unit={ unit }
-									slug={ slug }
-								/>
-							</>
-						) : (
-							<>
-								<Chart
-									query={ orderQuery }
-									selectedDate={ endSelectedDate }
-									siteId={ siteId }
-									unit={ unit }
-									slug={ slug }
-								/>
+						<>
+							<StatsPeriodHeader>
 								<StatsPeriodNavigation
 									date={ selectedDate }
 									period={ unit }
@@ -151,8 +108,17 @@ class StoreStats extends Component {
 										isShort
 									/>
 								</StatsPeriodNavigation>
-							</>
-						) }
+								<Intervals selected={ unit } pathTemplate={ pathTemplate } compact={ false } />
+							</StatsPeriodHeader>
+
+							<Chart
+								query={ orderQuery }
+								selectedDate={ endSelectedDate }
+								siteId={ siteId }
+								unit={ unit }
+								slug={ slug }
+							/>
+						</>
 
 						<div className="store-stats__widgets">
 							{ sparkWidgets.map( ( widget, index ) => (

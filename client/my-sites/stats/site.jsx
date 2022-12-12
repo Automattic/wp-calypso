@@ -26,7 +26,6 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
-import StickyPanel from 'calypso/components/sticky-panel';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { StatsNoContentBanner } from 'calypso/my-sites/stats/stats-no-content-banner';
@@ -190,7 +189,7 @@ class StatsSite extends Component {
 	}
 
 	renderStats() {
-		const { date, siteId, slug, isJetpack, isSitePrivate } = this.props;
+		const { date, siteId, slug, isJetpack, isSitePrivate, isOdysseyStats } = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -208,19 +207,17 @@ class StatsSite extends Component {
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ traffic.path }/{{ interval }}${ slugPath }`;
 
-		const showHighlights = config.isEnabled( 'stats/show-traffic-highlights' );
-
-		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
-		const wrapperClass = classNames( {
-			'stats--new-main-chart': isNewMainChart,
+		const wrapperClass = classNames( 'stats-content', {
 			'is-period-year': period === 'year',
 		} );
 
 		return (
 			<div className="stats">
-				<div className="stats-banner-wrapper">
-					<JetpackBackupCredsBanner event="stats-backup-credentials" />
-				</div>
+				{ ! isOdysseyStats && (
+					<div className="stats-banner-wrapper">
+						<JetpackBackupCredsBanner event="stats-backup-credentials" />
+					</div>
+				) }
 
 				<FormattedHeader
 					brandFont
@@ -235,7 +232,7 @@ class StatsSite extends Component {
 									<InlineSupportLink
 										supportContext="stats"
 										showIcon={ false }
-										showSupportModal={ config.isEnabled( 'is_running_in_jetpack_site' ) }
+										showSupportModal={ ! isOdysseyStats }
 									/>
 								),
 							},
@@ -250,80 +247,44 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 
-				{ showHighlights && <HighlightsSection siteId={ siteId } /> }
+				<HighlightsSection siteId={ siteId } />
 
 				<div id="my-stats-content" className={ wrapperClass }>
-					{ isNewMainChart ? (
-						<>
-							<StatsPeriodHeader>
-								<StatsPeriodNavigation
-									date={ date }
+					<>
+						<StatsPeriodHeader>
+							<StatsPeriodNavigation
+								date={ date }
+								period={ period }
+								url={ `/stats/${ period }/${ slug }` }
+							>
+								<DatePicker
 									period={ period }
-									url={ `/stats/${ period }/${ slug }` }
-								>
-									<DatePicker
-										period={ period }
-										date={ date }
-										query={ query }
-										statsType="statsTopPosts"
-										showQueryDate
-										isShort
-									/>
-								</StatsPeriodNavigation>
-								<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
-							</StatsPeriodHeader>
-
-							<ChartTabs
-								activeTab={ getActiveTab( this.props.chartTab ) }
-								activeLegend={ this.state.activeLegend }
-								availableLegend={ this.getAvailableLegend() }
-								onChangeLegend={ this.onChangeLegend }
-								barClick={ this.barClick }
-								switchTab={ this.switchChart }
-								charts={ CHARTS }
-								queryDate={ queryDate }
-								period={ this.props.period }
-								chartTab={ this.props.chartTab }
-							/>
-
-							{ isSitePrivate ? this.renderPrivateSiteBanner( siteId, slug ) : null }
-							{ ! isSitePrivate && <StatsNoContentBanner siteId={ siteId } siteSlug={ slug } /> }
-						</>
-					) : (
-						<>
-							{ isSitePrivate ? this.renderPrivateSiteBanner( siteId, slug ) : null }
-							{ ! isSitePrivate && <StatsNoContentBanner siteId={ siteId } siteSlug={ slug } /> }
-
-							<ChartTabs
-								activeTab={ getActiveTab( this.props.chartTab ) }
-								activeLegend={ this.state.activeLegend }
-								availableLegend={ this.getAvailableLegend() }
-								onChangeLegend={ this.onChangeLegend }
-								barClick={ this.barClick }
-								switchTab={ this.switchChart }
-								charts={ CHARTS }
-								queryDate={ queryDate }
-								period={ this.props.period }
-								chartTab={ this.props.chartTab }
-							/>
-
-							<StickyPanel className="stats__sticky-navigation">
-								<StatsPeriodNavigation
 									date={ date }
-									period={ period }
-									url={ `/stats/${ period }/${ slug }` }
-								>
-									<DatePicker
-										period={ period }
-										date={ date }
-										query={ query }
-										statsType="statsTopPosts"
-										showQueryDate
-									/>
-								</StatsPeriodNavigation>
-							</StickyPanel>
-						</>
-					) }
+									query={ query }
+									statsType="statsTopPosts"
+									showQueryDate
+									isShort
+								/>
+							</StatsPeriodNavigation>
+							<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
+						</StatsPeriodHeader>
+
+						<ChartTabs
+							activeTab={ getActiveTab( this.props.chartTab ) }
+							activeLegend={ this.state.activeLegend }
+							availableLegend={ this.getAvailableLegend() }
+							onChangeLegend={ this.onChangeLegend }
+							barClick={ this.barClick }
+							switchTab={ this.switchChart }
+							charts={ CHARTS }
+							queryDate={ queryDate }
+							period={ this.props.period }
+							chartTab={ this.props.chartTab }
+						/>
+
+						{ isSitePrivate ? this.renderPrivateSiteBanner( siteId, slug ) : null }
+						{ ! isSitePrivate && <StatsNoContentBanner siteId={ siteId } siteSlug={ slug } /> }
+					</>
 
 					<div className="stats__module-list stats__module-list--traffic is-events stats__module--unified">
 						<StatsModule
@@ -409,21 +370,23 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
-
-				<div className="stats-content-promo">
-					<PromoCardBlock
-						productSlug="wordpress-seo-premium"
-						impressionEvent="calypso_stats_wordpress_seo_premium_banner_view"
-						clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
-						headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
-						contentText={ translate(
-							'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
-						) }
-						ctaText={ translate( 'Learn more' ) }
-						image={ wordpressSeoIllustration }
-						href={ `/plugins/wordpress-seo-premium/${ slug }` }
-					/>
-				</div>
+				{ /** Promo Card is disabled for Odyssey because it doesn't make much sense in the context, which also removes an API call to `plugins`. */ }
+				{ ! isOdysseyStats && (
+					<div className="stats-content-promo">
+						<PromoCardBlock
+							productSlug="wordpress-seo-premium"
+							impressionEvent="calypso_stats_wordpress_seo_premium_banner_view"
+							clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
+							headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
+							contentText={ translate(
+								'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
+							) }
+							ctaText={ translate( 'Learn more' ) }
+							image={ wordpressSeoIllustration }
+							href={ `/plugins/wordpress-seo-premium/${ slug }` }
+						/>
+					</div>
+				) }
 				<JetpackColophon />
 			</div>
 		);
@@ -449,7 +412,7 @@ class StatsSite extends Component {
 	}
 
 	render() {
-		const { isJetpack, siteId, showEnableStatsModule } = this.props;
+		const { isJetpack, siteId, showEnableStatsModule, isOdysseyStats } = this.props;
 		const { period } = this.props.period;
 
 		// Track the last viewed tab.
@@ -461,9 +424,15 @@ class StatsSite extends Component {
 
 		return (
 			<Main className={ mainWrapperClass } fullWidthLayout>
-				<QueryKeyringConnections />
-				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
-				<QuerySiteKeyrings siteId={ siteId } />
+				{ /* Odyssey: Google My Business pages are currently unsupported. */ }
+				{ ! isOdysseyStats && (
+					<>
+						<QueryKeyringConnections />
+						<QuerySiteKeyrings siteId={ siteId } />
+					</>
+				) }
+				{ /* Odyssey: if Stats module is not enabled, the page will not be rendered. */ }
+				{ ! isOdysseyStats && isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 				<PageViewTracker
 					path={ `/stats/${ period }/:site` }
@@ -488,8 +457,13 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
+		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+		// Odyssey: if Stats is not enabled, the page will not be rendered.
 		const showEnableStatsModule =
-			siteId && isJetpack && isJetpackModuleActive( state, siteId, 'stats' ) === false;
+			! isOdysseyStats &&
+			siteId &&
+			isJetpack &&
+			isJetpackModuleActive( state, siteId, 'stats' ) === false;
 		return {
 			isJetpack,
 			isSitePrivate: isPrivateSite( state, siteId ),
@@ -497,6 +471,7 @@ export default connect(
 			slug: getSelectedSiteSlug( state ),
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
+			isOdysseyStats,
 		};
 	},
 	{ recordGoogleEvent, enableJetpackStatsModule, recordTracksEvent }

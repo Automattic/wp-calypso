@@ -217,7 +217,7 @@ class InviteFormHeader extends Component {
 				break;
 			case 'subscriber':
 				explanation = this.props.translate(
-					'As a subscriber, you will be able to manage your profile on %(siteName)s.',
+					'As a viewer, you will be able to manage your profile on %(siteName)s.',
 					{
 						args: {
 							siteName: this.getSiteName(),

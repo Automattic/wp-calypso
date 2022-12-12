@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
@@ -74,6 +75,8 @@ export default function SitesOverview() {
 	}, [ refetch, jetpackSiteDisconnected ] );
 
 	const pageTitle = translate( 'Dashboard' );
+
+	const downTimeMonitoringUpdates = 'Dashboard - Down Time Monitoring Updates Enabled';
 
 	const basePath = '/dashboard';
 
@@ -193,7 +196,11 @@ export default function SitesOverview() {
 						{ data?.sites && <SiteAddLicenseNotification /> }
 						<div className="sites-overview__page-title-container">
 							<div className="sites-overview__page-heading">
-								<h2 className="sites-overview__page-title">{ pageTitle }</h2>
+								{ isEnabled( 'jetpack/partner-portal-downtime-monitoring-updates' ) ? (
+									<h2 className="sites-overview__page-title">{ downTimeMonitoringUpdates }</h2>
+								) : (
+									<h2 className="sites-overview__page-title">{ pageTitle }</h2>
+								) }
 								<div className="sites-overview__page-subtitle">
 									{ translate( 'Manage all your Jetpack sites from one location' ) }
 								</div>

@@ -11,7 +11,7 @@ import BillingOptions from './billing-options';
  * These URLs are broken down into parts due to 119-gh-Automattic/lighthouse-forums
  */
 const CHECKOUT_URL = 'https' + '://' + 'wordpress.com/checkout';
-const PRICING_URL = 'https' + '://' + 'wordpress.com/pricing';
+const PLANS_URL = 'https' + '://' + 'wordpress.com/plans';
 
 interface Props {
 	plan: BlockPlan;
@@ -34,7 +34,7 @@ const PricingPlanDetail: FunctionComponent< BlockSaveProps< BlockAttributes > & 
 
 	const CtaLink = attributes.domain
 		? `${ CHECKOUT_URL }/${ attributes.domain }/${ plan.pathSlug }`
-		: PRICING_URL;
+		: PLANS_URL;
 
 	return (
 		<section className="hb-pricing-plans-embed__detail">

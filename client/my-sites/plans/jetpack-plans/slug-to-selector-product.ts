@@ -201,6 +201,7 @@ function itemToSelectorProduct(
 			description: getForCurrentCROIteration( item.getDescription ),
 			featuredDescription: getFeaturedPlanDescription( item ),
 			lightboxDescription: getLightboxPlanDescription( item ),
+			productsIncluded: item.getProductsIncluded?.() || [],
 			whatIsIncluded: item.getWhatIsIncluded
 				? getForCurrentCROIteration( item.getWhatIsIncluded )
 				: [],

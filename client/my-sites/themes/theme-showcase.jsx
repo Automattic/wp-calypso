@@ -186,8 +186,9 @@ class ThemeShowcase extends Component {
 	};
 
 	getTabFilterFromUrl = ( filterString = '' ) => {
-		const matches = Object.values( this.tabSubjectTermTable ).filter(
-			( value ) => filterString.indexOf( value ) >= 0
+		const filterArray = filterString.split( '+' );
+		const matches = Object.values( this.tabSubjectTermTable ).filter( ( value ) =>
+			filterArray.includes( value )
 		);
 
 		let tabFilter = this.tabFilters.ALL;
@@ -438,10 +439,8 @@ class ThemeShowcase extends Component {
 				return <ThemesSelection { ...themeProps } />;
 			case this.tabFilters.TRENDING?.key:
 				return <TrendingThemes { ...themeProps } />;
-			case this.tabFilters.ALL.key:
-				return this.allThemes( { themeProps } );
 			default:
-				return this.allThemes( { themeProps: { ...themeProps, filter: tabKey } } );
+				return this.allThemes( { themeProps } );
 		}
 	};
 

@@ -16,13 +16,15 @@ jest.mock( '../src/dom-operations', () => ( {
 } ) );
 
 describe( 'loadScript', () => {
-	describe( 'loadScript( url, callback )', () => {
+	describe( 'loadScript( url, callback, args )', () => {
 		const url = '/';
+		const args = { id: 'scriptId' };
+
 		const callback = jest.fn();
 
 		beforeAll( function () {
 			removeAllScriptCallbacks();
-			loadScript( url, callback );
+			loadScript( url, callback, args );
 		} );
 
 		afterEach( () => {
@@ -40,12 +42,13 @@ describe( 'loadScript', () => {
 
 		test( 'should call functions attachToHead and createScriptElement', () => {
 			expect( attachToHead ).toHaveBeenCalled();
-			expect( createScriptElement ).toHaveBeenCalledWith( url );
+			expect( createScriptElement ).toHaveBeenCalledWith( url, args );
 		} );
 	} );
 
-	describe( 'loadjQueryDependentScript( scriptURL, callback )', () => {
+	describe( 'loadjQueryDependentScript( scriptURL, callback, args )', () => {
 		const url = '/';
+		const args = { id: 'scriptId' };
 
 		beforeAll( function () {
 			removeAllScriptCallbacks();
@@ -61,10 +64,10 @@ describe( 'loadScript', () => {
 			window.jQuery = {};
 
 			const callback = jest.fn();
-			loadjQueryDependentScript( url, callback );
+			loadjQueryDependentScript( url, callback, args );
 
 			expect( createScriptElement ).toHaveBeenCalledTimes( 1 );
-			expect( createScriptElement ).toHaveBeenLastCalledWith( url );
+			expect( createScriptElement ).toHaveBeenLastCalledWith( url, args );
 
 			executeCallbacks( url );
 			expect( callback ).toHaveBeenCalledTimes( 1 );
@@ -83,14 +86,14 @@ describe( 'loadScript', () => {
 				loadjQueryDependentScript( url ).then( callback );
 
 				expect( createScriptElement ).toHaveBeenCalledTimes( 1 );
-				expect( createScriptElement ).toHaveBeenLastCalledWith( JQUERY_URL );
+				expect( createScriptElement ).toHaveBeenLastCalledWith( JQUERY_URL, undefined );
 
 				executeCallbacks( JQUERY_URL );
 
 				// enforce an event loop tick to make sure all internal Promises got resolved
 				setTimeout( () => {
 					expect( createScriptElement ).toHaveBeenCalledTimes( 2 );
-					expect( createScriptElement ).toHaveBeenLastCalledWith( url );
+					expect( createScriptElement ).toHaveBeenLastCalledWith( url, undefined );
 
 					executeCallbacks( url );
 
