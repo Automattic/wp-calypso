@@ -25,7 +25,7 @@ export const FeaturedImageEmailSetting = ( {
 	const translate = useTranslate();
 
 	return (
-		<div className="featured-image-template-toggle-settings">
+		<>
 			<ToggleControl
 				checked={ !! value }
 				onChange={ handleToggle( FEATURED_IMAGE_EMAIL_OPTION ) }
@@ -48,6 +48,6 @@ export const FeaturedImageEmailSetting = ( {
 					}
 				) }
 			</FormSettingExplanation>
-		</div>
+		</>
 	);
 };
