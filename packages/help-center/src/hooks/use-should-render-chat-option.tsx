@@ -6,7 +6,7 @@ type Result = {
 	state: 'AVAILABLE' | 'UNAVAILABLE' | 'CLOSED';
 	isLoading: boolean;
 	eligible: boolean;
-	env: boolean;
+	env: boolean | undefined;
 };
 
 export function useShouldRenderChatOption(): Result {
