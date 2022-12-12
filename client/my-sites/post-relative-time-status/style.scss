@@ -33,9 +33,9 @@ a.post-relative-time-status__link {
 
 .post-relative-time-status__time,
 .post-relative-time-status__status {
-	display: flex;
+	display: inline-flex;
 	align-items: center;
-	margin-right: 2em;
+	margin-right: math.div(11, 12)  * 1em;
 }
 
 .post-relative-time-status__time-text,
