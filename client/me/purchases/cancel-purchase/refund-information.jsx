@@ -1,3 +1,5 @@
+// @ts-check
+
 import config from '@automattic/calypso-config';
 import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
@@ -93,7 +95,7 @@ const CancelPurchaseRefundInformation = ( {
 	const expiryDate = moment( purchase.expiryDate ).format( 'LL' );
 	const translate = useTranslate();
 
-	let text;
+	let text = [];
 
 	const onCancelBundledDomainChange = ( event ) => {
 		const newCancelBundledDomainValue = event.currentTarget.value === 'cancel';
@@ -112,12 +114,14 @@ const CancelPurchaseRefundInformation = ( {
 
 	if ( isRefundable( purchase ) ) {
 		if ( isDomainRegistration( purchase ) ) {
-			text = translate(
-				'When you cancel your domain within %(refundPeriodInDays)d days of purchasing, ' +
-					"you'll receive a refund and it will be removed from your site immediately.",
-				{
-					args: { refundPeriodInDays },
-				}
+			text.push(
+				translate(
+					'When you cancel your domain within %(refundPeriodInDays)d days of purchasing, ' +
+						"you'll receive a refund and it will be removed from your site immediately.",
+					{
+						args: { refundPeriodInDays },
+					}
+				)
 			);
 		}
 
@@ -334,12 +338,16 @@ const CancelPurchaseRefundInformation = ( {
 					)
 				);
 			} else {
-				text = translate(
-					'When you cancel your subscription within %(refundPeriodInDays)d days of purchasing, ' +
-						"you'll receive a refund and it will be removed from your site immediately.",
-					{
-						args: { refundPeriodInDays },
-					}
+				text = [];
+
+				text.push(
+					translate(
+						'When you cancel your subscription within %(refundPeriodInDays)d days of purchasing, ' +
+							"you'll receive a refund and it will be removed from your site immediately.",
+						{
+							args: { refundPeriodInDays },
+						}
+					)
 				);
 			}
 		}
@@ -354,9 +362,13 @@ const CancelPurchaseRefundInformation = ( {
 			);
 		}
 	} else if ( isDomainRegistration( purchase ) ) {
-		text = translate(
-			'When you cancel your domain, it will remain registered and active until the registration expires, ' +
-				'at which point it will be automatically removed from your site.'
+		text = [];
+
+		text.push(
+			translate(
+				'When you cancel your domain, it will remain registered and active until the registration expires, ' +
+					'at which point it will be automatically removed from your site.'
+			)
 		);
 	} else if (
 		isSubscription( purchase ) &&
@@ -391,27 +403,35 @@ const CancelPurchaseRefundInformation = ( {
 		includedDomainPurchase &&
 		isDomainRegistration( includedDomainPurchase )
 	) {
-		text = translate(
-			'This plan subscription includes the custom domain, %(domain)s' +
-				'{{strong}}The domain will not be removed{{/strong}} along with the plan, to avoid any interruptions for your visitors. ',
-			{
-				args: {
-					domain: includedDomainPurchase.meta,
-					domainCost: includedDomainPurchase.priceText,
-				},
-				components: {
-					strong: <strong />,
-				},
-			}
+		text = [];
+
+		text.push(
+			translate(
+				'This plan subscription includes the custom domain, %(domain)s' +
+					'{{strong}}The domain will not be removed{{/strong}} along with the plan, to avoid any interruptions for your visitors. ',
+				{
+					args: {
+						domain: includedDomainPurchase.meta,
+						domainCost: includedDomainPurchase.priceText,
+					},
+					components: {
+						strong: <strong />,
+					},
+				}
+			)
 		);
 	} else {
-		text = translate(
-			'If you cancel your plan subscription your plan will be removed on %(expiryDate)s.',
-			{
-				args: {
-					expiryDate: expiryDate,
-				},
-			}
+		text = [];
+
+		text.push(
+			translate(
+				'If you cancel your plan subscription your plan will be removed on %(expiryDate)s.',
+				{
+					args: {
+						expiryDate: expiryDate,
+					},
+				}
+			)
 		);
 	}
 
