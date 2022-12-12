@@ -49,8 +49,9 @@ export const SyndicationFeedsSetting = ( {
 			</div>
 			<FormSettingExplanation>
 				{ translate(
-					`Sets the number of your most recent posts that will be sent out at once to RSS feed subscribers. (Located at {{siteFeedLink /}}).`,
+					'Sets the number of your most recent posts that will be sent out at once to RSS feed subscribers. (Located at {{siteFeedLink /}}).',
 					{
+						comment: "The site feed link is a hyperlink to the user's site feed source.",
 						components: {
 							siteFeedLink: (
 								<a href={ siteFeedUrl } target="_blank" rel="noreferrer">

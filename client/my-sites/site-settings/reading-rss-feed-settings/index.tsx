@@ -13,6 +13,7 @@ type RssFeedSettingsSectionProps = {
 	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
 	disabled?: boolean;
 	siteUrl?: string;
+	isSaving?: boolean;
 };
 
 export const RssFeedSettingsSection = ( {
@@ -21,6 +22,7 @@ export const RssFeedSettingsSection = ( {
 	handleSubmitForm,
 	disabled,
 	siteUrl,
+	isSaving,
 }: RssFeedSettingsSectionProps ) => {
 	const translate = useTranslate();
 	const { posts_per_rss } = fields;
@@ -33,6 +35,7 @@ export const RssFeedSettingsSection = ( {
 				showButton
 				onButtonClick={ handleSubmitForm }
 				disabled={ disabled }
+				isSaving={ isSaving }
 			/>
 			<Card>
 				<SyndicationFeedsSetting

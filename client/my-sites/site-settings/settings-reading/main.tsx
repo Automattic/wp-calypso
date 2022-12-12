@@ -80,6 +80,7 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						handleSubmitForm={ handleSubmitForm }
 						disabled={ disabled }
 						siteUrl={ siteUrl }
+						isSaving={ isSavingSettings }
 					/>
 					<NewsletterSettingsSection
 						fields={ fields }
