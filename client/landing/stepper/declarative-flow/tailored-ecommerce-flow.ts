@@ -169,8 +169,6 @@ const ecommerceFlow: Flow = {
 		const goBack = () => {
 			switch ( _currentStepName ) {
 				case 'designCarousel':
-					return navigate( 'storeAddress' );
-				case 'storeAddress':
 					return navigate( 'storeProfiler' );
 				default:
 					return navigate( 'intro' );
@@ -182,11 +180,11 @@ const ecommerceFlow: Flow = {
 				case 'intro':
 					return navigate( 'storeProfiler' );
 				case 'storeProfiler':
-					return navigate( 'storeAddress' );
+					return navigate( 'designCarousel' );
 				case 'storeAddress':
-					return navigate( 'designCarousel' );
+					return window.location.assign( `${ site?.URL }/wp-admin/admin.php?page=wc-admin` );
 				case 'designCarousel':
-					return navigate( 'designCarousel' );
+					return navigate( 'domains' );
 				default:
 					return navigate( 'intro' );
 			}

@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
-import { SiteDetailsPlan } from '@automattic/launch/src/stores';
+import { Site } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -9,7 +9,7 @@ import { useInView } from 'calypso/lib/use-in-view';
 import { PLAN_RENEW_NAG_EVENT_NAMES } from '../utils';
 
 interface PlanRenewProps {
-	plan: SiteDetailsPlan;
+	plan: Site.SiteDetailsPlan;
 	isSiteOwner: boolean;
 	checkoutUrl: string;
 }

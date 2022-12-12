@@ -97,7 +97,7 @@ function wpcom_global_styles_enqueue_block_editor_assets() {
 		'wpcomGlobalStyles',
 		array(
 			'assetsUrl'  => plugins_url( 'dist/', __FILE__ ),
-			'upgradeUrl' => "$calypso_domain/plans/$site_slug?plan=value_bundle",
+			'upgradeUrl' => "$calypso_domain/plans/$site_slug?plan=value_bundle&feature=advanced-design-customization",
 		)
 	);
 	wp_enqueue_style(
@@ -264,7 +264,7 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 		$site_slug = wp_parse_url( $home_url, PHP_URL_HOST );
 	}
 
-	$upgrade_url = 'https://wordpress.com/plans/' . $site_slug . '?plan=value_bundle';
+	$upgrade_url = 'https://wordpress.com/plans/' . $site_slug . '?plan=value_bundle&feature=advanced-design-customization';
 
 	if ( wpcom_is_previewing_global_styles() ) {
 		$preview_text     = __( 'Hide custom styles', 'full-site-editing' );

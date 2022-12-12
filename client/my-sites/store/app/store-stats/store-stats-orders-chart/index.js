@@ -77,7 +77,6 @@ class StoreStatsOrdersChart extends Component {
 
 		return (
 			<StoreStatsChart
-				className="store-stats-orders-chart"
 				data={ data }
 				selectedDate={ selectedDate }
 				unit={ unit }

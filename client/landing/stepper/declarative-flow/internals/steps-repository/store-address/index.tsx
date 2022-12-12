@@ -47,7 +47,7 @@ const CityZipRow = styled.div`
 `;
 
 const StoreAddress: Step = function StoreAddress( { navigation } ) {
-	const { goBack, goNext, submit } = navigation;
+	const { goNext, submit } = navigation;
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const site = useSite();
 	const settings = useSelect(
@@ -299,8 +299,6 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 		<StepContainer
 			stepName="store-address"
 			className={ `is-step-${ intent }` }
-			skipButtonAlign="top"
-			goBack={ goBack }
 			goNext={ goNext }
 			isHorizontalLayout={ true }
 			formattedHeader={
@@ -318,6 +316,7 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 			recordTracksEvent={ recordTracksEvent }
 			stepProgress={ stepProgress }
 			hideSkip
+			hideBack
 		/>
 	);
 };
