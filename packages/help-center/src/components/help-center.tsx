@@ -19,7 +19,7 @@ import HelpCenterContainer from './help-center-container';
 
 import '../styles.scss';
 
-const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
+const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 	const { setSite, setUnreadCount, setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 	const { show, isMinimized } = useSelect( ( select ) => ( {
@@ -63,7 +63,10 @@ const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 		};
 	}, [ portalParent ] );
 
-	return createPortal( <HelpCenterContainer handleClose={ handleClose } />, portalParent );
+	return createPortal(
+		<HelpCenterContainer handleClose={ handleClose } hidden={ hidden } />,
+		portalParent
+	);
 };
 
 export default HelpCenter;

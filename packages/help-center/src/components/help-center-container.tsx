@@ -73,7 +73,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose } ) => {
 	// https://github.com/react-grid-layout/react-draggable/blob/781ef77c86be9486400da9837f43b96186166e38/README.md
 	const nodeRef = useRef( null );
 
-	if ( ! show ) {
+	if ( ! show || hidden ) {
 		return null;
 	}
 

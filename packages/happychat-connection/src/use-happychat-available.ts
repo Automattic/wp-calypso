@@ -8,7 +8,7 @@ interface HappychatAvailableResponse {
 
 export function useHappychatAvailable( enabled = true ) {
 	return useQuery< HappychatAvailableResponse >(
-		`happychat-available-${ Math.floor( Date.now() / 1000 ) }`,
+		'happychat-available',
 		() =>
 			apiFetch( {
 				mode: 'cors',
@@ -17,7 +17,7 @@ export function useHappychatAvailable( enabled = true ) {
 				url: 'https://public-api.wordpress.com/wpcom/v2/happychat/availability',
 			} ),
 		{
-			refetchOnWindowFocus: false,
+			refetchInterval: 1000 * 30, // 30 seconds
 			keepPreviousData: false,
 			enabled,
 		}
