@@ -224,7 +224,7 @@ const CancelPurchaseRefundInformation = ( {
 										</span>
 										<span className="cancel-bundled-domain__option-description">
 											{ translate(
-												"You'll receive a full refund of %(planCost)s. The domain will be cancelled, you risk losing it forever, and visitors to your site may experience difficulties accessing it.",
+												"You'll receive a full refund of %(planCost)s. The domain will be cancelled, you risk losing it forever, and visitors to your site may experience difficulty accessing it.",
 												{
 													args: {
 														planCost: planCostText,
