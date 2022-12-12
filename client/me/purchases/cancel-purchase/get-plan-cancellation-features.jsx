@@ -1,3 +1,8 @@
+/**
+ * TODO:
+ * - remove this files duplicate: calypso/me/purchases/pre-cancellation-dialog/get-plan-cancellation-features.tsx
+ */
+
 import { getPlan, isMonthly } from '@automattic/calypso-products';
 
 export default function getPlanCancellationFeatures( productSlug, hasDomain ) {
