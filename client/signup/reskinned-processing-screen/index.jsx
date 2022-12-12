@@ -10,7 +10,7 @@ import './style.scss';
 // Default estimated time to perform "loading"
 const DURATION_IN_MS = 6000;
 
-const flowsWithDesignPicker = [ 'setup-site', 'do-it-for-me' ];
+const flowsWithDesignPicker = [ 'setup-site', 'do-it-for-me', 'do-it-for-me-store' ];
 
 const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => {
 	const { __ } = useI18n();

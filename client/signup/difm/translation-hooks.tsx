@@ -12,6 +12,11 @@ import {
 	TESTIMONIALS_PAGE,
 	PRICING_PAGE,
 	TEAM_PAGE,
+	PRODUCT_PAGE,
+	CART_PAGE,
+	CHECKOUT_PAGE,
+	MY_ACCOUNT_PAGE,
+	SHOP_PAGE,
 } from 'calypso/signup/difm/constants';
 import type { PageId } from 'calypso/signup/difm/constants';
 import type { TranslateResult } from 'i18n-calypso';
@@ -36,6 +41,11 @@ export function useTranslatedPageTitles() {
 		[ TESTIMONIALS_PAGE ]: translate( 'Testimonials' ),
 		[ PRICING_PAGE ]: translate( 'Pricing' ),
 		[ TEAM_PAGE ]: translate( 'Team' ),
+		[ PRODUCT_PAGE ]: translate( 'Product' ),
+		[ SHOP_PAGE ]: translate( 'Shop' ),
+		[ CHECKOUT_PAGE ]: translate( 'Checkout' ),
+		[ CART_PAGE ]: translate( 'Cart' ),
+		[ MY_ACCOUNT_PAGE ]: translate( 'My Account' ),
 	};
 	return pages;
 }
@@ -90,6 +100,11 @@ export function useTranslatedPageDescriptions(
 		[ TEAM_PAGE ]: translate(
 			'Showcase a mini profile of each member of your business, with an image, name, and role description.'
 		),
+		[ PRODUCT_PAGE ]: translate( 'Enter product details' ),
+		[ SHOP_PAGE ]: translate( 'Shop' ),
+		[ CHECKOUT_PAGE ]: translate( 'Checkout' ),
+		[ CART_PAGE ]: translate( 'Cart' ),
+		[ MY_ACCOUNT_PAGE ]: translate( 'My_Account' ),
 	};
 
 	const contextualDescriptions: Record< TranslationContext, typeof defaultDescriptions > = {

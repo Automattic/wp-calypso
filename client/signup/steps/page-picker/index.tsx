@@ -23,6 +23,10 @@ import {
 	TESTIMONIALS_PAGE,
 	PRICING_PAGE,
 	TEAM_PAGE,
+	CART_PAGE,
+	CHECKOUT_PAGE,
+	SHOP_PAGE,
+	MY_ACCOUNT_PAGE,
 } from 'calypso/signup/difm/constants';
 import {
 	useTranslatedPageDescriptions,
@@ -115,21 +119,22 @@ interface PageCellType {
 	onClick: ( pageId: string ) => void;
 	popular?: boolean;
 	required?: boolean;
+	included?: boolean;
 }
 
-function PageCell( { pageId, popular, required, selectedPages, onClick }: PageCellType ) {
+function PageCell( { pageId, popular, required, selectedPages, included, onClick }: PageCellType ) {
 	const translate = useTranslate();
 	const selectedIndex = selectedPages.indexOf( pageId );
-	const isSelected = Boolean( selectedIndex > -1 );
+	const isSelected = included || Boolean( selectedIndex > -1 );
 	const title = useTranslatedPageTitles()[ pageId ];
 	const description = useTranslatedPageDescriptions( pageId );
 
 	return (
-		<GridCellContainer isSelected={ isSelected } isClickDisabled={ false }>
+		<GridCellContainer isSelected={ isSelected } isClickDisabled={ included || false }>
 			<BrowserView
 				onClick={ () => onClick( pageId ) }
 				pageId={ pageId }
-				isClickDisabled={ false }
+				isClickDisabled={ included || false }
 				isSelected={ isSelected }
 				selectedIndex={ selectedIndex >= 0 ? selectedIndex : -1 }
 			/>
@@ -137,6 +142,7 @@ function PageCell( { pageId, popular, required, selectedPages, onClick }: PageCe
 				<div>{ title }</div>
 				{ popular ? <PageCellBadge>{ translate( 'Popular' ) }</PageCellBadge> : null }
 				{ required ? <PageCellBadge>{ translate( 'Required' ) }</PageCellBadge> : null }
+				{ included ? <PageCellBadge>{ translate( 'Included' ) }</PageCellBadge> : null }
 				<InfoPopover showOnHover={ true } position={ isMobile() ? 'left' : 'top left' }>
 					{ description }
 				</InfoPopover>
@@ -148,9 +154,11 @@ function PageCell( { pageId, popular, required, selectedPages, onClick }: PageCe
 function PageSelector( {
 	selectedPages,
 	setSelectedPages,
+	isStoreFlow,
 }: {
 	selectedPages: string[];
 	setSelectedPages: ( pages: string[] ) => void;
+	isStoreFlow: boolean;
 } ) {
 	const onPageClick = ( pageId: string ) => {
 		const isPageSelected = selectedPages.includes( pageId );
@@ -173,6 +181,38 @@ function PageSelector( {
 				selectedPages={ selectedPages }
 				onClick={ onPageClick }
 			/>
+			{ isStoreFlow && (
+				<PageCell
+					included
+					pageId={ SHOP_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+			) }
+			{ isStoreFlow && (
+				<PageCell
+					included
+					pageId={ CHECKOUT_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+			) }
+			{ isStoreFlow && (
+				<PageCell
+					included
+					pageId={ CART_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+			) }
+			{ isStoreFlow && (
+				<PageCell
+					included
+					pageId={ MY_ACCOUNT_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+			) }
 			<PageCell
 				popular
 				pageId={ ABOUT_PAGE }
@@ -235,6 +275,7 @@ function PageSelector( {
 interface StepProps {
 	stepSectionName: string | null;
 	stepName: string;
+	flowName: string;
 	goToStep: () => void;
 	goToNextStep: () => void;
 	signupDependencies: Dependencies;
@@ -260,9 +301,11 @@ function DIFMPagePicker( props: StepProps ) {
 		stepName,
 		goToNextStep,
 		signupDependencies: { siteId, siteSlug, newOrExistingSiteChoice },
+		flowName,
 	} = props;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const isStoreFlow = 'do-it-for-me-store' === flowName;
 	const [ isCheckoutPressed, setIsCheckoutPressed ] = useState( false );
 	const [ selectedPages, setSelectedPages ] = useState< string[] >( [
 		HOME_PAGE,
@@ -343,7 +386,11 @@ function DIFMPagePicker( props: StepProps ) {
 			subHeaderText={ subHeaderText }
 			fallbackSubHeaderText={ subHeaderText }
 			stepContent={
-				<PageSelector selectedPages={ selectedPages } setSelectedPages={ setSelectedPages } />
+				<PageSelector
+					isStoreFlow={ isStoreFlow }
+					selectedPages={ selectedPages }
+					setSelectedPages={ setSelectedPages }
+				/>
 			}
 			hideSkip
 			align="left"
