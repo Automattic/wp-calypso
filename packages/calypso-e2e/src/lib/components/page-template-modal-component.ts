@@ -33,7 +33,7 @@ export class PageTemplateModalComponent {
 				category.toLowerCase()
 			);
 		} else {
-			await this.editorFrame.getByRole( 'menuitem', { name: category } ).click();
+			await this.editorFrame.getByRole( 'menuitem', { name: category, exact: true } ).click();
 		}
 	}
 
@@ -43,7 +43,7 @@ export class PageTemplateModalComponent {
 	 * @param {string} label Label for the template (the string underneath the preview).
 	 */
 	async selectTemplate( label: string ): Promise< void > {
-		await this.editorFrame.getByRole( 'button', { name: label } ).click();
+		await this.editorFrame.getByRole( 'button', { name: label, exact: true } ).click();
 	}
 
 	/**
