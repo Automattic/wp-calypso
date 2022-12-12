@@ -958,42 +958,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/launch@workspace:^, @automattic/launch@workspace:packages/launch":
-  version: 0.0.0-use.local
-  resolution: "@automattic/launch@workspace:packages/launch"
-  dependencies:
-    "@automattic/calypso-analytics": "workspace:^"
-    "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/data-stores": "workspace:^"
-    "@automattic/domain-picker": "workspace:^"
-    "@automattic/i18n-utils": "workspace:^"
-    "@automattic/onboarding": "workspace:^"
-    "@automattic/plans-grid": "workspace:^"
-    "@automattic/shopping-cart": "workspace:^"
-    "@automattic/typography": "workspace:^"
-    "@testing-library/react": ^12.1.3
-    "@wordpress/base-styles": ^4.5.0
-    "@wordpress/components": ^19.15.0
-    "@wordpress/icons": ^9.0.0
-    "@wordpress/react-i18n": ^3.7.0
-    "@wordpress/url": ^3.10.0
-    classnames: ^2.3.1
-    copyfiles: ^2.3.0
-    react: ^17.0.2
-    react-dom: ^17.0.2
-    react-router-dom: ^5.1.2
-    tslib: ^2.3.0
-    typescript: ^4.7.4
-    use-debounce: ^3.1.0
-  peerDependencies:
-    "@wordpress/data": ^6.7.0
-    "@wordpress/element": ^4.5.0
-    "@wordpress/i18n": ^4.7.0
-    reakit-utils: ^0.15.1
-    redux: ^4.1.2
-  languageName: unknown
-  linkType: soft
-
 "@automattic/load-script@workspace:^, @automattic/load-script@workspace:packages/load-script":
   version: 0.0.0-use.local
   resolution: "@automattic/load-script@workspace:packages/load-script"
@@ -1753,7 +1717,6 @@ __metadata:
     "@automattic/happychat-connection": "workspace:^"
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
-    "@automattic/launch": "workspace:^"
     "@automattic/newspack-blocks": ^1.37.1
     "@automattic/onboarding": "workspace:^"
     "@automattic/page-pattern-modal": "workspace:^"
