@@ -370,6 +370,19 @@ const CancelPurchaseRefundInformation = ( {
 				}
 			);
 		}
+	} else if ( isJetpackPurchase && config.isEnabled( 'jetpack/cancel-through-main-flow' ) ) {
+		// NON refundable Jetpack subscription
+		text = [];
+		text.push(
+			translate(
+				"When you cancel your subscription, you'll be able to use %(productName)s until your subscription expires. Once it expires, it will be automatically removed from your site.",
+				{
+					args: {
+						productName: getName( purchase ),
+					},
+				}
+			)
+		);
 	} else if ( isDomainRegistration( purchase ) ) {
 		text = [];
 

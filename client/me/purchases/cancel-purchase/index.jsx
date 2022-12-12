@@ -176,6 +176,24 @@ class CancelPurchase extends Component {
 		);
 	};
 
+	keepButtonCTA = ( locale ) => {
+		let cta;
+
+		if ( isJetpackProduct ) {
+			cta =
+				i18n.hasTranslation( 'Keep Subscription' ) || locale === 'en'
+					? this.props.translate( 'Keep Subscription' )
+					: this.props.translate( 'Cancel and go back' );
+		} else {
+			cta =
+				i18n.hasTranslation( 'Keep plan' ) || locale === 'en'
+					? this.props.translate( 'Keep plan' )
+					: this.props.translate( 'Cancel and go back' );
+		}
+
+		return cta;
+	};
+
 	render() {
 		if ( ! this.isDataValid() ) {
 			return null;
@@ -280,9 +298,7 @@ class CancelPurchase extends Component {
 											this.props.purchaseId
 										) }
 									>
-										{ i18n.hasTranslation( 'Keep plan' ) || locale === 'en'
-											? this.props.translate( 'Keep plan' )
-											: this.props.translate( 'Cancel and go back' ) }
+										{ this.keepButtonCTA( locale ) }
 									</Button>
 								</div>
 
