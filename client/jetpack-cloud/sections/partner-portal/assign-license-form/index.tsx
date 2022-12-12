@@ -98,7 +98,10 @@ export default function AssignLicenseForm( {
 						count: licenseKeysArray.length,
 					} ) }
 				</Button>
-				<Button target="_blank" href="https://jetpack.com/jetpack-agency-beta-instructions/">
+				<Button
+					target="_blank"
+					href="https://jetpack.com/support/jetpack-agency-licensing-portal-instructions/add-sites-agency-portal-dashboard/"
+				>
 					{ translate( 'Learn how to add a site' ) }
 				</Button>
 			</div>
