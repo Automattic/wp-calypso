@@ -2,6 +2,12 @@
 <ruleset name="editing-toolkit">
 	<description>Editing Toolkit Plugin Rules</description>
 
+	<!--
+	Prevent errors caused by WordPress Coding Standards not supporting PHP 8.0+.
+	See https://github.com/WordPress/WordPress-Coding-Standards/issues/2035
+	-->
+	<ini name="error_reporting" value="E_ALL &#38; ~E_DEPRECATED" />
+
 	<rule ref="Jetpack"/>
 	<rule ref="WordPress.Utils.I18nTextDomainFixer">
 		<properties>
