@@ -95,7 +95,7 @@ export function getEnhancedTasks(
 						subtitle: planWarningText,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							if ( displayGlobalStylesWarning ) {
+							if ( displayWarning && ! isVideoPressFlowWithUnsupportedPlan ) {
 								recordTracksEvent(
 									'calypso_launchpad_global_styles_gating_plan_selected_task_clicked'
 								);
