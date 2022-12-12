@@ -31,7 +31,7 @@ const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props 
 	return <Draggable { ...props } />;
 };
 
-const HelpCenterContainer: React.FC< Container > = ( { handleClose } ) => {
+const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const { show, isMinimized } = useSelect( ( select ) => ( {
 		show: select( HELP_CENTER_STORE ).isHelpCenterShown(),
 		isMinimized: select( HELP_CENTER_STORE ).getIsMinimized(),
