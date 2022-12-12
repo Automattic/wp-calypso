@@ -107,6 +107,7 @@
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
 		"ssr/prefetch-timebox": true,
+		"stats/all-time-views": false,
 		"stats/new-main-chart": true,
 		"stats/new-stats-module-component": true,
 		"stepper-woocommerce-poc": true,
