@@ -279,8 +279,8 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 					.hidden { display: none; }
 				</style>
 				<script id="wpcom-launch-bar-global-styles-button-script">
-					<?php include __DIR__ . '/dist/wpcom-global-styles-view.min.js'; ?>
 					<?php
+					include __DIR__ . '/dist/wpcom-global-styles-view.min.js';
 					$asset_file   = plugin_dir_path( __FILE__ ) . 'dist/wpcom-global-styles-view.asset.php';
 					$asset        = file_exists( $asset_file ) ? require $asset_file : null;
 					$dependencies = $asset['dependencies'] ?? array();
