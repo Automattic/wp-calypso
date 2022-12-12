@@ -146,6 +146,34 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	const categorization = useCategorization( staticDesigns, categorizationOptions );
 
+	const offsetFromBottom = 100;
+	const prevScrollY = useRef( window.scrollY );
+
+	useEffect( () => {
+		const trackScroll = () => {
+			const eventProps = {};
+
+			recordTracksEvent( 'calypso_signup_design_picker_scrolled_to_end', eventProps );
+		};
+
+		const onScroll = () => {
+			const offset = -prevScrollY + window.innerHeight + offsetFromBottom;
+			if ( offset >= window.scrollY ) {
+				trackScroll();
+				// Only trigger this event once
+				window.removeEventListener( 'scroll', onScroll );
+			}
+
+			prevScrollY.current = window.scrollY;
+		};
+
+		window.addEventListener( 'scroll', onScroll );
+
+		return () => {
+			window.removeEventListener( 'scroll', onScroll );
+		};
+	}, [ categorization.selection ] );
+
 	// ********** Logic for selecting a design and style variation
 
 	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
