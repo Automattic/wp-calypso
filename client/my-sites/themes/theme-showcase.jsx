@@ -49,6 +49,8 @@ import TrendingThemes from './trending-themes';
 
 import './theme-showcase.scss';
 
+const noop = () => {};
+
 const optionShape = PropTypes.shape( {
 	label: PropTypes.string,
 	header: PropTypes.string,
@@ -459,9 +461,11 @@ class ThemeShowcase extends Component {
 			locale,
 			premiumThemesEnabled,
 		} = this.props;
-		const tier = this.props.tier || '';
 
+		const tier = this.props.tier || '';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
+		const isNewDetailsAndPreview = config.isEnabled( 'themes/showcase-i4/details-and-preview' );
+		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
 
 		const metas = [
 			{ name: 'description', property: 'og:description', content: this.props.description },
@@ -504,14 +508,14 @@ class ThemeShowcase extends Component {
 			trackScrollPage: this.props.trackScrollPage,
 			emptyContent: this.props.emptyContent,
 			scrollToSearchInput: this.scrollToSearchInput,
-			getOptions: ( theme ) =>
-				pickBy(
-					addTracking( options ),
-					( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
-				),
+			getOptions: ! isNewDetailsAndPreview
+				? ( theme ) =>
+						pickBy(
+							addTracking( options ),
+							( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
+						)
+				: noop,
 		};
-
-		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
 
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
