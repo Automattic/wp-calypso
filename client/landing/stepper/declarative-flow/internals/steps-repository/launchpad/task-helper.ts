@@ -176,7 +176,6 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Launch your site' ),
 						completed: siteLaunchCompleted,
-						disabled: ! siteEditCompleted,
 						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
