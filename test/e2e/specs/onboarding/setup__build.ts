@@ -1,5 +1,5 @@
 /**
- * @group quarantined
+ * @group calypso-pr
  */
 
 import { DataHelper, SecretsManager, StartSiteFlow, TestAccount } from '@automattic/calypso-e2e';
