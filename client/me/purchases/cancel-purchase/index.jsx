@@ -46,6 +46,41 @@ import CancelPurchaseRefundInformation from './refund-information';
 
 import './style.scss';
 
+const renderFooterText = ( state, translate, moment, includedDomainPurchase, purchase ) => {
+	const { refundText, expiryDate, totalRefundText } = purchase;
+
+	if ( hasAmountAvailableToRefund( purchase ) ) {
+		if ( state.cancelBundledDomain && includedDomainPurchase ) {
+			return translate( '%(refundText)s to be refunded', {
+				args: { refundText: totalRefundText },
+				context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
+			} );
+		}
+		return translate( '%(refundText)s to be refunded', {
+			args: { refundText },
+			context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
+		} );
+	}
+
+	const expirationDate = moment( expiryDate ).format( 'LL' );
+
+	if ( isDomainRegistration( purchase ) ) {
+		return translate(
+			'After you confirm this change, the domain will be removed on %(expirationDate)s',
+			{
+				args: { expirationDate },
+			}
+		);
+	}
+
+	return translate(
+		'After you confirm this change, the subscription will be removed on %(expirationDate)s',
+		{
+			args: { expirationDate },
+		}
+	);
+};
+
 class CancelPurchase extends Component {
 	static propTypes = {
 		purchaseListUrl: PropTypes.string,
@@ -137,42 +172,6 @@ class CancelPurchase extends Component {
 				components: {
 					contactLink: <a href={ CALYPSO_CONTACT } />,
 				},
-			}
-		);
-	};
-
-	renderFooterText = () => {
-		const { purchase } = this.props;
-		const { refundText, expiryDate, totalRefundText } = purchase;
-
-		if ( hasAmountAvailableToRefund( purchase ) ) {
-			if ( this.state.cancelBundledDomain && this.props.includedDomainPurchase ) {
-				return this.props.translate( '%(refundText)s to be refunded', {
-					args: { refundText: totalRefundText },
-					context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
-				} );
-			}
-			return this.props.translate( '%(refundText)s to be refunded', {
-				args: { refundText },
-				context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
-			} );
-		}
-
-		const expirationDate = this.props.moment( expiryDate ).format( 'LL' );
-
-		if ( isDomainRegistration( purchase ) ) {
-			return this.props.translate(
-				'After you confirm this change, the domain will be removed on %(expirationDate)s',
-				{
-					args: { expirationDate },
-				}
-			);
-		}
-
-		return this.props.translate(
-			'After you confirm this change, the subscription will be removed on %(expirationDate)s',
-			{
-				args: { expirationDate },
 			}
 		);
 	};
@@ -304,7 +303,13 @@ class CancelPurchase extends Component {
 
 								<CompactCard className="cancel-purchase__footer">
 									<div className="cancel-purchase__refund-amount">
-										{ this.renderFooterText( this.props ) }
+										{ renderFooterText(
+											this.state,
+											this.props.translate,
+											this.props.moment,
+											this.includedDomainPurchase,
+											purchase
+										) }
 									</div>
 
 									<CancelPurchaseButton
