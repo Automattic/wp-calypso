@@ -41,7 +41,7 @@
 function a8c_happyblocks_assets() {
 	$assets = require_once plugin_dir_path( __FILE__ ) . 'dist/editor.min.asset.php';
 
-	wp_register_script( 'a8c-happyblocks-pricing-plans', '', array(), '20221117', true );
+	wp_register_script( 'a8c-happyblocks-pricing-plans', '', array(), '20221212', true );
 	wp_enqueue_script( 'a8c-happyblocks-pricing-plans' );
 	wp_add_inline_script(
 		'a8c-happyblocks-pricing-plans',
