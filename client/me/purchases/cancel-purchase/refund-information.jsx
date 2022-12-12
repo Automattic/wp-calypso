@@ -237,17 +237,27 @@ const CancelPurchaseRefundInformation = ( {
 							/>
 						</FormLabel>,
 						translate(
-							"Since you are cancelling your plan within %(refundPeriodInDays)d days of purchasing you'll receive a {{spanRefund}}refund of %(refundAmount)s{{/spanRefund}} and it will be removed from your site immediately.",
+							'Since you are cancelling your plan within %(refundPeriodInDays)d day of purchasing,',
+							'Since you are cancelling your plan within %(refundPeriodInDays)d days of purchasing,',
 							{
+								count: refundPeriodInDays,
 								args: {
-									refundAmount: cancelBundledDomain ? planCostText : purchase.refundText,
 									refundPeriodInDays: refundPeriodInDays,
 								},
-								components: {
-									spanRefund: <span className="refund-amount" />,
-								},
 							}
-						)
+						) +
+							' ' +
+							translate(
+								"you'll receive a {{spanRefund}}refund of %(refundAmount)s{{/spanRefund}} and it will be removed from your site immediately.",
+								{
+									args: {
+										refundAmount: cancelBundledDomain ? planCostText : purchase.refundText,
+									},
+									components: {
+										spanRefund: <span className="refund-amount" />,
+									},
+								}
+							)
 					);
 
 					if ( cancelBundledDomain ) {
