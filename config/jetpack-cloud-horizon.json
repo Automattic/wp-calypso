@@ -55,7 +55,8 @@
 		"oauth": false,
 		"purchases/new-payment-methods": true,
 		"site-indicator": false,
-		"upgrades/redirect-payments": true
+		"upgrades/redirect-payments": true,
+		"jetpack/pricing-page-cart": false
 	},
 	"enable_all_sections": false,
 	"sections": {
