@@ -20,7 +20,7 @@ function should_show_coming_soon_page() {
 	$share_code = get_share_code();
 	if ( is_accessed_by_valid_share_link( $share_code ) ) {
 		track_preview_link_event();
-		setcookie( 'wp_share_code', $share_code, time() + 3600, '/', false, is_ssl() );
+		setcookie( 'wp_share_code', $share_code, time() + 3600, '/', false, is_ssl(), true );
 		return false;
 	}
 
