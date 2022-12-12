@@ -112,11 +112,6 @@ export const getPlugins = createSelector(
 		isRequestingForAllSites( state ),
 		...siteIds.map( ( siteId ) => isRequesting( state, siteId ) ),
 	],
-	( state, siteIds ) => [
-		state.plugins.installed.plugins,
-		isRequestingForAllSites( state ),
-		...siteIds.map( ( siteId ) => isRequesting( state, siteId ) ),
-	],
 	( state, siteIds, pluginFilter ) => {
 		return [ siteIds, pluginFilter ].flat().join( '-' );
 	}
