@@ -12,6 +12,8 @@ const UniversalNavbarHeader = () => {
 	const [ isMobileMenuOpen, setMobileMenuOpen ] = useState( false );
 	const sectionName = useSelector( getSectionName );
 
+	let startUrl = sectionName === 'plugins' ? '/start/business' : '/start';
+	startUrl += `/?ref=${ sectionName }-lp`;
 	return (
 		<div>
 			<div className="x-root lpc-header-nav-wrapper">
@@ -203,7 +205,7 @@ const UniversalNavbarHeader = () => {
 										className="x-nav-item x-nav-item__wide"
 										titleValue={ translate( 'Get Started' ) }
 										elementContent={ translate( 'Get Started' ) }
-										urlValue={ `/start/business/?ref=${ sectionName }-lp` }
+										urlValue={ startUrl }
 										type="nav"
 										typeClassName="x-nav-link x-nav-link__primary x-link cta-btn-nav"
 									/>
@@ -255,7 +257,7 @@ const UniversalNavbarHeader = () => {
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'Sign Up' ) }
 										elementContent={ translate( 'Sign Up' ) }
-										urlValue="//wordpress.com/start"
+										urlValue={ startUrl }
 										type="menu"
 									/>
 									<UniversalNavbarLiMenuItem
