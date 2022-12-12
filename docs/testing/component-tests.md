@@ -202,9 +202,7 @@ jest.mock( 'enzyme', () => {
 	if ( ! mockEnzymeSetup ) {
 		mockEnzymeSetup = true;
 		// Configure enzyme 3 for React, from docs: http://airbnb.io/enzyme/docs/installation/index.html
-		const Adapter = jest.requireActual(
-			'@wojtekmaj/enzyme-adapter-react-17'
-		);
+		const Adapter = jest.requireActual( '@wojtekmaj/enzyme-adapter-react-17' );
 		actualEnzyme.configure( { adapter: new Adapter() } );
 	}
 	return actualEnzyme;
@@ -221,7 +219,7 @@ npm install --save enzyme-to-json
 
 Finally, you should add `enzyme-to-json/serializer` to the array of [`snapshotSerializers`](https://jestjs.io/docs/configuration#snapshotserializers-arraystring) in your `jest` configuration:
 
-```javascript
+```
 {
 	snapshotSerializers: [ 'enzyme-to-json/serializer' ]
 }
