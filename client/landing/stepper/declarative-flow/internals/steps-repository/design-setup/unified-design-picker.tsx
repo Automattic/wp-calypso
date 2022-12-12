@@ -9,7 +9,7 @@ import {
 	isBlankCanvasDesign,
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
-import { StepContainer } from '@automattic/onboarding';
+import { isFreeFlow, StepContainer } from '@automattic/onboarding';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -409,7 +409,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
 		setSelectedDesign( _selectedDesign );
-		if ( siteSlugOrId && _selectedDesign ) {
+		if ( ( isFreeFlow( flow ) || siteSlugOrId ) && _selectedDesign ) {
 			let positionIndex = generatedDesigns.findIndex(
 				( design ) => design.slug === _selectedDesign.slug
 			);
@@ -418,12 +418,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					( design ) => design.slug === _selectedDesign.slug
 				);
 			}
-			setPendingAction( () =>
-				setDesignOnSite( siteSlugOrId, _selectedDesign, {
-					styleVariation: selectedStyleVariation,
-					verticalId: siteVerticalId,
-				} ).then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
-			);
+			siteSlugOrId &&
+				setPendingAction( () =>
+					setDesignOnSite( siteSlugOrId, _selectedDesign, {
+						styleVariation: selectedStyleVariation,
+						verticalId: siteVerticalId,
+					} ).then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
+				);
 			recordTracksEvent( 'calypso_signup_select_design', {
 				...getEventPropsByDesign( _selectedDesign, selectedStyleVariation ),
 				...( positionIndex >= 0 && { position_index: positionIndex } ),
@@ -530,10 +531,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		);
 	}
 
+	function setDesignPickerSkipLabelText() {
+		if ( intent === SiteIntent.Write || isFreeFlow( flow ) ) {
+			return translate( 'Skip and draft first post' );
+		}
+		return translate( 'Skip for now' );
+	}
+
 	// ********** Main render logic
 
 	// Don't render until we've done fetching all the data needed for initial render.
-	if ( ! site || isLoadingSiteVertical || isLoadingDesigns ) {
+	if ( ( ! site && ! isFreeFlow( flow ) ) || isLoadingSiteVertical || isLoadingDesigns ) {
 		return null;
 	}
 
@@ -686,11 +694,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			skipButtonAlign="top"
 			hideFormattedHeader
 			backLabelText={ translate( 'Back' ) }
-			skipLabelText={
-				intent === SiteIntent.Write
-					? translate( 'Skip and draft first post' )
-					: translate( 'Skip for now' )
-			}
+			skipLabelText={ setDesignPickerSkipLabelText() }
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }
 			goNext={ handleSubmit }
