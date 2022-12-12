@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useLayoutEffect, useRef, useState } from 'react';
@@ -29,14 +28,9 @@ const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
 		setContentStyle( { maxHeight: `${ height }px` } );
 	}, [ setContentStyle ] );
 
-	// Should be removed once translations are ready.
-	const isEnglishLocale = config< Array< string | undefined > >( 'english_locales' ).includes(
-		translate.localeSlug
-	);
-
 	return (
 		<>
-			{ product.productsIncluded && isEnglishLocale ? (
+			{ product.productsIncluded ? (
 				<IncludedProductList
 					products={ product.productsIncluded }
 					descriptionMap={ getIncludedProductDescriptionMap( product.productSlug ) }
