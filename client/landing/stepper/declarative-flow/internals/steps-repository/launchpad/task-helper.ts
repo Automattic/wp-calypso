@@ -22,7 +22,7 @@ export function getEnhancedTasks(
 	siteSlug: string | null,
 	site: SiteDetails | null,
 	submit: NavigationControls[ 'submit' ],
-	displayWarning: boolean,
+	displayGlobalStylesWarning: boolean,
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow?: string | null
 ) {
@@ -48,7 +48,7 @@ export function getEnhancedTasks(
 		? `/page/${ siteSlug }/${ homePageId }`
 		: `/site-editor/${ siteSlug }`;
 
-	let planWarningText = displayWarning
+	let planWarningText = displayGlobalStylesWarning
 		? translate(
 				'Your site contains custom colors that will only be visible once you upgrade to a Premium plan.'
 		  )
@@ -61,8 +61,9 @@ export function getEnhancedTasks(
 		planWarningText = translate(
 			'Upgrade to a plan with VideoPress support to upload your videos.'
 		);
-		displayWarning = true;
 	}
+
+	const shouldDisplayWarning = displayGlobalStylesWarning || isVideoPressFlowWithUnsupportedPlan;
 
 	tasks &&
 		tasks.map( ( task ) => {
@@ -95,13 +96,13 @@ export function getEnhancedTasks(
 						subtitle: planWarningText,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							if ( displayWarning && ! isVideoPressFlowWithUnsupportedPlan ) {
+							if ( displayGlobalStylesWarning ) {
 								recordTracksEvent(
 									'calypso_launchpad_global_styles_gating_plan_selected_task_clicked'
 								);
 							}
 							const plansUrl = addQueryArgs( `/plans/${ siteSlug }`, {
-								...( displayWarning && {
+								...( shouldDisplayWarning && {
 									plan: PLAN_PREMIUM,
 									feature: isVideoPressFlowWithUnsupportedPlan
 										? FEATURE_VIDEO_UPLOADS
@@ -111,8 +112,8 @@ export function getEnhancedTasks(
 							window.location.assign( plansUrl );
 						},
 						badgeText: isVideoPressFlowWithUnsupportedPlan ? null : translatedPlanName,
-						completed: task.completed && ! displayWarning,
-						warning: displayWarning,
+						completed: task.completed && ! shouldDisplayWarning,
+						warning: shouldDisplayWarning,
 					};
 					break;
 				case 'subscribers_added':
