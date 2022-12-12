@@ -17,7 +17,6 @@ import debugFactory from 'debug';
 import { filter, forEach, get, map } from 'lodash';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
-import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nav-sidebar/src/constants';
 import {
 	getPages,
 	inIframe,
@@ -455,8 +454,6 @@ function handleCloseEditor( calypsoPort ) {
 		doAction( 'a8c.wpcom-block-editor.closeEditor' );
 	};
 
-	handleCloseInLegacyEditors( dispatchAction );
-
 	// Add back to dashboard fill for Site Editor when edit-site package is available.
 	if ( editSitePackage ) {
 		registerPlugin( 'a8c-wpcom-block-editor-site-editor-back-to-dashboard-override', {
@@ -501,10 +498,6 @@ function handleCloseEditor( calypsoPort ) {
 		return;
 	}
 
-	if ( isNavSidebarPresent() ) {
-		return;
-	}
-
 	registerPlugin( 'a8c-wpcom-block-editor-close-button-override', {
 		render: function CloseWpcomBlockEditor() {
 			const [ closeUrl, setCloseUrl ] = useState( calypsoifyGutenberg.closeUrl );
@@ -541,32 +534,6 @@ function handleCloseEditor( calypsoPort ) {
 			);
 		},
 	} );
-}
-
-// The close button is generally overridden using the <MainDashboardButton> slot API
-// which was introduced in Gutenberg 8.2. In older editors we still need to override
-// the click handler so that the link will open in the parent frame instead of the
-// iframe. We try not to add the click handler if <MainDashboardButton> has been used.
-function handleCloseInLegacyEditors( handleClose ) {
-	// Selects close buttons in Gutenberg plugin < v7.7
-	const legacySelector = '.edit-post-fullscreen-mode-close__toolbar a';
-	addEditorListener( legacySelector, handleClose );
-
-	// Selects the close button in modern Gutenberg versions, unless it itself is a close button override
-	const wpcomCloseSelector = '.wpcom-block-editor__close-button';
-	const navSidebarCloseSelector = '.wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button';
-	const selector = `.edit-post-header .edit-post-fullscreen-mode-close:not(${ wpcomCloseSelector }):not(${ navSidebarCloseSelector })`;
-	addEditorListener( selector, handleClose );
-}
-
-/**
- * Uses presence of data store to detect whether the nav sidebar has been loaded.
- * Could run into timing issues, but the nav sidebar's data store is currently
- * loaded early enough that this works for our needs.
- */
-function isNavSidebarPresent() {
-	const selectors = select( NAV_SIDEBAR_STORE_KEY );
-	return !! selectors;
 }
 
 /**
