@@ -765,7 +765,13 @@ class ThemeSheet extends Component {
 			section ? ' > ' + titlecase( section ) : ''
 		}${ siteId ? ' > Site' : '' }`;
 
-		const plansUrl = siteSlug ? `/plans/${ siteSlug }/?plan=value_bundle` : '/plans';
+		let plansUrl = '/plans';
+
+		if ( ! isLoggedIn ) {
+			plansUrl = localizeUrl( 'https://wordpress.com/pricing' );
+		} else if ( siteSlug ) {
+			plansUrl = plansUrl + `/${ siteSlug }/?plan=value_bundle`;
+		}
 
 		const { canonicalUrl, description, name: themeName } = this.props;
 		const title =
