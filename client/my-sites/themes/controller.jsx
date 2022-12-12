@@ -97,10 +97,9 @@ export function fetchThemeFilters( context, next ) {
 		return next();
 	}
 
-	const filtersRequest = wpcom.req.get( {
-		path: '/theme-filters',
+	const filtersRequest = wpcom.req.get( '/theme-filters', {
 		apiVersion: '1.2',
-		query: context.lang ? { locale: context.lang } : {},
+		locale: context.lang, // Note: undefined will be omitted by the query string builder.
 	} );
 
 	const timeout = new Promise( ( _, reject ) => {

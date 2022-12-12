@@ -43,7 +43,7 @@ export default function sendRequest( params, query, body, fn ) {
 		params.apiVersion = query.apiVersion;
 		debug( 'apiVersion: %o', params.apiVersion );
 		delete query.apiVersion;
-	} else if ( ! params.apiVersion ) {
+	} else {
 		// Set to the default api version, but don't override a custom one if already set.
 		params.apiVersion = this.apiVersion;
 	}
