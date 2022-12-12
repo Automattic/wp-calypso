@@ -38,6 +38,7 @@ export const SyndicationFeedsSetting = ( {
 								type="number"
 								step="1"
 								min="0"
+								max="350"
 								aria-labelledby={ `${ SYNDICATION_FEEDS_OPTION }-label` }
 								value={ value }
 								onChange={ onChange }
