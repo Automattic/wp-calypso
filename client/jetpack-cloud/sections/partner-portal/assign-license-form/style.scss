@@ -143,3 +143,32 @@ p.assign-license-form__description {
 		margin-bottom: 0;
 	}
 }
+
+.assign-license-form__empty-state {
+	p {
+		font-size: 1.5rem;
+		color: var(--color-text);
+		margin-block-start: 11px;
+		margin-block-end: 16px;
+		letter-spacing: 0.005em;
+		line-height: 32px;
+
+		@include break-medium {
+			max-width: 90%;
+		}
+
+		@include break-large {
+			margin-block-start: 6px;
+			max-width: 60%;
+		}
+	}
+
+	button {
+		margin-inline-end: 8px;
+		margin-block-end: 6px;
+
+		@include break-small {
+			margin-block-end: 0;
+		}
+	}
+}
