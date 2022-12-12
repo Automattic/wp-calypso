@@ -1,5 +1,3 @@
-// @ts-check
-
 import config from '@automattic/calypso-config';
 import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
