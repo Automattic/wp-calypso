@@ -1,6 +1,8 @@
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { filter, find, includes, isEmpty, pick, sortBy } from 'lodash';
+import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+import { getDomainProductSlug } from 'calypso/lib/domains';
 import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { getStepModuleName } from 'calypso/signup/config/step-components';
@@ -215,4 +217,22 @@ export const isPlanSelectionAvailableLaterInFlow = ( flowSteps ) => {
 	const isPlansStepExistsInFutureOfFlow = plansIndex > 0 && plansIndex > domainsIndex;
 
 	return isPlansStepExistsInFutureOfFlow;
+};
+
+export const processDependencyInQuery = ( key, value ) => {
+	if ( key === 'domain' ) {
+		const domain = value;
+		const productSlug = getDomainProductSlug( domain );
+		const domainItem = domainRegistration( { productSlug, domain } );
+
+		// TODO: unify this object construction with
+		// the submitSignupStep() call in signup/steps/domains/index.jsx
+		return {
+			domainItem,
+			siteUrl: domain,
+			isPurchasingItem: true,
+		};
+	}
+
+	return value;
 };
