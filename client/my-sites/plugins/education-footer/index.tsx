@@ -10,6 +10,7 @@ import Section, { SectionContainer } from 'calypso/components/section';
 import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSectionName } from 'calypso/state/ui/selectors';
 
 const ThreeColumnContainer = styled.div`
 	@media ( max-width: 660px ) {
@@ -78,6 +79,11 @@ export const MarketplaceFooter = () => {
 	const { __ } = useI18n();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
+	const sectionName = useSelector( getSectionName );
+
+	let startUrl = sectionName === 'plugins' ? '/start/business' : '/start';
+	startUrl += `/?ref=${ sectionName }-lp`;
+
 	return (
 		<MarketplaceContainer isloggedIn={ isLoggedIn }>
 			<Section
@@ -85,7 +91,7 @@ export const MarketplaceFooter = () => {
 			>
 				<>
 					{ ! isLoggedIn && (
-						<Button className="is-primary marketplace-cta" href="/start/business">
+						<Button className="is-primary marketplace-cta" href={ startUrl }>
 							{ __( 'Get Started' ) }
 						</Button>
 					) }
