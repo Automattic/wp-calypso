@@ -50,5 +50,10 @@ export const itemLinkMatches = ( path, currentPath ) => {
 		return fragmentIsEqual( path, currentPath, 2 );
 	}
 
+	// Account for plugins in all-sites view where '/plugins/manage' isn't a child view of '/plugins'.
+	if ( pathIncludes( currentPath, 'plugins', 1 ) && pathIncludes( currentPath, 'manage', 2 ) ) {
+		return fragmentIsEqual( path, currentPath, 1 ) && fragmentIsEqual( path, currentPath, 2 );
+	}
+
 	return fragmentIsEqual( path, currentPath, 1 );
 };
