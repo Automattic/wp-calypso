@@ -1,6 +1,6 @@
 import { PLAN_ECOMMERCE, PLAN_ECOMMERCE_MONTHLY } from '@automattic/calypso-products';
 import { useLocale } from '@automattic/i18n-utils';
-import { useFlowProgress, ECOMMERCE_FLOW } from '@automattic/onboarding';
+import { useFlowProgress, ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
@@ -14,16 +14,20 @@ import { useSite } from '../hooks/use-site';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import type { StepPath } from './internals/steps-repository';
+import CheckPlan from './internals/steps-repository/check-plan';
+import DesignCarousel from './internals/steps-repository/design-carousel';
+import DomainsStep from './internals/steps-repository/domains';
+import Intro from './internals/steps-repository/intro';
+import ProcessingStep from './internals/steps-repository/processing-step';
+import SetThemeStep from './internals/steps-repository/set-theme-step';
+import SiteCreationStep from './internals/steps-repository/site-creation-step';
+import StoreAddress from './internals/steps-repository/store-address';
+import StoreProfiler from './internals/steps-repository/store-profiler';
+import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { SiteDetailsPlan } from '@automattic/data-stores';
 
-export const ecommerceFlowRecurTypes = {
-	YEARLY: 'yearly',
-	MONTHLY: 'monthly',
-};
-
-export const ecommerceFlow: Flow = {
+const ecommerceFlow: Flow = {
 	name: ECOMMERCE_FLOW,
 	useSteps() {
 		useEffect( () => {
@@ -32,17 +36,17 @@ export const ecommerceFlow: Flow = {
 		}, [] );
 
 		return [
-			'intro',
-			'storeProfiler',
-			'storeAddress',
-			'domains',
-			'designCarousel',
-			'siteCreationStep',
-			'processing',
-			'waitForAtomic',
-			'setThemeStep',
-			'checkPlan',
-		] as StepPath[];
+			{ slug: 'intro', component: Intro },
+			{ slug: 'storeProfiler', component: StoreProfiler },
+			{ slug: 'storeAddress', component: StoreAddress },
+			{ slug: 'domains', component: DomainsStep },
+			{ slug: 'designCarousel', component: DesignCarousel },
+			{ slug: 'siteCreationStep', component: SiteCreationStep },
+			{ slug: 'processing', component: ProcessingStep },
+			{ slug: 'waitForAtomic', component: WaitForAtomic },
+			{ slug: 'setThemeStep', component: SetThemeStep },
+			{ slug: 'checkPlan', component: CheckPlan },
+		];
 	},
 
 	useStepNavigation( _currentStepName, navigate ) {
@@ -64,12 +68,27 @@ export const ecommerceFlow: Flow = {
 		const flags = new URLSearchParams( window.location.search ).get( 'flags' );
 
 		const getStartUrl = () => {
+			let hasFlowParams = false;
+			const flowParams = new URLSearchParams();
+
+			if ( recurType !== ecommerceFlowRecurTypes.YEARLY ) {
+				flowParams.set( 'recur', recurType );
+				hasFlowParams = true;
+			}
+			if ( locale && locale !== 'en' ) {
+				flowParams.set( 'locale', locale );
+				hasFlowParams = true;
+			}
+
+			const redirectTarget =
+				`/setup/ecommerce/storeProfiler` +
+				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
 			const url =
 				locale && locale !== 'en'
-					? `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=/setup/ecommerce/storeProfiler`
-					: `/start/account/user?variationName=${ flowName }&redirect_to=/setup/ecommerce/storeProfiler`;
+					? `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=${ redirectTarget }`
+					: `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
 
-			return url + ( flags && `?flags=${ flags }` );
+			return url + ( flags ? `&flags=${ flags }` : '' );
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
@@ -101,7 +120,7 @@ export const ecommerceFlow: Flow = {
 					}
 
 					if ( providedDependencies?.siteSlug ) {
-						const destination = `/setup/${ flowName }/checkPlan?siteSlug=${ siteSlug }&flags=signup/tailored-ecommerce`;
+						const destination = `/setup/${ flowName }/checkPlan?siteSlug=${ siteSlug }`;
 						persistSignupDestination( destination );
 						setSignupCompleteSlug( siteSlug );
 						setSignupCompleteFlowName( flowName );
@@ -111,7 +130,6 @@ export const ecommerceFlow: Flow = {
 						const urlParams = new URLSearchParams( {
 							theme: selectedDesign?.slug || '',
 							siteSlug: siteSlug.replace( '.wordpress.com', '.wpcomstaging.com' ),
-							flags: 'signup/tailored-ecommerce',
 						} );
 
 						const returnUrl = encodeURIComponent( `/setup/${ flowName }/checkPlan?${ urlParams }` );
@@ -165,8 +183,6 @@ export const ecommerceFlow: Flow = {
 		const goBack = () => {
 			switch ( _currentStepName ) {
 				case 'designCarousel':
-					return navigate( 'storeAddress' );
-				case 'storeAddress':
 					return navigate( 'storeProfiler' );
 				default:
 					return navigate( 'intro' );
@@ -178,20 +194,22 @@ export const ecommerceFlow: Flow = {
 				case 'intro':
 					return navigate( 'storeProfiler' );
 				case 'storeProfiler':
-					return navigate( 'storeAddress' );
+					return navigate( 'designCarousel' );
 				case 'storeAddress':
-					return navigate( 'designCarousel' );
+					return window.location.assign( `${ site?.URL }/wp-admin/admin.php?page=wc-admin` );
 				case 'designCarousel':
-					return navigate( 'designCarousel' );
+					return navigate( 'domains' );
 				default:
 					return navigate( 'intro' );
 			}
 		};
 
-		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
+		const goToStep = ( step: string ) => {
 			navigate( step );
 		};
 
 		return { goNext, goBack, goToStep, submit };
 	},
 };
+
+export default ecommerceFlow;

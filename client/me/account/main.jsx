@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
-import { Card, Button } from '@automattic/components';
-import { getLanguage, isLocaleVariant, canBeTranslated } from '@automattic/i18n-utils';
+import { Button, Card } from '@automattic/components';
+import { canBeTranslated, getLanguage, isLocaleVariant } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
-import Badge from 'calypso/components/badge';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
@@ -41,14 +40,14 @@ import { clearStore } from 'calypso/lib/user/store';
 import wpcom from 'calypso/lib/wp';
 import AccountEmailField from 'calypso/me/account/account-email-field';
 import ReauthRequired from 'calypso/me/reauth-required';
-import { recordGoogleEvent, recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
+import { bumpStat, recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getCurrentUserDate,
 	getCurrentUserDisplayName,
 	getCurrentUserName,
 	getCurrentUserVisibleSiteCount,
 } from 'calypso/state/current-user/selectors';
-import { successNotice, errorNotice, removeNotice } from 'calypso/state/notices/actions';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-community-translator';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
@@ -62,13 +61,12 @@ import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 import AccountSettingsCloseLink from './close-link';
 import ToggleSitesAsLandingPage from './toggle-sites-as-landing-page';
+import './style.scss';
 
 export const noticeId = 'me-settings-notice';
 const noticeOptions = {
 	id: noticeId,
 };
-
-import './style.scss';
 
 /**
  * Debug instance
@@ -957,6 +955,13 @@ class Account extends Component {
 
 						{ this.props.canDisplayCommunityTranslator && this.communityTranslator() }
 
+						<FormFieldset className="account__settings-admin-home">
+							<FormLabel id="account__default_landing_page">
+								{ translate( 'Admin home' ) }
+							</FormLabel>
+							<ToggleSitesAsLandingPage />
+						</FormFieldset>
+
 						{ config.isEnabled( 'me/account/color-scheme-picker' ) &&
 							supportsCssCustomProperties() && (
 								<FormFieldset>
@@ -970,18 +975,6 @@ class Account extends Component {
 									/>
 								</FormFieldset>
 							) }
-
-						{ config.isEnabled( 'sites-as-landing-page' ) && (
-							<FormFieldset>
-								<FormLabel id="account__default_landing_page">
-									{ translate( 'Sites as landing page' ) }
-									<Badge className="account__beta-badge" type="info-blue">
-										{ translate( 'beta' ) }
-									</Badge>
-								</FormLabel>
-								<ToggleSitesAsLandingPage />
-							</FormFieldset>
-						) }
 					</form>
 				</Card>
 

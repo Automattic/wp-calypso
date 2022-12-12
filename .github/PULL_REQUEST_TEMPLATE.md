@@ -19,6 +19,7 @@ Complete applicable items on this checklist **before** merging into trunk. Inapp
 Both the PR author and reviewer are responsible for ensuring the checklist is completed.
 -->
 
+- [ ] Has the general commit checklist been followed? (PCYsg-hS-p2)
 - [ ] [Have you written new tests](https://wpcalypso.wordpress.com/devdocs/docs/testing/index.md) for your changes?
 - [ ] Have you tested the feature in Simple (P9HQHe-k8-p2), Atomic (P9HQHe-jW-p2), and self-hosted Jetpack sites (PCYsg-g6b-p2)?
 - [ ] Have you checked for TypeScript, React or other console errors?

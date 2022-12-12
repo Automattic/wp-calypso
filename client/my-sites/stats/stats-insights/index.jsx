@@ -12,7 +12,6 @@ import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AllTimelHighlightsSection from '../all-time-highlights-section';
 import AnnualHighlightsSection from '../annual-highlights-section';
@@ -27,10 +26,8 @@ import statsStrings from '../stats-strings';
 import StatsViews from '../stats-views';
 
 const StatsInsights = ( props ) => {
-	const { siteId, siteSlug, translate } = props;
+	const { siteId, siteSlug, translate, isOdysseyStats } = props;
 	const moduleStrings = statsStrings();
-
-	const showNewAnnualHighlights = config.isEnabled( 'stats/new-annual-highlights' );
 
 	const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
 
@@ -53,7 +50,7 @@ const StatsInsights = ( props ) => {
 					align="left"
 				/>
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
-				{ showNewAnnualHighlights && <AnnualHighlightsSection siteId={ siteId } /> }
+				<AnnualHighlightsSection siteId={ siteId } />
 				<AllTimelHighlightsSection siteId={ siteId } />
 				<div className="stats__module--insights-unified">
 					<PostingActivity />
@@ -77,9 +74,8 @@ const StatsInsights = ( props ) => {
 								moduleStrings={ moduleStrings.tags }
 								statType="statsTags"
 							/>
-
-							{ ! showNewAnnualHighlights && <AnnualSiteStats isWidget /> }
-							<StatShares siteId={ siteId } />
+							{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for Odyssey for now. */ }
+							{ ! isOdysseyStats && <StatShares siteId={ siteId } /> }
 						</div>
 						<div className="stats__module-column">
 							<Reach />
@@ -108,9 +104,11 @@ StatsInsights.propTypes = {
 
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	return {
 		siteId,
 		siteSlug: getSelectedSiteSlug( state, siteId ),
+		isOdysseyStats,
 	};
 } );
 

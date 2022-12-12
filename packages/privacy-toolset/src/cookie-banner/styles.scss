@@ -3,6 +3,9 @@
 // Granular consent banner (v2).
 $granular-banner-max-width: 900px;
 
+// Padding
+$horizontal-padding: 20px;
+
 // Colors.
 $cookie-banner-bg-color: #fff;
 $cookie-banner-text-color: #000;
@@ -47,7 +50,7 @@ $cookie-banner-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Robo
 	margin: 0;
 	max-height: 90vh;
 	z-index: 50001;
-	padding: 20px;
+	padding: 20px 0;
 	background-color: $cookie-banner-bg-color;
 	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.15), 0 1px 0 rgba(0, 0, 0, 0.05);
 	border-radius: 3 * 2px;
@@ -87,12 +90,12 @@ $cookie-banner-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Robo
 		color: $cookie-banner-text-muted-color;
 		font-size: $cookie-banner-font-size;
 		line-height: $cookie-banner-line-height;
-
 	}
 
 	.cookie-banner__simple-options {
 		display: flex;
 		justify-content: space-between;
+		padding: 0 $horizontal-padding;
 		gap: 25px;
 
 		.cookie-banner__button-container {
@@ -107,6 +110,7 @@ $cookie-banner-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Robo
 		flex-direction: column;
 		overflow-y: scroll;
 		scroll-padding-bottom: 25px;
+		padding: 0 $horizontal-padding;
 
 		.cookie-banner__options-lead-text {
 			margin-bottom: 12px;
@@ -136,62 +140,8 @@ $cookie-banner-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Robo
 			}
 		}
 	}
-	.cookie-banner__options-selection input[type="checkbox"] {
-		appearance: none;
-		position: relative;
-		border: 0;
-		outline: 0;
+	.cookie-banner__options-selection input[type="checkbox"]:not(:disabled) {
 		cursor: pointer;
-		box-sizing: unset;
-		transition: ease 0.3s;
-		-webkit-transition: ease 0.3s;
-		-moz-transition: ease 0.3s;
-		-o-transition: ease 0.3s;
-		height: 24px;
-
-		// Track.
-		&::after {
-			$track-size: 18px;
-
-			content: "";
-			width: 2 * $track-size;
-			height: $track-size;
-			display: block;
-			background: transparent;
-			border-radius: $track-size;
-			border: 1px solid #000;
-			clear: both;
-		}
-
-		// Handle.
-		&::before {
-			$handle-size: 12px;
-
-			content: "";
-			width: $handle-size;
-			height: $handle-size;
-			display: block;
-			position: absolute;
-			left: 4px;
-			top: 4px;
-			border-radius: math.div($handle-size, 2);
-			background-color: #000;
-		}
-
-		&:checked::before {
-			left: 22px;
-			background-color: #fff;
-		}
-		&:checked::after {
-			background: $cookie-banner-checkbox-color;
-			border-color: $cookie-banner-checkbox-color;
-		}
-		&:disabled {
-			&::after {
-				background-color: #aaa;
-				border-color: #aaa;
-			}
-		}
 	}
 	.cookie-banner__ok-button,
 	.cookie-banner__accept-all-button,

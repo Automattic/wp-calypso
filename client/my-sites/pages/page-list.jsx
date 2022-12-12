@@ -23,7 +23,12 @@ import {
 } from 'calypso/state/posts/selectors';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
-import { getSite, getSiteFrontPage, getSiteFrontPageType } from 'calypso/state/sites/selectors';
+import {
+	getSite,
+	getSiteFrontPage,
+	getSiteFrontPageType,
+	isJetpackSite,
+} from 'calypso/state/sites/selectors';
 import BlogPostsPage from './blog-posts-page';
 import { sortPagesHierarchically } from './helpers';
 import Page from './page';
@@ -49,6 +54,7 @@ class Pages extends Component {
 		areBlockEditorSettingsLoading: PropTypes.bool,
 		isFSEActive: PropTypes.bool,
 		isFSEActiveLoading: PropTypes.bool,
+		isJetpack: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -187,13 +193,15 @@ class Pages extends Component {
 	}
 
 	showBlogPostsPage() {
-		const { site, homepageType, homepageId, isFSEActive } = this.props;
+		const { site, homepageType, homepageId, isFSEActive, isJetpack } = this.props;
 		const { search, status } = this.props.query;
 
 		return (
 			( ! config.isEnabled( 'unified-pages/virtual-home-page' ) ||
 				/** Blog posts page is for themes that don't support FSE */
-				! isFSEActive ) &&
+				! isFSEActive ||
+				/** Virtual homepage doesn't support jetpack site, so make it fall back to render blog posts page */
+				isJetpack ) &&
 			site &&
 			( homepageType === 'posts' || ( homepageType === 'page' && ! homepageId ) ) &&
 			/** Under the "Published" tab */
@@ -207,14 +215,23 @@ class Pages extends Component {
 	 * Show the virtual homepage
 	 */
 	showVirtualHomepage() {
-		const { site, homepageType, homepageId, blockEditorSettings, isFSEActive, translate } =
-			this.props;
+		const {
+			site,
+			homepageType,
+			homepageId,
+			blockEditorSettings,
+			isFSEActive,
+			isJetpack,
+			translate,
+		} = this.props;
 		const { search, status } = this.props.query;
 
 		return (
 			config.isEnabled( 'unified-pages/virtual-home-page' ) &&
 			/** Virtual homepage is for themes that support FSE */
 			isFSEActive &&
+			/** Virtual homepage doesn't support jetpack site */
+			! isJetpack &&
 			site &&
 			( homepageType === 'posts' || ( homepageType === 'page' && ! homepageId ) ) &&
 			blockEditorSettings?.home_template &&
@@ -414,6 +431,7 @@ const mapState = ( state, { query, siteId } ) => ( {
 	site: getSite( state, siteId ),
 	newPageLink: getEditorUrl( state, siteId, null, 'page' ),
 	homepageType: getSiteFrontPageType( state, siteId ),
+	isJetpack: isJetpackSite( state, siteId ),
 } );
 
 const ConnectedPages = flowRight(

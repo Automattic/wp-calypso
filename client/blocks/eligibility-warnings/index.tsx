@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	FEATURE_UPLOAD_PLUGINS,
 	FEATURE_PERFORMANCE,
@@ -206,7 +205,7 @@ export const EligibilityWarnings = ( {
 				</CompactCard>
 			) }
 
-			{ showDataCenterPicker && config.isEnabled( 'hosting/datacenter-picker' ) && (
+			{ showDataCenterPicker && (
 				<CompactCard className="eligibility-warnings__data-center-picker">
 					<TrackComponentView eventName="calypso_automated_transfer_datacenter_picker_display" />
 					<DataCenterPicker

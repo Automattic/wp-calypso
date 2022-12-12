@@ -42,6 +42,8 @@ export interface StyleVariationPreview {
 }
 
 export interface StyleVariationPreviewColorPalette {
+	base?: string;
+	contrast?: string;
 	background?: string;
 	foreground?: string;
 	primary?: string;

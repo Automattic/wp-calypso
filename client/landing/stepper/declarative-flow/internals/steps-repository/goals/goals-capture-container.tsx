@@ -1,12 +1,13 @@
 import { StepContainer } from '@automattic/onboarding';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 
 type GoalsCaptureContainerProps = {
 	welcomeText: string;
 	whatAreYourGoalsText: string;
 	subHeaderText: string;
 	stepName: string;
-	goNext: () => void;
+	goNext: NavigationControls[ 'goNext' ];
 	skipLabelText: string;
 	skipButtonAlign?: 'top' | 'bottom';
 	hideBack: boolean;

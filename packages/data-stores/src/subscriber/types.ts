@@ -8,6 +8,8 @@ export interface SubscriberState {
 	};
 	import?: {
 		inProgress: boolean;
+		file?: File;
+		emails?: string[];
 		job?: ImportJob;
 		error?: ImportSubscribersError;
 	};

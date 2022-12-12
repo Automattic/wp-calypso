@@ -1,4 +1,8 @@
-import { Card, PercentCalculator as percentCalculator } from '@automattic/components';
+import {
+	Card,
+	PercentCalculator as percentCalculator,
+	ShortenedNumber,
+} from '@automattic/components';
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -28,17 +32,9 @@ type MostPopularData = {
 	hourPercent: number;
 };
 
-const FORMATTER = new Intl.NumberFormat( 'en-GB' );
-const COMPACT_FORMATTER = new Intl.NumberFormat( 'en-GB', {
-	notation: 'compact',
-	compactDisplay: 'short',
-	maximumFractionDigits: 1,
-} );
-
-function formatNumber( number: number | null, isCompact = false ) {
-	const formatter = isCompact ? COMPACT_FORMATTER : FORMATTER;
-
-	return Number.isFinite( number ) ? formatter.format( number as number ) : '-';
+const FORMATTER = new Intl.NumberFormat();
+function formatNumber( number: number | null ) {
+	return Number.isFinite( number ) ? FORMATTER.format( number as number ) : '-';
 }
 
 export default function AllTimeHighlightsSection( { siteId }: { siteId: number } ) {
@@ -67,6 +63,7 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 		return [
 			{
 				id: 'views',
+				//TODO: replace with an icon when available.
 				icon: (
 					<svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path
@@ -147,7 +144,7 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 				{
 					id: 'views',
 					header: translate( 'Views' ),
-					content: formatNumber( viewsBestDayTotal, true ),
+					content: <ShortenedNumber value={ viewsBestDayTotal } />,
 					footer: translate( '%(percent)d%% of views', {
 						args: { percent: bestViewsEverPercent || 0 },
 						context: 'Stats: Percentage of views',

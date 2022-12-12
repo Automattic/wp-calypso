@@ -101,6 +101,7 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 							icon={ chevronUp }
 							tooltipPosition="top left"
 							onClick={ onMaximize }
+							onTouchStart={ onMaximize }
 						/>
 					) : (
 						<Button
@@ -109,6 +110,7 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 							icon={ lineSolid }
 							tooltipPosition="top left"
 							onClick={ onMinimize }
+							onTouchStart={ onMinimize }
 						/>
 					) }
 
@@ -118,6 +120,7 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 						tooltipPosition="top left"
 						icon={ closeSmall }
 						onClick={ onDismiss }
+						onTouchStart={ onDismiss }
 					/>
 				</div>
 			</Flex>
