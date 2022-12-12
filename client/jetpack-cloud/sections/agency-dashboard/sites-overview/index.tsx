@@ -15,6 +15,7 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
+import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import {
@@ -31,6 +32,8 @@ import SiteWelcomeBanner from './site-welcome-banner';
 import { getProductSlugFromProductType } from './utils';
 
 import './style.scss';
+
+const CALYPSO_MASTERBAR_HEIGHT = 47;
 
 export default function SitesOverview() {
 	const translate = useTranslate();
@@ -147,6 +150,10 @@ export default function SitesOverview() {
 		} );
 	}, [ selectedLicensesSiteId, selectedLicenses ] );
 
+	const [ divRef, hasCrossed ] = useDetectWindowBoundary( CALYPSO_MASTERBAR_HEIGHT );
+
+	const outerDivProps = divRef ? { ref: divRef as React.RefObject< HTMLDivElement > } : {};
+
 	const renderIssueLicenseButton = () => {
 		return (
 			<div className="sites-overview__licenses-buttons">
@@ -173,7 +180,7 @@ export default function SitesOverview() {
 						)
 					}
 				>
-					{ translate( 'Issue %(numLicenses)d new license', 'Issue %(numLicenses)d new licenses', {
+					{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
 						context: 'button label',
 						count: selectedLicensesCount,
 						args: {
@@ -185,6 +192,9 @@ export default function SitesOverview() {
 		);
 	};
 
+	const showIssueLicenseButtonsLargeScreen =
+		isWithinBreakpoint( '>960px' ) && selectedLicensesCount > 0;
+
 	return (
 		<div className="sites-overview">
 			<DocumentHead title={ pageTitle } />
@@ -194,20 +204,25 @@ export default function SitesOverview() {
 					<div className="sites-overview__content-wrapper">
 						<SiteWelcomeBanner isDashboardView />
 						{ data?.sites && <SiteAddLicenseNotification /> }
-						<div className="sites-overview__page-title-container">
-							<div className="sites-overview__page-heading">
-								{ isEnabled( 'jetpack/partner-portal-downtime-monitoring-updates' ) ? (
-									<h2 className="sites-overview__page-title">{ downTimeMonitoringUpdates }</h2>
-								) : (
-									<h2 className="sites-overview__page-title">{ pageTitle }</h2>
-								) }
-								<div className="sites-overview__page-subtitle">
-									{ translate( 'Manage all your Jetpack sites from one location' ) }
+						<div className="sites-overview__viewport" { ...outerDivProps }>
+							<div
+								className={ classNames( 'sites-overview__page-title-container', {
+									'is-sticky': showIssueLicenseButtonsLargeScreen && hasCrossed,
+								} ) }
+							>
+								<div className="sites-overview__page-heading">
+									{ isEnabled( 'jetpack/partner-portal-downtime-monitoring-updates' ) ? (
+										<h2 className="sites-overview__page-title">{ downTimeMonitoringUpdates }</h2>
+									) : (
+										<h2 className="sites-overview__page-title">{ pageTitle }</h2>
+									) }
+									<div className="sites-overview__page-subtitle">
+										{ translate( 'Manage all your Jetpack sites from one location' ) }
+									</div>
 								</div>
+
+								{ showIssueLicenseButtonsLargeScreen && renderIssueLicenseButton() }
 							</div>
-							{ isWithinBreakpoint( '>960px' ) &&
-								selectedLicensesCount > 0 &&
-								renderIssueLicenseButton() }
 						</div>
 						<SectionNav
 							applyUpdatedStyles
