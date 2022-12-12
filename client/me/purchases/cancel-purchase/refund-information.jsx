@@ -399,7 +399,7 @@ const CancelPurchaseRefundInformation = ( {
 				}
 			),
 			translate(
-				'If you cancel your plan subscription your plan will be removed on %(expiryDate)s.',
+				'If you cancel your plan subscription, your plan will be removed on %(expiryDate)s.',
 				{
 					args: {
 						expiryDate: expiryDate,
@@ -435,7 +435,7 @@ const CancelPurchaseRefundInformation = ( {
 
 		text.push(
 			translate(
-				'If you cancel your plan subscription your plan will be removed on %(expiryDate)s.',
+				'If you cancel your plan subscription, your plan will be removed on %(expiryDate)s.',
 				{
 					args: {
 						expiryDate: expiryDate,
