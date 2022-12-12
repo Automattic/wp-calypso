@@ -14,6 +14,7 @@ interface productButtonLabelProps {
 	isDeprecated: boolean;
 	currentPlan?: SitePlan | null;
 	fallbackLabel?: TranslateResult;
+	isJetpackPlan?: boolean;
 }
 
 export default function productButtonLabel( {
@@ -25,13 +26,14 @@ export default function productButtonLabel( {
 	currentPlan,
 	fallbackLabel,
 	isInCart,
+	isJetpackPlan,
 }: productButtonLabelProps ): TranslateResult {
 	if ( isDeprecated ) {
 		return translate( 'No longer available' );
 	}
 
-	if ( isInCart ) {
-		return 'Added to Cart';
+	if ( isInCart && ! isJetpackPlan ) {
+		return 'View Cart';
 	}
 
 	if ( isUpgradeableToYearly ) {
