@@ -6,7 +6,7 @@ import { translate } from 'i18n-calypso';
  */
 /* eslint-enable jsdoc/require-param */
 
-export default function allSitesMenu() {
+export default function allSitesMenu( { showManagePlugins = false } ) {
 	return [
 		{
 			icon: 'dashicons-chart-bar',
@@ -44,9 +44,29 @@ export default function allSitesMenu() {
 			icon: 'dashicons-admin-plugins',
 			slug: 'plugins',
 			title: translate( 'Plugins' ),
-			navigationLabel: translate( 'View plugins for all sites' ),
+			navigationLabel: translate( 'View plugins marketplace for all sites' ),
 			type: 'menu-item',
-			url: '/plugins/manage',
+			url: '/plugins',
+			children: ! showManagePlugins
+				? null
+				: [
+						{
+							parent: 'plugins',
+							slug: 'all-sites-plugins-add-new',
+							title: translate( 'Add New' ),
+							navigationLabel: translate( 'View plugins marketplace for all sites' ),
+							type: 'submenu-item',
+							url: '/plugins',
+						},
+						{
+							parent: 'plugins',
+							slug: 'all-sites-plugins-installed-plugins',
+							title: translate( 'Installed Plugins' ),
+							navigationLabel: translate( 'View plugins on all sites' ),
+							type: 'submenu-item',
+							url: '/plugins/manage',
+						},
+				  ],
 		},
 	];
 }
