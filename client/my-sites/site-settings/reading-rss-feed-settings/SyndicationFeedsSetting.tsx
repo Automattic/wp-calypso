@@ -10,14 +10,17 @@ type SyndicationFeedsSettingProps = {
 	value?: number;
 	onChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
 	disabled?: boolean;
+	siteUrl?: string;
 };
 
 export const SyndicationFeedsSetting = ( {
 	value = 10,
 	onChange,
 	disabled,
+	siteUrl,
 }: SyndicationFeedsSettingProps ) => {
 	const translate = useTranslate();
+	const siteFeedUrl = siteUrl ? `${ siteUrl }/feed/` : '';
 	return (
 		<FormFieldset>
 			<FormLabel id={ `${ SYNDICATION_FEEDS_OPTION }-label` } htmlFor={ SYNDICATION_FEEDS_OPTION }>
@@ -26,7 +29,7 @@ export const SyndicationFeedsSetting = ( {
 			<div>
 				{ translate( 'Show the most recent {{field /}} items', {
 					comment:
-						'The field value is a number of most recent posts that will be sent out at once to RSS feed subscribers.'
+						'The field value is a number of most recent posts that will be sent out at once to RSS feed subscribers.',
 					components: {
 						field: (
 							<FormTextInput
@@ -46,7 +49,16 @@ export const SyndicationFeedsSetting = ( {
 			</div>
 			<FormSettingExplanation>
 				{ translate(
-					'Sets the number of your most recent posts that will be sent out at once to RSS feed subscribers. (Located at https://example.wordpress.com/feed/).'
+					`Sets the number of your most recent posts that will be sent out at once to RSS feed subscribers. (Located at {{siteFeedLink /}}).`,
+					{
+						components: {
+							siteFeedLink: (
+								<a href={ siteFeedUrl } target="_blank" rel="noreferrer">
+									{ siteFeedUrl }
+								</a>
+							),
+						},
+					}
 				) }
 			</FormSettingExplanation>
 		</FormFieldset>

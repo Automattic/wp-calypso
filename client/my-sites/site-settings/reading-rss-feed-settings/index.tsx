@@ -12,6 +12,7 @@ type RssFeedSettingsSectionProps = {
 	onChangeField: ( field: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => void;
 	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
 	disabled?: boolean;
+	siteUrl?: string;
 };
 
 export const RssFeedSettingsSection = ( {
@@ -19,6 +20,7 @@ export const RssFeedSettingsSection = ( {
 	onChangeField,
 	handleSubmitForm,
 	disabled,
+	siteUrl,
 }: RssFeedSettingsSectionProps ) => {
 	const translate = useTranslate();
 	const { posts_per_rss } = fields;
@@ -37,6 +39,7 @@ export const RssFeedSettingsSection = ( {
 					value={ posts_per_rss }
 					onChange={ onChangeField( SYNDICATION_FEEDS_OPTION ) }
 					disabled={ disabled }
+					siteUrl={ siteUrl }
 				/>
 			</Card>
 		</>
