@@ -43,8 +43,9 @@ describe( DataHelper.createSuiteTitle( `Editor: Navbar` ), function () {
 	} );
 
 	it( 'Return to Calypso dashboard', async function () {
+		const WPAdminBarLocator = page.locator( '#wpadminbar' );
 		const isMobileClassicView =
-			envVariables.VIEWPORT_NAME === 'mobile' && ( await page.isVisible( '#wpadminbar' ) );
+			envVariables.VIEWPORT_NAME === 'mobile' && ( await WPAdminBarLocator.isVisible() );
 
 		// The Classic View on mobile viewport doesn't have the "return" button.
 		if ( ! isMobileClassicView ) {
