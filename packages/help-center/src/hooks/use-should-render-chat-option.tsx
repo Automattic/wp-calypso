@@ -6,7 +6,7 @@ type Result = {
 	state: 'AVAILABLE' | 'UNAVAILABLE' | 'CLOSED';
 	isLoading: boolean;
 	eligible: boolean;
-	proxied?: boolean;
+	env: boolean;
 };
 
 export function useShouldRenderChatOption(): Result {
@@ -21,7 +21,7 @@ export function useShouldRenderChatOption(): Result {
 			isLoading,
 			state: chatStatus?.is_chat_closed ? 'CLOSED' : 'UNAVAILABLE',
 			eligible: false,
-			proxied: chatAvailability?.proxied,
+			env: chatAvailability?.env,
 		};
 	} else if ( chatStatus?.is_chat_closed ) {
 		return {
@@ -29,7 +29,7 @@ export function useShouldRenderChatOption(): Result {
 			state: 'CLOSED',
 			isLoading,
 			eligible: true,
-			proxied: chatAvailability?.proxied,
+			env: chatAvailability?.env,
 		};
 	} else if ( chatAvailability?.available ) {
 		return {
@@ -37,7 +37,7 @@ export function useShouldRenderChatOption(): Result {
 			state: 'AVAILABLE',
 			isLoading,
 			eligible: true,
-			proxied: chatAvailability?.proxied,
+			env: chatAvailability?.env,
 		};
 	}
 	return {
@@ -45,6 +45,6 @@ export function useShouldRenderChatOption(): Result {
 		state: 'UNAVAILABLE',
 		isLoading,
 		eligible: true,
-		proxied: chatAvailability?.proxied,
+		env: chatAvailability?.env,
 	};
 }

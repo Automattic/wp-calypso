@@ -147,7 +147,7 @@ export const HelpCenterContactPage: React.FC = () => {
 									</div>
 								</div>
 							</ConditionalLink>
-							{ renderChat.proxied && (
+							{ renderChat.env && (
 								<Notice
 									status="warning"
 									actions={ [ { label: 'HUD', url: 'https://hud-staging.happychat.io/' } ] }
