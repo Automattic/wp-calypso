@@ -211,12 +211,13 @@ const CancelPurchaseRefundInformation = ( {
 									<Fragment>
 										<span className="cancel-bundled-domain__option-header">
 											{ translate(
-												'Cancel the plan {{strong}}and{{/strong}} the domain “%(domain)s”',
+												'Cancel the plan {{strong}}and{{/strong}} the domain “%(domain)s.{{br/}}”',
 												{
 													args: {
 														domain: includedDomainPurchase.meta,
 													},
 													components: {
+														br: <br />,
 														strong: <strong />,
 													},
 												}
