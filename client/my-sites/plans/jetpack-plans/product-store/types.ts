@@ -96,7 +96,6 @@ export type FeaturedItemCardProps = {
 	hero: React.ReactNode;
 	isCtaDisabled?: boolean;
 	isCtaExternal?: boolean;
-	isProductInCart?: boolean;
 	onClickCta?: VoidFunction;
 	price: React.ReactNode;
 	title: React.ReactNode;

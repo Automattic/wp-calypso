@@ -9,7 +9,7 @@ import {
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import isSupersedingJetpackItem from 'calypso/../packages/calypso-products/src/is-superseding-jetpack-item';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
@@ -22,7 +22,6 @@ import {
 	isJetpackCloudCartEnabled,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
-import { openCart } from 'calypso/state/ui/cart-open/actions';
 import { EXTERNAL_PRODUCTS_LIST, ITEM_TYPE_PLAN } from '../../constants';
 import productButtonLabel from '../../product-card/product-button-label';
 import { SelectorProduct } from '../../types';
@@ -61,25 +60,27 @@ export const useStoreItemInfo = ( {
 
 	const isCurrentUserPurchaseOwner = useIsUserPurchaseOwner();
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
-	const getIsProductInCart = useCallback(
+	const getProductIsInCart = useCallback(
 		( item: SelectorProduct ) => {
-			if ( ! shouldShowCart ) {
-				return false;
-			}
-
 			const cartProducts = cartManagerClient.forCartKey( siteId || undefined ).getState()
 				.responseCart.products;
-
-			return cartProducts.some( ( product ) => product.product_slug === item.productSlug );
+			for ( const product of cartProducts ) {
+				if ( product.product_slug === item.productSlug ) {
+					return true;
+				}
+			}
+			return false;
 		},
-		[ siteId, shouldShowCart ]
+		[ siteId ]
 	);
 
 	// Determine whether product is owned.
 	const getIsOwned = useCallback(
 		( item: SelectorProduct ) => {
+			if ( shouldShowCart && getProductIsInCart( item ) ) {
+				return true;
+			}
 			if ( sitePlan && sitePlan.product_slug === item.productSlug ) {
 				return true;
 			} else if ( siteProducts ) {
@@ -90,7 +91,7 @@ export const useStoreItemInfo = ( {
 			}
 			return false;
 		},
-		[ sitePlan, siteProducts ]
+		[ sitePlan, siteProducts, getProductIsInCart, shouldShowCart ]
 	);
 
 	//Standalone products are currently not upgradable to yearly
@@ -158,39 +159,22 @@ export const useStoreItemInfo = ( {
 
 	const getCheckoutURL = useCallback(
 		( item: SelectorProduct ) => {
-			return shouldShowCart && ! isJetpackPlanSlug( item.productSlug ) && ! getIsOwned( item )
+			return shouldShowCart
 				? '#'
 				: createCheckoutURL?.( item, getIsUpgradeableToYearly( item ), getPurchase( item ) );
 		},
-		[ createCheckoutURL, getPurchase, getIsUpgradeableToYearly, shouldShowCart, getIsOwned ]
+		[ createCheckoutURL, getPurchase, getIsUpgradeableToYearly, shouldShowCart ]
 	);
 
 	const getOnClickPurchase = useCallback(
 		( item: SelectorProduct ) => () => {
-			if ( shouldShowCart && ! isJetpackPlanSlug( item.productSlug ) ) {
-				if ( getIsProductInCart( item ) ) {
-					//open the cart
-					return dispatch( openCart() );
-				} else if ( getIsOwned( item ) ) {
-					return onClickPurchase?.( item, getIsUpgradeableToYearly( item ), getPurchase( item ) );
-				}
-				return cartManagerClient
-					.forCartKey( siteId || undefined )
-					.actions.addProductsToCart( [ { product_slug: item.productSlug } ] );
-			}
-
-			return onClickPurchase?.( item, getIsUpgradeableToYearly( item ), getPurchase( item ) );
+			return shouldShowCart
+				? cartManagerClient
+						.forCartKey( siteId || undefined )
+						.actions.addProductsToCart( [ { product_slug: item.productSlug } ] )
+				: onClickPurchase?.( item, getIsUpgradeableToYearly( item ), getPurchase( item ) );
 		},
-		[
-			shouldShowCart,
-			onClickPurchase,
-			getIsUpgradeableToYearly,
-			getPurchase,
-			getIsProductInCart,
-			getIsOwned,
-			siteId,
-			dispatch,
-		]
+		[ getPurchase, getIsUpgradeableToYearly, onClickPurchase, shouldShowCart, siteId ]
 	);
 
 	const getIsUserPurchaseOwner = useCallback(
@@ -210,12 +194,8 @@ export const useStoreItemInfo = ( {
 				isDeprecated: getIsDeprecated( item ),
 				isSuperseded: getIsSuperseded( item ),
 				currentPlan: sitePlan,
-				fallbackLabel:
-					shouldShowCart && ! isJetpackPlanSlug( item.productSlug )
-						? 'Add to cart'
-						: translate( 'Get' ),
-				isInCart: getIsProductInCart( item ),
-				isJetpackPlan: isJetpackPlanSlug( item.productSlug ),
+				fallbackLabel: shouldShowCart ? 'Add to cart' : translate( 'Get' ),
+				isInCart: getProductIsInCart( item ),
 			} );
 
 			const purchase = getPurchase( item );
@@ -241,7 +221,7 @@ export const useStoreItemInfo = ( {
 			getPurchase,
 			isCurrentUserPurchaseOwner,
 			shouldShowCart,
-			getIsProductInCart,
+			getProductIsInCart,
 		]
 	);
 
@@ -260,7 +240,6 @@ export const useStoreItemInfo = ( {
 			getIsUpgradeableToYearly,
 			getIsUserPurchaseOwner,
 			getOnClickPurchase,
-			getIsProductInCart,
 			getPurchase,
 			isMultisite,
 		} ),
@@ -275,7 +254,6 @@ export const useStoreItemInfo = ( {
 			getIsUpgradeableToYearly,
 			getIsUserPurchaseOwner,
 			getOnClickPurchase,
-			getIsProductInCart,
 			getPurchase,
 			isMultisite,
 		]
