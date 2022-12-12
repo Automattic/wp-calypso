@@ -41,9 +41,9 @@ export const HelpCenterContactPage: React.FC = () => {
 
 	const renderEmail = useShouldRenderEmailOption();
 	const renderChat = useShouldRenderChatOption();
-	const { data: tickets, isLoading: isLoadingTickets } = useHasActiveSupport( 'TICKET' );
+	const { data: ticket, isLoading: isLoadingTicket } = useHasActiveSupport( 'TICKET' );
 	const { data: supportAvailability } = useSupportAvailability( 'CHAT' );
-	const isLoading = renderChat.isLoading || renderEmail.isLoading || isLoadingTickets;
+	const isLoading = renderChat.isLoading || renderEmail.isLoading || isLoadingTicket;
 
 	useEffect( () => {
 		if ( isLoading ) {
@@ -109,7 +109,7 @@ export const HelpCenterContactPage: React.FC = () => {
 			<BackButton />
 			<div className="help-center-contact-page__content">
 				<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
-				{ tickets && <HelpCenterActiveTicketNotice tickets={ tickets as SupportSession } /> }
+				{ ticket && <HelpCenterActiveTicketNotice ticket={ ticket as SupportSession } /> }
 				<GMClosureNotice
 					displayAt="2022-10-29 00:00Z"
 					closesAt="2022-11-05 00:00Z"
@@ -147,7 +147,7 @@ export const HelpCenterContactPage: React.FC = () => {
 									</div>
 								</div>
 							</ConditionalLink>
-							{ renderChat.env && (
+							{ renderChat.env === 'staging' && (
 								<Notice
 									status="warning"
 									actions={ [ { label: 'HUD', url: 'https://hud-staging.happychat.io/' } ] }

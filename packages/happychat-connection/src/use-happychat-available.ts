@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 
 interface HappychatAvailableResponse {
 	available: boolean;
-	env: boolean;
+	env: 'staging' | 'production';
 }
 
 export function useHappychatAvailable( enabled = true ) {
