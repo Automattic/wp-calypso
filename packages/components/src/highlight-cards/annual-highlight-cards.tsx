@@ -31,9 +31,11 @@ export default function AnnualHighlightCards( {
 				? translate( '%(year)s in review', { args: { year } } )
 				: translate( 'Year in review' ) }{ ' ' }
 			{ titleHref ? (
-				<a className="highlight-cards-heading-wrapper" href={ titleHref }>
-					<small>{ translate( 'View all annual insights' ) }</small>
-				</a>
+				<small>
+					<a className="highlight-cards-heading-wrapper" href={ titleHref }>
+						{ translate( 'View all annual insights' ) }
+					</a>
+				</small>
 			) : null }
 		</h1>
 	);
