@@ -716,6 +716,10 @@ class DomainsStep extends Component {
 		);
 	}
 
+	shouldHideNavButtons() {
+		return 'with-theme' === this.props.flowName || this.isTailoredFlow();
+	}
+
 	renderContent() {
 		let content;
 		let sideContent;
@@ -861,7 +865,7 @@ class DomainsStep extends Component {
 				isExternalBackUrl={ isExternalBackUrl }
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
-				shouldHideNavButtons={ this.isTailoredFlow() }
+				shouldHideNavButtons={ this.shouldHideNavButtons() }
 				stepContent={
 					<div>
 						<QueryProductsList />
