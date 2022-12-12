@@ -1,4 +1,5 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { EXTERNAL_PRODUCTS_LIST } from '../../constants';
@@ -8,9 +9,12 @@ import { sanitizeLocationHash } from '../utils/sanitize-location-hash';
 
 export const useProductLightbox = () => {
 	const dispatch = useDispatch();
-	const [ currentProduct, setCurrentProduct ] = useState< SelectorProduct | null >( () =>
-		slugToSelectorProduct( sanitizeLocationHash( window.location.hash ) )
-	);
+	const translate = useTranslate();
+	const [ currentProduct, setCurrentProduct ] = useState< SelectorProduct | null >( null );
+
+	useEffect( () => {
+		setCurrentProduct( slugToSelectorProduct( sanitizeLocationHash( window.location.hash ) ) );
+	}, [ translate ] );
 
 	const setCurrentProductAndLocationHash = useCallback( ( product: SelectorProduct | null ) => {
 		setCurrentProduct( product );
