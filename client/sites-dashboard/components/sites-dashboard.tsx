@@ -193,9 +193,8 @@ export function SitesDashboard( {
 							onClick={ () => {
 								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
 							} }
-							href={ addQueryArgs( '/start', {
+							href={ addQueryArgs( '/start/import', {
 								source: TRACK_SOURCE_NAME,
-								ref: 'smp-import',
 							} ) }
 							icon="arrow-down"
 						>
