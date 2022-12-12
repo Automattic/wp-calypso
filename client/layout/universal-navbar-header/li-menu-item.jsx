@@ -21,6 +21,7 @@ const UniversalNavbarLiMenuItem = ( {
 				href={ urlValue }
 				title={ titleValue }
 				tabIndex="-1"
+				target="_self"
 			>
 				{ elementContent }
 				{ /* <span className="x-menu-link-chevron" aria-hidden="true"></span> */ }
