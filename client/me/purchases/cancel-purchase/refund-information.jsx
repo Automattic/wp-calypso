@@ -26,7 +26,7 @@ const featuresList = ( translate, purchase, productSlug, hasDomain ) => {
 	return (
 		<Fragment>
 			<div className="cancel-purchase__refund-information-description-header">
-				{ translate( 'When your %(productName)s plan expires you will loose access to:', {
+				{ translate( 'When your %(productName)s plan expires you will lose access to:', {
 					args: {
 						productName: getName( purchase ),
 					},
