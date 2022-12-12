@@ -47,7 +47,9 @@ describe( DataHelper.createSuiteTitle( `Editor: Navbar` ), function () {
 		const isMobileClassicView =
 			envVariables.VIEWPORT_NAME === 'mobile' && ( await WPAdminBarLocator.isVisible() );
 
-		// The Classic View on mobile viewport doesn't have the "return" button.
+		// The classic WP Admin Bar on mobile viewport doesn't have the
+		// "return" button, so let's not fail this test if it's the case.
+		// See https://github.com/Automattic/wp-calypso/pull/70982
 		if ( ! isMobileClassicView ) {
 			await editorPage.exitEditor();
 		}
