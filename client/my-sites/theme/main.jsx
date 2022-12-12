@@ -773,6 +773,8 @@ class ThemeSheet extends Component {
 			plansUrl = plansUrl + `/${ siteSlug }/?plan=value_bundle`;
 		}
 
+		const launchPricing = () => window.open( plansUrl, '_blank' );
+
 		const { canonicalUrl, description, name: themeName } = this.props;
 		const title =
 			themeName &&
@@ -829,13 +831,14 @@ class ThemeSheet extends Component {
 			pageUpsellBanner = (
 				<UpsellNudge
 					plan={ PLAN_PREMIUM }
+					onClick={ ! isLoggedIn && launchPricing }
 					className="theme__page-upsell-banner"
 					title={ this.getBannerUpsellTitle() }
 					description={ preventWidows( this.getBannerUpsellDescription() ) }
 					event="themes_plan_particular_free_with_plan"
 					feature={ WPCOM_FEATURES_PREMIUM_THEMES }
 					forceHref={ true }
-					href={ plansUrl }
+					href={ isLoggedIn ? plansUrl : '#' }
 					showIcon={ true }
 					forceDisplay={ forceDisplay }
 				/>
