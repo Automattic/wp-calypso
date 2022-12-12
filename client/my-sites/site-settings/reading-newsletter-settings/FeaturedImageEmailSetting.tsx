@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl as OriginalToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -33,7 +34,18 @@ export const FeaturedImageEmailSetting = ( {
 			/>
 			<FormSettingExplanation>
 				{ translate(
-					"Includes your post's featured image in the email sent out to your readers."
+					"Includes your post's featured image in the email sent out to your readers. {{link}}Learn more about the featured image{{/link}}.",
+					{
+						components: {
+							link: (
+								<a
+									href={ localizeUrl( 'https://wordpress.com/support/featured-images/' ) }
+									target="_blank"
+									rel="noreferrer"
+								/>
+							),
+						},
+					}
 				) }
 			</FormSettingExplanation>
 		</div>
