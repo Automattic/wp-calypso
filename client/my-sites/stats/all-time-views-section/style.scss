@@ -97,6 +97,7 @@ $common-border-radius: 4px;
 	}
 
 	table.stats-views__months {
+		table-layout: fixed;
 		min-width: 900px;
 
 		td,
@@ -125,6 +126,7 @@ $common-border-radius: 4px;
 
 			&:last-child {
 				text-align: right;
+				width: 100px;
 			}
 
 			@media ( max-width: $custom-mobile-breakpoint ) {
