@@ -82,9 +82,9 @@ const cancelSubscriptionDescription = ( site, translate, purchase, includedDomai
 const CancelPurchaseRefundInformation = ( {
 	purchase,
 	isJetpackPurchase,
-	includedDomainPurchase,
 	cancelBundledDomain,
 	confirmCancelBundledDomain,
+	includedDomainPurchase,
 	onCancelConfirmationStateChange,
 	site,
 } ) => {

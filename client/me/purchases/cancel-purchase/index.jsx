@@ -251,7 +251,6 @@ class CancelPurchase extends Component {
 						<CancelPurchaseRefundInformation
 							purchase={ purchase }
 							isJetpackPurchase={ isJetpackPurchase }
-							includedDomainPurchase={ this.props.includedDomainPurchase }
 							confirmBundledDomain={ this.state.confirmCancelBundledDomain }
 							cancelBundledDomain={ this.state.cancelBundledDomain }
 							onCancelConfirmationStateChange={ this.onCancelConfirmationStateChange }
@@ -263,7 +262,6 @@ class CancelPurchase extends Component {
 								<div className="purchase-cancel-buttons">
 									<CancelPurchaseButton
 										purchase={ purchase }
-										includedDomainPurchase={ this.props.includedDomainPurchase }
 										disabled={
 											this.state.cancelBundledDomain && ! this.state.confirmCancelBundledDomain
 										}
@@ -314,7 +312,6 @@ class CancelPurchase extends Component {
 
 									<CancelPurchaseButton
 										purchase={ purchase }
-										includedDomainPurchase={ this.props.includedDomainPurchase }
 										siteSlug={ this.props.siteSlug }
 										cancelBundledDomain={ this.state.cancelBundledDomain }
 										purchaseListUrl={ this.props.purchaseListUrl }
