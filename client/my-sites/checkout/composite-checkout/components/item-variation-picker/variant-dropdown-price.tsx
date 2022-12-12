@@ -87,12 +87,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 	variant: WPCOMProductVariant;
 	compareTo?: WPCOMProductVariant;
 } > = ( { variant, compareTo } ) => {
-	const planTerm = variant.termIntervalInDays > 31 ? 'year' : 'month';
-	const introTerm = variant.introIntervalUnit;
-	const introCount = variant.introIntervalCount;
 	const isMobile = useMobileBreakpoint();
-	const isJetpackIntroductoryOffer = isJetpackProduct( variant ) && introCount > 0;
-	const formattedRegularPrice = formatCurrency( variant.regularPrice, variant.currency );
 	const compareToPriceForVariantTerm = getItemVariantCompareToPrice( variant, compareTo );
 	const discountPercentage = getItemVariantDiscountPercentage( variant, compareTo );
 	const formattedCurrentPrice = formatCurrency( variant.priceInteger, variant.currency, {
@@ -105,6 +100,12 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 				isSmallestUnit: true,
 		  } )
 		: undefined;
+	// Jetpack introductory pricing displays the introductory price for the first term, then the regular price for the remaining term.
+	const planTerm = variant.termIntervalInDays > 31 ? 'year' : 'month';
+	const introTerm = variant.introIntervalUnit;
+	const introCount = variant.introIntervalCount;
+	const formattedRegularPrice = formatCurrency( variant.regularPrice, variant.currency );
+	const isJetpackIntroductoryOffer = isJetpackProduct( variant ) && introCount > 0;
 	const translate = useTranslate();
 	const translatedIntroOfferPrice = translate(
 		' for the first %(introTerm)s then %(formattedRegularPrice)s per %(planTerm)s',
