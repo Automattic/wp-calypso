@@ -17,6 +17,7 @@ export { getFixedDomainSearch } from './get-fixed-domain-search';
 export { getPrimaryDomain } from './get-primary-domain';
 export { getSelectedDomain } from './get-selection-domain';
 export { getTld } from './get-tld';
+export { getRootDomain } from './get-root-domain';
 export { getTopLevelOfTld } from './get-top-level-of-tld';
 export { getUnformattedDomainPrice } from './get-unformatted-domain-price';
 export { getUnformattedDomainSalePrice } from './get-unformatted-domain-sale-price';

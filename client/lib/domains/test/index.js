@@ -1,5 +1,9 @@
 import { forEach } from 'lodash';
-import { getFixedDomainSearch, getDomainSuggestionSearch } from 'calypso/lib/domains';
+import {
+	getFixedDomainSearch,
+	getDomainSuggestionSearch,
+	getRootDomain,
+} from 'calypso/lib/domains';
 
 describe( 'index', () => {
 	describe( '#getFixedDomainSearch', () => {
@@ -53,6 +57,21 @@ describe( 'index', () => {
 		test( 'should return the original search string if it is long enough and is not one of the ignored strings', () => {
 			const search = 'hippos';
 			expect( getDomainSuggestionSearch( search ) ).toEqual( search );
+		} );
+	} );
+
+	describe( '#getRootDomain', () => {
+		test( 'should return the string as it is when there is no dot seperator.', () => {
+			expect( getRootDomain( 'com' ) ).toEqual( 'com' );
+		} );
+
+		test( 'should return the root domain for a domain name in the 2nd level.', () => {
+			expect( getRootDomain( 'wordpress.com' ) ).toEqual( 'wordpress.com' );
+		} );
+
+		test( 'should return the root domain for a domain name in more than 2 levels.', () => {
+			expect( getRootDomain( 'foo.wordpress.com' ) ).toEqual( 'wordpress.com' );
+			expect( getRootDomain( 'fried.rice.rock.food.blog' ) ).toEqual( 'food.blog' );
 		} );
 	} );
 } );
