@@ -8,7 +8,7 @@ import { SitePlan } from 'calypso/state/sites/selectors/get-site-plan';
 interface productButtonLabelProps {
 	product: SelectorProduct;
 	isOwned: boolean;
-	isInCart: boolean;
+	isInCart?: boolean;
 	isUpgradeableToYearly: boolean;
 	isSuperseded: boolean;
 	isDeprecated: boolean;
