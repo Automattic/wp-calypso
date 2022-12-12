@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import UniversalNavbarBtnMenuItem from 'calypso/layout/universal-navbar-header/btn-menu-item.jsx';
 import UniversalNavbarLiMenuItem from 'calypso/layout/universal-navbar-header/li-menu-item.jsx';
+import { addQueryArgs } from 'calypso/lib/route';
 import { getSectionName } from 'calypso/state/ui/selectors';
 
 const UniversalNavbarHeader = () => {
@@ -13,7 +14,12 @@ const UniversalNavbarHeader = () => {
 	const sectionName = useSelector( getSectionName );
 
 	let startUrl = sectionName === 'plugins' ? '/start/business' : '/start';
-	startUrl += `/?ref=${ sectionName }-lp`;
+	startUrl = addQueryArgs(
+		{
+			ref: sectionName,
+		},
+		startUrl
+	);
 	return (
 		<div>
 			<div className="x-root lpc-header-nav-wrapper">

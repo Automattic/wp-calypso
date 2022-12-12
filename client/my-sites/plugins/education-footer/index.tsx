@@ -8,6 +8,7 @@ import FeatureItem from 'calypso/components/feature-item';
 import LinkCard from 'calypso/components/link-card';
 import Section, { SectionContainer } from 'calypso/components/section';
 import { preventWidows } from 'calypso/lib/formatting';
+import { addQueryArgs } from 'calypso/lib/route';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
@@ -82,7 +83,12 @@ export const MarketplaceFooter = () => {
 	const sectionName = useSelector( getSectionName );
 
 	let startUrl = sectionName === 'plugins' ? '/start/business' : '/start';
-	startUrl += `/?ref=${ sectionName }-lp`;
+	startUrl = addQueryArgs(
+		{
+			ref: sectionName,
+		},
+		startUrl
+	);
 
 	return (
 		<MarketplaceContainer isloggedIn={ isLoggedIn }>
