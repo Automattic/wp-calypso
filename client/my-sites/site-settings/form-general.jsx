@@ -696,7 +696,9 @@ export class SiteSettingsFormGeneral extends Component {
 							<ToggleControl
 								disabled={ isRequestingSettings || isSavingSettings }
 								className="site-settings__gifting-toggle"
-								label={ translate( 'Allow a site visitor to gift you with site plan costs' ) }
+								label={ translate(
+									'Allow site visitors to gift your plan and domain renewal costs'
+								) }
 								checked={ fields.wpcom_gifting_subscription }
 								onChange={ this.props.handleToggle( 'wpcom_gifting_subscription' ) }
 							/>
