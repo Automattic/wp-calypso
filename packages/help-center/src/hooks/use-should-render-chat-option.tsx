@@ -6,7 +6,7 @@ type Result = {
 	state: 'AVAILABLE' | 'UNAVAILABLE' | 'CLOSED';
 	isLoading: boolean;
 	eligible: boolean;
-	env: 'staging' | 'production';
+	env?: 'staging' | 'production';
 };
 
 export function useShouldRenderChatOption(): Result {
