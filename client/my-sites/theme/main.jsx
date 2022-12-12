@@ -588,14 +588,12 @@ class ThemeSheet extends Component {
 						'label prompting user to upgrade the WordPress.com plan to activate a certain theme',
 				} );
 			} else if (
-				isPremium &&
 				isExternallyManagedTheme &&
 				! isPurchased &&
 				! isSiteEligibleForManagedExternalThemes
 			) {
 				return translate( 'Upgrade to subscribe' );
 			} else if (
-				isPremium &&
 				isExternallyManagedTheme &&
 				! isPurchased &&
 				isSiteEligibleForManagedExternalThemes
@@ -650,7 +648,7 @@ class ThemeSheet extends Component {
 		let price = this.props.price;
 		if ( ! this.isLoaded() || this.props.isActive || this.props.isBundledSoftwareSet ) {
 			price = '';
-		} else if ( ! this.props.isPremium ) {
+		} else if ( ! this.props.isPremium && ! this.props.isExternallyManagedTheme ) {
 			price = this.props.translate( 'Free' );
 		}
 
