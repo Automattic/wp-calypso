@@ -838,7 +838,7 @@ class ThemeSheet extends Component {
 					event="themes_plan_particular_free_with_plan"
 					feature={ WPCOM_FEATURES_PREMIUM_THEMES }
 					forceHref={ true }
-					href={ isLoggedIn && plansUrl }
+					href={ isLoggedIn ? plansUrl : '#' }
 					showIcon={ true }
 					forceDisplay={ forceDisplay }
 				/>
