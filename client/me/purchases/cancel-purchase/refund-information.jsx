@@ -69,7 +69,7 @@ const cancelSubscriptionDescription = ( site, translate, purchase, includedDomai
 		<div>
 			<p className="cancel-purchase__refund-information-subtitle">
 				{ translate(
-					'If you cancel your plan subscription your site may appear broken and things may not work properly.'
+					'If you cancel your plan subscription your site will lose functionality and its appearance may change.'
 				) }
 			</p>
 			<div className="cancel-purchase__refund-information-description">
