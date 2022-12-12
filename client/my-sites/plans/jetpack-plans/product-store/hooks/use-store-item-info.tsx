@@ -196,10 +196,25 @@ export const useStoreItemInfo = ( {
 		]
 	);
 
+	const getCtaAriaLabel = useCallback(
+		( item: SelectorProduct ) => {
+			return productButtonLabel( {
+				product: item,
+				isOwned: getIsOwned( item ),
+				isUpgradeableToYearly: getIsUpgradeableToYearly( item ),
+				isDeprecated: getIsDeprecated( item ),
+				isSuperseded: getIsSuperseded( item ),
+				currentPlan: sitePlan,
+			} );
+		},
+		[ getIsOwned, getIsUpgradeableToYearly, getIsSuperseded, sitePlan ]
+	);
+
 	return useMemo(
 		() => ( {
 			getCheckoutURL,
 			getCtaLabel,
+			getCtaAriaLabel,
 			getIsDeprecated,
 			getIsExternal,
 			getIsIncludedInPlan,
@@ -217,6 +232,7 @@ export const useStoreItemInfo = ( {
 		[
 			getCheckoutURL,
 			getCtaLabel,
+			getCtaAriaLabel,
 			getIsIncludedInPlan,
 			getIsIncludedInPlanOrSuperseded,
 			getIsOwned,
