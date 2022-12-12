@@ -339,7 +339,7 @@ export class EditorSettingsSidebarComponent {
 	async enterUrlSlug( slug: string ) {
 		await this.editor.getByRole( 'button', { name: /Change URL:/ } ).click();
 		await this.editor.getByLabel( 'Permalink' ).fill( slug );
-		await this.editor.getByRole( 'button', { name: 'Close' } ).click();
+		await this.editor.getByRole( 'button', { name: 'Close', exact: true } ).click();
 	}
 
 	/**
