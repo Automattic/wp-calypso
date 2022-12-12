@@ -82,12 +82,11 @@ export const MarketplaceFooter = () => {
 
 	const sectionName = useSelector( getSectionName );
 
-	let startUrl = sectionName === 'plugins' ? '/start/business' : '/start';
-	startUrl = addQueryArgs(
+	const startUrl = addQueryArgs(
 		{
-			ref: sectionName,
+			ref: sectionName + '-lp',
 		},
-		startUrl
+		sectionName === 'plugins' ? '/start/business' : '/start'
 	);
 
 	return (

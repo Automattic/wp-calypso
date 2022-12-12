@@ -13,13 +13,13 @@ const UniversalNavbarHeader = () => {
 	const [ isMobileMenuOpen, setMobileMenuOpen ] = useState( false );
 	const sectionName = useSelector( getSectionName );
 
-	let startUrl = sectionName === 'plugins' ? '/start/business' : '/start';
-	startUrl = addQueryArgs(
+	const startUrl = addQueryArgs(
 		{
-			ref: sectionName,
+			ref: sectionName + '-lp',
 		},
-		startUrl
+		sectionName === 'plugins' ? '/start/business' : '/start'
 	);
+
 	return (
 		<div>
 			<div className="x-root lpc-header-nav-wrapper">
