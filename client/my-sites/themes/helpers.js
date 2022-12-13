@@ -54,14 +54,17 @@ export function getAnalyticsData( path, { filter, vertical, tier, site_id } ) {
 export function localizeThemesPath( path, locale, isLoggedOut = true ) {
 	const shouldLocalizePath = isLoggedOut && isMagnificentLocale( locale );
 
-	if ( shouldLocalizePath ) {
-		if ( path.startsWith( '/theme' ) ) {
-			return `/${ locale }${ path }`;
-		}
-
-		if ( path.startsWith( '/start/with-theme' ) ) {
-			return addLocaleToPath( path, locale );
-		}
+	if ( ! shouldLocalizePath ) {
+		return path;
 	}
+
+	if ( path.startsWith( '/theme' ) ) {
+		return `/${ locale }${ path }`;
+	}
+
+	if ( path.startsWith( '/start/with-theme' ) ) {
+		return addLocaleToPath( path, locale );
+	}
+
 	return path;
 }
