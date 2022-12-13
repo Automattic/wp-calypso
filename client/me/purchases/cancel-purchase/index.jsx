@@ -179,7 +179,7 @@ class CancelPurchase extends Component {
 	keepButtonCTA = ( locale ) => {
 		let cta;
 
-		if ( isJetpackProduct ) {
+		if ( this.props.isJetpackPurchase ) {
 			cta =
 				i18n.hasTranslation( 'Keep Subscription' ) || locale === 'en'
 					? this.props.translate( 'Keep Subscription' )
