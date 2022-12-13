@@ -19,6 +19,7 @@ import { useIsUserPurchaseOwner } from 'calypso/state/purchases/utils';
 import {
 	getSitePlan,
 	getSiteProducts,
+	getSiteSlug,
 	isJetpackCloudCartEnabled,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
@@ -57,30 +58,27 @@ export const useStoreItemInfo = ( {
 	const isMultisite = useSelector(
 		( state ) => !! ( siteId && isJetpackSiteMultiSite( state, siteId ) )
 	);
-
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
 	const isCurrentUserPurchaseOwner = useIsUserPurchaseOwner();
 	const translate = useTranslate();
 
-	const getProductIsInCart = useCallback(
+	const getIsProductInCart = useCallback(
 		( item: SelectorProduct ) => {
+			if ( ! shouldShowCart ) {
+				return false;
+			}
+
 			const cartProducts = cartManagerClient.forCartKey( siteId || undefined ).getState()
 				.responseCart.products;
-			for ( const product of cartProducts ) {
-				if ( product.product_slug === item.productSlug ) {
-					return true;
-				}
-			}
-			return false;
+
+			return cartProducts.some( ( product ) => product.product_slug === item.productSlug );
 		},
-		[ siteId ]
+		[ siteId, shouldShowCart ]
 	);
 
 	// Determine whether product is owned.
 	const getIsOwned = useCallback(
 		( item: SelectorProduct ) => {
-			if ( shouldShowCart && getProductIsInCart( item ) ) {
-				return true;
-			}
 			if ( sitePlan && sitePlan.product_slug === item.productSlug ) {
 				return true;
 			} else if ( siteProducts ) {
@@ -91,7 +89,7 @@ export const useStoreItemInfo = ( {
 			}
 			return false;
 		},
-		[ sitePlan, siteProducts, getProductIsInCart, shouldShowCart ]
+		[ sitePlan, siteProducts ]
 	);
 
 	//Standalone products are currently not upgradable to yearly
@@ -157,24 +155,62 @@ export const useStoreItemInfo = ( {
 		[ getIsPlanFeature, getIsSuperseded, purchases, sitePlan?.product_slug ]
 	);
 
+	const getShouldShowCart = useCallback(
+		( item: SelectorProduct ) => {
+			return (
+				shouldShowCart &&
+				! isJetpackPlanSlug( item.productSlug ) &&
+				! getIsExternal( item ) &&
+				! getIsOwned( item )
+			);
+		},
+		[ getIsOwned, shouldShowCart ]
+	);
+
 	const getCheckoutURL = useCallback(
 		( item: SelectorProduct ) => {
-			return shouldShowCart
-				? '#'
-				: createCheckoutURL?.( item, getIsUpgradeableToYearly( item ), getPurchase( item ) );
+			if ( getShouldShowCart( item ) ) {
+				if ( getIsProductInCart( item ) ) {
+					//open the cart
+					return `http://www.wordpress.com/checkout/${ siteSlug }`;
+				}
+				return '';
+			}
+			return createCheckoutURL?.( item, getIsUpgradeableToYearly( item ), getPurchase( item ) );
 		},
-		[ createCheckoutURL, getPurchase, getIsUpgradeableToYearly, shouldShowCart ]
+
+		[
+			getShouldShowCart,
+			createCheckoutURL,
+			getIsUpgradeableToYearly,
+			getPurchase,
+			getIsProductInCart,
+			siteSlug,
+		]
 	);
 
 	const getOnClickPurchase = useCallback(
 		( item: SelectorProduct ) => () => {
-			return shouldShowCart
-				? cartManagerClient
-						.forCartKey( siteId || undefined )
-						.actions.addProductsToCart( [ { product_slug: item.productSlug } ] )
-				: onClickPurchase?.( item, getIsUpgradeableToYearly( item ), getPurchase( item ) );
+			if ( getShouldShowCart( item ) ) {
+				if ( getIsProductInCart( item ) ) {
+					//naviagate to the checkout page - handled by getCheckoutURL
+					return;
+				}
+				return cartManagerClient
+					.forCartKey( siteId || undefined )
+					.actions.addProductsToCart( [ { product_slug: item.productSlug } ] );
+			}
+
+			return onClickPurchase?.( item, getIsUpgradeableToYearly( item ), getPurchase( item ) );
 		},
-		[ getPurchase, getIsUpgradeableToYearly, onClickPurchase, shouldShowCart, siteId ]
+		[
+			getShouldShowCart,
+			onClickPurchase,
+			getIsUpgradeableToYearly,
+			getPurchase,
+			getIsProductInCart,
+			siteId,
+		]
 	);
 
 	const getIsUserPurchaseOwner = useCallback(
@@ -194,8 +230,9 @@ export const useStoreItemInfo = ( {
 				isDeprecated: getIsDeprecated( item ),
 				isSuperseded: getIsSuperseded( item ),
 				currentPlan: sitePlan,
-				fallbackLabel: shouldShowCart ? 'Add to cart' : translate( 'Get' ),
-				isInCart: getProductIsInCart( item ),
+				fallbackLabel: getShouldShowCart( item ) ? 'Add to cart' : translate( 'Get' ),
+				isInCart: getIsProductInCart( item ),
+				isJetpackPlan: isJetpackPlanSlug( item.productSlug ),
 			} );
 
 			const purchase = getPurchase( item );
@@ -217,11 +254,11 @@ export const useStoreItemInfo = ( {
 			getIsUpgradeableToYearly,
 			getIsSuperseded,
 			sitePlan,
+			getShouldShowCart,
 			translate,
+			getIsProductInCart,
 			getPurchase,
 			isCurrentUserPurchaseOwner,
-			shouldShowCart,
-			getProductIsInCart,
 		]
 	);
 
@@ -240,6 +277,7 @@ export const useStoreItemInfo = ( {
 			getIsUpgradeableToYearly,
 			getIsUserPurchaseOwner,
 			getOnClickPurchase,
+			getIsProductInCart,
 			getPurchase,
 			isMultisite,
 		} ),
@@ -254,6 +292,7 @@ export const useStoreItemInfo = ( {
 			getIsUpgradeableToYearly,
 			getIsUserPurchaseOwner,
 			getOnClickPurchase,
+			getIsProductInCart,
 			getPurchase,
 			isMultisite,
 		]
