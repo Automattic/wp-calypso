@@ -34,6 +34,7 @@ export default function PostStatsCard( {
 						{ translate( 'Published %(date)s', {
 							// TODO: Show relative duration instead of published date. Show actual date in a tooltip.
 							args: { date: parsedDate },
+							comment: 'Date when the post was published.',
 						} ) }
 					</div>
 				) }
@@ -64,6 +65,7 @@ export default function PostStatsCard( {
 					src={ post?.post_thumbnail }
 					alt={ translate( 'Thumbnail for a post titled "%(title)s"', {
 						args: { title: post.title },
+						comment: 'Alt-text for a thumbnail picture for a given post.',
 						textOnly: true,
 					} ) }
 				/>
