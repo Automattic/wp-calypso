@@ -858,7 +858,7 @@ class ThemeSheet extends Component {
 					href={ plansUrl }
 					showIcon={ true }
 					forceDisplay={ forceDisplay }
-					displayAsLink={ isExternallyManagedTheme }
+					displayAsLink={ onClick !== null }
 				/>
 			);
 		}
