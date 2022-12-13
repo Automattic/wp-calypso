@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	getBillingMonthsForTerm,
 	getTermDuration,
@@ -6,9 +7,11 @@ import {
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
+import { isValueTruthy } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { useStableCallback } from 'calypso/lib/use-stable-callback';
 import type { WPCOMProductVariant } from '../components/item-variation-picker';
 import type { ResponseCartProduct, ResponseCartProductVariant } from '@automattic/shopping-cart';
@@ -78,18 +81,34 @@ export function useGetProductVariants(
 	const filteredVariants = useMemo( () => {
 		const convertedVariants = variants
 			.sort( sortVariant )
-			.map( ( variant ): WPCOMProductVariant => {
-				const term = getBillingTermForMonths( variant.bill_period_in_months );
-				return {
-					variantLabel: getTermText( term, translate ),
-					productSlug: variant.product_slug,
-					productId: variant.product_id,
-					priceInteger: variant.price_integer,
-					termIntervalInMonths: getBillingMonthsForTerm( term ),
-					termIntervalInDays: getTermDuration( term ) ?? 0,
-					currency: variant.currency,
-				};
-			} );
+			.map( ( variant ): WPCOMProductVariant | undefined => {
+				try {
+					const term = getBillingTermForMonths( variant.bill_period_in_months );
+					return {
+						variantLabel: getTermText( term, translate ),
+						productSlug: variant.product_slug,
+						productId: variant.product_id,
+						priceInteger: variant.price_integer,
+						termIntervalInMonths: getBillingMonthsForTerm( term ),
+						termIntervalInDays: getTermDuration( term ) ?? 0,
+						currency: variant.currency,
+					};
+				} catch ( error ) {
+					// Three-year plans are not yet fully supported, so we need to guard
+					// against fatals here and ignore them.
+					logToLogstash( {
+						feature: 'calypso_client',
+						message: 'checkout variant picker variant error',
+						severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+						extra: {
+							env: config( 'env_id' ),
+							variant: JSON.stringify( variant ),
+							message: ( error as Error ).message + '; Stack: ' + ( error as Error ).stack,
+						},
+					} );
+				}
+			} )
+			.filter( isValueTruthy );
 
 		return convertedVariants.filter( ( product ) => filterCallbackMemoized( product ) );
 	}, [ translate, variants, filterCallbackMemoized ] );
