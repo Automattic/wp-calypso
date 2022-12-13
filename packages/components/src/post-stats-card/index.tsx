@@ -62,7 +62,10 @@ export default function PostStatsCard( {
 				<img
 					className="post-stats-card__thumbnail"
 					src={ post?.post_thumbnail }
-					alt={ translate( 'Thumbnail for the post' ) }
+					alt={ translate( 'Thumbnail for a post titled "%(title)s"', {
+						args: { title: post.title },
+						textOnly: true,
+					} ) }
 				/>
 			) }
 		</Card>
