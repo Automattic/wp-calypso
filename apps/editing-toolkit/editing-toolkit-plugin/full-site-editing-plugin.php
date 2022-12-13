@@ -385,9 +385,13 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );
  * Help center
  */
 function load_help_center() {
+	// disable help center in P2s.
+	if ( defined( 'IS_WPCOM' ) && IS_WPCOM && \WPForTeams\is_wpforteams_site( get_current_blog_id() ) ) {
+		return false;
+	}
+
 	require_once __DIR__ . '/help-center/class-help-center.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_help_center' );
 
 /**
  * Load paragraph block
