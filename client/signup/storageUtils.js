@@ -12,6 +12,11 @@ export const retrieveSignupDestination = () => {
 	return cookies.wpcom_signup_complete_destination;
 };
 
+export const retrieveRecognizedLogins = () => {
+	const cookies = cookie.parse( document.cookie );
+	return cookies.recognized_logins ?? null;
+};
+
 export const clearSignupDestinationCookie = () => {
 	// Set expiration to a random time in the past so that the cookie gets removed.
 	const expirationDate = new Date( new Date().getTime() - 1000 );

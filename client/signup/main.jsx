@@ -86,6 +86,7 @@ import {
 	setSignupCompleteSlug,
 	getSignupCompleteSlug,
 	setSignupCompleteFlowName,
+	retrieveRecognizedLogins,
 } from './storageUtils';
 import {
 	canResumeFlow,
@@ -858,6 +859,7 @@ class Signup extends Component {
 
 		return (
 			! this.props.isLoggedIn &&
+			! retrieveRecognizedLogins() &&
 			( isCurrentPlanFlow( this.props.flowName ) || this.props.flowName === 'onboarding' ) &&
 			isEnglishLocale &&
 			currentTime.getUTCHours() >= 15 &&
