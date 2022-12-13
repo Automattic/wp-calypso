@@ -6,13 +6,13 @@ import FreePostSetup from './internals/steps-repository/free-post-setup';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
 
-export const freePostSetup: Flow = {
+const freePostSetup: Flow = {
 	name: FREE_POST_SETUP_FLOW,
 	get title() {
 		return translate( 'Free' );
 	},
 	useSteps() {
-		return [ { slug: 'newsletterPostSetup', component: FreePostSetup } ];
+		return [ { slug: 'freePostSetup', component: FreePostSetup } ];
 	},
 
 	useStepNavigation( currentStep, navigate ) {
@@ -45,3 +45,5 @@ export const freePostSetup: Flow = {
 		return { goNext, goBack, goToStep, submit };
 	},
 };
+
+export default freePostSetup;
