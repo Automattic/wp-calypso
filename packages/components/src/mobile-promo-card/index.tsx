@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import './style.scss';
@@ -40,6 +41,27 @@ function getRedirectUrl( key: string ): string | null {
 	return 'https://jetpack.com/redirect/?source=' + REDIRECT_SLUGS[ key ];
 }
 
+// Event names used for Tracks.
+const TRACKS_EVENTS: {
+	[ key: string ]: string | undefined;
+} = {
+	jetpackClickA8C: 'calypso_stats_mobile_cta_jetpack_click',
+	jetpackClickApple: 'calypso_stats_mobile_cta_jetpack_apple_click',
+	jetpackClickGoogle: 'calypso_stats_mobile_cta_jetpack_google_click',
+	wooClickA8C: 'calypso_stats_mobile_cta_woo_click',
+	wooClickApple: 'calypso_stats_mobile_cta_woo_apple_click',
+	wooClickGoogle: 'calypso_stats_mobile_cta_woo_google_click',
+};
+
+function sendTracksEvent( key: string ): void {
+	// Limit to known events.
+	const eventName = TRACKS_EVENTS[ key ];
+	// Forward the Tracks call if we have a valid event.
+	if ( eventName ) {
+		recordTracksEvent( eventName );
+	}
+}
+
 export default function MobilePromoCard( { className, isWoo }: MobilePromoCardProps ) {
 	const translate = useTranslate();
 	// Basic user agent testing so we can show app store badges on moble.
@@ -67,7 +89,11 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 				{
 					components: {
 						a: (
-							<a className="woo" href={ getRedirectUrl( 'wooA8C' ) ?? 'https://woo.com/mobile' } />
+							<a
+								className="woo"
+								href={ getRedirectUrl( 'wooA8C' ) ?? 'https://woo.com/mobile' }
+								onClick={ () => sendTracksEvent( 'wooClickA8C' ) }
+							/>
 						),
 					},
 				}
@@ -81,6 +107,7 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 						<a
 							className="jetpack"
 							href={ getRedirectUrl( 'jetpackA8C' ) ?? 'https://jetpack.com/app' }
+							onClick={ () => sendTracksEvent( 'jetpackClickA8C' ) }
 						/>
 					),
 				},
@@ -93,8 +120,12 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 		const fallbackLink = isWoo ? 'https://woo.com/mobile' : 'https://jetpack.com/app';
 		if ( isApple ) {
 			const appStoreLink = isWoo ? getRedirectUrl( 'wooApple' ) : getRedirectUrl( 'jetpackApple' );
+			const tracksEventName = isWoo ? 'wooClickApple' : 'jetpackClickApple';
 			return (
-				<a href={ appStoreLink ?? fallbackLink }>
+				<a
+					href={ appStoreLink ?? fallbackLink }
+					onClick={ () => sendTracksEvent( tracksEventName ) }
+				>
 					<img
 						className="promo-store-badge"
 						src={ storeBadgeApple }
@@ -107,8 +138,12 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 			const appStoreLink = isWoo
 				? getRedirectUrl( 'wooGoogle' )
 				: getRedirectUrl( 'jetpackGoogle' );
+			const tracksEventName = isWoo ? 'wooClickGoogle' : 'jetpackClickGoogle';
 			return (
-				<a href={ appStoreLink ?? fallbackLink }>
+				<a
+					href={ appStoreLink ?? fallbackLink }
+					onClick={ () => sendTracksEvent( tracksEventName ) }
+				>
 					<img
 						className="promo-store-badge"
 						src={ storeBadgeGoogle }
