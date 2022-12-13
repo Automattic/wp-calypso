@@ -1,5 +1,6 @@
 import { createSelector } from '@automattic/state-utils';
-import { filter, find, get, pick, reduce, some, sortBy } from 'lodash';
+import { filter, find, get, pick, some, sortBy } from 'lodash';
+import getAllSitesWithPlugins from 'calypso/state/selectors/get-all-sites-with-plugins';
 import {
 	getSite,
 	getSiteTitle,
@@ -66,41 +67,50 @@ export function requestPluginsError( state ) {
 	return state.plugins.installed.requestError;
 }
 
+export const getAllPlugins = createSelector(
+	( state ) => {
+		const allSitesWithPlugins = getAllSitesWithPlugins( state );
+
+		return allSitesWithPlugins
+			.map( ( site ) => site.ID )
+			.reduce( ( plugins, siteId ) => {
+				const pluginsForSite = state.plugins.installed.plugins[ siteId ] || [];
+				pluginsForSite.forEach( ( plugin ) => {
+					const sitePluginInfo = pick( plugin, [ 'active', 'autoupdate', 'update', 'version' ] );
+
+					plugins[ plugin.slug ] = {
+						...plugins[ plugin.slug ],
+						...plugin,
+						sites: {
+							...plugins[ plugin.slug ]?.sites,
+							[ siteId ]: sitePluginInfo,
+						},
+					};
+				} );
+				return plugins;
+			}, {} );
+	},
+	( state ) => [ getAllSitesWithPlugins( state ), state.plugins.installed.plugins ]
+);
+
 function getPluginsSelector( state, siteIds, pluginFilter ) {
-	let pluginList = reduce(
-		siteIds,
-		( memo, siteId ) => {
-			if ( isRequesting( state, siteId ) ) {
-				return memo;
-			}
+	if ( isRequestingForAllSites( state ) ) {
+		return [];
+	}
 
-			// We currently support fetching plugins per site and also fetching all plugins
-			// in bulk, aiming to optimize the UX in some flows.
-			if ( isRequestingForAllSites( state ) ) {
-				return memo;
-			}
+	const allPlugins = getAllPlugins( state );
 
-			const list = state.plugins.installed.plugins[ siteId ] || [];
-			list.forEach( ( item ) => {
-				const sitePluginInfo = pick( item, [ 'active', 'autoupdate', 'update', 'version' ] );
-
-				memo[ item.slug ] = {
-					...memo[ item.slug ],
-					...item,
-					sites: {
-						...memo[ item.slug ]?.sites,
-						[ siteId ]: sitePluginInfo,
-					},
-				};
-			} );
-			return memo;
-		},
-		{}
+	const allPluginsForSites = Object.values( allPlugins ).filter(
+		( plugin ) =>
+			!! Object.keys( plugin.sites )
+				.map( ( siteId ) => Number( siteId ) )
+				.find( ( siteId ) => ! isRequesting( state, siteId ) && siteIds.includes( siteId ) )
 	);
 
-	if ( pluginFilter && _filters[ pluginFilter ] ) {
-		pluginList = filter( pluginList, _filters[ pluginFilter ] );
-	}
+	const pluginList =
+		pluginFilter && _filters[ pluginFilter ]
+			? filter( allPluginsForSites, _filters[ pluginFilter ] )
+			: allPluginsForSites;
 
 	return sortBy( pluginList, ( item ) => item.slug.toLowerCase() );
 }
@@ -134,7 +144,16 @@ export function getPluginsOnSites( state, plugins ) {
 }
 
 export function getPluginOnSites( state, siteIds, pluginSlug ) {
-	return getPlugins( state, siteIds ).find( ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) );
+	const plugin = getAllPlugins( state )[ pluginSlug ];
+	const pluginSiteIds = Object.keys( plugin.sites ).map( ( siteId ) => Number( siteId ) );
+
+	for ( const siteId of siteIds ) {
+		if ( pluginSiteIds.includes( Number( siteId ) ) ) {
+			return plugin;
+		}
+	}
+
+	return undefined;
 }
 
 export function getPluginOnSite( state, siteId, pluginSlug ) {
