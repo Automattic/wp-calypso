@@ -25,7 +25,7 @@ export default function DesignCarousel( { onPick }: Props ) {
 	} );
 
 	// Cherry-picked designs
-	const designSlugs = [ 'tsubaki', 'tazza', 'thriving-artist', 'twentytwentytwo' ];
+	const designSlugs = [ 'tsubaki', 'tazza', 'thriving-artist', 'twentytwentytwo', 'zaino' ];
 
 	const selectedDesigns = designSlugs
 		.map( ( designSlug ) =>
