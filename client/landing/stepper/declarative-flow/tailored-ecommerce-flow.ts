@@ -68,12 +68,27 @@ const ecommerceFlow: Flow = {
 		const flags = new URLSearchParams( window.location.search ).get( 'flags' );
 
 		const getStartUrl = () => {
+			let hasFlowParams = false;
+			const flowParams = new URLSearchParams();
+
+			if ( recurType !== ecommerceFlowRecurTypes.YEARLY ) {
+				flowParams.set( 'recur', recurType );
+				hasFlowParams = true;
+			}
+			if ( locale && locale !== 'en' ) {
+				flowParams.set( 'locale', locale );
+				hasFlowParams = true;
+			}
+
+			const redirectTarget =
+				`/setup/ecommerce/storeProfiler` +
+				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
 			const url =
 				locale && locale !== 'en'
-					? `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=/setup/ecommerce/storeProfiler`
-					: `/start/account/user?variationName=${ flowName }&redirect_to=/setup/ecommerce/storeProfiler`;
+					? `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=${ redirectTarget }`
+					: `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
 
-			return url + ( flags ? `?flags=${ flags }` : '' );
+			return url + ( flags ? `&flags=${ flags }` : '' );
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
@@ -105,7 +120,7 @@ const ecommerceFlow: Flow = {
 					}
 
 					if ( providedDependencies?.siteSlug ) {
-						const destination = `/setup/${ flowName }/checkPlan?siteSlug=${ siteSlug }&flags=signup/tailored-ecommerce`;
+						const destination = `/setup/${ flowName }/checkPlan?siteSlug=${ siteSlug }`;
 						persistSignupDestination( destination );
 						setSignupCompleteSlug( siteSlug );
 						setSignupCompleteFlowName( flowName );
@@ -115,7 +130,6 @@ const ecommerceFlow: Flow = {
 						const urlParams = new URLSearchParams( {
 							theme: selectedDesign?.slug || '',
 							siteSlug: siteSlug.replace( '.wordpress.com', '.wpcomstaging.com' ),
-							flags: 'signup/tailored-ecommerce',
 						} );
 
 						const returnUrl = encodeURIComponent( `/setup/${ flowName }/checkPlan?${ urlParams }` );
