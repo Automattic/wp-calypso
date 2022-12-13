@@ -45,8 +45,8 @@ const WpcomTourKitStepCard: React.FunctionComponent< WpcomTourStepRendererProps 
 					</picture>
 					{ imgLink && (
 						<a
-							className={ classnames( 'wpcom-tour-ket-step-card__medida-link', {
-								'wpcom-tour-ket-step-card__medida-link--playable': imgLink.playable,
+							className={ classnames( 'wpcom-tour-kit-step-card__media-link', {
+								'wpcom-tour-kit-step-card__media-link--playable': imgLink.playable,
 							} ) }
 							href={ imgLink.href }
 							target="_blank"
