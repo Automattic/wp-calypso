@@ -118,11 +118,11 @@ function useCachedContactDetailsForCheckoutForm(
 				setShouldShowContactDetailsValidationErrors( true );
 				isMounted.current && setComplete( true );
 				// eslint-disable-next-line no-console
-				console.error( error );
+				console.error( 'Error while autocompleting contact details:', error );
 				logToLogstash( {
 					feature: 'calypso_client',
-					message: 'composite checkout load error',
-					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+					message: 'composite checkout autocomplete error',
+					severity: config( 'env_id' ) === 'production' ? 'warning' : 'debug',
 					extra: {
 						env: config( 'env_id' ),
 						type: 'checkout_contact_details_autocomplete',
