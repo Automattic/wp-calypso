@@ -177,10 +177,6 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 					await page.close();
 					pageIndex++;
 				}
-				// Close the context.
-				// Strongly suggested by Playwright maintainers
-				// before shutting down the browser.
-				await context.close();
 				contextIndex++;
 			}
 			// Print paths to captured artifacts for faster triaging.
