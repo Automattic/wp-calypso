@@ -16,7 +16,9 @@ import { UPDATE_NAMESERVERS } from 'calypso/lib/url/support';
 import { getIncludedDomainPurchase } from 'calypso/state/purchases/selectors';
 import getPlanCancellationFeatures from './get-plan-cancellation-features';
 
-const featuresList = ( translate, purchase, productSlug, hasDomain ) => {
+const FeaturesList = ( { purchase, productSlug, hasDomain } ) => {
+	const translate = useTranslate();
+
 	if ( typeof productSlug !== 'string' ) {
 		return null;
 	}
@@ -73,7 +75,11 @@ const cancelSubscriptionDescription = ( site, translate, purchase, includedDomai
 				) }
 			</p>
 			<div className="cancel-purchase__refund-information-description">
-				{ featuresList( translate, purchase, planSlug, includedDomainPurchase ) }
+				<FeaturesList
+					purchase={ purchase }
+					productSlug={ planSlug }
+					hasDomain={ includedDomainPurchase }
+				/>
 			</div>
 		</div>
 	);
