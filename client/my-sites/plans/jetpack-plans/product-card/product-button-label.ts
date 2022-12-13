@@ -1,6 +1,5 @@
 import { planHasFeature } from '@automattic/calypso-products';
 import { translate, TranslateResult } from 'i18n-calypso';
-import { createElement, Fragment } from 'react';
 import { ITEM_TYPE_PRODUCT } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import { SitePlan } from 'calypso/state/sites/selectors/get-site-plan';
@@ -50,11 +49,11 @@ export default function productButtonLabel( {
 
 	return (
 		buttonLabel ??
-		translate( 'Get {{name/}}', {
-			components: {
-				name: createElement( Fragment, {}, displayName ),
+		translate( 'Get %(name)s', {
+			args: {
+				name: displayName,
 			},
-			comment: '{{name/}} is the name of a product',
+			comment: '%(name)s is the name of a product',
 		} )
 	);
 }
