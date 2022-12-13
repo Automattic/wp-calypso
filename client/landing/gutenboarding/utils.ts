@@ -5,9 +5,13 @@ export function getIsAnchorFmSignup( urlString: string ): boolean {
 	if ( ! urlString ) {
 		return false;
 	}
-	const url = new URL( urlString, window.location.origin );
-	const decodedUrl = decodeURIComponent( url.search );
-	const searchParams = new URLSearchParams( decodedUrl );
+
+	// Assemble search params if there is actually a query in the string.
+	const queryParamIndex = urlString.indexOf( '?' );
+	if ( queryParamIndex === -1 ) {
+		return false;
+	}
+	const searchParams = new URLSearchParams( urlString.slice( queryParamIndex ) );
 	const anchorFmPodcastId = searchParams.get( 'anchor_podcast' );
 	return Boolean( anchorFmPodcastId && anchorFmPodcastId.match( /^[0-9a-f]{7,8}$/i ) );
 }
