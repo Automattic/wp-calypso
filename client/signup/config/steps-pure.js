@@ -129,6 +129,7 @@ export function generateSteps( {
 		'domains-link-in-bio-tld': {
 			stepName: 'domains-link-in-bio-tld',
 			apiRequestFunction: createSiteWithCart,
+			fulfilledStepCallback: isDomainFulfilled,
 			dependencies: [ 'tld' ],
 			providesDependencies: [
 				'siteId',

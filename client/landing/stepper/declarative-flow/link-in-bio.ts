@@ -58,6 +58,7 @@ const linkInBio: Flow = {
 		const locale = useLocale();
 		const queryParams = useQuery();
 		const tld = queryParams.get( 'tld' );
+		const selectedDomain = queryParams.get( 'selectedDomain' );
 
 		// At the moment, the TLD variation relies on going back and forth from the classic signup framework
 		// and the Stepper framework. Since it begins from the former, the Stepper framework doesn't have a chance
@@ -162,7 +163,7 @@ const linkInBio: Flow = {
 
 				case 'linkInBioSetup':
 					return window.location.assign(
-						`/start/link-in-bio-tld/plans-link-in-bio?variationName=${ flowName }&pageTitle=Link%20in%20Bio&tld=${ tld }`
+						`/start/link-in-bio-tld/plans-link-in-bio?variationName=${ flowName }&pageTitle=Link%20in%20Bio&tld=${ tld }&selectedDomain=${ selectedDomain }`
 					);
 
 				case 'launchpad': {

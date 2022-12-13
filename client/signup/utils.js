@@ -220,7 +220,7 @@ export const isPlanSelectionAvailableLaterInFlow = ( flowSteps ) => {
 };
 
 export const processDependencyInQuery = ( key, value ) => {
-	if ( key === 'domain' ) {
+	if ( key === 'selectedDomain' ) {
 		const domain = value;
 		const productSlug = getDomainProductSlug( domain );
 		const domainItem = domainRegistration( { productSlug, domain } );

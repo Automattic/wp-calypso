@@ -254,7 +254,9 @@ const Flows = {
 			flow = removeP2DetailsStepFromFlow( flow );
 		}
 
-		return Flows.filterExcludedSteps( flow );
+		const result = Flows.filterExcludedSteps( flow );
+
+		return result;
 	},
 
 	getNextStepNameInFlow( flowName, currentStepName = '' ) {

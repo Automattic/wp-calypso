@@ -144,17 +144,23 @@ export function generateFlows( {
 			name: LINK_IN_BIO_TLD_FLOW,
 			steps: [ 'domains-link-in-bio-tld', 'user', 'plans-link-in-bio' ],
 			middleDestination: {
-				user: ( dependencies ) => `/setup/link-in-bio/patterns?tld=${ dependencies.tld }`,
+				user: ( { tld }, progress ) => {
+					const selectedDomain = progress[ 'domains-link-in-bio-tld' ]?.siteUrl;
+					return `/setup/link-in-bio/patterns?tld=${ tld }&selectedDomain=${ encodeURIComponent(
+						selectedDomain
+					) }`;
+				},
 			},
-			destination: ( dependencies ) =>
-				`/setup/link-in-bio/launchpad?siteSlug=${ encodeURIComponent( dependencies.siteSlug ) }`,
+			destination: ( { siteSlug } ) =>
+				`/setup/link-in-bio/launchpad?siteSlug=${ encodeURIComponent( siteSlug ) }`,
 			description: 'Beginning of the flow to create a link in bio',
 			lastModified: '2022-11-03',
 			showRecaptcha: true,
 			get pageTitle() {
 				return translate( 'Link in Bio' );
 			},
-			providesDependenciesInQuery: [ 'tld' ],
+			providesDependenciesInQuery: [ 'tld', 'selectedDomain' ],
+			optionalDependenciesInQuery: [ 'selectedDomain' ], // optional because it's only populated after the domain step
 			postCompleteCallback: setupSiteAfterCreation,
 		},
 		{

@@ -205,6 +205,7 @@ class Signup extends Component {
 			const destinationStep = flows.getFlow( this.props.flowName, this.props.isLoggedIn )
 				.steps[ 0 ];
 			this.setState( { resumingStep: destinationStep } );
+
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
 			return page.redirect(
 				getStepUrl(
@@ -455,7 +456,7 @@ class Signup extends Component {
 		map( flowSteps, ( flowStepName ) => this.processFulfilledSteps( flowStepName, nextProps ) );
 
 		if ( includes( flows.excludedSteps, stepName ) ) {
-			this.goToNextStep( flowName );
+			this.goToNextStep( flowName, stepName );
 		}
 	};
 
@@ -600,7 +601,8 @@ class Signup extends Component {
 		for ( const dependencyKey of dependenciesInQuery ) {
 			const value = queryObject[ dependencyKey ];
 			if ( value != null ) {
-				result[ dependencyKey ] = processDependencyInQuery( dependencyKey, value );
+				// result[ dependencyKey ] = processDependencyInQuery( dependencyKey, value );
+				result[ dependencyKey ] = value;
 			}
 		}
 
@@ -652,12 +654,12 @@ class Signup extends Component {
 
 	// `nextFlowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
-	goToNextStep = ( nextFlowName = this.props.flowName ) => {
+	goToNextStep = ( nextFlowName = this.props.flowName, currentStepName = this.props.stepName ) => {
 		const { steps: flowSteps, middleDestination } = flows.getFlow(
 			nextFlowName,
 			this.props.isLoggedIn
 		);
-		const currentStepIndex = flowSteps.indexOf( this.props.stepName );
+		const currentStepIndex = flowSteps.indexOf( currentStepName );
 		const nextStepName = flowSteps[ currentStepIndex + 1 ];
 		const nextProgressItem = get( this.props.progress, nextStepName );
 		const nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
@@ -666,12 +668,16 @@ class Signup extends Component {
 			this.setState( { previousFlowName: this.props.flowName } );
 		}
 
-		const midPoint = middleDestination ? middleDestination[ this.props.stepName ] : null;
+		const midPoint = middleDestination ? middleDestination[ currentStepName ] : null;
+
+		if ( currentStepName === 'domains-link-in-bio-tld' ) {
+			debugger;
+		}
 
 		if ( midPoint ) {
 			// save the resuming point and then navigate away.
 			this.setState( { resumingStep: nextStepName } );
-			page( midPoint( this.props.signupDependencies ) );
+			page( midPoint( this.props.signupDependencies, this.props.progress ) );
 			return;
 		}
 

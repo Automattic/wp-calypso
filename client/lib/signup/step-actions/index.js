@@ -10,10 +10,12 @@ import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lod
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
+	domainRegistration,
 	updatePrivacyForDomain,
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'calypso/lib/cart-values/cart-items';
+import { getDomainProductSlug } from 'calypso/lib/domains';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
@@ -1033,7 +1035,27 @@ function excludeDomainStep( stepName, tracksEventValue, submitSignupStep ) {
 }
 
 export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
-	const { siteDomains, submitSignupStep } = nextProps;
+	const { siteDomains, signupDependencies, submitSignupStep } = nextProps;
+	const { selectedDomain } = signupDependencies;
+
+	if ( selectedDomain ) {
+		const productSlug = getDomainProductSlug( selectedDomain );
+		const domainItem = domainRegistration( { productSlug, domain: selectedDomain } );
+		const isPurchasingItem = true;
+
+		submitSignupStep(
+			{
+				stepName,
+				domainItem,
+				isPurchasingItem,
+				siteUrl: selectedDomain,
+			},
+			{ domainItem }
+		);
+
+		flows.excludeStep( stepName );
+		return;
+	}
 
 	if ( siteDomains && siteDomains.length > 1 ) {
 		const tracksEventValue = siteDomains.map( ( siteDomain ) => siteDomain.domain ).join( ', ' );
