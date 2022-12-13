@@ -19,6 +19,19 @@ import { search } from './search-api';
 import { getPluginsListKey } from './utils';
 import type { ESHits, ESResponse, Plugin, PluginQueryOptions } from './types';
 
+const getIconUrl = ( pluginSlug: string, icon: string ): string => {
+	try {
+		const url = new URL( icon || '' );
+		return url.toString();
+	} catch ( _ ) {}
+
+	return buildDefaultIconUrl( pluginSlug );
+};
+
+function buildDefaultIconUrl( pluginSlug: string ) {
+	return `https://s.w.org/plugins/geopattern-icon/${ pluginSlug }.svg`;
+}
+
 const mapStarRatingToPercent = ( starRating?: number ) => ( ( starRating ?? 0 ) / 5 ) * 100;
 
 const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
@@ -41,7 +54,7 @@ const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 			active_installs: hit.plugin.active_installs,
 			last_updated: hit.modified,
 			short_description: hit.plugin.excerpt, // TODO: add localization
-			icon: hit.plugin.icons,
+			icon: getIconUrl( hit.slug, hit.plugin.icons ),
 			variations: {
 				monthly: { product_id: hit.plugin.store_product_monthly_id },
 				yearly: { product_id: hit.plugin.store_product_yearly_id },
