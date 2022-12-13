@@ -1,7 +1,7 @@
 import { StepContainer, base64ImageToBlob, uploadAndSetSiteLogo } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate } from 'i18n-calypso';
 import { FormEvent, useEffect, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
@@ -14,14 +14,14 @@ import '../free-setup/styles.scss';
 
 const FreePostSetup: Step = ( { navigation } ) => {
 	const { submit } = navigation;
-	const { __ } = useI18n();
+	const translate = useTranslate();
 	const site = useSite();
 
 	const formText = {
-		titlePlaceholder: __( 'My Website' ),
-		titleMissing: __( `Oops. Looks like your website doesn't have a name yet.` ),
-		taglinePlaceholder: __( 'Add a short description here' ),
-		iconPlaceholder: __( 'Upload a profile image' ),
+		titlePlaceholder: translate( 'My Website' ),
+		titleMissing: translate( `Oops. Looks like your website doesn't have a name yet.` ),
+		taglinePlaceholder: translate( 'Add a short description here' ),
+		iconPlaceholder: translate( 'Upload a profile image' ),
 	};
 
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = useState( false );
@@ -82,7 +82,7 @@ const FreePostSetup: Step = ( { navigation } ) => {
 			formattedHeader={
 				<FormattedHeader
 					id="free-setup-header"
-					headerText={ createInterpolateElement( __( 'Personalize your<br />Website' ), {
+					headerText={ createInterpolateElement( translate( 'Personalize your<br />Website' ), {
 						br: <br />,
 					} ) }
 					align="center"
