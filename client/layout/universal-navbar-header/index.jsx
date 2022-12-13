@@ -30,7 +30,12 @@ const UniversalNavbarHeader = () => {
 							<nav className="x-nav" aria-label="WordPress.com">
 								<ul className="x-nav-list x-nav-list__left">
 									<li className="x-nav-item">
-										<a role="menuitem" className="x-nav-link x-nav-link__logo x-link" href="/">
+										<a
+											role="menuitem"
+											className="x-nav-link x-nav-link__logo x-link"
+											href="/"
+											target="_self"
+										>
 											<WordPressWordmark className="x-icon x-icon__logo" />
 											<span className="x-hidden">WordPress.com</span>
 										</a>
