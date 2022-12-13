@@ -47,7 +47,7 @@ export function createCustomHomeTemplateContent(
 		);
 	}
 
-	if ( hasHeader || hasFooter || hasSections ) {
+	if ( hasSections ) {
 		content.push( `
 	<!-- wp:group {"tagName":"main"} -->
 		<main class="wp-block-group">
