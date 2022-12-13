@@ -75,14 +75,14 @@ const FreePostSetup: Step = ( { navigation } ) => {
 
 	return (
 		<StepContainer
-			stepName="newsletter-setup"
+			stepName="free-setup"
 			isWideLayout={ true }
 			hideBack={ true }
-			flowName="newsletter"
+			flowName="free"
 			formattedHeader={
 				<FormattedHeader
 					id="free-setup-header"
-					headerText={ createInterpolateElement( __( 'Personalize your<br />website' ), {
+					headerText={ createInterpolateElement( __( 'Personalize your<br />Website' ), {
 						br: <br />,
 					} ) }
 					align="center"
