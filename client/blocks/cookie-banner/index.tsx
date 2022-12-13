@@ -1,12 +1,11 @@
 import { CookieBanner } from '@automattic/privacy-toolset';
-import cookie from 'cookie';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {
-	refreshCountryCodeCookieGdpr,
 	setTrackingPrefs,
 	shouldSeeCookieBanner,
 	getTrackingPrefs,
+	useRefreshGeoCookies,
 } from 'calypso/lib/analytics/utils';
 import { bumpStat } from 'calypso/state/analytics/actions';
 import { useCookieBannerContent } from './use-cookie-banner-content';
@@ -41,21 +40,13 @@ const CookieBannerInner = ( { onClose }: { onClose: () => void } ) => {
 
 const CookieBannerContainer = () => {
 	const [ show, setShow ] = useState( false );
+	const geoCookies = useRefreshGeoCookies();
 
 	useEffect( () => {
-		const controller = new AbortController();
-
-		refreshCountryCodeCookieGdpr( controller.signal )
-			.then( () => {
-				const cookies = cookie.parse( document.cookie );
-				setShow( shouldSeeCookieBanner( cookies.country_code, getTrackingPrefs() ) );
-			} )
-			.catch( () => {
-				setShow( shouldSeeCookieBanner( undefined, getTrackingPrefs() ) );
-			} );
-
-		return () => controller.abort();
-	}, [ setShow ] );
+		if ( geoCookies ) {
+			setShow( shouldSeeCookieBanner( geoCookies.countryCode, getTrackingPrefs() ) );
+		}
+	}, [ geoCookies ] );
 
 	const handleClose = useCallback( () => {
 		setShow( false );

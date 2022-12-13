@@ -5,7 +5,7 @@ import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { retarget as retargetAdTrackers } from 'calypso/lib/analytics/ad-tracking';
 import { retargetFullStory } from 'calypso/lib/analytics/fullstory';
 import { updateQueryParamsTracking } from 'calypso/lib/analytics/sem';
-import { refreshCountryCodeCookieGdpr, saveCouponQueryArgument } from 'calypso/lib/analytics/utils';
+import { refreshGeoCookies, saveCouponQueryArgument } from 'calypso/lib/analytics/utils';
 import { gaRecordPageView } from './ga';
 import { processQueue } from './queue';
 import { referRecordPageView } from './refer';
@@ -40,6 +40,6 @@ async function safeGoogleAnalyticsPageView(
 	pageTitle,
 	useJetpackGoogleAnalytics = false
 ) {
-	await refreshCountryCodeCookieGdpr();
+	await refreshGeoCookies();
 	gaRecordPageView( urlPath, pageTitle, useJetpackGoogleAnalytics );
 }

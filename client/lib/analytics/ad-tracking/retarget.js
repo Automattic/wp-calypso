@@ -1,4 +1,4 @@
-import { refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
+import { refreshGeoCookies } from 'calypso/lib/analytics/utils';
 import { mayWeTrackByTracker } from '../tracker-buckets';
 import {
 	debug,
@@ -26,7 +26,7 @@ let lastRetargetTime = 0;
  * @returns {void}
  */
 export async function retarget( urlPath ) {
-	await refreshCountryCodeCookieGdpr();
+	await refreshGeoCookies();
 
 	await loadTrackingScripts();
 

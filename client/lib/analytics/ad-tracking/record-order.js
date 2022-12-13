@@ -1,5 +1,5 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
-import { costToUSD, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
+import { costToUSD, refreshGeoCookies } from 'calypso/lib/analytics/utils';
 import { mayWeTrackByTracker } from '../tracker-buckets';
 import { cartToGaPurchase } from '../utils/cart-to-ga-purchase';
 import { splitWpcomJetpackCartInfo } from '../utils/split-wpcom-jetpack-cart-info';
@@ -32,7 +32,7 @@ import './setup';
  * @returns {void}
  */
 export async function recordOrder( cart, orderId ) {
-	await refreshCountryCodeCookieGdpr();
+	await refreshGeoCookies();
 
 	await loadTrackingScripts();
 
