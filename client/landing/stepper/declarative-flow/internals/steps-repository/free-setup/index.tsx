@@ -3,7 +3,8 @@ import { Icon } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { FormEvent, useEffect } from 'react';
+import { debounce } from 'lodash';
+import React, { FormEvent, useEffect, useMemo } from 'react';
 import { DomainSuggestion } from 'calypso/../packages/data-stores/src';
 import { setDomainCartItem } from 'calypso/../packages/data-stores/src/onboard/actions';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -42,10 +43,12 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 		React.useState< DomainSuggestion | null >();
 	const [ generatedTopLevelDomain, setGeneratedTopLevelDomain ] = React.useState< string >( '' );
 	const [ generatedSiteName, setGeneratedSiteName ] = React.useState< string >( '' );
+	const [ showGeneratedDomainFormField, setShowGeneratedDomainFormField ] =
+		React.useState< boolean >( false );
 	const { setSiteTitle, setSiteDescription, setSiteLogo } = useDispatch( ONBOARD_STORE );
 	const state = useSelect( ( select ) => select( ONBOARD_STORE ) ).getState();
 
-	const generateNewRandomDomain = async () => {
+	const generateNewRandomDomain = async ( siteTitle: string ) => {
 		await wpcom.req
 			.get(
 				{
@@ -54,10 +57,12 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 				},
 				{
 					managed_subdomains: 'wordpress.com',
-					managed_subdomain_options: 'random_name',
+					managed_subdomain_options:
+						'exact_match,random_name,random_name_format=adjective,suffix=query',
 					managed_subdomain_quantity: 1,
 					quantity: 1,
 					http_envelope: 1,
+					query: siteTitle,
 				}
 			)
 			.then( ( result: DomainSuggestion[] ) => {
@@ -68,41 +73,23 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 						productSlug: '',
 					} );
 					setDomainCartItem( domainCartItem );
+					setShowGeneratedDomainFormField( true );
 				} else {
 					setGeneratedDomainSuggestion( null );
 					setDomainCartItem( undefined );
 				}
 			} )
 			.catch( () => {
+				// TODO: add error message
 				setGeneratedDomainSuggestion( null );
 				setDomainCartItem( undefined );
 			} );
 	};
 
-	useEffect( () => {
-		//Generates new domain when screen loads
-		generateNewRandomDomain();
-	}, [] );
-
-	useEffect( () => {
-		const { siteTitle, siteDescription, siteLogo } = state;
-		setTagline( siteDescription );
-		setComponentSiteTitle( siteTitle );
-
-		if ( siteLogo ) {
-			const file = new File( [ base64ImageToBlob( siteLogo ) ], 'site-logo.png' );
-			setSelectedFile( file );
-		}
-	}, [ state ] );
-
-	useEffect( () => {
-		if ( ! site ) {
-			return;
-		}
-
-		setComponentSiteTitle( site.name || '' );
-		setTagline( site.description );
-	}, [ site ] );
+	const debounceGenerateRandomDomainAPI = useMemo(
+		() => debounce( generateNewRandomDomain, 1000 ),
+		[]
+	);
 
 	const handleSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
@@ -115,7 +102,7 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 			try {
 				setSiteLogo( base64Image );
 			} catch ( _error ) {
-				// communicate the error to the user
+				// TODO: communicate the error to the user
 			}
 		}
 
@@ -124,16 +111,10 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 		}
 	};
 
-	// Splits generated domain suggestion for styling purposes
-	useEffect( () => {
-		if ( generatedDomainSuggestion ) {
-			const [ siteName, topLevelDomain ] = getUrlInfo( generatedDomainSuggestion?.domain_name );
-			topLevelDomain && setGeneratedTopLevelDomain( topLevelDomain );
-			siteName && setGeneratedSiteName( siteName );
-		}
-	}, [ generatedDomainSuggestion ] );
-
 	const domainGeneratorFormField = () => {
+		if ( ! showGeneratedDomainFormField ) {
+			return undefined;
+		}
 		return (
 			<FormFieldset className="setup-form-field-set-domain-name">
 				<FormLabel htmlFor="setup-form-domain-name">{ __( 'Site address' ) }</FormLabel>
@@ -160,6 +141,42 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 	const handleBackButton = () => {
 		return window.location.assign( '/setup/free/intro' );
 	};
+
+	useEffect( () => {
+		const { siteTitle, siteDescription, siteLogo } = state;
+		setTagline( siteDescription );
+		setComponentSiteTitle( siteTitle );
+
+		if ( siteLogo ) {
+			const file = new File( [ base64ImageToBlob( siteLogo ) ], 'site-logo.png' );
+			setSelectedFile( file );
+		}
+	}, [ state ] );
+
+	useEffect( () => {
+		if ( ! site ) {
+			return;
+		}
+
+		setComponentSiteTitle( site.name || '' );
+		setTagline( site.description );
+	}, [ site ] );
+
+	useEffect( () => {
+		if ( siteTitle.trim().length > 0 && ! showGeneratedDomainFormField ) {
+			// Debounce for random domain generation API while user is typing site title
+			debounceGenerateRandomDomainAPI( siteTitle );
+		}
+	}, [ siteTitle, showGeneratedDomainFormField, debounceGenerateRandomDomainAPI ] );
+
+	// Splits generated domain suggestion for styling purposes
+	useEffect( () => {
+		if ( generatedDomainSuggestion ) {
+			const [ siteName, topLevelDomain ] = getUrlInfo( generatedDomainSuggestion?.domain_name );
+			topLevelDomain && setGeneratedTopLevelDomain( topLevelDomain );
+			siteName && setGeneratedSiteName( siteName );
+		}
+	}, [ generatedDomainSuggestion ] );
 
 	return (
 		<StepContainer
