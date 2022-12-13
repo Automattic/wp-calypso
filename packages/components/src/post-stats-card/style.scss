@@ -107,7 +107,7 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 	}
 }
 
-@media ( max-width: $break-mobile ) {
+@media ( max-width: $break-zoomed-in ) {
 	.post-stats-card {
 		grid-template-areas:
 			"heading"
