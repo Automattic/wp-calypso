@@ -241,9 +241,6 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 				}
 				break;
 			case 'test_fn_start':
-				console.log(
-					`In test_fn_start, is browser connected: ${ this.global.browser.isConnected() }`
-				);
 				// This event is fired after both the `beforeAll` and `beforeEach` hooks.
 				// Since this event fires after `beforeEach` hooks, it is the best way to detect
 				// an actual `it/test` step as having started.
@@ -263,9 +260,6 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 				break;
 			}
 			case 'test_fn_failure': {
-				console.log(
-					`In test_fn_failure, is browser connected: ${ this.global.browser.isConnected() }`
-				);
 				this.failure = { type: 'test', name: event.test.name };
 				this.allure?.failTestStep( event.error );
 				break;
