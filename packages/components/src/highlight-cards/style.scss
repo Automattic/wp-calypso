@@ -4,6 +4,8 @@
 @import "../styles/typography";
 @import "./variables.scss";
 
+$header-margin-bottom: math.div($vertical-margin, 2);
+
 .highlight-cards {
 	color: var(--studio-gray-100);
 	font-size: $font-body-small;
@@ -25,7 +27,7 @@
 	font-weight: 400;
 	line-height: 40px;
 	font-family: $font-recoleta;
-	margin-bottom: math.div($vertical-margin, 2);
+	margin-bottom: $header-margin-bottom;
 	small {
 		font-family: $sans;
 		font-size: $font-body-small;
@@ -113,6 +115,16 @@
 }
 .highlight-card-difference-absolute-value {
 	margin-right: 2px;
+}
+.highlight-year-navigation {
+	display: flex;
+	justify-content: space-between;
+
+	.stats-period-navigation {
+		margin: 0;
+		align-self: stretch;
+		margin-bottom: $header-margin-bottom;
+	}
 }
 
 @media ( max-width: $custom-mobile-breakpoint ) {

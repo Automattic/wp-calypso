@@ -158,7 +158,34 @@ export function redirectToDefaultModulePage( context ) {
 }
 
 export function insights( context, next ) {
-	context.primary = <StatsInsights />;
+	const {
+		params: { site: givenSiteId },
+		query: queryOptions,
+		store,
+	} = context;
+
+	const filters = getSiteFilters( givenSiteId );
+	const state = store.getState();
+
+	// Why empty??
+	const currentSite = getSite( state, givenSiteId );
+	const siteId = currentSite ? currentSite.ID || 0 : 0;
+
+	const momentSiteZone = getMomentSiteZone( state, siteId );
+	const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
+
+	const activeFilter = find( filters, ( filter ) => {
+		return (
+			context.path.indexOf( filter.path ) >= 0 ||
+			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )
+		);
+	} );
+
+	const date = isValidStartDate
+		? moment( queryOptions.startDate ).locale( 'en' )
+		: rangeOfPeriod( activeFilter.period, momentSiteZone.locale( 'en' ) ).startOf;
+
+	context.primary = <StatsInsights date={ date } />;
 	next();
 }
 

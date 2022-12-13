@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import DomainTip from 'calypso/blocks/domain-tip';
@@ -26,7 +27,7 @@ import statsStrings from '../stats-strings';
 import StatsViews from '../stats-views';
 
 const StatsInsights = ( props ) => {
-	const { siteId, siteSlug, translate, isOdysseyStats } = props;
+	const { siteId, siteSlug, translate, isOdysseyStats, date } = props;
 	const moduleStrings = statsStrings();
 
 	const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
@@ -34,6 +35,11 @@ const StatsInsights = ( props ) => {
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
 	sessionStorage.setItem( 'jp-stats-last-tab', 'insights' );
+
+	const lastYear = moment.utc().subtract( 1, 'year' ).format( 'YYYY-MM-DD' );
+	const isPrevArrowHidden = ( queryDate ) => {
+		return moment( queryDate ).isSameOrBefore( '2001-01-01' );
+	};
 
 	// TODO: should be refactored into separate components
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -50,7 +56,13 @@ const StatsInsights = ( props ) => {
 					align="left"
 				/>
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
-				<AnnualHighlightsSection siteId={ siteId } />
+				<AnnualHighlightsSection
+					siteId={ siteId }
+					queryDate={ date }
+					hidePreviousArrow={ isPrevArrowHidden( date ) }
+					hideNextArrow={ lastYear === date } // why does this work even if this param and condition are broken?
+					url={ `/stats/insights/${ siteSlug }` }
+				/>
 				<AllTimelHighlightsSection siteId={ siteId } />
 				<div className="stats__module--insights-unified">
 					<PostingActivity />
