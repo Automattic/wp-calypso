@@ -93,7 +93,6 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 			setPendingAction( createSite );
 			submit();
 		}
-
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
