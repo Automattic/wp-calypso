@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState, useCallback } from 'react';
-import DoNotSellDialogContainer, { useDialogHelper } from 'calypso/blocks/do-not-sell-dialog';
+import DoNotSellDialogContainer from 'calypso/blocks/do-not-sell-dialog';
 import ExternalLink from 'calypso/components/external-link';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import SocialLogo from 'calypso/components/social-logo';
@@ -46,7 +46,14 @@ const JetpackComFooter: React.FC = () => {
 		[ region ]
 	);
 	const { shouldSeeDoNotSell, isDoNotSell, onSetDoNotSell } = useDoNotSell();
-	const { isDialogOpen, closeDialog, openDialog } = useDialogHelper();
+	const [ isDialogOpen, setIsDialogOpen ] = useState( false );
+
+	const openDialog = useCallback( () => {
+		setIsDialogOpen( true );
+	}, [] );
+	const closeDialog = useCallback( () => {
+		setIsDialogOpen( false );
+	}, [] );
 
 	const defaultLocale = useLocale();
 	const [ isLocaleSwitcherVisible, setLocaleSwitcherVisibility ] = useState( false );

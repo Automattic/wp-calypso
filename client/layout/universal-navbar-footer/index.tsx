@@ -1,6 +1,7 @@
 import './style.scss';
 import { useTranslate } from 'i18n-calypso';
-import DoNotSellDialogContainer, { useDialogHelper } from 'calypso/blocks/do-not-sell-dialog';
+import { useCallback, useState } from 'react';
+import DoNotSellDialogContainer from 'calypso/blocks/do-not-sell-dialog';
 import SocialLogo from 'calypso/components/social-logo';
 import { useDoNotSell } from 'calypso/lib/analytics/utils';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -9,7 +10,14 @@ import { navigate } from 'calypso/lib/navigate';
 const UniversalNavbarFooter = () => {
 	const translate = useTranslate();
 	const { shouldSeeDoNotSell, isDoNotSell, onSetDoNotSell } = useDoNotSell();
-	const { isDialogOpen, closeDialog, openDialog } = useDialogHelper();
+	const [ isDialogOpen, setIsDialogOpen ] = useState( false );
+
+	const openDialog = useCallback( () => {
+		setIsDialogOpen( true );
+	}, [] );
+	const closeDialog = useCallback( () => {
+		setIsDialogOpen( false );
+	}, [] );
 
 	return (
 		<>
