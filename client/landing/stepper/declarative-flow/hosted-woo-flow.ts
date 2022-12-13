@@ -17,7 +17,6 @@ import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import CheckPlan from './internals/steps-repository/check-plan';
 import DesignCarousel from './internals/steps-repository/design-carousel';
 import DomainsStep from './internals/steps-repository/domains';
-import Intro from './internals/steps-repository/intro';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SetThemeStep from './internals/steps-repository/set-theme-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
@@ -36,7 +35,6 @@ const hostedWooFlow: Flow = {
 		}, [] );
 
 		return [
-			{ slug: 'intro', component: Intro },
 			{ slug: 'storeProfiler', component: StoreProfiler },
 			{ slug: 'storeAddress', component: StoreAddress },
 			{ slug: 'domains', component: DomainsStep },

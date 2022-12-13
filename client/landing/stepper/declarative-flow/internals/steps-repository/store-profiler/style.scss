@@ -16,4 +16,10 @@
 			}
 		}
 	}
+
+	&.hosted-woo {
+		.button.is-primary {
+			background-color: #674399;
+		}
+	}
 }
