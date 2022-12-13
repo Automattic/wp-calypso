@@ -28,6 +28,8 @@ export function getEnhancedTasks(
 	const linkInBioLinksEditCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.links_edited || false;
 
+	const siteEditCompleted = site?.options?.launchpad_checklist_tasks_statuses?.site_edited || false;
+
 	const siteLaunchCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.site_launched || false;
 
@@ -66,6 +68,11 @@ export function getEnhancedTasks(
 				case 'design_edited':
 					taskData = {
 						title: translate( 'Edit site design' ),
+						completed: siteEditCompleted,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, siteEditCompleted, task.id );
+							window.location.assign( `/site-editor/${ siteSlug }` );
+						},
 					};
 					break;
 				case 'plan_selected':
@@ -79,6 +86,11 @@ export function getEnhancedTasks(
 						disabled: isVideoPressFlow( flow ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							if ( displayGlobalStylesWarning ) {
+								recordTracksEvent(
+									'calypso_launchpad_global_styles_gating_plan_selected_task_clicked'
+								);
+							}
 							const plansUrl = addQueryArgs( `/plans/${ siteSlug }`, {
 								...( displayGlobalStylesWarning && {
 									plan: PLAN_PREMIUM,

@@ -197,8 +197,6 @@ class StatsSite extends Component {
 
 		const query = memoizedQuery( period, endOf );
 
-		const showNewModules = config.isEnabled( 'stats/new-stats-module-component' );
-
 		// For period option links
 		const traffic = {
 			label: translate( 'Traffic' ),
@@ -294,7 +292,7 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsTopPosts"
 							showSummaryLink
-							showNewModules={ showNewModules }
+							showNewModules
 						/>
 						<StatsModule
 							path="referrers"
@@ -303,7 +301,7 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsReferrers"
 							showSummaryLink
-							showNewModules={ showNewModules }
+							showNewModules
 						/>
 
 						<Countries
@@ -311,7 +309,7 @@ class StatsSite extends Component {
 							period={ this.props.period }
 							query={ query }
 							summary={ false }
-							showNewModules={ showNewModules }
+							showNewModules
 						/>
 
 						<StatsModule
@@ -322,7 +320,7 @@ class StatsSite extends Component {
 							statType="statsTopAuthors"
 							className="stats__author-views"
 							showSummaryLink
-							showNewModules={ showNewModules }
+							showNewModules
 						/>
 						<StatsModule
 							path="searchterms"
@@ -331,7 +329,7 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsSearchTerms"
 							showSummaryLink
-							showNewModules={ showNewModules }
+							showNewModules
 						/>
 
 						<StatsModule
@@ -341,7 +339,7 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsClicks"
 							showSummaryLink
-							showNewModules={ showNewModules }
+							showNewModules
 						/>
 						<StatsModule
 							path="videoplays"
@@ -350,7 +348,7 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsVideoPlays"
 							showSummaryLink
-							showNewModules={ showNewModules }
+							showNewModules
 						/>
 						{
 							// File downloads are not yet supported in Jetpack Stats
@@ -364,7 +362,7 @@ class StatsSite extends Component {
 									statType="statsFileDownloads"
 									showSummaryLink
 									useShortLabel={ true }
-									showNewModules={ showNewModules }
+									showNewModules
 								/>
 							)
 						}

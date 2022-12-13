@@ -363,10 +363,21 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		// These conditions should be true at this point, but just in case...
 		if ( selectedDesign && selectedStyleVariation ) {
 			recordTracksEvent(
-				'calypso_signup_design_premium_global_styles_modal_show',
+				'calypso_signup_design_global_styles_gating_modal_show',
 				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
 			);
 			setShowPremiumGlobalStylesModal( true );
+		}
+	}
+
+	function closePremiumGlobalStylesModal() {
+		// These conditions should be true at this point, but just in case...
+		if ( selectedDesign && selectedStyleVariation ) {
+			recordTracksEvent(
+				'calypso_signup_design_global_styles_gating_modal_close_button_click',
+				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
+			);
+			setShowPremiumGlobalStylesModal( false );
 		}
 	}
 
@@ -374,7 +385,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		// These conditions should be true at this point, but just in case...
 		if ( selectedDesign && selectedStyleVariation && siteSlugOrId ) {
 			recordTracksEvent(
-				'calypso_signup_design_premium_global_styles_modal_checkout_button_click',
+				'calypso_signup_design_global_styles_gating_modal_checkout_button_click',
 				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
 			);
 
@@ -399,6 +410,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			window.location.href = `/checkout/${ encodeURIComponent(
 				siteSlug || urlToSlug( site?.URL || '' ) || ''
 			) }/premium?${ params.toString() }`;
+		}
+	}
+
+	function tryPremiumGlobalStyles() {
+		// These conditions should be true at this point, but just in case...
+		if ( selectedDesign && selectedStyleVariation ) {
+			recordTracksEvent(
+				'calypso_signup_design_global_styles_gating_modal_try_button_click',
+				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
+			);
+			pickDesign();
 		}
 	}
 
@@ -576,9 +598,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				/>
 				<PremiumGlobalStylesUpgradeModal
 					checkout={ goToCheckoutForPremiumGlobalStyles }
-					closeModal={ () => setShowPremiumGlobalStylesModal( false ) }
+					closeModal={ closePremiumGlobalStylesModal }
 					isOpen={ showPremiumGlobalStylesModal }
-					pickDesign={ pickDesign }
+					tryStyle={ tryPremiumGlobalStyles }
 				/>
 				{ selectedDesignHasStyleVariations ? (
 					<AsyncLoad

@@ -30,7 +30,9 @@ describe(
 			} );
 
 			it( 'Enter Onboarding flow', async function () {
-				await page.goto( DataHelper.getCalypsoURL( '/setup/site-setup', { siteSlug } ) );
+				await page.goto( DataHelper.getCalypsoURL( '/setup/site-setup', { siteSlug } ), {
+					timeout: 30 * 1000,
+				} );
 			} );
 
 			it( 'Select "Promote" goal', async function () {
