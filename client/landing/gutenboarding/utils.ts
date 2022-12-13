@@ -11,7 +11,9 @@ export function getIsAnchorFmSignup( urlString: string ): boolean {
 	if ( queryParamIndex === -1 ) {
 		return false;
 	}
-	const searchParams = new URLSearchParams( urlString.slice( queryParamIndex ) );
+	const searchParams = new URLSearchParams(
+		decodeURIComponent( urlString.slice( queryParamIndex ) )
+	);
 	const anchorFmPodcastId = searchParams.get( 'anchor_podcast' );
 	return Boolean( anchorFmPodcastId && anchorFmPodcastId.match( /^[0-9a-f]{7,8}$/i ) );
 }
