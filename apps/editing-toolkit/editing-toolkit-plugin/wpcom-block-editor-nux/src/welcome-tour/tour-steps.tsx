@@ -87,7 +87,7 @@ function getTourSteps(
 						if ( isPatternAssemblerFlow ) {
 							return createInterpolateElement(
 								__(
-									'This is the Site Editor, it’s where you can change everything about your site, including adding content to your homepage. <link_to_site_editor_course>Watch these short videos</link_to_site_editor_course> or take a tour to get started.',
+									'This is the Site Editor, it’s where you can change everything about your site, including adding content to your homepage. <link_to_site_editor_course>Watch these short videos</link_to_site_editor_course> and take this tour to get started.',
 									'full-site-editing'
 								),
 								{
