@@ -3,7 +3,8 @@ import { isWpMobileApp } from 'calypso/lib/mobile-app';
 
 // function that tells us if we want to show the Help Center to the user, given that we're showing it to
 // only a certain percentage of users.
-export function shouldShowHelpCenterToUser() {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function shouldShowHelpCenterToUser( _userId: number ) {
 	return true;
 }
 
