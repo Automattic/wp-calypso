@@ -12,6 +12,11 @@ export const useProductLightbox = () => {
 	const translate = useTranslate();
 	const [ currentProduct, setCurrentProduct ] = useState< SelectorProduct | null >( null );
 
+	/*
+	 * TO-DO: Ideally we want PlanList (holds all translatable data related to Jetpack plans) to be a react hook so it is aware of translation
+	 * changes. While fixing it will require huge refactoring, for now we useEffect here to manually recreate the product object.
+	 * This should be removed once we have converted PlanList and slugToSelectorProduct into a react hook.
+	 */
 	useEffect( () => {
 		setCurrentProduct( slugToSelectorProduct( sanitizeLocationHash( window.location.hash ) ) );
 	}, [ translate ] );
