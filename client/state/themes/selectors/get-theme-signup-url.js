@@ -1,5 +1,3 @@
-import { addLocaleToPath } from '@automattic/i18n-utils';
-import { getLocaleSlug } from 'i18n-calypso';
 import { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 
 import 'calypso/state/themes/init';
@@ -22,6 +20,5 @@ export function getThemeSignupUrl( state, themeId ) {
 		url += '&premium=true';
 	}
 
-	const localeSlug = typeof getLocaleSlug === 'function' ? getLocaleSlug() : 'en';
-	return addLocaleToPath( url, localeSlug );
+	return url;
 }

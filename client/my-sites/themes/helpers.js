@@ -1,4 +1,4 @@
-import { isMagnificentLocale } from '@automattic/i18n-utils';
+import { isMagnificentLocale, addLocaleToPath } from '@automattic/i18n-utils';
 import { mapValues } from 'lodash';
 import titlecase from 'to-title-case';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
@@ -52,7 +52,16 @@ export function getAnalyticsData( path, { filter, vertical, tier, site_id } ) {
 }
 
 export function localizeThemesPath( path, locale, isLoggedOut = true ) {
-	const shouldPrefix = isLoggedOut && isMagnificentLocale( locale ) && path.startsWith( '/theme' );
+	const shouldLocalizePath = isLoggedOut && isMagnificentLocale( locale );
 
-	return shouldPrefix ? `/${ locale }${ path }` : path;
+	if ( shouldLocalizePath ) {
+		if ( path.startsWith( '/theme' ) ) {
+			return `/${ locale }${ path }`;
+		}
+
+		if ( path.startsWith( '/start/theme' ) ) {
+			return addLocaleToPath( path, locale );
+		}
+	}
+	return path;
 }
