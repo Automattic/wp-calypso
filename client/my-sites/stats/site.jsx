@@ -9,6 +9,7 @@ import { parse as parseQs, stringify as stringifyQs } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
+import { MobilePromoCard } from 'calypso/../packages/components/src';
 import rocketImage from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import wordpressSeoIllustration from 'calypso/assets/images/illustrations/wordpress-seo-premium.svg';
@@ -21,6 +22,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
+import DotPager from 'calypso/components/dot-pager';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -38,6 +40,7 @@ import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HighlightsSection from './highlights-section';
@@ -189,7 +192,10 @@ class StatsSite extends Component {
 	}
 
 	renderStats() {
-		const { date, siteId, slug, isJetpack, isSitePrivate, isOdysseyStats } = this.props;
+		const { date, siteId, slug, isAtomic, isJetpack, isSitePrivate, isOdysseyStats } = this.props;
+
+		// Yoast promo card is only shown on Atomic sites.
+		const isJetpackNonAtomic = isJetpack && ! isAtomic;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -368,20 +374,36 @@ class StatsSite extends Component {
 					</div>
 				</div>
 				{ /** Promo Card is disabled for Odyssey because it doesn't make much sense in the context, which also removes an API call to `plugins`. */ }
-				{ ! isOdysseyStats && (
-					<div className="stats-content-promo">
-						<PromoCardBlock
-							productSlug="wordpress-seo-premium"
-							impressionEvent="calypso_stats_wordpress_seo_premium_banner_view"
-							clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
-							headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
-							contentText={ translate(
-								'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
-							) }
-							ctaText={ translate( 'Learn more' ) }
-							image={ wordpressSeoIllustration }
-							href={ `/plugins/wordpress-seo-premium/${ slug }` }
-						/>
+				{ ! isOdysseyStats && isJetpackNonAtomic && (
+					<div className="stats__promo-container">
+						<div className="stats__promo-card">
+							<MobilePromoCard className="stats__promo-card-apps" />
+						</div>
+					</div>
+				) }
+				{ ! isJetpackNonAtomic && (
+					<div className="stats__promo-container">
+						<div className="stats__promo-card">
+							<DotPager className="stats__promo-pager">
+								<div>
+									<PromoCardBlock
+										productSlug="wordpress-seo-premium"
+										impressionEvent="calypso_stats_wordpress_seo_premium_banner_view"
+										clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
+										headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
+										contentText={ translate(
+											'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
+										) }
+										ctaText={ translate( 'Learn more' ) }
+										image={ wordpressSeoIllustration }
+										href={ `/plugins/wordpress-seo-premium/${ slug }` }
+									/>
+								</div>
+								<div>
+									<MobilePromoCard className="stats__promo-card-apps" />
+								</div>
+							</DotPager>
+						</div>
 					</div>
 				) }
 				<JetpackColophon />
@@ -462,6 +484,7 @@ export default connect(
 			isJetpack &&
 			isJetpackModuleActive( state, siteId, 'stats' ) === false;
 		return {
+			isAtomic: isAtomicSite( state, siteId ),
 			isJetpack,
 			isSitePrivate: isPrivateSite( state, siteId ),
 			siteId,
