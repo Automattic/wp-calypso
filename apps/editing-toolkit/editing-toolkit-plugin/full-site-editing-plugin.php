@@ -392,6 +392,7 @@ function load_help_center() {
 
 	require_once __DIR__ . '/help-center/class-help-center.php';
 }
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_help_center' );
 
 /**
  * Load paragraph block
