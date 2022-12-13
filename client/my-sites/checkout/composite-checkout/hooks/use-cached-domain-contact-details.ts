@@ -122,7 +122,7 @@ function useCachedContactDetailsForCheckoutForm(
 				logToLogstash( {
 					feature: 'calypso_client',
 					message: 'composite checkout autocomplete error',
-					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+					severity: config( 'env_id' ) === 'production' ? 'warning' : 'debug',
 					extra: {
 						env: config( 'env_id' ),
 						type: 'checkout_contact_details_autocomplete',
