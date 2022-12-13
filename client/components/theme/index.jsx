@@ -1,5 +1,7 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Card, Ribbon, Button, Gridicon } from '@automattic/components';
+import { PremiumBadge, WooCommerceBundledBadge } from '@automattic/design-picker';
 import { Button as LinkButton } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -358,6 +360,48 @@ export class Theme extends Component {
 		);
 	}
 
+	getPricingBadge = () => {
+		const { doesThemeBundleSoftwareSet, isExternallyManagedTheme } = this.props;
+		if ( ! doesThemeBundleSoftwareSet || isExternallyManagedTheme ) {
+			return <PremiumBadge />;
+		}
+
+		if ( doesThemeBundleSoftwareSet && ! isExternallyManagedTheme ) {
+			return <WooCommerceBundledBadge />;
+		}
+
+		return null;
+	};
+
+	getPricingDescription = () => {
+		const {
+			didPurchaseTheme,
+			doesThemeBundleSoftwareSet,
+			isExternallyManagedTheme,
+			isSiteEligibleForBundledSoftware,
+			isSiteEligibleForManagedExternalThemes,
+			hasPremiumThemesFeature,
+			translate,
+		} = this.props;
+		const isUsablePremiumTheme = ! doesThemeBundleSoftwareSet && hasPremiumThemesFeature;
+		const isUsableBundledTheme =
+			doesThemeBundleSoftwareSet && hasPremiumThemesFeature && isSiteEligibleForBundledSoftware;
+
+		if ( didPurchaseTheme && ! isUsablePremiumTheme && ! isUsableBundledTheme ) {
+			return translate( 'Purchased on an annual subscription' );
+		} else if ( isExternallyManagedTheme && ! isSiteEligibleForManagedExternalThemes ) {
+			return translate( 'Available for purchase with the Business plan' );
+		} else if ( isExternallyManagedTheme && isSiteEligibleForManagedExternalThemes ) {
+			return translate( 'Included in your plan' );
+		} else if ( isUsablePremiumTheme || isUsableBundledTheme ) {
+			return translate( 'Included in your plan' );
+		} else if ( doesThemeBundleSoftwareSet ) {
+			return translate( 'Available with the Business plan' );
+		}
+
+		return translate( 'Included in the Premium plan' );
+	};
+
 	softLaunchedBanner = () => {
 		const { translate } = this.props;
 
@@ -387,6 +431,7 @@ export class Theme extends Component {
 			isExternallyManagedTheme,
 		} = this.props;
 		const { name, description, screenshot } = theme;
+		const isNewDetailsAndPreview = isEnabled( 'themes/showcase-i4/details-and-preview' );
 		const isActionable = this.props.screenshotClickUrl || this.props.onScreenshotClick;
 		const themeClass = classNames( 'theme', {
 			'is-active': active,
@@ -518,8 +563,21 @@ export class Theme extends Component {
 								} ) }
 							</span>
 						) }
-						{ active && <span className={ priceClass }>{ price }</span> }
-						{ upsell }
+						{ isNewDetailsAndPreview ? (
+							<div className="theme__info-pricing">
+								{ showUpsell && this.getPricingBadge() }
+								{ ! active && (
+									<span className="theme__info-pricing-text">
+										{ showUpsell ? this.getPricingDescription() : translate( 'Free' ) }
+									</span>
+								) }
+							</div>
+						) : (
+							<>
+								{ active && <span className={ priceClass }>{ price }</span> }
+								{ upsell }
+							</>
+						) }
 						{ ! isEmpty( this.props.buttonContents ) ? (
 							<ThemeMoreButton
 								index={ this.props.index }
