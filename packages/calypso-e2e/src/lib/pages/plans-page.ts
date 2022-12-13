@@ -82,7 +82,10 @@ export class PlansPage {
 		const locator = this.page.locator( selectors.selectPlanButton( plan ) );
 		// In the /plans view, there are two buttons for "Upgrade" on the
 		// plan comparison chart.
-		await Promise.all( [ this.page.waitForNavigation(), locator.first().click() ] );
+		await Promise.all( [
+			this.page.waitForNavigation( { timeout: 30 * 1000 } ),
+			locator.first().click(),
+		] );
 	}
 
 	/* Generic */

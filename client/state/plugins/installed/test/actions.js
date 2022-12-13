@@ -9,6 +9,7 @@ import {
 	DISABLE_AUTOUPDATE_PLUGIN,
 } from 'calypso/lib/plugins/constants';
 import {
+	PLUGINS_ALL_RECEIVE,
 	PLUGINS_ALL_REQUEST,
 	PLUGINS_ALL_REQUEST_SUCCESS,
 	PLUGINS_ALL_REQUEST_FAILURE,
@@ -114,9 +115,10 @@ describe( 'actions', () => {
 			test( 'should dispatch plugins receive action when request completes', async () => {
 				await fetchAllPlugins()( spy, getState );
 				expect( spy ).toHaveBeenCalledWith( {
-					type: PLUGINS_RECEIVE,
-					siteId: 2916284,
-					data: [ akismet, helloDolly, jetpack ],
+					type: PLUGINS_ALL_RECEIVE,
+					allSitesPlugins: {
+						2916284: [ akismet, helloDolly, jetpack ],
+					},
 				} );
 			} );
 
