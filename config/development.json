@@ -155,6 +155,7 @@
 		"sign-in-with-apple/redirect": true,
 		"signup/design-picker-pattern-assembler": true,
 		"signup/free-flow": true,
+		"signup/hosted-woo-onboarding": true,
 		"signup/inline-help": false,
 		"signup/professional-email-step": false,
 		"signup/social": true,

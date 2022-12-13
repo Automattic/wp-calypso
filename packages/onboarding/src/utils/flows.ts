@@ -6,6 +6,7 @@ export const LINK_IN_BIO_POST_SETUP_FLOW = 'link-in-bio-post-setup';
 export const VIDEOPRESS_FLOW = 'videopress';
 export const IMPORT_FOCUSED_FLOW = 'import-focused';
 export const ECOMMERCE_FLOW = 'ecommerce';
+export const HOSTED_WOO_FLOW = 'hosted-woo';
 export const FREE_FLOW = 'free';
 
 export const isLinkInBioFlow = ( flowName: string | null ) => {

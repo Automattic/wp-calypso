@@ -118,6 +118,7 @@
 		"sign-in-with-apple/redirect": true,
 		"signup/design-picker-pattern-assembler": true,
 		"signup/free-flow": false,
+		"signup/hosted-woo-onboarding": false,
 		"signup/inline-help": false,
 		"signup/professional-email-step": false,
 		"signup/social": true,

@@ -4,6 +4,7 @@ import {
 	ECOMMERCE_FLOW,
 	VIDEOPRESS_FLOW,
 	FREE_FLOW,
+	HOSTED_WOO_FLOW,
 } from '@automattic/onboarding';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -28,7 +29,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 			};
 		}
 
-		if ( flowName === ECOMMERCE_FLOW ) {
+		if ( flowName === ECOMMERCE_FLOW || flowName === HOSTED_WOO_FLOW ) {
 			return {
 				title: createInterpolateElement( __( 'Set up your online store<br />in minutes' ), {
 					br: <br />,

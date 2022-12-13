@@ -44,4 +44,9 @@ if ( config.isEnabled( 'themes/plugin-bundling' ) ) {
 	availableFlows[ 'plugin-bundle' ] = () =>
 		import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' );
 }
+
+if ( config.isEnabled( 'signup/hosted-woo-onboarding' ) ) {
+	availableFlows[ 'hosted-woo' ] = () =>
+		import( /* webpackChunkName: "hosted-woo-flow" */ '../declarative-flow/hosted-woo-flow' );
+}
 export default availableFlows;

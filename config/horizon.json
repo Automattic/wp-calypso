@@ -100,6 +100,7 @@
 		"sign-in-with-apple": false,
 		"signup/design-picker-pattern-assembler": true,
 		"signup/free-flow": true,
+		"signup/hosted-woo-onboarding": false,
 		"signup/inline-help": false,
 		"signup/professional-email-step": false,
 		"signup/social": true,
