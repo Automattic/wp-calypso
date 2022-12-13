@@ -89,6 +89,7 @@ import {
 	getStepUrl,
 	isReskinnedFlow,
 	isP2Flow,
+	hasAllPreviousAndCurrentStepsCompleted,
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 import './style.scss';
@@ -862,13 +863,16 @@ class Signup extends Component {
 		) {
 			const { pendingMidpointTransition } = this.state;
 
-			if ( pendingMidpointTransition ) {
-				if (
-					this.props.progress[ 'domains-link-in-bio-tld' ]?.status === 'completed' ||
-					this.props.progress[ 'domains-link-in-bio-tld' ]?.status === 'pending'
-				) {
-					page( pendingMidpointTransition );
-				}
+			if (
+				pendingMidpointTransition &&
+				hasAllPreviousAndCurrentStepsCompleted(
+					this.props.flowName,
+					this.props.progress,
+					this.props.isLoggedIn,
+					this.props.stepName
+				)
+			) {
+				page( pendingMidpointTransition );
 			}
 
 			return null;

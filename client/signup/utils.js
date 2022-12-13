@@ -143,6 +143,27 @@ export function getFirstInvalidStep( flowName, progress, isUserLoggedIn ) {
 	return find( getFilteredSteps( flowName, progress, isUserLoggedIn ), { status: 'invalid' } );
 }
 
+export function hasAllPreviousAndCurrentStepsCompleted(
+	flowName,
+	progress,
+	isUserLoggedIn,
+	currentStepName
+) {
+	// we don't use getFilteredSteps here since the order matters here.
+	const { steps: flowSteps } = flows.getFlow( flowName, isUserLoggedIn );
+	const currentStepIndex = flowSteps.indexOf( currentStepName );
+
+	for ( let stepIndex = 0; stepIndex <= currentStepIndex; ++stepIndex ) {
+		const progressStatus = progress[ flowSteps[ stepIndex ] ]?.status;
+
+		if ( progressStatus !== 'completed' && progressStatus !== 'pending' ) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 export function getCompletedSteps( flowName, progress, options = {}, isUserLoggedIn ) {
 	// Option to check that the current `flowName` matches the `lastKnownFlow`.
 	// This is to ensure that when resuming progress, we only do so if
