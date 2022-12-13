@@ -64,7 +64,8 @@ const FeaturesList = ( { purchase, productSlug, hasDomain } ) => {
 	);
 };
 
-const cancelSubscriptionDescription = ( site, translate, purchase, includedDomainPurchase ) => {
+const CancelSubscriptionDescription = ( { site, purchase, includedDomainPurchase } ) => {
+	const translate = useTranslate();
 	const planSlug = site.plan.product_slug;
 
 	return (
@@ -467,9 +468,13 @@ const CancelPurchaseRefundInformation = ( {
 
 	return (
 		<div className="cancel-purchase__info">
-			{ isSubscription( purchase ) &&
-				! isJetpackPurchase &&
-				cancelSubscriptionDescription( site, translate, purchase, includedDomainPurchase ) }
+			{ isSubscription( purchase ) && ! isJetpackPurchase && (
+				<CancelSubscriptionDescription
+					site={ site }
+					purchase={ purchase }
+					includedDomainPurchase={ includedDomainPurchase }
+				/>
+			) }
 			{ Array.isArray( text ) ? (
 				text.map( ( paragraph, index ) => (
 					<p
