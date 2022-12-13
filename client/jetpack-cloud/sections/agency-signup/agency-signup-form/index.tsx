@@ -35,7 +35,8 @@ export default function AgencySignupForm() {
 			let message = error.message;
 
 			if ( error.code === 'rest_invalid_param' && typeof error?.data?.params !== 'undefined' ) {
-				message = translateInvalidPartnerParameterError( error.data.params, error.data.details );
+				const details = error?.data?.details ?? {};
+				message = translateInvalidPartnerParameterError( error.data.params, details );
 			}
 
 			dispatch( errorNotice( message, { id: notificationId } ) );
