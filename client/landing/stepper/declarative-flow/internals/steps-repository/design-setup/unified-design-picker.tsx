@@ -121,8 +121,18 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		}
 	);
 
-	const generatedDesigns = allDesigns?.generated?.designs || [];
-	const staticDesigns = allDesigns?.static?.designs || [];
+	// Only display free designs if siteSlugOrId does not exist
+	function filterFreeDesigns( designs: Design[] | undefined ) {
+		if ( designs && ! siteSlugOrId ) {
+			return designs.filter( ( design ) => {
+				return ! design.is_premium;
+			} );
+		}
+		return designs;
+	}
+
+	const generatedDesigns = filterFreeDesigns( allDesigns?.generated?.designs ) || [];
+	const staticDesigns = filterFreeDesigns( allDesigns?.static?.designs ) || [];
 
 	const hasTrackedView = useRef( false );
 	useEffect( () => {
@@ -489,7 +499,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	}
 
 	function showGlobalStylesPremiumBadge() {
-		if ( ! shouldLimitGlobalStyles ) {
+		if ( ! site || ! shouldLimitGlobalStyles ) {
 			return null;
 		}
 
@@ -514,6 +524,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		}
 
 		if (
+			site &&
 			shouldLimitGlobalStyles &&
 			selectedStyleVariation &&
 			selectedStyleVariation.slug !== DEFAULT_VARIATION_SLUG
