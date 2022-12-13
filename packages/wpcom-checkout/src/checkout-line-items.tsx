@@ -797,7 +797,7 @@ function FirstTermDiscountCallout( { product }: { product: ResponseCartProduct }
 		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
 	}
 
-	if ( isBiennially( product ) && isTriennially( product ) ) {
+	if ( isBiennially( product ) || isTriennially( product ) ) {
 		return <DiscountCallout>{ translate( 'Discount for first term' ) }</DiscountCallout>;
 	}
 
