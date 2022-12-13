@@ -25,6 +25,7 @@ import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { showMasterbar } from 'calypso/state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import CartSubscriber from './cart-subscriber';
 import { getPurchaseURLCallback } from './get-purchase-url-callback';
 import getViewTrackerPath from './get-view-tracker-path';
 import { getForCurrentCROIteration, Iterations } from './iterations';
@@ -241,15 +242,20 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 				/>
 
 				{ isEnabled( 'jetpack/pricing-page-rework-v1' ) ? (
-					<ProductStore
-						createCheckoutURL={ createProductURL }
-						duration={ currentDuration }
-						enableUserLicensesDialog={ enableUserLicensesDialog }
-						onClickPurchase={ selectProduct }
-						urlQueryArgs={ urlQueryArgs }
-						header={ header }
-						planRecommendation={ planRecommendation }
-					/>
+					<CartSubscriber
+						siteId={ siteId }
+						render={ () => (
+							<ProductStore
+								createCheckoutURL={ createProductURL }
+								duration={ currentDuration }
+								enableUserLicensesDialog={ enableUserLicensesDialog }
+								onClickPurchase={ selectProduct }
+								urlQueryArgs={ urlQueryArgs }
+								header={ header }
+								planRecommendation={ planRecommendation }
+							/>
+						) }
+					></CartSubscriber>
 				) : (
 					<>
 						{ siteId && enableUserLicensesDialog && (
