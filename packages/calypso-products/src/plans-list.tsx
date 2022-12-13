@@ -1818,7 +1818,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_PERSONAL,
 				PLAN_PERSONAL_2_YEARS,
 			].includes( plan ),
-		getProductId: () => 100000, // Update this
+		getProductId: () => 1049,
 		getStoreSlug: () => PLAN_PERSONAL_3_YEARS,
 		getPathSlug: () => 'personal-3-years',
 	},
@@ -1896,7 +1896,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_PREMIUM,
 				PLAN_PREMIUM_2_YEARS,
 			].includes( plan ),
-		getProductId: () => 100000, // Update this
+		getProductId: () => 1043,
 		getStoreSlug: () => PLAN_PREMIUM_3_YEARS,
 		getPathSlug: () => 'premium-3-years',
 	},
@@ -1998,7 +1998,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_BUSINESS_2_YEARS,
 				PLAN_WPCOM_PRO_MONTHLY,
 			].includes( plan ),
-		getProductId: () => 100000, // Update this.
+		getProductId: () => 1048,
 		getStoreSlug: () => PLAN_BUSINESS_3_YEARS,
 		getPathSlug: () => 'business-3-years',
 	},
@@ -2123,7 +2123,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_ECOMMERCE_2_YEARS,
 				PLAN_WPCOM_PRO_MONTHLY,
 			].includes( plan ),
-		getProductId: () => 100000, // Update this.
+		getProductId: () => 1051,
 		getStoreSlug: () => PLAN_ECOMMERCE_3_YEARS,
 		getPathSlug: () => 'ecommerce-3-years',
 >>>>>>> 7c67435efb (Adding selectors and utils for triennial plans in calypso-products)

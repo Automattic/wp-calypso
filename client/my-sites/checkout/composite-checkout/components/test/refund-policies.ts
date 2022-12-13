@@ -5,6 +5,7 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_MONTHLY,
+	PLAN_TRIENNIAL_PERIOD,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
 	PRODUCT_WPCOM_CUSTOM_DESIGN,
 	TITAN_MAIL_YEARLY_SLUG,
@@ -164,6 +165,20 @@ describe( 'getRefundPolicies', () => {
 			...getEmptyResponseCartProduct(),
 			bill_period: `${ PLAN_BIENNIAL_PERIOD }`,
 			item_subtotal_integer: 35,
+			product_slug: PLAN_PREMIUM_2_YEARS,
+		} );
+
+		const refundPolicies = getRefundPolicies( cart );
+
+		expect( refundPolicies ).toEqual( [ RefundPolicy.GenericBiennial ] );
+	} );
+
+	test( 'triennial plan', () => {
+		const cart = getEmptyResponseCart();
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			bill_period: `${ PLAN_TRIENNIAL_PERIOD }`,
+			item_subtotal_integer: 70,
 			product_slug: PLAN_PREMIUM_2_YEARS,
 		} );
 
