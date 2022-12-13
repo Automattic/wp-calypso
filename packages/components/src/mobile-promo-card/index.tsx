@@ -10,11 +10,6 @@ import storeBadgeApple from './images/store-apple.png';
 import storeBadgeGoogle from './images/store-google.png';
 import { WordPressJetpackSVG } from './svg-icons';
 
-export type MobilePromoCardProps = {
-	className?: string;
-	isWoo?: boolean;
-};
-
 // Slugs as used by Jetpack Redirects.
 // See https://jetpack.com/redirect for current URLs.
 // Two _QRCode constants are included for reference only.
@@ -64,6 +59,11 @@ function sendTracksEvent( key: string ): void {
 		recordTracksEvent( eventName );
 	}
 }
+
+export type MobilePromoCardProps = {
+	className?: string;
+	isWoo?: boolean;
+};
 
 export default function MobilePromoCard( { className, isWoo }: MobilePromoCardProps ) {
 	const translate = useTranslate();
