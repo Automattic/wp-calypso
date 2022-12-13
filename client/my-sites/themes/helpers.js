@@ -59,7 +59,7 @@ export function localizeThemesPath( path, locale, isLoggedOut = true ) {
 			return `/${ locale }${ path }`;
 		}
 
-		if ( path.startsWith( '/start/theme' ) ) {
+		if ( path.startsWith( '/start/with-theme' ) ) {
 			return addLocaleToPath( path, locale );
 		}
 	}
