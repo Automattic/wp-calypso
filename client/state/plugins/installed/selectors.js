@@ -67,6 +67,11 @@ export function requestPluginsError( state ) {
 	return state.plugins.installed.requestError;
 }
 
+/**
+ * The server returns plugins store at state.plugins.installed.plugins are indexed by site, which means
+ * that the information for a plugin may be spread across multiple site objects. This selector transforms
+ * that structure into one indexed by the plugin slugs and memoizes that structure.
+ */
 export const getAllPlugins = createSelector(
 	( state ) => {
 		const allSitesWithPlugins = getAllSitesWithPlugins( state );
