@@ -1,4 +1,4 @@
-import { localizeUrl } from '@automattic/i18n-utils';
+import { addLocaleToPath } from '@automattic/i18n-utils';
 import { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 
 import 'calypso/state/themes/init';
@@ -21,5 +21,5 @@ export function getThemeSignupUrl( state, themeId ) {
 		url += '&premium=true';
 	}
 
-	return localizeUrl( url );
+	return addLocaleToPath( url );
 }
