@@ -176,7 +176,7 @@ class StatsModule extends Component {
 										label:
 											data.length >= 10
 												? this.props.translate( 'View all', {
-														context: 'Stats: Button label to expand a panel',
+														context: 'Stats: Button link to show more detailed stats information',
 												  } )
 												: this.props.translate( 'View details', {
 														context: 'Stats: Button label to see the detailed content of a panel',
