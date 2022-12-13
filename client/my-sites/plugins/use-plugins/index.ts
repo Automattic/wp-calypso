@@ -135,10 +135,15 @@ const usePlugins = ( {
 			break;
 		default:
 			plugins = config.isEnabled( 'marketplace-jetpack-plugin-search' )
-				? [ ...dotComPlugins, ...ESPlugins ]
-				: ESPlugins;
-			isFetching = isFetchingDotCom || isFetchingES;
-			results = ( ESPagination?.results ?? 0 ) + dotComPlugins.length;
+				? ESPlugins
+				: [ ...dotComPlugins, ...ESPlugins ];
+			isFetching = config.isEnabled( 'marketplace-jetpack-plugin-search' )
+				? isFetchingES
+				: isFetchingDotCom || isFetchingES;
+			results = config.isEnabled( 'marketplace-jetpack-plugin-search' )
+				? ESPagination?.results ?? 0
+				: ( ESPagination?.results ?? 0 ) + dotComPlugins.length;
+
 			break;
 	}
 
