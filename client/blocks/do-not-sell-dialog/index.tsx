@@ -1,6 +1,5 @@
 import { DoNotSellDialog } from '@automattic/privacy-toolset';
 import { useDoNotSellContent } from './use-do-not-sell-content';
-import { usePreventScroll } from './use-prevent-scroll';
 
 type Props = {
 	isOpen: boolean;
@@ -10,7 +9,6 @@ type Props = {
 };
 
 const DoNotSellDialogContainer = ( { isOpen, ...props }: Props ) => {
-	usePreventScroll( isOpen );
 	const content = useDoNotSellContent();
 	return (
 		<DoNotSellDialog
