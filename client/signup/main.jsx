@@ -667,10 +667,12 @@ class Signup extends Component {
 
 		const midPoint = middleDestination ? middleDestination[ this.props.stepName ] : null;
 
-		if ( midPoint ) {
+		if ( midPoint && ! this.state.pendingMidpointTransition ) {
 			// save the resuming point and then navigate away.
-			this.setState( { resumingStep: nextStepName } );
-			page( midPoint( this.props.signupDependencies ) );
+			this.setState( {
+				resumingStep: nextStepName,
+				pendingMidpointTransition: midPoint( this.props.signupDependencies ),
+			} );
 			return;
 		}
 
@@ -858,6 +860,17 @@ class Signup extends Component {
 			( this.getPositionInFlow() > 0 && this.props.progress.length === 0 ) ||
 			this.state.resumingStep
 		) {
+			const { pendingMidpointTransition } = this.state;
+
+			if ( pendingMidpointTransition ) {
+				if (
+					this.props.progress[ 'domains-link-in-bio-tld' ]?.status === 'completed' ||
+					this.props.progress[ 'domains-link-in-bio-tld' ]?.status === 'pending'
+				) {
+					page( pendingMidpointTransition );
+				}
+			}
+
 			return null;
 		}
 
