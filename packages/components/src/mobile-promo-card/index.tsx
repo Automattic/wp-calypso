@@ -1,4 +1,4 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+// import { recordTracksEvent } from '@automattic/calypso-analytics';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import './style.scss';
@@ -50,6 +50,11 @@ const TRACKS_EVENTS: {
 	wooClickApple: 'calypso_stats_mobile_cta_woo_apple_click',
 	wooClickGoogle: 'calypso_stats_mobile_cta_woo_google_click',
 };
+
+function recordTracksEvent( key: string ): void {
+	// eslint-disable-next-line no-console
+	console.log( key );
+}
 
 function sendTracksEvent( key: string ): void {
 	// Limit to known events.
