@@ -78,14 +78,3 @@ export function localizeThemesPath( path, locale, isLoggedOut = true ) {
 export function marketplaceThemeBillingProductSlug( themeId ) {
 	return `wp-mp-theme-${ themeId }`;
 }
-
-/**
- * Creates the billing product slug for a given theme ID.
- *
- * @param themeId Theme ID
- * @returns string
- */
-export function marketplaceThemeBillingProductSlug( themeId ) {
-	// @TODO: remove -test suffix.
-	return `wp-mp-theme-${ themeId }-test`;
-}
