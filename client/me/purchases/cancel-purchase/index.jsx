@@ -322,7 +322,7 @@ class CancelPurchase extends Component {
 											this.state,
 											this.props.translate,
 											this.props.moment,
-											this.includedDomainPurchase,
+											this.props.includedDomainPurchase,
 											purchase
 										) }
 									</div>
