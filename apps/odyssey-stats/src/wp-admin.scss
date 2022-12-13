@@ -6,7 +6,7 @@
 	}
 }
 
-// Overrides layout for WP Admin pages.
+// Overrides layout for WP Admin.
 .wp-admin {
 	& .layout__content,
 	&.theme-default .focus-content .layout__content {
@@ -25,6 +25,11 @@
 	#wpcontent {
 		padding-left: 1px;
 	}
+	// Offset margin of menu items set in Calypso.
+	ul.wp-submenu,
+	ul.wp-submenu-wrap {
+		margin-left: 0;
+	}
 }
 
 .jp-stats-dashboard {
@@ -38,7 +43,7 @@
 	}
 	.form-checkbox:checked::before {
 		// Increase Calypso styles specificity.
-		content: url( calypso/assets/images/checkbox-icons/checkmark-primary.svg );
+		content: url(calypso/assets/images/checkbox-icons/checkmark-primary.svg);
 		width: 12px;
 		height: 12px;
 		margin: 3px auto;
@@ -47,10 +52,4 @@
 		// Override WP-Admin styles.
 		float: none;
 	}
-}
-
-// Offset margin of menu items set in Calypso.
-ul.wp-submenu,
-ul.wp-submenu-wrap {
-	margin-left: 0;
 }
