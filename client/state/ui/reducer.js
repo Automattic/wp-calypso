@@ -8,7 +8,6 @@ import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import actionLog from './action-log/reducer';
 import appBannerDismissed from './app-banner-dismissed/reducer';
 import appBannerVisibility from './app-banner-visibility/reducer';
-import cartOpen from './cart-open/reducer';
 import checkout from './checkout/reducer';
 import language from './language/reducer';
 import layoutFocus from './layout-focus/reducer';
@@ -84,7 +83,6 @@ const reducer = combineReducers( {
 	masterbarVisibility,
 	mediaModal,
 	postTypeList,
-	cartOpen,
 	preview,
 	section,
 	selectedSiteId,

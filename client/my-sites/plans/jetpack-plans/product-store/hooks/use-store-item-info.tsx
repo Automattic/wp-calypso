@@ -9,7 +9,7 @@ import {
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import isSupersedingJetpackItem from 'calypso/../packages/calypso-products/src/is-superseding-jetpack-item';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
@@ -19,10 +19,10 @@ import { useIsUserPurchaseOwner } from 'calypso/state/purchases/utils';
 import {
 	getSitePlan,
 	getSiteProducts,
+	getSiteSlug,
 	isJetpackCloudCartEnabled,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
-import { openCart } from 'calypso/state/ui/cart-open/actions';
 import { EXTERNAL_PRODUCTS_LIST, ITEM_TYPE_PLAN } from '../../constants';
 import productButtonLabel from '../../product-card/product-button-label';
 import { SelectorProduct } from '../../types';
@@ -58,10 +58,9 @@ export const useStoreItemInfo = ( {
 	const isMultisite = useSelector(
 		( state ) => !! ( siteId && isJetpackSiteMultiSite( state, siteId ) )
 	);
-
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
 	const isCurrentUserPurchaseOwner = useIsUserPurchaseOwner();
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
 	const getIsProductInCart = useCallback(
 		( item: SelectorProduct ) => {
@@ -156,23 +155,46 @@ export const useStoreItemInfo = ( {
 		[ getIsPlanFeature, getIsSuperseded, purchases, sitePlan?.product_slug ]
 	);
 
+	const getShouldShowCart = useCallback(
+		( item: SelectorProduct ) => {
+			return (
+				shouldShowCart &&
+				! isJetpackPlanSlug( item.productSlug ) &&
+				! getIsExternal( item ) &&
+				! getIsOwned( item )
+			);
+		},
+		[ getIsOwned, shouldShowCart ]
+	);
+
 	const getCheckoutURL = useCallback(
 		( item: SelectorProduct ) => {
-			return shouldShowCart && ! isJetpackPlanSlug( item.productSlug ) && ! getIsOwned( item )
-				? '#'
-				: createCheckoutURL?.( item, getIsUpgradeableToYearly( item ), getPurchase( item ) );
+			if ( getShouldShowCart( item ) ) {
+				if ( getIsProductInCart( item ) ) {
+					//open the cart
+					return `http://www.wordpress.com/checkout/${ siteSlug }`;
+				}
+				return '';
+			}
+			return createCheckoutURL?.( item, getIsUpgradeableToYearly( item ), getPurchase( item ) );
 		},
-		[ createCheckoutURL, getPurchase, getIsUpgradeableToYearly, shouldShowCart, getIsOwned ]
+
+		[
+			getShouldShowCart,
+			createCheckoutURL,
+			getIsUpgradeableToYearly,
+			getPurchase,
+			getIsProductInCart,
+			siteSlug,
+		]
 	);
 
 	const getOnClickPurchase = useCallback(
 		( item: SelectorProduct ) => () => {
-			if ( shouldShowCart && ! isJetpackPlanSlug( item.productSlug ) ) {
+			if ( getShouldShowCart( item ) ) {
 				if ( getIsProductInCart( item ) ) {
-					//open the cart
-					return dispatch( openCart() );
-				} else if ( getIsOwned( item ) ) {
-					return onClickPurchase?.( item, getIsUpgradeableToYearly( item ), getPurchase( item ) );
+					//naviagate to the checkout page - handled by getCheckoutURL
+					return;
 				}
 				return cartManagerClient
 					.forCartKey( siteId || undefined )
@@ -182,14 +204,12 @@ export const useStoreItemInfo = ( {
 			return onClickPurchase?.( item, getIsUpgradeableToYearly( item ), getPurchase( item ) );
 		},
 		[
-			shouldShowCart,
+			getShouldShowCart,
 			onClickPurchase,
 			getIsUpgradeableToYearly,
 			getPurchase,
 			getIsProductInCart,
-			getIsOwned,
 			siteId,
-			dispatch,
 		]
 	);
 
@@ -210,10 +230,7 @@ export const useStoreItemInfo = ( {
 				isDeprecated: getIsDeprecated( item ),
 				isSuperseded: getIsSuperseded( item ),
 				currentPlan: sitePlan,
-				fallbackLabel:
-					shouldShowCart && ! isJetpackPlanSlug( item.productSlug )
-						? 'Add to cart'
-						: translate( 'Get' ),
+				fallbackLabel: getShouldShowCart( item ) ? 'Add to cart' : translate( 'Get' ),
 				isInCart: getIsProductInCart( item ),
 				isJetpackPlan: isJetpackPlanSlug( item.productSlug ),
 			} );
@@ -237,11 +254,11 @@ export const useStoreItemInfo = ( {
 			getIsUpgradeableToYearly,
 			getIsSuperseded,
 			sitePlan,
+			getShouldShowCart,
 			translate,
+			getIsProductInCart,
 			getPurchase,
 			isCurrentUserPurchaseOwner,
-			shouldShowCart,
-			getIsProductInCart,
 		]
 	);
 
