@@ -126,6 +126,18 @@ $header-margin-bottom: math.div($vertical-margin, 2);
 		margin-bottom: $header-margin-bottom;
 	}
 }
+.highlight-card-tooltip {
+	display: flex;
+	align-items: center;
+
+	.highlight-card-tooltip-icon {
+		fill: var(--studio-white);
+		display: flex;
+	}
+	.highlight-card-tooltip-label {
+		padding-right: 25px;
+	}
+}
 
 @media ( max-width: $custom-mobile-breakpoint ) {
 	.highlight-cards-heading {

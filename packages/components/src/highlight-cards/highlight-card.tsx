@@ -1,6 +1,8 @@
 import { arrowDown, arrowUp, Icon } from '@wordpress/icons';
 import classNames from 'classnames';
+import { useRef, useState } from 'react';
 import { Card, ShortenedNumber } from '../';
+import Popover from '../popover';
 
 export type HighlightCardProps = {
 	count: number | null;
@@ -27,6 +29,11 @@ export function percentCalculator( part: number | null, whole: number | null ) {
 	return Math.abs( answer ) === Infinity ? 100 : Math.round( answer );
 }
 
+const FORMATTER = new Intl.NumberFormat();
+function formatNumber( number: number | null ) {
+	return Number.isFinite( number ) ? FORMATTER.format( number as number ) : '-';
+}
+
 export default function HighlightCard( {
 	count,
 	previousCount,
@@ -37,14 +44,21 @@ export default function HighlightCard( {
 	const percentage = Number.isFinite( difference )
 		? percentCalculator( Math.abs( difference as number ), count )
 		: null;
+	const textRef = useRef( null );
+	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
 	return (
 		<Card className="highlight-card">
 			<div className="highlight-card-icon">{ icon }</div>
 			<div className="highlight-card-heading">{ heading }</div>
-			<div className="highlight-card-count">
+			<div
+				className="highlight-card-count"
+				onMouseEnter={ () => setTooltipVisible( true ) }
+				onMouseLeave={ () => setTooltipVisible( false ) }
+			>
 				<span
 					className="highlight-card-count-value"
 					title={ Number.isFinite( count ) ? String( count ) : undefined }
+					ref={ textRef }
 				>
 					<ShortenedNumber value={ count } />
 				</span>{ ' ' }
@@ -70,6 +84,18 @@ export default function HighlightCard( {
 						) }
 					</span>
 				) : null }
+				<Popover
+					className="tooltip"
+					isVisible={ isTooltipVisible }
+					position="bottom right"
+					context={ textRef.current }
+				>
+					<div className="highlight-card-tooltip">
+						<span className="highlight-card-tooltip-icon">{ icon }</span>
+						<span className="highlight-card-tooltip-label">{ heading }</span>
+						<span>{ formatNumber( count ) }</span>
+					</div>
+				</Popover>
 			</div>
 		</Card>
 	);
