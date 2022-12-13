@@ -456,6 +456,7 @@ export interface LaunchPadCheckListTasksStatuses {
 	first_post_published?: boolean;
 	links_edited?: boolean;
 	site_launched?: boolean;
+	site_edited?: boolean;
 	video_uploaded?: boolean;
 	publish_first_course: boolean;
 }

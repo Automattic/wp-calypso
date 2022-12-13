@@ -13,6 +13,33 @@ export type MobilePromoCardProps = {
 	isWoo?: boolean;
 };
 
+// Slugs as used by Jetpack Redirects.
+// See https://jetpack.com/redirect for current URLs.
+// Two _QRCode constants are included for reference only.
+const REDIRECT_SLUGS: {
+	[ key: string ]: string | undefined;
+} = {
+	jetpackA8C: 'calypso-stats-mobile-cta-jetpack-link',
+	jetpackApple: 'calypso-stats-mobile-cta-jetpack-apple-badge',
+	jetpackGoogle: 'calypso-stats-mobile-cta-jetpack-google-badge',
+	jetpackQRCode: 'calypso-stats-mobile-cta-jetpack-qrcode',
+	wooA8C: 'calypso-stats-mobile-cta-woo-link',
+	wooApple: 'calypso-stats-mobile-cta-woo-apple-badge',
+	wooGoogle: 'calypso-stats-mobile-cta-woo-google-badge',
+	wooQRCode: 'calypso-stats-mobile-cta-woo-qrcode',
+};
+
+// Generate a Jetpack Redirect URL based on the provided slug.
+// Similar to getRedirectUrl from '@automattic/jetpack-components'.
+function getRedirectUrl( key: string ): string | null {
+	// Confirm requested slug is valid.
+	if ( ! REDIRECT_SLUGS.hasOwnProperty( key ) ) {
+		return null;
+	}
+	// Return redirect URL.
+	return 'https://jetpack.com/redirect/?source=' + REDIRECT_SLUGS[ key ];
+}
+
 export default function MobilePromoCard( { className, isWoo }: MobilePromoCardProps ) {
 	const translate = useTranslate();
 	// Basic user agent testing so we can show app store badges on moble.
@@ -34,31 +61,40 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 		}
 		// Using useTranslate() with interpolation to set up the linked message.
 		// https://wpcalypso.wordpress.com/devdocs/packages/i18n-calypso/README.md
-		const redirectLink = isWoo ? 'https://woo.com/mobile/' : 'https://jetpack.com/app/';
-		const linkClassName = isWoo ? 'woo' : 'jetpack';
-		const components = {
-			a: <a className={ linkClassName } href={ redirectLink } />,
-		};
 		if ( isWoo ) {
 			return translate(
 				'Visit {{a}}woo.com/mobile{{/a}} or scan the QR code to download the WooCommerce mobile app.',
-				{ components }
+				{
+					components: {
+						a: (
+							<a className="woo" href={ getRedirectUrl( 'wooA8C' ) ?? 'https://woo.com/mobile' } />
+						),
+					},
+				}
 			);
 		}
 		return translate(
 			'Visit {{a}}jetpack.com/app{{/a}} or scan the QR code to download the Jetpack mobile app.',
-			{ components }
+			{
+				components: {
+					a: (
+						<a
+							className="jetpack"
+							href={ getRedirectUrl( 'jetpackA8C' ) ?? 'https://jetpack.com/app' }
+						/>
+					),
+				},
+			}
 		);
 	};
 
 	// Returns store badges on mobile (including tablets) and QR codes on the Desktop.
 	const getPromoImage = () => {
+		const fallbackLink = isWoo ? 'https://woo.com/mobile' : 'https://jetpack.com/app';
 		if ( isApple ) {
-			const appStoreLink = isWoo
-				? 'https://apps.apple.com/ca/app/woocommerce/id1389130815'
-				: 'https://apps.apple.com/ca/app/jetpack-website-builder/id1565481562';
+			const appStoreLink = isWoo ? getRedirectUrl( 'wooApple' ) : getRedirectUrl( 'jetpackApple' );
 			return (
-				<a href={ appStoreLink }>
+				<a href={ appStoreLink ?? fallbackLink }>
 					<img
 						className="promo-store-badge"
 						src={ storeBadgeApple }
@@ -69,10 +105,10 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 		}
 		if ( isGoogle ) {
 			const appStoreLink = isWoo
-				? 'https://play.google.com/store/apps/details?id=com.woocommerce.android'
-				: 'https://play.google.com/store/apps/details?id=com.jetpack.android';
+				? getRedirectUrl( 'wooGoogle' )
+				: getRedirectUrl( 'jetpackGoogle' );
 			return (
-				<a href={ appStoreLink }>
+				<a href={ appStoreLink ?? fallbackLink }>
 					<img
 						className="promo-store-badge"
 						src={ storeBadgeGoogle }
@@ -81,10 +117,9 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 				</a>
 			);
 		}
-		if ( isWoo ) {
-			return <img className="promo-qr-code" src={ qrCodeWoo } alt="QR Code for Woo mobile app" />;
-		}
-		return (
+		return isWoo ? (
+			<img className="promo-qr-code" src={ qrCodeWoo } alt="QR Code for Woo mobile app" />
+		) : (
 			<img className="promo-qr-code" src={ qrCodeJetpack } alt="QR Code for Jetpack mobile app" />
 		);
 	};

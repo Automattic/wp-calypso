@@ -182,6 +182,7 @@ export class ReaderSidebar extends Component {
 				<li>
 					<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
 				</li>
+
 				<SidebarSeparator />
 
 				<SidebarItem

@@ -16,7 +16,7 @@ const BackupsMadeRealtimeBanner: FunctionComponent = () => {
 			callToAction={ translate( 'Learn more' ) }
 			className="backups-made-realtime-banner"
 			description={ translate(
-				'Your site is backed up as you make edits, and automatically once a day.'
+				'Your site is backed up as you edit, with multiple copies stored securely in the cloud'
 			) }
 			event="calypso_backups_made_realtime_banner"
 			dismissPreferenceName={ `backups-made-realtime-${ siteId }` }
