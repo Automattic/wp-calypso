@@ -64,7 +64,7 @@ import {
 	hasAmountAvailableToRefund,
 	hasPaymentMethod,
 	isPaidWithCredits,
-	isCancelable,
+	canAutoRenewBeTurnedOff,
 	isExpired,
 	isOneTimePurchase,
 	isPartnerPurchase,
@@ -457,7 +457,7 @@ class ManagePurchase extends Component {
 			translate,
 		} = this.props;
 
-		if ( isCancelable( purchase ) ) {
+		if ( canAutoRenewBeTurnedOff( purchase ) ) {
 			return null;
 		}
 
@@ -601,7 +601,7 @@ class ManagePurchase extends Component {
 		const { isAtomicSite, purchase, translate } = this.props;
 		const { id } = purchase;
 
-		if ( ! isCancelable( purchase ) ) {
+		if ( ! canAutoRenewBeTurnedOff( purchase ) ) {
 			return null;
 		}
 
