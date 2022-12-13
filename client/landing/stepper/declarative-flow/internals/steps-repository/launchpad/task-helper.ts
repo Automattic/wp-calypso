@@ -1,6 +1,7 @@
-import { PLAN_PREMIUM } from '@automattic/calypso-products';
+import { PLAN_PREMIUM, FEATURE_ADVANCED_DESIGN_CUSTOMIZATION } from '@automattic/calypso-products';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list';
 import { SiteDetails } from 'calypso/../packages/data-stores/src';
@@ -27,8 +28,13 @@ export function getEnhancedTasks(
 	const linkInBioLinksEditCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.links_edited || false;
 
+	const siteEditCompleted = site?.options?.launchpad_checklist_tasks_statuses?.site_edited || false;
+
 	const siteLaunchCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.site_launched || false;
+
+	const firstPostPublishedCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.first_post_published || false;
 
 	const videoPressUploadCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.video_uploaded || false;
@@ -62,6 +68,11 @@ export function getEnhancedTasks(
 				case 'design_edited':
 					taskData = {
 						title: translate( 'Edit site design' ),
+						completed: siteEditCompleted,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, siteEditCompleted, task.id );
+							window.location.assign( `/site-editor/${ siteSlug }` );
+						},
 					};
 					break;
 				case 'plan_selected':
@@ -75,9 +86,18 @@ export function getEnhancedTasks(
 						disabled: isVideoPressFlow( flow ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.assign(
-								`/plans/${ siteSlug }${ displayGlobalStylesWarning ? '?plan=' + PLAN_PREMIUM : '' }`
-							);
+							if ( displayGlobalStylesWarning ) {
+								recordTracksEvent(
+									'calypso_launchpad_global_styles_gating_plan_selected_task_clicked'
+								);
+							}
+							const plansUrl = addQueryArgs( `/plans/${ siteSlug }`, {
+								...( displayGlobalStylesWarning && {
+									plan: PLAN_PREMIUM,
+									feature: FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+								} ),
+							} );
+							window.location.assign( plansUrl );
 						},
 						badgeText: translatedPlanName,
 						completed: task.completed && ! displayGlobalStylesWarning,
@@ -98,6 +118,7 @@ export function getEnhancedTasks(
 				case 'first_post_published':
 					taskData = {
 						title: translate( 'Write your first post' ),
+						completed: firstPostPublishedCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign( `/post/${ siteSlug }` );

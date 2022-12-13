@@ -1,5 +1,3 @@
-import config from '@automattic/calypso-config';
-import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -93,21 +91,16 @@ class StatModuleChartTabs extends Component {
 	makeQuery = () => this.props.requestChartCounts( this.props.query );
 
 	render() {
-		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
-
 		const { isActiveTabLoading } = this.props;
-
-		//TODO Try to retire `.stats-module` and replace it with `.main-chart-tabs`.
 		const classes = [
-			'main-chart-tabs',
+			'is-chart-tabs',
 			{
 				'is-loading': isActiveTabLoading,
-				'stats-module': ! isNewFeatured,
 			},
 		];
 
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
-		return isNewFeatured ? (
+		return (
 			<div className={ classNames( ...classes ) }>
 				<Legend
 					activeCharts={ this.props.activeLegend }
@@ -128,27 +121,6 @@ class StatModuleChartTabs extends Component {
 					activeKey="period"
 				/>
 			</div>
-		) : (
-			<Card key={ this.props.chartData.length } className={ classNames( ...classes ) }>
-				<Legend
-					activeCharts={ this.props.activeLegend }
-					activeTab={ this.props.activeTab }
-					availableCharts={ this.props.availableLegend }
-					clickHandler={ this.onLegendClick }
-					tabs={ this.props.charts }
-				/>
-				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
-				<Chart barClick={ this.props.barClick } data={ this.props.chartData } />
-				<StatTabs
-					data={ this.props.counts }
-					tabs={ this.props.charts }
-					switchTab={ this.props.switchTab }
-					selectedTab={ this.props.chartTab }
-					activeIndex={ this.props.queryDate }
-					activeKey="period"
-				/>
-			</Card>
 		);
 	}
 }

@@ -127,4 +127,5 @@ export type PricingBreakdownItem = {
 
 export type AmountSavedProps = ProductStoreBaseProps & {
 	product: SelectorProduct;
+	onClickMoreInfo: VoidFunction;
 };

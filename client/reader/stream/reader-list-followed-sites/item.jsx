@@ -8,7 +8,7 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import ReaderSidebarHelper from '../../sidebar/helper';
 import '../style.scss';
 
-const ReaderSidebarFollowingItem = ( props ) => {
+const ReaderListFollowingItem = ( props ) => {
 	const { site, path, isUnseen } = props;
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
@@ -65,4 +65,4 @@ const ReaderSidebarFollowingItem = ( props ) => {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
-export default ReaderSidebarFollowingItem;
+export default ReaderListFollowingItem;
