@@ -857,10 +857,19 @@ class Signup extends Component {
 		const isEnglishLocale = config( 'english_locales' ).includes( getLocaleSlug() ?? '' );
 		const currentTime = new Date();
 
+		const eligibleFlows = [
+			'do-it-for-me',
+			'domain',
+			'onboarding',
+			'onboarding-with-email',
+			'with-theme',
+		];
+
 		return (
 			! this.props.isLoggedIn &&
 			! retrieveRecognizedLogins() &&
-			( isCurrentPlanFlow( this.props.flowName ) || this.props.flowName === 'onboarding' ) &&
+			( eligibleFlows.includes( this.props.flowName ) ||
+				isCurrentPlanFlow( this.props.flowName ) ) &&
 			isEnglishLocale &&
 			currentTime.getUTCHours() >= 15 &&
 			currentTime.getUTCHours() < 21 &&
