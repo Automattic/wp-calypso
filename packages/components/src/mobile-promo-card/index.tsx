@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import './style.scss';
+import { useEffect } from 'react';
 import iconWoo from './images/icon-woo.png';
 import qrCodeJetpack from './images/qr-code-jetpack.png';
 import qrCodeWoo from './images/qr-code-woo.png';
@@ -45,9 +46,11 @@ function getRedirectUrl( key: string ): string | null {
 const TRACKS_EVENTS: {
 	[ key: string ]: string | undefined;
 } = {
+	jetpackView: 'calypso_stats_mobile_cta_jetpack_view',
 	jetpackClickA8C: 'calypso_stats_mobile_cta_jetpack_click',
 	jetpackClickApple: 'calypso_stats_mobile_cta_jetpack_apple_click',
 	jetpackClickGoogle: 'calypso_stats_mobile_cta_jetpack_google_click',
+	wooView: 'calypso_stats_mobile_cta_woo_view',
 	wooClickA8C: 'calypso_stats_mobile_cta_woo_click',
 	wooClickApple: 'calypso_stats_mobile_cta_woo_apple_click',
 	wooClickGoogle: 'calypso_stats_mobile_cta_woo_google_click',
@@ -158,6 +161,15 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 			<img className="promo-qr-code" src={ qrCodeJetpack } alt="QR Code for Jetpack mobile app" />
 		);
 	};
+
+	// Track "views" of this card.
+	useEffect( () => {
+		if ( isWoo ) {
+			sendTracksEvent( 'wooView' );
+		} else {
+			sendTracksEvent( 'jetpackView' );
+		}
+	}, [ isWoo ] );
 
 	return (
 		<div className={ classNames( 'promo-card', className ?? null ) }>
