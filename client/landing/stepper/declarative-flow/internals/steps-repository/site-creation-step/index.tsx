@@ -6,10 +6,9 @@ import {
 	createSiteWithCart,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import {
 	retrieveSignupDestination,
 	getSignupCompleteFlowName,
@@ -32,7 +31,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 
 	const username = useSelector( ( state ) => getCurrentUserName( state ) );
 
-	const { setDomainCartItem, setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	const theme = flow === LINK_IN_BIO_FLOW ? 'pub/lynx' : 'pub/lettre';
 	const isPaidDomainItem = Boolean( domainCartItem?.product_slug );
@@ -89,32 +88,14 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 		};
 	}
 
-	const [ freeFlowDomainCartItemLoaded, setFreeFlowDomainCartItemLoaded ] = useState( false );
-
 	useEffect( () => {
-		if ( flow === 'free' ) {
-			// We hydrate the redux store with a dynamically generated domain when this view is first loaded
-			// because the free flow has no domains step.
-			const domainCartItem = domainRegistration( {
-				// TODO: Insert dynamically generated Domain Here
-				domain: '',
-				productSlug: '',
-			} );
-
-			setDomainCartItem( domainCartItem );
-			setFreeFlowDomainCartItemLoaded( true );
-
-			if ( freeFlowDomainCartItemLoaded && submit ) {
-				setPendingAction( createSite );
-				submit();
-			}
-		} else if ( submit ) {
+		if ( submit ) {
 			setPendingAction( createSite );
 			submit();
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ freeFlowDomainCartItemLoaded ] );
+	}, [] );
 
 	return null;
 };
