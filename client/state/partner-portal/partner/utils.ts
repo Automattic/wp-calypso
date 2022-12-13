@@ -7,7 +7,7 @@ import { sprintf, __ } from '@wordpress/i18n';
  * @param {object} details Details of parameters with errors.
  * @returns {string} Human-readable error message.
  */
-export function translateInvalidPartnerParameterError( parameters: object, details: object ) {
+export function translateInvalidPartnerParameterError( parameters: object, details = {} ) {
 	const labels: { [ key: string ]: string } = {
 		name: __( 'Company name' ),
 		contact_person: __( 'Contact person' ),
