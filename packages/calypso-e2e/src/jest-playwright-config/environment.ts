@@ -373,6 +373,18 @@ function setupBrowserProxyTrap( browser: Browser ): Browser {
 					// Default value is 15000ms, defined in env-variables.ts.
 					page.setDefaultTimeout( env.TIMEOUT );
 
+					// Set up a HTTP response status interceptor
+					// to capture instances of 502 Bad Gateway.
+					// This remains active until the page is
+					// closed.
+					page.on( 'response', ( response ) => {
+						if ( response.status() === 502 ) {
+							throw new Error(
+								`Encountered HTTP ${ response.status } on request to URL ${ response.url() } }`
+							);
+						}
+					} );
+
 					const context = page.context();
 
 					await context.tracing.start( {
