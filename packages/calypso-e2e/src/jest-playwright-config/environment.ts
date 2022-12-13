@@ -169,12 +169,11 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 					// Screenshots and video are saved per page, where numerous
 					// pages may exist within a context.
 					await page.screenshot( { path: `${ mediaFilePath }.png`, timeout: env.TIMEOUT } );
-					await page.video()?.saveAs( `${ mediaFilePath }.webm` );
 
-					// Close the unnecessary page.
-					// Doing so also triggers a save of the video
-					// to the disk.
+					// Close the now unnecessary page which also
+					// triggers saving of video to the disk.
 					await page.close();
+					await page.video()?.saveAs( `${ mediaFilePath }.webm` );
 					pageIndex++;
 				}
 				contextIndex++;
