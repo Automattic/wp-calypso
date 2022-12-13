@@ -30,13 +30,11 @@ export default function WPContactForm( {
 	shouldShowContactDetailsValidationErrors,
 	contactDetailsType,
 	isLoggedOutCart,
-	setShouldShowContactDetailsValidationErrors,
 }: {
 	countriesList: CountryListItem[];
 	shouldShowContactDetailsValidationErrors: boolean;
 	contactDetailsType: Exclude< ContactDetailsType, 'none' >;
 	isLoggedOutCart: boolean;
-	setShouldShowContactDetailsValidationErrors: ( allowed: boolean ) => void;
 } ) {
 	const contactInfo: ManagedContactDetails = useSelect( ( select ) =>
 		select( 'wpcom-checkout' ).getContactInfo()
@@ -45,7 +43,7 @@ export default function WPContactForm( {
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== FormStatus.READY;
 
-	useCachedDomainContactDetails( setShouldShowContactDetailsValidationErrors, countriesList );
+	useCachedDomainContactDetails( countriesList );
 
 	return (
 		<BillingFormFields>
