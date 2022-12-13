@@ -4,6 +4,7 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PREMIUM,
+	PLAN_PREMIUM_3_YEARS,
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_TRIENNIAL_PERIOD,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
@@ -179,12 +180,12 @@ describe( 'getRefundPolicies', () => {
 			...getEmptyResponseCartProduct(),
 			bill_period: `${ PLAN_TRIENNIAL_PERIOD }`,
 			item_subtotal_integer: 70,
-			product_slug: PLAN_PREMIUM_2_YEARS,
+			product_slug: PLAN_PREMIUM_3_YEARS,
 		} );
 
 		const refundPolicies = getRefundPolicies( cart );
 
-		expect( refundPolicies ).toEqual( [ RefundPolicy.GenericBiennial ] );
+		expect( refundPolicies ).toEqual( [ RefundPolicy.GenericTriennial ] );
 	} );
 
 	test( 'yearly plan and bundled domain', () => {
