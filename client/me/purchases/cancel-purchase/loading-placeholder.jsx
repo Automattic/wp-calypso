@@ -9,7 +9,8 @@ import titles from 'calypso/me/purchases/titles';
 
 import '../components/loading-placeholder/style.scss';
 
-const supportLink = ( translate ) => {
+const SupportLink = () => {
+	const translate = useTranslate();
 	return translate( 'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}', {
 		components: {
 			contactLink: <a href={ CALYPSO_CONTACT } />,
@@ -72,7 +73,7 @@ const CancelPurchaseLoadingPlaceholder = ( { purchaseId, siteSlug, getManagePurc
 					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__reason" />
 
 					<p className="cancel-purchase--support-link cancel-purchase--support-link--main">
-						{ supportLink( translate ) }
+						<SupportLink />
 					</p>
 				</div>
 				<div className="cancel-purchase__layout-col cancel-purchase__layout-col-right">
@@ -81,7 +82,7 @@ const CancelPurchaseLoadingPlaceholder = ( { purchaseId, siteSlug, getManagePurc
 					</div>
 
 					<p className="cancel-purchase--support-link cancel-purchase--support-link--sidebar">
-						{ supportLink( translate ) }
+						<SupportLink />
 					</p>
 				</div>
 			</div>
