@@ -1,0 +1,43 @@
+// Override spinner styles
+.stats-module__placeholder {
+	.spinner {
+		visibility: initial;
+		background-image: none;
+	}
+}
+
+// Overrides layout for WP Admin pages.
+.wp-admin {
+	& .layout__content,
+	&.theme-default .focus-content .layout__content {
+		padding-top: 0;
+		padding-left: 1px;
+	}
+	// Fixed header doesn't work well for WP-Admin, as the masterbar isn't fixed.
+	& .is-section-stats .has-fixed-nav .fixed-navigation-header__header {
+		position: relative;
+		top: initial;
+		left: initial;
+	}
+	& .is-section-stats .has-fixed-nav {
+		padding-top: 0;
+	}
+	#wpcontent {
+		padding-left: 1px;
+	}
+}
+
+.jp-stats-dashboard .card {
+	border: 0;
+	max-width: initial;
+	min-width: initial;
+}
+
+ul.wp-submenu,
+ul.wp-submenu-wrap {
+	margin-left: 0;
+}
+
+.jp-stats-dashboard .followers-count {
+	display: none;
+}
