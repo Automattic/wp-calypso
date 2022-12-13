@@ -16,6 +16,7 @@ export const canAnySiteHavePlugins = createSelector(
 	( state: AppState ): boolean =>
 		getSites( state ).some(
 			( site ) =>
+				site &&
 				isJetpackSite( state, site.ID ) &&
 				canCurrentUser( state, site.ID, 'manage_options' ) &&
 				site.visible
