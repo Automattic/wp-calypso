@@ -7,7 +7,7 @@ import {
 	isJetpackProduct,
 } from '@automattic/calypso-products';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
-import i18n, { localize } from 'i18n-calypso';
+import i18n, { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -46,7 +46,8 @@ import CancelPurchaseRefundInformation from './refund-information';
 
 import './style.scss';
 
-const renderFooterText = ( state, translate, moment, includedDomainPurchase, purchase ) => {
+const FooterText = ( { state, moment, includedDomainPurchase, purchase } ) => {
+	const translate = useTranslate();
 	const { refundText, expiryDate, totalRefundText } = purchase;
 
 	if ( hasAmountAvailableToRefund( purchase ) ) {
@@ -318,13 +319,12 @@ class CancelPurchase extends Component {
 
 								<CompactCard className="cancel-purchase__footer">
 									<div className="cancel-purchase__refund-amount">
-										{ renderFooterText(
-											this.state,
-											this.props.translate,
-											this.props.moment,
-											this.props.includedDomainPurchase,
-											purchase
-										) }
+										<FooterText
+											state={ this.state }
+											moment={ this.props.moment }
+											includedDomainPurchase={ this.props.includedDomainPurchase }
+											purchase={ purchase }
+										/>
 									</div>
 
 									<CancelPurchaseButton
