@@ -51,6 +51,15 @@ const SearchableDropdown: React.FC< Props > = ( {
 			styles={ colourStyles }
 			components={ { DropdownIndicator } }
 			placeholder={ placeholder }
+			theme={ ( theme: any ) => ( {
+				...theme,
+				borderRadius: 1,
+				colors: {
+					...theme.colors,
+					primary25: 'var(--studio-gray-0)',
+					primary: 'black',
+				},
+			} ) }
 		/>
 	);
 };

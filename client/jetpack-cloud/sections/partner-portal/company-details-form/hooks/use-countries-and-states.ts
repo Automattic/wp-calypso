@@ -98,12 +98,6 @@ export function useCountriesAndStates() {
 		} );
 
 		const countries = Object.values( countryOptions );
-		countries.unshift( {
-			value: '',
-			label: translate( 'Type to find country' ),
-			isLabel: false,
-		} );
-
 		// Alphabetizes country list after translated.
 		countries.sort( ( { label: countryA }, { label: countryB } ) => {
 			if ( countryA < countryB ) {
@@ -113,6 +107,12 @@ export function useCountriesAndStates() {
 				return 1;
 			}
 			return 0;
+		} );
+
+		countries.unshift( {
+			value: '',
+			label: translate( 'Type to find country' ),
+			isLabel: true,
 		} );
 
 		return {
