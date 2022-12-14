@@ -2,7 +2,7 @@
 // eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 import { __experimentalBlockPatternsList as BlockPatternsList } from '@wordpress/block-editor';
 import { BaseControl } from '@wordpress/components';
-import { withInstanceId } from '@wordpress/compose';
+import { withInstanceId, useAsyncList } from '@wordpress/compose';
 import { memo } from '@wordpress/element';
 import type { FormattedPattern } from '../pattern-definition';
 
@@ -21,6 +21,8 @@ export const PatternSelectorControl = ( {
 	patterns = [],
 	onPatternSelect = noop,
 }: PatternSelectorControlProps ) => {
+	const shownPatterns = useAsyncList( patterns );
+
 	if ( ! Array.isArray( patterns ) || ! patterns.length ) {
 		return null;
 	}
@@ -33,7 +35,7 @@ export const PatternSelectorControl = ( {
 		>
 			<BlockPatternsList
 				blockPatterns={ patterns }
-				shownPatterns={ patterns }
+				shownPatterns={ shownPatterns }
 				onClickPattern={ ( pattern: FormattedPattern ) => onPatternSelect( pattern.name ) }
 			/>
 		</BaseControl>
