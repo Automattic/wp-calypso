@@ -8,7 +8,7 @@ import { getSitePurchases } from 'calypso/state/purchases/selectors';
  * @param {object} state global state
  * @param {string} themeId theme id
  * @param {number} siteId site id
- * @returns {boolean} true if the user subscribed to the theme
+ * @returns {boolean} true if the site subscribed to the theme
  */
 export function isMarketplaceThemeSubscribed( state = {}, themeId: string, siteId: number ) {
 	const products = getProductsByBillingSlug( state, marketplaceThemeBillingProductSlug( themeId ) );
