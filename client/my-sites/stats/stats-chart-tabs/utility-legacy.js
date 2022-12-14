@@ -9,22 +9,10 @@ import {
 import classNames from 'classnames';
 import { numberFormat, translate } from 'i18n-calypso';
 import { capitalize } from 'lodash';
-import moment from 'moment';
 import memoizeLast from 'calypso/lib/memoize-last';
-import { rangeOfPeriod } from 'calypso/state/stats/lists/utils';
 import { formatDate } from './utility';
 
-export function getQueryDate( queryDate, timezoneOffset, period, quantity ) {
-	const momentSiteZone = moment().utcOffset( timezoneOffset );
-	const endOfPeriodDate = rangeOfPeriod( period, momentSiteZone.locale( 'en' ) ).endOf;
-	const periodDifference = moment( endOfPeriodDate ).diff( moment( queryDate ), period );
-	if ( periodDifference >= quantity ) {
-		return moment( endOfPeriodDate )
-			.subtract( Math.floor( periodDifference / quantity ) * quantity, period )
-			.format( 'YYYY-MM-DD' );
-	}
-	return endOfPeriodDate;
-}
+// TODO: Ensure legacy invocations of getQueryDate has been migrated.
 
 const EMPTY_RESULT = [];
 export const buildChartData = memoizeLast( ( activeLegend, chartTab, data, period, queryDate ) => {
