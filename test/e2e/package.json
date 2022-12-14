@@ -18,7 +18,9 @@
 		"clean": "yarn clean:packages && yarn clean:output && rm -rf ./cookies && rm -rf ./node_modules",
 		"clean:packages": "yarn workspace @automattic/jest-circus-allure-reporter clean && yarn workspace @automattic/calypso-e2e clean",
 		"clean:output": "rm -rf ./allure-results && rm -rf ./results",
-		"build": "yarn workspace @automattic/jest-circus-allure-reporter build && yarn workspace @automattic/calypso-e2e build"
+		"build": "yarn workspace @automattic/jest-circus-allure-reporter build && yarn workspace @automattic/calypso-e2e build",
+		"start": "yarn jest",
+		"start:debug": "PWDEBUG=1 DEBUG=pw:api yarn run start"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
