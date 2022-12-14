@@ -88,8 +88,7 @@ export async function clickNavTab(
 	const navTabItem = page.locator( selectors.navTabItem( { name: name, selected: false } ) );
 	await Promise.all( [ page.waitForNavigation(), navTabItem.click() ] );
 
-	// Final verification, check that we are now on the expected
-	// navtab.
+	// Final verification, check that we are now on the expected navtab.
 	const newSelectedTabLocator = page.locator(
 		selectors.navTabItem( { name: name, selected: true } )
 	);
@@ -100,9 +99,6 @@ export async function clickNavTab(
 			`Failed to confirm NavTab is active: expected ${ name }, got ${ newSelectedTabName }`
 		);
 	}
-
-	// Wait for all network activity to cease.
-	await page.waitForLoadState( 'networkidle', { timeout: 20 * 1000 } );
 }
 
 /**
