@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
@@ -10,6 +11,7 @@ import Tooltip from 'calypso/components/tooltip';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboard/selectors';
+import ToggleActivateMonitoring from '../downtime-monitoring/toggle-activate-monitoring';
 import SiteSetFavorite from './site-set-favorite';
 import { getRowMetaData, getProductSlugFromProductType } from './utils';
 import type { AllowedTypes, SiteData } from './types';
@@ -41,7 +43,7 @@ export default function SiteStatusContent( {
 	} = getRowMetaData( rows, type, isLargeScreen );
 
 	const siteId = rows.site.value.blog_id;
-	const siteUrl = value?.url;
+	const siteUrl = rows.site.value.url;
 
 	const isLicenseSelected = useSelector( ( state ) =>
 		hasSelectedLicensesOfType( state, siteId, type )
@@ -142,6 +144,14 @@ export default function SiteStatusContent( {
 				{ errorContent }
 			</>
 		);
+	}
+
+	const isDownTimeMonitorEnabled = isEnabled(
+		'jetpack/partner-portal-downtime-monitoring-updates'
+	);
+
+	if ( isDownTimeMonitorEnabled && type === 'monitor' ) {
+		return <ToggleActivateMonitoring siteId={ siteId } status={ status } />;
 	}
 
 	let content;
