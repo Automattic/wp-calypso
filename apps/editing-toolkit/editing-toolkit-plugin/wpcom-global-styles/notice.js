@@ -3,9 +3,12 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { ExternalLink, Notice } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { createInterpolateElement, render, useEffect, useState } from '@wordpress/element';
+import { doAction, hasAction } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 
 import './notice.scss';
+
+const HOOK_OPEN_CHECKOUT_MODAL = 'a8c.wpcom-block-editor.openCheckoutModal';
 
 function GlobalStylesNoticeComponent() {
 	const { globalStylesConfig, siteChanges } = useSelect( ( select ) => {
@@ -61,6 +64,21 @@ function GlobalStylesNoticeComponent() {
 		return null;
 	}
 
+	const openCheckout = ( event ) => {
+		event.preventDefault();
+
+		recordTracksEvent( 'calypso_global_styles_gating_notice_upgrade_click', {
+			context: 'site-editor',
+		} );
+
+		if ( ! hasAction( HOOK_OPEN_CHECKOUT_MODAL ) ) {
+			window.open( wpcomGlobalStyles.upgradeUrl, '_blank' );
+			return;
+		}
+
+		doAction( HOOK_OPEN_CHECKOUT_MODAL, { products: [ { product_slug: 'value_bundle' } ] } );
+	};
+
 	return (
 		<Notice status="warning" isDismissible={ false } className="wpcom-global-styles-notice">
 			{ createInterpolateElement(
@@ -73,11 +91,7 @@ function GlobalStylesNoticeComponent() {
 						<ExternalLink
 							href={ wpcomGlobalStyles.upgradeUrl }
 							target="_blank"
-							onClick={ () =>
-								recordTracksEvent( 'calypso_global_styles_gating_notice_upgrade_click', {
-									context: 'site-editor',
-								} )
-							}
+							onClick={ openCheckout }
 						/>
 					),
 				}
