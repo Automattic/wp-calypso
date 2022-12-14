@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import languages, { LanguageSlug } from '@automattic/languages';
 import {
 	UseQueryResult,
@@ -26,6 +27,11 @@ import type { ESHits, ESResponse, Plugin, PluginQueryOptions, Icon } from './typ
  * 	a default generated url Icon if icons param is falsy, it is not JSON or it does not contain a valid resolution
  */
 const createIconUrl = ( pluginSlug: string, icons?: string ): string => {
+	try {
+		const url = new URL( icons || '' );
+		return url.toString();
+	} catch ( _ ) {}
+
 	const defaultIconUrl = buildDefaultIconUrl( pluginSlug );
 	if ( ! icons ) {
 		return defaultIconUrl;
@@ -94,6 +100,10 @@ const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 			last_updated: hit.modified,
 			short_description: hit.plugin.excerpt, // TODO: add localization
 			icon: createIconUrl( hit.slug, hit.plugin.icons ),
+			variations: {
+				monthly: { product_id: hit.plugin.store_product_monthly_id },
+				yearly: { product_id: hit.plugin.store_product_yearly_id },
+			},
 			railcar,
 		};
 
@@ -125,7 +135,7 @@ export const getESPluginsInfiniteQueryParams = (
 		search( {
 			query: searchTerm,
 			author,
-			groupId: 'wporg',
+			groupId: config.isEnabled( 'marketplace-jetpack-plugin-search' ) ? 'marketplace' : 'wporg',
 			category: options.category,
 			pageHandle: pageParam + '',
 			pageSize,

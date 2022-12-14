@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -23,11 +22,13 @@ class StatsDatePicker extends Component {
 		statType: PropTypes.string,
 		isActivity: PropTypes.bool,
 		showQueryDate: PropTypes.bool,
+		isShort: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		showQueryDate: false,
 		isActivity: false,
+		isShort: false,
 	};
 
 	dateForSummarize() {
@@ -51,16 +52,15 @@ class StatsDatePicker extends Component {
 	}
 
 	dateForDisplay() {
-		const { date, moment, period, translate } = this.props;
+		const { date, moment, period, translate, isShort } = this.props;
 
 		// Ensure we have a moment instance here to work with.
 		const momentDate = moment.isMoment( date ) ? date : moment( date );
 		const localizedDate = moment( momentDate.format( 'YYYY-MM-DD' ) );
 		let formattedDate;
 
-		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
 		// ll is a date localized with abbreviated Month by momentjs
-		const weekPeriodFormat = isNewFeatured ? 'll' : 'LL';
+		const weekPeriodFormat = isShort ? 'll' : 'LL';
 
 		switch ( period ) {
 			case 'week':
@@ -121,10 +121,8 @@ class StatsDatePicker extends Component {
 	};
 
 	render() {
-		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
-
 		/* eslint-disable wpcalypso/jsx-classname-namespace*/
-		const { summary, translate, query, showQueryDate, isActivity } = this.props;
+		const { summary, translate, query, showQueryDate, isActivity, isShort } = this.props;
 		const isSummarizeQuery = get( query, 'summarize' );
 
 		let sectionTitle = isActivity
@@ -155,7 +153,7 @@ class StatsDatePicker extends Component {
 						'Example: "Stats for December 7", "Stats for December 8 - December 14", "Stats for December", "Stats for 2014"',
 			  } );
 
-		if ( isNewFeatured ) {
+		if ( isShort ) {
 			sectionTitle = (
 				<span className="period">
 					<span className="date">{ this.dateForDisplay() }</span>

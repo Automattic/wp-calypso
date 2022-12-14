@@ -1,3 +1,4 @@
+import './view.scss';
 import { BlockEditProps } from '@wordpress/blocks';
 import { useState } from '@wordpress/element';
 import { FunctionComponent } from 'react';

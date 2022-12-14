@@ -1,4 +1,3 @@
-import './edit.scss';
 import { useBlockProps } from '@wordpress/block-editor';
 import { BlockEditProps } from '@wordpress/blocks';
 import { useEffect } from '@wordpress/element';
