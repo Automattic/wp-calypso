@@ -23,24 +23,19 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 .design-carousel__item {
 	flex: 1;
 
-	@include break-large {
+	@include break-medium {
 		aspect-ratio: 1.5;
 	}
 
 	&.design-carousel__item-mobile {
-		@include break-large {
+		@include break-medium {
 			display: none;
 		}
 	}
 	&.design-carousel__item-desktop {
 		display: none;
-		@include break-large {
-			display: flex;
-		}
-
 		@include break-medium {
-			width: 75%;
-			margin: 0 auto;
+			display: flex;
 		}
 	}
 
@@ -59,12 +54,9 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 	overflow: hidden;
 	height: calc(65vh - 50px);
 	outline: none;
+	max-width: 100%;
 
-	@media (max-height: 375px) {
-		aspect-ratio: 0.5;
-	}
-
-	// needed for iOS Safari. iOS has
+	// needed for iOS Safari.
 	@supports (min-height: 65svh) {
 		height: calc(65svh - 50px);
 	}
@@ -74,12 +66,8 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 
 	.mshots-image__container {
 		display: block;
-		height: 100%;
+		height: auto;
 		width: 100%;
-
-		@include break-medium {
-			height: auto;
-		}
 	}
 
 	.mshots-image-visible {
@@ -93,6 +81,8 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 
 	.design-carousel__slide {
 		width: auto;
+		max-width: 100%;
+		height: auto;
 	}
 
 	.swiper-slide-active .design-carousel__item {
