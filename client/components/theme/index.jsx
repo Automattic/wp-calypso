@@ -288,7 +288,7 @@ export class Theme extends Component {
 		return price;
 	};
 
-	getUpsellMessage() {
+	getUpsellMessage = () => {
 		const {
 			hasPremiumThemesFeature,
 			theme,
@@ -358,48 +358,87 @@ export class Theme extends Component {
 				Link: <LinkButton isLink onClick={ this.goToCheckout } />,
 			}
 		);
-	}
-
-	getPricingBadge = () => {
-		const { doesThemeBundleSoftwareSet, isExternallyManagedTheme } = this.props;
-		if ( ! doesThemeBundleSoftwareSet || isExternallyManagedTheme ) {
-			return <PremiumBadge />;
-		}
-
-		if ( doesThemeBundleSoftwareSet && ! isExternallyManagedTheme ) {
-			return <WooCommerceBundledBadge />;
-		}
-
-		return null;
 	};
 
-	getPricingDescription = () => {
+	getUpsellPopoverContent = () => {
+		const { doesThemeBundleSoftwareSet, isExternallyManagedTheme, theme, translate } = this.props;
+
+		return (
+			<>
+				<TrackComponentView
+					eventName="calypso_upgrade_nudge_impression"
+					eventProperties={ { cta_name: 'theme-upsell-popup', theme: theme.id } }
+				/>
+				<div>
+					<div data-testid="upsell-header" className="theme__upsell-header">
+						{ ( ! doesThemeBundleSoftwareSet || isExternallyManagedTheme ) &&
+							translate( 'Premium theme' ) }
+						{ doesThemeBundleSoftwareSet &&
+							! isExternallyManagedTheme &&
+							translate( 'WooCommerce theme' ) }
+					</div>
+					<div data-testid="upsell-message">{ this.getUpsellMessage() }</div>
+				</div>
+			</>
+		);
+	};
+
+	renderUpsell = () => {
 		const {
-			didPurchaseTheme,
+			active,
 			doesThemeBundleSoftwareSet,
 			isExternallyManagedTheme,
-			isSiteEligibleForBundledSoftware,
-			isSiteEligibleForManagedExternalThemes,
-			hasPremiumThemesFeature,
-			translate,
+			isPremiumTheme,
+			isPremiumThemeAvailable,
+			theme,
 		} = this.props;
-		const isUsablePremiumTheme = ! doesThemeBundleSoftwareSet && hasPremiumThemesFeature;
-		const isUsableBundledTheme =
-			doesThemeBundleSoftwareSet && hasPremiumThemesFeature && isSiteEligibleForBundledSoftware;
 
-		if ( didPurchaseTheme && ! isUsablePremiumTheme && ! isUsableBundledTheme ) {
-			return translate( 'Purchased on an annual subscription' );
-		} else if ( isExternallyManagedTheme && ! isSiteEligibleForManagedExternalThemes ) {
-			return translate( 'Available for purchase with the Business plan' );
-		} else if ( isExternallyManagedTheme && isSiteEligibleForManagedExternalThemes ) {
-			return translate( 'Included in your plan' );
-		} else if ( isUsablePremiumTheme || isUsableBundledTheme ) {
-			return translate( 'Included in your plan' );
-		} else if ( doesThemeBundleSoftwareSet ) {
-			return translate( 'Available with the Business plan' );
-		}
+		/*
+		 * Only show the Premium badge if we're not already showing the price
+		 * and the theme isn't the active theme.
+		 */
+		const showPremiumBadge = isPremiumTheme && isPremiumThemeAvailable && ! active;
+		const isNewDetailsAndPreview = isEnabled( 'themes/showcase-i4/details-and-preview' );
+		const popoverContent = this.getUpsellPopoverContent();
 
-		return translate( 'Included in the Premium plan' );
+		return (
+			<span className="theme__upsell">
+				<TrackComponentView
+					eventName="calypso_upgrade_nudge_impression"
+					eventProperties={ { cta_name: 'theme-upsell', theme: theme.id } }
+				/>
+				{ isNewDetailsAndPreview ? (
+					<>
+						{ ( ! doesThemeBundleSoftwareSet || isExternallyManagedTheme ) && (
+							<PremiumBadge
+								tooltipClassName="theme__upsell-popover info-popover__tooltip"
+								tooltipContent={ popoverContent }
+								tooltipPosition="top"
+							/>
+						) }
+						{ doesThemeBundleSoftwareSet && ! isExternallyManagedTheme && (
+							<WooCommerceBundledBadge
+								tooltipClassName="theme__upsell-popover info-popover__tooltip"
+								tooltipContent={ popoverContent }
+								tooltipPosition="top"
+							/>
+						) }
+					</>
+				) : (
+					<InfoPopover
+						icon="star"
+						showOnHover={ true }
+						className={ classNames(
+							'theme__upsell-popover',
+							isPremiumThemeAvailable || showPremiumBadge ? 'active' : null
+						) }
+						position="top"
+					>
+						{ popoverContent }
+					</InfoPopover>
+				) }
+			</span>
+		);
 	};
 
 	softLaunchedBanner = () => {
@@ -426,9 +465,6 @@ export class Theme extends Component {
 			hasPremiumThemesFeature,
 			isPremiumTheme,
 			didPurchaseTheme,
-			doesThemeBundleSoftwareSet,
-			isPremiumThemeAvailable,
-			isExternallyManagedTheme,
 		} = this.props;
 		const { name, description, screenshot } = theme;
 		const isNewDetailsAndPreview = isEnabled( 'themes/showcase-i4/details-and-preview' );
@@ -445,12 +481,6 @@ export class Theme extends Component {
 			'theme__badge-price-upsell': showUpsell,
 		} );
 
-		/*
-		 * Only show the Premium badge if we're not already showing the price
-		 * and the theme isn't the active theme.
-		 */
-		const showPremiumBadge = isPremiumTheme && isPremiumThemeAvailable && ! active;
-
 		const themeDescription = decodeEntities( description );
 
 		// for performance testing
@@ -460,52 +490,10 @@ export class Theme extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const impressionEventName = 'calypso_upgrade_nudge_impression';
-		const upsellEventProperties = { cta_name: 'theme-upsell', theme: theme.id };
-		const upsellPopupEventProperties = { cta_name: 'theme-upsell-popup', theme: theme.id };
-
-		const upsellContent = (
-			<div>
-				<div data-testid="upsell-header" className="theme__upsell-header">
-					{ ( ! doesThemeBundleSoftwareSet || isExternallyManagedTheme ) &&
-						translate( 'Premium theme' ) }
-					{ doesThemeBundleSoftwareSet &&
-						! isExternallyManagedTheme &&
-						translate( 'WooCommerce theme' ) }
-				</div>
-				<div data-testid="upsell-message">{ this.getUpsellMessage() }</div>
-			</div>
-		);
-
-		const upsell = showUpsell && (
-			<span className="theme__upsell">
-				<TrackComponentView
-					eventName={ impressionEventName }
-					eventProperties={ upsellEventProperties }
-				/>
-				<InfoPopover
-					icon="star"
-					showOnHover={ true }
-					className={ classNames(
-						'theme__upsell-popover',
-						isPremiumThemeAvailable || showPremiumBadge ? 'active' : null
-					) }
-					position="top"
-				>
-					<TrackComponentView
-						eventName={ impressionEventName }
-						eventProperties={ upsellPopupEventProperties }
-					/>
-					{ upsellContent }
-				</InfoPopover>
-			</span>
-		);
-
 		const fit = '479,360';
 		const themeImgSrc = photon( screenshot, { fit } ) || screenshot;
 		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } ) || screenshot;
 		const e2eThemeName = name.toLowerCase().replace( /\s+/g, '-' );
-
 		const bookmarkRef = this.props.bookmarkRef ? { ref: this.props.bookmarkRef } : {};
 
 		return (
@@ -563,21 +551,14 @@ export class Theme extends Component {
 								} ) }
 							</span>
 						) }
-						{ isNewDetailsAndPreview ? (
-							<div className="theme__info-pricing">
-								{ showUpsell && this.getPricingBadge() }
-								{ ! active && (
-									<span className="theme__info-pricing-text">
-										{ showUpsell ? this.getPricingDescription() : translate( 'Free' ) }
-									</span>
-								) }
-							</div>
-						) : (
-							<>
-								{ active && <span className={ priceClass }>{ price }</span> }
-								{ upsell }
-							</>
+						{ ! isNewDetailsAndPreview && active && (
+							<span className={ priceClass }>{ price }</span>
 						) }
+						{ showUpsell
+							? this.renderUpsell()
+							: isNewDetailsAndPreview && (
+									<span className="theme__info-upsell-description">{ translate( 'Free' ) }</span>
+							  ) }
 						{ ! isEmpty( this.props.buttonContents ) ? (
 							<ThemeMoreButton
 								index={ this.props.index }
