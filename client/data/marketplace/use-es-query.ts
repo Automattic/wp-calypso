@@ -27,6 +27,11 @@ import type { ESHits, ESResponse, Plugin, PluginQueryOptions, Icon } from './typ
  * 	a default generated url Icon if icons param is falsy, it is not JSON or it does not contain a valid resolution
  */
 const createIconUrl = ( pluginSlug: string, icons?: string ): string => {
+	try {
+		const url = new URL( icons || '' );
+		return url.toString();
+	} catch ( _ ) {}
+
 	const defaultIconUrl = buildDefaultIconUrl( pluginSlug );
 	if ( ! icons ) {
 		return defaultIconUrl;
