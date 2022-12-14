@@ -459,10 +459,9 @@ class ThemeShowcase extends Component {
 			locale,
 			premiumThemesEnabled,
 		} = this.props;
-
 		const tier = this.props.tier || '';
+
 		const canonicalUrl = 'https://wordpress.com' + pathName;
-		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
 
 		const metas = [
 			{ name: 'description', property: 'og:description', content: this.props.description },
@@ -511,6 +510,8 @@ class ThemeShowcase extends Component {
 					( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
 				),
 		};
+
+		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
 
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
