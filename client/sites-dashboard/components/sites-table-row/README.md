@@ -5,7 +5,7 @@ Renders a SitesTableRow component.
 ## How to use
 
 ```jsx
-import SitesTableRow from '../../sites-table-row';
+import SitesTableRow from 'calypso/sites-dashboard/components/sites-table-row';
 
 function render() {
 	const site = {};
