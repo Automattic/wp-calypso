@@ -73,14 +73,15 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						onChangeField={ onChangeField }
 						handleSubmitForm={ handleSubmitForm }
 						disabled={ disabled }
+						isSavingSettings={ isSavingSettings }
 					/>
 					<RssFeedSettingsSection
 						fields={ fields }
 						onChangeField={ onChangeField }
 						handleSubmitForm={ handleSubmitForm }
 						disabled={ disabled }
-						siteUrl={ siteUrl }
 						isSavingSettings={ isSavingSettings }
+						siteUrl={ siteUrl }
 					/>
 					<NewsletterSettingsSection
 						fields={ fields }

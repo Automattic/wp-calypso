@@ -12,6 +12,7 @@ type SiteSettingsSectionProps = {
 	onChangeField: ( field: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => void;
 	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
 	disabled?: boolean;
+	isSavingSettings?: boolean;
 };
 
 export const SiteSettingsSection = ( {
@@ -19,6 +20,7 @@ export const SiteSettingsSection = ( {
 	onChangeField,
 	handleSubmitForm,
 	disabled,
+	isSavingSettings,
 }: SiteSettingsSectionProps ) => {
 	const translate = useTranslate();
 	const { posts_per_page } = fields;
@@ -31,6 +33,7 @@ export const SiteSettingsSection = ( {
 				showButton
 				onButtonClick={ handleSubmitForm }
 				disabled={ disabled }
+				isSaving={ isSavingSettings }
 			/>
 			<Card>
 				<BlogsPostsSetting
