@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { MobilePromoCard } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { MobilePromoCard } from 'calypso/../packages/components/src';
 import wordpressSeoIllustration from 'calypso/assets/images/illustrations/wordpress-seo-premium.svg';
 import PromoCardBlock from 'calypso/blocks/promo-card-block';
 import DotPager from 'calypso/components/dot-pager';
