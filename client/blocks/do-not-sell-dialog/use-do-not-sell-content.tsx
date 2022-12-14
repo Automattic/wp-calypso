@@ -1,70 +1,25 @@
-import { Card } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
-import { ToggleControl, ExternalLink } from '@wordpress/components';
-import cookie from 'cookie';
+import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
-import SectionHeader from 'calypso/components/section-header';
-import {
-	refreshCountryCodeCookieGdpr,
-	setTrackingPrefs,
-	getTrackingPrefs,
-} from 'calypso/lib/analytics/utils';
-import isRegionInCcpaZone from 'calypso/lib/analytics/utils/is-region-in-ccpa-zone';
 
-const useDoNotSellHelper = () => {
-	const [ shouldShowSetting, setShouldShowSetting ] = useState( false );
-	const [ isDoNotSellEnabled, setDoNotSellEnabled ] = useState(
-		! getTrackingPrefs().buckets.advertising
+export const useDoNotSellContent = () => {
+	const translate = useTranslate();
+	const localizeUrl = useLocalizeUrl();
+
+	const cookiePolicyLink = (
+		<ExternalLink href={ localizeUrl( 'https://automattic.com/cookies/' ) } />
 	);
-
-	useEffect( () => {
-		refreshCountryCodeCookieGdpr().then( () => {
-			const cookies = cookie.parse( document.cookie );
-			setShouldShowSetting( isRegionInCcpaZone( cookies.country_code, cookies.region ) );
-		} );
-	}, [ setShouldShowSetting ] );
-
-	const handleSetDoNotSell = useCallback(
-		( isEnabled ) => {
-			const prefs = setTrackingPrefs( { ok: true, buckets: { advertising: ! isEnabled } } );
-			setDoNotSellEnabled( ! prefs.buckets.advertising );
-		},
-		[ setDoNotSellEnabled ]
+	const privacyPolicyLink = (
+		<ExternalLink href={ localizeUrl( 'https://automattic.com/privacy/' ) } />
+	);
+	const contactLink = (
+		<ExternalLink href="mailto:contact@automattic.com">contact@automattic.com</ExternalLink>
 	);
 
 	return {
-		shouldShowSetting,
-		handleSetDoNotSell,
-		isDoNotSellEnabled,
-	};
-};
-
-export const DoNotSellSetting = () => {
-	const translate = useTranslate();
-	const localizeUrl = useLocalizeUrl();
-	const { shouldShowSetting, handleSetDoNotSell, isDoNotSellEnabled } = useDoNotSellHelper();
-
-	const cookiePolicyLink = (
-		<ExternalLink href={ localizeUrl( 'https://automattic.com/cookies/' ) } target="_blank" />
-	);
-	const privacyPolicyLink = (
-		<ExternalLink href={ localizeUrl( 'https://automattic.com/privacy/' ) } target="_blank" />
-	);
-	const contactLink = (
-		<ExternalLink href="mailto:contact@automattic.com" target="_blank">
-			contact@automattic.com
-		</ExternalLink>
-	);
-
-	if ( ! shouldShowSetting ) {
-		return null;
-	}
-
-	return (
-		<>
-			<SectionHeader label={ translate( 'Do Not Sell or Share My Data' ) } />
-			<Card className="privacy__settings">
+		title: translate( 'Do Not Sell or Share My Data' ),
+		longDescription: (
+			<>
 				<p>
 					{ translate(
 						'Your privacy is critically important to us so we strive to be transparent in how we are collecting, using, and sharing your information. We use cookies and other technologies to help us identify and track visitors to our sites, to store usage and access preferences for our services, to track and understand email campaign effectiveness, and to deliver targeted ads. Learn more in our {{privacyPolicyLink}}Privacy Policy{{/privacyPolicyLink}} and our {{cookiePolicyLink}}Cookie Policy{{/cookiePolicyLink}}.',
@@ -97,14 +52,9 @@ export const DoNotSellSetting = () => {
 						{ components: { contactLink } }
 					) }
 				</p>
-				<hr />
-				<ToggleControl
-					id="advertising_opt_out"
-					checked={ isDoNotSellEnabled }
-					onChange={ handleSetDoNotSell }
-					label={ translate( 'Do Not Sell or Share My Data' ) }
-				/>
-			</Card>
-		</>
-	);
+			</>
+		),
+		toggleLabel: translate( 'Do Not Sell or Share My Data' ),
+		closeButton: translate( 'Close' ),
+	};
 };
