@@ -22,6 +22,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import PremiumBadge from 'calypso/components/premium-badge';
 import WebPreview from 'calypso/components/web-preview/content';
 import { useSiteVerticalQueryById } from 'calypso/data/site-verticals';
+import useTrackScrollPageToBottom from 'calypso/landing/stepper/hooks/use-track-scroll-page-to-bottom';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
@@ -146,33 +147,18 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	const categorization = useCategorization( staticDesigns, categorizationOptions );
 
-	const offsetFromBottom = 100;
-	const prevScrollY = useRef( window.scrollY );
-
-	useEffect( () => {
-		const trackScroll = () => {
-			const eventProps = {};
-
-			recordTracksEvent( 'calypso_signup_design_picker_scrolled_to_end', eventProps );
-		};
-
-		const onScroll = () => {
-			const offset = -prevScrollY + window.innerHeight + offsetFromBottom;
-			if ( offset >= window.scrollY ) {
-				trackScroll();
-				// Only trigger this event once
-				window.removeEventListener( 'scroll', onScroll );
-			}
-
-			prevScrollY.current = window.scrollY;
-		};
-
-		window.addEventListener( 'scroll', onScroll );
-
-		return () => {
-			window.removeEventListener( 'scroll', onScroll );
-		};
-	}, [ categorization.selection ] );
+	useTrackScrollPageToBottom(
+		true,
+		() => {
+			recordTracksEvent( 'calypso_signup_design_scrolled_to_end', {
+				intent,
+				site_category: categorization.selection,
+			} );
+		},
+		{
+			site_category: categorization.selection,
+		}
+	);
 
 	// ********** Logic for selecting a design and style variation
 
