@@ -186,6 +186,7 @@ export default function CompanyDetailsForm( {
 								setAddressState( option.value );
 							} }
 							isDisabled={ isLoading }
+							placeholder={ translate( 'Type to find state' ) }
 						/>
 					</FormFieldset>
 				) }

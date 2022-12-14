@@ -8,6 +8,7 @@ interface Props {
 	onChange: ( option: any ) => void;
 	isDisabled?: boolean;
 	isLoading?: boolean;
+	placeholder: string;
 }
 
 const colourStyles: StylesConfig = {
