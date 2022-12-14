@@ -151,7 +151,13 @@ add_action( 'wp_enqueue_scripts', 'wpcom_global_styles_enqueue_assets' );
  * @return WP_Theme_JSON_Data|WP_Theme_JSON_Data_Gutenberg Filtered data.
  */
 function wpcom_block_global_styles_frontend( $theme_json ) {
-	if ( ! wpcom_should_limit_global_styles() || wpcom_is_previewing_global_styles() ) {
+	global $current_screen;
+
+	if (
+		$current_screen->is_block_editor ||
+		! wpcom_should_limit_global_styles() ||
+		wpcom_is_previewing_global_styles()
+	) {
 		return $theme_json;
 	}
 
