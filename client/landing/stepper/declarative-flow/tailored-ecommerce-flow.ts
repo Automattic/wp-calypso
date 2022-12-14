@@ -19,7 +19,6 @@ import DesignCarousel from './internals/steps-repository/design-carousel';
 import DomainsStep from './internals/steps-repository/domains';
 import Intro from './internals/steps-repository/intro';
 import ProcessingStep from './internals/steps-repository/processing-step';
-import SetThemeStep from './internals/steps-repository/set-theme-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import StoreAddress from './internals/steps-repository/store-address';
 import StoreProfiler from './internals/steps-repository/store-profiler';
@@ -44,7 +43,6 @@ const ecommerceFlow: Flow = {
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'waitForAtomic', component: WaitForAtomic },
-			{ slug: 'setThemeStep', component: SetThemeStep },
 			{ slug: 'checkPlan', component: CheckPlan },
 		];
 	},
@@ -103,20 +101,18 @@ const ecommerceFlow: Flow = {
 						from_section: 'default',
 					} );
 
-					setPlanCartItem( { product_slug: selectedPlan } );
+					setPlanCartItem( {
+						product_slug: selectedPlan,
+						extra: { design: selectedDesign?.recipe?.stylesheet },
+					} );
 					return navigate( 'siteCreationStep' );
 
 				case 'siteCreationStep':
 					return navigate( 'processing' );
 
 				case 'processing':
-					// Coming from setThemeStep
-					if ( providedDependencies?.selectedDesign ) {
-						return navigate( 'storeAddress' );
-					}
-
 					if ( providedDependencies?.finishedWaitingForAtomic ) {
-						return navigate( 'setThemeStep' );
+						return navigate( 'storeAddress' );
 					}
 
 					if ( providedDependencies?.siteSlug ) {
@@ -157,9 +153,6 @@ const ecommerceFlow: Flow = {
 
 				case 'designCarousel':
 					return navigate( 'domains' );
-
-				case 'setThemeStep':
-					return navigate( 'processing' );
 
 				case 'waitForAtomic':
 					return navigate( 'processing' );
