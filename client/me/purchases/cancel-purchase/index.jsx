@@ -270,8 +270,8 @@ class CancelPurchase extends Component {
 						<CancelPurchaseRefundInformation
 							purchase={ purchase }
 							isJetpackPurchase={ isJetpackPurchase }
-							confirmBundledDomain={ this.state.confirmCancelBundledDomain }
-							confirmCancelBundledDomain={ this.state.cancelBundledDomain }
+							confirmCancelBundledDomain={ this.state.confirmCancelBundledDomain }
+							cancelBundledDomain={ this.state.cancelBundledDomain }
 							onCancelConfirmationStateChange={ this.onCancelConfirmationStateChange }
 							site={ this.props.site }
 						/>
