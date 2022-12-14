@@ -442,28 +442,32 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_global_styles' );
  * prompt on the click event of the action=deactivate.
  *
  * The option launch-status exists only on wpcom sites.
+ *
+ * @TODO: Remove after coming-soon is migrated to the new jetpack-mu-wpcom plugin
  */
-add_filter(
-	'plugin_action_links_' . plugin_basename( __FILE__ ),
-	function ( $actions ) {
-		$unlaunched = get_option( 'launch-status' ) === 'unlaunched';
+if ( has_action( 'plugins_loaded', 'Jetpack\Mu_Wpcom\load_coming_soon' ) === false ) {
+	add_filter(
+		'plugin_action_links_' . plugin_basename( __FILE__ ),
+		function ( $actions ) {
+			$unlaunched = get_option( 'launch-status' ) === 'unlaunched';
 
-		if ( $unlaunched ) {
-			$actions = array_map(
-				function ( $action ) {
-					$message = __( 'Disabling this plugin will make your site public.', 'full-site-editing' );
-					$confirm = "confirm('$message') ? null : event.preventDefault()";
+			if ( $unlaunched ) {
+				$actions = array_map(
+					function ( $action ) {
+						$message = __( 'Disabling this plugin will make your site public.', 'full-site-editing' );
+						$confirm = "confirm('$message') ? null : event.preventDefault()";
 
-					return str_replace(
-						'<a href="plugins.php?action=deactivate',
-						"<a onclick=\"$confirm\" href=\"plugins.php?action=deactivate",
-						$action
-					);
-				},
-				$actions
-			);
+						return str_replace(
+							'<a href="plugins.php?action=deactivate',
+							"<a onclick=\"$confirm\" href=\"plugins.php?action=deactivate",
+							$action
+						);
+					},
+					$actions
+				);
+			}
+
+			return $actions;
 		}
-
-		return $actions;
-	}
-);
+	);
+}
