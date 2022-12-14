@@ -74,7 +74,7 @@ const ProductLightbox: React.FC< Props > = ( {
 		getOnClickPurchase( product )();
 		// Tracking when checkout is clicked
 		dispatch(
-			recordTracksEvent( 'calyspo_product_lightbox_checkout_click', {
+			recordTracksEvent( 'calypso_product_lightbox_checkout_click', {
 				site_id: siteId,
 				product_slug: product.productSlug,
 			} )

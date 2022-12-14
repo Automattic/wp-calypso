@@ -105,7 +105,7 @@ const PatternAssemblerPreview = ( { header, sections = [], footer, scrollToSelec
 				recordTracksEvent={ recordTracksEvent }
 				scrollToSelector={ scrollToSelector }
 				onDeviceUpdate={ ( device: string ) => {
-					recordTracksEvent( 'calypso_signup_bcpa_preview_device_click', { device } );
+					recordTracksEvent( 'calypso_signup_pattern_assembler_preview_device_click', { device } );
 				} }
 			/>
 		</div>

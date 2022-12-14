@@ -32,18 +32,19 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 			/* webpackChunkName: "newsletter-post-setup-flow" */ '../declarative-flow/newsletter-post-setup'
 		),
 
+	ecommerce: () =>
+		import(
+			/* webpackChunkName: "tailored-ecommerce-flow" */ '../declarative-flow/tailored-ecommerce-flow'
+		),
+
 	free: () => import( /* webpackChunkName: "free-flow" */ '../declarative-flow/free' ),
+
+	'free-post-setup': () =>
+		import( /* webpackChunkName: "free-post-setup-flow" */ '../declarative-flow/free-post-setup' ),
 };
 
 if ( config.isEnabled( 'themes/plugin-bundling' ) ) {
 	availableFlows[ 'plugin-bundle' ] = () =>
 		import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' );
 }
-if ( config.isEnabled( 'signup/tailored-ecommerce' ) ) {
-	availableFlows[ 'ecommerce' ] = () =>
-		import(
-			/* webpackChunkName: "tailored-ecommerce-flow" */ '../declarative-flow/tailored-ecommerce-flow'
-		);
-}
-
 export default availableFlows;

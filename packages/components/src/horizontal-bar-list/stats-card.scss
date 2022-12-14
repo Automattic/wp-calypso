@@ -14,6 +14,9 @@
 	line-height: $row-line-height;
 	color: $font-color;
 	background-color: var(--studio-white);
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 
 
 	@media ( max-width: $break-medium ) {
@@ -56,6 +59,11 @@
 
 		&:visited {
 			color: $font-color;
+		}
+
+		&:hover,
+		&:focus {
+			text-decoration: underline;
 		}
 	}
 }

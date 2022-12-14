@@ -2,13 +2,8 @@
 @import "~@automattic/color-studio/dist/color-variables";
 @import "~@wordpress/base-styles/colors";
 
-/*
-Note:
-  There are several usages of !important in this file due to 104-gh-Automattic/lighthouse-forums.
-	Once this issue is resolved, we can remove the !important declarations.
-*/
-
 $brand-text: "SF Pro Text", $sans;
+$brand-display: "SF Pro Display", $sans;
 
 @keyframes hb-pricing-plans-embed__skeleton__animation {
 	0% {
@@ -37,11 +32,11 @@ $brand-text: "SF Pro Text", $sans;
 
 	&__settings {
 		select {
-			min-height: 30px !important;
-			height: 36px !important;
-			padding: 0 26px 0 16px !important;
-			margin: 0 !important;
-			border-color: $gray-600 !important;
+			min-height: 30px;
+			height: 36px;
+			padding: 0 26px 0 16px;
+			margin: 0;
+			border-color: $gray-600;
 		}
 
 		.components-panel__row {
@@ -99,10 +94,10 @@ $brand-text: "SF Pro Text", $sans;
 		}
 
 		&-learn-more {
-			text-decoration: none !important;
+			text-decoration: none;
 
 			&:hover {
-				text-decoration: underline !important;
+				text-decoration: underline;
 			}
 		}
 
@@ -125,8 +120,8 @@ $brand-text: "SF Pro Text", $sans;
 			}
 
 			p {
-				margin: 0 !important;
-				line-height: inherit !important;
+				margin: 0;
+				line-height: 1.57;
 			}
 		}
 	}
@@ -147,10 +142,10 @@ $brand-text: "SF Pro Text", $sans;
 
 		&-description {
 			font-family: $brand-text;
-			font-weight: 400 !important;
-			font-size: 0.75rem !important;
-			line-height: 1.66 !important;
-			color: $studio-gray-60 !important;
+			font-weight: 400;
+			font-size: 0.75rem;
+			line-height: 1.66;
+			color: $studio-gray-60;
 		}
 	}
 
@@ -173,13 +168,13 @@ $brand-text: "SF Pro Text", $sans;
 	}
 
 	&__billing-option-input {
-		margin: 0 !important;
+		margin: 0;
 		height: 20px;
 		width: 20px;
 	}
 
 	&__billing-option-label {
-		display: flex !important;
+		display: flex;
 		align-items: center;
 		gap: 8px;
 		font-family: $brand-text;
@@ -199,13 +194,64 @@ $brand-text: "SF Pro Text", $sans;
 		justify-content: space-between;
 
 		&-cta {
-			background: var(--wp-admin-theme-color) !important;
-			text-decoration: none !important;
+			color: $studio-blue-0;
+			font-family: $brand-display;
+			font-size: 0.875rem;
+			font-weight: 500;
+			background: $studio-blue-50;
+			text-decoration: none;
 			width: 100%;
-			border-radius: 4px !important;
-			display: flex !important;
+			border-radius: 4px;
+			display: flex;
 			justify-content: center;
-			padding: 20px 12px !important;
+			padding: 10px 0;
 		}
+	}
+}
+
+/*
+Note:
+  These are overrides for BBPress due to 104-gh-Automattic/lighthouse-forums.
+	Once this issue is resolved, we can remove the declarations below.
+*/
+#bbpress-forums {
+	a.hb-pricing-plans-embed__detail-cta {
+		&:link,
+		&:visited {
+			color: $studio-blue-0;
+			font-family: $brand-display;
+			font-size: 0.875rem;
+			font-weight: 500;
+			background: $studio-blue-50;
+			text-decoration: none;
+			width: 100%;
+			border-radius: 4px;
+			display: flex;
+			justify-content: center;
+			padding: 10px 0;
+		}
+	}
+
+	fieldset.bbp-form label.hb-pricing-plans-embed__billing-option-label {
+		display: flex;
+	}
+
+	fieldset.bbp-form input.hb-pricing-plans-embed__billing-option-input {
+		margin: 0;
+	}
+
+	div.bbp-reply-content a.hb-pricing-plans-embed__header-learn-more {
+		text-decoration: none;
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+
+	fieldset.bbp-form select.components-select-control__input {
+		min-height: 30px;
+		height: 36px;
+		padding: 0 26px 0 16px;
+		margin: 0;
+		border-color: $gray-600;
 	}
 }
