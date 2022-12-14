@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, reduce } from 'lodash';
@@ -14,7 +15,15 @@ import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 
 export const StatsReach = ( props ) => {
-	const { translate, siteId, followData, publicizeData, isLoadingPublicize, siteSlug } = props;
+	const {
+		translate,
+		siteId,
+		followData,
+		publicizeData,
+		isLoadingPublicize,
+		siteSlug,
+		isOdysseyStats,
+	} = props;
 
 	const isLoadingFollowData = ! followData;
 	const wpcomFollowCount = get( followData, 'total_wpcom', 0 );
@@ -38,7 +47,7 @@ export const StatsReach = ( props ) => {
 						gridicon="my-sites"
 						label={ translate( 'WordPress.com' ) }
 						loading={ isLoadingFollowData }
-						href={ `/people/followers/${ siteSlug }` }
+						href={ ! isOdysseyStats && `/people/followers/${ siteSlug }` }
 						value={ wpcomFollowCount }
 						compact
 					/>
@@ -46,7 +55,7 @@ export const StatsReach = ( props ) => {
 						gridicon="mail"
 						label={ translate( 'Email' ) }
 						loading={ isLoadingFollowData }
-						href={ `/people/email-followers/${ siteSlug }` }
+						href={ ! isOdysseyStats && `/people/email-followers/${ siteSlug }` }
 						value={ emailFollowCount }
 						compact
 					/>
@@ -77,5 +86,6 @@ export default connect( ( state ) => {
 		publicizeData,
 		isLoadingPublicize,
 		siteSlug,
+		isOdysseyStats: config.isEnabled( 'is_running_in_jetpack_site' ),
 	};
 } )( localize( StatsReach ) );

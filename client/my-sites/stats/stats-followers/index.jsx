@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -83,6 +84,7 @@ class StatModuleFollowers extends Component {
 			numberFormat,
 			emailQuery,
 			wpcomQuery,
+			isOdysseyStats,
 		} = this.props;
 		const isLoading = requestingWpcomFollowers || requestingEmailFollowers;
 		const hasEmailFollowers = !! get( emailData, 'subscribers', [] ).length;
@@ -104,9 +106,10 @@ class StatModuleFollowers extends Component {
 
 		const summaryPageSlug = siteSlug || '';
 		const summaryPageLink =
-			'email-followers' === activeFilter
+			! isOdysseyStats &&
+			( 'email-followers' === activeFilter
 				? '/people/email-followers/' + summaryPageSlug
-				: '/people/followers/' + summaryPageSlug;
+				: '/people/followers/' + summaryPageSlug );
 
 		return (
 			<div>
@@ -205,6 +208,7 @@ const connectComponent = connect(
 			wpcomQuery,
 			siteId,
 			siteSlug,
+			isOdysseyStats: config.isEnabled( 'is_running_in_jetpack_site' ),
 		};
 	},
 	{ recordGoogleEvent }

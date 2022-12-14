@@ -10,7 +10,7 @@
 .wp-admin {
 	& .layout__content,
 	&.theme-default .focus-content .layout__content {
-		padding-top: 0;
+		padding-top: 32px;
 		padding-left: 1px;
 	}
 	// Fixed header doesn't work well for WP-Admin, as the masterbar isn't fixed.
@@ -52,4 +52,5 @@
 		// Override WP-Admin styles.
 		float: none;
 	}
+
 }
