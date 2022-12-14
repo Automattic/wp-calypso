@@ -13,7 +13,8 @@ import './blocks-renderer.scss';
 
 const ScaledBlocksRendererContainer = ( {
 	children,
-	styles: customStyles = [],
+	styles: customStyles,
+	inlineCss,
 	viewportWidth = 1200,
 	containerWidth,
 	maxHeight = BLOCK_MAX_HEIGHT,
@@ -29,20 +30,23 @@ const ScaledBlocksRendererContainer = ( {
 		};
 	}, [] );
 
-	// Avoid scrollbars for pattern previews.
 	const editorStyles = useMemo( () => {
-		if ( styles ) {
-			return [
-				...styles,
-				{
-					css: 'body{height:auto;overflow:hidden;}',
-					__unstableType: 'presets',
-				},
-			];
+		const mergedStyles = [
+			...( styles || [] ),
+			...( customStyles || [] ),
+			// Avoid scrollbars for pattern previews.
+			{
+				css: 'body{height:auto;overflow:hidden;}',
+				__unstableType: 'presets',
+			},
+		];
+
+		if ( ! inlineCss ) {
+			return mergedStyles;
 		}
 
-		return styles;
-	}, [ styles ] );
+		return [ ...mergedStyles, { css: inlineCss } ];
+	}, [ styles, customStyles, inlineCss ] );
 
 	const svgFilters = useMemo( () => {
 		return [ ...( duotone?.default ?? [] ), ...( duotone?.theme ?? [] ) ];
@@ -75,12 +79,7 @@ const ScaledBlocksRendererContainer = ( {
 			} }
 		>
 			<Iframe
-				head={
-					<>
-						<EditorStyles styles={ editorStyles } />
-						<EditorStyles styles={ customStyles } />
-					</>
-				}
+				head={ <EditorStyles styles={ editorStyles } /> }
 				assets={ assets }
 				contentRef={ contentRef }
 				aria-hidden
