@@ -36,9 +36,6 @@ function Subscribers( props: Props ) {
 		'https://dashboard.wordpress.com/wp-admin/index.php'
 	);
 
-	const templateState =
-		search && ! subscribersTotal ? 'no-result' : ! subscribersTotal ? 'empty' : 'default';
-
 	function getFollowerRef( follower: Follower ) {
 		return 'follower-' + follower.ID;
 	}
@@ -49,6 +46,15 @@ function Subscribers( props: Props ) {
 
 	function renderPlaceholders() {
 		return <PeopleListItem key="people-list-item-placeholder" />;
+	}
+
+	let templateState;
+	if ( search && ! subscribersTotal ) {
+		templateState = 'no-result';
+	} else if ( ! subscribersTotal ) {
+		templateState = 'empty';
+	} else {
+		templateState = 'default';
 	}
 
 	switch ( templateState ) {
@@ -102,6 +108,8 @@ function Subscribers( props: Props ) {
 				/>
 			);
 	}
+
+	return null;
 }
 
 export default Subscribers;
