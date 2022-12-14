@@ -38,6 +38,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		),
 
 	free: () => import( /* webpackChunkName: "free-flow" */ '../declarative-flow/free' ),
+
+	'free-post-setup': () =>
+		import( /* webpackChunkName: "free-post-setup-flow" */ '../declarative-flow/free-post-setup' ),
 };
 
 if ( config.isEnabled( 'themes/plugin-bundling' ) ) {

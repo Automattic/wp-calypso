@@ -48,7 +48,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		[ header, ...sections, footer ].filter( ( pattern ) => pattern ) as Pattern[];
 
 	const trackEventPatternAdd = ( patternType: string ) => {
-		recordTracksEvent( 'calypso_signup_bcpa_pattern_add_click', {
+		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_add_click', {
 			pattern_type: patternType,
 		} );
 	};
@@ -60,7 +60,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		patternType: string;
 		patternId: number;
 	} ) => {
-		recordTracksEvent( 'calypso_signup_bcpa_pattern_select_click', {
+		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_click', {
 			pattern_type: patternType,
 			pattern_id: patternId,
 		} );
@@ -68,13 +68,13 @@ const PatternAssembler: Step = ( { navigation } ) => {
 
 	const trackEventContinue = () => {
 		const patterns = getPatterns();
-		recordTracksEvent( 'calypso_signup_bcpa_continue_click', {
+		recordTracksEvent( 'calypso_signup_pattern_assembler_continue_click', {
 			pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
 			pattern_count: patterns.length,
 		} );
 		patterns.forEach( ( { id, name } ) => {
-			recordTracksEvent( 'calypso_signup_bcpa_pattern_final_select', {
+			recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_final_select', {
 				pattern_id: id,
 				pattern_name: name,
 			} );
@@ -171,7 +171,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 
 	const onBack = () => {
 		const patterns = getPatterns();
-		recordTracksEvent( 'calypso_signup_bcpa_back_click', {
+		recordTracksEvent( 'calypso_signup_pattern_assembler_back_click', {
 			has_selected_patterns: patterns.length > 0,
 			pattern_count: patterns.length,
 		} );

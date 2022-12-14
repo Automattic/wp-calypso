@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { Plugin } from 'calypso/data/marketplace/types';
@@ -133,9 +134,16 @@ const usePlugins = ( {
 			results = featuredPlugins?.length ?? 0;
 			break;
 		default:
-			plugins = [ ...dotComPlugins, ...ESPlugins ];
-			isFetching = isFetchingDotCom || isFetchingES;
-			results = ( ESPagination?.results ?? 0 ) + dotComPlugins.length;
+			plugins = config.isEnabled( 'marketplace-jetpack-plugin-search' )
+				? ESPlugins
+				: [ ...dotComPlugins, ...ESPlugins ];
+			isFetching = config.isEnabled( 'marketplace-jetpack-plugin-search' )
+				? isFetchingES
+				: isFetchingDotCom || isFetchingES;
+			results = config.isEnabled( 'marketplace-jetpack-plugin-search' )
+				? ESPagination?.results ?? 0
+				: ( ESPagination?.results ?? 0 ) + dotComPlugins.length;
+
 			break;
 	}
 

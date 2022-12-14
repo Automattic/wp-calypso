@@ -60,7 +60,7 @@
 		"legal-updates-banner": true,
 		"limit-global-styles": true,
 		"mailchimp": true,
-		"marketplace-jetpack-plugin-search": true,
+		"marketplace-jetpack-plugin-search": false,
 		"marketplace-personal-premium": false,
 		"me/account-close": true,
 		"me/vat-details": true,

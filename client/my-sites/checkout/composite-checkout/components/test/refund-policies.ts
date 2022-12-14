@@ -3,6 +3,7 @@ import {
 	PLAN_MONTHLY_PERIOD,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM_2_YEARS,
+	PLAN_PREMIUM,
 	PLAN_PREMIUM_MONTHLY,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
 	PRODUCT_WPCOM_CUSTOM_DESIGN,
@@ -37,6 +38,70 @@ function getPlanAndDomainBundle( planSlug: string ) {
 }
 
 describe( 'getRefundPolicies', () => {
+	test( 'domain gift', () => {
+		const cart = getEmptyResponseCart();
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			item_subtotal_integer: 10,
+			is_domain_registration: true,
+			meta: 'test.live',
+			product_slug: 'dotlive_domain',
+		} );
+
+		cart.is_gift_purchase = true;
+
+		const refundPolicies = getRefundPolicies( cart );
+
+		expect( refundPolicies ).toEqual( [ RefundPolicy.GiftDomainPurchase ] );
+	} );
+
+	test( 'biennial gift', () => {
+		const cart = getEmptyResponseCart();
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			item_subtotal_integer: 5,
+			product_slug: PLAN_PREMIUM_2_YEARS,
+			bill_period: String( PLAN_BIENNIAL_PERIOD ),
+		} );
+
+		cart.is_gift_purchase = true;
+
+		const refundPolicies = getRefundPolicies( cart );
+
+		expect( refundPolicies ).toEqual( [ RefundPolicy.GiftBiennialPurchase ] );
+	} );
+
+	test( 'annual gift', () => {
+		const cart = getEmptyResponseCart();
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			item_subtotal_integer: 5,
+			product_slug: PLAN_PREMIUM,
+		} );
+
+		cart.is_gift_purchase = true;
+
+		const refundPolicies = getRefundPolicies( cart );
+
+		expect( refundPolicies ).toEqual( [ RefundPolicy.GiftYearlyPurchase ] );
+	} );
+
+	test( 'monthly gift', () => {
+		const cart = getEmptyResponseCart();
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			item_subtotal_integer: 5,
+			product_slug: PLAN_PREMIUM_MONTHLY,
+			bill_period: String( PLAN_MONTHLY_PERIOD ),
+		} );
+
+		cart.is_gift_purchase = true;
+
+		const refundPolicies = getRefundPolicies( cart );
+
+		expect( refundPolicies ).toEqual( [ RefundPolicy.GiftMonthlyPurchase ] );
+	} );
+
 	test( 'add-on product', () => {
 		const cart = getEmptyResponseCart();
 		cart.products.push( {

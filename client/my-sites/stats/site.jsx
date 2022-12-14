@@ -219,7 +219,7 @@ class StatsSite extends Component {
 
 				<FormattedHeader
 					brandFont
-					className="stats__section-header"
+					className="stats__section-header modernized-header"
 					headerText={ translate( 'Jetpack Stats' ) }
 					align="left"
 					subHeaderText={ translate(
@@ -261,6 +261,7 @@ class StatsSite extends Component {
 									query={ query }
 									statsType="statsTopPosts"
 									showQueryDate
+									isShort
 								/>
 							</StatsPeriodNavigation>
 							<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />

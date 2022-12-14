@@ -29,19 +29,20 @@ export default function AnnualHighlightCards( {
 		<h1 className="highlight-cards-heading">
 			{ Number.isFinite( year )
 				? translate( '%(year)s in review', { args: { year } } )
-				: translate( 'Year in review' ) }
+				: translate( 'Year in review' ) }{ ' ' }
+			{ titleHref ? (
+				<small>
+					<a className="highlight-cards-heading-wrapper" href={ titleHref }>
+						{ translate( 'View all annual insights' ) }
+					</a>
+				</small>
+			) : null }
 		</h1>
 	);
 
 	return (
 		<div className={ classNames( 'highlight-cards', className ?? null ) }>
-			{ titleHref ? (
-				<a className="highlight-cards-heading-wrapper" href={ titleHref }>
-					{ header }
-				</a>
-			) : (
-				header
-			) }
+			{ header }
 
 			<div className="highlight-cards-list">
 				<HighlightCard
