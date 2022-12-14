@@ -104,8 +104,6 @@ body.is-section-themes-i4 {
 
 body.is-section-themes-i4-2 {
 	.themes__selection .themes-list .theme {
-		$theme-info-height: 76px;
-
 		background: none;
 		border-radius: 2px;
 		box-shadow: none;
@@ -122,7 +120,7 @@ body.is-section-themes-i4-2 {
 		}
 
 		.theme__content {
-			padding-bottom: $theme-info-height;
+			padding-bottom: 76px;
 		}
 
 		.theme__img {
@@ -134,7 +132,8 @@ body.is-section-themes-i4-2 {
 			box-sizing: border-box;
 			display: flex;
 			flex-direction: row;
-			height: $theme-info-height;
+			flex-wrap: wrap;
+			height: 75px;
 			gap: 4px;
 			padding-top: 24px;
 		}
@@ -152,18 +151,28 @@ body.is-section-themes-i4-2 {
 
 		.theme__upsell {
 			font-size: 0;
+			line-height: 24px;
 			padding: 0;
 
 			.premium-badge,
 			.woocommerce-bundled-badge {
 				margin: 0;
+				vertical-align: middle;
 			}
 		}
 
 		.theme__info-upsell-description {
 			color: var(--color-neutral-60);
 			font-size: 0.875rem;
-			line-height: 20px;
+			line-height: 24px;
+		}
+
+		.theme__info-style-variations {
+			align-self: center;
+			display: flex;
+			flex-basis: 100%;
+			font-size: 0;
+			gap: 4px;
 		}
 
 		.theme__badge-active {
@@ -178,6 +187,20 @@ body.is-section-themes-i4-2 {
 	}
 
 	.theme__upsell-popover {
+		svg {
+			height: inherit;
+			padding: 0;
+			transform: none;
+			width: inherit;
+		}
+
+		&.premium-badge {
+			svg {
+				height: initial;
+				width: initial;
+			}
+		}
+
 		.popover__inner {
 			background: #fff;
 			color: var(--color-neutral-50);

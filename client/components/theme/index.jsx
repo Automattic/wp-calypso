@@ -1,7 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Card, Ribbon, Button, Gridicon } from '@automattic/components';
-import { PremiumBadge, WooCommerceBundledBadge } from '@automattic/design-picker';
+import {
+	PremiumBadge,
+	StyleVariationBadges,
+	WooCommerceBundledBadge,
+} from '@automattic/design-picker';
 import { Button as LinkButton } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -411,6 +415,7 @@ export class Theme extends Component {
 					<>
 						{ ( ! doesThemeBundleSoftwareSet || isExternallyManagedTheme ) && (
 							<PremiumBadge
+								className="theme__upsell-popover"
 								tooltipClassName="theme__upsell-popover info-popover__tooltip"
 								tooltipContent={ popoverContent }
 								tooltipPosition="top"
@@ -418,6 +423,7 @@ export class Theme extends Component {
 						) }
 						{ doesThemeBundleSoftwareSet && ! isExternallyManagedTheme && (
 							<WooCommerceBundledBadge
+								className="theme__upsell-popover"
 								tooltipClassName="theme__upsell-popover info-popover__tooltip"
 								tooltipContent={ popoverContent }
 								tooltipPosition="top"
@@ -438,6 +444,19 @@ export class Theme extends Component {
 					</InfoPopover>
 				) }
 			</span>
+		);
+	};
+
+	renderStyleVariations = () => {
+		const { theme } = this.props;
+		const { style_variations = [] } = theme;
+
+		return (
+			style_variations.length > 0 && (
+				<div className="theme__info-style-variations">
+					<StyleVariationBadges variations={ style_variations } />
+				</div>
+			)
 		);
 	};
 
@@ -556,9 +575,11 @@ export class Theme extends Component {
 						) }
 						{ showUpsell
 							? this.renderUpsell()
-							: isNewDetailsAndPreview && (
+							: isNewDetailsAndPreview &&
+							  ! active && (
 									<span className="theme__info-upsell-description">{ translate( 'Free' ) }</span>
 							  ) }
+						{ isNewDetailsAndPreview && ! active && this.renderStyleVariations() }
 						{ ! isEmpty( this.props.buttonContents ) ? (
 							<ThemeMoreButton
 								index={ this.props.index }
