@@ -47,20 +47,19 @@ export default function MobilePromoCardWrapper( { isJetpack, isOdysseyStats, slu
 				<div className="stats__promo-container">
 					<div className="stats__promo-card">
 						<DotPager className="stats__promo-pager" onPageSelected={ pagerDidSelectPage }>
-							<div>
-								<PromoCardBlock
-									productSlug="wordpress-seo-premium"
-									impressionEvent={ EVENT_YOAST_PROMO_VIEW }
-									clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
-									headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
-									contentText={ translate(
-										'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
-									) }
-									ctaText={ translate( 'Learn more' ) }
-									image={ wordpressSeoIllustration }
-									href={ `/plugins/wordpress-seo-premium/${ slug }` }
-								/>
-							</div>
+							<PromoCardBlock
+								productSlug="wordpress-seo-premium"
+								impressionEvent={ EVENT_YOAST_PROMO_VIEW }
+								clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
+								headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
+								contentText={ translate(
+									'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
+								) }
+								ctaText={ translate( 'Learn more' ) }
+								image={ wordpressSeoIllustration }
+								href={ `/plugins/wordpress-seo-premium/${ slug }` }
+							/>
+
 							<div>
 								<MobilePromoCard className="stats__promo-card-apps" />
 							</div>
