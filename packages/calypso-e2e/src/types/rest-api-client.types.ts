@@ -166,6 +166,7 @@ export interface AllPluginsResponse {
 }
 
 export interface PluginParams {
+	active: boolean;
 	[ key: string ]: string | number | boolean;
 }
 export interface PluginRemovalResponse {
