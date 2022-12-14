@@ -12,23 +12,7 @@ import { capitalize } from 'lodash';
 import moment from 'moment';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { rangeOfPeriod } from 'calypso/state/stats/lists/utils';
-
-export function formatDate( date, period ) {
-	// NOTE: Consider localizing the dates, especially for the 'week' case.
-	const momentizedDate = moment( date );
-	switch ( period ) {
-		case 'day':
-			return momentizedDate.format( 'LL' );
-		case 'week':
-			return momentizedDate.format( 'L' ) + ' - ' + momentizedDate.add( 6, 'days' ).format( 'L' );
-		case 'month':
-			return momentizedDate.format( 'MMMM YYYY' );
-		case 'year':
-			return momentizedDate.format( 'YYYY' );
-		default:
-			return null;
-	}
-}
+import { formatDate } from './utility';
 
 export function getQueryDate( queryDate, timezoneOffset, period, quantity ) {
 	const momentSiteZone = moment().utcOffset( timezoneOffset );
