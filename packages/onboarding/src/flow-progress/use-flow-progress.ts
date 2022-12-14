@@ -1,3 +1,5 @@
+import { LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW } from '../utils/flows';
+
 /* eslint-disable no-restricted-imports */
 interface FlowProgress {
 	stepName?: string;
@@ -14,12 +16,20 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		subscribers: 4,
 		launchpad: 5,
 	},
-	'link-in-bio': {
+	[ LINK_IN_BIO_FLOW ]: {
 		intro: 0,
 		user: 0,
 		patterns: 1,
 		linkInBioSetup: 2,
 		domains: 3,
+		plans: 4,
+		launchpad: 5,
+	},
+	[ LINK_IN_BIO_TLD_FLOW ]: {
+		domains: 0,
+		user: 1,
+		patterns: 2,
+		linkInBioSetup: 3,
 		plans: 4,
 		launchpad: 5,
 	},
