@@ -3,7 +3,7 @@ import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors'
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 
 /**
- * Checks if the user has a subscription to the theme.
+ * Checks if the site has a subscription to the theme.
  *
  * @param {object} state global state
  * @param {string} themeId theme id
