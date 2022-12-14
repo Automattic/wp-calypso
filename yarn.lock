@@ -7009,6 +7009,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/luxon@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "@types/luxon@npm:3.1.0"
+  checksum: 7e348748843dc71a9700ffde50ce00a510fdf4c17133f1e2fab8683ab27f6a695fb23a19d465befb9540d270fe0dbb2f3cf4ff379b9e574fadea74582b3b0705
+  languageName: node
+  linkType: hard
+
 "@types/mdast@npm:^3.0.0":
   version: 3.0.3
   resolution: "@types/mdast@npm:3.0.3"
@@ -23486,6 +23493,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"luxon@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "luxon@npm:3.1.1"
+  checksum: 4e537ec58735c5741710919d5fd552e39d0dc485e77eed02d7a4bd057ae8c6dd25a18e677892dd523556e28caa85be4c98cbbf67fb49467c0365099c07ea9f71
+  languageName: node
+  linkType: hard
+
 "lz-string@npm:^1.4.4":
   version: 1.4.4
   resolution: "lz-string@npm:1.4.4"
@@ -35576,6 +35590,7 @@ swiper@4.5.1:
     "@types/fast-json-stable-stringify": ^2.0.0
     "@types/gtag.js": ^0.0.10
     "@types/lodash": ^4.14.179
+    "@types/luxon": ^3.1.0
     "@types/node": ^16.11.26
     "@types/page": ^1.11.5
     "@types/qs": ^6.9.7
@@ -35658,6 +35673,7 @@ swiper@4.5.1:
     lodash: ^4.17.21
     lottie-web: ^5.9.6
     lunr: ^2.3.8
+    luxon: ^3.1.1
     mixedindentlint: ^1.2.0
     mkdirp: ^1.0.4
     ncp: ^2.0.0
