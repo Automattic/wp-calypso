@@ -32,6 +32,7 @@ import {
 	isSiteEligibleForManagedExternalThemes,
 	isWpcomTheme,
 } from 'calypso/state/themes/selectors';
+import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed';
 
 const identity = ( theme ) => theme;
 
@@ -69,7 +70,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		hideForTheme: ( state, themeId, siteId ) =>
 			( isJetpackSite( state, siteId ) && ! isSiteWpcomAtomic( state, siteId ) ) || // No individual theme purchase on a JP site
 			! isUserLoggedIn( state ) || // Not logged in
-			isPremiumThemeAvailable( state, themeId, siteId ) || // Already purchased individually, or thru a plan
+			isMarketplaceThemeSubscribed( state, themeId, siteId ) || // Already purchased individually, or thru a plan
 			doesThemeBundleSoftwareSet( state, themeId ) || // Premium themes with bundled Software Sets cannot be purchased ||
 			! isExternallyManagedTheme( state, themeId ) || // We're currently only subscribing to third-party themes
 			( isExternallyManagedTheme( state, themeId ) &&
@@ -168,7 +169,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			! isUserLoggedIn( state ) ||
 			isJetpackSiteMultiSite( state, siteId ) ||
 			( isExternallyManagedTheme( state, themeId ) &&
-				! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
+				! isMarketplaceThemeSubscribed( state, themeId, siteId ) ) ||
 			isThemeActive( state, themeId, siteId ) ||
 			( ! isWpcomTheme( state, themeId ) && ! isSiteWpcomAtomic( state, siteId ) ) ||
 			( isThemePremium( state, themeId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) ),
