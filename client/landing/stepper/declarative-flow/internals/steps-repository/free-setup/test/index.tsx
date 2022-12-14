@@ -93,31 +93,14 @@ describe( 'FreeSetup', () => {
 		jest.clearAllMocks();
 	} );
 
-	describe( 'Basics', () => {
-		it( 'should render successfully', async () => {
-			const { container } = renderComponent( <FreeSetup flow="free" navigation={ navigation } /> );
+	describe( 'Initial screen render', () => {
+		it( 'should render successfully without displaying the generated domain form field', async () => {
+			renderComponent( <FreeSetup flow="free" navigation={ navigation } /> );
 
 			await waitFor( () => {
 				expect( screen.getByText( 'Personalize your site' ) ).toBeInTheDocument();
-				expect(
-					container.getElementsByClassName( 'setup-form-field-set-domain-name' )
-				).toHaveLength( 0 );
+				expect( screen.queryByText( 'Site address' ) ).not.toBeInTheDocument();
 			} );
 		} );
 	} );
-
-	// describe( 'Submit free setup form', () => {
-	// 	it( 'should call submit successfully', async () => {
-	// 		const utils = renderComponent( <FreeSetup flow="free" navigation={ navigation } /> );
-
-	// 		await act( async () => {
-	// 			const siteNameInputField = await utils.getByPlaceholderText( 'My Website' );
-	// 			// const siteNameInputField = await container.queryByLabelText( '#free-setup-header' );
-	// 			await userEvent.type( siteNameInputField, 'site name' );
-	// 			await user.click( screen.getByText( 'Continue' ) );
-	// 		} );
-
-	// 		expect( navigation.submit ).toHaveBeenCalled();
-	// 	} );
-	// } );
 } );
