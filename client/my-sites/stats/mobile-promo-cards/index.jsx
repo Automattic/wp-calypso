@@ -7,11 +7,12 @@ import DotPager from 'calypso/components/dot-pager';
 
 import './style.scss';
 
-export default function MobilePromoCardWrapper( slug ) {
+export default function MobilePromoCardWrapper( { isAtomic, isOdysseyStats, slug } ) {
 	// do some stuff
-	const showMobileAppsPromo = false;
-	const showYoastPromo = false;
-	const showBothPromoCards = true;
+	// Yoast promo is disabled for Odyssey & self-hosted.
+	// Mobile apps promos are always shown.
+	const showYoastPromo = ! isOdysseyStats && ! isAtomic;
+	const showBothPromoCards = showYoastPromo;
 	// handle view events here
 	const pagerDidSelectPage = ( index ) => {
 		const evenLookup = [
@@ -26,24 +27,7 @@ export default function MobilePromoCardWrapper( slug ) {
 	// render some stuff
 	return (
 		<>
-			{ /** Promo Card is disabled for Odyssey because it doesn't make much sense in the context, which also removes an API call to `plugins`. */ }
-			{ showYoastPromo && (
-				<div className="stats-content-promo">
-					<PromoCardBlock
-						productSlug="wordpress-seo-premium"
-						impressionEvent="calypso_stats_wordpress_seo_premium_banner_view"
-						clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
-						headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
-						contentText={ translate(
-							'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
-						) }
-						ctaText={ translate( 'Learn more' ) }
-						image={ wordpressSeoIllustration }
-						href={ `/plugins/wordpress-seo-premium/${ slug }` }
-					/>
-				</div>
-			) }
-			{ showMobileAppsPromo && (
+			{ ! showBothPromoCards && (
 				<div className="stats__promo-container">
 					<div className="stats__promo-card">
 						<MobilePromoCard className="stats__promo-card-apps" />

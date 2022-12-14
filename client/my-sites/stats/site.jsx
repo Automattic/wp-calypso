@@ -368,7 +368,11 @@ class StatsSite extends Component {
 					</div>
 				</div>
 				{ /** Promo Card is disabled for Odyssey because it doesn't make much sense in the context, which also removes an API call to `plugins`. */ }
-				{ ! isOdysseyStats && <MobilePromoCardWrapper slug={ slug } /> }
+				<MobilePromoCardWrapper
+					isAtomic={ false }
+					isOdysseyStats={ isOdysseyStats }
+					slug={ slug }
+				/>
 				<JetpackColophon />
 			</div>
 		);
