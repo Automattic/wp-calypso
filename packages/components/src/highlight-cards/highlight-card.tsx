@@ -10,6 +10,7 @@ export type HighlightCardProps = {
 	icon: React.ReactNode;
 	onClick?: ( event: MouseEvent ) => void;
 	previousCount?: number | null;
+	showValueTooltip?: boolean | null;
 };
 
 function subtract( a: number | null, b: number | null | undefined ): number | null {
@@ -39,6 +40,7 @@ export default function HighlightCard( {
 	previousCount,
 	icon,
 	heading,
+	showValueTooltip,
 }: HighlightCardProps ) {
 	const difference = subtract( count, previousCount );
 	const percentage = Number.isFinite( difference )
@@ -84,18 +86,20 @@ export default function HighlightCard( {
 						) }
 					</span>
 				) : null }
-				<Popover
-					className="tooltip"
-					isVisible={ isTooltipVisible }
-					position="bottom right"
-					context={ textRef.current }
-				>
-					<div className="highlight-card-tooltip">
-						<span className="highlight-card-tooltip-icon">{ icon }</span>
-						<span className="highlight-card-tooltip-label">{ heading }</span>
-						<span>{ formatNumber( count ) }</span>
-					</div>
-				</Popover>
+				{ showValueTooltip && (
+					<Popover
+						className="tooltip tooltip--darker"
+						isVisible={ isTooltipVisible }
+						position="bottom right"
+						context={ textRef.current }
+					>
+						<div className="highlight-card-tooltip">
+							<span className="highlight-card-tooltip-icon">{ icon }</span>
+							<span className="highlight-card-tooltip-label">{ heading }</span>
+							<span>{ formatNumber( count ) }</span>
+						</div>
+					</Popover>
+				) }
 			</div>
 		</Card>
 	);

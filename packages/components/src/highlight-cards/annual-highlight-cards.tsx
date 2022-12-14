@@ -54,26 +54,31 @@ export default function AnnualHighlightCards( {
 					heading={ translate( 'Posts' ) }
 					icon={ <Icon icon={ postContent } /> }
 					count={ counts?.posts ?? null }
+					showValueTooltip
 				/>
 				<HighlightCard
 					heading={ translate( 'Words' ) }
 					icon={ <Icon icon={ paragraph } /> }
 					count={ counts?.words ?? null }
+					showValueTooltip
 				/>
 				<HighlightCard
 					heading={ translate( 'Likes' ) }
 					icon={ <Icon icon={ starEmpty } /> }
 					count={ counts?.likes ?? null }
+					showValueTooltip
 				/>
 				<HighlightCard
 					heading={ translate( 'Comments' ) }
 					icon={ <Icon icon={ comment } /> }
 					count={ counts?.comments ?? null }
+					showValueTooltip
 				/>
 				<HighlightCard
 					heading={ translate( 'Followers' ) }
 					icon={ <Icon icon={ people } /> }
 					count={ counts?.followers ?? null }
+					showValueTooltip
 				/>
 			</div>
 		</div>
