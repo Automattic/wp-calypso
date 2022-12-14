@@ -66,6 +66,13 @@ export function requestPluginsError( state ) {
 	return state.plugins.installed.requestError;
 }
 
+const getSiteIdsWithPlugins = createSelector(
+	( state ) => {
+		return Object.keys( state.plugins.installed.plugins ).map( ( pluginId ) => Number( pluginId ) );
+	},
+	( state ) => [ state.plugins.installed.plugins ]
+);
+
 /**
  * The server returns plugins store at state.plugins.installed.plugins are indexed by site, which means
  * that the information for a plugin may be spread across multiple site objects. This selector transforms
@@ -73,11 +80,7 @@ export function requestPluginsError( state ) {
  */
 export const getAllPlugins = createSelector(
 	( state ) => {
-		const allSiteIdsWithPlugins = Object.keys( state.plugins.installed.plugins ).map(
-			( pluginId ) => Number( pluginId )
-		);
-
-		return allSiteIdsWithPlugins.reduce( ( plugins, siteId ) => {
+		return getSiteIdsWithPlugins( state ).reduce( ( plugins, siteId ) => {
 			const pluginsForSite = state.plugins.installed.plugins[ siteId ] || [];
 			pluginsForSite.forEach( ( plugin ) => {
 				const sitePluginInfo = pick( plugin, [ 'active', 'autoupdate', 'update', 'version' ] );
@@ -94,7 +97,7 @@ export const getAllPlugins = createSelector(
 			return plugins;
 		}, {} );
 	},
-	( state ) => [ state.plugins.installed.plugins ]
+	( state ) => [ getSiteIdsWithPlugins( state ) ]
 );
 
 export const getFilteredAndSortedPlugins = createSelector(
