@@ -865,15 +865,12 @@ export class RestAPIClient {
 	}
 
 	/**
-	 * Removes a plugin.
-	 *
-	 * A plugin should be deactivated before removal.
-	 * Otherwise, the API will return an error.
+	 * Finds a plugin by name, deactivates it, and removes it from the site.
 	 *
 	 * @returns {Promise<PluginRemovalResponse | null>} Null if plugin removal was unsuccessful or not performed. PluginRemovalResponse otherwise.
 	 * @throws {Error} If API responded with an error.
 	 */
-	async removePlugin(
+	async removePluginIfInstalled(
 		siteID: number,
 		pluginName: string
 	): Promise< PluginRemovalResponse | null > {

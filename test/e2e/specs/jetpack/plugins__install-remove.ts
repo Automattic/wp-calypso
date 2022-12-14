@@ -29,7 +29,7 @@ describe( DataHelper.createSuiteTitle( 'Jetpack: Plugin' ), function () {
 		// Ensure known good state by removing the plugin if already installed.
 		restAPIClient = new RestAPIClient( SecretsManager.secrets.testAccounts.jetpackUser );
 		const siteID = SecretsManager.secrets.testAccounts.jetpackUser.testSites?.primary.id as number;
-		const response = await restAPIClient.removePlugin( siteID, pluginName );
+		const response = await restAPIClient.removePluginIfInstalled( siteID, pluginName );
 
 		if ( response ) {
 			console.log( `Successfully removed the plugin '${ pluginName }'.` );
