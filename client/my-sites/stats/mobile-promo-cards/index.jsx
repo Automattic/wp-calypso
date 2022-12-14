@@ -7,11 +7,11 @@ import DotPager from 'calypso/components/dot-pager';
 
 import './style.scss';
 
-export default function MobilePromoCardWrapper( { isAtomic, isOdysseyStats, slug } ) {
+export default function MobilePromoCardWrapper( { isJetpack, isOdysseyStats, slug } ) {
 	// do some stuff
 	// Yoast promo is disabled for Odyssey & self-hosted.
 	// Mobile apps promos are always shown.
-	const showYoastPromo = ! isOdysseyStats && ! isAtomic;
+	const showYoastPromo = ! isOdysseyStats && ! isJetpack;
 	const showBothPromoCards = showYoastPromo;
 	// handle view events here
 	const pagerDidSelectPage = ( index ) => {
