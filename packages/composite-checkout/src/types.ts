@@ -313,5 +313,3 @@ export interface CheckoutStepGroupActions {
 	getStepCompleteCallback: ( stepNumber: number ) => StepCompleteCallback;
 	setTotalSteps: ( totalSteps: number ) => void;
 }
-
-export type TogglePaymentMethod = ( paymentMethodId: string, available: boolean ) => void;

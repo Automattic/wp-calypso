@@ -13,10 +13,15 @@ import {
 	validatePaymentMethods,
 	validateTotal,
 } from '../lib/validation';
-import { LineItem, CheckoutProviderProps, FormStatus, TransactionStatus } from '../types';
+import {
+	LineItem,
+	CheckoutProviderProps,
+	FormStatus,
+	TransactionStatus,
+	PaymentMethod,
+} from '../types';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import TransactionStatusHandler from './transaction-status-handler';
-import type { CheckoutContextInterface } from '../lib/checkout-context';
 import type {
 	PaymentEventCallback,
 	PaymentErrorCallback,
@@ -62,19 +67,27 @@ export function CheckoutProvider( {
 		children,
 		initiallySelectedPaymentMethodId,
 	};
-	const [ disabledPaymentMethodIds, setDisabledPaymentMethodIds ] = useState< string[] >( [] );
-
 	const [ paymentMethodId, setPaymentMethodId ] = useState< string | null >(
 		initiallySelectedPaymentMethodId
 	);
-
-	useResetSelectedPaymentMethodWhenListChanges(
-		paymentMethods
-			.filter( ( method ) => ! disabledPaymentMethodIds.includes( method.id ) )
-			.map( ( method ) => method.id ),
-		initiallySelectedPaymentMethodId,
-		setPaymentMethodId
-	);
+	const [ prevPaymentMethods, setPrevPaymentMethods ] = useState< PaymentMethod[] >( [] );
+	useEffect( () => {
+		const paymentMethodIds = paymentMethods.map( ( x ) => x?.id );
+		const prevPaymentMethodIds = prevPaymentMethods.map( ( x ) => x?.id );
+		const paymentMethodsChanged =
+			paymentMethodIds.some( ( x ) => ! prevPaymentMethodIds.includes( x ) ) ||
+			prevPaymentMethodIds.some( ( x ) => ! paymentMethodIds.includes( x ) );
+		if ( paymentMethodsChanged ) {
+			debug(
+				'paymentMethods changed; setting payment method to initial selection ',
+				initiallySelectedPaymentMethodId,
+				'from',
+				paymentMethods
+			);
+			setPrevPaymentMethods( paymentMethods );
+			setPaymentMethodId( initiallySelectedPaymentMethodId );
+		}
+	}, [ paymentMethods, prevPaymentMethods, initiallySelectedPaymentMethodId ] );
 
 	const [ formStatus, setFormStatus ] = useFormStatusManager(
 		Boolean( isLoading ),
@@ -94,11 +107,9 @@ export function CheckoutProvider( {
 		transactionLastResponse,
 	} );
 
-	const value: CheckoutContextInterface = useMemo(
+	const value = useMemo(
 		() => ( {
 			allPaymentMethods: paymentMethods,
-			disabledPaymentMethodIds,
-			setDisabledPaymentMethodIds,
 			paymentMethodId,
 			setPaymentMethodId,
 			formStatus,
@@ -113,7 +124,6 @@ export function CheckoutProvider( {
 			formStatus,
 			paymentMethodId,
 			paymentMethods,
-			disabledPaymentMethodIds,
 			setFormStatus,
 			transactionStatusManager,
 			paymentProcessors,
@@ -229,25 +239,4 @@ function useCallEventCallbacks( {
 		}
 		prevTransactionStatus.current = transactionStatus;
 	}, [ transactionStatus, paymentMethodId, transactionLastResponse, transactionError ] );
-}
-
-function useResetSelectedPaymentMethodWhenListChanges(
-	availablePaymentMethodIds: string[],
-	initiallySelectedPaymentMethodId: string | null,
-	setPaymentMethodId: ( id: string | null ) => void
-) {
-	const hashKey = availablePaymentMethodIds.join( '-_-' );
-	const previousKey = useRef< string >();
-
-	useEffect( () => {
-		if ( previousKey.current !== hashKey ) {
-			debug(
-				'paymentMethods changed; setting payment method to initial selection ',
-				initiallySelectedPaymentMethodId
-			);
-
-			previousKey.current = hashKey;
-			setPaymentMethodId( initiallySelectedPaymentMethodId );
-		}
-	}, [ hashKey, setPaymentMethodId, initiallySelectedPaymentMethodId ] );
 }

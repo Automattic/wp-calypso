@@ -19,28 +19,12 @@ import {
 	CheckoutStepGroup,
 	useSetStepComplete,
 	makeManualResponse,
-	useTogglePaymentMethod,
 } from '../src/public-api';
 import { PaymentProcessorResponseType } from '../src/types';
 import { DefaultCheckoutSteps } from './utils/default-checkout-steps';
 
 const myContext = createContext();
 const usePaymentData = () => useContext( myContext );
-
-function TogglePaymentMethodBlock( { mockMethod } ) {
-	const togglePaymentMethod = useTogglePaymentMethod();
-
-	return (
-		<div>
-			<button onClick={ () => togglePaymentMethod( mockMethod.id, false ) }>
-				Disable Payment Method
-			</button>
-			<button onClick={ () => togglePaymentMethod( mockMethod.id, true ) }>
-				Enable Payment Method
-			</button>
-		</div>
-	);
-}
 
 describe( 'Checkout', () => {
 	describe( 'using the default steps', function () {
@@ -59,7 +43,6 @@ describe( 'Checkout', () => {
 						initiallySelectedPaymentMethodId={ mockMethod.id }
 					>
 						<DefaultCheckoutSteps />
-						<TogglePaymentMethodBlock mockMethod={ mockMethod } />
 					</CheckoutProvider>
 				);
 			} );
@@ -84,23 +67,6 @@ describe( 'Checkout', () => {
 			it( 'renders the payment method label', () => {
 				const { getAllByText } = render( <MyCheckout /> );
 				expect( getAllByText( 'Mock Label' )[ 0 ] ).toBeInTheDocument();
-			} );
-
-			it( 'does not render the payment method label if the payment method is disabled', async () => {
-				const { queryByText, getByText, getAllByText } = render( <MyCheckout /> );
-				const user = userEvent.setup();
-				await user.click( getAllByText( 'Continue' )[ 0 ] );
-				await user.click( getByText( 'Disable Payment Method' ) );
-				expect( queryByText( 'Mock Label' ) ).not.toBeVisible();
-			} );
-
-			it( 'does render the payment method label if the payment method is disabled then enabled', async () => {
-				const { getAllByText, getByText } = render( <MyCheckout /> );
-				const user = userEvent.setup();
-				await user.click( getAllByText( 'Continue' )[ 0 ] );
-				await user.click( getByText( 'Disable Payment Method' ) );
-				await user.click( getByText( 'Enable Payment Method' ) );
-				expect( getAllByText( 'Mock Label' )[ 0 ] ).toBeVisible();
 			} );
 
 			it( 'renders the payment method activeContent', () => {

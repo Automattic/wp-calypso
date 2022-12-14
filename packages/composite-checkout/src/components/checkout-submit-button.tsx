@@ -1,17 +1,9 @@
-import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { cloneElement } from 'react';
 import joinClasses from '../lib/join-classes';
-import { useAllPaymentMethods, usePaymentMethodId } from '../lib/payment-methods';
-import { useFormStatus, FormStatus, useProcessPayment } from '../public-api';
+import { useFormStatus, FormStatus, usePaymentMethod, useProcessPayment } from '../public-api';
 import CheckoutErrorBoundary from './checkout-error-boundary';
-import type { PaymentMethod, PaymentProcessorSubmitData } from '../types';
-
-const CheckoutSubmitButtonWrapper = styled.div`
-	&.checkout-submit-button--inactive {
-		display: none;
-	}
-`;
+import type { PaymentProcessorSubmitData } from '../types';
 
 export default function CheckoutSubmitButton( {
 	validateForm,
@@ -24,49 +16,12 @@ export default function CheckoutSubmitButton( {
 	disabled?: boolean;
 	onLoadError?: ( error: Error ) => void;
 } ) {
-	const paymentMethods = useAllPaymentMethods();
-
-	return (
-		<>
-			{ paymentMethods.map( ( paymentMethod ) => {
-				return (
-					<CheckoutSubmitButtonForPaymentMethod
-						key={ paymentMethod.id }
-						paymentMethod={ paymentMethod }
-						validateForm={ validateForm }
-						className={ className }
-						disabled={ disabled }
-						onLoadError={ onLoadError }
-					/>
-				);
-			} ) }
-		</>
-	);
-}
-
-function CheckoutSubmitButtonForPaymentMethod( {
-	paymentMethod,
-	validateForm,
-	className,
-	disabled,
-	onLoadError,
-}: {
-	paymentMethod: PaymentMethod;
-	validateForm?: () => Promise< boolean >;
-	className?: string;
-	disabled?: boolean;
-	onLoadError?: ( error: Error ) => void;
-} ) {
-	const [ activePaymentMethodId ] = usePaymentMethodId();
-	const isActive = paymentMethod.id === activePaymentMethodId;
 	const { formStatus } = useFormStatus();
 	const { __ } = useI18n();
-	const isDisabled = disabled || formStatus !== FormStatus.READY || ! isActive;
+	const isDisabled = disabled || formStatus !== FormStatus.READY;
+	const paymentMethod = usePaymentMethod();
 	const onClick = useProcessPayment( paymentMethod?.paymentProcessorId ?? '' );
 	const onClickWithValidation = ( processorData: PaymentProcessorSubmitData ) => {
-		if ( ! isActive ) {
-			return;
-		}
 		if ( validateForm ) {
 			validateForm().then( ( validationResult: boolean ) => {
 				if ( validationResult ) {
@@ -81,6 +36,9 @@ function CheckoutSubmitButtonForPaymentMethod( {
 		return onClick( processorData );
 	};
 
+	if ( ! paymentMethod ) {
+		return null;
+	}
 	const { submitButton } = paymentMethod;
 	if ( ! submitButton ) {
 		return null;
@@ -96,15 +54,9 @@ function CheckoutSubmitButtonForPaymentMethod( {
 			errorMessage={ __( 'There was a problem with the submit button.' ) }
 			onError={ onLoadError }
 		>
-			<CheckoutSubmitButtonWrapper
-				className={ joinClasses( [
-					className,
-					'checkout-submit-button',
-					isActive ? 'checkout-submit-button--active' : 'checkout-submit-button--inactive',
-				] ) }
-			>
+			<div className={ joinClasses( [ className, 'checkout-submit-button' ] ) }>
 				{ clonedSubmitButton }
-			</CheckoutSubmitButtonWrapper>
+			</div>
 		</CheckoutErrorBoundary>
 	);
 }
