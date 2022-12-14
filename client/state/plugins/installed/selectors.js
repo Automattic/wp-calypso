@@ -98,30 +98,28 @@ export const getAllPlugins = createSelector(
 	( state ) => [ getAllSitesWithPlugins( state ), state.plugins.installed.plugins ]
 );
 
-function getPluginsSelector( state, siteIds, pluginFilter ) {
-	if ( isRequestingForAllSites( state ) ) {
-		return [];
-	}
-
-	const allPlugins = getAllPlugins( state );
-
-	const allPluginsForSites = Object.values( allPlugins ).filter(
-		( plugin ) =>
-			!! Object.keys( plugin.sites )
-				.map( ( siteId ) => Number( siteId ) )
-				.find( ( siteId ) => ! isRequesting( state, siteId ) && siteIds.includes( siteId ) )
-	);
-
-	const pluginList =
-		pluginFilter && _filters[ pluginFilter ]
-			? filter( allPluginsForSites, _filters[ pluginFilter ] )
-			: allPluginsForSites;
-
-	return sortBy( pluginList, ( item ) => item.slug.toLowerCase() );
-}
-
 export const getPlugins = createSelector(
-	getPluginsSelector,
+	( state, siteIds, pluginFilter ) => {
+		if ( isRequestingForAllSites( state ) ) {
+			return [];
+		}
+
+		const allPlugins = getAllPlugins( state );
+
+		const allPluginsForSites = Object.values( allPlugins ).filter(
+			( plugin ) =>
+				!! Object.keys( plugin.sites )
+					.map( ( siteId ) => Number( siteId ) )
+					.find( ( siteId ) => ! isRequesting( state, siteId ) && siteIds.includes( siteId ) )
+		);
+
+		const pluginList =
+			pluginFilter && _filters[ pluginFilter ]
+				? filter( allPluginsForSites, _filters[ pluginFilter ] )
+				: allPluginsForSites;
+
+		return sortBy( pluginList, ( item ) => item.slug.toLowerCase() );
+	},
 	( state, siteIds ) => [
 		state.plugins.installed.plugins,
 		isRequestingForAllSites( state ),
