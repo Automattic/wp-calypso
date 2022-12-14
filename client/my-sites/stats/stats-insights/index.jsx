@@ -36,7 +36,8 @@ const StatsInsights = ( props ) => {
 	// Necessary to properly configure the fixed navigation headers.
 	sessionStorage.setItem( 'jp-stats-last-tab', 'insights' );
 
-	const lastYear = moment.utc().subtract( 1, 'year' ).format( 'YYYY-MM-DD' );
+	const currentYear = parseInt( moment.utc().format( 'YYYY' ), 10 );
+	const queryYear = parseInt( date.format( 'YYYY' ), 10 );
 	const isPrevArrowHidden = ( queryDate ) => {
 		return moment( queryDate ).isSameOrBefore( '2001-01-01' );
 	};
@@ -60,7 +61,7 @@ const StatsInsights = ( props ) => {
 					siteId={ siteId }
 					queryDate={ date }
 					hidePreviousArrow={ isPrevArrowHidden( date ) }
-					hideNextArrow={ lastYear === date } // why does this work even if this param and condition are broken?
+					hideNextArrow={ currentYear <= queryYear }
 					url={ `/stats/insights/${ siteSlug }` }
 				/>
 				<AllTimelHighlightsSection siteId={ siteId } />
