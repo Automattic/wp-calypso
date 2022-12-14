@@ -18,7 +18,7 @@ const SupportLink = () => {
 	} );
 };
 
-const siteHeader = () => {
+const SiteHeader = () => {
 	return (
 		<div className="site">
 			<div className="site__content">
@@ -64,7 +64,7 @@ const CancelPurchaseLoadingPlaceholder = ( { purchaseId, siteSlug, getManagePurc
 			<div className="cancel-purchase__layout">
 				<div className="cancel-purchase__layout-col cancel-purchase__layout-col-left">
 					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__site">
-						{ siteHeader() }
+						<SiteHeader />
 					</div>
 					<h2 className="loading-placeholder__content cancel-purchase-loading-placeholder__header" />
 					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__subheader" />
@@ -78,7 +78,7 @@ const CancelPurchaseLoadingPlaceholder = ( { purchaseId, siteSlug, getManagePurc
 				</div>
 				<div className="cancel-purchase__layout-col cancel-purchase__layout-col-right">
 					<div className="loading-placeholder__content cancel-purchase-loading-placeholder__site">
-						{ siteHeader() }
+						<SiteHeader />
 					</div>
 
 					<p className="cancel-purchase--support-link cancel-purchase--support-link--sidebar">
