@@ -7,6 +7,7 @@ import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -14,6 +15,7 @@ import isSupersedingJetpackItem from 'calypso/../packages/calypso-products/src/i
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { useIsUserPurchaseOwner } from 'calypso/state/purchases/utils';
 import {
@@ -62,18 +64,18 @@ export const useStoreItemInfo = ( {
 	const isCurrentUserPurchaseOwner = useIsUserPurchaseOwner();
 	const translate = useTranslate();
 
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
+
 	const getIsProductInCart = useCallback(
 		( item: SelectorProduct ) => {
 			if ( ! shouldShowCart ) {
 				return false;
 			}
 
-			const cartProducts = cartManagerClient.forCartKey( siteId || undefined ).getState()
-				.responseCart.products;
-
-			return cartProducts.some( ( product ) => product.product_slug === item.productSlug );
+			return responseCart.products.some( ( product ) => product.product_slug === item.productSlug );
 		},
-		[ siteId, shouldShowCart ]
+		[ shouldShowCart, responseCart ]
 	);
 
 	// Determine whether product is owned.

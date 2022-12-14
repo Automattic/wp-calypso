@@ -53,7 +53,8 @@ export function MasterbarCartButton( {
 	const onClick = () => {
 		setIsActive( ( active ) => {
 			if ( ! active ) {
-				reloadFromServer(); // Refresh the cart whenever the popup is made visible.
+				// This is to prevent an error in updating the component in the same event loop
+				setTimeout( reloadFromServer, 0 ); // Refresh the cart whenever the popup is made visible.
 				reduxDispatch( recordTracksEvent( 'calypso_masterbar_cart_open' ) );
 			}
 			return ! active;

@@ -20,12 +20,12 @@ import { JPC_PATH_PLANS } from 'calypso/jetpack-connect/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useExperiment } from 'calypso/lib/explat';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { showMasterbar } from 'calypso/state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import CartSubscriber from './cart-subscriber';
 import { getPurchaseURLCallback } from './get-purchase-url-callback';
 import getViewTrackerPath from './get-view-tracker-path';
 import { getForCurrentCROIteration, Iterations } from './iterations';
@@ -242,20 +242,17 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 				/>
 
 				{ isEnabled( 'jetpack/pricing-page-rework-v1' ) ? (
-					<CartSubscriber
-						siteId={ siteId }
-						render={ () => (
-							<ProductStore
-								createCheckoutURL={ createProductURL }
-								duration={ currentDuration }
-								enableUserLicensesDialog={ enableUserLicensesDialog }
-								onClickPurchase={ selectProduct }
-								urlQueryArgs={ urlQueryArgs }
-								header={ header }
-								planRecommendation={ planRecommendation }
-							/>
-						) }
-					></CartSubscriber>
+					<CalypsoShoppingCartProvider>
+						<ProductStore
+							createCheckoutURL={ createProductURL }
+							duration={ currentDuration }
+							enableUserLicensesDialog={ enableUserLicensesDialog }
+							onClickPurchase={ selectProduct }
+							urlQueryArgs={ urlQueryArgs }
+							header={ header }
+							planRecommendation={ planRecommendation }
+						/>
+					</CalypsoShoppingCartProvider>
 				) : (
 					<>
 						{ siteId && enableUserLicensesDialog && (
