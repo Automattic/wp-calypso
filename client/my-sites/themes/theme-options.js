@@ -69,7 +69,6 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		hideForTheme: ( state, themeId, siteId ) =>
 			( isJetpackSite( state, siteId ) && ! isSiteWpcomAtomic( state, siteId ) ) || // No individual theme purchase on a JP site
 			! isUserLoggedIn( state ) || // Not logged in
-			! isThemePremium( state, themeId ) || // Not a premium theme
 			isPremiumThemeAvailable( state, themeId, siteId ) || // Already purchased individually, or thru a plan
 			doesThemeBundleSoftwareSet( state, themeId ) || // Premium themes with bundled Software Sets cannot be purchased ||
 			! isExternallyManagedTheme( state, themeId ) || // We're currently only subscribing to third-party themes
@@ -151,7 +150,6 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			isJetpackSite( state, siteId ) ||
 			isSiteWpcomAtomic( state, siteId ) ||
 			! isUserLoggedIn( state ) ||
-			! isThemePremium( state, themeId ) ||
 			! isExternallyManagedTheme( state, themeId ) ||
 			( isExternallyManagedTheme( state, themeId ) &&
 				isSiteEligibleForManagedExternalThemes( state, siteId ) ) ||
@@ -169,6 +167,8 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		hideForTheme: ( state, themeId, siteId ) =>
 			! isUserLoggedIn( state ) ||
 			isJetpackSiteMultiSite( state, siteId ) ||
+			( isExternallyManagedTheme( state, themeId ) &&
+				! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
 			isThemeActive( state, themeId, siteId ) ||
 			( ! isWpcomTheme( state, themeId ) && ! isSiteWpcomAtomic( state, siteId ) ) ||
 			( isThemePremium( state, themeId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) ),
