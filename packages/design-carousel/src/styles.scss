@@ -23,19 +23,19 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 .design-carousel__item {
 	flex: 1;
 
-	@include break-small {
+	@include break-large {
 		aspect-ratio: 1.5;
 	}
 
 	&.design-carousel__item-mobile {
-		@include break-small {
-			display: none !important;
+		@include break-large {
+			display: none;
 		}
 	}
 	&.design-carousel__item-desktop {
-		display: none !important;
-		@include break-small {
-			display: flex !important;
+		display: none;
+		@include break-large {
+			display: flex;
 		}
 
 		@include break-medium {
