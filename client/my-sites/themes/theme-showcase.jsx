@@ -49,8 +49,6 @@ import TrendingThemes from './trending-themes';
 
 import './theme-showcase.scss';
 
-const noop = () => {};
-
 const optionShape = PropTypes.shape( {
 	label: PropTypes.string,
 	header: PropTypes.string,
@@ -464,7 +462,6 @@ class ThemeShowcase extends Component {
 
 		const tier = this.props.tier || '';
 		const canonicalUrl = 'https://wordpress.com' + pathName;
-		const isNewDetailsAndPreview = config.isEnabled( 'themes/showcase-i4/details-and-preview' );
 		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
 
 		const metas = [
@@ -508,13 +505,11 @@ class ThemeShowcase extends Component {
 			trackScrollPage: this.props.trackScrollPage,
 			emptyContent: this.props.emptyContent,
 			scrollToSearchInput: this.scrollToSearchInput,
-			getOptions: ! isNewDetailsAndPreview
-				? ( theme ) =>
-						pickBy(
-							addTracking( options ),
-							( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
-						)
-				: noop,
+			getOptions: ( theme ) =>
+				pickBy(
+					addTracking( options ),
+					( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
+				),
 		};
 
 		// FIXME: Logged-in title should only be 'Themes'

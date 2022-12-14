@@ -20,25 +20,16 @@ import ThemeShowcase from './theme-showcase';
 import ThemesHeader from './themes-header';
 import ThemesSelection from './themes-selection';
 
-const noop = () => {};
-
 const ConnectedThemesSelection = connectOptions( ( props ) => {
-	const isNewDetailsAndPreview = isEnabled( 'themes/showcase-i4/details-and-preview' );
-
 	return (
 		<ThemesSelection
 			{ ...props }
-			getOptions={
-				! isNewDetailsAndPreview
-					? ( theme ) => {
-							return pickBy(
-								addTracking( props.options ),
-								( option ) =>
-									! ( option.hideForTheme && option.hideForTheme( theme, props.siteId ) )
-							);
-					  }
-					: noop
-			}
+			getOptions={ function ( theme ) {
+				return pickBy(
+					addTracking( props.options ),
+					( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, props.siteId ) )
+				);
+			} }
 		/>
 	);
 } );

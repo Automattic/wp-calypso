@@ -580,7 +580,7 @@ export class Theme extends Component {
 									<span className="theme__info-upsell-description">{ translate( 'Free' ) }</span>
 							  ) }
 						{ isNewDetailsAndPreview && ! active && this.renderStyleVariations() }
-						{ ! isEmpty( this.props.buttonContents ) ? (
+						{ ! isNewDetailsAndPreview && ! isEmpty( this.props.buttonContents ) ? (
 							<ThemeMoreButton
 								index={ this.props.index }
 								themeId={ this.props.theme.id }
