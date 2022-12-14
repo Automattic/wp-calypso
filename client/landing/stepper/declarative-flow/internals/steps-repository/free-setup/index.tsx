@@ -163,9 +163,11 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 	}, [ site ] );
 
 	useEffect( () => {
-		if ( siteTitle.trim().length > 0 && ! showGeneratedDomainFormField ) {
+		if ( siteTitle.trim().length > 0 ) {
 			// Debounce for random domain generation API while user is typing site title
 			debounceGenerateRandomDomainAPI( siteTitle );
+		} else {
+			debounceGenerateRandomDomainAPI.cancel();
 		}
 	}, [ siteTitle, showGeneratedDomainFormField, debounceGenerateRandomDomainAPI ] );
 
