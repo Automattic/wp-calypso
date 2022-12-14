@@ -27,7 +27,7 @@ const PatternLargePreview = ( { header, sections, footer }: Props ) => {
 		<DeviceSwitcher className="pattern-large-preview" isShowDeviceSwitcherToolbar isShowFrameBorder>
 			{ patternIds.length > 0 ? (
 				<div className="pattern-large-preview__patterns">
-					<PatternsRenderer patternIds={ patternIds } />
+					<PatternsRenderer patternIds={ patternIds } enableDynamicViewport />
 				</div>
 			) : (
 				<div className="pattern-large-preview__placeholder">

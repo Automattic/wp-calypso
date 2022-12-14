@@ -108,7 +108,7 @@ const ScaledBlocksRendererContainer = ( {
 	);
 };
 
-const BlocksRendererContainer = ( props ) => {
+const BlocksRendererContainer = ( { viewportWidth, enableDynamicViewport, ...props } ) => {
 	const [ containerResizeListener, { width: containerWidth } ] = useResizeObserver();
 
 	return (
@@ -118,7 +118,11 @@ const BlocksRendererContainer = ( props ) => {
 			</div>
 			<div className="blocks-renderer">
 				{ !! containerWidth && (
-					<ScaledBlocksRendererContainer { ...props } containerWidth={ containerWidth } />
+					<ScaledBlocksRendererContainer
+						{ ...props }
+						viewportWidth={ enableDynamicViewport ? containerWidth : viewportWidth }
+						containerWidth={ containerWidth }
+					/>
 				) }
 			</div>
 		</>

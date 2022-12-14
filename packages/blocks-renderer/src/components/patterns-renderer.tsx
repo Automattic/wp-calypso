@@ -6,9 +6,10 @@ import { usePatternsRendererContext } from './patterns-renderer-context';
 interface Props {
 	patternIds: string[];
 	viewportWidth?: number;
+	enableDynamicViewport?: boolean;
 }
 
-const PatternsRenderer = ( { patternIds, viewportWidth = 1060 }: Props ) => {
+const PatternsRenderer = ( { patternIds, viewportWidth = 1060, enableDynamicViewport }: Props ) => {
 	const renderedPatterns = usePatternsRendererContext();
 	const styles = useMemo(
 		() =>
@@ -24,6 +25,7 @@ const PatternsRenderer = ( { patternIds, viewportWidth = 1060 }: Props ) => {
 			styles={ styles }
 			viewportWidth={ viewportWidth }
 			maxHeight={ BLOCK_MAX_HEIGHT * patternIds.length }
+			enableDynamicViewport={ enableDynamicViewport }
 		>
 			{ patternIds.map( ( patternId, index ) => {
 				const renderedPattern = renderedPatterns[ patternId ];
