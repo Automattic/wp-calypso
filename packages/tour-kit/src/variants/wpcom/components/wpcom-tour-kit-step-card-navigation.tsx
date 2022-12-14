@@ -36,7 +36,7 @@ const WpcomTourKitStepCardNavigation: React.FunctionComponent< Props > = ( {
 							onClick={ onNextStep }
 							ref={ setInitialFocusedElement }
 						>
-							{ __( 'Take tour', __i18n_text_domain__ ) }
+							{ __( 'Take the tour', __i18n_text_domain__ ) }
 						</Button>
 					</div>
 				) : (
