@@ -114,7 +114,7 @@ const WebServerSettingsCard = ( {
 				value: '8.1',
 			},
 			{
-				label: translate( '8.2', {
+				label: translate( '8.2 (experimental)', {
 					comment: 'PHP Version for a version switcher',
 				} ),
 				value: '8.2',
