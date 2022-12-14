@@ -70,7 +70,7 @@
 		"login/react-lost-password-screen": true,
 		"mailchimp": true,
 		"marketplace-domain-bundle": true,
-		"marketplace-jetpack-plugin-search": true,
+		"marketplace-jetpack-plugin-search": false,
 		"marketplace-personal-premium": false,
 		"marketplace-test": true,
 		"me/account-close": true,
