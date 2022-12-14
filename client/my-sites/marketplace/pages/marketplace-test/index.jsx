@@ -23,7 +23,7 @@ import { getAutomatedTransfer, getEligibility } from 'calypso/state/automated-tr
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import {
 	getPluginOnSite,
-	getPlugins,
+	getFilteredAndSortedPlugins,
 	isRequestingForSites,
 } from 'calypso/state/plugins/installed/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -51,7 +51,9 @@ export default function MarketplaceTest() {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const isAtomicSite = useSelector( ( state ) => isSiteWpcomAtomic( state, selectedSiteId ?? 0 ) );
-	const pluginDetails = useSelector( ( state ) => getPlugins( state, [ selectedSiteId ] ) );
+	const pluginDetails = useSelector( ( state ) =>
+		getFilteredAndSortedPlugins( state, [ selectedSiteId ] )
+	);
 	const { data = [], isFetching } = useWPCOMPluginsList( 'all' );
 
 	const {

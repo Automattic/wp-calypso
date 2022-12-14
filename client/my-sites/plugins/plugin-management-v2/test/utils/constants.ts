@@ -42,6 +42,7 @@ const site: SiteDetails = {
 	locale: '',
 	slug: 'test.wordpress.com',
 	is_multisite: false,
+	visible: true,
 };
 
 const plugin = {

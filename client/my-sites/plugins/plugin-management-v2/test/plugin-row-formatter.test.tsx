@@ -18,7 +18,7 @@ const initialReduxState = {
 	siteConnection: { items: { [ site.ID ]: true } },
 	sites: { items: { [ site.ID ]: site } },
 	currentUser: {
-		capabilities: {},
+		capabilities: { [ site.ID ]: { manage_options: true } },
 	},
 	plugins: {
 		installed: {

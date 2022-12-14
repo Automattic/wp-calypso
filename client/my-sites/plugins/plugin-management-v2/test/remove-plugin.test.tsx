@@ -22,7 +22,7 @@ const props = {
 const initialState = {
 	sites: { items: { [ site.ID ]: site } },
 	currentUser: {
-		capabilities: {},
+		capabilities: { [ site.ID ]: { manage_options: true } },
 	},
 	plugins: {
 		installed: {
