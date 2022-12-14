@@ -1,5 +1,6 @@
 import { PatternsRenderer } from '@automattic/blocks-renderer';
 import { DeviceSwitcher } from '@automattic/design-picker';
+import { Icon, layout } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { encodePatternId } from './utils';
@@ -30,7 +31,11 @@ const PatternLargePreview = ( { header, sections, footer }: Props ) => {
 				</div>
 			) : (
 				<div className="pattern-large-preview__placeholder">
-					<span>{ translate( 'Your page is blank. Start adding content on the left.' ) }</span>
+					<Icon className="pattern-large-preview__icon" icon={ layout } size={ 72 } />
+					<h2>{ translate( 'Welcome to your blank canvas' ) }</h2>
+					<span>
+						{ translate( "It's time to get creative. Add your first pattern to get started." ) }
+					</span>
 				</div>
 			) }
 		</DeviceSwitcher>
