@@ -15,7 +15,7 @@ export function isMarketplaceThemeSubscribed( state = {}, themeId: string, siteI
 
 	const sitePurchases = getSitePurchases( state, siteId );
 
-	return (
+	return !! (
 		sitePurchases &&
 		sitePurchases.find( ( purchase ) => {
 			return (
