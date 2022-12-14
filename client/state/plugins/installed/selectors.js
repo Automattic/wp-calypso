@@ -1,6 +1,5 @@
 import { createSelector } from '@automattic/state-utils';
 import { filter, find, get, pick, some, sortBy } from 'lodash';
-import getAllSitesWithPlugins from 'calypso/state/selectors/get-all-sites-with-plugins';
 import {
 	getSite,
 	getSiteTitle,
@@ -74,31 +73,31 @@ export function requestPluginsError( state ) {
  */
 export const getAllPlugins = createSelector(
 	( state ) => {
-		const allSitesWithPlugins = getAllSitesWithPlugins( state );
+		const allSiteIdsWithPlugins = Object.keys( state.plugins.installed.plugins ).map(
+			( pluginId ) => Number( pluginId )
+		);
 
-		return allSitesWithPlugins
-			.map( ( site ) => site.ID )
-			.reduce( ( plugins, siteId ) => {
-				const pluginsForSite = state.plugins.installed.plugins[ siteId ] || [];
-				pluginsForSite.forEach( ( plugin ) => {
-					const sitePluginInfo = pick( plugin, [ 'active', 'autoupdate', 'update', 'version' ] );
+		return allSiteIdsWithPlugins.reduce( ( plugins, siteId ) => {
+			const pluginsForSite = state.plugins.installed.plugins[ siteId ] || [];
+			pluginsForSite.forEach( ( plugin ) => {
+				const sitePluginInfo = pick( plugin, [ 'active', 'autoupdate', 'update', 'version' ] );
 
-					plugins[ plugin.slug ] = {
-						...plugins[ plugin.slug ],
-						...plugin,
-						sites: {
-							...plugins[ plugin.slug ]?.sites,
-							[ siteId ]: sitePluginInfo,
-						},
-					};
-				} );
-				return plugins;
-			}, {} );
+				plugins[ plugin.slug ] = {
+					...plugins[ plugin.slug ],
+					...plugin,
+					sites: {
+						...plugins[ plugin.slug ]?.sites,
+						[ siteId ]: sitePluginInfo,
+					},
+				};
+			} );
+			return plugins;
+		}, {} );
 	},
-	( state ) => [ getAllSitesWithPlugins( state ), state.plugins.installed.plugins ]
+	( state ) => [ state.plugins.installed.plugins ]
 );
 
-export const getPlugins = createSelector(
+export const getFilteredAndSortedPlugins = createSelector(
 	( state, siteIds, pluginFilter ) => {
 		if ( isRequestingForAllSites( state ) ) {
 			return [];
@@ -131,11 +130,13 @@ export const getPlugins = createSelector(
 );
 
 export function getPluginsWithUpdates( state, siteIds ) {
-	return filter( getPlugins( state, siteIds ), _filters.updates ).map( ( plugin ) => ( {
-		...plugin,
-		version: plugin?.update?.new_version,
-		type: 'plugin',
-	} ) );
+	return filter( getFilteredAndSortedPlugins( state, siteIds ), _filters.updates ).map(
+		( plugin ) => ( {
+			...plugin,
+			version: plugin?.update?.new_version,
+			type: 'plugin',
+		} )
+	);
 }
 
 export function getPluginsOnSites( state, plugins ) {
@@ -160,12 +161,12 @@ export function getPluginOnSites( state, siteIds, pluginSlug ) {
 }
 
 export function getPluginOnSite( state, siteId, pluginSlug ) {
-	const pluginList = getPlugins( state, [ siteId ] );
+	const pluginList = getFilteredAndSortedPlugins( state, [ siteId ] );
 	return find( pluginList, ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) );
 }
 
 export function getSitesWithPlugin( state, siteIds, pluginSlug ) {
-	const pluginList = getPlugins( state, siteIds );
+	const pluginList = getFilteredAndSortedPlugins( state, siteIds );
 	const plugin = find( pluginList, ( pluginItem ) => isEqualSlugOrId( pluginSlug, pluginItem ) );
 
 	if ( ! plugin ) {

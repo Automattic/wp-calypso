@@ -88,8 +88,8 @@ describe( 'Installed plugin selectors', () => {
 		expect( selectors.isRequestingForSites ).toBeInstanceOf( Function );
 	} );
 
-	test( 'should contain getPlugins method', () => {
-		expect( selectors.getPlugins ).toBeInstanceOf( Function );
+	test( 'should contain getFilteredAndSortedPlugins method', () => {
+		expect( selectors.getFilteredAndSortedPlugins ).toBeInstanceOf( Function );
 	} );
 
 	test( 'should contain getPluginsWithUpdates method', () => {
@@ -148,26 +148,24 @@ describe( 'Installed plugin selectors', () => {
 		} );
 	} );
 
-	describe( 'getPlugins', () => {
+	describe( 'getFilteredAndSortedPlugins', () => {
 		test( 'Should get an empty array if the requested site is not in the current state', () => {
-			const plugins = selectors.getPlugins( state, [ 'no.site' ] );
-			console.log( '****PLUGINS****' );
-			console.log( plugins );
+			const plugins = selectors.getFilteredAndSortedPlugins( state, [ 'no.site' ] );
 			expect( plugins ).toHaveLength( 0 );
 		} );
 
 		test( 'Should get an empty array if the plugins for this site are still being requested', () => {
-			const plugins = selectors.getPlugins( state, [ siteThreeId ] );
+			const plugins = selectors.getFilteredAndSortedPlugins( state, [ siteThreeId ] );
 			expect( plugins ).toHaveLength( 0 );
 		} );
 
 		test( 'Should get a plugin list of length 3 if both sites are requested', () => {
-			const plugins = selectors.getPlugins( state, [ siteOneId, siteTwoId ] );
+			const plugins = selectors.getFilteredAndSortedPlugins( state, [ siteOneId, siteTwoId ] );
 			expect( plugins ).toHaveLength( 3 );
 		} );
 
 		test( 'Should get a plugin list containing jetpack if both sites are requested', () => {
-			const plugins = selectors.getPlugins( state, [ siteOneId, siteTwoId ] );
+			const plugins = selectors.getFilteredAndSortedPlugins( state, [ siteOneId, siteTwoId ] );
 			const siteWithPlugin = {
 				[ siteTwoId ]: pick( jetpack, [ 'active', 'autoupdate', 'update', 'version' ] ),
 			};
@@ -177,17 +175,21 @@ describe( 'Installed plugin selectors', () => {
 		} );
 
 		test( 'Should get a plugin list of length 2 if only site 1 is requested', () => {
-			const plugins = selectors.getPlugins( state, [ siteOneId ] );
+			const plugins = selectors.getFilteredAndSortedPlugins( state, [ siteOneId ] );
 			expect( plugins ).toHaveLength( 2 );
 		} );
 
 		test( 'Should get a plugin list of length 2 if active plugins on both sites are requested', () => {
-			const plugins = selectors.getPlugins( state, [ siteOneId, siteTwoId ], 'active' );
+			const plugins = selectors.getFilteredAndSortedPlugins(
+				state,
+				[ siteOneId, siteTwoId ],
+				'active'
+			);
 			expect( plugins ).toHaveLength( 2 );
 		} );
 
 		test( 'Should get a plugin list of length 1 if inactive plugins on site 1 is requested', () => {
-			const plugins = selectors.getPlugins( state, [ siteOneId ], 'inactive' );
+			const plugins = selectors.getFilteredAndSortedPlugins( state, [ siteOneId ], 'inactive' );
 			expect( plugins ).toHaveLength( 1 );
 		} );
 	} );

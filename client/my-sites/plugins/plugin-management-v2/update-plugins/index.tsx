@@ -6,7 +6,10 @@ import ButtonGroup from 'calypso/components/button-group';
 import acceptDialog from 'calypso/lib/accept';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { updatePlugin } from 'calypso/state/plugins/installed/actions';
-import { getPlugins, getPluginsOnSites } from 'calypso/state/plugins/installed/selectors';
+import {
+	getFilteredAndSortedPlugins,
+	getPluginsOnSites,
+} from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -33,13 +36,13 @@ export default function UpdatePlugins( { plugins, isWpCom }: Props ): ReactEleme
 	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
 	const siteIds = useSelector( () => siteObjectsToSiteIds( sites ) ) ?? [];
 	const pluginsWithUpdates = useSelector( ( state ) =>
-		// The types of the getPlugins properties are being inferred incorrectly, so here they are casted
+		// The types of the getFilteredAndSortedPlugins properties are being inferred incorrectly, so here they are casted
 		// to "any" while the return type is preserved.
-		( getPlugins as ( ...any: any ) => ReturnType< typeof getPlugins > )(
-			state,
-			siteIds,
-			'updates'
-		)
+		(
+			getFilteredAndSortedPlugins as (
+				...any: any
+			) => ReturnType< typeof getFilteredAndSortedPlugins >
+		 )( state, siteIds, 'updates' )
 	);
 	const allSites = useSelector( getSites );
 

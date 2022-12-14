@@ -15,7 +15,7 @@ import { site, plugin } from './utils/constants';
 const initialState = {
 	sites: { items: { [ site.ID ]: site }, connection: { items: { [ site.ID ]: true } } },
 	currentUser: {
-		capabilities: {},
+		capabilities: { [ site.ID ]: { manage_options: true } },
 	},
 	plugins: {
 		installed: {
