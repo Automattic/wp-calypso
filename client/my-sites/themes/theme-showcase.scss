@@ -1,6 +1,12 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+$theme-img-filter:
+	drop-shadow(0 102px 61px rgba(0, 0, 0, 0.02))
+	drop-shadow(0 45px 45px rgba(0, 0, 0, 0.03))
+	drop-shadow(0 11px 25px rgba(0, 0, 0, 0.03))
+	drop-shadow(0 0 0 rgba(0, 0, 0, 0.03));
+
 body.is-section-themes-i4 {
 	&.theme-default.color-scheme {
 		--color-surface-backdrop: #fdfdfd;
@@ -107,46 +113,62 @@ body.is-section-themes-i4-2 {
 		background: none;
 		border-radius: 2px;
 		box-shadow: none;
+		cursor: default;
 		margin: 0 16px 48px;
-		overflow: hidden;
 
 		&.is-active {
 			.theme__info {
 				align-items: center;
+				background: var(--color-primary);
+				border-bottom-left-radius: 2px;
+				border-bottom-right-radius: 2px;
+				box-sizing: content-box;
 				flex-direction: row;
 				gap: 0;
-				padding: 0 24px;
+				padding: 4px 24px;
+			}
+
+			.theme__info-title {
+				color: var(--color-text-inverted);
 			}
 		}
 
 		.theme__content {
-			padding-bottom: 76px;
+			overflow: visible;
+			padding: 0;
+		}
+
+		.theme__thumbnail {
+			cursor: pointer;
 		}
 
 		.theme__img {
-			box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+			aspect-ratio: 4/3;
+			border: 1px solid rgba(0, 0, 0, 0.1);
+			filter: $theme-img-filter;
+			padding: 0;
+			position: relative;
 		}
 
 		.theme__info {
 			align-items: flex-start;
-			box-sizing: border-box;
+			background: transparent;
+			box-sizing: content-box;
 			display: flex;
 			flex-direction: row;
 			flex-wrap: wrap;
-			height: 75px;
+			height: 48px;
 			gap: 4px;
-			padding-top: 24px;
+			padding-top: 16px;
+			position: relative;
 		}
 
 		.theme__info-title {
+			color: var(--color-neutral-100);
 			font-size: 1rem;
 			line-height: 24px;
 			margin: 0;
 			padding: 0;
-
-			.theme:not(.is-active) & {
-				color: var(--color-neutral-100);
-			}
 		}
 
 		.theme__upsell {
@@ -173,6 +195,10 @@ body.is-section-themes-i4-2 {
 			flex-basis: 100%;
 			font-size: 0;
 			gap: 4px;
+
+			.style-variation__badge-more-wrapper > * {
+				background: transparent;
+			}
 		}
 
 		.theme__badge-active {
