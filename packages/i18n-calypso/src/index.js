@@ -3,9 +3,10 @@ import i18n from './default-i18n';
 import I18N from './i18n';
 import localize from './localize';
 import { useRtl, withRtl } from './rtl';
+import translateResultToString from './translate-result-to-string';
 import useTranslate from './use-translate';
 
-export { I18N, I18NContext, localize, useRtl, withRtl, useTranslate };
+export { I18N, I18NContext, localize, useRtl, withRtl, useTranslate, translateResultToString };
 export default i18n;
 
 // Export the default instance's properties and bound methods for convenience

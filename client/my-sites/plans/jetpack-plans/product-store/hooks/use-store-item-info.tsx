@@ -7,7 +7,7 @@ import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, translateResultToString } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import isSupersedingJetpackItem from 'calypso/../packages/calypso-products/src/is-superseding-jetpack-item';
@@ -198,14 +198,16 @@ export const useStoreItemInfo = ( {
 
 	const getCtaAriaLabel = useCallback(
 		( item: SelectorProduct ) => {
-			return productButtonLabel( {
-				product: item,
-				isOwned: getIsOwned( item ),
-				isUpgradeableToYearly: getIsUpgradeableToYearly( item ),
-				isDeprecated: getIsDeprecated( item ),
-				isSuperseded: getIsSuperseded( item ),
-				currentPlan: sitePlan,
-			} );
+			return translateResultToString(
+				productButtonLabel( {
+					product: item,
+					isOwned: getIsOwned( item ),
+					isUpgradeableToYearly: getIsUpgradeableToYearly( item ),
+					isDeprecated: getIsDeprecated( item ),
+					isSuperseded: getIsSuperseded( item ),
+					currentPlan: sitePlan,
+				} )
+			);
 		},
 		[ getIsOwned, getIsUpgradeableToYearly, getIsSuperseded, sitePlan ]
 	);

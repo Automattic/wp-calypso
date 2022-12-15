@@ -88,7 +88,7 @@ export type FeaturedItemCardProps = {
 	ctaAsPrimary?: boolean;
 	ctaHref?: string;
 	ctaLabel: React.ReactNode;
-	ctaAriaLabel?: React.ReactNode;
+	ctaAriaLabel?: string;
 	description: React.ReactNode;
 	hero: React.ReactNode;
 	isCtaDisabled?: boolean;
