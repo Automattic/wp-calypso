@@ -35,8 +35,6 @@ type Followers = {
 type AnnualHighlightsSectionProps = {
 	siteId: number;
 	queryDate: Moment;
-	hidePreviousArrow: boolean;
-	hideNextArrow: boolean;
 	url: string;
 };
 
@@ -46,8 +44,6 @@ const FOLLOWERS_QUERY = { type: 'wpcom', max: 0 };
 export default function AnnualHighlightsSection( {
 	siteId,
 	queryDate,
-	hidePreviousArrow,
-	hideNextArrow,
 	url,
 }: AnnualHighlightsSectionProps ) {
 	const queryYear = Number.parseInt( queryDate?.format( 'YYYY' ), 10 );
@@ -74,6 +70,11 @@ export default function AnnualHighlightsSection( {
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const viewMoreHref = siteSlug ? `/stats/annualstats/${ siteSlug }` : null;
+
+	const previousYear = insights?.years?.find( ( y ) => y.year === ( year - 1 ).toString() );
+	const hidePreviousArrow = ! previousYear;
+	const currentYear = new Date().getFullYear();
+	const hideNextArrow = currentYear <= queryYear;
 
 	const navigation = (
 		<StatsPeriodNavigation

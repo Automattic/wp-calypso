@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-import moment from 'moment';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import DomainTip from 'calypso/blocks/domain-tip';
@@ -36,12 +35,6 @@ const StatsInsights = ( props ) => {
 	// Necessary to properly configure the fixed navigation headers.
 	sessionStorage.setItem( 'jp-stats-last-tab', 'insights' );
 
-	const currentYear = parseInt( moment.utc().format( 'YYYY' ), 10 );
-	const queryYear = parseInt( date.format( 'YYYY' ), 10 );
-	const isPrevArrowHidden = ( queryDate ) => {
-		return moment( queryDate ).isSameOrBefore( '2001-01-01' );
-	};
-
 	// TODO: should be refactored into separate components
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -60,8 +53,6 @@ const StatsInsights = ( props ) => {
 				<AnnualHighlightsSection
 					siteId={ siteId }
 					queryDate={ date }
-					hidePreviousArrow={ isPrevArrowHidden( date ) }
-					hideNextArrow={ currentYear <= queryYear }
 					url={ `/stats/insights/${ siteSlug }` }
 				/>
 				<AllTimelHighlightsSection siteId={ siteId } />
