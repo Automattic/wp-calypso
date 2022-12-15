@@ -9,7 +9,6 @@ import {
 	wordAds,
 	redirectToActivity,
 	redirectToDefaultModulePage,
-	redirectToDefaultSitePage,
 	redirectToDefaultWordAdsPeriod,
 } from 'calypso/my-sites/stats/controller';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
@@ -24,6 +23,10 @@ const siteSelection = ( context, next ) => {
 
 const statsPage = ( url, controller ) => {
 	page( url, controller, siteSelection, makeLayout, clientRender );
+};
+
+const redirectToSiteTrafficPage = () => {
+	page.redirect( `/stats/day/${ config( 'blog_id' ) }` );
 };
 
 export default function ( pageBase = '/' ) {
@@ -78,7 +81,7 @@ export default function ( pageBase = '/' ) {
 	statsPage( '/stats/ads/(.*)', redirectToDefaultWordAdsPeriod );
 
 	// Anything else should redirect to default stats page
-	statsPage( '*', redirectToDefaultSitePage );
+	statsPage( '*', redirectToSiteTrafficPage );
 
 	// Enable hashbang for routing in Jetpack.
 	page( { hashbang: true } );
