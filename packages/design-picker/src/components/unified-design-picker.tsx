@@ -498,7 +498,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					purchasedThemes={ purchasedThemes }
 					currentPlanFeatures={ currentPlanFeatures }
 				/>
-				{ ! isShowAll && hasGeneratedDesigns && bottomAnchorContent }
+				{ ! isShowAll && bottomAnchorContent }
 			</div>
 			{ hasGeneratedDesigns && (
 				<div
