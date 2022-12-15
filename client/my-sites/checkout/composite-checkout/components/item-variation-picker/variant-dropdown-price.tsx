@@ -41,8 +41,9 @@ const DoNotPayThis = styled.del`
 `;
 
 const Price = styled.span`
+	display: flex;
+	justify-content: right;
 	color: #646970;
-
 	.item-variant-option--selected & {
 		color: #fff;
 	}
@@ -68,6 +69,11 @@ const Label = styled.span`
 	@media ( max-width: 480px ) {
 		flex-direction: column;
 	}
+`;
+
+const IntroPricing = styled.span`
+	display: flex;
+	flex-direction: column;
 `;
 
 const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent } ) => {
@@ -118,16 +124,29 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 		return termToTranslate;
 	};
 	const translatedIntroOfferPrice = translate(
-		'for the first %(introTerm)s then %(formattedRegularPrice)s per %(planTerm)s',
-		// translation example: $4.99 for the first month then $9.99 per year
+		'%(formattedCurrentPrice)s first %(introTerm)s then %(formattedRegularPrice)s per %(planTerm)s',
+		// translation example: $4.99 first month then $9.99 per year
 		{
 			args: {
+				formattedCurrentPrice,
 				formattedRegularPrice,
 				introTerm,
 				planTerm: planTerm(),
 			},
 		}
 	);
+
+	const translatedIntroOfferPriceMobile = translate(
+		'%(formattedCurrentPrice)s first %(introTerm)s',
+		// translation example: $4.99 first month
+		{
+			args: {
+				formattedCurrentPrice,
+				introTerm,
+			},
+		}
+	);
+
 	return (
 		<Variant>
 			<Label>
@@ -143,10 +162,13 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 				{ discountPercentage > 0 && ! isJetpackIntroductoryOffer && (
 					<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
 				) }
-				<Price>
-					{ formattedCurrentPrice }
-					{ isJetpackIntroductoryOffer && translatedIntroOfferPrice }
-				</Price>
+				<Price>{ formattedCurrentPrice }</Price>
+				<IntroPricing>
+					<small>{ isJetpackIntroductoryOffer && ! isMobile && translatedIntroOfferPrice }</small>
+					<small>
+						{ isJetpackIntroductoryOffer && isMobile && translatedIntroOfferPriceMobile }
+					</small>
+				</IntroPricing>
 			</span>
 		</Variant>
 	);
