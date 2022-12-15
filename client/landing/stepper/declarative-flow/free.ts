@@ -94,12 +94,6 @@ const free: Flow = {
 					return navigate( 'freeSetup' );
 
 				case 'freeSetup':
-					return navigate( 'domains' );
-
-				case 'domains':
-					return navigate( 'plans' );
-
-				case 'plans':
 					return navigate( 'siteCreationStep' );
 
 				case 'siteCreationStep':
