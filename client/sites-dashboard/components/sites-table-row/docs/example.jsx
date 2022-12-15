@@ -136,24 +136,21 @@ export default function SitesTableRowExample() {
 
 	return (
 		<div>
-			{ [
-				siteSimpleFree,
-				siteSimpleBusinessComingSoon,
-				siteSimpleBusinessExpired,
-				siteJetpackComplete,
-				siteSimplePrivateP2,
-			].map( ( site ) => (
-				<>
-					<h2>{ site.title }</h2>
-					<div style={ CONTAINER_STYLES }>
-						<table>
-							<tbody>
-								<SitesTableRow site={ site } key={ site.ID } />
-							</tbody>
-						</table>
-					</div>
-				</>
-			) ) }
+			<div style={ CONTAINER_STYLES }>
+				<table>
+					<tbody>
+						{ [
+							siteSimpleFree,
+							siteSimpleBusinessComingSoon,
+							siteSimpleBusinessExpired,
+							siteJetpackComplete,
+							siteSimplePrivateP2,
+						].map( ( site ) => (
+							<SitesTableRow site={ site } key={ site.ID } />
+						) ) }
+					</tbody>
+				</table>
+			</div>
 		</div>
 	);
 }
