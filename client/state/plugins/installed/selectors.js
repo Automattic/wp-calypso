@@ -1,5 +1,5 @@
 import { createSelector } from '@automattic/state-utils';
-import { filter, get, pick, some, sortBy } from 'lodash';
+import { cloneDeep, filter, get, pick, some, sortBy } from 'lodash';
 import {
 	getSite,
 	getSiteTitle,
@@ -68,7 +68,7 @@ export function requestPluginsError( state ) {
 
 const getSiteIdsThatHavePlugins = createSelector(
 	( state ) => {
-		return Object.keys( state.plugins.installed.plugins ).map( ( pluginId ) => Number( pluginId ) );
+		return Object.keys( state.plugins.installed.plugins ).map( ( siteId ) => Number( siteId ) );
 	},
 	( state ) => [ state.plugins.installed.plugins ]
 );
@@ -148,11 +148,24 @@ export const getFilteredAndSortedPlugins = createSelector(
 	( state, siteIds, pluginFilter ) => {
 		const allPluginsIndexedBySiteId = getAllPluginsIndexedBySiteId( state );
 
-		const allPluginsForSites = siteIds
-			.map( ( siteId ) => Number( siteId ) )
-			.map( ( siteId ) => allPluginsIndexedBySiteId[ siteId ] )
-			.filter( ( plugins ) => !! plugins )
-			.reduce( ( accumulator, current ) => ( { ...accumulator, ...current } ), {} );
+		// Properties on the objects in allPluginsIndexedBySiteId will be modified and the
+		// selector memoization always returns the same object, so use cloneDeep to avoid
+		// altering it for everyone.
+		const allPluginsForSites = cloneDeep(
+			siteIds
+				.map( ( siteId ) => Number( siteId ) )
+				.map( ( siteId ) => allPluginsIndexedBySiteId[ siteId ] )
+				.filter( ( plugins ) => !! plugins )
+				.reduce( ( accumulator, current ) => ( { ...accumulator, ...current } ), {} )
+		);
+
+		// Filter the sites object on the plugins so that only data for the requested siteIds is present
+		for ( const pluginSlug of Object.keys( allPluginsForSites ) ) {
+			allPluginsForSites[ pluginSlug ].sites = pick(
+				allPluginsForSites[ pluginSlug ].sites,
+				siteIds
+			);
+		}
 
 		const pluginList =
 			pluginFilter && _filters[ pluginFilter ]
