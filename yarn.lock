@@ -334,6 +334,7 @@ __metadata:
     debug: ^4.3.4
     html-webpack-plugin: ^5.0.0-beta.4
     jest: ^27.2.4
+    luxon: ^3.1.1
     page: ^1.11.5
     path-browserify: ^1.0.1
     postcss: ^8.3.11

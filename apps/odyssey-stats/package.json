@@ -30,6 +30,7 @@
 		"calypso": "workspace:^",
 		"classnames": "^2.3.1",
 		"debug": "^4.3.4",
+		"luxon": "^3.1.1",
 		"page": "^1.11.5",
 		"prop-types": "^15.8.1",
 		"react": "^17.0.2",
