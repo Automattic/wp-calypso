@@ -573,12 +573,13 @@ export class Theme extends Component {
 						{ ! isNewDetailsAndPreview && active && (
 							<span className={ priceClass }>{ price }</span>
 						) }
-						{ isPremiumTheme && ! active
-							? this.renderUpsell()
-							: isNewDetailsAndPreview &&
-							  ! active && (
-									<span className="theme__info-upsell-description">{ translate( 'Free' ) }</span>
-							  ) }
+						{ upsellUrl && // Do not show any pricing related infomation if there's no upsell action link.
+							( showUpsell
+								? this.renderUpsell()
+								: isNewDetailsAndPreview &&
+								  ! active && (
+										<span className="theme__info-upsell-description">{ translate( 'Free' ) }</span>
+								  ) ) }
 						{ isNewDetailsAndPreview && ! active && this.renderStyleVariations() }
 						{ ! isNewDetailsAndPreview && ! isEmpty( this.props.buttonContents ) ? (
 							<ThemeMoreButton
