@@ -12,8 +12,6 @@ import { capitalize } from 'lodash';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { formatDate } from './utility';
 
-// TODO: Ensure legacy invocations of getQueryDate has been migrated.
-
 const EMPTY_RESULT = [];
 export const buildChartData = memoizeLast( ( activeLegend, chartTab, data, period, queryDate ) => {
 	if ( ! data ) {

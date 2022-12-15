@@ -180,7 +180,7 @@ const connectComponent = connect(
 
 		const quantity = 'year' === period ? 10 : 30;
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
-		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
+		const date = getQueryDate( { desiredDateString: queryDate, timezoneOffset, period, quantity } );
 
 		const query = { unit: period, date, quantity };
 		const data = getSiteStatsNormalizedData( state, siteId, 'statsAds', query );

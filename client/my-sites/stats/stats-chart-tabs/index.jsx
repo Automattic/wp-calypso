@@ -153,7 +153,7 @@ const connectComponent = connect(
 		const loadingTabs = getLoadingTabs( state, siteId, period );
 		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length !== quantity;
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
-		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
+		const date = getQueryDate( { desiredDateString: queryDate, timezoneOffset, period, quantity } );
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;
 		const query = memoizedQuery( chartTab, date, period, quantity, siteId );
 
