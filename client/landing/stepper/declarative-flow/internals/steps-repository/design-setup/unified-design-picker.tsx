@@ -22,7 +22,6 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import PremiumBadge from 'calypso/components/premium-badge';
 import WebPreview from 'calypso/components/web-preview/content';
 import { useSiteVerticalQueryById } from 'calypso/data/site-verticals';
-import useTrackScrollPageToBottom from 'calypso/landing/stepper/hooks/use-track-scroll-page-to-bottom';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
@@ -175,20 +174,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		setSelectedStyleVariation( undefined );
 	}, [] );
 
-	// Track as if user has scrolled to bottom of the design picker
-	useTrackScrollPageToBottom(
-		! isPreviewingDesign,
-		() => {
-			recordTracksEvent( 'calypso_signup_design_scrolled_to_end', {
-				intent,
-				category: categorization.selection,
-			} );
-		},
-		{
-			category: categorization.selection,
-		}
-	);
-
 	// When the theme or style query strings parameters are present,
 	// automatically switch to previewing that theme (if it's a valid theme)
 	// and that style variation (if it's a valid style variation).
@@ -268,6 +253,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		}
 
 		setIsPreviewingDesign( true );
+	}
+
+	function trackAllDesignsView() {
+		recordTracksEvent( 'calypso_signup_design_scrolled_to_end', {
+			intent,
+			category: categorization?.selection,
+		} );
 	}
 
 	function previewDesignVariation( variation: StyleVariation ) {
@@ -707,6 +699,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			locale={ locale }
 			onSelect={ pickDesign }
 			onPreview={ previewDesign }
+			onViewAllDesigns={ trackAllDesignsView }
 			onCheckout={ goToCheckout }
 			heading={ heading }
 			categorization={ categorization }
