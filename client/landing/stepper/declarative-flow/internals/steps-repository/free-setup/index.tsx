@@ -21,7 +21,7 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 		titlePlaceholder: translate( 'My Website' ),
 		titleMissing: translate( `Oops. Looks like your website doesn't have a name yet.` ),
 		taglinePlaceholder: translate( 'Add a short description here' ),
-		iconPlaceholder: translate( 'Upload a profile image' ),
+		iconPlaceholder: translate( 'Add a site icon' ),
 	};
 
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = React.useState( false );
@@ -34,6 +34,7 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 
 	useEffect( () => {
 		const { siteTitle, siteDescription, siteLogo } = state;
+
 		setTagline( siteDescription );
 		setComponentSiteTitle( siteTitle );
 
@@ -43,18 +44,13 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 		}
 	}, [ state ] );
 
-	useEffect( () => {
-		if ( ! site ) {
-			return;
-		}
-
-		setComponentSiteTitle( site.name || '' );
-		setTagline( site.description );
-	}, [ site ] );
-
 	const handleSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
-		setInvalidSiteTitle( ! siteTitle.trim().length );
+
+		if ( ! siteTitle.trim().length ) {
+			setInvalidSiteTitle( true );
+			return;
+		}
 
 		setSiteDescription( tagline );
 		setSiteTitle( siteTitle );
@@ -68,7 +64,7 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 		}
 
 		if ( siteTitle.trim().length ) {
-			submit?.( { siteTitle, tagline } );
+			submit?.();
 		}
 	};
 
@@ -81,7 +77,7 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 			formattedHeader={
 				<FormattedHeader
 					id="free-setup-header"
-					headerText={ createInterpolateElement( translate( 'Personalize your<br />Website' ), {
+					headerText={ createInterpolateElement( translate( 'Personalize your Site' ), {
 						br: <br />,
 					} ) }
 					align="center"
@@ -104,6 +100,7 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 				/>
 			}
 			recordTracksEvent={ recordTracksEvent }
+			showJetpackPowered
 		/>
 	);
 };
