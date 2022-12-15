@@ -520,7 +520,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 						verticalId={ verticalId }
 						onPreview={ onPreview }
 					/>
-					{ bottomAnchorContent }
+					{ isShowAll && bottomAnchorContent }
 				</div>
 			) }
 		</div>
