@@ -637,7 +637,6 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	site_title?: string;
 	signup_flow?: string;
 	signup?: boolean;
-	headstart_theme?: string;
 }
 
 export interface GSuiteProductUser {
