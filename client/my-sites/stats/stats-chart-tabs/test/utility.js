@@ -71,4 +71,9 @@ describe( 'StatsChartTabs Utilities: getQueryDate', () => {
 	test( 'Should return the appropriate date for a "year" period', () => {
 		expect( getQueryDate( { ...options, period: 'year', quantity: 10 } ) ).toEqual( '2022-12-31' );
 	} );
+
+	test( 'Should return the appropriate date with negative or positive timezone offsets', () => {
+		expect( getQueryDate( { ...options, timezoneOffset: -1 } ) ).toEqual( '2021-12-31' );
+		expect( getQueryDate( { ...options, timezoneOffset: 1 } ) ).toEqual( '2022-01-01' );
+	} );
 } );

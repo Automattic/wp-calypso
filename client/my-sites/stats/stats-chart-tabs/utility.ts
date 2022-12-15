@@ -61,7 +61,7 @@ export function getQueryDate( {
 	}
 
 	// Use the site's timezone, not the browser's timezone.
-	const timezone = `UTC${ Math.sign( timezoneOffset ) > 0 ? '+' : '' }${ timezoneOffset }`;
+	const timezone = `UTC${ Math.sign( timezoneOffset ) >= 0 ? '+' : '' }${ timezoneOffset }`;
 	const dt = DateTime.fromISO( todayDateString ).setZone( timezone );
 
 	// Determine the end of the period interval for the current date.
