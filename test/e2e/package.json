@@ -19,8 +19,10 @@
 		"clean:packages": "yarn workspace @automattic/jest-circus-allure-reporter clean && yarn workspace @automattic/calypso-e2e clean",
 		"clean:output": "rm -rf ./allure-results && rm -rf ./results",
 		"build": "yarn workspace @automattic/jest-circus-allure-reporter build && yarn workspace @automattic/calypso-e2e build",
-		"start": "yarn jest",
-		"start:debug": "PWDEBUG=1 DEBUG=pw:api yarn run start"
+		"test": "yarn jest",
+		"test:mobile": "VIEWPORT_NAME=mobile yarn jest",
+		"debug": "PWDEBUG=1 DEBUG=pw:api yarn run test",
+		"debug:mobile": "PWDEBUG=1 DEBUG=pw:api yarn run test:mobile"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
