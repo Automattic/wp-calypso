@@ -25,7 +25,7 @@ describe( 'StatsChartTabs Utilities: formatDate', () => {
 	} );
 
 	test( 'Should correctly format date for "week" period', () => {
-		expect( formatDate( testDate, 'week' ) ).toEqual( '1/1/2022 - 1/7/2022' );
+		expect( formatDate( testDate, 'week' ) ).toEqual( '12/27/2021 - 1/2/2022' );
 	} );
 
 	test( 'Should correctly format date for "month" period', () => {
