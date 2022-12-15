@@ -30,8 +30,12 @@ import type { SiteDetailsPlan } from '@automattic/data-stores';
 const ecommerceFlow: Flow = {
 	name: ECOMMERCE_FLOW,
 	useSteps() {
+		const recurType = useSelect( ( select ) =>
+			select( ONBOARD_STORE ).getEcommerceFlowRecurType()
+		);
+
 		useEffect( () => {
-			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
+			recordTracksEvent( 'calypso_signup_start', { flow: this.name, recur: recurType } );
 			recordFullStoryEvent( 'calypso_signup_start_ecommerce', { flow: this.name } );
 		}, [] );
 
