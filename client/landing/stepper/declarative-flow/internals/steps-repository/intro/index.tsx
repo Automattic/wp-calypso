@@ -40,11 +40,8 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 		if ( flowName === NEWSLETTER_FLOW ) {
 			return {
 				title: __( 'Sign in. Set up. Send out.' ),
-				text: createInterpolateElement(
-					__(
-						`You’re a few steps away from launching a beautiful Newsletter with<br />everything you’ll ever need to grow your audience.`
-					),
-					{ br: <br /> }
+				text: __(
+					`You’re a few steps away from launching a beautiful Newsletter with everything you’ll ever need to grow your audience.`
 				),
 				buttonText: __( 'Start building your Newsletter' ),
 			};
