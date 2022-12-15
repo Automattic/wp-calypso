@@ -25,6 +25,14 @@ export default function MobilePromoCardWrapper( { isJetpack, isOdysseyStats, slu
 			recordTracksEvent( EVENT_MOBILE_PROMO_VIEW );
 		}
 	}, [ showBothPromoCards ] );
+	// handle click events here
+	const promoCardDidReceiveClick = ( event ) => {
+		// Events need to incorporate the page and the click type.
+		// This will allow us to account for integraton across different pages.
+		// FORMAT: calypso_stats_PAGE_mobile_cta_EVENT
+		const tracksEventName = `calypso_stats_traffic_mobile_cta_${ event.replaceAll( '-', '_' ) }`;
+		recordTracksEvent( tracksEventName );
+	};
 	// handle view events here
 	const pagerDidSelectPage = ( index ) => {
 		const evenLookup = [ EVENT_YOAST_PROMO_VIEW, EVENT_MOBILE_PROMO_VIEW ];
@@ -39,7 +47,10 @@ export default function MobilePromoCardWrapper( { isJetpack, isOdysseyStats, slu
 			{ ! showBothPromoCards && (
 				<div className="stats__promo-container">
 					<div className="stats__promo-card">
-						<MobilePromoCard className="stats__promo-card-apps" />
+						<MobilePromoCard
+							className="stats__promo-card-apps"
+							clickHandler={ promoCardDidReceiveClick }
+						/>
 					</div>
 				</div>
 			) }
@@ -61,7 +72,10 @@ export default function MobilePromoCardWrapper( { isJetpack, isOdysseyStats, slu
 							/>
 
 							<div>
-								<MobilePromoCard className="stats__promo-card-apps" />
+								<MobilePromoCard
+									className="stats__promo-card-apps"
+									clickHandler={ promoCardDidReceiveClick }
+								/>
 							</div>
 						</DotPager>
 					</div>
