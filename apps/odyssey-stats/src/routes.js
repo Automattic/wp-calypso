@@ -78,7 +78,8 @@ export default function ( pageBase = '/' ) {
 	statsPage( '/stats/ads/(.*)', redirectToDefaultWordAdsPeriod );
 
 	// Anything else should redirect to default stats page
-	statsPage( '/stats/(.*)', redirectToDefaultSitePage );
+	statsPage( '*', redirectToDefaultSitePage );
+
 	// Enable hashbang for routing in Jetpack.
 	page( { hashbang: true } );
 }
