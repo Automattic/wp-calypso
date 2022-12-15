@@ -24,9 +24,8 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 		}
 	}
 
-	// Do not limit Global Styles on sites created before we made it a paid feature. This cutoff
-	// blog ID needs to be updated as part of the public launch.
-	if ( $blog_id < 210494207 ) {
+	// Do not limit Global Styles on sites created before we made it a paid feature (2022-12-15).
+	if ( $blog_id < 213403000 ) {
 		return false;
 	}
 
