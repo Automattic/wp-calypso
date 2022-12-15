@@ -573,7 +573,7 @@ export class Theme extends Component {
 						{ ! isNewDetailsAndPreview && active && (
 							<span className={ priceClass }>{ price }</span>
 						) }
-						{ showUpsell
+						{ isPremiumTheme && ! active
 							? this.renderUpsell()
 							: isNewDetailsAndPreview &&
 							  ! active && (
