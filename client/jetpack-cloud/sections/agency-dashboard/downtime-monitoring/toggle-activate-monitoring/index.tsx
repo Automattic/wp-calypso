@@ -1,25 +1,25 @@
 import { ToggleControl as OriginalToggleControl } from '@wordpress/components';
-import { useUpdateMonitorSettings } from '../../hooks';
+import { useToggleActivateMonitor } from '../../hooks';
 import type { AllowedStatusTypes } from '../../sites-overview/types';
 
 import './style.scss';
 
 interface Props {
-	siteId: number;
+	site: { blog_id: number; url: string };
 	status: AllowedStatusTypes | string;
 }
 
-export default function ToggleActivateMonitoring( { siteId, status }: Props ) {
+export default function ToggleActivateMonitoring( { site, status }: Props ) {
 	const ToggleControl = OriginalToggleControl as React.ComponentType<
 		OriginalToggleControl.Props & {
 			disabled?: boolean;
 		}
 	>;
 
-	const [ updateMonitorSettings, isLoading ] = useUpdateMonitorSettings( siteId );
+	const [ toggleActivateMonitor, isLoading ] = useToggleActivateMonitor( site );
 
 	function handleToggleActivateMonitoring( checked: boolean ) {
-		updateMonitorSettings( { monitor_active: checked } );
+		toggleActivateMonitor( checked );
 	}
 
 	const isChecked = status !== 'disabled';

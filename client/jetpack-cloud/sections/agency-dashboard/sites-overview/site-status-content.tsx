@@ -151,7 +151,7 @@ export default function SiteStatusContent( {
 	);
 
 	if ( isDownTimeMonitorEnabled && type === 'monitor' ) {
-		return <ToggleActivateMonitoring siteId={ siteId } status={ status } />;
+		return <ToggleActivateMonitoring site={ rows.site.value } status={ status } />;
 	}
 
 	let content;

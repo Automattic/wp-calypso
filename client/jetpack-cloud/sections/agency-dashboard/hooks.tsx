@@ -1,59 +1,51 @@
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useContext } from 'react';
-import { useQueryClient } from 'react-query';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import useUpdateMonitorSettingsMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-update-monitor-settings-mutation';
-import { errorNotice } from 'calypso/state/notices/actions';
-import SitesOverviewContext from './sites-overview/context';
-import type {
-	Site,
-	APIError,
-	UpdateMonitorSettingsParams,
-} from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
-export function useUpdateMonitorSettings(
-	siteId: number
-): [ ( params: object ) => void, boolean ] {
+export function useToggleActivateMonitor( {
+	blog_id: siteId,
+	url: siteUrl,
+}: {
+	blog_id: number;
+	url: string;
+} ): [ ( isEnabled: boolean ) => void, boolean ] {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const queryClient = useQueryClient();
-	const { filter, search, currentPage } = useContext( SitesOverviewContext );
-	const queryKey = [ 'jetpack-agency-dashboard-sites', search, currentPage, filter ];
 
-	const updateMonitorSettings = useUpdateMonitorSettingsMutation( {
-		onMutate: async () => {
-			// Cancel any current refetches, so they don't overwrite our optimistic update
-			await queryClient.cancelQueries( queryKey );
+	const components = {
+		em: <em />,
+	};
 
-			// Snapshot the previous value
-			const previousSites = queryClient.getQueryData( queryKey );
-
-			// Optimistically update to the new value
-			queryClient.setQueryData( queryKey, ( oldSites: any ) => {
-				return {
-					...oldSites,
-					sites: oldSites?.sites.map( ( site: Site ) => {
-						if ( site.blog_id === siteId ) {
-							return {
-								...site,
-								monitor_active: ! site.monitor_active,
-							};
-						}
-						return site;
-					} ),
-				};
-			} );
-
-			// Store previous settings in case of failure
-			return { previousSites };
+	const toggleActivateMonitoring = useUpdateMonitorSettingsMutation( {
+		onSuccess: ( _data, arg ) => {
+			const isEnabled = arg.params.monitor_active;
+			const status = isEnabled ? translate( 'activate' ) : translate( 'deactivate' );
+			const successMessage = translate(
+				'A request to %(status)s the monitor for {{em}}%(siteUrl)s{{/em}} was made successfully. ' +
+					'Please allow a few minutes for it to %(status)s.',
+				{
+					args: { status, siteUrl },
+					comment:
+						"%(status)s is the monitor's currently set activation status which could be either 'activate' or 'deactivate'",
+					components,
+				}
+			);
+			dispatch( successNotice( successMessage ) );
 		},
-		onError: ( error: APIError, options: any, context: any ) => {
-			queryClient.setQueryData( queryKey, context?.previousSites );
-			const errorMessage =
-				error.message ??
-				translate(
-					'Sorry, something went wrong when trying to update monitor settings. Please try again.'
-				);
+		onError: ( _error, arg ) => {
+			const isEnabled = arg.params.monitor_active;
+			const status = isEnabled ? translate( 'activate' ) : translate( 'deactivate' );
+			const errorMessage = translate(
+				'Sorry, something went wrong when trying to %(status)s monitor for {{em}}%(siteUrl)s{{/em}}. Please try again.',
+				{
+					args: { status, siteUrl },
+					comment:
+						"%(status)s is the monitor's currently set activation status which could be either 'activate' or 'deactivate'",
+					components,
+				}
+			);
 			dispatch( errorNotice( errorMessage, { isPersistent: true } ) );
 		},
 		retry: ( errorCount ) => {
@@ -61,12 +53,15 @@ export function useUpdateMonitorSettings(
 		},
 	} );
 
-	const updateSettings = useCallback(
-		( params: UpdateMonitorSettingsParams ) => {
-			updateMonitorSettings.mutate( { siteId, params } );
+	const toggle = useCallback(
+		( isEnabled: boolean ) => {
+			const params = {
+				monitor_active: isEnabled,
+			};
+			toggleActivateMonitoring.mutate( { siteId, params } );
 		},
-		[ siteId, updateMonitorSettings ]
+		[ siteId, toggleActivateMonitoring ]
 	);
 
-	return [ updateSettings, updateMonitorSettings.isLoading ];
+	return [ toggle, toggleActivateMonitoring.isLoading ];
 }
