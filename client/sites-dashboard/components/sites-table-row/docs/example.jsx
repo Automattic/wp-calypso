@@ -1,6 +1,12 @@
 import SitesTableRow from '../../sites-table-row';
 
 export default function SitesTableRowExample() {
+	const CONTAINER_STYLES = {
+		backgroundColor: 'white',
+		border: '1px solid lightgray',
+		padding: '16px',
+	};
+
 	const exampleSite = {
 		URL: 'https://wpvip.com',
 		is_coming_soon: false,
@@ -37,6 +43,7 @@ export default function SitesTableRowExample() {
 	const siteSimpleFree = {
 		...exampleSite,
 		ID: 1,
+		title: 'Free Simple Site',
 	};
 
 	const siteSimpleBusinessComingSoon = {
@@ -56,6 +63,7 @@ export default function SitesTableRowExample() {
 		},
 		is_coming_soon: true,
 		launch_status: 'unlaunched',
+		title: 'Business Simple Site with Coming Soon status',
 	};
 
 	const siteSimpleBusinessExpired = {
@@ -74,6 +82,7 @@ export default function SitesTableRowExample() {
 			is_free: false,
 			expired: true,
 		},
+		title: 'Expired Business Simple Site',
 	};
 
 	const siteJetpackComplete = {
@@ -92,6 +101,7 @@ export default function SitesTableRowExample() {
 			user_is_owner: true,
 			is_free: false,
 		},
+		title: 'Jetpack Complete Site',
 	};
 
 	const siteSimplePrivateP2 = {
@@ -121,92 +131,29 @@ export default function SitesTableRowExample() {
 			header_image:
 				'https://wpjobmanager.com/wp-content/uploads/2022/11/hero-resized.png?resize=680',
 		},
+		title: 'Simple Private P2 Site',
 	};
 
 	return (
 		<div>
-			<h2>Free Simple Site</h2>
-			<div
-				style={ {
-					backgroundColor: 'white',
-					border: '1px solid lightgray',
-					padding: '16px',
-				} }
-			>
-				<table>
-					<tbody>
-						<SitesTableRow site={ siteSimpleFree } key={ siteSimpleFree.ID }></SitesTableRow>
-					</tbody>
-				</table>
-			</div>
-			<h2>Business Simple Site with Coming Soon status</h2>
-			<div
-				style={ {
-					backgroundColor: 'white',
-					border: '1px solid lightgray',
-					padding: '16px',
-				} }
-			>
-				<table>
-					<tbody>
-						<SitesTableRow
-							site={ siteSimpleBusinessComingSoon }
-							key={ siteSimpleBusinessComingSoon.ID }
-						></SitesTableRow>
-					</tbody>
-				</table>
-			</div>
-			<h2>Expired Business Simple Site</h2>
-			<div
-				style={ {
-					backgroundColor: 'white',
-					border: '1px solid lightgray',
-					padding: '16px',
-				} }
-			>
-				<table>
-					<tbody>
-						<SitesTableRow
-							site={ siteSimpleBusinessExpired }
-							key={ siteSimpleBusinessExpired.ID }
-						></SitesTableRow>
-					</tbody>
-				</table>
-			</div>
-			<h2>Jetpack Complete Site</h2>
-			<div
-				style={ {
-					backgroundColor: 'white',
-					border: '1px solid lightgray',
-					padding: '16px',
-				} }
-			>
-				<table>
-					<tbody>
-						<SitesTableRow
-							site={ siteJetpackComplete }
-							key={ siteJetpackComplete.ID }
-						></SitesTableRow>
-					</tbody>
-				</table>
-			</div>
-			<h2>Simple Private P2 Site</h2>
-			<div
-				style={ {
-					backgroundColor: 'white',
-					border: '1px solid lightgray',
-					padding: '16px',
-				} }
-			>
-				<table>
-					<tbody>
-						<SitesTableRow
-							site={ siteSimplePrivateP2 }
-							key={ siteSimplePrivateP2.ID }
-						></SitesTableRow>
-					</tbody>
-				</table>
-			</div>
+			{ [
+				siteSimpleFree,
+				siteSimpleBusinessComingSoon,
+				siteSimpleBusinessExpired,
+				siteJetpackComplete,
+				siteSimplePrivateP2,
+			].map( ( site ) => (
+				<>
+					<h2>{ site.title }</h2>
+					<div style={ CONTAINER_STYLES }>
+						<table>
+							<tbody>
+								<SitesTableRow site={ site } key={ site.ID } />
+							</tbody>
+						</table>
+					</div>
+				</>
+			) ) }
 		</div>
 	);
 }
