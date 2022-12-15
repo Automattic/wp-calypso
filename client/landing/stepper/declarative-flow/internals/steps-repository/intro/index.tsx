@@ -21,7 +21,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 		if ( flowName === LINK_IN_BIO_FLOW ) {
 			return {
 				title: createInterpolateElement(
-					__( 'You’re 3 minutes away from a stand-out Link in Bio site.<br />Ready? ' ),
+					__( 'You’re 3 minutes away from<br />a stand-out Link in Bio site.<br />Ready? ' ),
 					{ br: <br /> }
 				),
 				buttonText: __( 'Get started' ),
