@@ -7,7 +7,7 @@ const FeaturedImageTemplateToggle = ( props ) => {
 	const { isRequestingSettings, isSavingSettings, fields, handleAutosavingToggle, translate } =
 		props;
 	const isDisabled = isRequestingSettings || isSavingSettings;
-	const settingName = 'featured_image_email_enabled';
+	const settingName = 'wpcom_featured_image_in_email';
 
 	return (
 		<div className="featured-image-template-toggle-settings">

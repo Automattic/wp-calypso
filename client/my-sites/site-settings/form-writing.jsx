@@ -213,8 +213,8 @@ const getFormSettings = ( settings ) => {
 		'time_format',
 		'timezone_string',
 		'podcasting_category_id',
+		'wpcom_featured_image_in_email',
 		'wpcom_publish_posts_with_markdown',
-		'featured_image_email_enabled',
 		'jetpack_blogging_prompts_enabled',
 	] );
 
