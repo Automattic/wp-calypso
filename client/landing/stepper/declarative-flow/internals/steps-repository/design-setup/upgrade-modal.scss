@@ -162,14 +162,13 @@ $design-button-primary-hover-color: var(--color-primary-60);
 
 		li {
 			display: flex;
-			align-items: center;
+			align-self: flex-start;
 		}
 
 		.gridicon {
 			fill: var(--studio-green-50);
 			flex-shrink: 0;
 			margin-right: 10px;
-			align-self: flex-start;
 			margin-top: 4px;
 		}
 	}
