@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { getLanguage, getLocaleFromPath } from '@automattic/i18n-utils';
-import { startsWith } from 'lodash';
 
 /**
  * Module variables
@@ -16,7 +15,7 @@ const defaultLanguageSlug = config( 'i18n_default_locale_slug' );
  * @returns {boolean} The locale slug of the language, if any found.
  */
 export function isDefaultLocale( locale ) {
-	return startsWith( locale, defaultLanguageSlug );
+	return locale.startsWith( defaultLanguageSlug );
 }
 
 /**
