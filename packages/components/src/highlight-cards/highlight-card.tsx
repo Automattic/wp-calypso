@@ -88,14 +88,16 @@ export default function HighlightCard( {
 				) : null }
 				{ showValueTooltip && (
 					<Popover
-						className="tooltip tooltip--darker"
+						className="tooltip tooltip--darker highlight-card-tooltip"
 						isVisible={ isTooltipVisible }
 						position="bottom right"
 						context={ textRef.current }
 					>
-						<div className="highlight-card-tooltip">
-							<span className="highlight-card-tooltip-icon">{ icon }</span>
-							<span className="highlight-card-tooltip-label">{ heading }</span>
+						<div className="highlight-card-tooltip-content">
+							<span className="highlight-card-tooltip-label">
+								<span className="highlight-card-tooltip-icon">{ icon }</span>
+								<span>{ heading }</span>
+							</span>
 							<span>{ formatNumber( count ) }</span>
 						</div>
 					</Popover>
