@@ -47,7 +47,7 @@ export const StatsReach = ( props ) => {
 						gridicon="my-sites"
 						label={ translate( 'WordPress.com' ) }
 						loading={ isLoadingFollowData }
-						href={ ! isOdysseyStats && `/people/followers/${ siteSlug }` }
+						href={ ! isOdysseyStats ? `/people/followers/${ siteSlug }` : null }
 						value={ wpcomFollowCount }
 						compact
 					/>
@@ -55,7 +55,7 @@ export const StatsReach = ( props ) => {
 						gridicon="mail"
 						label={ translate( 'Email' ) }
 						loading={ isLoadingFollowData }
-						href={ ! isOdysseyStats && `/people/email-followers/${ siteSlug }` }
+						href={ ! isOdysseyStats ? `/people/email-followers/${ siteSlug }` : null }
 						value={ emailFollowCount }
 						compact
 					/>
