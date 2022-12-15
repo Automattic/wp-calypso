@@ -1,3 +1,5 @@
+export { computeFullAndMonthlyPricesForPlan } from './compute-full-and-monthly-prices-for-plan';
+export { computeProductsWithPrices } from './compute-products-with-prices';
 export { getAvailableProductsList } from './get-available-products-list';
 export { getPlanPrice } from './get-plan-price';
 export { getProductBySlug } from './get-product-by-slug';
@@ -12,6 +14,7 @@ export { getProductsByBillingSlug } from './get-products-by-billing-slug';
 export { getProductsList } from './get-products-list';
 export { getProductsListType } from './get-products-list-type';
 export { isProductsListFetching } from './is-products-list-fetching';
+export { planSlugToPlanProduct } from './plan-slug-to-plan-product';
 export { isMarketplaceProduct } from './is-marketplace-product';
 export { isSaasProduct } from './is-saas-product';
 export { getProductSaleCouponCost } from './get-product-sale-coupon-cost';

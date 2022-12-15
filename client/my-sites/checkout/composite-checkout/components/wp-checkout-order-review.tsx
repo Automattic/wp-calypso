@@ -7,6 +7,7 @@ import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, joinClasses } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
@@ -70,6 +71,7 @@ export default function WPCheckoutOrderReview( {
 	couponFieldStateProps,
 	onChangePlanLength,
 	siteUrl,
+	siteId,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
 	forceRadioButtons,
@@ -79,6 +81,7 @@ export default function WPCheckoutOrderReview( {
 	couponFieldStateProps: CouponFieldStateProps;
 	onChangePlanLength?: OnChangeItemVariant;
 	siteUrl?: string;
+	siteId?: number | undefined;
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
 	// TODO: This is just for unit tests. Remove forceRadioButtons everywhere
@@ -165,6 +168,7 @@ export default function WPCheckoutOrderReview( {
 			<WPOrderReviewSection>
 				<WPOrderReviewLineItems
 					forceRadioButtons={ forceRadioButtons }
+					siteId={ siteId }
 					removeProductFromCart={ removeProductFromCart }
 					removeCoupon={ removeCouponAndClearField }
 					onChangePlanLength={ onChangePlanLength }
@@ -188,6 +192,15 @@ export default function WPCheckoutOrderReview( {
 		</div>
 	);
 }
+
+WPCheckoutOrderReview.propTypes = {
+	isSummary: PropTypes.bool,
+	className: PropTypes.string,
+	removeProductFromCart: PropTypes.func,
+	onChangePlanLength: PropTypes.func,
+	siteUrl: PropTypes.string,
+	couponFieldStateProps: PropTypes.object.isRequired,
+};
 
 function CouponFieldArea( {
 	isCouponFieldVisible,

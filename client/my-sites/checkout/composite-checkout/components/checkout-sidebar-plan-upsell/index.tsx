@@ -7,11 +7,12 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import {
 	getItemVariantCompareToPrice,
@@ -30,8 +31,13 @@ export function CheckoutSidebarPlanUpsell() {
 	const locale = useLocale();
 	const cartKey = useCartKey();
 	const { responseCart, replaceProductInCart } = useShoppingCart( cartKey );
+	const siteId = useSelector( getSelectedSiteId );
 	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
-	const variants = useGetProductVariants( plan );
+	const variants = useGetProductVariants(
+		siteId ?? undefined,
+		plan?.product_slug ?? '',
+		plan?.current_quantity ?? null
+	);
 
 	if ( ! plan ) {
 		debug( 'no plan found in cart' );
@@ -109,10 +115,7 @@ export function CheckoutSidebarPlanUpsell() {
 					{ currentVariant.variantLabel }
 				</div>
 				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-					{ formatCurrency( currentVariant.priceInteger, currentVariant.currency, {
-						stripZeros: true,
-						isSmallestUnit: true,
-					} ) }
+					{ formatCurrency( currentVariant.price, currentVariant.currency, { stripZeros: true } ) }
 				</div>
 				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 					{ biennialVariant.variantLabel }
@@ -122,13 +125,11 @@ export function CheckoutSidebarPlanUpsell() {
 						<del className="checkout-sidebar-plan-upsell__do-not-pay">
 							{ formatCurrency( compareToPriceForVariantTerm, currentVariant.currency, {
 								stripZeros: true,
-								isSmallestUnit: true,
 							} ) }
 						</del>
 					) }
-					{ formatCurrency( biennialVariant.priceInteger, biennialVariant.currency, {
+					{ formatCurrency( biennialVariant.price, biennialVariant.currency, {
 						stripZeros: true,
-						isSmallestUnit: true,
 					} ) }
 				</div>
 			</div>

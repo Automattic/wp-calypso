@@ -11,7 +11,7 @@ export function getItemVariantCompareToPrice(
 	// or 10 (per month). In this case, selecting the variant would save the user
 	// 50% (5 / 10).
 	const compareToPriceForVariantTerm = compareTo
-		? ( compareTo.priceInteger / compareTo.termIntervalInMonths ) * variant.termIntervalInMonths
+		? compareTo.pricePerMonth * variant.termIntervalInMonths
 		: undefined;
 	return compareToPriceForVariantTerm;
 }
@@ -24,7 +24,7 @@ export function getItemVariantDiscountPercentage(
 	// Extremely low "discounts" are possible if the price of the longer term has been rounded
 	// if they cannot be rounded to at least a percentage point we should not show them.
 	const discountPercentage = compareToPriceForVariantTerm
-		? Math.floor( 100 - ( variant.priceInteger / compareToPriceForVariantTerm ) * 100 )
+		? Math.floor( 100 - ( variant.price / compareToPriceForVariantTerm ) * 100 )
 		: 0;
 	return discountPercentage;
 }

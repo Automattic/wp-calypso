@@ -13,10 +13,16 @@ import {
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
 import { useExperiment } from 'calypso/lib/explat';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
-import { useGetProductVariants } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
+import {
+	canVariantBePurchased,
+	getVariantPlanProductSlugs,
+	useGetProductVariants,
+} from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
+import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
@@ -53,6 +59,7 @@ export function WPOrderReviewSection( {
 
 export function WPOrderReviewLineItems( {
 	className,
+	siteId,
 	isSummary,
 	removeProductFromCart,
 	removeCoupon,
@@ -66,6 +73,7 @@ export function WPOrderReviewLineItems( {
 	forceRadioButtons,
 }: {
 	className?: string;
+	siteId?: number | undefined;
 	isSummary?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
 	removeCoupon: RemoveCouponFromCart;
@@ -98,6 +106,7 @@ export function WPOrderReviewLineItems( {
 					forceRadioButtons={ forceRadioButtons }
 					key={ product.product_slug }
 					product={ product }
+					siteId={ siteId }
 					isSummary={ isSummary }
 					removeProductFromCart={ removeProductFromCart }
 					onChangePlanLength={ onChangePlanLength }
@@ -111,9 +120,8 @@ export function WPOrderReviewLineItems( {
 					isDisabled={ isDisabled }
 					initialVariantTerm={
 						initialProducts.find( ( initialProduct ) => {
-							return initialProduct.product_variants.find(
-								( variant ) => variant.product_id === product.product_id
-							);
+							const variants = getVariantPlanProductSlugs( initialProduct.product_slug );
+							return variants.includes( product.product_slug );
 						} )?.months_per_bill_period
 					}
 				/>
@@ -145,6 +153,7 @@ export function WPOrderReviewLineItems( {
 
 function LineItemWrapper( {
 	product,
+	siteId,
 	isSummary,
 	removeProductFromCart,
 	onChangePlanLength,
@@ -160,6 +169,7 @@ function LineItemWrapper( {
 	forceRadioButtons,
 }: {
 	product: ResponseCartProduct;
+	siteId?: number | undefined;
 	isSummary?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
 	onChangePlanLength?: OnChangeItemVariant;
@@ -190,19 +200,31 @@ function LineItemWrapper( {
 		isJetpackPurchasableItem( product.product_slug )
 	);
 
-	const variants = useGetProductVariants( product, ( variant ) => {
-		// Only show term variants which are equal to or longer than the variant that
-		// was in the cart when checkout finished loading (not necessarily the
-		// current variant). For WordPress.com only, not Jetpack. See
-		// https://github.com/Automattic/wp-calypso/issues/69633
-		if ( ! initialVariantTerm ) {
-			return true;
+	const sitePlans = useSelector( ( state ) => getPlansBySiteId( state, siteId ) );
+	const activePlan = sitePlans?.data?.find( ( plan ) => plan.currentPlan );
+
+	const variants = useGetProductVariants(
+		siteId,
+		product.product_slug,
+		product.current_quantity,
+		( variant ) => {
+			if ( ! canVariantBePurchased( variant, activePlan?.interval, activePlan?.productSlug ) ) {
+				return false;
+			}
+
+			// Only show term variants which are equal to or longer than the variant that
+			// was in the cart when checkout finished loading (not necessarily the
+			// current variant). For WordPress.com only, not Jetpack. See
+			// https://github.com/Automattic/wp-calypso/issues/69633
+			if ( ! initialVariantTerm ) {
+				return true;
+			}
+			if ( isJetpack ) {
+				return true;
+			}
+			return variant.termIntervalInMonths >= initialVariantTerm;
 		}
-		if ( isJetpack ) {
-			return true;
-		}
-		return variant.termIntervalInMonths >= initialVariantTerm;
-	} );
+	);
 
 	const areThereVariants = variants.length > 1;
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(

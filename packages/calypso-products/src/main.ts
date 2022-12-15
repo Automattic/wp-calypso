@@ -496,17 +496,6 @@ export function getBillingYearsForTerm( term: string ): number {
 	throw new Error( `Unknown term: ${ term }` );
 }
 
-export function getBillingTermForMonths( term: number ): string {
-	if ( term === 1 ) {
-		return TERM_MONTHLY;
-	} else if ( term === 12 ) {
-		return TERM_ANNUALLY;
-	} else if ( term === 24 ) {
-		return TERM_BIENNIALLY;
-	}
-	throw new Error( `Unknown term: ${ term }` );
-}
-
 export function plansLink(
 	urlString: string,
 	siteSlug: string | undefined | null,

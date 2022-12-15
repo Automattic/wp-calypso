@@ -69,6 +69,5 @@ export function getEmptyResponseCartProduct(): ResponseCartProduct {
 		item_tax: 0,
 		product_type: 'test',
 		included_domain_purchase_amount: 0,
-		product_variants: [],
 	};
 }
