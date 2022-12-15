@@ -73,10 +73,11 @@ const PatternAssembler: Step = ( { navigation } ) => {
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
 			pattern_count: patterns.length,
 		} );
-		patterns.forEach( ( { id, name } ) => {
+		patterns.forEach( ( { id, name, category } ) => {
 			recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_final_select', {
 				pattern_id: id,
 				pattern_name: name,
+				pattern_category: category,
 			} );
 		} );
 	};
