@@ -103,7 +103,7 @@ const ecommerceFlow: Flow = {
 
 					setPlanCartItem( {
 						product_slug: selectedPlan,
-						extra: { design: selectedDesign?.recipe?.stylesheet },
+						extra: { headstart_theme: selectedDesign?.recipe?.stylesheet },
 					} );
 					return navigate( 'siteCreationStep' );
 
