@@ -218,11 +218,7 @@ export function getPluginOnSites( state, siteIds, pluginSlug ) {
 export function getPluginOnSite( state, siteId, pluginSlug ) {
 	const plugin = getAllPluginsIndexedByPluginSlug( state )[ pluginSlug ];
 
-	if ( ! plugin ) {
-		return undefined;
-	}
-
-	return plugin.sites[ siteId ] ? plugin : undefined;
+	return plugin && plugin.sites[ siteId ] ? plugin : undefined;
 }
 
 export function getSitesWithPlugin( state, siteIds, pluginSlug ) {
