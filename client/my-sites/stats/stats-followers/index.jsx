@@ -111,7 +111,7 @@ class StatModuleFollowers extends Component {
 				: '/people/followers/' + summaryPageSlug;
 
 		// Limit scope for Odyssey stats, as the Followers page is not yet available.
-		summaryPageLink = ! isOdysseyStats ? summaryPageLink : '';
+		summaryPageLink = ! isOdysseyStats ? summaryPageLink : null;
 
 		return (
 			<div>
