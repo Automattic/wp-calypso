@@ -56,6 +56,7 @@ function ParentConnection( { chatStatus, timeline, geoLocation } ) {
 								calypsoSectionName: 'gutenberg-editor',
 								wpcomSiteId: message.siteId?.toString(),
 								wpcomSitePlan: message.planSlug,
+								...( message.extraFields || {} ),
 							} )
 						);
 						dispatch(

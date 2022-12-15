@@ -1,5 +1,3 @@
-import config from '@automattic/calypso-config';
-import { Card } from '@automattic/components';
 import { Icon, chartBar, trendingUp } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -8,7 +6,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import Chart from 'calypso/components/chart';
-import Legend from 'calypso/components/chart/legend';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import compareProps from 'calypso/lib/compare-props';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -65,6 +62,7 @@ class WordAdsChartTabs extends Component {
 					label: this.props.translate( 'Ads Served' ),
 					value: this.props.numberFormat( item.data.impressions ),
 					className: 'is-impressions',
+					//TODO: replace with an icon when available.
 					icon: (
 						<svg
 							className="gridicon"
@@ -133,61 +131,37 @@ class WordAdsChartTabs extends Component {
 	}
 
 	render() {
-		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
-
 		const { siteId, query, isDataLoading } = this.props;
 		const classes = [
 			'is-chart-tabs',
 			{
-				'stats-module': ! isNewFeatured,
 				'is-loading': isDataLoading,
 			},
 		];
 
 		return (
-			<div>
+			<>
 				{ siteId && <QuerySiteStats statType="statsAds" siteId={ siteId } query={ query } /> }
 
-				{ isNewFeatured ? (
-					<div className={ classNames( ...classes ) }>
-						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-						<StatsModulePlaceholder className="is-chart" isLoading={ isDataLoading } />
-						<Chart
-							barClick={ this.props.barClick }
-							data={ this.buildChartData() }
-							minBarWidth={ 35 }
-						/>
-						<StatTabs
-							data={ this.props.data }
-							tabs={ this.props.charts }
-							switchTab={ this.props.switchTab }
-							selectedTab={ this.props.chartTab }
-							activeIndex={ this.props.queryDate }
-							activeKey="period"
-							iconSize={ 24 }
-						/>
-					</div>
-				) : (
-					<Card className={ classNames( ...classes ) }>
-						<Legend
-							activeCharts={ this.props.activeLegend }
-							activeTab={ this.props.activeTab }
-							tabs={ this.props.charts }
-						/>
-						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-						<StatsModulePlaceholder className="is-chart" isLoading={ isDataLoading } />
-						<Chart barClick={ this.props.barClick } data={ this.buildChartData() } />
-						<StatTabs
-							data={ this.props.data }
-							tabs={ this.props.charts }
-							switchTab={ this.props.switchTab }
-							selectedTab={ this.props.chartTab }
-							activeIndex={ this.props.queryDate }
-							activeKey="period"
-						/>
-					</Card>
-				) }
-			</div>
+				<div className={ classNames( ...classes ) }>
+					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+					<StatsModulePlaceholder className="is-chart" isLoading={ isDataLoading } />
+					<Chart
+						barClick={ this.props.barClick }
+						data={ this.buildChartData() }
+						minBarWidth={ 35 }
+					/>
+					<StatTabs
+						data={ this.props.data }
+						tabs={ this.props.charts }
+						switchTab={ this.props.switchTab }
+						selectedTab={ this.props.chartTab }
+						activeIndex={ this.props.queryDate }
+						activeKey="period"
+						iconSize={ 24 }
+					/>
+				</div>
+			</>
 		);
 	}
 }

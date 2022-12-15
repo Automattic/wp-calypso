@@ -4,9 +4,11 @@ export interface Task {
 	disabled: boolean;
 	taskType: string;
 	title?: string;
+	subtitle?: string;
 	badgeText?: string;
 	actionDispatch?: () => void;
 	isLaunchTask?: boolean;
+	warning?: boolean;
 }
 
 export interface LaunchpadFlowTaskList {

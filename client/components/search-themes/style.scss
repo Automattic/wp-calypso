@@ -81,13 +81,12 @@ $search-border-radius: 4px;
 			background-color: var(--color-surface);
 			display: flex;
 			flex-direction: column;
-			gap: 8px;
 		}
 
 		.keyed-suggestions__category {
 			border: 0;
-			font-size: 0.75rem;
-			gap: 8px;
+			font-size: $font-body-small;
+			gap: 2px;
 			line-height: 20px;
 			padding: 8px 14px;
 			position: sticky;
@@ -109,7 +108,7 @@ $search-border-radius: 4px;
 
 			.keyed-suggestions__category-show-all {
 				color: var(--color-link);
-				font-size: 0.75rem;
+				font-size: $font-body-small;
 				line-height: 20px;
 			}
 		}
@@ -121,7 +120,7 @@ $search-border-radius: 4px;
 			font-size: 0;
 			gap: 16px;
 			justify-content: flex-start;
-			padding: 8px 14px;
+			padding: 9px 14px;
 
 			&.is-selected {
 				background-color: var(--color-neutral-0);
@@ -153,7 +152,7 @@ $search-border-radius: 4px;
 			.keyed-suggestions__value-normal,
 			.keyed-suggestions__value-emphasis,
 			.keyed-suggestions__value-description {
-				font-size: 0.75rem;
+				font-size: $font-body-small;
 				height: 24px;
 				line-height: 24px;
 				margin: 0;

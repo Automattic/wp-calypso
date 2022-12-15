@@ -14,6 +14,12 @@ const siteIdsHash = ( siteIds ) => {
 	siteIds.sort();
 	return siteIds.join( '_' );
 };
+
+/**
+ * Makes an API request to fetch the features for the given array of siteIds.
+ * This will make one request per site, so if you have a large number of sites
+ * then consider using QueryJetpackSitesFeatures or something similar.
+ */
 export default function QuerySiteFeatures( { siteIds } ) {
 	const dispatch = useDispatch();
 

@@ -13,7 +13,7 @@ import {
 	FEATURE_STORAGE_BANDWIDTH,
 	FEATURE_EMAIL_SUPPORT_SIGNUP_V2,
 	FEATURE_PREMIUM_THEMES,
-	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS,
+	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 	FEATURE_UNLTD_LIVE_CHAT_SUPPORT,
 	FEATURE_INSTALL_THEMES_PLUGINS,
 	FEATURE_ADVANCED_SEO_TOOLS,
@@ -65,7 +65,7 @@ const iconMapping = {
 	[ FEATURE_STORAGE_BANDWIDTH ]: 'cloud_done',
 	[ FEATURE_EMAIL_SUPPORT_SIGNUP_V2 ]: 'mail',
 	[ FEATURE_PREMIUM_THEMES ]: 'space_dashboard',
-	[ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS ]: 'design_services',
+	[ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION ]: 'design_services',
 	[ FEATURE_UNLTD_LIVE_CHAT_SUPPORT ]: 'support_agent',
 	[ FEATURE_INSTALL_THEMES_PLUGINS ]: 'power',
 	[ FEATURE_ADVANCED_SEO_TOOLS ]: 'travel_explore',
@@ -376,6 +376,7 @@ PlanComparisonWithHighlights.propTypes = {
 	visiblePlans: PropTypes.array,
 	planProperties: PropTypes.array,
 	selectedFeature: PropTypes.string,
+	flowName: PropTypes.string,
 	purchaseId: PropTypes.number,
 	siteId: PropTypes.number,
 };
@@ -409,11 +410,18 @@ const hasPlaceholders = ( planProperties ) =>
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 export default connect(
 	( state, ownProps ) => {
-		const { isInSignup, placeholder, plans, isLandingPage, siteId, visiblePlans, popularPlanSpec } =
-			ownProps;
+		const {
+			isInSignup,
+			placeholder,
+			plans,
+			isLandingPage,
+			siteId,
+			visiblePlans,
+			popularPlanSpec,
+			flowName = getCurrentFlowName( state ),
+		} = ownProps;
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
-		const flowName = getCurrentFlowName( state );
 
 		let planProperties = compact(
 			map( plans, ( plan ) => {

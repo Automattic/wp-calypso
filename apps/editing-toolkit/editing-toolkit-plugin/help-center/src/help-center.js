@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
-import HelpCenter, { HelpIcon } from '@automattic/help-center';
+import HelpCenter, { HelpIcon, PromotionalPopover } from '@automattic/help-center';
 import { LocaleProvider } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
@@ -16,23 +15,17 @@ import { whatsNewQueryClient } from '../../common/what-new-query-client';
 import CalypsoStateProvider from './CalypsoStateProvider';
 
 function HelpCenterContent() {
+	const [ helpIconRef, setHelpIconRef ] = useState();
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
 	const sectionName = useSelector( getSectionName );
-	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
-	const [ showHelpIconDot, setShowHelpIconDot ] = useState( false );
 
-	const { data, isLoading } = useHasSeenWhatsNewModalQuery( window._currentSiteId );
-
-	useEffect( () => {
-		if ( ! isLoading && data ) {
-			setShowHelpIconDot( ! data.has_seen_whats_new_modal );
-		}
-	}, [ data, isLoading ] );
+	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
 
 	const handleToggleHelpCenter = () => {
 		recordTracksEvent( `calypso_inlinehelp_${ show ? 'close' : 'show' }`, {
+			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
 		} );
@@ -46,14 +39,25 @@ function HelpCenterContent() {
 	}, [] );
 
 	const content = (
-		<Button
-			className={ cx( 'entry-point-button', 'help-center', { 'is-active': show } ) }
-			onClick={ handleToggleHelpCenter }
-			icon={ <HelpIcon newItems={ showHelpIconDot } /> }
-			label="Help"
-			aria-pressed={ show ? true : false }
-			aria-expanded={ show ? true : false }
-		></Button>
+		<>
+			<Button
+				className={ cx( 'entry-point-button', 'help-center', { 'is-active': show } ) }
+				onClick={ handleToggleHelpCenter }
+				icon={
+					<HelpIcon
+						ref={ ( ref ) => {
+							if ( ref !== helpIconRef ) {
+								setHelpIconRef( ref );
+							}
+						} }
+					/>
+				}
+				label="Help"
+				aria-pressed={ show ? true : false }
+				aria-expanded={ show ? true : false }
+			/>
+			<PromotionalPopover iconElement={ helpIconRef } />
+		</>
 	);
 
 	return (

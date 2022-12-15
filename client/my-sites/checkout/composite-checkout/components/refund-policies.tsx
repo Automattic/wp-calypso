@@ -19,6 +19,10 @@ export enum RefundPolicy {
 	DomainNameRegistration = 1,
 	DomainNameRegistrationBundled,
 	DomainNameRenewal,
+	GiftBiennialPurchase,
+	GiftMonthlyPurchase,
+	GiftYearlyPurchase,
+	GiftDomainPurchase,
 	GenericBiennial,
 	GenericMonthly,
 	GenericYearly,
@@ -33,7 +37,27 @@ export enum RefundPolicy {
 }
 
 export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
+	const isGiftPurchase = cart.is_gift_purchase;
+
 	const refundPolicies: Array< RefundPolicy | undefined > = cart.products.map( ( product ) => {
+		if ( isGiftPurchase ) {
+			if ( isDomainRegistration( product ) ) {
+				return RefundPolicy.GiftDomainPurchase;
+			}
+
+			if ( isMonthlyProduct( product ) ) {
+				return RefundPolicy.GiftMonthlyPurchase;
+			}
+
+			if ( isYearly( product ) ) {
+				return RefundPolicy.GiftYearlyPurchase;
+			}
+
+			if ( isBiennially( product ) ) {
+				return RefundPolicy.GiftBiennialPurchase;
+			}
+		}
+
 		if ( isGoogleWorkspaceExtraLicence( product ) ) {
 			return RefundPolicy.NonRefundable;
 		}
@@ -46,7 +70,6 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 			if ( isRenewal( product ) ) {
 				return RefundPolicy.DomainNameRenewal;
 			}
-
 			return RefundPolicy.DomainNameRegistration;
 		}
 
@@ -198,10 +221,24 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 			);
 			break;
 
+		case RefundPolicy.GiftDomainPurchase:
+			text = translate(
+				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} for a domain gift are limited to 96 hours after purchase.',
+				{ components: { refundsSupportPage } }
+			);
+			break;
+
 		case RefundPolicy.GenericBiennial:
 		case RefundPolicy.PlanBiennialRenewal:
 			text = translate(
 				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase or renewal for non-domain products with two year subscriptions.',
+				{ components: { refundsSupportPage } }
+			);
+			break;
+
+		case RefundPolicy.GiftBiennialPurchase:
+			text = translate(
+				'You understand that gift {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase for non-domain products with two year subscriptions.',
 				{ components: { refundsSupportPage } }
 			);
 			break;
@@ -214,10 +251,24 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 			);
 			break;
 
+		case RefundPolicy.GiftMonthlyPurchase:
+			text = translate(
+				'You understand that gift {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 7 days after purchase for non-domain products with monthly subscriptions.',
+				{ components: { refundsSupportPage } }
+			);
+			break;
+
 		case RefundPolicy.GenericYearly:
 		case RefundPolicy.PlanYearlyRenewal:
 			text = translate(
 				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase or renewal for non-domain products with yearly subscriptions.',
+				{ components: { refundsSupportPage } }
+			);
+			break;
+
+		case RefundPolicy.GiftYearlyPurchase:
+			text = translate(
+				'You understand that gift {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase for non-domain products with yearly subscriptions.',
 				{ components: { refundsSupportPage } }
 			);
 			break;

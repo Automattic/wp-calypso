@@ -7,9 +7,13 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
 import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import scrollTo from 'calypso/lib/scroll-to';
+import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
@@ -21,6 +25,7 @@ import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/like
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
+import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import {
@@ -39,16 +44,31 @@ import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
+import ReaderListFollowedSites from './reader-list-followed-sites';
 import './style.scss';
 
+const WIDE_DISPLAY_CUTOFF = 900;
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
 const noop = () => {};
 const pagesByKey = new Map();
 const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
+const excludesSidebar = [
+	'a8c',
+	'conversations',
+	'conversations-a8c',
+	'feed',
+	'likes',
+	'search',
+	'custom_recs_posts_with_images',
+	'list',
+	'p2',
+	'tag',
+];
 
 class ReaderStream extends Component {
 	static propTypes = {
+		translate: PropTypes.func,
 		trackScrollPage: PropTypes.func.isRequired,
 		suppressSiteNameLink: PropTypes.bool,
 		showPostHeader: PropTypes.bool,
@@ -81,6 +101,17 @@ class ReaderStream extends Component {
 		useCompactCards: false,
 		intro: null,
 		forcePlaceholders: false,
+	};
+
+	state = {
+		selectedTab: 'posts',
+	};
+
+	handlePostsSelected = () => {
+		this.setState( { selectedTab: 'posts' } );
+	};
+	handleSitesSelected = () => {
+		this.setState( { selectedTab: 'sites' } );
 	};
 
 	listRef = createRef();
@@ -324,10 +355,10 @@ class ReaderStream extends Component {
 	fetchNextPage = ( options, props = this.props ) => {
 		const { streamKey, stream, startDate } = props;
 		if ( options.triggeredByScroll ) {
-			const page = pagesByKey.get( streamKey ) || 0;
-			pagesByKey.set( streamKey, page + 1 );
+			const pageId = pagesByKey.get( streamKey ) || 0;
+			pagesByKey.set( streamKey, pageId + 1 );
 
-			props.trackScrollPage( page );
+			props.trackScrollPage( pageId );
 		}
 		const pageHandle = stream.pageHandle || { before: startDate };
 		props.requestPage( { streamKey, pageHandle } );
@@ -401,9 +432,9 @@ class ReaderStream extends Component {
 	};
 
 	render() {
-		const { forcePlaceholders, lastPage, streamKey } = this.props;
+		const { translate, forcePlaceholders, lastPage, streamKey } = this.props;
+		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
-
 		const hasNoPosts = items.length === 0 && ! isRequesting;
 		let body;
 		let showingStream;
@@ -414,6 +445,11 @@ class ReaderStream extends Component {
 			isRequesting = true;
 		}
 
+		const path = window.location.pathname;
+		const streamType = getStreamType( streamKey );
+
+		let baseClassnames = classnames( 'following', this.props.className );
+
 		// @TODO: has error of invalid tag?
 		if ( hasNoPosts ) {
 			body = this.props.emptyContent;
@@ -423,7 +459,7 @@ class ReaderStream extends Component {
 			showingStream = false;
 		} else {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
-			body = (
+			const bodyContent = (
 				<InfiniteList
 					ref={ this.listRef }
 					className="reader__content"
@@ -437,15 +473,58 @@ class ReaderStream extends Component {
 					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 				/>
 			);
+			const sidebarContent = <ReaderListFollowedSites path={ path } />;
+
+			if ( excludesSidebar.includes( streamType ) ) {
+				body = bodyContent;
+			} else if ( wideDisplay ) {
+				body = (
+					<div className="stream__two-column">
+						{ bodyContent }
+						<div className="stream__right-column">{ sidebarContent }</div>
+					</div>
+				);
+				baseClassnames = classnames( 'reader-two-column', baseClassnames );
+			} else {
+				body = (
+					<>
+						<div className="stream__header">
+							<SectionNav selectedText={ this.state.selectedTab }>
+								<NavTabs label={ translate( 'Status' ) }>
+									<NavItem
+										key="posts"
+										selected={ this.state.selectedTab === 'posts' }
+										onClick={ this.handlePostsSelected }
+									>
+										{ translate( 'Posts' ) }
+									</NavItem>
+									<NavItem
+										key="sites"
+										selected={ this.state.selectedTab === 'sites' }
+										onClick={ this.handleSitesSelected }
+									>
+										{ translate( 'Sites' ) }
+									</NavItem>
+								</NavTabs>
+							</SectionNav>
+						</div>
+						{ this.state.selectedTab === 'posts' && bodyContent }
+						{ this.state.selectedTab === 'sites' && (
+							<div className="stream__two-column">
+								<div className="stream__right-column">{ sidebarContent }</div>
+							</div>
+						) }
+					</>
+				);
+			}
 			showingStream = true;
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
-		const streamType = getStreamType( streamKey );
 		const shouldPoll = streamType !== 'search' && streamType !== 'custom_recs_posts_with_images';
 
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (
-			<TopLevel className={ classnames( 'following', this.props.className ) }>
+			<TopLevel className={ baseClassnames }>
 				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
 
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
@@ -478,6 +557,7 @@ export default connect(
 			isRequesting: stream.isRequesting,
 			shouldRequestRecs: shouldRequestRecs( state, streamKey, recsStreamKey ),
 			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
+			organizations: getReaderOrganizations( state ),
 		};
 	},
 	{
@@ -492,4 +572,4 @@ export default connect(
 		showUpdates,
 		viewStream,
 	}
-)( localize( ReaderStream ) );
+)( localize( withDimensions( ReaderStream ) ) );

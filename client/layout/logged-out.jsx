@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import GdprBanner from 'calypso/blocks/gdpr-banner';
+import { CookieBannerContainerSSR } from 'calypso/blocks/cookie-banner';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
@@ -102,6 +102,8 @@ const LayoutLoggedOut = ( {
 		masterbar = null;
 	} else if ( sectionName === 'plugins' ) {
 		masterbar = <UniversalNavbarHeader />;
+	} else if ( sectionName === 'themes' || sectionName === 'theme' ) {
+		masterbar = <UniversalNavbarHeader />;
 	} else {
 		masterbar = (
 			<MasterbarLoggedOut
@@ -134,11 +136,17 @@ const LayoutLoggedOut = ( {
 					{ secondary }
 				</div>
 			</div>
-			{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner showGdprBanner={ showGdprBanner } /> }
+			{ config.isEnabled( 'cookie-banner' ) && (
+				<CookieBannerContainerSSR serverShow={ showGdprBanner } />
+			) }
+
 			{ sectionName === 'plugins' && (
 				<>
 					<UniversalNavbarFooter />
 					<UniversalNavbarFooterAutomattic />
+					{ config.isEnabled( 'layout/support-article-dialog' ) && (
+						<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
+					) }
 				</>
 			) }
 		</div>
@@ -165,10 +173,14 @@ export default withCurrentRoute(
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 		const isPartnerSignup = isPartnerSignupQuery( currentQuery );
 		const isPartnerSignupStart = currentRoute.startsWith( '/start/wpcc' );
-		const isWhiteLogin =
-			currentRoute.startsWith( '/log-in/new' ) || ( isPartnerSignup && ! isPartnerSignupStart );
 		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
+		const isReskinLoginRoute =
+			currentRoute.startsWith( '/log-in' ) &&
+			! isJetpackLogin &&
+			! isP2Login &&
+			Boolean( currentQuery?.client_id ) === false;
+		const isWhiteLogin = isReskinLoginRoute || ( isPartnerSignup && ! isPartnerSignupStart );
 		const noMasterbarForRoute =
 			isJetpackLogin || ( isWhiteLogin && ! isPartnerSignup ) || isJetpackWooDnaFlow || isP2Login;
 		const isPopup = '1' === currentQuery?.is_popup;

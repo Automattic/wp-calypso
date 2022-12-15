@@ -1,19 +1,23 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { CompactCard, Gridicon } from '@automattic/components';
 import { useTemplate } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
 import { decodeEntities } from '@wordpress/html-entities';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
+import pageRouter from 'page';
+import { connect } from 'react-redux';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import InfoPopover from 'calypso/components/info-popover';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import PopoverMenuItemClipboard from 'calypso/components/popover-menu/item-clipboard';
+import PopoverMenuItemQrCode from 'calypso/components/popover-menu/item-qr-code';
 import { addQueryArgs } from 'calypso/lib/route';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice } from 'calypso/state/notices/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { setPreviewUrl } from 'calypso/state/ui/preview/actions';
-import { recordEvent } from '../helpers';
 import Placeholder from '../placeholder';
 import type { SiteDetails } from '@automattic/data-stores';
 import './style.scss';
@@ -26,44 +30,97 @@ interface Props {
 	description?: string;
 	previewUrl?: string;
 	isHomepage?: boolean;
+
+	isAdmin: boolean;
+	recordGoogleEvent: any;
+	recordTracksEvent: any;
+	setPreviewUrl: any;
+	setLayoutFocus: any;
+	infoNotice: any;
 }
 
-const VirtualPage = ( { site, id, type, title, description, previewUrl, isHomepage }: Props ) => {
-	const dispatch = useDispatch();
+const VirtualPage = ( {
+	site,
+	id,
+	type,
+	title,
+	description,
+	previewUrl,
+	isHomepage,
+	isAdmin,
+	...props
+}: Props ) => {
 	const translate = useTranslate();
 	const defaultEditorUrl = `/site-editor/${ site.slug }`;
 	const editorUrl = ! isHomepage
 		? addQueryArgs( { templateId: id, templateType: type }, defaultEditorUrl )
 		: defaultEditorUrl;
 
-	const { data: template } = useTemplate( site.ID, id );
+	const { data: template } = useTemplate( site.ID, id, { enabled: isAdmin } );
 
-	const handleMenuToggle = ( isVisible: boolean ) => {
+	const recordGoogleEvent = ( action: string ) => {
+		props.recordGoogleEvent( 'Pages', action );
+	};
+
+	const toggleEllipsisMenu = ( isVisible: boolean ) => {
 		if ( isVisible ) {
-			dispatch( recordEvent( 'Clicked More Options Menu' ) );
+			props.recordTracksEvent( 'calypso_pages_ellipsismenu_open_click', {
+				page_type: 'virtual',
+				blog_id: site.ID,
+			} );
+			props.recordGoogleEvent( 'Pages', 'Clicked More Options Menu' );
 		}
 	};
 
-	const recordEditPage = () => dispatch( recordEvent( 'Clicked Edit Page' ) );
+	const recordEllipsisMenuItemClickEvent = ( item: string ) => {
+		props.recordTracksEvent( 'calypso_pages_ellipsismenu_item_click', {
+			page_type: 'virtual',
+			blog_id: site.ID,
+			item,
+		} );
+	};
 
-	const recordViewPage = () => dispatch( recordEvent( 'Clicked View Page' ) );
+	const clickPageTitle = () => {
+		props.recordTracksEvent( 'calypso_pages_page_title_click', {
+			page_type: 'virtual',
+			blog_id: site.ID,
+		} );
+	};
+
+	const editPage = () => {
+		recordEllipsisMenuItemClickEvent( 'editpage' );
+		recordGoogleEvent( 'Clicked Edit Page' );
+	};
 
 	const viewPage = () => {
-		recordViewPage();
-		dispatch( setPreviewUrl( previewUrl ) );
-		dispatch( setLayoutFocus( 'preview' ) );
+		recordEllipsisMenuItemClickEvent( 'viewpage' );
+		recordGoogleEvent( 'Clicked View Page' );
+
+		props.setPreviewUrl( previewUrl );
+		props.setLayoutFocus( 'preview' );
+	};
+
+	const viewStats = () => {
+		recordEllipsisMenuItemClickEvent( 'viewstats' );
+
+		if ( isHomepage ) {
+			pageRouter( `/stats/post/0/${ site.slug }` );
+		}
+	};
+
+	const viewPageQrCode = () => {
+		recordEllipsisMenuItemClickEvent( 'qrcode' );
 	};
 
 	const copyPageLink = () => {
-		dispatch(
-			infoNotice( translate( 'Link copied to clipboard.' ), {
-				duration: 3000,
-			} )
-		);
-		dispatch( recordEvent( 'Clicked Copy Page Link' ) );
+		props.infoNotice( translate( 'Link copied to clipboard.' ), {
+			duration: 3000,
+		} );
+		recordEllipsisMenuItemClickEvent( 'copylink' );
+		props.recordGoogleEvent( 'Pages', 'Clicked Copy Page Link' );
 	};
 
-	if ( ! template ) {
+	if ( isAdmin && ! template ) {
 		return <Placeholder.Page key={ id } multisite={ ! site } />;
 	}
 
@@ -73,14 +130,16 @@ const VirtualPage = ( { site, id, type, title, description, previewUrl, isHomepa
 			<div className="page__main">
 				<a
 					className="page__title"
-					href={ editorUrl }
-					title={ translate( 'Edit %(title)s', {
-						textOnly: true,
-						args: { title },
-					} ) }
+					href={ isAdmin ? editorUrl : previewUrl }
+					title={
+						isAdmin
+							? translate( 'Edit %(title)s', { textOnly: true, args: { title } } )
+							: translate( 'View %(title)s', { textOnly: true, args: { title } } )
+					}
+					onClick={ clickPageTitle }
 				>
 					<span>{ title }</span>
-					{ isHomepage && (
+					{ isHomepage && template && (
 						<InfoPopover position="right">
 							{ translate(
 								'The homepage of your site displays the %(title)s template. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
@@ -106,11 +165,13 @@ const VirtualPage = ( { site, id, type, title, description, previewUrl, isHomepa
 					{ description && <span className="page-card-info__description">{ description }</span> }
 				</div>
 			</div>
-			<EllipsisMenu position="bottom left" onToggle={ handleMenuToggle }>
-				<PopoverMenuItem onClick={ recordEditPage } href={ editorUrl }>
-					<Gridicon icon="pencil" size={ 18 } />
-					{ translate( 'Edit' ) }
-				</PopoverMenuItem>
+			<EllipsisMenu position="bottom left" onToggle={ toggleEllipsisMenu }>
+				{ isAdmin && (
+					<PopoverMenuItem onClick={ editPage } href={ editorUrl }>
+						<Gridicon icon="pencil" size={ 18 } />
+						{ translate( 'Edit' ) }
+					</PopoverMenuItem>
+				) }
 				{ previewUrl && (
 					<PopoverMenuItem onClick={ viewPage }>
 						<Gridicon icon="visible" size={ 18 } />
@@ -123,9 +184,34 @@ const VirtualPage = ( { site, id, type, title, description, previewUrl, isHomepa
 						{ translate( 'Copy link' ) }
 					</PopoverMenuItemClipboard>
 				) }
+				{ previewUrl && (
+					<PopoverMenuItem onClick={ viewStats }>
+						<Gridicon icon="stats" size={ 18 } />
+						{ translate( 'Stats' ) }
+					</PopoverMenuItem>
+				) }
+				{ previewUrl && isEnabled( 'post-list/qr-code-link' ) && (
+					<PopoverMenuItemQrCode url={ previewUrl } handleClick={ viewPageQrCode }>
+						{ translate( 'QR Code' ) }
+					</PopoverMenuItemQrCode>
+				) }
 			</EllipsisMenu>
 		</CompactCard>
 	);
 };
 
-export default VirtualPage;
+const mapStateToProps = ( state: any, ownProps: Props ) => {
+	return {
+		isAdmin: canCurrentUser( state, ownProps.site.ID, 'edit_theme_options' ),
+	};
+};
+
+const mapDispatchToProps = {
+	recordGoogleEvent,
+	recordTracksEvent,
+	setPreviewUrl,
+	setLayoutFocus,
+	infoNotice,
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( VirtualPage );

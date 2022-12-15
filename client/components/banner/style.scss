@@ -48,6 +48,12 @@
 		}
 	}
 
+	&:focus {
+		&.is-card-link {
+			box-shadow: 0 0 0 2px var(--color-primary-light);
+		}
+	}
+
 	@include breakpoint-deprecated( ">480px" ) {
 		align-items: center;
 
@@ -63,6 +69,7 @@
 	}
 
 	&.is-card-link {
+		cursor: pointer;
 		padding-right: 48px;
 	}
 }

@@ -17,7 +17,7 @@ import { useGetProductVariants } from '../../hooks/product-variants';
 import {
 	getItemVariantCompareToPrice,
 	getItemVariantDiscountPercentage,
-} from '../item-variation-picker/variant-price';
+} from '../item-variation-picker/util';
 
 import './style.scss';
 
@@ -33,7 +33,11 @@ export function CheckoutSidebarPlanUpsell() {
 	const { responseCart, replaceProductInCart } = useShoppingCart( cartKey );
 	const siteId = useSelector( getSelectedSiteId );
 	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
-	const variants = useGetProductVariants( siteId ?? undefined, plan?.product_slug ?? '' );
+	const variants = useGetProductVariants(
+		siteId ?? undefined,
+		plan?.product_slug ?? '',
+		plan?.current_quantity ?? null
+	);
 
 	if ( ! plan ) {
 		debug( 'no plan found in cart' );

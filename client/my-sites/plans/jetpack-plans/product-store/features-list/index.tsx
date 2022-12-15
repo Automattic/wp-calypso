@@ -19,9 +19,9 @@ export const FeaturesList: React.FC< FeaturesListProps > = ( { item } ) => {
 	}
 
 	const output = (
-		<div className="features-list">
+		<ul className="features-list">
 			{ featuresList.map( ( { features, icon, included, slug, title } ) => (
-				<div key={ slug } className="features-list__group">
+				<li key={ slug } className="features-list__group">
 					<div className="features-list__group--title">
 						<img className="features-list__group--icon" alt="" src={ icon } />
 						{ title }
@@ -37,9 +37,9 @@ export const FeaturesList: React.FC< FeaturesListProps > = ( { item } ) => {
 							</li>
 						) ) }
 					</ul>
-				</div>
+				</li>
 			) ) }
-		</div>
+		</ul>
 	);
 
 	if ( isMobile ) {

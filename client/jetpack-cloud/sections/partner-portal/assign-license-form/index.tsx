@@ -43,7 +43,7 @@ export default function AssignLicenseForm( {
 	search: string;
 } ) {
 	const translate = useTranslate();
-	const [ selectedSite, setSelectedSite ] = useState( { ID: 1, domain: '' } );
+	const [ selectedSite, setSelectedSite ] = useState( { ID: 0, domain: '' } );
 	const licenseKey = getQueryArg( window.location.href, 'key' ) as string;
 	const products = getQueryArg( window.location.href, 'products' ) as string;
 	const licenseKeysArray = products !== undefined ? products.split( ',' ) : [ licenseKey ];
@@ -85,6 +85,29 @@ export default function AssignLicenseForm( {
 		page.redirect( addQueryArgs( { highlight: licenseKey }, '/partner-portal/licenses' ) );
 	};
 
+	if ( ! results.length ) {
+		return (
+			<div className="assign-license-form__empty-state">
+				<p>
+					{ translate(
+						'It looks like you don’t have any connected Jetpack sites you can apply this license to.'
+					) }
+				</p>
+				<Button primary onClick={ onAssignLater }>
+					{ translate( 'Assign license later', 'Assign licenses later', {
+						count: licenseKeysArray.length,
+					} ) }
+				</Button>
+				<Button
+					target="_blank"
+					href="https://jetpack.com/support/jetpack-agency-licensing-portal-instructions/add-sites-agency-portal-dashboard/"
+				>
+					{ translate( 'Learn how to add a site' ) }
+				</Button>
+			</div>
+		);
+	}
+
 	return (
 		<div className="assign-license-form">
 			<div className="assign-license-form__top">
@@ -109,7 +132,7 @@ export default function AssignLicenseForm( {
 					<Button
 						primary
 						className="assign-license-form__assign-now"
-						disabled={ ! selectedSite }
+						disabled={ selectedSite?.ID === 0 }
 						busy={ isLoading }
 						onClick={ assignLicenses }
 					>

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -70,7 +71,8 @@ class StatsPostPerformance extends Component {
 	};
 
 	render() {
-		const { query, post, isRequesting, translate, moment, slug, siteId } = this.props;
+		const { query, post, isRequesting, translate, moment, slug, siteId, isOdysseyStats } =
+			this.props;
 		const loading = ! siteId || isRequesting;
 		const postTime = post ? moment( post.date ) : moment();
 		const cardClass = classNames( 'stats-module', 'stats-post-performance', 'is-site-overview' );
@@ -122,11 +124,13 @@ class StatsPostPerformance extends Component {
 							<p className="stats-post-performance__no-posts-message">
 								{ translate( "You haven't published any posts yet." ) }
 							</p>
-							<div className="stats-post-performance__start-post">
-								<Button primary href={ newPostUrl } onClick={ this.recordClickOnNewPostButton }>
-									{ translate( 'Start a Post' ) }
-								</Button>
-							</div>
+							{ ! isOdysseyStats && (
+								<div className="stats-post-performance__start-post">
+									<Button primary href={ newPostUrl } onClick={ this.recordClickOnNewPostButton }>
+										{ translate( 'Start a Post' ) }
+									</Button>
+								</div>
+							) }
 						</div>
 					) : null }
 					{ post ? <StatsTabs compact>{ this.buildTabs() }</StatsTabs> : null }
@@ -153,6 +157,7 @@ const connectComponent = connect(
 			query,
 			siteId,
 			viewCount,
+			isOdysseyStats: config.isEnabled( 'is_running_in_jetpack_site' ),
 		};
 	},
 	{ recordTracksEvent }

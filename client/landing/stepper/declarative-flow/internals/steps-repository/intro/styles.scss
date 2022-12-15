@@ -2,6 +2,7 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .intro {
+	&.free,
 	&.newsletter {
 		background-color: rgb(162 218 254);
 
@@ -99,10 +100,6 @@
 		.button.is-primary {
 			background-color: #ffe61c;
 			color: #000;
-		}
-
-		.flow-progress {
-			background: #0003;
 		}
 	}
 

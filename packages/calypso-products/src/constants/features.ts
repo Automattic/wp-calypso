@@ -43,7 +43,6 @@ export const FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS = 'live-chat-support-all-days';
 export const FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS = 'live-chat-support-business-days';
 export const FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT = 'email-forwarding-extended-limit';
 export const FEATURE_PREMIUM_SUPPORT = 'priority-support';
-export const FEATURE_CSS_CUSTOMIZATION = 'css-customization';
 export const FEATURE_GOOGLE_ANALYTICS = 'google-analytics';
 export const FEATURE_CLOUDFLARE_ANALYTICS = 'cloudflare-analytics';
 export const FEATURE_GOOGLE_MY_BUSINESS = 'google-my-business';
@@ -95,17 +94,6 @@ export const FEATURE_SITE_BACKUPS_AND_RESTORE = 'site-backups-and-restore';
 export const FEATURE_SECURITY_SETTINGS = 'security-settings';
 export const FEATURE_WOOP = 'woop';
 export const FEATURE_PREMIUM_THEMES = 'unlimited-premium-themes';
-
-/* START - PLAN TAGLINE EXPERIMENT */
-export const FEATURE_STORAGE_BANDWIDTH = 'storage-bandwidth';
-export const FEATURE_EMAIL_SUPPORT_SIGNUP_V2 = 'email-support-signup-v2';
-export const FEATURE_UNLTD_LIVE_CHAT_SUPPORT = 'unltd-live-chat-support';
-export const FEATURE_INSTALL_THEMES_PLUGINS = 'install-themes-plugins';
-export const FEATURE_DEVELOPER_TOOLS_V1 = 'developer-tools-v1';
-export const FEATURE_PRODUCT_LISTINGS = 'product-listings';
-export const FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS =
-	'advanced-design-customization-and-css';
-/* END - PLAN TAGLINE EXPERIMENT */
 
 // Jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';
@@ -260,6 +248,7 @@ export const WPCOM_FEATURES_VIDEO_HOSTING = 'video-hosting';
 export const WPCOM_FEATURES_WORDADS = 'wordads';
 export const WPCOM_FEATURES_CUSTOM_DESIGN = 'custom-design';
 export const WPCOM_FEATURES_GLOBAL_STYLES = 'global-styles';
+export const WPCOM_FEATURES_SITE_PREVIEW_LINKS = 'site-preview-links';
 
 // Signup flow related features
 export const FEATURE_UNLIMITED_EMAILS = 'unlimited-emails';

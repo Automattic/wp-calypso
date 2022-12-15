@@ -1,6 +1,6 @@
 import { action } from '@storybook/addon-actions';
+import { Icon, external } from '@wordpress/icons';
 import HorizontalBarList from '../.';
-import Gridicon from '../../gridicon';
 import HorizontalBarListItem from '../horizontal-bar-grid-item';
 import StatsCard from '../stats-card';
 import './stories.scss';
@@ -77,7 +77,7 @@ const ImageSample = () => {
 const RedirectSample = () => {
 	return (
 		<>
-			<Gridicon icon="external" size={ 18 } />
+			<Icon icon={ external } size={ 18 } />
 			<span>View</span>
 		</>
 	);

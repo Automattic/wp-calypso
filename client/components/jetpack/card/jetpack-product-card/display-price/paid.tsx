@@ -1,6 +1,7 @@
 import { TranslateResult } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import PlanPrice from 'calypso/my-sites/plan-price';
+import PriceAriaLabel from './price-aria-label';
 import TimeFrame from './time-frame';
 import type { Duration } from 'calypso/my-sites/plans/jetpack-plans/types';
 import type { Moment } from 'moment';
@@ -19,82 +20,117 @@ type OwnProps = {
 	expiryDate?: Moment;
 };
 
-const Paid: React.FC< OwnProps > = ( {
-	discountedPrice,
-	discountedPriceDuration,
+const Placeholder: React.FC< OwnProps > = ( { billingTerm, expiryDate } ) => {
+	return (
+		<>
+			<PlanPrice
+				original
+				className="display-price__original-price"
+				rawPrice={ 0.01 }
+				currencyCode="$"
+			/>
+			{ /* Remove this secondary <PlanPrice/> placeholder if we're not showing discounted prices */ }
+			<PlanPrice discounted rawPrice={ 0.01 } currencyCode="$" />
+			<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
+		</>
+	);
+};
+
+const DiscountedPrice: React.FC< OwnProps & { finalPrice: number } > = ( {
 	discountedPriceFirst,
 	originalPrice,
-	pricesAreFetching,
-	billingTerm,
 	currencyCode,
-	displayFrom,
-	tooltipText,
-	expiryDate,
+	finalPrice,
 } ) => {
-	const finalPrice = discountedPrice ?? originalPrice;
+	const theDiscountedPrice = (
+		<PlanPrice
+			discounted
+			rawPrice={ finalPrice as number }
+			currencyCode={ currencyCode }
+			omitHeading
+		/>
+	);
+	/*
+	 * Price should be displayed from left-to-right, even in right-to-left
+	 * languages. `PlanPrice` seems to keep the ltr direction no matter
+	 * what when seen in the dev docs page, but somehow it doesn't in
+	 * the pricing page.
+	 */
+	return (
+		<>
+			{ discountedPriceFirst && theDiscountedPrice }
+			<PlanPrice
+				original
+				className="display-price__original-price"
+				rawPrice={ originalPrice as number }
+				currencyCode={ currencyCode }
+				omitHeading
+			/>
+			{ ! discountedPriceFirst && theDiscountedPrice }
+		</>
+	);
+};
+
+const OriginalPrice: React.FC< OwnProps & { finalPrice: number } > = ( {
+	currencyCode,
+	finalPrice,
+} ) => {
+	return (
+		<PlanPrice
+			discounted
+			rawPrice={ finalPrice as number }
+			currencyCode={ currencyCode }
+			omitHeading
+		/>
+	);
+};
+
+const Paid: React.FC< OwnProps > = ( props ) => {
+	const {
+		discountedPrice,
+		discountedPriceDuration,
+		originalPrice,
+		pricesAreFetching,
+		billingTerm,
+		currencyCode,
+		displayFrom,
+		tooltipText,
+	} = props;
+	const finalPrice = ( discountedPrice ?? originalPrice ) as number;
+	const isDiscounted = !! ( finalPrice && originalPrice && finalPrice < originalPrice );
 
 	// Placeholder (while prices are loading)
 	if ( ! currencyCode || ! originalPrice || pricesAreFetching ) {
-		return (
-			<>
-				<PlanPrice
-					original
-					className="display-price__original-price"
-					rawPrice={ 0.01 }
-					currencyCode="$"
-				/>
-				{ /* Remove this secondary <PlanPrice/> placeholder if we're not showing discounted prices */ }
-				<PlanPrice discounted rawPrice={ 0.01 } currencyCode="$" />
-				<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
-			</>
-		);
+		return <Placeholder { ...props } />;
 	}
-
-	const renderDiscountedPrice = () => {
-		const theDiscountedPrice = (
-			<PlanPrice discounted rawPrice={ finalPrice as number } currencyCode={ currencyCode } />
-		);
-		/*
-		 * Price should be displayed from left-to-right, even in right-to-left
-		 * languages. `PlanPrice` seems to keep the ltr direction no matter
-		 * what when seen in the dev docs page, but somehow it doesn't in
-		 * the pricing page.
-		 */
-		return (
-			<>
-				{ discountedPriceFirst && theDiscountedPrice }
-				<PlanPrice
-					original
-					className="display-price__original-price"
-					rawPrice={ originalPrice as number }
-					currencyCode={ currencyCode }
-				/>
-				{ ! discountedPriceFirst && theDiscountedPrice }
-			</>
-		);
-	};
-
-	const renderNonDiscountedPrice = () => (
-		<PlanPrice discounted rawPrice={ finalPrice as number } currencyCode={ currencyCode } />
-	);
-
-	const renderPrice = () =>
-		finalPrice && finalPrice < originalPrice ? renderDiscountedPrice() : renderNonDiscountedPrice();
 
 	return (
 		<>
-			{ displayFrom && <span className="display-price__from">from</span> }
-			{ renderPrice() }
+			<PriceAriaLabel
+				{ ...props }
+				currencyCode={ currencyCode }
+				finalPrice={ finalPrice }
+				isDiscounted={ isDiscounted }
+			/>
+			<span aria-hidden="true">
+				{ displayFrom && <span className="display-price__from">from</span> }
+				{ isDiscounted ? (
+					<DiscountedPrice { ...props } finalPrice={ finalPrice } />
+				) : (
+					<OriginalPrice { ...props } finalPrice={ finalPrice } />
+				) }
+			</span>
 			{ tooltipText && (
 				<InfoPopover position="top" className="display-price__price-tooltip">
 					{ tooltipText }
 				</InfoPopover>
 			) }
-			<TimeFrame
-				expiryDate={ expiryDate }
-				billingTerm={ billingTerm }
-				discountedPriceDuration={ discountedPriceDuration }
-			/>
+			<span aria-hidden="true">
+				<TimeFrame
+					billingTerm={ billingTerm }
+					discountedPriceDuration={ discountedPriceDuration }
+				/>
+			</span>
 		</>
 	);
 };

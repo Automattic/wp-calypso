@@ -3,6 +3,7 @@ import {
 	findPlansKeys,
 	findProductKeys,
 	getBillingMonthsForTerm,
+	getBillingYearsForTerm,
 	getPlan,
 	getProductFromSlug,
 	getTermDuration,
@@ -92,6 +93,7 @@ const fallbackFilter = () => true;
 export function useGetProductVariants(
 	siteId: number | undefined,
 	productSlug: string,
+	currentQuantity: number | null,
 	filterCallback?: VariantFilterCallback
 ): WPCOMProductVariant[] {
 	const translate = useTranslate();
@@ -102,7 +104,7 @@ export function useGetProductVariants(
 	debug( 'variantProductSlugs', variantProductSlugs );
 
 	const variantsWithPrices: AvailableProductVariant[] = useSelector( ( state ) => {
-		return computeProductsWithPrices( state, siteId, variantProductSlugs );
+		return computeProductsWithPrices( state, siteId, variantProductSlugs, currentQuantity );
 	} );
 
 	const [ haveFetchedProducts, setHaveFetchedProducts ] = useState( false );
@@ -125,7 +127,9 @@ export function useGetProductVariants(
 					: variant.priceFinal || variant.priceFull;
 
 			const termIntervalInMonths = getBillingMonthsForTerm( variant.plan.term );
+			const termIntervalInYears = getBillingYearsForTerm( variant.plan.term );
 			const pricePerMonth = price / termIntervalInMonths;
+			const pricePerYear = price / termIntervalInYears;
 
 			return {
 				variantLabel: getTermText( variant.plan.term, translate ),
@@ -135,6 +139,7 @@ export function useGetProductVariants(
 				termIntervalInMonths: getBillingMonthsForTerm( variant.plan.term ),
 				termIntervalInDays: getTermDuration( variant.plan.term ) ?? 0,
 				pricePerMonth,
+				pricePerYear,
 				currency: variant.product.currency_code,
 			};
 		},

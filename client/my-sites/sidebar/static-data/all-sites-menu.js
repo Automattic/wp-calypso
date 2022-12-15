@@ -41,20 +41,12 @@ export default function allSitesMenu() {
 			url: '/pages',
 		},
 		{
-			icon: 'dashicons-admin-appearance',
-			slug: 'themes-php',
-			title: translate( 'Themes' ),
-			navigationLabel: translate( 'View themes for all sites' ),
-			type: 'menu-item',
-			url: '/themes',
-		},
-		{
 			icon: 'dashicons-admin-plugins',
 			slug: 'plugins',
 			title: translate( 'Plugins' ),
 			navigationLabel: translate( 'View plugins for all sites' ),
 			type: 'menu-item',
-			url: '/plugins',
+			url: '/plugins/manage',
 		},
 	];
 }

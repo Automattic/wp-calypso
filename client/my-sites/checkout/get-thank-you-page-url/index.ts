@@ -143,6 +143,7 @@ export default function getThankYouPageUrl( {
 			debug( 'has a redirectTo that is not external, so returning that', redirectTo );
 			return redirectTo;
 		}
+
 		// We cannot simply compare `hostname` to `siteSlug`, since the latter
 		// might contain a path in the case of Jetpack subdirectory installs.
 		if ( adminUrl && redirectTo.startsWith( `${ adminUrl }post.php?` ) ) {

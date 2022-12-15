@@ -127,7 +127,6 @@ $z-layers: (
 		".screen-options-tab": 179,
 		".app-banner": 180,
 		".masterbar": 180,
-		".gdpr-banner": 185,
 		".legal-updates-banner": 185,
 		".detail-page__backdrop": 190,
 		".layout__loader": 200,
@@ -179,7 +178,7 @@ $z-layers: (
 	),
 	".is-section-stepper": (
 		".step-container__navigation.action-buttons": 30,
-		".design-preview": 30,
+		".design-preview__sticky-variations": 30,
 	),
 	".ribbon": (
 		".ribbon__title::before": -1,

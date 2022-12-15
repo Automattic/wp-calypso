@@ -43,7 +43,6 @@ import {
 	FEATURE_CRM_PROPOSALS_AND_INVOICES,
 	FEATURE_CRM_TRACK_TRANSACTIONS,
 	FEATURE_CRM_V2,
-	FEATURE_CSS_CUSTOMIZATION,
 	FEATURE_CUSTOM_DOMAIN,
 	FEATURE_EARN_AD,
 	FEATURE_EASY_SITE_MIGRATION,
@@ -168,15 +167,6 @@ import {
 	FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
 	FEATURE_UNLIMITED_TRAFFIC,
 	FEATURE_MANAGED_HOSTING,
-	/* START - PLAN TAGLINE EXPERIMENT */
-	FEATURE_STORAGE_BANDWIDTH,
-	FEATURE_EMAIL_SUPPORT_SIGNUP_V2,
-	FEATURE_UNLTD_LIVE_CHAT_SUPPORT,
-	FEATURE_INSTALL_THEMES_PLUGINS,
-	FEATURE_DEVELOPER_TOOLS_V1,
-	FEATURE_PRODUCT_LISTINGS,
-	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS,
-	/* END - PLAN TAGLINE EXPERIMENT */
 	WPCOM_FEATURES_NO_ADVERTS,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -292,16 +282,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Advanced design customization' ),
 		getDescription: () =>
 			i18n.translate(
-				"Access extended color schemes and customization tools. Change all of your site's fonts, colors and more."
-			),
-	},
-
-	[ FEATURE_CSS_CUSTOMIZATION ]: {
-		getSlug: () => FEATURE_CSS_CUSTOMIZATION,
-		getTitle: () => i18n.translate( 'CSS customization' ),
-		getDescription: () =>
-			i18n.translate(
-				'Add your own CSS code, giving you complete control over how your site looks.'
+				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
 			),
 	},
 
@@ -1390,7 +1371,19 @@ export const FEATURES_LIST = {
 	[ FEATURE_SFTP_DATABASE ]: {
 		getSlug: () => FEATURE_SFTP_DATABASE,
 		getTitle: () => i18n.translate( 'SFTP, SSH, WP-CLI, and Database access' ),
-		getDescription: () => {},
+		getDescription: () => {
+			const hasTranslation =
+				config( 'english_locales' ).includes( i18n.getLocaleSlug() ) ||
+				i18n.hasTranslation(
+					'A set of developer tools that give you more control over your site, simplify debugging, and make it easier to integrate with each step of your workflow.'
+				);
+
+			return hasTranslation
+				? i18n.translate(
+						'A set of developer tools that give you more control over your site, simplify debugging, and make it easier to integrate with each step of your workflow.'
+				  )
+				: '';
+		},
 	},
 
 	[ PREMIUM_DESIGN_FOR_STORES ]: {
@@ -1576,47 +1569,6 @@ export const FEATURES_LIST = {
 				'All plans include world-class managed hosting, including automatic updates, security, backups, and more.'
 			),
 	},
-	/* START - PLAN TAGLINE EXPERIMENT */
-	[ FEATURE_STORAGE_BANDWIDTH ]: {
-		getSlug: () => FEATURE_STORAGE_BANDWIDTH,
-		getTitle: () => 'Increased storage and unlimited bandwidth',
-		getDescription: () => {},
-	},
-	[ FEATURE_EMAIL_SUPPORT_SIGNUP_V2 ]: {
-		getSlug: () => FEATURE_EMAIL_SUPPORT_SIGNUP_V2,
-		getTitle: () => 'Unlimited email support',
-		getDescription: () => {},
-	},
-	[ FEATURE_UNLTD_LIVE_CHAT_SUPPORT ]: {
-		getSlug: () => FEATURE_UNLTD_LIVE_CHAT_SUPPORT,
-		getTitle: () => 'Unlimited live chat support',
-		getDescription: () =>
-			i18n.translate( 'Live chat is available 24 hours a day from Monday through Friday.' ),
-	},
-	[ FEATURE_INSTALL_THEMES_PLUGINS ]: {
-		getSlug: () => FEATURE_INSTALL_THEMES_PLUGINS,
-		getTitle: () => 'Install plugins and custom themes',
-		getDescription: () => i18n.translate( 'Upload custom themes and plugins on your site.' ),
-	},
-	[ FEATURE_DEVELOPER_TOOLS_V1 ]: {
-		getSlug: () => FEATURE_DEVELOPER_TOOLS_V1,
-		getTitle: () => 'SFTP, SSH, and WP-CLI access',
-		getDescription: () => {},
-	},
-	[ FEATURE_PRODUCT_LISTINGS ]: {
-		getSlug: () => FEATURE_PRODUCT_LISTINGS,
-		getTitle: () => 'Unlimited product listings',
-		getDescription: () => {},
-	},
-	[ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS ]: {
-		getSlug: () => FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS,
-		getTitle: () => i18n.translate( 'Advanced design customization' ),
-		getDescription: () =>
-			i18n.translate(
-				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
-			),
-	},
-	/* END - PLAN TAGLINE EXPERIMENT */
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList ) => {

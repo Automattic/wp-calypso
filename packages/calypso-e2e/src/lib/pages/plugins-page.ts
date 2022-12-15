@@ -77,7 +77,12 @@ export class PluginsPage {
 	 * @param {string} site Optional site URL.
 	 */
 	async visit( site = '' ): Promise< void > {
-		await this.page.goto( getCalypsoURL( `plugins/${ site }` ), { waitUntil: 'networkidle' } );
+		await this.page.goto( getCalypsoURL( `plugins/${ site }` ), {
+			waitUntil: 'networkidle',
+			// Manual override of the timeout - `networkidle` can take longer
+			// to fire, especially for Simple sites.
+			timeout: 20 * 1000,
+		} );
 	}
 
 	/**
@@ -283,7 +288,7 @@ export class PluginsPage {
 	 * @returns {Promise<boolean>} True if plugin is active on any site. False otherwise.
 	 */
 	async pluginIsInstalled(): Promise< boolean > {
-		await this.page.waitForLoadState( 'networkidle' );
+		await this.page.waitForLoadState( 'networkidle', { timeout: 20 * 1000 } );
 		const locator = this.page.locator( selectors.pluginToggle( 'Active' ) );
 		if ( ( await locator.count() ) > 0 ) {
 			return true;

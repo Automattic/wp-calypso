@@ -1,4 +1,6 @@
 import { Button } from '@automattic/components';
+import { Icon, header, footer, group } from '@wordpress/icons';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
 import PatternActionBar from './pattern-action-bar';
@@ -23,9 +25,9 @@ type PatternLayoutProps = {
 };
 
 const PatternLayout = ( {
-	header,
+	header: selectedHeader,
 	sections,
-	footer,
+	footer: selectedFooter,
 	onAddHeader,
 	onReplaceHeader,
 	onDeleteHeader,
@@ -44,20 +46,20 @@ const PatternLayout = ( {
 	return (
 		<div className="pattern-layout">
 			<div className="pattern-layout__header">
-				<h2>{ translate( 'Design your page' ) }</h2>
+				<h2>{ translate( 'Design your home' ) }</h2>
 				<p>
 					{ translate(
-						'First choose a header for your page layout, then choose at least one content pattern, and finally choose your footer.'
+						'Choose from our library of patterns to quickly put together the structure of your homepage.'
 					) }
 				</p>
-				<p>{ translate( 'You can change this later.' ) }</p>
 			</div>
 			<div className="pattern-layout__body">
 				<ul>
-					{ header ? (
+					{ selectedHeader ? (
 						<li className="pattern-layout__list-item pattern-layout__list-item--header">
-							<span className="pattern-layout__list-item-text" title={ header.name }>
-								{ header.name }
+							<Icon className="pattern-layout__icon" icon={ header } size={ 24 } />
+							<span className="pattern-layout__list-item-text" title={ selectedHeader.category }>
+								{ selectedHeader.category }
 							</span>
 							<PatternActionBar
 								patternType="header"
@@ -67,16 +69,19 @@ const PatternLayout = ( {
 						</li>
 					) : (
 						<li className="pattern-layout__list-item pattern-layout__list-item--header">
-							<Button onClick={ onAddHeader }>
-								<span className="pattern-layout__add-icon">+</span>{ ' ' }
-								{ translate( 'Choose a header' ) }
+							<Button className="pattern-layout__list-item-button" onClick={ onAddHeader }>
+								<span
+									className={ classnames( 'pattern-layout__icon', 'pattern-layout__icon-add' ) }
+								>
+									+
+								</span>
+								{ translate( 'Add a header' ) }
 							</Button>
 						</li>
 					) }
 					<AsyncLoad require="./animate-list" featureName="domMax" placeholder={ <div /> }>
 						{ ( m: any ) =>
-							sections.map( ( section, index ) => {
-								const { name, key } = section as Pattern;
+							sections.map( ( { category, key }: Pattern, index ) => {
 								return (
 									<m.li
 										key={ key }
@@ -84,8 +89,9 @@ const PatternLayout = ( {
 										exit={ { opacity: 0, x: -50, transition: { duration: 0.2 } } }
 										className="pattern-layout__list-item pattern-layout__list-item--section"
 									>
-										<span className="pattern-layout__list-item-text" title={ name }>
-											{ name }
+										<Icon className="pattern-layout__icon" icon={ group } size={ 24 } />
+										<span className="pattern-layout__list-item-text" title={ category }>
+											{ category }
 										</span>
 										<PatternActionBar
 											patternType="section"
@@ -103,17 +109,18 @@ const PatternLayout = ( {
 						}
 					</AsyncLoad>
 					<li className="pattern-layout__list-item pattern-layout__list-item--section">
-						<Button onClick={ () => onAddSection() }>
-							<span className="pattern-layout__add-icon">+</span>{ ' ' }
-							{ sections?.length
-								? translate( 'Add another pattern' )
-								: translate( 'Add a first pattern' ) }
+						<Button className="pattern-layout__list-item-button" onClick={ () => onAddSection() }>
+							<span className={ classnames( 'pattern-layout__icon', 'pattern-layout__icon-add' ) }>
+								+
+							</span>
+							{ translate( 'Add sections' ) }
 						</Button>
 					</li>
-					{ footer ? (
+					{ selectedFooter ? (
 						<li className="pattern-layout__list-item pattern-layout__list-item--footer">
-							<span className="pattern-layout__list-item-text" title={ footer.name }>
-								{ footer.name }
+							<Icon className="pattern-layout__icon" icon={ footer } size={ 24 } />
+							<span className="pattern-layout__list-item-text" title={ selectedFooter.category }>
+								{ selectedFooter.category }
 							</span>
 							<PatternActionBar
 								patternType="footer"
@@ -123,9 +130,13 @@ const PatternLayout = ( {
 						</li>
 					) : (
 						<li className="pattern-layout__list-item pattern-layout__list-item--footer">
-							<Button onClick={ onAddFooter }>
-								<span className="pattern-layout__add-icon">+</span>{ ' ' }
-								{ translate( 'Choose a footer' ) }
+							<Button className="pattern-layout__list-item-button" onClick={ onAddFooter }>
+								<span
+									className={ classnames( 'pattern-layout__icon', 'pattern-layout__icon-add' ) }
+								>
+									+
+								</span>
+								{ translate( 'Add a footer' ) }
 							</Button>
 						</li>
 					) }

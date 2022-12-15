@@ -184,9 +184,10 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 		const getVideoPressFeaturesList = ( plan: Plans.Plan ) => {
 			/* translators: A label displaying the amount of storage space available in the plan, eg: "13GB" or "200GB" */
 			const storageString = plan.storage ? sprintf( __( '%s storage space' ), plan.storage ) : null;
+			const uploadVideosString = __( 'Upload videos' );
 
-			const filterStorageString = ( feature: PlanSimplifiedFeature ) =>
-				storageString !== feature.name;
+			const filterDuplicateFeatures = ( feature: PlanSimplifiedFeature ) =>
+				! [ storageString, uploadVideosString ].includes( feature.name );
 
 			return [
 				null !== storageString && {
@@ -199,7 +200,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 				{ name: __( 'Background videos' ), requiresAnnuallyBilledPlan: false },
 				{ name: __( 'Private videos' ), requiresAnnuallyBilledPlan: false },
 				{ name: __( 'Adaptive video streaming' ), requiresAnnuallyBilledPlan: false },
-				...( plan.features.filter( filterStorageString ) ?? [] ),
+				...( plan.features.filter( filterDuplicateFeatures ) ?? [] ),
 			].filter( isValueTruthy );
 		};
 
@@ -266,7 +267,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 		return (
 			<FormattedHeader
 				id="choose-a-plan-header"
-				headerText="Choose a plan"
+				headerText={ __( 'Choose a plan' ) }
 				subHeaderText={ __( 'Unlock a powerful bundle of features for your video site.' ) }
 				align="center"
 			/>

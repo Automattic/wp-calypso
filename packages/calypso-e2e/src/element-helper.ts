@@ -65,7 +65,7 @@ export async function clickNavTab(
 	// different implementation in PostsPage.
 	const selectedTabLocator = page.locator( selectors.navTabItem( { selected: true } ) );
 	const selectedTabName = await selectedTabLocator.innerText();
-	if ( selectedTabName.replace( /[0-9]/g, '' ) === name ) {
+	if ( selectedTabName.replace( /[0-9]|,/g, '' ) === name ) {
 		return;
 	}
 
@@ -76,7 +76,7 @@ export async function clickNavTab(
 
 	// Mobile view - navtabs become a dropdown and thus it must be opened first.
 	if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-		await page.waitForLoadState( 'networkidle' );
+		await page.waitForLoadState( 'networkidle', { timeout: 25 * 1000 } );
 
 		// Open the Navtabs which now act as a pseudo-dropdown menu.
 		const navTabsButtonLocator = page.locator( selectors.navTabMobileToggleButton );
@@ -88,7 +88,7 @@ export async function clickNavTab(
 
 	// Click on the intended item and wait for navigation to finish.
 	const navTabItem = page.locator( selectors.navTabItem( { name: name, selected: false } ) );
-	await Promise.all( [ page.waitForNavigation( { timeout: 10 * 1000 } ), navTabItem.click() ] );
+	await Promise.all( [ page.waitForNavigation(), navTabItem.click() ] );
 
 	// Final verification.
 	const newSelectedTabLocator = page.locator(
@@ -97,7 +97,7 @@ export async function clickNavTab(
 	const newSelectedTabName = await newSelectedTabLocator.innerText();
 
 	// Strip numerals from the extracted tab name, similar to above.
-	if ( newSelectedTabName.replace( /[0-9]/g, '' ) !== name ) {
+	if ( newSelectedTabName.replace( /[0-9]|,/g, '' ) !== name ) {
 		throw new Error(
 			`Failed to confirm NavTab is active: expected ${ name }, got ${ newSelectedTabName }`
 		);

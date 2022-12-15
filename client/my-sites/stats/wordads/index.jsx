@@ -9,6 +9,7 @@ import { parse as parseQs, stringify as stringifyQs } from 'qs';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
+import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -16,7 +17,6 @@ import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
-import StickyPanel from 'calypso/components/sticky-panel';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -163,8 +163,7 @@ class WordAds extends Component {
 
 		// New feature gate
 		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
-		const statsWrapperClass = classNames( 'wordads', {
-			'stats--new-main-chart': isNewMainChart,
+		const statsWrapperClass = classNames( 'wordads stats-content', {
 			'is-period-year': period === 'year',
 		} );
 		const mainWrapperClass = classNames( {
@@ -173,44 +172,45 @@ class WordAds extends Component {
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<Main className={ mainWrapperClass } wideLayout>
+			<Main className={ mainWrapperClass } fullWidthLayout>
 				<DocumentHead title={ translate( 'WordAds Stats' ) } />
 				<PageViewTracker
 					path={ `/stats/ads/${ period }/:site` }
 					title={ `WordAds > ${ titlecase( period ) }` }
 				/>
-				<FormattedHeader
-					brandFont
-					className="wordads__section-header"
-					headerText={ translate( 'Jetpack Stats' ) }
-					subHeaderText={ translate( 'See how ads are performing on your site.' ) }
-					align="left"
-				/>
 
-				{ ! canAccessAds && (
-					<EmptyContent
-						illustration="/calypso/images/illustrations/illustration-404.svg"
-						title={
-							! canUpgradeToUseWordAds
-								? translate( 'You are not authorized to view this page' )
-								: translate( 'WordAds is not enabled on your site' )
-						}
-						action={ canUpgradeToUseWordAds ? translate( 'Explore WordAds' ) : false }
-						actionURL={ '/earn/ads-settings/' + slug }
+				<div className="stats">
+					<FormattedHeader
+						brandFont
+						className="stats__section-header modernized-header"
+						headerText={ translate( 'Jetpack Stats' ) }
+						subHeaderText={ translate( 'See how ads are performing on your site.' ) }
+						align="left"
 					/>
-				) }
 
-				{ canAccessAds && (
-					<Fragment>
-						<StatsNavigation
-							selectedItem="wordads"
-							interval={ period }
-							siteId={ siteId }
-							slug={ slug }
+					{ ! canAccessAds && (
+						<EmptyContent
+							illustration={ illustration404 }
+							title={
+								! canUpgradeToUseWordAds
+									? translate( 'You are not authorized to view this page' )
+									: translate( 'WordAds is not enabled on your site' )
+							}
+							action={ canUpgradeToUseWordAds ? translate( 'Explore WordAds' ) : false }
+							actionURL={ '/earn/ads-settings/' + slug }
 						/>
+					) }
 
-						<div id="my-stats-content" className={ statsWrapperClass }>
-							{ isNewMainChart ? (
+					{ canAccessAds && (
+						<Fragment>
+							<StatsNavigation
+								selectedItem="wordads"
+								interval={ period }
+								siteId={ siteId }
+								slug={ slug }
+							/>
+
+							<div id="my-stats-content" className={ statsWrapperClass }>
 								<>
 									<StatsPeriodHeader>
 										<StatsPeriodNavigation
@@ -226,6 +226,7 @@ class WordAds extends Component {
 												query={ query }
 												statsType="statsAds"
 												showQueryDate
+												isShort
 											/>
 										</StatsPeriodNavigation>
 										<Intervals
@@ -248,48 +249,16 @@ class WordAds extends Component {
 										chartTab={ this.props.chartTab }
 									/>
 								</>
-							) : (
-								<>
-									<WordAdsChartTabs
-										activeTab={ getActiveTab( this.props.chartTab ) }
-										activeLegend={ this.state.activeLegend }
-										availableLegend={ this.getAvailableLegend() }
-										onChangeLegend={ this.onChangeLegend }
-										barClick={ this.barClick }
-										switchTab={ this.switchChart }
-										charts={ CHARTS }
-										queryDate={ queryDate }
-										period={ this.props.period }
-										chartTab={ this.props.chartTab }
-									/>
-									<StickyPanel className="stats__sticky-navigation">
-										<StatsPeriodNavigation
-											date={ queryDate }
-											hidePreviousArrow={ this.isPrevArrowHidden( period, queryDate ) }
-											hideNextArrow={ yesterday === queryDate }
-											period={ period }
-											url={ `/stats/ads/${ period }/${ slug }` }
-										>
-											<DatePicker
-												period={ period }
-												date={ queryDate }
-												query={ query }
-												statsType="statsAds"
-												showQueryDate
-											/>
-										</StatsPeriodNavigation>
-									</StickyPanel>
-								</>
-							) }
 
-							<div className="stats__module-list stats__module-headerless--unified">
-								<WordAdsEarnings site={ site } />
+								<div className="stats__module-list stats__module-headerless--unified">
+									<WordAdsEarnings site={ site } />
+								</div>
 							</div>
-						</div>
 
-						<JetpackColophon />
-					</Fragment>
-				) }
+							<JetpackColophon />
+						</Fragment>
+					) }
+				</div>
 			</Main>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

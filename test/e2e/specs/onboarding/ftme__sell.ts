@@ -53,7 +53,7 @@ describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
 		it( 'Navigate to Signup page', async function () {
 			const loginPage = new LoginPage( page );
 			await loginPage.visit();
-			await loginPage.clickSignUp();
+			await loginPage.clickCreateNewAccount();
 		} );
 
 		it( 'Sign up as new user', async function () {
@@ -133,6 +133,10 @@ describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
 
 		beforeAll( async function () {
 			startSiteFlow = new StartSiteFlow( page );
+		} );
+
+		it( 'Land on goal selection step', async function () {
+			page.waitForURL( /setup\/site-setup\/goals\?/, { timeout: 30 * 1000 } );
 		} );
 
 		it( 'Select "Sell" goal', async function () {

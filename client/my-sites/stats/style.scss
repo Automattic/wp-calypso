@@ -1,6 +1,7 @@
+@use "sass:math";
 @import "calypso/my-sites/stats/modernized-tooltip-styles.scss";
 @import "calypso/my-sites/stats/modernized-chart-tabs-styles.scss";
-@import "calypso/my-sites/stats/modernized-page-header-styles.scss";
+@import "calypso/my-sites/stats/modernized-layout-styles.scss";
 
 // Module container
 @include breakpoint-deprecated( ">960px" ) {
@@ -27,30 +28,6 @@
 			left: -10px;
 			position: relative;
 		}
-	}
-}
-
-.stats .jetpack-colophon {
-	background-color: #fdfdfd;
-}
-
-.stats .stats-content-promo {
-	background-color: #fdfdfd;
-
-	.promo-card-block {
-		margin: 0;
-	}
-}
-
-.stats > * {
-	@media ( min-width: 660px ) {
-		padding: 0 32px;
-	}
-
-	// 272 is the --sidebar-width-max value that can't be used in media queries.
-	// 1224 is the max-width for the stats content
-	@media ( min-width: calc(272px + 1224px) ) {
-		padding: 0 calc(50% - 612px);
 	}
 }
 
@@ -248,31 +225,9 @@
 	}
 }
 
-// this overrides the default .layout__content that adds unwanted padding
-.is-section-stats .layout__content,
-.is-section-stats.theme-default .focus-content .layout__content {
-	padding: 79px 0 0 0;
-
-	@media ( min-width: 783px ) {
-		padding: 79px 0 0 calc(var(--sidebar-width-max) + 1px);
-	}
-
-	.jetpack-colophon {
-		padding-top: 32px;
-		padding-bottom: 32px;
-		margin-top: 0;
-	}
-}
-
 // Stats section scoped styles
 .is-section-stats {
 	background: var(--studio-white);
-
-	.followers-count .button {
-		@include breakpoint-deprecated( "<480px" ) {
-			display: none;
-		}
-	}
 }
 
 @import "calypso/my-sites/stats/grid-layout.scss";

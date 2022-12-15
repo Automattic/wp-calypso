@@ -11,6 +11,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
+import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import titles from 'calypso/me/purchases/titles';
@@ -71,7 +72,7 @@ function Subscription( { translate, subscription, moment, stoppingStatus } ) {
 	}, [ stoppingStatus, dispatch, translate, isProduct ] );
 
 	return (
-		<Main wideLayout className="memberships__subscription">
+		<Main wideLayout className="manage-purchase memberships__subscription">
 			<DocumentHead
 				title={ isProduct ? translate( 'Product Details' ) : translate( 'Subscription Details' ) }
 			/>
@@ -135,13 +136,14 @@ function Subscription( { translate, subscription, moment, stoppingStatus } ) {
 					</Card>
 					<CompactCard
 						tagName="button"
-						className="memberships__subscription-remove"
+						className="remove-purchase__card"
 						onClick={ stopSubscription }
 					>
+						<MaterialIcon icon="delete" className="card__icon" />
 						{ isProduct
-							? translate( 'Remove %s product.', { args: subscription.title } )
-							: translate( 'Stop %s subscription.', { args: subscription.title } ) }
-						<Gridicon className="card__link-indicator" icon="trash" />
+							? translate( 'Remove %s product', { args: subscription.title } )
+							: translate( 'Stop %s subscription', { args: subscription.title } ) }
+						<Gridicon className="card__link-indicator" icon="chevron-right" />
 					</CompactCard>
 				</>
 			) }

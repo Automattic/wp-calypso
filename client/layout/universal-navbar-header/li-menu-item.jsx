@@ -5,6 +5,7 @@ const UniversalNavbarLiMenuItem = ( {
 	className,
 	type,
 	typeClassName,
+	target,
 } ) => {
 	let liClassName = '';
 	if ( type === 'menu' ) {
@@ -21,6 +22,7 @@ const UniversalNavbarLiMenuItem = ( {
 				href={ urlValue }
 				title={ titleValue }
 				tabIndex="-1"
+				target={ target }
 			>
 				{ elementContent }
 				{ /* <span className="x-menu-link-chevron" aria-hidden="true"></span> */ }

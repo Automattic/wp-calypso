@@ -124,6 +124,7 @@ export interface SelectorProduct extends SelectorProductCost {
 	categories?: JetpackProductCategory[];
 	featuredDescription?: TranslateResult | string;
 	lightboxDescription?: TranslateResult | string;
+	productsIncluded?: ReadonlyArray< string >;
 	whatIsIncluded?: Array< TranslateResult >;
 	benefits?: Array< TranslateResult >;
 	recommendedFor?: Array< JetpackTag >;

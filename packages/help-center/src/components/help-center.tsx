@@ -2,12 +2,12 @@
 /**
  * External Dependencies
  */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useSupportAvailability } from '@automattic/data-stores';
 import { useHappychatAvailable } from '@automattic/happychat-connection';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 import { useSelector } from 'react-redux';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
@@ -46,11 +46,12 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	}, [ data, setShowHelpCenter ] );
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const primarySiteId = useSelector( ( state ) => getPrimarySiteId( state ) );
 
 	useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 
 	const currentSite = window?.helpCenterData?.currentSite;
-	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
+	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId || primarySiteId ) );
 
 	setSite( currentSite ? currentSite : site );
 	useSupportAvailability( 'CHAT' );
@@ -65,12 +66,8 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 		portalParent.setAttribute( 'aria-labelledby', 'header-text' );
 
 		document.body.appendChild( portalParent );
-		const start = Date.now();
 
 		return () => {
-			recordTracksEvent( 'calypso_helpcenter_activity_time', {
-				elapsed: ( Date.now() - start ) / 1000,
-			} );
 			document.body.removeChild( portalParent );
 			closeChat();
 			handleClose();

@@ -37,32 +37,28 @@ export const handleKeyboard =
 export function createCustomHomeTemplateContent(
 	stylesheet: string,
 	hasHeader: boolean,
-	hasFooter: boolean
+	hasFooter: boolean,
+	hasSections: boolean
 ) {
 	const content: string[] = [];
 	if ( hasHeader ) {
 		content.push(
 			`<!-- wp:template-part {"slug":"header","tagName":"header","theme":"${ stylesheet }"} /-->`
 		);
-	} else {
-		content.push( `<!-- wp:template-part {"area":"header"} /-->` );
 	}
 
-	content.push( `
-<!-- wp:group {"tagName":"main"} -->
-	<main class="wp-block-group">
-	<!-- wp:paragraph -->
-	<p></p>
-	<!-- /wp:paragraph -->
-	</main>
-<!-- /wp:group -->` );
+	if ( hasSections ) {
+		content.push( `
+	<!-- wp:group {"tagName":"main"} -->
+		<main class="wp-block-group">
+		</main>
+	<!-- /wp:group -->` );
+	}
 
 	if ( hasFooter ) {
 		content.push(
 			`<!-- wp:template-part {"slug":"footer","tagName":"footer","theme":"${ stylesheet }","className":"site-footer-container"} /-->`
 		);
-	} else {
-		content.push( `<!-- wp:template-part {"area":"footer"} /-->` );
 	}
 
 	return content.join( '\n' );

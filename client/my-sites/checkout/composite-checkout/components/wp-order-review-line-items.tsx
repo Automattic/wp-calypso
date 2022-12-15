@@ -15,6 +15,7 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
+import { useExperiment } from 'calypso/lib/explat';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import {
 	canVariantBePurchased,
@@ -69,6 +70,7 @@ export function WPOrderReviewLineItems( {
 	onRemoveProduct,
 	onRemoveProductClick,
 	onRemoveProductCancel,
+	forceRadioButtons,
 }: {
 	className?: string;
 	siteId?: number | undefined;
@@ -82,6 +84,9 @@ export function WPOrderReviewLineItems( {
 	onRemoveProduct?: ( label: string ) => void;
 	onRemoveProductClick?: ( label: string ) => void;
 	onRemoveProductCancel?: ( label: string ) => void;
+	// TODO: This is just for unit tests. Remove forceRadioButtons everywhere
+	// when calypso_checkout_variant_picker_radio_2212 ExPlat test completes.
+	forceRadioButtons?: boolean;
 } ) {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
@@ -98,6 +103,7 @@ export function WPOrderReviewLineItems( {
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ responseCart.products.map( ( product ) => (
 				<LineItemWrapper
+					forceRadioButtons={ forceRadioButtons }
 					key={ product.product_slug }
 					product={ product }
 					siteId={ siteId }
@@ -160,6 +166,7 @@ function LineItemWrapper( {
 	hasPartnerCoupon,
 	isDisabled,
 	initialVariantTerm,
+	forceRadioButtons,
 }: {
 	product: ResponseCartProduct;
 	siteId?: number | undefined;
@@ -175,6 +182,9 @@ function LineItemWrapper( {
 	hasPartnerCoupon: boolean;
 	isDisabled: boolean;
 	initialVariantTerm: number | null | undefined;
+	// TODO: This is just for unit tests. Remove forceRadioButtons everywhere
+	// when calypso_checkout_variant_picker_radio_2212 ExPlat test completes.
+	forceRadioButtons?: boolean;
 } ) {
 	const isRenewal = isWpComProductRenewal( product );
 	const isWooMobile = isWcMobileApp();
@@ -193,25 +203,38 @@ function LineItemWrapper( {
 	const sitePlans = useSelector( ( state ) => getPlansBySiteId( state, siteId ) );
 	const activePlan = sitePlans?.data?.find( ( plan ) => plan.currentPlan );
 
-	const variants = useGetProductVariants( siteId, product.product_slug, ( variant ) => {
-		if ( ! canVariantBePurchased( variant, activePlan?.interval, activePlan?.productSlug ) ) {
-			return false;
-		}
+	const variants = useGetProductVariants(
+		siteId,
+		product.product_slug,
+		product.current_quantity,
+		( variant ) => {
+			if ( ! canVariantBePurchased( variant, activePlan?.interval, activePlan?.productSlug ) ) {
+				return false;
+			}
 
-		// Only show term variants which are equal to or longer than the variant that
-		// was in the cart when checkout finished loading (not necessarily the
-		// current variant). For WordPress.com only, not Jetpack. See
-		// https://github.com/Automattic/wp-calypso/issues/69633
-		if ( ! initialVariantTerm ) {
-			return true;
+			// Only show term variants which are equal to or longer than the variant that
+			// was in the cart when checkout finished loading (not necessarily the
+			// current variant). For WordPress.com only, not Jetpack. See
+			// https://github.com/Automattic/wp-calypso/issues/69633
+			if ( ! initialVariantTerm ) {
+				return true;
+			}
+			if ( isJetpack ) {
+				return true;
+			}
+			return variant.termIntervalInMonths >= initialVariantTerm;
 		}
-		if ( isJetpack ) {
-			return true;
-		}
-		return variant.termIntervalInMonths >= initialVariantTerm;
-	} );
+	);
 
 	const areThereVariants = variants.length > 1;
+	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
+		'calypso_checkout_variant_picker_radio_2212',
+		{
+			isEligible: areThereVariants && shouldShowVariantSelector && ! isJetpack,
+		}
+	);
+	const shouldUseRadioButtons =
+		forceRadioButtons || ( ! isJetpack && experimentAssignment?.variationName === 'treatment' );
 
 	return (
 		<WPOrderReviewListItem key={ product.uuid }>
@@ -227,14 +250,17 @@ function LineItemWrapper( {
 				onRemoveProductClick={ onRemoveProductClick }
 				onRemoveProductCancel={ onRemoveProductCancel }
 			>
-				{ areThereVariants && shouldShowVariantSelector && (
-					<ItemVariationPicker
-						selectedItem={ product }
-						onChangeItemVariant={ onChangePlanLength }
-						isDisabled={ isDisabled }
-						variants={ variants }
-					/>
-				) }
+				{ ( ! isLoadingExperimentAssignment || forceRadioButtons ) &&
+					areThereVariants &&
+					shouldShowVariantSelector && (
+						<ItemVariationPicker
+							selectedItem={ product }
+							onChangeItemVariant={ onChangePlanLength }
+							isDisabled={ isDisabled }
+							variants={ variants }
+							type={ shouldUseRadioButtons ? 'radio' : 'dropdown' }
+						/>
+					) }
 			</LineItem>
 		</WPOrderReviewListItem>
 	);

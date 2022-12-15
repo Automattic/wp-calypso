@@ -8,6 +8,8 @@ import AssignLicenseForm from 'calypso/jetpack-cloud/sections/partner-portal/ass
 import AssignLicenseStepProgress from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-step-progress';
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 
+import './styles.scss';
+
 export default function AssignLicense( {
 	sites,
 	currentPage,

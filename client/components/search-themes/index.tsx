@@ -1,11 +1,10 @@
 import { Gridicon } from '@automattic/components';
 import { __experimentalUseFocusOutside as useFocusOutside } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import KeyedSuggestions from 'calypso/components/keyed-suggestions';
 import Search, { SEARCH_MODE_ON_ENTER } from 'calypso/components/search';
-import StickyPanel from 'calypso/components/sticky-panel';
 import { getThemeFilters } from 'calypso/state/themes/selectors';
 import { allowSomeThemeFilters, computeEditedSearchElement, insertSuggestion } from './utils';
 import type { ThemeFilters } from './types';
@@ -14,9 +13,10 @@ import './style.scss';
 interface SearchThemesProps {
 	query: string;
 	onSearch: ( query: string ) => void;
+	recordTracksEvent: ( eventName: string, eventProperties?: object ) => void;
 }
 
-const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch } ) => {
+const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordTracksEvent } ) => {
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const searchRef = useRef< Search | null >( null );
 	const suggestionsRef = useRef< KeyedSuggestions | null >( null );
@@ -29,6 +29,15 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch } ) => {
 	const [ editedSearchElement, setEditedSearchElement ] = useState( '' );
 	const [ isApplySearch, setIsApplySearch ] = useState( false );
 	const [ isSearchOpen, setIsSearchOpen ] = useState( false );
+
+	// Sync the value of the search input with the subject filter,
+	// which is equivalent to adding `subject:<term>` to the search input
+	useEffect( () => {
+		// Prevent unnecessary render when there is unfinished filter subject:
+		if ( ! isSearchOpen ) {
+			setSearchInput( query );
+		}
+	}, [ query ] );
 
 	const findTextForSuggestions = ( inputValue: string ) => {
 		const val = inputValue;
@@ -83,7 +92,14 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch } ) => {
 			updateInput( updatedInput + suggestion );
 			focusOnInput();
 		} else {
-			updateInput( insertSuggestion( suggestion, searchInput, cursorPosition ) );
+			updatedInput = insertSuggestion( suggestion, searchInput, cursorPosition );
+			// Clean up duplicate criteria
+			updatedInput = updatedInput.replace( /(\b(feature|column|subject):.*[^ ]\b)(?=.*\1)/gi, '' );
+			// Only allow one `subject:` filter
+			updatedInput = updatedInput.replace( /(subject):([\w-]*[\s|$])(?=.*\1)/gi, '' );
+
+			// Strip filters and excess whitespace
+			updateInput( updatedInput.replace( /\s+/g, ' ' ).trim() );
 			closeSearch();
 		}
 	};
@@ -95,63 +111,67 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch } ) => {
 		}
 	};
 
+	const onClearIconClick = () => {
+		clearSearch();
+		recordTracksEvent( 'search_clear_icon_click' );
+	};
+
 	return (
 		<div ref={ wrapperRef } { ...useFocusOutside( closeSearch ) }>
-			<StickyPanel>
-				<div
-					className="search-themes-card"
-					role="presentation"
-					data-tip-target="search-themes-card"
-					onClick={ focusOnInput }
+			<div
+				className="search-themes-card"
+				role="presentation"
+				data-tip-target="search-themes-card"
+				onClick={ focusOnInput }
+			>
+				<Search
+					initialValue={ searchInput }
+					value={ searchInput }
+					ref={ searchRef }
+					placeholder={ translate( 'Search themes…' ) }
+					analyticsGroup="Themes"
+					searchMode={ SEARCH_MODE_ON_ENTER }
+					applySearch={ isApplySearch }
+					hideClose
+					onKeyDown={ onKeyDown }
+					onSearch={ onSearch }
+					onSearchOpen={ () => setIsSearchOpen( true ) }
+					onSearchClose={ closeSearch }
+					onSearchChange={ ( inputValue: string ) => {
+						findTextForSuggestions( inputValue );
+						setSearchInput( inputValue );
+						setIsApplySearch( false );
+					} }
 				>
-					<Search
-						initialValue={ searchInput }
-						value={ searchInput }
-						ref={ searchRef }
-						placeholder={ translate( 'Search themes…' ) }
-						analyticsGroup="Themes"
-						searchMode={ SEARCH_MODE_ON_ENTER }
-						applySearch={ isApplySearch }
-						hideClose
-						onKeyDown={ onKeyDown }
-						onSearch={ onSearch }
-						onSearchOpen={ () => setIsSearchOpen( true ) }
-						onSearchClose={ closeSearch }
-						onSearchChange={ ( inputValue: string ) => {
-							findTextForSuggestions( inputValue );
-							setSearchInput( inputValue );
-							setIsApplySearch( false );
-						} }
-					>
-						{ isSearchOpen && (
-							<KeyedSuggestions
-								ref={ suggestionsRef }
-								input={ editedSearchElement }
-								terms={ filters }
-								suggest={ suggest }
-								exclusions={ [ /twenty.*?two/ ] }
-								showAllLabelText={ translate( 'View all' ) }
-								showLessLabelText={ translate( 'View less' ) }
-								isShowTopLevelTermsOnMount
-								isDisableAutoSelectSuggestion
-								isDisableTextHighlight
+					{ isSearchOpen && (
+						<KeyedSuggestions
+							ref={ suggestionsRef }
+							input={ editedSearchElement }
+							terms={ filters }
+							suggest={ suggest }
+							exclusions={ [ /twenty.*?two/ ] }
+							showAllLabelText={ translate( 'View all' ) }
+							showLessLabelText={ translate( 'View less' ) }
+							isShowTopLevelTermsOnMount
+							isDisableAutoSelectSuggestion
+							isDisableTextHighlight
+							recordTracksEvent={ recordTracksEvent }
+						/>
+					) }
+					{ searchInput !== '' && (
+						<div className="search-themes-card__icon">
+							<Gridicon
+								icon="cross"
+								className="search-themes-card__icon-close"
+								tabIndex={ 0 }
+								aria-controls="search-component-search-themes"
+								aria-label={ translate( 'Clear Search' ) }
+								onClick={ onClearIconClick }
 							/>
-						) }
-						{ searchInput !== '' && (
-							<div className="search-themes-card__icon">
-								<Gridicon
-									icon="cross"
-									className="search-themes-card__icon-close"
-									tabIndex={ 0 }
-									aria-controls="search-component-search-themes"
-									aria-label={ translate( 'Clear Search' ) }
-									onClick={ clearSearch }
-								/>
-							</div>
-						) }
-					</Search>
-				</div>
-			</StickyPanel>
+						</div>
+					) }
+				</Search>
+			</div>
 		</div>
 	);
 };

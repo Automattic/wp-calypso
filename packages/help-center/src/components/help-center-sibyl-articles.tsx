@@ -34,6 +34,7 @@ function recordSibylArticleClick(
 ) {
 	return () =>
 		recordTracksEvent( 'calypso_helpcenter_page_open_sibyl_article', {
+			force_site_id: true,
 			location: 'help-center',
 			article_link: article.link,
 			article_title: article.title,
