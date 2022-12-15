@@ -181,7 +181,7 @@ class ThanksModal extends Component {
 				{ this.props.isFSEActive && (
 					<p className="themes__thanks-modal-fse-notice">
 						{ this.props.translate(
-							'This theme supports Site Editing that allows you to edit every aspect of your site all in one place, making it easier than ever to create exactly what you want!'
+							'This theme uses the Site Editor, which lets you edit every aspect of your site with blocks, making it easier than ever to create exactly what you want.'
 						) }
 					</p>
 				) }
