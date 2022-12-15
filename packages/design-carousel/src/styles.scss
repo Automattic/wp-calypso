@@ -36,6 +36,7 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 		display: none;
 		@include break-medium {
 			display: flex;
+			box-sizing: border-box;
 		}
 	}
 
