@@ -12,20 +12,18 @@ const EVENT_YOAST_PROMO_VIEW = 'calypso_stats_wordpress_seo_premium_banner_view'
 const EVENT_MOBILE_PROMO_VIEW = 'calypso_stats_traffic_mobile_cta_jetpack_view';
 
 export default function MobilePromoCardWrapper( { isJetpack, isOdysseyStats, slug } ) {
-	// do some stuff
 	// Yoast promo is disabled for Odyssey & self-hosted.
 	// Mobile apps promos are always shown.
 	const showYoastPromo = ! isOdysseyStats && ! isJetpack;
 	const showBothPromoCards = showYoastPromo;
-	// send first impression if not using the DotPager UI
-	// we don't worry about the Yoast card as it sends on mount
+	// Handle initial view event if not using the DotPager UI.
+	// We don't worry about the Yoast card as it sends on mount.
 	useEffect( () => {
 		if ( ! showBothPromoCards ) {
-			// sent tracks event
 			recordTracksEvent( EVENT_MOBILE_PROMO_VIEW );
 		}
 	}, [ showBothPromoCards ] );
-	// handle click events here
+	// Handle click events from promo card.
 	const promoCardDidReceiveClick = ( event ) => {
 		// Events need to incorporate the page and the click type.
 		// This will allow us to account for integraton across different pages.
@@ -33,15 +31,13 @@ export default function MobilePromoCardWrapper( { isJetpack, isOdysseyStats, slu
 		const tracksEventName = `calypso_stats_traffic_mobile_cta_${ event.replaceAll( '-', '_' ) }`;
 		recordTracksEvent( tracksEventName );
 	};
-	// handle view events here
+	// Handle view events from DotPager UI.
 	const pagerDidSelectPage = ( index ) => {
 		const evenLookup = [ EVENT_YOAST_PROMO_VIEW, EVENT_MOBILE_PROMO_VIEW ];
 		const eventName = evenLookup[ index ];
-		// console.log( `selected index: ${ index } -- event: ${ eventName }` );
-		// send an impression event
 		recordTracksEvent( eventName );
 	};
-	// render some stuff
+	// Render one or both promo cards.
 	return (
 		<>
 			{ ! showBothPromoCards && (
