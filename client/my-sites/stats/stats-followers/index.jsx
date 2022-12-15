@@ -105,11 +105,13 @@ class StatModuleFollowers extends Component {
 		];
 
 		const summaryPageSlug = siteSlug || '';
-		const summaryPageLink =
-			! isOdysseyStats &&
-			( 'email-followers' === activeFilter
+		let summaryPageLink =
+			'email-followers' === activeFilter
 				? '/people/email-followers/' + summaryPageSlug
-				: '/people/followers/' + summaryPageSlug );
+				: '/people/followers/' + summaryPageSlug;
+
+		// Limit scope for Odyssey stats, as the Followers page is not yet available.
+		summaryPageLink = ! isOdysseyStats ? summaryPageLink : '';
 
 		return (
 			<div>
