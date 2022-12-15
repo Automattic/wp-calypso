@@ -7,7 +7,11 @@ type OptionalProps = {
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 
-const useTrackScrollPageToBottom = ( enabled: boolean, onEnd: () => void , optionalProps?: OptionalProps ) => {
+const useTrackScrollPageToBottom = (
+	enabled: boolean,
+	onEnd: () => void,
+	optionalProps?: OptionalProps
+) => {
 	const prevScrollY = useRef( window.scrollY );
 
 	useEffect( () => {

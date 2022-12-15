@@ -147,19 +147,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	const categorization = useCategorization( staticDesigns, categorizationOptions );
 
-	useTrackScrollPageToBottom(
-		true,
-		() => {
-			recordTracksEvent( 'calypso_signup_design_scrolled_to_end', {
-				intent,
-				site_category: categorization.selection,
-			} );
-		},
-		{
-			site_category: categorization.selection,
-		}
-	);
-
 	// ********** Logic for selecting a design and style variation
 
 	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
@@ -187,6 +174,20 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		setSelectedDesign( undefined );
 		setSelectedStyleVariation( undefined );
 	}, [] );
+
+	// Track as if user has scrolled to bottom of the design picker
+	useTrackScrollPageToBottom(
+		! isPreviewingDesign,
+		() => {
+			recordTracksEvent( 'calypso_signup_design_scrolled_to_end', {
+				intent,
+				category: categorization.selection,
+			} );
+		},
+		{
+			category: categorization.selection,
+		}
+	);
 
 	// When the theme or style query strings parameters are present,
 	// automatically switch to previewing that theme (if it's a valid theme)
