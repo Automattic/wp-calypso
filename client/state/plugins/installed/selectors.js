@@ -1,5 +1,5 @@
 import { createSelector } from '@automattic/state-utils';
-import { filter, find, get, pick, some, sortBy } from 'lodash';
+import { filter, get, pick, some, sortBy } from 'lodash';
 import {
 	getSite,
 	getSiteTitle,
@@ -66,7 +66,7 @@ export function requestPluginsError( state ) {
 	return state.plugins.installed.requestError;
 }
 
-const getSiteIdsWithPlugins = createSelector(
+const getSiteIdsThatHavePlugins = createSelector(
 	( state ) => {
 		return Object.keys( state.plugins.installed.plugins ).map( ( pluginId ) => Number( pluginId ) );
 	},
@@ -78,9 +78,17 @@ const getSiteIdsWithPlugins = createSelector(
  * that the information for a plugin may be spread across multiple site objects. This selector transforms
  * that structure into one indexed by the plugin slugs and memoizes that structure.
  */
-export const getAllPlugins = createSelector(
+export const getAllPluginsIndexedByPluginSlug = createSelector(
 	( state ) => {
-		return getSiteIdsWithPlugins( state ).reduce( ( plugins, siteId ) => {
+		if ( isRequestingForAllSites( state ) ) {
+			return {};
+		}
+
+		return getSiteIdsThatHavePlugins( state ).reduce( ( plugins, siteId ) => {
+			if ( isRequesting( state, siteId ) ) {
+				return plugins;
+			}
+
 			const pluginsForSite = state.plugins.installed.plugins[ siteId ] || [];
 			pluginsForSite.forEach( ( plugin ) => {
 				const sitePluginInfo = pick( plugin, [ 'active', 'autoupdate', 'update', 'version' ] );
@@ -97,23 +105,54 @@ export const getAllPlugins = createSelector(
 			return plugins;
 		}, {} );
 	},
-	( state ) => [ getSiteIdsWithPlugins( state ) ]
+	( state ) => [
+		isRequestingForAllSites( state ),
+		getSiteIdsThatHavePlugins( state ),
+		...getSiteIdsThatHavePlugins( state ).map( ( siteId ) => isRequesting( state, siteId ) ),
+	]
+);
+
+/**
+ * The plugins here differ from the plugin objects found on state.plugins.installed.plugins in that each plugin
+ * object has data from all the different sites on it, whereas on state.plugins.installed.plugins they only have
+ * the state for the site which index they are under. The objects here are the same as those returned from
+ * getAllPluginsIndexedByPluginSlug, except they are indexed by siteId.
+ */
+export const getAllPluginsIndexedBySiteId = createSelector(
+	( state ) => {
+		const allPluginsIndexedByPluginSlug = getAllPluginsIndexedByPluginSlug( state );
+		const siteIdsThatHavePlugins = getSiteIdsThatHavePlugins( state );
+
+		const plugins = siteIdsThatHavePlugins.reduce( ( accumulator, siteId ) => {
+			accumulator[ siteId ] = {};
+			return accumulator;
+		}, {} );
+
+		return Object.values( allPluginsIndexedByPluginSlug ).reduce( ( accumulator, plugin ) => {
+			Object.keys( plugin.sites )
+				.map( ( siteId ) => Number( siteId ) )
+				.forEach( ( siteId ) => {
+					accumulator[ siteId ] = {
+						...accumulator[ siteId ],
+						[ plugin.slug ]: plugin,
+					};
+				} );
+
+			return accumulator;
+		}, plugins );
+	},
+	( state ) => [ getAllPluginsIndexedByPluginSlug( state ), getSiteIdsThatHavePlugins( state ) ]
 );
 
 export const getFilteredAndSortedPlugins = createSelector(
 	( state, siteIds, pluginFilter ) => {
-		if ( isRequestingForAllSites( state ) ) {
-			return [];
-		}
+		const allPluginsIndexedBySiteId = getAllPluginsIndexedBySiteId( state );
 
-		const allPlugins = getAllPlugins( state );
-
-		const allPluginsForSites = Object.values( allPlugins ).filter(
-			( plugin ) =>
-				!! Object.keys( plugin.sites )
-					.map( ( siteId ) => Number( siteId ) )
-					.find( ( siteId ) => ! isRequesting( state, siteId ) && siteIds.includes( siteId ) )
-		);
+		const allPluginsForSites = siteIds
+			.map( ( siteId ) => Number( siteId ) )
+			.map( ( siteId ) => allPluginsIndexedBySiteId[ siteId ] )
+			.filter( ( plugins ) => !! plugins )
+			.reduce( ( accumulator, current ) => ( { ...accumulator, ...current } ), {} );
 
 		const pluginList =
 			pluginFilter && _filters[ pluginFilter ]
@@ -122,11 +161,7 @@ export const getFilteredAndSortedPlugins = createSelector(
 
 		return sortBy( pluginList, ( item ) => item.slug.toLowerCase() );
 	},
-	( state, siteIds ) => [
-		state.plugins.installed.plugins,
-		isRequestingForAllSites( state ),
-		...siteIds.map( ( siteId ) => isRequesting( state, siteId ) ),
-	],
+	( state ) => [ getAllPluginsIndexedBySiteId( state ) ],
 	( state, siteIds, pluginFilter ) => {
 		return [ siteIds, pluginFilter ].flat().join( '-' );
 	}
@@ -142,6 +177,7 @@ export function getPluginsWithUpdates( state, siteIds ) {
 	);
 }
 
+// TODO: evaluate this
 export function getPluginsOnSites( state, plugins ) {
 	return Object.values( plugins ).reduce( ( acc, plugin ) => {
 		const siteIds = Object.keys( plugin.sites );
@@ -151,11 +187,14 @@ export function getPluginsOnSites( state, plugins ) {
 }
 
 export function getPluginOnSites( state, siteIds, pluginSlug ) {
-	const plugin = getAllPlugins( state )[ pluginSlug ];
-	const pluginSiteIds = Object.keys( plugin.sites ).map( ( siteId ) => Number( siteId ) );
+	const plugin = getAllPluginsIndexedByPluginSlug( state )[ pluginSlug ];
+
+	if ( ! plugin ) {
+		return undefined;
+	}
 
 	for ( const siteId of siteIds ) {
-		if ( pluginSiteIds.includes( Number( siteId ) ) ) {
+		if ( plugin.sites[ siteId ] ) {
 			return plugin;
 		}
 	}
@@ -164,14 +203,17 @@ export function getPluginOnSites( state, siteIds, pluginSlug ) {
 }
 
 export function getPluginOnSite( state, siteId, pluginSlug ) {
-	const pluginList = getFilteredAndSortedPlugins( state, [ siteId ] );
-	return find( pluginList, ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) );
+	const plugin = getAllPluginsIndexedByPluginSlug( state )[ pluginSlug ];
+
+	if ( ! plugin ) {
+		return undefined;
+	}
+
+	return plugin.sites[ siteId ] ? plugin : undefined;
 }
 
 export function getSitesWithPlugin( state, siteIds, pluginSlug ) {
-	const pluginList = getFilteredAndSortedPlugins( state, siteIds );
-	const plugin = find( pluginList, ( pluginItem ) => isEqualSlugOrId( pluginSlug, pluginItem ) );
-
+	const plugin = getAllPluginsIndexedByPluginSlug( state )[ pluginSlug ];
 	if ( ! plugin ) {
 		return [];
 	}
