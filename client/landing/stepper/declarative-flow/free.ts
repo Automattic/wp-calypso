@@ -28,7 +28,7 @@ import type { Flow, ProvidedDependencies } from './internals/types';
 
 const free: Flow = {
 	name: FREE_FLOW,
-	title: 'WordPress',
+	title: 'Free',
 	useSteps() {
 		useEffect( () => {
 			if ( ! isEnabled( 'signup/free-flow' ) ) {
