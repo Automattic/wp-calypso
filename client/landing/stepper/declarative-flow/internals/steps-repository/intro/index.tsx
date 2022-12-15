@@ -21,7 +21,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 		if ( flowName === LINK_IN_BIO_FLOW ) {
 			return {
 				title: createInterpolateElement(
-					__( 'You’re 3 minutes away from<br />a stand-out Link in Bio site.<br />Ready? ' ),
+					__( 'You’re 3 minutes away from a stand-out Link in Bio site.<br />Ready? ' ),
 					{ br: <br /> }
 				),
 				buttonText: __( 'Get started' ),
@@ -40,11 +40,8 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 		if ( flowName === NEWSLETTER_FLOW ) {
 			return {
 				title: __( 'Sign in. Set up. Send out.' ),
-				text: createInterpolateElement(
-					__(
-						`You’re a few steps away from launching a beautiful Newsletter with<br />everything you’ll ever need to grow your audience.`
-					),
-					{ br: <br /> }
+				text: __(
+					`You’re a few steps away from launching a beautiful Newsletter with everything you’ll ever need to grow your audience.`
 				),
 				buttonText: __( 'Start building your Newsletter' ),
 			};
