@@ -15,14 +15,13 @@ export default function PromoCards( { isJetpack, isOdysseyStats, slug } ) {
 	// Yoast promo is disabled for Odyssey & self-hosted.
 	// Mobile apps promos are always shown.
 	const showYoastPromo = ! isOdysseyStats && ! isJetpack;
-	const showBothPromoCards = showYoastPromo;
 	// Handle initial view event if not using the DotPager UI.
 	// We don't worry about the Yoast card as it sends on mount.
 	useEffect( () => {
-		if ( ! showBothPromoCards ) {
+		if ( ! showYoastPromo ) {
 			recordTracksEvent( EVENT_MOBILE_PROMO_VIEW );
 		}
-	}, [ showBothPromoCards ] );
+	}, [ showYoastPromo ] );
 	// Handle click events from promo card.
 	const promoCardDidReceiveClick = ( event ) => {
 		// Events need to incorporate the page and the click type.
@@ -40,7 +39,7 @@ export default function PromoCards( { isJetpack, isOdysseyStats, slug } ) {
 	// Render one or both promo cards.
 	return (
 		<>
-			{ ! showBothPromoCards && (
+			{ ! showYoastPromo && (
 				<div className="stats__promo-container">
 					<div className="stats__promo-card">
 						<MobilePromoCard
@@ -50,7 +49,7 @@ export default function PromoCards( { isJetpack, isOdysseyStats, slug } ) {
 					</div>
 				</div>
 			) }
-			{ showBothPromoCards && (
+			{ showYoastPromo && (
 				<div className="stats__promo-container">
 					<div className="stats__promo-card">
 						<DotPager className="stats__promo-pager" onPageSelected={ pagerDidSelectPage }>
