@@ -34,7 +34,7 @@ describe( DataHelper.createSuiteTitle( 'Jetpack: Plugin' ), function () {
 		if ( response ) {
 			console.log( `Successfully removed the plugin '${ pluginName }'.` );
 		} else {
-			console.warn( `Failed to remove the plugin '${ pluginName }'; no action performed.` );
+			console.log( `Unable to remove the plugin '${ pluginName }'; no action performed.` );
 		}
 
 		page = await browser.newPage();
