@@ -47,6 +47,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 	getFormattedPatternsByPatternSlugs = memoize( ( patterns: PatternDefinition[] ) => {
 		const blocksByPatternSlugs = patterns.reduce(
 			( prev, { name, description = '', html, pattern_meta } ) => {
+				// The default value is from https://github.com/Automattic/wp-calypso/blob/d22976d8250fb4479d5677f5434742878fbd0ef3/apps/editing-toolkit/editing-toolkit-plugin/block-patterns/class-block-patterns-from-api.php#L115
 				const viewportWidth = pattern_meta?.viewport_width
 					? Number( pattern_meta.viewport_width )
 					: 1280;
