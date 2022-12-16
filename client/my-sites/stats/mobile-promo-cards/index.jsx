@@ -11,10 +11,10 @@ import './style.scss';
 const EVENT_BLAZE_PROMO_VIEW = 'calypso_stats_blaze_banner_view';
 const EVENT_MOBILE_PROMO_VIEW = 'calypso_stats_traffic_mobile_cta_jetpack_view';
 
-export default function MobilePromoCardWrapper( { isJetpack, isOdysseyStats, slug } ) {
+export default function MobilePromoCardWrapper( { isOdysseyStats, slug } ) {
 	// Blaze promo is disabled for Odyssey & self-hosted.
 	// Mobile apps promos are always shown.
-	const showBlazePromo = ! isOdysseyStats && ! isJetpack;
+	const showBlazePromo = ! isOdysseyStats;
 	const showBothPromoCards = showBlazePromo;
 	// Handle initial view event if not using the DotPager UI.
 	// We don't worry about the Blaze card as it sends on mount.
@@ -65,6 +65,7 @@ export default function MobilePromoCardWrapper( { isJetpack, isOdysseyStats, slu
 								ctaText={ translate( 'Get started' ) }
 								image={ blazeDropDownIllustration }
 								href={ `/advertising/${ slug || '' }` }
+								showOnJetpackNonAtomic={ true }
 							/>
 
 							<div>
