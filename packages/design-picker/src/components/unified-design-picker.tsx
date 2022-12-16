@@ -468,8 +468,8 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 
 	// Track as if user has scrolled to bottom of the design picker
 	const ref = useInView< HTMLDivElement >( onViewAllDesigns, [ categorization?.selection ] );
-	const bottomAnchorContent = <div className="design-picker__bottom_anchor" ref={ ref }>hey you</div>;
-console.log( hasGeneratedDesigns );
+	const bottomAnchorContent = <div className="design-picker__bottom_anchor" ref={ ref }></div>;
+
 	return (
 		<div
 			className={ classnames(
