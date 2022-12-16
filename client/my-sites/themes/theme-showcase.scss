@@ -1,11 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-$theme-img-filter:
-	drop-shadow(0 102px 61px rgba(0, 0, 0, 0.02))
-	drop-shadow(0 45px 45px rgba(0, 0, 0, 0.03))
-	drop-shadow(0 11px 25px rgba(0, 0, 0, 0.03))
-	drop-shadow(0 0 0 rgba(0, 0, 0, 0.03));
+$theme-img-filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.05));
 
 body.is-section-themes-i4 {
 	&.theme-default.color-scheme {
