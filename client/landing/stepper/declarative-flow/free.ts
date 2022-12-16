@@ -62,7 +62,6 @@ const free: Flow = {
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const locale = useLocale();
-		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 
 		// trigger guides on step movement, we don't care about failures or response
@@ -88,7 +87,6 @@ const free: Flow = {
 			switch ( _currentStep ) {
 				case 'intro':
 					clearSignupDestinationCookie();
-					resetOnboardStore();
 					if ( userIsLoggedIn ) {
 						return navigate( 'freeSetup' );
 					}
