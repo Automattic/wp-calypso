@@ -104,6 +104,7 @@ export function MiniCart( {
 	closeCart,
 	onRemoveProduct,
 	onRemoveCoupon,
+	checkoutLabel,
 }: {
 	selectedSiteSlug: string;
 	cartKey: number | undefined;
@@ -111,6 +112,7 @@ export function MiniCart( {
 	closeCart: () => void;
 	onRemoveProduct?: ( uuid: string ) => void;
 	onRemoveCoupon?: () => void;
+	checkoutLabel?: string;
 } ) {
 	const { responseCart, removeCoupon, removeProductFromCart, isLoading, isPendingUpdate } =
 		useShoppingCart( cartKey ? cartKey : undefined );
@@ -166,7 +168,7 @@ export function MiniCart( {
 						isBusy={ isDisabled }
 						onClick={ () => goToCheckout( selectedSiteSlug ) }
 					>
-						{ __( 'Checkout' ) }
+						{ checkoutLabel || __( 'Checkout' ) }
 					</Button>
 				</MiniCartFooter>
 			</MiniCartWrapper>
