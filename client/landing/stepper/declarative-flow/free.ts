@@ -32,10 +32,13 @@ const free: Flow = {
 		return translate( 'Free' );
 	},
 	useSteps() {
+		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
+
 		useEffect( () => {
 			if ( ! isEnabled( 'signup/free-flow' ) ) {
 				return window.location.assign( '/start/free' );
 			}
+			resetOnboardStore();
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 			recordFullStoryEvent( 'calypso_signup_start_free', { flow: this.name } );
 		}, [] );
