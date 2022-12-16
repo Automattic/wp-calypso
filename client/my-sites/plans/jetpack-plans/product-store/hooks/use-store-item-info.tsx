@@ -14,14 +14,12 @@ import { useSelector } from 'react-redux';
 import isSupersedingJetpackItem from 'calypso/../packages/calypso-products/src/is-superseding-jetpack-item';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
-import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { useIsUserPurchaseOwner } from 'calypso/state/purchases/utils';
 import {
 	getSitePlan,
 	getSiteProducts,
-	getSiteSlug,
 	isJetpackCloudCartEnabled,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
@@ -29,6 +27,7 @@ import { EXTERNAL_PRODUCTS_LIST, ITEM_TYPE_PLAN } from '../../constants';
 import productButtonLabel from '../../product-card/product-button-label';
 import { SelectorProduct } from '../../types';
 import { UseStoreItemInfoProps } from '../types';
+import { useShoppingCartTracker } from './use-shopping-cart-tracker';
 
 const getIsDeprecated = ( item: SelectorProduct ) => Boolean( item.legacy );
 
@@ -60,12 +59,14 @@ export const useStoreItemInfo = ( {
 	const isMultisite = useSelector(
 		( state ) => !! ( siteId && isJetpackSiteMultiSite( state, siteId ) )
 	);
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
+
 	const isCurrentUserPurchaseOwner = useIsUserPurchaseOwner();
 	const translate = useTranslate();
 
 	const cartKey = useCartKey();
-	const { responseCart } = useShoppingCart( cartKey );
+	const { responseCart, addProductsToCart } = useShoppingCart( cartKey );
+
+	const shoppingCartTracker = useShoppingCartTracker();
 
 	const getIsProductInCart = useCallback(
 		( item: SelectorProduct ) => {
@@ -174,7 +175,7 @@ export const useStoreItemInfo = ( {
 			if ( getShouldShowCart( item ) ) {
 				if ( getIsProductInCart( item ) ) {
 					//open the cart
-					return `http://www.wordpress.com/checkout/${ siteSlug }`;
+					return createCheckoutURL?.( item, getIsUpgradeableToYearly( item ), getPurchase( item ) );
 				}
 				return '';
 			}
@@ -187,7 +188,6 @@ export const useStoreItemInfo = ( {
 			getIsUpgradeableToYearly,
 			getPurchase,
 			getIsProductInCart,
-			siteSlug,
 		]
 	);
 
@@ -196,11 +196,15 @@ export const useStoreItemInfo = ( {
 			if ( getShouldShowCart( item ) ) {
 				if ( getIsProductInCart( item ) ) {
 					//naviagate to the checkout page - handled by getCheckoutURL
+					shoppingCartTracker( 'calypso_jetpack_shopping_cart_view_click', {
+						productSlug: item.productSlug,
+					} );
 					return;
 				}
-				return cartManagerClient
-					.forCartKey( siteId || undefined )
-					.actions.addProductsToCart( [ { product_slug: item.productSlug } ] );
+				shoppingCartTracker( 'calypso_jetpack_shopping_cart_add_product', {
+					productSlug: item.productSlug,
+				} );
+				return addProductsToCart( [ { product_slug: item.productSlug } ] );
 			}
 
 			return onClickPurchase?.( item, getIsUpgradeableToYearly( item ), getPurchase( item ) );
@@ -211,7 +215,8 @@ export const useStoreItemInfo = ( {
 			getIsUpgradeableToYearly,
 			getPurchase,
 			getIsProductInCart,
-			siteId,
+			addProductsToCart,
+			shoppingCartTracker,
 		]
 	);
 
@@ -232,7 +237,7 @@ export const useStoreItemInfo = ( {
 				isDeprecated: getIsDeprecated( item ),
 				isSuperseded: getIsSuperseded( item ),
 				currentPlan: sitePlan,
-				fallbackLabel: getShouldShowCart( item ) ? 'Add to cart' : translate( 'Get' ),
+				fallbackLabel: getShouldShowCart( item ) ? translate( 'Add to cart' ) : translate( 'Get' ),
 				isInCart: getIsProductInCart( item ),
 				isJetpackPlan: isJetpackPlanSlug( item.productSlug ),
 			} );
