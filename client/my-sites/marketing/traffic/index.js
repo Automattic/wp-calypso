@@ -52,8 +52,8 @@ const SiteSettingsTraffic = ( {
 		{ isAdmin && (
 			<PromoCardBlock
 				productSlug="blaze"
-				impressionEvent="calypso_traffic_blaze_marketing_traffic_banner_view"
-				clickEvent="calypso_traffic_blaze_marketing_traffic_banner_click"
+				impressionEvent="calypso_marketing_traffic_blaze_banner_view"
+				clickEvent="calypso_marketing_traffic_blaze_banner_click"
 				headerText={ translate( 'Reach new readers and customers' ) }
 				contentText={ translate(
 					'Use WordPress Blaze to increase your reach by promoting your work to the larger WordPress.com community of blogs and sites. '
