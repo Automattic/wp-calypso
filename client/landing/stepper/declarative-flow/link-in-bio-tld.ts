@@ -82,7 +82,7 @@ const linkInBio: Flow = {
 					clearSignupDestinationCookie();
 
 					if ( userIsLoggedIn ) {
-						return navigate( 'plans' );
+						return navigate( 'patterns' );
 					}
 
 					return window.location.assign( logInUrl );
