@@ -1,7 +1,6 @@
 import { Site } from '@automattic/data-stores';
 import {
 	ECOMMERCE_FLOW,
-	LINK_IN_BIO_FLOW,
 	isLinkInBioFlow,
 	addPlanToCart,
 	createSiteWithCart,
@@ -34,7 +33,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
-	const theme = isLinkInBioFlow( LINK_IN_BIO_FLOW ) ? 'pub/lynx' : 'pub/lettre';
+	const theme = isLinkInBioFlow( flow ) ? 'pub/lynx' : 'pub/lettre';
 	const isPaidDomainItem = Boolean( domainCartItem?.product_slug );
 
 	// Default visibility is public
