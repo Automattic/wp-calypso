@@ -6,14 +6,14 @@ import { useRef } from 'react';
 import { DEVICES_SUPPORTED, DEVICE_TYPE } from '../../constants';
 import { computer, tablet, phone } from './icons';
 import type { Device } from '../../types';
-import './style.scss';
+import './toolbar.scss';
 
 interface ToolbarProps {
 	device: Device;
 	onDeviceClick: ( device: Device ) => void;
 }
 
-const Toolbar = ( { device: currentDevice, onDeviceClick }: ToolbarProps ) => {
+const DeviceSwitcherToolbar = ( { device: currentDevice, onDeviceClick }: ToolbarProps ) => {
 	const devices = useRef( {
 		[ DEVICE_TYPE.COMPUTER ]: { title: translate( 'Desktop' ), icon: computer, iconSize: 36 },
 		[ DEVICE_TYPE.TABLET ]: { title: translate( 'Tablet' ), icon: tablet, iconSize: 24 },
@@ -21,8 +21,8 @@ const Toolbar = ( { device: currentDevice, onDeviceClick }: ToolbarProps ) => {
 	} );
 
 	return (
-		<div className="theme-preview__toolbar">
-			<div className="theme-preview__toolbar-devices">
+		<div className="device-switcher__toolbar">
+			<div className="device-switcher__toolbar-devices">
 				{ DEVICES_SUPPORTED.map( ( device ) => (
 					<Button
 						key={ device }
@@ -43,4 +43,4 @@ const Toolbar = ( { device: currentDevice, onDeviceClick }: ToolbarProps ) => {
 	);
 };
 
-export default Toolbar;
+export default DeviceSwitcherToolbar;

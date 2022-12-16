@@ -5,9 +5,7 @@ import { addQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { v4 as uuid } from 'uuid';
-import { DEVICE_TYPE } from '../../constants';
-import Toolbar from './toolbar';
-import type { Device } from '../../types';
+import DeviceSwitcher from '../device-switcher';
 import './style.scss';
 
 interface Viewport {
@@ -41,12 +39,6 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	const [ containerResizeListener, { width: containerWidth } ] = useResizeObserver();
 	const calypso_token = useMemo( () => uuid(), [] );
 	const scale = containerWidth && viewportWidth ? containerWidth / viewportWidth : 1;
-
-	const [ device, setDevice ] = useState< Device >( DEVICE_TYPE.COMPUTER );
-	function handleDeviceClick( device: string ) {
-		recordDeviceClick?.( device );
-		setDevice( device );
-	}
 
 	useEffect( () => {
 		const handleMessage = ( event: MessageEvent ) => {
@@ -96,17 +88,15 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	}, [ inlineCss, isLoaded ] );
 
 	return (
-		<div
+		<DeviceSwitcher
 			className={ classnames( 'theme-preview__container', {
 				'theme-preview__container--loading': ! isLoaded,
-				'theme-preview__container--frame-bordered': isShowFrameBorder,
-				'theme-preview__container--is-computer': device === 'computer',
-				'theme-preview__container--is-tablet': device === 'tablet',
-				'theme-preview__container--is-phone': device === 'phone',
 			} ) }
+			isShowDeviceSwitcherToolbar={ isShowDeviceSwitcher }
+			isShowFrameBorder={ isShowFrameBorder }
+			onDeviceChange={ recordDeviceClick }
 		>
 			{ containerResizeListener }
-			{ isShowDeviceSwitcher && <Toolbar device={ device } onDeviceClick={ handleDeviceClick } /> }
 			<div className="theme-preview__frame-wrapper">
 				{ ! isLoaded && (
 					<div className="theme-preview__frame-message">
@@ -127,7 +117,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 					tabIndex={ -1 }
 				/>
 			</div>
-		</div>
+		</DeviceSwitcher>
 	);
 };
 

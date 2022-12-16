@@ -1,7 +1,7 @@
-import type { DEVICES_SUPPORTED, FONT_PAIRINGS } from './constants';
+import type { DEVICE_TYPE, FONT_PAIRINGS } from './constants';
 import type { ValuesType } from 'utility-types';
 
-export type Device = ValuesType< ValuesType< typeof DEVICES_SUPPORTED > >;
+export type Device = ValuesType< typeof DEVICE_TYPE >;
 export type Font = ValuesType< ValuesType< typeof FONT_PAIRINGS > >;
 
 /** @deprecated used for Gutenboarding (/new flow) */
