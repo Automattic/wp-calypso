@@ -1,6 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -92,6 +92,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		showExampleSuggestions = false;
 		includeWordPressDotCom = false;
 		showSkipButton = true;
+	}
+
+	if ( flow === LINK_IN_BIO_TLD_FLOW ) {
+		includeWordPressDotCom = false;
 	}
 
 	const domainsWithPlansOnly = true;
@@ -187,7 +191,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 					),
 					decideLaterComponent
 				);
-			case 'link-in-bio':
+			case LINK_IN_BIO_FLOW:
+			case LINK_IN_BIO_TLD_FLOW:
 				return createInterpolateElement(
 					__(
 						'Set your Link in Bio apart with a custom domain. Not sure yet? <span>Decide later</span>.'
@@ -330,6 +335,24 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		);
 	};
 
+	const getOtherManagedSubdomains = () => {
+		if ( flow === LINK_IN_BIO_TLD_FLOW ) {
+			return [ 'link' ];
+		}
+	};
+
+	const getOtherManagedSubdomainsCountOverride = () => {
+		if ( flow === LINK_IN_BIO_TLD_FLOW ) {
+			return 2;
+		}
+	};
+
+	const getPromoTlds = () => {
+		if ( flow === LINK_IN_BIO_TLD_FLOW ) {
+			return [ 'link' ];
+		}
+	};
+
 	const renderDomainForm = () => {
 		let initialState: DomainForm = {};
 		if ( domainForm ) {
@@ -376,12 +399,15 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 					key="domainForm"
 					mapDomainUrl={ getUseYourDomainUrl() }
 					offerUnavailableOption
+					otherManagedSubdomains={ getOtherManagedSubdomains() }
+					otherManagedSubdomainsCountOverride={ getOtherManagedSubdomainsCountOverride() }
 					onAddDomain={ handleAddDomain }
 					onAddMapping={ handleAddMapping }
 					onSave={ setDomainForm }
 					onSkip={ handleSkip }
 					path={ path }
 					products={ productsList }
+					promoTlds={ getPromoTlds() }
 					selectedSite={ selectedSite }
 					showExampleSuggestions={ showExampleSuggestions }
 					showSkipButton={ showSkipButton }

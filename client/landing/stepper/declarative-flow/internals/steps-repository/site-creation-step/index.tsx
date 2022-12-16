@@ -1,7 +1,7 @@
 import { Site } from '@automattic/data-stores';
 import {
 	ECOMMERCE_FLOW,
-	LINK_IN_BIO_FLOW,
+	isLinkInBioFlow,
 	addPlanToCart,
 	createSiteWithCart,
 } from '@automattic/onboarding';
@@ -33,14 +33,14 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
-	const theme = flow === LINK_IN_BIO_FLOW ? 'pub/lynx' : 'pub/lettre';
+	const theme = isLinkInBioFlow( flow ) ? 'pub/lynx' : 'pub/lettre';
 	const isPaidDomainItem = Boolean( domainCartItem?.product_slug );
 
 	// Default visibility is public
 	let siteVisibility = Site.Visibility.PublicIndexed;
 
 	// Link-in-bio flow defaults to "Coming Soon"
-	if ( flow === LINK_IN_BIO_FLOW ) {
+	if ( isLinkInBioFlow( flow ) ) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
 	}
 

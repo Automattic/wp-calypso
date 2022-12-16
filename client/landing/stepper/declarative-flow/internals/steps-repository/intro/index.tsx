@@ -1,9 +1,9 @@
 import {
-	LINK_IN_BIO_FLOW,
 	NEWSLETTER_FLOW,
 	ECOMMERCE_FLOW,
 	VIDEOPRESS_FLOW,
 	FREE_FLOW,
+	isLinkInBioFlow,
 } from '@automattic/onboarding';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -18,7 +18,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 	const { __ } = useI18n();
 
 	return useMemo( () => {
-		if ( flowName === LINK_IN_BIO_FLOW ) {
+		if ( isLinkInBioFlow( flowName ) ) {
 			return {
 				title: createInterpolateElement(
 					__( 'You’re 3 minutes away from<br />a stand-out Link in Bio site.<br />Ready? ' ),
