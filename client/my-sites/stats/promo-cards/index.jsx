@@ -65,13 +65,10 @@ export default function PromoCards( { isJetpack, isOdysseyStats, slug } ) {
 								image={ wordpressSeoIllustration }
 								href={ `/plugins/wordpress-seo-premium/${ slug }` }
 							/>
-
-							<div>
-								<MobilePromoCard
-									className="stats__promo-card-apps"
-									clickHandler={ promoCardDidReceiveClick }
-								/>
-							</div>
+							<MobilePromoCard
+								className="stats__promo-card-apps"
+								clickHandler={ promoCardDidReceiveClick }
+							/>
 						</DotPager>
 					</div>
 				</div>
