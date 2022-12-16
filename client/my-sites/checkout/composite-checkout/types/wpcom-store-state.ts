@@ -720,6 +720,13 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 		};
 	},
 
+	updateSomeFields: (
+		oldDetails: ManagedContactDetails,
+		newDetails: ManagedContactDetails
+	): ManagedContactDetails => {
+		return { ...oldDetails, ...newDetails };
+	},
+
 	updateDomainContactFields: (
 		oldDetails: ManagedContactDetails,
 		newField: DomainContactDetails
