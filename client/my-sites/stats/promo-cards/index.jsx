@@ -38,40 +38,34 @@ export default function PromoCards( { isJetpack, isOdysseyStats, slug } ) {
 	};
 	// Render one or both promo cards.
 	return (
-		<>
-			{ showYoastPromo ? (
-				<div className="stats__promo-container">
-					<div className="stats__promo-card">
-						<DotPager className="stats__promo-pager" onPageSelected={ pagerDidSelectPage }>
-							<PromoCardBlock
-								productSlug="wordpress-seo-premium"
-								impressionEvent={ EVENT_YOAST_PROMO_VIEW }
-								clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
-								headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
-								contentText={ translate(
-									'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
-								) }
-								ctaText={ translate( 'Learn more' ) }
-								image={ wordpressSeoIllustration }
-								href={ `/plugins/wordpress-seo-premium/${ slug }` }
-							/>
-							<MobilePromoCard
-								className="stats__promo-card-apps"
-								clickHandler={ promoCardDidReceiveClick }
-							/>
-						</DotPager>
-					</div>
-				</div>
-			) : (
-				<div className="stats__promo-container">
-					<div className="stats__promo-card">
+		<div className="stats__promo-container">
+			<div className="stats__promo-card">
+				{ showYoastPromo ? (
+					<DotPager className="stats__promo-pager" onPageSelected={ pagerDidSelectPage }>
+						<PromoCardBlock
+							productSlug="wordpress-seo-premium"
+							impressionEvent={ EVENT_YOAST_PROMO_VIEW }
+							clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
+							headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
+							contentText={ translate(
+								'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
+							) }
+							ctaText={ translate( 'Learn more' ) }
+							image={ wordpressSeoIllustration }
+							href={ `/plugins/wordpress-seo-premium/${ slug }` }
+						/>
 						<MobilePromoCard
 							className="stats__promo-card-apps"
 							clickHandler={ promoCardDidReceiveClick }
 						/>
-					</div>
-				</div>
-			) }
-		</>
+					</DotPager>
+				) : (
+					<MobilePromoCard
+						className="stats__promo-card-apps"
+						clickHandler={ promoCardDidReceiveClick }
+					/>
+				) }
+			</div>
+		</div>
 	);
 }
