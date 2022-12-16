@@ -11,7 +11,7 @@ import './style.scss';
 const EVENT_YOAST_PROMO_VIEW = 'calypso_stats_wordpress_seo_premium_banner_view';
 const EVENT_MOBILE_PROMO_VIEW = 'calypso_stats_traffic_mobile_cta_jetpack_view';
 
-export default function MobilePromoCardWrapper( { isJetpack, isOdysseyStats, slug } ) {
+export default function PromoCards( { isJetpack, isOdysseyStats, slug } ) {
 	// Yoast promo is disabled for Odyssey & self-hosted.
 	// Mobile apps promos are always shown.
 	const showYoastPromo = ! isOdysseyStats && ! isJetpack;
