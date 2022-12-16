@@ -127,6 +127,7 @@
 		"ssr/log-prefetch-errors": true,
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
+		"stats/all-time-views": false,
 		"stats/new-main-chart": true,
 		"stepper-woocommerce-poc": true,
 		"subscriber-csv-upload": true,
