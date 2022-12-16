@@ -61,6 +61,7 @@ const SiteSettingsTraffic = ( {
 				ctaText={ translate( 'Get started' ) }
 				image={ blazeDropDownIllustration }
 				href={ `/advertising/${ siteSlug || '' }` }
+				showOnJetpackNonAtomic={ true }
 			/>
 		) }
 		{ isAdmin && <SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } /> }
