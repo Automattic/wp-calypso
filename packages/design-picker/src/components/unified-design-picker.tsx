@@ -414,16 +414,17 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						currentPlanFeatures={ currentPlanFeatures }
 					/>
 				) ) }
-				{ generatedDesigns.map( ( design ) => (
-					<GeneratedDesignButtonContainer
-						key={ `generated-design__${ design.slug }` }
-						design={ design }
-						locale={ locale }
-						verticalId={ verticalId }
-						isShowing={ categorization?.selection === SHOW_GENERATED_DESIGNS_SLUG }
-						onPreview={ onPreview }
-					/>
-				) ) }
+				{ categorization?.selection === SHOW_GENERATED_DESIGNS_SLUG &&
+					generatedDesigns.map( ( design ) => (
+						<GeneratedDesignButtonContainer
+							key={ `generated-design__${ design.slug }` }
+							design={ design }
+							locale={ locale }
+							verticalId={ verticalId }
+							isShowing
+							onPreview={ onPreview }
+						/>
+					) ) }
 			</div>
 		</div>
 	);
