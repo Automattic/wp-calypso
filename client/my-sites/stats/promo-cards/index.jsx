@@ -39,17 +39,7 @@ export default function PromoCards( { isJetpack, isOdysseyStats, slug } ) {
 	// Render one or both promo cards.
 	return (
 		<>
-			{ ! showYoastPromo && (
-				<div className="stats__promo-container">
-					<div className="stats__promo-card">
-						<MobilePromoCard
-							className="stats__promo-card-apps"
-							clickHandler={ promoCardDidReceiveClick }
-						/>
-					</div>
-				</div>
-			) }
-			{ showYoastPromo && (
+			{ showYoastPromo ? (
 				<div className="stats__promo-container">
 					<div className="stats__promo-card">
 						<DotPager className="stats__promo-pager" onPageSelected={ pagerDidSelectPage }>
@@ -70,6 +60,15 @@ export default function PromoCards( { isJetpack, isOdysseyStats, slug } ) {
 								clickHandler={ promoCardDidReceiveClick }
 							/>
 						</DotPager>
+					</div>
+				</div>
+			) : (
+				<div className="stats__promo-container">
+					<div className="stats__promo-card">
+						<MobilePromoCard
+							className="stats__promo-card-apps"
+							clickHandler={ promoCardDidReceiveClick }
+						/>
 					</div>
 				</div>
 			) }
