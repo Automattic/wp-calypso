@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { Icon, video } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -109,7 +110,16 @@ class StatsSummaryChart extends Component {
 			label: tabLabel + label,
 		};
 
-		return (
+		const isFeatured = config.isEnabled( 'stats/enhance-post-detail' );
+
+		return isFeatured ? (
+			<div
+				className={ classNames( 'stats-module', 'is-summary-chart', { 'is-loading': isLoading } ) }
+			>
+				<StatsModulePlaceholder className="is-chart" isLoading={ isLoading } />
+				<ElementChart data={ this.buildChartData() } barClick={ this.barClick } />
+			</div>
+		) : (
 			<Card
 				className={ classNames( 'stats-module', 'is-summary-chart', { 'is-loading': isLoading } ) }
 			>
