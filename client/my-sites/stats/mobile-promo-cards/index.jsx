@@ -12,7 +12,7 @@ const EVENT_BLAZE_PROMO_VIEW = 'calypso_stats_blaze_banner_view';
 const EVENT_MOBILE_PROMO_VIEW = 'calypso_stats_traffic_mobile_cta_jetpack_view';
 
 export default function MobilePromoCardWrapper( { isOdysseyStats, slug } ) {
-	// Blaze promo is disabled for Odyssey & self-hosted.
+	// Blaze promo is disabled for Odyssey.
 	// Mobile apps promos are always shown.
 	const showBlazePromo = ! isOdysseyStats;
 	const showBothPromoCards = showBlazePromo;
