@@ -23,7 +23,6 @@ export interface PatternDefinition {
 export interface FormattedPattern {
 	name: string;
 	title: string;
-	description: string;
 	blocks: BlockInstance[];
 	viewportWidth: number;
 }

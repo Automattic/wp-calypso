@@ -56,7 +56,6 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 					name,
 					// Keep showing the description as before instead of the title
 					title: description,
-					description: '',
 					blocks: html
 						? parseBlocks( replacePlaceholders( html, this.props.siteInformation ) )
 						: [],
