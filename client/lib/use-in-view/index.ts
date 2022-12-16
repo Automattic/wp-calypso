@@ -1,5 +1,8 @@
 import { RefObject, useEffect, useRef } from 'react';
 
+// Check IntersectionObserver support
+const hasIntersectionObserver = typeof window !== 'undefined' && 'IntersectionObserver' in window;
+
 export function useInView< T extends Element >(
 	oneTimeCallback: () => void,
 	dependencies: any[] = []
@@ -11,7 +14,7 @@ export function useInView< T extends Element >(
 
 	useEffect( () => {
 		// We can't do anything without a valid reference to an element on the page
-		if ( ! elementRef.current ) {
+		if ( ! elementRef.current || ! hasIntersectionObserver ) {
 			return;
 		}
 
