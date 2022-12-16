@@ -155,7 +155,7 @@ class StatsPostSummary extends Component {
 					activeKey="period"
 					dataKey="value"
 					labelKey="periodLabel"
-					labelClass="visible"
+					chartType="views"
 					sectionClass="is-views"
 					tabLabel={ translate( 'Views' ) }
 					onClick={ this.selectRecord }
