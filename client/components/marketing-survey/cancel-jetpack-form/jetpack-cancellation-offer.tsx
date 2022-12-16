@@ -143,7 +143,15 @@ const JetpackCancellationOffer: FC< Props > = ( props ) => {
 			dispatch( applyCancellationOffer( siteId, purchase.id ) );
 			onGetDiscount(); // Takes care of analytics.
 		}
-	}, [ isApplyingOffer, offerApplySuccess, offerApplyError, siteId, purchase.id, onGetDiscount ] );
+	}, [
+		isApplyingOffer,
+		offerApplySuccess,
+		offerApplyError,
+		siteId,
+		purchase.id,
+		onGetDiscount,
+		dispatch,
+	] );
 
 	const getErrorOutput = useMemo( () => {
 		if ( offerApplyError ) {
@@ -162,7 +170,7 @@ const JetpackCancellationOffer: FC< Props > = ( props ) => {
 		}
 
 		return null;
-	}, [ offerApplyError ] );
+	}, [ offerApplyError, translate ] );
 
 	return (
 		<>

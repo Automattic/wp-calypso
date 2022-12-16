@@ -2,7 +2,7 @@ import { ProgressBar } from '@automattic/components';
 import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -11,9 +11,8 @@ import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import SignupHeader from 'calypso/signup/signup-header';
 import { ONBOARD_STORE } from '../../stores';
 import recordStepStart from './analytics/record-step-start';
-import * as Steps from './steps-repository';
-import { AssertConditionState, Flow } from './types';
-import type { StepPath } from './steps-repository';
+import VideoPressIntroBackground from './steps-repository/intro/videopress-intro-background';
+import { AssertConditionState, Flow, StepperStep } from './types';
 import './global.scss';
 
 const kebabCase = ( value: string ) => value.replace( /([a-z0-9])([A-Z])/g, '$1-$2' ).toLowerCase();
@@ -32,28 +31,40 @@ const kebabCase = ( value: string ) => value.replace( /([a-z0-9])([A-Z])/g, '$1-
 export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	// Configure app element that React Modal will aria-hide when modal is open
 	Modal.setAppElement( '#wpcom' );
-
-	const stepPaths = flow.useSteps();
+	const flowSteps = flow.useSteps();
+	const stepPaths = flowSteps.map( ( step ) => step.slug );
 	const location = useLocation();
-	const currentRoute = location.pathname.substring( 1 ).replace( /\/+$/, '' ) as StepPath;
+	const currentStepRoute = location.pathname.split( '/' )[ 2 ]?.replace( /\/+$/, '' );
 	const history = useHistory();
 	const { search } = useLocation();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
-	const stepNavigation = flow.useStepNavigation( currentRoute, async ( path, extraData = null ) => {
-		// If any extra data is passed to the navigate() function, store it to the stepper-internal store.
-		setStepData( {
-			path: path,
-			intent: intent,
-			...extraData,
-		} );
 
-		const _path = path.includes( '?' ) // does path contain search params
-			? generatePath( '/' + path )
-			: generatePath( '/' + path + search );
+	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
+	const progressValue = stepProgress ? stepProgress.progress / stepProgress.count : 0;
+	const [ previousProgress, setPreviousProgress ] = useState(
+		stepProgress ? stepProgress.progress : 0
+	);
+	const previousProgressValue = stepProgress ? previousProgress / stepProgress.count : 0;
 
-		history.push( _path, stepPaths );
-	} );
+	const stepNavigation = flow.useStepNavigation(
+		currentStepRoute,
+		async ( path, extraData = null ) => {
+			// If any extra data is passed to the navigate() function, store it to the stepper-internal store.
+			setStepData( {
+				path: path,
+				intent: intent,
+				...extraData,
+			} );
+
+			const _path = path.includes( '?' ) // does path contain search params
+				? generatePath( `/${ flow.name }/${ path }` )
+				: generatePath( `/${ flow.name }/${ path }${ search }` );
+
+			history.push( _path, stepPaths );
+			setPreviousProgress( stepProgress?.progress ?? 0 );
+		}
+	);
 	// Retrieve any extra step data from the stepper-internal store. This will be passed as a prop to the current step.
 	const stepData = useSelect( ( select ) => select( STEPPER_INTERNAL_STORE ).getStepData() );
 
@@ -65,21 +76,18 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
-		if ( currentRoute ) {
-			recordStepStart( flow.name, kebabCase( currentRoute ), { intent } );
+		if ( currentStepRoute ) {
+			recordStepStart( flow.name, kebabCase( currentStepRoute ), { intent } );
 		}
 
 		// We leave out intent from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
 		// This causes the intent to become empty, and thus this event being fired again.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ flow.name, currentRoute ] );
+	}, [ flow.name, currentStepRoute ] );
 
 	const assertCondition = flow.useAssertConditions?.() ?? { state: AssertConditionState.SUCCESS };
 
-	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
-	const progressValue = stepProgress ? stepProgress.progress / stepProgress.count : 0;
-
-	const renderStep = ( path: StepPath ) => {
+	const renderStep = ( step: StepperStep ) => {
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:
 				/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -89,8 +97,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				throw new Error( assertCondition.message ?? 'An error has occurred.' );
 		}
 
-		const StepComponent = Steps[ path ];
-		return <StepComponent navigation={ stepNavigation } flow={ flow.name } data={ stepData } />;
+		return <step.component navigation={ stepNavigation } flow={ flow.name } data={ stepData } />;
 	};
 
 	const getDocumentHeadTitle = () => {
@@ -99,28 +106,40 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		}
 	};
 
+	let progressBarExtraStyle: React.CSSProperties = {};
+	if ( 'videopress' === flow.name ) {
+		progressBarExtraStyle = {
+			'--previous-progress': Math.min( 100, Math.ceil( previousProgressValue * 100 ) ) + '%',
+			'--current-progress': Math.min( 100, Math.ceil( progressValue * 100 ) ) + '%',
+		} as React.CSSProperties;
+	}
+
 	return (
 		<>
 			<DocumentHead title={ getDocumentHeadTitle() } />
 			<Switch>
-				{ stepPaths.map( ( path ) => {
+				{ flowSteps.map( ( step ) => {
 					return (
-						<Route key={ path } path={ `/${ path }` }>
-							<div className={ classnames( flow.name, flow.classnames, kebabCase( path ) ) }>
+						<Route key={ step.slug } path={ `/${ flow.name }/${ step.slug }` }>
+							<div className={ classnames( flow.name, flow.classnames, kebabCase( step.slug ) ) }>
+								{ 'videopress' === flow.name && 'intro' === step.slug && (
+									<VideoPressIntroBackground />
+								) }
 								<ProgressBar
 									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 									className="flow-progress"
 									value={ progressValue * 100 }
 									total={ 100 }
+									style={ progressBarExtraStyle }
 								/>
 								<SignupHeader pageTitle={ flow.title } />
-								{ renderStep( path ) }
+								{ renderStep( step ) }
 							</div>
 						</Route>
 					);
 				} ) }
 				<Route>
-					<Redirect to={ stepPaths[ 0 ] + search } />
+					<Redirect to={ `/${ flow.name }/${ stepPaths[ 0 ] }${ search }` } />
 				</Route>
 			</Switch>
 		</>

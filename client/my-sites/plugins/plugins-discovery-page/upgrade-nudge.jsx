@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import getPlansForFeature from 'calypso/state/selectors/get-plans-for-feature';
+import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -31,6 +32,9 @@ const UpgradeNudge = ( { siteSlug, paidPlugins } ) => {
 	);
 	const isVip = useSelector( ( state ) => isVipSite( state, selectedSite?.ID ) );
 
+	const siteFeaturesLoaded = useSelector( ( state ) =>
+		getFeaturesBySiteId( state, selectedSite?.ID )
+	);
 	const hasInstallPlugins = useSelector( ( state ) =>
 		siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_PLUGINS )
 	);
@@ -63,6 +67,7 @@ const UpgradeNudge = ( { siteSlug, paidPlugins } ) => {
 		! sitePlan ||
 		isVip ||
 		hasInstallPlugins ||
+		! siteFeaturesLoaded ||
 		( paidPlugins && hasInstallPurchasedPlugins )
 	) {
 		return null;
@@ -89,9 +94,9 @@ const UpgradeNudge = ( { siteSlug, paidPlugins } ) => {
 		return (
 			<UpsellNudge
 				event="calypso_plugins_browser_upgrade_nudge"
-				className={ 'plugins-discovery-page__upsell' }
+				className="plugins-discovery-page__upsell"
 				callToAction={ translate( 'Upgrade now' ) }
-				icon={ 'notice-outline' }
+				icon="notice-outline"
 				showIcon={ true }
 				href={
 					pluginsPlansPageFlag
@@ -116,9 +121,9 @@ const UpgradeNudge = ( { siteSlug, paidPlugins } ) => {
 		return (
 			<UpsellNudge
 				event="calypso_plugins_browser_upgrade_nudge"
-				className={ 'plugins-discovery-page__upsell' }
+				className="plugins-discovery-page__upsell"
 				callToAction={ translate( 'Upgrade now' ) }
-				icon={ 'notice-outline' }
+				icon="notice-outline"
 				showIcon={ true }
 				href={ pluginsPlansPageFlag ? pluginsPlansPage : `/checkout/${ siteSlug }/pro` }
 				feature={ FEATURE_INSTALL_PLUGINS }
@@ -144,9 +149,9 @@ const UpgradeNudge = ( { siteSlug, paidPlugins } ) => {
 	return (
 		<UpsellNudge
 			event="calypso_plugins_browser_upgrade_nudge"
-			className={ 'plugins-discovery-page__upsell' }
+			className="plugins-discovery-page__upsell"
 			callToAction={ translate( 'Upgrade to Business' ) }
-			icon={ 'notice-outline' }
+			icon="notice-outline"
 			showIcon={ true }
 			href={ pluginsPlansPageFlag ? pluginsPlansPage : `/checkout/${ siteSlug }/business` }
 			feature={ FEATURE_INSTALL_PLUGINS }

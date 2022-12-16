@@ -106,7 +106,7 @@ function LicensingPromptDialog( { siteId }: Props ) {
 										target="_blank"
 										plain
 									>
-										{ 'https://wordpress.com/me/purchases' }
+										https://wordpress.com/me/purchases
 									</Button>
 								),
 							},

@@ -1,22 +1,21 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useHasSeenWhatsNewModalQuery, HelpCenter } from '@automattic/data-stores';
-import { HelpIcon } from '@automattic/help-center';
+import { HelpCenter } from '@automattic/data-stores';
+import { HelpIcon, PromotionalPopover } from '@automattic/help-center';
 import {
 	useDispatch as useDataStoreDispatch,
 	useSelect as useDateStoreSelect,
 } from '@wordpress/data';
 import classnames from 'classnames';
+import { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import Item from './item';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-const MasterbarHelpCenter = ( { siteId, tooltip } ) => {
-	const { isLoading, data } = useHasSeenWhatsNewModalQuery( siteId );
+const MasterbarHelpCenter = ( { tooltip } ) => {
+	const helpIconRef = useRef();
 	const sectionName = useSelector( getSectionName );
-
-	const newItems = ! isLoading && ! data?.has_seen_whats_new_modal;
 
 	const helpCenterVisible = useDateStoreSelect( ( select ) =>
 		select( HELP_CENTER_STORE ).isHelpCenterShown()
@@ -25,6 +24,7 @@ const MasterbarHelpCenter = ( { siteId, tooltip } ) => {
 
 	const handleToggleHelpCenter = () => {
 		recordTracksEvent( `calypso_inlinehelp_${ helpCenterVisible ? 'close' : 'show' }`, {
+			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
 		} );
@@ -33,14 +33,17 @@ const MasterbarHelpCenter = ( { siteId, tooltip } ) => {
 	};
 
 	return (
-		<Item
-			onClick={ handleToggleHelpCenter }
-			className={ classnames( 'masterbar__item-help', {
-				'is-active': helpCenterVisible,
-			} ) }
-			tooltip={ tooltip }
-			icon={ <HelpIcon newItems={ newItems } /> }
-		/>
+		<>
+			<Item
+				onClick={ handleToggleHelpCenter }
+				className={ classnames( 'masterbar__item-help', {
+					'is-active': helpCenterVisible,
+				} ) }
+				tooltip={ tooltip }
+				icon={ <HelpIcon ref={ helpIconRef } /> }
+			/>
+			<PromotionalPopover iconElement={ helpIconRef.current } />
+		</>
 	);
 };
 

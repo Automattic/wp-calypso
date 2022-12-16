@@ -13,16 +13,11 @@ $font-family: "SF Pro Text", $sans;
 	display: flex;
 	height: calc(100vh - 60px);
 	width: 100%;
-	justify-content: center;
 
 	.pattern-assembler__button {
 		width: 100%;
 		height: 40px;
 		border-radius: 4px;
-	}
-
-	.step-container {
-		max-width: 1440px;
 	}
 
 	.step-container__content {
@@ -73,7 +68,7 @@ $font-family: "SF Pro Text", $sans;
 				line-height: 24px;
 				letter-spacing: -0.1px;
 				color: #50575e;
-				padding-bottom: 42px;
+				padding-bottom: 24px;
 			}
 		}
 
@@ -135,10 +130,9 @@ $font-family: "SF Pro Text", $sans;
 
 			li {
 				list-style: none;
-				height: 40px;
-				line-height: 40px;
+				height: 48px;
+				line-height: 48px;
 				border-bottom: 1px solid #eee;
-				padding: 0 5px 0 35px;
 
 				.pattern-layout__list-item-text {
 					text-overflow: ellipsis;
@@ -153,15 +147,19 @@ $font-family: "SF Pro Text", $sans;
 					border: 0;
 					padding: 0;
 					font-family: inherit;
-					color: var(--studio-blue-50);
+					color: var(--color-link);
+					transition: color 0.2s ease-in;
 				}
 
 				&:hover,
 				&:focus,
 				&:focus-within {
 					button {
-						color: var(--color-accent-60);
-						transition: color 0.2s ease-in;
+						color: var(--color-link-dark);
+					}
+
+					.pattern-layout__add-icon {
+						background-color: var(--color-link-dark);
 					}
 
 					.pattern-layout__list-item-text {
@@ -188,18 +186,6 @@ $font-family: "SF Pro Text", $sans;
 				display: flex;
 				align-items: center;
 
-				&--header {
-					background: url(./images/icon-header.svg) no-repeat 5px center;
-				}
-
-				&--section {
-					background: url(./images/icon-section.svg) no-repeat 5px center;
-				}
-
-				&--footer {
-					background: url(./images/icon-footer.svg) no-repeat 5px center;
-				}
-
 				&--header,
 				&--footer {
 					&:hover .pattern-layout__list-item-text {
@@ -208,11 +194,27 @@ $font-family: "SF Pro Text", $sans;
 				}
 			}
 
-			.pattern-layout__add-icon {
-				line-height: 8px;
-				vertical-align: top;
-				padding-right: 4px;
-				height: 10px;
+			.pattern-layout__list-item-button {
+				width: 100%;
+				height: 100%;
+			}
+
+			.pattern-layout__icon {
+				margin-right: 16px;
+			}
+
+			.pattern-layout__icon-add {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				width: 24px;
+				height: 24px;
+				padding: 6px;
+				border-radius: 2px;
+				box-sizing: border-box;
+				color: var(--studio-white);
+				background-color: var(--color-link);
+				transition: background-color 0.2s ease-in;
 			}
 		}
 
@@ -241,11 +243,34 @@ $font-family: "SF Pro Text", $sans;
 			pointer-events: none;
 		}
 
-		.pattern-selector__header h1 {
-			font-family: $font-family;
-			font-size: $font-title-small;
-			font-weight: 500;
-			line-height: 26px;
+		.pattern-selector__header {
+			display: flex;
+
+			.button {
+				padding: 0;
+				width: 25px;
+				margin-right: 10px;
+
+				&:hover svg {
+					fill: var(--color-neutral-70);
+				}
+			}
+
+			svg {
+				width: 16px;
+				height: 16px;
+				top: 4px;
+				margin-right: 12px;
+				margin-left: 4px;
+				fill: var(--studio-gray-100);
+			}
+
+			h1 {
+				font-family: $font-family;
+				font-size: $font-title-small;
+				font-weight: 500;
+				line-height: 26px;
+			}
 		}
 
 		.pattern-selector__body {
@@ -267,11 +292,12 @@ $font-family: "SF Pro Text", $sans;
 			iframe {
 				width: 1024px;
 				height: 665px;
-				transform: scale(0.2705);
+				transform: scale(0.268);
 				transform-origin: top left;
 				position: absolute;
 				border-radius: 4px;
 				pointer-events: none;
+				overflow: hidden;
 			}
 
 			div {
@@ -282,9 +308,14 @@ $font-family: "SF Pro Text", $sans;
 				overflow: hidden;
 				user-select: none;
 				cursor: pointer;
+				background: #fff;
 
 				&:not(:last-child) {
 					margin-bottom: 16px;
+				}
+
+				&.pattern-selector__block-list--selected-pattern {
+					box-shadow: 0 0 0 2px var(--studio-gray);
 				}
 
 				&:focus,

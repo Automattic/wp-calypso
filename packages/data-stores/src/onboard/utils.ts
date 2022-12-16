@@ -19,6 +19,11 @@ export const goalsToIntent = ( goals: SiteGoal[] ): SiteIntent => {
 		return SiteIntent.Import;
 	}
 
+	// Prioritize Sell over Build and Write
+	if ( goals.includes( SiteGoal.Sell ) ) {
+		return SiteIntent.Sell;
+	}
+
 	const intentDecidingGoal = ( goals as IntentDecidingGoal[] ).find( ( goal ) =>
 		INTENT_DECIDING_GOALS.includes( goal )
 	);

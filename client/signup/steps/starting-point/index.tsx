@@ -60,8 +60,8 @@ export default function StartingPointStep( props: Props ) {
 			subHeaderText={ subHeaderText }
 			fallbackSubHeaderText={ subHeaderText }
 			stepContent={ <StartingPoint onSelect={ submitStartingPoint } /> }
-			align={ 'left' }
-			skipButtonAlign={ 'top' }
+			align="left"
+			skipButtonAlign="top"
 			skipLabelText={ translate( 'Skip to My Home' ) }
 			// We need to redirect user to My Home and apply the default theme if the user skips this step
 			goToNextStep={ () => submitStartingPoint( 'skip-to-my-home' ) }

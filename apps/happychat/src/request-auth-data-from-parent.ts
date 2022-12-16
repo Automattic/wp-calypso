@@ -22,10 +22,9 @@ export function requestDataFromParent(): Promise< HappyChatAuthData > {
 		throw new Error( 'This is not running neither inside an iframe or a popup.' );
 	}
 	return new Promise( function ( resolve, reject ) {
-		// Give the parent one second to respond, which is plenty of time, throw after then.
-		// If parent window is prepared to respond, it will probably respond in less than 100ms, if not, there is no reason to wait longer.
-		// It may be worth it to poll, though. So far, YAGNI.
-		const timeout = setTimeout( reject, 1000, unresponsiveParentError );
+		// Give the parent 5 seconds to respond, throw after then.
+		// It's 5 seconds because the parent will need to issue a request to /me.
+		const timeout = setTimeout( reject, 5000, unresponsiveParentError );
 
 		function handler( event: MessageEvent ) {
 			if ( event.data?.type === 'happy-chat-authentication-data' ) {

@@ -416,13 +416,15 @@ export function noSite( context, next ) {
 	const hasSite = currentUser && currentUser.visible_site_count >= 1;
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
 	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
+	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
 
-	if ( ! isDomainOnlyFlow && ! isJetpackCheckoutFlow && hasSite ) {
+	if ( ! isDomainOnlyFlow && ! isJetpackCheckoutFlow && ! isGiftCheckoutFlow && hasSite ) {
 		siteSelection( context, next );
-	} else {
-		context.store.dispatch( setSelectedSiteId( null ) );
-		return next();
+		return;
 	}
+
+	context.store.dispatch( setSelectedSiteId( null ) );
+	return next();
 }
 
 /*
@@ -517,8 +519,7 @@ export function siteSelection( context, next ) {
 					const unmappedSlug = withoutHttp( getSiteOption( getState(), site.ID, 'unmapped_url' ) );
 
 					if ( unmappedSlug !== siteSlug && unmappedSlug === siteFragment ) {
-						const basePath = sectionify( context.path, siteFragment );
-						return page.redirect( `${ basePath }/${ siteSlug }` );
+						return page.redirect( context.path.replace( siteFragment, siteSlug ) );
 					}
 				}
 
@@ -543,9 +544,10 @@ export function siteSelection( context, next ) {
 					navigate( getJetpackAuthorizeURL( context, site ) );
 				} else {
 					// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
+					const siteFragmentOffset = context.path.indexOf( `/${ siteFragment }` );
 					const allSitesPath = addQueryArgs(
 						{ site: siteFragment },
-						sectionify( context.path, siteFragment )
+						context.path.substring( 0, siteFragmentOffset )
 					);
 					page.redirect( allSitesPath );
 				}

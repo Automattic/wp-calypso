@@ -14,6 +14,7 @@ import {
 	getCreatedSocialAccountBearerToken,
 	getRedirectToOriginal,
 } from 'calypso/state/login/selectors';
+import SocialLoginToS from './social-login-tos';
 
 import './social.scss';
 
@@ -32,7 +33,7 @@ class SocialLoginForm extends Component {
 
 	static defaultProps = {
 		linkingSocialService: '',
-		shouldRenderToS: true,
+		shouldRenderToS: false,
 	};
 
 	reportSocialLoginFailure = ( { service, socialInfo, error } ) => {
@@ -154,7 +155,7 @@ class SocialLoginForm extends Component {
 							socialServiceResponse={
 								this.props.socialService === 'google' ? this.props.socialServiceResponse : null
 							}
-							startingPoint={ 'login' }
+							startingPoint="login"
 						/>
 
 						<AppleLoginButton
@@ -168,6 +169,7 @@ class SocialLoginForm extends Component {
 							}
 						/>
 					</div>
+					{ this.props.shouldRenderToS && <SocialLoginToS /> }
 				</div>
 
 				{ this.props.bearerToken && (

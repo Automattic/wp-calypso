@@ -118,7 +118,7 @@ class JetpackSiteStats extends Component {
 			<div className="site-settings__traffic-settings">
 				<QueryJetpackConnection siteId={ siteId } />
 
-				<SettingsSectionHeader title={ translate( 'Site stats' ) } />
+				<SettingsSectionHeader title={ translate( 'Jetpack Stats' ) } />
 
 				<FoldableCard
 					className="site-settings__foldable-card is-top-level"

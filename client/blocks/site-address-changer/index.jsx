@@ -10,6 +10,7 @@ import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { freeSiteAddressType } from 'calypso/lib/domains/constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import {
@@ -61,7 +62,10 @@ export class SiteAddressChanger extends Component {
 		const { domainFieldValue, newDomainSuffix } = this.state;
 		const { currentDomain, currentDomainSuffix, siteId } = this.props;
 		const oldDomain = get( currentDomain, 'name', null );
-		const type = '.wordpress.com' === currentDomainSuffix ? 'blog' : 'dotblog';
+		const type =
+			'.wordpress.com' === currentDomainSuffix
+				? freeSiteAddressType.BLOG
+				: freeSiteAddressType.MANAGED;
 
 		this.props.requestSiteAddressChange(
 			siteId,
@@ -196,7 +200,8 @@ export class SiteAddressChanger extends Component {
 			return;
 		}
 
-		const type = '.wordpress.com' === newDomainSuffix ? 'blog' : 'dotblog';
+		const type =
+			'.wordpress.com' === newDomainSuffix ? freeSiteAddressType.BLOG : freeSiteAddressType.MANAGED;
 
 		this.props.requestSiteAddressAvailability(
 			this.props.siteId,

@@ -67,7 +67,7 @@ This is an "asyncronous escape hatch", allowing you to use ExPlat in more synchr
 
 Checklist for use:
 
-- [ ] Does `loadExperiment` get called before `dangerouslyGetExperimentAssignment` gets called.
-- [ ] Does `loadExperiment` get called significantly before it (minimum 2 seconds looking at perf data, 5-10 seconds is best).
+- [ ] Does `loadExperimentAssignment` get called before `dangerouslyGetExperimentAssignment` gets called.
+- [ ] Does `loadExperimentAssignment` get called significantly before it (minimum 2 seconds looking at perf data, 5-10 seconds is best).
 - [ ] ~~Is `dangerouslyGetExperimentAssignment` wrapped in a try-catch block~~
 - [ ] Are there no `console.log` errors being emitted?

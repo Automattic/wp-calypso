@@ -1,6 +1,7 @@
 export default function ReaderFacebookIcon( { iconSize } ) {
 	return (
 		<svg
+			key="facebook"
 			fill="none"
 			className="reader-facebook"
 			viewBox="0 0 24 24"

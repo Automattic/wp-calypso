@@ -238,7 +238,7 @@ class PasswordlessSignupForm extends Component {
 					<ValidationFieldset errorMessages={ errorMessages }>
 						<FormLabel htmlFor="email">{ translate( 'Enter your email address' ) }</FormLabel>
 						<FormTextInput
-							autoCapitalize={ 'off' }
+							autoCapitalize="off"
 							className="signup-form__passwordless-email"
 							type="email"
 							name="email"

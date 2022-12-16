@@ -5,7 +5,11 @@
 
 .add-dns-record {
 	header.formatted-header {
-		margin-bottom: 24px;
+		margin-bottom: 4px;
+
+		@include break-mobile {
+			margin-bottom: initial;
+		}
 
 		h1.formatted-header__title {
 			color: $gray-900;
@@ -86,14 +90,6 @@
 
 		.is-hidden {
 			display: none;
-		}
-	}
-
-	header.formatted-header {
-		margin-bottom: 4px;
-
-		@include break-mobile {
-			margin-bottom: initial;
 		}
 	}
 

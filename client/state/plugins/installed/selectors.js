@@ -17,19 +17,25 @@ const _filters = {
 		return true;
 	},
 	active: function ( plugin ) {
-		return some( plugin.sites, function ( site ) {
-			return site.active;
-		} );
+		return (
+			some( plugin.sites, function ( site ) {
+				return site.active;
+			} ) || plugin.statusRecentlyChanged
+		);
 	},
 	inactive: function ( plugin ) {
-		return some( plugin.sites, function ( site ) {
-			return ! site.active;
-		} );
+		return (
+			some( plugin.sites, function ( site ) {
+				return ! site.active;
+			} ) || plugin.statusRecentlyChanged
+		);
 	},
 	updates: function ( plugin ) {
-		return some( plugin.sites, function ( site ) {
-			return site.update && ! site.update.recentlyUpdated;
-		} );
+		return (
+			some( plugin.sites, function ( site ) {
+				return site.update && ! site.update.recentlyUpdated;
+			} ) || plugin.statusRecentlyChanged
+		);
 	},
 	isEqual: function ( pluginSlug, plugin ) {
 		return plugin.slug === pluginSlug;
@@ -60,7 +66,7 @@ export function requestPluginsError( state ) {
 	return state.plugins.installed.requestError;
 }
 
-export function getPlugins( state, siteIds, pluginFilter ) {
+function getPluginsSelector( state, siteIds, pluginFilter ) {
 	let pluginList = reduce(
 		siteIds,
 		( memo, siteId ) => {
@@ -98,6 +104,18 @@ export function getPlugins( state, siteIds, pluginFilter ) {
 
 	return sortBy( pluginList, ( item ) => item.slug.toLowerCase() );
 }
+
+export const getPlugins = createSelector(
+	getPluginsSelector,
+	( state, siteIds ) => [
+		state.plugins.installed.plugins,
+		isRequestingForAllSites( state ),
+		...siteIds.map( ( siteId ) => isRequesting( state, siteId ) ),
+	],
+	( state, siteIds, pluginFilter ) => {
+		return [ siteIds, pluginFilter ].flat().join( '-' );
+	}
+);
 
 export function getPluginsWithUpdates( state, siteIds ) {
 	return filter( getPlugins( state, siteIds ), _filters.updates ).map( ( plugin ) => ( {

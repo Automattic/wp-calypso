@@ -16,8 +16,8 @@ export default class AuthorCompactProfileExample extends Component {
 			<Card>
 				<AuthorCompactProfile
 					author={ author }
-					siteName={ 'Bananas' }
-					siteUrl={ 'http://wpcalypso.wordpress.com' }
+					siteName="Bananas"
+					siteUrl="http://wpcalypso.wordpress.com"
 					followCount={ 123 }
 					feedId={ 1 }
 					siteId={ null }

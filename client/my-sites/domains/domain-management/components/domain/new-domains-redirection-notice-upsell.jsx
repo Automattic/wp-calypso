@@ -43,7 +43,7 @@ class NewDomainsRedirectionNoticeUpsell extends Component {
 				showIcon={ true }
 				icon="info"
 				href={ `/checkout/${ selectedSiteId }/${ checkoutPlan }` }
-				title={ '' }
+				title=""
 				description={
 					eligibleForProPlan
 						? translate(

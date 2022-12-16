@@ -11,15 +11,15 @@ const PromotePost = () => {
 	// todo no tracks here yet
 	return (
 		<EducationalContent
-			title={ translate( 'Promote your posts' ) }
+			title={ translate( 'Promote your posts and pages' ) }
 			description={ translate(
-				'Reach more people promoting a post to the larger WordPress.com community of blogs and sites with our ad delivery system.'
+				'Increase your reach by promoting your work to the larger WordPress.com community of blogs and sites.'
 			) }
 			links={ [
 				{
 					calypsoLink: true,
-					url: `/advertising/${ siteSlug }`, // todo
-					text: 'Learn more',
+					url: `/advertising/${ siteSlug }`,
+					text: translate( 'Start promoting' ),
 				},
 			] }
 			illustration={ megaphoneIllustration }

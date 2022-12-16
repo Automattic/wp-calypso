@@ -11,10 +11,18 @@ const debug = debugFactory( 'calypso:composite-checkout:use-add-products-from-ur
 
 export type isPendingAddingProductsFromUrl = boolean;
 
+/**
+ * Product requests can be sent to checkout using various methods including URL
+ * or localStorage. Those requests are turned into `RequestCartProduct` objects
+ * by `usePrepareProductsForCart()` and then they are added to the cart by this
+ * hook.
+ *
+ * This hook will return true when its adding process is complete or if there is
+ * nothing to add.
+ */
 export default function useAddProductsFromUrl( {
 	isLoadingCart,
 	isCartPendingUpdate,
-	isJetpackSitelessCheckout,
 	productsForCart,
 	areCartProductsPreparing,
 	couponCodeFromUrl,
@@ -24,7 +32,6 @@ export default function useAddProductsFromUrl( {
 }: {
 	isLoadingCart: boolean;
 	isCartPendingUpdate: boolean;
-	isJetpackSitelessCheckout: boolean;
 	productsForCart: RequestCartProduct[];
 	areCartProductsPreparing: boolean;
 	couponCodeFromUrl: string | null | undefined;
@@ -81,19 +88,7 @@ export default function useAddProductsFromUrl( {
 		debug( 'adding initial products to cart', productsForCart );
 		const cartPromises = [];
 		if ( productsForCart.length > 0 ) {
-			// The siteless checkout backend cannot handle multiple product checkout yet,
-			// so therefore we only want one product in the cart (The most recently selected).
-			if ( isJetpackSitelessCheckout ) {
-				debug(
-					'siteless checkout: replacing the cart with the most recently selected product',
-					productsForCart[ productsForCart.length - 1 ]
-				);
-				cartPromises.push(
-					replaceProductsInCart( [ productsForCart[ productsForCart.length - 1 ] ] )
-				);
-			} else {
-				cartPromises.push( addProductsToCart( productsForCart ) );
-			}
+			cartPromises.push( addProductsToCart( productsForCart ) );
 		}
 		debug( 'adding initial coupon to cart', couponCodeFromUrl );
 		if ( couponCodeFromUrl ) {
@@ -112,7 +107,6 @@ export default function useAddProductsFromUrl( {
 		applyCoupon,
 		productsForCart,
 		addProductsToCart,
-		isJetpackSitelessCheckout,
 		replaceProductsInCart,
 	] );
 

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_PREMIUM, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import DesignPicker, {
@@ -59,18 +58,19 @@ export default function DesignPickerStep( props ) {
 
 	const [ selectedDesign, setSelectedDesign ] = useState( null );
 	const scrollTop = useRef( 0 );
-	const tier =
-		isPremiumThemeAvailable || isEnabled( 'signup/design-picker-premium-themes-checkout' )
-			? 'all'
-			: 'free';
 
 	const getThemeFilters = () => {
-		if ( props.useDIFMThemes ) return 'do-it-for-me';
+		if ( props.useDIFMThemes ) {
+			return 'do-it-for-me';
+		}
 
 		return 'auto-loading-homepage,full-site-editing';
 	};
 
-	const { data: apiThemes = [] } = useThemeDesignsQuery( { filter: getThemeFilters(), tier } );
+	const { data: apiThemes = [] } = useThemeDesignsQuery( {
+		filter: getThemeFilters(),
+		tier: 'all',
+	} );
 
 	useEffect(
 		() => {
@@ -205,10 +205,6 @@ export default function DesignPickerStep( props ) {
 	}
 
 	function renderCheckoutModal() {
-		if ( ! isEnabled( 'signup/design-picker-premium-themes-checkout' ) ) {
-			return null;
-		}
-
 		return <AsyncCheckoutModal />;
 	}
 
@@ -235,7 +231,7 @@ export default function DesignPickerStep( props ) {
 					recommendedCategorySlug={ getCategorizationOptionsForStep().defaultSelection }
 					categoriesHeading={
 						<FormattedHeader
-							id={ 'step-header' }
+							id="step-header"
 							headerText={ headerText() }
 							subHeaderText={ subHeaderText() }
 							align="left"
@@ -353,8 +349,8 @@ export default function DesignPickerStep( props ) {
 				className="design-picker__preview"
 				fallbackHeaderText={ designTitle }
 				headerText={ designTitle }
-				fallbackSubHeaderText={ '' }
-				subHeaderText={ '' }
+				fallbackSubHeaderText=""
+				subHeaderText=""
 				stepContent={ renderDesignPreview() }
 				align={ isMobile ? 'left' : 'center' }
 				hideSkip

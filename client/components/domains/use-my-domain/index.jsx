@@ -67,7 +67,9 @@ function UseMyDomain( props ) {
 	const baseClassName = 'use-my-domain';
 
 	useEffect( () => {
-		if ( initialMode ) setMode( initialMode );
+		if ( initialMode ) {
+			setMode( initialMode );
+		}
 	}, [ initialMode ] );
 
 	const onGoBack = () => {
@@ -88,7 +90,9 @@ function UseMyDomain( props ) {
 				if ( prevTransferDomainStepsDefinition ) {
 					setTransferDomainFlowPageSlug( prevTransferDomainStepsDefinition );
 				} else {
-					if ( wasInitialModeSet ) return goBack();
+					if ( wasInitialModeSet ) {
+						return goBack();
+					}
 					setMode( inputMode.transferOrConnect );
 				}
 				return;
@@ -107,7 +111,7 @@ function UseMyDomain( props ) {
 	}, [] );
 
 	const filterDomainName = useCallback( ( domain ) => {
-		return domain.replace( /(?:^http(?:s)?:)?(?:[/]*)([^/?]*)(?:.*)$/gi, '$1' );
+		return domain.replace( /(?:^http(?:s)?:)?(?:[/]*)(?:www\.)?([^/?]*)(?:.*)$/gi, '$1' );
 	}, [] );
 
 	const setTransferStepsAndLockStatus = useCallback(
@@ -225,8 +229,9 @@ function UseMyDomain( props ) {
 	}, [ initialMode, initialQuery, onNext ] );
 
 	useEffect( () => {
-		if ( inputMode.transferDomain === mode && inputMode.transferDomain === initialMode )
+		if ( inputMode.transferDomain === mode && inputMode.transferDomain === initialMode ) {
 			setDomainTransferData();
+		}
 	}, [ mode, setDomainTransferData, initialMode ] );
 
 	const showOwnershipVerificationFlow = () => {
@@ -245,6 +250,7 @@ function UseMyDomain( props ) {
 				baseClassName={ baseClassName }
 				domainName={ domainName }
 				isBusy={ isFetchingAvailability }
+				isSignupStep={ isSignupStep }
 				onChange={ onDomainNameChange }
 				onClear={ onClearInput }
 				onNext={ onNext }
@@ -275,7 +281,7 @@ function UseMyDomain( props ) {
 	const renderOwnershipVerificationFlow = () => {
 		return (
 			<ConnectDomainSteps
-				baseClassName={ 'connect-domain-step' }
+				baseClassName="connect-domain-step"
 				domain={ domainName }
 				initialPageSlug={ ownershipVerificationFlowPageSlug }
 				isOwnershipVerificationFlow={ true }
@@ -289,7 +295,7 @@ function UseMyDomain( props ) {
 	const renderTransferDomainFlow = () => {
 		return (
 			<ConnectDomainSteps
-				baseClassName={ 'connect-domain-step' }
+				baseClassName="connect-domain-step"
 				domainInboundTransferStatusInfo={ domainInboundTransferStatusInfo }
 				isFetchingAvailability={ isFetchingAvailability }
 				initialMode={ initialMode }
@@ -364,7 +370,6 @@ function UseMyDomain( props ) {
 					brandFont
 					className={ baseClassName + '__page-heading' }
 					headerText={ headerText }
-					align="left"
 				/>
 			</>
 		);
@@ -382,10 +387,15 @@ UseMyDomain.propTypes = {
 	goBack: PropTypes.func,
 	initialQuery: PropTypes.string,
 	isSignupStep: PropTypes.bool,
+	showHeader: PropTypes.bool,
 	onConnect: PropTypes.func,
 	onTransfer: PropTypes.func,
+	onNextStep: PropTypes.func,
 	selectedSite: PropTypes.object,
 	transferDomainUrl: PropTypes.string,
+	analyticsSection: PropTypes.string,
+	basePath: PropTypes.string,
+	initialMode: PropTypes.string,
 };
 
 export default connect( ( state ) => ( { selectedSite: getSelectedSite( state ) } ) )(

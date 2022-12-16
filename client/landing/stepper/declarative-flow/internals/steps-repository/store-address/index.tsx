@@ -47,7 +47,7 @@ const CityZipRow = styled.div`
 `;
 
 const StoreAddress: Step = function StoreAddress( { navigation } ) {
-	const { goBack, goNext, submit } = navigation;
+	const { goNext, submit } = navigation;
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const site = useSite();
 	const settings = useSelect(
@@ -297,20 +297,18 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'store-address' }
+			stepName="store-address"
 			className={ `is-step-${ intent }` }
-			skipButtonAlign={ 'top' }
-			goBack={ goBack }
 			goNext={ goNext }
 			isHorizontalLayout={ true }
 			formattedHeader={
 				<FormattedHeader
-					id={ 'site-options-header' }
+					id="site-options-header"
 					headerText={ headerText }
 					subHeaderText={ __(
 						'This will be used as your default business address. You can change it later if you need to.'
 					) }
-					align={ 'left' }
+					align="left"
 				/>
 			}
 			intent={ intent }
@@ -318,6 +316,7 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 			recordTracksEvent={ recordTracksEvent }
 			stepProgress={ stepProgress }
 			hideSkip
+			hideBack
 		/>
 	);
 };

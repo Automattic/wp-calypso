@@ -69,10 +69,8 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			'Yoast SEO',
 			'MailPoet – emails and newsletters in WordPress',
 			'Jetpack CRM – Clients, Invoices, Leads, & Billing for WordPress',
-			'Contact Form 7',
-			'Site Kit by Google – Analytics, Search Console, AdSense, Speed',
 		] )( 'Featured Plugins section should show the %s plugin', async function ( plugin: string ) {
-			await pluginsPage.validateHasPluginOnSection( 'featured', plugin );
+			await pluginsPage.validateHasPluginOnSection( PluginsPage.featuredSection, plugin );
 		} );
 
 		it( 'Can browse SEO category', async function () {

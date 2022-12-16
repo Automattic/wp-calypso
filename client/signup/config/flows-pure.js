@@ -1,4 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
+import {
+	LINK_IN_BIO_FLOW,
+	LINK_IN_BIO_TLD_FLOW,
+	setupSiteAfterCreation,
+} from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { VIDEOPRESS_ONBOARDING_FLOW_STEPS } from './constants';
 
@@ -16,7 +21,6 @@ export function generateFlows( {
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
-	getAddOnsStep = noop,
 } = {} ) {
 	const flows = [
 		{
@@ -72,7 +76,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'free',
-			steps: getAddOnsStep( [ 'user', 'domains' ] ),
+			steps: [ 'user', 'domains' ],
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and default to the free plan.',
 			lastModified: '2020-08-11',
@@ -80,10 +84,10 @@ export function generateFlows( {
 		},
 		{
 			name: 'with-theme',
-			steps: [ 'domains-theme-preselected', 'plans', 'user' ],
+			steps: [ 'user', 'domains-theme-preselected', 'plans' ],
 			destination: getChecklistThemeDestination,
 			description: 'Preselect a theme to activate/buy from an external source',
-			lastModified: '2020-08-11',
+			lastModified: '2022-11-28',
 			showRecaptcha: true,
 		},
 		{
@@ -102,11 +106,9 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding',
-			steps: getAddOnsStep(
-				isEnabled( 'signup/professional-email-step' )
-					? [ 'user', 'domains', 'emails', 'plans' ]
-					: [ 'user', 'domains', 'plans' ]
-			),
+			steps: isEnabled( 'signup/professional-email-step' )
+				? [ 'user', 'domains', 'emails', 'plans' ]
+				: [ 'user', 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2020-12-10',
@@ -116,26 +118,55 @@ export function generateFlows( {
 			name: 'newsletter',
 			steps: [ 'domains', 'plans-newsletter' ],
 			destination: ( dependencies ) =>
-				`/setup/subscribers?flow=newsletter&siteSlug=${ dependencies.siteSlug }`,
+				`/setup/newsletter/subscribers?siteSlug=${ dependencies.siteSlug }`,
 			description: 'Beginning of the flow to create a newsletter',
-			lastModified: '2022-08-15',
+			lastModified: '2022-11-01',
 			showRecaptcha: true,
 			get pageTitle() {
 				return translate( 'Newsletter' );
 			},
+			postCompleteCallback: setupSiteAfterCreation,
 		},
 		{
-			name: 'link-in-bio',
-			steps: [ 'domains', 'plans-link-in-bio' ],
+			name: LINK_IN_BIO_FLOW,
+			steps: [ 'domains-link-in-bio', 'plans-link-in-bio' ],
 			destination: ( dependencies ) =>
-				`/setup/launchpad?flow=link-in-bio&siteSlug=${ encodeURIComponent(
-					dependencies.siteSlug
-				) }`,
+				`/setup/link-in-bio/launchpad?siteSlug=${ encodeURIComponent( dependencies.siteSlug ) }`,
 			description: 'Beginning of the flow to create a link in bio',
-			lastModified: '2022-08-16',
+			lastModified: '2022-11-01',
 			showRecaptcha: true,
 			get pageTitle() {
 				return translate( 'Link in Bio' );
+			},
+			postCompleteCallback: setupSiteAfterCreation,
+		},
+		{
+			name: LINK_IN_BIO_TLD_FLOW,
+			steps: [ 'domains-link-in-bio-tld', 'user', 'plans-link-in-bio' ],
+			middleDestination: {
+				user: ( dependencies ) => `/setup/link-in-bio/patterns?tld=${ dependencies.tld }`,
+			},
+			destination: ( dependencies ) =>
+				`/setup/link-in-bio/launchpad?siteSlug=${ encodeURIComponent( dependencies.siteSlug ) }`,
+			description: 'Beginning of the flow to create a link in bio',
+			lastModified: '2022-11-03',
+			showRecaptcha: true,
+			get pageTitle() {
+				return translate( 'Link in Bio' );
+			},
+			providesDependenciesInQuery: [ 'tld' ],
+			postCompleteCallback: setupSiteAfterCreation,
+		},
+		{
+			name: 'import',
+			steps: [ 'user', 'domains', 'plans-import' ],
+			destination: ( dependencies ) =>
+				`/setup/import-focused/import?siteSlug=${ dependencies.siteSlug }`,
+			description: 'Beginning of the flow to import content',
+			lastModified: '2022-10-03',
+			showRecaptcha: true,
+			get pageTitle() {
+				return translate( 'Import' );
 			},
 		},
 		{
@@ -151,7 +182,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding-with-email',
-			steps: getAddOnsStep( [ 'user', 'mailbox-domain', 'mailbox', 'mailbox-plan' ] ),
+			steps: [ 'user', 'mailbox-domain', 'mailbox', 'mailbox-plan' ],
 			destination: getEmailSignupFlowDestination,
 			description:
 				'Copy of the onboarding flow that includes non-skippable domain and email steps; the flow is used by the Professional Email landing page',
@@ -160,7 +191,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding-registrationless',
-			steps: getAddOnsStep( [ 'domains', 'plans-new', 'user-new' ] ),
+			steps: [ 'domains', 'plans-new', 'user-new' ],
 			destination: getSignupDestination,
 			description: 'Checkout without user account or site. Read more https://wp.me/pau2Xa-1hW',
 			lastModified: '2020-06-26',
@@ -274,9 +305,24 @@ export function generateFlows( {
 		{
 			name: 'videopress',
 			steps: VIDEOPRESS_ONBOARDING_FLOW_STEPS,
-			destination: ( dependencies ) => `/site-editor/${ dependencies.siteSlug }`,
+			destination: ( dependencies ) =>
+				`/setup/completingPurchase?flow=videopress&siteSlug=${ encodeURIComponent(
+					dependencies.siteSlug
+				) }`,
 			description: 'VideoPress signup flow',
-			lastModified: '2022-07-06',
+			lastModified: '2022-11-01',
+			showRecaptcha: true,
+			postCompleteCallback: setupSiteAfterCreation,
+		},
+		{
+			name: 'videopress-account',
+			steps: [ 'user' ],
+			destination: getRedirectDestination,
+			description: 'VideoPress onboarding signup flow',
+			lastModified: '2022-10-19',
+			get pageTitle() {
+				return translate( 'Create an account' );
+			},
 			showRecaptcha: true,
 		},
 		{

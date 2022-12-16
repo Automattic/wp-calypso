@@ -1,4 +1,4 @@
-import { Locator, Page } from 'playwright';
+import { Locator, Page, Frame } from 'playwright';
 import envVariables from './env-variables';
 
 const navTabParent = 'div.section-nav';
@@ -65,7 +65,7 @@ export async function clickNavTab(
 	// different implementation in PostsPage.
 	const selectedTabLocator = page.locator( selectors.navTabItem( { selected: true } ) );
 	const selectedTabName = await selectedTabLocator.innerText();
-	if ( selectedTabName.replace( /[0-9]/g, '' ) === name ) {
+	if ( selectedTabName.replace( /[0-9]|,/g, '' ) === name ) {
 		return;
 	}
 
@@ -76,7 +76,7 @@ export async function clickNavTab(
 
 	// Mobile view - navtabs become a dropdown and thus it must be opened first.
 	if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-		await page.waitForLoadState( 'networkidle' );
+		await page.waitForLoadState( 'networkidle', { timeout: 25 * 1000 } );
 
 		// Open the Navtabs which now act as a pseudo-dropdown menu.
 		const navTabsButtonLocator = page.locator( selectors.navTabMobileToggleButton );
@@ -88,7 +88,7 @@ export async function clickNavTab(
 
 	// Click on the intended item and wait for navigation to finish.
 	const navTabItem = page.locator( selectors.navTabItem( { name: name, selected: false } ) );
-	await Promise.all( [ page.waitForNavigation( { timeout: 10 * 1000 } ), navTabItem.click() ] );
+	await Promise.all( [ page.waitForNavigation(), navTabItem.click() ] );
 
 	// Final verification.
 	const newSelectedTabLocator = page.locator(
@@ -97,7 +97,7 @@ export async function clickNavTab(
 	const newSelectedTabName = await newSelectedTabLocator.innerText();
 
 	// Strip numerals from the extracted tab name, similar to above.
-	if ( newSelectedTabName.replace( /[0-9]/g, '' ) !== name ) {
+	if ( newSelectedTabName.replace( /[0-9]|,/g, '' ) !== name ) {
 		throw new Error(
 			`Failed to confirm NavTab is active: expected ${ name }, got ${ newSelectedTabName }`
 		);
@@ -151,4 +151,95 @@ export async function getIdFromBlock( block: Locator ): Promise< string > {
 	}
 
 	return blockId;
+}
+
+/**
+ * Waits until DOM mutations for given target element become idle. Can be used
+ * in situations where Playwright auto-waiting is not working for some reason.
+ *
+ * @example
+ * await Promise.all( [
+ *   waitForMutations( page, '.foobars-wrapper' ),
+ *   page.click( 'button.load-foobars' ),
+ * ] );
+ * const foobarsText = await page.innerText( '.foobars' );
+ * @param {Page} page Page object.
+ * @param {string} selector Observer target selector.
+ * @param {object} options
+ * @param {number} options.timeout Maximum time in milliseconds, defaults to 10
+ * seconds, pass 0 to disable timeout.
+ * @param {number} options.debounce Maximum time to wait between consecutive
+ * mutations, defaults to 1 second.
+ * @param {object} options.observe Mutation observation options.
+ */
+export async function waitForMutations(
+	page: Page | Frame,
+	selector: string,
+	options?: {
+		timeout?: number;
+		debounce?: number;
+		observe?: MutationObserverInit;
+	}
+): Promise< void > {
+	const timeout = options?.timeout || 10000;
+	const debounce = options?.debounce || 1000;
+	const observe = options?.observe || { attributes: true, subtree: true, childList: true };
+	const target = await page.waitForSelector( selector );
+
+	await Promise.race( [
+		new Promise( ( resolve, reject ) => {
+			if ( timeout > 0 ) {
+				setTimeout( () => {
+					reject( `Waiting for ${ selector } mutations timed out.` );
+				}, timeout );
+			}
+		} ),
+		page.evaluate(
+			async ( args ) => {
+				await new Promise( ( resolve ) => {
+					const debounceResolve = () => {
+						let timer: NodeJS.Timeout;
+						return () => {
+							clearTimeout( timer );
+							timer = setTimeout( resolve, args.debounce );
+						};
+					};
+
+					const observer = new MutationObserver( debounceResolve() );
+					observer.observe( args.target, args.observe );
+				} );
+			},
+			{ target, debounce, observe }
+		),
+	] );
+}
+
+/**
+ * Resolves once widgets.wp.com `message` events become idle or when no
+ * `message` events are dispatched within the first 3 seconds. Once resolved,
+ * all the widgets should be ready to be interacted with. This helper can be
+ * used on Atomic sites where the iframed widgets have, e.g., custom resize
+ * handlers (like the like button), causing layout shifting and, consequently,
+ * Playwright's stability checks to fail.
+ *
+ * @param {Page} page The parent page object.
+ */
+export async function waitForWPWidgetsIfNecessary( page: Page ): Promise< void > {
+	await page.evaluate( async () => {
+		await new Promise( ( resolve ) => {
+			let timer: NodeJS.Timeout;
+			const setResolveTimer = ( delay: number ) => {
+				clearTimeout( timer );
+				timer = setTimeout( resolve, delay );
+			};
+
+			setResolveTimer( 3000 );
+
+			window.addEventListener( 'message', ( event ) => {
+				if ( event.origin === 'https://widgets.wp.com' ) {
+					setResolveTimer( 1000 );
+				}
+			} );
+		} );
+	} );
 }

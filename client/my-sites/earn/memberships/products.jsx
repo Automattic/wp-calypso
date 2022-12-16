@@ -43,12 +43,12 @@ class MembershipsProductsSection extends Component {
 			<EllipsisMenu position="bottom left">
 				{ this.props.hasStripeFeature && (
 					<PopoverMenuItem onClick={ () => this.openAddEditDialog( productId ) }>
-						<Gridicon size={ 18 } icon={ 'pencil' } />
+						<Gridicon size={ 18 } icon="pencil" />
 						{ this.props.translate( 'Edit' ) }
 					</PopoverMenuItem>
 				) }
 				<PopoverMenuItem onClick={ () => this.openDeleteDialog( productId ) }>
-					<Gridicon size={ 18 } icon={ 'trash' } />
+					<Gridicon size={ 18 } icon="trash" />
 					{ this.props.translate( 'Delete' ) }
 				</PopoverMenuItem>
 			</EllipsisMenu>
@@ -74,6 +74,11 @@ class MembershipsProductsSection extends Component {
 	closeDialog = () => this.setState( { showAddEditDialog: false, showDeleteDialog: false } );
 
 	render() {
+		// This will take the hash into account only when ading a new product
+		const subscribe_as_site_subscriber = this.state.product
+			? this.state.product?.subscribe_as_site_subscriber
+			: window.location.hash === '#add-newsletter-payment-plan';
+
 		return (
 			<div>
 				<QueryMembershipsSettings siteId={ this.props.siteId } />
@@ -127,8 +132,7 @@ class MembershipsProductsSection extends Component {
 						<RecurringPaymentsPlanAddEditModal
 							closeDialog={ this.closeDialog }
 							product={ Object.assign( this.state.product ?? {}, {
-								subscribe_as_site_subscriber:
-									window.location.hash === '#add-newsletter-payment-plan',
+								subscribe_as_site_subscriber: subscribe_as_site_subscriber,
 							} ) }
 						/>
 					) }

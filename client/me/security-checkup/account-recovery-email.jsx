@@ -66,7 +66,7 @@ class SecurityCheckupAccountRecoveryEmail extends Component {
 
 		return (
 			<SecurityCheckupNavigationItem
-				path={ '/me/security/account-recovery' }
+				path="/me/security/account-recovery"
 				materialIcon={ icon }
 				text={ translate( 'Recovery Email' ) }
 				description={ description }

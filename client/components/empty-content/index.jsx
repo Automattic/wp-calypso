@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-
+import illustrationEmptyResults from 'calypso/assets/images/illustrations/illustration-empty-results.svg';
 import './style.scss';
 
 class EmptyContent extends Component {
@@ -12,6 +12,7 @@ class EmptyContent extends Component {
 		title: PropTypes.node,
 		illustration: PropTypes.string,
 		illustrationWidth: PropTypes.number,
+		illustrationHeight: PropTypes.number,
 		line: PropTypes.node,
 		action: PropTypes.node,
 		actionURL: PropTypes.string,
@@ -32,7 +33,7 @@ class EmptyContent extends Component {
 	};
 
 	static defaultProps = {
-		illustration: '/calypso/images/illustrations/illustration-empty-results.svg',
+		illustration: illustrationEmptyResults,
 		isCompact: false,
 	};
 
@@ -91,6 +92,7 @@ class EmptyContent extends Component {
 				src={ this.props.illustration }
 				alt=""
 				width={ this.props.illustrationWidth }
+				height={ this.props.illustrationHeight }
 				className="empty-content__illustration"
 			/>
 		);

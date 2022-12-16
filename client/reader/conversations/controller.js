@@ -17,7 +17,7 @@ export function conversations( context, next ) {
 	context.primary = (
 		<AsyncLoad
 			require="calypso/reader/conversations/stream"
-			key={ 'conversations' }
+			key="conversations"
 			title="Conversations"
 			streamKey={ streamKey }
 			trackScrollPage={ scrollTracker }
@@ -47,7 +47,7 @@ export function conversationsA8c( context, next ) {
 	context.primary = (
 		<AsyncLoad
 			require="calypso/reader/conversations/stream"
-			key={ 'conversations' }
+			key="conversations"
 			title="Conversations @ Automattic"
 			streamKey={ streamKey }
 			trackScrollPage={ scrollTracker }

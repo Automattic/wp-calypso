@@ -2,6 +2,7 @@ import {
 	HAPPYCHAT_IO_INIT,
 	HAPPYCHAT_IO_RECEIVE_ACCEPT,
 	HAPPYCHAT_IO_RECEIVE_DISCONNECT,
+	HAPPYCHAT_IO_RECEIVE_ENV,
 	HAPPYCHAT_IO_RECEIVE_INIT,
 	HAPPYCHAT_IO_RECEIVE_LOCALIZED_SUPPORT,
 	HAPPYCHAT_IO_RECEIVE_RECONNECTING,
@@ -62,6 +63,22 @@ const isAvailable = ( state = false, action ) => {
 };
 
 /**
+ * Tracks which happychat env is targeted (staging vs production)
+ *
+ * @param  {"staging"|"production"} state Current happychat env
+ * @param  {object}  action Action playload
+ * @returns {"staging"|"production"} Updated happychat env
+ */
+export const env = ( state = null, action ) => {
+	switch ( action.type ) {
+		case HAPPYCHAT_IO_RECEIVE_ENV: {
+			return action.env;
+		}
+	}
+	return state;
+};
+
+/**
  * Tracks whether happychat.io is accepting fully localized chats.
  * Customers locale and HE locale should be an exact match ( doesn't default routing to english speaker HEs )
  *
@@ -80,6 +97,7 @@ export const localizedSupport = ( state = false, action ) => {
 export default combineReducers( {
 	error,
 	isAvailable,
+	env,
 	localizedSupport,
 	status,
 } );

@@ -5,7 +5,6 @@ body {
 #title-bar {
 	-webkit-app-region: drag;
 	display: block;
-	user-select: none;
 	background-color: #24282d;
 	position: absolute;
 	height: 38px;
@@ -220,8 +219,8 @@ html.is-desktop .warning {
 }
 
 html.is-desktop .warning button {
-	color: white;
-	border-bottom: 1px solid white;
+	color: #fff;
+	border-bottom: 1px solid #fff;
 	cursor: pointer;
 }
 

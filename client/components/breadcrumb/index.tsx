@@ -68,6 +68,9 @@ const HelpBuble = styled( InfoPopover )`
 	& .gridicon {
 		color: var( --studio-gray-30 );
 	}
+	&:focus {
+		outline: thin dotted;
+	}
 `;
 
 const renderHelpBubble = ( item: Item ) => {
@@ -76,7 +79,7 @@ const renderHelpBubble = ( item: Item ) => {
 	}
 
 	return (
-		<HelpBuble icon="help-outline" position={ 'right' }>
+		<HelpBuble icon="help-outline" position="right">
 			{ item.helpBubble }
 		</HelpBuble>
 	);

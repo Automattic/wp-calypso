@@ -199,6 +199,7 @@
 .sidebar__menu.is-togglable .sidebar__menu-link {
 	line-height: 1.5;
 	padding: 7px 16px 7px 20px;
+	padding-left: 55px;
 }
 
 .sidebar__menu-link-text {
@@ -255,10 +256,6 @@
 	.sidebar__expandable-arrow {
 		transition: transform 0.1s linear;
 		fill: var(--color-sidebar-gridicon-fill);
-	}
-
-	.sidebar__menu-link {
-		padding-left: 55px;
 	}
 
 	&.is-toggle-open {

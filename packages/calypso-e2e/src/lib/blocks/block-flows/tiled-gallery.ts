@@ -10,7 +10,7 @@ const selectors = {
 	fileInput: `${ blockParentSelector } input[type=file]`,
 	uploadingIndicator: `${ blockParentSelector } .components-spinner`,
 	publishedImage: ( fileName: string ) =>
-		`.wp-block-jetpack-tiled-gallery img[src*="${ fileName }"]`,
+		`main .wp-block-jetpack-tiled-gallery img[src*="${ fileName }"]`, // 'main' needs to be specified due to the debug elements
 };
 
 /**

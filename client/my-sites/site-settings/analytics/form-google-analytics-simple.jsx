@@ -71,7 +71,7 @@ const GoogleAnalyticsSimpleForm = ( {
 				description={ translate(
 					"Add your unique Measurement ID to monitor your site's performance in Google Analytics."
 				) }
-				event={ 'google_analytics_settings' }
+				event="google_analytics_settings"
 				feature={ FEATURE_GOOGLE_ANALYTICS }
 				plan={ plan }
 				showIcon={ true }
@@ -148,7 +148,7 @@ const GoogleAnalyticsSimpleForm = ( {
 							<p>
 								{ translate(
 									'Google Analytics is a free service that complements our {{a}}built-in stats{{/a}} ' +
-										'with different insights into your traffic. WordPress.com stats and Google Analytics ' +
+										'with different insights into your traffic. Jetpack Stats and Google Analytics ' +
 										'use different methods to identify and track activity on your site, so they will ' +
 										'normally show slightly different totals for your visits, views, etc.',
 									{

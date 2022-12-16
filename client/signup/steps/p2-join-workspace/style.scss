@@ -75,7 +75,6 @@
 .p2-join-workspace__workspace-description {
 	font-size: 0.75rem;
 	color: var(--p2-color-border-medium);
-	grid-area: 2 / 2;
 	grid-area: 2/1/span 1/span 2;
 
 	@include break-small {

@@ -99,6 +99,7 @@ export default ( router ) => {
 			`/log-in/:isJetpack(jetpack)/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
 			`/log-in/:isGutenboarding(new)/${ lang }`,
 			`/log-in/:isGutenboarding(new)/:twoFactorAuthType(authenticator|backup|sms|push|webauthn)/${ lang }`,
+			`/log-in/:action(lostpassword)/${ lang }`,
 			`/log-in/${ lang }`,
 		],
 		redirectJetpack,

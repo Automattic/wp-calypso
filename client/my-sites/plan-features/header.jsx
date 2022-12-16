@@ -362,7 +362,7 @@ export class PlanFeaturesHeader extends Component {
 		const perMonthDescription = this.getPerMonthDescription() || billingTimeFrame;
 		if ( isInSignup || plansWithScroll ) {
 			return (
-				<div className={ 'plan-features__header-billing-info' }>
+				<div className="plan-features__header-billing-info">
 					<span>{ perMonthDescription }</span>
 				</div>
 			);
@@ -412,7 +412,6 @@ export class PlanFeaturesHeader extends Component {
 			discountPrice,
 			rawPrice,
 			relatedMonthlyPlan,
-			isFirstYearPromotionalDiscount,
 			isLoggedInMonthlyPricing,
 		} = this.props;
 
@@ -425,9 +424,9 @@ export class PlanFeaturesHeader extends Component {
 			return <div className={ classes } />;
 		}
 
-		if ( availableForPurchase && ! isLoggedInMonthlyPricing ) {
+		if ( availableForPurchase ) {
 			// Only multiply price by 12 for Jetpack plans where we sell both monthly and yearly
-			if ( isJetpack && ! isSiteAT && relatedMonthlyPlan ) {
+			if ( ! isLoggedInMonthlyPricing && isJetpack && ! isSiteAT && relatedMonthlyPlan ) {
 				return this.renderPriceGroup(
 					relatedMonthlyPlan.raw_price * 12,
 					discountPrice || rawPrice
@@ -437,9 +436,6 @@ export class PlanFeaturesHeader extends Component {
 			}
 		}
 
-		if ( isFirstYearPromotionalDiscount ) {
-			return this.renderPriceGroup( rawPrice, discountPrice );
-		}
 		return this.renderPriceGroup( rawPrice );
 	}
 
@@ -610,16 +606,10 @@ export default connect( ( state, { planType, relatedMonthlyPlan } ) => {
 	const isYearly = !! relatedMonthlyPlan;
 	const relatedYearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( planType ) );
 
-	const isFirstYearPromotionalDiscount =
-		isYearly &&
-		relatedYearlyPlan &&
-		'first_year_promotional_discounts' === relatedYearlyPlan.overridden_price_reason;
-
 	return {
 		currentSitePlan,
 		isSiteAT: isSiteAutomatedTransfer( state, selectedSiteId ),
 		isYearly,
-		isFirstYearPromotionalDiscount,
 		relatedYearlyPlan,
 		siteSlug: getSiteSlug( state, selectedSiteId ),
 		eligibleForWpcomMonthlyPlans: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),

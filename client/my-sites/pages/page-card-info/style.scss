@@ -8,6 +8,10 @@
 	font-style: italic;
 }
 
+.page-card-info__description {
+	margin-right: 12px;
+}
+
 .page-card-info__badge {
 	background: var(--color-neutral-0);
 	border-radius: 12px; /* stylelint-disable-line scales/radii */

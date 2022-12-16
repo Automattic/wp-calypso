@@ -37,9 +37,10 @@ const sshKeyFormReducer = ( state = initialState, action: ReducerAction ): typeo
 interface AddSSHKeyFormProps {
 	addSSHKey( args: { name: string; key: string } ): void;
 	isAdding: boolean;
+	saveText?: string;
 }
 
-export const AddSSHKeyForm = ( { addSSHKey, isAdding }: AddSSHKeyFormProps ) => {
+export const AddSSHKeyForm = ( { addSSHKey, isAdding, saveText }: AddSSHKeyFormProps ) => {
 	const [ { isValid, touched, value }, dispatch ] = useReducer( sshKeyFormReducer, initialState );
 
 	const { __ } = useI18n();
@@ -58,7 +59,7 @@ export const AddSSHKeyForm = ( { addSSHKey, isAdding }: AddSSHKeyFormProps ) => 
 			} }
 		>
 			<FormFieldset>
-				<FormLabel htmlFor={ PUBLIC_SSH_KEY_INPUT_ID }>{ __( 'Public SSH key' ) }</FormLabel>
+				<FormLabel htmlFor={ PUBLIC_SSH_KEY_INPUT_ID }>{ __( 'SSH Public Key' ) }</FormLabel>
 				<TextareaAutosize
 					required
 					id={ PUBLIC_SSH_KEY_INPUT_ID }
@@ -67,7 +68,7 @@ export const AddSSHKeyForm = ( { addSSHKey, isAdding }: AddSSHKeyFormProps ) => 
 					isError={ showSSHKeyError }
 					placeholder={ sprintf(
 						// translators: "formats" is a list of SSH-key formats.
-						__( 'Paste the public key here. It should begin with %(formats)s…' ),
+						__( 'Paste your SSH public key here. It should begin with %(formats)s…' ),
 						{
 							formats,
 						}
@@ -81,7 +82,7 @@ export const AddSSHKeyForm = ( { addSSHKey, isAdding }: AddSSHKeyFormProps ) => 
 						isError
 						text={ sprintf(
 							// translators: "formats" is a list of SSH-key formats.
-							__( 'Invalid public key. It should begin with %(formats)s.' ),
+							__( 'Invalid SSH public key. It should begin with %(formats)s.' ),
 							{
 								formats,
 							}
@@ -90,7 +91,7 @@ export const AddSSHKeyForm = ( { addSSHKey, isAdding }: AddSSHKeyFormProps ) => 
 				) }
 			</FormFieldset>
 			<Button busy={ isAdding } primary type="submit" disabled={ ! isValid || isAdding }>
-				{ __( 'Save SSH key' ) }
+				{ saveText || __( 'Save SSH Key' ) }
 			</Button>
 		</form>
 	);

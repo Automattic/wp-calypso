@@ -35,7 +35,7 @@ const StepProgressExample: FunctionComponent = () => {
 					onClick={ () => setCurrentStep( currentStep - 1 ) }
 					style={ { marginRight: '10px' } }
 				>
-					{ 'Previous Step' }
+					Previous Step
 				</Button>
 				<Button
 					primary

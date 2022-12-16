@@ -43,8 +43,6 @@ export const FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS = 'live-chat-support-all-days';
 export const FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS = 'live-chat-support-business-days';
 export const FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT = 'email-forwarding-extended-limit';
 export const FEATURE_PREMIUM_SUPPORT = 'priority-support';
-export const FEATURE_BASIC_DESIGN = 'basic-design';
-export const FEATURE_ADVANCED_DESIGN = 'advanced-design';
 export const FEATURE_GOOGLE_ANALYTICS = 'google-analytics';
 export const FEATURE_CLOUDFLARE_ANALYTICS = 'cloudflare-analytics';
 export const FEATURE_GOOGLE_MY_BUSINESS = 'google-my-business';
@@ -72,7 +70,7 @@ export const FEATURE_ALL_PERSONAL_FEATURES = 'all-personal-features';
 export const FEATURE_ALL_PERSONAL_FEATURES_JETPACK = 'all-personal-features-jetpack';
 export const FEATURE_ALL_PREMIUM_FEATURES = 'all-premium-features';
 export const FEATURE_ALL_PREMIUM_FEATURES_JETPACK = 'all-premium-features-jetpack';
-export const FEATURE_ADVANCED_CUSTOMIZATION = 'advanced-customization';
+export const FEATURE_ADVANCED_DESIGN_CUSTOMIZATION = 'advanced-design-customization';
 export const FEATURE_UPLOAD_THEMES_PLUGINS = 'upload-themes-and-plugins';
 export const FEATURE_FREE_DOMAIN = 'free-custom-domain';
 export const FEATURE_FREE_BLOG_DOMAIN = 'free-blog-domain';
@@ -96,23 +94,6 @@ export const FEATURE_SITE_BACKUPS_AND_RESTORE = 'site-backups-and-restore';
 export const FEATURE_SECURITY_SETTINGS = 'security-settings';
 export const FEATURE_WOOP = 'woop';
 export const FEATURE_PREMIUM_THEMES = 'unlimited-premium-themes';
-
-//condensed_plan_features_v1 test
-export const FEATURE_HOSTING_TEST = 'hosting-test';
-export const FEATURE_PRIORITY_SUPPORT_TEST = 'priority-support-test';
-export const FEATURE_PLUGINS_TEST = 'plugins-test';
-export const FEATURE_SFTP_DATABASE_TEST = 'sftp-database-test';
-export const FEATURE_FREE_NEWSLETTER_V1 = 'free-newsletter';
-export const FEATURE_PAID_NEWSLETTER_V1 = 'paid-newsletter';
-export const FEATURE_MONETISE_V2 = 'monetize-v2';
-export const FEATURE_REPUBLICIZE_V3 = 'republicize-v3';
-export const FEATURE_UPLOAD_THEMES_V3 = 'upload-themes-v3';
-export const FEATURE_EDGE_CACHING_V2 = 'edge-caching-v2';
-export const FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2 = 'seo-v2';
-export const FEATURE_SITE_STATS_V2 = 'site-stats-v2';
-export const FEATURE_COLLECT_PAYMENTS_V3 = 'collect-payments-v3';
-export const FEATURE_FREE_THEMES_V2 = 'free-themes-v2';
-export const FEATURE_VIDEO_UPLOADS_V2 = 'video-upload-v2';
 
 // Jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';
@@ -256,6 +237,7 @@ export const WPCOM_FEATURES_PRIORITY_SUPPORT = 'priority_support';
 export const WPCOM_FEATURES_REAL_TIME_BACKUPS = 'real-time-backups';
 export const WPCOM_FEATURES_SCAN = 'scan';
 export const WPCOM_FEATURES_SEO_PREVIEW_TOOLS = 'seo-preview-tools';
+export const WPCOM_FEATURES_SUBSCRIPTION_GIFTING = 'subscription-gifting';
 export const WPCOM_FEATURES_UPLOAD_AUDIO_FILES = 'upload-audio-files';
 export const WPCOM_FEATURES_UPLOAD_PLUGINS = 'upload-plugins';
 export const WPCOM_FEATURES_UPLOAD_VIDEO_FILES = 'upload-video-files';
@@ -266,6 +248,7 @@ export const WPCOM_FEATURES_VIDEO_HOSTING = 'video-hosting';
 export const WPCOM_FEATURES_WORDADS = 'wordads';
 export const WPCOM_FEATURES_CUSTOM_DESIGN = 'custom-design';
 export const WPCOM_FEATURES_GLOBAL_STYLES = 'global-styles';
+export const WPCOM_FEATURES_SITE_PREVIEW_LINKS = 'site-preview-links';
 
 // Signup flow related features
 export const FEATURE_UNLIMITED_EMAILS = 'unlimited-emails';

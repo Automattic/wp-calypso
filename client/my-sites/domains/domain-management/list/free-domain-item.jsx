@@ -30,8 +30,7 @@ export default function FreeDomainItem( {
 
 	const renderSiteAddressChanger = () => {
 		const domainName = domain?.name ?? '';
-		const dotblogSubdomain = domainName.match( /\.\w+\.blog$/ );
-		const currentDomainSuffix = dotblogSubdomain ? dotblogSubdomain[ 0 ] : '.wordpress.com';
+		const currentDomainSuffix = domainName.match( /\.\w+\.\w+$/ )[ 0 ];
 
 		return (
 			<SiteAddressChanger

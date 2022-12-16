@@ -44,7 +44,9 @@ const ReadyPreviewStep: React.FunctionComponent< ReadyPreviewProps > = ( {
 	};
 
 	const recordImportGuideEvent = () => {
-		if ( ! isModalDetailsOpen ) return;
+		if ( ! isModalDetailsOpen ) {
+			return;
+		}
 
 		recordTracksEvent( trackEventName, {
 			...trackEventParams,
@@ -192,7 +194,9 @@ const ReadyStep: React.FunctionComponent< ReadyProps > = ( props ) => {
 	};
 
 	const recordImportGuideEvent = () => {
-		if ( ! isModalDetailsOpen ) return;
+		if ( ! isModalDetailsOpen ) {
+			return;
+		}
 
 		recordTracksEvent( trackEventName, {
 			...trackEventParams,

@@ -20,7 +20,7 @@ export default class PostTrackback extends Component {
 		const unescapedAuthorName = unescape( get( comment, 'author.name', '' ) );
 
 		return (
-			<li className={ 'comments__comment depth-0' }>
+			<li className="comments__comment depth-0">
 				<div className="comments__comment-author">
 					<div className="comments__comment-trackbackicon">
 						<Gridicon icon="link" size={ 24 } />

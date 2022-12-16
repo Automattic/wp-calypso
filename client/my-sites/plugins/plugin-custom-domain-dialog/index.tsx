@@ -42,6 +42,7 @@ export const PluginCustomDomainDialog = ( {
 			label: translate( 'Manage domains' ),
 		},
 		{
+			className: 'plugin-custom-domain-dialog__install_plugin',
 			action: 'install-plugin',
 			label: translate( 'Install %(pluginName)s', {
 				args: { pluginName: plugin.name },

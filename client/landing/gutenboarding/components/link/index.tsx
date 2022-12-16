@@ -17,7 +17,9 @@ const LinkButton = forwardRef< HTMLAnchorElement, LinkButtonProps >(
 			...rest,
 			onClick: ( event: MouseEvent< HTMLAnchorElement > ) => {
 				try {
-					if ( onClick ) onClick( event );
+					if ( onClick ) {
+						onClick( event );
+					}
 				} catch ( ex ) {
 					event.preventDefault();
 					throw ex;

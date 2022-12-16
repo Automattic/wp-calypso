@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import TimeFrame from 'calypso/components/jetpack/card/jetpack-product-card/display-price/time-frame';
 import PlanPrice from 'calypso/my-sites/plan-price';
@@ -21,7 +22,7 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 	const translate = useTranslate();
 	const { containerRef, isCompact } = useItemPriceCompact();
 
-	const { originalPrice, discountedPrice, isFetching } = useItemPrice(
+	const { originalPrice, discountedPrice, discountedPriceDuration, isFetching } = useItemPrice(
 		siteId,
 		product,
 		product?.monthlyProductSlug || ''
@@ -36,6 +37,21 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 	);
 
 	const billingTerm = product.displayTerm || product.term;
+
+	const getDiscountedLabel = useCallback( () => {
+		if ( ! discountedPrice ) {
+			return;
+		}
+		const translateArgs = {
+			args: {
+				percentOff: Math.floor( ( ( originalPrice - discountedPrice ) / originalPrice ) * 100 ),
+			},
+			comment: '"%%" is the literal percent symbol escaped using the other one.',
+		};
+		return 1 === discountedPriceDuration
+			? translate( '%(percentOff)d%% off the first month', translateArgs )
+			: translate( '%(percentOff)d%% off the first year', translateArgs );
+	}, [ discountedPriceDuration, originalPrice, discountedPrice, translate ] );
 
 	return (
 		<div className="product-lightbox__variants-plan">
@@ -65,14 +81,7 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 								<span className="product-lightbox__variants-plan-card-old-price">
 									<PlanPrice original rawPrice={ originalPrice } currencyCode={ currencyCode } />
 								</span>
-								{ translate( '%(percentOff)d%% off the first year', {
-									args: {
-										percentOff: Math.floor(
-											( ( originalPrice - discountedPrice ) / originalPrice ) * 100
-										),
-									},
-									comment: '"%%" is the literal percent symbol escaped using the other one.',
-								} ) }
+								{ getDiscountedLabel() }
 							</div>
 						) }
 					</div>

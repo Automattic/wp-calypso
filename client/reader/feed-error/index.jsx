@@ -35,7 +35,7 @@ class FeedError extends Component {
 				<EmptyContent
 					action={ action }
 					title={ this.props.message }
-					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+					illustration="/calypso/images/illustrations/illustration-404.svg"
 					illustrationWidth={ 500 }
 				/>
 			</ReaderMain>

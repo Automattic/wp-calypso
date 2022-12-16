@@ -62,6 +62,8 @@ function getNumPeriodAgo( momentSiteZone, date, period ) {
 
 function getSiteFilters( siteId ) {
 	const filters = [
+		//TODO: This Insights route could be removed since it has been set routing as below.
+		// statsPage( '/stats/insights/:site', insights );
 		{
 			title: i18n.translate( 'Insights' ),
 			path: '/stats/insights/' + siteId,
@@ -91,6 +93,13 @@ function getSiteFilters( siteId ) {
 			id: 'stats-year',
 			period: 'year',
 		},
+	];
+
+	return filters;
+}
+
+function getWordAdsFilters( siteId ) {
+	const filters = [
 		{
 			title: i18n.translate( 'WordAds - Days' ),
 			path: '/stats/ads/day/' + siteId,
@@ -168,7 +177,6 @@ export function overview( context, next ) {
 			{
 				title: i18n.translate( 'Days' ),
 				path: '/stats/day',
-				altPaths: [ '/stats' ],
 				id: 'stats-day',
 				period: 'day',
 			},
@@ -186,11 +194,7 @@ export function overview( context, next ) {
 	window.scrollTo( 0, 0 );
 
 	const activeFilter = find( filters(), ( filter ) => {
-		return (
-			context.params.period === filter.period ||
-			context.pathname === filter.path ||
-			( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) )
-		);
+		return context.params.period === filter.period || context.path.includes( filter.path );
 	} );
 
 	// Validate that date filter is legit
@@ -213,15 +217,15 @@ export function site( context, next ) {
 
 	const filters = getSiteFilters( givenSiteId );
 	const state = store.getState();
+
+	// Why empty??
 	const currentSite = getSite( state, givenSiteId );
 	const siteId = currentSite ? currentSite.ID || 0 : 0;
 
-	const activeFilter = find(
-		filters,
-		( filter ) =>
-			context.pathname === filter.path ||
-			( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) )
-	);
+	const activeFilter = find( filters, ( filter ) => {
+		return context.path.includes( filter.path );
+	} );
+
 	if ( ! activeFilter ) {
 		return next();
 	}
@@ -265,8 +269,7 @@ export function summary( context, next ) {
 	const contextModule = context.params.module;
 	const filters = [
 		{
-			path: '/stats/' + contextModule + '/' + siteId,
-			altPaths: [ '/stats/day/' + contextModule + '/' + siteId ],
+			path: '/stats/day/' + contextModule + '/' + siteId,
 			id: 'stats-day',
 			period: 'day',
 		},
@@ -293,10 +296,7 @@ export function summary( context, next ) {
 	siteId = selectedSite ? selectedSite.ID || 0 : 0;
 
 	const activeFilter = find( filters, ( filter ) => {
-		return (
-			context.pathname === filter.path ||
-			( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) )
-		);
+		return context.path.includes( filter.path );
 	} );
 
 	if ( siteFragment && 0 === siteId ) {
@@ -304,7 +304,7 @@ export function summary( context, next ) {
 		return ( window.location = '/stats' );
 	}
 
-	if ( ! activeFilter || -1 === validModules.indexOf( context.params.module ) ) {
+	if ( ! activeFilter || ! validModules.includes( context.params.module ) ) {
 		return next();
 	}
 
@@ -401,7 +401,7 @@ export function wordAds( context, next ) {
 
 	const state = store.getState();
 	const siteId = getSelectedSiteId( state );
-	const filters = getSiteFilters( siteId );
+	const filters = getWordAdsFilters( siteId );
 
 	const activeFilter = find( filters, ( filter ) => context.params.period === filter.period );
 

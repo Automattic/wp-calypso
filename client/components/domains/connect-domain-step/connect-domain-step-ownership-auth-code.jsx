@@ -22,12 +22,12 @@ const ConnectDomainStepOwnershipAuthCode = ( {
 	);
 	const authCodeDescription = (
 		<>
-			<p className={ 'connect-domain-step__text' }>
+			<p className="connect-domain-step__text">
 				{ __(
 					'We will use your domain authorization code to verify that you are the domain owner.'
 				) }
 			</p>
-			<p className={ 'connect-domain-step__text' }>{ authCodeStepDefaultDescription.label }</p>
+			<p className="connect-domain-step__text">{ authCodeStepDefaultDescription.label }</p>
 		</>
 	);
 	return (

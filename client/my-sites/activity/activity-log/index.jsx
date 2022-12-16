@@ -10,6 +10,7 @@ import { connect, useSelector } from 'react-redux';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import VisibleDaysLimitUpsell from 'calypso/components/activity-card-list/visible-days-limit-upsell';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack-credentials-status';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryRewindBackupStatus from 'calypso/components/data/query-rewind-backup-status';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
@@ -43,6 +44,7 @@ import {
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
 import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
+import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
 import getRewindPoliciesRequestStatus from 'calypso/state/rewind/selectors/get-rewind-policies-request-status';
@@ -428,11 +430,13 @@ class ActivityLog extends Component {
 			isJetpack,
 			isIntroDismissed,
 			isMultisite,
+			areCredentialsInvalid,
 		} = this.props;
 
 		const disableRestore =
 			! enableRewind ||
 			[ 'queued', 'running' ].includes( get( this.props, [ 'restoreProgress', 'status' ] ) ) ||
+			( ! isAtomic && areCredentialsInvalid ) ||
 			'active' !== rewindState.state;
 		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
 
@@ -472,6 +476,7 @@ class ActivityLog extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<QuerySiteFeatures siteIds={ [ siteId ] } />
 				<QueryRewindBackups siteId={ siteId } />
+				{ ! isAtomic && <QueryJetpackCredentialsStatus siteId={ siteId } role="main" /> }
 
 				{ isJetpackCloud() && <SidebarNavigation /> }
 
@@ -687,6 +692,7 @@ export default connect(
 			hasFullActivityLog: siteHasFeature( state, siteId, WPCOM_FEATURES_FULL_ACTIVITY_LOG ),
 			isIntroDismissed: getPreference( state, 'dismissible-card-activity-introduction-banner' ),
 			isMultisite: isJetpackSiteMultiSite( state, siteId ),
+			areCredentialsInvalid: areJetpackCredentialsInvalid( state, siteId, 'main' ),
 		};
 	},
 	{

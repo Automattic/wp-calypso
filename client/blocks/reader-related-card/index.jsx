@@ -14,7 +14,6 @@ import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-f
 import FollowButton from 'calypso/reader/follow-button';
 import { getPostUrl, getStreamUrl } from 'calypso/reader/route';
 import { getPostById } from 'calypso/state/reader/posts/selectors';
-import { READER_RELATED_IMAGE_WIDTH } from 'calypso/state/reader/posts/sizes';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 
 import './style.scss';
@@ -33,6 +32,11 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource } ) {
 				<Gravatar user={ post.author } />
 			</a>
 			<div className="reader-related-card__byline">
+				<span className="reader-related-card__byline-site">
+					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card__link">
+						{ siteName }
+					</a>
+				</span>
 				{ authorName && authorAndSiteAreDifferent && (
 					<span className="reader-related-card__byline-author">
 						<ReaderAuthorLink
@@ -46,11 +50,6 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource } ) {
 						</ReaderAuthorLink>
 					</span>
 				) }
-				<span className="reader-related-card__byline-site">
-					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card__link">
-						{ siteName }
-					</a>
-				</span>
 			</div>
 			<FollowButton
 				siteUrl={ post.site_URL }
@@ -121,7 +120,7 @@ export function RelatedPostCard( {
 			<ReaderFeaturedVideo
 				{ ...canonicalMedia }
 				videoEmbed={ canonicalMedia }
-				className={ 'reader-related-card__featured-image' }
+				className="reader-related-card__featured-image"
 				href={ postLink }
 				onThumbnailClick={ postClickTracker }
 				allowPlaying={ false }
@@ -132,10 +131,10 @@ export function RelatedPostCard( {
 			<ReaderFeaturedImage
 				canonicalMedia={ canonicalMedia }
 				imageUrl={ canonicalMedia.src }
-				imageWidth={ READER_RELATED_IMAGE_WIDTH }
 				onClick={ postClickTracker }
 				href={ postLink }
-				className={ 'reader-related-card__featured-image' }
+				className="reader-related-card__featured-image"
+				children={ <div style={ { width: 'auto' } } /> }
 			/>
 		);
 	}

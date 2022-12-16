@@ -16,6 +16,7 @@ import QuerySiteSelectedEditor from 'calypso/components/data/query-site-selected
 import QuerySites from 'calypso/components/data/query-sites';
 import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
 import { withCurrentRoute } from 'calypso/components/route';
+import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
@@ -45,8 +46,16 @@ import {
 import BodySectionCssClass from './body-section-css-class';
 import LayoutLoader from './loader';
 import { handleScroll } from './utils';
+
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
+
+/*
+ * Hotfix for card and button styles hierarchy after <GdprBanner /> removal (see: #70601)
+ * TODO: Find a way to improve our async loading that will not require these imports in the global scope (context: pbNhbs-4xL-p2)
+ */
+import '@automattic/components/src/button/style.scss';
+import '@automattic/components/src/card/style.scss';
 
 import './style.scss';
 
@@ -150,6 +159,16 @@ class Layout extends Component {
 				document
 					.querySelector( 'body' )
 					.classList.add( `is-${ this.props.colorSchemePreference }` );
+
+				const themeColor = getComputedStyle( document.body )
+					.getPropertyValue( '--color-masterbar-background' )
+					.trim();
+				const themeColorMeta = document.querySelector( 'meta[name="theme-color"]' );
+				// We only want to set `themeColor` if it's not set by a config value (i.e. for JetpackCloud)
+				if ( themeColorMeta && ! themeColorMeta.content ) {
+					themeColorMeta.content = themeColor;
+					themeColorMeta.setAttribute( 'data-colorscheme', 'true' );
+				}
 			}
 		}
 	}
@@ -165,6 +184,15 @@ class Layout extends Component {
 			const classList = document.querySelector( 'body' ).classList;
 			classList.remove( `is-${ prevProps.colorSchemePreference }` );
 			classList.add( `is-${ this.props.colorSchemePreference }` );
+
+			const themeColor = getComputedStyle( document.body )
+				.getPropertyValue( '--color-masterbar-background' )
+				.trim();
+			const themeColorMeta = document.querySelector( 'meta[name="theme-color"]' );
+			// We only adjust the `theme-color` meta content value in case we set it in `componentDidMount`
+			if ( themeColorMeta && themeColorMeta.getAttribute( 'data-colorscheme' ) === 'true' ) {
+				themeColorMeta.content = themeColor;
+			}
 		}
 
 		// intentionally don't remove these in unmount
@@ -311,7 +339,10 @@ class Layout extends Component {
 					<AsyncLoad require="calypso/components/happychat" />
 				) }
 				{ 'development' === process.env.NODE_ENV && (
-					<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
+					<>
+						<SympathyDevWarning />
+						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
+					</>
 				) }
 				{ loadInlineHelp && (
 					<AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } />
@@ -332,8 +363,8 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/app-banner' ) && (
 					<AsyncLoad require="calypso/blocks/app-banner" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'gdpr-banner' ) && (
-					<AsyncLoad require="calypso/blocks/gdpr-banner" placeholder={ null } />
+				{ config.isEnabled( 'cookie-banner' ) && (
+					<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
 				) }
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />

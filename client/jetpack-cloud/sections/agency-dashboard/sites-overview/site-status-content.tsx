@@ -1,13 +1,17 @@
 import { Button, Gridicon } from '@automattic/components';
+import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import page from 'page';
+import { useRef, useState, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import Tooltip from 'calypso/components/tooltip';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
+import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import SiteSetFavorite from './site-set-favorite';
-import { getRowMetaData } from './utils';
+import { getRowMetaData, getProductSlugFromProductType } from './utils';
 import type { AllowedTypes, SiteData } from './types';
 
 interface Props {
@@ -36,6 +40,13 @@ export default function SiteStatusContent( {
 		eventName,
 	} = getRowMetaData( rows, type, isLargeScreen );
 
+	const siteId = rows.site.value.blog_id;
+	const siteUrl = value?.url;
+
+	const isLicenseSelected = useSelector( ( state ) =>
+		hasSelectedLicensesOfType( state, siteId, type )
+	);
+
 	// Disable clicks/hover when there is a site error &
 	// when the row it is not monitor and monitor status is down
 	// since monitor is clickable when site is down.
@@ -53,6 +64,27 @@ export default function SiteStatusContent( {
 
 	const handleClickRowAction = () => {
 		dispatch( recordTracksEvent( eventName ) );
+	};
+
+	const issueLicenseRedirectUrl = useMemo( () => {
+		return addQueryArgs( `/partner-portal/issue-license/`, {
+			site_id: siteId,
+			product_slug: getProductSlugFromProductType( type ),
+			source: 'dashboard',
+		} );
+	}, [ siteId, type ] );
+
+	const handleSelectLicenseAction = () => {
+		const inactiveProducts = Object.values( rows ).filter( ( row ) => row?.status === 'inactive' );
+		if ( inactiveProducts.length > 1 ) {
+			return dispatch( selectLicense( siteId, type ) );
+		}
+		// Redirect to issue-license if there is only one inactive product available for a site
+		return page( issueLicenseRedirectUrl );
+	};
+
+	const handleDeselectLicenseAction = () => {
+		dispatch( unselectLicense( siteId, type ) );
 	};
 
 	if ( type === 'site' ) {
@@ -86,8 +118,6 @@ export default function SiteStatusContent( {
 				</span>
 			);
 		}
-
-		const siteUrl = value.url;
 
 		return (
 			<>
@@ -146,11 +176,20 @@ export default function SiteStatusContent( {
 			break;
 		}
 		case 'inactive': {
-			content = (
-				<span className="sites-overview__status-add-new">
-					<Gridicon icon="plus-small" size={ 16 } />
-					<span>{ translate( 'Add' ) }</span>
-				</span>
+			content = ! isLicenseSelected ? (
+				<button onClick={ handleSelectLicenseAction }>
+					<span className="sites-overview__status-select-license">
+						<Gridicon icon="plus-small" size={ 16 } />
+						<span>{ translate( 'Add' ) }</span>
+					</span>
+				</button>
+			) : (
+				<button onClick={ handleDeselectLicenseAction }>
+					<span className="sites-overview__status-unselect-license">
+						<Gridicon icon="checkmark" size={ 16 } />
+						<span>{ translate( 'Selected' ) }</span>
+					</span>
+				</button>
 			);
 			break;
 		}

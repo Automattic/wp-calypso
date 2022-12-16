@@ -110,7 +110,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 
 					<div className="gmb-select-location__help-actions">
 						<Button
-							href={ 'https://business.google.com/create' }
+							href="https://business.google.com/create"
 							target="_blank"
 							onClick={ this.trackAddYourBusinessClick }
 						>

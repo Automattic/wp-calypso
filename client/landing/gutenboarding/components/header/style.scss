@@ -89,6 +89,10 @@ $padding--gutenboarding__header: $grid-unit-10;
 
 .gutenboarding__header-site-title-section {
 	display: none;
+	white-space: nowrap;
+	// Ensure flex item doesn't exceed 100% of th
+	// available width, allowing content to have ellipsis.
+	min-width: 0;
 
 	@include break-mobile {
 		display: block;
@@ -98,13 +102,6 @@ $padding--gutenboarding__header: $grid-unit-10;
 .gutenboarding__header-domain-section {
 	// Let this flex item take 100% of available width.
 	flex-grow: 1;
-	// Ensure flex item doesn't exceed 100% of th
-	// available width, allowing content to have ellipsis.
-	min-width: 0;
-}
-
-.gutenboarding__header-site-title-section {
-	white-space: nowrap;
 	// Ensure flex item doesn't exceed 100% of th
 	// available width, allowing content to have ellipsis.
 	min-width: 0;

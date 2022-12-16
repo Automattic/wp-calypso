@@ -5,7 +5,7 @@ function PodcastingNotSupportedMessage( { translate } ) {
 	return (
 		<div className="podcasting-details__not-supported">
 			<EmptyContent
-				illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
+				illustration="/calypso/images/illustrations/illustration-nosites.svg"
 				title={ translate( 'Management of podcast settings are not supported on this site.' ) }
 			/>
 		</div>

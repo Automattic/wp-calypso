@@ -20,6 +20,7 @@ import {
 	SitesContentControls,
 	handleQueryParamChange,
 } from './sites-content-controls';
+import { SitesDashboardOptInBanner } from './sites-dashboard-opt-in-banner';
 import { useSitesDisplayMode } from './sites-display-mode-switcher';
 import { SitesGrid } from './sites-grid';
 import { SitesTable } from './sites-table';
@@ -172,7 +173,6 @@ export function SitesDashboard( {
 							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
 						} }
 						href={ addQueryArgs( '/start', {
-							source: TRACK_SOURCE_NAME,
 							ref: TRACK_SOURCE_NAME,
 						} ) }
 					>
@@ -192,10 +192,7 @@ export function SitesDashboard( {
 							onClick={ () => {
 								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
 							} }
-							href={ addQueryArgs( '/start', {
-								source: TRACK_SOURCE_NAME,
-								ref: 'smp-import',
-							} ) }
+							href={ addQueryArgs( '/start/import' ) }
 							icon="arrow-down"
 						>
 							<span>{ __( 'Import an existing site' ) }</span>
@@ -204,6 +201,7 @@ export function SitesDashboard( {
 				</HeaderControls>
 			</PageHeader>
 			<PageBodyWrapper>
+				<SitesDashboardOptInBanner sites={ allSites } />
 				<SitesDashboardSitesList
 					sites={ allSites }
 					filtering={ { search } }
@@ -304,7 +302,7 @@ export function SitesDashboard( {
 				title={ __( 'Scroll to top' ) }
 				aria-label={ __( 'Scroll to top' ) }
 			>
-				<Gridicon icon={ 'arrow-up' } size={ 18 } />
+				<Gridicon icon="arrow-up" size={ 18 } />
 			</ScrollButton>
 		</main>
 	);

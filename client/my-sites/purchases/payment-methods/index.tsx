@@ -81,7 +81,7 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ) {
 					align="left"
 				/>
 			) }
-			<PurchasesNavigation section={ 'paymentMethods' } siteSlug={ siteSlug } />
+			<PurchasesNavigation section="paymentMethods" siteSlug={ siteSlug } />
 
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
@@ -129,7 +129,7 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ) 
 		<Main wideLayout className="purchases">
 			{ isJetpackCloud() && <SidebarNavigation /> }
 			<PageViewTracker
-				path={ '/purchases/add-payment-method' }
+				path="/purchases/add-payment-method"
 				title={ String( titles.addPaymentMethod ) }
 			/>
 			<DocumentHead title={ titles.addPaymentMethod } />
@@ -152,7 +152,7 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ) 
 						<PaymentMethodSelector
 							paymentMethods={ paymentMethodList }
 							successCallback={ goToBillingHistory }
-							eventContext={ '/purchases/add-payment-method' }
+							eventContext="/purchases/add-payment-method"
 						/>
 					</Column>
 					<Column type="sidebar">

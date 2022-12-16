@@ -9,9 +9,7 @@ const TransferUnavailableNotice = ( { message }: TransferUnavailableNoticeProps 
 			<Icon
 				icon={ info }
 				size={ 18 }
-				className={
-					'transfer-unavailable-notice__domain-notice-icon gridicon gridicon--error transfer-unavailable-notice__domain-notice-icon--rotated'
-				}
+				className="transfer-unavailable-notice__domain-notice-icon gridicon gridicon--error transfer-unavailable-notice__domain-notice-icon--rotated"
 				viewBox="2 2 20 20"
 			/>
 			<div className="transfer-unavailable-notice__domain-notice-message">{ message }</div>

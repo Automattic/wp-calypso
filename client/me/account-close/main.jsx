@@ -223,22 +223,18 @@ class AccountSettingsClose extends Component {
 					</ActionPanelBody>
 					<ActionPanelFooter>
 						{ ( isLoading || isDeletePossible ) && (
-							<Button
-								scary
-								onClick={ this.handleDeleteClick }
-								data-testid={ 'close-account-button' }
-							>
+							<Button scary onClick={ this.handleDeleteClick } data-testid="close-account-button">
 								<Gridicon icon="trash" />
 								{ translate( 'Close account', { context: 'button label' } ) }
 							</Button>
 						) }
 						{ hasAtomicSites && ! hasCancelablePurchases && (
-							<Button primary href="/help/contact" data-testid={ 'contact-support-button' }>
+							<Button primary href="/help/contact" data-testid="contact-support-button">
 								{ translate( 'Contact support' ) }
 							</Button>
 						) }
 						{ hasCancelablePurchases && (
-							<Button primary href="/me/purchases" data-testid={ 'manage-purchases-button' }>
+							<Button primary href="/me/purchases" data-testid="manage-purchases-button">
 								{ translate( 'Manage purchases', { context: 'button label' } ) }
 							</Button>
 						) }

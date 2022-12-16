@@ -127,7 +127,10 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 						originalPrice={ originalPrice ?? 0 }
 						pricesAreFetching={ pricesAreFetching }
 						belowPriceText={ item.belowPriceText }
-						tooltipText={ priceTierList.length > 0 && productTooltip( item, priceTierList ) }
+						tooltipText={
+							priceTierList.length > 0 &&
+							productTooltip( item, priceTierList, currencyCode ?? 'USD' )
+						}
 						billingTerm={ billingTerm }
 						productName={ displayName }
 						hideSavingLabel={ false }
@@ -163,10 +166,10 @@ export default UpsellProductCard;
 export const UpsellProductCardPlaceholder: React.FC = () => {
 	return (
 		<JetpackRnaActionCard
-			headerText={ 'Placeholder title' }
+			headerText="Placeholder title"
 			subHeaderText={ `This is placeholder text for the product description. The description text is
 					approximately 18 words and 126 characters.` }
-			ctaButtonLabel={ 'Button label' }
+			ctaButtonLabel="Button label"
 			isPlaceholder
 		>
 			<ul className="upsell-product-card__features">
@@ -185,7 +188,7 @@ export const UpsellProductCardPlaceholder: React.FC = () => {
 				<DisplayPrice
 					pricesAreFetching={ true }
 					billingTerm={ TERM_ANNUALLY }
-					productName={ 'Placeholder product' }
+					productName="Placeholder product"
 				/>
 			</div>
 		</JetpackRnaActionCard>

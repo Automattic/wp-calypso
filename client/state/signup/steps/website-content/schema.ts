@@ -1,8 +1,12 @@
+import type { PageId } from 'calypso/signup/difm/constants';
+import type { SiteId } from 'calypso/types';
+
 export const schema = {
 	$schema: 'https://json-schema.org/draft/2020-12/schema',
 	title: 'Website content schema',
 	type: 'object',
-	required: [ 'currentIndex', 'websiteContent' ],
+	additionalProperties: false,
+	required: [ 'currentIndex', 'websiteContent', 'mediaUploadStates' ],
 	properties: {
 		currentIndex: {
 			type: 'number',
@@ -11,6 +15,8 @@ export const schema = {
 		websiteContent: {
 			type: 'object',
 			description: 'The content for the website',
+			additionalProperties: false,
+			required: [ 'pages', 'siteLogoSection', 'feedbackSection' ],
 			properties: {
 				pages: {
 					type: 'array',
@@ -28,42 +34,80 @@ export const schema = {
 							content: {
 								type: 'string',
 							},
-							images: {
+							media: {
 								type: 'array',
 								items: {
 									type: 'object',
 									properties: {
 										caption: { type: 'string' },
 										url: { type: 'string' },
+										thumbnailUrl: { type: 'string' },
+										uploadID: { type: 'number' },
+										mediaType: { type: 'string' },
 									},
 								},
 							},
 						},
 					},
 				},
-				siteLogoUrl: {
-					type: 'string',
-					description: 'Uploaded Logot url',
+				siteLogoSection: {
+					type: 'object',
+					description: 'Props related to Uploading logo url',
+					additionalProperties: false,
+					required: [ 'siteLogoUrl' ],
+					properties: {
+						siteLogoUrl: {
+							type: 'string',
+							description: 'Uploaded Logo url',
+						},
+					},
+				},
+				feedbackSection: {
+					type: 'object',
+					description: 'Props related to generating feedback',
+					additionalProperties: false,
+					required: [ 'genericFeedback' ],
+					properties: {
+						genericFeedback: {
+							type: 'string',
+							description: 'General feedback provided about the site',
+						},
+					},
 				},
 			},
 		},
-		imageUploadStates: {
+		mediaUploadStates: {
 			type: 'object',
+		},
+		siteId: {
+			type: [ 'number', 'null' ],
+			description: 'The siteId of the stored website content',
 		},
 	},
 };
+export const LOGO_SECTION_ID = 'logo_section';
 
-export interface ImageData {
-	caption: string;
+export const MEDIA_UPLOAD_STATES = {
+	UPLOAD_STARTED: 'UPLOAD_STARTED',
+	UPLOAD_COMPLETED: 'UPLOAD_COMPLETED',
+	UPLOAD_FAILED: 'UPLOAD_FAILED',
+	UPLOAD_REMOVED: 'UPLOAD_REMOVED',
+};
+export type MediaUploadType = 'IMAGE' | 'VIDEO';
+
+export type Media = {
+	caption?: string;
 	url: string;
+	mediaType: MediaUploadType;
+	thumbnailUrl?: string;
 	uploadID?: string;
-}
+};
 
 export interface PageData {
-	id: string;
+	id: PageId;
 	title: string;
 	content: string;
-	images: Array< ImageData >;
+	media: Array< Media >;
 }
 
 export interface ContactPageData extends PageData {
@@ -72,15 +116,25 @@ export interface ContactPageData extends PageData {
 	displayAddress?: string;
 }
 
-export type WebsiteContent = { pages: Array< PageData >; siteLogoUrl: string };
+export type WebsiteContent = {
+	pages: Array< PageData >;
+	siteLogoSection: { siteLogoUrl: string };
+	feedbackSection: { genericFeedback: string };
+};
 export interface WebsiteContentCollection {
 	currentIndex: number;
 	websiteContent: WebsiteContent;
-	imageUploadStates: Record< string, Record< string, string > >;
+	mediaUploadStates: Record< string, Record< string, string > >;
+	siteId: SiteId | null;
 }
 
 export const initialState: WebsiteContentCollection = {
 	currentIndex: 0,
-	websiteContent: { pages: [], siteLogoUrl: '' },
-	imageUploadStates: {},
+	websiteContent: {
+		pages: [],
+		siteLogoSection: { siteLogoUrl: '' },
+		feedbackSection: { genericFeedback: '' },
+	},
+	mediaUploadStates: {},
+	siteId: null,
 };

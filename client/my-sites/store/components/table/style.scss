@@ -24,11 +24,6 @@
 	&.is-compact-table {
 		padding: 0.5em 0;
 
-		.table-heading,
-		.table-item {
-			border-bottom: none;
-		}
-
 		.table-row {
 			line-height: 28px;
 			&.is-header {
@@ -52,6 +47,7 @@
 
 		.table-heading,
 		.table-item {
+			border-bottom: none;
 			text-align: right;
 			padding: 0 8px;
 			white-space: nowrap;

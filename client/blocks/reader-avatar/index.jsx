@@ -70,8 +70,8 @@ const ReaderAvatar = ( {
 	let siteIconSize;
 	let gravatarSize;
 	if ( isCompact ) {
-		siteIconSize = 32;
-		gravatarSize = hasBothIcons ? 24 : 32;
+		siteIconSize = 40;
+		gravatarSize = hasBothIcons ? 32 : 40;
 	} else {
 		siteIconSize = 96;
 		gravatarSize = hasBothIcons ? 32 : 96;

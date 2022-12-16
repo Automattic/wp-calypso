@@ -72,6 +72,7 @@ export { isJetpackScan } from './is-jetpack-scan';
 export { isJetpackScanSlug } from './is-jetpack-scan-slug';
 export { isJetpackSearch } from './is-jetpack-search';
 export { isJetpackSearchSlug } from './is-jetpack-search-slug';
+export { isJetpackSearchFree } from './is-jetpack-search-free';
 export { isJetpackVideoPress } from './is-jetpack-videopress';
 export { default as isJetpackLegacyItem } from './is-jetpack-legacy-item';
 export { default as isJetpackPurchasableItem } from './is-jetpack-purchasable-item';

@@ -24,6 +24,7 @@ import {
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PRODUCT_WPCOM_SEARCH,
+	PRODUCT_JETPACK_SEARCH_FREE,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
 	PRODUCT_JETPACK_BOOST,
 	PRODUCT_JETPACK_BOOST_MONTHLY,
@@ -38,6 +39,12 @@ import {
 	JETPACK_TAG_FOR_NEWS_ORGANISATIONS,
 	JETPACK_TAG_FOR_ONLINE_FORUMS,
 	JETPACK_TAG_FOR_WOOCOMMERCE_STORES,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_YEARLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_YEARLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY,
 } from './constants';
 import type { SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -45,30 +52,33 @@ import type { TranslateResult } from 'i18n-calypso';
 // Translatable strings
 export const getJetpackProductsShortNames = (): Record< string, TranslateResult > => {
 	return {
-		[ PRODUCT_JETPACK_BACKUP_DAILY ]: translate( 'Backup {{em}}Daily{{/em}}', {
+		[ PRODUCT_JETPACK_BACKUP_DAILY ]: translate( 'VaultPress Backup {{em}}Daily{{/em}}', {
 			components: {
 				em: createElement( 'em' ),
 			},
 		} ),
-		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: translate( 'Backup {{em}}Daily{{/em}}', {
+		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: translate( 'VaultPress Backup {{em}}Daily{{/em}}', {
 			components: {
 				em: createElement( 'em' ),
 			},
 		} ),
-		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: translate( 'Backup {{em}}Real-time{{/em}}', {
+		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: translate( 'VaultPress Backup {{em}}Real-time{{/em}}', {
 			components: {
 				em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
 			},
 		} ),
-		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate( 'Backup {{em}}Real-time{{/em}}', {
-			components: {
-				em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
-			},
-		} ),
-		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: translate( 'Backup' ),
-		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: translate( 'Backup' ),
-		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: translate( 'Backup' ),
-		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: translate( 'Backup' ),
+		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate(
+			'VaultPress Backup {{em}}Real-time{{/em}}',
+			{
+				components: {
+					em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
+				},
+			}
+		),
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: translate( 'VaultPress Backup' ),
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: translate( 'VaultPress Backup' ),
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: translate( 'VaultPress Backup' ),
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: translate( 'VaultPress Backup' ),
 		[ PRODUCT_JETPACK_BOOST ]: translate( 'Boost' ),
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: translate( 'Boost' ),
 		[ PRODUCT_JETPACK_SCAN_REALTIME ]: translate( 'Scan {{em}}Real-time{{/em}}', {
@@ -84,35 +94,46 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 		[ PRODUCT_JETPACK_SCAN ]: translate( 'Scan' ),
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: translate( 'Scan' ),
 		[ PRODUCT_JETPACK_SEARCH ]: translate( 'Search' ),
+		[ PRODUCT_JETPACK_SEARCH_FREE ]: translate( 'Search' ),
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Search' ),
 		[ PRODUCT_WPCOM_SEARCH ]: translate( 'Search' ),
 		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: translate( 'Search' ),
-		[ PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Anti-spam' ),
-		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Anti-spam' ),
+		[ PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Akismet {{s}}Anti-spam{{/s}}', {
+			components: {
+				s: <span style={ { whiteSpace: 'nowrap' } } />,
+			},
+		} ),
+		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Akismet {{s}}Anti-spam{{/s}}', {
+			components: {
+				s: <span style={ { whiteSpace: 'nowrap' } } />,
+			},
+		} ),
 		[ PRODUCT_JETPACK_VIDEOPRESS ]: translate( 'VideoPress' ),
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: translate( 'VideoPress' ),
-		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: translate( 'Social' ),
-		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: translate( 'Social' ),
+		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: translate( 'Social', { context: 'Jetpack product name' } ),
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: translate( 'Social', {
+			context: 'Jetpack product name',
+		} ),
 	};
 };
 
 export const getJetpackProductsDisplayNames = (): Record< string, TranslateResult > => {
-	const backupDaily = translate( 'Backup {{em}}Daily{{/em}}', {
+	const backupDaily = translate( 'VaultPress Backup {{em}}Daily{{/em}}', {
 		components: {
 			em: <em />,
 		},
 	} );
 	const backupRealtime = (
 		<>
-			{ translate( 'Backup {{em}}Real-time{{/em}}', {
+			{ translate( 'VaultPress Backup {{em}}Real-time{{/em}}', {
 				components: {
 					em: <em style={ { whiteSpace: 'nowrap' } } />,
 				},
 			} ) }
 		</>
 	);
-	const backupT1 = translate( 'Backup' );
-	const backupT2 = translate( 'Backup' );
+	const backupT1 = translate( 'VaultPress Backup' );
+	const backupT2 = translate( 'VaultPress Backup' );
 	const search = translate( 'Site Search' );
 	const scan = translate( 'Scan' );
 	const scanRealtime = (
@@ -125,9 +146,45 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		</>
 	);
 	const videoPress = translate( 'VideoPress' );
-	const antiSpam = translate( 'Anti-spam' );
+	const antiSpam = translate( 'Akismet {{s}}Anti-spam{{/s}}', {
+		components: {
+			s: <span style={ { whiteSpace: 'nowrap' } } />,
+		},
+	} );
 	const boost = translate( 'Boost' );
-	const social = translate( 'Social' );
+	const social = translate( 'Social', { context: 'Jetpack product name' } );
+
+	const text10gb = translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
+		comment:
+			'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
+		count: 10,
+		args: { numberOfGigabytes: 10 },
+	} );
+
+	const text100gb = translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
+		comment:
+			'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
+		count: 100,
+		args: { numberOfGigabytes: 100 },
+	} );
+
+	const text1tb = translate( '%(numberOfTerabytes)dTB', '%(numberOfTerabytes)dTB', {
+		comment:
+			'Displays an amount of terabytes. Plural string used in case TB needs to be pluralized.',
+		count: 1,
+		args: { numberOfTerabytes: 1 },
+	} );
+
+	//Backup Add-on products
+	const backupAddon10gb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
+		args: { storageAmount: text10gb },
+	} );
+	const backupAddon100gb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
+		args: { storageAmount: text100gb },
+	} );
+	const backupAddon1tb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
+		args: { storageAmount: text1tb },
+	} );
 
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
@@ -154,30 +211,40 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: social,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: social,
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ]: backupAddon10gb,
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY ]: backupAddon100gb,
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY ]: backupAddon1tb,
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_YEARLY ]: backupAddon10gb,
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_YEARLY ]: backupAddon100gb,
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY ]: backupAddon1tb,
 	};
 };
 
 export const getJetpackProductsCallToAction = (): Record< string, TranslateResult > => {
-	const backupDaily = translate( 'Get Backup {{em}}Daily{{/em}}', {
+	const backupDaily = translate( 'Get VaultPress Backup {{em}}Daily{{/em}}', {
 		components: {
 			em: <em />,
 		},
 	} );
 	const backupRealtime = (
 		<>
-			{ translate( 'Get Backup {{em}}Real-time{{/em}}', {
+			{ translate( 'Get VaultPress Backup {{em}}Real-time{{/em}}', {
 				components: {
 					em: <em style={ { whiteSpace: 'nowrap' } } />,
 				},
 			} ) }
 		</>
 	);
-	const backupT1 = translate( 'Get Backup' );
-	const backupT2 = translate( 'Get Backup' );
+	const backupT1 = translate( 'Get VaultPress Backup' );
+	const backupT2 = translate( 'Get VaultPress Backup' );
 	const search = translate( 'Get Site Search' );
 	const scan = translate( 'Get Scan' );
 	const videoPress = translate( 'Get VideoPress' );
-	const antiSpam = translate( 'Get Anti-spam' );
+	const antiSpam = translate( 'Get Akismet {{s}}Anti-spam{{/s}}', {
+		components: {
+			s: <span style={ { whiteSpace: 'nowrap' } } />,
+		},
+	} );
 	const boost = translate( 'Get Boost' );
 	const social = translate( 'Get Social' );
 
@@ -222,7 +289,12 @@ export const getJetpackProductsTaglines = (): Record<
 	const socialTagLine = translate(
 		'Easily share your website content on your social media channels'
 	);
-
+	const backupAddonTagLine = translate(
+		'Additional storage for your Jetpack VaultPress Backup plan.'
+	);
+	const backupAddonOwnedTagLine = translate(
+		'Your site has additional storage for Jetpack VaultPress Backup.'
+	);
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
 			default: backupDailyTagline,
@@ -283,6 +355,30 @@ export const getJetpackProductsTaglines = (): Record<
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: { default: videoPressTagLine },
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: { default: socialTagLine },
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: { default: socialTagLine },
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ]: {
+			default: backupAddonTagLine,
+			owned: backupAddonOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY ]: {
+			default: backupAddonTagLine,
+			owned: backupAddonOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY ]: {
+			default: backupAddonTagLine,
+			owned: backupAddonOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_YEARLY ]: {
+			default: backupAddonTagLine,
+			owned: backupAddonOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_YEARLY ]: {
+			default: backupAddonTagLine,
+			owned: backupAddonOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY ]: {
+			default: backupAddonTagLine,
+			owned: backupAddonOwnedTagLine,
+		},
 	};
 };
 
@@ -631,7 +727,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 	const searchIncludesInfo = [
 		translate( 'Instant search, filtering, and indexing' ),
 		translate( 'Highly relevant search results' ),
-		translate( 'Support for 29 languages' ),
+		translate( 'Supports 38 languages' ),
 		translate( 'Quick and accurate spelling correction' ),
 	];
 	const boostIncludesInfo = [
@@ -784,6 +880,21 @@ export const useJetpack10GbStorageAmountText = (): TranslateResult => {
 					'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
 				count: 10,
 				args: { numberOfGigabytes: 10 },
+			} ),
+		[ _translate ]
+	);
+};
+
+export const useJetpack100GbStorageAmountText = (): TranslateResult => {
+	const _translate = useTranslate();
+
+	return useMemo(
+		() =>
+			_translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
+				comment:
+					'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
+				count: 100,
+				args: { numberOfGigabytes: 100 },
 			} ),
 		[ _translate ]
 	);

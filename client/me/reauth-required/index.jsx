@@ -24,14 +24,20 @@ const debug = debugFactory( 'calypso:me:reauth-required' );
 // autofocus is used for tracking purposes, not an a11y issue
 /* eslint-disable jsx-a11y/no-autofocus, jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/anchor-is-valid */
 class ReauthRequired extends Component {
-	state = {
-		remember2fa: false, // Should the 2fa be remembered for 30 days?
-		code: '', // User's generated 2fa code
-		smsRequestsAllowed: true, // Can the user request another SMS code?
-		twoFactorAuthType: 'authenticator',
-	};
-
 	codeRequestTimer = false;
+
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			remember2fa: false, // Should the 2fa be remembered for 30 days?
+			code: '', // User's generated 2fa code
+			smsRequestsAllowed: true, // Can the user request another SMS code?
+			twoFactorAuthType: 'authenticator',
+			isReauthRequired: props.twoStepAuthorization.isReauthRequired(),
+			isTwoStepInitialized: props.twoStepAuthorization.initialized,
+		};
+	}
 
 	componentDidMount() {
 		this.props.twoStepAuthorization.on( 'change', this.update );
@@ -42,7 +48,11 @@ class ReauthRequired extends Component {
 		this.props.twoStepAuthorization.off( 'change', this.update );
 	}
 
-	update = () => this.forceUpdate();
+	update = () => {
+		this.setState( {
+			isReauthRequired: this.props.twoStepAuthorization.isReauthRequired(),
+		} );
+	};
 
 	getClickHandler = ( action, callback ) => () => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
@@ -226,7 +236,7 @@ class ReauthRequired extends Component {
 		);
 	}
 
-	render() {
+	renderDialog() {
 		const method = this.props.twoStepAuthorization.isTwoStepSMSEnabled() ? 'sms' : 'authenticator';
 		const isSecurityKeySupported =
 			this.props.twoStepAuthorization.isSecurityKeyEnabled() && supported();
@@ -244,7 +254,7 @@ class ReauthRequired extends Component {
 				autoFocus={ false }
 				className="reauth-required__dialog"
 				isFullScreen={ false }
-				isVisible={ this.props.twoStepAuthorization.isReauthRequired() }
+				isVisible={ this.state.isReauthRequired }
 			>
 				{ isSecurityKeySupported && twoFactorAuthType === 'webauthn' ? (
 					<SecurityKeyForm
@@ -265,6 +275,17 @@ class ReauthRequired extends Component {
 					isSecurityKeySupported={ isSecurityKeySupported }
 				/>
 			</Dialog>
+		);
+	}
+
+	render() {
+		return (
+			<>
+				{ this.renderDialog() }
+				{ this.state.isTwoStepInitialized &&
+					! this.state.isReauthRequired &&
+					this.props.children?.() }
+			</>
 		);
 	}
 

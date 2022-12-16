@@ -20,3 +20,10 @@
 		margin: 0;
 	}
 }
+
+.plugin-custom-domain-dialog__install_plugin {
+	max-width: 200px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

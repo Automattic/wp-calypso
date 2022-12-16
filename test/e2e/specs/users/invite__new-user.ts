@@ -25,7 +25,7 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 		usernamePrefix: 'invited',
 	} );
 
-	let adjustedInviteLink: string;
+	let acceptInviteLink: string;
 	let page: Page;
 
 	beforeAll( async () => {
@@ -73,15 +73,14 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 				sentTo: testUser.email,
 			} );
 			const links = await emailClient.getLinksFromMessage( message );
-			const acceptInviteLink = links.find( ( link: string ) =>
+			acceptInviteLink = links.find( ( link: string ) =>
 				link.includes( 'accept-invite' )
 			) as string;
 			expect( acceptInviteLink ).toBeDefined();
-			adjustedInviteLink = DataHelper.adjustInviteLink( acceptInviteLink );
 		} );
 
 		it( 'Sign up as invited user from the invite link', async function () {
-			await page.goto( adjustedInviteLink );
+			await page.goto( acceptInviteLink );
 
 			const userSignupPage = new UserSignupPage( page );
 			await userSignupPage.signup( testUser.email, testUser.username, testUser.password );

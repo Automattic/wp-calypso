@@ -3,6 +3,7 @@
  */
 
 import { render, fireEvent } from '@testing-library/react';
+import nock from 'nock';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -11,6 +12,12 @@ import SiteCard from '../index';
 import type { SiteData } from '../../types';
 
 describe( '<SiteCard>', () => {
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.get( '/rest/v1.1/jetpack-blogs/1234/test-connection?is_stale_connection_healthy=true' )
+		.reply( 200, {
+			connected: true,
+		} );
 	test( 'should render correctly and expand card on click', () => {
 		const siteObj = {
 			blog_id: 1234,
@@ -42,7 +49,13 @@ describe( '<SiteCard>', () => {
 			scan: { threats: 3, type: 'scan', status: 'failed', value: '3 Threats' },
 			plugin: { updates: 3, type: 'plugin', status: 'warning', value: '3 Available' },
 		};
-		const initialState = {};
+		const initialState = {
+			partnerPortal: {
+				partner: {
+					isPartnerOAuthTokenLoaded: true,
+				},
+			},
+		};
 		const mockStore = configureStore();
 		const store = mockStore( initialState );
 		const queryClient = new QueryClient();

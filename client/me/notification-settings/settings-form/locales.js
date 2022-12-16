@@ -15,7 +15,7 @@ export const settingLabels = {
 	achievement: () => i18n.translate( 'Site achievements' ),
 	mentions: () => i18n.translate( 'Username mentions' ),
 	scheduled_publicize: () => i18n.translate( 'Post Publicized' ),
-
+	blogging_prompt: () => i18n.translate( 'Daily Writing Prompts' ),
 	store_order: () => i18n.translate( 'New order' ),
 };
 

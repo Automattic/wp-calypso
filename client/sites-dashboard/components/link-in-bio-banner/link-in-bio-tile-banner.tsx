@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import image from 'calypso/assets/images/onboarding/link-in-bio-banner-medium.png';
+import image from 'calypso/assets/images/onboarding/link-in-bio-banner-medium.jpg';
 import * as Banner from './link-in-bio-banner-parts';
 
 const Root = styled( Banner.Root )( {
@@ -30,7 +30,6 @@ const Details = styled( 'div' )( {
 export const LinkInBioTileBanner = () => {
 	return (
 		<Root data-testid="tile-banner">
-			<Banner.DismissButton />
 			<Banner.Image src={ image } />
 			<Details>
 				<Banner.Title />

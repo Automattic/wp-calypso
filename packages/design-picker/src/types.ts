@@ -42,6 +42,8 @@ export interface StyleVariationPreview {
 }
 
 export interface StyleVariationPreviewColorPalette {
+	base?: string;
+	contrast?: string;
 	background?: string;
 	foreground?: string;
 	primary?: string;
@@ -126,6 +128,7 @@ export interface DesignPreviewOptions {
 	viewport_height?: number;
 	use_screenshot_overrides?: boolean;
 	disable_viewport_height?: boolean;
+	remove_assets?: boolean;
 }
 
 /** @deprecated used for Gutenboarding (/new flow) */

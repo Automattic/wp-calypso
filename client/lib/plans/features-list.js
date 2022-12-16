@@ -10,8 +10,7 @@ import {
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_ACTIVITY_LOG,
 	FEATURE_ACTIVITY_LOG_1_YEAR_V2,
-	FEATURE_ADVANCED_CUSTOMIZATION,
-	FEATURE_ADVANCED_DESIGN,
+	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 	FEATURE_ADVANCED_SEO,
 	FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
 	FEATURE_ADVANCED_SEO_TOOLS,
@@ -33,7 +32,6 @@ import {
 	FEATURE_BACKUP_DAILY_V2,
 	FEATURE_BACKUP_REALTIME_V2,
 	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
-	FEATURE_BASIC_DESIGN,
 	FEATURE_BLANK,
 	FEATURE_BLOG_DOMAIN,
 	FEATURE_CLOUDFLARE_ANALYTICS,
@@ -169,24 +167,7 @@ import {
 	FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
 	FEATURE_UNLIMITED_TRAFFIC,
 	FEATURE_MANAGED_HOSTING,
-	/* START - condensed_plan_features_v1 test */
-	FEATURE_HOSTING_TEST,
-	FEATURE_PRIORITY_SUPPORT_TEST,
-	FEATURE_PLUGINS_TEST,
-	FEATURE_SFTP_DATABASE_TEST,
-	FEATURE_FREE_NEWSLETTER_V1,
-	FEATURE_PAID_NEWSLETTER_V1,
-	FEATURE_REPUBLICIZE_V3,
-	FEATURE_MONETISE_V2,
-	FEATURE_EDGE_CACHING_V2,
-	FEATURE_UPLOAD_THEMES_V3,
-	FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2,
-	FEATURE_SITE_STATS_V2,
-	FEATURE_COLLECT_PAYMENTS_V3,
-	FEATURE_FREE_THEMES_V2,
-	FEATURE_VIDEO_UPLOADS_V2,
-	/* END - condensed_plan_features_v1 test */
-	WPCOM_FEATURES_GLOBAL_STYLES,
+	WPCOM_FEATURES_NO_ADVERTS,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -296,26 +277,12 @@ export const FEATURES_LIST = {
 		},
 	},
 
-	[ WPCOM_FEATURES_GLOBAL_STYLES ]: {
-		getSlug: () => WPCOM_FEATURES_GLOBAL_STYLES,
-		getTitle: () =>
-			i18n.translate( 'Advanced design customization', {
-				components: {
-					strong: <strong />,
-				},
-			} ),
+	[ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION ]: {
+		getSlug: () => FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+		getTitle: () => i18n.translate( 'Advanced design customization' ),
 		getDescription: () =>
 			i18n.translate(
-				"Access extended color schemes and customization tools. Change all of your site's fonts, colours and more."
-			),
-	},
-
-	[ FEATURE_ADVANCED_CUSTOMIZATION ]: {
-		getSlug: () => FEATURE_ADVANCED_CUSTOMIZATION,
-		getTitle: () => i18n.translate( 'CSS customization' ),
-		getDescription: () =>
-			i18n.translate(
-				'Add your own CSS code, giving you complete control over how your site looks.'
+				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
 			),
 	},
 
@@ -625,29 +592,8 @@ export const FEATURES_LIST = {
 		getStoreSlug: () => 'videopress',
 	},
 
-	[ FEATURE_BASIC_DESIGN ]: {
-		getSlug: () => FEATURE_BASIC_DESIGN,
-		getTitle: () => i18n.translate( 'Basic design customization' ),
-		getDescription: () =>
-			i18n.translate(
-				'Customize your selected theme with pre-set color schemes, ' +
-					'background designs, and font styles.'
-			),
-		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
-	},
-
-	[ FEATURE_ADVANCED_DESIGN ]: {
-		getSlug: () => FEATURE_ADVANCED_DESIGN,
-		getTitle: () => i18n.translate( 'CSS customization' ),
-		getDescription: () =>
-			i18n.translate(
-				'Add your own CSS code, giving you complete control over how your site looks.'
-			),
-		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
-	},
-
 	[ FEATURE_NO_ADS ]: {
-		getSlug: () => FEATURE_NO_ADS,
+		getSlug: () => WPCOM_FEATURES_NO_ADVERTS,
 		getTitle: () => i18n.translate( 'Remove WordPress.com ads' ),
 		getDescription: () =>
 			i18n.translate(
@@ -867,7 +813,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_SITE_STATS ]: {
 		getSlug: () => FEATURE_SITE_STATS,
-		getTitle: () => i18n.translate( 'Site Stats and Analytics' ),
+		getTitle: () => i18n.translate( 'Jetpack Stats' ),
 		getDescription: () => i18n.translate( 'The most important metrics for your site.' ),
 	},
 	[ FEATURE_TRAFFIC_TOOLS ]: {
@@ -1082,12 +1028,12 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_BACKUP_REALTIME_V2 ]: {
 		getSlug: () => FEATURE_BACKUP_REALTIME_V2,
-		getTitle: () => i18n.translate( 'Backup (real-time, off-site)' ),
+		getTitle: () => i18n.translate( 'VaultPress Backup (real-time, off-site)' ),
 	},
 	[ FEATURE_PRODUCT_BACKUP_DAILY_V2 ]: {
 		getSlug: () => FEATURE_PRODUCT_BACKUP_DAILY_V2,
 		getIcon: () => 'cloud-upload',
-		getTitle: () => i18n.translate( 'All Backup Daily features' ),
+		getTitle: () => i18n.translate( 'All VaultPress Backup Daily features' ),
 		getDescription: () =>
 			i18n.translate(
 				'Automatic daily backups of your entire site, with unlimited, WordPress-optimized secure storage. {{link}}Learn more{{/link}}.',
@@ -1102,7 +1048,7 @@ export const FEATURES_LIST = {
 	[ FEATURE_PRODUCT_BACKUP_REALTIME_V2 ]: {
 		getSlug: () => FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 		getIcon: () => 'cloud-upload',
-		getTitle: () => i18n.translate( 'Backup Real-time (off-site)' ),
+		getTitle: () => i18n.translate( 'VaultPress Backup Real-time (off-site)' ),
 		getDescription: () =>
 			i18n.translate(
 				'Real-time backups of your entire site and database with unlimited secure storage. {{link}}Learn more{{/link}}.',
@@ -1176,7 +1122,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Activity log: 1-year archive' ),
 		getDescription: () =>
 			i18n.translate(
-				'View every change to your site in the last year. Pairs with Backup to restore your site to any earlier version. {{link}}Learn more.{{/link}}',
+				'View every change to your site in the last year. Pairs with VaultPress Backup to restore your site to any earlier version. {{link}}Learn more.{{/link}}',
 				{
 					components: {
 						link: <ExternalLink icon href="https://jetpack.com/features/security/activity-log/" />,
@@ -1424,8 +1370,20 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_SFTP_DATABASE ]: {
 		getSlug: () => FEATURE_SFTP_DATABASE,
-		getTitle: () => i18n.translate( 'SFTP (SSH File Transfer Protocol) and Database Access' ),
-		getDescription: () => {},
+		getTitle: () => i18n.translate( 'SFTP, SSH, WP-CLI, and Database access' ),
+		getDescription: () => {
+			const hasTranslation =
+				config( 'english_locales' ).includes( i18n.getLocaleSlug() ) ||
+				i18n.hasTranslation(
+					'A set of developer tools that give you more control over your site, simplify debugging, and make it easier to integrate with each step of your workflow.'
+				);
+
+			return hasTranslation
+				? i18n.translate(
+						'A set of developer tools that give you more control over your site, simplify debugging, and make it easier to integrate with each step of your workflow.'
+				  )
+				: '';
+		},
 	},
 
 	[ PREMIUM_DESIGN_FOR_STORES ]: {
@@ -1485,7 +1443,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_JETPACK_PRODUCT_BACKUP ]: {
 		getSlug: () => FEATURE_JETPACK_PRODUCT_BACKUP,
-		getTitle: () => i18n.translate( 'All Backup features' ),
+		getTitle: () => i18n.translate( 'All VaultPress Backup features' ),
 	},
 	[ FEATURE_JETPACK_PRODUCT_VIDEOPRESS ]: {
 		getSlug: () => FEATURE_JETPACK_PRODUCT_VIDEOPRESS,
@@ -1493,7 +1451,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_JETPACK_ALL_BACKUP_SECURITY_FEATURES ]: {
 		getSlug: () => FEATURE_JETPACK_ALL_BACKUP_SECURITY_FEATURES,
-		getTitle: () => i18n.translate( 'All Backup & Security features' ),
+		getTitle: () => i18n.translate( 'All VaultPress Backup & Security features' ),
 	},
 	[ FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS ]: {
 		getSlug: () => FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS,
@@ -1595,105 +1553,6 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
 		getTitle: () => i18n.translate( 'Advanced link in bio themes and customization' ),
 	},
-	/* START - condensed_plan_features_v1 test */
-	[ FEATURE_HOSTING_TEST ]: {
-		getSlug: () => FEATURE_HOSTING_TEST,
-		getTitle: () => i18n.translate( 'Fully managed web hosting & CDN' ),
-		getDescription: () => {},
-	},
-	[ FEATURE_PRIORITY_SUPPORT_TEST ]: {
-		getSlug: () => FEATURE_PRIORITY_SUPPORT_TEST,
-		getTitle: () => '24/7 live chat support',
-		getDescription: () => {},
-	},
-	[ FEATURE_PLUGINS_TEST ]: {
-		getSlug: () => FEATURE_PLUGINS_TEST,
-		getTitle: () => 'Install WordPress plugins',
-		getDescription: () => {},
-	},
-	[ FEATURE_SFTP_DATABASE_TEST ]: {
-		getSlug: () => FEATURE_SFTP_DATABASE_TEST,
-		getTitle: () => 'SFTP and Database Access',
-		getDescription: () => {},
-	},
-	[ FEATURE_FREE_NEWSLETTER_V1 ]: {
-		getSlug: () => FEATURE_FREE_NEWSLETTER_V1,
-		getTitle: () => 'Free newsletter w/ unlimited subscribers.',
-		getDescription: () => {},
-	},
-	[ FEATURE_PAID_NEWSLETTER_V1 ]: {
-		getSlug: () => FEATURE_PAID_NEWSLETTER_V1,
-		getTitle: () => 'Paid newsletter w/ unlimited subscribers.',
-		getDescription: () => {},
-	},
-	[ FEATURE_REPUBLICIZE_V3 ]: {
-		getSlug: () => FEATURE_REPUBLICIZE,
-		getTitle: () => 'Advanced social media tools',
-		getDescription: () => {},
-	},
-	[ FEATURE_MONETISE_V2 ]: {
-		getSlug: () => FEATURE_MONETISE,
-		getTitle: () => 'Earn money from ads',
-		getDescription: () => {},
-	},
-	[ FEATURE_UPLOAD_THEMES_V3 ]: {
-		getSlug: () => FEATURE_UPLOAD_THEMES_V3,
-		getTitle: () => 'Upload custom WordPress themes',
-		getDescription: () => {},
-	},
-	[ FEATURE_EDGE_CACHING_V2 ]: {
-		getSlug: () => FEATURE_EDGE_CACHING_V2,
-		getTitle: () => 'High-performance edge caching',
-		getDescription: () => {},
-	},
-	[ FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2 ]: {
-		getSlug: () => FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
-		getTitle: () => i18n.translate( 'Advanced SEO tools' ),
-		getDescription: () => {},
-	},
-	[ FEATURE_SITE_STATS_V2 ]: {
-		getSlug: () => FEATURE_SITE_STATS,
-		getTitle: () => i18n.translate( 'Built-in site stats' ),
-		getDescription: () => i18n.translate( 'The most important metrics for your site.' ),
-	},
-	[ FEATURE_COLLECT_PAYMENTS_V3 ]: {
-		getSlug: () => FEATURE_COLLECT_PAYMENTS_V2,
-		getTitle: () => i18n.translate( 'Collect payments and donations' ),
-		getDescription: () =>
-			i18n.translate(
-				'Accept payments from credit or debit cards via Stripe. Sell products, collect donations, and set up recurring payments for subscriptions or memberships. {{link}}Learn more{{/link}}.',
-				{
-					components: {
-						link: (
-							<ExternalLink
-								icon
-								href="https://jetpack.com/support/jetpack-blocks/payments-block/"
-							/>
-						),
-					},
-				}
-			),
-	},
-	[ FEATURE_FREE_THEMES_V2 ]: {
-		getSlug: () => FEATURE_FREE_THEMES,
-		getTitle: () => i18n.translate( 'Dozens of free themes and design patterns' ),
-		getDescription: () =>
-			i18n.translate(
-				'Access to a wide range of professional themes ' +
-					"so you can find a design that's just right for your site."
-			),
-	},
-	[ FEATURE_VIDEO_UPLOADS_V2 ]: {
-		getSlug: () => FEATURE_VIDEO_UPLOADS,
-		getTitle: () => i18n.translate( 'High-quality video hosting with VideoPress' ),
-		getDescription: () =>
-			i18n.translate(
-				'The easiest way to upload videos to your website and display them ' +
-					'using a fast, unbranded, customizable player with rich stats.'
-			),
-		getStoreSlug: () => 'videopress',
-	},
-	/* END - condensed_plan_features_v1 test */
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {
 		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,
 		getTitle: () => i18n.translate( 'Unlimited traffic' ),

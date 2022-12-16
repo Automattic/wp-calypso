@@ -1,132 +1,216 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`JetpackAuthorize renders as expected 1`] = `
-<Connect(Localized(JetpackConnectMainWrapper))
-  isWoo={false}
-  pageTitle=""
-  wooDnaConfig={
-    Object {
-      "getFlowName": [Function],
-      "getServiceHelpUrl": [Function],
-      "getServiceName": [Function],
-      "isWooDnaFlow": [Function],
-    }
-  }
->
-  <div
-    className="jetpack-connect__authorize-form"
+<div>
+  <main
+    class="jetpack-connect__main main"
+    role="main"
   >
     <div
-      className="jetpack-connect__logged-in-form"
+      class="jetpack-connect__main-logo"
     >
-      <QuerySiteFeatures
-        siteIds={
-          Array [
-            98765,
-          ]
-        }
-      />
-      <QuerySitePurchases
-        siteId={98765}
-      />
-      <QueryUserConnection
-        siteId={98765}
-        siteIsOnSitesList={false}
-      />
-      <Connect(Localized(AuthFormHeader))
-        authQuery={
-          Object {
-            "authApproved": false,
-            "blogname": "Example Blog",
-            "clientId": 98765,
-            "closeWindowAfterAuthorize": false,
-            "closeWindowAfterLogin": false,
-            "from": "banner-44-slide-1-dashboard",
-            "homeUrl": "http://an.example.site",
-            "jpVersion": "5.4",
-            "nonce": "fooBarNonce",
-            "redirectAfterAuth": "http://an.example.site/wp-admin/admin.php?page=jetpack",
-            "redirectUri": "http://an.example.site/wp-admin/admin.php?page=jetpack&action=authorize&_wpnonce=fooBarNonce&redirect=http%3A%2F%2Fan.example.site%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack",
-            "scope": "administrator:fooBarBaz",
-            "secret": "fooBarSecret",
-            "site": "http://an.example.site",
-            "siteIcon": "",
-            "siteUrl": "http://an.example.site",
-            "state": "1",
-            "userEmail": "email@an.example.site",
-          }
-        }
-        isWoo={false}
-        wooDnaConfig={
-          Object {
-            "getFlowName": [Function],
-            "getServiceHelpUrl": [Function],
-            "getServiceName": [Function],
-            "isWooDnaFlow": [Function],
-          }
-        }
-      />
-      <Memo(Card)
-        className="jetpack-connect__logged-in-card"
+      <div
+        class="jetpack-header"
       >
-        <Connect(Gravatar)
-          size={64}
-          user={
-            Object {
-              "display_name": "A User's Name",
-            }
-          }
-        />
-        <p
-          className="jetpack-connect__logged-in-form-user-text"
+        <svg
+          class="jetpack-logo"
+          height="45"
+          viewBox="0 0 118 32"
         >
-          Connecting as {{strong}}%(user)s{{/strong}} ({{strong}}%(email)s{{/strong}})
-        </p>
-        <LoggedOutFormFooter
-          className="jetpack-connect__action-disclaimer"
-        >
-          <Connect(Localized(JetpackConnectDisclaimer))
-            siteName="Example Blog"
+          <title>
+            Jetpack
+          </title>
+          <path
+            class="jetpack-logo__icon-circle"
+            d="M16,0C7.2,0,0,7.2,0,16s7.2,16,16,16s16-7.2,16-16S24.8,0,16,0z"
+            fill="#069e08"
           />
-          <ForwardRef(Button)
-            disabled={false}
-            onClick={[Function]}
-            primary={true}
-            type="button"
-          >
-            Approve
-          </ForwardRef(Button)>
-        </LoggedOutFormFooter>
-      </Memo(Card)>
-      <LoggedOutFormLinks>
-        <LoggedOutFormLinkItem
-          href="http://an.example.site/wp-admin/admin.php?page=jetpack"
-        >
-          <Gridicon
-            icon="arrow-left"
-            size={18}
+          <polygon
+            class="jetpack-logo__icon-triangle"
+            fill="#fff"
+            points="15,19 7,19 15,3 "
           />
-           
-          Return to %(sitename)s
-        </LoggedOutFormLinkItem>
-        <LoggedOutFormLinkItem
-          href="/log-in/jetpack?redirect_to=https%3A%2F%2Fexample.com%2F&from=banner-44-slide-1-dashboard"
-          onClick={[Function]}
-        >
-          Sign in as a different user
-        </LoggedOutFormLinkItem>
-        <LoggedOutFormLinkItem
-          onClick={[Function]}
-        >
-          Create a new account
-        </LoggedOutFormLinkItem>
-        <JetpackConnectHappychatButton
-          eventName="calypso_jpc_authorize_chat_initiated"
-        >
-          <JetpackConnectHelpButton />
-        </JetpackConnectHappychatButton>
-      </LoggedOutFormLinks>
+          <polygon
+            class="jetpack-logo__icon-triangle"
+            fill="#fff"
+            points="17,29 17,13 25,13 "
+          />
+          <path
+            class="jetpack-logo__text"
+            d="M41.3 26.6c-.5-.7-.9-1.4-1.3-2.1 2.3-1.4 3-2.5 3-4.6V8h-3V6h6v13.4C46 22.8 45 24.8 41.3 26.6zM58.5 21.3c-1.5.5-2.7.6-4.2.6-3.6 0-5.8-1.8-5.8-6 0-3.1 1.9-5.9 5.5-5.9s4.9 2.5 4.9 4.9c0 .8 0 1.5-.1 2h-7.3c.1 2.5 1.5 2.8 3.6 2.8 1.1 0 2.2-.3 3.4-.7C58.5 19 58.5 21.3 58.5 21.3zM56 15c0-1.4-.5-2.9-2-2.9-1.4 0-2.3 1.3-2.4 2.9C51.6 15 56 15 56 15zM65 18.4c0 1.1.8 1.3 1.4 1.3.5 0 2-.2 2.6-.4v2.1c-.9.3-2.5.5-3.7.5-1.5 0-3.2-.5-3.2-3.1V12H60v-2h2.1V7.1H65V10h4v2h-4V18.4zM71 10h3v1.3c1.1-.8 1.9-1.3 3.3-1.3 2.5 0 4.5 1.8 4.5 5.6s-2.2 6.3-5.8 6.3c-.9 0-1.3-.1-2-.3V28h-3V10zM76.5 12.3c-.8 0-1.6.4-2.5 1.2v5.9c.6.1.9.2 1.8.2 2 0 3.2-1.3 3.2-3.9C79 13.4 78.1 12.3 76.5 12.3zM93 22h-3v-1.5c-.9.7-1.9 1.5-3.5 1.5-1.5 0-3.1-1.1-3.1-3.2 0-2.9 2.5-3.4 4.2-3.7l2.4-.3v-.3c0-1.5-.5-2.3-2-2.3-.7 0-2.3.5-3.7 1.1L84 11c1.2-.4 3-1 4.4-1 2.7 0 4.6 1.4 4.6 4.7L93 22zM90 16.4l-2.2.4c-.7.1-1.4.5-1.4 1.6 0 .9.5 1.4 1.3 1.4s1.5-.5 2.3-1V16.4zM104.5 21.3c-1.1.4-2.2.6-3.5.6-4.2 0-5.9-2.4-5.9-5.9 0-3.7 2.3-6 6.1-6 1.4 0 2.3.2 3.2.5V13c-.8-.3-2-.6-3.2-.6-1.7 0-3.2.9-3.2 3.6 0 2.9 1.5 3.8 3.3 3.8.9 0 1.9-.2 3.2-.7V21.3zM110 15.2c.2-.3.2-.8 3.8-5.2h3.7l-4.6 5.7 5 6.3h-3.7l-4.2-5.8V22h-3V6h3V15.2z"
+          />
+        </svg>
+      </div>
     </div>
-  </div>
-</Connect(Localized(JetpackConnectMainWrapper))>
+    <div
+      class="jetpack-connect__authorize-form"
+    >
+      <div
+        class="jetpack-connect__logged-in-form"
+      >
+        <div>
+          <header
+            class="formatted-header"
+            id=""
+          >
+            <h1
+              class="formatted-header__title"
+            >
+              Create an account to set up Jetpack
+               
+              
+            </h1>
+            <p
+              class="formatted-header__subtitle"
+            >
+              You are moments away from a better WordPress.
+            </p>
+          </header>
+          <div
+            class="card jetpack-connect__site is-compact"
+          >
+            <div
+              class="site"
+            >
+              <a
+                aria-label="an.example.site"
+                class="site__content"
+                title="an.example.site"
+              >
+                <div
+                  class="site-icon is-blank"
+                  style="height: 32px; width: 32px; line-height: 32px; font-size: 32px;"
+                >
+                  <svg
+                    class="gridicon gridicons-globe"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    width="18"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <use
+                      xlink:href="gridicons.svg#gridicons-globe"
+                    />
+                  </svg>
+                </div>
+                <div
+                  class="site__info"
+                >
+                  <div
+                    class="site__title"
+                  >
+                    Example Blog
+                  </div>
+                  <div
+                    class="site__domain"
+                  >
+                    an.example.site
+                  </div>
+                </div>
+              </a>
+              <div
+                class="site-indicator__wrapper"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="card jetpack-connect__logged-in-card"
+        >
+          <img
+            alt="A User's Name"
+            class="gravatar"
+            height="64"
+            src="https://www.gravatar.com/avatar/0?s=96&d=mm"
+            width="64"
+          />
+          <p
+            class="jetpack-connect__logged-in-form-user-text"
+          >
+            Connecting as {{strong}}%(user)s{{/strong}} ({{strong}}%(email)s{{/strong}})
+          </p>
+          <div
+            class="card logged-out-form__footer jetpack-connect__action-disclaimer"
+          >
+            <p
+              class="jetpack-connect__tos-link"
+            >
+              By connecting your site, you agree to 
+              <a
+                class="jetpack-connect__sso-actions-modal-link"
+                href="https://jetpack.com/support/what-data-does-jetpack-sync/"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                share details
+              </a>
+               between WordPress.com and Example Blog.
+            </p>
+            <button
+              class="button is-primary"
+              type="button"
+            >
+              Approve
+            </button>
+          </div>
+        </div>
+        <div
+          class="logged-out-form__links"
+        >
+          <a
+            class="logged-out-form__link-item"
+            href="http://an.example.site/wp-admin/admin.php?page=jetpack"
+          >
+            <svg
+              class="gridicon gridicons-arrow-left needs-offset-y"
+              height="18"
+              viewBox="0 0 24 24"
+              width="18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <use
+                xlink:href="gridicons.svg#gridicons-arrow-left"
+              />
+            </svg>
+             
+            Return to %(sitename)s
+          </a>
+          <a
+            class="logged-out-form__link-item"
+            href="/log-in/jetpack?redirect_to=https%3A%2F%2Fexample.com%2F&from=banner-44-slide-1-dashboard"
+          >
+            Sign in as a different user
+          </a>
+          <a
+            class="logged-out-form__link-item"
+          >
+            Create a new account
+          </a>
+          <div>
+            <a
+              class="logged-out-form__link-item jetpack-connect__help-button"
+              href="https://jetpack.com/contact-support?hpi=1"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <svg
+                class="gridicon gridicons-help-outline needs-offset"
+                height="18"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <use
+                  xlink:href="gridicons.svg#gridicons-help-outline"
+                />
+              </svg>
+               
+              Get help setting up Jetpack
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
 `;

@@ -24,7 +24,7 @@ const CoursesStep: Step = function CoursesStep( { navigation } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'courses' }
+			stepName="courses"
 			goBack={ goBack }
 			goNext={ () => submit?.() }
 			isFullLayout

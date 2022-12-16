@@ -66,7 +66,7 @@ class SecurityCheckupAccountRecoveryPhone extends Component {
 
 		return (
 			<SecurityCheckupNavigationItem
-				path={ '/me/security/account-recovery' }
+				path="/me/security/account-recovery"
 				materialIcon={ icon }
 				text={ translate( 'Recovery SMS Number' ) }
 				description={ description }

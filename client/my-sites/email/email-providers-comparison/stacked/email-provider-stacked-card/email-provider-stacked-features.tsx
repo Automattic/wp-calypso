@@ -44,7 +44,7 @@ export const EmailProviderStackedFeatures = ( {
 
 	return (
 		<>
-			<span className={ 'email-provider-stacked-features__whats-included' }>
+			<span className="email-provider-stacked-features__whats-included">
 				{ translate( "What's included:" ) }
 			</span>
 

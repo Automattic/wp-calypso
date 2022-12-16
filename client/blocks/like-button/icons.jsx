@@ -1,8 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
 
-import './icons.scss';
-
 const LikeIcons = ( { size } ) => (
 	<span className="like-button__like-icons">
 		<Gridicon icon="star" size={ size } />

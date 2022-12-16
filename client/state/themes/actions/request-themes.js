@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { map, property } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import { fetchThemesList as fetchWporgThemesList } from 'calypso/lib/wporg';
@@ -45,7 +46,16 @@ export function requestThemes( siteId, query = {}, locale ) {
 			request = () =>
 				wpcom.req.get(
 					'/themes',
-					Object.assign( { ...query, apiVersion: '1.2' }, locale ? { locale } : null )
+					Object.assign(
+						{
+							...query,
+							apiVersion: '1.2',
+							include_marketplace_themes: config.isEnabled( 'themes/third-party-premium' )
+								? 'true'
+								: null,
+						},
+						locale ? { locale } : null
+					)
 				);
 		} else {
 			request = () => wpcom.req.get( `/sites/${ siteId }/themes`, { ...query, apiVersion: '1' } );

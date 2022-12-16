@@ -33,7 +33,7 @@ class SecurityCheckupConnectedApplications extends Component {
 
 		return (
 			<SecurityCheckupNavigationItem
-				path={ '/me/security/connected-applications' }
+				path="/me/security/connected-applications"
 				materialIcon="power"
 				materialIconStyle="filled"
 				text={ translate( 'Connected Apps' ) }

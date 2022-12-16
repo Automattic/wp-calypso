@@ -12,7 +12,6 @@ import './style.scss';
 
 const noop = () => {};
 const isTouch = hasTouch();
-const CHART_PADDING = 20;
 
 /**
  * Auxiliary method to calculate the maximum value for the Y axis, based on a dataset.
@@ -54,6 +53,7 @@ function Chart( {
 	minTouchBarWidth,
 	numberFormat,
 	translate,
+	chartXPadding,
 } ) {
 	const [ tooltip, setTooltip ] = useState( { isTooltipVisible: false } );
 	const [ sizing, setSizing ] = useState( { clientWidth: 650, hasResized: false } );
@@ -104,15 +104,11 @@ function Chart( {
 
 	const minWidth = isTouch ? minTouchBarWidth : minBarWidth;
 
-	const width = isTouch && sizing.clientWidth <= 0 ? 350 : sizing.clientWidth - CHART_PADDING; // mobile safari bug with zero width
+	const width = isTouch && sizing.clientWidth <= 0 ? 350 : sizing.clientWidth - chartXPadding; // mobile safari bug with zero width
 	const maxBars = Math.floor( width / minWidth );
 
 	// Memoize data calculations to avoid performing them too often.
 	const { chartData, isEmptyChart, yMax } = useMemo( () => {
-		if ( ! hasResized ) {
-			return {};
-		}
-
 		const nextData = data.length <= maxBars ? data : data.slice( 0 - maxBars );
 		const nextVals = data.map( ( { value } ) => value );
 
@@ -123,10 +119,11 @@ function Chart( {
 		};
 	}, [ data, maxBars, hasResized ] );
 
+	// Recover the chart with data even if no sizing is updated on the first loading.
 	// If we don't have any sizing info yet, render an empty chart with the ref.
-	if ( ! hasResized ) {
-		return <div ref={ resizeRef } className="chart" />;
-	}
+	// if ( ! hasResized ) {
+	// 	return <div ref={ resizeRef } className="chart" />;
+	// }
 
 	// Otherwise, render full chart.
 	const { isTooltipVisible, tooltipContext, tooltipPosition, tooltipData } = tooltip;
@@ -197,11 +194,11 @@ Chart.propTypes = {
 	data: PropTypes.array,
 	isPlaceholder: PropTypes.bool,
 	isRtl: PropTypes.bool,
-	loading: PropTypes.bool,
 	minBarWidth: PropTypes.number,
 	minTouchBarWidth: PropTypes.number,
 	numberFormat: PropTypes.func,
 	translate: PropTypes.func,
+	chartXPadding: PropTypes.number,
 };
 
 Chart.defaultProps = {
@@ -209,6 +206,7 @@ Chart.defaultProps = {
 	isPlaceholder: false,
 	minBarWidth: 15,
 	minTouchBarWidth: 42,
+	chartXPadding: 20,
 };
 
 export default withRtl( localize( Chart ) );

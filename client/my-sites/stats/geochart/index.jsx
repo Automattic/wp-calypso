@@ -15,6 +15,9 @@ import StatsModulePlaceholder from '../stats-module/placeholder';
 
 import './style.scss';
 
+// TODO: Replace with something that better handles responsive design.
+// E.g., https://github.com/themustafaomar/jsvectormap
+
 class StatsGeochart extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
@@ -22,8 +25,10 @@ class StatsGeochart extends Component {
 		query: PropTypes.object,
 		data: PropTypes.array,
 	};
+	state = {
+		visualizationsLoaded: false,
+	};
 
-	visualizationsLoaded = false;
 	visualization = null;
 	chartRef = createRef();
 
@@ -41,7 +46,7 @@ class StatsGeochart extends Component {
 	}
 
 	componentDidUpdate() {
-		if ( this.visualizationsLoaded ) {
+		if ( this.state.visualizationsLoaded ) {
 			this.drawData();
 		}
 	}
@@ -67,7 +72,7 @@ class StatsGeochart extends Component {
 
 	drawRegionsMap = () => {
 		if ( this.chartRef.current ) {
-			this.visualizationsLoaded = true;
+			this.setState( { visualizationsLoaded: true } );
 			this.visualization = new window.google.visualization.GeoChart( this.chartRef.current );
 			window.google.visualization.events.addListener(
 				this.visualization,
@@ -80,7 +85,7 @@ class StatsGeochart extends Component {
 	};
 
 	resize = () => {
-		if ( this.visualizationsLoaded ) {
+		if ( this.state.visualizationsLoaded ) {
 			this.drawData();
 		}
 	};
@@ -106,8 +111,6 @@ class StatsGeochart extends Component {
 		chartData.addColumn( 'string', translate( 'Country' ).toString() );
 		chartData.addColumn( 'number', translate( 'Views' ).toString() );
 		chartData.addRows( mapData );
-		const node = this.chartRef.current;
-		const width = node.clientWidth;
 
 		// Note that using raw hex values here is an exception due to
 		// IE11 and other older browser not supporting CSS custom props.
@@ -120,8 +123,6 @@ class StatsGeochart extends Component {
 			getComputedStyle( document.body ).getPropertyValue( '--color-accent' ).trim() || '#d52c82';
 
 		const options = {
-			width: 100 + '%',
-			height: width <= 480 ? '238' : '480',
 			keepAspectRatio: true,
 			enableRegionInteractivity: true,
 			region: 'world',
@@ -135,7 +136,7 @@ class StatsGeochart extends Component {
 			options.region = regions[ 0 ];
 		}
 
-		this.visualization.draw( chartData, options );
+		this.visualization?.draw( chartData, options );
 	};
 
 	loadVisualizations = () => {
@@ -158,19 +159,21 @@ class StatsGeochart extends Component {
 
 	render() {
 		const { siteId, statType, query, data } = this.props;
-		const isLoading = ! data;
+		const isLoading = ! data || ! this.state.visualizationsLoaded;
 		const classes = classNames( 'stats-geochart', {
 			'is-loading': isLoading,
 			'has-no-data': data && ! data.length,
 		} );
 
 		return (
-			<div>
-				<div ref={ this.chartRef } className={ classes } />
+			<>
 				{ siteId && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
-				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-				<StatsModulePlaceholder className="is-block" isLoading={ isLoading } />
-			</div>
+				<div ref={ this.chartRef } className={ classes } />
+				<StatsModulePlaceholder
+					className={ classNames( classes, 'is-block' ) }
+					isLoading={ isLoading }
+				/>
+			</>
 		);
 	}
 }

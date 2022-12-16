@@ -22,6 +22,9 @@ interface SectionHeaderProps {
 const Section = styled.div`
 	border-bottom: 1px solid var( --studio-gray-5 );
 	padding: 0 20px;
+	@media ( min-width: 600px ) {
+		width: 775px;
+	}
 `;
 
 const SectionHeader = styled.div< SectionHeaderProps >`
@@ -43,6 +46,7 @@ const SectionContent = styled.div`
 	padding: 0 0 36px 0;
 	@media ( min-width: 600px ) {
 		padding-right: 96px;
+		min-width: 675px;
 	}
 `;
 
@@ -87,7 +91,8 @@ const SummaryLabel = styled( RequiredLabel )`
 const NextButton = styled( Button )`
 	box-shadow: 0px 1px 2px rgba( 0, 0, 0, 0.05 );
 	border-radius: 5px;
-	padding: 10px 64px;
+	padding: 10px 50px;
+	width: 177px;
 	.gridicon {
 		margin-left: 10px;
 	}

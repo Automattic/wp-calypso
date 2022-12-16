@@ -27,7 +27,6 @@ import {
 	createCreditCardMethod,
 } from '../../payment-methods/credit-card';
 import { createFreePaymentMethod } from '../../payment-methods/free-purchase';
-import { createFullCreditsMethod } from '../../payment-methods/full-credits';
 import {
 	createNetBankingPaymentMethodStore,
 	createNetBankingMethod,
@@ -281,10 +280,6 @@ function useCreateNetbanking(): PaymentMethod {
 	);
 }
 
-function useCreateFullCredits() {
-	return useMemo( () => createFullCreditsMethod(), [] );
-}
-
 function useCreateFree() {
 	return useMemo( createFreePaymentMethod, [] );
 }
@@ -294,21 +289,16 @@ function useCreateApplePay( {
 	stripeLoadingError,
 	stripeConfiguration,
 	stripe,
-	isApplePayAvailable,
-	isWebPayLoading,
 	cartKey,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
 	stripeConfiguration: StripeConfiguration | null;
 	stripe: Stripe | null;
-	isApplePayAvailable: boolean;
-	isWebPayLoading: boolean;
 	cartKey: CartKey | undefined;
 } ): PaymentMethod | null {
 	const isStripeReady = ! isStripeLoading && ! stripeLoadingError && stripe && stripeConfiguration;
-
-	const shouldCreateApplePayMethod = isStripeReady && ! isWebPayLoading && isApplePayAvailable;
+	const shouldCreateApplePayMethod = isStripeReady;
 
 	const applePayMethod = useMemo( () => {
 		return shouldCreateApplePayMethod && stripe && stripeConfiguration && cartKey
@@ -324,25 +314,19 @@ function useCreateGooglePay( {
 	stripeLoadingError,
 	stripeConfiguration,
 	stripe,
-	isGooglePayAvailable,
-	isWebPayLoading,
 	cartKey,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
 	stripeConfiguration: StripeConfiguration | null;
 	stripe: Stripe | null;
-	isGooglePayAvailable: boolean;
-	isWebPayLoading: boolean;
 	cartKey: CartKey | undefined;
 } ): PaymentMethod | null {
 	const isStripeReady =
 		! isStripeLoading &&
 		! stripeLoadingError &&
-		! isWebPayLoading &&
 		stripe &&
 		stripeConfiguration &&
-		isGooglePayAvailable &&
 		isEnabled( 'checkout/google-pay' );
 
 	return useMemo( () => {
@@ -357,9 +341,6 @@ export default function useCreatePaymentMethods( {
 	stripeLoadingError,
 	stripeConfiguration,
 	stripe,
-	isApplePayAvailable,
-	isGooglePayAvailable,
-	isWebPayLoading,
 	storedCards,
 	siteSlug,
 }: {
@@ -367,9 +348,6 @@ export default function useCreatePaymentMethods( {
 	stripeLoadingError: StripeLoadingError;
 	stripeConfiguration: StripeConfiguration | null;
 	stripe: Stripe | null;
-	isApplePayAvailable: boolean;
-	isGooglePayAvailable: boolean;
-	isWebPayLoading: boolean;
 	storedCards: StoredCard[];
 	siteSlug: string | undefined;
 } ): PaymentMethod[] {
@@ -432,8 +410,6 @@ export default function useCreatePaymentMethods( {
 		allowUseForAllSubscriptions,
 	} );
 
-	const fullCreditsPaymentMethod = useCreateFullCredits();
-
 	const freePaymentMethod = useCreateFree();
 
 	const applePayMethod = useCreateApplePay( {
@@ -441,8 +417,6 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
-		isApplePayAvailable,
-		isWebPayLoading,
 		cartKey,
 	} );
 
@@ -451,8 +425,6 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
-		isGooglePayAvailable,
-		isWebPayLoading,
 		cartKey,
 	} );
 
@@ -464,7 +436,6 @@ export default function useCreatePaymentMethods( {
 
 	return [
 		freePaymentMethod,
-		fullCreditsPaymentMethod,
 		...existingCardMethods,
 		applePayMethod,
 		googlePayMethod,

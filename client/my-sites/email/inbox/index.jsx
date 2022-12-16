@@ -40,7 +40,7 @@ const NoAccessCard = () => {
 			<TrackPageView context="no-access" />
 			<EmptyContent
 				title={ translate( 'You are not authorized to view this page' ) }
-				illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+				illustration="/calypso/images/illustrations/illustration-404.svg"
 			/>
 		</Main>
 	);
@@ -54,7 +54,7 @@ const NotSupportedOnP2Card = () => {
 			<TrackPageView context="not-supported-on-p2" />
 			<EmptyContent
 				title={ translate( 'Inbox is not supported on P2 sites' ) }
-				illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
+				illustration="/calypso/images/illustrations/illustration-nosites.svg"
 			/>
 		</Main>
 	);
@@ -69,7 +69,7 @@ const MainHeader = () => {
 
 	return (
 		<PromoCard
-			className={ 'inbox__is-inbox-card' }
+			className="inbox__is-inbox-card"
 			icon={ null }
 			image={ image }
 			isPrimary={ true }

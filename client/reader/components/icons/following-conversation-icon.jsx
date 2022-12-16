@@ -1,6 +1,7 @@
 export default function ReaderFollowingConversationIcon( { iconSize } ) {
 	return (
 		<svg
+			key="following-conversation"
 			fill="none"
 			viewBox="0 0 20 20"
 			width={ iconSize }

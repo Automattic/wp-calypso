@@ -6,10 +6,10 @@ describe( 'GSuiteSingleFeature', () => {
 		const tree = renderer
 			.create(
 				<GSuiteSingleFeature
-					title={ 'title' }
-					description={ 'description' }
-					imagePath={ '/test/image/path.svg' }
-					imageAlt={ 'image alt' }
+					title="title"
+					description="description"
+					imagePath="/test/image/path.svg"
+					imageAlt="image alt"
 					compact={ false }
 				/>
 			)

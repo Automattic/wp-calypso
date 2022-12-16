@@ -13,20 +13,19 @@
  */
 function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 	if ( ! $blog_id ) {
-		$blog_id = get_current_blog_id();
+		if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
+			$blog_id = get_current_blog_id();
+		} elseif ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
+			$blog_id = method_exists( 'Jetpack_Options', 'get_option' )
+				? (int) Jetpack_Options::get_option( 'id' )
+				: get_current_blog_id();
+		} else {
+			return false;
+		}
 	}
 
-	// Do not limit Global Styles on Atomic sites for now, because blog stickers are not exposed
-	// to these sites and the project is still in a development stage that requires sites to have
-	// a certain blog sticker before restricting the feature. This is a temporary check that will
-	// be removed as part of the public launch.
-	if ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) {
-		return false;
-	}
-
-	// Do not limit Global Styles on sites created before we made it a paid feature. This cutoff
-	// blog ID needs to be updated as part of the public launch.
-	if ( $blog_id < 210494207 ) {
+	// Do not limit Global Styles on sites created before we made it a paid feature (2022-12-15).
+	if ( $blog_id < 213403000 ) {
 		return false;
 	}
 
@@ -34,17 +33,15 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 		return false;
 	}
 
-	// During the development stage, we only limit Global Styles on sites that have opted in. This
-	// is a temporary check that will be removed as part of the public launch.
-	return has_blog_sticker( 'wpcom-limit-global-styles', $blog_id );
+	return true;
 }
 
 /**
- * Enqueues the WP.com Global Styles scripts and styles.
+ * Enqueues the WP.com Global Styles scripts and styles for the block editor.
  *
  * @return void
  */
-function wpcom_global_styles_enqueue_scripts_and_styles() {
+function wpcom_global_styles_enqueue_block_editor_assets() {
 	$screen = get_current_screen();
 	if ( ! $screen || 'site-editor' !== $screen->id ) {
 		return;
@@ -94,7 +91,7 @@ function wpcom_global_styles_enqueue_scripts_and_styles() {
 		'wpcomGlobalStyles',
 		array(
 			'assetsUrl'  => plugins_url( 'dist/', __FILE__ ),
-			'upgradeUrl' => "$calypso_domain/plans/$site_slug",
+			'upgradeUrl' => "$calypso_domain/plans/$site_slug?plan=value_bundle&feature=advanced-design-customization",
 		)
 	);
 	wp_enqueue_style(
@@ -104,67 +101,63 @@ function wpcom_global_styles_enqueue_scripts_and_styles() {
 		filemtime( plugin_dir_path( __FILE__ ) . 'dist/wpcom-global-styles.css' )
 	);
 }
-add_action( 'enqueue_block_editor_assets', 'wpcom_global_styles_enqueue_scripts_and_styles' );
+add_action( 'enqueue_block_editor_assets', 'wpcom_global_styles_enqueue_block_editor_assets' );
 
 /**
- * Returns the stylesheet resulting of merging core and theme data.
+ * Enqueues the WP.com Global Styles scripts and styles for the front end.
  *
- * @return string Stylesheet.
+ * @return void
  */
-function wpcom_get_free_global_stylesheet() {
-	// Return cached value if it can be used and exists.
-	$can_use_cached = ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG )
-		&& ( ! defined( 'SCRIPT_DEBUG' ) || ! SCRIPT_DEBUG )
-		&& ( ! defined( 'REST_REQUEST' ) || ! REST_REQUEST )
-		&& ! is_admin();
-
-	$transient_name = 'wpcom_free_global_styles_' . get_stylesheet();
-	if ( $can_use_cached ) {
-		$cached = get_transient( $transient_name );
-		if ( $cached ) {
-			return $cached;
-		}
+function wpcom_global_styles_enqueue_assets() {
+	if ( ! wpcom_should_limit_global_styles() ) {
+		return;
 	}
 
-	$tree = new WP_Theme_JSON_Gutenberg();
+	$asset_file   = plugin_dir_path( __FILE__ ) . 'dist/wpcom-global-styles-view.asset.php';
+	$asset        = file_exists( $asset_file )
+		? require $asset_file
+		: null;
+	$dependencies = $asset['dependencies'] ?? array();
+	$version      = $asset['version'] ?? filemtime( plugin_dir_path( __FILE__ ) . 'dist/wpcom-global-styles-view.min.js' );
 
-	// Merge theme and core data.
-	$tree->merge( WP_Theme_JSON_Resolver_Gutenberg::get_theme_data() );
-	$tree->merge( WP_Theme_JSON_Resolver_Gutenberg::get_core_data() );
-
-	// Generate the default spacing sizes presets.
-	$tree->set_spacing_sizes();
-
-	// We only get the stylesheet for variables and styles of the theme.
-	$stylesheet = $tree->get_stylesheet( array( 'variables', 'styles' ), array( 'theme' ) );
-
-	if ( $can_use_cached ) {
-		// This cache can be long since it only applies to customers that can't load global styles.
-		// Once the customer is on a paid plan this code isn't executed and will use the default
-		// Gutenberg global styles loading mechanism instead.
-		set_transient( $transient_name, $stylesheet, MINUTE_IN_SECONDS );
-	}
-
-	return $stylesheet;
+	wp_enqueue_script(
+		'wpcom-global-styles',
+		plugins_url( 'dist/wpcom-global-styles-view.min.js', __FILE__ ),
+		$dependencies,
+		$version,
+		true
+	);
+	wp_enqueue_style(
+		'wpcom-global-styles',
+		plugins_url( 'dist/wpcom-global-styles-view.css', __FILE__ ),
+		array(),
+		filemtime( plugin_dir_path( __FILE__ ) . 'dist/wpcom-global-styles-view.css' )
+	);
 }
+add_action( 'wp_enqueue_scripts', 'wpcom_global_styles_enqueue_assets' );
 
 /**
- * De-queues Global Styles if the given site is on a free plan.
+ * Removes the user styles from a site with limited global styles.
  *
- * @param  int $blog_id Blog ID.
+ * @param WP_Theme_JSON_Data|WP_Theme_JSON_Data_Gutenberg $theme_json Class to access and update the underlying data.
+ * @return WP_Theme_JSON_Data|WP_Theme_JSON_Data_Gutenberg Filtered data.
  */
-function wpcom_global_styles_override_for_free_site( $blog_id = 0 ) {
-	if ( ! $blog_id ) {
-		$blog_id = get_current_blog_id();
+function wpcom_block_global_styles_frontend( $theme_json ) {
+	if ( ! wpcom_should_limit_global_styles() || wpcom_is_previewing_global_styles() ) {
+		return $theme_json;
 	}
 
-	// If the site does not meet the required criteria we override Global Styles with the free version of global styles.
-	if ( wpcom_should_limit_global_styles( $blog_id ) ) {
-		global $wp_styles;
-		$wp_styles->add_data( 'global-styles', 'after', array( wpcom_get_free_global_stylesheet() ) );
+	if ( class_exists( 'WP_Theme_JSON_Data' ) ) {
+		return new WP_Theme_JSON_Data( array(), 'custom' );
 	}
+
+	/*
+	 * If `WP_Theme_JSON_Data` is missing, then the site is running an old
+	 * version of WordPress we cannot block the user styles properly.
+	 */
+	return $theme_json;
 }
-add_action( 'wp_print_styles', 'wpcom_global_styles_override_for_free_site' );
+add_filter( 'wp_theme_json_data_user', 'wpcom_block_global_styles_frontend' );
 
 /**
  * Tracks when global styles are updated or reset after the post has actually been saved.
@@ -176,6 +169,13 @@ add_action( 'wp_print_styles', 'wpcom_global_styles_override_for_free_site' );
 function wpcom_track_global_styles( $blog_id, $post, $updated ) {
 	// If the post isn't updated then we know the gs cpt is being created.
 	$event_name = 'wpcom_core_global_styles_create';
+
+	// These properties are for debugging purposes and should be eventually edited or removed.
+	$event_props = array(
+		'should_limit' => (bool) wpcom_should_limit_global_styles(),
+		'is_simple'    => (bool) ! function_exists( 'wpcomsh_record_tracks_event' ),
+		'theme'        => get_stylesheet(),
+	);
 
 	if ( $updated ) {
 		// This is a fragile way of checking if the global styles cpt is being reset, we might need to update this condition in the future.
@@ -193,11 +193,14 @@ function wpcom_track_global_styles( $blog_id, $post, $updated ) {
 
 	// Invoke the correct function based on the underlying infrastructure.
 	if ( function_exists( 'wpcomsh_record_tracks_event' ) ) {
-		wpcomsh_record_tracks_event( $event_name, array() );
+		wpcomsh_record_tracks_event( $event_name, $event_props );
 	} else {
 		require_lib( 'tracks/client' );
-		tracks_record_event( get_current_user_id(), $event_name );
+		tracks_record_event( get_current_user_id(), $event_name, $event_props );
 	}
+
+	// Delegate logging to the underlying infrastructure.
+	do_action( 'global_styles_log', $event_name );
 }
 add_action( 'save_post_wp_global_styles', 'wpcom_track_global_styles', 10, 3 );
 
@@ -207,28 +210,45 @@ add_action( 'save_post_wp_global_styles', 'wpcom_track_global_styles', 10, 3 );
  * @return bool Returns true if custom styles are in use.
  */
 function wpcom_global_styles_in_use() {
-	$user_cpt = WP_Theme_JSON_Resolver_Gutenberg::get_user_data_from_wp_global_styles( wp_get_theme() );
+	/*
+	 * If `WP_Theme_JSON_Resolver` is missing, then the site is running an old version
+	 * of WordPress, so we cannot determine whether the site has custom styles.
+	 */
+	if ( ! class_exists( 'WP_Theme_JSON_Resolver' ) ) {
+		return false;
+	}
+
+	$user_cpt = WP_Theme_JSON_Resolver::get_user_data_from_wp_global_styles( wp_get_theme() );
 
 	if ( ! isset( $user_cpt['post_content'] ) ) {
+		do_action( 'global_styles_log', 'global_styles_not_in_use' );
 		return false;
 	}
 
 	$global_style_keys = array_keys( json_decode( $user_cpt['post_content'], true ) ?? array() );
 
-	return count( array_diff( $global_style_keys, array( 'version', 'isGlobalStylesUserThemeJSON' ) ) ) > 0;
+	$global_styles_in_use = count( array_diff( $global_style_keys, array( 'version', 'isGlobalStylesUserThemeJSON' ) ) ) > 0;
+
+	if ( $global_styles_in_use ) {
+		do_action( 'global_styles_log', 'global_styles_in_use' );
+	} else {
+		do_action( 'global_styles_log', 'global_styles_not_in_use' );
+	}
+
+	return $global_styles_in_use;
 }
 
 /**
- * Adds the global style notice banner to the custom launch bar controls.
+ * Adds the global style notice banner to the launch bar controls.
  *
- * @param array $custom_controls List of custom controls.
+ * @param array $bar_controls List of launch bar controls.
  *
- * return array The collection of launch bar custom controls to render.
+ * return array The collection of launch bar controls to render.
  */
-function wpcom_display_global_styles_banner( $custom_controls ) {
+function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 	// Do not show the banner if the user can use global styles.
 	if ( ! wpcom_should_limit_global_styles() || ! wpcom_global_styles_in_use() ) {
-		return;
+		return $bar_controls;
 	}
 
 	if ( method_exists( '\WPCOM_Masterbar', 'get_calypso_site_slug' ) ) {
@@ -238,19 +258,100 @@ function wpcom_display_global_styles_banner( $custom_controls ) {
 		$site_slug = wp_parse_url( $home_url, PHP_URL_HOST );
 	}
 
-	$upgrade_url = 'https://wordpress.com/plans/' . $site_slug;
+	$upgrade_url = 'https://wordpress.com/plans/' . $site_slug . '?plan=value_bundle&feature=advanced-design-customization';
 
-	$custom_controls[] = array(
-		'desktop_message'    => __( 'Styles hidden', 'full-site-editing' ),
-		'mobile_message'     => __( 'Styles', 'full-site-editing' ),
-		'track_button_name'  => 'wpcom_gs_notice',
-		'tooltip'            => __( 'You need to be on a paid plan for your style changes to be made public.', 'full-site-editing' ),
-		'tooltip_link_title' => __( 'Upgrade your plan', 'full-site-editing' ),
-		'tooltip_link_url'   => $upgrade_url,
-		'icon_path'          => 'M13 9h-2V7h2v2zm0 2h-2v6h2v-6zm-1-7c-4.411 0-8 3.589-8 8s3.589 8 8 8 8-3.589 8-8-3.589-8-8-8m0-2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2z',
-		'icon_color'         => 'orange',
-	);
+	if ( wpcom_is_previewing_global_styles() ) {
+		$preview_text     = __( 'Hide custom styles', 'full-site-editing' );
+		$preview_location = remove_query_arg( 'preview-global-styles' );
+	} else {
+		$preview_text     = __( 'Preview custom styles', 'full-site-editing' );
+		$preview_location = add_query_arg( 'preview-global-styles', '' );
+	}
 
-	return $custom_controls;
+	ob_start(); ?>
+		<div class="launch-bar-global-styles-button">
+			<?php if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) : // Workaround for the shadow DOM used on Atomic sites. ?>
+				<style id="wpcom-launch-bar-global-styles-button-style">
+					<?php include __DIR__ . '/dist/wpcom-global-styles-view.css'; ?>
+					.hidden { display: none; }
+				</style>
+				<script id="wpcom-launch-bar-global-styles-button-script">
+					<?php
+					include __DIR__ . '/dist/wpcom-global-styles-view.min.js';
+					$asset_file   = plugin_dir_path( __FILE__ ) . 'dist/wpcom-global-styles-view.asset.php';
+					$asset        = file_exists( $asset_file ) ? require $asset_file : null;
+					$dependencies = $asset['dependencies'] ?? array();
+					foreach ( $dependencies as $dep ) {
+						$dep_script = wp_scripts()->registered[ $dep ];
+						if ( ! $dep_script ) {
+							continue;
+						}
+						include ABSPATH . $dep_script->src;
+					}
+					?>
+				</script>
+			<?php endif; ?>
+			<div class="launch-bar-global-styles-popover hidden">
+				<div>
+					<?php echo esc_html__( 'Your site contains customized styles that will only be visible once you upgrade to a Premium plan.', 'full-site-editing' ); ?>
+				</div>
+				<a
+					class="launch-bar-global-styles-upgrade-button"
+					href="<?php echo esc_url( $upgrade_url ); ?>"
+				>
+					<?php echo esc_html__( 'Upgrade your plan', 'full-site-editing' ); ?>
+				</a>
+				<a class="launch-bar-global-styles-preview-link" href="<?php echo esc_url( $preview_location ); ?>">
+					<?php echo esc_html( $preview_text ); ?>
+				</a>
+			</div>
+			<a class="launch-bar-global-styles-toggle" href="#">
+				<svg width="25" height="25" viewBox="0 0 30 23" xmlns="http://www.w3.org/2000/svg">
+					<path d="M12 4c-4.4 0-8 3.6-8 8v.1c0 4.1 3.2 7.5 7.2 7.9h.8c4.4 0 8-3.6 8-8s-3.6-8-8-8zm0 15V5c3.9 0 7 3.1 7 7s-3.1 7-7 7z" style="fill: orange" />
+				</svg>
+				<span class="is-mobile">
+					<?php echo esc_html__( 'Styles', 'full-site-editing' ); ?>
+				</span>
+				<span class="is-desktop">
+					<?php echo esc_html__( 'Custom styles', 'full-site-editing' ); ?>
+				</span>
+			</a>
+		</div>
+	<?php
+	$global_styles_bar_control = ob_get_clean();
+
+	$launch_site_control_key = array_search( 'launch-site', array_keys( $bar_controls ), true );
+
+	if ( $launch_site_control_key ) {
+		array_splice( $bar_controls, $launch_site_control_key, 0, $global_styles_bar_control );
+	} else {
+		$bar_controls[] = $global_styles_bar_control;
+	}
+	return $bar_controls;
 }
-add_filter( 'wpcom_custom_launch_bar_controls', 'wpcom_display_global_styles_banner' );
+add_filter( 'wpcom_launch_bar_controls', 'wpcom_display_global_styles_launch_bar' );
+
+/**
+ * Include the Rest API that returns the global style information for a give WordPress site.
+ */
+require_once __DIR__ . '/api/class-global-styles-status-rest-api.php';
+
+/**
+ * Checks if the necessary conditions are met in order to establish that the supplied user should be considered as previewing Global Styles.
+ *
+ * @param int|null $user_id User id to check.
+ *
+ * @return bool
+ */
+function wpcom_is_previewing_global_styles( ?int $user_id = null ) {
+	if ( null === $user_id ) {
+		$user_id = get_current_user_id();
+	}
+
+	if ( 0 === $user_id ) {
+		return false;
+	}
+
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	return isset( $_GET['preview-global-styles'] ) && user_can( $user_id, 'administrator' );
+}

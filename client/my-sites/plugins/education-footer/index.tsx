@@ -1,31 +1,30 @@
+import { Button } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import FeatureItem from 'calypso/components/feature-item';
 import LinkCard from 'calypso/components/link-card';
-import Section from 'calypso/components/section';
+import Section, { SectionContainer } from 'calypso/components/section';
 import { preventWidows } from 'calypso/lib/formatting';
+import { addQueryArgs } from 'calypso/lib/route';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSectionName } from 'calypso/state/ui/selectors';
 
 const ThreeColumnContainer = styled.div`
-	@media ( max-width: 960px ) {
-		grid-template-columns: repeat( 1, 1fr );
-	}
-
 	@media ( max-width: 660px ) {
 		padding: 0 16px;
 	}
 
-	display: grid;
-	grid-template-columns: repeat( 3, 1fr );
-	column-gap: 29px;
-	row-gap: 10px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
 `;
 
 const EducationFooterContainer = styled.div`
-	margin-top: 40px;
+	margin-top: 32px;
 
 	> div:first-child {
 		padding: 0;
@@ -39,34 +38,88 @@ const EducationFooterContainer = styled.div`
 			margin-bottom: 24px;
 		}
 	}
+
+	.card-block {
+		display: flex;
+		width: calc( 33% - 10px );
+
+		@media ( max-width: 660px ) {
+			display: block;
+			width: 100%;
+			margin-top: 10px;
+		}
+	}
+`;
+
+const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
+	--color-accent: #117ac9;
+	--color-accent-60: #0e64a5;
+
+	.marketplace-cta {
+		min-width: 122px;
+		margin-bottom: 26px;
+
+		@media ( max-width: 660px ) {
+			margin-left: 16px;
+			margin-right: 16px;
+		}
+	}
+
+	${ ( { isloggedIn } ) =>
+		! isloggedIn &&
+		`${ SectionContainer } {
+		padding-bottom: 0;
+	}` }
+
+	${ SectionContainer }::before {
+		background-color: #f6f7f7;
+	}
 `;
 
 export const MarketplaceFooter = () => {
 	const { __ } = useI18n();
+	const isLoggedIn = useSelector( isUserLoggedIn );
+
+	const sectionName = useSelector( getSectionName );
+
+	const startUrl = addQueryArgs(
+		{
+			ref: sectionName + '-lp',
+		},
+		sectionName === 'plugins' ? '/start/business' : '/start'
+	);
 
 	return (
-		<Section
-			header={ preventWidows( __( 'You pick the plugin. We’ll take care of the rest.' ) ) }
-			dark
-		>
-			<ThreeColumnContainer>
-				<FeatureItem header={ __( 'Fully Managed' ) }>
-					{ __(
-						'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
+		<MarketplaceContainer isloggedIn={ isLoggedIn }>
+			<Section
+				header={ preventWidows( __( 'You pick the plugin. We’ll take care of the rest.' ) ) }
+			>
+				<>
+					{ ! isLoggedIn && (
+						<Button className="is-primary marketplace-cta" href={ startUrl }>
+							{ __( 'Get Started' ) }
+						</Button>
 					) }
-				</FeatureItem>
-				<FeatureItem header={ __( 'Thousands of plugins' ) }>
-					{ __(
-						'From WordPress.com premium plugins to thousands more community-authored plugins, we’ve got you covered.'
-					) }
-				</FeatureItem>
-				<FeatureItem header={ __( 'Flexible pricing' ) }>
-					{ __(
-						'Pay yearly and save. Or keep it flexible with monthly premium plugin pricing. It’s entirely up to you.'
-					) }
-				</FeatureItem>
-			</ThreeColumnContainer>
-		</Section>
+					<ThreeColumnContainer>
+						<FeatureItem header={ __( 'Fully Managed' ) }>
+							{ __(
+								'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
+							) }
+						</FeatureItem>
+						<FeatureItem header={ __( 'Thousands of plugins' ) }>
+							{ __(
+								'From WordPress.com premium plugins to thousands more community-authored plugins, we’ve got you covered.'
+							) }
+						</FeatureItem>
+						<FeatureItem header={ __( 'Flexible pricing' ) }>
+							{ __(
+								'Pay yearly and save. Or keep it flexible with monthly premium plugin pricing. It’s entirely up to you.'
+							) }
+						</FeatureItem>
+					</ThreeColumnContainer>
+				</>
+			</Section>
+		</MarketplaceContainer>
 	);
 };
 

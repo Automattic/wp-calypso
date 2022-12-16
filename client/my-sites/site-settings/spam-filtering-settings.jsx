@@ -67,7 +67,7 @@ const SpamFilteringSettings = ( {
 				description={ translate(
 					'Save time, get more responses, give your visitors a better experience - all without lifting a finger.'
 				) }
-				event={ 'calypso_akismet_settings_upgrade_nudge' }
+				event="calypso_akismet_settings_upgrade_nudge"
 				feature={ WPCOM_FEATURES_ANTISPAM }
 				showIcon={ true }
 				href={ `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_ANTI_SPAM }` }

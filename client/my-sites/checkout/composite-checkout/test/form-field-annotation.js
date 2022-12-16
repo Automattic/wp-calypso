@@ -39,7 +39,7 @@ describe( 'FormFieldAnnotation', () => {
 						isDisabled={ false }
 						className="test__annotation_class"
 					>
-						<span id="fieldId">{ 'child contents' }</span>
+						<span id="fieldId">child contents</span>
 					</FormFieldAnnotation>
 				</ThemeProvider>
 			);
@@ -73,7 +73,7 @@ describe( 'FormFieldAnnotation', () => {
 						isDisabled="false"
 						className="test__annotation_class"
 					>
-						<span id="fieldId">{ 'child contents' }</span>
+						<span id="fieldId">child contents</span>
 					</FormFieldAnnotation>
 				</ThemeProvider>
 			);

@@ -30,8 +30,10 @@ import {
 	hasGoogleApps,
 	hasDomainRegistration,
 	hasTransferProduct,
+	hasDIFMProduct,
 } from 'calypso/lib/cart-values/cart-items';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
@@ -50,6 +52,7 @@ import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import { CheckoutCompleteRedirecting } from './checkout-complete-redirecting';
 import CheckoutHelpLink from './checkout-help-link';
 import CheckoutNextSteps from './checkout-next-steps';
+import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import PaymentMethodStepContent from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
@@ -140,6 +143,7 @@ export default function WPCheckout( {
 	areThereErrors,
 	isInitialCartLoading,
 	customizedPreviousPath,
+	forceRadioButtons,
 }: {
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	changePlanLength: OnChangeItemVariant;
@@ -156,6 +160,9 @@ export default function WPCheckout( {
 	areThereErrors: boolean;
 	isInitialCartLoading: boolean;
 	customizedPreviousPath?: string;
+	// TODO: This is just for unit tests. Remove forceRadioButtons everywhere
+	// when calypso_checkout_variant_picker_radio_2212 ExPlat test completes.
+	forceRadioButtons?: boolean;
 } ) {
 	const cartKey = useCartKey();
 	const {
@@ -186,7 +193,7 @@ export default function WPCheckout( {
 	} = useDispatch( 'wpcom-checkout' );
 
 	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
-		useState( false );
+		useState( true );
 
 	// The "Summary" view is displayed in the sidebar at desktop (wide) widths
 	// and before the first step at mobile (smaller) widths. At smaller widths it
@@ -242,6 +249,8 @@ export default function WPCheckout( {
 		return true;
 	};
 
+	const isWcMobile = isWcMobileApp();
+
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
 		debug( 'rendering post-checkout redirecting page' );
 		return (
@@ -286,6 +295,8 @@ export default function WPCheckout( {
 		);
 	}
 
+	const isDIFMInCart = hasDIFMProduct( responseCart );
+
 	return (
 		<CheckoutStepGroup
 			stepAreaHeader={
@@ -310,6 +321,7 @@ export default function WPCheckout( {
 								onChangePlanLength={ changePlanLength }
 								nextDomainIsFree={ responseCart?.next_domain_is_free }
 							/>
+							{ ! isWcMobile && ! isDIFMInCart && <CheckoutSidebarPlanUpsell /> }
 							<SecondaryCartPromotions
 								responseCart={ responseCart }
 								addItemToCart={ addItemToCart }
@@ -332,11 +344,11 @@ export default function WPCheckout( {
 				titleContent={ <OrderReviewTitle /> }
 				completeStepContent={
 					<WPCheckoutOrderReview
+						forceRadioButtons={ forceRadioButtons }
 						removeProductFromCart={ removeProductFromCart }
 						couponFieldStateProps={ couponFieldStateProps }
 						onChangePlanLength={ changePlanLength }
 						siteUrl={ siteUrl }
-						siteId={ siteId }
 						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					/>
 				}
@@ -346,9 +358,8 @@ export default function WPCheckout( {
 				<CheckoutStep
 					stepId="contact-form"
 					isCompleteCallback={ async () => {
-						setShouldShowContactDetailsValidationErrors( true );
 						// Touch the fields so they display validation errors
-						touchContactFields();
+						shouldShowContactDetailsValidationErrors && touchContactFields();
 						const validationResponse = await validateContactDetails(
 							contactInfo,
 							isLoggedOutCart,
@@ -358,7 +369,7 @@ export default function WPCheckout( {
 							clearDomainContactErrorMessages,
 							reduxDispatch,
 							translate,
-							true
+							shouldShowContactDetailsValidationErrors
 						);
 						if ( validationResponse ) {
 							// When the contact details change, update the cart's tax location to match.
@@ -392,6 +403,9 @@ export default function WPCheckout( {
 							shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
 							contactDetailsType={ contactDetailsType }
 							isLoggedOutCart={ isLoggedOutCart }
+							setShouldShowContactDetailsValidationErrors={
+								setShouldShowContactDetailsValidationErrors
+							}
 						/>
 					}
 					completeStepContent={
@@ -529,6 +543,12 @@ const CheckoutSummaryBody = styled.div`
 		max-width: 328px;
 		position: fixed;
 		width: 100%;
+		overflow-y: auto;
+		height: 100vh;
+		& .card {
+			border-left: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+			border-right: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+		}
 	}
 `;
 

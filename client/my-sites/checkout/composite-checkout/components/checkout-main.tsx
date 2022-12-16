@@ -3,7 +3,7 @@ import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { useIsWebPayAvailable, isValueTruthy } from '@automattic/wpcom-checkout';
+import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
@@ -50,7 +50,6 @@ import { logStashLoadErrorEvent, logStashEvent } from '../lib/analytics';
 import existingCardProcessor from '../lib/existing-card-processor';
 import filterAppropriatePaymentMethods from '../lib/filter-appropriate-payment-methods';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
-import fullCreditsProcessor from '../lib/full-credits-processor';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
@@ -88,6 +87,7 @@ export default function CheckoutMain( {
 	isComingFromUpsell,
 	isLoggedOutCart,
 	isNoSiteCart,
+	isGiftPurchase,
 	infoMessage,
 	isInModal,
 	onAfterPaymentComplete,
@@ -97,6 +97,7 @@ export default function CheckoutMain( {
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
 	customizedPreviousPath,
+	forceRadioButtons,
 }: {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
@@ -111,6 +112,7 @@ export default function CheckoutMain( {
 	isComingFromUpsell?: boolean;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
+	isGiftPurchase?: boolean;
 	isInModal?: boolean;
 	infoMessage?: JSX.Element;
 	// IMPORTANT NOTE: This will not be called for redirect payment methods like
@@ -123,6 +125,9 @@ export default function CheckoutMain( {
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
 	customizedPreviousPath?: string;
+	// TODO: This is just for unit tests. Remove forceRadioButtons everywhere
+	// when calypso_checkout_variant_picker_radio_2212 ExPlat test completes.
+	forceRadioButtons?: boolean;
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
@@ -137,7 +142,6 @@ export default function CheckoutMain( {
 	const createUserAndSiteBeforeTransaction =
 		Boolean( isLoggedOutCart || isNoSiteCart ) && ! isJetpackCheckout;
 	const reduxDispatch = useDispatch();
-	const isJetpackSitelessCheckout = isJetpackCheckout && ! jetpackSiteSlug;
 	const updatedSiteSlug = isJetpackCheckout ? jetpackSiteSlug : siteSlug;
 
 	const showErrorMessageBriefly = useCallback(
@@ -180,6 +184,7 @@ export default function CheckoutMain( {
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
 		source: productSourceFromUrl,
+		isGiftPurchase,
 	} );
 
 	const cartKey = useCartKey();
@@ -200,7 +205,6 @@ export default function CheckoutMain( {
 	const isInitialCartLoading = useAddProductsFromUrl( {
 		isLoadingCart,
 		isCartPendingUpdate,
-		isJetpackSitelessCheckout,
 		productsForCart,
 		areCartProductsPreparing,
 		couponCodeFromUrl,
@@ -325,26 +329,11 @@ export default function CheckoutMain( {
 		} );
 	} );
 
-	const {
-		isApplePayAvailable,
-		isGooglePayAvailable,
-		isLoading: isWebPayLoading,
-	} = useIsWebPayAvailable(
-		stripe,
-		stripeConfiguration,
-		!! stripeLoadingError,
-		responseCart.currency,
-		responseCart.total_cost_integer
-	);
-
 	const paymentMethodObjects = useCreatePaymentMethods( {
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
-		isApplePayAvailable,
-		isGooglePayAvailable,
-		isWebPayLoading,
 		storedCards,
 		siteSlug: updatedSiteSlug,
 	} );
@@ -357,9 +346,7 @@ export default function CheckoutMain( {
 		responseCart.products.length < 1 ||
 		isInitialCartLoading ||
 		// Only wait for stored cards to load if we are using cards
-		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards ) ||
-		// Only wait for web pay to load if we are using web pay
-		( allowedPaymentMethods.includes( 'web-pay' ) && isWebPayLoading );
+		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards );
 
 	const contactDetails: ManagedContactDetails | undefined = useSelect( ( select ) =>
 		select( 'wpcom-checkout' )?.getContactInfo()
@@ -367,15 +354,12 @@ export default function CheckoutMain( {
 	const recaptchaClientId: number | undefined = useSelect( ( select ) =>
 		select( 'wpcom-checkout' )?.getRecaptchaClientId()
 	);
-	const countryCode: string = contactDetails?.countryCode?.value ?? '';
 
 	const paymentMethods = arePaymentMethodsLoading
 		? []
 		: filterAppropriatePaymentMethods( {
 				paymentMethodObjects,
-				countryCode,
 				allowedPaymentMethods,
-				responseCart,
 		  } );
 	debug( 'filtered payment method objects', paymentMethods );
 
@@ -481,7 +465,6 @@ export default function CheckoutMain( {
 				genericRedirectProcessor( 'sofort', transactionData, dataForProcessor ),
 			eps: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'eps', transactionData, dataForProcessor ),
-			'full-credits': () => fullCreditsProcessor( dataForProcessor ),
 			'existing-card': ( transactionData: unknown ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),
 			'existing-card-ebanx': ( transactionData: unknown ) =>
@@ -527,11 +510,11 @@ export default function CheckoutMain( {
 
 	useRecordCheckoutLoaded( {
 		isLoading,
-		isApplePayAvailable,
 		responseCart,
 		storedCards,
 		productAliasFromUrl,
 		checkoutFlow,
+		isGiftPurchase,
 	} );
 
 	const onPageLoadError: CheckoutPageErrorCallback = useCallback(
@@ -695,7 +678,7 @@ export default function CheckoutMain( {
 			<QueryPlans />
 			<QueryProducts />
 			<QueryContactDetailsCache />
-			{ cartHasSearchProduct && <QueryPostCounts siteId={ updatedSiteId || -1 } type={ 'post' } /> }
+			{ cartHasSearchProduct && <QueryPostCounts siteId={ updatedSiteId || -1 } type="post" /> }
 			<PageViewTracker
 				path={ analyticsPath }
 				title="Checkout"
@@ -718,6 +701,7 @@ export default function CheckoutMain( {
 				initiallySelectedPaymentMethodId={ paymentMethods?.length ? paymentMethods[ 0 ].id : null }
 			>
 				<WPCheckout
+					forceRadioButtons={ forceRadioButtons }
 					customizedPreviousPath={ customizedPreviousPath }
 					isRemovingProductFromCart={ isRemovingProductFromCart }
 					areThereErrors={ areThereErrors }

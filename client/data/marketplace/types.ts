@@ -52,14 +52,16 @@ export type ESIndexResult = {
 	'plugin.tested'?: string;
 	'plugin.support_threads'?: number;
 	'plugin.support_threads_resolved'?: number;
-	'plugin.active_installs'?: number;
 	plugin: {
+		store_product_monthly_id?: number;
+		store_product_yearly_id?: number;
 		author: string;
 		title: string;
 		excerpt: string;
 		icons: string;
 		rating: number;
 		num_ratings: number;
+		active_installs: number;
 	};
 };
 
@@ -83,6 +85,7 @@ export type ESDateRangeFilter = { range: Record< string, { gte: string; lt: stri
 export type SearchParams = {
 	query: string | undefined;
 	author: string | undefined;
+	category: string | undefined;
 	groupId: string;
 	pageHandle: string | undefined;
 	pageSize: number;

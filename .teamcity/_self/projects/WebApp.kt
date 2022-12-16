@@ -5,6 +5,7 @@ import _self.bashNodeScript
 import _self.lib.customBuildType.E2EBuildType
 import _self.lib.utils.mergeTrunk
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
+import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStepConditions
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
@@ -21,6 +22,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailu
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.finishBuildTrigger
 
 object WebApp : Project({
 	id("WebApp")
@@ -35,7 +37,6 @@ object WebApp : Project({
 	buildType(PreReleaseE2ETests)
 	buildType(AuthenticationE2ETests)
 	buildType(HelpCentreE2ETests)
-	buildType(KPIDashboardTests)
 	buildType(QuarantinedE2ETests)
 })
 
@@ -268,6 +269,7 @@ object BuildDockerImage : BuildType({
 })
 
 object RunAllUnitTests : BuildType({
+	id("calypso_WebApp_Run_All_Unit_Tests")
 	uuid = "beb75760-2786-472b-8909-ec33457bdece"
 	name = "Unit tests"
 	description = "Run unit tests (client + server + packages)"
@@ -502,6 +504,7 @@ object RunAllUnitTests : BuildType({
 })
 
 object CheckCodeStyleBranch : BuildType({
+	id("calypso_WebApp_Check_Code_Style_Branch")
 	uuid = "dfee7987-6bbc-4250-bb10-ef9dd7322bd2"
 	name = "Code style"
 	description = "Check code style"
@@ -537,7 +540,7 @@ object CheckCodeStyleBranch : BuildType({
 			"""
 		}
 		bashNodeScript {
-			name = "Run linters"
+			name = "Run eslint"
 			scriptContent = """
 				export NODE_ENV="test"
 
@@ -555,6 +558,14 @@ object CheckCodeStyleBranch : BuildType({
 				if [ ! -z "${'$'}FILES_TO_LINT" ]; then
 					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" ${'$'}FILES_TO_LINT
 				fi
+			"""
+		}
+
+		bashNodeScript {
+			name = "Run stylelint"
+			scriptContent = """
+				# In the future, we may add the stylelint cache here.
+				yarn run lint:css
 			"""
 		}
 	}
@@ -604,6 +615,7 @@ object CheckCodeStyleBranch : BuildType({
 })
 
 object Translate : BuildType({
+	id("calypso_WebApp_Translate")
 	name = "Translate"
 	description = "Extract translatable strings from the source code and build POT file"
 
@@ -715,7 +727,7 @@ object Translate : BuildType({
 
 fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildType {
 	return E2EBuildType(
-		buildId = "Calypso_E2E_Playwright_$targetDevice",
+		buildId = "calypso_WebApp_Calypso_E2E_Playwright_$targetDevice",
 		buildUuid = buildUuid,
 		buildName = "E2E Tests ($targetDevice)",
 		buildDescription = "Runs Calypso e2e tests on $targetDevice size",
@@ -762,18 +774,137 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 	)
 }
 
-object PreReleaseE2ETests : E2EBuildType(
-	buildId = "Calypso_E2E_Pre_Release",
-	buildUuid = "9c2f634f-6582-4245-bb77-fb97d9f16533",
-	buildName = "Pre-Release E2E Tests",
-	buildDescription = "Runs a pre-release suite of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production.",
-	concurrentBuilds = 1,
-	testGroup = "calypso-release",
-	buildParams = {
+object PreReleaseE2ETests : BuildType({
+	id("calypso_WebApp_Calypso_E2E_Pre_Release")
+	uuid = "9c2f634f-6582-4245-bb77-fb97d9f16533"
+	name = "Pre-Release E2E Tests"
+	description = "Runs a pre-release suite of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production."
+	artifactRules = """
+		logs => logs.tgz
+		screenshots => screenshots
+		trace => trace
+		allure-results => allure-results.tgz
+	""".trimIndent()
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	params {
+		param("env.NODE_CONFIG_ENV", "test")
+		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
+		param("env.TEAMCITY_VERSION", "2021")
+		param("env.HEADLESS", "true")
+		param("env.LOCALE", "en")
 		param("env.VIEWPORT_NAME", "desktop")
 		param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
-	},
-	buildFeatures = {
+		param("env.ALLURE_RESULTS_PATH", "allure-results")
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Prepare environment"
+			scriptContent = """
+				# Install deps
+				yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
+
+				# Decrypt secrets
+				# Must do before build so the secrets are in the dist output
+				E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn workspace @automattic/calypso-e2e decrypt-secrets
+
+				# Build packages
+				yarn workspace @automattic/calypso-e2e build
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
+			name = "Run tests"
+			scriptContent = """
+				# Configure bash shell.
+				shopt -s globstar
+				set -x
+
+				# Enter testing directory.
+				cd test/e2e
+				mkdir temp
+
+				# Run suite.
+				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-release
+			"""
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
+			name = "Collect results"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -x
+
+				mkdir -p screenshots
+				find test/e2e/results -type f \( -iname \*.webm -o -iname \*.png \) -print0 | xargs -r -0 mv -t screenshots
+
+				mkdir -p logs
+				find test/e2e/results -name '*.log' -print0 | xargs -r -0 mv -t logs
+
+				mkdir -p trace
+				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
+
+				mkdir -p allure-results
+				find test/e2e/allure-results -name '*.json' -print0 | xargs -r -0 mv -t allure-results
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
+			name = "Upload Allure results to S3"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				aws configure set aws_access_key_id %CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID%
+				aws configure set aws_secret_access_key %CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY%
+
+				# Need to use -C to avoid creation of an unnecessary top level directory.
+				tar cvfz %build.counter%-%build.vcs.number%.tgz -C allure-results .
+
+				aws s3 cp %build.counter%-%build.vcs.number%.tgz %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%
+			""".trimIndent()
+			conditions {
+				exists("env.ALLURE_RESULTS_PATH")
+				equals("teamcity.build.branch", "trunk")
+			}
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
+			name = "Send webhook to GitHub Actions"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				# Issue call as matticbot.
+				# The GitHub Action workflow expects the filename of the most recent Allure report
+				# as param.
+				curl https://api.github.com/repos/Automattic/wp-calypso-test-results/actions/workflows/generate-report.yml/dispatches -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer %MATTICBOT_GITHUB_BEARER_TOKEN%" -d '{"ref":"trunk","inputs":{"allure_result_filename": "%build.counter%-%build.vcs.number%.tgz"}}'
+			""".trimIndent()
+			conditions {
+				exists("env.ALLURE_RESULTS_PATH")
+				equals("teamcity.build.branch", "trunk")
+			}
+			dockerImage = "%docker_image_e2e%"
+		}
+	}
+
+	features {
+		perfmon {
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
@@ -789,10 +920,27 @@ object PreReleaseE2ETests : E2EBuildType(
 			buildProbablyHanging = true
 		}
 	}
-)
+
+	failureConditions {
+		executionTimeoutMin = 20
+		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have been muted previously.
+		nonZeroExitCode = false
+
+		// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner crashes and no tests are run.
+		failOnMetricChange {
+			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
+			threshold = 50
+			units = BuildFailureOnMetric.MetricUnit.PERCENTS
+			comparison = BuildFailureOnMetric.MetricComparison.LESS
+			compareTo = build {
+				buildRule = lastSuccessful()
+			}
+		}
+	}
+})
 
 object AuthenticationE2ETests : E2EBuildType(
-	buildId = "Calypso_E2E_Authentication",
+	buildId = "calypso_WebApp_Calypso_E2E_Authentication",
 	buildUuid = "f5036e29-f400-49ea-b5c5-4aba9307c5e8",
 	buildName = "Authentication E2E Tests",
 	buildDescription = "Runs a suite of Authentication E2E tests.",
@@ -824,13 +972,13 @@ object AuthenticationE2ETests : E2EBuildType(
 			}
 			branchFilter = "+:<default>"
 			triggerBuild = always()
-			withPendingChangesOnly = false
+			withPendingChangesOnly = true
 		}
 	}
 )
 
 object HelpCentreE2ETests : E2EBuildType(
-	buildId = "Calypso_E2E_Help_Centre",
+	buildId = "calypso_WebApp_Calypso_E2E_Help_Centre",
 	buildUuid = "a0e62582-8598-483e-8b82-9de540288f6d",
 	buildName = "Help Centre E2E Tests",
 	buildDescription = "Runs a suite of Help Centre E2E tests.",
@@ -866,21 +1014,118 @@ object HelpCentreE2ETests : E2EBuildType(
 	}
 )
 
-object KPIDashboardTests : E2EBuildType(
-	buildId = "Calypso_E2E_KPI_Dashboard",
-	buildUuid = "441efac5-721a-4557-9448-9234e89fb6b1",
-	buildName = "Test build for KPI Dashboard project",
-	buildDescription = "Test build configuration for KPI dashboard.",
-	testGroup = "kpi",
-	buildParams = {
+object KPIDashboardTests : BuildType({
+	id("calypso_WebApp_Calypso_E2E_KPI_Dashboard")
+	uuid = "441efac5-721a-4557-9448-9234e89fb6b1"
+	name = "Test build for KPI Dashboard project"
+	description = "Test build configuration for KPI dashboard."
+	artifactRules = """
+		logs.tgz => logs.tgz
+		screenshots => screenshots
+		trace => trace
+		allure-results.tgz => allure-results.tgz
+	""".trimIndent()
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	params {
+		param("env.NODE_CONFIG_ENV", "test")
+		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
+		param("env.TEAMCITY_VERSION", "2021")
+		param("env.HEADLESS", "true")
+		param("env.LOCALE", "en")
+		param("env.DEBUG", "")
 		param("env.VIEWPORT_NAME", "desktop")
-	},
-	buildFeatures = {
-	},
-)
+		param("env.ALLURE_RESULTS_PATH", "allure-results")
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Prepare environment"
+			scriptContent = """
+				# Install deps
+				yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
+
+				# Decrypt secrets
+				# Must do before build so the secrets are in the dist output
+				E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn workspace @automattic/calypso-e2e decrypt-secrets
+
+				# Build packages
+				yarn workspace @automattic/calypso-e2e build
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
+			name = "Run tests"
+			scriptContent = """
+				# Configure bash shell.
+				shopt -s globstar
+				set -x
+
+				# Enter testing directory.
+				cd test/e2e
+				mkdir temp
+
+				# Run suite.
+				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=kpi
+			"""
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
+			name = "Collect results"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -x
+
+				mkdir -p screenshots
+				find test/e2e/results -type f \( -iname \*.webm -o -iname \*.png \) -print0 | xargs -r -0 mv -t screenshots
+
+				mkdir -p logs
+				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+
+				mkdir -p trace
+				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
+
+				mkdir -p allure-results
+				find test/e2e/allure-results -name '*.json' -print0 | xargs -r -0 tar cvfz allure-results.tgz
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+	}
+
+	features {
+		perfmon {
+		}
+	}
+
+	// By default, no triggers are defined for this template class.
+	triggers {}
+
+	failureConditions {
+		executionTimeoutMin = 20
+		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have been muted previously.
+		nonZeroExitCode = false
+
+		// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner crashes and no tests are run.
+		failOnMetricChange {
+			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
+			threshold = 50
+			units = BuildFailureOnMetric.MetricUnit.PERCENTS
+			comparison = BuildFailureOnMetric.MetricComparison.LESS
+			compareTo = build {
+				buildRule = lastSuccessful()
+			}
+		}
+	}
+})
 
 object QuarantinedE2ETests: E2EBuildType(
-	buildId = "Quarantined_E2E_Tests",
+	buildId = "calypso_WebApp_Quarantined_E2E_Tests",
 	buildUuid = "14083675-b6de-419f-b2f6-ec89c06d3a8c",
 	buildName = "Quarantined E2E Tests",
 	buildDescription = "E2E tests quarantined due to intermittent failures.",

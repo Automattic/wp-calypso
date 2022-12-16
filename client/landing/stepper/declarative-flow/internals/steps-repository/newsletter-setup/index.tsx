@@ -3,6 +3,7 @@ import { hexToRgb, StepContainer, base64ImageToBlob } from '@automattic/onboardi
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate } from 'i18n-calypso';
 import { FormEvent, useEffect, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -13,26 +14,27 @@ import SetupForm from '../components/setup-form';
 import type { Step } from '../../types';
 import './style.scss';
 
-const defaultAccentColor = {
-	hex: '#1D39EB',
-	rgb: { r: 29, g: 57, b: 235 },
+export const defaultAccentColor = {
+	hex: '#113AF5',
+	rgb: { r: 17, g: 58, b: 245 },
 	default: true,
 };
 
 const NewsletterSetup: Step = ( { navigation } ) => {
 	const { submit } = navigation;
-	const { __, hasTranslation } = useI18n();
+	const translate = useTranslate();
+	const { hasTranslation } = useI18n();
 	const locale = useLocale();
 	const site = useSite();
 
 	const newsletterFormText = {
-		titlePlaceholder: __( 'My newsletter' ),
-		titleMissing: __( `Oops. Looks like your Newsletter doesn't have a name yet.` ),
-		taglinePlaceholder: __( 'Describe your Newsletter in a line or two' ),
+		titlePlaceholder: translate( 'My newsletter' ),
+		titleMissing: translate( `Oops. Looks like your Newsletter doesn't have a name yet.` ),
+		taglinePlaceholder: translate( 'Describe your Newsletter in a line or two' ),
 		iconPlaceholder:
 			hasTranslation( 'Add a logo or profile picture' ) || locale === 'en'
-				? __( 'Add a logo or profile picture' )
-				: __( 'Add a site icon' ),
+				? translate( 'Add a logo or profile picture' )
+				: translate( 'Add a site icon' ),
 	};
 
 	const { setSiteTitle, setSiteAccentColor, setSiteDescription, setSiteLogo } =
@@ -94,22 +96,22 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 
 	return (
 		<StepContainer
-			stepName={ 'newsletter-setup' }
+			stepName="newsletter-setup"
 			isWideLayout={ true }
 			hideBack={ true }
-			flowName={ 'newsletter' }
+			flowName="newsletter"
 			formattedHeader={
 				<FormattedHeader
-					id={ 'newsletter-setup-header' }
+					id="newsletter-setup-header"
 					headerText={ createInterpolateElement(
 						hasTranslation( 'Set up your<br />Newsletter' ) || locale === 'en'
-							? __( 'Set up your<br />Newsletter' )
-							: __( 'Personalize your<br />Newsletter' ),
+							? translate( 'Set up your<br />Newsletter' )
+							: translate( 'Personalize your<br />Newsletter' ),
 						{
 							br: <br />,
 						}
 					) }
-					align={ 'center' }
+					align="center"
 				/>
 			}
 			stepContent={

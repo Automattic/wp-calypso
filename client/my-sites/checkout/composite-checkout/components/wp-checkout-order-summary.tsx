@@ -3,11 +3,9 @@ import {
 	getYearlyPlanByMonthly,
 	isDomainProduct,
 	isDomainTransfer,
-	isGoogleWorkspace,
 	isMonthly,
 	isNoAds,
 	isPlan,
-	isTitanMail,
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
 	isWpComPersonalPlan,
@@ -33,14 +31,15 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
+import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getPlanFeatures from '../lib/get-plan-features';
-import getRefundDays from '../lib/get-refund-days';
-import getRefundText from '../lib/get-refund-text';
-import type { ResponseCartProduct } from '@automattic/shopping-cart';
+import { getRefundPolicies, getRefundWindows, RefundPolicy } from './refund-policies';
+import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
+import type { TranslateResult } from 'i18n-calypso';
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
@@ -58,15 +57,13 @@ export default function WPCheckoutOrderSummary( {
 	const { formStatus } = useFormStatus();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
-	const couponLineItem = getCouponLineItemFromCart( responseCart );
-	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
-	const totalLineItem = getTotalLineItemFromCart( responseCart );
 
 	const hasRenewalInCart = responseCart.products.some(
 		( product ) => product.extra.purchaseType === 'renewal'
 	);
 
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
+	const isWcMobile = isWcMobileApp();
 
 	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
 	const hasMonthlyPlanInCart = Boolean( plan && isMonthly( plan?.product_slug ) );
@@ -78,7 +75,9 @@ export default function WPCheckoutOrderSummary( {
 		>
 			<CheckoutSummaryFeatures>
 				<CheckoutSummaryFeaturesTitle>
-					{ translate( 'Included with your purchase' ) }
+					{ responseCart.is_gift_purchase
+						? translate( 'WordPress.com Gift Subscription' )
+						: translate( 'Included with your purchase' ) }
 				</CheckoutSummaryFeaturesTitle>
 				{ isCartUpdating ? (
 					<LoadingCheckoutSummaryFeaturesList />
@@ -86,30 +85,43 @@ export default function WPCheckoutOrderSummary( {
 					<CheckoutSummaryFeaturesWrapper siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />
 				) }
 			</CheckoutSummaryFeatures>
-			{ ! isCartUpdating && ! hasRenewalInCart && plan && hasMonthlyPlanInCart && (
+			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
 				<CheckoutSummaryAnnualUpsell plan={ plan } onChangePlanLength={ onChangePlanLength } />
 			) }
-			<CheckoutSummaryAmountWrapper>
-				{ couponLineItem && (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + couponLineItem.id }>
-						<span>{ couponLineItem.label }</span>
-						<span>{ couponLineItem.amount.displayValue }</span>
-					</CheckoutSummaryLineItem>
-				) }
-				{ taxLineItems.map( ( taxLineItem ) => (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
-						<span>{ taxLineItem.label }</span>
-						<span>{ taxLineItem.amount.displayValue }</span>
-					</CheckoutSummaryLineItem>
-				) ) }
-				<CheckoutSummaryTotal>
-					<span>{ translate( 'Total' ) }</span>
-					<span className="wp-checkout-order-summary__total-price">
-						{ totalLineItem.amount.displayValue }
-					</span>
-				</CheckoutSummaryTotal>
-			</CheckoutSummaryAmountWrapper>
+			<CheckoutSummaryPriceList />
 		</CheckoutSummaryCard>
+	);
+}
+
+function CheckoutSummaryPriceList() {
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
+	const couponLineItem = getCouponLineItemFromCart( responseCart );
+	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
+	const totalLineItem = getTotalLineItemFromCart( responseCart );
+	const translate = useTranslate();
+
+	return (
+		<CheckoutSummaryAmountWrapper>
+			{ couponLineItem && (
+				<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + couponLineItem.id }>
+					<span>{ couponLineItem.label }</span>
+					<span>{ couponLineItem.amount.displayValue }</span>
+				</CheckoutSummaryLineItem>
+			) }
+			{ taxLineItems.map( ( taxLineItem ) => (
+				<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
+					<span>{ taxLineItem.label }</span>
+					<span>{ taxLineItem.amount.displayValue }</span>
+				</CheckoutSummaryLineItem>
+			) ) }
+			<CheckoutSummaryTotal>
+				<span>{ translate( 'Total' ) }</span>
+				<span className="wp-checkout-order-summary__total-price">
+					{ totalLineItem.amount.displayValue }
+				</span>
+			</CheckoutSummaryTotal>
+		</CheckoutSummaryAmountWrapper>
 	);
 }
 
@@ -151,12 +163,133 @@ function CheckoutSummaryFeaturesWrapper( props: {
 	const { siteId, nextDomainIsFree } = props;
 	const signupFlowName = getSignupCompleteFlowName();
 	const shouldUseFlowFeatureList = isNewsletterOrLinkInBioFlow( signupFlowName );
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
+	const giftSiteSlug = responseCart.gift_details?.receiver_blog_slug;
+
+	if ( responseCart.is_gift_purchase && giftSiteSlug ) {
+		return <CheckoutSummaryGiftFeaturesList siteSlug={ giftSiteSlug } />;
+	}
 
 	if ( signupFlowName && shouldUseFlowFeatureList ) {
 		return <CheckoutSummaryFlowFeaturesList flowName={ signupFlowName } />;
 	}
 
 	return <CheckoutSummaryFeaturesList siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />;
+}
+
+function CheckoutSummaryGiftFeaturesList( { siteSlug }: { siteSlug: string } ) {
+	const translate = useTranslate();
+	return (
+		<CheckoutSummaryFeaturesListWrapper>
+			{ translate(
+				'You are showing your appreciation for %(siteSlug)s by gifting them their next subscription.',
+				{ args: { siteSlug } }
+			) }
+		</CheckoutSummaryFeaturesListWrapper>
+	);
+}
+
+function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
+	const translate = useTranslate();
+
+	const refundPolicies = getRefundPolicies( cart );
+	const refundWindows = getRefundWindows( refundPolicies );
+
+	if ( ! refundWindows.length || refundPolicies.includes( RefundPolicy.NonRefundable ) ) {
+		return null;
+	}
+
+	const allCartItemsAreDomains = refundPolicies.every(
+		( refundPolicy ) =>
+			refundPolicy === RefundPolicy.DomainNameRegistration ||
+			refundPolicy === RefundPolicy.DomainNameRegistrationBundled ||
+			refundPolicy === RefundPolicy.DomainNameRenewal
+	);
+
+	if ( allCartItemsAreDomains ) {
+		return null;
+	}
+
+	const allCartItemsAreMonthlyPlanBundle = refundPolicies.every(
+		( refundPolicy ) =>
+			refundPolicy === RefundPolicy.DomainNameRegistration ||
+			refundPolicy === RefundPolicy.PlanMonthlyBundle
+	);
+
+	const allCartItemsArePlanOrDomainRenewals = refundPolicies.every(
+		( refundPolicy ) =>
+			refundPolicy === RefundPolicy.DomainNameRenewal ||
+			refundPolicy === RefundPolicy.PlanMonthlyRenewal ||
+			refundPolicy === RefundPolicy.PlanYearlyRenewal ||
+			refundPolicy === RefundPolicy.PlanBiennialRenewal
+	);
+
+	let text: TranslateResult;
+
+	if ( refundWindows.length === 1 ) {
+		const refundWindow = refundWindows[ 0 ];
+		const planBundleRefundPolicy = refundPolicies.find(
+			( refundPolicy ) =>
+				refundPolicy === RefundPolicy.PlanBiennialBundle ||
+				refundPolicy === RefundPolicy.PlanYearlyBundle
+		);
+		const planProduct = cart.products.find( isPlan );
+
+		if ( planBundleRefundPolicy ) {
+			// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
+			text = translate(
+				'%(days)d-day money back guarantee for %(product)s',
+				'%(days)d-day money back guarantee for %(product)s',
+				{
+					count: refundWindow,
+					args: {
+						days: refundWindow,
+						product: planProduct?.product_name ?? '',
+					},
+				}
+			);
+		} else {
+			text = translate( '%(days)d-day money back guarantee', '%(days)d-day money back guarantee', {
+				count: refundWindow,
+				args: { days: refundWindow },
+			} );
+		}
+	} else if ( allCartItemsAreMonthlyPlanBundle || allCartItemsArePlanOrDomainRenewals ) {
+		const refundWindow = Math.max( ...refundWindows );
+		const planProduct = cart.products.find( isPlan );
+
+		text = translate(
+			'%(days)d-day money back guarantee for %(product)s',
+			'%(days)d-day money back guarantee for %(product)s',
+			{
+				count: refundWindow,
+				args: {
+					days: refundWindow,
+					product: planProduct?.product_name ?? '',
+				},
+			}
+		);
+	} else {
+		const shortestRefundWindow = Math.min( ...refundWindows );
+
+		text = translate(
+			'%(days)d-day full money back guarantee',
+			'%(days)d-day full money back guarantee',
+			{
+				count: shortestRefundWindow,
+				args: { days: shortestRefundWindow },
+				comment: 'The number of days until the shortest refund window in the cart expires.',
+			}
+		);
+	}
+
+	return (
+		<CheckoutSummaryFeaturesListItem>
+			<WPCheckoutCheckIcon id="features-list-refund-text" />
+			{ text }
+		</CheckoutSummaryFeaturesListItem>
+	);
 }
 
 function CheckoutSummaryFeaturesList( props: {
@@ -177,10 +310,6 @@ function CheckoutSummaryFeaturesList( props: {
 	const plans = responseCart.products.filter( ( product ) => isPlan( product ) );
 	const hasPlanInCart = plans.length > 0;
 
-	const refundableProducts = responseCart.products.filter(
-		( product ) => product.cost && getRefundDays( product )
-	);
-
 	const translate = useTranslate();
 
 	const hasNoAdsAddOn = responseCart.products.some( ( product ) => isNoAds( product ) );
@@ -191,6 +320,7 @@ function CheckoutSummaryFeaturesList( props: {
 				domains.map( ( domain ) => {
 					return <CheckoutSummaryFeaturesListDomainItem domain={ domain } key={ domain.uuid } />;
 				} ) }
+
 			{ hasPlanInCart && (
 				<CheckoutSummaryPlanFeatures
 					hasDomainsInCart={ hasDomainsInCart }
@@ -207,25 +337,7 @@ function CheckoutSummaryFeaturesList( props: {
 
 			{ ! hasPlanInCart && <CheckoutSummaryChatIfAvailable siteId={ siteId } /> }
 
-			{ refundableProducts.map( ( product ) => {
-				let productName = product.product_name;
-
-				if ( isDomainProduct( product ) ) {
-					productName = product.meta;
-				} else if ( isGoogleWorkspace( product ) || isTitanMail( product ) ) {
-					if ( product.extra?.email_users?.length ) {
-						const emailUsers = product.extra?.email_users?.map( ( user ) => user.email );
-						productName = emailUsers.join( ', ' );
-					}
-				}
-
-				return (
-					<CheckoutSummaryFeaturesListItem key={ product.uuid }>
-						<WPCheckoutCheckIcon id="features-list-refund-text" />
-						{ getRefundText( getRefundDays( product ), productName, translate ) }
-					</CheckoutSummaryFeaturesListItem>
-				);
-			} ) }
+			<CheckoutSummaryRefundWindows cart={ responseCart } />
 		</CheckoutSummaryFeaturesListWrapper>
 	);
 }
@@ -347,11 +459,13 @@ function CheckoutSummaryChatIfAvailable( props: { siteId: number | undefined } )
 			isWpComEcommercePlan( currentPlanSlug ) ) &&
 		! isMonthly( currentPlanSlug );
 
-	if ( ! isChatAvailable ) return null;
+	if ( ! isChatAvailable ) {
+		return null;
+	}
 
 	return (
 		<CheckoutSummaryFeaturesListItem>
-			<WPCheckoutCheckIcon id={ 'annual-live-chat' } />
+			<WPCheckoutCheckIcon id="annual-live-chat" />
 			{ translate( 'Live chat support' ) }
 		</CheckoutSummaryFeaturesListItem>
 	);
@@ -379,12 +493,12 @@ function CheckoutSummaryAnnualUpsell( props: {
 			</CheckoutSummaryFeaturesTitle>
 			<CheckoutSummaryFeaturesListWrapper>
 				<CheckoutSummaryFeaturesListItem isSupported={ false }>
-					<WPCheckoutCheckIcon id={ 'annual-domain-credit' } />
+					<WPCheckoutCheckIcon id="annual-domain-credit" />
 					{ translate( 'Free domain for one year' ) }
 				</CheckoutSummaryFeaturesListItem>
 				{ ! isWpComPersonalPlan( productSlug ) && (
 					<CheckoutSummaryFeaturesListItem isSupported={ false }>
-						<WPCheckoutCheckIcon id={ 'annual-live-chat' } />
+						<WPCheckoutCheckIcon id="annual-live-chat" />
 						{ translate( 'Live chat support' ) }
 					</CheckoutSummaryFeaturesListItem>
 				) }

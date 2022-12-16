@@ -65,7 +65,9 @@ export class EditorTracksEventManager {
 		return this.page.url().includes( '/wp-admin' )
 			? this.page.locator( 'body' ) // No Gutenframe
 			: this.page
-					.frameLocator( '[src*="wp-admin/post"],[src*="wp-admin/themes"]' ) // Post, page, and site editor!
+					.frameLocator(
+						'[src*="wp-admin/post"],[src*="wp-admin/themes"],[src*="wp-admin/site-editor"]'
+					) // Post, page, and site editor!
 					.locator( 'body' ); // Gutenframe
 	}
 

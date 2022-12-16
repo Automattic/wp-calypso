@@ -1,6 +1,7 @@
 export default function ReaderShareIcon( { iconSize } ) {
 	return (
 		<svg
+			key="share"
 			fill="none"
 			className="reader-share"
 			viewBox="0 0 20 20"

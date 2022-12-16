@@ -1,5 +1,8 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { Button } from '@automattic/components';
+import { isWithinBreakpoint } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { getQueryArg, removeQueryArgs } from '@wordpress/url';
+import { getQueryArg, removeQueryArgs, addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -12,10 +15,13 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
+import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import {
 	checkIfJetpackSiteGotDisconnected,
-	getPurchasedLicense,
+	getSelectedLicenses,
+	getSelectedLicensesSiteId,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import SitesOverviewContext from './context';
@@ -23,8 +29,11 @@ import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
 import SiteSearchFilterContainer from './site-search-filter-container/SiteSearchFilterContainer';
 import SiteWelcomeBanner from './site-welcome-banner';
+import { getProductSlugFromProductType } from './utils';
 
 import './style.scss';
+
+const CALYPSO_MASTERBAR_HEIGHT = 47;
 
 export default function SitesOverview() {
 	const translate = useTranslate();
@@ -32,7 +41,11 @@ export default function SitesOverview() {
 	const isMobile = useMobileBreakpoint();
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
-	const purchasedLicense = useSelector( getPurchasedLicense );
+
+	const selectedLicenses = useSelector( getSelectedLicenses );
+	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
+
+	const selectedLicensesCount = selectedLicenses?.length;
 
 	const highlightFavoriteTab = getQueryArg( window.location.href, 'highlight' ) === 'favorite-tab';
 
@@ -65,6 +78,8 @@ export default function SitesOverview() {
 	}, [ refetch, jetpackSiteDisconnected ] );
 
 	const pageTitle = translate( 'Dashboard' );
+
+	const downTimeMonitoringUpdates = 'Dashboard - Down Time Monitoring Updates Enabled';
 
 	const basePath = '/dashboard';
 
@@ -124,6 +139,62 @@ export default function SitesOverview() {
 
 	const isFavoritesTab = selectedTab.key === 'favorites';
 
+	const issueLicenseRedirectUrl = useMemo( () => {
+		return addQueryArgs( `/partner-portal/issue-license/`, {
+			site_id: selectedLicensesSiteId,
+			product_slug: selectedLicenses
+				?.map( ( type: string ) => getProductSlugFromProductType( type ) )
+				// If multiple products are selected, pass them as a comma-separated list.
+				.join( ',' ),
+			source: 'dashboard',
+		} );
+	}, [ selectedLicensesSiteId, selectedLicenses ] );
+
+	const [ divRef, hasCrossed ] = useDetectWindowBoundary( CALYPSO_MASTERBAR_HEIGHT );
+
+	const outerDivProps = divRef ? { ref: divRef as React.RefObject< HTMLDivElement > } : {};
+
+	const renderIssueLicenseButton = () => {
+		return (
+			<div className="sites-overview__licenses-buttons">
+				<Button
+					borderless
+					className="sites-overview__licenses-buttons-cancel"
+					onClick={ () => dispatch( resetSite() ) }
+				>
+					{ translate( 'Cancel', { context: 'button label' } ) }
+				</Button>
+				<Button
+					primary
+					className="sites-overview__licenses-buttons-issue-license"
+					href={ issueLicenseRedirectUrl }
+					onClick={ () =>
+						dispatch(
+							recordTracksEvent( 'calypso_jetpack_agency_dashboard_licenses_select', {
+								site_id: selectedLicensesSiteId,
+								products: selectedLicenses
+									?.map( ( type: string ) => getProductSlugFromProductType( type ) )
+									// If multiple products are selected, pass them as a comma-separated list.
+									.join( ',' ),
+							} )
+						)
+					}
+				>
+					{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
+						context: 'button label',
+						count: selectedLicensesCount,
+						args: {
+							numLicenses: selectedLicensesCount,
+						},
+					} ) }
+				</Button>
+			</div>
+		);
+	};
+
+	const showIssueLicenseButtonsLargeScreen =
+		isWithinBreakpoint( '>960px' ) && selectedLicensesCount > 0;
+
 	return (
 		<div className="sites-overview">
 			<DocumentHead title={ pageTitle } />
@@ -132,13 +203,25 @@ export default function SitesOverview() {
 				<div className="sites-overview__tabs">
 					<div className="sites-overview__content-wrapper">
 						<SiteWelcomeBanner isDashboardView />
-						{ purchasedLicense && data?.sites && (
-							<SiteAddLicenseNotification purchasedLicense={ purchasedLicense } />
-						) }
-						<div className="sites-overview__page-title-container">
-							<h2 className="sites-overview__page-title">{ pageTitle }</h2>
-							<div className="sites-overview__page-subtitle">
-								{ translate( 'Manage all your Jetpack sites from one location' ) }
+						{ data?.sites && <SiteAddLicenseNotification /> }
+						<div className="sites-overview__viewport" { ...outerDivProps }>
+							<div
+								className={ classNames( 'sites-overview__page-title-container', {
+									'is-sticky': showIssueLicenseButtonsLargeScreen && hasCrossed,
+								} ) }
+							>
+								<div className="sites-overview__page-heading">
+									{ isEnabled( 'jetpack/partner-portal-downtime-monitoring-updates' ) ? (
+										<h2 className="sites-overview__page-title">{ downTimeMonitoringUpdates }</h2>
+									) : (
+										<h2 className="sites-overview__page-title">{ pageTitle }</h2>
+									) }
+									<div className="sites-overview__page-subtitle">
+										{ translate( 'Manage all your Jetpack sites from one location' ) }
+									</div>
+								</div>
+
+								{ showIssueLicenseButtonsLargeScreen && renderIssueLicenseButton() }
 							</div>
 						</div>
 						<SectionNav
@@ -185,6 +268,11 @@ export default function SitesOverview() {
 					</div>
 				</div>
 			</div>
+			{ isWithinBreakpoint( '<960px' ) && selectedLicensesCount > 0 && (
+				<div className="sites-overview__issue-licenses-button-small-screen">
+					{ renderIssueLicenseButton() }
+				</div>
+			) }
 		</div>
 	);
 }

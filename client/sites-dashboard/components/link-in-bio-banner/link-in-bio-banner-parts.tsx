@@ -1,51 +1,35 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
-import { Button as IconButton } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { close } from '@wordpress/icons';
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { savePreference } from 'calypso/state/preferences/actions';
-
-export const LINK_IN_BIO_BANNER_PREFERENCE = `link-in-bio-banner`;
 
 export const Root = styled( 'div' )( {
 	position: 'relative',
 	display: 'flex',
-	backgroundColor: '#D0CCE3',
-	borderRadius: '3px',
+	backgroundColor: '#D9D7E6',
 } );
 
 export const Title = styled( 'h3' )( {
 	fontWeight: 500,
 	fontSize: 20,
-	color: '#000000',
+	color: 'var(--studio-gray-100)',
 	margin: 0,
 } );
 
-Title.defaultProps = { children: __( 'Your digital identity' ) };
+Title.defaultProps = { children: __( 'Stand out' ) };
 
 export const Description = styled( 'p' )( {
 	margin: 0,
+	fontSize: '14px',
 } );
 
 Description.defaultProps = {
-	children: __( 'Show the world what you have to offer with a Link to Bio site.' ),
-};
-
-export const DismissButton = () => {
-	const dispatch = useDispatch();
-
-	const handleDismissBanner = () => {
-		recordTracksEvent( 'calypso_link_in_bio_banner_dismiss_click' );
-		dispatch( savePreference( LINK_IN_BIO_BANNER_PREFERENCE, false ) );
-	};
-	return <IconButton icon={ close } onClick={ handleDismissBanner } className="dismiss-button" />;
+	children: __( 'All of your links in one beautiful, shareable site.' ),
 };
 
 export const Image = ( { src }: { src: string } ) => {
-	return <img src={ src } alt={ __( 'Link to Bio banner image' ) } className={ 'banner-image' } />;
+	return <img src={ src } alt={ __( 'Link to Bio banner image' ) } className="banner-image" />;
 };
 
 const handleBannerCtaClick = () => {
@@ -88,11 +72,11 @@ export const CreateButton = () => {
 	useEffect( handleBannerViewed, [] );
 	return (
 		<LinkButton
-			href="/setup/intro?flow=link-in-bio&ref=logged-out-homepage-lp"
+			href="/setup/intro?flow=link-in-bio&ref=sites-dashboard"
 			className="create-button"
 			onClick={ handleBannerCtaClick }
 		>
-			{ __( 'Create your bio site' ) }
+			{ __( 'Launch a link in bio' ) }
 		</LinkButton>
 	);
 };

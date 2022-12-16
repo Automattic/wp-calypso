@@ -128,7 +128,7 @@ export function CloudflareAnalyticsSettings( {
 				description={ translate(
 					'Choose an additional analytics tool to connect and get unique insights about your site traffic.'
 				) }
-				event={ 'jetpack_cloudflare_analytics_settings' }
+				event="jetpack_cloudflare_analytics_settings"
 				tracksClickProperties={ { plan: site.plan.product_slug } }
 				feature={ FEATURE_CLOUDFLARE_ANALYTICS }
 				plan={ plan }

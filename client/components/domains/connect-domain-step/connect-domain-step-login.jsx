@@ -47,7 +47,9 @@ export default function ConnectDomainStepLogin( {
 
 	useEffect( () => {
 		( async () => {
-			if ( ! isOwnershipVerificationFlow || initialValidation.current ) return;
+			if ( ! isOwnershipVerificationFlow || initialValidation.current ) {
+				return;
+			}
 
 			setIsFetching( true );
 

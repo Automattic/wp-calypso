@@ -37,9 +37,11 @@ const store = createStore(
 
 setStore( store );
 
-// For the moment we have the help center only in the editor
-store.dispatch( setSection( { name: 'gutenberg-editor' } ) );
-store.dispatch( setSelectedSiteId( window._currentSiteId ) );
+const section = window?.helpCenterAdminBar?.isLoaded ? 'wp-admin' : 'gutenberg-editor';
+const currentSite = window.helpCenterData.currentSite;
+currentSite && store.dispatch( setSelectedSiteId( currentSite.ID ) );
+store.dispatch( setSection( { name: section } ) );
+
 i18n.configure( { defaultLocaleSlug: window.helpCenterLocale } );
 
 rawCurrentUserFetch()
@@ -55,7 +57,7 @@ export default function CalypsoStateProvider( { children } ) {
 	return (
 		<Provider store={ store }>
 			<>
-				<QuerySites siteId={ window._currentSiteId } />
+				<QuerySites siteId={ currentSite.ID } />
 				{ children }
 			</>
 		</Provider>

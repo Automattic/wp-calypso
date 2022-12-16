@@ -389,6 +389,7 @@ export const normalizers = {
 				label: item.title,
 				value: item.views,
 				page: detailPage,
+				public: item.public,
 				actions: [
 					{
 						type: 'link',
@@ -648,7 +649,7 @@ export const normalizers = {
 
 		return authorsData.map( ( item ) => {
 			const record = {
-				label: item.name,
+				label: item.name || translate( 'Untracked Authors' ),
 				iconClassName: 'avatar-user',
 				icon: parseAvatar( item.avatar ),
 				children: null,

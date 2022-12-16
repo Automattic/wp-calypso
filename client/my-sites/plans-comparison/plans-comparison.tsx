@@ -500,7 +500,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 			>
 				<THead isInSignup={ isInSignup }>
 					<tr>
-						<td className={ `is-first` }>
+						<td className="is-first">
 							<br />
 						</td>
 						{ plans.map( ( plan ) => (
@@ -512,7 +512,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 						) ) }
 					</tr>
 					<tr>
-						<td className={ `is-first` }>
+						<td className="is-first">
 							<br />
 						</td>
 						{ plans.map( ( plan, index ) => {

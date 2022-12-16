@@ -7,7 +7,6 @@ import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, joinClasses } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
@@ -71,18 +70,20 @@ export default function WPCheckoutOrderReview( {
 	couponFieldStateProps,
 	onChangePlanLength,
 	siteUrl,
-	siteId,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
+	forceRadioButtons,
 }: {
 	className?: string;
 	removeProductFromCart?: RemoveProductFromCart;
 	couponFieldStateProps: CouponFieldStateProps;
 	onChangePlanLength?: OnChangeItemVariant;
 	siteUrl?: string;
-	siteId?: number | undefined;
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
+	// TODO: This is just for unit tests. Remove forceRadioButtons everywhere
+	// when calypso_checkout_variant_picker_radio_2212 ExPlat test completes.
+	forceRadioButtons?: boolean;
 } ) {
 	const translate = useTranslate();
 	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
@@ -124,7 +125,11 @@ export default function WPCheckoutOrderReview( {
 		( product ) =>
 			isDomainTransfer( product ) || isDomainRegistration( product ) || isDomainMapping( product )
 	);
-	const domainUrl = primaryDomain ?? firstDomainProduct?.meta ?? siteUrl;
+	const domainUrl =
+		primaryDomain ??
+		firstDomainProduct?.meta ??
+		responseCart?.gift_details?.receiver_blog_url ??
+		siteUrl;
 
 	const removeCouponAndClearField = () => {
 		couponFieldStateProps.setCouponFieldValue( '' );
@@ -159,7 +164,7 @@ export default function WPCheckoutOrderReview( {
 
 			<WPOrderReviewSection>
 				<WPOrderReviewLineItems
-					siteId={ siteId }
+					forceRadioButtons={ forceRadioButtons }
 					removeProductFromCart={ removeProductFromCart }
 					removeCoupon={ removeCouponAndClearField }
 					onChangePlanLength={ onChangePlanLength }
@@ -183,15 +188,6 @@ export default function WPCheckoutOrderReview( {
 		</div>
 	);
 }
-
-WPCheckoutOrderReview.propTypes = {
-	isSummary: PropTypes.bool,
-	className: PropTypes.string,
-	removeProductFromCart: PropTypes.func,
-	onChangePlanLength: PropTypes.func,
-	siteUrl: PropTypes.string,
-	couponFieldStateProps: PropTypes.object.isRequired,
-};
 
 function CouponFieldArea( {
 	isCouponFieldVisible,

@@ -399,10 +399,7 @@ class PostShare extends Component {
 						}
 					>
 						{ connection.service === 'facebook' && (
-							<NoticeAction
-								href={ 'https://wordpress.com/support/publicize/#facebook-pages' }
-								external
-							>
+							<NoticeAction href="https://wordpress.com/support/publicize/#facebook-pages" external>
 								{ translate( 'Learn More' ) }
 							</NoticeAction>
 						) }

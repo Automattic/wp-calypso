@@ -417,7 +417,23 @@ class PostCommentList extends Component {
 			>
 				{ ( this.props.showCommentCount || showViewMoreComments ) && (
 					<div className="comments__info-bar">
-						{ this.props.showCommentCount && <CommentCount count={ actualCommentsCount } /> }
+						<div className="comments__info-bar-title-links">
+							{ this.props.showCommentCount && <CommentCount count={ actualCommentsCount } /> }
+							<div className="comments__actions-wrapper">
+								{ showManageCommentsButton && this.renderCommentManageLink() }
+								{ showConversationFollowButton && (
+									<ConversationFollowButton
+										className="comments__conversation-follow-button"
+										siteId={ siteId }
+										postId={ postId }
+										post={ this.props.post }
+										followSource={ followSource }
+										followIcon={ ReaderFollowConversationIcon( { iconSize: 20 } ) }
+										followingIcon={ ReaderFollowingConversationIcon( { iconSize: 20 } ) }
+									/>
+								) }
+							</div>
+						</div>
 						{ showViewMoreComments && (
 							<button className="comments__view-more" onClick={ this.viewEarlierCommentsHandler }>
 								{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
@@ -430,20 +446,6 @@ class PostCommentList extends Component {
 						) }
 					</div>
 				) }
-				<div className="comments__actions-wrapper">
-					{ showManageCommentsButton && this.renderCommentManageLink() }
-					{ showConversationFollowButton && (
-						<ConversationFollowButton
-							className="comments__conversation-follow-button"
-							siteId={ siteId }
-							postId={ postId }
-							post={ this.props.post }
-							followSource={ followSource }
-							followIcon={ ReaderFollowConversationIcon( { iconSize: 20 } ) }
-							followingIcon={ ReaderFollowingConversationIcon( { iconSize: 20 } ) }
-						/>
-					) }
-				</div>
 				{ showFilters && (
 					<SegmentedControl compact primary>
 						<SegmentedControl.Item

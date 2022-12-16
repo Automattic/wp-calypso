@@ -207,7 +207,6 @@ $break-design-preview: 1024px;
 				color: #101517;
 				font-size: 2rem;
 				font-weight: 400;
-				letter-spacing: -0.4px;
 				letter-spacing: 0.2px;
 				margin: 0;
 
@@ -216,7 +215,7 @@ $break-design-preview: 1024px;
 				}
 			}
 
-			@include break-mobile {
+			@include break-small {
 				margin: 16px 0 24px;
 				transform: translateY(-58px);
 				min-height: 42px;
@@ -227,7 +226,7 @@ $break-design-preview: 1024px;
 			height: calc(100vh - 245px);
 			margin-top: 74px;
 
-			@include break-mobile {
+			@include break-small {
 				height: calc(100vh - 225px);
 				margin-top: 32px;
 			}
@@ -259,7 +258,6 @@ $break-design-preview: 1024px;
 			}
 
 			.web-preview__inner .spinner-line {
-				width: 100%;
 				width: calc(100% - 1px);
 				top: unset;
 				left: unset;
@@ -658,7 +656,6 @@ $break-design-preview: 1024px;
 				// 60px = .site-setup
 				margin-top: - ( 60px - $preview-padding-top );
 				max-height: none;
-				padding-bottom: 32px;
 			}
 
 			.design-preview__sidebar {

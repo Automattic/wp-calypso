@@ -26,7 +26,9 @@ import {
 import './style.scss';
 
 const shouldHideCard = ( date: string | null ): boolean => {
-	if ( ! date ) return false;
+	if ( ! date ) {
+		return false;
+	}
 	const reminderEnd = moment( date );
 	return reminderEnd.isValid() && moment().isBefore( reminderEnd );
 };
@@ -205,7 +207,9 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ) => {
 		);
 	};
 
-	if ( isRequestingDomainNotices ) return null;
+	if ( isRequestingDomainNotices ) {
+		return null;
+	}
 
 	const cards = [];
 
@@ -251,7 +255,9 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ) => {
 		);
 	}
 
-	if ( cards.length === 0 ) return null;
+	if ( cards.length === 0 ) {
+		return null;
+	}
 
 	return (
 		<DotPager

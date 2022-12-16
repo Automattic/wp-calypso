@@ -18,7 +18,7 @@ interface SectionHeaderProps {
 	dark?: boolean;
 }
 
-const SectionContainer = styled.div< SectionContainerProps >`
+export const SectionContainer = styled.div< SectionContainerProps >`
 	::before {
 		box-sizing: border-box;
 		content: '';
@@ -38,9 +38,9 @@ const SectionHeader = styled.div< SectionHeaderProps >`
 	color: var( --${ ( props ) => ( props.dark ? 'color-text-inverted' : 'color-text' ) } );
 	font-weight: 400;
 	letter-spacing: -0.4px;
+	line-height: 1.2;
 	text-align: left;
 	font-size: var( --scss-font-title-large );
-	line-height: 40px;
 `;
 
 const SectionSubHeader = styled.div< SectionHeaderProps >`
@@ -48,14 +48,13 @@ const SectionSubHeader = styled.div< SectionHeaderProps >`
 	font-weight: 400;
 	text-align: left;
 	font-size: var( --scss-font-body-small );
-	margin-top: 8px;
 `;
 
 const SectionHeaderContainer = styled.div< SectionHeaderProps >`
 	@media ( max-width: 660px ) {
 		padding: 0 16px;
 	}
-	margin-bottom: 25px;
+	margin-bottom: 16px;
 	max-width: 377px;
 `;
 

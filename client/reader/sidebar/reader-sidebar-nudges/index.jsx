@@ -15,15 +15,15 @@ const debug = debugFactory( 'calypso:reader:sidebar-nudges' );
 function renderFreeToPaidPlanNudge( { siteId, siteSlug, translate }, dispatch ) {
 	return (
 		<UpsellNudge
-			event={ 'free-to-paid-sidebar-reader' }
+			event="free-to-paid-sidebar-reader"
 			forceHref={ true }
 			callToAction={ translate( 'Upgrade' ) }
 			compact
 			href={ '/plans/' + siteSlug }
 			title={ translate( 'Free domain with an annual plan' ) }
 			onClick={ () => dispatch( clickUpgradeNudge( siteId ) ) }
-			tracksClickName={ 'calypso_upgrade_nudge_cta_click' }
-			tracksImpressionName={ 'calypso_upgrade_nudge_impression' }
+			tracksClickName="calypso_upgrade_nudge_cta_click"
+			tracksImpressionName="calypso_upgrade_nudge_impression"
 		/>
 	);
 }

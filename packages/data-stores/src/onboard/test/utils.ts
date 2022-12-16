@@ -13,7 +13,7 @@ describe( 'Test onboard utils', () => {
 		},
 		{
 			goals: [ SiteGoal.Write, SiteGoal.Sell, SiteGoal.Promote ],
-			expectedIntent: SiteIntent.Write,
+			expectedIntent: SiteIntent.Sell,
 		},
 		{
 			goals: [ SiteGoal.Sell, SiteGoal.Write, SiteGoal.Promote ],
@@ -21,7 +21,7 @@ describe( 'Test onboard utils', () => {
 		},
 		{
 			goals: [ SiteGoal.Promote, SiteGoal.Sell, SiteGoal.Write ],
-			expectedIntent: SiteIntent.Build,
+			expectedIntent: SiteIntent.Sell,
 		},
 	] )( 'Should map the $goals to $expectedIntent intent', ( { goals, expectedIntent } ) => {
 		expect( goalsToIntent( goals ) ).toBe( expectedIntent );

@@ -63,10 +63,6 @@
 		margin-left: 5px;
 	}
 
-	&__popover {
-		margin-top: 5px;
-	}
-
 	& .ellipsis-menu {
 		transform: translateY(-6px);
 		height: 20px;
@@ -78,6 +74,7 @@
 }
 
 .free-domain-item__popover {
+	margin-top: 5px;
 	.popover__menu-item {
 		color: var(--studio-gray-90);
 		svg {

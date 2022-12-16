@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
+import SiteAddLicenseNotification from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-add-license-notification';
 import SiteWelcomeBanner from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-welcome-banner';
 import LicenseList from 'calypso/jetpack-cloud/sections/partner-portal/license-list';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
@@ -17,6 +18,7 @@ import {
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { showAgencyDashboard } from 'calypso/state/partner-portal/partner/selectors';
+
 import './style.scss';
 
 interface Props {
@@ -55,6 +57,7 @@ export default function Licenses( {
 			<DocumentHead title={ translate( 'Licenses' ) } />
 			<SidebarNavigation />
 			{ isAgencyUser && <SiteWelcomeBanner bannerKey="licenses-page" /> }
+			<SiteAddLicenseNotification />
 			<div className="licenses__header">
 				<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>
 

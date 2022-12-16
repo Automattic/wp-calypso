@@ -9,11 +9,11 @@ export default function CampaignsEmpty() {
 			<EmptyContent
 				className="campaigns-empty"
 				title={ translate( 'Looking for a campaign?' ) }
-				line={ 'There are no running campaigns now.' }
-				action={ 'Start a campaign' }
-				actionURL={ 'todo' }
-				secondaryAction={ 'Learn more' }
-				secondaryActionURL={ 'todo' }
+				line="There are no running campaigns now."
+				action="Start a campaign"
+				actionURL="todo"
+				secondaryAction="Learn more"
+				secondaryActionURL="todo"
 				illustration={ megaphoneIllustration }
 				illustrationWidth={ 150 }
 			/>

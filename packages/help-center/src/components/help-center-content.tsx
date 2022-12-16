@@ -30,6 +30,7 @@ const HelpCenterContent: React.FC = () => {
 			pathname: location.pathname,
 			search: location.search,
 			section,
+			force_site_id: true,
 			location: 'help-center',
 		} );
 	}, [ location, section ] );

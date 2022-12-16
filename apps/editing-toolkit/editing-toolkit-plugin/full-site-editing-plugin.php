@@ -344,7 +344,10 @@ function load_coming_soon() {
 		require_once __DIR__ . '/coming-soon/coming-soon.php';
 	}
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_coming_soon' );
+// Todo: once coming-soon is migrated to the new jetpack-mu-wpcom plugin, coming-soon can be removed from ETK.
+if ( has_action( 'plugins_loaded', 'Jetpack\Mu_Wpcom\load_coming_soon' ) === false ) {
+	add_action( 'plugins_loaded', __NAMESPACE__ . '\load_coming_soon' );
+}
 
 /**
  * What's New section of the Tools menu.
@@ -380,18 +383,14 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );
 
 /**
  * Help center
- * At the moment we're disabling the help center.
  */
 function load_help_center() {
-	// enable help center for all proxied users.
-	$is_proxied = isset( $_SERVER['A8C_PROXIED_REQUEST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['A8C_PROXIED_REQUEST'] ) ) : false || defined( 'A8C_PROXIED_REQUEST' ) && A8C_PROXIED_REQUEST;
-
-	$current_segment = 10; // segment of existing users that will get the help center in %.
-	$user_segment    = get_current_user_id() % 100;
-
-	if ( $is_proxied || $user_segment < $current_segment ) {
-		require_once __DIR__ . '/help-center/class-help-center.php';
+	// disable help center in P2s.
+	if ( defined( 'IS_WPCOM' ) && IS_WPCOM && \WPForTeams\is_wpforteams_site( get_current_blog_id() ) ) {
+		return false;
 	}
+
+	require_once __DIR__ . '/help-center/class-help-center.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_help_center' );
 
@@ -420,17 +419,46 @@ function load_block_description_links() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_description_links' );
 
 /**
- * Load Tutorials API
- */
-function load_tutorials() {
-	require_once __DIR__ . '/tutorials/tutorials.php';
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tutorials' );
-
-/**
  * Load WP.com Global Styles.
  */
 function load_wpcom_global_styles() {
 	require_once __DIR__ . '/wpcom-global-styles/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_global_styles' );
+
+/**
+ * Shows a confirm prompt when the plugin is about to be deactivated on a unlaunched site.
+ *
+ * This will filter the FSE actions on the plugin manager list to add the confirm
+ * prompt on the click event of the action=deactivate.
+ *
+ * The option launch-status exists only on wpcom sites.
+ *
+ * @TODO: Remove after coming-soon is migrated to the new jetpack-mu-wpcom plugin
+ */
+if ( has_action( 'plugins_loaded', 'Jetpack\Mu_Wpcom\load_coming_soon' ) === false ) {
+	add_filter(
+		'plugin_action_links_' . plugin_basename( __FILE__ ),
+		function ( $actions ) {
+			$unlaunched = get_option( 'launch-status' ) === 'unlaunched';
+
+			if ( $unlaunched ) {
+				$actions = array_map(
+					function ( $action ) {
+						$message = __( 'Disabling this plugin will make your site public.', 'full-site-editing' );
+						$confirm = "confirm('$message') ? null : event.preventDefault()";
+
+						return str_replace(
+							'<a href="plugins.php?action=deactivate',
+							"<a onclick=\"$confirm\" href=\"plugins.php?action=deactivate",
+							$action
+						);
+					},
+					$actions
+				);
+			}
+
+			return $actions;
+		}
+	);
+}

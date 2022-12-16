@@ -54,7 +54,7 @@ class PostLifecycle extends Component {
 					<PostPlaceholder />
 				</Fragment>
 			);
-		} else if ( post._state === 'error' ) {
+		} else if ( post.is_error ) {
 			return <PostUnavailable post={ post } />;
 		} else if (
 			( ! post.is_external || post.is_jetpack ) &&

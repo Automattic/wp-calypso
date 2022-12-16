@@ -28,6 +28,7 @@ const requestRewind = ( action, payload ) =>
 			path: `/activity-log/${ action.siteId }/rewind/to/${ action.timestamp }`,
 			body: Object.assign( payload, {
 				calypso_env: config( 'env_id' ),
+				force_rewind: true,
 			} ),
 		},
 		action

@@ -65,7 +65,16 @@ const LocaleSwitcher: React.FC< Props > = ( { isVisible, onClose } ) => {
 					{ ( translations as Translations )[ selectedLocale ]?.translation ||
 						translate( 'Language' ) }
 				</h1>
-				<button className="locale-switcher__close-btn" onClick={ onClose }>
+				<button
+					className="locale-switcher__close-btn"
+					onClick={ onClose }
+					aria-label={
+						translate( 'Close language selector', {
+							comment:
+								'Text read by screen readers when the close button of the language selector gets focus.',
+						} ) as string
+					}
+				>
 					<Gridicon icon="cross" size={ 36 } />
 				</button>
 			</div>

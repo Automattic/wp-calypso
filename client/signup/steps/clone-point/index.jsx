@@ -9,7 +9,7 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Pagination from 'calypso/components/pagination';
 import TileGrid from 'calypso/components/tile-grid';
 import Tile from 'calypso/components/tile-grid/tile';
-import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
+import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import ActivityLogItem from 'calypso/my-sites/activity/activity-log-item';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -134,7 +134,7 @@ class ClonePointStep extends Component {
 					className="clone-point__current"
 					buttonLabel={ translate( 'Clone current state' ) }
 					description={ translate( 'Create a clone of your site as it is right now.' ) }
-					image={ '/calypso/images/illustrations/clone-site-origin.svg' }
+					image="/calypso/images/illustrations/clone-site-origin.svg"
 					onClick={ this.selectCurrent }
 				/>
 				<Tile
@@ -143,7 +143,7 @@ class ClonePointStep extends Component {
 					description={ translate(
 						'Browse your event history and choose an earlier state to clone from.'
 					) }
-					image={ '/calypso/images/illustrations/backup.svg' }
+					image="/calypso/images/illustrations/backup.svg"
 					onClick={ this.selectPrevious }
 				/>
 			</TileGrid>
@@ -184,7 +184,7 @@ class ClonePointStep extends Component {
 function withActivityLog( Inner ) {
 	return ( props ) => {
 		const { siteId } = props;
-		const { data: logs } = useActivityLogQuery( siteId, {}, { enabled: !! siteId } );
+		const { data: logs } = useRewindableActivityLogQuery( siteId, {}, { enabled: !! siteId } );
 		return <Inner { ...props } logs={ logs ?? [] } />;
 	};
 }

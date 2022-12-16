@@ -1,7 +1,8 @@
 /**
  * Common importer integration styles
  */
-.site-setup {
+.site-setup,
+.import-focused {
 	.importer-wrapper:not(.importer-wrapper__wordpress) {
 		max-width: 700px;
 		margin: auto;

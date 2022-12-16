@@ -267,18 +267,18 @@ const BusinessInfo: Step = function ( props ) {
 		<div className="business-info__signup is-woocommerce-install">
 			<div className="business-info__is-store-address">
 				<StepContainer
-					stepName={ 'business-info' }
+					stepName="business-info"
 					className={ `is-step-${ intent }` }
-					skipButtonAlign={ 'top' }
+					skipButtonAlign="top"
 					goBack={ goBack }
 					goNext={ goNext }
 					isHorizontalLayout={ true }
 					formattedHeader={
 						<FormattedHeader
-							id={ 'business-info-header' }
+							id="business-info-header"
 							headerText={ __( 'Tell us a bit about your business' ) }
 							subHeaderText={ __( 'We will guide you to get started based on your responses.' ) }
-							align={ 'left' }
+							align="left"
 						/>
 					}
 					stepContent={ getContent() }

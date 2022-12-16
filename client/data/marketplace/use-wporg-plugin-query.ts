@@ -24,8 +24,8 @@ import { getPluginsListKey } from './utils';
 export const getWPORGPluginsQueryParams = (
 	options: PluginQueryOptions,
 	locale: string
-): [ QueryKey, QueryFunction< { plugins: Plugin[]; info: { page: number } }, QueryKey > ] => {
-	const cacheKey = getPluginsListKey( WPORG_CACHE_KEY, options );
+): [ QueryKey, QueryFunction< { plugins: any[]; pagination: { page: number } }, QueryKey > ] => {
+	const cacheKey = getPluginsListKey( WPORG_CACHE_KEY + '-normalized', options );
 	const fetchFn = () => {
 		const [ search, author ] = extractSearchInformation( options.searchTerm );
 		return fetchPluginsList( {
@@ -36,7 +36,10 @@ export const getWPORGPluginsQueryParams = (
 			search,
 			author,
 			tag: options.tag && ! search ? options.tag : null,
-		} );
+		} ).then( ( { plugins = [], info = {} } ) => ( {
+			plugins: normalizePluginsList( plugins ),
+			pagination: info,
+		} ) );
 	};
 	return [ cacheKey, fetchFn ];
 };
@@ -48,10 +51,6 @@ export const useWPORGPlugins = (
 	const locale = useSelector( getCurrentUserLocale );
 
 	return useQuery( ...getWPORGPluginsQueryParams( options, locale ), {
-		select: ( { plugins = [], info = {} } ) => ( {
-			plugins: normalizePluginsList( plugins ),
-			pagination: info,
-		} ),
 		enabled: enabled,
 		staleTime: staleTime,
 		refetchOnMount: refetchOnMount,
@@ -93,7 +92,7 @@ export const useWPORGInfinitePlugins = (
 					pagination: extractPagination( data.pages ),
 				};
 			},
-			getNextPageParam: ( lastPage ) => {
+			getNextPageParam: ( lastPage: { info: { page: number; pages: number } } ) => {
 				// When on last page, the next page is undefined, according to docs.
 				// @see: https://tanstack.com/query/v4/docs/reference/useInfiniteQuery
 				if ( lastPage.info.pages <= lastPage.info.page ) {

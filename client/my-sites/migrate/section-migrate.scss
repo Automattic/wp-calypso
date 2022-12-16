@@ -175,6 +175,13 @@
 	&.notice {
 		margin-bottom: 16px;
 	}
+	.button {
+		margin-bottom: 16px;
+	}
+	.migrate__info {
+		width: 100%;
+		margin: 10px auto 0;
+	}
 }
 
 .migrate__card-footer {
@@ -301,24 +308,14 @@
 }
 
 .migrate__token-label {
-	background-color: lightgrey;
+	background-color: var(--studio-gray-5);
 	border-radius: 10px; /* stylelint-disable-line scales/radii */
 	padding: 2px 5px;
 	font-size: $font-body-extra-small;
-	color: darkgray;
+	color: var(--studio-gray-20);
 	margin: 5px 3px 5px 0;
 }
 
 .migrate__buttons-wrapper {
 	margin: 24px 0 8px;
-}
-
-.migrate__error {
-	.button {
-		margin-bottom: 16px;
-	}
-	.migrate__info {
-		width: 100%;
-		margin: 10px auto 0;
-	}
 }

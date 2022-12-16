@@ -1,4 +1,3 @@
-import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -16,6 +15,7 @@ class SelectDropdownItem extends Component {
 		disabled: PropTypes.bool,
 		icon: PropTypes.element,
 		ariaLabel: PropTypes.string,
+		secondaryIcon: PropTypes.element,
 	};
 
 	static defaultProps = {
@@ -56,13 +56,15 @@ class SelectDropdownItem extends Component {
 					data-e2e-title={ this.props.e2eTitle }
 				>
 					<span className="select-dropdown__item-text">
-						{ this.props.icon && this.props.icon.type === Gridicon ? this.props.icon : null }
+						{ this.props.icon }
 						{ this.props.children }
 					</span>
-					{ 'number' === typeof this.props.count && (
+					{ 'number' === typeof this.props.count ? (
 						<span data-text={ this.props.count } className="select-dropdown__item-count">
 							<Count count={ this.props.count } compact={ this.props.compactCount } />
 						</span>
+					) : (
+						<>{ this.props.secondaryIcon }</>
 					) }
 				</a>
 			</li>

@@ -169,8 +169,8 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 		required: requiresUpgrade,
 		checkoutUrl: addQueryArgs(
 			{
-				redirect_to: addQueryArgs( queryArgs, '/setup/wooTransfer' ),
-				cancel_to: addQueryArgs( queryArgs, '/setup/wooConfirm' ),
+				redirect_to: addQueryArgs( queryArgs, '/setup/plugin-bundle/wooTransfer' ),
+				cancel_to: addQueryArgs( queryArgs, '/setup/plugin-bundle/wooConfirm' ),
 			},
 			`/checkout/${ wpcomDomain }/${ upgradingPlan?.product_slug ?? '' }`
 		),
@@ -281,16 +281,16 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'woo-confirm' }
+			stepName="woo-confirm"
 			goBack={ goBack }
 			hideSkip
 			isHorizontalLayout={ true }
 			formattedHeader={
 				<FormattedHeader
-					id={ 'woo-confirm-title-header' }
+					id="woo-confirm-title-header"
 					headerText={ headerText }
 					subHeaderText={ subHeaderText }
-					align={ 'left' }
+					align="left"
 				/>
 			}
 			stepContent={ getContent() }

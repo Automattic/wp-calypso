@@ -8,7 +8,7 @@ function App( props ) {
 
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-		<div className={ 'woocommerce' }>
+		<div className="woocommerce">
 			<PageViewTracker path={ props.analyticsPath } title={ props.analyticsTitle } />
 			<DocumentHead title={ translate( 'Store' ) } />
 			{ props.children }

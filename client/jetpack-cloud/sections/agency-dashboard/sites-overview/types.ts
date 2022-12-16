@@ -123,9 +123,11 @@ export type AgencyDashboardFilter = {
 	showOnlyFavorites: boolean;
 };
 
-export type PurchasedProduct = {
+export type ProductInfo = { name: string; key: string; status: 'rejected' | 'fulfilled' };
+
+export type PurchasedProductsInfo = {
 	selectedSite: string;
-	selectedProduct: { name: string; key: string };
+	selectedProducts: Array< ProductInfo >;
 };
 
 export interface APIError {

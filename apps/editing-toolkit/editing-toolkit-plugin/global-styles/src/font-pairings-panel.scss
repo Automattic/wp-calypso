@@ -5,7 +5,7 @@
 .style-preview__font-option {
 	min-height: 3.4em;
 	box-shadow: inset 0 0 0 1px var(--studio-gray-10);
-	display: block;
+	display: flex;
 	width: 100%;
 	position: relative;
 	// for IE, see https://github.com/Automattic/wp-calypso/pull/40881#issuecomment-610836378
@@ -29,8 +29,4 @@
 		color: var(--studio-blue-40) !important;
 		box-shadow: inset 0 0 0 1px var(--studio-blue-40) !important;
 	}
-}
-
-.style-preview__font-option {
-	display: flex;
 }

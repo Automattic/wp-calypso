@@ -17,6 +17,13 @@ function should_show_coming_soon_page() {
 		return false;
 	}
 
+	$share_code = get_share_code();
+	if ( is_accessed_by_valid_share_link( $share_code ) ) {
+		track_preview_link_event();
+		setcookie( 'wp_share_code', $share_code, time() + 3600, '/', false, is_ssl() );
+		return false;
+	}
+
 	$should_show = ( (int) get_option( 'wpcom_public_coming_soon' ) === 1 );
 
 	// Everyone from Administrator to Subscriber will be able to see the site.
@@ -29,6 +36,85 @@ function should_show_coming_soon_page() {
 	// Allow folks to hook into this method to set their own rules.
 	// We'll use to on WordPress.com to check further user privileges.
 	return apply_filters( 'a8c_show_coming_soon_page', $should_show );
+}
+
+/**
+ * Gets share code from URL or Cookie.
+ *
+ * @return string
+ */
+function get_share_code() {
+	if ( isset( $_GET['share'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return sanitize_key( wp_unslash( $_GET['share'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	} elseif ( isset( $_COOKIE['wp_share_code'] ) ) {
+		return sanitize_key( wp_unslash( $_COOKIE['wp_share_code'] ) );
+	}
+	return '';
+}
+
+/**
+ * Determines whether the coming soon page should be bypassed.
+ *
+ * It checks if share code is provided as GET parameter, or as a cookie.
+ * Then it validates the code against blog option, and if sharing code is valid,
+ * it allows bypassing the Coming Soon page.
+ *
+ * Finally, it sets a code in cookie and sets header that prevents robots from indexing.
+ *
+ * @param string $share_code Share code to check against blog option value.
+ *
+ * @return bool
+ */
+function is_accessed_by_valid_share_link( $share_code ) {
+	$preview_links_option = get_option( 'wpcom_public_preview_links' );
+
+	if ( ! is_array( $preview_links_option ) || ! count( $preview_links_option ) || ! $share_code ) {
+		return false;
+	}
+
+	if ( ! in_array( $share_code, array_column( $preview_links_option, 'code' ), true ) ) {
+		return false;
+	}
+
+	return true;
+}
+
+/**
+ * Add X-Robots-Tag header to prevent from indexing page that includes share code.
+ *
+ * @param array $headers Headers.
+ * @return array Headers.
+ */
+function maybe_add_x_robots_headers( $headers ) {
+	if ( get_share_code() ) {
+		$headers['X-Robots-Tag'] = 'noindex, nofollow';
+	}
+	return $headers;
+}
+add_filter( 'wp_headers', __NAMESPACE__ . '\maybe_add_x_robots_headers' );
+
+/**
+ * Track site preview event.
+ *
+ * @return void
+ */
+function track_preview_link_event() {
+	$event_name = 'wpcom_site_previewed';
+	if ( function_exists( 'wpcomsh_record_tracks_event' ) ) {
+		wpcomsh_record_tracks_event( $event_name, array() );
+	} else {
+		require_lib( 'tracks/client' );
+		tracks_record_event( get_current_user_id(), $event_name, array() );
+	}
+}
+
+/**
+ * Returns the WP.com logo
+ *
+ * @return string
+ */
+function coming_soon_share_image() {
+	return 'https://s1.wp.com/home.logged-out/images/wpcom-og-image.jpg';
 }
 
 /**
@@ -49,12 +135,12 @@ function render_fallback_coming_soon_page() {
 	remove_action( 'wp_footer', 'stats_footer', 101 );
 	add_filter( 'infinite_scroll_archive_supported', '__return_false', 99 ); // Disable infinite scroll feature.
 	add_filter( 'jetpack_disable_eu_cookie_law_widget', '__return_true', 1 );
-	add_filter( 'jetpack_enable_open_graph', '__return_false', 1 );
 	add_filter( 'wpcom_disable_logged_out_follow', '__return_true', 10, 1 ); // Disable follow actionbar.
 	add_filter( 'wpl_is_enabled_sitewide', '__return_false', 10, 1 ); // Disable likes.
 	add_filter( 'jetpack_implode_frontend_css', '__return_false', 99 ); // Jetpack "implodes" all registered CSS files into one file.
 	add_filter( 'woocommerce_demo_store', '__return_false' ); // Prevent the the wocommerce demo store notice from displaying.
-
+	add_filter( 'jetpack_open_graph_image_default', 'A8C\FSE\Coming_soon\coming_soon_share_image' ); // Set the default OG image.
+	add_filter( 'jetpack_twitter_cards_image_default', 'A8C\FSE\Coming_soon\coming_soon_share_image' ); // Set the default Twitter Card image.
 	wp_enqueue_style( 'recoleta-font', '//s1.wp.com/i/fonts/recoleta/css/400.min.css', array(), A8C_ETK_PLUGIN_VERSION );
 
 	include __DIR__ . '/fallback-coming-soon-page.php';

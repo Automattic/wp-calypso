@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useDesktopBreakpoint, useMobileBreakpoint } from '@automattic/viewport-react';
 import page from 'page';
 import Pagination from 'calypso/components/pagination';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
@@ -24,6 +24,7 @@ interface Props {
 
 export default function SiteContent( { data, isLoading, currentPage, isFavoritesTab }: Props ) {
 	const isMobile = useMobileBreakpoint();
+	const isDesktop = useDesktopBreakpoint();
 
 	const sites = formatSites( data?.sites );
 
@@ -33,23 +34,26 @@ export default function SiteContent( { data, isLoading, currentPage, isFavorites
 
 	return (
 		<>
-			<SiteTable isLoading={ isLoading } columns={ siteColumns } items={ sites } />
-			<div className="site-content__mobile-view">
-				<>
-					{ isLoading ? (
-						<Card>
-							<TextPlaceholder />
-						</Card>
-					) : (
-						<>
-							{ sites.length > 0 &&
-								sites.map( ( rows, index ) => (
-									<SiteCard key={ index } columns={ siteColumns } rows={ rows } />
-								) ) }
-						</>
-					) }
-				</>
-			</div>
+			{ isDesktop ? (
+				<SiteTable isLoading={ isLoading } columns={ siteColumns } items={ sites } />
+			) : (
+				<div className="site-content__mobile-view">
+					<>
+						{ isLoading ? (
+							<Card>
+								<TextPlaceholder />
+							</Card>
+						) : (
+							<>
+								{ sites.length > 0 &&
+									sites.map( ( rows, index ) => (
+										<SiteCard key={ index } columns={ siteColumns } rows={ rows } />
+									) ) }
+							</>
+						) }
+					</>
+				</div>
+			) }
 			{ data && data?.total > 0 && (
 				<Pagination
 					compact={ isMobile }

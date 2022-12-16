@@ -16,7 +16,7 @@
 
 	&.is-selected .user-mentions__highlight,
 	&:hover .user-mentions__highlight {
-		color: white;
+		color: var(--color-text-inverted);
 	}
 
 	.rtl & {

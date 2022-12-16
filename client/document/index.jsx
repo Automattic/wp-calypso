@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { Component } from 'react';
 import EnvironmentBadge, {
 	Branch,
+	AccountSettingsHelper,
 	AuthHelper,
 	DevDocsLink,
 	PreferencesHelper,
@@ -23,6 +24,7 @@ class Document extends Component {
 	render() {
 		const {
 			app,
+			accountSettingsHelper,
 			authHelper,
 			chunkFiles,
 			commitSha,
@@ -154,6 +156,7 @@ class Document extends Component {
 					{ badge && (
 						<EnvironmentBadge badge={ badge } feedbackURL={ feedbackURL }>
 							{ reactQueryDevtoolsHelper && <ReactQueryDevtoolsHelper /> }
+							{ accountSettingsHelper && <AccountSettingsHelper /> }
 							{ preferencesHelper && <PreferencesHelper /> }
 							{ featuresHelper && <FeaturesHelper /> }
 							{ authHelper && <AuthHelper /> }

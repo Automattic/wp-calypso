@@ -130,7 +130,7 @@ class ReaderSiteNotificationSettings extends Component {
 					isVisible={ this.state.showPopover }
 					context={ this.iconRef.current }
 					ignoreContext={ this.spanRef.current }
-					position={ 'bottom left' }
+					position="bottom left"
 					className="reader-site-notification-settings__popout"
 				>
 					<div className="reader-site-notification-settings__popout-toggle">
@@ -155,7 +155,7 @@ class ReaderSiteNotificationSettings extends Component {
 							<ToggleControl
 								onChange={ this.toggleNewPostEmail }
 								checked={ sendNewPostsByEmail }
-								id={ 'reader-site-notification-settings__email-posts' }
+								id="reader-site-notification-settings__email-posts"
 								label={ translate( 'Email me new posts' ) }
 							/>
 						) }

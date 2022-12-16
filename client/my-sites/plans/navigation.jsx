@@ -16,7 +16,7 @@ class PlansNavigation extends Component {
 	static propTypes = {
 		isJetpack: PropTypes.bool,
 		path: PropTypes.string.isRequired,
-		shouldShowMyPlan: PropTypes.bool,
+		shouldShowNavigation: PropTypes.bool,
 		site: PropTypes.object,
 	};
 
@@ -36,23 +36,22 @@ class PlansNavigation extends Component {
 	}
 
 	render() {
-		const { site, shouldShowMyPlan, translate } = this.props;
+		const { site, shouldShowNavigation, translate } = this.props;
 		const path = sectionify( this.props.path );
 		const sectionTitle = this.getSectionTitle( path );
 		const hasPinnedItems = Boolean( site ) && isMobile();
 
 		return (
-			site && (
+			site &&
+			shouldShowNavigation && (
 				<SectionNav hasPinnedItems={ hasPinnedItems } selectedText={ sectionTitle }>
 					<NavTabs label="Section" selectedText={ sectionTitle }>
-						{ shouldShowMyPlan && (
-							<NavItem
-								path={ `/plans/my-plan/${ site.slug }` }
-								selected={ path === '/plans/my-plan' }
-							>
-								{ translate( 'My Plan' ) }
-							</NavItem>
-						) }
+						<NavItem
+							path={ `/plans/my-plan/${ site.slug }` }
+							selected={ path === '/plans/my-plan' }
+						>
+							{ translate( 'My Plan' ) }
+						</NavItem>
 						<NavItem
 							path={ `/plans/${ site.slug }` }
 							selected={
@@ -77,7 +76,7 @@ export default connect( ( state ) => {
 
 	return {
 		isJetpack,
-		shouldShowMyPlan: ! isOnFreePlan || ( isJetpack && ! isAtomic ),
+		shouldShowNavigation: ! isOnFreePlan || ( isJetpack && ! isAtomic ),
 		site,
 	};
 } )( localize( PlansNavigation ) );

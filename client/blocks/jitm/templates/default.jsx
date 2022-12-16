@@ -22,12 +22,12 @@ export default function DefaultTemplate( {
 				disableHref
 				dismissPreferenceName={ featureClass }
 				dismissTemporary={ true }
-				onDismiss={ onDismiss }
+				onDismissClick={ onDismiss }
 				onClick={ onClick }
 				event={ get( tracks, [ 'click', 'name' ] ) || `jitm_nudge_click_${ id }` }
 				href={ CTA.link }
 				horizontal
-				target={ '_blank' }
+				target="_blank"
 				showIcon={ true }
 				forceDisplay
 			/>

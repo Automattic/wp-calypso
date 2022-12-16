@@ -29,16 +29,15 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 		getIsUserPurchaseOwner,
 		getOnClickPurchase,
 		isMultisite,
-		getCustomLabel,
 	} = useStoreItemInfoContext();
 
 	const wrapperClassName = classNames( 'jetpack-product-store__all-items', className );
 
 	return (
 		<div className={ wrapperClassName }>
-			<h3 className="jetpack-product-store__all-items--header">{ heading }</h3>
+			<h2 className="jetpack-product-store__all-items--header">{ heading }</h2>
 
-			<div className="jetpack-product-store__all-items--grid">
+			<ul className="jetpack-product-store__all-items--grid">
 				{ items.map( ( item ) => {
 					const isOwned = getIsOwned( item );
 					const isSuperseded = getIsSuperseded( item );
@@ -53,7 +52,6 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 						( ( isOwned || isIncludedInPlan ) && ! getIsUserPurchaseOwner( item ) );
 
 					const ctaLabel = getCtaLabel( item );
-					const customLabel = getCustomLabel( item );
 
 					const hideMoreInfoLink = isDeprecated || isOwned || isIncludedInPlanOrSuperseded;
 
@@ -83,23 +81,23 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 					const ctaAsPrimary = ! ( isOwned || getIsPlanFeature( item ) || isSuperseded );
 
 					return (
-						<SimpleItemCard
-							ctaAsPrimary={ ctaAsPrimary }
-							ctaHref={ getCheckoutURL( item ) }
-							ctaLabel={ ctaLabel }
-							description={ description }
-							icon={ <img alt="" src={ getProductIcon( { productSlug: item.productSlug } ) } /> }
-							isCtaDisabled={ isCtaDisabled }
-							isCtaExternal={ isExternal }
-							key={ item.productSlug }
-							onClickCta={ getOnClickPurchase( item ) }
-							price={ price }
-							title={ item.displayName }
-							customLabel={ customLabel }
-						/>
+						<li key={ item.productSlug }>
+							<SimpleItemCard
+								ctaAsPrimary={ ctaAsPrimary }
+								ctaHref={ getCheckoutURL( item ) }
+								ctaLabel={ ctaLabel }
+								description={ description }
+								icon={ <img alt="" src={ getProductIcon( { productSlug: item.productSlug } ) } /> }
+								isCtaDisabled={ isCtaDisabled }
+								isCtaExternal={ isExternal }
+								onClickCta={ getOnClickPurchase( item ) }
+								price={ price }
+								title={ item.displayName }
+							/>
+						</li>
 					);
 				} ) }
-			</div>
+			</ul>
 		</div>
 	);
 };

@@ -1,5 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { englishLocales } from '@automattic/i18n-utils';
 import { get, includes, reject } from 'lodash';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -25,13 +23,6 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 
 function dependenciesContainCartItem( dependencies ) {
 	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
-}
-
-function getAddOnsStep( steps ) {
-	if ( isEnabled( 'signup/add-ons' ) ) {
-		return [ ...steps, 'add-ons' ];
-	}
-	return steps;
 }
 
 function getSiteDestination( dependencies ) {
@@ -66,7 +57,7 @@ function getRedirectDestination( dependencies ) {
 	return '/';
 }
 
-function getSignupDestination( { domainItem, siteId, siteSlug, refParameter }, localeSlug ) {
+function getSignupDestination( { domainItem, siteId, siteSlug, refParameter } ) {
 	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
@@ -85,17 +76,7 @@ function getSignupDestination( { domainItem, siteId, siteSlug, refParameter }, l
 		queryParam.ref = refParameter;
 	}
 
-	if ( isEnabled( 'signup/stepper-flow' ) ) {
-		return addQueryArgs( queryParam, '/setup' );
-	}
-
-	// Initially ship to English users only, then ship to all users when translations complete
-	if ( englishLocales.includes( localeSlug ) || isEnabled( 'signup/hero-flow-non-en' ) ) {
-		queryParam.loading_ellipsis = 1;
-		return addQueryArgs( queryParam, '/start/setup-site' );
-	}
-
-	return `/home/${ siteSlug }`;
+	return addQueryArgs( queryParam, '/setup' );
 }
 
 function getLaunchDestination( dependencies ) {
@@ -176,7 +157,6 @@ const flows = generateFlows( {
 	getDestinationFromIntent,
 	getDIFMSignupDestination,
 	getDIFMSiteContentCollectionDestination,
-	getAddOnsStep,
 } );
 
 function removeUserStepFromFlow( flow ) {
@@ -184,9 +164,32 @@ function removeUserStepFromFlow( flow ) {
 		return;
 	}
 
+	// TODO: A more general middle destination fallback mechanism is needed
+	// The `midDestination` mechanism is tied to a specific step in the flow configuration.
+	// If it happens to be the user step, then we the middle destination is also removed.
+	// For addressing Automattic/martech#1260, here we introduce a limited fallback mechanism that only works
+	// for the user step. Whenever a step that provides an auth token is removed, we simply tie the middle destination
+	// to its previous step. If it's the first step, then it will be removed all together atm.
+	const steps = [];
+	let prevStep = flow.steps[ 0 ];
+
+	for ( const curStep of flow.steps ) {
+		if ( stepConfig[ curStep ].providesToken ) {
+			const curStepMiddleDestination = flow.middleDestination && flow.middleDestination[ curStep ];
+			if ( curStepMiddleDestination ) {
+				flow.middleDestination[ prevStep ] = curStepMiddleDestination;
+			}
+			prevStep = curStep;
+			continue;
+		}
+
+		steps.push( curStep );
+		prevStep = curStep;
+	}
+
 	return {
 		...flow,
-		steps: reject( flow.steps, ( stepName ) => stepConfig[ stepName ].providesToken ),
+		steps,
 	};
 }
 

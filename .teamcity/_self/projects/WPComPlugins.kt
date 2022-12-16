@@ -29,7 +29,9 @@ object WPComPlugins : Project({
 	buildType(EditingToolkit)
 	buildType(WpcomBlockEditor)
 	buildType(Notifications)
+	buildType(OdysseyStats)
 	buildType(O2Blocks)
+	buildType(HappyBlocks)
 	buildType(Happychat)
 	buildType(InlineHelp)
 	buildType(GutenbergUploadSourceMapsToSentry);
@@ -45,9 +47,11 @@ object WPComPlugins : Project({
 				withStatus = successful()
 				withTags = anyOf(
 					"notifications-release-build",
+					"odyssey-stats-release-build",
 					"etk-release-build",
 					"wpcom-block-editor-release-build",
-					"o2-blocks-release-build"
+					"o2-blocks-release-build",
+					"happy-blocks-release-build",
 				)
 			}
 			dataToKeep = everything()
@@ -148,6 +152,14 @@ private object Notifications : WPComPluginBuild(
 	""".trimIndent(),
 )
 
+private object OdysseyStats : WPComPluginBuild(
+	buildId = "WPComPlugins_OdysseyStats",
+	buildName = "Odyssey Stats",
+	pluginSlug = "odyssey-stats",
+	archiveDir = "./dist/",
+	docsLink = "PCYsg-elI-p2",
+)
+
 private object O2Blocks : WPComPluginBuild(
 	buildId="WPComPlugins_O2Blocks",
 	buildName = "O2 Blocks",
@@ -159,6 +171,29 @@ private object O2Blocks : WPComPluginBuild(
 			name = "Create release directory"
 			scriptContent = """
 				cd apps/o2-blocks
+
+				# Copy existing dist files to release directory
+				mkdir release-files
+				cp -r dist release-files/dist/
+
+				# Add index.php file
+				cp index.php release-files/
+			"""
+		}
+	}
+)
+
+private object HappyBlocks : WPComPluginBuild(
+	buildId="WPComPlugins_HappyBlocks",
+	buildName = "Happy Blocks",
+	pluginSlug = "happy-blocks",
+	archiveDir = "./release-files/",
+	docsLink = "PCYsg-r7r-p2",
+	buildSteps = {
+		bashNodeScript {
+			name = "Create release directory"
+			scriptContent = """
+				cd apps/happy-blocks
 
 				# Copy existing dist files to release directory
 				mkdir release-files
@@ -278,7 +313,7 @@ fun BuildSteps.uploadPluginSourceMaps(
 
 			# Downloads the latest release build for the plugin.
 			wget "%teamcity.serverUrl%/repository/download/$buildId/$buildTag.tcbuildtag/$slug.zip?guest=1&branch=trunk" -O ./code.zip
-			
+
 			unzip -q ./code.zip -d ./code
 			cd code
 

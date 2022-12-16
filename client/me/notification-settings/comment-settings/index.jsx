@@ -27,7 +27,7 @@ class NotificationCommentsSettings extends Component {
 		if ( this.props.settings ) {
 			return (
 				<SettingsForm
-					sourceId={ 'other' }
+					sourceId="other"
 					settings={ this.props.settings }
 					settingKeys={ [ 'comment_like', 'comment_reply' ] }
 					hasUnsavedChanges={ this.props.hasUnsavedChanges }

@@ -14,6 +14,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import Count from 'calypso/components/count';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import EmptyContent from 'calypso/components/empty-content';
@@ -466,7 +467,11 @@ export class PluginsMain extends Component {
 			<>
 				<DocumentHead title={ pageTitle } />
 				<QueryPlugins siteId={ selectedSite?.ID } />
-				<QuerySiteFeatures siteIds={ this.props.siteIds } />
+				{ this.props.siteIds && 1 === this.props.siteIds.length ? (
+					<QuerySiteFeatures siteIds={ this.props.siteIds } />
+				) : (
+					<QueryJetpackSitesFeatures />
+				) }
 				{ this.renderPageViewTracking() }
 				{ ! isJetpackCloud && (
 					<FixedNavigationHeader
@@ -520,20 +525,22 @@ export class PluginsMain extends Component {
 				</div>
 				<div className="plugins__main-content">
 					<div className="plugins__content-wrapper">
-						{ currentPlugins?.length > 1 && (
-							<div className="plugins__search">
-								<Search
-									hideFocus
-									isOpen
-									onSearch={ this.props.doSearch }
-									initialValue={ this.props.search }
-									hideClose={ ! this.props.search }
-									ref={ `url-search` }
-									analyticsGroup="Plugins"
-									placeholder={ this.props.translate( 'Search plugins' ) }
-								/>
-							</div>
-						) }
+						{
+							// Hide the search box only when the request to fetch plugins fail, and there are no sites.
+							! ( this.props.requestPluginsError && ! currentPlugins?.length ) && (
+								<div className="plugins__search">
+									<Search
+										hideFocus
+										isOpen
+										onSearch={ this.props.doSearch }
+										initialValue={ this.props.search }
+										hideClose={ ! this.props.search }
+										analyticsGroup="Plugins"
+										placeholder={ this.props.translate( 'Search plugins' ) }
+									/>
+								</div>
+							)
+						}
 						{ this.renderPluginsContent() }
 					</div>
 				</div>

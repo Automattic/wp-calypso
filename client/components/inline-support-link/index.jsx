@@ -37,6 +37,7 @@ class InlineSupportLink extends Component {
 		statsName: PropTypes.string,
 		routeModalData: PropTypes.object,
 		showSupportModal: PropTypes.bool,
+		noWrap: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -46,6 +47,7 @@ class InlineSupportLink extends Component {
 		showIcon: true,
 		iconSize: 14,
 		showSupportModal: true,
+		noWrap: true,
 	};
 
 	componentDidMount() {
@@ -65,7 +67,9 @@ class InlineSupportLink extends Component {
 	onSupportLinkClick( event, supportPostId, url ) {
 		const { showSupportModal, openDialog } = this.props;
 
-		if ( ! showSupportModal ) return;
+		if ( ! showSupportModal ) {
+			return;
+		}
 
 		const openDialogReturn = openDialog( event, supportPostId, url );
 		this.props.routeModalData.openModal( supportPostId );
@@ -73,7 +77,7 @@ class InlineSupportLink extends Component {
 	}
 
 	render() {
-		const { className, showText, showIcon, iconSize, translate, children } = this.props;
+		const { className, showText, showIcon, iconSize, translate, children, noWrap } = this.props;
 
 		let { supportPostId, supportLink } = this.props;
 		if ( this.state.supportDataFromContext ) {
@@ -105,7 +109,7 @@ class InlineSupportLink extends Component {
 			No  Text, Yes Icon = Widow not possible
 			Yes Text, Yes Icon = Widow possible
 		*/
-		if ( showText ) {
+		if ( showText && noWrap ) {
 			content = <span className="inline-support-link__nowrap">{ content }</span>;
 		}
 

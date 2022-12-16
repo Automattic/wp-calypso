@@ -1,26 +1,38 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wpcom from 'calypso/lib/wp';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import Intro from './internals/steps-repository/intro';
+import Launchpad from './internals/steps-repository/launchpad';
+import NewsletterSetup from './internals/steps-repository/newsletter-setup';
+import Subscribers from './internals/steps-repository/subscribers';
 import { ProvidedDependencies } from './internals/types';
-import type { StepPath } from './internals/steps-repository';
 import type { Flow } from './internals/types';
 
-export const newsletter: Flow = {
+const newsletter: Flow = {
 	name: NEWSLETTER_FLOW,
-	title: 'Newsletter',
+	get title() {
+		return translate( 'Newsletter' );
+	},
 	useSteps() {
 		useEffect( () => {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 			recordFullStoryEvent( 'calypso_signup_start_newsletter', { flow: this.name } );
 		}, [] );
 
-		return [ 'intro', 'newsletterSetup', 'subscribers', 'launchpad' ] as StepPath[];
+		return [
+			{ slug: 'intro', component: Intro },
+			{ slug: 'newsletterSetup', component: NewsletterSetup },
+			{ slug: 'subscribers', component: Subscribers },
+			{ slug: 'launchpad', component: Launchpad },
+		];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -37,9 +49,21 @@ export const newsletter: Flow = {
 
 		const getStartUrl = () => {
 			return locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Newsletter&redirect_to=/setup/newsletterSetup?flow=${ flowName }`
-				: `/start/account/user?variationName=${ flowName }&pageTitle=Newsletter&redirect_to=/setup/newsletterSetup?flow=${ flowName }`;
+				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Newsletter&redirect_to=/setup/${ flowName }/newsletterSetup`
+				: `/start/account/user?variationName=${ flowName }&pageTitle=Newsletter&redirect_to=/setup/${ flowName }/newsletterSetup`;
 		};
+
+		// trigger guides on step movement, we don't care about failures or response
+		wpcom.req.post(
+			'guides/trigger',
+			{
+				apiNamespace: 'wpcom/v2/',
+			},
+			{
+				flow: flowName,
+				step: _currentStep,
+			}
+		);
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
@@ -82,10 +106,12 @@ export const newsletter: Flow = {
 			}
 		};
 
-		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
+		const goToStep = ( step: string ) => {
 			navigate( step );
 		};
 
 		return { goNext, goBack, goToStep, submit };
 	},
 };
+
+export default newsletter;

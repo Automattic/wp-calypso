@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -25,6 +26,7 @@ class StatsNavigation extends Component {
 		selectedItem: PropTypes.oneOf( Object.keys( navItems ) ).isRequired,
 		siteId: PropTypes.number,
 		slug: PropTypes.string,
+		isLegacy: PropTypes.bool,
 	};
 
 	isValidItem = ( item ) => {
@@ -50,14 +52,19 @@ class StatsNavigation extends Component {
 	};
 
 	render() {
-		const { slug, selectedItem, interval } = this.props;
+		const { slug, selectedItem, interval, isLegacy } = this.props;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
+
+		const wrapperClass = classNames( 'stats-navigation', {
+			'stats-navigation--modernized': ! isLegacy,
+		} );
+
 		return (
-			<div className="stats-navigation">
+			<div className={ wrapperClass }>
 				<SectionNav selectedText={ label }>
-					<NavTabs label={ 'Stats' } selectedText={ label }>
+					<NavTabs label="Stats" selectedText={ label }>
 						{ Object.keys( navItems )
 							.filter( this.isValidItem )
 							.map( ( item ) => {
@@ -77,10 +84,12 @@ class StatsNavigation extends Component {
 								);
 							} ) }
 					</NavTabs>
-					{ showIntervals && <Intervals selected={ interval } pathTemplate={ pathTemplate } /> }
+					{ isLegacy && showIntervals && (
+						<Intervals selected={ interval } pathTemplate={ pathTemplate } />
+					) }
 					<FollowersCount />
 				</SectionNav>
-				{ showIntervals && (
+				{ isLegacy && showIntervals && (
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
 				) }
 			</div>

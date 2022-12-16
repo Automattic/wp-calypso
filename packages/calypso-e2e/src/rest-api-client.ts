@@ -2,7 +2,7 @@ import fs from 'fs';
 import FormData from 'form-data';
 import fetch from 'node-fetch';
 import { SecretsManager } from './secrets';
-import { BearerTokenErrorResponse, TestFile } from './types';
+import { BearerTokenErrorResponse, TestFile, SettingsParams } from './types';
 import type { Roles } from './lib';
 import type {
 	AccountDetails,
@@ -18,11 +18,13 @@ import type {
 	NewSiteResponse,
 	NewSiteParams,
 	NewInviteResponse,
+	NewCommentResponse,
 	AllInvitesResponse,
 	DeleteInvitesResponse,
 	NewPostParams,
 	NewMediaResponse,
 	NewPostResponse,
+	ReaderResponse,
 	Invite,
 } from './types';
 import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
@@ -451,6 +453,34 @@ export class RestAPIClient {
 	}
 
 	/**
+	 * Updates the user's settings.
+	 *
+	 * @param {SettingsParams} details Key/value attributes to be set for the user.
+	 * @returns { { [key: string]: string | number } } Generic object.
+	 * @throws {Error} If an unknown attribute or invalid value for a known attribute was provided.
+	 */
+	async setMySettings( details: SettingsParams ): Promise< { [ key: string ]: string | number } > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( details ),
+		};
+
+		const response = await this.sendRequest( this.getRequestURL( '1.1', `/me/settings` ), params );
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
 	 * Closes the account.
 	 *
 	 * Prior to the account being closed, this method performs
@@ -537,6 +567,37 @@ export class RestAPIClient {
 		return await this.sendRequest( this.getRequestURL( '1.1', '/me/preferences' ), params );
 	}
 
+	/* Reader */
+
+	/**
+	 * Gets the latest posts from blogs a user follows.
+	 *
+	 * @returns {Promise<ReaderResponse>} An Array of posts.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async getReaderFeed(): Promise< ReaderResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', '/read/following' ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
 	/* Posts */
 
 	/**
@@ -557,6 +618,76 @@ export class RestAPIClient {
 
 		const response = await this.sendRequest(
 			this.getRequestURL( '1.1', `/sites/${ siteID }/posts/new` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/* Comments */
+
+	/**
+	 * Creates a comment on the given post.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param {number} postID Target post ID.
+	 * @param {string} comment Details of the new comment.
+	 * @returns {Promise<NewCommentResponse>} Confirmation details of the new comment.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async createComment(
+		siteID: number,
+		postID: number,
+		comment: string
+	): Promise< NewCommentResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( { content: comment } ),
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/posts/${ postID }/replies/new` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Deletes a given comment from a site.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param {number} commentID Target comment ID.
+	 * @returns {Promise< any >} Decoded JSON response.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async deleteComment( siteID: number, commentID: number ): Promise< any > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/comments/${ commentID }/delete` ),
 			params
 		);
 
@@ -618,6 +749,38 @@ export class RestAPIClient {
 		const response = await this.sendRequest(
 			this.getRequestURL( '1.1', `/sites/${ siteID }/media/new` ),
 			params as RequestParams
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/* Shopping Cart */
+
+	/**
+	 * Clears the shopping cart.
+	 *
+	 * @param {number} siteID Site that has the shopping cart.
+	 * @throws {Error} If the user doesn't have access to the siteID.
+	 * @returns {{success:true}} If the request was successful.
+	 */
+	async clearShoppingCart( siteID: number ): Promise< { success: true } > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/shopping-cart/clear` ),
+			params
 		);
 
 		if ( response.hasOwnProperty( 'error' ) ) {

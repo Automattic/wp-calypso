@@ -17,7 +17,7 @@ describe( '<Composer />', () => {
 			const onSetCurrentMessage = jest.fn();
 			render(
 				<Composer
-					message={ 'hey' }
+					message="hey"
 					onSetCurrentMessage={ onSetCurrentMessage }
 					onSendTyping={ onSendTyping }
 					onSendNotTyping={ onSendNotTyping }
@@ -60,7 +60,7 @@ describe( '<Composer />', () => {
 			const onSendNotTyping = jest.fn();
 			render(
 				<Composer
-					message={ 'hey' }
+					message="hey"
 					onSendMessage={ onSendMessage }
 					onSendNotTyping={ onSendNotTyping }
 					translate={ noop }
@@ -78,7 +78,7 @@ describe( '<Composer />', () => {
 			const onSendNotTyping = jest.fn();
 			render(
 				<Composer
-					message={ '' }
+					message=""
 					onSetCurrentMessage={ ( ...args ) => console.log( args ) }
 					onSendMessage={ onSendMessage }
 					onSendNotTyping={ onSendNotTyping }

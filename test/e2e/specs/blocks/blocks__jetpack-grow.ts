@@ -24,7 +24,8 @@ const blockFlows: BlockFlow[] = [
 
 // Interacting with the Premium Content toolbar is currently broken on mobile, so only adding for desktop:
 // https://github.com/Automattic/jetpack/issues/22745
-if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
+// Stripe is not connected to this WordPress.com account, so skipping on Atomic
+if ( envVariables.VIEWPORT_NAME === 'desktop' && ! envVariables.TEST_ON_ATOMIC ) {
 	blockFlows.push(
 		new PremiumContentBlockFlow( {
 			subscriberTitle: DataHelper.getRandomPhrase(),

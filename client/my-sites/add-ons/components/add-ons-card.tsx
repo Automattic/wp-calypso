@@ -132,7 +132,7 @@ const AddOnCard = ( {
 							) }
 							{ availabilityStatus?.text && (
 								<div className="add-ons-card__selected-tag">
-									<Gridicon icon="checkmark" className={ 'add-ons-card__checkmark' } />
+									<Gridicon icon="checkmark" className="add-ons-card__checkmark" />
 									<span>{ availabilityStatus.text }</span>
 								</div>
 							) }

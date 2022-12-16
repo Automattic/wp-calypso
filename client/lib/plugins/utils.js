@@ -113,6 +113,7 @@ export function getAllowedPluginData( plugin ) {
 		'sections',
 		'setup_url',
 		'slug',
+		'software_slug',
 		'support_URL',
 		'software_slug',
 		'tags',
@@ -121,7 +122,8 @@ export function getAllowedPluginData( plugin ) {
 		'updating',
 		'variations',
 		'version',
-		'wp_admin_settings_page_url'
+		'wp_admin_settings_page_url',
+		'saas_landing_page'
 	);
 }
 
@@ -138,6 +140,10 @@ export function extractAuthorUrl( authorElementSource ) {
 }
 
 export function extractScreenshots( screenshotsHtml ) {
+	if ( 'undefined' === typeof window ) {
+		return null;
+	}
+
 	const screenshotsDom = parseHtml( screenshotsHtml );
 
 	const list = screenshotsDom && screenshotsDom.querySelectorAll( 'li' );
@@ -415,14 +421,67 @@ export function getPreinstalledPremiumPluginsVariations( plugin ) {
  * - undefined product is not found by productId in productsList
  */
 export function getProductSlugByPeriodVariation( periodVariation, productsList ) {
-	if ( ! periodVariation ) return periodVariation;
+	if ( ! periodVariation ) {
+		return periodVariation;
+	}
 
 	const productSlug = periodVariation.product_slug;
-	if ( productSlug ) return productSlug;
+	if ( productSlug ) {
+		return productSlug;
+	}
 
 	const productId = periodVariation.product_id;
-	if ( productId === undefined || productId === null ) return productId;
+	if ( productId === undefined || productId === null ) {
+		return productId;
+	}
 
 	return Object.values( productsList ).find( ( product ) => product.product_id === productId )
 		?.product_slug;
+}
+
+/**
+ * @param  {object} plugin The plugin object
+ * @param  {boolean} isMarketplaceProduct Is this part of WP.com Marketplace or WP.org
+ * @returns {string} The software slug string
+ */
+export const getSoftwareSlug = ( plugin, isMarketplaceProduct ) =>
+	isMarketplaceProduct ? plugin.software_slug || plugin.org_slug : plugin.slug;
+
+/**
+ * @param  {object} plugin The plugin object
+ * @param  {Array} purchases An array of site purchases
+ * @param  {boolean} isMarketplaceProduct Is this part of WP.com Marketplace or WP.org
+ * @returns {object} The purchase object, if found.
+ */
+export const getPluginPurchased = ( plugin, purchases, isMarketplaceProduct ) => {
+	return (
+		isMarketplaceProduct &&
+		plugin?.variations &&
+		purchases.find( ( purchase ) =>
+			Object.values( plugin.variations ).some(
+				( variation ) => variation.product_id === purchase.productId
+			)
+		)
+	);
+};
+
+/**
+ * Gets the SaaS redirect URL of a plugin if it exits and is valid
+ *
+ * @param {plugin} plugin The plugin object  to read the SaaS redirect url from
+ * @param {number} userId The user id
+ * @param {number} siteId The site id
+ * @returns The URL of the SaaS redirect page or null if it doesn't exist or is an invalid URL
+ */
+export function getSaasRedirectUrl( plugin, userId, siteId ) {
+	if ( ! plugin?.saas_landing_page ) {
+		return null;
+	}
+	try {
+		const saasRedirectUrl = new URL( plugin.saas_landing_page );
+		saasRedirectUrl.searchParams.append( 'uuid', `${ userId }+${ siteId }` );
+		return saasRedirectUrl.toString();
+	} catch ( error ) {
+		return null;
+	}
 }

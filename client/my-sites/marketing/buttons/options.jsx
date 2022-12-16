@@ -207,7 +207,7 @@ class SharingButtonsOptions extends Component {
 						) }
 						link="https://wordpress.com/support/comment-likes/"
 						privacyLink={ false }
-						position={ 'bottom left' }
+						position="bottom left"
 					/>
 				</FormLabel>
 			</FormFieldset>

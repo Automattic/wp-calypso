@@ -22,6 +22,10 @@
 			margin-bottom: 8px;
 		}
 	}
+	a.button,
+	button {
+		margin-right: 8px;
+	}
 }
 
 .activity-log-item .foldable-card.card {
@@ -307,20 +311,6 @@
 	}
 }
 
-.activity-log-item__description {
-	flex: 1 1 50%;
-	font-size: $font-body-small;
-	word-break: break-word;
-
-	@include breakpoint-deprecated( "<960px" ) {
-		margin-top: 8px;
-	}
-
-	@include breakpoint-deprecated( "<480px" ) {
-		margin-top: 12px;
-	}
-}
-
 .activity-log-item__description-content {
 	margin-bottom: 8px;
 
@@ -405,11 +395,6 @@
 	color: var(--color-error);
 }
 
-.activity-log-item__activity-media {
-	margin-right: 16px;
-	color: var(--color-text-inverted);
-}
-
 .activity-log-item__activity-media .gridicon {
 	background-color: var(--color-neutral-10);
 }
@@ -429,6 +414,8 @@
 }
 
 .activity-log-item__activity-media {
+	margin-right: 16px;
+	color: var(--color-text-inverted);
 	&.is-mobile {
 		float: right;
 		margin-right: -50px;
@@ -486,18 +473,14 @@
 	position: static;
 }
 
-.activity-log-item {
-	a.button,
-	button {
-		margin-right: 8px;
-	}
-}
-
 .activity-log-item__description {
 	display: flex;
 
 	// Mobile-Medium: Action buttons under description
 	flex-direction: column;
+	flex: 1 1 50%;
+	font-size: $font-body-small;
+	word-break: break-word;
 	.activity-log-item__action {
 		justify-content: normal;
 	}
@@ -506,6 +489,14 @@
 		display: flex;
 		align-items: center;
 		justify-content: flex-start;
+	}
+
+	@include breakpoint-deprecated( "<960px" ) {
+		margin-top: 8px;
+	}
+
+	@include breakpoint-deprecated( "<480px" ) {
+		margin-top: 12px;
 	}
 
 	@include break-wide {

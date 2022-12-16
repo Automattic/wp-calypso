@@ -73,17 +73,6 @@
 	}
 }
 
-.purchase-item,
-.membership-item {
-	&:hover {
-		background: var(--color-neutral-0);
-	}
-
-	&:focus {
-		z-index: 1;
-	}
-}
-
 .purchase-item--disconnected {
 	&.card.is-compact {
 		padding-right: 48px;
@@ -97,7 +86,8 @@
 .purchase-item__placeholder {
 	display: block;
 	height: 40px;
-	@include placeholder();
+
+	@include placeholder;
 }
 
 .purchase-item__site,
@@ -111,6 +101,17 @@
 		border-radius: 2px;
 		width: 36px;
 		height: 36px;
+	}
+}
+
+.purchase-item,
+.membership-item {
+	&:hover {
+		background: var(--color-neutral-0);
+	}
+
+	&:focus {
+		z-index: 1;
 	}
 }
 
@@ -139,11 +140,11 @@
 .purchase-item__purchase-type {
 	font-size: $font-body-small;
 	color: var(--color-neutral-50);
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	line-height: 1.4em;
+	line-height: 1.4;
 }
 
-.purchase-item__link {
+.purchase-item__link,
+a.purchase-item__link {
 	color: var(--color-neutral-50);
 	text-decoration: underline;
 
@@ -164,8 +165,7 @@
 .purchase-item__status {
 	font-size: $font-body-small;
 	color: var(--color-neutral-80);
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	line-height: 1.3em;
+	line-height: 1.3;
 
 	.purchase-item__is-error,
 	.purchase-item__is-warning {
@@ -231,8 +231,10 @@
 	display: flex;
 	align-items: center;
 	gap: 4px;
+
 	svg {
 		flex-shrink: 0;
+
 		path {
 			fill: var(--color-warning-30);
 		}

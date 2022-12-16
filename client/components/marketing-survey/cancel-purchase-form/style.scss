@@ -16,20 +16,10 @@
 	vertical-align: middle;
 }
 
-.cancel-purchase-form__step {
-	position: absolute;
-	right: 1.5rem;
-	display: none;
-
-	@include break-small {
-		display: inline-block;
-	}
-}
-
 .cancel-purchase-form__feedback,
 .cancel-purchase-form__atomic-revert {
 	max-width: 730px;
-	margin: 0 auto 3rem;
+	margin: 0 auto 2rem;
 }
 
 .cancel-purchase-form__feedback-questions {
@@ -133,127 +123,229 @@
 }
 
 .cancel-purchase-form__buttons {
-	display: inline-block;
+	display: flex;
 	position: relative;
 
 	@include break-small {
-		// Line decorations.
-		&::before,
-		&::after {
-			content: "";
-			display: block;
-			width: 730px;
-			height: 0;
-			border-top: 1px solid var(--studio-gray-5);
-			top: 50%;
-			position: absolute;
-		}
-
-		&::before {
-			right: 100%;
-			margin-right: 1rem;
-		}
-
-		&::after {
-			left: 100%;
-			margin-left: 1rem;
-		}
+		display: inline-block;
 	}
 
 	.components-button {
-		margin-right: 1rem;
+		flex: 1;
 		padding: 0.625rem 1rem;
 		border-radius: 4px;
+		justify-content: center;
 
 		@include break-small {
-			margin: 0 0.625rem;
 			padding: 0.625rem 2rem;
-		}
-	}
-}
-
-.cancel-purchase-form__actions .precancellation-chat-button__main-button {
-	font-size: 0;
-	float: none;
-	right: 1rem;
-	color: var(--studio-gray-50);
-	display: inline-block;
-	position: absolute;
-
-	@include break-small {
-		margin: 1rem auto;
-		font-size: inherit;
-		position: relative;
-		display: block;
-	}
-
-	.material-icon {
-		fill: var(--studio-gray-50);
-		width: 1.5rem;
-		height: 1.5rem;
-
-		@include break-small {
-			width: 1rem;
-			height: 1rem;
+			justify-content: unset;
 		}
 	}
 }
 
 .cancel-purchase-form__upsell {
-	padding: 1.5rem;
-	background-color: var(--studio-green-0);
-	border: 1px solid var(--studio-green-5);
-	border-radius: 5px; /* stylelint-disable-line scales/radii */
 	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+	margin: 0 auto;
+	gap: 20px;
 
-	.cancel-purchase-form__upsell-image {
-		display: none;
-		width: 100px;
-		height: fit-content;
-		margin-right: 1.5rem;
+	.formatted-header.is-without-subhead {
+		text-align: initial;
+		margin: 20px 0;
 
-		@include break-small {
-			display: block;
+		> .formatted-header__title {
+			font-size: 2.25rem;
+			line-height: 1.1;
+
+			@include break-small {
+				font-size: 2.75rem;
+			}
 		}
 	}
+}
 
-	.form-section-heading {
-		font-size: 1rem;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 1.25rem;
-		margin-bottom: 0.5rem;
-		font-weight: 600;
+.cancel-purchase-form__upsell-subheader {
+	color: var(--studio-gray-70);
+}
+
+.cancel-purchase-form__upsell-content {
+	display: flex;
+	flex-direction: column;
+	flex: 0 1 535px;
+}
+
+.cancel-purchase-form__upsell-text {
+	line-height: 1.8;
+}
+
+.cancel-purchase-form__upsell-buttons {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin: 2.2rem 0;
+
+	> .components-button {
+		flex-grow: 1;
+		padding: 0 1.5rem;
+		height: 40px;
+		justify-content: center;
+
+		@include break-small {
+			flex-grow: 0;
+		}
+	}
+}
+
+.cancel-purchase-form__upsell-image-container {
+	flex: 0 1 400px;
+	text-align: center;
+}
+
+.blank-canvas.cancel-purchase-form {
+	.blank-canvas__back {
+		z-index: 1;
+		font-size: 0.875rem;
 	}
 
-	.form-fieldset {
-		margin-bottom: 0;
+	.blank-canvas__header {
+		padding: 0 1rem;
+		margin-bottom: 4rem;
+		box-shadow: none;
 
-		p {
-			font-size: 0.875rem;
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			line-height: 1.25rem;
-			margin-bottom: 0.5rem;
+		.wordpress-logo {
+			display: none;
 
-			&:last-child {
-				margin-bottom: 0;
+			@include break-small {
+				display: block;
 			}
 		}
 	}
 
-	.components-button {
-		margin-top: 1rem;
-		padding: 0.625rem 2rem;
-		border-radius: 4px;
+	.blank-canvas__header-title {
+		z-index: 0;
+		top: 5rem;
+		left: 1rem;
 
-		&:not(.is-primary) {
-			padding-left: 0.5rem;
-			padding-right: 0.5rem;
-			margin-left: 0.5rem;
+		@include break-small {
+			top: unset;
+			left: 0;
 		}
 	}
 
-	.button {
-		// Hide buttons rendered by old components, so we can still re-use them for rendering rest of content.
-		display: none;
+	.blank-canvas__content {
+		padding: 0 1rem;
+	}
+
+	.blank-canvas__footer {
+		position: static;
+		box-shadow: none;
+	}
+}
+
+.cancel-purchase-form__edu {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	justify-content: center;
+	margin: 0 auto;
+	gap: 20px;
+	max-width: 600px;
+
+	.formatted-header.is-without-subhead {
+		text-align: initial;
+		margin: 0;
+
+		> .formatted-header__title {
+			font-size: 2.25rem;
+			line-height: 1.1;
+			margin: 0;
+
+			@include break-small {
+				font-size: 2.75rem;
+			}
+		}
+	}
+}
+
+.cancel-purchase-form__edu-header-group {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-end;
+	gap: 20px;
+}
+
+.cancel-purchase-form__edu-header-text-group {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.cancel-purchase-form__edu-image-container {
+	display: none;
+
+	@include break-small {
+		display: block;
+		width: 138px;
+		flex: 0 0 138px;
+	}
+}
+
+.cancel-purchase-form__edu-buttons {
+	border-top: 1px solid #f0f0f0;
+	text-align: center;
+	padding-top: 30px;
+	margin-top: 30px;
+
+	p {
+		margin-bottom: 0.5em;
+	}
+}
+
+.cancel-purchase-form__edu-icon-list {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	list-style: none;
+	margin: 0;
+
+	> li {
+		display: flex;
+		flex-direction: row;
+		gap: 15px;
+		margin: 0;
+	}
+}
+
+.cancel-purchase-form__edu-icon {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 44px;
+	height: 44px;
+	flex: 0 0 44px;
+	border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	background-color: #50575e;
+
+	.material-icon {
+		width: 24px;
+		height: 24px;
+		fill: #fff;
+	}
+}
+
+.cancel-purchase-form__edu-text {
+	.components-button.is-link {
+		font-size: inherit;
+	}
+
+	ul {
+		margin-left: 2rem;
+	}
+
+	li {
+		margin: 0.75rem 0;
 	}
 }

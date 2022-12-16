@@ -10,10 +10,13 @@ export const SITE_EXCERPT_REQUEST_FIELDS = [
 	'icon',
 	'name',
 	'options',
+	'p2_thumbnail_elements',
 	'plan',
 	'jetpack',
 	'is_wpcom_atomic',
 	'user_interactions',
+	'lang',
+	'site_owner',
 ] as const;
 
 export const SITE_EXCERPT_COMPUTED_FIELDS = [ 'slug' ] as const;

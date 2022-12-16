@@ -8,3 +8,6 @@ export const EMAIL_USER_ROLE_ADMIN = 'admin';
 export const EMAIL_WARNING_SLUG_GOOGLE_ACCOUNT_TOS = 'google_pending_tos_acceptance';
 export const EMAIL_WARNING_SLUG_UNUSED_MAILBOXES = 'unused_mailboxes';
 export const EMAIL_WARNING_SLUG_UNVERIFIED_FORWARDS = 'unverified_forwards';
+export const EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION =
+	'other-user-owns-subscription';
+export const EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL = 'other-user-owns-email';

@@ -1,11 +1,11 @@
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import { isEqual } from 'lodash';
 import page from 'page';
 import { useCallback, useEffect, useState } from 'react';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-	selectAlphaticallySortedProductOptions,
 	ensurePartnerPortalReturnUrl,
 	getProductTitle,
 } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
@@ -13,7 +13,7 @@ import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
+import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
 import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
@@ -121,97 +121,105 @@ export function useCursorPagination(
 	return [ page, showPagination, onNavigate ];
 }
 
+export function useAssignLicenses(
+	licenseKeys: Array< string >,
+	selectedSite: { ID: number; domain: string } | null
+): [ () => void, boolean ] {
+	const products = useProductsQuery();
+	const dispatch = useDispatch();
+	const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
+	const assignLicense = useAssignLicenseMutation( {
+		onError: ( error: Error ) => {
+			dispatch( errorNotice( error.message, { isPersistent: true } ) );
+		},
+	} );
+	const isLoading = assignLicense.isLoading;
+	const selectedSiteId = selectedSite?.ID as number;
+	const assignMultipleLicenses = useCallback( async () => {
+		const assignLicenseRequests: any = [];
+		licenseKeys.forEach( ( licenseKey ) => {
+			assignLicenseRequests.push(
+				assignLicense.mutateAsync( { licenseKey, selectedSite: selectedSiteId } )
+			);
+		} );
+
+		dispatch(
+			recordTracksEvent( 'calypso_partner_portal_assign_multiple_licenses_submit', {
+				products: licenseKeys.join( ',' ),
+				selected_site: selectedSiteId,
+			} )
+		);
+
+		const assignLicensePromises = await Promise.allSettled( assignLicenseRequests );
+		const allSelectedProducts: { key: 'string'; name: string; status: 'rejected' | 'fulfilled' }[] =
+			[];
+
+		assignLicensePromises.forEach( ( promise: any ) => {
+			const { status, value: license } = promise;
+			if ( license ) {
+				const licenseKey = license.license_key;
+				const productSlug = licenseKey.split( '_' )[ 0 ];
+				const selectedProduct = products?.data?.find( ( p ) => p.slug === productSlug );
+				if ( selectedProduct ) {
+					const item = {
+						key: licenseKey,
+						name: getProductTitle( selectedProduct.name ),
+						status,
+					};
+					allSelectedProducts.push( item );
+				}
+			}
+		} );
+
+		const assignLicenseStatus = {
+			selectedSite: selectedSite?.domain || '',
+			selectedProducts: allSelectedProducts,
+		};
+		dispatch( resetSite() );
+		dispatch( setPurchasedLicense( assignLicenseStatus ) );
+		if ( fromDashboard ) {
+			return page.redirect( '/dashboard' );
+		}
+		return page.redirect( partnerPortalBasePath( '/licenses' ) );
+	}, [
+		dispatch,
+		licenseKeys,
+		selectedSite,
+		assignLicense,
+		products,
+		fromDashboard,
+		selectedSiteId,
+	] );
+
+	return [ assignMultipleLicenses, isLoading ];
+}
+
 /**
- * Handle license issuing
+ * Handle multiple license issue and assign
  *
  */
-export function useLicenseIssuing(
-	product: string,
-	selectedSite?: { ID: number; domain: string } | null
+export function useIssueMultipleLicenses(
+	selectedProducts: Array< string >,
+	selectedSite?: { ID: number; domain: string } | null,
+	suggestedProducts: Array< string > = []
 ): [ () => void, boolean ] {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const products = useProductsQuery();
+
 	const sites = useSelector( getSites ).length;
-	const products = useProductsQuery( {
-		select: selectAlphaticallySortedProductOptions,
-	} );
 
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 
 	const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
 
-	const handleRedirectToDashboard = ( licenseKey: string ) => {
-		const selectedProduct = products?.data?.find( ( p ) => p.slug === product );
-		if ( selectedSite && selectedProduct ) {
-			dispatch(
-				setPurchasedLicense( {
-					selectedSite: selectedSite?.domain,
-					selectedProduct: {
-						name: getProductTitle( selectedProduct.name ),
-						key: licenseKey,
-					},
-				} )
-			);
-		}
-		return page.redirect( '/dashboard' );
-	};
-
 	const assignLicense = useAssignLicenseMutation( {
-		onSuccess: ( license: any ) => {
-			if ( fromDashboard ) {
-				handleRedirectToDashboard( license.license_key );
-				return;
-			}
-
-			page.redirect(
-				addQueryArgs( { highlight: license.license_key }, partnerPortalBasePath( '/licenses' ) )
-			);
-		},
 		onError: ( error: Error ) => {
-			dispatch( errorNotice( error.message ) );
+			dispatch( errorNotice( error.message, { isPersistent: true } ) );
 		},
 	} );
 
 	const issueLicense = useIssueLicenseMutation( {
-		onSuccess: ( license ) => {
-			dispatch( recordTracksEvent( 'calypso_partner_portal_lincese_issued', { product } ) );
-
-			const licenseKey = license.license_key;
-			const selectedSiteId = selectedSite?.ID;
-
-			if ( selectedSiteId ) {
-				assignLicense.mutate( { licenseKey, selectedSite: selectedSiteId } );
-				return;
-			}
-
-			let nextStep = addQueryArgs(
-				{ highlight: license.license_key },
-				partnerPortalBasePath( '/licenses' )
-			);
-
-			if ( sites > 0 ) {
-				nextStep = addQueryArgs(
-					{ key: license.license_key },
-					partnerPortalBasePath( '/assign-license' )
-				);
-			}
-
-			dispatch(
-				successNotice(
-					translate( `Your %(product)s license was successfuly issued `, {
-						args: {
-							product:
-								products.data?.find( ( productOption ) => productOption.slug === product )?.name ||
-								'',
-						},
-					} ),
-					{
-						displayOnNextPage: true,
-					}
-				)
-			);
-			page.redirect( nextStep );
-		},
 		onError: ( error: APIError ) => {
 			let errorMessage;
 
@@ -223,11 +231,7 @@ export function useLicenseIssuing(
 						{
 							components: {
 								a: (
-									<a
-										href={
-											'/partner-portal/payment-methods/add?return=/partner-portal/issue-license'
-										}
-									/>
+									<a href="/partner-portal/payment-methods/add?return=/partner-portal/issue-license" />
 								),
 								br: <br />,
 							},
@@ -257,26 +261,219 @@ export function useLicenseIssuing(
 
 	const isLoading = assignLicense.isLoading || issueLicense.isLoading;
 
-	const issue = useCallback( () => {
-		if ( isLoading ) {
+	const issue = useCallback( async () => {
+		if ( isLoading && ! selectedProducts.length ) {
 			return;
 		}
+		dispatch(
+			recordTracksEvent( 'calypso_partner_portal_issue_mutiple_licenses_submit', {
+				products: selectedProducts.join( ',' ),
+			} )
+		);
 
-		dispatch( recordTracksEvent( 'calypso_partner_portal_issue_selection_submit', { product } ) );
+		// Track a custom event when the user is trying to purchase a product different than
+		// the one chosen by the dashboard.
+		if ( suggestedProducts?.length && ! isEqual( selectedProducts, suggestedProducts ) ) {
+			dispatch(
+				recordTracksEvent(
+					'calypso_partner_portal_issue_mutiple_licenses_changed_selection_after_dashboard_visit'
+				)
+			);
+		}
+
+		const selectedSiteId = selectedSite?.ID;
 
 		if ( paymentMethodRequired ) {
 			const nextStep = addQueryArgs(
 				{
-					product,
+					products: selectedProducts.join( ',' ),
+					...( selectedSiteId && { site_id: selectedSiteId } ),
+					...( fromDashboard && { source: 'dashboard' } ),
 				},
 				partnerPortalBasePath( '/payment-methods/add' )
 			);
-			page( nextStep );
+			return page( nextStep );
+		}
+
+		const issueLicenseRequests: any[] = [];
+
+		selectedProducts.forEach( ( product ) => {
+			issueLicenseRequests.push( issueLicense.mutateAsync( { product } ) );
+		} );
+		const issueLicensePromises: any[] = await Promise.allSettled( issueLicenseRequests );
+
+		const issuedLicenses = issueLicensePromises.filter( ( { status } ) => status === 'fulfilled' );
+
+		if ( ! issuedLicenses.length ) {
 			return;
 		}
 
-		issueLicense.mutate( { product } );
-	}, [ isLoading, product, paymentMethodRequired, issueLicense.mutate ] );
+		if ( ! selectedSiteId ) {
+			let nextStep = partnerPortalBasePath( '/licenses' );
+			if ( sites > 0 ) {
+				const licenseKeys = issuedLicenses.map( ( { value } ) => value.license_key );
+				nextStep = addQueryArgs(
+					{
+						products: licenseKeys.join( ',' ),
+					},
+					partnerPortalBasePath( '/assign-license' )
+				);
+			}
+
+			const assignedLicenses = selectedProducts
+				.map(
+					( product ) =>
+						products.data?.find( ( productOption ) => productOption.slug === product )?.name
+				)
+				.filter( ( license ) => license );
+
+			if ( assignedLicenses.length > 0 ) {
+				const initialLicenseList = assignedLicenses.slice( 0, -1 );
+				const lastLicenseItem = assignedLicenses.slice( -1 )[ 0 ];
+
+				const commaCharacter = translate( ',', {
+					comment:
+						'The character used to separate items in a list, such as the comma in "Jetpack Backup, Jetpack Scan, and Jetpack Boost".',
+				} );
+				const conjunction =
+					assignedLicenses.length > 2
+						? translate( '%(commaCharacter)s and ', {
+								args: {
+									commaCharacter,
+									comment:
+										'The final separator of a delimited list, such as ", and " in "Jetpack Backup, Jetpack Scan, and Jetpack Boost". Note that the spaces here are important due to the way the final string is constructed.',
+								},
+						  } )
+						: translate( ' and ', {
+								args: {
+									comment:
+										'The way that two words are separated, such as " and " in "Jetpack Backup and Jetpack Scan". Note that the spaces here are important due to the way the final string is constructed.',
+								},
+						  } );
+
+				const components = {
+					strong: <strong />,
+				};
+
+				dispatch(
+					successNotice(
+						// We are not using the same translate method for plural form since we have different arguments.
+						assignedLicenses.length > 1
+							? translate(
+									'{{strong}}%(initialLicenseList)s%(conjunction)s%(lastLicenseItem)s{{/strong}} were succesfully issued',
+									{
+										args: {
+											lastLicenseItem,
+											conjunction,
+											initialLicenseList: initialLicenseList.join( ', ' ),
+										},
+										comment:
+											'%(initialLicenseList)s is a list of n-1 license names seperated by a translated comma character, %(lastLicenseItem) is the nth license name, and %(conjunction) is a translated "and" text with or without a serial comma based on the licenses count. An example is "Jetpack Backup, Jetpack Scan, and Jetpack Boost" where the initialLicenseList is "Jetpack Backup, Jetpack Scan", the conjunction is ", and", and the lastLicenseItem is "Jetpack Boost". An alternative example is "Jetpack Backup and Jetpack Scan", where initialLicenseList is "Jetpack Backup", conjunction is " and", and lastLienseItem is "Jetpack Boost".',
+										components,
+									}
+							  )
+							: translate( '{{strong}}%(assignedLicense)s{{/strong}} was succesfully issued', {
+									args: {
+										assignedLicense: lastLicenseItem,
+									},
+									components,
+							  } ),
+						{
+							displayOnNextPage: true,
+						}
+					)
+				);
+			}
+			return page.redirect( nextStep );
+		}
+
+		const assignLicenseRequests: any = [];
+
+		const assignedProducts: Array< any > = [];
+
+		issuedLicenses.forEach( ( promise: any ) => {
+			const { value: license } = promise;
+			const licenseKey = license.license_key;
+			const productSlug = licenseKey.split( '_' )[ 0 ];
+			const selectedProduct = products?.data?.find( ( p ) => p.slug === productSlug );
+			if ( selectedProduct ) {
+				assignedProducts.push( getProductTitle( selectedProduct.name ) );
+			}
+			if ( selectedSiteId ) {
+				assignLicenseRequests.push(
+					assignLicense.mutateAsync( { licenseKey, selectedSite: selectedSiteId } )
+				);
+			}
+		} );
+
+		// Return if no request succeeded
+		if ( ! assignedProducts.length ) {
+			return;
+		}
+
+		dispatch(
+			recordTracksEvent( 'calypso_partner_portal_multiple_linceses_issued', {
+				products: assignedProducts.join( ',' ),
+			} )
+		);
+
+		const assignLicensePromises = await Promise.allSettled( assignLicenseRequests );
+
+		const allSelectedProducts: { key: 'string'; name: string; status: 'rejected' | 'fulfilled' }[] =
+			[];
+
+		assignLicensePromises.forEach( ( promise: any ) => {
+			const { status, value: license } = promise;
+			if ( license ) {
+				const licenseKey = license.license_key;
+				const productSlug = licenseKey.split( '_' )[ 0 ];
+				const selectedProduct = products?.data?.find( ( p ) => p.slug === productSlug );
+				if ( selectedProduct ) {
+					const item = {
+						key: licenseKey,
+						name: getProductTitle( selectedProduct.name ),
+						status,
+					};
+					allSelectedProducts.push( item );
+				}
+			}
+		} );
+		const assignLicenseStatus = {
+			selectedSite: selectedSite?.domain || '',
+			selectedProducts: allSelectedProducts,
+		};
+		dispatch( resetSite() );
+		dispatch( setPurchasedLicense( assignLicenseStatus ) );
+		if ( fromDashboard ) {
+			return page.redirect( '/dashboard' );
+		}
+		return page.redirect( partnerPortalBasePath( '/licenses' ) );
+	}, [
+		isLoading,
+		selectedProducts,
+		dispatch,
+		selectedSite?.ID,
+		selectedSite?.domain,
+		paymentMethodRequired,
+		fromDashboard,
+		issueLicense,
+		sites,
+		translate,
+		products.data,
+		assignLicense,
+	] );
 
 	return [ issue, isLoading ];
+}
+
+/**
+ * Handle multiple license assignment
+ *
+ */
+export function useAssignMultipleLicenses(
+	selectedLicenseKeys: Array< string >,
+	selectedSite: { ID: number; domain: string } | null
+): [ () => void, boolean ] {
+	const [ assign, isLoading ] = useAssignLicenses( selectedLicenseKeys, selectedSite );
+	return [ assign, isLoading ];
 }

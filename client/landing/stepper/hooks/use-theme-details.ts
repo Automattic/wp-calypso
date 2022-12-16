@@ -8,6 +8,7 @@ type Theme = {
 	author_uri: string;
 	description: string;
 	date_updated: string;
+	price: string;
 	taxonomies: Record< string, [] >;
 };
 
@@ -16,7 +17,7 @@ export function useThemeDetails( slug: string ): UseQueryResult< Theme > {
 		`theme-details-${ slug }`,
 		() => wpcom.req.get( `/themes/${ slug }`, { apiVersion: '1.2' } ),
 		{
-			staleTime: Infinity,
+			staleTime: 60 * 5 * 1000, // 5 minutes
 			refetchOnWindowFocus: false,
 			refetchOnReconnect: false,
 		}

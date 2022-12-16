@@ -36,14 +36,14 @@ const StringPreference: FunctionComponent< Props > = ( { name, value } ) => {
 						onClick={ savePreferenceChange }
 						disabled={ value === localValue }
 					>
-						{ 'save' }
+						save
 					</button>{ ' ' }
 					<button
 						className="preferences-helper__reset-pref-button"
 						onClick={ resetPreferenceChange }
 						disabled={ value === localValue }
 					>
-						{ 'reset' }
+						reset
 					</button>
 				</>
 			) }

@@ -29,7 +29,7 @@ class Notices extends PureComponent {
 						showDismiss={ false }
 						isCompact={ this.state.compactNotices ? true : null }
 					>
-						<NoticeAction href="#">{ 'Update' }</NoticeAction>
+						<NoticeAction href="#">Update</NoticeAction>
 					</Notice>
 				</div>
 				<div>
@@ -48,7 +48,7 @@ class Notices extends PureComponent {
 						icon="heart"
 						isCompact={ this.state.compactNotices ? true : null }
 					>
-						<NoticeAction href="#">{ 'Update' }</NoticeAction>
+						<NoticeAction href="#">Update</NoticeAction>
 					</Notice>
 				</div>
 				<div>
@@ -65,7 +65,7 @@ class Notices extends PureComponent {
 						text="I'm an `is-error` notice."
 						isCompact={ this.state.compactNotices ? true : null }
 					>
-						<NoticeAction href="#">{ 'Update' }</NoticeAction>
+						<NoticeAction href="#">Update</NoticeAction>
 					</Notice>
 				</div>
 				<div>
@@ -75,7 +75,7 @@ class Notices extends PureComponent {
 						text="I'm an `is-warning` notice with custom icon and an action."
 						isCompact={ this.state.compactNotices ? true : null }
 					>
-						<NoticeAction href="#">{ 'Update' }</NoticeAction>
+						<NoticeAction href="#">Update</NoticeAction>
 					</Notice>
 				</div>
 				<div>
@@ -94,7 +94,7 @@ class Notices extends PureComponent {
 						text={ "I'm an `is-success` notice with an arrow link." }
 					>
 						<NoticeAction href="#" external={ true }>
-							{ 'Preview' }
+							Preview
 						</NoticeAction>
 					</Notice>
 				</div>

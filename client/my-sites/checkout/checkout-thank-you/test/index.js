@@ -133,7 +133,7 @@ describe( 'CheckoutThankYou', () => {
 					{ ...props }
 					isSimplified={ true }
 					siteUnlaunchedBeforeUpgrade={ true }
-					upgradeIntent={ 'plugins' }
+					upgradeIntent="plugins"
 				/>
 			);
 			expect( CheckoutThankYouHeader ).toHaveBeenCalledWith(

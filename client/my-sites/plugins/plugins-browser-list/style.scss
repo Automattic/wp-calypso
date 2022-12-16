@@ -2,7 +2,8 @@
 @import "@wordpress/base-styles/mixins";
 
 .plugins-browser-list {
-	margin-bottom: 8px; // 32 + 8 = 40 gap
+	padding-top: 32px;
+	padding-bottom: 8px; // 32 + 8 = 40 gap
 
 	.feature-example & {
 		margin: 0;
@@ -22,67 +23,12 @@
 	}
 
 	@include breakpoint-deprecated("<660px") {
-		padding: 0 16px;
+		padding-left: 16px;
+		padding-right: 16px;
 	}
 
 	.spotlight {
 		margin-top: 20px;
-	}
-}
-
-.plugins-browser-list__header {
-	color: var(--color-gray-90);
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	flex-wrap: wrap;
-
-	padding-top: 32px;
-
-	.plugins-browser-list__titles {
-		margin-bottom: 4px; // +20 from elements = 24 gap
-
-		.plugins-browser-list__title {
-			@extend .wp-brand-font;
-			font-size: $font-title-medium;
-			font-weight: 500;
-
-			&[class*="plugins-browser-list__search-for"] {
-				font-weight: 400;
-			}
-		}
-
-		.plugins-browser-list__subtitle {
-			margin-top: 4px;
-			font-size: $font-body-small;
-		}
-	}
-	.plugins-browser-list__actions {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		justify-content: space-between;
-		margin-top: auto;
-		margin-bottom: 4px; // +20 from elements = 24 gap
-
-		> div {
-			flex-grow: 4;
-
-			.select-dropdown__container {
-				width: 100%;
-			}
-		}
-
-		.plugins-browser-list__browse-all {
-			font-size: $font-body-small;
-			display: flex;
-			justify-content: flex-end;
-			align-items: center;
-			flex-grow: 4;
-			svg {
-				margin-left: 2px;
-			}
-		}
 	}
 }
 
@@ -96,5 +42,10 @@
 
 	&::after {
 		display: none;
+	}
+
+	&.card {
+		// Card margin interferes with section spacing.
+		margin-bottom: 0;
 	}
 }

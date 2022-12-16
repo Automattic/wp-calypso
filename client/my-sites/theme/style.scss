@@ -4,7 +4,7 @@
 
 .theme__sheet-bar {
 	background-color: var(--color-masterbar-item-hover-background);
-	color: white;
+	color: var(--studio-white);
 	height: 180px;
 	padding: 0;
 	margin: 0;
@@ -20,7 +20,7 @@
 	line-height: 1;
 
 	.theme__sheet-badge-beta {
-		background-color: white;
+		background-color: var(--studio-white);
 		font-weight: bold;
 		margin-left: 10px;
 	}
@@ -36,6 +36,17 @@
 	padding-left: 25px;
 }
 
+.theme__sheet-bar-soft-launched {
+	color: var(--color-warning-80);
+	font-size: 0.75rem;
+	font-weight: bold;
+	text-transform: uppercase;
+	background-color: var(--color-warning-20);
+	margin-left: 1rem;
+	padding: 2px 4px;
+	border-radius: 2px;
+}
+
 .theme__sheet-columns {
 	display: flex;
 	flex-direction: row;
@@ -45,6 +56,9 @@
 	@include breakpoint-deprecated( "<960px" ) {
 		flex-direction: column-reverse;
 	}
+}
+.theme__sheet-columns.is-removed {
+	justify-content: center;
 }
 
 .theme__sheet-column-left,
@@ -75,7 +89,7 @@
 	position: absolute;
 	top: 5px;
 	right: 50%;
-	margin-right: 20px;
+	margin-right: 20px !important;
 
 	.theme__sheet-badge-beta {
 		background-color: var(--color-surface);
@@ -127,7 +141,7 @@
 	box-shadow:
 		0 0 0 1px rgba(var(--color-neutral-dark-rgb), 0),
 		0 2px 8px 0 rgba(var(--color-neutral-dark-rgb), 0.5);
-	background-color: transparentize(white, 0.5);
+	background-color: transparentize(rgb(255, 255, 255), 0.5);
 	transition: all 200ms ease-in-out;
 
 	// with width: 98%, gives 4:3 ratio before the image loads

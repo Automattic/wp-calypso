@@ -265,8 +265,11 @@ const buildApp = ( environment ) => {
 			tearDown.push( () => {
 				// If there was an old value, restore it. Otherwise delete
 				// the mocked value. This is required for process.env
-				if ( valueExists ) object[ name ] = oldValue;
-				else delete object[ name ];
+				if ( valueExists ) {
+					object[ name ] = oldValue;
+				} else {
+					delete object[ name ];
+				}
 			} );
 		},
 		withRenderJSX( value ) {

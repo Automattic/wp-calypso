@@ -35,23 +35,23 @@ class CloneJetpackStep extends Component {
 			<TileGrid>
 				<Tile
 					className="clone-jetpack__keep"
-					buttonLabel={ 'Keep plan where it is' }
+					buttonLabel="Keep plan where it is"
 					description={ translate( 'Your plan would remain on %(originSiteName)s.', {
 						args: { originSiteName },
 					} ) }
-					image={ '/calypso/images/illustrations/jetpack-connection.svg' }
+					image="/calypso/images/illustrations/jetpack-connection.svg"
 					onClick={ this.selectNew }
 				/>
 				<Tile
 					className="clone-jetpack__migrate"
-					buttonLabel={ 'Migrate Jetpack plan' }
+					buttonLabel="Migrate Jetpack plan"
 					description={ translate(
 						'Your Jetpack plan would be migrated to the destination site, %(destinationSiteName)s.',
 						{
 							args: { destinationSiteName },
 						}
 					) }
-					image={ '/calypso/images/illustrations/jetpack-connection-migration.svg' }
+					image="/calypso/images/illustrations/jetpack-connection-migration.svg"
 					onClick={ this.selectMigrate }
 				/>
 			</TileGrid>

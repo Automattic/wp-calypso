@@ -324,7 +324,7 @@ class MembershipsSection extends Component {
 					<QueryMembershipProducts siteId={ this.props.siteId } />
 					<div className="memberships__module-plans-content">
 						<div className="memberships__module-plans-icon">
-							<Gridicon size={ 24 } icon={ 'credit-card' } />
+							<Gridicon size={ 24 } icon="credit-card" />
 						</div>
 						<div>
 							<div className="memberships__module-plans-title">
@@ -354,7 +354,7 @@ class MembershipsSection extends Component {
 				>
 					<div className="memberships__module-plans-content">
 						<div className="memberships__module-plans-icon">
-							<Gridicon size={ 24 } icon={ 'link-break' } />
+							<Gridicon size={ 24 } icon="link-break" />
 						</div>
 						<div>
 							<div className="memberships__module-settings-title">
@@ -462,11 +462,11 @@ class MembershipsSection extends Component {
 					rel="noopener norefferer"
 					href={ `https://dashboard.stripe.com/search?query=metadata%3A${ subscriber.user.ID }` }
 				>
-					<Gridicon size={ 18 } icon={ 'external' } />
+					<Gridicon size={ 18 } icon="external" />
 					{ this.props.translate( 'See transactions in Stripe Dashboard' ) }
 				</PopoverMenuItem>
 				<PopoverMenuItem onClick={ () => this.setState( { cancelledSubscriber: subscriber } ) }>
-					<Gridicon size={ 18 } icon={ 'cross' } />
+					<Gridicon size={ 18 } icon="cross" />
 					{ this.getIntervalDependantWording( subscriber ).button }
 				</PopoverMenuItem>
 			</EllipsisMenu>
@@ -617,7 +617,7 @@ class MembershipsSection extends Component {
 						}
 					>
 						{ this.props.translate( 'Connect Stripe to Get Started' ) }{ ' ' }
-						<Gridicon size={ 18 } icon={ 'external' } />
+						<Gridicon size={ 18 } icon="external" />
 					</Button>,
 					this.props.connectedAccountDescription
 						? this.props.translate(

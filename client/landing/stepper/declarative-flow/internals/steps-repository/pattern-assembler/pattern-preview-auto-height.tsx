@@ -2,7 +2,9 @@ import { addQueryArgs } from '@wordpress/url';
 import { cloneElement, ReactElement, useEffect, useState } from 'react';
 
 // Same ratio as in the CSS transform in .pattern-selector__block-list iframe
-const iframeScaleRatio = 0.2705;
+const iframeScaleRatio = 0.268;
+const initialHeight = 140;
+const verticalPaddingValue = 10;
 
 const PatternPreviewAutoHeight = ( {
 	children,
@@ -15,8 +17,9 @@ const PatternPreviewAutoHeight = ( {
 	patternName: string;
 	patternId: number;
 } ) => {
-	const [ height, setHeight ] = useState( 300 );
+	const [ height, setHeight ] = useState( initialHeight );
 	const calypso_token = patternId;
+	const verticalPadding = height < initialHeight ? verticalPaddingValue : 0;
 
 	useEffect( () => {
 		const handleMessage = ( event: MessageEvent ) => {
@@ -43,13 +46,21 @@ const PatternPreviewAutoHeight = ( {
 
 	const wrapper = cloneElement(
 		children,
-		{ style: { minHeight: height * iframeScaleRatio } },
+		{
+			style: {
+				minHeight: Math.round( height * iframeScaleRatio ) + verticalPadding,
+			},
+		},
 		<iframe
 			title={ patternName }
 			frameBorder="0"
 			aria-hidden
 			tabIndex={ -1 }
-			style={ { height } }
+			style={ {
+				// The extra 2px are required to avoid the scrollbars on some patterns
+				height: height + 2,
+				top: verticalPadding / 2,
+			} }
 			src={ addQueryArgs( url, { calypso_token } ) }
 		/>
 	);

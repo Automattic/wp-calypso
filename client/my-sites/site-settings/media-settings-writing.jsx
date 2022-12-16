@@ -59,7 +59,7 @@ class MediaSettingsWriting extends Component {
 				<Card>
 					<QueryJetpackConnection siteId={ selectedSiteId } />
 
-					<FormFieldset className={ 'site-settings__formfieldset' }>
+					<FormFieldset className="site-settings__formfieldset">
 						<SupportInfo
 							text={ translate( 'Gorgeous full-screen photo browsing experience.' ) }
 							link="https://jetpack.com/support/carousel/"

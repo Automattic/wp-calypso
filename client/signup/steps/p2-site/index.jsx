@@ -459,7 +459,7 @@ class P2Site extends Component {
 			<>
 				<FormTextInput
 					id="site-address-input"
-					autoCapitalize={ 'off' }
+					autoCapitalize="off"
 					className="p2-site__site-suggested-url"
 					disabled={ true }
 					name="suggested-site"
@@ -488,7 +488,7 @@ class P2Site extends Component {
 				<FormTextInput
 					id="site-address-input"
 					ref={ this.customizeSiteInput }
-					autoCapitalize={ 'off' }
+					autoCapitalize="off"
 					className="p2-site__site-url"
 					disabled={ submitting }
 					name="site"
@@ -546,7 +546,7 @@ class P2Site extends Component {
 					<FormTextInput
 						id="site-title-input"
 						autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
-						autoCapitalize={ 'off' }
+						autoCapitalize="off"
 						className="p2-site__site-title"
 						disabled={ submitting }
 						name="site-title"

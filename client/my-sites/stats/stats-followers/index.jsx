@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -83,6 +84,7 @@ class StatModuleFollowers extends Component {
 			numberFormat,
 			emailQuery,
 			wpcomQuery,
+			isOdysseyStats,
 		} = this.props;
 		const isLoading = requestingWpcomFollowers || requestingEmailFollowers;
 		const hasEmailFollowers = !! get( emailData, 'subscribers', [] ).length;
@@ -103,10 +105,13 @@ class StatModuleFollowers extends Component {
 		];
 
 		const summaryPageSlug = siteSlug || '';
-		const summaryPageLink =
+		let summaryPageLink =
 			'email-followers' === activeFilter
 				? '/people/email-followers/' + summaryPageSlug
 				: '/people/followers/' + summaryPageSlug;
+
+		// Limit scope for Odyssey stats, as the Followers page is not yet available.
+		summaryPageLink = ! isOdysseyStats ? summaryPageLink : null;
 
 		return (
 			<div>
@@ -156,7 +161,7 @@ class StatModuleFollowers extends Component {
 								{ hasEmailFollowers && (
 									<StatsList moduleName="EmailFollowers" data={ emailData.subscribers } />
 								) }
-								{ hasEmailQueryFailed && <ErrorPanel className={ 'network-error' } /> }
+								{ hasEmailQueryFailed && <ErrorPanel className="network-error" /> }
 							</div>
 
 							<StatsModulePlaceholder isLoading={ isLoading } />
@@ -205,6 +210,7 @@ const connectComponent = connect(
 			wpcomQuery,
 			siteId,
 			siteSlug,
+			isOdysseyStats: config.isEnabled( 'is_running_in_jetpack_site' ),
 		};
 	},
 	{ recordGoogleEvent }

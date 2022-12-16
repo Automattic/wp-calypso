@@ -1,5 +1,6 @@
 import React from 'react';
 import { useStoreItemInfo } from './hooks/use-store-item-info';
+import type { PlanRecommendation } from '../plan-upgrade/types';
 import type {
 	QueryArgs,
 	SelectorProduct,
@@ -25,6 +26,7 @@ export interface ProductStoreProps {
 	duration: Duration;
 	createCheckoutURL: PurchaseURLCallback;
 	onClickPurchase: PurchaseCallback;
+	planRecommendation?: PlanRecommendation;
 	urlQueryArgs: ProductStoreQueryArgs;
 	header: React.ReactNode;
 }
@@ -35,12 +37,8 @@ export type ProductSlugsProps = Pick< ProductStoreProps, 'duration' > & ProductS
 
 export type productIconProps = {
 	productSlug: string;
+	light?: boolean;
 };
-
-export interface ViewFilterProps {
-	currentView: ViewType;
-	setCurrentView: ( currentView: ViewType ) => void;
-}
 
 export type ProductsListProps = ProductStoreBaseProps & {
 	onClickMoreInfoFactory: ( item: SelectorProduct ) => VoidFunction;
@@ -90,6 +88,7 @@ export type ItemPriceProps = ProductStoreBaseProps &
 	};
 
 export type FeaturedItemCardProps = {
+	amountSaved?: React.ReactNode;
 	ctaAsPrimary?: boolean;
 	ctaHref?: string;
 	ctaLabel: React.ReactNode;
@@ -100,7 +99,6 @@ export type FeaturedItemCardProps = {
 	onClickCta?: VoidFunction;
 	price: React.ReactNode;
 	title: React.ReactNode;
-	customLabel?: React.ReactNode;
 };
 
 export type SimpleItemCardProps = Omit< FeaturedItemCardProps, 'hero' > & {
@@ -111,4 +109,23 @@ export type MoreInfoLinkProps = {
 	item: SelectorProduct;
 	onClick?: VoidFunction;
 	isExternal?: boolean;
+};
+
+export type PricingBreakdownProps = {
+	product: SelectorProduct;
+	siteId: number | null;
+	includedProductSlugs: ReadonlyArray< string >;
+	showBreakdownHeading?: boolean;
+};
+
+export type PricingBreakdownItem = {
+	name: React.ReactNode;
+	slug: string;
+	originalPrice: number;
+	renderedPrice: React.ReactNode;
+};
+
+export type AmountSavedProps = ProductStoreBaseProps & {
+	product: SelectorProduct;
+	onClickMoreInfo: VoidFunction;
 };

@@ -4,11 +4,11 @@ import { compose } from '@wordpress/compose';
 import classNames from 'classnames';
 import { localize, withRtl } from 'i18n-calypso';
 import { get } from 'lodash';
-import lottie from 'lottie-web/build/player/lottie_light';
 import PropTypes from 'prop-types';
-import { Component, useEffect, useRef } from 'react';
+import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
+import AnimatedIcon from 'calypso/components/animated-icon';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import versionCompare from 'calypso/lib/version-compare';
 import {
@@ -134,15 +134,15 @@ export class AppBanner extends Component {
 			//TODO: update when section deep links are available.
 			switch ( currentSection ) {
 				case GUTENBERG:
-					return `intent://post/#Intent;scheme=${ scheme };package=${ packageName };end`;
+					return `intent://details?id=${ packageName }&url=${ scheme }://post&referrer=calypso#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case HOME:
-					return `intent://home/#Intent;scheme=${ scheme };package=${ packageName };end`;
+					return `intent://details?id=${ packageName }&url=${ scheme }://home&referrer=calypso#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case NOTES:
-					return `intent://notifications/#Intent;scheme=${ scheme };package=${ packageName };end`;
+					return `intent://details?id=${ packageName }&url=${ scheme }://notifications&referrer=calypso#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case READER:
-					return `intent://read/#Intent;scheme=${ scheme };package=${ packageName };end`;
+					return `intent://details?id=${ packageName }&url=${ scheme }://read&referrer=calypso#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case STATS:
-					return `intent://stats/#Intent;scheme=${ scheme };package=${ packageName };end`;
+					return `intent://details?id=${ packageName }&url=${ scheme }://stats&referrer=calypso#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 			}
 		}
 
@@ -170,7 +170,7 @@ export class AppBanner extends Component {
 						statGroup="calypso_mobile_app_banner"
 						statName="impression"
 					/>
-					<BannerIcon icon={ icon } />
+					<AnimatedIcon className="app-banner__icon" icon={ icon } />
 					<div className="app-banner__text-content jetpack">
 						<div className="app-banner__title jetpack">
 							<span> { title } </span>
@@ -261,32 +261,6 @@ export class AppBanner extends Component {
 			? this.getJetpackAppBanner( this.props )
 			: this.getWordpressAppBanner( this.props );
 	}
-}
-
-function BannerIcon( { icon } ) {
-	const iconEl = useRef();
-
-	useEffect( () => {
-		const reducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
-
-		const animation = lottie.loadAnimation( {
-			container: iconEl.current,
-			renderer: 'svg',
-			loop: false,
-			autoplay: ! reducedMotion,
-			path: icon,
-		} );
-
-		if ( reducedMotion ) {
-			animation.addEventListener( 'config_ready', () => {
-				animation.goToAndPlay( animation.totalFrames, true );
-			} );
-		}
-
-		return () => animation.destroy();
-	}, [ icon ] );
-
-	return <div ref={ iconEl } className="app-banner__icon"></div>;
 }
 
 export function getiOSDeepLink( currentRoute, currentSection ) {

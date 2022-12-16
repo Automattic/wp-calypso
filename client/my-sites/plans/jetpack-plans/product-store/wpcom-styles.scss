@@ -21,28 +21,6 @@ $wpcom-menu-collapse: 783px;
 		border-width: 0;
 	}
 
-	h2 {
-		font-size: $font-title-small;
-		font-weight: 600;
-		line-height: 32px;
-
-		@include break-small {
-			font-size: $font-headline-small;
-			line-height: 40px;
-		}
-	}
-
-	h3 {
-		font-size: $font-body;
-		font-weight: 600;
-		line-height: 23px;
-
-		@include break-small {
-			font-size: $font-title-small;
-			line-height: 23px;
-		}
-	}
-
 	// Start after the collapsible admin menu shows up
 	@media (min-width: $wpcom-menu-collapse) {
 		@media (max-width: $break-wide) {

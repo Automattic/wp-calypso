@@ -64,9 +64,23 @@ function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ) {
 
 	return isWebsiteContentSubmitted ? (
 		<EmptyContent
-			title={ translate( 'Our experts are building your site' ) }
+			title={ translate( 'Your content submission was successful!' ) }
 			line={ translate(
-				"Our team is building your site. We'll be in touch when your site is ready."
+				"We are currently building your site and will send you an email when it's ready, within %d business days.{{br}}{{/br}}" +
+					'{{SupportLink}}Contact support{{/SupportLink}} if you have any questions.',
+				{
+					components: {
+						br: <br />,
+						SupportLink: (
+							<a
+								href={ `mailto:builtby+express@wordpress.com?subject=${ encodeURIComponent(
+									`I need help with my site: ${ primaryDomain.domain }`
+								) }` }
+							/>
+						),
+					},
+					args: [ 4 ],
+				}
 			) }
 			action={ translate( 'Manage domain' ) }
 			actionURL={ domainManagementList( slug ) }
@@ -81,7 +95,20 @@ function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ) {
 		<EmptyContent
 			title={ translate( 'Website content not submitted' ) }
 			line={ translate(
-				'Please provide the necessary information for the creation of your website. To access click on the button below.'
+				'Please provide the necessary information for the creation of your website. To access click on the button below.{{br}}{{/br}}' +
+					'{{SupportLink}}Contact support{{/SupportLink}} if you have any questions.',
+				{
+					components: {
+						br: <br />,
+						SupportLink: (
+							<a
+								href={ `mailto:builtby+express@wordpress.com?subject=${ encodeURIComponent(
+									`I need help with my site: ${ primaryDomain.domain }`
+								) }` }
+							/>
+						),
+					},
+				}
 			) }
 			action={ translate( 'Add content to your website' ) }
 			actionURL={ `/start/site-content-collection/website-content?siteSlug=${ slug }` }

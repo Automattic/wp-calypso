@@ -17,5 +17,6 @@ export const hasMarketplaceProduct = (
 			( searchSlug === storeProductSlug || searchSlug === billing_product_slug ) &&
 			// additional type check needed when called from JS context
 			typeof product_type === 'string' &&
-			product_type.startsWith( 'marketplace' )
+			// SaaS products are also considered marketplace products
+			( product_type.startsWith( 'marketplace' ) || product_type === 'saas_plugin' )
 	);

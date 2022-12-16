@@ -65,7 +65,7 @@ const LinkCard = ( props: LinkCardProps ) => {
 	const Link = external ? ExternalLink : 'a';
 
 	return (
-		<Link href={ url } onClick={ onClick }>
+		<Link href={ url } onClick={ onClick } className="card-block">
 			<LinkCardContainer background={ background }>
 				<LinkCardLabel>{ label }</LinkCardLabel>
 				<LinkCardTitle>{ title }</LinkCardTitle>

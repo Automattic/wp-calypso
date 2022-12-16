@@ -148,25 +148,6 @@ export function hasDomainRegistration( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isDomainRegistration );
 }
 
-export function hasNewDomainRegistration( cart: ObjectWithProducts ): boolean {
-	return getAllCartItems( cart ).some( isNewDomainRegistration );
-}
-
-export function hasDomainRenewal( cart: ObjectWithProducts ): boolean {
-	return getAllCartItems( cart ).some( isDomainRenewal );
-}
-
-/**
- * Determines whether the supplied cart item is a new domain registration (i.e. not a renewal).
- */
-function isNewDomainRegistration( cartItem: ResponseCartProduct ): boolean {
-	return isDomainRegistration( cartItem ) && ! isRenewal( cartItem );
-}
-
-function isDomainRenewal( cartItem: ResponseCartProduct ): boolean {
-	return isRenewal( cartItem ) && isDomainRegistration( cartItem );
-}
-
 export function hasDomainBeingUsedForPlan( cart: ObjectWithProducts ): boolean {
 	return getDomainRegistrations( cart ).some( ( registration ) =>
 		isDomainBeingUsedForPlan( cart, registration.meta )
@@ -295,6 +276,18 @@ export function themeItem( themeSlug: string, source?: string ): MinimalRequestC
 		extra: {
 			source: source,
 		},
+	};
+}
+
+/**
+ * Creates a new shopping cart item for a marketplace theme subscription.
+ *
+ * @param productSlug the unique string that identifies the product
+ * @returns {MinimalRequestCartProduct} the new item
+ */
+export function marketplaceThemeProduct( productSlug: string ): MinimalRequestCartProduct {
+	return {
+		product_slug: productSlug,
 	};
 }
 

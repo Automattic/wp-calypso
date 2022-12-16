@@ -30,7 +30,7 @@ type StandardHeaderProps = {
 const StandardPlansHeader = ( { shouldShowPlanRecommendation, siteId }: StandardHeaderProps ) => (
 	<>
 		<FormattedHeader headerText={ translate( 'Plans' ) } align="left" brandFont />
-		<PlansNavigation path={ '/plans' } />
+		<PlansNavigation path="/plans" />
 		{ shouldShowPlanRecommendation && siteId && (
 			<JetpackPluginUpdateWarning
 				siteId={ siteId }
@@ -59,7 +59,7 @@ const ConnectFlowPlansHeader = () => (
 				brandFont
 			/>
 		</div>
-		<PlansNavigation path={ '/plans' } />
+		<PlansNavigation path="/plans" />
 	</>
 );
 

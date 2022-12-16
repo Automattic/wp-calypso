@@ -34,7 +34,7 @@ class PrimaryHeader extends Component {
 					<img
 						className="shared__info-illustration"
 						alt="support session signup form header"
-						src={ '/calypso/images/illustrations/illustration-start.svg' }
+						src="/calypso/images/illustrations/illustration-start.svg"
 					/>
 					<FormattedHeader
 						headerText={ translate( 'WordPress.com Quick Start Session Scheduler' ) }

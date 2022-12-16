@@ -43,6 +43,10 @@ export function useDomainOwnerUserName(
 	}
 
 	const teams = data as InfiniteData< UsersData > & UsersData;
+
+	//Due to Jetpack sites overriding the user.ID with a completely different thing,
+	//when Jetpack overrides this property, the original WordPress.com user Id
+	//ends stored as user.linked_user_ID, so in those cases, that's the ID we have to use.
 	const ownerUser = teams.users?.find(
 		( user ) => ( user.linked_user_ID ?? user.ID ) === domainSubscription?.userId
 	);

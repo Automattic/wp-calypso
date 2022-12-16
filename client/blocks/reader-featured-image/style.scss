@@ -1,5 +1,6 @@
 .reader-featured-image {
 	align-items: center;
+	/* stylelint-disable-next-line scales/radii */
 	border-radius: 6px;
 	cursor: pointer;
 	display: flex;
@@ -7,6 +8,24 @@
 	max-height: 300px;
 	overflow-y: hidden;
 	img {
+		/* stylelint-disable-next-line scales/radii */
 		border-radius: 6px;
+		object-fit: cover;
+	}
+}
+
+.reader-full-post__content .reader-featured-image {
+	margin-bottom: 24px;
+	position: relative;
+	&::after {
+		content: "";
+		position: absolute;
+		pointer-events: none;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+		border-radius: 6px; /* stylelint-disable-line scales/radii */
 	}
 }

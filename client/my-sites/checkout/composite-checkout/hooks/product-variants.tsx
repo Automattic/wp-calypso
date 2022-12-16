@@ -1,44 +1,22 @@
+import config from '@automattic/calypso-config';
 import {
-	isPlan,
-	findPlansKeys,
-	findProductKeys,
 	getBillingMonthsForTerm,
-	getPlan,
-	getProductFromSlug,
 	getTermDuration,
-	GROUP_JETPACK,
-	GROUP_WPCOM,
-	objectIsProduct,
+	getBillingTermForMonths,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
+import { isValueTruthy } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState, useMemo, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { requestPlans } from 'calypso/state/plans/actions';
-import { requestProductsList } from 'calypso/state/products-list/actions';
-import { computeProductsWithPrices } from 'calypso/state/products-list/selectors';
-import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
+import { useMemo } from 'react';
+import { logToLogstash } from 'calypso/lib/logstash';
+import { useStableCallback } from 'calypso/lib/use-stable-callback';
 import type { WPCOMProductVariant } from '../components/item-variation-picker';
-import type { Plan, Product } from '@automattic/calypso-products';
-import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
+import type { ResponseCartProduct, ResponseCartProductVariant } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
-
-export interface AvailableProductVariant {
-	planSlug: string;
-	plan: Plan | Product;
-	product: ProductListItem;
-	priceFull: number;
-	priceFinal: number;
-	introductoryOfferPrice: number | null;
-}
-
-export interface AvailableProductVariantAndCompared extends AvailableProductVariant {
-	priceFullBeforeDiscount: number;
-}
 
 export interface SitePlanData {
 	autoRenew?: boolean;
@@ -72,147 +50,80 @@ export interface SitesPlansResult {
 	data: SitePlanData[] | null;
 }
 
+export type VariantFilterCallback = ( variant: WPCOMProductVariant ) => boolean;
+
+const fallbackFilter = () => true;
+const fallbackVariants: ResponseCartProductVariant[] = [];
+
+/**
+ * Return all product variants for a particular product.
+ *
+ * This will return all available variants but you probably want to filter them
+ * using the `filterCallback` argument.
+ *
+ * `filterCallback` can safely be an anonymous function without causing
+ * identity stability issues (no need to use `useMemo` or `useCallback`).
+ *
+ * `filterCallback` gets two arguments: the first is a variant and the second
+ * is the term interval of the currently active plan, if any.
+ */
 export function useGetProductVariants(
-	siteId: number | undefined,
-	productSlug: string
+	product: ResponseCartProduct | undefined,
+	filterCallback?: VariantFilterCallback
 ): WPCOMProductVariant[] {
 	const translate = useTranslate();
-	const reduxDispatch = useDispatch();
+	const filterCallbackMemoized = useStableCallback( filterCallback ?? fallbackFilter );
 
-	const sitePlans = useSelector( ( state ) => getPlansBySiteId( state, siteId ) );
-	const activePlan = sitePlans?.data?.find( ( plan ) => plan.currentPlan );
-	debug( 'activePlan', activePlan );
-
-	const variantProductSlugs = useVariantPlanProductSlugs( productSlug, activePlan?.productSlug );
+	const variants = product?.product_variants ?? fallbackVariants;
+	const variantProductSlugs = variants.map( ( variant ) => variant.product_slug );
 	debug( 'variantProductSlugs', variantProductSlugs );
 
-	const variantsWithPrices: AvailableProductVariant[] = useSelector( ( state ) => {
-		return computeProductsWithPrices( state, siteId, variantProductSlugs );
-	} );
-
-	const [ haveFetchedProducts, setHaveFetchedProducts ] = useState( false );
-	const shouldFetchProducts = ! variantsWithPrices;
-
-	useEffect( () => {
-		if ( shouldFetchProducts && ! haveFetchedProducts ) {
-			debug( 'dispatching request for product variant data' );
-			reduxDispatch( requestPlans() );
-			reduxDispatch( requestProductsList() );
-			setHaveFetchedProducts( true );
-		}
-	}, [ shouldFetchProducts, haveFetchedProducts, reduxDispatch ] );
-
-	const getProductVariantFromAvailableVariant = useCallback(
-		( variant: AvailableProductVariant ): WPCOMProductVariant => {
-			const price =
-				variant.introductoryOfferPrice !== null
-					? variant.introductoryOfferPrice
-					: variant.priceFinal || variant.priceFull;
-
-			const termIntervalInMonths = getBillingMonthsForTerm( variant.plan.term );
-			const pricePerMonth = price / termIntervalInMonths;
-
-			return {
-				variantLabel: getTermText( variant.plan.term, translate ),
-				productSlug: variant.planSlug,
-				productId: variant.product.product_id,
-				price,
-				termIntervalInMonths: getBillingMonthsForTerm( variant.plan.term ),
-				pricePerMonth,
-				currency: variant.product.currency_code,
-			};
-		},
-		[ translate ]
-	);
-
 	const filteredVariants = useMemo( () => {
-		return variantsWithPrices.filter( ( product ) =>
-			isVariantAllowed( product, activePlan?.interval )
-		);
-	}, [ activePlan?.interval, variantsWithPrices ] );
+		const convertedVariants = variants
+			.sort( sortVariant )
+			.map( ( variant ): WPCOMProductVariant | undefined => {
+				try {
+					const term = getBillingTermForMonths( variant.bill_period_in_months );
+					return {
+						variantLabel: getTermText( term, translate ),
+						productSlug: variant.product_slug,
+						productId: variant.product_id,
+						priceInteger: variant.price_integer,
+						termIntervalInMonths: getBillingMonthsForTerm( term ),
+						termIntervalInDays: getTermDuration( term ) ?? 0,
+						currency: variant.currency,
+					};
+				} catch ( error ) {
+					// Three-year plans are not yet fully supported, so we need to guard
+					// against fatals here and ignore them.
+					logToLogstash( {
+						feature: 'calypso_client',
+						message: 'checkout variant picker variant error',
+						severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+						extra: {
+							env: config( 'env_id' ),
+							variant: JSON.stringify( variant ),
+							message: ( error as Error ).message + '; Stack: ' + ( error as Error ).stack,
+						},
+					} );
+				}
+			} )
+			.filter( isValueTruthy );
 
-	return useMemo( () => {
-		debug( 'found filtered variants', filteredVariants );
-		return filteredVariants.map( getProductVariantFromAvailableVariant );
-	}, [ getProductVariantFromAvailableVariant, filteredVariants ] );
+		return convertedVariants.filter( ( product ) => filterCallbackMemoized( product ) );
+	}, [ translate, variants, filterCallbackMemoized ] );
+
+	return filteredVariants;
 }
 
-function isVariantAllowed(
-	variant: AvailableProductVariant,
-	activePlanRenewalInterval: number | undefined
-): boolean {
-	// Allow the variant when the item added to the cart is not a plan.
-	if ( ! isPlan( variant.product ) ) {
-		return true;
+function sortVariant( a: ResponseCartProductVariant, b: ResponseCartProductVariant ) {
+	if ( a.bill_period_in_months < b.bill_period_in_months ) {
+		return -1;
 	}
-
-	// If this is a plan, does the site currently own a plan? If so, is the term
-	// of the variant lower than the term of the currently owned plan? If so, do
-	// not allow the variant.
-	if ( ! activePlanRenewalInterval || activePlanRenewalInterval < 1 ) {
-		return true;
+	if ( a.bill_period_in_months > b.bill_period_in_months ) {
+		return 1;
 	}
-	const variantRenewalInterval = getTermDuration( variant.plan.term ) ?? 0;
-	if ( activePlanRenewalInterval <= variantRenewalInterval ) {
-		return true;
-	}
-	debug(
-		'filtering out plan variant',
-		variant,
-		'with interval',
-		variantRenewalInterval,
-		'because it is a downgrade from',
-		activePlanRenewalInterval
-	);
-	return false;
-}
-
-function getVariantPlanProductSlugs( productSlug: string | undefined ): string[] {
-	const chosenPlan = getPlan( productSlug ?? '' )
-		? getPlan( productSlug ?? '' )
-		: getProductFromSlug( productSlug ?? '' );
-
-	if ( ! chosenPlan || typeof chosenPlan === 'string' ) {
-		return [];
-	}
-
-	// Only construct variants for WP.com and Jetpack plans
-	if (
-		! objectIsProduct( chosenPlan ) &&
-		chosenPlan.group !== GROUP_WPCOM &&
-		chosenPlan.group !== GROUP_JETPACK
-	) {
-		return [];
-	}
-
-	return objectIsProduct( chosenPlan )
-		? findProductKeys( {
-				type: chosenPlan.type,
-		  } )
-		: findPlansKeys( {
-				group: chosenPlan.group,
-				type: chosenPlan.type,
-		  } );
-}
-
-function isVariantOfActivePlan(
-	activePlanSlug: string | undefined,
-	variantPlanSlug: string
-): boolean {
-	return getVariantPlanProductSlugs( activePlanSlug ).includes( variantPlanSlug );
-}
-
-function useVariantPlanProductSlugs(
-	productSlug: string | undefined,
-	activePlanSlug: string | undefined
-): string[] {
-	return useMemo(
-		() =>
-			getVariantPlanProductSlugs( productSlug ).filter(
-				( slug ) => ! isVariantOfActivePlan( activePlanSlug, slug )
-			),
-		[ productSlug, activePlanSlug ]
-	);
+	return 0;
 }
 
 function getTermText( term: string, translate: ReturnType< typeof useTranslate > ): string {

@@ -291,7 +291,7 @@ class Upload extends Component {
 				line={ this.props.translate( 'Use the WP Admin interface instead' ) }
 				action={ this.props.translate( 'Open WP Admin' ) }
 				actionURL={ this.props.siteAdminUrl }
-				illustration={ '/calypso/images/illustrations/illustration-jetpack.svg' }
+				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
 			/>
 		);
 	}

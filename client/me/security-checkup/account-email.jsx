@@ -82,7 +82,7 @@ class SecurityCheckupAccountEmail extends Component {
 
 		return (
 			<SecurityCheckupNavigationItem
-				path={ '/me/security/account-email' }
+				path="/me/security/account-email"
 				materialIcon={ icon }
 				text={ translate( 'Account Email' ) }
 				description={ description }

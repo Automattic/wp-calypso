@@ -62,7 +62,7 @@ const domainTransferThankYouProps = ( {
 							href={ localizeUrl(
 								'https://wordpress.com/support/move-domain/incoming-domain-transfer/#changing-the-dns-records-after-a-successful-transfer'
 							) }
-							className={ 'domain-transfer__thank-you-button domain-thank-you__button' }
+							className="domain-transfer__thank-you-button domain-thank-you__button"
 							busy={ false }
 							disabled={ false }
 						>
@@ -79,7 +79,7 @@ const domainTransferThankYouProps = ( {
 					stepCta: (
 						<FullWidthButton
 							href={ localizeUrl( 'https://wordpress.com/support/add-email' ) }
-							className={ 'domain-transfer__thank-you-button domain-thank-you__button' }
+							className="domain-transfer__thank-you-button domain-thank-you__button"
 							busy={ false }
 							disabled={ false }
 						>

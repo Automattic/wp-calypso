@@ -1,8 +1,3 @@
-.reader-subscription-list-item {
-	display: flex;
-	flex-direction: row;
-}
-
 .reader-subscription-list-item__byline {
 	color: var(--color-text);
 	margin-right: 16px;
@@ -61,6 +56,7 @@
 
 .reader-subscription-list-item {
 	display: flex;
+	flex-direction: row;
 	font-size: $font-body-small;
 	padding: 15px 0;
 
@@ -71,8 +67,13 @@
 
 .reader-subscription-list-item__site-url,
 .reader-subscription-list-item__site-url:visited,
-.reader-subscription-list-item__timestamp {
+.reader-subscription-list-item__timestamp
+.reader-subscription-list-item__date-subscribed {
 	color: var(--color-text-subtle);
+}
+
+.reader-subscription-list-item__timestamp {
+	margin-right: 8px;
 }
 
 .reader-subscription-list-item__site-title,
@@ -106,6 +107,7 @@
 }
 
 .reader-subscription-list-item__site-title {
+	font-size: $font-body;
 	font-weight: 600;
 }
 
@@ -137,6 +139,21 @@
 
 	.external-link .gridicons-external {
 		margin-left: 4px;
+	}
+
+	ul {
+		display: flex;
+		justify-content: space-between;
+		list-style-type: disc;
+		color: var(--color-text-subtle);
+		margin: 0;
+		gap: 8px;
+		li {
+			margin-right: 4px;
+		}
+		li:first-child {
+			list-style: none;
+		}
 	}
 }
 
@@ -184,14 +201,11 @@
 
 	.reader-subscription-list-item__site-excerpt {
 		margin-top: 2px;
+		max-width: 80%;
 	}
 
 	.reader-subscription-list-item__site-title {
 		max-width: 60%;
-	}
-
-	.reader-subscription-list-item__site-excerpt {
-		max-width: 80%;
 	}
 
 	.reader-subscription-list-item__site-url {
@@ -210,5 +224,5 @@
 }
 
 .reader-subscription-list-item__avatar {
-	min-width: 44px;
+	min-width: 52px;
 }

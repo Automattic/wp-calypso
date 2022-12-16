@@ -39,7 +39,7 @@ const PatternActionBar = ( {
 						role="menuitem"
 						label={ translate( 'Move up' ) }
 						onClick={ () => {
-							recordTracksEvent( 'calypso_signup_bcpa_pattern_moveup_click' );
+							recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_moveup_click' );
 							onMoveUp?.();
 						} }
 						icon={ chevronUp }
@@ -51,7 +51,7 @@ const PatternActionBar = ( {
 						role="menuitem"
 						label={ translate( 'Move down' ) }
 						onClick={ () => {
-							recordTracksEvent( 'calypso_signup_bcpa_pattern_movedown_click' );
+							recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_movedown_click' );
 							onMoveDown?.();
 						} }
 						icon={ chevronDown }
@@ -64,7 +64,7 @@ const PatternActionBar = ( {
 				role="menuitem"
 				label={ translate( 'Replace' ) }
 				onClick={ () => {
-					recordTracksEvent( 'calypso_signup_bcpa_pattern_replace_click', {
+					recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_replace_click', {
 						pattern_type: patternType,
 					} );
 					onReplace();
@@ -77,7 +77,7 @@ const PatternActionBar = ( {
 				role="menuitem"
 				label={ translate( 'Delete' ) }
 				onClick={ () => {
-					recordTracksEvent( 'calypso_signup_bcpa_pattern_delete_click', {
+					recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_delete_click', {
 						pattern_type: patternType,
 					} );
 					onDelete();

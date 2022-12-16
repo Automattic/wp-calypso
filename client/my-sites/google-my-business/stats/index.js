@@ -201,7 +201,12 @@ class GoogleMyBusinessStats extends Component {
 
 				<DocumentHead title={ translate( 'Stats' ) } />
 
-				<StatsNavigation selectedItem={ 'googleMyBusiness' } siteId={ siteId } slug={ siteSlug } />
+				<StatsNavigation
+					selectedItem="googleMyBusiness"
+					siteId={ siteId }
+					slug={ siteSlug }
+					isLegacy
+				/>
 
 				<QuerySiteKeyrings siteId={ siteId } />
 				<QueryKeyringConnections forceRefresh />
@@ -244,7 +249,7 @@ class GoogleMyBusinessStats extends Component {
 						onClick={ this.trackUpdateListingClick }
 						target="_blank"
 					>
-						{ translate( 'Update Listing' ) } <Gridicon icon={ 'external' } />
+						{ translate( 'Update Listing' ) } <Gridicon icon="external" />
 					</Button>
 				</GoogleMyBusinessLocation>
 

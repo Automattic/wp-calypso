@@ -15,11 +15,13 @@ import {
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Geochart from '../geochart';
 import DatePicker from '../stats-date-picker';
 import DownloadCsv from '../stats-download-csv';
 import ErrorPanel from '../stats-error';
 import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
+import StatsListCard from '../stats-list/stats-list-card';
 import AllTimeNav from './all-time-nav';
 import StatsModuleAvailabilityWarning from './availability-warning';
 import StatsModuleExpand from './expand';
@@ -125,6 +127,7 @@ class StatsModule extends Component {
 			period,
 			translate,
 			useShortLabel,
+			showNewModules,
 		} = this.props;
 
 		const noData = data && this.state.loaded && ! data.length;
@@ -146,72 +149,113 @@ class StatsModule extends Component {
 		);
 
 		const summaryLink = this.getHref();
-		const displaySummaryLink = data && data.length >= 10;
+		const displaySummaryLink = data && ! this.props.hideSummaryLink;
 		const isAllTime = this.isAllTimeList();
 		const headerClass = classNames( 'stats-module__header', {
 			'is-refreshing': requesting && ! isLoading,
 		} );
 
+		const shouldShowNewModule = showNewModules && ! summary;
+
 		return (
-			<div>
+			<>
 				{ siteId && statType && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
-				{ ! isAllTime && (
-					<SectionHeader
-						className={ headerClass }
-						label={ this.getModuleLabel() }
-						href={ ! summary ? summaryLink : null }
-					>
-						{ summary && (
-							<DownloadCsv statType={ statType } query={ query } path={ path } period={ period } />
-						) }
-					</SectionHeader>
+				{ shouldShowNewModule && (
+					<StatsListCard
+						moduleType={ path }
+						data={ data }
+						useShortLabel={ useShortLabel }
+						title={ this.getModuleLabel() }
+						emptyMessage={ moduleStrings.empty }
+						showMore={
+							displaySummaryLink
+								? {
+										url: this.getHref(),
+										label:
+											data.length >= 10
+												? this.props.translate( 'View all', {
+														context: 'Stats: Button link to show more detailed stats information',
+												  } )
+												: this.props.translate( 'View details', {
+														context: 'Stats: Button label to see the detailed content of a panel',
+												  } ),
+								  }
+								: undefined
+						}
+						error={ hasError && <ErrorPanel /> }
+						loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
+						heroElement={ path === 'countryviews' && <Geochart query={ query } /> }
+					/>
 				) }
-				<Card compact className={ cardClasses }>
-					{ statType === 'statsFileDownloads' && (
-						<StatsModuleAvailabilityWarning
-							statType={ statType }
-							startOfPeriod={ period && period.startOf }
-						/>
-					) }
-					{ isAllTime && <AllTimeNav path={ path } query={ query } period={ period } /> }
-					{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
-					{ hasError && <ErrorPanel /> }
-					{ this.props.children }
-					<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
-					<StatsModulePlaceholder isLoading={ isLoading } />
-					<StatsList moduleName={ path } data={ data } useShortLabel={ useShortLabel } />
-					{ this.props.showSummaryLink && displaySummaryLink && (
-						<StatsModuleExpand href={ summaryLink } />
-					) }
-					{ summary && 'countryviews' === path && (
-						<UpsellNudge
-							title={ translate( 'Add Google Analytics' ) }
-							description={ translate(
-								'Upgrade to a Premium Plan for Google Analytics integration.'
+
+				{ ! shouldShowNewModule && (
+					<div className={ `stats__module-wrapper stats__module-wrapper--${ path }` }>
+						{ ! isAllTime && (
+							<SectionHeader
+								className={ headerClass }
+								label={ this.getModuleLabel() }
+								href={ ! summary ? summaryLink : null }
+							>
+								{ summary && (
+									<DownloadCsv
+										statType={ statType }
+										query={ query }
+										path={ path }
+										period={ period }
+									/>
+								) }
+							</SectionHeader>
+						) }
+						<Card compact className={ cardClasses }>
+							{ statType === 'statsFileDownloads' && (
+								<StatsModuleAvailabilityWarning
+									statType={ statType }
+									startOfPeriod={ period && period.startOf }
+								/>
 							) }
-							event="googleAnalytics-stats-countries"
-							feature={ FEATURE_GOOGLE_ANALYTICS }
-							plan={ PLAN_PREMIUM }
-							tracksImpressionName="calypso_upgrade_nudge_impression"
-							tracksClickName="calypso_upgrade_nudge_cta_click"
-							showIcon={ true }
-						/>
-					) }
-				</Card>
-				{ isAllTime && (
-					<div className="stats-module__footer-actions">
-						<DownloadCsv
-							statType={ statType }
-							query={ query }
-							path={ path }
-							borderless
-							period={ period }
-						/>
+							{ isAllTime && <AllTimeNav path={ path } query={ query } period={ period } /> }
+							{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
+							{ hasError && <ErrorPanel /> }
+							{ this.props.children }
+							<div className="stats__list-wrapper">
+								<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
+								<StatsModulePlaceholder isLoading={ isLoading } />
+								<StatsList moduleName={ path } data={ data } useShortLabel={ useShortLabel } />
+							</div>
+							{ this.props.showSummaryLink && data?.length >= 10 && (
+								<StatsModuleExpand href={ summaryLink } />
+							) }
+							{ summary && 'countryviews' === path && (
+								<UpsellNudge
+									title={ translate( 'Add Google Analytics' ) }
+									description={ translate(
+										'Upgrade to a Premium Plan for Google Analytics integration.'
+									) }
+									event="googleAnalytics-stats-countries"
+									feature={ FEATURE_GOOGLE_ANALYTICS }
+									plan={ PLAN_PREMIUM }
+									tracksImpressionName="calypso_upgrade_nudge_impression"
+									tracksClickName="calypso_upgrade_nudge_cta_click"
+									showIcon={ true }
+								/>
+							) }
+						</Card>
+						{ isAllTime && (
+							<div className="stats-module__footer-actions">
+								<DownloadCsv
+									statType={ statType }
+									query={ query }
+									path={ path }
+									borderless
+									period={ period }
+								/>
+							</div>
+						) }
 					</div>
 				) }
-			</div>
+			</>
 		);
 	}
 }

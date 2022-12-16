@@ -9,7 +9,7 @@ function BlogPosts( { fields, translate, onChangeField, isDisabled } ) {
 	return (
 		<FormFieldset>
 			<div className="custom-content-types__module-settings">
-				<div id={ name } className={ 'custom-content-types__label indented-form-field' }>
+				<div id={ name } className="custom-content-types__label indented-form-field">
 					{ translate( 'Blog posts' ) }
 				</div>
 				<div className="custom-content-types__indented-form-field indented-form-field">

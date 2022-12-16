@@ -71,9 +71,22 @@ export const testRequestStatus = keyedReducer( 'siteId', ( state, { type, role }
 		case JETPACK_CREDENTIALS_TEST:
 			return {
 				...state,
-				[ role ]: 'pending',
+				[ role ]: true,
 			};
 
+		case JETPACK_CREDENTIALS_TEST_VALID:
+		case JETPACK_CREDENTIALS_TEST_INVALID:
+			return {
+				...state,
+				[ role ]: false,
+			};
+	}
+
+	return state;
+} );
+
+export const testStatus = keyedReducer( 'siteId', ( state, { type, role } ) => {
+	switch ( type ) {
 		case JETPACK_CREDENTIALS_TEST_VALID:
 			return {
 				...state,
@@ -130,4 +143,5 @@ export const reducer = combineReducers( {
 	errors,
 	progressUpdates,
 	testRequestStatus,
+	testStatus,
 } );

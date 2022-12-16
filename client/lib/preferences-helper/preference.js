@@ -37,7 +37,7 @@ export default function Preference( { name, value } ) {
 					onClick={ () => dispatch( savePreference( name, null ) ) }
 					title={ translate( 'Unset Preference' ) }
 				>
-					{ 'X' }
+					X
 				</button>
 				<span>{ name }</span>
 			</div>

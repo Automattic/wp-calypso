@@ -48,8 +48,12 @@ function TransferDomainStepStart( {
 	// retrieves the availability data by itself if not provided by the parent component
 	useEffect( () => {
 		( async () => {
-			if ( initialValidation.current ) return;
-			if ( isFetching ) return;
+			if ( initialValidation.current ) {
+				return;
+			}
+			if ( isFetching ) {
+				return;
+			}
 
 			if ( ! inboundTransferStatusInfo ) {
 				setIsFetching( true );

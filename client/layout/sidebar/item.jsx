@@ -52,11 +52,11 @@ export default function SidebarItem( props ) {
 				onMouseEnter={ itemPreload }
 				{ ...linkProps }
 			>
-				{ icon && <Gridicon className={ 'sidebar__menu-icon' } icon={ icon } size={ 24 } /> }
+				{ icon && <Gridicon className="sidebar__menu-icon" icon={ icon } size={ 24 } /> }
 
 				{ materialIcon && (
 					<MaterialIcon
-						className={ 'sidebar__menu-icon' }
+						className="sidebar__menu-icon"
 						icon={ materialIcon }
 						style={ materialIconStyle }
 					/>

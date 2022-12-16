@@ -46,6 +46,12 @@ function getTourAssets( key: string ): TourAsset | undefined {
 				type: 'image/gif',
 			},
 		},
+		videomakerWelcome: {
+			desktop: { src: `${ CDN_PREFIX }/slide-videomaker-welcome.png`, type: 'image/png' },
+		},
+		videomakerEdit: {
+			desktop: { src: `${ CDN_PREFIX }/slide-videomaker-edit.png`, type: 'image/png' },
+		},
 	} as { [ key: string ]: TourAsset };
 
 	return tourAssets[ key ];
@@ -54,21 +60,28 @@ function getTourAssets( key: string ): TourAsset | undefined {
 function getTourSteps(
 	localeSlug: string,
 	referencePositioning = false,
-	isSiteEditor = false
+	isSiteEditor = false,
+	themeName: string | null = null
 ): WpcomStep[] {
+	const isVideoMaker = 'videomaker' === ( themeName ?? '' );
 	return [
 		{
 			slug: 'welcome',
 			meta: {
 				heading: __( 'Welcome to WordPress!', 'full-site-editing' ),
 				descriptions: {
-					desktop: __(
-						'Take this short, interactive tour to learn the fundamentals of the WordPress editor.',
-						'full-site-editing'
-					),
+					desktop: isSiteEditor
+						? __(
+								'Take this short, interactive tour to learn the fundamentals of the WordPress Site Editor.',
+								'full-site-editing'
+						  )
+						: __(
+								'Take this short, interactive tour to learn the fundamentals of the WordPress editor.',
+								'full-site-editing'
+						  ),
 					mobile: null,
 				},
-				imgSrc: getTourAssets( 'welcome' ),
+				imgSrc: getTourAssets( isVideoMaker ? 'videomakerWelcome' : 'welcome' ),
 			},
 			options: {
 				classNames: {
@@ -133,13 +146,18 @@ function getTourSteps(
 			meta: {
 				heading: __( 'Click a block to change it', 'full-site-editing' ),
 				descriptions: {
-					desktop: __(
-						'Use the toolbar to change the appearance of a selected block. Try making it bold.',
-						'full-site-editing'
-					),
+					desktop: isVideoMaker
+						? __(
+								'Use the toolbar to change the appearance of a selected block. Try replacing a video!',
+								'full-site-editing'
+						  )
+						: __(
+								'Use the toolbar to change the appearance of a selected block. Try making it bold.',
+								'full-site-editing'
+						  ),
 					mobile: null,
 				},
-				imgSrc: getTourAssets( 'makeBold' ),
+				imgSrc: getTourAssets( isVideoMaker ? 'videomakerEdit' : 'makeBold' ),
 			},
 			options: {
 				classNames: {
@@ -286,12 +304,24 @@ function getTourSteps(
 						meta: {
 							heading: __( 'Edit your site', 'full-site-editing' ),
 							descriptions: {
-								desktop: __(
-									'Design everything on your site - from the header right down to the footer - using blocks.',
-									'full-site-editing'
+								desktop: createInterpolateElement(
+									__(
+										'Design everything on your site - from the header right down to the footer - in the Site Editor. <link_to_fse_docs>Learn more</link_to_fse_docs>',
+										'full-site-editing'
+									),
+									{
+										link_to_fse_docs: (
+											<ExternalLink
+												href={ localizeUrl(
+													'https://wordpress.com/support/full-site-editing/',
+													localeSlug
+												) }
+											/>
+										),
+									}
 								),
 								mobile: __(
-									'Design everything on your site - from the header right down to the footer - using blocks.',
+									'Design everything on your site - from the header right down to the footer - in the Site Editor.',
 									'full-site-editing'
 								),
 							},

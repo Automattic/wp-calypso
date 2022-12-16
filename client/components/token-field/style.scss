@@ -151,7 +151,7 @@ input[type="text"].form-text-input.token-field__input {
 	color: var(--color-neutral-10);
 
 	&:hover {
-		color: white;
+		color: var(--color-text-inverted);
 		background: var(--color-neutral-40);
 	}
 }

@@ -71,7 +71,7 @@ class DomainsLandingContentCard extends Component {
 
 		return (
 			<CompactCard className="content-card">
-				{ <h2 className="content-card__title">{ title }</h2> }
+				<h2 className="content-card__title">{ title }</h2>
 				{ message && <h3 className={ messageClasses }>{ message }</h3> }
 				{ actionTitle && (
 					<Button

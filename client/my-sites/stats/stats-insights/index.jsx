@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
@@ -11,11 +12,10 @@ import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import AllTime from 'calypso/my-sites/stats/all-time/';
-import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
-import MostPopular from 'calypso/my-sites/stats/most-popular';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import AllTimelHighlightsSection from '../all-time-highlights-section';
+import AllTimelViewsSection from '../all-time-views-section';
+import AnnualHighlightsSection from '../annual-highlights-section';
 import LatestPostSummary from '../post-performance';
 import PostingActivity from '../post-trends';
 import Comments from '../stats-comments';
@@ -27,27 +27,43 @@ import statsStrings from '../stats-strings';
 import StatsViews from '../stats-views';
 
 const StatsInsights = ( props ) => {
-	const { isJetpack, siteId, siteSlug, translate } = props;
+	const { siteId, siteSlug, translate, isOdysseyStats } = props;
 	const moduleStrings = statsStrings();
+
+	const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
+	const isNewAllTimeViews = config.isEnabled( 'stats/all-time-views' );
+
+	// Track the last viewed tab.
+	// Necessary to properly configure the fixed navigation headers.
+	sessionStorage.setItem( 'jp-stats-last-tab', 'insights' );
 
 	// TODO: should be refactored into separate components
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<Main wideLayout>
-			<DocumentHead title={ translate( 'Stats and Insights' ) } />
+		<Main className={ isNewMainChart ? 'stats--new-wrapper' : undefined } fullWidthLayout>
+			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
-			<FormattedHeader
-				brandFont
-				className="stats__section-header"
-				headerText={ translate( 'Stats and Insights' ) }
-				subHeaderText={ translate( "View your site's performance and learn from trends." ) }
-				align="left"
-			/>
-			<StatsNavigation selectedItem={ 'insights' } siteId={ siteId } slug={ siteSlug } />
-			<div>
-				<PostingActivity />
-				<SectionHeader label={ translate( 'All-time views' ) } />
-				<StatsViews />
+			<div className="stats">
+				<FormattedHeader
+					brandFont
+					className="stats__section-header modernized-header"
+					headerText={ translate( 'Jetpack Stats' ) }
+					subHeaderText={ translate( "View your site's performance and learn from trends." ) }
+					align="left"
+				/>
+				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
+				<AnnualHighlightsSection siteId={ siteId } />
+				<AllTimelHighlightsSection siteId={ siteId } />
+				{ isNewAllTimeViews && <AllTimelViewsSection siteId={ siteId } slug={ siteSlug } /> }
+				<div className="stats__module--insights-unified">
+					<PostingActivity />
+					{ ! isNewAllTimeViews && (
+						<>
+							<SectionHeader label={ translate( 'All-time views' ) } />
+							<StatsViews />
+						</>
+					) }
+				</div>
 				{ siteId && (
 					<DomainTip
 						siteId={ siteId }
@@ -56,27 +72,24 @@ const StatsInsights = ( props ) => {
 					/>
 				) }
 				<div className="stats-insights__nonperiodic has-recent">
-					<div className="stats__module-list">
+					<div className="stats__module-list stats__module--unified">
 						<div className="stats__module-column">
 							<LatestPostSummary />
-							<MostPopular />
-							{ ! isJetpack && (
-								<StatsModule
-									path="tags-categories"
-									moduleStrings={ moduleStrings.tags }
-									statType="statsTags"
-								/>
-							) }
-							<AnnualSiteStats isWidget />
-							{ ! isJetpack && <StatShares siteId={ siteId } /> }
+
+							<StatsModule
+								path="tags-categories"
+								moduleStrings={ moduleStrings.tags }
+								statType="statsTags"
+							/>
+							{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for Odyssey for now. */ }
+							{ ! isOdysseyStats && <StatShares siteId={ siteId } /> }
 						</div>
 						<div className="stats__module-column">
 							<Reach />
-							<Followers path={ 'followers' } />
+							<Followers path="followers" />
 						</div>
 						<div className="stats__module-column">
-							<AllTime />
-							<Comments path={ 'comments' } />
+							<Comments path="comments" />
 							<StatsModule
 								path="publicize"
 								moduleStrings={ moduleStrings.publicize }
@@ -85,8 +98,8 @@ const StatsInsights = ( props ) => {
 						</div>
 					</div>
 				</div>
+				<JetpackColophon />
 			</div>
-			<JetpackColophon />
 		</Main>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -98,10 +111,11 @@ StatsInsights.propTypes = {
 
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	return {
-		isJetpack: isJetpackSite( state, siteId ),
 		siteId,
 		siteSlug: getSelectedSiteSlug( state, siteId ),
+		isOdysseyStats,
 	};
 } );
 

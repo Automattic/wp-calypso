@@ -11,14 +11,11 @@
 	display: inline-block;
 	flex-shrink: 0;
 	margin-right: 10px;
+	color: var(--color-success);
 }
 
 .credentials-configured__info-text {
 	display: inline-block;
-}
-
-.credentials-configured__info-gridicon {
-	color: var(--color-success);
 }
 
 .credentials-configured__info-protocol {

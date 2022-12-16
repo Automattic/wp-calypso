@@ -236,7 +236,7 @@ class Site extends Component {
 				<FormLabel htmlFor="site">{ this.props.translate( 'Choose a site address' ) }</FormLabel>
 				<FormTextInput
 					autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
-					autoCapitalize={ 'off' }
+					autoCapitalize="off"
 					className="site__site-url"
 					disabled={ fieldDisabled }
 					name="site"

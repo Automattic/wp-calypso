@@ -13,6 +13,9 @@ export const getPostType = ( type: string ) => {
 		case 'page': {
 			return __( 'Page' );
 		}
+		case 'product': {
+			return __( 'Product' );
+		}
 		default:
 			return type;
 	}
@@ -94,19 +97,24 @@ export const getCampaignOverallSpending = (
 	let daysRun = moment().diff( moment( start_date ), 'days' );
 	daysRun = daysRun > campaignDays ? campaignDays : daysRun;
 
-	/* translators: %1$s: Amount, %2$s: Days. eg: $3 over 2 days */
-	const overallSpending = sprintf( __( '$%1$s over %2$s days' ), totalBudgetUsed, daysRun );
-	return overallSpending;
+	const daysText = daysRun === 1 ? 'day' : 'days';
+
+	if ( daysRun > 0 ) {
+		/* translators: %1$s: Amount, %2$s: Days. Singular or plural: Day(s) eg: $3 over 2 days */
+		return sprintf( __( '$%1$s over %2$s %3$s' ), totalBudgetUsed, daysRun, daysText );
+	}
+
+	/* translators: %1$s: Amount, eg: $3 today */
+	return sprintf( __( '$%1$s today' ), totalBudgetUsed );
 };
 
 export const getCampaignClickthroughRate = ( clicks_total: number, impressions_total: number ) => {
 	const clickthroughRate = ( clicks_total * 100 ) / impressions_total || 0;
-	const formattedRate = clickthroughRate.toLocaleString( undefined, {
+	return clickthroughRate.toLocaleString( undefined, {
 		useGrouping: true,
 		minimumFractionDigits: 0,
 		maximumFractionDigits: 2,
 	} );
-	return formattedRate;
 };
 
 export const getCampaignDurationFormatted = ( start_date: string, end_date: string ) => {

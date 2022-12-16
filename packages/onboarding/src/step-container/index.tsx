@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { ReactChild, ReactElement } from 'react';
 import ActionButtons from '../action-buttons';
 import StepNavigationLink from '../step-navigation-link';
+import VideoPressLogo from '../videopress-logo';
 import './style.scss';
 
 interface Props {
@@ -39,7 +40,9 @@ interface Props {
 	intent?: string;
 	stepProgress?: { count: number; progress: number };
 	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
+	showHeaderJetpackPowered?: boolean;
 	showJetpackPowered?: boolean;
+	showVideoPressPowered?: boolean;
 }
 
 const StepContainer: React.FC< Props > = ( {
@@ -73,7 +76,9 @@ const StepContainer: React.FC< Props > = ( {
 	intent,
 	stepSectionName,
 	recordTracksEvent,
+	showHeaderJetpackPowered,
 	showJetpackPowered,
+	showVideoPressPowered,
 } ) => {
 	const translate = useTranslate();
 
@@ -185,6 +190,11 @@ const StepContainer: React.FC< Props > = ( {
 						</div>
 					) }
 					{ headerButton && <div className="step-container__header-button">{ headerButton }</div> }
+					{ showHeaderJetpackPowered && (
+						<div className="step-container__header-jetpack-powered">
+							<JetpackLogo monochrome size={ 18 } /> <span>{ translate( 'Jetpack powered' ) }</span>
+						</div>
+					) }
 				</div>
 			) }
 
@@ -193,12 +203,17 @@ const StepContainer: React.FC< Props > = ( {
 			{ ! hideSkip && skipButtonAlign === 'bottom' && (
 				<div className="step-container__buttons">
 					{ isLargeSkipLayout && <hr className="step-container__skip-hr" /> }
-					{ <SkipButton /> }
+					<SkipButton />
 				</div>
 			) }
 			{ showJetpackPowered && (
 				<div className="step-container__jetpack-powered">
-					<JetpackLogo monochrome size={ 18 } /> <span>Jetpack powered</span>
+					<JetpackLogo monochrome size={ 18 } /> <span>{ translate( 'Jetpack powered' ) }</span>
+				</div>
+			) }
+			{ showVideoPressPowered && (
+				<div className="step-container__videopress-powered">
+					<VideoPressLogo size={ 24 } /> <span>{ translate( 'Powered by VideoPress' ) }</span>
 				</div>
 			) }
 		</div>

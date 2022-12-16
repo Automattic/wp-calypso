@@ -3,7 +3,7 @@ import { buildConnectionForCheckingAvailability } from './connection';
 import { HappychatAuth } from './types';
 import useHappychatAuth from './use-happychat-auth';
 
-type HCAvailability = { available?: boolean; status?: string };
+type HCAvailability = { available?: boolean; status?: string; env?: 'staging' | 'production' };
 
 const key = Date.now();
 
@@ -11,21 +11,30 @@ function getHCAvailabilityAndStatus( dataAuth: HappychatAuth ) {
 	return new Promise< HCAvailability >( ( resolve ) => {
 		const result: HCAvailability = {};
 		const connection = buildConnectionForCheckingAvailability( {
+			receiveHappychatEnv: ( env ) => {
+				result.env = env;
+
+				if ( Object.keys( result ).length === 3 ) {
+					resolve( result );
+					// close connection after we get accept, status, and env
+					connection.openSocket?.then( ( socket ) => socket.close() );
+				}
+			},
 			receiveAccept: ( receivedAvailability ) => {
 				result.available = receivedAvailability;
 
-				if ( Object.keys( result ).length === 2 ) {
+				if ( Object.keys( result ).length === 3 ) {
 					resolve( result );
-					// close connection after we get accept and status
+					// close connection after we get accept, status, and env
 					connection.openSocket?.then( ( socket ) => socket.close() );
 				}
 			},
 			receiveStatus( status ) {
 				result.status = status;
 
-				if ( Object.keys( result ).length === 2 ) {
+				if ( Object.keys( result ).length === 3 ) {
 					resolve( result );
-					// close connection after we get accept and status
+					// close connection after we get accept, status, and env
 					connection.openSocket?.then( ( socket ) => socket.close() );
 				}
 			},

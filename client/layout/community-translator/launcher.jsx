@@ -38,8 +38,9 @@ class TranslatorLauncher extends Component {
 		translator.init( nextProps.currentUser, nextProps.isUserSettingsReady );
 		trackTranslatorStatus( nextProps.isTranslatorEnabled );
 
-		if ( prevState.isEnabled !== translator.isEnabled() )
+		if ( prevState.isEnabled !== translator.isEnabled() ) {
 			return { ...prevState, isEnabled: translator.isEnabled() };
+		}
 
 		return null;
 	}

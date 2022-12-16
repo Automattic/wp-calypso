@@ -20,7 +20,6 @@ export { useHas3PC } from './queries/use-has-3rd-party-cookies';
 export { useSiteAnalysis } from './queries/use-site-analysis';
 export { useUserSites } from './queries/use-user-sites';
 export type { AnalysisReport } from './queries/use-site-analysis';
-export { useHasSeenWhatsNewModalQuery } from './queries/use-has-seen-whats-new-modal-query';
 export { useSiteIntent } from './queries/use-site-intent';
 export { useSupportAvailability } from './support-queries/use-support-availability';
 export { useSubmitTicketMutation } from './support-queries/use-submit-support-ticket';
@@ -28,6 +27,9 @@ export { useSubmitForumsMutation } from './support-queries/use-submit-forums-top
 export * from './starter-designs-queries';
 export { useSibylQuery } from './support-queries/use-sibyl-query';
 export * from './site/types';
+export * from './templates';
+export * from './onboard/types';
+export * from './domain-suggestions/types';
 
 export {
 	Analyzer,
@@ -57,3 +59,4 @@ export { getContextResults } from './contextual-help/contextual-help';
 export { generateAdminSections } from './contextual-help/admin-sections';
 export type { LinksForSection } from './contextual-help/contextual-help';
 export * from './contextual-help/constants';
+export type { HelpCenterSite } from './help-center/types';

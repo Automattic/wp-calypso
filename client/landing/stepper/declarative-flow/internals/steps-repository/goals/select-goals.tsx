@@ -1,28 +1,52 @@
 import { Button } from '@automattic/components';
 import { Onboard } from '@automattic/data-stores';
+import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import DIFMLink from './difm-link';
 import { useGoals } from './goals';
-import ImportLink from './import-link';
 import SelectCard from './select-card';
 
 type SelectGoalsProps = {
-	displayAllGoals: boolean;
 	onChange: ( selectedGoals: Onboard.SiteGoal[] ) => void;
 	onSubmit: ( selectedGoals: Onboard.SiteGoal[] ) => void;
 	selectedGoals: Onboard.SiteGoal[];
 };
 
+const Placeholder = styled.div`
+	padding: 0 60px;
+	animation: loading-fade 800ms ease-in-out infinite;
+	background-color: var( --color-neutral-10 );
+	color: transparent;
+	min-height: 20px;
+	width: 100%;
+	@keyframes loading-fade {
+		0% {
+			opacity: 0.5;
+		}
+		50% {
+			opacity: 1;
+		}
+		100% {
+			opacity: 0.5;
+		}
+	}
+`;
+
 const SiteGoal = Onboard.SiteGoal;
 
-export const SelectGoals = ( {
-	displayAllGoals,
-	onChange,
-	onSubmit,
-	selectedGoals,
-}: SelectGoalsProps ) => {
+export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsProps ) => {
 	const translate = useTranslate();
-	const goalOptions = useGoals( displayAllGoals );
+	const goalOptions = useGoals();
+
+	// *******************************************************************************
+	// ****  Experiment skeleton left in for future BBE (Goal) copy change tests  ****
+	// *******************************************************************************
+	//
+	// let [ isBuiltByExpressExperimentLoading ] = useExperiment(
+	// 	CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME
+	// );
+	//
+	// *******************************************************************************
+	const isBuiltByExpressExperimentLoading = false;
 
 	const addGoal = ( goal: Onboard.SiteGoal ) => {
 		const goalSet = new Set( selectedGoals );
@@ -45,36 +69,37 @@ export const SelectGoals = ( {
 		onSubmit( selectedGoals );
 	};
 
-	const handleImportLinkClick = () => {
-		const selectedGoalsWithImport = addGoal( SiteGoal.Import );
-		onSubmit( selectedGoalsWithImport );
-	};
-
-	const handleDIFMLinkClick = () => {
-		const selectedGoalsWithDIFM = addGoal( SiteGoal.DIFM );
-		onSubmit( selectedGoalsWithDIFM );
-	};
-
+	const hasBuiltByExpressGoal = goalOptions.some( ( g ) => g.key === SiteGoal.DIFM );
 	return (
 		<>
-			{ displayAllGoals && (
-				<div className="select-goals__cards-hint">{ translate( 'Select all that apply' ) }</div>
-			) }
+			<div className="select-goals__cards-hint">{ translate( 'Select all that apply' ) }</div>
 
 			<div className="select-goals__cards-container">
-				{ goalOptions.map( ( { key, title, isPremium } ) => (
-					<SelectCard
-						key={ key }
-						onChange={ handleChange }
-						selected={ selectedGoals.includes( key ) }
-						value={ key }
-					>
-						<span className="select-goals__goal-title">{ title }</span>
-						{ isPremium && (
-							<span className="select-goals__premium-badge">{ translate( 'Premium' ) }</span>
-						) }
-					</SelectCard>
-				) ) }
+				{ /* We only need to show the goal loader only if the BBE goal will be displayed */ }
+				{ hasBuiltByExpressGoal && isBuiltByExpressExperimentLoading
+					? goalOptions.map( ( { key } ) => (
+							<div
+								className="select-card__container"
+								role="progressbar"
+								key={ `goal-${ key }-placeholder` }
+								style={ { cursor: 'default' } }
+							>
+								<Placeholder />
+							</div>
+					  ) )
+					: goalOptions.map( ( { key, title, isPremium } ) => (
+							<SelectCard
+								key={ key }
+								onChange={ handleChange }
+								selected={ selectedGoals.includes( key ) }
+								value={ key }
+							>
+								<span className="select-goals__goal-title">{ title }</span>
+								{ isPremium && (
+									<span className="select-goals__premium-badge">{ translate( 'Premium' ) }</span>
+								) }
+							</SelectCard>
+					  ) ) }
 			</div>
 
 			<div className="select-goals__actions-container">
@@ -82,13 +107,6 @@ export const SelectGoals = ( {
 					{ translate( 'Continue' ) }
 				</Button>
 			</div>
-
-			{ ! displayAllGoals && (
-				<div className="select-goals__links-container">
-					<ImportLink onClick={ handleImportLinkClick } />
-					<DIFMLink onClick={ handleDIFMLinkClick } />
-				</div>
-			) }
 		</>
 	);
 };

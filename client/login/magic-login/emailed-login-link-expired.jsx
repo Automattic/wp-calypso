@@ -43,7 +43,7 @@ class EmailedLoginLinkExpired extends Component {
 					actionCallback={ this.onClickTryAgainLink }
 					actionURL={ login( { twoFactorAuthType: 'link' } ) }
 					className="magic-login__link-expired"
-					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+					illustration="/calypso/images/illustrations/illustration-404.svg"
 					illustrationWidth={ 500 }
 					line={ translate( 'Maybe try resetting your password instead' ) }
 					secondaryAction={ translate( 'Reset my password' ) }

@@ -1,4 +1,5 @@
-import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import { VIDEOPRESS_FLOW, isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import page from 'page';
@@ -27,6 +28,7 @@ import {
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
+import wpcom from 'calypso/lib/wp';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
@@ -123,6 +125,22 @@ class DomainsStep extends Component {
 		this.state = {
 			currentStep: null,
 		};
+	}
+
+	componentDidMount() {
+		if ( isTailoredSignupFlow( this.props.flowName ) ) {
+			// trigger guides on this step, we don't care about failures or response
+			wpcom.req.post(
+				'guides/trigger',
+				{
+					apiNamespace: 'wpcom/v2/',
+				},
+				{
+					flow: this.props.flowName,
+					step: 'domains',
+				}
+			);
+		}
 	}
 
 	getLocale() {
@@ -442,7 +460,7 @@ class DomainsStep extends Component {
 	getSideContent = () => {
 		const useYourDomain = ! this.shouldHideUseYourDomain() ? (
 			<div className="domains__domain-side-content">
-				<ReskinSideExplainer onClick={ this.handleUseYourDomainClick } type={ 'use-your-domain' } />
+				<ReskinSideExplainer onClick={ this.handleUseYourDomainClick } type="use-your-domain" />
 			</div>
 		) : null;
 
@@ -452,7 +470,7 @@ class DomainsStep extends Component {
 					<div className="domains__domain-side-content domains__free-domain">
 						<ReskinSideExplainer
 							onClick={ this.handleDomainExplainerClick }
-							type={ 'free-domain-explainer' }
+							type="free-domain-explainer"
 							flowName={ this.props.flowName }
 						/>
 					</div>
@@ -462,7 +480,7 @@ class DomainsStep extends Component {
 					<div className="domains__domain-side-content">
 						<ReskinSideExplainer
 							onClick={ this.handleDomainExplainerClick }
-							type={ 'free-domain-only-explainer' }
+							type="free-domain-only-explainer"
 						/>
 					</div>
 				) }
@@ -507,6 +525,7 @@ class DomainsStep extends Component {
 		}
 
 		const includeWordPressDotCom = this.props.includeWordPressDotCom ?? ! this.props.isDomainOnly;
+		const promoTlds = this.props?.queryObject?.tld?.split( ',' ) ?? [];
 
 		return (
 			<CalypsoShoppingCartProvider>
@@ -517,8 +536,10 @@ class DomainsStep extends Component {
 					onAddDomain={ this.handleAddDomain }
 					products={ this.props.productsList }
 					basePath={ this.props.path }
-					promoTlds={ this.props?.queryObject?.tld?.split( ',' ) }
+					promoTlds={ promoTlds }
 					mapDomainUrl={ this.getUseYourDomainUrl() }
+					otherManagedSubdomains={ this.props.otherManagedSubdomains }
+					otherManagedSubdomainsCountOverride={ this.props.otherManagedSubdomainsCountOverride }
 					transferDomainUrl={ this.getUseYourDomainUrl() }
 					useYourDomainUrl={ this.getUseYourDomainUrl() }
 					onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
@@ -612,7 +633,7 @@ class DomainsStep extends Component {
 			return translate( 'Find the domain that defines you' );
 		}
 
-		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
+		if ( isNewsletterOrLinkInBioFlow( flowName ) || VIDEOPRESS_FLOW === flowName ) {
 			const components = {
 				span: (
 					// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus
@@ -623,6 +644,13 @@ class DomainsStep extends Component {
 					/>
 				),
 			};
+			if ( VIDEOPRESS_FLOW === flowName ) {
+				return translate(
+					'Set your video site apart with a custom domain. Not sure yet? {{span}}Decide later{{/span}}.',
+					{ components }
+				);
+			}
+
 			return flowName === 'newsletter'
 				? translate(
 						'Help your Newsletter stand out with a custom domain. Not sure yet? {{span}}Decide later{{/span}}.',
@@ -683,7 +711,13 @@ class DomainsStep extends Component {
 	}
 
 	isTailoredFlow() {
-		return isNewsletterOrLinkInBioFlow( this.props.flowName );
+		return (
+			isNewsletterOrLinkInBioFlow( this.props.flowName ) || VIDEOPRESS_FLOW === this.props.flowName
+		);
+	}
+
+	shouldHideNavButtons() {
+		return 'with-theme' === this.props.flowName || this.isTailoredFlow();
 	}
 
 	renderContent() {
@@ -725,7 +759,9 @@ class DomainsStep extends Component {
 	}
 
 	getPreviousStepUrl() {
-		if ( 'use-your-domain' !== this.props.stepSectionName ) return null;
+		if ( 'use-your-domain' !== this.props.stepSectionName ) {
+			return null;
+		}
 
 		const { step, ...queryValues } = parse( window.location.search.replace( '?', '' ) );
 		const currentStep = step ?? this.state?.currentStep;
@@ -798,9 +834,6 @@ class DomainsStep extends Component {
 			} else if ( 'general-settings' === source && siteSlug ) {
 				backUrl = `/settings/general/${ siteSlug }`;
 				backLabelText = translate( 'Back to General Settings' );
-			} else if ( 'sites-dashboard' === source ) {
-				backUrl = defaultBackUrl;
-				backLabelText = sitesBackLabelText;
 			} else if ( backUrl === this.removeQueryParam( this.props.path ) ) {
 				backUrl = defaultBackUrl;
 				backLabelText = sitesBackLabelText;
@@ -829,10 +862,10 @@ class DomainsStep extends Component {
 				isExternalBackUrl={ isExternalBackUrl }
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
-				shouldHideNavButtons={ this.isTailoredFlow() }
+				shouldHideNavButtons={ this.shouldHideNavButtons() }
 				stepContent={
 					<div>
-						{ ! this.props.productsLoaded && <QueryProductsList /> }
+						<QueryProductsList />
 						{ this.renderContent() }
 					</div>
 				}

@@ -273,22 +273,6 @@ export function getTestDomainRegistrarDetails( email: string ): RegistrarDetails
 }
 
 /**
- * Adjusts the user invite link to the correct environment.
- *
- * By default, all invite links reference the production `wordpress.com` hostname.
- * However, for end-to-end tests it is desirable to test invite functionality against
- * the development environment.
- *
- * @param {string} inviteURL Full invitation link.
- * @returns {string} Adjusted invitation link with the intended hostname.
- */
-export function adjustInviteLink( inviteURL: string ): string {
-	const originalURL = new URL( inviteURL );
-	const adjustedURL = new URL( originalURL.pathname, getCalypsoURL() );
-	return adjustedURL.href;
-}
-
-/**
  * Returns the hostname for Jetpack.
  *
  * @returns {string} Hostname to be used. Returns value of JETPACKHOST environment variable if set; WPCOM otherwise.

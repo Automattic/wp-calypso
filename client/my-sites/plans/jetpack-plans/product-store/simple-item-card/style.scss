@@ -25,6 +25,11 @@
 	}
 }
 
+.simple-item-card__icon > img {
+	width: 22px;
+	height: auto;
+}
+
 .simple-item-card__body {
 	display: flex;
 	flex-direction: column;
@@ -35,6 +40,7 @@
 .simple-item-card__header {
 	display: flex;
 	flex-direction: row;
+	column-gap: 1em;
 	font-size: $font-body-small;
 	justify-content: space-between;
 	align-items: flex-start;
@@ -46,6 +52,7 @@
 
 .simple-item-card__title {
 	font-size: $font-title-medium;
+	font-weight: 600;
 	line-height: rem(29px);
 	margin-bottom: 0 !important;
 	color: var(--studio-gray-100);
@@ -67,10 +74,9 @@
 }
 
 .simple-item-card__custom-label {
+	display: inline-block;
 	span {
-		display: inline-block;
 		padding: 0.125rem 0.5rem;
-		margin: 0.4rem 1rem 0 0;
 		background-color: var(--studio-yellow-10);
 		border-radius: 4px;
 		font-size: 0.875rem;

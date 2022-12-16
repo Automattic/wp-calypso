@@ -4,7 +4,7 @@ const contextLinks = {
 		post_id: 80368,
 	},
 	advertising: {
-		link: 'https://wordpress.com/advertising/',
+		link: 'https://wordpress.com/support/promote-a-post/',
 		post_id: 213203,
 	},
 	autorenewal: {
@@ -66,6 +66,10 @@ const contextLinks = {
 	'getting-started-video': {
 		link: 'https://wordpress.com/support/getting-started-with-wordpress-com/#video-getting-started-with-word-press-com',
 		post_id: 158974,
+	},
+	'gift-a-subscription': {
+		link: 'https://wordpress.com/support/gift-a-wordpress-com-subscription',
+		post_id: 226176,
 	},
 	'google-analytics-measurement-id': {
 		link: 'https://wordpress.com/support/google-analytics/#get-your-measurement-id',

@@ -336,7 +336,7 @@ class RegistrantExtraInfoFrForm extends PureComponent {
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
-						placeholder={ '' }
+						placeholder=""
 						onChange={ this.handleChangeContactEvent }
 						isError={ organizationIsError() }
 					/>

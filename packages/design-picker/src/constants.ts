@@ -5,6 +5,7 @@ export const FONT_TITLES: Partial< Record< Font, string > > = {
 };
 
 export const SHOW_ALL_SLUG = 'CLIENT_ONLY_SHOW_ALL_SLUG';
+export const SHOW_GENERATED_DESIGNS_SLUG = 'CLIENT_ONLY_SHOW_GENERATED_DESIGNS_SLUG';
 
 /**
  * Pairings of fontFamilies

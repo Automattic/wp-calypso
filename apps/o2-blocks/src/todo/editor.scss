@@ -88,6 +88,8 @@ $color-add-button-icon: #7e8993; // dark-gray-200
 	// Add new item form
 	.add-new-todo-item-form {
 		align-items: center;
+		// Only show the "add new" form when it's strictly needed.
+		display: none;
 
 		.components-button {
 			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
@@ -129,11 +131,6 @@ body:not(.wp-admin) .gutenberg {
 	.wp-block-a8c-todo .wp-block-a8c-todo__item {
 		padding: 10px 0 4px;
 	}
-}
-
-// Only show the "add new" form when it's strictly needed.
-.wp-block-a8c-todo .add-new-todo-item-form {
-	display: none;
 }
 
 .block-editor-block-list__block.is-selected,

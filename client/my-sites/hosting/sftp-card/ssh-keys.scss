@@ -1,0 +1,15 @@
+.ssh-keys {
+	max-width: calc(100vw - 32px);
+}
+
+.ssh-keys__form {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 16px;
+}
+
+.ssh-keys__select {
+	max-width: 100%;
+	width: 350px;
+}

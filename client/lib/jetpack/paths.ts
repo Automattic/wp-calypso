@@ -46,3 +46,5 @@ export const pluginsPath = ( siteSlug?: string, query = {} ): string => {
 	const path = siteSlug ? `${ pluginsBasePath }/${ siteSlug }` : pluginsBasePath;
 	return addQueryArgs( query, path );
 };
+
+export const dashboardPath = () => '/dashboard';

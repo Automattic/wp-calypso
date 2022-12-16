@@ -19,7 +19,7 @@ import { stringify } from 'qs';
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
-import { shouldSeeGdprBanner } from 'calypso/lib/analytics/utils';
+import { shouldSeeCookieBanner, parseTrackingPrefs } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
@@ -29,6 +29,7 @@ import isSectionEnabled from 'calypso/sections-filter';
 import { serverRouter, getCacheKey } from 'calypso/server/isomorphic-routing';
 import analytics from 'calypso/server/lib/analytics';
 import isWpMobileApp from 'calypso/server/lib/is-wp-mobile-app';
+import performanceMark from 'calypso/server/lib/performance-mark/index';
 import {
 	serverRender,
 	renderJsx,
@@ -51,7 +52,6 @@ import middlewareAssets from '../middleware/assets.js';
 import middlewareCache from '../middleware/cache.js';
 import middlewareUnsupportedBrowser from '../middleware/unsupported-browser.js';
 import { logSectionResponse } from './analytics';
-
 const debug = debugFactory( 'calypso:pages' );
 
 const calypsoEnv = config( 'env_id' );
@@ -95,11 +95,18 @@ function setupLoggedInContext( req, res, next ) {
 	next();
 }
 
-function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
+function getDefaultContext( request, response, entrypoint = 'entry-main', sectionName ) {
+	performanceMark( request.context, 'getDefaultContext' );
+
 	const geoIPCountryCode = request.headers[ 'x-geoip-country-code' ];
-	const showGdprBanner = shouldSeeGdprBanner(
-		request.cookies.country_code || geoIPCountryCode,
+	const trackingPrefs = parseTrackingPrefs(
+		request.cookies.sensitive_pixel_options,
 		request.cookies.sensitive_pixel_option
+	);
+
+	const showGdprBanner = shouldSeeCookieBanner(
+		request.cookies.country_code || geoIPCountryCode,
+		trackingPrefs
 	);
 
 	if ( ! request.cookies.country_code && geoIPCountryCode ) {
@@ -120,9 +127,11 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	 * are considered logged out. This shouldn't cause issues because only one
 	 * user is using the cache in dev mode -- so cross-request pollution won't happen.
 	 */
+	performanceMark( request.context, 'get cached redux state', true );
 	const cachedServerState = request.context.isLoggedIn ? {} : stateCache.get( cacheKey ) || {};
 	const getCachedState = ( reducer, storageKey ) => {
 		const storedState = cachedServerState[ storageKey ];
+
 		if ( ! storedState ) {
 			return undefined;
 		}
@@ -130,24 +139,34 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	};
 	const reduxStore = createReduxStore( getCachedState( initialReducer, 'root' ) );
 	setStore( reduxStore, getCachedState );
+	performanceMark( request.context, 'create basic options', true );
 
 	const devEnvironments = [ 'development', 'jetpack-cloud-development' ];
 	const isDebug = devEnvironments.includes( calypsoEnv ) || request.query.debug !== undefined;
 
 	const oauthClientId = request.query.oauth2_client_id || request.query.client_id;
 	const isWCComConnect =
-		( 'login' === request.context.sectionName || 'signup' === request.context.sectionName ) &&
+		( 'login' === sectionName || 'signup' === sectionName ) &&
 		request.query[ 'wccom-from' ] &&
 		isWooOAuth2Client( { id: parseInt( oauthClientId ) } );
 
 	const reactQueryDevtoolsHelper = config.isEnabled( 'dev/react-query-devtools' );
 	const authHelper = config.isEnabled( 'dev/auth-helper' );
+	const accountSettingsHelper = config.isEnabled( 'dev/account-settings-helper' );
 	// preferences helper requires a Redux store, which doesn't exist in Gutenboarding
 	const preferencesHelper =
 		config.isEnabled( 'dev/preferences-helper' ) && entrypoint !== 'entry-gutenboarding';
 	const featuresHelper = config.isEnabled( 'dev/features-helper' );
 
 	const flags = ( request.query.flags || '' ).split( ',' );
+
+	performanceMark( request.context, 'getFilesForEntrypoint', true );
+	const entrypointFiles = request.getFilesForEntrypoint( entrypoint );
+
+	performanceMark( request.context, 'getAssets', true );
+	const manifests = request.getAssets().manifests;
+
+	performanceMark( request.context, 'assign context object', true );
 	const context = Object.assign( {}, request.context, {
 		commitSha: process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)',
 		compileDebug: process.env.NODE_ENV === 'development',
@@ -159,9 +178,10 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		isWooDna: wooDnaConfig( request.query ).isWooDnaFlow(),
 		badge: false,
 		lang: config( 'i18n_default_locale_slug' ),
-		entrypoint: request.getFilesForEntrypoint( entrypoint ),
-		manifests: request.getAssets().manifests,
+		entrypoint: entrypointFiles,
+		manifests,
 		reactQueryDevtoolsHelper,
+		accountSettingsHelper,
 		authHelper,
 		preferencesHelper,
 		featuresHelper,
@@ -183,6 +203,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		isDebug,
 	};
 
+	performanceMark( request.context, 'setup environments', true );
 	if ( calypsoEnv === 'wpcalypso' ) {
 		context.badge = calypsoEnv;
 		context.devDocs = true;
@@ -226,17 +247,21 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	return context;
 }
 
-const setupDefaultContext = ( entrypoint ) => ( req, res, next ) => {
-	req.context = getDefaultContext( req, res, entrypoint );
+const setupDefaultContext = ( entrypoint, sectionName ) => ( req, res, next ) => {
+	req.context = getDefaultContext( req, res, entrypoint, sectionName );
 	next();
 };
 
 function setUpLocalLanguageRevisions( req ) {
+	performanceMark( req.context, 'setUpLocalLanguageRevisions', true );
 	const rootPath = path.join( __dirname, '..', '..', '..' );
 	const langRevisionsPath = path.join( rootPath, 'public', 'languages', 'lang-revisions.json' );
+
+	performanceMark( req.context, 'read language file', true );
 	const langPromise = fs.promises
 		.readFile( langRevisionsPath, 'utf8' )
 		.then( ( languageRevisions ) => {
+			performanceMark( req.context, 'parse language file', true );
 			req.context.languageRevisions = JSON.parse( languageRevisions );
 
 			return languageRevisions;
@@ -251,6 +276,7 @@ function setUpLocalLanguageRevisions( req ) {
 }
 
 function setUpLoggedOutRoute( req, res, next ) {
+	performanceMark( req.context, 'setUpLoggedOutRoute', true );
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN',
 	} );
@@ -262,7 +288,10 @@ function setUpLoggedOutRoute( req, res, next ) {
 	}
 
 	Promise.all( setupRequests )
-		.then( () => next() )
+		.then( () => {
+			performanceMark( req.context, 'done with loggedOut setup requests', true );
+			next();
+		} )
 		.catch( ( error ) => next( error ) );
 }
 
@@ -489,6 +518,8 @@ function setUpCSP( req, res, next ) {
 }
 
 function setUpRoute( req, res, next ) {
+	performanceMark( req.context, 'setUpRoute' );
+
 	if ( req.context.isRouteSetup === true ) {
 		req.logger.warn(
 			{
@@ -550,7 +581,9 @@ const renderServerError =
 	( err, req, res, next ) => {
 		// If the response is not writable it means someone else already rendered a page, do nothing
 		// Hopefully they logged the error as well.
-		if ( res.writableEnded ) return;
+		if ( res.writableEnded ) {
+			return;
+		}
 
 		try {
 			req.logger.error( err );
@@ -686,7 +719,7 @@ function wpcomPages( app ) {
 	// Landing pages for domains-related emails
 	app.get(
 		'/domain-services/:action',
-		setupDefaultContext( 'entry-domains-landing' ),
+		setupDefaultContext( 'entry-domains-landing', 'domains-landing' ),
 		( req, res ) => {
 			const ctx = req.context;
 			attachBuildTimestamp( ctx );
@@ -805,7 +838,7 @@ export default function pages() {
 
 		app.get(
 			pathRegex,
-			setupDefaultContext( entrypoint ),
+			setupDefaultContext( entrypoint, section.name ),
 			setUpSectionContext( section, entrypoint ),
 			// Skip the rest of the middleware chain if SSR compatible. Further
 			// SSR checks aren't accounted for here, but happen in the SSR pipeline

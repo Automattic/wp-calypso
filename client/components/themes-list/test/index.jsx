@@ -14,6 +14,11 @@ jest.mock( 'calypso/components/theme', () => ( { theme } ) => (
 	<div data-testid={ `theme-${ theme.id }` } />
 ) );
 
+jest.mock( 'react-redux', () => ( {
+	...jest.requireActual( 'react-redux' ),
+	useSelector: () => false,
+} ) );
+
 const defaultProps = deepFreeze( {
 	themes: [
 		{
@@ -33,6 +38,7 @@ const defaultProps = deepFreeze( {
 	fetchNextPage: noop,
 	getButtonOptions: noop,
 	onScreenshotClick: noop,
+	upsellCardDisplayed: noop,
 	translate: ( string ) => string,
 } );
 

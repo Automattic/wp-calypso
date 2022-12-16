@@ -73,14 +73,14 @@ describe( 'MediaLibrary', () => {
 		test( 'is issued when component source changes and now viewing an external source', () => {
 			const { rerender } = getItem( '' );
 
-			rerender( <MediaLibrary { ...props } source={ 'google_photos' } /> );
+			rerender( <MediaLibrary { ...props } source="google_photos" /> );
 			expect( requestStub ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		test( 'is not issued when component source changes and not viewing an external source', () => {
 			const { rerender } = getItem( '' );
 
-			rerender( <MediaLibrary { ...props } source={ '' } /> );
+			rerender( <MediaLibrary { ...props } source="" /> );
 			expect( requestStub ).toHaveBeenCalledTimes( 0 );
 		} );
 

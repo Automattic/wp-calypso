@@ -21,14 +21,13 @@ This obviously varies between components, but a few easy things to start out wit
 Like its child components?
 
 ```javascript
-import AnExpectedChildComponent from 'an-expected-child-component';
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import MyComponent from 'my-component';
 
-test( 'should have AnExpectedChildComponent as a child of MyComponent', () => {
-	const wrapper = shallow( <MyComponent /> );
-	expect( wrapper ).toMatchSnapshot();
-	expect( wrapper.find( AnExpectedChildComponent ) ).toHaveLength( 1 );
+test( 'should have Dialog as a child of MyComponent', () => {
+	const { container } = render( <MyComponent /> );
+	expect( container ).toMatchSnapshot();
+	expect( screen.getByRole( 'dialog' ) ).toBeVisible();
 } );
 ```
 
@@ -61,12 +60,15 @@ When a user for example clicks an element does the component react like it shoul
 Example test from `calypso/client/components/token-field`:
 
 ```javascript
-test( 'should remove tokens when X icon clicked', () => {
-	const wrapper = mount( <TokenFieldWrapper /> );
-	const tokenFieldNode = wrapper.find( '.token-field' );
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
-	tokenFieldNode.find( '.token-field__remove-token' ).first().simulate( 'click' );
-	expect( wrapper.state( 'tokens' ) ).toEqual( [ 'bar' ] );
+test( 'should remove tokens when X icon clicked', async () => {
+	const user = userEvent.setup();
+	render( <TokenFieldWrapper /> );
+	await user.click( screen.getAllByRole( 'button', { name: 'Remove' } )[ 0 ] );
+	const tokenField = screen.getByRole( 'textbox', { name: 'Your Field' } );
+	expect( tokenField ).toHaveValue( 'bar' );
 } );
 ```
 
@@ -107,7 +109,7 @@ class ThemesList extends React.Component {
 So we test it like this:
 
 ```javascript
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import EmptyContent from 'calypso/components/empty-content';
 import Theme from 'calypso/components/theme';
 import { ThemesList } from '../';
@@ -121,20 +123,20 @@ const defaultProps = deepFreeze( {
 } );
 
 test( 'should render a div with a className of "themes-list"', () => {
-	const wrapper = shallow( <ThemesList { ...defaultProps } /> );
-	expect( wrapper ).toMatchSnapshot();
-	expect( wrapper.hasClass( 'themes-list' ) ).toBe( true );
-	expect( wrapper.find( Theme ) ).toHaveLength( defaultProps.themes.length );
+	const { container } = render( <ThemesList { ...defaultProps } /> );
+	expect( container ).toMatchSnapshot();
+	expect( container.firstChild ).toHaveClass( 'themes-list' );
+	expect( container.querySelectorAll( '.theme' ) ).toHaveLength( defaultProps.themes.length );
 } );
 
 test( 'should render a <Theme /> child for each provided theme', () => {
-	const wrapper = shallow( <ThemesList { ...defaultProps } /> );
-	expect( wrapper.find( Theme ) ).toHaveLength( defaultProps.themes.length );
+	const { container } = render( <ThemesList { ...defaultProps } /> );
+	expect( container.querySelectorAll( '.theme' ) ).toHaveLength( defaultProps.themes.length );
 } );
 
 test( 'should display the EmptyContent component when no themes are provided', () => {
-	const wrapper = shallow( <ThemesList { ...defaultProps } themes={ [] } /> );
-	expect( wrapper.type() ).toBe( EmptyContent );
+	const { container } = render( <ThemesList { ...defaultProps } themes={ [] } /> );
+	expect( container ).toBeEmptyDOMElement();
 } );
 ```
 
@@ -166,3 +168,59 @@ export default localize( SomeComponent );
 ```
 
 See [#18064](https://github.com/Automattic/wp-calypso/pull/18064) for full examples of using ES6 classes.
+
+## Enzyme support
+
+Historically, we used to support [`enzyme`](https://github.com/enzymejs/enzyme), but support was dropped in favor of `@testing-library/react`, the primary reason being the fact that it was incompatible with React 18, and we are aiming at unblocking the upgrade to React 18. There were additional motivations, like being able to write more accessible tests and being able to test closer to what the user actually experiences.
+
+Previously, `enzyme` was provided by the `@automattic/calypso-jest` package as part of the testing infrastructure. Nowadays, in the Calypso monorepo, it's recommended to use `@testing-library/react` for component tests.
+
+If you wish to use `enzyme` in your project that uses a Calypso package, you can still use it by manually providing the React 17 adapter, by following the steps below. Note that it's likely that Enzyme still doesn't support React 18 yet.
+
+To install the enzyme dependency, run:
+
+```bash
+npm install --save enzyme
+```
+
+To install the React 17 adapter dependency, run:
+
+```bash
+npm install --save @wojtekmaj/enzyme-adapter-react-17
+```
+
+To use the React 17 adapter, use this in your [`setupFilesAfterEnv`](https://jestjs.io/docs/configuration#setupfilesafterenv-array) configuration:
+
+```javascript
+// It "mocks" enzyme, so that we can delay loading of
+// the utility functions until enzyme is imported in tests.
+// Props to @gdborton for sharing this technique in his article:
+// https://medium.com/airbnb-engineering/unlocking-test-performance-migrating-from-mocha-to-jest-2796c508ec50.
+let mockEnzymeSetup = false;
+jest.mock( 'enzyme', () => {
+	const actualEnzyme = jest.requireActual( 'enzyme' );
+	if ( ! mockEnzymeSetup ) {
+		mockEnzymeSetup = true;
+		// Configure enzyme 3 for React, from docs: http://airbnb.io/enzyme/docs/installation/index.html
+		const Adapter = jest.requireActual( '@wojtekmaj/enzyme-adapter-react-17' );
+		actualEnzyme.configure( { adapter: new Adapter() } );
+	}
+	return actualEnzyme;
+} );
+```
+
+If you also use snapshot tests with `enzyme`, you might want to add support for serializing them, through the `enzyme-to-json` package.
+
+To install the dependency, run:
+
+```bash
+npm install --save enzyme-to-json
+```
+
+Finally, you should add `enzyme-to-json/serializer` to the array of [`snapshotSerializers`](https://jestjs.io/docs/configuration#snapshotserializers-arraystring) in your `jest` configuration:
+
+```
+{
+	snapshotSerializers: [ 'enzyme-to-json/serializer' ]
+}
+```

@@ -124,6 +124,13 @@
 	}
 }
 
+@mixin onboarding-break-mobile-landscape() {
+	// very narrow wide screens (mobile landscape)
+	@media screen and ( max-height: 512px ) {
+		@content;
+	}
+}
+
 @mixin onboarding-modal-overlay {
 	// Absolute positioning allows the modal
 	// to reuse the <body> element's scrollbar.

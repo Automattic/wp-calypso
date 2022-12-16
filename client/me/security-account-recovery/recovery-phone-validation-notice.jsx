@@ -64,7 +64,7 @@ class RecoveryPhoneValidationNotice extends Component {
 
 				<FormVerificationCodeInput
 					disabled={ isValidating }
-					method={ 'sms' }
+					method="sms"
 					onChange={ this.onChange }
 					value={ candidateCode }
 				/>

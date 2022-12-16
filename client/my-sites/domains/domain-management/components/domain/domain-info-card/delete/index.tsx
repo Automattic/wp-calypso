@@ -25,8 +25,9 @@ const DomainDeleteInfoCard = ( {
 		! purchase ||
 		! domain.currentUserIsOwner ||
 		domain.pendingRegistration
-	)
+	) {
 		return null;
+	}
 
 	const removePurchaseClassName = 'domain-delete-info-card is-compact button';
 

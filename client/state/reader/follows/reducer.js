@@ -303,8 +303,20 @@ export const lastSyncTime = ( state = null, action ) => {
 	return state;
 };
 
+export const loading = ( state = null, action ) => {
+	switch ( action.type ) {
+		case READER_FOLLOWS_SYNC_START:
+			return true;
+		case READER_FOLLOWS_SYNC_COMPLETE:
+			return false;
+	}
+
+	return state;
+};
+
 export default combineReducers( {
 	items,
 	itemsCount,
 	lastSyncTime,
+	loading,
 } );

@@ -35,7 +35,7 @@ describe( 'item', () => {
 
 		test( 'should render custom aria-label if provided', () => {
 			render(
-				<SelectDropdownItem count={ 123 } ariaLabel={ 'My Custom Label' }>
+				<SelectDropdownItem count={ 123 } ariaLabel="My Custom Label">
 					Published
 				</SelectDropdownItem>
 			);

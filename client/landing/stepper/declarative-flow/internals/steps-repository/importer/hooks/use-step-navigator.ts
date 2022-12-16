@@ -2,13 +2,13 @@ import { getWpOrgImporterUrl } from 'calypso/blocks/import/util';
 import { useCheckoutUrl } from 'calypso/blocks/importer/hooks/use-checkout-url';
 import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
 import { addQueryArgs } from 'calypso/lib/route';
-import { StepPath } from '../../../steps-repository';
 import { BASE_STEPPER_ROUTE } from '../../import/config';
 import { removeLeadingSlash } from '../../import/util';
 import type { NavigationControls } from '../../../types';
 import type { StepNavigator } from 'calypso/blocks/importer/types';
 
 export function useStepNavigator(
+	flow: string | null,
 	navigation: NavigationControls,
 	siteId: number | undefined | null,
 	siteSlug: string | undefined | null,
@@ -17,8 +17,8 @@ export function useStepNavigator(
 	const checkoutUrl = useCheckoutUrl( siteId, siteSlug );
 
 	function navigator( path: string ) {
-		const stepPath = removeLeadingSlash( path.replace( BASE_STEPPER_ROUTE, '' ) );
-		navigation.goToStep?.( stepPath as StepPath );
+		const stepPath = removeLeadingSlash( path.replace( `${ BASE_STEPPER_ROUTE }/${ flow }`, '' ) );
+		navigation.goToStep?.( stepPath as string );
 	}
 
 	function goToIntentPage() {
@@ -68,7 +68,7 @@ export function useStepNavigator(
 			run: true,
 		};
 
-		return addQueryArgs( queryParams, `/${ BASE_STEPPER_ROUTE }/importerWordpress` );
+		return addQueryArgs( queryParams, `/${ BASE_STEPPER_ROUTE }/${ flow }/importerWordpress` );
 	}
 
 	function getCheckoutUrl() {

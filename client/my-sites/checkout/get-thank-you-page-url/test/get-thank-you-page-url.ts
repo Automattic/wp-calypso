@@ -1716,5 +1716,42 @@ describe( 'getThankYouPageUrl', () => {
 				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=80023&siteId=123456789'
 			);
 		} );
+
+		it( '/checkout/gift/thank-you/:site when gift purchase', () => {
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart: {
+					...getEmptyResponseCart(),
+					products: [
+						{
+							...getEmptyResponseCartProduct(),
+							product_slug: PLAN_PERSONAL,
+						},
+					],
+					is_gift_purchase: true,
+					gift_details: { receiver_blog_slug: 'foo.bar' },
+				},
+			} );
+			expect( url ).toBe( '/checkout/gift/thank-you/foo.bar' );
+		} );
+
+		it( 'Error when gift purchase missing blog_slug', () => {
+			expect( () =>
+				getThankYouPageUrl( {
+					...defaultArgs,
+					cart: {
+						...getEmptyResponseCart(),
+						products: [
+							{
+								...getEmptyResponseCartProduct(),
+								product_slug: PLAN_PERSONAL,
+							},
+						],
+						is_gift_purchase: true,
+						gift_details: {},
+					},
+				} )
+			).toThrow();
+		} );
 	} );
 } );

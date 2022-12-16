@@ -1,11 +1,10 @@
 import { useCallback } from 'react';
 import { captureException } from 'calypso/lib/sentry';
-import { useFlowParam } from './use-flow-param';
 import { useIntent } from './use-intent';
 import { useSite } from './use-site';
 
-const useCaptureFlowException = ( stepName: string ) => {
-	const flow = useFlowParam() || 'default';
+const useCaptureFlowException = ( flowName: string | null, stepName: string ) => {
+	const flow = flowName || 'default';
 	const intent = useIntent() || null;
 	const site = useSite();
 

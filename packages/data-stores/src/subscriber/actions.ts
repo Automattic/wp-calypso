@@ -13,9 +13,11 @@ export function createActions() {
 	/**
 	 * ↓ Import subscribers by CSV
 	 */
-	const importCsvSubscribersStart = ( siteId: number ) => ( {
+	const importCsvSubscribersStart = ( siteId: number, file?: File, emails: string[] = [] ) => ( {
 		type: 'IMPORT_CSV_SUBSCRIBERS_START' as const,
 		siteId,
+		file,
+		emails,
 	} );
 
 	const importCsvSubscribersStartSuccess = ( siteId: number, jobId: number ) => ( {
@@ -35,8 +37,8 @@ export function createActions() {
 		job,
 	} );
 
-	function* importCsvSubscribers( siteId: number, file: File ) {
-		yield importCsvSubscribersStart( siteId );
+	function* importCsvSubscribers( siteId: number, file?: File, emails: string[] = [] ) {
+		yield importCsvSubscribersStart( siteId, file, emails );
 
 		try {
 			const data: ImportSubscribersResponse = yield wpcomRequest( {
@@ -45,7 +47,8 @@ export function createActions() {
 				apiNamespace: 'wpcom/v2',
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
-				formData: [ [ 'import', file, file.name ] ],
+				formData: file && [ [ 'import', file, file.name ] ],
+				body: { emails },
 			} );
 
 			yield importCsvSubscribersStartSuccess( siteId, data.upload_id );

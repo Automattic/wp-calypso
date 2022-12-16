@@ -101,15 +101,15 @@ const WooVerifyEmail: Step = function WooVerifyEmail( { navigation } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'woo-verify-email-step' }
+			stepName="woo-verify-email-step"
 			goBack={ goBack }
 			goNext={ () => redirect( `/home/${ siteSlug }` ) }
 			isHorizontalLayout={ false }
-			skipButtonAlign={ 'top' }
+			skipButtonAlign="top"
 			skipLabelText={ __( 'Confirm my email later' ) }
 			formattedHeader={
 				<FormattedHeader
-					id={ 'woo-verify-email-title-header' }
+					id="woo-verify-email-title-header"
 					headerText={ headerText }
 					subHeaderText={ subHeaderText }
 				/>

@@ -1,14 +1,31 @@
+import { NEWSLETTER_FLOW, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import { DEVICE_TYPE } from 'calypso/../packages/design-picker/src/constants';
 import { Device } from 'calypso/../packages/design-picker/src/types';
 import WebPreview from 'calypso/components/web-preview/component';
+import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import PreviewToolbar from '../design-setup/preview-toolbar';
 
-const LaunchpadSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
+const LaunchpadSitePreview = ( {
+	siteSlug,
+	flow,
+}: {
+	siteSlug: string | null;
+	flow: string | null;
+} ) => {
 	const translate = useTranslate();
+	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+
 	const previewUrl = siteSlug ? 'https://' + siteSlug : null;
-	const defaultDevice = 'phone';
-	const devicesToShow: Device[] = [ 'computer', 'phone' ];
+	const devicesToShow: Device[] = [ DEVICE_TYPE.COMPUTER, DEVICE_TYPE.PHONE ];
+	let defaultDevice = flow === NEWSLETTER_FLOW ? DEVICE_TYPE.COMPUTER : DEVICE_TYPE.PHONE;
+	const isVideoPressFlow = VIDEOPRESS_FLOW === flow;
+
+	if ( isVideoPressFlow ) {
+		const windowWidth = window.innerWidth;
+		defaultDevice = windowWidth >= 1000 ? DEVICE_TYPE.COMPUTER : DEVICE_TYPE.PHONE;
+	}
 
 	function formatPreviewUrl() {
 		if ( ! previewUrl ) {
@@ -22,14 +39,16 @@ const LaunchpadSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
 			hide_banners: true,
 			// hide cookies popup
 			preview: true,
-			do_preview_no_interactions: true,
+			do_preview_no_interactions: ! isVideoPressFlow,
+			...( globalStylesInUse && shouldLimitGlobalStyles && { 'preview-global-styles': true } ),
 		} );
 	}
 
 	return (
-		<div className={ 'launchpad__site-preview-wrapper' }>
+		<div className="launchpad__site-preview-wrapper">
 			<WebPreview
 				className="launchpad__-web-preview"
+				disableTabbing
 				showDeviceSwitcher={ true }
 				showPreview
 				showSEO={ true }

@@ -6,25 +6,37 @@
 	padding: 0 20px;
 
 	.stats-period-navigation__children {
-		text-align: center;
 		flex-grow: 1;
 	}
 
 	.stats-section-title {
 		margin: 0;
+		font-size: $font-title-large;
+		line-height: 40px;
+		color: var(--studio-gray-100);
+		text-align: left;
 	}
 
 	.stats-period-navigation__previous,
 	.stats-period-navigation__next {
+		width: 24px;
+		height: 24px;
+		color: var(--color-neutral-90);
 		cursor: pointer;
-		color: var(--color-neutral-50);
-
-		&:hover {
-			color: var(--color-accent);
-		}
 
 		&.is-disabled {
-			visibility: hidden;
+			visibility: visible;
+			opacity: 0.2;
+			pointer-events: none;
 		}
+	}
+
+	.stats-period-navigation__next {
+		margin-left: 4px;
+	}
+
+	.stats-date-picker__refresh-status {
+		font-size: $font-body-small;
+		line-height: 16px;
 	}
 }

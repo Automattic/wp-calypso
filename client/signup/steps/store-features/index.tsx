@@ -98,7 +98,7 @@ export default function StoreFeaturesStep( props: Props ) {
 					/>
 				</>
 			}
-			align={ 'left' }
+			align="left"
 			hideSkip={ true }
 			isHorizontalLayout={ true }
 			defaultDependencies={ {

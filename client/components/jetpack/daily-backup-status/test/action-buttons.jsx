@@ -5,6 +5,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as record from 'calypso/state/analytics/actions/record';
+import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { renderWithProvider as render } from 'calypso/test-helpers/testing-library';
@@ -12,6 +13,7 @@ import ActionButtons from '../action-buttons';
 
 jest.mock( 'calypso/state/ui/selectors' );
 jest.mock( 'calypso/state/selectors/get-does-rewind-need-credentials' );
+jest.mock( 'calypso/state/jetpack/credentials/selectors' );
 
 const recordTracksEvent = jest.spyOn( record, 'recordTracksEvent' );
 
@@ -57,6 +59,7 @@ describe( 'ActionButtons', () => {
 
 	test( 'enables the restore button when credentials are not needed', () => {
 		getDoesRewindNeedCredentials.mockImplementation( () => false );
+		areJetpackCredentialsInvalid.mockImplementation( () => false );
 		const rewindId = 'test';
 
 		render( <ActionButtons rewindId={ rewindId } /> );
@@ -71,6 +74,7 @@ describe( 'ActionButtons', () => {
 
 	test( 'disables the restore button when credentials are needed', () => {
 		getDoesRewindNeedCredentials.mockImplementation( () => true );
+		areJetpackCredentialsInvalid.mockImplementation( () => true );
 
 		render( <ActionButtons rewindId="test" /> );
 		const restoreButton = screen.getByRole( 'button', { name: /restore/i } );
@@ -94,6 +98,7 @@ describe( 'ActionButtons', () => {
 	test( 'emits a Tracks event when the restore button is enabled and clicked', async () => {
 		const user = userEvent.setup();
 		getDoesRewindNeedCredentials.mockImplementation( () => false );
+		areJetpackCredentialsInvalid.mockImplementation( () => false );
 		const rewindId = 'test';
 		render( <ActionButtons rewindId={ rewindId } /> );
 

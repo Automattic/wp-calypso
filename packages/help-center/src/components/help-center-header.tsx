@@ -3,13 +3,16 @@ import { useSelect } from '@wordpress/data';
 import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import { useCallback } from 'react';
 import { Route, Switch, useLocation } from 'react-router-dom';
 import { HELP_CENTER_STORE } from '../stores';
 import type { Header } from '../types';
 
 export function ArticleTitle() {
 	const location = useLocation();
-	const { title } = location.state;
+	const { search } = useLocation();
+	const params = new URLSearchParams( search );
+	const title = location.state?.title || params.get( 'title' ) || '';
 
 	return (
 		<>
@@ -44,20 +47,32 @@ const SupportModeTitle = () => {
 		}
 	}
 };
+
 const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDismiss }: Header ) => {
 	const unreadCount = useSelect( ( select ) => select( HELP_CENTER_STORE ).getUnreadCount() );
 	const classNames = classnames( 'help-center__container-header' );
 	const { __ } = useI18n();
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
 
-	const handleClose = () => {
-		onDismiss();
-	};
+	const handleClick = useCallback(
+		( event ) => {
+			if ( isMinimized && event.target === event.currentTarget ) {
+				onMaximize?.();
+			}
+		},
+		[ isMinimized, onMaximize ]
+	);
 
 	return (
 		<CardHeader className={ classNames }>
-			<Flex>
-				<p id="header-text" className="help-center-header__text">
+			<Flex onClick={ handleClick }>
+				<p
+					id="header-text"
+					className="help-center-header__text"
+					onClick={ handleClick }
+					onKeyUp={ handleClick }
+					role="presentation"
+				>
 					{ isMinimized ? (
 						<Switch>
 							<Route path="/" exact>
@@ -69,6 +84,7 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 							<Route path="/inline-chat">{ __( 'Live Chat', __i18n_text_domain__ ) }</Route>
 							<Route path="/contact-form" component={ SupportModeTitle }></Route>
 							<Route path="/post" component={ ArticleTitle }></Route>
+							<Route path="/success">{ __( 'Message Submitted', __i18n_text_domain__ ) }</Route>
 						</Switch>
 					) : (
 						__( 'Help Center', __i18n_text_domain__ )
@@ -80,28 +96,31 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 				<div>
 					{ isMinimized ? (
 						<Button
-							className={ 'help-center-header__maximize' }
+							className="help-center-header__maximize"
 							label={ __( 'Maximize Help Center', __i18n_text_domain__ ) }
 							icon={ chevronUp }
 							tooltipPosition="top left"
 							onClick={ onMaximize }
+							onTouchStart={ onMaximize }
 						/>
 					) : (
 						<Button
-							className={ 'help-center-header__minimize' }
+							className="help-center-header__minimize"
 							label={ __( 'Minimize Help Center', __i18n_text_domain__ ) }
 							icon={ lineSolid }
 							tooltipPosition="top left"
 							onClick={ onMinimize }
+							onTouchStart={ onMinimize }
 						/>
 					) }
 
 					<Button
-						className={ 'help-center-header__close' }
+						className="help-center-header__close"
 						label={ __( 'Close Help Center', __i18n_text_domain__ ) }
 						tooltipPosition="top left"
 						icon={ closeSmall }
-						onClick={ handleClose }
+						onClick={ onDismiss }
+						onTouchStart={ onDismiss }
 					/>
 				</div>
 			</Flex>

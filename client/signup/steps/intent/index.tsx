@@ -42,7 +42,7 @@ export const EXCLUDED_STEPS: { [ key: string ]: string[] } = {
 };
 
 const EXTERNAL_FLOW: { [ key: string ]: string } = {
-	import: '/setup/import',
+	import: '/setup/site-setup/import',
 };
 
 const getExcludedSteps = ( providedDependencies?: Dependencies ) =>
@@ -101,7 +101,7 @@ export default function IntentStep( props: Props ) {
 					preventWidows={ preventWidows }
 				/>
 			}
-			align={ 'left' }
+			align="left"
 			hideSkip
 			isHorizontalLayout={ true }
 			siteId={ siteId }

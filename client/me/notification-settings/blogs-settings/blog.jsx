@@ -19,7 +19,20 @@ class BlogSettings extends Component {
 		onSaveToAll: PropTypes.func.isRequired,
 	};
 
-	state = { isExpanded: false };
+	// Does the URL contain the anchor #site-domain ?
+	checkForSiteAnchor = () => {
+		const domain = this.props.site?.domain ?? '';
+		if ( domain.length === 0 ) {
+			return false;
+		}
+		const hash = window.location.hash.substr( 1 );
+		if ( hash.indexOf( domain ) > -1 ) {
+			return true;
+		}
+		return false;
+	};
+
+	state = { isExpanded: this.checkForSiteAnchor() };
 
 	onToggle = () => {
 		const isExpanded = ! this.state.isExpanded;
@@ -53,6 +66,7 @@ class BlogSettings extends Component {
 			'achievement',
 			'mentions',
 			'scheduled_publicize',
+			'blogging_prompt',
 		];
 
 		if ( site.options.woocommerce_is_active ) {

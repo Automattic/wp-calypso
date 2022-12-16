@@ -1,6 +1,11 @@
 import { useQuery } from 'react-query';
 import wp from 'calypso/lib/wp';
 
+/**
+ * List of allowed SSH key formats.
+ *
+ * We need to keep it in sync with \Openssh_Authorized_Key::VALID_TYPES_AND_BITS from WPCOM.
+ */
 export const SSH_KEY_FORMATS = [
 	'ssh-rsa',
 	'ssh-ed25519',
@@ -20,8 +25,15 @@ export interface SSHKeyData {
 export const SSH_KEY_QUERY_KEY = [ 'me', 'ssh-keys' ];
 
 export const useSSHKeyQuery = () =>
-	useQuery( SSH_KEY_QUERY_KEY, (): SSHKeyData[] =>
-		wp.req.get( '/me/ssh-keys', {
-			apiNamespace: 'wpcom/v2',
-		} )
+	useQuery(
+		SSH_KEY_QUERY_KEY,
+		(): SSHKeyData[] =>
+			wp.req.get( '/me/ssh-keys', {
+				apiNamespace: 'wpcom/v2',
+			} ),
+		{
+			meta: {
+				persist: false,
+			},
+		}
 	);

@@ -8,18 +8,35 @@ import { useDispatch } from '@wordpress/data';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import Sidebar from '../sidebar';
-import { defaultSiteDetails, buildSiteDetails } from './lib/fixtures';
+import { defaultSiteDetails, buildSiteDetails, buildDomainResponse } from './lib/fixtures';
+
+jest.mock( 'calypso/state/sites/hooks/use-premium-global-styles', () => ( {
+	usePremiumGlobalStyles: () => ( {
+		shouldLimitGlobalStyles: false,
+		globalStylesInUse: false,
+	} ),
+} ) );
 
 const siteName = 'testlinkinbio';
 const secondAndTopLevelDomain = 'wordpress.com';
 const siteSlug = `${ siteName }.${ secondAndTopLevelDomain }`;
 
+const sidebarDomain = buildDomainResponse( {
+	domain: `${ siteName }.${ secondAndTopLevelDomain }`,
+	isWPCOMDomain: true,
+} );
+
+const upgradeDomainBadgeText = 'Customize';
+const upgradeDomainBadgeLink = `/domains/add/${ sidebarDomain.domain }`;
+
 const props = {
+	sidebarDomain,
 	siteSlug,
 	/* eslint-disable @typescript-eslint/no-empty-function */
 	submit: () => {},
 	goNext: () => {},
 	goToStep: () => {},
+	flow: 'link-in-bio',
 	/* eslint-enable @typescript-eslint/no-empty-function */
 };
 
@@ -35,9 +52,7 @@ function renderSidebar( props, siteDetails = defaultSiteDetails ) {
 		receiveSite( siteDetails.ID, siteDetails );
 
 		return (
-			<MemoryRouter
-				initialEntries={ [ `/setup/launchpad?flow=link-in-bio&siteSlug=${ siteSlug }` ] }
-			>
+			<MemoryRouter initialEntries={ [ `/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }` ] }>
 				<Sidebar { ...props } />
 			</MemoryRouter>
 		);
@@ -47,6 +62,10 @@ function renderSidebar( props, siteDetails = defaultSiteDetails ) {
 }
 
 describe( 'Sidebar', () => {
+	afterEach( () => {
+		props.sidebarDomain = sidebarDomain;
+	} );
+
 	it( 'displays an escape hatch from Launchpad that will take the user to Calypso my Home', () => {
 		renderSidebar( props );
 
@@ -66,11 +85,134 @@ describe( 'Sidebar', () => {
 		expect( renderedDomain ).toBeVisible();
 	} );
 
+	it( 'displays customize badge for wpcom domains (free)', () => {
+		renderSidebar( props );
+		expect( screen.getByRole( 'link', { name: upgradeDomainBadgeText } ) ).toHaveAttribute(
+			'href',
+			upgradeDomainBadgeLink
+		);
+	} );
+
+	it( 'does not display customize badge for non wpcom domains (paid)', () => {
+		props.sidebarDomain = buildDomainResponse( {
+			domain: 'paidtestlinkinbio.blog',
+			isWPCOMDomain: false,
+		} );
+
+		renderSidebar( props );
+
+		const upgradeDomainBadgeElement = screen.queryByRole( 'link', {
+			name: 'upgradeDomainBadgeText',
+		} );
+
+		expect( upgradeDomainBadgeElement ).not.toBeInTheDocument;
+	} );
+
 	it( 'displays a progress bar based off of task completion', () => {
 		renderSidebar( props );
 
 		const progressBar = screen.getByRole( 'progressbar' );
 		expect( progressBar ).toBeVisible();
+	} );
+
+	describe( 'when no custom domain has been purchased', () => {
+		it( 'shows a copy url to clipboard button', () => {
+			renderSidebar( {
+				...props,
+				sidebarDomain: buildDomainResponse( {
+					sslStatus: null,
+					isWPCOMDomain: true,
+				} ),
+			} );
+
+			const clipboardButton = screen.getByLabelText( /Copy URL/i );
+
+			expect( clipboardButton ).toBeInTheDocument();
+		} );
+
+		it( 'does not show a custom domain setup notification for free wpcom domains', () => {
+			renderSidebar( {
+				...props,
+				sidebarDomain: buildDomainResponse( {
+					sslStatus: null,
+					isWPCOMDomain: true,
+				} ),
+			} );
+
+			const domainProcessingNotification = screen.queryByText(
+				/We are currently setting up your new domain! It may take a few minutes before it is ready./i
+			);
+
+			expect( domainProcessingNotification ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'when a custom domain has been purchased', () => {
+		describe( 'and the domain SSL is still being processed', () => {
+			it( 'does not show a copy url to clipboard button', () => {
+				renderSidebar( {
+					...props,
+					sidebarDomain: buildDomainResponse( {
+						sslStatus: 'pending',
+						isWPCOMDomain: false,
+					} ),
+				} );
+
+				const clipboardButton = screen.queryByLabelText( /Copy URL/i );
+
+				expect( clipboardButton ).not.toBeInTheDocument();
+			} );
+
+			it( 'shows a notification explaining that the domain is being set up', () => {
+				renderSidebar( {
+					...props,
+					sidebarDomain: buildDomainResponse( {
+						sslStatus: 'pending',
+						isWPCOMDomain: false,
+					} ),
+				} );
+
+				const domainProcessingNotification = screen.getByText(
+					/We are currently setting up your new domain! It may take a few minutes before it is ready./i
+				);
+
+				expect( domainProcessingNotification ).toBeInTheDocument();
+			} );
+		} );
+
+		describe( 'and the domain SSL has been activated', () => {
+			it( 'shows a copy url to clipboard button', () => {
+				renderSidebar( {
+					...props,
+					sidebarDomain: buildDomainResponse( {
+						sslStatus: 'active',
+						isWPCOMDomain: false,
+						isPrimary: true,
+					} ),
+				} );
+
+				const clipboardButton = screen.getByLabelText( /Copy URL/i );
+
+				expect( clipboardButton ).toBeInTheDocument();
+			} );
+
+			it( 'does not show a notification', () => {
+				renderSidebar( {
+					...props,
+					sidebarDomain: buildDomainResponse( {
+						sslStatus: 'active',
+						isWPCOMDomain: false,
+						isPrimary: true,
+					} ),
+				} );
+
+				const domainProcessingNotification = screen.queryByText(
+					/We are currently setting up your new domain! It may take a few minutes before it is ready./i
+				);
+
+				expect( domainProcessingNotification ).not.toBeInTheDocument();
+			} );
+		} );
 	} );
 
 	describe( 'when the tailored flow includes a task to launch the site', () => {
@@ -86,7 +228,7 @@ describe( 'Sidebar', () => {
 				} );
 				renderSidebar( props, siteDetails );
 
-				const title = screen.getByRole( 'heading', { name: /ready to launch/i } );
+				const title = screen.getByRole( 'heading', { name: /link and launch/i } );
 				expect( title ).toBeVisible();
 			} );
 		} );
@@ -95,7 +237,7 @@ describe( 'Sidebar', () => {
 			it( 'shows a normal title', () => {
 				renderSidebar( props );
 
-				const title = screen.getByRole( 'heading', { name: /almost ready/i } );
+				const title = screen.getByRole( 'heading', { name: /link and launch/i } );
 				expect( title ).toBeVisible();
 			} );
 		} );

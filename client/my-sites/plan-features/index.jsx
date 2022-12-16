@@ -188,7 +188,7 @@ export class PlanFeatures extends Component {
 				{ activeDiscount.plansPageNoticeTextTitle && (
 					<strong>
 						{ activeDiscount.plansPageNoticeTextTitle }
-						{ <br /> }
+						<br />
 					</strong>
 				) }
 				{ activeDiscount.plansPageNoticeText }
@@ -696,7 +696,7 @@ export class PlanFeatures extends Component {
 			return (
 				<PlanFeaturesActionsWrapper
 					canPurchase={ canPurchase }
-					className={ 'is-top-buttons' }
+					className="is-top-buttons"
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					handleUpgradeClick={ this.handleUpgradeClick }
 					isInSignup={ isInSignup }
@@ -764,12 +764,12 @@ export class PlanFeatures extends Component {
 		} );
 		const isMobileNewsletterLinkinBio =
 			isInVerticalScrollingPlansExperiment && isNewsletterOrLinkInBioFlow( flowName );
-
+		const hideInfoPopover = isMobileNewsletterLinkinBio || feature.hideInfoPopover || ! description;
 		return (
 			<PlanFeaturesItem
 				key={ index }
 				description={ description }
-				hideInfoPopover={ feature.hideInfoPopover || isMobileNewsletterLinkinBio }
+				hideInfoPopover={ hideInfoPopover }
 				hideGridicon={ this.props.isReskinned ? false : this.props.withScroll }
 				availableForCurrentPlan={ feature.availableForCurrentPlan }
 			>
@@ -828,7 +828,7 @@ export class PlanFeatures extends Component {
 			return (
 				<PlanFeaturesActionsWrapper
 					canPurchase={ canPurchase }
-					className={ 'is-bottom-buttons' }
+					className="is-bottom-buttons"
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					handleUpgradeClick={ this.handleUpgradeClick }
 					isInSignup={ isInSignup }
@@ -922,6 +922,7 @@ const ConnectedPlanFeatures = connect(
 			popularPlanSpec,
 			kindOfPlanTypeSelector,
 			isInVerticalScrollingPlansExperiment,
+			flowName = getCurrentFlowName( state ),
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
@@ -936,7 +937,6 @@ const ConnectedPlanFeatures = connect(
 		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
 		const isLoggedInMonthlyPricing =
 			! isInSignup && ! isJetpack && kindOfPlanTypeSelector === 'interval';
-		const flowName = getCurrentFlowName( state );
 
 		let planProperties = compact(
 			map( plans, ( plan ) => {

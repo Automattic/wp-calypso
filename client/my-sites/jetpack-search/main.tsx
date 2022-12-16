@@ -67,7 +67,7 @@ export default function SearchMain() {
 				buttonLink={ settingsUrl }
 				buttonText={ translate( 'Settings' ) }
 				onClick={ onSettingsClick }
-				iconComponent={ <ProductIcon slug={ 'jetpack_search' } /> }
+				iconComponent={ <ProductIcon slug="jetpack_search" /> }
 			/>
 
 			<JetpackSearchFooter />

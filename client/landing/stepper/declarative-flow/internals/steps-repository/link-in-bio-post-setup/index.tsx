@@ -2,7 +2,7 @@
 import { StepContainer, base64ImageToBlob, uploadAndSetSiteLogo } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate } from 'i18n-calypso';
 import { FormEvent, useEffect, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
@@ -15,13 +15,13 @@ import '../link-in-bio-setup/styles.scss';
 
 const LinkInBioPostSetup: Step = function LinkInBioPostSetup( { navigation } ) {
 	const { submit } = navigation;
-	const { __ } = useI18n();
+	const translate = useTranslate();
 	const site = useSite();
 
 	const linkInBioFormText = {
-		titlePlaceholder: __( 'My Link in Bio' ),
-		titleMissing: __( `Oops. Looks like your Link in Bio name is missing.` ),
-		taglinePlaceholder: __( 'Add a short biography here' ),
+		titlePlaceholder: translate( 'My Link in Bio' ),
+		titleMissing: translate( `Oops. Looks like your Link in Bio name is missing.` ),
+		taglinePlaceholder: translate( 'Add a short biography here' ),
 	};
 
 	const [ siteTitle, setComponentSiteTitle ] = useState( '' );
@@ -75,17 +75,17 @@ const LinkInBioPostSetup: Step = function LinkInBioPostSetup( { navigation } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'link-in-bio-setup' }
+			stepName="link-in-bio-setup"
 			isWideLayout={ true }
 			hideBack={ true }
-			flowName={ 'linkInBioPostSetup' }
+			flowName="linkInBioPostSetup"
 			formattedHeader={
 				<FormattedHeader
-					id={ 'link-in-bio-setup-header' }
-					headerText={ createInterpolateElement( __( 'Personalize your<br />Link in Bio' ), {
+					id="link-in-bio-setup-header"
+					headerText={ createInterpolateElement( translate( 'Personalize your<br />Link in Bio' ), {
 						br: <br />,
 					} ) }
-					align={ 'center' }
+					align="center"
 				/>
 			}
 			stepContent={

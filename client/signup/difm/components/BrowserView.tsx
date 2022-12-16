@@ -3,18 +3,25 @@ import {
 	ABOUT_PAGE,
 	BLOG_PAGE,
 	CONTACT_PAGE,
+	FAQ_PAGE,
 	HOME_PAGE,
 	PHOTO_GALLERY_PAGE,
+	PRICING_PAGE,
 	SERVICE_SHOWCASE_PAGE,
 	SITEMAP_PAGE,
+	TEAM_PAGE,
 	TESTIMONIALS_PAGE,
 } from 'calypso/signup/difm/constants';
 import aboutPage from 'calypso/signup/difm/images/page-descriptions/about-page.svg';
 import blogPage from 'calypso/signup/difm/images/page-descriptions/blog-page.svg';
 import contactPage from 'calypso/signup/difm/images/page-descriptions/contact-page.svg';
+import faqPage from 'calypso/signup/difm/images/page-descriptions/faq-page.svg';
 import homePage from 'calypso/signup/difm/images/page-descriptions/home-page.svg';
 import photoGallery from 'calypso/signup/difm/images/page-descriptions/photo-gallery.svg';
+import pricingPage from 'calypso/signup/difm/images/page-descriptions/pricing-page.svg';
 import serviceShowcase from 'calypso/signup/difm/images/page-descriptions/service-showcase.svg';
+import sitemapPage from 'calypso/signup/difm/images/page-descriptions/sitemap-page.svg';
+import teamPage from 'calypso/signup/difm/images/page-descriptions/team-page.svg';
 import testimonials from 'calypso/signup/difm/images/page-descriptions/testimonials.svg';
 import threeDots from 'calypso/signup/difm/images/three-dots.svg';
 
@@ -128,8 +135,9 @@ export function BrowserView( {
 			case BLOG_PAGE:
 				return blogPage;
 			case CONTACT_PAGE:
-			case SITEMAP_PAGE:
 				return contactPage;
+			case SITEMAP_PAGE:
+				return sitemapPage;
 			case HOME_PAGE:
 				return homePage;
 			case PHOTO_GALLERY_PAGE:
@@ -138,6 +146,12 @@ export function BrowserView( {
 				return serviceShowcase;
 			case TESTIMONIALS_PAGE:
 				return testimonials;
+			case PRICING_PAGE:
+				return pricingPage;
+			case FAQ_PAGE:
+				return faqPage;
+			case TEAM_PAGE:
+				return teamPage;
 			default:
 				return homePage;
 		}

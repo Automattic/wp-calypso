@@ -6,9 +6,8 @@ export const Step1 = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	// TODO update the correct links when available
 	const downloadLink = 'https://wordpress.org/plugins/jetpack-social/';
-	const instructionsLink = 'https://jetpack.com/support/publicize/';
+	const instructionsLink = 'https://jetpack.com/support/jetpack-social/';
 
 	return (
 		<p>

@@ -12,7 +12,7 @@ export default function DIFMLiteThankYou() {
 		<Card className="difm-lite-thank-you__content">
 			<div className="difm-lite-thank-you__header">
 				<div className="difm-lite-thank-you__header-icon">
-					<img src={ '/calypso/images/upgrades/thank-you.svg' } alt="" />
+					<img src="/calypso/images/upgrades/thank-you.svg" alt="" />
 				</div>
 				<div className="difm-lite-thank-you__header-content">
 					<h1 className="difm-lite-thank-you__header-heading">

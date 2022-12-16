@@ -9,7 +9,6 @@ import {
 } from 'calypso/blocks/import/util';
 import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
 import { BASE_ROUTE } from './config';
-import type { StepPath } from '../../steps-repository';
 
 export function getFinalImporterUrl(
 	targetSlug: string,
@@ -32,7 +31,10 @@ export function getFinalImporterUrl(
 		} )
 	) {
 		importerUrl = getWpComOnboardingUrl( targetSlug, platform, fromSite, framework );
-		if ( platform === 'wordpress' && ! fromSite ) {
+
+		if ( platform === 'wordpress' && ! fromSite && isAtomicSite ) {
+			importerUrl = getWpOrgImporterUrl( targetSlug, platform );
+		} else if ( platform === 'wordpress' && ! fromSite ) {
 			importerUrl = addQueryArgs( importerUrl, {
 				option: WPImportOption.CONTENT_ONLY,
 			} );
@@ -48,15 +50,15 @@ export function getFinalImporterUrl(
  * Stepper's redirection handlers
  * generateStepPath share the same interface/params between 'signup' & 'stepper' frameworks
  */
-export function generateStepPath(
-	stepName: string | StepPath,
-	stepSectionName?: string
-): StepPath {
-	if ( stepName === 'intent' ) return 'goals';
-	else if ( stepName === 'capture' ) return BASE_ROUTE;
+export function generateStepPath( stepName: string, stepSectionName?: string ) {
+	if ( stepName === 'intent' ) {
+		return 'goals';
+	} else if ( stepName === 'capture' ) {
+		return BASE_ROUTE;
+	}
 
 	const routes = [ BASE_ROUTE, stepName, stepSectionName ];
 	const path = routes.join( '_' );
 
-	return camelCase( path ) as StepPath;
+	return camelCase( path ) as string;
 }

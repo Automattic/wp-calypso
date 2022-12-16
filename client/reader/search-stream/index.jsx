@@ -136,6 +136,7 @@ class SearchStream extends React.Component {
 				source="search"
 				sort={ sortOrder === 'date' ? sortOrder : undefined }
 				railcar={ suggestion.railcar }
+				key={ 'suggestion-' + suggestion.text }
 			/>,
 			', ',
 		] ).slice( 0, -1 );

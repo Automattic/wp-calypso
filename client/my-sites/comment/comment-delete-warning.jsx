@@ -20,7 +20,7 @@ const CommentDeleteWarning = ( { isLoading, destroyComment, translate } ) =>
 			text={ translate( 'Delete this comment permanently?' ) }
 		>
 			<NoticeAction icon="trash" onClick={ destroyComment }>
-				{ 'Delete Permanently' }
+				Delete Permanently
 			</NoticeAction>
 		</Notice>
 	);

@@ -9,7 +9,7 @@ import { bumpStatGenerator } from './utils';
 
 function PostActionsEllipsisMenuCopyLink( { onCopyLinkClick, copyLink } ) {
 	return (
-		<PopoverMenuItemClipboard text={ copyLink } onCopy={ onCopyLinkClick } icon={ 'link' }>
+		<PopoverMenuItemClipboard text={ copyLink } onCopy={ onCopyLinkClick } icon="link">
 			{ translate( 'Copy link' ) }
 		</PopoverMenuItemClipboard>
 	);

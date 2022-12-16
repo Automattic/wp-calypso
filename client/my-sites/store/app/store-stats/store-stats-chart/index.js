@@ -1,5 +1,5 @@
-import { Card } from '@automattic/components';
-import classnames from 'classnames';
+import { Icon, currencyDollar } from '@wordpress/icons';
+import classNames from 'classnames';
 import { findIndex, find } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -13,8 +13,8 @@ import { getWidgetPath, formatValue } from '../utils';
 
 class StoreStatsChart extends Component {
 	static propTypes = {
+		className: PropTypes.string,
 		basePath: PropTypes.string.isRequired,
-		chartTitle: PropTypes.node,
 		data: PropTypes.array.isRequired,
 		renderTabs: PropTypes.func.isRequired,
 		selectedDate: PropTypes.string.isRequired,
@@ -84,12 +84,30 @@ class StoreStatsChart extends Component {
 			{
 				value,
 				label: selectedTab.label,
+				icon: (
+					<svg
+						className="gridicon"
+						width="25"
+						height="25"
+						viewBox="0 0 25 25"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path
+							fillRule="evenodd"
+							clipRule="evenodd"
+							d="M6 10V8H19V10H6ZM6 13V17H19V13H6ZM4.5 7.5C4.5 6.94772 4.94772 6.5 5.5 6.5H19.5C20.0523 6.5 20.5 6.94772 20.5 7.5V17.5C20.5 18.0523 20.0523 18.5 19.5 18.5H5.5C4.94772 18.5 4.5 18.0523 4.5 17.5V7.5Z"
+							fill="#fff"
+						/>
+					</svg>
+				),
 			},
 		];
 		activeCharts.forEach( ( attr ) => {
 			data.push( {
 				value: formatValue( item[ attr ], selectedTab.type, item.currency ),
 				label: find( tabs, ( tab ) => tab.attr === attr ).label,
+				icon: <Icon className="gridicon" icon={ currencyDollar } />,
 			} );
 		} );
 		return data;
@@ -98,7 +116,7 @@ class StoreStatsChart extends Component {
 	buildChartData = ( item, selectedTab, chartFormat ) => {
 		const { selectedDate } = this.props;
 		const { activeCharts } = this.state;
-		const className = classnames( item.classNames.join( ' ' ), {
+		const className = classNames( item.classNames.join( ' ' ), {
 			'is-selected': item.period === selectedDate,
 		} );
 		const nestedValue = item[ activeCharts[ 0 ] ];
@@ -127,20 +145,27 @@ class StoreStatsChart extends Component {
 	};
 
 	render() {
-		const { chartTitle, className, data, renderTabs, selectedDate, tabs, unit } = this.props;
+		const { className, data, renderTabs, selectedDate, tabs, unit } = this.props;
 		const { selectedTabIndex } = this.state;
 		const selectedTab = tabs[ selectedTabIndex ];
 		const isLoading = ! data.length;
 		const chartFormat = UNITS[ unit ].chartFormat;
 		const chartData = data.map( ( item ) => this.buildChartData( item, selectedTab, chartFormat ) );
 		const selectedIndex = findIndex( data, ( d ) => d.period === selectedDate );
+
+		const classes = classNames( 'is-chart-tabs', className, {
+			'is-loading': isLoading,
+		} );
+
 		return (
-			<Card className={ classnames( className, 'stats-module' ) }>
-				<div className="store-stats-chart__top">
-					<div className="store-stats-chart__title">{ chartTitle && chartTitle }</div>
-					{ this.renderLegend( selectedTabIndex ) }
-				</div>
-				<ElementChart loading={ isLoading } data={ chartData } barClick={ this.barClick } />
+			<div className={ classes }>
+				{ this.renderLegend( selectedTabIndex ) }
+				<ElementChart
+					loading={ isLoading }
+					data={ chartData }
+					barClick={ this.barClick }
+					minBarWidth={ 35 }
+				/>
 				{ ! isLoading &&
 					renderTabs( {
 						chartData,
@@ -150,7 +175,7 @@ class StoreStatsChart extends Component {
 						unit,
 						tabClick: this.tabClick,
 					} ) }
-			</Card>
+			</div>
 		);
 	}
 }

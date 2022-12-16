@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	isFreePlanProduct,
 	FEATURE_INSTALL_PLUGINS,
@@ -18,6 +19,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const PluginDetailsSidebar = ( {
 	plugin: {
+		slug,
 		active_installs,
 		tested,
 		isMarketplaceProduct = false,
@@ -60,8 +62,29 @@ const PluginDetailsSidebar = ( {
 			label: translate( 'View documentation' ),
 		} );
 
+	/**
+	 * TODO: Update the isPremiumVersionAvailable check and the premiumVersionLink property
+	 * to read from plugins data
+	 */
+	const isPremiumVersionAvailable = config.isEnabled( 'plugins/premium-version-available' );
+	const premiumVersionLink = 'https://WP.com';
+
 	return (
 		<div className="plugin-details-sidebar__plugin-details-content">
+			{ isPremiumVersionAvailable && (
+				<PluginDetailsSidebarUSP
+					id="demo"
+					title={ translate( 'Premium version available' ) }
+					description={ translate(
+						'This plugin has a premium version that might suit your needs better.'
+					) }
+					links={ [
+						{ href: premiumVersionLink, label: translate( 'Check out the premium version' ) },
+					] }
+					first
+				/>
+			) }
+
 			{ isWooCommercePluginRequired && (
 				<PluginDetailsSidebarUSP
 					id="woo"
@@ -74,7 +97,7 @@ const PluginDetailsSidebar = ( {
 							},
 						}
 					) }
-					first
+					first={ ! isPremiumVersionAvailable }
 				/>
 			) }
 
@@ -89,6 +112,7 @@ const PluginDetailsSidebar = ( {
 
 			{ selectedSite && (
 				<PlanUSPS
+					pluginSlug={ slug }
 					shouldUpgrade={ shouldUpgrade }
 					isFreePlan={ isFreePlan }
 					isMarketplaceProduct={ isMarketplaceProduct }

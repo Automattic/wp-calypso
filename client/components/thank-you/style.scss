@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 
 .thank-you__container-header img {
-	max-width: 200px;
+	max-width: 260px;
 
 	@media ( max-width: 782px ) {
 		max-width: 150px;
@@ -20,10 +20,6 @@
 	padding-bottom: 35px;
 	box-sizing: border-box;
 	height: auto;
-
-	img {
-		max-width: 260px;
-	}
 }
 
 .thank-you__notice {

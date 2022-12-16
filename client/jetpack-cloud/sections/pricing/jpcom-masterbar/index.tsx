@@ -51,7 +51,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 						href: `${ JETPACK_COM_BASE_URL }/features/security/`,
 						items: [
 							{
-								label: translate( 'Backup' ),
+								label: translate( 'VaultPress' ),
 								tagline: translate( 'Save every change in real-time' ),
 								href: `${ JETPACK_COM_BASE_URL }/upgrade/backup/`,
 							},
@@ -61,7 +61,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 								href: `${ JETPACK_COM_BASE_URL }/upgrade/scan/`,
 							},
 							{
-								label: translate( 'Anti-spam' ),
+								label: translate( 'Akismet' ),
 								tagline: translate( 'Stop comment and form spam' ),
 								href: `${ JETPACK_COM_BASE_URL }/upgrade/anti-spam/`,
 							},
@@ -94,6 +94,11 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 						tagline: translate( 'Grow your audience' ),
 						href: `${ JETPACK_COM_BASE_URL }/features/growth/`,
 						items: [
+							{
+								label: translate( 'Social', { context: 'Jetpack product name' } ),
+								tagline: translate( 'Write once, post everywhere' ),
+								href: `${ JETPACK_COM_BASE_URL }/social/`,
+							},
 							{
 								label: translate( 'CRM' ),
 								tagline: translate( 'Connect with your people' ),

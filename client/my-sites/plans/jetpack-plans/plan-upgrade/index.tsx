@@ -94,7 +94,7 @@ const PlanUpgradeSection: FC< Props > = ( {
 					/>
 				</li>
 				<li className="plan-upgrade__separator">
-					<span className="plan-upgrade__arrow">{ '→' }</span>
+					<span className="plan-upgrade__arrow">→</span>
 				</li>
 				<li className="plan-upgrade__new-items">
 					<ul className="plan-upgrade__new-items-list">

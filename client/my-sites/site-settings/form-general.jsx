@@ -1,7 +1,16 @@
-import { PLAN_BUSINESS, WPCOM_FEATURES_NO_WPCOM_BRANDING } from '@automattic/calypso-products';
+import { isEnabled } from '@automattic/calypso-config';
+import {
+	PLAN_BUSINESS,
+	PLAN_PREMIUM,
+	WPCOM_FEATURES_NO_WPCOM_BRANDING,
+	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
+	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+} from '@automattic/calypso-products';
+import { WPCOM_FEATURES_SUBSCRIPTION_GIFTING } from '@automattic/calypso-products/src';
 import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
 import { guessTimezone } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
+import { ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
 import { flowRight, get } from 'lodash';
 import { Component, Fragment } from 'react';
@@ -20,6 +29,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import SiteLanguagePicker from 'calypso/components/language-picker/site-language-picker';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import SitePreviewLink from 'calypso/components/site-preview-link';
 import Timezone from 'calypso/components/timezone';
 import { preventWidows } from 'calypso/lib/formatting';
 import scrollTo from 'calypso/lib/scroll-to';
@@ -32,6 +42,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import {
 	getSiteOption,
@@ -260,6 +271,12 @@ export class SiteSettingsFormGeneral extends Component {
 		} );
 	};
 
+	trackAdvancedCustomizationUpgradeClick = () => {
+		this.props.recordTracksEvent( 'calypso_global_styles_gating_settings_notice_upgrade_click', {
+			cta_name: 'settings_site_privacy',
+		} );
+	};
+
 	trackFiverrLogoMakerClick = () => {
 		this.props.recordTracksEvent( 'calypso_site_icon_fiverr_logo_maker_cta_click', {
 			cta_name: 'site_icon_fiverr_logo_maker',
@@ -324,7 +341,7 @@ export class SiteSettingsFormGeneral extends Component {
 				<FormSettingExplanation>
 					{ translate( "The site's primary language." ) }
 					&nbsp;
-					<a href={ '/me/account' }>
+					<a href="/me/account">
 						{ translate( "You can also modify your interface's language in your profile." ) }
 					</a>
 				</FormSettingExplanation>
@@ -342,6 +359,12 @@ export class SiteSettingsFormGeneral extends Component {
 			siteIsJetpack,
 			siteIsAtomic,
 			translate,
+			shouldShowPremiumStylesNotice,
+			isSavingSettings,
+			hasSitePreviewLink,
+			siteId,
+			site,
+			isComingSoon,
 		} = this.props;
 
 		const blogPublic = parseInt( fields.blog_public, 10 );
@@ -359,12 +382,14 @@ export class SiteSettingsFormGeneral extends Component {
 				'is-coming-soon-disabled': isComingSoonDisabled,
 			}
 		);
+		const showPreviewLink = isComingSoon && hasSitePreviewLink;
 		return (
 			<FormFieldset>
 				{ ! isNonAtomicJetpackSite &&
 					! isWPForTeamsSite &&
 					! isAtomicAndEditingToolkitDeactivated && (
 						<>
+							{ shouldShowPremiumStylesNotice && this.advancedCustomizationNotice() }
 							<FormLabel className={ comingSoonFormLabelClasses }>
 								<FormRadio
 									name="blog_public"
@@ -387,6 +412,17 @@ export class SiteSettingsFormGeneral extends Component {
 									'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
 								) }
 							</FormSettingExplanation>
+							{ showPreviewLink && (
+								<div className="site-settings__visibility-label is-checkbox">
+									<SitePreviewLink
+										siteUrl={ site.URL }
+										siteId={ siteId }
+										disabled={ ! isAnyComingSoonEnabled || isSavingSettings }
+										forceOff={ ! isAnyComingSoonEnabled }
+										source="privacy-settings"
+									/>
+								</div>
+							) }
 						</>
 					) }
 				{ ! isNonAtomicJetpackSite && (
@@ -529,8 +565,17 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	renderLaunchSite() {
-		const { translate, siteDomains, siteSlug, siteId, isPaidPlan, isComingSoon, fields } =
-			this.props;
+		const {
+			translate,
+			siteDomains,
+			siteSlug,
+			siteId,
+			isPaidPlan,
+			isComingSoon,
+			fields,
+			hasSitePreviewLink,
+			site,
+		} = this.props;
 
 		const launchSiteClasses = classNames( 'site-settings__general-settings-launch-site-button', {
 			'site-settings__disable-privacy-settings': ! siteDomains.length,
@@ -560,23 +605,34 @@ export class SiteSettingsFormGeneral extends Component {
 		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
 		const isPrivateAndUnlaunched = -1 === blogPublic && this.props.isUnlaunchedSite;
 
+		const showPreviewLink = isComingSoon && hasSitePreviewLink;
+
+		const LaunchCard = showPreviewLink ? CompactCard : Card;
+
 		return (
 			<>
 				<SettingsSectionHeader title={ translate( 'Launch site' ) } />
-				<Card className="site-settings__general-settings-launch-site">
-					<div className="site-settings__general-settings-launch-site-text">
-						<p>
-							{ isComingSoon || isPrivateAndUnlaunched
-								? translate(
-										'Your site hasn\'t been launched yet. It is hidden from visitors behind a "Coming Soon" notice until it is launched.'
-								  )
-								: translate(
-										"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
-								  ) }
-						</p>
+				<LaunchCard>
+					<div className="site-settings__general-settings-launch-site">
+						<div className="site-settings__general-settings-launch-site-text">
+							<p>
+								{ isComingSoon || isPrivateAndUnlaunched
+									? translate(
+											'Your site hasn\'t been launched yet. It is hidden from visitors behind a "Coming Soon" notice until it is launched.'
+									  )
+									: translate(
+											"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
+									  ) }
+							</p>
+						</div>
+						<div className={ launchSiteClasses }>{ btnComponent }</div>
 					</div>
-					<div className={ launchSiteClasses }>{ btnComponent }</div>
-				</Card>
+				</LaunchCard>
+				{ showPreviewLink && (
+					<Card>
+						<SitePreviewLink siteUrl={ site.URL } siteId={ siteId } source="launch-settings" />
+					</Card>
+				) }
 
 				{ querySiteDomainsComponent }
 			</>
@@ -612,6 +668,57 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	giftOptions() {
+		const {
+			translate,
+			fields,
+			isRequestingSettings,
+			isSavingSettings,
+			handleSubmitForm,
+			hasSubscriptionGifting,
+		} = this.props;
+
+		if ( ! isEnabled( 'subscription-gifting' ) ) {
+			return;
+		}
+
+		if ( hasSubscriptionGifting ) {
+			return (
+				<>
+					<div className="site-settings__gifting-container">
+						<SettingsSectionHeader
+							title={ translate( 'Accept a gift subscription' ) }
+							id="site-settings__gifting-header"
+							disabled={ isRequestingSettings || isSavingSettings }
+							isSaving={ isSavingSettings }
+							onButtonClick={ handleSubmitForm }
+							showButton
+						/>
+						<CompactCard className="site-settings__gifting-content">
+							<ToggleControl
+								disabled={ isRequestingSettings || isSavingSettings }
+								className="site-settings__gifting-toggle"
+								label={ translate(
+									'Allow site visitors to gift your plan and domain renewal costs'
+								) }
+								checked={ fields.wpcom_gifting_subscription }
+								onChange={ this.props.handleToggle( 'wpcom_gifting_subscription' ) }
+							/>
+							<FormSettingExplanation>
+								{ translate(
+									"Allow a site visitor to cover the full cost of your site's WordPress.com plan."
+								) }
+								<InlineSupportLink supportContext="gift-a-subscription" showIcon="">
+									{ translate( 'Learn more.' ) }
+								</InlineSupportLink>
+							</FormSettingExplanation>
+						</CompactCard>
+					</div>
+				</>
+			);
+		}
+	}
+
 	render() {
 		const {
 			customizerUrl,
@@ -624,6 +731,7 @@ export class SiteSettingsFormGeneral extends Component {
 			siteIsJetpack,
 			siteIsAtomic,
 			translate,
+			isAtomicAndEditingToolkitDeactivated,
 		} = this.props;
 
 		const classes = classNames( 'site-settings__general-settings', {
@@ -652,8 +760,11 @@ export class SiteSettingsFormGeneral extends Component {
 					</form>
 				</Card>
 
-				{ this.props.isUnlaunchedSite ? this.renderLaunchSite() : this.privacySettings() }
+				{ this.props.isUnlaunchedSite && ! isAtomicAndEditingToolkitDeactivated
+					? this.renderLaunchSite()
+					: this.privacySettings() }
 
+				{ this.giftOptions() }
 				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
 					<div className="site-settings__footer-credit-container">
 						<SettingsSectionHeader
@@ -690,9 +801,40 @@ export class SiteSettingsFormGeneral extends Component {
 						) }
 					</div>
 				) }
-
 				{ this.toolbarOption() }
 			</div>
+		);
+	}
+
+	advancedCustomizationNotice() {
+		const { translate, selectedSite, siteSlug } = this.props;
+		const upgradeUrl = `/plans/${ siteSlug }?plan=${ PLAN_PREMIUM }&feature=${ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION }`;
+
+		return (
+			<>
+				<div className="site-settings__advanced-customization-notice">
+					<div className="site-settings__advanced-customization-notice-cta">
+						<Gridicon icon="info-outline" />
+						<span>
+							{ translate(
+								'Your site contains customized styles that will only be visible once you upgrade to a Premium plan.'
+							) }
+						</span>
+					</div>
+					<div className="site-settings__advanced-customization-notice-buttons">
+						<Button href={ selectedSite.URL } target="_blank">
+							{ translate( 'View site' ) }
+						</Button>
+						<Button
+							className="is-primary"
+							href={ upgradeUrl }
+							onClick={ this.trackAdvancedCustomizationUpgradeClick }
+						>
+							{ translate( 'Upgrade' ) }
+						</Button>
+					</div>
+				</div>
+			</>
 		);
 	}
 }
@@ -707,7 +849,6 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-
 	return {
 		customizerUrl: getCustomizerUrl( state, siteId, 'identity' ),
 		hasNoWpcomBranding: siteHasFeature( state, siteId, WPCOM_FEATURES_NO_WPCOM_BRANDING ),
@@ -723,6 +864,8 @@ const connectComponent = connect( ( state ) => {
 		siteDomains: getDomainsBySiteId( state, siteId ),
 		siteIsJetpack: isJetpackSite( state, siteId ),
 		siteSlug: getSelectedSiteSlug( state ),
+		hasSubscriptionGifting: siteHasFeature( state, siteId, WPCOM_FEATURES_SUBSCRIPTION_GIFTING ),
+		hasSitePreviewLink: siteHasFeature( state, siteId, WPCOM_FEATURES_SITE_PREVIEW_LINKS ),
 	};
 }, mapDispatchToProps );
 
@@ -735,6 +878,7 @@ const getFormSettings = ( settings ) => {
 		blog_public: '',
 		wpcom_coming_soon: '',
 		wpcom_public_coming_soon: '',
+		wpcom_gifting_subscription: false,
 		admin_url: '',
 	};
 
@@ -752,6 +896,7 @@ const getFormSettings = ( settings ) => {
 
 		wpcom_coming_soon: settings.wpcom_coming_soon,
 		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,
+		wpcom_gifting_subscription: !! settings.wpcom_gifting_subscription,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values
@@ -764,7 +909,18 @@ const getFormSettings = ( settings ) => {
 	return formSettings;
 };
 
+const SiteSettingsFormGeneralWithGlobalStylesNotice = ( props ) => {
+	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+
+	return (
+		<SiteSettingsFormGeneral
+			{ ...props }
+			shouldShowPremiumStylesNotice={ globalStylesInUse && shouldLimitGlobalStyles }
+		/>
+	);
+};
+
 export default flowRight(
 	connectComponent,
 	wrapSettingsForm( getFormSettings )
-)( SiteSettingsFormGeneral );
+)( SiteSettingsFormGeneralWithGlobalStylesNotice );

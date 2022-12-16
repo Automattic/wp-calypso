@@ -44,7 +44,7 @@ class PostCommentForm extends Component {
 		if ( event.keyCode === 27 ) {
 			if ( this.props.placeholderId ) {
 				// sync the text to the upper level so it won't be lost
-				this.props.onUpdateCommentText( this.props.commentText );
+				this.props.onUpdateCommentText( this.getCommentText() );
 				// remove the comment
 				this.props.deleteComment(
 					this.props.post.site_ID,
@@ -68,7 +68,7 @@ class PostCommentForm extends Component {
 		event.preventDefault();
 
 		const post = this.props.post;
-		const commentText = this.props.commentText.trim();
+		const commentText = this.getCommentText().trim();
 
 		if ( ! commentText ) {
 			this.resetCommentText(); // Clean up any newlines
@@ -104,8 +104,12 @@ class PostCommentForm extends Component {
 		this.props.onUpdateCommentText( '' );
 	}
 
+	getCommentText() {
+		return this.props.commentText ?? '';
+	}
+
 	hasCommentText() {
-		return this.props.commentText.trim().length > 0;
+		return this.getCommentText().trim().length > 0;
 	}
 
 	render() {
@@ -141,7 +145,7 @@ class PostCommentForm extends Component {
 				<FormFieldset>
 					<Gravatar user={ this.props.currentUser } />
 					<AutoresizingFormTextarea
-						value={ this.props.commentText }
+						value={ this.getCommentText() }
 						placeholder={ translate( 'Enter your comment here…' ) }
 						onKeyUp={ this.handleKeyUp }
 						onKeyDown={ this.handleKeyDown }
@@ -152,7 +156,7 @@ class PostCommentForm extends Component {
 					/>
 					<Button
 						className={ buttonClasses }
-						disabled={ this.props.commentText.length === 0 }
+						disabled={ this.getCommentText().length === 0 }
 						onClick={ this.handleSubmit }
 					>
 						{ this.props.error ? translate( 'Resend' ) : translate( 'Send' ) }

@@ -24,7 +24,9 @@ export const transferDomainAction: AuthCodeValidationHandler =
 			domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE,
 		];
 
-		if ( ! selectedSite ) return onDone( { message: transferDomainError.NO_SELECTED_SITE } );
+		if ( ! selectedSite ) {
+			return onDone( { message: transferDomainError.NO_SELECTED_SITE } );
+		}
 
 		try {
 			const authCode = verificationData.ownership_verification_data.verification_data;
@@ -33,11 +35,12 @@ export const transferDomainAction: AuthCodeValidationHandler =
 				{ auth_code: authCode }
 			);
 
-			if ( ! authCodeCheckResult.success )
+			if ( ! authCodeCheckResult.success ) {
 				return onDone( {
 					error: 'ownership_verification_failed',
 					message: transferDomainError.AUTH_CODE,
 				} );
+			}
 
 			const checkAvailabilityResult = await wpcom.req.get(
 				`/domains/${ encodeURIComponent( domain ) }/is-available`,

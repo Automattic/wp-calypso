@@ -91,7 +91,7 @@
 }
 
 .woocommerce-connect-cart-header__stepper-step .woocommerce-connect-cart-header__stepper-step-label {
-	color: var(--studio-gray-90);
+	color: var(--studio-gray-80);
 	line-height: 24px;
 	font-size: $font-body;
 
@@ -101,9 +101,6 @@
 	}
 }
 
-.woocommerce-connect-cart-header__stepper-step .woocommerce-connect-cart-header__stepper-step-label {
-	color: var(--studio-gray-80);
-}
 .woocommerce-connect-cart-header__stepper-step.is-complete .woocommerce-connect-cart-header__stepper-step-label {
 	color: var(--studio-gray-90);
 }

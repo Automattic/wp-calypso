@@ -8,6 +8,8 @@
 	width: 100%;
 	height: 100%;
 
+	margin-top: 10px;
+
 	flex-wrap: nowrap;
 	justify-content: space-between;
 	column-gap: 8px;
@@ -34,10 +36,6 @@
 	&.has-clickable-action:hover {
 		cursor: pointer;
 
-		.action-button__action-text {
-			text-decoration: underline;
-			text-decoration-thickness: 2px;
-		}
 
 		.action-button__arrow {
 			transform: translateX(8px);
@@ -59,4 +57,41 @@
 		font-size: $font-title-medium;
 		font-weight: 600;
 	}
+}
+
+.usage-warning__upsell-price {
+	&.is-placeholder {
+		@include placeholder( --color-neutral-10 );
+	}
+
+	.display-price {
+		&__billing-time-frame {
+			font-size: 1rem;
+			color: inherit;
+		}
+	}
+
+	.plan-price {
+		font-size: inherit;
+		line-height: inherit;
+		color: inherit;
+	}
+
+	.plan-price__fraction {
+		font-weight: inherit;
+		font-size: inherit;
+		vertical-align: inherit;
+	}
+
+	.plan-price__integer {
+		margin: 0;
+		font-weight: inherit;
+	}
+
+	.plan-price__currency-symbol {
+		color: inherit;
+		font-size: inherit;
+		vertical-align: inherit;
+	}
+
 }

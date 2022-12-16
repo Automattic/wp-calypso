@@ -4,25 +4,19 @@ import { localize } from 'i18n-calypso';
 import { PureComponent } from 'react';
 
 class PostUnavailable extends PureComponent {
-	componentDidMount() {
-		this.errors = {
-			unauthorized: this.props.translate(
-				'This is a post on a private site that you’re following, but not currently a member of.' +
-					' ' +
-					'Please request membership to display these posts in Reader.'
-			),
-			default: this.props.translate( 'An error occurred loading this post.' ),
-		};
-	}
-
 	render() {
-		const errorMessage =
-			this.errors[ this.props.post.errorCode || 'default' ] || this.errors.default;
+		const error = this.props.post.error;
 
-		if ( this.props.post.statusCode === 404 ) {
+		if ( ! error ) {
+			return null;
+		}
+
+		if ( error.status === 404 || error.error === 404 ) {
 			// don't render a card for 404s. These are posts that we once had but were deleted.
 			return null;
 		}
+
+		const message = error.message || this.props.translate( 'An error occurred loading this post.' );
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
@@ -36,7 +30,10 @@ class PostUnavailable extends PureComponent {
 				</div>
 
 				<div className="reader__post-excerpt">
-					<p>{ errorMessage }</p>
+					<p>
+						{ error.status ? `${ error.status }: ` : null }
+						{ message }
+					</p>
 					{ config.isEnabled( 'reader/full-errors' ) ? (
 						<pre>{ JSON.stringify( this.props.post, null, '  ' ) }</pre>
 					) : null }

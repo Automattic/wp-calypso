@@ -1,5 +1,6 @@
 /**
  * @group calypso-pr
+ * @group kpi
  */
 
 import { DataHelper } from '@automattic/calypso-e2e';
@@ -21,6 +22,6 @@ describe( DataHelper.createSuiteTitle( 'Server-side Rendering' ), function () {
 		${ DataHelper.getCalypsoURL( 'theme/twentytwenty' ) }
 	`( 'Check endpoint: $endpoint', async function ( { endpoint } ) {
 		await page.goto( endpoint );
-		await page.waitForSelector( '#wpcom[data-calypso-ssr="true"]' );
+		await page.locator( '#wpcom[data-calypso-ssr="true"]' ).waitFor( { timeout: 15 * 1000 } );
 	} );
 } );

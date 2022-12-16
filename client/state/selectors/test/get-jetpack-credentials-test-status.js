@@ -6,7 +6,7 @@ describe( 'getJetpackCredentialsTestStatus()', () => {
 		const stateIn = {
 			jetpack: {
 				credentials: {
-					testRequestStatus: SITES_CREDENTIALS_FIXTURE,
+					testStatus: SITES_CREDENTIALS_FIXTURE,
 				},
 			},
 		};
@@ -21,7 +21,7 @@ describe( 'getJetpackCredentialsTestStatus()', () => {
 		const stateIn = {
 			jetpack: {
 				credentials: {
-					testRequestStatus: SITES_CREDENTIALS_FIXTURE,
+					testStatus: SITES_CREDENTIALS_FIXTURE,
 				},
 			},
 		};
@@ -36,7 +36,7 @@ describe( 'getJetpackCredentialsTestStatus()', () => {
 		const stateIn = {
 			jetpack: {
 				credentials: {
-					testRequestStatus: SITES_CREDENTIALS_FIXTURE,
+					testStatus: SITES_CREDENTIALS_FIXTURE,
 				},
 			},
 		};
@@ -51,7 +51,7 @@ describe( 'getJetpackCredentialsTestStatus()', () => {
 		const stateIn = {
 			jetpack: {
 				credentials: {
-					testRequestStatus: SITES_CREDENTIALS_FIXTURE,
+					testStatus: SITES_CREDENTIALS_FIXTURE,
 				},
 			},
 		};

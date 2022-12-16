@@ -9,6 +9,7 @@ import {
 	DISABLE_AUTOUPDATE_PLUGIN,
 } from 'calypso/lib/plugins/constants';
 import {
+	PLUGINS_ALL_RECEIVE,
 	PLUGINS_ALL_REQUEST,
 	PLUGINS_ALL_REQUEST_SUCCESS,
 	PLUGINS_ALL_REQUEST_FAILURE,
@@ -38,6 +39,7 @@ import {
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_FAILURE,
 	SITE_PLUGIN_UPDATED,
+	PLUGIN_ACTION_STATUS_UPDATE,
 } from 'calypso/state/action-types';
 import {
 	fetchSitePlugins,
@@ -49,6 +51,7 @@ import {
 	disableAutoupdatePlugin,
 	installPlugin,
 	removePlugin,
+	handleDispatchSuccessCallback,
 } from '../actions';
 import { akismet, helloDolly, jetpack, jetpackUpdated } from './fixtures/plugins';
 
@@ -112,9 +115,10 @@ describe( 'actions', () => {
 			test( 'should dispatch plugins receive action when request completes', async () => {
 				await fetchAllPlugins()( spy, getState );
 				expect( spy ).toHaveBeenCalledWith( {
-					type: PLUGINS_RECEIVE,
-					siteId: 2916284,
-					data: [ akismet, helloDolly, jetpack ],
+					type: PLUGINS_ALL_RECEIVE,
+					allSitesPlugins: {
+						2916284: [ akismet, helloDolly, jetpack ],
+					},
 				} );
 			} );
 
@@ -743,6 +747,32 @@ describe( 'actions', () => {
 				pluginId: 'fake/fake',
 				error: expect.objectContaining( { message: 'Plugin file does not exist.' } ),
 			} );
+		} );
+	} );
+
+	describe( '#handleDispatchSuccessCallback()', () => {
+		test( 'should dispatch status update and the action dispatch call when a plugin is activated successfully', () => {
+			jest.useFakeTimers();
+			jest.spyOn( global, 'setTimeout' );
+			const defaultAction = {
+				action: ACTIVATE_PLUGIN,
+				siteId: 2916284,
+				pluginId: 'akismet/akismet',
+			};
+			handleDispatchSuccessCallback( defaultAction, {} )( spy );
+
+			expect( spy.mock.calls[ 0 ][ 0 ] ).toEqual( {
+				type: PLUGIN_ACTION_STATUS_UPDATE,
+				action: ACTIVATE_PLUGIN,
+				siteId: 2916284,
+				pluginId: 'akismet/akismet',
+				data: {
+					statusRecentlyChanged: true,
+				},
+			} );
+
+			expect( setTimeout ).toHaveBeenCalledTimes( 1 );
+			expect( setTimeout ).toHaveBeenLastCalledWith( expect.any( Function ), 3000 );
 		} );
 	} );
 } );

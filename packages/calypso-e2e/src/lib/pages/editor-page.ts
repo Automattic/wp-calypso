@@ -108,7 +108,7 @@ export class EditorPage {
 	 * Example "new page": {@link https://wordpress.com/page}
 	 */
 	async visit( type: 'post' | 'page' = 'post' ): Promise< Response | null > {
-		const request = await this.page.goto( getCalypsoURL( type ) );
+		const request = await this.page.goto( getCalypsoURL( type ), { timeout: 30 * 1000 } );
 		await this.waitUntilLoaded();
 
 		return request;
@@ -769,6 +769,7 @@ export class EditorPage {
 			this.page.waitForNavigation( { url: '**/home/**' } ),
 			this.page.waitForNavigation( { url: '**/posts/**' } ),
 			this.page.waitForNavigation( { url: '**/pages/**' } ),
+			this.page.waitForNavigation( { url: '**/wp-admin/edit**' } ),
 		] );
 		const actions: Promise< unknown >[] = [ navigationPromise ];
 

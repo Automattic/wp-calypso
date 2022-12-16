@@ -14,14 +14,17 @@ import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useState, useEffect } from 'react';
+import { ReactChild, useRef, useState, useEffect } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
+import PremiumBadge from 'calypso/components/premium-badge';
 import WebPreview from 'calypso/components/web-preview/content';
+import { useSiteVerticalQueryById } from 'calypso/data/site-verticals';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
+import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased-themes';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
@@ -32,8 +35,9 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { getCategorizationOptions } from './categories';
-import { STEP_NAME } from './constants';
+import { DEFAULT_VARIATION_SLUG, STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
+import PremiumGlobalStylesUpgradeModal from './premium-global-styles-upgrade-modal';
 import PreviewToolbar from './preview-toolbar';
 import UpgradeModal from './upgrade-modal';
 import getThemeIdFromDesign from './utils/get-theme-id-from-design';
@@ -80,14 +84,24 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		)
 	);
 
+	// ********** Logic for vertical
+	const { data: siteVertical, isLoading: isLoadingSiteVertical } =
+		useSiteVerticalQueryById( siteVerticalId );
+
 	// ********** Logic for fetching designs
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
+		// Before we retire the old blank canvas, we have both blank-canvas-blocks and blank-canvas-3.
+		// We need to remove the old one first
+		allDesigns.static.designs = allDesigns.static.designs.filter(
+			( design ) => design.slug !== 'blank-canvas-blocks'
+		);
+
 		const blankCanvasDesignOffset = allDesigns.static.designs.findIndex( isBlankCanvasDesign );
 		if ( blankCanvasDesignOffset !== -1 ) {
-			// Extract the blank canvas design first and then insert it into 4th position for the build intent
+			// Extract the blank canvas design first and then insert it into the last one for the build intent
 			const blankCanvasDesign = allDesigns.static.designs.splice( blankCanvasDesignOffset, 1 );
 			if ( isEnabled( 'signup/design-picker-pattern-assembler' ) && intent === SiteIntent.Build ) {
-				allDesigns.static.designs.splice( 3, 0, ...blankCanvasDesign );
+				allDesigns.static.designs.push( ...blankCanvasDesign );
 			}
 		}
 
@@ -124,7 +138,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		}
 	}, [ hasTrackedView, generatedDesigns, staticDesigns ] );
 
-	const categorizationOptions = getCategorizationOptions( intent, true );
+	const categorizationOptions = getCategorizationOptions(
+		intent,
+		true,
+		generatedDesigns.length > 0 ? siteVertical?.title : undefined
+	);
+
 	const categorization = useCategorization( staticDesigns, categorizationOptions );
 
 	// ********** Logic for selecting a design and style variation
@@ -155,8 +174,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		setSelectedStyleVariation( undefined );
 	}, [] );
 
-	// When the theme query string parameter is present, automatically switch to previewing that theme (if it's a valid theme)
-	const themeFromQueryString = useQuery().get( 'theme' );
+	// When the theme or style query strings parameters are present,
+	// automatically switch to previewing that theme (if it's a valid theme)
+	// and that style variation (if it's a valid style variation).
+	const queryParams = useQuery();
+	const themeFromQueryString = queryParams.get( 'theme' );
+	const styleFromQueryString = queryParams.get( 'style' );
+
 	useEffect( () => {
 		if ( ! themeFromQueryString || ! allDesigns ) {
 			return;
@@ -171,9 +195,23 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			return;
 		}
 
+		if ( styleFromQueryString ) {
+			const requestedStyleVariation = requestedDesign.style_variations?.find(
+				( styleVariation ) => styleVariation.slug === styleFromQueryString
+			);
+
+			setSelectedStyleVariation( requestedStyleVariation );
+		}
+
 		setSelectedDesign( requestedDesign );
 		setIsPreviewingDesign( true );
-	}, [ themeFromQueryString, allDesigns, setSelectedDesign ] );
+	}, [
+		themeFromQueryString,
+		styleFromQueryString,
+		allDesigns,
+		setSelectedDesign,
+		setSelectedStyleVariation,
+	] );
 
 	function getEventPropsByDesign( design: Design, variation?: StyleVariation ) {
 		const variationSlugSuffix =
@@ -182,6 +220,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		return {
 			flow,
 			intent,
+			category: categorization.selection,
 			slug: design.slug + variationSlugSuffix,
 			theme: design.recipe?.stylesheet,
 			theme_style: design.recipe?.stylesheet + variationSlugSuffix,
@@ -262,10 +301,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			);
 		}
 
-		if ( ! isEnabled( 'signup/seller-upgrade-modal' ) ) {
-			return goToCheckout();
-		}
-
 		recordTracksEvent( 'calypso_signup_design_upgrade_modal_show', {
 			theme: selectedDesign?.slug,
 		} );
@@ -280,27 +315,112 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	}
 
 	function goToCheckout() {
-		if ( ! isEnabled( 'signup/design-picker-premium-themes-checkout' ) ) {
-			return null;
-		}
+		recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
+			theme: selectedDesign?.slug,
+		} );
 
-		if ( isEnabled( 'signup/seller-upgrade-modal' ) ) {
-			recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
-				theme: selectedDesign?.slug,
-			} );
-		}
+		const themeHasWooCommerce = selectedDesign?.software_sets?.find(
+			( set ) => set.slug === 'woo-on-plans'
+		);
 
-		const plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
+		let plan;
+		if ( isEnabled( 'themes/plugin-bundling' ) && themeHasWooCommerce ) {
+			plan = 'business-bundle';
+		} else {
+			plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
+		}
 
 		if ( siteSlugOrId ) {
 			const params = new URLSearchParams();
-			params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
+
+			// When the user is done with checkout, send them back to the current url
+			const destUrl = new URL( window.location.href );
+			const destSearchP = destUrl.searchParams;
+
+			// If we have a theme selected, add &theme=slug to the query params
+			if ( selectedDesign?.slug ) {
+				destSearchP.set( 'theme', selectedDesign?.slug );
+				destUrl.search = destSearchP.toString();
+			}
+
+			const destString = destUrl.toString().replace( window.location.origin, '' );
+			params.append( 'redirect_to', destString );
 
 			// The theme upsell link does not work with siteId and requires a siteSlug.
 			// See https://github.com/Automattic/wp-calypso/pull/64899
 			window.location.href = `/checkout/${ encodeURIComponent(
 				siteSlug || urlToSlug( site?.URL || '' ) || ''
 			) }/${ plan }?${ params.toString() }`;
+		}
+	}
+
+	// ********** Logic for Premium Global Styles
+
+	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+	const [ showPremiumGlobalStylesModal, setShowPremiumGlobalStylesModal ] = useState( false );
+
+	function unlockPremiumGlobalStyles() {
+		// These conditions should be true at this point, but just in case...
+		if ( selectedDesign && selectedStyleVariation ) {
+			recordTracksEvent(
+				'calypso_signup_design_global_styles_gating_modal_show',
+				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
+			);
+			setShowPremiumGlobalStylesModal( true );
+		}
+	}
+
+	function closePremiumGlobalStylesModal() {
+		// These conditions should be true at this point, but just in case...
+		if ( selectedDesign && selectedStyleVariation ) {
+			recordTracksEvent(
+				'calypso_signup_design_global_styles_gating_modal_close_button_click',
+				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
+			);
+			setShowPremiumGlobalStylesModal( false );
+		}
+	}
+
+	function goToCheckoutForPremiumGlobalStyles() {
+		// These conditions should be true at this point, but just in case...
+		if ( selectedDesign && selectedStyleVariation && siteSlugOrId ) {
+			recordTracksEvent(
+				'calypso_signup_design_global_styles_gating_modal_checkout_button_click',
+				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
+			);
+
+			const params = new URLSearchParams();
+
+			// When the user is done with checkout, send them back to the current url
+			const destUrl = new URL( window.location.href );
+			const destSearchP = destUrl.searchParams;
+
+			// Add &theme=theme_slug&style=style_slug to the query params
+			if ( selectedDesign.slug && selectedStyleVariation.slug ) {
+				destSearchP.set( 'theme', selectedDesign.slug );
+				destSearchP.set( 'style', selectedStyleVariation.slug );
+				destUrl.search = destSearchP.toString();
+			}
+
+			const destString = destUrl.toString().replace( window.location.origin, '' );
+			params.append( 'redirect_to', destString );
+
+			// The theme upsell link does not work with siteId and requires a siteSlug.
+			// See https://github.com/Automattic/wp-calypso/pull/64899
+			window.location.href = `/checkout/${ encodeURIComponent(
+				siteSlug || urlToSlug( site?.URL || '' ) || ''
+			) }/premium?${ params.toString() }`;
+		}
+	}
+
+	function tryPremiumGlobalStyles() {
+		// These conditions should be true at this point, but just in case...
+		if ( selectedDesign && selectedStyleVariation ) {
+			recordTracksEvent(
+				'calypso_signup_design_global_styles_gating_modal_try_button_click',
+				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
+			);
+			pickDesign();
 		}
 	}
 
@@ -372,7 +492,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			return;
 		}
 
-		goBack();
+		goBack?.();
 	}
 
 	function recordDeviceClick( device: string ) {
@@ -388,10 +508,54 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		recordTracksEvent( eventName, tracksProps );
 	}
 
+	function showGlobalStylesPremiumBadge() {
+		if ( ! shouldLimitGlobalStyles ) {
+			return null;
+		}
+
+		return (
+			<PremiumBadge
+				className="design-picker__premium-badge"
+				labelText={ translate( 'Upgrade' ) }
+				tooltipText={ translate(
+					'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
+				) }
+			/>
+		);
+	}
+
+	function getPrimaryActionButton( pickDesignText: ReactChild ) {
+		if ( shouldUpgrade ) {
+			return (
+				<Button primary borderless={ false } onClick={ upgradePlan }>
+					{ translate( 'Unlock theme' ) }
+				</Button>
+			);
+		}
+
+		if (
+			shouldLimitGlobalStyles &&
+			selectedStyleVariation &&
+			selectedStyleVariation.slug !== DEFAULT_VARIATION_SLUG
+		) {
+			return (
+				<Button primary borderless={ false } onClick={ () => unlockPremiumGlobalStyles() }>
+					{ translate( 'Unlock this style' ) }
+				</Button>
+			);
+		}
+
+		return (
+			<Button primary borderless={ false } onClick={ () => pickDesign() }>
+				{ pickDesignText }
+			</Button>
+		);
+	}
+
 	// ********** Main render logic
 
-	// Don't render until we've fetched the designs from the backend.
-	if ( ! site || isLoadingDesigns ) {
+	// Don't render until we've done fetching all the data needed for initial render.
+	if ( ! site || isLoadingSiteVertical || isLoadingDesigns ) {
 		return null;
 	}
 
@@ -420,17 +584,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				{ selectedDesignHasStyleVariations && (
 					<div className="action-buttons__title">{ headerDesignTitle }</div>
 				) }
-				<div>
-					{ shouldUpgrade ? (
-						<Button primary borderless={ false } onClick={ upgradePlan }>
-							{ translate( 'Unlock theme' ) }
-						</Button>
-					) : (
-						<Button primary borderless={ false } onClick={ () => pickDesign() }>
-							{ pickDesignText }
-						</Button>
-					) }
-				</div>
+				<div>{ getPrimaryActionButton( pickDesignText ) }</div>
 			</>
 		);
 
@@ -441,6 +595,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					isOpen={ showUpgradeModal }
 					closeModal={ closeUpgradeModal }
 					checkout={ goToCheckout }
+				/>
+				<PremiumGlobalStylesUpgradeModal
+					checkout={ goToCheckoutForPremiumGlobalStyles }
+					closeModal={ closePremiumGlobalStylesModal }
+					isOpen={ showPremiumGlobalStylesModal }
+					tryStyle={ tryPremiumGlobalStyles }
 				/>
 				{ selectedDesignHasStyleVariations ? (
 					<AsyncLoad
@@ -454,6 +614,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 						onSelectVariation={ previewDesignVariation }
 						actionButtons={ actionButtons }
 						recordDeviceClick={ recordDeviceClick }
+						showGlobalStylesPremiumBadge={ showGlobalStylesPremiumBadge }
 					/>
 				) : (
 					<WebPreview
@@ -494,13 +655,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
 				hideSkip
-				className={ 'design-setup__preview' }
+				className="design-setup__preview"
 				nextLabelText={ pickDesignText }
 				goBack={ handleBackClick }
 				goNext={ () => pickDesign() }
 				formattedHeader={
 					<FormattedHeader
-						id={ 'design-setup-header' }
+						id="design-setup-header"
 						headerText={ headerDesignTitle }
 						align={ isMobile ? 'left' : 'center' }
 					/>
@@ -513,13 +674,15 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	const heading = (
 		<FormattedHeader
-			id={ 'step-header' }
+			id="step-header"
 			headerText={ translate( 'Pick a design' ) }
 			subHeaderText={ translate(
 				'One of these homepage options could be great to start with. You can always change later.'
 			) }
 		/>
 	);
+
+	const currentPlanFeatures = site?.plan?.features.active ?? [];
 
 	const stepContent = (
 		<UnifiedDesignPicker
@@ -534,6 +697,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			categorization={ categorization }
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			purchasedThemes={ purchasedThemes }
+			currentPlanFeatures={ currentPlanFeatures }
 		/>
 	);
 
@@ -541,7 +705,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		<StepContainer
 			stepName={ STEP_NAME }
 			className="unified-design-picker__has-categories"
-			skipButtonAlign={ 'top' }
+			skipButtonAlign="top"
 			hideFormattedHeader
 			backLabelText={ translate( 'Back' ) }
 			skipLabelText={

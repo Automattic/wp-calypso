@@ -21,7 +21,7 @@
 		padding: 0;
 
 		.reader-follow-feed {
-			fill: var( --color-primary );
+			fill: var(--color-primary);
 		}
 
 		.follow-button__label {
@@ -40,7 +40,7 @@
 		&.is-following {
 			&:hover {
 				.reader-follow-feed {
-					fill: var( --color-success );
+					fill: var(--color-success);
 				}
 
 				.follow-button__label {

@@ -53,7 +53,7 @@
 			font-style: italic;
 			text-align: left;
 
-			@media screen and ( min-width: 661px ) {
+			@media screen and (min-width: 661px) {
 				font-size: $font-body;
 			}
 		}
@@ -87,7 +87,7 @@
 				margin: 0 0 16px 0;
 				font-size: $font-body-small;
 
-				@media screen and ( min-width: 661px ) {
+				@media screen and (min-width: 661px) {
 					font-size: $font-title-small;
 					line-height: 1.3;
 				}
@@ -172,7 +172,7 @@
 				width: 100%;
 			}
 
-			@media screen and ( max-width: 660px ) {
+			@media screen and (max-width: 660px) {
 				line-height: 1.3;
 			}
 
@@ -216,7 +216,6 @@
 			.inline-help__resource-cell a,
 			.inline-help__resource-cell button {
 				display: flex;
-
 
 				svg:first-of-type {
 					margin-right: 15px;
@@ -266,8 +265,9 @@
 					}
 
 					span {
-						text-decoration: none;
 						color: var(--studio-gray-100);
+						flex-grow: 0;
+						text-decoration: none;
 					}
 
 					.inline-help__new-releases_dot {
@@ -284,9 +284,11 @@
 					}
 				}
 
-				> svg:last-child {
-					fill: unset;
-					margin-left: auto;
+				&:not(.inline-help__new-releases) {
+					>svg:last-child {
+						fill: var(--studio-gray-20);
+						margin-left: auto;
+					}
 				}
 			}
 		}
@@ -296,6 +298,7 @@
  	 * SECONDARY-VIEW HEADER
  	 */
 	.inline-help__secondary-view {
+
 		&.inline-help__richresult,
 		&.inline-help__contact {
 			button.button.is-borderless {
@@ -329,6 +332,7 @@
 			display: flex;
 			flex-direction: column;
 			justify-content: space-between;
+			gap: 16px;
 
 			a {
 				text-decoration: none;
@@ -346,7 +350,6 @@
 				overflow: hidden;
 				border-radius: 2px;
 				cursor: pointer;
-				margin-bottom: 16px;
 
 				.help-center-contact-page__box-icon {
 					border-radius: 2px 0 0 2px;
@@ -398,7 +401,7 @@
 					padding: 0 15px;
 					margin: 16px 0;
 
-					> * {
+					>* {
 						padding: 0;
 						margin: 0;
 					}

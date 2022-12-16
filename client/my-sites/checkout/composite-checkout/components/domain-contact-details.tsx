@@ -65,7 +65,7 @@ export default function DomainContactDetails( {
 					contactDetailsValidationErrors={
 						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
 					}
-					tld={ 'ca' }
+					tld="ca"
 					getDomainNames={ () => domainNames }
 					translate={ translate }
 					isManaged={ true }
@@ -79,7 +79,7 @@ export default function DomainContactDetails( {
 					contactDetailsValidationErrors={
 						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
 					}
-					tld={ 'uk' }
+					tld="uk"
 					getDomainNames={ () => domainNames }
 					translate={ translate }
 					isManaged={ true }
@@ -93,7 +93,7 @@ export default function DomainContactDetails( {
 					contactDetailsValidationErrors={
 						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
 					}
-					tld={ 'fr' }
+					tld="fr"
 					getDomainNames={ () => domainNames }
 					translate={ translate }
 					isManaged={ true }

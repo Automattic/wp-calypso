@@ -12,6 +12,9 @@ export const SiteUrl = styled( ExternalLink )`
 	&:hover {
 		text-decoration: underline;
 	}
+	svg {
+		flex-shrink: 0;
+	}
 `;
 
 export const Truncated = styled.span`

@@ -77,7 +77,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 				/>
 				<Button
 					borderless={ true }
-					className={ 'action-buttons__importer-list' }
+					className="action-buttons__importer-list"
 					onClick={ onDontHaveSiteAddressClick }
 				>
 					{ translate( "Don't have a site address?" ) }
@@ -99,7 +99,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 				</FormSettingExplanation>
 			</FormFieldset>
 
-			<NextButton type={ 'submit' } size={ 0 }>
+			<NextButton type="submit" size={ 0 }>
 				{ translate( 'Continue' ) }
 			</NextButton>
 		</form>

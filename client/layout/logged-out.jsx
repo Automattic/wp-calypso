@@ -4,13 +4,17 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import GdprBanner from 'calypso/blocks/gdpr-banner';
+import { CookieBannerContainerSSR } from 'calypso/blocks/cookie-banner';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
+import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import MasterbarLogin from 'calypso/layout/masterbar/login';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
+import UniversalNavbarFooter from 'calypso/layout/universal-navbar-footer';
+import UniversalNavbarFooterAutomattic from 'calypso/layout/universal-navbar-footer-automattic';
+import UniversalNavbarHeader from 'calypso/layout/universal-navbar-header';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
@@ -96,6 +100,10 @@ const LayoutLoggedOut = ( {
 		}
 	} else if ( config.isEnabled( 'jetpack-cloud' ) || isWpMobileApp() || isJetpackThankYou ) {
 		masterbar = null;
+	} else if ( sectionName === 'plugins' ) {
+		masterbar = <UniversalNavbarHeader />;
+	} else if ( sectionName === 'themes' || sectionName === 'theme' ) {
+		masterbar = <UniversalNavbarHeader />;
 	} else {
 		masterbar = (
 			<MasterbarLoggedOut
@@ -112,6 +120,7 @@ const LayoutLoggedOut = ( {
 
 	return (
 		<div className={ classNames( 'layout', classes ) }>
+			{ 'development' === process.env.NODE_ENV && <SympathyDevWarning /> }
 			<BodySectionCssClass group={ sectionGroup } section={ sectionName } bodyClass={ bodyClass } />
 			{ masterbar }
 			{ isJetpackCloud() && (
@@ -127,7 +136,19 @@ const LayoutLoggedOut = ( {
 					{ secondary }
 				</div>
 			</div>
-			{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner showGdprBanner={ showGdprBanner } /> }
+			{ config.isEnabled( 'cookie-banner' ) && (
+				<CookieBannerContainerSSR serverShow={ showGdprBanner } />
+			) }
+
+			{ sectionName === 'plugins' && (
+				<>
+					<UniversalNavbarFooter />
+					<UniversalNavbarFooterAutomattic />
+					{ config.isEnabled( 'layout/support-article-dialog' ) && (
+						<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
+					) }
+				</>
+			) }
 		</div>
 	);
 };
@@ -152,14 +173,21 @@ export default withCurrentRoute(
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 		const isPartnerSignup = isPartnerSignupQuery( currentQuery );
 		const isPartnerSignupStart = currentRoute.startsWith( '/start/wpcc' );
-		const isWhiteLogin =
-			currentRoute.startsWith( '/log-in/new' ) || ( isPartnerSignup && ! isPartnerSignupStart );
 		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
+		const isReskinLoginRoute =
+			currentRoute.startsWith( '/log-in' ) &&
+			! isJetpackLogin &&
+			! isP2Login &&
+			Boolean( currentQuery?.client_id ) === false;
+		const isWhiteLogin = isReskinLoginRoute || ( isPartnerSignup && ! isPartnerSignupStart );
 		const noMasterbarForRoute =
 			isJetpackLogin || ( isWhiteLogin && ! isPartnerSignup ) || isJetpackWooDnaFlow || isP2Login;
 		const isPopup = '1' === currentQuery?.is_popup;
-		const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
+		const oauth2Client = getCurrentOAuth2Client( state );
+		const noMasterbarForSection =
+			! isWooOAuth2Client( oauth2Client ) &&
+			[ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
 		const wccomFrom = currentQuery?.[ 'wccom-from' ];
 		const masterbarIsHidden =
@@ -177,7 +205,7 @@ export default withCurrentRoute(
 			sectionGroup,
 			sectionName,
 			sectionTitle,
-			oauth2Client: getCurrentOAuth2Client( state ),
+			oauth2Client,
 			useOAuth2Layout: showOAuth2Layout( state ),
 			isPartnerSignup,
 			isPartnerSignupStart,

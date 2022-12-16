@@ -6,7 +6,7 @@ import useCartForDIFM, { CartItem } from './use-cart-for-difm';
 const CartContainer = styled.div`
 	position: relative;
 	@media ( max-width: 600px ) {
-		z-index: 177;
+		z-index: 1100;
 		margin-bottom: 61px;
 		position: fixed;
 		background: white;
@@ -23,7 +23,7 @@ const CartContainer = styled.div`
 const LoadingContainer = styled.div`
 	position: relative;
 	@media ( max-width: 600px ) {
-		z-index: 177;
+		z-index: 1100;
 		margin-bottom: 61px;
 		position: fixed;
 		background: white;

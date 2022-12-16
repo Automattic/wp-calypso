@@ -3,7 +3,8 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { getPlanTermLabel } from '@automattic/calypso-products';
+import config from '@automattic/calypso-config';
+import { getPlan, getPlanTermLabel } from '@automattic/calypso-products';
 import { Button, FormInputValidation, Popover } from '@automattic/components';
 import {
 	useSubmitTicketMutation,
@@ -12,10 +13,12 @@ import {
 	useUserSites,
 	AnalysisReport,
 	useSibylQuery,
+	SiteDetails,
+	HelpCenterSite,
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
-import { SitePickerDropDown } from '@automattic/site-picker';
-import { TextControl, CheckboxControl } from '@wordpress/components';
+import { SitePickerDropDown, SitePickerSite } from '@automattic/site-picker';
+import { TextControl, CheckboxControl, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
@@ -25,7 +28,7 @@ import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 import { getCurrentUserEmail, getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
@@ -63,15 +66,15 @@ const HelpCenterSitePicker: React.FC< SitePicker > = ( {
 	const otherSite = {
 		name: __( 'Other site', __i18n_text_domain__ ),
 		ID: 0,
-		logo: { id: '', sizes: [], url: '' },
+		logo: { id: '', sizes: [] as never[], url: '' },
 		URL: '',
-	};
+	} as const;
 
-	function pickSite( ID: number ) {
+	function pickSite( ID: number | string ) {
 		onSelect( ID );
 	}
 
-	const options = [ currentSite, otherSite ];
+	const options: ( SitePickerSite | undefined )[] = [ currentSite, otherSite ];
 
 	return (
 		<SitePickerDropDown
@@ -83,39 +86,59 @@ const HelpCenterSitePicker: React.FC< SitePicker > = ( {
 	);
 };
 
-const titles: {
-	[ key: string ]: {
-		formTitle: string;
-		formSubtitle?: string;
-		trayText?: string;
-		formDisclaimer?: string;
-		buttonLabel: string;
-		buttonSubmittingLabel: string;
-		buttonLoadingLabel?: string;
-	};
-} = {
-	CHAT: {
-		formTitle: __( 'Start live chat', __i18n_text_domain__ ),
-		trayText: __( 'Our WordPress experts will be with you right away', __i18n_text_domain__ ),
-		buttonLabel: __( 'Chat with us', __i18n_text_domain__ ),
-		buttonSubmittingLabel: __( 'Connecting to chat', __i18n_text_domain__ ),
-	},
-	EMAIL: {
-		formTitle: __( 'Send us an email', __i18n_text_domain__ ),
-		trayText: __( 'Our WordPress experts will get back to you soon', __i18n_text_domain__ ),
-		buttonLabel: __( 'Email us', __i18n_text_domain__ ),
-		buttonSubmittingLabel: __( 'Sending email', __i18n_text_domain__ ),
-	},
-	FORUM: {
-		formTitle: __( 'Ask in our community forums', __i18n_text_domain__ ),
-		formDisclaimer: __(
-			'Please do not provide financial or contact information when submitting this form.',
-			__i18n_text_domain__
-		),
-		buttonLabel: __( 'Ask in the forums', __i18n_text_domain__ ),
-		buttonSubmittingLabel: __( 'Posting in the forums', __i18n_text_domain__ ),
-		buttonLoadingLabel: __( 'Analyzing site…', __i18n_text_domain__ ),
-	},
+function useFormTitles( mode: Mode ): {
+	formTitle: string;
+	formSubtitle?: string;
+	trayText?: string;
+	formDisclaimer?: string;
+	buttonLabel: string;
+	buttonSubmittingLabel: string;
+	buttonLoadingLabel?: string;
+} {
+	return {
+		CHAT: {
+			formTitle: __( 'Start live chat', __i18n_text_domain__ ),
+			trayText: __( 'Our WordPress experts will be with you right away', __i18n_text_domain__ ),
+			buttonLabel: __( 'Chat with us', __i18n_text_domain__ ),
+			buttonSubmittingLabel: __( 'Connecting to chat', __i18n_text_domain__ ),
+		},
+		EMAIL: {
+			formTitle: __( 'Send us an email', __i18n_text_domain__ ),
+			trayText: __( 'Our WordPress experts will get back to you soon', __i18n_text_domain__ ),
+			buttonLabel: __( 'Email us', __i18n_text_domain__ ),
+			buttonSubmittingLabel: __( 'Sending email', __i18n_text_domain__ ),
+		},
+		FORUM: {
+			formTitle: __( 'Ask in our community forums', __i18n_text_domain__ ),
+			formDisclaimer: __(
+				'Please do not provide financial or contact information when submitting this form.',
+				__i18n_text_domain__
+			),
+			buttonLabel: __( 'Ask in the forums', __i18n_text_domain__ ),
+			buttonSubmittingLabel: __( 'Posting in the forums', __i18n_text_domain__ ),
+			buttonLoadingLabel: __( 'Analyzing site…', __i18n_text_domain__ ),
+		},
+	}[ mode ];
+}
+
+const getSupportedLanguages = ( supportType: string, locale: string ) => {
+	const isLiveChatLanguageSupported = (
+		config( 'livechat_support_locales' ) as Array< string >
+	 ).includes( locale );
+
+	const isLanguageSupported = ( config( 'upwork_support_locales' ) as Array< string > ).includes(
+		locale
+	);
+
+	switch ( supportType ) {
+		case 'CHAT':
+			return ! isLiveChatLanguageSupported;
+		case 'EMAIL':
+			return ! isLanguageSupported && ! [ 'en', 'en-gb' ].includes( locale );
+
+		default:
+			return false;
+	}
 };
 
 type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
@@ -137,13 +160,12 @@ export const HelpCenterContactForm = () => {
 	const userWithNoSites = userSites?.sites.length === 0;
 	const queryClient = useQueryClient();
 	const email = useSelector( getCurrentUserEmail );
-
 	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
 		'CURRENT_SITE'
 	);
-	const { selectedSite, subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
+	const { currentSite, subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
 		return {
-			selectedSite: select( HELP_CENTER_STORE ).getSite(),
+			currentSite: select( HELP_CENTER_STORE ).getSite(),
 			subject: select( HELP_CENTER_STORE ).getSubject(),
 			message: select( HELP_CENTER_STORE ).getMessage(),
 			userDeclaredSiteUrl: select( HELP_CENTER_STORE ).getUserDeclaredSiteUrl(),
@@ -163,6 +185,7 @@ export const HelpCenterContactForm = () => {
 		const supportVariation = getSupportVariationFromMode( mode );
 		recordTracksEvent( 'calypso_inlinehelp_contact_view', {
 			support_variation: supportVariation,
+			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
 		} );
@@ -174,10 +197,7 @@ export const HelpCenterContactForm = () => {
 		}
 	}, [ userWithNoSites ] );
 
-	const formTitles = titles[ mode ];
-
-	const siteId = useSelector( getSelectedSiteId );
-	const currentSite = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
+	const formTitles = useFormTitles( mode );
 
 	let ownershipResult: AnalysisReport = useSiteAnalysis(
 		// pass user email as query cache key
@@ -202,29 +222,26 @@ export const HelpCenterContactForm = () => {
 	// record the resolved site
 	useEffect( () => {
 		if ( ownershipResult?.site && sitePickerChoice === 'OTHER_SITE' ) {
-			setUserDeclaredSite( ownershipResult?.site );
+			setUserDeclaredSite( ownershipResult?.site as SiteDetails );
 		}
 	}, [ ownershipResult, setUserDeclaredSite, sitePickerChoice ] );
 
-	let supportSite: typeof currentSite;
+	let supportSite: SiteDetails | HelpCenterSite;
 
 	// if the user picked "other site", force them to declare a site
 	if ( sitePickerChoice === 'OTHER_SITE' ) {
-		supportSite = ownershipResult?.site;
+		supportSite = ownershipResult?.site as SiteDetails;
 	} else {
-		supportSite = selectedSite || currentSite;
+		supportSite = currentSite as HelpCenterSite;
 	}
-
-	const isAtomic = Boolean(
-		useSelect( ( select ) => supportSite && select( SITE_STORE ).isSiteAtomic( supportSite?.ID ) )
-	);
-	const isJetpack = Boolean(
-		useSelect( ( select ) => select( SITE_STORE ).isJetpackSite( supportSite?.ID ) )
-	);
 
 	const [ debouncedMessage ] = useDebounce( message || '', 500 );
 
-	const { data: sibylArticles } = useSibylQuery( debouncedMessage, isJetpack, isAtomic );
+	const { data: sibylArticles } = useSibylQuery(
+		debouncedMessage,
+		Boolean( supportSite?.jetpack ),
+		Boolean( supportSite?.is_wpcom_atomic )
+	);
 
 	const showingSibylResults = params.get( 'show-results' ) === 'true';
 
@@ -237,18 +254,26 @@ export const HelpCenterContactForm = () => {
 			} );
 			return;
 		}
+		const productSlug = ( supportSite as HelpCenterSite )?.plan.product_slug;
+		const plan = getPlan( productSlug );
+		const productId = plan?.getProductId();
+		const productName = plan?.getTitle();
+		const productTerm = getPlanTermLabel( productSlug, ( text ) => text );
+
 		switch ( mode ) {
 			case 'CHAT':
 				if ( supportSite ) {
 					recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
 						support_variation: 'happychat',
+						force_site_id: true,
 						location: 'help-center',
 						section: sectionName,
 					} );
 
 					recordTracksEvent( 'calypso_help_live_chat_begin', {
-						site_plan_product_id: supportSite ? supportSite.plan?.product_id : null,
-						is_automated_transfer: supportSite ? supportSite.options.is_automated_transfer : null,
+						site_plan_product_id: productId,
+						is_automated_transfer: supportSite.is_wpcom_atomic,
+						force_site_id: true,
 						location: 'help-center',
 						section: sectionName,
 					} );
@@ -259,18 +284,10 @@ export const HelpCenterContactForm = () => {
 
 			case 'EMAIL':
 				if ( supportSite ) {
-					let planName = supportSite.plan?.product_slug;
-
-					if ( supportSite.plan ) {
-						planName = `${ supportSite.plan.product_id } - ${
-							supportSite.plan.product_name_short
-						} (${ getPlanTermLabel(
-							supportSite.plan.product_slug,
-							( val ) => val // Passing an identity function instead of `translate` to always return the English string
-						) })`;
-					}
-
-					const ticketMeta = [ 'Site I need help with: ' + supportSite.URL, 'Plan: ' + planName ];
+					const ticketMeta = [
+						'Site I need help with: ' + supportSite.URL,
+						`Plan: ${ productId } - ${ productName } (${ productTerm })`,
+					];
 
 					const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
 
@@ -280,11 +297,13 @@ export const HelpCenterContactForm = () => {
 						locale,
 						client: 'browser:help-center',
 						is_chat_overflow: overflow,
+						source: 'source_wpcom_help_center',
 						blog_url: supportSite.URL,
 					} )
 						.then( () => {
 							recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
 								support_variation: 'kayako',
+								force_site_id: true,
 								location: 'help-center',
 								section: sectionName,
 							} );
@@ -306,7 +325,6 @@ export const HelpCenterContactForm = () => {
 			case 'FORUM':
 				submitTopic( {
 					ownershipResult,
-					site: supportSite,
 					message: message ?? '',
 					subject: subject ?? '',
 					locale,
@@ -316,6 +334,7 @@ export const HelpCenterContactForm = () => {
 					.then( ( response ) => {
 						recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
 							support_variation: 'forums',
+							force_site_id: true,
 							location: 'help-center',
 							section: sectionName,
 						} );
@@ -361,6 +380,8 @@ export const HelpCenterContactForm = () => {
 		);
 	};
 
+	const shouldShowHelpLanguagePrompt = getSupportedLanguages( mode, locale );
+
 	const isCTADisabled = () => {
 		if ( isSubmitting || ! message || ownershipStatusLoading ) {
 			return true;
@@ -380,22 +401,20 @@ export const HelpCenterContactForm = () => {
 		if ( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
 			return __( 'Continue', __i18n_text_domain__ );
 		}
-		switch ( mode ) {
-			case 'CHAT':
-				if ( showingSibylResults ) {
-					return __( 'Still chat with us', __i18n_text_domain__ );
-				}
-			case 'EMAIL':
-				if ( showingSibylResults ) {
-					return __( 'Still email us', __i18n_text_domain__ );
-				}
-			case 'FORUM': {
-				if ( ownershipStatusLoading ) {
-					return formTitles.buttonLoadingLabel;
-				}
-				return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
-			}
+
+		if ( mode === 'CHAT' && showingSibylResults ) {
+			return __( 'Still chat with us', __i18n_text_domain__ );
 		}
+
+		if ( mode === 'EMAIL' && showingSibylResults ) {
+			return __( 'Still email us', __i18n_text_domain__ );
+		}
+
+		if ( ownershipStatusLoading ) {
+			return formTitles.buttonLoadingLabel;
+		}
+
+		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
 
 	return showingSibylResults ? (
@@ -518,6 +537,9 @@ export const HelpCenterContactForm = () => {
 				>
 					{ getCTALabel() }
 				</Button>
+				{ ! hasSubmittingError && shouldShowHelpLanguagePrompt && (
+					<Tip>{ __( 'Note: Support is only available in English at the moment.' ) }</Tip>
+				) }
 				{ hasSubmittingError && (
 					<FormInputValidation
 						isError

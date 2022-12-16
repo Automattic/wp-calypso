@@ -41,7 +41,7 @@ export default function CreditCardNumberField( {
 				errorMessage={ errorMessage }
 				inputMode="numeric"
 				label={ __( 'Card number' ) }
-				placeholder={ '•••• •••• •••• ••••' }
+				placeholder="•••• •••• •••• ••••"
 				disabled={ isDisabled }
 				name="number"
 				onChange={ ( event: { target: { value: string } } ) =>

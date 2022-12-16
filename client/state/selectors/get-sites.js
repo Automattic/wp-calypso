@@ -13,7 +13,7 @@ const sortByNameAndUrl = ( list ) => sortBy( list, [ 'name', 'URL' ] );
  * @returns {Array}        Sites objects
  */
 export default createSelector(
-	( state, { shouldSort = true } = {} ) => {
+	( state, shouldSort = true ) => {
 		const primarySiteId = getPrimarySiteId( state );
 		const [ primarySite, sites ] = partition( getSitesItems( state ), { ID: primarySiteId } );
 

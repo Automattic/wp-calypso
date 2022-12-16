@@ -25,6 +25,13 @@ export interface NewPostParams {
 	title: string;
 	content?: string;
 }
+export interface SettingsParams {
+	[ key: string ]: string | number;
+}
+
+export interface NewCommentParams {
+	content: string;
+}
 
 /* Response Interfaces */
 
@@ -129,6 +136,23 @@ export interface NewMediaResponse {
 	URL: string;
 	title: string;
 	file: string;
+}
+
+export interface ReaderMetadata {
+	ID: number;
+	site_ID: number;
+	author: {
+		ID: number;
+		login: string;
+	};
+}
+
+export interface ReaderResponse {
+	posts: Array< ReaderMetadata >;
+}
+
+export interface NewCommentResponse {
+	ID: number;
 }
 
 /* Error Responses */

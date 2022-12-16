@@ -6,14 +6,6 @@
 		justify-content: start;
 	}
 
-	&__threats {
-		margin: 0;
-
-		.info-popover {
-			margin: 0 0 0 20px;
-		}
-	}
-
 	&__card-header {
 		flex: none;
 		padding: 32px;
@@ -34,6 +26,11 @@
 	}
 
 	&__threats {
+		margin: 0;
+
+		.info-popover {
+			margin: 0 0 0 20px;
+		}
 		.foldable-card {
 			margin-bottom: 0;
 		}

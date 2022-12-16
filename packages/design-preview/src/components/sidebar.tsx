@@ -9,6 +9,7 @@ interface SidebarProps {
 	selectedVariation?: StyleVariation;
 	onSelectVariation: ( variation: StyleVariation ) => void;
 	actionButtons: React.ReactNode;
+	showGlobalStylesPremiumBadge: () => React.ReactNode;
 }
 
 const Sidebar: React.FC< SidebarProps > = ( {
@@ -18,32 +19,36 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	selectedVariation,
 	onSelectVariation,
 	actionButtons,
+	showGlobalStylesPremiumBadge,
 } ) => {
 	return (
 		<div className="design-preview__sidebar">
-			<div className="design-preview__sidebar-title">
-				<h1>{ title }</h1>
-			</div>
-
-			{ description && (
-				<div className="design-preview__sidebar-description">
-					<p>{ description }</p>
+			<div className="design-preview__sidebar-content">
+				<div className="design-preview__sidebar-title">
+					<h1>{ title }</h1>
 				</div>
-			) }
 
-			{ variations.length > 0 && (
-				<div className="design-preview__sidebar-variations">
-					<h2>{ translate( 'Style variations' ) }</h2>
-					<p>{ translate( 'Choose a variation to change the look of the site.' ) }</p>
-					<div className="design-preview__sidebar-variations-grid">
-						<StyleVariationPreviews
-							variations={ variations }
-							selectedVariation={ selectedVariation }
-							onClick={ onSelectVariation }
-						/>
+				{ description && (
+					<div className="design-preview__sidebar-description">
+						<p>{ description }</p>
 					</div>
-				</div>
-			) }
+				) }
+
+				{ variations.length > 0 && (
+					<div className="design-preview__sidebar-variations">
+						<h2>{ translate( 'Choose your style' ) }</h2>
+						<p>{ translate( 'You can change your style at any time.' ) }</p>
+						<div className="design-preview__sidebar-variations-grid">
+							<StyleVariationPreviews
+								variations={ variations }
+								selectedVariation={ selectedVariation }
+								onClick={ onSelectVariation }
+								showGlobalStylesPremiumBadge={ showGlobalStylesPremiumBadge }
+							/>
+						</div>
+					</div>
+				) }
+			</div>
 
 			{ actionButtons && (
 				<div className="design-preview__sidebar-action-buttons">{ actionButtons }</div>

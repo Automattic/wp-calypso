@@ -223,7 +223,7 @@ class SiteOrDomain extends Component {
 				'Please visit {{a}}wordpress.com/domains{{/a}} to search for a domain.',
 				{
 					components: {
-						a: <a href={ 'https://wordpress.com/domains/' } />,
+						a: <a href="https://wordpress.com/domains/" />,
 					},
 				}
 			);

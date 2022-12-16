@@ -15,7 +15,9 @@ export class HiddenInput extends PureComponent {
 	}
 
 	static getDerivedStateFromProps( props, state ) {
-		if ( props.toggled === undefined ) return null;
+		if ( props.toggled === undefined ) {
+			return null;
+		}
 
 		const toggled = !! props.toggled;
 		if ( state.toggled !== toggled ) {

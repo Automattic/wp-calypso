@@ -37,7 +37,7 @@ const DnsDetails = ( { dns, selectedDomainName, currentRoute, selectedSite }: Dn
 
 		return (
 			<DnsRecordItem
-				key={ 'domain-connect-record' }
+				key="domain-connect-record"
 				dnsRecord={ record }
 				selectedDomainName={ selectedDomainName }
 			/>

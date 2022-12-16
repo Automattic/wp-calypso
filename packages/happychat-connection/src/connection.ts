@@ -21,7 +21,6 @@ const buildConnection: ( socket: string | Socket ) => Socket = ( socket ) =>
 
 //The second one is an identity function, used in 'use-happychat-available' hook
 export type Dispatch = ( ( arg: unknown ) => void ) | ( < T >( value: T ) => T );
-
 export class Connection {
 	receiveAccept?: ( accept: boolean ) => void;
 	receiveConnect?: () => void;
@@ -30,6 +29,7 @@ export class Connection {
 	receiveInit?: ( init: HappychatUser ) => void;
 	receiveLocalizedSupport?: ( accept: boolean ) => void;
 	receiveMessage?: ( message: string ) => void;
+	receiveHappychatEnv?: ( env: 'production' | 'staging' ) => void;
 	receiveMessageOptimistic?: ( message: string ) => void;
 	receiveMessageUpdate?: ( message: string ) => void;
 	receiveReconnecting?: () => void;
@@ -49,21 +49,36 @@ export class Connection {
 	/**
 	 * Init the SocketIO connection: check user authorization and bind socket events
 	 *
-	 * @param dispatch Redux dispatch function
+	 * @param originalDispatch Redux dispatch function
 	 * @param auth Authentication promise, will return the user info upon fulfillment
 	 * @returns Fulfilled (returns the opened socket)
 	 *                   	 or rejected (returns an error message)
 	 */
-	init( dispatch: Dispatch, auth: Promise< HappychatAuth > ) {
+	init( originalDispatch: Dispatch, auth: Promise< HappychatAuth > ) {
 		if ( this.openSocket ) {
 			debug( 'socket is already connected' );
 			return this.openSocket;
 		}
+
+		const dispatch = ( action: unknown ) => {
+			if ( action ) {
+				return originalDispatch( action );
+			}
+		};
+
 		this.dispatch = dispatch;
 
 		this.openSocket = new Promise( ( resolve, reject ) => {
 			auth
 				.then( ( { url, user: { signer_user_id, jwt, groups, skills, geoLocation } } ) => {
+					// not so clean way to check if the happychat URL is staging or prod one.
+					if ( typeof url === 'string' ) {
+						if ( url.includes( 'staging' ) ) {
+							dispatch( this.receiveHappychatEnv?.( 'staging' ) );
+						} else {
+							dispatch( this.receiveHappychatEnv?.( 'production' ) );
+						}
+					}
 					const socket = buildConnection( url );
 					return socket
 						.once( 'connect', () => dispatch( this.receiveConnect?.() ) )

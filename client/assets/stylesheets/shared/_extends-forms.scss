@@ -33,6 +33,21 @@
 		&::-ms-clear {
 			display: none;
 		}
+		&.is-valid {
+			box-shadow: 0 0 0 2px var(--color-success-10);
+		}
+
+		&.is-valid:hover {
+			box-shadow: 0 0 0 2px var(--color-success-20);
+		}
+
+		&.is-error {
+			box-shadow: 0 0 0 2px var(--color-error-10);
+		}
+
+		&.is-error:hover {
+			box-shadow: 0 0 0 2px var(--color-error-20);
+		}
 	}
 
 	&:disabled {
@@ -65,23 +80,5 @@
 
 	&.is-error:hover {
 		border-color: var(--color-error-dark);
-	}
-
-	&:focus {
-		&.is-valid {
-			box-shadow: 0 0 0 2px var(--color-success-10);
-		}
-
-		&.is-valid:hover {
-			box-shadow: 0 0 0 2px var(--color-success-20);
-		}
-
-		&.is-error {
-			box-shadow: 0 0 0 2px var(--color-error-10);
-		}
-
-		&.is-error:hover {
-			box-shadow: 0 0 0 2px var(--color-error-20);
-		}
 	}
 }

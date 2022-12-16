@@ -24,7 +24,7 @@ import { getCalypsoURL } from '../../data-helper';
 import { getIdFromBlock } from '../../element-helper';
 import envVariables from '../../env-variables';
 
-const wpAdminPath = 'wp-admin/themes.php';
+const wpAdminPath = 'wp-admin/site-editor.php';
 
 const selectors = {
 	editorIframe: `iframe.is-loaded[src*="${ wpAdminPath }"]`,
@@ -360,6 +360,24 @@ export class FullSiteEditorPage {
 		await this.fullSiteEditorSavePanelComponent.confirmSave();
 		await this.waitForConfirmationToast( 'Site updated.' );
 	}
+
+	/**
+	 * Click the editor document actions icon.
+	 */
+	async openDocumentActionsDropdown(): Promise< void > {
+		await this.editorToolbarComponent.clickDocumentActionsIcon();
+	}
+
+	/**
+	 * Click on an item in the document actions dropdown.
+	 */
+	async clickDocumentActionsDropdownItem( itemSelector: string ): Promise< void > {
+		await this.editorToolbarComponent.clickDocumentActionsDropdownItem( itemSelector );
+	}
+
+	/**
+	 * Click the editor document actions icon.
+	 */
 
 	//#endregion
 

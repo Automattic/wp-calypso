@@ -13,7 +13,7 @@ const ClearSearchButton = () => {
 		<>
 			&nbsp;
 			<a
-				className={ 'plugins-browser__clear-filters' }
+				className="plugins-browser__clear-filters"
 				href={ localizePath( '/plugins' + ( siteSlug ? '/' + siteSlug : '' ) ) }
 			>
 				{ translate( 'Clear' ) }

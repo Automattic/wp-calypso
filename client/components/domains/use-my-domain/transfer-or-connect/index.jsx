@@ -60,6 +60,8 @@ function DomainTransferOrConnect( {
 
 	const handleTransfer = () => {
 		recordTransferButtonClickInUseYourDomain( domain );
+		setActionClicked( true );
+
 		onTransfer( { domain, selectedSite, transferDomainUrl }, () => setActionClicked( false ) );
 	};
 
@@ -82,7 +84,9 @@ function DomainTransferOrConnect( {
 	// retrieves the availability data by itself if not provided by the parent component
 	useEffect( () => {
 		( async () => {
-			if ( ( availabilityData && inboundTransferStatusInfo ) || isFetching ) return;
+			if ( ( availabilityData && inboundTransferStatusInfo ) || isFetching ) {
+				return;
+			}
 
 			try {
 				setIsFetching( true );

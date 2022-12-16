@@ -104,7 +104,6 @@
 	}
 
 	&:disabled {
-		cursor: default;
 		cursor: not-allowed;
 		color: var(--color-error-10);
 	}

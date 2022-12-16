@@ -3,9 +3,9 @@ import type { ResponseCartProduct } from '@automattic/shopping-cart';
 export type WPCOMProductSlug = string;
 
 export type WPCOMProductVariant = {
-	price: number;
-	pricePerMonth: number;
+	priceInteger: number;
 	termIntervalInMonths: number;
+	termIntervalInDays: number;
 	currency: string;
 	productId: number;
 	productSlug: WPCOMProductSlug;
@@ -16,9 +16,8 @@ export type ItemVariationPickerProps = {
 	selectedItem: ResponseCartProduct;
 	onChangeItemVariant: OnChangeItemVariant;
 	isDisabled: boolean;
-	siteId: number | undefined;
-	productSlug: string;
 	isLoading?: boolean;
+	variants: WPCOMProductVariant[];
 };
 
 export type OnChangeItemVariant = (

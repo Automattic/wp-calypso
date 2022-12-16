@@ -126,7 +126,7 @@ export class RegistrantExtraInfoUkForm extends PureComponent {
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
-						placeholder={ '' }
+						placeholder=""
 						onChange={ this.handleChangeEvent }
 						isError={ isError }
 					/>
@@ -162,7 +162,7 @@ export class RegistrantExtraInfoUkForm extends PureComponent {
 						autoCapitalize="off"
 						autoComplete="off"
 						autoCorrect="off"
-						placeholder={ '' }
+						placeholder=""
 						onChange={ this.handleChangeEvent }
 						isError={ isError }
 					/>

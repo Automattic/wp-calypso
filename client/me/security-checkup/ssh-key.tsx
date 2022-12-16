@@ -15,12 +15,12 @@ export const SecurityCheckupSSHKey = () => {
 
 	return (
 		<SecurityCheckupNavigationItem
-			path={ '/me/security/ssh-key' }
+			path="/me/security/ssh-key"
 			materialIcon={ hasSSHKey ? getOKIcon() : getWarningIcon() }
 			text={ __( 'SSH Key' ) }
 			description={
 				hasSSHKey
-					? __( 'You have added a SSH key to your account.' )
+					? __( 'You have a SSH key added to your account.' )
 					: __( 'You do not have a SSH key added to your account.' )
 			}
 		/>

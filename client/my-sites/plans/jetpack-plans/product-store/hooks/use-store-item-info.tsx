@@ -3,7 +3,6 @@ import {
 	JetpackPurchasableItemSlug,
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_SCAN_PRODUCTS,
-	JETPACK_SOCIAL_PRODUCTS,
 	planHasFeature,
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
@@ -21,7 +20,7 @@ import {
 	getSiteProducts,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
-import { EXTERNAL_PRODUCTS_LIST } from '../../constants';
+import { EXTERNAL_PRODUCTS_LIST, ITEM_TYPE_PLAN } from '../../constants';
 import productButtonLabel from '../../product-card/product-button-label';
 import { SelectorProduct } from '../../types';
 import { UseStoreItemInfoProps } from '../types';
@@ -75,9 +74,14 @@ export const useStoreItemInfo = ( {
 		[ sitePlan, siteProducts ]
 	);
 
+	//Standalone products are currently not upgradable to yearly
+	//Once the feature is enabled, remove the last condition to enable the upgrade button
 	const getIsUpgradeableToYearly = useCallback(
 		( item: SelectorProduct ) =>
-			getIsOwned( item ) && selectedTerm === TERM_ANNUALLY && item.term === TERM_MONTHLY,
+			getIsOwned( item ) &&
+			selectedTerm === TERM_ANNUALLY &&
+			item.term === TERM_MONTHLY &&
+			item.type === ITEM_TYPE_PLAN,
 		[ getIsOwned, selectedTerm ]
 	);
 
@@ -192,24 +196,6 @@ export const useStoreItemInfo = ( {
 		]
 	);
 
-	/**
-	 * This is a temporary custom label for Jetpack Social product only.
-	 * TODO: Remove 'getCustomLabel' in the near future when Social is ready for purchase.
-	 */
-	const getCustomLabel = useCallback(
-		( item: SelectorProduct ) => {
-			if (
-				! getIsOwned( item ) &&
-				getIsExternal( item ) &&
-				( [ ...JETPACK_SOCIAL_PRODUCTS ] as ReadonlyArray< string > ).includes( item.productSlug )
-			) {
-				return translate( 'Coming soon!' );
-			}
-			return null;
-		},
-		[ getIsOwned, translate ]
-	);
-
 	return useMemo(
 		() => ( {
 			getCheckoutURL,
@@ -227,7 +213,6 @@ export const useStoreItemInfo = ( {
 			getOnClickPurchase,
 			getPurchase,
 			isMultisite,
-			getCustomLabel,
 		} ),
 		[
 			getCheckoutURL,
@@ -242,7 +227,6 @@ export const useStoreItemInfo = ( {
 			getOnClickPurchase,
 			getPurchase,
 			isMultisite,
-			getCustomLabel,
 		]
 	);
 };

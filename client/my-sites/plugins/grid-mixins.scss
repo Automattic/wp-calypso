@@ -1,5 +1,4 @@
 @mixin display-grid {
-	display: -ms-grid;
 	display: grid;
 }
 @mixin grid-template-columns( $cols, $gap, $fr ) {

@@ -24,6 +24,7 @@
 		}
 	],
 	"oauth_client_id": 69040,
+	"zendesk_presales_chat_key": "d729d42c-b547-4750-a6f6-8b30534a5f12",
 	"features": {
 		"activity-log/v2": true,
 		"ad-tracking": false,
@@ -37,6 +38,7 @@
 		"jetpack/activity-log-sharing": true,
 		"jetpack/agency-dashboard": true,
 		"jetpack/backup-messaging-i3": true,
+		"jetpack/partner-portal-downtime-monitoring-updates": false,
 		"jetpack/partner-portal-payment": true,
 		"jetpack/plugin-management": true,
 		"jetpack/pricing-add-boost-social": true,
@@ -46,6 +48,7 @@
 		"jetpack/search-product": true,
 		"jetpack/server-credentials-advanced-flow": true,
 		"jetpack/simplify-pricing-structure": false,
+		"jetpack/standalone-plugin-onboarding-update-v1": true,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/query-selected-editor": false,
@@ -79,6 +82,5 @@
 	"theme": "jetpack-cloud",
 	"restricted_me_access": false,
 	"theme_color": "#2fb41f",
-	"google_analytics_key": "UA-52447-43",
 	"hotjar_enabled": true
 }
