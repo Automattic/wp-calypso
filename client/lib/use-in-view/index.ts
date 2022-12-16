@@ -1,14 +1,14 @@
 import { RefObject, useEffect, useRef } from 'react';
 
-// Check IntersectionObserver support
-const hasIntersectionObserver = typeof window !== 'undefined' && 'IntersectionObserver' in window;
-
 export function useInView< T extends Element >(
 	oneTimeCallback: () => void,
 	dependencies: any[] = []
 ): RefObject< T > {
 	const elementRef = useRef< T >( null );
 	const oneTimeCallbackRef = useRef< () => void >();
+
+	// Check IntersectionObserver support
+	const hasIntersectionObserver = typeof window !== 'undefined' && 'IntersectionObserver' in window;
 
 	oneTimeCallbackRef.current = oneTimeCallback;
 
