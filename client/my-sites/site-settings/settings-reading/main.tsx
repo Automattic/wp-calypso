@@ -22,11 +22,11 @@ const getFormSettings = ( settings: Settings = {} ) => {
 	}
 
 	// @ts-expect-error Settings are not typed yet, so we need to use `unknown` for now.
-	const { posts_per_page, posts_per_rss, featured_image_email_enabled } = settings;
+	const { posts_per_page, posts_per_rss, wpcom_featured_image_in_email } = settings;
 	return {
 		...( posts_per_page && { posts_per_page } ),
 		...( posts_per_rss && { posts_per_rss } ),
-		...( featured_image_email_enabled && { featured_image_email_enabled } ),
+		...( wpcom_featured_image_in_email && { wpcom_featured_image_in_email } ),
 	};
 };
 
@@ -41,7 +41,7 @@ const connectComponent = connect( ( state ) => {
 type Fields = {
 	posts_per_page?: number;
 	posts_per_rss?: number;
-	featured_image_email_enabled?: boolean;
+	wpcom_featured_image_in_email?: boolean;
 };
 
 type ReadingSettingsFormProps = {
