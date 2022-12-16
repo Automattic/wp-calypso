@@ -248,6 +248,12 @@ class StatsSite extends Component {
 
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
+						{ /** Promo Card is disabled for Odyssey because it doesn't make much sense in the context, which also removes an API call to `plugins`. */ }
+						<MobilePromoCardWrapper
+							isJetpack={ isJetpack }
+							isOdysseyStats={ isOdysseyStats }
+							slug={ slug }
+						/>
 						<StatsPeriodHeader>
 							<StatsPeriodNavigation
 								date={ date }
@@ -367,12 +373,6 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
-				{ /** Promo Card is disabled for Odyssey because it doesn't make much sense in the context, which also removes an API call to `plugins`. */ }
-				<MobilePromoCardWrapper
-					isJetpack={ isJetpack }
-					isOdysseyStats={ isOdysseyStats }
-					slug={ slug }
-				/>
 				<JetpackColophon />
 			</div>
 		);
