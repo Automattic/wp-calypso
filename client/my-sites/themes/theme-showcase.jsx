@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
-import { compact, omit, pickBy } from 'lodash';
+import { compact, pickBy } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -64,7 +64,7 @@ class ThemeShowcase extends Component {
 		this.bookmarkRef = createRef();
 		this.tabTiers = this.getTabTiers( props );
 		this.tabFilters = this.getTabFilters( props );
-		this.tabSubjectTermTable = this.getSubjectTermTable( props );
+		this.tabSubjectTermTable = this.getSubjectTermTable();
 		this.state = {
 			tabFilter: this.getTabFilterFromUrl( props.filter ),
 		};
@@ -136,11 +136,7 @@ class ThemeShowcase extends Component {
 	};
 
 	getTabFilters = ( props ) => {
-		const { subjects, translate } = props;
-		const subjectFilters = Object.fromEntries(
-			Object.entries( subjects ).map( ( [ key, filter ] ) => [ key, { key, text: filter.name } ] )
-		);
-
+		const { translate } = props;
 		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
 		const shouldShowMyThemesFilter =
 			( props.isJetpackSite && ! props.isAtomicSite ) ||
@@ -173,15 +169,44 @@ class ThemeShowcase extends Component {
 				text: isNewSearchAndFilter ? translate( 'All' ) : translate( 'All Themes' ),
 				order: 4,
 			},
-			...( isNewSearchAndFilter && subjectFilters ),
+			...( isNewSearchAndFilter && {
+				SUBJECT_BLOG: {
+					key: 'blog',
+					text: translate( 'Blog' ),
+				},
+				SUBJECT_BUSINESS: {
+					key: 'business',
+					text: translate( 'Business' ),
+				},
+				SUBJECT_LINK_IN_BIO: {
+					key: 'link-in-bio',
+					text: translate( 'Link in Bio' ),
+				},
+				SUBJECT_PODCAST: {
+					key: 'podcast',
+					text: translate( 'Podcast' ),
+				},
+				SUBJECT_PORTFOLIO: {
+					key: 'subject:portfolio',
+					text: translate( 'Portfolio' ),
+				},
+				SUBJECT_SINGLE_PAGE: {
+					key: 'single-page',
+					text: translate( 'Single Page' ),
+				},
+				SUBJECT_STORE: {
+					key: 'subject:store',
+					text: translate( 'Store' ),
+				},
+			} ),
 		};
 	};
 
-	getSubjectTermTable = ( { filterToTermTable } ) => {
-		return Object.keys( filterToTermTable )
-			.filter( ( key ) => key.indexOf( 'subject:' ) !== -1 )
-			.reduce( ( obj, key ) => {
-				obj[ key ] = filterToTermTable[ key ];
+	getSubjectTermTable = () => {
+		return Object.keys( this.tabFilters )
+			.filter( ( key ) => key.indexOf( 'SUBJECT_' ) !== -1 )
+			.reduce( ( obj, objKey ) => {
+				obj[ objKey ] = this.tabFilters[ objKey ].key;
 				return obj;
 			}, {} );
 	};
@@ -321,8 +346,7 @@ class ThemeShowcase extends Component {
 		}
 
 		if ( isNewSearchAndFilter ) {
-			const { filter = '', search, filterToTermTable } = this.props;
-			const subjectTerm = filterToTermTable[ `subject:${ tabFilter.key }` ];
+			const { filter = '', search } = this.props;
 			const subjectFilters = Object.values( this.tabSubjectTermTable );
 			const filterWithoutSubjects = filter
 				.split( '+' )
@@ -331,7 +355,7 @@ class ThemeShowcase extends Component {
 
 			const newFilter =
 				tabFilter.key !== this.tabFilters.ALL.key
-					? [ filterWithoutSubjects, subjectTerm ].join( '+' )
+					? [ filterWithoutSubjects, tabFilter.key ].filter( Boolean ).join( '+' )
 					: filterWithoutSubjects;
 
 			page( this.constructUrl( { filter: newFilter, searchString: search } ) );
@@ -596,7 +620,6 @@ class ThemeShowcase extends Component {
 const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 	const currentThemeId = getActiveTheme( state, siteId );
 	const currentTheme = getCanonicalTheme( state, siteId, currentThemeId );
-	const allowedSubjects = omit( getThemeFilterTerms( state, 'subject' ) || {}, [ 'newsletter' ] );
 
 	return {
 		currentThemeId,
@@ -608,7 +631,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 		siteSlug: getSiteSlug( state, siteId ),
 		description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
 		title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
-		subjects: allowedSubjects,
+		subjects: getThemeFilterTerms( state, 'subject' ) || {},
 		premiumThemesEnabled: arePremiumThemesEnabled( state, siteId ),
 		filterString: prependThemeFilterKeys( state, filter ),
 		filterToTermTable: getThemeFilterToTermTable( state ),
