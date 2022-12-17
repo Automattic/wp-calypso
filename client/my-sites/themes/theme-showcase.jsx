@@ -222,7 +222,7 @@ class ThemeShowcase extends Component {
 			return tabFilter;
 		}
 
-		const filterKey = matches[ matches.length - 1 ].split( ':' ).pop();
+		const filterKey = matches[ matches.length - 1 ];
 		Object.values( this.tabFilters ).map( ( filter ) => {
 			if ( filter.key === filterKey ) {
 				tabFilter = filter;
