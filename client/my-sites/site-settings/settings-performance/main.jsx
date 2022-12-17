@@ -14,6 +14,7 @@ import Main from 'calypso/components/main';
 import AmpJetpack from 'calypso/my-sites/site-settings/amp/jetpack';
 import AmpWpcom from 'calypso/my-sites/site-settings/amp/wpcom';
 import Cloudflare from 'calypso/my-sites/site-settings/cloudflare';
+import EdgeCacheSettings from 'calypso/my-sites/site-settings/edge-cache';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
 import MediaSettingsPerformance from 'calypso/my-sites/site-settings/media-settings-performance';
 import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
@@ -53,6 +54,7 @@ class SiteSettingsPerformance extends Component {
 			activateModule,
 		} = this.props;
 		const siteIsJetpackNonAtomic = siteIsJetpack && ! siteIsAtomic;
+		const isSimple = site && ! siteIsJetpack && ! siteIsAtomic;
 
 		return (
 			<Main className="settings-performance site-settings site-settings__performance-settings">
@@ -79,6 +81,8 @@ class SiteSettingsPerformance extends Component {
 					align="left"
 				/>
 				<SiteSettingsNavigation site={ site } section="performance" />
+
+				{ isSimple && <EdgeCacheSettings /> }
 
 				<Search
 					handleAutosavingToggle={ handleAutosavingToggle }
