@@ -57,7 +57,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		shoppingCartTracker( 'calypso_jetpack_shopping_cart_checkout_from_cart', {
 			addProducts: true,
 		} );
-		page( `https://wordpress.com/checkout/${ siteSlug }` );
+		window.location.href = `https://wordpress.com/checkout/${ siteSlug }`;
 	};
 
 	const sections = useMemo(
