@@ -1212,9 +1212,12 @@
 }
 
 //open the cart to full width and height of viewport
-.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing {
-	.masterbar-cart-button__popover .mini-cart {
-		top: 0;
-		bottom: 0;
+@media (max-width: 480px) {
+	.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing {
+		.masterbar-cart-button__popover .mini-cart {
+			top: 0;
+			bottom: 0;
+		}
 	}
 }
+
