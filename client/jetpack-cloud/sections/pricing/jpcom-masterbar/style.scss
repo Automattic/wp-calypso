@@ -253,6 +253,13 @@
 		width: 100%;
 		margin-inline-end: 3rem;
 		padding: 0.5rem 0;
+
+		& ~ .masterbar-cart-button {
+			display: none;
+		}
+		& ~ .masterbar-cart-count {
+			display: none;
+		}
 	}
 	@media ( max-width: 900px ) {
 		.header__sections-list {
@@ -1143,5 +1150,71 @@
 		.user-menu__list > li {
 			margin: 1rem 0;
 		}
+	}
+
+
+	@media ( min-width: 900px ) {
+		//show desktop cart
+		.header__sections-list {
+			& ~ .masterbar-cart-button {
+				display: flex;
+			}
+			& ~ .masterbar-cart-count {
+				display: block;
+			}
+		}
+
+		//hide mobile cart
+		.header__content {
+			& > .masterbar-cart-button {
+				display: none;
+			}
+			& > .masterbar-cart-count {
+				display: none;
+			}
+		}
+	}
+
+	@media (max-width: 900px) {
+		.header__content {
+			& > .masterbar-cart-button {
+				justify-content: flex-end;
+				flex: unset;
+			}
+			& > .masterbar-cart-count {
+				//display: none;
+				top: -8px;
+				margin-right: 32px;
+			}
+			.header__home-link {
+				flex: 1;
+			}
+		}
+	}
+	@media (max-width: 480px) {
+		.header__content > .masterbar__item.masterbar-cart-button {
+			flex: unset;
+			justify-content: flex-end;
+
+		}
+		.header__content > .masterbar-cart-count {
+			margin-left: 7px;
+			margin-right: 10px;
+
+		}
+		.header__home-link {
+			margin-right: 6px;
+			flex: 1;
+		}
+
+	}
+
+}
+
+//open the cart to full width and height of viewport
+.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing {
+	.masterbar-cart-button__popover .mini-cart {
+		top: 0;
+		bottom: 0;
 	}
 }

@@ -4,14 +4,15 @@
 	color: #fff;
 	padding: 0 5px;
 	vertical-align: top;
-	margin-left: -6px;
-	margin-right: 45px;
+	margin-right: 40px;
 	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
-
 	background-color: #c9356e;
-
 	top: 5px;
 	position: relative;
-	left: 4px;
+
+	&.masterbar-cart-count__hidden {
+		visibility: hidden;
+	}
 }
+

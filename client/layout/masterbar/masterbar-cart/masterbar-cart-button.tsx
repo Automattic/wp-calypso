@@ -70,7 +70,7 @@ export function MasterbarCartButton( {
 
 	const CustomCartIcon = cartIcon as React.ElementType;
 
-	const cartCount = responseCart?.products?.length ?? 0;
+	const cartCount = responseCart?.products?.length;
 	const icon = cartIcon ? (
 		<CustomCartIcon />
 	) : (

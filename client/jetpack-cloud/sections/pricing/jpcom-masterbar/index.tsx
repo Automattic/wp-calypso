@@ -189,6 +189,16 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 						>
 							<JetpackLogo full size={ 38 } />
 						</ExternalLink>
+						{ shouldShowCart && (
+							<MasterbarCartWrapper
+								goToCheckout={ goToCheckout }
+								selectedSiteSlug={ siteSlug || undefined }
+								selectedSiteId={ siteId || undefined }
+								checkoutLabel={ translate( 'Go to Checkout' ) }
+								cartIcon={ CloudCartIcon }
+								forceShow
+							/>
+						) }
 						<a
 							className="header__mobile-btn mobile-btn js-mobile-btn"
 							href="#mobile-menu"
