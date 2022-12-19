@@ -6,7 +6,6 @@ export { default as StyleVariationBadges } from './components/style-variation-ba
 export { default as ThemePreview } from './components/theme-preview';
 export { default as UnifiedDesignPicker } from './components/unified-design-picker';
 export { default as WooCommerceBundledBadge } from './components/woocommerce-bundled-badge';
-export { default as DeviceSwitcher } from './components/device-switcher';
 export {
 	availableDesignsConfig,
 	getAvailableDesigns,

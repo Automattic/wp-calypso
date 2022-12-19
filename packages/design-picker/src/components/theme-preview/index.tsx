@@ -1,3 +1,4 @@
+import { DeviceSwitcher } from '@automattic/components';
 import { Spinner } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
@@ -5,7 +6,6 @@ import { addQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { v4 as uuid } from 'uuid';
-import DeviceSwitcher from '../device-switcher';
 import './style.scss';
 
 interface Viewport {

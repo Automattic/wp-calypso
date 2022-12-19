@@ -1,9 +1,9 @@
 import classnames from 'classnames';
 import { useState } from 'react';
-import { DEVICE_TYPE } from '../../constants';
+import { DEVICE_TYPES } from './constants';
 import DeviceSwitcherToolbar from './toolbar';
-import type { Device } from '../../types';
-import './style.scss';
+import type { Device } from './types';
+import './device-switcher.scss';
 
 interface Props {
 	children: React.ReactNode;
@@ -17,7 +17,7 @@ interface Props {
 const DeviceSwitcher = ( {
 	children,
 	className = '',
-	defaultDevice = DEVICE_TYPE.COMPUTER,
+	defaultDevice = DEVICE_TYPES.COMPUTER,
 	isShowDeviceSwitcherToolbar,
 	isShowFrameBorder,
 	onDeviceChange,
