@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
-import { compact, omit, pickBy } from 'lodash';
+import { compact, isEqual, omit, pickBy } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -126,7 +126,10 @@ class ThemeShowcase extends Component {
 			this.scrollToSearchInput();
 		}
 
-		if ( prevProps.subjects !== this.props.subjects ) {
+		if (
+			! isEqual( prevProps.subjects, this.props.subjects ) ||
+			prevProps.siteCanInstallThemes !== this.props.siteCanInstallThemes
+		) {
 			this.tabFilters = this.getTabFilters( this.props );
 			this.tabSubjectTermTable = this.getSubjectTermTable( this.props );
 		}
