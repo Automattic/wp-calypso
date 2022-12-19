@@ -1,5 +1,6 @@
 import { createShoppingCartManagerClient, getEmptyResponseCart } from '../src/index';
 import { getCart, setCart, mainCartKey, planOne, planTwo } from './utils/mock-cart-api';
+import type { ResponseCart } from '../src/types';
 
 /* eslint-disable jest/no-done-callback, jest/no-conditional-expect */
 
@@ -169,6 +170,37 @@ describe( 'ShoppingCartManager', () => {
 		const slugsInCart = responseCart.products.map( ( prod ) => prod.product_slug );
 		expect( slugsInCart ).toContain( planOne.product_slug );
 		expect( slugsInCart ).toContain( planTwo.product_slug );
+	} );
+
+	it( 'noop actions taken when the cart already has errors do not reject their promises', async () => {
+		const errorCode = 'test-error';
+		const errorMessage = 'test error message';
+		const countryCode = 'CA';
+		const mockSetCart = jest.fn().mockResolvedValue( {
+			...getEmptyResponseCart(),
+			messages: { errors: [ { code: errorCode, message: errorMessage } ] },
+			tax: {
+				location: {
+					country_code: countryCode,
+				},
+			},
+		} as ResponseCart );
+		const cartManagerClient = createShoppingCartManagerClient( {
+			getCart,
+			setCart: mockSetCart,
+		} );
+		const manager = cartManagerClient.forCartKey( mainCartKey );
+		await manager.fetchInitialCart();
+		try {
+			await manager.actions.addProductsToCart( [ planOne ] );
+		} catch {
+			// This will reject because of the error, but that's expected.
+		}
+
+		// updateLocation with the same data should be a noop.
+		const p1 = manager.actions.updateLocation( { countryCode } );
+		const completeCart = await p1;
+		expect( p1 ).resolves.toEqual( completeCart );
 	} );
 
 	it( 'multiple actions triggered sequentially all modify the cart', async () => {
