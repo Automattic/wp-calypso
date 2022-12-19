@@ -50,6 +50,8 @@ class PostLikes extends PureComponent {
 	renderExtraCount() {
 		const { likes, likeCount, showDisplayNames, translate, numberFormat } = this.props;
 
+		const isFeatured = config.isEnabled( 'stats/enhance-post-detail' );
+
 		if ( ! likes || likeCount <= likes.length ) {
 			return null;
 		}
@@ -64,6 +66,12 @@ class PostLikes extends PureComponent {
 			} );
 		} else {
 			message = '+ ' + numberFormat( extraCount );
+		}
+
+		if ( isFeatured ) {
+			message = translate( '%(extraCount)s more', {
+				args: { extraCount: numberFormat( extraCount ) },
+			} );
 		}
 
 		return (
