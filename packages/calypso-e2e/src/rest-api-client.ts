@@ -2,7 +2,7 @@ import fs from 'fs';
 import FormData from 'form-data';
 import fetch from 'node-fetch';
 import { SecretsManager } from './secrets';
-import { BearerTokenErrorResponse, TestFile, SettingsParams } from './types';
+import { BearerTokenErrorResponse, TestFile, SettingsParams, PluginParams } from './types';
 import type { Roles } from './lib';
 import type {
 	AccountDetails,
@@ -26,6 +26,9 @@ import type {
 	NewPostResponse,
 	ReaderResponse,
 	Invite,
+	AllPluginsResponse,
+	PluginResponse,
+	PluginRemovalResponse,
 } from './types';
 import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 
@@ -182,7 +185,7 @@ export class RestAPIClient {
 	 * 	- URL
 	 * 	- site owner
 	 *
-	 * @returns {Promise<AllSitesResponse} JSON array of sites.
+	 * @returns {Promise<AllSitesResponse>} JSON array of sites.
 	 * @throws {Error} If API responded with an error.
 	 */
 	async getAllSites(): Promise< AllSitesResponse > {
@@ -790,5 +793,111 @@ export class RestAPIClient {
 		}
 
 		return response;
+	}
+
+	/* Plugins */
+
+	/**
+	 * Gets a list of plugins installed in a site.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @returns {Promise<AllPluginsResponse>} An Array of plugins.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async getAllPlugins( siteID: number ): Promise< AllPluginsResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/plugins` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Modifies a plugin installed in a site.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param {string} pluginID Plugin ID.
+	 * @param {PluginResponse} details Key/value attributes to be set for the user.
+	 * @returns {Promise<PluginResponse>} Details for the plugin.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async modifyPlugin(
+		siteID: number,
+		pluginID: string,
+		details: PluginParams
+	): Promise< PluginResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( details ),
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/plugins/${ pluginID }` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Finds a plugin by name, deactivates it, and removes it from the site.
+	 *
+	 * @returns {Promise<PluginRemovalResponse | null>} Null if plugin removal was unsuccessful or not performed. PluginRemovalResponse otherwise.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async removePluginIfInstalled(
+		siteID: number,
+		pluginName: string
+	): Promise< PluginRemovalResponse | null > {
+		const myPlugins = await this.getAllPlugins( siteID );
+		for ( const plugin of myPlugins.plugins ) {
+			if ( plugin.name === pluginName ) {
+				const pluginID = encodeURIComponent( plugin.id );
+				/// Plugin should be deactivated before removal.
+				if ( plugin.active ) {
+					await this.modifyPlugin( siteID, pluginID, { active: false } );
+				}
+				const params: RequestParams = {
+					method: 'post',
+					headers: {
+						Authorization: await this.getAuthorizationHeader( 'bearer' ),
+						'Content-Type': this.getContentTypeHeader( 'json' ),
+					},
+				};
+
+				return await this.sendRequest(
+					this.getRequestURL( '1.1', `/sites/${ siteID }/plugins/${ pluginID }/delete` ),
+					params
+				);
+			}
+		}
+
+		// If nothing matches, return that no action was performed.
+		return null;
 	}
 }

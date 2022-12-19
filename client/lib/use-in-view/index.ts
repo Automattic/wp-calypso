@@ -1,14 +1,20 @@
 import { RefObject, useEffect, useRef } from 'react';
 
-export function useInView< T extends Element >( oneTimeCallback: () => void ): RefObject< T > {
+export function useInView< T extends Element >(
+	oneTimeCallback: () => void,
+	dependencies: any[] = []
+): RefObject< T > {
 	const elementRef = useRef< T >( null );
 	const oneTimeCallbackRef = useRef< () => void >();
+
+	// Check IntersectionObserver support
+	const hasIntersectionObserver = typeof window !== 'undefined' && 'IntersectionObserver' in window;
 
 	oneTimeCallbackRef.current = oneTimeCallback;
 
 	useEffect( () => {
 		// We can't do anything without a valid reference to an element on the page
-		if ( ! elementRef.current ) {
+		if ( ! elementRef.current || ! hasIntersectionObserver ) {
 			return;
 		}
 
@@ -33,7 +39,7 @@ export function useInView< T extends Element >( oneTimeCallback: () => void ): R
 
 		// When the effect is dismounted, stop observing
 		return () => observer.disconnect();
-	}, [] );
+	}, dependencies );
 
 	return elementRef;
 }

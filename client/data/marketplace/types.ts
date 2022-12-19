@@ -53,6 +53,8 @@ export type ESIndexResult = {
 	'plugin.support_threads'?: number;
 	'plugin.support_threads_resolved'?: number;
 	plugin: {
+		store_product_monthly_id?: number;
+		store_product_yearly_id?: number;
 		author: string;
 		title: string;
 		excerpt: string;
@@ -61,13 +63,6 @@ export type ESIndexResult = {
 		num_ratings: number;
 		active_installs: number;
 	};
-};
-
-export type Icon = {
-	filename: string;
-	revision: string;
-	resolution: string;
-	location: string;
 };
 
 export type Railcar = Record< string, string | number >;

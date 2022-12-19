@@ -19,7 +19,6 @@ import DesignCarousel from './internals/steps-repository/design-carousel';
 import DomainsStep from './internals/steps-repository/domains';
 import Intro from './internals/steps-repository/intro';
 import ProcessingStep from './internals/steps-repository/processing-step';
-import SetThemeStep from './internals/steps-repository/set-theme-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import StoreAddress from './internals/steps-repository/store-address';
 import StoreProfiler from './internals/steps-repository/store-profiler';
@@ -30,8 +29,12 @@ import type { SiteDetailsPlan } from '@automattic/data-stores';
 const ecommerceFlow: Flow = {
 	name: ECOMMERCE_FLOW,
 	useSteps() {
+		const recurType = useSelect( ( select ) =>
+			select( ONBOARD_STORE ).getEcommerceFlowRecurType()
+		);
+
 		useEffect( () => {
-			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
+			recordTracksEvent( 'calypso_signup_start', { flow: this.name, recur: recurType } );
 			recordFullStoryEvent( 'calypso_signup_start_ecommerce', { flow: this.name } );
 		}, [] );
 
@@ -44,7 +47,6 @@ const ecommerceFlow: Flow = {
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'waitForAtomic', component: WaitForAtomic },
-			{ slug: 'setThemeStep', component: SetThemeStep },
 			{ slug: 'checkPlan', component: CheckPlan },
 		];
 	},
@@ -68,12 +70,27 @@ const ecommerceFlow: Flow = {
 		const flags = new URLSearchParams( window.location.search ).get( 'flags' );
 
 		const getStartUrl = () => {
+			let hasFlowParams = false;
+			const flowParams = new URLSearchParams();
+
+			if ( recurType !== ecommerceFlowRecurTypes.YEARLY ) {
+				flowParams.set( 'recur', recurType );
+				hasFlowParams = true;
+			}
+			if ( locale && locale !== 'en' ) {
+				flowParams.set( 'locale', locale );
+				hasFlowParams = true;
+			}
+
+			const redirectTarget =
+				`/setup/ecommerce/storeProfiler` +
+				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
 			const url =
 				locale && locale !== 'en'
-					? `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=/setup/ecommerce/storeProfiler`
-					: `/start/account/user?variationName=${ flowName }&redirect_to=/setup/ecommerce/storeProfiler`;
+					? `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=${ redirectTarget }`
+					: `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
 
-			return url + ( flags ? `?flags=${ flags }` : '' );
+			return url + ( flags ? `&flags=${ flags }` : '' );
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
@@ -88,24 +105,22 @@ const ecommerceFlow: Flow = {
 						from_section: 'default',
 					} );
 
-					setPlanCartItem( { product_slug: selectedPlan } );
+					setPlanCartItem( {
+						product_slug: selectedPlan,
+						extra: { headstart_theme: selectedDesign?.recipe?.stylesheet },
+					} );
 					return navigate( 'siteCreationStep' );
 
 				case 'siteCreationStep':
 					return navigate( 'processing' );
 
 				case 'processing':
-					// Coming from setThemeStep
-					if ( providedDependencies?.selectedDesign ) {
+					if ( providedDependencies?.finishedWaitingForAtomic ) {
 						return navigate( 'storeAddress' );
 					}
 
-					if ( providedDependencies?.finishedWaitingForAtomic ) {
-						return navigate( 'setThemeStep' );
-					}
-
 					if ( providedDependencies?.siteSlug ) {
-						const destination = `/setup/${ flowName }/checkPlan?siteSlug=${ siteSlug }&flags=signup/tailored-ecommerce`;
+						const destination = `/setup/${ flowName }/checkPlan?siteSlug=${ siteSlug }`;
 						persistSignupDestination( destination );
 						setSignupCompleteSlug( siteSlug );
 						setSignupCompleteFlowName( flowName );
@@ -115,7 +130,6 @@ const ecommerceFlow: Flow = {
 						const urlParams = new URLSearchParams( {
 							theme: selectedDesign?.slug || '',
 							siteSlug: siteSlug.replace( '.wordpress.com', '.wpcomstaging.com' ),
-							flags: 'signup/tailored-ecommerce',
 						} );
 
 						const returnUrl = encodeURIComponent( `/setup/${ flowName }/checkPlan?${ urlParams }` );
@@ -143,9 +157,6 @@ const ecommerceFlow: Flow = {
 
 				case 'designCarousel':
 					return navigate( 'domains' );
-
-				case 'setThemeStep':
-					return navigate( 'processing' );
 
 				case 'waitForAtomic':
 					return navigate( 'processing' );

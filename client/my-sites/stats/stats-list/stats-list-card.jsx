@@ -21,7 +21,6 @@ const StatsListCard = ( {
 	showMore,
 	title,
 	emptyMessage,
-	titleURL,
 	loader,
 	useShortLabel,
 	error,
@@ -70,7 +69,6 @@ const StatsListCard = ( {
 	return (
 		<StatsCard
 			title={ title }
-			titleURL={ titleURL }
 			footerAction={
 				showMore
 					? {

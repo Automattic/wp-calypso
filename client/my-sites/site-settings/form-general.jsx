@@ -1,8 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	PLAN_BUSINESS,
+	PLAN_PREMIUM,
 	WPCOM_FEATURES_NO_WPCOM_BRANDING,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
+	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 } from '@automattic/calypso-products';
 import { WPCOM_FEATURES_SUBSCRIPTION_GIFTING } from '@automattic/calypso-products/src';
 import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
@@ -380,8 +382,7 @@ export class SiteSettingsFormGeneral extends Component {
 				'is-coming-soon-disabled': isComingSoonDisabled,
 			}
 		);
-		const showPreviewLink =
-			isEnabled( 'dev/share-site-for-preview' ) && isComingSoon && hasSitePreviewLink;
+		const showPreviewLink = isComingSoon && hasSitePreviewLink;
 		return (
 			<FormFieldset>
 				{ ! isNonAtomicJetpackSite &&
@@ -604,8 +605,7 @@ export class SiteSettingsFormGeneral extends Component {
 		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
 		const isPrivateAndUnlaunched = -1 === blogPublic && this.props.isUnlaunchedSite;
 
-		const showPreviewLink =
-			isEnabled( 'dev/share-site-for-preview' ) && isComingSoon && hasSitePreviewLink;
+		const showPreviewLink = isComingSoon && hasSitePreviewLink;
 
 		const LaunchCard = showPreviewLink ? CompactCard : Card;
 
@@ -698,7 +698,9 @@ export class SiteSettingsFormGeneral extends Component {
 							<ToggleControl
 								disabled={ isRequestingSettings || isSavingSettings }
 								className="site-settings__gifting-toggle"
-								label={ translate( 'Allow a site visitor to gift you with site plan costs' ) }
+								label={ translate(
+									'Allow site visitors to gift your plan and domain renewal costs'
+								) }
 								checked={ fields.wpcom_gifting_subscription }
 								onChange={ this.props.handleToggle( 'wpcom_gifting_subscription' ) }
 							/>
@@ -806,7 +808,7 @@ export class SiteSettingsFormGeneral extends Component {
 
 	advancedCustomizationNotice() {
 		const { translate, selectedSite, siteSlug } = this.props;
-		const upgradeUrl = `/plans/${ siteSlug }?plan=value_bundle`;
+		const upgradeUrl = `/plans/${ siteSlug }?plan=${ PLAN_PREMIUM }&feature=${ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION }`;
 
 		return (
 			<>
@@ -815,7 +817,7 @@ export class SiteSettingsFormGeneral extends Component {
 						<Gridicon icon="info-outline" />
 						<span>
 							{ translate(
-								'Publish your style changes and unlock tons of other features by upgrading to a Premium plan.'
+								'Your site contains customized styles that will only be visible once you upgrade to a Premium plan.'
 							) }
 						</span>
 					</div>

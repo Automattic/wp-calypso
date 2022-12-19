@@ -41,7 +41,12 @@ import useProcessPayment from './components/use-process-payment';
 import { useFormStatus } from './lib/form-status';
 import InvalidPaymentProcessorResponseError from './lib/invalid-payment-processor-response-error';
 import { useLineItems, useTotal, useLineItemsOfType } from './lib/line-items';
-import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './lib/payment-methods';
+import {
+	usePaymentMethod,
+	usePaymentMethodId,
+	useAllPaymentMethods,
+	useTogglePaymentMethod,
+} from './lib/payment-methods';
 import PaymentLogo from './lib/payment-methods/payment-logo';
 import {
 	usePaymentProcessor,
@@ -107,6 +112,7 @@ export {
 	usePaymentProcessors,
 	useProcessPayment,
 	useSetStepComplete,
+	useTogglePaymentMethod,
 	useTotal,
 	useTransactionStatus,
 };

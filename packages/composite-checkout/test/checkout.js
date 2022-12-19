@@ -19,6 +19,7 @@ import {
 	CheckoutStepGroup,
 	useSetStepComplete,
 	makeManualResponse,
+	useTogglePaymentMethod,
 } from '../src/public-api';
 import { PaymentProcessorResponseType } from '../src/types';
 import { DefaultCheckoutSteps } from './utils/default-checkout-steps';
@@ -26,11 +27,32 @@ import { DefaultCheckoutSteps } from './utils/default-checkout-steps';
 const myContext = createContext();
 const usePaymentData = () => useContext( myContext );
 
+function TogglePaymentMethodBlock( { mockMethod } ) {
+	const togglePaymentMethod = useTogglePaymentMethod();
+
+	return (
+		<div>
+			<button onClick={ () => togglePaymentMethod( mockMethod.id, false ) }>
+				Disable Payment Method
+			</button>
+			<button onClick={ () => togglePaymentMethod( mockMethod.id, true ) }>
+				Enable Payment Method
+			</button>
+		</div>
+	);
+}
+
+const createMockMethod = createMockMethodFactory();
+
 describe( 'Checkout', () => {
 	describe( 'using the default steps', function () {
 		describe( 'using other defaults', function () {
 			let MyCheckout;
 			const mockMethod = createMockMethod();
+			const mockMethod2 = createMockMethod( {
+				submitButton: <MockSubmitButton content="Second method" />,
+				activeContent: <div />,
+			} );
 			const { items, total } = createMockItems();
 
 			beforeEach( () => {
@@ -38,11 +60,12 @@ describe( 'Checkout', () => {
 					<CheckoutProvider
 						items={ items }
 						total={ total }
-						paymentMethods={ [ mockMethod ] }
+						paymentMethods={ [ mockMethod, mockMethod2 ] }
 						paymentProcessors={ getMockPaymentProcessors() }
-						initiallySelectedPaymentMethodId={ mockMethod.id }
+						selectFirstAvailablePaymentMethod
 					>
 						<DefaultCheckoutSteps />
+						<TogglePaymentMethodBlock mockMethod={ mockMethod } />
 					</CheckoutProvider>
 				);
 			} );
@@ -66,7 +89,42 @@ describe( 'Checkout', () => {
 
 			it( 'renders the payment method label', () => {
 				const { getAllByText } = render( <MyCheckout /> );
-				expect( getAllByText( 'Mock Label' )[ 0 ] ).toBeInTheDocument();
+				expect( getAllByText( mockMethod.inactiveContent )[ 0 ] ).toBeInTheDocument();
+				expect( getAllByText( mockMethod2.inactiveContent )[ 0 ] ).toBeInTheDocument();
+			} );
+
+			it( 'renders the payment method label as selected', async () => {
+				const { getAllByText, findByLabelText } = render( <MyCheckout /> );
+				const user = userEvent.setup();
+				await user.click( getAllByText( 'Continue' )[ 0 ] );
+				const paymentMethod = await findByLabelText( mockMethod.inactiveContent );
+				expect( paymentMethod ).toBeChecked();
+			} );
+
+			it( 'does not render the payment method label if the payment method is disabled', async () => {
+				const { queryByText, getByText, getAllByText } = render( <MyCheckout /> );
+				const user = userEvent.setup();
+				await user.click( getAllByText( 'Continue' )[ 0 ] );
+				await user.click( getByText( 'Disable Payment Method' ) );
+				expect( queryByText( mockMethod.inactiveContent ) ).not.toBeVisible();
+			} );
+
+			it( 'does render the payment method label if the payment method is disabled then enabled', async () => {
+				const { getAllByText, getByText } = render( <MyCheckout /> );
+				const user = userEvent.setup();
+				await user.click( getAllByText( 'Continue' )[ 0 ] );
+				await user.click( getByText( 'Disable Payment Method' ) );
+				await user.click( getByText( 'Enable Payment Method' ) );
+				expect( getAllByText( mockMethod.inactiveContent )[ 0 ] ).toBeVisible();
+			} );
+
+			it( 'renders the second payment method label as selected if the first is disabled', async () => {
+				const { getByText, getAllByText, findByLabelText } = render( <MyCheckout /> );
+				const user = userEvent.setup();
+				await user.click( getAllByText( 'Continue' )[ 0 ] );
+				await user.click( getByText( 'Disable Payment Method' ) );
+				const paymentMethod = await findByLabelText( mockMethod2.inactiveContent );
+				expect( paymentMethod ).toBeChecked();
 			} );
 
 			it( 'renders the payment method activeContent', () => {
@@ -101,7 +159,7 @@ describe( 'Checkout', () => {
 						total={ total }
 						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
-						initiallySelectedPaymentMethodId={ mockMethod.id }
+						selectFirstAvailablePaymentMethod
 					>
 						<DefaultCheckoutSteps />
 					</CheckoutProvider>
@@ -147,7 +205,7 @@ describe( 'Checkout', () => {
 						total={ total }
 						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
-						initiallySelectedPaymentMethodId={ mockMethod.id }
+						selectFirstAvailablePaymentMethod
 					>
 						<DefaultCheckoutSteps />
 					</CheckoutProvider>
@@ -193,7 +251,7 @@ describe( 'Checkout', () => {
 							total={ total }
 							paymentMethods={ [ mockMethod ] }
 							paymentProcessors={ getMockPaymentProcessors() }
-							initiallySelectedPaymentMethodId={ mockMethod.id }
+							selectFirstAvailablePaymentMethod
 						>
 							<CheckoutStepGroup>
 								{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
@@ -584,7 +642,7 @@ describe( 'Checkout', () => {
 	describe( 'submitting the form', function () {
 		let MyCheckout;
 		const submitButtonComponent = <MockSubmitButtonSimple />;
-		const mockMethod = createMockMethod( submitButtonComponent );
+		const mockMethod = createMockMethod( { submitButton: submitButtonComponent } );
 		const { items, total } = createMockItems();
 		const steps = createMockStepObjects();
 
@@ -601,7 +659,7 @@ describe( 'Checkout', () => {
 							total={ total }
 							paymentMethods={ [ mockMethod ] }
 							paymentProcessors={ { mock: props.paymentProcessor } }
-							initiallySelectedPaymentMethodId={ mockMethod.id }
+							selectFirstAvailablePaymentMethod
 						>
 							<CheckoutStepGroup>
 								{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
@@ -665,19 +723,27 @@ describe( 'Checkout', () => {
 	} );
 } );
 
-function createMockMethod( submitButton = <MockSubmitButton /> ) {
-	return {
-		id: 'mock',
-		paymentProcessorId: 'mock',
-		label: <span data-testid="mock-label">Mock Label</span>,
-		activeContent: <MockPaymentForm />,
-		submitButton,
-		inactiveContent: 'Mock Method',
-		getAriaLabel: () => 'Mock Method',
+function createMockMethodFactory() {
+	let mockMethodIdCounter = 0;
+	return function ( {
+		submitButton = <MockSubmitButton content="Pay Please" />,
+		activeContent = <MockPaymentForm />,
+	} = {} ) {
+		mockMethodIdCounter = mockMethodIdCounter + 1;
+		const title = `Mock Payment Method ${ mockMethodIdCounter }`;
+		return {
+			id: 'mock' + mockMethodIdCounter,
+			paymentProcessorId: 'mock',
+			label: <span data-testid="mock-label">{ title }</span>,
+			activeContent,
+			submitButton,
+			inactiveContent: title,
+			getAriaLabel: () => title,
+		};
 	};
 }
 
-function MockSubmitButton( { disabled } ) {
+function MockSubmitButton( { disabled, content } ) {
 	const { setTransactionComplete, setTransactionPending } = useTransactionStatus();
 	const process = usePaymentProcessor( 'mock' );
 	const onClick = () => {
@@ -686,7 +752,7 @@ function MockSubmitButton( { disabled } ) {
 	};
 	return (
 		<button disabled={ disabled } onClick={ onClick }>
-			Pay Please
+			{ content }
 		</button>
 	);
 }

@@ -18,6 +18,7 @@ import { setupContextMiddleware } from './page-middleware/setup-context';
 import registerStatsPages from './routes';
 
 import 'calypso/assets/stylesheets/style.scss';
+import './wp-admin.scss';
 
 const setLocale = ( dispatch ) => {
 	const defaultLocale = config( 'i18n_default_locale_slug' ) || 'en';

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
@@ -231,7 +230,6 @@ export const SitesEllipsisMenu = ( {
 			dispatch( recordTracksEvent( eventName, extraProps ) );
 		},
 	};
-	const showPreviewLinkAction = isEnabled( 'dev/share-site-for-preview' ) && site.is_coming_soon;
 
 	return (
 		<SiteDropdownMenu
@@ -245,7 +243,7 @@ export const SitesEllipsisMenu = ( {
 					<SettingsItem { ...props } />
 					<ManagePluginsItem { ...props } />
 					{ ! isNotAtomicJetpack( site ) && <HostingConfigItem { ...props } /> }
-					{ showPreviewLinkAction && <PreviewSiteModalItem { ...props } /> }
+					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
 					<WpAdminItem { ...props } />
 				</SiteMenuGroup>
 			) }

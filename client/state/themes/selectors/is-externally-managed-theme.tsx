@@ -22,8 +22,13 @@ type GetThemeFunction = (
  * @returns {boolean} True if the theme is externally managed.
  */
 export function isExternallyManagedTheme( state = {}, themeId: string ): boolean {
-	const theme = ( getTheme as GetThemeFunction )( state, 'wpcom', themeId ) || {};
-
+	const theme =
+		/**
+		 * TODO: Remove this once we have a Third-Party theme to test!
+		 */
+		( getTheme as GetThemeFunction )( state, 'wpcom', `marketplace|${ themeId }` ) ||
+		( getTheme as GetThemeFunction )( state, 'wpcom', themeId ) ||
+		{};
 	if ( ! theme.theme_type ) {
 		return false;
 	}
