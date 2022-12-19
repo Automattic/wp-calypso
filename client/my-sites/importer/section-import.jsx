@@ -143,11 +143,11 @@ class SectionImport extends Component {
 	 */
 	renderIdleImporters( importerState ) {
 		const { site, siteTitle } = this.props;
-		let importers = getImporters();
+		const importers = getImporters();
 
 		// Filter out all importers except the WordPress ones for Atomic sites.
 		if ( site.options.is_wpcom_atomic ) {
-			importers = importers.filter( ( importer ) => importer.engine === 'wordpress' );
+			// importers = importers.filter( ( importer ) => importer.engine === 'wordpress' );
 		}
 
 		const importerElements = importers.map( ( { engine } ) => {
