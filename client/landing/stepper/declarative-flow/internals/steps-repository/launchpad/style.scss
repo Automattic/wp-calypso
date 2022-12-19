@@ -601,3 +601,17 @@
 		}
 	}
 }
+
+
+// Free flow
+
+.free.launchpad {
+	padding: 0;
+	.signup-header {
+		display: none;
+	}
+
+	.launchpad__sidebar-header-flow-name {
+		display: none;
+	}
+}
