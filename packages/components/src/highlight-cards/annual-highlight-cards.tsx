@@ -23,7 +23,6 @@ export default function AnnualHighlightCards( {
 	counts,
 	titleHref,
 	year,
-	navigation,
 }: AnnualHighlightCardsProps ) {
 	const translate = useTranslate();
 
@@ -44,10 +43,7 @@ export default function AnnualHighlightCards( {
 
 	return (
 		<div className={ classNames( 'highlight-cards', className ?? null ) }>
-			<div className="highlight-year-navigation">
-				{ header }
-				{ navigation && navigation }
-			</div>
+			<div className="highlight-year-navigation">{ header }</div>
 
 			<div className="highlight-cards-list">
 				<HighlightCard

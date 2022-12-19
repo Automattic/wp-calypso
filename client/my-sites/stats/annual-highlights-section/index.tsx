@@ -1,11 +1,9 @@
 import { AnnualHighlightCards } from '@automattic/components';
-import { Moment } from 'moment';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
-import StatsPeriodNavigation from '../stats-period-navigation';
 
 type Insights = {
 	day?: string;
@@ -32,22 +30,11 @@ type Followers = {
 	total_wpcom: number;
 };
 
-type AnnualHighlightsSectionProps = {
-	siteId: number;
-	queryDate: Moment;
-	url: string;
-};
-
 const FOLLOWERS_QUERY = { type: 'wpcom', max: 0 };
 
 // Meant to replace annual-site-stats section
-export default function AnnualHighlightsSection( {
-	siteId,
-	queryDate,
-	url,
-}: AnnualHighlightsSectionProps ) {
-	const queryYear = Number.parseInt( queryDate?.format( 'YYYY' ), 10 );
-	const year = ( queryDate && queryYear ) ?? new Date().getFullYear();
+export default function AnnualHighlightsSection( { siteId }: { siteId: number } ) {
+	const year = new Date().getFullYear();
 	const insights = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, 'statsInsights' )
 	) as Insights;
@@ -71,21 +58,6 @@ export default function AnnualHighlightsSection( {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const viewMoreHref = siteSlug ? `/stats/annualstats/${ siteSlug }` : null;
 
-	const previousYear = insights?.years?.find( ( y ) => y.year === ( year - 1 ).toString() );
-	const hidePreviousArrow = ! previousYear;
-	const currentYear = new Date().getFullYear();
-	const hideNextArrow = currentYear <= queryYear;
-
-	const navigation = (
-		<StatsPeriodNavigation
-			date={ queryDate }
-			hidePreviousArrow={ hidePreviousArrow }
-			hideNextArrow={ hideNextArrow }
-			period="year"
-			url={ url }
-		/>
-	);
-
 	return (
 		<>
 			{ siteId && (
@@ -94,12 +66,7 @@ export default function AnnualHighlightsSection( {
 					<QuerySiteStats siteId={ siteId } statType="statsFollowers" query={ FOLLOWERS_QUERY } />
 				</>
 			) }
-			<AnnualHighlightCards
-				counts={ counts }
-				titleHref={ viewMoreHref }
-				year={ year }
-				navigation={ navigation }
-			/>
+			<AnnualHighlightCards counts={ counts } titleHref={ viewMoreHref } year={ year } />
 		</>
 	);
 }
