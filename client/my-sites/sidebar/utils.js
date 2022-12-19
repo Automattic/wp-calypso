@@ -6,6 +6,9 @@ const pathIncludes = ( currentPath, term, position ) =>
 const fragmentIsEqual = ( path, currentPath, position ) =>
 	currentPath.split( /[/,?]/ )?.[ position ] === path.split( /[/,?]/ )?.[ position ];
 
+const isManageAllSitesPluginsPath = ( path ) =>
+	path.match( /^\/plugins\/(?:manage|active|inactive|updates)/ ) !== null;
+
 /**
  * Checks if `currentPath` starts with the first fragment of `path`
  *
@@ -51,8 +54,8 @@ export const itemLinkMatches = ( path, currentPath ) => {
 	}
 
 	// Account for plugins in all-sites view where '/plugins/manage' isn't a child view of '/plugins'.
-	if ( pathIncludes( currentPath, 'plugins', 1 ) && pathIncludes( currentPath, 'manage', 2 ) ) {
-		return fragmentIsEqual( path, currentPath, 1 ) && fragmentIsEqual( path, currentPath, 2 );
+	if ( isManageAllSitesPluginsPath( currentPath ) ) {
+		return isManageAllSitesPluginsPath( path );
 	}
 
 	return fragmentIsEqual( path, currentPath, 1 );
