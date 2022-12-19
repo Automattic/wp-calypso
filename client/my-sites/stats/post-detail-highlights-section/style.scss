@@ -21,6 +21,8 @@
 		padding: 24px;
 		min-width: 320px;
 		max-width: 495px;
+		max-height: 300px;
+		overflow-y: auto;
 	}
 
 	.highlight-card-heading {
@@ -44,8 +46,9 @@
 		line-height: 20px;
 	}
 
-	.stats-post-likes {
+	.card.stats-post-likes {
 		padding: 0;
+		margin: 0 0 -7px 0;
 		box-shadow: none;
 
 		.module-header {
