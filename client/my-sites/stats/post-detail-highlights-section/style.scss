@@ -1,0 +1,66 @@
+@import "@automattic/components/src/highlight-cards/variables.scss";
+
+.stats__post-detail-highlights-section {
+	padding-top: $vertical-margin;
+	padding-bottom: $vertical-margin;
+
+	.highlight-cards {
+		background-color: inherit;
+		box-shadow: none;
+	}
+
+	.post-stats-card {
+		margin: 0;
+		flex: 1;
+		min-width: 600px;
+	}
+
+	.highlight-cards-list .highlight-card {
+		margin: 0 0 0 10px;
+		padding: 24px;
+		min-width: 320px;
+		max-width: 495px;
+	}
+
+	.highlight-card-heading {
+		display: flex;
+		align-items: center;
+		margin-bottom: $vertical-margin;
+		color: var(--color-neutral-100);
+		font-family: inherit;
+		font-weight: 500;
+		font-size: $font-title-small;
+		line-height: 26px;
+	}
+
+	.likes-count {
+		margin-left: 8px;
+		padding: 4px 8px;
+		background-color: var(--color-neutral-5);
+		border-radius: 2px;
+		font-weight: 500;
+		font-size: $font-body-extra-small;
+		line-height: 20px;
+	}
+
+	.stats-post-likes {
+		padding: 0;
+		box-shadow: none;
+
+		.module-header {
+			display: none;
+		}
+
+		.stats-post-likes__content {
+			padding: 0;
+		}
+
+		.post-likes__item {
+			padding: 0;
+
+			&:not(:first-child) {
+				margin-left: 14px;
+			}
+		}
+	}
+}
