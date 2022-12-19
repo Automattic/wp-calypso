@@ -14,6 +14,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AllTimelHighlightsSection from '../all-time-highlights-section';
+import AllTimelViewsSection from '../all-time-views-section';
 import AnnualHighlightsSection from '../annual-highlights-section';
 import LatestPostSummary from '../post-performance';
 import PostingActivity from '../post-trends';
@@ -30,6 +31,7 @@ const StatsInsights = ( props ) => {
 	const moduleStrings = statsStrings();
 
 	const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
+	const isNewAllTimeViews = config.isEnabled( 'stats/all-time-views' );
 
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
@@ -44,7 +46,7 @@ const StatsInsights = ( props ) => {
 			<div className="stats">
 				<FormattedHeader
 					brandFont
-					className="stats__section-header"
+					className="stats__section-header modernized-header"
 					headerText={ translate( 'Jetpack Stats' ) }
 					subHeaderText={ translate( "View your site's performance and learn from trends." ) }
 					align="left"
@@ -52,10 +54,15 @@ const StatsInsights = ( props ) => {
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 				<AnnualHighlightsSection siteId={ siteId } />
 				<AllTimelHighlightsSection siteId={ siteId } />
+				{ isNewAllTimeViews && <AllTimelViewsSection siteId={ siteId } slug={ siteSlug } /> }
 				<div className="stats__module--insights-unified">
 					<PostingActivity />
-					<SectionHeader label={ translate( 'All-time views' ) } />
-					<StatsViews />
+					{ ! isNewAllTimeViews && (
+						<>
+							<SectionHeader label={ translate( 'All-time views' ) } />
+							<StatsViews />
+						</>
+					) }
 				</div>
 				{ siteId && (
 					<DomainTip

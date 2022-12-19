@@ -20,6 +20,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'link-in-bio': () =>
 		import( /* webpackChunkName: "link-in-bio-flow" */ '../declarative-flow/link-in-bio' ),
 
+	'link-in-bio-tld': () =>
+		import( /* webpackChunkName: "link-in-bio-tld-flow" */ '../declarative-flow/link-in-bio-tld' ),
+
 	podcasts: () => import( /* webpackChunkName: "podcasts-flow" */ '../declarative-flow/podcasts' ),
 
 	'link-in-bio-post-setup': () =>
@@ -40,6 +43,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	free: () => import( /* webpackChunkName: "free-flow" */ '../declarative-flow/free' ),
 
 	sensei: () => import( /* webpackChunkName: "sensei-flow" */ '../declarative-flow/sensei' ),
+
+	'free-post-setup': () =>
+		import( /* webpackChunkName: "free-post-setup-flow" */ '../declarative-flow/free-post-setup' ),
 };
 
 if ( config.isEnabled( 'themes/plugin-bundling' ) ) {

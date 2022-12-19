@@ -6,7 +6,7 @@ import {
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate } from 'i18n-calypso';
 import { FormEvent, useEffect, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import useAccentColor from 'calypso/landing/stepper/hooks/use-accent-color';
@@ -23,15 +23,15 @@ import '../newsletter-setup/style.scss';
 
 const NewsletterPostSetup: Step = ( { navigation } ) => {
 	const { submit } = navigation;
-	const { __ } = useI18n();
+	const translate = useTranslate();
 	const site = useSite();
 	const fetchedAccentColor = useAccentColor();
 	const saveAccentColor = useSaveAccentColor();
 	const newsletterFormText = {
-		titlePlaceholder: __( 'My newsletter' ),
-		titleMissing: __( `Oops. Looks like your Newsletter doesn't have a name yet.` ),
-		taglinePlaceholder: __( 'Describe your Newsletter in a line or two' ),
-		iconPlaceholder: __( 'Add a site icon' ),
+		titlePlaceholder: translate( 'My newsletter' ),
+		titleMissing: translate( `Oops. Looks like your Newsletter doesn't have a name yet.` ),
+		taglinePlaceholder: translate( 'Describe your Newsletter in a line or two' ),
+		iconPlaceholder: translate( 'Add a site icon' ),
 	};
 
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = useState( false );
@@ -106,7 +106,7 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 			formattedHeader={
 				<FormattedHeader
 					id="newsletter-setup-header"
-					headerText={ createInterpolateElement( __( 'Personalize your<br />Newsletter' ), {
+					headerText={ createInterpolateElement( translate( 'Personalize your<br />Newsletter' ), {
 						br: <br />,
 					} ) }
 					align="center"

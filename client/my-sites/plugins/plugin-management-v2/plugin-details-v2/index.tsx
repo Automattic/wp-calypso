@@ -3,8 +3,8 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import PluginDetailsBody from 'calypso/my-sites/plugins/plugin-details-body';
@@ -18,7 +18,6 @@ import {
 } from 'calypso/state/plugins/installed/selectors';
 import { resetPluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { isFetching as isWporgPluginFetchingSelector } from 'calypso/state/plugins/wporg/selectors';
-import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import type { Plugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -60,8 +59,6 @@ export default function PluginDetailsV2( {
 		};
 	}, [ dispatch ] );
 
-	const selectedOrAllSites = useSelector( getSelectedOrAllSites );
-
 	const isLoading = useSelector( ( state ) => isWporgPluginFetchingSelector( state, pluginSlug ) );
 
 	const breadcrumbs = [
@@ -81,7 +78,7 @@ export default function PluginDetailsV2( {
 		<div className="plugin-details-v2">
 			<QueryJetpackPlugins siteIds={ siteIds } />
 			<QueryEligibility siteId={ selectedSite?.ID } />
-			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site?.ID ) } />
+			<QueryJetpackSitesFeatures />
 			<QueryProductsList persist />
 			<FixedNavigationHeader
 				className="plugin-details-v2__header"

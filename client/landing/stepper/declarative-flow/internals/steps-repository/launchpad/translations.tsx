@@ -1,5 +1,6 @@
 import {
 	LINK_IN_BIO_FLOW,
+	LINK_IN_BIO_TLD_FLOW,
 	NEWSLETTER_FLOW,
 	VIDEOPRESS_FLOW,
 	SENSEI_FLOW,
@@ -24,6 +25,7 @@ export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunc
 			);
 			break;
 		case LINK_IN_BIO_FLOW:
+		case LINK_IN_BIO_TLD_FLOW:
 			translatedStrings.flowName = translate( 'Link in Bio' );
 			translatedStrings.title = translate( "You're ready to link and launch" );
 			translatedStrings.launchTitle = translate( "You're ready to link and launch" );
@@ -39,8 +41,8 @@ export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunc
 			break;
 		case VIDEOPRESS_FLOW:
 			translatedStrings.flowName = translate( 'Video' );
-			translatedStrings.title = translate( 'Your video site is ready!' );
-			translatedStrings.launchTitle = translate( 'Your video site is ready!' );
+			translatedStrings.title = translate( 'Your site is almost ready!' );
+			translatedStrings.launchTitle = translate( 'Your site is almost ready!' );
 			break;
 		case SENSEI_FLOW:
 			translatedStrings.flowName = translate( 'Sensei' );

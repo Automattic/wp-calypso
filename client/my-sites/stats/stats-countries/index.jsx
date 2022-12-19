@@ -25,6 +25,7 @@ class StatCountries extends Component {
 				path="countryviews"
 				period={ period }
 				showSummaryLink={ ! summary }
+				hideSummaryLink={ !! summary }
 				summary={ summary }
 				moduleStrings={ moduleStrings.countries }
 				statType="statsCountryViews"

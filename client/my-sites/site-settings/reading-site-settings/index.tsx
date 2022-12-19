@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { BlogsPostsSetting, BLOGS_POST_OPTION } from './BlogPostSetting';
+import { BlogPagesSetting, BLOG_PAGES_OPTION } from './BlogPagesSetting';
 
 type Fields = {
 	posts_per_page?: number;
@@ -12,6 +12,7 @@ type SiteSettingsSectionProps = {
 	onChangeField: ( field: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => void;
 	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
 	disabled?: boolean;
+	isSavingSettings?: boolean;
 };
 
 export const SiteSettingsSection = ( {
@@ -19,6 +20,7 @@ export const SiteSettingsSection = ( {
 	onChangeField,
 	handleSubmitForm,
 	disabled,
+	isSavingSettings,
 }: SiteSettingsSectionProps ) => {
 	const translate = useTranslate();
 	const { posts_per_page } = fields;
@@ -31,11 +33,12 @@ export const SiteSettingsSection = ( {
 				showButton
 				onButtonClick={ handleSubmitForm }
 				disabled={ disabled }
+				isSaving={ isSavingSettings }
 			/>
 			<Card>
-				<BlogsPostsSetting
+				<BlogPagesSetting
 					value={ posts_per_page }
-					onChange={ onChangeField( BLOGS_POST_OPTION ) }
+					onChange={ onChangeField( BLOG_PAGES_OPTION ) }
 					disabled={ disabled }
 				/>
 			</Card>

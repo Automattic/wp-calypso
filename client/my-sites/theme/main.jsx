@@ -21,6 +21,7 @@ import Badge from 'calypso/components/badge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
@@ -41,6 +42,7 @@ import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -65,7 +67,9 @@ import {
 	shouldShowTryAndCustomize,
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
+	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
 } from 'calypso/state/themes/selectors';
+import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ThemeDownloadCard from './theme-download-card';
@@ -560,6 +564,7 @@ class ThemeSheet extends Component {
 			isBundledSoftwareSet,
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes,
+			isMarketplaceThemeSubscribed,
 		} = this.props;
 		if ( isActive ) {
 			// Customize site
@@ -585,16 +590,14 @@ class ThemeSheet extends Component {
 						'label prompting user to upgrade the WordPress.com plan to activate a certain theme',
 				} );
 			} else if (
-				isPremium &&
 				isExternallyManagedTheme &&
-				! isPurchased &&
+				! isMarketplaceThemeSubscribed &&
 				! isSiteEligibleForManagedExternalThemes
 			) {
 				return translate( 'Upgrade to subscribe' );
 			} else if (
-				isPremium &&
 				isExternallyManagedTheme &&
-				! isPurchased &&
+				! isMarketplaceThemeSubscribed &&
 				isSiteEligibleForManagedExternalThemes
 			) {
 				return translate( 'Subscribe to activate' );
@@ -647,7 +650,7 @@ class ThemeSheet extends Component {
 		let price = this.props.price;
 		if ( ! this.isLoaded() || this.props.isActive || this.props.isBundledSoftwareSet ) {
 			price = '';
-		} else if ( ! this.props.isPremium ) {
+		} else if ( ! this.props.isPremium && ! this.props.isExternallyManagedTheme ) {
 			price = this.props.translate( 'Free' );
 		}
 
@@ -663,14 +666,21 @@ class ThemeSheet extends Component {
 		const label = this.getDefaultOptionLabel();
 		const price = this.renderPrice();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
-		const { isActive } = this.props;
+		const { isActive, isExternallyManagedTheme } = this.props;
+		const { isLoading } = this.props;
 
 		return (
 			<Button
 				className="theme__sheet-primary-button"
-				href={ getUrl ? getUrl( this.props.id ) : null }
+				href={
+					getUrl &&
+					( ! isExternallyManagedTheme || ! config.isEnabled( 'themes/third-party-premium' ) )
+						? getUrl( this.props.id )
+						: null
+				}
 				onClick={ this.onButtonClick }
 				primary
+				disabled={ isLoading }
 				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
@@ -693,14 +703,14 @@ class ThemeSheet extends Component {
 			isBundledSoftwareSet,
 			isExternallyManagedTheme,
 			translate,
-			isPurchased,
 			isSiteEligibleForManagedExternalThemes,
+			isMarketplaceThemeSubscribed,
 		} = this.props;
 
 		if ( isBundledSoftwareSet && ! isExternallyManagedTheme ) {
 			return translate( 'Access this WooCommerce theme with a Business plan!' );
 		} else if ( isExternallyManagedTheme ) {
-			if ( ! isPurchased && ! isSiteEligibleForManagedExternalThemes ) {
+			if ( ! isMarketplaceThemeSubscribed && ! isSiteEligibleForManagedExternalThemes ) {
 				return translate( 'Upgrade to a Business plan and subscribe to this theme!' );
 			}
 			return translate( 'Subscribe to this premium theme!' );
@@ -713,8 +723,8 @@ class ThemeSheet extends Component {
 			isBundledSoftwareSet,
 			isExternallyManagedTheme,
 			translate,
-			isPurchased,
 			isSiteEligibleForManagedExternalThemes,
+			isMarketplaceThemeSubscribed,
 		} = this.props;
 
 		if ( isBundledSoftwareSet && ! isExternallyManagedTheme ) {
@@ -722,7 +732,7 @@ class ThemeSheet extends Component {
 				'This theme comes bundled with the WooCommerce plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
 			);
 		} else if ( isExternallyManagedTheme ) {
-			if ( ! isPurchased && ! isSiteEligibleForManagedExternalThemes ) {
+			if ( ! isMarketplaceThemeSubscribed && ! isSiteEligibleForManagedExternalThemes ) {
 				return translate(
 					'Unlock this theme by upgrading to a Business plan and subscribing to this premium theme.'
 				);
@@ -754,8 +764,8 @@ class ThemeSheet extends Component {
 			isWPForTeamsSite,
 			isLoggedIn,
 			isExternallyManagedTheme,
-			isPurchased,
 			isSiteEligibleForManagedExternalThemes,
+			isMarketplaceThemeSubscribed,
 		} = this.props;
 
 		const analyticsPath = `/theme/${ id }${ section ? '/' + section : '' }${
@@ -823,24 +833,34 @@ class ThemeSheet extends Component {
 		const hasUpsellBanner =
 			hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic;
 
+		let onClick = null;
+
+		if ( isExternallyManagedTheme ) {
+			onClick = this.onButtonClick;
+		} else if ( ! isLoggedIn ) {
+			onClick = launchPricing;
+		}
+
 		if ( hasWpComThemeUpsellBanner ) {
 			const forceDisplay =
 				( isBundledSoftwareSet && ! isSiteBundleEligible ) ||
 				( isExternallyManagedTheme &&
-					( ! isPurchased || ! isSiteEligibleForManagedExternalThemes ) );
+					( ! isMarketplaceThemeSubscribed || ! isSiteEligibleForManagedExternalThemes ) );
 			pageUpsellBanner = (
 				<UpsellNudge
 					plan={ PLAN_PREMIUM }
-					onClick={ ! isLoggedIn && launchPricing }
 					className="theme__page-upsell-banner"
 					title={ this.getBannerUpsellTitle() }
 					description={ preventWidows( this.getBannerUpsellDescription() ) }
 					event="themes_plan_particular_free_with_plan"
 					feature={ WPCOM_FEATURES_PREMIUM_THEMES }
-					forceHref={ true }
-					href={ isLoggedIn ? plansUrl : '#' }
+					forceHref={ onClick === null }
+					disableHref={ onClick !== null }
+					onClick={ onClick }
+					href={ plansUrl }
 					showIcon={ true }
 					forceDisplay={ forceDisplay }
+					displayAsLink={ onClick !== null }
 				/>
 			);
 		}
@@ -884,6 +904,7 @@ class ThemeSheet extends Component {
 		return (
 			<Main className={ className }>
 				<QueryCanonicalTheme themeId={ this.props.id } siteId={ siteId } />
+				<QueryProductsList />
 				<QueryUserPurchases />
 				{
 					siteId && (
@@ -947,6 +968,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		isBundledSoftwareSet,
 		isExternallyManagedTheme,
 		isSiteEligibleForManagedExternalThemes,
+		isMarketplaceThemeSubscribed,
 	} = props;
 
 	let defaultOption;
@@ -966,6 +988,12 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'upgradePlan';
 	} else if ( isExternallyManagedTheme && ! isSiteEligibleForManagedExternalThemes ) {
 		defaultOption = 'upgradePlanForExternallyManagedThemes';
+	} else if (
+		isExternallyManagedTheme &&
+		isSiteEligibleForManagedExternalThemes &&
+		! isMarketplaceThemeSubscribed
+	) {
+		defaultOption = 'subscribe';
 	} else if ( isPremium && ! isPurchased && ! isBundledSoftwareSet ) {
 		defaultOption = 'purchase';
 	} else if ( isPremium && ! isPurchased && isBundledSoftwareSet ) {
@@ -1002,6 +1030,14 @@ export default connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		const isStandaloneJetpack = isJetpack && ! isAtomic;
 
+		const isExternallyManagedTheme = getIsExternallyManagedTheme( state, theme?.id );
+		const isLoading =
+			getIsLoadingCart( state ) ||
+			( isExternallyManagedTheme && Object.values( getProductsList( state ) ).length === 0 );
+
+		const isMarketplaceThemeSubscribed =
+			isExternallyManagedTheme && getIsMarketplaceThemeSubscribed( state, theme?.id, siteId );
+
 		return {
 			...theme,
 			id,
@@ -1032,11 +1068,13 @@ export default connect(
 			demoUrl: getThemeDemoUrl( state, id, siteId ),
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 			softLaunched: theme?.soft_launched,
-			isExternallyManagedTheme: getIsExternallyManagedTheme( state, theme?.id ),
+			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes: getIsSiteEligibleForManagedExternalThemes(
 				state,
 				siteId
 			),
+			isLoading,
+			isMarketplaceThemeSubscribed,
 		};
 	},
 	{

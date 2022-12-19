@@ -3,6 +3,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
+import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { useSite } from '../../../../hooks/use-site';
@@ -48,7 +49,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		[ header, ...sections, footer ].filter( ( pattern ) => pattern ) as Pattern[];
 
 	const trackEventPatternAdd = ( patternType: string ) => {
-		recordTracksEvent( 'calypso_signup_bcpa_pattern_add_click', {
+		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_add_click', {
 			pattern_type: patternType,
 		} );
 	};
@@ -60,7 +61,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		patternType: string;
 		patternId: number;
 	} ) => {
-		recordTracksEvent( 'calypso_signup_bcpa_pattern_select_click', {
+		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_click', {
 			pattern_type: patternType,
 			pattern_id: patternId,
 		} );
@@ -68,15 +69,16 @@ const PatternAssembler: Step = ( { navigation } ) => {
 
 	const trackEventContinue = () => {
 		const patterns = getPatterns();
-		recordTracksEvent( 'calypso_signup_bcpa_continue_click', {
+		recordTracksEvent( 'calypso_signup_pattern_assembler_continue_click', {
 			pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
 			pattern_count: patterns.length,
 		} );
-		patterns.forEach( ( { id, name } ) => {
-			recordTracksEvent( 'calypso_signup_bcpa_pattern_final_select', {
+		patterns.forEach( ( { id, name, category } ) => {
+			recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_final_select', {
 				pattern_id: id,
 				pattern_name: name,
+				pattern_category: category,
 			} );
 		} );
 	};
@@ -171,7 +173,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 
 	const onBack = () => {
 		const patterns = getPatterns();
-		recordTracksEvent( 'calypso_signup_bcpa_back_click', {
+		recordTracksEvent( 'calypso_signup_pattern_assembler_back_click', {
 			has_selected_patterns: patterns.length > 0,
 			pattern_count: patterns.length,
 		} );
@@ -301,18 +303,21 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	);
 
 	return (
-		<StepContainer
-			stepName="pattern-assembler"
-			hideBack={ showPatternSelectorType !== null }
-			goBack={ onBack }
-			goNext={ goNext }
-			isHorizontalLayout={ false }
-			isFullLayout={ true }
-			hideSkip={ true }
-			stepContent={ stepContent }
-			recordTracksEvent={ recordTracksEvent }
-			stepSectionName={ showPatternSelectorType ? 'pattern-selector' : undefined }
-		/>
+		<>
+			<DocumentHead title={ translate( 'Design your home' ) } />
+			<StepContainer
+				stepName="pattern-assembler"
+				hideBack={ showPatternSelectorType !== null }
+				goBack={ onBack }
+				goNext={ goNext }
+				isHorizontalLayout={ false }
+				isFullLayout={ true }
+				hideSkip={ true }
+				stepContent={ stepContent }
+				recordTracksEvent={ recordTracksEvent }
+				stepSectionName={ showPatternSelectorType ? 'pattern-selector' : undefined }
+			/>
+		</>
 	);
 };
 

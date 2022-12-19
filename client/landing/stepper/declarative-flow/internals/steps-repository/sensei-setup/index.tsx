@@ -39,7 +39,10 @@ const ThemeStylePreviews = ( {
 			<div className="sensei-theme-list" style={ { '--index': index } as CSSProperties }>
 				{ styles.map( ( { name } ) => {
 					return (
-						<div className={ classnames( 'sensei-theme-item', { selected: name === active } ) }>
+						<div
+							key={ name }
+							className={ classnames( 'sensei-theme-item', { selected: name === active } ) }
+						>
 							<div className={ `sensei-theme ${ name }` }></div>
 						</div>
 					);

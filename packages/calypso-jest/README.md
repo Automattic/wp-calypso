@@ -10,7 +10,6 @@ module.exports = {
 
 Major features:
 
-- Sets up Enzyme with React 17
 - Find tests under `<rootDir>` inside `test` folder. Valid extensions are `.ts`, `.js`, `.tsx`, `.jsx`
 - Can use `calypso:src` from `package.json` to resolve a package
 - Can use conditional exports

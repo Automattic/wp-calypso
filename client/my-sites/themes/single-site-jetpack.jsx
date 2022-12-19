@@ -51,6 +51,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 		requestingSitePlans,
 	} = props;
 
+	const isNewDetailsAndPreview = isEnabled( 'themes/showcase-i4/details-and-preview' );
 	const isNewSearchAndFilter = isEnabled( 'themes/showcase-i4/search-and-filter' );
 	const displayUpsellBanner = isAtomic && ! requestingSitePlans && currentPlan;
 	const upsellUrl =
@@ -75,6 +76,9 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 	return (
 		<Main fullWidthLayout className="themes">
 			{ isNewSearchAndFilter && <BodySectionCssClass bodyClass={ [ 'is-section-themes-i4' ] } /> }
+			{ isNewDetailsAndPreview && (
+				<BodySectionCssClass bodyClass={ [ 'is-section-themes-i4-2' ] } />
+			) }
 			<ThemesHeader isReskinned={ isNewSearchAndFilter } />
 			{ ! isNewSearchAndFilter ? (
 				<CurrentTheme siteId={ siteId } />

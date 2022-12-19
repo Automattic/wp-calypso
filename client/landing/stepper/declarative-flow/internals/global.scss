@@ -68,7 +68,8 @@ button {
 .subscribers,
 .ecommerce,
 .intro,
-.free-setup {
+.free-setup,
+.free-post-setup {
 	padding: 60px 0 0;
 	box-sizing: border-box;
 
@@ -146,7 +147,8 @@ button {
  * Tailored flow stylings
  */
 .newsletter,
-.link-in-bio:not(.domains) {
+.link-in-bio:not(.domains),
+.link-in-bio-tld:not(.domains) {
 	&:not(.launchpad):not(.subscribers) {
 		@include onboarding-break-mobile-landscape {
 			padding: 40px 0 0;
@@ -168,6 +170,7 @@ button {
 
 .newsletter,
 .link-in-bio,
+.link-in-bio-tld,
 .setup-form__form {
 	button {
 		&[type="submit"] {

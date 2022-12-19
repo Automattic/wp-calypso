@@ -30,7 +30,6 @@ const { serializeGoals, goalsToIntent } = Onboard.utils;
 
 const refGoals: Record< string, Onboard.SiteGoal[] > = {
 	'create-blog-lp': [ SiteGoal.Write ],
-	'smp-import': [ SiteGoal.Import ],
 };
 
 /**

@@ -8,11 +8,6 @@ import storeBadgeApple from './images/store-apple.png';
 import storeBadgeGoogle from './images/store-google.png';
 import { WordPressJetpackSVG } from './svg-icons';
 
-export type MobilePromoCardProps = {
-	className?: string;
-	isWoo?: boolean;
-};
-
 // Slugs as used by Jetpack Redirects.
 // See https://jetpack.com/redirect for current URLs.
 // Two _QRCode constants are included for reference only.
@@ -40,12 +35,36 @@ function getRedirectUrl( key: string ): string | null {
 	return 'https://jetpack.com/redirect/?source=' + REDIRECT_SLUGS[ key ];
 }
 
-export default function MobilePromoCard( { className, isWoo }: MobilePromoCardProps ) {
+// For relaying click events to the caller.
+const CLICK_EVENTS = {
+	jetpackClickA8C: 'jetpack-click-a8c',
+	jetpackClickApple: 'jetpack-click-apple',
+	jetpackClickGoogle: 'jetpack-click-google',
+	wooClickA8C: 'woo-click-a8c',
+	wooClickApple: 'woo-click-apple',
+	wooClickGoogle: 'woo-click-google',
+};
+
+export type MobilePromoCardProps = {
+	className?: string;
+	isWoo?: boolean;
+	clickHandler?: ( eventName: string ) => void;
+};
+
+export default function MobilePromoCard( {
+	className,
+	isWoo,
+	clickHandler,
+}: MobilePromoCardProps ) {
 	const translate = useTranslate();
 	// Basic user agent testing so we can show app store badges on moble.
 	const userAgent = window.navigator.userAgent.toLowerCase();
 	const isApple = userAgent.includes( 'iphone' ) || userAgent.includes( 'ipad' );
 	const isGoogle = userAgent.includes( 'android' );
+
+	const onClickHandler = ( eventName: string ) => {
+		clickHandler?.( eventName );
+	};
 
 	// Determines message text based on mobile, tablet, or Desktop.
 	const getMessage = () => {
@@ -67,7 +86,11 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 				{
 					components: {
 						a: (
-							<a className="woo" href={ getRedirectUrl( 'wooA8C' ) ?? 'https://woo.com/mobile' } />
+							<a
+								className="woo"
+								href={ getRedirectUrl( 'wooA8C' ) ?? 'https://woo.com/mobile' }
+								onClick={ () => onClickHandler( CLICK_EVENTS.wooClickA8C ) }
+							/>
 						),
 					},
 				}
@@ -81,6 +104,7 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 						<a
 							className="jetpack"
 							href={ getRedirectUrl( 'jetpackA8C' ) ?? 'https://jetpack.com/app' }
+							onClick={ () => onClickHandler( CLICK_EVENTS.jetpackClickA8C ) }
 						/>
 					),
 				},
@@ -93,8 +117,12 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 		const fallbackLink = isWoo ? 'https://woo.com/mobile' : 'https://jetpack.com/app';
 		if ( isApple ) {
 			const appStoreLink = isWoo ? getRedirectUrl( 'wooApple' ) : getRedirectUrl( 'jetpackApple' );
+			const tracksEventName = isWoo ? CLICK_EVENTS.wooClickApple : CLICK_EVENTS.jetpackClickApple;
 			return (
-				<a href={ appStoreLink ?? fallbackLink }>
+				<a
+					href={ appStoreLink ?? fallbackLink }
+					onClick={ () => onClickHandler( tracksEventName ) }
+				>
 					<img
 						className="promo-store-badge"
 						src={ storeBadgeApple }
@@ -107,8 +135,12 @@ export default function MobilePromoCard( { className, isWoo }: MobilePromoCardPr
 			const appStoreLink = isWoo
 				? getRedirectUrl( 'wooGoogle' )
 				: getRedirectUrl( 'jetpackGoogle' );
+			const tracksEventName = isWoo ? CLICK_EVENTS.wooClickGoogle : CLICK_EVENTS.jetpackClickGoogle;
 			return (
-				<a href={ appStoreLink ?? fallbackLink }>
+				<a
+					href={ appStoreLink ?? fallbackLink }
+					onClick={ () => onClickHandler( tracksEventName ) }
+				>
 					<img
 						className="promo-store-badge"
 						src={ storeBadgeGoogle }

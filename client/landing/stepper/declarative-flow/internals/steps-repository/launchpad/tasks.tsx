@@ -1,3 +1,4 @@
+import { LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
 import { LaunchpadFlowTaskList, Task } from './types';
 
 export const tasks: Task[] = [
@@ -99,15 +100,18 @@ export const tasks: Task[] = [
 	},
 ];
 
+const linkInBioTaskList = [
+	'design_selected',
+	'setup_link_in_bio',
+	'plan_selected',
+	'links_added',
+	'link_in_bio_launched',
+];
+
 export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 	newsletter: [ 'setup_newsletter', 'plan_selected', 'subscribers_added', 'first_post_published' ],
-	'link-in-bio': [
-		'design_selected',
-		'setup_link_in_bio',
-		'plan_selected',
-		'links_added',
-		'link_in_bio_launched',
-	],
+	[ LINK_IN_BIO_FLOW ]: linkInBioTaskList,
+	[ LINK_IN_BIO_TLD_FLOW ]: linkInBioTaskList,
 	free: [
 		'setup_free',
 		'design_selected',

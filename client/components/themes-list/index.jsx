@@ -10,6 +10,7 @@ import proThemesBanner from 'calypso/assets/images/themes/pro-themes-banner.svg'
 import EmptyContent from 'calypso/components/empty-content';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { upsellCardDisplayed as upsellCardDisplayedAction } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
@@ -225,16 +226,30 @@ function WPOrgMatchingThemes( props ) {
 }
 
 function PlanUpgradeCTA( { selectedSite, searchTerm, translate, recordTracksEvent } ) {
+	const isLoggedIn = useSelector( isUserLoggedIn );
+
 	const onUpgradeClick = useCallback( () => {
 		recordTracksEvent( 'calypso_themeshowcase_search_empty_results_upgrade_plan', {
 			site_plan: selectedSite?.plan?.product_slug,
 			search_term: searchTerm,
 		} );
 
+		if ( ! selectedSite?.slug ) {
+			return page( `/checkout/${ PLAN_BUSINESS }?redirect_to=/themes` );
+		}
+
 		return page(
 			`/checkout/${ selectedSite.slug }/${ PLAN_BUSINESS }?redirect_to=/themes/${ selectedSite.slug }`
 		);
-	}, [ selectedSite, searchTerm ] );
+	}, [ selectedSite, searchTerm, recordTracksEvent ] );
+
+	const onGetStartedClick = useCallback( () => {
+		recordTracksEvent( 'calypso_themeshowcase_search_empty_results_get_started', {
+			search_term: searchTerm,
+		} );
+
+		return page( `/start/business` );
+	}, [ searchTerm, recordTracksEvent ] );
 
 	return (
 		<div className="themes-list__upgrade-section-wrapper">
@@ -247,9 +262,15 @@ function PlanUpgradeCTA( { selectedSite, searchTerm, translate, recordTracksEven
 				) }
 			</div>
 
-			<Button primary className="themes-list__upgrade-section-cta" onClick={ onUpgradeClick }>
-				{ translate( 'Upgrade your plan' ) }
-			</Button>
+			{ isLoggedIn ? (
+				<Button primary className="themes-list__upgrade-section-cta" onClick={ onUpgradeClick }>
+					{ translate( 'Upgrade your plan' ) }
+				</Button>
+			) : (
+				<Button primary className="themes-list__upgrade-section-cta" onClick={ onGetStartedClick }>
+					{ translate( 'Get started' ) }
+				</Button>
+			) }
 
 			<div className="themes-list__themes-images">
 				<img

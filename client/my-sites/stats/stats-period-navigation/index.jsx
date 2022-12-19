@@ -1,5 +1,3 @@
-import config from '@automattic/calypso-config';
-import { Gridicon } from '@automattic/components';
 import { Icon, arrowLeft, arrowRight } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, withRtl } from 'i18n-calypso';
@@ -16,8 +14,9 @@ import './style.scss';
 class StatsPeriodNavigation extends PureComponent {
 	static propTypes = {
 		onPeriodChange: PropTypes.func,
-		hidePreviousArrow: PropTypes.bool,
-		hideNextArrow: PropTypes.bool,
+		showArrows: PropTypes.bool,
+		disablePreviousArrow: PropTypes.bool,
+		disableNextArrow: PropTypes.bool,
 		isRtl: PropTypes.bool,
 		queryParams: PropTypes.object,
 		startDate: PropTypes.bool,
@@ -25,8 +24,9 @@ class StatsPeriodNavigation extends PureComponent {
 	};
 
 	static defaultProps = {
-		hidePreviousArrow: false,
-		hideNextArrow: false,
+		showArrows: true,
+		disablePreviousArrow: false,
+		disableNextArrow: false,
 		isRtl: false,
 		queryParams: {},
 		startDate: false,
@@ -55,8 +55,17 @@ class StatsPeriodNavigation extends PureComponent {
 	};
 
 	render() {
-		const { children, date, moment, period, url, hidePreviousArrow, hideNextArrow, queryParams } =
-			this.props;
+		const {
+			children,
+			date,
+			moment,
+			period,
+			url,
+			showArrows,
+			disablePreviousArrow,
+			disableNextArrow,
+			queryParams,
+		} = this.props;
 
 		const isToday = moment( date ).isSame( moment(), period );
 		const previousDay = moment( date ).subtract( 1, period ).format( 'YYYY-MM-DD' );
@@ -69,51 +78,31 @@ class StatsPeriodNavigation extends PureComponent {
 			addQueryPrefix: true,
 		} );
 
-		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
-
-		return isNewFeatured ? (
-			<div className="stats-period-navigation stats-period-navigation--new-main-chart">
-				<div className="stats-period-navigation__children">{ children }</div>
-				<a
-					className={ classNames( 'stats-period-navigation__previous', {
-						'is-disabled': hidePreviousArrow,
-					} ) }
-					href={ `${ url }${ previousDayQuery }` }
-					onClick={ this.handleClickPrevious }
-				>
-					<Icon className="gridicon" icon={ arrowLeft } />
-				</a>
-				<a
-					className={ classNames( 'stats-period-navigation__next', {
-						'is-disabled': hideNextArrow || isToday,
-					} ) }
-					href={ `${ url }${ nextDayQuery }` }
-					onClick={ this.handleClickNext }
-				>
-					<Icon className="gridicon" icon={ arrowRight } />
-				</a>
-			</div>
-		) : (
+		return (
 			<div className="stats-period-navigation">
-				<a
-					className={ classNames( 'stats-period-navigation__previous', {
-						'is-disabled': hidePreviousArrow,
-					} ) }
-					href={ `${ url }${ previousDayQuery }` }
-					onClick={ this.handleClickPrevious }
-				>
-					<Gridicon icon="arrow-left" size={ 18 } />
-				</a>
 				<div className="stats-period-navigation__children">{ children }</div>
-				<a
-					className={ classNames( 'stats-period-navigation__next', {
-						'is-disabled': hideNextArrow || isToday,
-					} ) }
-					href={ `${ url }${ nextDayQuery }` }
-					onClick={ this.handleClickNext }
-				>
-					<Gridicon icon="arrow-right" size={ 18 } />
-				</a>
+				{ showArrows && (
+					<>
+						<a
+							className={ classNames( 'stats-period-navigation__previous', {
+								'is-disabled': disablePreviousArrow,
+							} ) }
+							href={ `${ url }${ previousDayQuery }` }
+							onClick={ this.handleClickPrevious }
+						>
+							<Icon className="gridicon" icon={ arrowLeft } />
+						</a>
+						<a
+							className={ classNames( 'stats-period-navigation__next', {
+								'is-disabled': disableNextArrow || isToday,
+							} ) }
+							href={ `${ url }${ nextDayQuery }` }
+							onClick={ this.handleClickNext }
+						>
+							<Icon className="gridicon" icon={ arrowRight } />
+						</a>
+					</>
+				) }
 			</div>
 		);
 	}

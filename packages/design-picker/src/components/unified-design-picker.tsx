@@ -9,6 +9,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef, useState } from 'react';
+import { useInView } from 'calypso/lib/use-in-view'; // eslint-disable-line no-restricted-imports
 import {
 	SHOW_ALL_SLUG,
 	SHOW_GENERATED_DESIGNS_SLUG,
@@ -414,16 +415,17 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						currentPlanFeatures={ currentPlanFeatures }
 					/>
 				) ) }
-				{ generatedDesigns.map( ( design ) => (
-					<GeneratedDesignButtonContainer
-						key={ `generated-design__${ design.slug }` }
-						design={ design }
-						locale={ locale }
-						verticalId={ verticalId }
-						isShowing={ categorization?.selection === SHOW_GENERATED_DESIGNS_SLUG }
-						onPreview={ onPreview }
-					/>
-				) ) }
+				{ categorization?.selection === SHOW_GENERATED_DESIGNS_SLUG &&
+					generatedDesigns.map( ( design ) => (
+						<GeneratedDesignButtonContainer
+							key={ `generated-design__${ design.slug }` }
+							design={ design }
+							locale={ locale }
+							verticalId={ verticalId }
+							isShowing
+							onPreview={ onPreview }
+						/>
+					) ) }
 			</div>
 		</div>
 	);
@@ -434,6 +436,7 @@ export interface UnifiedDesignPickerProps {
 	verticalId?: string;
 	onSelect: ( design: Design ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
+	onViewAllDesigns: () => void;
 	generatedDesigns: Design[];
 	staticDesigns: Design[];
 	categorization?: Categorization;
@@ -448,6 +451,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	locale,
 	onSelect,
 	onPreview,
+	onViewAllDesigns,
 	verticalId,
 	staticDesigns,
 	generatedDesigns,
@@ -462,6 +466,10 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	const hasCategories = !! categorization?.categories.length;
 	const hasGeneratedDesigns = generatedDesigns.length > 0;
 	const isShowAll = ! categorization?.selection || categorization?.selection === SHOW_ALL_SLUG;
+
+	// Track as if user has scrolled to bottom of the design picker
+	const ref = useInView< HTMLDivElement >( onViewAllDesigns, [ categorization?.selection ] );
+	const bottomAnchorContent = <div className="design-picker__bottom_anchor" ref={ ref }></div>;
 
 	return (
 		<div
@@ -489,6 +497,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					purchasedThemes={ purchasedThemes }
 					currentPlanFeatures={ currentPlanFeatures }
 				/>
+				{ ( ! isShowAll || ! hasGeneratedDesigns ) && bottomAnchorContent }
 			</div>
 			{ hasGeneratedDesigns && (
 				<div
@@ -510,6 +519,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 						verticalId={ verticalId }
 						onPreview={ onPreview }
 					/>
+					{ isShowAll && bottomAnchorContent }
 				</div>
 			) }
 		</div>

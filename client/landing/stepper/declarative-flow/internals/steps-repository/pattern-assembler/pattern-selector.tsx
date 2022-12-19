@@ -43,29 +43,29 @@ const PatternSelector = ( {
 	}, [ show ] );
 
 	const renderPatterns = ( patternList: Pattern[] ) =>
-		patternList?.map( ( item: Pattern, index: number ) => (
+		patternList?.map( ( pattern: Pattern, index: number ) => (
 			<PatternPreviewAutoHeight
-				key={ `${ index }-${ item.id }` }
+				key={ `${ index }-${ pattern.id }` }
 				url={ getPatternPreviewUrl( {
-					id: item.id,
+					id: pattern.id,
 					language: locale,
 					siteTitle: site?.name,
 					stylesheet: selectedDesign?.recipe?.stylesheet,
 				} ) }
-				patternId={ item.id }
-				patternName={ item.name }
+				patternId={ pattern.id }
+				patternName={ pattern.category }
 			>
 				<div
-					aria-label={ item.name }
+					aria-label={ pattern.category }
 					tabIndex={ show ? 0 : -1 }
 					role="option"
-					title={ item.name }
-					aria-selected={ item.id === selectedPattern?.id }
+					title={ pattern.category }
+					aria-selected={ pattern.id === selectedPattern?.id }
 					className={ classnames( {
-						'pattern-selector__block-list--selected-pattern': item.id === selectedPattern?.id,
+						'pattern-selector__block-list--selected-pattern': pattern.id === selectedPattern?.id,
 					} ) }
-					onClick={ () => onSelect( item ) }
-					onKeyUp={ handleKeyboard( () => onSelect( item ) ) }
+					onClick={ () => onSelect( pattern ) }
+					onKeyUp={ handleKeyboard( () => onSelect( pattern ) ) }
 				/>
 			</PatternPreviewAutoHeight>
 		) );
