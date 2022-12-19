@@ -255,6 +255,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		setIsPreviewingDesign( true );
 	}
 
+	function trackAllDesignsView() {
+		recordTracksEvent( 'calypso_signup_design_scrolled_to_end', {
+			intent,
+			category: categorization?.selection,
+		} );
+	}
+
 	function previewDesignVariation( variation: StyleVariation ) {
 		recordTracksEvent(
 			'calypso_signup_design_preview_style_variation_preview_click',
@@ -692,6 +699,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			locale={ locale }
 			onSelect={ pickDesign }
 			onPreview={ previewDesign }
+			onViewAllDesigns={ trackAllDesignsView }
 			onCheckout={ goToCheckout }
 			heading={ heading }
 			categorization={ categorization }

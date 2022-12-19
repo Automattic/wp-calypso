@@ -141,8 +141,11 @@ function a8c_happyblocks_pricing_plans_get_domain() {
 function a8c_happyblocks_get_config() {
 
 	return array(
-		'locale' => get_user_locale(),
-		'domain' => a8c_happyblocks_pricing_plans_get_domain(),
+		'features' => array(
+			'planTabs' => apply_filters( 'support_forums_use_upsell_block_tabs', false ),
+		),
+		'locale'   => get_user_locale(),
+		'domain'   => a8c_happyblocks_pricing_plans_get_domain(),
 	);
 }
 
@@ -168,7 +171,6 @@ function a8c_happyblocks_register() {
 	register_block_type(
 		'happy-blocks/pricing-plans',
 		array(
-			'api_version'     => 2,
 			'render_callback' => 'a8c_happyblocks_render_pricing_plans_callback',
 		)
 	);

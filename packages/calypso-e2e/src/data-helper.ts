@@ -174,23 +174,24 @@ export function getAccountSiteURL(
 	{ protocol = true }: { protocol?: boolean } = {}
 ): string {
 	const testAccount = SecretsManager.secrets.testAccounts[ accountType ];
+	const url = testAccount.primarySite || testAccount.testSites?.primary.url;
 	if ( ! testAccount ) {
 		throw new Error(
 			`Secrets file did not contain credentials for requested user ${ accountType }. Update typings or the secrets file.`
 		);
 	}
 
-	if ( ! testAccount.primarySite ) {
+	if ( ! url ) {
 		throw new ReferenceError(
 			`Secrets entry for ${ accountType } has no primary site URL defined.`
 		);
 	}
 
 	if ( protocol ) {
-		return new URL( `https://${ testAccount.primarySite }` ).toString();
+		return new URL( `https://${ url }` ).toString();
 	}
 
-	return testAccount.primarySite.toString();
+	return url.toString();
 }
 
 /**

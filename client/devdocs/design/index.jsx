@@ -123,6 +123,7 @@ import Wizard from 'calypso/components/wizard/docs/example';
 import WpcomColophon from 'calypso/components/wpcom-colophon/docs/example';
 import Collection from 'calypso/devdocs/design/search-collection';
 import { slugToCamelCase } from 'calypso/devdocs/docs-example/util';
+import SitesTableRowExample from 'calypso/sites-dashboard/components/sites-table-row/docs/example';
 
 export default class DesignAssets extends Component {
 	static displayName = 'DesignAssets';
@@ -270,6 +271,7 @@ export default class DesignAssets extends Component {
 					<SplitButton readmeFilePath="split-button" />
 					<Spotlight />
 					<SiteThumbnail readmeFilePath="/packages/components/src/site-thumbnail" />
+					<SitesTableRowExample readmeFilePath="/client/sites-dashboard/components/sites-table-row" />
 					<StepProgress readmeFilePath="step-progress" />
 					<Suggestions readmeFilePath="/packages/components/src/suggestions" />
 					<SuggestionSearchExample />
