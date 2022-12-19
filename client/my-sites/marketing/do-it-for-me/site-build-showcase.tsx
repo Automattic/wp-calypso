@@ -118,7 +118,7 @@ export default function SiteBuildShowcase() {
 	return (
 		<AnimatedSlideshow slideCount={ images.length } interval={ 8 } fadeDelay={ 2.5 }>
 			{ images.map( ( image, index ) => (
-				<div key={ '' + index } style={ { backgroundImage: `url( ${ image } )` } } />
+				<div key={ index } style={ { backgroundImage: `url( ${ image } )` } } />
 			) ) }
 		</AnimatedSlideshow>
 	);
