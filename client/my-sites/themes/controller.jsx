@@ -97,18 +97,11 @@ export function fetchThemeFilters( context, next ) {
 		return next();
 	}
 
-	const filtersRequest = wpcom.req.get( '/theme-filters', {
-		apiVersion: '1.2',
-		locale: context.lang, // Note: undefined will be omitted by the query string builder.
-	} );
-
-	const timeout = new Promise( ( _, reject ) => {
-		setTimeout( () => {
-			reject( new Error( 'Theme filters request timed out' ) );
-		}, 500 );
-	} );
-
-	Promise.race( [ filtersRequest, timeout ] )
+	wpcom.req
+		.get( '/theme-filters', {
+			apiVersion: '1.2',
+			locale: context.lang, // Note: undefined will be omitted by the query string builder.
+		} )
 		.then( ( filters ) => {
 			store.dispatch( { type: THEME_FILTERS_ADD, filters } );
 			next();
