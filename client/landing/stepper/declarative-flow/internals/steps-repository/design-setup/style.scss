@@ -668,9 +668,17 @@ $break-design-preview: 1024px;
 // Free flow
 
 .free.design-setup {
-	.step-container {
-		.step-container__navigation {
+	.step-container:not(.design-setup__preview) {
+		.navigation-link {
 			display: none;
 		}
 	}
+	.step-container__navigation {
+		.step-container__skip-wrapper {
+			button.step-container__navigation-link {
+				display: none;
+			}
+		}
+	}
+
 }
