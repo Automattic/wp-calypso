@@ -8,6 +8,7 @@ import {
 	LINK_IN_BIO_FLOW,
 	FREE_FLOW,
 	isFreeFlow,
+	isGeneralOnboardingFlow,
 } from './utils';
 
 const ONBOARD_STORE = Onboard.register();
@@ -49,31 +50,35 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 	if ( siteId && flowName ) {
 		const formData: ( string | File )[][] = [];
 		const settings: {
-			blogname: string;
-			blogdescription: string;
+			blogname?: string;
+			blogdescription?: string;
 			launchpad_screen?: string;
 			site_intent?: string;
-		} = {
-			blogname: siteTitle,
-			blogdescription: siteDescription,
-		};
+		} = {};
 
-		if ( isNewsletterOrLinkInBioFlow( flowName ) || isFreeFlow( flowName ) ) {
-			// link-in-bio and link-in-bio-tld are considered the same intent.
-			if ( isLinkInBioFlow( flowName ) || isFreeFlow( flowName ) ) {
-				settings.site_intent = isLinkInBioFlow( flowName ) ? LINK_IN_BIO_FLOW : FREE_FLOW;
-				if ( selectedPatternContent ) {
-					const pattern = {
-						content: selectedPatternContent,
-						template: 'blank',
-					};
-					formData.push( [ 'pattern', JSON.stringify( pattern ) ] );
-				}
-			} else {
-				settings.site_intent = flowName;
-			}
-
+		if ( isGeneralOnboardingFlow( flowName ) ) {
 			settings.launchpad_screen = 'full';
+		} else {
+			settings.blogname = siteTitle;
+			settings.blogdescription = siteDescription;
+
+			if ( isNewsletterOrLinkInBioFlow( flowName ) || isFreeFlow( flowName ) ) {
+				// link-in-bio and link-in-bio-tld are considered the same intent.
+				if ( isLinkInBioFlow( flowName ) || isFreeFlow( flowName ) ) {
+					settings.site_intent = isLinkInBioFlow( flowName ) ? LINK_IN_BIO_FLOW : FREE_FLOW;
+					if ( selectedPatternContent ) {
+						const pattern = {
+							content: selectedPatternContent,
+							template: 'blank',
+						};
+						formData.push( [ 'pattern', JSON.stringify( pattern ) ] );
+					}
+				} else {
+					settings.site_intent = flowName;
+				}
+
+				settings.launchpad_screen = 'full';
+			}
 		}
 
 		formData.push( [ 'settings', JSON.stringify( settings ) ] );

@@ -32,7 +32,7 @@ export const goalsToIntent = ( goals: SiteGoal[] ): SiteIntent => {
 		return GOAL_TO_INTENT_MAP[ intentDecidingGoal ];
 	}
 
-	return SiteIntent.Build;
+	return SiteIntent.Free;
 };
 
 export const serializeGoals = ( goals: SiteGoal[] ): string => {

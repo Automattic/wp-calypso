@@ -113,6 +113,7 @@ export function generateFlows( {
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2020-12-10',
 			showRecaptcha: true,
+			postCompleteCallback: setupSiteAfterCreation,
 		},
 		{
 			name: 'newsletter',
