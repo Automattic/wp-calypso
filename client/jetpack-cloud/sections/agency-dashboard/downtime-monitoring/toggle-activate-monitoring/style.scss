@@ -8,7 +8,18 @@
 	margin-bottom: 0;
 }
 
-.toggle-activate-monitoring__toggle-button {
+.inline-flex-align-centre {
 	display: inline-flex;
 	align-items: center;
+}
+
+.toggle-activate-monitoring__toggle-button {
+	@extend .inline-flex-align-centre;
+}
+
+.toggle-activate-monitoring__duration {
+	@extend .inline-flex-align-centre;
+	span {
+		margin-inline-start: 1px;
+	}
 }

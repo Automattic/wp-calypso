@@ -361,6 +361,7 @@ const formatMonitorData = ( site: Site ) => {
 		status: '',
 		type: 'monitor',
 		error: false,
+		settings: site.monitor_settings,
 	};
 	if ( ! site.monitor_active ) {
 		monitor.status = 'disabled';
