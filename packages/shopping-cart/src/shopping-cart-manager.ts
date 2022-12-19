@@ -32,6 +32,16 @@ import type {
 
 const debug = debugFactory( 'shopping-cart:shopping-cart-manager' );
 
+/**
+ * Enhance an action dispatcher to return a Promise that will resolve when the
+ * cart next reaches a `valid` CacheStatus.
+ *
+ * This is the dispatcher used for all actions in the ShoppingCartManager's
+ * public API.
+ *
+ * See `createActionPromisesManager` to learn about how the Promises are
+ * tracked.
+ */
 function createDispatchAndWaitForValid(
 	dispatch: ShoppingCartReducerDispatch,
 	actionPromises: ActionPromises
@@ -44,6 +54,18 @@ function createDispatchAndWaitForValid(
 	};
 }
 
+/**
+ * Return an error if the current state contains one.
+ *
+ * There are two types of things we consider an error in the state:
+ *
+ * 1. A loading error. This gets set when a network request (GET or POST) fails.
+ * 2. Cart errors. These get set by the endpoint for invalid carts.
+ *
+ * If there is a loading error, the cart may be invalid indefinitely. However,
+ * if the cart has errors, typically the cart is valid and can continue to be
+ * used.
+ */
 function getErrorFromState( state: ShoppingCartState ): undefined | CartActionError {
 	if ( state.loadingError ) {
 		return new CartActionConnectionError( state.loadingError, state.loadingErrorType );
@@ -76,6 +98,7 @@ function createShoppingCartManager(
 		state = newState;
 
 		if ( state.cacheStatus === 'error' ) {
+			debug( 'cache status is error, so rejecting action promises' );
 			actionPromises.reject(
 				new CartActionConnectionError( state.loadingError, state.loadingErrorType )
 			);
@@ -118,14 +141,21 @@ function createShoppingCartManager(
 
 	let didInitialFetch = false;
 	const initialFetch = () => {
+		// Only perform initialFetch once. If it already ran, we return immediately
+		// with the result.
 		if ( didInitialFetch ) {
 			const error = getErrorFromState( state );
 			if ( error ) {
+				debug( 'initial fetch called but it already ran and the current state has an error' );
 				return Promise.reject( error );
 			}
+			debug( 'initial fetch called but it already ran; returning without doing anything' );
 			return Promise.resolve( state.lastValidResponseCart );
 		}
 		didInitialFetch = true;
+
+		// takeActionsBasedOnState on a fresh cart will triger an initial fetch.
+		debug( 'initial fetch called and has not been called before' );
 		takeActionsBasedOnState( state, dispatch );
 		return new Promise< ResponseCart >( ( resolve, reject ) => {
 			actionPromises.add( { resolve, reject } );
