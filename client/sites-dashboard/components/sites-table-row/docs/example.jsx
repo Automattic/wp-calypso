@@ -132,7 +132,7 @@ const siteSimplePrivateP2 = {
 	title: 'Simple Private P2 Site',
 };
 
-export default function SitesTableRowExample() {
+const SitesTableRowExample = () => {
 	return (
 		<div>
 			<div style={ CONTAINER_STYLES }>
@@ -152,4 +152,8 @@ export default function SitesTableRowExample() {
 			</div>
 		</div>
 	);
-}
+};
+
+SitesTableRowExample.displayName = 'SitesTableRow';
+
+export default SitesTableRowExample;
