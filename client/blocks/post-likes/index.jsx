@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { PureComponent } from 'react';
@@ -26,6 +27,8 @@ class PostLikes extends PureComponent {
 		const likeUrl = like.site_ID && like.site_visible ? '/read/blogs/' + like.site_ID : null;
 		const LikeWrapper = likeUrl ? 'a' : 'span';
 
+		const isFeatured = config.isEnabled( 'stats/enhance-post-detail' );
+
 		return (
 			<LikeWrapper
 				key={ like.ID }
@@ -33,7 +36,12 @@ class PostLikes extends PureComponent {
 				className="post-likes__item"
 				onClick={ likeUrl ? this.trackLikeClick : null }
 			>
-				<Gravatar user={ like } alt={ like.login } title={ like.login } size={ 24 } />
+				<Gravatar
+					user={ like }
+					alt={ like.login }
+					title={ like.login }
+					size={ isFeatured ? 32 : 24 }
+				/>
 				{ showDisplayNames && <span className="post-likes__display-name">{ like.name }</span> }
 			</LikeWrapper>
 		);
