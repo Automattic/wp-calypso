@@ -105,12 +105,18 @@ function createShoppingCartManager(
 		}
 
 		if ( ! isStatePendingUpdateOrQueuedAction( state ) ) {
-			// action promises are resolved even if state hasn't changed so that
-			// noop actions resolve immediately.
+			// action promises are resolved even if state hasn't changed so that noop
+			// actions resolve immediately. However, if the state did not change and
+			// there are errors, they have already been reported and we don't want to
+			// reject action promises a second time.
 			const error = getErrorFromState( state );
-			if ( error ) {
+			if ( error && isStateChanged ) {
+				debug( 'no state updates pending and there is an error, so rejecting action promises' );
 				actionPromises.reject( error );
 			} else {
+				debug(
+					'no state updates pending and there are no new errors, so resolving action promises'
+				);
 				actionPromises.resolve( state.responseCart );
 			}
 		}
