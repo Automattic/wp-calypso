@@ -698,7 +698,7 @@ export default function CheckoutMain( {
 				isLoading={ isLoading }
 				isValidating={ isCartPendingUpdate }
 				theme={ theme }
-				initiallySelectedPaymentMethodId={ paymentMethods?.length ? paymentMethods[ 0 ].id : null }
+				selectFirstAvailablePaymentMethod
 			>
 				<WPCheckout
 					forceRadioButtons={ forceRadioButtons }
