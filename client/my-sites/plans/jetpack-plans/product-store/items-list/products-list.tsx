@@ -12,17 +12,17 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 	siteId,
 	duration,
 } ) => {
-	const [ popularItems, otherItems ] = useProductsToDisplay( { duration, siteId } );
+	const [ popularProducts, otherProducts ] = useProductsToDisplay( { duration, siteId } );
 	const [ popularBundles ] = useBundlesToDisplay( { duration, siteId } );
 	const translate = useTranslate();
 
 	const allItems = useMemo(
-		() => getSortedDisplayableProducts( [ ...popularItems, ...otherItems ] ),
-		[ popularItems, otherItems ]
+		() => getSortedDisplayableProducts( [ ...popularProducts, ...otherProducts ] ),
+		[ popularProducts, otherProducts ]
 	);
 
 	return (
-		<div className="jetpack-product-store__bundles-list">
+		<div className="jetpack-product-store__products-list">
 			<MostPopular
 				heading={ translate( 'Most popular bundles' ) }
 				items={ popularBundles }
