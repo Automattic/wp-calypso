@@ -108,28 +108,37 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 		: undefined;
 	// Jetpack introductory pricing displays the introductory price for the first term, then the regular price for the remaining term.
 	// const planTerm = variant.termIntervalInDays > 31 ? 'year' : 'month';
-	const introTerm = variant.introIntervalUnit;
-	const introCount = variant.introIntervalCount;
-	const formattedRegularPrice = formatCurrency( variant.regularPrice, variant.currency );
+	const introTerm = variant.introductoryTerm;
+	const introCount = variant.introductoryInterval;
+	const formattedPriceBeforeDiscounts = formatCurrency(
+		variant.priceBeforeDiscounts,
+		variant.currency,
+		{
+			stripZeros: true,
+			isSmallestUnit: true,
+		}
+	);
+	const planLength = variant.planLength;
 	const isJetpackIntroductoryOffer = isJetpackProduct( variant ) && introCount > 0;
 	const translate = useTranslate();
+	// the backend returns the term in text, but it it adds "one" like One year, which looks off so we're creating our own.
 	const planTerm = () => {
 		let termToTranslate = translate( 'month' );
-		if ( variant.termIntervalInYears > 1 ) {
+		if ( planLength > 12 ) {
 			//biannual is currently the only possible term past 1 year
 			termToTranslate = translate( '2 years' );
-		} else if ( variant.termIntervalInYears > 0 ) {
+		} else if ( planLength > 1 ) {
 			termToTranslate = translate( 'year' );
 		}
 		return termToTranslate;
 	};
 	const translatedIntroOfferPrice = translate(
-		'%(formattedCurrentPrice)s first %(introTerm)s then %(formattedRegularPrice)s per %(planTerm)s',
+		'%(formattedCurrentPrice)s first %(introTerm)s then %(formattedPriceBeforeDiscounts)s per %(planTerm)s',
 		// translation example: $4.99 first month then $9.99 per year
 		{
 			args: {
 				formattedCurrentPrice,
-				formattedRegularPrice,
+				formattedPriceBeforeDiscounts,
 				introTerm,
 				planTerm: planTerm(),
 			},
