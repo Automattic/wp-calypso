@@ -1,7 +1,6 @@
 import assert from 'assert';
 import { Page, Locator } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
-import envVariables from '../../env-variables';
 
 type PluginAttributes = 'Active' | 'Autoupdate';
 type PluginState = 'on' | 'off';
@@ -37,9 +36,10 @@ const selectors = {
 	searchResultTitle: ( text: string ) => `:text('plugins for "${ text }"')`,
 
 	// Plugin view
-	pluginHamburgerMenu: `.plugin-site-jetpack__action`,
+	pluginToggleMenu: `.plugin-details-cta__manage-plugin-menu button`,
 	pluginToggle: ( target: PluginAttributes ) =>
 		`.plugin-site-jetpack__container .components-toggle-control:has(span:text("${ target }")) span.components-form-toggle`,
+	pluginDetailButton: '.plugin-details__actions button:not([title="Toggle menu"])',
 	installButton: 'button:text("Install and activate")',
 	removeButton: 'button.plugin-remove-button__remove-button',
 
@@ -310,6 +310,17 @@ export class PluginsPage {
 	}
 
 	/**
+	 * Returns whether plugin is activated or not.
+	 *
+	 * @returns {Promise<boolean>} True if plugin is activated. False otherwise.
+	 */
+	private async isActivated( locator: Locator ): Promise< boolean > {
+		await locator.waitFor();
+		const value = await locator.innerText();
+		return value === 'Deactivate' ? true : false;
+	}
+
+	/**
 	 * Toggles the plugin attribute.
 	 *
 	 * @param {PluginAttributes} target Target attribute to toggle.
@@ -328,6 +339,23 @@ export class PluginsPage {
 	}
 
 	/**
+	 * Activate / Deactivate the plugin.
+	 *
+	 * @param {PluginState} target Target value.
+	 */
+	async setPluginAttribute( target: PluginState ): Promise< void > {
+		const toggleLocator = this.page.locator( selectors.pluginDetailButton );
+
+		const isActivated = await this.isActivated( toggleLocator );
+
+		// Only perform action if  the current state and
+		// target state differ.
+		if ( ( target === 'on' && ! isActivated ) || ( target === 'off' && isActivated ) ) {
+			await toggleLocator.click();
+		}
+	}
+
+	/**
 	 * Clicks on the Install Plugin button.
 	 */
 	async clickInstallPlugin(): Promise< void > {
@@ -339,10 +367,8 @@ export class PluginsPage {
 	 * Clicks on the `Remove Plugin` button.
 	 */
 	async clickRemovePlugin(): Promise< void > {
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			const pluginActionsLocator = this.page.locator( selectors.pluginHamburgerMenu );
-			await pluginActionsLocator.click();
-		}
+		const pluginActionsLocator = this.page.locator( selectors.pluginToggleMenu );
+		await pluginActionsLocator.click();
 
 		const locator = this.page.locator( selectors.removeButton );
 		await locator.click();
