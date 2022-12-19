@@ -57,6 +57,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const locale = useLocale();
 
 	const isMobile = ! useViewportMatch( 'small' );
+	const isDesktop = useViewportMatch( 'large' );
 
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 
@@ -450,6 +451,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				...getEventPropsByDesign( _selectedDesign, selectedStyleVariation ),
 				...( positionIndex >= 0 && { position_index: positionIndex } ),
 				device: resolveDeviceTypeByViewPort(),
+				goes_to_pattern_assembler_flow:
+					isEnabled( 'signup/design-picker-pattern-assembler' ) &&
+					isBlankCanvasDesign( _selectedDesign ) &&
+					isDesktop,
 			} );
 
 			if ( _selectedDesign.verticalizable ) {
