@@ -80,7 +80,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	// Checks if the user entered the signup flow via browser back from checkout page,
 	// and if they did, we'll show a modified domain step to prevent creating duplicate sites,
 	// check pau2Xa-1Io-p2#comment-6759.
-	const isAddNewSiteFlow = useQuery().get( 'ref' );
+	const isAddNewSiteFlow = useQuery().has( 'ref' );
 	const signupDestinationCookieExists = retrieveSignupDestination();
 	const isReEnteringFlow = getSignupCompleteFlowName() === flow;
 	const isReEnteringSignupViaBrowserBack =
