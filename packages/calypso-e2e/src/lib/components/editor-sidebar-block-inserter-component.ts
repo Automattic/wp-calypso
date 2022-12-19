@@ -72,10 +72,12 @@ export class EditorSidebarBlockInserterComponent {
 		let locator;
 
 		if ( type === 'pattern' ) {
-			locator = this.editor.locator( selectors.patternResultItem( name ) );
+			locator = this.editor.locator( selectors.patternResultItem( name ) ).first();
 		} else {
-			locator = this.editor.locator( selectors.blockResultItem( name ) );
+			locator = this.editor.locator( selectors.blockResultItem( name ) ).first();
 		}
-		await locator.first().click();
+
+		await Promise.all( [ locator.hover(), locator.focus() ] );
+		await locator.click();
 	}
 }

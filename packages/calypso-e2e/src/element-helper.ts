@@ -76,11 +76,9 @@ export async function clickNavTab(
 
 	// Mobile view - navtabs become a dropdown and thus it must be opened first.
 	if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-		await page.waitForLoadState( 'networkidle', { timeout: 25 * 1000 } );
-
 		// Open the Navtabs which now act as a pseudo-dropdown menu.
 		const navTabsButtonLocator = page.locator( selectors.navTabMobileToggleButton );
-		await navTabsButtonLocator.click();
+		await navTabsButtonLocator.click( { noWaitAfter: true } );
 
 		const navTabIsOpenLocator = page.locator( `${ navTabParent }.is-open` );
 		await navTabIsOpenLocator.waitFor();
@@ -90,13 +88,12 @@ export async function clickNavTab(
 	const navTabItem = page.locator( selectors.navTabItem( { name: name, selected: false } ) );
 	await Promise.all( [ page.waitForNavigation(), navTabItem.click() ] );
 
-	// Final verification.
+	// Final verification, check that we are now on the expected navtab.
 	const newSelectedTabLocator = page.locator(
 		selectors.navTabItem( { name: name, selected: true } )
 	);
 	const newSelectedTabName = await newSelectedTabLocator.innerText();
 
-	// Strip numerals from the extracted tab name, similar to above.
 	if ( newSelectedTabName.replace( /[0-9]|,/g, '' ) !== name ) {
 		throw new Error(
 			`Failed to confirm NavTab is active: expected ${ name }, got ${ newSelectedTabName }`
