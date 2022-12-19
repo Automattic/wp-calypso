@@ -100,6 +100,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 	const domainsWithPlansOnly = true;
 	const isPlanSelectionAvailableLaterInFlow = true;
+	const domainSearchInQuery = useQuery().get( 'new' ); // following the convention of /start/domains
 
 	const submitDomainStepSelection = ( suggestion: DomainSuggestion, section: string ) => {
 		let domainType = 'domain_reg';
@@ -358,7 +359,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		if ( domainForm ) {
 			initialState = domainForm;
 		}
-		const initialQuery = siteTitle;
+		const initialQuery = domainSearchInQuery || siteTitle;
 
 		if (
 			// If we landed here from /domains Search or with a suggested domain.
@@ -373,7 +374,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				// filter before counting length
 				initialState.loadingResults =
 					getDomainSuggestionSearch( getFixedDomainSearch( initialQuery ) ).length >= 2;
-				initialState.hideInitialQuery = true;
+				// when it's provided via the query arg, follow the convention of /start/domains to show it
+				initialState.hideInitialQuery = ! domainSearchInQuery;
 			}
 		}
 
