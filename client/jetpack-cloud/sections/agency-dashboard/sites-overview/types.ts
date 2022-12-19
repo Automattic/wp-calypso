@@ -140,3 +140,20 @@ export interface APIError {
 export interface APIToggleFavorite {
 	[ key: string ]: any;
 }
+
+export interface UpdateMonitorSettingsAPIResponse {
+	success: boolean;
+	settings: {
+		monitor_active: boolean;
+		email_notifications: boolean;
+		wp_note_notifications: boolean;
+	};
+}
+
+export interface UpdateMonitorSettingsParams {
+	monitor_active?: boolean;
+}
+export interface UpdateMonitorSettingsArgs {
+	siteId: number;
+	params: UpdateMonitorSettingsParams;
+}
