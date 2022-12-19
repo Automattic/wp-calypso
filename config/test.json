@@ -89,6 +89,7 @@
 		"signup/social": true,
 		"site-indicator": true,
 		"ssr/prefetch-timebox": true,
+		"stats/all-time-views": false,
 		"stats/new-main-chart": true,
 		"stepper-woocommerce-poc": true,
 		"themes/premium": true,

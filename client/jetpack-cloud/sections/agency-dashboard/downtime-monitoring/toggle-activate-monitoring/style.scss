@@ -1,0 +1,14 @@
+@import "@wordpress/base-styles/mixins";
+
+.components-form-toggle.is-checked .components-form-toggle__track {
+	background-color: var(--studio-jetpack-green-50);
+}
+
+.components-toggle-control .components-base-control__field {
+	margin-bottom: 0;
+}
+
+.toggle-activate-monitoring__toggle-button {
+	display: inline-flex;
+	align-items: center;
+}

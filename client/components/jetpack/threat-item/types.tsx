@@ -36,6 +36,7 @@ export interface BaseThreat {
 	context?: Record< string, unknown >;
 	severity: number;
 	source?: string;
+	version?: string;
 }
 
 export interface FixableThreat extends BaseThreat {

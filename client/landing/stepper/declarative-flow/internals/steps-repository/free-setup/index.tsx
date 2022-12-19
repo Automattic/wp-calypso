@@ -1,7 +1,7 @@
 import { StepContainer, base64ImageToBlob } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate } from 'i18n-calypso';
 import React, { FormEvent, useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -14,14 +14,14 @@ import './styles.scss';
 
 const FreeSetup: Step = function FreeSetup( { navigation } ) {
 	const { submit } = navigation;
-	const { __ } = useI18n();
+	const translate = useTranslate();
 	const site = useSite();
 
 	const formText = {
-		titlePlaceholder: __( 'My Website' ),
-		titleMissing: __( `Oops. Looks like your website doesn't have a name yet.` ),
-		taglinePlaceholder: __( 'Add a short description here' ),
-		iconPlaceholder: __( 'Upload a profile image' ),
+		titlePlaceholder: translate( 'My Website' ),
+		titleMissing: translate( `Oops. Looks like your website doesn't have a name yet.` ),
+		taglinePlaceholder: translate( 'Describe your website in a line or two' ),
+		iconPlaceholder: translate( 'Add a site icon' ),
 	};
 
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = React.useState( false );
@@ -34,6 +34,7 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 
 	useEffect( () => {
 		const { siteTitle, siteDescription, siteLogo } = state;
+
 		setTagline( siteDescription );
 		setComponentSiteTitle( siteTitle );
 
@@ -43,18 +44,13 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 		}
 	}, [ state ] );
 
-	useEffect( () => {
-		if ( ! site ) {
-			return;
-		}
-
-		setComponentSiteTitle( site.name || '' );
-		setTagline( site.description );
-	}, [ site ] );
-
 	const handleSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
-		setInvalidSiteTitle( ! siteTitle.trim().length );
+
+		if ( ! siteTitle.trim().length ) {
+			setInvalidSiteTitle( true );
+			return;
+		}
 
 		setSiteDescription( tagline );
 		setSiteTitle( siteTitle );
@@ -68,7 +64,7 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 		}
 
 		if ( siteTitle.trim().length ) {
-			submit?.( { siteTitle, tagline } );
+			submit?.();
 		}
 	};
 
@@ -81,7 +77,7 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 			formattedHeader={
 				<FormattedHeader
 					id="free-setup-header"
-					headerText={ createInterpolateElement( __( 'Personalize your<br />Website' ), {
+					headerText={ createInterpolateElement( translate( 'Personalize your Site' ), {
 						br: <br />,
 					} ) }
 					align="center"
@@ -104,6 +100,7 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 				/>
 			}
 			recordTracksEvent={ recordTracksEvent }
+			showJetpackPowered
 		/>
 	);
 };

@@ -69,15 +69,21 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 } > = ( { variant, compareTo } ) => {
 	const translate = useTranslate();
 	const discountPercentage = getItemVariantDiscountPercentage( variant, compareTo );
-	const formattedCurrentPrice = formatCurrency( variant.price, variant.currency, {
+	const formattedCurrentPrice = formatCurrency( variant.priceInteger, variant.currency, {
 		stripZeros: true,
+		isSmallestUnit: true,
 	} );
 
-	const pricePerYearFormatted = formatCurrency( variant.pricePerYear, variant.currency, {
+	const pricePerMonth = variant.priceInteger / variant.termIntervalInMonths;
+	const pricePerYear = pricePerMonth * 12;
+
+	const pricePerYearFormatted = formatCurrency( pricePerYear, variant.currency, {
 		stripZeros: true,
+		isSmallestUnit: true,
 	} );
-	const pricePerMonthFormatted = formatCurrency( variant.pricePerMonth, variant.currency, {
+	const pricePerMonthFormatted = formatCurrency( pricePerMonth, variant.currency, {
 		stripZeros: true,
+		isSmallestUnit: true,
 	} );
 
 	const shouldShowMonthlyPrice =

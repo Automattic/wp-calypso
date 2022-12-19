@@ -349,7 +349,6 @@ export default function WPCheckout( {
 						couponFieldStateProps={ couponFieldStateProps }
 						onChangePlanLength={ changePlanLength }
 						siteUrl={ siteUrl }
-						siteId={ siteId }
 						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					/>
 				}

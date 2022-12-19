@@ -4,7 +4,7 @@ import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-secti
 import { FeaturedImageEmailSetting } from './FeaturedImageEmailSetting';
 
 type Fields = {
-	featured_image_email_enabled?: boolean;
+	wpcom_featured_image_in_email?: boolean;
 };
 
 type NewsletterSettingsSectionProps = {
@@ -23,7 +23,7 @@ export const NewsletterSettingsSection = ( {
 	isSavingSettings,
 }: NewsletterSettingsSectionProps ) => {
 	const translate = useTranslate();
-	const { featured_image_email_enabled } = fields;
+	const { wpcom_featured_image_in_email } = fields;
 
 	return (
 		<>
@@ -37,7 +37,7 @@ export const NewsletterSettingsSection = ( {
 			/>
 			<Card>
 				<FeaturedImageEmailSetting
-					value={ featured_image_email_enabled }
+					value={ wpcom_featured_image_in_email }
 					handleToggle={ handleToggle }
 					disabled={ disabled }
 				/>

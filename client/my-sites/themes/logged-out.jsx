@@ -11,6 +11,9 @@ export default ( props ) => (
 		{ isEnabled( 'themes/showcase-i4/search-and-filter' ) && (
 			<BodySectionCssClass bodyClass={ [ 'is-section-themes-i4' ] } />
 		) }
+		{ isEnabled( 'themes/showcase-i4/details-and-preview' ) && (
+			<BodySectionCssClass bodyClass={ [ 'is-section-themes-i4-2' ] } />
+		) }
 		<ConnectedThemeShowcase
 			{ ...props }
 			origin="wpcom"

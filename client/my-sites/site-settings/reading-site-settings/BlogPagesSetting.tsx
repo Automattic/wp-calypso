@@ -4,20 +4,20 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
-export const BLOGS_POST_OPTION = 'posts_per_page';
+export const BLOG_PAGES_OPTION = 'posts_per_page';
 
-type BlogsPostSettingProps = {
+type BlogPagesSettingProps = {
 	value?: number;
 	onChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
 	disabled?: boolean;
 };
 
-export const BlogsPostsSetting = ( { value = 10, onChange, disabled }: BlogsPostSettingProps ) => {
+export const BlogPagesSetting = ( { value = 10, onChange, disabled }: BlogPagesSettingProps ) => {
 	const translate = useTranslate();
 	return (
 		<FormFieldset>
-			<FormLabel id={ `${ BLOGS_POST_OPTION }-label` } htmlFor={ BLOGS_POST_OPTION }>
-				{ translate( 'Blogs post' ) }
+			<FormLabel id={ `${ BLOG_PAGES_OPTION }-label` } htmlFor={ BLOG_PAGES_OPTION }>
+				{ translate( 'Blog pages' ) }
 			</FormLabel>
 			<div>
 				{ translate( 'Show at most {{field /}} posts', {
@@ -26,12 +26,12 @@ export const BlogsPostsSetting = ( { value = 10, onChange, disabled }: BlogsPost
 					components: {
 						field: (
 							<FormTextInput
-								id={ BLOGS_POST_OPTION }
-								name={ BLOGS_POST_OPTION }
+								id={ BLOG_PAGES_OPTION }
+								name={ BLOG_PAGES_OPTION }
 								type="number"
 								step="1"
 								min="0"
-								aria-labelledby={ `${ BLOGS_POST_OPTION }-label` }
+								aria-labelledby={ `${ BLOG_PAGES_OPTION }-label` }
 								value={ value }
 								onChange={ onChange }
 								disabled={ disabled }

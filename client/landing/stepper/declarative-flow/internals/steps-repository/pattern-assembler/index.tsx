@@ -3,6 +3,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
+import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { useSite } from '../../../../hooks/use-site';
@@ -73,10 +74,11 @@ const PatternAssembler: Step = ( { navigation } ) => {
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
 			pattern_count: patterns.length,
 		} );
-		patterns.forEach( ( { id, name } ) => {
+		patterns.forEach( ( { id, name, category } ) => {
 			recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_final_select', {
 				pattern_id: id,
 				pattern_name: name,
+				pattern_category: category,
 			} );
 		} );
 	};
@@ -301,18 +303,21 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	);
 
 	return (
-		<StepContainer
-			stepName="pattern-assembler"
-			hideBack={ showPatternSelectorType !== null }
-			goBack={ onBack }
-			goNext={ goNext }
-			isHorizontalLayout={ false }
-			isFullLayout={ true }
-			hideSkip={ true }
-			stepContent={ stepContent }
-			recordTracksEvent={ recordTracksEvent }
-			stepSectionName={ showPatternSelectorType ? 'pattern-selector' : undefined }
-		/>
+		<>
+			<DocumentHead title={ translate( 'Design your home' ) } />
+			<StepContainer
+				stepName="pattern-assembler"
+				hideBack={ showPatternSelectorType !== null }
+				goBack={ onBack }
+				goNext={ goNext }
+				isHorizontalLayout={ false }
+				isFullLayout={ true }
+				hideSkip={ true }
+				stepContent={ stepContent }
+				recordTracksEvent={ recordTracksEvent }
+				stepSectionName={ showPatternSelectorType ? 'pattern-selector' : undefined }
+			/>
+		</>
 	);
 };
 

@@ -2,6 +2,7 @@ export interface BlockAttributes {
 	defaultProductSlug: string;
 	productSlug: string;
 	domain: string | boolean;
+	planTypeOptions: string[];
 }
 
 /**
@@ -20,6 +21,9 @@ declare global {
 		A8C_HAPPY_BLOCKS_CONFIG: {
 			domain: string;
 			locale: string;
+			features: {
+				planTabs: boolean;
+			};
 		};
 	}
 }
