@@ -125,6 +125,11 @@ class ThemeShowcase extends Component {
 		) {
 			this.scrollToSearchInput();
 		}
+
+		if ( prevProps.subjects !== this.props.subjects ) {
+			this.tabFilters = this.getTabFilters( this.props );
+			this.tabSubjectTermTable = this.getSubjectTermTable( this.props );
+		}
 	}
 
 	getTabTiers = ( { translate } ) => {
