@@ -55,12 +55,12 @@
 			padding: 0;
 		}
 
-		.post-likes__item {
-			padding: 0;
+		.post-likes {
+			margin: 0 -7px;
+		}
 
-			&:not(:first-child) {
-				margin-left: 14px;
-			}
+		.post-likes__item {
+			padding: 7px;
 		}
 	}
 }
