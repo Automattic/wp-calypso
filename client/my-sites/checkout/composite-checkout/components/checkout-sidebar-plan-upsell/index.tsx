@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { isPlan } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
@@ -94,8 +95,10 @@ export function CheckoutSidebarPlanUpsell() {
 		{ strong: createElement( 'strong' ) }
 	);
 
+	const isEnglish = ( config( 'english_locales' ) as string[] ).includes( locale || '' );
+
 	if (
-		'en' !== locale &&
+		! isEnglish &&
 		! hasTranslation( '<strong>Save %(percentSavings)d%%</strong> by paying for two years' )
 	) {
 		debug( "not 'en' and does not have translation", locale );
