@@ -1,4 +1,4 @@
-import { ResponseCartProduct, useShoppingCart } from '@automattic/shopping-cart';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -17,14 +17,6 @@ type EventDataOptions = {
 	productSlug?: string;
 	addProducts?: boolean;
 };
-
-// Record tracks are not allowing objects inside track events
-// so this little hack to provide array reduced into object so it can be spread in the event
-const reduceProducts = ( products: ResponseCartProduct[] ) =>
-	products.reduce( ( res, item, index ) => {
-		res[ `cart_product_${ index }` ] = item.product_slug;
-		return res;
-	}, {} as any ); //eslint-disable-line @typescript-eslint/no-explicit-any
 
 export const useShoppingCartTracker = () => {
 	const siteId = useSelector( getSelectedSiteId );
@@ -51,7 +43,7 @@ export const useShoppingCartTracker = () => {
 			if ( addProducts ) {
 				eventData = {
 					...eventData,
-					...reduceProducts( responseCart.products ),
+					product_slugs_concatenated: responseCart.products.sort().join( '-' ),
 					number_of_products: responseCart.products.length,
 				};
 			}
