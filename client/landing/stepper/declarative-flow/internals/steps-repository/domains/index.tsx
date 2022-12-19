@@ -40,6 +40,7 @@ import {
 } from 'calypso/state/domains/actions';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { useQuery } from '../../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../../stores';
 import type { Step } from '../../types';
 import type { DomainSuggestion, DomainForm } from '@automattic/data-stores';
@@ -79,8 +80,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	// Checks if the user entered the signup flow via browser back from checkout page,
 	// and if they did, we'll show a modified domain step to prevent creating duplicate sites,
 	// check pau2Xa-1Io-p2#comment-6759.
-	const searchParams = new URLSearchParams( window.location.search );
-	const isAddNewSiteFlow = searchParams.has( 'ref' );
+	const isAddNewSiteFlow = useQuery().has( 'ref' );
 	const signupDestinationCookieExists = retrieveSignupDestination();
 	const isReEnteringFlow = getSignupCompleteFlowName() === flow;
 	const isReEnteringSignupViaBrowserBack =
@@ -100,6 +100,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 	const domainsWithPlansOnly = true;
 	const isPlanSelectionAvailableLaterInFlow = true;
+	const domainSearchInQuery = useQuery().get( 'new' ); // following the convention of /start/domains
 
 	const submitDomainStepSelection = ( suggestion: DomainSuggestion, section: string ) => {
 		let domainType = 'domain_reg';
@@ -358,7 +359,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		if ( domainForm ) {
 			initialState = domainForm;
 		}
-		const initialQuery = siteTitle;
+		const initialQuery = domainSearchInQuery || siteTitle;
 
 		if (
 			// If we landed here from /domains Search or with a suggested domain.
@@ -373,7 +374,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				// filter before counting length
 				initialState.loadingResults =
 					getDomainSuggestionSearch( getFixedDomainSearch( initialQuery ) ).length >= 2;
-				initialState.hideInitialQuery = true;
+				// when it's provided via the query arg, follow the convention of /start/domains to show it
+				initialState.hideInitialQuery = ! domainSearchInQuery;
 			}
 		}
 
