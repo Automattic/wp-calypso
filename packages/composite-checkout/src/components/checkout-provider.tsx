@@ -47,6 +47,7 @@ export function CheckoutProvider( {
 	paymentProcessors,
 	isLoading,
 	isValidating,
+	selectFirstAvailablePaymentMethod,
 	initiallySelectedPaymentMethodId = null,
 	children,
 }: CheckoutProviderProps ) {
@@ -64,14 +65,24 @@ export function CheckoutProvider( {
 	};
 	const [ disabledPaymentMethodIds, setDisabledPaymentMethodIds ] = useState< string[] >( [] );
 
+	const availablePaymentMethodIds = paymentMethods
+		.filter( ( method ) => ! disabledPaymentMethodIds.includes( method.id ) )
+		.map( ( method ) => method.id );
+
+	if (
+		selectFirstAvailablePaymentMethod &&
+		! initiallySelectedPaymentMethodId &&
+		availablePaymentMethodIds.length > 0
+	) {
+		initiallySelectedPaymentMethodId = availablePaymentMethodIds[ 0 ];
+	}
+
 	const [ paymentMethodId, setPaymentMethodId ] = useState< string | null >(
 		initiallySelectedPaymentMethodId
 	);
 
 	useResetSelectedPaymentMethodWhenListChanges(
-		paymentMethods
-			.filter( ( method ) => ! disabledPaymentMethodIds.includes( method.id ) )
-			.map( ( method ) => method.id ),
+		availablePaymentMethodIds,
 		initiallySelectedPaymentMethodId,
 		setPaymentMethodId
 	);

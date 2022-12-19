@@ -31,7 +31,7 @@ function TestWrapper( { paymentMethods, paymentProcessors = undefined } ) {
 				<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
 					<CheckoutProvider
 						paymentMethods={ paymentMethods }
-						initiallySelectedPaymentMethodId={ paymentMethods[ 0 ].id }
+						selectFirstAvailablePaymentMethod
 						paymentProcessors={ paymentProcessors ?? {} }
 					>
 						<CheckoutStepGroup>
