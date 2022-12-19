@@ -4,6 +4,7 @@ import {
 	isLinkInBioFlow,
 	addPlanToCart,
 	createSiteWithCart,
+	isFreeFlow,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
@@ -40,7 +41,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 	let siteVisibility = Site.Visibility.PublicIndexed;
 
 	// Link-in-bio flow defaults to "Coming Soon"
-	if ( isLinkInBioFlow( flow ) ) {
+	if ( isLinkInBioFlow( flow ) || isFreeFlow( flow ) ) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
 	}
 
