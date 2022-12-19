@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
-import { compact, isEqual, omit, pickBy } from 'lodash';
+import { compact, omit, pickBy } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -62,9 +62,39 @@ class ThemeShowcase extends Component {
 		super( props );
 		this.scrollRef = createRef();
 		this.bookmarkRef = createRef();
-		this.tabTiers = this.getTabTiers( props );
-		this.tabFilters = this.getTabFilters( props );
-		this.tabSubjectTermTable = this.getSubjectTermTable( props );
+
+		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
+		this.staticFilters = {
+			RECOMMENDED: {
+				key: 'recommended',
+				text: props.translate( 'Recommended' ),
+				order: 1,
+			},
+			TRENDING: {
+				key: 'trending',
+				text: props.translate( 'Trending' ),
+				order: 2,
+			},
+			MYTHEMES: {
+				key: 'my-themes',
+				text: props.translate( 'My Themes' ),
+				order: 3,
+			},
+			ALL: {
+				key: 'all',
+				text: isNewSearchAndFilter ? props.translate( 'All' ) : props.translate( 'All Themes' ),
+				order: 4,
+			},
+		};
+
+		this.tiers = [
+			{ value: 'all', label: props.translate( 'All' ) },
+			{ value: 'free', label: props.translate( 'Free' ) },
+			{ value: 'premium', label: props.translate( 'Premium' ) },
+		];
+
+		this.subjectTermTable = this.getSubjectTermTable( props );
+
 		this.state = {
 			tabFilter: this.getTabFilterFromUrl( props.filter ),
 		};
@@ -125,63 +155,33 @@ class ThemeShowcase extends Component {
 		) {
 			this.scrollToSearchInput();
 		}
-
-		if (
-			! isEqual( prevProps.subjects, this.props.subjects ) ||
-			prevProps.siteCanInstallThemes !== this.props.siteCanInstallThemes
-		) {
-			this.tabFilters = this.getTabFilters( this.props );
-			this.tabSubjectTermTable = this.getSubjectTermTable( this.props );
-		}
 	}
 
-	getTabTiers = ( { translate } ) => {
-		return [
-			{ value: 'all', label: translate( 'All' ) },
-			{ value: 'free', label: translate( 'Free' ) },
-			{ value: 'premium', label: translate( 'Premium' ) },
-		];
-	};
-
-	getTabFilters = ( props ) => {
-		const { subjects, translate } = props;
-		const subjectFilters = Object.fromEntries(
+	getSubjectFilters = () => {
+		const { subjects } = this.props;
+		return Object.fromEntries(
 			Object.entries( subjects ).map( ( [ key, filter ] ) => [ key, { key, text: filter.name } ] )
 		);
+	};
 
+	getTabFilters = () => {
 		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
 		const shouldShowMyThemesFilter =
-			( props.isJetpackSite && ! props.isAtomicSite ) ||
-			( props.isAtomicSite && props.siteCanInstallThemes );
+			( this.props.isJetpackSite && ! this.props.isAtomicSite ) ||
+			( this.props.isAtomicSite && this.props.siteCanInstallThemes );
 
 		return {
 			...( ! isNewSearchAndFilter && {
-				RECOMMENDED: {
-					key: 'recommended',
-					text: translate( 'Recommended' ),
-					order: 1,
-				},
+				RECOMMENDED: this.staticFilters.RECOMMENDED,
 			} ),
 			...( ! isNewSearchAndFilter && {
-				TRENDING: {
-					key: 'trending',
-					text: translate( 'Trending' ),
-					order: 2,
-				},
+				TRENDING: this.staticFilters.TRENDING,
 			} ),
 			...( shouldShowMyThemesFilter && {
-				MYTHEMES: {
-					key: 'my-themes',
-					text: translate( 'My Themes' ),
-					order: 3,
-				},
+				MYTHEMES: this.staticFilters.MYTHEMES,
 			} ),
-			ALL: {
-				key: 'all',
-				text: isNewSearchAndFilter ? translate( 'All' ) : translate( 'All Themes' ),
-				order: 4,
-			},
-			...( isNewSearchAndFilter && subjectFilters ),
+			ALL: this.staticFilters.ALL,
+			...( isNewSearchAndFilter && this.getSubjectFilters() ),
 		};
 	};
 
@@ -196,17 +196,17 @@ class ThemeShowcase extends Component {
 
 	getTabFilterFromUrl = ( filterString = '' ) => {
 		const filterArray = filterString.split( '+' );
-		const matches = Object.values( this.tabSubjectTermTable ).filter( ( value ) =>
+		const matches = Object.values( this.subjectTermTable ).filter( ( value ) =>
 			filterArray.includes( value )
 		);
 
-		let tabFilter = this.tabFilters.ALL;
+		let tabFilter = this.staticFilters.ALL;
 		if ( ! matches.length ) {
 			return tabFilter;
 		}
 
 		const filterKey = matches[ matches.length - 1 ].split( ':' ).pop();
-		Object.values( this.tabFilters ).map( ( filter ) => {
+		Object.values( this.getSubjectFilters() ).forEach( ( filter ) => {
 			if ( filter.key === filterKey ) {
 				tabFilter = filter;
 			}
@@ -293,9 +293,9 @@ class ThemeShowcase extends Component {
 			! config.isEnabled( 'themes/showcase-i4/search-and-filter' ) &&
 			tier !== '' &&
 			tier !== 'all' &&
-			this.state.tabFilter.key !== this.tabFilters.ALL.key
+			this.state.tabFilter.key !== this.staticFilters.ALL.key
 		) {
-			this.setState( { tabFilter: this.tabFilters.ALL } );
+			this.setState( { tabFilter: this.staticFilters.ALL } );
 		}
 
 		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
@@ -319,7 +319,7 @@ class ThemeShowcase extends Component {
 		// Clicking "Recommended" forces tier to be "all", since Recommend themes cannot filter on tier.
 		if (
 			! isNewSearchAndFilter &&
-			tabFilter.key !== this.tabFilters.ALL.key &&
+			tabFilter.key !== this.staticFilters.ALL.key &&
 			'all' !== this.props.tier
 		) {
 			callback = () => {
@@ -331,14 +331,14 @@ class ThemeShowcase extends Component {
 		if ( isNewSearchAndFilter ) {
 			const { filter = '', search, filterToTermTable } = this.props;
 			const subjectTerm = filterToTermTable[ `subject:${ tabFilter.key }` ];
-			const subjectFilters = Object.values( this.tabSubjectTermTable );
+			const subjectFilters = Object.values( this.subjectTermTable );
 			const filterWithoutSubjects = filter
 				.split( '+' )
 				.filter( ( key ) => ! subjectFilters.includes( key ) )
 				.join( '+' );
 
 			const newFilter =
-				tabFilter.key !== this.tabFilters.ALL.key
+				tabFilter.key !== this.staticFilters.ALL.key
 					? [ filterWithoutSubjects, subjectTerm ].join( '+' )
 					: filterWithoutSubjects;
 
@@ -363,11 +363,11 @@ class ThemeShowcase extends Component {
 
 	notificationCount = ( key ) => {
 		switch ( key ) {
-			case this.tabFilters.MYTHEMES?.key:
+			case this.staticFilters.MYTHEMES?.key:
 				return this.props.outdatedThemes.length || null;
-			case this.tabFilters.RECOMMENDED?.key:
-			case this.tabFilters.TRENDING?.key:
-			case this.tabFilters.ALL.key:
+			case this.staticFilters.RECOMMENDED?.key:
+			case this.staticFilters.TRENDING?.key:
+			case this.staticFilters.ALL.key:
 				return null;
 		}
 	};
@@ -409,7 +409,7 @@ class ThemeShowcase extends Component {
 		const tabKey = this.state.tabFilter.key;
 
 		if (
-			tabKey !== this.tabFilters.MYTHEMES?.key &&
+			tabKey !== this.staticFilters.MYTHEMES?.key &&
 			! isExpertBannerDissmissed &&
 			! loggedOutComponent
 		) {
@@ -420,15 +420,15 @@ class ThemeShowcase extends Component {
 
 			// See p2-pau2Xa-4nq#comment-12458 for the context regarding the utm campaign value.
 			switch ( tabKey ) {
-				case this.tabFilters.RECOMMENDED?.key:
+				case this.staticFilters.RECOMMENDED?.key:
 					location = 'recommended-theme-banner';
 					utmCampaign = 'theme-rec-tre';
 					break;
-				case this.tabFilters.TRENDING?.key:
+				case this.staticFilters.TRENDING?.key:
 					location = 'trending-theme-banner';
 					utmCampaign = 'theme-rec-tre';
 					break;
-				case this.tabFilters.ALL.key:
+				case this.staticFilters.ALL.key:
 					location = 'all-theme-banner';
 					utmCampaign = 'theme-all';
 			}
@@ -442,11 +442,11 @@ class ThemeShowcase extends Component {
 	renderThemes = ( themeProps ) => {
 		const tabKey = this.state.tabFilter.key;
 		switch ( tabKey ) {
-			case this.tabFilters.RECOMMENDED?.key:
+			case this.staticFilters.RECOMMENDED?.key:
 				return <RecommendedThemes { ...themeProps } />;
-			case this.tabFilters.MYTHEMES?.key:
+			case this.staticFilters.MYTHEMES?.key:
 				return <ThemesSelection { ...themeProps } />;
-			case this.tabFilters.TRENDING?.key:
+			case this.staticFilters.TRENDING?.key:
 				return <TrendingThemes { ...themeProps } />;
 			default:
 				return this.allThemes( { themeProps } );
@@ -522,6 +522,8 @@ class ThemeShowcase extends Component {
 
 		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
 
+		const tabFilters = this.getTabFilters();
+
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
@@ -551,11 +553,11 @@ class ThemeShowcase extends Component {
 					{ isNewSearchAndFilter && (
 						<div className="theme__filters">
 							<ThemesToolbarGroup
-								items={ Object.values( this.tabFilters ) }
+								items={ Object.values( tabFilters ) }
 								selectedKey={ this.state.tabFilter.key }
 								onSelect={ ( key ) =>
 									this.onFilterClick(
-										Object.values( this.tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
+										Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
 									)
 								}
 							/>
@@ -563,7 +565,7 @@ class ThemeShowcase extends Component {
 								<SimplifiedSegmentedControl
 									key={ tier }
 									initialSelected={ tier || 'all' }
-									options={ this.tabTiers }
+									options={ this.tiers }
 									onSelect={ this.onTierSelect }
 								/>
 							) }
@@ -572,7 +574,7 @@ class ThemeShowcase extends Component {
 					{ isLoggedIn && ! isNewSearchAndFilter && (
 						<SectionNav className="themes__section-nav" selectedText={ this.state.tabFilter.text }>
 							<NavTabs>
-								{ Object.values( this.tabFilters )
+								{ Object.values( tabFilters )
 									.sort( ( a, b ) => a.order - b.order )
 									.map( ( tabFilter ) => (
 										<NavItem
