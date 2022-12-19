@@ -1,4 +1,4 @@
-import { LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW } from '../utils/flows';
+import { LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW, ECOMMERCE_FLOW } from '../utils/flows';
 
 /* eslint-disable no-restricted-imports */
 interface FlowProgress {
@@ -49,6 +49,17 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		chooseAPlan: 5,
 		processing: 6,
 		launchpad: 7,
+	},
+	[ ECOMMERCE_FLOW ]: {
+		intro: 0,
+		storeProfiler: 1,
+		storeAddress: 2,
+		domains: 3,
+		designCarousel: 4,
+		siteCreationStep: 5,
+		processing: 5,
+		waitForAtomic: 5,
+		checkPlan: 5,
 	},
 };
 
