@@ -215,6 +215,7 @@
 
 	.gravatar,
 	.social-logo,
+	.server-actor-icon,
 	.jetpack-logo {
 		float: left;
 		width: 40px;
@@ -231,6 +232,21 @@
 			width: 24px;
 			height: 24px;
 			margin-right: 8px;
+		}
+	}
+
+	.server-actor-icon {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		border-radius: 50%;
+		background-color: #23292e;
+		color: #fff;
+		position: relative;
+		&::before {
+			content: "./";
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
 		}
 	}
 

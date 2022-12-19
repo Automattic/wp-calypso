@@ -27,6 +27,15 @@ const HAPPINESS_ACTOR = (
 	</div>
 );
 
+const SERVER_ACTOR = (
+	<div className="activity-log-item__actor">
+		<div class="server-actor-icon"></div>
+		<div className="activity-log-item__actor-info">
+			<div className="activity-log-item__actor-name">Server</div>
+		</div>
+	</div>
+);
+
 const WORDPRESS_ACTOR = (
 	<div className="activity-log-item__actor">
 		<SocialLogo icon="wordpress" size={ 40 } />
@@ -65,6 +74,9 @@ export default class ActivityActor extends PureComponent {
 		}
 		if ( actorName === 'Happiness Engineer' && actorType === 'Happiness Engineer' ) {
 			return HAPPINESS_ACTOR;
+		}
+		if ( actorName === 'Server' && actorType === 'Application' ) {
+			return SERVER_ACTOR;
 		}
 		if ( actorType === 'Multiple' ) {
 			return MULTIPLE_ACTORS;
