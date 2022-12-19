@@ -35,8 +35,7 @@ const PricingPlansTabs: FunctionComponent< Props > = ( {
 			{ availablePlanOptions.map( ( planOption ) => (
 				<button
 					onClick={ () => onTabButtonClick( planOption.value ) }
-					className={ classnames( {
-						'hb-pricing-plans-embed__tabs-label': true,
+					className={ classnames( 'hb-pricing-plans-embed__tabs-label', {
 						'hb-pricing-plans-embed__tabs-label--active': planOption.value === currentPlan.type,
 					} ) }
 					key={ planOption.value }
