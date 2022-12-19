@@ -14,6 +14,10 @@ $headerHeight: 72px;
 		justify-content: space-between;
 		min-height: $headerHeight;
 		padding: 0 rem(24px);
+		position: fixed;
+		width: calc(100% - 3rem);
+		background: var(--theme-text-color);
+		z-index: 1000;
 
 		h2 {
 			@include onboarding-font-recoleta;
@@ -43,6 +47,7 @@ $headerHeight: 72px;
 		display: flex;
 		flex-direction: column;
 		height: calc(100% - #{$headerHeight});
+		margin-top: 72px;
 	}
 	.blazepress-widget__content.loading {
 		justify-content: center;
