@@ -4,10 +4,16 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 
 import './style.scss';
 
-const JetpackColophon = ( { className, translate } ) => {
+const JetpackColophon = ( { className, translate, grayscale = false } ) => {
 	return (
 		<div className={ classNames( 'jetpack-colophon', className ) }>
-			<span className="jetpack-colophon__power">
+			<span
+				className={
+					grayscale
+						? 'jetpack-colophon__power jetpack-colophon__grayscale'
+						: 'jetpack-colophon__power'
+				}
+			>
 				{ translate( 'Powered by {{jetpackLogo /}}', {
 					components: {
 						jetpackLogo: <JetpackLogo size={ 32 } full />,
