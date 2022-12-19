@@ -9,9 +9,12 @@ import { Item } from './item';
 import 'swiper/dist/css/swiper.css';
 import type { Design } from '@automattic/design-picker/src/types';
 
-type Props = { onPick: ( design: Design ) => void };
+type DesignCarouselProps = {
+	onPick: ( design: Design ) => void;
+	selectedDesignSlugs?: string[];
+};
 
-export default function DesignCarousel( { onPick }: Props ) {
+export default function DesignCarousel( { onPick, selectedDesignSlugs }: DesignCarouselProps ) {
 	const { __ } = useI18n();
 
 	const swiperInstance = useRef< Swiper | null >( null );
@@ -24,15 +27,21 @@ export default function DesignCarousel( { onPick }: Props ) {
 		_locale: locale,
 	} );
 
-	// Cherry-picked designs
-	const designSlugs = [ 'tsubaki', 'tazza', 'thriving-artist', 'twentytwentytwo', 'zaino' ];
+	let selectedDesigns = allDesigns?.static.designs;
 
-	const selectedDesigns = designSlugs
-		.map( ( designSlug ) =>
-			allDesigns?.static.designs.find( ( design ) => design.slug === designSlug )
-		)
-		// Remove not found (not launched) items
-		.filter( ( design ) => !! design ) as Design[];
+	if ( selectedDesigns && selectedDesignSlugs ) {
+		// If we have a restricted set of designs, filter out all unwanted designs
+		const filteredDesigns = selectedDesigns.filter( ( design ) =>
+			selectedDesignSlugs.includes( design.slug )
+		);
+
+		// Now order the filtered set based on the supplied slugs.
+		selectedDesigns = selectedDesignSlugs
+			.map( ( selectedDesignSlug ) =>
+				filteredDesigns.find( ( design ) => design.slug === selectedDesignSlug )
+			)
+			.filter( ( selectedDesign ) => !! selectedDesign ) as Design[];
+	}
 
 	useEffect( () => {
 		if ( selectedDesigns ) {
