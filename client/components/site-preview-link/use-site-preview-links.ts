@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
 import wpcom from 'calypso/lib/wp';
-import type { SiteId } from 'calypso/types';
+import type { SiteId, SiteSlug } from 'calypso/types';
 
 export interface PreviewLink {
 	code: string;
@@ -12,7 +12,7 @@ export interface PreviewLink {
 export type PreviewLinksResponse = PreviewLink[];
 
 interface UseSitePreviewLinksOptions {
-	siteId: SiteId;
+	siteId: SiteId | SiteSlug;
 	onSuccess?: ( previewLinks: PreviewLink[] | undefined ) => void;
 }
 

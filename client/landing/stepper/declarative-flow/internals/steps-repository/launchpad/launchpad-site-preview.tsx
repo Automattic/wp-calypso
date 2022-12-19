@@ -1,11 +1,26 @@
 import { NEWSLETTER_FLOW, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import { number } from 'yargs';
 import { DEVICE_TYPE } from 'calypso/../packages/design-picker/src/constants';
 import { Device } from 'calypso/../packages/design-picker/src/types';
+import { useSitePreviewLinks } from 'calypso/components/site-preview-link/use-site-preview-links';
 import WebPreview from 'calypso/components/web-preview/component';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import PreviewToolbar from '../design-setup/preview-toolbar';
+
+interface PreviewLink {
+	code: number;
+	created_at: string;
+}
+
+function getPreviewCode( links: PreviewLink[] ) {
+	if ( typeof links === 'undefined' ) {
+		return false;
+	}
+	const link = links[ 0 ];
+	return link.code ?? false;
+}
 
 const LaunchpadSitePreview = ( {
 	siteSlug,
@@ -14,6 +29,11 @@ const LaunchpadSitePreview = ( {
 	siteSlug: string | null;
 	flow: string | null;
 } ) => {
+	const siteId = siteSlug || '';
+	const { data: previewLinks, isLoading: isPreviewLinksLoading } = useSitePreviewLinks( {
+		siteId,
+	} );
+	const share = getPreviewCode( previewLinks );
 	const translate = useTranslate();
 	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 
@@ -31,8 +51,12 @@ const LaunchpadSitePreview = ( {
 		if ( ! previewUrl ) {
 			return null;
 		}
+		if ( ! ( isPreviewLinksLoading || share ) ) {
+			return null;
+		}
 
 		return addQueryArgs( previewUrl, {
+			share,
 			iframe: true,
 			theme_preview: true,
 			// hide the "Create your website with WordPress.com" banner
