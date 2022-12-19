@@ -40,6 +40,7 @@ import {
 } from 'calypso/state/domains/actions';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { useQuery } from '../../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../../stores';
 import type { Step } from '../../types';
 import type { DomainSuggestion, DomainForm } from '@automattic/data-stores';
@@ -79,8 +80,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	// Checks if the user entered the signup flow via browser back from checkout page,
 	// and if they did, we'll show a modified domain step to prevent creating duplicate sites,
 	// check pau2Xa-1Io-p2#comment-6759.
-	const searchParams = new URLSearchParams( window.location.search );
-	const isAddNewSiteFlow = searchParams.has( 'ref' );
+	const isAddNewSiteFlow = useQuery().get( 'ref' );
 	const signupDestinationCookieExists = retrieveSignupDestination();
 	const isReEnteringFlow = getSignupCompleteFlowName() === flow;
 	const isReEnteringSignupViaBrowserBack =
