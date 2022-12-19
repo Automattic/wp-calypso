@@ -24,6 +24,24 @@ export const Edit: FunctionComponent< BlockEditProps< BlockAttributes > > = ( {
 	}, [ attributes.defaultProductSlug, attributes.domain, attributes.productSlug, setAttributes ] );
 
 	useEffect( () => {
+		if ( ! plans.length ) {
+			return;
+		}
+
+		if ( attributes.planTypeOptions.length > 0 ) {
+			return;
+		}
+
+		const defaultPlanTypeOption = plans.find(
+			( plan ) => plan.productSlug === attributes.productSlug
+		);
+
+		setAttributes( {
+			planTypeOptions: defaultPlanTypeOption ? [ defaultPlanTypeOption.type ] : [],
+		} );
+	}, [ attributes.planTypeOptions.length, attributes.productSlug, plans, setAttributes ] );
+
+	useEffect( () => {
 		const blogIdSelect: HTMLSelectElement | null =
 			document.querySelector( 'select[name="blog_id"]' );
 
