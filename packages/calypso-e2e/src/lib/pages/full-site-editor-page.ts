@@ -34,6 +34,7 @@ const selectors = {
 	templateLoadingSpinner: '[aria-label="Block: Template Part"] .components-spinner',
 	closeStylesWelcomeGuideButton:
 		'[aria-label="Welcome to styles"] button[aria-label="Close dialog"]',
+	limitedGlobalStylesModalTryButton: '.wpcom-global-styles-modal button:has-text("Try it out")',
 	// The toast can have double quotes, so we use single quotes here.
 	confirmationToast: ( text: string ) => `.components-snackbar:has-text('${ text }')`,
 	focusedBlock: ( blockSelector: string ) => `${ blockSelector }.is-selected`,
@@ -356,9 +357,15 @@ export class FullSiteEditorPage {
 	/**
 	 * Save the changes in the full site editor (equivalent of publish).
 	 */
-	async save(): Promise< void > {
+	async save(
+		{ preSaveSelectors }: { preSaveSelectors: string[] } = { preSaveSelectors: [] }
+	): Promise< void > {
 		await this.clearExistingSaveConfirmationToast();
 		await this.editorToolbarComponent.saveSiteEditor();
+		for ( const selector of preSaveSelectors ) {
+			const locator = this.editor.locator( selector );
+			await locator.waitFor();
+		}
 		await this.fullSiteEditorSavePanelComponent.confirmSave();
 		await this.waitForConfirmationToast( 'Site updated.' );
 	}
@@ -470,7 +477,7 @@ export class FullSiteEditorPage {
 	 * @param {ColorLocation} colorLocation What part of the site we are updating the color for.
 	 * @param {ColorSettings} colorSettings Settings for the color to set.
 	 */
-	async setGlobalColorStlye(
+	async setGlobalColorStyle(
 		colorLocation: ColorLocation,
 		colorSettings: ColorSettings
 	): Promise< void > {
@@ -515,6 +522,14 @@ export class FullSiteEditorPage {
 	async resetStylesToDefaults(): Promise< void > {
 		await this.editorSiteStylesComponent.openMoreActionsMenu();
 		await this.editorPopoverMenuComponent.clickMenuButton( 'Reset to defaults' );
+	}
+
+	/**
+	 * Selects the "Try it out" option on the Limited Global Styles upgrade modal.
+	 */
+	async tryGlobalStyles(): Promise< void > {
+		const locator = this.editor.locator( selectors.limitedGlobalStylesModalTryButton );
+		await locator.click( { timeout: 5 * 1000 } );
 	}
 
 	//#endregion
