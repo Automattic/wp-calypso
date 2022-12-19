@@ -47,24 +47,24 @@ export default function allSitesMenu( { showManagePlugins = false } ) {
 			navigationLabel: translate( 'View plugins for all sites' ),
 			type: 'menu-item',
 			url: '/plugins',
-			children: ! showManagePlugins
-				? null
-				: [
-						{
-							parent: 'plugins',
-							slug: 'all-sites-plugins-add-new',
-							title: translate( 'Add New' ),
-							type: 'submenu-item',
-							url: '/plugins',
-						},
-						{
-							parent: 'plugins',
-							slug: 'all-sites-plugins-installed-plugins',
-							title: translate( 'Installed Plugins' ),
-							type: 'submenu-item',
-							url: '/plugins/manage',
-						},
-				  ],
+			...( showManagePlugins && {
+				children: [
+					{
+						parent: 'plugins',
+						slug: 'all-sites-plugins-add-new',
+						title: translate( 'Add New' ),
+						type: 'submenu-item',
+						url: '/plugins',
+					},
+					{
+						parent: 'plugins',
+						slug: 'all-sites-plugins-installed-plugins',
+						title: translate( 'Installed Plugins' ),
+						type: 'submenu-item',
+						url: '/plugins/manage',
+					},
+				],
+			} ),
 		},
 	];
 }
