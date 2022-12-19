@@ -222,10 +222,17 @@ body.is-section-themes-i4-2 {
 				width: initial;
 			}
 		}
+	}
 
+	.theme__upsell-popover.info-popover__tooltip {
 		.popover__inner {
 			background: #fff;
 			color: var(--color-neutral-50);
+			text-align: left;
+		}
+
+		.theme__upsell-header {
+			color: var(--color-neutral-100);
 		}
 	}
 }
