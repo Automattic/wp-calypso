@@ -1,4 +1,4 @@
-import { LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW } from '../utils/flows';
+import { LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW, FREE_FLOW } from '../utils/flows';
 
 /* eslint-disable no-restricted-imports */
 interface FlowProgress {
@@ -33,11 +33,11 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		plans: 4,
 		launchpad: 5,
 	},
-	free: {
+	[ FREE_FLOW ]: {
 		intro: 0,
 		user: 0,
-		patterns: 1,
-		freeSetup: 2,
+		freeSetup: 1,
+		designSetup: 2,
 		launchpad: 3,
 	},
 	videopress: {
