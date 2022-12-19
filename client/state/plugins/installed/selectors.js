@@ -1,5 +1,5 @@
 import { createSelector } from '@automattic/state-utils';
-import { cloneDeep, filter, get, pick, some, sortBy } from 'lodash';
+import { cloneDeep, filter, get, omit, pick, some, sortBy } from 'lodash';
 import {
 	getSite,
 	getSiteTitle,
@@ -91,11 +91,13 @@ export const getAllPluginsIndexedByPluginSlug = createSelector(
 
 			const pluginsForSite = state.plugins.installed.plugins[ siteId ] || [];
 			pluginsForSite.forEach( ( plugin ) => {
-				const sitePluginInfo = pick( plugin, [ 'active', 'autoupdate', 'update', 'version' ] );
+				const sitePluginProperties = [ 'active', 'autoupdate', 'update', 'version' ];
+				const sitePluginInfo = pick( plugin, sitePluginProperties );
+				const otherPluginInfo = omit( plugin, sitePluginProperties );
 
 				plugins[ plugin.slug ] = {
 					...plugins[ plugin.slug ],
-					...plugin,
+					...otherPluginInfo,
 					sites: {
 						...plugins[ plugin.slug ]?.sites,
 						[ siteId ]: sitePluginInfo,
@@ -218,7 +220,11 @@ export function getPluginOnSites( state, siteIds, pluginSlug ) {
 export function getPluginOnSite( state, siteId, pluginSlug ) {
 	const plugin = getAllPluginsIndexedByPluginSlug( state )[ pluginSlug ];
 
-	return plugin && plugin.sites[ siteId ] ? plugin : undefined;
+	return plugin && plugin.sites[ siteId ]
+		? // Because this is a plugin for a single site context omit the "sites"
+		  // property and move the site specific properties onto the main object.
+		  { ...omit( plugin, [ 'sites' ] ), ...plugin.sites[ siteId ] }
+		: undefined;
 }
 
 export function getSitesWithPlugin( state, siteIds, pluginSlug ) {
