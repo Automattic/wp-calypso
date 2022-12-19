@@ -1,12 +1,12 @@
 import { translate } from 'i18n-calypso';
 
-/* eslint-disable jsdoc/require-param */
 /**
  * Menu items that support all sites screen.
+ *
+ * @param {object} options
+ * @param {boolean} options.showManagePlugins Includes menu items that can manage plugins across all sites.
  */
-/* eslint-enable jsdoc/require-param */
-
-export default function allSitesMenu( { showManagePlugins = false } ) {
+export default function allSitesMenu( { showManagePlugins = false } = {} ) {
 	return [
 		{
 			icon: 'dashicons-chart-bar',
