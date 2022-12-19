@@ -10,7 +10,7 @@ import './style.scss';
 interface Props {
 	site: { blog_id: number; url: string };
 	status: AllowedStatusTypes | string;
-	settings: MonitorSettings;
+	settings: MonitorSettings | undefined;
 }
 
 export default function ToggleActivateMonitoring( { site, status, settings }: Props ) {
@@ -31,7 +31,10 @@ export default function ToggleActivateMonitoring( { site, status, settings }: Pr
 	const isChecked = status !== 'disabled';
 
 	const currentSettings = () => {
-		const minutes = settings.monitor_deferment_time;
+		const minutes = settings?.monitor_deferment_time;
+		if ( ! minutes ) {
+			return null;
+		}
 		// Convert minutes to moment duration to show "hr" if monitor_deferment_time is greater than 60
 		const duration = moment.duration( minutes, 'minutes' );
 		const hours = Math.floor( duration.asHours() );
@@ -65,7 +68,7 @@ export default function ToggleActivateMonitoring( { site, status, settings }: Pr
 				onChange={ handleToggleActivateMonitoring }
 				checked={ isChecked }
 				disabled={ isLoading }
-				label={ isChecked && settings && currentSettings() }
+				label={ isChecked && currentSettings() }
 			/>
 		</span>
 	);
