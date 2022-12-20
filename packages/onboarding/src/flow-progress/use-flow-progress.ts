@@ -1,4 +1,4 @@
-import { LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW, ECOMMERCE_FLOW } from '../utils/flows';
+import { ECOMMERCE_FLOW, LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW } from '../utils/flows';
 
 /* eslint-disable no-restricted-imports */
 interface FlowProgress {
