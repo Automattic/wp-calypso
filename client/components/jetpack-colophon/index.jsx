@@ -8,11 +8,9 @@ const JetpackColophon = ( { className, translate, grayscale = false } ) => {
 	return (
 		<div className={ classNames( 'jetpack-colophon', className ) }>
 			<span
-				className={
-					grayscale
-						? 'jetpack-colophon__power jetpack-colophon__grayscale'
-						: 'jetpack-colophon__power'
-				}
+				className={ classNames( 'jetpack-colophon__power', {
+					'jetpack-colophon__grayscale': grayscale,
+				} ) }
 			>
 				{ translate( 'Powered by {{jetpackLogo /}}', {
 					components: {
