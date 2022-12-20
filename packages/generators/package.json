@@ -11,7 +11,7 @@
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
 	"bin": {
-		"wp-generate": "cli.js"
+		"generate-calypso-package": "cli.js"
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/generators#readme",
@@ -21,7 +21,7 @@
 		"yarn": "^3.1.1"
 	},
 	"scripts": {
-		"generate": "wp-generate"
+		"generate": "generate-calypso-package"
 	},
 	"dependencies": {
 		"commander": "^5.1.0",
