@@ -40,7 +40,7 @@ const EdgeCacheSettings = ( {
 					onChange={ updateActive }
 					label={ translate( 'Status' ) }
 				></ToggleControl>
-				<Button disabled={ isPurgingCache } onClick={ clearCache }>
+				<Button disabled={ isPurgingCache || ! active } onClick={ clearCache }>
 					{ translate( 'Clear Cache' ) }
 				</Button>
 			</div>
