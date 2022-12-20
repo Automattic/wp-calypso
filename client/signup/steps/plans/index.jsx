@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	planHasFeature,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
@@ -283,6 +284,9 @@ export class PlansStep extends Component {
 		}
 
 		if ( this.state.isDesktop ) {
+			if ( isEnabled( 'onboarding/2023-pricing-grid' ) ) {
+				return translate( 'Choose your flavor of WordPress' );
+			}
 			return translate( 'Choose a plan' );
 		}
 
@@ -339,6 +343,10 @@ export class PlansStep extends Component {
 				'Add more features to your professional website with a plan. Or {{link}}start with email and a free site{{/link}}.',
 				{ components: { link: freePlanButton } }
 			);
+		}
+
+		if ( isEnabled( 'onboarding/2023-pricing-grid' ) ) {
+			return;
 		}
 
 		if ( this.state.isDesktop ) {
