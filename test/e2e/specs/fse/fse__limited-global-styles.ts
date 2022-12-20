@@ -56,7 +56,9 @@ describe( DataHelper.createSuiteTitle( 'Site Editor: Limited Global Styles' ), f
 
 	it( 'Reset styles to defaults', async function () {
 		await fullSiteEditorPage.openSiteStyles();
-		await fullSiteEditorPage.resetStylesToDefaults();
+		await fullSiteEditorPage.setGlobalColorStyle( 'Background', {
+			colorName: 'Primary',
+		} );
 		await fullSiteEditorPage.closeSiteStyles();
 		await fullSiteEditorPage.save();
 	} );
