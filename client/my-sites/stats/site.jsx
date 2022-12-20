@@ -284,6 +284,17 @@ class StatsSite extends Component {
 					</>
 
 					<div className="stats__module-list stats__module-list--traffic is-events stats__module--unified">
+						{ config.isEnabled( 'newsletter/stats' ) && (
+							<StatsModule
+								path="emails-open"
+								moduleStrings={ moduleStrings.emailsOpenStats }
+								period={ this.props.period }
+								query={ query }
+								statType="statsEmailsOpen"
+								showSummaryLink
+								showNewModules
+							/>
+						) }
 						<StatsModule
 							path="posts"
 							moduleStrings={ moduleStrings.posts }
