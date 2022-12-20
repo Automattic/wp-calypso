@@ -1,6 +1,6 @@
 import { doesCurrencyExist, getCurrencyDefaults } from './currencies';
 import numberFormat from './number-format';
-import { FormatCurrencyOptions, CurrencyObject } from './types';
+import { FormatCurrencyOptions, CurrencyObject, CurrencyObjectOptions } from './types';
 
 export { getCurrencyDefaults };
 
@@ -130,13 +130,13 @@ export function formatCurrency(
  *
  * @param      {number}                   number     number to format; assumed to be a float unless isSmallestUnit is set.
  * @param      {string}                   code       currency code e.g. 'USD'
- * @param      {FormatCurrencyOptions}    options    options object
+ * @param      {CurrencyObjectOptions}    options    options object
  * @returns    {?CurrencyObject}          A formatted string e.g. { symbol:'$', integer: '$99', fraction: '.99', sign: '-' }
  */
 export function getCurrencyObject(
 	number: number,
 	code: string,
-	options: FormatCurrencyOptions = {}
+	options: CurrencyObjectOptions = {}
 ): CurrencyObject | null {
 	if ( ! doesCurrencyExist( code ) ) {
 		// eslint-disable-next-line no-console

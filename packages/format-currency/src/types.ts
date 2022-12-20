@@ -1,4 +1,4 @@
-export interface FormatCurrencyOptions {
+export interface CurrencyObjectOptions {
 	/**
 	 * The symbol separating the integer part of a decimal from its fraction.
 	 *
@@ -48,6 +48,8 @@ export interface FormatCurrencyOptions {
 	 */
 	isSmallestUnit?: boolean;
 }
+
+export type FormatCurrencyOptions = Pick< CurrencyObjectOptions, 'stripZeros' | 'isSmallestUnit' >;
 
 export interface CurrencyObject {
 	sign: '-' | '';
