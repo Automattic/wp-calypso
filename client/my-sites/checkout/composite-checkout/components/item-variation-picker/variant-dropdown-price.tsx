@@ -171,7 +171,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 				{ discountPercentage > 0 && ! isJetpackIntroductoryOffer && (
 					<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
 				) }
-				<Price>{ formattedCurrentPrice }</Price>
+				<Price aria-hidden={ isJetpackIntroductoryOffer }>{ formattedCurrentPrice }</Price>
 				<IntroPricing>
 					{ isJetpackIntroductoryOffer && ! isMobile && translatedIntroOfferPrice }
 					{ isJetpackIntroductoryOffer && isMobile && translatedIntroOfferPriceMobile }
