@@ -53,13 +53,13 @@ const flows: Record< string, { [ step: string ]: number } > = {
 	[ ECOMMERCE_FLOW ]: {
 		intro: 0,
 		storeProfiler: 1,
-		storeAddress: 2,
+		designCarousel: 2,
 		domains: 3,
-		designCarousel: 4,
-		siteCreationStep: 5,
-		processing: 5,
-		waitForAtomic: 5,
-		checkPlan: 5,
+		siteCreationStep: 4,
+		processing: 4,
+		waitForAtomic: 4,
+		checkPlan: 4,
+		storeAddress: 5,
 	},
 };
 
