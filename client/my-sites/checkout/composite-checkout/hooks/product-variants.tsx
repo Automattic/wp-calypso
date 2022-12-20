@@ -96,7 +96,7 @@ export function useGetProductVariants(
 						introductoryTerm: introductoryTerms?.interval_unit,
 						priceBeforeDiscounts: variant.price_before_discounts_integer,
 						currency: variant.currency,
-						planLength: variant.bill_period_in_months,
+						productBillingTermInMonths: variant.bill_period_in_months,
 					};
 				} catch ( error ) {
 					// Three-year plans are not yet fully supported, so we need to guard

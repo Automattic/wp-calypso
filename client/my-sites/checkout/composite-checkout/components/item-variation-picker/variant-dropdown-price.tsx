@@ -74,6 +74,7 @@ const Label = styled.span`
 const IntroPricing = styled.span`
 	display: flex;
 	flex-direction: column;
+	font-size: 0.8rem;
 `;
 
 const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent } ) => {
@@ -107,7 +108,6 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 		  } )
 		: undefined;
 	// Jetpack introductory pricing displays the introductory price for the first term, then the regular price for the remaining term.
-	// const planTerm = variant.termIntervalInDays > 31 ? 'year' : 'month';
 	const introTerm = variant.introductoryTerm;
 	const introCount = variant.introductoryInterval;
 	const formattedPriceBeforeDiscounts = formatCurrency(
@@ -118,16 +118,16 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 			isSmallestUnit: true,
 		}
 	);
-	const planLength = variant.planLength;
+	const productBillingTermInMonths = variant.productBillingTermInMonths;
 	const isJetpackIntroductoryOffer = isJetpackProduct( variant ) && introCount > 0;
 	const translate = useTranslate();
 	// the backend returns the term in text, but it it adds "one" like One year, which looks off so we're creating our own.
 	const planTerm = () => {
 		let termToTranslate = translate( 'month' );
-		if ( planLength > 12 ) {
+		if ( productBillingTermInMonths > 12 ) {
 			//biannual is currently the only possible term past 1 year
 			termToTranslate = translate( '2 years' );
-		} else if ( planLength > 1 ) {
+		} else if ( productBillingTermInMonths > 1 ) {
 			termToTranslate = translate( 'year' );
 		}
 		return termToTranslate;
@@ -173,10 +173,8 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 				) }
 				<Price>{ formattedCurrentPrice }</Price>
 				<IntroPricing>
-					<small>{ isJetpackIntroductoryOffer && ! isMobile && translatedIntroOfferPrice }</small>
-					<small>
-						{ isJetpackIntroductoryOffer && isMobile && translatedIntroOfferPriceMobile }
-					</small>
+					{ isJetpackIntroductoryOffer && ! isMobile && translatedIntroOfferPrice }
+					{ isJetpackIntroductoryOffer && isMobile && translatedIntroOfferPriceMobile }
 				</IntroPricing>
 			</span>
 		</Variant>

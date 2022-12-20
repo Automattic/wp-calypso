@@ -585,7 +585,9 @@ export interface ResponseCartProductVariant {
 	currency: string;
 	price_integer: number;
 	price_before_discounts_integer: number;
-	introductory_offer_terms: IntroductoryOfferTerms;
+	introductory_offer_terms:
+		| Record< string, never >
+		| Pick< IntroductoryOfferTerms, 'interval_unit' | 'interval_count' >;
 }
 
 export interface IntroductoryOfferTerms {
