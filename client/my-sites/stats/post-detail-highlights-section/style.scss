@@ -9,20 +9,22 @@
 		box-shadow: none;
 	}
 
-	.post-stats-card {
-		margin: 0;
-		flex: 1;
-		min-width: 600px;
-		max-height: 300px;
-	}
+	.highlight-cards-list {
+		display: grid;
+		grid-template-columns: 3fr 2fr;
+		grid-template-rows: 1fr;
+		column-gap: 10px;
 
-	.highlight-cards-list .highlight-card {
-		margin: 0 0 0 10px;
-		padding: 24px;
-		min-width: 320px;
-		max-width: 495px;
-		max-height: 300px;
-		overflow-y: auto;
+		.post-stats-card {
+			margin: 0;
+			max-height: unset;
+		}
+
+		.highlight-card {
+			padding: 24px;
+			height: 300px;
+			overflow-y: auto;
+		}
 	}
 
 	.highlight-card-heading {
