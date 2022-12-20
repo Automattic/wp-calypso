@@ -1,0 +1,9 @@
+.stats-summary-view {
+	padding: 0 32px 0;
+	@media ( max-width: 660px ) {
+		padding: 0 0.875rem 0;
+	}
+	@media ( max-width: 480px ) {
+		padding: 0;
+	}
+}

@@ -170,6 +170,9 @@ class AnnualSiteStats extends Component {
 						label={ translate( 'Annual site stats', { args: [ currentYear ] } ) }
 					/>
 				) }
+				{ ! isWidget && (
+					<h1 className="highlight-cards-heading">{ translate( 'All-time annual insights' ) }</h1>
+				) }
 				<Card className="stats-module">
 					<StatsModulePlaceholder isLoading={ isLoading } />
 					{ isError && <ErrorPanel message={ translate( 'Oops! Something went wrong.' ) } /> }

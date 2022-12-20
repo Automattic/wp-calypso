@@ -18,6 +18,8 @@ import VideoPlayDetails from '../stats-video-details';
 import StatsVideoSummary from '../stats-video-summary';
 import VideoPressStatsModule from '../videopress-stats-module';
 
+import './style.scss';
+
 const StatsStrings = statsStringsFactory();
 
 class StatsSummary extends Component {
@@ -241,7 +243,9 @@ class StatsSummary extends Component {
 				/>
 				<FixedNavigationHeader navigationItems={ navigationItems } />
 
-				<div id="my-stats-content">{ summaryViews }</div>
+				<div id="my-stats-content" className=" stats-summary-view">
+					{ summaryViews }
+				</div>
 				<JetpackColophon />
 			</Main>
 		);
