@@ -60,8 +60,8 @@ export default function DesignPickerStep( props ) {
 	const scrollTop = useRef( 0 );
 
 	const getThemeFilters = () => {
-		if ( props.useDIFMThemes ) {
-			return 'do-it-for-me';
+		if ( props.themeFilters ) {
+			return props.themeFilters;
 		}
 
 		return 'auto-loading-homepage,full-site-editing';
@@ -134,13 +134,6 @@ export default function DesignPickerStep( props ) {
 				result.defaultSelection = null;
 				result.sort = sortBlogToTop;
 				break;
-		}
-
-		// This is a temporary change until DIFM Lite switches to the full WPCOM theme catalog.
-		// We'll then use the 'difm' intent here.
-		if ( props.useDIFMThemes ) {
-			result.defaultSelection = null;
-			result.sort = sortLocalServicesToTop;
 		}
 
 		return result;
@@ -223,7 +216,7 @@ export default function DesignPickerStep( props ) {
 					} ) }
 					highResThumbnails
 					premiumBadge={
-						props.useDIFMThemes ? null : (
+						props.themeFilters ? null : (
 							<PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } />
 						)
 					}
@@ -427,17 +420,6 @@ function sortStoreToTop( a, b ) {
 	} else if ( a.slug === 'store' ) {
 		return -1;
 	} else if ( b.slug === 'store' ) {
-		return 1;
-	}
-	return 0;
-}
-
-function sortLocalServicesToTop( a, b ) {
-	if ( a.slug === b.slug ) {
-		return 0;
-	} else if ( a.slug === 'local-services' ) {
-		return -1;
-	} else if ( b.slug === 'local-services' ) {
 		return 1;
 	}
 	return 0;

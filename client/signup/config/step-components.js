@@ -78,6 +78,7 @@ const stepNameToModuleName = {
 	'difm-site-picker': 'difm-site-picker',
 	'difm-store-site-picker': 'difm-site-picker',
 	'difm-design-setup-site': 'design-picker',
+	'difm-store-design-setup-site': 'design-picker',
 	'difm-options': 'site-options',
 	'difm-store-options': 'site-options',
 	'difm-page-picker': 'page-picker',
