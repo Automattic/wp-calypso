@@ -2,10 +2,14 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { MobilePromoCard } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import blazeDropDownIllustration from 'calypso/assets/images/illustrations/blaze-drop-down.svg';
 import wordpressSeoIllustration from 'calypso/assets/images/illustrations/wordpress-seo-premium.svg';
 import PromoCardBlock from 'calypso/blocks/promo-card-block';
 import DotPager from 'calypso/components/dot-pager';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -13,11 +17,16 @@ const EVENT_YOAST_PROMO_VIEW = 'calypso_stats_wordpress_seo_premium_banner_view'
 const EVENT_BLAZE_PROMO_VIEW = 'calypso_stats_blaze_banner_view';
 const EVENT_MOBILE_PROMO_VIEW = 'calypso_stats_traffic_mobile_cta_jetpack_view';
 
-export default function PromoCards( { isJetpack, isOdysseyStats, slug } ) {
+export default function PromoCards( { isOdysseyStats, slug } ) {
+	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const jetpackNonAtomic = useSelector(
+		( state ) => isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId )
+	);
+
 	// Yoast promo is disabled for Odyssey & self-hosted.
 	// Mobile apps promos are always shown.
 	const showBlazePromo = ! isOdysseyStats;
-	const showYoastPromo = ! isOdysseyStats && ! isJetpack;
+	const showYoastPromo = ! isOdysseyStats && ! jetpackNonAtomic;
 
 	// Handle click events from promo card.
 	const promoCardDidReceiveClick = ( event ) => {
@@ -52,7 +61,6 @@ export default function PromoCards( { isJetpack, isOdysseyStats, slug } ) {
 							ctaText={ translate( 'Get started' ) }
 							image={ blazeDropDownIllustration }
 							href={ `/advertising/${ slug || '' }` }
-							showOnJetpackNonAtomic={ true }
 						/>
 					) }
 					{ showYoastPromo && (
