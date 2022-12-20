@@ -231,6 +231,20 @@ export function deleteSite( siteId ) {
 					return;
 				}
 
+				if ( error.error === 'unauthorized' ) {
+					// this error is used when you try to delete an Atomic site
+					// right after removing the plan(s) from it. Normally the
+					// message will be 'User cannot delete jetpack site via API.'
+					// The user needs to wait a minute before self-service deletion is available.
+					dispatch(
+						errorNotice(
+							'Unable to delete site. If you recently removed the plan(s) then please wait a couple of minutes and retry.',
+							siteDeletionNoticeOptions
+						)
+					);
+					return;
+				}
+
 				dispatch( errorNotice( error.message, siteDeletionNoticeOptions ) );
 			} );
 	};
