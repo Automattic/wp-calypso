@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { Button, FormInputValidation } from '@automattic/components';
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, ECOMMERCE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
@@ -16,7 +16,7 @@ import { ONBOARD_STORE, USER_STORE } from '../../../../stores';
 import type { Step } from '../../types';
 import './style.scss';
 
-const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
+const StoreProfiler: Step = function StoreProfiler( { navigation, flow } ) {
 	const { goBack, goNext, submit } = navigation;
 	const [ siteTitle, setSiteTitle ] = React.useState( '' );
 	const [ verticalId, setVerticalId ] = React.useState( '' );
@@ -165,6 +165,7 @@ const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 			}
 			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }
+			showWooCommercePowered={ flow === ECOMMERCE_FLOW }
 		/>
 	);
 };

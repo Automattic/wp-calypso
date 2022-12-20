@@ -1,4 +1,4 @@
-import { WordPressLogo, JetpackLogo } from '@automattic/components';
+import { WordPressLogo, JetpackLogo, WooCommerceLogo } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { ReactChild, ReactElement } from 'react';
@@ -42,6 +42,8 @@ interface Props {
 	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
 	showHeaderJetpackPowered?: boolean;
 	showJetpackPowered?: boolean;
+	showHeaderWooCommercePowered?: boolean;
+	showWooCommercePowered?: boolean;
 	showVideoPressPowered?: boolean;
 }
 
@@ -77,8 +79,10 @@ const StepContainer: React.FC< Props > = ( {
 	stepSectionName,
 	recordTracksEvent,
 	showHeaderJetpackPowered,
+	showHeaderWooCommercePowered,
 	showJetpackPowered,
 	showVideoPressPowered,
+	showWooCommercePowered,
 } ) => {
 	const translate = useTranslate();
 
@@ -195,6 +199,12 @@ const StepContainer: React.FC< Props > = ( {
 							<JetpackLogo monochrome size={ 18 } /> <span>{ translate( 'Jetpack powered' ) }</span>
 						</div>
 					) }
+					{ showHeaderWooCommercePowered && (
+						<div className="step-container__header-woocommerce-powered">
+							<WooCommerceLogo monochrome size={ 18 } />{ ' ' }
+							<span>{ translate( 'WooCommerce powered' ) }</span>
+						</div>
+					) }
 				</div>
 			) }
 
@@ -209,6 +219,13 @@ const StepContainer: React.FC< Props > = ( {
 			{ showJetpackPowered && (
 				<div className="step-container__jetpack-powered">
 					<JetpackLogo monochrome size={ 18 } /> <span>{ translate( 'Jetpack powered' ) }</span>
+				</div>
+			) }
+
+			{ showWooCommercePowered && (
+				<div className="step-container__woocommerce-powered">
+					<WooCommerceLogo monochrome size={ 18 } />{ ' ' }
+					<span>{ translate( 'WooCommerce powered' ) }</span>
 				</div>
 			) }
 			{ showVideoPressPowered && (
