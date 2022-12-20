@@ -69,9 +69,10 @@ export function formatCurrency(
 		number = 0;
 	}
 
+	const locale = options.locale ?? getLocaleFromBrowser();
 	let precision;
 	try {
-		precision = getPrecisionForLocaleAndCurrency( getLocaleFromBrowser(), code );
+		precision = getPrecisionForLocaleAndCurrency( locale, code );
 	} catch {
 		// The above may throw if the currency is unknown, in which case we want to
 		// default to USD.
@@ -90,7 +91,7 @@ export function formatCurrency(
 		number = convertPriceForSmallestUnit( number, precision );
 	}
 
-	const formatter = new Intl.NumberFormat( getLocaleFromBrowser(), {
+	const formatter = new Intl.NumberFormat( locale, {
 		style: 'currency',
 		currency: code,
 		// There's an option called `trailingZeroDisplay` but it does not yet work

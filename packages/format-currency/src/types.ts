@@ -47,9 +47,20 @@ export interface CurrencyObjectOptions {
 	 * will return `$10.25` instead.
 	 */
 	isSmallestUnit?: boolean;
+
+	/**
+	 * The locale for the formatting.
+	 *
+	 * Some currencies are formatted differently depending on the locale. If not
+	 * set, this will be retrieved from the user's browser.
+	 */
+	locale?: string;
 }
 
-export type FormatCurrencyOptions = Pick< CurrencyObjectOptions, 'stripZeros' | 'isSmallestUnit' >;
+export type FormatCurrencyOptions = Pick<
+	CurrencyObjectOptions,
+	'stripZeros' | 'isSmallestUnit' | 'locale'
+>;
 
 export interface CurrencyObject {
 	sign: '-' | '';
