@@ -1,7 +1,7 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 
-.stats-year-navigation {
+.stats-period-navigation.stats-year-navigation {
 	padding-right: 0;
 
 	.stats-period-navigation__previous,
