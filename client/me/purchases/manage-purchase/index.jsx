@@ -462,6 +462,7 @@ class ManagePurchase extends Component {
 		}
 
 		let text = translate( 'Remove subscription' );
+
 		if ( isPlan( purchase ) ) {
 			text = translate( 'Remove plan' );
 		} else if ( isDomainRegistration( purchase ) ) {
@@ -1023,6 +1024,7 @@ class ManagePurchase extends Component {
 			getChangePaymentMethodUrlFor,
 			isProductOwner,
 		} = this.props;
+
 		let changePaymentMethodPath = false;
 		if ( ! this.isDataLoading( this.props ) && site && canEditPaymentDetails( purchase ) ) {
 			changePaymentMethodPath = getChangePaymentMethodUrlFor( siteSlug, purchase );
@@ -1146,6 +1148,7 @@ function PurchasesQueryComponent( { isSiteLevel, selectedSiteId } ) {
 export default connect(
 	( state, props ) => {
 		const purchase = getByPurchaseId( state, props.purchaseId );
+
 		const purchaseAttachedTo =
 			purchase && purchase.attachedToPurchaseId
 				? getByPurchaseId( state, purchase.attachedToPurchaseId )
