@@ -59,7 +59,7 @@ export default function AnnualHighlightsSection( { siteId }: { siteId: number } 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const viewMoreHref = siteSlug ? `/stats/annualstats/${ siteSlug }` : null;
 
-	const currentYear = new Date().getFullYear(); // shorten it
+	const currentYear = new Date().getFullYear();
 	const oldestYear = useMemo(
 		() =>
 			insights?.years?.reduce(
