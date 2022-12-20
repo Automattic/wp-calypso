@@ -19,7 +19,10 @@
 }
 
 .toggle-activate-monitoring__duration {
-	@extend .inline-flex-align-centre;
+	button {
+		@extend .inline-flex-align-centre;
+	}
+
 	span {
 		margin-inline-start: 1px;
 		font-size: 0.75rem;
