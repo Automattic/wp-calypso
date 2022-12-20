@@ -1,5 +1,4 @@
+const nodeConfig = require( '@automattic/calypso-eslint-overrides/node' );
 module.exports = {
-	rules: {
-		'import/no-nodejs-modules': 0,
-	},
+	...nodeConfig,
 };
