@@ -95,7 +95,6 @@ RUN apt-get update \
 		xauth \
 		xvfb \
 	&& apt-get autoremove --purge \
-	&& apt-get remove --purge -y $(apt-mark showauto) \
 	&& apt-get autoclean \
 	&& rm -rf /var/lib/apt/lists/*
 
