@@ -66,39 +66,28 @@ class StatsPeriodNavigation extends PureComponent {
 		const nextDayQuery = qs.stringify( Object.assign( {}, queryParams, { startDate: nextDay } ), {
 			addQueryPrefix: true,
 		} );
-		const isNextDisabled = hideNextArrow || isToday;
 
 		return (
 			<div className="stats-period-navigation">
 				<div className="stats-period-navigation__children">{ children }</div>
-
-				{ ! hidePreviousArrow ? (
-					<a
-						className={ classNames( 'stats-period-navigation__previous' ) }
-						href={ `${ url }${ previousDayQuery }` }
-						onClick={ this.handleClickPrevious }
-					>
-						<Icon className="gridicon" icon={ arrowLeft } />
-					</a>
-				) : (
-					<div className={ classNames( 'stats-period-navigation__previous', 'is-disabled' ) }>
-						<Icon className="gridicon" icon={ arrowLeft } />
-					</div>
-				) }
-
-				{ ! isNextDisabled ? (
-					<a
-						className={ classNames( 'stats-period-navigation__next' ) }
-						href={ `${ url }${ nextDayQuery }` }
-						onClick={ this.handleClickNext }
-					>
-						<Icon className="gridicon" icon={ arrowRight } />
-					</a>
-				) : (
-					<div className={ classNames( 'stats-period-navigation__next', 'is-disabled' ) }>
-						<Icon className="gridicon" icon={ arrowRight } />
-					</div>
-				) }
+				<a
+					className={ classNames( 'stats-period-navigation__previous', {
+						'is-disabled': hidePreviousArrow,
+					} ) }
+					href={ `${ url }${ previousDayQuery }` }
+					onClick={ this.handleClickPrevious }
+				>
+					<Icon className="gridicon" icon={ arrowLeft } />
+				</a>
+				<a
+					className={ classNames( 'stats-period-navigation__next', {
+						'is-disabled': hideNextArrow || isToday,
+					} ) }
+					href={ `${ url }${ nextDayQuery }` }
+					onClick={ this.handleClickNext }
+				>
+					<Icon className="gridicon" icon={ arrowRight } />
+				</a>
 			</div>
 		);
 	}
