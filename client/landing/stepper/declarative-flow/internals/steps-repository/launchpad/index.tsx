@@ -45,7 +45,7 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		if ( launchpadScreenOption !== undefined ) {
 			// The screen option returns false for sites that have never set the option
 			if (
-				( 'sensei' !== flow && 'videopress' !== flow && launchpadScreenOption === false ) ||
+				( 'videopress' !== flow && launchpadScreenOption === false ) ||
 				launchpadScreenOption === 'off'
 			) {
 				window.location.replace( `/home/${ siteSlug }` );
