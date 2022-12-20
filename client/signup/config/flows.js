@@ -243,9 +243,12 @@ const Flows = {
 		if ( isUserLoggedIn ) {
 			const urlParams = new URLSearchParams( window.location.search );
 			const param = urlParams.get( 'user_completed' );
+			const isUserStepOnly = flow.steps.length === 1 && stepConfig[ flow.steps[ 0 ] ].providesToken;
+
 			// Remove the user step unless the user has just completed the step
 			// and then clicked the back button.
-			if ( ! param && ! detectHistoryNavigation.loadedViaHistory() ) {
+			// If the user step is the only step in the whole flow, e.g. /start/account, don't remove it as well.
+			if ( ! param && ! detectHistoryNavigation.loadedViaHistory() && ! isUserStepOnly ) {
 				flow = removeUserStepFromFlow( flow );
 			}
 		}

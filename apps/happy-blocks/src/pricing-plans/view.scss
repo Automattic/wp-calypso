@@ -20,13 +20,12 @@ $brand-display: "SF Pro Display", $sans;
 }
 
 .hb-pricing-plans-embed {
-	display: flex;
 	flex-wrap: wrap;
 	padding: 28px;
 	margin: 24px 0;
 	border: 1px solid $studio-gray-5;
 	border-radius: 2px;
-	gap: 32px;
+	gap: 22px;
 	background-color: $studio-white;
 
 
@@ -55,6 +54,10 @@ $brand-display: "SF Pro Display", $sans;
 			gap: 17px;
 			justify-content: flex-start;
 		}
+
+		&-checkbox--disabled {
+			opacity: 0.6;
+		}
 	}
 
 	&__skeleton {
@@ -69,6 +72,46 @@ $brand-display: "SF Pro Display", $sans;
 		&::after {
 			content: "";
 		}
+	}
+
+	&__tabs {
+		display: flex;
+		background: $studio-gray-0;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 6px;
+		padding: 4px;
+
+		&-label {
+			background: $studio-gray-0;
+			padding: 4px 16px;
+			height: 28px;
+			font-family: $brand-display;
+			font-weight: 500;
+			font-size: 0.875rem;
+			line-height: 20px;
+			border: none;
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 5px;
+			margin: 0;
+
+			&:hover {
+				background: $studio-gray-0;
+			}
+
+			&--active {
+				background: $white;
+				border: 0.5px solid rgba(0, 0, 0, 0.04);
+				box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
+				/* stylelint-disable-next-line scales/radii */
+				border-radius: 5px;
+				z-index: 1;
+			}
+		}
+	}
+
+	&__tab {
+		display: flex;
+		gap: 24px;
 	}
 
 	&__header {

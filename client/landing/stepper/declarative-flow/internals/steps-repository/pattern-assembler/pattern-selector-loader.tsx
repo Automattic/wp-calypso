@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import PatternSelector from './pattern-selector';
-import { headerPatterns, footerPatterns, sectionPatterns } from './patterns-data';
+import { useHeaderPatterns, useFooterPatterns, useSectionPatterns } from './patterns-data';
 import type { Pattern } from './types';
 
 type PatternSelectorLoaderProps = {
@@ -17,6 +17,9 @@ const PatternSelectorLoader = ( {
 	selectedPattern,
 }: PatternSelectorLoaderProps ) => {
 	const translate = useTranslate();
+	const headerPatterns = useHeaderPatterns();
+	const footerPatterns = useFooterPatterns();
+	const sectionPatterns = useSectionPatterns();
 
 	return (
 		<>

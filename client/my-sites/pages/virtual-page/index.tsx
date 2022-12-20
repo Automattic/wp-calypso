@@ -27,7 +27,6 @@ interface Props {
 	id: string;
 	type: string;
 	title: string;
-	description?: string;
 	previewUrl?: string;
 	isHomepage?: boolean;
 
@@ -44,7 +43,6 @@ const VirtualPage = ( {
 	id,
 	type,
 	title,
-	description,
 	previewUrl,
 	isHomepage,
 	isAdmin,
@@ -124,6 +122,14 @@ const VirtualPage = ( {
 		return <Placeholder.Page key={ id } multisite={ ! site } />;
 	}
 
+	const homepageLearnMoreLink = (
+		<ExternalLink
+			href={ localizeUrl( 'https://wordpress.com/support/templates/#template-hierarchy' ) }
+			target="_blank"
+			rel="noopener noreferrer"
+		/>
+	);
+
 	return (
 		<CompactCard key={ id } className="page is-virtual">
 			{ isHomepage && <Gridicon icon="house" size={ 16 } className="page__icon" /> }
@@ -139,31 +145,40 @@ const VirtualPage = ( {
 					onClick={ clickPageTitle }
 				>
 					<span>{ title }</span>
-					{ isHomepage && template && (
+					{ isHomepage && (
 						<InfoPopover position="right">
-							{ translate(
-								'The homepage of your site displays the %(title)s template. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-								{
-									args: { title: decodeEntities( template.title.rendered || template.slug ) },
-									components: {
-										learnMoreLink: (
-											<ExternalLink
-												href={ localizeUrl(
-													'https://wordpress.com/support/templates/#template-hierarchy'
-												) }
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
-										),
-									},
-								}
-							) }
+							{ isAdmin && template
+								? translate(
+										'You can change the content of this page by editing the %(templateTitle)s template using the Site Editor. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+										{
+											components: {
+												learnMoreLink: homepageLearnMoreLink,
+											},
+											args: {
+												templateTitle: decodeEntities( template.title.rendered || template.slug ),
+											},
+										}
+								  )
+								: translate(
+										'Administrators can change the content of this page using the Site Editor. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+										{
+											components: {
+												learnMoreLink: homepageLearnMoreLink,
+											},
+										}
+								  ) }
 						</InfoPopover>
 					) }
 				</a>
-				<div className="page-card-info">
-					{ description && <span className="page-card-info__description">{ description }</span> }
-				</div>
+				{ isHomepage && template && (
+					<div className="page-card-info">
+						<span className="page-card-info__description">
+							{ translate( 'Your homepage uses the %(templateTitle)s template', {
+								args: { templateTitle: decodeEntities( template.title.rendered || template.slug ) },
+							} ) }
+						</span>
+					</div>
+				) }
 			</div>
 			<EllipsisMenu position="bottom left" onToggle={ toggleEllipsisMenu }>
 				{ isAdmin && (

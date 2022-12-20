@@ -19,6 +19,7 @@ import {
 import {
 	getJetpackUpgradeUrlIfPremiumTheme,
 	getTheme,
+	getThemeDemoUrl,
 	getThemeDetailsUrl,
 	getThemeHelpUrl,
 	getThemePurchaseUrl,
@@ -223,6 +224,11 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			comment: 'label for previewing the theme demo website',
 		} ),
 		action: themePreview,
+		hideForTheme: ( state, themeId, siteId ) => {
+			const demoUrl = getThemeDemoUrl( state, themeId, siteId );
+
+			return ! demoUrl;
+		},
 	};
 
 	const signupLabel = translate( 'Pick this design', {

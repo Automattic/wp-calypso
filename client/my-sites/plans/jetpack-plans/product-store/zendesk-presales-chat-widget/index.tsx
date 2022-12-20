@@ -24,12 +24,12 @@ export const ZendeskPreSalesChat: React.VFC = () => {
 		);
 		const currentTime = new Date();
 
-		return (
-			! isLoggedIn &&
-			isEnglishLocale &&
-			isJetpackCloud() &&
-			isWithinAvailableChatDays( currentTime )
-		);
+		return config.isEnabled( 'jetpack/zendesk-chat-for-logged-in-users' )
+			? isEnglishLocale && isJetpackCloud() && isWithinAvailableChatDays( currentTime )
+			: ! isLoggedIn &&
+					isEnglishLocale &&
+					isJetpackCloud() &&
+					isWithinAvailableChatDays( currentTime );
 	}, [ isLoggedIn ] );
 
 	return shouldShowZendeskPresalesChat ? <ZendeskChat chatKey={ zendeskChatKey } /> : null;

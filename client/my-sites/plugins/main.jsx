@@ -525,19 +525,22 @@ export class PluginsMain extends Component {
 				</div>
 				<div className="plugins__main-content">
 					<div className="plugins__content-wrapper">
-						{ currentPlugins?.length > 1 && (
-							<div className="plugins__search">
-								<Search
-									hideFocus
-									isOpen
-									onSearch={ this.props.doSearch }
-									initialValue={ this.props.search }
-									hideClose={ ! this.props.search }
-									analyticsGroup="Plugins"
-									placeholder={ this.props.translate( 'Search plugins' ) }
-								/>
-							</div>
-						) }
+						{
+							// Hide the search box only when the request to fetch plugins fail, and there are no sites.
+							! ( this.props.requestPluginsError && ! currentPlugins?.length ) && (
+								<div className="plugins__search">
+									<Search
+										hideFocus
+										isOpen
+										onSearch={ this.props.doSearch }
+										initialValue={ this.props.search }
+										hideClose={ ! this.props.search }
+										analyticsGroup="Plugins"
+										placeholder={ this.props.translate( 'Search plugins' ) }
+									/>
+								</div>
+							)
+						}
 						{ this.renderPluginsContent() }
 					</div>
 				</div>
