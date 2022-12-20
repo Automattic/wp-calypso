@@ -23,10 +23,7 @@ import {
 	TESTIMONIALS_PAGE,
 	PRICING_PAGE,
 	TEAM_PAGE,
-	CART_PAGE,
-	CHECKOUT_PAGE,
 	SHOP_PAGE,
-	MY_ACCOUNT_PAGE,
 } from 'calypso/signup/difm/constants';
 import {
 	useTranslatedPageDescriptions,
@@ -163,7 +160,7 @@ function PageSelector( {
 	const onPageClick = ( pageId: string ) => {
 		const isPageSelected = selectedPages.includes( pageId );
 		// The home page cannot be touched and is always included
-		if ( pageId !== HOME_PAGE ) {
+		if ( ! [ HOME_PAGE, SHOP_PAGE ].includes( pageId ) ) {
 			if ( isPageSelected ) {
 				// Unselect selected page
 				setSelectedPages( selectedPages.filter( ( page ) => page !== pageId ) );
@@ -183,32 +180,8 @@ function PageSelector( {
 			/>
 			{ isStoreFlow && (
 				<PageCell
-					included
+					required
 					pageId={ SHOP_PAGE }
-					selectedPages={ selectedPages }
-					onClick={ onPageClick }
-				/>
-			) }
-			{ isStoreFlow && (
-				<PageCell
-					included
-					pageId={ CHECKOUT_PAGE }
-					selectedPages={ selectedPages }
-					onClick={ onPageClick }
-				/>
-			) }
-			{ isStoreFlow && (
-				<PageCell
-					included
-					pageId={ CART_PAGE }
-					selectedPages={ selectedPages }
-					onClick={ onPageClick }
-				/>
-			) }
-			{ isStoreFlow && (
-				<PageCell
-					included
-					pageId={ MY_ACCOUNT_PAGE }
 					selectedPages={ selectedPages }
 					onClick={ onPageClick }
 				/>
@@ -307,11 +280,11 @@ function DIFMPagePicker( props: StepProps ) {
 	const dispatch = useDispatch();
 	const isStoreFlow = 'do-it-for-me-store' === flowName;
 	const [ isCheckoutPressed, setIsCheckoutPressed ] = useState( false );
-	const [ selectedPages, setSelectedPages ] = useState< string[] >( [
-		HOME_PAGE,
-		ABOUT_PAGE,
-		CONTACT_PAGE,
-	] );
+	const [ selectedPages, setSelectedPages ] = useState< string[] >(
+		isStoreFlow
+			? [ HOME_PAGE, SHOP_PAGE, ABOUT_PAGE, CONTACT_PAGE ]
+			: [ HOME_PAGE, ABOUT_PAGE, CONTACT_PAGE ]
+	);
 	const cartKey = useSelector( ( state ) => getSiteId( state, siteSlug ?? siteId ) );
 
 	const { replaceProductsInCart } = useShoppingCart( cartKey ?? undefined );
