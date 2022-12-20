@@ -8,5 +8,5 @@ import 'calypso/state/edge-cache/init';
  * @returns {string} 0 - disabled, 1 - enabled
  */
 export function getEdgeCacheActive( state, siteId ) {
-	return state.edgeCache?.[ siteId ]?.active ?? 0;
+	return state.edgeCache?.[ siteId ]?.active ?? null;
 }

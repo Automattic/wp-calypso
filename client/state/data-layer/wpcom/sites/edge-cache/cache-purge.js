@@ -13,6 +13,7 @@ const edgeCachePurge = ( action ) =>
 			method: 'POST',
 			path: `/sites/${ action.siteId }/edge-cache/purge`,
 			apiNamespace: 'wpcom/v2',
+			body: {},
 		},
 		action
 	);
