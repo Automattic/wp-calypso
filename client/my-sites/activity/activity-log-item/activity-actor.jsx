@@ -31,7 +31,7 @@ const SERVER_ACTOR = (
 	<div className="activity-log-item__actor">
 		<div class="server-actor-icon"></div>
 		<div className="activity-log-item__actor-info">
-			<div className="activity-log-item__actor-name">Server</div>
+			<div className="activity-log-item__actor-name">{ translate( 'Server' ) }</div>
 		</div>
 	</div>
 );
