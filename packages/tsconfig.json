@@ -30,7 +30,6 @@
 		{ "path": "./js-utils" },
 		{ "path": "./language-picker" },
 		{ "path": "./languages" },
-		{ "path": "./launch" },
 		{ "path": "./mini-cart" },
 		{ "path": "./onboarding" },
 		{ "path": "./page-pattern-modal" },
