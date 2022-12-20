@@ -24,6 +24,7 @@ import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -87,13 +88,14 @@ class ThemeShowcase extends Component {
 			},
 		};
 
+		this.subjectFilters = this.getSubjectFilters( props );
+		this.subjectTermTable = this.getSubjectTermTable( props );
+
 		this.tiers = [
 			{ value: 'all', label: props.translate( 'All' ) },
 			{ value: 'free', label: props.translate( 'Free' ) },
 			{ value: 'premium', label: props.translate( 'Premium' ) },
 		];
-
-		this.subjectTermTable = this.getSubjectTermTable( props );
 
 		this.state = {
 			tabFilter: this.getTabFilterFromUrl( props.filter ),
@@ -157,14 +159,18 @@ class ThemeShowcase extends Component {
 		}
 	}
 
-	getSubjectFilters = () => {
-		const { subjects } = this.props;
+	getSubjectFilters = ( props ) => {
+		const { subjects } = props;
 		return Object.fromEntries(
 			Object.entries( subjects ).map( ( [ key, filter ] ) => [ key, { key, text: filter.name } ] )
 		);
 	};
 
 	getTabFilters = () => {
+		if ( ! this.props.areSiteFeaturesLoaded ) {
+			return null;
+		}
+
 		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
 		const shouldShowMyThemesFilter =
 			( this.props.isJetpackSite && ! this.props.isAtomicSite ) ||
@@ -181,7 +187,7 @@ class ThemeShowcase extends Component {
 				MYTHEMES: this.staticFilters.MYTHEMES,
 			} ),
 			ALL: this.staticFilters.ALL,
-			...( isNewSearchAndFilter && this.getSubjectFilters() ),
+			...( isNewSearchAndFilter && this.subjectFilters ),
 		};
 	};
 
@@ -206,7 +212,7 @@ class ThemeShowcase extends Component {
 		}
 
 		const filterKey = matches[ matches.length - 1 ].split( ':' ).pop();
-		Object.values( this.getSubjectFilters() ).forEach( ( filter ) => {
+		Object.values( this.subjectFilters ).forEach( ( filter ) => {
 			if ( filter.key === filterKey ) {
 				tabFilter = filter;
 			}
@@ -550,7 +556,7 @@ class ThemeShowcase extends Component {
 							select={ this.onTierSelect }
 						/>
 					) }
-					{ isNewSearchAndFilter && (
+					{ isNewSearchAndFilter && tabFilters && (
 						<div className="theme__filters">
 							<ThemesToolbarGroup
 								items={ Object.values( tabFilters ) }
@@ -614,6 +620,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 		isLoggedIn: isUserLoggedIn( state ),
 		isAtomicSite: isAtomicSite( state, siteId ),
 		isExpertBannerDissmissed: isUpworkBannerDismissed( state ),
+		areSiteFeaturesLoaded: !! getSiteFeaturesById( state, siteId ),
 		siteCanInstallThemes: siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES ),
 		siteSlug: getSiteSlug( state, siteId ),
 		description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
