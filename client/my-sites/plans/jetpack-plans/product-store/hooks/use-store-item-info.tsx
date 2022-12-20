@@ -20,10 +20,12 @@ import { useIsUserPurchaseOwner } from 'calypso/state/purchases/utils';
 import {
 	getSitePlan,
 	getSiteProducts,
+	getSiteSlug,
 	isJetpackCloudCartEnabled,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
 import { EXTERNAL_PRODUCTS_LIST, ITEM_TYPE_PLAN } from '../../constants';
+import { buildCheckoutURL } from '../../get-purchase-url-callback';
 import productButtonLabel from '../../product-card/product-button-label';
 import { SelectorProduct } from '../../types';
 import { UseStoreItemInfoProps } from '../types';
@@ -59,6 +61,7 @@ export const useStoreItemInfo = ( {
 	const isMultisite = useSelector(
 		( state ) => !! ( siteId && isJetpackSiteMultiSite( state, siteId ) )
 	);
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
 	const isCurrentUserPurchaseOwner = useIsUserPurchaseOwner();
 	const translate = useTranslate();
@@ -174,8 +177,8 @@ export const useStoreItemInfo = ( {
 		( item: SelectorProduct ) => {
 			if ( getShouldShowCart( item ) ) {
 				if ( getIsProductInCart( item ) ) {
-					//open the cart
-					return createCheckoutURL?.( item, getIsUpgradeableToYearly( item ), getPurchase( item ) );
+					//navigate to checkout
+					return buildCheckoutURL( siteSlug || '', '' );
 				}
 				return '';
 			}
@@ -188,6 +191,7 @@ export const useStoreItemInfo = ( {
 			getIsUpgradeableToYearly,
 			getPurchase,
 			getIsProductInCart,
+			siteSlug,
 		]
 	);
 

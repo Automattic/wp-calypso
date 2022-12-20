@@ -12,6 +12,7 @@ import JetpackSaleBanner from 'calypso/jetpack-cloud/sections/pricing/sale-banne
 import MasterbarCartWrapper from 'calypso/layout/masterbar/masterbar-cart/masterbar-cart-wrapper';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { trailingslashit } from 'calypso/lib/route';
+import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { useShoppingCartTracker } from 'calypso/my-sites/plans/jetpack-plans/product-store/hooks/use-shopping-cart-tracker';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
@@ -56,7 +57,8 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		shoppingCartTracker( 'calypso_jetpack_shopping_cart_checkout_from_cart', {
 			addProducts: true,
 		} );
-		window.location.href = `https://wordpress.com/checkout/${ siteSlug }`;
+
+		window.location.href = buildCheckoutURL( siteSlug, '' );
 	};
 
 	const sections = useMemo(
