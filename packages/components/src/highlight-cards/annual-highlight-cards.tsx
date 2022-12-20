@@ -15,7 +15,6 @@ export type AnnualHighlightCardsProps = {
 	};
 	titleHref?: string | null;
 	year?: string | number | null;
-	navigation?: object | null;
 };
 
 export default function AnnualHighlightCards( {
