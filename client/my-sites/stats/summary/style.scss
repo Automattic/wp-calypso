@@ -1,9 +1,12 @@
 .stats-summary-view {
-	padding: 0 32px 0;
-	@media ( max-width: 660px ) {
-		padding: 0 0.875rem 0;
-	}
-	@media ( max-width: 480px ) {
-		padding: 0;
+	.highlight-cards-heading {
+		@media ( max-width: 1380px ) {
+			margin-left: 32px;
+			margin-right: 32px;
+		}
+		@media ( max-width: 660px ) {
+			margin-left: 0.875rem;
+			margin-right: 0.875rem;
+		}
 	}
 }
