@@ -78,7 +78,6 @@ RUN apt-get update \
 		fonts-noto-core \
 		git-restore-mtime \
 		libasound2 \
-		libatk-bridge2.0-0 \
 		libatspi2.0-0 \
 		libdbus-glib-1-2 \
 		libgtk-3-0 \
@@ -94,7 +93,8 @@ RUN apt-get update \
 		xvfb \
 	&& apt-get autoremove --purge \
 	&& apt-get autoclean \
-	&& rm -rf /var/lib/apt/lists/*
+	&& rm -rf /var/lib/apt/lists/* \
+	&& apt-get autoremove python* --purge -y
 
 ENTRYPOINT [ "/bin/bash" ]
 
