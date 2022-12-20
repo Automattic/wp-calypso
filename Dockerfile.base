@@ -49,9 +49,10 @@ RUN apt-get update \
 	&& chown $UID /calypso \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& apt-get autoremove --purge \
-	&& apt-get autoclean
+	&& apt-get autoclean \
 	# Set bash as the default shell
-	&& rm /bin/sh && ln -s /bin/bash /bin/sh
+	&& rm /bin/sh \
+	&& ln -s /bin/bash /bin/sh
 
 # Copy all other caches (webpack, babel, yarn...)
 COPY --from=cache --chown=$UID /calypso/.cache /calypso/.cache
