@@ -77,8 +77,6 @@ RUN apt-get update \
 		fonts-noto-cjk \
 		fonts-noto-core \
 		git-restore-mtime \
-		gtk2-engines-pixbuf \
-		libappindicator3-1 \
 		libasound2 \
 		libatk-bridge2.0-0 \
 		libatspi2.0-0 \
