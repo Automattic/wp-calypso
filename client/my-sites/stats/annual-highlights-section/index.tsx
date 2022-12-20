@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
-import YearNavigation from './yearNavigation';
+import YearNavigation from './year-navigation';
 
 type Insights = {
 	day?: string;

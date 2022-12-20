@@ -15,7 +15,7 @@ export type AnnualHighlightCardsProps = {
 	};
 	titleHref?: string | null;
 	year?: string | number | null;
-	navigation?: object | null;
+	navigation?: React.ReactNode;
 };
 
 export default function AnnualHighlightCards( {
@@ -46,7 +46,7 @@ export default function AnnualHighlightCards( {
 		<div className={ classNames( 'highlight-cards', className ?? null ) }>
 			<div className="highlight-year-navigation">
 				{ header }
-				{ navigation && navigation }
+				{ navigation }
 			</div>
 
 			<div className="highlight-cards-list">
