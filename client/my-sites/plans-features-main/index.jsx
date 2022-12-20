@@ -46,6 +46,7 @@ import Notice from 'calypso/components/notice';
 import { getTld } from 'calypso/lib/domains';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import PlanFeatures from 'calypso/my-sites/plan-features';
+import PlanFeatures2023Grid from 'calypso/my-sites/plan-features-2023-grid';
 import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
@@ -123,6 +124,50 @@ export class PlansFeaturesMain extends Component {
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
+
+		if ( isEnabled( 'onboarding/2023-pricing-grid' ) ) {
+			return (
+				<div
+					className={ classNames(
+						'plans-features-main__group',
+						'is-wpcom',
+						`is-customer-${ customerType }`,
+						{
+							'is-scrollable': plansWithScroll,
+						}
+					) }
+					data-e2e-plans="wpcom"
+				>
+					<PlanFeatures2023Grid
+						basePlansPath={ basePlansPath }
+						domainName={ domainName }
+						isInSignup={ isInSignup }
+						isLandingPage={ isLandingPage }
+						isLaunchPage={ isLaunchPage }
+						onUpgradeClick={ onUpgradeClick }
+						plans={ plans }
+						flowName={ flowName }
+						redirectTo={ redirectTo }
+						visiblePlans={ visiblePlans }
+						selectedFeature={ selectedFeature }
+						selectedPlan={ selectedPlan }
+						withDiscount={ withDiscount }
+						discountEndDate={ discountEndDate }
+						withScroll={ plansWithScroll }
+						popularPlanSpec={ getPopularPlanSpec( {
+							flowName,
+							customerType,
+							isJetpack,
+							availablePlans: visiblePlans,
+						} ) }
+						siteId={ siteId }
+						isReskinned={ isReskinned }
+						isFAQCondensedExperiment={ isFAQCondensedExperiment }
+						isPlansInsideStepper={ isPlansInsideStepper }
+					/>
+				</div>
+			);
+		}
 
 		return (
 			<div
