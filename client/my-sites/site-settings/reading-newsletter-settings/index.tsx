@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { ExcerptSetting } from './ExcerptSetting';
 import { FeaturedImageEmailSetting } from './FeaturedImageEmailSetting';
+import { WelcomeEmailTextSetting } from './WelcomeEmailTextSetting';
 
 type Fields = {
 	wpcom_featured_image_in_email?: boolean;
@@ -39,6 +40,13 @@ export const NewsletterSettingsSection = ( {
 				disabled={ disabled }
 				isSaving={ isSavingSettings }
 			/>
+			<Card className="site-settings__card">
+				<WelcomeEmailTextSetting
+					value={ false }
+					updateFields={ updateFields }
+					disabled={ disabled }
+				/>
+			</Card>
 			<Card className="site-settings__card">
 				<FeaturedImageEmailSetting
 					value={ wpcom_featured_image_in_email }
