@@ -192,10 +192,37 @@ describe( 'ShoppingCartManager', () => {
 		const manager = cartManagerClient.forCartKey( mainCartKey );
 		await manager.fetchInitialCart();
 		try {
+			// Create the error state by sending an action which will cause setCart
+			// to set an error.
 			await manager.actions.addProductsToCart( [ planOne ] );
 		} catch {
 			// This will reject because of the error, but that's expected.
 		}
+
+		// updateLocation with the same data should be a noop.
+		const p1 = manager.actions.updateLocation( { countryCode } );
+		const completeCart = await p1;
+		expect( p1 ).resolves.toEqual( completeCart );
+	} );
+
+	it( 'noop actions taken when the cart has a loading error are not rejected', async () => {
+		const errorMessage = 'test error message';
+		const countryCode = 'CA';
+		const mockGetCart = jest.fn().mockResolvedValue( {
+			...getEmptyResponseCart(),
+			tax: {
+				location: {
+					country_code: countryCode,
+				},
+			},
+		} as ResponseCart );
+		const mockSetCart = jest.fn().mockRejectedValue( new Error( errorMessage ) );
+		const cartManagerClient = createShoppingCartManagerClient( {
+			getCart: mockGetCart,
+			setCart: mockSetCart,
+		} );
+		const manager = cartManagerClient.forCartKey( mainCartKey );
+		await manager.fetchInitialCart();
 
 		// updateLocation with the same data should be a noop.
 		const p1 = manager.actions.updateLocation( { countryCode } );
