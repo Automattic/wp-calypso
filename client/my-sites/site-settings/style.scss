@@ -592,10 +592,19 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 	}
 }
 
-.site-settings__cloudflare,
-.site-settings__edge-cache {
+.site-settings__cloudflare {
 	display: flex;
 	flex-direction: row;
+	align-items: flex-start;
+}
+
+.site-settings__edge-cache {
+	margin-bottom: 16px;
+}
+
+.site-settings__edge-cache-content {
+	display: flex;
+	flex-direction: column;
 	align-items: flex-start;
 }
 

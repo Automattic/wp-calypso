@@ -1,7 +1,6 @@
-import { Button, Spinner } from '@automattic/components';
-import { Card, ToggleControl } from '@wordpress/components';
+import { Button, CompactCard, Spinner } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import { Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryEdgeCacheActive from 'calypso/components/data/query-site-edge-cache';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
@@ -34,7 +33,7 @@ const EdgeCacheSettings = ( {
 		}
 
 		return (
-			<div className="site-settings__edge-cache">
+			<div className="site-settings__edge-cache-content">
 				<ToggleControl
 					checked={ active }
 					disabled={ isUpdatingActive }
@@ -49,14 +48,17 @@ const EdgeCacheSettings = ( {
 	};
 
 	return (
-		<Fragment>
+		<div className="site-settings__edge-cache">
 			<QueryEdgeCacheActive siteId={ siteId } />
-			<SettingsSectionHeader title={ translate( 'Edge Cache' ) } />
-			<Card>
+			<SettingsSectionHeader
+				className="site-settings__edge-cache-title"
+				title={ translate( 'Edge Cache' ) }
+			/>
+			<CompactCard>
 				{ getContent() }
 				{ isGettingActive && <Spinner /> }
-			</Card>
-		</Fragment>
+			</CompactCard>
+		</div>
 	);
 };
 
