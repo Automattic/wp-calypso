@@ -46,6 +46,7 @@ class SiteSettingsPerformance extends Component {
 			siteIsUnlaunched,
 			siteSlug,
 			showCloudflare,
+			showEdgeCache,
 			submitForm,
 			translate,
 			trackEvent,
@@ -82,7 +83,7 @@ class SiteSettingsPerformance extends Component {
 				/>
 				<SiteSettingsNavigation site={ site } section="performance" />
 
-				{ isSimple && <EdgeCacheSettings /> }
+				{ showEdgeCache && isSimple && <EdgeCacheSettings /> }
 
 				<Search
 					handleAutosavingToggle={ handleAutosavingToggle }
@@ -170,6 +171,7 @@ const connectComponent = connect( ( state ) => {
 	const siteIsAtomic = isSiteAutomatedTransfer( state, siteId );
 	const siteIsAtomicPrivate = siteIsAtomic && isPrivateSite( state, siteId );
 	const showCloudflare = config.isEnabled( 'cloudflare' );
+	const showEdgeCache = config.isEnabled( 'edge-cache' );
 
 	return {
 		hasManagePluginsFeature: siteHasFeature( state, siteId, WPCOM_FEATURES_MANAGE_PLUGINS ),
@@ -180,6 +182,7 @@ const connectComponent = connect( ( state ) => {
 		siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 		showCloudflare,
+		showEdgeCache,
 	};
 } );
 

@@ -38,6 +38,7 @@
 		"difm/allow-extra-pages": false,
 		"fullstory": true,
 		"cookie-banner": false,
+		"edge-cache": true,
 		"google-my-business": false,
 		"help": true,
 		"importers/substack": true,
