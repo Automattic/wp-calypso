@@ -115,6 +115,7 @@ describe( 'Purchase Management Buttons', () => {
 			</ReduxProvider>
 		);
 		expect( await screen.findByText( /Cancel/ ) ).toBeInTheDocument();
+		expect( screen.queryByText( /Remove/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders a remove button when auto-renew is OFF', async () => {
@@ -159,5 +160,6 @@ describe( 'Purchase Management Buttons', () => {
 			</ReduxProvider>
 		);
 		expect( await screen.findByText( /Remove/ ) ).toBeInTheDocument();
+		expect( screen.queryByText( /Cancel/ ) ).not.toBeInTheDocument();
 	} );
 } );
