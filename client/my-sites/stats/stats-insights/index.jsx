@@ -26,7 +26,7 @@ import statsStrings from '../stats-strings';
 import StatsViews from '../stats-views';
 
 const StatsInsights = ( props ) => {
-	const { siteId, siteSlug, translate, isOdysseyStats, date } = props;
+	const { siteId, siteSlug, translate, isOdysseyStats } = props;
 	const moduleStrings = statsStrings();
 
 	const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
@@ -50,11 +50,7 @@ const StatsInsights = ( props ) => {
 					align="left"
 				/>
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
-				<AnnualHighlightsSection
-					siteId={ siteId }
-					queryDate={ date }
-					url={ `/stats/insights/${ siteSlug }` }
-				/>
+				<AnnualHighlightsSection siteId={ siteId } />
 				<AllTimelHighlightsSection siteId={ siteId } />
 				<div className="stats__module--insights-unified">
 					<PostingActivity />

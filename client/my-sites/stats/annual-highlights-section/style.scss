@@ -1,0 +1,14 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+
+.stats-year-navigation {
+	padding-right: 0;
+
+	.stats-period-navigation__previous,
+	.stats-period-navigation__next {
+		&:focus,
+		&:active {
+			outline: thin dotted;
+		}
+	}
+}
