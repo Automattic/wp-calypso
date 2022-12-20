@@ -86,8 +86,8 @@ const PlanFeaturesActionsButton = ( {
 
 const PlanFeatures2023GridActions = ( props ) => {
 	return (
-		<div className="plan-features-comparison__actions">
-			<div className="plan-features-comparison__actions-buttons">
+		<div className="plan-features-2023-gridrison__actions">
+			<div className="plan-features-2023-gridrison__actions-buttons">
 				<PlanFeaturesActionsButton { ...props } />
 			</div>
 		</div>
