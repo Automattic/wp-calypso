@@ -234,20 +234,6 @@
 		}
 	}
 
-	.server-actor-icon {
-		border-radius: 50%;
-		color: var(--color-text-inverted);
-		background-color: var(--color-neutral-40);
-		position: relative;
-		&::before {
-			content: "./";
-			position: absolute;
-			left: 50%;
-			top: 50%;
-			transform: translate(-50%, -50%);
-		}
-	}
-
 	.social-logo {
 		fill: var(--color-text-inverted);
 		background: var(--color-wordpress-org);
@@ -281,6 +267,12 @@
 				width: 18px;
 				height: 18px;
 			}
+		}
+	}
+
+	&.activity-log-item__server-actor {
+		.gridicon {
+			background-color: var(--color-neutral-40);
 		}
 	}
 }

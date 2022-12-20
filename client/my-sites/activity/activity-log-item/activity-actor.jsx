@@ -28,8 +28,8 @@ const HAPPINESS_ACTOR = (
 );
 
 const SERVER_ACTOR = (
-	<div className="activity-log-item__actor">
-		<div class="server-actor-icon"></div>
+	<div className="activity-log-item__actor activity-log-item__server-actor">
+		<ActivityActorIcon icon="cloud" />
 		<div className="activity-log-item__actor-info">
 			<div className="activity-log-item__actor-name">{ translate( 'Server' ) }</div>
 		</div>
