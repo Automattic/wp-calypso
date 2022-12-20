@@ -23,86 +23,85 @@ Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Au
 
 Calypso E2E requires the following:
 
-- [NodeJS 16.13](https://nodejs.org/en/blog/release/v16.17.0/) or higher
+- [NodeJS 16.17.0](https://nodejs.org/en/blog/release/v16.17.0/) or higher
 - [TypeScript 4.5](https://www.staging-typescript.org/docs/handbook/release-notes/typescript-4-5.html) or higher
-- [Playwright 1.24](https://playwright.dev/docs/release-notes#version-123) or higher
+- [Playwright 1.28](https://playwright.dev/docs/release-notes#version-128) or higher
 - [yarn 3.1](https://github.com/yarnpkg/berry) or higher
 
 ## Quick start
 
 1. install `homebrew`.
 
-```
+```bash
 mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew
 ```
 
 2. install `nvm`.
 
-```
+```bash
 brew install nvm
 ```
 
 3. install the required nodeJS version.
 
-```
+```bash
 nvm install <node_version>
 ```
 
 4. use the installed nodeJS version.
 
-```
+```bash
 nvm use <node_version>
 ```
 
-5. install `yarn`.
+5. enable `yarn` package manager.
 
-See [this guide](https://yarnpkg.com/getting-started/install).
-
-```
+```bash
 corepack enable
 ```
 
 6. clone this repository
 
-```
+```bash
 git clone https://github.com/Automattic/wp-calypso.git
 ```
 
 7. navigate to the cloned directory.
 
-```
+```bash
 cd wp-calypso
 ```
 
+_From this point on, all commands are executed within the `wp-calypso` root directory._
+
 8. install project dependencies.
 
-```
+```bash
 yarn install
 ```
 
-9. navigate to e2e directory.
+9. obtain the secrets decryption key.
 
-```
-cd test/e2e
+```bash
+export E2E_SECRETS_KEY='Calypso E2E Config decode key from the Automattic secret store>'
 ```
 
 10. [decrypt](docs/test_environment.md) the secrets file.
 
-```
-export E2E_SECRETS_KEY='Calypso E2E Config decode key from the Automattic secret store>'
-yarn decrypt-secrets
+```bash
+yarn workspace wp-e2e-tests decrypt-secrets
 ```
 
-11. transpile the `@automattic/calypso-e2e` package.
+11. transpile the packages.
 
-```
-yarn workspace @automattic/calypso-e2e build
+```bash
+yarn workspace wp-e2e-tests build --watch
 ```
 
 12. run test.
 
-```
-yarn jest specs/<group>/<spec_name>
+```bash
+yarn workspace wp-e2e-tests start -- <test_path>
 ```
 
 ## Advanced setup
@@ -115,4 +114,4 @@ Please refer to the [Writing Tests](docs/writing_tests.md) and [Style Guide](doc
 
 ## Troubleshooting
 
-Please refer to the [Troubleshooting](docs/troubleshooting.md) page.
+Please refer to the [Troubleshooting](docs/troubleshooting.md) page, or ask at [#kitkat](https://a8c.slack.com/archives/CQD1HH4MA).
