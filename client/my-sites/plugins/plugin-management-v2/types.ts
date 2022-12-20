@@ -23,7 +23,9 @@ export type Columns = Array< {
 	colSpan?: number;
 } >;
 
-export type PluginSite = { [ key: string ]: { ID: number; canUpdateFiles: boolean } };
+export type PluginSite = {
+	[ key: string ]: { ID: number; canUpdateFiles: boolean; update: any; version: any };
+};
 
 export interface Plugin {
 	id: string;
