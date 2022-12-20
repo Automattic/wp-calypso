@@ -16,8 +16,8 @@ describe( 'formatCurrency', () => {
 		const money2 = formatCurrency( 0, 'USD', { stripZeros: true } );
 		expect( money2 ).toBe( '$0' );
 
-		const money3 = formatCurrency( 0, 'EUR' );
-		expect( money3 ).toBe( '€0,00' );
+		const money3 = formatCurrency( 0, 'EUR', { locale: 'en-US' } );
+		expect( money3 ).toBe( '€0.00' );
 
 		const money4 = formatCurrency( 0, 'EUR', { stripZeros: true } );
 		expect( money4 ).toBe( '€0' );
@@ -60,16 +60,16 @@ describe( 'formatCurrency', () => {
 	} );
 
 	test( 'returns no trailing zero cents when stripZeros set to true (EUR)', () => {
-		const money = formatCurrency( 9800900, 'EUR', { precision: 2 } );
-		expect( money ).toBe( '€9.800.900,00' );
+		const money = formatCurrency( 9800900, 'EUR' );
+		expect( money ).toBe( '€9,800,900.00' );
 
 		// Trailing zero cents should be removed.
-		const money2 = formatCurrency( 9800900, 'EUR', { precision: 2, stripZeros: true } );
-		expect( money2 ).toBe( '€9.800.900' );
+		const money2 = formatCurrency( 9800900, 'EUR', { stripZeros: true } );
+		expect( money2 ).toBe( '€9.800,900' );
 
 		// It should not strip non-zero cents.
-		const money3 = formatCurrency( 9800900.32, 'EUR', { precision: 2, stripZeros: true } );
-		expect( money3 ).toBe( '€9.800.900,32' );
+		const money3 = formatCurrency( 9800900.32, 'EUR', { stripZeros: true } );
+		expect( money3 ).toBe( '€9,800,900.32' );
 	} );
 
 	describe( 'supported currencies', () => {
@@ -87,7 +87,11 @@ describe( 'formatCurrency', () => {
 		} );
 		test( 'EUR', () => {
 			const money = formatCurrency( 9800900.32, 'EUR' );
-			expect( money ).toBe( '€9.800.900,32' );
+			expect( money ).toBe( '€9,800,900.32' );
+		} );
+		test( 'EUR in FR locale', () => {
+			const money = formatCurrency( 9800900.32, 'EUR', { locale: 'fr-FR' } );
+			expect( money ).toBe( '9 800 900,32 €' );
 		} );
 		test( 'GBP', () => {
 			const money = formatCurrency( 9800900.32, 'GBP' );
