@@ -783,11 +783,9 @@ __metadata:
   dependencies:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    commander: ^5.1.0
-    debug: ^4.3.3
     plop: ^3.1.1
   bin:
-    wp-generate: cli.js
+    generate-calypso-package: cli.js
   languageName: unknown
   linkType: soft
 
