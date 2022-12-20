@@ -2,10 +2,12 @@
  * @jest-environment jsdom
  */
 
-import { render, fireEvent, screen } from '@testing-library/react';
+import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import { registerBlockType, unregisterBlockType } from '@wordpress/blocks';
 import * as React from 'react';
 import PagePatternModal from '../page-pattern-modal';
+
+jest.mock( '@wordpress/block-editor/build/components/block-preview', () => () => null );
 
 const noop = () => undefined;
 
@@ -46,6 +48,8 @@ beforeEach( () => {
 		title: 'test block',
 	} );
 
+	global.ResizeObserver = require( 'resize-observer-polyfill' );
+
 	Object.defineProperty( window, 'matchMedia', {
 		writable: true,
 		value: jest.fn().mockImplementation( ( query ) => ( {
@@ -67,7 +71,7 @@ afterEach( () => {
 } );
 
 describe( '<PagePatternModal>', () => {
-	it( 'sets the page title after selecting a layout', () => {
+	it( 'sets the page title after selecting a layout', async () => {
 		const insertPattern = jest.fn();
 		render(
 			<PagePatternModal
@@ -79,13 +83,18 @@ describe( '<PagePatternModal>', () => {
 				hideWelcomeGuide={ noop }
 			/>
 		);
+
 		// 1th button because the 0th is the mobile drop down menu
 		fireEvent.click( screen.getAllByText( 'Blog' )[ 1 ] );
-		fireEvent.click( screen.getByText( 'Descriptive Name One' ) );
+
+		await waitFor( () => {
+			fireEvent.click( screen.getByText( 'Descriptive Name One' ) );
+		} );
+
 		expect( insertPattern ).toHaveBeenCalledWith( 'Layout One', expect.anything() );
 	} );
 
-	it( "doesn't set the page title after selecting a home page layout", () => {
+	it( "doesn't set the page title after selecting a home page layout", async () => {
 		const insertPattern = jest.fn();
 		render(
 			<PagePatternModal
@@ -97,9 +106,14 @@ describe( '<PagePatternModal>', () => {
 				hideWelcomeGuide={ noop }
 			/>
 		);
+
 		// 1th button because the 0th is the mobile drop down menu
 		fireEvent.click( screen.getAllByText( 'Home' )[ 1 ] );
-		fireEvent.click( screen.getByText( 'Descriptive Name Two' ) );
+
+		await waitFor( () => {
+			fireEvent.click( screen.getByText( 'Descriptive Name Two' ) );
+		} );
+
 		expect( insertPattern ).toHaveBeenCalledWith( null, expect.anything() );
 	} );
 
@@ -115,7 +129,9 @@ describe( '<PagePatternModal>', () => {
 				hideWelcomeGuide={ noop }
 			/>
 		);
+
 		fireEvent.click( screen.getByText( 'Blank page' ) );
+
 		expect( insertPattern ).toHaveBeenCalledWith( '', expect.anything() );
 	} );
 } );
