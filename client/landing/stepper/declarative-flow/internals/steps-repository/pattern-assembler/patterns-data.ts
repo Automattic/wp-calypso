@@ -283,4 +283,12 @@ const useSectionPatterns = () => {
 	return sectionPatterns;
 };
 
-export { useHeaderPatterns, useFooterPatterns, useSectionPatterns };
+const useAllPatterns = () => {
+	const headerPatterns = useHeaderPatterns();
+	const sectionPatterns = useSectionPatterns();
+	const footerPatterns = useFooterPatterns();
+
+	return [ ...headerPatterns, ...sectionPatterns, ...footerPatterns ];
+};
+
+export { useHeaderPatterns, useFooterPatterns, useSectionPatterns, useAllPatterns };

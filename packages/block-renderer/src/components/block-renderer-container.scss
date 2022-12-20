@@ -1,0 +1,19 @@
+.block-renderer {
+	position: relative;
+	width: 100%;
+	overflow: hidden;
+
+	.scaled-block-renderer {
+		top: 0;
+		left: 0;
+		transform-origin: top left;
+		text-align: initial;
+		margin: 0;
+		overflow: visible;
+		min-height: auto;
+
+		iframe {
+			border: none;
+		}
+	}
+}

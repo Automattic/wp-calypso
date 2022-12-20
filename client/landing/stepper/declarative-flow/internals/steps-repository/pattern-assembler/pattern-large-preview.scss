@@ -9,6 +9,12 @@
 	z-index: 1;
 }
 
+.pattern-large-preview__patterns {
+	position: relative;
+	flex-grow: 1;
+	overflow: auto;
+}
+
 .pattern-large-preview__placeholder {
 	display: flex;
 	flex-direction: column;

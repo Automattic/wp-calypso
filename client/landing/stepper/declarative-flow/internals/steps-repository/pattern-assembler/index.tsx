@@ -1,3 +1,4 @@
+import { BlockRendererProvider, PatternsRendererProvider } from '@automattic/block-renderer';
 import { isEnabled } from '@automattic/calypso-config';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -15,6 +16,7 @@ import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
+import { useAllPatterns } from './patterns-data';
 import { encodePatternId, createCustomHomeTemplateContent } from './utils';
 import type { Step } from '../../types';
 import type { Pattern } from './types';
@@ -40,6 +42,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
+	const allPatterns = useAllPatterns();
 
 	useEffect( () => {
 		// Require to start the flow from the first step
@@ -357,6 +360,10 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 		</div>
 	);
 
+	if ( ! selectedDesign ) {
+		return null;
+	}
+
 	return (
 		<>
 			<DocumentHead title={ translate( 'Design your home' ) } />
@@ -368,7 +375,24 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 				isHorizontalLayout={ false }
 				isFullLayout={ true }
 				hideSkip={ true }
-				stepContent={ stepContent }
+				stepContent={
+					isEnabled( 'pattern-assembler/client-side-render' ) ? (
+						<BlockRendererProvider
+							siteId={ site?.ID }
+							stylesheet={ selectedDesign?.recipe?.stylesheet }
+						>
+							<PatternsRendererProvider
+								siteId={ site?.ID }
+								stylesheet={ selectedDesign?.recipe?.stylesheet }
+								patternIds={ allPatterns.map( ( pattern ) => encodePatternId( pattern.id ) ) }
+							>
+								{ stepContent }
+							</PatternsRendererProvider>
+						</BlockRendererProvider>
+					) : (
+						stepContent
+					)
+				}
 				recordTracksEvent={ recordTracksEvent }
 				stepSectionName={ showPatternSelectorType ? 'pattern-selector' : undefined }
 			/>

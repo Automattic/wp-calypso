@@ -35,6 +35,7 @@ const PatternSelector = ( {
 		patterns,
 		selectedPattern,
 		show,
+		activeClassName: 'pattern-selector__block-list--selected-pattern',
 		onSelect,
 	};
 

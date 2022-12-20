@@ -1,3 +1,4 @@
+import { PatternsRenderer } from '@automattic/block-renderer';
 import { DeviceSwitcher } from '@automattic/components';
 import { Icon, layout } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -25,8 +26,9 @@ const PatternLargePreview = ( { header, sections, footer }: Props ) => {
 	return (
 		<DeviceSwitcher className="pattern-large-preview" isShowDeviceSwitcherToolbar isShowFrameBorder>
 			{ patternIds.length > 0 ? (
-				// TODO: render patterns on client side
-				JSON.stringify( patternIds )
+				<div className="pattern-large-preview__patterns">
+					<PatternsRenderer patternIds={ patternIds } />
+				</div>
 			) : (
 				<div className="pattern-large-preview__placeholder">
 					<Icon className="pattern-large-preview__placeholder-icon" icon={ layout } size={ 72 } />
