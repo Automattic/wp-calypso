@@ -1216,7 +1216,8 @@
 	.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing {
 		.masterbar-cart-button__popover .mini-cart {
 			top: 0;
-			bottom: 0;
+			bottom: unset;
+			box-shadow: rgb(99 99 99 / 20%) 0 2px 8px 0;
 		}
 	}
 }

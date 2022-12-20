@@ -21,6 +21,7 @@ export type MasterbarCartButtonProps = {
 	forceShow?: boolean;
 	checkoutLabel?: string;
 	cartIcon?: React.ElementType;
+	emptyCart?: React.ElementType;
 };
 
 export function MasterbarCartButton( {
@@ -32,6 +33,7 @@ export function MasterbarCartButton( {
 	forceShow = false,
 	checkoutLabel,
 	cartIcon,
+	emptyCart,
 }: MasterbarCartButtonProps ) {
 	const { responseCart, reloadFromServer } = useShoppingCart(
 		selectedSiteId ? selectedSiteId : undefined
@@ -69,7 +71,6 @@ export function MasterbarCartButton( {
 	const tooltip = String( translate( 'My shopping cart' ) );
 
 	const CustomCartIcon = cartIcon as React.ElementType;
-
 	const cartCount = responseCart?.products?.length;
 	const icon = cartIcon ? (
 		<CustomCartIcon />
@@ -104,6 +105,7 @@ export function MasterbarCartButton( {
 						onRemoveProduct={ onRemoveProduct }
 						onRemoveCoupon={ onRemoveCoupon }
 						checkoutLabel={ checkoutLabel }
+						emptyCart={ emptyCart }
 					/>
 				</CheckoutErrorBoundary>
 			</Popover>
