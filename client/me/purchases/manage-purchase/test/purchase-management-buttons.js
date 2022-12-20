@@ -28,7 +28,7 @@ const purchase = {
 	product_type: 'bundle',
 	blog_created_date: '2022-11-21T05:50:39+00:00',
 	blogname: '',
-	domain: 'bahamashouse.wordpress.com',
+	domain: 'onecooltestsite.com',
 	description:
 		'<p>All the benefits of our Premium plan, plus the ability to: </p><ul><li>Try any one of our 200+ themes and change as often as you like, no extra charge.</li><li>Upload all the video and audio files you want with unlimited storage.</li><li>Chat live with a WordPress.com specialist Monday to Friday between 7am and 7pm Eastern time.</li></ul><p>See the <a href="http://store.wordpress.com/premium-upgrades/wordpress-business/">WordPress.com Business</a> page for more information.</p>',
 	attached_to_purchase_id: null,
@@ -80,10 +80,9 @@ describe( 'Purchase Management Buttons', () => {
 
 		const store = createReduxStore(
 			{
-				currentUser: { id: purchase.user_id },
+				currentUser: { id: Number( purchase.user_id ) },
 				happychat: { chat: { status: '' } },
 				plans: { items: [] },
-
 				purchases: {
 					data: [ { ...purchase, auto_renew: 1 } ],
 					hasLoadedUserPurchasesFromServer: true,
@@ -91,6 +90,7 @@ describe( 'Purchase Management Buttons', () => {
 				},
 				productsList: { items: {} },
 				sites: {
+					items: { 212628935: { ID: 212628935 } },
 					plans: {},
 					requesting: {},
 					domains: { requesting: {}, items: { [ purchase.site_id ]: {} } },
@@ -124,17 +124,17 @@ describe( 'Purchase Management Buttons', () => {
 
 		const store = createReduxStore(
 			{
-				currentUser: { id: purchase.user_id },
+				currentUser: { id: Number( purchase.user_id ) },
 				happychat: { chat: { status: '' } },
 				plans: { items: [] },
-
 				purchases: {
-					data: [ { ...purchase, auto_renew: 1 } ],
+					data: [ { ...purchase, auto_renew: 0 } ],
 					hasLoadedUserPurchasesFromServer: true,
 					hasLoadedSitePurchasesFromServer: true,
 				},
 				productsList: { items: {} },
 				sites: {
+					items: { 212628935: { ID: 212628935 } },
 					plans: {},
 					requesting: {},
 					domains: { requesting: {}, items: { [ purchase.site_id ]: {} } },
@@ -160,9 +160,4 @@ describe( 'Purchase Management Buttons', () => {
 		);
 		expect( await screen.findByText( /Remove/ ) ).toBeInTheDocument();
 	} );
-
-	// eslint-disable-next-line jest/no-commented-out-tests
-	// it.skip( 'renders a cancel button and does NOT render a remove button', () => {} );
-	// eslint-disable-next-line jest/no-commented-out-tests
-	// it.skip( 'renders a remove button and does NOT render a cancel button', () => {} );
 } );
