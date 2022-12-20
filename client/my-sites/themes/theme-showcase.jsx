@@ -58,6 +58,9 @@ const optionShape = PropTypes.shape( {
 	action: PropTypes.func,
 } );
 
+const findTabFilter = ( tabFilters, filterKey, defaultValue ) =>
+	Object.values( tabFilters ).find( ( filter ) => filter.key === filterKey ) || defaultValue;
+
 class ThemeShowcase extends Component {
 	constructor( props ) {
 		super( props );
@@ -206,19 +209,12 @@ class ThemeShowcase extends Component {
 			filterArray.includes( value )
 		);
 
-		let tabFilter = this.staticFilters.ALL;
 		if ( ! matches.length ) {
-			return tabFilter;
+			return findTabFilter( this.staticFilters, this.state?.tabFilter.key, this.staticFilters.ALL );
 		}
 
 		const filterKey = matches[ matches.length - 1 ].split( ':' ).pop();
-		Object.values( this.subjectFilters ).forEach( ( filter ) => {
-			if ( filter.key === filterKey ) {
-				tabFilter = filter;
-			}
-		} );
-
-		return tabFilter;
+		return findTabFilter( this.subjectFilters, filterKey, this.staticFilters.ALL );
 	};
 
 	scrollToSearchInput = () => {
@@ -318,7 +314,6 @@ class ThemeShowcase extends Component {
 
 		recordTracksEvent( 'calypso_themeshowcase_filter_category_click', { category: tabFilter.key } );
 		trackClick( 'section nav filter', tabFilter );
-		this.setState( { tabFilter } );
 
 		let callback = () => null;
 		// In this state: tabFilter = [ Recommended | ##All(1)## ]  tier = [ All(2) | Free | ##Premium## ]
@@ -343,10 +338,11 @@ class ThemeShowcase extends Component {
 				.filter( ( key ) => ! subjectFilters.includes( key ) )
 				.join( '+' );
 
-			const newFilter =
-				tabFilter.key !== this.staticFilters.ALL.key
-					? [ filterWithoutSubjects, subjectTerm ].join( '+' )
-					: filterWithoutSubjects;
+			const newFilter = ! [ this.staticFilters.ALL.key, this.staticFilters.MYTHEMES.key ].includes(
+				tabFilter.key
+			)
+				? [ filterWithoutSubjects, subjectTerm ].join( '+' )
+				: filterWithoutSubjects;
 
 			page( this.constructUrl( { filter: newFilter, searchString: search } ) );
 		}
