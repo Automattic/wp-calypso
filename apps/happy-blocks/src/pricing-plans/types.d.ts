@@ -1,7 +1,7 @@
 export interface BlockAttributes {
 	defaultProductSlug: string;
 	productSlug: string;
-	domain: string | boolean;
+	domain: string | false;
 	planTypeOptions: string[];
 }
 
@@ -19,7 +19,6 @@ export interface ApiPricingPlan {
 declare global {
 	interface Window {
 		A8C_HAPPY_BLOCKS_CONFIG: {
-			domain: string;
 			locale: string;
 			features: {
 				planTabs: boolean;

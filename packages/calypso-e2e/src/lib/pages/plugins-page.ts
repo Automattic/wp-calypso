@@ -77,12 +77,7 @@ export class PluginsPage {
 	 * @param {string} site Optional site URL.
 	 */
 	async visit( site = '' ): Promise< void > {
-		await this.page.goto( getCalypsoURL( `plugins/${ site }` ), {
-			waitUntil: 'networkidle',
-			// Manual override of the timeout - `networkidle` can take longer
-			// to fire, especially for Simple sites.
-			timeout: 20 * 1000,
-		} );
+		await this.page.goto( getCalypsoURL( `plugins/${ site }` ) );
 	}
 
 	/**
