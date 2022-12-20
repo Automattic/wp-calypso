@@ -42,7 +42,7 @@ body.app-banner-is-visible {
 .app-banner__circle {
 	position: absolute;
 	border: 2px solid;
-	border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	border-radius: 50%;
 	z-index: z-index("root", ".app-banner__circle");
 
 	&.is-blue {
