@@ -17,7 +17,6 @@ import Notice from 'calypso/components/notice';
 import DeleteSiteWarningDialog from 'calypso/my-sites/site-settings/delete-site-warning-dialog';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { deleteSite } from 'calypso/state/sites/actions';
 import { getSite, getSiteDomain } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
@@ -121,7 +120,7 @@ class DeleteSite extends Component {
 	};
 
 	render() {
-		const { isAtomic, siteDomain, siteId, siteSlug, translate } = this.props;
+		const { siteDomain, siteId, siteSlug, translate } = this.props;
 		const exportLink = '/export/' + siteSlug;
 		const deleteDisabled =
 			typeof this.state.confirmDomain !== 'string' ||
@@ -257,68 +256,43 @@ class DeleteSite extends Component {
 								</li>
 							</ul>
 						</ActionPanelFigure>
-						{ ! isAtomic && (
-							<div>
-								<p>
-									{ translate(
-										'Deletion {{strong}}can not{{/strong}} be undone, ' +
-											'and will remove all content, contributors, domains, themes and upgrades from this site.',
-										{
-											components: {
-												strong: <strong />,
-											},
-										}
-									) }
-								</p>
-								<p>
-									{ translate(
-										"If you're unsure about what deletion means or have any other questions, " +
-											'please chat with someone from our support team before proceeding.'
-									) }
-								</p>
-								<p>
-									<a
-										className="delete-site__body-text-link action-panel__body-text-link"
-										href="/help/contact"
-									>
-										{ strings.contactSupport }
-									</a>
-								</p>
-							</div>
-						) }
-						{ isAtomic && (
-							<div>
-								<p>
-									{ translate(
-										"To delete this site, you'll need to contact our support team. Deletion can not be undone, " +
-											'and will remove all content, contributors, domains, themes and upgrades from this site.'
-									) }
-								</p>
-								<p>
-									{ translate(
-										"If you're unsure about what deletion means or have any other questions, " +
-											"you'll have a chance to chat with someone from our support team before anything happens."
-									) }
-								</p>
-							</div>
-						) }
+						<div>
+							<p>
+								{ translate(
+									'Deletion {{strong}}can not{{/strong}} be undone, ' +
+										'and will remove all content, contributors, domains, themes and upgrades from this site.',
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+								) }
+							</p>
+							<p>
+								{ translate(
+									"If you're unsure about what deletion means or have any other questions, " +
+										'please chat with someone from our support team before proceeding.'
+								) }
+							</p>
+							<p>
+								<a
+									className="delete-site__body-text-link action-panel__body-text-link"
+									href="/help/contact"
+								>
+									{ strings.contactSupport }
+								</a>
+							</p>
+						</div>
 					</ActionPanelBody>
 					<ActionPanelFooter>
-						{ ! isAtomic && (
-							<Button
-								scary
-								disabled={ ! siteId || ! this.props.hasLoadedSitePurchasesFromServer }
-								onClick={ this.handleDeleteSiteClick }
-							>
-								<Gridicon icon="trash" />
-								{ strings.deleteSite }
-							</Button>
-						) }
-						{ isAtomic && (
-							<Button primary href="/help/contact">
-								{ strings.contactSupport }
-							</Button>
-						) }
+						<Button
+							scary
+							disabled={ ! siteId || ! this.props.hasLoadedSitePurchasesFromServer }
+							onClick={ this.handleDeleteSiteClick }
+						>
+							<Gridicon icon="trash" />
+							{ strings.deleteSite }
+						</Button>
 					</ActionPanelFooter>
 					<DeleteSiteWarningDialog
 						isVisible={ this.state.showWarningDialog }
@@ -367,7 +341,6 @@ export default connect(
 		const siteSlug = getSelectedSiteSlug( state );
 		return {
 			hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
-			isAtomic: isSiteAutomatedTransfer( state, siteId ),
 			siteDomain,
 			siteId,
 			siteSlug,
