@@ -266,7 +266,7 @@ body.is-section-themes-i4-2 {
 	min-height: 100vh;
 
 	@include breakpoint-deprecated( "<660px" ) {
-		margin: 0 16px;
+		margin: 16px 16px 0;
 	}
 }
 

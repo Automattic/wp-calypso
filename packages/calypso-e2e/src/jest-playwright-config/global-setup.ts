@@ -7,6 +7,12 @@ import pwConfig from './playwright-config';
 export default async (): Promise< void > => {
 	const { AUTHENTICATE_ACCOUNTS } = envVariables;
 
+	// If PWDEBUG mode is enabled (stepping through each step)
+	// don't execute the cookie refresh.
+	if ( process.env.PWDEBUG ) {
+		return;
+	}
+
 	if ( AUTHENTICATE_ACCOUNTS.length > 0 ) {
 		const browser = await chromium.launch( {
 			...pwConfig.launchOptions,
@@ -21,6 +27,7 @@ export default async (): Promise< void > => {
 				}
 
 				const page = await browser.newPage( pwConfig.contextOptions );
+				page.setDefaultTimeout( envVariables.TIMEOUT );
 
 				await testAccount.logInViaLoginPage( page );
 				await testAccount.saveAuthCookies( page.context() );
