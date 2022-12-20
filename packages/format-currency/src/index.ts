@@ -8,6 +8,23 @@ export { CURRENCIES } from './currencies';
 
 export * from './types';
 
+function getLocaleFromBrowser() {
+	if ( typeof window === 'undefined' ) {
+		return 'en';
+	}
+	return window.navigator?.languages?.length > 0
+		? window.navigator.languages[ 0 ]
+		: window.navigator?.language ?? 'en';
+}
+
+function getPrecisionForLocaleAndCurrency( locale: string, currency: string ): number {
+	const defaultFormatter = new Intl.NumberFormat( locale, {
+		style: 'currency',
+		currency,
+	} );
+	return defaultFormatter.resolvedOptions().maximumFractionDigits;
+}
+
 /**
  * Formats money with a given currency code.
  *
@@ -46,22 +63,22 @@ export function formatCurrency(
 	code: string,
 	options: FormatCurrencyOptions = {}
 ): string | null {
-	if ( ! doesCurrencyExist( code ) ) {
-		// eslint-disable-next-line no-console
-		console.warn( `formatCurrency was called with an unknown currency "${ code }"` );
-	}
-	const currencyDefaults = getCurrencyDefaults( code );
 	if ( isNaN( number ) ) {
 		// eslint-disable-next-line no-console
 		console.warn( 'formatCurrency was called with NaN' );
 		number = 0;
 	}
-	const { decimal, grouping, precision, symbol, isSmallestUnit } = {
-		...currencyDefaults,
-		...options,
-	};
-	const sign = number < 0 ? '-' : '';
-	if ( isSmallestUnit ) {
+
+	let precision;
+	try {
+		precision = getPrecisionForLocaleAndCurrency( getLocaleFromBrowser(), code );
+	} catch {
+		// The above may throw if the currency is unknown, in which case we want to
+		// default to USD.
+		return formatCurrency( number, 'USD', options );
+	}
+
+	if ( options.isSmallestUnit ) {
 		if ( ! Number.isInteger( number ) ) {
 			// eslint-disable-next-line no-console
 			console.warn(
@@ -72,13 +89,15 @@ export function formatCurrency(
 		}
 		number = convertPriceForSmallestUnit( number, precision );
 	}
-	let value = numberFormat( Math.abs( number ), precision, decimal, grouping );
 
-	if ( options.stripZeros ) {
-		value = stripZeros( value, decimal );
-	}
-
-	return `${ sign }${ symbol }${ value }`;
+	const formatter = new Intl.NumberFormat( getLocaleFromBrowser(), {
+		style: 'currency',
+		currency: code,
+		// There's an option called `trailingZeroDisplay` but it does not yet work
+		// in FF so we have to strip zeros manually.
+		...( Number.isInteger( number ) && options.stripZeros ? { maximumFractionDigits: 0 } : {} ),
+	} );
+	return formatter.format( number );
 }
 
 /**
@@ -158,19 +177,6 @@ export function getCurrencyObject(
 		integer,
 		fraction,
 	};
-}
-
-/**
- * Remove trailing zero cents
- *
- * @param {string}  number  formatted number
- * @param {string}  decimal decimal symbol
- * @returns {string}
- */
-
-function stripZeros( number: string, decimal: string ): string {
-	const regex = new RegExp( `\\${ decimal }0+$` );
-	return number.replace( regex, '' );
 }
 
 function convertPriceForSmallestUnit( price: number, precision: number ): number {
