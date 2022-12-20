@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 
 $icon-size: 80px;
-$icon-border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+$icon-border-radius: 50%;
 
 .site-icon-with-picker__background {
 	min-width: calc(100vw - 16px);

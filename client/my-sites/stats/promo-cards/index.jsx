@@ -11,18 +11,17 @@ import './style.scss';
 const EVENT_YOAST_PROMO_VIEW = 'calypso_stats_wordpress_seo_premium_banner_view';
 const EVENT_MOBILE_PROMO_VIEW = 'calypso_stats_traffic_mobile_cta_jetpack_view';
 
-export default function MobilePromoCardWrapper( { isJetpack, isOdysseyStats, slug } ) {
+export default function PromoCards( { isJetpack, isOdysseyStats, slug } ) {
 	// Yoast promo is disabled for Odyssey & self-hosted.
 	// Mobile apps promos are always shown.
 	const showYoastPromo = ! isOdysseyStats && ! isJetpack;
-	const showBothPromoCards = showYoastPromo;
 	// Handle initial view event if not using the DotPager UI.
 	// We don't worry about the Yoast card as it sends on mount.
 	useEffect( () => {
-		if ( ! showBothPromoCards ) {
+		if ( ! showYoastPromo ) {
 			recordTracksEvent( EVENT_MOBILE_PROMO_VIEW );
 		}
-	}, [ showBothPromoCards ] );
+	}, [ showYoastPromo ] );
 	// Handle click events from promo card.
 	const promoCardDidReceiveClick = ( event ) => {
 		// Events need to incorporate the page and the click type.
@@ -39,44 +38,34 @@ export default function MobilePromoCardWrapper( { isJetpack, isOdysseyStats, slu
 	};
 	// Render one or both promo cards.
 	return (
-		<>
-			{ ! showBothPromoCards && (
-				<div className="stats__promo-container">
-					<div className="stats__promo-card">
+		<div className="stats__promo-container">
+			<div className="stats__promo-card">
+				{ showYoastPromo ? (
+					<DotPager className="stats__promo-pager" onPageSelected={ pagerDidSelectPage }>
+						<PromoCardBlock
+							productSlug="wordpress-seo-premium"
+							impressionEvent={ EVENT_YOAST_PROMO_VIEW }
+							clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
+							headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
+							contentText={ translate(
+								'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
+							) }
+							ctaText={ translate( 'Learn more' ) }
+							image={ wordpressSeoIllustration }
+							href={ `/plugins/wordpress-seo-premium/${ slug }` }
+						/>
 						<MobilePromoCard
 							className="stats__promo-card-apps"
 							clickHandler={ promoCardDidReceiveClick }
 						/>
-					</div>
-				</div>
-			) }
-			{ showBothPromoCards && (
-				<div className="stats__promo-container">
-					<div className="stats__promo-card">
-						<DotPager className="stats__promo-pager" onPageSelected={ pagerDidSelectPage }>
-							<PromoCardBlock
-								productSlug="wordpress-seo-premium"
-								impressionEvent={ EVENT_YOAST_PROMO_VIEW }
-								clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
-								headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
-								contentText={ translate(
-									'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
-								) }
-								ctaText={ translate( 'Learn more' ) }
-								image={ wordpressSeoIllustration }
-								href={ `/plugins/wordpress-seo-premium/${ slug }` }
-							/>
-
-							<div>
-								<MobilePromoCard
-									className="stats__promo-card-apps"
-									clickHandler={ promoCardDidReceiveClick }
-								/>
-							</div>
-						</DotPager>
-					</div>
-				</div>
-			) }
-		</>
+					</DotPager>
+				) : (
+					<MobilePromoCard
+						className="stats__promo-card-apps"
+						clickHandler={ promoCardDidReceiveClick }
+					/>
+				) }
+			</div>
+		</div>
 	);
 }

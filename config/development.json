@@ -148,7 +148,6 @@
 		"security/security-checkup": true,
 		"seller-experience": true,
 		"server-side-rendering": true,
-		"settings/featured-image-template-toggle": true,
 		"settings/modernize-reading-settings": true,
 		"settings/security/monitor": true,
 		"sign-in-with-apple": true,
@@ -183,6 +182,7 @@
 		"upsell/concierge-session": true,
 		"woop": false,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": false
+		"wpcom-user-bootstrap": false,
+		"newsletter/stats": false
 	}
 }

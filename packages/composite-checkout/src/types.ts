@@ -120,6 +120,7 @@ export interface CheckoutProviderProps {
 	paymentProcessors: PaymentProcessorProp;
 	isValidating?: boolean;
 	initiallySelectedPaymentMethodId?: string | null;
+	selectFirstAvailablePaymentMethod?: boolean;
 	children: React.ReactNode;
 }
 

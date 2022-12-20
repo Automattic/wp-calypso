@@ -95,7 +95,6 @@
 		"security/security-checkup": true,
 		"seller-experience": true,
 		"server-side-rendering": true,
-		"settings/featured-image-template-toggle": false,
 		"settings/modernize-reading-settings": true,
 		"settings/security/monitor": true,
 		"sign-in-with-apple": false,
@@ -128,7 +127,8 @@
 		"use-translation-chunks": true,
 		"woop": false,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": true
+		"wpcom-user-bootstrap": true,
+		"newsletter/stats": false
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

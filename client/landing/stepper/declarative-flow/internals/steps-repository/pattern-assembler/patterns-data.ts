@@ -76,7 +76,6 @@ const useFooterPatterns = () => {
 	const footer = translate( 'Footer' );
 
 	// All footers in dotcompatterns
-	// Missing footers in dotcomfsepatterns
 	const footerPatterns: Pattern[] = [
 		{
 			id: 5316,
@@ -131,6 +130,36 @@ const useFooterPatterns = () => {
 		{
 			id: 5880,
 			name: 'Footer with background color and three columns',
+			category: footer,
+		},
+		{
+			id: 8666,
+			name: 'Left-aligned minimal footer',
+			category: footer,
+		},
+		{
+			id: 8662,
+			name: 'Center-aligned minimal footer',
+			category: footer,
+		},
+		{
+			id: 8654,
+			name: 'Three columns with address and open times',
+			category: footer,
+		},
+		{
+			id: 8659,
+			name: 'Center-aligned minimal footer with dark background',
+			category: footer,
+		},
+		{
+			id: 8656,
+			name: 'Center-aligned minimal footer with dark background and social icons',
+			category: footer,
+		},
+		{
+			id: 8650,
+			name: 'Three columns with contact info and social icons',
 			category: footer,
 		},
 	];
