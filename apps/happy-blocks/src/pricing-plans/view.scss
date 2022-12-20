@@ -80,6 +80,8 @@ $brand-display: "SF Pro Display", $sans;
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 6px;
 		padding: 4px;
+		width: min-content;
+		margin-bottom: 16px;
 
 		&-label {
 			background: $studio-gray-0;
