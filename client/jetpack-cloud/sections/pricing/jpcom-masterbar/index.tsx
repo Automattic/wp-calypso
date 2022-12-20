@@ -2,7 +2,6 @@ import { Gridicon } from '@automattic/components';
 import { useLocale, localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback, useMemo } from 'react';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
@@ -13,6 +12,7 @@ import JetpackSaleBanner from 'calypso/jetpack-cloud/sections/pricing/sale-banne
 import MasterbarCartWrapper from 'calypso/layout/masterbar/masterbar-cart/masterbar-cart-wrapper';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { trailingslashit } from 'calypso/lib/route';
+import { useShoppingCartTracker } from 'calypso/my-sites/plans/jetpack-plans/product-store/hooks/use-shopping-cart-tracker';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 import { getSiteSlug, isJetpackCloudCartEnabled } from 'calypso/state/sites/selectors';
@@ -31,10 +31,6 @@ type Props = {
 	pathname?: string;
 };
 
-const goToCheckout = ( siteSlug: string ) => {
-	page( `https://wordpress.com/checkout/${ siteSlug }` );
-};
-
 /**
  * WARNING: this component is a reflection of the Jetpack.com header, whose markup is located here:
  * https://opengrok.a8c.com/source/xref/a8c/jetpackme-new/parts/shared/header.php
@@ -47,6 +43,22 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 	const jetpackSaleCoupon = useSelector( getJetpackSaleCoupon );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const user = useSelector( getCurrentUser );
+
+	const shoppingCartTracker = useShoppingCartTracker();
+
+	const onRemoveProductFromCart = ( productSlug: string ) => {
+		shoppingCartTracker( 'calypso_jetpack_shopping_cart_remove_product', {
+			productSlug,
+		} );
+	};
+
+	const goToCheckout = ( siteSlug: string ) => {
+		shoppingCartTracker( 'calypso_jetpack_shopping_cart_checkout_from_cart', {
+			addProducts: true,
+		} );
+		window.location.href = `https://wordpress.com/checkout/${ siteSlug }`;
+	};
+
 	const sections = useMemo(
 		() => [
 			{
@@ -262,6 +274,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 							{ shouldShowCart && (
 								<MasterbarCartWrapper
 									goToCheckout={ goToCheckout }
+									onRemoveProduct={ onRemoveProductFromCart }
 									selectedSiteSlug={ siteSlug || undefined }
 									selectedSiteId={ siteId || undefined }
 									forceShow
