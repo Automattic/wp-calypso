@@ -167,7 +167,7 @@ class ThemeShowcase extends Component {
 	};
 
 	getTabFilters = () => {
-		if ( ! this.props.areSiteFeaturesLoaded ) {
+		if ( this.props.siteId && ! this.props.areSiteFeaturesLoaded ) {
 			return null;
 		}
 
