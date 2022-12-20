@@ -14,15 +14,28 @@ const isWithinAvailableChatDays = ( currentTime: Date ) => {
 	return utcWeekDay !== SUNDAY && utcWeekDay !== SATURDAY;
 };
 
+const isWithinShutdownDates = ( currentTime: Date ) => {
+	const startTime = new Date( Date.UTC( 2022, 12, 23 ) ); // Thu Dec 22 2022 19:00:00 (7:00pm) GMT-0500 (Eastern Standard Time)
+	const endTime = new Date( Date.UTC( 2023, 0, 3 ) ); // Mon Jan 02 2023 19:00:00 (7:00pm) GMT-0500 (Eastern Standard Time)
+	const currentDateUTC = new Date( currentTime.toUTCString() );
+	if ( currentDateUTC > startTime && currentDateUTC < endTime ) {
+		return true;
+	}
+	return false;
+};
+
 export const ZendeskPreSalesChat: React.VFC = () => {
 	const zendeskChatKey = config( 'zendesk_presales_chat_key' ) as keyof ConfigData;
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const shouldShowZendeskPresalesChat = useMemo( () => {
+		const currentTime = new Date();
+		if ( isWithinShutdownDates( currentTime ) ) {
+			return false;
+		}
 		const isEnglishLocale = ( config( 'english_locales' ) as string[] ).includes(
 			getLocaleSlug() ?? ''
 		);
-		const currentTime = new Date();
 
 		return config.isEnabled( 'jetpack/zendesk-chat-for-logged-in-users' )
 			? isEnglishLocale && isJetpackCloud() && isWithinAvailableChatDays( currentTime )
