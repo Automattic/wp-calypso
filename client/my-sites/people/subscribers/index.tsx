@@ -76,7 +76,9 @@ function Subscribers( props: Props ) {
 							{ _( 'Add subscribers' ) }
 						</Button>
 						<EllipsisMenu compact position="bottom">
-							<PopoverMenuItem href={ downloadCsvLink }>{ _( 'Download as CSV' ) }</PopoverMenuItem>
+							<PopoverMenuItem href={ downloadCsvLink }>
+								{ _( 'Download email subscribers as CSV' ) }
+							</PopoverMenuItem>
 						</EllipsisMenu>
 					</PeopleListSectionHeader>
 					<Card className="people-subscribers-list">
