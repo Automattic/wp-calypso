@@ -5,13 +5,16 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormTextarea from 'calypso/components/forms/form-textarea';
 
 type WelcomeEmailTextSettingProps = {
-	value?: boolean;
+	value?: {
+		invitation: string;
+		comment_follow: string;
+	};
 	disabled?: boolean;
 	updateFields?: ( fields: { [ key: string ]: unknown } ) => void;
 };
 
 export const WelcomeEmailTextSetting = ( {
-	value = false,
+	value,
 	disabled,
 	updateFields,
 }: WelcomeEmailTextSettingProps ) => {
@@ -19,11 +22,10 @@ export const WelcomeEmailTextSetting = ( {
 	return (
 		<FormFieldset>
 			<FormLabel>Welcome email text</FormLabel>
-			{ value } { disabled }
 			<FormTextarea
 				name=""
 				id=""
-				value={ value }
+				value={ value?.invitation }
 				onChange={ updateFields }
 				disabled={ disabled }
 				autoCapitalize="none"

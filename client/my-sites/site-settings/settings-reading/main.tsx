@@ -18,6 +18,10 @@ type Settings = {
 	posts_per_rss?: boolean;
 	wpcom_featured_image_in_email?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
+	subscription_options: {
+		invitation: string;
+		comment_follow: string;
+	};
 };
 
 const getFormSettings = ( settings: Settings ) => {
@@ -30,6 +34,7 @@ const getFormSettings = ( settings: Settings ) => {
 		posts_per_rss,
 		wpcom_featured_image_in_email,
 		wpcom_subscription_emails_use_excerpt,
+		subscription_options,
 	} = settings;
 
 	return {
@@ -37,6 +42,7 @@ const getFormSettings = ( settings: Settings ) => {
 		...( posts_per_rss && { posts_per_rss } ),
 		...( wpcom_featured_image_in_email && { wpcom_featured_image_in_email } ),
 		...( wpcom_subscription_emails_use_excerpt && { wpcom_subscription_emails_use_excerpt } ),
+		...( subscription_options && { subscription_options } ),
 	};
 };
 
@@ -53,6 +59,10 @@ type Fields = {
 	posts_per_rss?: number;
 	wpcom_featured_image_in_email?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
+	subscription_settings?: {
+		invitation: string;
+		comment_follow: string;
+	};
 };
 
 type ReadingSettingsFormProps = {
