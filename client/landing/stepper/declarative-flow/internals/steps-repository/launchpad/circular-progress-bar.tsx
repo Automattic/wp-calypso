@@ -11,7 +11,7 @@ const CircularProgressBar = ( {
 	const FULL_ARC = 2 * Math.PI * RADIUS;
 
 	return (
-		<div className="launchpad__progress" style={ { width: SIZE, height: SIZE } }>
+		<div role="progressbar" className="launchpad__progress" style={ { width: SIZE, height: SIZE } }>
 			<svg
 				viewBox={ `0 0 ${ SIZE } ${ SIZE }` }
 				style={ { width: SIZE, height: SIZE } }
