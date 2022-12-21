@@ -65,6 +65,9 @@ class ThemeShowcase extends Component {
 		this.bookmarkRef = createRef();
 
 		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
+
+		// As the values of these filter is static and won't be changed, we use it to check a filter
+		// is a static filter directly in the `isStaticFilter` function.
 		this.staticFilters = {
 			RECOMMENDED: {
 				key: 'recommended',
@@ -159,6 +162,8 @@ class ThemeShowcase extends Component {
 		}
 	}
 
+	isStaticFilter = ( tabFilter ) => Object.values( this.staticFilters ).includes( tabFilter );
+
 	getSubjectFilters = ( props ) => {
 		const { subjects } = props;
 		return Object.fromEntries(
@@ -200,25 +205,22 @@ class ThemeShowcase extends Component {
 			}, {} );
 	};
 
+	findTabFilter = ( tabFilters, filterKey ) =>
+		Object.values( tabFilters ).find( ( filter ) => filter.key === filterKey ) ||
+		this.staticFilters.ALL;
+
 	getTabFilterFromUrl = ( filterString = '' ) => {
 		const filterArray = filterString.split( '+' );
 		const matches = Object.values( this.subjectTermTable ).filter( ( value ) =>
 			filterArray.includes( value )
 		);
 
-		let tabFilter = this.staticFilters.ALL;
 		if ( ! matches.length ) {
-			return tabFilter;
+			return this.findTabFilter( this.staticFilters, this.state?.tabFilter.key );
 		}
 
 		const filterKey = matches[ matches.length - 1 ].split( ':' ).pop();
-		Object.values( this.subjectFilters ).forEach( ( filter ) => {
-			if ( filter.key === filterKey ) {
-				tabFilter = filter;
-			}
-		} );
-
-		return tabFilter;
+		return this.findTabFilter( this.subjectFilters, filterKey );
 	};
 
 	scrollToSearchInput = () => {
@@ -318,7 +320,6 @@ class ThemeShowcase extends Component {
 
 		recordTracksEvent( 'calypso_themeshowcase_filter_category_click', { category: tabFilter.key } );
 		trackClick( 'section nav filter', tabFilter );
-		this.setState( { tabFilter } );
 
 		let callback = () => null;
 		// In this state: tabFilter = [ Recommended | ##All(1)## ]  tier = [ All(2) | Free | ##Premium## ]
@@ -343,10 +344,9 @@ class ThemeShowcase extends Component {
 				.filter( ( key ) => ! subjectFilters.includes( key ) )
 				.join( '+' );
 
-			const newFilter =
-				tabFilter.key !== this.staticFilters.ALL.key
-					? [ filterWithoutSubjects, subjectTerm ].join( '+' )
-					: filterWithoutSubjects;
+			const newFilter = ! this.isStaticFilter( tabFilter )
+				? [ filterWithoutSubjects, subjectTerm ].join( '+' )
+				: filterWithoutSubjects;
 
 			page( this.constructUrl( { filter: newFilter, searchString: search } ) );
 		}
