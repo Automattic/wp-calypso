@@ -18,9 +18,9 @@ ENV HOME=/calypso
 
 COPY . .
 
-RUN yarn \
+# RUN yarn \
 	# Prime webpack caches, including sourcemaps.
-	&& NODE_ENV=production SOURCEMAP=hidden-source-map yarn build-client
+	# && NODE_ENV=production SOURCEMAP=hidden-source-map yarn build-client
 
 ENTRYPOINT [ "/bin/bash" ]
 
@@ -47,9 +47,10 @@ RUN apt-get update \
 	&& echo "$user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$user \
 	&& chmod 0440 /etc/sudoers.d/$user \
 	&& chown $UID /calypso \
-	&& rm -rf /var/lib/apt/lists/* \
+	# Remove unnecessary packages
 	&& apt-get autoremove --purge \
 	&& apt-get autoclean \
+	&& rm -rf /var/lib/apt/lists/* \
 	# Set bash as the default shell
 	&& rm /bin/sh \
 	&& ln -s /bin/bash /bin/sh
