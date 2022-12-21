@@ -167,9 +167,9 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 							{ translate( 'Receive email notifications with one or more recipients.' ) }
 						</div>
 						{
-							// We are using CSS to hide/show mobile/large screen view instead of breakpoint hook since the useMobileBreakpont
-							// hook returns true only when the width is > 480px and we have some styles applied using the CSS breakpoint where
-							// @include break-mobile is true for width > 479px
+							// We are using CSS to hide/show add email content on mobile/large screen view instead of the breakpoint
+							// hook since the 'useMobileBreakpont' hook returns true only when the width is > 480px, and we have some
+							// styles applied using the CSS breakpoint where '@include break-mobile' is true for width > 479px
 						 }
 						<div className="notification-settings__large-screen">{ addEmailsContent }</div>
 					</div>
