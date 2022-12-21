@@ -81,10 +81,10 @@ RUN apt-get update \
 		libatspi2.0-0 \
 		libdbus-glib-1-2 \
 		libgtk-3-0 \
-		libgbm-dev \
+		libgbm \
 		libnspr4 \
 		libnss3 \
-		libsecret-1-dev \
+		libsecret-1-0 \
 		libx11-xcb1 \
 		libxss1 \
 		libxtst6 \
