@@ -28,6 +28,14 @@ export default function PromoCards( { isOdysseyStats, slug } ) {
 	const showBlazePromo = ! isOdysseyStats;
 	const showYoastPromo = ! isOdysseyStats && ! jetpackNonAtomic;
 
+	// Handle initial view event if not using the DotPager UI.
+	// We don't worry about the Yoast and Blaze cards as they sends on mount.
+	useEffect( () => {
+		if ( ! showYoastPromo && ! showBlazePromo ) {
+			recordTracksEvent( EVENT_MOBILE_PROMO_VIEW );
+		}
+	}, [ showYoastPromo, showBlazePromo ] );
+
 	// Handle click events from promo card.
 	const promoCardDidReceiveClick = ( event ) => {
 		// Events need to incorporate the page and the click type.
@@ -36,15 +44,24 @@ export default function PromoCards( { isOdysseyStats, slug } ) {
 		const tracksEventName = `calypso_stats_traffic_mobile_cta_${ event.replaceAll( '-', '_' ) }`;
 		recordTracksEvent( tracksEventName );
 	};
+
 	// Handle view events from DotPager UI.
 	const pagerDidSelectPage = ( index ) => {
-		const eventLookup = [ EVENT_BLAZE_PROMO_VIEW, EVENT_YOAST_PROMO_VIEW, EVENT_MOBILE_PROMO_VIEW ];
+		const eventLookup = [];
+
+		if ( showBlazePromo ) {
+			eventLookup.push( EVENT_BLAZE_PROMO_VIEW );
+		}
+
+		if ( showYoastPromo ) {
+			eventLookup.push( EVENT_YOAST_PROMO_VIEW );
+		}
+
+		eventLookup.push( EVENT_MOBILE_PROMO_VIEW );
 		const eventName = eventLookup[ index ];
+
 		recordTracksEvent( eventName );
 	};
-
-	// Trigger initial view event as DotPager don't call it.
-	useEffect( () => pagerDidSelectPage( 0 ) );
 
 	return (
 		<div className="stats__promo-container">
@@ -52,6 +69,7 @@ export default function PromoCards( { isOdysseyStats, slug } ) {
 				<DotPager className="stats__promo-pager" onPageSelected={ pagerDidSelectPage }>
 					{ showBlazePromo && (
 						<PromoCardBlock
+							impressionEvent={ EVENT_BLAZE_PROMO_VIEW }
 							productSlug="blaze"
 							clickEvent="calypso_stats_blaze_banner_click"
 							headerText={ translate( 'Reach new readers and customers' ) }
@@ -65,6 +83,7 @@ export default function PromoCards( { isOdysseyStats, slug } ) {
 					) }
 					{ showYoastPromo && (
 						<PromoCardBlock
+							impressionEvent={ EVENT_YOAST_PROMO_VIEW }
 							productSlug="wordpress-seo-premium"
 							clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
 							headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
