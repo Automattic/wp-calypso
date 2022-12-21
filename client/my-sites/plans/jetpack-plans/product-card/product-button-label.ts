@@ -33,7 +33,7 @@ export default function productButtonLabel( {
 	}
 
 	if ( isInCart && ! isJetpackPlan ) {
-		return 'View Cart';
+		return translate( 'View Cart' );
 	}
 
 	if ( isUpgradeableToYearly ) {

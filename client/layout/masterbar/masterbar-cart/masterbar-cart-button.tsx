@@ -19,9 +19,10 @@ export type MasterbarCartButtonProps = {
 	onRemoveProduct?: ( uuid: string ) => void;
 	onRemoveCoupon?: () => void;
 	forceShow?: boolean;
+	showCount?: boolean;
 	checkoutLabel?: string;
-	cartIcon?: React.ElementType;
-	emptyCart?: React.ElementType;
+	cartIcon: React.ReactNode;
+	emptyCart: React.ReactNode;
 };
 
 export function MasterbarCartButton( {
@@ -31,6 +32,7 @@ export function MasterbarCartButton( {
 	onRemoveProduct,
 	onRemoveCoupon,
 	forceShow = false,
+	showCount = false,
 	checkoutLabel,
 	cartIcon,
 	emptyCart,
@@ -70,13 +72,9 @@ export function MasterbarCartButton( {
 	const onClose = () => setIsActive( false );
 	const tooltip = String( translate( 'My shopping cart' ) );
 
-	const CustomCartIcon = cartIcon as React.ElementType;
 	const cartCount = responseCart?.products?.length;
-	const icon = cartIcon ? (
-		<CustomCartIcon />
-	) : (
-		<CartIcon newItems={ !! responseCart.products } active={ isActive } />
-	);
+	const icon = cartIcon || <CartIcon newItems={ !! responseCart.products } active={ isActive } />;
+
 	return (
 		<>
 			<MasterbarItem
@@ -88,7 +86,7 @@ export function MasterbarCartButton( {
 				isActive={ isActive }
 				ref={ cartButtonRef }
 			/>
-			<MasterBarCartCount cartCount={ cartCount } />
+			{ showCount && <MasterBarCartCount cartCount={ cartCount } /> }
 			<Popover
 				isVisible={ isActive }
 				onClose={ onClose }

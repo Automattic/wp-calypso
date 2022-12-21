@@ -199,6 +199,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 								cartIcon={ CloudCartIcon }
 								emptyCart={ EmptyCart }
 								forceShow
+								showCount
 							/>
 						) }
 						<a
@@ -287,16 +288,19 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 								} ) }
 							</ul>
 							{ shouldShowCart && (
-								<MasterbarCartWrapper
-									goToCheckout={ goToCheckout }
-									onRemoveProduct={ onRemoveProductFromCart }
-									selectedSiteSlug={ siteSlug || undefined }
-									selectedSiteId={ siteId || undefined }
-									checkoutLabel={ translate( 'Go to Checkout' ) }
-									cartIcon={ CloudCartIcon }
-									emptyCart={ EmptyCart }
-									forceShow
-								/>
+								<div className="header__jetpack-masterbar-cart">
+									<MasterbarCartWrapper
+										goToCheckout={ goToCheckout }
+										onRemoveProduct={ onRemoveProductFromCart }
+										selectedSiteSlug={ siteSlug || undefined }
+										selectedSiteId={ siteId || undefined }
+										checkoutLabel={ translate( 'Go to Checkout' ) }
+										cartIcon={ <CloudCartIcon /> }
+										emptyCart={ <EmptyCart /> }
+										forceShow
+										showCount
+									/>
+								</div>
 							) }
 							<ul className="header__actions-list">
 								<li

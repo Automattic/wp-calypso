@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import './masterbar-cart-count.scss';
-export type MasterbarCartCountProps = {
+
+type MasterbarCartCountProps = {
 	cartCount: number;
 };
 

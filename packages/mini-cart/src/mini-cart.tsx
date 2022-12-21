@@ -114,13 +114,12 @@ export function MiniCart( {
 	onRemoveProduct?: ( uuid: string ) => void;
 	onRemoveCoupon?: () => void;
 	checkoutLabel?: string;
-	emptyCart?: React.ElementType;
+	emptyCart: React.ReactNode;
 } ) {
 	const { responseCart, removeCoupon, removeProductFromCart, isLoading, isPendingUpdate } =
 		useShoppingCart( cartKey ? cartKey : undefined );
 	const { __ } = useI18n();
 
-	const EmptyCart = emptyCart as React.ElementType;
 	const shouldRenderEmptyCart = emptyCart && responseCart.products.length <= 0;
 	const isDisabled = isLoading || isPendingUpdate;
 
@@ -163,7 +162,7 @@ export function MiniCart( {
 					removeProductFromCart={ handleRemoveProduct }
 					responseCart={ responseCart }
 				/>
-				{ shouldRenderEmptyCart && <EmptyCart /> }
+				{ shouldRenderEmptyCart && emptyCart }
 				{ ! shouldRenderEmptyCart && <MiniCartTotal responseCart={ responseCart } /> }
 				<MiniCartFooter className="mini-cart__footer">
 					{ ! shouldRenderEmptyCart && (
