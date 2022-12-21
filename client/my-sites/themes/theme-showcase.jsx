@@ -58,9 +58,6 @@ const optionShape = PropTypes.shape( {
 	action: PropTypes.func,
 } );
 
-const findTabFilter = ( tabFilters, filterKey, defaultValue ) =>
-	Object.values( tabFilters ).find( ( filter ) => filter.key === filterKey ) || defaultValue;
-
 class ThemeShowcase extends Component {
 	constructor( props ) {
 		super( props );
@@ -68,6 +65,9 @@ class ThemeShowcase extends Component {
 		this.bookmarkRef = createRef();
 
 		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
+
+		// As the values of these filter is static and won't be changed, we use it to check a filter
+		// is a static filter directly in the `isStaticFilter` function.
 		this.staticFilters = {
 			RECOMMENDED: {
 				key: 'recommended',
@@ -162,6 +162,8 @@ class ThemeShowcase extends Component {
 		}
 	}
 
+	isStaticFilter = ( tabFilter ) => Object.values( this.staticFilters ).includes( tabFilter );
+
 	getSubjectFilters = ( props ) => {
 		const { subjects } = props;
 		return Object.fromEntries(
@@ -203,6 +205,10 @@ class ThemeShowcase extends Component {
 			}, {} );
 	};
 
+	findTabFilter = ( tabFilters, filterKey ) =>
+		Object.values( tabFilters ).find( ( filter ) => filter.key === filterKey ) ||
+		this.staticFilters.ALL;
+
 	getTabFilterFromUrl = ( filterString = '' ) => {
 		const filterArray = filterString.split( '+' );
 		const matches = Object.values( this.subjectTermTable ).filter( ( value ) =>
@@ -210,11 +216,11 @@ class ThemeShowcase extends Component {
 		);
 
 		if ( ! matches.length ) {
-			return findTabFilter( this.staticFilters, this.state?.tabFilter.key, this.staticFilters.ALL );
+			return this.findTabFilter( this.staticFilters, this.state?.tabFilter.key );
 		}
 
 		const filterKey = matches[ matches.length - 1 ].split( ':' ).pop();
-		return findTabFilter( this.subjectFilters, filterKey, this.staticFilters.ALL );
+		return this.findTabFilter( this.subjectFilters, filterKey );
 	};
 
 	scrollToSearchInput = () => {
@@ -338,9 +344,7 @@ class ThemeShowcase extends Component {
 				.filter( ( key ) => ! subjectFilters.includes( key ) )
 				.join( '+' );
 
-			const newFilter = ! [ this.staticFilters.ALL.key, this.staticFilters.MYTHEMES.key ].includes(
-				tabFilter.key
-			)
+			const newFilter = ! this.isStaticFilter( tabFilter )
 				? [ filterWithoutSubjects, subjectTerm ].join( '+' )
 				: filterWithoutSubjects;
 
