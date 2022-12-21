@@ -36,6 +36,7 @@ const FOLLOWERS_QUERY = { type: 'wpcom', max: 0 };
 // Meant to replace annual-site-stats section
 export default function AnnualHighlightsSection( { siteId }: { siteId: number } ) {
 	const [ year, setYear ] = useState( new Date().getFullYear() );
+	const currentYear = new Date().getFullYear();
 	const insights = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, 'statsInsights' )
 	) as Insights;
@@ -52,14 +53,13 @@ export default function AnnualHighlightsSection( { siteId }: { siteId: number } 
 			likes: currentYearData?.total_likes ?? ( hasYearsData ? 0 : null ),
 			posts: currentYearData?.total_posts ?? ( hasYearsData ? 0 : null ),
 			words: currentYearData?.total_words ?? ( hasYearsData ? 0 : null ),
-			followers: followers?.total_wpcom ?? null,
+			followers: year === currentYear ? followers?.total_wpcom ?? null : null,
 		};
-	}, [ year, followers, insights ] );
+	}, [ year, followers, insights, currentYear ] );
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const viewMoreHref = siteSlug ? `/stats/annualstats/${ siteSlug }` : null;
 
-	const currentYear = new Date().getFullYear();
 	const oldestYear = useMemo(
 		() =>
 			insights?.years?.reduce(
