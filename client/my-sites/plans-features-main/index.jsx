@@ -360,7 +360,9 @@ export class PlansFeaturesMain extends Component {
 				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_PREMIUM } )[ 0 ],
 				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_BUSINESS } )[ 0 ],
 				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_ECOMMERCE } )[ 0 ],
-				isEnabled( 'onboarding/2023-pricing-grid' ) && isInSignup
+				isEnabled( 'onboarding/2023-pricing-grid' ) &&
+				isInSignup &&
+				flowName === 'onboarding-2023-pricing-grid'
 					? findPlansKeys( { group: GROUP_WPCOM, type: TYPE_ENTERPRISE } )[ 0 ]
 					: null,
 			].filter( ( el ) => el !== null );
@@ -424,6 +426,7 @@ export class PlansFeaturesMain extends Component {
 			isAllPaidPlansShown,
 			isInMarketplace,
 			sitePlanSlug,
+			flowName,
 		} = this.props;
 
 		const isPlanOneOfType = ( plan, types ) =>
@@ -444,7 +447,10 @@ export class PlansFeaturesMain extends Component {
 			: availablePlans;
 
 		if ( plansWithScroll ) {
-			if ( isEnabled( 'onboarding/2023-pricing-grid' ) ) {
+			if (
+				isEnabled( 'onboarding/2023-pricing-grid' ) &&
+				flowName === 'onboarding-2023-pricing-grid'
+			) {
 				return plans.filter( ( plan ) =>
 					isPlanOneOfType( plan, [
 						TYPE_FREE,
