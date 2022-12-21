@@ -13,7 +13,6 @@ import wrapSettingsForm from '../wrap-settings-form';
 
 const isEnabled = config.isEnabled( 'settings/modernize-reading-settings' );
 
-// Settings are not typed yet, so we need to use `unknown` for now.
 type Settings = {
 	posts_per_page?: boolean;
 	posts_per_rss?: boolean;
