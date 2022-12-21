@@ -72,38 +72,58 @@ const purchase = {
 	check_dns: false,
 };
 
+function getSiteForPurchase( purchaseForSite ) {
+	return {
+		ID: parseInt( purchaseForSite.blog_id ),
+		URL: 'example.com',
+		capabilities: {},
+		description: '',
+		domain: '',
+		launch_status: '',
+		locale: 'en-US',
+		logo: { id: '', sizes: [], url: '' },
+		name: '',
+		options: {},
+		slug: 'example.com',
+	};
+}
+
+function createMockReduxStoreForPurchase( purchaseForRedux ) {
+	return createReduxStore(
+		{
+			currentUser: { id: Number( purchaseForRedux.user_id ) },
+			happychat: { chat: { status: '' } },
+			plans: { items: [] },
+			purchases: {
+				data: [ purchaseForRedux ],
+				hasLoadedUserPurchasesFromServer: true,
+				hasLoadedSitePurchasesFromServer: true,
+			},
+			productsList: { items: {} },
+			sites: {
+				items: { [ purchaseForRedux.blog_id ]: getSiteForPurchase( purchaseForRedux ) },
+				plans: {},
+				requesting: {},
+				domains: { requesting: {}, items: {} },
+			},
+			plugins: {
+				premium: { plugins: {} },
+			},
+			ui: { selectSiteId: purchaseForRedux.blog_id },
+		},
+		( state ) => {
+			return state;
+		}
+	);
+}
+
 describe( 'Purchase Management Buttons', () => {
 	it( 'renders a cancel button when auto-renew is ON', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/me/payment-methods?expired=include' )
 			.reply( 200 );
 
-		const store = createReduxStore(
-			{
-				currentUser: { id: Number( purchase.user_id ) },
-				happychat: { chat: { status: '' } },
-				plans: { items: [] },
-				purchases: {
-					data: [ { ...purchase, auto_renew: 1 } ],
-					hasLoadedUserPurchasesFromServer: true,
-					hasLoadedSitePurchasesFromServer: true,
-				},
-				productsList: { items: {} },
-				sites: {
-					items: { 212628935: { ID: 212628935 } },
-					plans: {},
-					requesting: {},
-					domains: { requesting: {}, items: { [ purchase.site_id ]: {} } },
-				},
-				plugins: {
-					premium: { plugins: {} },
-				},
-				ui: { selectSiteId: purchase.site_id },
-			},
-			( state ) => {
-				return state;
-			}
-		);
+		const store = createMockReduxStoreForPurchase( { ...purchase, auto_renew: 1 } );
 
 		render(
 			<ReduxProvider store={ store }>
@@ -123,32 +143,7 @@ describe( 'Purchase Management Buttons', () => {
 			.get( '/rest/v1.1/me/payment-methods?expired=include' )
 			.reply( 200 );
 
-		const store = createReduxStore(
-			{
-				currentUser: { id: Number( purchase.user_id ) },
-				happychat: { chat: { status: '' } },
-				plans: { items: [] },
-				purchases: {
-					data: [ { ...purchase, auto_renew: 0 } ],
-					hasLoadedUserPurchasesFromServer: true,
-					hasLoadedSitePurchasesFromServer: true,
-				},
-				productsList: { items: {} },
-				sites: {
-					items: { 212628935: { ID: 212628935 } },
-					plans: {},
-					requesting: {},
-					domains: { requesting: {}, items: { [ purchase.site_id ]: {} } },
-				},
-				plugins: {
-					premium: { plugins: {} },
-				},
-				ui: { selectSiteId: purchase.site_id },
-			},
-			( state ) => {
-				return state;
-			}
-		);
+		const store = createMockReduxStoreForPurchase( { ...purchase, auto_renew: 0 } );
 
 		render(
 			<ReduxProvider store={ store }>
