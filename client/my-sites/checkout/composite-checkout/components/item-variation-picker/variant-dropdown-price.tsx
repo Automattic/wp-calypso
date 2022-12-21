@@ -1,4 +1,3 @@
-import { isJetpackProduct } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { styled } from '@automattic/wpcom-checkout';
@@ -75,6 +74,10 @@ const IntroPricing = styled.span`
 	display: flex;
 	flex-direction: column;
 	font-size: 0.8rem;
+	margin-left: auto;
+	p {
+		text-align: right;
+	}
 `;
 
 const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent } ) => {
@@ -107,7 +110,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 				isSmallestUnit: true,
 		  } )
 		: undefined;
-	// Jetpack introductory pricing displays the introductory price for the first term, then the regular price for the remaining term.
+	// Introductory offer variables
 	const introTerm = variant.introductoryTerm;
 	const introCount = variant.introductoryInterval;
 	const formattedPriceBeforeDiscounts = formatCurrency(
@@ -119,42 +122,96 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 		}
 	);
 	const productBillingTermInMonths = variant.productBillingTermInMonths;
-	const isJetpackIntroductoryOffer = isJetpackProduct( variant ) && introCount > 0;
+	const isIntroductoryOffer = introCount > 0;
 	const translate = useTranslate();
-	// the backend returns the term in text, but it it adds "one" like One year, which looks off so we're creating our own.
-	const planTerm = () => {
-		let termToTranslate = translate( 'month' );
+	const billingTermInYears = () => {
 		if ( productBillingTermInMonths > 12 ) {
-			//biannual is currently the only possible term past 1 year
-			termToTranslate = translate( '2 years' );
-		} else if ( productBillingTermInMonths > 1 ) {
-			termToTranslate = translate( 'year' );
+			return productBillingTermInMonths / 12;
 		}
-		return termToTranslate;
+		return null;
 	};
-	const translatedIntroOfferPrice = translate(
-		'%(formattedCurrentPrice)s first %(introTerm)s then %(formattedPriceBeforeDiscounts)s per %(planTerm)s',
-		// translation example: $4.99 first month then $9.99 per year
-		{
-			args: {
-				formattedCurrentPrice,
-				formattedPriceBeforeDiscounts,
-				introTerm,
-				planTerm: planTerm(),
-			},
-		}
-	);
 
-	const translatedIntroOfferPriceMobile = translate(
-		'%(formattedCurrentPrice)s first %(introTerm)s',
-		// translation example: $4.99 first month
-		{
-			args: {
-				formattedCurrentPrice,
-				introTerm,
-			},
+	const translatedIntroOfferDetails = () => {
+		const args = {
+			formattedCurrentPrice,
+			formattedPriceBeforeDiscounts,
+			billingTermInYears: billingTermInYears(),
+			introCount,
+		};
+		//generic introductory offer to catch unexpected offer terms
+		if (
+			( introTerm !== 'month' && introTerm !== 'year' ) ||
+			( introCount > 1 && introTerm === 'year' )
+		) {
+			return translate( '%(formattedCurrentPrice)s introductory offer', { args } );
+			// translation example: $1 introductory offer
 		}
-	);
+
+		// mobile display for introductory offers
+		else if ( isMobile ) {
+			if ( introCount === 1 ) {
+				return introTerm === 'month'
+					? translate( '%(formattedCurrentPrice)s first month', { args } )
+					: translate( '%(formattedCurrentPrice)s first year', { args } );
+				// translation example: $1 first month
+			}
+			return translate( '%(formattedCurrentPrice)s first %(introCount)s months', { args } );
+			// translation example: $1 first 3 months
+		}
+
+		// single period introductory offers (eg 1 month)
+		else if ( introCount === 1 ) {
+			if ( productBillingTermInMonths > 12 ) {
+				return introTerm === 'month'
+					? translate(
+							'%(formattedCurrentPrice)s first month then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
+							{ args }
+					  )
+					: translate(
+							'%(formattedCurrentPrice)s first year then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
+							{ args }
+					  );
+				// translation example: $1 first month then $2 per 2 years
+			} else if ( productBillingTermInMonths === 12 ) {
+				return introTerm === 'month'
+					? translate(
+							'%(formattedCurrentPrice)s first month then %(formattedPriceBeforeDiscounts)s per year',
+							{ args }
+					  )
+					: translate(
+							'%(formattedCurrentPrice)s first year then %(formattedPriceBeforeDiscounts)s per year',
+							{ args }
+					  );
+				// translation example: $1 first month then $2 per year
+			}
+			return translate(
+				'%(formattedCurrentPrice)s first month then %(formattedPriceBeforeDiscounts)s per month',
+				{ args }
+			);
+			// translation example: $1 first month then $2 per month
+
+			// multiple period introductory offers (eg 3 months) there are no multi-year introductory offers
+		} else if ( introCount > 1 ) {
+			if ( productBillingTermInMonths > 12 ) {
+				return translate(
+					'%(formattedCurrentPrice)s first %(introCount)s months then %(formattedPriceBeforeDiscounts)s per %(billingTermInYears)s years',
+					{ args }
+				);
+				// translation example: $1 first 3 months then $2 per 2 years
+			} else if ( productBillingTermInMonths === 12 ) {
+				return translate(
+					'%(formattedCurrentPrice)s first %(introCount)s months then %(formattedPriceBeforeDiscounts)s per year',
+					{ args }
+				);
+				// translation example: $1 first 3 months then $2 per year
+			}
+			return translate(
+				'%(formattedCurrentPrice)s first %(introCount)s months then %(formattedPriceBeforeDiscounts)s per month',
+				{ args }
+			);
+			// translation example: $1 first 3 months then $2 per month
+		}
+	};
 
 	return (
 		<Variant>
@@ -165,16 +222,15 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 				) }
 			</Label>
 			<span>
-				{ discountPercentage > 0 && ! isMobile && ! isJetpackIntroductoryOffer && (
+				{ discountPercentage > 0 && ! isMobile && ! isIntroductoryOffer && (
 					<DiscountPercentage percent={ discountPercentage } />
 				) }
-				{ discountPercentage > 0 && ! isJetpackIntroductoryOffer && (
+				{ discountPercentage > 0 && ! isIntroductoryOffer && (
 					<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
 				) }
-				<Price aria-hidden={ isJetpackIntroductoryOffer }>{ formattedCurrentPrice }</Price>
+				<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
 				<IntroPricing>
-					{ isJetpackIntroductoryOffer && ! isMobile && translatedIntroOfferPrice }
-					{ isJetpackIntroductoryOffer && isMobile && translatedIntroOfferPriceMobile }
+					<p>{ isIntroductoryOffer && translatedIntroOfferDetails() }</p>
 				</IntroPricing>
 			</span>
 		</Variant>
