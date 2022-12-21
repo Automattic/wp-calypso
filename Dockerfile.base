@@ -81,7 +81,7 @@ RUN apt-get update \
 		libatspi2.0-0 \
 		libdbus-glib-1-2 \
 		libgtk-3-0 \
-		libgbm \
+		libgbm1 \
 		libnspr4 \
 		libnss3 \
 		libsecret-1-0 \
