@@ -22,6 +22,7 @@ const PromoCardBlock = ( {
 	image,
 	impressionEvent,
 	productSlug,
+	showOnJetpackNonAtomic = false,
 } ) => {
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const selectedPlugin = useSelector( ( state ) =>
@@ -40,7 +41,7 @@ const PromoCardBlock = ( {
 	return (
 		<>
 			<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
-			{ jetpackNonAtomic || selectedPlugin || isFetching ? (
+			{ ( ! showOnJetpackNonAtomic && jetpackNonAtomic ) || selectedPlugin || isFetching ? (
 				<div></div>
 			) : (
 				<>

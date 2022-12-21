@@ -31,6 +31,7 @@ const DesignCarousel: Step = function DesignCarousel( { navigation } ) {
 					require="@automattic/design-carousel"
 					placeholder={ null }
 					onPick={ pickDesign }
+					selectedDesignSlugs={ [ 'tsubaki', 'tazza', 'zaino', 'thriving-artist' ] }
 				/>
 			}
 			recordTracksEvent={ recordTracksEvent }

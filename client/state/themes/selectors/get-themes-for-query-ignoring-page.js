@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { createSelector } from '@automattic/state-utils';
 import { flatMap } from 'lodash';
-import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { getSerializedThemesQueryWithoutPage } from 'calypso/state/themes/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -30,25 +30,23 @@ export const getThemesForQueryIgnoringPage = createSelector(
 
 		// If query is default, filter out recommended themes.
 		if ( ! ( query.search || query.filter || query.tier ) ) {
-			const selectedSiteId = state.ui ? getSelectedSiteId( state ) : null;
 			const recommendedThemes = state.themes.recommendedThemes.themes;
 			const themeIds = flatMap( recommendedThemes, ( theme ) => theme.id );
 
 			themesForQueryIgnoringPage = themesForQueryIgnoringPage.filter(
 				( theme ) => ! themeIds.includes( theme.id )
 			);
+		}
 
-			// Set active theme to be the first theme in the array.
-			if ( isEnabled( 'themes/showcase-i4/search-and-filter' ) && selectedSiteId ) {
-				const currentThemeId = getActiveTheme( state, selectedSiteId );
-				const currentTheme = getCanonicalTheme( state, selectedSiteId, currentThemeId );
-
-				if ( currentTheme ) {
-					themesForQueryIgnoringPage = themesForQueryIgnoringPage.filter(
-						( theme ) => theme.id !== currentTheme.id
-					);
-					themesForQueryIgnoringPage.unshift( currentTheme );
-				}
+		// Set active theme to be the first theme in the array.
+		const selectedSiteId = state.ui ? getSelectedSiteId( state ) : null;
+		if ( isEnabled( 'themes/showcase-i4/search-and-filter' ) && selectedSiteId ) {
+			const currentThemeId = getActiveTheme( state, selectedSiteId );
+			const index = themesForQueryIgnoringPage.findIndex(
+				( theme ) => theme.id === currentThemeId
+			);
+			if ( index >= 0 ) {
+				themesForQueryIgnoringPage.unshift( ...themesForQueryIgnoringPage.splice( index, 1 ) );
 			}
 		}
 

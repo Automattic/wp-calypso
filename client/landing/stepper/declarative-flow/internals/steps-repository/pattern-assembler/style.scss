@@ -149,6 +149,7 @@ $font-family: "SF Pro Text", $sans;
 					font-family: inherit;
 					color: var(--color-link);
 					transition: color 0.2s ease-in;
+					background-color: transparent;
 				}
 
 				&:hover,
@@ -275,9 +276,14 @@ $font-family: "SF Pro Text", $sans;
 
 		.pattern-selector__body {
 			margin-top: 32px;
+			margin-bottom: 32px;
 			padding: 2px;
 			overflow-y: scroll;
 			scrollbar-width: none;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
 
 			&::-webkit-scrollbar {
 				display: none;
@@ -295,15 +301,18 @@ $font-family: "SF Pro Text", $sans;
 				transform: scale(0.268);
 				transform-origin: top left;
 				position: absolute;
+				left: 0;
 				border-radius: 4px;
 				pointer-events: none;
 				overflow: hidden;
 			}
 
-			div {
+			button {
+				display: block;
 				border: 1px solid rgba(0, 0, 0, 5%);
 				border-radius: 4px;
 				min-height: 140px;
+				width: 100%;
 				transform: translateZ(0);
 				overflow: hidden;
 				user-select: none;

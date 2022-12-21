@@ -109,6 +109,7 @@ class StatsModule extends Component {
 			'statsSearchTerms',
 			'statsClicks',
 			'statsReferrers',
+			'statsEmailsOpen',
 		];
 		return summary && includes( summarizedTypes, statType );
 	}
