@@ -1,6 +1,9 @@
-import PropTypes from 'prop-types';
+type WooCommerceWooLogoProps = {
+	height: number;
+	width: number;
+}
 
-const WooCommerceLogo = ( { height = 35, width = 20 } ) => {
+const WooCommerceWooLogo = ( { height = 35, width = 20 }: WooCommerceWooLogoProps ) => {
 	return (
 		<svg
 			width={ width }
@@ -19,9 +22,4 @@ const WooCommerceLogo = ( { height = 35, width = 20 } ) => {
 	);
 };
 
-WooCommerceLogo.propTypes = {
-	height: PropTypes.number,
-	width: PropTypes.number,
-};
-
-export default WooCommerceLogo;
+export default WooCommerceWooLogo;

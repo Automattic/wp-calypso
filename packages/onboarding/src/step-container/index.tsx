@@ -1,4 +1,4 @@
-import { WordPressLogo, JetpackLogo, WooCommerceLogo } from '@automattic/components';
+import { WordPressLogo, JetpackLogo, WooCommerceWooLogo } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { ReactChild, ReactElement } from 'react';
@@ -201,8 +201,7 @@ const StepContainer: React.FC< Props > = ( {
 					) }
 					{ showHeaderWooCommercePowered && (
 						<div className="step-container__header-woocommerce-powered">
-							<WooCommerceLogo monochrome size={ 18 } />{ ' ' }
-							<span>{ translate( 'WooCommerce powered' ) }</span>
+							<WooCommerceWooLogo size={ 18 } /> <span>{ translate( 'WooCommerce powered' ) }</span>
 						</div>
 					) }
 				</div>
@@ -224,8 +223,7 @@ const StepContainer: React.FC< Props > = ( {
 
 			{ showWooCommercePowered && (
 				<div className="step-container__woocommerce-powered">
-					<WooCommerceLogo monochrome size={ 18 } />{ ' ' }
-					<span>{ translate( 'WooCommerce powered' ) }</span>
+					<WooCommerceWooLogo size={ 18 } /> <span>{ translate( 'WooCommerce powered' ) }</span>
 				</div>
 			) }
 			{ showVideoPressPowered && (
