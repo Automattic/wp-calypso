@@ -1187,7 +1187,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_PRODUCT_SEARCH_V2 ]: {
 		getSlug: () => FEATURE_PRODUCT_SEARCH_V2,
-		getTitle: () => i18n.translate( 'Site Search up to 100k records' ),
+		getTitle: () => i18n.translate( 'Site Search up to 100k records and 100k requests/mo.' ),
 
 		getDescription: () =>
 			i18n.translate(
