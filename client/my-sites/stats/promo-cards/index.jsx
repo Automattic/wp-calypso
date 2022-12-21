@@ -14,7 +14,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 const EVENT_YOAST_PROMO_VIEW = 'calypso_stats_wordpress_seo_premium_banner_view';
-const EVENT_BLAZE_PROMO_VIEW = 'calypso_stats_blaze_banner_view';
+const EVENT_BLAZE_PROMO_VIEW = 'calypso_stats_traffic_blaze_banner_view';
 const EVENT_MOBILE_PROMO_VIEW = 'calypso_stats_traffic_mobile_cta_jetpack_view';
 
 export default function PromoCards( { isOdysseyStats, slug } ) {
