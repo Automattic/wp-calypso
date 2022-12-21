@@ -3,7 +3,6 @@ import { loadScript } from '@automattic/load-script';
 import { useSelector } from 'react-redux';
 import request, { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 declare global {
 	interface Window {
@@ -122,17 +121,8 @@ export enum PromoteWidgetStatus {
  * @returns bool
  */
 export const usePromoteWidget = (): PromoteWidgetStatus => {
-	const value = useSelector( ( state ) => {
-		const userData = getCurrentUser( state );
-		if ( userData ) {
-			const originalSetting = userData[ 'has_promote_widget' ];
-			if ( originalSetting !== undefined ) {
-				return originalSetting === true
-					? PromoteWidgetStatus.ENABLED
-					: PromoteWidgetStatus.DISABLED;
-			}
-		}
-		return PromoteWidgetStatus.FETCHING;
+	const value = useSelector( () => {
+		return PromoteWidgetStatus.DISABLED;
 	} );
 	return value;
 };
