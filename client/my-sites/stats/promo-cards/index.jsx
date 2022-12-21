@@ -71,7 +71,7 @@ export default function PromoCards( { isOdysseyStats, slug } ) {
 						<PromoCardBlock
 							impressionEvent={ EVENT_BLAZE_PROMO_VIEW }
 							productSlug="blaze"
-							clickEvent="calypso_stats_blaze_banner_click"
+							clickEvent="calypso_stats_traffic_blaze_banner_click"
 							headerText={ translate( 'Reach new readers and customers' ) }
 							contentText={ translate(
 								'Use WordPress Blaze to increase your reach by promoting your work to the larger WordPress.com community of blogs and sites. '
