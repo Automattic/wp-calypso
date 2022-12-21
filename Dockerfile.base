@@ -93,8 +93,7 @@ RUN apt-get update \
 		xvfb \
 	&& apt-get autoremove --purge \
 	&& apt-get autoclean \
-	&& rm -rf /var/lib/apt/lists/* \
-	&& apt-get autoremove python* --purge -y
+	&& rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT [ "/bin/bash" ]
 
