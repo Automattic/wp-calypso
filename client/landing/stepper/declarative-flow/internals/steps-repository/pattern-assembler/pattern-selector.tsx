@@ -1,14 +1,11 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
-import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
-import { useSite } from '../../../../hooks/use-site';
+import AsyncLoad from 'calypso/components/async-load';
 import { ONBOARD_STORE } from '../../../../stores';
-import Delayed from './delayed-render-hook';
-import PatternPreviewAutoHeight from './pattern-preview-auto-height';
-import { getPatternPreviewUrl } from './utils';
 import type { Pattern } from './types';
 
 type PatternSelectorProps = {
@@ -28,12 +25,16 @@ const PatternSelector = ( {
 	show,
 	selectedPattern,
 }: PatternSelectorProps ) => {
-	const locale = useLocale();
 	const patternSelectorRef = useRef< HTMLDivElement >( null );
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const translate = useTranslate();
-	const site = useSite();
-	const [ firstPattern, ...restPatterns ] = patterns;
+	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
+	const patternListProps = {
+		patterns,
+		selectedPattern,
+		show,
+		onSelect,
+	};
 
 	useEffect( () => {
 		if ( show ) {
@@ -44,30 +45,6 @@ const PatternSelector = ( {
 			patternSelectorRef.current?.querySelector( '.pattern-selector__body' )?.scrollTo( 0, 0 );
 		}
 	}, [ show ] );
-
-	const renderPatterns = ( patternList: Pattern[] ) =>
-		patternList?.map( ( pattern: Pattern, index: number ) => (
-			<PatternPreviewAutoHeight
-				key={ `${ index }-${ pattern.id }` }
-				url={ getPatternPreviewUrl( {
-					id: pattern.id,
-					language: locale,
-					siteTitle: site?.name,
-					stylesheet: selectedDesign?.recipe?.stylesheet,
-				} ) }
-				patternId={ pattern.id }
-				patternName={ pattern.category }
-			>
-				<Button
-					tabIndex={ show ? 0 : -1 }
-					title={ pattern.category }
-					className={ classnames( {
-						'pattern-selector__block-list--selected-pattern': pattern.id === selectedPattern?.id,
-					} ) }
-					onClick={ () => onSelect( pattern ) }
-				/>
-			</PatternPreviewAutoHeight>
-		) );
 
 	return (
 		<div
@@ -87,10 +64,11 @@ const PatternSelector = ( {
 			</div>
 			<div className="pattern-selector__body">
 				<div className="pattern-selector__block-list" role="listbox">
-					{ renderPatterns( [ firstPattern ] ) }
-					<Delayed>
-						<>{ renderPatterns( restPatterns ) }</>
-					</Delayed>
+					{ isEnabled( 'pattern-assembler/client-side-render' ) ? (
+						<AsyncLoad require="./pattern-list-renderer" { ...patternListProps } />
+					) : (
+						<AsyncLoad require="./pattern-list" { ...patternListProps } stylesheet={ stylesheet } />
+					) }
 				</div>
 			</div>
 			<div className="pattern-selector__footer">
