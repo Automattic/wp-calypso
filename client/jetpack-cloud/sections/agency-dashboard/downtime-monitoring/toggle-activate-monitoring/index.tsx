@@ -62,13 +62,38 @@ export default function ToggleActivateMonitoring( { site, status, settings }: Pr
 					},
 					comment: '%(minutes) is the no of minutes, e.g. "5m"',
 			  } );
+
+		const currentSchedule = hours
+			? translate( '%(hours)d hour', '%(hours)d hours', {
+					count: hours,
+					args: {
+						hours,
+					},
+					comment: '%(hours) is the no of hours, e.g. "1 hour"',
+			  } )
+			: translate( '%(minutes)d minute', '%(minutes)d minutes', {
+					count: minutes,
+					args: {
+						minutes,
+					},
+					comment: '%(minutes) is the no of minutes, e.g. "5 minutes"',
+			  } );
 		return (
 			<div className="toggle-activate-monitoring__duration">
 				<Button
 					borderless
 					compact
 					onClick={ handleToggleNotificationSettings }
-					aria-label={ translate( 'Update notification settings' ) }
+					aria-label={
+						translate(
+							'The current notification schedule is set to %(currentSchedule)s. Click here to update the settings',
+							{
+								args: { currentSchedule },
+								comment:
+									'%(currentSchedule) is the current notification duration set, e.g. "1 hour" or "5 minutes"',
+							}
+						) as string
+					}
 				>
 					<img src={ clockIcon } alt="Notification Settings" />
 					<span>{ currentDurationText }</span>
