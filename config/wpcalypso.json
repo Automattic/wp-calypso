@@ -97,6 +97,7 @@
 		"onboarding/import-light-url-screen": true,
 		"onboarding/import-redirect-to-themes": true,
 		"p2/p2-plus": true,
+		"pattern-assembler/client-side-render": false,
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
@@ -152,7 +153,8 @@
 		"use-translation-chunks": true,
 		"woop": false,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": true
+		"wpcom-user-bootstrap": true,
+		"newsletter/stats": false
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",

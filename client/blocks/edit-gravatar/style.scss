@@ -13,7 +13,7 @@
 		top: 0;
 		left: 0;
 		background-color: rgba(var(--color-neutral-70-rgb), 0.5);
-		border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		border-radius: 50%;
 		height: 150px;
 		width: 150px;
 	}
@@ -36,7 +36,7 @@
 		display: block;
 		width: 150px;
 		height: 150px;
-		border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		border-radius: 50%;
 	}
 	.edit-gravatar__explanation-placeholder {
 		height: 24px;
@@ -91,7 +91,7 @@
 	top: 0;
 	width: 150px;
 	height: 150px;
-	border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	border-radius: 50%;
 	background: rgba(var(--color-neutral-70-rgb), 0.5);
 	color: #fff;
 	text-align: center;
@@ -160,7 +160,7 @@
 }
 
 .edit-gravatar .drop-zone {
-	border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	border-radius: 50%;
 	width: 150px;
 	height: 150px;
 	border: 0;

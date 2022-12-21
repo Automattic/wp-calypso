@@ -93,13 +93,11 @@
 	margin-top: -4px;
 	/*!rtl:ignore*/
 	margin-left: -4px;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
 	border: 2px solid var(--color-border-inverted);
 	background: var(--color-neutral-90);
 
 	&::before {
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 100%;
 		content: " ";
 		display: block;

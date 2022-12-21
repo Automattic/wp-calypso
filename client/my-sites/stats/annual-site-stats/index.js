@@ -167,8 +167,11 @@ class AnnualSiteStats extends Component {
 				{ isWidget && (
 					<SectionHeader
 						href={ viewAllLink }
-						label={ translate( 'Annual site stats', { args: [ currentYear ] } ) }
+						label={ translate( 'Annual insights', { args: [ currentYear ] } ) }
 					/>
+				) }
+				{ ! isWidget && (
+					<h1 className="highlight-cards-heading">{ translate( 'All-time annual insights' ) }</h1>
 				) }
 				<Card className="stats-module">
 					<StatsModulePlaceholder isLoading={ isLoading } />
