@@ -5,7 +5,7 @@ describe( 'Test onboard utils', () => {
 	it.each( [
 		{
 			goals: [],
-			expectedIntent: SiteIntent.Build,
+			expectedIntent: SiteIntent.Free,
 		},
 		{
 			goals: [ SiteGoal.Write, SiteGoal.Import, SiteGoal.DIFM ],
