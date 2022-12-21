@@ -1,6 +1,6 @@
 type WooCommerceWooLogoProps = {
-	height: number;
-	width: number;
+	height?: number;
+	width?: number;
 };
 
 const WooCommerceWooLogo = ( { height = 35, width = 20 }: WooCommerceWooLogoProps ) => {
