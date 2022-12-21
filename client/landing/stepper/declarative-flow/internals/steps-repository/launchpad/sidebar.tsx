@@ -1,4 +1,4 @@
-import { Gridicon, ProgressBar } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import { useRef, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
@@ -12,6 +12,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import Checklist from './checklist';
+import CircularProgressBar from './circular-progress-bar';
 import { getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
 import { tasks } from './tasks';
 import { getLaunchpadTranslations } from './translations';
@@ -37,16 +38,19 @@ function getUrlInfo( url: string ) {
 	return [ siteName ? siteName[ 0 ] : '', topLevelDomain ? topLevelDomain[ 0 ] : '' ];
 }
 
-function getChecklistCompletionProgress( tasks: Task[] | null ) {
+function getTasksProgress( tasks: Task[] | null ) {
 	if ( ! tasks ) {
-		return;
+		// TODO: How do we want to handle that?
+		return [ null, null ];
 	}
 
-	const totalCompletedTasks = tasks.reduce( ( total, currentTask ) => {
+	const completedTasks = tasks.reduce( ( total, currentTask ) => {
 		return currentTask.completed ? total + 1 : total;
 	}, 0 );
 
-	return Math.round( ( totalCompletedTasks / tasks.length ) * 100 );
+	const totalTasks = tasks.length;
+
+	return [ completedTasks, totalTasks ];
 }
 
 const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: SidebarProps ) => {
@@ -75,7 +79,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 			flow
 		);
 
-	const taskCompletionProgress = site && getChecklistCompletionProgress( enhancedTasks );
+	const [ currentTask, numberOfTasks ] = getTasksProgress( enhancedTasks );
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
 	const showLaunchTitle = launchTask && ! launchTask.disabled;
 
@@ -95,15 +99,9 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 				<span className="launchpad__sidebar-header-flow-name">{ flowName }</span>
 			</div>
 			<div className="launchpad__sidebar-content-container">
-				{ taskCompletionProgress && (
+				{ currentTask && numberOfTasks && (
 					<div className="launchpad__progress-bar-container">
-						<span className="launchpad__progress-value">{ taskCompletionProgress }%</span>
-						<ProgressBar
-							className="launchpad__progress-bar"
-							value={ taskCompletionProgress }
-							title={ translate( 'Launchpad checklist progress bar' ) }
-							compact={ true }
-						/>
+						<CircularProgressBar currentStep={ currentTask } numberOfSteps={ numberOfTasks } />
 					</div>
 				) }
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace*/ }
