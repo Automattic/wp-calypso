@@ -47,29 +47,29 @@ describe( 'formatCurrency', () => {
 	} );
 
 	test( 'returns no trailing zero cents when stripZeros set to true (USD)', () => {
-		const money = formatCurrency( 9800900, 'USD', { precision: 2 } );
+		const money = formatCurrency( 9800900, 'USD', {} );
 		expect( money ).toBe( '$9,800,900.00' );
 
 		// Trailing zero cents should be removed.
-		const money2 = formatCurrency( 9800900, 'USD', { precision: 2, stripZeros: true } );
+		const money2 = formatCurrency( 9800900, 'USD', { stripZeros: true } );
 		expect( money2 ).toBe( '$9,800,900' );
 
 		// It should not strip non-zero cents.
-		const money3 = formatCurrency( 9800900.32, 'USD', { precision: 2, stripZeros: true } );
+		const money3 = formatCurrency( 9800900.32, 'USD', { stripZeros: true } );
 		expect( money3 ).toBe( '$9,800,900.32' );
 	} );
 
 	test( 'returns no trailing zero cents when stripZeros set to true (EUR)', () => {
-		const money = formatCurrency( 9800900, 'EUR' );
-		expect( money ).toBe( '€9,800,900.00' );
+		const money = formatCurrency( 9800900, 'EUR', { locale: 'de-DE' } );
+		expect( money ).toBe( '9.800.900,00 €' );
 
 		// Trailing zero cents should be removed.
-		const money2 = formatCurrency( 9800900, 'EUR', { stripZeros: true } );
-		expect( money2 ).toBe( '€9.800,900' );
+		const money2 = formatCurrency( 9800900, 'EUR', { locale: 'de-DE', stripZeros: true } );
+		expect( money2 ).toBe( '9.800.900 €' );
 
 		// It should not strip non-zero cents.
-		const money3 = formatCurrency( 9800900.32, 'EUR', { stripZeros: true } );
-		expect( money3 ).toBe( '€9,800,900.32' );
+		const money3 = formatCurrency( 9800900.32, 'EUR', { locale: 'de-DE', stripZeros: true } );
+		expect( money3 ).toBe( '9.800.900,32 €' );
 	} );
 
 	describe( 'supported currencies', () => {
@@ -81,13 +81,25 @@ describe( 'formatCurrency', () => {
 			const money = formatCurrency( 9800900.32, 'AUD' );
 			expect( money ).toBe( 'A$9,800,900.32' );
 		} );
-		test( 'CAD', () => {
-			const money = formatCurrency( 9800900.32, 'CAD' );
-			expect( money ).toBe( 'C$9,800,900.32' );
+		test( 'CAD in Canadian English', () => {
+			const money = formatCurrency( 9800900.32, 'CAD', { locale: 'en-CA' } );
+			expect( money ).toBe( '$9,800,900.32' );
 		} );
-		test( 'EUR', () => {
-			const money = formatCurrency( 9800900.32, 'EUR' );
+		test( 'CAD in US English', () => {
+			const money = formatCurrency( 9800900.32, 'CAD', { locale: 'en-US' } );
+			expect( money ).toBe( 'CA$9,800,900.32' );
+		} );
+		test( 'CAD in Canadian French', () => {
+			const money = formatCurrency( 9800900.32, 'CAD', { locale: 'fr-CA' } );
+			expect( money ).toBe( '9 800 900,32 $' );
+		} );
+		test( 'EUR in EN locale', () => {
+			const money = formatCurrency( 9800900.32, 'EUR', { locale: 'en-US' } );
 			expect( money ).toBe( '€9,800,900.32' );
+		} );
+		test( 'EUR in DE locale', () => {
+			const money = formatCurrency( 9800900.32, 'EUR', { locale: 'de-DE' } );
+			expect( money ).toBe( '9.800.900,32 €' );
 		} );
 		test( 'EUR in FR locale', () => {
 			const money = formatCurrency( 9800900.32, 'EUR', { locale: 'fr-FR' } );
@@ -101,13 +113,17 @@ describe( 'formatCurrency', () => {
 			const money = formatCurrency( 9800900.32, 'JPY' );
 			expect( money ).toBe( '¥9,800,900' );
 		} );
-		test( 'BRL', () => {
-			const money = formatCurrency( 9800900.32, 'BRL' );
-			expect( money ).toBe( 'R$9.800.900,32' );
+		test( 'BRL in EN locale', () => {
+			const money = formatCurrency( 9800900.32, 'BRL', { locale: 'en-US' } );
+			expect( money ).toBe( 'R$9,800,900.32' );
+		} );
+		test( 'BRL in PT locale', () => {
+			const money = formatCurrency( 9800900.32, 'BRL', { locale: 'pt-BR' } );
+			expect( money ).toBe( 'R$ 9.800.900,32' );
 		} );
 		test( 'IDR', () => {
-			const money = formatCurrency( 107280000, 'IDR', { isSmallestUnit: true } );
-			expect( money ).toBe( 'Rp1.072.800,00' );
+			const money = formatCurrency( 107280000, 'IDR', { locale: 'in-ID', isSmallestUnit: true } );
+			expect( money ).toBe( 'Rp 1.072.800,00' );
 		} );
 	} );
 
