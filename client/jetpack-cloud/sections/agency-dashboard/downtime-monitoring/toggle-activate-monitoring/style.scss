@@ -5,10 +5,6 @@
 	background-color: var(--studio-jetpack-green-50);
 }
 
-.components-toggle-control .components-base-control__field {
-	margin-bottom: 0;
-}
-
 .inline-flex-align-centre {
 	display: inline-flex;
 	align-items: center;
@@ -16,6 +12,20 @@
 
 .toggle-activate-monitoring__toggle-button {
 	@extend .inline-flex-align-centre;
+
+	.components-toggle-control .components-base-control__field {
+		margin-bottom: 0;
+
+		.components-form-toggle {
+			@include break-large {
+				margin-right: 4px;
+			}
+
+			@include break-xlarge {
+				margin-right: 12px;
+			}
+		}
+	}
 }
 
 .toggle-activate-monitoring__duration {
