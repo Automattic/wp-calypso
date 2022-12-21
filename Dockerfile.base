@@ -72,7 +72,6 @@ RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
 		# For wp-calypso-test-results dashboard
 		awscli \
-		fonts-liberation \
 		# Install non-Latin fonts
 		fonts-noto-cjk \
 		fonts-noto-core \
