@@ -1,12 +1,8 @@
 .stats-summary-view {
 	.highlight-cards-heading {
-		@media ( max-width: 1380px ) {
+		@media ( min-width: 661px ) and ( max-width: 1380px ) {
 			margin-left: 32px;
 			margin-right: 32px;
-		}
-		@media ( max-width: 660px ) {
-			margin-left: 0.875rem;
-			margin-right: 0.875rem;
 		}
 	}
 }
