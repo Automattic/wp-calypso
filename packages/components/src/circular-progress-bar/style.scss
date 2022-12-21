@@ -1,0 +1,27 @@
+.circular__progress-bar {
+	position: relative;
+
+	&-empty-circle {
+		stroke: var(--studio-gray-5);
+	}
+
+	&-fill-circle {
+		stroke: var(--studio-blue-50);
+		transform-origin: center;
+		transform: rotate(-90deg);
+		stroke-linecap: round;
+	}
+
+	&-text {
+		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		font-size: 1rem;
+		letter-spacing: 0.05em;
+
+		// center the text inside the circle
+		position: absolute;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		top: 50%;
+
+	}
+}

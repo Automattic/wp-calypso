@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, CircularProgressBar } from '@automattic/components';
 import { useRef, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
@@ -12,7 +12,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import Checklist from './checklist';
-import CircularProgressBar from './circular-progress-bar';
 import { getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
 import { tasks } from './tasks';
 import { getLaunchpadTranslations } from './translations';
