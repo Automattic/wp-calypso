@@ -271,7 +271,7 @@ export class PlansStep extends Component {
 	}
 
 	getHeaderText() {
-		const { headerText, translate, eligibleForProPlan, locale } = this.props;
+		const { headerText, translate, eligibleForProPlan, locale, flowName } = this.props;
 
 		if ( headerText ) {
 			return headerText;
@@ -284,7 +284,10 @@ export class PlansStep extends Component {
 		}
 
 		if ( this.state.isDesktop ) {
-			if ( isEnabled( 'onboarding/2023-pricing-grid' ) ) {
+			if (
+				isEnabled( 'onboarding/2023-pricing-grid' ) &&
+				flowName === 'onboarding-2023-pricing-grid'
+			) {
 				return translate( 'Choose your flavor of WordPress' );
 			}
 			return translate( 'Choose a plan' );
@@ -345,7 +348,10 @@ export class PlansStep extends Component {
 			);
 		}
 
-		if ( isEnabled( 'onboarding/2023-pricing-grid' ) ) {
+		if (
+			isEnabled( 'onboarding/2023-pricing-grid' ) &&
+			flowName === 'onboarding-2023-pricing-grid'
+		) {
 			return;
 		}
 
