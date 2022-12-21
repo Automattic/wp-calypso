@@ -1,0 +1,35 @@
+.team-invite-form {
+	select {
+		width: 100%;
+	}
+
+	.form-fieldset {
+		margin-bottom: 1rem;
+	}
+
+	.form-input-validation {
+		padding-bottom: 0;
+	}
+
+	.form-setting-explanation {
+		font-style: normal;
+	}
+
+	.team-invite-form__add-message {
+		padding: 0;
+		margin-bottom: 1rem;
+	}
+}
+
+.invite-people__link {
+	.form-fieldset {
+		margin-bottom: 0;
+		margin-inline-end: 1rem;
+	}
+}
+
+.invite-people__action-required {
+	.feature-example {
+		margin-top: 0;
+	}
+}
