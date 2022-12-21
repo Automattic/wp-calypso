@@ -8,6 +8,7 @@ import {
 	PHOTO_GALLERY_PAGE,
 	PRICING_PAGE,
 	SERVICE_SHOWCASE_PAGE,
+	SHOP_PAGE,
 	SITEMAP_PAGE,
 	TEAM_PAGE,
 	TESTIMONIALS_PAGE,
@@ -142,6 +143,7 @@ export function BrowserView( {
 			case HOME_PAGE:
 				return homePage;
 			case PHOTO_GALLERY_PAGE:
+			case SHOP_PAGE:
 				return photoGallery;
 			case SERVICE_SHOWCASE_PAGE:
 				return serviceShowcase;

@@ -1,8 +1,7 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlan,
+	PLAN_BUSINESS,
 	PLAN_PREMIUM,
-	PLAN_WPCOM_PRO,
 	WPCOM_DIFM_LITE,
 } from '@automattic/calypso-products';
 import { IntentScreen } from '@automattic/onboarding';
@@ -31,6 +30,7 @@ interface Props {
 	goToNextStep: () => void;
 	submitSignupStep: ( { stepName, wasSkipped }: { stepName: string; wasSkipped: boolean } ) => void;
 	goToStep: ( stepName: string ) => void;
+	flowName: string;
 	stepName: string;
 }
 
@@ -56,9 +56,10 @@ export default function NewOrExistingSiteStep( props: Props ) {
 			args: {
 				displayCost,
 				fulfillmentDays: 4,
-				plan: isEnabled( 'plans/pro-plan' )
-					? getPlan( PLAN_WPCOM_PRO )?.getTitle()
-					: getPlan( PLAN_PREMIUM )?.getTitle(),
+				plan:
+					props.flowName === 'do-it-for-me-store'
+						? getPlan( PLAN_BUSINESS )?.getTitle()
+						: getPlan( PLAN_PREMIUM )?.getTitle(),
 			},
 			components: {
 				PriceWrapper: isLoading ? <Placeholder /> : <strong />,

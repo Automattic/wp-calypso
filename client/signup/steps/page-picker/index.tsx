@@ -26,6 +26,8 @@ import {
 	SHOP_PAGE,
 } from 'calypso/signup/difm/constants';
 import {
+	BBE_ONBOARDING_PAGE_PICKER_STEP,
+	BBE_STORE_ONBOARDING_PAGE_PICKER_STEP,
 	useTranslatedPageDescriptions,
 	useTranslatedPageTitles,
 } from 'calypso/signup/difm/translation-hooks';
@@ -36,6 +38,7 @@ import { getSiteId } from 'calypso/state/sites/selectors';
 import ShoppingCartForDIFM from './shopping-cart-for-difm';
 import useCartForDIFM from './use-cart-for-difm';
 import type { PageId } from 'calypso/signup/difm/constants';
+import type { BBETranslationContext } from 'calypso/signup/difm/translation-hooks';
 import type { Dependencies } from 'calypso/signup/types';
 
 import './style.scss';
@@ -117,14 +120,23 @@ interface PageCellType {
 	popular?: boolean;
 	required?: boolean;
 	included?: boolean;
+	context: BBETranslationContext;
 }
 
-function PageCell( { pageId, popular, required, selectedPages, included, onClick }: PageCellType ) {
+function PageCell( {
+	pageId,
+	popular,
+	required,
+	selectedPages,
+	included,
+	context,
+	onClick,
+}: PageCellType ) {
 	const translate = useTranslate();
 	const selectedIndex = selectedPages.indexOf( pageId );
 	const isSelected = included || Boolean( selectedIndex > -1 );
 	const title = useTranslatedPageTitles()[ pageId ];
-	const description = useTranslatedPageDescriptions( pageId );
+	const description = useTranslatedPageDescriptions( pageId, context );
 
 	return (
 		<GridCellContainer isSelected={ isSelected } isClickDisabled={ included || false }>
@@ -170,9 +182,14 @@ function PageSelector( {
 		}
 	};
 
+	const context = isStoreFlow
+		? BBE_STORE_ONBOARDING_PAGE_PICKER_STEP
+		: BBE_ONBOARDING_PAGE_PICKER_STEP;
+
 	return (
 		<PageGrid>
 			<PageCell
+				context={ context }
 				required
 				pageId={ HOME_PAGE }
 				selectedPages={ selectedPages }
@@ -180,6 +197,7 @@ function PageSelector( {
 			/>
 			{ isStoreFlow && (
 				<PageCell
+					context={ context }
 					required
 					pageId={ SHOP_PAGE }
 					selectedPages={ selectedPages }
@@ -187,12 +205,14 @@ function PageSelector( {
 				/>
 			) }
 			<PageCell
+				context={ context }
 				popular
 				pageId={ ABOUT_PAGE }
 				selectedPages={ selectedPages }
 				onClick={ onPageClick }
 			/>
 			<PageCell
+				context={ context }
 				popular
 				pageId={ CONTACT_PAGE }
 				selectedPages={ selectedPages }
@@ -200,6 +220,7 @@ function PageSelector( {
 			/>
 
 			<PageCell
+				context={ context }
 				popular
 				pageId={ BLOG_PAGE }
 				selectedPages={ selectedPages }
@@ -207,40 +228,79 @@ function PageSelector( {
 			/>
 
 			<PageCell
+				context={ context }
 				pageId={ PHOTO_GALLERY_PAGE }
 				selectedPages={ selectedPages }
 				onClick={ onPageClick }
 			/>
+			{ isStoreFlow ? (
+				<PageCell
+					context={ context }
+					popular
+					pageId={ FAQ_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+			) : (
+				<PageCell
+					context={ context }
+					popular={ ! isStoreFlow }
+					pageId={ SERVICES_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+			) }
 			<PageCell
-				popular
-				pageId={ SERVICES_PAGE }
-				selectedPages={ selectedPages }
-				onClick={ onPageClick }
-			/>
-			<PageCell
+				context={ context }
 				pageId={ VIDEO_GALLERY_PAGE }
 				selectedPages={ selectedPages }
 				onClick={ onPageClick }
 			/>
+			{ ! isStoreFlow && (
+				<PageCell
+					context={ context }
+					popular
+					pageId={ PRICING_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+			) }
 			<PageCell
-				popular
-				pageId={ PRICING_PAGE }
+				context={ context }
+				pageId={ PORTFOLIO_PAGE }
 				selectedPages={ selectedPages }
 				onClick={ onPageClick }
 			/>
-			<PageCell pageId={ PORTFOLIO_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
+			{ isStoreFlow ? (
+				<PageCell
+					context={ context }
+					popular
+					pageId={ SERVICES_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+			) : (
+				<PageCell
+					context={ context }
+					popular
+					pageId={ FAQ_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+			) }
 			<PageCell
-				popular
-				pageId={ FAQ_PAGE }
-				selectedPages={ selectedPages }
-				onClick={ onPageClick }
-			/>
-			<PageCell
+				context={ context }
+				popular={ isStoreFlow }
 				pageId={ TESTIMONIALS_PAGE }
 				selectedPages={ selectedPages }
 				onClick={ onPageClick }
 			/>
-			<PageCell pageId={ TEAM_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
+			<PageCell
+				context={ context }
+				pageId={ TEAM_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
 		</PageGrid>
 	);
 }
@@ -295,7 +355,7 @@ function DIFMPagePicker( props: StepProps ) {
 		isProductsLoading,
 		isFormattedCurrencyLoading,
 		effectiveCurrencyCode,
-	} = useCartForDIFM( selectedPages );
+	} = useCartForDIFM( selectedPages, isStoreFlow );
 
 	const difmLiteProduct = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
 	let difmTieredPriceDetails = null;
@@ -324,31 +384,58 @@ function DIFMPagePicker( props: StepProps ) {
 		components: { wbr: <wbr /> },
 	} );
 
-	const subHeaderText = translate(
-		'Select your desired pages by clicking the thumbnails. {{br}}{{/br}}Your site build includes up to %(freePageCount)s pages, add additional pages for {{PriceWrapper}}%(extraPagePrice)s{{/PriceWrapper}} each.',
-		{
-			components: {
-				br: <br />,
-				PriceWrapper:
-					difmTieredPriceDetails?.perExtraPagePrice && ! isFormattedCurrencyLoading ? (
-						<span />
-					) : (
-						<Placeholder />
-					),
-			},
-			args: {
-				freePageCount: difmTieredPriceDetails?.numberOfIncludedPages,
-				extraPagePrice: formatCurrency(
-					difmTieredPriceDetails?.perExtraPagePrice ?? 0,
-					effectiveCurrencyCode ?? '',
-					{
-						stripZeros: true,
-						isSmallestUnit: true,
-					}
-				),
-			},
-		}
-	);
+	const subHeaderText = isStoreFlow
+		? translate(
+				'Select your desired pages by clicking the thumbnails. {{br}}{{/br}}Your site build includes up to %(freePageCount)s pages, add additional pages for {{PriceWrapper}}%(extraPagePrice)s{{/PriceWrapper}} each.' +
+					'{{br}}{{/br}}{{br}}{{/br}}A cart and checkout are also included with your site.{{br}}{{/br}}You can add products later with the WordPress editor.',
+				{
+					components: {
+						br: <br />,
+						PriceWrapper:
+							difmTieredPriceDetails?.perExtraPagePrice && ! isFormattedCurrencyLoading ? (
+								<span />
+							) : (
+								<Placeholder />
+							),
+					},
+					args: {
+						freePageCount: difmTieredPriceDetails?.numberOfIncludedPages,
+						extraPagePrice: formatCurrency(
+							difmTieredPriceDetails?.perExtraPagePrice ?? 0,
+							effectiveCurrencyCode ?? '',
+							{
+								stripZeros: true,
+								isSmallestUnit: true,
+							}
+						),
+					},
+				}
+		  )
+		: translate(
+				'Select your desired pages by clicking the thumbnails. {{br}}{{/br}}Your site build includes up to %(freePageCount)s pages, add additional pages for {{PriceWrapper}}%(extraPagePrice)s{{/PriceWrapper}} each.',
+				{
+					components: {
+						br: <br />,
+						PriceWrapper:
+							difmTieredPriceDetails?.perExtraPagePrice && ! isFormattedCurrencyLoading ? (
+								<span />
+							) : (
+								<Placeholder />
+							),
+					},
+					args: {
+						freePageCount: difmTieredPriceDetails?.numberOfIncludedPages,
+						extraPagePrice: formatCurrency(
+							difmTieredPriceDetails?.perExtraPagePrice ?? 0,
+							effectiveCurrencyCode ?? '',
+							{
+								stripZeros: true,
+								isSmallestUnit: true,
+							}
+						),
+					},
+				}
+		  );
 
 	const isExistingSite = newOrExistingSiteChoice === 'existing-site';
 
@@ -386,7 +473,9 @@ function DIFMPagePicker( props: StepProps ) {
 					{ translate( 'Go to Checkout' ) }
 				</StyledButton>
 			}
-			headerContent={ <ShoppingCartForDIFM selectedPages={ selectedPages } /> }
+			headerContent={
+				<ShoppingCartForDIFM selectedPages={ selectedPages } isStoreFlow={ isStoreFlow } />
+			}
 			{ ...props }
 		/>
 	);

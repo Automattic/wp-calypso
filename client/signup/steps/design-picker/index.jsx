@@ -378,12 +378,14 @@ export default function DesignPickerStep( props ) {
 				subHeaderText: subHeaderText(),
 		  };
 
+	const isDIFMStoreFlow = 'do-it-for-me-store' === props.flowName;
+
 	return (
 		<StepWrapper
 			{ ...props }
 			className={ classnames( {
 				'design-picker__has-categories': showDesignPickerCategories,
-				'design-picker__sell-intent': 'sell' === intent,
+				'design-picker__sell-intent': 'sell' === intent || isDIFMStoreFlow,
 			} ) }
 			{ ...headerProps }
 			stepContent={ renderDesignPicker() }

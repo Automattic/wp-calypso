@@ -2,6 +2,7 @@ import {
 	PLAN_PREMIUM,
 	WPCOM_DIFM_LITE,
 	getDIFMTieredPriceDetails,
+	PLAN_BUSINESS,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { MinimalRequestCartProduct, useShoppingCart } from '@automattic/shopping-cart';
@@ -163,6 +164,7 @@ function getSiteCartProducts( {
 	const cartItems: Array< CartItem | null > = responseCart.products.map( ( product ) => {
 		switch ( product.product_slug ) {
 			case PLAN_PREMIUM:
+			case PLAN_BUSINESS:
 				return {
 					productSlug: product.product_slug,
 					productOriginalName: product.product_name,
@@ -218,7 +220,9 @@ function getSiteCartProducts( {
 	// Enforce order of display, so that the DIFM product is visible first
 	const difmRelatedCartItems = cartItems.filter( ( e ) => e !== null );
 	const difmProduct = difmRelatedCartItems.find( ( e ) => e?.productSlug === WPCOM_DIFM_LITE );
-	const planProduct = difmRelatedCartItems.find( ( e ) => e?.productSlug === PLAN_PREMIUM );
+	const planProduct = difmRelatedCartItems.find( ( e ) =>
+		[ PLAN_PREMIUM, PLAN_BUSINESS ].includes( e?.productSlug || '' )
+	);
 
 	//Enforce order
 	const finalCartItems: CartItem[] = [];
@@ -232,7 +236,10 @@ function getSiteCartProducts( {
 	return finalCartItems;
 }
 
-export function useCartForDIFM( selectedPages: string[] ): {
+export function useCartForDIFM(
+	selectedPages: string[],
+	isStoreFlow: boolean
+): {
 	items: CartItem[];
 	total: string | null;
 	isCartLoading: boolean;
@@ -248,7 +255,9 @@ export function useCartForDIFM( selectedPages: string[] ): {
 	const signupDependencies = useSelector( getSignupDependencyStore );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const premiumPlan = useSelector( ( state ) => getProductBySlug( state, PLAN_PREMIUM ) );
+	const activePlanScheme = useSelector( ( state ) =>
+		getProductBySlug( state, isStoreFlow ? PLAN_BUSINESS : PLAN_PREMIUM )
+	);
 	const { newOrExistingSiteChoice, siteId, siteSlug } = signupDependencies;
 	const isExistingSite = newOrExistingSiteChoice === 'existing-site';
 	const isProductsLoading = useSelector( isProductsListFetching );
@@ -318,7 +327,7 @@ export function useCartForDIFM( selectedPages: string[] ): {
 	const effectiveCurrencyCode = getEffectiveCurrencyCode();
 	let displayedCartItems: CartItem[] = [];
 	let totalCostFormatted = null;
-	if ( difmLiteProduct && premiumPlan && effectiveCurrencyCode ) {
+	if ( difmLiteProduct && activePlanScheme && effectiveCurrencyCode ) {
 		if ( isExistingSite ) {
 			displayedCartItems = getSiteCartProducts( {
 				responseCart,
@@ -330,7 +339,7 @@ export function useCartForDIFM( selectedPages: string[] ): {
 				selectedPages,
 				currencyCode: effectiveCurrencyCode,
 				translate,
-				activePlanScheme: premiumPlan,
+				activePlanScheme: activePlanScheme,
 				difmLiteProduct,
 			} );
 		}
