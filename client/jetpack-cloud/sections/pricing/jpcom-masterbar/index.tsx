@@ -18,6 +18,8 @@ import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selec
 import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 import { getSiteSlug, isJetpackCloudCartEnabled } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import CloudCartIcon from './CloudCartIcon';
+import EmptyCart from './EmptyCart';
 import useMobileBtn from './use-mobile-btn';
 import useSubmenuBtn from './use-submenu-btn';
 import useUserMenu from './use-user-menu';
@@ -188,6 +190,17 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 						>
 							<JetpackLogo full size={ 38 } />
 						</ExternalLink>
+						{ shouldShowCart && (
+							<MasterbarCartWrapper
+								goToCheckout={ goToCheckout }
+								selectedSiteSlug={ siteSlug || undefined }
+								selectedSiteId={ siteId || undefined }
+								checkoutLabel={ translate( 'Go to Checkout' ) }
+								cartIcon={ CloudCartIcon }
+								emptyCart={ EmptyCart }
+								forceShow
+							/>
+						) }
 						<a
 							className="header__mobile-btn mobile-btn js-mobile-btn"
 							href="#mobile-menu"
@@ -279,6 +292,9 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 									onRemoveProduct={ onRemoveProductFromCart }
 									selectedSiteSlug={ siteSlug || undefined }
 									selectedSiteId={ siteId || undefined }
+									checkoutLabel={ translate( 'Go to Checkout' ) }
+									cartIcon={ CloudCartIcon }
+									emptyCart={ EmptyCart }
 									forceShow
 								/>
 							) }

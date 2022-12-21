@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MasterbarItem from '../item';
+import { MasterBarCartCount } from './masterbar-cart-count';
 import { CartIcon } from './masterbar-cart-icon';
 
 import './masterbar-cart-button-style.scss';
@@ -18,6 +19,9 @@ export type MasterbarCartButtonProps = {
 	onRemoveProduct?: ( uuid: string ) => void;
 	onRemoveCoupon?: () => void;
 	forceShow?: boolean;
+	checkoutLabel?: string;
+	cartIcon?: React.ElementType;
+	emptyCart?: React.ElementType;
 };
 
 export function MasterbarCartButton( {
@@ -27,6 +31,9 @@ export function MasterbarCartButton( {
 	onRemoveProduct,
 	onRemoveCoupon,
 	forceShow = false,
+	checkoutLabel,
+	cartIcon,
+	emptyCart,
 }: MasterbarCartButtonProps ) {
 	const { responseCart, reloadFromServer } = useShoppingCart(
 		selectedSiteId ? selectedSiteId : undefined
@@ -63,17 +70,25 @@ export function MasterbarCartButton( {
 	const onClose = () => setIsActive( false );
 	const tooltip = String( translate( 'My shopping cart' ) );
 
+	const CustomCartIcon = cartIcon as React.ElementType;
+	const cartCount = responseCart?.products?.length;
+	const icon = cartIcon ? (
+		<CustomCartIcon />
+	) : (
+		<CartIcon newItems={ !! responseCart.products } active={ isActive } />
+	);
 	return (
 		<>
 			<MasterbarItem
 				className="masterbar-cart-button"
 				alwaysShowContent
-				icon={ <CartIcon newItems={ !! responseCart.products } active={ isActive } /> }
+				icon={ icon }
 				tooltip={ tooltip }
 				onClick={ onClick }
 				isActive={ isActive }
 				ref={ cartButtonRef }
 			/>
+			<MasterBarCartCount cartCount={ cartCount } />
 			<Popover
 				isVisible={ isActive }
 				onClose={ onClose }
@@ -89,6 +104,8 @@ export function MasterbarCartButton( {
 						closeCart={ onClose }
 						onRemoveProduct={ onRemoveProduct }
 						onRemoveCoupon={ onRemoveCoupon }
+						checkoutLabel={ checkoutLabel }
+						emptyCart={ emptyCart }
 					/>
 				</CheckoutErrorBoundary>
 			</Popover>

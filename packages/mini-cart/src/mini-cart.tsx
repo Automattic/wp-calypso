@@ -104,6 +104,8 @@ export function MiniCart( {
 	closeCart,
 	onRemoveProduct,
 	onRemoveCoupon,
+	checkoutLabel,
+	emptyCart,
 }: {
 	selectedSiteSlug: string;
 	cartKey: number | undefined;
@@ -111,10 +113,15 @@ export function MiniCart( {
 	closeCart: () => void;
 	onRemoveProduct?: ( uuid: string ) => void;
 	onRemoveCoupon?: () => void;
+	checkoutLabel?: string;
+	emptyCart?: React.ElementType;
 } ) {
 	const { responseCart, removeCoupon, removeProductFromCart, isLoading, isPendingUpdate } =
 		useShoppingCart( cartKey ? cartKey : undefined );
 	const { __ } = useI18n();
+
+	const EmptyCart = emptyCart as React.ElementType;
+	const shouldRenderEmptyCart = emptyCart && responseCart.products.length <= 0;
 	const isDisabled = isLoading || isPendingUpdate;
 
 	const handleRemoveCoupon = () => {
@@ -156,18 +163,21 @@ export function MiniCart( {
 					removeProductFromCart={ handleRemoveProduct }
 					responseCart={ responseCart }
 				/>
-				<MiniCartTotal responseCart={ responseCart } />
+				{ shouldRenderEmptyCart && <EmptyCart /> }
+				{ ! shouldRenderEmptyCart && <MiniCartTotal responseCart={ responseCart } /> }
 				<MiniCartFooter className="mini-cart__footer">
-					<Button
-						className="mini-cart__checkout"
-						buttonType="primary"
-						fullWidth
-						disabled={ isDisabled }
-						isBusy={ isDisabled }
-						onClick={ () => goToCheckout( selectedSiteSlug ) }
-					>
-						{ __( 'Checkout' ) }
-					</Button>
+					{ ! shouldRenderEmptyCart && (
+						<Button
+							className="mini-cart__checkout"
+							buttonType="primary"
+							fullWidth
+							disabled={ isDisabled }
+							isBusy={ isDisabled }
+							onClick={ () => goToCheckout( selectedSiteSlug ) }
+						>
+							{ checkoutLabel || __( 'Checkout' ) }
+						</Button>
+					) }
 				</MiniCartFooter>
 			</MiniCartWrapper>
 		</CheckoutProvider>
