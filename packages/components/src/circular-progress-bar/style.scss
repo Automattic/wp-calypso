@@ -1,5 +1,14 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .circular__progress-bar {
 	position: relative;
+
+	@include break-mobile {
+		// mobile: 40px, desktop: 48px (1.2x scale)
+		transform: scale(1.2);
+	}
 
 	&-empty-circle {
 		stroke: var(--studio-gray-5);

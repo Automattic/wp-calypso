@@ -7,8 +7,8 @@ const CircularProgressBar = ( {
 	currentStep: number;
 	numberOfSteps: number;
 } ) => {
-	const SIZE = 48;
-	const STROKE_WIDTH = 5;
+	const SIZE = 40;
+	const STROKE_WIDTH = 4;
 	const RADIUS = SIZE / 2 - STROKE_WIDTH / 2;
 	const FULL_ARC = 2 * Math.PI * RADIUS;
 
