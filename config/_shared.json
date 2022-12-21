@@ -209,7 +209,8 @@
 		"ecommerce-monthly",
 		"pro",
 		"starter",
-		"domain"
+		"domain",
+		"onboarding-2023-pricing-grid"
 	],
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js"
 }
