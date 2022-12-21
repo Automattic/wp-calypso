@@ -22,7 +22,7 @@ const PlanFeaturesActionsButton = ( {
 	translate,
 } ) => {
 	const classes = classNames(
-		'plan-features__actions-button',
+		'plan-features-2023-grid__actions-button',
 		{
 			'is-current': current,
 			'is-primary': ( primaryUpgrade && ! isPlaceholder ) || isPopular,
@@ -46,7 +46,7 @@ const PlanFeaturesActionsButton = ( {
 	if ( ( availableForPurchase || isPlaceholder ) && ! isLaunchPage && isInSignup ) {
 		return (
 			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
-				{ translate( 'Select', {
+				{ translate( 'Get %(plan)s', {
 					args: {
 						plan: planName,
 					},

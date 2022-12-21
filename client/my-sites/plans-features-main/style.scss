@@ -49,6 +49,44 @@
 	}
 }
 
+.plans-features-main__group.is-2023-pricing-grid {
+	position: relative;
+
+	.is-section-signup & {
+		--approximate-viewport-scrollbar-width: 20px;
+
+		width: calc(100vw - var(--approximate-viewport-scrollbar-width));
+		margin-left: calc(50% - 50vw + var(--approximate-viewport-scrollbar-width) / 2);
+
+		@media ( min-width: 860px ) {
+			max-width: 860px;
+			margin-left: -280px;
+		}
+
+		@media ( min-width: 1320px ) {
+			max-width: 1320px;
+			margin-left: -280px;
+		}
+
+	}
+
+	.is-section-plans & {
+		overflow: hidden;
+		width: calc(100vw - 278px);
+		margin-left: calc(50% - 50vw + 138px);
+
+		@include breakpoint-deprecated( "<660px" ) {
+			margin-left: 0;
+			width: 100%;
+		}
+
+		@media ( min-width: 1800px ) {
+			max-width: 1520px;
+			margin-left: -240px;
+		}
+	}
+}
+
 .plans-features-main__group.is-wpcom {
 	padding-top: 19px;
 }

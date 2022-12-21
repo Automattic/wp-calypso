@@ -109,18 +109,18 @@ export class PlanFeatures2023Grid extends Component {
 				rawPrice,
 				rawPriceAnnual,
 				rawPriceForMonthlyPlan,
+				tagline,
 			} = properties;
 
 			const classes = classNames( 'plan-features-2023-grid__table-item', {
 				'has-border-top': ! isReskinned,
 			} );
-			const audience = planConstantObj.getAudience?.();
 			const billingTimeFrame = planConstantObj.getBillingTimeFrame();
 
 			return (
 				<th scope="col" key={ planName } className={ classes }>
 					<PlanFeatures2023GridHeader
-						audience={ audience }
+						tagline={ tagline }
 						availableForPurchase={ availableForPurchase }
 						basePlansPath={ basePlansPath }
 						billingTimeFrame={ billingTimeFrame }
@@ -434,6 +434,8 @@ export default connect(
 						? discountPrice * 12
 						: getPlanRawPrice( state, planProductId, false );
 
+				const tagline = planConstantObj.getPlanTagline();
+
 				return {
 					availableForPurchase,
 					cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ),
@@ -455,6 +457,7 @@ export default connect(
 					relatedMonthlyPlan,
 					annualPricePerMonth,
 					isMonthlyPlan,
+					tagline,
 				};
 			} )
 		);

@@ -1,3 +1,4 @@
+@import "@automattic/onboarding/styles/mixins";
 $plan-features-header-banner-height: 20px;
 $plan-features-sidebar-width: 272px;
 
@@ -23,16 +24,16 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features-2023-grid__table-item.is-top-buttons {
-	padding-top: 8px;
+	padding: 0 20px;
 }
 
 .plan-features-2023-grid__header {
 	position: relative;
 	display: flex;
 	align-items: flex-start;
-	padding: 12px 24px 12px 15px;
+	padding: 20px 0 8px 20px;
 	background-color: var(--color-surface);
-	justify-content: center;
+	justify-content: left;
 	font-weight: 400;
 	margin-top: 30px;
 }
@@ -75,7 +76,9 @@ $plan-features-sidebar-width: 272px;
 		border-spacing: 16px 0;
 		margin-top: -16px;
 		table-layout: fixed;
-		width: 80%;
+		border: 1px solid #e0e0e0;
+		border-radius: 5px;
+		background-color: #fff;
 
 		@include breakpoint-deprecated( ">660px" ) {
 			display: table;
@@ -98,19 +101,22 @@ $plan-features-sidebar-width: 272px;
 
 	.plan-features-2023-grid__header-title {
 		margin-bottom: 5px;
-		font-size: $font-title-small;
+		font-size: $font-title-large;
 		line-height: 0.7;
-		color: var(--studio-gray-80);
+		color: var(--studio-gray-100);
 		font-weight: 400;
+		@include onboarding-font-recoleta;
 	}
 
-	.is-premium-plan .plan-features-2023-grid__header-title {
-		color: var(--studio-gray-100);
-		font-weight: 600;
+	.plan-features-2023-grid__header-tagline {
+		font-size: $font-body-extra-small;
+		color: var(--studio-gray-80);
+		font-weight: 400;
+		padding: 0 20px 16px 20px;
 	}
 
 	.plan-features-2023-grid__table-item {
-		text-align: center;
+		text-align: left;
 		transition: opacity 0.05s;
 		border-right: solid 1px var(--color-neutral-5);
 		border-left: solid 1px var(--color-neutral-5);

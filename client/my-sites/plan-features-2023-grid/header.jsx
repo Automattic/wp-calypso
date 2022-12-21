@@ -1,5 +1,6 @@
 import { getPlans, getPlanClass } from '@automattic/calypso-products';
 import { getCurrencyObject } from '@automattic/format-currency';
+import { NEWSLETTER_FLOW, LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -14,8 +15,22 @@ export class PlanFeatures2023GridHeader extends Component {
 		return this.renderPlansHeaderNoTabs();
 	}
 
+	getPlanPillText() {
+		const { flow, translate } = this.props;
+
+		switch ( flow ) {
+			case NEWSLETTER_FLOW:
+				return translate( 'Best for Newsletters' );
+			case LINK_IN_BIO_FLOW:
+			case LINK_IN_BIO_TLD_FLOW:
+				return translate( 'Best for Link in Bio' );
+			default:
+				return translate( 'Popular' );
+		}
+	}
+
 	renderPlansHeaderNoTabs() {
-		const { planType, popular, selectedPlan, title, translate } = this.props;
+		const { planType, popular, selectedPlan, title, tagline, translate } = this.props;
 
 		const headerClasses = classNames( 'plan-features-2023-grid__header', getPlanClass( planType ) );
 
@@ -23,17 +38,17 @@ export class PlanFeatures2023GridHeader extends Component {
 			<span>
 				<div>
 					{ popular && ! selectedPlan && (
-						<PlanPill isInSignup={ true }>{ translate( 'Popular' ) }</PlanPill>
+						<PlanPill isInSignup={ true }>{ this.getPlanPillText() }</PlanPill>
 					) }
 				</div>
 				<header className={ headerClasses }>
 					<h4 className="plan-features-2023-grid__header-title">{ title }</h4>
 				</header>
+				<div className="plan-features-2023-grid__header-tagline">{ tagline }</div>
 				<div className="plan-features-2023-grid__pricing">
 					{ this.renderPriceGroup() }
 					{ this.getBillingTimeframe() }
 				</div>
-				{ this.getAnnualDiscount() }
 			</span>
 		);
 	}
@@ -65,32 +80,6 @@ export class PlanFeatures2023GridHeader extends Component {
 		return null;
 	}
 
-	getAnnualDiscount() {
-		const { isMonthlyPlan, rawPriceForMonthlyPlan, annualPricePerMonth, translate } = this.props;
-
-		if ( ! isMonthlyPlan ) {
-			const isLoading = typeof rawPriceForMonthlyPlan !== 'number';
-
-			const discountRate = Math.round(
-				( 100 * ( rawPriceForMonthlyPlan - annualPricePerMonth ) ) / rawPriceForMonthlyPlan
-			);
-			const annualDiscountText = translate( `You're saving %(discountRate)s%% by paying annually`, {
-				args: { discountRate },
-			} );
-
-			return (
-				<div
-					className={ classNames( {
-						'plan-features-2023-grid__header-annual-discount': true,
-						'plan-features-2023-grid__header-annual-discount-is-loading': isLoading,
-					} ) }
-				>
-					<span>{ annualDiscountText }</span>
-				</div>
-			);
-		}
-	}
-
 	getBillingTimeframe() {
 		const { billingTimeFrame } = this.props;
 		const perMonthDescription = this.getPerMonthDescription() || billingTimeFrame;
@@ -112,13 +101,13 @@ export class PlanFeatures2023GridHeader extends Component {
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ rawPrice }
-							displayPerMonthNotation={ true }
+							displayPerMonthNotation={ false }
 							original
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ discountPrice }
-							displayPerMonthNotation={ true }
+							displayPerMonthNotation={ false }
 							discounted
 						/>
 					</div>
@@ -130,7 +119,7 @@ export class PlanFeatures2023GridHeader extends Component {
 			<PlanPrice
 				currencyCode={ currencyCode }
 				rawPrice={ rawPrice }
-				displayPerMonthNotation={ true }
+				displayPerMonthNotation={ false }
 			/>
 		);
 	}
