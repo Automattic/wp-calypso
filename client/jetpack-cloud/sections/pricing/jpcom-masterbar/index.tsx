@@ -196,8 +196,8 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 								selectedSiteSlug={ siteSlug || undefined }
 								selectedSiteId={ siteId || undefined }
 								checkoutLabel={ translate( 'Go to Checkout' ) }
-								cartIcon={ CloudCartIcon }
-								emptyCart={ EmptyCart }
+								cartIcon={ <CloudCartIcon /> }
+								emptyCart={ <EmptyCart /> }
 								forceShow
 								showCount
 							/>
