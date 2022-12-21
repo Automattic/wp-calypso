@@ -15,9 +15,13 @@ const selectors = {
 	closeSidebarButton: 'button[aria-expanded="true"][aria-label="Styles"]',
 	backButton: `${ parentSelector } button[aria-label="Navigate to the previous view"]`,
 	moreActionsMenuButton: `${ parentSelector } button[aria-label="More Styles actions"]`,
+	defaultStyleVariation: `${ parentSelector } .edit-site-global-styles-variations_item[aria-label="Default"]`,
+	nonDefaultStyleVariation: `${ parentSelector } .edit-site-global-styles-variations_item:not([aria-label="Default"])`,
 };
 
 export type ColorLocation = 'Background' | 'Text' | 'Links';
+
+export type StyleVariation = 'Default' | 'Non-default';
 
 /**
  * Represents the site editor site styles sidebar/panel.
@@ -126,6 +130,22 @@ export class EditorSiteStylesComponent {
 		await this.returnToTopMenu();
 		await this.clickMenuButton( 'Layout' );
 		await this.editorDimensionsComponent.resetAll();
+	}
+
+	/**
+	 * Sets a style variation for the site.
+	 * This auto-handles returning to top menu and navigating down.
+	 *
+	 * @param {StyleVariation} styleVariation The style variation to set.
+	 */
+	async setStyleVariation( styleVariation: StyleVariation ): Promise< void > {
+		await this.returnToTopMenu();
+		await this.clickMenuButton( 'Browse styles' );
+		const locator =
+			styleVariation === 'Default'
+				? this.editor.locator( selectors.defaultStyleVariation )
+				: this.editor.locator( selectors.nonDefaultStyleVariation ).first();
+		await locator.click();
 	}
 
 	/**

@@ -19,6 +19,7 @@ import {
 	OpenInlineInserter,
 	EditorInlineBlockInserterComponent,
 	DimensionsSettings,
+	StyleVariation,
 } from '..';
 import { getCalypsoURL } from '../../data-helper';
 import { getIdFromBlock } from '../../element-helper';
@@ -530,6 +531,16 @@ export class FullSiteEditorPage {
 	async tryGlobalStyles(): Promise< void > {
 		const locator = this.editor.locator( selectors.limitedGlobalStylesModalTryButton );
 		await locator.click( { timeout: 5 * 1000 } );
+	}
+
+	/**
+	 * Sets a style variation for the site.
+	 * This auto-handles returning to top menu and navigating down.
+	 *
+	 * @param {StyleVariation} styleVariation The style variation to set.
+	 */
+	async setStyleVariation( styleVariation: StyleVariation ): Promise< void > {
+		await this.editorSiteStylesComponent.setStyleVariation( styleVariation );
 	}
 
 	//#endregion

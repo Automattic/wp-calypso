@@ -41,10 +41,8 @@ describe( DataHelper.createSuiteTitle( 'Site Editor: Limited Global Styles' ), f
 		await fullSiteEditorPage.tryGlobalStyles();
 	} );
 
-	it( 'Update the global background color', async function () {
-		await fullSiteEditorPage.setGlobalColorStyle( 'Background', {
-			colorName: 'Primary',
-		} );
+	it( 'Pick a non-default style variation', async function () {
+		await fullSiteEditorPage.setStyleVariation( 'Non-default' );
 	} );
 
 	it( 'Save the styles', async function () {
@@ -56,9 +54,7 @@ describe( DataHelper.createSuiteTitle( 'Site Editor: Limited Global Styles' ), f
 
 	it( 'Reset styles to defaults', async function () {
 		await fullSiteEditorPage.openSiteStyles();
-		await fullSiteEditorPage.setGlobalColorStyle( 'Background', {
-			colorName: 'Primary',
-		} );
+		await fullSiteEditorPage.setStyleVariation( 'Default' );
 		await fullSiteEditorPage.closeSiteStyles();
 		await fullSiteEditorPage.save();
 	} );
