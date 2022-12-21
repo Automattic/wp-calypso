@@ -1,3 +1,4 @@
+@import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
 .components-form-toggle.is-checked .components-form-toggle__track {
@@ -21,5 +22,7 @@
 	@extend .inline-flex-align-centre;
 	span {
 		margin-inline-start: 1px;
+		font-size: 0.75rem;
+		font-weight: 500;
 	}
 }

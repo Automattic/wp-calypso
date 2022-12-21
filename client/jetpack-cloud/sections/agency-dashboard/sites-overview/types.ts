@@ -4,7 +4,11 @@ import type { ReactChild } from 'react';
 export type AllowedTypes = 'site' | 'backup' | 'scan' | 'monitor' | 'plugin';
 
 // Site column object which holds key and title of each column
-export type SiteColumns = Array< { key: string; title: ReactChild } >;
+export type SiteColumns = Array< {
+	key: string;
+	title: ReactChild;
+	className?: string;
+} >;
 
 export type AllowedStatusTypes =
 	| 'inactive'

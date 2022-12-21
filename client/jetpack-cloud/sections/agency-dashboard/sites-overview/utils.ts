@@ -32,6 +32,7 @@ export const siteColumns = [
 	{
 		key: 'monitor',
 		title: translate( 'Monitor' ),
+		className: 'min-width-100px',
 	},
 	{
 		key: 'plugin',
