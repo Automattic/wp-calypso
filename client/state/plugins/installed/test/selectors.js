@@ -1,5 +1,5 @@
 import deepFreeze from 'deep-freeze';
-import { pick } from 'lodash';
+import { omit, pick } from 'lodash';
 import {
 	DEACTIVATE_PLUGIN,
 	ENABLE_AUTOUPDATE_PLUGIN,
@@ -169,8 +169,9 @@ describe( 'Installed plugin selectors', () => {
 			const siteWithPlugin = {
 				[ siteTwoId ]: pick( jetpack, [ 'active', 'autoupdate', 'update', 'version' ] ),
 			};
+			const pluginProperties = omit( jetpack, [ 'active', 'autoupdate', 'update', 'version' ] );
 			expect( plugins ).toEqual(
-				expect.arrayContaining( [ { ...jetpack, sites: siteWithPlugin } ] )
+				expect.arrayContaining( [ { ...pluginProperties, sites: siteWithPlugin } ] )
 			);
 		} );
 
@@ -217,10 +218,9 @@ describe( 'Installed plugin selectors', () => {
 
 		test( 'Should get the plugin if the it exists on the requested site', () => {
 			const plugin = selectors.getPluginOnSite( state, siteOneId, 'akismet' );
-			const siteWithPlugin = {
-				[ siteOneId ]: pick( akismet, [ 'active', 'autoupdate', 'update', 'version' ] ),
-			};
-			expect( plugin ).toEqual( { ...akismet, sites: siteWithPlugin } );
+			const siteWithPlugin = pick( akismet, [ 'active', 'autoupdate', 'update', 'version' ] );
+			const pluginProperties = omit( akismet, [ 'active', 'autoupdate', 'update', 'version' ] );
+			expect( plugin ).toEqual( { ...pluginProperties, ...siteWithPlugin } );
 		} );
 	} );
 
@@ -241,7 +241,8 @@ describe( 'Installed plugin selectors', () => {
 				[ siteOneId ]: pick( helloDolly, [ 'active', 'autoupdate', 'update', 'version' ] ),
 				[ siteTwoId ]: pick( helloDolly, [ 'active', 'autoupdate', 'update', 'version' ] ),
 			};
-			expect( plugin ).toEqual( { ...helloDolly, sites: sitesWithPlugins } );
+			const pluginProperties = omit( helloDolly, [ 'active', 'autoupdate', 'update', 'version' ] );
+			expect( plugin ).toEqual( { ...pluginProperties, sites: sitesWithPlugins } );
 		} );
 	} );
 
