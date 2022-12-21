@@ -1,12 +1,12 @@
 import { translate } from 'i18n-calypso';
 
-/* eslint-disable jsdoc/require-param */
 /**
  * Menu items that support all sites screen.
+ *
+ * @param {object} options
+ * @param {boolean} options.showManagePlugins Includes menu items that can manage plugins across all sites.
  */
-/* eslint-enable jsdoc/require-param */
-
-export default function allSitesMenu() {
+export default function allSitesMenu( { showManagePlugins = false } = {} ) {
 	return [
 		{
 			icon: 'dashicons-chart-bar',
@@ -46,7 +46,25 @@ export default function allSitesMenu() {
 			title: translate( 'Plugins' ),
 			navigationLabel: translate( 'View plugins for all sites' ),
 			type: 'menu-item',
-			url: '/plugins/manage',
+			url: '/plugins',
+			...( showManagePlugins && {
+				children: [
+					{
+						parent: 'plugins',
+						slug: 'all-sites-plugins-add-new',
+						title: translate( 'Add New' ),
+						type: 'submenu-item',
+						url: '/plugins',
+					},
+					{
+						parent: 'plugins',
+						slug: 'all-sites-plugins-installed-plugins',
+						title: translate( 'Installed Plugins' ),
+						type: 'submenu-item',
+						url: '/plugins/manage',
+					},
+				],
+			} ),
 		},
 	];
 }
