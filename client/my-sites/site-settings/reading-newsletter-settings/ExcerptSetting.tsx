@@ -39,7 +39,18 @@ export const ExcerptSetting = ( {
 			</FormLabel>
 			<FormSettingExplanation>
 				{ translate(
-					'Sets whether email subscribers can read full posts in emails or just an excerpt and link to the full version of the post. Learn more about sending emails.'
+					"Sets whether email subscribers can read full posts in emails or just an excerpt and link to the full version of the post. {{link}}Learn more about sending emails{{/link}}.",
+					{
+						components: {
+							link: (
+								<a
+									href={ localizeUrl( 'https://wordpress.com/support/launch-a-newsletter/' ) }
+									target="_blank"
+									rel="noreferrer"
+								/>
+							),
+						},
+					}
 				) }
 			</FormSettingExplanation>
 		</FormFieldset>
