@@ -302,6 +302,7 @@ class ThemesSelectionWithPage extends React.Component {
 
 	componentDidUpdate( nextProps ) {
 		if (
+			nextProps.siteId !== this.props.siteId ||
 			nextProps.search !== this.props.search ||
 			nextProps.tier !== this.props.tier ||
 			nextProps.filter !== this.props.filter ||
