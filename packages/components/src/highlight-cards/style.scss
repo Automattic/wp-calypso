@@ -4,6 +4,28 @@
 @import "../styles/typography";
 @import "./variables.scss";
 
+$header-margin-bottom: math.div($vertical-margin, 2);
+
+@font-face {
+	font-family: Inter;
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src:
+		url(https://s0.wp.com/i/fonts/inter/Inter-Regular.woff2?v=3.19) format("woff2"),
+		url(https://s0.wp.com/i/fonts/inter/Inter-Regular.woff?v=3.19) format("woff");
+}
+
+@font-face {
+	font-family: Inter;
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src:
+		url(https://s0.wp.com/i/fonts/inter/Inter-Medium.woff2?v=3.19) format("woff2"),
+		url(https://s0.wp.com/i/fonts/inter/Inter-Medium.woff?v=3.19) format("woff");
+}
+
 .highlight-cards {
 	color: var(--studio-gray-100);
 	font-size: $font-body-small;
@@ -27,7 +49,7 @@
 	font-weight: 400;
 	line-height: 40px;
 	font-family: $font-recoleta;
-	margin-bottom: math.div($vertical-margin, 2);
+	margin-bottom: $header-margin-bottom;
 	small {
 		font-family: $sans;
 		font-size: $font-body-small;
@@ -115,6 +137,43 @@
 }
 .highlight-card-difference-absolute-value {
 	margin-right: 2px;
+}
+.highlight-year-navigation {
+	display: flex;
+	justify-content: space-between;
+
+	.stats-period-navigation {
+		margin: 0;
+		align-self: stretch;
+		margin-bottom: $header-margin-bottom;
+	}
+}
+.tooltip.popover.highlight-card-tooltip { // overload tooltip's styles
+	.popover__inner {
+		padding: 16px 24px;
+		min-width: 244px;
+		box-sizing: border-box;
+		border-radius: 5px; // stylelint-disable-line scales/radii
+	}
+}
+.highlight-card-tooltip-content {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-size: $font-body-small;
+	font-weight: 500;
+	line-height: 20px;
+	font-family: Inter, $sans;
+
+	.highlight-card-tooltip-label {
+		display: flex;
+		align-items: center;
+	}
+	.highlight-card-tooltip-icon {
+		fill: var(--studio-white);
+		display: flex;
+		padding-right: 8px;
+	}
 }
 
 @media ( max-width: $custom-mobile-breakpoint ) {

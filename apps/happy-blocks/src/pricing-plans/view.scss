@@ -58,6 +58,12 @@ $brand-display: "SF Pro Display", $sans;
 		&-checkbox--disabled {
 			opacity: 0.6;
 		}
+
+		&-domain:has(.components-base-control__help) {
+			.components-base-control__field {
+				margin-bottom: 0;
+			}
+		}
 	}
 
 	&__skeleton {
@@ -80,6 +86,8 @@ $brand-display: "SF Pro Display", $sans;
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 6px;
 		padding: 4px;
+		width: min-content;
+		margin-bottom: 16px;
 
 		&-label {
 			background: $studio-gray-0;
