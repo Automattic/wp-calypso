@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactChild, useCallback, useState } from 'react';
+import { ReactChild, useCallback, useState, useMemo, ChangeEvent } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -8,6 +8,7 @@ import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-
 import { PartnerDetailsPayload } from 'calypso/state/partner-portal/types';
 import SearchableDropdown from './components/searchable-dropdown';
 import { Option as CountryOption, useCountriesAndStates } from './hooks/use-countries-and-states';
+
 import './style.scss';
 
 const defaultCountry: CountryOption = {
@@ -37,13 +38,7 @@ function getCountry( country: string, options: CountryOption[] ): CountryOption 
 }
 
 function getState( state: string, options: StateOption[] ): StateOption {
-	for ( let i = 0; i < options.length; i++ ) {
-		if ( options[ i ].value === state ) {
-			return options[ i ];
-		}
-	}
-
-	return options[ 0 ];
+	return options.find( ( option ) => option.value === state ) ?? options[ 0 ];
 }
 
 interface Props {
@@ -91,18 +86,32 @@ export default function CompanyDetailsForm( {
 		: false;
 	const state = stateOptions ? getState( addressState, stateOptions ) : false;
 
-	const payload: PartnerDetailsPayload = {
-		name,
-		contactPerson,
-		companyWebsite,
-		city,
-		line1,
-		line2,
-		country: country.value,
-		postalCode,
-		state: addressState,
-		...( includeTermsOfService ? { tos: 'consented' } : {} ),
-	};
+	const payload: PartnerDetailsPayload = useMemo(
+		() => ( {
+			name,
+			contactPerson,
+			companyWebsite,
+			city,
+			line1,
+			line2,
+			country: country.value,
+			postalCode,
+			state: addressState,
+			...( includeTermsOfService ? { tos: 'consented' } : {} ),
+		} ),
+		[
+			addressState,
+			city,
+			companyWebsite,
+			contactPerson,
+			country.value,
+			includeTermsOfService,
+			line1,
+			line2,
+			name,
+			postalCode,
+		]
+	);
 
 	const handleSubmit = useCallback(
 		( e ) => {
@@ -126,7 +135,7 @@ export default function CompanyDetailsForm( {
 						id="name"
 						name="name"
 						value={ name }
-						onChange={ ( event: any ) => setName( event.target.value ) }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => setName( event.target.value ) }
 						disabled={ isLoading }
 					/>
 				</FormFieldset>
@@ -139,7 +148,9 @@ export default function CompanyDetailsForm( {
 						id="contactPerson"
 						name="contactPerson"
 						value={ contactPerson }
-						onChange={ ( event: any ) => setContactPerson( event.target.value ) }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+							setContactPerson( event.target.value )
+						}
 						disabled={ isLoading }
 					/>
 				</FormFieldset>
@@ -150,7 +161,9 @@ export default function CompanyDetailsForm( {
 						id="companyWebsite"
 						name="companyWebsite"
 						value={ companyWebsite }
-						onChange={ ( event: any ) => setCompanyWebsite( event.target.value ) }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+							setCompanyWebsite( event.target.value )
+						}
 						disabled={ isLoading }
 					/>
 				</FormFieldset>
@@ -160,11 +173,11 @@ export default function CompanyDetailsForm( {
 					{ showCountryFields && (
 						<SearchableDropdown
 							className="company-details-form__dropdown"
-							value={ country.value.length < 1 ? 'default' : country }
+							value={ country }
 							placeholder={ translate( 'Type to find country' ) }
 							options={ countryOptions }
 							isDisabled={ isLoading }
-							onChange={ ( option: any ) => {
+							onChange={ ( option ) => {
 								setCountryValue( option.value );
 								// Reset the value of state since it no longer matches with the selected country.
 								setAddressState( '' );
@@ -180,9 +193,9 @@ export default function CompanyDetailsForm( {
 						<FormLabel>{ translate( 'State' ) }</FormLabel>
 						<SearchableDropdown
 							className="company-details-form__dropdown"
-							value={ state! }
+							value={ state }
 							options={ stateOptions }
-							onChange={ ( option: any ) => {
+							onChange={ ( option ) => {
 								setAddressState( option.value );
 							} }
 							isDisabled={ isLoading }
@@ -198,7 +211,9 @@ export default function CompanyDetailsForm( {
 						name="line1"
 						placeholder={ translate( 'Street name and house number' ) }
 						value={ line1 }
-						onChange={ ( event: any ) => setLine1( event.target.value ) }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+							setLine1( event.target.value )
+						}
 						disabled={ isLoading }
 					/>
 					<FormTextInput
@@ -206,7 +221,9 @@ export default function CompanyDetailsForm( {
 						name="line2"
 						placeholder={ translate( 'Apartment, floor, suite or unit number' ) }
 						value={ line2 }
-						onChange={ ( event: any ) => setLine2( event.target.value ) }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+							setLine2( event.target.value )
+						}
 						disabled={ isLoading }
 					/>
 				</FormFieldset>
@@ -217,7 +234,7 @@ export default function CompanyDetailsForm( {
 						id="city"
 						name="city"
 						value={ city }
-						onChange={ ( event: any ) => setCity( event.target.value ) }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => setCity( event.target.value ) }
 						disabled={ isLoading }
 					/>
 				</FormFieldset>
@@ -228,7 +245,9 @@ export default function CompanyDetailsForm( {
 						id="postalCode"
 						name="postalCode"
 						value={ postalCode }
-						onChange={ ( event: any ) => setPostalCode( event.target.value ) }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) =>
+							setPostalCode( event.target.value )
+						}
 						disabled={ isLoading }
 					/>
 				</FormFieldset>

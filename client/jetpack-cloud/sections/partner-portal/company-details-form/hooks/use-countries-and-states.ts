@@ -1,4 +1,3 @@
-import { useTranslate } from 'i18n-calypso';
 import { ReactChild, useMemo } from 'react';
 import { useCountries } from 'calypso/landing/stepper/hooks/use-countries';
 
@@ -49,7 +48,6 @@ export interface Option {
 
 export function useCountriesAndStates() {
 	const { data: countriesList } = useCountries();
-	const translate = useTranslate();
 
 	return useMemo( () => {
 		const countryOptions = <{ [ key: string ]: Option }>{};
@@ -107,12 +105,6 @@ export function useCountriesAndStates() {
 				return 1;
 			}
 			return 0;
-		} );
-
-		countries.unshift( {
-			value: '',
-			label: translate( 'Type to find country' ),
-			isLabel: true,
 		} );
 
 		return {
