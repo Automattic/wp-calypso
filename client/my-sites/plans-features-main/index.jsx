@@ -126,7 +126,10 @@ export class PlansFeaturesMain extends Component {
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
 
-		if ( isEnabled( 'onboarding/2023-pricing-grid' ) ) {
+		if (
+			isEnabled( 'onboarding/2023-pricing-grid' ) &&
+			flowName === 'onboarding-2023-pricing-grid'
+		) {
 			return (
 				<div
 					className={ classNames(
