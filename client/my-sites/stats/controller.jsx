@@ -11,6 +11,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import StatsCommentFollows from './comment-follows';
 import StatsOverview from './overview';
 import StatsSite from './site';
+import StatsEmailOpenDetail from './stats-email-open-detail';
 import StatsInsights from './stats-insights';
 import StatsPostDetail from './stats-post-detail';
 import StatsSummary from './summary';
@@ -434,6 +435,12 @@ export function wordAds( context, next ) {
 			period={ rangeOfPeriod( activeFilter.period, date ) }
 		/>
 	);
+
+	next();
+}
+
+export function emailOpen( context, next ) {
+	context.primary = <StatsEmailOpenDetail />;
 
 	next();
 }

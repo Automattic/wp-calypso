@@ -11,8 +11,7 @@ import PeopleList from './main';
 import PeopleAddSubscribers from './people-add-subscribers';
 import PeopleInviteDetails from './people-invite-details';
 import PeopleInvites from './people-invites';
-import Subscribers from './subscribers';
-import TeamMembers from './team-members';
+import SubscribersTeam from './subscribers-team';
 
 export default {
 	redirectToTeam,
@@ -130,7 +129,7 @@ function renderTeamMembers( context, next ) {
 	context.primary = (
 		<>
 			<TeamMembersTitle />
-			<TeamMembers filter={ context.params.filter } search={ context.query.s } />
+			<SubscribersTeam filter={ context.params.filter } search={ context.query.s } />
 		</>
 	);
 	next();
@@ -146,7 +145,7 @@ function renderSubscribers( context, next ) {
 	context.primary = (
 		<>
 			<SubscribersTitle />
-			<Subscribers filter={ context.params.filter } search={ context.query.s } />
+			<SubscribersTeam filter={ context.params.filter } search={ context.query.s } />
 		</>
 	);
 	next();

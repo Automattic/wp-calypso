@@ -23,6 +23,7 @@ import {
 } from 'calypso/state/sites/selectors';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import PostDetailHighlightsSection from '../post-detail-highlights-section';
 import PostDetailTableSection from '../post-detail-table-section';
 import PostMonths from '../stats-detail-months';
 import PostWeeks from '../stats-detail-weeks';
@@ -157,6 +158,10 @@ class StatsPostDetail extends Component {
 					) }
 				</FixedNavigationHeader>
 
+				{ isFeatured && (
+					<PostDetailHighlightsSection siteId={ siteId } postId={ postId } post={ post } />
+				) }
+
 				<StatsPlaceholder isLoading={ isLoading } />
 
 				{ ! isLoading && countViews === 0 && (
@@ -175,7 +180,9 @@ class StatsPostDetail extends Component {
 					<div>
 						<PostSummary siteId={ siteId } postId={ postId } />
 
-						{ !! postId && <PostLikes siteId={ siteId } postId={ postId } postType={ postType } /> }
+						{ ! isFeatured && !! postId && (
+							<PostLikes siteId={ siteId } postId={ postId } postType={ postType } />
+						) }
 
 						{ isFeatured && <PostDetailTableSection siteId={ siteId } postId={ postId } /> }
 
