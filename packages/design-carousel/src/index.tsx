@@ -97,7 +97,7 @@ export default function DesignCarousel( { onPick, selectedDesignSlugs }: DesignC
 					className="design-carousel__select"
 					isPrimary
 					onClick={ () => {
-						if ( swiperInstance.current ) {
+						if ( swiperInstance.current && selectedDesigns ) {
 							onPick( selectedDesigns[ swiperInstance.current?.activeIndex ] );
 						}
 					} }
