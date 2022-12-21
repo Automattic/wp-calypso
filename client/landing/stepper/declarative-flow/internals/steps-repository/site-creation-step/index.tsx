@@ -24,11 +24,14 @@ import './styles.scss';
 const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } ) {
 	const { submit } = navigation;
 
-	const { domainCartItem, planCartItem, siteAccentColor } = useSelect( ( select ) => ( {
-		domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
-		siteAccentColor: select( ONBOARD_STORE ).getSelectedSiteAccentColor(),
-		planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
-	} ) );
+	const { domainCartItem, planCartItem, siteAccentColor, getSelectedSiteTitle } = useSelect(
+		( select ) => ( {
+			domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
+			siteAccentColor: select( ONBOARD_STORE ).getSelectedSiteAccentColor(),
+			planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
+			getSelectedSiteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
+		} )
+	);
 
 	const username = useSelector( ( state ) => getCurrentUserName( state ) );
 
@@ -58,6 +61,8 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 		wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow
 	);
 
+	const blogTitle = isFreeFlow( flow ) ? getSelectedSiteTitle : '';
+
 	async function createSite() {
 		if ( isManageSiteFlow ) {
 			return {
@@ -72,7 +77,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 			isPaidDomainItem,
 			theme,
 			siteVisibility,
-			'',
+			blogTitle,
 			siteAccentColor,
 			true,
 			username,
