@@ -201,7 +201,7 @@ const StepContainer: React.FC< Props > = ( {
 					) }
 					{ showHeaderWooCommercePowered && (
 						<div className="step-container__header-woocommerce-powered">
-							<WooCommerceWooLogo size={ 18 } /> <span>{ translate( 'WooCommerce powered' ) }</span>
+							<WooCommerceWooLogo /> <span>{ translate( 'WooCommerce powered' ) }</span>
 						</div>
 					) }
 				</div>
@@ -223,7 +223,7 @@ const StepContainer: React.FC< Props > = ( {
 
 			{ showWooCommercePowered && (
 				<div className="step-container__woocommerce-powered">
-					<WooCommerceWooLogo size={ 18 } /> <span>{ translate( 'WooCommerce powered' ) }</span>
+					<WooCommerceWooLogo /> <span>{ translate( 'WooCommerce powered' ) }</span>
 				</div>
 			) }
 			{ showVideoPressPowered && (
