@@ -10,7 +10,7 @@ type WelcomeEmailTextSettingProps = {
 		comment_follow: string;
 	};
 	disabled?: boolean;
-	updateFields?: ( fields: { [ key: string ]: unknown } ) => void;
+	updateFields: ( fields: { [ key: string ]: unknown } ) => void;
 };
 
 export const WelcomeEmailTextSetting = ( {
@@ -19,6 +19,22 @@ export const WelcomeEmailTextSetting = ( {
 	updateFields,
 }: WelcomeEmailTextSettingProps ) => {
 	const translate = useTranslate();
+
+	const onChangeFieldSubscriptionOptions =
+		( field: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
+			const textFieldValue = event.target.value;
+			if ( field === 'invitation' ) {
+				const newValue = { invitation: textFieldValue };
+				const valueToSave = { ...value, ...newValue };
+				updateFields( {
+					[ 'subscription_options' ]: valueToSave,
+				} );
+			} else if ( field === 'welcome_text' ) {
+				//const newValue = { welcome_text: textFieldValue };
+				//const valueToSave = { ...value, ...newValue };
+			}
+		};
+
 	return (
 		<FormFieldset>
 			<FormLabel>Welcome email text</FormLabel>
@@ -26,7 +42,7 @@ export const WelcomeEmailTextSetting = ( {
 				name=""
 				id=""
 				value={ value?.invitation }
-				onChange={ updateFields }
+				onChange={ onChangeFieldSubscriptionOptions( 'invitation' ) }
 				disabled={ disabled }
 				autoCapitalize="none"
 				onClick={ null }
