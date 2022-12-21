@@ -12,6 +12,16 @@
  * @return bool Whether Global Styles are limited.
  */
 function wpcom_should_limit_global_styles( $blog_id = 0 ) {
+	/**
+	 * Filter to force a limited Global Styles scenario. Useful for unit testing.
+	 *
+	 * @param bool $force_limit_global_styles Whether Global Styles are forced to be limited.
+	 */
+	$force_limit_global_styles = apply_filters( 'wpcom_force_limit_global_styles', false );
+	if ( $force_limit_global_styles ) {
+		return true;
+	}
+
 	if ( ! $blog_id ) {
 		if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
 			$blog_id = get_current_blog_id();
@@ -24,9 +34,8 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 		}
 	}
 
-	// Do not limit Global Styles on sites created before we made it a paid feature. This cutoff
-	// blog ID needs to be updated as part of the public launch.
-	if ( $blog_id < 210494207 ) {
+	// Do not limit Global Styles on sites created before we made it a paid feature (2022-12-15).
+	if ( $blog_id < 213403000 ) {
 		return false;
 	}
 
@@ -34,14 +43,7 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 		return false;
 	}
 
-	// During the development stage, we only limit Global Styles on sites that have opted in via
-	// a blog sticker. This is a temporary check that will be removed as part of the public launch.
-	// Note that block stickers are not exposed by default to Atomic sites, so we're not limiting
-	// Global Styles on Atomic sites for now.
-	if ( ! function_exists( 'has_blog_sticker' ) ) {
-		return false;
-	}
-	return has_blog_sticker( 'wpcom-limit-global-styles', $blog_id );
+	return true;
 }
 
 /**
@@ -202,7 +204,7 @@ function wpcom_track_global_styles( $blog_id, $post, $updated ) {
 	// Invoke the correct function based on the underlying infrastructure.
 	if ( function_exists( 'wpcomsh_record_tracks_event' ) ) {
 		wpcomsh_record_tracks_event( $event_name, $event_props );
-	} else {
+	} elseif ( function_exists( 'require_lib' ) && function_exists( 'tracks_record_event' ) ) {
 		require_lib( 'tracks/client' );
 		tracks_record_event( get_current_user_id(), $event_name, $event_props );
 	}

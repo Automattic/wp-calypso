@@ -11,9 +11,7 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import rocketImage from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
-import wordpressSeoIllustration from 'calypso/assets/images/illustrations/wordpress-seo-premium.svg';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
-import PromoCardBlock from 'calypso/blocks/promo-card-block';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import Banner from 'calypso/components/banner';
@@ -41,6 +39,7 @@ import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HighlightsSection from './highlights-section';
+import PromoCards from './promo-cards';
 import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
@@ -285,6 +284,17 @@ class StatsSite extends Component {
 					</>
 
 					<div className="stats__module-list stats__module-list--traffic is-events stats__module--unified">
+						{ config.isEnabled( 'newsletter/stats' ) && (
+							<StatsModule
+								path="emails-open"
+								moduleStrings={ moduleStrings.emailsOpenStats }
+								period={ this.props.period }
+								query={ query }
+								statType="statsEmailsOpen"
+								showSummaryLink
+								showNewModules
+							/>
+						) }
 						<StatsModule
 							path="posts"
 							moduleStrings={ moduleStrings.posts }
@@ -368,23 +378,7 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
-				{ /** Promo Card is disabled for Odyssey because it doesn't make much sense in the context, which also removes an API call to `plugins`. */ }
-				{ ! isOdysseyStats && (
-					<div className="stats-content-promo">
-						<PromoCardBlock
-							productSlug="wordpress-seo-premium"
-							impressionEvent="calypso_stats_wordpress_seo_premium_banner_view"
-							clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
-							headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
-							contentText={ translate(
-								'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
-							) }
-							ctaText={ translate( 'Learn more' ) }
-							image={ wordpressSeoIllustration }
-							href={ `/plugins/wordpress-seo-premium/${ slug }` }
-						/>
-					</div>
-				) }
+				<PromoCards isJetpack={ isJetpack } isOdysseyStats={ isOdysseyStats } slug={ slug } />
 				<JetpackColophon />
 			</div>
 		);

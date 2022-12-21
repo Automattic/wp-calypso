@@ -1,18 +1,16 @@
 import { isPlan } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
-import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import {
 	getItemVariantCompareToPrice,
@@ -27,17 +25,11 @@ export function CheckoutSidebarPlanUpsell() {
 	const { formStatus } = useFormStatus();
 	const reduxDispatch = useDispatch();
 	const isFormLoading = FormStatus.READY !== formStatus;
-	const { __, hasTranslation } = useI18n();
-	const locale = useLocale();
+	const { __ } = useI18n();
 	const cartKey = useCartKey();
 	const { responseCart, replaceProductInCart } = useShoppingCart( cartKey );
-	const siteId = useSelector( getSelectedSiteId );
 	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
-	const variants = useGetProductVariants(
-		siteId ?? undefined,
-		plan?.product_slug ?? '',
-		plan?.current_quantity ?? null
-	);
+	const variants = useGetProductVariants( plan );
 
 	if ( ! plan ) {
 		debug( 'no plan found in cart' );
@@ -100,14 +92,6 @@ export function CheckoutSidebarPlanUpsell() {
 		{ strong: createElement( 'strong' ) }
 	);
 
-	if (
-		'en' !== locale &&
-		! hasTranslation( '<strong>Save %(percentSavings)d%%</strong> by paying for two years' )
-	) {
-		debug( "not 'en' and does not have translation", locale );
-		return null;
-	}
-
 	return (
 		<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell">
 			<div className="checkout-sidebar-plan-upsell__plan-grid">
@@ -115,7 +99,10 @@ export function CheckoutSidebarPlanUpsell() {
 					{ currentVariant.variantLabel }
 				</div>
 				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-					{ formatCurrency( currentVariant.price, currentVariant.currency, { stripZeros: true } ) }
+					{ formatCurrency( currentVariant.priceInteger, currentVariant.currency, {
+						stripZeros: true,
+						isSmallestUnit: true,
+					} ) }
 				</div>
 				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
 					{ biennialVariant.variantLabel }
@@ -125,11 +112,13 @@ export function CheckoutSidebarPlanUpsell() {
 						<del className="checkout-sidebar-plan-upsell__do-not-pay">
 							{ formatCurrency( compareToPriceForVariantTerm, currentVariant.currency, {
 								stripZeros: true,
+								isSmallestUnit: true,
 							} ) }
 						</del>
 					) }
-					{ formatCurrency( biennialVariant.price, biennialVariant.currency, {
+					{ formatCurrency( biennialVariant.priceInteger, biennialVariant.currency, {
 						stripZeros: true,
+						isSmallestUnit: true,
 					} ) }
 				</div>
 			</div>

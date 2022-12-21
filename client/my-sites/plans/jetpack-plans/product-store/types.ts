@@ -52,10 +52,6 @@ export type ItemToDisplayProps = {
 	duration: Duration;
 };
 
-export interface ItemsListProps extends ItemToDisplayProps {
-	currentView: ViewType;
-}
-
 export type MostPopularProps = {
 	className?: string;
 	heading: string;

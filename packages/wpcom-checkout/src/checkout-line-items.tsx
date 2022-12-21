@@ -893,7 +893,9 @@ function WPLineItem( {
 			product.is_bundled
 	);
 	const hasMarketplaceProductsInCart = responseCart.products.some(
-		( product ) => product.extra.is_marketplace_product === true
+		( product ) =>
+			product.extra.is_marketplace_product === true ||
+			product.product_slug.startsWith( 'wp_mp_theme' )
 	);
 	const { formStatus } = useFormStatus();
 	const itemSpanId = `checkout-line-item-${ id }`;

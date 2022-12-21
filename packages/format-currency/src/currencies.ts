@@ -365,7 +365,7 @@ export const CURRENCIES: CurrenciesDictionary = {
 		symbol: 'Rp',
 		grouping: '.',
 		decimal: ',',
-		precision: 0,
+		precision: 2,
 	},
 	ILS: {
 		symbol: '₪',

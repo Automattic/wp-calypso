@@ -101,6 +101,10 @@ describe( 'formatCurrency', () => {
 			const money = formatCurrency( 9800900.32, 'BRL' );
 			expect( money ).toBe( 'R$9.800.900,32' );
 		} );
+		test( 'IDR', () => {
+			const money = formatCurrency( 107280000, 'IDR', { isSmallestUnit: true } );
+			expect( money ).toBe( 'Rp1.072.800,00' );
+		} );
 	} );
 
 	describe( 'getCurrencyDefaults()', () => {

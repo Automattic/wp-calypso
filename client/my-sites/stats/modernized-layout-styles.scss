@@ -20,7 +20,9 @@ $sidebar-appearance-break-point: 783px;
 
 	// Ensures vertical padding for certain sections.
 	> .highlight-cards,
-	> .stats__all-time-highlights-section {
+	> .stats__all-time-highlights-section,
+	> .stats__all-time-views-section,
+	> .stats__post-detail-highlights-section {
 		padding-top: $vertical-margin;
 		padding-bottom: $vertical-margin;
 	}

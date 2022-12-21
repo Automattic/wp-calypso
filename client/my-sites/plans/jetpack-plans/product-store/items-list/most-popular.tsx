@@ -2,7 +2,6 @@ import { isJetpackPlanSlug } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useStoreItemInfoContext } from '../context/store-item-info-context';
 import { FeaturedItemCard } from '../featured-item-card';
-import { FeaturesList } from '../features-list';
 import { HeroImage } from '../hero-image';
 import { ItemPrice } from '../item-price';
 import { MoreInfoLink } from '../more-info-link';
@@ -117,7 +116,6 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 								price={ price }
 								title={ item.displayName }
 							/>
-							<FeaturesList item={ item } />
 						</li>
 					);
 				} ) }

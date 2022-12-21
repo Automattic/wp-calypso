@@ -65,13 +65,6 @@ export type ESIndexResult = {
 	};
 };
 
-export type Icon = {
-	filename: string;
-	revision: string;
-	resolution: string;
-	location: string;
-};
-
 export type Railcar = Record< string, string | number >;
 
 export type ESHits = Array< { fields: ESIndexResult; railcar: Railcar } >;

@@ -102,7 +102,6 @@ $soft-launch-badge-font-size: 0.725rem;
 .theme__upsell-icon svg {
 	transform: scale(0.8);
 	border: 2px solid var(--color-neutral-20);
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 100%;
 	display: inline-block;
 	width: 22px;
@@ -120,7 +119,6 @@ $soft-launch-badge-font-size: 0.725rem;
 	text-align: center;
 	svg {
 		transform: scale(0.8);
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 100%;
 		display: inline-block;
 		width: 30px;

@@ -28,6 +28,7 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 	const { currentPlan, currentThemeId, isVip, requestingSitePlans, siteId, siteSlug, translate } =
 		props;
 
+	const isNewDetailsAndPreview = isEnabled( 'themes/showcase-i4/details-and-preview' );
 	const isNewSearchAndFilter = isEnabled( 'themes/showcase-i4/search-and-filter' );
 	const displayUpsellBanner = ! requestingSitePlans && currentPlan && ! isVip;
 	const upsellUrl = `/plans/${ siteSlug }`;
@@ -81,6 +82,9 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 	return (
 		<Main fullWidthLayout className="themes">
 			{ isNewSearchAndFilter && <BodySectionCssClass bodyClass={ [ 'is-section-themes-i4' ] } /> }
+			{ isNewDetailsAndPreview && (
+				<BodySectionCssClass bodyClass={ [ 'is-section-themes-i4-2' ] } />
+			) }
 			<ThemesHeader isReskinned={ isNewSearchAndFilter } />
 			{ ! isNewSearchAndFilter ? (
 				<CurrentTheme siteId={ siteId } />

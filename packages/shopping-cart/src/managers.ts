@@ -78,6 +78,15 @@ export function createSubscriptionManager( cartKey: CartKey | undefined ): Subsc
 	return { subscribe, notifySubscribers };
 }
 
+/**
+ * Create an object that manages the Promises returned by cart actions.
+ *
+ * When an action is requested, we create a Promise for that action dispatcher
+ * to return and store it in this object. Later when we know if the action
+ * resulted in a success or a failure, the resolve or reject methods are called
+ * on this object; those methods then resolve or reject each Promise that was
+ * waiting for a response.
+ */
 export function createActionPromisesManager(): ActionPromises {
 	let actionPromises: SavedActionPromise[] = [];
 
