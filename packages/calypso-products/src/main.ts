@@ -451,6 +451,7 @@ export function planMatches( planKey: string | Plan, query: PlanMatchesQuery = {
 	if ( ! plan ) {
 		return false;
 	}
+
 	if (
 		( ! ( 'type' in query ) || plan.type === query.type ) &&
 		( ! ( 'group' in query ) || plan.group === query.group ) &&

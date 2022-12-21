@@ -19,6 +19,7 @@ import {
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
+	TYPE_ENTERPRISE,
 	TERM_MONTHLY,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
@@ -338,6 +339,7 @@ export class PlansFeaturesMain extends Component {
 			sitePlanSlug,
 			showTreatmentPlansReorderTest,
 			flowName,
+			isInSignup,
 		} = this.props;
 
 		const hideBloggerPlan = ! isBloggerPlan( selectedPlan ) && ! isBloggerPlan( sitePlanSlug );
@@ -357,6 +359,9 @@ export class PlansFeaturesMain extends Component {
 				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_PREMIUM } )[ 0 ],
 				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_BUSINESS } )[ 0 ],
 				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_ECOMMERCE } )[ 0 ],
+				isEnabled( 'onboarding/2023-pricing-grid' ) && isInSignup
+					? findPlansKeys( { group: GROUP_WPCOM, type: TYPE_ENTERPRISE } )[ 0 ]
+					: null,
 			].filter( ( el ) => el !== null );
 		}
 
@@ -438,6 +443,19 @@ export class PlansFeaturesMain extends Component {
 			: availablePlans;
 
 		if ( plansWithScroll ) {
+			if ( isEnabled( 'onboarding/2023-pricing-grid' ) ) {
+				return plans.filter( ( plan ) =>
+					isPlanOneOfType( plan, [
+						TYPE_FREE,
+						TYPE_PERSONAL,
+						TYPE_PREMIUM,
+						TYPE_BUSINESS,
+						TYPE_ECOMMERCE,
+						TYPE_ENTERPRISE,
+					] )
+				);
+			}
+
 			return plans.filter( ( plan ) =>
 				isPlanOneOfType( plan, [
 					TYPE_BLOGGER,

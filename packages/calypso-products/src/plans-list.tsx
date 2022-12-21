@@ -152,6 +152,7 @@ import {
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_ENTERPRISE,
 	PLAN_FREE,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -190,6 +191,7 @@ import {
 	TYPE_BLOGGER,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
+	TYPE_ENTERPRISE,
 	TYPE_FREE,
 	TYPE_P2_PLUS,
 	TYPE_PERSONAL,
@@ -321,6 +323,79 @@ const plansDescriptionHeadingComponent = {
 };
 /* eslint-enable */
 
+const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
+	...getDotcomPlanDetails(),
+	group: GROUP_WPCOM,
+	type: TYPE_FREE,
+	getTitle: () => i18n.translate( 'Free' ),
+	getAudience: () => i18n.translate( 'Best for students' ),
+	getBlogAudience: () => i18n.translate( 'Best for students' ),
+	getPortfolioAudience: () => i18n.translate( 'Best for students' ),
+	getStoreAudience: () => i18n.translate( 'Best for students' ),
+	getPlanTagline: () => 'Get a taste of the world’s most popular CMS & blogging software.',
+	getDescription: () =>
+		i18n.translate(
+			'Get a free website and be on your way to publishing your ' +
+				'first post in less than five minutes.'
+		),
+	getPlanCompareFeatures: () => [
+		// pay attention to ordering, shared features should align on /plan page
+		FEATURE_WP_SUBDOMAIN,
+		FEATURE_JETPACK_ESSENTIAL,
+		FEATURE_COMMUNITY_SUPPORT,
+		FEATURE_FREE_THEMES,
+		FEATURE_3GB_STORAGE,
+	],
+	getSignupFeatures: () => [
+		FEATURE_COMMUNITY_SUPPORT,
+		FEATURE_WP_SUBDOMAIN_SIGNUP,
+		FEATURE_FREE_THEMES_SIGNUP,
+	],
+	getBlogSignupFeatures: () => [
+		FEATURE_COMMUNITY_SUPPORT,
+		FEATURE_WP_SUBDOMAIN_SIGNUP,
+		FEATURE_FREE_THEMES_SIGNUP,
+	],
+	getPortfolioSignupFeatures: () => [
+		FEATURE_COMMUNITY_SUPPORT,
+		FEATURE_WP_SUBDOMAIN_SIGNUP,
+		FEATURE_FREE_THEMES_SIGNUP,
+	],
+	getIncludedFeatures: () => [],
+	getInferiorFeatures: () => [],
+	getCancellationFeatureList: (): CancellationFeatureLists => ( {
+		monthly: {
+			featureList: [
+				FEATURE_CANCELLATION_MANAGED_HOSTINGS,
+				FEATURE_CANCELLATION_SEO_AND_SOCIAL,
+				FEATURE_CANCELLATION_EARN_AD_REVENUE,
+				FEATURE_CANCELLATION_SECURITY_AND_SPAM,
+				FEATURE_CANCELLATION_JETPACK_ESSENTIALS,
+			],
+			andMore: true,
+		},
+		yearly: {
+			featureList: [
+				FEATURE_CANCELLATION_MANAGED_HOSTINGS,
+				FEATURE_CANCELLATION_SEO_AND_SOCIAL,
+				FEATURE_CANCELLATION_EARN_AD_REVENUE,
+				FEATURE_CANCELLATION_SECURITY_AND_SPAM,
+				FEATURE_CANCELLATION_JETPACK_ESSENTIALS,
+			],
+			andMore: true,
+		},
+		withDomain: {
+			featureList: [
+				FEATURE_CANCELLATION_MANAGED_HOSTINGS,
+				FEATURE_CANCELLATION_SEO_AND_SOCIAL,
+				FEATURE_CANCELLATION_EARN_AD_REVENUE,
+				FEATURE_CANCELLATION_SECURITY_AND_SPAM,
+			],
+			andMore: true,
+		},
+	} ),
+} );
+
 const getPlanBloggerDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
@@ -407,6 +482,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for personal use' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for personal use' ),
 	getStoreAudience: () => i18n.translate( 'Best for personal use' ),
+	getPlanTagline: () => 'Create your home on the web with a custom domain name.',
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for personal use:{{/strong}} Boost your' +
@@ -536,6 +612,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for online stores' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for online stores' ),
 	getStoreAudience: () => i18n.translate( 'Best for online stores' ),
+	getPlanTagline: () => 'Sell products and process payments with an online store.',
 	getDescription: () => {
 		return i18n.translate(
 			'{{strong}}Best for online stores:{{/strong}} Sell products or services with this powerful, ' +
@@ -681,6 +758,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for freelancers' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for freelancers' ),
 	getStoreAudience: () => i18n.translate( 'Best for freelancers' ),
+	getPlanTagline: () => 'Build a unique website with powerful design tools.',
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
@@ -857,6 +935,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for small businesses' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for small businesses' ),
 	getStoreAudience: () => i18n.translate( 'The plan for small businesses' ),
+	getPlanTagline: () => 'Unlock the power of WordPress with plugins and cloud tools.',
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for small businesses:{{/strong}} Power your' +
@@ -1076,6 +1155,17 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 			andMore: true,
 		},
 	} ),
+} );
+
+const getPlanEnterpriseDetails = (): IncompleteWPcomPlan => ( {
+	...getDotcomPlanDetails(),
+	group: GROUP_WPCOM,
+	type: TYPE_ENTERPRISE,
+	getTitle: () => i18n.translate( 'Enterprise' ),
+	getAudience: () => i18n.translate( 'Best for enterprises' ),
+	getPlanTagline: () =>
+		'Deliver an unmatched performance with the highest security standards on our enterprise content platform.',
+	getDescription: () => '',
 } );
 
 const getJetpackPersonalDetails = (): IncompleteJetpackPlan => ( {
@@ -1500,80 +1590,21 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 
 // DO NOT import. Use `getPlan` instead.
 export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
-	[ PLAN_FREE ]: {
-		group: GROUP_WPCOM,
-		type: TYPE_FREE,
+	[ PLAN_ENTERPRISE ]: {
+		...getPlanEnterpriseDetails(),
 		term: TERM_ANNUALLY,
-		getTitle: () => i18n.translate( 'Free' ),
-		getAudience: () => i18n.translate( 'Best for students' ),
-		getBlogAudience: () => i18n.translate( 'Best for students' ),
-		getPortfolioAudience: () => i18n.translate( 'Best for students' ),
-		getStoreAudience: () => i18n.translate( 'Best for students' ),
+		getBillingTimeFrame: () => i18n.translate( 'for life' ),
+		getProductId: () => 0,
+		getStoreSlug: () => PLAN_ENTERPRISE,
+		getPathSlug: () => 'enterprise',
+	},
+	[ PLAN_FREE ]: {
+		...getPlanFreeDetails(),
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: () => i18n.translate( 'for life' ),
 		getProductId: () => 1,
 		getStoreSlug: () => PLAN_FREE,
 		getPathSlug: () => 'beginner',
-		getDescription: () =>
-			i18n.translate(
-				'Get a free website and be on your way to publishing your ' +
-					'first post in less than five minutes.'
-			),
-		getPlanCompareFeatures: () => [
-			// pay attention to ordering, shared features should align on /plan page
-			FEATURE_WP_SUBDOMAIN,
-			FEATURE_JETPACK_ESSENTIAL,
-			FEATURE_COMMUNITY_SUPPORT,
-			FEATURE_FREE_THEMES,
-			FEATURE_3GB_STORAGE,
-		],
-		getSignupFeatures: () => [
-			FEATURE_COMMUNITY_SUPPORT,
-			FEATURE_WP_SUBDOMAIN_SIGNUP,
-			FEATURE_FREE_THEMES_SIGNUP,
-		],
-		getBlogSignupFeatures: () => [
-			FEATURE_COMMUNITY_SUPPORT,
-			FEATURE_WP_SUBDOMAIN_SIGNUP,
-			FEATURE_FREE_THEMES_SIGNUP,
-		],
-		getPortfolioSignupFeatures: () => [
-			FEATURE_COMMUNITY_SUPPORT,
-			FEATURE_WP_SUBDOMAIN_SIGNUP,
-			FEATURE_FREE_THEMES_SIGNUP,
-		],
-		getBillingTimeFrame: () => i18n.translate( 'for life' ),
-		getIncludedFeatures: () => [],
-		getInferiorFeatures: () => [],
-		getCancellationFeatureList: (): CancellationFeatureLists => ( {
-			monthly: {
-				featureList: [
-					FEATURE_CANCELLATION_MANAGED_HOSTINGS,
-					FEATURE_CANCELLATION_SEO_AND_SOCIAL,
-					FEATURE_CANCELLATION_EARN_AD_REVENUE,
-					FEATURE_CANCELLATION_SECURITY_AND_SPAM,
-					FEATURE_CANCELLATION_JETPACK_ESSENTIALS,
-				],
-				andMore: true,
-			},
-			yearly: {
-				featureList: [
-					FEATURE_CANCELLATION_MANAGED_HOSTINGS,
-					FEATURE_CANCELLATION_SEO_AND_SOCIAL,
-					FEATURE_CANCELLATION_EARN_AD_REVENUE,
-					FEATURE_CANCELLATION_SECURITY_AND_SPAM,
-					FEATURE_CANCELLATION_JETPACK_ESSENTIALS,
-				],
-				andMore: true,
-			},
-			withDomain: {
-				featureList: [
-					FEATURE_CANCELLATION_MANAGED_HOSTINGS,
-					FEATURE_CANCELLATION_SEO_AND_SOCIAL,
-					FEATURE_CANCELLATION_EARN_AD_REVENUE,
-					FEATURE_CANCELLATION_SECURITY_AND_SPAM,
-				],
-				andMore: true,
-			},
-		} ),
 	},
 
 	[ PLAN_BLOGGER ]: {

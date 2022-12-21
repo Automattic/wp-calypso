@@ -774,7 +774,9 @@ class Signup extends Component {
 
 		// Hide the free option in the signup flow
 		const selectedHideFreePlan = get( this.props, 'signupDependencies.shouldHideFreePlan', false );
-		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
+		const hideFreePlan =
+			! config.isEnabled( 'onboarding/2023-pricing-grid' ) &&
+			( planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan );
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		let propsForCurrentStep = propsFromConfig;

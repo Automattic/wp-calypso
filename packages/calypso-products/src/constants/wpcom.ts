@@ -37,6 +37,7 @@ export const PLAN_WPCOM_FLEXIBLE = 'wpcom-flexible'; // Not a real plan; it's a 
 export const PLAN_WPCOM_PRO = 'pro-plan';
 export const PLAN_WPCOM_PRO_MONTHLY = 'pro-plan-monthly';
 export const PLAN_WPCOM_STARTER = 'starter-plan';
+export const PLAN_ENTERPRISE = 'enterprise_plan';
 
 export const WPCOM_PLANS = <const>[
 	PLAN_BUSINESS_MONTHLY,
@@ -64,6 +65,7 @@ export const WPCOM_PLANS = <const>[
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_PRO_MONTHLY,
 	PLAN_WPCOM_STARTER,
+	PLAN_ENTERPRISE,
 ];
 
 export const WPCOM_MONTHLY_PLANS = <const>[
@@ -72,6 +74,8 @@ export const WPCOM_MONTHLY_PLANS = <const>[
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_WPCOM_PRO_MONTHLY,
+	PLAN_ENTERPRISE,
+	PLAN_FREE,
 ];
 
 export const WPCOM_DIFM_LITE = 'wp_difm_lite';
