@@ -10,5 +10,6 @@ export type UsersQuery = {
 	hasNextPage: boolean;
 	refetch: () => void;
 	fetchNextPage: () => void;
+	isLoading: boolean;
 	isFetchingNextPage: boolean;
 };

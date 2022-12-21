@@ -21,7 +21,7 @@ function TeamMembers( props: Props ) {
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 
 	const listKey = [ 'team-members', site?.ID, search ].join( '-' );
-	const { data, fetchNextPage, isFetchingNextPage, hasNextPage } = usersQuery;
+	const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage } = usersQuery;
 
 	const members = data?.users || [];
 	const membersTotal = data?.total;
@@ -58,8 +58,9 @@ function TeamMembers( props: Props ) {
 	}
 
 	let templateState;
-
-	if ( search && ! membersTotal ) {
+	if ( isLoading ) {
+		templateState = 'loading';
+	} else if ( search && ! membersTotal ) {
 		templateState = 'no-result';
 	} else if ( ! membersTotal ) {
 		templateState = 'empty';
@@ -69,14 +70,16 @@ function TeamMembers( props: Props ) {
 
 	switch ( templateState ) {
 		case 'default':
+		case 'loading':
 			return (
 				<>
-					<PeopleListSectionHeader label={ getHeaderLabel() }>
+					<PeopleListSectionHeader isPlaceholder={ isLoading } label={ getHeaderLabel() }>
 						<Button compact primary href={ addTeamMemberLink }>
 							{ _( 'Add a team member' ) }
 						</Button>
 					</PeopleListSectionHeader>
 					<Card className="people-team-members-list">
+						{ isLoading && renderLoadingPeople() }
 						<InfiniteList
 							listkey={ listKey }
 							items={ members }
