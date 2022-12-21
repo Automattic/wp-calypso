@@ -25,7 +25,8 @@ function Subscribers( props: Props ) {
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 
 	const listKey = [ 'subscribers', site?.ID, 'all', search ].join( '-' );
-	const { data, fetchNextPage, isFetchingNextPage, hasNextPage, refetch } = followersQuery;
+	const { data, fetchNextPage, isLoading, isFetchingNextPage, hasNextPage, refetch } =
+		followersQuery;
 
 	const subscribers = data?.followers || [];
 	const subscribersTotal = data?.total;
@@ -49,7 +50,9 @@ function Subscribers( props: Props ) {
 	}
 
 	let templateState;
-	if ( search && ! subscribersTotal ) {
+	if ( isLoading ) {
+		templateState = 'loading';
+	} else if ( search && ! subscribersTotal ) {
 		templateState = 'no-result';
 	} else if ( ! subscribersTotal ) {
 		templateState = 'empty';
@@ -59,9 +62,11 @@ function Subscribers( props: Props ) {
 
 	switch ( templateState ) {
 		case 'default':
+		case 'loading':
 			return (
 				<>
 					<PeopleListSectionHeader
+						isPlaceholder={ isLoading }
 						label={ _( 'You have %(number)d subscriber', 'You have %(number)d subscribers', {
 							args: { number: subscribersTotal },
 							count: subscribersTotal as number,
@@ -75,6 +80,7 @@ function Subscribers( props: Props ) {
 						</EllipsisMenu>
 					</PeopleListSectionHeader>
 					<Card className="people-subscribers-list">
+						{ isLoading && renderPlaceholders() }
 						<InfiniteList
 							listkey={ listKey }
 							items={ subscribers }
