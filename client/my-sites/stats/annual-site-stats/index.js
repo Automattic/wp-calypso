@@ -167,7 +167,7 @@ class AnnualSiteStats extends Component {
 				{ isWidget && (
 					<SectionHeader
 						href={ viewAllLink }
-						label={ translate( 'Annual site stats', { args: [ currentYear ] } ) }
+						label={ translate( 'Annual insights', { args: [ currentYear ] } ) }
 					/>
 				) }
 				{ ! isWidget && (

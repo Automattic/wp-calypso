@@ -217,7 +217,7 @@ class StatsSummary extends Component {
 				);
 				break;
 			case 'annualstats':
-				title = translate( 'Annual site stats' );
+				title = translate( 'Annual insights' );
 				backLabel = localizedTabNames.insights;
 				backLink = `/stats/insights/`;
 				summaryView = <AnnualSiteStats key="annualstats" />;
