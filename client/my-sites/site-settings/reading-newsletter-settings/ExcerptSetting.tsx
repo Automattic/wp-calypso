@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -39,7 +40,7 @@ export const ExcerptSetting = ( {
 			</FormLabel>
 			<FormSettingExplanation>
 				{ translate(
-					"Sets whether email subscribers can read full posts in emails or just an excerpt and link to the full version of the post. {{link}}Learn more about sending emails{{/link}}.",
+					'Sets whether email subscribers can read full posts in emails or just an excerpt and link to the full version of the post. {{link}}Learn more about sending emails{{/link}}.',
 					{
 						components: {
 							link: (
