@@ -84,7 +84,11 @@
 		// adds +2 px of padding to the button to match the input field height
 		padding: 10px 14px;
 		margin-top: 16px;
-
+		&:focus {
+			box-shadow: none;
+			outline: 2px solid var(--studio-blue-60);
+			outline-offset: 1px;
+		}
 		&:hover:not([disabled]) {
 			background-color: var(--wp-admin-theme-color-darker-10);
 		}
