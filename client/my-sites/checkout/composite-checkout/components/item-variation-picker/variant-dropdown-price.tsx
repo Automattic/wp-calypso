@@ -56,6 +56,7 @@ const Variant = styled.div`
 	justify-content: space-between;
 	line-height: 20px;
 	width: 100%;
+	column-gap: 10%;
 
 	.item-variant-option--selected & {
 		color: #fff;
@@ -74,10 +75,16 @@ const IntroPricing = styled.span`
 	display: flex;
 	flex-direction: column;
 	font-size: 0.8rem;
-	margin-left: auto;
-	p {
-		text-align: right;
+	.div {
+		display: block;
+		margin-bottom: 0rem;
 	}
+`;
+
+const IntroPricingText = styled.span`
+	display: block;
+	text-align: right;
+	margin-bottom: 0rem;
 `;
 
 const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent } ) => {
@@ -230,7 +237,9 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 				) }
 				<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>
 				<IntroPricing>
-					<p>{ isIntroductoryOffer && translatedIntroOfferDetails() }</p>
+					<IntroPricingText>
+						{ isIntroductoryOffer && translatedIntroOfferDetails() }
+					</IntroPricingText>
 				</IntroPricing>
 			</span>
 		</Variant>
