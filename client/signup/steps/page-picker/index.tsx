@@ -244,7 +244,7 @@ function PageSelector( {
 			) : (
 				<PageCell
 					context={ context }
-					popular={ ! isStoreFlow }
+					popular
 					pageId={ SERVICES_PAGE }
 					selectedPages={ selectedPages }
 					onClick={ onPageClick }
@@ -274,7 +274,6 @@ function PageSelector( {
 			{ isStoreFlow ? (
 				<PageCell
 					context={ context }
-					popular
 					pageId={ SERVICES_PAGE }
 					selectedPages={ selectedPages }
 					onClick={ onPageClick }
