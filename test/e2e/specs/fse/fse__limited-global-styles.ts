@@ -61,6 +61,6 @@ describe( DataHelper.createSuiteTitle( 'Site Editor: Limited Global Styles' ), f
 		// On mobile, site styles is a popover panel that blocks the Save button.
 		// So let's always close site styles first to be safe. :)
 		await fullSiteEditorPage.closeSiteStyles();
-		await fullSiteEditorPage.save( { preSaveSelectors: [ '.wpcom-global-styles-notice' ] } );
+		await fullSiteEditorPage.save();
 	} );
 } );
