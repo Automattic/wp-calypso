@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
+import { map, uniqBy } from 'lodash';
 import { useState, useRef, useEffect } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
@@ -46,8 +47,21 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		}
 	}, [] );
 
-	const getPatterns = () =>
-		[ header, ...sections, footer ].filter( ( pattern ) => pattern ) as Pattern[];
+	const getPatterns = ( patternType?: string | null ) => {
+		let patterns = [ header, ...sections, footer ];
+
+		if ( 'header' === patternType ) {
+			patterns = [ header ];
+		}
+		if ( 'footer' === patternType ) {
+			patterns = [ footer ];
+		}
+		if ( 'section' === patternType ) {
+			patterns = sections;
+		}
+
+		return patterns.filter( ( pattern ) => pattern ) as Pattern[];
+	};
 
 	const trackEventPatternAdd = ( patternType: string ) => {
 		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_add_click', {
@@ -209,7 +223,18 @@ const PatternAssembler: Step = ( { navigation } ) => {
 				<PatternSelectorLoader
 					showPatternSelectorType={ showPatternSelectorType }
 					onSelect={ onSelect }
-					onBack={ () => setShowPatternSelectorType( null ) }
+					onBack={ () => {
+						const uniquePatterns = uniqBy( getPatterns( showPatternSelectorType ), 'id' );
+						const pattern_ids = map( uniquePatterns, 'id' );
+						const pattern_names = map( uniquePatterns, 'name' );
+						recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_done_click', {
+							pattern_type: showPatternSelectorType,
+							pattern_id: pattern_ids.length ? pattern_ids.join( ',' ) : null,
+							pattern_name: pattern_names.length ? pattern_names.join( ',' ) : null,
+						} );
+
+						setShowPatternSelectorType( null );
+					} }
 					selectedPattern={ getSelectedPattern() }
 				/>
 				{ ! showPatternSelectorType && (
