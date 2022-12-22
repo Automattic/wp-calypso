@@ -2,3 +2,7 @@
 	font-size: $font-title-small;
 	margin-bottom: 16px;
 }
+
+.is-section-people .info-popover__tooltip .popover__inner .support-info__privacy {
+	display: none;
+}
