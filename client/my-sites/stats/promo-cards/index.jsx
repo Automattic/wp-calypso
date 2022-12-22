@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { MobilePromoCard } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import blazeDropDownIllustration from 'calypso/assets/images/illustrations/blaze-drop-down.svg';
 import wordpressSeoIllustration from 'calypso/assets/images/illustrations/wordpress-seo-premium.svg';
@@ -13,28 +13,37 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-const EVENT_YOAST_PROMO_VIEW = 'calypso_stats_wordpress_seo_premium_banner_view';
 const EVENT_BLAZE_PROMO_VIEW = 'calypso_stats_traffic_blaze_banner_view';
 const EVENT_MOBILE_PROMO_VIEW = 'calypso_stats_traffic_mobile_cta_jetpack_view';
+const EVENT_YOAST_PROMO_VIEW = 'calypso_stats_wordpress_seo_premium_banner_view';
 
 export default function PromoCards( { isOdysseyStats, slug } ) {
+	// Keep a replica of the pager index state.
+	// TODO: Figure out an approach that doesn't require replicating state value from DotPager.
+	const [ dotPagerIndex, setDotPagerIndex ] = useState( 0 );
+
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const jetpackNonAtomic = useSelector(
 		( state ) => isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId )
 	);
 
-	// Yoast promo is disabled for Odyssey & self-hosted.
-	// Mobile apps promos are always shown.
+	// Blaze promo is disabled for Odyssey.
 	const showBlazePromo = ! isOdysseyStats;
+	// Yoast promo is disabled for Odyssey & self-hosted.
 	const showYoastPromo = ! isOdysseyStats && ! jetpackNonAtomic;
 
-	// Handle initial view event if not using the DotPager UI.
-	// We don't worry about the Yoast and Blaze cards as they sends on mount.
+	const viewEvents = useMemo( () => {
+		const events = [];
+		showBlazePromo && events.push( EVENT_BLAZE_PROMO_VIEW );
+		showYoastPromo && events.push( EVENT_YOAST_PROMO_VIEW );
+		events.push( EVENT_MOBILE_PROMO_VIEW );
+		return events;
+	}, [ showBlazePromo, showYoastPromo ] );
+
+	// Handle view events upon initial mount and upon paging DotPager.
 	useEffect( () => {
-		if ( ! showYoastPromo && ! showBlazePromo ) {
-			recordTracksEvent( EVENT_MOBILE_PROMO_VIEW );
-		}
-	}, [ showYoastPromo, showBlazePromo ] );
+		recordTracksEvent( viewEvents[ dotPagerIndex ], { site_id: selectedSiteId } );
+	}, [ viewEvents, dotPagerIndex, selectedSiteId ] );
 
 	// Handle click events from promo card.
 	const promoCardDidReceiveClick = ( event ) => {
@@ -45,23 +54,7 @@ export default function PromoCards( { isOdysseyStats, slug } ) {
 		recordTracksEvent( tracksEventName );
 	};
 
-	// Handle view events from DotPager UI.
-	const pagerDidSelectPage = ( index ) => {
-		const eventLookup = [];
-
-		if ( showBlazePromo ) {
-			eventLookup.push( EVENT_BLAZE_PROMO_VIEW );
-		}
-
-		if ( showYoastPromo ) {
-			eventLookup.push( EVENT_YOAST_PROMO_VIEW );
-		}
-
-		eventLookup.push( EVENT_MOBILE_PROMO_VIEW );
-		const eventName = eventLookup[ index ];
-
-		recordTracksEvent( eventName );
-	};
+	const pagerDidSelectPage = ( index ) => setDotPagerIndex( index );
 
 	return (
 		<div className="stats__promo-container">
@@ -69,7 +62,6 @@ export default function PromoCards( { isOdysseyStats, slug } ) {
 				<DotPager className="stats__promo-pager" onPageSelected={ pagerDidSelectPage }>
 					{ showBlazePromo && (
 						<PromoCardBlock
-							impressionEvent={ EVENT_BLAZE_PROMO_VIEW }
 							productSlug="blaze"
 							clickEvent="calypso_stats_traffic_blaze_banner_click"
 							headerText={ translate( 'Reach new readers and customers' ) }
@@ -83,7 +75,6 @@ export default function PromoCards( { isOdysseyStats, slug } ) {
 					) }
 					{ showYoastPromo && (
 						<PromoCardBlock
-							impressionEvent={ EVENT_YOAST_PROMO_VIEW }
 							productSlug="wordpress-seo-premium"
 							clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
 							headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
