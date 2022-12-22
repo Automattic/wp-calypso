@@ -13,6 +13,10 @@ type WelcomeEmailTextSettingProps = {
 	updateFields: ( fields: { [ key: string ]: unknown } ) => void;
 };
 
+type SubscriptionOption = {
+	[ key: string ]: string;
+};
+
 export const WelcomeEmailTextSetting = ( {
 	value,
 	disabled,
@@ -23,16 +27,15 @@ export const WelcomeEmailTextSetting = ( {
 	const onChangeFieldSubscriptionOptions =
 		( field: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
 			const textFieldValue = event.target.value;
-			if ( field === 'invitation' ) {
-				const newValue = { invitation: textFieldValue };
-				const valueToSave = { ...value, ...newValue };
-				updateFields( {
-					[ 'subscription_options' ]: valueToSave,
-				} );
-			} else if ( field === 'welcome_text' ) {
-				//const newValue = { welcome_text: textFieldValue };
-				//const valueToSave = { ...value, ...newValue };
-			}
+
+			const newValue: SubscriptionOption = {};
+			newValue[ field ] = textFieldValue;
+
+			const valueToSave = { ...value, ...newValue };
+
+			updateFields( {
+				[ 'subscription_options' ]: valueToSave,
+			} );
 		};
 
 	return (
