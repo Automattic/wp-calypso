@@ -1,29 +1,46 @@
-import { useQuery, UseQueryResult } from 'react-query';
+import { useInfiniteQuery, UseQueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { RenderedPatterns } from '../types';
 
-const useQueryRenderedPatterns = (
+const PAGE_SIZE = 20;
+
+const fetchRenderedPatterns = (
 	siteId: number,
 	stylesheet: string,
-	patternIds: string[]
-): UseQueryResult< RenderedPatterns > => {
-	const pattern_ids = patternIds.join( ',' );
+	patternIds: string[],
+	page: number
+): Promise< RenderedPatterns > => {
+	const pattern_ids = patternIds.slice( ( page - 1 ) * PAGE_SIZE, page * PAGE_SIZE ).join( ',' );
 	const params = new URLSearchParams( {
 		stylesheet,
 		pattern_ids,
 	} );
 
-	return useQuery< RenderedPatterns >(
-		[ siteId, 'block-renderer/patterns/render', pattern_ids ],
-		() =>
-			wpcomRequest( {
-				apiNamespace: 'wpcom/v2',
-				path: `/sites/${ encodeURIComponent( siteId ) }/block-renderer/patterns/render`,
-				query: params.toString(),
-			} ),
+	return wpcomRequest( {
+		apiNamespace: 'wpcom/v2',
+		path: `/sites/${ encodeURIComponent( siteId ) }/block-renderer/patterns/render`,
+		query: params.toString(),
+	} );
+};
+
+const useQueryRenderedPatterns = (
+	siteId: number,
+	stylesheet: string,
+	patternIds: string[],
+	{ staleTime = 10000, refetchOnMount = true }: UseQueryOptions = {}
+) => {
+	return useInfiniteQuery(
+		[ siteId, 'block-renderer/patterns/render' ],
+		( { pageParam = 1 } ) => fetchRenderedPatterns( siteId, stylesheet, patternIds, pageParam ),
 		{
-			refetchOnMount: 'always',
-			staleTime: Infinity,
+			getNextPageParam: ( lastPage, allPages ) => {
+				if ( allPages.length * PAGE_SIZE >= patternIds.length ) {
+					return;
+				}
+				return allPages.length + 1;
+			},
+			refetchOnMount,
+			staleTime,
 		}
 	);
 };
