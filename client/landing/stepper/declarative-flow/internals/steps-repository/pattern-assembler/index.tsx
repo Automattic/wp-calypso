@@ -58,13 +58,16 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const trackEventPatternSelect = ( {
 		patternType,
 		patternId,
+		patternName,
 	}: {
 		patternType: string;
 		patternId: number;
+		patternName: string;
 	} ) => {
 		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_click', {
 			pattern_type: patternType,
 			pattern_id: patternId,
+			pattern_name: patternName,
 		} );
 	};
 
@@ -157,6 +160,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 			trackEventPatternSelect( {
 				patternType: showPatternSelectorType,
 				patternId: selectedPattern.id,
+				patternName: selectedPattern.name,
 			} );
 		}
 
