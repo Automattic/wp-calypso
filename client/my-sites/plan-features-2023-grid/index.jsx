@@ -135,6 +135,7 @@ export class PlanFeatures2023Grid extends Component {
 						annualPricePerMonth={ annualPricePerMonth }
 						isMonthlyPlan={ isMonthlyPlan }
 						flow={ flowName }
+						planName={ planName }
 					/>
 				</th>
 			);

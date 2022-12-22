@@ -130,28 +130,28 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.plan-features-2023-grid__pricing {
-		padding: 8px 16px;
+		padding: 8px 20px;
 		margin: 0;
 
 		.plan-price {
-			font-weight: 600;
-			color: var(--color-text);
+			color: var(--studio-gray-100);
 			margin-right: 10px;
-			font-size: $font-title-large;
 			line-height: $font-title-large;
 			padding-bottom: 12px;
-			font-family: "Helvetica Neue", helvetica, arial, sans-serif;
+			position: relative;
 		}
 
 		.plan-price__currency-symbol {
-			font-size: $font-title-large;
-			vertical-align: unset;
+			font-size: $font-title-medium;
 			color: var(--color-text);
+			@include onboarding-font-recoleta;
 		}
 
 		.plan-price__integer {
-			font-weight: 600;
+			font-size: 2.75rem;
 			margin-left: 2px;
+			position: absolute;
+			top: 10px;
 		}
 
 		.plan-price__term {
@@ -177,6 +177,12 @@ $plan-features-sidebar-width: 272px;
 			.plan-price__tax-amount {
 				color: var(--color-text-subtle);
 			}
+		}
+
+		.plan-features-2023-grid__vip-price {
+			font-size: $font-body-extra-small;
+			font-weight: 400;
+			color: var(--studio-gray-80);
 		}
 	}
 
@@ -413,16 +419,6 @@ body.is-section-signup.is-white-signup {
 
 	.plan-features--signup .is-premium-plan .plan-features-2023-grid__header-title {
 		font-weight: 500;
-	}
-
-	.plan-features--signup .plan-features-2023-grid__pricing {
-		.plan-price {
-			font-weight: 500;
-
-			.plan-price__integer {
-				font-weight: 500;
-			}
-		}
 	}
 
 	.plan-features-2023-grid__item-title {

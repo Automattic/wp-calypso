@@ -1,4 +1,4 @@
-import { getPlans } from '@automattic/calypso-products';
+import { getPlans, PLAN_FREE, PLAN_ENTERPRISE } from '@automattic/calypso-products';
 import { getCurrencyObject } from '@automattic/format-currency';
 import { NEWSLETTER_FLOW, LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
 import { localize } from 'i18n-calypso';
@@ -46,7 +46,12 @@ export class PlanFeatures2023GridHeader extends Component {
 			translate,
 			annualPricePerMonth,
 			isMonthlyPlan,
+			planName,
 		} = this.props;
+
+		if ( [ PLAN_FREE, PLAN_ENTERPRISE ].includes( planName ) ) {
+			return null;
+		}
 
 		if ( isMonthlyPlan && annualPricePerMonth < rawPrice ) {
 			const discountRate = Math.round( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice );
@@ -68,14 +73,20 @@ export class PlanFeatures2023GridHeader extends Component {
 		const perMonthDescription = this.getPerMonthDescription() || billingTimeFrame;
 
 		return (
-			<div className="plan-features-2023-grid__header-billing-info">
-				<span>{ perMonthDescription }</span>
-			</div>
+			<div className="plan-features-2023-grid__header-billing-info">{ perMonthDescription }</div>
 		);
 	}
 
 	renderPriceGroup() {
-		const { currencyCode, rawPrice, discountPrice } = this.props;
+		const { currencyCode, rawPrice, discountPrice, planName } = this.props;
+
+		if ( PLAN_ENTERPRISE === planName ) {
+			return (
+				<div className="plan-features-2023-grid__vip-price">
+					Starts at <b>US$25,000</b> yearly.
+				</div>
+			);
+		}
 
 		if ( discountPrice ) {
 			return (

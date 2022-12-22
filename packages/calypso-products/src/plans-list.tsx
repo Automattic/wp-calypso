@@ -1593,15 +1593,15 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	[ PLAN_ENTERPRISE ]: {
 		...getPlanEnterpriseDetails(),
 		term: TERM_ANNUALLY,
-		getBillingTimeFrame: () => i18n.translate( 'for life' ),
-		getProductId: () => 0,
+		getBillingTimeFrame: () => '',
+		getProductId: () => 0, // TODO: What should go here?
 		getStoreSlug: () => PLAN_ENTERPRISE,
 		getPathSlug: () => 'enterprise',
 	},
 	[ PLAN_FREE ]: {
 		...getPlanFreeDetails(),
 		term: TERM_ANNUALLY,
-		getBillingTimeFrame: () => i18n.translate( 'for life' ),
+		getBillingTimeFrame: () => i18n.translate( 'No expiration date' ),
 		getProductId: () => 1,
 		getStoreSlug: () => PLAN_FREE,
 		getPathSlug: () => 'beginner',

@@ -56,7 +56,7 @@
 		--approximate-viewport-scrollbar-width: 20px;
 
 		width: calc(100vw - var(--approximate-viewport-scrollbar-width));
-		margin-left: calc(50% - 38vw + var(--approximate-viewport-scrollbar-width) / 2);
+		margin-left: calc(50% - 43vw + var(--approximate-viewport-scrollbar-width) / 2);
 
 		@media ( min-width: 860px ) {
 			max-width: 860px;
@@ -64,6 +64,11 @@
 
 		@media ( min-width: 1320px ) {
 			max-width: 1320px;
+		}
+
+		@media ( min-width: 1600px ) {
+			max-width: 1480px;
+			margin-left: calc(50% - 43vw + var(--approximate-viewport-scrollbar-width) / 2);
 		}
 	}
 
