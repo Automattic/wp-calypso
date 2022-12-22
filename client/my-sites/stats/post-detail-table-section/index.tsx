@@ -33,7 +33,7 @@ export default function PostDetailTableSection( {
 	};
 
 	return (
-		<div className="stats__post-detail-table-section">
+		<div className="stats__post-detail-table-section stats__modernized-stats-table">
 			<div className="highlight-cards">
 				<h1 className="highlight-cards-heading">{ translate( 'All-time Insights' ) }</h1>
 

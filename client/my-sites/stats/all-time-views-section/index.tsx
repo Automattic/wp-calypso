@@ -33,7 +33,7 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 	};
 
 	return (
-		<div className="stats__all-time-views-section">
+		<div className="stats__all-time-views-section stats__modernized-stats-table">
 			{ siteId && <QuerySiteStats statType="statsVisits" siteId={ siteId } query={ query } /> }
 
 			<div className="highlight-cards">
