@@ -7,12 +7,16 @@ import './style.scss';
 
 interface Props {
 	className?: string;
+	tooltipContent?: React.ReactElement;
+	tooltipClassName?: string;
 	tooltipPosition?: string;
 	isPremiumThemeAvailable?: boolean;
 }
 
 const PremiumBadge: FunctionComponent< Props > = ( {
 	className,
+	tooltipContent,
+	tooltipClassName,
 	tooltipPosition = 'bottom left',
 	isPremiumThemeAvailable,
 } ) => {
@@ -41,12 +45,12 @@ const PremiumBadge: FunctionComponent< Props > = ( {
 			<Gridicon className="premium-badge__logo" icon="star" size={ 14 } />
 			<span>{ __( 'Premium' ) }</span>
 			<Popover
-				className="premium-badge__popover"
+				className={ classNames( 'premium-badge__popover', tooltipClassName ) }
 				context={ divRef.current }
 				isVisible={ isPopoverVisible }
 				position={ tooltipPosition }
 			>
-				{ tooltipText }
+				{ tooltipContent || tooltipText }
 			</Popover>
 		</div>
 	);

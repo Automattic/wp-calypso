@@ -1,11 +1,11 @@
+import { DEVICE_TYPES } from '@automattic/components';
 import { NEWSLETTER_FLOW, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { DEVICE_TYPE } from 'calypso/../packages/design-picker/src/constants';
-import { Device } from 'calypso/../packages/design-picker/src/types';
 import WebPreview from 'calypso/components/web-preview/component';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import PreviewToolbar from '../design-setup/preview-toolbar';
+import type { Device } from '@automattic/components';
 
 const LaunchpadSitePreview = ( {
 	siteSlug,
@@ -15,15 +15,16 @@ const LaunchpadSitePreview = ( {
 	flow: string | null;
 } ) => {
 	const translate = useTranslate();
-	const color = useQuery().get( 'color' );
+	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+
 	const previewUrl = siteSlug ? 'https://' + siteSlug : null;
-	const devicesToShow: Device[] = [ DEVICE_TYPE.COMPUTER, DEVICE_TYPE.PHONE ];
-	let defaultDevice = flow === NEWSLETTER_FLOW ? DEVICE_TYPE.COMPUTER : DEVICE_TYPE.PHONE;
+	const devicesToShow: Device[] = [ DEVICE_TYPES.COMPUTER, DEVICE_TYPES.PHONE ];
+	let defaultDevice = flow === NEWSLETTER_FLOW ? DEVICE_TYPES.COMPUTER : DEVICE_TYPES.PHONE;
 	const isVideoPressFlow = VIDEOPRESS_FLOW === flow;
 
 	if ( isVideoPressFlow ) {
 		const windowWidth = window.innerWidth;
-		defaultDevice = windowWidth >= 1000 ? DEVICE_TYPE.COMPUTER : DEVICE_TYPE.PHONE;
+		defaultDevice = windowWidth >= 1000 ? DEVICE_TYPES.COMPUTER : DEVICE_TYPES.PHONE;
 	}
 
 	function formatPreviewUrl() {
@@ -39,7 +40,7 @@ const LaunchpadSitePreview = ( {
 			// hide cookies popup
 			preview: true,
 			do_preview_no_interactions: ! isVideoPressFlow,
-			...( color && { preview_accent_color: color } ),
+			...( globalStylesInUse && shouldLimitGlobalStyles && { 'preview-global-styles': true } ),
 		} );
 	}
 

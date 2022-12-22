@@ -3,6 +3,7 @@ import {
 	makeLayout,
 	redirectLoggedOut,
 	redirectWithoutLocaleParamIfLoggedIn,
+	render as clientRender,
 } from 'calypso/controller';
 import {
 	navigation,
@@ -35,14 +36,15 @@ export default function ( router ) {
 	];
 
 	// Upload routes are valid only when logged in. In logged-out sessions they redirect to login page.
-	router( '/themes/upload', redirectLoggedOut, siteSelection, sites, makeLayout );
+	router( '/themes/upload', redirectLoggedOut, siteSelection, sites, makeLayout, clientRender );
 	router(
 		'/themes/upload/:site_id',
 		redirectLoggedOut,
 		siteSelection,
 		upload,
 		navigation,
-		makeLayout
+		makeLayout,
+		clientRender
 	);
 
 	router(
@@ -53,7 +55,8 @@ export default function ( router ) {
 		siteSelection,
 		loggedIn,
 		navigation,
-		makeLayout
+		makeLayout,
+		clientRender
 	);
 
 	router(
@@ -62,6 +65,7 @@ export default function ( router ) {
 		selectSiteIfLoggedIn,
 		fetchAndValidateVerticalsAndFilters,
 		loggedOut,
-		makeLayout
+		makeLayout,
+		clientRender
 	);
 }

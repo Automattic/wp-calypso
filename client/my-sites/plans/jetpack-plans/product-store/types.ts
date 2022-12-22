@@ -37,6 +37,7 @@ export type ProductSlugsProps = Pick< ProductStoreProps, 'duration' > & ProductS
 
 export type productIconProps = {
 	productSlug: string;
+	light?: boolean;
 };
 
 export type ProductsListProps = ProductStoreBaseProps & {
@@ -50,10 +51,6 @@ export type ItemToDisplayProps = {
 	siteId: number | null;
 	duration: Duration;
 };
-
-export interface ItemsListProps extends ItemToDisplayProps {
-	currentView: ViewType;
-}
 
 export type MostPopularProps = {
 	className?: string;
@@ -87,6 +84,7 @@ export type ItemPriceProps = ProductStoreBaseProps &
 	};
 
 export type FeaturedItemCardProps = {
+	amountSaved?: React.ReactNode;
 	ctaAsPrimary?: boolean;
 	ctaHref?: string;
 	ctaLabel: React.ReactNode;
@@ -107,4 +105,23 @@ export type MoreInfoLinkProps = {
 	item: SelectorProduct;
 	onClick?: VoidFunction;
 	isExternal?: boolean;
+};
+
+export type PricingBreakdownProps = {
+	product: SelectorProduct;
+	siteId: number | null;
+	includedProductSlugs: ReadonlyArray< string >;
+	showBreakdownHeading?: boolean;
+};
+
+export type PricingBreakdownItem = {
+	name: React.ReactNode;
+	slug: string;
+	originalPrice: number;
+	renderedPrice: React.ReactNode;
+};
+
+export type AmountSavedProps = ProductStoreBaseProps & {
+	product: SelectorProduct;
+	onClickMoreInfo: VoidFunction;
 };

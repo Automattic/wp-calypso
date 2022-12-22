@@ -82,7 +82,10 @@ export class PlansPage {
 		const locator = this.page.locator( selectors.selectPlanButton( plan ) );
 		// In the /plans view, there are two buttons for "Upgrade" on the
 		// plan comparison chart.
-		await Promise.all( [ this.page.waitForNavigation(), locator.first().click() ] );
+		await Promise.all( [
+			this.page.waitForNavigation( { timeout: 30 * 1000 } ),
+			locator.first().click(),
+		] );
 	}
 
 	/* Generic */
@@ -140,7 +143,7 @@ export class PlansPage {
 		// See https://github.com/Automattic/wp-calypso/issues/64389
 		// and https://github.com/Automattic/wp-calypso/pull/64421#discussion_r892589761.
 		await Promise.all( [
-			this.page.waitForLoadState( 'networkidle' ),
+			this.page.waitForLoadState( 'networkidle', { timeout: 20 * 1000 } ),
 			this.page.waitForResponse( /.*active-promotions.*/ ),
 		] );
 		await clickNavTab( this.page, targetTab, { force: true } );

@@ -58,8 +58,8 @@ const PatternLayout = ( {
 					{ selectedHeader ? (
 						<li className="pattern-layout__list-item pattern-layout__list-item--header">
 							<Icon className="pattern-layout__icon" icon={ header } size={ 24 } />
-							<span className="pattern-layout__list-item-text" title={ selectedHeader.name }>
-								{ selectedHeader.name }
+							<span className="pattern-layout__list-item-text" title={ selectedHeader.category }>
+								{ selectedHeader.category }
 							</span>
 							<PatternActionBar
 								patternType="header"
@@ -81,7 +81,7 @@ const PatternLayout = ( {
 					) }
 					<AsyncLoad require="./animate-list" featureName="domMax" placeholder={ <div /> }>
 						{ ( m: any ) =>
-							sections.map( ( { name, key }: Pattern, index ) => {
+							sections.map( ( { category, key }: Pattern, index ) => {
 								return (
 									<m.li
 										key={ key }
@@ -90,8 +90,8 @@ const PatternLayout = ( {
 										className="pattern-layout__list-item pattern-layout__list-item--section"
 									>
 										<Icon className="pattern-layout__icon" icon={ group } size={ 24 } />
-										<span className="pattern-layout__list-item-text" title={ name }>
-											{ name }
+										<span className="pattern-layout__list-item-text" title={ category }>
+											{ category }
 										</span>
 										<PatternActionBar
 											patternType="section"
@@ -119,8 +119,8 @@ const PatternLayout = ( {
 					{ selectedFooter ? (
 						<li className="pattern-layout__list-item pattern-layout__list-item--footer">
 							<Icon className="pattern-layout__icon" icon={ footer } size={ 24 } />
-							<span className="pattern-layout__list-item-text" title={ selectedFooter.name }>
-								{ selectedFooter.name }
+							<span className="pattern-layout__list-item-text" title={ selectedFooter.category }>
+								{ selectedFooter.category }
 							</span>
 							<PatternActionBar
 								patternType="footer"

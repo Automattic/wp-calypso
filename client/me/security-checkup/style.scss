@@ -21,7 +21,8 @@
 			&.material-icon-check_circle {
 				fill: var(--color-success);
 			}
-			&.material-icon-error {
+			&.material-icon-pending,
+			&.material-icon-error, {
 				fill: var(--color-warning-30);
 			}
 		}

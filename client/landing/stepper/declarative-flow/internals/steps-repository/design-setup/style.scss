@@ -656,7 +656,6 @@ $break-design-preview: 1024px;
 				// 60px = .site-setup
 				margin-top: - ( 60px - $preview-padding-top );
 				max-height: none;
-				padding-bottom: 32px;
 			}
 
 			.design-preview__sidebar {
@@ -664,4 +663,22 @@ $break-design-preview: 1024px;
 			}
 		}
 	}
+}
+
+// Free flow
+
+.free.design-setup {
+	.step-container:not(.design-setup__preview) {
+		.navigation-link {
+			display: none;
+		}
+	}
+	.step-container__navigation {
+		.step-container__skip-wrapper {
+			button.step-container__navigation-link {
+				display: none;
+			}
+		}
+	}
+
 }

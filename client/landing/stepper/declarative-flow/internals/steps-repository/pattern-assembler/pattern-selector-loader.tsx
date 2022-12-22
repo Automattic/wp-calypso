@@ -1,13 +1,13 @@
 import { useTranslate } from 'i18n-calypso';
 import PatternSelector from './pattern-selector';
-import { headerPatterns, footerPatterns, sectionPatterns } from './patterns-data';
+import { useHeaderPatterns, useFooterPatterns, useSectionPatterns } from './patterns-data';
 import type { Pattern } from './types';
 
 type PatternSelectorLoaderProps = {
-	onSelect: ( selectedPattern: Pattern | null ) => void;
-	onBack: () => void;
 	showPatternSelectorType: string | null;
 	selectedPattern: Pattern | null;
+	onSelect: ( selectedPattern: Pattern ) => void;
+	onBack: () => void;
 };
 
 const PatternSelectorLoader = ( {
@@ -17,6 +17,9 @@ const PatternSelectorLoader = ( {
 	selectedPattern,
 }: PatternSelectorLoaderProps ) => {
 	const translate = useTranslate();
+	const headerPatterns = useHeaderPatterns();
+	const footerPatterns = useFooterPatterns();
+	const sectionPatterns = useSectionPatterns();
 
 	return (
 		<>
@@ -41,7 +44,7 @@ const PatternSelectorLoader = ( {
 				patterns={ sectionPatterns }
 				onSelect={ onSelect }
 				onBack={ onBack }
-				title={ translate( 'Add sections' ) }
+				title={ selectedPattern ? translate( 'Replace section' ) : translate( 'Add sections' ) }
 				selectedPattern={ selectedPattern }
 			/>
 		</>

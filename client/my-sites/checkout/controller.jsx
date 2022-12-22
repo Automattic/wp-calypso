@@ -140,7 +140,10 @@ export function checkout( context, next ) {
 	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
 
 	const isLoggedOutCart =
-		isJetpackCheckout || ( isLoggedOut && context.pathname.includes( '/checkout/no-site' ) );
+		isJetpackCheckout ||
+		( isLoggedOut &&
+			( context.pathname.includes( '/checkout/no-site' ) ||
+				context.pathname.includes( '/gift/' ) ) );
 	const isNoSiteCart =
 		isJetpackCheckout ||
 		( ! isLoggedOut &&

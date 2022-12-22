@@ -1,22 +1,17 @@
-jest.mock( 'react-redux', () => ( {
-	connect: () => ( component ) => component,
-} ) );
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
-jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( '@automattic/calypso-config', () => {
-	const fn = () => {
-		return [];
-	};
-	fn.isEnabled = jest.fn( () => true );
-	return fn;
-} );
-jest.mock( 'calypso/components/happychat/connection-connected', () => 'HappychatConnection' );
-jest.mock( 'calypso/components/data/query-plans', () => 'QueryPlans' );
-jest.mock( 'calypso/components/data/query-site-plans', () => 'QuerySitePlans' );
-jest.mock( 'calypso/my-sites/plan-features', () => 'PlanFeatures' );
-jest.mock( 'calypso/my-sites/plans-features-main/wpcom-faq', () => 'WpcomFAQ' );
-jest.mock( 'calypso/my-sites/plans-features-main/jetpack-faq', () => 'JetpackFAQ' );
+/**
+ * @jest-environment jsdom
+ */
+
+jest.mock( 'calypso/my-sites/plan-features', () => ( { visiblePlans, popularPlanSpec } ) => (
+	<div data-testid="plan-features">
+		<div data-testid="visible-plans">{ JSON.stringify( visiblePlans ) }</div>
+		<div data-testid="popular-plan-spec">{ JSON.stringify( popularPlanSpec ) }</div>
+	</div>
+) );
+jest.mock( 'calypso/my-sites/plans-features-main/wpcom-faq', () => () => 'WpcomFAQ' );
+jest.mock( 'calypso/my-sites/plans-features-main/plan-type-selector', () => () => (
+	<div>PlanTypeSelector</div>
+) );
 
 import {
 	GROUP_WPCOM,
@@ -37,10 +32,10 @@ import {
 	TYPE_ECOMMERCE,
 	TYPE_FREE,
 	TYPE_PERSONAL,
-	TERM_ANNUALLY,
 	TYPE_PREMIUM,
 } from '@automattic/calypso-products';
-import { shallow } from 'enzyme';
+import { screen } from '@testing-library/react';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { PlansFeaturesMain } from '../index';
 
 const props = {
@@ -50,113 +45,140 @@ const props = {
 
 describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 	test( 'Should render <PlanFeatures /> with plans matching given planTypes when called with planTypes props', () => {
-		const instance = new PlansFeaturesMain( {
-			...props,
-			planTypes: [ TYPE_BUSINESS, TYPE_ECOMMERCE ],
-		} );
-		const plans = instance.getPlansForPlanFeatures();
-		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] );
+		renderWithProvider(
+			<PlansFeaturesMain { ...props } planTypes={ [ TYPE_BUSINESS, TYPE_ECOMMERCE ] } />
+		);
+
+		expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+			JSON.stringify( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] )
+		);
 	} );
+
 	test( 'Should render <PlanFeatures /> removing the free plan when hideFreePlan prop is present, regardless of its position', () => {
-		const instance = new PlansFeaturesMain( {
-			...props,
-			planTypes: [ TYPE_BUSINESS, TYPE_FREE, TYPE_ECOMMERCE ],
-			hideFreePlan: true,
-		} );
-		const plans = instance.getPlansForPlanFeatures();
-		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] );
+		renderWithProvider(
+			<PlansFeaturesMain
+				{ ...props }
+				planTypes={ [ TYPE_BUSINESS, TYPE_FREE, TYPE_ECOMMERCE ] }
+				hideFreePlan
+			/>
+		);
+
+		expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+			JSON.stringify( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] )
+		);
 	} );
+
 	test( 'Should render <PlanFeatures /> removing the Personal plan when hidePersonalPlan prop is present, regardless of its position', () => {
-		const instance = new PlansFeaturesMain( {
-			...props,
-			planTypes: [ TYPE_BUSINESS, TYPE_PERSONAL, TYPE_ECOMMERCE ],
-			hidePersonalPlan: true,
-		} );
-		const plans = instance.getPlansForPlanFeatures();
-		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] );
+		renderWithProvider(
+			<PlansFeaturesMain
+				{ ...props }
+				planTypes={ [ TYPE_BUSINESS, TYPE_PERSONAL, TYPE_ECOMMERCE ] }
+				hidePersonalPlan
+			/>
+		);
+
+		expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+			JSON.stringify( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] )
+		);
 	} );
+
 	test( 'Should render <PlanFeatures /> removing the Premium plan when hidePremiumPlan prop is present, regardless of its position', () => {
-		const instance = new PlansFeaturesMain( {
-			...props,
-			planTypes: [ TYPE_BUSINESS, TYPE_PREMIUM, TYPE_ECOMMERCE ],
-			hidePremiumPlan: true,
-		} );
-		const plans = instance.getPlansForPlanFeatures();
-		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] );
+		renderWithProvider(
+			<PlansFeaturesMain
+				{ ...props }
+				planTypes={ [ TYPE_BUSINESS, TYPE_PREMIUM, TYPE_ECOMMERCE ] }
+				hidePremiumPlan
+			/>
+		);
+
+		expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+			JSON.stringify( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] )
+		);
 	} );
+
 	test( 'Should render <PlanFeatures /> with the Personal plan and the Premium plan when hidePersonalPlan and hidePremiumPlan are false.', () => {
-		const planTypes = [ TYPE_BUSINESS, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_ECOMMERCE ];
-		const instance = new PlansFeaturesMain( {
-			...props,
-			planTypes,
-			hidePersonalPlan: false,
-			hidePremiumPlan: false,
-		} );
-		const plans = instance.getPlansForPlanFeatures();
-		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_ECOMMERCE ] );
+		renderWithProvider(
+			<PlansFeaturesMain
+				{ ...props }
+				planTypes={ [ TYPE_BUSINESS, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_ECOMMERCE ] }
+				hidePersonalPlan={ false }
+				hidePremiumPlan={ false }
+			/>
+		);
+
+		expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+			JSON.stringify( [ PLAN_BUSINESS, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_ECOMMERCE ] )
+		);
 	} );
 
 	test( 'Should render <PlanFeatures /> with WP.com plans when requested', () => {
-		const instance = new PlansFeaturesMain( { ...props } );
-		const plans = instance.getPlansForPlanFeatures();
-		expect( plans ).toEqual( [
-			PLAN_FREE,
-			PLAN_PERSONAL,
-			PLAN_PREMIUM,
-			PLAN_BUSINESS,
-			PLAN_ECOMMERCE,
-		] );
+		renderWithProvider( <PlansFeaturesMain { ...props } planTypeSelector={ null } /> );
+
+		expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+			JSON.stringify( [ PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE ] )
+		);
 	} );
 
 	test( 'Should render <PlanFeatures /> with WP.com data-e2e-plans when requested', () => {
-		const instance = new PlansFeaturesMain( { ...props } );
-		const comp = shallow( instance.getPlanFeatures() );
-		expect( comp.find( '[data-e2e-plans="wpcom"]' ).length ).toBe( 1 );
+		renderWithProvider( <PlansFeaturesMain { ...props } /> );
+
+		expect( screen.getByTestId( 'plan-features' ).parentElement ).toHaveAttribute(
+			'data-e2e-plans',
+			'wpcom'
+		);
 	} );
 
 	test( 'Should render <PlanFeatures /> with WP.com plans without free one when requested', () => {
-		const instance = new PlansFeaturesMain( { ...props, hideFreePlan: true } );
-		const plans = instance.getPlansForPlanFeatures();
-		expect( plans ).toEqual( [ PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE ] );
+		renderWithProvider( <PlansFeaturesMain { ...props } hideFreePlan /> );
+
+		expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+			JSON.stringify( [ PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE ] )
+		);
 	} );
 
 	test( 'Should render <PlanFeatures /> with monthly WP.com plans when requested', () => {
-		const instance = new PlansFeaturesMain( {
-			...props,
-			intervalType: 'monthly',
-			hideFreePlan: true,
-		} );
-		const plans = instance.getPlansForPlanFeatures();
-		expect( plans ).toEqual( [
-			PLAN_PERSONAL_MONTHLY,
-			PLAN_PREMIUM_MONTHLY,
-			PLAN_BUSINESS_MONTHLY,
-			PLAN_ECOMMERCE_MONTHLY,
-		] );
+		renderWithProvider( <PlansFeaturesMain { ...props } intervalType="monthly" /> );
+
+		expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+			JSON.stringify( [
+				PLAN_PERSONAL_MONTHLY,
+				PLAN_PREMIUM_MONTHLY,
+				PLAN_BUSINESS_MONTHLY,
+				PLAN_ECOMMERCE_MONTHLY,
+			] )
+		);
 	} );
 
 	test( 'Should render <PlanFeatures /> with WP.com 2-year plans when requested ( by plan )', () => {
-		const instance = new PlansFeaturesMain( { ...props, selectedPlan: PLAN_PERSONAL_2_YEARS } );
-		const plans = instance.getPlansForPlanFeatures();
-		expect( plans ).toEqual( [
-			PLAN_FREE,
-			PLAN_PERSONAL_2_YEARS,
-			PLAN_PREMIUM_2_YEARS,
-			PLAN_BUSINESS_2_YEARS,
-			PLAN_ECOMMERCE_2_YEARS,
-		] );
+		renderWithProvider(
+			<PlansFeaturesMain
+				{ ...props }
+				selectedPlan={ PLAN_PERSONAL_2_YEARS }
+				intervalType={ null }
+			/>
+		);
+
+		expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+			JSON.stringify( [
+				PLAN_PERSONAL_2_YEARS,
+				PLAN_PREMIUM_2_YEARS,
+				PLAN_BUSINESS_2_YEARS,
+				PLAN_ECOMMERCE_2_YEARS,
+			] )
+		);
 	} );
 
 	test( 'Should render <PlanFeatures /> with WP.com 2-year plans when requested ( by interval )', () => {
-		const instance = new PlansFeaturesMain( { ...props, intervalType: '2yearly' } );
-		const plans = instance.getPlansForPlanFeatures();
-		expect( plans ).toEqual( [
-			PLAN_FREE,
-			PLAN_PERSONAL_2_YEARS,
-			PLAN_PREMIUM_2_YEARS,
-			PLAN_BUSINESS_2_YEARS,
-			PLAN_ECOMMERCE_2_YEARS,
-		] );
+		renderWithProvider( <PlansFeaturesMain { ...props } intervalType="2yearly" /> );
+
+		expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+			JSON.stringify( [
+				PLAN_PERSONAL_2_YEARS,
+				PLAN_PREMIUM_2_YEARS,
+				PLAN_BUSINESS_2_YEARS,
+				PLAN_ECOMMERCE_2_YEARS,
+			] )
+		);
 	} );
 } );
 
@@ -166,6 +188,7 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 		translate: ( x ) => x,
 		hideFreePlan: true,
 		withWPPlanTabs: true,
+		planTypeSelector: null,
 	};
 
 	beforeEach( () => {
@@ -173,85 +196,77 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 	} );
 
 	test( 'Should render <PlanFeatures /> with tab picker when requested', () => {
-		const instance = new PlansFeaturesMain( { ...myProps } );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'PlanTypeSelector' ).length ).toBe( 1 );
+		renderWithProvider( <PlansFeaturesMain { ...myProps } /> );
+
+		expect( screen.getByText( 'PlanTypeSelector' ) ).toBeVisible();
 	} );
 
 	test( 'Should display proper plans in personal tab', () => {
-		const instance = new PlansFeaturesMain( { ...myProps, customerType: 'personal' } );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'PlanFeatures' ).props().visiblePlans ).toEqual( [
-			PLAN_PERSONAL,
-			PLAN_PREMIUM,
-		] );
+		renderWithProvider( <PlansFeaturesMain { ...myProps } customerType="personal" /> );
+
+		expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+			JSON.stringify( [ PLAN_PERSONAL, PLAN_PREMIUM ] )
+		);
 	} );
 
 	test( 'Should display proper plans in personal tab (2y)', () => {
-		const instance = new PlansFeaturesMain( {
-			...myProps,
-			intervalType: '2yearly',
-			customerType: 'personal',
-		} );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'PlanFeatures' ).props().visiblePlans ).toEqual( [
-			PLAN_PERSONAL_2_YEARS,
-			PLAN_PREMIUM_2_YEARS,
-		] );
+		renderWithProvider(
+			<PlansFeaturesMain { ...myProps } customerType="personal" intervalType="2yearly" />
+		);
+
+		expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+			JSON.stringify( [ PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ] )
+		);
 	} );
 
 	test( 'Highlights TYPE_PREMIUM as popular plan for personal customer type', () => {
-		const instance = new PlansFeaturesMain( {
-			customerType: 'personal',
-		} );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'PlanFeatures' ).props().popularPlanSpec ).toEqual( {
-			type: TYPE_PREMIUM,
-			group: GROUP_WPCOM,
-		} );
+		renderWithProvider( <PlansFeaturesMain { ...myProps } customerType="personal" /> );
+
+		expect( screen.getByTestId( 'popular-plan-spec' ) ).toHaveTextContent(
+			JSON.stringify( {
+				type: TYPE_PREMIUM,
+				group: GROUP_WPCOM,
+			} )
+		);
 	} );
 
 	test( 'Highlights TYPE_BUSINESS as popular plan for business customer type', () => {
-		const instance = new PlansFeaturesMain( {
-			customerType: 'business',
-		} );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'PlanFeatures' ).props().popularPlanSpec ).toEqual( {
-			type: TYPE_BUSINESS,
-			group: GROUP_WPCOM,
-		} );
+		renderWithProvider( <PlansFeaturesMain { ...myProps } customerType="business" /> );
+
+		expect( screen.getByTestId( 'popular-plan-spec' ) ).toHaveTextContent(
+			JSON.stringify( {
+				type: TYPE_BUSINESS,
+				group: GROUP_WPCOM,
+			} )
+		);
 	} );
 
 	test( 'Highlights TYPE_BUSINESS as popular plan for empty customer type', () => {
-		const instance = new PlansFeaturesMain( {} );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'PlanFeatures' ).props().popularPlanSpec ).toEqual( {
-			type: TYPE_BUSINESS,
-			group: GROUP_WPCOM,
-		} );
+		renderWithProvider( <PlansFeaturesMain { ...myProps } /> );
+
+		expect( screen.getByTestId( 'popular-plan-spec' ) ).toHaveTextContent(
+			JSON.stringify( {
+				type: TYPE_BUSINESS,
+				group: GROUP_WPCOM,
+			} )
+		);
 	} );
 } );
 
 describe( 'PlansFeaturesMain.getPlansFromProps', () => {
-	const group = GROUP_WPCOM;
-	const term = TERM_ANNUALLY;
-
 	test( 'Should return an empty array if planTypes are not specified', () => {
-		const instance = new PlansFeaturesMain( { ...props } );
-		const plans = instance.getPlansFromProps( group, term );
-		expect( plans ).toEqual( [] );
+		renderWithProvider( <PlansFeaturesMain { ...props } planTypes={ [ TYPE_FREE ] } /> );
+
+		expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent( JSON.stringify( [] ) );
 	} );
 
 	test( 'Should filter out invalid plan types and print a warning in the console', () => {
 		global.console.warn = jest.fn();
-		const NOT_A_PLAN = 'not-a-plan';
-		const instance = new PlansFeaturesMain( {
-			...props,
-			planTypes: [ NOT_A_PLAN, TYPE_BUSINESS, TYPE_ECOMMERCE ],
-		} );
-		const plans = instance.getPlansFromProps( group, term );
 
-		expect( plans ).toEqual( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] );
+		const NOT_A_PLAN = 'not-a-plan';
+
+		renderWithProvider( <PlansFeaturesMain { ...props } planTypes={ [ NOT_A_PLAN ] } /> );
+
 		expect( global.console.warn ).toHaveBeenCalledWith(
 			`Invalid plan type, \`${ NOT_A_PLAN }\`, provided to \`PlansFeaturesMain\` component. See plans constants for valid plan types.`
 		);

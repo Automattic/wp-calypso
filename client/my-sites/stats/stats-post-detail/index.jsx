@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -22,6 +23,8 @@ import {
 } from 'calypso/state/sites/selectors';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import PostDetailHighlightsSection from '../post-detail-highlights-section';
+import PostDetailTableSection from '../post-detail-table-section';
 import PostMonths from '../stats-detail-months';
 import PostWeeks from '../stats-detail-weeks';
 import StatsPlaceholder from '../stats-module/placeholder';
@@ -134,6 +137,8 @@ class StatsPostDetail extends Component {
 			noViewsLabel = translate( 'Your post has not received any views yet!' );
 		}
 
+		const isFeatured = config.isEnabled( 'stats/enhance-post-detail' );
+
 		return (
 			<Main className="has-fixed-nav" wideLayout>
 				<PageViewTracker
@@ -153,6 +158,10 @@ class StatsPostDetail extends Component {
 					) }
 				</FixedNavigationHeader>
 
+				{ isFeatured && (
+					<PostDetailHighlightsSection siteId={ siteId } postId={ postId } post={ post } />
+				) }
+
 				<StatsPlaceholder isLoading={ isLoading } />
 
 				{ ! isLoading && countViews === 0 && (
@@ -171,25 +180,33 @@ class StatsPostDetail extends Component {
 					<div>
 						<PostSummary siteId={ siteId } postId={ postId } />
 
-						{ !! postId && <PostLikes siteId={ siteId } postId={ postId } postType={ postType } /> }
+						{ ! isFeatured && !! postId && (
+							<PostLikes siteId={ siteId } postId={ postId } postType={ postType } />
+						) }
 
-						<PostMonths
-							dataKey="years"
-							title={ translate( 'Months and years' ) }
-							total={ translate( 'Total' ) }
-							siteId={ siteId }
-							postId={ postId }
-						/>
+						{ isFeatured && <PostDetailTableSection siteId={ siteId } postId={ postId } /> }
 
-						<PostMonths
-							dataKey="averages"
-							title={ translate( 'Average per day' ) }
-							total={ translate( 'Overall' ) }
-							siteId={ siteId }
-							postId={ postId }
-						/>
+						{ ! isFeatured && (
+							<>
+								<PostMonths
+									dataKey="years"
+									title={ translate( 'Months and years' ) }
+									total={ translate( 'Total' ) }
+									siteId={ siteId }
+									postId={ postId }
+								/>
 
-						<PostWeeks siteId={ siteId } postId={ postId } />
+								<PostMonths
+									dataKey="averages"
+									title={ translate( 'Average per day' ) }
+									total={ translate( 'Overall' ) }
+									siteId={ siteId }
+									postId={ postId }
+								/>
+
+								<PostWeeks siteId={ siteId } postId={ postId } />
+							</>
+						) }
 					</div>
 				) }
 

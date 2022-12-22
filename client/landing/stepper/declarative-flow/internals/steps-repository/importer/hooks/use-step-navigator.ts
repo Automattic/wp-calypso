@@ -2,7 +2,6 @@ import { getWpOrgImporterUrl } from 'calypso/blocks/import/util';
 import { useCheckoutUrl } from 'calypso/blocks/importer/hooks/use-checkout-url';
 import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
 import { addQueryArgs } from 'calypso/lib/route';
-import { StepPath } from '../../../steps-repository';
 import { BASE_STEPPER_ROUTE } from '../../import/config';
 import { removeLeadingSlash } from '../../import/util';
 import type { NavigationControls } from '../../../types';
@@ -19,7 +18,7 @@ export function useStepNavigator(
 
 	function navigator( path: string ) {
 		const stepPath = removeLeadingSlash( path.replace( `${ BASE_STEPPER_ROUTE }/${ flow }`, '' ) );
-		navigation.goToStep?.( stepPath as StepPath );
+		navigation.goToStep?.( stepPath as string );
 	}
 
 	function goToIntentPage() {

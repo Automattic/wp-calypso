@@ -411,6 +411,9 @@ function getProductTypeForModalCopy(
 	hasMarketplaceProductsInCart: boolean,
 	isPwpoUser: boolean
 ): string {
+	if ( product.is_gift_purchase ) {
+		return 'gift purchase';
+	}
 	if ( isWpComPlan( product.product_slug ) ) {
 		if ( hasMarketplaceProductsInCart ) {
 			return 'plan with marketplace dependencies';
@@ -435,6 +438,15 @@ function returnModalCopy(
 	isRenewal = false
 ): ModalCopy {
 	switch ( productType ) {
+		case 'gift purchase':
+			return {
+				title: String( translate( 'You are about to remove your gift from the cart' ) ),
+				description: String(
+					translate(
+						"When you press Continue, we'll remove all gift products in the cart, and your gift will not be given."
+					)
+				),
+			};
 		case 'plan with marketplace dependencies':
 			if ( isRenewal ) {
 				return {
@@ -881,7 +893,9 @@ function WPLineItem( {
 			product.is_bundled
 	);
 	const hasMarketplaceProductsInCart = responseCart.products.some(
-		( product ) => product.extra.is_marketplace_product === true
+		( product ) =>
+			product.extra.is_marketplace_product === true ||
+			product.product_slug.startsWith( 'wp_mp_theme' )
 	);
 	const { formStatus } = useFormStatus();
 	const itemSpanId = `checkout-line-item-${ id }`;
@@ -997,7 +1011,21 @@ function WPLineItem( {
 							setIsModalVisible( false );
 						} }
 						primaryAction={ () => {
-							removeProductFromCart( product.uuid ).catch( () => {
+							let product_uuids_to_remove = [ product.uuid ];
+
+							// Gifts need to be all or nothing, to prevent leaving
+							// the site in a state where it requires other purchases
+							// in order to actually work correctly for the period of
+							// the gift (for example, gifting a plan renewal without
+							// a domain renewal would likely lead the site's domain
+							// to expire soon afterwards).
+							if ( product.is_gift_purchase ) {
+								product_uuids_to_remove = responseCart.products
+									.filter( ( cart_product ) => cart_product.is_gift_purchase )
+									.map( ( cart_product ) => cart_product.uuid );
+							}
+
+							Promise.all( product_uuids_to_remove.map( removeProductFromCart ) ).catch( () => {
 								// Nothing needs to be done here. CartMessages will display the error to the user.
 							} );
 							onRemoveProduct?.( label );

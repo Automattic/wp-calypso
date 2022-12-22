@@ -2,6 +2,10 @@ import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import {
+	JETPACK_SITES_FEATURES_FETCH,
+	JETPACK_SITES_FEATURES_FETCH_FAILURE,
+	JETPACK_SITES_FEATURES_FETCH_SUCCESS,
+	JETPACK_SITES_FEATURES_RECEIVE,
 	SITE_FEATURES_FETCH,
 	SITE_FEATURES_FETCH_COMPLETED,
 	SITE_FEATURES_FETCH_FAILED,
@@ -44,6 +48,44 @@ export function fetchSiteFeatures( siteId ) {
 				} );
 			} );
 	};
+}
+
+export function fetchJetpackSitesFeatures() {
+	return ( dispatch ) => {
+		dispatch( {
+			type: JETPACK_SITES_FEATURES_FETCH,
+		} );
+
+		return wpcom.req
+			.get( '/me/sites/features' )
+			.then( ( data ) => {
+				const features = {};
+				for ( const siteId in data.features ) {
+					features[ siteId ] = createSiteFeaturesObject( data.features[ siteId ] );
+				}
+
+				dispatch( fetchJetpackSitesFeaturesReceive( features ) );
+
+				dispatch( {
+					type: JETPACK_SITES_FEATURES_FETCH_SUCCESS,
+				} );
+			} )
+			.catch( ( error ) => {
+				const errorMessage =
+					error.message ||
+					i18n.translate(
+						'There was a problem fetching site features. Please try again later or contact support.'
+					);
+				dispatch( {
+					type: JETPACK_SITES_FEATURES_FETCH_FAILURE,
+					error: errorMessage,
+				} );
+			} );
+	};
+}
+
+function fetchJetpackSitesFeaturesReceive( features ) {
+	return { type: JETPACK_SITES_FEATURES_RECEIVE, features };
 }
 
 /**

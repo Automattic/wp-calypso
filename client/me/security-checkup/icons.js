@@ -5,3 +5,7 @@ export function getOKIcon() {
 export function getWarningIcon() {
 	return 'error';
 }
+
+export function getPendingIcon() {
+	return 'pending';
+}

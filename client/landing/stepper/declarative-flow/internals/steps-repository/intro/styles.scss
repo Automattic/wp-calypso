@@ -2,6 +2,7 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .intro {
+	&.free,
 	&.newsletter {
 		background-color: rgb(162 218 254);
 
@@ -26,6 +27,10 @@
 				background-size: cover;
 				background-position-y: 10vh;
 			}
+		}
+		.intro__description {
+			max-width: 450px;
+			margin: auto;
 		}
 	}
 

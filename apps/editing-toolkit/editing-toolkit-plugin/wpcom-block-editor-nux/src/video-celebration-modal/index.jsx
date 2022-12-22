@@ -3,10 +3,11 @@ import { useSelect } from '@wordpress/data';
 import { useState, useRef, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import request from 'wpcom-proxy-request';
-import fireworksImage from 'calypso/assets/images/illustrations/fireworks.svg';
+import videoSuccessImage from 'calypso/assets/images/illustrations/video-success.svg';
 import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
 import useHasSeenVideoCelbrationModal from '../../../dotcom-fse/lib/video-celebration-modal/use-has-seen-video-celebration-modal';
 import NuxModal from '../nux-modal';
+import './style.scss';
 
 // Shows a celebration modal after a video is first uploaded to a site and the editor is saved.
 const VideoCelebrationModalInner = () => {
@@ -90,23 +91,23 @@ const VideoCelebrationModalInner = () => {
 	return (
 		<NuxModal
 			isOpen={ isModalOpen }
-			className="wpcom-site-editor-seller-celebration-modal"
-			title={ __( "You've added your first video!", 'full-site-editing' ) }
+			className="wpcom-site-editor-video-celebration-modal"
+			title={ __( 'You’ve added your first video!', 'full-site-editing' ) }
 			description={ __(
-				'Feel free to continue editing or go back to setup and launch your site.',
+				'Feel free to keep editing your homepage, or continue and launch your site.',
 				'full-site-editing'
 			) }
-			imageSrc={ fireworksImage }
+			imageSrc={ videoSuccessImage }
 			actionButtons={
 				<>
-					<Button onClick={ closeModal }>{ __( 'Continue editing', 'full-site-editing' ) }</Button>
+					<Button onClick={ closeModal }>{ __( 'Keep editing', 'full-site-editing' ) }</Button>
 					<Button
 						isPrimary
 						href={ `https://wordpress.com/setup/videopress/launchpad?siteSlug=${ window.location.hostname }` }
 						target="__blank"
 						rel="noopener noreferrer"
 					>
-						{ __( 'Back to setup', 'full-site-editing' ) }
+						{ __( 'Continue and launch', 'full-site-editing' ) }
 					</Button>
 				</>
 			}

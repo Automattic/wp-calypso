@@ -11,6 +11,7 @@ import PeopleList from './main';
 import PeopleAddSubscribers from './people-add-subscribers';
 import PeopleInviteDetails from './people-invite-details';
 import PeopleInvites from './people-invites';
+import SubscribersTeam from './subscribers-team';
 
 export default {
 	redirectToTeam,
@@ -43,6 +44,14 @@ export default {
 
 	peopleInviteDetails( context, next ) {
 		renderPeopleInviteDetails( context, next );
+	},
+
+	teamMembers( context, next ) {
+		renderTeamMembers( context, next );
+	},
+
+	subscribers( context, next ) {
+		renderSubscribers( context, next );
 	},
 
 	peopleAddSubscribers( context, next ) {
@@ -105,6 +114,38 @@ function renderPeopleInvites( context, next ) {
 		<>
 			<PeopleInvitesTitle />
 			<PeopleInvites />
+		</>
+	);
+	next();
+}
+
+function renderTeamMembers( context, next ) {
+	const TeamMembersTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'Team Members', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<TeamMembersTitle />
+			<SubscribersTeam filter={ context.params.filter } search={ context.query.s } />
+		</>
+	);
+	next();
+}
+
+function renderSubscribers( context, next ) {
+	const SubscribersTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'Subscribers', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<SubscribersTitle />
+			<SubscribersTeam filter={ context.params.filter } search={ context.query.s } />
 		</>
 	);
 	next();

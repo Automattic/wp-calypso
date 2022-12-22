@@ -96,7 +96,9 @@ export const useMshotsImg = (
 		}
 
 		return () => {
-			clearTimeout( timeout.current );
+			if ( timeout.current ) {
+				clearTimeout( timeout.current );
+			}
 		};
 	}, [ isLoading, mshotUrl, retryCount, src ] );
 

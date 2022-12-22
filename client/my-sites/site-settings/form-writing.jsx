@@ -3,7 +3,6 @@ import { flowRight, get, pick } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
-import FeaturedImageTemplateToggle from 'calypso/my-sites/site-settings/featured-image-toggle';
 import FeedSettings from 'calypso/my-sites/site-settings/feed-settings';
 import PodcastingLink from 'calypso/my-sites/site-settings/podcasting-details/link';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
@@ -98,16 +97,6 @@ class SiteSettingsFormWriting extends Component {
 					onChangeField={ onChangeField }
 					translate={ translate }
 				/>
-
-				{ config.isEnabled( 'settings/featured-image-template-toggle' ) && (
-					<FeaturedImageTemplateToggle
-						isSavingSettings={ isSavingSettings }
-						isRequestingSettings={ isRequestingSettings }
-						handleAutosavingToggle={ handleAutosavingToggle }
-						fields={ fields }
-						translate={ translate }
-					/>
-				) }
 
 				{ isPodcastingSupported && <PodcastingLink fields={ fields } /> }
 
@@ -214,7 +203,7 @@ const getFormSettings = ( settings ) => {
 		'timezone_string',
 		'podcasting_category_id',
 		'wpcom_publish_posts_with_markdown',
-		'featured_image_email_enabled',
+		'jetpack_blogging_prompts_enabled',
 	] );
 
 	// handling `gmt_offset` and `timezone_string` values

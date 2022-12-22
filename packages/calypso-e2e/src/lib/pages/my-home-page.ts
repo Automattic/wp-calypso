@@ -1,4 +1,5 @@
 import { Page } from 'playwright';
+import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
 	visitSiteButton: '.button >> text=Visit site',
@@ -21,6 +22,17 @@ export class MyHomePage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+	}
+
+	/**
+	 * Visits the `/home` endpoint.
+	 *
+	 * @param {string} siteSlug Site URL.
+	 */
+	async visit( siteSlug: string ): Promise< void > {
+		await this.page.goto( getCalypsoURL( `/home/${ siteSlug }` ), {
+			timeout: 20 * 1000,
+		} );
 	}
 
 	/**

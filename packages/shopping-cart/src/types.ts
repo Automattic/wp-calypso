@@ -566,9 +566,24 @@ export interface ResponseCartProduct {
 	subscription_id?: string;
 	introductory_offer_terms?: IntroductoryOfferTerms;
 
+	/**
+	 * True if the cart item represents a purchase for a different user's site.
+	 */
+	is_gift_purchase?: boolean;
+
+	product_variants: ResponseCartProductVariant[];
+
 	// Temporary optional properties for the monthly pricing test
 	related_monthly_plan_cost_display?: string;
 	related_monthly_plan_cost_integer?: number;
+}
+
+export interface ResponseCartProductVariant {
+	product_id: number;
+	bill_period_in_months: number;
+	product_slug: string;
+	currency: string;
+	price_integer: number;
 }
 
 export interface IntroductoryOfferTerms {
@@ -632,6 +647,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	site_title?: string;
 	signup_flow?: string;
 	signup?: boolean;
+	headstart_theme?: string;
 }
 
 export interface GSuiteProductUser {

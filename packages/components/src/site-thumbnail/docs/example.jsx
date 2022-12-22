@@ -7,7 +7,7 @@ const THUMBNAIL_DIMENSION = {
 	height: 401 / ASPECT_RATIO,
 };
 
-export default function SiteThumbnailExample() {
+const SiteThumbnailExample = () => {
 	return (
 		<div>
 			<h2>Small</h2>
@@ -144,4 +144,8 @@ export default function SiteThumbnailExample() {
 			</div>
 		</div>
 	);
-}
+};
+
+SiteThumbnailExample.displayName = 'SiteThumbnail';
+
+export default SiteThumbnailExample;

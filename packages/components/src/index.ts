@@ -2,6 +2,7 @@ export { default as Button } from './button';
 export * as Animation from './animation';
 export { default as Card } from './card';
 export { default as CompactCard } from './card/compact';
+export * from './device-switcher';
 export { default as Dialog } from './dialog';
 export { default as FormInputValidation } from './forms/form-input-validation';
 export { default as Gridicon } from './gridicon';
@@ -38,3 +39,5 @@ export {
 	percentCalculator as PercentCalculator,
 } from './highlight-cards/highlight-card';
 export { default as MobilePromoCard } from './mobile-promo-card';
+export { default as ShortenedNumber } from './shortened-number';
+export { default as PostStatsCard } from './post-stats-card';

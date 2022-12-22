@@ -11,6 +11,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import StatsCommentFollows from './comment-follows';
 import StatsOverview from './overview';
 import StatsSite from './site';
+import StatsEmailOpenDetail from './stats-email-open-detail';
 import StatsInsights from './stats-insights';
 import StatsPostDetail from './stats-post-detail';
 import StatsSummary from './summary';
@@ -62,6 +63,8 @@ function getNumPeriodAgo( momentSiteZone, date, period ) {
 
 function getSiteFilters( siteId ) {
 	const filters = [
+		//TODO: This Insights route could be removed since it has been set routing as below.
+		// statsPage( '/stats/insights/:site', insights );
 		{
 			title: i18n.translate( 'Insights' ),
 			path: '/stats/insights/' + siteId,
@@ -91,6 +94,13 @@ function getSiteFilters( siteId ) {
 			id: 'stats-year',
 			period: 'year',
 		},
+	];
+
+	return filters;
+}
+
+function getWordAdsFilters( siteId ) {
+	const filters = [
 		{
 			title: i18n.translate( 'WordAds - Days' ),
 			path: '/stats/ads/day/' + siteId,
@@ -168,7 +178,6 @@ export function overview( context, next ) {
 			{
 				title: i18n.translate( 'Days' ),
 				path: '/stats/day',
-				altPaths: [ '/stats' ],
 				id: 'stats-day',
 				period: 'day',
 			},
@@ -186,11 +195,7 @@ export function overview( context, next ) {
 	window.scrollTo( 0, 0 );
 
 	const activeFilter = find( filters(), ( filter ) => {
-		return (
-			context.params.period === filter.period ||
-			context.path.indexOf( filter.path ) >= 0 ||
-			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )
-		);
+		return context.params.period === filter.period || context.path.includes( filter.path );
 	} );
 
 	// Validate that date filter is legit
@@ -219,10 +224,7 @@ export function site( context, next ) {
 	const siteId = currentSite ? currentSite.ID || 0 : 0;
 
 	const activeFilter = find( filters, ( filter ) => {
-		return (
-			context.path.indexOf( filter.path ) >= 0 ||
-			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )
-		);
+		return context.path.includes( filter.path );
 	} );
 
 	if ( ! activeFilter ) {
@@ -268,8 +270,7 @@ export function summary( context, next ) {
 	const contextModule = context.params.module;
 	const filters = [
 		{
-			path: '/stats/' + contextModule + '/' + siteId,
-			altPaths: [ '/stats/day/' + contextModule + '/' + siteId ],
+			path: '/stats/day/' + contextModule + '/' + siteId,
 			id: 'stats-day',
 			period: 'day',
 		},
@@ -296,10 +297,7 @@ export function summary( context, next ) {
 	siteId = selectedSite ? selectedSite.ID || 0 : 0;
 
 	const activeFilter = find( filters, ( filter ) => {
-		return (
-			context.path.indexOf( filter.path ) >= 0 ||
-			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )
-		);
+		return context.path.includes( filter.path );
 	} );
 
 	if ( siteFragment && 0 === siteId ) {
@@ -307,7 +305,7 @@ export function summary( context, next ) {
 		return ( window.location = '/stats' );
 	}
 
-	if ( ! activeFilter || -1 === validModules.indexOf( context.params.module ) ) {
+	if ( ! activeFilter || ! validModules.includes( context.params.module ) ) {
 		return next();
 	}
 
@@ -404,7 +402,7 @@ export function wordAds( context, next ) {
 
 	const state = store.getState();
 	const siteId = getSelectedSiteId( state );
-	const filters = getSiteFilters( siteId );
+	const filters = getWordAdsFilters( siteId );
 
 	const activeFilter = find( filters, ( filter ) => context.params.period === filter.period );
 
@@ -437,6 +435,12 @@ export function wordAds( context, next ) {
 			period={ rangeOfPeriod( activeFilter.period, date ) }
 		/>
 	);
+
+	next();
+}
+
+export function emailOpen( context, next ) {
+	context.primary = <StatsEmailOpenDetail />;
 
 	next();
 }

@@ -13,6 +13,7 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import SectionHeader from 'calypso/components/section-header';
 import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import NoResults from 'calypso/my-sites/no-results';
 import { preloadEditor } from 'calypso/sections-preloaders';
 import {
@@ -74,6 +75,10 @@ class Pages extends Component {
 			this.setState( { pages: nextProps.pages, shadowItems: {} } );
 		}
 	}
+
+	trackNewpageClick = () => {
+		recordTracksEvent( 'calypso_pages_addnewpage_click', { blog_id: this.props.siteId } );
+	};
 
 	fetchPages = ( options ) => {
 		if ( this.props.loading || this.props.lastPage ) {
@@ -250,7 +255,13 @@ class Pages extends Component {
 
 		return (
 			<SectionHeader label={ translate( 'Pages' ) }>
-				<Button primary compact className="pages__add-page" href={ newPageLink }>
+				<Button
+					primary
+					compact
+					className="pages__add-page"
+					href={ newPageLink }
+					onClick={ this.trackNewpageClick }
+				>
 					{ translate( 'Add new page' ) }
 				</Button>
 			</SectionHeader>
@@ -282,7 +293,6 @@ class Pages extends Component {
 				type={ blockEditorSettings?.home_template?.postType }
 				/** We'd prefer to call it Homepage no matter which template is in use */
 				title={ translate( 'Homepage' ) }
-				description={ translate( 'The front page of your site' ) }
 				previewUrl={ site.URL }
 				isHomepage
 			/>

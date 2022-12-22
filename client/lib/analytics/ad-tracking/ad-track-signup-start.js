@@ -40,6 +40,6 @@ export async function adTrackSignupStart( flow ) {
 			},
 		];
 		debug( 'adTrackSignupStart: [Google Ads Gtag]', params );
-		window.gtag?.( ...params );
+		window.gtag( ...params );
 	}
 }

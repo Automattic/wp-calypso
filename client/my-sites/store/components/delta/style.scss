@@ -11,7 +11,8 @@
 			}
 		}
 		.delta__labels {
-			.delta__value {
+			.delta__value,
+			.delta__suffix {
 				color: var(--color-success);
 			}
 		}
@@ -24,7 +25,8 @@
 			}
 		}
 		.delta__labels {
-			.delta__value {
+			.delta__value,
+			.delta__suffix {
 				color: var(--color-error);
 			}
 		}
@@ -57,10 +59,10 @@
 	}
 
 	.delta__labels {
-		align-items: left;
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
+		justify-content: flex-start;
 
 		.delta__suffix,
 		.delta__value {
@@ -73,24 +75,6 @@
 		}
 		.delta__value {
 			margin-right: 6px;
-		}
-	}
-
-	&.delta--new-main-chart {
-		&.is-favorable {
-			.delta__labels {
-				.delta__suffix {
-					color: var(--color-success);
-				}
-			}
-		}
-
-		&.is-unfavorable {
-			.delta__labels {
-				.delta__suffix {
-					color: var(--color-error);
-				}
-			}
 		}
 	}
 }

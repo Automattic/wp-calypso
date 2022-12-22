@@ -11,6 +11,16 @@ import thunk from 'redux-thunk';
 import SitesOverviewContext from '../context';
 import SitesOverview from '../index';
 
+window.IntersectionObserver = jest.fn( () => ( {
+	observe: jest.fn(),
+	disconnect: jest.fn(),
+	root: null,
+	rootMargin: '',
+	thresholds: [],
+	takeRecords: jest.fn(),
+	unobserve: jest.fn(),
+} ) );
+
 describe( '<SitesOverview>', () => {
 	const initialState = {
 		sites: {},

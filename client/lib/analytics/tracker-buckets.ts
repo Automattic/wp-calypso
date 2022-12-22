@@ -1,9 +1,11 @@
 import { getDoNotTrack } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { isPiiUrl, isUrlExcludedForPerformance } from 'calypso/lib/analytics/utils';
+import {
+	isPiiUrl,
+	isUrlExcludedForPerformance,
+	getTrackingPrefs,
+} from 'calypso/lib/analytics/utils';
 import { isE2ETest } from 'calypso/lib/e2e';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import getTrackingPrefs from './utils/get-tracking-prefs';
 
 const allAdTrackers = [
 	'bing',
@@ -38,10 +40,9 @@ export enum Bucket {
 
 export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	// Analytics trackers:
-	// 'ga' is categorized as analytics tracker in Jetpack Cloud, but not in Calypso
-	ga: isJetpackCloud() ? Bucket.ANALYTICS : Bucket.ADVERTISING,
 
 	// Advertising trackers:
+	ga: Bucket.ADVERTISING,
 	gaEnhancedEcommerce: Bucket.ADVERTISING,
 	fullstory: Bucket.ADVERTISING,
 	hotjar: Bucket.ADVERTISING,
@@ -65,6 +66,32 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	adroll: null,
 };
 
+const checkGtagInit = (): boolean => 'dataLayer' in window && 'gtag' in window;
+
+export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolean } > = {
+	ga: checkGtagInit,
+	gaEnhancedEcommerce: checkGtagInit,
+	floodlight: checkGtagInit,
+	googleAds: checkGtagInit,
+	fullstory: () => 'FS' in window,
+	hotjar: () => 'hj' in window,
+	bing: () => 'uetq' in window,
+	outbrain: () => 'obApi' in window,
+	pinterest: () => 'pintrk' in window,
+	twitter: () => 'twq' in window,
+	facebook: () => 'fbq' in window,
+	linkedin: () => '_linkedin_data_partner_id' in window,
+	criteo: () => 'criteo_q' in window,
+	quora: () => 'qp' in window,
+	adroll: () => 'adRoll' in window,
+};
+
+const isTrackerIntialized = ( tracker: AdTracker ): boolean => {
+	const guardFunction = AdTrackersInitGuards[ tracker ];
+	// If there is no guard function, skip the check
+	return guardFunction ? guardFunction() : true;
+};
+
 export const mayWeTrackGeneral = () =>
 	! isE2ETest() && ! getDoNotTrack() && ! isPiiUrl() && config.isEnabled( 'ad-tracking' );
 
@@ -82,8 +109,10 @@ export const mayWeTrackByBucket = ( bucket: Bucket ) => {
 	return prefs.ok && prefs.buckets[ bucket ];
 };
 
-export const mayWeTrackByTracker = ( tracker: AdTracker ) => {
+export const mayWeInitTracker = ( tracker: AdTracker ) => {
 	const bucket = AdTrackersBuckets[ tracker ];
-
 	return null !== bucket && mayWeTrackByBucket( bucket );
 };
+
+export const mayWeTrackByTracker = ( tracker: AdTracker ) =>
+	mayWeInitTracker( tracker ) && isTrackerIntialized( tracker );

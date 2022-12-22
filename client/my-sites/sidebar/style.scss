@@ -301,7 +301,6 @@ $font-size: rem(14px);
 					left: calc(50% - 9px);
 					width: 18px;
 					height: 18px;
-					/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 					border-radius: 50%;
 				}
 			}
@@ -478,7 +477,6 @@ $font-size: rem(14px);
 				line-height: 20px;
 				background-color: #a7aaad;
 				color: var(--color-text-inverted);
-				/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 				border-radius: 50%;
 				margin: 3px 0 3px 1px;
 			}
