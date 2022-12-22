@@ -143,7 +143,7 @@ function itemToSelectorProduct(
 		}
 
 		// We do not support TERM_BIENNIALLY or TERM_TRIENIALLY for Jetpack plans
-		if ( item.term === ( TERM_BIENNIALLY || TERM_TRIENNIALLY ) ) {
+		if ( [ TERM_BIENNIALLY, TERM_TRIENNIALLY ].includes( item.term ) ) {
 			return null;
 		}
 
@@ -211,7 +211,7 @@ function itemToSelectorProduct(
 				? getForCurrentCROIteration( item.getRecommendedFor )
 				: [],
 			monthlyProductSlug,
-			term: item.term === ( TERM_BIENNIALLY || TERM_TRIENNIALLY ) ? TERM_ANNUALLY : item.term,
+			term: [ TERM_BIENNIALLY, TERM_TRIENNIALLY ].includes( item.term ) ? TERM_ANNUALLY : item.term,
 			features: {
 				items: buildCardFeaturesFromItem( item ),
 			},
