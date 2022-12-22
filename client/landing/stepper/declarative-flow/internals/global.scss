@@ -169,6 +169,7 @@ button {
 	}
 }
 
+.store-profiler__form,
 .newsletter,
 .link-in-bio,
 .link-in-bio-tld,
@@ -235,6 +236,7 @@ button {
 		label {
 			font-size: $font-body;
 			color: var(--studio-gray-60);
+			font-weight: 400;
 		}
 	}
 
