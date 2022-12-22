@@ -56,6 +56,20 @@ export const WelcomeEmailTextSetting = ( {
 					'The welcome message sent out to new readers when they subscribe to your blog.'
 				) }
 			</FormSettingExplanation>
+			<FormLabel>Comment follow email text</FormLabel>
+			<FormTextarea
+				name=""
+				id=""
+				value={ value?.comment_follow }
+				onChange={ onChangeFieldSubscriptionOptions( 'comment_follow' ) }
+				disabled={ disabled }
+				autoCapitalize="none"
+				onClick={ null }
+				onKeyPress={ null }
+			/>
+			<FormSettingExplanation>
+				{ translate( 'The email sent out when someone follows one of your posts.' ) }
+			</FormSettingExplanation>
 		</FormFieldset>
 	);
 };
