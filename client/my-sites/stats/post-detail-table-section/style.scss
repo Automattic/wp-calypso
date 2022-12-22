@@ -52,7 +52,7 @@ $common-border-radius: 4px;
 		}
 
 		td {
-			background-color: var(--color-neutral-0);
+			background-color: var(--color-primary-5);
 
 			&.stats-detail__row-label {
 				background: none;
@@ -70,7 +70,7 @@ $common-border-radius: 4px;
 			}
 
 			&.highest-count {
-				background-color: var(--color-primary-5);
+				background-color: var(--color-primary-10);
 				color: var(--color-neutral-60);
 			}
 
