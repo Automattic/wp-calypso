@@ -55,7 +55,12 @@ describe( DataHelper.createSuiteTitle( 'Site Editor: Limited Global Styles' ), f
 	it( 'Reset styles to defaults', async function () {
 		await fullSiteEditorPage.openSiteStyles();
 		await fullSiteEditorPage.setStyleVariation( 'Default' );
+	} );
+
+	it( 'Save the default styles', async function () {
+		// On mobile, site styles is a popover panel that blocks the Save button.
+		// So let's always close site styles first to be safe. :)
 		await fullSiteEditorPage.closeSiteStyles();
-		await fullSiteEditorPage.save();
+		await fullSiteEditorPage.save( { preSaveSelectors: [ '.wpcom-global-styles-notice' ] } );
 	} );
 } );
