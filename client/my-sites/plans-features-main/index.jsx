@@ -37,6 +37,7 @@ import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -46,7 +47,6 @@ import Notice from 'calypso/components/notice';
 import { getTld } from 'calypso/lib/domains';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import PlanFeatures from 'calypso/my-sites/plan-features';
-import PlanFeatures2023Grid from 'calypso/my-sites/plan-features-2023-grid';
 import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
@@ -129,6 +129,35 @@ export class PlansFeaturesMain extends Component {
 			isEnabled( 'onboarding/2023-pricing-grid' ) &&
 			flowName === 'onboarding-2023-pricing-grid'
 		) {
+			const asyncProps = {
+				basePlansPath,
+				domainName,
+				isInSignup,
+				isLandingPage,
+				isLaunchPage,
+				onUpgradeClick,
+				plans,
+				flowName,
+				redirectTo,
+				visiblePlans,
+				selectedFeature,
+				selectedPlan,
+				withDiscount,
+				discountEndDate,
+				withScroll: plansWithScroll,
+				popularPlanSpec: getPopularPlanSpec( {
+					flowName,
+					customerType,
+					isJetpack,
+					availablePlans: visiblePlans,
+				} ),
+				siteId,
+				isReskinned,
+				isPlansInsideStepper,
+			};
+			const asyncPlanFeatures2023Grid = (
+				<AsyncLoad require="calypso/my-sites/plan-features-2023-grid" { ...asyncProps } />
+			);
 			return (
 				<div
 					className={ classNames(
@@ -141,33 +170,7 @@ export class PlansFeaturesMain extends Component {
 					) }
 					data-e2e-plans="wpcom"
 				>
-					<PlanFeatures2023Grid
-						basePlansPath={ basePlansPath }
-						domainName={ domainName }
-						isInSignup={ isInSignup }
-						isLandingPage={ isLandingPage }
-						isLaunchPage={ isLaunchPage }
-						onUpgradeClick={ onUpgradeClick }
-						plans={ plans }
-						flowName={ flowName }
-						redirectTo={ redirectTo }
-						visiblePlans={ visiblePlans }
-						selectedFeature={ selectedFeature }
-						selectedPlan={ selectedPlan }
-						withDiscount={ withDiscount }
-						discountEndDate={ discountEndDate }
-						withScroll={ plansWithScroll }
-						popularPlanSpec={ getPopularPlanSpec( {
-							flowName,
-							customerType,
-							isJetpack,
-							availablePlans: visiblePlans,
-						} ) }
-						siteId={ siteId }
-						isReskinned={ isReskinned }
-						isFAQCondensedExperiment={ isFAQCondensedExperiment }
-						isPlansInsideStepper={ isPlansInsideStepper }
-					/>
+					{ asyncPlanFeatures2023Grid }
 				</div>
 			);
 		}
