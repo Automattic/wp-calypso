@@ -43,7 +43,7 @@ const getConfirmationText = ( sites, selectedPlugins, actionText ) => {
 
 		Object.keys( plugin.sites ).forEach( ( siteId ) => {
 			const site = sites.find( ( s ) => s.ID === parseInt( siteId ) );
-			if ( site.canUpdateFiles ) {
+			if ( site && site.canUpdateFiles ) {
 				sitesList[ site.ID ] = true;
 				siteName = site.title;
 			}

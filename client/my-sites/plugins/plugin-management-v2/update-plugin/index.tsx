@@ -58,6 +58,7 @@ export default function UpdatePlugin( { plugin, selectedSite, className, updateP
 		};
 	}, [ plugin, selectedSite ] );
 
+	// TODO: types
 	const hasUpdate = selectedSite
 		? plugin.sites[ selectedSite.ID ]?.update?.new_version &&
 		  allSites.find( ( site ) => site.ID === selectedSite.ID ).canUpdateFiles

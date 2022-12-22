@@ -48,14 +48,19 @@ const site: SiteDetails = {
 const plugin = {
 	id: pluginId,
 	last_updated: '2021-09-16 12:40am GMT',
-	sites: { [ `${ siteId }` ]: { ID: siteId, canUpdateFiles: true } },
+	sites: {
+		[ `${ siteId }` ]: {
+			ID: siteId,
+			canUpdateFiles: true,
+			version: '11.3',
+			update: { new_version: '11.5', canUpdateFiles: true },
+		},
+	},
 	icon: '',
 	name: 'Plugin 1',
 	pluginsOnSites: [],
 	slug: pluginId,
 	wporg: true,
-	version: '11.3',
-	update: { new_version: '11.5', canUpdateFiles: true },
 };
 
 export { site, plugin };
