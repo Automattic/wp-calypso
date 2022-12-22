@@ -3,6 +3,7 @@ import {
 	isNewsletterOrLinkInBioFlow,
 	isLinkInBioFlow,
 	isFreeFlow,
+	ECOMMERCE_FLOW,
 } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -117,6 +118,7 @@ const ProcessingStep: Step = function ( props ) {
 
 	const flowName = props.flow || '';
 	const isJetpackPowered = isNewsletterOrLinkInBioFlow( flowName );
+	const isWooCommercePowered = flowName === ECOMMERCE_FLOW;
 
 	// Currently we have the Domains and Plans only for link in bio
 	if ( isLinkInBioFlow( flowName ) || isFreeFlow( flowName ) ) {
@@ -132,27 +134,30 @@ const ProcessingStep: Step = function ( props ) {
 				stepName="processing-step"
 				isHorizontalLayout={ true }
 				stepContent={
-					<div className="processing-step">
-						<h1 className="processing-step__progress-step">{ getCurrentMessage() }</h1>
-						{ progress >= 0 ? (
-							<div className="processing-step__content woocommerce-install__content">
-								<div
-									className="processing-step__progress-bar"
-									style={
-										{
-											'--progress': simulatedProgress > 1 ? 1 : simulatedProgress,
-										} as React.CSSProperties
-									}
-								/>
-							</div>
-						) : (
-							<LoadingEllipsis />
-						) }
-					</div>
+					<>
+						<div className="processing-step">
+							<h1 className="processing-step__progress-step">{ getCurrentMessage() }</h1>
+							{ progress >= 0 ? (
+								<div className="processing-step__content woocommerce-install__content">
+									<div
+										className="processing-step__progress-bar"
+										style={
+											{
+												'--progress': simulatedProgress > 1 ? 1 : simulatedProgress,
+											} as React.CSSProperties
+										}
+									/>
+								</div>
+							) : (
+								<LoadingEllipsis />
+							) }
+						</div>
+					</>
 				}
 				stepProgress={ stepProgress }
 				recordTracksEvent={ recordTracksEvent }
 				showJetpackPowered={ isJetpackPowered }
+				showFooterWooCommercePowered={ isWooCommercePowered }
 			/>
 		</>
 	);
