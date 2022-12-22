@@ -72,7 +72,6 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 			open={ true }
 			onRequestClose={ onClose }
 			title={ translate( 'Set custom notification' ) }
-			shouldCloseOnClickOutside={ false }
 			className="notification-settings__modal"
 		>
 			<div className="notification-settings__sub-title">{ site.url }</div>

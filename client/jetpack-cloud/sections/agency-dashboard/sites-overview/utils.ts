@@ -442,4 +442,4 @@ export const availableNotificationDurations = [
 	},
 ];
 
-export const mobileAppLink = 'https://jetpack.com/blog/jetpack-mobile-app/';
+export const mobileAppLink = 'https://jetpack.com/mobile/';
