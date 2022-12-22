@@ -1,11 +1,9 @@
-import { getPlans, getPlanClass } from '@automattic/calypso-products';
+import { getPlans } from '@automattic/calypso-products';
 import { getCurrencyObject } from '@automattic/format-currency';
 import { NEWSLETTER_FLOW, LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
-import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import PlanPill from 'calypso/components/plans/plan-pill';
 import PlanPrice from 'calypso/my-sites/plan-price';
 
 const PLANS_LIST = getPlans();
@@ -30,21 +28,8 @@ export class PlanFeatures2023GridHeader extends Component {
 	}
 
 	renderPlansHeaderNoTabs() {
-		const { planType, popular, selectedPlan, title, tagline, translate } = this.props;
-
-		const headerClasses = classNames( 'plan-features-2023-grid__header', getPlanClass( planType ) );
-
 		return (
 			<span>
-				<div>
-					{ popular && ! selectedPlan && (
-						<PlanPill isInSignup={ true }>{ this.getPlanPillText() }</PlanPill>
-					) }
-				</div>
-				<header className={ headerClasses }>
-					<h4 className="plan-features-2023-grid__header-title">{ title }</h4>
-				</header>
-				<div className="plan-features-2023-grid__header-tagline">{ tagline }</div>
 				<div className="plan-features-2023-grid__pricing">
 					{ this.renderPriceGroup() }
 					{ this.getBillingTimeframe() }
@@ -72,9 +57,7 @@ export class PlanFeatures2023GridHeader extends Component {
 			const annualPriceObj = getCurrencyObject( rawPriceAnnual, currencyCode );
 			const annualPriceText = `${ annualPriceObj.symbol }${ annualPriceObj.integer }`;
 
-			return translate( 'billed as %(price)s annually', {
-				args: { price: annualPriceText },
-			} );
+			return `per month, ${ annualPriceText } billed annually`;
 		}
 
 		return null;

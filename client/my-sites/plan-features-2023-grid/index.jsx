@@ -78,6 +78,8 @@ export class PlanFeatures2023Grid extends Component {
 								</caption>
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>
+									<tr>{ this.renderPlanSubHeaders() }</tr>
+									<tr>{ this.renderPlanPriceGroup() }</tr>
 									<tr>{ this.renderTopButtons() }</tr>
 									{ this.renderPlanFeatureRows() }
 								</tbody>
@@ -89,7 +91,7 @@ export class PlanFeatures2023Grid extends Component {
 		);
 	}
 
-	renderPlanHeaders() {
+	renderPlanPriceGroup() {
 		const { basePlansPath, planProperties, isReskinned, flowName } = this.props;
 
 		return map( planProperties, ( properties ) => {
@@ -101,7 +103,6 @@ export class PlanFeatures2023Grid extends Component {
 				discountPrice,
 				planConstantObj,
 				planName,
-				popular,
 				relatedMonthlyPlan,
 				isMonthlyPlan,
 				isPlaceholder,
@@ -109,7 +110,6 @@ export class PlanFeatures2023Grid extends Component {
 				rawPrice,
 				rawPriceAnnual,
 				rawPriceForMonthlyPlan,
-				tagline,
 			} = properties;
 
 			const classes = classNames( 'plan-features-2023-grid__table-item', {
@@ -120,7 +120,6 @@ export class PlanFeatures2023Grid extends Component {
 			return (
 				<th scope="col" key={ planName } className={ classes }>
 					<PlanFeatures2023GridHeader
-						tagline={ tagline }
 						availableForPurchase={ availableForPurchase }
 						basePlansPath={ basePlansPath }
 						billingTimeFrame={ billingTimeFrame }
@@ -129,17 +128,50 @@ export class PlanFeatures2023Grid extends Component {
 						discountPrice={ discountPrice }
 						hideMonthly={ hideMonthly }
 						isPlaceholder={ isPlaceholder }
-						planType={ planName }
-						popular={ popular }
 						rawPrice={ rawPrice }
 						rawPriceAnnual={ rawPriceAnnual }
 						rawPriceForMonthlyPlan={ rawPriceForMonthlyPlan }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
-						title={ planConstantObj.getTitle() }
 						annualPricePerMonth={ annualPricePerMonth }
 						isMonthlyPlan={ isMonthlyPlan }
 						flow={ flowName }
 					/>
+				</th>
+			);
+		} );
+	}
+
+	renderPlanHeaders() {
+		const { planProperties } = this.props;
+
+		return map( planProperties, ( properties ) => {
+			const { planName, planConstantObj } = properties;
+			const headerClasses = classNames(
+				'plan-features-2023-grid__header',
+				getPlanClass( planName )
+			);
+
+			return (
+				<th scope="col" key={ planName } className="plan-features-2023-grid__table-item">
+					<header className={ headerClasses }>
+						<h4 className="plan-features-2023-grid__header-title">
+							{ planConstantObj.getTitle() }
+						</h4>
+					</header>
+				</th>
+			);
+		} );
+	}
+
+	renderPlanSubHeaders() {
+		const { planProperties } = this.props;
+
+		return map( planProperties, ( properties ) => {
+			const { planName, tagline } = properties;
+
+			return (
+				<th scope="col" key={ planName } className="plan-features-2023-grid__table-item">
+					<div className="plan-features-2023-grid__header-tagline">{ tagline }</div>
 				</th>
 			);
 		} );
