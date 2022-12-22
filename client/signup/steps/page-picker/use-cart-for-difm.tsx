@@ -283,12 +283,13 @@ export function useCartForDIFM(
 				extra: buildDIFMCartExtrasObject( {
 					...signupDependencies,
 					selectedPageTitles: selectedPages,
+					isStoreFlow,
 				} ),
 				quantity: selectedPages.length,
 			};
 		}
 		return null;
-	}, [ signupDependencies, selectedPages, difmLiteProduct ] );
+	}, [ difmLiteProduct, signupDependencies, selectedPages, isStoreFlow ] );
 
 	// [Effect] Loads required initial data
 	useEffect( () => {

@@ -35,6 +35,7 @@ export function buildDIFMCartExtrasObject( dependencies: Partial< Dependencies >
 		displayPhone,
 		displayAddress,
 		selectedPageTitles,
+		isStoreFlow,
 	} = dependencies;
 
 	return {
@@ -52,5 +53,6 @@ export function buildDIFMCartExtrasObject( dependencies: Partial< Dependencies >
 		display_phone: displayPhone,
 		display_address: displayAddress,
 		selected_page_titles: selectedPageTitles,
+		is_store_flow: isStoreFlow,
 	};
 }
