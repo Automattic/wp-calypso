@@ -110,7 +110,25 @@ module.exports = {
 			useDefaults: false,
 			requestToHandle: defaultRequestToHandle,
 			requestToExternal: ( request ) => {
-				if ( request === '@wordpress/react-i18n' || request === 'moment' ) {
+				if (
+					! [
+						'lodash',
+						'lodash-es',
+						'react',
+						'react-dom',
+						'@wordpress/api-fetch',
+						'@wordpress/components',
+						'@wordpress/compose',
+						'@wordpress/element',
+						'@wordpress/html-entities',
+						'@wordpress/i18n',
+						'@wordpress/is-shallow-equal',
+						'@wordpress/polyfill',
+						'@wordpress/primitives',
+						'@wordpress/url',
+						'@wordpress/warning',
+					].includes( request )
+				) {
 					return;
 				}
 				return defaultRequestToExternal( request );
