@@ -58,6 +58,10 @@ const Description = styled.div`
 	font-size: 14px;
 `;
 
+const Link = styled( ExternalLink )`
+	font-size: 14px;
+`;
+
 const PluginDetailsSidebarUSP = ( {
 	id,
 	title,
@@ -95,9 +99,9 @@ const PluginDetailsSidebarUSP = ( {
 				links.map( ( link, idx ) => {
 					return (
 						<Fragment key={ idx }>
-							<ExternalLink icon href={ link.href }>
+							<Link icon href={ link.href }>
 								{ link.label }
-							</ExternalLink>
+							</Link>
 							<br />
 						</Fragment>
 					);
