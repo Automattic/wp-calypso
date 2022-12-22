@@ -23,7 +23,7 @@ interface Props {
 
 export default function UpdatePlugin( { plugin, selectedSite, className, updatePlugin }: Props ) {
 	const translate = useTranslate();
-	const allSites = useSelector( getSites );
+	const allSites = useSelector( getSites ) as any;
 	const state = useSelector( ( state ) => state );
 
 	const updatedVersions = selectedSite
@@ -58,14 +58,13 @@ export default function UpdatePlugin( { plugin, selectedSite, className, updateP
 		};
 	}, [ plugin, selectedSite ] );
 
-	// TODO: types
 	const hasUpdate = selectedSite
 		? plugin.sites[ selectedSite.ID ]?.update?.new_version &&
-		  allSites.find( ( site ) => site.ID === selectedSite.ID ).canUpdateFiles
+		  allSites.find( ( site: any ) => site.ID === selectedSite.ID ).canUpdateFiles
 		: Object.entries( plugin.sites ).some(
 				( [ siteId, site ] ) =>
 					site?.update?.new_version &&
-					allSites.find( ( site ) => site.ID === Number( siteId ) ).canUpdateFiles
+					allSites.find( ( site: any ) => site.ID === Number( siteId ) ).canUpdateFiles
 		  );
 
 	const allowedActions = getAllowedPluginActions( plugin, state, selectedSite );
