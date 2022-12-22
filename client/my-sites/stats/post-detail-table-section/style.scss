@@ -1,11 +1,46 @@
 $common-border-radius: 4px;
 
 .stats__post-detail-table-section {
-	.module-header {
-		display: none;
+	.stats__table-wrapper {
+		.card {
+			box-shadow: none;
+			margin-bottom: 0;
+		}
+
+		.module-header {
+			display: none;
+		}
+
+		.is-post-weeks {
+			tr:first-child {
+				td {
+					&:first-child {
+						border-top-left-radius: $common-border-radius;
+					}
+
+					&:nth-child(2) {
+						border-top-left-radius: 0;
+					}
+				}
+			}
+
+			tr:last-child {
+				td {
+					&:first-child {
+						border-bottom-left-radius: $common-border-radius;
+					}
+
+					&:nth-child(2) {
+						border-bottom-left-radius: 0;
+					}
+				}
+			}
+		}
 	}
 
 	table {
+		margin-bottom: 0;
+
 		th {
 			&.spacer {
 				color: var(--studio-white);
@@ -44,8 +79,20 @@ $common-border-radius: 4px;
 			.stats-detail-weeks__value {
 				display: block;
 
+				svg {
+					margin: 0 2px -3px -4px;
+				}
+
 				&.is-same {
 					color: var(--color-neutral-30);
+				}
+
+				&.is-rising {
+					color: var(--color-success);
+				}
+
+				&.is-falling {
+					color: var(--color-error);
 				}
 			}
 		}
