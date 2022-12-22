@@ -54,10 +54,12 @@ describe( '<UpdatePlugin>', () => {
 
 		expect(
 			container.getElementsByClassName( 'update-plugin__current-version' )[ 0 ].textContent
-		).toEqual( plugin.version );
+		).toEqual( plugin.sites[ site.ID ].version );
 
 		const [ updateButton ] = container.getElementsByClassName( 'update-plugin__new-version' );
-		expect( updateButton.textContent ).toEqual( `Update to  ${ plugin.update.new_version }` );
+		expect( updateButton.textContent ).toEqual(
+			`Update to  ${ plugin.sites[ site.ID ].update.new_version }`
+		);
 
 		await userEvent.click( updateButton );
 		expect( props.updatePlugin ).toHaveBeenCalledTimes( 1 );

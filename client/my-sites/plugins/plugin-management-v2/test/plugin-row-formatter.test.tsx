@@ -108,6 +108,7 @@ describe( '<PluginRowFormatter>', () => {
 
 	test( 'should render correctly and show site count(plural) on small screen', () => {
 		props.columnKey = 'sites';
+		const sitesOriginal = plugin.sites;
 		plugin.sites = {
 			[ site.ID ]: { ID: site.ID, canUpdateFiles: true },
 			[ site.ID + 1 ]: { ID: site.ID + 1, canUpdateFiles: true },
@@ -122,6 +123,7 @@ describe( '<PluginRowFormatter>', () => {
 			`Installed on ${ Object.keys( plugin.sites ).length } sites`
 		);
 		expect( autoManagedSite ).toBeInTheDocument();
+		plugin.sites = sitesOriginal;
 	} );
 
 	test( 'should render correctly and show activate and toggle checked value', async () => {
