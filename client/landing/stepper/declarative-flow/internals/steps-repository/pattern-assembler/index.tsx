@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { map, uniqBy } from 'lodash';
+import { uniqBy } from 'lodash';
 import { useState, useRef, useEffect } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
@@ -225,12 +225,10 @@ const PatternAssembler: Step = ( { navigation } ) => {
 					onSelect={ onSelect }
 					onBack={ () => {
 						const uniquePatterns = uniqBy( getPatterns( showPatternSelectorType ), 'id' );
-						const pattern_ids = map( uniquePatterns, 'id' );
-						const pattern_names = map( uniquePatterns, 'name' );
 						recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_done_click', {
 							pattern_type: showPatternSelectorType,
-							pattern_id: pattern_ids.length ? pattern_ids.join( ',' ) : null,
-							pattern_name: pattern_names.length ? pattern_names.join( ',' ) : null,
+							pattern_ids: uniquePatterns.map( ( { id } ) => id ).join( ',' ),
+							pattern_names: uniquePatterns.map( ( { name } ) => name ).join( ',' ),
 						} );
 
 						setShowPatternSelectorType( null );
