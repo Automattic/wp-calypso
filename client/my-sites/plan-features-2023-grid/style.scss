@@ -138,20 +138,19 @@ $plan-features-sidebar-width: 272px;
 			margin-right: 10px;
 			line-height: $font-title-large;
 			padding-bottom: 12px;
-			position: relative;
+			display: flex;
 		}
 
 		.plan-price__currency-symbol {
 			font-size: $font-title-medium;
-			color: var(--color-text);
+			color: var(--studio-gray-100);
+			position: relative;
+			top: -10px;
 			@include onboarding-font-recoleta;
 		}
 
 		.plan-price__integer {
 			font-size: 2.75rem;
-			margin-left: 2px;
-			position: absolute;
-			top: 10px;
 		}
 
 		.plan-price__term {
@@ -171,6 +170,9 @@ $plan-features-sidebar-width: 272px;
 
 			&::before {
 				border-color: var(--color-success);
+				left: 11%;
+				top: 34%;
+				right: -5%;
 			}
 
 			.plan-price__currency-symbol,
@@ -183,6 +185,10 @@ $plan-features-sidebar-width: 272px;
 			font-size: $font-body-extra-small;
 			font-weight: 400;
 			color: var(--studio-gray-80);
+		}
+
+		.plan-price.is-discounted .plan-price__integer-fraction {
+			color: var(--color-success);
 		}
 	}
 

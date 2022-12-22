@@ -102,12 +102,12 @@ export class PlanPrice extends Component {
 
 		const renderPriceHtml = ( priceObj ) => {
 			return (
-				<>
+				<div class="plan-price__integer-fraction">
 					<span className="plan-price__integer">{ priceObj.price.integer }</span>
 					<sup className="plan-price__fraction">
 						{ priceObj.raw - priceObj.price.integer > 0 && priceObj.price.fraction }
 					</sup>
-				</>
+				</div>
 			);
 		};
 
