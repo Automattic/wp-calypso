@@ -11,7 +11,7 @@ import guaranteeBadge from './14-day-badge.svg';
 import people from './people.svg';
 
 const CALYPSO_MASTERBAR_HEIGHT = 47;
-const CLOUD_MASTERBAR_HEIGHT = 0;
+const CLOUD_MASTERBAR_HEIGHT = 47;
 
 const IntroPricingBanner: React.FC = () => {
 	const translate = useTranslate();
