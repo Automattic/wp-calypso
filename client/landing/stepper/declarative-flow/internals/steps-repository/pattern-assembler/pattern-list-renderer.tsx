@@ -1,11 +1,19 @@
 import { PatternsRenderer } from '@automattic/block-renderer';
 import { Button } from '@automattic/components';
 import classnames from 'classnames';
+import { useMemo } from 'react';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
 import './pattern-list-renderer.scss';
 
-interface Props {
+interface PatternListItemProps {
+	pattern: Pattern;
+	className: string;
+	show: boolean;
+	onSelect: ( selectedPattern: Pattern | null ) => void;
+}
+
+interface PatternListRendererProps {
 	patterns: Pattern[];
 	selectedPattern: Pattern | null;
 	show: boolean;
@@ -13,30 +21,40 @@ interface Props {
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 }
 
+const PatternListItem = ( { pattern, className, show, onSelect }: PatternListItemProps ) => {
+	const patternIds = useMemo( () => [ encodePatternId( pattern.id ) ], [ pattern.id ] );
+
+	return (
+		<Button
+			className={ className }
+			title={ pattern.category }
+			tabIndex={ show ? 0 : -1 }
+			onClick={ () => onSelect( pattern ) }
+		>
+			<PatternsRenderer patternIds={ patternIds } viewportWidth={ 1060 } />
+		</Button>
+	);
+};
+
 const PatternListRenderer = ( {
 	patterns,
 	selectedPattern,
 	show,
 	activeClassName,
 	onSelect,
-}: Props ) => {
+}: PatternListRendererProps ) => {
 	return (
 		<>
 			{ patterns.map( ( pattern, index ) => (
-				<Button
+				<PatternListItem
 					key={ `${ index }-${ pattern.id }` }
-					tabIndex={ show ? 0 : -1 }
-					title={ pattern.category }
-					className={ classnames( 'pattern-list-renderer__pattern', {
+					pattern={ pattern }
+					show={ show }
+					className={ classnames( 'pattern-list-renderer__pattern-list-item', {
 						[ activeClassName ]: pattern.id === selectedPattern?.id,
 					} ) }
-					onClick={ () => onSelect( pattern ) }
-				>
-					<PatternsRenderer
-						patternIds={ [ encodePatternId( pattern.id ) ] }
-						viewportWidth={ 1060 }
-					/>
-				</Button>
+					onSelect={ onSelect }
+				/>
 			) ) }
 		</>
 	);

@@ -26,16 +26,14 @@ const PatternsRenderer = ( { patternIds, viewportWidth }: Props ) => {
 			maxHeight={ BLOCK_MAX_HEIGHT * patternIds.length }
 		>
 			<>
-				{ patternIds
-					.filter( ( patternId ) => !! renderedPatterns[ patternId ] )
-					.map( ( patternId, index ) => (
-						<div
-							key={ `${ patternId }-${ index }` }
-							data-position={ index }
-							// eslint-disable-next-line react/no-danger
-							dangerouslySetInnerHTML={ { __html: renderedPatterns[ patternId ].html } }
-						/>
-					) ) }
+				{ patternIds.map( ( patternId, index ) => (
+					<div
+						key={ `${ patternId }-${ index }` }
+						data-position={ index }
+						// eslint-disable-next-line react/no-danger
+						dangerouslySetInnerHTML={ { __html: renderedPatterns[ patternId ]?.html ?? '' } }
+					/>
+				) ) }
 			</>
 		</BlockRendererContainer>
 	);
