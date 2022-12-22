@@ -64,7 +64,11 @@ import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
+import type {
+	CountryListItem,
+	ManagedContactDetails,
+	VatDetails,
+} from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -185,6 +189,8 @@ export default function WPCheckout( {
 	const contactInfo: ManagedContactDetails = useSelect( ( sel ) =>
 		sel( 'wpcom-checkout' ).getContactInfo()
 	);
+
+	const vatDetails: VatDetails = useSelect( ( sel ) => sel( 'wpcom-checkout' ).getVatDetails() );
 
 	const {
 		touchContactFields,
@@ -378,7 +384,8 @@ export default function WPCheckout( {
 									countriesList,
 									responseCart,
 									updateLocation,
-									contactInfo
+									contactInfo,
+									vatDetails
 								);
 							} catch {
 								// If updating the cart fails, we should not continue. No need
