@@ -16,7 +16,8 @@ const selectors = {
 	backButton: `${ parentSelector } button[aria-label="Navigate to the previous view"]`,
 	moreActionsMenuButton: `${ parentSelector } button[aria-label="More Styles actions"]`,
 	defaultStyleVariation: `${ parentSelector } .edit-site-global-styles-variations_item[aria-label="Default"]`,
-	nonDefaultStyleVariation: `${ parentSelector } .edit-site-global-styles-variations_item:not([aria-label="Default"])`,
+	// The :not(.is-active) selector is needed to ensure that an inactive style variation is selected.
+	nonDefaultStyleVariation: `${ parentSelector } .edit-site-global-styles-variations_item:not([aria-label="Default"]):not(.is-active)`,
 };
 
 export type ColorLocation = 'Background' | 'Text' | 'Links';
