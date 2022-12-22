@@ -4,6 +4,8 @@ import type { RenderedPatterns } from '../types';
 
 const PAGE_SIZE = 20;
 
+const HOUR_IN_MS = 3600000;
+
 const fetchRenderedPatterns = (
 	siteId: number,
 	stylesheet: string,
@@ -27,10 +29,10 @@ const useQueryRenderedPatterns = (
 	siteId: number,
 	stylesheet: string,
 	patternIds: string[],
-	{ staleTime = 10000, refetchOnMount = true }: UseQueryOptions = {}
+	{ staleTime = HOUR_IN_MS, refetchOnMount = true }: UseQueryOptions = {}
 ) => {
 	return useInfiniteQuery(
-		[ siteId, 'block-renderer/patterns/render' ],
+		[ siteId, stylesheet, 'block-renderer/patterns/render' ],
 		( { pageParam = 1 } ) => fetchRenderedPatterns( siteId, stylesheet, patternIds, pageParam ),
 		{
 			getNextPageParam: ( lastPage, allPages ) => {
