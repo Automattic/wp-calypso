@@ -4,6 +4,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
+import { SiteIntent } from 'calypso/../packages/data-stores/src/onboard';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -12,6 +13,7 @@ import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
+import { recordSelectedDesign } from '../../analytics/record-design';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
 import { encodePatternId, createCustomHomeTemplateContent } from './utils';
@@ -20,7 +22,7 @@ import type { Pattern } from './types';
 import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import './style.scss';
 
-const PatternAssembler: Step = ( { navigation } ) => {
+const PatternAssembler: Step = ( { navigation, flow } ) => {
 	const translate = useTranslate();
 	const [ showPatternSelectorType, setShowPatternSelectorType ] = useState< string | null >( null );
 	const [ header, setHeader ] = useState< Pattern | null >( null );
@@ -32,8 +34,9 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const { goBack, goNext, submit, goToStep } = navigation;
 	const { setThemeOnSite, runThemeSetupOnSite, createCustomTemplate } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
-	const { setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setIntent, setPendingAction } = useDispatch( ONBOARD_STORE );
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
@@ -182,6 +185,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 			pattern_count: patterns.length,
 		} );
 
+		setIntent( SiteIntent.Build );
 		goBack?.();
 	};
 
@@ -289,6 +293,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 										.then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
 								);
 
+								recordSelectedDesign( { flow, intent, design } );
 								trackEventContinue();
 
 								submit?.();

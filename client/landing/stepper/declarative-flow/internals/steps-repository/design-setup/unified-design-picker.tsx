@@ -10,7 +10,6 @@ import {
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
-import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -34,6 +33,12 @@ import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
+import {
+	getDesignEventProps,
+	getDesignIntentProps,
+	recordPreviewedDesign,
+	recordSelectedDesign,
+} from '../../analytics/record-design';
 import { getCategorizationOptions } from './categories';
 import { DEFAULT_VARIATION_SLUG, STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
@@ -213,19 +218,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		setSelectedStyleVariation,
 	] );
 
-	function getEventPropsByDesign( design: Design, variation?: StyleVariation ) {
-		const variationSlugSuffix =
-			variation && variation.slug !== 'default' ? `-${ variation.slug }` : '';
-
+	function getEventPropsByDesign( design: Design, styleVariation?: StyleVariation ) {
 		return {
-			flow,
-			intent,
+			...getDesignEventProps( { flow, intent, design, styleVariation } ),
 			category: categorization.selection,
-			slug: design.slug + variationSlugSuffix,
-			theme: design.recipe?.stylesheet,
-			theme_style: design.recipe?.stylesheet + variationSlugSuffix,
-			design_type: design.design_type,
-			is_premium: design.is_premium,
 			...( design.recipe?.pattern_ids && { pattern_ids: design.recipe.pattern_ids.join( ',' ) } ),
 			...( design.recipe?.header_pattern_ids && {
 				header_pattern_ids: design.recipe.header_pattern_ids.join( ',' ),
@@ -233,23 +229,19 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			...( design.recipe?.footer_pattern_ids && {
 				footer_pattern_ids: design.recipe.footer_pattern_ids.join( ',' ),
 			} ),
-			has_style_variations: ( design.style_variations || [] ).length > 0,
 		};
 	}
 
-	function previewDesign( design: Design, variation?: StyleVariation ) {
-		recordTracksEvent(
-			'calypso_signup_design_preview_select',
-			getEventPropsByDesign( design, variation )
-		);
+	function previewDesign( design: Design, styleVariation?: StyleVariation ) {
+		recordPreviewedDesign( { flow, intent, design, styleVariation } );
 		setSelectedDesign( design );
 
-		if ( variation ) {
+		if ( styleVariation ) {
 			recordTracksEvent(
 				'calypso_signup_design_picker_style_variation_button_click',
-				getEventPropsByDesign( design, variation )
+				getEventPropsByDesign( design, styleVariation )
 			);
-			setSelectedStyleVariation( variation );
+			setSelectedStyleVariation( styleVariation );
 		}
 
 		setIsPreviewingDesign( true );
@@ -434,7 +426,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	// ********** Logic for submitting the selected design
 
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
-	const { setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setIntent, setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
 		setSelectedDesign( _selectedDesign );
@@ -453,37 +445,53 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					verticalId: siteVerticalId,
 				} ).then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
 			);
-			recordTracksEvent( 'calypso_signup_select_design', {
-				...getEventPropsByDesign( _selectedDesign, selectedStyleVariation ),
-				...( positionIndex >= 0 && { position_index: positionIndex } ),
-				device: resolveDeviceTypeByViewPort(),
-			} );
 
-			if ( _selectedDesign.verticalizable ) {
-				recordTracksEvent(
-					'calypso_signup_select_verticalized_design',
-					getEventPropsByDesign( _selectedDesign, selectedStyleVariation )
-				);
-			}
-
-			handleSubmit( {
-				selectedDesign: _selectedDesign,
-				selectedSiteCategory: categorization.selection,
-			} );
+			handleSubmit(
+				{
+					selectedDesign: _selectedDesign,
+					selectedSiteCategory: categorization.selection,
+				},
+				{ ...( positionIndex >= 0 && { position_index: positionIndex } ) }
+			);
 		}
 	}
 
-	function handleSubmit( providedDependencies?: ProvidedDependencies ) {
-		const _selectedDesign = providedDependencies?.selectedDesign as Design;
+	function pickBlankCanvasDesign( blankCanvasDesign: Design, shouldGoToAssemblerStep: boolean ) {
+		if ( shouldGoToAssemblerStep ) {
+			setIntent( SiteIntent.Assembler );
+			setSelectedDesign( {
+				...blankCanvasDesign,
+				design_type: 'assembler',
+			} );
+		} else {
+			pickDesign( blankCanvasDesign );
+		}
+	}
 
-		recordTracksEvent( 'calypso_signup_design_type_submit', {
-			flow,
-			intent,
-			design_type: _selectedDesign?.design_type ?? 'default',
-			has_style_variations: ( _selectedDesign?.style_variations || [] ).length > 0,
+	useEffect( () => {
+		if ( intent === SiteIntent.Assembler && selectedDesign ) {
+			recordPreviewedDesign( { flow, intent, design: selectedDesign } );
+			handleSubmit( {
+				selectedDesign,
+			} );
+		}
+	}, [ intent, selectedDesign ] );
+
+	function handleSubmit( providedDependencies?: ProvidedDependencies, optionalProps?: object ) {
+		if ( intent !== SiteIntent.Assembler ) {
+			recordSelectedDesign( {
+				flow,
+				intent,
+				design: providedDependencies?.selectedDesign as Design,
+				styleVariation: selectedStyleVariation,
+				optionalProps,
+			} );
+		}
+
+		submit?.( {
+			...providedDependencies,
+			...getDesignIntentProps( intent ),
 		} );
-
-		submit?.( providedDependencies );
 	}
 
 	function handleBackClick() {
@@ -560,6 +568,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	}
 
 	// ********** Main render logic
+
+	if ( intent === SiteIntent.Assembler || isAtomic ) {
+		return null;
+	}
 
 	// Don't render until we've done fetching all the data needed for initial render.
 	if ( ! site || isLoadingSiteVertical || isLoadingDesigns ) {
@@ -698,6 +710,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			verticalId={ siteVerticalId }
 			locale={ locale }
 			onSelect={ pickDesign }
+			onSelectBlankCanvas={ pickBlankCanvasDesign }
 			onPreview={ previewDesign }
 			onViewAllDesigns={ trackAllDesignsView }
 			onCheckout={ goToCheckout }
