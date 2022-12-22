@@ -27,7 +27,8 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 
 	const mobileAppLink = 'https://jetpack.com/blog/jetpack-mobile-app/';
 
-	function onSave() {
+	function onSave( event: React.FormEvent< HTMLFormElement > ) {
+		event.preventDefault();
 		// handle save here
 	}
 
@@ -103,90 +104,94 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 			className="notification-settings__modal"
 		>
 			<div className="notification-settings__sub-title">{ site.url }</div>
-			<div className="notification-settings__content">
-				<div className="notification-settings__content-block">
-					<div className="notification-settings__content-heading">
-						{ translate( 'Notify me about downtime:' ) }
+			<form onSubmit={ onSave }>
+				<div className="notification-settings__content">
+					<div className="notification-settings__content-block">
+						<div className="notification-settings__content-heading">
+							{ translate( 'Notify me about downtime:' ) }
+						</div>
+						<SelectDropdown
+							selectedIcon={
+								<img
+									className="notification-settings__duration-icon"
+									src={ clockIcon }
+									alt="Durations"
+								/>
+							}
+							selectedText={ selectedDuration?.label }
+						>
+							{ durations.map( ( duration ) => (
+								<SelectDropdown.Item
+									key={ duration.time }
+									selected={ duration.time === selectedDuration?.time }
+									onClick={ () => selectDuration( duration ) }
+								>
+									{ duration.label }
+								</SelectDropdown.Item>
+							) ) }
+						</SelectDropdown>
 					</div>
-					<SelectDropdown
-						selectedIcon={
-							<img
-								className="notification-settings__duration-icon"
-								src={ clockIcon }
-								alt="Durations"
+					<div className="notification-settings__toggle-container">
+						<div className="notification-settings__toggle">
+							<ToggleControl
+								onChange={ setEnablMobileNotification }
+								checked={ enableMobileNotification }
 							/>
-						}
-						selectedText={ selectedDuration?.label }
+						</div>
+						<div className="notification-settings__toggle-content">
+							<div className="notification-settings__content-heading">
+								{ translate( 'Mobile' ) }
+							</div>
+							<div className="notification-settings__content-sub-heading">
+								{ translate( 'Receive notifications via the {{a}}Jetpack App{{/a}}.', {
+									components: {
+										a: (
+											<a
+												className="notification-settings__link"
+												target="_blank"
+												rel="noreferrer"
+												href={ mobileAppLink }
+											/>
+										),
+									},
+								} ) }
+							</div>
+						</div>
+					</div>
+					<div className="notification-settings__toggle-container">
+						<div className="notification-settings__toggle">
+							<ToggleControl
+								onChange={ setEnableEmailNotification }
+								checked={ enableEmailNotification }
+							/>
+						</div>
+						<div className="notification-settings__toggle-content">
+							<div className="notification-settings__content-heading">{ translate( 'Email' ) }</div>
+							<div className="notification-settings__content-sub-heading">
+								{ translate( 'Receive email notifications with one or more recipients.' ) }
+							</div>
+							{
+								// We are using CSS to hide/show add email content on mobile/large screen view instead of the breakpoint
+								// hook since the 'useMobileBreakpont' hook returns true only when the width is > 480px, and we have some
+								// styles applied using the CSS breakpoint where '@include break-mobile' is true for width > 479px
+							 }
+							<div className="notification-settings__large-screen">{ addEmailsContent }</div>
+						</div>
+					</div>
+					<div className="notification-settings__small-screen">{ addEmailsContent }</div>
+				</div>
+				<div className="notification-settings__footer">
+					<Button
+						onClick={ onClose }
+						aria-label={ translate( 'Cancel and close notification settings popup' ) }
 					>
-						{ durations.map( ( duration ) => (
-							<SelectDropdown.Item
-								key={ duration.time }
-								selected={ duration.time === selectedDuration?.time }
-								onClick={ () => selectDuration( duration ) }
-							>
-								{ duration.label }
-							</SelectDropdown.Item>
-						) ) }
-					</SelectDropdown>
+						{ translate( 'Cancel' ) }
+					</Button>
+					<Button type="submit" primary aria-label={ translate( 'Save notification settings' ) }>
+						{ translate( 'Save' ) }
+					</Button>
 				</div>
-				<div className="notification-settings__toggle-container">
-					<div className="notification-settings__toggle">
-						<ToggleControl
-							onChange={ setEnablMobileNotification }
-							checked={ enableMobileNotification }
-						/>
-					</div>
-					<div className="notification-settings__toggle-content">
-						<div className="notification-settings__content-heading">{ translate( 'Mobile' ) }</div>
-						<div className="notification-settings__content-sub-heading">
-							{ translate( 'Receive notifications via the {{a}}Jetpack App{{/a}}.', {
-								components: {
-									a: (
-										<a
-											className="notification-settings__link"
-											target="_blank"
-											rel="noreferrer"
-											href={ mobileAppLink }
-										/>
-									),
-								},
-							} ) }
-						</div>
-					</div>
-				</div>
-				<div className="notification-settings__toggle-container">
-					<div className="notification-settings__toggle">
-						<ToggleControl
-							onChange={ setEnableEmailNotification }
-							checked={ enableEmailNotification }
-						/>
-					</div>
-					<div className="notification-settings__toggle-content">
-						<div className="notification-settings__content-heading">{ translate( 'Email' ) }</div>
-						<div className="notification-settings__content-sub-heading">
-							{ translate( 'Receive email notifications with one or more recipients.' ) }
-						</div>
-						{
-							// We are using CSS to hide/show add email content on mobile/large screen view instead of the breakpoint
-							// hook since the 'useMobileBreakpont' hook returns true only when the width is > 480px, and we have some
-							// styles applied using the CSS breakpoint where '@include break-mobile' is true for width > 479px
-						 }
-						<div className="notification-settings__large-screen">{ addEmailsContent }</div>
-					</div>
-				</div>
-				<div className="notification-settings__small-screen">{ addEmailsContent }</div>
-			</div>
-			<div className="notification-settings__footer">
-				<Button
-					onClick={ onClose }
-					aria-label={ translate( 'Cancel and close notification settings popup' ) }
-				>
-					{ translate( 'Cancel' ) }
-				</Button>
-				<Button primary onClick={ onSave } aria-label={ translate( 'Save notification settings' ) }>
-					{ translate( 'Save' ) }
-				</Button>
-			</div>
+			</form>
 		</Modal>
 	);
 }
