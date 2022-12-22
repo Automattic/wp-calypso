@@ -47,14 +47,7 @@
 	}
 
 	.horizontal-bar-list-group {
-		.horizontal-bar-list-item {
-			&:hover,
-			&:focus,
-			&:focus-within {
-				margin-left: $stats-child-hover-indentation;
-				padding-left: $padding-outside - $stats-child-hover-indentation;
-			}
-		}
+		margin-left: $stats-child-hover-indentation;
 	}
 
 	.horizontal-bar-list-item-bar {
