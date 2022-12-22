@@ -6,9 +6,10 @@ $header-font: Recoleta, $sans;
 $mobile-layout-breakpoint: $break-small;
 $common-border-radius: 4px;
 
-.stats__all-time-views-section {
+.stats__all-time-views-section,
+.stats__post-detail-table-section {
 
-	.stats__all-time-views-table-wrapper {
+	.stats__table-wrapper {
 		width: 100%;
 		overflow-x: auto;
 	}
@@ -80,7 +81,7 @@ $common-border-radius: 4px;
 				border-right: 0;
 			}
 
-			&:last-of-type .segmented-control__link {
+			&:nth-of-type(2):last-of-type .segmented-control__link {
 				border-top-right-radius: $common-border-radius;
 				border-bottom-right-radius: $common-border-radius;
 				border-left: 0;
@@ -96,18 +97,22 @@ $common-border-radius: 4px;
 		}
 	}
 
+	table,
 	table.stats-views__months {
 		table-layout: fixed;
 		min-width: 900px;
 
 		td,
 		th {
-			text-transform: none;
+			padding: 6px;
+			color: var(--color-neutral-60);
 			font-weight: 400;
 			font-size: $font-body-small;
 			line-height: 20px;
-			color: var(--color-neutral-60);
+			text-transform: none;
+			text-align: center;
 			letter-spacing: -0.15px;
+			border: 0;
 
 			&.is-total {
 				font-weight: 600;

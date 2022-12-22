@@ -1,3 +1,4 @@
+import { Card } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
@@ -32,25 +33,33 @@ export default function PostDetailTableSection( {
 	};
 
 	return (
-		<>
-			<SimplifiedSegmentedControl
-				className="stats-views__table-control"
-				options={ tableOptions }
-				onSelect={ toggleTable }
-				compact
-			/>
+		<div className="stats__post-detail-table-section">
+			<div className="highlight-cards">
+				<h1 className="highlight-cards-heading">{ translate( 'All-time Insights' ) }</h1>
 
-			{ [ 'years', 'averages' ].includes( tableKey ) ? (
-				<PostMonths
-					dataKey={ tableKey }
-					title={ tableOptions.find( ( o ) => o.value === tableKey )?.label || 'Title' }
-					total={ tableKey === 'years' ? translate( 'Total' ) : translate( 'Overall' ) }
-					siteId={ siteId }
-					postId={ postId }
-				/>
-			) : (
-				<PostWeeks siteId={ siteId } postId={ postId } />
-			) }
-		</>
+				<div className="highlight-cards-list">
+					<Card className="highlight-card">
+						<div className="highlight-card-heading">
+							<span>{ translate( 'Total views' ) }</span>
+							<SimplifiedSegmentedControl options={ tableOptions } onSelect={ toggleTable } />
+						</div>
+
+						<div className="stats__table-wrapper">
+							{ [ 'years', 'averages' ].includes( tableKey ) ? (
+								<PostMonths
+									dataKey={ tableKey }
+									title={ tableOptions.find( ( o ) => o.value === tableKey )?.label || 'Title' }
+									total={ tableKey === 'years' ? translate( 'Total' ) : translate( 'Overall' ) }
+									siteId={ siteId }
+									postId={ postId }
+								/>
+							) : (
+								<PostWeeks siteId={ siteId } postId={ postId } />
+							) }
+						</div>
+					</Card>
+				</div>
+			</div>
+		</div>
 	);
 }

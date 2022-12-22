@@ -1,4 +1,53 @@
-.segmented-control.stats-views__table-control {
-	max-width: 280px;
-	margin: 0 auto 10px;
+$common-border-radius: 4px;
+
+.stats__post-detail-table-section {
+	.module-header {
+		display: none;
+	}
+
+	table {
+		th {
+			&.spacer {
+				color: var(--studio-white);
+			}
+
+			padding-bottom: 24px;
+		}
+
+		td {
+			background-color: var(--color-neutral-0);
+
+			&.stats-detail__row-label {
+				background: none;
+				text-align: left;
+			}
+
+			&:last-child {
+				background: none;
+				font-weight: 600;
+				text-align: right;
+			}
+
+			&.has-no-data {
+				background-color: var(--studio-white);
+			}
+
+			&.highest-count {
+				background-color: var(--color-primary-5);
+				color: var(--color-neutral-60);
+			}
+
+			.stats-detail-weeks__date {
+				color: var(--color-neutral-50);
+			}
+
+			.stats-detail-weeks__value {
+				display: block;
+
+				&.is-same {
+					color: var(--color-neutral-30);
+				}
+			}
+		}
+	}
 }
