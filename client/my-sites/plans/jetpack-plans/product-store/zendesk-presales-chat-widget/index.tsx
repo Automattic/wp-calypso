@@ -16,7 +16,7 @@ const isWithinAvailableChatDays = ( currentTime: Date ) => {
 
 const isWithinShutdownDates = ( currentTime: Date ) => {
 	const startTime = new Date( Date.UTC( 2022, 11, 23 ) ); // Thu Dec 22 2022 19:00:00 (7:00pm) GMT-0500 (Eastern Standard Time)
-	const endTime = new Date( Date.UTC( 2023, 0, 2 ) ); // Mon Jan 02 2023 19:00:00 (7:00pm) GMT-0500 (Eastern Standard Time)
+	const endTime = new Date( Date.UTC( 2023, 0, 2 ) ); // Sun Jan 01 2023 19:00:00 (7:00pm) GMT-0500 (Eastern Standard Time)
 	const currentDateUTC = new Date( currentTime.toUTCString() );
 	if ( currentDateUTC > startTime && currentDateUTC < endTime ) {
 		return true;
