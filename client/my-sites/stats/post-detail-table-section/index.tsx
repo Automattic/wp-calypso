@@ -25,7 +25,7 @@ export default function PostDetailTableSection( {
 	const tableOptions = [
 		{ value: 'years', label: translate( 'Months and years' ) },
 		{ value: 'averages', label: translate( 'Average per day' ) },
-		{ value: 'weeks', label: translate( 'Recent Weeks' ) },
+		{ value: 'weeks', label: translate( 'Recent weeks' ) },
 	];
 
 	const toggleTable = ( option?: TableOption ) => {
