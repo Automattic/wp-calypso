@@ -259,7 +259,8 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 		case RefundPolicy.GiftBiennialPurchase:
 			text = translate(
 				'You understand that gift {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase for non-domain products with two year subscriptions.',
-			)
+				{ components: { refundsSupportPage } }
+			);
 			break;
 		case RefundPolicy.GenericTriennial:
 		case RefundPolicy.PlanTriennialRenewal:
