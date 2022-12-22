@@ -1,4 +1,4 @@
-// This file is from the Gutenberg file packages/block-editor/src/components/block-preview/auto.js (d50e613).
+// The idea of this file is from the Gutenberg file packages/block-editor/src/components/block-preview/auto.js (d50e613).
 import {
 	store as blockEditorStore,
 	__unstableIframe as Iframe,
