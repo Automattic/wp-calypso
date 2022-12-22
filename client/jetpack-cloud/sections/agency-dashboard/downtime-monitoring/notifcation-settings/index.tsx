@@ -5,7 +5,10 @@ import { useEffect, useState } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import TokenField from 'calypso/components/token-field';
-import { availableNotificationDurations as durations } from '../../sites-overview/utils';
+import {
+	availableNotificationDurations as durations,
+	mobileAppLink,
+} from '../../sites-overview/utils';
 import type { MonitorSettings } from '../../sites-overview/types';
 
 import './style.scss';
@@ -26,9 +29,8 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 	const [ selectedDuration, setSelectedDuration ] = useState< Duration | undefined >( undefined );
 	const [ addedEmailAddresses, setAddedEmailAddresses ] = useState< string[] | [] >( [] );
 
-	const mobileAppLink = 'https://jetpack.com/blog/jetpack-mobile-app/';
-
-	function onSave() {
+	function onSave( event: React.FormEvent< HTMLFormElement > ) {
+		event.preventDefault();
 		// handle save here
 	}
 
