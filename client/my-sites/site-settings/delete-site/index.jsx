@@ -1,3 +1,4 @@
+import { isFreePlanProduct } from '@automattic/calypso-products';
 import { Button, Dialog, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -17,6 +18,7 @@ import Notice from 'calypso/components/notice';
 import DeleteSiteWarningDialog from 'calypso/my-sites/site-settings/delete-site-warning-dialog';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { deleteSite } from 'calypso/state/sites/actions';
 import { getSite, getSiteDomain } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
@@ -30,6 +32,7 @@ class DeleteSite extends Component {
 		hasLoadedSitePurchasesFromServer: PropTypes.bool,
 		siteDomain: PropTypes.string,
 		siteExists: PropTypes.bool,
+
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
@@ -120,11 +123,12 @@ class DeleteSite extends Component {
 	};
 
 	render() {
-		const { siteDomain, siteId, siteSlug, translate } = this.props;
+		const { isAtomic, isFreePlan, siteDomain, siteId, siteSlug, translate } = this.props;
 		const exportLink = '/export/' + siteSlug;
 		const deleteDisabled =
 			typeof this.state.confirmDomain !== 'string' ||
 			this.state.confirmDomain.toLowerCase().replace( /\s/g, '' ) !== siteDomain;
+		const isAtomicRemovalInProgress = isFreePlan && isAtomic;
 
 		const deleteButtons = [
 			<Button onClick={ this.closeConfirmDialog }>{ translate( 'Cancel' ) }</Button>,
@@ -284,10 +288,21 @@ class DeleteSite extends Component {
 							</p>
 						</div>
 					</ActionPanelBody>
+					{ isAtomicRemovalInProgress && (
+						<p className="delete-site__cannot-delete-message">
+							{ translate(
+								"We are still in the process of removing your previous plan. Please check back in a few minutes and you'll be able to delete your site."
+							) }
+						</p>
+					) }
 					<ActionPanelFooter>
 						<Button
 							scary
-							disabled={ ! siteId || ! this.props.hasLoadedSitePurchasesFromServer }
+							disabled={
+								! siteId ||
+								! this.props.hasLoadedSitePurchasesFromServer ||
+								isAtomicRemovalInProgress
+							}
 							onClick={ this.handleDeleteSiteClick }
 						>
 							<Gridicon icon="trash" />
@@ -339,8 +354,11 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const siteDomain = getSiteDomain( state, siteId );
 		const siteSlug = getSelectedSiteSlug( state );
+		const site = getSite( state, siteId );
 		return {
 			hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
+			isAtomic: isSiteAutomatedTransfer( state, siteId ),
+			isFreePlan: isFreePlanProduct( site.plan ),
 			siteDomain,
 			siteId,
 			siteSlug,
