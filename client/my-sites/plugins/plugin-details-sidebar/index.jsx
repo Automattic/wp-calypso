@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	isFreePlanProduct,
 	FEATURE_INSTALL_PLUGINS,
@@ -26,6 +25,7 @@ const PluginDetailsSidebar = ( {
 		demo_url = null,
 		documentation_url = null,
 		requirements = {},
+		premium_slug,
 	},
 } ) => {
 	const translate = useTranslate();
@@ -62,12 +62,8 @@ const PluginDetailsSidebar = ( {
 			label: translate( 'View documentation' ),
 		} );
 
-	/**
-	 * TODO: Update the isPremiumVersionAvailable check and the premiumVersionLink property
-	 * to read from plugins data
-	 */
-	const isPremiumVersionAvailable = config.isEnabled( 'plugins/premium-version-available' );
-	const premiumVersionLink = 'https://WP.com';
+	const isPremiumVersionAvailable = !! premium_slug;
+	const premiumVersionLink = `/plugins/${ premium_slug }/${ selectedSite?.slug || '' }`;
 
 	return (
 		<div className="plugin-details-sidebar__plugin-details-content">
