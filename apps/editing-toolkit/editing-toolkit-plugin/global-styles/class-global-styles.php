@@ -83,7 +83,7 @@ class Global_Styles {
 	 *
 	 * @var string
 	 */
-	private $root_url = 'https://fonts.googleapis.com/css2';
+	private $root_url = 'https://fonts.googleapis.com/css';
 
 	const VERSION = '2003121439';
 
