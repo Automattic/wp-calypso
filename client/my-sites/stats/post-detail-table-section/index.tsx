@@ -57,6 +57,23 @@ export default function PostDetailTableSection( {
 								<PostWeeks siteId={ siteId } postId={ postId } />
 							) }
 						</div>
+
+						<div className="stats-views__key-container">
+							<span className="stats-views__key-label">
+								{ translate( 'Fewer Views', {
+									context: 'Legend label in stats all-time views table',
+								} ) }
+							</span>
+							<ul className="stats-views__key">
+								<li className="stats-views__key-item level-1" />
+								<li className="stats-views__key-item level-2" />
+							</ul>
+							<span className="stats-views__key-label">
+								{ translate( 'More Views', {
+									context: 'Legend label in stats all-time views table',
+								} ) }
+							</span>
+						</div>
 					</Card>
 				</div>
 			</div>
