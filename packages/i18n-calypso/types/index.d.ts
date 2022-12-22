@@ -146,6 +146,5 @@ export type LocalizedComponent< C > = React.ComponentClass<
 export function localize< C >( component: C ): LocalizedComponent< C >;
 export function useTranslate(): typeof translate & { localeSlug: string | undefined };
 export function useRtl(): boolean;
-export function translateResultToString( result: TranslateResult ): string;
 
 export declare const I18NContext: React.Context< I18N >;

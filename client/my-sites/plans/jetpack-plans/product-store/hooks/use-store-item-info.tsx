@@ -7,11 +7,12 @@ import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
-import { useTranslate, translateResultToString } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import isSupersedingJetpackItem from 'calypso/../packages/calypso-products/src/is-superseding-jetpack-item';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
+import reactNodeToString from 'calypso/lib/react-node-to-string';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { useIsUserPurchaseOwner } from 'calypso/state/purchases/utils';
@@ -198,7 +199,7 @@ export const useStoreItemInfo = ( {
 
 	const getCtaAriaLabel = useCallback(
 		( item: SelectorProduct ) => {
-			return translateResultToString(
+			return reactNodeToString(
 				productButtonLabel( {
 					product: item,
 					isOwned: getIsOwned( item ),
