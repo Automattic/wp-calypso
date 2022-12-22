@@ -1,10 +1,11 @@
 import { Button } from '@automattic/components';
 import { Modal, ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import TokenField from 'calypso/components/token-field';
+import { availableNotificationDurations as durations } from '../../sites-overview/utils';
 import type { MonitorSettings } from '../../sites-overview/types';
 
 import './style.scss';
@@ -36,36 +37,6 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 		setSelectedDuration( duration );
 	}
 
-	const durations = useMemo(
-		() => [
-			{
-				time: 1,
-				label: translate( 'After 1 minute' ),
-			},
-			{
-				time: 5,
-				label: translate( 'After 5 minutes' ),
-			},
-			{
-				time: 15,
-				label: translate( 'After 15 minutes' ),
-			},
-			{
-				time: 30,
-				label: translate( 'After 30 minutes' ),
-			},
-			{
-				time: 45,
-				label: translate( 'After 45 minutes' ),
-			},
-			{
-				time: 60,
-				label: translate( 'After 1 hour' ),
-			},
-		],
-		[ translate ]
-	);
-
 	useEffect( () => {
 		if ( settings?.monitor_deferment_time ) {
 			const foundDuration = durations.find(
@@ -73,7 +44,7 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 			);
 			foundDuration && setSelectedDuration( foundDuration );
 		}
-	}, [ durations, settings?.monitor_deferment_time ] );
+	}, [ settings?.monitor_deferment_time ] );
 
 	useEffect( () => {
 		if ( settings?.monitor_notify_users_emails ) {

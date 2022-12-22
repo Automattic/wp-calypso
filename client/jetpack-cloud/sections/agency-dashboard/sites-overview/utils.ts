@@ -414,3 +414,30 @@ export const getProductSlugFromProductType = ( type: string ): string | undefine
 
 	return slugs[ type ];
 };
+
+export const availableNotificationDurations = [
+	{
+		time: 1,
+		label: translate( 'After 1 minute' ),
+	},
+	{
+		time: 5,
+		label: translate( 'After 5 minutes' ),
+	},
+	{
+		time: 15,
+		label: translate( 'After 15 minutes' ),
+	},
+	{
+		time: 30,
+		label: translate( 'After 30 minutes' ),
+	},
+	{
+		time: 45,
+		label: translate( 'After 45 minutes' ),
+	},
+	{
+		time: 60,
+		label: translate( 'After 1 hour' ),
+	},
+];
