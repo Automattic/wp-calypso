@@ -518,6 +518,8 @@ export function getBillingYearsForTerm( term: string ): number {
 		return 1;
 	} else if ( term === TERM_BIENNIALLY ) {
 		return 2;
+	} else if ( term === TERM_TRIENNIALLY ) {
+		return 3;
 	}
 	throw new Error( `Unknown term: ${ term }` );
 }
@@ -529,6 +531,8 @@ export function getBillingTermForMonths( term: number ): string {
 		return TERM_ANNUALLY;
 	} else if ( term === 24 ) {
 		return TERM_BIENNIALLY;
+	} else if ( term === 36 ) {
+		return TERM_TRIENNIALLY;
 	}
 	throw new Error( `Unknown term: ${ term }` );
 }
