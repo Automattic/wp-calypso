@@ -23,6 +23,7 @@ import {
 	TERM_MONTHLY,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
+	TERM_TRIENNIALLY,
 	GROUP_WPCOM,
 	PLAN_PERSONAL,
 	TITAN_MAIL_MONTHLY_SLUG,
@@ -334,6 +335,7 @@ export class PlansFeaturesMain extends Component {
 			monthly: TERM_MONTHLY,
 			yearly: TERM_ANNUALLY,
 			'2yearly': TERM_BIENNIALLY,
+			'3yearly:': TERM_TRIENNIALLY,
 		};
 
 		return plans[ intervalType ] || defaultValue || TERM_ANNUALLY;
