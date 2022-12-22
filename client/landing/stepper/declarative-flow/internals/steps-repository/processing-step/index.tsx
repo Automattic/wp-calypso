@@ -157,7 +157,7 @@ const ProcessingStep: Step = function ( props ) {
 				stepProgress={ stepProgress }
 				recordTracksEvent={ recordTracksEvent }
 				showJetpackPowered={ isJetpackPowered }
-				showWooCommercePowered={ isWooCommercePowered }
+				showFooterWooCommercePowered={ isWooCommercePowered }
 			/>
 		</>
 	);

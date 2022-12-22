@@ -165,7 +165,7 @@ const StoreProfiler: Step = function StoreProfiler( { navigation, flow } ) {
 			}
 			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }
-			showWooCommercePowered={ flow === ECOMMERCE_FLOW }
+			showFooterWooCommercePowered={ flow === ECOMMERCE_FLOW }
 		/>
 	);
 };

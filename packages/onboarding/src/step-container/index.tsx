@@ -43,7 +43,7 @@ interface Props {
 	showHeaderJetpackPowered?: boolean;
 	showJetpackPowered?: boolean;
 	showHeaderWooCommercePowered?: boolean;
-	showWooCommercePowered?: boolean;
+	showFooterWooCommercePowered?: boolean;
 	showVideoPressPowered?: boolean;
 }
 
@@ -82,7 +82,7 @@ const StepContainer: React.FC< Props > = ( {
 	showHeaderWooCommercePowered,
 	showJetpackPowered,
 	showVideoPressPowered,
-	showWooCommercePowered,
+	showFooterWooCommercePowered,
 } ) => {
 	const translate = useTranslate();
 
@@ -221,7 +221,7 @@ const StepContainer: React.FC< Props > = ( {
 				</div>
 			) }
 
-			{ showWooCommercePowered && (
+			{ showFooterWooCommercePowered && (
 				<div className="step-container__woocommerce-powered">
 					<WooCommerceWooLogo /> <span>{ translate( 'WooCommerce powered' ) }</span>
 				</div>
