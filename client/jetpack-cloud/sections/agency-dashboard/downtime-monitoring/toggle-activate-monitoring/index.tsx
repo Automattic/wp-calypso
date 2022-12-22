@@ -5,7 +5,7 @@ import { useState } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useToggleActivateMonitor } from '../../hooks';
-import NotificationSettings from '../notifcation-settings';
+import NotificationSettings from '../notification-settings';
 import type { AllowedStatusTypes, MonitorSettings } from '../../sites-overview/types';
 
 import './style.scss';
