@@ -441,3 +441,5 @@ export const availableNotificationDurations = [
 		label: translate( 'After 1 hour' ),
 	},
 ];
+
+export const mobileAppLink = 'https://jetpack.com/blog/jetpack-mobile-app/';
