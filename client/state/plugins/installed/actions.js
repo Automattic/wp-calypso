@@ -319,7 +319,7 @@ export function enableAutoupdatePlugin( siteId, plugin ) {
 			pluginId,
 		};
 
-		if ( plugin.autoupdate ) {
+		if ( siteId && plugin.sites[ siteId ]?.autoupdate ) {
 			return dispatch( {
 				...defaultAction,
 				type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS,
@@ -362,7 +362,7 @@ export function disableAutoupdatePlugin( siteId, plugin ) {
 			pluginId,
 		};
 
-		if ( ! plugin.autoupdate ) {
+		if ( siteId && ! plugin[ siteId ]?.autoupdate ) {
 			return dispatch( {
 				...defaultAction,
 				type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS,
@@ -403,7 +403,7 @@ export function togglePluginAutoUpdate( siteId, plugin ) {
 			return;
 		}
 
-		if ( ! plugin.autoupdate ) {
+		if ( siteId && ! plugin.sites[ siteId ]?.autoupdate ) {
 			dispatch( enableAutoupdatePlugin( siteId, plugin ) );
 		} else {
 			dispatch( disableAutoupdatePlugin( siteId, plugin ) );
