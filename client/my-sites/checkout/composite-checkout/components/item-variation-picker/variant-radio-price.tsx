@@ -74,7 +74,7 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 		isSmallestUnit: true,
 	} );
 
-	const pricePerMonth = variant.priceInteger / variant.termIntervalInMonths;
+	const pricePerMonth = Math.round( variant.priceInteger / variant.termIntervalInMonths );
 	const pricePerYear = pricePerMonth * 12;
 
 	const pricePerYearFormatted = formatCurrency( pricePerYear, variant.currency, {
