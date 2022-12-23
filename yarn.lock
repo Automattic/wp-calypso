@@ -11806,6 +11806,7 @@ __metadata:
     moment-timezone: ^0.5.40
     moment-timezone-data-webpack-plugin: ^1.5.1
     nock: ^12.0.3
+    p5: ^1.5.0
     page: ^1.11.5
     path-browserify: ^1.0.1
     percentage-regex: ^3.0.0
@@ -11850,6 +11851,7 @@ __metadata:
     to-title-case: ^1.0.0
     tracekit: ^0.4.5
     twemoji: ^12.1.4
+    twgl.js: ^5.3.0
     ua-parser-js: ^0.7.22
     uplot: ^1.6.24
     uplot-react: ^1.1.4
@@ -24713,6 +24715,13 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"p5@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "p5@npm:1.5.0"
+  checksum: a3ae131848425b8b49ad6d7aaa3e314a46c79d901aa457502f274455fbad8413a64400eff532f31da90e5f0451ac49cfd7bbe0ad7468f444345db40035a4a2a5
+  languageName: node
+  linkType: hard
+
 "package-json@npm:^6.3.0":
   version: 6.5.0
   resolution: "package-json@npm:6.5.0"
@@ -31759,6 +31768,13 @@ fsevents@^1.2.7:
     twemoji-parser: 12.1.1
     universalify: ^0.1.2
   checksum: 0c9c23962ebdccb377026c182efe94fd0e67d4be447d6599a0213df0e66a39c39596b2014a05864cad5122829ebbb02e81385eff1df32498736fb8f2c1c1451f
+  languageName: node
+  linkType: hard
+
+"twgl.js@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "twgl.js@npm:5.3.0"
+  checksum: d0288727cfa88bc56cd23308cf2fb8d0f1bb3028e1e0ba87bd2fd47dd403d383dbe270e3f64dd0a0130dca9a08379682fda3c9fc80652fd5001f5efe2beddd7d
   languageName: node
   linkType: hard
 
