@@ -152,7 +152,7 @@ import {
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_ECOMMERCE_MONTHLY,
-	PLAN_ENTERPRISE,
+	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_FREE,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -191,7 +191,7 @@ import {
 	TYPE_BLOGGER,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
-	TYPE_ENTERPRISE,
+	TYPE_ENTERPRISE_GRID_WPCOM,
 	TYPE_FREE,
 	TYPE_P2_PLUS,
 	TYPE_PERSONAL,
@@ -1157,10 +1157,13 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 	} ),
 } );
 
-const getPlanEnterpriseDetails = (): IncompleteWPcomPlan => ( {
+// The following is not a real plan, we are adding it here so that
+// VIP (a.k.a Enterprise) gets its own column in the plans grid.
+// Check pdgrnI-1Qp-p2 for more details.
+const get2023EnterprisGrideDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
-	type: TYPE_ENTERPRISE,
+	type: TYPE_ENTERPRISE_GRID_WPCOM,
 	getTitle: () => i18n.translate( 'Enterprise' ),
 	getAudience: () => i18n.translate( 'Best for enterprises' ),
 	getPlanTagline: () =>
@@ -1590,12 +1593,14 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 
 // DO NOT import. Use `getPlan` instead.
 export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
-	[ PLAN_ENTERPRISE ]: {
-		...getPlanEnterpriseDetails(),
+	// Not a real plan. This is used to show the Enterprise (VIP) offering in
+	// the main plans grid as part of pdgrnI-1Qp-p2.
+	[ PLAN_ENTERPRISE_GRID_WPCOM ]: {
+		...get2023EnterprisGrideDetails(),
 		term: TERM_ANNUALLY,
 		getBillingTimeFrame: () => '',
 		getProductId: () => 0, // TODO: What should go here?
-		getStoreSlug: () => PLAN_ENTERPRISE,
+		getStoreSlug: () => PLAN_ENTERPRISE_GRID_WPCOM,
 		getPathSlug: () => 'enterprise',
 	},
 	[ PLAN_FREE ]: {
