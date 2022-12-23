@@ -143,9 +143,10 @@ function InviteForm() {
 
 			{ [ ...Array( tokenControlNum ) ].map( ( v, i ) => (
 				<FormFieldset key={ i }>
-					{ ! i && <FormLabel htmlFor="email_or_username">{ _( 'Email or Username' ) }</FormLabel> }
+					{ ! i && <FormLabel htmlFor={ `token-${ i }` }>{ _( 'Email or Username' ) }</FormLabel> }
 					<FormTextInput
-						id="email_or_username"
+						id={ `token-${ i }` }
+						name={ `token-${ i }` }
 						value={ tokenValues[ i ] || '' }
 						isError={ tokenErrors && !! tokenErrors[ tokenValues[ i ] ] }
 						onBlur={ () => onTokenBlur( i ) }
