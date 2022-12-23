@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import PlanPill from 'calypso/components/plans/plan-pill';
 import PlanPrice from 'calypso/my-sites/plan-price';
 
 const PLANS_LIST = getPlans();
@@ -15,17 +14,12 @@ export class PlanFeatures2023GridHeader extends Component {
 	}
 
 	renderPlansHeaderNoTabs() {
-		const { planType, popular, selectedPlan, title, translate } = this.props;
+		const { planType, title } = this.props;
 
 		const headerClasses = classNames( 'plan-features-2023-grid__header', getPlanClass( planType ) );
 
 		return (
 			<span>
-				<div>
-					{ popular && ! selectedPlan && (
-						<PlanPill isInSignup={ true }>{ translate( 'Popular' ) }</PlanPill>
-					) }
-				</div>
 				<header className={ headerClasses }>
 					<h4 className="plan-features-2023-grid__header-title">{ title }</h4>
 				</header>
