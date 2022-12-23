@@ -1,6 +1,6 @@
+import { SiteIntent } from '@automattic/data-stores/src/onboard';
 import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { SiteIntent } from 'calypso/../packages/data-stores/src/onboard';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';

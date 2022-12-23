@@ -1,10 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { SiteIntent } from '@automattic/data-stores/src/onboard';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
-import { SiteIntent } from 'calypso/../packages/data-stores/src/onboard';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

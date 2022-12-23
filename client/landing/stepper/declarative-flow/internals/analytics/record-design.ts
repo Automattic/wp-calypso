@@ -1,6 +1,6 @@
+import { SiteIntent } from '@automattic/data-stores/src/onboard';
+import { Design, StyleVariation } from '@automattic/design-picker/src';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
-import { SiteIntent } from 'calypso/../packages/data-stores/src/onboard';
-import { Design, StyleVariation } from 'calypso/../packages/design-picker/src';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 export function recordPreviewedDesign( {
