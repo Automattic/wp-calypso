@@ -1,5 +1,4 @@
 /**
- * @group calypso-pr
  * @group gutenberg
  */
 
