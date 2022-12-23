@@ -67,7 +67,7 @@ class Block_Patterns_Utils_Test extends TestCase {
 
 		$post_types = $this->utils->get_pattern_post_types_from_pattern( $pattern );
 
-		$this->assertEquals( array( 'wp_template', 'wp_template_part', 'post' ), $post_types );
+		$this->assertEquals( array( 'wp_template', 'wp_template_part', 'page' ), $post_types );
 	}
 
 	/**
