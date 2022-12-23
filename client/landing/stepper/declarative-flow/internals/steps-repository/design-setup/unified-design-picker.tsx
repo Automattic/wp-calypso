@@ -458,7 +458,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	function pickBlankCanvasDesign( blankCanvasDesign: Design, shouldGoToAssemblerStep: boolean ) {
 		if ( shouldGoToAssemblerStep ) {
-			const selectedIntent = SiteIntent.SiteAssembler;
 			const selectedDesign = {
 				...blankCanvasDesign,
 				design_type: 'assembler',
@@ -466,14 +465,14 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 			recordPreviewedDesign( {
 				flow,
-				intent: selectedIntent,
+				intent,
 				design: selectedDesign,
 			} );
 
 			setSelectedDesign( selectedDesign );
 
 			handleSubmit( {
-				selectedIntent,
+				selectedIntent: SiteIntent.SiteAssembler,
 				selectedDesign,
 				selectedSiteCategory: categorization.selection,
 			} );
