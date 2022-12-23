@@ -42,7 +42,12 @@ export default function PromoCards( { isOdysseyStats, slug } ) {
 
 	// Handle view events upon initial mount and upon paging DotPager.
 	useEffect( () => {
-		recordTracksEvent( viewEvents[ dotPagerIndex ], { site_id: selectedSiteId } );
+		// Prevent out of bounds index when switching sites.
+		if ( dotPagerIndex >= viewEvents.length ) {
+			recordTracksEvent( viewEvents[ viewEvents.length - 1 ], { site_id: selectedSiteId } );
+		} else {
+			recordTracksEvent( viewEvents[ dotPagerIndex ], { site_id: selectedSiteId } );
+		}
 	}, [ viewEvents, dotPagerIndex, selectedSiteId ] );
 
 	// Handle click events from promo card.
