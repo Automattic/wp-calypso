@@ -19,6 +19,10 @@ $headerHeight: 72px;
 		background: var(--theme-text-color);
 		z-index: 1000;
 
+		@include break-large {
+			border-bottom: 1px solid var(--studio-gray-20);
+		}
+
 		h2 {
 			@include onboarding-font-recoleta;
 			font-size: $font-body-large;
