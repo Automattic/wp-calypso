@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { uniqueBy } from '@automattic/js-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -227,14 +226,11 @@ const PatternAssembler: Step = ( { navigation } ) => {
 					showPatternSelectorType={ showPatternSelectorType }
 					onSelect={ onSelect }
 					onDoneClick={ () => {
-						const uniquePatterns = uniqueBy(
-							getPatterns( showPatternSelectorType ),
-							( a, b ) => a.id === b.id
-						);
+						const patterns = getPatterns( showPatternSelectorType );
 						recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_done_click', {
 							pattern_type: showPatternSelectorType,
-							pattern_ids: uniquePatterns.map( ( { id } ) => id ).join( ',' ),
-							pattern_names: uniquePatterns.map( ( { name } ) => name ).join( ',' ),
+							pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
+							pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
 						} );
 
 						setShowPatternSelectorType( null );
