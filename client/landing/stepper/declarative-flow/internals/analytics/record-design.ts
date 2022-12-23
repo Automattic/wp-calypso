@@ -16,7 +16,7 @@ export function recordPreviewedDesign( {
 } ) {
 	recordTracksEvent( 'calypso_signup_design_preview_select', {
 		...getDesignEventProps( { flow, intent, design, styleVariation } ),
-		goes_to_assembler_step: intent === SiteIntent.Assembler,
+		goes_to_assembler_step: intent === SiteIntent.SiteAssembler,
 	} );
 }
 
@@ -58,7 +58,7 @@ export function recordSelectedDesign( {
 
 export function getDesignIntentProps( intent: string ) {
 	return {
-		goes_to_assembler_step: intent === SiteIntent.Assembler,
+		goes_to_assembler_step: intent === SiteIntent.SiteAssembler,
 	};
 }
 

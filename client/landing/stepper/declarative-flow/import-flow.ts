@@ -103,7 +103,7 @@ const importFlow: Flow = {
 				}
 
 				case 'designSetup': {
-					if ( intent === SiteIntent.Assembler ) {
+					if ( intent === SiteIntent.SiteAssembler ) {
 						return navigate( 'patternAssembler' );
 					}
 
@@ -115,7 +115,7 @@ const importFlow: Flow = {
 
 				case 'processing': {
 					// End of Pattern Assembler flow
-					if ( intent === SiteIntent.Assembler ) {
+					if ( intent === SiteIntent.SiteAssembler ) {
 						return exitFlow( `/site-editor/${ siteSlugParam }` );
 					}
 

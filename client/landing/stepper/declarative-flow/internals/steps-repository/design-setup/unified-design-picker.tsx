@@ -458,7 +458,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	function pickBlankCanvasDesign( blankCanvasDesign: Design, shouldGoToAssemblerStep: boolean ) {
 		if ( shouldGoToAssemblerStep ) {
-			setIntent( SiteIntent.Assembler );
+			setIntent( SiteIntent.SiteAssembler );
 			setSelectedDesign( {
 				...blankCanvasDesign,
 				design_type: 'assembler',
@@ -469,7 +469,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	}
 
 	useEffect( () => {
-		if ( intent === SiteIntent.Assembler && selectedDesign ) {
+		if ( intent === SiteIntent.SiteAssembler && selectedDesign ) {
 			recordPreviewedDesign( { flow, intent, design: selectedDesign } );
 			handleSubmit( {
 				selectedDesign,
@@ -478,7 +478,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	}, [ intent, selectedDesign ] );
 
 	function handleSubmit( providedDependencies?: ProvidedDependencies, optionalProps?: object ) {
-		if ( intent !== SiteIntent.Assembler ) {
+		if ( intent !== SiteIntent.SiteAssembler ) {
 			recordSelectedDesign( {
 				flow,
 				intent,
@@ -569,7 +569,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	// ********** Main render logic
 
-	if ( intent === SiteIntent.Assembler || isAtomic ) {
+	if ( intent === SiteIntent.SiteAssembler || isAtomic ) {
 		return null;
 	}
 

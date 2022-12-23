@@ -206,7 +206,7 @@ const siteSetupFlow: Flow = {
 				}
 
 				case 'designSetup':
-					if ( intent === SiteIntent.Assembler ) {
+					if ( intent === SiteIntent.SiteAssembler ) {
 						return navigate( 'patternAssembler' );
 					}
 
@@ -223,7 +223,7 @@ const siteSetupFlow: Flow = {
 					}
 
 					// End of Pattern Assembler flow
-					if ( intent === SiteIntent.Assembler ) {
+					if ( intent === SiteIntent.SiteAssembler ) {
 						return exitFlow( `/site-editor/${ siteSlug }` );
 					}
 
