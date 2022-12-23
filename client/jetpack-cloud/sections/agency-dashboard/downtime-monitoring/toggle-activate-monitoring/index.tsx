@@ -95,7 +95,7 @@ export default function ToggleActivateMonitoring( { site, status, settings }: Pr
 						) as string
 					}
 				>
-					<img src={ clockIcon } alt="Notification Settings" />
+					<img src={ clockIcon } alt={ translate( 'Current Schedule' ) } />
 					<span>{ currentDurationText }</span>
 				</Button>
 			</div>

@@ -24,7 +24,7 @@ interface Props {
 export default function NotificationSettings( { onClose, site, settings }: Props ) {
 	const translate = useTranslate();
 
-	const [ enableMobileNotification, setEnablMobileNotification ] = useState< boolean >( false );
+	const [ enableMobileNotification, setEnableMobileNotification ] = useState< boolean >( false );
 	const [ enableEmailNotification, setEnableEmailNotification ] = useState< boolean >( false );
 	const [ selectedDuration, setSelectedDuration ] = useState< Duration | undefined >( undefined );
 	const [ addedEmailAddresses, setAddedEmailAddresses ] = useState< string[] | [] >( [] );
@@ -57,7 +57,7 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 	const addEmailsContent = enableEmailNotification && (
 		<div className="notification-settings__email-container">
 			<TokenField
-				placeholder="Enter Email IDs"
+				placeholder={ translate( 'Enter email addresses' ) }
 				value={ addedEmailAddresses }
 				onChange={ setAddedEmailAddresses }
 			/>
@@ -86,7 +86,7 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 								<img
 									className="notification-settings__duration-icon"
 									src={ clockIcon }
-									alt="Durations"
+									alt={ translate( 'Schedules' ) }
 								/>
 							}
 							selectedText={ selectedDuration?.label }
@@ -105,7 +105,7 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 					<div className="notification-settings__toggle-container">
 						<div className="notification-settings__toggle">
 							<ToggleControl
-								onChange={ setEnablMobileNotification }
+								onChange={ setEnableMobileNotification }
 								checked={ enableMobileNotification }
 							/>
 						</div>
