@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { SiteIntent } from '@automattic/data-stores/src/onboard';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -12,6 +13,7 @@ import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
+import { recordSelectedDesign } from '../../analytics/record-design';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
 import { encodePatternId, createCustomHomeTemplateContent } from './utils';
@@ -20,7 +22,7 @@ import type { Pattern } from './types';
 import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import './style.scss';
 
-const PatternAssembler: Step = ( { navigation } ) => {
+const PatternAssembler: Step = ( { navigation, flow } ) => {
 	const translate = useTranslate();
 	const [ showPatternSelectorType, setShowPatternSelectorType ] = useState< string | null >( null );
 	const [ header, setHeader ] = useState< Pattern | null >( null );
@@ -32,8 +34,9 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const { goBack, goNext, submit, goToStep } = navigation;
 	const { setThemeOnSite, runThemeSetupOnSite, createCustomTemplate } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
-	const { setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setIntent, setPendingAction } = useDispatch( ONBOARD_STORE );
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
@@ -205,6 +208,37 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		goBack?.();
 	};
 
+	const onSubmit = () => {
+		if ( ! siteSlugOrId ) {
+			return;
+		}
+
+		const design = getDesign();
+		const stylesheet = design.recipe!.stylesheet!;
+		const theme = stylesheet?.split( '/' )[ 1 ] || design.theme;
+
+		setPendingAction( () =>
+			// We have to switch theme first. Otherwise, the unique suffix might append to
+			// the slug of newly created Home template if the current activated theme has
+			// modified Home template.
+			setThemeOnSite( siteSlugOrId, theme, undefined, false )
+				.then( () =>
+					createCustomTemplate(
+						siteSlugOrId,
+						stylesheet,
+						'home',
+						translate( 'Home' ),
+						createCustomHomeTemplateContent( stylesheet, !! header, !! footer, !! sections.length )
+					)
+				)
+				.then( () => runThemeSetupOnSite( siteSlugOrId, design ) )
+				.then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
+		);
+
+		recordSelectedDesign( { flow, intent, design } );
+		submit?.();
+	};
+
 	const getSelectedPattern = () => {
 		if ( 'header' === showPatternSelectorType ) {
 			return header;
@@ -297,38 +331,8 @@ const PatternAssembler: Step = ( { navigation } ) => {
 							setScrollToSelector( null );
 						} }
 						onContinueClick={ () => {
-							if ( siteSlugOrId ) {
-								const design = getDesign();
-								const stylesheet = design.recipe!.stylesheet!;
-								const theme = stylesheet?.split( '/' )[ 1 ] || design.theme;
-
-								setPendingAction( () =>
-									// We have to switch theme first. Otherwise, the unique suffix might append to
-									// the slug of newly created Home template if the current activated theme has
-									// modified Home template.
-									setThemeOnSite( siteSlugOrId, theme, undefined, false )
-										.then( () =>
-											createCustomTemplate(
-												siteSlugOrId,
-												stylesheet,
-												'home',
-												translate( 'Home' ),
-												createCustomHomeTemplateContent(
-													stylesheet,
-													!! header,
-													!! footer,
-													!! sections.length
-												)
-											)
-										)
-										.then( () => runThemeSetupOnSite( siteSlugOrId, design ) )
-										.then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
-								);
-
-								trackEventContinue();
-
-								submit?.();
-							}
+							trackEventContinue();
+							setIntent( SiteIntent.SiteAssembler );
 						} }
 					/>
 				) }
@@ -353,6 +357,12 @@ const PatternAssembler: Step = ( { navigation } ) => {
 			) }
 		</div>
 	);
+
+	useEffect( () => {
+		if ( siteSlugOrId && intent === SiteIntent.SiteAssembler ) {
+			onSubmit();
+		}
+	}, [ siteSlugOrId, intent ] );
 
 	return (
 		<>
