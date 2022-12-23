@@ -3,12 +3,15 @@ import { useTranslate } from 'i18n-calypso';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { BlogPagesSetting, BLOG_PAGES_OPTION } from './BlogPagesSetting';
 import { RelatedPostsSetting } from './RelatedPostsSetting';
+import { YourHomepageDisplaysSetting } from './YourHomepageDisplaysSetting';
 
 type Fields = {
-	posts_per_page?: number;
 	jetpack_relatedposts_enabled?: boolean;
 	jetpack_relatedposts_show_headline?: boolean;
 	jetpack_relatedposts_show_thumbnails?: boolean;
+	page_on_front?: string;
+	posts_per_page?: number;
+	show_on_front?: 'posts' | 'page';
 };
 
 type SiteSettingsSectionProps = {
@@ -31,7 +34,7 @@ export const SiteSettingsSection = ( {
 	isSavingSettings,
 }: SiteSettingsSectionProps ) => {
 	const translate = useTranslate();
-	const { posts_per_page } = fields;
+	const { posts_per_page, show_on_front, page_on_front } = fields;
 
 	return (
 		<>
@@ -47,6 +50,12 @@ export const SiteSettingsSection = ( {
 				<BlogPagesSetting
 					value={ posts_per_page }
 					onChange={ onChangeField( BLOG_PAGES_OPTION ) }
+					disabled={ disabled }
+				/>
+				<YourHomepageDisplaysSetting
+					value={ { show_on_front, page_on_front } }
+					// eslint-disable-next-line @typescript-eslint/no-empty-function
+					onChange={ () => {} }
 					disabled={ disabled }
 				/>
 			</Card>

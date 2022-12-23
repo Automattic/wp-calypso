@@ -17,15 +17,17 @@ type Settings = {
 	jetpack_relatedposts_enabled?: boolean;
 	jetpack_relatedposts_show_headline?: boolean;
 	jetpack_relatedposts_show_thumbnails?: boolean;
-	posts_per_page?: boolean;
-	posts_per_rss?: boolean;
+	page_on_front?: string;
+	posts_per_page?: number;
+	posts_per_rss?: number;
 	rss_use_excerpt?: boolean;
-	wpcom_featured_image_in_email?: boolean;
-	wpcom_subscription_emails_use_excerpt?: boolean;
+	show_on_front?: 'posts' | 'page';
 	subscription_options?: {
 		invitation: string;
 		comment_follow: string;
 	};
+	wpcom_featured_image_in_email?: boolean;
+	wpcom_subscription_emails_use_excerpt?: boolean;
 };
 
 const getFormSettings = ( settings: Settings ) => {
@@ -37,24 +39,28 @@ const getFormSettings = ( settings: Settings ) => {
 		jetpack_relatedposts_enabled,
 		jetpack_relatedposts_show_headline,
 		jetpack_relatedposts_show_thumbnails,
+		page_on_front,
 		posts_per_page,
 		posts_per_rss,
 		rss_use_excerpt,
+		show_on_front,
+		subscription_options,
 		wpcom_featured_image_in_email,
 		wpcom_subscription_emails_use_excerpt,
-		subscription_options,
 	} = settings;
 
 	return {
 		...( jetpack_relatedposts_enabled && { jetpack_relatedposts_enabled } ),
 		...( jetpack_relatedposts_show_headline && { jetpack_relatedposts_show_headline } ),
 		...( jetpack_relatedposts_show_thumbnails && { jetpack_relatedposts_show_thumbnails } ),
+		...( page_on_front && { page_on_front } ),
 		...( posts_per_page && { posts_per_page } ),
 		...( posts_per_rss && { posts_per_rss } ),
 		...( rss_use_excerpt && { rss_use_excerpt } ),
+		...( show_on_front && { show_on_front } ),
+		...( subscription_options && { subscription_options } ),
 		...( wpcom_featured_image_in_email && { wpcom_featured_image_in_email } ),
 		...( wpcom_subscription_emails_use_excerpt && { wpcom_subscription_emails_use_excerpt } ),
-		...( subscription_options && { subscription_options } ),
 	};
 };
 
