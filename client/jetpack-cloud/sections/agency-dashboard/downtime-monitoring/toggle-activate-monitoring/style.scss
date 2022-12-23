@@ -1,3 +1,4 @@
+@import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
 .components-form-toggle.is-checked .components-form-toggle__track {
@@ -8,7 +9,20 @@
 	margin-bottom: 0;
 }
 
-.toggle-activate-monitoring__toggle-button {
+.inline-flex-align-centre {
 	display: inline-flex;
 	align-items: center;
+}
+
+.toggle-activate-monitoring__toggle-button {
+	@extend .inline-flex-align-centre;
+}
+
+.toggle-activate-monitoring__duration {
+	@extend .inline-flex-align-centre;
+	span {
+		margin-inline-start: 1px;
+		font-size: 0.75rem;
+		font-weight: 500;
+	}
 }

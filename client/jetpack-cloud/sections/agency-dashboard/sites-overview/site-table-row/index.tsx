@@ -66,7 +66,10 @@ export default function SiteTableRow( { columns, item }: Props ) {
 					if ( row.type ) {
 						return (
 							<td
-								className={ classNames( site.error && 'site-table__td-with-error' ) }
+								className={ classNames(
+									site.error && 'site-table__td-with-error',
+									column.className
+								) }
 								key={ `table-data-${ row.type }-${ blogId }` }
 							>
 								<SiteStatusContent

@@ -2,6 +2,7 @@ export { default as Button } from './button';
 export * as Animation from './animation';
 export { default as Card } from './card';
 export { default as CompactCard } from './card/compact';
+export * from './device-switcher';
 export { default as Dialog } from './dialog';
 export { default as FormInputValidation } from './forms/form-input-validation';
 export { default as Gridicon } from './gridicon';
@@ -23,6 +24,7 @@ export { SpinnerExample } from './spinner/example';
 export { GMClosureNotice } from './gm-closure-notice/gm-closure-notice';
 export { default as WordPressLogo } from './wordpress-logo';
 export { default as JetpackLogo } from './jetpack-logo';
+export { default as WooCommerceWooLogo } from './woocommerce-woo-logo';
 export { ListTile } from './list-tile';
 export { LoadingPlaceholder } from './loading-placeholder';
 export {
@@ -39,3 +41,4 @@ export {
 } from './highlight-cards/highlight-card';
 export { default as MobilePromoCard } from './mobile-promo-card';
 export { default as ShortenedNumber } from './shortened-number';
+export { default as PostStatsCard } from './post-stats-card';

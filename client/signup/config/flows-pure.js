@@ -5,7 +5,6 @@ import {
 	setupSiteAfterCreation,
 } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
-import { VIDEOPRESS_ONBOARDING_FLOW_STEPS } from './constants';
 
 const noop = () => {};
 
@@ -311,18 +310,6 @@ export function generateFlows( {
 			description: 'P2 signup flow',
 			lastModified: '2020-09-01',
 			showRecaptcha: true,
-		},
-		{
-			name: 'videopress',
-			steps: VIDEOPRESS_ONBOARDING_FLOW_STEPS,
-			destination: ( dependencies ) =>
-				`/setup/completingPurchase?flow=videopress&siteSlug=${ encodeURIComponent(
-					dependencies.siteSlug
-				) }`,
-			description: 'VideoPress signup flow',
-			lastModified: '2022-11-01',
-			showRecaptcha: true,
-			postCompleteCallback: setupSiteAfterCreation,
 		},
 		{
 			name: 'videopress-account',

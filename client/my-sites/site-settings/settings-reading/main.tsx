@@ -13,20 +13,30 @@ import wrapSettingsForm from '../wrap-settings-form';
 
 const isEnabled = config.isEnabled( 'settings/modernize-reading-settings' );
 
-// Settings are not typed yet, so we need to use `unknown` for now.
-type Settings = unknown;
+type Settings = {
+	posts_per_page?: boolean;
+	posts_per_rss?: boolean;
+	wpcom_featured_image_in_email?: boolean;
+	wpcom_subscription_emails_use_excerpt?: boolean;
+};
 
-const getFormSettings = ( settings: Settings = {} ) => {
+const getFormSettings = ( settings: Settings ) => {
 	if ( ! settings ) {
 		return {};
 	}
 
-	// @ts-expect-error Settings are not typed yet, so we need to use `unknown` for now.
-	const { posts_per_page, posts_per_rss, wpcom_featured_image_in_email } = settings;
+	const {
+		posts_per_page,
+		posts_per_rss,
+		wpcom_featured_image_in_email,
+		wpcom_subscription_emails_use_excerpt,
+	} = settings;
+
 	return {
 		...( posts_per_page && { posts_per_page } ),
 		...( posts_per_rss && { posts_per_rss } ),
 		...( wpcom_featured_image_in_email && { wpcom_featured_image_in_email } ),
+		...( wpcom_subscription_emails_use_excerpt && { wpcom_subscription_emails_use_excerpt } ),
 	};
 };
 
@@ -42,6 +52,7 @@ type Fields = {
 	posts_per_page?: number;
 	posts_per_rss?: number;
 	wpcom_featured_image_in_email?: boolean;
+	wpcom_subscription_emails_use_excerpt?: boolean;
 };
 
 type ReadingSettingsFormProps = {
@@ -52,6 +63,7 @@ type ReadingSettingsFormProps = {
 	isRequestingSettings: boolean;
 	isSavingSettings: boolean;
 	siteUrl?: string;
+	updateFields: ( fields: Fields ) => void;
 };
 
 const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
@@ -64,6 +76,7 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 			isRequestingSettings,
 			isSavingSettings,
 			siteUrl,
+			updateFields,
 		}: ReadingSettingsFormProps ) => {
 			const disabled = isRequestingSettings || isSavingSettings;
 			return (
@@ -89,6 +102,7 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						handleSubmitForm={ handleSubmitForm }
 						disabled={ disabled }
 						isSavingSettings={ isSavingSettings }
+						updateFields={ updateFields }
 					/>
 				</form>
 			);
