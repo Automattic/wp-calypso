@@ -7,6 +7,7 @@ import {
 	PLAN_ANNUAL_PERIOD,
 	PLAN_BIENNIAL_PERIOD,
 	PLAN_MONTHLY_PERIOD,
+	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
@@ -91,6 +92,8 @@ function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 					return translate( 'two years' );
 				case TERM_MONTHLY:
 					return translate( 'month' );
+				case TERM_ANNUALLY:
+					return translate( 'year' );
 			}
 		}
 
