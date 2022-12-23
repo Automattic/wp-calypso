@@ -48,6 +48,7 @@ const PatternSelectorLoader = ( {
 				patterns={ sectionPatterns }
 				onSelect={ onSelect }
 				onBack={ onBack }
+				onDoneClick={ onDoneClick }
 				title={ selectedPattern ? translate( 'Replace section' ) : translate( 'Add sections' ) }
 				selectedPattern={ selectedPattern }
 			/>
