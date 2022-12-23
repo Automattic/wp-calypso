@@ -11,8 +11,6 @@ const INSERTING_HOOK_NAMESPACE = 'automattic/full-site-editing/inserting-pattern
 
 interface PagePatternsPluginProps {
 	patterns: PatternDefinition[];
-	locale?: string;
-	theme?: string;
 }
 
 export function PagePatternsPlugin( props: PagePatternsPluginProps ) {

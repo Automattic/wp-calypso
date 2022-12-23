@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
 import { connect } from 'react-redux';
-import wordpressSeoIllustration from 'calypso/assets/images/illustrations/wordpress-seo-premium.svg';
+import blazeDropDownIllustration from 'calypso/assets/images/illustrations/blaze-drop-down.svg';
 import PromoCardBlock from 'calypso/blocks/promo-card-block';
 import AsyncLoad from 'calypso/components/async-load';
 import EmptyContent from 'calypso/components/empty-content';
@@ -51,16 +51,17 @@ const SiteSettingsTraffic = ( {
 		<JetpackDevModeNotice />
 		{ isAdmin && (
 			<PromoCardBlock
-				productSlug="wordpress-seo-premium"
-				impressionEvent="calypso_traffic_wordpress_seo_premium_banner_view"
-				clickEvent="calypso_traffic_wordpress_seo_premium_banner_click"
-				headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
+				productSlug="blaze"
+				impressionEvent="calypso_marketing_traffic_blaze_banner_view"
+				clickEvent="calypso_marketing_traffic_blaze_banner_click"
+				headerText={ translate( 'Reach new readers and customers' ) }
 				contentText={ translate(
-					'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
+					'Use WordPress Blaze to increase your reach by promoting your work to the larger WordPress.com community of blogs and sites. '
 				) }
-				ctaText={ translate( 'Learn more' ) }
-				image={ wordpressSeoIllustration }
-				href={ `/plugins/wordpress-seo-premium/${ siteSlug || '' }` }
+				ctaText={ translate( 'Get started' ) }
+				image={ blazeDropDownIllustration }
+				href={ `/advertising/${ siteSlug || '' }` }
+				showOnJetpackNonAtomic={ true }
 			/>
 		) }
 		{ isAdmin && <SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } /> }

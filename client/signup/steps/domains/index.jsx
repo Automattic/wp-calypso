@@ -525,7 +525,7 @@ class DomainsStep extends Component {
 		}
 
 		const includeWordPressDotCom = this.props.includeWordPressDotCom ?? ! this.props.isDomainOnly;
-		const promoTlds = this.props?.queryObject?.tld?.split( ',' ) ?? [];
+		const promoTlds = this.props?.queryObject?.tld?.split( ',' ) ?? null;
 
 		return (
 			<CalypsoShoppingCartProvider>

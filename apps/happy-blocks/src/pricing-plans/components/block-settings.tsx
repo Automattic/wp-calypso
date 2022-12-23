@@ -7,7 +7,9 @@ import {
 	RadioControl,
 	CheckboxControl,
 	SelectControl,
+	TextControl,
 } from '@wordpress/components';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { FunctionComponent } from 'react';
@@ -20,13 +22,17 @@ interface Props {
 	plans: BlockPlan[];
 }
 
+const NORMALIZE_DOMAIN_REGEX = /(?:^http(?:s)?:)?(?:[/]*)(?:www\.)?([^/?]*)(?:.*)$/gi;
+const VALIDATE_DOMAIN_REGEX =
+	/^(([A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)\.)+([A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)$/;
+
 const BlockSettings: FunctionComponent<
 	Pick< BlockEditProps< BlockAttributes >, 'attributes' | 'setAttributes' > & Props
 > = ( { attributes, setAttributes, plans } ) => {
-	const { productSlug, planTypeOptions } = attributes;
-
+	const { productSlug, planTypeOptions, domain } = attributes;
 	const planOptions = usePlanOptions( plans );
 	const currentPlan = plans?.find( ( plan ) => plan.productSlug === productSlug );
+	const [ newDomainInputValue, setNewDomainInputValue ] = useState( domain );
 
 	const setPlan = ( type: string, term: string ) => {
 		const plan = plans?.find( ( plan ) => plan.type === type && plan.term === term );
@@ -61,6 +67,20 @@ const BlockSettings: FunctionComponent<
 
 	const isChecked = ( value: string ) => planTypeOptions.includes( value );
 
+	const onDomainChange = ( value: string ) => {
+		setNewDomainInputValue( value );
+
+		if ( ! value ) {
+			setAttributes( { domain: false } );
+			return;
+		}
+
+		const normalizedDomain = value.replace( NORMALIZE_DOMAIN_REGEX, '$1' );
+		if ( VALIDATE_DOMAIN_REGEX.test( normalizedDomain ) ) {
+			setAttributes( { domain: normalizedDomain } );
+		}
+	};
+
 	return (
 		<InspectorControls>
 			<PanelBody
@@ -90,6 +110,16 @@ const BlockSettings: FunctionComponent<
 								onChange={ ( checked ) => onPlanTypeToggle( option.value, checked ) }
 							/>
 						) ) }
+					<TextControl
+						className="hb-pricing-plans-embed__settings-domain"
+						label={ __( 'Domain', 'happy-blocks' ) }
+						value={ newDomainInputValue || '' }
+						help={ __(
+							'Enter a valid domain name or leave empty to avoid showing any domain',
+							'happy-blocks'
+						) }
+						onChange={ onDomainChange }
+					/>
 					<RadioControl
 						label={ __( 'Price', 'happy-blocks' ) }
 						selected={ currentPlan?.term }

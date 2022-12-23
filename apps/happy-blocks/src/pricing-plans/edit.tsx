@@ -5,7 +5,6 @@ import { FunctionComponent } from 'react';
 import BlockSettings from './components/block-settings';
 import PricingPlans from './components/pricing-plans';
 import Skeleton from './components/skeleton';
-import config from './config';
 import usePricingPlans from './hooks/pricing-plans';
 import { BlockAttributes } from './types';
 
@@ -19,7 +18,7 @@ export const Edit: FunctionComponent< BlockEditProps< BlockAttributes > > = ( {
 	useEffect( () => {
 		setAttributes( {
 			productSlug: attributes.productSlug ?? attributes.defaultProductSlug,
-			domain: attributes.domain ?? config.domain,
+			domain: attributes.domain,
 		} );
 	}, [ attributes.defaultProductSlug, attributes.domain, attributes.productSlug, setAttributes ] );
 
@@ -42,6 +41,10 @@ export const Edit: FunctionComponent< BlockEditProps< BlockAttributes > > = ( {
 	}, [ attributes.planTypeOptions.length, attributes.productSlug, plans, setAttributes ] );
 
 	useEffect( () => {
+		if ( attributes.domain ) {
+			return;
+		}
+
 		const blogIdSelect: HTMLSelectElement | null =
 			document.querySelector( 'select[name="blog_id"]' );
 
@@ -67,7 +70,7 @@ export const Edit: FunctionComponent< BlockEditProps< BlockAttributes > > = ( {
 		return () => {
 			blogIdSelect.removeEventListener( 'change', updateBlogId );
 		};
-	}, [ setAttributes ] );
+	}, [ attributes.domain, setAttributes ] );
 
 	const blockProps = useBlockProps();
 

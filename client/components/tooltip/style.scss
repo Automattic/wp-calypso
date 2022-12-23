@@ -173,4 +173,27 @@
 			padding: 2px 0;
 		}
 	}
+
+	&.tooltip--darker {
+		&.is-bottom-right,
+		&.is-bottom-left,
+		&.is-bottom {
+			.popover__arrow {
+				border-bottom-color: var(--studio-gray-100);
+			}
+		}
+
+		&.is-top,
+		&.is-top-left,
+		&.is-top-right {
+			.popover__arrow {
+				border-top-color: var(--studio-gray-100);
+			}
+		}
+
+		.popover__inner {
+			color: var(--studio-white);
+			background: var(--studio-gray-100);
+		}
+	}
 }
