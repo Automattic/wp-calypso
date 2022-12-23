@@ -5,8 +5,21 @@ import { isOneTimePurchase, isPaidWithCreditCard } from 'calypso/lib/purchases';
 import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
 import { canEditPaymentDetails } from '../utils';
 import PaymentInfoBlock from './payment-info-block';
+import type { Purchase, GetChangePaymentMethodUrlFor } from 'calypso/lib/purchases/types';
 
-function PurchaseMetaPaymentDetails( { purchase, getChangePaymentMethodUrlFor, siteSlug, site } ) {
+interface PaymentProps {
+	purchase: Purchase;
+	getChangePaymentMethodUrlFor: GetChangePaymentMethodUrlFor;
+	siteSlug?: string;
+	site?: string;
+}
+
+function PurchaseMetaPaymentDetails( {
+	purchase,
+	getChangePaymentMethodUrlFor,
+	siteSlug,
+	site,
+}: PaymentProps ) {
 	const cards = useSelector( getAllStoredCards );
 	const handleEditPaymentMethodClick = () => {
 		recordTracksEvent( 'calypso_purchases_edit_payment_method' );
@@ -24,12 +37,15 @@ function PurchaseMetaPaymentDetails( { purchase, getChangePaymentMethodUrlFor, s
 
 	return (
 		<li>
-			<a
-				href={ getChangePaymentMethodUrlFor( siteSlug, purchase ) }
-				onClick={ handleEditPaymentMethodClick }
-			>
-				{ paymentDetails }
-			</a>
+			{ siteSlug && (
+				<a
+					href={ getChangePaymentMethodUrlFor( siteSlug, purchase ) }
+					onClick={ handleEditPaymentMethodClick }
+				>
+					{ paymentDetails }
+				</a>
+			) }
+			{ ! siteSlug && paymentDetails }
 		</li>
 	);
 }
