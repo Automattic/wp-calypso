@@ -4,6 +4,8 @@ import {
 	isDIFMProduct,
 	isDomainTransfer,
 	isEmailMonthly,
+	PLAN_ANNUAL_PERIOD,
+	PLAN_MONTHLY_PERIOD,
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
@@ -91,15 +93,21 @@ function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 			}
 		}
 
-		if ( purchase.billPeriodLabel ) {
-			switch ( purchase.billPeriodLabel ) {
-				case 'per year':
+		if ( purchase.billPeriodDays ) {
+			switch ( purchase.billPeriodDays ) {
+				case PLAN_ANNUAL_PERIOD:
 					return translate( 'year' );
-				case 'per month':
+				case PLAN_MONTHLY_PERIOD:
 					return translate( 'month' );
-				case 'per week':
+				case 7:
+					// Note: does this period ever happen? I don't think it does but it
+					// was added in https://github.com/Automattic/wp-calypso/pull/65006
+					// and so I'm leaving it for now.
 					return translate( 'week' );
-				case 'per day':
+				case 1:
+					// Note: does this period ever happen? I don't think it does but it
+					// was added in https://github.com/Automattic/wp-calypso/pull/65006
+					// and so I'm leaving it for now.
 					return translate( 'day' );
 			}
 		}
