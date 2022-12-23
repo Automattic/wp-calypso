@@ -185,8 +185,38 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 			pattern_count: patterns.length,
 		} );
 
-		setIntent( SiteIntent.Build );
 		goBack?.();
+	};
+
+	const onSubmit = () => {
+		if ( ! siteSlugOrId ) {
+			return;
+		}
+
+		const design = getDesign();
+		const stylesheet = design.recipe!.stylesheet!;
+		const theme = stylesheet?.split( '/' )[ 1 ] || design.theme;
+
+		setPendingAction( () =>
+			// We have to switch theme first. Otherwise, the unique suffix might append to
+			// the slug of newly created Home template if the current activated theme has
+			// modified Home template.
+			setThemeOnSite( siteSlugOrId, theme, undefined, false )
+				.then( () =>
+					createCustomTemplate(
+						siteSlugOrId,
+						stylesheet,
+						'home',
+						translate( 'Home' ),
+						createCustomHomeTemplateContent( stylesheet, !! header, !! footer, !! sections.length )
+					)
+				)
+				.then( () => runThemeSetupOnSite( siteSlugOrId, design ) )
+				.then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
+		);
+
+		recordSelectedDesign( { flow, intent, design } );
+		submit?.();
 	};
 
 	const getSelectedPattern = () => {
@@ -265,39 +295,8 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 							setScrollToSelector( null );
 						} }
 						onContinueClick={ () => {
-							if ( siteSlugOrId ) {
-								const design = getDesign();
-								const stylesheet = design.recipe!.stylesheet!;
-								const theme = stylesheet?.split( '/' )[ 1 ] || design.theme;
-
-								setPendingAction( () =>
-									// We have to switch theme first. Otherwise, the unique suffix might append to
-									// the slug of newly created Home template if the current activated theme has
-									// modified Home template.
-									setThemeOnSite( siteSlugOrId, theme, undefined, false )
-										.then( () =>
-											createCustomTemplate(
-												siteSlugOrId,
-												stylesheet,
-												'home',
-												translate( 'Home' ),
-												createCustomHomeTemplateContent(
-													stylesheet,
-													!! header,
-													!! footer,
-													!! sections.length
-												)
-											)
-										)
-										.then( () => runThemeSetupOnSite( siteSlugOrId, design ) )
-										.then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
-								);
-
-								recordSelectedDesign( { flow, intent, design } );
-								trackEventContinue();
-
-								submit?.();
-							}
+							trackEventContinue();
+							setIntent( SiteIntent.SiteAssembler );
 						} }
 					/>
 				) }
@@ -322,6 +321,12 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 			) }
 		</div>
 	);
+
+	useEffect( () => {
+		if ( siteSlugOrId && intent === SiteIntent.SiteAssembler ) {
+			onSubmit();
+		}
+	}, [ siteSlugOrId, intent ] );
 
 	return (
 		<>

@@ -426,7 +426,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	// ********** Logic for submitting the selected design
 
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
-	const { setIntent, setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
 		setSelectedDesign( _selectedDesign );
@@ -458,31 +458,38 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	function pickBlankCanvasDesign( blankCanvasDesign: Design, shouldGoToAssemblerStep: boolean ) {
 		if ( shouldGoToAssemblerStep ) {
-			setIntent( SiteIntent.SiteAssembler );
-			setSelectedDesign( {
+			const selectedIntent = SiteIntent.SiteAssembler;
+			const selectedDesign = {
 				...blankCanvasDesign,
 				design_type: 'assembler',
+			} as Design;
+
+			recordPreviewedDesign( {
+				flow,
+				intent: selectedIntent,
+				design: selectedDesign,
+			} );
+
+			setSelectedDesign( selectedDesign );
+
+			handleSubmit( {
+				selectedIntent,
+				selectedDesign,
 			} );
 		} else {
 			pickDesign( blankCanvasDesign );
 		}
 	}
 
-	useEffect( () => {
-		if ( intent === SiteIntent.SiteAssembler && selectedDesign ) {
-			recordPreviewedDesign( { flow, intent, design: selectedDesign } );
-			handleSubmit( {
-				selectedDesign,
-			} );
-		}
-	}, [ intent, selectedDesign ] );
-
 	function handleSubmit( providedDependencies?: ProvidedDependencies, optionalProps?: object ) {
-		if ( intent !== SiteIntent.SiteAssembler ) {
+		const selectedIntent = providedDependencies?.selectedIntent as string;
+		const selectedDesign = providedDependencies?.selectedDesign as Design;
+
+		if ( selectedIntent !== SiteIntent.SiteAssembler ) {
 			recordSelectedDesign( {
 				flow,
 				intent,
-				design: providedDependencies?.selectedDesign as Design,
+				design: selectedDesign,
 				styleVariation: selectedStyleVariation,
 				optionalProps,
 			} );
@@ -490,7 +497,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 		submit?.( {
 			...providedDependencies,
-			...getDesignIntentProps( intent ),
+			...getDesignIntentProps( selectedIntent ),
 		} );
 	}
 
@@ -568,10 +575,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	}
 
 	// ********** Main render logic
-
-	if ( intent === SiteIntent.SiteAssembler || isAtomic ) {
-		return null;
-	}
 
 	// Don't render until we've done fetching all the data needed for initial render.
 	if ( ! site || isLoadingSiteVertical || isLoadingDesigns ) {

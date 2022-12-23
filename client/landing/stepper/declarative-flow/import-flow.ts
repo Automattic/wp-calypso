@@ -103,7 +103,7 @@ const importFlow: Flow = {
 				}
 
 				case 'designSetup': {
-					if ( intent === SiteIntent.SiteAssembler ) {
+					if ( providedDependencies?.selectedIntent === SiteIntent.SiteAssembler ) {
 						return navigate( 'patternAssembler' );
 					}
 
