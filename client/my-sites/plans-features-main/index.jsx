@@ -19,7 +19,7 @@ import {
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
-	TYPE_ENTERPRISE,
+	TYPE_ENTERPRISE_GRID_WPCOM,
 	TERM_MONTHLY,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
@@ -48,7 +48,6 @@ import Notice from 'calypso/components/notice';
 import { getTld } from 'calypso/lib/domains';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import PlanFeatures from 'calypso/my-sites/plan-features';
-import PlanFeatures2023Grid from 'calypso/my-sites/plan-features-2023-grid';
 import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
@@ -367,7 +366,7 @@ export class PlansFeaturesMain extends Component {
 				isEnabled( 'onboarding/2023-pricing-grid' ) &&
 				isInSignup &&
 				flowName === 'onboarding-2023-pricing-grid'
-					? findPlansKeys( { group: GROUP_WPCOM, type: TYPE_ENTERPRISE } )[ 0 ]
+					? findPlansKeys( { group: GROUP_WPCOM, type: TYPE_ENTERPRISE_GRID_WPCOM } )[ 0 ]
 					: null,
 			].filter( ( el ) => el !== null );
 		}
@@ -462,7 +461,7 @@ export class PlansFeaturesMain extends Component {
 						TYPE_PREMIUM,
 						TYPE_BUSINESS,
 						TYPE_ECOMMERCE,
-						TYPE_ENTERPRISE,
+						TYPE_ENTERPRISE_GRID_WPCOM,
 					] )
 				);
 			}

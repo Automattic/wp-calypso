@@ -1,4 +1,4 @@
-import { getPlans, PLAN_FREE, PLAN_ENTERPRISE } from '@automattic/calypso-products';
+import { getPlans, PLAN_FREE, PLAN_ENTERPRISE_GRID_WPCOM } from '@automattic/calypso-products';
 import { getCurrencyObject } from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -9,10 +9,10 @@ const PLANS_LIST = getPlans();
 
 export class PlanFeatures2023GridHeader extends Component {
 	render() {
-		return this.renderPlansHeaderNoTabs();
+		return this.renderPlansHeader();
 	}
 
-	renderPlansHeaderNoTabs() {
+	renderPlansHeader() {
 		return (
 			<span>
 				<div className="plan-features-2023-grid__pricing">
@@ -34,7 +34,7 @@ export class PlanFeatures2023GridHeader extends Component {
 			planName,
 		} = this.props;
 
-		if ( [ PLAN_FREE, PLAN_ENTERPRISE ].includes( planName ) ) {
+		if ( [ PLAN_FREE, PLAN_ENTERPRISE_GRID_WPCOM ].includes( planName ) ) {
 			return null;
 		}
 
@@ -65,7 +65,7 @@ export class PlanFeatures2023GridHeader extends Component {
 	renderPriceGroup() {
 		const { currencyCode, rawPrice, discountPrice, planName } = this.props;
 
-		if ( PLAN_ENTERPRISE === planName ) {
+		if ( PLAN_ENTERPRISE_GRID_WPCOM === planName ) {
 			return (
 				<div className="plan-features-2023-grid__vip-price">
 					Starts at <b>US$25,000</b> yearly.
