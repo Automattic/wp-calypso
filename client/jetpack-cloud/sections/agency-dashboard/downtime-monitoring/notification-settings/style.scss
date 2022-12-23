@@ -1,0 +1,169 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+
+@keyframes components-modal__appear-animation {
+	from {
+		transform: translateY(32px);
+	}
+	to {
+		transform: translateY(0);
+	}
+}
+
+.notification-settings-title-light {
+	font-size: 0.75rem;
+	line-height: 14px;
+	color: var(--studio-gray-50);
+}
+
+.notification-settings__sub-title {
+	@extend .notification-settings-title-light;
+	position: absolute;
+	inset-block-start: 50px;
+
+}
+
+.notification-settings__content {
+	margin-block-start: -16px;
+}
+
+.notification-settings__content-heading {
+	font-size: 0.875rem;
+	line-height: 17px;
+	margin-block-end: 8px;
+}
+
+.notification-settings__content-sub-heading {
+	@extend .notification-settings-title-light;
+}
+
+.notification-settings__content-block {
+	margin-block-start: 24px;
+	position: relative;
+}
+
+.notification-settings__link {
+	text-decoration: underline;
+}
+
+.notification-settings__footer {
+	margin-block-end: 32px;
+	width: calc(100% - 64px); // reducing the left and right padding
+	display: flex;
+	justify-content: flex-start;
+	flex-direction: column;
+	position: absolute;
+	bottom: 0;
+
+	button {
+		height: 36px;
+		line-height: 18px;
+
+		&:nth-child(2) {
+			margin-block-start: 16px;
+		}
+	}
+
+	@include break-mobile {
+		position: static;
+		justify-content: right;
+		flex-direction: initial;
+		margin-block-start: 32px;
+		margin-block-end: 0;
+		width: auto;
+
+		button {
+			&:nth-child(2) {
+				margin-inline-start: 12px;
+				margin-block-start: 0;
+			}
+		}
+	}
+
+}
+
+.select-dropdown .select-dropdown__container {
+	display: block;
+}
+
+.notification-settings__duration-icon {
+	position: relative;
+	inset-block-start: 5px;
+	inset-inline-end: 2px;
+	width: 20px;
+}
+
+
+.notification-settings__toggle {
+	width: 15%;
+	display: inline-flex;
+	justify-content: end;
+
+	.components-form-toggle {
+		margin-right: 0 !important;
+	}
+
+	@include break-mobile {
+		justify-content: unset;
+	}
+}
+
+.notification-settings__toggle-content {
+	width: 85%;
+	display: inline-flex;
+	flex-direction: column;
+}
+
+.notification-settings__modal {
+	max-height: 100%;
+	width: 480px;
+	animation: components-modal__appear-animation 0.1s ease-out;
+	animation-fill-mode: forwards;
+
+	@include break-mobile {
+		width: 450px;
+		margin: auto;
+	}
+}
+
+.notification-settings__email-container {
+	margin-block-start: 8px;
+	width: 100%;
+
+	.token-field__suggestions-list {
+		display: none;
+	}
+
+	@include break-mobile {
+		margin-block-start: 4px;
+	}
+}
+
+.notification-settings__email-condition {
+	margin-block-start: 4px;
+	@extend .notification-settings-title-light;
+}
+
+.notification-settings__toggle-container {
+	@extend .notification-settings__content-block;
+	display: inline-flex;
+	flex-direction: row-reverse;
+	width: 100%;
+
+	@include break-mobile {
+		display: block;
+	}
+}
+
+.notification-settings__large-screen {
+	display: none;
+	@include break-mobile {
+		display: inherit;
+	}
+}
+
+.notification-settings__small-screen {
+	@include break-mobile {
+		display: none;
+	}
+}
