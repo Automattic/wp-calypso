@@ -1011,8 +1011,6 @@ export function parseEmailChartData( payload, nullAttributes = [] ) {
 			const localeSlug = getLocaleSlug();
 			const localizedDate = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( localeSlug );
 			Object.assign( dataRecord, getChartLabels( payload.unit, date, localizedDate ) );
-			dataRecord.opens_count = Math.round( Math.random() * 100 );
-			dataRecord.unique_opens = Math.round( Math.random() * 100 );
 		}
 		return dataRecord;
 	} );

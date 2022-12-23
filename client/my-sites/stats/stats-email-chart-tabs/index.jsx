@@ -65,15 +65,6 @@ class StatModuleChartTabs extends Component {
 		this.props.onChangeLegend( activeLegend );
 	};
 
-	// startQueryInterval() {
-	// 	// NOTE: Unpredictable behavior will arise if DEFAULT_HEARTBEAT < request duration!
-	// 	Number.isFinite( this.intervalId ) && clearInterval( this.intervalId );
-	// 	this.makeQuery();
-	// 	this.intervalId = setInterval( this.makeQuery, DEFAULT_HEARTBEAT );
-	// }
-
-	// makeQuery = () => this.props.requestChartCounts( this.props.query );
-
 	render() {
 		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
 
