@@ -278,7 +278,10 @@ export function updatePlugin( siteId, plugin ) {
 			pluginId,
 		};
 
-		if ( ! plugin?.update || plugin?.update?.recentlyUpdated ) {
+		if (
+			plugin.sites &&
+			( ! plugin.sites[ siteId ]?.update || plugin.sites[ siteId ]?.update?.recentlyUpdated )
+		) {
 			return dispatch( { ...defaultAction, type: PLUGIN_ALREADY_UP_TO_DATE, data: plugin } );
 		}
 
