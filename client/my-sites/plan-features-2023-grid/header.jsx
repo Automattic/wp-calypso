@@ -9,10 +9,10 @@ const PLANS_LIST = getPlans();
 
 export class PlanFeatures2023GridHeader extends Component {
 	render() {
-		return this.renderPlansHeaderNoTabs();
+		return this.renderPlansHeader();
 	}
 
-	renderPlansHeaderNoTabs() {
+	renderPlansHeader() {
 		return (
 			<span>
 				<div className="plan-features-2023-grid__pricing">
