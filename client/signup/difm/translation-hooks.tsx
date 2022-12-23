@@ -46,10 +46,12 @@ export function useTranslatedPageTitles() {
 export const BBE_ONBOARDING_PAGE_PICKER_STEP = 'BBE_ONBOARDING_PAGE_PICKER_STEP';
 export const BBE_STORE_ONBOARDING_PAGE_PICKER_STEP = 'BBE_STORE_ONBOARDING_PAGE_PICKER_STEP';
 export const BBE_WEBSITE_CONTENT_FILLING_STEP = 'BBE_WEBSITE_CONTENT_FILLING_STEP';
+export const BBE_STORE_WEBSITE_CONTENT_FILLING_STEP = 'BBE_STORE_WEBSITE_CONTENT_FILLING_STEP';
 export type BBETranslationContext =
 	| typeof BBE_ONBOARDING_PAGE_PICKER_STEP
 	| typeof BBE_STORE_ONBOARDING_PAGE_PICKER_STEP
-	| typeof BBE_WEBSITE_CONTENT_FILLING_STEP;
+	| typeof BBE_WEBSITE_CONTENT_FILLING_STEP
+	| typeof BBE_STORE_WEBSITE_CONTENT_FILLING_STEP;
 
 export function useTranslatedPageDescriptions(
 	pageId: PageId,
@@ -116,6 +118,12 @@ export function useTranslatedPageDescriptions(
 			),
 		},
 		[ BBE_STORE_ONBOARDING_PAGE_PICKER_STEP ]: {
+			...defaultDescriptions,
+			[ HOME_PAGE ]: translate(
+				'An overview of you, your shop, or your business. What phrases would someone search on Google to find you? What can visitors purchase on this site?'
+			),
+		},
+		[ BBE_STORE_WEBSITE_CONTENT_FILLING_STEP ]: {
 			...defaultDescriptions,
 			[ HOME_PAGE ]: translate(
 				'An overview of you, your shop, or your business. What phrases would someone search on Google to find you? What can visitors purchase on this site?'

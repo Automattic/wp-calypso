@@ -68,7 +68,7 @@ const generateWebsiteContentSections = (
 	params: SectionGeneratorReturnType< WebsiteContent >,
 	elapsedSections = 0
 ): SectionProcessedResult => {
-	const { translate, formValues, formErrors, onChangeField } = params;
+	const { translate, formValues, formErrors, context, onChangeField } = params;
 
 	const OPTIONAL_PAGES: Partial< Record< PageId, boolean > > = {
 		[ CONTACT_PAGE ]: true,
@@ -102,6 +102,7 @@ const generateWebsiteContentSections = (
 					page={ page }
 					formErrors={ formErrors }
 					onChangeField={ onChangeField }
+					context={ context }
 				/>
 			),
 			showSkip: !! OPTIONAL_PAGES[ page.id ],

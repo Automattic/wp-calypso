@@ -7,10 +7,7 @@ import {
 	LabelBlock,
 } from 'calypso/signup/accordion-form/form-components';
 import { ValidationErrors } from 'calypso/signup/accordion-form/types';
-import {
-	BBE_WEBSITE_CONTENT_FILLING_STEP,
-	useTranslatedPageDescriptions,
-} from 'calypso/signup/difm/translation-hooks';
+import { useTranslatedPageDescriptions } from 'calypso/signup/difm/translation-hooks';
 import {
 	mediaRemoved,
 	mediaUploaded,
@@ -20,6 +17,7 @@ import {
 } from 'calypso/state/signup/steps/website-content/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { MediaUploadData, WordpressMediaUpload } from '../wordpress-media-upload';
+import type { BBETranslationContext } from 'calypso/signup/difm/translation-hooks';
 import type { PageData } from 'calypso/state/signup/steps/website-content/schema';
 
 export const CONTENT_SUFFIX = 'Content';
@@ -27,11 +25,13 @@ export const IMAGE_PREFIX = 'Image';
 export interface PageDetailsParams< T > {
 	page: T;
 	formErrors: ValidationErrors;
+	context: BBETranslationContext;
 	onChangeField?: ( { target: { name, value } }: ChangeEvent< HTMLInputElement > ) => void;
 }
 export function DefaultPageDetails( {
 	page,
 	formErrors,
+	context,
 	onChangeField,
 }: PageDetailsParams< PageData > ) {
 	const translate = useTranslate();
@@ -39,7 +39,7 @@ export function DefaultPageDetails( {
 	const site = useSelector( getSelectedSite );
 	const pageTitle = page.title;
 	const pageID = page.id;
-	const description = useTranslatedPageDescriptions( pageID, BBE_WEBSITE_CONTENT_FILLING_STEP );
+	const description = useTranslatedPageDescriptions( pageID, context );
 
 	const onMediaUploadFailed = ( { mediaIndex }: MediaUploadData ) => {
 		dispatch(

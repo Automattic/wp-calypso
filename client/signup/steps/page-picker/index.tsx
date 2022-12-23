@@ -119,31 +119,22 @@ interface PageCellType {
 	onClick: ( pageId: string ) => void;
 	popular?: boolean;
 	required?: boolean;
-	included?: boolean;
 	context: BBETranslationContext;
 }
 
-function PageCell( {
-	pageId,
-	popular,
-	required,
-	selectedPages,
-	included,
-	context,
-	onClick,
-}: PageCellType ) {
+function PageCell( { pageId, popular, required, selectedPages, context, onClick }: PageCellType ) {
 	const translate = useTranslate();
 	const selectedIndex = selectedPages.indexOf( pageId );
-	const isSelected = included || Boolean( selectedIndex > -1 );
+	const isSelected = Boolean( selectedIndex > -1 );
 	const title = useTranslatedPageTitles()[ pageId ];
 	const description = useTranslatedPageDescriptions( pageId, context );
 
 	return (
-		<GridCellContainer isSelected={ isSelected } isClickDisabled={ included || false }>
+		<GridCellContainer isSelected={ isSelected } isClickDisabled={ false }>
 			<BrowserView
 				onClick={ () => onClick( pageId ) }
 				pageId={ pageId }
-				isClickDisabled={ included || false }
+				isClickDisabled={ false }
 				isSelected={ isSelected }
 				selectedIndex={ selectedIndex >= 0 ? selectedIndex : -1 }
 			/>
@@ -151,7 +142,6 @@ function PageCell( {
 				<div>{ title }</div>
 				{ popular ? <PageCellBadge>{ translate( 'Popular' ) }</PageCellBadge> : null }
 				{ required ? <PageCellBadge>{ translate( 'Required' ) }</PageCellBadge> : null }
-				{ included ? <PageCellBadge>{ translate( 'Included' ) }</PageCellBadge> : null }
 				<InfoPopover showOnHover={ true } position={ isMobile() ? 'left' : 'top left' }>
 					{ description }
 				</InfoPopover>
