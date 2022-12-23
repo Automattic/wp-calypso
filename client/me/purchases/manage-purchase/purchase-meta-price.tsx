@@ -5,6 +5,7 @@ import {
 	isDomainTransfer,
 	isEmailMonthly,
 	PLAN_ANNUAL_PERIOD,
+	PLAN_BIENNIAL_PERIOD,
 	PLAN_MONTHLY_PERIOD,
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
@@ -95,6 +96,8 @@ function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 
 		if ( purchase.billPeriodDays ) {
 			switch ( purchase.billPeriodDays ) {
+				case PLAN_BIENNIAL_PERIOD:
+					return translate( 'two years' );
 				case PLAN_ANNUAL_PERIOD:
 					return translate( 'year' );
 				case PLAN_MONTHLY_PERIOD:
