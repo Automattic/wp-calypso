@@ -475,6 +475,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			handleSubmit( {
 				selectedIntent,
 				selectedDesign,
+				selectedSiteCategory: categorization.selection,
 			} );
 		} else {
 			pickDesign( blankCanvasDesign );
