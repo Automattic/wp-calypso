@@ -63,7 +63,8 @@ export class PlanFeatures2023GridHeader extends Component {
 	}
 
 	renderPriceGroup() {
-		const { currencyCode, rawPrice, discountPrice, planName } = this.props;
+		const { currencyCode, rawPrice, discountPrice, planName, is2023OnboardingPricingGrid } =
+			this.props;
 
 		if ( PLAN_ENTERPRISE_GRID_WPCOM === planName ) {
 			return (
@@ -81,12 +82,14 @@ export class PlanFeatures2023GridHeader extends Component {
 							currencyCode={ currencyCode }
 							rawPrice={ rawPrice }
 							displayPerMonthNotation={ false }
+							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 							original
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ discountPrice }
 							displayPerMonthNotation={ false }
+							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 							discounted
 						/>
 					</div>
@@ -99,6 +102,7 @@ export class PlanFeatures2023GridHeader extends Component {
 				currencyCode={ currencyCode }
 				rawPrice={ rawPrice }
 				displayPerMonthNotation={ false }
+				is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 			/>
 		);
 	}

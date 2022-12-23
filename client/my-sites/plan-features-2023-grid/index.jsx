@@ -92,7 +92,8 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderPlanPriceGroup() {
-		const { basePlansPath, planProperties, isReskinned, flowName } = this.props;
+		const { basePlansPath, planProperties, isReskinned, flowName, is2023OnboardingPricingGrid } =
+			this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -136,6 +137,7 @@ export class PlanFeatures2023Grid extends Component {
 						isMonthlyPlan={ isMonthlyPlan }
 						flow={ flowName }
 						planName={ planName }
+						is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 					/>
 				</th>
 			);

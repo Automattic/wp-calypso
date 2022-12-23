@@ -22,6 +22,7 @@ export class PlanPrice extends Component {
 			taxText,
 			translate,
 			omitHeading,
+			is2023OnboardingPricingGrid,
 		} = this.props;
 
 		const classes = classNames( 'plan-price', className, {
@@ -101,13 +102,24 @@ export class PlanPrice extends Component {
 		}
 
 		const renderPriceHtml = ( priceObj ) => {
+			if ( is2023OnboardingPricingGrid ) {
+				return (
+					<div class="plan-price__integer-fraction">
+						<span className="plan-price__integer">{ priceObj.price.integer }</span>
+						<sup className="plan-price__fraction">
+							{ priceObj.raw - priceObj.price.integer > 0 && priceObj.price.fraction }
+						</sup>
+					</div>
+				);
+			}
+
 			return (
-				<div class="plan-price__integer-fraction">
+				<>
 					<span className="plan-price__integer">{ priceObj.price.integer }</span>
 					<sup className="plan-price__fraction">
 						{ priceObj.raw - priceObj.price.integer > 0 && priceObj.price.fraction }
 					</sup>
-				</div>
+				</>
 			);
 		};
 
