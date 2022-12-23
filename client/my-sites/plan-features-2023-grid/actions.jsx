@@ -11,6 +11,7 @@ const PlanFeaturesActionsButton = ( {
 	className,
 	current = false,
 	freePlan = false,
+	isWpcomEnterpriseGridPlan = false,
 	isPlaceholder = false,
 	isPopular,
 	isInSignup,
@@ -35,10 +36,12 @@ const PlanFeaturesActionsButton = ( {
 			return;
 		}
 
-		recordTracksEvent( 'calypso_plan_features_upgrade_click', {
-			current_plan: null,
-			upgrading_to: planType,
-		} );
+		if ( ! freePlan && ! isWpcomEnterpriseGridPlan ) {
+			recordTracksEvent( 'calypso_plan_features_upgrade_click', {
+				current_plan: null,
+				upgrading_to: planType,
+			} );
+		}
 
 		onUpgradeClick();
 	};

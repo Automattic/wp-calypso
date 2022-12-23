@@ -7,6 +7,7 @@ import {
 	getPlan as getPlanFromKey,
 	getPlanClass,
 	isFreePlan,
+	isWpcomEnterpriseGridPlan,
 	isMonthly,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
@@ -180,10 +181,14 @@ export class PlanFeatures2023Grid extends Component {
 
 	handleUpgradeClick( singlePlanProperties ) {
 		const { onUpgradeClick: ownPropsOnUpgradeClick } = this.props;
-		const { cartItemForPlan } = singlePlanProperties;
+		const { cartItemForPlan, planName } = singlePlanProperties;
 
 		if ( ownPropsOnUpgradeClick && ownPropsOnUpgradeClick !== noop && cartItemForPlan ) {
 			ownPropsOnUpgradeClick( cartItemForPlan );
+			return;
+		}
+
+		if ( isFreePlan( planName ) ) {
 			return;
 		}
 
@@ -212,6 +217,7 @@ export class PlanFeatures2023Grid extends Component {
 						className={ getPlanClass( planName ) }
 						current={ current }
 						freePlan={ isFreePlan( planName ) }
+						enterpriseGridPlan={ isWpcomEnterpriseGridPlan( planName ) }
 						isPlaceholder={ isPlaceholder }
 						isPopular={ popular }
 						isInSignup={ isInSignup }

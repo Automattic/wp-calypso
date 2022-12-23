@@ -22,6 +22,7 @@ import {
 	FEATURE_JETPACK_SEARCH,
 	FEATURE_JETPACK_SEARCH_MONTHLY,
 	TYPE_P2_PLUS,
+	TYPE_ENTERPRISE_GRID_WPCOM,
 } from './constants';
 import { PLANS_LIST } from './plans-list';
 import {
@@ -278,6 +279,12 @@ export function isBloggerPlan( planSlug: string ): boolean {
 
 export function isFreePlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_FREE } );
+}
+
+// Checks if it is an Enterprise plan (a.k.a VIP), introduced as part of pdgrnI-1Qp-p2.
+// This is not a real plan, but added to display Enterprise in the pricing grid.
+export function isWpcomEnterpriseGridPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_ENTERPRISE_GRID_WPCOM } );
 }
 
 export function isFlexiblePlan( planSlug: string ): boolean {
