@@ -82,10 +82,12 @@ function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 	}
 
 	const getPeriod = () => {
+		// TODO: is this block needed or can we rely on billPeriodDays?
 		if ( isEmailMonthly( purchase ) ) {
 			return translate( 'month' );
 		}
 
+		// TODO: is this block needed or can we rely on billPeriodDays?
 		if ( typeof plan === 'object' && plan.term ) {
 			switch ( plan.term ) {
 				case TERM_BIENNIALLY:
@@ -118,6 +120,7 @@ function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 			}
 		}
 
+		// TODO: is this fallback needed or can we rely on billPeriodDays?
 		return translate( 'year' );
 	};
 
