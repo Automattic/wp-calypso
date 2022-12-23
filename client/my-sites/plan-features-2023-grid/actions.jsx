@@ -46,7 +46,7 @@ const PlanFeaturesActionsButton = ( {
 	if ( ( availableForPurchase || isPlaceholder ) && ! isLaunchPage && isInSignup ) {
 		return (
 			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
-				{ translate( 'Select', {
+				{ translate( 'Get %(plan)s', {
 					args: {
 						plan: planName,
 					},
