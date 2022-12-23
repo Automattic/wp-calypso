@@ -20,6 +20,7 @@ import {
 	EditorInlineBlockInserterComponent,
 	DimensionsSettings,
 	StyleVariation,
+	CookieBannerComponent,
 } from '..';
 import { getCalypsoURL } from '../../data-helper';
 import { getIdFromBlock } from '../../element-helper';
@@ -62,6 +63,7 @@ export class FullSiteEditorPage {
 	private fullSiteEditorNavSidebarComponent: FullSiteEditorNavSidebarComponent;
 	private templatePartModalComponent: TemplatePartModalComponent;
 	private templatePartListComponent: TemplatePartListComponent;
+	private cookieBannerComponent: CookieBannerComponent;
 
 	/**
 	 * Constructs an instance of the page POM class.
@@ -110,6 +112,7 @@ export class FullSiteEditorPage {
 		);
 		this.templatePartModalComponent = new TemplatePartModalComponent( page, this.editor );
 		this.templatePartListComponent = new TemplatePartListComponent( page, this.editor );
+		this.cookieBannerComponent = new CookieBannerComponent( page );
 	}
 
 	//#region Visit and Setup
@@ -153,6 +156,7 @@ export class FullSiteEditorPage {
 	): Promise< void > {
 		await this.waitUntilLoaded();
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
+		await this.cookieBannerComponent.acceptCookie();
 
 		if ( leaveWithoutSaving ) {
 			this.page.on( 'dialog', async ( dialog ) => {

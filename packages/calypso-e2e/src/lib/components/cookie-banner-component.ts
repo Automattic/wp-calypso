@@ -1,7 +1,7 @@
 import { Page } from 'playwright';
 
 const selectors = {
-	acceptCookie: 'input[value="Close and accept"]',
+	acceptCookie: '.a8c-cookie-banner__ok-button',
 };
 
 /**
@@ -23,6 +23,13 @@ export class CookieBannerComponent {
 	 * Accept and clear the cookie notice.
 	 */
 	async acceptCookie(): Promise< void > {
-		await this.page.click( selectors.acceptCookie );
+		const locator = this.page.locator( selectors.acceptCookie );
+
+		// If it is not present, exit early.
+		if ( ( await locator.count() ) === 0 ) {
+			return;
+		}
+
+		await locator.click();
 	}
 }

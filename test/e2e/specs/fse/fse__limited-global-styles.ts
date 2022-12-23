@@ -45,7 +45,7 @@ describe( DataHelper.createSuiteTitle( 'Site Editor: Limited Global Styles' ), f
 		await fullSiteEditorPage.setStyleVariation( 'Non-default' );
 	} );
 
-	it( 'Save the styles', async function () {
+	it( 'Save the styles and check that the pre-save notice shows up', async function () {
 		// On mobile, site styles is a popover panel that blocks the Save button.
 		// So let's always close site styles first to be safe. :)
 		await fullSiteEditorPage.closeSiteStyles();
@@ -55,11 +55,6 @@ describe( DataHelper.createSuiteTitle( 'Site Editor: Limited Global Styles' ), f
 	it( 'Reset styles to defaults', async function () {
 		await fullSiteEditorPage.openSiteStyles();
 		await fullSiteEditorPage.setStyleVariation( 'Default' );
-	} );
-
-	it( 'Save the default styles', async function () {
-		// On mobile, site styles is a popover panel that blocks the Save button.
-		// So let's always close site styles first to be safe. :)
 		await fullSiteEditorPage.closeSiteStyles();
 		await fullSiteEditorPage.save();
 	} );
