@@ -1,15 +1,10 @@
 import {
-	getPlan,
-	getProductFromSlug,
 	isDIFMProduct,
 	isDomainTransfer,
 	isEmailMonthly,
 	PLAN_ANNUAL_PERIOD,
 	PLAN_BIENNIAL_PERIOD,
 	PLAN_MONTHLY_PERIOD,
-	TERM_ANNUALLY,
-	TERM_BIENNIALLY,
-	TERM_MONTHLY,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import {
@@ -21,8 +16,7 @@ import type { Purchase } from 'calypso/lib/purchases/types';
 
 function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 	const translate = useTranslate();
-	const { productSlug, productDisplayPrice } = purchase;
-	const plan = getPlan( productSlug ) || getProductFromSlug( productSlug );
+	const { productDisplayPrice } = purchase;
 
 	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
 		if ( isDIFMProduct( purchase ) ) {
@@ -87,37 +81,23 @@ function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 			return translate( 'month' );
 		}
 
-		// TODO: is this block needed or can we rely on billPeriodDays?
-		if ( typeof plan === 'object' && plan.term ) {
-			switch ( plan.term ) {
-				case TERM_BIENNIALLY:
-					return translate( 'two years' );
-				case TERM_MONTHLY:
-					return translate( 'month' );
-				case TERM_ANNUALLY:
-					return translate( 'year' );
-			}
-		}
-
-		if ( purchase.billPeriodDays ) {
-			switch ( purchase.billPeriodDays ) {
-				case PLAN_BIENNIAL_PERIOD:
-					return translate( 'two years' );
-				case PLAN_ANNUAL_PERIOD:
-					return translate( 'year' );
-				case PLAN_MONTHLY_PERIOD:
-					return translate( 'month' );
-				case 7:
-					// Note: does this period ever happen? I don't think it does but it
-					// was added in https://github.com/Automattic/wp-calypso/pull/65006
-					// and so I'm leaving it for now.
-					return translate( 'week' );
-				case 1:
-					// Note: does this period ever happen? I don't think it does but it
-					// was added in https://github.com/Automattic/wp-calypso/pull/65006
-					// and so I'm leaving it for now.
-					return translate( 'day' );
-			}
+		switch ( purchase.billPeriodDays ) {
+			case PLAN_BIENNIAL_PERIOD:
+				return translate( 'two years' );
+			case PLAN_ANNUAL_PERIOD:
+				return translate( 'year' );
+			case PLAN_MONTHLY_PERIOD:
+				return translate( 'month' );
+			case 7:
+				// Note: does this period ever happen? I don't think it does but it
+				// was added in https://github.com/Automattic/wp-calypso/pull/65006
+				// and so I'm leaving it for now.
+				return translate( 'week' );
+			case 1:
+				// Note: does this period ever happen? I don't think it does but it
+				// was added in https://github.com/Automattic/wp-calypso/pull/65006
+				// and so I'm leaving it for now.
+				return translate( 'day' );
 		}
 
 		// TODO: is this fallback needed or can we rely on billPeriodDays?
