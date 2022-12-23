@@ -1,7 +1,6 @@
 import {
 	isDIFMProduct,
 	isDomainTransfer,
-	isEmailMonthly,
 	PLAN_ANNUAL_PERIOD,
 	PLAN_BIENNIAL_PERIOD,
 	PLAN_MONTHLY_PERIOD,
@@ -76,11 +75,6 @@ function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 	}
 
 	const getPeriod = () => {
-		// TODO: is this block needed or can we rely on billPeriodDays?
-		if ( isEmailMonthly( purchase ) ) {
-			return translate( 'month' );
-		}
-
 		switch ( purchase.billPeriodDays ) {
 			case PLAN_BIENNIAL_PERIOD:
 				return translate( 'two years' );
