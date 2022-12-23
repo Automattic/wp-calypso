@@ -6,6 +6,7 @@ import { getItemVariantDiscountPercentage } from './util';
 import type { WPCOMProductVariant } from './types';
 
 const Discount = styled.span`
+	text-align: center;
 	color: #234929;
 	display: block;
 	background-color: #b8e6bf;
