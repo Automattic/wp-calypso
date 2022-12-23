@@ -18,13 +18,13 @@
 		gap: 1rem;
 		align-items: center;
 
-		@media (max-width: $break-medium) {
+		@media (max-width: $break-large) {
 			align-items: normal;
 		}
 
 		&--title {
 			font-weight: 600;
-			@media (max-width: $break-medium) {
+			@media (max-width: $break-large) {
 				display: none;
 			}
 		}
@@ -53,14 +53,14 @@
 		height: 1rem;
 	}
 
-	@media (max-width: $break-medium) {
+	@media (max-width: $break-large) {
 		display: block;
 	}
 
 	tr {
 		border-bottom: 1px solid var(--studio-white);
 
-		@media (max-width: $break-medium) {
+		@media (max-width: $break-large) {
 			display: block;
 			margin-bottom: 1rem;
 		}
@@ -82,7 +82,7 @@
 
 			&.product-jetpack-free .more-info-link {
 				display: none;
-				@media (max-width: $break-medium) {
+				@media (max-width: $break-large) {
 					display: initial;
 					text-decoration: none;
 				}
@@ -137,7 +137,7 @@
 			gap: 0.5rem;
 		}
 
-		@media (max-width: $break-medium) {
+		@media (max-width: $break-large) {
 			display: block;
 			width: 100%;
 			text-align: start;
@@ -155,7 +155,7 @@
 		display: none;
 	}
 
-	@include break-medium() {
+	@include break-large() {
 		.feature-heading > div {
 			display: flex;
 			align-items: center;
@@ -192,7 +192,7 @@
 		font-weight: normal;
 		font-size: 1rem;
 
-		@media (max-width: $break-medium) {
+		@media (max-width: $break-large) {
 			padding: 0.5em 0 0.5em 0;
 			font-weight: 700;
 			text-align: start;
@@ -200,12 +200,12 @@
 	}
 
 	tbody {
-		@media (max-width: $break-medium) {
+		@media (max-width: $break-large) {
 			display: block;
 			width: 100%;
 		}
 
-		@include break-medium() {
+		@include break-large() {
 			tr:first-child {
 				.section-heading {
 					padding-top: 0;
@@ -218,7 +218,7 @@
 		padding: 1em;
 		text-align: center;
 
-		@media (max-width: $break-medium) {
+		@media (max-width: $break-large) {
 			display: block;
 			text-align: start;
 			border-bottom: 1px solid var(--studio-white);
