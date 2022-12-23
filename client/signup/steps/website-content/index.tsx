@@ -216,15 +216,20 @@ export default function WrapperWebsiteContent(
 ) {
 	const { flowName, stepName, positionInFlow, queryObject } = props;
 	const translate = useTranslate();
-	const headerText = translate( 'Website Content' );
-	const subHeaderText = translate(
-		'Provide content for your website build. You will be able to edit all content later using the WordPress editor.'
-	);
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 
 	const [ pageTitles, setPageTitles ] = useState< PageId[] >( [] );
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ isStoreFlow, setIsStoreFlow ] = useState( false );
+
+	const headerText = translate( 'Website Content' );
+	const subHeaderText = isStoreFlow
+		? translate(
+				'Provide content for your website build. You can add products later with the WordPress editor.'
+		  )
+		: translate(
+				'Provide content for your website build. You will be able to edit all content later using the WordPress editor.'
+		  );
 
 	useEffect( () => {
 		async function fetchSelectedPageTitles() {
