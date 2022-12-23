@@ -57,6 +57,7 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 	const addEmailsContent = enableEmailNotification && (
 		<div className="notification-settings__email-container">
 			<TokenField
+				tokenizeOnSpace
 				placeholder={ translate( 'Enter email addresses' ) }
 				value={ addedEmailAddresses }
 				onChange={ setAddedEmailAddresses }
