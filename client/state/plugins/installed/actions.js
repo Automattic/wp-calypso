@@ -198,7 +198,7 @@ export function deactivatePlugin( siteId, plugin ) {
 			pluginId,
 		};
 
-		if ( ! plugin.active ) {
+		if ( siteId && ! plugin.sites[ siteId ]?.active ) {
 			return dispatch( {
 				...defaultAction,
 				type: PLUGIN_DEACTIVATE_REQUEST_SUCCESS,
