@@ -100,11 +100,19 @@ function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 				return translate( 'day' );
 		}
 
-		// TODO: is this fallback needed or can we rely on billPeriodDays?
-		return translate( 'year' );
+		return null;
 	};
 
-	const getPriceLabel = ( period: string ) => {
+	const getPriceLabel = ( period: string | null ) => {
+		if ( ! period ) {
+			return (
+				<span
+					// eslint-disable-next-line react/no-danger
+					dangerouslySetInnerHTML={ { __html: productDisplayPrice } }
+				/>
+			);
+		}
+
 		//translators: displayPrice is the price of the purchase with localized currency (i.e. "C$10"), %(period)s is how long the plan is active (i.e. "year")
 		return translate( '{{displayPrice/}} {{period}}/ %(period)s{{/period}}', {
 			args: { period },
