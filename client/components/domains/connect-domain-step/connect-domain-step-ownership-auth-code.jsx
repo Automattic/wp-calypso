@@ -32,7 +32,7 @@ const ConnectDomainStepOwnershipAuthCode = ( {
 			<p className="connect-domain-step__text">
 				{ createInterpolateElement(
 					__(
-						'This will only be used for verification purposes, a domain transfer <strong>will not</strong> be initiated.'
+						'This will only be used to verify that you own this domain, <strong>we will not transfer it</strong>.'
 					),
 					{ strong: createElement( 'strong' ) }
 				) }
