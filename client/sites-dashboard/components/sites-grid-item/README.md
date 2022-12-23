@@ -11,7 +11,7 @@ function render() {
 	const site = {};
 	return (
 		<div>
-            <SitesGridItem site={ site } key={ site.ID }></SitesGridItem>
+			<SitesGridItem site={ site } key={ site.ID }></SitesGridItem>
 		</div>
 	);
 }
