@@ -544,6 +544,11 @@
 	}
 }
 
+.banner.theme__page-upsell-disabled {
+	pointer-events: none;
+	opacity: 0.5;
+}
+
 .banner.theme__preview-upsell-banner {
 	@include banner-dark();
 	width: 100%;
