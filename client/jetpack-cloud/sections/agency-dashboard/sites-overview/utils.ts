@@ -32,6 +32,7 @@ export const siteColumns = [
 	{
 		key: 'monitor',
 		title: translate( 'Monitor' ),
+		className: 'min-width-100px',
 	},
 	{
 		key: 'plugin',
@@ -361,6 +362,7 @@ const formatMonitorData = ( site: Site ) => {
 		status: '',
 		type: 'monitor',
 		error: false,
+		settings: site.monitor_settings,
 	};
 	if ( ! site.monitor_active ) {
 		monitor.status = 'disabled';
