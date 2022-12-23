@@ -46,8 +46,21 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		}
 	}, [] );
 
-	const getPatterns = () =>
-		[ header, ...sections, footer ].filter( ( pattern ) => pattern ) as Pattern[];
+	const getPatterns = ( patternType?: string | null ) => {
+		let patterns = [ header, ...sections, footer ];
+
+		if ( 'header' === patternType ) {
+			patterns = [ header ];
+		}
+		if ( 'footer' === patternType ) {
+			patterns = [ footer ];
+		}
+		if ( 'section' === patternType ) {
+			patterns = sections;
+		}
+
+		return patterns.filter( ( pattern ) => pattern ) as Pattern[];
+	};
 
 	const trackEventPatternAdd = ( patternType: string ) => {
 		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_add_click', {
@@ -58,19 +71,25 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const trackEventPatternSelect = ( {
 		patternType,
 		patternId,
+		patternName,
 	}: {
 		patternType: string;
 		patternId: number;
+		patternName: string;
 	} ) => {
 		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_click', {
 			pattern_type: patternType,
 			pattern_id: patternId,
+			pattern_name: patternName,
 		} );
 	};
 
 	const trackEventContinue = () => {
 		const patterns = getPatterns();
 		recordTracksEvent( 'calypso_signup_pattern_assembler_continue_click', {
+			pattern_types: [ header && 'header', sections.length && 'section', footer && 'footer' ]
+				.filter( Boolean )
+				.join( ',' ),
 			pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
 			pattern_count: patterns.length,
@@ -157,6 +176,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 			trackEventPatternSelect( {
 				patternType: showPatternSelectorType,
 				patternId: selectedPattern.id,
+				patternName: selectedPattern.name,
 			} );
 		}
 
@@ -205,7 +225,23 @@ const PatternAssembler: Step = ( { navigation } ) => {
 				<PatternSelectorLoader
 					showPatternSelectorType={ showPatternSelectorType }
 					onSelect={ onSelect }
-					onBack={ () => setShowPatternSelectorType( null ) }
+					onDoneClick={ () => {
+						const patterns = getPatterns( showPatternSelectorType );
+						recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_done_click', {
+							pattern_type: showPatternSelectorType,
+							pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
+							pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
+						} );
+
+						setShowPatternSelectorType( null );
+					} }
+					onBack={ () => {
+						recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_back_click', {
+							pattern_type: showPatternSelectorType,
+						} );
+
+						setShowPatternSelectorType( null );
+					} }
 					selectedPattern={ getSelectedPattern() }
 				/>
 				{ ! showPatternSelectorType && (
