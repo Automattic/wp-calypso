@@ -11806,7 +11806,6 @@ __metadata:
     moment-timezone: ^0.5.40
     moment-timezone-data-webpack-plugin: ^1.5.1
     nock: ^12.0.3
-    p5: ^1.5.0
     page: ^1.11.5
     path-browserify: ^1.0.1
     percentage-regex: ^3.0.0
@@ -24712,13 +24711,6 @@ fsevents@^1.2.7:
   version: 2.2.0
   resolution: "p-try@npm:2.2.0"
   checksum: c36c19907734c904b16994e6535b02c36c2224d433e01a2f1ab777237f4d86e6289fd5fd464850491e940379d4606ed850c03e0f9ab600b0ebddb511312e177f
-  languageName: node
-  linkType: hard
-
-"p5@npm:^1.5.0":
-  version: 1.5.0
-  resolution: "p5@npm:1.5.0"
-  checksum: a3ae131848425b8b49ad6d7aaa3e314a46c79d901aa457502f274455fbad8413a64400eff532f31da90e5f0451ac49cfd7bbe0ad7468f444345db40035a4a2a5
   languageName: node
   linkType: hard
 
