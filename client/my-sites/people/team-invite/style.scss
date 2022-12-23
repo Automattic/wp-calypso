@@ -7,12 +7,30 @@
 		margin-bottom: 1rem;
 	}
 
+	input[type="text"].form-text-input {
+		padding-inline-end: 2rem;
+	}
+
 	.form-input-validation {
 		padding-bottom: 0;
 	}
 
 	.form-setting-explanation {
 		font-style: normal;
+	}
+
+	.form-field-wrapper {
+		position: relative;
+	}
+
+	.form-validation-icon {
+		position: absolute;
+		top: 7px;
+		inset-inline-end: 7px;
+
+		svg {
+			fill: var(--color-success-50);
+		}
 	}
 
 	.team-invite-form__add-message {

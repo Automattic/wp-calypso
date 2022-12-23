@@ -1,5 +1,6 @@
 import { Button, FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Icon, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, ChangeEvent, useEffect, FormEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -144,16 +145,23 @@ function InviteForm() {
 			{ [ ...Array( tokenControlNum ) ].map( ( v, i ) => (
 				<FormFieldset key={ i }>
 					{ ! i && <FormLabel htmlFor={ `token-${ i }` }>{ _( 'Email or Username' ) }</FormLabel> }
-					<FormTextInput
-						id={ `token-${ i }` }
-						name={ `token-${ i }` }
-						value={ tokenValues[ i ] || '' }
-						isError={ tokenErrors && !! tokenErrors[ tokenValues[ i ] ] }
-						onBlur={ () => onTokenBlur( i ) }
-						onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
-							onTokenChange( e.target.value, i )
-						}
-					/>
+					<div className="form-field-wrapper">
+						<FormTextInput
+							id={ `token-${ i }` }
+							name={ `token-${ i }` }
+							value={ tokenValues[ i ] || '' }
+							isError={ tokenErrors && !! tokenErrors[ tokenValues[ i ] ] }
+							onBlur={ () => onTokenBlur( i ) }
+							onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
+								onTokenChange( e.target.value, i )
+							}
+						/>
+						{ tokenValues[ i ] && tokenErrors && ! tokenErrors[ tokenValues[ i ] ] && (
+							<div className="form-validation-icon">
+								<Icon icon={ check } />
+							</div>
+						) }
+					</div>
 					{ tokenErrors && tokenErrors[ tokenValues[ i ] ] && (
 						<FormInputValidation isError text={ tokenErrors[ tokenValues[ i ] ]?.message } />
 					) }
