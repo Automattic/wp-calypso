@@ -82,6 +82,8 @@ function TeamInvite( props: Props ) {
 				if ( ! site || ! isJetpack || needsVerification ) {
 					return (
 						<Card>
+							{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
+							{ /* @ts-ignore */ }
 							<EmailVerificationGate>
 								<InviteForm />
 							</EmailVerificationGate>
@@ -102,6 +104,8 @@ function TeamInvite( props: Props ) {
 				<>
 					<SectionHeader label={ _( 'Invite Link' ) } />
 					<Card className="invite-people__link">
+						{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
+						{ /* @ts-ignore */ }
 						<EmailVerificationGate>
 							<InviteLinkForm siteId={ siteId } />
 						</EmailVerificationGate>
