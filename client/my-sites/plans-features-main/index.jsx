@@ -47,7 +47,6 @@ import Notice from 'calypso/components/notice';
 import { getTld } from 'calypso/lib/domains';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import PlanFeatures from 'calypso/my-sites/plan-features';
-import PlanFeatures2023Grid from 'calypso/my-sites/plan-features-2023-grid';
 import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
