@@ -104,7 +104,7 @@ export class PlanPrice extends Component {
 			let priceInteger = priceObj.price.integer;
 			// In some currencies like IDR, a dot is used to separate group of threes.
 			// Remove it so that it's not confused to be a decimal point by the subtraction operator.
-			priceInteger = priceInteger.replace( '.', '' );
+			priceInteger = priceInteger.replace( /[,.]/g, '' );
 
 			return (
 				<>
