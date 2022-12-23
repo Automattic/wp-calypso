@@ -17,6 +17,7 @@ import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import {
 	getSiteOption,
@@ -54,7 +55,7 @@ function updateQueryString( url = null, query = {} ) {
 }
 
 const CHART_OPENS = {
-	attr: 'opens',
+	attr: 'opens_count',
 	legendOptions: [],
 	icon: (
 		<svg className="gridicon" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -176,7 +177,7 @@ class StatsEmailOpenDetail extends Component {
 		const { isLatestEmailsHomepage, email, emailFallback } = this.props;
 
 		if ( isLatestEmailsHomepage ) {
-			return translate( 'Home page / Archives' );
+			return this.props.translate( 'Home page / Archives' );
 		}
 
 		if ( typeof email?.title === 'string' && email.title.length ) {
@@ -222,7 +223,6 @@ class StatsEmailOpenDetail extends Component {
 		const isLoading = isRequestingStats && ! countViews;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
-
 		const actionLabel = translate( 'View Email' );
 		const noViewsLabel = translate( 'Your email has not received any views yet!' );
 
@@ -317,27 +317,30 @@ class StatsEmailOpenDetail extends Component {
 	}
 }
 
-const connectComponent = connect( ( state, { postId, period: { period } } ) => {
-	const siteId = getSelectedSiteId( state );
-	const isJetpack = isJetpackSite( state, siteId );
-	const isPreviewable = isSitePreviewable( state, siteId );
-	const isLatestEmailsHomepage =
-		getSiteOption( state, siteId, 'show_on_front' ) === 'email' && postId === 0;
+const connectComponent = connect(
+	( state, { postId, period: { period } } ) => {
+		const siteId = getSelectedSiteId( state );
+		const isJetpack = isJetpackSite( state, siteId );
+		const isPreviewable = isSitePreviewable( state, siteId );
+		const isLatestEmailsHomepage =
+			getSiteOption( state, siteId, 'show_on_front' ) === 'email' && postId === 0;
 
-	return {
-		email: getSiteEmail( state, siteId, postId ),
-		emailFallback: getEmailStat( state, siteId, postId, 'email' ),
-		isLatestEmailsHomepage,
-		countViews: getEmailStat( state, siteId, postId, period, statType ),
-		// countViews: [1],
-		isRequestingStats: isRequestingEmailStats( state, siteId, postId ),
-		siteSlug: getSiteSlug( state, siteId ),
-		showViewLink: ! isJetpack && ! isLatestEmailsHomepage && isPreviewable,
-		slug: getSelectedSiteSlug( state ),
-		// previewUrl: getEmailPreviewUrl( state, siteId, postId ),
-		isSitePrivate: isPrivateSite( state, siteId ),
-		siteId,
-	};
-} );
+		return {
+			email: getSiteEmail( state, siteId, postId ),
+			emailFallback: getEmailStat( state, siteId, postId, 'email' ),
+			isLatestEmailsHomepage,
+			countViews: getEmailStat( state, siteId, postId, period, statType ),
+			// countViews: [1],
+			isRequestingStats: isRequestingEmailStats( state, siteId, postId ),
+			siteSlug: getSiteSlug( state, siteId ),
+			showViewLink: ! isJetpack && ! isLatestEmailsHomepage && isPreviewable,
+			slug: getSelectedSiteSlug( state ),
+			// previewUrl: getEmailPreviewUrl( state, siteId, postId ),
+			isSitePrivate: isPrivateSite( state, siteId ),
+			siteId,
+		};
+	},
+	{ recordGoogleEvent }
+);
 
 export default flowRight( connectComponent, localize )( StatsEmailOpenDetail );
