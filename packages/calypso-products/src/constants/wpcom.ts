@@ -37,7 +37,7 @@ export const PLAN_WPCOM_FLEXIBLE = 'wpcom-flexible'; // Not a real plan; it's a 
 export const PLAN_WPCOM_PRO = 'pro-plan';
 export const PLAN_WPCOM_PRO_MONTHLY = 'pro-plan-monthly';
 export const PLAN_WPCOM_STARTER = 'starter-plan';
-export const PLAN_ENTERPRISE = 'enterprise_plan';
+export const PLAN_ENTERPRISE_GRID_WPCOM = 'plan-enterprise-grid-wpcom'; // Not a real plan; we show the VIP section in the plans grid as part of pdgrnI-1Qp-p2.
 
 export const WPCOM_PLANS = <const>[
 	PLAN_BUSINESS_MONTHLY,
@@ -65,7 +65,7 @@ export const WPCOM_PLANS = <const>[
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_PRO_MONTHLY,
 	PLAN_WPCOM_STARTER,
-	PLAN_ENTERPRISE,
+	PLAN_ENTERPRISE_GRID_WPCOM,
 ];
 
 export const WPCOM_MONTHLY_PLANS = <const>[
@@ -74,7 +74,7 @@ export const WPCOM_MONTHLY_PLANS = <const>[
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_WPCOM_PRO_MONTHLY,
-	PLAN_ENTERPRISE,
+	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_FREE,
 ];
 
