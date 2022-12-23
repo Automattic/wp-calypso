@@ -488,7 +488,7 @@ export function emailOpen( context, next ) {
 		return next();
 	}
 
-	const validTabs = [ 'opens_count', 'unique_opens_count' ];
+	const validTabs = [ 'opens_count', 'unique_opens' ];
 	const chartTab = validTabs.includes( queryOptions.tab ) ? queryOptions.tab : 'opens_count';
 
 	context.primary = (

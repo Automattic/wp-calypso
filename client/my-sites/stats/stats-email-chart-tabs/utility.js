@@ -50,7 +50,7 @@ export const buildChartData = memoizeLast( ( activeLegend, chartTab, data, perio
 			'is-selected': record.period === queryDate,
 		} );
 
-		const item = addTooltipData(
+		return addTooltipData(
 			chartTab,
 			{
 				label: record[ `label${ capitalize( period ) }` ],
@@ -61,8 +61,6 @@ export const buildChartData = memoizeLast( ( activeLegend, chartTab, data, perio
 			},
 			period
 		);
-
-		return item;
 	} );
 } );
 
@@ -79,11 +77,18 @@ function addTooltipData( chartTab, item, period ) {
 			tooltipData.push( {
 				label: translate( 'Opens' ),
 				value: numberFormat( item.value ),
-				className: 'is-likes',
+				className: 'is-opens',
 				icon: <Icon className="gridicon" icon={ starEmpty } />,
 			} );
 			break;
-
+		case 'unique_opens':
+			tooltipData.push( {
+				label: translate( 'Unique opens' ),
+				value: numberFormat( item.value ),
+				className: 'is-unqiue-opens',
+				icon: <Icon className="gridicon" icon={ starEmpty } />,
+			} );
+			break;
 		default:
 			tooltipData.push( {
 				label: translate( 'Views' ),
