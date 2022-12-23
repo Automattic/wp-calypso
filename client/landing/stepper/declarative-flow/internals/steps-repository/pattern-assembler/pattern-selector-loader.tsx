@@ -8,12 +8,14 @@ type PatternSelectorLoaderProps = {
 	selectedPattern: Pattern | null;
 	onSelect: ( selectedPattern: Pattern ) => void;
 	onBack: () => void;
+	onDoneClick: () => void;
 };
 
 const PatternSelectorLoader = ( {
 	showPatternSelectorType,
 	onSelect,
 	onBack,
+	onDoneClick,
 	selectedPattern,
 }: PatternSelectorLoaderProps ) => {
 	const translate = useTranslate();
@@ -28,6 +30,7 @@ const PatternSelectorLoader = ( {
 				patterns={ headerPatterns }
 				onSelect={ onSelect }
 				onBack={ onBack }
+				onDoneClick={ onDoneClick }
 				title={ translate( 'Add a header' ) }
 				selectedPattern={ selectedPattern }
 			/>
@@ -36,6 +39,7 @@ const PatternSelectorLoader = ( {
 				patterns={ footerPatterns }
 				onSelect={ onSelect }
 				onBack={ onBack }
+				onDoneClick={ onDoneClick }
 				title={ translate( 'Add a footer' ) }
 				selectedPattern={ selectedPattern }
 			/>

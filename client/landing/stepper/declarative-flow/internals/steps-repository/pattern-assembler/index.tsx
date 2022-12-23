@@ -1,8 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { uniqueBy } from '@automattic/js-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { uniqBy } from 'lodash';
 import { useState, useRef, useEffect } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
@@ -88,6 +88,9 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const trackEventContinue = () => {
 		const patterns = getPatterns();
 		recordTracksEvent( 'calypso_signup_pattern_assembler_continue_click', {
+			pattern_types: [ header && 'header', sections.length && 'section', footer && 'footer' ]
+				.filter( Boolean )
+				.join( ',' ),
 			pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
 			pattern_count: patterns.length,
@@ -223,12 +226,22 @@ const PatternAssembler: Step = ( { navigation } ) => {
 				<PatternSelectorLoader
 					showPatternSelectorType={ showPatternSelectorType }
 					onSelect={ onSelect }
-					onBack={ () => {
-						const uniquePatterns = uniqBy( getPatterns( showPatternSelectorType ), 'id' );
+					onDoneClick={ () => {
+						const uniquePatterns = uniqueBy(
+							getPatterns( showPatternSelectorType ),
+							( a, b ) => a.id === b.id
+						);
 						recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_done_click', {
 							pattern_type: showPatternSelectorType,
 							pattern_ids: uniquePatterns.map( ( { id } ) => id ).join( ',' ),
 							pattern_names: uniquePatterns.map( ( { name } ) => name ).join( ',' ),
+						} );
+
+						setShowPatternSelectorType( null );
+					} }
+					onBack={ () => {
+						recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_back_click', {
+							pattern_type: showPatternSelectorType,
 						} );
 
 						setShowPatternSelectorType( null );
