@@ -189,7 +189,7 @@ export class PlanFeatures2023Grid extends Component {
 		}
 
 		if ( isFreePlan( planName ) ) {
-			return;
+			ownPropsOnUpgradeClick( null );
 		}
 
 		return `/checkout`;
@@ -217,7 +217,7 @@ export class PlanFeatures2023Grid extends Component {
 						className={ getPlanClass( planName ) }
 						current={ current }
 						freePlan={ isFreePlan( planName ) }
-						enterpriseGridPlan={ isWpcomEnterpriseGridPlan( planName ) }
+						isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planName ) }
 						isPlaceholder={ isPlaceholder }
 						isPopular={ popular }
 						isInSignup={ isInSignup }

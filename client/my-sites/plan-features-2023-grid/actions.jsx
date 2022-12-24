@@ -2,6 +2,7 @@ import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const noop = () => {};
@@ -47,6 +48,23 @@ const PlanFeaturesActionsButton = ( {
 	};
 
 	if ( ( availableForPurchase || isPlaceholder ) && ! isLaunchPage && isInSignup ) {
+		if ( isWpcomEnterpriseGridPlan ) {
+			return (
+				<Button className={ classes }>
+					{ translate( '{{ExternalLink}}Get %(plan)s{{/ExternalLink}}', {
+						args: {
+							plan: planName,
+						},
+						components: {
+							ExternalLink: (
+								<ExternalLinkWithTracking href="https://wordpress.org" target="_blank" />
+							),
+						},
+					} ) }
+				</Button>
+			);
+		}
+
 		return (
 			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
 				{ translate( 'Get %(plan)s', {
