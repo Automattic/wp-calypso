@@ -14,20 +14,18 @@ const PlanFeaturesActionsButton = ( {
 	freePlan = false,
 	isWpcomEnterpriseGridPlan = false,
 	isPlaceholder = false,
-	isPopular,
 	isInSignup,
 	isLaunchPage,
 	onUpgradeClick = noop,
 	planName,
 	planType,
-	primaryUpgrade = false,
 	translate,
+	flowName,
 } ) => {
 	const classes = classNames(
 		'plan-features-2023-grid__actions-button',
 		{
 			'is-current': current,
-			'is-primary': ( primaryUpgrade && ! isPlaceholder ) || isPopular,
 		},
 		className
 	);
@@ -47,6 +45,8 @@ const PlanFeaturesActionsButton = ( {
 		onUpgradeClick();
 	};
 
+	const vipLandingPageUrlWithoutUtmCampaign =
+		'https://wpvip.com/wordpress-vip-agile-content-platform?utm_source=WordPresscom&utm_medium=automattic_referral';
 	if ( ( availableForPurchase || isPlaceholder ) && ! isLaunchPage && isInSignup ) {
 		if ( isWpcomEnterpriseGridPlan ) {
 			return (
@@ -57,7 +57,12 @@ const PlanFeaturesActionsButton = ( {
 						},
 						components: {
 							ExternalLink: (
-								<ExternalLinkWithTracking href="https://wordpress.org" target="_blank" />
+								<ExternalLinkWithTracking
+									href={ `${ vipLandingPageUrlWithoutUtmCampaign }&utm_campaign=calypso_signup` }
+									target="_blank"
+									tracksEventName="calypso_plan_step_enterprise_click"
+									tracksEventProps={ { flow: flowName } }
+								/>
 							),
 						},
 					} ) }

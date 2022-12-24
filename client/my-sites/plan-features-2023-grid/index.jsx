@@ -196,7 +196,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderTopButtons() {
-		const { isInSignup, isLaunchPage, planProperties } = this.props;
+		const { isInSignup, isLaunchPage, planProperties, flowName } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -226,6 +226,7 @@ export class PlanFeatures2023Grid extends Component {
 						planName={ planConstantObj.getTitle() }
 						planType={ planName }
 						primaryUpgrade={ primaryUpgrade }
+						flowName={ flowName }
 					/>
 				</td>
 			);

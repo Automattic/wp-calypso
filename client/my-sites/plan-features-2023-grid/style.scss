@@ -25,6 +25,52 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features-2023-grid__table-item.is-top-buttons {
 	padding: 0 20px;
+
+	.plan-features-2023-gridrison__actions-buttons {
+		.plan-features-2023-grid__actions-button {
+			font-weight: 500;
+			letter-spacing: 0.32px;
+			line-height: 20px;
+			border-radius: 4px;
+
+			&:hover {
+				opacity: 0.85;
+				transition: 0.7s;
+			}
+
+			&.is-free-plan {
+				background-color: var(--studio-blue-50);
+				color: var(--studio-blue-0);
+			}
+
+			&.is-personal-plan {
+				background-color: var(--studio-blue-60);
+				color: var(--studio-blue-0);
+			}
+
+			&.is-premium-plan {
+				background-color: #004687;
+				color: var(--studio-blue-0);
+			}
+
+			&.is-business-plan {
+				background-color: #7f54b3;
+				color: var(--studio-purple-0);
+			}
+
+			&.is-ecommerce-plan {
+				background-color: #55347d;
+				color: var(--studio-purple-0);
+			}
+
+			&.is-wpcom-enterprise-grid-plan {
+				background-color: var(--studio-gray-80);
+				a {
+					color: var(--studio-gray-0);
+				}
+			}
+		}
+	}
 }
 
 .plan-features-2023-grid__header {

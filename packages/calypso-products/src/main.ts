@@ -109,6 +109,10 @@ export function getPlanClass( planKey: string ): string {
 		return 'is-ecommerce-plan';
 	}
 
+	if ( isWpcomEnterpriseGridPlan( planKey ) ) {
+		return 'is-wpcom-enterprise-grid-plan';
+	}
+
 	if ( isProPlan( planKey ) ) {
 		return 'is-pro-plan';
 	}
