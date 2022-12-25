@@ -95,7 +95,7 @@ $plan-features-sidebar-width: 272px;
 
 .plans-wrapper {
 	margin: 0 auto;
-	padding: 40px 0 10px;
+	padding: 103px 0 10px;
 	transform: translateY(-20px);
 	overflow-x: auto;
 }
@@ -449,15 +449,18 @@ body.is-section-signup.is-white-signup {
 		.plan-pill.is-in-signup {
 			font-size: 0.75rem;
 			font-weight: 500;
+			color: var(--studio-white);
 			letter-spacing: 0.2px;
 			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			line-height: 1.25rem;
-			padding: 0 8px;
-			right: 52%;
-			transform: translate(50%);
+			padding: 0 9px;
+			right: unset;
+			left: unset;
+			top: unset;
+			bottom: 0;
 			border-radius: 4px;
-			background-color: var(--studio-green-5);
-			color: var(--studio-gray-80);
+			background-color: var(--studio-gray-80);
+			transform: translate(20px, 0);
 		}
 
 		&.popular-plan-parent-class {
@@ -466,12 +469,17 @@ body.is-section-signup.is-white-signup {
 			.plan-features-2023-grid__popular-badge {
 				position: absolute;
 				width: 100%;
-				height: 50px;
-				top: -40px;
-				background: #000;
-				border: 1px solid #000;
+				top: -38px;
+				right: -1px;
+				background: #fff;
+				border-color: #e0e0e0;
+				border-width: 1px 1px 0 1px;
+				/* stylelint-disable-next-line */
+				border-radius: 5px 5px 0 0;
+				border-style: solid;
 				z-index: 999999;
 				color: #fff;
+				padding: 20px 0 17px;
 			}
 		}
 	}

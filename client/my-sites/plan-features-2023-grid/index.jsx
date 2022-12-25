@@ -19,6 +19,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
+import PlanPill from 'calypso/components/plans/plan-pill';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
@@ -147,7 +148,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderPlanHeaders() {
-		const { planProperties } = this.props;
+		const { planProperties, translate, isInSignup } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const { planName, planConstantObj } = properties;
@@ -162,7 +163,9 @@ export class PlanFeatures2023Grid extends Component {
 			return (
 				<th scope="col" key={ planName } className={ tableItemClasses }>
 					{ isPremiumPlan( planName ) && (
-						<div className="plan-features-2023-grid__popular-badge">Popular</div>
+						<div className="plan-features-2023-grid__popular-badge">
+							<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
+						</div>
 					) }
 					<header className={ headerClasses }>
 						<h4 className="plan-features-2023-grid__header-title">
