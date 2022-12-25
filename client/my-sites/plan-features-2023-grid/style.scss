@@ -95,7 +95,7 @@ $plan-features-sidebar-width: 272px;
 
 .plans-wrapper {
 	margin: 0 auto;
-	padding: 20px 0 10px;
+	padding: 40px 0 10px;
 	transform: translateY(-20px);
 	overflow-x: auto;
 }
@@ -458,6 +458,21 @@ body.is-section-signup.is-white-signup {
 			border-radius: 4px;
 			background-color: var(--studio-green-5);
 			color: var(--studio-gray-80);
+		}
+
+		&.popular-plan-parent-class {
+			position: relative;
+
+			.plan-features-2023-grid__popular-badge {
+				position: absolute;
+				width: 100%;
+				height: 50px;
+				top: -40px;
+				background: #000;
+				border: 1px solid #000;
+				z-index: 999999;
+				color: #fff;
+			}
 		}
 	}
 

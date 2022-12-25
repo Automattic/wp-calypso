@@ -10,6 +10,7 @@ import {
 	isWpcomEnterpriseGridPlan,
 	isMonthly,
 	TERM_MONTHLY,
+	isPremiumPlan,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -148,13 +149,19 @@ export class PlanFeatures2023Grid extends Component {
 
 		return map( planProperties, ( properties ) => {
 			const { planName, planConstantObj } = properties;
+			const tableItemClasses = classNames( 'plan-features-2023-grid__table-item', {
+				'popular-plan-parent-class': isPremiumPlan( planName ),
+			} );
 			const headerClasses = classNames(
 				'plan-features-2023-grid__header',
 				getPlanClass( planName )
 			);
 
 			return (
-				<th scope="col" key={ planName } className="plan-features-2023-grid__table-item">
+				<th scope="col" key={ planName } className={ tableItemClasses }>
+					{ isPremiumPlan( planName ) && (
+						<div className="plan-features-2023-grid__popular-badge">Popular</div>
+					) }
 					<header className={ headerClasses }>
 						<h4 className="plan-features-2023-grid__header-title">
 							{ planConstantObj.getTitle() }
