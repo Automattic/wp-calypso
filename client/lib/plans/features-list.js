@@ -168,6 +168,53 @@ import {
 	FEATURE_UNLIMITED_TRAFFIC,
 	FEATURE_MANAGED_HOSTING,
 	WPCOM_FEATURES_NO_ADVERTS,
+	FEATURE_BEAUTIFUL_THEMES,
+	FEATURE_PAGES,
+	FEATURE_USERS,
+	FEATURE_NEWSLETTERS_RSS,
+	FEATURE_POST_EDITS_HISTORY,
+	FEATURE_SECURITY_BRUTE_FORCE,
+	FEATURE_SMART_REDIRECTS,
+	FEATURE_ALWAYS_ONLINE,
+	FEATURE_FAST_DNS,
+	FEATURE_STYLE_CUSTOMIZATION,
+	FEATURE_SUPPORT_EMAIL,
+	FEATURE_DESIGN_TOOLS,
+	FEATURE_PREMIUM_THEMES_V2,
+	FEATURE_WORDADS,
+	FEATURE_PLUGINS_THEMES,
+	FEATURE_BANDWIDTH,
+	FEATURE_BURST,
+	FEATURE_WAF_V2,
+	FEATURE_CDN,
+	FEATURE_CPUS,
+	FEATURE_DATACENTRE_FAILOVER,
+	FEATURE_ISOLATED_INFRA,
+	FEATURE_SECURITY_MALWARE,
+	FEATURE_SECURITY_DDOS,
+	FEATURE_DEV_TOOLS,
+	FEATURE_WP_UPDATES,
+	FEATURE_MULTI_SITE,
+	FEATURE_SELL_SHIP,
+	FEATURE_CUSTOM_STORE,
+	FEATURE_INVENTORY,
+	FEATURE_CHECKOUT,
+	FEATURE_ACCEPT_PAYMENTS_V2,
+	FEATURE_SALES_REPORTS,
+	FEATURE_EXTENSIONS,
+	FEATURE_STATS_JP,
+	FEATURE_SPAM_JP,
+	FEATURE_LTD_SOCIAL_MEDIA_JP,
+	FEATURE_CONTACT_FORM_JP,
+	FEATURE_PAID_SUBSCRIBERS_JP,
+	FEATURE_VIDEOPRESS_JP,
+	FEATURE_UNLTD_SOCIAL_MEDIA_JP,
+	FEATURE_SEO_JP,
+	FEATURE_BRUTE_PROTECT_JP,
+	FEATURE_REALTIME_BACKUPS_JP,
+	FEATURE_UPTIME_MONITOR_JP,
+	FEATURE_ES_SEARCH_JP,
+	FEATURE_PLUGIN_AUTOUPDATE_JP,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -1569,6 +1616,198 @@ export const FEATURES_LIST = {
 				'All plans include world-class managed hosting, including automatic updates, security, backups, and more.'
 			),
 	},
+
+	/* START: 2023 Pricing Grid Features */
+	[ FEATURE_BEAUTIFUL_THEMES ]: {
+		getSlug: () => FEATURE_BEAUTIFUL_THEMES,
+		getTitle: () => i18n.translate( 'Beautiful themes and patterns' ),
+	},
+	[ FEATURE_PAGES ]: {
+		getSlug: () => FEATURE_PAGES,
+		getTitle: () => i18n.translate( 'Unlimited pages' ),
+	},
+	[ FEATURE_USERS ]: {
+		getSlug: () => FEATURE_USERS,
+		getTitle: () => i18n.translate( 'Unlimited users' ),
+	},
+	[ FEATURE_NEWSLETTERS_RSS ]: {
+		getSlug: () => FEATURE_NEWSLETTERS_RSS,
+		getTitle: () => i18n.translate( 'Built-in newsletters & RSS' ),
+	},
+	[ FEATURE_POST_EDITS_HISTORY ]: {
+		getSlug: () => FEATURE_POST_EDITS_HISTORY,
+		getTitle: () => i18n.translate( 'Time machine for post edits Time machine for post edits' ),
+	},
+	[ FEATURE_SECURITY_BRUTE_FORCE ]: {
+		getSlug: () => FEATURE_SECURITY_BRUTE_FORCE,
+		getTitle: () => i18n.translate( 'Brute-force protection' ),
+	},
+	[ FEATURE_SMART_REDIRECTS ]: {
+		getSlug: () => FEATURE_SMART_REDIRECTS,
+		getTitle: () => i18n.translate( 'Smart redirects' ),
+	},
+	[ FEATURE_ALWAYS_ONLINE ]: {
+		getSlug: () => FEATURE_ALWAYS_ONLINE,
+		getTitle: () => i18n.translate( 'Online forever' ),
+	},
+	[ FEATURE_FAST_DNS ]: {
+		getSlug: () => FEATURE_FAST_DNS,
+		getTitle: () => i18n.translate( 'Extremely fast DNS with SSL' ),
+	},
+	[ FEATURE_STYLE_CUSTOMIZATION ]: {
+		getSlug: () => FEATURE_STYLE_CUSTOMIZATION,
+		getTitle: () => i18n.translate( 'Style customization' ),
+	},
+	[ FEATURE_SUPPORT_EMAIL ]: {
+		getSlug: () => FEATURE_SUPPORT_EMAIL,
+		getTitle: () => i18n.translate( 'Support via email' ),
+	},
+	[ FEATURE_DESIGN_TOOLS ]: {
+		getSlug: () => FEATURE_DESIGN_TOOLS,
+		getTitle: () => i18n.translate( 'Avant-garde design tools' ),
+	},
+	[ FEATURE_PREMIUM_THEMES_V2 ]: {
+		getSlug: () => FEATURE_PREMIUM_THEMES_V2,
+		getTitle: () => i18n.translate( 'Premium themes' ),
+	},
+	[ FEATURE_WORDADS ]: {
+		getSlug: () => FEATURE_WORDADS,
+		getTitle: () => i18n.translate( 'Earn with WordAds' ),
+	},
+	[ FEATURE_PLUGINS_THEMES ]: {
+		getSlug: () => FEATURE_PLUGINS_THEMES,
+		getTitle: () => i18n.translate( 'Install plugins & themes' ),
+	},
+	[ FEATURE_BANDWIDTH ]: {
+		getSlug: () => FEATURE_BANDWIDTH,
+		getTitle: () => i18n.translate( 'Unrestricted bandwidth' ),
+	},
+	[ FEATURE_BURST ]: {
+		getSlug: () => FEATURE_BURST,
+		getTitle: () => i18n.translate( 'High-burst capacity' ),
+	},
+	[ FEATURE_WAF_V2 ]: {
+		getSlug: () => FEATURE_WAF_V2,
+		getTitle: () => i18n.translate( 'Web application firewall (WAF)' ),
+	},
+	[ FEATURE_CDN ]: {
+		getSlug: () => FEATURE_CDN,
+		getTitle: () => i18n.translate( 'Global CDN with 28+ locations' ),
+	},
+	[ FEATURE_CPUS ]: {
+		getSlug: () => FEATURE_CPUS,
+		getTitle: () => i18n.translate( 'High-frequency CPUs' ),
+	},
+	[ FEATURE_DATACENTRE_FAILOVER ]: {
+		getSlug: () => FEATURE_DATACENTRE_FAILOVER,
+		getTitle: () => i18n.translate( 'Automatic datacenter fail-over' ),
+	},
+	[ FEATURE_ISOLATED_INFRA ]: {
+		getSlug: () => FEATURE_ISOLATED_INFRA,
+		getTitle: () => i18n.translate( 'Isolated site infrastructure' ),
+	},
+	[ FEATURE_SECURITY_MALWARE ]: {
+		getSlug: () => FEATURE_SECURITY_MALWARE,
+		getTitle: () => i18n.translate( 'Managed malware protection' ),
+	},
+	[ FEATURE_SECURITY_DDOS ]: {
+		getSlug: () => FEATURE_SECURITY_DDOS,
+		getTitle: () => i18n.translate( 'DDOS mitigation' ),
+	},
+	[ FEATURE_DEV_TOOLS ]: {
+		getSlug: () => FEATURE_DEV_TOOLS,
+		getTitle: () => i18n.translate( 'SFTP-SSH, WP-CLI, Git tools' ),
+	},
+	[ FEATURE_WP_UPDATES ]: {
+		getSlug: () => FEATURE_WP_UPDATES,
+		getTitle: () => i18n.translate( 'Automated WordPress updates' ),
+	},
+	[ FEATURE_MULTI_SITE ]: {
+		getSlug: () => FEATURE_MULTI_SITE,
+		getTitle: () => i18n.translate( 'Multi-site management' ),
+	},
+	[ FEATURE_SELL_SHIP ]: {
+		getSlug: () => FEATURE_SELL_SHIP,
+		getTitle: () => i18n.translate( 'Sell and ship products' ),
+	},
+	[ FEATURE_CUSTOM_STORE ]: {
+		getSlug: () => FEATURE_CUSTOM_STORE,
+		getTitle: () => i18n.translate( 'Store customization' ),
+	},
+	[ FEATURE_INVENTORY ]: {
+		getSlug: () => FEATURE_INVENTORY,
+		getTitle: () => i18n.translate( 'Inventory management' ),
+	},
+	[ FEATURE_CHECKOUT ]: {
+		getSlug: () => FEATURE_CHECKOUT,
+		getTitle: () => i18n.translate( 'Easy checkout experience' ),
+	},
+	[ FEATURE_ACCEPT_PAYMENTS_V2 ]: {
+		getSlug: () => FEATURE_ACCEPT_PAYMENTS_V2,
+		getTitle: () => i18n.translate( 'Payments in 60+ countries' ),
+	},
+	[ FEATURE_SALES_REPORTS ]: {
+		getSlug: () => FEATURE_SALES_REPORTS,
+		getTitle: () => i18n.translate( 'Sales reports' ),
+	},
+	[ FEATURE_EXTENSIONS ]: {
+		getSlug: () => FEATURE_EXTENSIONS,
+		getTitle: () => i18n.translate( 'Extensions marketplace' ),
+	},
+	// FOLLOWING ARE JETPACK FEATURES BUNDLED IN WPCOM
+	[ FEATURE_STATS_JP ]: {
+		getSlug: () => FEATURE_STATS_JP,
+		getTitle: () => i18n.translate( 'Visitor stats' ),
+	},
+	[ FEATURE_SPAM_JP ]: {
+		getSlug: () => FEATURE_SPAM_JP,
+		getTitle: () => i18n.translate( 'Spam protection with Akismet' ),
+	},
+	[ FEATURE_LTD_SOCIAL_MEDIA_JP ]: {
+		getSlug: () => FEATURE_LTD_SOCIAL_MEDIA_JP,
+		getTitle: () => i18n.translate( 'Limited social media sharing' ),
+	},
+	[ FEATURE_CONTACT_FORM_JP ]: {
+		getSlug: () => FEATURE_CONTACT_FORM_JP,
+		getTitle: () => i18n.translate( 'Contact form' ),
+	},
+	[ FEATURE_PAID_SUBSCRIBERS_JP ]: {
+		getSlug: () => FEATURE_PAID_SUBSCRIBERS_JP,
+		getTitle: () => i18n.translate( 'Paid subscribers' ),
+	},
+	[ FEATURE_VIDEOPRESS_JP ]: {
+		getSlug: () => FEATURE_VIDEOPRESS_JP,
+		getTitle: () => i18n.translate( '4K Video with VideoPress' ),
+	},
+	[ FEATURE_UNLTD_SOCIAL_MEDIA_JP ]: {
+		getSlug: () => FEATURE_UNLTD_SOCIAL_MEDIA_JP,
+		getTitle: () => i18n.translate( 'Unlimited shares in social media' ),
+	},
+	[ FEATURE_SEO_JP ]: {
+		getSlug: () => FEATURE_SEO_JP,
+		getTitle: () => i18n.translate( 'Tools for SEO' ),
+	},
+	[ FEATURE_BRUTE_PROTECT_JP ]: {
+		getSlug: () => FEATURE_CONTACT_FORM_JP,
+		getTitle: () => i18n.translate( 'BruteProtect' ),
+	},
+	[ FEATURE_REALTIME_BACKUPS_JP ]: {
+		getSlug: () => FEATURE_REALTIME_BACKUPS_JP,
+		getTitle: () => i18n.translate( 'Real-time backups' ),
+	},
+	[ FEATURE_UPTIME_MONITOR_JP ]: {
+		getSlug: () => FEATURE_UPTIME_MONITOR_JP,
+		getTitle: () => i18n.translate( 'Uptime monitor' ),
+	},
+	[ FEATURE_ES_SEARCH_JP ]: {
+		getSlug: () => FEATURE_ES_SEARCH_JP,
+		getTitle: () => i18n.translate( 'Built-in Elastic Search' ),
+	},
+	[ FEATURE_PLUGIN_AUTOUPDATE_JP ]: {
+		getSlug: () => FEATURE_PLUGIN_AUTOUPDATE_JP,
+		getTitle: () => i18n.translate( 'Plugin auto-updates' ),
+	},
+	/* END: 2023 Pricing Grid Features */
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList ) => {
