@@ -7,10 +7,11 @@ import {
 	getPlan as getPlanFromKey,
 	getPlanClass,
 	isFreePlan,
-	isWpcomEnterpriseGridPlan,
 	isMonthly,
 	TERM_MONTHLY,
 	isPremiumPlan,
+	isEcommercePlan,
+	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -18,6 +19,8 @@ import { compact, get, map, reduce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import vipLogo from 'calypso/assets/images/onboarding/vip-logo.svg';
+import wooLogo from 'calypso/assets/images/onboarding/woo-logo.svg';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import PlanPill from 'calypso/components/plans/plan-pill';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
@@ -80,6 +83,7 @@ export class PlanFeatures2023Grid extends Component {
 									{ translate( 'Available plans to choose from' ) }
 								</caption>
 								<tbody>
+									<tr>{ this.renderPlanLogos() }</tr>
 									<tr>{ this.renderPlanHeaders() }</tr>
 									<tr>{ this.renderPlanSubHeaders() }</tr>
 									<tr>{ this.renderPlanPriceGroup() }</tr>
@@ -142,6 +146,35 @@ export class PlanFeatures2023Grid extends Component {
 						planName={ planName }
 						is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 					/>
+				</th>
+			);
+		} );
+	}
+
+	renderPlanLogos() {
+		const { planProperties } = this.props;
+
+		return map( planProperties, ( properties ) => {
+			const { planName } = properties;
+			const headerClasses = classNames(
+				'plan-features-2023-grid__header-logo',
+				getPlanClass( planName )
+			);
+
+			return (
+				<th scope="col" key={ planName } className="plan-features-2023-grid__table-item">
+					<header className={ headerClasses }>
+						{ isEcommercePlan( planName ) && (
+							<div className="plan-features-2023-grid__plan-logo">
+								<img src={ wooLogo } alt="WooCommerce logo" />{ ' ' }
+							</div>
+						) }
+						{ isWpcomEnterpriseGridPlan( planName ) && (
+							<div className="plan-features-2023-grid__plan-logo">
+								<img src={ vipLogo } alt="Enterprise logo" />{ ' ' }
+							</div>
+						) }
+					</header>
 				</th>
 			);
 		} );
