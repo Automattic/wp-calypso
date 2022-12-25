@@ -259,14 +259,16 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.plan-features-2023-grid__item-info {
-		padding: 0 5px;
 		display: flex;
 		flex-direction: column;
 		flex: 1 0 0;
 		width: 100%;
 
 		.plan-features-2023-grid__item-title {
-			line-height: 18px;
+			color: var(--studio-gray-80);
+			font-size: $font-body-extra-small;
+			font-weight: 400;
+			line-height: 16px;
 			overflow-wrap: break-word;
 			margin: 0;
 			flex: 1 0 0;
@@ -321,8 +323,7 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.plan-features-2023-grid__item {
-		padding: 0.5rem;
-		margin: 0 15px;
+		padding: 0 20px 12px;
 		text-align: left;
 
 		&.plan-features-2023-grid__item-available {
@@ -501,6 +502,10 @@ body.is-section-signup.is-white-signup {
 				padding: 20px 0 17px;
 			}
 		}
+
+		.plan-features-2023-grid__jp-logo {
+			padding: 24px 0 6px 20px;
+		}
 	}
 
 	.plan-features-2023-grid__header {
@@ -513,10 +518,6 @@ body.is-section-signup.is-white-signup {
 
 	.plan-features--signup .is-premium-plan .plan-features-2023-grid__header-title {
 		font-weight: 500;
-	}
-
-	.plan-features-2023-grid__item-title {
-		color: var(--studio-gray-60);
 	}
 
 	.plan-features-2023-grid__item.plan-features-2023-grid__item-available {

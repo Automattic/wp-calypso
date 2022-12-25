@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import { PlanFeaturesItem } from './item';
 
 export class PlanFeatures2023GridFeatures extends Component {
@@ -66,7 +67,12 @@ export class PlanFeatures2023GridFeatures extends Component {
 			);
 		} );
 
-		jpFeatures.length !== 0 && featureItemJSX.push( <div></div> );
+		jpFeatures.length !== 0 &&
+			featureItemJSX.push(
+				<div className="plan-features-2023-grid__jp-logo">
+					<JetpackLogo size={ 16 } />
+				</div>
+			);
 
 		featureItemJSX.push(
 			jpFeatures.map( ( currentFeature, featureIndex ) => {
