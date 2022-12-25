@@ -152,7 +152,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderPlanLogos() {
-		const { planProperties } = this.props;
+		const { planProperties, translate, isInSignup } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const { planName } = properties;
@@ -160,9 +160,17 @@ export class PlanFeatures2023Grid extends Component {
 				'plan-features-2023-grid__header-logo',
 				getPlanClass( planName )
 			);
+			const tableItemClasses = classNames( 'plan-features-2023-grid__table-item', {
+				'popular-plan-parent-class': isPremiumPlan( planName ),
+			} );
 
 			return (
-				<th scope="col" key={ planName } className="plan-features-2023-grid__table-item">
+				<th scope="col" key={ planName } className={ tableItemClasses }>
+					{ isPremiumPlan( planName ) && (
+						<div className="plan-features-2023-grid__popular-badge">
+							<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
+						</div>
+					) }
 					<header className={ headerClasses }>
 						{ isEcommercePlan( planName ) && (
 							<div className="plan-features-2023-grid__plan-logo">
@@ -181,25 +189,17 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderPlanHeaders() {
-		const { planProperties, translate, isInSignup } = this.props;
+		const { planProperties } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const { planName, planConstantObj } = properties;
-			const tableItemClasses = classNames( 'plan-features-2023-grid__table-item', {
-				'popular-plan-parent-class': isPremiumPlan( planName ),
-			} );
 			const headerClasses = classNames(
 				'plan-features-2023-grid__header',
 				getPlanClass( planName )
 			);
 
 			return (
-				<th scope="col" key={ planName } className={ tableItemClasses }>
-					{ isPremiumPlan( planName ) && (
-						<div className="plan-features-2023-grid__popular-badge">
-							<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
-						</div>
-					) }
+				<th scope="col" key={ planName } className="plan-features-2023-grid__table-item">
 					<header className={ headerClasses }>
 						<h4 className="plan-features-2023-grid__header-title">
 							{ planConstantObj.getTitle() }
