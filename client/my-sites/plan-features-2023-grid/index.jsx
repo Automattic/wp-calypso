@@ -9,6 +9,8 @@ import {
 	isFreePlan,
 	isMonthly,
 	TERM_MONTHLY,
+	isEcommercePlan,
+	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -16,6 +18,8 @@ import { compact, get, map, reduce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import vipLogo from 'calypso/assets/images/onboarding/vip-logo.svg';
+import wooLogo from 'calypso/assets/images/onboarding/woo-logo.svg';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
@@ -77,6 +81,7 @@ export class PlanFeatures2023Grid extends Component {
 									{ translate( 'Available plans to choose from' ) }
 								</caption>
 								<tbody>
+									<tr>{ this.renderPlanLogos() }</tr>
 									<tr>{ this.renderPlanHeaders() }</tr>
 									<tr>{ this.renderPlanSubHeaders() }</tr>
 									<tr>{ this.renderPlanPriceGroup() }</tr>
@@ -144,6 +149,35 @@ export class PlanFeatures2023Grid extends Component {
 		} );
 	}
 
+	renderPlanLogos() {
+		const { planProperties } = this.props;
+
+		return map( planProperties, ( properties ) => {
+			const { planName } = properties;
+			const headerClasses = classNames(
+				'plan-features-2023-grid__header-logo',
+				getPlanClass( planName )
+			);
+
+			return (
+				<th scope="col" key={ planName } className="plan-features-2023-grid__table-item">
+					<header className={ headerClasses }>
+						{ isEcommercePlan( planName ) && (
+							<div className="plan-features-2023-grid__plan-logo">
+								<img src={ wooLogo } alt="WooCommerce logo" />{ ' ' }
+							</div>
+						) }
+						{ isWpcomEnterpriseGridPlan( planName ) && (
+							<div className="plan-features-2023-grid__plan-logo">
+								<img src={ vipLogo } alt="Enterprise logo" />{ ' ' }
+							</div>
+						) }
+					</header>
+				</th>
+			);
+		} );
+	}
+
 	renderPlanHeaders() {
 		const { planProperties } = this.props;
 
@@ -157,6 +191,11 @@ export class PlanFeatures2023Grid extends Component {
 			return (
 				<th scope="col" key={ planName } className="plan-features-2023-grid__table-item">
 					<header className={ headerClasses }>
+						{ /* { isEcommercePlan( planName ) && (
+							<div className="plan-features-2023-grid__header-plan-logo">
+								<img src={ wooLogo } alt="wooCommerce logo" />{ ' ' }
+							</div>
+						) } */ }
 						<h4 className="plan-features-2023-grid__header-title">
 							{ planConstantObj.getTitle() }
 						</h4>

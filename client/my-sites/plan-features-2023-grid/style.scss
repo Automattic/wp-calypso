@@ -31,11 +31,19 @@ $plan-features-sidebar-width: 272px;
 	position: relative;
 	display: flex;
 	align-items: flex-start;
-	padding: 20px 0 8px 20px;
+	padding: 0 0 8px 20px;
 	background-color: var(--color-surface);
 	justify-content: left;
 	font-weight: 400;
-	margin-top: 30px;
+}
+
+.plan-features-2023-grid__header-logo {
+	padding-left: 20px;
+	margin-top: 36px;
+}
+
+.plan-features-2023-grid__plan-logo {
+	margin-bottom: 9px;
 }
 
 .plan-features-2023-grid__header-text {
