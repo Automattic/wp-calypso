@@ -130,7 +130,6 @@ PlanFeatures2023GridActions.propTypes = {
 	isLaunchPage: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	planType: PropTypes.string,
-	primaryUpgrade: PropTypes.bool,
 };
 
 export default localize( PlanFeatures2023GridActions );

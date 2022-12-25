@@ -788,6 +788,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SHIPPING_CARRIERS,
 		FEATURE_EXTENSIONS,
 	],
+	get2023PricingGridSignupJetpackFeatures: () => [],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -1293,6 +1294,7 @@ const get2023EnterprisGrideDetails = (): IncompleteWPcomPlan => ( {
 		'Deliver an unmatched performance with the highest security standards on our enterprise content platform.',
 	getDescription: () => '',
 	get2023PricingGridSignupWpcomFeatures: () => [],
+	get2023PricingGridSignupJetpackFeatures: () => [],
 } );
 
 const getJetpackPersonalDetails = (): IncompleteJetpackPlan => ( {

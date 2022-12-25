@@ -1,5 +1,4 @@
 import {
-	planMatches,
 	applyTestFiltersToPlansList,
 	getMonthlyPlanByYearly,
 	getYearlyPlanByMonthly,
@@ -12,13 +11,11 @@ import {
 	isPremiumPlan,
 	isEcommercePlan,
 	isWpcomEnterpriseGridPlan,
-	FEATURE_CUSTOM_DOMAIN,
-	PLAN_FREE,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { compact, get, map, reduce } from 'lodash';
+import { compact, get, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -38,15 +35,9 @@ import {
 	getPlanSlug,
 	getDiscountedRawPrice,
 } from 'calypso/state/plans/selectors';
-import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
-import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
-import {
-	getPlanDiscountedRawPrice,
-	getSitePlanRawPrice,
-} from 'calypso/state/sites/plans/selectors';
 import PlanFeatures2023GridActions from './actions';
+import PlanFeatures2023GridFeatures from './features';
 import PlanFeatures2023GridHeaderPrice from './header-price';
-import { PlanFeaturesItem } from './item';
 import './style.scss';
 
 const noop = () => {};
@@ -86,7 +77,7 @@ export class PlanFeatures2023Grid extends Component {
 									<tr>{ this.renderPlanSubHeaders() }</tr>
 									<tr>{ this.renderPlanPriceGroup() }</tr>
 									<tr>{ this.renderTopButtons() }</tr>
-									{ this.renderPlanFeatureRows() }
+									<tr>{ this.renderPlanFeaturesList() }</tr>
 								</tbody>
 							</table>
 						</div>
@@ -242,15 +233,8 @@ export class PlanFeatures2023Grid extends Component {
 		const { isInSignup, isLaunchPage, planProperties, flowName } = this.props;
 
 		return map( planProperties, ( properties ) => {
-			const {
-				availableForPurchase,
-				current,
-				planName,
-				primaryUpgrade,
-				isPlaceholder,
-				planConstantObj,
-				popular,
-			} = properties;
+			const { availableForPurchase, current, planName, isPlaceholder, planConstantObj } =
+				properties;
 			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
 
 			return (
@@ -262,13 +246,11 @@ export class PlanFeatures2023Grid extends Component {
 						freePlan={ isFreePlan( planName ) }
 						isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planName ) }
 						isPlaceholder={ isPlaceholder }
-						isPopular={ popular }
 						isInSignup={ isInSignup }
 						isLaunchPage={ isLaunchPage }
 						onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
 						planName={ planConstantObj.getTitle() }
 						planType={ planName }
-						primaryUpgrade={ primaryUpgrade }
 						flowName={ flowName }
 					/>
 				</td>
@@ -276,108 +258,12 @@ export class PlanFeatures2023Grid extends Component {
 		} );
 	}
 
-	getLongestFeaturesList() {
-		const { planProperties } = this.props;
-
-		return reduce(
-			planProperties,
-			( longest, properties ) => {
-				const currentFeatures = Object.keys( properties.features );
-				return currentFeatures.length > longest.length ? currentFeatures : longest;
-			},
-			[]
-		);
-	}
-
-	renderPlanFeatureRows() {
-		return (
-			<>
-				<tr className="plan-features-comparison__row">{ this.renderPlanFeatureColumns() }</tr>
-			</>
-		);
-	}
-
-	renderAnnualPlansFeatureNotice( feature ) {
-		const { translate } = this.props;
-
-		if ( ! feature.availableOnlyForAnnualPlans || feature.availableForCurrentPlan ) {
-			return '';
-		}
+	renderPlanFeaturesList() {
+		const { planProperties, domainName } = this.props;
 
 		return (
-			<span className="plan-features-2023-grid__item-annual-plan">
-				{ translate( 'Included with annual plans' ) }
-			</span>
+			<PlanFeatures2023GridFeatures planProperties={ planProperties } domainName={ domainName } />
 		);
-	}
-
-	renderFeatureItem( feature, index ) {
-		const classes = classNames( 'plan-features-2023-grid__item-info', {
-			'is-annual-plan-feature': feature.availableOnlyForAnnualPlans,
-			'is-available': feature.availableForCurrentPlan,
-		} );
-
-		return (
-			<>
-				<PlanFeaturesItem
-					key={ index }
-					annualOnlyContent={ this.renderAnnualPlansFeatureNotice( feature ) }
-					isFeatureAvailable={ feature.availableForCurrentPlan }
-				>
-					<span className={ classes }>
-						<span className="plan-features-2023-grid__item-title">
-							{ feature.getTitle( this.props.domainName ) }
-						</span>
-					</span>
-				</PlanFeaturesItem>
-			</>
-		);
-	}
-
-	renderPlanFeatures( features, planName, mapIndex ) {
-		const { selectedFeature } = this.props;
-
-		return map( features, ( currentFeature, featureIndex ) => {
-			const classes = classNames( '', getPlanClass( planName ), {
-				'is-last-feature': featureIndex + 1 === features.length,
-				'is-highlighted':
-					selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
-				'is-bold': currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN,
-			} );
-
-			return (
-				<div key={ `${ currentFeature.getSlug() }-${ featureIndex }` } className={ classes }>
-					{ this.renderFeatureItem( currentFeature, mapIndex ) }
-				</div>
-			);
-		} );
-	}
-
-	renderPlanFeatureColumns() {
-		const { planProperties } = this.props;
-		let previousPlanName = 'Free';
-		let currentPlanName = 'Free';
-
-		return map( planProperties, ( properties, mapIndex ) => {
-			const { planName, features, product_name_short } = properties;
-			previousPlanName = currentPlanName;
-			currentPlanName = product_name_short;
-			const planFeatureTitle = [ PLAN_FREE, PLAN_ENTERPRISE_GRID_WPCOM ].includes( planName )
-				? ''
-				: `Everything in ${ previousPlanName }, plus:`;
-			const classes = classNames(
-				'plan-features-2023-grid__item',
-				'plan-features-2023-grid__common-title',
-				getPlanClass( planName )
-			);
-
-			return (
-				<td key={ `${ planName }-${ mapIndex }` } className="plan-features-2023-grid__table-item">
-					<div className={ classes }>{ mapIndex === 0 ? <>&nbsp;</> : planFeatureTitle }</div>
-					{ this.renderPlanFeatures( features, planName, mapIndex ) }
-				</td>
-			);
-		} );
 	}
 }
 
@@ -387,7 +273,6 @@ PlanFeatures2023Grid.propTypes = {
 	onUpgradeClick: PropTypes.func,
 	// either you specify the plans prop or isPlaceholder prop
 	plans: PropTypes.array,
-	popularPlan: PropTypes.object,
 	visiblePlans: PropTypes.array,
 	planProperties: PropTypes.array,
 	selectedFeature: PropTypes.string,
@@ -403,31 +288,10 @@ PlanFeatures2023Grid.defaultProps = {
 	onUpgradeClick: noop,
 };
 
-export const calculatePlanCredits = ( state, siteId, planProperties ) =>
-	planProperties
-		.map( ( { planName, availableForPurchase } ) => {
-			if ( ! availableForPurchase ) {
-				return 0;
-			}
-			const annualDiscountPrice = getPlanDiscountedRawPrice( state, siteId, planName );
-			const annualRawPrice = getSitePlanRawPrice( state, siteId, planName );
-			if ( typeof annualDiscountPrice !== 'number' || typeof annualRawPrice !== 'number' ) {
-				return 0;
-			}
-
-			return annualRawPrice - annualDiscountPrice;
-		} )
-		.reduce( ( max, credits ) => Math.max( max, credits ), 0 );
-
-const hasPlaceholders = ( planProperties ) =>
-	planProperties.filter( ( planProps ) => planProps.isPlaceholder ).length > 0;
-
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 export default connect(
 	( state, ownProps ) => {
-		const { placeholder, plans, isLandingPage, siteId, visiblePlans, popularPlanSpec } = ownProps;
-		const signupDependencies = getSignupDependencyStore( state );
-		const siteType = signupDependencies.designType;
+		const { placeholder, plans, isLandingPage, visiblePlans } = ownProps;
 
 		let planProperties = compact(
 			map( plans, ( plan ) => {
@@ -441,7 +305,6 @@ export default connect(
 				const relatedMonthlyPlan = showMonthly
 					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
 					: null;
-				const popular = popularPlanSpec && planMatches( plan, popularPlanSpec );
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = true;
@@ -455,6 +318,9 @@ export default connect(
 
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj.get2023PricingGridSignupWpcomFeatures()
+				);
+				let jetpackFeatures = getPlanFeaturesObject(
+					planConstantObj.get2023PricingGridSignupJetpackFeatures()
 				);
 
 				const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );
@@ -499,6 +365,16 @@ export default connect(
 					} );
 				}
 
+				jetpackFeatures = jetpackFeatures.map( ( feature ) => {
+					const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes( feature.getSlug() );
+
+					return {
+						...feature,
+						availableOnlyForAnnualPlans,
+						availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
+					};
+				} );
+
 				// Strip annual-only features out for the site's /plans page
 				if ( isPlaceholder ) {
 					planFeatures = planFeatures.filter(
@@ -523,16 +399,15 @@ export default connect(
 					currencyCode: getCurrentUserCurrencyCode( state ),
 					discountPrice,
 					features: planFeatures,
+					jpFeatures: jetpackFeatures,
 					isLandingPage,
 					isPlaceholder,
 					planConstantObj,
 					planName: plan,
 					planObject: planObject,
-					popular,
 					productSlug: get( planObject, 'product_slug' ),
 					product_name_short,
 					hideMonthly: false,
-					primaryUpgrade: popular || plans.length === 1,
 					rawPrice,
 					rawPriceAnnual,
 					rawPriceForMonthlyPlan,
@@ -548,13 +423,8 @@ export default connect(
 			planProperties = planProperties.filter( ( p ) => visiblePlans.indexOf( p.planName ) !== -1 );
 		}
 
-		const purchaseId = getCurrentPlanPurchaseId( state, siteId );
-
 		return {
 			planProperties,
-			purchaseId,
-			siteType,
-			hasPlaceholders: hasPlaceholders( planProperties ),
 		};
 	},
 	{
