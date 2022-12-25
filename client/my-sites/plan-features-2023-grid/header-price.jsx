@@ -7,7 +7,7 @@ import PlanPrice from 'calypso/my-sites/plan-price';
 
 const PLANS_LIST = getPlans();
 
-export class PlanFeatures2023GridHeader extends Component {
+export class PlanFeatures2023GridHeaderPrice extends Component {
 	render() {
 		return this.renderPlansHeader();
 	}
@@ -63,7 +63,8 @@ export class PlanFeatures2023GridHeader extends Component {
 	}
 
 	renderPriceGroup() {
-		const { currencyCode, rawPrice, discountPrice, planName } = this.props;
+		const { currencyCode, rawPrice, discountPrice, planName, is2023OnboardingPricingGrid } =
+			this.props;
 
 		if ( PLAN_ENTERPRISE_GRID_WPCOM === planName ) {
 			return (
@@ -81,12 +82,14 @@ export class PlanFeatures2023GridHeader extends Component {
 							currencyCode={ currencyCode }
 							rawPrice={ rawPrice }
 							displayPerMonthNotation={ false }
+							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 							original
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ discountPrice }
 							displayPerMonthNotation={ false }
+							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 							discounted
 						/>
 					</div>
@@ -99,12 +102,13 @@ export class PlanFeatures2023GridHeader extends Component {
 				currencyCode={ currencyCode }
 				rawPrice={ rawPrice }
 				displayPerMonthNotation={ false }
+				is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 			/>
 		);
 	}
 }
 
-PlanFeatures2023GridHeader.propTypes = {
+PlanFeatures2023GridHeaderPrice.propTypes = {
 	billingTimeFrame: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
 	currencyCode: PropTypes.string,
 	discountPrice: PropTypes.number,
@@ -119,8 +123,8 @@ PlanFeatures2023GridHeader.propTypes = {
 	flow: PropTypes.string,
 };
 
-PlanFeatures2023GridHeader.defaultProps = {
+PlanFeatures2023GridHeaderPrice.defaultProps = {
 	popular: false,
 };
 
-export default localize( PlanFeatures2023GridHeader );
+export default localize( PlanFeatures2023GridHeaderPrice );

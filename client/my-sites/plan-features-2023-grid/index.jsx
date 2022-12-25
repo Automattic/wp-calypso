@@ -43,7 +43,7 @@ import {
 	getSitePlanRawPrice,
 } from 'calypso/state/sites/plans/selectors';
 import PlanFeatures2023GridActions from './actions';
-import PlanFeatures2023GridHeader from './header';
+import PlanFeatures2023GridHeaderPrice from './header-price';
 import { PlanFeaturesItem } from './item';
 import './style.scss';
 
@@ -94,7 +94,8 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderPlanPriceGroup() {
-		const { basePlansPath, planProperties, isReskinned, flowName } = this.props;
+		const { basePlansPath, planProperties, isReskinned, flowName, is2023OnboardingPricingGrid } =
+			this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -121,7 +122,7 @@ export class PlanFeatures2023Grid extends Component {
 
 			return (
 				<th scope="col" key={ planName } className={ classes }>
-					<PlanFeatures2023GridHeader
+					<PlanFeatures2023GridHeaderPrice
 						availableForPurchase={ availableForPurchase }
 						basePlansPath={ basePlansPath }
 						billingTimeFrame={ billingTimeFrame }
@@ -138,6 +139,7 @@ export class PlanFeatures2023Grid extends Component {
 						isMonthlyPlan={ isMonthlyPlan }
 						flow={ flowName }
 						planName={ planName }
+						is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 					/>
 				</th>
 			);

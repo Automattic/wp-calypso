@@ -155,6 +155,9 @@ export class PlansFeaturesMain extends Component {
 				siteId,
 				isReskinned,
 				isPlansInsideStepper,
+				is2023OnboardingPricingGrid:
+					isEnabled( 'onboarding/2023-pricing-grid' ) &&
+					flowName === 'onboarding-2023-pricing-grid',
 			};
 			const asyncPlanFeatures2023Grid = (
 				<AsyncLoad require="calypso/my-sites/plan-features-2023-grid" { ...asyncProps } />
