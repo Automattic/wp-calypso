@@ -173,7 +173,7 @@ $plan-features-sidebar-width: 272px;
 		background-color: var(--color-surface);
 		position: relative;
 
-		&.is-bold {
+		.is-bold {
 			font-weight: bold;
 		}
 	}
@@ -353,17 +353,27 @@ $plan-features-sidebar-width: 272px;
 			}
 		}
 
-		.plan-features-2023-grid__item-checkmark,
-		.plan-features-2023-grid__item-cross {
-			fill: var(--studio-green-50);
-			width: 16px;
-			height: 16px;
-			margin-right: 0;
-			flex: 0 0 auto;
-		}
+		&.plan-features-2023-grid__common-title {
+			font-weight: 600;
+			font-size: $font-body-small;
+			padding-top: 0;
+			margin-top: 36px;
 
-		.plan-features-2023-grid__item-cross {
-			fill: #a7aaad;
+			&.is-personal-plan {
+				color: var(--studio-blue-60);
+			}
+
+			&.is-premium-plan {
+				color: #004687;
+			}
+
+			&.is-business-plan {
+				color: #7f54b3;
+			}
+
+			&.is-ecommerce-plan {
+				color: #55347d;
+			}
 		}
 	}
 }

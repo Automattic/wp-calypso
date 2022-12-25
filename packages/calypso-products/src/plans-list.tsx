@@ -1292,6 +1292,7 @@ const get2023EnterprisGrideDetails = (): IncompleteWPcomPlan => ( {
 	getPlanTagline: () =>
 		'Deliver an unmatched performance with the highest security standards on our enterprise content platform.',
 	getDescription: () => '',
+	get2023PricingGridSignupWpcomFeatures: () => [],
 } );
 
 const getJetpackPersonalDetails = (): IncompleteJetpackPlan => ( {

@@ -1637,7 +1637,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_POST_EDITS_HISTORY ]: {
 		getSlug: () => FEATURE_POST_EDITS_HISTORY,
-		getTitle: () => i18n.translate( 'Time machine for post edits Time machine for post edits' ),
+		getTitle: () => i18n.translate( 'Time machine for post edits' ),
 	},
 	[ FEATURE_SECURITY_BRUTE_FORCE ]: {
 		getSlug: () => FEATURE_SECURITY_BRUTE_FORCE,

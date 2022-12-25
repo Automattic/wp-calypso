@@ -12,6 +12,9 @@ import {
 	isPremiumPlan,
 	isEcommercePlan,
 	isWpcomEnterpriseGridPlan,
+	FEATURE_CUSTOM_DOMAIN,
+	PLAN_FREE,
+	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -331,46 +334,51 @@ export class PlanFeatures2023Grid extends Component {
 		);
 	}
 
-	renderPlanFeatureColumns() {
-		const { planProperties } = this.props;
-		return map( planProperties, ( properties, mapIndex ) => {
-			const { features, planName } = properties;
+	renderPlanFeatures( features, planName, mapIndex ) {
+		const { selectedFeature } = this.props;
+
+		return map( features, ( currentFeature, featureIndex ) => {
+			const classes = classNames( '', getPlanClass( planName ), {
+				'is-last-feature': featureIndex + 1 === features.length,
+				'is-highlighted':
+					selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
+				'is-bold': currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN,
+			} );
 
 			return (
-				<td
-					key={ `${ planName }-unique-${ mapIndex }` }
-					className="plan-features-comparison__table-item plan-features-comparison__unique-features"
-				>
-					<ul>{ this.renderPlanFeatures( features, planName, mapIndex ) }</ul>
-				</td>
+				<div key={ `${ currentFeature.getSlug() }-${ featureIndex }` } className={ classes }>
+					{ this.renderFeatureItem( currentFeature, mapIndex ) }
+				</div>
 			);
 		} );
 	}
 
-	// renderPlanFeatureColumns( rowIndex ) {
-	// 	const { planProperties, selectedFeature } = this.props;
+	renderPlanFeatureColumns() {
+		const { planProperties } = this.props;
+		let previousPlanName = 'Free';
+		let currentPlanName = 'Free';
 
-	// 	return map( planProperties, ( properties, mapIndex ) => {
-	// 		const { features, planName } = properties;
-	// 		const featureKeys = Object.keys( features );
-	// 		const key = featureKeys[ rowIndex ];
-	// 		const currentFeature = features[ key ];
-	// 		const classes = classNames( 'plan-features-2023-grid__table-item', getPlanClass( planName ), {
-	// 			'is-last-feature': rowIndex + 1 === featureKeys.length,
-	// 			'is-highlighted':
-	// 				selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
-	// 			'is-bold': rowIndex === 0 || currentFeature?.isHighlightedFeature,
-	// 		} );
+		return map( planProperties, ( properties, mapIndex ) => {
+			const { planName, features, product_name_short } = properties;
+			previousPlanName = currentPlanName;
+			currentPlanName = product_name_short;
+			const planFeatureTitle = [ PLAN_FREE, PLAN_ENTERPRISE_GRID_WPCOM ].includes( planName )
+				? ''
+				: `Everything in ${ previousPlanName }, plus:`;
+			const classes = classNames(
+				'plan-features-2023-grid__item',
+				'plan-features-2023-grid__common-title',
+				getPlanClass( planName )
+			);
 
-	// 		return currentFeature ? (
-	// 			<td key={ `${ planName }-${ key }` } className={ classes }>
-	// 				{ this.renderFeatureItem( currentFeature, mapIndex ) }
-	// 			</td>
-	// 		) : (
-	// 			<td key={ `${ planName }-none` } className="plan-features-2023-grid__table-item" />
-	// 		);
-	// 	} );
-	// }
+			return (
+				<td key={ `${ planName }-${ mapIndex }` } className="plan-features-2023-grid__table-item">
+					<div className={ classes }>{ mapIndex === 0 ? <>&nbsp;</> : planFeatureTitle }</div>
+					{ this.renderPlanFeatures( features, planName, mapIndex ) }
+				</td>
+			);
+		} );
+	}
 }
 
 PlanFeatures2023Grid.propTypes = {
@@ -445,7 +453,9 @@ export default connect(
 					isPlaceholder = true;
 				}
 
-				planFeatures = getPlanFeaturesObject( planConstantObj.getCondensedExperimentFeatures() );
+				planFeatures = getPlanFeaturesObject(
+					planConstantObj.get2023PricingGridSignupWpcomFeatures()
+				);
 
 				const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );
 				const discountPrice = getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
@@ -502,6 +512,10 @@ export default connect(
 						: getPlanRawPrice( state, planProductId, false );
 
 				const tagline = planConstantObj.getPlanTagline();
+				const product_name_short =
+					PLAN_ENTERPRISE_GRID_WPCOM === plan
+						? planConstantObj.getPathSlug()
+						: planObject.product_name_short;
 
 				return {
 					availableForPurchase,
@@ -516,6 +530,7 @@ export default connect(
 					planObject: planObject,
 					popular,
 					productSlug: get( planObject, 'product_slug' ),
+					product_name_short,
 					hideMonthly: false,
 					primaryUpgrade: popular || plans.length === 1,
 					rawPrice,
