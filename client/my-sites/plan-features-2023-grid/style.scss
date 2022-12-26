@@ -376,6 +376,31 @@ $plan-features-sidebar-width: 272px;
 				color: #55347d;
 			}
 		}
+
+		&.plan-features-2023-grid__enterprise-logo {
+			@media ( min-width: 1500px ) {
+				img:nth-child(1) {
+					padding-right: 24px;
+				}
+
+				img:nth-child(2) {
+					padding-right: 24px;
+				}
+
+				img:nth-child(4) {
+					padding-right: 24px;
+				}
+
+				img:nth-child(5) {
+					padding-right: 24px;
+				}
+
+				img:nth-child(7) {
+					padding-right: 24px;
+				}
+			}
+
+		}
 	}
 }
 

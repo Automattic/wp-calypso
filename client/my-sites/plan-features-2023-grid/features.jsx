@@ -8,6 +8,14 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import BloombergLogo from 'calypso/assets/images/onboarding/bloomberg-logo.svg';
+import CNNLogo from 'calypso/assets/images/onboarding/cnn-logo.svg';
+import CondenastLogo from 'calypso/assets/images/onboarding/condenast-logo.svg';
+import DisneyLogo from 'calypso/assets/images/onboarding/disney-logo.svg';
+import FacebookLogo from 'calypso/assets/images/onboarding/facebook-logo.svg';
+import SalesforceLogo from 'calypso/assets/images/onboarding/salesforce-logo.svg';
+import SlackLogo from 'calypso/assets/images/onboarding/slack-logo.svg';
+import TimeLogo from 'calypso/assets/images/onboarding/time-logo.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { PlanFeaturesItem } from './item';
 
@@ -53,7 +61,26 @@ export class PlanFeatures2023GridFeatures extends Component {
 		);
 	}
 
+	renderEnterpriseClientLogos() {
+		return (
+			<div className="plan-features-2023-grid__item plan-features-2023-grid__enterprise-logo">
+				<img src={ TimeLogo } alt="WordPress VIP client logo for TIME" />
+				<img src={ SlackLogo } alt="WordPress VIP client logo for Slack" />
+				<img src={ DisneyLogo } alt="WordPress VIP client logo for Disney" />
+				<img src={ CNNLogo } alt="WordPress VIP client logo for CNN" />
+				<img src={ SalesforceLogo } alt="WordPress VIP client logo for Salesforce" />
+				<img src={ FacebookLogo } alt="WordPress VIP client logo for Facebook" />
+				<img src={ CondenastLogo } alt="WordPress VIP client logo for Conde Nast" />
+				<img src={ BloombergLogo } alt="WordPress VIP client logo for Bloomberg" />
+			</div>
+		);
+	}
+
 	renderPlanFeatures( features, jpFeatures, planName, mapIndex ) {
+		if ( PLAN_ENTERPRISE_GRID_WPCOM === planName ) {
+			return this.renderEnterpriseClientLogos();
+		}
+
 		const featureItemJSX = features.map( ( currentFeature, featureIndex ) => {
 			const classes = classNames( '', getPlanClass( planName ), {
 				'is-last-feature': featureIndex + 1 === features.length,
