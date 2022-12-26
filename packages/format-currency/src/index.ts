@@ -1,4 +1,4 @@
-import { getCurrencyDefaults } from './currencies';
+import { doesCurrencyExist, getCurrencyDefaults } from './currencies';
 import numberFormat from './number-format';
 import { FormatCurrencyOptions, CurrencyObject } from './types';
 
@@ -28,23 +28,33 @@ export * from './types';
  * function will format the amount `1025` in `USD` as `$1,025.00`, but when the
  * option is true, it will return `$10.25` instead.
  *
- * Will return null if the currency code is unknown or if the number is not a
- * number. Will also return null if `isSmallestUnit` is set and the number is
- * not an integer.
+ * If the number is NaN, it will be treated as 0.
+ *
+ * If the currency code is not known, this will assume a default currency
+ * similar to USD.
+ *
+ * If `isSmallestUnit` is set and the number is not an integer, it will be
+ * rounded to an integer.
  *
  * @param      {number}                   number     number to format; assumed to be a float unless isSmallestUnit is set.
  * @param      {string}                   code       currency code e.g. 'USD'
  * @param      {FormatCurrencyOptions}    options    options object
- * @returns    {?string}                  A formatted string.
+ * @returns    {string}                  A formatted string.
  */
 export function formatCurrency(
 	number: number,
 	code: string,
 	options: FormatCurrencyOptions = {}
 ): string | null {
+	if ( ! doesCurrencyExist( code ) ) {
+		// eslint-disable-next-line no-console
+		console.warn( `formatCurrency was called with an unknown currency "${ code }"` );
+	}
 	const currencyDefaults = getCurrencyDefaults( code );
-	if ( ! currencyDefaults || isNaN( number ) ) {
-		return null;
+	if ( isNaN( number ) ) {
+		// eslint-disable-next-line no-console
+		console.warn( 'formatCurrency was called with NaN' );
+		number = 0;
 	}
 	const { decimal, grouping, precision, symbol, isSmallestUnit } = {
 		...currencyDefaults,
@@ -53,7 +63,12 @@ export function formatCurrency(
 	const sign = number < 0 ? '-' : '';
 	if ( isSmallestUnit ) {
 		if ( ! Number.isInteger( number ) ) {
-			return null;
+			// eslint-disable-next-line no-console
+			console.warn(
+				'formatCurrency was called with isSmallestUnit and a float which will be rounded',
+				number
+			);
+			number = Math.round( number );
 		}
 		number = convertPriceForSmallestUnit( number, precision );
 	}
@@ -86,9 +101,13 @@ export function formatCurrency(
  * function will format the amount `1025` in `USD` as `$1,025.00`, but when the
  * option is true, it will return `$10.25` instead.
  *
- * Will return null if the currency code is unknown or if the number is not a
- * number. Will also return null if `isSmallestUnit` is set and the number is
- * not an integer.
+ * If the number is NaN, this will return null.
+ *
+ * If the currency code is not known, this will assume a default currency
+ * similar to USD.
+ *
+ * If `isSmallestUnit` is set and the number is not an integer, it will be
+ * rounded to an integer.
  *
  * @param      {number}                   number     number to format; assumed to be a float unless isSmallestUnit is set.
  * @param      {string}                   code       currency code e.g. 'USD'
@@ -100,8 +119,14 @@ export function getCurrencyObject(
 	code: string,
 	options: FormatCurrencyOptions = {}
 ): CurrencyObject | null {
+	if ( ! doesCurrencyExist( code ) ) {
+		// eslint-disable-next-line no-console
+		console.warn( `getCurrencyObject was called with an unknown currency "${ code }"` );
+	}
 	const currencyDefaults = getCurrencyDefaults( code );
-	if ( ! currencyDefaults || isNaN( number ) ) {
+	if ( isNaN( number ) ) {
+		// eslint-disable-next-line no-console
+		console.warn( 'getCurrencyObject was called with NaN' );
 		return null;
 	}
 	const { decimal, grouping, precision, symbol, isSmallestUnit } = {
@@ -111,7 +136,12 @@ export function getCurrencyObject(
 	const sign = number < 0 ? '-' : '';
 	if ( isSmallestUnit ) {
 		if ( ! Number.isInteger( number ) ) {
-			return null;
+			// eslint-disable-next-line no-console
+			console.warn(
+				'getCurrencyObject was called with isSmallestUnit and a float which will be rounded',
+				number
+			);
+			number = Math.round( number );
 		}
 		number = convertPriceForSmallestUnit( number, precision );
 	}

@@ -12,7 +12,14 @@ import {
 	INVITES_REQUEST,
 	INVITES_REQUEST_FAILURE,
 	INVITES_REQUEST_SUCCESS,
+	INVITES_VALIDATE_TOKEN,
+	INVITES_VALIDATE_TOKEN_SUCCESS,
+	INVITES_VALIDATE_TOKEN_FAILURE,
 	INVITE_ACCEPTED,
+	INVITES_SEND,
+	INVITES_SEND_ERROR,
+	INVITES_SEND_FAILURE,
+	INVITES_SEND_SUCCESS,
 	INVITE_RESEND_REQUEST,
 	INVITE_RESEND_REQUEST_FAILURE,
 	INVITE_RESEND_REQUEST_SUCCESS,
@@ -250,6 +257,69 @@ export function acceptInvite( invite ) {
 			}
 			recordTracksEvent( 'calypso_invite_accept_failed', { error: error.error } );
 			throw error;
+		}
+	};
+}
+
+export function validateTokens( siteId, invitees, role ) {
+	return async ( dispatch ) => {
+		dispatch( {
+			type: INVITES_VALIDATE_TOKEN,
+		} );
+
+		try {
+			const data = await wpcom.req.post( `/sites/${ siteId }/invites/validate`, {
+				invitees,
+				role,
+			} );
+
+			dispatch( {
+				type: INVITES_VALIDATE_TOKEN_SUCCESS,
+				data,
+			} );
+			recordTracksEvent( 'calypso_invite_create_validation_success' );
+		} catch ( e ) {
+			dispatch( {
+				type: INVITES_VALIDATE_TOKEN_FAILURE,
+			} );
+			recordTracksEvent( 'calypso_invite_create_validation_failed' );
+		}
+	};
+}
+
+export function sendInvites( siteId, invitees, role, message, isExternal ) {
+	return async ( dispatch ) => {
+		dispatch( {
+			type: INVITES_SEND,
+		} );
+
+		try {
+			const response = await wpcom.req.post( `/sites/${ siteId }/invites/new`, {
+				invitees,
+				role,
+				message,
+				is_external: isExternal,
+				source: 'calypso',
+			} );
+			const errorsCount = Object.keys( response.errors ).length;
+
+			if ( errorsCount ) {
+				dispatch( {
+					type: INVITES_SEND_ERROR,
+					errorType: errorsCount === invitees.length ? 'all' : 'partial',
+				} );
+				recordTracksEvent( 'calypso_invite_send_failed' );
+			} else {
+				dispatch( {
+					type: INVITES_SEND_SUCCESS,
+				} );
+				recordTracksEvent( 'calypso_invite_send_success', { role } );
+			}
+		} catch ( e ) {
+			dispatch( {
+				type: INVITES_SEND_FAILURE,
+			} );
+			recordTracksEvent( 'calypso_invite_send_failed' );
 		}
 	};
 }
