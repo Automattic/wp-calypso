@@ -164,15 +164,12 @@ export const TableWithStoreContext: React.FC< TableWithStoreContextProps > = ( {
 
 	const onClickPurchase = useCallback< PurchaseCallback >(
 		( product ) => {
-			const trackingProps = {
-				site_id: undefined,
-				product_slug: product.productSlug,
-				duration: TERM_ANNUALLY,
-				path: rootUrl,
-			};
-
 			dispatch(
-				recordTracksEvent( 'calypso_jetpack_comparison_page_product_click', trackingProps )
+				recordTracksEvent( 'calypso_jetpack_comparison_page_product_click', {
+					product_slug: product.productSlug,
+					duration: TERM_ANNUALLY,
+					path: rootUrl,
+				} )
 			);
 		},
 		[ dispatch, rootUrl ]
