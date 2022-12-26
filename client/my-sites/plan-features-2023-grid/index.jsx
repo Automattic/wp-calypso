@@ -94,7 +94,6 @@ export class PlanFeatures2023Grid extends Component {
 		return map( planProperties, ( properties ) => {
 			const {
 				annualPricePerMonth,
-				availableForPurchase,
 				currencyCode,
 				discountPrice,
 				planConstantObj,
@@ -116,7 +115,6 @@ export class PlanFeatures2023Grid extends Component {
 			return (
 				<th scope="col" key={ planName } className={ classes }>
 					<PlanFeatures2023GridHeaderPrice
-						availableForPurchase={ availableForPurchase }
 						basePlansPath={ basePlansPath }
 						billingTimeFrame={ billingTimeFrame }
 						currencyCode={ currencyCode }
@@ -296,7 +294,6 @@ export default connect(
 				const planObject = getPlan( state, planProductId );
 				const isMonthlyPlan = isMonthly( plan );
 				const showMonthly = ! isMonthlyPlan;
-				const availableForPurchase = true;
 				const relatedMonthlyPlan = showMonthly
 					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
 					: null;
@@ -389,7 +386,6 @@ export default connect(
 						: planObject.product_name_short;
 
 				return {
-					availableForPurchase,
 					cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ),
 					currencyCode: getCurrentUserCurrencyCode( state ),
 					discountPrice,

@@ -274,6 +274,10 @@ $plan-features-sidebar-width: 272px;
 			margin: 0;
 			flex: 1 0 0;
 			width: 100%;
+
+			&.is-bold {
+				font-weight: bold;
+			}
 		}
 
 		&:not(.is-available) {
@@ -335,8 +339,7 @@ $plan-features-sidebar-width: 272px;
 			& .plan-features-2023-grid__item-annual-plan-container {
 				display: flex;
 				position: absolute;
-				margin-left: 21px;
-				top: 5px;
+				top: -3px;
 
 				& .plan-features-2023-grid__item-annual-plan {
 					font-weight: 600;

@@ -44,6 +44,9 @@ export class PlanFeatures2023GridFeatures extends Component {
 			'is-available': feature.availableForCurrentPlan,
 		} );
 
+		const itemTitleClasses = classNames( 'plan-features-2023-grid__item-title', {
+			'is-bold': feature.getSlug() === FEATURE_CUSTOM_DOMAIN,
+		} );
 		return (
 			<>
 				<PlanFeaturesItem
@@ -52,7 +55,7 @@ export class PlanFeatures2023GridFeatures extends Component {
 					isFeatureAvailable={ feature.availableForCurrentPlan }
 				>
 					<span className={ classes }>
-						<span className="plan-features-2023-grid__item-title">
+						<span className={ itemTitleClasses }>
 							{ feature.getTitle( this.props.domainName ) }
 						</span>
 					</span>
@@ -84,7 +87,6 @@ export class PlanFeatures2023GridFeatures extends Component {
 		const featureItemJSX = features.map( ( currentFeature, featureIndex ) => {
 			const classes = classNames( '', getPlanClass( planName ), {
 				'is-last-feature': featureIndex + 1 === features.length,
-				'is-bold': currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN,
 			} );
 
 			return (
