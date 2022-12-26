@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -12,6 +13,7 @@ import PeopleAddSubscribers from './people-add-subscribers';
 import PeopleInviteDetails from './people-invite-details';
 import PeopleInvites from './people-invites';
 import SubscribersTeam from './subscribers-team';
+import TeamInvite from './team-invite';
 
 export default {
 	redirectToTeam,
@@ -97,7 +99,8 @@ function renderInvitePeople( context, next ) {
 	context.primary = (
 		<>
 			<InvitePeopleTitle />
-			<InvitePeople key={ site.ID } site={ site } />
+			{ ! isEnabled( 'user-management-revamp' ) && <InvitePeople key={ site.ID } site={ site } /> }
+			{ isEnabled( 'user-management-revamp' ) && <TeamInvite key={ site.ID } site={ site } /> }
 		</>
 	);
 	next();
