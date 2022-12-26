@@ -49,7 +49,6 @@ export class PlanFeatures2023GridFeatures extends Component {
 		} );
 		return (
 			<PlanFeaturesItem
-				key={ key }
 				annualOnlyContent={ this.renderAnnualPlansFeatureNotice( feature ) }
 				isFeatureAvailable={ feature.availableForCurrentPlan }
 			>
@@ -95,7 +94,7 @@ export class PlanFeatures2023GridFeatures extends Component {
 
 		jpFeatures.length !== 0 &&
 			featureItemJSX.push(
-				<div className="plan-features-2023-grid__jp-logo">
+				<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
 					<JetpackLogo size={ 16 } />
 				</div>
 			);
