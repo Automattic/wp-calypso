@@ -45,7 +45,9 @@ export class PlanFeatures2023GridHeaderPrice extends Component {
 			const annualPriceObj = getCurrencyObject( rawPriceAnnual, currencyCode );
 			const annualPriceText = `${ annualPriceObj.symbol }${ annualPriceObj.integer }`;
 
-			return `per month, ${ annualPriceText } billed annually`;
+			return translate( 'per month, %(annualPriceText)s billed annually', {
+				args: { annualPriceText },
+			} );
 		}
 
 		return null;
@@ -61,13 +63,22 @@ export class PlanFeatures2023GridHeaderPrice extends Component {
 	}
 
 	renderPriceGroup() {
-		const { currencyCode, rawPrice, discountPrice, planName, is2023OnboardingPricingGrid } =
-			this.props;
+		const {
+			currencyCode,
+			rawPrice,
+			discountPrice,
+			planName,
+			is2023OnboardingPricingGrid,
+			translate,
+		} = this.props;
 
 		if ( PLAN_ENTERPRISE_GRID_WPCOM === planName ) {
 			return (
 				<div className="plan-features-2023-grid__vip-price">
-					Starts at <b>US$25,000</b> yearly.
+					{ translate( 'Starts at {{b}}US$25,000{{/b}} yearly.', {
+						components: { b: <b /> },
+						comment: 'Translators: the price is in US dollars for all users (US$25,000)',
+					} ) }
 				</div>
 			);
 		}
