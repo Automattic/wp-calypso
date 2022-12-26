@@ -1,11 +1,9 @@
-import { getPlans, PLAN_FREE, PLAN_ENTERPRISE_GRID_WPCOM } from '@automattic/calypso-products';
+import { PLAN_FREE, PLAN_ENTERPRISE_GRID_WPCOM } from '@automattic/calypso-products';
 import { getCurrencyObject } from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import PlanPrice from 'calypso/my-sites/plan-price';
-
-const PLANS_LIST = getPlans();
 
 export class PlanFeatures2023GridHeaderPrice extends Component {
 	render() {
@@ -47,7 +45,9 @@ export class PlanFeatures2023GridHeaderPrice extends Component {
 			const annualPriceObj = getCurrencyObject( rawPriceAnnual, currencyCode );
 			const annualPriceText = `${ annualPriceObj.symbol }${ annualPriceObj.integer }`;
 
-			return `per month, ${ annualPriceText } billed annually`;
+			return translate( 'per month, %(annualPriceText)s billed annually', {
+				args: { annualPriceText },
+			} );
 		}
 
 		return null;
@@ -63,13 +63,22 @@ export class PlanFeatures2023GridHeaderPrice extends Component {
 	}
 
 	renderPriceGroup() {
-		const { currencyCode, rawPrice, discountPrice, planName, is2023OnboardingPricingGrid } =
-			this.props;
+		const {
+			currencyCode,
+			rawPrice,
+			discountPrice,
+			planName,
+			is2023OnboardingPricingGrid,
+			translate,
+		} = this.props;
 
 		if ( PLAN_ENTERPRISE_GRID_WPCOM === planName ) {
 			return (
 				<div className="plan-features-2023-grid__vip-price">
-					Starts at <b>US$25,000</b> yearly.
+					{ translate( 'Starts at {{b}}US$25,000{{/b}} yearly.', {
+						components: { b: <b /> },
+						comment: 'Translators: the price is in US dollars for all users (US$25,000)',
+					} ) }
 				</div>
 			);
 		}
@@ -112,19 +121,9 @@ PlanFeatures2023GridHeaderPrice.propTypes = {
 	billingTimeFrame: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
 	currencyCode: PropTypes.string,
 	discountPrice: PropTypes.number,
-	planType: PropTypes.oneOf( Object.keys( PLANS_LIST ) ).isRequired,
-	popular: PropTypes.bool,
 	rawPrice: PropTypes.number,
-	title: PropTypes.string.isRequired,
 	translate: PropTypes.func,
-
-	// For Monthly Pricing test
 	annualPricePerMonth: PropTypes.number,
-	flow: PropTypes.string,
-};
-
-PlanFeatures2023GridHeaderPrice.defaultProps = {
-	popular: false,
 };
 
 export default localize( PlanFeatures2023GridHeaderPrice );

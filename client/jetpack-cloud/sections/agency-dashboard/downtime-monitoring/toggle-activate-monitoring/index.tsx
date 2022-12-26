@@ -1,8 +1,11 @@
+import { Button } from '@automattic/components';
 import { ToggleControl as OriginalToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useToggleActivateMonitor } from '../../hooks';
+import NotificationSettings from '../notification-settings';
 import type { AllowedStatusTypes, MonitorSettings } from '../../sites-overview/types';
 
 import './style.scss';
@@ -17,6 +20,7 @@ export default function ToggleActivateMonitoring( { site, status, settings }: Pr
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 	const [ toggleActivateMonitor, isLoading ] = useToggleActivateMonitor( site );
+	const [ showNotificationSettings, setShowNotificationSettings ] = useState< boolean >( false );
 
 	const ToggleControl = OriginalToggleControl as React.ComponentType<
 		OriginalToggleControl.Props & {
@@ -26,6 +30,10 @@ export default function ToggleActivateMonitoring( { site, status, settings }: Pr
 
 	function handleToggleActivateMonitoring( checked: boolean ) {
 		toggleActivateMonitor( checked );
+	}
+
+	function handleToggleNotificationSettings() {
+		setShowNotificationSettings( ( isOpen ) => ! isOpen );
 	}
 
 	const isChecked = status !== 'disabled';
@@ -54,22 +62,63 @@ export default function ToggleActivateMonitoring( { site, status, settings }: Pr
 					},
 					comment: '%(minutes) is the no of minutes, e.g. "5m"',
 			  } );
+
+		const currentSchedule = hours
+			? translate( '%(hours)d hour', '%(hours)d hours', {
+					count: hours,
+					args: {
+						hours,
+					},
+					comment: '%(hours) is the no of hours, e.g. "1 hour"',
+			  } )
+			: translate( '%(minutes)d minute', '%(minutes)d minutes', {
+					count: minutes,
+					args: {
+						minutes,
+					},
+					comment: '%(minutes) is the no of minutes, e.g. "5 minutes"',
+			  } );
 		return (
 			<div className="toggle-activate-monitoring__duration">
-				<img src={ clockIcon } alt="Monitoring duration" />
-				<span>{ currentDurationText }</span>
+				<Button
+					borderless
+					compact
+					onClick={ handleToggleNotificationSettings }
+					aria-label={
+						translate(
+							'The current notification schedule is set to %(currentSchedule)s. Click here to update the settings',
+							{
+								args: { currentSchedule },
+								comment:
+									'%(currentSchedule) is the current notification duration set, e.g. "1 hour" or "5 minutes"',
+							}
+						) as string
+					}
+				>
+					<img src={ clockIcon } alt={ translate( 'Current Schedule' ) } />
+					<span>{ currentDurationText }</span>
+				</Button>
 			</div>
 		);
 	};
 
 	return (
-		<span className="toggle-activate-monitoring__toggle-button">
-			<ToggleControl
-				onChange={ handleToggleActivateMonitoring }
-				checked={ isChecked }
-				disabled={ isLoading }
-				label={ isChecked && currentSettings() }
-			/>
-		</span>
+		<>
+			<span className="toggle-activate-monitoring__toggle-button">
+				<ToggleControl
+					onChange={ handleToggleActivateMonitoring }
+					checked={ isChecked }
+					disabled={ isLoading }
+					label={ isChecked && currentSettings() }
+				/>
+			</span>
+			{ showNotificationSettings && (
+				<NotificationSettings
+					onClose={ handleToggleNotificationSettings }
+					site={ site }
+					settings={ settings }
+				/>
+			) }
+		</>
 	);
 }

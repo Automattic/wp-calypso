@@ -381,7 +381,8 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for students' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for students' ),
 	getStoreAudience: () => i18n.translate( 'Best for students' ),
-	getPlanTagline: () => 'Get a taste of the world’s most popular CMS & blogging software.',
+	getPlanTagline: () =>
+		i18n.translate( 'Get a taste of the world’s most popular CMS & blogging software.' ),
 	getDescription: () =>
 		i18n.translate(
 			'Get a free website and be on your way to publishing your ' +
@@ -547,7 +548,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for personal use' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for personal use' ),
 	getStoreAudience: () => i18n.translate( 'Best for personal use' ),
-	getPlanTagline: () => 'Create your home on the web with a custom domain name.',
+	getPlanTagline: () => i18n.translate( 'Create your home on the web with a custom domain name.' ),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for personal use:{{/strong}} Boost your' +
@@ -688,7 +689,8 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for online stores' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for online stores' ),
 	getStoreAudience: () => i18n.translate( 'Best for online stores' ),
-	getPlanTagline: () => 'Sell products and process payments with an online store.',
+	getPlanTagline: () =>
+		i18n.translate( 'Sell products and process payments with an online store.' ),
 	getDescription: () => {
 		return i18n.translate(
 			'{{strong}}Best for online stores:{{/strong}} Sell products or services with this powerful, ' +
@@ -846,7 +848,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for freelancers' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for freelancers' ),
 	getStoreAudience: () => i18n.translate( 'Best for freelancers' ),
-	getPlanTagline: () => 'Build a unique website with powerful design tools.',
+	getPlanTagline: () => i18n.translate( 'Build a unique website with powerful design tools.' ),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
@@ -1036,7 +1038,8 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for small businesses' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for small businesses' ),
 	getStoreAudience: () => i18n.translate( 'The plan for small businesses' ),
-	getPlanTagline: () => 'Unlock the power of WordPress with plugins and cloud tools.',
+	getPlanTagline: () =>
+		i18n.translate( 'Unlock the power of WordPress with plugins and cloud tools.' ),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for small businesses:{{/strong}} Power your' +
@@ -1291,7 +1294,9 @@ const get2023EnterprisGrideDetails = (): IncompleteWPcomPlan => ( {
 	getTitle: () => i18n.translate( 'Enterprise' ),
 	getAudience: () => i18n.translate( 'Best for enterprises' ),
 	getPlanTagline: () =>
-		'Deliver an unmatched performance with the highest security standards on our enterprise content platform.',
+		i18n.translate(
+			'Deliver an unmatched performance with the highest security standards on our enterprise content platform.'
+		),
 	getDescription: () => '',
 	get2023PricingGridSignupWpcomFeatures: () => [],
 	get2023PricingGridSignupJetpackFeatures: () => [],
@@ -1719,16 +1724,6 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 
 // DO NOT import. Use `getPlan` instead.
 export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
-	// Not a real plan. This is used to show the Enterprise (VIP) offering in
-	// the main plans grid as part of pdgrnI-1Qp-p2.
-	[ PLAN_ENTERPRISE_GRID_WPCOM ]: {
-		...get2023EnterprisGrideDetails(),
-		term: TERM_ANNUALLY,
-		getBillingTimeFrame: () => '',
-		getProductId: () => 0, // TODO: What should go here?
-		getStoreSlug: () => PLAN_ENTERPRISE_GRID_WPCOM,
-		getPathSlug: () => 'enterprise',
-	},
 	[ PLAN_FREE ]: {
 		...getPlanFreeDetails(),
 		term: TERM_ANNUALLY,
@@ -2004,6 +1999,17 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 1031,
 		getStoreSlug: () => PLAN_ECOMMERCE_2_YEARS,
 		getPathSlug: () => 'ecommerce-2-years',
+	},
+
+	// Not a real plan. This is used to show the Enterprise (VIP) offering in
+	// the main plans grid as part of pdgrnI-1Qp-p2.
+	[ PLAN_ENTERPRISE_GRID_WPCOM ]: {
+		...get2023EnterprisGrideDetails(),
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: () => i18n.translate( 'for life' ),
+		getProductId: () => 0,
+		getStoreSlug: () => PLAN_ENTERPRISE_GRID_WPCOM,
+		getPathSlug: () => 'enterprise',
 	},
 
 	[ PLAN_JETPACK_FREE ]: {

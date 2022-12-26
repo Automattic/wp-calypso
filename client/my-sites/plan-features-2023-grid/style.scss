@@ -32,6 +32,7 @@ $plan-features-sidebar-width: 272px;
 			letter-spacing: 0.32px;
 			line-height: 20px;
 			border-radius: 4px;
+			padding: 10px 14px;
 
 			&:hover {
 				opacity: 0.85;
@@ -193,6 +194,7 @@ $plan-features-sidebar-width: 272px;
 			line-height: $font-title-large;
 			padding-bottom: 12px;
 			display: flex;
+			@include onboarding-font-recoleta;
 		}
 
 		.plan-price__currency-symbol {
@@ -200,7 +202,6 @@ $plan-features-sidebar-width: 272px;
 			color: var(--studio-gray-100);
 			position: relative;
 			top: -7px;
-			@include onboarding-font-recoleta;
 		}
 
 		.plan-price__integer {

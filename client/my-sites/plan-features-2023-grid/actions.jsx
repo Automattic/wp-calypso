@@ -8,9 +8,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 const noop = () => {};
 
 const PlanFeaturesActionsButton = ( {
-	availableForPurchase = true,
 	className,
-	current = false,
 	freePlan = false,
 	isWpcomEnterpriseGridPlan = false,
 	isPlaceholder = false,
@@ -22,20 +20,14 @@ const PlanFeaturesActionsButton = ( {
 	translate,
 	flowName,
 } ) => {
-	const classes = classNames(
-		'plan-features-2023-grid__actions-button',
-		{
-			'is-current': current,
-		},
-		className
-	);
+	const classes = classNames( 'plan-features-2023-grid__actions-button', className );
 
 	const handleUpgradeButtonClick = () => {
 		if ( isPlaceholder ) {
 			return;
 		}
 
-		if ( ! freePlan && ! isWpcomEnterpriseGridPlan ) {
+		if ( ! freePlan ) {
 			recordTracksEvent( 'calypso_plan_features_upgrade_click', {
 				current_plan: null,
 				upgrading_to: planType,
@@ -47,44 +39,50 @@ const PlanFeaturesActionsButton = ( {
 
 	const vipLandingPageUrlWithoutUtmCampaign =
 		'https://wpvip.com/wordpress-vip-agile-content-platform?utm_source=WordPresscom&utm_medium=automattic_referral';
-	if ( ( availableForPurchase || isPlaceholder ) && ! isLaunchPage && isInSignup ) {
-		if ( isWpcomEnterpriseGridPlan ) {
-			return (
-				<Button className={ classes }>
-					{ translate( '{{ExternalLink}}Get %(plan)s{{/ExternalLink}}', {
-						args: {
-							plan: planName,
-						},
-						components: {
-							ExternalLink: (
-								<ExternalLinkWithTracking
-									href={ `${ vipLandingPageUrlWithoutUtmCampaign }&utm_campaign=calypso_signup` }
-									target="_blank"
-									tracksEventName="calypso_plan_step_enterprise_click"
-									tracksEventProps={ { flow: flowName } }
-								/>
-							),
-						},
-					} ) }
-				</Button>
-			);
-		}
 
+	if ( isWpcomEnterpriseGridPlan ) {
 		return (
-			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
-				{ translate( 'Get %(plan)s', {
-					args: {
-						plan: planName,
+			<Button className={ classes }>
+				{ translate( '{{ExternalLink}}Get in touch{{/ExternalLink}}', {
+					components: {
+						ExternalLink: (
+							<ExternalLinkWithTracking
+								href={ `${ vipLandingPageUrlWithoutUtmCampaign }&utm_campaign=calypso_signup` }
+								target="_blank"
+								tracksEventName="calypso_plan_step_enterprise_click"
+								tracksEventProps={ { flow: flowName } }
+							/>
+						),
 					},
 				} ) }
 			</Button>
 		);
 	}
 
-	if ( ( availableForPurchase || isPlaceholder ) && isLaunchPage && ! freePlan ) {
+	if ( ! isLaunchPage && isInSignup ) {
+		let btnText;
+
+		if ( freePlan ) {
+			btnText = translate( 'Start with Free' );
+		} else {
+			btnText = translate( 'Get %(plan)s', {
+				args: {
+					plan: planName,
+				},
+			} );
+		}
+
 		return (
 			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
-				{ translate( 'Select %(plan)s', {
+				{ btnText }
+			</Button>
+		);
+	}
+
+	if ( isLaunchPage && ! freePlan ) {
+		return (
+			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
+				{ translate( 'Get %(plan)s', {
 					args: {
 						plan: planName,
 					},
@@ -96,7 +94,7 @@ const PlanFeaturesActionsButton = ( {
 		);
 	}
 
-	if ( ( availableForPurchase || isPlaceholder ) && isLaunchPage && freePlan ) {
+	if ( isLaunchPage && freePlan ) {
 		return (
 			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
 				{ translate( 'Keep this plan', {
@@ -121,15 +119,15 @@ const PlanFeatures2023GridActions = ( props ) => {
 };
 
 PlanFeatures2023GridActions.propTypes = {
-	availableForPurchase: PropTypes.bool,
 	className: PropTypes.string,
-	current: PropTypes.bool,
 	freePlan: PropTypes.bool,
-	isDisabled: PropTypes.bool,
+	isWpcomEnterpriseGridPlan: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
 	isLaunchPage: PropTypes.bool,
+	isInSignup: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	planType: PropTypes.string,
+	flowName: PropTypes.string,
 };
 
 export default localize( PlanFeatures2023GridActions );

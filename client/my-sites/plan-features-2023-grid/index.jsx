@@ -6,11 +6,11 @@ import {
 	getPlan as getPlanFromKey,
 	getPlanClass,
 	isFreePlan,
+	isWpcomEnterpriseGridPlan,
 	isMonthly,
 	TERM_MONTHLY,
 	isPremiumPlan,
 	isEcommercePlan,
-	isWpcomEnterpriseGridPlan,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
@@ -96,7 +96,6 @@ export class PlanFeatures2023Grid extends Component {
 				annualPricePerMonth,
 				availableForPurchase,
 				currencyCode,
-				current,
 				discountPrice,
 				planConstantObj,
 				planName,
@@ -120,7 +119,6 @@ export class PlanFeatures2023Grid extends Component {
 						availableForPurchase={ availableForPurchase }
 						basePlansPath={ basePlansPath }
 						billingTimeFrame={ billingTimeFrame }
-						current={ current }
 						currencyCode={ currencyCode }
 						discountPrice={ discountPrice }
 						hideMonthly={ hideMonthly }
@@ -233,16 +231,13 @@ export class PlanFeatures2023Grid extends Component {
 		const { isInSignup, isLaunchPage, planProperties, flowName } = this.props;
 
 		return map( planProperties, ( properties ) => {
-			const { availableForPurchase, current, planName, isPlaceholder, planConstantObj } =
-				properties;
+			const { planName, isPlaceholder, planConstantObj } = properties;
 			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
 
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeatures2023GridActions
-						availableForPurchase={ availableForPurchase }
 						className={ getPlanClass( planName ) }
-						current={ current }
 						freePlan={ isFreePlan( planName ) }
 						isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planName ) }
 						isPlaceholder={ isPlaceholder }

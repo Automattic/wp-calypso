@@ -92,58 +92,13 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	}
 
 	/**
-	 * Determine the browser to be used for the spec.
-	 *
-	 * By default, the browser used is defined in the BROWSER_NAME
-	 * environment variable, but at times it may be required to
-	 * run tests in a different browser.
-	 *
-	 * To specify a different browser than default,
-	 * use the @browser tag in the docblock.
-	 *
-	 * Example:
-	 *
-	 * 	`@browser firefox`
-	 */
-	async determineBrowser(): Promise< BrowserType > {
-		const parsed = parseDocBlock( await fs.readFile( this.testFilePath, 'utf8' ) );
-		const defaultBrowser = env.BROWSER_NAME;
-
-		// Parsed docblock can return any one of the following:
-		// 	- undefined: if a tag was not found.
-		// 	- single string: if only one instance of a tag was found.
-		//	- string array: if multiple instances of the tag was found.
-		// In this case, we only want to throw if the tag has been defined
-		// multiple times.
-		if ( parsed.browser && typeof parsed.browser !== 'string' ) {
-			throw new Error( 'Multiple browsers defined in docblock.' );
-		}
-
-		// If the browser tag was found in the docblock, look for the
-		// matches in the supported browsers list.
-		// If the browser tag was **not** found, then match based on
-		// the default broswser specified in the BROWSER_NAME
-		// environment variable.
-		const match = supportedBrowsers.find( ( browser ) => {
-			return parsed.browser === undefined
-				? browser.name() === defaultBrowser.toLowerCase()
-				: browser.name() === parsed.browser;
-		} );
-
-		if ( ! match ) {
-			throw new Error( 'Unsupported browser defined in docblock.' );
-		}
-		return match;
-	}
-
-	/**
 	 * Set up the environment.
 	 */
 	async setup() {
 		await super.setup();
 
 		// Determine the browser that should be used for the spec.
-		const browserType: BrowserType = await this.determineBrowser();
+		const browserType: BrowserType = await determineBrowser( this.testFilePath );
 
 		// Create folders for test artifacts.
 		await fs.mkdir( env.ARTIFACTS_PATH, { recursive: true } );
@@ -171,61 +126,8 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 			},
 		} );
 
-		// Proxy our E2E browser to bind our custom default context options.
-		// We need to it this way because we're not using the first-party Playwright
-		// and we can't use the playwright.config.js file.
-		// See https://playwright.dev/docs/api/class-testoptions.
-		const wpBrowser = new Proxy( browser, {
-			get: function ( target, prop: keyof Browser ) {
-				const orig = target[ prop ];
-
-				if ( typeof orig !== 'function' ) {
-					return orig;
-				}
-
-				if ( prop === 'newContext' ) {
-					return async function ( options: BrowserContextOptions ): Promise< BrowserContext > {
-						const context = await target.newContext( {
-							...options,
-							...config.contextOptions,
-							recordVideo: { dir: os.tmpdir() },
-						} );
-
-						await context.tracing.start( {
-							screenshots: true,
-							snapshots: true,
-						} );
-
-						return context;
-					};
-				}
-
-				if ( prop === 'newPage' ) {
-					return async function ( options: BrowserContextOptions ): Promise< Page > {
-						const page = await target.newPage( {
-							...options,
-							...config.contextOptions,
-							recordVideo: { dir: os.tmpdir() },
-						} );
-
-						// Set the default timeout for all Playwright methods.
-						// Default value is 15000ms, defined in env-variables.ts.
-						page.setDefaultTimeout( env.TIMEOUT );
-
-						const context = page.context();
-
-						await context.tracing.start( {
-							screenshots: true,
-							snapshots: true,
-						} );
-
-						return page;
-					};
-				}
-
-				return orig.bind( target );
-			},
-		} );
+		// Set up the proxy trap.
+		const wpBrowser = setupBrowserProxyTrap( browser );
 
 		// Expose browser globally.
 		this.global.browser = wpBrowser;
@@ -241,8 +143,6 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	 * The browser is then shut down at the end regardless of failure status.
 	 */
 	async teardown(): Promise< void > {
-		await super.teardown();
-
 		if ( ! this.global.browser ) {
 			throw new Error( 'Browser instance unavailable' );
 		}
@@ -250,23 +150,29 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 		if ( this.failure ) {
 			let contextIndex = 0;
 			let pageIndex = 0;
+
+			// Define artifact filename templates.
 			const artifactFilename = `${ this.testFilename }__${ sanitizeString( this.failure.name ) }`;
 			const traceFilePath = path.join(
 				this.testArtifactsPath,
 				`${ artifactFilename }__${ contextIndex }.zip`
 			);
+			const mediaFilePath = path.join(
+				this.testArtifactsPath,
+				`${ artifactFilename }__${ contextIndex }-${ pageIndex }`
+			);
+
 			for await ( const context of contexts ) {
 				// Traces are saved per context.
 				await context.tracing.stop( { path: traceFilePath } );
 				for await ( const page of context.pages() ) {
 					// Screenshots and video are saved per page, where numerous
 					// pages may exist within a context.
-					const mediaFilePath = path.join(
-						this.testArtifactsPath,
-						`${ artifactFilename }__${ contextIndex }-${ pageIndex }`
-					);
-					await page.screenshot( { path: `${ mediaFilePath }.png` } );
-					await page.close(); // Needed before saving video.
+					await page.screenshot( { path: `${ mediaFilePath }.png`, timeout: env.TIMEOUT } );
+
+					// Close the now unnecessary page which also
+					// triggers saving of video to the disk.
+					await page.close();
 					await page.video()?.saveAs( `${ mediaFilePath }.webm` );
 					pageIndex++;
 				}
@@ -276,7 +182,9 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 			console.error( `Artifacts for ${ this.testFilename }: ${ this.testArtifactsPath }` );
 		}
 		// Regardless of pass/fail status, close the browser instance.
-		return await this.global.browser.close();
+		await this.global.browser.close();
+
+		await super.teardown();
 	}
 
 	/**
@@ -372,6 +280,113 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 				break;
 		}
 	}
+}
+
+/**
+ * Determine the browser to be used for the spec.
+ *
+ * By default, the browser used is defined in the BROWSER_NAME
+ * environment variable, but at times it may be required to
+ * run tests in a different browser.
+ *
+ * To specify a different browser than default,
+ * use the @browser tag in the docblock.
+ *
+ * Example:
+ *
+ * 	`@browser firefox`
+ */
+async function determineBrowser( testFilePath: string ): Promise< BrowserType > {
+	const parsed = parseDocBlock( await fs.readFile( testFilePath, 'utf8' ) );
+	const defaultBrowser = env.BROWSER_NAME;
+
+	// Parsed docblock can return any one of the following:
+	// 	- undefined: if a tag was not found.
+	// 	- single string: if only one instance of a tag was found.
+	//	- string array: if multiple instances of the tag was found.
+	// In this case, we only want to throw if the tag has been defined
+	// multiple times.
+	if ( parsed.browser && typeof parsed.browser !== 'string' ) {
+		throw new Error( 'Multiple browsers defined in docblock.' );
+	}
+
+	// If the browser tag was found in the docblock, look for the
+	// matches in the supported browsers list.
+	// If the browser tag was **not** found, then match based on
+	// the default broswser specified in the BROWSER_NAME
+	// environment variable.
+	const match = supportedBrowsers.find( ( browser ) => {
+		return parsed.browser === undefined
+			? browser.name() === defaultBrowser.toLowerCase()
+			: browser.name() === parsed.browser;
+	} );
+
+	if ( ! match ) {
+		throw new Error( 'Unsupported browser defined in docblock.' );
+	}
+	return match;
+}
+
+/**
+ * Proxy our E2E browser to bind our custom default context options.
+ * We need to it this way because we're not using the first-party Playwright
+ * and we can't use the playwright.config.js file.
+ *
+ * @see {@link  https://playwright.dev/docs/api/class-testoptions}
+ * @returns {Browser} Proxy-trapped instance of a browser.
+ */
+function setupBrowserProxyTrap( browser: Browser ): Browser {
+	return new Proxy( browser, {
+		get: function ( target, prop: keyof Browser ) {
+			const orig = target[ prop ];
+
+			if ( typeof orig !== 'function' ) {
+				return orig;
+			}
+
+			if ( prop === 'newContext' ) {
+				return async function ( options: BrowserContextOptions ): Promise< BrowserContext > {
+					const context = await target.newContext( {
+						...options,
+						...config.contextOptions,
+						recordVideo: { dir: os.tmpdir() },
+					} );
+
+					await context.tracing.start( {
+						screenshots: true,
+						snapshots: true,
+					} );
+
+					return context;
+				};
+			}
+
+			if ( prop === 'newPage' ) {
+				return async function ( options: BrowserContextOptions ): Promise< Page > {
+					const page = await target.newPage( {
+						...options,
+						...config.contextOptions,
+						recordVideo: { dir: os.tmpdir() },
+					} );
+
+					// Set the default timeout for all Playwright methods.
+					// Default value is 15000ms, defined in env-variables.ts.
+					page.setDefaultTimeout( env.TIMEOUT );
+
+					const context = page.context();
+
+					await context.tracing.start( {
+						screenshots: true,
+						snapshots: true,
+					} );
+
+					return page;
+				};
+			}
+
+			return orig.bind( target );
+		},
+	} );
 }
 
 export default JestEnvironmentPlaywright;
