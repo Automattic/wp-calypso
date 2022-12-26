@@ -93,7 +93,7 @@ export default function PostItem( { post }: Props ) {
 					disabled={ loading }
 					onClick={ onClickPromote }
 				>
-					{ __( 'Promote' ) }
+					{ __( 'Blaze' ) }
 				</Button>
 			</div>
 		</CompactCard>
