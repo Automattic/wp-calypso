@@ -189,11 +189,6 @@ export class PlanFeatures2023Grid extends Component {
 			return (
 				<th scope="col" key={ planName } className="plan-features-2023-grid__table-item">
 					<header className={ headerClasses }>
-						{ /* { isEcommercePlan( planName ) && (
-							<div className="plan-features-2023-grid__header-plan-logo">
-								<img src={ wooLogo } alt="wooCommerce logo" />{ ' ' }
-							</div>
-						) } */ }
 						<h4 className="plan-features-2023-grid__header-title">
 							{ planConstantObj.getTitle() }
 						</h4>
