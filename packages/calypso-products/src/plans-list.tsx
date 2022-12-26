@@ -1598,16 +1598,6 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 
 // DO NOT import. Use `getPlan` instead.
 export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
-	// Not a real plan. This is used to show the Enterprise (VIP) offering in
-	// the main plans grid as part of pdgrnI-1Qp-p2.
-	[ PLAN_ENTERPRISE_GRID_WPCOM ]: {
-		...get2023EnterprisGrideDetails(),
-		term: TERM_ANNUALLY,
-		getBillingTimeFrame: () => '',
-		getProductId: () => 0, // TODO: What should go here?
-		getStoreSlug: () => PLAN_ENTERPRISE_GRID_WPCOM,
-		getPathSlug: () => 'enterprise',
-	},
 	[ PLAN_FREE ]: {
 		...getPlanFreeDetails(),
 		term: TERM_ANNUALLY,
@@ -1883,6 +1873,17 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 1031,
 		getStoreSlug: () => PLAN_ECOMMERCE_2_YEARS,
 		getPathSlug: () => 'ecommerce-2-years',
+	},
+
+	// Not a real plan. This is used to show the Enterprise (VIP) offering in
+	// the main plans grid as part of pdgrnI-1Qp-p2.
+	[ PLAN_ENTERPRISE_GRID_WPCOM ]: {
+		...get2023EnterprisGrideDetails(),
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: () => i18n.translate( 'for life' ),
+		getProductId: () => 0,
+		getStoreSlug: () => PLAN_ENTERPRISE_GRID_WPCOM,
+		getPathSlug: () => 'enterprise',
 	},
 
 	[ PLAN_JETPACK_FREE ]: {
