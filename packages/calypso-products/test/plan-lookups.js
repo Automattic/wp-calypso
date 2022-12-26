@@ -596,6 +596,7 @@ describe( 'getPlanClass', () => {
 		expect( getPlanClass( PLAN_BUSINESS_2_YEARS ) ).toEqual( 'is-business-plan' );
 		expect( getPlanClass( PLAN_ECOMMERCE ) ).toEqual( 'is-ecommerce-plan' );
 		expect( getPlanClass( PLAN_ECOMMERCE_2_YEARS ) ).toEqual( 'is-ecommerce-plan' );
+		expect( getPlanClass( PLAN_ENTERPRISE_GRID_WPCOM ) ).toEqual( 'is-wpcom-enterprise-grid-plan' );
 		expect( getPlanClass( PLAN_JETPACK_BUSINESS ) ).toEqual( 'is-business-plan' );
 		expect( getPlanClass( PLAN_JETPACK_BUSINESS_MONTHLY ) ).toEqual( 'is-business-plan' );
 	} );
