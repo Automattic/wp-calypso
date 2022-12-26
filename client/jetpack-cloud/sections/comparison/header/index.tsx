@@ -11,7 +11,7 @@ const Header: React.FC = () => {
 		<FormattedHeader
 			className="header__main-title"
 			headerText={ preventWidows( translate( 'Compare Jetpack products and bundles' ) ) }
-			subHeaderText={ translate( 'Choose the best Jetpack products for your site ' ) }
+			subHeaderText={ translate( 'Choose the best Jetpack products for your site' ) }
 			align="center"
 		/>
 	);
