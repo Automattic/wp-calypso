@@ -12,6 +12,7 @@ import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import isSupersedingJetpackItem from 'calypso/../packages/calypso-products/src/is-superseding-jetpack-item';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
+import reactNodeToString from 'calypso/lib/react-node-to-string';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { useIsUserPurchaseOwner } from 'calypso/state/purchases/utils';
@@ -196,10 +197,27 @@ export const useStoreItemInfo = ( {
 		]
 	);
 
+	const getCtaAriaLabel = useCallback(
+		( item: SelectorProduct ) => {
+			return reactNodeToString(
+				productButtonLabel( {
+					product: item,
+					isOwned: getIsOwned( item ),
+					isUpgradeableToYearly: getIsUpgradeableToYearly( item ),
+					isDeprecated: getIsDeprecated( item ),
+					isSuperseded: getIsSuperseded( item ),
+					currentPlan: sitePlan,
+				} )
+			);
+		},
+		[ getIsOwned, getIsUpgradeableToYearly, getIsSuperseded, sitePlan ]
+	);
+
 	return useMemo(
 		() => ( {
 			getCheckoutURL,
 			getCtaLabel,
+			getCtaAriaLabel,
 			getIsDeprecated,
 			getIsExternal,
 			getIsIncludedInPlan,
@@ -217,6 +235,7 @@ export const useStoreItemInfo = ( {
 		[
 			getCheckoutURL,
 			getCtaLabel,
+			getCtaAriaLabel,
 			getIsIncludedInPlan,
 			getIsIncludedInPlanOrSuperseded,
 			getIsOwned,

@@ -1,3 +1,4 @@
+import { createElement, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
 import { connect } from 'react-redux';
@@ -28,6 +29,14 @@ const ConnectDomainStepOwnershipAuthCode = ( {
 				) }
 			</p>
 			<p className="connect-domain-step__text">{ authCodeStepDefaultDescription.label }</p>
+			<p className="connect-domain-step__text">
+				{ createInterpolateElement(
+					__(
+						'This will only be used to verify that you own this domain, <strong>we will not transfer it</strong>.'
+					),
+					{ strong: createElement( 'strong' ) }
+				) }
+			</p>
 		</>
 	);
 	return (

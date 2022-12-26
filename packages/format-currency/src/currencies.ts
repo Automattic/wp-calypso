@@ -969,12 +969,6 @@ export const CURRENCIES: CurrenciesDictionary = {
 	},
 };
 
-/**
- * Returns currency defaults.
- *
- * @param   {string} code      currency code
- * @returns {?object}          currency defaults
- */
 export function getCurrencyDefaults( code: string ): CurrencyDefinition {
 	const defaultCurrency = {
 		symbol: '$',
@@ -984,4 +978,8 @@ export function getCurrencyDefaults( code: string ): CurrencyDefinition {
 	};
 
 	return CURRENCIES[ code ] || defaultCurrency;
+}
+
+export function doesCurrencyExist( code: string ): boolean {
+	return Boolean( CURRENCIES[ code ] );
 }

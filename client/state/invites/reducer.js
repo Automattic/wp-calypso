@@ -8,6 +8,13 @@ import {
 	INVITES_REQUEST,
 	INVITES_REQUEST_FAILURE,
 	INVITES_REQUEST_SUCCESS,
+	INVITES_SEND,
+	INVITES_SEND_ERROR,
+	INVITES_SEND_FAILURE,
+	INVITES_SEND_SUCCESS,
+	INVITES_VALIDATE_TOKEN,
+	INVITES_VALIDATE_TOKEN_FAILURE,
+	INVITES_VALIDATE_TOKEN_SUCCESS,
 	INVITE_RESEND_REQUEST,
 	INVITE_RESEND_REQUEST_FAILURE,
 	INVITE_RESEND_REQUEST_SUCCESS,
@@ -238,6 +245,70 @@ export function deleting( state = {}, action ) {
 	return state;
 }
 
+export function validation( state = {}, action ) {
+	switch ( action.type ) {
+		case INVITES_VALIDATE_TOKEN:
+			return Object.assign( {}, state, {
+				progress: true,
+				failure: false,
+			} );
+
+		case INVITES_VALIDATE_TOKEN_SUCCESS:
+			return Object.assign( {}, state, {
+				progress: false,
+				failure: false,
+				errors: Array.isArray( action.data.errors ) ? {} : action.data.errors,
+				success: action.data.success,
+			} );
+
+		case INVITES_VALIDATE_TOKEN_FAILURE:
+			return Object.assign( {}, state, {
+				progress: false,
+				failure: true,
+			} );
+	}
+
+	return state;
+}
+
+const initInvitingState = {
+	progress: false,
+	error: false,
+	errorType: undefined,
+	failure: false,
+	success: false,
+};
+export function inviting( state = initInvitingState, action ) {
+	switch ( action.type ) {
+		case INVITES_SEND:
+			return Object.assign( {}, state, {
+				progress: true,
+				success: false,
+			} );
+
+		case INVITES_SEND_ERROR:
+			return Object.assign( {}, state, {
+				...initInvitingState,
+				error: true,
+				errorType: action.errorType,
+			} );
+
+		case INVITES_SEND_SUCCESS:
+			return Object.assign( {}, state, {
+				...initInvitingState,
+				success: true,
+			} );
+
+		case INVITES_SEND_FAILURE:
+			return Object.assign( {}, state, {
+				...initInvitingState,
+				failure: true,
+			} );
+	}
+
+	return state;
+}
+
 const combinedReducer = combineReducers( {
 	requesting,
 	items,
@@ -245,6 +316,8 @@ const combinedReducer = combineReducers( {
 	requestingResend,
 	deleting,
 	links,
+	validation,
+	inviting,
 } );
 
 export default withStorageKey( 'invites', combinedReducer );
