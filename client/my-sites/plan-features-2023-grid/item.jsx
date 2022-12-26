@@ -6,7 +6,10 @@ export function PlanFeaturesItem( props ) {
 	} );
 
 	return (
-		<div className="plan-features-2023-grid__item plan-features-2023-grid__item-available">
+		<div
+			className="plan-features-2023-grid__item plan-features-2023-grid__item-available"
+			key={ props.key }
+		>
 			{ props.annualOnlyContent && (
 				<div className="plan-features-2023-grid__item-annual-plan-container">
 					{ props.annualOnlyContent }

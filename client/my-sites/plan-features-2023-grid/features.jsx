@@ -38,7 +38,7 @@ export class PlanFeatures2023GridFeatures extends Component {
 		);
 	}
 
-	renderFeatureItem( feature, index ) {
+	renderFeatureItem( feature, index, key = null ) {
 		const classes = classNames( 'plan-features-2023-grid__item-info', {
 			'is-annual-plan-feature': feature.availableOnlyForAnnualPlans,
 			'is-available': feature.availableForCurrentPlan,
@@ -48,19 +48,15 @@ export class PlanFeatures2023GridFeatures extends Component {
 			'is-bold': feature.getSlug() === FEATURE_CUSTOM_DOMAIN,
 		} );
 		return (
-			<>
-				<PlanFeaturesItem
-					key={ index }
-					annualOnlyContent={ this.renderAnnualPlansFeatureNotice( feature ) }
-					isFeatureAvailable={ feature.availableForCurrentPlan }
-				>
-					<span className={ classes }>
-						<span className={ itemTitleClasses }>
-							{ feature.getTitle( this.props.domainName ) }
-						</span>
-					</span>
-				</PlanFeaturesItem>
-			</>
+			<PlanFeaturesItem
+				key={ key }
+				annualOnlyContent={ this.renderAnnualPlansFeatureNotice( feature ) }
+				isFeatureAvailable={ feature.availableForCurrentPlan }
+			>
+				<span className={ classes } key={ key }>
+					<span className={ itemTitleClasses }>{ feature.getTitle( this.props.domainName ) }</span>
+				</span>
+			</PlanFeaturesItem>
 		);
 	}
 
@@ -88,10 +84,11 @@ export class PlanFeatures2023GridFeatures extends Component {
 			const classes = classNames( '', getPlanClass( planName ), {
 				'is-last-feature': featureIndex + 1 === features.length,
 			} );
+			const key = `${ currentFeature.getSlug() }-${ featureIndex }`;
 
 			return (
-				<div key={ `${ currentFeature.getSlug() }-${ featureIndex }` } className={ classes }>
-					{ this.renderFeatureItem( currentFeature, mapIndex ) }
+				<div key={ key } className={ classes }>
+					{ this.renderFeatureItem( currentFeature, mapIndex, key ) }
 				</div>
 			);
 		} );
@@ -109,10 +106,11 @@ export class PlanFeatures2023GridFeatures extends Component {
 					'is-last-feature': featureIndex + 1 === features.length,
 					'is-bold': currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN,
 				} );
+				const key = `${ currentFeature.getSlug() }-jp-${ featureIndex }`;
 
 				return (
-					<div key={ `${ currentFeature.getSlug() }-${ featureIndex }` } className={ classes }>
-						{ this.renderFeatureItem( currentFeature, mapIndex ) }
+					<div key={ key } className={ classes }>
+						{ this.renderFeatureItem( currentFeature, mapIndex, key ) }
 					</div>
 				);
 			} )
@@ -150,21 +148,8 @@ export class PlanFeatures2023GridFeatures extends Component {
 }
 
 PlanFeatures2023GridFeatures.propTypes = {
-	billingTimeFrame: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
-	currencyCode: PropTypes.string,
-	discountPrice: PropTypes.number,
-	popular: PropTypes.bool,
-	rawPrice: PropTypes.number,
-	title: PropTypes.string.isRequired,
+	domainName: PropTypes.string,
 	translate: PropTypes.func,
-
-	// For Monthly Pricing test
-	annualPricePerMonth: PropTypes.number,
-	flow: PropTypes.string,
-};
-
-PlanFeatures2023GridFeatures.defaultProps = {
-	popular: false,
 };
 
 export default localize( PlanFeatures2023GridFeatures );
