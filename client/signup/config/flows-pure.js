@@ -1,9 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import {
-	LINK_IN_BIO_FLOW,
-	LINK_IN_BIO_TLD_FLOW,
-	setupSiteAfterCreation,
-} from '@automattic/onboarding';
+import { LINK_IN_BIO_FLOW, setupSiteAfterCreation } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 
 const noop = () => {};
@@ -147,23 +143,6 @@ export function generateFlows( {
 			get pageTitle() {
 				return translate( 'Link in Bio' );
 			},
-			postCompleteCallback: setupSiteAfterCreation,
-		},
-		{
-			name: LINK_IN_BIO_TLD_FLOW,
-			steps: [ 'domains-link-in-bio-tld', 'user', 'plans-link-in-bio' ],
-			middleDestination: {
-				user: ( dependencies ) => `/setup/link-in-bio/patterns?tld=${ dependencies.tld }`,
-			},
-			destination: ( dependencies ) =>
-				`/setup/link-in-bio/launchpad?siteSlug=${ encodeURIComponent( dependencies.siteSlug ) }`,
-			description: 'Beginning of the flow to create a link in bio',
-			lastModified: '2022-11-03',
-			showRecaptcha: true,
-			get pageTitle() {
-				return translate( 'Link in Bio' );
-			},
-			providesDependenciesInQuery: [ 'tld' ],
 			postCompleteCallback: setupSiteAfterCreation,
 		},
 		{
