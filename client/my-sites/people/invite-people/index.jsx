@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -375,7 +376,11 @@ class InvitePeople extends Component {
 
 	goBack = () => {
 		const siteSlug = get( this.props, 'site.slug' );
-		const fallback = siteSlug ? '/people/team/' + siteSlug : '/people/team';
+		let fallback = siteSlug ? '/people/team/' + siteSlug : '/people/team';
+
+		if ( isEnabled( 'user-management-revamp' ) ) {
+			fallback = '/people/team-members/' + siteSlug;
+		}
 
 		// Go back to last route with /people/team/$site as the fallback
 		page.back( fallback );

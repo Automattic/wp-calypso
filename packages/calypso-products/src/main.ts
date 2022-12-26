@@ -288,7 +288,7 @@ export function isFreePlan( planSlug: string ): boolean {
 // Checks if it is an Enterprise plan (a.k.a VIP), introduced as part of pdgrnI-1Qp-p2.
 // This is not a real plan, but added to display Enterprise in the pricing grid.
 export function isWpcomEnterpriseGridPlan( planSlug: string ): boolean {
-	return planMatches( planSlug, { type: TYPE_ENTERPRISE_GRID_WPCOM } );
+	return planMatches( planSlug, { type: TYPE_ENTERPRISE_GRID_WPCOM, group: GROUP_WPCOM } );
 }
 
 export function isFlexiblePlan( planSlug: string ): boolean {
