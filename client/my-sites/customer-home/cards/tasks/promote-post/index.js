@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import megaphoneIllustration from 'calypso/assets/images/customer-home/illustration--megaphone.svg';
+import blazeIllustration from 'calypso/assets/images/customer-home/illustration--blaze.svg';
 import {
 	loadDSPWidgetJS,
 	recordDSPEntryPoint,
@@ -37,7 +37,7 @@ const PromotePost = () => {
 					actionUrl={ `/advertising/${ selectedSiteSlug }` }
 					actionOnClick={ trackDspAction }
 					completeOnStart={ false }
-					illustration={ megaphoneIllustration }
+					illustration={ blazeIllustration }
 					taskId={ TASK_PROMOTE_POST }
 				/>
 			) }
