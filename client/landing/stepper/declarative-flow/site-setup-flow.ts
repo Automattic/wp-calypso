@@ -1,7 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
-import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
@@ -122,7 +120,6 @@ const siteSetupFlow: Flow = {
 
 		const urlQueryParams = useQuery();
 		const isPluginBundleEligible = useIsPluginBundleEligible();
-		const isDesktop = useViewportMatch( 'large' );
 
 		let siteSlug: string | null = null;
 		if ( siteSlugParam ) {
@@ -209,10 +206,7 @@ const siteSetupFlow: Flow = {
 				}
 
 				case 'designSetup':
-					if (
-						isDesktop &&
-						isBlankCanvasDesign( providedDependencies?.selectedDesign as Design )
-					) {
+					if ( providedDependencies?.selectedIntent === SiteIntent.SiteAssembler ) {
 						return navigate( 'patternAssembler' );
 					}
 
@@ -229,10 +223,7 @@ const siteSetupFlow: Flow = {
 					}
 
 					// End of Pattern Assembler flow
-					if (
-						isEnabled( 'signup/design-picker-pattern-assembler' ) &&
-						isBlankCanvasDesign( selectedDesign as Design )
-					) {
+					if ( intent === SiteIntent.SiteAssembler ) {
 						return exitFlow( `/site-editor/${ siteSlug }` );
 					}
 

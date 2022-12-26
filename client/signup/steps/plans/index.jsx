@@ -288,7 +288,7 @@ export class PlansStep extends Component {
 				isEnabled( 'onboarding/2023-pricing-grid' ) &&
 				flowName === 'onboarding-2023-pricing-grid'
 			) {
-				return 'Choose your flavor of WordPress';
+				return translate( 'Choose your flavor of WordPress' );
 			}
 			return translate( 'Choose a plan' );
 		}

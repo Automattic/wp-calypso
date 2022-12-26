@@ -101,11 +101,16 @@ export class PlanPrice extends Component {
 		}
 
 		const renderPriceHtml = ( priceObj ) => {
+			let priceInteger = priceObj.price.integer;
+			// In some currencies like IDR, a dot is used to separate group of threes.
+			// Remove it so that it's not confused to be a decimal point by the subtraction operator.
+			priceInteger = priceInteger.replace( /[,.]/g, '' );
+
 			return (
 				<>
 					<span className="plan-price__integer">{ priceObj.price.integer }</span>
 					<sup className="plan-price__fraction">
-						{ priceObj.raw - priceObj.price.integer > 0 && priceObj.price.fraction }
+						{ priceObj.raw - priceInteger > 0 && priceObj.price.fraction }
 					</sup>
 				</>
 			);
