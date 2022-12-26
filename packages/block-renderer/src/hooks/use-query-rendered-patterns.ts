@@ -34,7 +34,7 @@ const useQueryRenderedPatterns = (
 	// If we query too many patterns at once, the endpoint will be very slow.
 	// Hence, do local pagination to ensure the performance.
 	return useInfiniteQuery(
-		[ siteId, stylesheet, 'block-renderer/patterns/render' ],
+		[ siteId, stylesheet, 'block-renderer/patterns/render', patternIds ],
 		( { pageParam = 1 } ) => fetchRenderedPatterns( siteId, stylesheet, patternIds, pageParam ),
 		{
 			getNextPageParam: ( lastPage, allPages ) => {
