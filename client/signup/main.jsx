@@ -652,10 +652,7 @@ class Signup extends Component {
 	// `nextFlowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToNextStep = ( nextFlowName = this.props.flowName ) => {
-		const { steps: flowSteps, middleDestination } = flows.getFlow(
-			nextFlowName,
-			this.props.isLoggedIn
-		);
+		const { steps: flowSteps } = flows.getFlow( nextFlowName, this.props.isLoggedIn );
 		const currentStepIndex = flowSteps.indexOf( this.props.stepName );
 		const nextStepName = flowSteps[ currentStepIndex + 1 ];
 		const nextProgressItem = get( this.props.progress, nextStepName );
@@ -663,15 +660,6 @@ class Signup extends Component {
 
 		if ( nextFlowName !== this.props.flowName ) {
 			this.setState( { previousFlowName: this.props.flowName } );
-		}
-
-		const midPoint = middleDestination ? middleDestination[ this.props.stepName ] : null;
-
-		if ( midPoint ) {
-			// save the resuming point and then navigate away.
-			this.setState( { resumingStep: nextStepName } );
-			page( midPoint( this.props.signupDependencies ) );
-			return;
 		}
 
 		this.goToStep( nextStepName, nextStepSection, nextFlowName );
