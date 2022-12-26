@@ -67,14 +67,14 @@ export class PlanFeatures2023GridFeatures extends Component {
 	renderEnterpriseClientLogos() {
 		return (
 			<div className="plan-features-2023-grid__item plan-features-2023-grid__enterprise-logo">
-				<img src={ TimeLogo } alt="WordPress VIP client logo for TIME" />
-				<img src={ SlackLogo } alt="WordPress VIP client logo for Slack" />
-				<img src={ DisneyLogo } alt="WordPress VIP client logo for Disney" />
-				<img src={ CNNLogo } alt="WordPress VIP client logo for CNN" />
-				<img src={ SalesforceLogo } alt="WordPress VIP client logo for Salesforce" />
-				<img src={ FacebookLogo } alt="WordPress VIP client logo for Facebook" />
-				<img src={ CondenastLogo } alt="WordPress VIP client logo for Conde Nast" />
-				<img src={ BloombergLogo } alt="WordPress VIP client logo for Bloomberg" />
+				<img src={ TimeLogo } alt="WordPress VIP client logo for TIME" loading="lazy" />
+				<img src={ SlackLogo } alt="WordPress VIP client logo for Slack" loading="lazy" />
+				<img src={ DisneyLogo } alt="WordPress VIP client logo for Disney" loading="lazy" />
+				<img src={ CNNLogo } alt="WordPress VIP client logo for CNN" loading="lazy" />
+				<img src={ SalesforceLogo } alt="WordPress VIP client logo for Salesforce" loading="lazy" />
+				<img src={ FacebookLogo } alt="WordPress VIP client logo for Facebook" loading="lazy" />
+				<img src={ CondenastLogo } alt="WordPress VIP client logo for Conde Nast" loading="lazy" />
+				<img src={ BloombergLogo } alt="WordPress VIP client logo for Bloomberg" loading="lazy" />
 			</div>
 		);
 	}
