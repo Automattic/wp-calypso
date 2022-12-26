@@ -102,7 +102,7 @@ export default function PromotedPosts( { tab }: Props ) {
 	const translate = useTranslate();
 
 	const tabs: TabOption[] = [
-		{ id: 'posts', name: translate( 'Ready to promote' ) },
+		{ id: 'posts', name: translate( 'Ready to Blaze' ) },
 		{ id: 'campaigns', name: translate( 'Campaigns' ) },
 	];
 
@@ -111,7 +111,7 @@ export default function PromotedPosts( { tab }: Props ) {
 	}
 
 	const subtitle = translate(
-		'Reach new readers and customers by promoting a post or a page on our network of millions blogs and web sites. {{learnMoreLink}}Learn more.{{/learnMoreLink}}',
+		'Reach new readers and customers with WordPress Blaze. Promote a post or a page on our network of millions blogs and web sites. {{learnMoreLink}}Learn more.{{/learnMoreLink}}',
 		{
 			components: {
 				learnMoreLink: <InlineSupportLink supportContext="advertising" showIcon={ false } />,

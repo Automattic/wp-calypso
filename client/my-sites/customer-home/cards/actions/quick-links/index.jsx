@@ -108,7 +108,7 @@ export const QuickLinks = ( {
 					href={ `/advertising/${ siteSlug }` }
 					hideLinkIndicator
 					onClick={ trackPromotePostAction }
-					label={ translate( 'Promote post or page' ) }
+					label={ translate( 'Promote using Blaze' ) }
 					gridicon="speaker"
 				/>
 			) }
