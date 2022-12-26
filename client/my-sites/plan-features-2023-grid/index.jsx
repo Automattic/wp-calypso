@@ -11,7 +11,6 @@ import {
 	isMonthly,
 	TERM_MONTHLY,
 	isEcommercePlan,
-	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -106,7 +105,6 @@ export class PlanFeatures2023Grid extends Component {
 				annualPricePerMonth,
 				availableForPurchase,
 				currencyCode,
-				current,
 				discountPrice,
 				planConstantObj,
 				planName,
@@ -130,7 +128,6 @@ export class PlanFeatures2023Grid extends Component {
 						availableForPurchase={ availableForPurchase }
 						basePlansPath={ basePlansPath }
 						billingTimeFrame={ billingTimeFrame }
-						current={ current }
 						currencyCode={ currencyCode }
 						discountPrice={ discountPrice }
 						hideMonthly={ hideMonthly }
@@ -240,33 +237,21 @@ export class PlanFeatures2023Grid extends Component {
 		const { isInSignup, isLaunchPage, planProperties, flowName } = this.props;
 
 		return map( planProperties, ( properties ) => {
-			const {
-				availableForPurchase,
-				current,
-				planName,
-				primaryUpgrade,
-				isPlaceholder,
-				planConstantObj,
-				popular,
-			} = properties;
+			const { planName, isPlaceholder, planConstantObj } = properties;
 			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
 
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeatures2023GridActions
-						availableForPurchase={ availableForPurchase }
 						className={ getPlanClass( planName ) }
-						current={ current }
 						freePlan={ isFreePlan( planName ) }
 						isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planName ) }
 						isPlaceholder={ isPlaceholder }
-						isPopular={ popular }
 						isInSignup={ isInSignup }
 						isLaunchPage={ isLaunchPage }
 						onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
 						planName={ planConstantObj.getTitle() }
 						planType={ planName }
-						primaryUpgrade={ primaryUpgrade }
 						flowName={ flowName }
 					/>
 				</td>
