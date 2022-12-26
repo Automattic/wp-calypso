@@ -1,4 +1,4 @@
-import { SiteIntent } from '@automattic/data-stores/src/onboard';
+import { Design } from '@automattic/design-picker';
 import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
@@ -49,7 +49,7 @@ const importFlow: Flow = {
 		const urlQueryParams = useQuery();
 		const siteSlugParam = useSiteSlugParam();
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
-		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 		const flowProgress = useSiteSetupFlowProgress( _currentStep, 'import', '' );
 
 		if ( flowProgress ) {
@@ -103,7 +103,8 @@ const importFlow: Flow = {
 				}
 
 				case 'designSetup': {
-					if ( providedDependencies?.selectedIntent === SiteIntent.SiteAssembler ) {
+					const _selectedDesign = providedDependencies?.selectedDesign as Design;
+					if ( _selectedDesign?.design_type === 'assembler' ) {
 						return navigate( 'patternAssembler' );
 					}
 
@@ -115,7 +116,7 @@ const importFlow: Flow = {
 
 				case 'processing': {
 					// End of Pattern Assembler flow
-					if ( intent === SiteIntent.SiteAssembler ) {
+					if ( selectedDesign?.design_type === 'assembler' ) {
 						return exitFlow( `/site-editor/${ siteSlugParam }` );
 					}
 
