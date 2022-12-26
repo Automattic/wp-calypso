@@ -535,6 +535,33 @@ body.is-section-signup.is-white-signup {
 		.plan-features-2023-grid__jp-logo {
 			padding: 24px 0 6px 20px;
 		}
+
+		&.plan-features-2023-grid__storage {
+			padding: 24px 20px 38px 20px;
+
+			.plan-features-2023-grid__storage-title {
+				color: var(--studio-gray-100);
+				font-weight: 500;
+				/* stylelint-disable-next-line */
+				font-size: 11rem;
+				line-height: 16px;
+				margin-bottom: 10px;
+			}
+
+			.plan-features-2023-grid__storage-buttons {
+				background: #f2f2f2;
+				/* stylelint-disable-next-line */
+				border-radius: 5px;
+				padding: 4px 0;
+				width: fit-content;
+				text-align: center;
+				font-size: $font-body-extra-small;
+				font-weight: 400;
+				line-height: 20px;
+				color: var(--studio-gray-90);
+				min-width: 64px;
+			}
+		}
 	}
 
 	.plan-features-2023-grid__header {

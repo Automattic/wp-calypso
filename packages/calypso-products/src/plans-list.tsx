@@ -427,6 +427,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_LTD_SOCIAL_MEDIA_JP,
 		FEATURE_CONTACT_FORM_JP,
 	],
+	get2023PricingGridSignupStorageOptions: () => [ FEATURE_1GB_STORAGE ],
 	getIncludedFeatures: () => [],
 	getInferiorFeatures: () => [],
 	getCancellationFeatureList: (): CancellationFeatureLists => ( {
@@ -607,6 +608,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PAID_SUBSCRIBERS_JP,
 		FEATURE_PREMIUM_CONTENT_JP,
 	],
+	get2023PricingGridSignupStorageOptions: () => [ FEATURE_6GB_STORAGE ],
 	getNewsletterDescription: () =>
 		i18n.translate(
 			'Jumpstart your Newsletter with a custom domain, ad-free experience, and the ability to sell subscriptions, take payments, and collect donations from day one. Backed with email support to help get everything just right.'
@@ -791,6 +793,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_EXTENSIONS,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [],
+	get2023PricingGridSignupStorageOptions: () => [ FEATURE_200GB_STORAGE ],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -984,6 +987,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SEO_JP,
 		FEATURE_BRUTE_PROTECT_JP,
 	],
+	get2023PricingGridSignupStorageOptions: () => [ FEATURE_13GB_STORAGE ],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -1142,6 +1146,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_ES_SEARCH_JP,
 		FEATURE_PLUGIN_AUTOUPDATE_JP,
 	],
+	get2023PricingGridSignupStorageOptions: () => [ FEATURE_200GB_STORAGE ],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -1300,6 +1305,7 @@ const get2023EnterprisGrideDetails = (): IncompleteWPcomPlan => ( {
 	getDescription: () => '',
 	get2023PricingGridSignupWpcomFeatures: () => [],
 	get2023PricingGridSignupJetpackFeatures: () => [],
+	get2023PricingGridSignupStorageOptions: () => [],
 } );
 
 const getJetpackPersonalDetails = (): IncompleteJetpackPlan => ( {

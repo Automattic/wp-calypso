@@ -12,9 +12,13 @@ import {
 	isPremiumPlan,
 	isEcommercePlan,
 	PLAN_ENTERPRISE_GRID_WPCOM,
+	FEATURE_1GB_STORAGE,
+	FEATURE_6GB_STORAGE,
+	FEATURE_13GB_STORAGE,
+	FEATURE_200GB_STORAGE,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import { compact, get, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -49,7 +53,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	render() {
-		const { isInSignup, planProperties, translate } = this.props;
+		const { isInSignup, planProperties } = this.props;
 		const tableClasses = classNames(
 			'plan-features-2023-grid__table',
 			`has-${ planProperties.length }-cols`
@@ -78,6 +82,7 @@ export class PlanFeatures2023Grid extends Component {
 									<tr>{ this.renderPlanPriceGroup() }</tr>
 									<tr>{ this.renderTopButtons() }</tr>
 									<tr>{ this.renderPlanFeaturesList() }</tr>
+									<tr>{ this.renderPlanStorageOptions() }</tr>
 								</tbody>
 							</table>
 						</div>
@@ -137,7 +142,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderPlanLogos() {
-		const { planProperties, translate, isInSignup } = this.props;
+		const { planProperties, isInSignup } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const { planName } = properties;
@@ -257,6 +262,52 @@ export class PlanFeatures2023Grid extends Component {
 		return (
 			<PlanFeatures2023GridFeatures planProperties={ planProperties } domainName={ domainName } />
 		);
+	}
+
+	getFeatureToStorageMap( storageFeature ) {
+		switch ( storageFeature ) {
+			case FEATURE_1GB_STORAGE:
+				return translate( '1GB' );
+			case FEATURE_6GB_STORAGE:
+				return translate( '6GB' );
+			case FEATURE_13GB_STORAGE:
+				return translate( '13GB' );
+			case FEATURE_200GB_STORAGE:
+				return translate( '200GB' );
+			default:
+				return null;
+		}
+	}
+
+	renderPlanStorageOptions() {
+		const { planProperties } = this.props;
+
+		return planProperties.map( ( properties ) => {
+			const { planName, storageOptions } = properties;
+			const storageJSX = storageOptions.map( ( storageFeature ) => {
+				if ( storageFeature.length <= 0 ) {
+					return;
+				}
+				return (
+					<div className="plan-features-2023-grid__storage-buttons">
+						{ this.getFeatureToStorageMap( storageFeature ) }
+					</div>
+				);
+			} );
+
+			return (
+				<th
+					scope="col"
+					key={ planName }
+					className="plan-features-2023-grid__table-item plan-features-2023-grid__storage"
+				>
+					{ storageOptions.length ? (
+						<div className="plan-features-2023-grid__storage-title">{ translate( 'STORAGE' ) }</div>
+					) : null }
+					{ storageJSX }
+				</th>
+			);
+		} );
 	}
 }
 
@@ -384,6 +435,7 @@ export default connect(
 					PLAN_ENTERPRISE_GRID_WPCOM === plan
 						? planConstantObj.getPathSlug()
 						: planObject.product_name_short;
+				const storageOptions = planConstantObj.get2023PricingGridSignupStorageOptions() || [];
 
 				return {
 					cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ),
@@ -406,6 +458,7 @@ export default connect(
 					annualPricePerMonth,
 					isMonthlyPlan,
 					tagline,
+					storageOptions,
 				};
 			} )
 		);
