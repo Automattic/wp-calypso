@@ -109,7 +109,7 @@ export class PlanPrice extends Component {
 
 			if ( is2023OnboardingPricingGrid ) {
 				return (
-					<div class="plan-price__integer-fraction">
+					<div className="plan-price__integer-fraction">
 						<span className="plan-price__integer">{ priceObj.price.integer }</span>
 						<sup className="plan-price__fraction">
 							{ priceObj.raw - priceInteger > 0 && priceObj.price.fraction }

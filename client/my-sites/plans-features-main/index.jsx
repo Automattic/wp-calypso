@@ -168,7 +168,10 @@ export class PlansFeaturesMain extends Component {
 						'plans-features-main__group',
 						'is-wpcom',
 						`is-customer-${ customerType }`,
-						'is-2023-pricing-grid'
+						'is-2023-pricing-grid',
+						{
+							'is-scrollable': plansWithScroll,
+						}
 					) }
 					data-e2e-plans="wpcom"
 				>
