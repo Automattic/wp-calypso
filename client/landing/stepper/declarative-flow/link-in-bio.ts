@@ -12,7 +12,6 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { useQuery } from '../hooks/use-query';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -56,16 +55,8 @@ const linkInBio: Flow = {
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const locale = useLocale();
-		const queryParams = useQuery();
-		const tld = queryParams.get( 'tld' );
 
-		// At the moment, the TLD variation relies on going back and forth from the classic signup framework
-		// and the Stepper framework. Since it begins from the former, the Stepper framework doesn't have a chance
-		// to inject the step progress there, which can be quite confusing. Thus, we've decided to just not show it at all.
-		// Once the whole flow is moved into Stepper, this can also be removed. See Automattic/martech#1256
-		if ( ! tld ) {
-			setStepProgress( flowProgress );
-		}
+		setStepProgress( flowProgress );
 
 		// trigger guides on step movement, we don't care about failures or response
 		wpcom.req.post(
@@ -79,13 +70,12 @@ const linkInBio: Flow = {
 			}
 		);
 
-		// for the standard Link in Bio flow
-		const submitDefault = ( providedDependencies: ProvidedDependencies = {} ) => {
-			const logInUrl =
-				locale && locale !== 'en'
-					? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=/setup/${ flowName }/patterns`
-					: `/start/account/user?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=/setup/${ flowName }/patterns`;
+		const logInUrl =
+			locale && locale !== 'en'
+				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=/setup/${ flowName }/patterns`
+				: `/start/account/user?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=/setup/${ flowName }/patterns`;
 
+		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
 
 			switch ( _currentStepSlug ) {
@@ -136,43 +126,6 @@ const linkInBio: Flow = {
 			}
 			return providedDependencies;
 		};
-
-		// when there is a designated tld, the domain step will come first, hence altering the flow accordingly
-		const submitDomainFirst = ( providedDependencies: ProvidedDependencies = {} ) => {
-			const logInUrl =
-				locale && locale !== 'en'
-					? `/start/link-in-bio-tld/${ locale }?variationName=${ flowName }&pageTitle=Link%20in%20Bio&tld=${ tld }`
-					: `/start/link-in-bio-tld?variationName=${ flowName }&pageTitle=Link%20in%20Bio&tld=${ tld }`;
-
-			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
-
-			switch ( _currentStepSlug ) {
-				case 'intro':
-					if ( userIsLoggedIn ) {
-						return window.location.assign(
-							`/start/link-in-bio-tld/domains?new=${ encodeURIComponent(
-								providedDependencies.siteTitle as string
-							) }&search=yes&hide_initial_query=yes`
-						);
-					}
-					return window.location.assign( logInUrl );
-
-				case 'patterns':
-					return navigate( 'linkInBioSetup' );
-
-				case 'linkInBioSetup':
-					return window.location.assign(
-						`/start/link-in-bio-tld/plans-link-in-bio?variationName=${ flowName }&pageTitle=Link%20in%20Bio&tld=${ tld }`
-					);
-
-				case 'launchpad': {
-					return navigate( 'processing' );
-				}
-			}
-			return providedDependencies;
-		};
-
-		const submit = tld ? submitDomainFirst : submitDefault;
 
 		const goBack = () => {
 			return;
