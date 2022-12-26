@@ -38,7 +38,7 @@ export class PlanFeatures2023GridFeatures extends Component {
 		);
 	}
 
-	renderFeatureItem( feature, index ) {
+	renderFeatureItem( feature, index, key = null ) {
 		const classes = classNames( 'plan-features-2023-grid__item-info', {
 			'is-annual-plan-feature': feature.availableOnlyForAnnualPlans,
 			'is-available': feature.availableForCurrentPlan,
@@ -48,33 +48,28 @@ export class PlanFeatures2023GridFeatures extends Component {
 			'is-bold': feature.getSlug() === FEATURE_CUSTOM_DOMAIN,
 		} );
 		return (
-			<>
-				<PlanFeaturesItem
-					key={ index }
-					annualOnlyContent={ this.renderAnnualPlansFeatureNotice( feature ) }
-					isFeatureAvailable={ feature.availableForCurrentPlan }
-				>
-					<span className={ classes }>
-						<span className={ itemTitleClasses }>
-							{ feature.getTitle( this.props.domainName ) }
-						</span>
-					</span>
-				</PlanFeaturesItem>
-			</>
+			<PlanFeaturesItem
+				annualOnlyContent={ this.renderAnnualPlansFeatureNotice( feature ) }
+				isFeatureAvailable={ feature.availableForCurrentPlan }
+			>
+				<span className={ classes } key={ key }>
+					<span className={ itemTitleClasses }>{ feature.getTitle( this.props.domainName ) }</span>
+				</span>
+			</PlanFeaturesItem>
 		);
 	}
 
 	renderEnterpriseClientLogos() {
 		return (
 			<div className="plan-features-2023-grid__item plan-features-2023-grid__enterprise-logo">
-				<img src={ TimeLogo } alt="WordPress VIP client logo for TIME" />
-				<img src={ SlackLogo } alt="WordPress VIP client logo for Slack" />
-				<img src={ DisneyLogo } alt="WordPress VIP client logo for Disney" />
-				<img src={ CNNLogo } alt="WordPress VIP client logo for CNN" />
-				<img src={ SalesforceLogo } alt="WordPress VIP client logo for Salesforce" />
-				<img src={ FacebookLogo } alt="WordPress VIP client logo for Facebook" />
-				<img src={ CondenastLogo } alt="WordPress VIP client logo for Conde Nast" />
-				<img src={ BloombergLogo } alt="WordPress VIP client logo for Bloomberg" />
+				<img src={ TimeLogo } alt="WordPress VIP client logo for TIME" loading="lazy" />
+				<img src={ SlackLogo } alt="WordPress VIP client logo for Slack" loading="lazy" />
+				<img src={ DisneyLogo } alt="WordPress VIP client logo for Disney" loading="lazy" />
+				<img src={ CNNLogo } alt="WordPress VIP client logo for CNN" loading="lazy" />
+				<img src={ SalesforceLogo } alt="WordPress VIP client logo for Salesforce" loading="lazy" />
+				<img src={ FacebookLogo } alt="WordPress VIP client logo for Facebook" loading="lazy" />
+				<img src={ CondenastLogo } alt="WordPress VIP client logo for Conde Nast" loading="lazy" />
+				<img src={ BloombergLogo } alt="WordPress VIP client logo for Bloomberg" loading="lazy" />
 			</div>
 		);
 	}
@@ -88,17 +83,18 @@ export class PlanFeatures2023GridFeatures extends Component {
 			const classes = classNames( '', getPlanClass( planName ), {
 				'is-last-feature': featureIndex + 1 === features.length,
 			} );
+			const key = `${ currentFeature.getSlug() }-${ featureIndex }`;
 
 			return (
-				<div key={ `${ currentFeature.getSlug() }-${ featureIndex }` } className={ classes }>
-					{ this.renderFeatureItem( currentFeature, mapIndex ) }
+				<div key={ key } className={ classes }>
+					{ this.renderFeatureItem( currentFeature, mapIndex, key ) }
 				</div>
 			);
 		} );
 
 		jpFeatures.length !== 0 &&
 			featureItemJSX.push(
-				<div className="plan-features-2023-grid__jp-logo">
+				<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
 					<JetpackLogo size={ 16 } />
 				</div>
 			);
@@ -109,10 +105,11 @@ export class PlanFeatures2023GridFeatures extends Component {
 					'is-last-feature': featureIndex + 1 === features.length,
 					'is-bold': currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN,
 				} );
+				const key = `${ currentFeature.getSlug() }-jp-${ featureIndex }`;
 
 				return (
-					<div key={ `${ currentFeature.getSlug() }-${ featureIndex }` } className={ classes }>
-						{ this.renderFeatureItem( currentFeature, mapIndex ) }
+					<div key={ key } className={ classes }>
+						{ this.renderFeatureItem( currentFeature, mapIndex, key ) }
 					</div>
 				);
 			} )
@@ -150,21 +147,8 @@ export class PlanFeatures2023GridFeatures extends Component {
 }
 
 PlanFeatures2023GridFeatures.propTypes = {
-	billingTimeFrame: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
-	currencyCode: PropTypes.string,
-	discountPrice: PropTypes.number,
-	popular: PropTypes.bool,
-	rawPrice: PropTypes.number,
-	title: PropTypes.string.isRequired,
+	domainName: PropTypes.string,
 	translate: PropTypes.func,
-
-	// For Monthly Pricing test
-	annualPricePerMonth: PropTypes.number,
-	flow: PropTypes.string,
-};
-
-PlanFeatures2023GridFeatures.defaultProps = {
-	popular: false,
 };
 
 export default localize( PlanFeatures2023GridFeatures );
