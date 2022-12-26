@@ -55,6 +55,7 @@ import {
 	TYPE_FREE,
 	PLAN_P2_PLUS,
 	PLAN_P2_FREE,
+	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '../src/constants';
 import {
 	getPlan,
@@ -78,6 +79,7 @@ import {
 	isWpComPremiumPlan,
 	isWpComBloggerPlan,
 	isWpComFreePlan,
+	isWpcomEnterpriseGridPlan,
 	isWpComAnnualPlan,
 	isWpComBiennialPlan,
 	isWpComMonthlyPlan,
@@ -329,6 +331,24 @@ describe( 'isWpComEcommercePlan', () => {
 		expect( isWpComEcommercePlan( PLAN_BUSINESS ) ).toEqual( false );
 		expect( isWpComEcommercePlan( PLAN_BUSINESS_2_YEARS ) ).toEqual( false );
 		expect( isWpComEcommercePlan( 'non-exisWpComting plan' ) ).toEqual( false );
+	} );
+} );
+
+describe( 'isWpComEnterpriseGridPlan', () => {
+	test( 'should return true for enterprise grid plan', () => {
+		expect( isWpcomEnterpriseGridPlan( PLAN_ENTERPRISE_GRID_WPCOM ) ).toEqual( true );
+	} );
+	test( 'should return false for non-business plans', () => {
+		expect( isWpcomEnterpriseGridPlan( PLAN_JETPACK_BUSINESS ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_JETPACK_BUSINESS_MONTHLY ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_PERSONAL ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_PERSONAL_2_YEARS ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_JETPACK_PERSONAL ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_PREMIUM ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_JETPACK_PREMIUM ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_ECOMMERCE ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( 'non-exisWpComting plan' ) ).toEqual( false );
 	} );
 } );
 
@@ -837,6 +857,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_WPCOM_STARTER,
 			PLAN_WPCOM_FLEXIBLE,
 			PLAN_WPCOM_PRO,
+			PLAN_ENTERPRISE_GRID_WPCOM,
 		] );
 		expect( findPlansKeys( { term: TERM_MONTHLY } ) ).toEqual( [
 			PLAN_PERSONAL_MONTHLY,
@@ -912,6 +933,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_WPCOM_FLEXIBLE,
 			PLAN_WPCOM_PRO,
 			PLAN_WPCOM_PRO_MONTHLY,
+			PLAN_ENTERPRISE_GRID_WPCOM,
 		] );
 		expect( findPlansKeys( { group: GROUP_JETPACK } ) ).toEqual( [
 			PLAN_JETPACK_FREE,
