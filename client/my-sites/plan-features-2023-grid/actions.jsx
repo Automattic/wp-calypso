@@ -43,10 +43,7 @@ const PlanFeaturesActionsButton = ( {
 	if ( isWpcomEnterpriseGridPlan ) {
 		return (
 			<Button className={ classes }>
-				{ translate( '{{ExternalLink}}Get %(plan)s{{/ExternalLink}}', {
-					args: {
-						plan: planName,
-					},
+				{ translate( '{{ExternalLink}}Get in touch{{/ExternalLink}}', {
 					components: {
 						ExternalLink: (
 							<ExternalLinkWithTracking
@@ -63,13 +60,21 @@ const PlanFeaturesActionsButton = ( {
 	}
 
 	if ( ! isLaunchPage && isInSignup ) {
+		let btnText;
+
+		if ( freePlan ) {
+			btnText = translate( 'Start with Free' );
+		} else {
+			btnText = translate( 'Get %(plan)s', {
+				args: {
+					plan: planName,
+				},
+			} );
+		}
+
 		return (
 			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
-				{ translate( 'Get %(plan)s', {
-					args: {
-						plan: planName,
-					},
-				} ) }
+				{ btnText }
 			</Button>
 		);
 	}
