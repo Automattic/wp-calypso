@@ -98,7 +98,7 @@ const ProductLightbox: React.FC< Props > = ( {
 		} ) );
 	}, [ product.productSlug ] );
 
-	const shouldShowOptions = variantOptions.length > 1;
+	const shouldShowOptions = variantOptions.length >= 1;
 
 	const isMultiSiteIncompatible = isMultisite && ! getIsMultisiteCompatible( product );
 
@@ -107,6 +107,7 @@ const ProductLightbox: React.FC< Props > = ( {
 	const isLargeScreen = useBreakpoint( '>782px' );
 
 	const showPricingBreakdown = includedProductSlugs?.length;
+	console.log( product );
 
 	return (
 		<Modal
