@@ -11,7 +11,7 @@ export function jetpackComparisonContext( context: PageJS.Context, next: () => v
 	const { lang } = context.params;
 	const path = context.path;
 
-	if ( context.pathname.endsWith( '/comparison' ) && urlQueryArgs.site ) {
+	if ( context.pathname.endsWith( '/features/comparison' ) && urlQueryArgs.site ) {
 		page.redirect( addQueryArgs( urlQueryArgs, `${ context.pathname }/${ urlQueryArgs.site }` ) );
 		return;
 	}
@@ -28,6 +28,7 @@ export function jetpackComparisonContext( context: PageJS.Context, next: () => v
 			locale={ lang }
 			nav={ context.nav }
 			urlQueryArgs={ urlQueryArgs }
+			rootUrl={ context.pathname }
 		/>
 	);
 	next();

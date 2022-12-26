@@ -1,7 +1,8 @@
-import { TERM_ANNUALLY } from '@automattic/calypso-products';
+import { TERM_ANNUALLY, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useMemo } from 'react';
+import { Fragment, useCallback, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
 import ProductLightbox from 'calypso/my-sites/plans/jetpack-plans/product-lightbox';
 import StoreItemInfoContext, {
 	useStoreItemInfoContext,
@@ -10,13 +11,13 @@ import { useProductLightbox } from 'calypso/my-sites/plans/jetpack-plans/product
 import { useStoreItemInfo } from 'calypso/my-sites/plans/jetpack-plans/product-store/hooks/use-store-item-info';
 import { MoreInfoLink } from 'calypso/my-sites/plans/jetpack-plans/product-store/more-info-link';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
-import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { getPurchaseURLCallback } from '../../../../my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { TableWithStoreContextProps } from '../types';
 import { links } from './links';
 import { useComparisonData } from './useComparisonData';
 import { useProductsToCompare } from './useProductsToCompare';
-
+import type { SelectorProduct, PurchaseCallback } from 'calypso/my-sites/plans/jetpack-plans/types';
 import './style.scss';
 
 export const Table: React.FC = () => {
@@ -36,9 +37,11 @@ export const Table: React.FC = () => {
 		<tr className="header-row">
 			<th></th>
 			{ productsToCompare.map( ( { id, name, productSlug } ) => {
-				const item = slugToSelectorProduct( productSlug ) as SelectorProduct;
-
 				const isFree = 'FREE' === id;
+
+				const item = (
+					isFree ? { productSlug: PLAN_JETPACK_FREE } : slugToSelectorProduct( productSlug )
+				 ) as SelectorProduct;
 
 				return (
 					<th key={ id } scope="col" className={ `product product-jetpack-${ id.toLowerCase() }` }>
@@ -48,9 +51,9 @@ export const Table: React.FC = () => {
 							<Button
 								className="pricing-comparison__product-header--cta"
 								primary={ ! isFree }
-								onClick={ ! isFree ? getOnClickPurchase( item ) : undefined }
+								onClick={ getOnClickPurchase( item ) }
 								target={ ! isFree && getIsExternal( item ) ? '_blank' : undefined }
-								href={ ! isFree ? getCheckoutURL( item ) : '' }
+								href={ ! isFree ? getCheckoutURL( item ) : links.connect_free }
 							>
 								{ isFree ? translate( 'Get started' ) : getCtaLabel( item, '' ) }
 							</Button>
@@ -150,17 +153,36 @@ export const Table: React.FC = () => {
 
 export const TableWithStoreContext: React.FC< TableWithStoreContextProps > = ( {
 	locale,
+	rootUrl,
 	urlQueryArgs,
 } ) => {
 	const createCheckoutURL = useMemo(
 		() => getPurchaseURLCallback( '', urlQueryArgs, locale ),
 		[ locale, urlQueryArgs ]
 	);
+	const dispatch = useDispatch();
+
+	const onClickPurchase = useCallback< PurchaseCallback >(
+		( product ) => {
+			const trackingProps = {
+				site_id: undefined,
+				product_slug: product.productSlug,
+				duration: TERM_ANNUALLY,
+				path: rootUrl,
+			};
+
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_comparison_page_product_click', trackingProps )
+			);
+		},
+		[ dispatch, rootUrl ]
+	);
 
 	const storeItemInfo = useStoreItemInfo( {
 		duration: TERM_ANNUALLY,
 		siteId: null,
 		createCheckoutURL,
+		onClickPurchase,
 	} );
 
 	return (

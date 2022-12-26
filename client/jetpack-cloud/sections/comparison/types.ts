@@ -39,6 +39,7 @@ export type ComparisonDataItem = {
 export type TableWithStoreContextProps = {
 	locale?: string;
 	urlQueryArgs: QueryArgs;
+	rootUrl: string;
 };
 
 export type ContentProps = TableWithStoreContextProps & {

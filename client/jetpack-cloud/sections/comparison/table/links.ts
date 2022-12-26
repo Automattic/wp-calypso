@@ -8,6 +8,7 @@ export const links = {
 	brute_force_attack_protection:
 		'https://jetpack.com/features/security/brute-force-attack-protection/',
 	cdn: 'https://jetpack.com/features/traffic/content-delivery-network/',
+	connect_free: 'https://wordpress.com/jetpack/connect/',
 	contact_forms: 'https://jetpack.com/features/discussion/contact-forms/',
 	crm: 'https://jetpackcrm.com/',
 	downtime_monitoring: 'https://jetpack.com/features/security/downtime-monitoring/',

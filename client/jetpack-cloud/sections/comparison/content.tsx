@@ -9,6 +9,7 @@ export const Content: React.FC< ContentProps > = ( {
 	header,
 	footer,
 	locale,
+	rootUrl,
 	urlQueryArgs,
 } ) => {
 	return (
@@ -19,7 +20,11 @@ export const Content: React.FC< ContentProps > = ( {
 			<QueryIntroOffers />
 			<Main>
 				{ header }
-				<TableWithStoreContext locale={ locale } urlQueryArgs={ urlQueryArgs } />
+				<TableWithStoreContext
+					locale={ locale }
+					rootUrl={ rootUrl }
+					urlQueryArgs={ urlQueryArgs }
+				/>
 			</Main>
 			{ footer }
 		</>
