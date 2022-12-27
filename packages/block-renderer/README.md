@@ -5,19 +5,16 @@ Render blocks on the client side
 ## Usage
 
 ```jsx
-import { BlockRendererProvider, PatternsRendererProvider, PatternsRenderer } from '@automattic/block-renderer';
+import {
+	BlockRendererProvider,
+	PatternsRendererProvider,
+	PatternRenderer,
+} from '@automattic/block-renderer';
 
 const PatternsPreview = () => (
-	<BlockRendererProvider
-		siteId={ siteId }
-		stylesheet={ stylesheet }
-	>
-		<PatternsRendererProvider
-			siteId={ siteId }
-			stylesheet={ stylesheet }
-			patternIds={ patternIds }
-		>
-			<PatternsRenderer patternIds={ patternIds } />
+	<BlockRendererProvider siteId={ siteId } stylesheet={ stylesheet }>
+		<PatternsRendererProvider siteId={ siteId } stylesheet={ stylesheet } patternIds={ patternIds }>
+			<PatternRenderer patternId={ patternId } />
 		</PatternsRendererProvider>
 	</BlockRendererProvider>
 );
