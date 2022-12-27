@@ -43,29 +43,15 @@ Will return null if the currency code is unknown or if the number is not a numbe
 
 An object with the following properties:
 
-### `decimal?: string`
-
-The symbol separating the integer part of a decimal from its fraction.
-
-Will be set automatically by the currency code.
-
-### `grouping?: string`
-
-The symbol separating the thousands part of an amount from its hundreds.
-
-Will be set automatically by the currency code.
-
 ### `precision?: number`
 
-The symbol separating the thousands part of an amount from its hundreds.
+The number of decimal places to display.
 
 Will be set automatically by the currency code.
 
-### `symbol?: string`
+## `locale?: string`
 
-The currency symbol.
-
-Will be set automatically by the currency code.
+The locale to use for the formatting. Defaults to using the browser's current locale.
 
 ### `stripZeros?: boolean`
 
@@ -95,9 +81,8 @@ The currency symbol (eg: `$` for USD).
 
 ### `integer: string`
 
-The integer part of a decimal currency.
+The integer part of a decimal currency. Note that this is not a number, but a locale-formatted string that includes any symbols used for separating the thousands groups (eg: commas, periods, or spaces).
 
 ### `fraction: string`
 
-The decimal part of a decimal currency.
-
+The decimal part of a decimal currency. Note that this is not a number, but a locale-formatted string that includes the decimal separator that may be a comma or a period.
