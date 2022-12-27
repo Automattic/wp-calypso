@@ -42,14 +42,3 @@ export interface CurrencyObject {
 	integer: string;
 	fraction: string;
 }
-
-export interface CurrencyDefinition {
-	symbol: string;
-	grouping: string;
-	decimal: string;
-	precision: number;
-}
-
-export interface CurrenciesDictionary {
-	[ currencyCode: string ]: CurrencyDefinition;
-}
