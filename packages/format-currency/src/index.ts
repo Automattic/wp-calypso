@@ -1,4 +1,4 @@
-import { getCurrencyDefaults } from './currencies';
+import { getCurrencyDefaults, doesCurrencyExist } from './currencies';
 import type { CurrencyObject, CurrencyObjectOptions } from './types';
 
 export { getCurrencyDefaults };
@@ -11,9 +11,10 @@ function getLocaleFromBrowser() {
 	if ( typeof window === 'undefined' ) {
 		return 'en';
 	}
-	return window.navigator?.languages?.length > 0
-		? window.navigator.languages[ 0 ]
-		: window.navigator?.language ?? 'en';
+	if ( window.navigator?.languages?.length > 0 ) {
+		return window.navigator.languages[ 0 ];
+	}
+	return window.navigator?.language ?? 'en';
 }
 
 function getPrecisionForLocaleAndCurrency( locale: string, currency: string ): number {
@@ -107,15 +108,10 @@ export function formatCurrency(
 	options: CurrencyObjectOptions = {}
 ): string | null {
 	const locale = options.locale ?? getLocaleFromBrowser();
-	let currencyPrecision;
-	try {
-		currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );
-	} catch {
-		// The above may throw if the currency is unknown, in which case we want to
-		// default to USD.
+	if ( ! doesCurrencyExist( code ) ) {
 		code = 'USD';
-		currencyPrecision = 2;
 	}
+	const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );
 
 	number = prepareNumberForFormatting( number, currencyPrecision, options );
 	const formatter = getFormatter( number, code, options );
@@ -166,15 +162,10 @@ export function getCurrencyObject(
 	options: CurrencyObjectOptions = {}
 ): CurrencyObject | null {
 	const locale = options.locale ?? getLocaleFromBrowser();
-	let currencyPrecision;
-	try {
-		currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );
-	} catch {
-		// The above may throw if the currency is unknown, in which case we want to
-		// default to USD.
+	if ( ! doesCurrencyExist( code ) ) {
 		code = 'USD';
-		currencyPrecision = 2;
 	}
+	const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );
 
 	number = prepareNumberForFormatting( number, currencyPrecision, options );
 	const formatter = getFormatter( number, code, options );
