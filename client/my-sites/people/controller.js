@@ -174,7 +174,7 @@ function renderPeopleInviteDetails( context, next ) {
 	const PeopleInviteDetailsTitle = () => {
 		const translate = useTranslate();
 
-		return <DocumentHead title={ translate( 'Invite Details', { textOnly: true } ) } />;
+		return <DocumentHead title={ translate( 'User Details', { textOnly: true } ) } />;
 	};
 
 	context.primary = (

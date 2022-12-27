@@ -151,7 +151,7 @@ export class PeopleInviteDetails extends PureComponent {
 		if ( siteId && ! canViewPeople ) {
 			return (
 				<Main>
-					<PageViewTracker path="/people/invites/:site/:invite" title="People > Invite Details" />
+					<PageViewTracker path="/people/invites/:site/:invite" title="People > User Details" />
 					<EmptyContent
 						title={ this.props.translate( 'You are not authorized to view this page' ) }
 						illustration="/calypso/images/illustrations/illustration-404.svg"
@@ -162,11 +162,11 @@ export class PeopleInviteDetails extends PureComponent {
 
 		return (
 			<Main className="people-invite-details">
-				<PageViewTracker path="/people/invites/:site/:invite" title="People > Invite Details" />
+				<PageViewTracker path="/people/invites/:site/:invite" title="People > User Details" />
 				{ siteId && <QuerySiteInvites siteId={ siteId } /> }
 
 				<HeaderCake isCompact onClick={ this.goBack }>
-					{ translate( 'Invite Details' ) }
+					{ translate( 'User Details' ) }
 				</HeaderCake>
 
 				{ this.renderInvite() }
