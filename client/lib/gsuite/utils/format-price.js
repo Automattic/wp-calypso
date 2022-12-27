@@ -25,5 +25,5 @@ export function formatPrice( cost, currencyCode, options = {} ) {
 		cost = applyPrecision( cost, options.precision );
 	}
 
-	return formatCurrency( cost, currencyCode, cost % 1 > 0 ? {} : { precision: 0 } );
+	return formatCurrency( cost, currencyCode, { stripZeros: true } );
 }
