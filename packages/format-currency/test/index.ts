@@ -1,4 +1,4 @@
-import formatCurrency, { getCurrencyDefaults, getCurrencyObject } from '../src';
+import formatCurrency, { getCurrencyObject } from '../src';
 
 describe( 'formatCurrency', () => {
 	test( 'formats a number to localized currency', () => {
@@ -124,18 +124,6 @@ describe( 'formatCurrency', () => {
 		test( 'IDR', () => {
 			const money = formatCurrency( 107280000, 'IDR', { locale: 'in-ID', isSmallestUnit: true } );
 			expect( money ).toBe( 'Rp 1.072.800,00' );
-		} );
-	} );
-
-	describe( 'getCurrencyDefaults()', () => {
-		test( 'returns currency defaults', () => {
-			const audDefaults = getCurrencyDefaults( 'AUD' );
-			expect( audDefaults ).toEqual( {
-				symbol: 'A$',
-				grouping: ',',
-				decimal: '.',
-				precision: 2,
-			} );
 		} );
 	} );
 
