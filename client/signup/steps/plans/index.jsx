@@ -271,7 +271,8 @@ export class PlansStep extends Component {
 	}
 
 	getHeaderText() {
-		const { headerText, translate, eligibleForProPlan, locale, flowName } = this.props;
+		const { headerText, translate, eligibleForProPlan, locale, isOnboarding2023PricingGrid } =
+			this.props;
 
 		if ( headerText ) {
 			return headerText;
@@ -283,10 +284,7 @@ export class PlansStep extends Component {
 				: translate( 'Choose the plan that’s right for you' );
 		}
 
-		if (
-			isEnabled( 'onboarding/2023-pricing-grid' ) &&
-			flowName === 'onboarding-2023-pricing-grid'
-		) {
+		if ( isOnboarding2023PricingGrid ) {
 			return translate( 'Choose your flavor of WordPress' );
 		}
 
@@ -305,6 +303,7 @@ export class PlansStep extends Component {
 			locale,
 			translate,
 			useEmailOnboardingSubheader,
+			isOnboarding2023PricingGrid,
 		} = this.props;
 
 		const freePlanButton = <Button onClick={ this.handleFreePlanButtonClick } borderless />;
@@ -349,10 +348,7 @@ export class PlansStep extends Component {
 			);
 		}
 
-		if (
-			isEnabled( 'onboarding/2023-pricing-grid' ) &&
-			flowName === 'onboarding-2023-pricing-grid'
-		) {
+		if ( isOnboarding2023PricingGrid ) {
 			return;
 		}
 
@@ -429,7 +425,8 @@ export class PlansStep extends Component {
 
 	render() {
 		const classes = classNames( 'plans plans-step', {
-			'in-vertically-scrolled-plans-experiment': this.props.isInVerticalScrollingPlansExperiment,
+			'in-vertically-scrolled-plans-experiment':
+				! this.props.isOnboarding2023PricingGrid && this.props.isInVerticalScrollingPlansExperiment,
 			'has-no-sidebar': true,
 			'is-wide-layout': true,
 		} );
@@ -478,7 +475,7 @@ export const isDotBlogDomainRegistration = ( domainItem ) => {
 export default connect(
 	(
 		state,
-		{ path, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation } }
+		{ path, flowName, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation } }
 	) => ( {
 		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
 		disableBloggerPlanWithNonBlogDomain:
@@ -499,6 +496,8 @@ export default connect(
 		isInVerticalScrollingPlansExperiment: true,
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		eligibleForProPlan: isEligibleForProPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
+		isOnboarding2023PricingGrid:
+			isEnabled( 'onboarding/2023-pricing-grid' ) && flowName === 'onboarding-2023-pricing-grid',
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );

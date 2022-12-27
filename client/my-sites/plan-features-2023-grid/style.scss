@@ -91,9 +91,13 @@ $plan-features-sidebar-width: 272px;
 
 .plans-wrapper {
 	margin: 0 auto;
-	padding: 103px 0 10px;
+	padding: 28px 0 10px;
 	transform: translateY(-20px);
 	overflow-x: auto;
+
+	@media ( min-width: 880px ) {
+		padding-top: 103px;
+	}
 }
 
 .plan-features--signup {
@@ -141,6 +145,29 @@ $plan-features-sidebar-width: 272px;
 		.foldable-card {
 			box-shadow: unset;
 			margin-top: 24px;
+
+			.foldable-card__main {
+				color: var(--studio-blue-60);
+				font-family: Inter, $sans;
+				font-weight: 500;
+				font-size: $font-body-small;
+				letter-spacing: -0.24px;
+				line-height: 20px;
+			}
+
+			.foldable-card__expand .gridicon {
+				fill: var(--studio-blue-60);
+				width: 12px;
+			}
+
+			&.is-compact .foldable-card__header {
+				padding: 8px 20px;
+			}
+
+			&.is-expanded .foldable-card__content {
+				border-top: none;
+				padding: 24px 0 0;
+			}
 		}
 	}
 
@@ -282,9 +309,9 @@ $plan-features-sidebar-width: 272px;
 
 		.plan-features-2023-grid__item-title {
 			color: var(--studio-gray-80);
-			font-size: $font-body-extra-small;
+			font-size: $font-body-small;
 			font-weight: 400;
-			line-height: 16px;
+			line-height: 20px;
 			overflow-wrap: break-word;
 			margin: 0;
 			flex: 1 0 0;
@@ -292,6 +319,11 @@ $plan-features-sidebar-width: 272px;
 
 			&.is-bold {
 				font-weight: bold;
+			}
+
+			@media ( min-width: 880px ) {
+				font-size: $font-body-extra-small;
+				line-height: 16px;
 			}
 		}
 

@@ -147,7 +147,10 @@ export class PlanFeatures2023GridFeatures extends Component {
 					key={ `${ planName }-${ mapIndex }` }
 					className="plan-features-2023-grid__table-item"
 				>
-					<div className={ classes }>{ mapIndex === 0 ? <>&nbsp;</> : planFeatureTitle }</div>
+					{ ! isMobile && (
+						<div className={ classes }>{ mapIndex === 0 ? <>&nbsp;</> : planFeatureTitle }</div>
+					) }
+					{ isMobile && mapIndex !== 0 && <div className={ classes }>{ planFeatureTitle }</div> }
 					{ this.renderPlanFeatures( features, jpFeatures, planName, mapIndex ) }
 				</Container>
 			);
