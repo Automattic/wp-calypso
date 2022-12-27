@@ -369,6 +369,74 @@ $plan-features-sidebar-width: 272px;
 		}
 
 		&.plan-features-2023-grid__enterprise-logo {
+			@media ( min-width: 880px ) {
+				img:nth-child(1) {
+					padding-right: 32px;
+				}
+
+				img:nth-child(2) {
+					padding-right: 32px;
+				}
+
+				img:nth-child(3) {
+					padding-right: 0;
+				}
+
+				img:nth-child(4) {
+					padding-right: 32px;
+				}
+
+				img:nth-child(5) {
+					padding-right: 32px;
+				}
+
+				img:nth-child(6) {
+					padding-right: 0;
+				}
+
+				img:nth-child(7) {
+					padding-right: 32px;
+				}
+
+				img:nth-child(8) {
+					padding-right: 0;
+				}
+			}
+
+			@media ( min-width: 1340px ) {
+				img:nth-child(1) {
+					padding-right: 24px;
+				}
+
+				img:nth-child(2) {
+					padding-right: 24px;
+				}
+
+				img:nth-child(3) {
+					padding-right: 24px;
+				}
+
+				img:nth-child(4) {
+					padding-right: 18px;
+				}
+
+				img:nth-child(5) {
+					padding-right: 0;
+				}
+
+				img:nth-child(6) {
+					padding-right: 16px;
+				}
+
+				img:nth-child(7) {
+					padding-right: 0;
+				}
+
+				img:nth-child(8) {
+					padding-right: 0;
+				}
+			}
+
 			@media ( min-width: 1500px ) {
 				img:nth-child(1) {
 					padding-right: 24px;
@@ -376,6 +444,10 @@ $plan-features-sidebar-width: 272px;
 
 				img:nth-child(2) {
 					padding-right: 24px;
+				}
+
+				img:nth-child(3) {
+					padding-right: 0;
 				}
 
 				img:nth-child(4) {
@@ -386,8 +458,16 @@ $plan-features-sidebar-width: 272px;
 					padding-right: 24px;
 				}
 
+				img:nth-child(6) {
+					padding-right: 0;
+				}
+
 				img:nth-child(7) {
 					padding-right: 24px;
+				}
+
+				img:nth-child(8) {
+					padding-right: 0;
 				}
 			}
 
