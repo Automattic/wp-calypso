@@ -1,3 +1,5 @@
+@use "sass:math";
+@import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/highlight-cards/variables.scss";
 
 .stats__post-detail-highlights-section {
@@ -14,17 +16,38 @@
 		grid-template-columns: 3fr 2fr;
 		grid-template-rows: 1fr;
 		column-gap: 10px;
+		overflow-x: auto;
 
-		.post-stats-card {
-			margin: 0;
-			max-height: unset;
-		}
+		@media ( max-width: $break-small ) {
+			display: block;
+			padding: 0;
 
-		.highlight-card {
-			padding: 24px;
-			height: 300px;
-			overflow-y: auto;
+			& > * {
+				padding: 24px;
+				min-width: unset;
+			}
+
+			.highlight-card {
+				height: 180px;
+				margin: math.div($vertical-margin, 2) 0;
+				border-left: 0;
+				border-right: 0;
+				border-radius: 0;
+			}
 		}
+	}
+
+	.post-stats-card {
+		margin: 0;
+		max-height: unset;
+		min-width: 450px;
+	}
+
+	.highlight-card {
+		padding: 24px;
+		height: 300px;
+		overflow-y: auto;
+		min-width: 300px;
 	}
 
 	.highlight-card-heading {
