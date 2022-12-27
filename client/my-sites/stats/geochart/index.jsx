@@ -6,6 +6,7 @@ import { throttle, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
+import QueryEmailStats from 'calypso/components/data/query-email-stats';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
@@ -24,7 +25,13 @@ class StatsGeochart extends Component {
 		statType: PropTypes.string,
 		query: PropTypes.object,
 		data: PropTypes.array,
+		kind: PropTypes.string,
 	};
+
+	static defaultProps = {
+		kind: 'site',
+	};
+
 	state = {
 		visualizationsLoaded: false,
 	};
@@ -158,7 +165,7 @@ class StatsGeochart extends Component {
 	};
 
 	render() {
-		const { siteId, statType, query, data } = this.props;
+		const { siteId, statType, query, data, kind } = this.props;
 		const isLoading = ! data || ! this.state.visualizationsLoaded;
 		const classes = classNames( 'stats-geochart', {
 			'is-loading': isLoading,
@@ -167,7 +174,13 @@ class StatsGeochart extends Component {
 
 		return (
 			<>
-				{ siteId && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
+				{ siteId && kind === 'site' && (
+					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
+				) }
+				{ siteId && kind === 'email' && (
+					<QueryEmailStats statType={ statType } siteId={ siteId } query={ query } />
+				) }
+
 				<div ref={ this.chartRef } className={ classes } />
 				<StatsModulePlaceholder
 					className={ classNames( classes, 'is-block' ) }
@@ -181,11 +194,15 @@ class StatsGeochart extends Component {
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const statType = 'statsCountryViews';
-	const { query } = ownProps;
+	const { query, kind } = ownProps;
 
+	const data =
+		kind === 'email'
+			? getSiteStatsNormalizedData( state, siteId, statType, query )
+			: getSiteStatsNormalizedData( state, siteId, statType, query );
 	return {
 		currentUserCountryCode: getCurrentUserCountryCode( state ),
-		data: getSiteStatsNormalizedData( state, siteId, statType, query ),
+		data,
 		siteId,
 		statType,
 	};

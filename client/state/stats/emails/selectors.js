@@ -1,6 +1,5 @@
 import { createSelector } from '@automattic/state-utils';
 import { get } from 'lodash';
-
 import 'calypso/state/stats/init';
 
 /**
