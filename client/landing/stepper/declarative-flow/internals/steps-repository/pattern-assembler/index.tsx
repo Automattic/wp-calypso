@@ -12,6 +12,7 @@ import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
+import { useThemeDetails } from '../../../../hooks/use-theme-details';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
 import PatternLayout from './pattern-layout';
@@ -43,6 +44,9 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const allPatterns = useAllPatterns();
+	const { data: theme } = useThemeDetails( selectedDesign?.slug );
+	const themeDemoSiteSlug =
+		theme && theme.demo_uri.replace( /^https?:\/\//, '' ).replace( '/', '' );
 
 	useEffect( () => {
 		// Require to start the flow from the first step
@@ -360,7 +364,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 		</div>
 	);
 
-	if ( ! selectedDesign ) {
+	if ( ! selectedDesign || ! themeDemoSiteSlug ) {
 		return null;
 	}
 
@@ -378,11 +382,13 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 				stepContent={
 					isEnabled( 'pattern-assembler/client-side-render' ) ? (
 						<BlockRendererProvider
-							siteId={ site?.ID }
+							siteId={ themeDemoSiteSlug }
 							stylesheet={ selectedDesign?.recipe?.stylesheet }
 						>
 							<PatternsRendererProvider
-								siteId={ site?.ID }
+								// Use theme demo site to render the site-related blocks for now.
+								// For example, site logo, site title, site tagline, posts.
+								siteId={ themeDemoSiteSlug }
 								stylesheet={ selectedDesign?.recipe?.stylesheet }
 								patternIds={ allPatterns.map( ( pattern ) => encodePatternId( pattern.id ) ) }
 							>

@@ -2,7 +2,7 @@ import { useQuery, UseQueryResult, UseQueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 
 const useQueryBlockSettings = (
-	siteId: number,
+	siteId: number | string,
 	stylesheet: string,
 	queryOptions: UseQueryOptions< unknown, unknown, unknown > = {}
 ): UseQueryResult< unknown > => {

@@ -6,13 +6,14 @@ type Theme = {
 	name: string;
 	author: string;
 	author_uri: string;
+	demo_uri: string;
 	description: string;
 	date_updated: string;
 	price: string;
 	taxonomies: Record< string, [] >;
 };
 
-export function useThemeDetails( slug: string ): UseQueryResult< Theme > {
+export function useThemeDetails( slug = '' ): UseQueryResult< Theme > {
 	return useQuery< Theme >(
 		`theme-details-${ slug }`,
 		() => wpcom.req.get( `/themes/${ slug }`, { apiVersion: '1.2' } ),
@@ -20,6 +21,7 @@ export function useThemeDetails( slug: string ): UseQueryResult< Theme > {
 			staleTime: 60 * 5 * 1000, // 5 minutes
 			refetchOnWindowFocus: false,
 			refetchOnReconnect: false,
+			enabled: !! slug,
 		}
 	);
 }

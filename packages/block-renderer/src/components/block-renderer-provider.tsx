@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import useQuerySettings from '../hooks/use-query-settings';
 
 export interface Props {
-	siteId: number;
+	siteId: number | string;
 	stylesheet: string;
 	children: JSX.Element;
 }

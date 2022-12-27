@@ -7,7 +7,7 @@ const PAGE_SIZE = 20;
 const HOUR_IN_MS = 3600000;
 
 const fetchRenderedPatterns = (
-	siteId: number,
+	siteId: number | string,
 	stylesheet: string,
 	patternIds: string[],
 	page: number
@@ -26,7 +26,7 @@ const fetchRenderedPatterns = (
 };
 
 const useQueryRenderedPatterns = (
-	siteId: number,
+	siteId: number | string,
 	stylesheet: string,
 	patternIds: string[],
 	{ staleTime = HOUR_IN_MS, refetchOnMount = true }: UseQueryOptions = {}
