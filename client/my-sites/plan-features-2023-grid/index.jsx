@@ -53,7 +53,7 @@ import './style.scss';
 
 const noop = () => {};
 
-const HeaderContainer = ( props ) => {
+const Container = ( props ) => {
 	const { children, isMobile, ...otherProps } = props;
 	return isMobile ? (
 		<div { ...otherProps }>{ children }</div>
@@ -200,7 +200,7 @@ export class PlanFeatures2023Grid extends Component {
 			const billingTimeFrame = planConstantObj.getBillingTimeFrame();
 
 			return (
-				<HeaderContainer scope="col" key={ planName } className={ classes } isMobile={ isMobile }>
+				<Container scope="col" key={ planName } className={ classes } isMobile={ isMobile }>
 					<PlanFeatures2023GridHeaderPrice
 						billingTimeFrame={ billingTimeFrame }
 						currencyCode={ currencyCode }
@@ -217,7 +217,7 @@ export class PlanFeatures2023Grid extends Component {
 						planName={ planName }
 						is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 					/>
-				</HeaderContainer>
+				</Container>
 			);
 		} );
 	}
@@ -315,7 +315,7 @@ export class PlanFeatures2023Grid extends Component {
 			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
 
 			return (
-				<HeaderContainer key={ planName } className={ classes } isMobile={ isMobile }>
+				<Container key={ planName } className={ classes } isMobile={ isMobile }>
 					<PlanFeatures2023GridActions
 						className={ getPlanClass( planName ) }
 						freePlan={ isFreePlan( planName ) }
@@ -328,7 +328,7 @@ export class PlanFeatures2023Grid extends Component {
 						planType={ planName }
 						flowName={ flowName }
 					/>
-				</HeaderContainer>
+				</Container>
 			);
 		} );
 	}
@@ -341,6 +341,7 @@ export class PlanFeatures2023Grid extends Component {
 				planProperties={ planPropertiesObj }
 				domainName={ domainName }
 				isMobile={ isMobile }
+				Container={ Container }
 			/>
 		);
 	}
@@ -375,8 +376,7 @@ export class PlanFeatures2023Grid extends Component {
 			} );
 
 			return (
-				<th
-					scope="col"
+				<td
 					key={ planName }
 					className="plan-features-2023-grid__table-item plan-features-2023-grid__storage"
 				>
@@ -384,7 +384,7 @@ export class PlanFeatures2023Grid extends Component {
 						<div className="plan-features-2023-grid__storage-title">{ translate( 'STORAGE' ) }</div>
 					) : null }
 					{ storageJSX }
-				</th>
+				</td>
 			);
 		} );
 	}
