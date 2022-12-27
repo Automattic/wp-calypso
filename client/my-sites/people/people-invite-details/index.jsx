@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -7,6 +8,7 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 import EmptyContent from 'calypso/components/empty-content';
+import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
@@ -164,6 +166,19 @@ export class PeopleInviteDetails extends PureComponent {
 			<Main className="people-invite-details">
 				<PageViewTracker path="/people/invites/:site/:invite" title="People > User Details" />
 				{ siteId && <QuerySiteInvites siteId={ siteId } /> }
+
+				{ isEnabled( 'user-management-revamp' ) && (
+					<FormattedHeader
+						brandFont
+						className="people__page-heading"
+						headerText={ translate( 'Users' ) }
+						subHeaderText={ translate(
+							'People who have subscribed to your site and team members.'
+						) }
+						align="left"
+						hasScreenOptions
+					/>
+				) }
 
 				<HeaderCake isCompact onClick={ this.goBack }>
 					{ translate( 'User Details' ) }
