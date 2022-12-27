@@ -1,9 +1,5 @@
-import { getCurrencyDefaults, doesCurrencyExist } from './currencies';
+import { doesCurrencyExist } from './currencies';
 import type { CurrencyObject, CurrencyObjectOptions } from './types';
-
-export { getCurrencyDefaults };
-
-export { CURRENCIES } from './currencies';
 
 export * from './types';
 
