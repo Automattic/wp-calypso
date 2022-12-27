@@ -169,6 +169,7 @@ export class PlanFeatures2023Grid extends Component {
 					{ this.renderTopButtons( propertiesContainerArray, { isMobile: true } ) }
 					<FoldableCard header={ translate( 'Show features' ) } clickableHeader compact>
 						{ this.renderPlanFeaturesList( propertiesContainerArray, { isMobile: true } ) }
+						{ this.renderPlanStorageOptions( propertiesContainerArray, { isMobile: true } ) }
 					</FoldableCard>
 				</div>
 			);
@@ -361,7 +362,7 @@ export class PlanFeatures2023Grid extends Component {
 		}
 	}
 
-	renderPlanStorageOptions( planPropertiesObj ) {
+	renderPlanStorageOptions( planPropertiesObj, { isMobile } = {} ) {
 		return planPropertiesObj.map( ( properties ) => {
 			const { planName, storageOptions } = properties;
 			const storageJSX = storageOptions.map( ( storageFeature ) => {
@@ -376,15 +377,16 @@ export class PlanFeatures2023Grid extends Component {
 			} );
 
 			return (
-				<td
+				<Container
 					key={ planName }
 					className="plan-features-2023-grid__table-item plan-features-2023-grid__storage"
+					isMobile={ isMobile }
 				>
 					{ storageOptions.length ? (
-						<div className="plan-features-2023-grid__storage-title">{ translate( 'STORAGE' ) }</div>
+						<div className="plan-features-2023-grid__storage-title">{ translate( 'Storage' ) }</div>
 					) : null }
 					{ storageJSX }
-				</td>
+				</Container>
 			);
 		} );
 	}
