@@ -7,7 +7,6 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 import EmptyContent from 'calypso/components/empty-content';
-import Gravatar from 'calypso/components/gravatar';
 import HeaderCake from 'calypso/components/header-cake';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
@@ -53,30 +52,14 @@ export class PeopleInviteDetails extends PureComponent {
 		this.props.deleteInvite( site.ID, invite.key );
 	};
 
-	renderClearOrRevoke = () => {
+	renderClearOrRevoke = ( props = {} ) => {
 		const { deleting, invite, translate } = this.props;
 		const { isPending } = invite;
-		const revokeMessage = translate(
-			'Revoking an invite will no longer allow this person to become a member of ' +
-				'your site. You can always invite them again if you change your mind.'
-		);
-		const clearMessage = translate(
-			'If you no longer wish to see this record, you can clear it. ' +
-				'The person will still remain a member of this site.'
-		);
 
 		return (
-			<div className="people-invite-details__clear-revoke">
-				<div>{ isPending ? revokeMessage : clearMessage }</div>
-				<Button
-					busy={ deleting }
-					primary={ isPending }
-					scary={ isPending }
-					onClick={ this.handleDelete }
-				>
-					{ isPending ? translate( 'Revoke invite' ) : translate( 'Clear invite' ) }
-				</Button>
-			</div>
+			<Button className={ props.className || '' } busy={ deleting } onClick={ this.handleDelete }>
+				{ isPending ? translate( 'Revoke' ) : translate( 'Clear' ) }
+			</Button>
 		);
 	};
 
@@ -114,10 +97,11 @@ export class PeopleInviteDetails extends PureComponent {
 						site={ site }
 						type="invite-details"
 						isSelectable={ false }
+						showStatus={ true }
+						RevokeClearBtn={ this.renderClearOrRevoke }
 					/>
 					{ this.renderInviteDetails() }
 				</Card>
-				{ this.renderClearOrRevoke() }
 			</div>
 		);
 	}
@@ -129,33 +113,33 @@ export class PeopleInviteDetails extends PureComponent {
 		return (
 			<div className="people-invite-details__meta">
 				<div className="people-invite-details__meta-item">
-					<span className="people-invite-details__meta-item-label">
-						{ translate( 'Invited By' ) }
-					</span>
-					<Gravatar user={ invite.invitedBy } size={ 24 } />
-					{ showName && (
-						<span className="people-invite-details__meta-item-user">{ invite.invitedBy.name }</span>
-					) }
-					<span className="people-invite-details__meta-item-username">
-						{ '@' + invite.invitedBy.login }
-					</span>
+					<strong>{ translate( 'Status' ) }</strong>
+					<div>
+						{ invite.isPending && (
+							<span className="people-invite-details__meta-status-pending">
+								{ translate( 'Pending' ) }
+							</span>
+						) }
+						{ !! invite.acceptedDate && (
+							<span className="people-invite-details__meta-status-active">
+								{ translate( 'Active' ) }
+							</span>
+						) }
+					</div>
 				</div>
 				<div className="people-invite-details__meta-item">
-					<span className="people-invite-details__meta-item-label">{ translate( 'Sent' ) }</span>
-					<span className="people-invite-details__meta-item-date">
-						{ moment( invite.inviteDate ).format( 'LLL' ) }
-					</span>
-				</div>
-				{ invite.acceptedDate && (
-					<div className="people-invite-details__meta-item">
-						<span className="people-invite-details__meta-item-label">
-							{ translate( 'Accepted' ) }
-						</span>
-						<span className="people-invite-details__meta-item-date">
-							{ moment( invite.acceptedDate ).format( 'LLL' ) }
+					<strong>{ translate( 'Invited By' ) }</strong>
+					<div>
+						<span>
+							{ showName && <>{ invite.invitedBy.name }</> } { '@' + invite.invitedBy.login }
 						</span>
 					</div>
-				) }
+				</div>
+
+				<div className="people-invite-details__meta-item">
+					<strong>{ translate( 'Invite date' ) }</strong>
+					<div>{ moment( invite.inviteDate ).format( 'LLL' ) }</div>
+				</div>
 			</div>
 		);
 	}
