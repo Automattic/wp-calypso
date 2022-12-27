@@ -227,16 +227,16 @@ describe( 'formatCurrency', () => {
 				} );
 			} );
 			test( 'CAD', () => {
-				const money = getCurrencyObject( 9800900.32, 'CAD' );
+				const money = getCurrencyObject( 9800900.32, 'CAD', { locale: 'en-US' } );
 				expect( money ).toEqual( {
-					symbol: 'C$',
+					symbol: 'CA$',
 					integer: '9,800,900',
 					fraction: '.32',
 					sign: '',
 				} );
 			} );
 			test( 'EUR', () => {
-				const money = getCurrencyObject( 9800900.32, 'EUR' );
+				const money = getCurrencyObject( 9800900.32, 'EUR', { locale: 'de-DE' } );
 				expect( money ).toEqual( {
 					symbol: '€',
 					integer: '9.800.900',
@@ -263,7 +263,7 @@ describe( 'formatCurrency', () => {
 				} );
 			} );
 			test( 'BRL', () => {
-				const money = getCurrencyObject( 9800900.32, 'BRL' );
+				const money = getCurrencyObject( 9800900.32, 'BRL', { locale: 'pt-BR' } );
 				expect( money ).toEqual( {
 					symbol: 'R$',
 					integer: '9.800.900',
