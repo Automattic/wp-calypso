@@ -1,6 +1,5 @@
-import { doesCurrencyExist, getCurrencyDefaults } from './currencies';
-import numberFormat from './number-format';
-import { FormatCurrencyOptions, CurrencyObject, CurrencyObjectOptions } from './types';
+import { getCurrencyDefaults } from './currencies';
+import type { CurrencyObject, CurrencyObjectOptions } from './types';
 
 export { getCurrencyDefaults };
 
@@ -23,6 +22,50 @@ function getPrecisionForLocaleAndCurrency( locale: string, currency: string ): n
 		currency,
 	} );
 	return defaultFormatter.resolvedOptions().maximumFractionDigits;
+}
+
+function prepareNumberForFormatting(
+	number: number,
+	// currencyPrecision here must be the precision of the currency, regardless
+	// of what precision is requested for display!
+	currencyPrecision: number,
+	options: CurrencyObjectOptions
+) {
+	if ( isNaN( number ) ) {
+		// eslint-disable-next-line no-console
+		console.warn( 'formatCurrency was called with NaN' );
+		number = 0;
+	}
+
+	if ( options.isSmallestUnit ) {
+		if ( ! Number.isInteger( number ) ) {
+			// eslint-disable-next-line no-console
+			console.warn(
+				'formatCurrency was called with isSmallestUnit and a float which will be rounded',
+				number
+			);
+			number = Math.round( number );
+		}
+		number = convertPriceForSmallestUnit( number, currencyPrecision );
+	}
+
+	return number;
+}
+
+function getFormatter(
+	number: number,
+	code: string,
+	options: CurrencyObjectOptions
+): Intl.NumberFormat {
+	const locale = options.locale ?? getLocaleFromBrowser();
+
+	return new Intl.NumberFormat( locale, {
+		style: 'currency',
+		currency: code,
+		// There's an option called `trailingZeroDisplay` but it does not yet work
+		// in FF so we have to strip zeros manually.
+		...( Number.isInteger( number ) && options.stripZeros ? { maximumFractionDigits: 0 } : {} ),
+	} );
 }
 
 /**
@@ -55,49 +98,27 @@ function getPrecisionForLocaleAndCurrency( locale: string, currency: string ): n
  *
  * @param      {number}                   number     number to format; assumed to be a float unless isSmallestUnit is set.
  * @param      {string}                   code       currency code e.g. 'USD'
- * @param      {FormatCurrencyOptions}    options    options object
+ * @param      {CurrencyObjectOptions}    options    options object
  * @returns    {string}                  A formatted string.
  */
 export function formatCurrency(
 	number: number,
 	code: string,
-	options: FormatCurrencyOptions = {}
+	options: CurrencyObjectOptions = {}
 ): string | null {
-	if ( isNaN( number ) ) {
-		// eslint-disable-next-line no-console
-		console.warn( 'formatCurrency was called with NaN' );
-		number = 0;
-	}
-
 	const locale = options.locale ?? getLocaleFromBrowser();
-	let precision;
+	let currencyPrecision;
 	try {
-		precision = getPrecisionForLocaleAndCurrency( locale, code );
+		currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );
 	} catch {
 		// The above may throw if the currency is unknown, in which case we want to
 		// default to USD.
-		return formatCurrency( number, 'USD', options );
+		code = 'USD';
+		currencyPrecision = 2;
 	}
 
-	if ( options.isSmallestUnit ) {
-		if ( ! Number.isInteger( number ) ) {
-			// eslint-disable-next-line no-console
-			console.warn(
-				'formatCurrency was called with isSmallestUnit and a float which will be rounded',
-				number
-			);
-			number = Math.round( number );
-		}
-		number = convertPriceForSmallestUnit( number, precision );
-	}
-
-	const formatter = new Intl.NumberFormat( locale, {
-		style: 'currency',
-		currency: code,
-		// There's an option called `trailingZeroDisplay` but it does not yet work
-		// in FF so we have to strip zeros manually.
-		...( Number.isInteger( number ) && options.stripZeros ? { maximumFractionDigits: 0 } : {} ),
-	} );
+	number = prepareNumberForFormatting( number, currencyPrecision, options );
+	const formatter = getFormatter( number, code, options );
 	return formatter.format( number );
 }
 
@@ -121,6 +142,11 @@ export function formatCurrency(
  * function will format the amount `1025` in `USD` as `$1,025.00`, but when the
  * option is true, it will return `$10.25` instead.
  *
+ * Note that the `integer` return value of this function is not a number, but a
+ * locale-formatted string which may include symbols like spaces, commas, or
+ * periods as group separators. Similarly, the `fraction` property is a string
+ * that contains the decimal separator.
+ *
  * If the number is NaN, this will return null.
  *
  * If the currency code is not known, this will assume a default currency
@@ -139,39 +165,48 @@ export function getCurrencyObject(
 	code: string,
 	options: CurrencyObjectOptions = {}
 ): CurrencyObject | null {
-	if ( ! doesCurrencyExist( code ) ) {
-		// eslint-disable-next-line no-console
-		console.warn( `getCurrencyObject was called with an unknown currency "${ code }"` );
+	const locale = options.locale ?? getLocaleFromBrowser();
+	let currencyPrecision;
+	try {
+		currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );
+	} catch {
+		// The above may throw if the currency is unknown, in which case we want to
+		// default to USD.
+		code = 'USD';
+		currencyPrecision = 2;
 	}
-	const currencyDefaults = getCurrencyDefaults( code );
-	if ( isNaN( number ) ) {
-		// eslint-disable-next-line no-console
-		console.warn( 'getCurrencyObject was called with NaN' );
-		return null;
-	}
-	const { decimal, grouping, precision, symbol, isSmallestUnit } = {
-		...currencyDefaults,
-		...options,
-	};
-	const sign = number < 0 ? '-' : '';
-	if ( isSmallestUnit ) {
-		if ( ! Number.isInteger( number ) ) {
-			// eslint-disable-next-line no-console
-			console.warn(
-				'getCurrencyObject was called with isSmallestUnit and a float which will be rounded',
-				number
-			);
-			number = Math.round( number );
+
+	number = prepareNumberForFormatting( number, currencyPrecision, options );
+	const formatter = getFormatter( number, code, options );
+	const parts = formatter.formatToParts( number );
+
+	let sign = '' as CurrencyObject[ 'sign' ];
+	let symbol = '$';
+	let integer = '';
+	let fraction = '';
+	parts.forEach( ( part ) => {
+		switch ( part.type ) {
+			case 'currency':
+				symbol = part.value;
+				return;
+			case 'group':
+				integer += part.value;
+				return;
+			case 'decimal':
+				fraction += part.value;
+				return;
+			case 'integer':
+				integer += part.value;
+				return;
+			case 'fraction':
+				fraction += part.value;
+				return;
+			case 'minusSign':
+				sign = '-' as CurrencyObject[ 'sign' ];
+				return;
 		}
-		number = convertPriceForSmallestUnit( number, precision );
-	}
-	const absNumber = Math.abs( number );
-	const rawInteger = Math.floor( absNumber );
-	const integer = numberFormat( absNumber, precision, decimal, grouping ).split( decimal )[ 0 ];
-	const fraction =
-		precision > 0
-			? numberFormat( absNumber - rawInteger, precision, decimal, grouping ).slice( 1 )
-			: '';
+	} );
+
 	return {
 		sign,
 		symbol,
