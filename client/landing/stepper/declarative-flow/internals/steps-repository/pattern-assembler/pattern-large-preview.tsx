@@ -2,6 +2,7 @@ import { PatternRenderer } from '@automattic/block-renderer';
 import { DeviceSwitcher } from '@automattic/components';
 import { Icon, layout } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
 import './pattern-large-preview.scss';
@@ -17,7 +18,14 @@ const PatternLargePreview = ( { header, sections, footer }: Props ) => {
 	const hasSelectedPattern = header || sections.length || footer;
 
 	return (
-		<DeviceSwitcher className="pattern-large-preview" isShowDeviceSwitcherToolbar isShowFrameBorder>
+		<DeviceSwitcher
+			className="pattern-large-preview"
+			isShowDeviceSwitcherToolbar
+			isShowFrameBorder
+			onDeviceChange={ ( device ) =>
+				recordTracksEvent( 'calypso_signup_pattern_assembler_preview_device_click', { device } )
+			}
+		>
 			{ hasSelectedPattern ? (
 				<ul className="pattern-large-preview__patterns">
 					{ header && (
