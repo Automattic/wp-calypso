@@ -1,8 +1,7 @@
-import { PatternsRenderer } from '@automattic/block-renderer';
+import { PatternRenderer } from '@automattic/block-renderer';
 import { DeviceSwitcher } from '@automattic/components';
 import { Icon, layout } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
 import './pattern-large-preview.scss';
@@ -15,20 +14,28 @@ interface Props {
 
 const PatternLargePreview = ( { header, sections, footer }: Props ) => {
 	const translate = useTranslate();
-	const patternIds = useMemo(
-		() =>
-			[ header, ...sections, footer ]
-				.filter( Boolean )
-				.map( ( pattern ) => encodePatternId( pattern!.id ) ),
-		[ header, sections, footer ]
-	);
+	const hasSelectedPattern = header || sections.length || footer;
 
 	return (
 		<DeviceSwitcher className="pattern-large-preview" isShowDeviceSwitcherToolbar isShowFrameBorder>
-			{ patternIds.length > 0 ? (
-				<div className="pattern-large-preview__patterns">
-					<PatternsRenderer patternIds={ patternIds } />
-				</div>
+			{ hasSelectedPattern ? (
+				<ul className="pattern-large-preview__patterns">
+					{ header && (
+						<li key="header">
+							<PatternRenderer patternId={ encodePatternId( header.id ) } />
+						</li>
+					) }
+					{ sections.map( ( pattern ) => (
+						<li key={ pattern.key }>
+							<PatternRenderer patternId={ encodePatternId( pattern.id ) } />
+						</li>
+					) ) }
+					{ footer && (
+						<li key="footer">
+							<PatternRenderer patternId={ encodePatternId( footer.id ) } />
+						</li>
+					) }
+				</ul>
 			) : (
 				<div className="pattern-large-preview__placeholder">
 					<Icon className="pattern-large-preview__placeholder-icon" icon={ layout } size={ 72 } />

@@ -12,6 +12,8 @@
 .pattern-large-preview__patterns {
 	position: relative;
 	flex-grow: 1;
+	margin: 0;
+	list-style-type: none;
 	overflow: auto;
 }
 

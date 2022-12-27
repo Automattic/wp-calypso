@@ -1,7 +1,6 @@
-import { PatternsRenderer } from '@automattic/block-renderer';
+import { PatternRenderer } from '@automattic/block-renderer';
 import { Button } from '@automattic/components';
 import classnames from 'classnames';
-import { useMemo } from 'react';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
 import './pattern-list-renderer.scss';
@@ -22,8 +21,6 @@ interface PatternListRendererProps {
 }
 
 const PatternListItem = ( { pattern, className, show, onSelect }: PatternListItemProps ) => {
-	const patternIds = useMemo( () => [ encodePatternId( pattern.id ) ], [ pattern.id ] );
-
 	return (
 		<Button
 			className={ className }
@@ -31,7 +28,7 @@ const PatternListItem = ( { pattern, className, show, onSelect }: PatternListIte
 			tabIndex={ show ? 0 : -1 }
 			onClick={ () => onSelect( pattern ) }
 		>
-			<PatternsRenderer patternIds={ patternIds } viewportWidth={ 1060 } />
+			<PatternRenderer patternId={ encodePatternId( pattern.id ) } viewportWidth={ 1060 } />
 		</Button>
 	);
 };

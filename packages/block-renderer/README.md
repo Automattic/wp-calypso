@@ -39,6 +39,6 @@ Initialize the provided pattern ids. It will fetch the rendered html of each pat
 
 Note that it fetches 20 patterns per request to avoid any potential performance issues.
 
-### PatternsRenderer
+### PatternRenderer
 
-Render the provided pattern ids.
+Render the pattern by the provided pattern id.
