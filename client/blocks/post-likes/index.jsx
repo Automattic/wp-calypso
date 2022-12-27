@@ -104,7 +104,10 @@ class PostLikes extends PureComponent {
 
 		const isLoading = ! likes;
 
-		const classes = classnames( 'post-likes', { 'has-display-names': showDisplayNames } );
+		const classes = classnames( 'post-likes', {
+			'has-display-names': showDisplayNames,
+			'no-likes': likeCount === 0,
+		} );
 		const extraProps = { onMouseEnter, onMouseLeave };
 
 		return (

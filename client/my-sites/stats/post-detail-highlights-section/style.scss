@@ -84,7 +84,7 @@
 			padding: 0;
 		}
 
-		.post-likes {
+		.post-likes:not(.no-likes) {
 			margin: 0 -7px;
 		}
 
