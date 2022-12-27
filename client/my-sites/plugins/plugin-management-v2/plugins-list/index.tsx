@@ -5,8 +5,9 @@ import PluginCommonList from '../plugin-common/plugin-common-list';
 import PluginManageConnection from '../plugin-manage-connection';
 import PluginRowFormatter from '../plugin-row-formatter';
 import RemovePlugin from '../remove-plugin';
-import type { Columns, PluginRowFormatterArgs, Plugin } from '../types';
+import type { Columns, PluginRowFormatterArgs } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { Plugin } from 'calypso/state/plugins/installed/types';
 
 import '../style.scss';
 

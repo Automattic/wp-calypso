@@ -18,8 +18,8 @@ import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import PluginActionStatus from '../plugin-action-status';
 import { getAllowedPluginActions } from '../utils/get-allowed-plugin-actions';
 import { getPluginActionStatuses } from '../utils/get-plugin-action-statuses';
-import type { Plugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { Plugin } from 'calypso/state/plugins/installed/types';
 import type { MomentInput } from 'moment';
 import type { MouseEventHandler, PropsWithChildren } from 'react';
 

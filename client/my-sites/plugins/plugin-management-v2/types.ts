@@ -13,6 +13,7 @@ import {
 	PLUGIN_INSTALLATION_UP_TO_DATE,
 } from 'calypso/state/plugins/installed/status/constants';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { Plugin } from 'calypso/state/plugins/installed/types';
 import type { ReactNode } from 'react';
 
 export type Columns = Array< {
