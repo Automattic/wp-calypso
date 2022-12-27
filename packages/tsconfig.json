@@ -7,7 +7,6 @@
 	// Reference all TS packages
 	"references": [
 		{ "path": "./accessible-focus" },
-		{ "path": "./block-renderer" },
 		{ "path": "./browser-data-collector" },
 		{ "path": "./calypso-analytics" },
 		{ "path": "./calypso-config" },
