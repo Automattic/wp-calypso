@@ -9,8 +9,8 @@ import getSites from 'calypso/state/selectors/get-sites';
 import PluginActionStatus from '../plugin-action-status';
 import { getAllowedPluginActions } from '../utils/get-allowed-plugin-actions';
 import { getPluginActionStatuses } from '../utils/get-plugin-action-statuses';
-import type { Plugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { Plugin } from 'calypso/state/plugins/installed/types';
 
 import './style.scss';
 
@@ -23,7 +23,7 @@ interface Props {
 
 export default function UpdatePlugin( { plugin, selectedSite, className, updatePlugin }: Props ) {
 	const translate = useTranslate();
-	const allSites = useSelector( getSites ) as any;
+	const allSites = useSelector( getSites );
 	const state = useSelector( ( state ) => state );
 
 	const updatedVersions = selectedSite
@@ -60,11 +60,11 @@ export default function UpdatePlugin( { plugin, selectedSite, className, updateP
 
 	const hasUpdate = selectedSite
 		? plugin.sites[ selectedSite.ID ]?.update?.new_version &&
-		  allSites.find( ( site: any ) => site.ID === selectedSite.ID ).canUpdateFiles
+		  allSites.find( ( site ) => site && site.ID === selectedSite.ID )?.canUpdateFiles
 		: Object.entries( plugin.sites ).some(
 				( [ siteId, site ] ) =>
 					site?.update?.new_version &&
-					allSites.find( ( site: any ) => site.ID === Number( siteId ) ).canUpdateFiles
+					allSites.find( ( site ) => site && site.ID === Number( siteId ) )?.canUpdateFiles
 		  );
 
 	const allowedActions = getAllowedPluginActions( plugin, state, selectedSite );
@@ -78,7 +78,7 @@ export default function UpdatePlugin( { plugin, selectedSite, className, updateP
 			status.pluginId === plugin.id &&
 			status.action === UPDATE_PLUGIN &&
 			// Filter out status based on selected site if any
-			( selectedSite ? parseInt( status.siteId ) === selectedSite.ID : true )
+			( selectedSite ? Number( status.siteId ) === selectedSite.ID : true )
 	);
 
 	if ( ! allowedActions?.autoupdate ) {
