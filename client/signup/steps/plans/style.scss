@@ -12,6 +12,8 @@
 	}
 
 	.is-onboarding-2023-pricing-grid &.is-wide-layout {
+		max-width: 414px;
+
 		@media ( min-width: 880px ) {
 			max-width: 860px;
 		}
@@ -35,6 +37,8 @@
 		}
 
 		.is-onboarding-2023-pricing-grid &.is-wide-layout {
+			max-width: 414px;
+
 			@media ( min-width: 880px ) {
 				max-width: 860px;
 			}

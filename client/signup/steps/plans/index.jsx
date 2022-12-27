@@ -283,13 +283,14 @@ export class PlansStep extends Component {
 				: translate( 'Choose the plan that’s right for you' );
 		}
 
+		if (
+			isEnabled( 'onboarding/2023-pricing-grid' ) &&
+			flowName === 'onboarding-2023-pricing-grid'
+		) {
+			return translate( 'Choose your flavor of WordPress' );
+		}
+
 		if ( this.state.isDesktop ) {
-			if (
-				isEnabled( 'onboarding/2023-pricing-grid' ) &&
-				flowName === 'onboarding-2023-pricing-grid'
-			) {
-				return translate( 'Choose your flavor of WordPress' );
-			}
 			return translate( 'Choose a plan' );
 		}
 

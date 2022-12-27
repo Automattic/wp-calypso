@@ -123,6 +123,27 @@ $plan-features-sidebar-width: 272px;
 		}
 	}
 
+	.plan-features-2023-grid__mobile-view {
+		display: block;
+
+		@media ( min-width: 880px ) {
+			display: none;
+		}
+
+		.plan-features-2023-grid__mobile-plan-card {
+			border: 1px solid #e0e0e0;
+			/* stylelint-disable-next-line */
+			border-radius: 5px;
+			margin-bottom: 12px;
+			padding: 38px 0 20px 0;
+		}
+
+		.foldable-card {
+			box-shadow: unset;
+			margin-top: 24px;
+		}
+	}
+
 	.signup__steps .plans-features-main__group.is-scrollable & {
 		max-width: 100%;
 	}
@@ -147,22 +168,30 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.plan-features-2023-grid__header-tagline {
-		font-size: $font-body-extra-small;
+		font-size: $font-body;
 		color: var(--studio-gray-80);
 		font-weight: 400;
 		padding: 0 20px 16px 20px;
+
+		@media ( min-width: 880px ) {
+			font-size: $font-body-extra-small;
+		}
 	}
 
 	.plan-features-2023-grid__table-item {
 		text-align: left;
 		transition: opacity 0.05s;
-		border-right: solid 1px var(--color-neutral-5);
-		border-left: solid 1px var(--color-neutral-5);
+		border: none;
 		background-color: var(--color-surface);
 		position: relative;
 
 		.is-bold {
 			font-weight: bold;
+		}
+
+		@media ( min-width: 880px ) {
+			border-right: solid 1px var(--color-neutral-5);
+			border-left: solid 1px var(--color-neutral-5);
 		}
 	}
 
@@ -179,7 +208,6 @@ $plan-features-sidebar-width: 272px;
 			color: var(--studio-gray-100);
 			margin-right: 10px;
 			line-height: $font-title-large;
-			padding-bottom: 12px;
 			display: flex;
 			@include onboarding-font-recoleta;
 		}
@@ -291,12 +319,7 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.plan-features-2023-grid__actions-button {
-		margin-top: 8px;
 		width: 100%;
-
-		@include breakpoint-deprecated( "<660px" ) {
-			margin-top: 20px;
-		}
 
 		&.disabled,
 		&[disabled] {
@@ -585,6 +608,14 @@ body.is-section-signup.is-white-signup {
 		.plan-features-2023-grid__item-annual-plan-container
 		.plan-features-2023-grid__item-annual-plan {
 			color: var(--studio-orange-40);
+		}
+	}
+
+	.step-wrapper__header {
+		margin: 24px 20px 38px;
+
+		@media ( min-width: 880px ) {
+			margin: 24px 20px;
 		}
 	}
 }

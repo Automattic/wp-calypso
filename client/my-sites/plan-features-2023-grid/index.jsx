@@ -32,6 +32,7 @@ import { connect } from 'react-redux';
 import vipLogo from 'calypso/assets/images/onboarding/vip-logo.svg';
 import wooLogo from 'calypso/assets/images/onboarding/woo-logo.svg';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
+import FoldableCard from 'calypso/components/foldable-card';
 import PlanPill from 'calypso/components/plans/plan-pill';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
@@ -51,6 +52,15 @@ import PlanFeatures2023GridHeaderPrice from './header-price';
 import './style.scss';
 
 const noop = () => {};
+
+const HeaderContainer = ( props ) => {
+	const { children, isMobile, ...otherProps } = props;
+	return isMobile ? (
+		<div { ...otherProps }>{ children }</div>
+	) : (
+		<td { ...otherProps }>{ children }</td>
+	);
+};
 
 export class PlanFeatures2023Grid extends Component {
 	componentDidMount() {
@@ -136,9 +146,36 @@ export class PlanFeatures2023Grid extends Component {
 		);
 	}
 
-	renderMobileView() {}
+	renderMobileView() {
+		const { planProperties } = this.props;
 
-	renderPlanPriceGroup( planPropertiesObj ) {
+		return map( planProperties, ( properties ) => {
+			const { planName, planConstantObj, tagline } = properties;
+			const headerClasses = classNames(
+				'plan-features-2023-grid__header',
+				getPlanClass( planName )
+			);
+			const propertiesContainerArray = [ properties ];
+
+			return (
+				<div className="plan-features-2023-grid__mobile-plan-card">
+					<header className={ headerClasses }>
+						<h4 className="plan-features-2023-grid__header-title">
+							{ planConstantObj.getTitle() }
+						</h4>
+					</header>
+					<div className="plan-features-2023-grid__header-tagline">{ tagline }</div>
+					{ this.renderPlanPriceGroup( propertiesContainerArray, { isMobile: true } ) }
+					{ this.renderTopButtons( propertiesContainerArray, { isMobile: true } ) }
+					<FoldableCard header={ translate( 'Show features' ) } clickableHeader compact>
+						{ this.renderPlanFeaturesList( propertiesContainerArray, { isMobile: true } ) }
+					</FoldableCard>
+				</div>
+			);
+		} );
+	}
+
+	renderPlanPriceGroup( planPropertiesObj, { isMobile } = {} ) {
 		const { isReskinned, flowName, is2023OnboardingPricingGrid } = this.props;
 
 		return map( planPropertiesObj, ( properties ) => {
@@ -163,7 +200,7 @@ export class PlanFeatures2023Grid extends Component {
 			const billingTimeFrame = planConstantObj.getBillingTimeFrame();
 
 			return (
-				<th scope="col" key={ planName } className={ classes }>
+				<HeaderContainer scope="col" key={ planName } className={ classes } isMobile={ isMobile }>
 					<PlanFeatures2023GridHeaderPrice
 						billingTimeFrame={ billingTimeFrame }
 						currencyCode={ currencyCode }
@@ -180,7 +217,7 @@ export class PlanFeatures2023Grid extends Component {
 						planName={ planName }
 						is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 					/>
-				</th>
+				</HeaderContainer>
 			);
 		} );
 	}
@@ -270,7 +307,7 @@ export class PlanFeatures2023Grid extends Component {
 		return `/checkout`;
 	}
 
-	renderTopButtons( planPropertiesObj ) {
+	renderTopButtons( planPropertiesObj, { isMobile } = {} ) {
 		const { isInSignup, isLaunchPage, flowName } = this.props;
 
 		return map( planPropertiesObj, ( properties ) => {
@@ -278,7 +315,7 @@ export class PlanFeatures2023Grid extends Component {
 			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
 
 			return (
-				<td key={ planName } className={ classes }>
+				<HeaderContainer key={ planName } className={ classes } isMobile={ isMobile }>
 					<PlanFeatures2023GridActions
 						className={ getPlanClass( planName ) }
 						freePlan={ isFreePlan( planName ) }
@@ -291,18 +328,19 @@ export class PlanFeatures2023Grid extends Component {
 						planType={ planName }
 						flowName={ flowName }
 					/>
-				</td>
+				</HeaderContainer>
 			);
 		} );
 	}
 
-	renderPlanFeaturesList( planPropertiesObj ) {
+	renderPlanFeaturesList( planPropertiesObj, { isMobile } = {} ) {
 		const { domainName } = this.props;
 
 		return (
 			<PlanFeatures2023GridFeatures
 				planProperties={ planPropertiesObj }
 				domainName={ domainName }
+				isMobile={ isMobile }
 			/>
 		);
 	}

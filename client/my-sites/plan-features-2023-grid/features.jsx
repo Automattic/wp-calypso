@@ -19,11 +19,16 @@ import TimeLogo from 'calypso/assets/images/onboarding/time-logo.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { PlanFeaturesItem } from './item';
 
-export class PlanFeatures2023GridFeatures extends Component {
-	render() {
-		return this.renderPlanFeatureColumns();
-	}
+const Container = ( props ) => {
+	const { children, isMobile, ...otherProps } = props;
+	return isMobile ? (
+		<div { ...otherProps }>{ children }</div>
+	) : (
+		<td { ...otherProps }>{ children }</td>
+	);
+};
 
+export class PlanFeatures2023GridFeatures extends Component {
 	renderAnnualPlansFeatureNotice( feature ) {
 		const { translate } = this.props;
 
@@ -118,8 +123,8 @@ export class PlanFeatures2023GridFeatures extends Component {
 		return featureItemJSX;
 	}
 
-	renderPlanFeatureColumns() {
-		const { planProperties } = this.props;
+	render() {
+		const { planProperties, isMobile } = this.props;
 		let previousPlanName = 'Free';
 		let currentPlanName = 'Free';
 
@@ -137,10 +142,14 @@ export class PlanFeatures2023GridFeatures extends Component {
 			);
 
 			return (
-				<td key={ `${ planName }-${ mapIndex }` } className="plan-features-2023-grid__table-item">
+				<Container
+					isMobile={ isMobile }
+					key={ `${ planName }-${ mapIndex }` }
+					className="plan-features-2023-grid__table-item"
+				>
 					<div className={ classes }>{ mapIndex === 0 ? <>&nbsp;</> : planFeatureTitle }</div>
 					{ this.renderPlanFeatures( features, jpFeatures, planName, mapIndex ) }
-				</td>
+				</Container>
 			);
 		} );
 	}
