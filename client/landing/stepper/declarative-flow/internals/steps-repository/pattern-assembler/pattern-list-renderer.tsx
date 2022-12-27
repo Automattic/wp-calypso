@@ -20,6 +20,8 @@ interface PatternListRendererProps {
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 }
 
+const PLACEHOLDER_HEIGHT = 100;
+
 const PatternListItem = ( { pattern, className, show, onSelect }: PatternListItemProps ) => {
 	return (
 		<Button
@@ -28,7 +30,11 @@ const PatternListItem = ( { pattern, className, show, onSelect }: PatternListIte
 			tabIndex={ show ? 0 : -1 }
 			onClick={ () => onSelect( pattern ) }
 		>
-			<PatternRenderer patternId={ encodePatternId( pattern.id ) } viewportWidth={ 1060 } />
+			<PatternRenderer
+				patternId={ encodePatternId( pattern.id ) }
+				viewportWidth={ 1060 }
+				minHeight={ PLACEHOLDER_HEIGHT }
+			/>
 		</Button>
 	);
 };

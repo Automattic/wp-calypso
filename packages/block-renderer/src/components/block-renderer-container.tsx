@@ -18,6 +18,7 @@ interface BlockRendererContainerProps {
 	inlineCss?: string;
 	viewportWidth?: number;
 	maxHeight?: number;
+	minHeight?: number;
 }
 
 interface ScaledBlockRendererContainerProps extends BlockRendererContainerProps {
@@ -31,6 +32,7 @@ const ScaledBlockRendererContainer = ( {
 	viewportWidth = 1200,
 	containerWidth,
 	maxHeight = BLOCK_MAX_HEIGHT,
+	minHeight,
 }: ScaledBlockRendererContainerProps ) => {
 	const [ contentResizeListener, { height: contentHeight } ] = useResizeObserver();
 	const { styles, assets, duotone } = useSelect( ( select ) => {
@@ -86,9 +88,12 @@ const ScaledBlockRendererContainer = ( {
 			className="scaled-block-renderer"
 			style={ {
 				transform: `scale(${ scale })`,
-				height: ( contentHeight as number ) * scale,
+				height: ( contentHeight as number ) * scale || minHeight,
 				maxHeight: ( contentHeight as number ) > maxHeight ? maxHeight * scale : undefined,
 				minHeight: '1px',
+				// Try to avoid showing the content when the styles are not ready
+				opacity: contentHeight ? 1 : 0,
+				transition: 'opacity 0.3s ease-in-out',
 			} }
 		>
 			<Iframe
