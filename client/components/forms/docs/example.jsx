@@ -1,7 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { Card, FormInputValidation } from '@automattic/components';
-import { CURRENCIES } from '@automattic/format-currency';
 import { ToggleControl } from '@wordpress/components';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -31,6 +30,93 @@ import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormStateSelector from 'calypso/components/forms/us-state-selector';
 import PhoneInput from 'calypso/components/phone-input';
 import getCountries from 'calypso/state/selectors/get-countries';
+
+export const CURRENCIES = {
+	ALL: {
+		symbol: 'Lek',
+		grouping: '.',
+		decimal: ',',
+		precision: 2,
+	},
+	BDT: {
+		symbol: '৳',
+		grouping: ',',
+		decimal: '.',
+		precision: 0,
+	},
+	GIP: {
+		symbol: '£',
+		grouping: ',',
+		decimal: '.',
+		precision: 2,
+	},
+	KGS: {
+		symbol: 'сом',
+		grouping: ' ',
+		decimal: '-',
+		precision: 2,
+	},
+	MOP: {
+		symbol: 'MOP$',
+		grouping: ',',
+		decimal: '.',
+		precision: 2,
+	},
+	UZS: {
+		symbol: 'сўм',
+		grouping: ' ',
+		decimal: ',',
+		precision: 2,
+	},
+	VEB: {
+		symbol: 'Bs.',
+		grouping: ',',
+		decimal: '.',
+		precision: 2,
+	},
+	VEF: {
+		symbol: 'Bs. F.',
+		grouping: '.',
+		decimal: ',',
+		precision: 2,
+	},
+	VND: {
+		symbol: '₫',
+		grouping: '.',
+		decimal: ',',
+		precision: 1,
+	},
+	VUV: {
+		symbol: 'VT',
+		grouping: ',',
+		decimal: '.',
+		precision: 0,
+	},
+	WST: {
+		symbol: 'WS$',
+		grouping: ',',
+		decimal: '.',
+		precision: 2,
+	},
+	XAF: {
+		symbol: 'F',
+		grouping: ',',
+		decimal: '.',
+		precision: 2,
+	},
+	XCD: {
+		symbol: '$',
+		grouping: ',',
+		decimal: '.',
+		precision: 2,
+	},
+	XOF: {
+		symbol: 'F',
+		grouping: ' ',
+		decimal: ',',
+		precision: 2,
+	},
+};
 
 const currencyList = Object.entries( CURRENCIES ).map( ( [ code ] ) => ( { code } ) );
 const visualCurrencyList = Object.entries( CURRENCIES ).map( ( [ code, { symbol } ] ) => ( {
