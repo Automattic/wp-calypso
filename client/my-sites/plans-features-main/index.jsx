@@ -455,23 +455,23 @@ export class PlansFeaturesMain extends Component {
 			  } )
 			: availablePlans;
 
-		if ( plansWithScroll ) {
-			if (
-				isEnabled( 'onboarding/2023-pricing-grid' ) &&
-				flowName === 'onboarding-2023-pricing-grid'
-			) {
-				return plans.filter( ( plan ) =>
-					isPlanOneOfType( plan, [
-						TYPE_FREE,
-						TYPE_PERSONAL,
-						TYPE_PREMIUM,
-						TYPE_BUSINESS,
-						TYPE_ECOMMERCE,
-						TYPE_ENTERPRISE_GRID_WPCOM,
-					] )
-				);
-			}
+		if (
+			isEnabled( 'onboarding/2023-pricing-grid' ) &&
+			flowName === 'onboarding-2023-pricing-grid'
+		) {
+			return plans.filter( ( plan ) =>
+				isPlanOneOfType( plan, [
+					TYPE_FREE,
+					TYPE_PERSONAL,
+					TYPE_PREMIUM,
+					TYPE_BUSINESS,
+					TYPE_ECOMMERCE,
+					TYPE_ENTERPRISE_GRID_WPCOM,
+				] )
+			);
+		}
 
+		if ( plansWithScroll ) {
 			return plans.filter( ( plan ) =>
 				isPlanOneOfType( plan, [
 					TYPE_BLOGGER,
