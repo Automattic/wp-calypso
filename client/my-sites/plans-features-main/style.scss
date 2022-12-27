@@ -12,8 +12,8 @@
 	}
 }
 
-
-.plans-features-main__group.is-scrollable {
+/*TODO: Remove the section below when the 2023 pricing grid is live to all locales */
+.plans-features-main__group.is-scrollable:not(.is-2023-pricing-grid) {
 	position: relative;
 
 	.is-section-signup & {
@@ -53,38 +53,19 @@
 	position: relative;
 
 	.is-section-signup & {
-		--approximate-viewport-scrollbar-width: 20px;
-
-		width: calc(100vw - var(--approximate-viewport-scrollbar-width));
-		margin-left: calc(50% - 43vw + var(--approximate-viewport-scrollbar-width) / 2);
-
-		@media ( min-width: 860px ) {
+		@media ( min-width: 880px ) {
 			max-width: 860px;
+			margin: auto;
 		}
 
-		@media ( min-width: 1320px ) {
+		@media ( min-width: 1340px ) {
 			max-width: 1320px;
+			margin: auto;
 		}
 
-		@media ( min-width: 1600px ) {
+		@media ( min-width: 1500px ) {
 			max-width: 1480px;
-			margin-left: calc(50% - 43vw + var(--approximate-viewport-scrollbar-width) / 2);
-		}
-	}
-
-	.is-section-plans & {
-		overflow: hidden;
-		width: calc(100vw - 278px);
-		margin-left: calc(50% - 50vw + 138px);
-
-		@include breakpoint-deprecated( "<660px" ) {
-			margin-left: 0;
-			width: 100%;
-		}
-
-		@media ( min-width: 1800px ) {
-			max-width: 1520px;
-			margin-left: -240px;
+			margin: auto;
 		}
 	}
 }

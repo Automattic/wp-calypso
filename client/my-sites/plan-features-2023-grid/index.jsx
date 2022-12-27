@@ -16,6 +16,12 @@ import {
 	FEATURE_6GB_STORAGE,
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
+	TYPE_FREE,
+	TYPE_PERSONAL,
+	TYPE_PREMIUM,
+	TYPE_BUSINESS,
+	TYPE_ECOMMERCE,
+	TYPE_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
@@ -53,11 +59,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	render() {
-		const { isInSignup, planProperties } = this.props;
-		const tableClasses = classNames(
-			'plan-features-2023-grid__table',
-			`has-${ planProperties.length }-cols`
-		);
+		const { isInSignup } = this.props;
 		const planClasses = classNames( 'plan-features', {
 			'plan-features--signup': isInSignup,
 		} );
@@ -71,20 +73,15 @@ export class PlanFeatures2023Grid extends Component {
 				<div className={ planClasses }>
 					<div ref={ this.contentRef } className="plan-features-2023-grid__content">
 						<div>
-							<table className={ tableClasses }>
-								<caption className="plan-features-2023-grid__screen-reader-text screen-reader-text">
-									{ translate( 'Available plans to choose from' ) }
-								</caption>
-								<tbody>
-									<tr>{ this.renderPlanLogos() }</tr>
-									<tr>{ this.renderPlanHeaders() }</tr>
-									<tr>{ this.renderPlanSubHeaders() }</tr>
-									<tr>{ this.renderPlanPriceGroup() }</tr>
-									<tr>{ this.renderTopButtons() }</tr>
-									<tr>{ this.renderPlanFeaturesList() }</tr>
-									<tr>{ this.renderPlanStorageOptions() }</tr>
-								</tbody>
-							</table>
+							<div className="plan-features-2023-grid__desktop-view">
+								{ this.renderTable( this.props.planProperties ) }
+							</div>
+							<div className="plan-features-2023-grid__tablet-view">
+								{ this.renderTabletView() }
+							</div>
+							<div className="plan-features-2023-grid__mobile-view">
+								{ this.renderMobileView() }
+							</div>
 						</div>
 					</div>
 				</div>
@@ -92,11 +89,59 @@ export class PlanFeatures2023Grid extends Component {
 		);
 	}
 
-	renderPlanPriceGroup() {
-		const { basePlansPath, planProperties, isReskinned, flowName, is2023OnboardingPricingGrid } =
-			this.props;
+	renderTable( planPropertiesObj ) {
+		const tableClasses = classNames(
+			'plan-features-2023-grid__table',
+			`has-${ planPropertiesObj.length }-cols`
+		);
 
-		return map( planProperties, ( properties ) => {
+		return (
+			<table className={ tableClasses }>
+				<caption className="plan-features-2023-grid__screen-reader-text screen-reader-text">
+					{ translate( 'Available plans to choose from' ) }
+				</caption>
+				<tbody>
+					<tr>{ this.renderPlanLogos( planPropertiesObj ) }</tr>
+					<tr>{ this.renderPlanHeaders( planPropertiesObj ) }</tr>
+					<tr>{ this.renderPlanSubHeaders( planPropertiesObj ) }</tr>
+					<tr>{ this.renderPlanPriceGroup( planPropertiesObj ) }</tr>
+					<tr>{ this.renderTopButtons( planPropertiesObj ) }</tr>
+					<tr>{ this.renderPlanFeaturesList( planPropertiesObj ) }</tr>
+					<tr>{ this.renderPlanStorageOptions( planPropertiesObj ) }</tr>
+				</tbody>
+			</table>
+		);
+	}
+
+	renderTabletView() {
+		const { planProperties } = this.props;
+		const topRowPlans = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
+		const bottomRowPlans = [ TYPE_BUSINESS, TYPE_ECOMMERCE, TYPE_ENTERPRISE_GRID_WPCOM ];
+		const planPropertiesForTopRow = planProperties.filter( ( properties ) =>
+			topRowPlans.includes( properties.planConstantObj.type )
+		);
+		const planPropertiesForBottomRow = planProperties.filter( ( properties ) =>
+			bottomRowPlans.includes( properties.planConstantObj.type )
+		);
+
+		return (
+			<>
+				<div className="plan-features-2023-grid__table-top">
+					{ this.renderTable( planPropertiesForTopRow ) }
+				</div>
+				<div className="plan-features-2023-grid__table-bottom">
+					{ this.renderTable( planPropertiesForBottomRow ) }
+				</div>
+			</>
+		);
+	}
+
+	renderMobileView() {}
+
+	renderPlanPriceGroup( planPropertiesObj ) {
+		const { isReskinned, flowName, is2023OnboardingPricingGrid } = this.props;
+
+		return map( planPropertiesObj, ( properties ) => {
 			const {
 				annualPricePerMonth,
 				currencyCode,
@@ -120,7 +165,6 @@ export class PlanFeatures2023Grid extends Component {
 			return (
 				<th scope="col" key={ planName } className={ classes }>
 					<PlanFeatures2023GridHeaderPrice
-						basePlansPath={ basePlansPath }
 						billingTimeFrame={ billingTimeFrame }
 						currencyCode={ currencyCode }
 						discountPrice={ discountPrice }
@@ -141,10 +185,10 @@ export class PlanFeatures2023Grid extends Component {
 		} );
 	}
 
-	renderPlanLogos() {
-		const { planProperties, isInSignup } = this.props;
+	renderPlanLogos( planPropertiesObj ) {
+		const { isInSignup } = this.props;
 
-		return map( planProperties, ( properties ) => {
+		return map( planPropertiesObj, ( properties ) => {
 			const { planName } = properties;
 			const headerClasses = classNames(
 				'plan-features-2023-grid__header-logo',
@@ -178,10 +222,8 @@ export class PlanFeatures2023Grid extends Component {
 		} );
 	}
 
-	renderPlanHeaders() {
-		const { planProperties } = this.props;
-
-		return map( planProperties, ( properties ) => {
+	renderPlanHeaders( planPropertiesObj ) {
+		return map( planPropertiesObj, ( properties ) => {
 			const { planName, planConstantObj } = properties;
 			const headerClasses = classNames(
 				'plan-features-2023-grid__header',
@@ -200,10 +242,8 @@ export class PlanFeatures2023Grid extends Component {
 		} );
 	}
 
-	renderPlanSubHeaders() {
-		const { planProperties } = this.props;
-
-		return map( planProperties, ( properties ) => {
+	renderPlanSubHeaders( planPropertiesObj ) {
+		return map( planPropertiesObj, ( properties ) => {
 			const { planName, tagline } = properties;
 
 			return (
@@ -230,10 +270,10 @@ export class PlanFeatures2023Grid extends Component {
 		return `/checkout`;
 	}
 
-	renderTopButtons() {
-		const { isInSignup, isLaunchPage, planProperties, flowName } = this.props;
+	renderTopButtons( planPropertiesObj ) {
+		const { isInSignup, isLaunchPage, flowName } = this.props;
 
-		return map( planProperties, ( properties ) => {
+		return map( planPropertiesObj, ( properties ) => {
 			const { planName, isPlaceholder, planConstantObj } = properties;
 			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
 
@@ -256,11 +296,14 @@ export class PlanFeatures2023Grid extends Component {
 		} );
 	}
 
-	renderPlanFeaturesList() {
-		const { planProperties, domainName } = this.props;
+	renderPlanFeaturesList( planPropertiesObj ) {
+		const { domainName } = this.props;
 
 		return (
-			<PlanFeatures2023GridFeatures planProperties={ planProperties } domainName={ domainName } />
+			<PlanFeatures2023GridFeatures
+				planProperties={ planPropertiesObj }
+				domainName={ domainName }
+			/>
 		);
 	}
 
@@ -279,10 +322,8 @@ export class PlanFeatures2023Grid extends Component {
 		}
 	}
 
-	renderPlanStorageOptions() {
-		const { planProperties } = this.props;
-
-		return planProperties.map( ( properties ) => {
+	renderPlanStorageOptions( planPropertiesObj ) {
+		return planPropertiesObj.map( ( properties ) => {
 			const { planName, storageOptions } = properties;
 			const storageJSX = storageOptions.map( ( storageFeature ) => {
 				if ( storageFeature.length <= 0 ) {
@@ -312,7 +353,6 @@ export class PlanFeatures2023Grid extends Component {
 }
 
 PlanFeatures2023Grid.propTypes = {
-	basePlansPath: PropTypes.string,
 	isInSignup: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	// either you specify the plans prop or isPlaceholder prop
@@ -326,7 +366,6 @@ PlanFeatures2023Grid.propTypes = {
 };
 
 PlanFeatures2023Grid.defaultProps = {
-	basePlansPath: null,
 	isInSignup: true,
 	siteId: null,
 	onUpgradeClick: noop,

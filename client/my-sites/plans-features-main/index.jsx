@@ -562,13 +562,21 @@ export class PlansFeaturesMain extends Component {
 		return props.planTypeSelector;
 	}
 
+	renderPlansGrid() {
+		const { shouldShowPlansFeatureComparison, flowName } = this.props;
+
+		if (
+			isEnabled( 'onboarding/2023-pricing-grid' ) &&
+			flowName === 'onboarding-2023-pricing-grid'
+		) {
+			return this.showFeatureComparison();
+		}
+
+		return shouldShowPlansFeatureComparison ? this.showFeatureComparison() : this.getPlanFeatures();
+	}
+
 	render() {
-		const {
-			siteId,
-			redirectToAddDomainFlow,
-			domainAndPlanPackage,
-			shouldShowPlansFeatureComparison,
-		} = this.props;
+		const { siteId, redirectToAddDomainFlow, domainAndPlanPackage } = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
@@ -598,7 +606,7 @@ export class PlansFeaturesMain extends Component {
 						plans={ visiblePlans }
 					/>
 				) }
-				{ shouldShowPlansFeatureComparison ? this.showFeatureComparison() : this.getPlanFeatures() }
+				{ this.renderPlansGrid() }
 				{ this.mayRenderFAQ() }
 			</div>
 		);
