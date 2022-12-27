@@ -356,7 +356,7 @@ export function isPluginActionInProgress(
  */
 export const getPluginStatusesByType = createSelector(
 	( state: AppState, status: string ) => {
-		const statuses: object[] = [];
+		const statuses: PluginStatus[] = [];
 
 		const pluginStatuses: { [ siteId: number ]: { [ pluginId: string ]: PluginStatus } } =
 			state.plugins.installed.status;
@@ -366,7 +366,7 @@ export const getPluginStatusesByType = createSelector(
 				if ( pluginStatus.status === status ) {
 					statuses.push( {
 						...pluginStatus,
-						siteId,
+						siteId: Number( siteId ),
 						pluginId,
 					} );
 				}

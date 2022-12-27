@@ -55,5 +55,8 @@ export type PluginUpdate = {
 export type PluginFilter = 'none' | 'all' | 'active' | 'inactive' | 'updates';
 
 export type PluginStatus = {
+	siteId: number;
+	pluginId: string;
 	status: string;
+	action: string;
 };
