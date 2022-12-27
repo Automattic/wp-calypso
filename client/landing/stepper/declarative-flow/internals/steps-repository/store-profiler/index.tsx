@@ -9,6 +9,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormInput from 'calypso/components/forms/form-text-input';
+import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import useSiteVerticalsFeatured from 'calypso/data/site-verticals/use-site-verticals-featured';
 import { useCountriesAndStates } from 'calypso/jetpack-cloud/sections/partner-portal/company-details-form/hooks/use-countries-and-states';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -20,7 +21,6 @@ const StoreProfiler: Step = function StoreProfiler( { navigation, flow } ) {
 	const { goBack, goNext, submit } = navigation;
 	const [ siteTitle, setSiteTitle ] = React.useState( '' );
 	const [ verticalId, setVerticalId ] = React.useState( '' );
-	const [ storeCountryCode, setStoreCountryCode ] = React.useState( '' );
 	const translate = useTranslate();
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
@@ -58,6 +58,10 @@ const StoreProfiler: Step = function StoreProfiler( { navigation, flow } ) {
 			</option>
 		) );
 	}, [ countriesAndStates ] );
+
+	const region = useGeoLocationQuery()?.data;
+	const [ storeCountryCode, setStoreCountryCode ] = React.useState( region?.country_short );
+
 	const isLoading = verticals.isLoading || ! countriesAndStates;
 
 	const handleSubmit = async ( event: React.FormEvent ) => {
