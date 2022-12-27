@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import { PureComponent, Fragment } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import PeopleProfile from 'calypso/my-sites/people/people-profile';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -22,6 +22,12 @@ class PeopleListItem extends PureComponent {
 	static propTypes = {
 		site: PropTypes.object,
 		invite: PropTypes.object,
+		showStatus: PropTypes.bool,
+		RevokeClearBtn: PropTypes.elementType,
+	};
+
+	static defaultProps = {
+		RevokeClearBtn: null,
 	};
 
 	navigateToUser = () => {
@@ -75,44 +81,46 @@ class PeopleListItem extends PureComponent {
 	};
 
 	renderInviteStatus = () => {
-		const { type, invite, translate, requestingResend, resendSuccess } = this.props;
+		const { type, invite, translate, requestingResend, resendSuccess, RevokeClearBtn } = this.props;
 		const { isPending } = invite;
 		const className = classNames( 'people-list-item__invite-status', {
 			'is-pending': isPending,
 			'is-invite-details': type === 'invite-details',
 		} );
-		const buttonClassName = classNames( 'people-list-item__invite-resend', {
+		const btnResendClassName = classNames( 'people-list-item__invite-resend', {
 			'is-success': resendSuccess,
 		} );
+		const btnRevokeClassName = classNames( 'people-list-item__invite-revoke' );
 
 		return (
 			<div className={ className }>
-				{ type === 'invite-details' &&
-					( isPending ? (
-						translate( 'Pending' )
-					) : (
-						<Fragment>
-							<Gridicon icon="checkmark" size={ 18 } />
-							{ translate( 'Accepted' ) }
-						</Fragment>
-					) ) }
 				{ isPending && (
 					<Button
-						className={ buttonClassName }
+						className={ btnResendClassName }
 						onClick={ this.onResend }
 						busy={ requestingResend }
-						compact
 					>
 						{ resendSuccess ? translate( 'Invite Sent!' ) : translate( 'Resend Invite' ) }
 					</Button>
 				) }
+
+				<RevokeClearBtn className={ btnRevokeClassName } />
 			</div>
 		);
 	};
 
 	render() {
-		const { className, invite, onRemove, siteId, translate, type, user, inviteWasDeleted } =
-			this.props;
+		const {
+			className,
+			invite,
+			onRemove,
+			siteId,
+			translate,
+			type,
+			user,
+			inviteWasDeleted,
+			showStatus,
+		} = this.props;
 
 		const isInvite = invite && ( 'invite' === type || 'invite-details' === type );
 
@@ -146,7 +154,7 @@ class PeopleListItem extends PureComponent {
 					<PeopleProfile invite={ invite } siteId={ siteId } type={ type } user={ user } />
 				</div>
 
-				{ isInvite && this.renderInviteStatus() }
+				{ isInvite && showStatus && this.renderInviteStatus() }
 
 				{ onRemove && (
 					<div className="people-list-item__actions">
