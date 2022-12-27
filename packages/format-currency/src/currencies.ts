@@ -1,4 +1,4 @@
-import { CurrencyDefinition, CurrenciesDictionary } from './types';
+import { CurrenciesDictionary } from './types';
 
 export const CURRENCIES: CurrenciesDictionary = {
 	AED: {
@@ -968,17 +968,6 @@ export const CURRENCIES: CurrenciesDictionary = {
 		precision: 2,
 	},
 };
-
-export function getCurrencyDefaults( code: string ): CurrencyDefinition {
-	const defaultCurrency = {
-		symbol: '$',
-		grouping: ',',
-		decimal: '.',
-		precision: 2,
-	};
-
-	return CURRENCIES[ code ] || defaultCurrency;
-}
 
 export function doesCurrencyExist( code: string ): boolean {
 	return Boolean( CURRENCIES[ code ] );
