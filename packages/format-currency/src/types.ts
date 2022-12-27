@@ -1,31 +1,10 @@
 export interface CurrencyObjectOptions {
 	/**
-	 * The symbol separating the integer part of a decimal from its fraction.
-	 *
-	 * Will be set automatically by the currency code.
-	 */
-	decimal?: string;
-
-	/**
-	 * The symbol separating the thousands part of an amount from its hundreds.
-	 *
-	 * Will be set automatically by the currency code.
-	 */
-	grouping?: string;
-
-	/**
 	 * The symbol separating the thousands part of an amount from its hundreds.
 	 *
 	 * Will be set automatically by the currency code.
 	 */
 	precision?: number;
-
-	/**
-	 * The currency symbol.
-	 *
-	 * Will be set automatically by the currency code.
-	 */
-	symbol?: string;
 
 	/**
 	 * Forces any decimal zeros to be hidden if set.
@@ -56,11 +35,6 @@ export interface CurrencyObjectOptions {
 	 */
 	locale?: string;
 }
-
-export type FormatCurrencyOptions = Pick<
-	CurrencyObjectOptions,
-	'stripZeros' | 'isSmallestUnit' | 'locale'
->;
 
 export interface CurrencyObject {
 	sign: '-' | '';
