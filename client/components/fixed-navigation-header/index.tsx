@@ -48,6 +48,11 @@ const Container = styled.div`
 		max-width: 1040px;
 		margin: auto;
 	}
+
+	.stats & {
+		max-width: 1224px;
+		margin: auto;
+	}
 `;
 
 const ActionsContainer = styled.div`

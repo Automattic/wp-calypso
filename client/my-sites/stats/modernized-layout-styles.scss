@@ -37,6 +37,10 @@ $sidebar-appearance-break-point: 783px;
 	> .stats-banner-wrapper {
 		padding-bottom: 1em;
 	}
+
+	&.has-fixed-nav {
+		padding-top: 44px;
+	}
 }
 
 // this overrides the default .layout__content that adds unwanted padding
