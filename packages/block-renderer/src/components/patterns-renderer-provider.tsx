@@ -3,13 +3,13 @@ import useRenderedPatterns from '../hooks/use-query-rendered-patterns';
 import PatternsRendererContext from './patterns-renderer-context';
 
 interface Props {
-	siteId: number;
-	stylesheet: string;
+	siteId: number | string;
+	stylesheet?: string;
 	patternIds: string[];
 	children: JSX.Element;
 }
 
-const PatternsRendererProvider = ( { siteId, stylesheet, patternIds, children }: Props ) => {
+const PatternsRendererProvider = ( { siteId, stylesheet = '', patternIds, children }: Props ) => {
 	const { data, isLoading, hasNextPage, fetchNextPage } = useRenderedPatterns(
 		siteId,
 		stylesheet,
