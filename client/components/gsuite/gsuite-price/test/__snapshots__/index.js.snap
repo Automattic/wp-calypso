@@ -8,7 +8,7 @@ exports[`GSuitePrice renders correctly 1`] = `
     className="gsuite-price__monthly-price"
   >
     <strong>
-      €6,40
+      €6.40
     </strong>
      /user /month
   </h4>
