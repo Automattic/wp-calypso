@@ -180,6 +180,7 @@ $plan-features-sidebar-width: 272px;
 		color: var(--color-text-subtle);
 		table-layout: fixed;
 		border: 1px solid #e0e0e0;
+		border-right: none;
 		border-radius: 5px; /* stylelint-disable-line */
 		background-color: #fff;
 		margin: 0;
@@ -400,31 +401,46 @@ $plan-features-sidebar-width: 272px;
 			}
 		}
 
-		&.plan-features-2023-grid__common-title {
-			font-weight: 600;
-			font-size: $font-body-small;
-			padding-top: 0;
-			margin-top: 36px;
-
-			&.is-personal-plan {
-				color: var(--studio-blue-60);
-			}
-
-			&.is-premium-plan {
-				color: #004687;
-			}
-
-			&.is-business-plan {
-				color: #7f54b3;
-			}
-
-			&.is-ecommerce-plan {
-				color: #55347d;
-			}
-		}
-
 		&.plan-features-2023-grid__enterprise-logo {
+			padding-top: 32px;
+
+			img:nth-child(1) {
+				padding-right: 32px;
+			}
+
+			img:nth-child(2) {
+				padding-right: 32px;
+			}
+
+			img:nth-child(3) {
+				padding-right: 32px;
+			}
+
+			img:nth-child(4) {
+				padding-right: 0;
+			}
+
+			img:nth-child(5) {
+				padding-right: 24px;
+			}
+
+			img:nth-child(6) {
+				padding-right: 24px;
+			}
+
+			img:nth-child(7) {
+				padding-right: 24px;
+			}
+
+			img:nth-child(8) {
+				padding-right: 0;
+			}
+
 			@media ( min-width: 880px ) {
+				position: relative;
+				top: 10px;
+				padding-top: 0;
+
 				img:nth-child(1) {
 					padding-right: 32px;
 				}
@@ -550,10 +566,6 @@ body.is-section-signup.is-white-signup {
 		border-left: none;
 		background-color: transparent;
 
-		&:last-of-type {
-			border-right: none;
-		}
-
 		.plan-pill.is-in-signup {
 			font-family: Inter, $sans;
 			font-size: 0.75rem;
@@ -621,6 +633,33 @@ body.is-section-signup.is-white-signup {
 				line-height: 20px;
 				color: var(--studio-gray-90);
 				min-width: 64px;
+			}
+		}
+
+		.plan-features-2023-grid__common-title {
+			font-weight: 600;
+			font-size: $font-body-small;
+			padding: 0 20px;
+			margin-bottom: 12px;
+
+			@media ( min-width: 880px ) {
+				margin-top: 36px;
+			}
+
+			&.is-personal-plan {
+				color: var(--studio-blue-60);
+			}
+
+			&.is-premium-plan {
+				color: #004687;
+			}
+
+			&.is-business-plan {
+				color: #7f54b3;
+			}
+
+			&.is-ecommerce-plan {
+				color: #55347d;
 			}
 		}
 	}

@@ -1,87 +1,22 @@
-import { IncompleteWPcomPlan } from '@automattic/calypso-products';
 import {
-	NEWSLETTER_FLOW,
-	isLinkInBioFlow,
-	isNewsletterOrLinkInBioFlow,
-} from '@automattic/onboarding';
+	FEATURE_1GB_STORAGE,
+	FEATURE_6GB_STORAGE,
+	FEATURE_13GB_STORAGE,
+	FEATURE_200GB_STORAGE,
+} from '@automattic/calypso-products';
+import { translate } from 'i18n-calypso';
 
-const newsletterFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
-	return flowName === NEWSLETTER_FLOW && plan.getNewsletterSignupFeatures;
-};
-
-const linkInBioFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
-	return isLinkInBioFlow( flowName ) && plan.getLinkInBioSignupFeatures;
-};
-
-const signupFlowDefaultFeatures = (
-	flowName: string,
-	plan: IncompleteWPcomPlan,
-	isInVerticalScrollingPlansExperiment: boolean
-) => {
-	if ( ! flowName || isNewsletterOrLinkInBioFlow( flowName ) ) {
-		return;
+export const getFeatureToStorageMap = ( storageFeature: string ) => {
+	switch ( storageFeature ) {
+		case FEATURE_1GB_STORAGE:
+			return translate( '1GB' );
+		case FEATURE_6GB_STORAGE:
+			return translate( '6GB' );
+		case FEATURE_13GB_STORAGE:
+			return translate( '13GB' );
+		case FEATURE_200GB_STORAGE:
+			return translate( '200GB' );
+		default:
+			return null;
 	}
-
-	return isInVerticalScrollingPlansExperiment
-		? plan.getSignupFeatures
-		: plan.getSignupCompareAvailableFeatures;
-};
-
-export const getPlanFeatureAccessor = ( {
-	flowName = '',
-	isInVerticalScrollingPlansExperiment = false,
-	plan,
-}: {
-	flowName?: string;
-	isInVerticalScrollingPlansExperiment?: boolean;
-	plan: IncompleteWPcomPlan;
-} ) => {
-	return [
-		newsletterFeatures( flowName, plan ),
-		linkInBioFeatures( flowName, plan ),
-		signupFlowDefaultFeatures( flowName, plan, isInVerticalScrollingPlansExperiment ),
-	].find( ( accessor ) => {
-		return accessor instanceof Function;
-	} );
-};
-
-const newsletterHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
-	return flowName === NEWSLETTER_FLOW && plan.getNewsletterHighlightedFeatures;
-};
-
-const linkInBioHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
-	return isLinkInBioFlow( flowName ) && plan.getLinkInBioHighlightedFeatures;
-};
-
-export const getHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
-	const accessor = [
-		newsletterHighlightedFeatures( flowName, plan ),
-		linkInBioHighlightedFeatures( flowName, plan ),
-	].find( ( accessor ) => {
-		return accessor instanceof Function;
-	} );
-
-	return ( accessor && accessor() ) || [];
-};
-
-export const getPlanDescriptionForMobile = ( {
-	flowName,
-	isInVerticalScrollingPlansExperiment,
-	plan,
-}: {
-	flowName: string;
-	isInVerticalScrollingPlansExperiment: boolean;
-	plan: IncompleteWPcomPlan;
-} ) => {
-	if ( flowName === NEWSLETTER_FLOW && plan.getNewsletterDescription ) {
-		return plan.getNewsletterDescription();
-	}
-
-	if ( isLinkInBioFlow( flowName ) && plan.getLinkInBioDescription ) {
-		return plan.getLinkInBioDescription();
-	}
-
-	return plan.getShortDescription && isInVerticalScrollingPlansExperiment
-		? plan.getShortDescription()
-		: plan.getDescription();
 };

@@ -6,16 +6,13 @@ import {
 	getPlan as getPlanFromKey,
 	getPlanClass,
 	isFreePlan,
+	isWpComFreePlan,
 	isWpcomEnterpriseGridPlan,
 	isMonthly,
 	TERM_MONTHLY,
 	isPremiumPlan,
 	isEcommercePlan,
 	PLAN_ENTERPRISE_GRID_WPCOM,
-	FEATURE_1GB_STORAGE,
-	FEATURE_6GB_STORAGE,
-	FEATURE_13GB_STORAGE,
-	FEATURE_200GB_STORAGE,
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
@@ -29,9 +26,16 @@ import { compact, get, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import BloombergLogo from 'calypso/assets/images/onboarding/bloomberg-logo.svg';
+import CNNLogo from 'calypso/assets/images/onboarding/cnn-logo.svg';
+import CondenastLogo from 'calypso/assets/images/onboarding/condenast-logo.svg';
+import DisneyLogo from 'calypso/assets/images/onboarding/disney-logo.svg';
+import FacebookLogo from 'calypso/assets/images/onboarding/facebook-logo.svg';
+import SalesforceLogo from 'calypso/assets/images/onboarding/salesforce-logo.svg';
+import SlackLogo from 'calypso/assets/images/onboarding/slack-logo.svg';
+import TimeLogo from 'calypso/assets/images/onboarding/time-logo.svg';
 import vipLogo from 'calypso/assets/images/onboarding/vip-logo.svg';
 import wooLogo from 'calypso/assets/images/onboarding/woo-logo.svg';
-import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import FoldableCard from 'calypso/components/foldable-card';
 import PlanPill from 'calypso/components/plans/plan-pill';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
@@ -49,6 +53,7 @@ import {
 import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridFeatures from './features';
 import PlanFeatures2023GridHeaderPrice from './header-price';
+import { getFeatureToStorageMap } from './util';
 import './style.scss';
 
 const noop = () => {};
@@ -79,7 +84,6 @@ export class PlanFeatures2023Grid extends Component {
 
 		return (
 			<div className={ planWrapperClasses }>
-				<QueryActivePromotions />
 				<div className={ planClasses }>
 					<div ref={ this.contentRef } className="plan-features-2023-grid__content">
 						<div>
@@ -113,9 +117,10 @@ export class PlanFeatures2023Grid extends Component {
 				<tbody>
 					<tr>{ this.renderPlanLogos( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPlanHeaders( planPropertiesObj ) }</tr>
-					<tr>{ this.renderPlanSubHeaders( planPropertiesObj ) }</tr>
+					<tr>{ this.renderPlanTagline( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPlanPriceGroup( planPropertiesObj ) }</tr>
 					<tr>{ this.renderTopButtons( planPropertiesObj ) }</tr>
+					<tr>{ this.renderPreviousFeaturesIncludedTitle( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPlanFeaturesList( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPlanStorageOptions( planPropertiesObj ) }</tr>
 				</tbody>
@@ -148,31 +153,40 @@ export class PlanFeatures2023Grid extends Component {
 
 	renderMobileView() {
 		const { planProperties } = this.props;
-
-		return map( planProperties, ( properties ) => {
-			const { planName, planConstantObj, tagline } = properties;
-			const headerClasses = classNames(
-				'plan-features-2023-grid__header',
-				getPlanClass( planName )
+		const CardContainer = ( props ) => {
+			const { children, planName, ...otherProps } = props;
+			return PLAN_ENTERPRISE_GRID_WPCOM === planName ? (
+				<div { ...otherProps }>{ children }</div>
+			) : (
+				<FoldableCard { ...otherProps }>{ children }</FoldableCard>
 			);
-			const propertiesContainerArray = [ properties ];
+		};
+		let previousProductNameShort;
 
-			return (
+		return planProperties.map( ( properties ) => {
+			const planCardJsx = (
 				<div className="plan-features-2023-grid__mobile-plan-card">
-					<header className={ headerClasses }>
-						<h4 className="plan-features-2023-grid__header-title">
-							{ planConstantObj.getTitle() }
-						</h4>
-					</header>
-					<div className="plan-features-2023-grid__header-tagline">{ tagline }</div>
-					{ this.renderPlanPriceGroup( propertiesContainerArray, { isMobile: true } ) }
-					{ this.renderTopButtons( propertiesContainerArray, { isMobile: true } ) }
-					<FoldableCard header={ translate( 'Show features' ) } clickableHeader compact>
-						{ this.renderPlanFeaturesList( propertiesContainerArray, { isMobile: true } ) }
-						{ this.renderPlanStorageOptions( propertiesContainerArray, { isMobile: true } ) }
-					</FoldableCard>
+					{ this.renderPlanHeaders( [ properties ], { isMobile: true } ) }
+					{ this.renderPlanTagline( [ properties ], { isMobile: true } ) }
+					{ this.renderPlanPriceGroup( [ properties ], { isMobile: true } ) }
+					{ this.renderTopButtons( [ properties ], { isMobile: true } ) }
+					<CardContainer
+						header={ translate( 'Show features' ) }
+						planName={ properties.planName }
+						clickableHeader
+						compact
+					>
+						{ this.renderPreviousFeaturesIncludedTitle( [ properties ], {
+							isMobile: true,
+							previousProductNameShort,
+						} ) }
+						{ this.renderPlanFeaturesList( [ properties ], { isMobile: true } ) }
+						{ this.renderPlanStorageOptions( [ properties ], { isMobile: true } ) }
+					</CardContainer>
 				</div>
 			);
+			previousProductNameShort = properties.product_name_short;
+			return planCardJsx;
 		} );
 	}
 
@@ -260,7 +274,7 @@ export class PlanFeatures2023Grid extends Component {
 		} );
 	}
 
-	renderPlanHeaders( planPropertiesObj ) {
+	renderPlanHeaders( planPropertiesObj, { isMobile } = {} ) {
 		return map( planPropertiesObj, ( properties ) => {
 			const { planName, planConstantObj } = properties;
 			const headerClasses = classNames(
@@ -269,25 +283,33 @@ export class PlanFeatures2023Grid extends Component {
 			);
 
 			return (
-				<th scope="col" key={ planName } className="plan-features-2023-grid__table-item">
+				<Container
+					key={ planName }
+					className="plan-features-2023-grid__table-item"
+					isMobile={ isMobile }
+				>
 					<header className={ headerClasses }>
 						<h4 className="plan-features-2023-grid__header-title">
 							{ planConstantObj.getTitle() }
 						</h4>
 					</header>
-				</th>
+				</Container>
 			);
 		} );
 	}
 
-	renderPlanSubHeaders( planPropertiesObj ) {
-		return map( planPropertiesObj, ( properties ) => {
+	renderPlanTagline( planPropertiesObj, { isMobile } = {} ) {
+		return planPropertiesObj.map( ( properties ) => {
 			const { planName, tagline } = properties;
 
 			return (
-				<th scope="col" key={ planName } className="plan-features-2023-grid__table-item">
+				<Container
+					key={ planName }
+					className="plan-features-2023-grid__table-item"
+					isMobile={ isMobile }
+				>
 					<div className="plan-features-2023-grid__header-tagline">{ tagline }</div>
-				</th>
+				</Container>
 			);
 		} );
 	}
@@ -334,36 +356,81 @@ export class PlanFeatures2023Grid extends Component {
 		} );
 	}
 
-	renderPlanFeaturesList( planPropertiesObj, { isMobile } = {} ) {
+	renderEnterpriseClientLogos() {
+		return (
+			<div className="plan-features-2023-grid__item plan-features-2023-grid__enterprise-logo">
+				<img src={ TimeLogo } alt="WordPress VIP client logo for TIME" loading="lazy" />
+				<img src={ SlackLogo } alt="WordPress VIP client logo for Slack" loading="lazy" />
+				<img src={ DisneyLogo } alt="WordPress VIP client logo for Disney" loading="lazy" />
+				<img src={ CNNLogo } alt="WordPress VIP client logo for CNN" loading="lazy" />
+				<img src={ SalesforceLogo } alt="WordPress VIP client logo for Salesforce" loading="lazy" />
+				<img src={ FacebookLogo } alt="WordPress VIP client logo for Facebook" loading="lazy" />
+				<img src={ CondenastLogo } alt="WordPress VIP client logo for Conde Nast" loading="lazy" />
+				<img src={ BloombergLogo } alt="WordPress VIP client logo for Bloomberg" loading="lazy" />
+			</div>
+		);
+	}
+
+	renderPreviousFeaturesIncludedTitle(
+		planPropertiesObj,
+		{ isMobile, previousProductNameShort } = {}
+	) {
+		let previousPlanShortNameFromProperties;
+
+		return planPropertiesObj.map( ( properties ) => {
+			const { planName, product_name_short } = properties;
+			const shouldShowFeatureTitle =
+				! isWpComFreePlan( planName ) && ! isWpcomEnterpriseGridPlan( planName );
+			const planShortName = previousProductNameShort || previousPlanShortNameFromProperties;
+			previousPlanShortNameFromProperties = product_name_short;
+			const title =
+				planShortName &&
+				translate( 'Everything in %(planShortName)s, plus:', {
+					args: { planShortName },
+				} );
+			const classes = classNames(
+				'plan-features-2023-grid__common-title',
+				getPlanClass( planName )
+			);
+			const rowspanProp =
+				! isMobile && isWpcomEnterpriseGridPlan( planName ) ? { rowspan: '2' } : {};
+			return (
+				<Container
+					key={ planName }
+					isMobile={ isMobile }
+					className="plan-features-2023-grid__table-item"
+					{ ...rowspanProp }
+				>
+					{ shouldShowFeatureTitle && <div className={ classes }>{ title }</div> }
+					{ isWpcomEnterpriseGridPlan( planName ) && this.renderEnterpriseClientLogos() }
+				</Container>
+			);
+		} );
+	}
+
+	renderPlanFeaturesList( planPropertiesObj, { isMobile, previousProductNameShort } = {} ) {
 		const { domainName } = this.props;
+		const planProperties = planPropertiesObj.filter(
+			( properties ) => ! isWpcomEnterpriseGridPlan( properties.planName )
+		);
 
 		return (
 			<PlanFeatures2023GridFeatures
-				planProperties={ planPropertiesObj }
+				planProperties={ planProperties }
 				domainName={ domainName }
 				isMobile={ isMobile }
+				previousProductNameShort={ previousProductNameShort }
 				Container={ Container }
 			/>
 		);
 	}
 
-	getFeatureToStorageMap( storageFeature ) {
-		switch ( storageFeature ) {
-			case FEATURE_1GB_STORAGE:
-				return translate( '1GB' );
-			case FEATURE_6GB_STORAGE:
-				return translate( '6GB' );
-			case FEATURE_13GB_STORAGE:
-				return translate( '13GB' );
-			case FEATURE_200GB_STORAGE:
-				return translate( '200GB' );
-			default:
-				return null;
-		}
-	}
-
 	renderPlanStorageOptions( planPropertiesObj, { isMobile } = {} ) {
 		return planPropertiesObj.map( ( properties ) => {
+			if ( isMobile && isWpcomEnterpriseGridPlan( properties.planName ) ) {
+				return null;
+			}
+
 			const { planName, storageOptions } = properties;
 			const storageJSX = storageOptions.map( ( storageFeature ) => {
 				if ( storageFeature.length <= 0 ) {
@@ -371,7 +438,7 @@ export class PlanFeatures2023Grid extends Component {
 				}
 				return (
 					<div className="plan-features-2023-grid__storage-buttons">
-						{ this.getFeatureToStorageMap( storageFeature ) }
+						{ getFeatureToStorageMap( storageFeature ) }
 					</div>
 				);
 			} );
@@ -399,15 +466,11 @@ PlanFeatures2023Grid.propTypes = {
 	plans: PropTypes.array,
 	visiblePlans: PropTypes.array,
 	planProperties: PropTypes.array,
-	selectedFeature: PropTypes.string,
-	purchaseId: PropTypes.number,
 	flowName: PropTypes.string,
-	siteId: PropTypes.number,
 };
 
 PlanFeatures2023Grid.defaultProps = {
 	isInSignup: true,
-	siteId: null,
 	onUpgradeClick: noop,
 };
 
