@@ -1,4 +1,3 @@
-import { SiteIntent } from '@automattic/data-stores/src/onboard';
 import { Design, StyleVariation } from '@automattic/design-picker/src';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -16,7 +15,7 @@ export function recordPreviewedDesign( {
 } ) {
 	recordTracksEvent( 'calypso_signup_design_preview_select', {
 		...getDesignEventProps( { flow, intent, design, styleVariation } ),
-		goes_to_assembler_step: design.design_type === 'assembler',
+		...getDesignTypeProps( design ),
 	} );
 }
 
@@ -43,7 +42,7 @@ export function recordSelectedDesign( {
 	if ( design ) {
 		recordTracksEvent( 'calypso_signup_select_design', {
 			...getDesignEventProps( { flow, intent, design, styleVariation } ),
-			...getDesignIntentProps( intent ),
+			...getDesignTypeProps( design ),
 			...optionalProps,
 		} );
 
@@ -56,9 +55,9 @@ export function recordSelectedDesign( {
 	}
 }
 
-export function getDesignIntentProps( intent: string ) {
+export function getDesignTypeProps( design?: Design ) {
 	return {
-		goes_to_assembler_step: intent === SiteIntent.SiteAssembler,
+		goes_to_assembler_step: design?.design_type === 'assembler',
 	};
 }
 

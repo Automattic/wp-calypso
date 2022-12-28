@@ -5,7 +5,6 @@ import { controls as wpcomRequestControls } from '../wpcom-request-controls';
 import * as actions from './actions';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
-import * as resolvers from './resolvers';
 import * as selectors from './selectors';
 export type { State };
 import type { SelectFromMap, DispatchFromMap } from '../mapped-types';
@@ -22,7 +21,6 @@ export function register(): typeof STORE_KEY {
 			controls: { ...controls, ...wpcomRequestControls } as any,
 			selectors,
 			persist: [ 'site', 'message', 'userDeclaredSite', 'userDeclaredSiteUrl', 'subject' ],
-			resolvers,
 		} );
 		isRegistered = true;
 	}
