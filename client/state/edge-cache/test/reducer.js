@@ -16,7 +16,7 @@ describe( 'reducer', () => {
 		};
 		const state1 = reducer( previousState, {
 			type: EDGE_CACHE_ACTIVE_SET,
-			siteId: 9876543,
+			siteId: 12345678,
 			active: 0,
 		} );
 
@@ -26,9 +26,9 @@ describe( 'reducer', () => {
 			},
 		} );
 
-		const state2 = reducer( previousState, {
+		const state2 = reducer( state1, {
 			type: EDGE_CACHE_ACTIVE_SET,
-			siteId: 9876543,
+			siteId: 12345678,
 			active: 0,
 		} );
 
