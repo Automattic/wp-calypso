@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
+import SupportInfo from 'calypso/components/support-info';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isEligibleForSubscriberImporter from 'calypso/state/selectors/is-eligible-for-subscriber-importer';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -86,14 +87,21 @@ class PeopleListSectionHeader extends Component {
 			( siteLink && ! this.isSubscribersTab() ) || ( siteLink && ! includeSubscriberImporter );
 		const showAddSubscriberBtn =
 			addSubscriberLink && this.isSubscribersTab() && includeSubscriberImporter;
+		const popoverText = this.getPopoverText();
 
 		return (
 			<SectionHeader
 				className={ classes }
 				count={ count }
-				label={ label }
+				label={
+					<>
+						{ label }
+						{ popoverText && (
+							<SupportInfo position="right" text={ popoverText } privacyLink={ false } />
+						) }
+					</>
+				}
 				isPlaceholder={ this.props.isPlaceholder }
-				popoverText={ this.getPopoverText() }
 			>
 				{ children }
 				{ showInviteUserBtn && (
