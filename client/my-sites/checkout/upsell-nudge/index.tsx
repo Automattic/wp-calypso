@@ -194,8 +194,10 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 	render() {
 		const { selectedSiteId, hasProductsList, hasSitePlans, upsellType } = this.props;
 
+		const mainClass =
+			BUSINESS_PLAN_UPGRADE_UPSELL === upsellType ? upsellType + ' is-wide-layout' : upsellType;
 		return (
-			<Main className={ upsellType }>
+			<Main className={ mainClass }>
 				<QuerySites siteId={ selectedSiteId } />
 				<QueryStoredCards />
 				{ ! hasProductsList && <QueryProductsList /> }

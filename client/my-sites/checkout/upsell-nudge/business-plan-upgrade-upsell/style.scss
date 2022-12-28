@@ -1,17 +1,56 @@
+body.is-section-business-plan-upgrade-upsell {
+	--color-surface-backdrop: var(--studio-white);
+}
+
 main.business-plan-upgrade-upsell.main {
 	margin: auto;
 }
 
 .business-plan-upgrade-upsell {
-	display: flex;
-	flex-direction: column;
+	padding: 16px;
 
 	b {
 		font-weight: 700;
 	}
 
-	.card {
-		width: 100%;
+	&__header {
+		text-align: center;
+		@extend .wp-brand-font;
+		font-size: $font-title-large;
+		font-weight: 400;
+		line-height: 40px;
+		color: var(--studio-blue-90);
+		margin-bottom: 50px;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			font-size: $font-title-small;
+			margin-bottom: 0;
+		}
+	}
+
+	&__small-header-title {
+		text-transform: uppercase;
+		font-family: "SF Pro Text", $sans;
+		font-size: $font-body;
+		@include breakpoint-deprecated( "<660px" ) {
+			text-align: left;
+		}
+	}
+
+	&__header-title {
+		text-align: center;
+		@extend .wp-brand-font;
+		font-size: 42px;
+		font-weight: 400;
+		line-height: 40px;
+		color: var(--studio-blue-90);
+		padding: 20px 0;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			font-size: $font-headline-small;
+			text-align: left;
+			padding: 0 0 20px;
+		}
 	}
 
 	&__placeholders {
@@ -45,19 +84,26 @@ main.business-plan-upgrade-upsell.main {
 		justify-content: space-between;
 	}
 
-	&__card-header,
-	&__card-footer {
-		width: 100%;
+	&__image-container {
+		grid-area: images;
+		text-align: center;
+		@include breakpoint-deprecated( "<660px" ) {
+			padding: 20px 0;
+		}
+
+		img {
+			max-width: 60%;
+		}
 	}
 
-	&__card-body {
+	&__footer {
+		grid-area: buttons;
+	}
+
+	&__body {
 		overflow: auto;
 		flex: 1;
-	}
-
-	&__column-pane {
-		display: flex;
-		flex-flow: row;
+		grid-area: body;
 	}
 
 	&__column-content {
@@ -67,35 +113,25 @@ main.business-plan-upgrade-upsell.main {
 		}
 	}
 
-	&__column-doodle {
-		width: 120px;
-		flex-shrink: 0;
-		@include breakpoint-deprecated( "<480px" ) {
-			display: none;
-		}
-	}
-
-	&__doodle {
-		margin-top: 85px;
-	}
-
-	&__small-header {
-		font-style: italic;
-		text-align: center;
-	}
-
-	&__header {
-		font-size: $font-title-medium;
-		font-weight: 600;
-		text-align: center;
-		line-height: 1.4;
-		margin-top: 0.7em;
-		margin-bottom: 1em;
-
+	&__container {
+		max-width: 746px;
+		margin: 0 auto;
+		grid-column-gap: 32px;
+		display: grid;
+		grid-auto-rows: auto 1fr;
+		grid-template-areas:
+			"body body images"
+			"buttons buttons images";
+		grid-template-columns: minmax(0,1fr) minmax(0,1fr) 50%;
 		@include breakpoint-deprecated( "<660px" ) {
-			font-size: $font-title-small;
+			grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+			grid-template-areas:
+				"body body body"
+				"buttons buttons buttons"
+				"images images images";
 		}
 	}
+
 	&__sub-header {
 		font-size: $font-title-small;
 		font-weight: normal;
@@ -141,19 +177,16 @@ main.business-plan-upgrade-upsell.main {
 			width: 100%;
 		}
 
-		@include breakpoint-deprecated( ">480px" ) {
-			float: left;
-		}
 	}
 
 	&__footer &__accept-offer-button {
 		@include breakpoint-deprecated( "<480px" ) {
 			width: 100%;
-			margin-top: 10px;
+			margin-bottom: 20px;
 		}
 
 		@include breakpoint-deprecated( ">480px" ) {
-			float: right;
+			margin-right: 20px;
 		}
 	}
 }
