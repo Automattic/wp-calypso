@@ -4,6 +4,7 @@ import type { CurrencyObject, CurrencyObjectOptions } from './types';
 export * from './types';
 
 let defaultLocale: string | undefined = undefined;
+const formatterCache = new Map< string, Intl.NumberFormat >();
 
 /**
  * Set a default locale for use by `formatCurrency` and `getCurrencyObject`.
@@ -25,10 +26,63 @@ function getLocaleFromBrowser() {
 	return window.navigator?.language ?? 'en';
 }
 
-function getPrecisionForLocaleAndCurrency( locale: string, currency: string ): number {
-	const defaultFormatter = new Intl.NumberFormat( locale, {
+function getFormatterCacheKey( {
+	locale,
+	currency,
+	noDecimals,
+}: {
+	locale: string;
+	currency: string;
+	noDecimals: boolean;
+} ): string {
+	return `currency:${ currency },locale:${ locale },noDecimals:${ noDecimals }`;
+}
+
+function isNoDecimals( number: number, options: CurrencyObjectOptions ) {
+	if ( options.stripZeros && Number.isInteger( number ) ) {
+		return true;
+	}
+	return false;
+}
+
+/**
+ * Creating an Intl.NumberFormat is expensive, so this allows caching.
+ */
+function getCachedFormatter( {
+	locale,
+	currency,
+	noDecimals,
+}: {
+	locale: string;
+	currency: string;
+	noDecimals: boolean;
+} ): Intl.NumberFormat {
+	const cacheKey = getFormatterCacheKey( { locale, currency, noDecimals } );
+	if ( formatterCache.has( cacheKey ) ) {
+		const formatter = formatterCache.get( cacheKey );
+		if ( formatter ) {
+			return formatter;
+		}
+	}
+
+	const formatter = new Intl.NumberFormat( locale, {
 		style: 'currency',
 		currency,
+		// There's an option called `trailingZeroDisplay` but it does not yet work
+		// in FF so we have to strip zeros manually.
+		...( noDecimals ? { maximumFractionDigits: 0 } : {} ),
+	} );
+
+	formatterCache.set( cacheKey, formatter );
+
+	return formatter;
+}
+
+function getPrecisionForLocaleAndCurrency( locale: string, currency: string ): number {
+	const defaultFormatter = getCachedFormatter( {
+		locale,
+		currency,
+		noDecimals: false,
 	} );
 	return defaultFormatter.resolvedOptions().maximumFractionDigits;
 }
@@ -68,12 +122,10 @@ function getFormatter(
 ): Intl.NumberFormat {
 	const locale = options.locale ?? defaultLocale ?? getLocaleFromBrowser();
 
-	return new Intl.NumberFormat( locale, {
-		style: 'currency',
+	return getCachedFormatter( {
+		locale,
 		currency: code,
-		// There's an option called `trailingZeroDisplay` but it does not yet work
-		// in FF so we have to strip zeros manually.
-		...( Number.isInteger( number ) && options.stripZeros ? { maximumFractionDigits: 0 } : {} ),
+		noDecimals: isNoDecimals( number, options ),
 	} );
 }
 
