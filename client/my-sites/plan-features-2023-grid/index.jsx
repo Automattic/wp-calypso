@@ -22,7 +22,6 @@ import {
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
-import { compact, get, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -217,7 +216,7 @@ export class PlanFeatures2023Grid extends Component {
 	renderPlanPriceGroup( planPropertiesObj, { isMobile } = {} ) {
 		const { isReskinned, flowName, is2023OnboardingPricingGrid } = this.props;
 
-		return map( planPropertiesObj, ( properties ) => {
+		return planPropertiesObj.map( ( properties ) => {
 			const {
 				annualPricePerMonth,
 				currencyCode,
@@ -264,7 +263,7 @@ export class PlanFeatures2023Grid extends Component {
 	renderPlanLogos( planPropertiesObj, { isMobile } = {} ) {
 		const { isInSignup } = this.props;
 
-		return map( planPropertiesObj, ( properties ) => {
+		return planPropertiesObj.map( ( properties ) => {
 			const { planName } = properties;
 			const headerClasses = classNames(
 				'plan-features-2023-grid__header-logo',
@@ -299,7 +298,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderPlanHeaders( planPropertiesObj, { isMobile } = {} ) {
-		return map( planPropertiesObj, ( properties ) => {
+		return planPropertiesObj.map( ( properties ) => {
 			const { planName, planConstantObj } = properties;
 			const headerClasses = classNames(
 				'plan-features-2023-grid__header',
@@ -357,7 +356,7 @@ export class PlanFeatures2023Grid extends Component {
 	renderTopButtons( planPropertiesObj, { isMobile } = {} ) {
 		const { isInSignup, isLaunchPage, flowName } = this.props;
 
-		return map( planPropertiesObj, ( properties ) => {
+		return planPropertiesObj.map( ( properties ) => {
 			const { planName, isPlaceholder, planConstantObj } = properties;
 			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
 
@@ -502,9 +501,10 @@ PlanFeatures2023Grid.defaultProps = {
 export default connect(
 	( state, ownProps ) => {
 		const { placeholder, plans, isLandingPage, visiblePlans } = ownProps;
+		let planProperties = [];
 
-		let planProperties = compact(
-			map( plans, ( plan ) => {
+		planProperties.push(
+			plans.map( ( plan ) => {
 				let isPlaceholder = false;
 				const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
 				const planProductId = planConstantObj.getProductId();
@@ -614,7 +614,6 @@ export default connect(
 					planConstantObj,
 					planName: plan,
 					planObject: planObject,
-					productSlug: get( planObject, 'product_slug' ),
 					product_name_short,
 					hideMonthly: false,
 					rawPrice,
@@ -630,7 +629,7 @@ export default connect(
 		);
 
 		if ( Array.isArray( visiblePlans ) ) {
-			planProperties = planProperties.filter( ( p ) => visiblePlans.indexOf( p.planName ) !== -1 );
+			planProperties = planProperties.filter( ( p ) => visiblePlans.indexOf( p?.planName ) !== -1 );
 		}
 
 		return {
