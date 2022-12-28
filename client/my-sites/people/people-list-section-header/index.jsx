@@ -96,7 +96,7 @@ class PeopleListSectionHeader extends Component {
 				label={
 					<>
 						{ label }
-						{ popoverText && (
+						{ popoverText && ! this.props.isPlaceholder && (
 							<SupportInfo position="right" text={ popoverText } privacyLink={ false } />
 						) }
 					</>
