@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { useLocale, localizeUrl } from '@automattic/i18n-utils';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
@@ -47,6 +48,10 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const user = useSelector( getCurrentUser );
 
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+
+	const { responseCart } = useShoppingCart( siteId ?? undefined );
 	const shoppingCartTracker = useShoppingCartTracker();
 
 	const onRemoveProductFromCart = ( productSlug: string ) => {
@@ -60,7 +65,13 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 			addProducts: true,
 		} );
 
-		window.location.href = buildCheckoutURL( siteSlug, '' );
+		window.location.href = buildCheckoutURL( siteSlug, '', {
+			...( responseCart.products.length > 1
+				? {
+						redirect_to: `https://${ siteSlug }/wp-admin/admin.php?page=jetpack#/recommendations/site-type`,
+				  }
+				: {} ),
+		} );
 	};
 
 	const sections = useMemo(
@@ -151,9 +162,6 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		],
 		[ translate ]
 	);
-
-	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
 	const shouldShowCart = useSelector( isJetpackCloudCartEnabled );
 
