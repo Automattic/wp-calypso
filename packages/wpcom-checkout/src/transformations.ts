@@ -77,7 +77,6 @@ export function getSubtotalLineItemFromCart( responseCart: ResponseCart ): LineI
 			value: responseCart.sub_total_integer,
 			displayValue: formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
 				isSmallestUnit: true,
-
 				stripZeros: true,
 			} ),
 		},
@@ -98,7 +97,6 @@ export function getTaxLineItemFromCart( responseCart: ResponseCart ): LineItem |
 			value: responseCart.total_tax_integer,
 			displayValue: formatCurrency( responseCart.total_tax_integer, responseCart.currency, {
 				isSmallestUnit: true,
-
 				stripZeros: true,
 			} ),
 		},
@@ -133,7 +131,6 @@ export function getTaxBreakdownLineItemsFromCart( responseCart: ResponseCart ): 
 					responseCart.currency,
 					{
 						isSmallestUnit: true,
-
 						stripZeros: true,
 					}
 				),
