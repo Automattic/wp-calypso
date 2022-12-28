@@ -57,7 +57,7 @@ export function getCouponLineItemFromCart( responseCart: ResponseCart ): LineIte
 						discountAmount: formatCurrency(
 							responseCart.coupon_savings_total_integer,
 							responseCart.currency,
-							{ isSmallestUnit: true }
+							{ isSmallestUnit: true, stripZeros: true }
 						),
 					},
 				} )
@@ -77,6 +77,8 @@ export function getSubtotalLineItemFromCart( responseCart: ResponseCart ): LineI
 			value: responseCart.sub_total_integer,
 			displayValue: formatCurrency( responseCart.sub_total_integer, responseCart.currency, {
 				isSmallestUnit: true,
+
+				stripZeros: true,
 			} ),
 		},
 	};
@@ -96,6 +98,8 @@ export function getTaxLineItemFromCart( responseCart: ResponseCart ): LineItem |
 			value: responseCart.total_tax_integer,
 			displayValue: formatCurrency( responseCart.total_tax_integer, responseCart.currency, {
 				isSmallestUnit: true,
+
+				stripZeros: true,
 			} ),
 		},
 	};
@@ -129,6 +133,8 @@ export function getTaxBreakdownLineItemsFromCart( responseCart: ResponseCart ): 
 					responseCart.currency,
 					{
 						isSmallestUnit: true,
+
+						stripZeros: true,
 					}
 				),
 			},
@@ -162,7 +168,7 @@ export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineIt
 								? responseCart.sub_total_with_taxes_integer
 								: responseCart.credits_integer,
 							responseCart.currency,
-							{ isSmallestUnit: true }
+							{ isSmallestUnit: true, stripZeros: true }
 						),
 					},
 				} )
