@@ -37,8 +37,29 @@ export interface CurrencyObjectOptions {
 }
 
 export interface CurrencyObject {
+	/**
+	 * The negative sign for the price, if it is negative.
+	 */
 	sign: '-' | '';
+
+	/**
+	 * The currency symbol for the formatted price.
+	 */
 	symbol: string;
+
+	/**
+	 * The section of the formatted price before the decimal.
+	 *
+	 * Note that this is not a number, but a locale-formatted string which may
+	 * include symbols like spaces, commas, or periods as group separators.
+	 */
 	integer: string;
+
+	/**
+	 * The section of the formatted price after and including the decimal.
+	 *
+	 * Note that this is not a number, but a locale-formatted string which may
+	 * include symbols like spaces, commas, or periods as the decimal separator.
+	 */
 	fraction: string;
 }
