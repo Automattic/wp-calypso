@@ -7,10 +7,6 @@ import PlanPrice from 'calypso/my-sites/plan-price';
 
 export class PlanFeatures2023GridHeaderPrice extends Component {
 	render() {
-		return this.renderPlansHeader();
-	}
-
-	renderPlansHeader() {
 		return (
 			<span>
 				<div className="plan-features-2023-grid__pricing">

@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import HelpCenter, { HelpIcon, PromotionalPopover } from '@automattic/help-center';
+import HelpCenter, { HelpIcon } from '@automattic/help-center';
 import { LocaleProvider } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
@@ -56,7 +56,6 @@ function HelpCenterContent() {
 				aria-pressed={ show ? true : false }
 				aria-expanded={ show ? true : false }
 			/>
-			<PromotionalPopover iconElement={ helpIconRef } />
 		</>
 	);
 

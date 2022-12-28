@@ -2006,7 +2006,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	[ PLAN_ENTERPRISE_GRID_WPCOM ]: {
 		...get2023EnterprisGrideDetails(),
 		term: TERM_ANNUALLY,
-		getBillingTimeFrame: () => i18n.translate( 'for life' ),
+		getBillingTimeFrame: () => '',
 		getProductId: () => 0,
 		getStoreSlug: () => PLAN_ENTERPRISE_GRID_WPCOM,
 		getPathSlug: () => 'enterprise',
