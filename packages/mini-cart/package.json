@@ -39,6 +39,7 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/mini-cart#readme",
 	"dependencies": {
 		"@automattic/composite-checkout": "workspace:^",
+		"@automattic/format-currency": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
 		"@automattic/wpcom-checkout": "workspace:^",
 		"@emotion/styled": "^11.3.0",

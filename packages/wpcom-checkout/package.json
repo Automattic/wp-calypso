@@ -38,6 +38,7 @@
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/calypso-stripe": "workspace:^",
 		"@automattic/composite-checkout": "workspace:^",
+		"@automattic/format-currency": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
 		"@emotion/styled": "^11.3.0",
 		"@stripe/stripe-js": "^1.17.1",
