@@ -40,10 +40,7 @@ export class PlanFeatures2023GridFeatures extends Component {
 			'is-bold': feature.getSlug() === FEATURE_CUSTOM_DOMAIN,
 		} );
 		return (
-			<PlanFeaturesItem
-				annualOnlyContent={ this.renderAnnualPlansFeatureNotice( feature ) }
-				isFeatureAvailable={ feature.availableForCurrentPlan }
-			>
+			<PlanFeaturesItem annualOnlyContent={ this.renderAnnualPlansFeatureNotice( feature ) }>
 				<span className={ classes } key={ key }>
 					<span className={ itemTitleClasses }>{ feature.getTitle( this.props.domainName ) }</span>
 				</span>

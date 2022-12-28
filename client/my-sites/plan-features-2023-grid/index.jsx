@@ -53,6 +53,7 @@ import {
 import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridFeatures from './features';
 import PlanFeatures2023GridHeaderPrice from './header-price';
+import { PlanFeaturesItem } from './item';
 import { getFeatureToStorageMap } from './util';
 import './style.scss';
 
@@ -155,7 +156,7 @@ export class PlanFeatures2023Grid extends Component {
 		const { planProperties } = this.props;
 		const CardContainer = ( props ) => {
 			const { children, planName, ...otherProps } = props;
-			return PLAN_ENTERPRISE_GRID_WPCOM === planName ? (
+			return isWpcomEnterpriseGridPlan( planName ) ? (
 				<div { ...otherProps }>{ children }</div>
 			) : (
 				<FoldableCard { ...otherProps }>{ children }</FoldableCard>
@@ -166,9 +167,11 @@ export class PlanFeatures2023Grid extends Component {
 		return planProperties.map( ( properties ) => {
 			const planCardJsx = (
 				<div className="plan-features-2023-grid__mobile-plan-card">
+					{ this.renderPlanLogos( [ properties ], { isMobile: true } ) }
 					{ this.renderPlanHeaders( [ properties ], { isMobile: true } ) }
 					{ this.renderPlanTagline( [ properties ], { isMobile: true } ) }
 					{ this.renderPlanPriceGroup( [ properties ], { isMobile: true } ) }
+					{ this.renderMobileFreeDomain( properties.planName, properties.isMonthlyPlan ) }
 					{ this.renderTopButtons( [ properties ], { isMobile: true } ) }
 					<CardContainer
 						header={ translate( 'Show features' ) }
@@ -188,6 +191,27 @@ export class PlanFeatures2023Grid extends Component {
 			previousProductNameShort = properties.product_name_short;
 			return planCardJsx;
 		} );
+	}
+
+	renderMobileFreeDomain( planName, isMonthlyPlan ) {
+		if ( isMonthlyPlan || isWpComFreePlan( planName ) || isWpcomEnterpriseGridPlan( planName ) ) {
+			return null;
+		}
+		const { domainName } = this.props;
+
+		const displayText = domainName
+			? translate( '%(domainName)s is included', {
+					args: { domainName },
+			  } )
+			: translate( 'Free domain for one year' );
+
+		return (
+			<PlanFeaturesItem>
+				<span className="plan-features-2023-grid__item-info is-annual-plan-feature is-available">
+					<span className="plan-features-2023-grid__item-title is-bold">{ displayText }</span>
+				</span>
+			</PlanFeaturesItem>
+		);
 	}
 
 	renderPlanPriceGroup( planPropertiesObj, { isMobile } = {} ) {
@@ -237,7 +261,7 @@ export class PlanFeatures2023Grid extends Component {
 		} );
 	}
 
-	renderPlanLogos( planPropertiesObj ) {
+	renderPlanLogos( planPropertiesObj, { isMobile } = {} ) {
 		const { isInSignup } = this.props;
 
 		return map( planPropertiesObj, ( properties ) => {
@@ -251,7 +275,7 @@ export class PlanFeatures2023Grid extends Component {
 			} );
 
 			return (
-				<th scope="col" key={ planName } className={ tableItemClasses }>
+				<Container key={ planName } className={ tableItemClasses } isMobile={ isMobile }>
 					{ isPremiumPlan( planName ) && (
 						<div className="plan-features-2023-grid__popular-badge">
 							<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
@@ -265,11 +289,11 @@ export class PlanFeatures2023Grid extends Component {
 						) }
 						{ isWpcomEnterpriseGridPlan( planName ) && (
 							<div className="plan-features-2023-grid__plan-logo">
-								<img src={ vipLogo } alt="Enterprise logo" />{ ' ' }
+								<img src={ vipLogo } alt="WPVIP logo" />{ ' ' }
 							</div>
 						) }
 					</header>
-				</th>
+				</Container>
 			);
 		} );
 	}

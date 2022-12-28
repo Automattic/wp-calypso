@@ -73,7 +73,10 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features-2023-grid__header-logo {
 	padding-left: 20px;
-	margin-top: 36px;
+
+	@media ( min-width: 880px ) {
+		margin-top: 36px;
+	}
 }
 
 .plan-features-2023-grid__plan-logo {
@@ -135,6 +138,7 @@ $plan-features-sidebar-width: 272px;
 		}
 
 		.plan-features-2023-grid__mobile-plan-card {
+			background-color: var(--studio-white);
 			border: 1px solid #e0e0e0;
 			/* stylelint-disable-next-line */
 			border-radius: 5px;
@@ -588,19 +592,25 @@ body.is-section-signup.is-white-signup {
 			position: relative;
 
 			.plan-features-2023-grid__popular-badge {
-				position: absolute;
+				margin-bottom: 24px;
 				width: 100%;
-				top: -38px;
-				right: -1px;
 				background: #fff;
-				border-color: #e0e0e0;
-				border-width: 1px 1px 0 1px;
-				/* stylelint-disable-next-line */
-				border-radius: 5px 5px 0 0;
-				border-style: solid;
 				z-index: 999999;
 				color: #fff;
-				padding: 20px 0 17px;
+				padding: 0 0 17px;
+
+				@media ( min-width: 880px ) {
+					position: absolute;
+					top: -38px;
+					right: -1px;
+					border-color: #e0e0e0;
+					border-width: 1px 1px 0 1px;
+					/* stylelint-disable-next-line */
+					border-radius: 5px 5px 0 0;
+					border-style: solid;
+					padding-top: 20px;
+					margin-bottom: 0;
+				}
 			}
 		}
 
