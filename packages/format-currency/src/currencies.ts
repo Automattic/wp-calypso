@@ -438,9 +438,7 @@ const CURRENCIES: Record< string, CurrencyOverride > = {
 	UGX: {
 		symbol: 'USh',
 	},
-	USD: {
-		symbol: '$',
-	},
+	USD: {},
 	UYU: {
 		symbol: '$U',
 	},
