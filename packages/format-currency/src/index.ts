@@ -1,4 +1,4 @@
-import { doesCurrencyExist } from './currencies';
+import { doesCurrencyExist, getCurrencyOverride } from './currencies';
 import type { CurrencyObject, CurrencyObjectOptions } from './types';
 
 export * from './types';
@@ -171,11 +171,24 @@ export function formatCurrency(
 	if ( ! doesCurrencyExist( code ) ) {
 		code = 'USD';
 	}
+	const currencyOverride = getCurrencyOverride( code );
 	const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );
 
 	number = prepareNumberForFormatting( number, currencyPrecision, options );
 	const formatter = getFormatter( number, code, options );
-	return formatter.format( number );
+	const parts = formatter.formatToParts( number );
+
+	return parts.reduce( ( formatted, part ) => {
+		switch ( part.type ) {
+			case 'currency':
+				if ( currencyOverride?.symbol ) {
+					return formatted + currencyOverride.symbol;
+				}
+				return formatted + part.value;
+			default:
+				return formatted + part.value;
+		}
+	}, '' );
 }
 
 /**
@@ -225,6 +238,7 @@ export function getCurrencyObject(
 	if ( ! doesCurrencyExist( code ) ) {
 		code = 'USD';
 	}
+	const currencyOverride = getCurrencyOverride( code );
 	const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );
 
 	number = prepareNumberForFormatting( number, currencyPrecision, options );
@@ -240,7 +254,7 @@ export function getCurrencyObject(
 	parts.forEach( ( part ) => {
 		switch ( part.type ) {
 			case 'currency':
-				symbol = part.value;
+				symbol = currencyOverride?.symbol ?? part.value;
 				if ( hasAmountBeenSet ) {
 					symbolPosition = 'after';
 				}

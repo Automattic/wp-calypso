@@ -87,15 +87,15 @@ describe( 'formatCurrency', () => {
 		} );
 		test( 'CAD in Canadian English', () => {
 			const money = formatCurrency( 9800900.32, 'CAD', { locale: 'en-CA' } );
-			expect( money ).toBe( '$9,800,900.32' );
+			expect( money ).toBe( 'C$9,800,900.32' );
 		} );
 		test( 'CAD in US English', () => {
 			const money = formatCurrency( 9800900.32, 'CAD', { locale: 'en-US' } );
-			expect( money ).toBe( 'CA$9,800,900.32' );
+			expect( money ).toBe( 'C$9,800,900.32' );
 		} );
 		test( 'CAD in Canadian French', () => {
 			const money = formatCurrency( 9800900.32, 'CAD', { locale: 'fr-CA' } );
-			expect( money ).toBe( '9 800 900,32 $' );
+			expect( money ).toBe( '9 800 900,32 C$' );
 		} );
 		test( 'EUR in EN locale', () => {
 			const money = formatCurrency( 9800900.32, 'EUR', { locale: 'en-US' } );
@@ -235,7 +235,7 @@ describe( 'formatCurrency', () => {
 			test( 'CAD', () => {
 				const money = getCurrencyObject( 9800900.32, 'CAD', { locale: 'en-US' } );
 				expect( money ).toEqual( {
-					symbol: 'CA$',
+					symbol: 'C$',
 					symbolPosition: 'before',
 					integer: '9,800,900',
 					fraction: '.32',
