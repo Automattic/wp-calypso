@@ -21,6 +21,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getDomainSuggestionSearch, getFixedDomainSearch } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { getRestrictedTldQueryData } from 'calypso/lib/domains/tlds/get-restricted-tld-query-data';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import {
 	retrieveSignupDestination,
@@ -101,6 +102,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const domainsWithPlansOnly = true;
 	const isPlanSelectionAvailableLaterInFlow = true;
 	const domainSearchInQuery = useQuery().get( 'new' ); // following the convention of /start/domains
+	const { promoTlds, otherManagedSubdomains, otherManagedSubdomainsCountOverride } =
+		getRestrictedTldQueryData( flow === LINK_IN_BIO_TLD_FLOW ? 'link' : null );
 
 	const submitDomainStepSelection = ( suggestion: DomainSuggestion, section: string ) => {
 		let domainType = 'domain_reg';
@@ -336,24 +339,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		);
 	};
 
-	const getOtherManagedSubdomains = () => {
-		if ( flow === LINK_IN_BIO_TLD_FLOW ) {
-			return [ 'link' ];
-		}
-	};
-
-	const getOtherManagedSubdomainsCountOverride = () => {
-		if ( flow === LINK_IN_BIO_TLD_FLOW ) {
-			return 2;
-		}
-	};
-
-	const getPromoTlds = () => {
-		if ( flow === LINK_IN_BIO_TLD_FLOW ) {
-			return [ 'link' ];
-		}
-	};
-
 	const renderDomainForm = () => {
 		let initialState: DomainForm = {};
 		if ( domainForm ) {
@@ -401,15 +386,15 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 					key="domainForm"
 					mapDomainUrl={ getUseYourDomainUrl() }
 					offerUnavailableOption
-					otherManagedSubdomains={ getOtherManagedSubdomains() }
-					otherManagedSubdomainsCountOverride={ getOtherManagedSubdomainsCountOverride() }
+					otherManagedSubdomains={ otherManagedSubdomains }
+					otherManagedSubdomainsCountOverride={ otherManagedSubdomainsCountOverride }
 					onAddDomain={ handleAddDomain }
 					onAddMapping={ handleAddMapping }
 					onSave={ setDomainForm }
 					onSkip={ handleSkip }
 					path={ path }
 					products={ productsList }
-					promoTlds={ getPromoTlds() }
+					promoTlds={ promoTlds }
 					selectedSite={ selectedSite }
 					showExampleSuggestions={ showExampleSuggestions }
 					showSkipButton={ showSkipButton }
