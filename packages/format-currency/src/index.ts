@@ -3,6 +3,18 @@ import type { CurrencyObject, CurrencyObjectOptions } from './types';
 
 export * from './types';
 
+let defaultLocale: string | undefined = undefined;
+
+/**
+ * Set a default locale for use by `formatCurrency` and `getCurrencyObject`.
+ *
+ * Note that this is global and will override any browser locale that is set!
+ * Use it with care.
+ */
+export function setDefaultLocale( locale: string | undefined ): void {
+	defaultLocale = locale;
+}
+
 function getLocaleFromBrowser() {
 	if ( typeof window === 'undefined' ) {
 		return 'en';
@@ -54,7 +66,7 @@ function getFormatter(
 	code: string,
 	options: CurrencyObjectOptions
 ): Intl.NumberFormat {
-	const locale = options.locale ?? getLocaleFromBrowser();
+	const locale = options.locale ?? defaultLocale ?? getLocaleFromBrowser();
 
 	return new Intl.NumberFormat( locale, {
 		style: 'currency',
@@ -103,7 +115,7 @@ export function formatCurrency(
 	code: string,
 	options: CurrencyObjectOptions = {}
 ): string {
-	const locale = options.locale ?? getLocaleFromBrowser();
+	const locale = options.locale ?? defaultLocale ?? getLocaleFromBrowser();
 	if ( ! doesCurrencyExist( code ) ) {
 		code = 'USD';
 	}
@@ -157,7 +169,7 @@ export function getCurrencyObject(
 	code: string,
 	options: CurrencyObjectOptions = {}
 ): CurrencyObject {
-	const locale = options.locale ?? getLocaleFromBrowser();
+	const locale = options.locale ?? defaultLocale ?? getLocaleFromBrowser();
 	if ( ! doesCurrencyExist( code ) ) {
 		code = 'USD';
 	}
