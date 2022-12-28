@@ -26,6 +26,7 @@ class StatsGeochart extends Component {
 		query: PropTypes.object,
 		data: PropTypes.array,
 		kind: PropTypes.string,
+		postId: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -165,7 +166,7 @@ class StatsGeochart extends Component {
 	};
 
 	render() {
-		const { siteId, statType, query, data, kind } = this.props;
+		const { siteId, statType, query, data, kind, postId } = this.props;
 		const isLoading = ! data || ! this.state.visualizationsLoaded;
 		const classes = classNames( 'stats-geochart', {
 			'is-loading': isLoading,
@@ -178,7 +179,14 @@ class StatsGeochart extends Component {
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
 				{ siteId && kind === 'email' && (
-					<QueryEmailStats statType={ statType } siteId={ siteId } query={ query } />
+					<QueryEmailStats
+						statType={ statType }
+						siteId={ siteId }
+						period="day"
+						postId={ postId }
+						date={ query.date }
+						query={ query }
+					/>
 				) }
 
 				<div ref={ this.chartRef } className={ classes } />

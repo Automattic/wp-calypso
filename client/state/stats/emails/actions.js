@@ -57,7 +57,6 @@ export function requestEmailStats( siteId, postId, period, date, statType, quant
 			.statsEmailOpens( postId, { period, quantity, date } )
 			.then( ( stats ) => {
 				const emailStats = parseEmailChartData( stats.timeline, [] );
-
 				dispatch( receiveEmailStats( siteId, postId, period, statType, emailStats ) );
 				dispatch( {
 					type: EMAIL_STATS_REQUEST_SUCCESS,
