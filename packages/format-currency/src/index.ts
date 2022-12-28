@@ -181,24 +181,33 @@ export function getCurrencyObject(
 
 	let sign = '' as CurrencyObject[ 'sign' ];
 	let symbol = '$';
+	let symbolPosition = 'before';
+	let hasAmountBeenSet = false;
 	let integer = '';
 	let fraction = '';
 	parts.forEach( ( part ) => {
 		switch ( part.type ) {
 			case 'currency':
 				symbol = part.value;
+				if ( hasAmountBeenSet ) {
+					symbolPosition = 'after';
+				}
 				return;
 			case 'group':
 				integer += part.value;
+				hasAmountBeenSet = true;
 				return;
 			case 'decimal':
 				fraction += part.value;
+				hasAmountBeenSet = true;
 				return;
 			case 'integer':
 				integer += part.value;
+				hasAmountBeenSet = true;
 				return;
 			case 'fraction':
 				fraction += part.value;
+				hasAmountBeenSet = true;
 				return;
 			case 'minusSign':
 				sign = '-' as CurrencyObject[ 'sign' ];
@@ -209,6 +218,7 @@ export function getCurrencyObject(
 	return {
 		sign,
 		symbol,
+		symbolPosition,
 		integer,
 		fraction,
 	};

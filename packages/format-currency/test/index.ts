@@ -141,6 +141,7 @@ describe( 'formatCurrency', () => {
 			const money = getCurrencyObject( 0, 'USD' );
 			expect( money ).toEqual( {
 				symbol: '$',
+				symbolPosition: 'before',
 				integer: '0',
 				fraction: '.00',
 				sign: '',
@@ -150,6 +151,7 @@ describe( 'formatCurrency', () => {
 			const money = getCurrencyObject( -1234.56789, 'USD' );
 			expect( money ).toEqual( {
 				symbol: '$',
+				symbolPosition: 'before',
 				integer: '1,234',
 				fraction: '.57',
 				sign: '-',
@@ -159,6 +161,7 @@ describe( 'formatCurrency', () => {
 			const money = getCurrencyObject( 9.99876, 'USD' );
 			expect( money ).toEqual( {
 				symbol: '$',
+				symbolPosition: 'before',
 				integer: '10',
 				fraction: '.00',
 				sign: '',
@@ -168,6 +171,7 @@ describe( 'formatCurrency', () => {
 			const money = getCurrencyObject( 9.99432, 'USD' );
 			expect( money ).toEqual( {
 				symbol: '$',
+				symbolPosition: 'before',
 				integer: '9',
 				fraction: '.99',
 				sign: '',
@@ -178,6 +182,7 @@ describe( 'formatCurrency', () => {
 			const money = getCurrencyObject( 9932, 'USD', { isSmallestUnit: true } );
 			expect( money ).toEqual( {
 				symbol: '$',
+				symbolPosition: 'before',
 				integer: '99',
 				fraction: '.32',
 				sign: '',
@@ -188,6 +193,7 @@ describe( 'formatCurrency', () => {
 			const money = getCurrencyObject( 9932, 'JPY', { isSmallestUnit: true } );
 			expect( money ).toEqual( {
 				symbol: '¥',
+				symbolPosition: 'before',
 				integer: '9,932',
 				fraction: '',
 				sign: '',
@@ -198,6 +204,7 @@ describe( 'formatCurrency', () => {
 			const money = getCurrencyObject( 9932.1, 'USD', { isSmallestUnit: true } );
 			expect( money ).toEqual( {
 				symbol: '$',
+				symbolPosition: 'before',
 				integer: '99',
 				fraction: '.32',
 				sign: '',
@@ -209,6 +216,7 @@ describe( 'formatCurrency', () => {
 				const money = getCurrencyObject( 9800900.32, 'USD' );
 				expect( money ).toEqual( {
 					symbol: '$',
+					symbolPosition: 'before',
 					integer: '9,800,900',
 					fraction: '.32',
 					sign: '',
@@ -218,6 +226,7 @@ describe( 'formatCurrency', () => {
 				const money = getCurrencyObject( 9800900.32, 'AUD' );
 				expect( money ).toEqual( {
 					symbol: 'A$',
+					symbolPosition: 'before',
 					integer: '9,800,900',
 					fraction: '.32',
 					sign: '',
@@ -227,6 +236,7 @@ describe( 'formatCurrency', () => {
 				const money = getCurrencyObject( 9800900.32, 'CAD', { locale: 'en-US' } );
 				expect( money ).toEqual( {
 					symbol: 'CA$',
+					symbolPosition: 'before',
 					integer: '9,800,900',
 					fraction: '.32',
 					sign: '',
@@ -236,6 +246,7 @@ describe( 'formatCurrency', () => {
 				const money = getCurrencyObject( 9800900.32, 'EUR', { locale: 'de-DE' } );
 				expect( money ).toEqual( {
 					symbol: '€',
+					symbolPosition: 'after',
 					integer: '9.800.900',
 					fraction: ',32',
 					sign: '',
@@ -245,6 +256,7 @@ describe( 'formatCurrency', () => {
 				const money = getCurrencyObject( 9800900.32, 'GBP' );
 				expect( money ).toEqual( {
 					symbol: '£',
+					symbolPosition: 'before',
 					integer: '9,800,900',
 					fraction: '.32',
 					sign: '',
@@ -254,6 +266,7 @@ describe( 'formatCurrency', () => {
 				const money = getCurrencyObject( 9800900.32, 'JPY' );
 				expect( money ).toEqual( {
 					symbol: '¥',
+					symbolPosition: 'before',
 					integer: '9,800,900',
 					fraction: '',
 					sign: '',
@@ -263,6 +276,7 @@ describe( 'formatCurrency', () => {
 				const money = getCurrencyObject( 9800900.32, 'BRL', { locale: 'pt-BR' } );
 				expect( money ).toEqual( {
 					symbol: 'R$',
+					symbolPosition: 'before',
 					integer: '9.800.900',
 					fraction: ',32',
 					sign: '',
