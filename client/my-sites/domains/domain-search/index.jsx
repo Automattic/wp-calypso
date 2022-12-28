@@ -23,6 +23,7 @@ import {
 	updatePrivacyForDomain,
 } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { getRestrictedTldQueryData } from 'calypso/lib/domains/tlds/get-restricted-tld-query-data';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 import {
@@ -41,6 +42,7 @@ import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsu
 import isSiteOnMonthlyPlan from 'calypso/state/selectors/is-site-on-monthly-plan';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import getSiteOptions from 'calypso/state/sites/selectors/get-site-options';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -196,7 +198,8 @@ class DomainSearch extends Component {
 	}
 
 	render() {
-		const { selectedSite, selectedSiteSlug, translate, isManagingAllDomains, cart } = this.props;
+		const { selectedSite, selectedSiteSlug, translate, isManagingAllDomains, cart, restrictedTld } =
+			this.props;
 
 		if ( ! selectedSite ) {
 			return null;
@@ -233,6 +236,9 @@ class DomainSearch extends Component {
 				/>
 			);
 		} else {
+			const { promoTlds, otherManagedSubdomains, otherManagedSubdomainsCountOverride } =
+				getRestrictedTldQueryData( restrictedTld );
+
 			content = (
 				<span>
 					<div className="domain-search__content">
@@ -271,6 +277,9 @@ class DomainSearch extends Component {
 								onAddDomain={ this.handleAddRemoveDomain }
 								onAddMapping={ this.handleAddMapping }
 								onAddTransfer={ this.handleAddTransfer }
+								otherManagedSubdomains={ otherManagedSubdomains }
+								otherManagedSubdomainsCountOverride={ otherManagedSubdomainsCountOverride }
+								promoTlds={ promoTlds }
 								isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
 								showAlreadyOwnADomain
 								selectedSite={ selectedSite }
@@ -308,6 +317,7 @@ export default connect(
 			isSiteOnMonthlyPlan: isSiteOnMonthlyPlan( state, siteId ),
 			productsList: getProductsList( state ),
 			userCanPurchaseGSuite: canUserPurchaseGSuite( state ),
+			restrictedTld: getSiteOptions( state, siteId ).restricted_tld,
 		};
 	},
 	{
