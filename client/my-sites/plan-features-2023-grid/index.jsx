@@ -12,7 +12,6 @@ import {
 	TERM_MONTHLY,
 	isPremiumPlan,
 	isEcommercePlan,
-	PLAN_ENTERPRISE_GRID_WPCOM,
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
@@ -501,80 +500,64 @@ PlanFeatures2023Grid.defaultProps = {
 export default connect(
 	( state, ownProps ) => {
 		const { placeholder, plans, isLandingPage, visiblePlans } = ownProps;
-		let planProperties = [];
 
-		planProperties.push(
-			plans.map( ( plan ) => {
-				let isPlaceholder = false;
-				const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
-				const planProductId = planConstantObj.getProductId();
-				const planObject = getPlan( state, planProductId );
-				const isMonthlyPlan = isMonthly( plan );
-				const showMonthly = ! isMonthlyPlan;
-				const relatedMonthlyPlan = showMonthly
-					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
-					: null;
+		let planProperties = plans.map( ( plan ) => {
+			let isPlaceholder = false;
+			const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
+			const planProductId = planConstantObj.getProductId();
+			const planObject = getPlan( state, planProductId );
+			const isMonthlyPlan = isMonthly( plan );
+			const showMonthly = ! isMonthlyPlan;
+			const relatedMonthlyPlan = showMonthly
+				? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
+				: null;
 
-				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
-				const showMonthlyPrice = true;
+			// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
+			const showMonthlyPrice = true;
 
-				const features = planConstantObj.getPlanCompareFeatures();
+			const features = planConstantObj.getPlanCompareFeatures();
 
-				let planFeatures = getPlanFeaturesObject( features );
-				if ( placeholder || ! planObject ) {
-					isPlaceholder = true;
+			let planFeatures = getPlanFeaturesObject( features );
+			if ( placeholder || ! planObject ) {
+				isPlaceholder = true;
+			}
+
+			planFeatures = getPlanFeaturesObject(
+				planConstantObj.get2023PricingGridSignupWpcomFeatures()
+			);
+			let jetpackFeatures = getPlanFeaturesObject(
+				planConstantObj.get2023PricingGridSignupJetpackFeatures()
+			);
+
+			const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );
+			const discountPrice = getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
+
+			let annualPricePerMonth = discountPrice || rawPrice;
+			if ( isMonthlyPlan ) {
+				// Get annual price per month for comparison
+				const yearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( plan ) );
+				if ( yearlyPlan ) {
+					const yearlyPlanDiscount = getDiscountedRawPrice(
+						state,
+						yearlyPlan.product_id,
+						showMonthlyPrice
+					);
+					annualPricePerMonth =
+						yearlyPlanDiscount || getPlanRawPrice( state, yearlyPlan.product_id, showMonthlyPrice );
 				}
+			}
 
-				planFeatures = getPlanFeaturesObject(
-					planConstantObj.get2023PricingGridSignupWpcomFeatures()
-				);
-				let jetpackFeatures = getPlanFeaturesObject(
-					planConstantObj.get2023PricingGridSignupJetpackFeatures()
-				);
-
-				const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );
-				const discountPrice = getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
-
-				let annualPricePerMonth = discountPrice || rawPrice;
-				if ( isMonthlyPlan ) {
-					// Get annual price per month for comparison
-					const yearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( plan ) );
-					if ( yearlyPlan ) {
-						const yearlyPlanDiscount = getDiscountedRawPrice(
-							state,
-							yearlyPlan.product_id,
-							showMonthlyPrice
-						);
-						annualPricePerMonth =
-							yearlyPlanDiscount ||
-							getPlanRawPrice( state, yearlyPlan.product_id, showMonthlyPrice );
-					}
-				}
-
-				const monthlyPlanKey = findPlansKeys( {
-					group: planConstantObj.group,
-					term: TERM_MONTHLY,
-					type: planConstantObj.type,
-				} )[ 0 ];
-				const monthlyPlanProductId = getPlanFromKey( monthlyPlanKey )?.getProductId();
-				// This is the per month price of a monthly plan. E.g. $14 for Premium monthly.
-				const rawPriceForMonthlyPlan = getPlanRawPrice( state, monthlyPlanProductId, true );
-				const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
-				if ( annualPlansOnlyFeatures.length > 0 ) {
-					planFeatures = planFeatures.map( ( feature ) => {
-						const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes(
-							feature.getSlug()
-						);
-
-						return {
-							...feature,
-							availableOnlyForAnnualPlans,
-							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
-						};
-					} );
-				}
-
-				jetpackFeatures = jetpackFeatures.map( ( feature ) => {
+			const monthlyPlanKey = findPlansKeys( {
+				group: planConstantObj.group,
+				term: TERM_MONTHLY,
+				type: planConstantObj.type,
+			} )[ 0 ];
+			const monthlyPlanProductId = getPlanFromKey( monthlyPlanKey )?.getProductId();
+			// This is the per month price of a monthly plan. E.g. $14 for Premium monthly.
+			const rawPriceForMonthlyPlan = getPlanRawPrice( state, monthlyPlanProductId, true );
+			const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
+			if ( annualPlansOnlyFeatures.length > 0 ) {
+				planFeatures = planFeatures.map( ( feature ) => {
 					const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes( feature.getSlug() );
 
 					return {
@@ -583,50 +566,59 @@ export default connect(
 						availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
 					};
 				} );
+			}
 
-				// Strip annual-only features out for the site's /plans page
-				if ( isPlaceholder ) {
-					planFeatures = planFeatures.filter(
-						( { availableForCurrentPlan = true } ) => availableForCurrentPlan
-					);
-				}
-
-				const rawPriceAnnual =
-					null !== discountPrice
-						? discountPrice * 12
-						: getPlanRawPrice( state, planProductId, false );
-
-				const tagline = planConstantObj.getPlanTagline();
-				const product_name_short =
-					PLAN_ENTERPRISE_GRID_WPCOM === plan
-						? planConstantObj.getPathSlug()
-						: planObject.product_name_short;
-				const storageOptions = planConstantObj.get2023PricingGridSignupStorageOptions() || [];
+			jetpackFeatures = jetpackFeatures.map( ( feature ) => {
+				const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes( feature.getSlug() );
 
 				return {
-					cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ),
-					currencyCode: getCurrentUserCurrencyCode( state ),
-					discountPrice,
-					features: planFeatures,
-					jpFeatures: jetpackFeatures,
-					isLandingPage,
-					isPlaceholder,
-					planConstantObj,
-					planName: plan,
-					planObject: planObject,
-					product_name_short,
-					hideMonthly: false,
-					rawPrice,
-					rawPriceAnnual,
-					rawPriceForMonthlyPlan,
-					relatedMonthlyPlan,
-					annualPricePerMonth,
-					isMonthlyPlan,
-					tagline,
-					storageOptions,
+					...feature,
+					availableOnlyForAnnualPlans,
+					availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
 				};
-			} )
-		);
+			} );
+
+			// Strip annual-only features out for the site's /plans page
+			if ( isPlaceholder ) {
+				planFeatures = planFeatures.filter(
+					( { availableForCurrentPlan = true } ) => availableForCurrentPlan
+				);
+			}
+
+			const rawPriceAnnual =
+				null !== discountPrice
+					? discountPrice * 12
+					: getPlanRawPrice( state, planProductId, false );
+
+			const tagline = planConstantObj.getPlanTagline();
+			const product_name_short = isWpcomEnterpriseGridPlan( plan )
+				? planConstantObj.getPathSlug()
+				: planObject.product_name_short;
+			const storageOptions = planConstantObj.get2023PricingGridSignupStorageOptions() || [];
+
+			return {
+				cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ),
+				currencyCode: getCurrentUserCurrencyCode( state ),
+				discountPrice,
+				features: planFeatures,
+				jpFeatures: jetpackFeatures,
+				isLandingPage,
+				isPlaceholder,
+				planConstantObj,
+				planName: plan,
+				planObject: planObject,
+				product_name_short,
+				hideMonthly: false,
+				rawPrice,
+				rawPriceAnnual,
+				rawPriceForMonthlyPlan,
+				relatedMonthlyPlan,
+				annualPricePerMonth,
+				isMonthlyPlan,
+				tagline,
+				storageOptions,
+			};
+		} );
 
 		if ( Array.isArray( visiblePlans ) ) {
 			planProperties = planProperties.filter( ( p ) => visiblePlans.indexOf( p?.planName ) !== -1 );
