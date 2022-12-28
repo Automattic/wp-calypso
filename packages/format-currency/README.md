@@ -35,6 +35,12 @@ For currencies that include decimals, this will always return the amount with de
 
 Since rounding errors are common in floating point math, sometimes a price is provided as an integer in the smallest unit of a currency (eg: cents in USD or yen in JPY). Set the `isSmallestUnit` to change the function to operate on integer numbers instead. If this option is not set or false, the function will format the amount `1025` in `USD` as `$1,025.00`, but when the option is true, it will return `$10.25` instead.
 
+## setDefaultLocale()
+
+`setDefaultLocale( locale: string ): void`
+
+A function that can be used to set a default locale for use by `formatCurrency` and `getCurrencyObject`. Note that this is global and will override any browser locale that is set! Use it with care.
+
 ## FormatCurrencyOptions
 
 An object with the following properties:
