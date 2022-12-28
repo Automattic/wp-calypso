@@ -44,8 +44,16 @@ export interface CurrencyObject {
 
 	/**
 	 * The currency symbol for the formatted price.
+	 *
+	 * Note that the symbol's position depends on the `symbolPosition` property,
+	 * and keep RTL locales in mind.
 	 */
 	symbol: string;
+
+	/**
+	 * The position of the currency symbol relative to the formatted price.
+	 */
+	symbolPosition: 'before' | 'after';
 
 	/**
 	 * The section of the formatted price before the decimal.
