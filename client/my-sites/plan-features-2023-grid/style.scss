@@ -6,10 +6,6 @@ $plan-features-sidebar-width: 272px;
 	margin-top: 300px;
 }
 
-.plan-features-2023-grid__table-item.has-border-top {
-	border-top: solid 1px var(--color-neutral-5);
-}
-
 .plan-features-2023-grid__table-item.is-top-buttons {
 	padding: 0 20px;
 
@@ -20,6 +16,7 @@ $plan-features-sidebar-width: 272px;
 			line-height: 20px;
 			border-radius: 4px;
 			padding: 10px 14px;
+			border: unset;
 
 			&:hover {
 				opacity: 0.85;
@@ -184,10 +181,13 @@ $plan-features-sidebar-width: 272px;
 		color: var(--color-text-subtle);
 		table-layout: fixed;
 		border: 1px solid #e0e0e0;
-		border-right: none;
 		border-radius: 5px; /* stylelint-disable-line */
 		background-color: #fff;
 		margin: 0;
+	}
+
+	.plan-features-2023-grid__table-top .plan-features-2023-grid__table {
+		border-top-right-radius: 0;
 	}
 
 	.plan-features-2023-grid__header-title {
@@ -222,8 +222,8 @@ $plan-features-sidebar-width: 272px;
 		}
 
 		@media ( min-width: 880px ) {
-			border-right: solid 1px var(--color-neutral-5);
-			border-left: solid 1px var(--color-neutral-5);
+			border-right: solid 1px #e0e0e0;
+			border-left: solid 1px #e0e0e0;
 		}
 	}
 
@@ -339,19 +339,6 @@ $plan-features-sidebar-width: 272px;
 				text-decoration: line-through;
 				color: var(--color-neutral-30);
 			}
-		}
-	}
-
-	.plan-features-2023-grid__actions {
-		padding: 0 15px 15px;
-
-		@include breakpoint-deprecated( "<1040px" ) {
-			padding: 0 12px 12px;
-		}
-
-		@include breakpoint-deprecated( "<660px" ) {
-			padding: 0 20px 20px;
-			border-bottom: solid 1px var(--color-neutral-0);
 		}
 	}
 
@@ -567,8 +554,12 @@ $plan-features-sidebar-width: 272px;
 
 body.is-section-signup.is-white-signup {
 	.plan-features-2023-grid__table-item {
-		border-left: none;
+		border-right: none;
 		background-color: transparent;
+
+		&:first-of-type {
+			border-left: none;
+		}
 
 		.plan-pill.is-in-signup {
 			font-family: Inter, $sans;
@@ -654,6 +645,7 @@ body.is-section-signup.is-white-signup {
 
 			@media ( min-width: 880px ) {
 				margin-top: 36px;
+				font-size: $font-body-extra-small;
 			}
 
 			&.is-personal-plan {
