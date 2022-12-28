@@ -10,12 +10,13 @@ import {
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import isSupersedingJetpackItem from 'calypso/../packages/calypso-products/src/is-superseding-jetpack-item';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import reactNodeToString from 'calypso/lib/react-node-to-string';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { successNotice } from 'calypso/state/notices/actions';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { useIsUserPurchaseOwner } from 'calypso/state/purchases/utils';
 import {
@@ -31,7 +32,6 @@ import productButtonLabel from '../../product-card/product-button-label';
 import { SelectorProduct } from '../../types';
 import { UseStoreItemInfoProps } from '../types';
 import { useShoppingCartTracker } from './use-shopping-cart-tracker';
-
 const getIsDeprecated = ( item: SelectorProduct ) => Boolean( item.legacy );
 
 const getIsExternal = ( item: SelectorProduct ) =>
@@ -63,6 +63,7 @@ export const useStoreItemInfo = ( {
 		( state ) => !! ( siteId && isJetpackSiteMultiSite( state, siteId ) )
 	);
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const dispatch = useDispatch();
 
 	const isCurrentUserPurchaseOwner = useIsUserPurchaseOwner();
 	const translate = useTranslate();
@@ -209,7 +210,11 @@ export const useStoreItemInfo = ( {
 				shoppingCartTracker( 'calypso_jetpack_shopping_cart_add_product', {
 					productSlug: item.productSlug,
 				} );
-				return addProductsToCart( [ { product_slug: item.productSlug } ] );
+				addProductsToCart( [ { product_slug: item.productSlug } ] );
+
+				const addedToCartText = translate( 'added to cart' );
+				dispatch( successNotice( `${ item.displayName } ${ addedToCartText }` ) );
+				return;
 			}
 
 			return onClickPurchase?.( item, getIsUpgradeableToYearly( item ), getPurchase( item ) );
@@ -220,8 +225,10 @@ export const useStoreItemInfo = ( {
 			getIsUpgradeableToYearly,
 			getPurchase,
 			getIsProductInCart,
-			addProductsToCart,
 			shoppingCartTracker,
+			addProductsToCart,
+			dispatch,
+			translate,
 		]
 	);
 
