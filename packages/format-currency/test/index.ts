@@ -81,6 +81,10 @@ describe( 'formatCurrency', () => {
 			const money = formatCurrency( 9800900.32, 'USD' );
 			expect( money ).toBe( '$9,800,900.32' );
 		} );
+		test( 'USD in Canadian English', () => {
+			const money = formatCurrency( 9800900.32, 'USD', { locale: 'en-CA' } );
+			expect( money ).toBe( 'US$9,800,900.32' );
+		} );
 		test( 'AUD', () => {
 			const money = formatCurrency( 9800900.32, 'AUD' );
 			expect( money ).toBe( 'A$9,800,900.32' );
