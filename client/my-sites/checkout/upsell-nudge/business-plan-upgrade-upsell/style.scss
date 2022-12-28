@@ -40,7 +40,7 @@ main.business-plan-upgrade-upsell.main {
 	&__header-title {
 		text-align: center;
 		@extend .wp-brand-font;
-		font-size: 42px;
+		font-size: $font-headline-small;
 		font-weight: 400;
 		line-height: 40px;
 		color: var(--studio-blue-90);
@@ -122,9 +122,9 @@ main.business-plan-upgrade-upsell.main {
 		grid-template-areas:
 			"body body images"
 			"buttons buttons images";
-		grid-template-columns: minmax(0,1fr) minmax(0,1fr) 50%;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 50%;
 		@include breakpoint-deprecated( "<660px" ) {
-			grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 			grid-template-areas:
 				"body body body"
 				"buttons buttons buttons"
