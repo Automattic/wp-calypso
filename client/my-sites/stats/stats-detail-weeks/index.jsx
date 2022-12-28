@@ -157,7 +157,7 @@ const StatsPostDetailWeeks = ( props ) => {
 	} );
 
 	return (
-		<Card className={ classNames( 'stats-module', 'is-expanded', 'is-post-weeks', classes ) }>
+		<Card className={ classNames( 'stats-module', 'is-expanded', 'is-detail-weeks', classes ) }>
 			<QueryPostStats siteId={ siteId } postId={ postId } />
 			<QueryPosts siteId={ siteId } postId={ postId } />
 			<div className="module-header">
