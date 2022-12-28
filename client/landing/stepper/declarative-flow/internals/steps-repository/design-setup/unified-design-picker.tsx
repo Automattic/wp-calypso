@@ -35,7 +35,7 @@ import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import {
 	getDesignEventProps,
-	getDesignIntentProps,
+	getDesignTypeProps,
 	recordPreviewedDesign,
 	recordSelectedDesign,
 } from '../../analytics/record-design';
@@ -458,7 +458,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	function pickBlankCanvasDesign( blankCanvasDesign: Design, shouldGoToAssemblerStep: boolean ) {
 		if ( shouldGoToAssemblerStep ) {
-			const selectedDesign = {
+			const _selectedDesign = {
 				...blankCanvasDesign,
 				design_type: 'assembler',
 			} as Design;
@@ -466,14 +466,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			recordPreviewedDesign( {
 				flow,
 				intent,
-				design: selectedDesign,
+				design: _selectedDesign,
 			} );
 
-			setSelectedDesign( selectedDesign );
+			setSelectedDesign( _selectedDesign );
 
 			handleSubmit( {
-				selectedIntent: SiteIntent.SiteAssembler,
-				selectedDesign,
+				selectedDesign: _selectedDesign,
 				selectedSiteCategory: categorization.selection,
 			} );
 		} else {
@@ -482,14 +481,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	}
 
 	function handleSubmit( providedDependencies?: ProvidedDependencies, optionalProps?: object ) {
-		const selectedIntent = providedDependencies?.selectedIntent as string;
-		const selectedDesign = providedDependencies?.selectedDesign as Design;
-
-		if ( selectedIntent !== SiteIntent.SiteAssembler ) {
+		const _selectedDesign = providedDependencies?.selectedDesign as Design;
+		if ( _selectedDesign?.design_type !== 'assembler' ) {
 			recordSelectedDesign( {
 				flow,
 				intent,
-				design: selectedDesign,
+				design: _selectedDesign,
 				styleVariation: selectedStyleVariation,
 				optionalProps,
 			} );
@@ -497,7 +494,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 		submit?.( {
 			...providedDependencies,
-			...getDesignIntentProps( selectedIntent ),
+			...getDesignTypeProps( _selectedDesign ),
 		} );
 	}
 
