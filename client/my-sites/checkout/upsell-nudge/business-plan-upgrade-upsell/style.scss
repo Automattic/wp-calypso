@@ -40,7 +40,7 @@ main.business-plan-upgrade-upsell.main {
 	&__header-title {
 		text-align: center;
 		@extend .wp-brand-font;
-		font-size: $font-headline-small;
+		font-size: 2.75rem;
 		font-weight: 400;
 		line-height: 40px;
 		color: var(--studio-blue-90);
@@ -51,37 +51,6 @@ main.business-plan-upgrade-upsell.main {
 			text-align: left;
 			padding: 0 0 20px;
 		}
-	}
-
-	&__placeholders {
-		display: flex;
-		flex-direction: column;
-
-		.is-placeholder {
-			animation: pulse-light 800ms ease-in-out infinite;
-			background: var(--color-neutral-10);
-		}
-	}
-
-	&__placeholder-row {
-		height: 40px;
-		flex: 0 0 100%;
-		margin-bottom: 15px;
-	}
-
-	&__placeholder-button {
-		height: 50px;
-		width: 100%;
-
-		@include breakpoint-deprecated( ">480px" ) {
-			width: 80px;
-			height: 40px;
-		}
-	}
-
-	&__placeholder-button-container {
-		display: flex;
-		justify-content: space-between;
 	}
 
 	&__image-container {
@@ -106,13 +75,6 @@ main.business-plan-upgrade-upsell.main {
 		grid-area: body;
 	}
 
-	&__column-content {
-		padding-right: 10px;
-		@include breakpoint-deprecated( "<480px" ) {
-			padding-right: 0;
-		}
-	}
-
 	&__container {
 		max-width: 746px;
 		margin: 0 auto;
@@ -132,19 +94,6 @@ main.business-plan-upgrade-upsell.main {
 		}
 	}
 
-	&__sub-header {
-		font-size: $font-title-small;
-		font-weight: normal;
-		text-align: center;
-		line-height: 1.4;
-		margin-top: 5px;
-		margin-bottom: 1.6em;
-
-		@include breakpoint-deprecated( "<660px" ) {
-			font-size: $font-body;
-		}
-	}
-
 	&__checklist {
 		margin: 0 0 0.75em;
 
@@ -152,7 +101,7 @@ main.business-plan-upgrade-upsell.main {
 			display: flex;
 			width: 100%;
 			align-items: flex-start;
-			margin-bottom: 1.2em;
+			margin-bottom: 0.5em;
 
 			@include breakpoint-deprecated( "<660px" ) {
 				align-items: flex-start;
