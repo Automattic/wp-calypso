@@ -221,15 +221,17 @@ function add_option_to_new_site( $blog_id, $user_id, $domain, $path, $network_id
 add_action( 'wpmu_new_blog', __NAMESPACE__ . '\add_option_to_new_site', 10, 6 );
 
 /**
- * Decides whether to redirect to the site's coming soon page and performs
- * the redirect.
+ * Decides whether to render to the site's coming soon page and performs
+ * the render.
+ *
+ * @param string $template The template to render.
  */
-function coming_soon_page() {
+function coming_soon_page( $template ) {
 	if ( ! should_show_coming_soon_page() ) {
-		return;
+		return $template;
 	}
 
 	render_fallback_coming_soon_page();
 	die();
 }
-add_action( 'template_redirect', __NAMESPACE__ . '\coming_soon_page' );
+add_filter( 'template_include', __NAMESPACE__ . '\coming_soon_page' );
