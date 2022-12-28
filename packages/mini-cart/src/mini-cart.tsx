@@ -1,4 +1,5 @@
 import { CheckoutProvider, Button } from '@automattic/composite-checkout';
+import { formatCurrency } from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
@@ -81,7 +82,11 @@ function MiniCartTotal( { responseCart }: { responseCart: ResponseCart } ) {
 	return (
 		<MiniCartTotalWrapper className="mini-cart__total">
 			<span>{ __( 'Total' ) }</span>
-			<span>{ responseCart.total_cost_display }</span>
+			<span>
+				{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
+					isSmallestUnit: true,
+				} ) }
+			</span>
 		</MiniCartTotalWrapper>
 	);
 }
