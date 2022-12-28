@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { SiteIntent } from '@automattic/data-stores/src/onboard';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -34,7 +33,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 	const { goBack, goNext, submit, goToStep } = navigation;
 	const { setThemeOnSite, runThemeSetupOnSite, createCustomTemplate } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
-	const { setIntent, setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const site = useSite();
@@ -332,7 +331,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 						} }
 						onContinueClick={ () => {
 							trackEventContinue();
-							setIntent( SiteIntent.SiteAssembler );
+							onSubmit();
 						} }
 					/>
 				) }
@@ -357,12 +356,6 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 			) }
 		</div>
 	);
-
-	useEffect( () => {
-		if ( siteSlugOrId && intent === SiteIntent.SiteAssembler ) {
-			onSubmit();
-		}
-	}, [ siteSlugOrId, intent ] );
 
 	return (
 		<>
