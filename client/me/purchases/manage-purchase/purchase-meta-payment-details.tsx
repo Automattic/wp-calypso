@@ -31,21 +31,23 @@ function PurchaseMetaPaymentDetails( {
 
 	const paymentDetails = <PaymentInfoBlock purchase={ purchase } cards={ cards } />;
 
-	if ( ! canEditPaymentDetails( purchase ) || ! isPaidWithCreditCard( purchase ) || ! site ) {
+	if (
+		! canEditPaymentDetails( purchase ) ||
+		! isPaidWithCreditCard( purchase ) ||
+		! site ||
+		! siteSlug
+	) {
 		return <li>{ paymentDetails }</li>;
 	}
 
 	return (
 		<li>
-			{ siteSlug && (
-				<a
-					href={ getChangePaymentMethodUrlFor( siteSlug, purchase ) }
-					onClick={ handleEditPaymentMethodClick }
-				>
-					{ paymentDetails }
-				</a>
-			) }
-			{ ! siteSlug && paymentDetails }
+			<a
+				href={ getChangePaymentMethodUrlFor( siteSlug, purchase ) }
+				onClick={ handleEditPaymentMethodClick }
+			>
+				{ paymentDetails }
+			</a>
 		</li>
 	);
 }
