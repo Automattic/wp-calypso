@@ -18,6 +18,10 @@
 		.post-stats-card {
 			margin: 0;
 			max-height: unset;
+
+			&::after {
+				display: none;
+			}
 		}
 
 		.highlight-card {
