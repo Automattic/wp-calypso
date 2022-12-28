@@ -23,6 +23,14 @@ $common-border-radius: 4px;
 					&:nth-child(2) {
 						border-top-left-radius: 0;
 					}
+
+					&:nth-last-child(2) {
+						border-top-right-radius: 0;
+					}
+
+					&:nth-last-child(3) {
+						border-top-right-radius: $common-border-radius;
+					}
 				}
 			}
 
@@ -35,7 +43,27 @@ $common-border-radius: 4px;
 					&:nth-child(2) {
 						border-bottom-left-radius: 0;
 					}
+
+					&:nth-last-child(2) {
+						border-bottom-right-radius: 0;
+					}
+
+					&:nth-last-child(3) {
+						border-bottom-right-radius: $common-border-radius;
+					}
 				}
+			}
+
+			th:nth-last-child(2) {
+				text-align: right;
+				width: 100px;
+			}
+
+			td:nth-last-child(2) {
+				background-color: var(--studio-white);
+				font-weight: 600;
+				text-align: right;
+				vertical-align: top;
 			}
 		}
 	}
@@ -58,12 +86,12 @@ $common-border-radius: 4px;
 			}
 
 			&:last-child {
-				background: none;
 				font-weight: 600;
 				text-align: right;
 			}
 
-			&.has-no-data {
+			&.has-no-data,
+			&:last-child {
 				background-color: var(--studio-white);
 			}
 
