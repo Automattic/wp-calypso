@@ -92,7 +92,7 @@ export function getTaxLineItemFromCart( responseCart: ResponseCart ): LineItem |
 		amount: {
 			currency: responseCart.currency,
 			value: responseCart.total_tax_integer,
-			displayValue: formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
+			displayValue: formatCurrency( responseCart.total_tax_integer, responseCart.currency, {
 				isSmallestUnit: true,
 			} ),
 		},
