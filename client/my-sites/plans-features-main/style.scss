@@ -52,9 +52,13 @@
 .plans-features-main__group.is-2023-pricing-grid {
 	position: relative;
 	margin: auto;
-	max-width: 375px;
+	max-width: 335px;
 
 	.is-section-signup & {
+
+		@media ( min-width: 385px ) {
+			max-width: 375px;
+		}
 
 		@media ( min-width: 880px ) {
 			max-width: 860px;
