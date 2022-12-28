@@ -28,12 +28,14 @@ const cart: ResponseCart = {
 			uuid: 'test1',
 			product_name: 'Test Product 1',
 			item_subtotal_integer: 50000,
+			currency: 'JPY',
 		},
 		{
 			...getEmptyResponseCartProduct(),
 			uuid: 'test2',
 			product_name: 'Test Product 2',
 			item_subtotal_integer: 25000,
+			currency: 'JPY',
 		},
 	],
 };
