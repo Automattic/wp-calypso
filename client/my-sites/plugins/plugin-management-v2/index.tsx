@@ -17,7 +17,7 @@ interface Props {
 	plugins: Array< Plugin >;
 	isLoading: boolean;
 	requestError: boolean;
-	selectedSite: SiteDetails;
+	selectedSite?: SiteDetails;
 	searchTerm: string;
 	isBulkManagementActive: boolean;
 	toggleBulkManagement: () => void;
