@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-In this PR we modify `formatCurrency()` and its sibling `getCurrencyObject()` to ignore the hard-coded list of data and instead use the browser's built-in library that formats currency for locales: [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat).
+In this PR we modify `formatCurrency()` and its sibling `getCurrencyObject()` to ignore the hard-coded list of data and instead use the browser's built-in library that formats currency for locales: [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat). The `null` return value is also removed from both functions so that they always return a string; if their inputs are malformed (NaN, unknown currency) they will use default values instead (0 and USD), respectively.
+
+This PR also adds `setDefaultLocale()` which can be used to set a global default locale.
 
 ### Removed
 
