@@ -1,4 +1,4 @@
-import { PLAN_FREE, PLAN_ENTERPRISE_GRID_WPCOM } from '@automattic/calypso-products';
+import { isWpComFreePlan, isWpcomEnterpriseGridPlan } from '@automattic/calypso-products';
 import { getCurrencyObject } from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -28,7 +28,7 @@ export class PlanFeatures2023GridHeaderPrice extends Component {
 			planName,
 		} = this.props;
 
-		if ( [ PLAN_FREE, PLAN_ENTERPRISE_GRID_WPCOM ].includes( planName ) ) {
+		if ( isWpComFreePlan( planName ) || isWpcomEnterpriseGridPlan( planName ) ) {
 			return null;
 		}
 
@@ -68,7 +68,7 @@ export class PlanFeatures2023GridHeaderPrice extends Component {
 			translate,
 		} = this.props;
 
-		if ( PLAN_ENTERPRISE_GRID_WPCOM === planName ) {
+		if ( isWpcomEnterpriseGridPlan( planName ) ) {
 			return (
 				<div className="plan-features-2023-grid__vip-price">
 					{ translate( 'Starts at {{b}}US$25,000{{/b}} yearly.', {
