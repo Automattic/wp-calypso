@@ -5,8 +5,8 @@
  * Some overwrites are necessary to make both this and Jetpack.com headers look
  * similar.
  */
-
-.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing .jpcom-masterbar {
+.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing .jpcom-masterbar,
+.is-group-jetpack-cloud.is-section-jetpack-cloud-features-comparison .jpcom-masterbar {
 	// ============================================================================
 	// Overwrites
 	// ============================================================================
@@ -1020,7 +1020,6 @@
 		padding: 0;
 		background: transparent;
 		border: none;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 50%;
 		transition: transform 0.1s ease-in-out;
 	}

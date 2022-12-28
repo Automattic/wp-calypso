@@ -23,7 +23,7 @@
 		"jest-docblock": "^27",
 		"mailosaur": "^8.4.0",
 		"nock": "^12.0.3",
-		"playwright": "^1.26",
+		"playwright": "^1.28",
 		"totp-generator": "^0.0.12"
 	},
 	"devDependencies": {
@@ -43,6 +43,6 @@
 		"clean": "yarn build --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json",
 		"encrypt-secrets": "openssl enc -md sha1 -aes-256-cbc -pass env:E2E_SECRETS_KEY -out ./src/secrets/encrypted.enc -in ./src/secrets/decrypted-secrets.json",
-		"decrypt-secrets": "openssl enc -md sha1 -aes-256-cbc -d -pass env:E2E_SECRETS_KEY -in ./src/secrets/encrypted.enc -out ./src/secrets/decrypted-secrets.json"
+		"decrypt-secrets": "rm ./src/secrets/decrypted-secrets.json; openssl enc -md sha1 -aes-256-cbc -d -pass env:E2E_SECRETS_KEY -in ./src/secrets/encrypted.enc -out ./src/secrets/decrypted-secrets.json"
 	}
 }

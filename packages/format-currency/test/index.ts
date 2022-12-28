@@ -41,9 +41,9 @@ describe( 'formatCurrency', () => {
 		expect( money ).toBe( '¥9,932' );
 	} );
 
-	test( 'returns null if the number is a float and smallest unit is true', () => {
+	test( 'formats a rounded number if the number is a float and smallest unit is true', () => {
 		const money = formatCurrency( 9932.1, 'USD', { isSmallestUnit: true } );
-		expect( money ).toBe( null );
+		expect( money ).toBe( '$99.32' );
 	} );
 
 	test( 'returns no trailing zero cents when stripZeros set to true (USD)', () => {
@@ -100,6 +100,10 @@ describe( 'formatCurrency', () => {
 		test( 'BRL', () => {
 			const money = formatCurrency( 9800900.32, 'BRL' );
 			expect( money ).toBe( 'R$9.800.900,32' );
+		} );
+		test( 'IDR', () => {
+			const money = formatCurrency( 107280000, 'IDR', { isSmallestUnit: true } );
+			expect( money ).toBe( 'Rp1.072.800,00' );
 		} );
 	} );
 
@@ -173,9 +177,14 @@ describe( 'formatCurrency', () => {
 			} );
 		} );
 
-		test( 'returns null if the number is a float and the smallest unit is set', () => {
+		test( 'handles the number as rounded if the number is a float and smallest unit is set', () => {
 			const money = getCurrencyObject( 9932.1, 'USD', { isSmallestUnit: true } );
-			expect( money ).toEqual( null );
+			expect( money ).toEqual( {
+				symbol: '$',
+				integer: '99',
+				fraction: '.32',
+				sign: '',
+			} );
 		} );
 
 		describe( 'supported currencies', () => {

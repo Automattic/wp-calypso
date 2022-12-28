@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
 import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -31,8 +30,6 @@ import {
 	getStepUrl,
 	isP2Flow,
 	isVideoPressFlow,
-	getVideoPressOnboardingTotalSteps,
-	getVideoPressOnboardingStepNumber,
 } from 'calypso/signup/utils';
 import VideoPressStepWrapper from 'calypso/signup/videopress-step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -489,12 +486,12 @@ export class UserStep extends Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
-				headerText={ this.props.translate( "Let's get you signed up" ) }
+				headerText={ this.props.translate( 'Let’s get you signed up' ) }
 				subHeaderText={ this.getSubHeaderText() }
 				stepIndicator={ this.props.translate( 'Step %(currentStep)s of %(totalSteps)s', {
 					args: {
-						currentStep: getVideoPressOnboardingStepNumber( this.props.stepName ),
-						totalSteps: getVideoPressOnboardingTotalSteps(),
+						currentStep: 1,
+						totalSteps: 1,
 					},
 				} ) }
 			>
@@ -544,7 +541,6 @@ export class UserStep extends Component {
 		// TODO: decouple hideBack flag from the flow name.
 		return (
 			<StepWrapper
-				hideBack={ this.props.flowName === LINK_IN_BIO_TLD_FLOW }
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				headerText={ this.getHeaderText() }

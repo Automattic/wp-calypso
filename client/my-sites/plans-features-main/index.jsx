@@ -37,6 +37,7 @@ import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -117,10 +118,62 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			plansWithScroll,
 			isReskinned,
+			isFAQCondensedExperiment,
+			isPlansInsideStepper,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
+
+		if (
+			isEnabled( 'onboarding/2023-pricing-grid' ) &&
+			flowName === 'onboarding-2023-pricing-grid'
+		) {
+			const asyncProps = {
+				basePlansPath,
+				domainName,
+				isInSignup,
+				isLandingPage,
+				isLaunchPage,
+				onUpgradeClick,
+				plans,
+				flowName,
+				redirectTo,
+				visiblePlans,
+				selectedFeature,
+				selectedPlan,
+				withDiscount,
+				discountEndDate,
+				withScroll: plansWithScroll,
+				popularPlanSpec: getPopularPlanSpec( {
+					flowName,
+					customerType,
+					isJetpack,
+					availablePlans: visiblePlans,
+				} ),
+				siteId,
+				isReskinned,
+				isPlansInsideStepper,
+			};
+			const asyncPlanFeatures2023Grid = (
+				<AsyncLoad require="calypso/my-sites/plan-features-2023-grid" { ...asyncProps } />
+			);
+			return (
+				<div
+					className={ classNames(
+						'plans-features-main__group',
+						'is-wpcom',
+						`is-customer-${ customerType }`,
+						{
+							'is-scrollable': plansWithScroll,
+						}
+					) }
+					data-e2e-plans="wpcom"
+				>
+					{ asyncPlanFeatures2023Grid }
+				</div>
+			);
+		}
 
 		return (
 			<div
@@ -142,6 +195,7 @@ export class PlansFeaturesMain extends Component {
 					isLaunchPage={ isLaunchPage }
 					onUpgradeClick={ onUpgradeClick }
 					plans={ plans }
+					flowName={ flowName }
 					redirectTo={ redirectTo }
 					visiblePlans={ visiblePlans }
 					selectedFeature={ selectedFeature }
@@ -157,6 +211,8 @@ export class PlansFeaturesMain extends Component {
 					} ) }
 					siteId={ siteId }
 					isReskinned={ isReskinned }
+					isFAQCondensedExperiment={ isFAQCondensedExperiment }
+					isPlansInsideStepper={ isPlansInsideStepper }
 				/>
 			</div>
 		);
@@ -188,6 +244,7 @@ export class PlansFeaturesMain extends Component {
 			translate,
 			locale,
 			flowName,
+			isPlansInsideStepper,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -257,9 +314,11 @@ export class PlansFeaturesMain extends Component {
 						isJetpack,
 						availablePlans: visiblePlans,
 					} ) }
+					flowName={ flowName }
 					siteId={ siteId }
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					kindOfPlanTypeSelector={ this.getKindOfPlanTypeSelector( this.props ) }
+					isPlansInsideStepper={ isPlansInsideStepper }
 				/>
 			</div>
 		);
@@ -555,6 +614,7 @@ PlansFeaturesMain.propTypes = {
 	plansWithScroll: PropTypes.bool,
 	planTypes: PropTypes.array,
 	isReskinned: PropTypes.bool,
+	isPlansInsideStepper: PropTypes.bool,
 	planTypeSelector: PropTypes.string,
 };
 
@@ -571,6 +631,7 @@ PlansFeaturesMain.defaultProps = {
 	plansWithScroll: false,
 	isReskinned: false,
 	planTypeSelector: 'interval',
+	isPlansInsideStepper: false,
 };
 
 export default connect(

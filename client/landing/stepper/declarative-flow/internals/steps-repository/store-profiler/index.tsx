@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { Button, FormInputValidation } from '@automattic/components';
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, ECOMMERCE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
@@ -16,7 +16,7 @@ import { ONBOARD_STORE, USER_STORE } from '../../../../stores';
 import type { Step } from '../../types';
 import './style.scss';
 
-const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
+const StoreProfiler: Step = function StoreProfiler( { navigation, flow } ) {
 	const { goBack, goNext, submit } = navigation;
 	const [ siteTitle, setSiteTitle ] = React.useState( '' );
 	const [ verticalId, setVerticalId ] = React.useState( '' );
@@ -33,14 +33,14 @@ const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 	const verticals = useSiteVerticalsFeatured();
 	const verticalsOptions = React.useMemo( () => {
 		const sorted = verticals.data?.sort( ( a, b ) => {
-			if ( a.name === b.name ) {
+			if ( a.title === b.title ) {
 				return 0;
 			}
-			return a.name > b.name ? 1 : -1;
+			return a.title > b.title ? 1 : -1;
 		} );
 		const options = sorted?.map( ( v ) => (
 			<option value={ v.id } key={ v.id }>
-				{ v.name }
+				{ v.title }
 			</option>
 		) );
 		options?.unshift(
@@ -151,6 +151,7 @@ const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 		<StepContainer
 			stepName="store-profiler"
 			skipButtonAlign="top"
+			shouldHideNavButtons={ flow === ECOMMERCE_FLOW }
 			goBack={ goBack }
 			goNext={ goNext }
 			formattedHeader={
@@ -165,6 +166,7 @@ const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 			}
 			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }
+			showFooterWooCommercePowered={ flow === ECOMMERCE_FLOW }
 		/>
 	);
 };

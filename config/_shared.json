@@ -33,8 +33,9 @@
 	"google_oauth_client_id": "108380595987-j91sm1alavcdgd81i2655kp8q1lbtvrc.apps.googleusercontent.com",
 	"facebook_app_id": "611241942420191",
 	"livechat_support_locales": [ "en", "en-gb" ],
-	"dsp_stripe_pub_key": "pk_live_51LYYzQF53KN4RFN0ePTwefdm7seki4pRuc4a19gPMGUba5mzuosz0IBR0cp4T57FiBgxK911ky0LNwlX2IHbm0SS00uPHEQNBO",
+	"dsp_stripe_pub_key": "pk_live_51LYYzQF53KN4RFN0oHFYHpzmHGpuUAXZ6ygDAFxM4XkRArRsET0orrofmsynkd9DhFaOGEsDZ3RC4f8mgI0zhEyN000X8i0Mqx",
 	"dsp_widget_js_src": "https://widgets.wp.com/promote/widget.js",
+	"zendesk_presales_chat_key": false,
 	"upwork_support_locales": [
 		"de",
 		"de-at",
@@ -154,6 +155,7 @@
 	"sections": {
 		"jetpack-cloud": false,
 		"jetpack-cloud-agency-dashboard": false,
+		"jetpack-cloud-features-comparison": false,
 		"jetpack-cloud-plugin-management": false,
 		"jetpack-cloud-agency-signup": false,
 		"jetpack-cloud-auth": false,
@@ -208,7 +210,8 @@
 		"ecommerce-monthly",
 		"pro",
 		"starter",
-		"domain"
+		"domain",
+		"onboarding-2023-pricing-grid"
 	],
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js"
 }

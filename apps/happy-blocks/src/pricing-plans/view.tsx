@@ -1,3 +1,4 @@
+import './view.scss';
 import { BlockEditProps } from '@wordpress/blocks';
 import { useState } from '@wordpress/element';
 import { FunctionComponent } from 'react';
@@ -15,7 +16,7 @@ const ViewPricingPlans: FunctionComponent< BlockEditProps< BlockAttributes > > =
 		setDummyAttributes( ( values ) => ( { ...values, ...newValues } ) );
 	};
 
-	if ( isLoading || ! plans ) {
+	if ( isLoading || ! plans?.length ) {
 		return <Skeleton />;
 	}
 

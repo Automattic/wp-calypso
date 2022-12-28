@@ -2,7 +2,7 @@ import { getCurrencyObject } from '@automattic/format-currency';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, createElement } from 'react';
 import Badge from 'calypso/components/badge';
 
 import './style.scss';
@@ -21,12 +21,15 @@ export class PlanPrice extends Component {
 			isOnSale,
 			taxText,
 			translate,
+			omitHeading,
 		} = this.props;
 
 		const classes = classNames( 'plan-price', className, {
 			'is-original': original,
 			'is-discounted': discounted,
 		} );
+
+		const tagName = omitHeading ? 'span' : 'h4';
 
 		// productDisplayPrice is returned from Store Price and provides a geo-IDed currency format
 		const shouldUseDisplayPrice = () => {
@@ -42,14 +45,14 @@ export class PlanPrice extends Component {
 		};
 
 		if ( shouldUseDisplayPrice() ) {
-			return (
-				<h4 className={ classes }>
-					<span
-						className="plan-price__integer"
-						// eslint-disable-next-line react/no-danger
-						dangerouslySetInnerHTML={ { __html: productDisplayPrice } }
-					/>
-				</h4>
+			return createElement(
+				tagName,
+				{ className: classes },
+				<span
+					className="plan-price__integer"
+					// eslint-disable-next-line react/no-danger
+					dangerouslySetInnerHTML={ { __html: productDisplayPrice } }
+				/>
 			);
 		}
 
@@ -98,11 +101,16 @@ export class PlanPrice extends Component {
 		}
 
 		const renderPriceHtml = ( priceObj ) => {
+			let priceInteger = priceObj.price.integer;
+			// In some currencies like IDR, a dot is used to separate group of threes.
+			// Remove it so that it's not confused to be a decimal point by the subtraction operator.
+			priceInteger = priceInteger.replace( /[,.]/g, '' );
+
 			return (
 				<>
 					<span className="plan-price__integer">{ priceObj.price.integer }</span>
 					<sup className="plan-price__fraction">
-						{ priceObj.raw - priceObj.price.integer > 0 && priceObj.price.fraction }
+						{ priceObj.raw - priceInteger > 0 && priceObj.price.fraction }
 					</sup>
 				</>
 			);
@@ -115,8 +123,10 @@ export class PlanPrice extends Component {
 		const smallerPriceHtml = renderPriceHtml( priceRange[ 0 ] );
 		const higherPriceHtml = priceRange[ 1 ] && renderPriceHtml( priceRange[ 1 ] );
 
-		return (
-			<h4 className={ classes }>
+		return createElement(
+			tagName,
+			{ className: classes },
+			<>
 				<sup className="plan-price__currency-symbol">{ priceRange[ 0 ].price.symbol }</sup>
 				{ ! higherPriceHtml && renderPriceHtml( priceRange[ 0 ] ) }
 				{ higherPriceHtml &&
@@ -139,7 +149,7 @@ export class PlanPrice extends Component {
 					</span>
 				) }
 				{ isOnSale && <Badge>{ saleBadgeText }</Badge> }
-			</h4>
+			</>
 		);
 	}
 }
@@ -158,6 +168,7 @@ PlanPrice.propTypes = {
 	displayPerMonthNotation: PropTypes.bool,
 	currencyFormatOptions: PropTypes.object,
 	productDisplayPrice: PropTypes.string,
+	omitHeading: PropTypes.bool,
 };
 
 PlanPrice.defaultProps = {

@@ -485,6 +485,28 @@ export function getBillingMonthsForTerm( term: string ): number {
 	throw new Error( `Unknown term: ${ term }` );
 }
 
+export function getBillingYearsForTerm( term: string ): number {
+	if ( term === TERM_MONTHLY ) {
+		return 0;
+	} else if ( term === TERM_ANNUALLY ) {
+		return 1;
+	} else if ( term === TERM_BIENNIALLY ) {
+		return 2;
+	}
+	throw new Error( `Unknown term: ${ term }` );
+}
+
+export function getBillingTermForMonths( term: number ): string {
+	if ( term === 1 ) {
+		return TERM_MONTHLY;
+	} else if ( term === 12 ) {
+		return TERM_ANNUALLY;
+	} else if ( term === 24 ) {
+		return TERM_BIENNIALLY;
+	}
+	throw new Error( `Unknown term: ${ term }` );
+}
+
 export function plansLink(
 	urlString: string,
 	siteSlug: string | undefined | null,
@@ -622,7 +644,7 @@ export const getPopularPlanSpec = ( {
 
 	const group = GROUP_WPCOM;
 
-	if ( flowName === 'link-in-bio' ) {
+	if ( flowName === 'link-in-bio' || flowName === 'link-in-bio-tld' ) {
 		return {
 			type: TYPE_PERSONAL,
 			group,

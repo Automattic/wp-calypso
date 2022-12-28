@@ -3,8 +3,6 @@
  */
 jest.mock( 'calypso/state/products-list/selectors/get-product-cost' );
 jest.mock( 'calypso/state/currency-code/selectors' );
-// Prevent `ReferenceError: window is not defined`
-jest.mock( '../product-grid', () => null );
 
 import {
 	PLAN_JETPACK_SECURITY_DAILY,

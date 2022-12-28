@@ -3,11 +3,7 @@ import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import {
-	useStripePaymentRequest,
-	usePaymentRequestOptions,
-	isValueTruthy,
-} from '@automattic/wpcom-checkout';
+import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
@@ -101,6 +97,7 @@ export default function CheckoutMain( {
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
 	customizedPreviousPath,
+	forceRadioButtons,
 }: {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
@@ -128,6 +125,9 @@ export default function CheckoutMain( {
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
 	customizedPreviousPath?: string;
+	// TODO: This is just for unit tests. Remove forceRadioButtons everywhere
+	// when calypso_checkout_variant_picker_radio_2212 ExPlat test completes.
+	forceRadioButtons?: boolean;
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
@@ -329,25 +329,11 @@ export default function CheckoutMain( {
 		} );
 	} );
 
-	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration, cartKey );
-	const { allowedPaymentTypes: allowedWebPayTypes, isLoading: isWebPayLoading } =
-		useStripePaymentRequest( {
-			paymentRequestOptions,
-			// No callback is needed here; this is being used only to determine what
-			// payment methods are available.
-			onSubmit: () => undefined,
-			stripe,
-		} );
-	const { applePay: isApplePayAvailable, googlePay: isGooglePayAvailable } = allowedWebPayTypes;
-
 	const paymentMethodObjects = useCreatePaymentMethods( {
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
-		isApplePayAvailable,
-		isGooglePayAvailable,
-		isWebPayLoading,
 		storedCards,
 		siteSlug: updatedSiteSlug,
 	} );
@@ -360,9 +346,7 @@ export default function CheckoutMain( {
 		responseCart.products.length < 1 ||
 		isInitialCartLoading ||
 		// Only wait for stored cards to load if we are using cards
-		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards ) ||
-		// Only wait for web pay to load if we are using web pay
-		( allowedPaymentMethods.includes( 'web-pay' ) && isWebPayLoading );
+		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards );
 
 	const contactDetails: ManagedContactDetails | undefined = useSelect( ( select ) =>
 		select( 'wpcom-checkout' )?.getContactInfo()
@@ -526,11 +510,11 @@ export default function CheckoutMain( {
 
 	useRecordCheckoutLoaded( {
 		isLoading,
-		isApplePayAvailable,
 		responseCart,
 		storedCards,
 		productAliasFromUrl,
 		checkoutFlow,
+		isGiftPurchase,
 	} );
 
 	const onPageLoadError: CheckoutPageErrorCallback = useCallback(
@@ -714,9 +698,10 @@ export default function CheckoutMain( {
 				isLoading={ isLoading }
 				isValidating={ isCartPendingUpdate }
 				theme={ theme }
-				initiallySelectedPaymentMethodId={ paymentMethods?.length ? paymentMethods[ 0 ].id : null }
+				selectFirstAvailablePaymentMethod
 			>
 				<WPCheckout
+					forceRadioButtons={ forceRadioButtons }
 					customizedPreviousPath={ customizedPreviousPath }
 					isRemovingProductFromCart={ isRemovingProductFromCart }
 					areThereErrors={ areThereErrors }

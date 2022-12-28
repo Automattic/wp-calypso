@@ -1,12 +1,26 @@
 import './style.scss';
 import { getRealPathName } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback, useState } from 'react';
+import DoNotSellDialogContainer from 'calypso/blocks/do-not-sell-dialog';
 import SocialLogo from 'calypso/components/social-logo';
+import { useDoNotSell } from 'calypso/lib/analytics/utils';
+import { preventWidows } from 'calypso/lib/formatting';
 import { navigate } from 'calypso/lib/navigate';
 
 const UniversalNavbarFooter = () => {
 	const translate = useTranslate();
+	const { shouldSeeDoNotSell, isDoNotSell, onSetDoNotSell } = useDoNotSell();
+	const [ isDialogOpen, setIsDialogOpen ] = useState( false );
+
 	const realPathName = getRealPathName( window.location.pathname.slice( 1 ) );
+
+	const openDialog = useCallback( () => {
+		setIsDialogOpen( true );
+	}, [] );
+	const closeDialog = useCallback( () => {
+		setIsDialogOpen( false );
+	}, [] );
 
 	return (
 		<>
@@ -23,31 +37,37 @@ const UniversalNavbarFooter = () => {
 							<h3>{ translate( 'Products' ) }</h3>
 							<ul>
 								<li>
-									<a href="https://wordpress.com/hosting/">{ translate( 'WordPress Hosting' ) }</a>
+									<a href="https://wordpress.com/hosting/" target="_self">
+										{ translate( 'WordPress Hosting' ) }
+									</a>
 								</li>
 								<li>
-									<a href="https://wordpress.com/domains/">{ translate( 'Domain Names' ) }</a>
+									<a href="https://wordpress.com/domains/" target="_self">
+										{ translate( 'Domain Names' ) }
+									</a>
 								</li>
 								<li>
-									<a href="https://wordpress.com/website-builder/">
+									<a href="https://wordpress.com/website-builder/" target="_self">
 										{ translate( 'Website Builder' ) }
 									</a>
 								</li>
 								<li>
-									<a href="https://wordpress.com/create-blog/">{ translate( 'Create a Blog' ) }</a>
+									<a href="https://wordpress.com/create-blog/" target="_self">
+										{ translate( 'Create a Blog' ) }
+									</a>
 								</li>
 								<li>
-									<a href="https://wordpress.com/professional-email/">
+									<a href="https://wordpress.com/professional-email/" target="_self">
 										{ translate( 'Professional Email' ) }
 									</a>
 								</li>
 								<li>
-									<a href="https://wordpress.com/p2/?ref=wpcom-product-menu">
+									<a href="https://wordpress.com/p2/?ref=wpcom-product-menu" target="_self">
 										{ translate( 'P2: WordPress for Teams' ) }
 									</a>
 								</li>
 								<li>
-									<a href="https://wpvip.com/" data-is_external="1">
+									<a href="https://wpvip.com/" data-is_external="1" target="_self">
 										{ translate( 'Enterprise' ) }{ ' ' }
 										<span className="lp-link-chevron-external">{ translate( 'Solutions' ) }</span>
 									</a>
@@ -56,6 +76,7 @@ const UniversalNavbarFooter = () => {
 									<a
 										href="https://wordpress.com/do-it-for-me/?ref=footer_pricing"
 										title="WordPress Website Building Service"
+										target="_self"
 									>
 										{ translate( 'Built by WordPress.com' ) }
 									</a>
@@ -66,20 +87,28 @@ const UniversalNavbarFooter = () => {
 							<h3>{ translate( 'Features' ) }</h3>
 							<ul>
 								<li>
-									<a href="https://wordpress.com/features/" title="WordPress.com Features">
+									<a
+										href="https://wordpress.com/features/"
+										title="WordPress.com Features"
+										target="_self"
+									>
 										{ translate( 'Overview' ) }
 									</a>
 								</li>
 								<li>
-									<a href="https://wordpress.com/themes">{ translate( 'WordPress Themes' ) }</a>
+									<a href="https://wordpress.com/themes" target="_self">
+										{ translate( 'WordPress Themes' ) }
+									</a>
 								</li>
 								<li>
-									<a href="https://wordpress.com/install-plugins/">
+									<a href="https://wordpress.com/install-plugins/" target="_self">
 										{ translate( 'WordPress Plugins' ) }
 									</a>
 								</li>
 								<li>
-									<a href="https://wordpress.com/google/">{ translate( 'Google Apps' ) }</a>
+									<a href="https://wordpress.com/google/" target="_self">
+										{ translate( 'Google Apps' ) }
+									</a>
 								</li>
 							</ul>
 						</div>
@@ -87,29 +116,39 @@ const UniversalNavbarFooter = () => {
 							<h3>{ translate( 'Resources' ) }</h3>
 							<ul>
 								<li>
-									<a href="https://wordpress.com/support/">
+									<a href="https://wordpress.com/support/" target="_self">
 										{ translate( 'WordPress.com Support' ) }
 									</a>
 								</li>
 								<li>
-									<a href="https://wordpress.com/forums/">{ translate( 'WordPress Forums' ) }</a>
+									<a href="https://wordpress.com/forums/" target="_self">
+										{ translate( 'WordPress Forums' ) }
+									</a>
 								</li>
 								<li>
-									<a href="https://wordpress.com/blog/">{ translate( 'WordPress News' ) }</a>
+									<a href="https://wordpress.com/blog/" target="_self">
+										{ translate( 'WordPress News' ) }
+									</a>
 								</li>
 								<li>
-									<a href="https://wordpress.com/go/">{ translate( 'Website Building Tips' ) }</a>
+									<a href="https://wordpress.com/go/" target="_self">
+										{ translate( 'Website Building Tips' ) }
+									</a>
 								</li>
 								<li>
-									<a href="https://wordpress.com/business-name-generator/">
+									<a href="https://wordpress.com/business-name-generator/" target="_self">
 										{ translate( 'Business Name Generator' ) }
 									</a>
 								</li>
 								<li>
-									<a href="https://wordpress.com/logo-maker/">{ translate( 'Logo Maker' ) }</a>
+									<a href="https://wordpress.com/logo-maker/" target="_self">
+										{ translate( 'Logo Maker' ) }
+									</a>
 								</li>
 								<li>
-									<a href="https://wordpress.com/webinars/">{ translate( 'Daily Webinars' ) }</a>
+									<a href="https://wordpress.com/webinars/" target="_self">
+										{ translate( 'Daily Webinars' ) }
+									</a>
 								</li>
 								<li>
 									<a href="https://wordpress.com/learn/">{ translate( 'Learn WordPress' ) }</a>
@@ -126,10 +165,14 @@ const UniversalNavbarFooter = () => {
 							<h3>{ translate( 'Company' ) }</h3>
 							<ul>
 								<li>
-									<a href="https://wordpress.com/about/">{ translate( 'About' ) }</a>
+									<a href="https://wordpress.com/about/" target="_self">
+										{ translate( 'About' ) }
+									</a>
 								</li>
 								<li>
-									<a href="https://wordpress.com/partners/">{ translate( 'Partners' ) }</a>
+									<a href="https://wordpress.com/partners/" target="_self">
+										{ translate( 'Partners' ) }
+									</a>
 								</li>
 								<li>
 									<a href="https://automattic.com/press/" data-is_external="1">
@@ -137,7 +180,9 @@ const UniversalNavbarFooter = () => {
 									</a>
 								</li>
 								<li>
-									<a href="https://wordpress.com/tos/">{ translate( 'Terms of Service' ) }</a>
+									<a href="https://wordpress.com/tos/" target="_self">
+										{ translate( 'Terms of Service' ) }
+									</a>
 								</li>
 								<li>
 									<a href="https://automattic.com/privacy/" data-is_external="1">
@@ -145,6 +190,13 @@ const UniversalNavbarFooter = () => {
 										<span className="lp-link-chevron-external">{ translate( 'Policy' ) }</span>
 									</a>
 								</li>
+								{ shouldSeeDoNotSell && (
+									<li>
+										<button onClick={ openDialog }>
+											{ preventWidows( translate( 'Do Not Sell or Share My Data' ) ) }
+										</button>
+									</li>
+								) }
 							</ul>
 						</div>
 					</div>
@@ -354,6 +406,14 @@ const UniversalNavbarFooter = () => {
 					</div>
 				</div>
 			</section>
+			{ shouldSeeDoNotSell && (
+				<DoNotSellDialogContainer
+					isOpen={ isDialogOpen }
+					isActive={ isDoNotSell }
+					onToggleActive={ onSetDoNotSell }
+					onClose={ closeDialog }
+				/>
+			) }
 		</>
 	);
 };

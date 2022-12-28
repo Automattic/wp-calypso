@@ -413,27 +413,11 @@
 
 	.design-picker__grid {
 		@supports ( display: grid ) {
-			row-gap: 0;
+			row-gap: 32px;
 
 			@include break-medium {
 				grid-template-columns: 1fr 1fr 1fr;
 				column-gap: 24px;
-
-				.design-button-container:nth-child(-n+3) {
-					margin-top: 0;
-				}
-			}
-
-			.pattern-assembler-cta-wrapper {
-				margin-top: 32px;
-			}
-
-			.design-button-container {
-				margin-top: 32px;
-
-				&:first-child {
-					margin-top: 0;
-				}
 			}
 
 			.design-button-container--is-generated {
@@ -448,7 +432,6 @@
 			}
 
 			.design-button-container--is-generated--is-showing {
-				margin-top: 32px;
 				max-height: none;
 
 				.theme-preview__container {
@@ -458,7 +441,7 @@
 		}
 	}
 
-	h3 {
+	.unified-design-picker__title {
 		font-size: $font-title-small;
 		font-weight: 600;
 		margin-top: 40px;

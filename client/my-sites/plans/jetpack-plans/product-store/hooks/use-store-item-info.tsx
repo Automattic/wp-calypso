@@ -12,6 +12,7 @@ import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import isSupersedingJetpackItem from 'calypso/../packages/calypso-products/src/is-superseding-jetpack-item';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
+import reactNodeToString from 'calypso/lib/react-node-to-string';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { useIsUserPurchaseOwner } from 'calypso/state/purchases/utils';
@@ -20,7 +21,7 @@ import {
 	getSiteProducts,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
-import { EXTERNAL_PRODUCTS_LIST } from '../../constants';
+import { EXTERNAL_PRODUCTS_LIST, ITEM_TYPE_PLAN } from '../../constants';
 import productButtonLabel from '../../product-card/product-button-label';
 import { SelectorProduct } from '../../types';
 import { UseStoreItemInfoProps } from '../types';
@@ -74,9 +75,14 @@ export const useStoreItemInfo = ( {
 		[ sitePlan, siteProducts ]
 	);
 
+	//Standalone products are currently not upgradable to yearly
+	//Once the feature is enabled, remove the last condition to enable the upgrade button
 	const getIsUpgradeableToYearly = useCallback(
 		( item: SelectorProduct ) =>
-			getIsOwned( item ) && selectedTerm === TERM_ANNUALLY && item.term === TERM_MONTHLY,
+			getIsOwned( item ) &&
+			selectedTerm === TERM_ANNUALLY &&
+			item.term === TERM_MONTHLY &&
+			item.type === ITEM_TYPE_PLAN,
 		[ getIsOwned, selectedTerm ]
 	);
 
@@ -155,7 +161,7 @@ export const useStoreItemInfo = ( {
 	);
 
 	const getCtaLabel = useCallback(
-		( item: SelectorProduct ) => {
+		( item: SelectorProduct, fallbackLabel = translate( 'Get' ) ) => {
 			const ctaLabel = productButtonLabel( {
 				product: item,
 				isOwned: getIsOwned( item ),
@@ -163,7 +169,7 @@ export const useStoreItemInfo = ( {
 				isDeprecated: getIsDeprecated( item ),
 				isSuperseded: getIsSuperseded( item ),
 				currentPlan: sitePlan,
-				fallbackLabel: translate( 'Get' ),
+				fallbackLabel,
 			} );
 
 			const purchase = getPurchase( item );
@@ -191,10 +197,27 @@ export const useStoreItemInfo = ( {
 		]
 	);
 
+	const getCtaAriaLabel = useCallback(
+		( item: SelectorProduct ) => {
+			return reactNodeToString(
+				productButtonLabel( {
+					product: item,
+					isOwned: getIsOwned( item ),
+					isUpgradeableToYearly: getIsUpgradeableToYearly( item ),
+					isDeprecated: getIsDeprecated( item ),
+					isSuperseded: getIsSuperseded( item ),
+					currentPlan: sitePlan,
+				} )
+			);
+		},
+		[ getIsOwned, getIsUpgradeableToYearly, getIsSuperseded, sitePlan ]
+	);
+
 	return useMemo(
 		() => ( {
 			getCheckoutURL,
 			getCtaLabel,
+			getCtaAriaLabel,
 			getIsDeprecated,
 			getIsExternal,
 			getIsIncludedInPlan,
@@ -212,6 +235,7 @@ export const useStoreItemInfo = ( {
 		[
 			getCheckoutURL,
 			getCtaLabel,
+			getCtaAriaLabel,
 			getIsIncludedInPlan,
 			getIsIncludedInPlanOrSuperseded,
 			getIsOwned,

@@ -25,7 +25,7 @@ import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
 import './style.scss';
 
 const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
-	const { goNext, goBack, submit } = navigation;
+	const { goNext, goBack, submit, goToStep } = navigation;
 	const isVideoPressFlow = 'videopress' === flow;
 
 	const [ billingPeriod, setBillingPeriod ] =
@@ -184,9 +184,10 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 		const getVideoPressFeaturesList = ( plan: Plans.Plan ) => {
 			/* translators: A label displaying the amount of storage space available in the plan, eg: "13GB" or "200GB" */
 			const storageString = plan.storage ? sprintf( __( '%s storage space' ), plan.storage ) : null;
+			const uploadVideosString = __( 'Upload videos' );
 
-			const filterStorageString = ( feature: PlanSimplifiedFeature ) =>
-				storageString !== feature.name;
+			const filterDuplicateFeatures = ( feature: PlanSimplifiedFeature ) =>
+				! [ storageString, uploadVideosString ].includes( feature.name );
 
 			return [
 				null !== storageString && {
@@ -199,7 +200,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 				{ name: __( 'Background videos' ), requiresAnnuallyBilledPlan: false },
 				{ name: __( 'Private videos' ), requiresAnnuallyBilledPlan: false },
 				{ name: __( 'Adaptive video streaming' ), requiresAnnuallyBilledPlan: false },
-				...( plan.features.filter( filterStorageString ) ?? [] ),
+				...( plan.features.filter( filterDuplicateFeatures ) ?? [] ),
 			].filter( isValueTruthy );
 		};
 
@@ -240,7 +241,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 													getPlanProduct( plan.periodAgnosticSlug, billingPeriod )?.productId
 											}
 											onSelect={ ( id ) => onPlanSelect( id, plan ) }
-											onPickDomainClick={ undefined }
+											onPickDomainClick={ () => goToStep && goToStep( 'chooseADomain' ) }
 											onToggleExpandAll={ () => setAllPlansExpanded( ( expand ) => ! expand ) }
 											// translators: Placeholder refers to the name of a WordPress.com plan.
 											CTAButtonLabel={ __( 'Get %s' ).replace( '%s', plan.title ) }
@@ -266,7 +267,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 		return (
 			<FormattedHeader
 				id="choose-a-plan-header"
-				headerText="Choose a plan"
+				headerText={ __( 'Choose a plan' ) }
 				subHeaderText={ __( 'Unlock a powerful bundle of features for your video site.' ) }
 				align="center"
 			/>

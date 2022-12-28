@@ -12,7 +12,6 @@ import {
 	CartCheckoutPage,
 	TestAccount,
 	SignupDomainPage,
-	MediaPage,
 	NewSiteResponse,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
@@ -89,12 +88,6 @@ describe(
 				sidebarComponent = new SidebarComponent( page );
 				const currentPlan = await sidebarComponent.getCurrentPlanName();
 				expect( currentPlan ).toBe( planName );
-			} );
-
-			it( 'Validate storage capacity', async function () {
-				await sidebarComponent.navigate( 'Media' );
-				const mediaPage = new MediaPage( page );
-				expect( await mediaPage.hasStorageCapacity( 200 ) ).toBe( true );
 			} );
 		} );
 

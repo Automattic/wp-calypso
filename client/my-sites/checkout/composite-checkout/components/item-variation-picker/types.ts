@@ -3,14 +3,17 @@ import type { ResponseCartProduct } from '@automattic/shopping-cart';
 export type WPCOMProductSlug = string;
 
 export type WPCOMProductVariant = {
-	price: number;
-	pricePerMonth: number;
+	priceInteger: number;
 	termIntervalInMonths: number;
 	termIntervalInDays: number;
 	currency: string;
 	productId: number;
 	productSlug: WPCOMProductSlug;
 	variantLabel: string;
+	introductoryTerm: string;
+	introductoryInterval: number;
+	priceBeforeDiscounts: number;
+	productBillingTermInMonths: number;
 };
 
 export type ItemVariationPickerProps = {

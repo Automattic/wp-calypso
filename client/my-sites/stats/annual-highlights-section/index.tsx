@@ -1,9 +1,10 @@
 import { AnnualHighlightCards } from '@automattic/components';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
+import YearNavigation from './year-navigation';
 
 type Insights = {
 	day?: string;
@@ -34,7 +35,8 @@ const FOLLOWERS_QUERY = { type: 'wpcom', max: 0 };
 
 // Meant to replace annual-site-stats section
 export default function AnnualHighlightsSection( { siteId }: { siteId: number } ) {
-	const year = new Date().getFullYear();
+	const [ year, setYear ] = useState( new Date().getFullYear() );
+	const currentYear = new Date().getFullYear();
 	const insights = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, 'statsInsights' )
 	) as Insights;
@@ -51,12 +53,36 @@ export default function AnnualHighlightsSection( { siteId }: { siteId: number } 
 			likes: currentYearData?.total_likes ?? ( hasYearsData ? 0 : null ),
 			posts: currentYearData?.total_posts ?? ( hasYearsData ? 0 : null ),
 			words: currentYearData?.total_words ?? ( hasYearsData ? 0 : null ),
-			followers: followers?.total_wpcom ?? null,
+			followers: year === currentYear ? followers?.total_wpcom ?? null : null,
 		};
-	}, [ year, followers, insights ] );
+	}, [ year, followers, insights, currentYear ] );
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const viewMoreHref = siteSlug ? `/stats/annualstats/${ siteSlug }` : null;
+
+	const oldestYear = useMemo(
+		() =>
+			insights?.years?.reduce(
+				( lowest, current ) =>
+					parseInt( current.year, 10 ) < lowest ? parseInt( current.year, 10 ) : lowest,
+				currentYear
+			) || currentYear,
+		[ insights, currentYear ]
+	);
+	const disablePreviousArrow = year <= oldestYear;
+	const disableNextArrow = year >= currentYear;
+
+	const onYearChange = ( future?: boolean ) => {
+		setYear( future ? year + 1 : year - 1 );
+	};
+
+	const navigation = (
+		<YearNavigation
+			disablePreviousArrow={ disablePreviousArrow }
+			disableNextArrow={ disableNextArrow }
+			onYearChange={ onYearChange }
+		/>
+	);
 
 	return (
 		<>
@@ -66,7 +92,12 @@ export default function AnnualHighlightsSection( { siteId }: { siteId: number } 
 					<QuerySiteStats siteId={ siteId } statType="statsFollowers" query={ FOLLOWERS_QUERY } />
 				</>
 			) }
-			<AnnualHighlightCards counts={ counts } titleHref={ viewMoreHref } year={ year } />
+			<AnnualHighlightCards
+				counts={ counts }
+				titleHref={ viewMoreHref }
+				year={ year }
+				navigation={ navigation }
+			/>
 		</>
 	);
 }

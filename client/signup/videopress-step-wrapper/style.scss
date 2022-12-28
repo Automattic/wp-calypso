@@ -319,10 +319,10 @@
 	@extend %videopress-form-button;
 	background: var(--videopress-color-background-button);
 	color: #070707;
-	border-radius: 0;
+	border-radius: 2px;
 
 	&:hover {
-		color: #070707;
+		color: #070707 !important;
 	}
 }
 

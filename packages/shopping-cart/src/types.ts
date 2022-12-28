@@ -507,6 +507,22 @@ export interface ResponseCartProduct {
 
 	price_tier_minimum_units?: number | null;
 	price_tier_maximum_units?: number | null;
+
+	/**
+	 * If set, is used to transform the usage/quantity of units used to derive the number of units
+	 * we want to bill the customer for, before applying the per unit cost.
+	 *
+	 * To put simply, the purpose of this attribute is to bill the customer at a different granularity compared to their usage.
+	 */
+	price_tier_transform_quantity_divide_by?: number | null;
+
+	/**
+	 * Used for rounding the number of units we want to bill the customer for (which is derived after dividing the
+	 * usage/quantity of units by the `price_tier_transform_quantity_divide_by` number).
+	 *
+	 * Used only when `$this->price_tier_transform_quantity_divide_by` is set. Possible values are: `up`, `down`
+	 */
+	price_tier_transform_quantity_round?: string | null;
 	is_domain_registration: boolean;
 	is_bundled: boolean;
 	is_sale_coupon_applied: boolean;
@@ -550,9 +566,28 @@ export interface ResponseCartProduct {
 	subscription_id?: string;
 	introductory_offer_terms?: IntroductoryOfferTerms;
 
+	/**
+	 * True if the cart item represents a purchase for a different user's site.
+	 */
+	is_gift_purchase?: boolean;
+
+	product_variants: ResponseCartProductVariant[];
+
 	// Temporary optional properties for the monthly pricing test
 	related_monthly_plan_cost_display?: string;
 	related_monthly_plan_cost_integer?: number;
+}
+
+export interface ResponseCartProductVariant {
+	product_id: number;
+	bill_period_in_months: number;
+	product_slug: string;
+	currency: string;
+	price_integer: number;
+	price_before_discounts_integer: number;
+	introductory_offer_terms:
+		| Record< string, never >
+		| Pick< IntroductoryOfferTerms, 'interval_unit' | 'interval_count' >;
 }
 
 export interface IntroductoryOfferTerms {
@@ -615,6 +650,8 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	selected_page_titles?: string[];
 	site_title?: string;
 	signup_flow?: string;
+	signup?: boolean;
+	headstart_theme?: string;
 }
 
 export interface GSuiteProductUser {

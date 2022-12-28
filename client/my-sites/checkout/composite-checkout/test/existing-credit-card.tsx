@@ -24,7 +24,7 @@ function TestWrapper( { paymentMethods, paymentProcessors = undefined } ) {
 			<QueryClientProvider client={ queryClient }>
 				<CheckoutProvider
 					paymentMethods={ paymentMethods }
-					initiallySelectedPaymentMethodId={ paymentMethods[ 0 ].id }
+					selectFirstAvailablePaymentMethod
 					paymentProcessors={ paymentProcessors ?? {} }
 				>
 					<CheckoutStepGroup>

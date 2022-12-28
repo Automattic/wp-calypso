@@ -53,8 +53,12 @@ const Title = styled.div`
 	${ ( props ) => ! props.showAsAccordion && 'margin-bottom: 8px;' };
 `;
 const Description = styled.div`
-	color: var( --studio-gray-60 );
+	color: var( --studio-gray-80 );
 	margin-bottom: 12px;
+	font-size: 14px;
+`;
+
+const Link = styled( ExternalLink )`
 	font-size: 14px;
 `;
 
@@ -95,9 +99,9 @@ const PluginDetailsSidebarUSP = ( {
 				links.map( ( link, idx ) => {
 					return (
 						<Fragment key={ idx }>
-							<ExternalLink icon href={ link.href }>
+							<Link icon href={ link.href }>
 								{ link.label }
-							</ExternalLink>
+							</Link>
 							<br />
 						</Fragment>
 					);

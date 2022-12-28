@@ -25,19 +25,11 @@ export const getPatternPreviewUrl = ( {
 	} );
 };
 
-// Runs the callback if the keys Enter or Spacebar are in the keyboard event
-export const handleKeyboard =
-	( callback: () => void ) =>
-	( { key }: { key: string } ) => {
-		if ( key === 'Enter' || key === ' ' ) {
-			callback();
-		}
-	};
-
 export function createCustomHomeTemplateContent(
 	stylesheet: string,
 	hasHeader: boolean,
-	hasFooter: boolean
+	hasFooter: boolean,
+	hasSections: boolean
 ) {
 	const content: string[] = [];
 	if ( hasHeader ) {
@@ -46,14 +38,13 @@ export function createCustomHomeTemplateContent(
 		);
 	}
 
-	content.push( `
-<!-- wp:group {"tagName":"main"} -->
-	<main class="wp-block-group">
-	<!-- wp:paragraph -->
-	<p></p>
-	<!-- /wp:paragraph -->
-	</main>
-<!-- /wp:group -->` );
+	if ( hasSections ) {
+		content.push( `
+	<!-- wp:group {"tagName":"main"} -->
+		<main class="wp-block-group">
+		</main>
+	<!-- /wp:group -->` );
+	}
 
 	if ( hasFooter ) {
 		content.push(

@@ -17,7 +17,6 @@ import SidebarSeparator from 'calypso/layout/sidebar/separator';
 import { isDiscoverEnabled } from 'calypso/reader/discover/helper';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getTagStreamUrl } from 'calypso/reader/route';
-import ReaderSidebarFollowedSites from 'calypso/reader/sidebar/reader-sidebar-followed-sites';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import {
 	toggleReaderSidebarLists,
@@ -169,12 +168,21 @@ export class ReaderSidebar extends Component {
 				) }
 
 				<SidebarSeparator />
-				<li>
-					<ReaderSidebarFollowedSites path={ path } />
-				</li>
+
+				<SidebarItem
+					className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
+						'sidebar-streams__following': true,
+					} ) }
+					label={ translate( 'Following' ) }
+					onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
+					materialIcon="check_circle"
+					link="/read"
+				/>
+
 				<li>
 					<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
 				</li>
+
 				<SidebarSeparator />
 
 				<SidebarItem

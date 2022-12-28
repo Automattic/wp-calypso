@@ -5,7 +5,6 @@ import {
 	setupSiteAfterCreation,
 } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
-import { VIDEOPRESS_ONBOARDING_FLOW_STEPS } from './constants';
 
 const noop = () => {};
 
@@ -84,10 +83,10 @@ export function generateFlows( {
 		},
 		{
 			name: 'with-theme',
-			steps: [ 'domains-theme-preselected', 'plans', 'user' ],
+			steps: [ 'user', 'domains-theme-preselected', 'plans' ],
 			destination: getChecklistThemeDestination,
 			description: 'Preselect a theme to activate/buy from an external source',
-			lastModified: '2020-08-11',
+			lastModified: '2022-11-28',
 			showRecaptcha: true,
 		},
 		{
@@ -115,6 +114,16 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
+			name: 'onboarding-2023-pricing-grid',
+			steps: isEnabled( 'signup/professional-email-step' )
+				? [ 'user', 'domains', 'emails', 'plans' ]
+				: [ 'user', 'domains', 'plans' ],
+			destination: getSignupDestination,
+			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
+			lastModified: '2020-12-10',
+			showRecaptcha: true,
+		},
+		{
 			name: 'newsletter',
 			steps: [ 'domains', 'plans-newsletter' ],
 			destination: ( dependencies ) =>
@@ -129,7 +138,7 @@ export function generateFlows( {
 		},
 		{
 			name: LINK_IN_BIO_FLOW,
-			steps: [ 'domains', 'plans-link-in-bio' ],
+			steps: [ 'domains-link-in-bio', 'plans-link-in-bio' ],
 			destination: ( dependencies ) =>
 				`/setup/link-in-bio/launchpad?siteSlug=${ encodeURIComponent( dependencies.siteSlug ) }`,
 			description: 'Beginning of the flow to create a link in bio',
@@ -142,7 +151,7 @@ export function generateFlows( {
 		},
 		{
 			name: LINK_IN_BIO_TLD_FLOW,
-			steps: [ 'domains', 'user', 'plans-link-in-bio' ],
+			steps: [ 'domains-link-in-bio-tld', 'user', 'plans-link-in-bio' ],
 			middleDestination: {
 				user: ( dependencies ) => `/setup/link-in-bio/patterns?tld=${ dependencies.tld }`,
 			},
@@ -301,18 +310,6 @@ export function generateFlows( {
 			description: 'P2 signup flow',
 			lastModified: '2020-09-01',
 			showRecaptcha: true,
-		},
-		{
-			name: 'videopress',
-			steps: VIDEOPRESS_ONBOARDING_FLOW_STEPS,
-			destination: ( dependencies ) =>
-				`/setup/completingPurchase?flow=videopress&siteSlug=${ encodeURIComponent(
-					dependencies.siteSlug
-				) }`,
-			description: 'VideoPress signup flow',
-			lastModified: '2022-11-01',
-			showRecaptcha: true,
-			postCompleteCallback: setupSiteAfterCreation,
 		},
 		{
 			name: 'videopress-account',

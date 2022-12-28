@@ -290,7 +290,7 @@
 			border: {
 				width: 1px;
 				style: solid;
-				radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				radius: 50%;
 			}
 		}
 	}
@@ -376,7 +376,7 @@
 		}
 
 		.wpnc__note .wpnc__note-icon img {
-			border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			border-radius: 50%;
 		}
 
 		.unread .wpnc__note-icon .wpnc__gridicon {
@@ -815,9 +815,42 @@
 	.wpnc__comment .wpnc__body .wpnc__body-content,
 	.wpnc__new_post .wpnc__body .wpnc__body-content,
 	.wpnc__automattcher .wpnc__body .wpnc__body-content,
-	.wpnc__writing_prompts_note .wpnc__body .wpnc__body-content {
+	.wpnc__blogging_prompts_note .wpnc__body .wpnc__body-content {
 		border-bottom: 1px solid var(--color-neutral-5);
 		padding-top: $wpnc__padding-small;
+	}
+
+	.wpnc__blogging_prompts_note {
+		svg.gridicons-bell-off {
+			position: absolute;
+			top: 10px;
+			right: 20px;
+
+			&:hover {
+				path.bell {
+					stroke: var(--color-link);
+				}
+
+				rect {
+					fill: var(--color-link);
+				}
+
+				g {
+					opacity: 1;
+				}
+			}
+		}
+
+		.wpnc__action-link {
+			&:only-child {
+				padding: 0;
+			}
+			&:hover {
+				svg.gridicons-pinned path {
+					fill: var(--color-link);
+				}
+			}
+		}
 	}
 
 	.wpnc__comment .wpnc__body .wpnc__body-content {

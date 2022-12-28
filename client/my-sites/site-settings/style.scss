@@ -657,6 +657,10 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 	@include break-xlarge {
 		flex-direction: row;
 
+		.site-settings__advanced-customization-notice-cta {
+			margin-right: 20px;
+		}
+
 		.site-settings__advanced-customization-notice-buttons {
 			padding-top: 0;
 		}
@@ -667,5 +671,8 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 	margin-bottom: 16px;
 	p {
 		font-style: italic;
+	}
+	.inline-support-link {
+		padding-left: 5px;
 	}
 }

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
@@ -110,6 +109,7 @@ class StatsModule extends Component {
 			'statsSearchTerms',
 			'statsClicks',
 			'statsReferrers',
+			'statsEmailsOpen',
 		];
 		return summary && includes( summarizedTypes, statType );
 	}
@@ -150,14 +150,13 @@ class StatsModule extends Component {
 		);
 
 		const summaryLink = this.getHref();
-		const displaySummaryLink = data && data.length >= 10;
+		const displaySummaryLink = data && ! this.props.hideSummaryLink;
 		const isAllTime = this.isAllTimeList();
 		const headerClass = classNames( 'stats-module__header', {
 			'is-refreshing': requesting && ! isLoading,
 		} );
 
-		const shouldShowNewModule =
-			showNewModules && isEnabled( 'stats/new-stats-module-component' ) && ! summary;
+		const shouldShowNewModule = showNewModules && ! summary;
 
 		return (
 			<>
@@ -172,16 +171,20 @@ class StatsModule extends Component {
 						title={ this.getModuleLabel() }
 						emptyMessage={ moduleStrings.empty }
 						showMore={
-							this.props.showSummaryLink && displaySummaryLink
+							displaySummaryLink
 								? {
 										url: this.getHref(),
-										label: this.props.translate( 'View all', {
-											context: 'Stats: Button label to expand a panel',
-										} ),
+										label:
+											data.length >= 10
+												? this.props.translate( 'View all', {
+														context: 'Stats: Button link to show more detailed stats information',
+												  } )
+												: this.props.translate( 'View details', {
+														context: 'Stats: Button label to see the detailed content of a panel',
+												  } ),
 								  }
 								: undefined
 						}
-						titleURL={ this.getHref() }
 						error={ hasError && <ErrorPanel /> }
 						loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
 						heroElement={ path === 'countryviews' && <Geochart query={ query } /> }
@@ -222,7 +225,7 @@ class StatsModule extends Component {
 								<StatsModulePlaceholder isLoading={ isLoading } />
 								<StatsList moduleName={ path } data={ data } useShortLabel={ useShortLabel } />
 							</div>
-							{ this.props.showSummaryLink && displaySummaryLink && (
+							{ this.props.showSummaryLink && data?.length >= 10 && (
 								<StatsModuleExpand href={ summaryLink } />
 							) }
 							{ summary && 'countryviews' === path && (

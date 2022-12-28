@@ -1,21 +1,36 @@
+import {
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+} from '@automattic/calypso-products';
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import config from './config';
 import { Edit } from './edit';
 
 const blockAttributes = {
+	defaultProductSlug: {
+		enum: config.plans,
+	},
 	productSlug: {
 		enum: config.plans,
 	},
+	domain: {
+		type: 'string',
+	},
+	planTypeOptions: {
+		type: 'array',
+		default: [],
+	},
 };
 
-function registerBlock() {
+function registerBlocks() {
 	registerBlockType( 'happy-blocks/pricing-plans', {
-		apiVersion: 2,
-		title: __( 'Upgrade', 'happy-blocks' ),
+		title: __( 'Upgrade Pricing Plan', 'happy-blocks' ),
 		icon: 'money-alt',
-		category: 'a8c',
-		description: __( 'List of available pricing plans', 'happy-blocks' ),
+		category: 'embed',
+		description: __( 'Pricing Plan upgrade block', 'happy-blocks' ),
 		keywords: [
 			__( 'pricing', 'happy-blocks' ),
 			__( 'plans', 'happy-blocks' ),
@@ -23,7 +38,42 @@ function registerBlock() {
 		],
 		attributes: blockAttributes,
 		edit: Edit,
+		variations: [
+			{
+				isDefault: true,
+				name: 'personal',
+				title: __( 'Upgrade Personal', 'happy-blocks' ),
+				description: __( 'Upgrade to Personal pricing plan', 'happy-blocks' ),
+				attributes: {
+					defaultProductSlug: PLAN_PERSONAL,
+				},
+			},
+			{
+				name: 'premium',
+				title: __( 'Upgrade Premium', 'happy-blocks' ),
+				description: __( 'Upgrade to Premium pricing plan', 'happy-blocks' ),
+				attributes: {
+					defaultProductSlug: PLAN_PREMIUM,
+				},
+			},
+			{
+				name: 'business',
+				title: __( 'Upgrade Business', 'happy-blocks' ),
+				description: __( 'Upgrade to Business pricing plan', 'happy-blocks' ),
+				attributes: {
+					defaultProductSlug: PLAN_BUSINESS,
+				},
+			},
+			{
+				name: 'ecommerce',
+				title: __( 'Upgrade eCommerce', 'happy-blocks' ),
+				description: __( 'Upgrade to eCommerce pricing plan', 'happy-blocks' ),
+				attributes: {
+					defaultProductSlug: PLAN_ECOMMERCE,
+				},
+			},
+		],
 	} );
 }
 
-registerBlock();
+registerBlocks();

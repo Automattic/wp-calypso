@@ -206,6 +206,12 @@ $videopress-background: #010101;
 				color: #000;
 			}
 		}
+
+		.domain-registration-suggestion__match-reasons {
+			svg.gridicon {
+				fill: var(--color-text-subtle);
+			}
+		}
 	}
 
 	.register-domain-step__next-page {

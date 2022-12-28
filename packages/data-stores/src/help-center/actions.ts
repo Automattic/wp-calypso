@@ -3,7 +3,6 @@ import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
 import { wpcomRequest } from '../wpcom-request-controls';
-import { HAS_SEEN_PREF_KEY } from './constants';
 import type { Location, APIFetchOptions, HelpCenterSite } from './types';
 
 export const setRouterState = ( history: Location[], index: number ) =>
@@ -13,35 +12,35 @@ export const setRouterState = ( history: Location[], index: number ) =>
 		index,
 	} as const );
 
-export const receiveHasSeenPromotionalPopover = ( value: boolean | undefined ) =>
+export const receiveHasSeenWhatsNewModal = ( value: boolean | undefined ) =>
 	( {
-		type: 'HELP_CENTER_SET_SEEN_PROMOTIONAL_POPOVER',
+		type: 'HELP_CENTER_SET_SEEN_WHATS_NEW_MODAL',
 		value,
 	} as const );
 
-export function* setHasSeenPromotionalPopover( value: boolean ) {
-	let response: { [ HAS_SEEN_PREF_KEY ]: boolean };
+export function* setHasSeenWhatsNewModal( value: boolean ) {
+	let response: {
+		has_seen_whats_new_modal: boolean;
+	};
 	if ( canAccessWpcomApis() ) {
 		response = yield wpcomRequest( {
-			path: `me/preferences`,
-			apiNamespace: 'wpcom/v2/',
-			apiVersion: '2',
-			method: 'POST',
+			path: `/block-editor/has-seen-whats-new-modal`,
+			apiNamespace: 'wpcom/v2',
+			method: 'PUT',
 			body: {
-				calypso_preferences: {
-					[ HAS_SEEN_PREF_KEY ]: value,
-				},
+				has_seen_whats_new_modal: value,
 			},
 		} );
 	} else {
 		response = yield apiFetch( {
 			global: true,
-			path: '/help-center/has-seen-promotion',
-			method: 'POST',
+			path: `/wpcom/v2/block-editor/has-seen-whats-new-modal`,
+			method: 'PUT',
+			data: { has_seen_whats_new_modal: value },
 		} as APIFetchOptions );
 	}
 
-	return receiveHasSeenPromotionalPopover( response[ HAS_SEEN_PREF_KEY ] );
+	return receiveHasSeenWhatsNewModal( response.has_seen_whats_new_modal );
 }
 
 export const resetRouterState = () =>
@@ -135,7 +134,7 @@ export type HelpCenterAction =
 			| typeof setRouterState
 			| typeof resetRouterState
 			| typeof resetStore
-			| typeof receiveHasSeenPromotionalPopover
+			| typeof receiveHasSeenWhatsNewModal
 			| typeof setMessage
 			| typeof setUserDeclaredSite
 			| typeof setUserDeclaredSiteUrl
@@ -144,4 +143,4 @@ export type HelpCenterAction =
 			| typeof setUnreadCount
 			| typeof setIsMinimized
 	  >
-	| GeneratorReturnType< typeof setHasSeenPromotionalPopover | typeof setShowHelpCenter >;
+	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;

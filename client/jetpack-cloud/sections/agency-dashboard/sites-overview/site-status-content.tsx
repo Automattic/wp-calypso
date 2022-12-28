@@ -11,6 +11,7 @@ import Tooltip from 'calypso/components/tooltip';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboard/selectors';
+import ToggleActivateMonitoring from '../downtime-monitoring/toggle-activate-monitoring';
 import SiteSetFavorite from './site-set-favorite';
 import { getRowMetaData, getProductSlugFromProductType } from './utils';
 import type { AllowedTypes, SiteData } from './types';
@@ -42,7 +43,7 @@ export default function SiteStatusContent( {
 	} = getRowMetaData( rows, type, isLargeScreen );
 
 	const siteId = rows.site.value.blog_id;
-	const siteUrl = value?.url;
+	const siteUrl = rows.site.value.url;
 
 	const isLicenseSelected = useSelector( ( state ) =>
 		hasSelectedLicensesOfType( state, siteId, type )
@@ -145,6 +146,20 @@ export default function SiteStatusContent( {
 		);
 	}
 
+	const isDownTimeMonitorEnabled = isEnabled(
+		'jetpack/partner-portal-downtime-monitoring-updates'
+	);
+
+	if ( isDownTimeMonitorEnabled && type === 'monitor' ) {
+		return (
+			<ToggleActivateMonitoring
+				site={ rows.site.value }
+				settings={ rows.monitor.settings }
+				status={ status }
+			/>
+		);
+	}
+
 	let content;
 
 	switch ( status ) {
@@ -177,30 +192,21 @@ export default function SiteStatusContent( {
 			break;
 		}
 		case 'inactive': {
-			if ( ! isEnabled( 'jetpack/partner-portal-issue-multiple-licenses' ) ) {
-				content = (
+			content = ! isLicenseSelected ? (
+				<button onClick={ handleSelectLicenseAction }>
 					<span className="sites-overview__status-select-license">
 						<Gridicon icon="plus-small" size={ 16 } />
 						<span>{ translate( 'Add' ) }</span>
 					</span>
-				);
-			} else {
-				content = ! isLicenseSelected ? (
-					<button onClick={ handleSelectLicenseAction }>
-						<span className="sites-overview__status-select-license">
-							<Gridicon icon="plus-small" size={ 16 } />
-							<span>{ translate( 'Add' ) }</span>
-						</span>
-					</button>
-				) : (
-					<button onClick={ handleDeselectLicenseAction }>
-						<span className="sites-overview__status-unselect-license">
-							<Gridicon icon="checkmark" size={ 16 } />
-							<span>{ translate( 'Selected' ) }</span>
-						</span>
-					</button>
-				);
-			}
+				</button>
+			) : (
+				<button onClick={ handleDeselectLicenseAction }>
+					<span className="sites-overview__status-unselect-license">
+						<Gridicon icon="checkmark" size={ 16 } />
+						<span>{ translate( 'Selected' ) }</span>
+					</span>
+				</button>
+			);
 			break;
 		}
 	}

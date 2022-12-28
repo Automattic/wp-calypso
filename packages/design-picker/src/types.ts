@@ -1,7 +1,6 @@
-import type { DEVICES_SUPPORTED, FONT_PAIRINGS } from './constants';
+import type { FONT_PAIRINGS } from './constants';
 import type { ValuesType } from 'utility-types';
 
-export type Device = ValuesType< ValuesType< typeof DEVICES_SUPPORTED > >;
 export type Font = ValuesType< ValuesType< typeof FONT_PAIRINGS > >;
 
 /** @deprecated used for Gutenboarding (/new flow) */
@@ -42,6 +41,8 @@ export interface StyleVariationPreview {
 }
 
 export interface StyleVariationPreviewColorPalette {
+	base?: string;
+	contrast?: string;
 	background?: string;
 	foreground?: string;
 	primary?: string;
@@ -75,7 +76,8 @@ export type DesignType =
 	| 'premium'
 	| 'standard' // The design is free.
 	| 'default' // The default design and it means user skipped the step and didn't select any design.
-	| 'anchor-fm';
+	| 'anchor-fm'
+	| 'assembler';
 
 export interface Design {
 	slug: string;

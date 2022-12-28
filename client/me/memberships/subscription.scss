@@ -115,20 +115,3 @@
 		font-size: 0.75rem;
 	}
 }
-
-.memberships__subscription-remove {
-	color: var(--color-error);
-	text-align: left;
-	width: 100%;
-	cursor: hand;
-
-	&:active,
-	&:focus,
-	&:hover {
-		color: var(--color-error-60);
-	}
-
-	.accessible-focus &:focus {
-		box-shadow: 0 0 0 2px var(--color-error-light);
-	}
-}

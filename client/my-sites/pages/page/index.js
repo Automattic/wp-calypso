@@ -20,6 +20,7 @@ import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
 import PostActionsEllipsisMenuPromote from 'calypso/my-sites/post-type-list/post-actions-ellipsis-menu/promote';
 import PostActionsEllipsisMenuQRCode from 'calypso/my-sites/post-type-list/post-actions-ellipsis-menu/qrcode';
 import { preloadEditor } from 'calypso/sections-preloaders';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEditorDuplicatePostPath } from 'calypso/state/editor/selectors';
 import { infoNotice } from 'calypso/state/notices/actions';
 import { isFrontPage, isPostsPage } from 'calypso/state/pages/selectors';
@@ -73,16 +74,20 @@ class Page extends Component {
 		setPreviewUrl: PropTypes.func.isRequired,
 		setLayoutFocus: PropTypes.func.isRequired,
 		recordEvent: PropTypes.func.isRequired,
-		recordMoreOptions: PropTypes.func.isRequired,
-		recordPageTitle: PropTypes.func.isRequired,
-		recordEditPage: PropTypes.func.isRequired,
-		recordViewPage: PropTypes.func.isRequired,
-		recordStatsPage: PropTypes.func.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
 		onShadowStatusChange: noop,
 		showPublishedStatus: false,
+	};
+
+	recordEllipsisMenuItemClickEvent = ( item ) => {
+		this.props.recordTracksEvent( 'calypso_pages_ellipsismenu_item_click', {
+			page_type: 'real',
+			blog_id: this.props.site.ID,
+			item,
+		} );
 	};
 
 	// Construct a link to the Site the page belongs too
@@ -94,7 +99,8 @@ class Page extends Component {
 		const { isPreviewable, page, previewURL } = this.props;
 
 		if ( page.status && page.status === 'publish' ) {
-			this.props.recordViewPage();
+			this.recordEllipsisMenuItemClickEvent( 'viewpage' );
+			this.props.recordEvent( 'Clicked View Page' );
 		}
 
 		if ( ! isPreviewable && typeof window === 'object' ) {
@@ -208,7 +214,7 @@ class Page extends Component {
 
 		if ( this.props.wpAdminGutenberg ) {
 			return (
-				<PopoverMenuItem onClick={ this.props.recordEditPage } href={ this.props.editorUrl }>
+				<PopoverMenuItem onClick={ this.editPage } href={ this.props.editorUrl }>
 					<Gridicon icon="pencil" size={ 18 } />
 					{ this.props.translate( 'Edit' ) }
 				</PopoverMenuItem>
@@ -356,7 +362,13 @@ class Page extends Component {
 		if ( ! config.isEnabled( 'post-list/qr-code-link' ) ) {
 			return null;
 		}
-		return <PostActionsEllipsisMenuQRCode globalId={ this.props.page.global_ID } key="qrcode" />;
+		return (
+			<PostActionsEllipsisMenuQRCode
+				globalId={ this.props.page.global_ID }
+				key="qrcode"
+				onClick={ this.viewPageQrCode }
+			/>
+		);
 	}
 
 	getCopyLinkItem() {
@@ -381,8 +393,9 @@ class Page extends Component {
 		);
 	}
 
-	statsPage = () => {
-		this.props.recordStatsPage();
+	viewStats = () => {
+		this.recordEllipsisMenuItemClickEvent( 'viewstats' );
+		this.props.recordEvent( 'Clicked Stats Page' );
 		pageRouter( statsLinkForPage( this.props.page, this.props.site ) );
 	};
 
@@ -392,7 +405,7 @@ class Page extends Component {
 		}
 
 		return (
-			<PopoverMenuItem onClick={ this.statsPage }>
+			<PopoverMenuItem onClick={ this.viewStats }>
 				<Gridicon icon="stats" size={ 18 } />
 				{ this.props.translate( 'Stats' ) }
 			</PopoverMenuItem>
@@ -400,8 +413,12 @@ class Page extends Component {
 	}
 
 	editPage = () => {
-		this.props.recordEditPage();
-		pageRouter( this.props.editorUrl );
+		this.recordEllipsisMenuItemClickEvent( 'editpage' );
+		this.props.recordEvent( 'Clicked Edit Page' );
+
+		if ( ! this.props.wpAdminGutenberg ) {
+			pageRouter( this.props.editorUrl );
+		}
 	};
 
 	getPageStatusInfo() {
@@ -580,7 +597,7 @@ class Page extends Component {
 									? translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } )
 									: translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } )
 							}
-							onClick={ this.props.recordPageTitle }
+							onClick={ () => this.clickPageTitle( canEdit ) }
 							onMouseOver={ preloadEditor }
 							onFocus={ preloadEditor }
 							data-tip-target={ 'page-' + page.slug }
@@ -736,11 +753,22 @@ class Page extends Component {
 		this.props.recordEvent( 'Clicked Delete Page' );
 	};
 
+	clickPageTitle = ( canEdit ) => {
+		this.props.recordTracksEvent( 'calypso_pages_page_title_click', {
+			page_type: 'real',
+			blog_id: this.props.siteId,
+			can_edit: canEdit,
+		} );
+		this.props.recordEvent( 'Clicked Page Title' );
+	};
+
 	copyPage = () => {
+		this.recordEllipsisMenuItemClickEvent( 'copypage' );
 		this.props.recordEvent( 'Clicked Copy Page' );
 	};
 
 	exportPage = () => {
+		this.recordEllipsisMenuItemClickEvent( 'exportpage' );
 		this.props.recordEvent( 'Clicked Export Page' );
 		const { page } = this.props;
 
@@ -756,17 +784,27 @@ class Page extends Component {
 		saveAs( blob, fileName );
 	};
 
+	viewPageQrCode = () => {
+		this.recordEllipsisMenuItemClickEvent( 'qrcode' );
+	};
+
 	copyPageLink = () => {
+		this.recordEllipsisMenuItemClickEvent( 'copylink' );
+		this.props.recordEvent( 'Clicked Copy Page Link' );
+
 		this.props.infoNotice( this.props.translate( 'Link copied to clipboard.' ), {
 			duration: 3000,
 		} );
-		this.props.recordEvent( 'Clicked Copy Page Link' );
 	};
 
 	handleMenuToggle = ( isVisible ) => {
 		if ( isVisible ) {
+			this.props.recordTracksEvent( 'calypso_pages_ellipsismenu_open_click', {
+				page_type: 'real',
+				blog_id: this.props.siteId,
+			} );
 			// record a GA event when the menu is opened
-			this.props.recordMoreOptions();
+			this.props.recordEvent( 'Clicked More Options Menu' );
 			preloadEditor();
 		}
 	};
@@ -808,12 +846,8 @@ const mapDispatch = {
 	restorePost,
 	setPreviewUrl,
 	setLayoutFocus,
+	recordTracksEvent,
 	recordEvent,
-	recordMoreOptions: () => recordEvent( 'Clicked More Options Menu' ),
-	recordPageTitle: () => recordEvent( 'Clicked Page Title' ),
-	recordEditPage: () => recordEvent( 'Clicked Edit Page' ),
-	recordViewPage: () => recordEvent( 'Clicked View Page' ),
-	recordStatsPage: () => recordEvent( 'Clicked Stats Page' ),
 	updateSiteFrontPage,
 };
 

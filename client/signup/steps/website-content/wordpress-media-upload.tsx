@@ -4,9 +4,11 @@ import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, MouseEvent, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useAddMedia } from 'calypso/data/media/use-add-media';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { LabelLink, SubLabel } from 'calypso/signup/accordion-form/form-components';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { Media, MediaUploadType } from 'calypso/state/signup/steps/website-content/schema';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -141,22 +143,52 @@ export function WordpressMediaUpload( {
 	onRemoveImage,
 	media = { caption: '', url: '', mediaType: 'IMAGE', thumbnailUrl: '', uploadID: '' },
 }: WordpressMediaUploadProps ) {
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+	const addMedia = useAddMedia();
 	const { url, caption, mediaType, thumbnailUrl } = media ?? {};
 	const [ uploadState, setUploadState ] = useState(
 		url ? UPLOAD_STATES.COMPLETED : UPLOAD_STATES.NOT_SELECTED
 	);
 	const [ imageCaption, setImageCaption ] = useState( caption );
 	const [ isImageLoading, setIsImageLoading ] = useState( false );
-	const translate = useTranslate();
-	const addMedia = useAddMedia();
+
+	const allowedFileTypes = mediaType === 'VIDEO' ? allowedVideoExtensions : allowedImageExtensions;
+	const allowedFileTypesString = allowedFileTypes.map( ( type ) => `.${ type }` ).join();
+
+	const isFileValid = ( fileList: FileList | null ): boolean => {
+		if ( ! fileList ) {
+			return false;
+		}
+		const [ file ] = Array.from( fileList );
+		const { name: fileName = '' } = file;
+
+		const fileParts = fileName.split( '.' );
+		const extension = fileParts[ fileParts.length - 1 ];
+
+		if ( allowedFileTypes.includes( extension ) ) {
+			return true;
+		}
+		return false;
+	};
+
 	const onPick = async function ( event: ChangeEvent< HTMLInputElement > ) {
-		const file = event.target.files;
+		const fileList = event.target.files;
+		if ( ! isFileValid( fileList ) ) {
+			dispatch(
+				errorNotice( translate( 'This type of file is not allowed for this section' ), {
+					id: 'INVALID_FILE_NOTICE',
+				} )
+			);
+			return;
+		}
 		setIsImageLoading( true );
 		setImageCaption( '' );
 		onMediaUploadStart && onMediaUploadStart( { mediaIndex } );
 		setUploadState( UPLOAD_STATES.IN_PROGRESS );
+
 		try {
-			const [ media ] = await addMedia( file, site );
+			const [ media ] = await addMedia( fileList, site );
 			const { title, URL, ID, thumbnails, icon } = media;
 			setImageCaption( title );
 			onMediaUploadComplete( {
@@ -179,9 +211,9 @@ export function WordpressMediaUpload( {
 				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
 				blog_id: site?.ID,
 				extra: {
-					filename: file?.item( 0 )?.name,
-					filesize: file?.item( 0 )?.size,
-					'files-picked': file?.length,
+					filename: fileList?.item( 0 )?.name,
+					filesize: fileList?.item( 0 )?.size,
+					'files-picked': fileList?.length,
 					'error-message': e.message + '; Stack: ' + e.stack,
 				},
 			} );
@@ -193,10 +225,6 @@ export function WordpressMediaUpload( {
 		setImageCaption( '' );
 		onRemoveImage && onRemoveImage( { mediaIndex } );
 	};
-
-	const allowedFileTypes = mediaType === 'VIDEO' ? allowedVideoExtensions : allowedImageExtensions;
-
-	const allowedFileTypesString = allowedFileTypes.map( ( type ) => `.${ type }` ).join();
 
 	switch ( uploadState ) {
 		case UPLOAD_STATES.COMPLETED:

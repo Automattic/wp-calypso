@@ -4,3 +4,23 @@
 	margin-right: auto;
 	max-width: 1040px;
 }
+
+// Customization for the /themes page.
+.is-section-themes-i4 .layout__content > .upsell-nudge {
+	max-width: 100%;
+	margin: 40px 0 0 0;
+}
+
+// Customization for the /stats page.
+.is-section-stats .layout__content > .upsell-nudge {
+	max-width: 1224px;
+	margin: -25px max(calc(50% - 612px), 32px) 0;
+
+	@media ( max-width: 660px ) {
+		margin: -15px 16px 0;
+	}
+
+	@media ( min-width: 659px ) and ( max-width: 782px ) {
+		margin: -10px 32px 0;
+	}
+}

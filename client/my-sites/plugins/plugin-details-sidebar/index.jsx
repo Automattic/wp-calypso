@@ -25,6 +25,7 @@ const PluginDetailsSidebar = ( {
 		demo_url = null,
 		documentation_url = null,
 		requirements = {},
+		premium_slug,
 	},
 } ) => {
 	const translate = useTranslate();
@@ -61,8 +62,25 @@ const PluginDetailsSidebar = ( {
 			label: translate( 'View documentation' ),
 		} );
 
+	const isPremiumVersionAvailable = !! premium_slug;
+	const premiumVersionLink = `/plugins/${ premium_slug }/${ selectedSite?.slug || '' }`;
+
 	return (
 		<div className="plugin-details-sidebar__plugin-details-content">
+			{ isPremiumVersionAvailable && (
+				<PluginDetailsSidebarUSP
+					id="demo"
+					title={ translate( 'Premium version available' ) }
+					description={ translate(
+						'This plugin has a premium version that might suit your needs better.'
+					) }
+					links={ [
+						{ href: premiumVersionLink, label: translate( 'Check out the premium version' ) },
+					] }
+					first
+				/>
+			) }
+
 			{ isWooCommercePluginRequired && (
 				<PluginDetailsSidebarUSP
 					id="woo"
@@ -75,7 +93,7 @@ const PluginDetailsSidebar = ( {
 							},
 						}
 					) }
-					first
+					first={ ! isPremiumVersionAvailable }
 				/>
 			) }
 

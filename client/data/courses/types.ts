@@ -1,4 +1,8 @@
-export type CourseSlug = 'blogging-quick-start';
+import { COURSE_SLUGS } from './constants';
+
+type ValueOf< T > = T[ keyof T ];
+
+export type CourseSlug = ValueOf< typeof COURSE_SLUGS >;
 
 export type VideoSlug = string;
 
@@ -19,6 +23,8 @@ export interface Course {
 		action: string;
 		url: string;
 	};
-	videos: CourseVideo[];
+	videos: {
+		[ key: string ]: CourseVideo;
+	};
 	completions: { [ key in VideoSlug ]: boolean | boolean[] };
 }

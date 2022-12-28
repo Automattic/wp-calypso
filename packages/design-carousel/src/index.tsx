@@ -1,4 +1,3 @@
-import { Gridicon } from '@automattic/components';
 import { useStarterDesignsQuery } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
@@ -10,9 +9,12 @@ import { Item } from './item';
 import 'swiper/dist/css/swiper.css';
 import type { Design } from '@automattic/design-picker/src/types';
 
-type Props = { onPick: ( design: Design ) => void };
+type DesignCarouselProps = {
+	onPick: ( design: Design ) => void;
+	selectedDesignSlugs?: string[];
+};
 
-export default function DesignCarousel( { onPick }: Props ) {
+export default function DesignCarousel( { onPick, selectedDesignSlugs }: DesignCarouselProps ) {
 	const { __ } = useI18n();
 
 	const swiperInstance = useRef< Swiper | null >( null );
@@ -25,10 +27,24 @@ export default function DesignCarousel( { onPick }: Props ) {
 		_locale: locale,
 	} );
 
-	const staticDesigns = allDesigns?.static?.designs.slice( 0, 10 ) || [];
+	let selectedDesigns = allDesigns?.static.designs;
+
+	if ( selectedDesigns && selectedDesignSlugs ) {
+		// If we have a restricted set of designs, filter out all unwanted designs
+		const filteredDesigns = selectedDesigns.filter( ( design ) =>
+			selectedDesignSlugs.includes( design.slug )
+		);
+
+		// Now order the filtered set based on the supplied slugs.
+		selectedDesigns = selectedDesignSlugs
+			.map( ( selectedDesignSlug ) =>
+				filteredDesigns.find( ( design ) => design.slug === selectedDesignSlug )
+			)
+			.filter( ( selectedDesign ) => !! selectedDesign ) as Design[];
+	}
 
 	useEffect( () => {
-		if ( staticDesigns ) {
+		if ( selectedDesigns ) {
 			swiperInstance.current = new Swiper( '.swiper-container', {
 				autoHeight: true,
 				mousewheel: true,
@@ -47,9 +63,9 @@ export default function DesignCarousel( { onPick }: Props ) {
 		return () => {
 			swiperInstance.current?.destroy();
 		};
-	}, [ staticDesigns ] );
+	}, [ selectedDesigns ] );
 
-	if ( ! staticDesigns ) {
+	if ( ! selectedDesigns ) {
 		return null;
 	}
 
@@ -57,7 +73,7 @@ export default function DesignCarousel( { onPick }: Props ) {
 		<div className="design-carousel">
 			<div className="design-carousel__carousel swiper-container">
 				<div className="swiper-wrapper">
-					{ staticDesigns.map( ( design ) => (
+					{ selectedDesigns.map( ( design ) => (
 						<div
 							className="design-carousel__slide swiper-slide"
 							key={ `${ design.slug }-slide-item` }
@@ -81,13 +97,12 @@ export default function DesignCarousel( { onPick }: Props ) {
 					className="design-carousel__select"
 					isPrimary
 					onClick={ () => {
-						if ( swiperInstance.current ) {
-							onPick( staticDesigns[ swiperInstance.current?.activeIndex ] );
+						if ( swiperInstance.current && selectedDesigns ) {
+							onPick( selectedDesigns[ swiperInstance.current?.activeIndex ] );
 						}
 					} }
 				>
 					<span>{ __( 'Continue' ) }</span>
-					<Gridicon icon="heart" size={ 18 } />
 				</Button>
 			</div>
 		</div>

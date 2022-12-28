@@ -186,10 +186,6 @@
 
 		.reader-post-card__post {
 			margin-top: 0;
-
-			@include breakpoint-deprecated( "<960px" ) {
-				flex-direction: row;
-			}
 		}
 
 		.reader-post-card__post-details {
@@ -425,7 +421,6 @@
 	}
 
 	img {
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 100%;
 	}
 }
@@ -663,7 +658,6 @@
 }
 
 .reader-post-card__gallery-circle {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
 	width: 7px;
 	height: 7px;

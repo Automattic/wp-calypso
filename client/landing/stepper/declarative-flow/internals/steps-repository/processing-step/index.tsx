@@ -1,7 +1,14 @@
-import { StepContainer, isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import {
+	StepContainer,
+	isNewsletterOrLinkInBioFlow,
+	isLinkInBioFlow,
+	isFreeFlow,
+	ECOMMERCE_FLOW,
+} from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
+import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -9,6 +16,7 @@ import { useInterval } from 'calypso/lib/interval';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
 import { useVideoPressLoadingMessages } from './hooks/use-videopress-loading-messages';
+import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -108,36 +116,48 @@ const ProcessingStep: Step = function ( props ) {
 
 	const flowName = props.flow || '';
 	const isJetpackPowered = isNewsletterOrLinkInBioFlow( flowName );
+	const isWooCommercePowered = flowName === ECOMMERCE_FLOW;
+
+	// Currently we have the Domains and Plans only for link in bio
+	if ( isLinkInBioFlow( flowName ) || isFreeFlow( flowName ) ) {
+		return <TailoredFlowPreCheckoutScreen flowName={ flowName } />;
+	}
 
 	return (
-		<StepContainer
-			shouldHideNavButtons={ true }
-			hideFormattedHeader={ true }
-			stepName="processing-step"
-			isHorizontalLayout={ true }
-			stepContent={
-				<div className="processing-step">
-					<h1 className="processing-step__progress-step">{ getCurrentMessage() }</h1>
-					{ progress >= 0 ? (
-						<div className="processing-step__content woocommerce-install__content">
-							<div
-								className="processing-step__progress-bar"
-								style={
-									{
-										'--progress': simulatedProgress > 1 ? 1 : simulatedProgress,
-									} as React.CSSProperties
-								}
-							/>
+		<>
+			<DocumentHead title={ __( 'Processing' ) } />
+			<StepContainer
+				shouldHideNavButtons={ true }
+				hideFormattedHeader={ true }
+				stepName="processing-step"
+				isHorizontalLayout={ true }
+				stepContent={
+					<>
+						<div className="processing-step">
+							<h1 className="processing-step__progress-step">{ getCurrentMessage() }</h1>
+							{ progress >= 0 ? (
+								<div className="processing-step__content woocommerce-install__content">
+									<div
+										className="processing-step__progress-bar"
+										style={
+											{
+												'--progress': simulatedProgress > 1 ? 1 : simulatedProgress,
+											} as React.CSSProperties
+										}
+									/>
+								</div>
+							) : (
+								<LoadingEllipsis />
+							) }
 						</div>
-					) : (
-						<LoadingEllipsis />
-					) }
-				</div>
-			}
-			stepProgress={ stepProgress }
-			recordTracksEvent={ recordTracksEvent }
-			showJetpackPowered={ isJetpackPowered }
-		/>
+					</>
+				}
+				stepProgress={ stepProgress }
+				recordTracksEvent={ recordTracksEvent }
+				showJetpackPowered={ isJetpackPowered }
+				showFooterWooCommercePowered={ isWooCommercePowered }
+			/>
+		</>
 	);
 };
 

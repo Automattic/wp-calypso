@@ -288,7 +288,6 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 			}
 
 			const parsedBlogURL = getUrlParts( response.blog_details.url );
-
 			const siteSlug = parsedBlogURL.hostname;
 			const siteId = response.blog_details.blogid;
 			const providedDependencies = {
@@ -932,65 +931,6 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 			fetchSitesAndUser( siteSlug, () => callback( undefined, providedDependencies ), reduxStore );
 		} else {
 			callback( isEmpty( errors ) ? undefined : [ errors ], providedDependencies );
-		}
-	} );
-}
-
-// Similar to createSite but also sets the site title and description
-export function createVideoPressSite( callback, dependencies, stepData, reduxStore ) {
-	const { site, siteTitle = '', siteDescription = '' } = stepData;
-	const locale = getLocaleSlug();
-
-	const data = {
-		blog_name: site,
-		blog_title: siteTitle,
-		public: Visibility.PublicNotIndexed,
-		options: {
-			theme: 'pub/twentytwentytwo',
-			site_vertical_name: 'videomaker',
-			timezone_string: guessTimezone(),
-			wpcom_public_coming_soon: 1,
-		},
-		validate: false,
-		locale,
-		lang_id: getLanguage( locale ).value,
-		client_id: config( 'wpcom_signup_id' ),
-		client_secret: config( 'wpcom_signup_key' ),
-	};
-
-	wpcom.req.post( '/sites/new', data, function ( errors, response ) {
-		let providedDependencies;
-		let siteSlug;
-
-		if ( !! response && response.blog_details ) {
-			const parsedBlogURL = getUrlParts( response.blog_details.url );
-			siteSlug = parsedBlogURL.hostname;
-
-			providedDependencies = { siteSlug };
-		}
-
-		const callbackWithErrorChecking = ( e ) =>
-			callback( isEmpty( e ) ? undefined : [ e ], providedDependencies );
-
-		if ( isUserLoggedIn( reduxStore.getState() ) && isEmpty( errors ) ) {
-			fetchSitesAndUser(
-				siteSlug,
-				() => {
-					if ( siteDescription ) {
-						wpcom.req.post(
-							`/sites/${ siteSlug }/settings`,
-							{ apiVersion: '1.4' },
-							{ blogdescription: siteDescription },
-							callbackWithErrorChecking
-						);
-					} else {
-						callbackWithErrorChecking( undefined );
-					}
-				},
-				reduxStore
-			);
-		} else {
-			callbackWithErrorChecking( errors );
 		}
 	} );
 }

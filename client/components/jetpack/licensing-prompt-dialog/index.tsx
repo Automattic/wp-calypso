@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
@@ -47,11 +46,9 @@ function LicensingPromptDialog( { siteId }: Props ) {
 		dispatch( recordTracksEvent( 'calypso_user_license_modal_view' ) );
 	}, [ dispatch ] );
 
-	let titleToRender =
-		isEnabled( 'jetpack/pricing-page-rework-v1' ) &&
-		window.location.pathname.startsWith( JPC_PATH_PLANS )
-			? translate( 'Jetpack is successfully installed' )
-			: '';
+	let titleToRender = window.location.pathname.startsWith( JPC_PATH_PLANS )
+		? translate( 'Jetpack is successfully installed' )
+		: '';
 
 	if ( ! titleToRender ) {
 		if ( hasOneDetachedLicense ) {
@@ -69,53 +66,40 @@ function LicensingPromptDialog( { siteId }: Props ) {
 		}
 	}
 
-	let instructions: React.ReactNode = preventWidows(
-		translate(
-			'Find the license key in your purchase confirmation email to activate your new Jetpack features.'
-		)
+	const instructions = (
+		<>
+			<b>
+				{ hasOneDetachedLicense
+					? translate(
+							'You have a %(productName)s license available. You can activate it now if you want.',
+							{
+								args: {
+									productName: detachedUserLicense?.product,
+								},
+							}
+					  )
+					: translate(
+							'You have licenses available for some Jetpack features. You can activate them now if you want.'
+					  ) }
+			</b>
+			<ul>
+				<li>
+					{ translate( 'You can find the license keys in your purchase confirmation email.' ) }
+				</li>
+				<li>
+					{ translate( 'Or in {{purchases/}}', {
+						components: {
+							purchases: (
+								<Button className="user-purchases-link" href="/me/purchases" target="_blank" plain>
+									https://wordpress.com/me/purchases
+								</Button>
+							),
+						},
+					} ) }
+				</li>
+			</ul>
+		</>
 	);
-
-	if ( isEnabled( 'jetpack/pricing-page-rework-v1' ) ) {
-		instructions = (
-			<>
-				<b>
-					{ hasOneDetachedLicense
-						? translate(
-								'You have a %(productName)s license available. You can activate it now if you want.',
-								{
-									args: {
-										productName: detachedUserLicense?.product,
-									},
-								}
-						  )
-						: translate(
-								'You have licenses available for some Jetpack features. You can activate them now if you want.'
-						  ) }
-				</b>
-				<ul>
-					<li>
-						{ translate( 'You can find the license keys in your purchase confirmation email.' ) }
-					</li>
-					<li>
-						{ translate( 'Or in {{purchases/}}', {
-							components: {
-								purchases: (
-									<Button
-										className="user-purchases-link"
-										href="/me/purchases"
-										target="_blank"
-										plain
-									>
-										https://wordpress.com/me/purchases
-									</Button>
-								),
-							},
-						} ) }
-					</li>
-				</ul>
-			</>
-		);
-	}
 
 	const activateProductClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_user_license_modal_activate_click' ) );
@@ -134,9 +118,7 @@ function LicensingPromptDialog( { siteId }: Props ) {
 	return (
 		<Dialog
 			additionalClassNames="licensing-prompt-dialog"
-			additionalOverlayClassNames={
-				isEnabled( 'jetpack/pricing-page-rework-v1' ) ? 'licensing-prompt-dialog__backdrop' : ''
-			}
+			additionalOverlayClassNames="licensing-prompt-dialog__backdrop"
 			isVisible={ showLicensesDialog }
 			onClose={ closeDialog }
 			shouldCloseOnEsc

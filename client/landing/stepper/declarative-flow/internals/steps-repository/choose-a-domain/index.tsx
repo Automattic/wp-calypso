@@ -2,6 +2,7 @@
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE, PRODUCTS_LIST_STORE } from 'calypso/landing/stepper/stores';
@@ -97,10 +98,10 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		return (
 			<FormattedHeader
 				id="choose-a-domain-header"
-				headerText="Choose a domain"
+				headerText={ __( 'Choose a domain' ) }
 				subHeaderText={
 					<>
-						{ __( 'Make your video site shine with a custom domain. Not sure yet ?' ) }
+						{ __( 'Make your video site shine with a custom domain. Not sure yet?' ) }
 						<button
 							className="button navigation-link step-container__navigation-link has-underline is-borderless"
 							onClick={ onSkip }
@@ -117,18 +118,21 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	const stepContent = isVideoPressFlow ? getVideoPressFlowStepContent() : getDefaultStepContent();
 
 	return (
-		<StepContainer
-			stepName="chooseADomain"
-			shouldHideNavButtons={ isVideoPressFlow }
-			goBack={ goBack }
-			goNext={ goNext }
-			isHorizontalLayout={ false }
-			isWideLayout={ true }
-			isLargeSkipLayout={ false }
-			stepContent={ stepContent }
-			recordTracksEvent={ recordTracksEvent }
-			formattedHeader={ getFormattedHeader() }
-		/>
+		<>
+			<QueryProductsList />
+			<StepContainer
+				stepName="chooseADomain"
+				shouldHideNavButtons={ isVideoPressFlow }
+				goBack={ goBack }
+				goNext={ goNext }
+				isHorizontalLayout={ false }
+				isWideLayout={ true }
+				isLargeSkipLayout={ false }
+				stepContent={ stepContent }
+				recordTracksEvent={ recordTracksEvent }
+				formattedHeader={ getFormattedHeader() }
+			/>
+		</>
 	);
 };
 

@@ -42,8 +42,7 @@ export class BulkSelect extends Component {
 		const { translate, ariaLabel = translate( 'Select All' ) } = this.props;
 		const isChecked = this.hasAllElementsSelected();
 		const inputClasses = classNames( 'bulk-select__box', {
-			// We need to add this CSS class to be able to test if the input if checked,
-			// since Enzyme still doesn't support :checked pseudoselector.
+			// TODO: We might be able to remove this class in favor of the :checked pseudoselector.
 			'is-checked': isChecked,
 		} );
 

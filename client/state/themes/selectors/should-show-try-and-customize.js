@@ -1,11 +1,13 @@
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import {
 	isPremiumThemeAvailable,
 	isThemeActive,
 	isThemeGutenbergFirst,
 	isThemePremium,
+	isWpcomTheme,
 } from 'calypso/state/themes/selectors';
 
 import 'calypso/state/themes/init';
@@ -37,6 +39,13 @@ export function shouldShowTryAndCustomize( state, themeId, siteId ) {
 		) {
 			return false;
 		}
+	}
+
+	/**
+	 * If displaying a WP.org theme on a non-atomic site, bail
+	 */
+	if ( ! isWpcomTheme( state, themeId ) && ! isSiteWpcomAtomic( state, siteId ) ) {
+		return false;
 	}
 
 	return (

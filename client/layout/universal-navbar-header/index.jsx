@@ -1,13 +1,24 @@
 import './nav-style.scss';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import UniversalNavbarBtnMenuItem from 'calypso/layout/universal-navbar-header/btn-menu-item.jsx';
 import UniversalNavbarLiMenuItem from 'calypso/layout/universal-navbar-header/li-menu-item.jsx';
+import { addQueryArgs } from 'calypso/lib/route';
+import { getSectionName } from 'calypso/state/ui/selectors';
 
 const UniversalNavbarHeader = () => {
 	const translate = useTranslate();
 	const [ isMobileMenuOpen, setMobileMenuOpen ] = useState( false );
+	const sectionName = useSelector( getSectionName );
+
+	const startUrl = addQueryArgs(
+		{
+			ref: sectionName + '-lp',
+		},
+		sectionName === 'plugins' ? '/start/business' : '/start'
+	);
 
 	return (
 		<div>
@@ -19,7 +30,12 @@ const UniversalNavbarHeader = () => {
 							<nav className="x-nav" aria-label="WordPress.com">
 								<ul className="x-nav-list x-nav-list__left">
 									<li className="x-nav-item">
-										<a role="menuitem" className="x-nav-link x-nav-link__logo x-link" href="/">
+										<a
+											role="menuitem"
+											className="x-nav-link x-nav-link__logo x-link"
+											href="/"
+											target="_self"
+										>
 											<WordPressWordmark className="x-icon x-icon__logo" />
 											<span className="x-hidden">WordPress.com</span>
 										</a>
@@ -42,30 +58,35 @@ const UniversalNavbarHeader = () => {
 													elementContent={ translate( 'WordPress Hosting' ) }
 													urlValue="//wordpress.com/hosting/"
 													type="dropdown"
+													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Domain Names' ) }
 													elementContent={ translate( 'Domain Names' ) }
 													urlValue="//wordpress.com/domains/"
 													type="dropdown"
+													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Website Builder' ) }
 													elementContent={ translate( 'Website Builder' ) }
 													urlValue="//wordpress.com/website-builder/"
 													type="dropdown"
+													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Create a Blog' ) }
 													elementContent={ translate( 'Create a Blog' ) }
 													urlValue="//wordpress.com/create-blog/"
 													type="dropdown"
+													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Professional Email' ) }
 													elementContent={ translate( 'Professional Email' ) }
 													urlValue="//wordpress.com/professional-email/"
 													type="dropdown"
+													target="_self"
 												/>
 											</ul>
 											<div className="x-dropdown-content-separator"></div>
@@ -97,6 +118,7 @@ const UniversalNavbarHeader = () => {
 													elementContent={ translate( 'Overview' ) }
 													urlValue="//wordpress.com/features/"
 													type="dropdown"
+													target="_self"
 												/>
 											</ul>
 											<div className="x-dropdown-content-separator"></div>
@@ -118,6 +140,7 @@ const UniversalNavbarHeader = () => {
 													elementContent={ translate( 'Google Apps' ) }
 													urlValue="//wordpress.com/google/"
 													type="dropdown"
+													target="_self"
 												/>
 											</ul>
 										</div>
@@ -146,36 +169,42 @@ const UniversalNavbarHeader = () => {
 													elementContent={ translate( 'News' ) }
 													urlValue="//wordpress.com/blog/"
 													type="dropdown"
+													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Website Building Tips' ) }
 													elementContent={ translate( 'Website Building Tips' ) }
 													urlValue="//wordpress.com/go/"
 													type="dropdown"
+													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Business Name Generator' ) }
 													elementContent={ translate( 'Business Name Generator' ) }
 													urlValue="//wordpress.com/business-name-generator/"
 													type="dropdown"
+													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Logo Maker' ) }
 													elementContent={ translate( 'Logo Maker' ) }
 													urlValue="//wordpress.com/logo-maker/"
 													type="dropdown"
+													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Daily Webinars' ) }
 													elementContent={ translate( 'Daily Webinars' ) }
 													urlValue="//wordpress.com/webinars/"
 													type="dropdown"
+													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Learn WordPress' ) }
 													elementContent={ translate( 'Learn WordPress' ) }
 													urlValue="//wordpress.com/learn/"
 													type="dropdown"
+													target="_self"
 												/>
 											</ul>
 										</div>
@@ -186,6 +215,7 @@ const UniversalNavbarHeader = () => {
 										elementContent={ translate( 'Plans & Pricing' ) }
 										urlValue="//wordpress.com/pricing/"
 										type="nav"
+										target="_self"
 									/>
 								</ul>
 								<ul className="x-nav-list x-nav-list__right">
@@ -200,7 +230,7 @@ const UniversalNavbarHeader = () => {
 										className="x-nav-item x-nav-item__wide"
 										titleValue={ translate( 'Get Started' ) }
 										elementContent={ translate( 'Get Started' ) }
-										urlValue="/start/business/?ref=plugins-lp"
+										urlValue={ startUrl }
 										type="nav"
 										typeClassName="x-nav-link x-nav-link__primary x-link cta-btn-nav"
 									/>
@@ -252,7 +282,7 @@ const UniversalNavbarHeader = () => {
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'Sign Up' ) }
 										elementContent={ translate( 'Sign Up' ) }
-										urlValue="//wordpress.com/start"
+										urlValue={ startUrl }
 										type="menu"
 									/>
 									<UniversalNavbarLiMenuItem

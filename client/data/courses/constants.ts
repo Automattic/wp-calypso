@@ -1,5 +1,5 @@
-export const COURSE_SLUGS: Readonly< { PAYMENTS_FEATURES: string; BLOGGING_QUICK_START: string } > =
-	Object.freeze( {
-		BLOGGING_QUICK_START: 'blogging-quick-start',
-		PAYMENTS_FEATURES: 'payments-features',
-	} );
+export const COURSE_SLUGS = {
+	BLOGGING_QUICK_START: 'blogging-quick-start',
+	PAYMENTS_FEATURES: 'payments-features',
+	SITE_EDITOR_QUICK_START: 'site-editor-quick-start',
+} as const;

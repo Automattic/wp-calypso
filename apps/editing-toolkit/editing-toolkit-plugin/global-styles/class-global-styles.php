@@ -78,6 +78,13 @@ class Global_Styles {
 	 */
 	private $plugin_name = 'jetpack-global-styles';
 
+	/**
+	 * The provider's root URL for retrieving font CSS.
+	 *
+	 * @var string
+	 */
+	private $root_url = 'https://fonts.googleapis.com/css';
+
 	const VERSION = '2003121439';
 
 	const SYSTEM_FONT     = '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif';
@@ -458,6 +465,13 @@ class Global_Styles {
 	 * @return string
 	 */
 	private function get_inline_css( $only_selected_fonts = false ) {
+		/**
+		 * Filters the Google Fonts API URL.
+		 *
+		 * @param string $url The Google Fonts API URL.
+		 */
+		$root_url = esc_url( apply_filters( 'jetpack_global_styles_google_fonts_api_url', $this->root_url ) );
+
 		$result = '';
 
 		$data = $this->rest_api_data->get_data();
@@ -489,7 +503,7 @@ class Global_Styles {
 				// the API will return only the regular and bold CSS for those.
 				$font_list_str = $font_list_str . $font . ':thin,extralight,light,regular,medium,semibold,bold,italic,bolditalic,extrabold,black|';
 			}
-			$result = $result . "@import url('https://fonts.googleapis.com/css?family=" . $font_list_str . "');";
+			$result = $result . "@import url('" . $root_url . '?family=' . $font_list_str . "');";
 		}
 
 		/*

@@ -29,6 +29,7 @@ import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-act
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import {
 	getDowngradePlanRawPrice,
+	getDowngradePlanToMonthlyRawPrice,
 	willAtomicSiteRevertAfterPurchaseDeactivation,
 } from 'calypso/state/purchases/selectors';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
@@ -47,6 +48,7 @@ import {
 	nextAdventureOptionsForPurchase,
 } from './options-for-product';
 import PrecancellationChatButton from './precancellation-chat-button';
+import EducationContentStep from './step-components/educational-content-step';
 import FeedbackStep from './step-components/feedback-step';
 import NextAdventureStep from './step-components/next-adventure-step';
 import UpsellStep from './step-components/upsell-step';
@@ -311,7 +313,7 @@ class CancelPurchaseForm extends Component {
 	surveyContent() {
 		const { atomicTransfer, translate, isImport, moment, purchase, site, hasBackupsFeature } =
 			this.props;
-		const { atomicRevertCheckOne, atomicRevertCheckTwo, surveyStep } = this.state;
+		const { atomicRevertCheckOne, atomicRevertCheckTwo, surveyStep, upsell } = this.state;
 
 		if ( surveyStep === FEEDBACK_STEP ) {
 			return (
@@ -330,6 +332,17 @@ class CancelPurchaseForm extends Component {
 			const allSteps = this.getAllSurveySteps();
 			const isLastStep = surveyStep === allSteps[ allSteps.length - 1 ];
 
+			if ( upsell.startsWith( 'education:' ) ) {
+				return (
+					<EducationContentStep
+						type={ upsell }
+						site={ site }
+						onDecline={ isLastStep ? this.onSubmit : this.clickNext }
+						cancellationReason={ this.state.questionOneText }
+					/>
+				);
+			}
+
 			return (
 				<UpsellStep
 					upsell={ this.state.upsell }
@@ -338,7 +351,11 @@ class CancelPurchaseForm extends Component {
 					site={ site }
 					disabled={ this.state.isSubmitting }
 					refundAmount={ this.getRefundAmount() }
-					downgradePlanPrice={ this.props.downgradePlanPrice }
+					downgradePlanPrice={
+						'downgrade-personal' === this.state.upsell
+							? this.props.downgradePlanToPersonalPrice
+							: this.props.downgradePlanToMonthlyPrice
+					}
 					downgradeClick={ this.downgradeClick }
 					closeDialog={ this.closeDialog }
 					cancelBundledDomain={ this.props.cancelBundledDomain }
@@ -689,7 +706,8 @@ export default connect(
 		isChatActive: hasActiveHappychatSession( state ),
 		isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 		isImport: !! getSiteImportEngine( state, purchase.siteId ),
-		downgradePlanPrice: getDowngradePlanRawPrice( state, purchase ),
+		downgradePlanToPersonalPrice: getDowngradePlanRawPrice( state, purchase ),
+		downgradePlanToMonthlyPrice: getDowngradePlanToMonthlyRawPrice( state, purchase ),
 		supportVariation: getSupportVariation( state ),
 		site: getSite( state, purchase.siteId ),
 		willAtomicSiteRevert: willAtomicSiteRevertAfterPurchaseDeactivation(

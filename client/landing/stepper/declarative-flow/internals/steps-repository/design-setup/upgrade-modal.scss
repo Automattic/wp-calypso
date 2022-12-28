@@ -131,7 +131,7 @@ $design-button-primary-hover-color: var(--color-primary-60);
 			padding: 9px 25px;
 			border-radius: 4px;
 			font-weight: 500;
-			margin-bottom: 15px;
+			margin-bottom: 0;
 			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
 
 			&.is-primary {
@@ -149,8 +149,6 @@ $design-button-primary-hover-color: var(--color-primary-60);
 	}
 
 	&__included {
-		margin-bottom: 25px;
-
 		ul,
 		li {
 			font-size: $font-body-small;
@@ -159,17 +157,24 @@ $design-button-primary-hover-color: var(--color-primary-60);
 			margin-left: 0;
 			padding-left: 0;
 			margin-top: 0;
+			margin-bottom: 0;
 		}
 
 		li {
 			display: flex;
-			align-items: center;
+			align-items: flex-start;
 		}
 
 		.gridicon {
 			fill: var(--studio-green-50);
+			flex-shrink: 0;
 			margin-right: 10px;
+			margin-top: 4px;
 		}
+	}
+
+	.theme-features__features-wrap {
+		margin-top: 25px;
 	}
 
 	h2 {
