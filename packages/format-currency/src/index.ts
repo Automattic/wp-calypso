@@ -102,7 +102,7 @@ export function formatCurrency(
 	number: number,
 	code: string,
 	options: CurrencyObjectOptions = {}
-): string | null {
+): string {
 	const locale = options.locale ?? getLocaleFromBrowser();
 	if ( ! doesCurrencyExist( code ) ) {
 		code = 'USD';
@@ -139,7 +139,7 @@ export function formatCurrency(
  * periods as group separators. Similarly, the `fraction` property is a string
  * that contains the decimal separator.
  *
- * If the number is NaN, this will return null.
+ * If the number is NaN, it will be treated as 0.
  *
  * If the currency code is not known, this will assume a default currency
  * similar to USD.
@@ -156,7 +156,7 @@ export function getCurrencyObject(
 	number: number,
 	code: string,
 	options: CurrencyObjectOptions = {}
-): CurrencyObject | null {
+): CurrencyObject {
 	const locale = options.locale ?? getLocaleFromBrowser();
 	if ( ! doesCurrencyExist( code ) ) {
 		code = 'USD';
