@@ -17,6 +17,7 @@ type Settings = {
 	jetpack_relatedposts_enabled?: boolean;
 	jetpack_relatedposts_show_headline?: boolean;
 	jetpack_relatedposts_show_thumbnails?: boolean;
+	page_for_posts?: string;
 	page_on_front?: string;
 	posts_per_page?: number;
 	posts_per_rss?: number;
@@ -39,6 +40,7 @@ const getFormSettings = ( settings: Settings ) => {
 		jetpack_relatedposts_enabled,
 		jetpack_relatedposts_show_headline,
 		jetpack_relatedposts_show_thumbnails,
+		page_for_posts,
 		page_on_front,
 		posts_per_page,
 		posts_per_rss,
@@ -53,6 +55,7 @@ const getFormSettings = ( settings: Settings ) => {
 		...( jetpack_relatedposts_enabled && { jetpack_relatedposts_enabled } ),
 		...( jetpack_relatedposts_show_headline && { jetpack_relatedposts_show_headline } ),
 		...( jetpack_relatedposts_show_thumbnails && { jetpack_relatedposts_show_thumbnails } ),
+		...( page_for_posts && { page_for_posts } ),
 		...( page_on_front && { page_on_front } ),
 		...( posts_per_page && { posts_per_page } ),
 		...( posts_per_rss && { posts_per_rss } ),
@@ -76,12 +79,12 @@ type Fields = {
 	posts_per_page?: number;
 	posts_per_rss?: number;
 	rss_use_excerpt?: boolean;
-	wpcom_featured_image_in_email?: boolean;
-	wpcom_subscription_emails_use_excerpt?: boolean;
 	subscription_options?: {
 		invitation: string;
 		comment_follow: string;
 	};
+	wpcom_featured_image_in_email?: boolean;
+	wpcom_subscription_emails_use_excerpt?: boolean;
 };
 
 type ReadingSettingsFormProps = {
@@ -118,6 +121,7 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						disabled={ disabled }
 						isRequestingSettings={ isRequestingSettings }
 						isSavingSettings={ isSavingSettings }
+						updateFields={ updateFields }
 					/>
 					<RssFeedSettingsSection
 						fields={ fields }

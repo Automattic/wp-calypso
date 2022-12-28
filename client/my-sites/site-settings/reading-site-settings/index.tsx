@@ -9,6 +9,7 @@ type Fields = {
 	jetpack_relatedposts_enabled?: boolean;
 	jetpack_relatedposts_show_headline?: boolean;
 	jetpack_relatedposts_show_thumbnails?: boolean;
+	page_for_posts?: string;
 	page_on_front?: string;
 	posts_per_page?: number;
 	show_on_front?: 'posts' | 'page';
@@ -22,6 +23,7 @@ type SiteSettingsSectionProps = {
 	disabled?: boolean;
 	isRequestingSettings?: boolean;
 	isSavingSettings?: boolean;
+	updateFields: ( fields: Fields ) => void;
 };
 
 export const SiteSettingsSection = ( {
@@ -32,9 +34,10 @@ export const SiteSettingsSection = ( {
 	disabled,
 	isRequestingSettings,
 	isSavingSettings,
+	updateFields,
 }: SiteSettingsSectionProps ) => {
 	const translate = useTranslate();
-	const { posts_per_page, show_on_front, page_on_front } = fields;
+	const { page_for_posts, page_on_front, posts_per_page, show_on_front } = fields;
 
 	return (
 		<>
@@ -47,15 +50,18 @@ export const SiteSettingsSection = ( {
 				isSaving={ isSavingSettings }
 			/>
 			<Card className="site-settings__card">
+				<YourHomepageDisplaysSetting
+					value={ { page_for_posts, page_on_front, show_on_front } }
+					onChange={ ( value ) => {
+						updateFields( value );
+					} }
+					disabled={ disabled }
+				/>
+			</Card>
+			<Card className="site-settings__card">
 				<BlogPagesSetting
 					value={ posts_per_page }
 					onChange={ onChangeField( BLOG_PAGES_OPTION ) }
-					disabled={ disabled }
-				/>
-				<YourHomepageDisplaysSetting
-					value={ { show_on_front, page_on_front } }
-					// eslint-disable-next-line @typescript-eslint/no-empty-function
-					onChange={ () => {} }
 					disabled={ disabled }
 				/>
 			</Card>
