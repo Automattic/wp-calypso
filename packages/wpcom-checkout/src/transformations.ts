@@ -13,6 +13,7 @@ export function getLineItemsFromCart( cart: ResponseCart ): LineItem[] {
 			value: product.item_subtotal_integer,
 			displayValue: formatCurrency( product.item_subtotal_integer, product.currency, {
 				isSmallestUnit: true,
+				stripZeros: true,
 			} ),
 		},
 	} ) );
@@ -29,6 +30,7 @@ export function getTotalLineItemFromCart( cart: ResponseCart ): LineItem {
 			value: cart.total_cost_integer,
 			displayValue: formatCurrency( cart.total_cost_integer, cart.currency, {
 				isSmallestUnit: true,
+				stripZeros: true,
 			} ),
 		},
 	};

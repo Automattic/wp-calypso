@@ -40,6 +40,36 @@ const cart: ResponseCart = {
 	],
 };
 
+const usdCart: ResponseCart = {
+	...getEmptyResponseCart(),
+	currency: 'USD',
+	total_cost_integer: 75100,
+	sub_total_integer: 75000,
+	sub_total_with_taxes_integer: 75000,
+	total_tax_integer: 100,
+	credits_integer: 0,
+	tax: {
+		...getEmptyResponseCart().tax,
+		display_taxes: false,
+	},
+	products: [
+		{
+			...getEmptyResponseCartProduct(),
+			uuid: 'test1',
+			product_name: 'Test Product 1',
+			item_subtotal_integer: 50000,
+			currency: 'USD',
+		},
+		{
+			...getEmptyResponseCartProduct(),
+			uuid: 'test2',
+			product_name: 'Test Product 2',
+			item_subtotal_integer: 25000,
+			currency: 'USD',
+		},
+	],
+};
+
 describe( 'getLineItemsFromCart', function () {
 	it( 'returns line items for all cart products', () => {
 		const expected = [
@@ -83,6 +113,21 @@ describe( 'getTotalLineItemFromCart', function () {
 		};
 
 		expect( getTotalLineItemFromCart( cart ) ).toStrictEqual( expected );
+	} );
+
+	it( 'returns line item for total without zeros', () => {
+		const expected = {
+			id: 'total',
+			type: 'total',
+			label: 'Total',
+			amount: {
+				currency: 'USD',
+				value: 75100,
+				displayValue: '$751',
+			},
+		};
+
+		expect( getTotalLineItemFromCart( usdCart ) ).toStrictEqual( expected );
 	} );
 } );
 
