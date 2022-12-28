@@ -181,7 +181,7 @@ export function getCurrencyObject(
 
 	let sign = '' as CurrencyObject[ 'sign' ];
 	let symbol = '$';
-	let symbolPosition = 'before';
+	let symbolPosition = 'before' as CurrencyObject[ 'symbolPosition' ];
 	let hasAmountBeenSet = false;
 	let integer = '';
 	let fraction = '';
