@@ -67,7 +67,7 @@ function PostActionsEllipsisMenuPromote( {
 
 	return (
 		<PopoverMenuItem onClick={ showDSPWidget } icon="speaker">
-			{ type === 'post' ? translate( 'Promote post' ) : translate( 'Promote page' ) }
+			{ type === 'post' ? translate( 'Blaze this post' ) : translate( 'Blaze this page' ) }
 		</PopoverMenuItem>
 	);
 }
