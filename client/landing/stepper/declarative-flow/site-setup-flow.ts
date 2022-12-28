@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
+import { Design } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
@@ -205,13 +206,14 @@ const siteSetupFlow: Flow = {
 					return navigate( 'bloggerStartingPoint' );
 				}
 
-				case 'designSetup':
-					if ( providedDependencies?.selectedIntent === SiteIntent.SiteAssembler ) {
+				case 'designSetup': {
+					const _selectedDesign = providedDependencies?.selectedDesign as Design;
+					if ( _selectedDesign?.design_type === 'assembler' ) {
 						return navigate( 'patternAssembler' );
 					}
 
 					return navigate( 'processing' );
-
+				}
 				case 'patternAssembler':
 					return navigate( 'processing' );
 
@@ -223,7 +225,7 @@ const siteSetupFlow: Flow = {
 					}
 
 					// End of Pattern Assembler flow
-					if ( intent === SiteIntent.SiteAssembler ) {
+					if ( selectedDesign?.design_type === 'assembler' ) {
 						return exitFlow( `/site-editor/${ siteSlug }` );
 					}
 
