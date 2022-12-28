@@ -1,4 +1,4 @@
-import formatCurrency, { getCurrencyObject } from '../src';
+import formatCurrency, { getCurrencyObject, setDefaultLocale } from '../src';
 
 describe( 'formatCurrency', () => {
 	test( 'formats a number to localized currency', () => {
@@ -73,6 +73,10 @@ describe( 'formatCurrency', () => {
 	} );
 
 	describe( 'supported currencies', () => {
+		beforeEach( () => {
+			setDefaultLocale( undefined );
+		} );
+
 		test( 'USD', () => {
 			const money = formatCurrency( 9800900.32, 'USD' );
 			expect( money ).toBe( '$9,800,900.32' );
@@ -96,6 +100,11 @@ describe( 'formatCurrency', () => {
 		test( 'EUR in EN locale', () => {
 			const money = formatCurrency( 9800900.32, 'EUR', { locale: 'en-US' } );
 			expect( money ).toBe( '€9,800,900.32' );
+		} );
+		test( 'EUR in DE locale set by setDefaultLocale', () => {
+			setDefaultLocale( 'de-DE' );
+			const money = formatCurrency( 9800900.32, 'EUR' );
+			expect( money ).toBe( '9.800.900,32 €' );
 		} );
 		test( 'EUR in DE locale', () => {
 			const money = formatCurrency( 9800900.32, 'EUR', { locale: 'de-DE' } );
