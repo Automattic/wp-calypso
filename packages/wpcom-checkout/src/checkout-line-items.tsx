@@ -709,7 +709,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 							productCost: formatCurrency(
 								product.item_original_cost_for_quantity_one_integer,
 								product.currency,
-								{ isSmallestUnit: true }
+								{ isSmallestUnit: true, stripZeros: true }
 							),
 						},
 					} ) }
