@@ -85,6 +85,7 @@ function MiniCartTotal( { responseCart }: { responseCart: ResponseCart } ) {
 			<span>
 				{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
 					isSmallestUnit: true,
+					stripZeros: true,
 				} ) }
 			</span>
 		</MiniCartTotalWrapper>

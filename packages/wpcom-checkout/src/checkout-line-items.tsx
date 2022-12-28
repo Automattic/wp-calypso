@@ -609,7 +609,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 			const itemPrice = formatCurrency(
 				product.item_original_cost_for_quantity_one_integer,
 				product.currency,
-				{ isSmallestUnit: true }
+				{ isSmallestUnit: true, stripZeros: true }
 			);
 			const members = product?.current_quantity || 1;
 			const p2Options = {
@@ -636,6 +636,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 				sublabel,
 				price: formatCurrency( product.item_original_subtotal_integer, product.currency, {
 					isSmallestUnit: true,
+					stripZeros: true,
 				} ),
 			},
 		};
@@ -929,12 +930,13 @@ function WPLineItem( {
 	const originalAmountDisplay = formatCurrency(
 		product.item_original_subtotal_integer,
 		product.currency,
-		{ isSmallestUnit: true }
+		{ isSmallestUnit: true, stripZeros: true }
 	);
 	const originalAmountInteger = product.item_original_subtotal_integer;
 
 	const actualAmountDisplay = formatCurrency( product.item_subtotal_integer, product.currency, {
 		isSmallestUnit: true,
+		stripZeros: true,
 	} );
 	const isDiscounted = Boolean(
 		product.item_subtotal_integer < originalAmountInteger && originalAmountDisplay
