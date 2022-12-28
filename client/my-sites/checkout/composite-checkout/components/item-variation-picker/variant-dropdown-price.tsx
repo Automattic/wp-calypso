@@ -40,7 +40,7 @@ const DoNotPayThis = styled.del`
 `;
 
 const Price = styled.span`
-	display: flex;
+	display: inline-flex;
 	justify-content: right;
 	color: #646970;
 	.item-variant-option--selected & {
@@ -81,6 +81,10 @@ const IntroPricingText = styled.span`
 	display: block;
 	text-align: right;
 	margin-bottom: 0rem;
+`;
+
+const PriceTextContainer = styled.span`
+	text-align: right;
 `;
 
 const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent } ) => {
@@ -224,7 +228,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 					<DiscountPercentage percent={ discountPercentage } />
 				) }
 			</Label>
-			<span>
+			<PriceTextContainer>
 				{ discountPercentage > 0 && ! isMobile && ! isIntroductoryOffer && (
 					<DiscountPercentage percent={ discountPercentage } />
 				) }
@@ -237,7 +241,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 						{ isIntroductoryOffer && translatedIntroOfferDetails() }
 					</IntroPricingText>
 				</IntroPricing>
-			</span>
+			</PriceTextContainer>
 		</Variant>
 	);
 };
