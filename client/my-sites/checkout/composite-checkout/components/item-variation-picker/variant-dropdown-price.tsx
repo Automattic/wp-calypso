@@ -75,10 +75,6 @@ const IntroPricing = styled.span`
 	display: flex;
 	flex-direction: column;
 	font-size: 0.8rem;
-	.div {
-		display: block;
-		margin-bottom: 0rem;
-	}
 `;
 
 const IntroPricingText = styled.span`
