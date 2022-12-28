@@ -103,7 +103,7 @@ const StatsPostDetailWeeks = ( props ) => {
 			// If there are fewer than 7 days in the last week, append blank days
 			if ( week.days.length < 7 && 0 !== index ) {
 				for ( let j = 0; j < 7 - week.days.length; j++ ) {
-					cells.push( <td key={ 'w' + index + 'e' + j } /> );
+					cells.push( <td className="has-no-data" key={ 'w' + index + 'e' + j } /> );
 				}
 			}
 
