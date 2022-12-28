@@ -1,3 +1,4 @@
+import { isFreePlanProduct } from '@automattic/calypso-products';
 import { Button, Dialog, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -31,6 +32,7 @@ class DeleteSite extends Component {
 		hasLoadedSitePurchasesFromServer: PropTypes.bool,
 		siteDomain: PropTypes.string,
 		siteExists: PropTypes.bool,
+
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
@@ -121,11 +123,12 @@ class DeleteSite extends Component {
 	};
 
 	render() {
-		const { isAtomic, siteDomain, siteId, siteSlug, translate } = this.props;
+		const { isAtomic, isFreePlan, siteDomain, siteId, siteSlug, translate } = this.props;
 		const exportLink = '/export/' + siteSlug;
 		const deleteDisabled =
 			typeof this.state.confirmDomain !== 'string' ||
 			this.state.confirmDomain.toLowerCase().replace( /\s/g, '' ) !== siteDomain;
+		const isAtomicRemovalInProgress = isFreePlan && isAtomic;
 
 		const deleteButtons = [
 			<Button onClick={ this.closeConfirmDialog }>{ translate( 'Cancel' ) }</Button>,
@@ -257,68 +260,54 @@ class DeleteSite extends Component {
 								</li>
 							</ul>
 						</ActionPanelFigure>
-						{ ! isAtomic && (
-							<div>
-								<p>
-									{ translate(
-										'Deletion {{strong}}can not{{/strong}} be undone, ' +
-											'and will remove all content, contributors, domains, themes and upgrades from this site.',
-										{
-											components: {
-												strong: <strong />,
-											},
-										}
-									) }
-								</p>
-								<p>
-									{ translate(
-										"If you're unsure about what deletion means or have any other questions, " +
-											'please chat with someone from our support team before proceeding.'
-									) }
-								</p>
-								<p>
-									<a
-										className="delete-site__body-text-link action-panel__body-text-link"
-										href="/help/contact"
-									>
-										{ strings.contactSupport }
-									</a>
-								</p>
-							</div>
-						) }
-						{ isAtomic && (
-							<div>
-								<p>
-									{ translate(
-										"To delete this site, you'll need to contact our support team. Deletion can not be undone, " +
-											'and will remove all content, contributors, domains, themes and upgrades from this site.'
-									) }
-								</p>
-								<p>
-									{ translate(
-										"If you're unsure about what deletion means or have any other questions, " +
-											"you'll have a chance to chat with someone from our support team before anything happens."
-									) }
-								</p>
-							</div>
-						) }
+						<div>
+							<p>
+								{ translate(
+									'Deletion {{strong}}can not{{/strong}} be undone, ' +
+										'and will remove all content, contributors, domains, themes and upgrades from this site.',
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+								) }
+							</p>
+							<p>
+								{ translate(
+									"If you're unsure about what deletion means or have any other questions, " +
+										'please chat with someone from our support team before proceeding.'
+								) }
+							</p>
+							<p>
+								<a
+									className="delete-site__body-text-link action-panel__body-text-link"
+									href="/help/contact"
+								>
+									{ strings.contactSupport }
+								</a>
+							</p>
+						</div>
 					</ActionPanelBody>
+					{ isAtomicRemovalInProgress && (
+						<p className="delete-site__cannot-delete-message">
+							{ translate(
+								"We are still in the process of removing your previous plan. Please check back in a few minutes and you'll be able to delete your site."
+							) }
+						</p>
+					) }
 					<ActionPanelFooter>
-						{ ! isAtomic && (
-							<Button
-								scary
-								disabled={ ! siteId || ! this.props.hasLoadedSitePurchasesFromServer }
-								onClick={ this.handleDeleteSiteClick }
-							>
-								<Gridicon icon="trash" />
-								{ strings.deleteSite }
-							</Button>
-						) }
-						{ isAtomic && (
-							<Button primary href="/help/contact">
-								{ strings.contactSupport }
-							</Button>
-						) }
+						<Button
+							scary
+							disabled={
+								! siteId ||
+								! this.props.hasLoadedSitePurchasesFromServer ||
+								isAtomicRemovalInProgress
+							}
+							onClick={ this.handleDeleteSiteClick }
+						>
+							<Gridicon icon="trash" />
+							{ strings.deleteSite }
+						</Button>
 					</ActionPanelFooter>
 					<DeleteSiteWarningDialog
 						isVisible={ this.state.showWarningDialog }
@@ -365,9 +354,11 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const siteDomain = getSiteDomain( state, siteId );
 		const siteSlug = getSelectedSiteSlug( state );
+		const site = getSite( state, siteId );
 		return {
 			hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
 			isAtomic: isSiteAutomatedTransfer( state, siteId ),
+			isFreePlan: isFreePlanProduct( site.plan ),
 			siteDomain,
 			siteId,
 			siteSlug,

@@ -975,3 +975,45 @@ export const normalizers = {
 		} );
 	},
 };
+
+/**
+ * Return data in a format used by 'components/chart` for email stats. The fields array is matched to
+ * the data in a single object.
+ *
+ * @param {object} payload - response
+ * @param {Array} nullAttributes - properties on data objects to be initialized with
+ * a null value
+ * @returns {Array} - Array of data objects
+ */
+export function parseEmailChartData( payload, nullAttributes = [] ) {
+	if ( ! payload || ! payload.data ) {
+		return [];
+	}
+
+	return payload.data.map( function ( record ) {
+		// Initialize data
+		const dataRecord = nullAttributes.reduce( ( memo, attribute ) => {
+			memo[ attribute ] = null;
+			return memo;
+		}, {} );
+
+		// Fill Field Values
+		record.forEach( function ( value, i ) {
+			// Remove W from weeks
+			if ( 'date' === payload.fields[ i ] ) {
+				value = value.replace( /W/g, '-' );
+				dataRecord.period = value;
+			} else {
+				dataRecord[ payload.fields[ i ] ] = value;
+			}
+		} );
+
+		if ( dataRecord.period ) {
+			const date = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( 'en' );
+			const localeSlug = getLocaleSlug();
+			const localizedDate = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( localeSlug );
+			Object.assign( dataRecord, getChartLabels( payload.unit, date, localizedDate ) );
+		}
+		return dataRecord;
+	} );
+}
