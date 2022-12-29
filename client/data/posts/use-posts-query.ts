@@ -49,7 +49,6 @@ const usePostsQuery = ( siteId?: number, params: PostsRequestParams = {}, queryO
 		(): Promise< Response > => wpcom.req.get( `/sites/${ siteId }/posts`, params ),
 		{
 			enabled: !! siteId,
-			select: ( { posts } ) => posts,
 			...queryOptions,
 		}
 	);
