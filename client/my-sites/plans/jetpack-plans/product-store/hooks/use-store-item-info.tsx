@@ -12,6 +12,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import isSupersedingJetpackItem from 'calypso/../packages/calypso-products/src/is-superseding-jetpack-item';
+import { Gridicon } from 'calypso/devdocs/design/playground-scope';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import reactNodeToString from 'calypso/lib/react-node-to-string';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
@@ -233,6 +234,29 @@ export const useStoreItemInfo = ( {
 		[ getPurchase, isCurrentUserPurchaseOwner ]
 	);
 
+	const getLightBoxCtaLabel = useCallback(
+		( item: SelectorProduct ) => {
+			const shouldShowCart = getShouldShowCart( item );
+			const isProductInCart = getIsProductInCart( item );
+
+			if ( ! shouldShowCart ) {
+				return <>{ translate( 'Proceed to checkout' ) }</>;
+			}
+
+			if ( isProductInCart ) {
+				return (
+					<>
+						<Gridicon icon="checkmark" />
+						{ translate( 'View Cart' ) }
+					</>
+				);
+			}
+
+			return <>{ translate( 'Add to cart' ) }</>;
+		},
+		[ getIsProductInCart, getShouldShowCart, translate ]
+	);
+
 	const getCtaLabel = useCallback(
 		( item: SelectorProduct, fallbackLabel = translate( 'Get' ) ) => {
 			const ctaLabel = productButtonLabel( {
@@ -305,6 +329,7 @@ export const useStoreItemInfo = ( {
 			getIsSuperseded,
 			getIsUpgradeableToYearly,
 			getIsUserPurchaseOwner,
+			getLightBoxCtaLabel,
 			getOnClickPurchase,
 			getIsProductInCart,
 			getPurchase,
@@ -321,6 +346,7 @@ export const useStoreItemInfo = ( {
 			getIsSuperseded,
 			getIsUpgradeableToYearly,
 			getIsUserPurchaseOwner,
+			getLightBoxCtaLabel,
 			getOnClickPurchase,
 			getIsProductInCart,
 			getPurchase,
