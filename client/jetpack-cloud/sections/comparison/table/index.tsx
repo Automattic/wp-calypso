@@ -2,7 +2,7 @@ import { TERM_ANNUALLY, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import ProductLightbox from 'calypso/my-sites/plans/jetpack-plans/product-lightbox';
 import StoreItemInfoContext, {
 	useStoreItemInfoContext,
@@ -13,7 +13,6 @@ import { ItemPrice } from 'calypso/my-sites/plans/jetpack-plans/product-store/it
 import { MoreInfoLink } from 'calypso/my-sites/plans/jetpack-plans/product-store/more-info-link';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getPurchaseURLCallback } from '../../../../my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { TableWithStoreContextProps } from '../types';
 import { links } from './links';
@@ -24,23 +23,14 @@ import './style.scss';
 
 export const Table: React.FC = () => {
 	const translate = useTranslate();
-	const siteId = useSelector( getSelectedSiteId );
 
 	const productsToCompare = useProductsToCompare();
 
 	const data = useComparisonData();
 
 	const { currentProduct, setCurrentProduct, onClickMoreInfoFactory } = useProductLightbox();
-	const {
-		getCheckoutURL,
-		getCtaLabel,
-		getIsExternal,
-		getOnClickPurchase,
-		getIsOwned,
-		getIsIncludedInPlan,
-		getIsMultisiteCompatible,
-		isMultisite,
-	} = useStoreItemInfoContext();
+	const { getCheckoutURL, getCtaLabel, getIsExternal, getOnClickPurchase } =
+		useStoreItemInfoContext();
 
 	const sectionHeadingColSpan = productsToCompare.length + 1;
 
@@ -53,10 +43,6 @@ export const Table: React.FC = () => {
 				const item = (
 					isFree ? { productSlug: PLAN_JETPACK_FREE } : slugToSelectorProduct( productSlug )
 				 ) as SelectorProduct;
-
-				const isOwned = getIsOwned( item );
-				const isIncludedInPlan = getIsIncludedInPlan( item );
-				const isMultiSiteIncompatible = isMultisite && ! getIsMultisiteCompatible( item );
 
 				return (
 					<th key={ id } scope="col" className={ `product product-jetpack-${ id.toLowerCase() }` }>
@@ -73,15 +59,7 @@ export const Table: React.FC = () => {
 								{ isFree ? translate( 'Get started' ) : getCtaLabel( item, '' ) }
 							</Button>
 
-							{ ! isFree && (
-								<ItemPrice
-									isMultiSiteIncompatible={ isMultiSiteIncompatible }
-									isIncludedInPlan={ isIncludedInPlan }
-									isOwned={ isOwned }
-									item={ item }
-									siteId={ siteId }
-								/>
-							) }
+							{ ! isFree && <ItemPrice item={ item } /> }
 
 							{ isFree ? (
 								<span className="more-info-link">{ translate( 'Get started for free' ) }</span>
