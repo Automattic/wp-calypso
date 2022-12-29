@@ -37,6 +37,10 @@ describe(
 				editorPage = new EditorPage( page, { target: features.siteType } );
 			} );
 
+			afterAll( async () => {
+				await page.close();
+			} );
+
 			it( 'Start a new post', async function () {
 				await editorPage.visit( 'post' );
 				await editorPage.waitUntilLoaded();
@@ -90,9 +94,17 @@ describe(
 				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
 			} );
 
+			afterAll( async () => {
+				await page.close();
+			} );
+
 			it( 'Go to the site editor', async function () {
 				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+			} );
+
+			it( 'Close the navigation sidebar', async function () {
+				await fullSiteEditorPage.closeNavSidebar();
 			} );
 
 			it( 'Add a Pullquote block', async function () {
