@@ -210,11 +210,10 @@ export const useStoreItemInfo = ( {
 				shoppingCartTracker( 'calypso_jetpack_shopping_cart_add_product', {
 					productSlug: item.productSlug,
 				} );
-				addProductsToCart( [ { product_slug: item.productSlug } ] );
 
 				const addedToCartText = translate( 'added to cart' );
 				dispatch( successNotice( `${ item.displayName } ${ addedToCartText }` ) );
-				return;
+				return addProductsToCart( [ { product_slug: item.productSlug } ] );
 			}
 
 			return onClickPurchase?.( item, getIsUpgradeableToYearly( item ), getPurchase( item ) );
