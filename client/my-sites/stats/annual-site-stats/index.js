@@ -143,7 +143,8 @@ class AnnualSiteStats extends Component {
 	}
 
 	render() {
-		const { years, translate, moment, isWidget, siteId, siteSlug } = this.props;
+		const { years, translate, moment, isWidget, siteId, siteSlug, isJetpack, isOdysseyStats } =
+			this.props;
 		const strings = this.getStrings();
 		const now = moment();
 		const currentYear = now.format( 'YYYY' );
@@ -191,6 +192,12 @@ class AnnualSiteStats extends Component {
 						</div>
 					) }
 				</Card>
+				<PromoCards
+					isJetpack={ isJetpack }
+					isOdysseyStats={ isOdysseyStats }
+					pageSlug="annual-insights"
+					slug={ siteSlug }
+				/>
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -203,9 +210,14 @@ export default connect( ( state ) => {
 	const siteSlug = getSiteSlug( state, siteId );
 	const insights = getSiteStatsNormalizedData( state, siteId, statType, {} );
 
+	const isJetpack = isJetpackSite( state, siteId );
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+
 	return {
-		years: insights.years,
+		isJetpack,
+		isOdysseyStats,
 		siteId,
 		siteSlug,
+		years: insights.years,
 	};
 } )( localize( withLocalizedMoment( AnnualSiteStats ) ) );
