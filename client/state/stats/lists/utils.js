@@ -98,7 +98,7 @@ export function buildExportArray( data, parent = null ) {
 		return [];
 	}
 	const label = parent ? parent + ' > ' + data.label : data.label;
-	const escapedLabel = label.replace( /\"/, '""' ); // eslint-disable-line no-useless-escape
+	const escapedLabel = label.replace( /\"/, '""' ); // eslint-disable-line
 	let exportData = [ [ '"' + escapedLabel + '"', data.value ] ];
 
 	// Includes the URL for content data, but not for "Countries" data where it doesn't exist.
@@ -962,7 +962,7 @@ export const normalizers = {
 		const emailsData = get( data, [ 'days', startOf, 'email_opens' ], [] );
 
 		return emailsData.map( ( { id, href, date, title, type, opens } ) => {
-			const record = {
+			return {
 				id,
 				href,
 				date,
@@ -970,8 +970,6 @@ export const normalizers = {
 				type,
 				value: opens || '0',
 			};
-
-			return record;
 		} );
 	},
 };
