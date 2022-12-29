@@ -82,7 +82,7 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 		} );
 	} );
 
-	describe.skip( 'wpcom_block_editor_global_styles_menu_selected', function () {
+	describe( 'wpcom_block_editor_global_styles_menu_selected', function () {
 		let page: Page;
 		let testAccount: TestAccount;
 		let fullSiteEditorPage: FullSiteEditorPage;
