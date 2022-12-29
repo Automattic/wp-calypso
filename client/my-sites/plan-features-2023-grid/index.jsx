@@ -10,7 +10,7 @@ import {
 	isWpcomEnterpriseGridPlan,
 	isMonthly,
 	TERM_MONTHLY,
-	isPremiumPlan,
+	isBusinessPlan,
 	isEcommercePlan,
 	TYPE_FREE,
 	TYPE_PERSONAL,
@@ -291,12 +291,12 @@ export class PlanFeatures2023Grid extends Component {
 				getPlanClass( planName )
 			);
 			const tableItemClasses = classNames( 'plan-features-2023-grid__table-item', {
-				'popular-plan-parent-class': isPremiumPlan( planName ),
+				'popular-plan-parent-class': isBusinessPlan( planName ),
 			} );
 
 			return (
 				<Container key={ planName } className={ tableItemClasses } isMobile={ isMobile }>
-					{ isPremiumPlan( planName ) && (
+					{ isBusinessPlan( planName ) && (
 						<div className="plan-features-2023-grid__popular-badge">
 							<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
 						</div>
