@@ -41,18 +41,6 @@
 function a8c_happyblocks_assets() {
 	$assets = require_once plugin_dir_path( __FILE__ ) . 'dist/editor.min.asset.php';
 
-	wp_register_script( 'a8c-happyblocks-pricing-plans', '', array(), '20221212', true );
-	wp_enqueue_script( 'a8c-happyblocks-pricing-plans' );
-	wp_add_inline_script(
-		'a8c-happyblocks-pricing-plans',
-		sprintf(
-			'window.A8C_HAPPY_BLOCKS_CONFIG = %s;
-			window.configData ||= {};',
-			wp_json_encode( a8c_happyblocks_get_config() )
-		),
-		'before'
-	);
-
 	wp_enqueue_script(
 		'a8c-happyblocks-edit-js',
 		plugins_url( 'dist/editor.min.js', __FILE__ ),
@@ -76,6 +64,18 @@ function a8c_happyblocks_assets() {
 function a8c_happyblocks_view_assets() {
 	$assets = require plugin_dir_path( __FILE__ ) . 'dist/view.min.asset.php';
 
+	wp_register_script( 'a8c-happyblocks-pricing-plans', '', array(), '20221212', true );
+	wp_enqueue_script( 'a8c-happyblocks-pricing-plans' );
+	wp_add_inline_script(
+		'a8c-happyblocks-pricing-plans',
+		sprintf(
+			'window.A8C_HAPPY_BLOCKS_CONFIG = %s;
+			window.configData ||= {};',
+			wp_json_encode( a8c_happyblocks_get_config() )
+		),
+		'before'
+	);
+
 	$style_file = 'dist/view' . ( is_rtl() ? '.rtl.css' : '.css' );
 	wp_enqueue_style(
 		'a8c-happyblock-view-css',
@@ -88,7 +88,7 @@ function a8c_happyblocks_view_assets() {
 	wp_enqueue_script(
 		'a8c-happyblock-view-js',
 		plugins_url( $script_file, __FILE__ ),
-		$assets['dependencies'],
+		array_merge( $assets['dependencies'], array( 'a8c-happyblocks-pricing-plans' ) ),
 		$assets['version'],
 		true
 	);
