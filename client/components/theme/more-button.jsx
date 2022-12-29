@@ -40,7 +40,7 @@ class ThemeMoreButton extends Component {
 
 	popoverAction( action, label ) {
 		return () => {
-			action( this.props.themeId );
+			action( this.props.themeId, 'more button' );
 			this.props.onMoreButtonClick( this.props.themeId, this.props.index, 'popup_' + label );
 		};
 	}
