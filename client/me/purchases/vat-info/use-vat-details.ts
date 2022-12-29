@@ -9,7 +9,7 @@ export interface VatDetails {
 	address?: string | null;
 }
 
-export type SetVatDetails = ( vatDetails: VatDetails ) => void;
+export type SetVatDetails = ( vatDetails: VatDetails ) => Promise< VatDetails >;
 
 export interface UpdateError {
 	message: string;
@@ -62,7 +62,7 @@ export default function useVatDetails(): VatDetailsManager {
 	}, [] );
 	const setDetails = useCallback(
 		( vatDetails: VatDetails ) => {
-			mutation.mutate( formatVatDetails( vatDetails ) );
+			return mutation.mutateAsync( formatVatDetails( vatDetails ) );
 		},
 		[ mutation, formatVatDetails ]
 	);
