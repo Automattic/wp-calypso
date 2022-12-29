@@ -18,7 +18,7 @@ import {
 	FEATURE_200GB_STORAGE,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
-import { localize, translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { compact, get, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -53,7 +53,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	render() {
-		const { isInSignup, planProperties } = this.props;
+		const { isInSignup, planProperties, translate } = this.props;
 		const tableClasses = classNames(
 			'plan-features-2023-grid__table',
 			`has-${ planProperties.length }-cols`
@@ -142,7 +142,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderPlanLogos() {
-		const { planProperties, isInSignup } = this.props;
+		const { planProperties, isInSignup, translate } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const { planName } = properties;
@@ -265,6 +265,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	getFeatureToStorageMap( storageFeature ) {
+		const { translate } = this.props;
 		switch ( storageFeature ) {
 			case FEATURE_1GB_STORAGE:
 				return translate( '1GB' );
@@ -280,7 +281,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderPlanStorageOptions() {
-		const { planProperties } = this.props;
+		const { planProperties, translate } = this.props;
 
 		return planProperties.map( ( properties ) => {
 			const { planName, storageOptions } = properties;
