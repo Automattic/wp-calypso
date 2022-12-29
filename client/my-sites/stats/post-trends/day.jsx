@@ -1,5 +1,7 @@
+import { Icon, postContent } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent, Fragment } from 'react';
 import Tooltip from 'calypso/components/tooltip';
@@ -29,18 +31,32 @@ class PostTrendsDay extends PureComponent {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	buildTooltipData = () => {
 		const { label, postCount } = this.props;
-		const content = this.props.translate( '%(posts)d post', '%(posts)d posts', {
-			count: postCount,
-			args: {
-				posts: postCount,
-			},
-			comment: 'How many posts published on a certain date.',
-		} );
+		const date = moment( label );
+		const weekDay = date.format( 'dddd' );
+		const formattedDate = date.format( 'MMMM DD, YYYY' );
+
+		const postPublished = this.props.translate(
+			'%(posts)d post published',
+			'%(posts)d posts published',
+			{
+				count: postCount,
+				args: {
+					posts: postCount,
+				},
+				comment: 'How many posts published on a certain date.',
+			}
+		);
 
 		return (
-			<span>
-				<span className="post-count">{ content } </span>
-				<span className="date">{ label }</span>
+			<span className="post-trends__tooltip-content">
+				<div className="post-date">
+					{ formattedDate } ({ weekDay })
+				</div>
+
+				<div className="post-count">
+					<Icon icon={ postContent } className="post-count-icon" />
+					{ postPublished }
+				</div>
 			</span>
 		);
 	};
@@ -61,8 +77,8 @@ class PostTrendsDay extends PureComponent {
 				/>
 				{ postCount > 0 && (
 					<Tooltip
-						className="chart__tooltip is-streak"
-						id="popover__chart-bar"
+						className="post-trends-day__tooltip is-streak"
+						id="post-trends__tooltip"
 						context={ this.dayRef.current }
 						isVisible={ this.state.showPopover }
 						position="top"
