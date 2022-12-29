@@ -1,20 +1,28 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/components/src/highlight-cards/variables.scss";
+
+$font-recoleta: Recoleta, $sans;
+$font-label: "SF Pro Text", $sans;
+$mobile-layout-breakpoint: $break-small;
+$common-border-radius: 4px;
+
 .post-trends {
 	display: inline-block;
 	user-select: none;
 	position: relative;
 	width: 100%;
-	@include breakpoint-deprecated( "<480px" ) {
+
+	@include breakpoint-deprecated("<480px") {
 		display: none;
 	}
-}
 
-.post-trends__title {
-	color: var(--color-neutral-40);
-	margin-left: 11px;
-	height: 40px;
-	font-weight: 600;
-	position: relative;
-	z-index: z-index("root", ".post-trends__title");
+	.post-trends__title {
+		font-size: 32px; // stylelint-disable-line declaration-property-unit-allowed-list
+		font-weight: 400;
+		line-height: 40px;
+		font-family: $font-recoleta;
+	}
 }
 
 .post-trends__value {
@@ -25,18 +33,17 @@
 }
 
 .post-trends__year {
-	position: relative;
-	top: 0;
-	left: 0;
-	display: block;
-	white-space: nowrap;
+	margin-top: 16px;
+	padding: 16px 0;
+	display: flex;
+	justify-content: space-between;
 	transition: left, 1s, ease-in-out;
 }
 
 .post-trends__wrapper {
 	position: relative;
-	height: 130px;
-	max-width: 660px; // necessary for fluid width mode
+	// height: 130px;
+	// max-width: 660px; // necessary for fluid width mode
 	margin: 0 auto;
 	overflow: hidden;
 }
@@ -47,11 +54,15 @@
 	top: 0;
 	width: 30px;
 	height: 130px;
-	background: linear-gradient(to right, var(--color-surface), rgba(var(--color-surface-rgb), 0.92), rgba(var(--color-surface-rgb), 0));
+	background:
+		linear-gradient(to right,
+			var(--color-surface),
+			rgba(var(--color-surface-rgb), 0.92),
+			rgba(var(--color-surface-rgb), 0));
 	text-align: left;
 	z-index: z-index("root", ".post-trends__scroll");
 
-	@include breakpoint-deprecated( "<960px" ) {
+	@include breakpoint-deprecated("<960px") {
 		.focus-sidebar & {
 			z-index: 0;
 		}
@@ -62,17 +73,18 @@
 		width: 30px;
 		height: 100px;
 		display: block;
-		background: url(calypso/assets/images/stats/left-arrow.svg) no-repeat 4px 48px;
+		background: url(calypso/assets/images/stats/left-arrow.svg ) no-repeat 4px 48px;
 		background-size: 18px 18px;
 		opacity: 0.15;
 	}
 
 	.right-arrow {
-		background: url(calypso/assets/images/stats/right-arrow.svg) no-repeat 4px 48px;
+		background: url(calypso/assets/images/stats/right-arrow.svg ) no-repeat 4px 48px;
 		background-size: 18px 18px;
 	}
 
 	&.is-active {
+
 		.right-arrow,
 		.left-arrow {
 			opacity: 0.8;
@@ -85,7 +97,10 @@
 }
 
 .post-trends__scroll-right {
-	background: linear-gradient(to left, var(--color-surface), rgba(var(--color-surface-rgb), 0.92), rgba(var(--color-surface-rgb), 0));
+	background: linear-gradient(to left,
+			var(--color-surface),
+			rgba(var(--color-surface-rgb), 0.92),
+			rgba(var(--color-surface-rgb), 0));
 	text-align: right;
 	right: 0;
 }
@@ -99,23 +114,35 @@
 
 .post-trends__month {
 	font-size: 0;
-	display: inline-block;
-	white-space: normal;
-	margin: 0 4px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+
+	&:not( :first-child) {
+		margin-left: 28px;
+	}
+}
+
+.post-trends__weeks {
+	display: flex;
+	flex-direction: column;
 }
 
 .post-trends__week {
-	display: inline-block;
-	width: 9px;
+	display: flex;
 }
 
 .post-trends__label {
+	margin-top: 32px;
+	font-family: $font-label;
+	color: var(--color-neutral-80);
+	// --studio-gray-80
+	font-weight: 400;
+	font-size: 0.875rem;
+	line-height: 20px;
+	text-transform: none;
 	text-align: center;
-	font-size: $font-body-extra-small;
-	color: var(--color-neutral-40);
-	margin-top: 10px;
-	text-transform: uppercase;
-	letter-spacing: 0.1em;
+	letter-spacing: -0.15px;
 
 	.is-loading & {
 		display: none;
@@ -124,11 +151,12 @@
 
 .post-trends__day {
 	display: inline-block;
-	width: 7px;
-	height: 7px;
+	width: 12px;
+	height: 12px;
 	border: 1px solid var(--color-border-inverted);
+	border-radius: 2px;
 	background-color: var(--color-neutral-5);
-	margin: 0;
+	margin: 2px;
 }
 
 .post-trends__day,
@@ -171,7 +199,8 @@
 	}
 }
 
-@include breakpoint-deprecated( ">1040px" ) {
+@include breakpoint-deprecated(">1040px") {
+
 	.post-trends__scroll-left,
 	.post-trends__scroll-right {
 		display: none;
@@ -179,39 +208,37 @@
 }
 
 .post-trends__key-container {
-	@include clear-fix;
-	padding-top: 10px;
-	float: right;
+	padding: 16px;
+	float: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
-	@include breakpoint-deprecated( "<960px" ) {
-		float: none;
-		margin: 0 auto;
-		margin-bottom: 25px;
-		text-align: center;
+	@media (max-width: $break-large ) {
+		margin-bottom: 0;
 	}
 }
 
-.post-trends__key-label,
-.post-trends__key {
-	display: inline-block;
-}
-
 .post-trends__key-label {
-	font-size: $font-body-extra-small;
-	color: var(--color-neutral);
-	letter-spacing: 0.1em;
-	text-transform: uppercase;
+	font-weight: 400;
+	font-size: $font-body-small;
+	line-height: 18px;
+	color: #000;
+	text-transform: none;
+	letter-spacing: normal;
 }
 
 .post-trends__key {
-	margin: 0;
+	border-radius: $common-border-radius;
+	overflow: hidden;
+	padding: 0;
+	margin: 0 16px;
 	list-style-type: none;
-	padding: 2px 9px 0 5px;
+	display: flex;
 
 	.post-trends__key-day {
-		width: 10px;
-		height: 10px;
-		float: left;
-		margin-left: 3px;
+		width: 25px;
+		height: 25px;
+		margin: 0;
 	}
 }

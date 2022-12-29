@@ -8,7 +8,6 @@ import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import SectionHeader from 'calypso/components/section-header';
 import compareProps from 'calypso/lib/compare-props';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSiteStatsPostStreakData } from 'calypso/state/stats/lists/selectors';
@@ -128,7 +127,7 @@ class PostTrends extends Component {
 	};
 
 	render() {
-		const { siteId, query } = this.props;
+		const { siteId, query, translate } = this.props;
 
 		const leftClass = classNames( 'post-trends__scroll-left', {
 			'is-active': this.state.canScrollLeft,
@@ -142,8 +141,10 @@ class PostTrends extends Component {
 		return (
 			<div className="post-trends">
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsStreak" query={ query } /> }
-				<SectionHeader label={ this.props.translate( 'Posting activity' ) } />
+
 				<Card>
+					<h1 className="post-trends__title">{ translate( 'Posting activity' ) }</h1>
+
 					<div className={ leftClass } onClick={ this.scrollLeft } role="button" tabIndex="0">
 						<span className="left-arrow" />
 					</div>
@@ -156,7 +157,7 @@ class PostTrends extends Component {
 						</div>
 						<div className="post-trends__key-container">
 							<span className="post-trends__key-label">
-								{ this.props.translate( 'Fewer Posts', {
+								{ translate( 'Fewer Posts', {
 									context: 'Legend label in stats post trends visualization',
 								} ) }
 							</span>
@@ -168,7 +169,7 @@ class PostTrends extends Component {
 								<li className="post-trends__key-day is-level-4" />
 							</ul>
 							<span className="post-trends__key-label">
-								{ this.props.translate( 'More Posts', {
+								{ translate( 'More Posts', {
 									context: 'Legend label in stats post trends visualization',
 								} ) }
 							</span>
