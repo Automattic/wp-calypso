@@ -279,12 +279,8 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.plan-features-2023-grid__pricing {
-		padding: 0 20px 24px;
+		padding: 0 20px;
 		margin: 0;
-
-		@media ( min-width: 880px ) {
-			padding-bottom: 16px;
-		}
 
 		.plan-price {
 			color: var(--studio-gray-100);
@@ -624,7 +620,11 @@ body.is-section-signup.is-white-signup {
 			color: var(--studio-gray-50);
 			font-weight: 400;
 			font-size: $font-body-extra-small;
-			padding-bottom: 5px;
+			padding: 0 19px 24px 20px;
+
+			@media ( min-width: 880px ) {
+				padding-bottom: 16px;
+			}
 		}
 
 		.plan-pill.is-in-signup {

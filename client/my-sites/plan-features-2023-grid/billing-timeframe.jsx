@@ -38,7 +38,20 @@ export class PlanFeatures2023GridBillingTimeframe extends Component {
 	}
 
 	render() {
+		const { planName, translate } = this.props;
 		const perMonthDescription = this.getPerMonthDescription() || this.props.billingTimeframe;
+
+		if ( isWpcomEnterpriseGridPlan( planName ) ) {
+			return (
+				<div className="plan-features-2023-grid__vip-price">
+					{ translate( 'Starts at {{b}}US$25,000{{/b}} yearly.', {
+						components: { b: <b /> },
+						comment: 'Translators: the price is in US dollars for all users (US$25,000)',
+					} ) }
+				</div>
+			);
+		}
+
 		return <div>{ perMonthDescription }</div>;
 	}
 }

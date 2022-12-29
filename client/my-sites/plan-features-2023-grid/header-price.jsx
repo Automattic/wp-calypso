@@ -59,6 +59,7 @@ PlanFeatures2023GridHeaderPrice.propTypes = {
 	currencyCode: PropTypes.string,
 	discountPrice: PropTypes.number,
 	rawPrice: PropTypes.number,
+	is2023OnboardingPricingGrid: PropTypes.bool,
 };
 
 export default localize( PlanFeatures2023GridHeaderPrice );

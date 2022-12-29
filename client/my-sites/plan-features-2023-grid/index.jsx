@@ -224,44 +224,21 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderPlanPrice( planPropertiesObj, { isMobile } = {} ) {
-		const { isReskinned, flowName, is2023OnboardingPricingGrid } = this.props;
+		const { isReskinned, is2023OnboardingPricingGrid } = this.props;
 
 		return planPropertiesObj.map( ( properties ) => {
-			const {
-				annualPricePerMonth,
-				currencyCode,
-				discountPrice,
-				planConstantObj,
-				planName,
-				relatedMonthlyPlan,
-				isMonthlyPlan,
-				isPlaceholder,
-				hideMonthly,
-				rawPrice,
-				rawPriceAnnual,
-				rawPriceForMonthlyPlan,
-			} = properties;
+			const { currencyCode, discountPrice, planName, rawPrice } = properties;
 
 			const classes = classNames( 'plan-features-2023-grid__table-item', {
 				'has-border-top': ! isReskinned,
 			} );
-			const billingTimeFrame = planConstantObj.getBillingTimeFrame();
 
 			return (
 				<Container scope="col" key={ planName } className={ classes } isMobile={ isMobile }>
 					<PlanFeatures2023GridHeaderPrice
-						billingTimeFrame={ billingTimeFrame }
 						currencyCode={ currencyCode }
 						discountPrice={ discountPrice }
-						hideMonthly={ hideMonthly }
-						isPlaceholder={ isPlaceholder }
 						rawPrice={ rawPrice }
-						rawPriceAnnual={ rawPriceAnnual }
-						rawPriceForMonthlyPlan={ rawPriceForMonthlyPlan }
-						relatedMonthlyPlan={ relatedMonthlyPlan }
-						annualPricePerMonth={ annualPricePerMonth }
-						isMonthlyPlan={ isMonthlyPlan }
-						flow={ flowName }
 						planName={ planName }
 						is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 					/>
