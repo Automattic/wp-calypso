@@ -25,7 +25,6 @@ class StatsEmailModule extends Component {
 		data: PropTypes.array,
 		query: PropTypes.object,
 		statType: PropTypes.string,
-		showSummaryLink: PropTypes.bool,
 		translate: PropTypes.func,
 	};
 
