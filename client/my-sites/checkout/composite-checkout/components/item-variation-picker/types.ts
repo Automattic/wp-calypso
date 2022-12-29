@@ -10,6 +10,10 @@ export type WPCOMProductVariant = {
 	productId: number;
 	productSlug: WPCOMProductSlug;
 	variantLabel: string;
+	introductoryTerm: string;
+	introductoryInterval: number;
+	priceBeforeDiscounts: number;
+	productBillingTermInMonths: number;
 };
 
 export type ItemVariationPickerProps = {
