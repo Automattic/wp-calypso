@@ -4,7 +4,6 @@ import {
 	getPlan,
 	isJetpackPlan,
 	isJetpackProduct,
-	isPlan,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -288,10 +287,6 @@ class CancelPurchaseButton extends Component {
 				text = translate( 'Cancel Subscription' );
 			}
 
-			if ( isSubscription( purchase ) && isPlan( purchase ) ) {
-				text = translate( 'Cancel Plan' );
-			}
-
 			if ( isOneTimePurchase( purchase ) ) {
 				text = translate( 'Cancel and Refund' );
 			}
@@ -307,10 +302,6 @@ class CancelPurchaseButton extends Component {
 			if ( isSubscription( purchase ) ) {
 				onClick = this.handleCancelPurchaseClick;
 				text = translate( 'Cancel Subscription' );
-			}
-
-			if ( isSubscription( purchase ) && isPlan( purchase ) ) {
-				text = translate( 'Cancel Plan' );
 			}
 		}
 
