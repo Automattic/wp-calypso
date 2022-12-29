@@ -1015,3 +1015,33 @@ export function parseEmailChartData( payload, nullAttributes = [] ) {
 		return dataRecord;
 	} );
 }
+
+/**
+ * Return data in a format used by 'components/stats/geochart` for email stats. The fields array is matched to
+ * the data in a single object.
+ *
+ * @param {Array} countries - the array of countries for the given data
+ * @param {object} countriesInfo - an object containing information about the countries
+ * @returns {Array} - Array of data objects
+ */
+export function parseEmailCountriesData( countries, countriesInfo ) {
+	if ( ! countries || ! countriesInfo ) {
+		return [];
+	}
+
+	return countries.map( function ( country ) {
+		const info = countriesInfo[ country[ 0 ] ];
+		if ( ! info ) {
+			return {};
+		}
+
+		const { country_full, map_region } = info;
+
+		return {
+			countryCode: country[ 0 ],
+			label: country_full,
+			region: map_region,
+			value: parseInt( country[ 1 ], 10 ),
+		};
+	} );
+}

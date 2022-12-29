@@ -6,10 +6,10 @@ import { throttle, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
-import QueryEmailStats from 'calypso/components/data/query-email-stats';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
+import { getEmailCountryStatsNormalizedData } from 'calypso/state/stats/emails/selectors';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import StatsModulePlaceholder from '../stats-module/placeholder';
@@ -100,7 +100,6 @@ class StatsGeochart extends Component {
 
 	drawData = () => {
 		const { currentUserCountryCode, data, translate } = this.props;
-
 		if ( ! data || ! data.length ) {
 			return;
 		}
@@ -166,7 +165,7 @@ class StatsGeochart extends Component {
 	};
 
 	render() {
-		const { siteId, statType, query, data, kind, postId } = this.props;
+		const { siteId, statType, query, data, kind } = this.props;
 		const isLoading = ! data || ! this.state.visualizationsLoaded;
 		const classes = classNames( 'stats-geochart', {
 			'is-loading': isLoading,
@@ -177,16 +176,6 @@ class StatsGeochart extends Component {
 			<>
 				{ siteId && kind === 'site' && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
-				) }
-				{ siteId && kind === 'email' && (
-					<QueryEmailStats
-						statType={ statType }
-						siteId={ siteId }
-						period="day"
-						postId={ postId }
-						date={ query.date }
-						query={ query }
-					/>
 				) }
 
 				<div ref={ this.chartRef } className={ classes } />
@@ -201,12 +190,19 @@ class StatsGeochart extends Component {
 
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
-	const statType = 'statsCountryViews';
-	const { query, kind } = ownProps;
+	const statType = ownProps.statType ?? 'statsCountryViews';
+	const { query, kind, postId } = ownProps;
 
 	const data =
 		kind === 'email'
-			? getSiteStatsNormalizedData( state, siteId, statType, query )
+			? getEmailCountryStatsNormalizedData(
+					state,
+					siteId,
+					postId,
+					query.period,
+					query.date,
+					statType
+			  )
 			: getSiteStatsNormalizedData( state, siteId, statType, query );
 	return {
 		currentUserCountryCode: getCurrentUserCountryCode( state ),
