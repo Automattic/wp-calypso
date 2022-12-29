@@ -55,15 +55,17 @@ const StatsInsights = ( props ) => {
 				<AnnualHighlightsSection siteId={ siteId } />
 				<AllTimelHighlightsSection siteId={ siteId } />
 				{ isNewAllTimeViews && <AllTimelViewsSection siteId={ siteId } slug={ siteSlug } /> }
-				<div className="stats__module--insights-unified">
+				<div className="stats__module--insights-posting-activity">
 					<PostingActivity />
-					{ ! isNewAllTimeViews && (
+				</div>
+				{ ! isNewAllTimeViews && (
+					<div className="stats__module--insights-unified">
 						<>
 							<SectionHeader label={ translate( 'All-time views' ) } />
 							<StatsViews />
 						</>
-					) }
-				</div>
+					</div>
+				) }
 				{ siteId && (
 					<DomainTip
 						siteId={ siteId }

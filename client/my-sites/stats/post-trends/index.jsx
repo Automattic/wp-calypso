@@ -1,5 +1,4 @@
-import { Card } from '@automattic/components';
-import classNames from 'classnames';
+// import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { throttle, values } from 'lodash';
 import moment from 'moment';
@@ -13,6 +12,7 @@ import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSiteStatsPostStreakData } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Month from './month';
+// import YearNavigation from './year-navigation';
 
 import './style.scss';
 
@@ -129,28 +129,38 @@ class PostTrends extends Component {
 	render() {
 		const { siteId, query, translate } = this.props;
 
-		const leftClass = classNames( 'post-trends__scroll-left', {
-			'is-active': this.state.canScrollLeft,
-		} );
+		// const leftClass = classNames( 'post-trends__scroll-left', {
+		// 	'is-active': this.state.canScrollLeft,
+		// } );
 
-		const rightClass = classNames( 'post-trends__scroll-right', {
-			'is-active': this.state.canScrollRight,
-		} );
+		// const rightClass = classNames( 'post-trends__scroll-right', {
+		// 	'is-active': this.state.canScrollRight,
+		// } );
 
 		/* eslint-disable jsx-a11y/click-events-have-key-events, wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="post-trends">
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsStreak" query={ query } /> }
 
-				<Card>
-					<h1 className="post-trends__title">{ translate( 'Posting activity' ) }</h1>
+				<div>
+					<div className="post-trends__heading">
+						<h1 className="post-trends__title">{ translate( 'Posting activity' ) }</h1>
 
+						{ /* This will be finished later */ }
+						{ /* <YearNavigation
+							disablePreviousArrow={ false }
+							disableNextArrow={ false }
+							onYearChange={ () => {} }
+						/> */ }
+					</div>
+
+					{ /* 
 					<div className={ leftClass } onClick={ this.scrollLeft } role="button" tabIndex="0">
 						<span className="left-arrow" />
 					</div>
 					<div className={ rightClass } onClick={ this.scrollRight } role="button" tabIndex="0">
 						<span className="right-arrow" />
-					</div>
+					</div> */ }
 					<div ref={ this.wrapperRef } className="post-trends__wrapper">
 						<div ref={ this.yearRef } className="post-trends__year">
 							{ this.getMonthComponents() }
@@ -175,7 +185,7 @@ class PostTrends extends Component {
 							</span>
 						</div>
 					</div>
-				</Card>
+				</div>
 			</div>
 		);
 	}
