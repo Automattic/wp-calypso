@@ -8,13 +8,12 @@ import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import SectionHeader from 'calypso/components/section-header';
+import PromoCards from 'calypso/my-sites/stats/promo-cards';
 import ErrorPanel from 'calypso/my-sites/stats/stats-error';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import PromoCards from '../promo-cards';
-
 import './style.scss';
 
 class AnnualSiteStats extends Component {
@@ -143,7 +142,7 @@ class AnnualSiteStats extends Component {
 	}
 
 	render() {
-		const { years, translate, moment, isWidget, siteId, siteSlug, isJetpack, isOdysseyStats } =
+		const { isJetpack, isOdysseyStats, isWidget, moment, siteId, siteSlug, translate, years } =
 			this.props;
 		const strings = this.getStrings();
 		const now = moment();
@@ -207,17 +206,13 @@ class AnnualSiteStats extends Component {
 export default connect( ( state ) => {
 	const statType = 'statsInsights';
 	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSiteSlug( state, siteId );
 	const insights = getSiteStatsNormalizedData( state, siteId, statType, {} );
 
-	const isJetpack = isJetpackSite( state, siteId );
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-
 	return {
-		isJetpack,
-		isOdysseyStats,
+		isJetpack: isJetpackSite( state, siteId ),
+		isOdysseyStats: config.isEnabled( 'is_running_in_jetpack_site' ),
 		siteId,
-		siteSlug,
+		siteSlug: getSiteSlug( state, siteId ),
 		years: insights.years,
 	};
 } )( localize( withLocalizedMoment( AnnualSiteStats ) ) );
