@@ -127,9 +127,7 @@ function a8c_happyblocks_pricing_plans_is_author() {
 function a8c_happyblocks_get_config() {
 
 	return array(
-		'features' => array(
-			'planTabs' => apply_filters( 'support_forums_use_upsell_block_tabs', false ),
-		),
+		'features' => array(),
 		'locale'   => get_user_locale(),
 	);
 }
