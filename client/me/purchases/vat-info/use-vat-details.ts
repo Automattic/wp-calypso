@@ -51,10 +51,10 @@ export default function useVatDetails(): VatDetailsManager {
 		const { country, id } = data;
 
 		if ( !! id && id?.length > 1 ) {
-			const first2UppercasedChars = id.substr( 0, 2 ).toUpperCase();
+			const first2UppercasedChars = id.slice( 0, 2 ).toUpperCase();
 
 			if ( isNaN( Number( first2UppercasedChars ) ) && first2UppercasedChars === country ) {
-				return { ...data, id: id.substr( 2 ) };
+				return { ...data, id: id.slice( 2 ) };
 			}
 		}
 
@@ -64,7 +64,7 @@ export default function useVatDetails(): VatDetailsManager {
 		( vatDetails: VatDetails ) => {
 			mutation.mutate( formatVatDetails( vatDetails ) );
 		},
-		[ mutation ]
+		[ mutation, formatVatDetails ]
 	);
 
 	return useMemo(
