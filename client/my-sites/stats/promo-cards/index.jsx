@@ -13,11 +13,17 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-const EVENT_BLAZE_PROMO_VIEW = 'calypso_stats_traffic_blaze_banner_view';
-const EVENT_MOBILE_PROMO_VIEW = 'calypso_stats_traffic_mobile_cta_jetpack_view';
-const EVENT_YOAST_PROMO_VIEW = 'calypso_stats_wordpress_seo_premium_banner_view';
+const EVENT_TRAFFIC_BLAZE_PROMO_VIEW = 'calypso_stats_traffic_blaze_banner_view';
+const EVENT_TRAFFIC_MOBILE_PROMO_VIEW = 'calypso_stats_traffic_mobile_cta_jetpack_view';
+const EVENT_TRAFFIC_YOAST_PROMO_VIEW = 'calypso_stats_wordpress_seo_premium_banner_view';
 
-export default function PromoCards( { isOdysseyStats, slug } ) {
+// TODO: Register the following events with Tracks to ensure they're properly tracked.
+const EVENT_ANNUAL_BLAZE_PROMO_VIEW = 'calypso_stats_annual_insights_blaze_banner_view';
+const EVENT_ANNUAL_MOBILE_PROMO_VIEW = 'calypso_stats_annual_insights_mobile_cta_jetpack_view';
+const EVENT_ANNUAL_YOAST_PROMO_VIEW =
+	'calypso_stats_annual_insights_wordpress_seo_premium_banner_view';
+
+export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 	// Keep a replica of the pager index state.
 	// TODO: Figure out an approach that doesn't require replicating state value from DotPager.
 	const [ dotPagerIndex, setDotPagerIndex ] = useState( 0 );
@@ -29,16 +35,22 @@ export default function PromoCards( { isOdysseyStats, slug } ) {
 
 	// Blaze promo is disabled for Odyssey.
 	const showBlazePromo = ! isOdysseyStats;
-	// Yoast promo is disabled for Odyssey & self-hosted.
-	const showYoastPromo = ! isOdysseyStats && ! jetpackNonAtomic;
+	// Yoast promo is disabled for Odyssey & self-hosted & non-traffic pages.
+	const showYoastPromo = ! isOdysseyStats && ! jetpackNonAtomic && pageSlug !== 'traffic';
 
 	const viewEvents = useMemo( () => {
 		const events = [];
-		showBlazePromo && events.push( EVENT_BLAZE_PROMO_VIEW );
-		showYoastPromo && events.push( EVENT_YOAST_PROMO_VIEW );
-		events.push( EVENT_MOBILE_PROMO_VIEW );
+		if ( pageSlug === 'traffic' ) {
+			showBlazePromo && events.push( EVENT_TRAFFIC_BLAZE_PROMO_VIEW );
+			showYoastPromo && events.push( EVENT_TRAFFIC_YOAST_PROMO_VIEW );
+			events.push( EVENT_TRAFFIC_MOBILE_PROMO_VIEW );
+		} else if ( pageSlug === 'annual-insights' ) {
+			showBlazePromo && events.push( EVENT_ANNUAL_BLAZE_PROMO_VIEW );
+			showYoastPromo && events.push( EVENT_ANNUAL_MOBILE_PROMO_VIEW );
+			events.push( EVENT_ANNUAL_YOAST_PROMO_VIEW );
+		}
 		return events;
-	}, [ showBlazePromo, showYoastPromo ] );
+	}, [ pageSlug, showBlazePromo, showYoastPromo ] );
 
 	// Handle view events upon initial mount and upon paging DotPager.
 	useEffect( () => {
