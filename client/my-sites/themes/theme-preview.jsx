@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -5,11 +6,13 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import PulsingDot from 'calypso/components/pulsing-dot';
+import ThemePreviewModal from 'calypso/components/theme-preview-modal';
 import WebPreview from 'calypso/components/web-preview';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { hideThemePreview } from 'calypso/state/themes/actions';
 import {
+	getCanonicalTheme,
 	getThemeDemoUrl,
 	getThemePreviewThemeOptions,
 	themePreviewVisibility,
@@ -96,8 +99,9 @@ class ThemePreview extends Component {
 	};
 
 	render() {
-		const { themeId, siteId, demoUrl, children, isWPForTeamsSite } = this.props;
+		const { theme, themeId, siteId, demoUrl, children, isWPForTeamsSite } = this.props;
 		const { showActionIndicator } = this.state;
+		const isNewDetailsAndPreview = isEnabled( 'themes/showcase-i4/details-and-preview' );
 
 		if ( ! themeId || isWPForTeamsSite ) {
 			return null;
@@ -107,21 +111,27 @@ class ThemePreview extends Component {
 			<div>
 				<QueryCanonicalTheme siteId={ siteId } themeId={ themeId } />
 				{ children }
-				{ demoUrl && (
-					<WebPreview
-						showPreview={ true }
-						showExternal={ false }
-						showSEO={ false }
-						onClose={ this.props.hideThemePreview }
-						previewUrl={ this.props.demoUrl + '?demo=true&iframe=true&theme_preview=true' }
-						externalUrl={ this.props.demoUrl }
-						belowToolbar={ this.props.belowToolbar }
-					>
-						{ showActionIndicator && <PulsingDot active={ true } /> }
-						{ ! showActionIndicator && this.renderSecondaryButton() }
-						{ ! showActionIndicator && this.renderPrimaryButton() }
-					</WebPreview>
-				) }
+				{ demoUrl &&
+					( isNewDetailsAndPreview ? (
+						<ThemePreviewModal
+							previewUrl={ this.props.demoUrl + '?demo=true&iframe=true&theme_preview=true' }
+							theme={ theme }
+						/>
+					) : (
+						<WebPreview
+							showPreview={ true }
+							showExternal={ false }
+							showSEO={ false }
+							onClose={ this.props.hideThemePreview }
+							previewUrl={ this.props.demoUrl + '?demo=true&iframe=true&theme_preview=true' }
+							externalUrl={ this.props.demoUrl }
+							belowToolbar={ this.props.belowToolbar }
+						>
+							{ showActionIndicator && <PulsingDot active={ true } /> }
+							{ ! showActionIndicator && this.renderSecondaryButton() }
+							{ ! showActionIndicator && this.renderPrimaryButton() }
+						</WebPreview>
+					) ) }
 			</div>
 		);
 	}
@@ -141,6 +151,7 @@ export default connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		const themeOptions = getThemePreviewThemeOptions( state );
 		return {
+			theme: getCanonicalTheme( state, siteId, themeId ),
 			themeId,
 			siteId,
 			isJetpack,
