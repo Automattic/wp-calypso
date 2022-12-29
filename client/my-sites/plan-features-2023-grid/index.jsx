@@ -212,11 +212,13 @@ export class PlanFeatures2023Grid extends Component {
 			: translate( 'Free domain for one year' );
 
 		return (
-			<PlanFeaturesItem>
-				<span className="plan-features-2023-grid__item-info is-annual-plan-feature is-available">
-					<span className="plan-features-2023-grid__item-title is-bold">{ displayText }</span>
-				</span>
-			</PlanFeaturesItem>
+			<div className="plan-features-2023-grid__highlighted-feature">
+				<PlanFeaturesItem>
+					<span className="plan-features-2023-grid__item-info is-annual-plan-feature is-available">
+						<span className="plan-features-2023-grid__item-title is-bold">{ displayText }</span>
+					</span>
+				</PlanFeaturesItem>
+			</div>
 		);
 	}
 

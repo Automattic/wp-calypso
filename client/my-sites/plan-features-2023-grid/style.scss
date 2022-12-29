@@ -211,6 +211,10 @@ $plan-features-sidebar-width: 272px;
 				padding: 24px 0 0;
 			}
 		}
+
+		.plan-features-2023-grid__highlighted-feature .plan-features-2023-grid__item {
+			padding-bottom: 24px;
+		}
 	}
 
 	.signup__steps .plans-features-main__group.is-scrollable & {
@@ -244,10 +248,11 @@ $plan-features-sidebar-width: 272px;
 		font-size: $font-body;
 		color: var(--studio-gray-80);
 		font-weight: 400;
-		padding: 0 20px 16px 20px;
+		padding: 0 20px 24px 20px;
 
 		@media ( min-width: 880px ) {
 			font-size: $font-body-extra-small;
+			padding-bottom: 16px;
 		}
 	}
 
@@ -274,8 +279,12 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.plan-features-2023-grid__pricing {
-		padding: 8px 20px;
+		padding: 0 20px 24px;
 		margin: 0;
+
+		@media ( min-width: 880px ) {
+			padding-bottom: 16px;
+		}
 
 		.plan-price {
 			color: var(--studio-gray-100);
@@ -305,7 +314,6 @@ $plan-features-sidebar-width: 272px;
 			color: var(--studio-gray-50);
 			font-weight: 400;
 			font-size: $font-body-extra-small;
-			padding-bottom: 5px;
 		}
 
 		.plan-price.is-original {
