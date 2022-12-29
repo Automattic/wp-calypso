@@ -96,6 +96,11 @@ $plan-features-sidebar-width: 272px;
 	overflow-x: hidden;
 
 	@media ( min-width: 880px ) {
+		padding-top: 64px;
+		overflow-x: auto;
+	}
+
+	@media ( min-width: 1340px ) {
 		padding-top: 103px;
 		overflow-x: auto;
 	}
@@ -231,8 +236,8 @@ $plan-features-sidebar-width: 272px;
 		margin: 0;
 	}
 
-	.plan-features-2023-grid__table-top .plan-features-2023-grid__table {
-		border-top-right-radius: 0;
+	.plan-features-2023-grid__table-bottom .plan-features-2023-grid__table {
+		border-top-left-radius: 0;
 	}
 
 	.plan-features-2023-grid__header-title {
@@ -603,7 +608,7 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.plan-features-2023-grid__table-bottom {
-		margin-top: 16px;
+		margin-top: 54px;
 	}
 }
 
@@ -615,6 +620,10 @@ body.is-section-signup.is-white-signup {
 	.plan-features-2023-grid__table-item {
 		border-right: none;
 		background-color: transparent;
+
+		&:first-of-type {
+			border-left: none;
+		}
 
 		&.plan-features-2023-grid__header-billing-info {
 			color: var(--studio-gray-50);
