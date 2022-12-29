@@ -264,7 +264,7 @@ export class PlanFeatures2023Grid extends Component {
 		);
 	}
 
-	getFeatureToStorageMap( storageFeature ) {
+	getStorageStringFromFeature( storageFeature ) {
 		const { translate } = this.props;
 		switch ( storageFeature ) {
 			case FEATURE_1GB_STORAGE:
@@ -291,7 +291,7 @@ export class PlanFeatures2023Grid extends Component {
 				}
 				return (
 					<div className="plan-features-2023-grid__storage-buttons">
-						{ this.getFeatureToStorageMap( storageFeature ) }
+						{ this.getStorageStringFromFeature( storageFeature ) }
 					</div>
 				);
 			} );
