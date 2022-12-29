@@ -21,7 +21,7 @@ import {
 	TYPE_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
-import { localize, translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { compact, get, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -54,7 +54,7 @@ import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridFeatures from './features';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { PlanFeaturesItem } from './item';
-import { getFeatureToStorageMap } from './util';
+import { getStorageStringFromFeature } from './util';
 import './style.scss';
 
 const noop = () => {};
@@ -234,7 +234,6 @@ export class PlanFeatures2023Grid extends Component {
 				planName,
 				relatedMonthlyPlan,
 				isMonthlyPlan,
-				isPlaceholder,
 				hideMonthly,
 				rawPrice,
 				rawPriceAnnual,
@@ -253,7 +252,6 @@ export class PlanFeatures2023Grid extends Component {
 						currencyCode={ currencyCode }
 						discountPrice={ discountPrice }
 						hideMonthly={ hideMonthly }
-						isPlaceholder={ isPlaceholder }
 						rawPrice={ rawPrice }
 						rawPriceAnnual={ rawPriceAnnual }
 						rawPriceForMonthlyPlan={ rawPriceForMonthlyPlan }
@@ -470,7 +468,7 @@ export class PlanFeatures2023Grid extends Component {
 				}
 				return (
 					<div className="plan-features-2023-grid__storage-buttons">
-						{ getFeatureToStorageMap( storageFeature ) }
+						{ getStorageStringFromFeature( storageFeature ) }
 					</div>
 				);
 			} );
@@ -525,15 +523,11 @@ export default connect(
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = true;
-
-				const features = planConstantObj.getPlanCompareFeatures();
-
-				let planFeatures = getPlanFeaturesObject( features );
 				if ( placeholder || ! planObject ) {
 					isPlaceholder = true;
 				}
 
-				planFeatures = getPlanFeaturesObject(
+				let planFeatures = getPlanFeaturesObject(
 					planConstantObj.get2023PricingGridSignupWpcomFeatures()
 				);
 				let jetpackFeatures = getPlanFeaturesObject(

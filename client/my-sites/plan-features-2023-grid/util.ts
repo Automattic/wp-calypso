@@ -6,7 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 
-export const getFeatureToStorageMap = ( storageFeature: string ) => {
+export const getStorageStringFromFeature = ( storageFeature: string ) => {
 	switch ( storageFeature ) {
 		case FEATURE_1GB_STORAGE:
 			return translate( '1GB' );
