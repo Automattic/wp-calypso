@@ -41,7 +41,6 @@ export interface Theme {
 	screenshot: string;
 	screenshots: string[];
 	stylesheet: string;
-	style_variations?: any[];
 	supportDocumentation: string;
 	tags: string[];
 	taxonomies?: {
