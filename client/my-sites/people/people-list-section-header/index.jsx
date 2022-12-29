@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import { get, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -55,11 +55,19 @@ class PeopleListSectionHeader extends Component {
 		const { currentRoute, translate } = this.props;
 
 		if ( startsWith( currentRoute, '/people/followers' ) ) {
-			return translate( 'A list of people currently following your site' );
+			// Adding a dot at the end of the translation. New translation for RTL languages.
+			return i18n.hasTranslation( 'A list of people currently following your site.' )
+				? translate( 'A list of people currently following your site.' )
+				: translate( 'A list of people currently following your site' ) + '.';
 		}
 
 		if ( startsWith( currentRoute, '/people/email-followers' ) ) {
-			return translate( 'A list of people who are subscribed to your blog via email only' );
+			// Adding a dot at the end of the translation. New translation for RTL languages.
+			return i18n.hasTranslation(
+				'A list of people who are subscribed to your blog via email only.'
+			)
+				? translate( 'A list of people who are subscribed to your blog via email only.' )
+				: translate( 'A list of people who are subscribed to your blog via email only' ) + '.';
 		}
 
 		return null;
@@ -97,7 +105,12 @@ class PeopleListSectionHeader extends Component {
 					<>
 						{ label }
 						{ popoverText && ! this.props.isPlaceholder && (
-							<SupportInfo position="right" text={ popoverText } privacyLink={ false } />
+							<SupportInfo
+								position="right"
+								text={ popoverText }
+								privacyLink={ false }
+								link="https://wordpress.com/support/followers/"
+							/>
 						) }
 					</>
 				}
