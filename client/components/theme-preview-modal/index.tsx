@@ -1,8 +1,5 @@
 import { RootChild } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
-import PremiumBadge from 'calypso/components/premium-badge';
-import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import type { Theme } from 'calypso/lib/types';
 
 import './style.scss';
@@ -12,24 +9,9 @@ interface ThemePreviewModalProps {
 	theme: Theme;
 }
 
-const ThemePreviewModal: ReactFC< ThemePreviewModalProps > = ( { previewUrl, theme } ) => {
-	const translate = useTranslate();
-	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
-
-	function showGlobalStylesPremiumBadge() {
-		if ( ! shouldLimitGlobalStyles ) {
-			return null;
-		}
-
-		return (
-			<PremiumBadge
-				className="design-picker__premium-badge"
-				labelText={ translate( 'Upgrade' ) }
-				tooltipText={ translate(
-					'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
-				) }
-			/>
-		);
+const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( { previewUrl, theme } ) => {
+	if ( ! theme ) {
+		return null;
 	}
 
 	return (
@@ -46,7 +28,7 @@ const ThemePreviewModal: ReactFC< ThemePreviewModalProps > = ( { previewUrl, the
 						// onSelectVariation={ previewDesignVariation }
 						// actionButtons={ actionButtons }
 						// recordDeviceClick={ recordDeviceClick }
-						showGlobalStylesPremiumBadge={ showGlobalStylesPremiumBadge }
+						// showGlobalStylesPremiumBadge={ showGlobalStylesPremiumBadge }
 					/>
 				</div>
 			</div>
