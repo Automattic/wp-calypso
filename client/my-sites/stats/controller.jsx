@@ -62,7 +62,7 @@ function getNumPeriodAgo( momentSiteZone, date, period ) {
 }
 
 function getSiteFilters( siteId ) {
-	const filters = [
+	return [
 		//TODO: This Insights route could be removed since it has been set routing as below.
 		// statsPage( '/stats/insights/:site', insights );
 		{
@@ -94,13 +94,35 @@ function getSiteFilters( siteId ) {
 			id: 'stats-year',
 			period: 'year',
 		},
+		{
+			title: i18n.translate( 'Days' ),
+			path: '/stats/email/open/' + siteId + '/day',
+			id: 'stats-email-opens-day',
+			period: 'day',
+		},
+		{
+			title: i18n.translate( 'Weeks' ),
+			path: '/stats/email/open/' + siteId + '/week',
+			id: 'stats-email-opens-week',
+			period: 'week',
+		},
+		{
+			title: i18n.translate( 'Months' ),
+			path: '/stats/email/open/' + siteId + '/month',
+			id: 'stats-email-opens-month',
+			period: 'month',
+		},
+		{
+			title: i18n.translate( 'Years' ),
+			path: '/stats/email/open/' + siteId + '/year',
+			id: 'stats-email-opens-year',
+			period: 'year',
+		},
 	];
-
-	return filters;
 }
 
 function getWordAdsFilters( siteId ) {
-	const filters = [
+	return [
 		{
 			title: i18n.translate( 'WordAds - Days' ),
 			path: '/stats/ads/day/' + siteId,
@@ -122,8 +144,6 @@ function getWordAdsFilters( siteId ) {
 			period: 'year',
 		},
 	];
-
-	return filters;
 }
 
 function getMomentSiteZone( state, siteId ) {
@@ -440,7 +460,47 @@ export function wordAds( context, next ) {
 }
 
 export function emailOpen( context, next ) {
-	context.primary = <StatsEmailOpenDetail />;
+	const givenSiteId = context.params.site;
+	const queryOptions = context.query;
+	const state = context.store.getState();
+	const postId = parseInt( context.params.email_id, 10 );
+	const selectedSite = getSite( context.store.getState(), givenSiteId );
+	const siteId = selectedSite ? selectedSite.ID || 0 : 0;
+
+	const momentSiteZone = getMomentSiteZone( state, siteId );
+	const filters = getSiteFilters( givenSiteId );
+
+	const activeFilter = find( filters, ( filter ) => {
+		return (
+			context.path.indexOf( filter.path ) >= 0 ||
+			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )
+		);
+	} );
+
+	const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
+
+	const date = isValidStartDate
+		? moment( queryOptions.startDate ).locale( 'en' )
+		: rangeOfPeriod( activeFilter.period, momentSiteZone.locale( 'en' ) ).startOf;
+
+	if ( 0 === siteId ) {
+		window.location = '/stats';
+		return next();
+	}
+
+	const validTabs = [ 'opens_count', 'unique_opens' ];
+	const chartTab = validTabs.includes( queryOptions.tab ) ? queryOptions.tab : 'opens_count';
+
+	context.primary = (
+		<StatsEmailOpenDetail
+			path={ context.path }
+			postId={ postId }
+			chartTab={ chartTab }
+			context={ context }
+			period={ rangeOfPeriod( activeFilter.period, date ) }
+			date={ date }
+		/>
+	);
 
 	next();
 }
