@@ -505,6 +505,13 @@ const sections = [
 		],
 	},
 	{
+		name: 'jetpack-cloud-features-comparison',
+		paths: [ '/features/comparison', '/[^\\/]+/features/comparison' ],
+		module: 'calypso/jetpack-cloud/sections/comparison',
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+	},
+	{
 		name: 'jetpack-search',
 		paths: [ '/jetpack-search' ],
 		module: 'calypso/my-sites/jetpack-search',
