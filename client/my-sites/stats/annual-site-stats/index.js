@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { find, includes } from 'lodash';
@@ -9,9 +10,10 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import SectionHeader from 'calypso/components/section-header';
 import ErrorPanel from 'calypso/my-sites/stats/stats-error';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import PromoCards from '../promo-cards';
 
 import './style.scss';
 
