@@ -161,7 +161,7 @@ export const useStoreItemInfo = ( {
 	);
 
 	const getCtaLabel = useCallback(
-		( item: SelectorProduct ) => {
+		( item: SelectorProduct, fallbackLabel = translate( 'Get' ) ) => {
 			const ctaLabel = productButtonLabel( {
 				product: item,
 				isOwned: getIsOwned( item ),
@@ -169,7 +169,7 @@ export const useStoreItemInfo = ( {
 				isDeprecated: getIsDeprecated( item ),
 				isSuperseded: getIsSuperseded( item ),
 				currentPlan: sitePlan,
-				fallbackLabel: translate( 'Get' ),
+				fallbackLabel,
 			} );
 
 			const purchase = getPurchase( item );

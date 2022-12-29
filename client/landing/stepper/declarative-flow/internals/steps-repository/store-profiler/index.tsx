@@ -151,6 +151,7 @@ const StoreProfiler: Step = function StoreProfiler( { navigation, flow } ) {
 		<StepContainer
 			stepName="store-profiler"
 			skipButtonAlign="top"
+			shouldHideNavButtons={ flow === ECOMMERCE_FLOW }
 			goBack={ goBack }
 			goNext={ goNext }
 			formattedHeader={
