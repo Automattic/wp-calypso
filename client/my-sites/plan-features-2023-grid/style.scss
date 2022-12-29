@@ -250,7 +250,8 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.plan-features-2023-grid__header-tagline {
-		font-size: $font-body;
+		font-size: 0.813rem; /* stylelint-disable-line */
+		line-height: 16px;
 		color: var(--studio-gray-80);
 		font-weight: 400;
 		padding: 0 20px 24px 20px;
