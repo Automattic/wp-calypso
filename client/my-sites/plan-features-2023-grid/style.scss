@@ -6,10 +6,6 @@ $plan-features-sidebar-width: 272px;
 	margin-top: 300px;
 }
 
-.plan-features-2023-grid__table-item.has-border-top {
-	border-top: solid 1px var(--color-neutral-5);
-}
-
 .plan-features-2023-grid__table-item.is-top-buttons {
 	padding: 0 20px;
 
@@ -20,6 +16,7 @@ $plan-features-sidebar-width: 272px;
 			line-height: 20px;
 			border-radius: 4px;
 			padding: 10px 14px;
+			border: unset;
 
 			&:hover {
 				opacity: 0.85;
@@ -96,10 +93,11 @@ $plan-features-sidebar-width: 272px;
 	margin: 0 auto;
 	padding: 28px 0 10px;
 	transform: translateY(-20px);
-	overflow-x: auto;
+	overflow-x: hidden;
 
 	@media ( min-width: 880px ) {
 		padding-top: 103px;
+		overflow-x: auto;
 	}
 }
 
@@ -144,6 +142,51 @@ $plan-features-sidebar-width: 272px;
 			border-radius: 5px;
 			margin-bottom: 12px;
 			padding: 38px 0 20px 0;
+
+			&.is-free-plan .foldable-card__main {
+				color: var(--studio-blue-50);
+
+				.foldable-card__expand .gridicon {
+					fill: var(--studio-blue-50);
+					width: 12px;
+				}
+			}
+
+			&.is-personal-plan .foldable-card__main {
+				color: var(--studio-blue-60);
+
+				.foldable-card__expand .gridicon {
+					fill: var(--studio-blue-60);
+					width: 12px;
+				}
+			}
+
+			&.is-premium-plan .foldable-card__main {
+				color: #004687;
+
+				.foldable-card__expand .gridicon {
+					fill: #004687;
+					width: 12px;
+				}
+			}
+
+			&.is-business-plan .foldable-card__main {
+				color: #7f54b3;
+
+				.foldable-card__expand .gridicon {
+					fill: #7f54b3;
+					width: 12px;
+				}
+			}
+
+			&.is-ecommerce-plan .foldable-card__main {
+				color: #55347d;
+
+				.foldable-card__expand .gridicon {
+					fill: #55347d;
+					width: 12px;
+				}
+			}
 		}
 
 		.foldable-card {
@@ -159,19 +202,18 @@ $plan-features-sidebar-width: 272px;
 				line-height: 20px;
 			}
 
-			.foldable-card__expand .gridicon {
-				fill: var(--studio-blue-60);
-				width: 12px;
-			}
-
 			&.is-compact .foldable-card__header {
-				padding: 8px 20px;
+				padding: 0 20px;
 			}
 
 			&.is-expanded .foldable-card__content {
 				border-top: none;
 				padding: 24px 0 0;
 			}
+		}
+
+		.plan-features-2023-grid__highlighted-feature .plan-features-2023-grid__item {
+			padding-bottom: 24px;
 		}
 	}
 
@@ -184,10 +226,13 @@ $plan-features-sidebar-width: 272px;
 		color: var(--color-text-subtle);
 		table-layout: fixed;
 		border: 1px solid #e0e0e0;
-		border-right: none;
 		border-radius: 5px; /* stylelint-disable-line */
 		background-color: #fff;
 		margin: 0;
+	}
+
+	.plan-features-2023-grid__table-top .plan-features-2023-grid__table {
+		border-top-right-radius: 0;
 	}
 
 	.plan-features-2023-grid__header-title {
@@ -203,10 +248,11 @@ $plan-features-sidebar-width: 272px;
 		font-size: $font-body;
 		color: var(--studio-gray-80);
 		font-weight: 400;
-		padding: 0 20px 16px 20px;
+		padding: 0 20px 24px 20px;
 
 		@media ( min-width: 880px ) {
 			font-size: $font-body-extra-small;
+			padding-bottom: 16px;
 		}
 	}
 
@@ -218,12 +264,12 @@ $plan-features-sidebar-width: 272px;
 		position: relative;
 
 		.is-bold {
-			font-weight: bold;
+			font-weight: 600;
 		}
 
 		@media ( min-width: 880px ) {
-			border-right: solid 1px var(--color-neutral-5);
-			border-left: solid 1px var(--color-neutral-5);
+			border-right: solid 1px #e0e0e0;
+			border-left: solid 1px #e0e0e0;
 		}
 	}
 
@@ -233,8 +279,12 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.plan-features-2023-grid__pricing {
-		padding: 8px 20px;
+		padding: 0 20px 24px;
 		margin: 0;
+
+		@media ( min-width: 880px ) {
+			padding-bottom: 16px;
+		}
 
 		.plan-price {
 			color: var(--studio-gray-100);
@@ -316,7 +366,7 @@ $plan-features-sidebar-width: 272px;
 			width: 100%;
 
 			&.is-bold {
-				font-weight: bold;
+				font-weight: 600;
 			}
 
 			@media ( min-width: 880px ) {
@@ -332,19 +382,6 @@ $plan-features-sidebar-width: 272px;
 				text-decoration: line-through;
 				color: var(--color-neutral-30);
 			}
-		}
-	}
-
-	.plan-features-2023-grid__actions {
-		padding: 0 15px 15px;
-
-		@include breakpoint-deprecated( "<1040px" ) {
-			padding: 0 12px 12px;
-		}
-
-		@include breakpoint-deprecated( "<660px" ) {
-			padding: 0 20px 20px;
-			border-bottom: solid 1px var(--color-neutral-0);
 		}
 	}
 
@@ -419,18 +456,22 @@ $plan-features-sidebar-width: 272px;
 
 			img:nth-child(5) {
 				padding-right: 24px;
+				padding-top: 12px;
 			}
 
 			img:nth-child(6) {
 				padding-right: 24px;
+				padding-top: 12px;
 			}
 
 			img:nth-child(7) {
 				padding-right: 24px;
+				padding-top: 12px;
 			}
 
 			img:nth-child(8) {
 				padding-right: 0;
+				padding-top: 12px;
 			}
 
 			@media ( min-width: 880px ) {
@@ -452,22 +493,27 @@ $plan-features-sidebar-width: 272px;
 
 				img:nth-child(4) {
 					padding-right: 32px;
+					padding-top: 12px;
 				}
 
 				img:nth-child(5) {
 					padding-right: 32px;
+					padding-top: 12px;
 				}
 
 				img:nth-child(6) {
 					padding-right: 0;
+					padding-top: 12px;
 				}
 
 				img:nth-child(7) {
 					padding-right: 32px;
+					padding-top: 12px;
 				}
 
 				img:nth-child(8) {
 					padding-right: 0;
+					padding-top: 12px;
 				}
 			}
 
@@ -482,26 +528,32 @@ $plan-features-sidebar-width: 272px;
 
 				img:nth-child(3) {
 					padding-right: 24px;
+					padding-top: 12px;
 				}
 
 				img:nth-child(4) {
 					padding-right: 18px;
+					padding-top: 12px;
 				}
 
 				img:nth-child(5) {
 					padding-right: 0;
+					padding-top: 12px;
 				}
 
 				img:nth-child(6) {
 					padding-right: 16px;
+					padding-top: 12px;
 				}
 
 				img:nth-child(7) {
 					padding-right: 0;
+					padding-top: 12px;
 				}
 
 				img:nth-child(8) {
 					padding-right: 0;
+					padding-top: 12px;
 				}
 			}
 
@@ -520,22 +572,27 @@ $plan-features-sidebar-width: 272px;
 
 				img:nth-child(4) {
 					padding-right: 24px;
+					padding-top: 12px;
 				}
 
 				img:nth-child(5) {
 					padding-right: 24px;
+					padding-top: 12px;
 				}
 
 				img:nth-child(6) {
 					padding-right: 0;
+					padding-top: 12px;
 				}
 
 				img:nth-child(7) {
 					padding-right: 24px;
+					padding-top: 12px;
 				}
 
 				img:nth-child(8) {
 					padding-right: 0;
+					padding-top: 12px;
 				}
 			}
 
@@ -560,7 +617,7 @@ $plan-features-sidebar-width: 272px;
 
 body.is-section-signup.is-white-signup {
 	.plan-features-2023-grid__table-item {
-		border-left: none;
+		border-right: none;
 		background-color: transparent;
 
 		&.plan-features-2023-grid__header-billing-info {
@@ -654,6 +711,7 @@ body.is-section-signup.is-white-signup {
 
 			@media ( min-width: 880px ) {
 				margin-top: 36px;
+				font-size: $font-body-extra-small;
 			}
 
 			&.is-personal-plan {
