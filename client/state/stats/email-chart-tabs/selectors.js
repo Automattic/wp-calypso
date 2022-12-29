@@ -1,5 +1,4 @@
 import { get } from 'lodash';
-import { QUERY_FIELDS } from 'calypso/state/stats/chart-tabs/constants';
 
 import 'calypso/state/stats/init';
 
@@ -16,11 +15,9 @@ const EMPTY_RESULT = [];
  * @returns {Array}            Array of count objects
  */
 export function getCountRecords( state, siteId, postId, period, statType ) {
-	return (
-		Object.keys( state.stats.emails.items[ siteId ][ postId ][ period ][ statType ] ).map(
-			( key ) => state.stats.emails.items[ siteId ][ postId ][ period ][ statType ][ key ]
-		) || EMPTY_RESULT
-	);
+	const stats = get( state.stats.emails.items, [ siteId, postId, period, statType ], null );
+
+	return stats ? Object.keys( stats ).map( ( key ) => stats[ key ] ) || EMPTY_RESULT : EMPTY_RESULT;
 }
 
 /**
@@ -32,8 +29,8 @@ export function getCountRecords( state, siteId, postId, period, statType ) {
  * @param   {string}  period   Type of duration to include in the query (such as daily)
  * @returns {Array}          	 Array of stat types as strings
  */
-export function getLoadingTabs( state, siteId, postId, period ) {
-	return QUERY_FIELDS.filter( () =>
-		get( state, [ 'stats', 'emails', 'requesting', siteId, postId, period ] )
-	);
+export function isLoadingTabs( state, siteId, postId, period, statType ) {
+	return state.stats.emails
+		? get( state.stats.emails.requests, [ siteId, postId, period, statType, 'requesting' ], false )
+		: false;
 }

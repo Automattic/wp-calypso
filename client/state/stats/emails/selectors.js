@@ -12,9 +12,9 @@ import 'calypso/state/stats/init';
  * @param  {number}  postId Email Id
  * @returns {boolean}        Whether email stat is being requested
  */
-export function isRequestingEmailStats( state, siteId, postId ) {
+export function isRequestingEmailStats( state, siteId, postId, period, statType ) {
 	return state.stats.emails
-		? get( state.stats.emails.requesting, [ siteId, postId ], false )
+		? get( state.stats.emails.requests, [ siteId, postId, period, statType, 'requesting' ], false )
 		: false;
 }
 
