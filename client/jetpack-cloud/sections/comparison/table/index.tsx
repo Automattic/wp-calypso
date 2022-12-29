@@ -59,7 +59,7 @@ export const Table: React.FC = () => {
 								{ isFree ? translate( 'Get started' ) : getCtaLabel( item, '' ) }
 							</Button>
 
-							{ ! isFree && <ItemPrice item={ item } /> }
+							{ ! isFree && <ItemPrice item={ item } siteId={ null } /> }
 
 							{ isFree ? (
 								<span className="more-info-link">{ translate( 'Get started for free' ) }</span>
