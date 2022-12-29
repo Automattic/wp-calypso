@@ -295,12 +295,11 @@ class ThemeShowcase extends Component {
 	};
 
 	onTierSelect = ( { value: tier } ) => {
-		// In this state: tabFilter = [ ##Recommended## | All(1) ]   tier = [ All(2) | Free | Premium ]
-		// Clicking "Free" or "Premium" forces tabFilter from "Recommended" to "All"
+		// Due to the search backend limitation, static filters other than "All"
+		// can only have "All" tier.
 		if (
-			! config.isEnabled( 'themes/showcase-i4/search-and-filter' ) &&
-			tier !== '' &&
 			tier !== 'all' &&
+			this.isStaticFilter( this.state.tabFilter ) &&
 			this.state.tabFilter.key !== this.staticFilters.ALL.key
 		) {
 			this.setState( { tabFilter: this.staticFilters.ALL } );
@@ -315,23 +314,22 @@ class ThemeShowcase extends Component {
 	};
 
 	onFilterClick = ( tabFilter ) => {
-		const scrollPos = window.pageYOffset;
 		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
 
 		recordTracksEvent( 'calypso_themeshowcase_filter_category_click', { category: tabFilter.key } );
 		trackClick( 'section nav filter', tabFilter );
 
 		let callback = () => null;
-		// In this state: tabFilter = [ Recommended | ##All(1)## ]  tier = [ All(2) | Free | ##Premium## ]
-		// Clicking "Recommended" forces tier to be "all", since Recommend themes cannot filter on tier.
+		// Due to the search backend limitation, static filters other than "All"
+		// can only have "All" tier.
 		if (
-			! isNewSearchAndFilter &&
+			this.isStaticFilter( tabFilter ) &&
 			tabFilter.key !== this.staticFilters.ALL.key &&
-			'all' !== this.props.tier
+			this.props.tier !== 'all'
 		) {
 			callback = () => {
 				this.onTierSelect( { value: 'all' } );
-				window.scrollTo( 0, scrollPos );
+				this.scrollToSearchInput();
 			};
 		}
 

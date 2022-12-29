@@ -84,6 +84,7 @@ export function useGetProductVariants(
 			.map( ( variant ): WPCOMProductVariant | undefined => {
 				try {
 					const term = getBillingTermForMonths( variant.bill_period_in_months );
+					const introductoryTerms = variant.introductory_offer_terms;
 					return {
 						variantLabel: getTermText( term, translate ),
 						productSlug: variant.product_slug,
@@ -91,7 +92,11 @@ export function useGetProductVariants(
 						priceInteger: variant.price_integer,
 						termIntervalInMonths: getBillingMonthsForTerm( term ),
 						termIntervalInDays: getTermDuration( term ) ?? 0,
+						introductoryInterval: introductoryTerms?.interval_count,
+						introductoryTerm: introductoryTerms?.interval_unit,
+						priceBeforeDiscounts: variant.price_before_discounts_integer,
 						currency: variant.currency,
+						productBillingTermInMonths: variant.bill_period_in_months,
 					};
 				} catch ( error ) {
 					// Three-year plans are not yet fully supported, so we need to guard
