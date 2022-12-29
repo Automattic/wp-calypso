@@ -1,13 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import wpcom from 'calypso/lib/wp';
-
-export interface VatDetails {
-	country?: string | null;
-	id?: string | null;
-	name?: string | null;
-	address?: string | null;
-}
+import type { VatDetails } from '@automattic/wpcom-checkout';
 
 export type SetVatDetails = ( vatDetails: VatDetails ) => void;
 

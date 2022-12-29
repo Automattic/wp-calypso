@@ -323,6 +323,13 @@ export interface FailedPurchase {
 	product_name: string;
 }
 
+export interface VatDetails {
+	country?: string | null;
+	id?: string | null;
+	name?: string | null;
+	address?: string | null;
+}
+
 /*
  * Helper type which bundles the field updaters in a single object
  * to help keep import lists under control. All updaters should
