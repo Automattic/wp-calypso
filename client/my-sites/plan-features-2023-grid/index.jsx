@@ -35,6 +35,7 @@ import TimeLogo from 'calypso/assets/images/onboarding/time-logo.svg';
 import vipLogo from 'calypso/assets/images/onboarding/vip-logo.svg';
 import wooLogo from 'calypso/assets/images/onboarding/woo-logo.svg';
 import FoldableCard from 'calypso/components/foldable-card';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import PlanPill from 'calypso/components/plans/plan-pill';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
@@ -159,7 +160,9 @@ export class PlanFeatures2023Grid extends Component {
 			return isWpcomEnterpriseGridPlan( planName ) ? (
 				<div { ...otherProps }>{ children }</div>
 			) : (
-				<FoldableCard { ...otherProps }>{ children }</FoldableCard>
+				<FoldableCard { ...otherProps } compact clickableHeader>
+					{ children }
+				</FoldableCard>
 			);
 		};
 		let previousProductNameShort;
@@ -171,7 +174,7 @@ export class PlanFeatures2023Grid extends Component {
 				getPlanClass( properties.planName )
 			);
 			const planCardJsx = (
-				<div className={ planCardClasses }>
+				<div className={ planCardClasses } key={ `${ properties.planName }-${ index }` }>
 					{ this.renderPlanLogos( [ properties ], { isMobile: true } ) }
 					{ this.renderPlanHeaders( [ properties ], { isMobile: true } ) }
 					{ this.renderPlanTagline( [ properties ], { isMobile: true } ) }
@@ -182,9 +185,8 @@ export class PlanFeatures2023Grid extends Component {
 					<CardContainer
 						header={ translate( 'Show all features' ) }
 						planName={ properties.planName }
-						clickableHeader
-						compact
 						{ ...cardExpandedProp }
+						key={ `${ properties.planName }-${ index }` }
 					>
 						{ this.renderPreviousFeaturesIncludedTitle( [ properties ], {
 							isMobile: true,
@@ -437,7 +439,7 @@ export class PlanFeatures2023Grid extends Component {
 				getPlanClass( planName )
 			);
 			const rowspanProp =
-				! isMobile && isWpcomEnterpriseGridPlan( planName ) ? { rowspan: '2' } : {};
+				! isMobile && isWpcomEnterpriseGridPlan( planName ) ? { rowSpan: '2' } : {};
 			return (
 				<Container
 					key={ planName }
@@ -452,21 +454,39 @@ export class PlanFeatures2023Grid extends Component {
 		} );
 	}
 
-	renderPlanFeaturesList( planPropertiesObj, { isMobile, previousProductNameShort } = {} ) {
+	renderPlanFeaturesList( planPropertiesObj, { isMobile } = {} ) {
 		const { domainName } = this.props;
 		const planProperties = planPropertiesObj.filter(
 			( properties ) => ! isWpcomEnterpriseGridPlan( properties.planName )
 		);
 
-		return (
-			<PlanFeatures2023GridFeatures
-				planProperties={ planProperties }
-				domainName={ domainName }
-				isMobile={ isMobile }
-				previousProductNameShort={ previousProductNameShort }
-				Container={ Container }
-			/>
-		);
+		return planProperties.map( ( properties, mapIndex ) => {
+			const { planName, features, jpFeatures } = properties;
+			return (
+				<Container
+					key={ `${ planName }-${ mapIndex }` }
+					isMobile={ isMobile }
+					className="plan-features-2023-grid__table-item"
+				>
+					<PlanFeatures2023GridFeatures
+						features={ features }
+						planName={ planName }
+						domainName={ domainName }
+						translate={ translate }
+					/>
+					{ jpFeatures.length !== 0 && (
+						<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
+							<JetpackLogo size={ 16 } />
+						</div>
+					) }
+					<PlanFeatures2023GridFeatures
+						features={ jpFeatures }
+						planName={ planName }
+						translate={ translate }
+					/>
+				</Container>
+			);
+		} );
 	}
 
 	renderPlanStorageOptions( planPropertiesObj, { isMobile } = {} ) {
@@ -481,7 +501,7 @@ export class PlanFeatures2023Grid extends Component {
 					return;
 				}
 				return (
-					<div className="plan-features-2023-grid__storage-buttons">
+					<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
 						{ getFeatureToStorageMap( storageFeature ) }
 					</div>
 				);
