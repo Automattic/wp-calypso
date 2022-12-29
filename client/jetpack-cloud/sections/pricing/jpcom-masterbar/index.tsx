@@ -65,13 +65,14 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 			addProducts: true,
 		} );
 
-		window.location.href = buildCheckoutURL( siteSlug, '', {
-			...( responseCart.products.length > 1
+		const buildUrlParams =
+			responseCart.products.length > 1
 				? {
 						redirect_to: `https://${ siteSlug }/wp-admin/admin.php?page=jetpack#/recommendations/site-type`,
 				  }
-				: {} ),
-		} );
+				: undefined;
+
+		window.location.href = buildCheckoutURL( siteSlug, '', buildUrlParams );
 	};
 
 	const sections = useMemo(
