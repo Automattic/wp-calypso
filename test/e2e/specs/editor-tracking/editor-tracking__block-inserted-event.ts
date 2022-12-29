@@ -43,6 +43,10 @@ describe(
 				editorPage = new EditorPage( page, { target: features.siteType } );
 			} );
 
+			afterAll( async () => {
+				await page.close();
+			} );
+
 			it( 'Start a new post', async function () {
 				await editorPage.visit( 'post' );
 				await editorPage.waitUntilLoaded();
@@ -146,6 +150,10 @@ describe(
 				editorPage = new EditorPage( page, { target: features.siteType } );
 			} );
 
+			afterAll( async () => {
+				await page.close();
+			} );
+
 			it( 'Start a new page', async function () {
 				await editorPage.visit( 'page' );
 				await editorPage.waitUntilLoaded();
@@ -202,9 +210,22 @@ describe(
 				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
 			} );
 
+			afterAll( async () => {
+				// Always try to delete the created template part.
+				if ( templatePartName ) {
+					await fullSiteEditorPage.deleteTemplatePart( templatePartName );
+				}
+
+				await page.close();
+			} );
+
 			it( 'Visit the site editor', async function () {
 				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+			} );
+
+			it( 'Close the navigation sidebar', async function () {
+				await fullSiteEditorPage.closeNavSidebar();
 			} );
 
 			// A lot of block insertions sometimes happen on load
@@ -299,13 +320,6 @@ describe(
 					);
 					expect( eventDidFire ).toBe( false );
 				} );
-			} );
-
-			// Always try to delete the created template part.
-			afterAll( async function () {
-				if ( templatePartName ) {
-					await fullSiteEditorPage.deleteTemplatePart( templatePartName );
-				}
 			} );
 		} );
 	}

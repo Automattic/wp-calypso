@@ -3,7 +3,7 @@ import envVariables from '../../env-variables';
 import { translateFromPage } from '../utils';
 import type { EditorPreviewOptions } from './types';
 
-const panel = 'div.interface-interface-skeleton__header';
+const panel = '.interface-navigable-region[class*="header"]';
 const settingsButtonLabel = 'Settings';
 const moreOptionsLabel = 'Options';
 const selectors = {
