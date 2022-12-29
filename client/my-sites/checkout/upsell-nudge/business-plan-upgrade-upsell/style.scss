@@ -65,8 +65,19 @@ main.business-plan-upgrade-upsell.main {
 		}
 	}
 
-	&__footer {
-		grid-area: buttons;
+	&__discount {
+		position: relative;
+		top: 65px;
+		text-align: right;
+		right: 5%;
+		height: 0;
+	}
+
+	&__discount-badge {
+		background: rgba(245, 245, 245, 0.5) !important;
+		border-radius: 10px !important; /* stylelint-disable-line scales/radii */
+		padding: 5px 15px !important;
+		backdrop-filter: blur(10px);
 	}
 
 	&__body {
@@ -75,20 +86,39 @@ main.business-plan-upgrade-upsell.main {
 		grid-area: body;
 	}
 
+	&__countdown {
+		grid-area: countdown;
+		margin-bottom: 20px;
+	}
+
+	&__countdown-badge {
+		display: block !important;
+		padding: 10px !important;
+		border-radius: 0 !important;
+		background: #f5f1e1 !important;
+		text-align: center;
+	}
+
+	&__footer {
+		grid-area: buttons;
+	}
+
 	&__container {
 		max-width: 746px;
 		margin: 0 auto;
-		grid-column-gap: 32px;
 		display: grid;
 		grid-auto-rows: auto 1fr;
+		grid-template-columns: minmax(0, 1fr) 50%;
 		grid-template-areas:
 			"body body images"
+			"countdown countdown images"
 			"buttons buttons images";
-		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 50%;
 		@include breakpoint-deprecated( "<660px" ) {
-			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+			grid-auto-rows: auto;
+			grid-template-columns: 1fr;
 			grid-template-areas:
 				"body body body"
+				"countdown countdown countdown"
 				"buttons buttons buttons"
 				"images images images";
 		}

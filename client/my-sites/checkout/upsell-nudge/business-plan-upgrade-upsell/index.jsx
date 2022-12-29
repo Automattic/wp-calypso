@@ -1,6 +1,8 @@
 import { Button, Gridicon } from '@automattic/components';
 import { PureComponent } from 'react';
+import formatCurrency from 'calypso/../packages/format-currency/src';
 import upsellImage from 'calypso/assets/images/checkout-upsell/upsell-rocket.png';
+import Badge from 'calypso/components/badge';
 import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
@@ -28,7 +30,11 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 				</div>
 				<div className="business-plan-upgrade-upsell__container">
 					<div className="business-plan-upgrade-upsell__body">{ this.body() }</div>
-					<div className="business-plan-upgrade-upsell__image-container">{ this.image() }</div>
+					<div className="business-plan-upgrade-upsell__image-container">
+						{ this.discount() }
+						{ this.image() }
+					</div>
+					<div className="business-plan-upgrade-upsell__countdown">{ this.countdown() }</div>
 					<div className="business-plan-upgrade-upsell__footer">{ this.footer() }</div>
 				</div>
 			</>
@@ -62,13 +68,29 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 		);
 	}
 
+	discount() {
+		const { translate, planRawPrice, planDiscountedRawPrice } = this.props;
+
+		const discountPercentage = Math.round( 100 - ( planDiscountedRawPrice * 100 ) / planRawPrice );
+
+		return (
+			<div className="business-plan-upgrade-upsell__discount">
+				<Badge key="popular" type="info" className="business-plan-upgrade-upsell__discount-badge">
+					{ translate( 'Save %(discountPercentage)s%', {
+						args: { discountPercentage },
+					} ) }
+				</Badge>
+			</div>
+		);
+	}
+
 	body() {
 		const {
 			translate,
-			// planRawPrice,
-			// planDiscountedRawPrice,
-			// currencyCode,
-			// hasSevenDayRefundPeriod,
+			planRawPrice,
+			planDiscountedRawPrice,
+			currencyCode,
+			hasSevenDayRefundPeriod,
 		} = this.props;
 		return (
 			<>
@@ -116,10 +138,36 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 					</ul>
 					<p>
 						{ translate(
-							'The great news is that you can upgrade today and try the Business Plan risk-free thanks to our 14-day money-back guarantee. Simply click below to upgrade. You’ll only have to pay the difference to the Premium Plan ($XX).'
+							'The great news is that you can upgrade today and try the Business Plan risk-free thanks to our 14-day money-back guarantee. Simply click below to upgrade. You’ll only have to pay the difference to the Premium Plan ({{del}}%(fullPrice)s{{/del}} %(discountPrice)s)',
+							{
+								components: {
+									del: <del />,
+									b: <b />,
+								},
+								args: {
+									days: hasSevenDayRefundPeriod ? 7 : 14,
+									fullPrice: formatCurrency( planRawPrice, currencyCode, { stripZeros: true } ),
+									discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
+										stripZeros: true,
+									} ),
+								},
+							}
 						) }
 					</p>
 				</div>
+			</>
+		);
+	}
+
+	countdown() {
+		const { translate } = this.props;
+		return (
+			<>
+				<Badge key="popular" type="info" className="business-plan-upgrade-upsell__countdown-badge">
+					{ translate( 'Discount ends in %(d)dd %(h)dh %(m)dm %(s)ds', {
+						args: { d: 6, h: 23, m: 59, s: 59 },
+					} ) }
+				</Badge>
 			</>
 		);
 	}
