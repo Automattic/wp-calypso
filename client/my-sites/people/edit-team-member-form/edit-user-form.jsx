@@ -220,7 +220,7 @@ class EditUserForm extends Component {
 						key="isExternalContributor"
 						id={ fieldKeys.isExternalContributor }
 						onChange={ this.handleExternalChange }
-						checked={ this.state.isExternalContributor }
+						checked={ !! this.state.isExternalContributor }
 						disabled={ isDisabled || this.state.isExternalContributor === undefined }
 					/>
 				);
