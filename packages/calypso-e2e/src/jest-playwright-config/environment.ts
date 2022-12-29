@@ -384,11 +384,9 @@ function setupBrowserProxyTrap( browser: Browser ): Browser {
 					// to capture instances of 502 Bad Gateway.
 					// This remains active until the page is
 					// closed.
-					page.on( 'response', ( response ) => {
+					page.on( 'response', async ( response ) => {
 						if ( response.status() === 502 ) {
-							throw new Error(
-								`Encountered HTTP ${ response.status } on request to URL ${ response.url() } }`
-							);
+							await page.reload();
 						}
 					} );
 
