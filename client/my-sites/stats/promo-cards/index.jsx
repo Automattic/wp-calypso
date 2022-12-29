@@ -20,8 +20,6 @@ const EVENT_TRAFFIC_YOAST_PROMO_VIEW = 'calypso_stats_wordpress_seo_premium_bann
 // TODO: Register the following events with Tracks to ensure they're properly tracked.
 const EVENT_ANNUAL_BLAZE_PROMO_VIEW = 'calypso_stats_annual_insights_blaze_banner_view';
 const EVENT_ANNUAL_MOBILE_PROMO_VIEW = 'calypso_stats_annual_insights_mobile_cta_jetpack_view';
-const EVENT_ANNUAL_YOAST_PROMO_VIEW =
-	'calypso_stats_annual_insights_wordpress_seo_premium_banner_view';
 
 export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 	// Keep a replica of the pager index state.
@@ -36,7 +34,7 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 	// Blaze promo is disabled for Odyssey.
 	const showBlazePromo = ! isOdysseyStats;
 	// Yoast promo is disabled for Odyssey & self-hosted & non-traffic pages.
-	const showYoastPromo = ! isOdysseyStats && ! jetpackNonAtomic && pageSlug !== 'traffic';
+	const showYoastPromo = ! isOdysseyStats && ! jetpackNonAtomic && pageSlug === 'traffic';
 
 	const viewEvents = useMemo( () => {
 		const events = [];
@@ -46,8 +44,7 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 			events.push( EVENT_TRAFFIC_MOBILE_PROMO_VIEW );
 		} else if ( pageSlug === 'annual-insights' ) {
 			showBlazePromo && events.push( EVENT_ANNUAL_BLAZE_PROMO_VIEW );
-			showYoastPromo && events.push( EVENT_ANNUAL_MOBILE_PROMO_VIEW );
-			events.push( EVENT_ANNUAL_YOAST_PROMO_VIEW );
+			events.push( EVENT_ANNUAL_MOBILE_PROMO_VIEW );
 		}
 		return events;
 	}, [ pageSlug, showBlazePromo, showYoastPromo ] );
