@@ -2,18 +2,21 @@ import './style.scss';
 import { getRealPathName } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
+import { useSelector } from 'react-redux';
 import DoNotSellDialogContainer from 'calypso/blocks/do-not-sell-dialog';
 import SocialLogo from 'calypso/components/social-logo';
 import { useDoNotSell } from 'calypso/lib/analytics/utils';
 import { preventWidows } from 'calypso/lib/formatting';
 import { navigate } from 'calypso/lib/navigate';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 const UniversalNavbarFooter = () => {
 	const translate = useTranslate();
 	const { shouldSeeDoNotSell, isDoNotSell, onSetDoNotSell } = useDoNotSell();
 	const [ isDialogOpen, setIsDialogOpen ] = useState( false );
 
-	const realPathName = getRealPathName( window.location.pathname.slice( 1 ) );
+	const currentRoute = useSelector( getCurrentRoute );
+	const realPathName = getRealPathName( currentRoute.slice( 1 ) );
 
 	const openDialog = useCallback( () => {
 		setIsDialogOpen( true );
@@ -210,7 +213,7 @@ const UniversalNavbarFooter = () => {
 									className="lp-language-picker__content"
 									title={ translate( 'Change Language' ) }
 									onChange={ ( e ) => navigate( e.target.value ) }
-									defaultValue={ window.location.pathname }
+									defaultValue={ currentRoute }
 								>
 									<option>{ translate( 'Change Language' ) }</option>
 									<option lang="es" value={ `/es/${ realPathName }` }>
