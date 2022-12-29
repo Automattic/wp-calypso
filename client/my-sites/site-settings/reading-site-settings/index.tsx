@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { BlogPagesSetting, BLOG_PAGES_OPTION } from './BlogPagesSetting';
 import { RelatedPostsSetting } from './RelatedPostsSetting';
-import { YourHomepageDisplaysSetting } from './YourHomepageDisplaysSetting';
+import YourHomepageDisplaysSetting from './YourHomepageDisplaysSetting';
 
 type Fields = {
 	jetpack_relatedposts_enabled?: boolean;

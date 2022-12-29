@@ -25,7 +25,7 @@ type YourHomepageDisplaysSettingProps = {
 	siteSlug?: string;
 };
 
-export const YourHomepageDisplaysSetting = ( {
+const YourHomepageDisplaysSetting = ( {
 	value: { show_on_front, page_for_posts, page_on_front } = {},
 	onChange,
 	disabled,
@@ -33,7 +33,11 @@ export const YourHomepageDisplaysSetting = ( {
 	siteSlug,
 }: YourHomepageDisplaysSettingProps ) => {
 	const translate = useTranslate();
-	const { data: pages, isLoading } = usePostsQuery( siteId, { type: 'page' } );
+	const { data: pages, isLoading } = usePostsQuery(
+		siteId,
+		{ type: 'page' },
+		{ select: ( { posts } ) => posts }
+	);
 	return (
 		<FormFieldset>
 			<FormLabel>{ translate( 'Your homepage displays' ) }</FormLabel>
@@ -71,60 +75,56 @@ export const YourHomepageDisplaysSetting = ( {
 				/>
 			</FormLabel>
 
-			{ pages?.length ? (
-				<FormLabel htmlFor="homepage-page-select">
-					{ translate( 'Homepage' ) }
+			<FormLabel htmlFor="homepage-page-select">
+				{ translate( 'Homepage' ) }
 
-					<FormSelect
-						id="homepage-page-select"
-						name="page_on_front"
-						disabled={ show_on_front !== 'page' || disabled || isLoading }
-						value={ page_on_front }
-						onChange={ ( { target } ) =>
-							onChange?.( { page_on_front: ( target as HTMLSelectElement ).value } )
+				<FormSelect
+					id="homepage-page-select"
+					name="page_on_front"
+					disabled={ disabled || isLoading || show_on_front !== 'page' || ! pages?.length }
+					value={ page_on_front }
+					onChange={ ( { target } ) =>
+						onChange?.( { page_on_front: ( target as HTMLSelectElement ).value } )
+					}
+				>
+					<option value="">{ translate( '-- Select --' ) }</option>
+					{ pages?.map( ( page ) => {
+						if ( page_for_posts && page_for_posts === String( page.ID ) ) {
+							return null;
 						}
-					>
-						<option value="">{ translate( '-- Select --' ) }</option>
-						{ pages.map( ( page ) => {
-							if ( page_for_posts && page_for_posts === String( page.ID ) ) {
-								return null;
-							}
 
-							return (
-								<option key={ page.ID } value={ page.ID }>
-									{ page.title }
-								</option>
-							);
-						} ) }
-					</FormSelect>
-				</FormLabel>
-			) : null }
+						return (
+							<option key={ page.ID } value={ page.ID }>
+								{ page.title }
+							</option>
+						);
+					} ) }
+				</FormSelect>
+			</FormLabel>
 
-			{ pages?.length ? (
-				<FormLabel htmlFor="posts-page-select">
-					{ translate( 'Posts page' ) }
+			<FormLabel htmlFor="posts-page-select">
+				{ translate( 'Posts page' ) }
 
-					<FormSelect
-						id="posts-page-select"
-						name="page_for_posts"
-						disabled={ show_on_front !== 'page' || disabled || isLoading }
-						value={ page_for_posts }
-					>
-						<option value="">{ translate( '-- Select --' ) }</option>
-						{ pages.map( ( page ) => {
-							if ( page_on_front && page_on_front === String( page.ID ) ) {
-								return null;
-							}
+				<FormSelect
+					id="posts-page-select"
+					name="page_for_posts"
+					disabled={ disabled || isLoading || show_on_front !== 'page' || ! pages?.length }
+					value={ page_for_posts }
+				>
+					<option value="">{ translate( '-- Select --' ) }</option>
+					{ pages?.map( ( page ) => {
+						if ( page_on_front && page_on_front === String( page.ID ) ) {
+							return null;
+						}
 
-							return (
-								<option key={ page.ID } value={ page.ID }>
-									{ page.title }
-								</option>
-							);
-						} ) }
-					</FormSelect>
-				</FormLabel>
-			) : null }
+						return (
+							<option key={ page.ID } value={ page.ID }>
+								{ page.title }
+							</option>
+						);
+					} ) }
+				</FormSelect>
+			</FormLabel>
 
 			<FormSettingExplanation>
 				{ translate(
