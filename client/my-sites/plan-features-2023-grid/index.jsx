@@ -20,7 +20,7 @@ import {
 	TYPE_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
-import { localize, translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -54,7 +54,7 @@ import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridFeatures from './features';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { PlanFeaturesItem } from './item';
-import { getFeatureToStorageMap } from './util';
+import { getStorageStringFromFeature } from './util';
 import './style.scss';
 
 const noop = () => {};
@@ -105,6 +105,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderTable( planPropertiesObj ) {
+		const { translate } = this.props;
 		const tableClasses = classNames(
 			'plan-features-2023-grid__table',
 			`has-${ planPropertiesObj.length }-cols`
@@ -154,7 +155,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderMobileView() {
-		const { planProperties } = this.props;
+		const { planProperties, translate } = this.props;
 		const CardContainer = ( props ) => {
 			const { children, planName, ...otherProps } = props;
 			return isWpcomEnterpriseGridPlan( planName ) ? (
@@ -203,6 +204,8 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderMobileFreeDomain( planName, isMonthlyPlan ) {
+		const { translate } = this.props;
+
 		if ( isMonthlyPlan || isWpComFreePlan( planName ) || isWpcomEnterpriseGridPlan( planName ) ) {
 			return null;
 		}
@@ -230,7 +233,6 @@ export class PlanFeatures2023Grid extends Component {
 
 		return planPropertiesObj.map( ( properties ) => {
 			const { currencyCode, discountPrice, planName, rawPrice } = properties;
-
 			const classes = classNames( 'plan-features-2023-grid__table-item', {
 				'has-border-top': ! isReskinned,
 			} );
@@ -250,6 +252,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderBillingTimeframe( planPropertiesObj, { isMobile } = {} ) {
+		const { translate } = this.props;
 		return planPropertiesObj.map( ( properties ) => {
 			const {
 				planConstantObj,
@@ -284,7 +287,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderPlanLogos( planPropertiesObj, { isMobile } = {} ) {
-		const { isInSignup } = this.props;
+		const { isInSignup, translate } = this.props;
 
 		return planPropertiesObj.map( ( properties ) => {
 			const { planName } = properties;
@@ -421,6 +424,7 @@ export class PlanFeatures2023Grid extends Component {
 		planPropertiesObj,
 		{ isMobile, previousProductNameShort } = {}
 	) {
+		const { translate } = this.props;
 		let previousPlanShortNameFromProperties;
 
 		return planPropertiesObj.map( ( properties ) => {
@@ -455,7 +459,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderPlanFeaturesList( planPropertiesObj, { isMobile } = {} ) {
-		const { domainName } = this.props;
+		const { domainName, translate } = this.props;
 		const planProperties = planPropertiesObj.filter(
 			( properties ) => ! isWpcomEnterpriseGridPlan( properties.planName )
 		);
@@ -490,6 +494,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderPlanStorageOptions( planPropertiesObj, { isMobile } = {} ) {
+		const { translate } = this.props;
 		return planPropertiesObj.map( ( properties ) => {
 			if ( isMobile && isWpcomEnterpriseGridPlan( properties.planName ) ) {
 				return null;
@@ -502,7 +507,7 @@ export class PlanFeatures2023Grid extends Component {
 				}
 				return (
 					<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
-						{ getFeatureToStorageMap( storageFeature ) }
+						{ getStorageStringFromFeature( storageFeature ) }
 					</div>
 				);
 			} );
@@ -556,15 +561,11 @@ export default connect(
 
 			// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 			const showMonthlyPrice = true;
-
-			const features = planConstantObj.getPlanCompareFeatures();
-
-			let planFeatures = getPlanFeaturesObject( features );
 			if ( placeholder || ! planObject ) {
 				isPlaceholder = true;
 			}
 
-			planFeatures = getPlanFeaturesObject(
+			let planFeatures = getPlanFeaturesObject(
 				planConstantObj.get2023PricingGridSignupWpcomFeatures()
 			);
 			let jetpackFeatures = getPlanFeaturesObject(

@@ -87,7 +87,11 @@ export const items = withSchemaValidation( itemSchemas, ( state = {}, action ) =
 					[ action.postId ]: {
 						[ action.period ]: {
 							[ action.statType ]: {
-								...get( state, [ action.siteId, action.postId ], {} ),
+								...get(
+									state,
+									[ action.siteId, action.postId, action.period, action.statType ],
+									{}
+								),
 								...action.stats,
 							},
 						},
