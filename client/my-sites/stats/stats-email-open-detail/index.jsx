@@ -17,7 +17,6 @@ import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
-import Geochart from 'calypso/my-sites/stats/geochart';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import {
@@ -309,13 +308,6 @@ class StatsEmailOpenDetail extends Component {
 						</>
 					</div>
 				) }
-				<Geochart
-					kind="email"
-					statType="opens"
-					siteId={ siteId }
-					postId={ postId }
-					query={ { date: queryDate, period } }
-				/>
 			</Main>
 		);
 	}
