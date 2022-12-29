@@ -105,6 +105,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderTable( planPropertiesObj ) {
+		const { translate } = this.props;
 		const tableClasses = classNames(
 			'plan-features-2023-grid__table',
 			`has-${ planPropertiesObj.length }-cols`
@@ -153,7 +154,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderMobileView() {
-		const { planProperties } = this.props;
+		const { planProperties, translate } = this.props;
 		const CardContainer = ( props ) => {
 			const { children, planName, ...otherProps } = props;
 			return isWpcomEnterpriseGridPlan( planName ) ? (
@@ -200,6 +201,8 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderMobileFreeDomain( planName, isMonthlyPlan ) {
+		const { translate } = this.props;
+
 		if ( isMonthlyPlan || isWpComFreePlan( planName ) || isWpcomEnterpriseGridPlan( planName ) ) {
 			return null;
 		}
@@ -268,7 +271,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderPlanLogos( planPropertiesObj, { isMobile } = {} ) {
-		const { isInSignup } = this.props;
+		const { isInSignup, translate } = this.props;
 
 		return map( planPropertiesObj, ( properties ) => {
 			const { planName } = properties;
@@ -405,6 +408,7 @@ export class PlanFeatures2023Grid extends Component {
 		planPropertiesObj,
 		{ isMobile, previousProductNameShort } = {}
 	) {
+		const { translate } = this.props;
 		let previousPlanShortNameFromProperties;
 
 		return planPropertiesObj.map( ( properties ) => {
@@ -456,6 +460,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderPlanStorageOptions( planPropertiesObj, { isMobile } = {} ) {
+		const { translate } = this.props;
 		return planPropertiesObj.map( ( properties ) => {
 			if ( isMobile && isWpcomEnterpriseGridPlan( properties.planName ) ) {
 				return null;
