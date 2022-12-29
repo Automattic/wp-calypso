@@ -162,9 +162,14 @@ export class PlanFeatures2023Grid extends Component {
 		};
 		let previousProductNameShort;
 
-		return planProperties.map( ( properties ) => {
+		return planProperties.map( ( properties, index ) => {
+			const cardExpandedProp = index === 0 ? { expanded: true } : {};
+			const planCardClasses = classNames(
+				'plan-features-2023-grid__mobile-plan-card',
+				getPlanClass( properties.planName )
+			);
 			const planCardJsx = (
-				<div className="plan-features-2023-grid__mobile-plan-card">
+				<div className={ planCardClasses }>
 					{ this.renderPlanLogos( [ properties ], { isMobile: true } ) }
 					{ this.renderPlanHeaders( [ properties ], { isMobile: true } ) }
 					{ this.renderPlanTagline( [ properties ], { isMobile: true } ) }
@@ -172,10 +177,11 @@ export class PlanFeatures2023Grid extends Component {
 					{ this.renderMobileFreeDomain( properties.planName, properties.isMonthlyPlan ) }
 					{ this.renderTopButtons( [ properties ], { isMobile: true } ) }
 					<CardContainer
-						header={ translate( 'Show features' ) }
+						header={ translate( 'Show all features' ) }
 						planName={ properties.planName }
 						clickableHeader
 						compact
+						{ ...cardExpandedProp }
 					>
 						{ this.renderPreviousFeaturesIncludedTitle( [ properties ], {
 							isMobile: true,
@@ -204,11 +210,13 @@ export class PlanFeatures2023Grid extends Component {
 			: translate( 'Free domain for one year' );
 
 		return (
-			<PlanFeaturesItem>
-				<span className="plan-features-2023-grid__item-info is-annual-plan-feature is-available">
-					<span className="plan-features-2023-grid__item-title is-bold">{ displayText }</span>
-				</span>
-			</PlanFeaturesItem>
+			<div className="plan-features-2023-grid__highlighted-feature">
+				<PlanFeaturesItem>
+					<span className="plan-features-2023-grid__item-info is-annual-plan-feature is-available">
+						<span className="plan-features-2023-grid__item-title is-bold">{ displayText }</span>
+					</span>
+				</PlanFeaturesItem>
+			</div>
 		);
 	}
 
