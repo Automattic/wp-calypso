@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
-import { getEmailCountryStatsNormalizedData } from 'calypso/state/stats/emails/selectors';
+import { getEmailStatsNormalizedData } from 'calypso/state/stats/emails/selectors';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import StatsModulePlaceholder from '../stats-module/placeholder';
@@ -191,17 +191,18 @@ class StatsGeochart extends Component {
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const statType = ownProps.statType ?? 'statsCountryViews';
-	const { query, kind, postId } = ownProps;
+	const { postId, query, kind } = ownProps;
 
 	const data =
 		kind === 'email'
-			? getEmailCountryStatsNormalizedData(
+			? getEmailStatsNormalizedData(
 					state,
 					siteId,
 					postId,
 					query.period,
 					query.date,
-					statType
+					statType,
+					'countries'
 			  )
 			: getSiteStatsNormalizedData( state, siteId, statType, query );
 	return {

@@ -98,7 +98,7 @@ export function getEmailStat( state, siteId, postId, period, statType ) {
 }
 
 /**
- * Returns the email country stats for the specified site ID,
+ * Returns the email stats for the specified site ID,
  * post ID, period, date and stat key
  *
  * @param  {object}  state   Global state tree
@@ -107,21 +107,15 @@ export function getEmailStat( state, siteId, postId, period, statType ) {
  * @param  {string} period   Period
  * @param  {string} date     Date
  * @param  {string} statType Stat type
+ * @param {string} path      Path
  * @returns {*}              Normalized data
  */
-export function getEmailCountryStatsNormalizedData(
-	state,
-	siteId,
-	postId,
-	period,
-	date,
-	statType
-) {
+export function getEmailStatsNormalizedData( state, siteId, postId, period, date, statType, path ) {
 	const stats = state.stats.emails
 		? get( state.stats.emails.items, [ siteId, postId, period, statType ], null )
 		: null;
 	if ( stats ) {
-		return Object.values( stats ).find( ( stat ) => stat.period === date )?.countries;
+		return Object.values( stats ).find( ( stat ) => stat.period === date )?.[ path ];
 	}
 	return [];
 }
