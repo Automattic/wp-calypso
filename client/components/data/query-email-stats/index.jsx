@@ -15,7 +15,7 @@ function QueryEmailStats( { siteId, postId, period, date, quantity } ) {
 		if ( siteId && postId > -1 ) {
 			dispatch( request( siteId, postId, period, date, statType, quantity ) );
 		}
-	}, [ dispatch, siteId, postId ] );
+	}, [ dispatch, siteId, postId, period ] );
 
 	return null;
 }
