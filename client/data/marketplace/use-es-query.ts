@@ -7,6 +7,7 @@ import {
 	InfiniteData,
 	QueryKey,
 	QueryFunction,
+	useQuery,
 } from 'react-query';
 import { useSelector } from 'react-redux';
 import {
@@ -15,7 +16,7 @@ import {
 } from 'calypso/lib/plugins/utils';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { DEFAULT_PAGE_SIZE } from './constants';
-import { search } from './search-api';
+import { search, searchBySlug } from './search-api';
 import { getPluginsListKey } from './utils';
 import type { ESHits, ESResponse, Plugin, PluginQueryOptions } from './types';
 
@@ -55,6 +56,7 @@ const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 			last_updated: hit.modified,
 			short_description: hit.plugin.excerpt, // TODO: add localization
 			icon: getIconUrl( hit.slug, hit.plugin.icons ),
+			premium_slug: hit.plugin.premium_slug,
 			variations: {
 				monthly: { product_id: hit.plugin.store_product_monthly_id },
 				yearly: { product_id: hit.plugin.store_product_yearly_id },
@@ -77,6 +79,35 @@ const getWpLocaleBySlug = ( slug: LanguageSlug ) => {
 	}
 
 	return languages.find( ( l ) => l.langSlug === slug )?.wpLocale || defaultLanguage;
+};
+
+export const getESPluginQueryParams = (
+	slug: string,
+	locale: string,
+	fields?: Array< string >
+): [ QueryKey, QueryFunction< { plugins: Plugin[]; pagination: { page: number } }, QueryKey > ] => {
+	const cacheKey = `es-plugin-slug-${ slug }`;
+	const fetchFn = () =>
+		searchBySlug( slug, locale, { fields } )
+			.then( ( { data }: { data: { results: ESHits } } ) =>
+				mapIndexResultsToPluginData( data.results )
+			)
+			.then( ( plugins: Plugin[] ) => plugins?.[ 0 ] || null );
+	return [ cacheKey, fetchFn ];
+};
+
+export const useESPlugin = (
+	slug: string,
+	fields?: Array< string >,
+	{ enabled = true, staleTime = 10000, refetchOnMount = true }: UseQueryOptions = {}
+): UseQueryResult => {
+	const locale = useSelector( getCurrentUserLocale );
+
+	return useQuery( ...getESPluginQueryParams( slug, locale, fields ), {
+		enabled,
+		staleTime,
+		refetchOnMount,
+	} );
 };
 
 export const getESPluginsInfiniteQueryParams = (

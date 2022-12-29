@@ -1,0 +1,10 @@
+@import "../shared-style.scss";
+
+.is-group-jetpack-cloud.is-section-jetpack-cloud-features-comparison {
+
+	@include jetpack-cloud-sections-shared-styles();
+
+	.main {
+		max-width: 1200px;
+	}
+}

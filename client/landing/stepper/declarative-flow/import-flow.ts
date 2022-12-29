@@ -1,7 +1,5 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
+import { Design } from '@automattic/design-picker';
 import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
-import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -50,7 +48,6 @@ const importFlow: Flow = {
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const urlQueryParams = useQuery();
 		const siteSlugParam = useSiteSlugParam();
-		const isDesktop = useViewportMatch( 'large' );
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 		const flowProgress = useSiteSetupFlowProgress( _currentStep, 'import', '' );
@@ -106,10 +103,8 @@ const importFlow: Flow = {
 				}
 
 				case 'designSetup': {
-					if (
-						isDesktop &&
-						isBlankCanvasDesign( providedDependencies?.selectedDesign as Design )
-					) {
+					const _selectedDesign = providedDependencies?.selectedDesign as Design;
+					if ( _selectedDesign?.design_type === 'assembler' ) {
 						return navigate( 'patternAssembler' );
 					}
 
@@ -121,10 +116,7 @@ const importFlow: Flow = {
 
 				case 'processing': {
 					// End of Pattern Assembler flow
-					if (
-						isEnabled( 'signup/design-picker-pattern-assembler' ) &&
-						isBlankCanvasDesign( selectedDesign as Design )
-					) {
+					if ( selectedDesign?.design_type === 'assembler' ) {
 						return exitFlow( `/site-editor/${ siteSlugParam }` );
 					}
 

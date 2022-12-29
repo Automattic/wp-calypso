@@ -8,6 +8,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 	ctaAsPrimary,
 	ctaHref,
 	ctaLabel,
+	ctaAriaLabel,
 	description,
 	hero,
 	isCtaDisabled,
@@ -38,6 +39,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 						disabled={ isCtaDisabled }
 						target={ isCtaExternal ? '_blank' : undefined }
 						href={ isCtaDisabled ? '#' : ctaHref }
+						aria-label={ ctaAriaLabel }
 					>
 						{ isProductInCart && <Gridicon icon="checkmark" /> }
 						{ ctaLabel }

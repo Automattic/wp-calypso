@@ -19,6 +19,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 	const {
 		getCheckoutURL,
 		getCtaLabel,
+		getCtaAriaLabel,
 		getIsDeprecated,
 		getIsExternal,
 		getIsIncludedInPlan,
@@ -56,6 +57,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 						( ( isOwned || isIncludedInPlan ) && ! getIsUserPurchaseOwner( item ) );
 
 					const ctaLabel = getCtaLabel( item );
+					const ctaAriaLabel = getCtaAriaLabel( item );
 
 					const hideMoreInfoLink = isDeprecated || isOwned || isIncludedInPlanOrSuperseded;
 
@@ -95,6 +97,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 								ctaAsPrimary={ ctaAsPrimary }
 								ctaHref={ getCheckoutURL( item ) }
 								ctaLabel={ ctaLabel }
+								ctaAriaLabel={ ctaAriaLabel }
 								description={ description }
 								icon={ <img alt="" src={ getProductIcon( { productSlug: item.productSlug } ) } /> }
 								isCtaDisabled={ isCtaDisabled }

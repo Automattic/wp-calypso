@@ -385,6 +385,21 @@ class Site {
 	}
 
 	/**
+	 * Get detailed stats about a specific email
+	 *
+	 * @param {string} postId - id of the post which email we are querying
+	 * @param {object} [query] - query object parameter
+	 * @param {Function} fn - callback function
+	 * @returns {Function} request handler
+	 */
+	statsEmailOpens( postId, query, fn ) {
+		const path = `${ this.path }/stats/opens/emails/${ postId }`;
+		query.stats_fields = 'timeline'; // Possible values: timeline,client,country,device
+
+		return this.wpcom.req.get( path, query, fn );
+	}
+
+	/**
 	 * Return a `SiteWordAds` instance.
 	 *
 	 * Example:*

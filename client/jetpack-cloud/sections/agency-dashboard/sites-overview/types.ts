@@ -4,7 +4,11 @@ import type { ReactChild } from 'react';
 export type AllowedTypes = 'site' | 'backup' | 'scan' | 'monitor' | 'plugin';
 
 // Site column object which holds key and title of each column
-export type SiteColumns = Array< { key: string; title: ReactChild } >;
+export type SiteColumns = Array< {
+	key: string;
+	title: ReactChild;
+	className?: string;
+} >;
 
 export type AllowedStatusTypes =
 	| 'inactive'
@@ -13,6 +17,12 @@ export type AllowedStatusTypes =
 	| 'warning'
 	| 'success'
 	| 'disabled';
+
+export interface MonitorSettings {
+	last_down_time: string;
+	monitor_deferment_time: number;
+	monitor_notify_users_emails: Array< string >;
+}
 
 export interface Site {
 	blog_id: number;
@@ -27,6 +37,7 @@ export interface Site {
 	is_connection_healthy: boolean;
 	awaiting_plugin_updates: Array< string >;
 	is_favorite: boolean;
+	monitor_settings: MonitorSettings;
 }
 export interface SiteNode {
 	value: Site;
@@ -59,6 +70,7 @@ export interface MonitorNode {
 	status: AllowedStatusTypes | string;
 	value: ReactChild;
 	error?: boolean;
+	settings?: MonitorSettings;
 }
 export interface SiteData {
 	site: SiteNode;

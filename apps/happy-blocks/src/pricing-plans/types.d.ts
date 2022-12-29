@@ -20,9 +20,7 @@ declare global {
 	interface Window {
 		A8C_HAPPY_BLOCKS_CONFIG: {
 			locale: string;
-			features: {
-				planTabs: boolean;
-			};
+			features: Record< string, boolean >;
 		};
 	}
 }

@@ -1073,11 +1073,33 @@ function handleSiteEditorBackButton( calypsoPort ) {
 	// have to do this event delegation style because the Editor isn't fully initialized yet.
 	document.getElementById( 'wpwrap' ).addEventListener( 'click', ( event ) => {
 		const clickedElement = event.target;
-		if ( clickedElement.classList.contains( 'edit-site-navigation-panel__back-to-dashboard' ) ) {
+		const isOldDashboardButton =
+			clickedElement.classList.contains( 'edit-site-navigation-panel__back-to-dashboard' ) ||
+			// The above fails if user clicked internal SVG. So check the parent again.
+			clickedElement.parentElement?.classList.contains(
+				'edit-site-navigation-panel__back-to-dashboard'
+			) ||
+			// The above fails if the user clicked the internal path. So check the parent's parent...
+			clickedElement.parentElement?.parentElement?.classList.contains(
+				'edit-site-navigation-panel__back-to-dashboard'
+			);
+
+		// The new dashboard button proposed with Gutenberg 14.8 has no useful class selector for
+		// this state. Instead, lets treat any element with an href corresponding to the
+		// dashboardLink setting as the close button.
+		const dashboardLink = select( 'core/edit-site' )?.getSettings?.().__experimentalDashboardLink;
+		const isNewDashboardButton =
+			clickedElement.attributes?.href?.value &&
+			clickedElement.attributes?.href?.value === dashboardLink;
+
+		// Since the clicked element may not have an href (as noted by internal SVG and path woes above).
+		const returnHref = clickedElement.href || dashboardLink;
+
+		if ( isOldDashboardButton || isNewDashboardButton ) {
 			event.preventDefault();
 			calypsoPort.postMessage( {
 				action: 'openLinkInParentFrame',
-				payload: { postUrl: clickedElement.href },
+				payload: { postUrl: returnHref },
 			} );
 		}
 	} );
