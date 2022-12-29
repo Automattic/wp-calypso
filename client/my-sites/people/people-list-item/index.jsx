@@ -1,4 +1,4 @@
-import { Button, CompactCard, Gridicon } from '@automattic/components';
+import { Button, CompactCard } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -53,6 +53,12 @@ class PeopleListItem extends PureComponent {
 		);
 	};
 
+	canLinkToSubscriberProfile = () => {
+		const { site, user } = this.props;
+
+		return site && site.slug && user && user.ID;
+	};
+
 	maybeGetCardLink = () => {
 		const { invite, site, type, user } = this.props;
 
@@ -62,8 +68,19 @@ class PeopleListItem extends PureComponent {
 
 		const editLink = this.canLinkToProfile() && `/people/edit/${ site.slug }/${ user.login }`;
 		const inviteLink = invite && `/people/invites/${ site.slug }/${ invite.key }`;
+		const subscriberDetailsLink =
+			this.canLinkToSubscriberProfile() && `/people/subscribers/${ site.slug }/${ user.ID }`;
 
-		return type === 'invite' ? inviteLink : editLink;
+		switch ( type ) {
+			case 'invite':
+				return inviteLink;
+
+			case 'subscriber-details':
+				return subscriberDetailsLink;
+
+			default:
+				return editLink;
+		}
 	};
 
 	onResend = ( event ) => {
@@ -159,12 +176,10 @@ class PeopleListItem extends PureComponent {
 				{ onRemove && (
 					<div className="people-list-item__actions">
 						<Button
-							compact
 							className="people-list-item__remove-button"
 							onClick={ onRemove }
 							data-e2e-remove-login={ get( user, 'login', '' ) }
 						>
-							<Gridicon icon="cross" />
 							<span>
 								{ translate( 'Remove', {
 									context: 'Verb: Remove a user or follower from the blog.',

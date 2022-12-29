@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
 import InfoPopover from 'calypso/components/info-popover';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useExternalContributorsQuery from 'calypso/data/external-contributors/use-external-contributors';
 import useP2GuestsQuery from 'calypso/data/p2/use-p2-guests-query';
 import { decodeEntities } from 'calypso/lib/formatting';
@@ -18,7 +17,6 @@ import './style.scss';
 
 const PeopleProfile = ( { siteId, type, user, invite } ) => {
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
 	const { data: externalContributors } = useExternalContributorsQuery( siteId );
 	const { data: p2Guests } = useP2GuestsQuery( siteId );
 
@@ -251,19 +249,22 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 		);
 	};
 
-	const renderSubscribedDate = () => {
+	const renderSubscribedRole = () => {
 		if ( ! user || ! user.date_subscribed ) {
-			return;
+			return null;
 		}
 
 		return (
-			<div className="people-profile__subscribed">
-				{ translate( 'Since %(formattedDate)s', {
-					context: 'How long a user has been subscribed to a blog. Example: "Since Sep 16, 2015"',
-					args: {
-						formattedDate: moment( user.date_subscribed ).format( 'll' ),
-					},
-				} ) }
+			<div className="people-profile__badges">
+				<div
+					className={ classNames(
+						'people-profile__role-badge',
+						getRoleBadgeClass( 'subscriber' )
+					) }
+				>
+					{ user.login && translate( 'Follower' ) }
+					{ ! user.login && translate( 'Email subscriber' ) }
+				</div>
 			</div>
 		);
 	};
@@ -284,7 +285,7 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 			<div className="people-profile__detail">
 				{ renderNameOrEmail() }
 				{ renderLogin() }
-				{ isFollowerType() ? renderSubscribedDate() : renderRole() }
+				{ isFollowerType() ? renderSubscribedRole() : renderRole() }
 			</div>
 		</div>
 	);
