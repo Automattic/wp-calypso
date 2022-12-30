@@ -78,7 +78,7 @@ $plan-features-sidebar-width: 272px;
 		}
 	}
 
-	@media ( min-width: 1340px ) {
+	@media ( min-width: 1440px ) {
 		margin-top: 36px;
 	}
 }
@@ -653,12 +653,12 @@ body.is-section-signup.is-white-signup {
 				font-weight: 400;
 				color: var(--studio-gray-80);
 
-				@media ( min-width: 880px ) {
+				@media ( min-width: 1024px ) {
 					font-size: $font-body-small;
 					line-height: 20px;
 				}
 
-				@media ( min-width: 1340px ) {
+				@media ( min-width: 1440px ) {
 					font-size: $font-body-extra-small;
 					line-height: 16px;
 				}
