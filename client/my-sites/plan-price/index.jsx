@@ -22,6 +22,7 @@ export class PlanPrice extends Component {
 			taxText,
 			translate,
 			omitHeading,
+			isOnboarding2023PricingGrid,
 		} = this.props;
 
 		const classes = classNames( 'plan-price', className, {
@@ -105,6 +106,17 @@ export class PlanPrice extends Component {
 			// In some currencies like IDR, a dot is used to separate group of threes.
 			// Remove it so that it's not confused to be a decimal point by the subtraction operator.
 			priceInteger = priceInteger.replace( /[,.]/g, '' );
+
+			if ( isOnboarding2023PricingGrid ) {
+				return (
+					<div className="plan-price__integer-fraction">
+						<span className="plan-price__integer">{ priceObj.price.integer }</span>
+						<sup className="plan-price__fraction">
+							{ priceObj.raw - priceInteger > 0 && priceObj.price.fraction }
+						</sup>
+					</div>
+				);
+			}
 
 			return (
 				<>

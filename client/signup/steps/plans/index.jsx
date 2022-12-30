@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	planHasFeature,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
@@ -194,6 +193,7 @@ export class PlansStep extends Component {
 			isInVerticalScrollingPlansExperiment,
 			isReskinned,
 			eligibleForProPlan,
+			isOnboarding2023PricingGrid,
 		} = this.props;
 
 		let errorDisplay;
@@ -257,6 +257,7 @@ export class PlansStep extends Component {
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 					isReskinned={ isReskinned }
+					isOnboarding2023PricingGrid={ isOnboarding2023PricingGrid }
 				/>
 			</div>
 		);
@@ -271,7 +272,8 @@ export class PlansStep extends Component {
 	}
 
 	getHeaderText() {
-		const { headerText, translate, eligibleForProPlan, locale, flowName } = this.props;
+		const { headerText, translate, eligibleForProPlan, locale, isOnboarding2023PricingGrid } =
+			this.props;
 
 		if ( headerText ) {
 			return headerText;
@@ -283,13 +285,11 @@ export class PlansStep extends Component {
 				: translate( 'Choose the plan that’s right for you' );
 		}
 
+		if ( isOnboarding2023PricingGrid ) {
+			return translate( 'Choose your flavor of WordPress' );
+		}
+
 		if ( this.state.isDesktop ) {
-			if (
-				isEnabled( 'onboarding/2023-pricing-grid' ) &&
-				flowName === 'onboarding-2023-pricing-grid'
-			) {
-				return translate( 'Choose your flavor of WordPress' );
-			}
 			return translate( 'Choose a plan' );
 		}
 
@@ -304,6 +304,7 @@ export class PlansStep extends Component {
 			locale,
 			translate,
 			useEmailOnboardingSubheader,
+			isOnboarding2023PricingGrid,
 		} = this.props;
 
 		const freePlanButton = <Button onClick={ this.handleFreePlanButtonClick } borderless />;
@@ -348,10 +349,7 @@ export class PlansStep extends Component {
 			);
 		}
 
-		if (
-			isEnabled( 'onboarding/2023-pricing-grid' ) &&
-			flowName === 'onboarding-2023-pricing-grid'
-		) {
+		if ( isOnboarding2023PricingGrid ) {
 			return;
 		}
 
@@ -428,7 +426,8 @@ export class PlansStep extends Component {
 
 	render() {
 		const classes = classNames( 'plans plans-step', {
-			'in-vertically-scrolled-plans-experiment': this.props.isInVerticalScrollingPlansExperiment,
+			'in-vertically-scrolled-plans-experiment':
+				! this.props.isOnboarding2023PricingGrid && this.props.isInVerticalScrollingPlansExperiment,
 			'has-no-sidebar': true,
 			'is-wide-layout': true,
 		} );
