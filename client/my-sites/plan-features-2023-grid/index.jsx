@@ -169,7 +169,6 @@ export class PlanFeatures2023Grid extends Component {
 		let previousProductNameShort;
 
 		return planProperties.map( ( properties, index ) => {
-			const cardExpandedProp = index === 0 ? { expanded: true } : {};
 			const planCardClasses = classNames(
 				'plan-features-2023-grid__mobile-plan-card',
 				getPlanClass( properties.planName )
@@ -186,7 +185,6 @@ export class PlanFeatures2023Grid extends Component {
 					<CardContainer
 						header={ translate( 'Show all features' ) }
 						planName={ properties.planName }
-						{ ...cardExpandedProp }
 						key={ `${ properties.planName }-${ index }` }
 					>
 						{ this.renderPreviousFeaturesIncludedTitle( [ properties ], {

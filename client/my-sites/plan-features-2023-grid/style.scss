@@ -88,7 +88,7 @@ $plan-features-sidebar-width: 272px;
 	text-align: center;
 }
 
-.plans-wrapper {
+.is-2023-pricing-grid .plans-wrapper {
 	margin: 0 auto;
 	padding: 28px 0 10px;
 	transform: translateY(-20px);
@@ -105,7 +105,7 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
-.plan-features--signup {
+.is-2023-pricing-grid .plan-features--signup {
 	margin: 0 auto;
 
 	.signup__steps & {
