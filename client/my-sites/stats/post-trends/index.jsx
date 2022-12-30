@@ -46,33 +46,31 @@ class PostTrends extends Component {
 			<div className="post-trends">
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsStreak" query={ query } /> }
 
-				<div>
-					<div className="post-trends__heading">
-						<h1 className="post-trends__title">{ translate( 'Posting activity' ) }</h1>
+				<div className="post-trends__heading">
+					<h1 className="post-trends__title">{ translate( 'Posting activity' ) }</h1>
+				</div>
+				<div ref={ this.wrapperRef } className="post-trends__wrapper">
+					<div ref={ this.yearRef } className="post-trends__year">
+						{ this.getMonthComponents() }
 					</div>
-					<div ref={ this.wrapperRef } className="post-trends__wrapper">
-						<div ref={ this.yearRef } className="post-trends__year">
-							{ this.getMonthComponents() }
-						</div>
-						<div className="post-trends__key-container">
-							<span className="post-trends__key-label">
-								{ translate( 'Fewer Posts', {
-									context: 'Legend label in stats post trends visualization',
-								} ) }
-							</span>
-							<ul className="post-trends__key">
-								<li className="post-trends__key-day is-today" />
-								<li className="post-trends__key-day is-level-1" />
-								<li className="post-trends__key-day is-level-2" />
-								<li className="post-trends__key-day is-level-3" />
-								<li className="post-trends__key-day is-level-4" />
-							</ul>
-							<span className="post-trends__key-label">
-								{ translate( 'More Posts', {
-									context: 'Legend label in stats post trends visualization',
-								} ) }
-							</span>
-						</div>
+					<div className="post-trends__key-container">
+						<span className="post-trends__key-label">
+							{ translate( 'Fewer Posts', {
+								context: 'Legend label in stats post trends visualization',
+							} ) }
+						</span>
+						<ul className="post-trends__key">
+							<li className="post-trends__key-day is-today" />
+							<li className="post-trends__key-day is-level-1" />
+							<li className="post-trends__key-day is-level-2" />
+							<li className="post-trends__key-day is-level-3" />
+							<li className="post-trends__key-day is-level-4" />
+						</ul>
+						<span className="post-trends__key-label">
+							{ translate( 'More Posts', {
+								context: 'Legend label in stats post trends visualization',
+							} ) }
+						</span>
 					</div>
 				</div>
 			</div>
