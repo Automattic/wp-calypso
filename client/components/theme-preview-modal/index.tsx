@@ -1,14 +1,31 @@
-import { RootChild } from '@automattic/components';
+import { Button, Gridicon, RootChild } from '@automattic/components';
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import PremiumBadge from 'calypso/components/premium-badge';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { Theme } from 'calypso/types';
 
 import './style.scss';
+
+interface BackButtonProps {
+	cssClass: string;
+	onClick: () => void;
+}
+
+const BackButton: React.FC< BackButtonProps > = ( { cssClass, onClick } ) => {
+	const translate = useTranslate();
+
+	return (
+		<Button className={ cssClass } borderless onClick={ onClick }>
+			<Gridicon icon="chevron-left" size={ 18 } />
+			{ translate( 'Back' ) }
+		</Button>
+	);
+};
 
 interface ThemePreviewModalProps {
 	previewUrl: string;
@@ -44,6 +61,10 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( { previewUrl, th
 	return (
 		<RootChild>
 			<div className="theme-preview-modal">
+				<div className="theme-preview-modal__navigation">
+					<WordPressLogo size={ 24 } />
+					<BackButton cssClass="theme-preview-modal__navigation-link" />
+				</div>
 				<div className="theme-preview-modal__content">
 					<AsyncLoad
 						require="@automattic/design-preview"
