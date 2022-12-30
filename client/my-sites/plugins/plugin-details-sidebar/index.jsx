@@ -4,8 +4,10 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import './style.scss';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import { PlanUSPS, USPS } from 'calypso/my-sites/plugins/plugin-details-CTA/usps';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
@@ -64,6 +66,14 @@ const PluginDetailsSidebar = ( {
 
 	const isPremiumVersionAvailable = !! premium_slug;
 	const premiumVersionLink = `/plugins/${ premium_slug }/${ selectedSite?.slug || '' }`;
+	const premiumVersionLinkOnClik = useCallback( () => {
+		recordTracksEvent( 'calypso_plugin_details_premium_plugin_link_click', {
+			current_plugin_slug: slug,
+			premium_plugin_slug: premium_slug,
+			premium_plugin_link: premiumVersionLink,
+			site: selectedSite?.ID,
+		} );
+	}, [ premiumVersionLink, premium_slug, selectedSite?.ID, slug ] );
 
 	return (
 		<div className="plugin-details-sidebar__plugin-details-content">
@@ -75,7 +85,11 @@ const PluginDetailsSidebar = ( {
 						'This plugin has a premium version that might suit your needs better.'
 					) }
 					links={ [
-						{ href: premiumVersionLink, label: translate( 'Check out the premium version' ) },
+						{
+							href: premiumVersionLink,
+							label: translate( 'Check out the premium version' ),
+							onClick: premiumVersionLinkOnClik,
+						},
 					] }
 					first
 				/>
