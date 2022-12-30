@@ -1,5 +1,5 @@
 import { Button, Gridicon, RootChild } from '@automattic/components';
-import { useMemo } from '@wordpress/element';
+import { useEffect, useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
@@ -46,6 +46,13 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) || -1;
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
+
+	useEffect( () => {
+		document.documentElement.classList.add( 'no-scroll' );
+		return () => {
+			document.documentElement.classList.remove( 'no-scroll' );
+		};
+	}, [] );
 
 	function showGlobalStylesPremiumBadge() {
 		if ( ! shouldLimitGlobalStyles ) {
