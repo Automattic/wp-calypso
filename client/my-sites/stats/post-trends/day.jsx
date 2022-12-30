@@ -1,7 +1,6 @@
 import { Icon, postContent } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import moment from 'moment';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent, Fragment } from 'react';
 import Tooltip from 'calypso/components/tooltip';
@@ -31,9 +30,13 @@ class PostTrendsDay extends PureComponent {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	buildTooltipData = () => {
 		const { label, postCount } = this.props;
-		const date = moment( label );
-		const weekDay = date.format( 'dddd' );
-		const formattedDate = date.format( 'MMMM DD, YYYY' );
+		const date = new Date( label );
+		const weekDay = date.toLocaleDateString( undefined, { weekday: 'long' } );
+		const formattedDate = date.toLocaleDateString( undefined, {
+			month: 'long',
+			day: 'numeric',
+			year: 'numeric',
+		} );
 
 		const postPublished = this.props.translate(
 			'%(posts)d post published',
