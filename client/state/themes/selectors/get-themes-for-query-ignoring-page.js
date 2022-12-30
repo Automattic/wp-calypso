@@ -1,7 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { createSelector } from '@automattic/state-utils';
 import { flatMap } from 'lodash';
-import { getActiveTheme } from 'calypso/state/themes/selectors';
+import {
+	getActiveTheme,
+	getCanonicalTheme,
+	arePremiumThemesEnabled,
+} from 'calypso/state/themes/selectors';
 import { getSerializedThemesQueryWithoutPage } from 'calypso/state/themes/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -28,8 +32,17 @@ export const getThemesForQueryIgnoringPage = createSelector(
 			return null;
 		}
 
+		const selectedSiteId = state.ui ? getSelectedSiteId( state ) : null;
+		const premiumThemesEnabled = arePremiumThemesEnabled( state, selectedSiteId );
+		const isDefaultQuery = ! (
+			query.search ||
+			query.filter ||
+			// If the premium themes is not enabled, the default tier is 'free'
+			( query.tier && premiumThemesEnabled )
+		);
+
 		// If query is default, filter out recommended themes.
-		if ( ! ( query.search || query.filter || query.tier ) ) {
+		if ( isDefaultQuery ) {
 			const recommendedThemes = state.themes.recommendedThemes.themes;
 			const themeIds = flatMap( recommendedThemes, ( theme ) => theme.id );
 
@@ -39,14 +52,19 @@ export const getThemesForQueryIgnoringPage = createSelector(
 		}
 
 		// Set active theme to be the first theme in the array.
-		const selectedSiteId = state.ui ? getSelectedSiteId( state ) : null;
 		if ( isEnabled( 'themes/showcase-i4/search-and-filter' ) && selectedSiteId ) {
 			const currentThemeId = getActiveTheme( state, selectedSiteId );
+			const currentTheme = getCanonicalTheme( state, selectedSiteId, currentThemeId );
 			const index = themesForQueryIgnoringPage.findIndex(
 				( theme ) => theme.id === currentThemeId
 			);
+
 			if ( index >= 0 ) {
 				themesForQueryIgnoringPage.unshift( ...themesForQueryIgnoringPage.splice( index, 1 ) );
+			} else if ( isDefaultQuery && currentTheme ) {
+				// If activated theme is retired or a 3rd party theme, we have to show it
+				// if query is default
+				themesForQueryIgnoringPage.unshift( currentTheme );
 			}
 		}
 

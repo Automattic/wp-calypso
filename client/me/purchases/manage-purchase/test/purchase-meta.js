@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-/* eslint-disable jest/no-conditional-expect */
-/* eslint-disable jest/valid-title */
-
 import { render, screen } from '@testing-library/react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
@@ -54,6 +51,7 @@ describe( 'PurchaseMeta', () => {
 					data: [
 						{
 							ID: 1,
+							bill_period_days: 365,
 							bill_period_label: 'per year',
 						},
 					],
@@ -90,6 +88,7 @@ describe( 'PurchaseMeta', () => {
 					data: [
 						{
 							ID: 1,
+							bill_period_days: 365,
 							bill_period_label: 'par année',
 						},
 					],
@@ -127,6 +126,7 @@ describe( 'PurchaseMeta', () => {
 						{
 							ID: 1,
 							bill_period_label: 'per month',
+							bill_period_days: 31,
 						},
 					],
 				},
@@ -163,6 +163,7 @@ describe( 'PurchaseMeta', () => {
 						{
 							ID: 1,
 							bill_period_label: 'per week',
+							bill_period_days: 7,
 						},
 					],
 				},
@@ -199,6 +200,7 @@ describe( 'PurchaseMeta', () => {
 						{
 							ID: 1,
 							bill_period_label: 'per day',
+							bill_period_days: 1,
 						},
 					],
 				},
@@ -235,6 +237,7 @@ describe( 'PurchaseMeta', () => {
 						{
 							ID: 1,
 							product_slug: 'business-bundle-2y',
+							bill_period_days: 730,
 						},
 					],
 				},

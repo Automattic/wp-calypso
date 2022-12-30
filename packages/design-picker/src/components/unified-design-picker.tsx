@@ -144,6 +144,7 @@ const useTrackDesignView = ( {
 interface DesignButtonProps {
 	design: Design;
 	locale: string;
+	onSelect: ( design: Design ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	isPremiumThemeAvailable?: boolean;
 	hasPurchasedTheme?: boolean;
@@ -245,12 +246,12 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 
 interface DesignButtonContainerProps extends DesignButtonProps {
 	category?: string | null;
-	onSelect: ( design: Design ) => void;
+	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
 }
 
 const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	category,
-	onSelect,
+	onSelectBlankCanvas,
 	...props
 } ) => {
 	const trackingDivRef = useTrackDesignView( {
@@ -260,7 +261,13 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	} );
 
 	if ( isBlankCanvasDesign( props.design ) ) {
-		return <PatternAssemblerCta onButtonClick={ () => onSelect( props.design ) } />;
+		return (
+			<PatternAssemblerCta
+				onButtonClick={ ( shouldGoToAssemblerStep ) =>
+					onSelectBlankCanvas( props.design, shouldGoToAssemblerStep )
+				}
+			/>
+		);
 	}
 
 	return (
@@ -358,6 +365,7 @@ interface DesignPickerProps {
 	locale: string;
 	verticalId?: string;
 	onSelect: ( design: Design ) => void;
+	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	staticDesigns: Design[];
 	generatedDesigns: Design[];
@@ -371,6 +379,7 @@ interface DesignPickerProps {
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
 	onSelect,
+	onSelectBlankCanvas,
 	onPreview,
 	staticDesigns,
 	generatedDesigns,
@@ -407,6 +416,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						design={ design }
 						locale={ locale }
 						onSelect={ onSelect }
+						onSelectBlankCanvas={ onSelectBlankCanvas }
 						onPreview={ onPreview }
 						isPremiumThemeAvailable={ isPremiumThemeAvailable }
 						onCheckout={ onCheckout }
@@ -435,6 +445,7 @@ export interface UnifiedDesignPickerProps {
 	locale: string;
 	verticalId?: string;
 	onSelect: ( design: Design ) => void;
+	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onViewAllDesigns: () => void;
 	generatedDesigns: Design[];
@@ -450,6 +461,7 @@ export interface UnifiedDesignPickerProps {
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	locale,
 	onSelect,
+	onSelectBlankCanvas,
 	onPreview,
 	onViewAllDesigns,
 	verticalId,
@@ -487,6 +499,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 				<DesignPicker
 					locale={ locale }
 					onSelect={ onSelect }
+					onSelectBlankCanvas={ onSelectBlankCanvas }
 					onPreview={ onPreview }
 					staticDesigns={ staticDesigns }
 					generatedDesigns={ generatedDesigns }

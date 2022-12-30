@@ -9,20 +9,7 @@ import {
 	isFreePlan,
 	isMonthly,
 	TERM_MONTHLY,
-	FEATURE_FREE_DOMAIN,
-	FEATURE_STORAGE_BANDWIDTH,
-	FEATURE_EMAIL_SUPPORT_SIGNUP_V2,
-	FEATURE_PREMIUM_THEMES,
-	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
-	FEATURE_UNLTD_LIVE_CHAT_SUPPORT,
-	FEATURE_INSTALL_THEMES_PLUGINS,
-	FEATURE_ADVANCED_SEO_TOOLS,
-	FEATURE_DEVELOPER_TOOLS_V1,
-	FEATURE_PRODUCT_LISTINGS,
-	FEATURE_ACCEPT_PAYMENTS,
-	FEATURE_SHIPPING_CARRIERS,
 } from '@automattic/calypso-products';
-import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { compact, get, map, reduce } from 'lodash';
@@ -36,7 +23,7 @@ import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import {
 	getHighlightedFeatures,
 	getPlanFeatureAccessor,
-} from 'calypso/my-sites/plan-comparison-with-highlights/util';
+} from 'calypso/my-sites/plan-features-2023-grid/util';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import {
@@ -53,29 +40,14 @@ import {
 	getPlanDiscountedRawPrice,
 	getSitePlanRawPrice,
 } from 'calypso/state/sites/plans/selectors';
-import PlanComparisonWithHighlightsActions from './actions';
-import PlanComparisonWithHighlightsHeader from './header';
+import PlanFeatures2023GridActions from './actions';
+import PlanFeatures2023GridHeader from './header';
 import { PlanFeaturesItem } from './item';
 import './style.scss';
 
 const noop = () => {};
 
-const iconMapping = {
-	[ FEATURE_FREE_DOMAIN ]: 'public',
-	[ FEATURE_STORAGE_BANDWIDTH ]: 'cloud_done',
-	[ FEATURE_EMAIL_SUPPORT_SIGNUP_V2 ]: 'mail',
-	[ FEATURE_PREMIUM_THEMES ]: 'space_dashboard',
-	[ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION ]: 'design_services',
-	[ FEATURE_UNLTD_LIVE_CHAT_SUPPORT ]: 'support_agent',
-	[ FEATURE_INSTALL_THEMES_PLUGINS ]: 'power',
-	[ FEATURE_ADVANCED_SEO_TOOLS ]: 'travel_explore',
-	[ FEATURE_DEVELOPER_TOOLS_V1 ]: 'terminal',
-	[ FEATURE_PRODUCT_LISTINGS ]: 'shopping_bag',
-	[ FEATURE_ACCEPT_PAYMENTS ]: 'monetization',
-	[ FEATURE_SHIPPING_CARRIERS ]: 'local_shipping',
-};
-
-export class PlanComparisonWithHighlights extends Component {
+export class PlanFeatures2023Grid extends Component {
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
@@ -84,7 +56,7 @@ export class PlanComparisonWithHighlights extends Component {
 	render() {
 		const { isInSignup, planProperties, translate } = this.props;
 		const tableClasses = classNames(
-			'plan-comparison-with-highlights__table',
+			'plan-features-2023-grid__table',
 			`has-${ planProperties.length }-cols`
 		);
 		const planClasses = classNames( 'plan-features', {
@@ -98,15 +70,14 @@ export class PlanComparisonWithHighlights extends Component {
 			<div className={ planWrapperClasses }>
 				<QueryActivePromotions />
 				<div className={ planClasses }>
-					<div ref={ this.contentRef } className="plan-comparison-with-highlights__content">
+					<div ref={ this.contentRef } className="plan-features-2023-grid__content">
 						<div>
 							<table className={ tableClasses }>
-								<caption className="plan-comparison-with-highlights__screen-reader-text screen-reader-text">
+								<caption className="plan-features-2023-grid__screen-reader-text screen-reader-text">
 									{ translate( 'Available plans to choose from' ) }
 								</caption>
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>
-									{ this.renderHighlightFeatures() }
 									<tr>{ this.renderTopButtons() }</tr>
 									{ this.renderPlanFeatureRows() }
 								</tbody>
@@ -118,18 +89,8 @@ export class PlanComparisonWithHighlights extends Component {
 		);
 	}
 
-	renderHighlightFeatures() {
-		return (
-			<>
-				<tr className="plan-comparison-with-highlights__row">
-					{ this.renderPlanUniqueFeatures() }
-				</tr>
-			</>
-		);
-	}
-
 	renderPlanHeaders() {
-		const { basePlansPath, planProperties, isReskinned } = this.props;
+		const { basePlansPath, planProperties, isReskinned, flowName } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -150,7 +111,7 @@ export class PlanComparisonWithHighlights extends Component {
 				rawPriceForMonthlyPlan,
 			} = properties;
 
-			const classes = classNames( 'plan-comparison-with-highlights__table-item', {
+			const classes = classNames( 'plan-features-2023-grid__table-item', {
 				'has-border-top': ! isReskinned,
 			} );
 			const audience = planConstantObj.getAudience?.();
@@ -158,7 +119,7 @@ export class PlanComparisonWithHighlights extends Component {
 
 			return (
 				<th scope="col" key={ planName } className={ classes }>
-					<PlanComparisonWithHighlightsHeader
+					<PlanFeatures2023GridHeader
 						audience={ audience }
 						availableForPurchase={ availableForPurchase }
 						basePlansPath={ basePlansPath }
@@ -177,6 +138,7 @@ export class PlanComparisonWithHighlights extends Component {
 						title={ planConstantObj.getTitle() }
 						annualPricePerMonth={ annualPricePerMonth }
 						isMonthlyPlan={ isMonthlyPlan }
+						flow={ flowName }
 					/>
 				</th>
 			);
@@ -208,11 +170,11 @@ export class PlanComparisonWithHighlights extends Component {
 				planConstantObj,
 				popular,
 			} = properties;
-			const classes = classNames( 'plan-comparison-with-highlights__table-item', 'is-top-buttons' );
+			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
 
 			return (
 				<td key={ planName } className={ classes }>
-					<PlanComparisonWithHighlightsActions
+					<PlanFeatures2023GridActions
 						availableForPurchase={ availableForPurchase }
 						className={ getPlanClass( planName ) }
 						current={ current }
@@ -248,7 +210,7 @@ export class PlanComparisonWithHighlights extends Component {
 		const longestFeatures = this.getLongestFeaturesList();
 		return map( longestFeatures, ( featureKey, rowIndex ) => {
 			return (
-				<tr key={ rowIndex } className="plan-comparison-with-highlights__row">
+				<tr key={ rowIndex } className="plan-features-2023-grid__row">
 					{ this.renderPlanFeatureColumns( rowIndex ) }
 				</tr>
 			);
@@ -267,19 +229,17 @@ export class PlanComparisonWithHighlights extends Component {
 		}
 
 		return (
-			<span className="plan-comparison-with-highlights__item-annual-plan">
+			<span className="plan-features-2023-grid__item-annual-plan">
 				{ translate( 'Included with annual plans' ) }
 			</span>
 		);
 	}
 
-	renderFeatureItem( feature, index, isHighlightsSection = false ) {
-		const classes = classNames( 'plan-comparison-with-highlights__item-info', {
+	renderFeatureItem( feature, index ) {
+		const classes = classNames( 'plan-features-2023-grid__item-info', {
 			'is-annual-plan-feature': feature.availableOnlyForAnnualPlans,
 			'is-available': feature.availableForCurrentPlan,
 		} );
-
-		const featureSlug = feature.getSlug();
 
 		return (
 			<>
@@ -287,10 +247,9 @@ export class PlanComparisonWithHighlights extends Component {
 					key={ index }
 					annualOnlyContent={ this.renderAnnualPlansFeatureNotice( feature ) }
 					isFeatureAvailable={ feature.availableForCurrentPlan }
-					materialIconName={ isHighlightsSection && iconMapping[ featureSlug ] }
 				>
 					<span className={ classes }>
-						<span className="plan-comparison-with-highlights__item-title">
+						<span className="plan-features-2023-grid__item-title">
 							{ feature.getTitle( this.props.domainName ) }
 						</span>
 					</span>
@@ -307,66 +266,25 @@ export class PlanComparisonWithHighlights extends Component {
 			const featureKeys = Object.keys( features );
 			const key = featureKeys[ rowIndex ];
 			const currentFeature = features[ key ];
-			const shouldBoldFeature =
-				currentFeature?.isHighlightedFeature && isNewsletterOrLinkInBioFlow( this.props.flowName );
-			const classes = classNames(
-				'plan-comparison-with-highlights__table-item',
-				getPlanClass( planName ),
-				{
-					'is-last-feature': rowIndex + 1 === featureKeys.length,
-					'is-highlighted':
-						selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
-					'is-bold': rowIndex === 0 || shouldBoldFeature,
-				}
-			);
+			const classes = classNames( 'plan-features-2023-grid__table-item', getPlanClass( planName ), {
+				'is-last-feature': rowIndex + 1 === featureKeys.length,
+				'is-highlighted':
+					selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
+				'is-bold': rowIndex === 0 || currentFeature?.isHighlightedFeature,
+			} );
 
 			return currentFeature ? (
 				<td key={ `${ planName }-${ key }` } className={ classes }>
 					{ this.renderFeatureItem( currentFeature, mapIndex ) }
 				</td>
 			) : (
-				<td key={ `${ planName }-none` } className="plan-comparison-with-highlights__table-item" />
-			);
-		} );
-	}
-
-	renderPlanFeatures( features, planName, mapIndex ) {
-		const { selectedFeature } = this.props;
-
-		return map( features, ( currentFeature, featureIndex ) => {
-			const classes = classNames( '', getPlanClass( planName ), {
-				'is-highlighted':
-					selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
-			} );
-			const isHighlightsSection = true;
-
-			return (
-				<div key={ `${ currentFeature.getSlug() }-${ featureIndex }` } className={ classes }>
-					{ this.renderFeatureItem( currentFeature, mapIndex, isHighlightsSection ) }
-				</div>
-			);
-		} );
-	}
-
-	renderPlanUniqueFeatures() {
-		const { planProperties } = this.props;
-		return map( planProperties, ( properties, mapIndex ) => {
-			const { planName } = properties;
-			const features = properties.featuredBenefits;
-
-			return (
-				<td
-					key={ `${ planName }-unique-${ mapIndex }` }
-					className="plan-comparison-with-highlights__table-item plan-comparison-with-highlights__unique-features"
-				>
-					<div>{ this.renderPlanFeatures( features, planName, mapIndex ) }</div>
-				</td>
+				<td key={ `${ planName }-none` } className="plan-features-2023-grid__table-item" />
 			);
 		} );
 	}
 }
 
-PlanComparisonWithHighlights.propTypes = {
+PlanFeatures2023Grid.propTypes = {
 	basePlansPath: PropTypes.string,
 	isInSignup: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
@@ -376,12 +294,12 @@ PlanComparisonWithHighlights.propTypes = {
 	visiblePlans: PropTypes.array,
 	planProperties: PropTypes.array,
 	selectedFeature: PropTypes.string,
-	flowName: PropTypes.string,
 	purchaseId: PropTypes.number,
+	flowName: PropTypes.string,
 	siteId: PropTypes.number,
 };
 
-PlanComparisonWithHighlights.defaultProps = {
+PlanFeatures2023Grid.defaultProps = {
 	basePlansPath: null,
 	isInSignup: true,
 	siteId: null,
@@ -480,26 +398,12 @@ export default connect(
 				// This is the per month price of a monthly plan. E.g. $14 for Premium monthly.
 				const rawPriceForMonthlyPlan = getPlanRawPrice( state, monthlyPlanProductId, true );
 				const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
-				let planFeaturedBenefits = getPlanFeaturesObject(
-					planConstantObj.getOnboardingHighlightedFeatures?.() || []
-				);
 				if ( annualPlansOnlyFeatures.length > 0 ) {
 					planFeatures = planFeatures.map( ( feature ) => {
 						const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes(
 							feature.getSlug()
 						);
 
-						return {
-							...feature,
-							availableOnlyForAnnualPlans,
-							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
-						};
-					} );
-
-					planFeaturedBenefits = planFeaturedBenefits.map( ( feature ) => {
-						const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes(
-							feature.getSlug()
-						);
 						return {
 							...feature,
 							availableOnlyForAnnualPlans,
@@ -536,7 +440,6 @@ export default connect(
 					currencyCode: getCurrentUserCurrencyCode( state ),
 					discountPrice,
 					features: planFeatures,
-					featuredBenefits: planFeaturedBenefits,
 					isLandingPage,
 					isPlaceholder,
 					planConstantObj,
@@ -572,5 +475,5 @@ export default connect(
 	{
 		recordTracksEvent,
 	}
-)( localize( PlanComparisonWithHighlights ) );
+)( localize( PlanFeatures2023Grid ) );
 /* eslint-enable wpcalypso/redux-no-bound-selectors */

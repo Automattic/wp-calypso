@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -23,11 +22,7 @@ export function jetpackPricingContext( context: PageJS.Context, next: () => void
 		return (
 			<Header
 				urlQueryArgs={ urlQueryArgs }
-				title={
-					isEnabled( 'jetpack/pricing-page-rework-v1' )
-						? translate( 'Best-in-class products for your WordPress site' )
-						: translate( 'Security, performance, and marketing tools made for WordPress' )
-				}
+				title={ translate( 'Best-in-class products for your WordPress site' ) }
 			/>
 		);
 	};

@@ -1,7 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
-import { useViewportMatch } from '@wordpress/compose';
+import { Design } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
@@ -122,7 +121,6 @@ const siteSetupFlow: Flow = {
 
 		const urlQueryParams = useQuery();
 		const isPluginBundleEligible = useIsPluginBundleEligible();
-		const isDesktop = useViewportMatch( 'large' );
 
 		let siteSlug: string | null = null;
 		if ( siteSlugParam ) {
@@ -208,16 +206,14 @@ const siteSetupFlow: Flow = {
 					return navigate( 'bloggerStartingPoint' );
 				}
 
-				case 'designSetup':
-					if (
-						isDesktop &&
-						isBlankCanvasDesign( providedDependencies?.selectedDesign as Design )
-					) {
+				case 'designSetup': {
+					const _selectedDesign = providedDependencies?.selectedDesign as Design;
+					if ( _selectedDesign?.design_type === 'assembler' ) {
 						return navigate( 'patternAssembler' );
 					}
 
 					return navigate( 'processing' );
-
+				}
 				case 'patternAssembler':
 					return navigate( 'processing' );
 
@@ -229,10 +225,7 @@ const siteSetupFlow: Flow = {
 					}
 
 					// End of Pattern Assembler flow
-					if (
-						isEnabled( 'signup/design-picker-pattern-assembler' ) &&
-						isBlankCanvasDesign( selectedDesign as Design )
-					) {
+					if ( selectedDesign?.design_type === 'assembler' ) {
 						return exitFlow( `/site-editor/${ siteSlug }` );
 					}
 
