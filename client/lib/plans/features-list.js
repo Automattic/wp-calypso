@@ -216,6 +216,7 @@ import {
 	FEATURE_ES_SEARCH_JP,
 	FEATURE_PLUGIN_AUTOUPDATE_JP,
 	FEATURE_PREMIUM_CONTENT_JP,
+	FEATURE_SITE_ACTIVITY_LOG_JP,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -1811,6 +1812,10 @@ export const FEATURES_LIST = {
 	[ FEATURE_PLUGIN_AUTOUPDATE_JP ]: {
 		getSlug: () => FEATURE_PLUGIN_AUTOUPDATE_JP,
 		getTitle: () => i18n.translate( 'Plugin auto-updates' ),
+	},
+	[ FEATURE_SITE_ACTIVITY_LOG_JP ]: {
+		getSlug: () => FEATURE_SITE_ACTIVITY_LOG_JP,
+		getTitle: () => i18n.translate( 'Site activity log' ),
 	},
 	/* END: 2023 Pricing Grid Features */
 };

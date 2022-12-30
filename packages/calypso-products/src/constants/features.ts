@@ -315,3 +315,4 @@ export const FEATURE_UPTIME_MONITOR_JP = 'uptime-monitor-jp';
 export const FEATURE_ES_SEARCH_JP = 'es-search-jp';
 export const FEATURE_PLUGIN_AUTOUPDATE_JP = 'plugin-autoupdate-jp';
 export const FEATURE_PREMIUM_CONTENT_JP = 'premium-content-jp';
+export const FEATURE_SITE_ACTIVITY_LOG_JP = 'site-activity-log-jp';
