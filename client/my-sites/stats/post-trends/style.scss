@@ -13,8 +13,9 @@ $common-border-radius: 4px;
 	position: relative;
 	width: 100%;
 
-	@include breakpoint-deprecated("<480px") {
-		display: none;
+	@media (max-width: 660px) {
+		margin-left: 0.875rem;
+		margin-right: 0.875rem;
 	}
 
 }
@@ -45,12 +46,11 @@ $common-border-radius: 4px;
 	display: flex;
 	justify-content: space-between;
 	transition: left, 1s, ease-in-out;
+	overflow-x: scroll;
 }
 
 .post-trends__wrapper {
 	position: relative;
-	// height: 130px;
-	// max-width: 660px; // necessary for fluid width mode
 	margin: 0 auto;
 	overflow: hidden;
 }
