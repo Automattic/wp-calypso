@@ -116,6 +116,7 @@ class ThemePreview extends Component {
 						<ThemePreviewModal
 							previewUrl={ this.props.demoUrl + '?demo=true&iframe=true&theme_preview=true' }
 							theme={ theme }
+							onClose={ this.props.hideThemePreview }
 						/>
 					) : (
 						<WebPreview

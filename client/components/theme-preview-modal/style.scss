@@ -30,23 +30,39 @@ $break-design-preview: 1024px;
 	align-items: center;
 	bottom: 0;
 	display: flex;
+	inset-inline-end: 0;
+	inset-inline-start: 0;
 	height: 60px;
 	gap: 24px;
 	margin: 0;
-	justify-content: flex-start;
+	padding: 0 20px;
+	pointer-events: none;
+	position: fixed;
+	top: auto;
+	justify-content: space-between;
+	z-index: z-index(".theme-preview-modal", ".theme-preview-modal__navigation");
 
-	@include break-small {
+	@include break-design-preview {
 		position: absolute;
 		top: 8px;
 		inset-inline-end: 24px;
 		inset-inline-start: 24px;
+		justify-content: flex-start;
 		padding: 1px 0 0;
 	}
 
+	> * {
+		pointer-events: auto;
+	}
+
 	.wordpress-logo {
-		display: block;
+		display: none;
 		fill: var(--color-text);
 		margin: 2px 0 0 0;
+
+		@include break-design-preview {
+			display: block;
+		}
 	}
 
 	&-link.button.is-borderless {
@@ -54,6 +70,7 @@ $break-design-preview: 1024px;
 		cursor: pointer;
 		font-size: 0.875rem;
 		font-weight: 600;
+		margin-top: -2px;
 		padding: 0;
 
 		svg {
@@ -63,12 +80,31 @@ $break-design-preview: 1024px;
 			top: 5px;
 			width: 20px;
 		}
+
+		@include break-design-preview {
+			margin-top: 0;
+		}
+	}
+
+	&-title,
+	&-action {
+		display: block;
+
+		@include break-design-preview {
+			display: none;
+		}
+	}
+
+	&-title {
+		font-size: 0.875rem;
+		font-weight: 500;
+		line-height: 20px;
 	}
 }
 
 .theme-preview-modal__content {
 	height: calc(100vh - 156px);
-	margin-top: 36px;
+	margin-top: 96px;
 	position: relative;
 	z-index: 1;
 

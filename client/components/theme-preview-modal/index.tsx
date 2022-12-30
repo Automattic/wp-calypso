@@ -30,9 +30,14 @@ const BackButton: React.FC< BackButtonProps > = ( { cssClass, onClick } ) => {
 interface ThemePreviewModalProps {
 	previewUrl: string;
 	theme: Theme;
+	onClose: () => void;
 }
 
-const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( { previewUrl, theme } ) => {
+const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
+	previewUrl,
+	theme,
+	onClose,
+} ) => {
 	const shortDescription = useMemo( () => {
 		const idx = theme.description.indexOf( '. ' );
 		return idx >= 0 ? theme.description.substring( 0, idx + 1 ) : theme.description;
@@ -63,7 +68,9 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( { previewUrl, th
 			<div className="theme-preview-modal">
 				<div className="theme-preview-modal__navigation">
 					<WordPressLogo size={ 24 } />
-					<BackButton cssClass="theme-preview-modal__navigation-link" />
+					<BackButton cssClass="theme-preview-modal__navigation-link" onClick={ onClose } />
+					<div className="theme-preview-modal__navigation-title">{ theme.name }</div>
+					<div className="theme-preview-modal__navigation-action"></div>
 				</div>
 				<div className="theme-preview-modal__content">
 					<AsyncLoad
