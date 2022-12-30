@@ -47,6 +47,10 @@ $common-border-radius: 4px;
 	justify-content: space-between;
 	transition: left, 1s, ease-in-out;
 	overflow-x: scroll;
+
+	&.post-trends__year-loading {
+		opacity: 0.2;
+	}
 }
 
 .post-trends__wrapper {
@@ -189,11 +193,23 @@ $common-border-radius: 4px;
 		&:active {
 			outline: thin dotted;
 		}
+
+		&.is-disabled {
+			opacity: 0.2;
+			pointer-events: none;
+		}
 	}
 
 	@media (min-width: 661px) {
 		padding-right: 0;
 	}
+}
+
+.post-trends__spinner-container {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
 
 
