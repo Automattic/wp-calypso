@@ -71,6 +71,9 @@
 	}
 }
 
+.is-redesign .layout__content {
+	padding-top: 0;
+}
 // Jetpack injects a banner on the /plugins page for jetpack sites
 .is-section-plugins .layout__content > .banner {
 	// This moves it down out from under our sticky header

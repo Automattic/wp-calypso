@@ -310,6 +310,11 @@ body.is-section-plugins #primary {
 		z-index: -1;
 	}
 
+	.is-redesign .search-box-header::before {
+		background: #e5f4ff;
+		top: 0;
+	}
+
 	.categories__menu {
 		.components-button {
 			&:not(.is-pressed):not(.is-selected) {

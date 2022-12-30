@@ -90,6 +90,8 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	const categories = useCategories();
 	const categoryName = categories[ category ]?.menu || __( 'Plugins' );
 
+	const isRedesign = true;
+
 	// this is a temporary hack until we merge Phase 4 of the refactor
 	const renderList = () => {
 		if ( search ) {
@@ -127,7 +129,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	}
 
 	return (
-		<MainComponent wideLayout>
+		<MainComponent wideLayout isRedesign>
 			<QueryProductsList persist />
 			<QueryPlugins siteId={ selectedSite?.ID } />
 			<QuerySitePurchases siteId={ selectedSite?.ID } />
@@ -139,7 +141,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 			<DocumentHead title={ __( 'Plugins' ) } />
 
 			<PluginsAnnouncementModal />
-			{ ! hideHeader && (
+			{ ! hideHeader && ! isRedesign && (
 				<PluginsNavigationHeader
 					navigationHeaderRef={ navigationHeaderRef }
 					categoryName={ categoryName }
@@ -151,7 +153,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 			<SearchBoxHeader
 				searchRef={ searchRef }
 				stickySearchBoxRef={ searchHeaderRef }
-				isSticky={ isAboveElement }
+				isSticky={ ! isRedesign && isAboveElement }
 				searchTerm={ search }
 				isSearching={ isFetchingPluginsBySearchTerm }
 				title={
