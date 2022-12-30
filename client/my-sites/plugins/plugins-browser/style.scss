@@ -71,8 +71,35 @@
 	}
 }
 
-.is-redesign .layout__content {
+body.is-section-plugins #primary .main.is-redesign {
 	padding-top: 0;
+
+	.fixed-navigation-header__header {
+		visibility: hidden;
+	}
+
+	.responsive-toolbar-group__swipe-list {
+		background: none;
+		margin-bottom: 22px;
+	}
+
+	.responsive-toolbar-group__dropdown {
+		margin-bottom: 20px;
+		padding: 0 8px;
+
+		.responsive-toolbar-group__button-item {
+			padding: 0 16px;
+		}
+		.responsive-toolbar-group__button-item:not([class*="is-pressed"]):hover::before {
+			background: none;
+		}
+	}
+
+	.components-button.is-pressed::before {
+		background: #0675c4;
+		left: 4px;
+		right: 4px;
+	}
 }
 // Jetpack injects a banner on the /plugins page for jetpack sites
 .is-section-plugins .layout__content > .banner {
