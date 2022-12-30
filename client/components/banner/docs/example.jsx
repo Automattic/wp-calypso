@@ -16,7 +16,7 @@ const BannerExample = () => (
 			callToAction="Update"
 			disableHref
 			showIcon={ false }
-			title="Simple banner with description with custom body"
+			title="Simple banner with custom body"
 			body={
 				<div style={ { display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start' } }>
 					{ icons.map( ( icon, idx ) => (

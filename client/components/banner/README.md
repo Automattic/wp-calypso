@@ -57,6 +57,7 @@ function render() {
 | `jetpack`                    | `bool`   | false   | When true, a Jetpack logo will be rendered and the border color will be set to Jetpack green.                                |
 | `icon`                       | `string` | null    | The component icon.                                                                                                          |
 | `list`                       | `string` | null    | A list of the upgrade features.                                                                                              |
+| `body`                       | `node`   | null    | A custom component to render as the main content.                                                                            |
 | `onClick`                    | `string` | null    | A function associated to the click on the whole banner or just the CTA or dismiss button.                                    |
 | `plan`                       | `string` | null    | PlanSlug of the plan that upgrade leads to.                                                                                  |
 | `price`                      | `string` | null    | One or two (original/discounted) upgrade prices.                                                                             |
