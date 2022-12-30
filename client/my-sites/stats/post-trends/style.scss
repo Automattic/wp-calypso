@@ -12,12 +12,11 @@ $common-border-radius: 4px;
 	user-select: none;
 	position: relative;
 	width: 100%;
+	margin: 0 0.875rem;
 
-	@media (max-width: 660px) {
-		margin-left: 0.875rem;
-		margin-right: 0.875rem;
+	@media (min-width: 660px) {
+		margin: 0;
 	}
-
 }
 
 .post-trends__heading {
@@ -56,63 +55,6 @@ $common-border-radius: 4px;
 	overflow: hidden;
 }
 
-.post-trends__scroll-left,
-.post-trends__scroll-right {
-	position: absolute;
-	top: 0;
-	width: 30px;
-	height: 130px;
-	background: linear-gradient(to right, var(--color-surface), rgba(var(--color-surface-rgb), 0.92), rgba(var(--color-surface-rgb), 0));
-	text-align: left;
-	z-index: z-index("root", ".post-trends__scroll");
-
-	@include breakpoint-deprecated("<960px") {
-		.focus-sidebar & {
-			z-index: 0;
-		}
-	}
-
-	.left-arrow,
-	.right-arrow {
-		width: 30px;
-		height: 100px;
-		display: block;
-		background: url(calypso/assets/images/stats/left-arrow.svg) no-repeat 4px 48px;
-		background-size: 18px 18px;
-		opacity: 0.15;
-	}
-
-	.right-arrow {
-		background: url(calypso/assets/images/stats/right-arrow.svg) no-repeat 4px 48px;
-		background-size: 18px 18px;
-	}
-
-	&.is-active {
-
-		.right-arrow,
-		.left-arrow {
-			opacity: 0.8;
-		}
-	}
-
-	&.is-active:hover {
-		cursor: pointer;
-	}
-}
-
-.post-trends__scroll-right {
-	background: linear-gradient(to left, var(--color-surface), rgba(var(--color-surface-rgb), 0.92), rgba(var(--color-surface-rgb), 0));
-	text-align: right;
-	right: 0;
-}
-
-/*rtl:begin:ignore*/
-.post-trends__scroll-left {
-	left: 0;
-}
-
-/*rtl:end:ignore*/
-
 .post-trends__month {
 	font-size: 0;
 	display: flex;
@@ -141,17 +83,12 @@ $common-border-radius: 4px;
 	margin-top: 32px;
 	font-family: $font-label;
 	color: var(--color-neutral-80);
-	// --studio-gray-80
 	font-weight: 400;
 	font-size: 0.875rem;
 	line-height: 20px;
 	text-transform: none;
 	text-align: center;
 	letter-spacing: -0.15px;
-
-	.is-loading & {
-		display: none;
-	}
 }
 
 .post-trends__day {
@@ -206,14 +143,6 @@ $common-border-radius: 4px;
 	}
 }
 
-@include breakpoint-deprecated(">1040px") {
-
-	.post-trends__scroll-left,
-	.post-trends__scroll-right {
-		display: none;
-	}
-}
-
 .post-trends__key-container {
 	margin-top: 16px;
 	margin-bottom: 48px;
@@ -221,10 +150,6 @@ $common-border-radius: 4px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-
-	@media (max-width: $break-large ) {
-		margin-bottom: 0;
-	}
 }
 
 .post-trends__key-label {
