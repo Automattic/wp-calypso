@@ -157,7 +157,7 @@
 	}
 }
 
-main.is-redesign .search-box-header {
+main.is-logged-out .search-box-header {
 	align-items: flex-start;
 	margin-bottom: 7px;
 	margin-top: -15px;
@@ -169,7 +169,7 @@ main.is-redesign .search-box-header {
 
 	.search-box-header__header {
 		font-size: rem(44px);
-		color: #0675c4;
+		color: var(--studio-blue-50);
 		padding-top: 0;
 		line-height: 1.15;
 		text-align: left;

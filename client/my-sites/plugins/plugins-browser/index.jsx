@@ -125,9 +125,8 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	if ( ! isRequestingSitesData && noPermissionsError ) {
 		return <NoPermissionsError title={ __( 'Plugins' ) } />;
 	}
-	const isRedesign = ! isLoggedIn;
 	return (
-		<MainComponent wideLayout isRedesign={ isRedesign }>
+		<MainComponent wideLayout isLoggedOut={ ! isLoggedIn }>
 			<QueryProductsList persist />
 			<QueryPlugins siteId={ selectedSite?.ID } />
 			<QuerySitePurchases siteId={ selectedSite?.ID } />
@@ -161,7 +160,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 						: __( 'Plugins you need to get your projects done' )
 				}
 				subtitle={
-					isRedesign &&
+					! isLoggedIn &&
 					( 'en' === locale ||
 						hasTranslation(
 							'Add new functionality and integrations to your site with thousands of plugins.'
