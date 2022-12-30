@@ -21,6 +21,7 @@ $common-border-radius: 4px;
 }
 
 .post-trends__heading {
+	margin-top: 48px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -215,6 +216,7 @@ $common-border-radius: 4px;
 
 .post-trends__key-container {
 	margin-top: 16px;
+	margin-bottom: 48px;
 	float: none;
 	display: flex;
 	align-items: center;
