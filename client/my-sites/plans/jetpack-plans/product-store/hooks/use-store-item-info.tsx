@@ -7,6 +7,7 @@ import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
@@ -239,6 +240,29 @@ export const useStoreItemInfo = ( {
 		[ getPurchase, isCurrentUserPurchaseOwner ]
 	);
 
+	const getLightBoxCtaLabel = useCallback(
+		( item: SelectorProduct ) => {
+			const shouldShowCart = getShouldShowCart( item );
+			const isProductInCart = getIsProductInCart( item );
+
+			if ( ! shouldShowCart ) {
+				return <>{ translate( 'Proceed to checkout' ) }</>;
+			}
+
+			if ( isProductInCart ) {
+				return (
+					<>
+						<Gridicon icon="checkmark" />
+						{ translate( 'View Cart' ) }
+					</>
+				);
+			}
+
+			return <>{ translate( 'Add to cart' ) }</>;
+		},
+		[ getIsProductInCart, getShouldShowCart, translate ]
+	);
+
 	const getCtaLabel = useCallback(
 		( item: SelectorProduct, fallbackLabel = translate( 'Get' ) ) => {
 			const ctaLabel = productButtonLabel( {
@@ -311,6 +335,7 @@ export const useStoreItemInfo = ( {
 			getIsSuperseded,
 			getIsUpgradeableToYearly,
 			getIsUserPurchaseOwner,
+			getLightBoxCtaLabel,
 			getOnClickPurchase,
 			getIsProductInCart,
 			getPurchase,
@@ -327,6 +352,7 @@ export const useStoreItemInfo = ( {
 			getIsSuperseded,
 			getIsUpgradeableToYearly,
 			getIsUserPurchaseOwner,
+			getLightBoxCtaLabel,
 			getOnClickPurchase,
 			getIsProductInCart,
 			getPurchase,
