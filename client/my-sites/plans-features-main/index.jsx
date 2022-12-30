@@ -121,15 +121,13 @@ export class PlansFeaturesMain extends Component {
 			isReskinned,
 			isFAQCondensedExperiment,
 			isPlansInsideStepper,
+			isOnboarding2023PricingGrid,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
 
-		if (
-			isEnabled( 'onboarding/2023-pricing-grid' ) &&
-			flowName === 'onboarding-2023-pricing-grid'
-		) {
+		if ( isOnboarding2023PricingGrid ) {
 			const asyncProps = {
 				basePlansPath,
 				domainName,
@@ -155,9 +153,7 @@ export class PlansFeaturesMain extends Component {
 				siteId,
 				isReskinned,
 				isPlansInsideStepper,
-				is2023OnboardingPricingGrid:
-					isEnabled( 'onboarding/2023-pricing-grid' ) &&
-					flowName === 'onboarding-2023-pricing-grid',
+				isOnboarding2023PricingGrid,
 			};
 			const asyncPlanFeatures2023Grid = (
 				<AsyncLoad require="calypso/my-sites/plan-features-2023-grid" { ...asyncProps } />
@@ -349,7 +345,7 @@ export class PlansFeaturesMain extends Component {
 			sitePlanSlug,
 			showTreatmentPlansReorderTest,
 			flowName,
-			isInSignup,
+			isOnboarding2023PricingGrid,
 		} = this.props;
 
 		const hideBloggerPlan = ! isBloggerPlan( selectedPlan ) && ! isBloggerPlan( sitePlanSlug );
@@ -369,9 +365,7 @@ export class PlansFeaturesMain extends Component {
 				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_PREMIUM } )[ 0 ],
 				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_BUSINESS } )[ 0 ],
 				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_ECOMMERCE } )[ 0 ],
-				isEnabled( 'onboarding/2023-pricing-grid' ) &&
-				isInSignup &&
-				flowName === 'onboarding-2023-pricing-grid'
+				isOnboarding2023PricingGrid
 					? findPlansKeys( { group: GROUP_WPCOM, type: TYPE_ENTERPRISE_GRID_WPCOM } )[ 0 ]
 					: null,
 			].filter( ( el ) => el !== null );
@@ -435,7 +429,7 @@ export class PlansFeaturesMain extends Component {
 			isAllPaidPlansShown,
 			isInMarketplace,
 			sitePlanSlug,
-			flowName,
+			isOnboarding2023PricingGrid,
 		} = this.props;
 
 		const isPlanOneOfType = ( plan, types ) =>
@@ -455,10 +449,7 @@ export class PlansFeaturesMain extends Component {
 			  } )
 			: availablePlans;
 
-		if (
-			isEnabled( 'onboarding/2023-pricing-grid' ) &&
-			flowName === 'onboarding-2023-pricing-grid'
-		) {
+		if ( isOnboarding2023PricingGrid ) {
 			return plans.filter( ( plan ) =>
 				isPlanOneOfType( plan, [
 					TYPE_FREE,

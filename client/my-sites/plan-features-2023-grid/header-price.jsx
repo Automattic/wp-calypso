@@ -8,7 +8,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	discountPrice,
 	currencyCode,
 	rawPrice,
-	is2023OnboardingPricingGrid,
+	isOnboarding2023PricingGrid,
 } ) => {
 	if ( isWpcomEnterpriseGridPlan( planName ) ) {
 		return null;
@@ -23,14 +23,14 @@ const PlanFeatures2023GridHeaderPrice = ( {
 							currencyCode={ currencyCode }
 							rawPrice={ rawPrice }
 							displayPerMonthNotation={ false }
-							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+							isOnboarding2023PricingGrid={ isOnboarding2023PricingGrid }
 							original
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ discountPrice }
 							displayPerMonthNotation={ false }
-							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+							isOnboarding2023PricingGrid={ isOnboarding2023PricingGrid }
 							discounted
 						/>
 					</div>
@@ -41,7 +41,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 					currencyCode={ currencyCode }
 					rawPrice={ rawPrice }
 					displayPerMonthNotation={ false }
-					is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+					isOnboarding2023PricingGrid={ isOnboarding2023PricingGrid }
 				/>
 			) }
 		</div>
@@ -53,7 +53,7 @@ PlanFeatures2023GridHeaderPrice.propTypes = {
 	discountPrice: PropTypes.number,
 	currencyCode: PropTypes.string,
 	rawPrice: PropTypes.number,
-	is2023OnboardingPricingGrid: PropTypes.bool,
+	isOnboarding2023PricingGrid: PropTypes.bool,
 };
 
 export default localize( PlanFeatures2023GridHeaderPrice );

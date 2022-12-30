@@ -229,7 +229,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderPlanPrice( planPropertiesObj, { isMobile } = {} ) {
-		const { isReskinned, is2023OnboardingPricingGrid } = this.props;
+		const { isReskinned, isOnboarding2023PricingGrid } = this.props;
 
 		return planPropertiesObj.map( ( properties ) => {
 			const { currencyCode, discountPrice, planName, rawPrice } = properties;
@@ -244,7 +244,7 @@ export class PlanFeatures2023Grid extends Component {
 						discountPrice={ discountPrice }
 						rawPrice={ rawPrice }
 						planName={ planName }
-						is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+						isOnboarding2023PricingGrid={ isOnboarding2023PricingGrid }
 					/>
 				</Container>
 			);

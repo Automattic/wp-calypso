@@ -774,12 +774,13 @@ class Signup extends Component {
 
 		// Hide the free option in the signup flow
 		const selectedHideFreePlan = get( this.props, 'signupDependencies.shouldHideFreePlan', false );
+		const isOnboarding2023PricingGrid = config( 'english_locales' ).includes(
+			this.props.localeSlug
+		);
 
-		const hideFreePlan =
-			config.isEnabled( 'onboarding/2023-pricing-grid' ) &&
-			this.props.flowName === 'onboarding-2023-pricing-grid'
-				? false
-				: planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
+		const hideFreePlan = isOnboarding2023PricingGrid
+			? false
+			: planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		let propsForCurrentStep = propsFromConfig;
@@ -818,6 +819,7 @@ class Signup extends Component {
 							hideFreePlan={ hideFreePlan }
 							isReskinned={ isReskinned }
 							queryParams={ this.getCurrentFlowSupportedQueryParams() }
+							isOnboarding2023PricingGrid={ isOnboarding2023PricingGrid }
 							{ ...propsForCurrentStep }
 						/>
 					) }
