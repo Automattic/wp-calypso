@@ -10,7 +10,7 @@ import {
 	isWpcomEnterpriseGridPlan,
 	isMonthly,
 	TERM_MONTHLY,
-	isPremiumPlan,
+	isBusinessPlan,
 	isEcommercePlan,
 	TYPE_FREE,
 	TYPE_PERSONAL,
@@ -35,6 +35,7 @@ import TimeLogo from 'calypso/assets/images/onboarding/time-logo.svg';
 import vipLogo from 'calypso/assets/images/onboarding/vip-logo.svg';
 import wooLogo from 'calypso/assets/images/onboarding/woo-logo.svg';
 import FoldableCard from 'calypso/components/foldable-card';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import PlanPill from 'calypso/components/plans/plan-pill';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
@@ -49,6 +50,7 @@ import {
 	getDiscountedRawPrice,
 } from 'calypso/state/plans/selectors';
 import PlanFeatures2023GridActions from './actions';
+import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridFeatures from './features';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { PlanFeaturesItem } from './item';
@@ -118,7 +120,8 @@ export class PlanFeatures2023Grid extends Component {
 					<tr>{ this.renderPlanLogos( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPlanHeaders( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPlanTagline( planPropertiesObj ) }</tr>
-					<tr>{ this.renderPlanPriceGroup( planPropertiesObj ) }</tr>
+					<tr>{ this.renderPlanPrice( planPropertiesObj ) }</tr>
+					<tr>{ this.renderBillingTimeframe( planPropertiesObj ) }</tr>
 					<tr>{ this.renderTopButtons( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPreviousFeaturesIncludedTitle( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPlanFeaturesList( planPropertiesObj ) }</tr>
@@ -158,7 +161,9 @@ export class PlanFeatures2023Grid extends Component {
 			return isWpcomEnterpriseGridPlan( planName ) ? (
 				<div { ...otherProps }>{ children }</div>
 			) : (
-				<FoldableCard { ...otherProps }>{ children }</FoldableCard>
+				<FoldableCard { ...otherProps } compact clickableHeader>
+					{ children }
+				</FoldableCard>
 			);
 		};
 		let previousProductNameShort;
@@ -170,19 +175,19 @@ export class PlanFeatures2023Grid extends Component {
 				getPlanClass( properties.planName )
 			);
 			const planCardJsx = (
-				<div className={ planCardClasses }>
+				<div className={ planCardClasses } key={ `${ properties.planName }-${ index }` }>
 					{ this.renderPlanLogos( [ properties ], { isMobile: true } ) }
 					{ this.renderPlanHeaders( [ properties ], { isMobile: true } ) }
 					{ this.renderPlanTagline( [ properties ], { isMobile: true } ) }
-					{ this.renderPlanPriceGroup( [ properties ], { isMobile: true } ) }
+					{ this.renderPlanPrice( [ properties ], { isMobile: true } ) }
+					{ this.renderBillingTimeframe( [ properties ], { isMobile: true } ) }
 					{ this.renderMobileFreeDomain( properties.planName, properties.isMonthlyPlan ) }
 					{ this.renderTopButtons( [ properties ], { isMobile: true } ) }
 					<CardContainer
 						header={ translate( 'Show all features' ) }
 						planName={ properties.planName }
-						clickableHeader
-						compact
 						{ ...cardExpandedProp }
+						key={ `${ properties.planName }-${ index }` }
 					>
 						{ this.renderPreviousFeaturesIncludedTitle( [ properties ], {
 							isMobile: true,
@@ -223,45 +228,58 @@ export class PlanFeatures2023Grid extends Component {
 		);
 	}
 
-	renderPlanPriceGroup( planPropertiesObj, { isMobile } = {} ) {
-		const { isReskinned, flowName, is2023OnboardingPricingGrid } = this.props;
+	renderPlanPrice( planPropertiesObj, { isMobile } = {} ) {
+		const { isReskinned, isOnboarding2023PricingGrid } = this.props;
 
 		return planPropertiesObj.map( ( properties ) => {
-			const {
-				annualPricePerMonth,
-				currencyCode,
-				discountPrice,
-				planConstantObj,
-				planName,
-				relatedMonthlyPlan,
-				isMonthlyPlan,
-				hideMonthly,
-				rawPrice,
-				rawPriceAnnual,
-				rawPriceForMonthlyPlan,
-			} = properties;
-
+			const { currencyCode, discountPrice, planName, rawPrice } = properties;
 			const classes = classNames( 'plan-features-2023-grid__table-item', {
 				'has-border-top': ! isReskinned,
 			} );
-			const billingTimeFrame = planConstantObj.getBillingTimeFrame();
 
 			return (
 				<Container scope="col" key={ planName } className={ classes } isMobile={ isMobile }>
 					<PlanFeatures2023GridHeaderPrice
-						billingTimeFrame={ billingTimeFrame }
 						currencyCode={ currencyCode }
 						discountPrice={ discountPrice }
-						hideMonthly={ hideMonthly }
+						rawPrice={ rawPrice }
+						planName={ planName }
+						isOnboarding2023PricingGrid={ isOnboarding2023PricingGrid }
+					/>
+				</Container>
+			);
+		} );
+	}
+
+	renderBillingTimeframe( planPropertiesObj, { isMobile } = {} ) {
+		const { translate } = this.props;
+		return planPropertiesObj.map( ( properties ) => {
+			const {
+				planConstantObj,
+				planName,
+				rawPrice,
+				rawPriceAnnual,
+				currencyCode,
+				annualPricePerMonth,
+				isMonthlyPlan,
+			} = properties;
+
+			const classes = classNames(
+				'plan-features-2023-grid__table-item',
+				'plan-features-2023-grid__header-billing-info'
+			);
+
+			return (
+				<Container className={ classes } isMobile={ isMobile } key={ planName }>
+					<PlanFeatures2023GridBillingTimeframe
 						rawPrice={ rawPrice }
 						rawPriceAnnual={ rawPriceAnnual }
-						rawPriceForMonthlyPlan={ rawPriceForMonthlyPlan }
-						relatedMonthlyPlan={ relatedMonthlyPlan }
+						currencyCode={ currencyCode }
 						annualPricePerMonth={ annualPricePerMonth }
 						isMonthlyPlan={ isMonthlyPlan }
-						flow={ flowName }
 						planName={ planName }
-						is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+						translate={ translate }
+						billingTimeframe={ planConstantObj.getBillingTimeFrame() }
 					/>
 				</Container>
 			);
@@ -278,12 +296,12 @@ export class PlanFeatures2023Grid extends Component {
 				getPlanClass( planName )
 			);
 			const tableItemClasses = classNames( 'plan-features-2023-grid__table-item', {
-				'popular-plan-parent-class': isPremiumPlan( planName ),
+				'popular-plan-parent-class': isBusinessPlan( planName ),
 			} );
 
 			return (
 				<Container key={ planName } className={ tableItemClasses } isMobile={ isMobile }>
-					{ isPremiumPlan( planName ) && (
+					{ isBusinessPlan( planName ) && (
 						<div className="plan-features-2023-grid__popular-badge">
 							<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
 						</div>
@@ -425,7 +443,7 @@ export class PlanFeatures2023Grid extends Component {
 				getPlanClass( planName )
 			);
 			const rowspanProp =
-				! isMobile && isWpcomEnterpriseGridPlan( planName ) ? { rowspan: '2' } : {};
+				! isMobile && isWpcomEnterpriseGridPlan( planName ) ? { rowSpan: '2' } : {};
 			return (
 				<Container
 					key={ planName }
@@ -440,21 +458,39 @@ export class PlanFeatures2023Grid extends Component {
 		} );
 	}
 
-	renderPlanFeaturesList( planPropertiesObj, { isMobile, previousProductNameShort } = {} ) {
-		const { domainName } = this.props;
+	renderPlanFeaturesList( planPropertiesObj, { isMobile } = {} ) {
+		const { domainName, translate } = this.props;
 		const planProperties = planPropertiesObj.filter(
 			( properties ) => ! isWpcomEnterpriseGridPlan( properties.planName )
 		);
 
-		return (
-			<PlanFeatures2023GridFeatures
-				planProperties={ planProperties }
-				domainName={ domainName }
-				isMobile={ isMobile }
-				previousProductNameShort={ previousProductNameShort }
-				Container={ Container }
-			/>
-		);
+		return planProperties.map( ( properties, mapIndex ) => {
+			const { planName, features, jpFeatures } = properties;
+			return (
+				<Container
+					key={ `${ planName }-${ mapIndex }` }
+					isMobile={ isMobile }
+					className="plan-features-2023-grid__table-item"
+				>
+					<PlanFeatures2023GridFeatures
+						features={ features }
+						planName={ planName }
+						domainName={ domainName }
+						translate={ translate }
+					/>
+					{ jpFeatures.length !== 0 && (
+						<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
+							<JetpackLogo size={ 16 } />
+						</div>
+					) }
+					<PlanFeatures2023GridFeatures
+						features={ jpFeatures }
+						planName={ planName }
+						translate={ translate }
+					/>
+				</Container>
+			);
+		} );
 	}
 
 	renderPlanStorageOptions( planPropertiesObj, { isMobile } = {} ) {
@@ -470,7 +506,7 @@ export class PlanFeatures2023Grid extends Component {
 					return;
 				}
 				return (
-					<div className="plan-features-2023-grid__storage-buttons">
+					<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
 						{ getStorageStringFromFeature( storageFeature ) }
 					</div>
 				);
@@ -510,7 +546,7 @@ PlanFeatures2023Grid.defaultProps = {
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 export default connect(
 	( state, ownProps ) => {
-		const { placeholder, plans, isLandingPage, visiblePlans } = ownProps;
+		const { placeholder, plans, visiblePlans } = ownProps;
 
 		let planProperties = plans.map( ( plan ) => {
 			let isPlaceholder = false;
@@ -609,7 +645,6 @@ export default connect(
 				discountPrice,
 				features: planFeatures,
 				jpFeatures: jetpackFeatures,
-				isLandingPage,
 				isPlaceholder,
 				planConstantObj,
 				planName: plan,

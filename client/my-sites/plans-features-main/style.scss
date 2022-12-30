@@ -77,7 +77,15 @@
 	}
 }
 
-.plans-features-main__group.is-wpcom {
+.plans-features-main__group.is-wpcom:not(.is-2023-pricing-grid) {
+	padding-top: 26px;
+
+	@media ( min-width: 880px ) {
+		padding-top: 19px;
+	}
+}
+
+.plans-features-main__group.is-wpcom.is-2023-pricing-grid {
 	padding-top: 19px;
 }
 
