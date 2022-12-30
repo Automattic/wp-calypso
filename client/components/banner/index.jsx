@@ -50,8 +50,11 @@ export class Banner extends Component {
 		jetpack: PropTypes.bool,
 		isAtomic: PropTypes.bool,
 		compact: PropTypes.bool,
-		list: PropTypes.arrayOf( PropTypes.string ),
-		body: PropTypes.node,
+		list: PropTypes.oneOfType( [
+			PropTypes.arrayOf( PropTypes.string ),
+			PropTypes.arrayOf( PropTypes.object ),
+		] ),
+		renderListItem: PropTypes.func,
 		onClick: PropTypes.func,
 		onDismiss: PropTypes.func,
 		plan: PropTypes.string,
@@ -184,7 +187,7 @@ export class Banner extends Component {
 			feature,
 			compact,
 			list,
-			body,
+			renderListItem,
 			price,
 			primaryButton,
 			title,
@@ -211,13 +214,17 @@ export class Banner extends Component {
 				<div className="banner__info">
 					<div className="banner__title">{ title }</div>
 					{ description && <div className="banner__description">{ description }</div> }
-					{ body }
+					{ renderListItem }
 					{ size( list ) > 0 && (
 						<ul className="banner__list">
 							{ list.map( ( item, key ) => (
 								<li key={ key }>
-									<Gridicon icon="checkmark" size={ 18 } />
-									{ item }
+									{ renderListItem?.( item ) ?? (
+										<>
+											<Gridicon icon="checkmark" size={ 18 } />
+											{ item }
+										</>
+									) }
 								</li>
 							) ) }
 						</ul>

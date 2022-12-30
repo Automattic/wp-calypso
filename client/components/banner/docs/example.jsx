@@ -16,42 +16,45 @@ const BannerExample = () => (
 			callToAction="Update"
 			disableHref
 			showIcon={ false }
-			title="Simple banner with custom body"
-			body={
-				<div style={ { display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start' } }>
-					{ icons.map( ( icon, idx ) => (
-						<div key={ idx } style={ { marginRight: '12px', marginTop: '12px' } }>
-							<ListTile
-								title={ <h5>Feature name</h5> }
-								leading={
-									<div
-										style={ {
-											display: 'flex',
-											marginRight: '10px',
-											alignItems: 'center',
-											borderRadius: '50%',
-											justifyContent: 'center',
-											flexShrink: 0,
-											width: '24px',
-											height: '24px',
-											padding: '3px 4px 4px 3px',
-											backgroundColor: 'var(--color-accent)',
-											color: 'var(--color-text-inverted)',
-										} }
-									>
-										<Gridicon icon={ icon } size={ 18 } />
-									</div>
-								}
-								trailing={
-									<div style={ { marginLeft: '8px', marginTop: '5px' } }>
-										<Gridicon color="#C6C6C6" icon="info-outline" size={ 18 } />
-									</div>
-								}
+			title="Simple banner with custom list items"
+			list={ icons }
+			renderListItem={ ( icon ) => (
+				<ListTile
+					title={ <h5>Feature name</h5> }
+					leading={
+						<div
+							style={ {
+								display: 'flex',
+								marginRight: '10px',
+								alignItems: 'center',
+								borderRadius: '50%',
+								justifyContent: 'center',
+								flexShrink: 0,
+								width: '24px',
+								height: '24px',
+								padding: '3px 4px 4px 3px',
+								backgroundColor: 'var(--color-accent)',
+							} }
+						>
+							<Gridicon
+								icon={ icon }
+								size={ 18 }
+								style={ { marginRight: '0px', color: 'var(--color-text-inverted)' } }
 							/>
 						</div>
-					) ) }
-				</div>
-			}
+					}
+					trailing={
+						<div style={ { marginLeft: '8px' } }>
+							<Gridicon
+								color="#C6C6C6"
+								icon="info-outline"
+								size={ 18 }
+								style={ { verticalAlign: 'unset' } }
+							/>
+						</div>
+					}
+				/>
+			) }
 		/>
 		<Banner showIcon={ false } title="Banner with showIcon set to false" />
 		<Banner
