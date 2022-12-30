@@ -60,10 +60,8 @@ const StatsInsights = ( props ) => {
 				</div>
 				{ ! isNewAllTimeViews && (
 					<div className="stats__module--insights-unified">
-						<>
-							<SectionHeader label={ translate( 'All-time views' ) } />
-							<StatsViews />
-						</>
+						<SectionHeader label={ translate( 'All-time views' ) } />
+						<StatsViews />
 					</div>
 				) }
 				{ siteId && (

@@ -1,9 +1,8 @@
-// import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { throttle, values } from 'lodash';
+import { values } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import { createRef, Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -12,7 +11,6 @@ import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSiteStatsPostStreakData } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Month from './month';
-// import YearNavigation from './year-navigation';
 
 import './style.scss';
 
@@ -22,92 +20,6 @@ class PostTrends extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		query: PropTypes.object,
-	};
-
-	state = {
-		canScrollLeft: false,
-		canScrollRight: false,
-	};
-
-	wrapperRef = createRef();
-	yearRef = createRef();
-
-	componentDidMount() {
-		const node = this.wrapperRef.current;
-		const yearNode = this.yearRef.current;
-		const computedStyle = window.getComputedStyle( yearNode );
-		const margin =
-			parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) +
-			parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 );
-
-		// Initially scroll all the way to the left
-		yearNode.style.left = 0 - yearNode.scrollWidth + node.clientWidth - margin + 'px';
-
-		// Add resize listener
-		this.resize = throttle( this.resize, 400 );
-		window.addEventListener( 'resize', this.resize );
-		this.resize();
-	}
-
-	// Remove listener
-	componentWillUnmount() {
-		window.removeEventListener( 'resize', this.resize );
-	}
-
-	resize = () => {
-		const scrollProps = {};
-		const node = this.wrapperRef.current;
-		const yearNode = this.yearRef.current;
-		const computedStyle = window.getComputedStyle( yearNode );
-		const margin =
-			parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) +
-			parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 );
-		const left = parseInt( yearNode.style.left, 10 );
-
-		scrollProps.canScrollLeft = left < 0;
-		scrollProps.canScrollRight = left > 0 - yearNode.scrollWidth + node.clientWidth - margin;
-
-		if ( this.state.canScrollLeft && node.clientWidth >= yearNode.scrollWidth - margin ) {
-			yearNode.style.left = '0px';
-		}
-
-		this.setState( scrollProps );
-	};
-
-	scroll = ( direction ) => {
-		const node = this.wrapperRef.current;
-		const yearNode = this.yearRef.current;
-		const computedStyle = window.getComputedStyle( yearNode );
-		const margin =
-			parseInt( computedStyle.getPropertyValue( 'margin-left' ), 10 ) +
-			parseInt( computedStyle.getPropertyValue( 'margin-right' ), 10 );
-		let left = parseInt( computedStyle.getPropertyValue( 'left' ), 10 );
-
-		if ( 1 !== direction ) {
-			direction = -1;
-		}
-
-		// scroll left 80% of the clientWidth
-		left -= Math.ceil( direction * node.clientWidth * 0.8 );
-
-		// enforce bounds
-		if ( left > 0 ) {
-			left = 0;
-		} else if ( left < 0 - yearNode.scrollWidth + node.clientWidth - margin ) {
-			left = 0 - yearNode.scrollWidth + node.clientWidth - margin;
-		}
-
-		yearNode.style.left = left + 'px';
-
-		this.resize();
-	};
-
-	scrollLeft = () => {
-		this.scroll( -1 );
-	};
-
-	scrollRight = () => {
-		this.scroll( 1 );
 	};
 
 	getMonthComponents = () => {
@@ -129,14 +41,6 @@ class PostTrends extends Component {
 	render() {
 		const { siteId, query, translate } = this.props;
 
-		// const leftClass = classNames( 'post-trends__scroll-left', {
-		// 	'is-active': this.state.canScrollLeft,
-		// } );
-
-		// const rightClass = classNames( 'post-trends__scroll-right', {
-		// 	'is-active': this.state.canScrollRight,
-		// } );
-
 		/* eslint-disable jsx-a11y/click-events-have-key-events, wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="post-trends">
@@ -145,22 +49,7 @@ class PostTrends extends Component {
 				<div>
 					<div className="post-trends__heading">
 						<h1 className="post-trends__title">{ translate( 'Posting activity' ) }</h1>
-
-						{ /* This will be finished later */ }
-						{ /* <YearNavigation
-							disablePreviousArrow={ false }
-							disableNextArrow={ false }
-							onYearChange={ () => {} }
-						/> */ }
 					</div>
-
-					{ /* 
-					<div className={ leftClass } onClick={ this.scrollLeft } role="button" tabIndex="0">
-						<span className="left-arrow" />
-					</div>
-					<div className={ rightClass } onClick={ this.scrollRight } role="button" tabIndex="0">
-						<span className="right-arrow" />
-					</div> */ }
 					<div ref={ this.wrapperRef } className="post-trends__wrapper">
 						<div ref={ this.yearRef } className="post-trends__year">
 							{ this.getMonthComponents() }
