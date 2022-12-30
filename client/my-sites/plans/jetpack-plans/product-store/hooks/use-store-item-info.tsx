@@ -7,12 +7,12 @@ import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import isSupersedingJetpackItem from 'calypso/../packages/calypso-products/src/is-superseding-jetpack-item';
-import { Gridicon } from 'calypso/devdocs/design/playground-scope';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import reactNodeToString from 'calypso/lib/react-node-to-string';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
