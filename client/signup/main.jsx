@@ -6,6 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { isNewsletterOrLinkInBioFlow, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
+import classNames from 'classnames';
 import debugModule from 'debug';
 import {
 	clone,
@@ -875,10 +876,16 @@ class Signup extends Component {
 		}
 
 		const isReskinned = isReskinnedFlow( this.props.flowName );
+		const isOnboarding2023PricingGrid = config( 'english_locales' ).includes(
+			this.props.localeSlug
+		);
+		const classes = classNames( 'signup', `is-${ kebabCase( this.props.flowName ) }`, {
+			'is-onboarding-2023-pricing-grid': isOnboarding2023PricingGrid,
+		} );
 
 		return (
 			<>
-				<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
+				<div className={ classes }>
 					<DocumentHead title={ this.props.pageTitle } />
 					{ ! isP2Flow( this.props.flowName ) && (
 						<SignupHeader
