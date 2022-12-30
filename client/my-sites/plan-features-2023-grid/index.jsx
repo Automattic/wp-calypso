@@ -10,9 +10,8 @@ import {
 	isWpcomEnterpriseGridPlan,
 	isMonthly,
 	TERM_MONTHLY,
-	isPremiumPlan,
+	isBusinessPlan,
 	isEcommercePlan,
-	PLAN_ENTERPRISE_GRID_WPCOM,
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
@@ -22,7 +21,6 @@ import {
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { compact, get, map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -37,6 +35,7 @@ import TimeLogo from 'calypso/assets/images/onboarding/time-logo.svg';
 import vipLogo from 'calypso/assets/images/onboarding/vip-logo.svg';
 import wooLogo from 'calypso/assets/images/onboarding/woo-logo.svg';
 import FoldableCard from 'calypso/components/foldable-card';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import PlanPill from 'calypso/components/plans/plan-pill';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
@@ -51,6 +50,7 @@ import {
 	getDiscountedRawPrice,
 } from 'calypso/state/plans/selectors';
 import PlanFeatures2023GridActions from './actions';
+import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridFeatures from './features';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { PlanFeaturesItem } from './item';
@@ -120,7 +120,8 @@ export class PlanFeatures2023Grid extends Component {
 					<tr>{ this.renderPlanLogos( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPlanHeaders( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPlanTagline( planPropertiesObj ) }</tr>
-					<tr>{ this.renderPlanPriceGroup( planPropertiesObj ) }</tr>
+					<tr>{ this.renderPlanPrice( planPropertiesObj ) }</tr>
+					<tr>{ this.renderBillingTimeframe( planPropertiesObj ) }</tr>
 					<tr>{ this.renderTopButtons( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPreviousFeaturesIncludedTitle( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPlanFeaturesList( planPropertiesObj ) }</tr>
@@ -160,7 +161,9 @@ export class PlanFeatures2023Grid extends Component {
 			return isWpcomEnterpriseGridPlan( planName ) ? (
 				<div { ...otherProps }>{ children }</div>
 			) : (
-				<FoldableCard { ...otherProps }>{ children }</FoldableCard>
+				<FoldableCard { ...otherProps } compact clickableHeader>
+					{ children }
+				</FoldableCard>
 			);
 		};
 		let previousProductNameShort;
@@ -172,19 +175,19 @@ export class PlanFeatures2023Grid extends Component {
 				getPlanClass( properties.planName )
 			);
 			const planCardJsx = (
-				<div className={ planCardClasses }>
+				<div className={ planCardClasses } key={ `${ properties.planName }-${ index }` }>
 					{ this.renderPlanLogos( [ properties ], { isMobile: true } ) }
 					{ this.renderPlanHeaders( [ properties ], { isMobile: true } ) }
 					{ this.renderPlanTagline( [ properties ], { isMobile: true } ) }
-					{ this.renderPlanPriceGroup( [ properties ], { isMobile: true } ) }
+					{ this.renderPlanPrice( [ properties ], { isMobile: true } ) }
+					{ this.renderBillingTimeframe( [ properties ], { isMobile: true } ) }
 					{ this.renderMobileFreeDomain( properties.planName, properties.isMonthlyPlan ) }
 					{ this.renderTopButtons( [ properties ], { isMobile: true } ) }
 					<CardContainer
 						header={ translate( 'Show all features' ) }
 						planName={ properties.planName }
-						clickableHeader
-						compact
 						{ ...cardExpandedProp }
+						key={ `${ properties.planName }-${ index }` }
 					>
 						{ this.renderPreviousFeaturesIncludedTitle( [ properties ], {
 							isMobile: true,
@@ -225,45 +228,58 @@ export class PlanFeatures2023Grid extends Component {
 		);
 	}
 
-	renderPlanPriceGroup( planPropertiesObj, { isMobile } = {} ) {
-		const { isReskinned, flowName, is2023OnboardingPricingGrid } = this.props;
+	renderPlanPrice( planPropertiesObj, { isMobile } = {} ) {
+		const { isReskinned, isOnboarding2023PricingGrid } = this.props;
 
-		return map( planPropertiesObj, ( properties ) => {
-			const {
-				annualPricePerMonth,
-				currencyCode,
-				discountPrice,
-				planConstantObj,
-				planName,
-				relatedMonthlyPlan,
-				isMonthlyPlan,
-				hideMonthly,
-				rawPrice,
-				rawPriceAnnual,
-				rawPriceForMonthlyPlan,
-			} = properties;
-
+		return planPropertiesObj.map( ( properties ) => {
+			const { currencyCode, discountPrice, planName, rawPrice } = properties;
 			const classes = classNames( 'plan-features-2023-grid__table-item', {
 				'has-border-top': ! isReskinned,
 			} );
-			const billingTimeFrame = planConstantObj.getBillingTimeFrame();
 
 			return (
 				<Container scope="col" key={ planName } className={ classes } isMobile={ isMobile }>
 					<PlanFeatures2023GridHeaderPrice
-						billingTimeFrame={ billingTimeFrame }
 						currencyCode={ currencyCode }
 						discountPrice={ discountPrice }
-						hideMonthly={ hideMonthly }
+						rawPrice={ rawPrice }
+						planName={ planName }
+						isOnboarding2023PricingGrid={ isOnboarding2023PricingGrid }
+					/>
+				</Container>
+			);
+		} );
+	}
+
+	renderBillingTimeframe( planPropertiesObj, { isMobile } = {} ) {
+		const { translate } = this.props;
+		return planPropertiesObj.map( ( properties ) => {
+			const {
+				planConstantObj,
+				planName,
+				rawPrice,
+				rawPriceAnnual,
+				currencyCode,
+				annualPricePerMonth,
+				isMonthlyPlan,
+			} = properties;
+
+			const classes = classNames(
+				'plan-features-2023-grid__table-item',
+				'plan-features-2023-grid__header-billing-info'
+			);
+
+			return (
+				<Container className={ classes } isMobile={ isMobile } key={ planName }>
+					<PlanFeatures2023GridBillingTimeframe
 						rawPrice={ rawPrice }
 						rawPriceAnnual={ rawPriceAnnual }
-						rawPriceForMonthlyPlan={ rawPriceForMonthlyPlan }
-						relatedMonthlyPlan={ relatedMonthlyPlan }
+						currencyCode={ currencyCode }
 						annualPricePerMonth={ annualPricePerMonth }
 						isMonthlyPlan={ isMonthlyPlan }
-						flow={ flowName }
 						planName={ planName }
-						is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+						translate={ translate }
+						billingTimeframe={ planConstantObj.getBillingTimeFrame() }
 					/>
 				</Container>
 			);
@@ -273,19 +289,19 @@ export class PlanFeatures2023Grid extends Component {
 	renderPlanLogos( planPropertiesObj, { isMobile } = {} ) {
 		const { isInSignup, translate } = this.props;
 
-		return map( planPropertiesObj, ( properties ) => {
+		return planPropertiesObj.map( ( properties ) => {
 			const { planName } = properties;
 			const headerClasses = classNames(
 				'plan-features-2023-grid__header-logo',
 				getPlanClass( planName )
 			);
 			const tableItemClasses = classNames( 'plan-features-2023-grid__table-item', {
-				'popular-plan-parent-class': isPremiumPlan( planName ),
+				'popular-plan-parent-class': isBusinessPlan( planName ),
 			} );
 
 			return (
 				<Container key={ planName } className={ tableItemClasses } isMobile={ isMobile }>
-					{ isPremiumPlan( planName ) && (
+					{ isBusinessPlan( planName ) && (
 						<div className="plan-features-2023-grid__popular-badge">
 							<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
 						</div>
@@ -308,7 +324,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderPlanHeaders( planPropertiesObj, { isMobile } = {} ) {
-		return map( planPropertiesObj, ( properties ) => {
+		return planPropertiesObj.map( ( properties ) => {
 			const { planName, planConstantObj } = properties;
 			const headerClasses = classNames(
 				'plan-features-2023-grid__header',
@@ -366,7 +382,7 @@ export class PlanFeatures2023Grid extends Component {
 	renderTopButtons( planPropertiesObj, { isMobile } = {} ) {
 		const { isInSignup, isLaunchPage, flowName } = this.props;
 
-		return map( planPropertiesObj, ( properties ) => {
+		return planPropertiesObj.map( ( properties ) => {
 			const { planName, isPlaceholder, planConstantObj } = properties;
 			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
 
@@ -427,7 +443,7 @@ export class PlanFeatures2023Grid extends Component {
 				getPlanClass( planName )
 			);
 			const rowspanProp =
-				! isMobile && isWpcomEnterpriseGridPlan( planName ) ? { rowspan: '2' } : {};
+				! isMobile && isWpcomEnterpriseGridPlan( planName ) ? { rowSpan: '2' } : {};
 			return (
 				<Container
 					key={ planName }
@@ -442,21 +458,39 @@ export class PlanFeatures2023Grid extends Component {
 		} );
 	}
 
-	renderPlanFeaturesList( planPropertiesObj, { isMobile, previousProductNameShort } = {} ) {
-		const { domainName } = this.props;
+	renderPlanFeaturesList( planPropertiesObj, { isMobile } = {} ) {
+		const { domainName, translate } = this.props;
 		const planProperties = planPropertiesObj.filter(
 			( properties ) => ! isWpcomEnterpriseGridPlan( properties.planName )
 		);
 
-		return (
-			<PlanFeatures2023GridFeatures
-				planProperties={ planProperties }
-				domainName={ domainName }
-				isMobile={ isMobile }
-				previousProductNameShort={ previousProductNameShort }
-				Container={ Container }
-			/>
-		);
+		return planProperties.map( ( properties, mapIndex ) => {
+			const { planName, features, jpFeatures } = properties;
+			return (
+				<Container
+					key={ `${ planName }-${ mapIndex }` }
+					isMobile={ isMobile }
+					className="plan-features-2023-grid__table-item"
+				>
+					<PlanFeatures2023GridFeatures
+						features={ features }
+						planName={ planName }
+						domainName={ domainName }
+						translate={ translate }
+					/>
+					{ jpFeatures.length !== 0 && (
+						<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
+							<JetpackLogo size={ 16 } />
+						</div>
+					) }
+					<PlanFeatures2023GridFeatures
+						features={ jpFeatures }
+						planName={ planName }
+						translate={ translate }
+					/>
+				</Container>
+			);
+		} );
 	}
 
 	renderPlanStorageOptions( planPropertiesObj, { isMobile } = {} ) {
@@ -472,7 +506,7 @@ export class PlanFeatures2023Grid extends Component {
 					return;
 				}
 				return (
-					<div className="plan-features-2023-grid__storage-buttons">
+					<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
 						{ getStorageStringFromFeature( storageFeature ) }
 					</div>
 				);
@@ -512,76 +546,61 @@ PlanFeatures2023Grid.defaultProps = {
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 export default connect(
 	( state, ownProps ) => {
-		const { placeholder, plans, isLandingPage, visiblePlans } = ownProps;
+		const { placeholder, plans, visiblePlans } = ownProps;
 
-		let planProperties = compact(
-			map( plans, ( plan ) => {
-				let isPlaceholder = false;
-				const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
-				const planProductId = planConstantObj.getProductId();
-				const planObject = getPlan( state, planProductId );
-				const isMonthlyPlan = isMonthly( plan );
-				const showMonthly = ! isMonthlyPlan;
-				const relatedMonthlyPlan = showMonthly
-					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
-					: null;
+		let planProperties = plans.map( ( plan ) => {
+			let isPlaceholder = false;
+			const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
+			const planProductId = planConstantObj.getProductId();
+			const planObject = getPlan( state, planProductId );
+			const isMonthlyPlan = isMonthly( plan );
+			const showMonthly = ! isMonthlyPlan;
+			const relatedMonthlyPlan = showMonthly
+				? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
+				: null;
 
-				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
-				const showMonthlyPrice = true;
-				if ( placeholder || ! planObject ) {
-					isPlaceholder = true;
+			// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
+			const showMonthlyPrice = true;
+			if ( placeholder || ! planObject ) {
+				isPlaceholder = true;
+			}
+
+			let planFeatures = getPlanFeaturesObject(
+				planConstantObj.get2023PricingGridSignupWpcomFeatures()
+			);
+			let jetpackFeatures = getPlanFeaturesObject(
+				planConstantObj.get2023PricingGridSignupJetpackFeatures()
+			);
+
+			const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );
+			const discountPrice = getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
+
+			let annualPricePerMonth = discountPrice || rawPrice;
+			if ( isMonthlyPlan ) {
+				// Get annual price per month for comparison
+				const yearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( plan ) );
+				if ( yearlyPlan ) {
+					const yearlyPlanDiscount = getDiscountedRawPrice(
+						state,
+						yearlyPlan.product_id,
+						showMonthlyPrice
+					);
+					annualPricePerMonth =
+						yearlyPlanDiscount || getPlanRawPrice( state, yearlyPlan.product_id, showMonthlyPrice );
 				}
+			}
 
-				let planFeatures = getPlanFeaturesObject(
-					planConstantObj.get2023PricingGridSignupWpcomFeatures()
-				);
-				let jetpackFeatures = getPlanFeaturesObject(
-					planConstantObj.get2023PricingGridSignupJetpackFeatures()
-				);
-
-				const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );
-				const discountPrice = getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
-
-				let annualPricePerMonth = discountPrice || rawPrice;
-				if ( isMonthlyPlan ) {
-					// Get annual price per month for comparison
-					const yearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( plan ) );
-					if ( yearlyPlan ) {
-						const yearlyPlanDiscount = getDiscountedRawPrice(
-							state,
-							yearlyPlan.product_id,
-							showMonthlyPrice
-						);
-						annualPricePerMonth =
-							yearlyPlanDiscount ||
-							getPlanRawPrice( state, yearlyPlan.product_id, showMonthlyPrice );
-					}
-				}
-
-				const monthlyPlanKey = findPlansKeys( {
-					group: planConstantObj.group,
-					term: TERM_MONTHLY,
-					type: planConstantObj.type,
-				} )[ 0 ];
-				const monthlyPlanProductId = getPlanFromKey( monthlyPlanKey )?.getProductId();
-				// This is the per month price of a monthly plan. E.g. $14 for Premium monthly.
-				const rawPriceForMonthlyPlan = getPlanRawPrice( state, monthlyPlanProductId, true );
-				const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
-				if ( annualPlansOnlyFeatures.length > 0 ) {
-					planFeatures = planFeatures.map( ( feature ) => {
-						const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes(
-							feature.getSlug()
-						);
-
-						return {
-							...feature,
-							availableOnlyForAnnualPlans,
-							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
-						};
-					} );
-				}
-
-				jetpackFeatures = jetpackFeatures.map( ( feature ) => {
+			const monthlyPlanKey = findPlansKeys( {
+				group: planConstantObj.group,
+				term: TERM_MONTHLY,
+				type: planConstantObj.type,
+			} )[ 0 ];
+			const monthlyPlanProductId = getPlanFromKey( monthlyPlanKey )?.getProductId();
+			// This is the per month price of a monthly plan. E.g. $14 for Premium monthly.
+			const rawPriceForMonthlyPlan = getPlanRawPrice( state, monthlyPlanProductId, true );
+			const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
+			if ( annualPlansOnlyFeatures.length > 0 ) {
+				planFeatures = planFeatures.map( ( feature ) => {
 					const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes( feature.getSlug() );
 
 					return {
@@ -590,54 +609,61 @@ export default connect(
 						availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
 					};
 				} );
+			}
 
-				// Strip annual-only features out for the site's /plans page
-				if ( isPlaceholder ) {
-					planFeatures = planFeatures.filter(
-						( { availableForCurrentPlan = true } ) => availableForCurrentPlan
-					);
-				}
-
-				const rawPriceAnnual =
-					null !== discountPrice
-						? discountPrice * 12
-						: getPlanRawPrice( state, planProductId, false );
-
-				const tagline = planConstantObj.getPlanTagline();
-				const product_name_short =
-					PLAN_ENTERPRISE_GRID_WPCOM === plan
-						? planConstantObj.getPathSlug()
-						: planObject.product_name_short;
-				const storageOptions = planConstantObj.get2023PricingGridSignupStorageOptions() || [];
+			jetpackFeatures = jetpackFeatures.map( ( feature ) => {
+				const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes( feature.getSlug() );
 
 				return {
-					cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ),
-					currencyCode: getCurrentUserCurrencyCode( state ),
-					discountPrice,
-					features: planFeatures,
-					jpFeatures: jetpackFeatures,
-					isLandingPage,
-					isPlaceholder,
-					planConstantObj,
-					planName: plan,
-					planObject: planObject,
-					productSlug: get( planObject, 'product_slug' ),
-					product_name_short,
-					hideMonthly: false,
-					rawPrice,
-					rawPriceAnnual,
-					rawPriceForMonthlyPlan,
-					relatedMonthlyPlan,
-					annualPricePerMonth,
-					isMonthlyPlan,
-					tagline,
-					storageOptions,
+					...feature,
+					availableOnlyForAnnualPlans,
+					availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
 				};
-			} )
-		);
+			} );
+
+			// Strip annual-only features out for the site's /plans page
+			if ( isPlaceholder ) {
+				planFeatures = planFeatures.filter(
+					( { availableForCurrentPlan = true } ) => availableForCurrentPlan
+				);
+			}
+
+			const rawPriceAnnual =
+				null !== discountPrice
+					? discountPrice * 12
+					: getPlanRawPrice( state, planProductId, false );
+
+			const tagline = planConstantObj.getPlanTagline();
+			const product_name_short = isWpcomEnterpriseGridPlan( plan )
+				? planConstantObj.getPathSlug()
+				: planObject.product_name_short;
+			const storageOptions = planConstantObj.get2023PricingGridSignupStorageOptions() || [];
+
+			return {
+				cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ),
+				currencyCode: getCurrentUserCurrencyCode( state ),
+				discountPrice,
+				features: planFeatures,
+				jpFeatures: jetpackFeatures,
+				isPlaceholder,
+				planConstantObj,
+				planName: plan,
+				planObject: planObject,
+				product_name_short,
+				hideMonthly: false,
+				rawPrice,
+				rawPriceAnnual,
+				rawPriceForMonthlyPlan,
+				relatedMonthlyPlan,
+				annualPricePerMonth,
+				isMonthlyPlan,
+				tagline,
+				storageOptions,
+			};
+		} );
 
 		if ( Array.isArray( visiblePlans ) ) {
-			planProperties = planProperties.filter( ( p ) => visiblePlans.indexOf( p.planName ) !== -1 );
+			planProperties = planProperties.filter( ( p ) => visiblePlans.indexOf( p?.planName ) !== -1 );
 		}
 
 		return {
