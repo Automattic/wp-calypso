@@ -114,16 +114,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'onboarding-2023-pricing-grid',
-			steps: isEnabled( 'signup/professional-email-step' )
-				? [ 'user', 'domains', 'emails', 'plans' ]
-				: [ 'user', 'domains', 'plans' ],
-			destination: getSignupDestination,
-			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
-			lastModified: '2020-12-10',
-			showRecaptcha: true,
-		},
-		{
 			name: 'newsletter',
 			steps: [ 'domains', 'plans-newsletter' ],
 			destination: ( dependencies ) =>
