@@ -11,6 +11,22 @@
 		max-width: 1200px;
 	}
 
+	.is-onboarding-2023-pricing-grid &.is-wide-layout {
+		max-width: 414px;
+
+		@media ( min-width: 880px ) {
+			max-width: 860px;
+		}
+
+		@media ( min-width: 1340px ) {
+			max-width: 1320px;
+		}
+
+		@media ( min-width: 1500px ) {
+			max-width: 1480px;
+		}
+	}
+
 	.formatted-header.is-without-subhead {
 		margin-bottom: 15px;
 	}
@@ -18,6 +34,22 @@
 	.step-wrapper {
 		&.is-wide-layout {
 			max-width: 1200px;
+		}
+
+		.is-onboarding-2023-pricing-grid &.is-wide-layout {
+			max-width: 414px;
+
+			@media ( min-width: 880px ) {
+				max-width: 860px;
+			}
+
+			@media ( min-width: 1340px ) {
+				max-width: 1320px;
+			}
+
+			@media ( min-width: 1500px ) {
+				max-width: 1480px;
+			}
 		}
 	}
 }

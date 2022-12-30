@@ -22,7 +22,7 @@ export class PlanPrice extends Component {
 			taxText,
 			translate,
 			omitHeading,
-			is2023OnboardingPricingGrid,
+			isOnboarding2023PricingGrid,
 		} = this.props;
 
 		const classes = classNames( 'plan-price', className, {
@@ -107,7 +107,7 @@ export class PlanPrice extends Component {
 			// Remove it so that it's not confused to be a decimal point by the subtraction operator.
 			priceInteger = priceInteger.replace( /[,.]/g, '' );
 
-			if ( is2023OnboardingPricingGrid ) {
+			if ( isOnboarding2023PricingGrid ) {
 				return (
 					<div className="plan-price__integer-fraction">
 						<span className="plan-price__integer">{ priceObj.price.integer }</span>
