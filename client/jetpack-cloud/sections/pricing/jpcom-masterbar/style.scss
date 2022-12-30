@@ -156,6 +156,12 @@
 		fill: #101517;
 	}
 
+	.header__content-wrapper {
+		position: absolute;
+		width: 100%;
+		height: 195px;
+	}
+
 	.header__content {
 		width: 85%;
 		max-width: 1200px;
@@ -164,12 +170,11 @@
 		align-items: center;
 
 		&.is-sticky {
-			position: fixed;
+			margin: 0 5%;
 			top: 0;
-			left: 50%;
-			transform: translate(-50%, 0);
+			max-width: 100%;
+			position: sticky;
 			background-color: #fff;
-			height: 3rem;
 		}
 	}
 	@media ( max-width: 1300px ) {

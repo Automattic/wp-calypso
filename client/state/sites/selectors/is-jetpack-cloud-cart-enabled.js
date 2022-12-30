@@ -11,10 +11,5 @@ import getSiteSlug from './get-site-slug';
 export default function isJetpackCloudCartEnabled( state ) {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, siteId );
-	return (
-		isEnabled( 'jetpack/pricing-page-rework-v1' ) &&
-		isEnabled( 'jetpack/pricing-page-cart' ) &&
-		isUserLoggedIn( state ) &&
-		siteSlug
-	);
+	return isEnabled( 'jetpack/pricing-page-cart' ) && isUserLoggedIn( state ) && siteSlug;
 }
