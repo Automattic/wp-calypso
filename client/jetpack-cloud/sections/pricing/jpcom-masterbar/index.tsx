@@ -9,17 +9,13 @@ import ExternalLink from 'calypso/components/external-link';
 import Gravatar from 'calypso/components/gravatar';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import JetpackSaleBanner from 'calypso/jetpack-cloud/sections/pricing/sale-banner';
-import MasterbarCartWrapper from 'calypso/layout/masterbar/masterbar-cart/masterbar-cart-wrapper';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import { trailingslashit } from 'calypso/lib/route';
-import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
-import { useShoppingCartTracker } from 'calypso/my-sites/plans/jetpack-plans/product-store/hooks/use-shopping-cart-tracker';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
-import { getSiteSlug, isJetpackCloudCartEnabled } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import CloudCartIcon from './CloudCartIcon';
-import EmptyCart from './EmptyCart';
+import { isJetpackCloudCartEnabled } from 'calypso/state/sites/selectors';
+import CloudCart from './cloud-cart';
 import useMobileBtn from './use-mobile-btn';
 import useSubmenuBtn from './use-submenu-btn';
 import useUserMenu from './use-user-menu';
@@ -46,22 +42,8 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 	const jetpackSaleCoupon = useSelector( getJetpackSaleCoupon );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const user = useSelector( getCurrentUser );
-
-	const shoppingCartTracker = useShoppingCartTracker();
-
-	const onRemoveProductFromCart = ( productSlug: string ) => {
-		shoppingCartTracker( 'calypso_jetpack_shopping_cart_remove_product', {
-			productSlug,
-		} );
-	};
-
-	const goToCheckout = ( siteSlug: string ) => {
-		shoppingCartTracker( 'calypso_jetpack_shopping_cart_checkout_from_cart', {
-			addProducts: true,
-		} );
-
-		window.location.href = buildCheckoutURL( siteSlug, '' );
-	};
+	const [ barRef, hasCrossed ] = useDetectWindowBoundary( -32 );
+	const outerDivProps = barRef ? { ref: barRef as React.RefObject< HTMLDivElement > } : {};
 
 	const sections = useMemo(
 		() => [
@@ -152,9 +134,6 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		[ translate ]
 	);
 
-	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
-
 	const shouldShowCart = useSelector( isJetpackCloudCartEnabled );
 
 	const onLinkClick = useCallback( ( e ) => {
@@ -176,9 +155,9 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		<>
 			{ jetpackSaleCoupon && <JetpackSaleBanner coupon={ jetpackSaleCoupon } /> }
 
-			<div className="jpcom-masterbar">
-				<header className="header js-header force-opaque">
-					<nav className="header__content">
+			<div className="jpcom-masterbar" { ...outerDivProps }>
+				<header className={ `header js-header force-opaque ${ hasCrossed && 'is-sticky' }` }>
+					<nav className={ `header__content ${ hasCrossed && 'is-sticky' }` }>
 						<a className="header__skip" href={ `#${ MAIN_CONTENT_ID }` }>
 							{ translate( 'Skip to main content' ) }
 						</a>
@@ -190,18 +169,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 						>
 							<JetpackLogo full size={ 38 } />
 						</ExternalLink>
-						{ shouldShowCart && (
-							<MasterbarCartWrapper
-								goToCheckout={ goToCheckout }
-								selectedSiteSlug={ siteSlug || undefined }
-								selectedSiteId={ siteId || undefined }
-								checkoutLabel={ translate( 'Go to Checkout' ) }
-								cartIcon={ <CloudCartIcon /> }
-								emptyCart={ <EmptyCart /> }
-								forceShow
-								showCount
-							/>
-						) }
+						{ shouldShowCart && <CloudCart /> }
 						<a
 							className="header__mobile-btn mobile-btn js-mobile-btn"
 							href="#mobile-menu"
@@ -287,21 +255,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 									);
 								} ) }
 							</ul>
-							{ shouldShowCart && (
-								<div className="header__jetpack-masterbar-cart">
-									<MasterbarCartWrapper
-										goToCheckout={ goToCheckout }
-										onRemoveProduct={ onRemoveProductFromCart }
-										selectedSiteSlug={ siteSlug || undefined }
-										selectedSiteId={ siteId || undefined }
-										checkoutLabel={ translate( 'Go to Checkout' ) }
-										cartIcon={ <CloudCartIcon /> }
-										emptyCart={ <EmptyCart /> }
-										forceShow
-										showCount
-									/>
-								</div>
-							) }
+							{ shouldShowCart && <CloudCart /> }
 							<ul className="header__actions-list">
 								<li
 									className={ classNames( 'header__user-menu user-menu ', {
