@@ -72,3 +72,17 @@ export function usePremiumGlobalStyles(): GlobalStylesStatus {
 
 	return data ?? DEFAULT_GLOBAL_STYLES_INFO;
 }
+
+export function usePremiumGlobalStylesSelectedSite(): GlobalStylesStatus {
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const { data } = useQuery(
+		[ 'globalStylesInfo', selectedSiteId ],
+		() => getGlobalStylesInfoForSite( selectedSiteId ),
+		{
+			placeholderData: DEFAULT_GLOBAL_STYLES_INFO,
+			refetchOnWindowFocus: false,
+		}
+	);
+
+	return data ?? DEFAULT_GLOBAL_STYLES_INFO;
+}
