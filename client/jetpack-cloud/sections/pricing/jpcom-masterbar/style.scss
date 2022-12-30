@@ -162,6 +162,15 @@
 		margin: 0 auto;
 		display: flex;
 		align-items: center;
+
+		&.is-sticky {
+			position: fixed;
+			top: 0;
+			left: 50%;
+			transform: translate(-50%, 0);
+			background-color: #fff;
+			height: 3rem;
+		}
 	}
 	@media ( max-width: 1300px ) {
 		.header__content {
@@ -1172,14 +1181,6 @@
 		.header__content {
 			& > .header__jetpack-masterbar-cart {
 				display: none;
-			}
-
-			&.is-sticky {
-				position: fixed;
-				top: 0;
-				left: 50%;
-				transform: translate(-50%, 0);
-				background-color: #fff;
 			}
 		}
 	}
