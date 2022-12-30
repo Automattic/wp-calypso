@@ -1,10 +1,12 @@
 import { RootChild } from '@automattic/components';
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import PremiumBadge from 'calypso/components/premium-badge';
-import { usePremiumGlobalStylesSelectedSite } from 'calypso/state/sites/hooks/use-premium-global-styles';
-import type { Theme } from 'calypso/lib/types';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { Theme } from 'calypso/types';
 
 import './style.scss';
 
@@ -19,8 +21,9 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( { previewUrl, th
 		return idx >= 0 ? theme.description.substring( 0, idx + 1 ) : theme.description;
 	}, [ theme.description ] );
 
-	const { shouldLimitGlobalStyles } = usePremiumGlobalStylesSelectedSite();
 	const translate = useTranslate();
+	const siteId = useSelector( getSelectedSiteId ) || -1;
+	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
 
 	function showGlobalStylesPremiumBadge() {
 		if ( ! shouldLimitGlobalStyles ) {
@@ -46,6 +49,7 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( { previewUrl, th
 						require="@automattic/design-preview"
 						placeholder={ null }
 						previewUrl={ previewUrl }
+						title={ theme.name }
 						description={ shortDescription }
 						variations={ theme?.style_variations }
 						// selectedVariation={ selectedStyleVariation }
