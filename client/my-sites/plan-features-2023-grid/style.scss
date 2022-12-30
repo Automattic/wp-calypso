@@ -315,10 +315,13 @@ $plan-features-sidebar-width: 272px;
 			color: var(--color-neutral-light);
 
 			&::before {
-				border-color: var(--color-success);
-				left: 11%;
-				top: 34%;
-				right: -5%;
+				left: 0%;
+				top: 30%;
+				right: 65%;
+
+				@media ( min-width: 880px ) {
+					right: 47%;
+				}
 			}
 
 			.plan-price__currency-symbol,
