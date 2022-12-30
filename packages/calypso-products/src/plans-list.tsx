@@ -310,6 +310,7 @@ import {
 	FEATURE_PLUGIN_AUTOUPDATE_JP,
 	FEATURE_PREMIUM_CONTENT_JP,
 	FEATURE_ONE_CLICK_RESTORE_V2,
+	FEATURE_SITE_ACTIVITY_LOG_JP,
 } from './constants';
 import type {
 	BillingTerm,
@@ -985,6 +986,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_VIDEOPRESS_JP,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_SEO_JP,
+		FEATURE_SITE_ACTIVITY_LOG_JP,
 		FEATURE_BRUTE_PROTECT_JP,
 	],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_13GB_STORAGE ],
