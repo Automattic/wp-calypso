@@ -51,6 +51,7 @@ export class Banner extends Component {
 		isAtomic: PropTypes.bool,
 		compact: PropTypes.bool,
 		list: PropTypes.arrayOf( PropTypes.string ),
+		body: PropTypes.node,
 		onClick: PropTypes.func,
 		onDismiss: PropTypes.func,
 		plan: PropTypes.string,
@@ -183,6 +184,7 @@ export class Banner extends Component {
 			feature,
 			compact,
 			list,
+			body,
 			price,
 			primaryButton,
 			title,
@@ -209,6 +211,7 @@ export class Banner extends Component {
 				<div className="banner__info">
 					<div className="banner__title">{ title }</div>
 					{ description && <div className="banner__description">{ description }</div> }
+					{ body }
 					{ size( list ) > 0 && (
 						<ul className="banner__list">
 							{ list.map( ( item, key ) => (
