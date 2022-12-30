@@ -38,7 +38,6 @@ import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import AsyncLoad from 'calypso/components/async-load';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -48,6 +47,7 @@ import Notice from 'calypso/components/notice';
 import { getTld } from 'calypso/lib/domains';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import PlanFeatures from 'calypso/my-sites/plan-features';
+import PlanFeatures2023Grid from 'calypso/my-sites/plan-features-2023-grid';
 import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
@@ -100,6 +100,48 @@ export class PlansFeaturesMain extends Component {
 		}
 	}
 
+	render2023PricingGrid() {
+		const {
+			customerType,
+			domainName,
+			isInSignup,
+			isLaunchPage,
+			onUpgradeClick,
+			flowName,
+			isReskinned,
+			isOnboarding2023PricingGrid,
+		} = this.props;
+
+		const plans = this.getPlansForPlanFeatures();
+		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
+
+		const componentProps = {
+			domainName,
+			isInSignup,
+			isLaunchPage,
+			onUpgradeClick,
+			plans,
+			visiblePlans,
+			flowName,
+			isReskinned,
+			isOnboarding2023PricingGrid,
+		};
+
+		return (
+			<div
+				className={ classNames(
+					'plans-features-main__group',
+					'is-wpcom',
+					`is-customer-${ customerType }`,
+					'is-2023-pricing-grid'
+				) }
+				data-e2e-plans="wpcom"
+			>
+				<PlanFeatures2023Grid { ...componentProps } />
+			</div>
+		);
+	}
+
 	showFeatureComparison() {
 		const {
 			basePlansPath,
@@ -121,60 +163,10 @@ export class PlansFeaturesMain extends Component {
 			isReskinned,
 			isFAQCondensedExperiment,
 			isPlansInsideStepper,
-			isOnboarding2023PricingGrid,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
-
-		if ( isOnboarding2023PricingGrid ) {
-			const asyncProps = {
-				basePlansPath,
-				domainName,
-				isInSignup,
-				isLandingPage,
-				isLaunchPage,
-				onUpgradeClick,
-				plans,
-				flowName,
-				redirectTo,
-				visiblePlans,
-				selectedFeature,
-				selectedPlan,
-				withDiscount,
-				discountEndDate,
-				withScroll: plansWithScroll,
-				popularPlanSpec: getPopularPlanSpec( {
-					flowName,
-					customerType,
-					isJetpack,
-					availablePlans: visiblePlans,
-				} ),
-				siteId,
-				isReskinned,
-				isPlansInsideStepper,
-				isOnboarding2023PricingGrid,
-			};
-			const asyncPlanFeatures2023Grid = (
-				<AsyncLoad require="calypso/my-sites/plan-features-2023-grid" { ...asyncProps } />
-			);
-			return (
-				<div
-					className={ classNames(
-						'plans-features-main__group',
-						'is-wpcom',
-						`is-customer-${ customerType }`,
-						'is-2023-pricing-grid',
-						{
-							'is-scrollable': plansWithScroll,
-						}
-					) }
-					data-e2e-plans="wpcom"
-				>
-					{ asyncPlanFeatures2023Grid }
-				</div>
-			);
-		}
 
 		return (
 			<div
@@ -554,13 +546,10 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	renderPlansGrid() {
-		const { shouldShowPlansFeatureComparison, flowName } = this.props;
+		const { isOnboarding2023PricingGrid, shouldShowPlansFeatureComparison } = this.props;
 
-		if (
-			isEnabled( 'onboarding/2023-pricing-grid' ) &&
-			flowName === 'onboarding-2023-pricing-grid'
-		) {
-			return this.showFeatureComparison();
+		if ( isOnboarding2023PricingGrid ) {
+			return this.render2023PricingGrid();
 		}
 
 		return shouldShowPlansFeatureComparison ? this.showFeatureComparison() : this.getPlanFeatures();

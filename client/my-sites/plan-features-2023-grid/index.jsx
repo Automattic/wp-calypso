@@ -546,7 +546,7 @@ PlanFeatures2023Grid.defaultProps = {
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 export default connect(
 	( state, ownProps ) => {
-		const { placeholder, plans, isLandingPage, visiblePlans } = ownProps;
+		const { placeholder, plans, visiblePlans } = ownProps;
 
 		let planProperties = plans.map( ( plan ) => {
 			let isPlaceholder = false;
@@ -645,7 +645,6 @@ export default connect(
 				discountPrice,
 				features: planFeatures,
 				jpFeatures: jetpackFeatures,
-				isLandingPage,
 				isPlaceholder,
 				planConstantObj,
 				planName: plan,
