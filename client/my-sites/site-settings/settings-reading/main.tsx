@@ -16,6 +16,7 @@ const isEnabled = config.isEnabled( 'settings/modernize-reading-settings' );
 type Settings = {
 	posts_per_page?: boolean;
 	posts_per_rss?: boolean;
+	rss_use_excerpt?: boolean;
 	wpcom_featured_image_in_email?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
 };
@@ -28,6 +29,7 @@ const getFormSettings = ( settings: Settings ) => {
 	const {
 		posts_per_page,
 		posts_per_rss,
+		rss_use_excerpt,
 		wpcom_featured_image_in_email,
 		wpcom_subscription_emails_use_excerpt,
 	} = settings;
@@ -35,6 +37,7 @@ const getFormSettings = ( settings: Settings ) => {
 	return {
 		...( posts_per_page && { posts_per_page } ),
 		...( posts_per_rss && { posts_per_rss } ),
+		...( rss_use_excerpt && { rss_use_excerpt } ),
 		...( wpcom_featured_image_in_email && { wpcom_featured_image_in_email } ),
 		...( wpcom_subscription_emails_use_excerpt && { wpcom_subscription_emails_use_excerpt } ),
 	};
@@ -51,6 +54,7 @@ const connectComponent = connect( ( state ) => {
 type Fields = {
 	posts_per_page?: number;
 	posts_per_rss?: number;
+	rss_use_excerpt?: boolean;
 	wpcom_featured_image_in_email?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
 };
@@ -92,6 +96,7 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						fields={ fields }
 						onChangeField={ onChangeField }
 						handleSubmitForm={ handleSubmitForm }
+						updateFields={ updateFields }
 						disabled={ disabled }
 						isSavingSettings={ isSavingSettings }
 						siteUrl={ siteUrl }
