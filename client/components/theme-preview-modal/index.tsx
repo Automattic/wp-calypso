@@ -7,9 +7,14 @@ import PremiumBadge from 'calypso/components/premium-badge';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { StyleVariation } from '@automattic/design-picker/src/types';
 import type { Theme } from 'calypso/types';
 
 import './style.scss';
+
+interface ThemeWithStyleVariations extends Theme {
+	style_variations?: StyleVariation[];
+}
 
 interface BackButtonProps {
 	cssClass: string;
@@ -29,7 +34,7 @@ const BackButton: React.FC< BackButtonProps > = ( { cssClass, onClick } ) => {
 
 interface ThemePreviewModalProps {
 	previewUrl: string;
-	theme: Theme;
+	theme: ThemeWithStyleVariations;
 	onClose: () => void;
 }
 
