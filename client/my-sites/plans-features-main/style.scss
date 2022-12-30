@@ -12,8 +12,8 @@
 	}
 }
 
-
-.plans-features-main__group.is-scrollable {
+/*TODO: Remove the section below when the 2023 pricing grid is live to all locales */
+.plans-features-main__group.is-scrollable:not(.is-2023-pricing-grid) {
 	position: relative;
 
 	.is-section-signup & {
@@ -49,7 +49,43 @@
 	}
 }
 
-.plans-features-main__group.is-wpcom {
+.plans-features-main__group.is-2023-pricing-grid {
+	position: relative;
+	margin: auto;
+	max-width: 335px;
+
+	.is-section-signup & {
+
+		@media ( min-width: 385px ) {
+			max-width: 375px;
+		}
+
+		@media ( min-width: 880px ) {
+			max-width: 860px;
+			margin: auto;
+		}
+
+		@media ( min-width: 1340px ) {
+			max-width: 1320px;
+			margin: auto;
+		}
+
+		@media ( min-width: 1500px ) {
+			max-width: 1480px;
+			margin: auto;
+		}
+	}
+}
+
+.plans-features-main__group.is-wpcom:not(.is-2023-pricing-grid) {
+	padding-top: 26px;
+
+	@media ( min-width: 880px ) {
+		padding-top: 19px;
+	}
+}
+
+.plans-features-main__group.is-wpcom.is-2023-pricing-grid {
 	padding-top: 19px;
 }
 

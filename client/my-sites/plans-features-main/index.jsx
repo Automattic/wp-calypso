@@ -38,7 +38,6 @@ import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import AsyncLoad from 'calypso/components/async-load';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -48,6 +47,7 @@ import Notice from 'calypso/components/notice';
 import { getTld } from 'calypso/lib/domains';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import PlanFeatures from 'calypso/my-sites/plan-features';
+import PlanFeatures2023Grid from 'calypso/my-sites/plan-features-2023-grid';
 import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
@@ -100,6 +100,48 @@ export class PlansFeaturesMain extends Component {
 		}
 	}
 
+	render2023PricingGrid() {
+		const {
+			customerType,
+			domainName,
+			isInSignup,
+			isLaunchPage,
+			onUpgradeClick,
+			flowName,
+			isReskinned,
+			isOnboarding2023PricingGrid,
+		} = this.props;
+
+		const plans = this.getPlansForPlanFeatures();
+		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
+
+		const componentProps = {
+			domainName,
+			isInSignup,
+			isLaunchPage,
+			onUpgradeClick,
+			plans,
+			visiblePlans,
+			flowName,
+			isReskinned,
+			isOnboarding2023PricingGrid,
+		};
+
+		return (
+			<div
+				className={ classNames(
+					'plans-features-main__group',
+					'is-wpcom',
+					`is-customer-${ customerType }`,
+					'is-2023-pricing-grid'
+				) }
+				data-e2e-plans="wpcom"
+			>
+				<PlanFeatures2023Grid { ...componentProps } />
+			</div>
+		);
+	}
+
 	showFeatureComparison() {
 		const {
 			basePlansPath,
@@ -125,56 +167,6 @@ export class PlansFeaturesMain extends Component {
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
-
-		if (
-			isEnabled( 'onboarding/2023-pricing-grid' ) &&
-			flowName === 'onboarding-2023-pricing-grid'
-		) {
-			const asyncProps = {
-				basePlansPath,
-				domainName,
-				isInSignup,
-				isLandingPage,
-				isLaunchPage,
-				onUpgradeClick,
-				plans,
-				flowName,
-				redirectTo,
-				visiblePlans,
-				selectedFeature,
-				selectedPlan,
-				withDiscount,
-				discountEndDate,
-				withScroll: plansWithScroll,
-				popularPlanSpec: getPopularPlanSpec( {
-					flowName,
-					customerType,
-					isJetpack,
-					availablePlans: visiblePlans,
-				} ),
-				siteId,
-				isReskinned,
-				isPlansInsideStepper,
-			};
-			const asyncPlanFeatures2023Grid = (
-				<AsyncLoad require="calypso/my-sites/plan-features-2023-grid" { ...asyncProps } />
-			);
-			return (
-				<div
-					className={ classNames(
-						'plans-features-main__group',
-						'is-wpcom',
-						`is-customer-${ customerType }`,
-						{
-							'is-scrollable': plansWithScroll,
-						}
-					) }
-					data-e2e-plans="wpcom"
-				>
-					{ asyncPlanFeatures2023Grid }
-				</div>
-			);
-		}
 
 		return (
 			<div
@@ -345,7 +337,7 @@ export class PlansFeaturesMain extends Component {
 			sitePlanSlug,
 			showTreatmentPlansReorderTest,
 			flowName,
-			isInSignup,
+			isOnboarding2023PricingGrid,
 		} = this.props;
 
 		const hideBloggerPlan = ! isBloggerPlan( selectedPlan ) && ! isBloggerPlan( sitePlanSlug );
@@ -365,9 +357,7 @@ export class PlansFeaturesMain extends Component {
 				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_PREMIUM } )[ 0 ],
 				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_BUSINESS } )[ 0 ],
 				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_ECOMMERCE } )[ 0 ],
-				isEnabled( 'onboarding/2023-pricing-grid' ) &&
-				isInSignup &&
-				flowName === 'onboarding-2023-pricing-grid'
+				isOnboarding2023PricingGrid
 					? findPlansKeys( { group: GROUP_WPCOM, type: TYPE_ENTERPRISE_GRID_WPCOM } )[ 0 ]
 					: null,
 			].filter( ( el ) => el !== null );
@@ -431,7 +421,7 @@ export class PlansFeaturesMain extends Component {
 			isAllPaidPlansShown,
 			isInMarketplace,
 			sitePlanSlug,
-			flowName,
+			isOnboarding2023PricingGrid,
 		} = this.props;
 
 		const isPlanOneOfType = ( plan, types ) =>
@@ -451,23 +441,20 @@ export class PlansFeaturesMain extends Component {
 			  } )
 			: availablePlans;
 
-		if ( plansWithScroll ) {
-			if (
-				isEnabled( 'onboarding/2023-pricing-grid' ) &&
-				flowName === 'onboarding-2023-pricing-grid'
-			) {
-				return plans.filter( ( plan ) =>
-					isPlanOneOfType( plan, [
-						TYPE_FREE,
-						TYPE_PERSONAL,
-						TYPE_PREMIUM,
-						TYPE_BUSINESS,
-						TYPE_ECOMMERCE,
-						TYPE_ENTERPRISE_GRID_WPCOM,
-					] )
-				);
-			}
+		if ( isOnboarding2023PricingGrid ) {
+			return plans.filter( ( plan ) =>
+				isPlanOneOfType( plan, [
+					TYPE_FREE,
+					TYPE_PERSONAL,
+					TYPE_PREMIUM,
+					TYPE_BUSINESS,
+					TYPE_ECOMMERCE,
+					TYPE_ENTERPRISE_GRID_WPCOM,
+				] )
+			);
+		}
 
+		if ( plansWithScroll ) {
 			return plans.filter( ( plan ) =>
 				isPlanOneOfType( plan, [
 					TYPE_BLOGGER,
@@ -558,13 +545,18 @@ export class PlansFeaturesMain extends Component {
 		return props.planTypeSelector;
 	}
 
+	renderPlansGrid() {
+		const { isOnboarding2023PricingGrid, shouldShowPlansFeatureComparison } = this.props;
+
+		if ( isOnboarding2023PricingGrid ) {
+			return this.render2023PricingGrid();
+		}
+
+		return shouldShowPlansFeatureComparison ? this.showFeatureComparison() : this.getPlanFeatures();
+	}
+
 	render() {
-		const {
-			siteId,
-			redirectToAddDomainFlow,
-			domainAndPlanPackage,
-			shouldShowPlansFeatureComparison,
-		} = this.props;
+		const { siteId, redirectToAddDomainFlow, domainAndPlanPackage } = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
@@ -594,7 +586,7 @@ export class PlansFeaturesMain extends Component {
 						plans={ visiblePlans }
 					/>
 				) }
-				{ shouldShowPlansFeatureComparison ? this.showFeatureComparison() : this.getPlanFeatures() }
+				{ this.renderPlansGrid() }
 				{ this.mayRenderFAQ() }
 			</div>
 		);
