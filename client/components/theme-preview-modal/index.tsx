@@ -1,12 +1,17 @@
-import { Button, Gridicon, RootChild } from '@automattic/components';
+import { RootChild } from '@automattic/components';
+import { PremiumBadge, WooCommerceBundledBadge } from '@automattic/design-picker';
 import { useEffect, useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import PremiumBadge from 'calypso/components/premium-badge';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
+import {
+	doesThemeBundleSoftwareSet as getDoesThemeBundleSoftwareSet,
+	isExternallyManagedTheme as getIsExternallyManagedTheme,
+	isThemePremium as getIsThemePremium,
+} from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import ThemePreviewModalNavigation from './navigation';
 import type { StyleVariation } from '@automattic/design-picker/src/types';
 import type { Theme } from 'calypso/types';
 
@@ -15,22 +20,6 @@ import './style.scss';
 interface ThemeWithStyleVariations extends Theme {
 	style_variations?: StyleVariation[];
 }
-
-interface BackButtonProps {
-	cssClass: string;
-	onClick: () => void;
-}
-
-const BackButton: React.FC< BackButtonProps > = ( { cssClass, onClick } ) => {
-	const translate = useTranslate();
-
-	return (
-		<Button className={ cssClass } borderless onClick={ onClick }>
-			<Gridicon icon="chevron-left" size={ 18 } />
-			{ translate( 'Back' ) }
-		</Button>
-	);
-};
 
 interface ThemePreviewModalProps {
 	previewUrl: string;
@@ -43,14 +32,37 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 	theme,
 	onClose,
 } ) => {
+	const translate = useTranslate();
+	const siteId = useSelector( getSelectedSiteId ) || -1;
+	const isThemePremium = useSelector( ( state ) => getIsThemePremium( state, theme.id ) );
+	const isExternallyManagedTheme = useSelector( ( state ) =>
+		getIsExternallyManagedTheme( state, theme.id )
+	);
+	const doesThemeBundleSoftwareSet = useSelector( ( state ) =>
+		getDoesThemeBundleSoftwareSet( state, theme.id )
+	);
+	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
+
 	const shortDescription = useMemo( () => {
 		const idx = theme.description.indexOf( '. ' );
 		return idx >= 0 ? theme.description.substring( 0, idx + 1 ) : theme.description;
 	}, [ theme.description ] );
 
-	const translate = useTranslate();
-	const siteId = useSelector( getSelectedSiteId ) || -1;
-	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
+	const badge = useMemo( () => {
+		if ( ! isThemePremium ) {
+			return null;
+		}
+
+		if ( ! doesThemeBundleSoftwareSet || isExternallyManagedTheme ) {
+			return <PremiumBadge />;
+		}
+
+		if ( doesThemeBundleSoftwareSet && ! isExternallyManagedTheme ) {
+			return <WooCommerceBundledBadge />;
+		}
+
+		return null;
+	}, [ isThemePremium, isExternallyManagedTheme, doesThemeBundleSoftwareSet ] );
 
 	useEffect( () => {
 		document.documentElement.classList.add( 'no-scroll' );
@@ -78,18 +90,18 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 	return (
 		<RootChild>
 			<div className="theme-preview-modal">
-				<div className="theme-preview-modal__navigation">
-					<WordPressLogo size={ 24 } />
-					<BackButton cssClass="theme-preview-modal__navigation-link" onClick={ onClose } />
-					<div className="theme-preview-modal__navigation-title">{ theme.name }</div>
-					<div className="theme-preview-modal__navigation-action"></div>
-				</div>
+				<ThemePreviewModalNavigation title={ theme.name } onClose={ onClose } />
 				<div className="theme-preview-modal__content">
 					<AsyncLoad
 						require="@automattic/design-preview"
 						placeholder={ null }
 						previewUrl={ previewUrl }
-						title={ theme.name }
+						title={
+							<div className="theme-preview-modal__content-title design-picker-design-title__container">
+								{ theme.name }
+								{ badge }
+							</div>
+						}
 						description={ shortDescription }
 						variations={ theme?.style_variations }
 						// selectedVariation={ selectedStyleVariation }

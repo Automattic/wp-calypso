@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 $break-design-preview: 1024px;
 
@@ -116,6 +117,18 @@ $break-design-preview: 1024px;
 
 		.design-preview__sidebar {
 			margin-top: 72px;
+		}
+	}
+
+	&-title {
+		font-size: 2rem;
+		font-weight: 400;
+		text-rendering: optimizelegibility;
+		-webkit-font-smoothing: antialiased;
+
+		.premium-badge,
+		.woocommerce-bundled-badge {
+			font-family: $default-font;
 		}
 	}
 }
