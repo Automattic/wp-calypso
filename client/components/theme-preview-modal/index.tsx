@@ -8,6 +8,7 @@ import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-gl
 import {
 	doesThemeBundleSoftwareSet as getDoesThemeBundleSoftwareSet,
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
+	isPremiumThemeAvailable as getIsPremiumThemeAvailable,
 	isThemePremium as getIsThemePremium,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -38,6 +39,9 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 	const isExternallyManagedTheme = useSelector( ( state ) =>
 		getIsExternallyManagedTheme( state, theme.id )
 	);
+	const isPremiumThemeAvailable = useSelector( ( state ) =>
+		getIsPremiumThemeAvailable( state, theme.id, siteId )
+	);
 	const doesThemeBundleSoftwareSet = useSelector( ( state ) =>
 		getDoesThemeBundleSoftwareSet( state, theme.id )
 	);
@@ -54,15 +58,25 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 		}
 
 		if ( ! doesThemeBundleSoftwareSet || isExternallyManagedTheme ) {
-			return <PremiumBadge />;
+			return (
+				<PremiumBadge
+					tooltipClassName="theme-preview-tooltip"
+					isPremiumThemeAvailable={ isPremiumThemeAvailable }
+				/>
+			);
 		}
 
 		if ( doesThemeBundleSoftwareSet && ! isExternallyManagedTheme ) {
-			return <WooCommerceBundledBadge />;
+			return <WooCommerceBundledBadge tooltipClassName="theme-preview-tooltip" />;
 		}
 
 		return null;
-	}, [ isThemePremium, isExternallyManagedTheme, doesThemeBundleSoftwareSet ] );
+	}, [
+		isThemePremium,
+		isExternallyManagedTheme,
+		isPremiumThemeAvailable,
+		doesThemeBundleSoftwareSet,
+	] );
 
 	useEffect( () => {
 		document.documentElement.classList.add( 'no-scroll' );
@@ -80,9 +94,12 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 			<PremiumBadge
 				className="design-picker__premium-badge"
 				labelText={ translate( 'Upgrade' ) }
-				tooltipText={ translate(
+				tooltipClassName="theme-preview-tooltip"
+				tooltipPosition="top"
+				tooltipContent={ translate(
 					'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
 				) }
+				focusOnShow={ false }
 			/>
 		);
 	}
