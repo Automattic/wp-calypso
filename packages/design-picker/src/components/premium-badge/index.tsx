@@ -8,7 +8,7 @@ import './style.scss';
 interface Props {
 	className?: string;
 	labelText?: string;
-	tooltipContent?: React.ReactElement;
+	tooltipContent?: string | React.ReactElement;
 	tooltipClassName?: string;
 	tooltipPosition?: string;
 	isPremiumThemeAvailable?: boolean;
