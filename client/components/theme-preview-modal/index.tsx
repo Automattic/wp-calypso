@@ -1,6 +1,7 @@
 import { RootChild } from '@automattic/components';
 import { PremiumBadge, WooCommerceBundledBadge } from '@automattic/design-picker';
-import { useEffect, useMemo } from '@wordpress/element';
+import { useEffect, useMemo, useState } from '@wordpress/element';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
@@ -46,6 +47,7 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 		getDoesThemeBundleSoftwareSet( state, theme.id )
 	);
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
+	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState( null );
 
 	const shortDescription = useMemo( () => {
 		const idx = theme.description.indexOf( '. ' );
@@ -85,6 +87,10 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 		};
 	}, [] );
 
+	function previewDesignVariation( variation: StyleVariation ) {
+		setSelectedStyleVariation( variation );
+	}
+
 	function showGlobalStylesPremiumBadge() {
 		if ( ! shouldLimitGlobalStyles ) {
 			return null;
@@ -106,8 +112,16 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 
 	return (
 		<RootChild>
-			<div className="theme-preview-modal">
-				<ThemePreviewModalNavigation title={ theme.name } onClose={ onClose } />
+			<div
+				className={ classnames( 'theme-preview-modal', {
+					'theme-preview-modal--has-style-variations': theme?.style_variations?.length > 0,
+				} ) }
+			>
+				<ThemePreviewModalNavigation
+					title={ theme.name }
+					titleBadge={ badge }
+					onClose={ onClose }
+				/>
 				<div className="theme-preview-modal__content">
 					<AsyncLoad
 						require="@automattic/design-preview"
@@ -121,10 +135,9 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 						}
 						description={ shortDescription }
 						variations={ theme?.style_variations }
-						// selectedVariation={ selectedStyleVariation }
-						// onSelectVariation={ previewDesignVariation }
+						selectedVariation={ selectedStyleVariation }
+						onSelectVariation={ previewDesignVariation }
 						// actionButtons={ actionButtons }
-						// recordDeviceClick={ recordDeviceClick }
 						showGlobalStylesPremiumBadge={ showGlobalStylesPremiumBadge }
 					/>
 				</div>

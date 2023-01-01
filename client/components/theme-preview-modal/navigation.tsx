@@ -4,11 +4,13 @@ import WordPressLogo from 'calypso/components/wordpress-logo';
 
 interface ThemePreviewModalNavigationProps {
 	title: string;
+	titleBadge?: ReactNode | null;
 	onClose: () => void;
 }
 
 const ThemePreviewModalNavigation: React.FC< ThemePreviewModalNavigationProps > = ( {
 	title,
+	titleBadge,
 	onClose,
 } ) => {
 	const translate = useTranslate();
@@ -20,7 +22,10 @@ const ThemePreviewModalNavigation: React.FC< ThemePreviewModalNavigationProps > 
 				<Gridicon icon="chevron-left" size={ 18 } />
 				{ translate( 'Back' ) }
 			</Button>
-			<div className="theme-preview-modal__navigation-title">{ title }</div>
+			<div className="theme-preview-modal__navigation-title">
+				{ title }
+				{ titleBadge }
+			</div>
 			<div className="theme-preview-modal__navigation-action"></div>
 		</div>
 	);

@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import { getDesignPreviewUrl } from '@automattic/design-picker';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -98,6 +99,15 @@ class ThemePreview extends Component {
 		);
 	};
 
+	getPreviewUrl = () => {
+		const { demoUrl, locale, theme } = this.props;
+		if ( isEnabled( 'themes/showcase-i4/details-and-preview' ) ) {
+			return getDesignPreviewUrl( { slug: theme.id, recipe: theme }, { language: locale } );
+		}
+
+		return demoUrl + '?demo=true&iframe=true&theme_preview=true';
+	};
+
 	render() {
 		const { theme, themeId, siteId, demoUrl, children, isWPForTeamsSite } = this.props;
 		const { showActionIndicator } = this.state;
@@ -114,7 +124,7 @@ class ThemePreview extends Component {
 				{ demoUrl &&
 					( isNewDetailsAndPreview ? (
 						<ThemePreviewModal
-							previewUrl={ this.props.demoUrl + '?demo=true&iframe=true&theme_preview=true' }
+							previewUrl={ this.getPreviewUrl() }
 							theme={ theme }
 							onClose={ this.props.hideThemePreview }
 						/>
@@ -124,7 +134,7 @@ class ThemePreview extends Component {
 							showExternal={ false }
 							showSEO={ false }
 							onClose={ this.props.hideThemePreview }
-							previewUrl={ this.props.demoUrl + '?demo=true&iframe=true&theme_preview=true' }
+							previewUrl={ this.getPreviewUrl() }
 							externalUrl={ this.props.demoUrl }
 							belowToolbar={ this.props.belowToolbar }
 						>
