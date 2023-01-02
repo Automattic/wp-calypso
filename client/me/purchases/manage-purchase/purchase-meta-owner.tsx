@@ -1,7 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
 import UserItem from 'calypso/components/user';
+import type { Owner } from 'calypso/lib/purchases/types';
 
-function PurchaseMetaOwner( { owner } ) {
+function PurchaseMetaOwner( { owner }: { owner: Owner } ) {
 	const translate = useTranslate();
 	if ( ! owner ) {
 		return null;
