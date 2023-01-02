@@ -337,25 +337,6 @@ export class EditorToolbarComponent {
 		await locator.click();
 	}
 
-	/* Details popover */
-
-	/**
-	 * Opens the post details popover (i.e. number of character, words, etc.).
-	 */
-	async openDetailsPopover(): Promise< void > {
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			// Details are not available on mobile!
-			return;
-		}
-
-		if ( await this.targetIsOpen( selectors.detailsButton ) ) {
-			return;
-		}
-
-		const locator = this.editor.locator( selectors.detailsButton );
-		await locator.click();
-	}
-
 	/**
 	 * Click the editor undo button. Throws an error if the button is not enabled.
 	 *

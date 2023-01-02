@@ -798,13 +798,6 @@ export class EditorPage {
 	}
 
 	/**
-	 * Opens the post details popover (i.e. number of character, words, etc.).
-	 */
-	async openDetailsPopover(): Promise< void > {
-		await this.editorToolbarComponent.openDetailsPopover();
-	}
-
-	/**
 	 * Checks whether the editor has any block warnings/errors displaying.
 	 *
 	 * @returns {Promise<boolean>} True if there are block warnings/errors.

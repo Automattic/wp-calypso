@@ -97,43 +97,6 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 			} );
 		} );
 
-		describe( 'wpcom_block_editor_details_open', function () {
-			let page: Page;
-			let editorPage: EditorPage;
-			let editorTracksEventManager: EditorTracksEventManager;
-			beforeAll( async () => {
-				page = await browser.newPage();
-
-				const accountName = getTestAccountByFeature( features );
-				const testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
-
-				editorTracksEventManager = new EditorTracksEventManager( page );
-				editorPage = new EditorPage( page, { target: features.siteType } );
-			} );
-
-			it( 'Start a new post', async function () {
-				await editorPage.visit( 'post' );
-				await editorPage.waitUntilLoaded();
-			} );
-
-			// Needed to enable the details button.
-			it( 'Enter some text', async function () {
-				await editorPage.enterText( 'The actual text does not matter for this test either.' );
-			} );
-
-			it( 'Click details button', async function () {
-				await editorPage.openDetailsPopover();
-			} );
-
-			it( '"wpcom_block_editor_details_open" event fires', async function () {
-				const eventDidFire = await editorTracksEventManager.didEventFire(
-					'wpcom_block_editor_details_open'
-				);
-				expect( eventDidFire ).toBe( true );
-			} );
-		} );
-
 		describe( 'wpcom_block_editor_undo/redo_performed', function () {
 			let page: Page;
 			let fullSiteEditorPage: FullSiteEditorPage;
