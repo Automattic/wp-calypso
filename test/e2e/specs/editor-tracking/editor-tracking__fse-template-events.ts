@@ -29,6 +29,25 @@ describe(
 
 		const createdTemplateParts: string[] = [];
 
+		afterAll( async function () {
+			if ( createdTemplateParts.length > 0 ) {
+				// Template part data cleanup
+				const page = await browser.newPage();
+
+				const testAccount = new TestAccount( accountName );
+				await testAccount.authenticate( page );
+
+				const fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+
+				console.info( `Deleting created template parts: ${ createdTemplateParts.join( ', ' ) }` );
+				for ( const templatePart of createdTemplateParts ) {
+					await fullSiteEditorPage.deleteTemplatePart( templatePart );
+				}
+			}
+		} );
+
 		describe( 'wpcom_block_editor_create_template_part', function () {
 			let page: Page;
 			let testAccount: TestAccount;
@@ -50,9 +69,17 @@ describe(
 				templatePartName = createTemplatePartName();
 			} );
 
+			afterAll( async () => {
+				await page.close();
+			} );
+
 			it( 'Visit the site editor', async function () {
 				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+			} );
+
+			it( 'Close the navigation sidebar', async function () {
+				await fullSiteEditorPage.closeNavSidebar();
 			} );
 
 			it( 'Add a Template Part block', async function () {
@@ -94,9 +121,17 @@ describe(
 				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
 			} );
 
+			afterAll( async () => {
+				await page.close();
+			} );
+
 			it( 'Visit the site editor', async function () {
 				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+			} );
+
+			it( 'Close the navigation sidebar', async function () {
+				await fullSiteEditorPage.closeNavSidebar();
 			} );
 
 			it( 'Add a Header block', async function () {
@@ -176,9 +211,17 @@ describe(
 				templatePartName = createTemplatePartName();
 			} );
 
+			afterAll( async () => {
+				await page.close();
+			} );
+
 			it( 'Visit the site editor', async function () {
 				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+			} );
+
+			it( 'Close the navigation sidebar', async function () {
+				await fullSiteEditorPage.closeNavSidebar();
 			} );
 
 			it( 'Add a Page List block', async function () {
@@ -227,25 +270,6 @@ describe(
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
-		} );
-
-		afterAll( async function () {
-			if ( createdTemplateParts.length > 0 ) {
-				// Template part data cleanup
-				const page = await browser.newPage();
-
-				const testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
-
-				const fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
-				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
-
-				console.info( `Deleting created template parts: ${ createdTemplateParts.join( ', ' ) }` );
-				for ( const templatePart of createdTemplateParts ) {
-					await fullSiteEditorPage.deleteTemplatePart( templatePart );
-				}
-			}
 		} );
 	}
 );
