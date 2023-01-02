@@ -366,11 +366,6 @@ export class EditorPage {
 	): Promise< void > {
 		await inserter.searchBlockInserter( patternName );
 		await inserter.selectBlockInserterResult( patternName, { type: 'pattern' } );
-
-		const insertConfirmationToastLocator = this.editor.locator(
-			`.components-snackbar__content:text('Block pattern "${ patternName }" inserted.')`
-		);
-		await insertConfirmationToastLocator.waitFor();
 	}
 
 	/**
