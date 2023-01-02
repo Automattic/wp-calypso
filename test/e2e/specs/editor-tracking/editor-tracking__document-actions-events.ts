@@ -37,9 +37,17 @@ describe(
 				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
 			} );
 
+			afterAll( async () => {
+				await page.close();
+			} );
+
 			it( 'Visit the site editor', async function () {
 				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+			} );
+
+			it( 'Close the navigation sidebar', async function () {
+				await fullSiteEditorPage.closeNavSidebar();
 			} );
 
 			it( 'Open the document actions dropdown', async function () {
@@ -69,9 +77,17 @@ describe(
 				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
 			} );
 
+			afterAll( async () => {
+				await page.close();
+			} );
+
 			it( 'Visit the site editor', async function () {
 				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+			} );
+
+			it( 'Close the navigation sidebar', async function () {
+				await fullSiteEditorPage.closeNavSidebar();
 			} );
 
 			it( 'Open the document actions dropdown', async function () {
@@ -112,9 +128,17 @@ describe(
 				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
 			} );
 
+			afterAll( async () => {
+				await page.close();
+			} );
+
 			it( 'Visit the site editor', async function () {
 				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+			} );
+
+			it( 'Close the navigation sidebar', async function () {
+				await fullSiteEditorPage.closeNavSidebar();
 			} );
 
 			it( 'Customize the current template', async function () {
@@ -161,9 +185,17 @@ describe(
 				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
 			} );
 
+			afterAll( async () => {
+				await page.close();
+			} );
+
 			it( 'Visit the site editor', async function () {
 				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+			} );
+
+			it( 'Close the navigation sidebar', async function () {
+				await fullSiteEditorPage.closeNavSidebar();
 			} );
 
 			it( 'Open the document actions dropdown', async function () {
