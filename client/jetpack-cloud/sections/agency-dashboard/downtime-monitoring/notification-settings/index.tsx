@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import TokenField from 'calypso/components/token-field';
+import { useUpdateMonitorSettings } from '../../hooks';
 import {
 	availableNotificationDurations as durations,
 	mobileAppLink,
@@ -16,29 +17,39 @@ import './style.scss';
 type Duration = { label: string; time: number };
 
 interface Props {
-	site: { blog_id: number; url: string };
+	sites: Array< { blog_id: number; url: string } >;
 	onClose: () => void;
-	settings: MonitorSettings | undefined;
+	settings?: MonitorSettings;
 }
 
-export default function NotificationSettings( { onClose, site, settings }: Props ) {
+export default function NotificationSettings( { onClose, sites, settings }: Props ) {
 	const translate = useTranslate();
+	const { updateMonitorSettings, isLoading, isComplete } = useUpdateMonitorSettings( sites );
+
+	const defaultDuration = durations.find( ( duration ) => duration.time === 5 );
 
 	const [ enableMobileNotification, setEnableMobileNotification ] = useState< boolean >( false );
 	const [ enableEmailNotification, setEnableEmailNotification ] = useState< boolean >( false );
-	const [ selectedDuration, setSelectedDuration ] = useState< Duration | undefined >( undefined );
+	const [ selectedDuration, setSelectedDuration ] = useState< Duration | undefined >(
+		defaultDuration
+	);
 	const [ addedEmailAddresses, setAddedEmailAddresses ] = useState< string[] | [] >( [] );
 	const [ validationError, setValidationError ] = useState< string >( '' );
 
 	function onSave( event: React.FormEvent< HTMLFormElement > ) {
 		event.preventDefault();
 		if ( ! enableMobileNotification && ! enableEmailNotification ) {
-			setValidationError( translate( 'Please select at least one contact method.' ) );
+			return setValidationError( translate( 'Please select at least one contact method.' ) );
 		}
 		if ( enableEmailNotification && ! addedEmailAddresses.length ) {
-			setValidationError( translate( 'Please add at least one email recipient' ) );
+			return setValidationError( translate( 'Please add at least one email recipient' ) );
 		}
-		// handle save here
+		const params = {
+			wp_note_notifications: enableMobileNotification,
+			email_notifications: enableEmailNotification,
+			jetmon_defer_status_down_minutes: selectedDuration?.time,
+		};
+		updateMonitorSettings( params );
 	}
 
 	function selectDuration( duration: Duration ) {
@@ -73,6 +84,11 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 		}
 		setAddedEmailAddresses( recipients );
 	}
+	useEffect( () => {
+		if ( isComplete ) {
+			onClose();
+		}
+	}, [ isComplete, onClose ] );
 
 	const addEmailsContent = enableEmailNotification && (
 		<div className="notification-settings__email-container">
@@ -88,6 +104,14 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 		</div>
 	);
 
+	const siteSubTitle =
+		sites.length > 1
+			? translate( '%(siteCount)d Sites', {
+					args: { siteCount: sites.length },
+					comment: '%(siteCount) is no of sites selected, e.g. "2 Sites"',
+			  } )
+			: sites[ 0 ].url;
+
 	return (
 		<Modal
 			open={ true }
@@ -95,7 +119,7 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 			title={ translate( 'Set custom notification' ) }
 			className="notification-settings__modal"
 		>
-			<div className="notification-settings__sub-title">{ site.url }</div>
+			<div className="notification-settings__sub-title">{ siteSubTitle }</div>
 			<form onSubmit={ onSave }>
 				<div className="notification-settings__content">
 					<div className="notification-settings__content-block">
@@ -186,12 +210,12 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 							{ translate( 'Cancel' ) }
 						</Button>
 						<Button
-							disabled={ !! validationError }
+							disabled={ !! validationError || isLoading }
 							type="submit"
 							primary
 							aria-label={ translate( 'Save notification settings' ) }
 						>
-							{ translate( 'Save' ) }
+							{ isLoading ? translate( 'Saving Changes' ) : translate( 'Save' ) }
 						</Button>
 					</div>
 				</div>
