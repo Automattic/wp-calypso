@@ -1648,7 +1648,7 @@ describe( 'utils', () => {
 		} );
 
 		describe( 'statsSearchTerms()', () => {
-			test( 'should return an empty array if not data is passed', () => {
+			test( 'should return an empty array if no data is passed', () => {
 				expect( normalizers.statsSearchTerms() ).toEqual( [] );
 			} );
 
@@ -1697,12 +1697,6 @@ describe( 'utils', () => {
 						label: 'ribs',
 						value: 10,
 					},
-					{
-						label: 'Unknown Search Terms',
-						labelIcon: 'external',
-						link: 'https://wordpress.com/support/stats/#search-engine-terms',
-						value: 221,
-					},
 				] );
 			} );
 
@@ -1712,7 +1706,6 @@ describe( 'utils', () => {
 						{
 							date: '2017-01-12',
 							summary: {
-								encrypted_search_terms: 400,
 								search_terms: [
 									{
 										term: 'chicken',
@@ -1742,12 +1735,6 @@ describe( 'utils', () => {
 						className: 'user-selectable',
 						label: 'ribs',
 						value: 100,
-					},
-					{
-						label: 'Unknown Search Terms',
-						labelIcon: 'external',
-						link: 'https://wordpress.com/support/stats/#search-engine-terms',
-						value: 400,
 					},
 				] );
 			} );
