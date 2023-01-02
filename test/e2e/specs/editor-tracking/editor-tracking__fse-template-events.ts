@@ -42,9 +42,7 @@ describe(
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 
 				console.info( `Deleting created template parts: ${ createdTemplateParts.join( ', ' ) }` );
-				for ( const templatePart of createdTemplateParts ) {
-					await fullSiteEditorPage.deleteTemplatePart( templatePart );
-				}
+				await fullSiteEditorPage.deleteTemplateParts( createdTemplateParts );
 			}
 		} );
 

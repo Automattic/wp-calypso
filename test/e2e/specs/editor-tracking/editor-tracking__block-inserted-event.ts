@@ -213,7 +213,7 @@ describe(
 			afterAll( async () => {
 				// Always try to delete the created template part.
 				if ( templatePartName ) {
-					await fullSiteEditorPage.deleteTemplatePart( templatePartName );
+					await fullSiteEditorPage.deleteTemplateParts( [ templatePartName ] );
 				}
 
 				await page.close();

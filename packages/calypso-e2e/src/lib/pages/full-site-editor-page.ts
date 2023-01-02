@@ -549,13 +549,15 @@ export class FullSiteEditorPage {
 	/**
 	 * Delete a template part in the site editor.
 	 *
-	 * @param {string} name Name of the template part.
+	 * @param {string[]} names Name of the template part.
 	 */
-	async deleteTemplatePart( name: string ): Promise< void > {
+	async deleteTemplateParts( names: string[] ): Promise< void > {
 		await this.openNavSidebar();
 		await this.fullSiteEditorNavSidebarComponent.navigateToTemplatePartsManager();
-		await this.templatePartListComponent.deleteTemplatePart( name );
-		await this.waitForConfirmationToast( `"${ name }" deleted.` );
+		for ( const name of names ) {
+			await this.templatePartListComponent.deleteTemplatePart( name );
+			await this.waitForConfirmationToast( `"${ name }" deleted.` );
+		}
 	}
 
 	//#endregion
