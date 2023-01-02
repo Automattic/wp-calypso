@@ -28,6 +28,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 			let page: Page;
 			let editorPage: EditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;
+
 			beforeAll( async () => {
 				page = await browser.newPage();
 
@@ -37,6 +38,10 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				editorPage = new EditorPage( page, { target: features.siteType } );
+			} );
+
+			afterAll( async () => {
+				await page.close();
 			} );
 
 			it( 'Start a new post', async function () {
@@ -102,6 +107,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 			let fullSiteEditorPage: FullSiteEditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;
 			let testAccount: TestAccount;
+
 			beforeAll( async () => {
 				page = await browser.newPage();
 
@@ -113,9 +119,17 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
 			} );
 
+			afterAll( async () => {
+				await page.close();
+			} );
+
 			it( 'Go to site editor', async function () {
 				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+			} );
+
+			it( 'Close the navigation sidebar', async function () {
+				await fullSiteEditorPage.closeNavSidebar();
 			} );
 
 			it( 'Add a Header block', async function () {

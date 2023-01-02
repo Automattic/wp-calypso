@@ -27,8 +27,8 @@ const selectors = {
 		return `${ panel } button.editor-post-publish-button__button[aria-disabled="${ buttonState }"]`;
 	},
 
-	// List view
-	listViewButton: `${ panel } button[aria-label="List View"]`,
+	// Document overview
+	documentOverviewButton: `${ panel } button[aria-label="Document Overview"]`,
 
 	// Details popover
 	detailsButton: `${ panel } button[aria-label="Details"]`,
@@ -312,11 +312,11 @@ export class EditorToolbarComponent {
 			return;
 		}
 
-		if ( await this.targetIsOpen( selectors.listViewButton ) ) {
+		if ( await this.targetIsOpen( selectors.documentOverviewButton ) ) {
 			return;
 		}
 
-		const locator = this.editor.locator( selectors.listViewButton );
+		const locator = this.editor.locator( selectors.documentOverviewButton );
 		await locator.click();
 	}
 
@@ -329,11 +329,11 @@ export class EditorToolbarComponent {
 			return;
 		}
 
-		if ( ! ( await this.targetIsOpen( selectors.listViewButton ) ) ) {
+		if ( ! ( await this.targetIsOpen( selectors.documentOverviewButton ) ) ) {
 			return;
 		}
 
-		const locator = this.editor.locator( selectors.listViewButton );
+		const locator = this.editor.locator( selectors.documentOverviewButton );
 		await locator.click();
 	}
 
