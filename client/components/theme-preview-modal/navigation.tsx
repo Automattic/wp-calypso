@@ -4,7 +4,7 @@ import WordPressLogo from 'calypso/components/wordpress-logo';
 
 interface ThemePreviewModalNavigationProps {
 	title: string;
-	titleBadge?: ReactNode | null;
+	titleBadge?: React.ReactNode | null;
 	onClose: () => void;
 }
 

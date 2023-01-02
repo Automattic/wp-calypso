@@ -47,7 +47,9 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 		getDoesThemeBundleSoftwareSet( state, theme.id )
 	);
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
-	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState( null );
+	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation | null >(
+		null
+	);
 
 	const shortDescription = useMemo( () => {
 		const idx = theme.description.indexOf( '. ' );
@@ -114,7 +116,8 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 		<RootChild>
 			<div
 				className={ classnames( 'theme-preview-modal', {
-					'theme-preview-modal--has-style-variations': theme?.style_variations?.length > 0,
+					'theme-preview-modal--has-style-variations':
+						theme.style_variations && theme.style_variations.length > 0,
 				} ) }
 			>
 				<ThemePreviewModalNavigation
@@ -134,7 +137,7 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 							</div>
 						}
 						description={ shortDescription }
-						variations={ theme?.style_variations }
+						variations={ theme.style_variations }
 						selectedVariation={ selectedStyleVariation }
 						onSelectVariation={ previewDesignVariation }
 						// actionButtons={ actionButtons }
