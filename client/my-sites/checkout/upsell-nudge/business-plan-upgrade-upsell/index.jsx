@@ -95,7 +95,7 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 		return (
 			<>
 				<div className="business-plan-upgrade-upsell__column-pane">
-					<p>{ translate( 'Unlock the power of the Business Plan and gain access to::' ) }</p>
+					<p>{ translate( 'Unlock the power of the Business Plan and gain access to:' ) }</p>
 					<ul className="business-plan-upgrade-upsell__checklist">
 						<li className="business-plan-upgrade-upsell__checklist-item">
 							<Gridicon
