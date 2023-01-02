@@ -159,6 +159,7 @@ export interface UpdateMonitorSettingsAPIResponse {
 		monitor_active: boolean;
 		email_notifications: boolean;
 		wp_note_notifications: boolean;
+		jetmon_defer_status_down_minutes: number;
 	};
 }
 
