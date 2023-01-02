@@ -288,8 +288,13 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 			fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
 		} );
 
-		afterAll( async () => {
-			await page.close();
+		afterAll( async function () {
+			// Reset the layout back to empty to protect future runs.
+			// You can reset an already empty layout, so this is safe to do even if saving didn't go through.
+			await fullSiteEditorPage.openSiteStyles();
+			await fullSiteEditorPage.resetGlobalLayoutStyle();
+			await fullSiteEditorPage.closeSiteStyles();
+			await fullSiteEditorPage.save();
 		} );
 
 		it( 'Visit the site editor', async function () {
@@ -328,15 +333,6 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 				}
 			);
 			expect( eventDidFire ).toBe( true );
-		} );
-
-		afterAll( async function () {
-			// Reset the layout back to empty to protect future runs.
-			// You can reset an already empty layout, so this is safe to do even if saving didn't go through.
-			await fullSiteEditorPage.openSiteStyles();
-			await fullSiteEditorPage.resetGlobalLayoutStyle();
-			await fullSiteEditorPage.closeSiteStyles();
-			await fullSiteEditorPage.save();
 		} );
 	} );
 } );
