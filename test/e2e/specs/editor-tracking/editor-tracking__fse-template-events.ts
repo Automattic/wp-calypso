@@ -245,7 +245,7 @@ describe(
 					'wpcom_block_editor_convert_to_template_part',
 					{
 						matchingProperties: {
-							block_names: 'core/page-list',
+							block_names: 'core/page-list,core/page-list-item',
 						},
 					}
 				);
@@ -262,7 +262,7 @@ describe(
 					'wpcom_block_editor_template_part_detach_blocks',
 					{
 						matchingProperties: {
-							block_names: 'core/page-list',
+							block_names: 'core/page-list,core/page-list-item',
 							// Event property values are always lower case.
 							template_part_id: `pub/blockbase//${ templatePartName.toLowerCase() }`,
 						},
