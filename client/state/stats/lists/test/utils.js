@@ -1090,7 +1090,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsVideo() ).toBeNull();
 			} );
 
-			test( 'should return an a properly parsed data array', () => {
+			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsVideo( {
 						data: [
@@ -1146,7 +1146,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsTopAuthors( {}, { period: 'day' } ) ).toEqual( [] );
 			} );
 
-			test( 'should return an a properly parsed data array', () => {
+			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsTopAuthors(
 						{
@@ -1234,7 +1234,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsTags( { bad: [] } ) ).toEqual( [] );
 			} );
 
-			test( 'should return an a properly parsed data array', () => {
+			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsTags( {
 						date: '2014-10-01',
@@ -1328,7 +1328,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsClicks( {}, { period: 'day' } ) ).toEqual( [] );
 			} );
 
-			test( 'should return an a properly parsed data array', () => {
+			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsClicks(
 						{
@@ -1556,7 +1556,7 @@ describe( 'utils', () => {
 				] );
 			} );
 
-			test( 'should return an a properly parsed data array', () => {
+			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsReferrers(
 						{
@@ -1660,7 +1660,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsSearchTerms( {}, { period: 'day' } ) ).toEqual( [] );
 			} );
 
-			test( 'should return an a properly parsed data array', () => {
+			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsSearchTerms(
 						{
@@ -1762,7 +1762,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsVisits( { bad: [] } ) ).toEqual( [] );
 			} );
 
-			test( 'should return an a properly parsed data array', () => {
+			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsVisits( {
 						fields: [ 'period', 'views', 'visitors' ],
