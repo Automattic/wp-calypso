@@ -6,6 +6,7 @@ $font-recoleta: Recoleta, $sans;
 $font-label: "SF Pro Text", $sans;
 $mobile-layout-breakpoint: $break-small;
 $common-border-radius: 4px;
+$tooltip-box-shadow-color: #0000000d;
 
 .post-trends {
 	display: inline-block;
@@ -156,7 +157,7 @@ $common-border-radius: 4px;
 	font-weight: 400;
 	font-size: $font-body-small;
 	line-height: 18px;
-	color: #000;
+	color: var(--color-text);
 	text-transform: none;
 	letter-spacing: normal;
 }
@@ -200,12 +201,12 @@ $common-border-radius: 4px;
 .tooltip.popover.post-trends-day__tooltip {
 	&.is-top .popover__arrow {
 		border-top-color: var(--color-neutral-100);
-		box-shadow: 0 1px 2px #0000000d;
+		box-shadow: 0 1px 2px $tooltip-box-shadow-color;
 	}
 
 	.popover__inner {
 		background-color: var(--color-neutral-100);
-		box-shadow: 0 1px 2px #0000000d;
+		box-shadow: 0 1px 2px $tooltip-box-shadow-color;
 		border-radius: 4px;
 		padding: 16px 24px;
 
