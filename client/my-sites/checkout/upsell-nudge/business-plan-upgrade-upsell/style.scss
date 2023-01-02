@@ -98,6 +98,9 @@ main.business-plan-upgrade-upsell.main {
 		background: #f5f1e1 !important;
 		text-align: center;
 	}
+	&__countdown-counter span {
+		padding-left: 5px;
+	}
 
 	&__footer {
 		grid-area: buttons;
