@@ -1000,7 +1000,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsPublicize( { bad: [] } ) ).toEqual( [] );
 			} );
 
-			test( 'should return an a properly parsed services array', () => {
+			test( 'should return a properly parsed services array', () => {
 				expect(
 					normalizers.statsPublicize( {
 						services: [
@@ -1393,7 +1393,7 @@ describe( 'utils', () => {
 				] );
 			} );
 
-			test( 'should return an a properly parsed summary data array', () => {
+			test( 'should return a properly parsed summary data array', () => {
 				expect(
 					normalizers.statsClicks(
 						{
@@ -1471,7 +1471,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsReferrers( {}, { period: 'day' } ) ).toEqual( [] );
 			} );
 
-			test( 'should return an a properly parsed summary data array', () => {
+			test( 'should return a properly parsed summary data array', () => {
 				expect(
 					normalizers.statsReferrers(
 						{
@@ -1706,7 +1706,7 @@ describe( 'utils', () => {
 				] );
 			} );
 
-			test( 'should return an a properly parsed summarized data array', () => {
+			test( 'should return a properly parsed summarized data array', () => {
 				expect(
 					normalizers.statsSearchTerms(
 						{
