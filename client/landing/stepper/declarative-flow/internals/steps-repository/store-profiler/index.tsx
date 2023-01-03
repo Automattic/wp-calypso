@@ -3,7 +3,7 @@ import { Button, FormInputValidation } from '@automattic/components';
 import { StepContainer, ECOMMERCE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -21,6 +21,7 @@ const StoreProfiler: Step = function StoreProfiler( { navigation, flow } ) {
 	const { goBack, goNext, submit } = navigation;
 	const [ siteTitle, setSiteTitle ] = React.useState( '' );
 	const [ verticalId, setVerticalId ] = React.useState( '' );
+	const [ storeCountryCode, setStoreCountryCode ] = React.useState( '' );
 	const translate = useTranslate();
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
@@ -60,7 +61,12 @@ const StoreProfiler: Step = function StoreProfiler( { navigation, flow } ) {
 	}, [ countriesAndStates ] );
 
 	const region = useGeoLocationQuery()?.data;
-	const [ storeCountryCode, setStoreCountryCode ] = React.useState( region?.country_short );
+
+	useEffect( () => {
+		if ( ! storeCountryCode && region ) {
+			setStoreCountryCode( region?.country_short );
+		}
+	}, [ region ] );
 
 	const isLoading = verticals.isLoading || ! countriesAndStates;
 
