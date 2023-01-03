@@ -37,6 +37,8 @@ import ChartTabs from '../stats-email-chart-tabs';
 import { StatsNoContentBanner } from '../stats-no-content-banner';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
+import './style.scss';
+
 function getPageUrl() {
 	return getUrlParts( page.current );
 }
@@ -307,32 +309,34 @@ class StatsEmailOpenDetail extends Component {
 					</>
 				</div>
 
-				<StatsEmailModule
-					path="countries"
-					statType="opens"
-					postId={ postId }
-					siteId={ siteId }
-					period={ period }
-					date={ queryDate }
-				/>
+				<div className="stats__module-list">
+					<StatsEmailModule
+						path="countries"
+						statType="opens"
+						postId={ postId }
+						siteId={ siteId }
+						period={ period }
+						date={ queryDate }
+					/>
 
-				<StatsEmailModule
-					path="devices"
-					statType="opens"
-					postId={ postId }
-					siteId={ siteId }
-					period={ period }
-					date={ queryDate }
-				/>
+					<StatsEmailModule
+						path="devices"
+						statType="opens"
+						postId={ postId }
+						siteId={ siteId }
+						period={ period }
+						date={ queryDate }
+					/>
 
-				<StatsEmailModule
-					path="clients"
-					statType="opens"
-					postId={ postId }
-					siteId={ siteId }
-					period={ period }
-					date={ queryDate }
-				/>
+					<StatsEmailModule
+						path="clients"
+						statType="opens"
+						postId={ postId }
+						siteId={ siteId }
+						period={ period }
+						date={ queryDate }
+					/>
+				</div>
 			</Main>
 		);
 	}

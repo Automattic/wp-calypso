@@ -4,7 +4,38 @@ $break-large-stats-countries: 1280px;
 
 // Countries
 .stats__email-opens {
+	.stats__module-list {
+		align-items: stretch;
+		display: grid;
+		grid-template-columns: repeat(12, 1fr);
+		grid-template-rows: repeat(2, min-content);
+		gap: 32px 24px;
+		grid-template-areas:
+			"country country country country country country country country country country country country"
+			"devices devices devices devices devices devices clients clients clients clients clients clients";
+
+		@media ( max-width: $break-large ) {
+			grid-template-columns: repeat(8, 1fr);
+			grid-template-rows: repeat(2, min-content);
+			grid-template-areas:
+				"country country country country country country country country"
+				"devices devices devices devices clients clients clients clients";
+		}
+
+		// Mobile
+		@media ( max-width: $break-medium ) {
+			grid-template-columns: repeat(4, 1fr);
+			grid-template-rows: repeat(3, min-content);
+			gap: 0;
+			grid-template-areas:
+				"country country country country"
+				"devices devices devices devices"
+				"clients clients clients clients";
+		}
+	}
+
 	.list-countries {
+		grid-area: country;
 		display: grid;
 		gap: 0 24px;
 		grid-template-columns: 7fr 5fr;
@@ -30,6 +61,14 @@ $break-large-stats-countries: 1280px;
 		.stats-card--footer {
 			grid-area: more;
 		}
+	}
+
+	.list-devices {
+		grid-area: devices;
+	}
+
+	.list-clients {
+		grid-area: clients;
 	}
 
 	.stats__module-wrapper--countries {
