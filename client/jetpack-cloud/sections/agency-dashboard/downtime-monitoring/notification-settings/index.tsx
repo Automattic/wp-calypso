@@ -32,7 +32,7 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 
 	function onSave( event: React.FormEvent< HTMLFormElement > ) {
 		event.preventDefault();
-		if ( ! enableMobileNotification || ! enableEmailNotification ) {
+		if ( ! enableMobileNotification && ! enableEmailNotification ) {
 			setValidationError( translate( 'Please select at least one contact method.' ) );
 		}
 		if ( enableEmailNotification && ! addedEmailAddresses.length ) {
