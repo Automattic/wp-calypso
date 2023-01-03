@@ -1,3 +1,4 @@
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import MasterbarCartWrapper from 'calypso/layout/masterbar/masterbar-cart/masterbar-cart-wrapper';
@@ -13,6 +14,7 @@ const CloudCart = () => {
 	const shoppingCartTracker = useShoppingCartTracker();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const { responseCart } = useShoppingCart( siteId ?? undefined );
 
 	const onRemoveProductFromCart = ( productSlug: string ) => {
 		shoppingCartTracker( 'calypso_jetpack_shopping_cart_remove_product', {
@@ -24,8 +26,14 @@ const CloudCart = () => {
 		shoppingCartTracker( 'calypso_jetpack_shopping_cart_checkout_from_cart', {
 			addProducts: true,
 		} );
+		const buildUrlParams =
+			responseCart.products.length > 1
+				? {
+						redirect_to: `https://${ siteSlug }/wp-admin/admin.php?page=jetpack#/recommendations/site-type`,
+				  }
+				: undefined;
 
-		window.location.href = buildCheckoutURL( siteSlug, '' );
+		window.location.href = buildCheckoutURL( siteSlug, '', buildUrlParams );
 	};
 
 	return (
