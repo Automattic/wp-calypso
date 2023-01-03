@@ -117,7 +117,7 @@ export function getEmailCountryStatsNormalizedData(
 	date,
 	statType
 ) {
-	const stats = state.stats.emails
+	const stats = state.stats.emails.items
 		? get( state.stats.emails.items, [ siteId, postId, period, statType ], null )
 		: null;
 	if ( stats ) {
