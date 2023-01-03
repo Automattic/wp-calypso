@@ -26,6 +26,7 @@ export const PLAN_BLOGGER_2_YEARS = 'blogger-bundle-2y';
 export const PLAN_ECOMMERCE_MONTHLY = 'ecommerce-bundle-monthly';
 export const PLAN_ECOMMERCE = 'ecommerce-bundle';
 export const PLAN_ECOMMERCE_2_YEARS = 'ecommerce-bundle-2y';
+export const PLAN_ECOMMERCE_TRIAL_MONTHLY = 'wp-bundle-ecommerce-trial';
 export const PLAN_FREE = 'free_plan';
 export const PLAN_HOST_BUNDLE = 'host-bundle';
 export const PLAN_WPCOM_ENTERPRISE = 'wpcom-enterprise';
@@ -53,6 +54,7 @@ export const WPCOM_PLANS = <const>[
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_FREE,
 	PLAN_HOST_BUNDLE,
 	PLAN_WPCOM_ENTERPRISE,
@@ -71,6 +73,7 @@ export const WPCOM_MONTHLY_PLANS = <const>[
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_WPCOM_PRO_MONTHLY,
 ];
 
