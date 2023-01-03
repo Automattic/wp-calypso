@@ -291,7 +291,7 @@ class StatsSite extends Component {
 								period={ this.props.period }
 								query={ query }
 								statType="statsEmailsOpen"
-								showSummaryLink
+								hideSummaryLink
 								showNewModules
 							/>
 						) }
