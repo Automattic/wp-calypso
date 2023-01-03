@@ -1,3 +1,5 @@
+@import "../../videopress-constants.scss";
+
 $videopress-mobile-layout-width: 1200px;
 $videopress-link-color: #c377ff;
 $videopress-background: #010101;
@@ -225,5 +227,86 @@ $videopress-background: #010101;
 			color: #fff;
 			background: none;
 		}
+	}
+}
+
+.is-videopress-stepper {
+	#search-filters-dropdown-filters {
+		.token-field__suggestions-list {
+			background-color: #000;
+			border-color: #272727;
+		}
+
+		.token-field {
+			border-color: #272727;
+			color: #fff;
+			outline: none;
+			background-color: #000;
+			box-shadow: none;
+
+			.token-field__input {
+				color: #fff;
+			}
+
+			::placeholder {
+				color: #ffffffc0;
+			}
+		}
+
+		.token-field__suggestion {
+			color: #fff;
+			&.is-selected {
+				background-color: $videopress-theme-yellow;
+				span {
+					color: #000;
+				}
+			}
+		}
+
+		.popover__arrow {
+			border: none;
+			&::before {
+				border-bottom-color: #272727;
+			}
+		}
+
+		.popover__inner {
+			background-color: #272727;
+			border-color: #000;
+		}
+
+		.search-filters__buttons {
+			button {
+				background: transparent;
+				color: #fff;
+				border-radius: 4px;
+
+				&.is-primary {
+					color: $videopress-theme-background-color;
+					background-color: $videopress-theme-yellow;
+					border-color: $videopress-theme-yellow;
+				}
+			}
+		}
+
+		.search-filters__checkbox-label {
+			color: #fff;
+		}
+
+		.token-field__token {
+			.token-field__token-text {
+				background: none;
+				color: #ffffffa0;
+			}
+
+			.token-field__remove-token {
+				background: none;
+				fill: #ffffffa0;
+			}
+		}
+	}
+
+	.search-filters__dropdown-filters-button-text .count.is-primary {
+		background-color: #646970;
 	}
 }
