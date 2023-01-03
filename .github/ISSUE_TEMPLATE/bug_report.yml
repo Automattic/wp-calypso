@@ -63,7 +63,7 @@ body:
     attributes:
       value: |
         <br>
-        ---
+        
         ## Optional Information
 
         The following section is optional. If you're an Automattician, you should be able to fill it in. If not, please scroll to the bottom and submit the issue.
