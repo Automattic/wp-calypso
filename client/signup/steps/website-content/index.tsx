@@ -181,7 +181,7 @@ function WebsiteContentStep( {
 			<AccordionForm
 				generatedSections={ generatedSections }
 				onErrorUpdates={ ( errors ) => setFormErrors( errors ) }
-				formValuesInitialState={ websiteContent }
+				formValues={ websiteContent }
 				currentIndex={ currentIndex }
 				updateCurrentIndex={ ( currentIndex ) => {
 					dispatch( updateWebsiteContentCurrentIndex( currentIndex ) );
