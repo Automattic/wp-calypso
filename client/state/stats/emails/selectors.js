@@ -111,7 +111,7 @@ export function getEmailStat( state, siteId, postId, period, statType ) {
  * @returns {*}              Normalized data
  */
 export function getEmailStatsNormalizedData( state, siteId, postId, period, date, statType, path ) {
-	const stats = state.stats.emails
+	const stats = state.stats.emails.items
 		? get( state.stats.emails.items, [ siteId, postId, period, statType ], null )
 		: null;
 	if ( stats ) {

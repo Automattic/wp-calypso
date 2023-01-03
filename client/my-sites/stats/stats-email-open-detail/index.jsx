@@ -245,6 +245,7 @@ class StatsEmailOpenDetail extends Component {
 					path="/stats/email/open/:site/:period/:email_id"
 					title="Stats > Single Email"
 				/>
+
 				<FixedNavigationHeader
 					navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }
 				>
@@ -335,7 +336,6 @@ const connectComponent = connect(
 			slug: getSelectedSiteSlug( state ),
 			isSitePrivate: isPrivateSite( state, siteId ),
 			siteId,
-			postId,
 		};
 	},
 	{ recordGoogleEvent }
