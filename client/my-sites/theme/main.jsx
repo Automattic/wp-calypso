@@ -248,8 +248,8 @@ class ThemeSheet extends Component {
 	};
 
 	shouldRenderPreviewButton() {
-		const { isWPForTeamsSite } = this.props;
-		return this.isThemeAvailable() && ! this.isThemeCurrentOne() && ! isWPForTeamsSite;
+		const { isWPForTeamsSite, isWporg } = this.props;
+		return this.isThemeAvailable() && ! this.isThemeCurrentOne() && ! isWPForTeamsSite && ! isWporg;
 	}
 
 	isThemeCurrentOne() {
