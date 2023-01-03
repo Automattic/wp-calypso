@@ -20,7 +20,6 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import UserItem from 'calypso/components/user';
 import useUserLicenseBySubscriptionQuery from 'calypso/data/jetpack-licensing/use-user-license-by-subscription-query';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	getName,
 	hasPaymentMethod,
@@ -28,7 +27,6 @@ import {
 	isExpiring,
 	isIncludedWithPlan,
 	isOneTimePurchase,
-	isPaidWithCreditCard,
 	isRechargeable,
 	isRenewing,
 	isSubscription,
@@ -39,12 +37,11 @@ import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
-import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
 import { managePurchase } from '../paths';
-import { canEditPaymentDetails, isJetpackTemporarySitePurchase } from '../utils';
+import { isJetpackTemporarySitePurchase } from '../utils';
 import AutoRenewToggle from './auto-renew-toggle';
-import PaymentInfoBlock from './payment-info-block';
 import PurchaseMetaIntroductoryOfferDetail from './purchase-meta-introductory-offer-detail';
+import PurchaseMetaPaymentDetails from './purchase-meta-payment-details';
 import PurchaseMetaPrice from './purchase-meta-price';
 
 export default function PurchaseMeta( {
@@ -213,34 +210,6 @@ function PurchaseMetaOwner( { owner } ) {
 			<span className="manage-purchase__detail">
 				<UserItem user={ { ...owner, name: owner.display_name } } />
 			</span>
-		</li>
-	);
-}
-
-function PurchaseMetaPaymentDetails( { purchase, getChangePaymentMethodUrlFor, siteSlug, site } ) {
-	const cards = useSelector( getAllStoredCards );
-	const handleEditPaymentMethodClick = () => {
-		recordTracksEvent( 'calypso_purchases_edit_payment_method' );
-	};
-
-	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
-		return null;
-	}
-
-	const paymentDetails = <PaymentInfoBlock purchase={ purchase } cards={ cards } />;
-
-	if ( ! canEditPaymentDetails( purchase ) || ! isPaidWithCreditCard( purchase ) || ! site ) {
-		return <li>{ paymentDetails }</li>;
-	}
-
-	return (
-		<li>
-			<a
-				href={ getChangePaymentMethodUrlFor( siteSlug, purchase ) }
-				onClick={ handleEditPaymentMethodClick }
-			>
-				{ paymentDetails }
-			</a>
 		</li>
 	);
 }

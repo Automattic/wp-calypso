@@ -4,7 +4,6 @@ const titles = {
 	addCreditCard: i18n.translate( 'Add Credit Card' ),
 	addPaymentMethod: i18n.translate( 'Add Payment Method' ),
 	cancelPurchase: i18n.translate( 'Cancel Purchase' ),
-	cancelingSubscription: i18n.translate( 'Canceling your plan subscription' ),
 	confirmCancelDomain: i18n.translate( 'Cancel Domain' ),
 	changePaymentMethod: i18n.translate( 'Change Payment Method' ),
 	addCardDetails: i18n.translate( 'Add Credit Card' ),

@@ -247,13 +247,14 @@
 		}
 	}
 
-
+	// Products with price need to be slightly wider so the placeholder size doesn't get warped
 	col.product {
-		width: 200px;
+		width: 230px;
 	}
 
 	col.product-jetpack-free {
 		background-color: rgba(157, 217, 119, 0.05);
+		width: 200px;
 	}
 
 	col.product-jetpack-backup {

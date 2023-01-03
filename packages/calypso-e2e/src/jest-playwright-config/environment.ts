@@ -292,39 +292,46 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
  * To specify a different browser than default,
  * use the @browser tag in the docblock.
  *
+ * Declaration of multiple browsers in the docblock is not supported at this time.
+ *
  * Example:
  *
  * 	`@browser firefox`
  */
 async function determineBrowser( testFilePath: string ): Promise< BrowserType > {
 	const parsed = parseDocBlock( await fs.readFile( testFilePath, 'utf8' ) );
-	const defaultBrowser = env.BROWSER_NAME;
 
-	// Parsed docblock can return any one of the following:
+	// Parsed docblock can return any one of the following for the `browser` prop:
 	// 	- undefined: if a tag was not found.
 	// 	- single string: if only one instance of a tag was found.
 	//	- string array: if multiple instances of the tag was found.
-	// In this case, we only want to throw if the tag has been defined
-	// multiple times.
-	if ( parsed.browser && typeof parsed.browser !== 'string' ) {
+	if ( typeof parsed.browser === 'object' ) {
+		// Multiple browser declarations are not supported.
 		throw new Error( 'Multiple browsers defined in docblock.' );
-	}
+	} else if ( typeof parsed.browser === 'string' ) {
+		// Single browser declaration is supported, but must be a valid browser.
+		const browserFromDocblock = supportedBrowsers.find(
+			( browser ) => browser.name().toLowerCase() === parsed.browser.toString().toLowerCase()
+		);
 
-	// If the browser tag was found in the docblock, look for the
-	// matches in the supported browsers list.
-	// If the browser tag was **not** found, then match based on
-	// the default broswser specified in the BROWSER_NAME
-	// environment variable.
-	const match = supportedBrowsers.find( ( browser ) => {
-		return parsed.browser === undefined
-			? browser.name() === defaultBrowser.toLowerCase()
-			: browser.name() === parsed.browser;
-	} );
+		if ( ! browserFromDocblock ) {
+			throw new Error( `Unsupported browser defined in DocBlock: ${ parsed.browser }` );
+		}
 
-	if ( ! match ) {
-		throw new Error( 'Unsupported browser defined in docblock.' );
+		return browserFromDocblock;
+	} else {
+		// Fall back on the default browser specified in `BROWSER_NAME` environment
+		// variable.
+		const browserFromEnvironmentVariable = supportedBrowsers.find(
+			( browser ) => browser.name().toLowerCase() === env.BROWSER_NAME.toLowerCase()
+		);
+
+		if ( ! browserFromEnvironmentVariable ) {
+			throw new Error( `Unsupported default browser: ${ env.BROWSER_NAME }` );
+		}
+
+		return browserFromEnvironmentVariable;
 	}
-	return match;
 }
 
 /**
@@ -372,6 +379,16 @@ function setupBrowserProxyTrap( browser: Browser ): Browser {
 					// Set the default timeout for all Playwright methods.
 					// Default value is 15000ms, defined in env-variables.ts.
 					page.setDefaultTimeout( env.TIMEOUT );
+
+					// Set up a HTTP response status interceptor
+					// to capture instances of 502 Bad Gateway.
+					// This remains active until the page is
+					// closed.
+					page.on( 'response', async ( response ) => {
+						if ( response.status() === 502 ) {
+							await page.reload();
+						}
+					} );
 
 					const context = page.context();
 

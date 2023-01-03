@@ -34,7 +34,6 @@ import {
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DatePicker from '../stats-date-picker';
 import ChartTabs from '../stats-email-chart-tabs';
-import StatsPlaceholder from '../stats-module/placeholder';
 import { StatsNoContentBanner } from '../stats-no-content-banner';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
@@ -220,7 +219,6 @@ class StatsEmailOpenDetail extends Component {
 			slug,
 			isSitePrivate,
 		} = this.props;
-		const isLoading = isRequestingStats && ! countViews;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const actionLabel = translate( 'View Email' );
@@ -256,8 +254,8 @@ class StatsEmailOpenDetail extends Component {
 						</Button>
 					) }
 				</FixedNavigationHeader>
-				<StatsPlaceholder isLoading={ isLoading } />
-				{ ! isLoading && ! countViews && (
+
+				{ ! isRequestingStats && ! countViews && (
 					<EmptyContent
 						title={ noViewsLabel }
 						line={ translate( 'Learn some tips to attract more visitors' ) }
@@ -268,46 +266,45 @@ class StatsEmailOpenDetail extends Component {
 						illustrationWidth={ 150 }
 					/>
 				) }
-				{ ! isLoading && countViews && (
-					<div>
-						<>
-							<StatsPeriodHeader>
-								<StatsPeriodNavigation
-									date={ date }
+
+				<div>
+					<>
+						<StatsPeriodHeader>
+							<StatsPeriodNavigation
+								date={ date }
+								period={ period }
+								url={ `/stats/email/open/${ slug }/${ period }/${ postId }` }
+							>
+								<DatePicker
 									period={ period }
-									url={ `/stats/email/open/${ slug }/${ period }/${ postId }` }
-								>
-									<DatePicker
-										period={ period }
-										date={ date }
-										query={ query }
-										statsType="statsTopPosts"
-										showQueryDate
-									/>
-								</StatsPeriodNavigation>
-								<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
-							</StatsPeriodHeader>
+									date={ date }
+									query={ query }
+									statsType="statsTopPosts"
+									showQueryDate
+								/>
+							</StatsPeriodNavigation>
+							<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
+						</StatsPeriodHeader>
 
-							<ChartTabs
-								activeTab={ getActiveTab( this.props.chartTab ) }
-								activeLegend={ this.state.activeLegend }
-								availableLegend={ this.getAvailableLegend() }
-								onChangeLegend={ this.onChangeLegend }
-								barClick={ this.barClick }
-								switchTab={ this.switchChart }
-								charts={ CHARTS }
-								queryDate={ queryDate }
-								period={ this.props.period }
-								chartTab={ this.props.chartTab }
-								postId={ postId }
-								statType={ statType }
-							/>
+						<ChartTabs
+							activeTab={ getActiveTab( this.props.chartTab ) }
+							activeLegend={ this.state.activeLegend }
+							availableLegend={ this.getAvailableLegend() }
+							onChangeLegend={ this.onChangeLegend }
+							barClick={ this.barClick }
+							switchTab={ this.switchChart }
+							charts={ CHARTS }
+							queryDate={ queryDate }
+							period={ this.props.period }
+							chartTab={ this.props.chartTab }
+							postId={ postId }
+							statType={ statType }
+						/>
 
-							{ isSitePrivate ? this.renderPrivateSiteBanner( siteId, slug ) : null }
-							{ ! isSitePrivate && <StatsNoContentBanner siteId={ siteId } siteSlug={ slug } /> }
-						</>
-					</div>
-				) }
+						{ isSitePrivate ? this.renderPrivateSiteBanner( siteId, slug ) : null }
+						{ ! isSitePrivate && <StatsNoContentBanner siteId={ siteId } siteSlug={ slug } /> }
+					</>
+				</div>
 				<StatsEmailCountries
 					postId={ postId }
 					siteId={ siteId }
@@ -332,12 +329,10 @@ const connectComponent = connect(
 			emailFallback: getEmailStat( state, siteId, postId, 'email' ),
 			isLatestEmailsHomepage,
 			countViews: getEmailStat( state, siteId, postId, period, statType ),
-			// countViews: [1],
-			isRequestingStats: isRequestingEmailStats( state, siteId, postId ),
+			isRequestingStats: isRequestingEmailStats( state, siteId, postId, period, statType ),
 			siteSlug: getSiteSlug( state, siteId ),
 			showViewLink: ! isJetpack && ! isLatestEmailsHomepage && isPreviewable,
 			slug: getSelectedSiteSlug( state ),
-			// previewUrl: getEmailPreviewUrl( state, siteId, postId ),
 			isSitePrivate: isPrivateSite( state, siteId ),
 			siteId,
 			postId,
