@@ -18,6 +18,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
 import StatsEmailCountries from 'calypso/my-sites/stats/stats-email-countries';
+import StatsEmailDevices from 'calypso/my-sites/stats/stats-email-devices';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import {
@@ -307,6 +308,13 @@ class StatsEmailOpenDetail extends Component {
 					</>
 				</div>
 				<StatsEmailCountries
+					postId={ postId }
+					siteId={ siteId }
+					period={ period }
+					date={ queryDate }
+				/>
+
+				<StatsEmailDevices
 					postId={ postId }
 					siteId={ siteId }
 					period={ period }

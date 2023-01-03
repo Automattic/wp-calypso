@@ -1045,3 +1045,23 @@ export function parseEmailCountriesData( countries, countriesInfo ) {
 		};
 	} );
 }
+
+/**
+ * Return data in a format used by 'components/stats/geochart` for email stats. The fields array is matched to
+ * the data in a single object.
+ *
+ * @param {Array} devices - the array of devices for the given data
+ * @returns {Array} - Array of data objects
+ */
+export function parseEmailDevicesData( devices ) {
+	if ( ! devices ) {
+		return [];
+	}
+
+	return devices.map( function ( device ) {
+		return {
+			label: device[ 0 ],
+			value: parseInt( device[ 1 ], 10 ),
+		};
+	} );
+}
