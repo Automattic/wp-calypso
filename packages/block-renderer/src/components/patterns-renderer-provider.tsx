@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import useRenderedPatterns from '../hooks/use-query-rendered-patterns';
+import useRenderedPatterns from '../hooks/use-rendered-patterns';
 import PatternsRendererContext from './patterns-renderer-context';
 
 interface Props {

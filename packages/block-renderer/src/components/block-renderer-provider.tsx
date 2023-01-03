@@ -1,7 +1,7 @@
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
-import useQuerySettings from '../hooks/use-query-settings';
+import useBlockRendererSettings from '../hooks/use-block-renderer-settings';
 
 export interface Props {
 	siteId: number | string;
@@ -10,7 +10,7 @@ export interface Props {
 }
 
 const BlockRendererProvider = ( { siteId, stylesheet = '', children }: Props ) => {
-	const { data: settings } = useQuerySettings( siteId, stylesheet );
+	const { data: settings } = useBlockRendererSettings( siteId, stylesheet );
 
 	// @ts-expect-error Type definition is outdated
 	const { updateSettings } = useDispatch( blockEditorStore );

@@ -1,7 +1,7 @@
 import { useQuery, UseQueryResult, UseQueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 
-const useQueryBlockSettings = (
+const useBlockRendererSettings = (
 	siteId: number | string,
 	stylesheet: string,
 	queryOptions: UseQueryOptions< unknown, unknown, unknown > = {}
@@ -30,4 +30,4 @@ const useQueryBlockSettings = (
 	);
 };
 
-export default useQueryBlockSettings;
+export default useBlockRendererSettings;

@@ -25,7 +25,7 @@ const fetchRenderedPatterns = (
 	} );
 };
 
-const useQueryRenderedPatterns = (
+const useRenderedPatterns = (
 	siteId: number | string,
 	stylesheet: string,
 	patternIds: string[],
@@ -49,4 +49,4 @@ const useQueryRenderedPatterns = (
 	);
 };
 
-export default useQueryRenderedPatterns;
+export default useRenderedPatterns;
