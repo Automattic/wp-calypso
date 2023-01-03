@@ -148,16 +148,17 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 		}
 		const contexts = this.global.browser.contexts();
 		if ( this.failure ) {
-			let contextIndex = 0;
-			let pageIndex = 0;
+			let contextIndex = 1;
 
 			const artifactFilename = `${ this.testFilename }__${ sanitizeString( this.failure.name ) }`;
 
 			for await ( const context of contexts ) {
+				let pageIndex = 1;
 				const traceFilePath = path.join(
 					this.testArtifactsPath,
 					`${ artifactFilename }__${ contextIndex }.zip`
 				);
+
 				// Traces are saved per context.
 				await context.tracing.stop( { path: traceFilePath } );
 
