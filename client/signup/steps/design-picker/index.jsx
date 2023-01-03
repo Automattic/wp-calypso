@@ -59,9 +59,11 @@ export default function DesignPickerStep( props ) {
 	const [ selectedDesign, setSelectedDesign ] = useState( null );
 	const scrollTop = useRef( 0 );
 
+	const isDIFMStoreFlow = 'do-it-for-me-store' === props.flowName;
+
 	const getThemeFilters = () => {
-		if ( props.themeFilters ) {
-			return props.themeFilters;
+		if ( props.useDIFMThemes ) {
+			return isDIFMStoreFlow ? 'do-it-for-me-store' : 'do-it-for-me';
 		}
 
 		return 'auto-loading-homepage,full-site-editing';
@@ -216,7 +218,7 @@ export default function DesignPickerStep( props ) {
 					} ) }
 					highResThumbnails
 					premiumBadge={
-						props.themeFilters ? null : (
+						props.useDIFMThemes ? null : (
 							<PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } />
 						)
 					}
@@ -377,8 +379,6 @@ export default function DesignPickerStep( props ) {
 				fallbackSubHeaderText: subHeaderText(),
 				subHeaderText: subHeaderText(),
 		  };
-
-	const isDIFMStoreFlow = 'do-it-for-me-store' === props.flowName;
 
 	return (
 		<StepWrapper

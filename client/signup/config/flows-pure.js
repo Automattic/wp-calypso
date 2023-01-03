@@ -487,7 +487,7 @@ export function generateFlows( {
 				'difm-site-picker',
 				'difm-store-options',
 				'social-profiles',
-				'difm-store-design-setup-site',
+				'difm-design-setup-site',
 				'difm-page-picker',
 			],
 			destination: getDIFMSignupDestination,
