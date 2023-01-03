@@ -8,6 +8,6 @@
 
 	tbody tr:nth-child(odd),
 	.is-fixed-row-header tbody > tr:nth-child(odd) > th {
-		background-color: var( --studio-gray-0 );
+		background-color: var(--studio-gray-0);
 	}
 }
