@@ -26,6 +26,7 @@ class StatsEmailModule extends Component {
 		query: PropTypes.object,
 		statType: PropTypes.string,
 		translate: PropTypes.func,
+		requesting: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -36,6 +37,14 @@ class StatsEmailModule extends Component {
 	state = {
 		loaded: false,
 	};
+
+	constructor( props ) {
+		super( props );
+
+		if ( ! props.requesting ) {
+			this.state.loaded = true;
+		}
+	}
 
 	componentDidUpdate( prevProps ) {
 		if ( ! this.props.requesting && prevProps.requesting ) {
@@ -65,7 +74,7 @@ class StatsEmailModule extends Component {
 					moduleType={ path }
 					data={ data }
 					useShortLabel={ useShortLabel }
-					emptyMessage={ moduleStrings.empty }
+					emptyMessage={ moduleStrings.countries.empty }
 					error={ hasError && <ErrorPanel /> }
 					loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
 					heroElement={
@@ -85,7 +94,7 @@ export default connect( ( state, ownProps ) => {
 	const { postId, period, date, statType, path } = ownProps;
 
 	return {
-		requesting: isRequestingEmailStats( state, siteId, postId ),
+		requesting: isRequestingEmailStats( state, siteId, postId, period, statType ),
 		data: getEmailStatsNormalizedData( state, siteId, postId, period, date, statType, path ),
 		siteId,
 		postId,
