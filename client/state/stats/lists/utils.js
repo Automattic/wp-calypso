@@ -893,11 +893,6 @@ export const normalizers = {
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const dataPath = query.summarize ? [ 'summary' ] : [ 'days', startOf ];
 		const searchTerms = get( data, dataPath.concat( [ 'search_terms' ] ), [] );
-		const encryptedSearchTerms = get(
-			data,
-			dataPath.concat( [ 'encrypted_search_terms' ] ),
-			false
-		);
 
 		const result = searchTerms.map( ( day ) => {
 			return {
@@ -906,15 +901,6 @@ export const normalizers = {
 				value: day.views,
 			};
 		} );
-
-		if ( encryptedSearchTerms ) {
-			result.push( {
-				label: translate( 'Unknown Search Terms' ),
-				value: encryptedSearchTerms,
-				link: 'https://wordpress.com/support/stats/#search-engine-terms',
-				labelIcon: 'external',
-			} );
-		}
 
 		return result;
 	},
