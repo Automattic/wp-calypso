@@ -70,10 +70,9 @@ const PluginDetailsSidebar = ( {
 		recordTracksEvent( 'calypso_plugin_details_premium_plugin_link_click', {
 			current_plugin_slug: slug,
 			premium_plugin_slug: premium_slug,
-			premium_plugin_link: premiumVersionLink,
 			site: selectedSite?.ID,
 		} );
-	}, [ premiumVersionLink, premium_slug, selectedSite?.ID, slug ] );
+	}, [ premium_slug, selectedSite?.ID, slug ] );
 
 	return (
 		<div className="plugin-details-sidebar__plugin-details-content">
