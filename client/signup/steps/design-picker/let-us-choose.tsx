@@ -28,10 +28,9 @@ const LetUsChooseButton = styled( Button )`
 	text-align: center;
 `;
 
-const LET_US_CHOOSE_THEME_SLUG = 'russell';
-
 const LetUsChoose = ( { flowName, designs, onSelect }: Props ) => {
 	const translate = useTranslate();
+	const LET_US_CHOOSE_THEME_SLUG = flowName === 'do-it-for-me-store' ? 'tazza' : 'russell';
 
 	const defaultDesign = designs.find( ( design ) => LET_US_CHOOSE_THEME_SLUG === design.slug );
 
