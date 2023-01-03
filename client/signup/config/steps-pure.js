@@ -848,7 +848,7 @@ export function generateSteps( {
 		},
 		'difm-store-design-setup-site': {
 			stepName: 'difm-store-design-setup-site',
-			apiRequestFunction: setDIFMLiteDesign,
+			apiRequestFunction: createSiteAndAddDIFMToCart,
 			delayApiRequestUntilComplete: true,
 			providesDependencies: [
 				'selectedDesign',
