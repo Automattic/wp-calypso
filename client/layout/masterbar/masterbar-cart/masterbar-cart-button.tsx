@@ -21,8 +21,8 @@ export type MasterbarCartButtonProps = {
 	forceShow?: boolean;
 	showCount?: boolean;
 	checkoutLabel?: string;
-	cartIcon: React.ReactNode;
-	emptyCart: React.ReactNode;
+	cartIcon?: React.ReactNode;
+	emptyCart?: React.ReactNode;
 };
 
 export function MasterbarCartButton( {

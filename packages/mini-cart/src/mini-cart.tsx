@@ -114,7 +114,7 @@ export function MiniCart( {
 	onRemoveProduct?: ( uuid: string ) => void;
 	onRemoveCoupon?: () => void;
 	checkoutLabel?: string;
-	emptyCart: React.ReactNode;
+	emptyCart?: React.ReactNode;
 } ) {
 	const { responseCart, removeCoupon, removeProductFromCart, isLoading, isPendingUpdate } =
 		useShoppingCart( cartKey ? cartKey : undefined );

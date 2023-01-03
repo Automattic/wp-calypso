@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { useLocale, localizeUrl } from '@automattic/i18n-utils';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
@@ -41,6 +42,33 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 	const jetpackSaleCoupon = useSelector( getJetpackSaleCoupon );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const user = useSelector( getCurrentUser );
+
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+
+	const { responseCart } = useShoppingCart( siteId ?? undefined );
+	const shoppingCartTracker = useShoppingCartTracker();
+
+	const onRemoveProductFromCart = ( productSlug: string ) => {
+		shoppingCartTracker( 'calypso_jetpack_shopping_cart_remove_product', {
+			productSlug,
+		} );
+	};
+
+	const goToCheckout = ( siteSlug: string ) => {
+		shoppingCartTracker( 'calypso_jetpack_shopping_cart_checkout_from_cart', {
+			addProducts: true,
+		} );
+
+		const buildUrlParams =
+			responseCart.products.length > 1
+				? {
+						redirect_to: `https://${ siteSlug }/wp-admin/admin.php?page=jetpack#/recommendations/site-type`,
+				  }
+				: undefined;
+
+		window.location.href = buildCheckoutURL( siteSlug, '', buildUrlParams );
+	};
 
 	const sections = useMemo(
 		() => [

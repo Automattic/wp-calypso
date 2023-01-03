@@ -7,15 +7,17 @@ import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import isSupersedingJetpackItem from 'calypso/../packages/calypso-products/src/is-superseding-jetpack-item';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import reactNodeToString from 'calypso/lib/react-node-to-string';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { successNotice } from 'calypso/state/notices/actions';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { useIsUserPurchaseOwner } from 'calypso/state/purchases/utils';
 import {
@@ -31,7 +33,6 @@ import productButtonLabel from '../../product-card/product-button-label';
 import { SelectorProduct } from '../../types';
 import { UseStoreItemInfoProps } from '../types';
 import { useShoppingCartTracker } from './use-shopping-cart-tracker';
-
 const getIsDeprecated = ( item: SelectorProduct ) => Boolean( item.legacy );
 
 const getIsExternal = ( item: SelectorProduct ) =>
@@ -63,6 +64,7 @@ export const useStoreItemInfo = ( {
 		( state ) => !! ( siteId && isJetpackSiteMultiSite( state, siteId ) )
 	);
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const dispatch = useDispatch();
 
 	const isCurrentUserPurchaseOwner = useIsUserPurchaseOwner();
 	const translate = useTranslate();
@@ -209,6 +211,9 @@ export const useStoreItemInfo = ( {
 				shoppingCartTracker( 'calypso_jetpack_shopping_cart_add_product', {
 					productSlug: item.productSlug,
 				} );
+
+				const addedToCartText = translate( 'added to cart' );
+				dispatch( successNotice( `${ item.displayName } ${ addedToCartText }` ) );
 				return addProductsToCart( [ { product_slug: item.productSlug } ] );
 			}
 
@@ -220,8 +225,10 @@ export const useStoreItemInfo = ( {
 			getIsUpgradeableToYearly,
 			getPurchase,
 			getIsProductInCart,
-			addProductsToCart,
 			shoppingCartTracker,
+			addProductsToCart,
+			dispatch,
+			translate,
 		]
 	);
 
@@ -231,6 +238,29 @@ export const useStoreItemInfo = ( {
 			return isCurrentUserPurchaseOwner( purchase );
 		},
 		[ getPurchase, isCurrentUserPurchaseOwner ]
+	);
+
+	const getLightBoxCtaLabel = useCallback(
+		( item: SelectorProduct ) => {
+			const shouldShowCart = getShouldShowCart( item );
+			const isProductInCart = getIsProductInCart( item );
+
+			if ( ! shouldShowCart ) {
+				return <>{ translate( 'Proceed to checkout' ) }</>;
+			}
+
+			if ( isProductInCart ) {
+				return (
+					<>
+						<Gridicon icon="checkmark" />
+						{ translate( 'View Cart' ) }
+					</>
+				);
+			}
+
+			return <>{ translate( 'Add to cart' ) }</>;
+		},
+		[ getIsProductInCart, getShouldShowCart, translate ]
 	);
 
 	const getCtaLabel = useCallback(
@@ -305,6 +335,7 @@ export const useStoreItemInfo = ( {
 			getIsSuperseded,
 			getIsUpgradeableToYearly,
 			getIsUserPurchaseOwner,
+			getLightBoxCtaLabel,
 			getOnClickPurchase,
 			getIsProductInCart,
 			getPurchase,
@@ -321,6 +352,7 @@ export const useStoreItemInfo = ( {
 			getIsSuperseded,
 			getIsUpgradeableToYearly,
 			getIsUserPurchaseOwner,
+			getLightBoxCtaLabel,
 			getOnClickPurchase,
 			getIsProductInCart,
 			getPurchase,
