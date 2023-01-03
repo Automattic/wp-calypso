@@ -14,12 +14,13 @@ export type PreviewLinksResponse = PreviewLink[];
 interface UseSitePreviewLinksOptions {
 	siteId: SiteId;
 	onSuccess?: ( previewLinks: PreviewLink[] | undefined ) => void;
+	isEnabled: boolean;
 }
 
 export const SITE_PREVIEW_LINKS_QUERY_KEY = 'site-preview-links';
 
 export function useSitePreviewLinks( options: UseSitePreviewLinksOptions ) {
-	const { siteId, onSuccess } = options;
+	const { siteId, onSuccess, isEnabled = false } = options;
 	return useQuery< PreviewLinksResponse, unknown, PreviewLink[] >(
 		[ SITE_PREVIEW_LINKS_QUERY_KEY, siteId ],
 		() =>
@@ -28,7 +29,7 @@ export function useSitePreviewLinks( options: UseSitePreviewLinksOptions ) {
 				apiNamespace: 'wpcom/v2',
 			} ),
 		{
-			enabled: !! siteId,
+			enabled: isEnabled && !! siteId,
 			meta: { persist: false },
 			onSuccess,
 		}
