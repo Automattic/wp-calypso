@@ -1047,21 +1047,21 @@ export function parseEmailCountriesData( countries, countriesInfo ) {
 }
 
 /**
- * Return data in a format used by 'components/stats/geochart` for email stats. The fields array is matched to
+ * Return data in a format used by lists for email stats. The fields array is matched to
  * the data in a single object.
  *
- * @param {Array} devices - the array of devices for the given data
+ * @param {Array} list - the array of devices for the given data
  * @returns {Array} - Array of data objects
  */
-export function parseEmailDevicesData( devices ) {
-	if ( ! devices ) {
+export function parseEmailListData( list ) {
+	if ( ! list ) {
 		return [];
 	}
 
-	return devices.map( function ( device ) {
+	return list.map( function ( item ) {
 		return {
-			label: device[ 0 ],
-			value: parseInt( device[ 1 ], 10 ),
+			label: item[ 0 ],
+			value: parseInt( item[ 1 ], 10 ),
 		};
 	} );
 }

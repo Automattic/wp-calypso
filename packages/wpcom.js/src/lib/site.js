@@ -394,7 +394,7 @@ class Site {
 	 */
 	statsEmailOpens( postId, query, fn ) {
 		const path = `${ this.path }/stats/opens/emails/${ postId }`;
-		query.stats_fields = 'timeline,country,device'; // Possible values: timeline,client,country,device
+		query.stats_fields = 'timeline,country,device,client'; // Possible values: timeline,client,country,device,client
 		return this.wpcom.req.get( path, query, fn );
 	}
 

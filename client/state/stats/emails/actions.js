@@ -8,7 +8,7 @@ import {
 import {
 	parseEmailChartData,
 	parseEmailCountriesData,
-	parseEmailDevicesData,
+	parseEmailListData,
 } from 'calypso/state/stats/lists/utils';
 
 import 'calypso/state/stats/init';
@@ -68,7 +68,8 @@ export function requestEmailStats( siteId, postId, period, date, statType, quant
 							stats.countries[ item.period ],
 							stats[ 'countries-info' ]
 						),
-						devices: parseEmailDevicesData( stats.devices[ item.period ] ),
+						devices: parseEmailListData( stats.devices[ item.period ] ),
+						clients: parseEmailListData( stats.clients[ item.period ] ),
 					};
 				} );
 
