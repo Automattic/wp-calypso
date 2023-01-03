@@ -41,6 +41,15 @@
 		margin: 0;
 		max-height: unset;
 		min-width: 450px;
+
+		&::after {
+			display: none;
+		}
+	}
+
+	.post-stats-card__thumbnail {
+		max-height: 300px;
+		width: 300px;
 	}
 
 	.highlight-card {

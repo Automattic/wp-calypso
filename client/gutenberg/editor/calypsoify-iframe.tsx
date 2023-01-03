@@ -79,6 +79,7 @@ interface Props {
 	stripeConnectSuccess: 'gutenberg' | null;
 	showDraftPostModal: boolean;
 	blockEditorSettings: BlockEditorSettings;
+	completedFlow?: string;
 }
 
 interface CheckoutModalOptions extends RequestCart {
@@ -777,6 +778,7 @@ const mapStateToProps = (
 		showDraftPostModal,
 		pressThisData,
 		blockEditorSettings,
+		completedFlow,
 	}: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
@@ -803,6 +805,7 @@ const mapStateToProps = (
 		showDraftPostModal,
 		...pressThisData,
 		answer_prompt: getQueryArg( window.location.href, 'answer_prompt' ),
+		completedFlow,
 	} );
 
 	// needed for loading the editor in SU sessions

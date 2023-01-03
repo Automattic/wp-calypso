@@ -226,6 +226,7 @@ const siteSetupFlow: Flow = {
 
 					// End of Pattern Assembler flow
 					if ( selectedDesign?.design_type === 'assembler' ) {
+						window.sessionStorage.setItem( 'wpcom_signup_completed_flow', 'pattern_assembler' );
 						return exitFlow( `/site-editor/${ siteSlug }` );
 					}
 

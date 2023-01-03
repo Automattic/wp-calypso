@@ -28,18 +28,26 @@
 		&:hover,
 		&:focus,
 		&:focus-within {
-			background-color: var(--studio-gray-0);
+			background-color: var(--theme-highlight-color);
+			color: var(--studio-white);
 
-			.horizontal-bar-list-item-bar {
-				&::before {
-					background-color: rgba(var(--color-primary-rgb), 40%);
-				}
+			svg {
+				fill: var(--studio-white);
 			}
 
 			.horizontal-bar-list--hover-action {
 				display: block;
 			}
+
+			.horizontal-bar-list-label {
+				color: var(--studio-white);
+			}
+
 		}
+	}
+
+	.horizontal-bar-list-group {
+		margin-left: $stats-child-hover-indentation;
 	}
 
 	.horizontal-bar-list-item-bar {
