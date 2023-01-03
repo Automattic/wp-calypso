@@ -16,6 +16,7 @@ interface Dependencies {
 	displayPhone: string;
 	displayAddress: string;
 	selectedPageTitles: string[];
+	isStoreFlow: boolean;
 }
 
 export function buildDIFMCartExtrasObject( dependencies: Partial< Dependencies > ) {
