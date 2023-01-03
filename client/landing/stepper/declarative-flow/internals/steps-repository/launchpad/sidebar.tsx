@@ -39,17 +39,14 @@ function getUrlInfo( url: string ) {
 
 function getTasksProgress( tasks: Task[] | null ) {
 	if ( ! tasks ) {
-		// TODO: How do we want to handle that?
-		return [ null, null ];
+		return null;
 	}
 
 	const completedTasks = tasks.reduce( ( total, currentTask ) => {
 		return currentTask.completed ? total + 1 : total;
 	}, 0 );
 
-	const totalTasks = tasks.length;
-
-	return [ completedTasks, totalTasks ];
+	return completedTasks;
 }
 
 const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: SidebarProps ) => {
@@ -78,7 +75,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 			flow
 		);
 
-	const [ currentTask, numberOfTasks ] = getTasksProgress( enhancedTasks );
+	const currentTask = getTasksProgress( enhancedTasks );
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
 	const showLaunchTitle = launchTask && ! launchTask.disabled;
 
@@ -98,9 +95,12 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 				<span className="launchpad__sidebar-header-flow-name">{ flowName }</span>
 			</div>
 			<div className="launchpad__sidebar-content-container">
-				{ currentTask && numberOfTasks && (
+				{ currentTask && enhancedTasks?.length && (
 					<div className="launchpad__progress-bar-container">
-						<CircularProgressBar currentStep={ currentTask } numberOfSteps={ numberOfTasks } />
+						<CircularProgressBar
+							currentStep={ currentTask }
+							numberOfSteps={ enhancedTasks?.length }
+						/>
 					</div>
 				) }
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace*/ }
