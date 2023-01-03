@@ -124,8 +124,9 @@ class ThemePreview extends Component {
 				{ demoUrl &&
 					( isNewDetailsAndPreview ? (
 						<ThemePreviewModal
-							previewUrl={ this.getPreviewUrl() }
 							theme={ theme }
+							previewUrl={ this.getPreviewUrl() }
+							actionButtons={ this.renderPrimaryButton() }
 							onClose={ this.props.hideThemePreview }
 						/>
 					) : (

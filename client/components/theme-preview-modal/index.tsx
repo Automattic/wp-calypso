@@ -24,14 +24,16 @@ interface ThemeWithStyleVariations extends Theme {
 }
 
 interface ThemePreviewModalProps {
-	previewUrl: string;
 	theme: ThemeWithStyleVariations;
+	previewUrl: string;
+	actionButtons: React.ReactNode;
 	onClose: () => void;
 }
 
 const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
-	previewUrl,
 	theme,
+	previewUrl,
+	actionButtons,
 	onClose,
 } ) => {
 	const translate = useTranslate();
@@ -53,8 +55,11 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 
 	const shortDescription = useMemo( () => {
 		const idx = theme.description.indexOf( '. ' );
-		return idx >= 0 ? theme.description.substring( 0, idx + 1 ) : theme.description;
-	}, [ theme.description ] );
+		const hasStyleVariations = theme.style_variations && theme.style_variations.length > 0;
+		return idx >= 0 && hasStyleVariations
+			? theme.description.substring( 0, idx + 1 )
+			: theme.description;
+	}, [ theme.description, theme.style_variations ] );
 
 	const badge = useMemo( () => {
 		if ( ! isThemePremium ) {
@@ -140,7 +145,7 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 						variations={ theme.style_variations }
 						selectedVariation={ selectedStyleVariation }
 						onSelectVariation={ previewDesignVariation }
-						// actionButtons={ actionButtons }
+						actionButtons={ actionButtons }
 						showGlobalStylesPremiumBadge={ showGlobalStylesPremiumBadge }
 					/>
 				</div>
