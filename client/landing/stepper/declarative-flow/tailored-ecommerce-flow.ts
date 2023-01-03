@@ -20,7 +20,6 @@ import DomainsStep from './internals/steps-repository/domains';
 import Intro from './internals/steps-repository/intro';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
-import StoreAddress from './internals/steps-repository/store-address';
 import StoreProfiler from './internals/steps-repository/store-profiler';
 import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
 import type { Flow, ProvidedDependencies } from './internals/types';
@@ -41,7 +40,6 @@ const ecommerceFlow: Flow = {
 		return [
 			{ slug: 'intro', component: Intro },
 			{ slug: 'storeProfiler', component: StoreProfiler },
-			{ slug: 'storeAddress', component: StoreAddress },
 			{ slug: 'domains', component: DomainsStep },
 			{ slug: 'designCarousel', component: DesignCarousel },
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
@@ -116,7 +114,7 @@ const ecommerceFlow: Flow = {
 
 				case 'processing':
 					if ( providedDependencies?.finishedWaitingForAtomic ) {
-						return navigate( 'storeAddress' );
+						return window.location.assign( `${ site?.URL }/wp-admin/admin.php?page=wc-admin` );
 					}
 
 					if ( providedDependencies?.siteSlug ) {
@@ -151,9 +149,6 @@ const ecommerceFlow: Flow = {
 
 				case 'storeProfiler':
 					return navigate( 'designCarousel' );
-
-				case 'storeAddress':
-					return window.location.assign( `${ site?.URL }/wp-admin/admin.php?page=wc-admin` );
 
 				case 'designCarousel':
 					return navigate( 'domains' );
@@ -192,8 +187,6 @@ const ecommerceFlow: Flow = {
 					return navigate( 'storeProfiler' );
 				case 'storeProfiler':
 					return navigate( 'designCarousel' );
-				case 'storeAddress':
-					return window.location.assign( `${ site?.URL }/wp-admin/admin.php?page=wc-admin` );
 				case 'designCarousel':
 					return navigate( 'domains' );
 				default:
