@@ -69,7 +69,7 @@ const CHART_OPENS = {
 	label: translate( 'Opens', { context: 'noun' } ),
 };
 const CHART_UNIQUE_OPENS = {
-	attr: 'unique_opens',
+	attr: 'unique_opens_count',
 	icon: <Icon className="gridicon" icon={ people } />,
 	label: translate( 'Unique opens', { context: 'noun' } ),
 };
