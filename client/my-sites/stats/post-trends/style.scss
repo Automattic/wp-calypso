@@ -47,7 +47,7 @@ $tooltip-box-shadow-color: #0000000d;
 	display: flex;
 	justify-content: space-between;
 	transition: left, 1s, ease-in-out;
-	overflow-x: scroll;
+	overflow-x: auto;
 }
 
 .post-trends__wrapper {
@@ -63,7 +63,7 @@ $tooltip-box-shadow-color: #0000000d;
 	justify-content: space-between;
 
 	&:not(:first-child) {
-		margin-left: 28px;
+		margin-left: 20px;
 	}
 }
 
@@ -76,7 +76,7 @@ $tooltip-box-shadow-color: #0000000d;
 	display: flex;
 
 	&:not(:first-child) {
-		margin-top: 4px;
+		margin-top: 2px;
 	}
 }
 
@@ -94,13 +94,13 @@ $tooltip-box-shadow-color: #0000000d;
 
 .post-trends__day {
 	display: inline-block;
-	width: 12px;
-	height: 12px;
+	width: 10px;
+	height: 10px;
 	border-radius: 2px;
 	background-color: var(--color-neutral-5);
 
 	&:not(:first-child) {
-		margin-left: 4px;
+		margin-left: 2px;
 	}
 }
 
