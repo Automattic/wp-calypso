@@ -37,6 +37,8 @@ import ChartTabs from '../stats-email-chart-tabs';
 import { StatsNoContentBanner } from '../stats-no-content-banner';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
+import statsStrings from '../stats-strings';
+
 import './style.scss';
 
 function getPageUrl() {
@@ -235,6 +237,7 @@ class StatsEmailOpenDetail extends Component {
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ traffic.path }${ slugPath }/{{ interval }}/${ postId }`;
 
+		const moduleStrings = statsStrings();
 		return (
 			<Main className="has-fixed-nav stats__email-opens" wideLayout>
 				<QueryEmailStats
@@ -317,6 +320,7 @@ class StatsEmailOpenDetail extends Component {
 						siteId={ siteId }
 						period={ period }
 						date={ queryDate }
+						moduleStrings={ moduleStrings.countries }
 					/>
 
 					<StatsEmailModule
@@ -326,6 +330,7 @@ class StatsEmailOpenDetail extends Component {
 						siteId={ siteId }
 						period={ period }
 						date={ queryDate }
+						moduleStrings={ moduleStrings.devices }
 					/>
 
 					<StatsEmailModule
@@ -335,6 +340,7 @@ class StatsEmailOpenDetail extends Component {
 						siteId={ siteId }
 						period={ period }
 						date={ queryDate }
+						moduleStrings={ moduleStrings.clients }
 					/>
 				</div>
 			</Main>

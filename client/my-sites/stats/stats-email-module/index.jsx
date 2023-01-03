@@ -2,7 +2,6 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import statsStrings from 'calypso/my-sites/stats/stats-strings';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	getEmailStatsNormalizedData,
@@ -25,7 +24,7 @@ class StatsEmailModule extends Component {
 		data: PropTypes.array,
 		query: PropTypes.object,
 		statType: PropTypes.string,
-		translate: PropTypes.func,
+		moduleStrings: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -50,8 +49,7 @@ class StatsEmailModule extends Component {
 	}
 
 	render() {
-		const { path, data, postId, statType, query, useShortLabel } = this.props;
-		const moduleStrings = statsStrings();
+		const { path, data, postId, statType, query, moduleStrings } = this.props;
 
 		// Only show loading indicators when nothing is in state tree, and request in-flight
 		const isLoading = ! this.state.loaded && ! ( data && data.length );
@@ -62,9 +60,9 @@ class StatsEmailModule extends Component {
 		return (
 			<>
 				<StatsListCard
+					title={ moduleStrings.title }
 					moduleType={ path }
 					data={ data }
-					useShortLabel={ useShortLabel }
 					emptyMessage={ moduleStrings.empty }
 					error={ hasError && <ErrorPanel /> }
 					loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
