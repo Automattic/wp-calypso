@@ -14,3 +14,14 @@
 		margin-inline-start: 12px;
 	}
 }
+
+.edit-all__bulk-actions {
+	margin: 10px;
+	padding-right: 5px;
+}
+.edit-all__bulk-actions button {
+	border: 1px solid var(--color-neutral-20);
+}
+.edit-all__bulk-actions button .gridicon {
+	border: none;
+}
