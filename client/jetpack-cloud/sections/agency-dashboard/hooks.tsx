@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import useUpdateMonitorSettingsMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-update-monitor-settings-mutation';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import SitesOverviewContext from './sites-overview/context';
-import type { APIError, Site } from './sites-overview/types';
+import type { Site } from './sites-overview/types';
 
 export function useToggleActivateMonitor( {
 	blog_id: siteId,
@@ -87,9 +87,6 @@ export function useUpdateMonitorSettings( sites: Array< { blog_id: number; url: 
 			// Cancel any current refetches, so they don't overwrite our optimistic update
 			await queryClient.cancelQueries( queryKey );
 
-			// Snapshot the previous value
-			const previousSites = queryClient.getQueryData( queryKey );
-
 			// Optimistically update to the new value
 			queryClient.setQueryData( queryKey, ( oldSites: any ) => {
 				return {
@@ -110,15 +107,6 @@ export function useUpdateMonitorSettings( sites: Array< { blog_id: number; url: 
 					} ),
 				};
 			} );
-
-			// Store previous settings in case of failure
-			return { previousSites };
-		},
-		onError: ( error: APIError, options: any, context: any ) => {
-			queryClient.setQueryData( queryKey, context?.previousSites );
-		},
-		onSettled: () => {
-			queryClient.invalidateQueries( queryKey );
 		},
 	} );
 
