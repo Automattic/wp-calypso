@@ -96,10 +96,11 @@ export const getESPluginQueryParams = (
 	return [ cacheKey, fetchFn ];
 };
 
+const ONE_DAY_IN_MS = 1000 * 60 * 60 * 24;
 export const useESPlugin = (
 	slug: string,
 	fields?: Array< string >,
-	{ enabled = true, staleTime = 10000, refetchOnMount = true }: UseQueryOptions = {}
+	{ enabled = true, staleTime = ONE_DAY_IN_MS, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult => {
 	const locale = useSelector( getCurrentUserLocale );
 
