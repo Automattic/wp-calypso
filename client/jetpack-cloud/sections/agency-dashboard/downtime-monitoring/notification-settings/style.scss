@@ -55,6 +55,11 @@
 	position: absolute;
 	bottom: 0;
 
+	.notification-settings__footer-buttons {
+		display: flex;
+		flex-direction: column;
+	}
+
 	button {
 		height: 36px;
 		line-height: 18px;
@@ -71,6 +76,12 @@
 		margin-block-start: 32px;
 		margin-block-end: 0;
 		width: auto;
+
+		.notification-settings__footer-buttons {
+			justify-content: end;
+			width: 100%;
+			flex-direction: initial;
+		}
 
 		button {
 			&:nth-child(2) {
@@ -166,4 +177,10 @@
 	@include break-mobile {
 		display: none;
 	}
+}
+
+.notification-settings__footer-validation-error {
+	@extend .notification-settings-title-light;
+	color: var(--color-scary-40);
+	margin-block-end: 16px;
 }
