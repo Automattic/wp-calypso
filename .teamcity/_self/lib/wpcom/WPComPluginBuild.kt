@@ -49,11 +49,6 @@ open class WPComPluginBuild(
 		}
 
 		params.buildParams()
-		maxRunningBuildsPerBranch = """
-			<default>: 0
-			revert*: 0
-			*: 1
-		""".trimIndent()
 
 		artifactRules = "$pluginSlug.zip"
 		buildNumberPattern = "%build.prefix%.%build.counter%"
