@@ -81,7 +81,7 @@ function addTooltipData( chartTab, item, period ) {
 				icon: <Icon className="gridicon" icon={ starEmpty } />,
 			} );
 			break;
-		case 'unique_opens':
+		case 'unique_opens_count':
 			tooltipData.push( {
 				label: translate( 'Unique opens' ),
 				value: numberFormat( item.value ),
