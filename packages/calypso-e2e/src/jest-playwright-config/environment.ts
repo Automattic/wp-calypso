@@ -151,27 +151,29 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 			let contextIndex = 0;
 			let pageIndex = 0;
 
-			// Define artifact filename templates.
 			const artifactFilename = `${ this.testFilename }__${ sanitizeString( this.failure.name ) }`;
-			const traceFilePath = path.join(
-				this.testArtifactsPath,
-				`${ artifactFilename }__${ contextIndex }.zip`
-			);
-			const mediaFilePath = path.join(
-				this.testArtifactsPath,
-				`${ artifactFilename }__${ contextIndex }-${ pageIndex }`
-			);
 
 			for await ( const context of contexts ) {
+				const traceFilePath = path.join(
+					this.testArtifactsPath,
+					`${ artifactFilename }__${ contextIndex }.zip`
+				);
 				// Traces are saved per context.
 				await context.tracing.stop( { path: traceFilePath } );
+
 				for await ( const page of context.pages() ) {
+					// Define artifact filename.
+					const mediaFilePath = path.join(
+						this.testArtifactsPath,
+						`${ artifactFilename }__${ contextIndex }-${ pageIndex }`
+					);
+
 					// Screenshots and video are saved per page, where numerous
 					// pages may exist within a context.
 					await page.screenshot( { path: `${ mediaFilePath }.png`, timeout: env.TIMEOUT } );
 
-					// Close the now unnecessary page which also
-					// triggers saving of video to the disk.
+					// Close the now unnecessary page which also triggers saving
+					// of video to the disk.
 					await page.close();
 					await page.video()?.saveAs( `${ mediaFilePath }.webm` );
 					pageIndex++;
