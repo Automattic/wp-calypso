@@ -57,7 +57,9 @@ export const getMShotOptions = ( {
 	// Take care changing these values, as the design-picker CSS animations are written for these values (see the *__landscape and *__portrait classes)
 	return {
 		vpw: isMobile ? MOBILE_VIEWPORT_WIDTH : DEFAULT_VIEWPORT_WIDTH,
-		// 901 renders well with all the current designs
+		// 901 renders well with all the current designs, more details in the links below
+		// https://github.com/Automattic/wp-calypso/issues/71439#issuecomment-1367335609
+		// https://github.com/Automattic/wp-calypso/issues/71439#issuecomment-1369694397
 		vph: scrollable ? 1600 : 901,
 		// When `w` was 1200 it created a visual glitch on one thumbnail. #57261
 		w: highRes ? 1199 : 600,
