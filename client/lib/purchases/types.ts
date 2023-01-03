@@ -269,3 +269,5 @@ export interface MembershipSubscriptionsSite {
 	domain: string;
 	subscriptions: MembershipSubscription[];
 }
+
+export type GetChangePaymentMethodUrlFor = ( siteSlug: string, purchase: Purchase ) => string;

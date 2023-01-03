@@ -3,12 +3,13 @@ import { Button, FormInputValidation } from '@automattic/components';
 import { StepContainer, ECOMMERCE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormInput from 'calypso/components/forms/form-text-input';
+import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import useSiteVerticalsFeatured from 'calypso/data/site-verticals/use-site-verticals-featured';
 import { useCountriesAndStates } from 'calypso/jetpack-cloud/sections/partner-portal/company-details-form/hooks/use-countries-and-states';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -58,6 +59,15 @@ const StoreProfiler: Step = function StoreProfiler( { navigation, flow } ) {
 			</option>
 		) );
 	}, [ countriesAndStates ] );
+
+	const region = useGeoLocationQuery()?.data;
+
+	useEffect( () => {
+		if ( ! storeCountryCode && region ) {
+			setStoreCountryCode( region?.country_short );
+		}
+	}, [ region ] );
+
 	const isLoading = verticals.isLoading || ! countriesAndStates;
 
 	const handleSubmit = async ( event: React.FormEvent ) => {
