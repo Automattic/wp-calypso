@@ -1,5 +1,3 @@
-@import '~@automattic/color-studio/dist/color-variables';
-
 .stats-summary-view {
 	.highlight-cards-heading {
 		@media ( min-width: 661px ) and ( max-width: 1380px ) {
@@ -8,8 +6,8 @@
 		}
 	}
 
-	tbody tr:nth-child( odd ),
-	.module-content-table-scroll tbody > tr:nth-child( odd ) > th {
-		background-color: var(--studio-gray-0);
+	tbody tr:nth-child(odd),
+	.is-fixed-row-header tbody > tr:nth-child(odd) > th {
+		background-color: var( --studio-gray-0 );
 	}
 }
