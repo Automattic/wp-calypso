@@ -131,7 +131,7 @@
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
 		"ssr/prefetch-timebox": true,
-		"stats/all-time-views": false,
+		"stats/all-time-views": true,
 		"stats/new-main-chart": true,
 		"stepper-woocommerce-poc": true,
 		"subscriber-csv-upload": true,
