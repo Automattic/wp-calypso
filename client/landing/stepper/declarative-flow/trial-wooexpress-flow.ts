@@ -7,8 +7,8 @@ import ProcessingStep, { ProcessingResult } from './internals/steps-repository/p
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import { Flow, ProvidedDependencies } from './internals/types';
 
-const ecommerceTrialFlow: Flow = {
-	name: 'ecommerce-trial',
+const wooExpressTrialFlow: Flow = {
+	name: 'wooexpress-trial',
 
 	useSteps() {
 		return [
@@ -59,4 +59,4 @@ const ecommerceTrialFlow: Flow = {
 	},
 };
 
-export default ecommerceTrialFlow;
+export default wooExpressTrialFlow;

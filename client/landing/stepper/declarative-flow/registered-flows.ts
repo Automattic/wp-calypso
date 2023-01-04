@@ -40,9 +40,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 			/* webpackChunkName: "tailored-ecommerce-flow" */ '../declarative-flow/tailored-ecommerce-flow'
 		),
 
-	ecommerceTrial: () =>
+	wooExpressTrial: () =>
 		import(
-			/* webpackChunkName: "trial-ecommerce-flow" */ '../declarative-flow/trial-ecommerce-flow'
+			/* webpackChunkName: "trial-wooexpress-flow" */ '../declarative-flow/trial-wooexpress-flow'
 		),
 
 	free: () => import( /* webpackChunkName: "free-flow" */ '../declarative-flow/free' ),
