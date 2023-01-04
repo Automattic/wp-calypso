@@ -324,7 +324,7 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 		.catch( ( error ) => callback( [ error ] ) );
 }
 
-function addDIFMLiteToCart( callback, dependencies, step, reduxStore ) {
+function addDIFMLiteProductToCart( callback, dependencies, step, reduxStore ) {
 	const { selectedDesign, selectedSiteCategory, isLetUsChooseSelected, siteSlug } = dependencies;
 	const extra = buildDIFMCartExtrasObject( dependencies );
 	const cartItem = {
@@ -346,13 +346,12 @@ function addDIFMLiteToCart( callback, dependencies, step, reduxStore ) {
 }
 
 /**
- * If the user chooses DIFM Lite for a new site, then
- * create a new site, call the `setDesignOnSite` function (see below)
- * and add the DIFM Lite product to the cart.
- * If the user chooses DIFM Lite for an existing site, then
- * just add the DIFM Lite product to the cart.
+ * If the user chooses DIFM Lite (BBE) for a new site, then
+ * create a new site, and add the DIFM Lite (BBE) product to the cart.
+ * If the user chooses DIFM Lite (BBE) for an existing site, then
+ * just add the DIFM Lite (BBE) product to the cart.
  */
-export function setDIFMLiteDesign( callback, dependencies, step, reduxStore ) {
+export function createSiteAndAddDIFMToCart( callback, dependencies, step, reduxStore ) {
 	const signupDependencies = getSignupDependencyStore( reduxStore.getState() );
 	const { newOrExistingSiteChoice } = signupDependencies;
 
@@ -361,26 +360,18 @@ export function setDIFMLiteDesign( callback, dependencies, step, reduxStore ) {
 	if ( 'new-site' === newOrExistingSiteChoice ) {
 		let siteSlug = null;
 
-		const setDesignOnSiteCallback = ( error ) => {
-			if ( error ) {
-				callback( error );
-				return;
-			}
-			addDIFMLiteToCart( callback, { ...providedDependencies, siteSlug }, step, reduxStore );
-		};
-
 		const createSiteWithCartCallback = ( error, result ) => {
 			if ( error ) {
 				callback( error );
 				return;
 			}
 			siteSlug = result.siteSlug;
-			setDesignOnSite( setDesignOnSiteCallback, { ...providedDependencies, siteSlug } );
+			addDIFMLiteProductToCart( callback, { ...providedDependencies, siteSlug }, step, reduxStore );
 		};
 
 		createSiteWithCart( createSiteWithCartCallback, providedDependencies, step, reduxStore );
 	} else {
-		addDIFMLiteToCart( callback, providedDependencies, step, reduxStore );
+		addDIFMLiteProductToCart( callback, providedDependencies, step, reduxStore );
 	}
 }
 

@@ -1,5 +1,4 @@
 import { getUrlParts } from '@automattic/calypso-url';
-import { Button } from '@automattic/components';
 import { Icon, people } from '@wordpress/icons';
 import { localize, translate } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -37,7 +36,6 @@ import ChartTabs from '../stats-email-chart-tabs';
 import { StatsNoContentBanner } from '../stats-no-content-banner';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
-import statsStrings from '../stats-strings';
 
 import './style.scss';
 
@@ -73,7 +71,7 @@ const CHART_OPENS = {
 	label: translate( 'Opens', { context: 'noun' } ),
 };
 const CHART_UNIQUE_OPENS = {
-	attr: 'unique_opens',
+	attr: 'unique_opens_count',
 	icon: <Icon className="gridicon" icon={ people } />,
 	label: translate( 'Unique opens', { context: 'noun' } ),
 };
@@ -164,18 +162,6 @@ class StatsEmailOpenDetail extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
-	openPreview = () => {
-		this.setState( {
-			showPreview: true,
-		} );
-	};
-
-	closePreview = () => {
-		this.setState( {
-			showPreview: false,
-		} );
-	};
-
 	getTitle() {
 		const { isLatestEmailsHomepage, email, emailFallback } = this.props;
 
@@ -213,19 +199,9 @@ class StatsEmailOpenDetail extends Component {
 	};
 
 	render() {
-		const {
-			isRequestingStats,
-			countViews,
-			postId,
-			siteId,
-			showViewLink,
-			date,
-			slug,
-			isSitePrivate,
-		} = this.props;
+		const { isRequestingStats, countViews, postId, siteId, date, slug, isSitePrivate } = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
-		const actionLabel = translate( 'View Email' );
 		const noViewsLabel = translate( 'Your email has not received any views yet!' );
 
 		const { period, endOf } = this.props.period;
@@ -237,7 +213,6 @@ class StatsEmailOpenDetail extends Component {
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ traffic.path }${ slugPath }/{{ interval }}/${ postId }`;
 
-		const moduleStrings = statsStrings();
 		return (
 			<Main className="has-fixed-nav stats__email-opens" wideLayout>
 				<QueryEmailStats
@@ -253,13 +228,7 @@ class StatsEmailOpenDetail extends Component {
 
 				<FixedNavigationHeader
 					navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }
-				>
-					{ showViewLink && (
-						<Button onClick={ this.openPreview }>
-							<span>{ actionLabel }</span>
-						</Button>
-					) }
-				</FixedNavigationHeader>
+				/>
 
 				{ ! isRequestingStats && ! countViews && (
 					<EmptyContent
@@ -320,7 +289,6 @@ class StatsEmailOpenDetail extends Component {
 						siteId={ siteId }
 						period={ period }
 						date={ queryDate }
-						moduleStrings={ moduleStrings.countries }
 					/>
 
 					<StatsEmailModule
@@ -330,7 +298,6 @@ class StatsEmailOpenDetail extends Component {
 						siteId={ siteId }
 						period={ period }
 						date={ queryDate }
-						moduleStrings={ moduleStrings.devices }
 					/>
 
 					<StatsEmailModule
@@ -340,7 +307,6 @@ class StatsEmailOpenDetail extends Component {
 						siteId={ siteId }
 						period={ period }
 						date={ queryDate }
-						moduleStrings={ moduleStrings.clients }
 					/>
 				</div>
 			</Main>

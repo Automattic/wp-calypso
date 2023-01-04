@@ -1000,7 +1000,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsPublicize( { bad: [] } ) ).toEqual( [] );
 			} );
 
-			test( 'should return an a properly parsed services array', () => {
+			test( 'should return a properly parsed services array', () => {
 				expect(
 					normalizers.statsPublicize( {
 						services: [
@@ -1090,7 +1090,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsVideo() ).toBeNull();
 			} );
 
-			test( 'should return an a properly parsed data array', () => {
+			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsVideo( {
 						data: [
@@ -1146,7 +1146,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsTopAuthors( {}, { period: 'day' } ) ).toEqual( [] );
 			} );
 
-			test( 'should return an a properly parsed data array', () => {
+			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsTopAuthors(
 						{
@@ -1234,7 +1234,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsTags( { bad: [] } ) ).toEqual( [] );
 			} );
 
-			test( 'should return an a properly parsed data array', () => {
+			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsTags( {
 						date: '2014-10-01',
@@ -1328,7 +1328,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsClicks( {}, { period: 'day' } ) ).toEqual( [] );
 			} );
 
-			test( 'should return an a properly parsed data array', () => {
+			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsClicks(
 						{
@@ -1393,7 +1393,7 @@ describe( 'utils', () => {
 				] );
 			} );
 
-			test( 'should return an a properly parsed summary data array', () => {
+			test( 'should return a properly parsed summary data array', () => {
 				expect(
 					normalizers.statsClicks(
 						{
@@ -1471,7 +1471,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsReferrers( {}, { period: 'day' } ) ).toEqual( [] );
 			} );
 
-			test( 'should return an a properly parsed summary data array', () => {
+			test( 'should return a properly parsed summary data array', () => {
 				expect(
 					normalizers.statsReferrers(
 						{
@@ -1556,7 +1556,7 @@ describe( 'utils', () => {
 				] );
 			} );
 
-			test( 'should return an a properly parsed data array', () => {
+			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsReferrers(
 						{
@@ -1648,7 +1648,7 @@ describe( 'utils', () => {
 		} );
 
 		describe( 'statsSearchTerms()', () => {
-			test( 'should return an empty array if not data is passed', () => {
+			test( 'should return an empty array if no data is passed', () => {
 				expect( normalizers.statsSearchTerms() ).toEqual( [] );
 			} );
 
@@ -1660,7 +1660,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsSearchTerms( {}, { period: 'day' } ) ).toEqual( [] );
 			} );
 
-			test( 'should return an a properly parsed data array', () => {
+			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsSearchTerms(
 						{
@@ -1697,22 +1697,15 @@ describe( 'utils', () => {
 						label: 'ribs',
 						value: 10,
 					},
-					{
-						label: 'Unknown Search Terms',
-						labelIcon: 'external',
-						link: 'https://wordpress.com/support/stats/#search-engine-terms',
-						value: 221,
-					},
 				] );
 			} );
 
-			test( 'should return an a properly parsed summarized data array', () => {
+			test( 'should return a properly parsed summarized data array', () => {
 				expect(
 					normalizers.statsSearchTerms(
 						{
 							date: '2017-01-12',
 							summary: {
-								encrypted_search_terms: 400,
 								search_terms: [
 									{
 										term: 'chicken',
@@ -1743,12 +1736,6 @@ describe( 'utils', () => {
 						label: 'ribs',
 						value: 100,
 					},
-					{
-						label: 'Unknown Search Terms',
-						labelIcon: 'external',
-						link: 'https://wordpress.com/support/stats/#search-engine-terms',
-						value: 400,
-					},
 				] );
 			} );
 		} );
@@ -1762,7 +1749,7 @@ describe( 'utils', () => {
 				expect( normalizers.statsVisits( { bad: [] } ) ).toEqual( [] );
 			} );
 
-			test( 'should return an a properly parsed data array', () => {
+			test( 'should return a properly parsed data array', () => {
 				expect(
 					normalizers.statsVisits( {
 						fields: [ 'period', 'views', 'visitors' ],

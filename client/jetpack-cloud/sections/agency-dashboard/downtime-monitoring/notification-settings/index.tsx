@@ -28,9 +28,16 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 	const [ enableEmailNotification, setEnableEmailNotification ] = useState< boolean >( false );
 	const [ selectedDuration, setSelectedDuration ] = useState< Duration | undefined >( undefined );
 	const [ addedEmailAddresses, setAddedEmailAddresses ] = useState< string[] | [] >( [] );
+	const [ validationError, setValidationError ] = useState< string >( '' );
 
 	function onSave( event: React.FormEvent< HTMLFormElement > ) {
 		event.preventDefault();
+		if ( ! enableMobileNotification && ! enableEmailNotification ) {
+			setValidationError( translate( 'Please select at least one contact method.' ) );
+		}
+		if ( enableEmailNotification && ! addedEmailAddresses.length ) {
+			setValidationError( translate( 'Please add at least one email recipient' ) );
+		}
 		// handle save here
 	}
 
@@ -54,13 +61,26 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 		}
 	}, [ settings?.monitor_notify_users_emails ] );
 
+	useEffect( () => {
+		if ( enableMobileNotification || enableEmailNotification ) {
+			setValidationError( '' );
+		}
+	}, [ enableMobileNotification, enableEmailNotification ] );
+
+	function handleAddEmail( recipients: Array< string > ) {
+		if ( recipients.length ) {
+			setValidationError( '' );
+		}
+		setAddedEmailAddresses( recipients );
+	}
+
 	const addEmailsContent = enableEmailNotification && (
 		<div className="notification-settings__email-container">
 			<TokenField
 				tokenizeOnSpace
 				placeholder={ translate( 'Enter email addresses' ) }
 				value={ addedEmailAddresses }
-				onChange={ setAddedEmailAddresses }
+				onChange={ handleAddEmail }
 			/>
 			<div className="notification-settings__email-condition">
 				{ translate( 'Separate with commas or the Enter key.' ) }
@@ -153,15 +173,27 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 					<div className="notification-settings__small-screen">{ addEmailsContent }</div>
 				</div>
 				<div className="notification-settings__footer">
-					<Button
-						onClick={ onClose }
-						aria-label={ translate( 'Cancel and close notification settings popup' ) }
-					>
-						{ translate( 'Cancel' ) }
-					</Button>
-					<Button type="submit" primary aria-label={ translate( 'Save notification settings' ) }>
-						{ translate( 'Save' ) }
-					</Button>
+					{ validationError && (
+						<div className="notification-settings__footer-validation-error">
+							{ validationError }
+						</div>
+					) }
+					<div className="notification-settings__footer-buttons">
+						<Button
+							onClick={ onClose }
+							aria-label={ translate( 'Cancel and close notification settings popup' ) }
+						>
+							{ translate( 'Cancel' ) }
+						</Button>
+						<Button
+							disabled={ !! validationError }
+							type="submit"
+							primary
+							aria-label={ translate( 'Save notification settings' ) }
+						>
+							{ translate( 'Save' ) }
+						</Button>
+					</div>
 				</div>
 			</form>
 		</Modal>

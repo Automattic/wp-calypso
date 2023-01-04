@@ -2,6 +2,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import statsStrings from 'calypso/my-sites/stats/stats-strings';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	getEmailStatsNormalizedData,
@@ -24,7 +25,7 @@ class StatsEmailModule extends Component {
 		data: PropTypes.array,
 		query: PropTypes.object,
 		statType: PropTypes.string,
-		moduleStrings: PropTypes.object,
+		requesting: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -35,6 +36,14 @@ class StatsEmailModule extends Component {
 	state = {
 		loaded: false,
 	};
+
+	constructor( props ) {
+		super( props );
+
+		if ( ! props.requesting ) {
+			this.state.loaded = true;
+		}
+	}
 
 	componentDidUpdate( prevProps ) {
 		if ( ! this.props.requesting && prevProps.requesting ) {
@@ -49,10 +58,10 @@ class StatsEmailModule extends Component {
 	}
 
 	render() {
-		const { path, data, postId, statType, query, moduleStrings } = this.props;
-
+		const { path, data, postId, statType, query } = this.props;
 		// Only show loading indicators when nothing is in state tree, and request in-flight
 		const isLoading = ! this.state.loaded && ! ( data && data.length );
+		const moduleStrings = statsStrings()[ path ];
 
 		// TODO: Support error state in redux store
 		const hasError = false;
@@ -83,7 +92,7 @@ export default connect( ( state, ownProps ) => {
 	const { postId, period, date, statType, path } = ownProps;
 
 	return {
-		requesting: isRequestingEmailStats( state, siteId, postId ),
+		requesting: isRequestingEmailStats( state, siteId, postId, period, statType ),
 		data: getEmailStatsNormalizedData( state, siteId, postId, period, date, statType, path ),
 		siteId,
 		postId,
