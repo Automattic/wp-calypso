@@ -124,7 +124,7 @@ export default function PromotedPosts( { tab }: Props ) {
 			<EmptyContent
 				className="campaigns-empty"
 				title={ translate( 'Site is not published' ) }
-				line={ translate( 'Start promoting posts by publishing your site' ) }
+				line={ translate( 'To start using Blaze, you must first publish your site.' ) }
 				illustration={ null }
 			/>
 		);
@@ -136,7 +136,7 @@ export default function PromotedPosts( { tab }: Props ) {
 				className="campaigns-empty"
 				title={ translate( 'Site is private' ) }
 				line={ translate(
-					'To start advertising, you must make your website public. You can do that from {{sitePrivacySettingsLink}}here{{/sitePrivacySettingsLink}}.',
+					'To start using Blaze, you must make your site public. You can do that from {{sitePrivacySettingsLink}}here{{/sitePrivacySettingsLink}}.',
 					{
 						components: {
 							sitePrivacySettingsLink: (
