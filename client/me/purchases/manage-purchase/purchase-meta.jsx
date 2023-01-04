@@ -76,6 +76,8 @@ export default function PurchaseMeta( {
 					siteSlug={ siteSlug }
 					getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+					renderRenewsOrExpiresOn={ renderRenewsOrExpiresOn }
+					renderRenewsOrExpiresOnLabel={ renderRenewsOrExpiresOnLabel }
 				/>
 				<PurchaseMetaPaymentDetails
 					purchase={ purchase }
@@ -97,6 +99,84 @@ PurchaseMeta.propTypes = {
 	getManagePurchaseUrlFor: PropTypes.func,
 	getChangePaymentMethodUrlFor: PropTypes.func,
 };
+
+function renderRenewsOrExpiresOn( {
+	moment,
+	purchase,
+	siteSlug,
+	translate,
+	getManagePurchaseUrlFor,
+} ) {
+	if ( isIncludedWithPlan( purchase ) ) {
+		const attachedPlanUrl = getManagePurchaseUrlFor( siteSlug, purchase.attachedToPurchaseId );
+
+		return (
+			<span>
+				<a href={ attachedPlanUrl }>{ translate( 'Renews with Plan' ) }</a>
+			</span>
+		);
+	}
+
+	if ( isExpiring( purchase ) || isExpired( purchase ) ) {
+		return moment( purchase.expiryDate ).format( 'LL' );
+	}
+
+	if ( isRenewing( purchase ) ) {
+		return moment( purchase.renewDate ).format( 'LL' );
+	}
+
+	if ( isOneTimePurchase( purchase ) ) {
+		return translate( 'Never Expires' );
+	}
+}
+
+function renderRenewsOrExpiresOnLabel( { purchase, translate } ) {
+	if ( isExpiring( purchase ) ) {
+		if ( isDomainRegistration( purchase ) ) {
+			return translate( 'Domain expires on' );
+		}
+
+		if ( isSubscription( purchase ) ) {
+			return translate( 'Subscription expires on' );
+		}
+
+		if ( isOneTimePurchase( purchase ) ) {
+			return translate( 'Expires on' );
+		}
+	}
+
+	if ( isExpired( purchase ) ) {
+		if ( isDomainRegistration( purchase ) ) {
+			return translate( 'Domain expired on' );
+		}
+
+		if ( isConciergeSession( purchase ) ) {
+			return translate( 'Session used on' );
+		}
+
+		if ( isSubscription( purchase ) ) {
+			return translate( 'Subscription expired on' );
+		}
+
+		if ( isOneTimePurchase( purchase ) ) {
+			return translate( 'Expired on' );
+		}
+	}
+
+	if ( isDomainRegistration( purchase ) ) {
+		return translate( 'Domain renews on' );
+	}
+
+	if ( isSubscription( purchase ) ) {
+		return translate( 'Subscription renews on' );
+	}
+
+	if ( isOneTimePurchase( purchase ) ) {
+		return translate( 'Renews on' );
+	}
+
+	return null;
+}
 
 function PurchaseMetaPlaceholder() {
 	return (
