@@ -9,6 +9,10 @@ export function getPlugin( state, pluginSlug ) {
 	return plugin ? { ...plugin } : plugin;
 }
 
+export function getPlugins( state, pluginSlugs ) {
+	return pluginSlugs.map( ( pluginSlug ) => getPlugin( state, pluginSlug ) );
+}
+
 export function isFetching( state, pluginSlug ) {
 	return state?.plugins.wporg.fetchingItems[ pluginSlug ] ?? false;
 }
@@ -21,6 +25,10 @@ export function hasError( state, pluginSlug ) {
 export function isFetched( state, pluginSlug ) {
 	const plugin = getPlugin( state, pluginSlug );
 	return plugin ? !! plugin.fetched : false;
+}
+
+export function areFetched( state, pluginSlugs ) {
+	return pluginSlugs.map( ( pluginSlug ) => isFetched( state, pluginSlug ) );
 }
 
 /**
