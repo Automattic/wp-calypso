@@ -79,7 +79,6 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 
 	return (
 		<Main fullWidthLayout className="themes">
-			<BodySectionCssClass section="themes" />
 			{ isNewDetailsAndPreview && (
 				<BodySectionCssClass bodyClass={ [ 'is-section-themes-i4-2' ] } />
 			) }
