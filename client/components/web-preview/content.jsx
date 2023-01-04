@@ -31,6 +31,7 @@ export default class WebPreviewContent extends Component {
 		loaded: false,
 		isLoadingSubpage: false,
 		isMobile: isWithinBreakpoint( '<660px' ),
+		showIFrameOverlay: false,
 	};
 
 	setIframeInstance = ( ref ) => {
@@ -410,6 +411,7 @@ export default class WebPreviewContent extends Component {
 								'is-resizable': ! this.props.isModalWindow,
 							} ) }
 						>
+							{ /* eslint-disable jsx-a11y/mouse-events-have-key-events */ }
 							<iframe
 								ref={ this.setIframeInstance }
 								className="web-preview__frame"
@@ -420,7 +422,23 @@ export default class WebPreviewContent extends Component {
 								fetchpriority={ fetchpriority ? fetchpriority : undefined }
 								scrolling={ autoHeight ? 'no' : undefined }
 								tabIndex={ disableTabbing ? -1 : 0 }
+								onMouseOver={ () => this.setState( { showIFrameOverlay: true } ) }
+								onMouseOut={ () =>
+									setTimeout( () => this.setState( { showIFrameOverlay: false } ), 150 )
+								}
 							/>
+							{ this.state.showIFrameOverlay && (
+								<div className="web-preview__frame-edit-overlay">
+									<button
+										className="web-preview__frame-edit-button"
+										onClick={ () => {
+											window.location.assign( `/site-editor/${ this.props.externalUrl }` );
+										} }
+									>
+										Edit
+									</button>
+								</div>
+							) }
 						</div>
 					) }
 					{ 'seo' === this.state.device && (
