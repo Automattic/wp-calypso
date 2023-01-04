@@ -6,14 +6,19 @@ $font-recoleta: Recoleta, $sans;
 $font-label: "SF Pro Text", $sans;
 $mobile-layout-breakpoint: $break-small;
 $common-border-radius: 4px;
-$tooltip-box-shadow-color: #0000000d;
+$mobile-container-margin: 16px;
 
 .post-trends {
 	display: inline-block;
 	user-select: none;
 	position: relative;
 	width: 100%;
-	margin: 0 0.875rem;
+
+}
+
+.post-trends__heading,
+.post-trends__wrapper {
+	margin: 0 $mobile-container-margin;
 
 	@media (min-width: 660px) {
 		margin: 0;
@@ -52,7 +57,6 @@ $tooltip-box-shadow-color: #0000000d;
 
 .post-trends__wrapper {
 	position: relative;
-	margin: 0 auto;
 	overflow: hidden;
 }
 
