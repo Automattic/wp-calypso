@@ -159,9 +159,7 @@ class StatsPostDetail extends Component {
 						) }
 					</FixedNavigationHeader>
 
-					{ isFeatured && (
-						<PostDetailHighlightsSection siteId={ siteId } postId={ postId } post={ post } />
-					) }
+					<PostDetailHighlightsSection siteId={ siteId } postId={ postId } post={ post } />
 
 					<StatsPlaceholder isLoading={ isLoading } />
 
@@ -180,34 +178,7 @@ class StatsPostDetail extends Component {
 					{ ! isLoading && countViews > 0 && (
 						<>
 							<PostSummary siteId={ siteId } postId={ postId } />
-
-							{ ! isFeatured && !! postId && (
-								<PostLikes siteId={ siteId } postId={ postId } postType={ postType } />
-							) }
-
-							{ isFeatured && <PostDetailTableSection siteId={ siteId } postId={ postId } /> }
-
-							{ ! isFeatured && (
-								<>
-									<PostMonths
-										dataKey="years"
-										title={ translate( 'Months and years' ) }
-										total={ translate( 'Total' ) }
-										siteId={ siteId }
-										postId={ postId }
-									/>
-
-									<PostMonths
-										dataKey="averages"
-										title={ translate( 'Average per day' ) }
-										total={ translate( 'Overall' ) }
-										siteId={ siteId }
-										postId={ postId }
-									/>
-
-									<PostWeeks siteId={ siteId } postId={ postId } />
-								</>
-							) }
+							<PostDetailTableSection siteId={ siteId } postId={ postId } />
 						</>
 					) }
 				</div>
@@ -241,10 +212,6 @@ class StatsPostDetail extends Component {
 					) }
 				</FixedNavigationHeader>
 
-				{ isFeatured && (
-					<PostDetailHighlightsSection siteId={ siteId } postId={ postId } post={ post } />
-				) }
-
 				<StatsPlaceholder isLoading={ isLoading } />
 
 				{ ! isLoading && countViews === 0 && (
@@ -262,34 +229,22 @@ class StatsPostDetail extends Component {
 				{ ! isLoading && countViews > 0 && (
 					<div>
 						<PostSummary siteId={ siteId } postId={ postId } />
-
-						{ ! isFeatured && !! postId && (
-							<PostLikes siteId={ siteId } postId={ postId } postType={ postType } />
-						) }
-
-						{ isFeatured && <PostDetailTableSection siteId={ siteId } postId={ postId } /> }
-
-						{ ! isFeatured && (
-							<>
-								<PostMonths
-									dataKey="years"
-									title={ translate( 'Months and years' ) }
-									total={ translate( 'Total' ) }
-									siteId={ siteId }
-									postId={ postId }
-								/>
-
-								<PostMonths
-									dataKey="averages"
-									title={ translate( 'Average per day' ) }
-									total={ translate( 'Overall' ) }
-									siteId={ siteId }
-									postId={ postId }
-								/>
-
-								<PostWeeks siteId={ siteId } postId={ postId } />
-							</>
-						) }
+						{ !! postId && <PostLikes siteId={ siteId } postId={ postId } postType={ postType } /> }
+						<PostMonths
+							dataKey="years"
+							title={ translate( 'Months and years' ) }
+							total={ translate( 'Total' ) }
+							siteId={ siteId }
+							postId={ postId }
+						/>
+						<PostMonths
+							dataKey="averages"
+							title={ translate( 'Average per day' ) }
+							total={ translate( 'Overall' ) }
+							siteId={ siteId }
+							postId={ postId }
+						/>
+						<PostWeeks siteId={ siteId } postId={ postId } />
 					</div>
 				) }
 
