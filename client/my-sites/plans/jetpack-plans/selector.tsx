@@ -125,7 +125,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 				dispatch( showMasterbar() );
 			}
 		},
-		[]
+		[ dispatch ]
 	);
 
 	const createProductURL = useMemo(
