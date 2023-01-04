@@ -1,3 +1,7 @@
+@import "@automattic/typography/styles/variables";
+
+$post-trends-box-shadow-color: #0000000d;
+
 .tooltip.popover {
 	.popover__arrow {
 		border-width: 6px;
@@ -194,6 +198,47 @@
 		.popover__inner {
 			color: var(--studio-white);
 			background: var(--studio-gray-100);
+		}
+	}
+
+	&.post-trends-day__tooltip {
+		&.is-top .popover__arrow {
+			border-top-color: var(--color-neutral-100);
+			box-shadow: 0 1px 2px $post-trends-box-shadow-color;
+		}
+
+		.popover__inner {
+			background-color: var(--color-neutral-100);
+			box-shadow: 0 1px 2px $post-trends-box-shadow-color;
+			border-radius: 4px;
+			padding: 16px 24px;
+
+			.post-trends__tooltip-content {
+				.post-date,
+				.post-count {
+					font-family: var(--p2-font-inter);
+					font-size: 14px; // stylelint-disable-line declaration-property-unit-allowed-list
+					line-height: 20px;
+					letter-spacing: -0.24px;
+					color: var(--studio-white);
+				}
+
+				.post-date {
+					font-weight: 600;
+				}
+
+				.post-count {
+					margin-top: 14px;
+					display: flex;
+					align-items: center;
+					font-weight: 500;
+					fill: var(--studio-white);
+
+					.post-count-icon {
+						margin-right: 12px;
+					}
+				}
+			}
 		}
 	}
 }
