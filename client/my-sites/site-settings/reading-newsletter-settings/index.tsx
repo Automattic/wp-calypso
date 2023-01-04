@@ -1,9 +1,9 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { EmailsTextSetting } from './EmailsTextSetting';
 import { ExcerptSetting } from './ExcerptSetting';
 import { FeaturedImageEmailSetting } from './FeaturedImageEmailSetting';
-import { WelcomeEmailTextSetting } from './WelcomeEmailTextSetting';
 
 type Fields = {
 	wpcom_featured_image_in_email?: boolean;
@@ -49,7 +49,7 @@ export const NewsletterSettingsSection = ( {
 				isSaving={ isSavingSettings }
 			/>
 			<Card className="site-settings__card">
-				<WelcomeEmailTextSetting
+				<EmailsTextSetting
 					value={ subscription_options }
 					updateFields={ updateFields }
 					disabled={ disabled }

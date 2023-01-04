@@ -4,7 +4,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 
-type WelcomeEmailTextSettingProps = {
+type EmailsTextSettingProps = {
 	value?: {
 		invitation: string;
 		comment_follow: string;
@@ -17,11 +17,11 @@ type SubscriptionOption = {
 	[ key: string ]: string;
 };
 
-export const WelcomeEmailTextSetting = ( {
+export const EmailsTextSetting = ( {
 	value,
 	disabled,
 	updateFields,
-}: WelcomeEmailTextSettingProps ) => {
+}: EmailsTextSettingProps ) => {
 	const translate = useTranslate();
 
 	const onChangeFieldSubscriptionOptions =
