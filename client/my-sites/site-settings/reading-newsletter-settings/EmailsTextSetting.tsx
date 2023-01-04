@@ -17,25 +17,23 @@ type SubscriptionOption = {
 	[ key: string ]: string;
 };
 
-export const EmailsTextSetting = ( {
-	value,
-	disabled,
-	updateFields,
-}: EmailsTextSettingProps ) => {
+export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsTextSettingProps ) => {
 	const translate = useTranslate();
 
-	const onChangeFieldSubscriptionOptions =
-		( field: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
-			const textFieldValue = event.target.value;
+	const updateSubscriptionOptions =
+		( option: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
+			const textAreaValue = event.target.value;
+			const currentSubscriptionOptions = value;
 
-			const newValue: SubscriptionOption = {};
-			newValue[ field ] = textFieldValue;
+			const newSubscriptionOption: SubscriptionOption = {};
+			newSubscriptionOption[ option ] = textAreaValue;
 
-			const valueToSave = { ...value, ...newValue };
+			const mergedOptions = { ...currentSubscriptionOptions, ...newSubscriptionOption };
+			const fieldToUpdate = {
+				subscription_options: mergedOptions,
+			};
 
-			updateFields( {
-				[ 'subscription_options' ]: valueToSave,
-			} );
+			updateFields( fieldToUpdate );
 		};
 
 	return (
@@ -46,7 +44,7 @@ export const EmailsTextSetting = ( {
 					name=""
 					id=""
 					value={ value?.invitation }
-					onChange={ onChangeFieldSubscriptionOptions( 'invitation' ) }
+					onChange={ updateSubscriptionOptions( 'invitation' ) }
 					disabled={ disabled }
 					autoCapitalize="none"
 					onClick={ null }
@@ -64,7 +62,7 @@ export const EmailsTextSetting = ( {
 					name=""
 					id=""
 					value={ value?.comment_follow }
-					onChange={ onChangeFieldSubscriptionOptions( 'comment_follow' ) }
+					onChange={ updateSubscriptionOptions( 'comment_follow' ) }
 					disabled={ disabled }
 					autoCapitalize="none"
 					onClick={ null }
