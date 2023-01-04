@@ -169,17 +169,9 @@ function removeUserStepFromFlow( flow ) {
 		return;
 	}
 
-	const steps = [];
-	for ( const curStep of flow.steps ) {
-		if ( stepConfig[ curStep ].providesToken ) {
-			continue;
-		}
-		steps.push( curStep );
-	}
-
 	return {
 		...flow,
-		steps,
+		steps: flow.steps.filter( ( stepName ) => ! stepConfig[ stepName ].providesToken ),
 	};
 }
 
