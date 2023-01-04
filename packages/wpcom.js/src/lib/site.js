@@ -394,8 +394,16 @@ class Site {
 	 */
 	statsEmailOpens( postId, query, fn ) {
 		const path = `${ this.path }/stats/opens/emails/${ postId }`;
-		query.stats_fields = 'timeline,country'; // Possible values: timeline,client,country,device
-		return this.wpcom.req.get( path, query, fn );
+		const statFields = [ 'timeline', 'country' ];
+		return Promise.all(
+			statFields.map( ( field ) =>
+				this.wpcom.req.get( path, { ...query, stats_fields: field }, fn )
+			)
+		).then( ( statsArray ) =>
+			statsArray.reduce( ( result, item ) => {
+				return { ...result, ...item };
+			}, {} )
+		);
 	}
 
 	/**
