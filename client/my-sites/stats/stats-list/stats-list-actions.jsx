@@ -79,14 +79,20 @@ function useActionItems( { data, moduleName } ) {
  * Render a list of `action` icons based on action array from a list item.
  * Possible types: External Link redirect, Specific page statistics redirect, Spam, Promote, Follow.
  */
-const StatsListActions = ( { data, moduleName, children, isMobileMenuVisible, onClick } ) => {
+const StatsListActions = ( {
+	data,
+	moduleName,
+	children,
+	isMobileMenuVisible,
+	onMobileMenuClick,
+} ) => {
 	const translate = useTranslate();
 	const actionItems = useActionItems( { data, moduleName } );
 
 	return actionItems?.length || children ? (
 		<>
 			<button
-				onClick={ onClick }
+				onClick={ onMobileMenuClick }
 				className={ classNames( 'stats-list-actions__mobile-toggle', {
 					'stats-list-actions__mobile-toggle--expanded': isMobileMenuVisible,
 				} ) }

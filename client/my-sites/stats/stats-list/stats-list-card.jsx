@@ -65,7 +65,7 @@ const StatsListCard = ( {
 				moduleName={ moduleType }
 				isMobileMenuVisible={ isVisible }
 				inStatsListCard
-				onClick={ ( event ) => toggleMobileMenu( event, isVisible, key ) }
+				onMobileMenuClick={ ( event ) => toggleMobileMenu( event, isVisible, key ) }
 			>
 				{ item?.link && (
 					<OpenLink href={ item.link } key={ `link-${ key }` } moduleName={ moduleType } />
