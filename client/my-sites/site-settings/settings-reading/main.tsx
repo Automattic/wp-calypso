@@ -72,7 +72,7 @@ type Fields = {
 	rss_use_excerpt?: boolean;
 	wpcom_featured_image_in_email?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
-	subscription_settings?: {
+	subscription_options?: {
 		invitation: string;
 		comment_follow: string;
 	};
