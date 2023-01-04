@@ -1,11 +1,17 @@
+import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
-import { ONBOARD_STORE } from '../stores';
+import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
-import { Flow, ProvidedDependencies } from './internals/types';
+import {
+	AssertConditionResult,
+	AssertConditionState,
+	Flow,
+	ProvidedDependencies,
+} from './internals/types';
 
 const wooExpressTrialFlow: Flow = {
 	name: 'wooexpress-trial',
@@ -15,6 +21,45 @@ const wooExpressTrialFlow: Flow = {
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'processing', component: ProcessingStep },
 		];
+	},
+	useAssertConditions(): AssertConditionResult {
+		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
+
+		const flags = new URLSearchParams( window.location.search ).get( 'flags' );
+		const flowName = this.name;
+		const locale = useLocale();
+
+		const getStartUrl = () => {
+			let hasFlowParams = false;
+			const flowParams = new URLSearchParams();
+
+			if ( locale && locale !== 'en' ) {
+				flowParams.set( 'locale', locale );
+				hasFlowParams = true;
+			}
+
+			const redirectTarget =
+				`/setup/wooexpress-trial/processing` +
+				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
+			const url =
+				locale && locale !== 'en'
+					? `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=${ redirectTarget }`
+					: `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
+
+			return url + ( flags ? `&flags=${ flags }` : '' );
+		};
+
+		if ( ! userIsLoggedIn ) {
+			const logInUrl = getStartUrl();
+			window.location.assign( logInUrl );
+			result = {
+				state: AssertConditionState.FAILURE,
+				message: 'store-setup requires a logged in user',
+			};
+		}
+
+		return result;
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
