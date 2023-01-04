@@ -5,12 +5,14 @@ import WordPressLogo from 'calypso/components/wordpress-logo';
 interface ThemePreviewModalNavigationProps {
 	title: string;
 	titleBadge?: React.ReactNode | null;
+	actionButtons: React.ReactNode;
 	onClose: () => void;
 }
 
 const ThemePreviewModalNavigation: React.FC< ThemePreviewModalNavigationProps > = ( {
 	title,
 	titleBadge,
+	actionButtons,
 	onClose,
 } ) => {
 	const translate = useTranslate();
@@ -26,7 +28,7 @@ const ThemePreviewModalNavigation: React.FC< ThemePreviewModalNavigationProps > 
 				{ title }
 				{ titleBadge }
 			</div>
-			<div className="theme-preview-modal__navigation-action"></div>
+			<div className="theme-preview-modal__navigation-action">{ actionButtons }</div>
 		</div>
 	);
 };

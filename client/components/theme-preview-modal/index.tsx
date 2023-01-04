@@ -2,7 +2,6 @@ import { RootChild } from '@automattic/components';
 import { PremiumBadge, WooCommerceBundledBadge } from '@automattic/design-picker';
 import { useEffect, useMemo, useState } from '@wordpress/element';
 import classnames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
@@ -36,7 +35,6 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 	actionButtons,
 	onClose,
 } ) => {
-	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) || -1;
 	const isThemePremium = useSelector( ( state ) => getIsThemePremium( state, theme.id ) );
 	const isExternallyManagedTheme = useSelector( ( state ) =>
@@ -98,25 +96,6 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 		setSelectedStyleVariation( variation );
 	}
 
-	function showGlobalStylesPremiumBadge() {
-		if ( ! shouldLimitGlobalStyles ) {
-			return null;
-		}
-
-		return (
-			<PremiumBadge
-				className="design-picker__premium-badge"
-				labelText={ translate( 'Upgrade' ) }
-				tooltipClassName="theme-preview-tooltip"
-				tooltipPosition="top"
-				tooltipContent={ translate(
-					'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
-				) }
-				focusOnShow={ false }
-			/>
-		);
-	}
-
 	return (
 		<RootChild>
 			<div
@@ -128,6 +107,7 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 				<ThemePreviewModalNavigation
 					title={ theme.name }
 					titleBadge={ badge }
+					actionButtons={ actionButtons }
 					onClose={ onClose }
 				/>
 				<div className="theme-preview-modal__content">
@@ -146,7 +126,7 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 						selectedVariation={ selectedStyleVariation }
 						onSelectVariation={ previewDesignVariation }
 						actionButtons={ actionButtons }
-						showGlobalStylesPremiumBadge={ showGlobalStylesPremiumBadge }
+						showGlobalStylesPremiumBadge={ shouldLimitGlobalStyles }
 					/>
 				</div>
 			</div>
