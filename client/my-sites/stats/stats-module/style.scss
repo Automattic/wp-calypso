@@ -450,12 +450,12 @@ ul.module-header-actions {
 		.stats-module & td.has-no-data:hover, // 1
 		tbody tr:hover td,
 		tbody tr:hover th {
-			background: var(--color-neutral-0);
+			background: var(--color-primary-0);
 		}
 
 		.stats-module & td.highest-count:hover,
 		tbody tr td:hover {
-			background: var(--color-neutral-0);
+			background: var(--color-primary-0);
 			color: var(--color-neutral-70);
 		}
 	}
