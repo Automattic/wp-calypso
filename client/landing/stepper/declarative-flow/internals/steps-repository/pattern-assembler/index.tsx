@@ -11,10 +11,12 @@ import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
+import { useThemeDetails } from '../../../../hooks/use-theme-details';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
+import { useAllPatterns } from './patterns-data';
 import { encodePatternId, createCustomHomeTemplateContent } from './utils';
 import type { Step } from '../../types';
 import type { Pattern } from './types';
@@ -40,6 +42,10 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
+	const allPatterns = useAllPatterns();
+	const { data: theme } = useThemeDetails( selectedDesign?.slug );
+	const themeDemoSiteSlug =
+		theme && theme.demo_uri.replace( /^https?:\/\//, '' ).replace( '/', '' );
 
 	useEffect( () => {
 		// Require to start the flow from the first step
@@ -357,6 +363,10 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 		</div>
 	);
 
+	if ( ! selectedDesign || ! themeDemoSiteSlug ) {
+		return null;
+	}
+
 	return (
 		<>
 			<DocumentHead title={ translate( 'Design your home' ) } />
@@ -368,7 +378,21 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 				isHorizontalLayout={ false }
 				isFullLayout={ true }
 				hideSkip={ true }
-				stepContent={ stepContent }
+				stepContent={
+					isEnabled( 'pattern-assembler/client-side-render' ) ? (
+						<AsyncLoad
+							require="./pattern-assembler-container"
+							placeholder={ null }
+							siteId={ themeDemoSiteSlug }
+							stylesheet={ selectedDesign?.recipe?.stylesheet }
+							patternIds={ allPatterns.map( ( pattern ) => encodePatternId( pattern.id ) ) }
+						>
+							{ stepContent }
+						</AsyncLoad>
+					) : (
+						stepContent
+					)
+				}
 				recordTracksEvent={ recordTracksEvent }
 				stepSectionName={ showPatternSelectorType ? 'pattern-selector' : undefined }
 			/>
