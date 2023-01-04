@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { Modal, ToggleControl } from '@wordpress/components';
+import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
@@ -70,6 +71,11 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 	function handleAddEmail( recipients: Array< string > ) {
 		if ( recipients.length ) {
 			setValidationError( '' );
+			recipients.forEach( ( recipient ) => {
+				if ( ! emailValidator.validate( recipient ) ) {
+					setValidationError( translate( 'Please enter a valid email address.' ) );
+				}
+			} );
 		}
 		setAddedEmailAddresses( recipients );
 	}
