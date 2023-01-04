@@ -39,10 +39,10 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 	return (
 		<>
 			<FormFieldset>
-				<FormLabel>Welcome email text</FormLabel>
+				<FormLabel htmlFor="welcome_email_text">Welcome email text</FormLabel>
 				<FormTextarea
-					name=""
-					id=""
+					name="welcome_email_text"
+					id="welcome_email_text"
 					value={ value?.invitation }
 					onChange={ updateSubscriptionOptions( 'invitation' ) }
 					disabled={ disabled }
@@ -57,10 +57,10 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 				</FormSettingExplanation>
 			</FormFieldset>
 			<FormFieldset>
-				<FormLabel>Comment follow email text</FormLabel>
+				<FormLabel htmlFor="comment_follow_email_text">Comment follow email text</FormLabel>
 				<FormTextarea
-					name=""
-					id=""
+					name="comment_follow_email_text"
+					id="comment_follow_email_text"
 					value={ value?.comment_follow }
 					onChange={ updateSubscriptionOptions( 'comment_follow' ) }
 					disabled={ disabled }
