@@ -1,12 +1,15 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import CloudCart from 'calypso/jetpack-cloud/sections/pricing/jpcom-masterbar/cloud-cart';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import { preventWidows } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { GUARANTEE_DAYS } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';
 import './style.scss';
+import { isJetpackCloudCartEnabled } from 'calypso/state/sites/selectors';
 import guaranteeBadge from './14-day-badge.svg';
 import people from './people.svg';
 
@@ -15,6 +18,7 @@ const CLOUD_MASTERBAR_HEIGHT = 0;
 
 const IntroPricingBanner: React.FC = () => {
 	const translate = useTranslate();
+	const shouldShowCart = useSelector( isJetpackCloudCartEnabled );
 
 	const windowBoundaryOffset = useMemo( () => {
 		if ( isJetpackCloud() || isConnectStore() ) {
@@ -62,6 +66,7 @@ const IntroPricingBanner: React.FC = () => {
 							{ preventWidows( translate( 'Explore Jetpack for Agencies' ) ) }
 						</a>
 					</div>
+					{ shouldShowCart && hasCrossed && <CloudCart /> }
 				</div>
 			</div>
 		</>

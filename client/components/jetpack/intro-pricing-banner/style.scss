@@ -84,6 +84,14 @@
 	top: 0;
 }
 
+.is-section-jetpack-connect .intro-pricing-banner.is-sticky,
+.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing .intro-pricing-banner.is-sticky .header__jetpack-masterbar-cart {
+	position: absolute;
+	right: 10%;
+	display: inline-flex;
+}
+
+
 // target Calypso pricing filter bar, not jetpack cloud
 .is-group-sites.is-section-plans .intro-pricing-banner.is-sticky {
 	// At this screen size, the left sidebar is 228px;

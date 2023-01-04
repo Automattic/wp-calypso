@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import './EmptyCart.scss';
+import './empty-cart.scss';
 
 const EmptyCart: React.FC = () => {
 	const translate = useTranslate();
