@@ -1,6 +1,5 @@
 import { createSelector } from '@automattic/state-utils';
 import { get } from 'lodash';
-
 import 'calypso/state/stats/init';
 
 /**
@@ -84,14 +83,39 @@ export const getSiteEmail = createSelector(
  * Returns the stat value for the specified site ID,
  * email ID and stat key
  *
- * @param  {object}  state  Global state tree
- * @param  {number}  siteId Site ID
- * @param  {number}  postId Email Id
- * @returns {*}              Stat value
+ * @param  {object}  state    Global state tree
+ * @param  {number}  siteId   Site ID
+ * @param  {number}  postId   Email Id
+ * @param  {string}  period   Period
+ * @param  {string}  statType Stat type
+ * @returns {*}               Stat value
  */
 export function getEmailStat( state, siteId, postId, period, statType ) {
 	const stats = state.stats.emails
 		? get( state.stats.emails.items, [ siteId, postId, period, statType ], null )
 		: null;
 	return stats ? Object.keys( stats ).map( ( key ) => stats[ key ] ) : null;
+}
+
+/**
+ * Returns the email stats for the specified site ID,
+ * post ID, period, date and stat key
+ *
+ * @param  {object}  state   Global state tree
+ * @param  {number}  siteId  Site ID
+ * @param  {number}  postId  Email Id
+ * @param  {string} period   Period
+ * @param  {string} date     Date
+ * @param  {string} statType Stat type
+ * @param {string} path      Path
+ * @returns {*}              Normalized data
+ */
+export function getEmailStatsNormalizedData( state, siteId, postId, period, date, statType, path ) {
+	const stats = state.stats.emails.items
+		? get( state.stats.emails.items, [ siteId, postId, period, statType ], null )
+		: null;
+	if ( stats ) {
+		return Object.values( stats ).find( ( stat ) => stat.period === date )?.[ path ];
+	}
+	return [];
 }

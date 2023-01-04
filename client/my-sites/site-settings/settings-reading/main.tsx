@@ -14,8 +14,12 @@ import wrapSettingsForm from '../wrap-settings-form';
 const isEnabled = config.isEnabled( 'settings/modernize-reading-settings' );
 
 type Settings = {
+	jetpack_relatedposts_enabled?: boolean;
+	jetpack_relatedposts_show_headline?: boolean;
+	jetpack_relatedposts_show_thumbnails?: boolean;
 	posts_per_page?: boolean;
 	posts_per_rss?: boolean;
+	rss_use_excerpt?: boolean;
 	wpcom_featured_image_in_email?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
 };
@@ -26,15 +30,23 @@ const getFormSettings = ( settings: Settings ) => {
 	}
 
 	const {
+		jetpack_relatedposts_enabled,
+		jetpack_relatedposts_show_headline,
+		jetpack_relatedposts_show_thumbnails,
 		posts_per_page,
 		posts_per_rss,
+		rss_use_excerpt,
 		wpcom_featured_image_in_email,
 		wpcom_subscription_emails_use_excerpt,
 	} = settings;
 
 	return {
+		...( jetpack_relatedposts_enabled && { jetpack_relatedposts_enabled } ),
+		...( jetpack_relatedposts_show_headline && { jetpack_relatedposts_show_headline } ),
+		...( jetpack_relatedposts_show_thumbnails && { jetpack_relatedposts_show_thumbnails } ),
 		...( posts_per_page && { posts_per_page } ),
 		...( posts_per_rss && { posts_per_rss } ),
+		...( rss_use_excerpt && { rss_use_excerpt } ),
 		...( wpcom_featured_image_in_email && { wpcom_featured_image_in_email } ),
 		...( wpcom_subscription_emails_use_excerpt && { wpcom_subscription_emails_use_excerpt } ),
 	};
@@ -51,6 +63,7 @@ const connectComponent = connect( ( state ) => {
 type Fields = {
 	posts_per_page?: number;
 	posts_per_rss?: number;
+	rss_use_excerpt?: boolean;
 	wpcom_featured_image_in_email?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
 };
@@ -84,14 +97,17 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 					<SiteSettingsSection
 						fields={ fields }
 						onChangeField={ onChangeField }
+						handleToggle={ handleToggle }
 						handleSubmitForm={ handleSubmitForm }
 						disabled={ disabled }
+						isRequestingSettings={ isRequestingSettings }
 						isSavingSettings={ isSavingSettings }
 					/>
 					<RssFeedSettingsSection
 						fields={ fields }
 						onChangeField={ onChangeField }
 						handleSubmitForm={ handleSubmitForm }
+						updateFields={ updateFields }
 						disabled={ disabled }
 						isSavingSettings={ isSavingSettings }
 						siteUrl={ siteUrl }

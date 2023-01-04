@@ -12,6 +12,7 @@
  */
 
 const path = require( 'path' );
+const base = require( '@automattic/calypso-jest' );
 // @wordpress/scripts manually adds additional Jest config ontop of
 // @wordpress/jest-preset-default so we pull in this file to extend it
 const defaults = require( '@wordpress/scripts/config/jest-unit.config.js' );
@@ -21,6 +22,7 @@ const defaults = require( '@wordpress/scripts/config/jest-unit.config.js' );
 const pluginRoot = path.resolve( './' );
 
 const config = {
+	...base,
 	...defaults,
 	rootDir: path.normalize( '../../' ), // To detect wp-calypso root node_modules
 	testMatch: [ `${ pluginRoot }/**/?(*.)test.[jt]s?(x)` ],

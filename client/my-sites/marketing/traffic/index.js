@@ -74,7 +74,7 @@ const SiteSettingsTraffic = ( {
 		{ isAdmin && (
 			<RelatedPosts
 				onSubmitForm={ handleSubmitForm }
-				handleAutosavingToggle={ handleAutosavingToggle }
+				handleToggle={ handleAutosavingToggle }
 				isSavingSettings={ isSavingSettings }
 				isRequestingSettings={ isRequestingSettings }
 				fields={ fields }

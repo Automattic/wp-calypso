@@ -893,11 +893,6 @@ export const normalizers = {
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const dataPath = query.summarize ? [ 'summary' ] : [ 'days', startOf ];
 		const searchTerms = get( data, dataPath.concat( [ 'search_terms' ] ), [] );
-		const encryptedSearchTerms = get(
-			data,
-			dataPath.concat( [ 'encrypted_search_terms' ] ),
-			false
-		);
 
 		const result = searchTerms.map( ( day ) => {
 			return {
@@ -906,15 +901,6 @@ export const normalizers = {
 				value: day.views,
 			};
 		} );
-
-		if ( encryptedSearchTerms ) {
-			result.push( {
-				label: translate( 'Unknown Search Terms' ),
-				value: encryptedSearchTerms,
-				link: 'https://wordpress.com/support/stats/#search-engine-terms',
-				labelIcon: 'external',
-			} );
-		}
 
 		return result;
 	},
@@ -952,16 +938,19 @@ export const normalizers = {
 	 *
 	 * @param   {object} data   Stats data
 	 * @param   {object} query  Stats query
+	 * @param   {number} siteId  Site ID
+	 * @param   {object} site    Site object
 	 * @returns {Array}       Normalized stats data
 	 */
-	statsEmailsOpen( data, query = {} ) {
+	statsEmailsOpen( data, query = {}, siteId, site ) {
 		if ( ! data || ! query.period || ! query.date ) {
 			return [];
 		}
-		const { startOf } = rangeOfPeriod( query.period, query.date );
-		const emailsData = get( data, [ 'days', startOf, 'email_opens' ], [] );
+
+		const emailsData = get( data, [ 'posts' ], [] );
 
 		return emailsData.map( ( { id, href, date, title, type, opens } ) => {
+			const detailPage = site ? `/stats/email/open/${ site.slug }/${ query.period }/${ id }` : null;
 			return {
 				id,
 				href,
@@ -969,6 +958,13 @@ export const normalizers = {
 				label: title,
 				type,
 				value: opens || '0',
+				page: detailPage,
+				actions: [
+					{
+						type: 'link',
+						data: href,
+					},
+				],
 			};
 		} );
 	},
@@ -1013,5 +1009,35 @@ export function parseEmailChartData( payload, nullAttributes = [] ) {
 			Object.assign( dataRecord, getChartLabels( payload.unit, date, localizedDate ) );
 		}
 		return dataRecord;
+	} );
+}
+
+/**
+ * Return data in a format used by 'components/stats/geochart` for email stats. The fields array is matched to
+ * the data in a single object.
+ *
+ * @param {Array} countries - the array of countries for the given data
+ * @param {object} countriesInfo - an object containing information about the countries
+ * @returns {Array} - Array of data objects
+ */
+export function parseEmailCountriesData( countries, countriesInfo ) {
+	if ( ! countries || ! countriesInfo ) {
+		return [];
+	}
+
+	return countries.map( function ( country ) {
+		const info = countriesInfo[ country[ 0 ] ];
+		if ( ! info ) {
+			return {};
+		}
+
+		const { country_full, map_region } = info;
+
+		return {
+			countryCode: country[ 0 ],
+			label: country_full,
+			region: map_region,
+			value: parseInt( country[ 1 ], 10 ),
+		};
 	} );
 }

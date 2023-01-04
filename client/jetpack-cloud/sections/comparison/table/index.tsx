@@ -9,6 +9,7 @@ import StoreItemInfoContext, {
 } from 'calypso/my-sites/plans/jetpack-plans/product-store/context/store-item-info-context';
 import { useProductLightbox } from 'calypso/my-sites/plans/jetpack-plans/product-store/hooks/use-product-lightbox';
 import { useStoreItemInfo } from 'calypso/my-sites/plans/jetpack-plans/product-store/hooks/use-store-item-info';
+import { ItemPrice } from 'calypso/my-sites/plans/jetpack-plans/product-store/item-price';
 import { MoreInfoLink } from 'calypso/my-sites/plans/jetpack-plans/product-store/more-info-link';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -57,6 +58,9 @@ export const Table: React.FC = () => {
 							>
 								{ isFree ? translate( 'Get started' ) : getCtaLabel( item, '' ) }
 							</Button>
+
+							{ ! isFree && <ItemPrice item={ item } siteId={ null } /> }
+
 							{ isFree ? (
 								<span className="more-info-link">{ translate( 'Get started for free' ) }</span>
 							) : (

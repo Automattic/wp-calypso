@@ -291,7 +291,7 @@ class StatsSite extends Component {
 								period={ this.props.period }
 								query={ query }
 								statType="statsEmailsOpen"
-								showSummaryLink
+								hideSummaryLink
 								showNewModules
 							/>
 						) }
@@ -378,7 +378,12 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
-				<PromoCards isJetpack={ isJetpack } isOdysseyStats={ isOdysseyStats } slug={ slug } />
+				<PromoCards
+					isJetpack={ isJetpack }
+					isOdysseyStats={ isOdysseyStats }
+					pageSlug="traffic"
+					slug={ slug }
+				/>
 				<JetpackColophon />
 			</div>
 		);

@@ -3,6 +3,7 @@ import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect, useSelector } from 'react-redux';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	recordDSPEntryPoint,
 	usePromoteWidget,
@@ -62,6 +63,7 @@ function PostActionsEllipsisMenuPromote( {
 
 	const showDSPWidget = () => {
 		dispatch( recordDSPEntryPoint( bumpStatKey ) );
+		recordTracksEvent( 'calypso_post_type_list_blaze' );
 		openModal();
 	};
 
