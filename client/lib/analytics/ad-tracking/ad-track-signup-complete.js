@@ -159,7 +159,15 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 	// Twitter
 
 	if ( mayWeTrackByTracker( 'twitter' ) ) {
-		const params = [ 'track', 'Signup', {} ];
+		const params = [
+			'event',
+			'tw-nvzbs-ode0f',
+			{
+				value: syntheticCart.total_cost,
+				currency: syntheticCart.currency,
+				conversion_id: syntheticOrderId,
+			},
+		];
 		debug( 'recordSignup: [Twitter]', params );
 		window.twq( ...params );
 	}
