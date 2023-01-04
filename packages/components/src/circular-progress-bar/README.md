@@ -1,7 +1,7 @@
 # Launchpad: Circular Progress Bar
 
 This component is used to display a circular progress bar as part of the cohesive Launchpad Experience and is only meant to be used in the context of Launchpad.
-See https://cylonp2.wordpress.com/2022/12/14/a-cohesive-launchpad-experience/
+See <https://cylonp2.wordpress.com/2022/12/14/a-cohesive-launchpad-experience>
 It displays a gray circle and another blue circle on top of it showing the progress.
 It renders text in the center in the center: X/Y where X is the current step and Y is the total number of steps
 The currentStep and numberOfSteps props are used to calculate represent the current progress as a fraction
