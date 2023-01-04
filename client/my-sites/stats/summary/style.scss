@@ -5,4 +5,9 @@
 			margin-right: 32px;
 		}
 	}
+
+	tbody tr:nth-child(odd),
+	.is-fixed-row-header tbody > tr:nth-child(odd) > th {
+		background-color: var(--studio-gray-0);
+	}
 }
