@@ -9,7 +9,7 @@ interface SidebarProps {
 	selectedVariation?: StyleVariation;
 	onSelectVariation: ( variation: StyleVariation ) => void;
 	actionButtons: React.ReactNode;
-	showGlobalStylesPremiumBadge: () => React.ReactNode;
+	showGlobalStylesPremiumBadge: boolean;
 }
 
 const Sidebar: React.FC< SidebarProps > = ( {

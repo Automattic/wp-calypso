@@ -18,7 +18,6 @@ import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
-import PremiumBadge from 'calypso/components/premium-badge';
 import WebPreview from 'calypso/components/web-preview/content';
 import { useSiteVerticalQueryById } from 'calypso/data/site-verticals';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -527,22 +526,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		recordTracksEvent( eventName, tracksProps );
 	}
 
-	function showGlobalStylesPremiumBadge() {
-		if ( ! shouldLimitGlobalStyles ) {
-			return null;
-		}
-
-		return (
-			<PremiumBadge
-				className="design-picker__premium-badge"
-				labelText={ translate( 'Upgrade' ) }
-				tooltipText={ translate(
-					'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
-				) }
-			/>
-		);
-	}
-
 	function getPrimaryActionButton( pickDesignText: ReactChild ) {
 		if ( shouldUpgrade ) {
 			return (
@@ -633,7 +616,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 						onSelectVariation={ previewDesignVariation }
 						actionButtons={ actionButtons }
 						recordDeviceClick={ recordDeviceClick }
-						showGlobalStylesPremiumBadge={ showGlobalStylesPremiumBadge }
+						showGlobalStylesPremiumBadge={ shouldLimitGlobalStyles }
 					/>
 				) : (
 					<WebPreview
