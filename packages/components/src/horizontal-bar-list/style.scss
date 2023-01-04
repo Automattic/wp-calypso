@@ -31,8 +31,15 @@
 			background-color: var(--theme-highlight-color);
 			color: var(--studio-white);
 
-			svg {
-				fill: var(--studio-white);
+			@media (min-width: 481px) {
+				svg {
+					fill: var(--studio-white);
+				}
+
+				a,
+				button {
+					color: var(--studio-white);
+				}
 			}
 
 			.horizontal-bar-list--hover-action {
@@ -43,6 +50,19 @@
 				color: var(--studio-white);
 			}
 
+			.stats-list-actions__mobile-toggle {
+				.stats-icon {
+					fill: var(--studio-white);
+				}
+			}
+		}
+
+		.stats-list-actions__mobile-toggle {
+			&:focus {
+				.stats-icon {
+					outline: dotted 1px var(--studio-white);
+				}
+			}
 		}
 	}
 
