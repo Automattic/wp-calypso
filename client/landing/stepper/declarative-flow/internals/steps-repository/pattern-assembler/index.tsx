@@ -1,4 +1,3 @@
-import { BlockRendererProvider, PatternsRendererProvider } from '@automattic/block-renderer';
 import { isEnabled } from '@automattic/calypso-config';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -381,20 +380,15 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 				hideSkip={ true }
 				stepContent={
 					isEnabled( 'pattern-assembler/client-side-render' ) ? (
-						<BlockRendererProvider
+						<AsyncLoad
+							require="./pattern-assembler-container"
+							placeholder={ null }
 							siteId={ themeDemoSiteSlug }
 							stylesheet={ selectedDesign?.recipe?.stylesheet }
+							patternIds={ allPatterns.map( ( pattern ) => encodePatternId( pattern.id ) ) }
 						>
-							<PatternsRendererProvider
-								// Use theme demo site to render the site-related blocks for now.
-								// For example, site logo, site title, site tagline, posts.
-								siteId={ themeDemoSiteSlug }
-								stylesheet={ selectedDesign?.recipe?.stylesheet }
-								patternIds={ allPatterns.map( ( pattern ) => encodePatternId( pattern.id ) ) }
-							>
-								{ stepContent }
-							</PatternsRendererProvider>
-						</BlockRendererProvider>
+							{ stepContent }
+						</AsyncLoad>
 					) : (
 						stepContent
 					)
