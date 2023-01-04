@@ -52,8 +52,6 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 					onChange={ updateSubscriptionOptions( 'invitation' ) }
 					disabled={ disabled }
 					autoCapitalize="none"
-					onClick={ null }
-					onKeyPress={ null }
 				/>
 				<FormSettingExplanation>
 					{ translate(
@@ -70,8 +68,6 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 					onChange={ updateSubscriptionOptions( 'comment_follow' ) }
 					disabled={ disabled }
 					autoCapitalize="none"
-					onClick={ null }
-					onKeyPress={ null }
 				/>
 				<FormSettingExplanation>
 					{ translate( 'The email sent out when someone follows one of your posts.' ) }
