@@ -60,8 +60,6 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 						'The welcome message sent out to new readers when they subscribe to your blog.'
 					) }
 				</FormSettingExplanation>
-			</FormFieldset>
-			<FormFieldset>
 				<FormLabel htmlFor="comment_follow_email_text">
 					{ translate( 'Comment follow email text' ) }
 				</FormLabel>

@@ -680,9 +680,12 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 .site-settings__emails-test-settings-container {
 	legend {
 		font-weight: 400;
-		margin-bottom: 32px;
+		margin-bottom: 0;
 	}
 	legend + label {
 		font-weight: 700;
+	}
+	label {
+		margin-top: 24px;
 	}
 }
