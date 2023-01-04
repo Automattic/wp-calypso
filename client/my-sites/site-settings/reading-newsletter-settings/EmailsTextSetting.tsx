@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormLegend from 'calypso/components/forms/form-legend';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 
@@ -37,8 +38,12 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 		};
 
 	return (
-		<>
+		<div className="site-settings__emails-test-settings-container">
 			<FormFieldset>
+				{ /* @ts-expect-error FormLegend is not typed and is causing errors */ }
+				<FormLegend>
+					These settings change the emails sent from your site to your readers
+				</FormLegend>
 				<FormLabel htmlFor="welcome_email_text">{ translate( 'Welcome email text' ) }</FormLabel>
 				<FormTextarea
 					name="welcome_email_text"
@@ -74,6 +79,6 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 					{ translate( 'The email sent out when someone follows one of your posts.' ) }
 				</FormSettingExplanation>
 			</FormFieldset>
-		</>
+		</div>
 	);
 };
