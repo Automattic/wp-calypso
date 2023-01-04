@@ -20,6 +20,12 @@
 		@include break-large {
 			height: 52px;
 		}
+
+
+		@media (max-width: $break-mobile) {
+			justify-content: flex-start;
+			padding-left: 15px;
+		}
 	}
 }
 
@@ -89,6 +95,11 @@
 	position: absolute;
 	right: 10%;
 	display: inline-flex;
+
+	@media (max-width: 960px) {
+		top: 14px;
+	}
+
 }
 
 
