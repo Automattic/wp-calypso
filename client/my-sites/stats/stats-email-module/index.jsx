@@ -1,3 +1,4 @@
+import isShallowEqual from '@wordpress/is-shallow-equal';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -51,7 +52,7 @@ class StatsEmailModule extends Component {
 			this.setState( { loaded: true } );
 		}
 
-		if ( this.props.query !== prevProps.query && this.state.loaded ) {
+		if ( ! isShallowEqual( this.props.query, prevProps.query ) && this.state.loaded ) {
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { loaded: false } );
 		}
@@ -62,7 +63,6 @@ class StatsEmailModule extends Component {
 		// Only show loading indicators when nothing is in state tree, and request in-flight
 		const isLoading = ! this.state.loaded && ! ( data && data.length );
 		const moduleStrings = statsStrings()[ path ];
-
 		// TODO: Support error state in redux store
 		const hasError = false;
 
