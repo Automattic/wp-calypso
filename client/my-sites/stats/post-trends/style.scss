@@ -200,3 +200,30 @@ $mobile-container-margin: 16px;
 		padding-right: 0;
 	}
 }
+
+.post-trends__tooltip-content {
+	.post-date,
+	.post-count {
+		font-family: var(--p2-font-inter);
+		font-size: 14px; // stylelint-disable-line declaration-property-unit-allowed-list
+		line-height: 20px;
+		letter-spacing: -0.24px;
+		color: var(--studio-white);
+	}
+
+	.post-date {
+		font-weight: 600;
+	}
+
+	.post-count {
+		margin-top: 14px;
+		display: flex;
+		align-items: center;
+		font-weight: 500;
+		fill: var(--studio-white);
+
+		.post-count-icon {
+			margin-right: 12px;
+		}
+	}
+}
