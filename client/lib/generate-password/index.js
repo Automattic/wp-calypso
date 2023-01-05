@@ -1,31 +1,32 @@
 // inspired from https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
 const randomInt = ( lower, upper ) => Math.floor( lower + Math.random() * ( upper - lower + 1 ) );
 
-// inspired from https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_sample
-const sample = ( arr ) =>
-	arr.length ? arr[ Math.floor( Math.random() * arr.length ) ] : undefined;
+/**
+ * Generate a cryptographically secure random password.
+ *
+ * This is just as secure as using the `generate-password` AJAX endpoint, but faster, and avoids introducing the
+ * possibility of XHR failures, etc.
+ *
+ * @returns {string}
+ */
+export function generatePassword() {
+	const characterPool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
+	const passwordLength = randomInt( 16, 35 );
+	const randomNumber = new Uint8Array( 1 );
+	let password = '';
 
-const LETTER_CHARSETS = [
-	'abcdefghjkmnpqrstuvwxyz'.split( '' ),
-	'ABCDEFGHJKMNPQRSTUVWXYZ'.split( '' ),
-];
+	// JS doesn't provide a way to generate a cryptographically secure random number within a range, so instead
+	// we just throw out values that don't correspond to a character. This is a little bit slower than using a
+	// modulo operation, but it avoids introducing bias in the distribution. Realistically, it's easily performant
+	// in this context.
+	// @link https://dimitri.xyz/random-ints-from-random-bits/
+	for ( let i = 0; i < passwordLength; i++ ) {
+		do {
+			crypto.getRandomValues( randomNumber );
+		} while ( randomNumber[ 0 ] >= characterPool.length );
 
-const CHARSETS = [ ...LETTER_CHARSETS, '23456789'.split( '' ), '!@#$%^&*'.split( '' ) ];
-
-export const generatePassword = function () {
-	const length = randomInt( 12, 35 );
-	const chars = Object.keys( CHARSETS ).map( ( charset ) => {
-		return sample( CHARSETS[ charset ] );
-	} );
-
-	for ( let i = 0; i < length; i++ ) {
-		if ( 0 === i % 4 ) {
-			chars.push( sample( sample( LETTER_CHARSETS ) ) );
-		} else {
-			// Get a random character from a random character set
-			chars.push( sample( sample( CHARSETS ) ) );
-		}
+		password += characterPool[ randomNumber[ 0 ] ];
 	}
 
-	return chars.join( '' );
-};
+	return password;
+}
