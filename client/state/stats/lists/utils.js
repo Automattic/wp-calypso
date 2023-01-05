@@ -1054,10 +1054,18 @@ export function parseEmailListData( list ) {
 		return [];
 	}
 
-	return list.map( function ( item ) {
+	const result = list.map( function ( item ) {
 		return {
 			label: item[ 0 ],
 			value: parseInt( item[ 1 ], 10 ),
 		};
 	} );
+
+	// Add item with label == Other to end of the list
+	const otherItem = result.find( ( item ) => item.label === 'Other' );
+	if ( otherItem ) {
+		result.splice( result.indexOf( otherItem ), 1 );
+		result.push( otherItem );
+	}
+	return result;
 }
