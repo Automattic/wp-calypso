@@ -57,17 +57,20 @@ export function requestEmailStats( siteId, postId, period, date, statType, quant
 			.statsEmailOpens( postId, { period, quantity, date } )
 			.then( ( stats ) => {
 				const emailChartData = parseEmailChartData( stats.timeline, [] );
-				const emailStats = emailChartData.map( ( item ) => {
-					return {
-						...item,
+
+				// create an object from emailStats with period as the key
+				const emailStatsObject = emailChartData.reduce( ( obj, item ) => {
+					obj[ item.period ] = {
+						chart: item,
 						countries: parseEmailCountriesData(
 							stats.countries[ item.period ],
 							stats[ 'countries-info' ]
 						),
 					};
-				} );
+					return obj;
+				}, {} );
 
-				dispatch( receiveEmailStats( siteId, postId, period, statType, emailStats ) );
+				dispatch( receiveEmailStats( siteId, postId, period, statType, emailStatsObject ) );
 				dispatch( {
 					type: EMAIL_STATS_REQUEST_SUCCESS,
 					siteId,
