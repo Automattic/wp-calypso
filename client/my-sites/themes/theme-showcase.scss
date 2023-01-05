@@ -3,7 +3,7 @@
 
 $theme-img-filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.05));
 
-body.is-section-themes-i4 {
+body.is-section-themes {
 	&.theme-default.color-scheme {
 		--color-surface-backdrop: #fdfdfd;
 	}
@@ -12,11 +12,9 @@ body.is-section-themes-i4 {
 		padding-top: var(--masterbar-height);
 	}
 
-	.theme__filters {
-		margin-top: 24px;
-		padding: 0;
-	}
+}
 
+.theme-showcase {
 	.themes__selection .themes-list {
 		margin: 32px -16px 0;
 
@@ -278,11 +276,6 @@ body.is-section-themes-i4-2 {
 	}
 }
 
-.banner.themes__showcase-banner {
-	margin-top: 15px;
-	margin-bottom: 15px;
-}
-
 .theme-showcase__open-showcase-button-holder {
 	margin: 20px 0;
 	display: flex;
@@ -320,11 +313,11 @@ body.is-section-themes-i4-2 {
 	flex-wrap: wrap;
 	gap: 24px;
 	justify-content: center;
-	padding: 16px 0 24px;
+	margin-top: 24px;
+	padding: 0;
 
 	@include break-small {
 		flex-direction: row;
-		padding: 24px 0 32px;
 	}
 
 	.themes-toolbar-group {

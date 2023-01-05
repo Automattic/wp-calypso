@@ -2,30 +2,13 @@ import { Icon, moreHorizontalMobile } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import titlecase from 'to-title-case';
 import Follow from './action-follow';
 import OpenLink from './action-link';
 import Page from './action-page';
 import Promote from './action-promote';
 import Spam from './action-spam';
-
-function useStatefulMobileMenu() {
-	const [ isMobileMenuVisible, setIsMobileMenuVisible ] = useState( false );
-	const toggleMobileMenu = useCallback(
-		( event ) => {
-			event.stopPropagation();
-			event.preventDefault();
-			setIsMobileMenuVisible( ! isMobileMenuVisible );
-		},
-		[ isMobileMenuVisible, setIsMobileMenuVisible ]
-	);
-	return {
-		isMobileMenuVisible,
-		setIsMobileMenuVisible,
-		toggleMobileMenu,
-	};
-}
 
 function useActionItems( { data, moduleName } ) {
 	return useMemo( () => {
@@ -96,15 +79,20 @@ function useActionItems( { data, moduleName } ) {
  * Render a list of `action` icons based on action array from a list item.
  * Possible types: External Link redirect, Specific page statistics redirect, Spam, Promote, Follow.
  */
-const StatsListActions = ( { data, moduleName, children } ) => {
+const StatsListActions = ( {
+	data,
+	moduleName,
+	children,
+	isMobileMenuVisible,
+	onMobileMenuClick,
+} ) => {
 	const translate = useTranslate();
 	const actionItems = useActionItems( { data, moduleName } );
-	const { isMobileMenuVisible, toggleMobileMenu } = useStatefulMobileMenu();
 
 	return actionItems?.length || children ? (
 		<>
 			<button
-				onClick={ toggleMobileMenu }
+				onClick={ onMobileMenuClick }
 				className={ classNames( 'stats-list-actions__mobile-toggle', {
 					'stats-list-actions__mobile-toggle--expanded': isMobileMenuVisible,
 				} ) }
