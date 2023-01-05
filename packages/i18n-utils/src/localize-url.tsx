@@ -4,7 +4,6 @@ import { useCallback, ComponentType } from 'react';
 import { useLocale } from './locale-context';
 import {
 	localesWithBlog,
-	localesWithGoBlog,
 	localesWithPrivacyPolicy,
 	localesWithCookiePolicy,
 	localesToSubdomains,
@@ -115,7 +114,6 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 	'wordpress.com/support/': prefixLocalizedUrlPath( supportSiteLocales ),
 	'wordpress.com/forums/': prefixLocalizedUrlPath( forumLocales ),
 	'wordpress.com/blog/': prefixLocalizedUrlPath( localesWithBlog, /^\/blog\/?$/ ),
-	'wordpress.com/go/': prefixLocalizedUrlPath( localesWithGoBlog, /^\/go\/?$/ ),
 	'wordpress.com/tos/': prefixLocalizedUrlPath( magnificentNonEnLocales ),
 	'wordpress.com/wp-admin/': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
 	'wordpress.com/wp-login.php': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
