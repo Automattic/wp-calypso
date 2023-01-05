@@ -1,5 +1,6 @@
 import './nav-style.scss';
-import { useTranslate } from 'i18n-calypso';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
@@ -10,6 +11,8 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 
 const UniversalNavbarHeader = () => {
 	const translate = useTranslate();
+	const localizeUrl = useLocalizeUrl();
+	const locale = getLocaleSlug();
 	const [ isMobileMenuOpen, setMobileMenuOpen ] = useState( false );
 	const sectionName = useSelector( getSectionName );
 
@@ -17,7 +20,9 @@ const UniversalNavbarHeader = () => {
 		{
 			ref: sectionName + '-lp',
 		},
-		sectionName === 'plugins' ? '/start/business' : '/start'
+		sectionName === 'plugins'
+			? localizeUrl( '//wordpress.com/start/business', locale, false )
+			: localizeUrl( '//wordpress.com/start', locale, false )
 	);
 
 	return (
@@ -56,35 +61,35 @@ const UniversalNavbarHeader = () => {
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'WordPress Hosting' ) }
 													elementContent={ translate( 'WordPress Hosting' ) }
-													urlValue="//wordpress.com/hosting/"
+													urlValue={ localizeUrl( '//wordpress.com/hosting/' ) }
 													type="dropdown"
 													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Domain Names' ) }
 													elementContent={ translate( 'Domain Names' ) }
-													urlValue="//wordpress.com/domains/"
+													urlValue={ localizeUrl( '//wordpress.com/domains/' ) }
 													type="dropdown"
 													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Website Builder' ) }
 													elementContent={ translate( 'Website Builder' ) }
-													urlValue="//wordpress.com/website-builder/"
+													urlValue={ localizeUrl( '//wordpress.com/website-builder/' ) }
 													type="dropdown"
 													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Create a Blog' ) }
 													elementContent={ translate( 'Create a Blog' ) }
-													urlValue="//wordpress.com/create-blog/"
+													urlValue={ localizeUrl( '//wordpress.com/create-blog/' ) }
 													type="dropdown"
 													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Professional Email' ) }
 													elementContent={ translate( 'Professional Email' ) }
-													urlValue="//wordpress.com/professional-email/"
+													urlValue={ localizeUrl( '//wordpress.com/professional-email/' ) }
 													type="dropdown"
 													target="_self"
 												/>
@@ -116,7 +121,7 @@ const UniversalNavbarHeader = () => {
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Features' ) }
 													elementContent={ translate( 'Overview' ) }
-													urlValue="//wordpress.com/features/"
+													urlValue={ localizeUrl( '//wordpress.com/features/' ) }
 													type="dropdown"
 													target="_self"
 												/>
@@ -126,19 +131,19 @@ const UniversalNavbarHeader = () => {
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'WordPress Themes' ) }
 													elementContent={ translate( 'WordPress Themes' ) }
-													urlValue="//wordpress.com/themes"
+													urlValue={ localizeUrl( '//wordpress.com/themes', locale, false ) }
 													type="dropdown"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'WordPress Plugins' ) }
 													elementContent={ translate( 'WordPress Plugins' ) }
-													urlValue="//wordpress.com/plugins"
+													urlValue={ localizeUrl( '//wordpress.com/plugins', locale, false ) }
 													type="dropdown"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Google Apps' ) }
 													elementContent={ translate( 'Google Apps' ) }
-													urlValue="//wordpress.com/google/"
+													urlValue={ localizeUrl( '//wordpress.com/google/' ) }
 													type="dropdown"
 													target="_self"
 												/>
@@ -161,48 +166,48 @@ const UniversalNavbarHeader = () => {
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Support' ) }
 													elementContent={ translate( 'WordPress.com Support' ) }
-													urlValue="//en.support.wordpress.com/"
+													urlValue={ localizeUrl( '//wordpress.com/support/' ) }
 													type="dropdown"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'News' ) }
 													elementContent={ translate( 'News' ) }
-													urlValue="//wordpress.com/blog/"
+													urlValue={ localizeUrl( '//wordpress.com/blog/' ) }
 													type="dropdown"
 													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Website Building Tips' ) }
 													elementContent={ translate( 'Website Building Tips' ) }
-													urlValue="//wordpress.com/go/"
+													urlValue={ localizeUrl( '//wordpress.com/go/' ) }
 													type="dropdown"
 													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Business Name Generator' ) }
 													elementContent={ translate( 'Business Name Generator' ) }
-													urlValue="//wordpress.com/business-name-generator/"
+													urlValue={ localizeUrl( '//wordpress.com/business-name-generator/' ) }
 													type="dropdown"
 													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Logo Maker' ) }
 													elementContent={ translate( 'Logo Maker' ) }
-													urlValue="//wordpress.com/logo-maker/"
+													urlValue={ localizeUrl( '//wordpress.com/logo-maker/' ) }
 													type="dropdown"
 													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'Daily Webinars' ) }
 													elementContent={ translate( 'Daily Webinars' ) }
-													urlValue="//wordpress.com/webinars/"
+													urlValue={ localizeUrl( '//wordpress.com/webinars/' ) }
 													type="dropdown"
 													target="_self"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'WordPress Courses' ) }
 													elementContent={ translate( 'WordPress Courses' ) }
-													urlValue="//wordpress.com/courses/"
+													urlValue={ localizeUrl( '//wordpress.com/courses/' ) }
 													type="dropdown"
 													target="_self"
 												/>
@@ -213,7 +218,7 @@ const UniversalNavbarHeader = () => {
 										className="x-nav-item x-nav-item__wide"
 										titleValue={ translate( 'Plans & Pricing' ) }
 										elementContent={ translate( 'Plans & Pricing' ) }
-										urlValue="//wordpress.com/pricing/"
+										urlValue={ localizeUrl( '//wordpress.com/pricing/' ) }
 										type="nav"
 										target="_self"
 									/>
@@ -223,7 +228,7 @@ const UniversalNavbarHeader = () => {
 										className="x-nav-item x-nav-item__wide"
 										titleValue={ translate( 'Log In' ) }
 										elementContent={ translate( 'Log In' ) }
-										urlValue="/log-in"
+										urlValue={ localizeUrl( '//wordpress.com/log-in', locale, false ) }
 										type="nav"
 									/>
 									<UniversalNavbarLiMenuItem
@@ -288,7 +293,7 @@ const UniversalNavbarHeader = () => {
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'Log In' ) }
 										elementContent={ translate( 'Log In' ) }
-										urlValue="/log-in"
+										urlValue={ localizeUrl( '/log-in', locale, false ) }
 										type="menu"
 									/>
 								</ul>
@@ -299,7 +304,7 @@ const UniversalNavbarHeader = () => {
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'Plans & Pricing' ) }
 										elementContent={ translate( 'Plans & Pricing' ) }
-										urlValue="//wordpress.com/pricing/"
+										urlValue={ localizeUrl( '//wordpress.com/pricing/' ) }
 										type="menu"
 									/>
 								</ul>
@@ -310,31 +315,31 @@ const UniversalNavbarHeader = () => {
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'WordPress Hosting' ) }
 										elementContent={ translate( 'WordPress Hosting' ) }
-										urlValue="//wordpress.com/hosting/"
+										urlValue={ localizeUrl( '//wordpress.com/hosting/' ) }
 										type="menu"
 									/>
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'Domain Names' ) }
 										elementContent={ translate( 'Domain Names' ) }
-										urlValue="//wordpress.com/domains/"
+										urlValue={ localizeUrl( '//wordpress.com/domains/' ) }
 										type="menu"
 									/>
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'Website Builder' ) }
 										elementContent={ translate( 'Website Builder' ) }
-										urlValue="//wordpress.com/website-builder/"
+										urlValue={ localizeUrl( '//wordpress.com/website-builder/' ) }
 										type="menu"
 									/>
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'Create a Blog' ) }
 										elementContent={ translate( 'Create a Blog' ) }
-										urlValue="//wordpress.com/create-blog/"
+										urlValue={ localizeUrl( '//wordpress.com/create-blog/' ) }
 										type="menu"
 									/>
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'Professional Email' ) }
 										elementContent={ translate( 'Professional Email' ) }
-										urlValue="//wordpress.com/professional-email/"
+										urlValue={ localizeUrl( '//wordpress.com/professional-email/' ) }
 										type="menu"
 									/>
 									<UniversalNavbarLiMenuItem
@@ -351,7 +356,7 @@ const UniversalNavbarHeader = () => {
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'Features' ) }
 										elementContent={ translate( 'Overview' ) }
-										urlValue="//wordpress.com/features/"
+										urlValue={ localizeUrl( '//wordpress.com/features/' ) }
 										type="menu"
 									/>
 								</ul>
@@ -359,19 +364,19 @@ const UniversalNavbarHeader = () => {
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'WordPress Themes' ) }
 										elementContent={ translate( 'WordPress Themes' ) }
-										urlValue="//wordpress.com/themes"
+										urlValue={ localizeUrl( '//wordpress.com/themes', locale, false ) }
 										type="menu"
 									/>
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'WordPress Plugins' ) }
 										elementContent={ translate( 'WordPress Plugins' ) }
-										urlValue="//wordpress.com/plugins"
+										urlValue={ localizeUrl( '//wordpress.com/plugins', locale, false ) }
 										type="menu"
 									/>
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'Google Apps' ) }
 										elementContent={ translate( 'Google Apps' ) }
-										urlValue="//wordpress.com/google/"
+										urlValue={ localizeUrl( '//wordpress.com/google/' ) }
 										type="menu"
 									/>
 								</ul>
@@ -382,43 +387,43 @@ const UniversalNavbarHeader = () => {
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'Support' ) }
 										elementContent={ translate( 'WordPress.com Support' ) }
-										urlValue="//en.support.wordpress.com/"
+										urlValue={ localizeUrl( '//wordpress.com/support/' ) }
 										type="menu"
 									/>
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'News' ) }
 										elementContent={ translate( 'News' ) }
-										urlValue="//wordpress.com/blog/"
+										urlValue={ localizeUrl( '//wordpress.com/blog/' ) }
 										type="menu"
 									/>
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'Website Building Tips' ) }
 										elementContent={ translate( 'Website Building Tips' ) }
-										urlValue="//wordpress.com/go/"
+										urlValue={ localizeUrl( '//wordpress.com/go/' ) }
 										type="menu"
 									/>
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'Business Name Generator' ) }
 										elementContent={ translate( 'Business Name Generator' ) }
-										urlValue="//wordpress.com/business-name-generator/"
+										urlValue={ localizeUrl( '//wordpress.com/business-name-generator/' ) }
 										type="menu"
 									/>
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'Logo Maker' ) }
 										elementContent={ translate( 'Logo Maker' ) }
-										urlValue="//wordpress.com/logo-maker/"
+										urlValue={ localizeUrl( '//wordpress.com/logo-maker/' ) }
 										type="menu"
 									/>
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'Daily Webinars' ) }
 										elementContent={ translate( 'Daily Webinars' ) }
-										urlValue="//wordpress.com/webinars/"
+										urlValue={ localizeUrl( '//wordpress.com/webinars/' ) }
 										type="menu"
 									/>
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'WordPress Courses' ) }
 										elementContent={ translate( 'WordPress Courses' ) }
-										urlValue="//wordpress.com/courses/"
+										urlValue={ localizeUrl( '//wordpress.com/courses/' ) }
 										type="menu"
 									/>
 								</ul>
