@@ -3,6 +3,7 @@ import { NEWSLETTER_FLOW, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import WebPreview from 'calypso/components/web-preview/component';
+import { useSitePreviewShareCode } from 'calypso/landing/stepper/hooks/use-site-preview-share-code';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import PreviewToolbar from '../design-setup/preview-toolbar';
 import type { Device } from '@automattic/components';
@@ -27,12 +28,16 @@ const LaunchpadSitePreview = ( {
 		defaultDevice = windowWidth >= 1000 ? DEVICE_TYPES.COMPUTER : DEVICE_TYPES.PHONE;
 	}
 
+	const { shareCode, isPreviewLinksLoading, isCreatingSitePreviewLinks } =
+		useSitePreviewShareCode();
+
 	function formatPreviewUrl() {
-		if ( ! previewUrl ) {
+		if ( ! previewUrl || isPreviewLinksLoading || isCreatingSitePreviewLinks ) {
 			return null;
 		}
 
 		return addQueryArgs( previewUrl, {
+			...( shareCode && { share: shareCode } ),
 			iframe: true,
 			theme_preview: true,
 			// hide the "Create your website with WordPress.com" banner
