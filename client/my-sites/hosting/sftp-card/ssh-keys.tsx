@@ -33,7 +33,11 @@ const sshKeyAttachFailureNoticeId = 'ssh-key-attach-failure';
 function SshKeys( { siteId, siteSlug, username, disabled }: SshKeysProps ) {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
-	const { data: keys, isLoading: isLoadingKeys } = useAtomicSshKeys( siteId, {
+	const {
+		data: keys,
+		isLoading: isLoadingKeys,
+		isFetching: isFetchingKeys,
+	} = useAtomicSshKeys( siteId, {
 		enabled: ! disabled,
 	} );
 	const { data: userKeys, isLoading: isLoadingUserKeys } = useSSHKeyQuery();
@@ -96,6 +100,7 @@ function SshKeys( { siteId, siteSlug, username, disabled }: SshKeysProps ) {
 					sshKey={ sshKey }
 					deleteText={ __( 'Detach' ) }
 					siteId={ siteId }
+					disabled={ isFetchingKeys }
 				/>
 			) ) }
 
