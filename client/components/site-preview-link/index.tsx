@@ -60,6 +60,7 @@ export default function SitePreviewLink( {
 			const validLinksLength = linksResponse?.filter( ( link ) => ! link.isRemoving ).length || 0;
 			setChecked( validLinksLength > 0 );
 		},
+		isEnabled: true,
 	} );
 
 	const { createLink, isLoading: isCreating } = useCreateSitePreviewLink( {
