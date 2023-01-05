@@ -1,5 +1,4 @@
 /* eslint-disable no-console, import/no-nodejs-modules */
-import { SecretsManager } from '@automattic/calypso-e2e';
 const { createWriteStream } = require( 'fs' );
 const { mkdir } = require( 'fs/promises' );
 const path = require( 'path' );
@@ -83,11 +82,9 @@ describe( 'User Can log in', () => {
 
 	// eslint-disable-next-line jest/expect-expect
 	it( 'Log in', async function () {
-		const credentials = SecretsManager.secrets.desktopAppUser;
-
-		await mainWindow.fill( '#usernameOrEmail', credentials.username );
+		await mainWindow.fill( '#usernameOrEmail', process.env.E2EGUTENBERGUSER );
 		await mainWindow.keyboard.press( 'Enter' );
-		await mainWindow.fill( '#password', credentials.password );
+		await mainWindow.fill( '#password', process.env.E2EPASSWORD );
 
 		// Wait for response from the Login endpoint.
 		const [ response ] = await Promise.all( [
