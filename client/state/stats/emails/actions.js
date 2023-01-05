@@ -5,7 +5,11 @@ import {
 	EMAIL_STATS_REQUEST_FAILURE,
 	EMAIL_STATS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import { parseEmailChartData, parseEmailCountriesData } from 'calypso/state/stats/lists/utils';
+import {
+	parseEmailChartData,
+	parseEmailCountriesData,
+	parseEmailListData,
+} from 'calypso/state/stats/lists/utils';
 
 import 'calypso/state/stats/init';
 
@@ -66,6 +70,8 @@ export function requestEmailStats( siteId, postId, period, date, statType, quant
 							stats.countries[ item.period ],
 							stats[ 'countries-info' ]
 						),
+						devices: parseEmailListData( stats.devices[ item.period ] ),
+						clients: parseEmailListData( stats.clients[ item.period ] ),
 					};
 					return obj;
 				}, {} );

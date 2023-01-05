@@ -1,14 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.themes__header {
-	display: flex;
-
-	.themes__page-heading {
-		width: 100%;
-	}
-}
-
 .themes__install-theme-button-container {
 	margin: auto;
 	margin-right: 16px;
@@ -27,7 +19,7 @@
 	margin: 0;
 }
 
-body.is-section-themes-i4 .themes__header {
+.themes__header {
 	align-items: flex-end;
 	border-bottom: 1px solid var(--color-neutral-5);
 	box-sizing: border-box;
@@ -51,6 +43,8 @@ body.is-section-themes-i4 .themes__header {
 	}
 
 	.themes__page-heading {
+		width: 100%;
+
 		h1 {
 			color: var(--color-neutral-100);
 			font-size: $font-title-small;

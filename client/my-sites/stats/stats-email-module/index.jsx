@@ -1,3 +1,4 @@
+import isShallowEqual from '@wordpress/is-shallow-equal';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -25,7 +26,6 @@ class StatsEmailModule extends Component {
 		data: PropTypes.array,
 		query: PropTypes.object,
 		statType: PropTypes.string,
-		translate: PropTypes.func,
 		requesting: PropTypes.bool,
 	};
 
@@ -52,29 +52,27 @@ class StatsEmailModule extends Component {
 			this.setState( { loaded: true } );
 		}
 
-		if ( this.props.query !== prevProps.query && this.state.loaded ) {
+		if ( ! isShallowEqual( this.props.query, prevProps.query ) && this.state.loaded ) {
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { loaded: false } );
 		}
 	}
 
 	render() {
-		const { path, data, postId, statType, query, useShortLabel } = this.props;
-		const moduleStrings = statsStrings();
-
+		const { path, data, postId, statType, query } = this.props;
 		// Only show loading indicators when nothing is in state tree, and request in-flight
 		const isLoading = ! this.state.loaded && ! ( data && data.length );
-
+		const moduleStrings = statsStrings()[ path ];
 		// TODO: Support error state in redux store
 		const hasError = false;
 
 		return (
 			<>
 				<StatsListCard
+					title={ moduleStrings.title }
 					moduleType={ path }
 					data={ data }
-					useShortLabel={ useShortLabel }
-					emptyMessage={ moduleStrings.countries.empty }
+					emptyMessage={ moduleStrings.empty }
 					error={ hasError && <ErrorPanel /> }
 					loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
 					heroElement={

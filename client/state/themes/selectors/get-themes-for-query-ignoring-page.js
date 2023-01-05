@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { createSelector } from '@automattic/state-utils';
 import { flatMap } from 'lodash';
 import {
@@ -52,7 +51,7 @@ export const getThemesForQueryIgnoringPage = createSelector(
 		}
 
 		// Set active theme to be the first theme in the array.
-		if ( isEnabled( 'themes/showcase-i4/search-and-filter' ) && selectedSiteId ) {
+		if ( selectedSiteId ) {
 			const currentThemeId = getActiveTheme( state, selectedSiteId );
 			const currentTheme = getCanonicalTheme( state, selectedSiteId, currentThemeId );
 			const index = themesForQueryIgnoringPage.findIndex(

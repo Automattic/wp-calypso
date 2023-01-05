@@ -1,5 +1,4 @@
 import { getUrlParts } from '@automattic/calypso-url';
-import { Button } from '@automattic/components';
 import { Icon, people } from '@wordpress/icons';
 import { localize, translate } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -17,7 +16,7 @@ import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
-import StatsEmailCountries from 'calypso/my-sites/stats/stats-email-countries';
+import StatsEmailModule from 'calypso/my-sites/stats/stats-email-module';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import {
@@ -37,6 +36,9 @@ import ChartTabs from '../stats-email-chart-tabs';
 import { StatsNoContentBanner } from '../stats-no-content-banner';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
+
+import './style.scss';
+
 function getPageUrl() {
 	return getUrlParts( page.current );
 }
@@ -160,18 +162,6 @@ class StatsEmailOpenDetail extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
-	openPreview = () => {
-		this.setState( {
-			showPreview: true,
-		} );
-	};
-
-	closePreview = () => {
-		this.setState( {
-			showPreview: false,
-		} );
-	};
-
 	getTitle() {
 		const { isLatestEmailsHomepage, email, emailFallback } = this.props;
 
@@ -209,19 +199,9 @@ class StatsEmailOpenDetail extends Component {
 	};
 
 	render() {
-		const {
-			isRequestingStats,
-			countViews,
-			postId,
-			siteId,
-			showViewLink,
-			date,
-			slug,
-			isSitePrivate,
-		} = this.props;
+		const { isRequestingStats, countViews, postId, siteId, date, slug, isSitePrivate } = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
-		const actionLabel = translate( 'View Email' );
 		const noViewsLabel = translate( 'Your email has not received any views yet!' );
 
 		const { period, endOf } = this.props.period;
@@ -248,13 +228,7 @@ class StatsEmailOpenDetail extends Component {
 
 				<FixedNavigationHeader
 					navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }
-				>
-					{ showViewLink && (
-						<Button onClick={ this.openPreview }>
-							<span>{ actionLabel }</span>
-						</Button>
-					) }
-				</FixedNavigationHeader>
+				/>
 
 				{ ! isRequestingStats && ! countViews && (
 					<EmptyContent
@@ -306,12 +280,35 @@ class StatsEmailOpenDetail extends Component {
 						{ ! isSitePrivate && <StatsNoContentBanner siteId={ siteId } siteSlug={ slug } /> }
 					</>
 				</div>
-				<StatsEmailCountries
-					postId={ postId }
-					siteId={ siteId }
-					period={ period }
-					date={ queryDate }
-				/>
+
+				<div className="stats__module-list">
+					<StatsEmailModule
+						path="countries"
+						statType="opens"
+						postId={ postId }
+						siteId={ siteId }
+						period={ period }
+						date={ queryDate }
+					/>
+
+					<StatsEmailModule
+						path="devices"
+						statType="opens"
+						postId={ postId }
+						siteId={ siteId }
+						period={ period }
+						date={ queryDate }
+					/>
+
+					<StatsEmailModule
+						path="clients"
+						statType="opens"
+						postId={ postId }
+						siteId={ siteId }
+						period={ period }
+						date={ queryDate }
+					/>
+				</div>
 			</Main>
 		);
 	}
