@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { get, sortBy } from 'lodash';
 
 import 'calypso/state/stats/init';
 
@@ -17,11 +17,14 @@ const EMPTY_RESULT = [];
 export function getCountRecords( state, siteId, postId, period, statType ) {
 	const stats = get( state.stats.emails.items, [ siteId, postId, period, statType ], null );
 
-	return stats
-		? Object.keys( stats ).map( ( key ) =>
-				stats[ key ] && stats[ key ].chart ? stats[ key ].chart : EMPTY_RESULT
-		  )
-		: EMPTY_RESULT;
+	return ! stats
+		? EMPTY_RESULT
+		: sortBy(
+				Object.keys( stats ).map( ( key ) =>
+					stats[ key ] && stats[ key ].chart ? stats[ key ].chart : {}
+				),
+				'period'
+		  );
 }
 
 /**
