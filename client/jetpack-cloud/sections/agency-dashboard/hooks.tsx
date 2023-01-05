@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import useUpdateMonitorSettingsMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-update-monitor-settings-mutation';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import SitesOverviewContext from './sites-overview/context';
-import type { Site } from './sites-overview/types';
+import type { Site, UpdateMonitorSettingsParams } from './sites-overview/types';
 
 export function useToggleActivateMonitor( {
 	blog_id: siteId,
@@ -70,7 +70,7 @@ export function useToggleActivateMonitor( {
 }
 
 export function useUpdateMonitorSettings( sites: Array< { blog_id: number; url: string } > ): {
-	updateMonitorSettings: ( params: object ) => void;
+	updateMonitorSettings: ( params: UpdateMonitorSettingsParams ) => void;
 	isLoading: boolean;
 	isComplete: boolean;
 } {

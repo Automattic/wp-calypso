@@ -165,6 +165,9 @@ export interface UpdateMonitorSettingsAPIResponse {
 
 export interface UpdateMonitorSettingsParams {
 	monitor_active?: boolean;
+	wp_note_notifications?: boolean;
+	email_notifications?: boolean;
+	jetmon_defer_status_down_minutes?: number;
 }
 export interface UpdateMonitorSettingsArgs {
 	siteId: number;
