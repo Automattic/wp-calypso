@@ -12,7 +12,7 @@
 	position: relative;
 
 	&.masterbar-cart-count__hidden {
-		display: none;
+		visibility: hidden;
 	}
 }
 
