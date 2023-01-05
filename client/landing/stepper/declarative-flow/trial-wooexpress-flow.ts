@@ -43,7 +43,7 @@ const wooexpress: Flow = {
 			if ( locale || locale === 'en' ) {
 				return `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
 			}
-			
+
 			return `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
 
 			// Initial URL approach
