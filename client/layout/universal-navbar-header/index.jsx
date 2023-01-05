@@ -13,7 +13,7 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 const UniversalNavbarHeader = () => {
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
-	const locale = getLocaleSlug();
+	const locale = getLocaleSlug() ?? undefined;
 	const [ isMobileMenuOpen, setMobileMenuOpen ] = useState( false );
 	const sectionName = useSelector( getSectionName );
 	const isLoggedIn = useSelector( isUserLoggedIn );

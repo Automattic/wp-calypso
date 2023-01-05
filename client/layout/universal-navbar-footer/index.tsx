@@ -13,7 +13,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 const UniversalNavbarFooter = () => {
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
-	const locale = getLocaleSlug();
+	const locale = getLocaleSlug() ?? undefined;
 	const { shouldSeeDoNotSell, isDoNotSell, onSetDoNotSell } = useDoNotSell();
 	const [ isDialogOpen, setIsDialogOpen ] = useState( false );
 	const isLoggedIn = useSelector( isUserLoggedIn );
