@@ -33,7 +33,7 @@ export const PLAN_PERSONAL_MONTHLY = 'personal-bundle-monthly';
 export const PLAN_PREMIUM_MONTHLY = 'value_bundle_monthly';
 export const PLAN_BUSINESS_MONTHLY = 'business-bundle-monthly';
 export const PLAN_ECOMMERCE_MONTHLY = 'ecommerce-bundle-monthly';
-export const PLAN_WOOEXPRESS_TRIAL_MONTHLY = 'ecommerce-trial-bundle-monthly';
+export const PLAN_ECOMMERCE_TRIAL_MONTHLY = 'ecommerce-trial-bundle-monthly';
 
 export const annualSlugs = [ PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE ] as const;
 
@@ -42,7 +42,7 @@ export const monthlySlugs = [
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE_MONTHLY,
-	PLAN_WOOEXPRESS_TRIAL_MONTHLY,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 ] as const;
 
 export const plansProductSlugs = [ PLAN_FREE, ...annualSlugs, ...monthlySlugs ] as const;
