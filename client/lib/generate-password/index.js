@@ -2,6 +2,8 @@
 const randomInt = ( lower, upper ) => Math.floor( lower + Math.random() * ( upper - lower + 1 ) );
 
 /**
+ * Forked from https://github.com/WordPress/wporg-two-factor/blob/5241afeac49739ba58d8162f468434291dbc0fb6/settings/src/components/password.js#L132-L160
+ *
  * Generate a cryptographically secure random password.
  *
  * This is just as secure as using the `generate-password` AJAX endpoint, but faster, and avoids introducing the
