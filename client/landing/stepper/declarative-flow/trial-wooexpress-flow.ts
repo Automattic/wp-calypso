@@ -22,7 +22,6 @@ const wooExpressTrialFlow: Flow = {
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
-		const flags = new URLSearchParams( window.location.search ).get( 'flags' );
 		const flowName = this.name;
 		const locale = useLocale();
 
@@ -36,14 +35,14 @@ const wooExpressTrialFlow: Flow = {
 			}
 
 			const redirectTarget =
-				`/setup/wooexpress-trial/processing` +
+				`/setup/wooExpressTrial` +
 				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
 			const url =
 				locale && locale !== 'en'
 					? `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=${ redirectTarget }`
 					: `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
 
-			return url + ( flags ? `&flags=${ flags }` : '' );
+			return url;
 		};
 
 		if ( ! userIsLoggedIn ) {
@@ -51,7 +50,7 @@ const wooExpressTrialFlow: Flow = {
 			window.location.assign( logInUrl );
 			result = {
 				state: AssertConditionState.FAILURE,
-				message: 'store-setup requires a logged in user',
+				message: 'wooexpress-trial requires a logged in user',
 			};
 		}
 
