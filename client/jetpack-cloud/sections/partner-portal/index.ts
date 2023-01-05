@@ -109,6 +109,17 @@ export default function () {
 
 	// Billing Dashboard.
 	page(
+		`/partner-portal/prices`,
+		controller.requireAccessContext,
+		controller.requireTermsOfServiceConsentContext,
+		controller.requireSelectedPartnerKeyContext,
+		controller.pricesContext,
+		makeLayout,
+		clientRender
+	);
+
+	//
+	page(
 		`/partner-portal/billing`,
 		controller.requireAccessContext,
 		controller.requireTermsOfServiceConsentContext,

@@ -1,0 +1,82 @@
+.prices__header {
+	display: flex;
+	align-items: center;
+
+	> * + * {
+		margin-left: 24px;
+	}
+
+	a.button {
+		margin-left: auto;
+	}
+
+	@include breakpoint-deprecated( "<960px" ) {
+		flex-wrap: wrap;
+		> * {
+			width: 100%;
+			margin-bottom: 16px;
+		}
+
+		> * + * {
+			margin-left: 0;
+		}
+	}
+}
+
+.prices__description p {
+	line-height: 28px;
+	font-size: 1rem;
+}
+
+.prices__table,
+.prices__table td {
+	border: 1px solid #000;
+}
+
+.prices__table tr:first-child td {
+	font-weight: 600;
+}
+
+.prices__table tr td {
+	text-align: center;
+}
+
+.prices__table tr td:first-child {
+	text-align: left;
+}
+
+.prices__table td {
+	padding: 0.3rem;
+	vertical-align: middle;
+}
+
+.prices__table .license-bundle-card-description {
+	margin-top: 0;
+}
+
+.prices__table p.license-bundle-card-description__text {
+	font-size: 0.875rem;
+}
+
+.prices__mobile-description {
+	display: none;
+}
+
+.license-bundle-card-description__list li {
+	display: none;
+}
+
+@include breakpoint-deprecated( "<960px" ) {
+	.prices__table tr:first-child td {
+		display: none;
+	}
+
+	.prices__table td {
+		display: block;
+	}
+
+	.prices__mobile-description {
+		display: block;
+		font-size: 0.75rem;
+	}
+}
