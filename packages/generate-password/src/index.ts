@@ -1,6 +1,3 @@
-// inspired from https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
-const randomInt = ( lower, upper ) => Math.floor( lower + Math.random() * ( upper - lower + 1 ) );
-
 /**
  * Forked from https://github.com/WordPress/wporg-two-factor/blob/5241afeac49739ba58d8162f468434291dbc0fb6/settings/src/components/password.js#L132-L160
  *
@@ -8,12 +5,10 @@ const randomInt = ( lower, upper ) => Math.floor( lower + Math.random() * ( uppe
  *
  * This is just as secure as using the `generate-password` AJAX endpoint, but faster, and avoids introducing the
  * possibility of XHR failures, etc.
- *
- * @returns {string}
  */
 export function generatePassword() {
 	const characterPool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
-	const passwordLength = randomInt( 16, 35 );
+	const passwordLength = 24;
 	const randomNumber = new Uint8Array( 1 );
 	let password = '';
 
@@ -24,7 +19,7 @@ export function generatePassword() {
 	// @link https://dimitri.xyz/random-ints-from-random-bits/
 	for ( let i = 0; i < passwordLength; i++ ) {
 		do {
-			crypto.getRandomValues( randomNumber );
+			window.crypto.getRandomValues( randomNumber );
 		} while ( randomNumber[ 0 ] >= characterPool.length );
 
 		password += characterPool[ randomNumber[ 0 ] ];

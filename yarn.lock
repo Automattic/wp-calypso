@@ -761,6 +761,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/generate-password@workspace:^, @automattic/generate-password@workspace:packages/generate-password":
+  version: 0.0.0-use.local
+  resolution: "@automattic/generate-password@workspace:packages/generate-password"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    typescript: ^4.7.4
+  languageName: unknown
+  linkType: soft
+
 "@automattic/happychat-app@workspace:apps/happychat":
   version: 0.0.0-use.local
   resolution: "@automattic/happychat-app@workspace:apps/happychat"
@@ -11627,6 +11636,7 @@ __metadata:
     "@automattic/explat-client": "workspace:^"
     "@automattic/explat-client-react-helpers": "workspace:^"
     "@automattic/format-currency": "workspace:^"
+    "@automattic/generate-password": "workspace:^"
     "@automattic/happychat-connection": "workspace:^"
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
