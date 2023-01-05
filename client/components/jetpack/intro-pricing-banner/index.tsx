@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import { useLayoutEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import CloudCart from 'calypso/jetpack-cloud/sections/pricing/jpcom-masterbar/cloud-cart';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
@@ -12,39 +12,11 @@ import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-gri
 import './style.scss';
 import { isJetpackCloudCartEnabled } from 'calypso/state/sites/selectors';
 import guaranteeBadge from './14-day-badge.svg';
+import useBoundingClientRect from './hooks/use-bounding-client-rect';
 import people from './people.svg';
 
 const CALYPSO_MASTERBAR_HEIGHT = 47;
 const CLOUD_MASTERBAR_HEIGHT = 0;
-
-const useBoundingClientRect = ( eleQuery: string ) => {
-	const [ boundingClientRect, setBoundingClientRect ] = useState( {
-		bottom: 0,
-		height: 0,
-		left: 0,
-		right: 0,
-		top: 0,
-		width: 0,
-		x: 0,
-		y: 0,
-	} );
-
-	useLayoutEffect( () => {
-		const resizeListener = () => {
-			document.querySelectorAll( eleQuery ).forEach( ( node ) => {
-				const style = window.getComputedStyle( node, undefined );
-				if ( style[ 'display' ] !== 'none' ) {
-					setBoundingClientRect( node.getBoundingClientRect() );
-				}
-			} );
-		};
-
-		resizeListener();
-		window.addEventListener( 'resize', resizeListener );
-	}, [ eleQuery ] );
-
-	return boundingClientRect;
-};
 
 const IntroPricingBanner: React.FC = () => {
 	const translate = useTranslate();

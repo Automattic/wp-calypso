@@ -207,19 +207,25 @@
 			width: 90%;
 		}
 		.header__content-wrapper {
-			height: 520px;
+			height: 445px;
 		}
 	}
 
 	@media ( max-width: 600px ) {
 		.header__content-wrapper {
-			height: 445px;
+			height: 520px;
 		}
 	}
 
 	@media ( max-width: 480px ) {
 		.header__content-wrapper {
 			height: 570px;
+		}
+	}
+
+	@media ( max-width: 336px ) {
+		.header__content-wrapper {
+			height: 690px;
 		}
 	}
 
@@ -1219,7 +1225,7 @@
 			& > .header__jetpack-masterbar-cart {
 				justify-content: flex-end;
 				flex: unset;
-				margin-right: 32px;
+				margin-right: 16px;
 			}
 			.header__home-link {
 				flex: 1;
