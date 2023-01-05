@@ -295,7 +295,7 @@ const UniversalNavbarHeader = () => {
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'Log In' ) }
 										elementContent={ translate( 'Log In' ) }
-										urlValue={ localizeUrl( '/log-in', locale, isLoggedIn ) }
+										urlValue={ localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn ) }
 										type="menu"
 									/>
 								</ul>
