@@ -315,12 +315,13 @@ class StatsEmailOpenDetail extends Component {
 }
 
 const connectComponent = connect(
-	( state, { postId, period: { period }, date } ) => {
+	( state, { postId, period: { period, endOf } } ) => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
 		const isPreviewable = isSitePreviewable( state, siteId );
 		const isLatestEmailsHomepage =
 			getSiteOption( state, siteId, 'show_on_front' ) === 'email' && postId === 0;
+
 		return {
 			email: getSiteEmail( state, siteId, postId ),
 			emailFallback: getEmailStat( state, siteId, postId, 'email' ),
@@ -332,7 +333,7 @@ const connectComponent = connect(
 				postId,
 				period,
 				statType,
-				date.format( 'YYYY-MM-DD' )
+				endOf.format( 'YYYY-MM-DD' )
 			),
 			siteSlug: getSiteSlug( state, siteId ),
 			showViewLink: ! isJetpack && ! isLatestEmailsHomepage && isPreviewable,
