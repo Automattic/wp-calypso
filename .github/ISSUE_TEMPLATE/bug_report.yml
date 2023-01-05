@@ -95,4 +95,4 @@ body:
     attributes:
       label: Logs or notes
       placeholder: |
-        e.g. Logs, CLI or console errors, notes, browser, platform, etc.
+        e.g. Any relevant information - logs, CLI/console errors, notes, browser, platform, themes, etc.
