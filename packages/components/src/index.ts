@@ -9,6 +9,7 @@ export { default as Gridicon } from './gridicon';
 export { default as Popover } from './popover';
 export { default as ProductIcon } from './product-icon';
 export { default as ProgressBar } from './progress-bar';
+export { default as CircularProgressBar } from './circular-progress-bar';
 export { default as ResponsiveToolbarGroup } from './responsive-toolbar-group';
 export { default as Ribbon } from './ribbon';
 export { default as RootChild } from './root-child';

@@ -5,6 +5,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import WebPreview from 'calypso/components/web-preview/component';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useSitePreviewShareCode } from 'calypso/landing/stepper/hooks/use-site-preview-share-code';
 import { isVideoPressFlow } from 'calypso/signup/utils';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import PreviewToolbar from '../design-setup/preview-toolbar';
@@ -48,12 +49,16 @@ const LaunchpadSitePreview = ( {
 		}
 	}
 
+	const { shareCode, isPreviewLinksLoading, isCreatingSitePreviewLinks } =
+		useSitePreviewShareCode();
+
 	function formatPreviewUrl() {
-		if ( ! previewUrl ) {
+		if ( ! previewUrl || isPreviewLinksLoading || isCreatingSitePreviewLinks ) {
 			return null;
 		}
 
 		return addQueryArgs( previewUrl, {
+			...( shareCode && { share: shareCode } ),
 			iframe: true,
 			theme_preview: true,
 			// hide the "Create your website with WordPress.com" banner
