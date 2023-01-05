@@ -131,7 +131,7 @@ export class PeopleInviteDetails extends PureComponent {
 					</div>
 				</div>
 				<div className="people-invite-details__meta-item">
-					<strong>{ translate( 'Invited By' ) }</strong>
+					<strong>{ translate( 'Added By' ) }</strong>
 					<div>
 						<span>
 							{ showName && <>{ invite.invitedBy.name }</> } { '@' + invite.invitedBy.login }
