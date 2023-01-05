@@ -6,12 +6,8 @@ import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
-import {
-	AssertConditionResult,
-	AssertConditionState,
-	Flow,
-	ProvidedDependencies,
-} from './internals/types';
+import { AssertConditionState } from './internals/types';
+import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 
 const wooExpressTrialFlow: Flow = {
 	name: 'wooexpress-trial',
