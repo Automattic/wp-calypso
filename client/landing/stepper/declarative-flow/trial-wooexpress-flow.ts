@@ -39,12 +39,17 @@ const wooexpress: Flow = {
 			const redirectTarget =
 				`/setup/wooexpress` +
 				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
-			const url =
-				locale && locale !== 'en'
-					? `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=${ redirectTarget }`
-					: `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
+			// Early return approach
+			if ( locale || locale === 'en' ) {
+				return `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
+			}
+			
+			return `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
 
-			return url;
+			// Initial URL approach
+			const baseUrl = '/start/account/user' + ( locale && locale !== 'en' ? `/${ locale }` : '' );
+
+			return baseUrl + `?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
 		};
 
 		if ( ! userIsLoggedIn ) {
