@@ -2,8 +2,10 @@ import { Button } from '@automattic/components';
 import { ToggleControl as OriginalToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { getSiteMonitorStatus } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { useToggleActivateMonitor } from '../../hooks';
 import NotificationSettings from '../notification-settings';
 import type { AllowedStatusTypes, MonitorSettings } from '../../sites-overview/types';
@@ -19,7 +21,8 @@ interface Props {
 export default function ToggleActivateMonitoring( { site, status, settings }: Props ) {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
-	const [ toggleActivateMonitor, isLoading ] = useToggleActivateMonitor( site );
+	const toggleActivateMonitor = useToggleActivateMonitor( [ site ] );
+	const statuses = useSelector( getSiteMonitorStatus );
 	const [ showNotificationSettings, setShowNotificationSettings ] = useState< boolean >( false );
 
 	const ToggleControl = OriginalToggleControl as React.ComponentType<
@@ -37,6 +40,7 @@ export default function ToggleActivateMonitoring( { site, status, settings }: Pr
 	}
 
 	const isChecked = status !== 'disabled';
+	const isLoading = statuses?.[ site.blog_id ] === 'loading';
 
 	const currentSettings = () => {
 		const minutes = settings?.monitor_deferment_time;
@@ -84,6 +88,7 @@ export default function ToggleActivateMonitoring( { site, status, settings }: Pr
 					borderless
 					compact
 					onClick={ handleToggleNotificationSettings }
+					disabled={ isLoading }
 					aria-label={
 						translate(
 							'The current notification schedule is set to %(currentSchedule)s. Click here to update the settings',
