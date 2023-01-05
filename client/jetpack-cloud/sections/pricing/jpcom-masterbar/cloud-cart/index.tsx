@@ -9,7 +9,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CloudCartIcon from './cloud-cart-icon';
 import EmptyCart from './empty-cart';
 
-const CloudCart = () => {
+const CloudCart = ( { cartStyle }: { cartStyle?: React.CSSProperties } ) => {
 	const translate = useTranslate();
 	const shoppingCartTracker = useShoppingCartTracker();
 	const siteId = useSelector( getSelectedSiteId );
@@ -37,7 +37,7 @@ const CloudCart = () => {
 	};
 
 	return (
-		<div className="header__jetpack-masterbar-cart">
+		<div className="header__jetpack-masterbar-cart" style={ cartStyle }>
 			<MasterbarCartWrapper
 				goToCheckout={ goToCheckout }
 				onRemoveProduct={ onRemoveProductFromCart }

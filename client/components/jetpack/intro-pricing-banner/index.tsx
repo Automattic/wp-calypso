@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -11,6 +12,7 @@ import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-gri
 import './style.scss';
 import { isJetpackCloudCartEnabled } from 'calypso/state/sites/selectors';
 import guaranteeBadge from './14-day-badge.svg';
+import useBoundingClientRect from './hooks/use-bounding-client-rect';
 import people from './people.svg';
 
 const CALYPSO_MASTERBAR_HEIGHT = 47;
@@ -19,6 +21,8 @@ const CLOUD_MASTERBAR_HEIGHT = 0;
 const IntroPricingBanner: React.FC = () => {
 	const translate = useTranslate();
 	const shouldShowCart = useSelector( isJetpackCloudCartEnabled );
+	const clientRect = useBoundingClientRect( '.header__content .header__jetpack-masterbar-cart' );
+	const isSmallScreen = useBreakpoint( '<660px' );
 
 	const windowBoundaryOffset = useMemo( () => {
 		if ( isJetpackCloud() || isConnectStore() ) {
@@ -66,7 +70,9 @@ const IntroPricingBanner: React.FC = () => {
 							{ preventWidows( translate( 'Explore Jetpack for Agencies' ) ) }
 						</a>
 					</div>
-					{ shouldShowCart && hasCrossed && <CloudCart /> }
+					{ shouldShowCart && hasCrossed && (
+						<CloudCart cartStyle={ isSmallScreen ? {} : { left: clientRect.left } } />
+					) }
 				</div>
 			</div>
 		</>

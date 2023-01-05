@@ -213,7 +213,9 @@ export const useStoreItemInfo = ( {
 				} );
 
 				const addedToCartText = translate( 'added to cart' );
-				dispatch( successNotice( `${ item.displayName } ${ addedToCartText }` ) );
+				const productName = reactNodeToString( item.displayName );
+				dispatch( successNotice( `${ productName } ${ addedToCartText }` ) );
+
 				return addProductsToCart( [ { product_slug: item.productSlug } ] );
 			}
 
