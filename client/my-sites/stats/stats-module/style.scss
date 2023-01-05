@@ -449,7 +449,7 @@ ul.module-header-actions {
 	@include breakpoint-deprecated( ">480px" ) {
 		.stats-module & td.has-no-data:hover, // 1
 		tbody tr:hover td,
-		.stats-module & tbody tr:hover th {
+		.stats-module & tbody tr:hover th:first-child {
 			background: var(--color-primary-0);
 		}
 
