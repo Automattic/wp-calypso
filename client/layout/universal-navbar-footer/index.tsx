@@ -2,11 +2,13 @@ import './style.scss';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
+import { useSelector } from 'react-redux';
 import DoNotSellDialogContainer from 'calypso/blocks/do-not-sell-dialog';
 import SocialLogo from 'calypso/components/social-logo';
 import { useDoNotSell } from 'calypso/lib/analytics/utils';
 import { preventWidows } from 'calypso/lib/formatting';
 import { navigate } from 'calypso/lib/navigate';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 const UniversalNavbarFooter = () => {
 	const translate = useTranslate();
@@ -14,6 +16,7 @@ const UniversalNavbarFooter = () => {
 	const locale = getLocaleSlug();
 	const { shouldSeeDoNotSell, isDoNotSell, onSetDoNotSell } = useDoNotSell();
 	const [ isDialogOpen, setIsDialogOpen ] = useState( false );
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const openDialog = useCallback( () => {
 		setIsDialogOpen( true );
@@ -106,7 +109,7 @@ const UniversalNavbarFooter = () => {
 								</li>
 								<li>
 									<a
-										href={ localizeUrl( 'https://wordpress.com/themes', locale, false ) }
+										href={ localizeUrl( 'https://wordpress.com/themes', locale, isLoggedIn ) }
 										target="_self"
 									>
 										{ translate( 'WordPress Themes' ) }
@@ -114,7 +117,7 @@ const UniversalNavbarFooter = () => {
 								</li>
 								<li>
 									<a
-										href={ localizeUrl( 'https://wordpress.com/plugins/', locale, false ) }
+										href={ localizeUrl( 'https://wordpress.com/plugins/', locale, isLoggedIn ) }
 										target="_self"
 									>
 										{ translate( 'WordPress Plugins' ) }

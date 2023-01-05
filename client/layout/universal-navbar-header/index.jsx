@@ -7,6 +7,7 @@ import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import UniversalNavbarBtnMenuItem from 'calypso/layout/universal-navbar-header/btn-menu-item.jsx';
 import UniversalNavbarLiMenuItem from 'calypso/layout/universal-navbar-header/li-menu-item.jsx';
 import { addQueryArgs } from 'calypso/lib/route';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 
 const UniversalNavbarHeader = () => {
@@ -15,14 +16,15 @@ const UniversalNavbarHeader = () => {
 	const locale = getLocaleSlug();
 	const [ isMobileMenuOpen, setMobileMenuOpen ] = useState( false );
 	const sectionName = useSelector( getSectionName );
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const startUrl = addQueryArgs(
 		{
 			ref: sectionName + '-lp',
 		},
 		sectionName === 'plugins'
-			? localizeUrl( '//wordpress.com/start/business', locale, false )
-			: localizeUrl( '//wordpress.com/start', locale, false )
+			? localizeUrl( '//wordpress.com/start/business', locale, isLoggedIn )
+			: localizeUrl( '//wordpress.com/start', locale, isLoggedIn )
 	);
 
 	return (
@@ -131,13 +133,13 @@ const UniversalNavbarHeader = () => {
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'WordPress Themes' ) }
 													elementContent={ translate( 'WordPress Themes' ) }
-													urlValue={ localizeUrl( '//wordpress.com/themes', locale, false ) }
+													urlValue={ localizeUrl( '//wordpress.com/themes', locale, isLoggedIn ) }
 													type="dropdown"
 												/>
 												<UniversalNavbarLiMenuItem
 													titleValue={ translate( 'WordPress Plugins' ) }
 													elementContent={ translate( 'WordPress Plugins' ) }
-													urlValue={ localizeUrl( '//wordpress.com/plugins', locale, false ) }
+													urlValue={ localizeUrl( '//wordpress.com/plugins', locale, isLoggedIn ) }
 													type="dropdown"
 												/>
 												<UniversalNavbarLiMenuItem
@@ -228,7 +230,7 @@ const UniversalNavbarHeader = () => {
 										className="x-nav-item x-nav-item__wide"
 										titleValue={ translate( 'Log In' ) }
 										elementContent={ translate( 'Log In' ) }
-										urlValue={ localizeUrl( '//wordpress.com/log-in', locale, false ) }
+										urlValue={ localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn ) }
 										type="nav"
 									/>
 									<UniversalNavbarLiMenuItem
@@ -293,7 +295,7 @@ const UniversalNavbarHeader = () => {
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'Log In' ) }
 										elementContent={ translate( 'Log In' ) }
-										urlValue={ localizeUrl( '/log-in', locale, false ) }
+										urlValue={ localizeUrl( '/log-in', locale, isLoggedIn ) }
 										type="menu"
 									/>
 								</ul>
@@ -364,13 +366,13 @@ const UniversalNavbarHeader = () => {
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'WordPress Themes' ) }
 										elementContent={ translate( 'WordPress Themes' ) }
-										urlValue={ localizeUrl( '//wordpress.com/themes', locale, false ) }
+										urlValue={ localizeUrl( '//wordpress.com/themes', locale, isLoggedIn ) }
 										type="menu"
 									/>
 									<UniversalNavbarLiMenuItem
 										titleValue={ translate( 'WordPress Plugins' ) }
 										elementContent={ translate( 'WordPress Plugins' ) }
-										urlValue={ localizeUrl( '//wordpress.com/plugins', locale, false ) }
+										urlValue={ localizeUrl( '//wordpress.com/plugins', locale, isLoggedIn ) }
 										type="menu"
 									/>
 									<UniversalNavbarLiMenuItem
