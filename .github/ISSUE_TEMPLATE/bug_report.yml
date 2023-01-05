@@ -51,14 +51,28 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: internal_severity
+    id: impact_level
     attributes:
-      label: Severity
+      label: Impact
       options:
         - Low
         - Normal
         - High
-      
+    validations:
+      required: true
+  - type: dropdown
+    id: workarounds
+    attributes:
+      label: Available workarounds?
+      options:
+        - No and the platform is unusable
+        - No but the platform is still usable
+        - Yes, difficult to implement
+        - Yes, easy to implement
+        - There is no user impact
+    validations:
+      required: true
+
   - type: markdown
     attributes:
       value: |
