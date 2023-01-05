@@ -38,7 +38,7 @@ const UniversalNavbarHeader = () => {
 										<a
 											role="menuitem"
 											className="x-nav-link x-nav-link__logo x-link"
-											href="/"
+											href={ localizeUrl( '//wordpress.com' ) }
 											target="_self"
 										>
 											<WordPressWordmark className="x-icon x-icon__logo" />
