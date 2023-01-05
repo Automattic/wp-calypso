@@ -91,7 +91,7 @@ export const PaymentMethodSummary = ( {
 
 		case 'discover':
 			displayType = translate( 'Discover', {
-				context: 'Credit Card company',
+				context: 'Name of credit card',
 			} );
 			break;
 
