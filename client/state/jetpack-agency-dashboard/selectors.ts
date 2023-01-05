@@ -58,3 +58,9 @@ export function hasSelectedLicensesOfType(
 		state.agencyDashboard?.selectedLicenses?.licenses.includes( type )
 	);
 }
+
+export function getSiteMonitorStatus( state: AppState ): {
+	[ siteId: number ]: 'loading' | 'completed';
+} {
+	return state.agencyDashboard?.siteMonitorStatus?.statuses;
+}

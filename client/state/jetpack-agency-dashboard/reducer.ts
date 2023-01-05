@@ -7,6 +7,7 @@ import {
 	JETPACK_AGENCY_DASHBOARD_SELECT_LICENSE,
 	JETPACK_AGENCY_DASHBOARD_UNSELECT_LICENSE,
 	JETPACK_AGENCY_DASHBOARD_RESET_SITE,
+	JETPACK_AGENCY_DASHBOARD_SITE_MONITOR_STATUS_CHANGE,
 } from './action-types';
 import type { PurchasedProductsInfo } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
@@ -17,6 +18,17 @@ const purchasedLicense: Reducer<
 	switch ( action?.type ) {
 		case JETPACK_AGENCY_DASHBOARD_PURCHASED_LICENSE_CHANGE:
 			return { ...state, purchasedLicenseInfo: action.payload };
+	}
+	return state;
+};
+
+const siteMonitorStatus: Reducer<
+	{ statuses: { [ siteId: number ]: 'loading' | 'completed' } },
+	AnyAction
+> = ( state = { statuses: {} }, action: AnyAction ): AppState => {
+	switch ( action?.type ) {
+		case JETPACK_AGENCY_DASHBOARD_SITE_MONITOR_STATUS_CHANGE:
+			return { ...state, statuses: { ...state.statuses, [ action.siteId ]: action.status } };
 	}
 	return state;
 };
@@ -59,6 +71,7 @@ const selectedLicenses: Reducer<
 const combinedReducer = combineReducers( {
 	purchasedLicense,
 	selectedLicenses,
+	siteMonitorStatus,
 } );
 
 export default withStorageKey( 'agencyDashboard', combinedReducer );
