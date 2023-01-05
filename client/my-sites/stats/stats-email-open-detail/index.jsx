@@ -315,19 +315,25 @@ class StatsEmailOpenDetail extends Component {
 }
 
 const connectComponent = connect(
-	( state, { postId, period: { period } } ) => {
+	( state, { postId, period: { period }, date } ) => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
 		const isPreviewable = isSitePreviewable( state, siteId );
 		const isLatestEmailsHomepage =
 			getSiteOption( state, siteId, 'show_on_front' ) === 'email' && postId === 0;
-
 		return {
 			email: getSiteEmail( state, siteId, postId ),
 			emailFallback: getEmailStat( state, siteId, postId, 'email' ),
 			isLatestEmailsHomepage,
 			countViews: getEmailStat( state, siteId, postId, period, statType ),
-			isRequestingStats: isRequestingEmailStats( state, siteId, postId, period, statType ),
+			isRequestingStats: isRequestingEmailStats(
+				state,
+				siteId,
+				postId,
+				period,
+				statType,
+				date.format( 'YYYY-MM-DD' )
+			),
 			siteSlug: getSiteSlug( state, siteId ),
 			showViewLink: ! isJetpack && ! isLatestEmailsHomepage && isPreviewable,
 			slug: getSelectedSiteSlug( state ),

@@ -54,6 +54,7 @@ export function requestEmailStats( siteId, postId, period, date, statType, quant
 			siteId,
 			period,
 			statType,
+			date,
 		} );
 
 		return wpcom
@@ -64,15 +65,28 @@ export function requestEmailStats( siteId, postId, period, date, statType, quant
 
 				// create an object from emailStats with period as the key
 				const emailStatsObject = emailChartData.reduce( ( obj, item ) => {
+					// we have chart data for every period
 					obj[ item.period ] = {
 						chart: item,
-						countries: parseEmailCountriesData(
+					};
+
+					// add countries data if available
+					if ( stats.countries[ item.period ] ) {
+						obj[ item.period ].countries = parseEmailCountriesData(
 							stats.countries[ item.period ],
 							stats[ 'countries-info' ]
-						),
-						devices: parseEmailListData( stats.devices[ item.period ] ),
-						clients: parseEmailListData( stats.clients[ item.period ] ),
-					};
+						);
+					}
+
+					// add devices data if available
+					if ( stats.devices[ item.period ] ) {
+						obj[ item.period ].devices = parseEmailListData( stats.devices[ item.period ] );
+					}
+
+					// add clients data if available
+					if ( stats.clients[ item.period ] ) {
+						obj[ item.period ].clients = parseEmailListData( stats.clients[ item.period ] );
+					}
 					return obj;
 				}, {} );
 
@@ -81,6 +95,7 @@ export function requestEmailStats( siteId, postId, period, date, statType, quant
 					type: EMAIL_STATS_REQUEST_SUCCESS,
 					siteId,
 					postId,
+					date,
 				} );
 			} )
 			.catch( ( error ) => {
@@ -91,6 +106,7 @@ export function requestEmailStats( siteId, postId, period, date, statType, quant
 					period,
 					statType,
 					error,
+					date,
 				} );
 			} );
 	};

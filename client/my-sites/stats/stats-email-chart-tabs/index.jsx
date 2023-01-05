@@ -123,7 +123,7 @@ const connectComponent = connect(
 		const quantity = 'year' === period ? 10 : 30;
 		const counts = getCountRecords( state, siteId, postId, period, statType );
 		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
-		const isActiveTabLoading = isLoadingTabs( state, siteId, postId, period, statType );
+		const isActiveTabLoading = isLoadingTabs( state, siteId, postId, period, statType, queryDate );
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
 		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;

@@ -18,36 +18,42 @@ import { items as itemSchemas } from './schema';
 export const requests = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case EMAIL_STATS_REQUEST: {
-			const { siteId, postId, period, statType } = action;
+			const { siteId, postId, period, statType, date } = action;
 			return merge( {}, state, {
 				[ siteId ]: {
 					[ postId ]: {
 						[ period ]: {
-							[ statType ]: { requesting: true, status: 'pending' },
+							[ statType ]: {
+								[ date ]: { requesting: true, status: 'pending' },
+							},
 						},
 					},
 				},
 			} );
 		}
 		case EMAIL_STATS_RECEIVE: {
-			const { siteId, postId, period, statType } = action;
+			const { siteId, postId, period, statType, date } = action;
 			return merge( {}, state, {
 				[ siteId ]: {
 					[ postId ]: {
 						[ period ]: {
-							[ statType ]: { requesting: false, status: 'success' },
+							[ statType ]: {
+								[ date ]: { requesting: false, status: 'success' },
+							},
 						},
 					},
 				},
 			} );
 		}
 		case EMAIL_STATS_REQUEST_FAILURE: {
-			const { siteId, postId, period, statType } = action;
+			const { siteId, postId, period, statType, date } = action;
 			return merge( {}, state, {
 				[ siteId ]: {
 					[ postId ]: {
 						[ period ]: {
-							[ statType ]: { requesting: false, status: 'error' },
+							[ statType ]: {
+								[ date ]: { requesting: false, status: 'error' },
+							},
 						},
 					},
 				},
