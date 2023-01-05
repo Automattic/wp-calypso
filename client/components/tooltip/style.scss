@@ -1,6 +1,4 @@
-@import "@automattic/typography/styles/variables";
-
-$post-trends-box-shadow-color: rgba(0, 0, 0, 0.05);
+$large-tooltip-box-shadow-color: rgba(0, 0, 0, 0.05);
 
 .tooltip.popover {
 	.popover__arrow {
@@ -206,12 +204,12 @@ $post-trends-box-shadow-color: rgba(0, 0, 0, 0.05);
 		&.is-top-left .popover__arrow,
 		&.is-top-right .popover__arrow {
 			border-top-color: var(--color-neutral-100);
-			box-shadow: 0 1px 2px $post-trends-box-shadow-color;
+			box-shadow: 0 1px 2px $large-tooltip-box-shadow-color;
 		}
 
 		.popover__inner {
 			background-color: var(--color-neutral-100);
-			box-shadow: 0 1px 2px $post-trends-box-shadow-color;
+			box-shadow: 0 1px 2px $large-tooltip-box-shadow-color;
 			border-radius: 4px;
 			padding: 16px 24px;
 		}
