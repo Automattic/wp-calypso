@@ -93,6 +93,16 @@ class PartnerPortalSidebar extends Component< Props > {
 								selected={ itemLinkMatches( '/partner-portal/company-details', path ) }
 							/>
 						) }
+
+						<SidebarItem
+							customIcon={ <JetpackIcons icon="money" /> }
+							label={ translate( 'Prices', {
+								comment: 'Jetpack sidebar navigation item',
+							} ) }
+							link="/partner-portal/prices"
+							onNavigate={ this.onNavigate( 'Jetpack Cloud / Partner Portal / Prices' ) }
+							selected={ itemLinkMatches( '/partner-portal/prices', path ) }
+						/>
 					</SidebarMenu>
 				</SidebarRegion>
 			</Sidebar>

@@ -107,7 +107,7 @@ export default function () {
 		);
 	}
 
-	// Billing Dashboard.
+	// Pricing page
 	page(
 		`/partner-portal/prices`,
 		controller.requireAccessContext,
@@ -118,7 +118,7 @@ export default function () {
 		clientRender
 	);
 
-	//
+	// Billing dashboard
 	page(
 		`/partner-portal/billing`,
 		controller.requireAccessContext,
