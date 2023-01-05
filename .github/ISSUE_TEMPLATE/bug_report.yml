@@ -12,7 +12,7 @@ body:
         Please **do not** link to image hosting services such as Cloudup, Droplr, Imgur, etc…
         Instead, directly embed screenshot(s) or recording(s) in any of the text areas below: click, then drag and drop.
 
-        If you have any questions, please ask in: `slack-bug-herders`.
+        If you have any questions, please ask in: `#dotcom-pa-triage`.
   - type: markdown
     attributes:
       value: |
