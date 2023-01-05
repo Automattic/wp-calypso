@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -27,6 +28,7 @@ export default function ConnectDomainStepLogin( {
 	const [ isConnectSupported, setIsConnectSupported ] = useState( true );
 
 	const initialValidation = useRef( false );
+	const localizeUrl = useLocalizeUrl();
 
 	useEffect( () => {
 		switch ( mode ) {
@@ -70,6 +72,8 @@ export default function ConnectDomainStepLogin( {
 		} )();
 	} );
 
+	const supportUrl = localizeUrl( 'https://wordpress.com/support/domains/connect-subdomain' );
+
 	const stepContent = (
 		<div className={ className + '__login' }>
 			{ isOwnershipVerificationFlow && (
@@ -84,6 +88,9 @@ export default function ConnectDomainStepLogin( {
 					text={ __( 'This domain cannot be connected.' ) }
 				></Notice>
 			) }
+			<h2 className={ className + '__title' }>
+				<b>{ __( 'Domain registered with an external proveder' ) }</b>
+			</h2>
 			<p className={ className + '__text' }>
 				{ createInterpolateElement(
 					__(
@@ -102,6 +109,20 @@ export default function ConnectDomainStepLogin( {
 						'On your domain provider’s site go to the domains page. Find %s and go to its settings page.'
 					),
 					domain
+				) }
+			</p>
+			<h2 className={ className + '__title' }>
+				<b>{ __( 'Domain registered with WordPress.com' ) }</b>
+			</h2>
+			<p className={ className + '__text' }>
+				{ createInterpolateElement(
+					__(
+						"Open a new browser tab, switch to the site the domain is added to and go to <em>Upgrades → Domains</em>. Then click on the domain name to access the domain's settings page (alternatively click on the 3 vertical dots on the domain row and select <em>View Settings</em>). If the domain is under another WordPress.com account, use a different browser, log in to that account and follow the previous instructions. <a>More info here</a>."
+					),
+					{
+						em: createElement( 'em' ),
+						a: createElement( 'a', { href: supportUrl, target: '_blank' } ),
+					}
 				) }
 			</p>
 			<Button
