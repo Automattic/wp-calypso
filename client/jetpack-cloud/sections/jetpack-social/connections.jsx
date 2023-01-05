@@ -16,7 +16,9 @@ import 'calypso/my-sites/marketing/style.scss';
 import './style.scss';
 
 export const Connections = ( { siteId, translate } ) => {
-	const titleHeader = translate( 'Social', { context: 'Jetpack product name' } );
+	const titleHeader = translate( 'Social Connections', {
+		context: 'Title of the Jetpack Social connections page',
+	} );
 
 	const learnMoreLink = (
 		<a
@@ -40,14 +42,14 @@ export const Connections = ( { siteId, translate } ) => {
 			<FormattedHeader
 				className="connections__page-heading"
 				headerText={ titleHeader }
-				subHeaderText={ translate( 'Manage your connections to social media networks' ) }
+				subHeaderText={ translate(
+					'Connect to social media networks to drive more traffic to your site and increase your reach, engagement, and visibility.'
+				) }
 				align="left"
 			/>
 			<SharingServicesGroup
 				type="publicize"
-				title={ translate( 'Share posts with Jetpack Social {{learnMoreLink/}}', {
-					components: { learnMoreLink },
-				} ) }
+				title={ translate( 'Share posts with Jetpack Social', { components: { learnMoreLink } } ) }
 			/>
 		</Main>
 	);
