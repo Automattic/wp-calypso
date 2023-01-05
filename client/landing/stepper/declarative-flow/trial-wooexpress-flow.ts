@@ -4,6 +4,7 @@ import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress'
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import ErrorStep from './internals/steps-repository/error-step';
 import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import { AssertConditionState } from './internals/types';
@@ -16,6 +17,7 @@ const wooExpressTrialFlow: Flow = {
 		return [
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'processing', component: ProcessingStep },
+			{ slug: 'error', component: ErrorStep },
 		];
 	},
 	useAssertConditions(): AssertConditionResult {
