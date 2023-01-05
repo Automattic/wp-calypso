@@ -40,7 +40,7 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 			/* webpackChunkName: "tailored-ecommerce-flow" */ '../declarative-flow/tailored-ecommerce-flow'
 		),
 
-	wooExpressTrial: () =>
+	wooexpress: () =>
 		import(
 			/* webpackChunkName: "trial-wooexpress-flow" */ '../declarative-flow/trial-wooexpress-flow'
 		),

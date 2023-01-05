@@ -10,8 +10,8 @@ import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 
-const wooExpressTrialFlow: Flow = {
-	name: 'wooexpress-trial',
+const wooexpress: Flow = {
+	name: 'wooexpress',
 
 	useSteps() {
 		return [
@@ -37,7 +37,7 @@ const wooExpressTrialFlow: Flow = {
 			}
 
 			const redirectTarget =
-				`/setup/wooExpressTrial` +
+				`/setup/wooexpress` +
 				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
 			const url =
 				locale && locale !== 'en'
@@ -101,4 +101,4 @@ const wooExpressTrialFlow: Flow = {
 	},
 };
 
-export default wooExpressTrialFlow;
+export default wooexpress;
