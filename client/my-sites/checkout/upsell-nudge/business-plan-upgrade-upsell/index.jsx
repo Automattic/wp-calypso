@@ -82,6 +82,7 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 				<Badge key="popular" type="info" className="business-plan-upgrade-upsell__discount-badge">
 					{ translate( 'Save %(discountPercentage)s%', {
 						args: { discountPercentage },
+						comment: 'The percentage value. e.g.: Save 49%',
 					} ) }
 				</Badge>
 			</div>
@@ -142,7 +143,7 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 					</ul>
 					<p>
 						{ translate(
-							'The great news is that you can upgrade today and try the Business Plan risk-free thanks to our 14-day money-back guarantee. Simply click below to upgrade. You’ll only have to pay the difference to the Premium Plan ({{del}}%(fullPrice)s{{/del}} %(discountPrice)s)',
+							'The great news is that you can upgrade today and try the Business Plan risk-free thanks to our 14-day money-back guarantee. Simply click below to upgrade. You’ll only have to pay the difference to the Premium Plan ({{del}}%(fullPrice)s{{/del}} %(discountPrice)s).',
 							{
 								components: {
 									del: <del />,
@@ -154,6 +155,7 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 									discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
 										stripZeros: true,
 									} ),
+									comment: 'A monetary value at the end, e.g. $25',
 								},
 							}
 						) }
