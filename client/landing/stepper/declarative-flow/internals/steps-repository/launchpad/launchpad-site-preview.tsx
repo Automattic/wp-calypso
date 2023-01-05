@@ -1,9 +1,12 @@
+import { FEATURE_VIDEO_UPLOADS, planHasFeature } from '@automattic/calypso-products';
 import { DEVICE_TYPES } from '@automattic/components';
-import { NEWSLETTER_FLOW, VIDEOPRESS_FLOW } from '@automattic/onboarding';
+import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import WebPreview from 'calypso/components/web-preview/component';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSitePreviewShareCode } from 'calypso/landing/stepper/hooks/use-site-preview-share-code';
+import { isVideoPressFlow } from 'calypso/signup/utils';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import PreviewToolbar from '../design-setup/preview-toolbar';
 import type { Device } from '@automattic/components';
@@ -17,15 +20,33 @@ const LaunchpadSitePreview = ( {
 } ) => {
 	const translate = useTranslate();
 	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+	const site = useSite();
 
-	const previewUrl = siteSlug ? 'https://' + siteSlug : null;
+	let previewUrl = siteSlug ? 'https://' + siteSlug : null;
 	const devicesToShow: Device[] = [ DEVICE_TYPES.COMPUTER, DEVICE_TYPES.PHONE ];
 	let defaultDevice = flow === NEWSLETTER_FLOW ? DEVICE_TYPES.COMPUTER : DEVICE_TYPES.PHONE;
-	const isVideoPressFlow = VIDEOPRESS_FLOW === flow;
+	let loadingMessage = translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
+		components: { strong: <strong /> },
+	} );
 
-	if ( isVideoPressFlow ) {
+	if ( isVideoPressFlow( flow ) ) {
 		const windowWidth = window.innerWidth;
 		defaultDevice = windowWidth >= 1000 ? DEVICE_TYPES.COMPUTER : DEVICE_TYPES.PHONE;
+		const productSlug = site?.plan?.product_slug;
+		const isVideoPressFlowWithUnsupportedPlan = ! planHasFeature(
+			productSlug as string,
+			FEATURE_VIDEO_UPLOADS
+		);
+
+		if ( isVideoPressFlowWithUnsupportedPlan ) {
+			previewUrl = null;
+			loadingMessage = translate(
+				'{{strong}}Site preview not available.{{/strong}} Plan upgrade is required.',
+				{
+					components: { strong: <strong /> },
+				}
+			);
+		}
 	}
 
 	const { shareCode, isPreviewLinksLoading, isCreatingSitePreviewLinks } =
@@ -64,9 +85,7 @@ const LaunchpadSitePreview = ( {
 				showClose={ false }
 				showEdit={ false }
 				showExternal={ false }
-				loadingMessage={ translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
-					components: { strong: <strong /> },
-				} ) }
+				loadingMessage={ loadingMessage }
 				translate={ translate }
 				defaultViewportDevice={ defaultDevice }
 				devicesToShow={ devicesToShow }
