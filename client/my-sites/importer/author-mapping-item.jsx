@@ -36,28 +36,25 @@ class ImporterAuthorMapping extends Component {
 	};
 
 	componentDidMount() {
-		const { hasSingleAuthor, onSelect: selectAuthor } = this.props;
+		const { onSelect: selectAuthor } = this.props;
 
-		if ( hasSingleAuthor ) {
-			/**
-			 * Using `defer` here is a leftover from using Flux store in the past.
-			 *
-			 * It's not ideal and should be refactored in the future to read
-			 * the state, instead of automating the UI in this way.
-			 *
-			 * This effort is quite big as it requires refactoring a few things on more fundamental
-			 * level in the imports section.
-			 *
-			 * TODO: Refactor this to not automate the UI but use proper state
-			 * TODO: A better way might be to handle this call in the backend and leave the UI out of the decision
-			 */
-			defer( () => selectAuthor( this.props.currentUser ) );
-		}
+		/**
+		 * Using `defer` here is a leftover from using Flux store in the past.
+		 *
+		 * It's not ideal and should be refactored in the future to read
+		 * the state, instead of automating the UI in this way.
+		 *
+		 * This effort is quite big as it requires refactoring a few things on more fundamental
+		 * level in the imports section.
+		 *
+		 * TODO: Refactor this to not automate the UI but use proper state
+		 * TODO: A better way might be to handle this call in the backend and leave the UI out of the decision
+		 */
+		defer( () => selectAuthor( this.props.currentUser ) );
 	}
 
 	render() {
 		const {
-			hasSingleAuthor,
 			siteId,
 			onSelect,
 			sourceAuthor: {
@@ -67,6 +64,8 @@ class ImporterAuthorMapping extends Component {
 			},
 			currentUser,
 		} = this.props;
+
+		const hasSingleAuthor = true;
 
 		return (
 			<div className="importer__author-mapping">
