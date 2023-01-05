@@ -40,7 +40,7 @@ const LaunchpadSitePreview = ( {
 		if ( isVideoPressFlowWithUnsupportedPlan ) {
 			previewUrl = null;
 			loadingMessage = translate(
-				'{{strong}}Site preview not available.{{/strong}} Plan purchase is required.',
+				'{{strong}}Site preview not available.{{/strong}} Plan upgrade is required.',
 				{
 					components: { strong: <strong /> },
 				}
