@@ -1,6 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
 import { CheckoutCheckIcon, PaymentLogo } from '@automattic/composite-checkout';
-import formatCurrency from '@automattic/format-currency';
 import {
 	getCreditsLineItemFromCart,
 	getItemIntroductoryOfferDisplay,
@@ -52,17 +51,10 @@ function LineItemIntroductoryOffer( { product }: { product: ResponseCartProduct 
 
 function OrderStep( { siteSlug, product }: { siteSlug: string; product: ResponseCartProduct } ) {
 	const translate = useTranslate();
-	const originalAmountDisplay = formatCurrency(
-		product.item_original_subtotal_integer,
-		product.currency,
-		{ isSmallestUnit: true, stripZeros: true }
-	);
+	const originalAmountDisplay = product.item_original_subtotal_display;
 	const originalAmountInteger = product.item_original_subtotal_integer;
 
-	const actualAmountDisplay = formatCurrency( product.item_subtotal_integer, product.currency, {
-		isSmallestUnit: true,
-		stripZeros: true,
-	} );
+	const actualAmountDisplay = product.item_subtotal_display;
 	const isDiscounted = Boolean(
 		product.item_subtotal_integer < originalAmountInteger && originalAmountDisplay
 	);
@@ -221,23 +213,14 @@ export default function PurchaseModalContent( {
 			<OrderReview
 				creditsLineItem={ cart.sub_total_integer > 0 ? creditsLineItem : null }
 				shouldDisplayTax={ cart.tax?.display_taxes }
-				total={ formatCurrency( cart.total_cost_integer, cart.currency, {
-					isSmallestUnit: true,
-					stripZeros: true,
-				} ) }
-				tax={ formatCurrency( cart.total_tax_integer, cart.currency, {
-					isSmallestUnit: true,
-					stripZeros: true,
-				} ) }
+				total={ cart.total_cost_display }
+				tax={ cart.total_tax_display }
 			/>
 			<PayButton
 				busy={ BEFORE_SUBMIT !== step }
 				onClick={ submitTransaction }
 				totalCost={ cart.total_cost_integer }
-				totalCostDisplay={ formatCurrency( cart.total_cost_integer, cart.currency, {
-					isSmallestUnit: true,
-					stripZeros: true,
-				} ) }
+				totalCostDisplay={ cart.total_cost_display }
 			/>
 		</>
 	);

@@ -27,7 +27,6 @@ import {
 	getBasicCart,
 	mockMatchMediaOnWindow,
 } from './util';
-import type { ResponseCart } from '@automattic/shopping-cart';
 
 /* eslint-disable jest/no-conditional-expect */
 
@@ -66,22 +65,12 @@ describe( 'CheckoutMain', () => {
 
 		const store = createTestReduxStore();
 
-		MyCheckout = ( {
-			cartChanges,
-			additionalProps,
-			additionalCartProps,
-			useUndefinedCartKey,
-		}: {
-			cartChanges: Partial< ResponseCart >;
-			additionalProps: Partial< Parameters< typeof CheckoutMain > >;
-			additionalCartProps: Partial< Parameters< typeof ShoppingCartProvider > >;
-			useUndefinedCartKey?: boolean;
-		} ) => {
+		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps, useUndefinedCartKey } ) => {
 			const managerClient = createShoppingCartManagerClient( {
 				getCart: mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ),
 				setCart: mockSetCartEndpoint,
 			} );
-			const mainCartKey = 123456;
+			const mainCartKey = 'foo.com';
 			useCartKey.mockImplementation( () => ( useUndefinedCartKey ? undefined : mainCartKey ) );
 			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 			mockMatchMediaOnWindow();
@@ -98,6 +87,7 @@ describe( 'CheckoutMain', () => {
 							<CheckoutMain
 								siteId={ siteId }
 								siteSlug="foo.com"
+								getStoredCards={ async () => [] }
 								overrideCountryList={ countryList }
 								{ ...additionalProps }
 							/>

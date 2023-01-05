@@ -606,11 +606,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 	if ( isPlan( product ) || isAddOn( product ) || isJetpackProductSlug( productSlug ) ) {
 		if ( isP2Plus( product ) ) {
 			// This is the price for one item for products with a quantity (eg. seats in a license).
-			const itemPrice = formatCurrency(
-				product.item_original_cost_for_quantity_one_integer,
-				product.currency,
-				{ isSmallestUnit: true, stripZeros: true }
-			);
+			const itemPrice = product.item_original_cost_for_quantity_one_display;
 			const members = product?.current_quantity || 1;
 			const p2Options = {
 				args: {
@@ -634,10 +630,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 		const options = {
 			args: {
 				sublabel,
-				price: formatCurrency( product.item_original_subtotal_integer, product.currency, {
-					isSmallestUnit: true,
-					stripZeros: true,
-				} ),
+				price: product.item_original_subtotal_display,
 			},
 		};
 
@@ -707,11 +700,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 				<>
 					{ translate( 'Service: %(productCost)s one-time fee', {
 						args: {
-							productCost: formatCurrency(
-								product.item_original_cost_for_quantity_one_integer,
-								product.currency,
-								{ isSmallestUnit: true, stripZeros: true }
-							),
+							productCost: product.item_original_cost_for_quantity_one_display,
 						},
 					} ) }
 					<br></br>
@@ -927,17 +916,10 @@ function WPLineItem( {
 
 	const label = getLabel( product );
 
-	const originalAmountDisplay = formatCurrency(
-		product.item_original_subtotal_integer,
-		product.currency,
-		{ isSmallestUnit: true, stripZeros: true }
-	);
+	const originalAmountDisplay = product.item_original_subtotal_display;
 	const originalAmountInteger = product.item_original_subtotal_integer;
 
-	const actualAmountDisplay = formatCurrency( product.item_subtotal_integer, product.currency, {
-		isSmallestUnit: true,
-		stripZeros: true,
-	} );
+	const actualAmountDisplay = product.item_subtotal_display;
 	const isDiscounted = Boolean(
 		product.item_subtotal_integer < originalAmountInteger && originalAmountDisplay
 	);

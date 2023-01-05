@@ -1,4 +1,3 @@
-import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import {
 	getLineItemsFromCart,
 	getCreditsLineItemFromCart,
@@ -8,64 +7,32 @@ import {
 	getCouponLineItemFromCart,
 	getTotalLineItemFromCart,
 } from '../src';
-import type { ResponseCart } from '@automattic/shopping-cart';
 
-const cart: ResponseCart = {
-	...getEmptyResponseCart(),
+const cart = {
 	currency: 'JPY',
 	total_cost_integer: 75100,
+	total_cost_display: 'JPY 75,100',
 	sub_total_integer: 75000,
+	sub_total_display: 'JPY 75,000',
 	sub_total_with_taxes_integer: 75000,
+	sub_total_with_taxes_display: 'JPY 75,000',
 	total_tax_integer: 100,
+	total_tax_display: 'JPY 100',
 	credits_integer: 0,
-	tax: {
-		...getEmptyResponseCart().tax,
-		display_taxes: false,
-	},
+	credits_display: 'JPY 0',
+	tax: { display_taxes: false },
 	products: [
 		{
-			...getEmptyResponseCartProduct(),
 			uuid: 'test1',
 			product_name: 'Test Product 1',
 			item_subtotal_integer: 50000,
-			currency: 'JPY',
+			item_subtotal_display: 'JPY 50,000',
 		},
 		{
-			...getEmptyResponseCartProduct(),
 			uuid: 'test2',
 			product_name: 'Test Product 2',
 			item_subtotal_integer: 25000,
-			currency: 'JPY',
-		},
-	],
-};
-
-const usdCart: ResponseCart = {
-	...getEmptyResponseCart(),
-	currency: 'USD',
-	total_cost_integer: 75100,
-	sub_total_integer: 75000,
-	sub_total_with_taxes_integer: 75000,
-	total_tax_integer: 100,
-	credits_integer: 0,
-	tax: {
-		...getEmptyResponseCart().tax,
-		display_taxes: false,
-	},
-	products: [
-		{
-			...getEmptyResponseCartProduct(),
-			uuid: 'test1',
-			product_name: 'Test Product 1',
-			item_subtotal_integer: 50000,
-			currency: 'USD',
-		},
-		{
-			...getEmptyResponseCartProduct(),
-			uuid: 'test2',
-			product_name: 'Test Product 2',
-			item_subtotal_integer: 25000,
-			currency: 'USD',
+			item_subtotal_display: 'JPY 25,000',
 		},
 	],
 };
@@ -80,7 +47,7 @@ describe( 'getLineItemsFromCart', function () {
 				amount: {
 					currency: 'JPY',
 					value: 50000,
-					displayValue: '¥50,000',
+					displayValue: 'JPY 50,000',
 				},
 			},
 			{
@@ -90,7 +57,7 @@ describe( 'getLineItemsFromCart', function () {
 				amount: {
 					currency: 'JPY',
 					value: 25000,
-					displayValue: '¥25,000',
+					displayValue: 'JPY 25,000',
 				},
 			},
 		];
@@ -108,26 +75,11 @@ describe( 'getTotalLineItemFromCart', function () {
 			amount: {
 				currency: 'JPY',
 				value: 75100,
-				displayValue: '¥75,100',
+				displayValue: 'JPY 75,100',
 			},
 		};
 
 		expect( getTotalLineItemFromCart( cart ) ).toStrictEqual( expected );
-	} );
-
-	it( 'returns line item for total without zeros', () => {
-		const expected = {
-			id: 'total',
-			type: 'total',
-			label: 'Total',
-			amount: {
-				currency: 'USD',
-				value: 75100,
-				displayValue: '$751',
-			},
-		};
-
-		expect( getTotalLineItemFromCart( usdCart ) ).toStrictEqual( expected );
 	} );
 } );
 
@@ -141,6 +93,7 @@ describe( 'getCouponLineItemFromCart', function () {
 			...cart,
 			coupon: 'ABCD',
 			coupon_savings_total_integer: 300,
+			coupon_savings_total_display: 'JPY 300',
 		};
 
 		const expected = {
@@ -150,7 +103,7 @@ describe( 'getCouponLineItemFromCart', function () {
 			amount: {
 				currency: 'JPY',
 				value: 300,
-				displayValue: '- ¥300',
+				displayValue: '- JPY 300',
 			},
 		};
 
@@ -167,7 +120,7 @@ describe( 'getSubtotalLineItemFromCart', function () {
 			amount: {
 				currency: 'JPY',
 				value: 75000,
-				displayValue: '¥75,000',
+				displayValue: 'JPY 75,000',
 			},
 		};
 
@@ -189,7 +142,7 @@ describe( 'getTaxLineItemFromCart', function () {
 			amount: {
 				currency: 'JPY',
 				value: 100,
-				displayValue: '¥100',
+				displayValue: 'JPY 100',
 			},
 		};
 
@@ -203,23 +156,21 @@ describe( 'getTaxBreakdownLineItemsFromCart', function () {
 	} );
 
 	it( 'returns line item for taxes if displayed', () => {
-		const cartWithTaxes: ResponseCart = {
+		const cartWithTaxes = {
 			...cart,
 			tax: { ...cart.tax, display_taxes: true },
 			total_tax_breakdown: [
 				{
 					label: 'GST',
 					rate_display: '5%',
-					tax_collected: 100,
 					tax_collected_integer: 100,
-					rate: 0.5,
+					tax_collected_display: 'JPY 100',
 				},
 				{
 					label: 'PST',
 					rate_display: '10%',
-					tax_collected: 200,
 					tax_collected_integer: 200,
-					rate: 0.5,
+					tax_collected_display: 'JPY 200',
 				},
 			],
 		};
@@ -231,7 +182,7 @@ describe( 'getTaxBreakdownLineItemsFromCart', function () {
 				amount: {
 					currency: 'JPY',
 					value: 100,
-					displayValue: '¥100',
+					displayValue: 'JPY 100',
 				},
 			},
 			{
@@ -241,7 +192,7 @@ describe( 'getTaxBreakdownLineItemsFromCart', function () {
 				amount: {
 					currency: 'JPY',
 					value: 200,
-					displayValue: '¥200',
+					displayValue: 'JPY 200',
 				},
 			},
 		];
@@ -263,7 +214,7 @@ describe( 'getTaxBreakdownLineItemsFromCart', function () {
 				amount: {
 					currency: 'JPY',
 					value: 100,
-					displayValue: '¥100',
+					displayValue: 'JPY 100',
 				},
 			},
 		];
@@ -286,7 +237,7 @@ describe( 'getCreditsLineItemFromCart', function () {
 			amount: {
 				currency: 'JPY',
 				value: 400,
-				displayValue: '- ¥400',
+				displayValue: '- JPY 400',
 			},
 		};
 
@@ -302,7 +253,7 @@ describe( 'getCreditsLineItemFromCart', function () {
 			amount: {
 				currency: 'JPY',
 				value: 75000,
-				displayValue: '- ¥75,000',
+				displayValue: '- JPY 75,000',
 			},
 		};
 
