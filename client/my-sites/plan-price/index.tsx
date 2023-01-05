@@ -1,16 +1,17 @@
 import { getCurrencyObject } from '@automattic/format-currency';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import { Component, createElement } from 'react';
 import Badge from 'calypso/components/badge';
+import type { CurrencyObject } from '@automattic/format-currency';
+import type { LocalizeProps } from 'i18n-calypso';
 
 import './style.scss';
 
-export class PlanPrice extends Component {
+export class PlanPrice extends Component< PlanPriceProps & LocalizeProps > {
 	render() {
 		const {
-			currencyCode,
+			currencyCode = 'USD',
 			rawPrice,
 			original,
 			discounted,
@@ -44,7 +45,7 @@ export class PlanPrice extends Component {
 			return true;
 		};
 
-		if ( shouldUseDisplayPrice() ) {
+		if ( shouldUseDisplayPrice() && productDisplayPrice ) {
 			return createElement(
 				tagName,
 				{ className: classes },
@@ -68,17 +69,16 @@ export class PlanPrice extends Component {
 			return null;
 		}
 
-		const priceRange = rawPriceRange.map( ( item ) => {
+		const priceRange: PriceRangeData[] = rawPriceRange.map( ( item ) => {
 			return {
 				price: getCurrencyObject( item, currencyCode ),
 				raw: item,
 			};
 		} );
 
-		const renderPrice = ( priceObj ) => {
-			const fraction = priceObj.raw - priceObj.price.integer > 0 && priceObj.price.fraction;
-			if ( fraction ) {
-				return `${ priceObj.price.integer }${ fraction }`;
+		const renderPrice = ( priceObj: PriceRangeData ) => {
+			if ( ! Number.isInteger( priceObj.raw ) ) {
+				return `${ priceObj.price.integer }${ priceObj.price.fraction }`;
 			}
 			return priceObj.price.integer;
 		};
@@ -100,18 +100,13 @@ export class PlanPrice extends Component {
 			);
 		}
 
-		const renderPriceHtml = ( priceObj ) => {
-			let priceInteger = priceObj.price.integer;
-			// In some currencies like IDR, a dot is used to separate group of threes.
-			// Remove it so that it's not confused to be a decimal point by the subtraction operator.
-			priceInteger = priceInteger.replace( /[,.]/g, '' );
+		const renderPriceHtml = ( priceObj: PriceRangeData ) => {
+			const hasFraction = ! Number.isInteger( priceObj.raw );
 
 			return (
 				<>
 					<span className="plan-price__integer">{ priceObj.price.integer }</span>
-					<sup className="plan-price__fraction">
-						{ priceObj.raw - priceInteger > 0 && priceObj.price.fraction }
-					</sup>
+					<sup className="plan-price__fraction">{ hasFraction && priceObj.price.fraction }</sup>
 				</>
 			);
 		};
@@ -156,26 +151,21 @@ export class PlanPrice extends Component {
 
 export default localize( PlanPrice );
 
-PlanPrice.propTypes = {
-	rawPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
-	original: PropTypes.bool,
-	discounted: PropTypes.bool,
-	currencyCode: PropTypes.string,
-	className: PropTypes.string,
-	isOnSale: PropTypes.bool,
-	taxText: PropTypes.string,
-	translate: PropTypes.func.isRequired,
-	displayPerMonthNotation: PropTypes.bool,
-	currencyFormatOptions: PropTypes.object,
-	productDisplayPrice: PropTypes.string,
-	omitHeading: PropTypes.bool,
-};
+export interface PlanPriceProps {
+	rawPrice?: number | [ number, number ];
+	original?: boolean;
+	discounted?: boolean;
+	currencyCode?: string | null;
+	className?: string;
+	isOnSale?: boolean;
+	taxText?: string;
+	displayPerMonthNotation?: boolean;
+	productDisplayPrice?: string;
+	omitHeading?: boolean;
+	displayFlatPrice?: boolean;
+}
 
-PlanPrice.defaultProps = {
-	currencyCode: 'USD',
-	original: false,
-	discounted: false,
-	className: '',
-	isOnSale: false,
-	displayPerMonthNotation: false,
-};
+interface PriceRangeData {
+	price: CurrencyObject;
+	raw: number;
+}
