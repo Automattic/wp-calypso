@@ -2,12 +2,14 @@ import { Icon, arrowLeft, arrowRight } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, withRtl } from 'i18n-calypso';
 import { flowRight } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import qs from 'qs';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/analytics/actions';
+import NavigationArrows from '../navigation-arrows';
 
 import './style.scss';
 
@@ -41,7 +43,7 @@ class StatsPeriodNavigation extends PureComponent {
 		this.handleClickArrow( 'previous' );
 	};
 
-	handleClickArrow = ( arrow ) => {
+	handleClickArrow = ( arrow, href ) => {
 		const { date, onPeriodChange, period, recordGoogleEvent } = this.props;
 		recordGoogleEvent( 'Stats Period Navigation', `Clicked ${ arrow } ${ period }` );
 
@@ -52,6 +54,31 @@ class StatsPeriodNavigation extends PureComponent {
 				period,
 			} );
 		}
+
+		if ( href ) {
+			page( href );
+		}
+	};
+
+	handleArrowNext = () => {
+		const { date, moment, period, url, queryParams } = this.props;
+		const nextDay = moment( date ).add( 1, period ).format( 'YYYY-MM-DD' );
+		const nextDayQuery = qs.stringify( Object.assign( {}, queryParams, { startDate: nextDay } ), {
+			addQueryPrefix: true,
+		} );
+		const href = `${ url }${ nextDayQuery }`;
+		this.handleClickArrow( 'next', href );
+	};
+
+	handleArrowPrevious = () => {
+		const { date, moment, period, url, queryParams } = this.props;
+		const previousDay = moment( date ).subtract( 1, period ).format( 'YYYY-MM-DD' );
+		const previousDayQuery = qs.stringify(
+			Object.assign( {}, queryParams, { startDate: previousDay } ),
+			{ addQueryPrefix: true }
+		);
+		const href = `${ url }${ previousDayQuery }`;
+		this.handleClickArrow( 'previous', href );
 	};
 
 	render() {
@@ -81,7 +108,13 @@ class StatsPeriodNavigation extends PureComponent {
 		return (
 			<div className="stats-period-navigation">
 				<div className="stats-period-navigation__children">{ children }</div>
-				{ showArrows && (
+				<NavigationArrows
+					disableNextArrow={ disableNextArrow || isToday }
+					disablePreviousArrow={ disablePreviousArrow }
+					onArrowNext={ this.handleArrowNext }
+					onArrowPrevious={ this.handleArrowPrevious }
+				/>
+				{ showArrows && false && (
 					<>
 						<a
 							className={ classNames( 'stats-period-navigation__previous', {
