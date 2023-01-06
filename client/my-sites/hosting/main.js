@@ -1,4 +1,5 @@
 import { PLAN_BUSINESS, FEATURE_SFTP } from '@automattic/calypso-products';
+import { Spinner } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
@@ -14,6 +15,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { Experiment } from 'calypso/lib/explat';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -75,13 +77,31 @@ class Hosting extends Component {
 		} = this.props;
 
 		const getUpgradeBanner = () => (
-			<UpsellNudge
-				title={ translate( 'Upgrade to the Business plan to access all hosting features' ) }
-				event="calypso_hosting_configuration_upgrade_click"
-				href={ `/checkout/${ siteId }/business` }
-				plan={ PLAN_BUSINESS }
-				feature={ FEATURE_SFTP }
-				showIcon={ true }
+			<Experiment
+				name="calypso_hosting_configuration_upsell_list_features"
+				defaultExperience={
+					<UpsellNudge
+						title={ translate( 'Upgrade to the Business plan to access all hosting features' ) }
+						event="calypso_hosting_configuration_upgrade_click"
+						href={ `/checkout/${ siteId }/business` }
+						plan={ PLAN_BUSINESS }
+						feature={ FEATURE_SFTP }
+						showIcon={ true }
+					/>
+				}
+				treatmentExperience={
+					<UpsellNudge
+						title={ translate(
+							'TREATMENT Upgrade to the Business plan to access all hosting features'
+						) }
+						event="calypso_hosting_configuration_upgrade_click"
+						href={ `/checkout/${ siteId }/business` }
+						plan={ PLAN_BUSINESS }
+						feature={ FEATURE_SFTP }
+						showIcon={ true }
+					/>
+				}
+				loadingExperience={ <Spinner style={ { left: 'calc(50%-8px)' } } /> }
 			/>
 		);
 
