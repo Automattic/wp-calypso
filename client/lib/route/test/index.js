@@ -140,6 +140,38 @@ describe( 'route', function () {
 				).toEqual( 2916284 );
 			} );
 		} );
+		describe( 'for checkout paths', function () {
+			test( 'should return false for gift checkouts', function () {
+				expect(
+					route.getSiteFragment( '/checkout/value_bundle/gift/18726247?cancel_to=/home' )
+				).toEqual( false );
+			} );
+			test( 'should return false for domain checkouts', function () {
+				expect( route.getSiteFragment( '/checkout/thank-you/no-site/75806534' ) ).toEqual( false );
+			} );
+			test( 'should return the correct site fragment when checking out', function () {
+				expect(
+					route.getSiteFragment( '/checkout/thank-you/example.wordpress.com/75806534' )
+				).toEqual( 'example.wordpress.com' );
+			} );
+		} );
+		describe( 'for jetpack paths', function () {
+			test( 'should return correct site fragment when site_url is trailing slashed', function () {
+				expect( route.getSiteFragment( '/jetpack/connect/plans/subdomain.example.com::' ) ).toEqual(
+					'subdomain.example.com'
+				);
+			} );
+		} );
+		describe( 'for plugins paths', function () {
+			test( 'should return correct site fragment', function () {
+				expect( route.getSiteFragment( '/plugins/404-to-301/example.wpcomstaging.com' ) ).toEqual(
+					'example.wpcomstaging.com'
+				);
+			} );
+			test( 'should return false when plugin name ends a number', function () {
+				expect( route.getSiteFragment( '/plugins/404-to-301' ) ).toEqual( false );
+			} );
+		} );
 	} );
 
 	describe( 'addSiteFragment', function () {
