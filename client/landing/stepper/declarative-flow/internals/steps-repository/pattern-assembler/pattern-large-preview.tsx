@@ -42,10 +42,9 @@ const PatternLargePreview = ( { header, sections, footer, activePosition }: Prop
 			// Use the height to determine whether the newly added pattern is loaded.
 			// If it's not loaded, try to delay the behavior of scrolling into view.
 			if ( height && height > PATTERN_RENDERER_MIN_HEIGHT ) {
-				element.scrollIntoView( {
-					block: 'start',
-					behavior: 'smooth',
-				} );
+				// Note that Firefox has an issue related to "smooth" behavior, so we leave it as default
+				// See https://github.com/Automattic/wp-calypso/pull/71527#issuecomment-1370522634
+				element.scrollIntoView();
 			} else {
 				timerId = window.setTimeout( () => scrollIntoView(), 100 );
 			}
