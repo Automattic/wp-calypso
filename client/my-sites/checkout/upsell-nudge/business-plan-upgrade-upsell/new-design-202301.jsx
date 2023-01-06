@@ -9,10 +9,6 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import './style-new-design.scss';
 
 export class BusinessPlanUpgradeUpsellNewDesign extends PureComponent {
-	componentDidMount() {
-		this.countdownStart();
-	}
-
 	render() {
 		const { receiptId, translate } = this.props;
 
@@ -39,9 +35,6 @@ export class BusinessPlanUpgradeUpsellNewDesign extends PureComponent {
 					<div className="business-plan-upgrade-upsell-new-design__image-container">
 						{ this.discount() }
 						{ this.image() }
-					</div>
-					<div className="business-plan-upgrade-upsell-new-design__countdown">
-						{ this.countdown() }
 					</div>
 					<div className="business-plan-upgrade-upsell-new-design__footer">{ this.footer() }</div>
 				</div>
@@ -173,113 +166,6 @@ export class BusinessPlanUpgradeUpsellNewDesign extends PureComponent {
 				</div>
 			</>
 		);
-	}
-
-	countdown() {
-		const { translate } = this.props;
-		const days = 0;
-		const hours = 0;
-		const mins = 0;
-		const secs = 0;
-
-		return (
-			<>
-				<Badge
-					key="popular"
-					type="info"
-					className="business-plan-upgrade-upsell-new-design__countdown-badge"
-				>
-					<div className="business-plan-upgrade-upsell-new-design__countdown-counter">
-						{ translate( 'Discount ends in' ) }
-						<span className="business-plan-upgrade-upsell-new-design__countdown-day">{ days }</span>
-						{ translate( 'd' ) }
-						<span className="business-plan-upgrade-upsell-new-design__countdown-hour">
-							{ hours }
-						</span>
-						{ translate( 'h' ) }
-						<span className="business-plan-upgrade-upsell-new-design__countdown-minute">
-							{ mins }
-						</span>
-						{ translate( 'm' ) }
-						<span className="business-plan-upgrade-upsell-new-design__countdown-second">
-							{ secs }
-						</span>
-						{ translate( 's' ) }
-					</div>
-				</Badge>
-			</>
-		);
-	}
-
-	countdownStart() {
-		let upsellInterval;
-
-		const eventTime = new Date().getTime() + 60 * 60 * 24 * 1000;
-
-		if ( eventTime - Date.now() > 0 ) {
-			upsellInterval = window.setInterval( updateCountdown, 1000, eventTime );
-		} else {
-			countdownEnds();
-		}
-
-		function updateCountdown( ts ) {
-			const now = Date.now();
-			const diff = ts - now;
-
-			if ( diff < 0 ) {
-				countdownEnds();
-				window.clearInterval( upsellInterval ); // remove interval here
-				return;
-			}
-
-			// convert diff to seconds
-			let rem = Math.round( diff / 1000 );
-
-			const days = Math.floor( rem / ( 24 * 60 * 60 ) );
-			rem = rem - days * 24 * 60 * 60;
-
-			const hours = Math.floor( rem / ( 60 * 60 ) );
-			rem = rem - hours * 60 * 60;
-
-			const mins = Math.floor( rem / 60 );
-			rem = rem - mins * 60;
-
-			const secs = rem;
-
-			document.getElementsByClassName(
-				'business-plan-upgrade-upsell-new-design__countdown-day'
-			)[ 0 ].innerHTML = days;
-			document.getElementsByClassName(
-				'business-plan-upgrade-upsell-new-design__countdown-hour'
-			)[ 0 ].innerHTML = hours;
-			document.getElementsByClassName(
-				'business-plan-upgrade-upsell-new-design__countdown-minute'
-			)[ 0 ].innerHTML = mins;
-			document.getElementsByClassName(
-				'business-plan-upgrade-upsell-new-design__countdown-second'
-			)[ 0 ].innerHTML = secs;
-		}
-
-		function countdownEnds() {
-			const countdown = document.getElementsByClassName(
-				'business-plan-upgrade-upsell-new-design__countdown-counter'
-			)[ 0 ];
-			document.getElementsByClassName(
-				'business-plan-upgrade-upsell-new-design__countdown-day'
-			)[ 0 ].innerHTML = 0;
-			document.getElementsByClassName(
-				'business-plan-upgrade-upsell-new-design__countdown-hour'
-			)[ 0 ].innerHTML = 0;
-			document.getElementsByClassName(
-				'business-plan-upgrade-upsell-new-design__countdown-minute'
-			)[ 0 ].innerHTML = 0;
-			document.getElementsByClassName(
-				'business-plan-upgrade-upsell-new-design__countdown-second'
-			)[ 0 ].innerHTML = 0;
-			countdown.classList.add(
-				'business-plan-upgrade-upsell-new-design__countdown-counter-stopped'
-			);
-		}
 	}
 
 	footer() {

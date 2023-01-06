@@ -86,22 +86,6 @@ main.business-plan-upgrade-upsell-new-design.main {
 		grid-area: body;
 	}
 
-	&__countdown {
-		grid-area: countdown;
-		margin-bottom: 20px;
-	}
-
-	&__countdown-badge {
-		display: block !important;
-		padding: 10px !important;
-		border-radius: 0 !important;
-		background: #f5f1e1 !important;
-		text-align: center;
-	}
-	&__countdown-counter span {
-		padding-left: 5px;
-	}
-
 	&__footer {
 		grid-area: buttons;
 	}
