@@ -9,7 +9,10 @@ import {
 	JETPACK_AGENCY_DASHBOARD_RESET_SITE,
 	JETPACK_AGENCY_DASHBOARD_SITE_MONITOR_STATUS_CHANGE,
 } from './action-types';
-import type { PurchasedProductsInfo } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import type {
+	PurchasedProductsInfo,
+	SiteMonitorStatus,
+} from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
 const purchasedLicense: Reducer<
 	{ purchasedLicenseInfo: PurchasedProductsInfo | null },
@@ -22,10 +25,10 @@ const purchasedLicense: Reducer<
 	return state;
 };
 
-const siteMonitorStatus: Reducer<
-	{ statuses: { [ siteId: number ]: 'loading' | 'completed' } },
-	AnyAction
-> = ( state = { statuses: {} }, action: AnyAction ): AppState => {
+const siteMonitorStatus: Reducer< { statuses: SiteMonitorStatus }, AnyAction > = (
+	state = { statuses: {} },
+	action: AnyAction
+): AppState => {
 	switch ( action?.type ) {
 		case JETPACK_AGENCY_DASHBOARD_SITE_MONITOR_STATUS_CHANGE:
 			return { ...state, statuses: { ...state.statuses, [ action.siteId ]: action.status } };

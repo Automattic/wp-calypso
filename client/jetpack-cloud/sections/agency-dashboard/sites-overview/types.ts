@@ -175,3 +175,7 @@ export interface UpdateMonitorSettingsArgs {
 	siteId: number;
 	params: UpdateMonitorSettingsParams;
 }
+
+export type SiteMonitorStatus = {
+	[ siteId: number ]: 'loading' | 'completed';
+};

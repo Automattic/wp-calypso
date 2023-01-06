@@ -3,6 +3,7 @@ import type {
 	Preference,
 	AllowedTypes,
 	PurchasedProductsInfo,
+	SiteMonitorStatus,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import type { AppState } from 'calypso/types';
 
@@ -59,8 +60,6 @@ export function hasSelectedLicensesOfType(
 	);
 }
 
-export function getSiteMonitorStatus( state: AppState ): {
-	[ siteId: number ]: 'loading' | 'completed';
-} {
+export function getSiteMonitorStatus( state: AppState ): SiteMonitorStatus {
 	return state.agencyDashboard?.siteMonitorStatus?.statuses;
 }
