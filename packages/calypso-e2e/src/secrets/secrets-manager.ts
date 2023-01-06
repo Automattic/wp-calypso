@@ -132,7 +132,6 @@ export class SecretsManager {
 		};
 
 		return {
-			passwordForNewTestSignUps: 'FAKE_VALUE',
 			storeSandboxCookieValue: 'FAKE_VALUE',
 			testCouponCode: 'FAKE_VALUE',
 			wpccAuthPath: 'FAKE_VALUE',
