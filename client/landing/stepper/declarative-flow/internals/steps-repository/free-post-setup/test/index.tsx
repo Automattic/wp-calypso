@@ -1,14 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useDispatch } from '@wordpress/data';
 import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
+import { renderWithProvider } from '../../../../../../../test-helpers/testing-library';
 import * as useSiteModule from '../../../../../hooks/use-site';
 import FreeFlowPostSetup from '../index';
 import { defaultSiteDetails, buildSiteDetails } from './lib/fixtures';
@@ -23,27 +20,6 @@ jest.mock( 'react-router-dom', () => ( {
 } ) );
 
 jest.mock( '@wordpress/data' );
-const useDispatchMock = useDispatch as jest.Mock;
-
-const middlewares = [ thunk ];
-
-const mockStore = configureStore( middlewares );
-
-const renderComponent = ( component, initialState = {} ) => {
-	const queryClient = new QueryClient();
-	const store = mockStore( {
-		'automattic/onboard': {},
-		...initialState,
-	} );
-
-	return render(
-		<Provider store={ store }>
-			<QueryClientProvider client={ queryClient }>{ component }</QueryClientProvider>
-		</Provider>
-	);
-};
-
-const useSiteMock = jest.spyOn( useSiteModule, 'useSite' );
 
 describe( 'Onboarding Free Flow - FreeSetup', () => {
 	const user = userEvent.setup();
@@ -52,6 +28,8 @@ describe( 'Onboarding Free Flow - FreeSetup', () => {
 		goNext: jest.fn(),
 		submit: jest.fn(),
 	};
+	const useDispatchMock = useDispatch as jest.Mock;
+	const useSiteMock = jest.spyOn( useSiteModule, 'useSite' );
 
 	afterEach( () => {
 		jest.clearAllMocks();
@@ -62,7 +40,7 @@ describe( 'Onboarding Free Flow - FreeSetup', () => {
 			useDispatchMock.mockImplementation( () => {
 				return { saveSiteSettings: jest.fn() };
 			} );
-			renderComponent( <FreeFlowPostSetup flow="free" navigation={ navigation } /> );
+			renderWithProvider( <FreeFlowPostSetup flow="free" navigation={ navigation } /> );
 
 			await waitFor( () => {
 				expect( screen.getByText( 'Personalize your Site' ) ).toBeInTheDocument();
@@ -85,7 +63,7 @@ describe( 'Onboarding Free Flow - FreeSetup', () => {
 				} )
 			);
 
-			renderComponent( <FreeFlowPostSetup flow="free" navigation={ navigation } /> );
+			renderWithProvider( <FreeFlowPostSetup flow="free" navigation={ navigation } /> );
 
 			await waitFor( async () => {
 				await user.click( screen.getByText( 'Continue' ) );
@@ -102,7 +80,7 @@ describe( 'Onboarding Free Flow - FreeSetup', () => {
 				return { saveSiteSettings: jest.fn() };
 			} );
 			useSiteMock.mockReturnValue( defaultSiteDetails );
-			renderComponent( <FreeFlowPostSetup flow="free" navigation={ navigation } /> );
+			renderWithProvider( <FreeFlowPostSetup flow="free" navigation={ navigation } /> );
 
 			await act( async () => {
 				await user.click( screen.getByText( 'Continue' ) );
@@ -120,7 +98,7 @@ describe( 'Onboarding Free Flow - FreeSetup', () => {
 				};
 			} );
 			useSiteMock.mockReturnValue( defaultSiteDetails );
-			renderComponent( <FreeFlowPostSetup flow="free" navigation={ navigation } /> );
+			renderWithProvider( <FreeFlowPostSetup flow="free" navigation={ navigation } /> );
 
 			await act( async () => {
 				await user.click( screen.getByText( 'Continue' ) );
