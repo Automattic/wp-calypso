@@ -8,25 +8,29 @@ import 'calypso/state/themes/init';
  * Jetpack site. If the themeId parameter is suffixed with '-wpcom', install the
  * theme from WordPress.com. Otherwise, install from WordPress.org.
  *
- * @param {string} themeId   Theme ID. If suffixed with '-wpcom', install theme from WordPress.com
- * @param {number} siteId    Site ID
- * @param {string} source    The source that is requesting theme activation, e.g. 'showcase'
- * @param {boolean} purchased Whether the theme has been purchased prior to activation
+ * @param {string} themeId              Theme ID. If suffixed with '-wpcom', install theme from WordPress.com
+ * @param {number} siteId               Site ID
+ * @param {string} source               The source that is requesting theme activation, e.g. 'showcase'
+ * @param {boolean} purchased           Whether the theme has been purchased prior to activation
  * @param {boolean} keepCurrentHomepage Prevent theme from switching homepage content if this is what it'd normally do when activated
- * @returns {Function}           Action thunk
+ * @param {string}  styleVariationSlug  The theme style slug
+ * @returns {Function}                  Action thunk
  */
 export function installAndActivateTheme(
 	themeId,
 	siteId,
 	source = 'unknown',
 	purchased = false,
-	keepCurrentHomepage = false
+	keepCurrentHomepage = false,
+	styleVariationSlug
 ) {
 	return ( dispatch ) => {
 		return dispatch( installTheme( themeId, siteId ) ).then( () => {
 			// This will be called even if `installTheme` silently fails. We rely on
 			// `activateTheme`'s own error handling here.
-			dispatch( activateTheme( themeId, siteId, source, purchased, keepCurrentHomepage ) );
+			dispatch(
+				activateTheme( themeId, siteId, source, purchased, keepCurrentHomepage, styleVariationSlug )
+			);
 		} );
 	};
 }

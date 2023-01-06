@@ -11,19 +11,21 @@ import 'calypso/state/themes/init';
 /**
  * Triggers a network request to activate a specific theme on a given site.
  *
- * @param {string} themeId   Theme ID
- * @param {number} siteId    Site ID
- * @param {string} source    The source that is requesting theme activation, e.g. 'showcase'
- * @param {boolean} purchased Whether the theme has been purchased prior to activation
+ * @param {string}  themeId            Theme ID
+ * @param {number}  siteId             Site ID
+ * @param {string}  source             The source that is requesting theme activation, e.g. 'showcase'
+ * @param {boolean} purchased          Whether the theme has been purchased prior to activation
  * @param {boolean} dontChangeHomepage Prevent theme from switching homepage content if this is what it'd normally do when activated
- * @returns {Function}           Action thunk
+ * @param {string}  styleVariationSlug The theme style slug
+ * @returns {Function}                 Action thunk
  */
 export function activateTheme(
 	themeId,
 	siteId,
 	source = 'unknown',
 	purchased = false,
-	dontChangeHomepage = false
+	dontChangeHomepage = false,
+	styleVariationSlug
 ) {
 	return ( dispatch ) => {
 		dispatch( {
@@ -39,6 +41,7 @@ export function activateTheme(
 				...( isEnabled( 'themes/theme-switch-persist-template' ) && {
 					persist_homepage_template: true,
 				} ),
+				...( styleVariationSlug && { style_variation_slug: styleVariationSlug } ),
 			} )
 			.then( ( theme ) => {
 				// Fall back to ID for Jetpack sites which don't return a stylesheet attr.

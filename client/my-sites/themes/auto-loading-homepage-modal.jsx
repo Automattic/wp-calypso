@@ -25,6 +25,7 @@ import {
 	isThemeActive,
 	shouldShowHomepageWarning,
 	getPreActivateThemeId,
+	getThemePreviewThemeOptions,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -92,9 +93,10 @@ class AutoLoadingHomepageModal extends Component {
 	closeModalHandler =
 		( action = 'dismiss' ) =>
 		() => {
-			const { installingThemeId, siteId, source } = this.props;
+			const { installingThemeId, siteId, source, themeOptions } = this.props;
 			if ( 'activeTheme' === action ) {
 				this.props.acceptAutoLoadingHomepageWarning( installingThemeId );
+				const { themeId, styleVariation } = themeOptions;
 				const keepCurrentHomepage = this.state.homepageAction === 'keep_current_homepage';
 				recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_activate_click', {
 					theme: installingThemeId,
@@ -105,7 +107,8 @@ class AutoLoadingHomepageModal extends Component {
 					siteId,
 					source,
 					false,
-					keepCurrentHomepage
+					keepCurrentHomepage,
+					installingThemeId === themeId ? styleVariation?.slug : undefined
 				);
 			} else if ( 'keepCurrentTheme' === action ) {
 				recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
@@ -298,6 +301,7 @@ export default connect(
 			siteDomain: getSiteDomain( state, siteId ),
 			installingThemeId,
 			theme: installingThemeId && getCanonicalTheme( state, siteId, installingThemeId ),
+			themeOptions: getThemePreviewThemeOptions( state ),
 			isActivating: !! isActivatingTheme( state, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
 			hasAutoLoadingHomepage: themeHasAutoLoadingHomepage( state, installingThemeId, siteId ),
