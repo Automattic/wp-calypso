@@ -63,11 +63,23 @@ const SetupForm = ( {
 		reader.onerror = () => setBase64Image( null );
 	};
 
+	// TODO: Add this if useEffect below is not working on its own
+	// const [ siteTitleValue, setSiteTitleValue ] = useState( '' );
+
+	// TODO: Need to check if this useEffect change works
+	// If not, handle the state updates within the component and only pass in siteTitle value
 	useEffect( () => {
-		if ( siteTitle.trim().length && invalidSiteTitle ) {
+		if ( invalidSiteTitle ) {
 			setInvalidSiteTitle( false );
 		}
-	}, [ siteTitle, invalidSiteTitle, setInvalidSiteTitle ] );
+	}, [ invalidSiteTitle, setInvalidSiteTitle ] );
+
+	// TODO: Use this if the useEffect above is not working on its own
+	// useEffect( () => {
+	// 	if ( siteTitle.trim().length ) {
+	// 		setComponentSiteTitle( siteTitle );
+	// 	}
+	// }, [ siteTitle, setComponentSiteTitle ] );
 
 	return (
 		<form className="setup-form__form" onSubmit={ handleSubmit }>
