@@ -295,23 +295,10 @@ $font-family: "SF Pro Text", $sans;
 		}
 
 		.pattern-selector__block-list {
-			iframe {
-				width: 1024px;
-				height: 665px;
-				transform: scale(0.268);
-				transform-origin: top left;
-				position: absolute;
-				left: 0;
-				border-radius: 4px;
-				pointer-events: none;
-				overflow: hidden;
-			}
-
 			button {
 				display: block;
 				border: 1px solid rgba(0, 0, 0, 5%);
 				border-radius: 4px;
-				min-height: 140px;
 				width: 100%;
 				transform: translateZ(0);
 				overflow: hidden;

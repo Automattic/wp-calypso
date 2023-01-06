@@ -1,6 +1,6 @@
 import { doesCurrencyExist, getCurrencyDefaults } from './currencies';
 import numberFormat from './number-format';
-import { FormatCurrencyOptions, CurrencyObject } from './types';
+import type { FormatCurrencyOptions, CurrencyObject } from './types';
 
 export { getCurrencyDefaults };
 
@@ -45,7 +45,7 @@ export function formatCurrency(
 	number: number,
 	code: string,
 	options: FormatCurrencyOptions = {}
-): string | null {
+): string {
 	if ( ! doesCurrencyExist( code ) ) {
 		// eslint-disable-next-line no-console
 		console.warn( `formatCurrency was called with an unknown currency "${ code }"` );
@@ -101,7 +101,12 @@ export function formatCurrency(
  * function will format the amount `1025` in `USD` as `$1,025.00`, but when the
  * option is true, it will return `$10.25` instead.
  *
- * If the number is NaN, this will return null.
+ * Note that the `integer` return value of this function is not a number, but a
+ * locale-formatted string which may include symbols like spaces, commas, or
+ * periods as group separators. Similarly, the `fraction` property is a string
+ * that contains the decimal separator.
+ *
+ * If the number is NaN, it will be treated as 0.
  *
  * If the currency code is not known, this will assume a default currency
  * similar to USD.
@@ -112,13 +117,13 @@ export function formatCurrency(
  * @param      {number}                   number     number to format; assumed to be a float unless isSmallestUnit is set.
  * @param      {string}                   code       currency code e.g. 'USD'
  * @param      {FormatCurrencyOptions}    options    options object
- * @returns    {?CurrencyObject}          A formatted string e.g. { symbol:'$', integer: '$99', fraction: '.99', sign: '-' }
+ * @returns    {CurrencyObject}          A formatted string e.g. { symbol:'$', integer: '$99', fraction: '.99', sign: '-' }
  */
 export function getCurrencyObject(
 	number: number,
 	code: string,
 	options: FormatCurrencyOptions = {}
-): CurrencyObject | null {
+): CurrencyObject {
 	if ( ! doesCurrencyExist( code ) ) {
 		// eslint-disable-next-line no-console
 		console.warn( `getCurrencyObject was called with an unknown currency "${ code }"` );
@@ -127,7 +132,7 @@ export function getCurrencyObject(
 	if ( isNaN( number ) ) {
 		// eslint-disable-next-line no-console
 		console.warn( 'getCurrencyObject was called with NaN' );
-		return null;
+		number = 0;
 	}
 	const { decimal, grouping, precision, symbol, isSmallestUnit } = {
 		...currencyDefaults,

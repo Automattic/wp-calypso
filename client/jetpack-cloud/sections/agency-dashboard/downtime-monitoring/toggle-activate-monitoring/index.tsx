@@ -115,7 +115,7 @@ export default function ToggleActivateMonitoring( { site, status, settings }: Pr
 			{ showNotificationSettings && (
 				<NotificationSettings
 					onClose={ handleToggleNotificationSettings }
-					site={ site }
+					sites={ [ site ] }
 					settings={ settings }
 				/>
 			) }

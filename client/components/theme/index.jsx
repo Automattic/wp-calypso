@@ -71,6 +71,8 @@ export class Theme extends Component {
 		screenshotClickUrl: PropTypes.string,
 		// Called when theme screenshot is clicked
 		onScreenshotClick: PropTypes.func,
+		// Called when theme style variation is clicked
+		onStyleVariationClick: PropTypes.func,
 		// Called when the more button is clicked
 		onMoreButtonClick: PropTypes.func,
 		// Options to populate the 'More' button popover menu with
@@ -135,6 +137,7 @@ export class Theme extends Component {
 			) ||
 			nextProps.screenshotClickUrl !== this.props.screenshotClickUrl ||
 			nextProps.onScreenshotClick !== this.props.onScreenshotClick ||
+			nextProps.onStyleVariationClick !== this.props.onStyleVariationClick ||
 			nextProps.onMoreButtonClick !== this.props.onMoreButtonClick ||
 			themeThumbnailRefUpdated
 		);
@@ -153,6 +156,10 @@ export class Theme extends Component {
 		if ( typeof onScreenshotClick === 'function' ) {
 			onScreenshotClick( this.props.theme.id, this.props.index );
 		}
+	};
+
+	onStyleVariationClick = ( variation ) => {
+		this.props.onStyleVariationClick?.( this.props.theme.id, this.props.index, variation );
 	};
 
 	isBeginnerTheme() {
@@ -454,7 +461,11 @@ export class Theme extends Component {
 		return (
 			style_variations.length > 0 && (
 				<div className="theme__info-style-variations">
-					<StyleVariationBadges variations={ style_variations } />
+					<StyleVariationBadges
+						variations={ style_variations }
+						onMoreClick={ this.onStyleVariationClick }
+						onClick={ this.onStyleVariationClick }
+					/>
 				</div>
 			)
 		);
