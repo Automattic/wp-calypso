@@ -153,16 +153,91 @@ export class PlanPrice extends Component< PlanPriceProps & LocalizeProps > {
 export default localize( PlanPrice );
 
 export interface PlanPriceProps {
+	/**
+	 * Can be either a floating point price to display, or a pair of floating
+	 * point prices.
+	 *
+	 * If there are a pair of prices, they will be displayed as a range (eg:
+	 * '$5-$10').
+	 *
+	 * If either of the numbers is a 0, nothing will be rendered at all.
+	 *
+	 * If specified along with `productDisplayPrice`, this will be ignored unless
+	 * it is an array, in which case `productDisplayPrice` will be ignored.
+	 */
 	rawPrice?: number | [ number, number ];
+
+	/**
+	 * Adds the `is-original` CSS class.
+	 */
 	original?: boolean;
+
+	/**
+	 * Adds the `is-discounted` CSS class.
+	 */
 	discounted?: boolean;
+
+	/**
+	 * The currency code for the price.
+	 *
+	 * Ignored if `productDisplayPrice` is set and `rawPrice` is not an array.
+	 *
+	 * Defaults to `USD` if not set or if undefined, but if it is `null`, the
+	 * component will render nothing at all (if using `rawPrice`).
+	 */
 	currencyCode?: string | null;
+
+	/**
+	 * A string to add to the className of the component's output.
+	 */
 	className?: string;
+
+	/**
+	 * Displays a "Sale" banner over the price if set.
+	 *
+	 * Ignored if `productDisplayPrice` is set and `rawPrice` is not an array.
+	 * Also ignored if `displayFlatPrice` is set.
+	 */
 	isOnSale?: boolean;
+
+	/**
+	 * Text to display adjacent to the price referring to taxes.
+	 *
+	 * It is rendered inside the string '(+X tax)' where `X` is this prop.
+	 *
+	 * Ignored if `productDisplayPrice` is set and `rawPrice` is not an array.
+	 * Also ignored if `displayFlatPrice` is set.
+	 */
 	taxText?: string;
+
+	/**
+	 * Whether to display a "per month" label adjacent to the price.
+	 *
+	 * Ignored if `productDisplayPrice` is set and `rawPrice` is not an array.
+	 * Also ignored if `displayFlatPrice` is set.
+	 */
 	displayPerMonthNotation?: boolean;
+
+	/**
+	 * A pre-formatted price to display.
+	 *
+	 * Ignored if `rawPrice` is set and is an array.
+	 */
 	productDisplayPrice?: string;
+
+	/**
+	 * If set, the component will render a `span` instead of an `h4`.
+	 */
 	omitHeading?: boolean;
+
+	/**
+	 * If set, the component will render without separating the integer part of
+	 * the price from the decimal part of the price.
+	 *
+	 * If set, many of the other formatting options will be ignored.
+	 *
+	 * Ignored if `productDisplayPrice` is set and `rawPrice` is not an array.
+	 */
 	displayFlatPrice?: boolean;
 }
 
