@@ -538,6 +538,7 @@ describe( 'actions', () => {
 									search_taxonomies: '',
 									search_term: 'simple, white',
 									source: 'unknown',
+									style_variation_slug: '',
 									theme: 'twentysixteen',
 								},
 								service: 'tracks',
