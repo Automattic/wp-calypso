@@ -96,8 +96,6 @@ body:
       label: Logs or notes
       placeholder: |
         Add any information that may be relevant, such as:
-          - browser
-          - platform
-          - theme
-          - logs
-          - cli/console errors
+          - Browser/Platform
+          - Theme
+          - Logs/Errors
