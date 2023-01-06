@@ -33,20 +33,9 @@ export class PlanPrice extends Component< PlanPriceProps & LocalizeProps > {
 
 		const tagName = omitHeading ? 'span' : 'h4';
 
-		// productDisplayPrice is returned from Store Price and provides a geo-IDed currency format
-		const shouldUseDisplayPrice = () => {
-			if ( ! productDisplayPrice ) {
-				return false;
-			}
-			if ( rawPrice ) {
-				if ( Array.isArray( rawPrice ) && rawPrice.length > 1 ) {
-					return false;
-				}
-			}
-			return true;
-		};
+		const areThereMultipleRawPrices = rawPrice && Array.isArray( rawPrice ) && rawPrice.length > 1;
 
-		if ( shouldUseDisplayPrice() && productDisplayPrice ) {
+		if ( productDisplayPrice && ! areThereMultipleRawPrices ) {
 			return createElement(
 				tagName,
 				{ className: classes },
