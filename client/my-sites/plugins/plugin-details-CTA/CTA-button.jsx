@@ -256,14 +256,12 @@ function onClickInstallPlugin( {
 				`/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
 					selectedSite?.plan,
 					billingPeriod
-				) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
-					selectedSite.slug
-				}`
+				) },${ product_slug }?redirect_to=/marketplace/thank-you/plugins/${ selectedSite.slug }`
 			);
 		}
 
 		return page(
-			`/checkout/${ selectedSite.slug }/${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }#step2`
+			`/checkout/${ selectedSite.slug }/${ product_slug }?redirect_to=/marketplace/thank-you/plugins/${ selectedSite.slug }#step2`
 		);
 	}
 
