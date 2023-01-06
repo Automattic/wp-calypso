@@ -15,6 +15,8 @@ const YearNavigation = ( {
 	disableNextArrow,
 }: YearNavigationProps ) => {
 	const handleClickArrow = ( next?: boolean ) => {
+		// eslint-disable-next-line no-console
+		// console.log( 'handleClickArrow' );
 		const arrow = next ? 'next' : 'previous';
 		recordGoogleEvent( 'Stats Period Navigation', `Clicked ${ arrow } year` );
 
@@ -22,6 +24,8 @@ const YearNavigation = ( {
 	};
 
 	const onKeyDown = ( event: React.KeyboardEvent< HTMLButtonElement >, next?: boolean ) => {
+		// eslint-disable-next-line no-console
+		// console.log( 'onKeyDown' );
 		if ( event.key === 'Enter' || event.key === 'Space' ) {
 			handleClickArrow( next );
 		}
