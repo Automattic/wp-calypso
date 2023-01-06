@@ -460,9 +460,6 @@
 
 	.web-preview__placeholder {
 		overflow-y: visible;
-	}
-
-	.is-phone .web-preview__placeholder {
 		display: flex;
 		justify-content: center;
 		align-items: start;
@@ -474,13 +471,18 @@
 
 	.is-phone .web-preview__frame-wrapper.is-resizable {
 		height: 100%;
-		max-width: 95%;
 
 		@include break-large {
-			// width: auto;
 			max-width: 340px;
 			height: 680px;
 		}
+
+		.web-preview__frame-edit-overlay {
+			@include break-large {
+				border-radius: 40px; /* stylelint-disable-line scales/radii */
+			}
+		}
+
 	}
 
 	.web-preview__frame-wrapper.is-resizable {
@@ -488,6 +490,12 @@
 		padding: 0;
 		background-color: transparent;
 		position: relative;
+		max-width: 95%;
+
+		@include break-large {
+			min-height: 585px;
+			height: calc(100% - 120px);
+		}
 
 		.web-preview__frame-edit-overlay {
 			position: absolute;
@@ -496,11 +504,15 @@
 			right: 0;
 			bottom: 0;
 			background: rgba(16, 21, 23, 0.5);
-			border-radius: 30px;  /* stylelint-disable-line scales/radii */
+			border-radius: 40px;  /* stylelint-disable-line scales/radii */
 
 			display: flex;
 			justify-content: center;
 			align-items: center;
+
+			@include break-large {
+				border-radius: 20px; /* stylelint-disable-line scales/radii */
+			}
 
 			.web-preview__frame-edit-button {
 				font-size: 14px;  /* stylelint-disable-line declaration-property-unit-allowed-list */
@@ -520,8 +532,8 @@
 		border: 10px solid var(--color-print);
 		border-radius: 40px; /* stylelint-disable-line scales/radii */
 		box-sizing: border-box;
-		max-width: 95%;
 		box-shadow: 0 5px 15px rgba(0 0 0 / 7%), 0 3px 10px rgba(0 0 0 / 4%);
+		min-height: 720px;
 
 		@include break-large {
 			margin-top: 0;
@@ -530,14 +542,11 @@
 				0 13px 10px rgb(0 0 0 / 3%),
 				0 6px 6px rgb(0 0 0 / 2%);
 			border-radius: 20px; /* stylelint-disable-line scales/radii */
-			min-height: 585px;
-			height: calc(100% - 120px);
 		}
 	}
 
 	.is-phone .web-preview__frame-wrapper.is-resizable .web-preview__frame {
 		max-width: 100%;
-		min-height: 720px;
 
 		@include break-large {
 			box-shadow:
