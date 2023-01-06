@@ -1,5 +1,3 @@
-import { Icon, arrowLeft, arrowRight } from '@wordpress/icons';
-import classNames from 'classnames';
 import { localize, withRtl } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import page from 'page';
@@ -33,14 +31,6 @@ class StatsPeriodNavigation extends PureComponent {
 		queryParams: {},
 		startDate: false,
 		endDate: false,
-	};
-
-	handleClickNext = () => {
-		this.handleClickArrow( 'next' );
-	};
-
-	handleClickPrevious = () => {
-		this.handleClickArrow( 'previous' );
 	};
 
 	handleClickArrow = ( arrow, href ) => {
@@ -82,28 +72,10 @@ class StatsPeriodNavigation extends PureComponent {
 	};
 
 	render() {
-		const {
-			children,
-			date,
-			moment,
-			period,
-			url,
-			showArrows,
-			disablePreviousArrow,
-			disableNextArrow,
-			queryParams,
-		} = this.props;
+		const { children, date, moment, period, showArrows, disablePreviousArrow, disableNextArrow } =
+			this.props;
 
 		const isToday = moment( date ).isSame( moment(), period );
-		const previousDay = moment( date ).subtract( 1, period ).format( 'YYYY-MM-DD' );
-		const previousDayQuery = qs.stringify(
-			Object.assign( {}, queryParams, { startDate: previousDay } ),
-			{ addQueryPrefix: true }
-		);
-		const nextDay = moment( date ).add( 1, period ).format( 'YYYY-MM-DD' );
-		const nextDayQuery = qs.stringify( Object.assign( {}, queryParams, { startDate: nextDay } ), {
-			addQueryPrefix: true,
-		} );
 
 		return (
 			<div className="stats-period-navigation">
@@ -115,28 +87,6 @@ class StatsPeriodNavigation extends PureComponent {
 						onArrowNext={ this.handleArrowNext }
 						onArrowPrevious={ this.handleArrowPrevious }
 					/>
-				) }
-				{ showArrows && false && (
-					<>
-						<a
-							className={ classNames( 'stats-period-navigation__previous', {
-								'is-disabled': disablePreviousArrow,
-							} ) }
-							href={ `${ url }${ previousDayQuery }` }
-							onClick={ this.handleClickPrevious }
-						>
-							<Icon className="gridicon" icon={ arrowLeft } />
-						</a>
-						<a
-							className={ classNames( 'stats-period-navigation__next', {
-								'is-disabled': disableNextArrow || isToday,
-							} ) }
-							href={ `${ url }${ nextDayQuery }` }
-							onClick={ this.handleClickNext }
-						>
-							<Icon className="gridicon" icon={ arrowRight } />
-						</a>
-					</>
 				) }
 			</div>
 		);
