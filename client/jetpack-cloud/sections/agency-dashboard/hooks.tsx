@@ -8,6 +8,33 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import SitesOverviewContext from './sites-overview/context';
 import type { Site, UpdateMonitorSettingsParams } from './sites-overview/types';
 
+function getRejectedAndFulFilledRequests(
+	promises: any[],
+	requests: { site: { blog_id: number; url: string } }[]
+) {
+	const allSelectedSites: {
+		site: { blog_id: number; url: string };
+		status: 'rejected' | 'fulfilled';
+	}[] = [];
+
+	promises.forEach( ( promise, index ) => {
+		const { status } = promise;
+		const site = requests[ index ].site;
+		const item = {
+			site,
+			status,
+		};
+		allSelectedSites.push( item );
+	} );
+
+	const fulfilledRequests = allSelectedSites.filter(
+		( product ) => product.status === 'fulfilled'
+	);
+	const rejectedRequests = allSelectedSites.filter( ( product ) => product.status === 'rejected' );
+
+	return { fulfilledRequests, rejectedRequests };
+}
+
 export function useToggleActivateMonitor(
 	sites: Array< { blog_id: number; url: string } >
 ): ( isEnabled: boolean ) => void {
@@ -72,26 +99,9 @@ export function useToggleActivateMonitor(
 				requests.map( ( request: { mutation: any } ) => request.mutation )
 			);
 
-			const allSelectedSites: {
-				site: { blog_id: number; url: string };
-				status: 'rejected' | 'fulfilled';
-			}[] = [];
-
-			promises.forEach( ( promise: any, index: number ) => {
-				const { status } = promise;
-				const site = requests[ index ].site;
-				const item = {
-					site,
-					status,
-				};
-				allSelectedSites.push( item );
-			} );
-
-			const fulfilledRequests = allSelectedSites.filter(
-				( product ) => product.status === 'fulfilled'
-			);
-			const rejectedRequests = allSelectedSites.filter(
-				( product ) => product.status === 'rejected'
+			const { fulfilledRequests, rejectedRequests } = getRejectedAndFulFilledRequests(
+				promises,
+				requests
 			);
 
 			const totalFulfilled = fulfilledRequests.length;
@@ -229,34 +239,17 @@ export function useUpdateMonitorSettings( sites: Array< { blog_id: number; url: 
 
 			setStatus( 'completed' );
 
-			const allSelectedSites: {
-				site: { blog_id: number; url: string };
-				status: 'rejected' | 'fulfilled';
-			}[] = [];
+			const components = {
+				em: <em />,
+			};
 
-			promises.forEach( ( promise: any, index: number ) => {
-				const { status } = promise;
-				const site = requests[ index ].site;
-				const item = {
-					site,
-					status,
-				};
-				allSelectedSites.push( item );
-			} );
-
-			const fulfilledRequests = allSelectedSites.filter(
-				( product ) => product.status === 'fulfilled'
-			);
-			const rejectedRequests = allSelectedSites.filter(
-				( product ) => product.status === 'rejected'
+			const { fulfilledRequests, rejectedRequests } = getRejectedAndFulFilledRequests(
+				promises,
+				requests
 			);
 
 			const totalFulfilled = fulfilledRequests.length;
 			const totalRejected = rejectedRequests.length;
-
-			const components = {
-				em: <em />,
-			};
 
 			if ( totalFulfilled ) {
 				let successMessage;
