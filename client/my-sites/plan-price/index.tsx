@@ -1,4 +1,4 @@
-import { getCurrencyObject } from '@automattic/format-currency';
+import { getCurrencyObject, formatCurrency } from '@automattic/format-currency';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { Component, createElement } from 'react';
@@ -12,6 +12,7 @@ export class PlanPrice extends Component< PlanPriceProps & LocalizeProps > {
 	render() {
 		const {
 			currencyCode = 'USD',
+			priceInteger,
 			rawPrice,
 			original,
 			discounted,
@@ -33,6 +34,23 @@ export class PlanPrice extends Component< PlanPriceProps & LocalizeProps > {
 		const tagName = omitHeading ? 'span' : 'h4';
 
 		const areThereMultipleRawPrices = rawPrice && Array.isArray( rawPrice ) && rawPrice.length > 1;
+
+		if ( priceInteger && ! areThereMultipleRawPrices ) {
+			if ( ! currencyCode ) {
+				return null;
+			}
+
+			return createElement(
+				tagName,
+				{ className: classes },
+				<span className="plan-price__integer">
+					{ formatCurrency( priceInteger, currencyCode, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ) }
+				</span>
+			);
+		}
 
 		if ( productDisplayPrice && ! areThereMultipleRawPrices ) {
 			return createElement(
@@ -141,6 +159,7 @@ export class PlanPrice extends Component< PlanPriceProps & LocalizeProps > {
 export default localize( PlanPrice );
 
 export interface PlanPriceProps {
+	priceInteger?: number;
 	rawPrice?: number | [ number, number ];
 	original?: boolean;
 	discounted?: boolean;
