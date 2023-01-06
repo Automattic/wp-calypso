@@ -214,7 +214,6 @@ export class Banner extends Component {
 				<div className="banner__info">
 					<div className="banner__title">{ title }</div>
 					{ description && <div className="banner__description">{ description }</div> }
-					{ renderListItem }
 					{ size( list ) > 0 && (
 						<ul className="banner__list">
 							{ list.map( ( item, key ) => (
