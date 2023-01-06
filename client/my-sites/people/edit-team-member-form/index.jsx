@@ -70,7 +70,9 @@ export const EditTeamMemberForm = ( {
 					hasScreenOptions
 				/>
 			) }
-			<HeaderCake onClick={ goBack } isCompact />
+			<HeaderCake onClick={ goBack } isCompact>
+				{ translate( 'User Details' ) }
+			</HeaderCake>
 			<Card className="edit-team-member-form__user-profile">
 				<PeopleProfile siteId={ siteId } user={ user } />
 				{ user && (
