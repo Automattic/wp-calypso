@@ -266,7 +266,7 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@jest/globals": ^27.3.1
     "@types/jest": ^27.4.0
-    "@types/node": ^16.11.26
+    "@types/node": ^16.17.0
     "@types/node-fetch": ^2.6.1
     "@types/totp-generator": ^0.0.3
     "@wordpress/i18n": ^4.9.0
@@ -7130,6 +7130,13 @@ __metadata:
   version: 15.14.9
   resolution: "@types/node@npm:15.14.9"
   checksum: fe5b69cffd20f97c814d568c1d791b3c367f9efa6567a18d2c15cd73c5437f47bcff73a2e10bdfe59f90ce7df47e6cc3c6d431c76d2213bf6099e8ab5d16d355
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^16.17.0":
+  version: 16.18.11
+  resolution: "@types/node@npm:16.18.11"
+  checksum: 7bdf5e865a7959a72881ede19a882219f9d0baadf9ef8fdf24523291d401a7fc43bf91aa3223b1961ca54e1363f542cc4d60c8b00a70b457b2e9439b82adac70
   languageName: node
   linkType: hard
 

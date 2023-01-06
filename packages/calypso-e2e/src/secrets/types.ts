@@ -26,7 +26,6 @@ export interface TestAccountCredentials {
 }
 
 export interface Secrets {
-	passwordForNewTestSignUps: string;
 	storeSandboxCookieValue: string;
 	testCouponCode: string;
 	wpccAuthPath: string;
