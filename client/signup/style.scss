@@ -465,7 +465,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 		.step-wrapper__header {
 			margin: 24px 20px 38px;
 
-			@media ( min-width: 880px ) {
+			@media ( min-width: 1024px ) {
 				margin: 24px 20px;
 			}
 		}
@@ -832,7 +832,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 				line-height: 2.5rem;
 				font-weight: 400;
 
-				@media ( min-width: 880px ) {
+				@media ( min-width: 1024px ) {
 					font-size: 2.75rem;
 					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 					line-height: 3rem;

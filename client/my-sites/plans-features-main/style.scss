@@ -56,21 +56,21 @@
 
 	.is-section-signup & {
 
-		@media ( min-width: 385px ) {
-			max-width: 375px;
+		@media ( min-width: 414px ) {
+			max-width: 374px;
 		}
 
-		@media ( min-width: 880px ) {
+		@media ( min-width: 1024px ) {
 			max-width: 860px;
 			margin: auto;
 		}
 
-		@media ( min-width: 1340px ) {
+		@media ( min-width: 1440px ) {
 			max-width: 1320px;
 			margin: auto;
 		}
 
-		@media ( min-width: 1500px ) {
+		@media ( min-width: 1600px ) {
 			max-width: 1480px;
 			margin: auto;
 		}

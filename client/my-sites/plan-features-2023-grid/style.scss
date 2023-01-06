@@ -70,7 +70,7 @@ $plan-features-sidebar-width: 272px;
 .plan-features-2023-grid__header-logo {
 	padding-left: 20px;
 
-	@media ( min-width: 880px ) {
+	@media ( min-width: 1024px ) {
 		margin-top: 36px;
 
 		.plan-features-2023-grid__table-top & {
@@ -78,7 +78,7 @@ $plan-features-sidebar-width: 272px;
 		}
 	}
 
-	@media ( min-width: 1340px ) {
+	@media ( min-width: 1440px ) {
 		margin-top: 36px;
 	}
 }
@@ -102,12 +102,12 @@ $plan-features-sidebar-width: 272px;
 	transform: translateY(-20px);
 	overflow-x: hidden;
 
-	@media ( min-width: 880px ) {
+	@media ( min-width: 1024px ) {
 		padding-top: 64px;
 		overflow-x: auto;
 	}
 
-	@media ( min-width: 1340px ) {
+	@media ( min-width: 1440px ) {
 		padding-top: 103px;
 		overflow-x: auto;
 	}
@@ -123,7 +123,7 @@ $plan-features-sidebar-width: 272px;
 	.plan-features-2023-grid__desktop-view {
 		display: none;
 
-		@media ( min-width: 1340px ) {
+		@media ( min-width: 1440px ) {
 			display: block;
 		}
 	}
@@ -131,11 +131,11 @@ $plan-features-sidebar-width: 272px;
 	.plan-features-2023-grid__tablet-view {
 		display: none;
 
-		@media ( min-width: 880px ) {
+		@media ( min-width: 1024px ) {
 			display: block;
 		}
 
-		@media ( min-width: 1340px ) {
+		@media ( min-width: 1440px ) {
 			display: none;
 		}
 	}
@@ -143,7 +143,7 @@ $plan-features-sidebar-width: 272px;
 	.plan-features-2023-grid__mobile-view {
 		display: block;
 
-		@media ( min-width: 880px ) {
+		@media ( min-width: 1024px ) {
 			display: none;
 		}
 
@@ -264,12 +264,12 @@ $plan-features-sidebar-width: 272px;
 		font-weight: 400;
 		padding: 0 20px 24px 20px;
 
-		@media ( min-width: 880px ) {
+		@media ( min-width: 1024px ) {
 			font-size: $font-body-small;
 			line-height: 20px;
 		}
 
-		@media ( min-width: 1340px ) {
+		@media ( min-width: 1440px ) {
 			font-size: 0.813rem; /* stylelint-disable-line */
 			line-height: 16px;
 			padding-bottom: 8px;
@@ -287,7 +287,7 @@ $plan-features-sidebar-width: 272px;
 			font-weight: 600;
 		}
 
-		@media ( min-width: 880px ) {
+		@media ( min-width: 1024px ) {
 			border-right: solid 1px #e0e0e0;
 			border-left: solid 1px #e0e0e0;
 		}
@@ -334,7 +334,7 @@ $plan-features-sidebar-width: 272px;
 				top: 30%;
 				right: 65%;
 
-				@media ( min-width: 880px ) {
+				@media ( min-width: 1024px ) {
 					right: 47%;
 				}
 			}
@@ -382,7 +382,7 @@ $plan-features-sidebar-width: 272px;
 				font-weight: 600;
 			}
 
-			@media ( min-width: 880px ) {
+			@media ( min-width: 1024px ) {
 				font-size: $font-body-extra-small;
 				line-height: 16px;
 			}
@@ -487,7 +487,7 @@ $plan-features-sidebar-width: 272px;
 				padding-top: 12px;
 			}
 
-			@media ( min-width: 880px ) {
+			@media ( min-width: 1024px ) {
 				position: relative;
 				top: 10px;
 				padding-top: 0;
@@ -530,7 +530,7 @@ $plan-features-sidebar-width: 272px;
 				}
 			}
 
-			@media ( min-width: 1340px ) {
+			@media ( min-width: 1440px ) {
 				img:nth-child(1) {
 					padding-right: 24px;
 				}
@@ -570,7 +570,7 @@ $plan-features-sidebar-width: 272px;
 				}
 			}
 
-			@media ( min-width: 1500px ) {
+			@media ( min-width: 1600px ) {
 				img:nth-child(1) {
 					padding-right: 24px;
 				}
@@ -643,7 +643,7 @@ body.is-section-signup.is-white-signup {
 			font-size: $font-body-extra-small;
 			padding: 0 19px 24px 20px;
 
-			@media ( min-width: 880px ) {
+			@media ( min-width: 1024px ) {
 				padding-bottom: 16px;
 			}
 
@@ -653,12 +653,12 @@ body.is-section-signup.is-white-signup {
 				font-weight: 400;
 				color: var(--studio-gray-80);
 
-				@media ( min-width: 880px ) {
+				@media ( min-width: 1024px ) {
 					font-size: $font-body-small;
 					line-height: 20px;
 				}
 
-				@media ( min-width: 1340px ) {
+				@media ( min-width: 1440px ) {
 					font-size: $font-body-extra-small;
 					line-height: 16px;
 				}
@@ -694,7 +694,7 @@ body.is-section-signup.is-white-signup {
 				color: #fff;
 				padding: 0 0 17px;
 
-				@media ( min-width: 880px ) {
+				@media ( min-width: 1024px ) {
 					position: absolute;
 					top: -38px;
 					right: -1px;
@@ -747,7 +747,7 @@ body.is-section-signup.is-white-signup {
 			padding: 0 20px;
 			margin-bottom: 12px;
 
-			@media ( min-width: 880px ) {
+			@media ( min-width: 1024px ) {
 				margin-top: 36px;
 				font-size: $font-body-extra-small;
 			}
@@ -788,7 +788,7 @@ body.is-section-signup.is-white-signup {
 	.step-wrapper__header {
 		margin: 24px 20px 38px;
 
-		@media ( min-width: 880px ) {
+		@media ( min-width: 1024px ) {
 			margin: 24px 20px;
 		}
 	}
@@ -800,7 +800,7 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 	width: 100%;
 	margin: 0 22px;
 
-	@media ( min-width: 880px ) {
+	@media ( min-width: 1024px ) {
 		max-width: unset;
 		width: auto;
 		margin: 0 auto;
