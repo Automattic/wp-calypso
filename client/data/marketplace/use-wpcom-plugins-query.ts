@@ -79,17 +79,19 @@ export const useWPCOMPluginsList = (
 	} );
 };
 
-const fetchWPCOMPlugin = ( slug: string ) => {
+const fetchWPCOMPlugin = ( slugOrId: string | number ) => {
 	return wpcom.req.get( {
-		path: `${ plugisApiBase }/${ slug }`,
+		path: `${ plugisApiBase }/${ slugOrId }`,
 		apiNamespace: pluginsApiNamespace,
 	} );
 };
 
-export const getWPCOMPluginQueryParams = ( slug: string ): [ QueryKey, QueryFunction ] => {
-	const cacheKey = getCacheKey( slug + '-normalized' );
+export const getWPCOMPluginQueryParams = (
+	slugOrId: string | number
+): [ QueryKey, QueryFunction ] => {
+	const cacheKey = getCacheKey( slugOrId + '-normalized' );
 	const fetchFn = () =>
-		fetchWPCOMPlugin( slug ).then( ( data: any ) =>
+		fetchWPCOMPlugin( slugOrId ).then( ( data: any ) =>
 			normalizePluginData( { detailsFetched: Date.now() }, data )
 		);
 
@@ -99,25 +101,27 @@ export const getWPCOMPluginQueryParams = ( slug: string ): [ QueryKey, QueryFunc
 /**
  * Returns a marketplace plugin data
  *
- * @param {Type} slug The plugin slug to query
+ * @param {Type} slugOrId The plugin slug or id to query
  * @param {{enabled: boolean, staleTime: number, refetchOnMount: boolean}} {} Optional options to pass to the underlying query engine
  * @returns {{ data, error, isLoading: boolean ...}} Returns various parameters piped from `useQuery`
  */
 export const useWPCOMPlugin = (
-	slug: string,
+	slugOrId: string | number,
 	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult< any > => {
-	return useQuery( ...getWPCOMPluginQueryParams( slug ), {
+	return useQuery( ...getWPCOMPluginQueryParams( slugOrId ), {
 		enabled: enabled,
 		staleTime: staleTime,
 		refetchOnMount: refetchOnMount,
 	} );
 };
 
-export const useWPCOMPlugins = ( slugs: Array< string > ): Array< UseQueryResult< any > > => {
+export const useWPCOMPlugins = (
+	slugOrIds: Array< string | number >
+): Array< UseQueryResult< any > > => {
 	return useQueries(
-		slugs.map( ( slug ) => {
-			const [ cacheKey, fetchFn ] = getWPCOMPluginQueryParams( slug );
+		slugOrIds.map( ( slugOrId ) => {
+			const [ cacheKey, fetchFn ] = getWPCOMPluginQueryParams( slugOrId );
 
 			return { queryKey: cacheKey, queryFn: fetchFn };
 		} )

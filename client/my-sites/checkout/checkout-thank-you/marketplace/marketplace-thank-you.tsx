@@ -6,6 +6,7 @@ import page from 'page';
 import { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import successImage from 'calypso/assets/images/marketplace/check-circle.svg';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { ThankYou } from 'calypso/components/thank-you';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
@@ -31,6 +32,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { usePluginSlugsOrIds } from './hooks';
 
 const ThankYouContainer = styled.div`
 	.marketplace-thank-you {
@@ -51,7 +53,7 @@ const ThankYouContainer = styled.div`
 `;
 
 const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
-	const [ productSlugs ] = useState< Array< string > >( productSlug.split( ',' ) );
+	const pluginSlugsOrIds = usePluginSlugsOrIds( productSlug );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -59,22 +61,24 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const isRequestingPlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
 
 	// retrieve WPCom plugin data
-	const wpComPluginsDataResults = useWPCOMPlugins( productSlugs );
+	const wpComPluginsDataResults = useWPCOMPlugins( pluginSlugsOrIds );
 	const wpComPluginsData = wpComPluginsDataResults.map(
 		( wpComPluginData ) => wpComPluginData.data
 	);
 	const softwareSlugs = wpComPluginsData.map( ( wpComPluginData, i ) =>
-		wpComPluginData ? wpComPluginData.software_slug || wpComPluginData.org_slug : productSlugs[ i ]
+		wpComPluginData
+			? wpComPluginData.software_slug || wpComPluginData.org_slug
+			: pluginSlugsOrIds[ i ]
 	);
 
 	const pluginsOnSite: [] = useSelector( ( state ) =>
 		getPluginsOnSite( state, siteId, softwareSlugs )
 	);
 	const wporgPlugins = useSelector(
-		( state ) => getPlugins( state, productSlugs ),
+		( state ) => getPlugins( state, pluginSlugsOrIds ),
 		( oldValue, newValue ) => oldValue.slug === newValue.slug
 	);
-	const areWporgPluginsFetched = useSelector( ( state ) => areFetched( state, productSlugs ) );
+	const areWporgPluginsFetched = useSelector( ( state ) => areFetched( state, pluginSlugsOrIds ) );
 	const areAllWporgPluginsFetched = areWporgPluginsFetched.every( Boolean );
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 	const isFetchingTransferStatus = useSelector( ( state ) =>
@@ -120,13 +124,15 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	// retrieve wporg plugin data if not available
 	useEffect( () => {
 		if ( ! areAllWporgPluginsFetched ) {
-			productSlugs.forEach( ( productSlug ) => dispatch( wporgFetchPluginData( productSlug ) ) );
+			pluginSlugsOrIds.forEach( ( productSlug ) =>
+				dispatch( wporgFetchPluginData( productSlug ) )
+			);
 		}
 		if ( areAllWporgPluginsFetched ) {
 			// wporgPlugin exists in the wporg directory.
 			setPluginIcon( wporgPlugins?.[ 0 ]?.icon || successImage );
 		}
-	}, [ areAllWporgPluginsFetched, productSlugs, dispatch, wporgPlugins ] );
+	}, [ areAllWporgPluginsFetched, pluginSlugsOrIds, dispatch, wporgPlugins ] );
 
 	useEffect( () => {
 		if ( wporgPlugins?.[ 0 ]?.wporg === false ) {
@@ -216,7 +222,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const fallbackSetupUrls = wpComPluginsData.map(
 		( wpComPluginData ) => wpComPluginData?.setup_url && siteAdminUrl + wpComPluginData?.setup_url
 	);
-	const managePluginsUrls = productSlugs.map( ( productSlug ) =>
+	const managePluginsUrls = pluginSlugsOrIds.map( ( productSlug ) =>
 		hasManagePluginsFeature
 			? `${ siteAdminUrl }plugins.php`
 			: `/plugins/${ productSlug }/${ siteSlug } `
@@ -284,6 +290,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 
 	return (
 		<ThemeProvider theme={ theme }>
+			<QuerySitePurchases siteId={ siteId } />
 			{ /* Using Global to override Global masterbar height */ }
 			<Global
 				styles={ css`
