@@ -91,6 +91,8 @@ const InlineChat: React.FC = () => {
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
 	const session = params.get( 'session' ) === 'continued' ? 'continued' : 'new';
+	// "ref" is used to track where the user came from so we can show the right message
+	// See happychat/getUserInfo for more info.
 	const ref = new URLSearchParams( window.location.search ).get( 'ref' ) || '';
 
 	return (
