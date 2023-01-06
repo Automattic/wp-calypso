@@ -227,7 +227,7 @@ export class PlanFeatures2023Grid extends Component {
 	}
 
 	renderPlanPrice( planPropertiesObj, { isMobile } = {} ) {
-		const { isReskinned, isOnboarding2023PricingGrid } = this.props;
+		const { isReskinned, is2023OnboardingPricingGrid } = this.props;
 
 		return planPropertiesObj.map( ( properties ) => {
 			const { currencyCode, discountPrice, planName, rawPrice } = properties;
@@ -242,7 +242,7 @@ export class PlanFeatures2023Grid extends Component {
 						discountPrice={ discountPrice }
 						rawPrice={ rawPrice }
 						planName={ planName }
-						isOnboarding2023PricingGrid={ isOnboarding2023PricingGrid }
+						is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 					/>
 				</Container>
 			);
@@ -544,7 +544,7 @@ PlanFeatures2023Grid.defaultProps = {
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 export default connect(
 	( state, ownProps ) => {
-		const { placeholder, plans, visiblePlans } = ownProps;
+		const { placeholder, plans, isLandingPage, visiblePlans } = ownProps;
 
 		let planProperties = plans.map( ( plan ) => {
 			let isPlaceholder = false;
@@ -643,6 +643,7 @@ export default connect(
 				discountPrice,
 				features: planFeatures,
 				jpFeatures: jetpackFeatures,
+				isLandingPage,
 				isPlaceholder,
 				planConstantObj,
 				planName: plan,
