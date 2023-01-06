@@ -80,15 +80,7 @@ function SshKeys( { siteId, siteSlug, username, disabled }: SshKeysProps ) {
 		return !! keys.find( ( { user_login } ) => user_login === username );
 	}, [ keys, username ] );
 
-	/*
-	 * isFetching keys is needed here, because when we update a key from me/security/ssh-key page,
-	 * and return to this page, the keys, although the query reruns, are not cleared.
-	 * isFetching returns true when refetching in the background. Happens when there is stale cache to display as a placeholder.
-	 * So we rely on that to display the loader.
-	 * Same goes with the map of the keys in the view below. We don't want to show the old keys
-	 * until the refetching is completed.
-	 * */
-	const isLoading = isLoadingKeys || isLoadingUserKeys || isFetchingKeys;
+	const isLoading = isLoadingKeys || isLoadingUserKeys;
 	const showKeysSelect = ! isLoading && ! userKeyIsAttached && userKeys && userKeys.length > 0;
 	const showLinkToAddUserKey = ! isLoading && ! userKeyIsAttached && userKeys?.length === 0;
 	const SSH_ADD_URL = addQueryArgs( '/me/security/ssh-key', {
@@ -102,15 +94,15 @@ function SshKeys( { siteId, siteSlug, username, disabled }: SshKeysProps ) {
 				{ __( 'SSH Keys' ) }
 			</label>
 
-			{ ! isFetchingKeys &&
-				keys?.map( ( sshKey ) => (
-					<SshKeyCard
-						key={ sshKey.sha256 }
-						sshKey={ sshKey }
-						deleteText={ __( 'Detach' ) }
-						siteId={ siteId }
-					/>
-				) ) }
+			{ keys?.map( ( sshKey ) => (
+				<SshKeyCard
+					key={ sshKey.sha256 }
+					sshKey={ sshKey }
+					deleteText={ __( 'Detach' ) }
+					siteId={ siteId }
+					disabled={ isFetchingKeys }
+				/>
+			) ) }
 
 			{ isLoading && <Spinner /> }
 
