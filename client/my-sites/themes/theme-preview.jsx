@@ -75,6 +75,10 @@ class ThemePreview extends Component {
 		return isActive ? null : this.props.themeOptions.secondary;
 	};
 
+	getStyleVariationOption = () => {
+		return this.props.themeOptions.styleVariation;
+	};
+
 	renderPrimaryButton = () => {
 		const primaryOption = this.getPrimaryOption();
 		const buttonHref = primaryOption.getUrl ? primaryOption.getUrl( this.props.themeId ) : null;
@@ -126,6 +130,7 @@ class ThemePreview extends Component {
 						<ThemePreviewModal
 							theme={ theme }
 							previewUrl={ this.getPreviewUrl() }
+							selectedVariation={ this.getStyleVariationOption() }
 							actionButtons={ this.renderPrimaryButton() }
 							onClose={ this.props.hideThemePreview }
 						/>
