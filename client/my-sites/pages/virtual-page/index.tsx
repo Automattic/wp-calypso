@@ -64,11 +64,11 @@ const HomepagePopover = ( { isAdmin, template }: HomepagePopoverProps ) => {
 	} else if (
 		isEnglishLocale ||
 		hasTranslation(
-			'You can change the content of this page by editing the template using the Site Editor. {{learnMoreLink}}Learn more{{/learnMoreLink}}.'
+			'You can change the content of this page using the Site Editor. {{learnMoreLink}}Learn more{{/learnMoreLink}}.'
 		)
 	) {
 		msg = translate(
-			'You can change the content of this page by editing the template using the Site Editor. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+			'You can change the content of this page using the Site Editor. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 			{
 				components: {
 					learnMoreLink,
