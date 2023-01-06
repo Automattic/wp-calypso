@@ -97,9 +97,7 @@ export class PlanPrice extends Component< PlanPriceProps & LocalizeProps > {
 				return (
 					<div className="plan-price__integer-fraction">
 						<span className="plan-price__integer">{ priceObj.price.integer }</span>
-						<sup className="plan-price__fraction">
-							{ priceObj.raw - priceInteger > 0 && priceObj.price.fraction }
-						</sup>
+						<sup className="plan-price__fraction">{ hasFraction && priceObj.price.fraction }</sup>
 					</div>
 				);
 			}
@@ -239,6 +237,16 @@ export interface PlanPriceProps {
 	 * Ignored if `productDisplayPrice` is set and `rawPrice` is not an array.
 	 */
 	displayFlatPrice?: boolean;
+
+	/**
+	 * If true, this renders each price inside a `div` with the class
+	 * `plan-price__integer-fraction` but is otherwise identical to the output normally used by `rawPrice`.
+	 *
+	 * Ignored if `displayFlatPrice` is set.
+	 *
+	 * Ignored if `productDisplayPrice` is set and `rawPrice` is not an array.
+	 */
+	is2023OnboardingPricingGrid?: boolean;
 }
 
 interface PriceRangeData {
