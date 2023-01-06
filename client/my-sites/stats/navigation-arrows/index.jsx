@@ -10,13 +10,9 @@ function NavigationArrows( {
 	onArrowPrevious,
 } ) {
 	const handleClickNext = () => {
-		// eslint-disable-next-line no-console
-		console.log( 'click next' );
 		onArrowNext();
 	};
 	const handleClickPrevious = () => {
-		// eslint-disable-next-line no-console
-		console.log( 'click previous' );
 		onArrowPrevious();
 	};
 	return (
