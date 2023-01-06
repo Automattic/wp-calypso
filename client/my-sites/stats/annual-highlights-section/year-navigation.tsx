@@ -23,20 +23,11 @@ const YearNavigation = ( {
 		onYearChange( next );
 	};
 
-	const onKeyDown = ( event: React.KeyboardEvent< HTMLButtonElement >, next?: boolean ) => {
-		// eslint-disable-next-line no-console
-		// console.log( 'onKeyDown' );
-		if ( event.key === 'Enter' || event.key === 'Space' ) {
-			handleClickArrow( next );
-		}
-	};
-
 	return (
 		<NavigationArrows
 			disableNextArrow={ disableNextArrow }
 			disablePreviousArrow={ disablePreviousArrow }
 			handleClickArrow={ handleClickArrow }
-			onKeyDown={ onKeyDown }
 		/>
 	);
 };
