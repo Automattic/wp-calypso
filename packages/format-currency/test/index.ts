@@ -72,6 +72,11 @@ describe( 'formatCurrency', () => {
 		expect( money3 ).toBe( '9.800.900,32 €' );
 	} );
 
+	test( 'returns a number in latin numbers even for locales which default to other character sets', () => {
+		const money = formatCurrency( 9800900, 'INR', { locale: 'mr-IN' } );
+		expect( money ).toBe( '₹9,800,900.00' );
+	} );
+
 	describe( 'supported currencies', () => {
 		beforeEach( () => {
 			setDefaultLocale( undefined );
