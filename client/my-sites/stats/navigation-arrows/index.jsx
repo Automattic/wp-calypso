@@ -20,7 +20,7 @@ function NavigationArrows( {
 		onArrowPrevious();
 	};
 	return (
-		<div className={ classNames( 'arrow-navigation', '' ) }>
+		<div className="arrow-navigation">
 			<button
 				className={ classNames( 'arrow-navigation__previous', {
 					'is-disabled': disablePreviousArrow,
