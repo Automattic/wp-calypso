@@ -1,6 +1,8 @@
 import { Icon, arrowLeft, arrowRight } from '@wordpress/icons';
 import classNames from 'classnames';
 
+import './style.scss';
+
 function NavigationArrows( {
 	disableNextArrow,
 	disablePreviousArrow,
@@ -18,9 +20,9 @@ function NavigationArrows( {
 		onArrowPrevious();
 	};
 	return (
-		<div className={ classNames( 'stats-period-navigation', 'stats-year-navigation' ) }>
+		<div className={ classNames( 'arrow-navigation', '' ) }>
 			<button
-				className={ classNames( 'stats-period-navigation__previous', {
+				className={ classNames( 'arrow-navigation__previous', {
 					'is-disabled': disablePreviousArrow,
 				} ) }
 				onClick={ disablePreviousArrow ? undefined : () => handleClickPrevious() }
@@ -29,7 +31,7 @@ function NavigationArrows( {
 				<Icon className="gridicon" icon={ arrowLeft } />
 			</button>
 			<button
-				className={ classNames( 'stats-period-navigation__next', {
+				className={ classNames( 'arrow-navigation__next', {
 					'is-disabled': disableNextArrow,
 				} ) }
 				onClick={ disableNextArrow ? undefined : () => handleClickNext() }

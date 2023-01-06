@@ -1,0 +1,34 @@
+@import "@automattic/typography/styles/variables";
+
+.arrow-navigation {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	margin: 0 0 16px;
+
+	.arrow-navigation__previous,
+	.arrow-navigation__next {
+		width: 24px;
+		height: 24px;
+		color: var(--color-neutral-90);
+		cursor: pointer;
+
+		&:focus,
+		&:active {
+			outline: thin dotted;
+		}
+		&.is-disabled {
+			visibility: visible;
+			opacity: 0.2;
+			pointer-events: none;
+		}
+	}
+	.arrow-navigation__next {
+		margin-left: 4px;
+	}
+
+	@media ( min-width: 661px ) {
+		padding-right: 0;
+	}
+}
