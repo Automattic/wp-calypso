@@ -108,12 +108,14 @@ class StatsPeriodNavigation extends PureComponent {
 		return (
 			<div className="stats-period-navigation">
 				<div className="stats-period-navigation__children">{ children }</div>
-				<NavigationArrows
-					disableNextArrow={ disableNextArrow || isToday }
-					disablePreviousArrow={ disablePreviousArrow }
-					onArrowNext={ this.handleArrowNext }
-					onArrowPrevious={ this.handleArrowPrevious }
-				/>
+				{ showArrows && (
+					<NavigationArrows
+						disableNextArrow={ disableNextArrow || isToday }
+						disablePreviousArrow={ disablePreviousArrow }
+						onArrowNext={ this.handleArrowNext }
+						onArrowPrevious={ this.handleArrowPrevious }
+					/>
+				) }
 				{ showArrows && false && (
 					<>
 						<a
