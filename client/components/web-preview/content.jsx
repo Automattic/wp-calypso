@@ -407,6 +407,8 @@ export default class WebPreviewContent extends Component {
 					) }
 					{ 'seo' !== this.state.device && (
 						<div
+							onMouseEnter={ () => this.setState( { showIFrameOverlay: true } ) }
+							onMouseLeave={ () => this.setState( { showIFrameOverlay: false } ) }
 							className={ classNames( 'web-preview__frame-wrapper', {
 								'is-resizable': ! this.props.isModalWindow,
 							} ) }
@@ -415,17 +417,17 @@ export default class WebPreviewContent extends Component {
 							<iframe
 								ref={ this.setIframeInstance }
 								className="web-preview__frame"
-								style={ { ...this.state.iframeStyle, height: this.state.viewport?.height } }
+								style={ {
+									...this.state.iframeStyle,
+									height: this.state.viewport?.height,
+									pointerEvents: 'none',
+								} }
 								src="about:blank"
 								onLoad={ () => this.setLoaded( 'iframe-onload' ) }
 								title={ this.props.iframeTitle || translate( 'Preview' ) }
 								fetchpriority={ fetchpriority ? fetchpriority : undefined }
 								scrolling={ autoHeight ? 'no' : undefined }
 								tabIndex={ disableTabbing ? -1 : 0 }
-								onMouseOver={ () => this.setState( { showIFrameOverlay: true } ) }
-								onMouseOut={ () =>
-									setTimeout( () => this.setState( { showIFrameOverlay: false } ), 150 )
-								}
 							/>
 							{ this.state.showIFrameOverlay && (
 								<div className="web-preview__frame-edit-overlay">

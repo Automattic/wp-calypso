@@ -460,11 +460,27 @@
 
 	.web-preview__placeholder {
 		overflow-y: visible;
-		min-height: 720px;
+	}
+
+	.is-phone .web-preview__placeholder {
+		display: flex;
+		justify-content: center;
+		align-items: start;
 	}
 
 	.preview-toolbar__devices {
 		margin-bottom: 28px;
+	}
+
+	.is-phone .web-preview__frame-wrapper.is-resizable {
+		height: 100%;
+		max-width: 95%;
+
+		@include break-large {
+			// width: auto;
+			max-width: 340px;
+			height: 680px;
+		}
 	}
 
 	.web-preview__frame-wrapper.is-resizable {
@@ -474,12 +490,11 @@
 		position: relative;
 
 		.web-preview__frame-edit-overlay {
-			width: 320px;
-			height: 660px;
 			position: absolute;
-			top: 10px; // TODO: change this
-			left: 50%;
-			transform: translateX(-50%);
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
 			background: rgba(16, 21, 23, 0.5);
 			border-radius: 30px;  /* stylelint-disable-line scales/radii */
 
@@ -521,7 +536,8 @@
 	}
 
 	.is-phone .web-preview__frame-wrapper.is-resizable .web-preview__frame {
-		max-width: 95%;
+		max-width: 100%;
+		min-height: 720px;
 
 		@include break-large {
 			box-shadow:
@@ -531,9 +547,8 @@
 				0 15px 13px rgba(0 0 0 / 2%),
 				0 6px 5px rgba(0 0 0 / 2%),
 				0 2px 3px rgba(0 0 0 / 1%);
-			max-width: 340px;
 			border-radius: 40px; /* stylelint-disable-line scales/radii */
-			height: 680px;
+			min-height: 680px;
 		}
 	}
 
