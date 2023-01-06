@@ -10,6 +10,7 @@ import type { SiteData, SiteColumns } from '../types';
 
 interface Props {
 	isLoading: boolean;
+	isSmallScreen?: boolean;
 	columns: SiteColumns;
 	items: Array< SiteData >;
 }

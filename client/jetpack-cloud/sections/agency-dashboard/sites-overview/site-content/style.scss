@@ -22,6 +22,38 @@
 .edit-all__bulk-actions button {
 	border: 1px solid var(--color-neutral-20);
 }
-.edit-all__bulk-actions button .gridicon {
+button.edit-all__bulk-actions-close {
 	border: none;
+	padding: 4px 8px 4px 10px;
+}
+
+th.edit-all-buttons {
+	text-align: right;
+}
+
+.edit-all__bulk-actions-custom-notifications {
+	padding: 0 10px;
+}
+
+.button-group {
+	margin-top: 6px;
+}
+
+.site-bulk-edit-menu-container {
+	background-color: #fff;
+	text-align: right;
+}
+
+.select-dropdown__item-text {
+	text-align: left;
+}
+
+.edit-all__bulk-actions-close {
+	text-align: right;
+	justify-content: flex-end;
+	float: right;
+}
+
+.site-bulk-edit-menu-container.card {
+	padding: 10px;
 }
