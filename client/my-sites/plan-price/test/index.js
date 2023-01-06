@@ -76,12 +76,13 @@ describe( 'PlanPrice', () => {
 	} );
 
 	it( 'renders no decimal section when price is integer', () => {
-		render( <PlanPrice rawPrice={ 5.0 } currencyCode="IDR" /> );
-		expect( document.body ).toHaveTextContent( 'Rp5' );
+		render( <PlanPrice rawPrice={ 44700 } currencyCode="IDR" /> );
+		expect( document.body ).toHaveTextContent( 'Rp44.700' );
+		expect( document.body ).not.toHaveTextContent( 'Rp44.700,00' );
 	} );
 
 	it( 'renders a decimal section when price is not integer', () => {
-		render( <PlanPrice rawPrice={ 5.5 } currencyCode="IDR" /> );
-		expect( document.body ).toHaveTextContent( 'Rp5,50' );
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" /> );
+		expect( document.body ).toHaveTextContent( 'Rp44.700,50' );
 	} );
 } );
