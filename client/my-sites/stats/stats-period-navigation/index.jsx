@@ -33,7 +33,7 @@ class StatsPeriodNavigation extends PureComponent {
 		endDate: false,
 	};
 
-	handleClickArrow = ( arrow, href ) => {
+	handleArrowEvent = ( arrow, href ) => {
 		const { date, onPeriodChange, period, recordGoogleEvent } = this.props;
 		recordGoogleEvent( 'Stats Period Navigation', `Clicked ${ arrow } ${ period }` );
 
@@ -57,7 +57,7 @@ class StatsPeriodNavigation extends PureComponent {
 			addQueryPrefix: true,
 		} );
 		const href = `${ url }${ nextDayQuery }`;
-		this.handleClickArrow( 'next', href );
+		this.handleArrowEvent( 'next', href );
 	};
 
 	handleArrowPrevious = () => {
@@ -68,7 +68,7 @@ class StatsPeriodNavigation extends PureComponent {
 			{ addQueryPrefix: true }
 		);
 		const href = `${ url }${ previousDayQuery }`;
-		this.handleClickArrow( 'previous', href );
+		this.handleArrowEvent( 'previous', href );
 	};
 
 	render() {
