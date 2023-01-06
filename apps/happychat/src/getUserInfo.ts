@@ -31,7 +31,7 @@ function getUserCameThrough() {
 	const isWCCOM = queryArgs?.ref === 'woocommerce-com';
 
 	if ( isWCCOM ) {
-		return isWcMobileApp() ? 'Store setup on Woo mobile app' : 'Store setup on Woo browser';
+		return isWcMobileApp() ? 'store setup on Woo mobile app' : 'store setup on Woo browser';
 	}
 	return null;
 }
