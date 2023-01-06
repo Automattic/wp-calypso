@@ -94,7 +94,8 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		! new URLSearchParams( document.location.search ).has( 'hide-progress-bar' )
 	);
 
-	const areAllPluginsOnSite = pluginsOnSite.every( ( pluginOnSite ) => !! pluginOnSite );
+	const areAllPluginsOnSite =
+		!! pluginsOnSite.length && pluginsOnSite.every( ( pluginOnSite ) => !! pluginOnSite );
 
 	// Site is transferring to Atomic.
 	// Poll the transfer status.
