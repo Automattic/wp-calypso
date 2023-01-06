@@ -5,6 +5,7 @@ import Main from 'calypso/components/main';
 import SectionNav from 'calypso/components/section-nav';
 import useFollowersQuery from 'calypso/data/followers/use-followers-query';
 import useUsersQuery from 'calypso/data/users/use-users-query';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleSectionNavCompact from '../people-section-nav-compact';
 import Subscribers from '../subscribers';
@@ -67,16 +68,25 @@ function SubscribersTeam( props: Props ) {
 					switch ( filter ) {
 						case 'subscribers':
 							return (
-								<Subscribers
-									filter={ filter }
-									search={ search }
-									followersQuery={ followersQuery }
-								/>
+								<>
+									<PageViewTracker path="/people/subscribers/:site" title="People > Subscribers" />
+
+									<Subscribers
+										filter={ filter }
+										search={ search }
+										followersQuery={ followersQuery }
+									/>
+								</>
 							);
 
 						case 'team-members':
 							return (
 								<>
+									<PageViewTracker
+										path="/people/team-members/:site"
+										title="People > Team Members / Invites"
+									/>
+
 									<TeamMembers search={ search } usersQuery={ usersQuery } />
 									<TeamInvites />
 									<TeamInvitesAccepted />
