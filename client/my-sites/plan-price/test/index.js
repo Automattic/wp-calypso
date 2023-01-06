@@ -85,4 +85,9 @@ describe( 'PlanPrice', () => {
 		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" /> );
 		expect( document.body ).toHaveTextContent( 'Rp44.700,50' );
 	} );
+
+	it( 'renders an integer price when set', () => {
+		render( <PlanPrice priceInteger={ 4470050 } currencyCode="IDR" /> );
+		expect( document.body ).toHaveTextContent( 'Rp44.700,50' );
+	} );
 } );
