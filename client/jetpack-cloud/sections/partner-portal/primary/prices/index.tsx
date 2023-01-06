@@ -1,3 +1,4 @@
+import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
@@ -16,11 +17,7 @@ export default function Prices() {
 	const translate = useTranslate();
 	const { data: agencyProducts } = useProductsQuery();
 	const userProducts = useSelector( ( state ) => getProductsList( state ) );
-
-	const formatter = new Intl.NumberFormat( 'en-US', {
-		style: 'currency',
-		currency: 'USD',
-	} );
+	const currencyFormatOptions = { stripZeros: true };
 
 	const productRows = agencyProducts?.map( ( product ) => {
 		const userYearlyProduct = Object.values( userProducts ).find(
@@ -33,11 +30,10 @@ export default function Prices() {
 					p.billing_product_slug === userYearlyProduct.billing_product_slug &&
 					p.product_term === 'month'
 			);
-		const dailyUserYearlyPrice =
-			userYearlyProduct && formatter.format( userYearlyProduct.cost / 365 );
-		const dailyUserMonthlyPrice =
-			userMonthlyProduct && formatter.format( ( userMonthlyProduct.cost * 12 ) / 365 );
-		const dailyAgencyPrice = formatter.format( ( product.amount * 12 ) / 365 );
+
+		const dailyAgencyPrice = ( product.amount * 12 ) / 365;
+		const dailyUserMonthlyPrice = userMonthlyProduct ? ( userMonthlyProduct.cost * 12 ) / 365 : 0;
+		const dailyUserYearlyPrice = userYearlyProduct ? userYearlyProduct.cost / 365 : 0;
 
 		return (
 			<tr key={ product.product_id }>
@@ -50,12 +46,20 @@ export default function Prices() {
 						{ translate( 'Jetpack.com Pricing, purchased Monthly (USD)' ) }
 					</div>
 					<div>
-						{ dailyUserMonthlyPrice }
-						{ translate( '/day' ) }
+						{ translate( '%(price)s/day', {
+							args: {
+								price: formatCurrency( dailyUserMonthlyPrice, 'USD', currencyFormatOptions ),
+							},
+						} ) }
 					</div>
 					<div>
-						{ userMonthlyProduct && userMonthlyProduct.cost_display }
-						{ translate( '/month' ) }
+						{ translate( '%(price)s/month', {
+							args: {
+								price:
+									userMonthlyProduct &&
+									formatCurrency( userMonthlyProduct.cost, 'USD', currencyFormatOptions ),
+							},
+						} ) }
 					</div>
 				</td>
 				<td>
@@ -63,20 +67,33 @@ export default function Prices() {
 						{ translate( 'Jetpack.com Pricing, purchased Yearly (USD)' ) }
 					</div>
 					<div>
-						{ dailyUserYearlyPrice }
-						{ translate( '/day' ) }
+						{ translate( '%(price)s/day', {
+							args: {
+								price: formatCurrency( dailyUserYearlyPrice, 'USD', currencyFormatOptions ),
+							},
+						} ) }
 					</div>
 					<div>
-						{ userYearlyProduct && userYearlyProduct.cost_display }
-						{ translate( '/year' ) }
+						{ translate( '%(price)s/year', {
+							args: {
+								price:
+									userYearlyProduct &&
+									formatCurrency( userYearlyProduct.cost, 'USD', currencyFormatOptions ),
+							},
+						} ) }
 					</div>
 				</td>
 				<td>
 					<div className="prices__mobile-description">
 						{ translate( 'Agency/Pro Pricing, purchased daily (USD)' ) }
 					</div>
-					{ dailyAgencyPrice }
-					{ translate( '/day' ) }
+					{ translate( '%(price)s/day', {
+						args: {
+							price:
+								dailyAgencyPrice &&
+								formatCurrency( dailyAgencyPrice, 'USD', currencyFormatOptions ),
+						},
+					} ) }
 				</td>
 			</tr>
 		);
