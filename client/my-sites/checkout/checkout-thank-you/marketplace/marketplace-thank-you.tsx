@@ -51,7 +51,7 @@ const ThankYouContainer = styled.div`
 `;
 
 const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
-	const productSlugs = productSlug.split( ',' );
+	const [ productSlugs ] = useState< Array< string > >( productSlug.split( ',' ) );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -70,7 +70,10 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const pluginsOnSite: [] = useSelector( ( state ) =>
 		getPluginsOnSite( state, siteId, softwareSlugs )
 	);
-	const wporgPlugins = useSelector( ( state ) => getPlugins( state, productSlugs ) );
+	const wporgPlugins = useSelector(
+		( state ) => getPlugins( state, productSlugs ),
+		( oldValue, newValue ) => oldValue.slug === newValue.slug
+	);
 	const areWporgPluginsFetched = useSelector( ( state ) => areFetched( state, productSlugs ) );
 	const areAllWporgPluginsFetched = areWporgPluginsFetched.every( Boolean );
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
@@ -122,7 +125,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			// wporgPlugin exists in the wporg directory.
 			setPluginIcon( wporgPlugins?.[ 0 ]?.icon || successImage );
 		}
-	}, [ areAllWporgPluginsFetched, productSlugs, setPluginIcon, dispatch, wporgPlugins ] );
+	}, [ areAllWporgPluginsFetched, productSlugs, dispatch, wporgPlugins ] );
 
 	useEffect( () => {
 		if ( wporgPlugins?.[ 0 ]?.wporg === false ) {
