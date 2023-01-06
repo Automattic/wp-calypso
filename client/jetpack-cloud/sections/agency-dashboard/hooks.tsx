@@ -8,7 +8,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import SitesOverviewContext from './sites-overview/context';
 import type { Site, UpdateMonitorSettingsParams } from './sites-overview/types';
 
-function getRejectedAndFulFilledRequests(
+function getRejectedAndFulfilledRequests(
 	promises: any[],
 	requests: { site: { blog_id: number; url: string } }[]
 ) {
@@ -99,7 +99,7 @@ export function useToggleActivateMonitor(
 				requests.map( ( request: { mutation: any } ) => request.mutation )
 			);
 
-			const { fulfilledRequests, rejectedRequests } = getRejectedAndFulFilledRequests(
+			const { fulfilledRequests, rejectedRequests } = getRejectedAndFulfilledRequests(
 				promises,
 				requests
 			);
@@ -243,7 +243,7 @@ export function useUpdateMonitorSettings( sites: Array< { blog_id: number; url: 
 				em: <em />,
 			};
 
-			const { fulfilledRequests, rejectedRequests } = getRejectedAndFulFilledRequests(
+			const { fulfilledRequests, rejectedRequests } = getRejectedAndFulfilledRequests(
 				promises,
 				requests
 			);
