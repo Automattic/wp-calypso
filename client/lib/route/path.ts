@@ -28,12 +28,12 @@ export function getSiteFragment( path: URLString ): SiteSlug | SiteId | false {
 		return false;
 	}
 
-	// By default there are 2 URL positions where we should look for the site fragment:
+	// By default there are two URL positions where we should look for the site fragment:
 	// last (most sections) and second-to-last (post ID is last in editor).
-	// Define the second-to-last and last index positions to search. Order matters.
+	// searchPositions defines the second-to-last and last index positions to search. Order matters.
 	let searchPositions = [ pieces.length - 2, pieces.length - 1 ];
 
-	// There are exceptions. In some paths, the site fragment is in third position.
+	// There are exceptions. In some paths the site fragment is in the third position.
 	// e.g. /me/purchases/example.wordpress.com/foo/bar
 	if (
 		0 === basePath.indexOf( '/me/purchases/' ) ||
@@ -41,13 +41,13 @@ export function getSiteFragment( path: URLString ): SiteSlug | SiteId | false {
 	) {
 		searchPositions = [ 3 ];
 	}
-	// In other paths, the site fragment is in second position.
+	// In other paths the site fragment is in the second position.
 	// e.g. /checkout/example.wordpress.com/offer-plan-upgrade/business-monthly/75806534
 	else if ( basePath.includes( '/offer-plan-upgrade/' ) && basePath.startsWith( '/checkout/' ) ) {
 		searchPositions = [ 2 ];
 	}
 
-	// Search for site slug or ID in the positions defined above.
+	// Search for site slug or ID in the URL positions defined above in searchPositions.
 	for ( let i = 0; i < searchPositions.length; i++ ) {
 		const piece = pieces[ searchPositions[ i ] ];
 
