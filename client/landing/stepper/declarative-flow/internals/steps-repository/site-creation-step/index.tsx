@@ -1,6 +1,7 @@
 import { Site } from '@automattic/data-stores';
 import {
 	ECOMMERCE_FLOW,
+	WOOEXPRESS_FLOW,
 	isLinkInBioFlow,
 	addPlanToCart,
 	createSiteWithCart,
@@ -48,8 +49,9 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 		siteVisibility = Site.Visibility.PublicNotIndexed;
 	}
 
-	// Ecommerce flow defaults to Private
-	if ( flow === ECOMMERCE_FLOW ) {
+	// Certain flows should default to private.
+	const privateFlows = [ ECOMMERCE_FLOW, WOOEXPRESS_FLOW ];
+	if ( privateFlows.includes( flow ) ) {
 		siteVisibility = Site.Visibility.Private;
 	}
 
