@@ -2,13 +2,19 @@ import fs from 'fs';
 import FormData from 'form-data';
 import fetch from 'node-fetch';
 import { SecretsManager } from './secrets';
-import { BearerTokenErrorResponse, TestFile, SettingsParams, PluginParams } from './types';
+import {
+	BearerTokenErrorResponse,
+	TestFile,
+	SettingsParams,
+	PluginParams,
+	AllDomainsResponse,
+	DomainsMetadata,
+} from './types';
 import type { Roles } from './lib';
 import type {
 	AccountDetails,
 	SiteDetails,
 	BearerTokenResponse,
-	AllSitesResponse,
 	MyAccountInformationResponse,
 	AccountClosureResponse,
 	SiteDeletionResponse,
@@ -185,10 +191,10 @@ export class RestAPIClient {
 	 * 	- URL
 	 * 	- site owner
 	 *
-	 * @returns {Promise<AllSitesResponse>} JSON array of sites.
+	 * @returns {Promise<AllDomainsResponse>} JSON array of sites.
 	 * @throws {Error} If API responded with an error.
 	 */
-	async getAllSites(): Promise< AllSitesResponse > {
+	async getAllSites(): Promise< AllDomainsResponse > {
 		const params: RequestParams = {
 			method: 'get',
 			headers: {
@@ -197,7 +203,7 @@ export class RestAPIClient {
 			},
 		};
 
-		const response = await this.sendRequest( this.getRequestURL( '1.1', '/me/sites' ), params );
+		const response = await this.sendRequest( this.getRequestURL( '1.1', '/all-domains/' ), params );
 
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(
@@ -247,48 +253,64 @@ export class RestAPIClient {
 	}
 
 	/**
-	 * Deletes a site.
+	 * Deletes a site belonging to the user.
 	 *
-	 * If the target site has an upgrade purchased within the
+	 * This method will perform a quick check to ensure the target site
+	 * belongs to the user.
+	 *
+	 * Additionally, if the target site has an upgrade purchased within the
 	 * sandboxed environment, it can be deleted without first
 	 * cancelling the subscription.
 	 *
 	 * Otherwise the active subscription must be first cancelled
-	 * otherwise the REST API will throw a HTTP 403 status.
+	 * or else the REST API will throw a HTTP 403 status.
 	 *
 	 * @param {SiteDetails} expectedSiteDetails Expected details for the site to be deleted.
 	 * @returns {SiteDeletionResponse | null} Null if deletion was unsuccessful or not performed. SiteDeletionResponse otherwise.
 	 */
-	async deleteSite( expectedSiteDetails: SiteDetails ): Promise< SiteDeletionResponse | null > {
-		if ( ! expectedSiteDetails.url.includes( 'e2e' ) ) {
-			console.warn( `Aborting site deletion: target is not a test site.` );
+	async deleteSite( targetSite: {
+		id: number;
+		domain: string;
+	} ): Promise< SiteDeletionResponse | null > {
+		// Every new testing site since 2021 has the prefix `e2e` of some sort.
+		if ( ! targetSite.domain.includes( 'e2e' ) ) {
 			return null;
 		}
 
-		const mySites = await this.getAllSites();
-		const myAccountInformation = await this.getMyAccountInformation();
+		const targetDomain = targetSite.domain.startsWith( 'http' )
+			? targetSite.domain.replace( 'https://', '' )
+			: targetSite.domain;
 
-		// Start from tail end of the array since
-		// the target of site deletion is likely the
-		// most recently created site.
-		for ( const site of mySites.sites.reverse() ) {
-			if ( site.ID === expectedSiteDetails.id && site.site_owner === myAccountInformation.ID ) {
-				const params: RequestParams = {
-					method: 'post',
-					headers: {
-						Authorization: await this.getAuthorizationHeader( 'bearer' ),
-						'Content-Type': this.getContentTypeHeader( 'json' ),
-					},
-				};
+		const mySites: AllDomainsResponse = await this.getAllSites();
 
-				return await this.sendRequest(
-					this.getRequestURL( '1.1', `/sites/${ expectedSiteDetails.id }/delete` ),
-					params
-				);
-			}
+		const match = mySites.domains.filter( ( site: DomainsMetadata ) => {
+			site.blog_id === targetSite.id && site.domain === targetDomain;
+		} );
+
+		if ( ! match ) {
+			return null;
 		}
-		// If nothing matches, return that no action was performed.
-		return null;
+
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ targetSite.id }/delete` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
 	}
 
 	/* Invites */
