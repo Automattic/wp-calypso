@@ -42,4 +42,5 @@ export {
 } from './highlight-cards/highlight-card';
 export { default as MobilePromoCard } from './mobile-promo-card';
 export { default as ShortenedNumber } from './shortened-number';
+export { default as formattedNumber } from './shortened-number/formattedNumber';
 export { default as PostStatsCard } from './post-stats-card';

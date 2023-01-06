@@ -1,4 +1,5 @@
 import ShortenedNumber from '..';
+import formttedNumber from './../formattedNumber';
 
 export default { title: 'Shortened Number' };
 
@@ -8,14 +9,29 @@ const ShortenedNumberExample = ( { value } ) => (
 	</p>
 );
 
+const FormattedNumberExample = ( { value } ) => (
+	<p>
+		{ String( value ) } becomes { formttedNumber( value ) }
+	</p>
+);
+
+const exampleValues = [ 0, 123, 12345, 12345678, 12345678901, 1.23456, 'Apple' ];
+
 export const Default = () => (
-	<div>
-		<ShortenedNumberExample value={ 0 } />
-		<ShortenedNumberExample value={ 123 } />
-		<ShortenedNumberExample value={ 12345 } />
-		<ShortenedNumberExample value={ 12345678 } />
-		<ShortenedNumberExample value={ 12345678901 } />
-		<ShortenedNumberExample value={ 1.23456 } />
-		<ShortenedNumberExample value="Apple" />
-	</div>
+	<>
+		<div>
+			<h1>Shortened numbers</h1>
+			<div></div>
+			{ exampleValues.map( ( item ) => (
+				<ShortenedNumberExample value={ item } />
+			) ) }
+		</div>
+		<div>
+			<h1>Formatted numbers</h1>
+			<div>Numbers formatted using the default formatter.</div>
+			{ exampleValues.map( ( item ) => (
+				<FormattedNumberExample value={ item } />
+			) ) }
+		</div>
+	</>
 );
