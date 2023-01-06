@@ -1,3 +1,6 @@
+import { isWcMobileApp } from 'calypso/lib/mobile-app';
+import { getQueryArgs } from 'calypso/lib/query-args';
+
 type UserInfo = {
 	siteUrl: string;
 	siteId: number;
@@ -17,7 +20,21 @@ type UserInfo = {
 		region: string;
 		city: string;
 	};
+	cameThrough: string | null;
 };
+
+/**
+ * Returns the source where the user came from.
+ */
+function getUserCameThrough() {
+	const queryArgs = getQueryArgs();
+	const isWCCOM = queryArgs?.ref === 'woocommerce-com';
+
+	if ( isWCCOM ) {
+		return isWcMobileApp() ? 'Store setup on Woo mobile app' : 'Store setup on Woo browser';
+	}
+	return null;
+}
 
 export function getUserInfo(
 	message: string,
@@ -42,6 +59,7 @@ export function getUserInfo(
 		// add user agent
 		userAgent: window.navigator.userAgent,
 		geoLocation,
+		cameThrough: getUserCameThrough(),
 	};
 	return info;
 }
