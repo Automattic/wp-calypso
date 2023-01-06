@@ -5,9 +5,9 @@ import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useDispatch } from '@wordpress/data';
 import React from 'react';
-import { renderWithProvider } from '../../../../../../../test-helpers/testing-library';
-import * as useSiteModule from '../../../../../hooks/use-site';
-import FreeFlowPostSetup from '../index';
+import FreeFlowPostSetup from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/free-post-setup/index';
+import * as useSiteModule from 'calypso/landing/stepper/hooks/use-site';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { defaultSiteDetails, buildSiteDetails } from './lib/fixtures';
 
 jest.mock( 'react-router-dom', () => ( {
