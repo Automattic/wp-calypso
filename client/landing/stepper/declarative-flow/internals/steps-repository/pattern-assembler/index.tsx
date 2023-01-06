@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -14,6 +14,7 @@ import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { useThemeDetails } from '../../../../hooks/use-theme-details';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
+import { SITE_TAGLINE } from './constants';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
 import { useAllPatterns } from './patterns-data';
@@ -54,6 +55,14 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 		footer,
 		activePosition,
 	};
+
+	const siteInfo = useMemo(
+		() => ( {
+			title: site?.title,
+			tagline: site?.description || SITE_TAGLINE,
+		} ),
+		[ site?.title, site?.description ]
+	);
 
 	useEffect( () => {
 		// Require to start the flow from the first step
@@ -383,6 +392,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 							siteId={ themeDemoSiteSlug }
 							stylesheet={ selectedDesign?.recipe?.stylesheet }
 							patternIds={ allPatterns.map( ( pattern ) => encodePatternId( pattern.id ) ) }
+							siteInfo={ siteInfo }
 						>
 							{ stepContent }
 						</AsyncLoad>
