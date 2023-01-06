@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	planHasFeature,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
@@ -193,7 +194,6 @@ export class PlansStep extends Component {
 			isInVerticalScrollingPlansExperiment,
 			isReskinned,
 			eligibleForProPlan,
-			isOnboarding2023PricingGrid,
 		} = this.props;
 
 		let errorDisplay;
@@ -257,7 +257,6 @@ export class PlansStep extends Component {
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 					isReskinned={ isReskinned }
-					isOnboarding2023PricingGrid={ isOnboarding2023PricingGrid }
 				/>
 			</div>
 		);
@@ -476,7 +475,7 @@ export const isDotBlogDomainRegistration = ( domainItem ) => {
 export default connect(
 	(
 		state,
-		{ path, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation } }
+		{ path, flowName, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation } }
 	) => ( {
 		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
 		disableBloggerPlanWithNonBlogDomain:
@@ -497,6 +496,8 @@ export default connect(
 		isInVerticalScrollingPlansExperiment: true,
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		eligibleForProPlan: isEligibleForProPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
+		isOnboarding2023PricingGrid:
+			isEnabled( 'onboarding/2023-pricing-grid' ) && flowName === 'onboarding-2023-pricing-grid',
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );
