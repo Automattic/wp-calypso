@@ -147,8 +147,6 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 	useUserMenu();
 	useMobileBtn();
 
-	//${ hasCrossed && 'is-sticky' }
-
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<>
