@@ -1,16 +1,21 @@
 import { Icon, arrowLeft, arrowRight } from '@wordpress/icons';
 import classNames from 'classnames';
 
-function NavigationArrows( { disableNextArrow, disablePreviousArrow, handleClickArrow } ) {
+function NavigationArrows( {
+	disableNextArrow,
+	disablePreviousArrow,
+	onArrowNext,
+	onArrowPrevious,
+} ) {
 	const handleClickNext = () => {
 		// eslint-disable-next-line no-console
 		console.log( 'click next' );
-		handleClickArrow( true );
+		onArrowNext();
 	};
 	const handleClickPrevious = () => {
 		// eslint-disable-next-line no-console
 		console.log( 'click previous' );
-		handleClickArrow();
+		onArrowPrevious();
 	};
 	return (
 		<div className={ classNames( 'stats-period-navigation', 'stats-year-navigation' ) }>
