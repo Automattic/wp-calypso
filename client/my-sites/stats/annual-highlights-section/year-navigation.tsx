@@ -15,20 +15,14 @@ const YearNavigation = ( {
 	disableNextArrow,
 }: YearNavigationProps ) => {
 	const handleArrowEvent = ( next: boolean ) => {
-		// eslint-disable-next-line no-console
-		// console.log( 'handleArrowEvent' );
 		const arrow = next ? 'next' : 'previous';
 		recordGoogleEvent( 'Stats Period Navigation', `Clicked ${ arrow } year` );
 		onYearChange( next );
 	};
 	const handleArrowNext = () => {
-		// eslint-disable-next-line no-console
-		// console.log( 'handleArrowNext' );
 		handleArrowEvent( true );
 	};
 	const handleArrowPrevious = () => {
-		// eslint-disable-next-line no-console
-		// console.log( 'handleArrowPrevious' );
 		handleArrowEvent( false );
 	};
 
