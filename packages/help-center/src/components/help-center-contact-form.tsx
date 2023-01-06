@@ -292,7 +292,7 @@ export const HelpCenterContactForm = () => {
 
 					if ( getQueryArgs()?.ref === 'woocommerce-com' ) {
 						ticketMeta.push(
-							`Created: during store setup on ${ isWcMobileApp() ? 'Woo mobile app' : 'browser' }`
+							`Created during store setup on ${ isWcMobileApp() ? 'Woo mobile app' : 'Woo browser' }`
 						);
 					}
 
