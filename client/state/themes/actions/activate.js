@@ -35,7 +35,9 @@ export function activate(
 	return ( dispatch, getState ) => {
 		const themeOptions = getThemePreviewThemeOptions( getState() );
 		const styleVariationSlug =
-			themeOptions.themeId === themeId ? themeOptions.styleVariation?.slug : undefined;
+			themeOptions && themeOptions.themeId === themeId
+				? themeOptions.styleVariation?.slug
+				: undefined;
 		let showModalCondition =
 			! isJetpackSite( getState(), siteId ) && ! isSiteAtomic( getState(), siteId );
 
