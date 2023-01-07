@@ -12599,6 +12599,7 @@ __metadata:
     "@automattic/onboarding": "workspace:^"
     "@automattic/pattern-picker": "workspace:^"
     "@automattic/plans-grid": "workspace:^"
+    "@automattic/privacy-toolset": "workspace:^"
     "@automattic/react-virtualized": ^9.22.3
     "@automattic/request-external-access": "workspace:^"
     "@automattic/search": "workspace:^"
@@ -35586,6 +35587,7 @@ swiper@4.5.1:
   version: 0.0.0-use.local
   resolution: "wp-calypso@workspace:."
   dependencies:
+    "@automattic/block-renderer": "workspace:^"
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
