@@ -7,6 +7,7 @@ import { showAutoLoadingHomepageWarning } from 'calypso/state/themes/actions/sho
 import { suffixThemeIdForInstall } from 'calypso/state/themes/actions/suffix-theme-id-for-install';
 import {
 	getTheme,
+	getThemePreviewThemeOptions,
 	hasAutoLoadingHomepageModalAccepted,
 	themeHasAutoLoadingHomepage,
 } from 'calypso/state/themes/selectors';
@@ -22,7 +23,6 @@ import 'calypso/state/themes/init';
  * @param  {string}   source              The source that is requesting theme activation, e.g. 'showcase'
  * @param  {boolean}  purchased           Whether the theme has been purchased prior to activation
  * @param  {boolean}  keepCurrentHomepage Prevent theme from switching homepage content if this is what it'd normally do when activated
- * @param  {string}   styleVariationSlug  The theme style slug
  * @returns {Function}                    Action thunk
  */
 export function activate(
@@ -30,10 +30,12 @@ export function activate(
 	siteId,
 	source = 'unknown',
 	purchased = false,
-	keepCurrentHomepage = false,
-	styleVariationSlug
+	keepCurrentHomepage = false
 ) {
 	return ( dispatch, getState ) => {
+		const themeOptions = getThemePreviewThemeOptions( getState() );
+		const styleVariationSlug =
+			themeOptions.themeId === themeId ? themeOptions.styleVariation?.slug : undefined;
 		let showModalCondition =
 			! isJetpackSite( getState(), siteId ) && ! isSiteAtomic( getState(), siteId );
 
