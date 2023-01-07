@@ -37,6 +37,7 @@
 		{ "path": "./pattern-picker" },
 		{ "path": "./photon" },
 		{ "path": "./plans-grid" },
+		{ "path": "./privacy-toolset" },
 		{ "path": "./search" },
 		{ "path": "./sites" },
 		{ "path": "./shopping-cart" },
