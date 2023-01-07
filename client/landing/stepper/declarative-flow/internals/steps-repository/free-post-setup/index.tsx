@@ -31,13 +31,16 @@ const FreePostSetup: Step = ( { navigation } ) => {
 	const [ selectedFile, setSelectedFile ] = useState< File | undefined >();
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isSubmitError, setIsSubmitError ] = useState( false );
-
+	const [ siteDataFetched, setSiteDataFetched ] = useState( false );
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 
 	useEffect( () => {
-		setComponentSiteTitle( site?.name || '' );
-		setTagline( site?.description || '' );
-	}, [ site ] );
+		if ( site && ! siteDataFetched ) {
+			setComponentSiteTitle( site?.name || '' );
+			setTagline( site?.description || '' );
+			setSiteDataFetched( true );
+		}
+	}, [ site, siteDataFetched, setSiteDataFetched ] );
 
 	useEffect( () => {
 		setIsSubmitError( false );

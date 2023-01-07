@@ -31,13 +31,16 @@ const LinkInBioPostSetup: Step = function LinkInBioPostSetup( { navigation } ) {
 	const [ base64Image, setBase64Image ] = useState< string | null >();
 	const [ isLoading, setIsLoading ] = useState< boolean >( false );
 	const [ isSubmitError, setIsSubmitError ] = useState< boolean >( false );
-
+	const [ siteDataFetched, setSiteDataFetched ] = useState( false );
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 
 	useEffect( () => {
-		setComponentSiteTitle( site?.name || '' );
-		setTagline( site?.description || '' );
-	}, [ site ] );
+		if ( site && ! siteDataFetched ) {
+			setComponentSiteTitle( site?.name || '' );
+			setTagline( site?.description || '' );
+			setSiteDataFetched( true );
+		}
+	}, [ site, siteDataFetched, setSiteDataFetched ] );
 
 	useEffect( () => {
 		setIsSubmitError( false );
