@@ -567,6 +567,17 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#activateTheme()', () => {
+		const getState = () => ( {
+			themes: {
+				queries: {
+					wpcom: new ThemeQueryManager(),
+				},
+			},
+			sites: {
+				items: {},
+			},
+		} );
+
 		const trackingData = {
 			theme: 'twentysixteen',
 			previous_theme: 'twentyfifteen',
@@ -588,7 +599,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when thunk is triggered', () => {
-			activateTheme( 'twentysixteen', 2211667 )( spy );
+			activateTheme( 'twentysixteen', 2211667 )( spy, getState );
 
 			expect( spy ).toBeCalledWith( {
 				type: THEME_ACTIVATE,
@@ -602,7 +613,7 @@ describe( 'actions', () => {
 				'twentysixteen',
 				2211667,
 				trackingData
-			)( spy ).then( () => {
+			)( spy, getState ).then( () => {
 				expect( spy.mock.calls[ 1 ][ 0 ].name ).toEqual( 'themeActivatedThunk' );
 			} );
 		} );
@@ -619,7 +630,7 @@ describe( 'actions', () => {
 				'badTheme',
 				2211667,
 				trackingData
-			)( spy ).then( () => {
+			)( spy, getState ).then( () => {
 				expect( spy ).toBeCalledWith( themeActivationFailure );
 			} );
 		} );
