@@ -7,7 +7,6 @@ import { showAutoLoadingHomepageWarning } from 'calypso/state/themes/actions/sho
 import { suffixThemeIdForInstall } from 'calypso/state/themes/actions/suffix-theme-id-for-install';
 import {
 	getTheme,
-	getThemePreviewThemeOptions,
 	hasAutoLoadingHomepageModalAccepted,
 	themeHasAutoLoadingHomepage,
 } from 'calypso/state/themes/selectors';
@@ -33,11 +32,6 @@ export function activate(
 	keepCurrentHomepage = false
 ) {
 	return ( dispatch, getState ) => {
-		const themeOptions = getThemePreviewThemeOptions( getState() );
-		const styleVariationSlug =
-			themeOptions && themeOptions.themeId === themeId
-				? themeOptions.styleVariation?.slug
-				: undefined;
 		let showModalCondition =
 			! isJetpackSite( getState(), siteId ) && ! isSiteAtomic( getState(), siteId );
 
@@ -67,19 +61,10 @@ export function activate(
 			// If theme is already installed, installation will silently fail,
 			// and it will just be activated.
 			return dispatch(
-				installAndActivateTheme(
-					installId,
-					siteId,
-					source,
-					purchased,
-					keepCurrentHomepage,
-					styleVariationSlug
-				)
+				installAndActivateTheme( installId, siteId, source, purchased, keepCurrentHomepage )
 			);
 		}
 
-		return dispatch(
-			activateTheme( themeId, siteId, source, purchased, keepCurrentHomepage, styleVariationSlug )
-		);
+		return dispatch( activateTheme( themeId, siteId, source, purchased, keepCurrentHomepage ) );
 	};
 }
