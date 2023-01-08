@@ -1,5 +1,5 @@
 import ShortenedNumber from '..';
-import formttedNumber from './../formattedNumber';
+import formattedNumber from '../formatted-number';
 
 export default { title: 'Shortened Number' };
 
@@ -11,7 +11,7 @@ const ShortenedNumberExample = ( { value } ) => (
 
 const FormattedNumberExample = ( { value } ) => (
 	<p>
-		{ String( value ) } becomes { formttedNumber( value ) }
+		{ String( value ) } becomes { formattedNumber( value ) }
 	</p>
 );
 
