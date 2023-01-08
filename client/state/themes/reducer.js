@@ -410,9 +410,8 @@ export const lastQuery = ( state = {}, action ) => {
 export const themePreviewOptions = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case THEME_PREVIEW_OPTIONS: {
-			const { primary, secondary } = action;
-
-			return { primary, secondary };
+			const { primary, secondary, styleVariation } = action;
+			return { primary, secondary, styleVariation };
 		}
 	}
 

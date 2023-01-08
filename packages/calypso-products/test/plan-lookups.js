@@ -55,6 +55,7 @@ import {
 	TYPE_FREE,
 	PLAN_P2_PLUS,
 	PLAN_P2_FREE,
+	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '../src/constants';
 import {
 	getPlan,
@@ -78,6 +79,7 @@ import {
 	isWpComPremiumPlan,
 	isWpComBloggerPlan,
 	isWpComFreePlan,
+	isWpcomEnterpriseGridPlan,
 	isWpComAnnualPlan,
 	isWpComBiennialPlan,
 	isWpComMonthlyPlan,
@@ -332,6 +334,24 @@ describe( 'isWpComEcommercePlan', () => {
 	} );
 } );
 
+describe( 'isWpComEnterpriseGridPlan', () => {
+	test( 'should return true for enterprise grid plan', () => {
+		expect( isWpcomEnterpriseGridPlan( PLAN_ENTERPRISE_GRID_WPCOM ) ).toEqual( true );
+	} );
+	test( 'should return false for non-business plans', () => {
+		expect( isWpcomEnterpriseGridPlan( PLAN_JETPACK_BUSINESS ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_JETPACK_BUSINESS_MONTHLY ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_PERSONAL ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_PERSONAL_2_YEARS ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_JETPACK_PERSONAL ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_PREMIUM ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_JETPACK_PREMIUM ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_ECOMMERCE ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( 'non-exisWpComting plan' ) ).toEqual( false );
+	} );
+} );
+
 describe( 'isWpComProPlan', () => {
 	test( 'should return true for the Pro plan', () => {
 		expect( isWpComProPlan( PLAN_WPCOM_PRO ) ).toEqual( true );
@@ -576,6 +596,7 @@ describe( 'getPlanClass', () => {
 		expect( getPlanClass( PLAN_BUSINESS_2_YEARS ) ).toEqual( 'is-business-plan' );
 		expect( getPlanClass( PLAN_ECOMMERCE ) ).toEqual( 'is-ecommerce-plan' );
 		expect( getPlanClass( PLAN_ECOMMERCE_2_YEARS ) ).toEqual( 'is-ecommerce-plan' );
+		expect( getPlanClass( PLAN_ENTERPRISE_GRID_WPCOM ) ).toEqual( 'is-wpcom-enterprise-grid-plan' );
 		expect( getPlanClass( PLAN_JETPACK_BUSINESS ) ).toEqual( 'is-business-plan' );
 		expect( getPlanClass( PLAN_JETPACK_BUSINESS_MONTHLY ) ).toEqual( 'is-business-plan' );
 	} );
@@ -824,6 +845,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_PREMIUM,
 			PLAN_BUSINESS,
 			PLAN_ECOMMERCE,
+			PLAN_ENTERPRISE_GRID_WPCOM,
 			PLAN_JETPACK_FREE,
 			PLAN_JETPACK_PREMIUM,
 			PLAN_JETPACK_PERSONAL,
@@ -906,6 +928,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_ECOMMERCE_MONTHLY,
 			PLAN_ECOMMERCE,
 			PLAN_ECOMMERCE_2_YEARS,
+			PLAN_ENTERPRISE_GRID_WPCOM,
 			PLAN_P2_PLUS,
 			PLAN_P2_FREE,
 			PLAN_WPCOM_STARTER,
