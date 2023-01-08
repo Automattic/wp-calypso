@@ -13,7 +13,7 @@ import 'calypso/state/themes/init';
  * @param {string} source    The source that is requesting theme activation, e.g. 'showcase'
  * @param {boolean} purchased Whether the theme has been purchased prior to activation
  * @param {boolean} keepCurrentHomepage Prevent theme from switching homepage content if this is what it'd normally do when activated
- * @returns {Function}                  Action thunk
+ * @returns {Function} Action thunk
  */
 export function installAndActivateTheme(
 	themeId,

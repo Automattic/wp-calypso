@@ -17,12 +17,12 @@ import 'calypso/state/themes/init';
  * Triggers a network request to activate a specific theme on a given site.
  * If it's a Jetpack site, installs the theme prior to activation if it isn't already.
  *
- * @param  {string}   themeId             Theme ID
- * @param  {number}   siteId              Site ID
- * @param  {string}   source              The source that is requesting theme activation, e.g. 'showcase'
- * @param  {boolean}  purchased           Whether the theme has been purchased prior to activation
+ * @param  {string}   themeId   Theme ID
+ * @param  {number}   siteId    Site ID
+ * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
+ * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
  * @param  {boolean}  keepCurrentHomepage Prevent theme from switching homepage content if this is what it'd normally do when activated
- * @returns {Function}                    Action thunk
+ * @returns {Function}          Action thunk
  */
 export function activate(
 	themeId,
