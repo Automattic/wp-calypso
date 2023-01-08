@@ -1,28 +1,15 @@
-import {
-	planMatches,
-	isBloggerPlan,
-	isPersonalPlan,
-	isPremiumPlan,
-	isBusinessPlan,
-	isEcommercePlan,
-	GROUP_JETPACK,
-	GROUP_WPCOM,
-	WPCOM_FEATURES_NO_ADVERTS,
-	isFreePlanProduct,
-} from '@automattic/calypso-products';
+import { WPCOM_FEATURES_NO_ADVERTS, isFreePlanProduct } from '@automattic/calypso-products';
 import classnames from 'classnames';
 import debugFactory from 'debug';
 import { connect } from 'react-redux';
 import Banner from 'calypso/components/banner';
-import { addQueryArgs } from 'calypso/lib/url';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -31,7 +18,6 @@ const debug = debugFactory( 'calypso:upsell-nudge' );
 export const UpsellNudge = ( {
 	callToAction,
 	canManageSite,
-	canUserUpgrade,
 	className,
 	compact,
 	customerType,
@@ -55,12 +41,11 @@ export const UpsellNudge = ( {
 	onDismissClick,
 	plan,
 	price,
-	primaryButton,
+	primaryButton = true,
 	selectedSiteHasFeature,
 	showIcon = false,
 	icon = 'star',
 	site,
-	siteSlug,
 	target,
 	title,
 	tracksClickName,
@@ -92,24 +77,7 @@ export const UpsellNudge = ( {
 		return null;
 	}
 
-	if ( ! href && siteSlug && canUserUpgrade ) {
-		href = addQueryArgs( { feature, plan }, `/plans/${ siteSlug }` );
-		if ( customerType ) {
-			href = `/plans/${ siteSlug }?customerType=${ customerType }`;
-		}
-	}
-
-	const classes = classnames(
-		'upsell-nudge',
-		className,
-		{ 'is-upgrade-blogger': plan && isBloggerPlan( plan ) },
-		{ 'is-upgrade-personal': plan && isPersonalPlan( plan ) },
-		{ 'is-upgrade-premium': plan && isPremiumPlan( plan ) },
-		{ 'is-upgrade-business': plan && isBusinessPlan( plan ) },
-		{ 'is-upgrade-ecommerce': plan && isEcommercePlan( plan ) },
-		{ 'is-jetpack-plan': plan && planMatches( plan, { group: GROUP_JETPACK } ) },
-		{ 'is-wpcom-plan': plan && planMatches( plan, { group: GROUP_WPCOM } ) }
-	);
+	const classes = classnames( 'upsell-nudge', className );
 
 	if ( dismissPreferenceName && forceHref && href ) {
 		debug(
@@ -122,6 +90,7 @@ export const UpsellNudge = ( {
 			callToAction={ callToAction }
 			className={ classes }
 			compact={ compact }
+			customerType={ customerType }
 			description={ description }
 			disableHref={ disableHref }
 			dismissPreferenceName={ dismissPreferenceName }
@@ -154,10 +123,6 @@ export const UpsellNudge = ( {
 	);
 };
 
-UpsellNudge.defaultProps = {
-	primaryButton: true,
-};
-
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 
@@ -168,9 +133,6 @@ export default connect( ( state, ownProps ) => {
 		isJetpack: isJetpackSite( state, siteId ),
 		isAtomic: isSiteAutomatedTransfer( state, siteId ),
 		isVip: isVipSite( state, siteId ),
-		currentPlan: getCurrentPlan( state, siteId ),
-		siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
-		canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 		siteIsWPForTeams: isSiteWPForTeams( state, getSelectedSiteId( state ) ),
 	};
 } )( UpsellNudge );
