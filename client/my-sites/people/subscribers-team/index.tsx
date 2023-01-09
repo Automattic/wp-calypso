@@ -1,6 +1,8 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import SectionNav from 'calypso/components/section-nav';
 import useFollowersQuery from 'calypso/data/followers/use-followers-query';
@@ -47,7 +49,17 @@ function SubscribersTeam( props: Props ) {
 				className="people__page-heading"
 				headerText={ _( 'Users' ) }
 				subHeaderText={ _(
-					'Invite subscribers and team members to your site and manage their access settings.'
+					'Invite subscribers and team members to your site and manage their access settings. {{learnMore}}Learn more{{/learnMore}}.',
+					{
+						components: {
+							learnMore: (
+								<InlineSupportLink
+									showIcon={ false }
+									supportLink={ localizeUrl( 'https://wordpress.com/support/invite-people/' ) }
+								/>
+							),
+						},
+					}
 				) }
 				align="left"
 				hasScreenOptions
