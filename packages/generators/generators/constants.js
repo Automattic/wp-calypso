@@ -37,12 +37,6 @@ export const actions = [
 	},
 	{
 		type: 'add',
-		path: '../{{kebabCase name}}/package.json',
-		templateFile: 'templates/shared/package.json.hbs',
-		abortOnFail: true,
-	},
-	{
-		type: 'add',
 		path: '../{{kebabCase name}}/README.md',
 		templateFile: 'templates/shared/README.md.hbs',
 		abortOnFail: true,

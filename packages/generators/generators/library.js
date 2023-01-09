@@ -7,6 +7,12 @@ const libraryGenerator = {
 		...actions,
 		{
 			type: 'add',
+			path: '../{{kebabCase name}}/package.json',
+			templateFile: 'templates/library/package.json.hbs',
+			abortOnFail: true,
+		},
+		{
+			type: 'add',
 			path: '../{{kebabCase name}}/src/index.ts',
 			templateFile: 'templates/library/index.js.hbs',
 			abortOnFail: true,
