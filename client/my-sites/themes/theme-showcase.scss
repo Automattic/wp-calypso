@@ -102,15 +102,6 @@ body.is-section-themes {
 }
 
 body.is-section-themes-i4-2 {
-	.layout.has-no-sidebar .layout__content {
-		.themes__selection .themes-list .theme {
-			.theme__info-options:not(.has-style-variations) {
-				align-self: flex-start;
-				flex: 0 0 auto;
-			}
-		}
-	}
-
 	.themes__selection .themes-list .theme {
 		background: none;
 		border-radius: 2px;
@@ -168,6 +159,13 @@ body.is-section-themes-i4-2 {
 			gap: 4px;
 			padding-top: 16px;
 			position: relative;
+
+			&:not(.has-pricing) {
+				.theme__info-options:not(.has-style-variations) {
+					align-self: flex-start;
+					flex: 0 0 auto;
+				}
+			}
 		}
 
 		.theme__info-title {
