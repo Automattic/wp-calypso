@@ -11,7 +11,6 @@ body.is-section-themes {
 	.layout:not(.has-no-sidebar) .layout__content {
 		padding-top: var(--masterbar-height);
 	}
-
 }
 
 .theme-showcase {
@@ -103,6 +102,15 @@ body.is-section-themes {
 }
 
 body.is-section-themes-i4-2 {
+	.layout.has-no-sidebar .layout__content {
+		.themes__selection .themes-list .theme {
+			.theme__info-options:not(.has-style-variations) {
+				align-self: flex-start;
+				flex: 0 0 auto;
+			}
+		}
+	}
+
 	.themes__selection .themes-list .theme {
 		background: none;
 		border-radius: 2px;
@@ -118,12 +126,17 @@ body.is-section-themes-i4-2 {
 				border-bottom-right-radius: 2px;
 				box-sizing: content-box;
 				flex-direction: row;
-				gap: 0;
+				gap: 16px;
 				padding: 4px 24px;
 			}
 
 			.theme__info-title {
 				color: var(--color-text-inverted);
+			}
+
+			.theme__info-options {
+				display: inline-flex;
+				flex: 0 0 auto;
 			}
 		}
 
@@ -183,8 +196,28 @@ body.is-section-themes-i4-2 {
 			line-height: 24px;
 		}
 
-		.theme__info-style-variations {
+		.theme__badge-active {
+			background-color: var(--color-primary-0);
+			border-radius: 20px; /* stylelint-disable-line scales/radii */
+			color: var(--color-neutral-100);
+			font-size: 0.75rem;
+			line-height: 20px;
+			padding: 0 10px;
+			text-transform: none;
+		}
+
+		.theme__info-options {
 			align-self: center;
+			display: flex;
+			flex-basis: 100%;
+
+			.theme__more-button:only-child {
+				margin-inline-start: auto;
+			}
+		}
+
+		.theme__info-style-variations {
+			align-content: center;
 			display: flex;
 			flex-basis: 100%;
 			font-size: 0;
@@ -195,14 +228,18 @@ body.is-section-themes-i4-2 {
 			}
 		}
 
-		.theme__badge-active {
-			background-color: var(--color-primary-0);
-			border-radius: 20px; /* stylelint-disable-line scales/radii */
-			color: var(--color-neutral-100);
-			font-size: 0.75rem;
-			line-height: 20px;
-			padding: 0 10px;
-			text-transform: none;
+		.theme__more-button {
+			border: 0;
+			height: 20px;
+
+			&:hover {
+				background-color: transparent;
+			}
+
+			button {
+				font-size: 0;
+				padding: 0;
+			}
 		}
 	}
 

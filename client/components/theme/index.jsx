@@ -591,17 +591,36 @@ export class Theme extends Component {
 								  ! active && (
 										<span className="theme__info-upsell-description">{ translate( 'Free' ) }</span>
 								  ) ) }
-						{ isNewDetailsAndPreview && ! active && this.renderStyleVariations() }
-						{ ! isNewDetailsAndPreview && ! isEmpty( this.props.buttonContents ) ? (
-							<ThemeMoreButton
-								index={ this.props.index }
-								themeId={ this.props.theme.id }
-								themeName={ this.props.theme.name }
-								active={ this.props.active }
-								onMoreButtonClick={ this.props.onMoreButtonClick }
-								options={ this.props.buttonContents }
-							/>
-						) : null }
+						{ isNewDetailsAndPreview ? (
+							<div
+								className={ classNames( 'theme__info-options', {
+									'has-style-variations': theme.style_variations?.length > 0,
+								} ) }
+							>
+								{ ! active && this.renderStyleVariations() }
+								{ ! isEmpty( this.props.buttonContents ) && (
+									<ThemeMoreButton
+										index={ this.props.index }
+										themeId={ this.props.theme.id }
+										themeName={ this.props.theme.name }
+										active={ this.props.active }
+										onMoreButtonClick={ this.props.onMoreButtonClick }
+										options={ this.props.buttonContents }
+									/>
+								) }
+							</div>
+						) : (
+							! isEmpty( this.props.buttonContents ) && (
+								<ThemeMoreButton
+									index={ this.props.index }
+									themeId={ this.props.theme.id }
+									themeName={ this.props.theme.name }
+									active={ this.props.active }
+									onMoreButtonClick={ this.props.onMoreButtonClick }
+									options={ this.props.buttonContents }
+								/>
+							)
+						) }
 					</div>
 				</div>
 			</Card>
