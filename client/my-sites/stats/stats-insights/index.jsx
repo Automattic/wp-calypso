@@ -28,8 +28,6 @@ const StatsInsights = ( props ) => {
 	const { siteId, siteSlug, translate, isOdysseyStats } = props;
 	const moduleStrings = statsStrings();
 
-	const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
-
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
 	sessionStorage.setItem( 'jp-stats-last-tab', 'insights' );
@@ -37,7 +35,7 @@ const StatsInsights = ( props ) => {
 	// TODO: should be refactored into separate components
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<Main className={ isNewMainChart ? 'stats--new-wrapper' : undefined } fullWidthLayout>
+		<Main fullWidthLayout>
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
 			<div className="stats">
