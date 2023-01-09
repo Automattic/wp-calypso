@@ -1,3 +1,5 @@
+$large-tooltip-box-shadow-color: rgba(0, 0, 0, 0.05);
+
 .tooltip.popover {
 	.popover__arrow {
 		border-width: 6px;
@@ -194,6 +196,22 @@
 		.popover__inner {
 			color: var(--studio-white);
 			background: var(--studio-gray-100);
+		}
+	}
+
+	&.tooltip--large {
+		&.is-top .popover__arrow,
+		&.is-top-left .popover__arrow,
+		&.is-top-right .popover__arrow {
+			border-top-color: var(--color-neutral-100);
+			box-shadow: 0 1px 2px $large-tooltip-box-shadow-color;
+		}
+
+		.popover__inner {
+			background-color: var(--color-neutral-100);
+			box-shadow: 0 1px 2px $large-tooltip-box-shadow-color;
+			border-radius: 4px;
+			padding: 16px 24px;
 		}
 	}
 }

@@ -16,9 +16,9 @@ function appendActionTracking( option, name ) {
 	const { action } = option;
 
 	return Object.assign( {}, option, {
-		action: ( t ) => {
+		action: ( t, context ) => {
 			action && action( t );
-			trackClick( 'more button', name );
+			context && trackClick( context, name );
 		},
 	} );
 }

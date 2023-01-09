@@ -5,15 +5,6 @@ import PropTypes from 'prop-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const noop = () => {};
-const PlanFeaturesComparisonActions = ( props ) => {
-	return (
-		<div className="plan-features-comparison__actions">
-			<div className="plan-features-comparison__actions-buttons">
-				<PlanFeaturesActionsButton { ...props } />
-			</div>
-		</div>
-	);
-};
 
 const PlanFeaturesActionsButton = ( {
 	availableForPurchase = true,
@@ -91,6 +82,16 @@ const PlanFeaturesActionsButton = ( {
 	}
 
 	return null;
+};
+
+const PlanFeaturesComparisonActions = ( props ) => {
+	return (
+		<div className="plan-features-comparison__actions">
+			<div className="plan-features-comparison__actions-buttons">
+				<PlanFeaturesActionsButton { ...props } />
+			</div>
+		</div>
+	);
 };
 
 PlanFeaturesComparisonActions.propTypes = {

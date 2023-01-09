@@ -114,7 +114,7 @@ function Chart( {
 
 		return {
 			chartData: nextData,
-			isEmptyChart: Boolean( nextVals.length && ! nextVals.some( ( a ) => a > 0 ) ),
+			isEmptyChart: Boolean( ! nextVals.some( ( a ) => a > 0 ) ),
 			yMax: getYAxisMax( nextVals ),
 		};
 	}, [ data, maxBars, hasResized ] );
