@@ -51,7 +51,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 
 	// Certain flows should default to private.
 	const privateFlows = [ ECOMMERCE_FLOW, WOOEXPRESS_FLOW ];
-	if ( privateFlows.includes( flow ) ) {
+	if ( privateFlows.includes( flow || '' ) ) {
 		siteVisibility = Site.Visibility.Private;
 	}
 
