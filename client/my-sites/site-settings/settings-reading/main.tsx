@@ -4,7 +4,9 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
-import { getSiteUrl } from 'calypso/state/sites/selectors';
+import { isModuleActive } from 'calypso/lib/site/utils';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSiteUrl, getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { NewsletterSettingsSection } from '../reading-newsletter-settings';
 import { RssFeedSettingsSection } from '../reading-rss-feed-settings';
@@ -55,8 +57,15 @@ const getFormSettings = ( settings: Settings ) => {
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteUrl = siteId && getSiteUrl( state, siteId );
+	const site = siteId && getSite( state, siteId );
+	const isJetpack = isJetpackSite( state, siteId );
+	const isAtomic = isSiteAutomatedTransfer( state, siteId );
+
 	return {
 		...( siteUrl && { siteUrl } ),
+		...( site && { site } ),
+		...( isJetpack && { isJetpack } ),
+		...( isAtomic && { isAtomic } ),
 	};
 } );
 
@@ -76,6 +85,9 @@ type ReadingSettingsFormProps = {
 	isRequestingSettings: boolean;
 	isSavingSettings: boolean;
 	siteUrl?: string;
+	site?: object;
+	isJetpack?: boolean;
+	isAtomic?: boolean;
 	updateFields: ( fields: Fields ) => void;
 };
 
@@ -89,9 +101,17 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 			isRequestingSettings,
 			isSavingSettings,
 			siteUrl,
+			site,
+			isJetpack,
+			isAtomic,
 			updateFields,
 		}: ReadingSettingsFormProps ) => {
 			const disabled = isRequestingSettings || isSavingSettings;
+			const newsletterSectionEnabled =
+				( ! isJetpack && ! isAtomic ) ||
+				( ( isJetpack || isAtomic ) && site && isModuleActive( site, 'subscriptions' ) )
+					? true
+					: false;
 			return (
 				<form onSubmit={ handleSubmitForm }>
 					<SiteSettingsSection
@@ -112,14 +132,16 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						isSavingSettings={ isSavingSettings }
 						siteUrl={ siteUrl }
 					/>
-					<NewsletterSettingsSection
-						fields={ fields }
-						handleToggle={ handleToggle }
-						handleSubmitForm={ handleSubmitForm }
-						disabled={ disabled }
-						isSavingSettings={ isSavingSettings }
-						updateFields={ updateFields }
-					/>
+					{ newsletterSectionEnabled && (
+						<NewsletterSettingsSection
+							fields={ fields }
+							handleToggle={ handleToggle }
+							handleSubmitForm={ handleSubmitForm }
+							disabled={ disabled }
+							isSavingSettings={ isSavingSettings }
+							updateFields={ updateFields }
+						/>
+					) }
 				</form>
 			);
 		}
