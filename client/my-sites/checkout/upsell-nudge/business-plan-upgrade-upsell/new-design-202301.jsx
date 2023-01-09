@@ -2,7 +2,6 @@ import { Button, Gridicon } from '@automattic/components';
 import { PureComponent } from 'react';
 import formatCurrency from 'calypso/../packages/format-currency/src';
 import upsellImage from 'calypso/assets/images/checkout-upsell/upsell-rocket.png';
-import Badge from 'calypso/components/badge';
 import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
@@ -33,7 +32,6 @@ export class BusinessPlanUpgradeUpsellNewDesign extends PureComponent {
 				<div className="business-plan-upgrade-upsell-new-design__container">
 					<div className="business-plan-upgrade-upsell-new-design__body">{ this.body() }</div>
 					<div className="business-plan-upgrade-upsell-new-design__image-container">
-						{ this.discount() }
 						{ this.image() }
 					</div>
 					<div className="business-plan-upgrade-upsell-new-design__footer">{ this.footer() }</div>
@@ -71,27 +69,6 @@ export class BusinessPlanUpgradeUpsellNewDesign extends PureComponent {
 		);
 	}
 
-	discount() {
-		const { translate, planRawPrice, planDiscountedRawPrice } = this.props;
-
-		const discountPercentage = Math.round( 100 - ( planDiscountedRawPrice * 100 ) / planRawPrice );
-
-		return (
-			<div className="business-plan-upgrade-upsell-new-design__discount">
-				<Badge
-					key="popular"
-					type="info"
-					className="business-plan-upgrade-upsell-new-design__discount-badge"
-				>
-					{ translate( 'Save %(discountPercentage)s%', {
-						args: { discountPercentage },
-						comment: 'The percentage value. e.g.: Save 49%',
-					} ) }
-				</Badge>
-			</div>
-		);
-	}
-
 	body() {
 		const {
 			translate,
@@ -122,7 +99,7 @@ export class BusinessPlanUpgradeUpsellNewDesign extends PureComponent {
 								className="business-plan-upgrade-upsell-new-design__checklist-item-icon"
 							/>
 							<span className="business-plan-upgrade-upsell-new-design__checklist-item-text">
-								{ translate( 'Upload any WordPress themes purchased or downloaded elsewhere.' ) }
+								{ translate( 'Uploading any WordPress themes purchased or downloaded elsewhere.' ) }
 							</span>
 						</li>
 						<li className="business-plan-upgrade-upsell-new-design__checklist-item">
@@ -140,7 +117,7 @@ export class BusinessPlanUpgradeUpsellNewDesign extends PureComponent {
 								className="business-plan-upgrade-upsell-new-design__checklist-item-icon"
 							/>
 							<span className="business-plan-upgrade-upsell-new-design__checklist-item-text">
-								{ translate( 'Gaining SFTP and database access.' ) }
+								{ translate( 'Setting up SFTP and database credentials.' ) }
 							</span>
 						</li>
 					</ul>
@@ -173,18 +150,18 @@ export class BusinessPlanUpgradeUpsellNewDesign extends PureComponent {
 		return (
 			<footer className="business-plan-upgrade-upsell-new-design__footer">
 				<Button
-					primary
-					className="business-plan-upgrade-upsell-new-design__accept-offer-button"
-					onClick={ () => handleClickAccept( 'accept' ) }
-				>
-					{ translate( 'Upgrade Now' ) }
-				</Button>
-				<Button
 					data-e2e-button="decline"
 					className="business-plan-upgrade-upsell-new-design__decline-offer-button"
 					onClick={ handleClickDecline }
 				>
 					{ translate( 'No Thanks' ) }
+				</Button>
+				<Button
+					primary
+					className="business-plan-upgrade-upsell-new-design__accept-offer-button"
+					onClick={ () => handleClickAccept( 'accept' ) }
+				>
+					{ translate( 'Upgrade Now' ) }
 				</Button>
 			</footer>
 		);
