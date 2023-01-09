@@ -105,12 +105,8 @@ class ThemePreview extends Component {
 
 	getPreviewUrl = () => {
 		const { demoUrl, locale, theme } = this.props;
-		if ( isEnabled( 'themes/showcase-i4/details-and-preview' ) ) {
-			// The theme stylesheet is required to generate an interactive preview embeddeable in an iframe.
-			// Otherwise, use the theme screenshot as a static preview.
-			return theme.stylesheet
-				? getDesignPreviewUrl( { slug: theme.id, recipe: theme }, { language: locale } )
-				: theme.screenshot;
+		if ( isEnabled( 'themes/showcase-i4/details-and-preview' ) && theme.stylesheet ) {
+			return getDesignPreviewUrl( { slug: theme.id, recipe: theme }, { language: locale } );
 		}
 
 		return demoUrl + '?demo=true&iframe=true&theme_preview=true';

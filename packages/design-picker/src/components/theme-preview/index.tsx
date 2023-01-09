@@ -23,6 +23,11 @@ interface ThemePreviewProps {
 	recordDeviceClick?: ( device: string ) => void;
 }
 
+// Determine whether the preview URL is from the WPCOM site preview endpoint.
+// This endpoint allows more preview capabilities via window.postMessage().
+const isUrlWpcomApi = ( url: string ) =>
+	url.indexOf( 'public-api.wordpress.com/wpcom/v2/block-previews/site' ) >= 0;
+
 const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	url,
 	inlineCss,
@@ -86,6 +91,12 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 			);
 		}
 	}, [ inlineCss, isLoaded ] );
+
+	useEffect( () => {
+		if ( ! isUrlWpcomApi( url ) ) {
+			setIsLoaded( true );
+		}
+	}, [ url, setIsLoaded ] );
 
 	return (
 		<DeviceSwitcher
