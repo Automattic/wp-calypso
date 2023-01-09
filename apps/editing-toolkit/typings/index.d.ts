@@ -10,14 +10,6 @@ declare module '*.svg' {
 
 declare global {
 	interface Window {
-		wpcomEditorSiteLaunch?: {
-			launchFlow: string;
-			// property does not exist when not isGutenboarding
-			// property holds the value '1' when isGutenboarding
-			isGutenboarding?: '1';
-			anchorFmPodcastId?: string;
-			locale?: string;
-		};
 		_currentSiteId: number;
 		calypsoifyGutenberg?: {
 			isGutenboarding?: boolean;

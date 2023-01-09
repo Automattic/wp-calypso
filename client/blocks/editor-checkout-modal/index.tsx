@@ -24,8 +24,7 @@ function removeHashFromUrl(): void {
 }
 
 const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
-	const { isOpen, onClose, cartData, redirectTo, isFocusedLaunch, checkoutOnSuccessCallback } =
-		props;
+	const { isOpen, onClose, cartData, redirectTo, checkoutOnSuccessCallback } = props;
 
 	const translate = useTranslate();
 
@@ -74,7 +73,6 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 					<CheckoutMain
 						redirectTo={ redirectTo } // custom thank-you URL for payments that are processed after a redirect (eg: Paypal)
 						isInModal
-						disabledThankYouPage={ isFocusedLaunch }
 						siteId={ selectedSiteId ?? undefined }
 						siteSlug={ site?.slug }
 						productAliasFromUrl={ commaSeparatedProductSlugs }
@@ -94,7 +92,6 @@ interface Props {
 	// PayPal. They will redirect directly to the post-checkout page decided by
 	// `getThankYouUrl`.
 	checkoutOnSuccessCallback?: () => void;
-	isFocusedLaunch?: boolean;
 	cartData?: RequestCart;
 	redirectTo?: string;
 }

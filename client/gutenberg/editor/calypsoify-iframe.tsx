@@ -84,7 +84,6 @@ interface Props {
 
 interface CheckoutModalOptions extends RequestCart {
 	redirectTo?: string;
-	isFocusedLaunch?: boolean;
 }
 
 interface State {
@@ -686,7 +685,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 
 		const isUsingClassicBlock = !! classicBlockEditorId;
 		const isCheckoutOverlayEnabled = config.isEnabled( 'post-editor/checkout-overlay' );
-		const { redirectTo, isFocusedLaunch, ...cartData } = checkoutModalOptions || {};
+		const { redirectTo, ...cartData } = checkoutModalOptions || {};
 
 		if ( ! isNew7DUser && 'IN' === currentUserCountryCode ) {
 			addHotJarScript();
@@ -751,7 +750,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 						isOpen={ isCheckoutModalVisible }
 						cartData={ cartData }
 						redirectTo={ redirectTo }
-						isFocusedLaunch={ isFocusedLaunch }
 					/>
 				) }
 				<AsyncLoad
