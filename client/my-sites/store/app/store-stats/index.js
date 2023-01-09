@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
@@ -51,17 +50,12 @@ class StoreStats extends Component {
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ store.path }/{{ interval }}${ slugPath }`;
 
-		// New feature gate
-		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
 		const statsWrapperClass = classNames( 'stats-content', {
 			'is-period-year': unit === 'year',
 		} );
-		const mainWrapperClass = classNames( 'store-stats', 'woocommerce', {
-			'stats--new-wrapper': isNewMainChart,
-		} );
 
 		return (
-			<Main className={ mainWrapperClass } fullWidthLayout>
+			<Main className="store-stats woocommerce" fullWidthLayout>
 				<PageViewTracker
 					path={ `/store/stats/orders/${ unit }/:site` }
 					title={ `Store > Stats > Orders > ${ titlecase( unit ) }` }
