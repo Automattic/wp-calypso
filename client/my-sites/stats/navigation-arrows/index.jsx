@@ -16,9 +16,9 @@ function NavigationArrows( {
 		onArrowPrevious();
 	};
 	return (
-		<div className="arrow-navigation">
+		<div className="stats-navigation-arrows">
 			<button
-				className={ classNames( 'arrow-navigation__previous', {
+				className={ classNames( 'stats-navigation-arrows__previous', {
 					'is-disabled': disablePreviousArrow,
 				} ) }
 				onClick={ disablePreviousArrow ? undefined : () => handleClickPrevious() }
@@ -27,7 +27,7 @@ function NavigationArrows( {
 				<Icon className="gridicon" icon={ arrowLeft } />
 			</button>
 			<button
-				className={ classNames( 'arrow-navigation__next', {
+				className={ classNames( 'stats-navigation-arrows__next', {
 					'is-disabled': disableNextArrow,
 				} ) }
 				onClick={ disableNextArrow ? undefined : () => handleClickNext() }

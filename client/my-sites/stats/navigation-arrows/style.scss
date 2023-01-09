@@ -1,12 +1,12 @@
 @import "@automattic/typography/styles/variables";
 
-.arrow-navigation {
+.stats-navigation-arrows {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 
-	.arrow-navigation__previous,
-	.arrow-navigation__next {
+	.stats-navigation-arrows__previous,
+	.stats-navigation-arrows__next {
 		width: 24px;
 		height: 24px;
 		color: var(--color-neutral-90);
@@ -22,7 +22,7 @@
 			pointer-events: none;
 		}
 	}
-	.arrow-navigation__next {
+	.stats-navigation-arrows__next {
 		margin-left: 4px;
 	}
 
