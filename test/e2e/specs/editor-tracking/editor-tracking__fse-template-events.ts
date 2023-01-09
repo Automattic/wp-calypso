@@ -67,10 +67,6 @@ describe(
 				templatePartName = createTemplatePartName();
 			} );
 
-			afterAll( async () => {
-				await page.close();
-			} );
-
 			it( 'Visit the site editor', async function () {
 				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
@@ -100,6 +96,10 @@ describe(
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
+			} );
 		} );
 
 		describe( 'wpcom_block_editor_template_part_choose_existing/replace', function () {
@@ -117,10 +117,6 @@ describe(
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
-			} );
-
-			afterAll( async () => {
-				await page.close();
 			} );
 
 			it( 'Visit the site editor', async function () {
@@ -187,6 +183,10 @@ describe(
 				);
 				expect( eventDidFire ).toBe( false );
 			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
+			} );
 		} );
 
 		describe( 'wpcom_block_editor_convert_to_template_part / wpcom_block_editor_template_part_detach_blocks', function () {
@@ -207,10 +207,6 @@ describe(
 				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
 
 				templatePartName = createTemplatePartName();
-			} );
-
-			afterAll( async () => {
-				await page.close();
 			} );
 
 			it( 'Visit the site editor', async function () {
@@ -267,6 +263,10 @@ describe(
 					}
 				);
 				expect( eventDidFire ).toBe( true );
+			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
 			} );
 		} );
 	}

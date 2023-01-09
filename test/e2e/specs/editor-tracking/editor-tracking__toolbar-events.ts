@@ -40,10 +40,6 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 				editorPage = new EditorPage( page, { target: features.siteType } );
 			} );
 
-			afterAll( async () => {
-				await page.close();
-			} );
-
 			it( 'Start a new post', async function () {
 				await editorPage.visit( 'post' );
 				await editorPage.waitUntilLoaded();
@@ -100,6 +96,10 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
+			} );
 		} );
 
 		describe( 'wpcom_block_editor_undo/redo_performed', function () {
@@ -117,10 +117,6 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
-			} );
-
-			afterAll( async () => {
-				await page.close();
 			} );
 
 			it( 'Go to site editor', async function () {
@@ -159,6 +155,10 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 					'wpcom_block_editor_redo_performed'
 				);
 				expect( eventDidFire ).toBe( true );
+			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
 			} );
 		} );
 	}

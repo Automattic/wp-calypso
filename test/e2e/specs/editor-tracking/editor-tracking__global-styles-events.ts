@@ -36,10 +36,6 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 			fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
 		} );
 
-		afterAll( async () => {
-			await page.close();
-		} );
-
 		it( 'Visit the site editor', async function () {
 			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
 			await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
@@ -80,6 +76,10 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 			);
 			expect( eventDidFire ).toBe( true );
 		} );
+
+		it( 'Close the page', async function () {
+			await page.close();
+		} );
 	} );
 
 	describe( 'wpcom_block_editor_global_styles_menu_selected', function () {
@@ -96,10 +96,6 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 
 			editorTracksEventManager = new EditorTracksEventManager( page );
 			fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
-		} );
-
-		afterAll( async () => {
-			await page.close();
 		} );
 
 		it( 'Visit the site editor', async function () {
@@ -150,6 +146,10 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 			);
 			expect( eventDidFire ).toBe( true );
 		} );
+
+		it( 'Close the page', async function () {
+			await page.close();
+		} );
 	} );
 
 	describe( 'wpcom_block_editor_global_styles_update', function () {
@@ -166,10 +166,6 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 
 			editorTracksEventManager = new EditorTracksEventManager( page );
 			fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
-		} );
-
-		afterAll( async () => {
-			await page.close();
 		} );
 
 		it( 'Visit the site editor', async function () {
@@ -264,6 +260,10 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 				} );
 			}
 		);
+
+		it( 'Close the page', async function () {
+			await page.close();
+		} );
 	} );
 
 	describe( 'wpcom_block_editor_global_styles_save', function () {
@@ -333,6 +333,10 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 				}
 			);
 			expect( eventDidFire ).toBe( true );
+		} );
+
+		it( 'Close the page', async function () {
+			await page.close();
 		} );
 	} );
 } );

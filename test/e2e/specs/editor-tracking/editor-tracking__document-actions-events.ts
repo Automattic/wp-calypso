@@ -37,10 +37,6 @@ describe(
 				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
 			} );
 
-			afterAll( async () => {
-				await page.close();
-			} );
-
 			it( 'Visit the site editor', async function () {
 				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
@@ -60,6 +56,10 @@ describe(
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
+			} );
 		} );
 
 		describe( 'wpcom_site_editor_document_actions_template_area_click header', function () {
@@ -75,10 +75,6 @@ describe(
 				await testAccount.authenticate( page );
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
-			} );
-
-			afterAll( async () => {
-				await page.close();
 			} );
 
 			it( 'Visit the site editor', async function () {
@@ -111,6 +107,10 @@ describe(
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
+			} );
 		} );
 
 		describe( 'wpcom_site_editor_document_actions_revert_click', function () {
@@ -126,10 +126,6 @@ describe(
 				await testAccount.authenticate( page );
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
-			} );
-
-			afterAll( async () => {
-				await page.close();
 			} );
 
 			it( 'Visit the site editor', async function () {
@@ -168,6 +164,10 @@ describe(
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
+			} );
 		} );
 
 		describe( 'wpcom_site_editor_document_actions_show_all_click', function () {
@@ -183,10 +183,6 @@ describe(
 				await testAccount.authenticate( page );
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
-			} );
-
-			afterAll( async () => {
-				await page.close();
 			} );
 
 			it( 'Visit the site editor', async function () {
@@ -213,6 +209,10 @@ describe(
 					'wpcom_site_editor_document_actions_show_all_click'
 				);
 				expect( eventDidFire ).toBe( true );
+			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
 			} );
 		} );
 	}

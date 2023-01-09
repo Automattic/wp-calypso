@@ -37,10 +37,6 @@ describe(
 				editorPage = new EditorPage( page, { target: features.siteType } );
 			} );
 
-			afterAll( async () => {
-				await page.close();
-			} );
-
 			it( 'Start a new post', async function () {
 				await editorPage.visit( 'post' );
 				await editorPage.waitUntilLoaded();
@@ -74,6 +70,10 @@ describe(
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
+			} );
 		} );
 
 		describe( '"wpcom_block_deleted"', function () {
@@ -92,10 +92,6 @@ describe(
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
-			} );
-
-			afterAll( async () => {
-				await page.close();
 			} );
 
 			it( 'Go to the site editor', async function () {
@@ -122,6 +118,10 @@ describe(
 			it( '"wpcom_block_deleted" event fires', async function () {
 				const eventDidFire = await editorTracksEventManager.didEventFire( 'wpcom_block_deleted' );
 				expect( eventDidFire ).toBe( true );
+			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
 			} );
 		} );
 	}

@@ -43,10 +43,6 @@ describe(
 				editorPage = new EditorPage( page, { target: features.siteType } );
 			} );
 
-			afterAll( async () => {
-				await page.close();
-			} );
-
 			it( 'Start a new post', async function () {
 				await editorPage.visit( 'post' );
 				await editorPage.waitUntilLoaded();
@@ -132,6 +128,10 @@ describe(
 					} );
 				} );
 			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
+			} );
 		} );
 
 		describe( 'In the page editor', function () {
@@ -148,10 +148,6 @@ describe(
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				editorPage = new EditorPage( page, { target: features.siteType } );
-			} );
-
-			afterAll( async () => {
-				await page.close();
 			} );
 
 			it( 'Start a new page', async function () {
@@ -187,6 +183,10 @@ describe(
 					expect( eventDidFire ).toBe( true );
 				} );
 			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
+			} );
 		} );
 
 		describe( 'In the site editor', function () {
@@ -215,8 +215,6 @@ describe(
 				if ( templatePartName ) {
 					await fullSiteEditorPage.deleteTemplateParts( [ templatePartName ] );
 				}
-
-				await page.close();
 			} );
 
 			it( 'Visit the site editor', async function () {
@@ -320,6 +318,10 @@ describe(
 					);
 					expect( eventDidFire ).toBe( false );
 				} );
+			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
 			} );
 		} );
 	}
