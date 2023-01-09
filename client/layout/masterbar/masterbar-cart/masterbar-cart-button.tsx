@@ -2,7 +2,6 @@ import { Popover } from '@automattic/components';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { MiniCart } from '@automattic/mini-cart';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -44,7 +43,6 @@ export function MasterbarCartButton( {
 	const cartButtonRef = useRef( null );
 	const [ isActive, setIsActive ] = useState( false );
 	const translate = useTranslate();
-	const isMobile = useMobileBreakpoint();
 
 	const reduxDispatch = useDispatch();
 	const shouldShowCart =
@@ -59,15 +57,12 @@ export function MasterbarCartButton( {
 	}, [ shouldShowCart, reduxDispatch ] );
 
 	useEffect( () => {
-		const isPricingPage = document.body.classList.contains( 'is-section-jetpack-cloud-pricing' );
-
-		//add the className for body, only if the page is in mobile view and in pricing page
-		if ( isActive && isMobile && isPricingPage ) {
-			document.body.classList.add( 'is-mobile-cart' );
+		if ( isActive ) {
+			document.body.classList.add( 'body--masterbar-cart-visible' );
 		} else {
-			document.body.classList.remove( 'is-mobile-cart' );
+			document.body.classList.remove( 'body--masterbar-cart-visible' );
 		}
-	}, [ isActive, isMobile ] );
+	}, [ isActive ] );
 
 	if ( ! shouldShowCart ) {
 		return null;
