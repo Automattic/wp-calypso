@@ -144,14 +144,14 @@ export default function NotificationSettings( { onClose, sites, settings }: Prop
 					<Gridicon icon="info-outline" size={ 18 } />
 					{ sitesWithMonitorDisabled.length > 1
 						? translate(
-								'Monitor is not enabled for %(siteCountText)s, and custom notifications can be set for sites that have monitor enabled',
+								'Monitor is not enabled for %(siteCountText)s, and custom notifications can be set for sites that have monitor enabled.',
 								{
 									args: { siteCountText: getSiteCountTitle( sitesWithMonitorDisabled ) },
 									comment: "%(siteCountText) is no of sites, e.g. '2 sites'",
 								}
 						  )
 						: translate(
-								'Monitor is not enabled for {{em}}%(siteUrl)s{{/em}}, and custom notifications can be set for sites that have monitor enabled',
+								'Monitor is not enabled for {{em}}%(siteUrl)s{{/em}}, and custom notifications can be set for sites that have monitor enabled.',
 								{
 									args: { siteUrl: getSiteCountTitle( sitesWithMonitorDisabled ) },
 									components: {
