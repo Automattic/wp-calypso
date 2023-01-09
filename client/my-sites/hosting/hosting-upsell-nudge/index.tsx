@@ -28,7 +28,6 @@ export function HostingUpsellNudge( { siteId }: { siteId: number | null } ) {
 			event="calypso_hosting_configuration_upgrade_click"
 			href={ `/checkout/${ siteId }/business` }
 			callToAction={ translate( 'Upgrade to Business Plan' ) }
-			price={ [ 32, 25 ] }
 			showIcon={ true }
 			list={ features }
 			renderListItem={ ( { icon, title, description }: FeatureListItem ) => (
