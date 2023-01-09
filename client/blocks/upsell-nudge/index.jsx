@@ -34,6 +34,7 @@ export const UpsellNudge = ( {
 	canUserUpgrade,
 	className,
 	compact,
+	compactButton,
 	customerType,
 	description,
 	disableHref,
@@ -122,6 +123,7 @@ export const UpsellNudge = ( {
 			callToAction={ callToAction }
 			className={ classes }
 			compact={ compact }
+			compactButton={ compactButton }
 			description={ description }
 			disableHref={ disableHref }
 			dismissPreferenceName={ dismissPreferenceName }
@@ -156,6 +158,7 @@ export const UpsellNudge = ( {
 
 UpsellNudge.defaultProps = {
 	primaryButton: true,
+	compactButton: true,
 };
 
 export default connect( ( state, ownProps ) => {
