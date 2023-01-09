@@ -1,5 +1,5 @@
 /**
- * Forked from https://github.com/WordPress/wporg-two-factor/blob/5241afeac49739ba58d8162f468434291dbc0fb6/settings/src/components/password.js#L132-L160
+ * Forked from https://github.com/WordPress/wporg-two-factor/blob/trunk/settings/src/components/password.js#L139-L167
  *
  * Generate a cryptographically secure random password.
  *
