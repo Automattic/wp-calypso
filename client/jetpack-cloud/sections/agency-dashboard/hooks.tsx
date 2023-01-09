@@ -120,7 +120,7 @@ export function useToggleActivateMonitor(
 						comment: '%(siteCount) is no of sites, e.g. "2 sites"',
 					} );
 					successMessage = translate(
-						'Successfully %(monitorStatus)s the monitor for %(siteCountText)s',
+						'Successfully %(monitorStatus)s the monitor for %(siteCountText)s.',
 						{
 							args: { monitorStatus, siteCountText },
 							comment:
@@ -131,7 +131,7 @@ export function useToggleActivateMonitor(
 				} else {
 					const siteUrl = fulfilledRequests[ 0 ].site.url;
 					successMessage = translate(
-						'Successfully %(monitorStatus)s the monitor for {{em}}%(siteUrl)s{{/em}}',
+						'Successfully %(monitorStatus)s the monitor for {{em}}%(siteUrl)s{{/em}}.',
 						{
 							args: { monitorStatus, siteUrl },
 							comment:

@@ -47,13 +47,13 @@ export function useHandleToggleMonitor( selectedSites: Array< { blog_id: number;
 					: selectedSites[ 0 ].url;
 			const content =
 				selectedSites.length > 1
-					? translate( 'You are about to %(monitorAction)s the monitor for %(siteCountText)s', {
+					? translate( 'You are about to %(monitorAction)s the monitor for %(siteCountText)s.', {
 							args: { monitorAction, siteCountText },
 							comment:
 								"%(monitorAction)s is the monitor's currently performed action which could be either 'resume' or 'pause'. %(siteCountText) is no of sites, e.g. '2 sites'",
 					  } )
 					: translate(
-							'You are about to %(monitorAction)s the monitor for {{em}}%(siteUrl)s{{/em}}',
+							'You are about to %(monitorAction)s the monitor for {{em}}%(siteUrl)s{{/em}}.',
 							{
 								args: { monitorAction, siteUrl: siteCountText },
 								comment:
