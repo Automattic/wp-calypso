@@ -34,6 +34,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
+import { CheckoutOrderBanner } from 'calypso/my-sites/checkout/composite-checkout/components/checkout-order-banner';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
@@ -298,166 +299,171 @@ export default function WPCheckout( {
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 
 	return (
-		<CheckoutStepGroup
-			stepAreaHeader={
-				<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
-					<CheckoutErrorBoundary
-						errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
-						onError={ onSummaryError }
-					>
-						<CheckoutSummaryTitleLink onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }>
-							<CheckoutSummaryTitle>
-								<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
-								{ translate( 'Purchase Details' ) }
-								<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
-							</CheckoutSummaryTitle>
-							<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
-								{ total.amount.displayValue }
-							</CheckoutSummaryTitlePrice>
-						</CheckoutSummaryTitleLink>
-						<CheckoutSummaryBody>
-							<WPCheckoutOrderSummary
-								siteId={ siteId }
-								onChangePlanLength={ changePlanLength }
-								nextDomainIsFree={ responseCart?.next_domain_is_free }
-							/>
-							{ ! isWcMobile && ! isDIFMInCart && <CheckoutSidebarPlanUpsell /> }
-							<SecondaryCartPromotions
-								responseCart={ responseCart }
-								addItemToCart={ addItemToCart }
-								isCartPendingUpdate={ isCartPendingUpdate }
-							/>
-							<CheckoutHelpLink />
-							<CheckoutNextSteps responseCart={ responseCart } />
-						</CheckoutSummaryBody>
-					</CheckoutErrorBoundary>
-				</CheckoutSummaryArea>
-			}
-		>
-			{ infoMessage }
-			<CheckoutStepBody
-				onError={ onReviewError }
-				className="wp-checkout__review-order-step"
-				stepId="review-order-step"
-				isStepActive={ false }
-				isStepComplete={ true }
-				titleContent={ <OrderReviewTitle /> }
-				completeStepContent={
-					<WPCheckoutOrderReview
-						forceRadioButtons={ forceRadioButtons }
-						removeProductFromCart={ removeProductFromCart }
-						couponFieldStateProps={ couponFieldStateProps }
-						onChangePlanLength={ changePlanLength }
-						siteUrl={ siteUrl }
-						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-					/>
+		<>
+			<CheckoutOrderBanner />
+			<CheckoutStepGroup
+				stepAreaHeader={
+					<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
+						<CheckoutErrorBoundary
+							errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
+							onError={ onSummaryError }
+						>
+							<CheckoutSummaryTitleLink onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }>
+								<CheckoutSummaryTitle>
+									<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
+									{ translate( 'Purchase Details' ) }
+									<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
+								</CheckoutSummaryTitle>
+								<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
+									{ total.amount.displayValue }
+								</CheckoutSummaryTitlePrice>
+							</CheckoutSummaryTitleLink>
+							<CheckoutSummaryBody>
+								<WPCheckoutOrderSummary
+									siteId={ siteId }
+									onChangePlanLength={ changePlanLength }
+									nextDomainIsFree={ responseCart?.next_domain_is_free }
+								/>
+								{ ! isWcMobile && ! isDIFMInCart && <CheckoutSidebarPlanUpsell /> }
+								<SecondaryCartPromotions
+									responseCart={ responseCart }
+									addItemToCart={ addItemToCart }
+									isCartPendingUpdate={ isCartPendingUpdate }
+								/>
+								<CheckoutHelpLink />
+								<CheckoutNextSteps responseCart={ responseCart } />
+							</CheckoutSummaryBody>
+						</CheckoutErrorBoundary>
+					</CheckoutSummaryArea>
 				}
-				formStatus={ formStatus }
-			/>
-			{ contactDetailsType !== 'none' && (
-				<CheckoutStep
-					stepId="contact-form"
-					isCompleteCallback={ async () => {
-						// Touch the fields so they display validation errors
-						shouldShowContactDetailsValidationErrors && touchContactFields();
-						const validationResponse = await validateContactDetails(
-							contactInfo,
-							isLoggedOutCart,
-							responseCart,
-							showErrorMessageBriefly,
-							applyDomainContactValidationResults,
-							clearDomainContactErrorMessages,
-							reduxDispatch,
-							translate,
-							shouldShowContactDetailsValidationErrors
-						);
-						if ( validationResponse ) {
-							// When the contact details change, update the cart's tax location to match.
-							try {
-								await updateCartContactDetailsForCheckout(
-									countriesList,
-									responseCart,
-									updateLocation,
-									contactInfo
-								);
-							} catch {
-								// If updating the cart fails, we should not continue. No need
-								// to do anything else, though, because CartMessages will
-								// display the error.
-								return false;
-							}
-
-							// When the contact details change, update the cached contact details on
-							// the server. This can fail if validation fails but we will silently
-							// ignore failures here because the validation call will handle them better
-							// than this will.
-							reduxDispatch(
-								saveContactDetailsCache( prepareDomainContactValidationRequest( contactInfo ) )
-							);
-
-							reduxDispatch(
-								recordTracksEvent( 'calypso_checkout_composite_step_complete', {
-									step: 1,
-									step_name: 'contact-form',
-								} )
-							);
-						}
-						return validationResponse;
-					} }
-					activeStepContent={
-						<WPContactForm
-							countriesList={ countriesList }
-							shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
-							contactDetailsType={ contactDetailsType }
-							isLoggedOutCart={ isLoggedOutCart }
-							setShouldShowContactDetailsValidationErrors={
-								setShouldShowContactDetailsValidationErrors
-							}
-						/>
-					}
+			>
+				{ infoMessage }
+				<CheckoutStepBody
+					onError={ onReviewError }
+					className="wp-checkout__review-order-step"
+					stepId="review-order-step"
+					isStepActive={ false }
+					isStepComplete={ true }
+					titleContent={ <OrderReviewTitle /> }
 					completeStepContent={
-						<WPContactFormSummary
-							areThereDomainProductsInCart={ areThereDomainProductsInCart }
-							isGSuiteInCart={ isGSuiteInCart }
-							isLoggedOutCart={ isLoggedOutCart }
+						<WPCheckoutOrderReview
+							forceRadioButtons={ forceRadioButtons }
+							removeProductFromCart={ removeProductFromCart }
+							couponFieldStateProps={ couponFieldStateProps }
+							onChangePlanLength={ changePlanLength }
+							siteUrl={ siteUrl }
+							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						/>
 					}
-					titleContent={ <ContactFormTitle /> }
+					formStatus={ formStatus }
+				/>
+				{ contactDetailsType !== 'none' && (
+					<CheckoutStep
+						stepId="contact-form"
+						isCompleteCallback={ async () => {
+							// Touch the fields so they display validation errors
+							shouldShowContactDetailsValidationErrors && touchContactFields();
+							const validationResponse = await validateContactDetails(
+								contactInfo,
+								isLoggedOutCart,
+								responseCart,
+								showErrorMessageBriefly,
+								applyDomainContactValidationResults,
+								clearDomainContactErrorMessages,
+								reduxDispatch,
+								translate,
+								shouldShowContactDetailsValidationErrors
+							);
+							if ( validationResponse ) {
+								// When the contact details change, update the cart's tax location to match.
+								try {
+									await updateCartContactDetailsForCheckout(
+										countriesList,
+										responseCart,
+										updateLocation,
+										contactInfo
+									);
+								} catch {
+									// If updating the cart fails, we should not continue. No need
+									// to do anything else, though, because CartMessages will
+									// display the error.
+									return false;
+								}
+
+								// When the contact details change, update the cached contact details on
+								// the server. This can fail if validation fails but we will silently
+								// ignore failures here because the validation call will handle them better
+								// than this will.
+								reduxDispatch(
+									saveContactDetailsCache( prepareDomainContactValidationRequest( contactInfo ) )
+								);
+
+								reduxDispatch(
+									recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+										step: 1,
+										step_name: 'contact-form',
+									} )
+								);
+							}
+							return validationResponse;
+						} }
+						activeStepContent={
+							<WPContactForm
+								countriesList={ countriesList }
+								shouldShowContactDetailsValidationErrors={
+									shouldShowContactDetailsValidationErrors
+								}
+								contactDetailsType={ contactDetailsType }
+								isLoggedOutCart={ isLoggedOutCart }
+								setShouldShowContactDetailsValidationErrors={
+									setShouldShowContactDetailsValidationErrors
+								}
+							/>
+						}
+						completeStepContent={
+							<WPContactFormSummary
+								areThereDomainProductsInCart={ areThereDomainProductsInCart }
+								isGSuiteInCart={ isGSuiteInCart }
+								isLoggedOutCart={ isLoggedOutCart }
+							/>
+						}
+						titleContent={ <ContactFormTitle /> }
+						editButtonText={ String( translate( 'Edit' ) ) }
+						editButtonAriaLabel={ String( translate( 'Edit the contact details' ) ) }
+						nextStepButtonText={ String( translate( 'Continue' ) ) }
+						nextStepButtonAriaLabel={ String(
+							translate( 'Continue with the entered contact details' )
+						) }
+						validatingButtonText={ validatingButtonText }
+						validatingButtonAriaLabel={ validatingButtonText }
+					/>
+				) }
+				<PaymentMethodStep
+					activeStepFooter={ <PaymentMethodStepContent /> }
 					editButtonText={ String( translate( 'Edit' ) ) }
-					editButtonAriaLabel={ String( translate( 'Edit the contact details' ) ) }
+					editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
 					nextStepButtonText={ String( translate( 'Continue' ) ) }
 					nextStepButtonAriaLabel={ String(
-						translate( 'Continue with the entered contact details' )
+						translate( 'Continue with the selected payment method' )
 					) }
 					validatingButtonText={ validatingButtonText }
 					validatingButtonAriaLabel={ validatingButtonText }
+					isCompleteCallback={ () => false }
 				/>
-			) }
-			<PaymentMethodStep
-				activeStepFooter={ <PaymentMethodStepContent /> }
-				editButtonText={ String( translate( 'Edit' ) ) }
-				editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
-				nextStepButtonText={ String( translate( 'Continue' ) ) }
-				nextStepButtonAriaLabel={ String(
-					translate( 'Continue with the selected payment method' )
+				{ hasMarketplaceProduct && (
+					<ThirdPartyDevsAccount
+						isAccepted={ is3PDAccountConsentAccepted }
+						onChange={ setIs3PDAccountConsentAccepted }
+						isSubmitted={ isSubmitted }
+					/>
 				) }
-				validatingButtonText={ validatingButtonText }
-				validatingButtonAriaLabel={ validatingButtonText }
-				isCompleteCallback={ () => false }
-			/>
-			{ hasMarketplaceProduct && (
-				<ThirdPartyDevsAccount
-					isAccepted={ is3PDAccountConsentAccepted }
-					onChange={ setIs3PDAccountConsentAccepted }
-					isSubmitted={ isSubmitted }
+				<CheckoutFormSubmit
+					validateForm={ validateForm }
+					submitButtonHeader={ <SubmitButtonHeader /> }
+					submitButtonFooter={ <SubmitButtonFooter /> }
 				/>
-			) }
-			<CheckoutFormSubmit
-				validateForm={ validateForm }
-				submitButtonHeader={ <SubmitButtonHeader /> }
-				submitButtonFooter={ <SubmitButtonFooter /> }
-			/>
-		</CheckoutStepGroup>
+			</CheckoutStepGroup>
+		</>
 	);
 }
 
