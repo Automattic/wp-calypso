@@ -262,6 +262,27 @@ $break-design-preview: 1024px;
 		margin-bottom: 32px;
 	}
 
+	.design-preview__site-preview-image {
+		$frame-border-width: 10px;
+
+		@include break-small {
+			box-sizing: border-box;
+			box-shadow:
+				0 5px 15px rgb(0 0 0 / 7%),
+				0 3px 10px rgb(0 0 0 / 4%);
+		}
+
+		@include break-large {
+			border: $frame-border-width solid var(--color-print);
+			border-radius: 20px; /* stylelint-disable-line scales/radii */
+			box-shadow:
+				0 15px 20px rgb(0 0 0 / 4%),
+				0 13px 10px rgb(0 0 0 / 3%),
+				0 6px 6px rgb(0 0 0 / 2%);
+			margin-top: 0;
+		}
+	}
+
 	.theme-preview__frame-wrapper {
 		.theme-preview__frame {
 			@media ( max-width: $break-design-preview ) {
