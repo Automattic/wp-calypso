@@ -27,7 +27,11 @@
 html {
 	overflow-y: initial;
 }
-body.is-mobile-cart.is-section-jetpack-cloud-pricing {
+body.is-section-jetpack-cloud-pricing {
 	//hide scroll for body when cart is open in mobile view
-	overflow-y: hidden;
+	&.body--masterbar-cart-visible {
+		@media ( max-width: $break-mobile ) {
+			overflow-y: hidden;
+		}
+	}
 }
