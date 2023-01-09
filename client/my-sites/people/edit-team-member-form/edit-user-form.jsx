@@ -1,7 +1,7 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import { defer } from 'lodash';
+import { defer, omit } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
@@ -163,8 +163,12 @@ class EditUserForm extends Component {
 		const changedAttributes = changedSettings.roles
 			? Object.assign( changedSettings, { roles: [ changedSettings.roles ] } )
 			: changedSettings;
+		// User object doesn't support isExternalContributor field
+		const changedUserAttributes = omit( changedAttributes, 'isExternalContributor' );
 
-		this.props.updateUser( user.ID, changedAttributes );
+		if ( Object.keys( changedUserAttributes ).length ) {
+			this.props.updateUser( user.ID, changedUserAttributes );
+		}
 
 		if ( true === changedSettings.isExternalContributor ) {
 			this.props.addExternalContributor(
