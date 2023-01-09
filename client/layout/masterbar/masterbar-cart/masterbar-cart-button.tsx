@@ -2,11 +2,13 @@ import { Popover } from '@automattic/components';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { MiniCart } from '@automattic/mini-cart';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MasterbarItem from '../item';
+import { MasterBarCartCount } from './masterbar-cart-count';
 import { CartIcon } from './masterbar-cart-icon';
 
 import './masterbar-cart-button-style.scss';
@@ -17,6 +19,11 @@ export type MasterbarCartButtonProps = {
 	goToCheckout: ( siteSlug: string ) => void;
 	onRemoveProduct?: ( uuid: string ) => void;
 	onRemoveCoupon?: () => void;
+	forceShow?: boolean;
+	showCount?: boolean;
+	checkoutLabel?: string;
+	cartIcon?: React.ReactNode;
+	emptyCart?: React.ReactNode;
 };
 
 export function MasterbarCartButton( {
@@ -25,6 +32,11 @@ export function MasterbarCartButton( {
 	goToCheckout,
 	onRemoveProduct,
 	onRemoveCoupon,
+	forceShow = false,
+	showCount = false,
+	checkoutLabel,
+	cartIcon,
+	emptyCart,
 }: MasterbarCartButtonProps ) {
 	const { responseCart, reloadFromServer } = useShoppingCart(
 		selectedSiteId ? selectedSiteId : undefined
@@ -32,8 +44,11 @@ export function MasterbarCartButton( {
 	const cartButtonRef = useRef( null );
 	const [ isActive, setIsActive ] = useState( false );
 	const translate = useTranslate();
+	const isMobile = useMobileBreakpoint();
+
 	const reduxDispatch = useDispatch();
-	const shouldShowCart = selectedSiteSlug && selectedSiteId && responseCart.products.length > 0;
+	const shouldShowCart =
+		selectedSiteSlug && selectedSiteId && ( responseCart.products.length > 0 || forceShow );
 
 	useEffect( () => {
 		if ( shouldShowCart ) {
@@ -43,6 +58,17 @@ export function MasterbarCartButton( {
 		}
 	}, [ shouldShowCart, reduxDispatch ] );
 
+	useEffect( () => {
+		const isPricingPage = document.body.classList.contains( 'is-section-jetpack-cloud-pricing' );
+
+		//add the className for body, only if the page is in mobile view and in pricing page
+		if ( isActive && isMobile && isPricingPage ) {
+			document.body.classList.add( 'is-mobile-cart' );
+		} else {
+			document.body.classList.remove( 'is-mobile-cart' );
+		}
+	}, [ isActive, isMobile ] );
+
 	if ( ! shouldShowCart ) {
 		return null;
 	}
@@ -50,7 +76,8 @@ export function MasterbarCartButton( {
 	const onClick = () => {
 		setIsActive( ( active ) => {
 			if ( ! active ) {
-				reloadFromServer(); // Refresh the cart whenever the popup is made visible.
+				// This is to prevent an error in updating the component in the same event loop
+				setTimeout( reloadFromServer, 0 ); // Refresh the cart whenever the popup is made visible.
 				reduxDispatch( recordTracksEvent( 'calypso_masterbar_cart_open' ) );
 			}
 			return ! active;
@@ -59,17 +86,21 @@ export function MasterbarCartButton( {
 	const onClose = () => setIsActive( false );
 	const tooltip = String( translate( 'My shopping cart' ) );
 
+	const cartCount = responseCart?.products?.length;
+	const icon = cartIcon || <CartIcon newItems={ !! responseCart.products } active={ isActive } />;
+
 	return (
 		<>
 			<MasterbarItem
 				className="masterbar-cart-button"
 				alwaysShowContent
-				icon={ <CartIcon newItems={ !! responseCart.products } active={ isActive } /> }
+				icon={ icon }
 				tooltip={ tooltip }
 				onClick={ onClick }
 				isActive={ isActive }
 				ref={ cartButtonRef }
 			/>
+			{ showCount && <MasterBarCartCount cartCount={ cartCount } /> }
 			<Popover
 				isVisible={ isActive }
 				onClose={ onClose }
@@ -85,6 +116,8 @@ export function MasterbarCartButton( {
 						closeCart={ onClose }
 						onRemoveProduct={ onRemoveProduct }
 						onRemoveCoupon={ onRemoveCoupon }
+						checkoutLabel={ checkoutLabel }
+						emptyCart={ emptyCart }
 					/>
 				</CheckoutErrorBoundary>
 			</Popover>
