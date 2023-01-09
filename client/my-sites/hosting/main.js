@@ -27,6 +27,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { HostingUpsellNudge } from './hosting-upsell-nudge';
 import MiscellaneousCard from './miscellaneous-card';
 import PhpMyAdminCard from './phpmyadmin-card';
 import RestorePlanSoftwareCard from './restore-plan-software-card';
@@ -89,18 +90,7 @@ class Hosting extends Component {
 						showIcon={ true }
 					/>
 				}
-				treatmentExperience={
-					<UpsellNudge
-						title={ translate(
-							'TREATMENT Upgrade to the Business plan to access all hosting features'
-						) }
-						event="calypso_hosting_configuration_upgrade_click"
-						href={ `/checkout/${ siteId }/business` }
-						plan={ PLAN_BUSINESS }
-						feature={ FEATURE_SFTP }
-						showIcon={ true }
-					/>
-				}
+				treatmentExperience={ <HostingUpsellNudge siteId={ siteId } /> }
 				loadingExperience={ <Spinner style={ { left: 'calc(50%-8px)' } } /> }
 			/>
 		);

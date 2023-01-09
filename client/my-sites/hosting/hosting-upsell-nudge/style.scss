@@ -1,0 +1,69 @@
+// Extra specificity needed to override banner alignment rules
+.hosting-upsell-nudge.banner.card {
+	@include breakpoint-deprecated( '>480px' ) {
+		align-items: flex-start;
+	}
+
+	.banner__title {
+		font-size: 16px;
+		color: var( --color-neutral-90 );
+		font-weight: 500;
+		margin-bottom: 18px;
+
+		// Vertically aligns the title with the icon which is 31px tall.
+		line-height: 31px;
+	}
+
+	.banner__content {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.banner__info {
+		@include breakpoint-deprecated( '>480px' ) {
+			width: 100%;
+		}
+	}
+
+	.banner__action {
+		@include breakpoint-deprecated( '>480px' ) {
+			text-align: initial;
+			width: 100%;
+			margin: 0;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+
+			.banner__prices {
+				margin-left: 8px;
+				order: 1;
+			}
+		}
+
+		.plan-price {
+			@include breakpoint-deprecated( '>480px' ) {
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	ul {
+		display: grid;
+		grid-template-columns: repeat( auto-fit, minmax( 220px, 1fr ) );
+		gap: 22px 24px;
+		margin-right: 16px;
+		margin-bottom: 22px;
+	}
+
+	.hosting-upsell-nudge__feature-title {
+		font-size: 14px;
+		color: var( --color-neutral-80 );
+		font-weight: 500;
+		margin-bottom: 10px;
+	}
+
+	.hosting-upsell-nudge__feature-description {
+		font-size: 14px;
+		color: var( --color-neutral-50 );
+	}
+}

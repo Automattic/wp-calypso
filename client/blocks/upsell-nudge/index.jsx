@@ -52,6 +52,7 @@ export const UpsellNudge = ( {
 	isVip,
 	siteIsWPForTeams,
 	list,
+	renderListItem,
 	onClick,
 	onDismissClick,
 	plan,
@@ -137,6 +138,7 @@ export const UpsellNudge = ( {
 			jetpack={ isJetpack || isJetpackDevDocs } //Force show Jetpack example in Devdocs
 			isAtomic={ isAtomic }
 			list={ list }
+			renderListItem={ renderListItem }
 			onClick={ onClick }
 			onDismiss={ onDismissClick }
 			plan={ plan }
