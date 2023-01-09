@@ -159,7 +159,7 @@ export const ThankYou = ( props: ThankYouProps ) => {
 		showSupportSection = true,
 		thankYouTitle,
 		thankYouSubtitle,
-		thankYouImage,
+		thankYouImage = null,
 		thankYouNotice,
 		thankYouHeaderBody = null,
 	} = props;
@@ -181,8 +181,8 @@ export const ThankYou = ( props: ThankYouProps ) => {
 		background-color: ${ headerBackgroundColor };
 		min-height: 352px;
 		img {
-			width: ${ thankYouImage.width ? null : 'auto' };
-			height: ${ thankYouImage.height ? null : '200px' };
+			width: ${ thankYouImage?.width ? null : 'auto' };
+			height: ${ thankYouImage?.height ? null : '200px' };
 			margin-bottom: 14px;
 		}
 	`;
@@ -210,7 +210,7 @@ export const ThankYou = ( props: ThankYouProps ) => {
 	return (
 		<ThankYouContainer className={ classNames( 'thank-you__container', containerClassName ) }>
 			<ThankYouHeader className={ classNames( 'thank-you__container-header', headerClassName ) }>
-				<img { ...{ ...thankYouImage, alt: String( thankYouImage.alt ) } } />
+				{ thankYouImage && <img { ...{ ...thankYouImage, alt: String( thankYouImage.alt ) } } /> }
 				{ thankYouTitle && (
 					<ThankYouTitleContainer>
 						<h1 className="thank-you__header-title wp-brand-font">{ thankYouTitle }</h1>

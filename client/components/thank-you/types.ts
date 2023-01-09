@@ -39,7 +39,7 @@ export type ThankYouProps = {
 	sections: ThankYouSectionProps[];
 	showSupportSection?: boolean;
 	customSupportSection?: ThankYouSupportSectionProps;
-	thankYouImage: {
+	thankYouImage?: {
 		alt: string | TranslateResult;
 		src: string;
 		width?: string;
