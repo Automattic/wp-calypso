@@ -12,6 +12,7 @@ import PeopleList from './main';
 import PeopleAddSubscribers from './people-add-subscribers';
 import PeopleInviteDetails from './people-invite-details';
 import PeopleInvites from './people-invites';
+import SubscriberDetails from './subscriber-details';
 import SubscribersTeam from './subscribers-team';
 import TeamInvite from './team-invite';
 
@@ -54,6 +55,10 @@ export default {
 
 	subscribers( context, next ) {
 		renderSubscribers( context, next );
+	},
+
+	subscriberDetails( context, next ) {
+		renderSubscribersDetails( context, next );
 	},
 
 	peopleAddSubscribers( context, next ) {
@@ -154,6 +159,22 @@ function renderSubscribers( context, next ) {
 	next();
 }
 
+function renderSubscribersDetails( context, next ) {
+	const SubscriberDetailsTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'User Details', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<SubscriberDetailsTitle />
+			<SubscriberDetails subscriberId={ context.params.id } />
+		</>
+	);
+	next();
+}
+
 function renderPeopleAddSubscribers( context, next ) {
 	const PeopleAddSubscribersTitle = () => {
 		const translate = useTranslate();
@@ -174,7 +195,7 @@ function renderPeopleInviteDetails( context, next ) {
 	const PeopleInviteDetailsTitle = () => {
 		const translate = useTranslate();
 
-		return <DocumentHead title={ translate( 'Invite Details', { textOnly: true } ) } />;
+		return <DocumentHead title={ translate( 'User Details', { textOnly: true } ) } />;
 	};
 
 	context.primary = (

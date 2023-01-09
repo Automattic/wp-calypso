@@ -201,6 +201,7 @@ class EditUserForm extends Component {
 				returnField = (
 					<RoleSelect
 						key="role-select"
+						formControlType="select"
 						id={ fieldKeys.roles }
 						name={ fieldKeys.roles }
 						siteId={ this.props.siteId }
@@ -219,7 +220,7 @@ class EditUserForm extends Component {
 						key="isExternalContributor"
 						id={ fieldKeys.isExternalContributor }
 						onChange={ this.handleExternalChange }
-						checked={ this.state.isExternalContributor }
+						checked={ !! this.state.isExternalContributor }
 						disabled={ isDisabled || this.state.isExternalContributor === undefined }
 					/>
 				);
