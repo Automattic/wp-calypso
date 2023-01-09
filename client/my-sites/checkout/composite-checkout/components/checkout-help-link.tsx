@@ -3,6 +3,7 @@ import { Gridicon } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
 import { SUPPORT_FORUM, shouldShowHelpCenterToUser } from '@automattic/help-center';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { ResponseCartMessage, useShoppingCart } from '@automattic/shopping-cart';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
@@ -11,6 +12,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
 import AsyncLoad from 'calypso/components/async-load';
 import HappychatButtonUnstyled from 'calypso/components/happychat/button';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import getSupportLevel from 'calypso/state/happychat/selectors/get-support-level';
@@ -142,6 +144,13 @@ export default function CheckoutHelpLink() {
 	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const isEnglishLocale = useIsEnglishLocale();
 
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
+
+	const cartErrors = responseCart.messages?.errors || [];
+	const purchasesAreBlocked =
+		cartErrors.filter( ( error: ResponseCartMessage ) => error.code === 'blocked' ).length > 0;
+
 	const {
 		presalesZendeskChatAvailable,
 		section,
@@ -176,7 +185,10 @@ export default function CheckoutHelpLink() {
 
 	const zendeskPresalesChatKey: string | false = config( 'zendesk_presales_chat_key' );
 	const isPresalesZendeskChatEligible =
-		presalesZendeskChatAvailable && isEnglishLocale && zendeskPresalesChatKey;
+		presalesZendeskChatAvailable &&
+		isEnglishLocale &&
+		zendeskPresalesChatKey &&
+		! purchasesAreBlocked;
 
 	const hasDirectSupport = supportVariation !== SUPPORT_FORUM;
 
