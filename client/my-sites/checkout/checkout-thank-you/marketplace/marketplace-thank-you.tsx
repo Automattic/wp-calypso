@@ -6,7 +6,6 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import successImage from 'calypso/assets/images/marketplace/check-circle.svg';
 import { ThankYou } from 'calypso/components/thank-you';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
@@ -22,6 +21,7 @@ import {
 	getAutomatedTransferStatus,
 	isFetchingAutomatedTransferStatus,
 } from 'calypso/state/automated-transfer/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
@@ -34,18 +34,16 @@ import { getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const ThankYouContainer = styled.div`
-	.marketplace-thank-you {
-		margin-top: 72px;
-		img {
-			height: 74px;
-		}
-	}
-
 	.thank-you__header-title {
-		font-size: 44px;
+		font-family: Recoleta;
+		font-size: 48px;
+		line-height: 24px;
 	}
 
 	.thank-you__header-subtitle {
+		margin-top: 16px;
+		width: 500px;
+		line-height: 24px;
 		font-size: 16px;
 		color: var( --studio-gray-60 );
 	}
@@ -71,6 +69,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const wpComPluginsData = wpComPluginsDataResults.map(
 		( wpComPluginData ) => wpComPluginData.data
 	);
+	const foundWPcomData = wpComPluginsData.every( Boolean );
 	const softwareSlugs = wpComPluginsData.map( ( wpComPluginData, i ) =>
 		wpComPluginData ? wpComPluginData.software_slug || wpComPluginData.org_slug : productSlugs[ i ]
 	);
@@ -103,7 +102,6 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isJetpackSelfHosted = isJetpack && ! isAtomic;
 
-	const [ pluginIcon, setPluginIcon ] = useState( '' );
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ showProgressBar, setShowProgressBar ] = useState(
 		! new URLSearchParams( document.location.search ).has( 'hide-progress-bar' )
@@ -111,6 +109,8 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 
 	const areAllPluginsOnSite =
 		!! pluginsOnSite.length && pluginsOnSite.every( ( pluginOnSite ) => !! pluginOnSite );
+
+	const currentUser = useSelector( getCurrentUser );
 
 	// Site is transferring to Atomic.
 	// Poll the transfer status.
@@ -137,18 +137,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		if ( ! areAllWporgPluginsFetched ) {
 			productSlugs.forEach( ( productSlug ) => dispatch( wporgFetchPluginData( productSlug ) ) );
 		}
-		if ( areAllWporgPluginsFetched ) {
-			// wporgPlugin exists in the wporg directory.
-			setPluginIcon( wporgPlugins?.[ 0 ]?.icon || successImage );
-		}
 	}, [ areAllWporgPluginsFetched, productSlugs, dispatch, wporgPlugins ] );
-
-	useEffect( () => {
-		if ( wporgPlugins?.[ 0 ]?.wporg === false ) {
-			// wporgPlugin exists and plugin doesn't exist in wporg directory.
-			setPluginIcon( successImage );
-		}
-	}, [ wporgPlugins ] );
 
 	// Site is already Atomic (or just transferred).
 	// Poll the plugin installation status.
@@ -215,11 +204,6 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		[ translate ]
 	);
 	const additionalSteps = useMarketplaceAdditionalSteps();
-
-	const thankYouImage = {
-		alt: '',
-		src: pluginIcon,
-	};
 
 	// Cast pluginOnSite's type because the return type of getPluginOnSite is
 	// wrong and I don't know how to fix it. Remove this cast if the return type
@@ -293,9 +277,8 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		],
 	};
 
-	const thankYouSubtitle = translate( '%(pluginName)s has been installed.', {
-		args: { pluginName: pluginsOnSiteData?.[ 0 ]?.name },
-	} );
+	const purchase = translate( 'purchase' );
+	const download = translate( 'download' );
 
 	return (
 		<ThemeProvider theme={ theme }>
@@ -329,9 +312,19 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 						containerClassName="marketplace-thank-you"
 						sections={ [ setupSection ] }
 						showSupportSection={ true }
-						thankYouImage={ thankYouImage }
-						thankYouTitle={ translate( 'All ready to go!' ) }
-						thankYouSubtitle={ areAllPluginsOnSite ? thankYouSubtitle : '' }
+						thankYouTitle={ translate( "You're all set %(username)s!", {
+							args: {
+								username: currentUser?.display_name || currentUser?.username,
+							},
+						} ) }
+						thankYouSubtitle={ translate(
+							'Congratulations on your %(action)s. You can now extend the possibilities of your site with your WordPress.com plugins.',
+							{
+								args: {
+									action: foundWPcomData ? purchase : download,
+								},
+							}
+						) }
 						headerBackgroundColor="#fff"
 						headerTextColor="#000"
 					/>
