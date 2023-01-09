@@ -28,6 +28,9 @@ import './style.scss';
 
 const debug = debugFactory( 'calypso:upsell-nudge' );
 
+/**
+ * @param {any} props Props declared as `any` to prevent errors in TSX files that use this component.
+ */
 export const UpsellNudge = ( {
 	callToAction,
 	canManageSite,
