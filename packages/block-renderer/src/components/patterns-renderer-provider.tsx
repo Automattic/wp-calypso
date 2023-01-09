@@ -1,19 +1,28 @@
 import React, { useEffect, useMemo } from 'react';
 import useRenderedPatterns from '../hooks/use-rendered-patterns';
 import PatternsRendererContext from './patterns-renderer-context';
+import type { SiteInfo } from '../types';
 
 interface Props {
 	siteId: number | string;
 	stylesheet?: string;
 	patternIds: string[];
 	children: JSX.Element;
+	siteInfo: SiteInfo;
 }
 
-const PatternsRendererProvider = ( { siteId, stylesheet = '', patternIds, children }: Props ) => {
+const PatternsRendererProvider = ( {
+	siteId,
+	stylesheet = '',
+	patternIds,
+	children,
+	siteInfo = {},
+}: Props ) => {
 	const { data, isLoading, hasNextPage, fetchNextPage } = useRenderedPatterns(
 		siteId,
 		stylesheet,
-		patternIds
+		patternIds,
+		siteInfo
 	);
 
 	const renderedPatterns = useMemo(

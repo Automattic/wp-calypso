@@ -14,3 +14,8 @@ export type RenderedPattern = {
 export type RenderedPatterns = {
 	[ key: string ]: RenderedPattern;
 };
+
+export type SiteInfo = {
+	title?: string;
+	tagline?: string;
+};

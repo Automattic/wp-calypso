@@ -14,6 +14,7 @@ import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { useThemeDetails } from '../../../../hooks/use-theme-details';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
+import { SITE_TAGLINE } from './constants';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
 import { useAllPatterns } from './patterns-data';
@@ -53,6 +54,11 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 		sections,
 		footer,
 		activePosition,
+	};
+
+	const siteInfo = {
+		title: site?.name,
+		tagline: site?.description || SITE_TAGLINE,
 	};
 
 	useEffect( () => {
@@ -383,6 +389,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 							siteId={ themeDemoSiteSlug }
 							stylesheet={ selectedDesign?.recipe?.stylesheet }
 							patternIds={ allPatterns.map( ( pattern ) => encodePatternId( pattern.id ) ) }
+							siteInfo={ siteInfo }
 						>
 							{ stepContent }
 						</AsyncLoad>
