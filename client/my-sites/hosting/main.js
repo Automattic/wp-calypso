@@ -91,7 +91,7 @@ class Hosting extends Component {
 					/>
 				}
 				treatmentExperience={ <HostingUpsellNudge siteId={ siteId } /> }
-				loadingExperience={ <Spinner style={ { left: 'calc(50%-8px)' } } /> }
+				loadingExperience={ <Spinner className="hosting__upsell-experiment-spinner" /> }
 			/>
 		);
 
