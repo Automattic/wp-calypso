@@ -118,6 +118,7 @@ body.is-section-themes-i4-2 {
 				box-sizing: content-box;
 				flex-direction: row;
 				gap: 16px;
+				margin-top: 0;
 				padding: 4px 24px;
 			}
 
@@ -125,9 +126,8 @@ body.is-section-themes-i4-2 {
 				color: var(--color-text-inverted);
 			}
 
-			.theme__info-options {
-				display: inline-flex;
-				flex: 0 0 auto;
+			.theme__more-button {
+				position: relative;
 			}
 		}
 
@@ -157,13 +157,12 @@ body.is-section-themes-i4-2 {
 			flex-wrap: wrap;
 			height: 48px;
 			gap: 4px;
-			padding-top: 16px;
+			margin-top: 16px;
 			position: relative;
 
 			&:not(.has-pricing) {
-				.theme__info-options:not(.has-style-variations) {
-					align-self: flex-start;
-					flex: 0 0 auto;
+				.theme__more-button {
+					top: 0;
 				}
 			}
 		}
@@ -204,16 +203,6 @@ body.is-section-themes-i4-2 {
 			text-transform: none;
 		}
 
-		.theme__info-options {
-			align-self: center;
-			display: flex;
-			flex-basis: 100%;
-
-			.theme__more-button:only-child {
-				margin-inline-start: auto;
-			}
-		}
-
 		.theme__info-style-variations {
 			align-content: center;
 			display: flex;
@@ -227,8 +216,11 @@ body.is-section-themes-i4-2 {
 		}
 
 		.theme__more-button {
+			bottom: 0;
 			border: 0;
 			height: 20px;
+			position: absolute;
+			right: 0;
 
 			&:hover {
 				background-color: transparent;

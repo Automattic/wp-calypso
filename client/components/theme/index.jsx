@@ -613,18 +613,8 @@ export class Theme extends Component {
 								  ! active && (
 										<span className="theme__info-upsell-description">{ translate( 'Free' ) }</span>
 								  ) ) }
-						{ isNewDetailsAndPreview ? (
-							<div
-								className={ classNames( 'theme__info-options', {
-									'has-style-variations': theme.style_variations?.length > 0,
-								} ) }
-							>
-								{ ! active && this.renderStyleVariations() }
-								{ this.renderMoreButton() }
-							</div>
-						) : (
-							this.renderMoreButton()
-						) }
+						{ isNewDetailsAndPreview && ! active && this.renderStyleVariations() }
+						{ this.renderMoreButton() }
 					</div>
 				</div>
 			</Card>
