@@ -50,6 +50,13 @@ const ThankYouContainer = styled.div`
 	}
 `;
 
+type Plugin = {
+	slug: string;
+	fetched: boolean;
+	wporg: boolean;
+	icon: string;
+};
+
 const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const [ productSlugs ] = useState< Array< string > >( productSlug.split( ',' ) );
 	const dispatch = useDispatch();
@@ -72,7 +79,14 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	);
 	const wporgPlugins = useSelector(
 		( state ) => getPlugins( state, productSlugs ),
-		( oldValue, newValue ) => oldValue.slug === newValue.slug
+		( newPluginsValue: Array< Plugin >, oldPluginsValue: Array< Plugin > ) =>
+			oldPluginsValue.length === newPluginsValue.length &&
+			oldPluginsValue.every( ( oldPluginValue, i ) => {
+				return (
+					oldPluginValue?.slug === newPluginsValue[ i ]?.slug &&
+					Boolean( oldPluginValue ) === Boolean( newPluginsValue[ i ] )
+				);
+			} )
 	);
 	const areWporgPluginsFetched = useSelector( ( state ) => areFetched( state, productSlugs ) );
 	const areAllWporgPluginsFetched = areWporgPluginsFetched.every( Boolean );
