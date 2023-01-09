@@ -70,7 +70,9 @@ export const EditTeamMemberForm = ( {
 					hasScreenOptions
 				/>
 			) }
-			<HeaderCake onClick={ goBack } isCompact />
+			<HeaderCake onClick={ goBack } isCompact>
+				{ translate( 'User Details' ) }
+			</HeaderCake>
 			<Card className="edit-team-member-form__user-profile">
 				<PeopleProfile siteId={ siteId } user={ user } />
 				{ user && (
@@ -78,6 +80,7 @@ export const EditTeamMemberForm = ( {
 						user={ user }
 						disabled={ false } // @TODO added when added mutation to remove user
 						siteId={ siteId }
+						autoSave={ isEnabled( 'user-management-revamp' ) }
 						isJetpack={ isJetpack }
 						markChanged={ markChanged }
 						markSaved={ markSaved }
