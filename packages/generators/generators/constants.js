@@ -25,12 +25,6 @@ export const prompts = [
 export const actions = [
 	{
 		type: 'add',
-		path: '../{{kebabCase name}}/.eslintrc.js',
-		templateFile: 'templates/shared/.eslintrc.js.hbs',
-		abortOnFail: true,
-	},
-	{
-		type: 'add',
 		path: '../{{kebabCase name}}/jest.config.js',
 		templateFile: 'templates/shared/jest.config.js',
 		abortOnFail: true,
