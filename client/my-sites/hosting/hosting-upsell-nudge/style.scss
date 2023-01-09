@@ -32,7 +32,7 @@
 		@include break-mobile {
 			text-align: initial;
 			width: 100%;
-			margin: 0;
+			margin: 22px 0 12px 0;
 			display: flex;
 			flex-direction: row;
 			align-items: center;
@@ -44,7 +44,6 @@
 		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 		gap: 22px 24px;
 		margin-right: 16px;
-		margin-bottom: 22px;
 	}
 
 	.hosting-upsell-nudge__feature-icon {
