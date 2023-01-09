@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -56,13 +56,10 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 		activePosition,
 	};
 
-	const siteInfo = useMemo(
-		() => ( {
-			title: site?.title,
-			tagline: site?.description || SITE_TAGLINE,
-		} ),
-		[ site?.title, site?.description ]
-	);
+	const siteInfo = {
+		title: site?.name,
+		tagline: site?.description || SITE_TAGLINE,
+	};
 
 	useEffect( () => {
 		// Require to start the flow from the first step
