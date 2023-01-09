@@ -81,7 +81,7 @@ class PostTrendsDay extends PureComponent {
 				/>
 				{ postCount > 0 && (
 					<Tooltip
-						className="post-trends-day__tooltip is-streak"
+						className="is-streak tooltip--large"
 						id="post-trends__tooltip"
 						context={ this.dayRef.current }
 						isVisible={ this.state.showPopover }

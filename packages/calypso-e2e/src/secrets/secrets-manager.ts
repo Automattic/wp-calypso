@@ -24,6 +24,7 @@ export const TEST_ACCOUNT_NAMES = [
 	'jetpackUser',
 	'jetpackUserPREMIUM',
 	'jetpackUserJN',
+	'desktopAppUser',
 	'commentingUser',
 	'notificationsUser',
 	'googleLoginUser',
@@ -131,7 +132,6 @@ export class SecretsManager {
 		};
 
 		return {
-			passwordForNewTestSignUps: 'FAKE_VALUE',
 			storeSandboxCookieValue: 'FAKE_VALUE',
 			testCouponCode: 'FAKE_VALUE',
 			wpccAuthPath: 'FAKE_VALUE',
@@ -178,6 +178,7 @@ export class SecretsManager {
 				jetpackUser: { ...fakeAccount },
 				jetpackUserPREMIUM: { ...fakeAccount },
 				jetpackUserJN: { ...fakeAccount },
+				desktopAppUser: { ...fakeAccount },
 				commentingUser: { ...fakeAccount },
 				notificationsUser: { ...fakeAccount },
 				googleLoginUser: {

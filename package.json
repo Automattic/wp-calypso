@@ -1,7 +1,7 @@
 {
 	"name": "wp-calypso",
 	"author": "Automattic Inc.",
-	"version": "0.17.0",
+	"version": "16.17.0",
 	"description": "A pure REST-API and JS based version of the WordPress.com admin.",
 	"private": true,
 	"workspaces": {
