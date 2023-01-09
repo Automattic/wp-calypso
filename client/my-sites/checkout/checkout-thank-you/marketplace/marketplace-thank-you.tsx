@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import { ThemeProvider, Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -31,8 +32,10 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import ThankYouMultiplePlugin from './components/thank-you';
 
 const ThankYouContainer = styled.div`
+	margin-top: 72px;
 	.marketplace-thank-you {
 		margin-top: 72px;
 		img {
@@ -316,16 +319,22 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			) }
 			{ ! showProgressBar && (
 				<ThankYouContainer>
-					<ThankYou
-						containerClassName="marketplace-thank-you"
-						sections={ [ setupSection ] }
-						showSupportSection={ true }
-						thankYouImage={ thankYouImage }
-						thankYouTitle={ translate( 'All ready to go!' ) }
-						thankYouSubtitle={ areAllPluginsOnSite ? thankYouSubtitle : '' }
-						headerBackgroundColor="#fff"
-						headerTextColor="#000"
-					/>
+					{ config.isEnabled( 'marketplace-thank-you-new-experience' ) ? (
+						<ThankYouMultiplePlugin
+							products={ [ { name: 'Royal Mail', description: "This plugin doesn't expire" } ] }
+						/>
+					) : (
+						<ThankYou
+							containerClassName="marketplace-thank-you"
+							sections={ [ setupSection ] }
+							showSupportSection={ true }
+							thankYouImage={ thankYouImage }
+							thankYouTitle={ translate( 'All ready to go!' ) }
+							thankYouSubtitle={ areAllPluginsOnSite ? thankYouSubtitle : '' }
+							headerBackgroundColor="#fff"
+							headerTextColor="#000"
+						/>
+					) }
 				</ThankYouContainer>
 			) }
 		</ThemeProvider>
