@@ -168,7 +168,14 @@ class PeopleListItem extends PureComponent {
 				onClick={ canLinkToProfile && this.navigateToUser }
 			>
 				<div className="people-list-item__profile-container">
-					<PeopleProfile invite={ invite } siteId={ siteId } type={ type } user={ user } />
+					<PeopleProfile
+						invite={ invite }
+						siteId={ siteId }
+						type={ type }
+						user={ user }
+						showDate={ ! this.maybeGetCardLink() }
+						showRole={ !! this.maybeGetCardLink() }
+					/>
 				</div>
 
 				{ isInvite && showStatus && this.renderInviteStatus() }

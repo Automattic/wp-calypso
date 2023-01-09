@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
 import InfoPopover from 'calypso/components/info-popover';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useExternalContributorsQuery from 'calypso/data/external-contributors/use-external-contributors';
 import useP2GuestsQuery from 'calypso/data/p2/use-p2-guests-query';
 import { decodeEntities } from 'calypso/lib/formatting';
@@ -15,8 +16,10 @@ import isPrivateSite from 'calypso/state/selectors/is-private-site';
 
 import './style.scss';
 
-const PeopleProfile = ( { siteId, type, user, invite } ) => {
+const PeopleProfile = ( { siteId, type, user, invite, showDate, showRole = true } ) => {
 	const translate = useTranslate();
+	const moment = useLocalizedMoment();
+
 	const { data: externalContributors } = useExternalContributorsQuery( siteId );
 	const { data: p2Guests } = useP2GuestsQuery( siteId );
 
@@ -249,6 +252,23 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 		);
 	};
 
+	const renderSubscribedDate = () => {
+		if ( ! user || ! user.date_subscribed ) {
+			return;
+		}
+
+		return (
+			<div className="people-profile__subscribed">
+				{ translate( 'Since %(formattedDate)s', {
+					context: 'How long a user has been subscribed to a blog. Example: "Since Sep 16, 2015"',
+					args: {
+						formattedDate: moment( user.date_subscribed ).format( 'll' ),
+					},
+				} ) }
+			</div>
+		);
+	};
+
 	const renderSubscribedRole = () => {
 		if ( ! user || ! user.date_subscribed ) {
 			return null;
@@ -285,7 +305,8 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 			<div className="people-profile__detail">
 				{ renderNameOrEmail() }
 				{ renderLogin() }
-				{ isFollowerType() ? renderSubscribedRole() : renderRole() }
+				{ showDate && renderSubscribedDate() }
+				{ showRole && isFollowerType() ? renderSubscribedRole() : renderRole() }
 			</div>
 		</div>
 	);
