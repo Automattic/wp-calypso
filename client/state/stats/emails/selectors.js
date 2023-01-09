@@ -8,7 +8,9 @@ import 'calypso/state/stats/init';
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @param  {number}  postId Email Id
+ * @param  {number}  postId Post Id
+ * @param  {number}  period The period (eg day, week, month, year)
+ * @param  {string}  statType The type of stat we are working with. For example: 'opens' for Email Open stats
  * @returns {boolean}        Whether email stat is being requested
  */
 export function isRequestingEmailStats( state, siteId, postId, period, statType ) {
@@ -111,11 +113,7 @@ export function getEmailStat( state, siteId, postId, period, statType ) {
  * @returns {*}              Normalized data
  */
 export function getEmailStatsNormalizedData( state, siteId, postId, period, date, statType, path ) {
-	const stats = state.stats.emails.items
-		? get( state.stats.emails.items, [ siteId, postId, period, statType ], null )
+	return state.stats.emails.items
+		? get( state.stats.emails.items, [ siteId, postId, period, statType, date, path ], null )
 		: null;
-	if ( stats ) {
-		return Object.values( stats ).find( ( stat ) => stat.period === date )?.[ path ];
-	}
-	return [];
 }

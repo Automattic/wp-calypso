@@ -9,7 +9,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
-import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -24,13 +23,10 @@ import StatsModule from '../stats-module';
 import Reach from '../stats-reach';
 import StatShares from '../stats-shares';
 import statsStrings from '../stats-strings';
-import StatsViews from '../stats-views';
 
 const StatsInsights = ( props ) => {
 	const { siteId, siteSlug, translate, isOdysseyStats } = props;
 	const moduleStrings = statsStrings();
-
-	const isNewAllTimeViews = config.isEnabled( 'stats/all-time-views' );
 
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
@@ -53,16 +49,10 @@ const StatsInsights = ( props ) => {
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 				<AnnualHighlightsSection siteId={ siteId } />
 				<AllTimelHighlightsSection siteId={ siteId } />
-				{ isNewAllTimeViews && <AllTimelViewsSection siteId={ siteId } slug={ siteSlug } /> }
+				<AllTimelViewsSection siteId={ siteId } slug={ siteSlug } />
 				<div className="stats__module--insights-posting-activity">
 					<PostingActivity />
 				</div>
-				{ ! isNewAllTimeViews && (
-					<div className="stats__module--insights-unified">
-						<SectionHeader label={ translate( 'All-time views' ) } />
-						<StatsViews />
-					</div>
-				) }
 				{ siteId && (
 					<DomainTip
 						siteId={ siteId }

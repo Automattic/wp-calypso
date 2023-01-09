@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	planHasFeature,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
@@ -270,7 +271,8 @@ export class PlansStep extends Component {
 	}
 
 	getHeaderText() {
-		const { headerText, translate, eligibleForProPlan, locale } = this.props;
+		const { headerText, translate, eligibleForProPlan, locale, isOnboarding2023PricingGrid } =
+			this.props;
 
 		if ( headerText ) {
 			return headerText;
@@ -280,6 +282,10 @@ export class PlansStep extends Component {
 			return 'en' === locale || i18n.hasTranslation( 'Choose the right plan for you' )
 				? translate( 'Choose the right plan for you' )
 				: translate( 'Choose the plan that’s right for you' );
+		}
+
+		if ( isOnboarding2023PricingGrid ) {
+			return translate( 'Choose your flavor of WordPress' );
 		}
 
 		if ( this.state.isDesktop ) {
@@ -297,6 +303,7 @@ export class PlansStep extends Component {
 			locale,
 			translate,
 			useEmailOnboardingSubheader,
+			isOnboarding2023PricingGrid,
 		} = this.props;
 
 		const freePlanButton = <Button onClick={ this.handleFreePlanButtonClick } borderless />;
@@ -339,6 +346,10 @@ export class PlansStep extends Component {
 				'Add more features to your professional website with a plan. Or {{link}}start with email and a free site{{/link}}.',
 				{ components: { link: freePlanButton } }
 			);
+		}
+
+		if ( isOnboarding2023PricingGrid ) {
+			return;
 		}
 
 		if ( this.state.isDesktop ) {
@@ -414,7 +425,8 @@ export class PlansStep extends Component {
 
 	render() {
 		const classes = classNames( 'plans plans-step', {
-			'in-vertically-scrolled-plans-experiment': this.props.isInVerticalScrollingPlansExperiment,
+			'in-vertically-scrolled-plans-experiment':
+				! this.props.isOnboarding2023PricingGrid && this.props.isInVerticalScrollingPlansExperiment,
 			'has-no-sidebar': true,
 			'is-wide-layout': true,
 		} );
@@ -463,7 +475,7 @@ export const isDotBlogDomainRegistration = ( domainItem ) => {
 export default connect(
 	(
 		state,
-		{ path, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation } }
+		{ path, flowName, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation } }
 	) => ( {
 		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
 		disableBloggerPlanWithNonBlogDomain:
@@ -484,6 +496,8 @@ export default connect(
 		isInVerticalScrollingPlansExperiment: true,
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		eligibleForProPlan: isEligibleForProPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
+		isOnboarding2023PricingGrid:
+			isEnabled( 'onboarding/2023-pricing-grid' ) && flowName === 'onboarding-2023-pricing-grid',
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );

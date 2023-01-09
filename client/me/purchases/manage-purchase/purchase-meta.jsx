@@ -18,7 +18,6 @@ import { useSelector } from 'react-redux';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import UserItem from 'calypso/components/user';
 import useUserLicenseBySubscriptionQuery from 'calypso/data/jetpack-licensing/use-user-license-by-subscription-query';
 import {
 	getName,
@@ -41,6 +40,7 @@ import { managePurchase } from '../paths';
 import { isJetpackTemporarySitePurchase } from '../utils';
 import AutoRenewToggle from './auto-renew-toggle';
 import PurchaseMetaIntroductoryOfferDetail from './purchase-meta-introductory-offer-detail';
+import PurchaseMetaOwner from './purchase-meta-owner';
 import PurchaseMetaPaymentDetails from './purchase-meta-payment-details';
 import PurchaseMetaPrice from './purchase-meta-price';
 
@@ -195,22 +195,6 @@ function PurchaseMetaPlaceholder() {
 				</li>
 			) ) }
 		</ul>
-	);
-}
-
-function PurchaseMetaOwner( { owner } ) {
-	const translate = useTranslate();
-	if ( ! owner ) {
-		return null;
-	}
-
-	return (
-		<li>
-			<em className="manage-purchase__detail-label">{ translate( 'Owner' ) }</em>
-			<span className="manage-purchase__detail">
-				<UserItem user={ { ...owner, name: owner.display_name } } />
-			</span>
-		</li>
 	);
 }
 

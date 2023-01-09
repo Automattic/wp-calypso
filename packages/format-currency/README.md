@@ -13,7 +13,7 @@ import formatCurrency from '@automattic/format-currency';`
 
 ## formatCurrency()
 
-`formatCurrency( number: number, code: string, options: FormatCurrencyOptions = {} ): string | null`
+`formatCurrency( number: number, code: string, options: FormatCurrencyOptions = {} ): string`
 
 Formats money with a given currency code.
 
@@ -23,11 +23,9 @@ For currencies that include decimals, this will always return the amount with de
 
 Since rounding errors are common in floating point math, sometimes a price is provided as an integer in the smallest unit of a currency (eg: cents in USD or yen in JPY). Set the `isSmallestUnit` to change the function to operate on integer numbers instead. If this option is not set or false, the function will format the amount `1025` in `USD` as `$1,025.00`, but when the option is true, it will return `$10.25` instead.
 
-Will return null if the currency code is unknown or if the number is not a number. Will also return null if `isSmallestUnit` is set and the number is not an integer.
-
 ## getCurrencyObject()
 
-`getCurrencyObject( number: number, code: string, options: FormatCurrencyOptions = {} ): CurrencyObject | null`
+`getCurrencyObject( number: number, code: string, options: FormatCurrencyOptions = {} ): CurrencyObject`
 
 Returns a formatted price object.
 
@@ -36,8 +34,6 @@ The currency will define the properties to use for this formatting, but those pr
 For currencies that include decimals, this will always return the amount with decimals included, even if those decimals are zeros. To exclude the zeros, use the `stripZeros` option. For example, the function will normally format `10.00` in `USD` as `$10.00` but when this option is true, it will return `$10` instead.
 
 Since rounding errors are common in floating point math, sometimes a price is provided as an integer in the smallest unit of a currency (eg: cents in USD or yen in JPY). Set the `isSmallestUnit` to change the function to operate on integer numbers instead. If this option is not set or false, the function will format the amount `1025` in `USD` as `$1,025.00`, but when the option is true, it will return `$10.25` instead.
-
-Will return null if the currency code is unknown or if the number is not a number. Will also return null if `isSmallestUnit` is set and the number is not an integer.
 
 ## FormatCurrencyOptions
 

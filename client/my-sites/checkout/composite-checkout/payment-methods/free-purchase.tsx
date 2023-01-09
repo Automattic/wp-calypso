@@ -1,4 +1,5 @@
 import { Button, useFormStatus, FormStatus } from '@automattic/composite-checkout';
+import formatCurrency from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { doesPurchaseHaveFullCredits } from '@automattic/wpcom-checkout';
 import { sprintf } from '@wordpress/i18n';
@@ -72,7 +73,11 @@ function ButtonContents( {
 
 	if ( formStatus === FormStatus.READY ) {
 		if ( doesPurchaseHaveFullCredits( responseCart ) ) {
-			const total = responseCart.sub_total_with_taxes_display;
+			const total = formatCurrency(
+				responseCart.sub_total_with_taxes_integer,
+				responseCart.currency,
+				{ isSmallestUnit: true, stripZeros: true }
+			);
 			/* translators: %s is the total to be paid in localized currency */
 			return <>{ sprintf( __( 'Pay %s with credits' ), total ) }</>;
 		}
@@ -94,7 +99,10 @@ function WordPressFreePurchaseLabel() {
 					{
 						/* translators: %(amount)s is the total amount of credits available in localized currency */
 						sprintf( __( 'WordPress.com Credits: %(amount)s available' ), {
-							amount: responseCart.credits_display,
+							amount: formatCurrency( responseCart.credits_integer, responseCart.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
 						} )
 					}
 				</div>
