@@ -3,5 +3,9 @@
 .highlight-year-navigation {
 	.stats-navigation-arrows {
 		margin: 0 0 16px;
+
+		@media ( max-width: 661px ) {
+			margin-right: 16px;
+		}
 	}
 }
