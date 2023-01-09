@@ -20,7 +20,7 @@ const selectors = {
 
 	// Invites
 	invitedUser: ( email: string ) => `[title="${ email }"]`,
-	revokeInviteButton: 'button:text("Revoke invite")',
+	revokeInviteButton: 'button:text("Revoke")',
 	inviteRevokedMessage: 'span:text("Invite deleted.")',
 };
 

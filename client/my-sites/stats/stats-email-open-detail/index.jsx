@@ -9,6 +9,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
+import DocumentHead from 'calypso/components/data/document-head';
 import QueryEmailStats from 'calypso/components/data/query-email-stats';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
@@ -215,6 +216,7 @@ class StatsEmailOpenDetail extends Component {
 
 		return (
 			<Main className="has-fixed-nav stats__email-opens" wideLayout>
+				<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 				<QueryEmailStats
 					siteId={ siteId }
 					postId={ postId }
