@@ -6,7 +6,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import { isModuleActive } from 'calypso/lib/site/utils';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { getSiteUrl, getSite, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteUrl, getSite, isSimpleSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { NewsletterSettingsSection } from '../reading-newsletter-settings';
 import { RssFeedSettingsSection } from '../reading-rss-feed-settings';
@@ -58,14 +58,16 @@ const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteUrl = siteId && getSiteUrl( state, siteId );
 	const site = siteId && getSite( state, siteId );
-	const isJetpack = isJetpackSite( state, siteId );
+	const isSimple = isSimpleSite( state );
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
+	const isJetpack = isJetpackSite( state, siteId );
 
 	return {
 		...( siteUrl && { siteUrl } ),
 		...( site && { site } ),
-		...( isJetpack && { isJetpack } ),
+		...( isSimple && { isSimple } ),
 		...( isAtomic && { isAtomic } ),
+		...( isJetpack && { isJetpack } ),
 	};
 } );
 
@@ -86,8 +88,9 @@ type ReadingSettingsFormProps = {
 	isSavingSettings: boolean;
 	siteUrl?: string;
 	site?: object;
-	isJetpack?: boolean;
+	isSimple?: boolean;
 	isAtomic?: boolean;
+	isJetpack?: boolean;
 	updateFields: ( fields: Fields ) => void;
 };
 
@@ -102,14 +105,14 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 			isSavingSettings,
 			siteUrl,
 			site,
-			isJetpack,
+			isSimple,
 			isAtomic,
+			isJetpack,
 			updateFields,
 		}: ReadingSettingsFormProps ) => {
 			const disabled = isRequestingSettings || isSavingSettings;
 			const newsletterSectionEnabled =
-				( ! isJetpack && ! isAtomic ) ||
-				( ( isJetpack || isAtomic ) && site && isModuleActive( site, 'subscriptions' ) )
+				isSimple || ( ( isJetpack || isAtomic ) && site && isModuleActive( site, 'subscriptions' ) )
 					? true
 					: false;
 			return (
