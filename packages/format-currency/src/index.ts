@@ -70,7 +70,7 @@ function getCachedFormatter( {
 		currency,
 		// There's an option called `trailingZeroDisplay` but it does not yet work
 		// in FF so we have to strip zeros manually.
-		...( noDecimals ? { maximumFractionDigits: 0 } : {} ),
+		...( noDecimals ? { maximumFractionDigits: 0, minimumFractionDigits: 0 } : {} ),
 	} );
 
 	formatterCache.set( cacheKey, formatter );
