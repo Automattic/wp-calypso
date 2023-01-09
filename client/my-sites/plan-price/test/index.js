@@ -62,7 +62,7 @@ describe( 'PlanPrice', () => {
 
 	it( 'renders a currency when set', () => {
 		render( <PlanPrice rawPrice={ 5.05 } currencyCode="EUR" /> );
-		expect( document.body ).toHaveTextContent( '€5,05' );
+		expect( document.body ).toHaveTextContent( '€5.05' );
 	} );
 
 	it( 'renders USD currency when currency is undefined', () => {
@@ -77,12 +77,12 @@ describe( 'PlanPrice', () => {
 
 	it( 'renders no decimal section when price is integer', () => {
 		render( <PlanPrice rawPrice={ 44700 } currencyCode="IDR" /> );
-		expect( document.body ).toHaveTextContent( 'Rp44.700' );
-		expect( document.body ).not.toHaveTextContent( 'Rp44.700,00' );
+		expect( document.body ).toHaveTextContent( 'Rp44,700' );
+		expect( document.body ).not.toHaveTextContent( 'Rp44,700.00' );
 	} );
 
 	it( 'renders a decimal section when price is not integer', () => {
 		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" /> );
-		expect( document.body ).toHaveTextContent( 'Rp44.700,50' );
+		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
 	} );
 } );

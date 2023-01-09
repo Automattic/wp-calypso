@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import moment from 'moment';
 import { UNITS } from '../constants';
 import {
@@ -178,6 +181,9 @@ describe( 'getEndPeriod', () => {
 } );
 
 describe( 'formatValue', () => {
+	beforeEach( () => {
+		jest.spyOn( window.navigator, 'languages', 'get' ).mockImplementation( () => [ 'en-US' ] );
+	} );
 	test( 'should return a correctly formatted currency for NZD', () => {
 		const response = formatValue( 12.34, 'currency', 'NZD' );
 		expect( typeof response ).toBe( 'string' );
@@ -189,9 +195,10 @@ describe( 'formatValue', () => {
 		expect( response ).toBe( '$12.34' );
 	} );
 	test( 'should return a correctly formatted currency for ZAR', () => {
+		jest.spyOn( window.navigator, 'languages', 'get' ).mockImplementation( () => [ 'en-ZA' ] );
 		const response = formatValue( 12.34, 'currency', 'ZAR' );
 		expect( typeof response ).toBe( 'string' );
-		expect( response ).toBe( 'R12,34' );
+		expect( response ).toBe( 'R 12,34' );
 	} );
 	test( 'should return a correctly formatted USD currency for unknown code', () => {
 		const response = formatValue( 12.34, 'currency', 'XXX' );
