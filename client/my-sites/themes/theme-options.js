@@ -224,11 +224,8 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			comment: 'label for previewing the theme demo website',
 		} ),
 		action: themePreview,
-		hideForTheme: ( state, themeId, siteId ) => {
-			const demoUrl = getThemeDemoUrl( state, themeId, siteId );
-
-			return ! demoUrl;
-		},
+		hideForTheme: ( state, themeId, siteId ) =>
+			! getThemeDemoUrl( state, themeId, siteId ) || ! isWpcomTheme( state, themeId ),
 	};
 
 	const signupLabel = translate( 'Pick this design', {

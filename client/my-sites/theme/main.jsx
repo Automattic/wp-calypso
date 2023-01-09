@@ -248,8 +248,10 @@ class ThemeSheet extends Component {
 	};
 
 	shouldRenderPreviewButton() {
-		const { isWPForTeamsSite } = this.props;
-		return this.isThemeAvailable() && ! this.isThemeCurrentOne() && ! isWPForTeamsSite;
+		const { isWpcomTheme, isWPForTeamsSite } = this.props;
+		return (
+			this.isThemeAvailable() && ! this.isThemeCurrentOne() && ! isWPForTeamsSite && isWpcomTheme
+		);
 	}
 
 	isThemeCurrentOne() {
@@ -302,7 +304,7 @@ class ThemeSheet extends Component {
 					className="theme__sheet-screenshot is-active"
 					href={ demoUrl }
 					onClick={ ( e ) => {
-						this.previewAction( e, 'screenshot' );
+						isWpcomTheme && this.previewAction( e, 'screenshot' );
 					} }
 					rel="noopener noreferrer"
 				>
