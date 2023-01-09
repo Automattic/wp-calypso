@@ -359,7 +359,7 @@ export const CURRENCIES: CurrenciesDictionary = {
 		symbol: 'Ft',
 		grouping: '.',
 		decimal: ',',
-		precision: 0,
+		precision: 2,
 	},
 	IDR: {
 		symbol: 'Rp',
