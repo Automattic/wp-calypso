@@ -132,6 +132,7 @@
 		"site-indicator": true,
 		"ssr/prefetch-timebox": true,
 		"stats/all-time-views": true,
+		"stats/horizontal-bars-everywhere": false,
 		"stats/new-main-chart": true,
 		"stepper-woocommerce-poc": true,
 		"subscriber-csv-upload": true,

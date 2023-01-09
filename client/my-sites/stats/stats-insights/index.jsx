@@ -80,6 +80,8 @@ const StatsInsights = ( props ) => {
 								path="tags-categories"
 								moduleStrings={ moduleStrings.tags }
 								statType="statsTags"
+								hideSummaryLink
+								hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
 							/>
 							{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for Odyssey for now. */ }
 							{ ! isOdysseyStats && <StatShares siteId={ siteId } /> }
@@ -94,6 +96,8 @@ const StatsInsights = ( props ) => {
 								path="publicize"
 								moduleStrings={ moduleStrings.publicize }
 								statType="statsPublicize"
+								hideSummaryLink
+								hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
 							/>
 						</div>
 					</div>
