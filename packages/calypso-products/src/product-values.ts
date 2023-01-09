@@ -74,6 +74,7 @@ export { isJetpackSearch } from './is-jetpack-search';
 export { isJetpackSearchSlug } from './is-jetpack-search-slug';
 export { isJetpackSearchFree } from './is-jetpack-search-free';
 export { isJetpackVideoPress } from './is-jetpack-videopress';
+export { isJetpackBoostSlug } from './is-jetpack-boost-slug';
 export { default as isJetpackLegacyItem } from './is-jetpack-legacy-item';
 export { default as isJetpackPurchasableItem } from './is-jetpack-purchasable-item';
 export * from './is-monthly';
