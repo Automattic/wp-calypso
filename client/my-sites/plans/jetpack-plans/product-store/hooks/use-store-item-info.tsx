@@ -6,13 +6,13 @@ import {
 	planHasFeature,
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
+	isSupersedingJetpackItem,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import isSupersedingJetpackItem from 'calypso/../packages/calypso-products/src/is-superseding-jetpack-item';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import reactNodeToString from 'calypso/lib/react-node-to-string';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
@@ -214,7 +214,7 @@ export const useStoreItemInfo = ( {
 
 				const addedToCartText = translate( 'added to cart' );
 				const productName = reactNodeToString( item.displayName );
-				dispatch( successNotice( `${ productName } ${ addedToCartText }` ) );
+				dispatch( successNotice( `${ productName } ${ addedToCartText }`, { duration: 5000 } ) );
 
 				return addProductsToCart( [ { product_slug: item.productSlug } ] );
 			}

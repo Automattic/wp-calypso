@@ -1255,6 +1255,11 @@
 			top: 0;
 			bottom: unset;
 			box-shadow: rgb(99 99 99 / 20%) 0 2px 8px 0;
+			max-height: 100%;
+		}
+		.masterbar-cart-button__popover {
+			//display mobile cart at the top most layer
+			z-index: 9999999;
 		}
 	}
 }
