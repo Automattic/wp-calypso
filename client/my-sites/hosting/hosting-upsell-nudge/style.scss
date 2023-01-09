@@ -1,6 +1,9 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 // Extra specificity needed to override banner alignment rules
 .hosting-upsell-nudge.banner.card {
-	@include breakpoint-deprecated( ">480px" ) {
+	@include break-mobile {
 		align-items: flex-start;
 	}
 
@@ -20,13 +23,13 @@
 	}
 
 	.banner__info {
-		@include breakpoint-deprecated( ">480px" ) {
+		@include break-mobile {
 			width: 100%;
 		}
 	}
 
 	.banner__action {
-		@include breakpoint-deprecated( ">480px" ) {
+		@include break-mobile {
 			text-align: initial;
 			width: 100%;
 			margin: 0;
