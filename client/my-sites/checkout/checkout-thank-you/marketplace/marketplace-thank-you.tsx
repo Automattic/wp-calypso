@@ -72,7 +72,14 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	);
 	const wporgPlugins = useSelector(
 		( state ) => getPlugins( state, productSlugs ),
-		( oldValue, newValue ) => oldValue.slug === newValue.slug
+		( newPluginsValue: Array< { slug: string } >, oldPluginsValue: Array< { slug: string } > ) =>
+			oldPluginsValue.length === newPluginsValue.length &&
+			oldPluginsValue.every( ( oldPluginValue, i ) => {
+				return (
+					oldPluginValue?.slug === newPluginsValue[ i ]?.slug &&
+					Boolean( oldPluginValue ) === Boolean( newPluginsValue[ i ] )
+				);
+			} )
 	);
 	const areWporgPluginsFetched = useSelector( ( state ) => areFetched( state, productSlugs ) );
 	const areAllWporgPluginsFetched = areWporgPluginsFetched.every( Boolean );
