@@ -55,11 +55,17 @@
 		margin-bottom: 22px;
 	}
 
+	.hosting-upsell-nudge__feature-icon {
+		margin-right: 8px;
+	}
+
 	.hosting-upsell-nudge__feature-title {
 		font-size: $font-body-small;
 		font-weight: 500;
 		color: var(--color-neutral-80);
 		margin-bottom: 10px;
+		display: flex;
+		align-items: center;
 	}
 
 	.hosting-upsell-nudge__feature-description {
