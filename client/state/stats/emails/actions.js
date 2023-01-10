@@ -56,6 +56,9 @@ export function requestEmailStats( siteId, postId, period, date, statType, quant
 			statType,
 		} );
 
+		quantity = 'year' === period ? 10 : quantity;
+		quantity = 'hour' === period ? 24 : quantity;
+
 		return wpcom
 			.site( siteId )
 			.statsEmailOpens( postId, { period, quantity, date } )
@@ -64,7 +67,8 @@ export function requestEmailStats( siteId, postId, period, date, statType, quant
 
 				// create an object from emailStats with period as the key
 				const emailStatsObject = emailChartData.reduce( ( obj, item ) => {
-					obj[ item.period ] = {
+					const filter = 'hour' === period ? item.labelHour : item.period;
+					obj[ filter ] = {
 						chart: item,
 						countries: parseEmailCountriesData(
 							stats.countries[ item.period ],
