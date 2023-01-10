@@ -394,7 +394,7 @@ class Site {
 	 */
 	statsEmailOpens( postId, query, fn ) {
 		const path = `${ this.path }/stats/opens/emails/${ postId }`;
-		const statFields = [ 'timeline', 'country' ];
+		const statFields = [ 'timeline', 'country', 'device', 'client' ];
 		return Promise.all(
 			statFields.map( ( field ) =>
 				this.wpcom.req.get( path, { ...query, stats_fields: field }, fn )

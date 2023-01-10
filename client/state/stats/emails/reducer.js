@@ -1,4 +1,4 @@
-import { get, sortBy, merge } from 'lodash';
+import { merge } from 'lodash';
 import {
 	EMAIL_STATS_RECEIVE,
 	EMAIL_STATS_REQUEST,
@@ -6,17 +6,6 @@ import {
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { items as itemSchemas } from './schema';
-
-/**
- * Returns a serialized stats query, used as the key in the
- * `state.stats.lists.items` and `state.stats.lists.requesting` state objects.
- *
- * @param   {object} query    Stats query
- * @returns {string}          Serialized stats query
- */
-export function getSerializedStatsQuery( query = {} ) {
-	return JSON.stringify( sortBy( Object.entries( query ), ( pair ) => pair[ 0 ] ) );
-}
 
 /**
  * Returns the updated requests state after an action has been dispatched. The
@@ -80,24 +69,18 @@ export const requests = ( state = {}, action ) => {
 export const items = withSchemaValidation( itemSchemas, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case EMAIL_STATS_RECEIVE:
-			return {
-				...state,
-				[ action.siteId ]: {
-					...get( state, [ action.siteId ], {} ),
-					[ action.postId ]: {
-						[ action.period ]: {
-							[ action.statType ]: {
-								...get(
-									state,
-									[ action.siteId, action.postId, action.period, action.statType ],
-									{}
-								),
-								...action.stats,
-							},
+			// eslint-disable-next-line no-case-declarations
+			const { siteId, postId, period, statType } = action;
+
+			return merge( {}, state, {
+				[ siteId ]: {
+					[ postId ]: {
+						[ period ]: {
+							[ statType ]: action.stats,
 						},
 					},
 				},
-			};
+			} );
 	}
 
 	return state;

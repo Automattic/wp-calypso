@@ -528,7 +528,6 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 									currencyCode={ currencyCode }
 									price={ prices[ index ].price }
 									originalPrice={ prices[ index ].originalPrice }
-									translate={ translate }
 								>
 									{ selectedDomainConnection && <PlansDomainConnectionInfo plan={ plan } /> }
 									<PlansComparisonAction

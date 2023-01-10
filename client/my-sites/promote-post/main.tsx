@@ -102,7 +102,7 @@ export default function PromotedPosts( { tab }: Props ) {
 	const translate = useTranslate();
 
 	const tabs: TabOption[] = [
-		{ id: 'posts', name: translate( 'Ready to promote' ) },
+		{ id: 'posts', name: translate( 'Ready to Blaze' ) },
 		{ id: 'campaigns', name: translate( 'Campaigns' ) },
 	];
 
@@ -111,7 +111,7 @@ export default function PromotedPosts( { tab }: Props ) {
 	}
 
 	const subtitle = translate(
-		'Reach new readers and customers by promoting a post or a page on our network of millions blogs and web sites. {{learnMoreLink}}Learn more.{{/learnMoreLink}}',
+		'Reach new readers and customers with WordPress Blaze. Promote a post or a page on our network of millions blogs and web sites. {{learnMoreLink}}Learn more.{{/learnMoreLink}}',
 		{
 			components: {
 				learnMoreLink: <InlineSupportLink supportContext="advertising" showIcon={ false } />,
@@ -124,7 +124,7 @@ export default function PromotedPosts( { tab }: Props ) {
 			<EmptyContent
 				className="campaigns-empty"
 				title={ translate( 'Site is not published' ) }
-				line={ translate( 'Start promoting posts by publishing your site' ) }
+				line={ translate( 'To start using Blaze, you must first publish your site.' ) }
 				illustration={ null }
 			/>
 		);
@@ -136,7 +136,7 @@ export default function PromotedPosts( { tab }: Props ) {
 				className="campaigns-empty"
 				title={ translate( 'Site is private' ) }
 				line={ translate(
-					'To start advertising, you must make your website public. You can do that from {{sitePrivacySettingsLink}}here{{/sitePrivacySettingsLink}}.',
+					'To start using Blaze, you must make your site public. You can do that from {{sitePrivacySettingsLink}}here{{/sitePrivacySettingsLink}}.',
 					{
 						components: {
 							sitePrivacySettingsLink: (
@@ -169,7 +169,7 @@ export default function PromotedPosts( { tab }: Props ) {
 				brandFont
 				className="advertising__page-header"
 				headerText={ translate( 'Advertising' ) }
-				subHeaderText={ subtitle }
+				subHeaderText={ campaignsData?.length ? subtitle : '' }
 				align="left"
 			/>
 

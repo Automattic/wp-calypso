@@ -41,6 +41,7 @@ const SearchBoxHeader = ( props ) => {
 	const {
 		searchTerm,
 		title,
+		subtitle,
 		isSticky,
 		stickySearchBoxRef,
 		isSearching,
@@ -58,10 +59,17 @@ const SearchBoxHeader = ( props ) => {
 		}
 	}, [ searchRef, searchTerm ] );
 
+	const classNames = [ 'search-box-header' ];
+
+	if ( isSticky ) {
+		classNames.push( 'fixed-top' );
+	}
+
 	return (
-		<div className={ isSticky ? 'search-box-header fixed-top' : 'search-box-header' }>
+		<div className={ classNames.join( ' ' ) }>
 			{ renderTitleInH1 && <h1 className="search-box-header__header">{ title }</h1> }
 			{ ! renderTitleInH1 && <div className="search-box-header__header">{ title }</div> }
+			{ subtitle && <p className="search-box-header__subtitle">{ subtitle }</p> }
 			<div className="search-box-header__search">
 				<SearchBox
 					searchTerm={ searchTerm }

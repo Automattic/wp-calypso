@@ -4,6 +4,7 @@ import {
 	PLAN_ANNUAL_PERIOD,
 	PLAN_BIENNIAL_PERIOD,
 	PLAN_MONTHLY_PERIOD,
+	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import {
@@ -76,6 +77,8 @@ function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 
 	const getPeriod = () => {
 		switch ( purchase.billPeriodDays ) {
+			case PLAN_TRIENNIAL_PERIOD:
+				return translate( 'three years' );
 			case PLAN_BIENNIAL_PERIOD:
 				return translate( 'two years' );
 			case PLAN_ANNUAL_PERIOD:

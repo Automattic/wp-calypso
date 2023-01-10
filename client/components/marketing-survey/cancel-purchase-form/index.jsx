@@ -4,7 +4,6 @@ import {
 	isWpComMonthlyPlan,
 } from '@automattic/calypso-products';
 import { WPCOM_FEATURES_BACKUPS } from '@automattic/calypso-products/src';
-import { getCurrencyDefaults } from '@automattic/format-currency';
 import { SUPPORT_HAPPYCHAT } from '@automattic/help-center';
 import { Button as GutenbergButton, CheckboxControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
@@ -301,7 +300,11 @@ class CancelPurchaseForm extends Component {
 	getRefundAmount = () => {
 		const { purchase } = this.props;
 		const { refundOptions, currencyCode } = purchase;
-		const { precision } = getCurrencyDefaults( currencyCode );
+		const defaultFormatter = new Intl.NumberFormat( 'en-US', {
+			style: 'currency',
+			currency: currencyCode,
+		} );
+		const precision = defaultFormatter.resolvedOptions().maximumFractionDigits;
 		const refundAmount =
 			isRefundable( purchase ) && refundOptions?.[ 0 ]?.refund_amount
 				? refundOptions[ 0 ].refund_amount

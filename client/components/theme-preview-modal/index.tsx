@@ -26,6 +26,8 @@ interface ThemePreviewModalProps {
 	theme: ThemeWithStyleVariations;
 	previewUrl: string;
 	actionButtons: React.ReactNode;
+	selectedVariation?: StyleVariation;
+	onSelectVariation: ( variation: StyleVariation ) => void;
 	onClose: () => void;
 }
 
@@ -33,6 +35,8 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 	theme,
 	previewUrl,
 	actionButtons,
+	selectedVariation,
+	onSelectVariation,
 	onClose,
 } ) => {
 	const siteId = useSelector( getSelectedSiteId ) || -1;
@@ -48,7 +52,7 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 	);
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
 	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation | null >(
-		null
+		selectedVariation || null
 	);
 
 	const shortDescription = useMemo( () => {
@@ -94,6 +98,7 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 
 	function previewDesignVariation( variation: StyleVariation ) {
 		setSelectedStyleVariation( variation );
+		onSelectVariation( variation );
 	}
 
 	return (

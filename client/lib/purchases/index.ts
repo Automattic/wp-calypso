@@ -15,6 +15,7 @@ import {
 	isWpComPlan,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
+	TERM_TRIENNIALLY,
 	TYPE_PRO,
 	isDIFMProduct,
 	isJetpackSearchFree,
@@ -875,7 +876,7 @@ export function shouldRenderMonthlyRenewalOption( purchase: Purchase ) {
 
 	const plan = getPlan( purchase.productSlug );
 
-	if ( ! [ TERM_ANNUALLY, TERM_BIENNIALLY ].includes( plan?.term ?? '' ) ) {
+	if ( ! [ TERM_ANNUALLY, TERM_BIENNIALLY, TERM_TRIENNIALLY ].includes( plan?.term ?? '' ) ) {
 		return false;
 	}
 

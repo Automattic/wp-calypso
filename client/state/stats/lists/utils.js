@@ -175,6 +175,10 @@ export function getChartLabels( unit, date, localizedDate ) {
 		const isWeekend = 'day' === unit && ( 6 === dayOfWeek || 0 === dayOfWeek );
 		const labelName = `label${ unit.charAt( 0 ).toUpperCase() + unit.slice( 1 ) }`;
 		const formats = {
+			hour: translate( 'MMM D HH:mm', {
+				context: 'momentjs format string (hour)',
+				comment: 'This specifies an hour for the stats x-axis label.',
+			} ),
 			day: translate( 'MMM D', {
 				context: 'momentjs format string (day)',
 				comment: 'This specifies a day for the stats x-axis label.',
@@ -1006,6 +1010,9 @@ export function parseEmailChartData( payload, nullAttributes = [] ) {
 			const date = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( 'en' );
 			const localeSlug = getLocaleSlug();
 			const localizedDate = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( localeSlug );
+			if ( dataRecord.hour ) {
+				localizedDate.add( dataRecord.hour, 'hours' );
+			}
 			Object.assign( dataRecord, getChartLabels( payload.unit, date, localizedDate ) );
 		}
 		return dataRecord;
@@ -1040,4 +1047,32 @@ export function parseEmailCountriesData( countries, countriesInfo ) {
 			value: parseInt( country[ 1 ], 10 ),
 		};
 	} );
+}
+
+/**
+ * Return data in a format used by lists for email stats. The fields array is matched to
+ * the data in a single object.
+ *
+ * @param {Array} list - the array of devices for the given data
+ * @returns {Array} - Array of data objects
+ */
+export function parseEmailListData( list ) {
+	if ( ! list ) {
+		return [];
+	}
+
+	const result = list.map( function ( item ) {
+		return {
+			label: item[ 0 ],
+			value: parseInt( item[ 1 ], 10 ),
+		};
+	} );
+
+	// Add item with label == Other to end of the list
+	const otherItem = result.find( ( item ) => item.label === 'Other' );
+	if ( otherItem ) {
+		result.splice( result.indexOf( otherItem ), 1 );
+		result.push( otherItem );
+	}
+	return result;
 }

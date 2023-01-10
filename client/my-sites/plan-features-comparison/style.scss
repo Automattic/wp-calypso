@@ -58,10 +58,6 @@ $plan-features-sidebar-width: 272px;
 
 	.signup__steps & {
 		width: auto;
-
-		@include breakpoint-deprecated( ">660px" ) {
-			max-width: 1100px;
-		}
 	}
 
 	.signup__steps .plans-features-main__group.is-scrollable & {

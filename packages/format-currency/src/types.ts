@@ -1,31 +1,10 @@
-export interface FormatCurrencyOptions {
-	/**
-	 * The symbol separating the integer part of a decimal from its fraction.
-	 *
-	 * Will be set automatically by the currency code.
-	 */
-	decimal?: string;
-
-	/**
-	 * The symbol separating the thousands part of an amount from its hundreds.
-	 *
-	 * Will be set automatically by the currency code.
-	 */
-	grouping?: string;
-
+export interface CurrencyObjectOptions {
 	/**
 	 * The symbol separating the thousands part of an amount from its hundreds.
 	 *
 	 * Will be set automatically by the currency code.
 	 */
 	precision?: number;
-
-	/**
-	 * The currency symbol.
-	 *
-	 * Will be set automatically by the currency code.
-	 */
-	symbol?: string;
 
 	/**
 	 * Forces any decimal zeros to be hidden if set.
@@ -47,22 +26,48 @@ export interface FormatCurrencyOptions {
 	 * will return `$10.25` instead.
 	 */
 	isSmallestUnit?: boolean;
+
+	/**
+	 * The locale for the formatting.
+	 *
+	 * Some currencies are formatted differently depending on the locale. If not
+	 * set, this will be retrieved from the user's browser.
+	 */
+	locale?: string;
 }
 
 export interface CurrencyObject {
+	/**
+	 * The negative sign for the price, if it is negative.
+	 */
 	sign: '-' | '';
+
+	/**
+	 * The currency symbol for the formatted price.
+	 *
+	 * Note that the symbol's position depends on the `symbolPosition` property,
+	 * and keep RTL locales in mind.
+	 */
 	symbol: string;
+
+	/**
+	 * The position of the currency symbol relative to the formatted price.
+	 */
+	symbolPosition: 'before' | 'after';
+
+	/**
+	 * The section of the formatted price before the decimal.
+	 *
+	 * Note that this is not a number, but a locale-formatted string which may
+	 * include symbols like spaces, commas, or periods as group separators.
+	 */
 	integer: string;
+
+	/**
+	 * The section of the formatted price after and including the decimal.
+	 *
+	 * Note that this is not a number, but a locale-formatted string which may
+	 * include symbols like spaces, commas, or periods as the decimal separator.
+	 */
 	fraction: string;
-}
-
-export interface CurrencyDefinition {
-	symbol: string;
-	grouping: string;
-	decimal: string;
-	precision: number;
-}
-
-export interface CurrenciesDictionary {
-	[ currencyCode: string ]: CurrencyDefinition;
 }

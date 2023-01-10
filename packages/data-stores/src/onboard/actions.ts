@@ -82,6 +82,7 @@ export function* createVideoPressSite( {
 			selected_features: selectedFeatures,
 			wpcom_public_coming_soon: 1,
 			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),
+			is_videopress_initial_purchase: true,
 		},
 	};
 

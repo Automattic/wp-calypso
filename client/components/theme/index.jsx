@@ -71,6 +71,8 @@ export class Theme extends Component {
 		screenshotClickUrl: PropTypes.string,
 		// Called when theme screenshot is clicked
 		onScreenshotClick: PropTypes.func,
+		// Called when theme style variation is clicked
+		onStyleVariationClick: PropTypes.func,
 		// Called when the more button is clicked
 		onMoreButtonClick: PropTypes.func,
 		// Options to populate the 'More' button popover menu with
@@ -135,6 +137,7 @@ export class Theme extends Component {
 			) ||
 			nextProps.screenshotClickUrl !== this.props.screenshotClickUrl ||
 			nextProps.onScreenshotClick !== this.props.onScreenshotClick ||
+			nextProps.onStyleVariationClick !== this.props.onStyleVariationClick ||
 			nextProps.onMoreButtonClick !== this.props.onMoreButtonClick ||
 			themeThumbnailRefUpdated
 		);
@@ -153,6 +156,10 @@ export class Theme extends Component {
 		if ( typeof onScreenshotClick === 'function' ) {
 			onScreenshotClick( this.props.theme.id, this.props.index );
 		}
+	};
+
+	onStyleVariationClick = ( variation ) => {
+		this.props.onStyleVariationClick?.( this.props.theme.id, this.props.index, variation );
 	};
 
 	isBeginnerTheme() {
@@ -454,9 +461,31 @@ export class Theme extends Component {
 		return (
 			style_variations.length > 0 && (
 				<div className="theme__info-style-variations">
-					<StyleVariationBadges variations={ style_variations } />
+					<StyleVariationBadges
+						variations={ style_variations }
+						onMoreClick={ this.onStyleVariationClick }
+						onClick={ this.onStyleVariationClick }
+					/>
 				</div>
 			)
+		);
+	};
+
+	renderMoreButton = () => {
+		const { active, buttonContents, index, theme, onMoreButtonClick } = this.props;
+		if ( isEmpty( buttonContents ) ) {
+			return null;
+		}
+
+		return (
+			<ThemeMoreButton
+				index={ index }
+				themeId={ theme.id }
+				themeName={ theme.name }
+				active={ active }
+				onMoreButtonClick={ onMoreButtonClick }
+				options={ buttonContents }
+			/>
 		);
 	};
 
@@ -561,7 +590,11 @@ export class Theme extends Component {
 
 					{ this.softLaunchedBanner() }
 
-					<div className="theme__info">
+					<div
+						className={ classNames( 'theme__info', {
+							'has-pricing': !! upsellUrl,
+						} ) }
+					>
 						<h2 className="theme__info-title">{ name }</h2>
 						{ active && (
 							<span className="theme__badge-active">
@@ -581,16 +614,7 @@ export class Theme extends Component {
 										<span className="theme__info-upsell-description">{ translate( 'Free' ) }</span>
 								  ) ) }
 						{ isNewDetailsAndPreview && ! active && this.renderStyleVariations() }
-						{ ! isNewDetailsAndPreview && ! isEmpty( this.props.buttonContents ) ? (
-							<ThemeMoreButton
-								index={ this.props.index }
-								themeId={ this.props.theme.id }
-								themeName={ this.props.theme.name }
-								active={ this.props.active }
-								onMoreButtonClick={ this.props.onMoreButtonClick }
-								options={ this.props.buttonContents }
-							/>
-						) : null }
+						{ this.renderMoreButton() }
 					</div>
 				</div>
 			</Card>

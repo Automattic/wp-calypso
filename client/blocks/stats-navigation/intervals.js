@@ -7,13 +7,21 @@ import { intervals } from './constants';
 import './intervals.scss';
 
 const Intervals = ( props ) => {
-	const { selected, pathTemplate, className, standalone, compact = true } = props;
+	const {
+		selected,
+		pathTemplate,
+		className,
+		standalone,
+		compact = true,
+		intervalValues = intervals,
+	} = props;
 	const classes = classnames( 'stats-navigation__intervals', className, {
 		'is-standalone': standalone,
 	} );
+
 	return (
 		<SegmentedControl primary className={ classes } compact={ compact }>
-			{ intervals.map( ( i ) => {
+			{ intervalValues.map( ( i ) => {
 				const path = pathTemplate.replace( /{{ interval }}/g, i.value );
 				return (
 					<SegmentedControl.Item key={ i.value } path={ path } selected={ i.value === selected }>
@@ -30,6 +38,7 @@ Intervals.propTypes = {
 	pathTemplate: PropTypes.string.isRequired,
 	selected: PropTypes.string.isRequired,
 	standalone: PropTypes.bool,
+	intervalValues: PropTypes.array,
 };
 
 Intervals.defaultProps = {

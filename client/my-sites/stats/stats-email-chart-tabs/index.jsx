@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -66,16 +65,12 @@ class StatModuleChartTabs extends Component {
 	};
 
 	render() {
-		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
-
 		const { isActiveTabLoading } = this.props;
 
-		//TODO Try to retire `.stats-module` and replace it with `.is-chart-tabs`.
 		const classes = [
 			'is-chart-tabs',
 			{
 				'is-loading': isActiveTabLoading,
-				'stats-module': ! isNewFeatured,
 			},
 		];
 
@@ -120,7 +115,8 @@ const connectComponent = connect(
 			return NO_SITE_STATE;
 		}
 
-		const quantity = 'year' === period ? 10 : 30;
+		let quantity = 'year' === period ? 10 : 30;
+		quantity = 'hour' === period ? 24 : quantity;
 		const counts = getCountRecords( state, siteId, postId, period, statType );
 		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
 		const isActiveTabLoading = isLoadingTabs( state, siteId, postId, period, statType );

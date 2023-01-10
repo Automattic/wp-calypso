@@ -1,4 +1,4 @@
-import { Gridicon, ProgressBar } from '@automattic/components';
+import { Gridicon, CircularProgressBar } from '@automattic/components';
 import { useRef, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
@@ -37,16 +37,16 @@ function getUrlInfo( url: string ) {
 	return [ siteName ? siteName[ 0 ] : '', topLevelDomain ? topLevelDomain[ 0 ] : '' ];
 }
 
-function getChecklistCompletionProgress( tasks: Task[] | null ) {
+function getTasksProgress( tasks: Task[] | null ) {
 	if ( ! tasks ) {
-		return;
+		return null;
 	}
 
-	const totalCompletedTasks = tasks.reduce( ( total, currentTask ) => {
+	const completedTasks = tasks.reduce( ( total, currentTask ) => {
 		return currentTask.completed ? total + 1 : total;
 	}, 0 );
 
-	return Math.round( ( totalCompletedTasks / tasks.length ) * 100 );
+	return completedTasks;
 }
 
 const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: SidebarProps ) => {
@@ -75,7 +75,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 			flow
 		);
 
-	const taskCompletionProgress = site && getChecklistCompletionProgress( enhancedTasks );
+	const currentTask = getTasksProgress( enhancedTasks );
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
 	const showLaunchTitle = launchTask && ! launchTask.disabled;
 
@@ -95,14 +95,11 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 				<span className="launchpad__sidebar-header-flow-name">{ flowName }</span>
 			</div>
 			<div className="launchpad__sidebar-content-container">
-				{ taskCompletionProgress && (
+				{ currentTask && enhancedTasks?.length && (
 					<div className="launchpad__progress-bar-container">
-						<span className="launchpad__progress-value">{ taskCompletionProgress }%</span>
-						<ProgressBar
-							className="launchpad__progress-bar"
-							value={ taskCompletionProgress }
-							title={ translate( 'Launchpad checklist progress bar' ) }
-							compact={ true }
+						<CircularProgressBar
+							currentStep={ currentTask }
+							numberOfSteps={ enhancedTasks?.length }
 						/>
 					</div>
 				) }

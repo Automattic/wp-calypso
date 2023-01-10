@@ -127,7 +127,7 @@ export type AgencyDashboardFilterOption =
 	| 'backup_failed'
 	| 'backup_warning'
 	| 'threats_found'
-	| 'site_down'
+	| 'site_disconnected'
 	| 'plugin_updates';
 
 export type AgencyDashboardFilter = {
@@ -159,11 +159,15 @@ export interface UpdateMonitorSettingsAPIResponse {
 		monitor_active: boolean;
 		email_notifications: boolean;
 		wp_note_notifications: boolean;
+		jetmon_defer_status_down_minutes: number;
 	};
 }
 
 export interface UpdateMonitorSettingsParams {
 	monitor_active?: boolean;
+	wp_note_notifications?: boolean;
+	email_notifications?: boolean;
+	jetmon_defer_status_down_minutes?: number;
 }
 export interface UpdateMonitorSettingsArgs {
 	siteId: number;

@@ -27,7 +27,7 @@ const IssueTypeSelector: React.FunctionComponent< Props > = ( props ) => {
 			name: translate( 'Threats found' ),
 		},
 		{
-			key: 'site_down',
+			key: 'site_disconnected',
 			name: translate( 'Site disconnected' ),
 		},
 		{

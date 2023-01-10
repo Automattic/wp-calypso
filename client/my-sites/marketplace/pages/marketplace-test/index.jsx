@@ -12,7 +12,7 @@ import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Notice from 'calypso/components/notice';
 import { useESPluginsInfinite } from 'calypso/data/marketplace/use-es-query';
-import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
+import { useWPCOMPluginsList } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import {
@@ -52,7 +52,7 @@ export default function MarketplaceTest() {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const isAtomicSite = useSelector( ( state ) => isSiteWpcomAtomic( state, selectedSiteId ?? 0 ) );
 	const pluginDetails = useSelector( ( state ) => getPlugins( state, [ selectedSiteId ] ) );
-	const { data = [], isFetching } = useWPCOMPlugins( 'all' );
+	const { data = [], isFetching } = useWPCOMPluginsList( 'all' );
 
 	const {
 		data: dataSearch = [],
