@@ -131,6 +131,7 @@
 		"signup/social": true,
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
+		"sites/copy-site": true,
 		"ssr/prefetch-timebox": true,
 		"stepper-woocommerce-poc": true,
 		"subscriber-csv-upload": true,
