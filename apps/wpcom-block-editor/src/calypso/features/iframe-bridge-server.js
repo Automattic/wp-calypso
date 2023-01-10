@@ -482,13 +482,15 @@ function handleCloseEditor( calypsoPort ) {
 					return null;
 				}
 
+				const { pathname } = new URL( closeUrl );
+
 				return (
 					<SiteEditorDashboardFill>
 						<NavigationBackButton
 							backButtonLabel={ __( 'Dashboard' ) }
 							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 							className="edit-site-navigation-panel__back-to-dashboard"
-							href={ closeUrl }
+							href={ pathname ? pathname : closeUrl }
 							onClick={ dispatchAction }
 						/>
 					</SiteEditorDashboardFill>
@@ -1095,11 +1097,16 @@ function handleSiteEditorBackButton( calypsoPort ) {
 		// Since the clicked element may not have an href (as noted by internal SVG and path woes above).
 		const returnHref = clickedElement.href || dashboardLink;
 
+		// The URL constructor cannot handle relative paths, so, if returnHref becomes a relative path in
+		// thefuture, fall back to returnHref
+		const postUrl = new URL( returnHref )?.pathname || returnHref;
+
 		if ( isOldDashboardButton || isNewDashboardButton ) {
 			event.preventDefault();
 			calypsoPort.postMessage( {
 				action: 'openLinkInParentFrame',
-				payload: { postUrl: returnHref },
+
+				payload: { postUrl },
 			} );
 		}
 	} );
