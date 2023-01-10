@@ -33,6 +33,7 @@ const selectors = {
 	editorRoot: 'body.block-editor-page',
 	editorCanvasIframe: 'iframe[name="editor-canvas"]',
 	editorCanvasRoot: '.wp-site-blocks',
+	editButton: '.edit-site-layout__edit-button',
 	templateLoadingSpinner: '[aria-label="Block: Template Part"] .components-spinner',
 	closeStylesWelcomeGuideButton:
 		'[aria-label="Welcome to styles"] button[aria-label="Close dialog"]',
@@ -155,6 +156,10 @@ export class FullSiteEditorPage {
 		} = { leaveWithoutSaving: true }
 	): Promise< void > {
 		await this.waitUntilLoaded();
+
+		const editButton = this.editor.locator( selectors.editButton );
+		await editButton.click();
+
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
 		await this.cookieBannerComponent.acceptCookie();
 
@@ -534,7 +539,7 @@ export class FullSiteEditorPage {
 	 */
 	async tryGlobalStyles(): Promise< void > {
 		const locator = this.editor.locator( selectors.limitedGlobalStylesModalTryButton );
-		await locator.click( { timeout: 5 * 1000 } );
+		await locator.click();
 	}
 
 	/**
