@@ -79,7 +79,7 @@ Specified accounts will be pre-authenticated prior to the main test suite execut
 Specify a list of user accounts found in [Secret Manager](packages/calypso-e2e/src/secrets/secrets-manager.ts), separated by commas:
 
 ```bash
-export AUTHENTICATE_ACCOUNTS=simpleSitePersonalPlanUser,eCommerceUser,defaultUser
+export AUTHENTICATE_ACCOUNTS=simpleSitePersonalPlanUser,atomicUser,defaultUser
 ```
 
 ### Use the mobile viewport
