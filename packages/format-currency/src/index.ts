@@ -5,6 +5,7 @@ export * from './types';
 
 let defaultLocale: string | undefined = undefined;
 const formatterCache = new Map< string, Intl.NumberFormat >();
+const fallbackLocale = 'en';
 
 /**
  * Set a default locale for use by `formatCurrency` and `getCurrencyObject`.
@@ -18,12 +19,12 @@ export function setDefaultLocale( locale: string | undefined ): void {
 
 function getLocaleFromBrowser() {
 	if ( typeof window === 'undefined' ) {
-		return 'en';
+		return fallbackLocale;
 	}
 	if ( window.navigator?.languages?.length > 0 ) {
 		return window.navigator.languages[ 0 ];
 	}
-	return window.navigator?.language ?? 'en';
+	return window.navigator?.language ?? fallbackLocale;
 }
 
 function getFormatterCacheKey( {
@@ -65,17 +66,22 @@ function getCachedFormatter( {
 		}
 	}
 
-	const formatter = new Intl.NumberFormat( addNumberingSystemToLocale( locale ), {
-		style: 'currency',
-		currency,
-		// There's an option called `trailingZeroDisplay` but it does not yet work
-		// in FF so we have to strip zeros manually.
-		...( noDecimals ? { maximumFractionDigits: 0, minimumFractionDigits: 0 } : {} ),
-	} );
+	try {
+		const formatter = new Intl.NumberFormat( addNumberingSystemToLocale( locale ), {
+			style: 'currency',
+			currency,
+			// There's an option called `trailingZeroDisplay` but it does not yet work
+			// in FF so we have to strip zeros manually.
+			...( noDecimals ? { maximumFractionDigits: 0, minimumFractionDigits: 0 } : {} ),
+		} );
 
-	formatterCache.set( cacheKey, formatter );
+		formatterCache.set( cacheKey, formatter );
 
-	return formatter;
+		return formatter;
+	} catch ( error ) {
+		// If the locale is invalid, creating the NumberFormat will throw.
+		return getCachedFormatter( { locale: fallbackLocale, currency, noDecimals } );
+	}
 }
 
 /**
