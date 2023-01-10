@@ -1,5 +1,6 @@
 import page from 'page';
 import { addQueryArgs } from 'calypso/lib/route';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { hideMasterbar } from 'calypso/state/ui/actions';
 import JetpackComFooter from '../pricing/jpcom-footer';
 import JetpackComMasterbar from '../pricing/jpcom-masterbar';
@@ -22,14 +23,16 @@ export function jetpackComparisonContext( context: PageJS.Context, next: () => v
 	context.footer = <JetpackComFooter />;
 
 	context.primary = (
-		<Content
-			footer={ context.footer }
-			header={ context.header }
-			locale={ lang }
-			nav={ context.nav }
-			urlQueryArgs={ urlQueryArgs }
-			rootUrl={ context.pathname }
-		/>
+		<CalypsoShoppingCartProvider>
+			<Content
+				footer={ context.footer }
+				header={ context.header }
+				locale={ lang }
+				nav={ context.nav }
+				urlQueryArgs={ urlQueryArgs }
+				rootUrl={ context.pathname }
+			/>
+		</CalypsoShoppingCartProvider>
 	);
 	next();
 }
