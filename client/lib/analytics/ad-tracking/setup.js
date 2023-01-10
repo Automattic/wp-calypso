@@ -1,3 +1,4 @@
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { mayWeInitTracker, mayWeTrackByTracker } from '../tracker-buckets';
 import {
 	ADROLL_PAGEVIEW_PIXEL_URL_1,
@@ -48,7 +49,7 @@ if ( typeof window !== 'undefined' ) {
 
 	// Linkedin
 	if ( mayWeInitTracker( 'linkedin' ) ) {
-		setupLinkedinGlobal();
+		setupLinkedinInsight( isJetpackCloud() ? TRACKING_IDS.jetpackLinkedinId : null );
 	}
 
 	// Quora
@@ -75,10 +76,28 @@ if ( typeof window !== 'undefined' ) {
 /**
  * Initializes Linkedin tracking.
  */
-function setupLinkedinGlobal() {
-	if ( ! window._linkedin_data_partner_id ) {
-		window._linkedin_data_partner_id = TRACKING_IDS.linkedInPartnerId;
+function setupLinkedinInsight( partnerId ) {
+	if ( window._linkedin_data_partner_id && window.lintrk ) {
+		return;
 	}
+
+	window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+	window._linkedin_data_partner_ids.push( partnerId );
+
+	( function ( l ) {
+		if ( ! l ) {
+			window.lintrk = function ( a, b ) {
+				window.lintrk.q.push( [ a, b ] );
+			};
+			window.lintrk.q = [];
+		}
+		const s = document.getElementsByTagName( 'script' )[ 0 ];
+		const b = document.createElement( 'script' );
+		b.type = 'text/javascript';
+		b.async = true;
+		b.src = 'https://snap.licdn.com/li.lms-analytics/insight.min.js';
+		s.parentNode.insertBefore( b, s );
+	} )( window.lintrk );
 }
 
 /**
