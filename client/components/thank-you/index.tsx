@@ -88,21 +88,22 @@ const ThankYouNotice = ( props: ThankYouNoticeProps ) => {
 };
 
 const ThankYouNextStep = ( props: ThankYouNextStepProps ) => {
-	const { stepCta, stepDescription, stepKey, stepTitle } = props;
+	const { stepIcon, stepCta, stepDescription, stepKey, stepTitle } = props;
 
 	return (
 		<div className="thank-you__step" key={ stepKey }>
+			{ stepIcon && <div className="thank-you__step-icon">{ stepIcon }</div> }
 			<div>
 				<h3>{ stepTitle }</h3>
 				<p>{ stepDescription }</p>
 			</div>
-			<div className="thank-you__step-cta">{ stepCta }</div>
+			{ stepCta && <div className="thank-you__step-cta">{ stepCta }</div> }
 		</div>
 	);
 };
 
 const ThankYouSection = ( props: ThankYouSectionProps ) => {
-	const { nextSteps, sectionTitle } = props;
+	const { nextSteps, sectionTitle, nextStepsClassName } = props;
 
 	const nextStepComponents = nextSteps.map( ( nextStepProps, index ) => (
 		<ThankYouNextStep key={ index } { ...nextStepProps } />
@@ -110,11 +111,13 @@ const ThankYouSection = ( props: ThankYouSectionProps ) => {
 
 	return (
 		<ThankYouSectionContainer>
-			<ThankYouSectionTitle className="thank-you__body-header wp-brand-font">
-				{ sectionTitle }
-			</ThankYouSectionTitle>
+			{ sectionTitle && (
+				<ThankYouSectionTitle className="thank-you__body-header wp-brand-font">
+					{ sectionTitle }
+				</ThankYouSectionTitle>
+			) }
 
-			<ThankYouNextSteps>{ nextStepComponents }</ThankYouNextSteps>
+			<ThankYouNextSteps className={ nextStepsClassName }>{ nextStepComponents }</ThankYouNextSteps>
 		</ThankYouSectionContainer>
 	);
 };

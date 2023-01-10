@@ -2,10 +2,11 @@ import { TranslateResult } from 'i18n-calypso';
 import * as React from 'react';
 
 export type ThankYouNextStepProps = {
-	stepCta: React.ReactNode | React.ReactFragment;
-	stepDescription: TranslateResult;
+	stepCta?: React.ReactNode | React.ReactFragment;
+	stepDescription: TranslateResult | React.ReactElement;
 	stepKey: string;
-	stepTitle: TranslateResult;
+	stepTitle?: TranslateResult;
+	stepIcon?: React.ReactNode;
 };
 
 export type ThankYouNoticeProps = {
@@ -17,7 +18,8 @@ export type ThankYouNoticeProps = {
 export type ThankYouSectionProps = {
 	nextSteps: ThankYouNextStepProps[];
 	sectionKey: string;
-	sectionTitle: TranslateResult;
+	sectionTitle?: TranslateResult;
+	nextStepsClassName?: string;
 };
 
 export type ThankYouSupportLink = {
