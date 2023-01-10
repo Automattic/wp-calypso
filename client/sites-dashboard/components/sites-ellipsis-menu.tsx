@@ -1,4 +1,6 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
+	WPCOM_FEATURES_ATOMIC,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 } from '@automattic/calypso-products';
@@ -11,6 +13,7 @@ import { ComponentType, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
@@ -176,6 +179,27 @@ const PreviewSiteModalItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	);
 };
 
+const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
+	const { __ } = useI18n();
+	const hasAtomicFeature = useSafeSiteHasFeature( site.ID, WPCOM_FEATURES_ATOMIC );
+	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const isSiteOwner = site.site_owner === userId;
+
+	if ( ! hasAtomicFeature || ! isSiteOwner ) {
+		return null;
+	}
+
+	const copySiteHref = `/setup/wooexpress`; // TODO: Update this to the correct URL
+	return (
+		<MenuItemLink
+			href={ copySiteHref }
+			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_copy_site' ) }
+		>
+			{ __( 'Create a copy of this site' ) }
+		</MenuItemLink>
+	);
+};
+
 const ExternalGridIcon = styled( Gridicon )( {
 	insetBlockStart: '-1px',
 	marginInlineStart: '4px',
@@ -244,6 +268,7 @@ export const SitesEllipsisMenu = ( {
 					<ManagePluginsItem { ...props } />
 					{ ! isNotAtomicJetpack( site ) && <HostingConfigItem { ...props } /> }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
+					{ isEnabled( 'sites/copy-site' ) && <CopySiteItem { ...props } /> }
 					<WpAdminItem { ...props } />
 				</SiteMenuGroup>
 			) }
