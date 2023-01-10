@@ -22,6 +22,10 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 		if ( submit ) {
 			const assignTrialPlan = async () => {
 				try {
+					if ( ! data?.siteSlug ) {
+						throw new Error( 'Invalid site slug' );
+					}
+
 					await wpcom.req.post(
 						`/sites/${ data?.siteSlug }/ecommerce-trial/add/ecommerce-trial-bundle-monthly`,
 						{
