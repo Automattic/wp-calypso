@@ -31,7 +31,9 @@ import {
 	hasDomainRegistration,
 	hasTransferProduct,
 	hasDIFMProduct,
+	hasPremiumPlan,
 } from 'calypso/lib/cart-values/cart-items';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
@@ -296,6 +298,10 @@ export default function WPCheckout( {
 	}
 
 	const isDIFMInCart = hasDIFMProduct( responseCart );
+
+	if ( hasPremiumPlan( responseCart ) ) {
+		loadExperimentAssignment( 'calypso_plans_postpurchasepage_newdesign_202301_v1' );
+	}
 
 	return (
 		<CheckoutStepGroup
