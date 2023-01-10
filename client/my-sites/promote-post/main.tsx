@@ -169,7 +169,7 @@ export default function PromotedPosts( { tab }: Props ) {
 				brandFont
 				className="advertising__page-header"
 				headerText={ translate( 'Advertising' ) }
-				subHeaderText={ subtitle }
+				subHeaderText={ campaignsData?.length ? subtitle : '' }
 				align="left"
 			/>
 
