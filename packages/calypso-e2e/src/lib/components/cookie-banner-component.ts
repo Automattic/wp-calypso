@@ -13,7 +13,7 @@ export class CookieBannerComponent {
 	/**
 	 * Constructs an instance of the component.
 	 *
-	 * @param {Page} page The underlying page.
+	 * @param {Page | Locator} page The underlying page.
 	 */
 	constructor( page: Page | Locator ) {
 		this.page = page;
