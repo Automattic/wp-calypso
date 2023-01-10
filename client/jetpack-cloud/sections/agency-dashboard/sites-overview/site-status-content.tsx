@@ -157,6 +157,7 @@ export default function SiteStatusContent( {
 				site={ rows.site.value }
 				settings={ rows.monitor.settings }
 				status={ status }
+				siteError={ siteError }
 			/>
 		);
 	}
