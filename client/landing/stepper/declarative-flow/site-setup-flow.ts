@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import { Design } from '@automattic/design-picker';
+import { Design, useDesignsBySite } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
@@ -104,6 +104,12 @@ const siteSetupFlow: Flow = {
 				: [] ),
 			{ slug: 'difmStartingPoint', component: DIFMStartingPoint },
 		];
+	},
+	useSideEffect() {
+		// Prefetch designs for a smooth design picker UX.
+		// Except for Unified Design Picker which uses a separate API endpoint (wpcom/v2/starter-designs).
+		const site = useSite();
+		useDesignsBySite( site, { enabled: !! site && ! isEnabled( 'signup/design-picker-unified' ) } );
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;

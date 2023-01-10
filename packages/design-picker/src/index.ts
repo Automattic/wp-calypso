@@ -35,3 +35,4 @@ export type {
 } from './types';
 export { useCategorization } from './hooks/use-categorization';
 export { useThemeDesignsQuery } from './hooks/use-theme-designs-query';
+export { useDesignsBySite } from '././hooks/use-designs-by-site';
