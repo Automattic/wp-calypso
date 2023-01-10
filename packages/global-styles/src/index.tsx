@@ -1,9 +1,3 @@
-interface Props {
-	blablabla: string;
-}
-
-const GlobalStyles = ( { blablabla }: Props ) => {
-	return blablabla;
-};
-
-export default GlobalStyles;
+export * from './components';
+export { useUpdateGlobalStylesUserConfig } from './hooks';
+export * from './types';
