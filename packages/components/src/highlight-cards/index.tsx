@@ -1,7 +1,7 @@
+import { eye } from '@automattic/components/src/icons';
 import { commentContent, Icon, people, starEmpty } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import eye from './eye';
 import HighlightCard from './highlight-card';
 import './style.scss';
 
