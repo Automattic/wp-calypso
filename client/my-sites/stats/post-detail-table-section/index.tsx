@@ -4,6 +4,7 @@ import { useState } from 'react';
 import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import PostMonths from '../stats-detail-months';
 import PostWeeks from '../stats-detail-weeks';
+import StatsHeatMapTableLegends from '../stats-heap-map/legends';
 
 import './style.scss';
 
@@ -58,22 +59,7 @@ export default function PostDetailTableSection( {
 							) }
 						</div>
 
-						<div className="stats-views__key-container">
-							<span className="stats-views__key-label">
-								{ translate( 'Fewer Views', {
-									context: 'Legend label in stats all-time views table',
-								} ) }
-							</span>
-							<ul className="stats-views__key">
-								<li className="stats-views__key-item level-1" />
-								<li className="stats-views__key-item level-2" />
-							</ul>
-							<span className="stats-views__key-label">
-								{ translate( 'More Views', {
-									context: 'Legend label in stats all-time views table',
-								} ) }
-							</span>
-						</div>
+						<StatsHeatMapTableLegends levels={ 2 } />
 					</Card>
 				</div>
 			</div>
