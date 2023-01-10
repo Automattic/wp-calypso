@@ -49,36 +49,36 @@ function useFeatureList(): FeatureListItem[] {
 
 	return [
 		{
-			title: translate( 'SFTP & Database Access' ),
+			title: translate( 'SFTP' ),
 			description: translate(
-				`Access and edit your website's files directly by creating SFTP credentials and using an SFTP client`
+				`Access and edit your website's files directly using an SFTP client`
 			),
 			icon: iconCloud,
 		},
 		{
 			title: translate( 'CLI Access' ),
-			description: translate( 'Get on the Command Line Interface and perform high level tasks' ),
+			description: translate(
+				'Use WP-CLI to manage plugins and users, or perform search-and-replace across your site'
+			),
 			icon: iconTerminal,
 		},
 		{
 			title: translate( 'SSH' ),
 			description: translate(
-				'Enable SSH to perform advanced site operations using the command line'
+				`Work the way you're used to working with SSH access to your website`
 			),
 			icon: iconSSH,
 		},
 		{
-			title: translate( 'Pick Your Datacenter' ),
+			title: translate( 'Pick Your Data Center' ),
 			description: translate(
-				'Select and change where you want to host your WordPress.com website'
+				'Choose a primary data center for your site while still enjoying multi-region redundancy'
 			),
 			icon: iconServerRacks,
 		},
 		{
-			title: translate( 'PhpMyAdmin' ),
-			description: translate(
-				"Be able to dive deep into your website's database columns and SQL tables"
-			),
+			title: translate( 'Database Access' ),
+			description: translate( `Inspect your website's tables and run SQL queries via phpMyAdmin` ),
 			icon: iconPHP,
 		},
 		{
