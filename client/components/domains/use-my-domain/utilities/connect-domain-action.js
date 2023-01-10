@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import page from 'page';
 import { stepSlug } from 'calypso/components/domains/connect-domain-step/constants';
+import { isSubdomain } from 'calypso/lib/domains';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList, domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -36,7 +37,12 @@ export const connectDomainAction =
 							}
 						)
 					);
-					const step = result.points_to_wpcom ? stepSlug.SUGGESTED_CONNECTED : '';
+					let step = '';
+					if ( result.points_to_wpcom ) {
+						step = isSubdomain( domain )
+							? stepSlug.SUBDOMAIN_SUGGESTED_CONNECTED
+							: stepSlug.SUGGESTED_CONNECTED;
+					}
 					page( domainMappingSetup( selectedSite.slug, domain, step, false, true ) );
 				} )
 				.catch( ( error ) => {

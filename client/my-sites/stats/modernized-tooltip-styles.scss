@@ -1,0 +1,88 @@
+// Overwrite Tooltip styles on Stats tab pages
+// Could be applied to component Chart styles for the new Chart Tooltip styles
+.tooltip.popover.chart__tooltip {
+	&.is-bottom-right,
+	&.is-bottom-left,
+	&.is-bottom {
+		.popover__arrow {
+			border-bottom-color: var(--color-neutral-100);
+		}
+	}
+
+	&.is-top,
+	&.is-top-left,
+	&.is-top-right {
+		.popover__arrow {
+			border-top-color: var(--color-neutral-100);
+		}
+	}
+
+	&.is-left {
+		.popover__arrow {
+			border-left-color: var(--color-neutral-100);
+		}
+	}
+
+	&.is-right {
+		.popover__arrow {
+			border-right-color: var(--color-neutral-100);
+		}
+	}
+
+	.popover__inner {
+		color: var(--color-text-inverted);
+		background: var(--color-neutral-100);
+		font-size: $font-body-small;
+		padding: 16px 24px;
+
+		ul {
+			li {
+				font-size: $font-body-small;
+				font-weight: 500;
+				line-height: 20px;
+				letter-spacing: -0.24px;
+				margin-bottom: 10px;
+				text-transform: none;
+
+				&:last-child {
+					margin-bottom: 0;
+				}
+
+				.value {
+					color: inherit;
+				}
+
+				.gridicon {
+					margin-right: 12px;
+				}
+			}
+		}
+	}
+
+	.module-content-list-item {
+		&.is-date-label {
+			font-weight: 600;
+			border-bottom: 0;
+		}
+
+		&.is-published {
+			margin-bottom: 4px;
+		}
+
+		&.is-published-item {
+			height: auto;
+			font-size: $font-body-extra-small;
+			margin-bottom: 0;
+			padding-left: 30px;
+			text-decoration: underline;
+
+			.label {
+				height: auto;
+				line-height: 20px;
+				color: inherit;
+				letter-spacing: inherit;
+				word-break: break-word;
+			}
+		}
+	}
+}

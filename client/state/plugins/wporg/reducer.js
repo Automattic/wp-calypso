@@ -4,7 +4,7 @@ import {
 	PLUGINS_WPORG_PLUGIN_RECEIVE,
 	PLUGINS_WPORG_PLUGIN_REQUEST,
 } from 'calypso/state/action-types';
-import { combineReducers } from 'calypso/state/utils';
+import { combineReducers, withPersistence } from 'calypso/state/utils';
 
 function updatePluginState( state = {}, pluginSlug, attributes ) {
 	return Object.assign( {}, state, {
@@ -47,7 +47,7 @@ export function fetchingLists( state = {}, action ) {
 	return state;
 }
 
-export function items( state = {}, action ) {
+function itemsReducer( state = {}, action ) {
 	const { type, pluginSlug } = action;
 	switch ( type ) {
 		case PLUGINS_WPORG_PLUGIN_RECEIVE:
@@ -67,6 +67,10 @@ export function items( state = {}, action ) {
 			return state;
 	}
 }
+
+export const items = withPersistence( itemsReducer );
+
+// export const items = itemsReducer;
 
 export function listsPagination( state = {}, action ) {
 	const { category, pagination } = action;

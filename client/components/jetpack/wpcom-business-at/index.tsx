@@ -53,17 +53,17 @@ interface TransferFailureNoticeProps {
 }
 
 const content = {
-	documentHeadTitle: 'Activate Jetpack Backup now',
-	header: String( translate( 'Jetpack Backup' ) ),
+	documentHeadTitle: 'Activate Jetpack VaultPress Backup now',
+	header: String( translate( 'Jetpack VaultPress Backup' ) ),
 	primaryPromo: {
-		title: translate( 'Get time travel for your site with Jetpack Backup' ),
+		title: translate( 'Get time travel for your site with Jetpack VaultPress Backup' ),
 		image: { path: JetpackBackupSVG },
 		content: translate(
-			'Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
+			'VaultPress Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
 		),
 		promoCTA: {
-			text: translate( 'Activate Jetpack Backup now' ),
-			loadingText: translate( 'Activating Jetpack Backup' ),
+			text: translate( 'Activate Jetpack VaultPress Backup now' ),
+			loadingText: translate( 'Activating Jetpack VaultPress Backup' ),
 		},
 	},
 };

@@ -69,20 +69,20 @@ over the course of a series of commits, the snapshot diffs record the evolution 
 structure. Pretty cool 😎
 
 ```js
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import LocaleSuggestions from '../locale-suggestions';
 import MyComponent from '../my-component';
 
 describe( 'MyComponent', () => {
 	test( 'should render', () => {
-		const wrapper = shallow( <MyComponent /> );
-		expect( wrapper ).toMatchSnapshot();
+		const { container } = render( <MyComponent /> );
+		expect( container ).toMatchSnapshot();
 	} );
 
 	test( 'should render with locale suggestions if locale is provided', () => {
-		const wrapper = shallow( <MyComponent locale="es" /> );
-		expect( wrapper ).toMatchSnapshot();
-		expect( wrapper.find( LocaleSuggestions ) ).toHaveLength( 1 );
+		const { container } = render( <MyComponent locale="es" /> );
+		expect( container ).toMatchSnapshot();
+		expect( screen.getByText( 'Also available in' ) ).toBeVisible();
 	} );
 } );
 ```
@@ -140,24 +140,15 @@ conjunction with other tests that do describe our expectations, like in the exam
 
 ```
 test( 'should render with locale suggestions if locale is provided', () => {
-  const wrapper = shallow( <MyComponent locale="es" /> );
+  const { container } = render( <MyComponent locale="es" /> );
 
   // Snapshot will catch unintended changes
-  expect( wrapper ).toMatchSnapshot();
+  expect( container ).toMatchSnapshot();
 
   // This is what we actually expect to find in our test
-  expect( wrapper.find( LocaleSuggestions ) ).toHaveLength( 1 );
+  expect( screen.getByText( 'Also available in' ) ).toBeVisible();
 } );
 ```
-
-[`shallow`](http://airbnb.io/enzyme/docs/api/shallow.html) rendering is your friend:
-
-> Shallow rendering is useful to constrain yourself to testing a component as a unit, and to ensure
-> that your tests aren't indirectly asserting on behavior of child components.
-
-It's tempting to snapshot full renders, but that makes for huge snapshots. Additionally, you're no
-longer testing your component, but all of the components in the entire tree. With `shallow`, we
-snapshot just the components that are directly rendered by our component.
 
 [snapshot testing]: https://facebook.github.io/jest/docs/en/snapshot-testing.html
 [update snapshots]: https://facebook.github.io/jest/docs/en/snapshot-testing.html#updating-snapshots

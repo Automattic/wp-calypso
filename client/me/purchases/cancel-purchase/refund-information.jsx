@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -18,6 +19,7 @@ import { getIncludedDomainPurchase } from 'calypso/state/purchases/selectors';
 
 const CancelPurchaseRefundInformation = ( {
 	purchase,
+	isJetpackPurchase,
 	includedDomainPurchase,
 	cancelBundledDomain,
 	confirmCancelBundledDomain,
@@ -237,6 +239,21 @@ const CancelPurchaseRefundInformation = ( {
 				}
 
 				showSupportLink = false;
+			} else if ( isJetpackPurchase && config.isEnabled( 'jetpack/cancel-through-main-flow' ) ) {
+				// Refundable Jetpack subscription
+				text = [];
+				text.push(
+					i18n.translate(
+						'Because you are within the %(refundPeriodInDays)d day refund period, ' +
+							'your plan will be cancelled and removed from your site immediately and you will receive a full refund. ',
+						{
+							args: { refundPeriodInDays },
+						}
+					),
+					i18n.translate(
+						'If you want to keep the subscription until the renewal date, please cancel after the refund period has ended.'
+					)
+				);
 			} else {
 				text = i18n.translate(
 					'When you cancel your subscription within %(refundPeriodInDays)d days of purchasing, ' +
@@ -346,6 +363,7 @@ const CancelPurchaseRefundInformation = ( {
 
 CancelPurchaseRefundInformation.propTypes = {
 	purchase: PropTypes.object.isRequired,
+	isJetpackPurchase: PropTypes.bool.isRequired,
 	includedDomainPurchase: PropTypes.object,
 	cancelBundledDomain: PropTypes.bool,
 	confirmCancelBundledDomain: PropTypes.bool,

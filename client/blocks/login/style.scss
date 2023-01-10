@@ -186,7 +186,12 @@
 	}
 
 	.visit-site {
-		margin: -12px 0 24px;
+		margin: 12px 0 24px;
+		text-align: left;
+
+		@include break-mobile {
+			text-align: center;
+		}
 	}
 }
 

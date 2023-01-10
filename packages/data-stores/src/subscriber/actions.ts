@@ -13,9 +13,11 @@ export function createActions() {
 	/**
 	 * ↓ Import subscribers by CSV
 	 */
-	const importCsvSubscribersStart = ( siteId: number ) => ( {
+	const importCsvSubscribersStart = ( siteId: number, file?: File, emails: string[] = [] ) => ( {
 		type: 'IMPORT_CSV_SUBSCRIBERS_START' as const,
 		siteId,
+		file,
+		emails,
 	} );
 
 	const importCsvSubscribersStartSuccess = ( siteId: number, jobId: number ) => ( {
@@ -36,7 +38,7 @@ export function createActions() {
 	} );
 
 	function* importCsvSubscribers( siteId: number, file?: File, emails: string[] = [] ) {
-		yield importCsvSubscribersStart( siteId );
+		yield importCsvSubscribersStart( siteId, file, emails );
 
 		try {
 			const data: ImportSubscribersResponse = yield wpcomRequest( {

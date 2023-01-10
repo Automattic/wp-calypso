@@ -28,7 +28,7 @@
 			{
 				"/^font-size$|^font$/": [ "rem" ],
 				"line-height": [ "px" ],
-				"/radius$/": [ "px" ]
+				"/radius$/": [ "px", "%" ]
 			},
 			{ "ignore": [ "inside-function" ] }
 		],
@@ -45,6 +45,19 @@
 				"units": [ "px" ]
 			}
 		],
-		"unit-allowed-list": [ "%", "deg", "em", "fr", "ms", "px", "rem", "s", "vh", "vw", "svh" ]
+		"unit-allowed-list": [
+			"%",
+			"deg",
+			"em",
+			"fr",
+			"ms",
+			"px",
+			"rem",
+			"s",
+			"vh",
+			"vw",
+			"svh",
+			"dvh"
+		]
 	}
 }

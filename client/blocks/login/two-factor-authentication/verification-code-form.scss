@@ -10,7 +10,7 @@
 
 .woo .two-factor-authentication__verification-code-form {
 	margin-bottom: 52px;
-	padding-bottom: 0;
+	padding: 16px 0 0;
 	text-align: center;
 
 	@media screen and ( max-width: 660px ) {
@@ -53,7 +53,6 @@
 		}
 	}
 }
-
 
 .security-key-form__add-wait-for-key {
 	text-align: center;

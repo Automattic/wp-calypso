@@ -2,15 +2,14 @@
 @import "@wordpress/base-styles/mixins";
 
 .jetpack-product-store__need-more-info {
-	background-color: var(--color-surface);
 	padding: 5rem 0;
 	text-align: center;
 }
 
 .jetpack-product-store__need-more-info-headline {
 	padding-bottom: 0.9375rem;
-	font-size: 1.5rem;
-	font-weight: 700;
+	font-size: 1.5rem !important;
+	font-weight: 700 !important;
 	line-height: inherit;
 }
 

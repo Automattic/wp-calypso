@@ -1,4 +1,5 @@
 $theme-info-height: 54px;
+$soft-launch-badge-font-size: 0.725rem;
 
 .theme {
 	padding: 0;
@@ -101,7 +102,6 @@ $theme-info-height: 54px;
 .theme__upsell-icon svg {
 	transform: scale(0.8);
 	border: 2px solid var(--color-neutral-20);
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 100%;
 	display: inline-block;
 	width: 22px;
@@ -119,7 +119,6 @@ $theme-info-height: 54px;
 	text-align: center;
 	svg {
 		transform: scale(0.8);
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 100%;
 		display: inline-block;
 		width: 30px;
@@ -203,6 +202,10 @@ $theme-info-height: 54px;
 			opacity: 1;
 			animation: theme__thumbnail-label 150ms ease-in-out;
 		}
+	}
+
+	.accessible-focus &:focus .theme__thumbnail-label {
+		box-shadow: 0 0 0 2px var(--color-primary-light);
 	}
 
 	.theme__thumbnail-label {
@@ -365,7 +368,7 @@ $theme-info-height: 54px;
 
 		.accessible-focus &:focus {
 			z-index: z-index("root", ".accessible-focus .theme__more-button button:focus");
-			outline: solid 3px var(--color-primary-light);
+			box-shadow: inset 0 0 0 2px var(--color-primary-light);
 		}
 	}
 
@@ -402,4 +405,21 @@ $theme-info-height: 54px;
 
 .theme__tooltip {
 	max-width: 300px;
+}
+
+.theme__info-soft-launched {
+	position: absolute;
+	top: 7px;
+	left: 7px;
+
+	.theme__info-soft-launched-banner {
+		background-color: var(--color-warning-20);
+		color: var(--color-warning-80);
+		font-size: $soft-launch-badge-font-size;
+		font-weight: bold;
+		line-height: 1.2;
+		text-transform: uppercase;
+		padding: 3px 6px;
+		border-radius: 2px;
+	}
 }

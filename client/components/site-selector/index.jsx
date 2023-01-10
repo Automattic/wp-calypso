@@ -19,6 +19,7 @@ import allSitesMenu from 'calypso/my-sites/sidebar/static-data/all-sites-menu';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
+import { canAnySiteHavePlugins } from 'calypso/state/selectors/can-any-site-have-plugins';
 import getSites from 'calypso/state/selectors/get-sites';
 import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
@@ -59,6 +60,7 @@ export class SiteSelector extends Component {
 		showManageSitesButton: PropTypes.bool,
 		showHiddenSites: PropTypes.bool,
 		maxResults: PropTypes.number,
+		hasSiteWithPlugins: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -311,14 +313,22 @@ export class SiteSelector extends Component {
 		return sites;
 	}
 
+	mapAllSitesPath = ( path ) => {
+		if ( path.includes( '/posts/my' ) ) {
+			return path.replace( '/posts/my', '/posts' );
+		}
+
+		return path;
+	};
+
 	renderAllSites() {
 		if ( ! this.props.showAllSites || this.state.searchTerm || ! this.props.allSitesPath ) {
 			return null;
 		}
 
-		const multiSiteContext = allSitesMenu().find(
-			( menu ) => menu.url === this.props.allSitesPath.replace( '/posts/my', '/posts' )
-		);
+		const multiSiteContext = allSitesMenu( {
+			showManagePlugins: this.props.hasSiteWithPlugins,
+		} ).find( ( menuItem ) => menuItem.url === this.mapAllSitesPath( this.props.allSitesPath ) );
 
 		// Let's not display the all sites button if there is no multi-site context.
 		if ( this.props.showManageSitesButton && ! multiSiteContext ) {
@@ -575,6 +585,7 @@ const mapState = ( state ) => {
 		visibleSites: getVisibleSites( state ),
 		allSitesSingleUser: areAllSitesSingleUser( state ),
 		hasAllSitesList: hasAllSitesList( state ),
+		hasSiteWithPlugins: canAnySiteHavePlugins( state ),
 	};
 };
 

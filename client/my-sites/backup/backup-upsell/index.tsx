@@ -43,7 +43,7 @@ const BackupsMultisiteBody: FunctionComponent = () => {
 		<Upsell
 			headerText={ translate( 'WordPress multi-sites are not supported' ) }
 			bodyText={ translate(
-				"We're sorry, Jetpack Backup is not compatible with multisite WordPress installations at this time."
+				"We're sorry, Jetpack VaultPress Backup is not compatible with multisite WordPress installations at this time."
 			) }
 			iconComponent={ <BackupsUpsellIcon /> }
 		/>
@@ -115,7 +115,7 @@ const BackupsUpsellPage: FunctionComponent< UpsellComponentProps > = ( { reason 
 	}
 	return (
 		<Main className="backup-upsell" wideLayout>
-			<DocumentHead title="Backup" />
+			<DocumentHead title="VaultPress Backup" />
 			<SidebarNavigation />
 			<div className="backup-upsell__content">{ body }</div>
 		</Main>

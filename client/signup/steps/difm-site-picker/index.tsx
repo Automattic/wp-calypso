@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config/';
 import { Card } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -77,7 +76,7 @@ export default function DIFMSitePickerStep( props: Props ) {
 	const filterSites = ( site: SiteDetails ) => {
 		return !! (
 			site.capabilities?.manage_options &&
-			( isEnabled( 'difm/allow-woa-sites' ) || ! site.jetpack ) &&
+			( site.is_wpcom_atomic || ! site.jetpack ) &&
 			! site.options?.is_wpforteams_site &&
 			! site.options?.is_difm_lite_in_progress
 		);

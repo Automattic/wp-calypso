@@ -2,14 +2,10 @@ import { Button } from '@automattic/components';
 import { Onboard } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useExperiment } from 'calypso/lib/explat';
-import DIFMLink from './difm-link';
-import { CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME, useGoals } from './goals';
-import ImportLink from './import-link';
+import { useGoals } from './goals';
 import SelectCard from './select-card';
 
 type SelectGoalsProps = {
-	displayAllGoals: boolean;
 	onChange: ( selectedGoals: Onboard.SiteGoal[] ) => void;
 	onSubmit: ( selectedGoals: Onboard.SiteGoal[] ) => void;
 	selectedGoals: Onboard.SiteGoal[];
@@ -37,17 +33,20 @@ const Placeholder = styled.div`
 
 const SiteGoal = Onboard.SiteGoal;
 
-export const SelectGoals = ( {
-	displayAllGoals,
-	onChange,
-	onSubmit,
-	selectedGoals,
-}: SelectGoalsProps ) => {
+export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsProps ) => {
 	const translate = useTranslate();
-	const goalOptions = useGoals( displayAllGoals );
-	const [ isBuiltByExpressExperimentLoading ] = useExperiment(
-		CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME
-	);
+	const goalOptions = useGoals();
+
+	// *******************************************************************************
+	// ****  Experiment skeleton left in for future BBE (Goal) copy change tests  ****
+	// *******************************************************************************
+	//
+	// let [ isBuiltByExpressExperimentLoading ] = useExperiment(
+	// 	CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME
+	// );
+	//
+	// *******************************************************************************
+	const isBuiltByExpressExperimentLoading = false;
 
 	const addGoal = ( goal: Onboard.SiteGoal ) => {
 		const goalSet = new Set( selectedGoals );
@@ -70,21 +69,10 @@ export const SelectGoals = ( {
 		onSubmit( selectedGoals );
 	};
 
-	const handleImportLinkClick = () => {
-		const selectedGoalsWithImport = addGoal( SiteGoal.Import );
-		onSubmit( selectedGoalsWithImport );
-	};
-
-	const handleDIFMLinkClick = () => {
-		const selectedGoalsWithDIFM = addGoal( SiteGoal.DIFM );
-		onSubmit( selectedGoalsWithDIFM );
-	};
 	const hasBuiltByExpressGoal = goalOptions.some( ( g ) => g.key === SiteGoal.DIFM );
 	return (
 		<>
-			{ displayAllGoals && (
-				<div className="select-goals__cards-hint">{ translate( 'Select all that apply' ) }</div>
-			) }
+			<div className="select-goals__cards-hint">{ translate( 'Select all that apply' ) }</div>
 
 			<div className="select-goals__cards-container">
 				{ /* We only need to show the goal loader only if the BBE goal will be displayed */ }
@@ -119,13 +107,6 @@ export const SelectGoals = ( {
 					{ translate( 'Continue' ) }
 				</Button>
 			</div>
-
-			{ ! displayAllGoals && (
-				<div className="select-goals__links-container">
-					<ImportLink onClick={ handleImportLinkClick } />
-					<DIFMLink onClick={ handleDIFMLinkClick } />
-				</div>
-			) }
 		</>
 	);
 };

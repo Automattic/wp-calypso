@@ -3,7 +3,7 @@ import { Button, Gridicon, Dialog, ScreenReaderText } from '@automattic/componen
 import { ExternalLink } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import wooCommerceImage from 'calypso/assets/images/onboarding/woo-commerce.svg';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useThemeDetails } from 'calypso/landing/stepper/hooks/use-theme-details';
@@ -19,8 +19,16 @@ interface UpgradeModalProps {
 	checkout: () => void;
 }
 
+interface UpgradeModalContent {
+	header: JSX.Element;
+	text: JSX.Element;
+	price: JSX.Element | null;
+	action: JSX.Element;
+}
+
 const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps ) => {
 	const translate = useTranslate();
+	const currentLocale = i18n.getLocaleSlug();
 	const theme = useThemeDetails( slug );
 	const features = theme.data && theme.data.taxonomies.theme_feature;
 	const featuresHeading = translate( 'Theme features' ) as string;
@@ -35,92 +43,162 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 		select( PRODUCTS_LIST_STORE ).getProductBySlug( 'business-bundle' )
 	);
 
-	let themePrice;
-	if ( showBundleVersion ) {
-		themePrice = businessPlanProduct?.combined_cost_display;
-	} else {
-		themePrice = premiumPlanProduct?.combined_cost_display;
-	}
-
 	//Wait until we have theme and product data to show content
-	const isLoading = ! themePrice || ! theme.data;
+	const isLoading = ! premiumPlanProduct || ! businessPlanProduct || ! theme.data;
 
-	let header = (
-		<h1 className="upgrade-modal__heading">{ translate( 'Unlock this premium theme' ) }</h1>
-	);
+	// TODO: This is placeholder logic for determining whether the theme is a third party premium theme
+	// Change `false` to `true` in order to test this UI with any premium theme's upgrade modal.
+	const isThirdParty = isEnabled( 'themes/subscription-purchases' ) || false;
 
-	let text = (
-		<p>
-			{ translate(
-				'You can purchase a subscription to use this theme or join the Premium plan to get it for free.'
-			) }
-		</p>
-	);
+	const getStandardPurchaseModalData = (): UpgradeModalContent => {
+		const planName = premiumPlanProduct?.product_name;
+		const planPrice = premiumPlanProduct?.combined_cost_display;
 
-	const price = (
-		<div className="upgrade-modal__theme-price">
-			{ translate( '{{span}}%(themePrice)s{{/span}} per year', {
-				components: {
-					span: <span />,
-				},
-				args: {
-					themePrice,
-				},
-			} ) }
-		</div>
-	);
+		return {
+			header: (
+				<h1 className="upgrade-modal__heading">{ translate( 'Unlock this premium theme' ) }</h1>
+			),
+			text: (
+				<p>
+					{ currentLocale === 'en' ||
+					currentLocale?.startsWith( 'en-' ) ||
+					i18n.hasTranslation(
+						"Get access to our Premium themes, and a ton of other features, with a subscription to the Premium plan. It's {{strong}}%s{{/strong}} a year, risk-free with a 14-day money-back guarantee."
+					)
+						? translate(
+								"Get access to our Premium themes, and a ton of other features, with a subscription to the Premium plan. It's {{strong}}%s{{/strong}} a year, risk-free with a 14-day money-back guarantee.",
+								{
+									components: {
+										strong: <strong />,
+									},
+									args: planPrice,
+								}
+						  )
+						: translate(
+								"This theme requires %(planName)s to unlock. It's %(planPrice)s a year, risk-free with a 14-day money-back guarantee.",
+								{
+									args: {
+										planName,
+										planPrice,
+									},
+								}
+						  ) }
+				</p>
+			),
+			price: null,
+			action: (
+				<div className="upgrade-modal__actions bundle">
+					<Button className="upgrade-modal__cancel" onClick={ () => closeModal() }>
+						{ translate( 'Cancel' ) }
+					</Button>
+					<Button className="upgrade-modal__upgrade-plan" primary onClick={ () => checkout() }>
+						{ translate( 'Upgrade to activate' ) }
+					</Button>
+				</div>
+			),
+		};
+	};
 
-	let action = (
-		<>
-			<div className="upgrade-modal__actions">
-				<Button className="upgrade-modal__upgrade" primary onClick={ () => checkout() }>
-					{ translate( 'Buy and activate theme' ) }
-				</Button>
-			</div>
-			<p className="upgrade-modal__plan-nudge">
-				{ translate( 'or get it for free when on the {{button}}Premium plan{{/button}}', {
-					components: {
-						button: <Button onClick={ () => checkout() } plain />,
-					},
-				} ) }
-			</p>
-		</>
-	);
+	const getBundledFirstPartyPurchaseModalData = (): UpgradeModalContent => {
+		const businessPlanPrice = businessPlanProduct?.combined_cost_display;
+		return {
+			header: (
+				<>
+					<img src={ wooCommerceImage } alt="WooCommerce" className="upgrade-modal__woo-logo" />
+					<h1 className="upgrade-modal__heading bundle">
+						{ translate( 'Unlock this WooCommerce theme' ) }
+					</h1>
+				</>
+			),
+			text: (
+				<p>
+					{ translate(
+						"This theme comes bundled with {{link}}WooCommerce{{/link}} plugin. Upgrade to a Business plan to select this theme and unlock all its features. It's %s per year with a 14-day money-back guarantee.",
+						{
+							components: {
+								link: <ExternalLink target="_blank" href="https://woocommerce.com/" />,
+							},
+							args: businessPlanPrice,
+						}
+					) }
+				</p>
+			),
+			price: null,
+			action: (
+				<div className="upgrade-modal__actions bundle">
+					<Button className="upgrade-modal__cancel" onClick={ () => closeModal() }>
+						{ translate( 'Cancel' ) }
+					</Button>
+					<Button className="upgrade-modal__upgrade-plan" primary onClick={ () => checkout() }>
+						{ translate( 'Upgrade Plan' ) }
+					</Button>
+				</div>
+			),
+		};
+	};
 
-	if ( showBundleVersion ) {
-		header = (
-			<>
-				<img src={ wooCommerceImage } alt="WooCommerce" className="upgrade-modal__woo-logo" />
-				<h1 className="upgrade-modal__heading bundle">
-					{ translate( 'Unlock this WooCommerce theme' ) }
-				</h1>
-			</>
-		);
+	const getThirdPartyPurchaseModalData = (): UpgradeModalContent => {
+		const themePrice = premiumPlanProduct?.combined_cost_display;
+		const businessPlanPrice = businessPlanProduct?.combined_cost_display;
+		return {
+			header: (
+				<>
+					<h1 className="upgrade-modal__heading bundle">{ translate( 'Upgrade to Buy' ) }</h1>
+				</>
+			),
+			text: (
+				<>
+					<p>
+						{ translate(
+							'This premium theme is only available to buy on the Business or eCommerce plans.'
+						) }
+					</p>
+					<p>
+						<strong>To activate this theme, you need:</strong>
+					</p>
+				</>
+			),
+			price: (
+				<>
+					<table className="upgrade-modal__product-list">
+						<tr className="upgrade-modal__product-list-item">
+							<td className="upgrade-modal__product-list-product">{ theme?.data?.name }</td>
+							<td className="upgrade-modal__product-list-price">
+								<strong>{ translate( '%s per year', { args: themePrice } ) }</strong>
+							</td>
+						</tr>
+						<tr className="upgrade-modal__product-list-item">
+							<td className="upgrade-modal__product-list-product">
+								{ translate( 'Business plan' ) }
+							</td>
+							<td className="upgrade-modal__product-list-price">
+								<strong>{ translate( '%s per year', { args: businessPlanPrice } ) }</strong>
+							</td>
+						</tr>
+					</table>
+				</>
+			),
+			action: (
+				<div className="upgrade-modal__actions bundle">
+					<Button className="upgrade-modal__cancel" onClick={ () => closeModal() }>
+						{ translate( 'Cancel' ) }
+					</Button>
+					<Button className="upgrade-modal__upgrade-plan" primary onClick={ () => checkout() }>
+						{ translate( 'Continue' ) }
+					</Button>
+				</div>
+			),
+		};
+	};
 
-		text = (
-			<p>
-				{ translate(
-					"This theme comes bundled with {{link}}WooCommerce{{/link}} plugin. Upgrade to a Business plan to select this theme and unlock all its features. It's %s per year with a 14-day money-back guarantee.",
-					{
-						components: {
-							link: <ExternalLink target="_blank" href="https://woocommerce.com/" />,
-						},
-						args: themePrice,
-					}
-				) }
-			</p>
-		);
+	let modalData = null;
 
-		action = (
-			<div className="upgrade-modal__actions bundle">
-				<Button className="upgrade-modal__cancel" onClick={ () => closeModal() }>
-					{ translate( 'Cancel' ) }
-				</Button>
-				<Button className="upgrade-modal__upgrade-plan" primary onClick={ () => checkout() }>
-					{ translate( 'Upgrade Plan' ) }
-				</Button>
-			</div>
-		);
+	if ( isThirdParty ) {
+		modalData = getThirdPartyPurchaseModalData();
+	} else if ( showBundleVersion ) {
+		modalData = getBundledFirstPartyPurchaseModalData();
+	} else {
+		modalData = getStandardPurchaseModalData();
 	}
 
 	return (
@@ -134,10 +212,10 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 			{ ! isLoading && (
 				<>
 					<div className="upgrade-modal__col">
-						{ header }
-						{ text }
-						{ ! showBundleVersion && price }
-						{ action }
+						{ modalData.header }
+						{ modalData.text }
+						{ modalData.price }
+						{ modalData.action }
 					</div>
 					<div className="upgrade-modal__col">
 						<div className="upgrade-modal__included">

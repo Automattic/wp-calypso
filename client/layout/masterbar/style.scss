@@ -6,7 +6,7 @@ $masterbar-color-secondary: #101517;
 
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "client/assets/stylesheets/shared/animation";
+@import "calypso/assets/stylesheets/shared/animation";
 
 // Hide the masterbar on WP Mobile App views.
 .is-mobile-app-view {
@@ -148,6 +148,14 @@ $masterbar-color-secondary: #101517;
 		flex: 2;
 		.masterbar__item {
 			flex: 0 0 auto;
+		}
+	}
+
+	&--left {
+		@include breakpoint-deprecated( "<660px" ) {
+			a .masterbar__item-content {
+				display: none;
+			}
 		}
 	}
 

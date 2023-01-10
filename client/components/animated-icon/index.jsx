@@ -14,6 +14,9 @@ const AnimatedIcon = ( { icon, className } ) => {
 			loop: false,
 			autoplay: ! reducedMotion,
 			path: icon,
+			rendererSettings: {
+				viewBoxOnly: true,
+			},
 		} );
 
 		if ( reducedMotion ) {

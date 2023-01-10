@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import debugModule from 'debug';
 import { map, pick, throttle } from 'lodash';
+import { setStoredItem } from 'calypso/lib/browser-storage';
 import { isSupportSession } from 'calypso/lib/user/support-user-interop';
 import { APPLY_STORED_STATE } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
@@ -20,6 +21,7 @@ const HOUR_IN_MS = 3600000;
 export const SERIALIZE_THROTTLE = 5000;
 export const MAX_AGE = 7 * DAY_IN_HOURS * HOUR_IN_MS;
 export const BASE_STALE_TIME = 2 * HOUR_IN_MS;
+export const WAS_STATE_RANDOMLY_CLEARED_KEY = 'was-state-randomly-cleared';
 
 // Store the timestamp at which the module loads as a proxy for the timestamp
 // when the server data (if any) was generated.
@@ -169,7 +171,6 @@ function getInitialPersistedState( initialReducer, currentUserId ) {
 
 	if ( 'development' === process.env.NODE_ENV ) {
 		window.resetState = () => clearPersistedState().then( () => window.location.reload( true ) );
-
 		if ( shouldAddSympathy() ) {
 			// eslint-disable-next-line no-console
 			console.log(
@@ -178,6 +179,25 @@ function getInitialPersistedState( initialReducer, currentUserId ) {
 			);
 
 			clearPersistedState();
+
+			/**
+			 * Decide whether to save a flag that indicates whether
+			 * the persisted state was randomly cleared
+			 */
+			if ( config.isEnabled( 'force-sympathy' ) ) {
+				/**
+				 * If we're forcing the state-clearing we don't
+				 * have to announce it, because someone intentionally
+				 * forced it and should know why it's cleared.
+				 */
+			} else {
+				/**
+				 * If state-clearing wasn't forced and we still cleared persisted state
+				 * this means it happened randomly. Consequently, save a flag
+				 * so that we can notify the developer once the UI is mounted
+				 */
+				setStoredItem( WAS_STATE_RANDOMLY_CLEARED_KEY, true );
+			}
 			return null;
 		}
 	}

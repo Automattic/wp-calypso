@@ -25,5 +25,8 @@
 		<testsuite name="tutorials">
 			<directory suffix="-test.php">./tutorials/test/</directory>
 		</testsuite>
+		<testsuite name="wpcom-global-styles">
+			<directory suffix="-test.php">./wpcom-global-styles/test/</directory>
+		</testsuite>
 	</testsuites>
 </phpunit>

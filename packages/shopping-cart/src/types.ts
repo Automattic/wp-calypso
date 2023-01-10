@@ -228,7 +228,7 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	/**
 	 * The amount of tax collected.
 	 *
-	 * @deprecated This is a float and is unreliable. Use total_tax_integer or total_tax_display.
+	 * @deprecated This is a float and is unreliable. Use total_tax_integer.
 	 */
 	total_tax: string;
 
@@ -238,11 +238,6 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	total_tax_integer: number;
 
 	/**
-	 * The amount of tax collected formatted for the locale and currency.
-	 */
-	total_tax_display: string;
-
-	/**
 	 * The amount of tax collected per product.
 	 */
 	total_tax_breakdown: TaxBreakdownItem[];
@@ -250,7 +245,7 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	/**
 	 * The cart's total cost.
 	 *
-	 * @deprecated This is a float and is unreliable. Use total_cost_integer or total_cost_display.
+	 * @deprecated This is a float and is unreliable. Use total_cost_integer.
 	 */
 	total_cost: number;
 
@@ -258,11 +253,6 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	 * The cart's total cost in the currency's smallest unit.
 	 */
 	total_cost_integer: number;
-
-	/**
-	 * The cart's total cost formatted for the locale and currency.
-	 */
-	total_cost_display: string;
 
 	/**
 	 * The difference between `cost_before_coupon` and the actual price for all
@@ -274,23 +264,9 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	coupon_savings_total_integer: number;
 
 	/**
-	 * The difference between `cost_before_coupon` and the actual price for all
-	 * products formatted for the locale and currency.
-	 *
-	 * Note that the difference may be caused by many factors, not just coupons.
-	 * It's best not to rely on it.
-	 */
-	coupon_savings_total_display: string;
-
-	/**
 	 * The subtotal with taxes included in the currency's smallest unit.
 	 */
 	sub_total_with_taxes_integer: number;
-
-	/**
-	 * The subtotal with taxes included formatted for the locale and currency.
-	 */
-	sub_total_with_taxes_display: string;
 
 	/**
 	 * The subtotal without taxes included in the currency's smallest unit.
@@ -298,19 +274,19 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	sub_total_integer: number;
 
 	/**
-	 * The subtotal without taxes included formatted for the locale and currency.
-	 */
-	sub_total_display: string;
-
-	/**
 	 * The number of credits available in the currency's smallest unit.
 	 */
 	credits_integer: number;
 
 	/**
-	 * The number of credits available formatted for the locale and currency.
+	 * Gift Details
 	 */
-	credits_display: string;
+	gift_details?: ResponseCartGiftDetails;
+
+	/**
+	 * True if the cart contains a purchase for a different user's site.
+	 */
+	is_gift_purchase?: boolean;
 
 	currency: string;
 	allowed_payment_methods: string[];
@@ -342,7 +318,6 @@ export interface ResponseCartTaxData {
 export interface TaxBreakdownItem {
 	tax_collected: number;
 	tax_collected_integer: number;
-	tax_collected_display: string;
 	label?: string;
 	rate: number;
 	rate_display: string;
@@ -380,30 +355,11 @@ export interface ResponseCartProduct {
 	product_cost_integer: number;
 
 	/**
-	 * The cart item's original price formatted for the locale with currency.
-	 *
-	 * @deprecated Use item_original_cost_display or item_original_subtotal_display.
-	 */
-	product_cost_display: string;
-
-	/**
 	 * The cart item's original price without volume in the currency's smallest unit.
 	 *
 	 * Discounts and volume are not included, but quantity is included.
 	 */
 	item_original_cost_integer: number;
-
-	/**
-	 * The cart item's original price without volume formatted for the locale with currency.
-	 *
-	 * Discounts and volume are not included, but quantity is included.
-	 */
-	item_original_cost_display: string;
-
-	/**
-	 * The monthly term subtotal of a cart item formatted for the locale with currency.
-	 */
-	item_subtotal_monthly_cost_display: string;
 
 	/**
 	 * The monthly term subtotal of a cart item in the currency's smallest unit.
@@ -418,13 +374,6 @@ export interface ResponseCartProduct {
 	item_original_subtotal_integer: number;
 
 	/**
-	 * The cart item's original price with volume formatted for the locale with currency.
-	 *
-	 * Discounts are not included, but volume and quantity are included.
-	 */
-	item_original_subtotal_display: string;
-
-	/**
 	 * The cart item's original price for quantity 1 in the currency's smallest unit.
 	 *
 	 * Discounts are not included, but volume is included.
@@ -432,26 +381,14 @@ export interface ResponseCartProduct {
 	item_original_cost_for_quantity_one_integer: number;
 
 	/**
-	 * The cart item's original price for quantity 1 formatted for the locale with currency.
-	 *
-	 * Discounts are not included, but volume is included.
-	 */
-	item_original_cost_for_quantity_one_display: string;
-
-	/**
 	 * The cart item's subtotal in the currency's smallest unit.
 	 */
 	item_subtotal_integer: number;
 
 	/**
-	 * The cart item's subtotal formatted for the locale with currency.
-	 */
-	item_subtotal_display: string;
-
-	/**
 	 * The cart item's subtotal without volume.
 	 *
-	 * @deprecated This is a float and is unreliable. Use item_subtotal_integer or item_subtotal_display.
+	 * @deprecated This is a float and is unreliable. Use item_subtotal_integer
 	 */
 	cost: number;
 
@@ -464,7 +401,7 @@ export interface ResponseCartProduct {
 	 * other price changes (eg: domain discounts). It's best not to rely on it.
 	 *
 	 * @deprecated This is a float and is unreliable. Use
-	 * item_original_subtotal_integer or item_original_subtotal_display if you
+	 * item_original_subtotal_integer if you
 	 * can, although those have slightly different meanings.
 	 */
 	cost_before_coupon?: number;
@@ -475,17 +412,9 @@ export interface ResponseCartProduct {
 	 * Note that the difference may be caused by many factors, not just coupons.
 	 * It's best not to rely on it.
 	 *
-	 * @deprecated This is a float and is unreliable. Use coupon_savings_integer or coupon_savings_display.
+	 * @deprecated This is a float and is unreliable. Use coupon_savings_integer
 	 */
 	coupon_savings?: number;
-
-	/**
-	 * The difference between `cost_before_coupon` and the actual price formatted for the locale with currency.
-	 *
-	 * Note that the difference may be caused by many factors, not just coupons.
-	 * It's best not to rely on it.
-	 */
-	coupon_savings_display?: string;
 
 	/**
 	 * The difference between `cost_before_coupon` and the actual price in the currency's smallest unit.
@@ -497,13 +426,46 @@ export interface ResponseCartProduct {
 
 	price_tier_minimum_units?: number | null;
 	price_tier_maximum_units?: number | null;
+
+	/**
+	 * If set, is used to transform the usage/quantity of units used to derive the number of units
+	 * we want to bill the customer for, before applying the per unit cost.
+	 *
+	 * To put simply, the purpose of this attribute is to bill the customer at a different granularity compared to their usage.
+	 */
+	price_tier_transform_quantity_divide_by?: number | null;
+
+	/**
+	 * Used for rounding the number of units we want to bill the customer for (which is derived after dividing the
+	 * usage/quantity of units by the `price_tier_transform_quantity_divide_by` number).
+	 *
+	 * Used only when `$this->price_tier_transform_quantity_divide_by` is set. Possible values are: `up`, `down`
+	 */
+	price_tier_transform_quantity_round?: string | null;
 	is_domain_registration: boolean;
 	is_bundled: boolean;
 	is_sale_coupon_applied: boolean;
 	meta: string;
 	time_added_to_cart: number;
+
+	/**
+	 * The billing term in days in numeric format, but as a string.
+	 *
+	 * Typically one of '31' (monthly), '365' (annual), or '730' (biennial).
+	 *
+	 * Similar to `months_per_bill_period`.
+	 */
 	bill_period: string;
+
+	/**
+	 * The billing term in months in numeric format.
+	 *
+	 * Typically one of 1 (monthly), 12 (annual), or 24 (biennial).
+	 *
+	 * Similar to `bill_period`.
+	 */
 	months_per_bill_period: number | null;
+
 	volume: number;
 	quantity: number | null;
 	current_quantity: number | null;
@@ -511,13 +473,40 @@ export interface ResponseCartProduct {
 	item_tax: number;
 	product_type: string;
 	included_domain_purchase_amount: number;
+
+	/**
+	 * True if the product is a renewal.
+	 *
+	 * This does not get set for `RequestCartProduct` which instead uses
+	 * `extra.purchaseType` set to 'renewal'.
+	 */
 	is_renewal?: boolean;
+
 	subscription_id?: string;
 	introductory_offer_terms?: IntroductoryOfferTerms;
+
+	/**
+	 * True if the cart item represents a purchase for a different user's site.
+	 */
+	is_gift_purchase?: boolean;
+
+	product_variants: ResponseCartProductVariant[];
 
 	// Temporary optional properties for the monthly pricing test
 	related_monthly_plan_cost_display?: string;
 	related_monthly_plan_cost_integer?: number;
+}
+
+export interface ResponseCartProductVariant {
+	product_id: number;
+	bill_period_in_months: number;
+	product_slug: string;
+	currency: string;
+	price_integer: number;
+	price_before_discounts_integer: number;
+	introductory_offer_terms:
+		| Record< string, never >
+		| Pick< IntroductoryOfferTerms, 'interval_unit' | 'interval_count' >;
 }
 
 export interface IntroductoryOfferTerms {
@@ -545,15 +534,34 @@ export interface ResponseCartProductExtra {
 	google_apps_users?: GSuiteProductUser[];
 	google_apps_registration_data?: DomainContactDetails;
 	receipt_for_domain?: number;
+
+	/**
+	 * Set to 'renewal' if requesting a renewal.
+	 *
+	 * Often this does not need to be explicitly set because the shopping cart
+	 * endpoint will automatically make a requested product into a renewal if the
+	 * product is already owned.
+	 *
+	 * This is not set for `ResponseCartProduct` objects which use `is_renewal`
+	 * instead.
+	 */
 	purchaseType?: string;
+
 	afterPurchaseUrl?: string;
 	isJetpackCheckout?: boolean;
 	is_marketplace_product?: boolean;
 }
 
+export interface ResponseCartGiftDetails {
+	receiver_blog_id: number;
+	receiver_blog_slug?: string;
+	receiver_blog_url?: string;
+}
+
 export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	purchaseId?: string;
 	isJetpackCheckout?: boolean;
+	isGiftPurchase?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	auth_code?: string;
@@ -561,6 +569,8 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	selected_page_titles?: string[];
 	site_title?: string;
 	signup_flow?: string;
+	signup?: boolean;
+	headstart_theme?: string;
 }
 
 export interface GSuiteProductUser {

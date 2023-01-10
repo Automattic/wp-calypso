@@ -6,6 +6,7 @@ import './style.scss';
 interface FeatureItemProps {
 	header: ReactChild;
 	children: ReactChild;
+	dark?: boolean;
 }
 
 const FeatureItemContainer = styled.div`
@@ -18,28 +19,36 @@ const FeatureItemContainer = styled.div`
 	}
 `;
 
-const FeatureItemHeader = styled.div`
+interface FeatureItemHeaderProps {
+	dark?: boolean;
+}
+
+interface FeatureItemContentProps {
+	dark?: boolean;
+}
+
+const FeatureItemHeader = styled.div< FeatureItemHeaderProps >`
 	margin-bottom: 16px;
 	font-size: var( --scss-font-body );
 	font-weight: 500;
 	line-height: 24px;
-	color: var( --color-text-inverted );
+	color: var( --${ ( props ) => ( props.dark ? 'color-text-inverted' : 'color-text' ) } );
 `;
 
-const FeatureItemContent = styled.p`
+const FeatureItemContent = styled.p< FeatureItemContentProps >`
 	font-size: var( --scss-font-body-small );
 	font-weight: 400;
 	line-height: 22px;
-	color: var( --color-neutral-20 );
+	color: var( --${ ( props ) => ( props.dark ? 'color-neutral-20' : 'color-text' ) } );
 `;
 
 const FeatureItem = ( props: FeatureItemProps ) => {
-	const { header, children } = props;
+	const { header, children, dark } = props;
 
 	return (
 		<FeatureItemContainer>
-			<FeatureItemHeader>{ header }</FeatureItemHeader>
-			<FeatureItemContent>{ children }</FeatureItemContent>
+			<FeatureItemHeader dark={ dark }>{ header }</FeatureItemHeader>
+			<FeatureItemContent dark={ dark }>{ children }</FeatureItemContent>
 		</FeatureItemContainer>
 	);
 };

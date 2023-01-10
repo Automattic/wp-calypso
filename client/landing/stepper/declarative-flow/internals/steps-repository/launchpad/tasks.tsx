@@ -1,63 +1,111 @@
+import { LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
 import { LaunchpadFlowTaskList, Task } from './types';
 
 export const tasks: Task[] = [
 	{
 		id: 'setup_newsletter',
-		isCompleted: true,
+		completed: true,
+		disabled: false,
 		taskType: 'blog',
-		displayBadge: false,
 	},
 	{
 		id: 'plan_selected',
-		isCompleted: true,
+		completed: true,
+		disabled: false,
 		taskType: 'blog',
-		displayBadge: true,
 	},
 	{
 		id: 'subscribers_added',
-		isCompleted: true,
+		completed: true,
+		disabled: false,
 		taskType: 'blog',
-		displayBadge: false,
 	},
 	{
 		id: 'first_post_published',
-		isCompleted: false,
+		completed: false,
+		disabled: false,
 		taskType: 'blog',
-		displayBadge: false,
 	},
 	{
 		id: 'design_selected',
-		isCompleted: true,
+		completed: true,
+		disabled: true,
 		taskType: 'blog',
-		displayBadge: false,
 	},
 	{
 		id: 'setup_link_in_bio',
-		isCompleted: true,
+		completed: true,
+		disabled: false,
 		taskType: 'blog',
-		displayBadge: false,
 	},
 	{
 		id: 'links_added',
-		isCompleted: false,
+		completed: false,
+		disabled: false,
 		taskType: 'blog',
-		displayBadge: false,
 	},
 	{
 		id: 'link_in_bio_launched',
-		isCompleted: false,
+		completed: false,
+		disabled: true,
 		taskType: 'blog',
-		displayBadge: false,
 	},
+	{
+		id: 'videopress_setup',
+		completed: true,
+		taskType: 'blog',
+		disabled: false,
+	},
+	{
+		id: 'videopress_upload',
+		completed: false,
+		taskType: 'blog',
+		disabled: false,
+	},
+	{
+		id: 'videopress_launched',
+		completed: false,
+		taskType: 'blog',
+		disabled: true,
+	},
+	{
+		id: 'setup_free',
+		completed: true,
+		disabled: false,
+		taskType: 'blog',
+	},
+	{
+		id: 'design_edited',
+		completed: false,
+		disabled: false,
+		taskType: 'blog',
+	},
+	{
+		id: 'site_launched',
+		completed: false,
+		disabled: false,
+		taskType: 'blog',
+	},
+];
+
+const linkInBioTaskList = [
+	'design_selected',
+	'setup_link_in_bio',
+	'plan_selected',
+	'links_added',
+	'link_in_bio_launched',
 ];
 
 export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 	newsletter: [ 'setup_newsletter', 'plan_selected', 'subscribers_added', 'first_post_published' ],
-	'link-in-bio': [
+	[ LINK_IN_BIO_FLOW ]: linkInBioTaskList,
+	[ LINK_IN_BIO_TLD_FLOW ]: linkInBioTaskList,
+	free: [
+		'setup_free',
 		'design_selected',
-		'setup_link_in_bio',
-		'plan_selected',
-		'links_added',
-		'link_in_bio_launched',
+		'first_post_published',
+		'design_edited',
+		'site_launched',
 	],
+	videopress: [ 'videopress_setup', 'plan_selected', 'videopress_upload', 'videopress_launched' ],
 };

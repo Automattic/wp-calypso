@@ -47,5 +47,6 @@ export type ThankYouProps = {
 	};
 	thankYouTitle?: string | TranslateResult;
 	thankYouSubtitle?: string | TranslateResult;
+	thankYouHeaderBody?: React.ReactElement | null;
 	thankYouNotice?: ThankYouNoticeProps;
 };

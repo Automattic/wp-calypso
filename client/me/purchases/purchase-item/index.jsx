@@ -4,6 +4,7 @@ import {
 	PLAN_MONTHLY_PERIOD,
 	PLAN_ANNUAL_PERIOD,
 	PLAN_BIENNIAL_PERIOD,
+	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import { CompactCard, Gridicon } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
@@ -260,6 +261,18 @@ class PurchaseItem extends Component {
 								translateOptions
 							);
 						}
+					case PLAN_TRIENNIAL_PERIOD:
+						if (
+							locale === 'en' ||
+							i18n.hasTranslation(
+								'Renews every three years at %(amount)s on {{span}}%(date)s{{/span}}'
+							)
+						) {
+							return translate(
+								'Renews every three years at %(amount)s on {{span}}%(date)s{{/span}}',
+								translateOptions
+							);
+						}
 				}
 			}
 
@@ -420,6 +433,10 @@ class PurchaseItem extends Component {
 
 	getPaymentMethod() {
 		const { purchase, translate } = this.props;
+
+		if ( isIncludedWithPlan( purchase ) ) {
+			return translate( 'Included with Plan' );
+		}
 
 		if (
 			purchase.isAutoRenewEnabled &&

@@ -47,6 +47,7 @@ export const ManagePluginMenu = ( { plugin } ) => {
 					site={ site }
 					menuItem
 					isMarketplaceProduct={ plugin.isMarketplaceProduct }
+					productPurchase={ currentPurchase }
 				/>
 			</EllipsisMenu>
 		</>

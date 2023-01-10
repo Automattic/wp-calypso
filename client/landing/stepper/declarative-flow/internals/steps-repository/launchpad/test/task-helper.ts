@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { getArrayOfFilteredTasks, getEnhancedTasks, isTaskDisabled } from '../task-helper';
+import { getArrayOfFilteredTasks, getEnhancedTasks } from '../task-helper';
 import { tasks, launchpadFlowTasks } from '../tasks';
 import { buildTask } from './lib/fixtures';
 
@@ -14,18 +14,51 @@ describe( 'Task Helpers', () => {
 					buildTask( { id: 'fake-task-2' } ),
 					buildTask( { id: 'fake-task-3' } ),
 				];
-				// eslint-disable-next-line @typescript-eslint/no-empty-function
-				expect( getEnhancedTasks( fakeTasks, 'fake.wordpress.com', null, () => {} ) ).toEqual(
-					fakeTasks
-				);
+				expect(
+					// eslint-disable-next-line @typescript-eslint/no-empty-function
+					getEnhancedTasks( fakeTasks, 'fake.wordpress.com', null, () => {}, false )
+				).toEqual( fakeTasks );
 			} );
 		} );
 		describe( 'when it is link_in_bio_launched task', () => {
 			it( 'then it receives launchtask property = true', () => {
 				const fakeTasks = [ buildTask( { id: 'link_in_bio_launched' } ) ];
-				// eslint-disable-next-line @typescript-eslint/no-empty-function
-				const enhancedTasks = getEnhancedTasks( fakeTasks, 'fake.wordpress.com', null, () => {} );
+				const enhancedTasks = getEnhancedTasks(
+					fakeTasks,
+					'fake.wordpress.com',
+					null,
+					// eslint-disable-next-line @typescript-eslint/no-empty-function
+					() => {},
+					false
+				);
 				expect( enhancedTasks[ 0 ].isLaunchTask ).toEqual( true );
+			} );
+		} );
+		describe( 'when it is plan_selected task', () => {
+			it( 'marks plan_selected as incomplete if styles used but not part of plan', () => {
+				const fakeTasks = [ buildTask( { id: 'plan_selected', completed: true } ) ];
+				const enhancedTasks = getEnhancedTasks(
+					fakeTasks,
+					'fake.wordpress.com',
+					null,
+					// eslint-disable-next-line @typescript-eslint/no-empty-function
+					() => {},
+					true
+				);
+				expect( enhancedTasks[ 0 ].completed ).toEqual( false );
+				expect( enhancedTasks[ 0 ].warning ).toEqual( true );
+			} );
+			it( 'leaves plan_selected if styles warning is unnecessary', () => {
+				const fakeTasks = [ buildTask( { id: 'plan_selected', completed: true } ) ];
+				const enhancedTasks = getEnhancedTasks(
+					fakeTasks,
+					'fake.wordpress.com',
+					null,
+					// eslint-disable-next-line @typescript-eslint/no-empty-function
+					() => {},
+					false
+				);
+				expect( enhancedTasks[ 0 ].completed ).toEqual( true );
 			} );
 		} );
 	} );
@@ -48,38 +81,6 @@ describe( 'Task Helpers', () => {
 				expect( getArrayOfFilteredTasks( tasks, 'newsletter' ) ).toEqual(
 					tasks.filter( ( task ) => launchpadFlowTasks[ 'newsletter' ].includes( task.id ) )
 				);
-			} );
-		} );
-	} );
-	describe( 'isTaskDisabled', () => {
-		describe( 'when a given task has other, dependent tasks that should be completed first', () => {
-			describe( 'and the other tasks are incomplete', () => {
-				it( 'then the given task is disabled', () => {
-					const dependencies = [ true, false ];
-					const task = buildTask( { dependencies, isCompleted: false } );
-					expect( isTaskDisabled( task ) ).toBe( true );
-				} );
-			} );
-			describe( 'and the other tasks are complete', () => {
-				const dependencies = [ true, true ];
-				describe( 'and the task can be revisited', () => {
-					it( 'then the task is enabled', () => {
-						const task = buildTask( { dependencies, keepActive: true, isCompleted: false } );
-						expect( isTaskDisabled( task ) ).toBe( false );
-					} );
-				} );
-				describe( 'and the given task complete', () => {
-					it( 'then the task is disabled', () => {
-						const task = buildTask( { dependencies, keepActive: false, isCompleted: true } );
-						expect( isTaskDisabled( task ) ).toBe( true );
-					} );
-				} );
-				describe( 'and the given task is incomplete', () => {
-					it( 'then the given task is enabled', () => {
-						const task = buildTask( { dependencies, keepActive: false, isCompleted: false } );
-						expect( isTaskDisabled( task ) ).toBe( false );
-					} );
-				} );
 			} );
 		} );
 	} );

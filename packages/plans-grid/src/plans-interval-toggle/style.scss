@@ -90,6 +90,8 @@
 	}
 
 	// `data-y-axis` needed to override original popover styles
+	// `data-y-axis` appears to no longer be rendered, so defining both here incase it changes again
+	&--desktop,
 	&--desktop[data-y-axis="middle"] {
 		display: none;
 

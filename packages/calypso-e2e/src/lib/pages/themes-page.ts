@@ -15,7 +15,7 @@ const selectors = {
 	// Search
 	showAllThemesButton: 'text=Show all themes',
 	searchToolbar: '.themes-magic-search',
-	searchInput: `[placeholder="Search by style or feature: portfolio, store, multiple menus, or…"]`,
+	searchInput: '.themes__content input.search__input',
 
 	// Theme card
 	popoverButton: '.theme__more-button',

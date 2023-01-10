@@ -14,8 +14,8 @@ export const StoragePricingHeader = () => {
 					className="storage-pricing-header__title"
 					headerText={ preventWidows(
 						translate(
-							'Upgrade your Backup storage to %(storageAmount)dTB',
-							'Upgrade your Backup storage to %(storageAmount)dTB',
+							'Upgrade your VaultPress Backup storage to %(storageAmount)dTB',
+							'Upgrade your VaultPress Backup storage to %(storageAmount)dTB',
 							{
 								count: 1,
 								args: { storageAmount: 1 },

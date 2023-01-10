@@ -6,12 +6,12 @@ import {
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_SCAN_PRODUCTS,
 	isJetpackPlanSlug,
+	isSupersedingJetpackItem,
 } from '@automattic/calypso-products';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import isSupersedingJetpackItem from 'calypso/../packages/calypso-products/src/is-superseding-jetpack-item';
 import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
@@ -231,7 +231,9 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			isDeprecated={ isDeprecated }
 			isAligned={ isAligned }
 			displayFrom={ ! siteId && priceTierList.length > 0 }
-			tooltipText={ priceTierList.length > 0 && productTooltip( item, priceTierList ) }
+			tooltipText={
+				priceTierList.length > 0 && productTooltip( item, priceTierList, currencyCode ?? 'USD' )
+			}
 			aboveButtonText={ productAboveButtonText( item, siteProduct, isOwned, isItemPlanFeature ) }
 			isDisabled={ isDisabled }
 			disabledMessage={ disabledMessage }

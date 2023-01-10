@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import PropTypes from 'prop-types';
 import { Children, cloneElement } from 'react';
 import { useSelector } from 'react-redux';
@@ -12,6 +13,7 @@ import PostActionsEllipsisMenuDuplicate from './duplicate';
 import PostActionsEllipsisMenuEdit from './edit';
 import PostActionsEllipsisMenuPromote from './promote';
 import PostActionsEllipsisMenuPublish from './publish';
+import PostActionsEllipsisMenuQRCode from './qrcode';
 import PostActionsEllipsisMenuRestore from './restore';
 import PostActionsEllipsisMenuShare from './share';
 import PostActionsEllipsisMenuStats from './stats';
@@ -23,7 +25,7 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 	let actions = [];
 
 	const keyValue = globalId;
-	const { isModalOpen, value, closeModal } = useRouteModal( 'blazepress-widget', keyValue );
+	const { isModalOpen, value } = useRouteModal( 'blazepress-widget', keyValue );
 	const post = useSelector( ( state ) => getPost( state, globalId ) );
 
 	if ( includeDefaultActions ) {
@@ -40,6 +42,10 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 			<PostActionsEllipsisMenuCopyLink key="copyLink" />,
 			<PostActionsEllipsisMenuTrash key="trash" />
 		);
+
+		if ( config.isEnabled( 'post-list/qr-code-link' ) ) {
+			actions.push( <PostActionsEllipsisMenuQRCode key="qrcode" /> );
+		}
 	}
 
 	children = Children.toArray( children );
@@ -58,7 +64,6 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 					isVisible={ isModalOpen && value === keyValue }
 					siteId={ post.site_ID }
 					postId={ post.ID }
-					onClose={ () => closeModal() }
 				/>
 			) }
 			<EllipsisMenu position="bottom left" disabled={ ! globalId }>

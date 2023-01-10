@@ -361,6 +361,24 @@ export class FullSiteEditorPage {
 		await this.waitForConfirmationToast( 'Site updated.' );
 	}
 
+	/**
+	 * Click the editor document actions icon.
+	 */
+	async openDocumentActionsDropdown(): Promise< void > {
+		await this.editorToolbarComponent.clickDocumentActionsIcon();
+	}
+
+	/**
+	 * Click on an item in the document actions dropdown.
+	 */
+	async clickDocumentActionsDropdownItem( itemSelector: string ): Promise< void > {
+		await this.editorToolbarComponent.clickDocumentActionsDropdownItem( itemSelector );
+	}
+
+	/**
+	 * Click the editor document actions icon.
+	 */
+
 	//#endregion
 
 	//#region Site Global Styles

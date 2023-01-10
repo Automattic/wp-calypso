@@ -113,5 +113,36 @@ export default function () {
 		} ),
 	};
 
+	statsStrings.emailsOpenStats = {
+		title: translate( 'Email opens', { context: 'Stats: title of module' } ),
+		item: translate( 'Title', { context: 'Stats: module row header for post title.' } ),
+		value: translate( 'Views', { context: 'Stats: module row header for number of post views.' } ),
+		empty: translate( 'No email opens', {
+			context: 'Stats: Info box label when the Email Open module is empty',
+		} ),
+	};
+
+	statsStrings.devices = {
+		title: translate( 'Devices', { context: 'Stats: title of module' } ),
+		item: translate( 'Device', { context: 'Stats: module row header for views by country.' } ),
+		value: translate( 'Views', {
+			context: 'Stats: module row header for number of views from a country.',
+		} ),
+		empty: translate( 'No devices recorded', {
+			context: 'Stats: Info box label when the Devices module is empty',
+		} ),
+	};
+
+	statsStrings.clients = {
+		title: translate( 'Clients', { context: 'Stats: title of module' } ),
+		item: translate( 'Client', { context: 'Stats: module row header for views by country.' } ),
+		value: translate( 'Views', {
+			context: 'Stats: module row header for number of views from a country.',
+		} ),
+		empty: translate( 'No clients recorded', {
+			context: 'Stats: Info box label when the Email clients module is empty',
+		} ),
+	};
+
 	return statsStrings;
 }

@@ -22,11 +22,13 @@ class StatsDatePicker extends Component {
 		statType: PropTypes.string,
 		isActivity: PropTypes.bool,
 		showQueryDate: PropTypes.bool,
+		isShort: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		showQueryDate: false,
 		isActivity: false,
+		isShort: false,
 	};
 
 	dateForSummarize() {
@@ -50,21 +52,23 @@ class StatsDatePicker extends Component {
 	}
 
 	dateForDisplay() {
-		const { date, moment, period, translate } = this.props;
+		const { date, moment, period, translate, isShort } = this.props;
 
 		// Ensure we have a moment instance here to work with.
 		const momentDate = moment.isMoment( date ) ? date : moment( date );
 		const localizedDate = moment( momentDate.format( 'YYYY-MM-DD' ) );
 		let formattedDate;
 
+		// ll is a date localized with abbreviated Month by momentjs
+		const weekPeriodFormat = isShort ? 'll' : 'LL';
+
 		switch ( period ) {
 			case 'week':
 				formattedDate = translate( '%(startDate)s - %(endDate)s', {
 					context: 'Date range for which stats are being displayed',
 					args: {
-						// LL is a date localized by momentjs
-						startDate: localizedDate.startOf( 'week' ).add( 1, 'd' ).format( 'LL' ),
-						endDate: localizedDate.endOf( 'week' ).add( 1, 'd' ).format( 'LL' ),
+						startDate: localizedDate.startOf( 'week' ).add( 1, 'd' ).format( weekPeriodFormat ),
+						endDate: localizedDate.endOf( 'week' ).add( 1, 'd' ).format( weekPeriodFormat ),
 					},
 				} );
 				break;
@@ -86,23 +90,29 @@ class StatsDatePicker extends Component {
 	}
 
 	renderQueryDate() {
-		const { queryDate, moment, translate } = this.props;
-		if ( ! queryDate ) {
-			return null;
+		const { query, queryDate, moment, translate } = this.props;
+
+		let content;
+
+		if ( ! queryDate || ! isAutoRefreshAllowedForQuery( query ) ) {
+			content = null;
+		} else {
+			const today = moment();
+			const date = moment( queryDate );
+			const isToday = today.isSame( date, 'day' );
+
+			content = translate( '{{b}}Last update: %(time)s{{/b}} (Updates every 30 minutes)', {
+				args: { time: isToday ? date.format( 'LT' ) : date.fromNow() },
+				components: {
+					b: <span className="stats-date-picker__last-update" />,
+				},
+			} );
 		}
 
-		const today = moment();
-		const date = moment( queryDate );
-		const isToday = today.isSame( date, 'day' );
 		return (
-			<span>
-				{ translate( '{{b}}Last update: %(time)s{{/b}} (Updates every 30 minutes)', {
-					args: { time: isToday ? date.format( 'LT' ) : date.fromNow() },
-					components: {
-						b: <span className="stats-date-picker__last-update" />,
-					},
-				} ) }
-			</span>
+			<div className="stats-date-picker__refresh-status">
+				<span className="stats-date-picker__update-date">{ content }</span>
+			</div>
 		);
 	}
 
@@ -112,10 +122,10 @@ class StatsDatePicker extends Component {
 
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace*/
-		const { summary, translate, query, showQueryDate, isActivity } = this.props;
+		const { summary, translate, query, showQueryDate, isActivity, isShort } = this.props;
 		const isSummarizeQuery = get( query, 'summarize' );
 
-		const sectionTitle = isActivity
+		let sectionTitle = isActivity
 			? translate( 'Activity for {{period/}}', {
 					components: {
 						period: (
@@ -143,6 +153,14 @@ class StatsDatePicker extends Component {
 						'Example: "Stats for December 7", "Stats for December 8 - December 14", "Stats for December", "Stats for 2014"',
 			  } );
 
+		if ( isShort ) {
+			sectionTitle = (
+				<span className="period">
+					<span className="date">{ this.dateForDisplay() }</span>
+				</span>
+			);
+		}
+
 		return (
 			<div>
 				{ summary ? (
@@ -150,11 +168,7 @@ class StatsDatePicker extends Component {
 				) : (
 					<div className="stats-section-title">
 						<h3>{ sectionTitle }</h3>
-						{ showQueryDate && isAutoRefreshAllowedForQuery( query ) && (
-							<div className="stats-date-picker__refresh-status">
-								<span className="stats-date-picker__update-date">{ this.renderQueryDate() }</span>
-							</div>
-						) }
+						{ showQueryDate && this.renderQueryDate() }
 					</div>
 				) }
 			</div>

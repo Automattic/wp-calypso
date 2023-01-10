@@ -7,12 +7,12 @@ import { intervals } from './constants';
 import './intervals.scss';
 
 const Intervals = ( props ) => {
-	const { selected, pathTemplate, className, standalone } = props;
+	const { selected, pathTemplate, className, standalone, compact = true } = props;
 	const classes = classnames( 'stats-navigation__intervals', className, {
 		'is-standalone': standalone,
 	} );
 	return (
-		<SegmentedControl compact primary className={ classes }>
+		<SegmentedControl primary className={ classes } compact={ compact }>
 			{ intervals.map( ( i ) => {
 				const path = pathTemplate.replace( /{{ interval }}/g, i.value );
 				return (

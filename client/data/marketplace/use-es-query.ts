@@ -1,5 +1,14 @@
+import config from '@automattic/calypso-config';
 import languages, { LanguageSlug } from '@automattic/languages';
-import { UseQueryResult, UseQueryOptions, useInfiniteQuery, InfiniteData } from 'react-query';
+import {
+	UseQueryResult,
+	UseQueryOptions,
+	useInfiniteQuery,
+	InfiniteData,
+	QueryKey,
+	QueryFunction,
+	useQuery,
+} from 'react-query';
 import { useSelector } from 'react-redux';
 import {
 	extractSearchInformation,
@@ -7,58 +16,18 @@ import {
 } from 'calypso/lib/plugins/utils';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { DEFAULT_PAGE_SIZE } from './constants';
-import { search } from './search-api';
+import { search, searchBySlug } from './search-api';
 import { getPluginsListKey } from './utils';
-import type { ESHits, ESResponse, Plugin, PluginQueryOptions, Icon } from './types';
+import type { ESHits, ESResponse, Plugin, PluginQueryOptions } from './types';
 
-/**
- *
- * @param pluginSlug
- * @param icons
- * @returns A string containing an icon url or
- * 	a default generated url Icon if icons param is falsy, it is not JSON or it does not contain a valid resolution
- */
-const createIconUrl = ( pluginSlug: string, icons?: string ): string => {
-	const defaultIconUrl = buildDefaultIconUrl( pluginSlug );
-	if ( ! icons ) {
-		return defaultIconUrl;
-	}
-
-	let iconsObject: Record< string, Icon > = {};
+const getIconUrl = ( pluginSlug: string, icon: string ): string => {
 	try {
-		iconsObject = JSON.parse( icons );
-	} catch ( error ) {
-		return defaultIconUrl;
-	}
+		const url = new URL( icon || '' );
+		return url.toString();
+	} catch ( _ ) {}
 
-	// Transform Icon response for easier handling
-	const iconByResolution = Object.values( iconsObject ).reduce(
-		( iconByResolution, currentIcon ) => {
-			const newKey = currentIcon.resolution;
-			iconByResolution[ newKey ] = currentIcon;
-			return iconByResolution;
-		},
-		{} as Record< string, Icon >
-	);
-
-	const icon =
-		iconByResolution[ '256x256' ] ||
-		iconByResolution[ '128x128' ] ||
-		iconByResolution[ '2x' ] ||
-		iconByResolution[ '1x' ] ||
-		iconByResolution.svg ||
-		iconByResolution.default;
-
-	if ( ! icon ) {
-		return defaultIconUrl;
-	}
-
-	return buildIconUrl( pluginSlug, icon.location, icon.filename, icon.revision );
+	return buildDefaultIconUrl( pluginSlug );
 };
-
-function buildIconUrl( pluginSlug: string, location: string, filename: string, revision: string ) {
-	return `https://ps.w.org/${ pluginSlug }/${ location }/${ filename }?rev=${ revision }`;
-}
 
 function buildDefaultIconUrl( pluginSlug: string ) {
 	return `https://s.w.org/plugins/geopattern-icon/${ pluginSlug }.svg`;
@@ -86,7 +55,12 @@ const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 			active_installs: hit.plugin.active_installs,
 			last_updated: hit.modified,
 			short_description: hit.plugin.excerpt, // TODO: add localization
-			icon: createIconUrl( hit.slug, hit.plugin.icons ),
+			icon: getIconUrl( hit.slug, hit.plugin.icons ),
+			premium_slug: hit.plugin.premium_slug,
+			variations: {
+				monthly: { product_id: hit.plugin.store_product_monthly_id },
+				yearly: { product_id: hit.plugin.store_product_yearly_id },
+			},
 			railcar,
 		};
 
@@ -107,40 +81,79 @@ const getWpLocaleBySlug = ( slug: LanguageSlug ) => {
 	return languages.find( ( l ) => l.langSlug === slug )?.wpLocale || defaultLanguage;
 };
 
+export const getESPluginQueryParams = (
+	slug: string,
+	locale: string,
+	fields?: Array< string >
+): [ QueryKey, QueryFunction< { plugins: Plugin[]; pagination: { page: number } }, QueryKey > ] => {
+	const cacheKey = `es-plugin-slug-${ slug }`;
+	const fetchFn = () =>
+		searchBySlug( slug, locale, { fields } )
+			.then( ( { data }: { data: { results: ESHits } } ) =>
+				mapIndexResultsToPluginData( data.results )
+			)
+			.then( ( plugins: Plugin[] ) => plugins?.[ 0 ] || null );
+	return [ cacheKey, fetchFn ];
+};
+
+const ONE_DAY_IN_MS = 1000 * 60 * 60 * 24;
+export const useESPlugin = (
+	slug: string,
+	fields?: Array< string >,
+	{ enabled = true, staleTime = ONE_DAY_IN_MS, refetchOnMount = true }: UseQueryOptions = {}
+): UseQueryResult => {
+	const locale = useSelector( getCurrentUserLocale );
+
+	return useQuery( ...getESPluginQueryParams( slug, locale, fields ), {
+		enabled,
+		staleTime,
+		refetchOnMount,
+	} );
+};
+
+export const getESPluginsInfiniteQueryParams = (
+	options: PluginQueryOptions,
+	locale: string
+): [ QueryKey, QueryFunction< ESResponse, QueryKey > ] => {
+	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
+	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
+	const cacheKey = getPluginsListKey( 'DEBUG-new-site-seach', options, true );
+	const fetchFn = ( { pageParam = 1 } ) =>
+		search( {
+			query: searchTerm,
+			author,
+			groupId: config.isEnabled( 'marketplace-jetpack-plugin-search' ) ? 'marketplace' : 'wporg',
+			category: options.category,
+			pageHandle: pageParam + '',
+			pageSize,
+			locale: getWpLocaleBySlug( ( options.locale || locale ) as LanguageSlug ),
+		} );
+	return [ cacheKey, fetchFn ];
+};
+
 export const useESPluginsInfinite = (
 	options: PluginQueryOptions,
 	{ enabled = true, staleTime = 10000, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult => {
-	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
 	const locale = useSelector( getCurrentUserLocale );
-	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
 
-	return useInfiniteQuery(
-		getPluginsListKey( 'DEBUG-new-site-seach', options, true ),
-		( { pageParam } ) =>
-			search( {
-				query: searchTerm,
-				author,
-				groupId: 'wporg',
-				category: options.category,
-				pageHandle: pageParam,
-				pageSize,
-				locale: getWpLocaleBySlug( options.locale || locale ),
-			} ),
-		{
-			select: ( data: InfiniteData< ESResponse > ) => {
-				return {
-					...data,
-					plugins: mapIndexResultsToPluginData( data.pages.flatMap( ( p ) => p.data.results ) ),
-					pagination: { results: data.pages[ 0 ]?.data?.total },
-				};
-			},
-			getNextPageParam: ( lastPage ) => {
-				return lastPage.data.page_handle || undefined;
-			},
-			enabled,
-			staleTime,
-			refetchOnMount,
-		}
-	);
+	return useInfiniteQuery( ...getESPluginsInfiniteQueryParams( options, locale ), {
+		select: ( data: InfiniteData< ESResponse > ) => {
+			return {
+				...data,
+				plugins: mapIndexResultsToPluginData( data.pages.flatMap( ( p ) => p.data.results ) ),
+				pagination: {
+					results: data.pages[ 0 ]?.data?.total,
+					pages: data?.pages || [],
+					page: data?.pageParams?.length || 0,
+				},
+			};
+		},
+		getNextPageParam: ( lastPage ) => {
+			return lastPage.data.page_handle || undefined;
+		},
+		enabled,
+		staleTime,
+		refetchOnMount,
+	} );
 };

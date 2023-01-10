@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const BlazePressStrings = () => {
 	const translate = useTranslate();
 	translate(
@@ -78,3 +77,7 @@ const BlazePressStrings = () => {
 	translate( 'Drop image here' );
 	translate( 'Click or Drag an image here' );
 };
+
+if ( window.BlazePress ) {
+	window.BlazePress.strings = BlazePressStrings;
+}

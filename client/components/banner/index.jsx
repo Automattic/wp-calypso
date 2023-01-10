@@ -50,7 +50,11 @@ export class Banner extends Component {
 		jetpack: PropTypes.bool,
 		isAtomic: PropTypes.bool,
 		compact: PropTypes.bool,
-		list: PropTypes.arrayOf( PropTypes.string ),
+		list: PropTypes.oneOfType( [
+			PropTypes.arrayOf( PropTypes.string ),
+			PropTypes.arrayOf( PropTypes.object ),
+		] ),
+		renderListItem: PropTypes.func,
 		onClick: PropTypes.func,
 		onDismiss: PropTypes.func,
 		plan: PropTypes.string,
@@ -68,6 +72,7 @@ export class Banner extends Component {
 		tracksDismissProperties: PropTypes.object,
 		customerType: PropTypes.string,
 		isSiteWPForTeams: PropTypes.bool,
+		displayAsLink: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -182,6 +187,7 @@ export class Banner extends Component {
 			feature,
 			compact,
 			list,
+			renderListItem,
 			price,
 			primaryButton,
 			title,
@@ -212,8 +218,12 @@ export class Banner extends Component {
 						<ul className="banner__list">
 							{ list.map( ( item, key ) => (
 								<li key={ key }>
-									<Gridicon icon="checkmark" size={ 18 } />
-									{ item }
+									{ renderListItem?.( item ) ?? (
+										<>
+											<Gridicon icon="checkmark" size={ 18 } />
+											{ item }
+										</>
+									) }
 								</li>
 							) ) }
 						</ul>
@@ -264,6 +274,7 @@ export class Banner extends Component {
 			jetpack,
 			isAtomic,
 			plan,
+			displayAsLink,
 		} = this.props;
 
 		// For P2 sites, only show banners if they have the 'p2-banner' class.
@@ -310,6 +321,7 @@ export class Banner extends Component {
 				className={ classes }
 				href={ ( disableHref || callToAction ) && ! forceHref ? null : this.getHref() }
 				onClick={ callToAction && ! forceHref ? null : this.handleClick }
+				displayAsLink={ displayAsLink }
 			>
 				{ dismissWithoutSavingPreference && (
 					<Gridicon icon="cross" className="banner__close-icon" onClick={ this.handleDismiss } />

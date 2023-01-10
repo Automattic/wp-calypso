@@ -1,10 +1,12 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Dialog } from '@automattic/components';
+import { Icon, warning } from '@wordpress/icons';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import wpcom from 'calypso/lib/wp';
+import './actions-spam.scss';
 
 const debug = debugFactory( 'calypso:stats:action-spam' );
 
@@ -12,18 +14,44 @@ class StatsActionSpam extends Component {
 	static displayName = 'StatsActionSpam';
 
 	state = {
+		showConfirmDialog: false,
 		spammed: false,
 	};
 
+	closeConfirmDialog = () => {
+		this.setState( { showConfirmDialog: false } );
+	};
+
 	clickHandler = ( event ) => {
-		const spamType = this.state.spammed ? 'statsReferrersSpamDelete' : 'statsReferrersSpamNew';
-		const gaEvent = this.state.spammed ? 'Undid Referrer Spam' : 'Marked Referrer as Spam';
 		event.stopPropagation();
 		event.preventDefault();
+
+		// Component used in old stats list, fallback to legacy behavior without dialog.
+		if ( ! this.props.inHorizontalBarList ) {
+			this.toggleSpamState();
+			return;
+		}
+
+		// Confirm marking as spam with dialog.
+		if ( ! this.state.spammed ) {
+			this.setState( { showConfirmDialog: true } );
+			return;
+		}
+
+		// Allow unmarking as spam without confirmation.
+		this.toggleSpamState();
+	};
+
+	markAsSpam = () => {
+		this.closeConfirmDialog();
+		this.toggleSpamState();
+	};
+
+	toggleSpamState() {
+		const spamType = this.state.spammed ? 'statsReferrersSpamDelete' : 'statsReferrersSpamNew';
+		const gaEvent = this.state.spammed ? 'Undid Referrer Spam' : 'Marked Referrer as Spam';
 		debug( this.state );
-		this.setState( {
-			spammed: ! this.state.spammed,
-		} );
+		this.setState( { spammed: ! this.state.spammed } );
 
 		if ( this.props.afterChange ) {
 			this.props.afterChange( ! this.state.spammed );
@@ -32,7 +60,7 @@ class StatsActionSpam extends Component {
 		const wpcomSite = wpcom.site( this.props.data.siteID );
 		wpcomSite[ spamType ].call( wpcomSite, this.props.data.domain, function () {} );
 		gaRecordEvent( 'Stats', gaEvent + ' in ' + this.props.moduleName + ' List' );
-	};
+	}
 
 	render() {
 		const label = this.state.spammed
@@ -65,11 +93,35 @@ class StatsActionSpam extends Component {
 					title={ title }
 					aria-label={ title }
 				>
-					<Gridicon icon="spam" size={ 18 } />
+					<Icon className="stats-icon" icon={ warning } size={ 22 } />
 					<span className="stats-list__spam-label module-content-list-item-action-label">
 						{ label }
 					</span>
 				</Button>
+				{ this.props.inHorizontalBarList && (
+					<Dialog
+						isVisible={ this.state.showConfirmDialog }
+						buttons={ [
+							{
+								action: 'cancel',
+								label: this.props.translate( 'Cancel' ),
+							},
+							{
+								action: 'delete',
+								label: this.props.translate( 'Mark as Spam' ),
+								isPrimary: true,
+								onClick: this.markAsSpam,
+							},
+						] }
+						onClose={ this.closeConfirmDialog }
+					>
+						<p>
+							{ this.props.translate( "Are you sure you want to mark '%(domain)s' as spam?", {
+								args: { domain: this.props.data?.domain },
+							} ) }
+						</p>
+					</Dialog>
+				) }
 			</li>
 		);
 	}

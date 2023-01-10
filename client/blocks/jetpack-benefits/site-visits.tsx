@@ -42,7 +42,7 @@ const JetpackBenefitsSiteVisits: React.FC< Props > = ( { siteId, statType, query
 	if ( isRequestingStats ) {
 		return (
 			<JetpackBenefitsCard
-				headline={ translate( 'Site Stats' ) }
+				headline={ translate( 'Jetpack Stats' ) }
 				stat={ translate( 'Loading' ) }
 				description={ translate( 'Getting visitors stat' ) }
 				placeholder={ true }
@@ -58,7 +58,7 @@ const JetpackBenefitsSiteVisits: React.FC< Props > = ( { siteId, statType, query
 	return (
 		<React.Fragment>
 			<JetpackBenefitsCard
-				headline={ translate( 'Site Stats' ) }
+				headline={ translate( 'Jetpack Stats' ) }
 				stat={ countVisits > 0 ? countVisits : null }
 				description={
 					countVisits > 0

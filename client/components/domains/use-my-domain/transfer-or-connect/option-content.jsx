@@ -89,7 +89,7 @@ export default function OptionContent( {
 			</div>
 			<div className="option-content__action">
 				{ onSelect && (
-					<Button primary={ primary } disabled={ disabled } onClick={ onSelect }>
+					<Button primary={ primary } disabled={ disabled } onClick={ onSelect } busy={ disabled }>
 						{ __( 'Select' ) }
 					</Button>
 				) }

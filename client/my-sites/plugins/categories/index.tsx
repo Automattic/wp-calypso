@@ -23,7 +23,7 @@ export type Plugin = {
 	icon: string;
 };
 
-const Categories = ( { selected }: { selected?: string } ) => {
+const Categories = ( { selected, noSelection }: { selected?: string; noSelection?: boolean } ) => {
 	const dispatch = useDispatch();
 	const getCategoryUrl = useGetCategoryUrl();
 
@@ -47,11 +47,12 @@ const Categories = ( { selected }: { selected?: string } ) => {
 	};
 
 	const current = selected ? categories.findIndex( ( { slug } ) => slug === selected ) : 0;
+	const activeIndex = noSelection ? -1 : current;
 
 	return (
 		<ResponsiveToolbarGroup
 			className="categories__menu"
-			initialActiveIndex={ current }
+			initialActiveIndex={ activeIndex }
 			onClick={ onClick }
 			hrefList={ categoryUrls }
 			forceSwipe={ 'undefined' === typeof window }

@@ -15,7 +15,8 @@ const selectors = {
 	email: `${ blockParentSelector } input[placeholder="Email"]`,
 
 	// Published
-	publishedPrice: ( price: number ) => `.jetpack-simple-payments-price :text("${ price }")`,
+	publishedName: ( name: string ) => `main .jetpack-simple-payments-title :text("${ name }")`, // 'main' needs to be specified due to the debug elements
+	publishedPrice: ( price: number ) => `main .jetpack-simple-payments-price :text("${ price }")`, // 'main' needs to be specified due to the debug elements
 };
 
 /**
@@ -65,7 +66,9 @@ export class PayWithPaypalBlockFlow implements BlockFlow {
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		// Use quotes in selector to narrow down to an exact text node match for specificity.
-		const expectedNameLocator = context.page.locator( `text="${ this.configurationData.name }"` );
+		const expectedNameLocator = context.page.locator(
+			selectors.publishedName( this.configurationData.name )
+		);
 		expectedNameLocator.waitFor();
 
 		const expectedPriceLocator = context.page.locator(

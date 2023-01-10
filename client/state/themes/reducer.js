@@ -22,6 +22,7 @@ import {
 	THEME_CLEAR_ACTIVATED,
 	THEME_DELETE_SUCCESS,
 	THEME_FILTERS_ADD,
+	THEME_FILTERS_REQUEST_FAILURE,
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
 	THEME_INSTALL_FAILURE,
@@ -37,6 +38,7 @@ import {
 	THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
 	UPSELL_CARD_DISPLAYED,
+	THEMES_LOADING_CART,
 } from 'calypso/state/themes/action-types';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import {
@@ -408,9 +410,8 @@ export const lastQuery = ( state = {}, action ) => {
 export const themePreviewOptions = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case THEME_PREVIEW_OPTIONS: {
-			const { primary, secondary } = action;
-
-			return { primary, secondary };
+			const { themeId, primary, secondary, styleVariation } = action;
+			return { themeId, primary, secondary, styleVariation };
 		}
 	}
 
@@ -475,6 +476,20 @@ export const themeFilters = withSchemaValidation( themeFiltersSchema, ( state = 
 
 	return state;
 } );
+
+export function themeFilterRequestError( state = null, action ) {
+	// Stores the error for the theme filter fetch.
+	switch ( action.type ) {
+		case THEME_FILTERS_REQUEST_FAILURE:
+			return action.error;
+		case THEME_FILTERS_ADD: {
+			// Only dispatched on success, which means we can clear the error.
+			return null;
+		}
+	}
+
+	return state;
+}
 
 /**
  * Returns updated state for recommended themes after
@@ -585,6 +600,17 @@ export function upsellCardDisplayed( state = false, action ) {
 	return state;
 }
 
+export function isLoadingCart( state = false, action ) {
+	switch ( action.type ) {
+		case THEMES_LOADING_CART: {
+			const { isLoading } = action;
+			return isLoading;
+		}
+	}
+
+	return state;
+}
+
 const combinedReducer = combineReducers( {
 	queries,
 	queryRequests,
@@ -602,11 +628,13 @@ const combinedReducer = combineReducers( {
 	themePreviewOptions,
 	themePreviewVisibility,
 	themeFilters,
+	themeFilterRequestError,
 	recommendedThemes,
 	trendingThemes,
 	themeHasAutoLoadingHomepageWarning,
 	themesUpdate,
 	upsellCardDisplayed,
+	isLoadingCart,
 } );
 const themesReducer = withStorageKey( 'themes', combinedReducer );
 

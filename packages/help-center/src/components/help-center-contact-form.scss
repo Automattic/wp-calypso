@@ -16,7 +16,7 @@
 		width: 32px;
 		height: 32px;
 		border: 2px solid #fff;
-		border-radius: 50%; // stylelint-disable-line declaration-property-unit-allowed-list
+		border-radius: 50%;
 	}
 
 	img + img {
@@ -190,9 +190,9 @@ section.contact-form-submit {
 		margin-left: 16px;
 	}
 
-	.dashicon {
+	.info-icon {
 		display: block;
-		color: var(--studio-orange-40);
+		fill: var(--studio-orange-40);
 		margin-top: 2px;
 	}
 	.components-external-link__icon {

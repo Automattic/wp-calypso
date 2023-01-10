@@ -1,25 +1,27 @@
-import { shallow } from 'enzyme';
+/**
+ * @jest-environment jsdom
+ */
+import { render } from '@testing-library/react';
 import Sparkline from '../index';
 
 describe( 'Sparkline', () => {
-	const shallowWithoutLifecycle = ( arg ) => shallow( arg, { disableLifecycleMethods: true } );
-
 	test( 'should allow data to be set.', () => {
 		const sparkline = <Sparkline data={ [ 1, 2, 3, 4, 5 ] } />;
 		expect( sparkline.props.data ).toEqual( [ 1, 2, 3, 4, 5 ] );
 	} );
 
 	test( 'should have sparkline class', () => {
-		const sparkline = shallowWithoutLifecycle( <Sparkline data={ [ 1, 2, 3, 4, 5 ] } /> );
-		expect( sparkline.find( '.sparkline' ) ).toHaveLength( 1 );
+		const { container } = render( <Sparkline data={ [ 1, 2, 3, 4, 5 ] } /> );
+
+		expect( container ).toMatchSnapshot();
 	} );
 
 	test( 'should have className if provided, as well as sparkline class', () => {
-		const sparkline = shallowWithoutLifecycle(
+		const { container } = render(
 			<Sparkline data={ [ 1, 2, 3, 4, 5 ] } className="test__foobar" />
 		);
-		expect( sparkline.find( '.test__foobar' ) ).toHaveLength( 1 );
-		expect( sparkline.find( '.sparkline' ) ).toHaveLength( 1 );
+
+		expect( container ).toMatchSnapshot();
 	} );
 
 	test( 'should have a default aspectRatio of 4.5', () => {

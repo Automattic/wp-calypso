@@ -1,10 +1,12 @@
 import { combineReducers } from '@wordpress/data';
 import { SiteGoal } from './constants';
-import type { DomainSuggestion } from '../domain-suggestions/types';
+import type { DomainSuggestion } from '../domain-suggestions';
 import type { FeatureId } from '../wpcom-features/types';
 import type { OnboardAction } from './actions';
+import type { DomainForm } from './types';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { Reducer } from 'redux';
 
 const domain: Reducer< DomainSuggestion | undefined, OnboardAction > = ( state, action ) => {
@@ -215,6 +217,19 @@ const siteLogo: Reducer< null | string, OnboardAction > = ( state = null, action
 	return state;
 };
 
+const planCartItem: Reducer< MinimalRequestCartProduct | null, OnboardAction > = (
+	state = null,
+	action
+) => {
+	if ( action.type === 'SET_PLAN_CART_ITEM' ) {
+		return action.planCartItem;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return null;
+	}
+	return state;
+};
+
 const siteAccentColor: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_SITE_ACCENT_COLOR' ) {
 		return action.siteAccentColor;
@@ -377,14 +392,84 @@ const editEmail: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
+const verticalId: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_VERTICAL_ID' ) {
+		return action.verticalId;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
+const storeLocationCountryCode: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_STORE_LOCATION_COUNTRY_CODE' ) {
+		return action.storeLocationCountryCode;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
+const ecommerceFlowRecurType: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_ECOMMERCE_FLOW_RECUR_TYPE' ) {
+		return action.ecommerceFlowRecurType;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
+const domainForm: Reducer< DomainForm, OnboardAction > = ( state = {}, action ) => {
+	if ( action.type === 'SET_DOMAIN_FORM' ) {
+		return {
+			...state,
+			...action.step,
+		};
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return {};
+	}
+
+	return state;
+};
+
+const hideFreePlan: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_HIDE_FREE_PLAN' ) {
+		return action.hideFreePlan;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
+const domainCartItem: Reducer< MinimalRequestCartProduct | undefined, OnboardAction > = (
+	state = undefined,
+	action
+) => {
+	if ( action.type === 'SET_DOMAIN_CART_ITEM' ) {
+		return action.domainCartItem;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+
+	return state;
+};
+
 const reducer = combineReducers( {
 	anchorPodcastId,
 	anchorEpisodeId,
 	anchorSpotifyUrl,
 	domain,
+	domainCartItem,
 	patternContent,
 	domainSearch,
 	domainCategory,
+	domainForm,
 	isRedirecting,
 	hasUsedDomainsStep,
 	hasUsedPlansStep,
@@ -408,9 +493,14 @@ const reducer = combineReducers( {
 	stepProgress,
 	goals,
 	editEmail,
+	hideFreePlan,
 	siteDescription,
 	siteLogo,
 	siteAccentColor,
+	verticalId,
+	storeLocationCountryCode,
+	ecommerceFlowRecurType,
+	planCartItem,
 } );
 
 export type State = ReturnType< typeof reducer >;

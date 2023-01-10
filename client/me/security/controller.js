@@ -87,6 +87,6 @@ export function socialLogin( context, next ) {
 }
 
 export function sshKey( context, next ) {
-	context.primary = <SecuritySSHKey />;
+	context.primary = <SecuritySSHKey queryParams={ context.query } />;
 	next();
 }

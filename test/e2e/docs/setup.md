@@ -12,7 +12,6 @@
   - [Regular setup](#regular-setup)
   - [Apple Silicon emulated x86_64](#apple-silicon-emulated-x86_64)
   - [Apple Silicon arm64](#apple-silicon-arm64)
-  - [Help](#help)
 
 <!-- /TOC -->
 
@@ -87,7 +86,3 @@ PUPPETEER_SKIP_DOWNLOAD=true
 ```
 yarn install
 ```
-
-## Help
-
-See the [Troubleshooting](troubleshooting.md) section.

@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { Icon, info } from '@wordpress/icons';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import type { Moment } from 'moment';
@@ -27,7 +27,7 @@ const StatsModuleAvailabilityWarning: FunctionComponent< Props & LocalizeProps >
 
 	return (
 		<div className="stats-module__availability-warning">
-			<Gridicon icon="info-outline" size={ 24 } />
+			<Icon icon={ info } size={ 24 } />
 			<p className="stats-module__availability-warning-message">
 				{ translate( 'File download counts were not recorded before July 2019.' ) }
 			</p>

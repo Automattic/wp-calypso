@@ -127,7 +127,10 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 						originalPrice={ originalPrice ?? 0 }
 						pricesAreFetching={ pricesAreFetching }
 						belowPriceText={ item.belowPriceText }
-						tooltipText={ priceTierList.length > 0 && productTooltip( item, priceTierList ) }
+						tooltipText={
+							priceTierList.length > 0 &&
+							productTooltip( item, priceTierList, currencyCode ?? 'USD' )
+						}
 						billingTerm={ billingTerm }
 						productName={ displayName }
 						hideSavingLabel={ false }

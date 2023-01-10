@@ -40,7 +40,7 @@ class ThemeMoreButton extends Component {
 
 	popoverAction( action, label ) {
 		return () => {
-			action( this.props.themeId );
+			action( this.props.themeId, 'more button' );
 			this.props.onMoreButtonClick( this.props.themeId, this.props.index, 'popup_' + label );
 		};
 	}
@@ -54,7 +54,11 @@ class ThemeMoreButton extends Component {
 
 		return (
 			<span className={ classes }>
-				<button ref={ this.moreButtonRef } onClick={ this.togglePopover }>
+				<button
+					aria-label={ `More options for theme ${ this.props.themeName }` }
+					ref={ this.moreButtonRef }
+					onClick={ this.togglePopover }
+				>
 					<Gridicon icon="ellipsis" size={ 24 } />
 				</button>
 
@@ -103,6 +107,8 @@ class ThemeMoreButton extends Component {
 }
 
 ThemeMoreButton.propTypes = {
+	// Name of theme to give image context.
+	themeName: PropTypes.string,
 	themeId: PropTypes.string,
 	// Index of theme in results list
 	index: PropTypes.number,

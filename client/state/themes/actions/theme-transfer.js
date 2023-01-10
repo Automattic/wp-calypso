@@ -12,7 +12,7 @@ import {
 
 import 'calypso/state/themes/init';
 
-function initiateTransfer( siteId, plugin, theme, onProgress ) {
+function initiateTransfer( siteId, plugin, theme, geoAffinity, onProgress ) {
 	return new Promise( ( resolve, rejectPromise ) => {
 		const resolver = ( error, data ) => {
 			error ? rejectPromise( error ) : resolve( data );
@@ -21,12 +21,22 @@ function initiateTransfer( siteId, plugin, theme, onProgress ) {
 		const post = {
 			path: `/sites/${ siteId }/automated-transfers/initiate`,
 		};
-
+		post.body = {};
 		if ( plugin ) {
-			post.body = { plugin };
+			post.body = {
+				...post.body,
+				plugin,
+			};
 		}
 		if ( theme ) {
 			post.formData = [ [ 'theme', theme ] ];
+		}
+
+		if ( geoAffinity ) {
+			post.body = {
+				...post.body,
+				geo_affinity: geoAffinity,
+			};
 		}
 
 		const req = wpcom.req.post( post, resolver );
@@ -40,9 +50,10 @@ function initiateTransfer( siteId, plugin, theme, onProgress ) {
  * @param {number} siteId -- the site to transfer
  * @param {window.File} file -- theme zip to upload
  * @param {string} plugin -- plugin slug
+ * @param {string} geoAffinity -- geographic affinity for the new site
  * @returns {Promise} for testing purposes only
  */
-export function initiateThemeTransfer( siteId, file, plugin ) {
+export function initiateThemeTransfer( siteId, file, plugin, geoAffinity = '' ) {
 	let context = plugin ? 'plugins' : 'themes';
 	if ( ! plugin && ! file ) {
 		context = 'hosting';
@@ -60,7 +71,7 @@ export function initiateThemeTransfer( siteId, file, plugin ) {
 				themeInitiateRequest
 			)
 		);
-		return initiateTransfer( siteId, plugin, file, ( event ) => {
+		return initiateTransfer( siteId, plugin, file, geoAffinity, ( event ) => {
 			dispatch( {
 				type: THEME_TRANSFER_INITIATE_PROGRESS,
 				siteId,

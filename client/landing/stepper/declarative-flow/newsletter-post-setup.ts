@@ -1,15 +1,18 @@
 import { NEWSLETTER_POST_SETUP_FLOW } from '@automattic/onboarding';
+import { translate } from 'i18n-calypso';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import NewsletterPostSetup from './internals/steps-repository/newsletter-post-setup';
 import { ProvidedDependencies } from './internals/types';
-import type { StepPath } from './internals/steps-repository';
 import type { Flow } from './internals/types';
 
-export const newsletterPostSetup: Flow = {
+const newsletterPostSetup: Flow = {
 	name: NEWSLETTER_POST_SETUP_FLOW,
-	title: 'Newsletter',
+	get title() {
+		return translate( 'Newsletter' );
+	},
 	useSteps() {
-		return [ 'newsletterPostSetup' ] as StepPath[];
+		return [ { slug: 'newsletterPostSetup', component: NewsletterPostSetup } ];
 	},
 
 	useStepNavigation( currentStep, navigate ) {
@@ -22,7 +25,7 @@ export const newsletterPostSetup: Flow = {
 			switch ( currentStep ) {
 				case 'newsletterPostSetup':
 					return window.location.assign(
-						`/setup/launchpad?flow=newsletter&siteSlug=${ siteSlug }&color=${ providedDependencies.color }`
+						`/setup/newsletter/launchpad?siteSlug=${ siteSlug }&color=${ providedDependencies.color }`
 					);
 			}
 		}
@@ -35,10 +38,12 @@ export const newsletterPostSetup: Flow = {
 			return;
 		};
 
-		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
+		const goToStep = ( step: string ) => {
 			navigate( step );
 		};
 
 		return { goNext, goBack, goToStep, submit };
 	},
 };
+
+export default newsletterPostSetup;

@@ -5,7 +5,6 @@ import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { getStepModuleName } from 'calypso/signup/config/step-components';
 import steps from 'calypso/signup/config/steps-pure';
-import { VIDEOPRESS_ONBOARDING_FLOW_STEPS } from './config/constants';
 
 const { defaultFlowName } = flows;
 
@@ -116,14 +115,6 @@ export function getThemeForDesignType( designType ) {
 	}
 }
 
-export function getVideoPressOnboardingTotalSteps() {
-	return VIDEOPRESS_ONBOARDING_FLOW_STEPS.length;
-}
-
-export function getVideoPressOnboardingStepNumber( stepName ) {
-	return VIDEOPRESS_ONBOARDING_FLOW_STEPS.indexOf( stepName ) + 1;
-}
-
 export function getFilteredSteps( flowName, progress, isUserLoggedIn ) {
 	const flow = flows.getFlow( flowName, isUserLoggedIn );
 
@@ -178,7 +169,7 @@ export const shouldForceLogin = ( flowName, userLoggedIn ) => {
 };
 
 export const isReskinnedFlow = ( flowName ) => {
-	return config.isEnabled( 'signup/reskin' ) && config( 'reskinned_flows' ).includes( flowName );
+	return config( 'reskinned_flows' ).includes( flowName );
 };
 
 export const isP2Flow = ( flowName ) => {
@@ -186,7 +177,7 @@ export const isP2Flow = ( flowName ) => {
 };
 
 export const isVideoPressFlow = ( flowName ) => {
-	return flowName === 'videopress';
+	return flowName === 'videopress' || flowName === 'videopress-account';
 };
 
 export const isWpccFlow = ( flowName ) => {

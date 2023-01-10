@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { createInterpolateElement } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import AnimatedIcon from 'calypso/components/animated-icon';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -126,7 +127,9 @@ export const getTask = (
 						<a href="/me/account">{ translate( 'Change' ) }</a>
 					</>
 				),
-				actionText: translate( 'Resend email' ),
+				actionText: task.isCompleted
+					? translate( 'Already confirmed' )
+					: translate( 'Resend email' ),
 				actionDispatch: verifyEmail,
 				actionDispatchArgs: [ { showGlobalNotices: true } ],
 			};
@@ -175,25 +178,40 @@ export const getTask = (
 				isSkippable: true,
 			};
 			break;
-		case CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED:
+		case CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED: {
+			const description = isBlogger
+				? translate(
+						"Ready for the big reveal? Right now, your blog is private and visible only to you. Launch your blog so that it's public for everyone."
+				  )
+				: translate(
+						"Your site is private and only visible to you. When you're ready, launch your site to make it public."
+				  );
+			const descriptionOnCompleted = createInterpolateElement(
+				/* translators: pressing <Link> will redirect user to Settings -> Privacy where they can change the site visibilidty */
+				translate(
+					'Your site is already live. You can change your site visibility in <Link>privacy options</Link> at any time.'
+				),
+				{
+					Link: <a href={ `/settings/general/${ siteSlug }#site-privacy-settings` } />,
+				}
+			);
+
+			const actionText = isBlogger ? translate( 'Launch blog' ) : translate( 'Launch site' );
+			const actionTextOnCompleted = translate( 'Already launched' );
+
 			taskData = {
 				timing: 1,
 				title: isBlogger
 					? translate( 'Launch your blog' )
 					: translate( 'Launch your site to the world' ),
-				description: isBlogger
-					? translate(
-							"Ready for the big reveal? Right now, your blog is private and visible only to you. Launch your blog so that it's public for everyone."
-					  )
-					: translate(
-							"Your site is private and only visible to you. When you're ready, launch your site to make it public."
-					  ),
-				actionText: isBlogger ? translate( 'Launch blog' ) : translate( 'Launch site' ),
+				description: task.isCompleted ? descriptionOnCompleted : description,
+				actionText: task.isCompleted ? actionTextOnCompleted : actionText,
 				actionDispatch: launchSiteOrRedirectToLaunchSignupFlow,
 				actionDispatchArgs: [ siteId, 'my-home' ],
 				actionDisableOnComplete: true,
 			};
 			break;
+		}
 		case CHECKLIST_KNOWN_TASKS.FRONT_PAGE_UPDATED:
 			taskData = {
 				timing: 20,

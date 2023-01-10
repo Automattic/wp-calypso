@@ -4,8 +4,10 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import './style.scss';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import { PlanUSPS, USPS } from 'calypso/my-sites/plugins/plugin-details-CTA/usps';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
@@ -18,12 +20,14 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const PluginDetailsSidebar = ( {
 	plugin: {
+		slug,
 		active_installs,
 		tested,
 		isMarketplaceProduct = false,
 		demo_url = null,
 		documentation_url = null,
 		requirements = {},
+		premium_slug,
 	},
 } ) => {
 	const translate = useTranslate();
@@ -60,8 +64,36 @@ const PluginDetailsSidebar = ( {
 			label: translate( 'View documentation' ),
 		} );
 
+	const isPremiumVersionAvailable = !! premium_slug;
+	const premiumVersionLink = `/plugins/${ premium_slug }/${ selectedSite?.slug || '' }`;
+	const premiumVersionLinkOnClik = useCallback( () => {
+		recordTracksEvent( 'calypso_plugin_details_premium_plugin_link_click', {
+			current_plugin_slug: slug,
+			premium_plugin_slug: premium_slug,
+			site: selectedSite?.ID,
+		} );
+	}, [ premium_slug, selectedSite?.ID, slug ] );
+
 	return (
 		<div className="plugin-details-sidebar__plugin-details-content">
+			{ isPremiumVersionAvailable && (
+				<PluginDetailsSidebarUSP
+					id="demo"
+					title={ translate( 'Premium version available' ) }
+					description={ translate(
+						'This plugin has a premium version that might suit your needs better.'
+					) }
+					links={ [
+						{
+							href: premiumVersionLink,
+							label: translate( 'Check out the premium version' ),
+							onClick: premiumVersionLinkOnClik,
+						},
+					] }
+					first
+				/>
+			) }
+
 			{ isWooCommercePluginRequired && (
 				<PluginDetailsSidebarUSP
 					id="woo"
@@ -74,7 +106,7 @@ const PluginDetailsSidebar = ( {
 							},
 						}
 					) }
-					first
+					first={ ! isPremiumVersionAvailable }
 				/>
 			) }
 
@@ -89,6 +121,7 @@ const PluginDetailsSidebar = ( {
 
 			{ selectedSite && (
 				<PlanUSPS
+					pluginSlug={ slug }
 					shouldUpgrade={ shouldUpgrade }
 					isFreePlan={ isFreePlan }
 					isMarketplaceProduct={ isMarketplaceProduct }

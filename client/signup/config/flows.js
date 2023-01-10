@@ -1,7 +1,6 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { englishLocales } from '@automattic/i18n-utils';
 import { get, includes, reject } from 'lodash';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
+import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs } from 'calypso/lib/url';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
 import stepConfig from './steps';
@@ -17,6 +16,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 	return addQueryArgs(
 		{
 			signup: 1,
+			ref: getQueryArgs()?.ref,
 			...( [ 'domain', 'add-domain' ].includes( flowName ) && { isDomainOnly: 1 } ),
 		},
 		checkoutURL
@@ -59,7 +59,7 @@ function getRedirectDestination( dependencies ) {
 	return '/';
 }
 
-function getSignupDestination( { domainItem, siteId, siteSlug, refParameter }, localeSlug ) {
+function getSignupDestination( { domainItem, siteId, siteSlug, refParameter } ) {
 	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
@@ -78,17 +78,7 @@ function getSignupDestination( { domainItem, siteId, siteSlug, refParameter }, l
 		queryParam.ref = refParameter;
 	}
 
-	if ( isEnabled( 'signup/stepper-flow' ) ) {
-		return addQueryArgs( queryParam, '/setup' );
-	}
-
-	// Initially ship to English users only, then ship to all users when translations complete
-	if ( englishLocales.includes( localeSlug ) || isEnabled( 'signup/hero-flow-non-en' ) ) {
-		queryParam.loading_ellipsis = 1;
-		return addQueryArgs( queryParam, '/start/setup-site' );
-	}
-
-	return `/home/${ siteSlug }`;
+	return addQueryArgs( queryParam, '/setup' );
 }
 
 function getLaunchDestination( dependencies ) {
@@ -116,8 +106,11 @@ function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
 
-function getChecklistThemeDestination( dependencies ) {
-	return `/home/${ dependencies.siteSlug }`;
+function getChecklistThemeDestination( { siteSlug, themeParameter } ) {
+	if ( themeParameter === 'blank-canvas-3' ) {
+		return `/setup/site-setup/patternAssembler?siteSlug=${ siteSlug }`;
+	}
+	return `/home/${ siteSlug }`;
 }
 
 function getEditorDestination( dependencies ) {
@@ -176,9 +169,17 @@ function removeUserStepFromFlow( flow ) {
 		return;
 	}
 
+	const steps = [];
+	for ( const curStep of flow.steps ) {
+		if ( stepConfig[ curStep ].providesToken ) {
+			continue;
+		}
+		steps.push( curStep );
+	}
+
 	return {
 		...flow,
-		steps: reject( flow.steps, ( stepName ) => stepConfig[ stepName ].providesToken ),
+		steps,
 	};
 }
 
@@ -232,9 +233,12 @@ const Flows = {
 		if ( isUserLoggedIn ) {
 			const urlParams = new URLSearchParams( window.location.search );
 			const param = urlParams.get( 'user_completed' );
+			const isUserStepOnly = flow.steps.length === 1 && stepConfig[ flow.steps[ 0 ] ].providesToken;
+
 			// Remove the user step unless the user has just completed the step
 			// and then clicked the back button.
-			if ( ! param && ! detectHistoryNavigation.loadedViaHistory() ) {
+			// If the user step is the only step in the whole flow, e.g. /start/account, don't remove it as well.
+			if ( ! param && ! detectHistoryNavigation.loadedViaHistory() && ! isUserStepOnly ) {
 				flow = removeUserStepFromFlow( flow );
 			}
 		}

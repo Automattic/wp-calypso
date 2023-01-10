@@ -22,7 +22,7 @@ const useFreeItem = (): SelectorProduct => {
 			features: {
 				items: [
 					{ slug: 'not used', text: translate( 'Brute force attack protection' ) },
-					{ slug: 'not used', text: translate( 'Site stats' ) },
+					{ slug: 'not used', text: translate( 'Jetpack Stats' ) },
 					{ slug: 'not used', text: translate( 'Content Delivery Network' ) },
 					{ slug: 'not used', text: translate( 'Downtime monitoring' ) },
 					{ slug: 'not used', text: translate( 'Related posts' ) },

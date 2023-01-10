@@ -3,6 +3,8 @@ import {
 	isDomainTransfer,
 	isPlan,
 	hasMarketplaceProduct,
+	isJetpackPlan,
+	isJetpackProduct,
 } from '@automattic/calypso-products';
 import { Card, CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -51,6 +53,7 @@ class CancelPurchase extends Component {
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		includedDomainPurchase: PropTypes.object,
+		isJetpackPurchase: PropTypes.bool,
 		purchase: PropTypes.object,
 		purchaseId: PropTypes.number.isRequired,
 		site: PropTypes.object,
@@ -180,7 +183,7 @@ class CancelPurchase extends Component {
 			);
 		}
 
-		const { purchase } = this.props;
+		const { purchase, isJetpackPurchase } = this.props;
 		const purchaseName = getName( purchase );
 		const { siteName, domain: siteDomain, siteId } = purchase;
 
@@ -220,6 +223,7 @@ class CancelPurchase extends Component {
 
 					<CancelPurchaseRefundInformation
 						purchase={ purchase }
+						isJetpackPurchase={ isJetpackPurchase }
 						includedDomainPurchase={ this.props.includedDomainPurchase }
 						confirmBundledDomain={ this.state.confirmCancelBundledDomain }
 						cancelBundledDomain={ this.state.cancelBundledDomain }
@@ -255,11 +259,14 @@ class CancelPurchase extends Component {
 
 export default connect( ( state, props ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
+	const isJetpackPurchase =
+		purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
 	const purchases = purchase && getSitePurchases( state, purchase.siteId );
 	const productsList = getProductsList( state );
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+		isJetpackPurchase,
 		purchase,
 		purchases,
 		productsList,

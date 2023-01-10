@@ -1,3 +1,4 @@
+import { isJetpackPlanSlug } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useStoreItemInfoContext } from '../context/store-item-info-context';
 import { ItemPrice } from '../item-price';
@@ -18,6 +19,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 	const {
 		getCheckoutURL,
 		getCtaLabel,
+		getCtaAriaLabel,
 		getIsDeprecated,
 		getIsExternal,
 		getIsIncludedInPlan,
@@ -29,17 +31,20 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 		getIsUserPurchaseOwner,
 		getOnClickPurchase,
 		isMultisite,
+		getIsProductInCart,
 	} = useStoreItemInfoContext();
 
 	const wrapperClassName = classNames( 'jetpack-product-store__all-items', className );
 
 	return (
 		<div className={ wrapperClassName }>
-			<h3 className="jetpack-product-store__all-items--header">{ heading }</h3>
+			<h2 className="jetpack-product-store__all-items--header">{ heading }</h2>
 
-			<div className="jetpack-product-store__all-items--grid">
+			<ul className="jetpack-product-store__all-items--grid">
 				{ items.map( ( item ) => {
 					const isOwned = getIsOwned( item );
+					const isProductInCart =
+						! isJetpackPlanSlug( item.productSlug ) && getIsProductInCart( item );
 					const isSuperseded = getIsSuperseded( item );
 					const isDeprecated = getIsDeprecated( item );
 					const isExternal = getIsExternal( item );
@@ -52,6 +57,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 						( ( isOwned || isIncludedInPlan ) && ! getIsUserPurchaseOwner( item ) );
 
 					const ctaLabel = getCtaLabel( item );
+					const ctaAriaLabel = getCtaAriaLabel( item );
 
 					const hideMoreInfoLink = isDeprecated || isOwned || isIncludedInPlanOrSuperseded;
 
@@ -78,25 +84,33 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 						</>
 					);
 
-					const ctaAsPrimary = ! ( isOwned || getIsPlanFeature( item ) || isSuperseded );
+					const ctaAsPrimary = ! (
+						isProductInCart ||
+						isOwned ||
+						getIsPlanFeature( item ) ||
+						isSuperseded
+					);
 
 					return (
-						<SimpleItemCard
-							ctaAsPrimary={ ctaAsPrimary }
-							ctaHref={ getCheckoutURL( item ) }
-							ctaLabel={ ctaLabel }
-							description={ description }
-							icon={ <img alt="" src={ getProductIcon( { productSlug: item.productSlug } ) } /> }
-							isCtaDisabled={ isCtaDisabled }
-							isCtaExternal={ isExternal }
-							key={ item.productSlug }
-							onClickCta={ getOnClickPurchase( item ) }
-							price={ price }
-							title={ item.displayName }
-						/>
+						<li key={ item.productSlug }>
+							<SimpleItemCard
+								ctaAsPrimary={ ctaAsPrimary }
+								ctaHref={ getCheckoutURL( item ) }
+								ctaLabel={ ctaLabel }
+								ctaAriaLabel={ ctaAriaLabel }
+								description={ description }
+								icon={ <img alt="" src={ getProductIcon( { productSlug: item.productSlug } ) } /> }
+								isCtaDisabled={ isCtaDisabled }
+								isCtaExternal={ isExternal }
+								onClickCta={ getOnClickPurchase( item ) }
+								isProductInCart={ isProductInCart }
+								price={ price }
+								title={ item.displayName }
+							/>
+						</li>
 					);
 				} ) }
-			</div>
+			</ul>
 		</div>
 	);
 };

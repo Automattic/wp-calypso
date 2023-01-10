@@ -1,11 +1,12 @@
+import { isJetpackPlanSlug } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useStoreItemInfoContext } from '../context/store-item-info-context';
 import { FeaturedItemCard } from '../featured-item-card';
-import { FeaturesList } from '../features-list';
 import { HeroImage } from '../hero-image';
 import { ItemPrice } from '../item-price';
 import { MoreInfoLink } from '../more-info-link';
 import { MostPopularProps } from '../types';
+import { AmountSaved } from './amount-saved';
 
 import './style-most-popular.scss';
 
@@ -21,6 +22,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 	const {
 		getCheckoutURL,
 		getCtaLabel,
+		getCtaAriaLabel,
 		getIsDeprecated,
 		getIsExternal,
 		getIsIncludedInPlan,
@@ -28,6 +30,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 		getIsMultisiteCompatible,
 		getIsOwned,
 		getIsPlanFeature,
+		getIsProductInCart,
 		getIsSuperseded,
 		getIsUserPurchaseOwner,
 		getOnClickPurchase,
@@ -36,11 +39,13 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 
 	return (
 		<div className={ wrapperClassName }>
-			<h3 className="jetpack-product-store__most-popular--heading">{ heading }</h3>
-			<div className="jetpack-product-store__most-popular--items">
+			<h2 className="jetpack-product-store__most-popular--heading">{ heading }</h2>
+			<ul className="jetpack-product-store__most-popular--items">
 				{ items.map( ( item ) => {
 					const isOwned = getIsOwned( item );
 					const isSuperseded = getIsSuperseded( item );
+					const isProductInCart =
+						! isJetpackPlanSlug( item.productSlug ) && getIsProductInCart( item );
 					const isDeprecated = getIsDeprecated( item );
 					const isExternal = getIsExternal( item );
 					const isIncludedInPlanOrSuperseded = getIsIncludedInPlanOrSuperseded( item );
@@ -52,6 +57,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 						( ( isOwned || isIncludedInPlan ) && ! getIsUserPurchaseOwner( item ) );
 
 					const ctaLabel = getCtaLabel( item );
+					const ctaAriaLabel = getCtaAriaLabel( item );
 
 					const hideMoreInfoLink = isDeprecated || isOwned || isIncludedInPlanOrSuperseded;
 
@@ -80,27 +86,43 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 						</p>
 					);
 
-					const ctaAsPrimary = ! ( isOwned || getIsPlanFeature( item ) || isSuperseded );
+					const ctaAsPrimary = ! (
+						isProductInCart ||
+						isOwned ||
+						getIsPlanFeature( item ) ||
+						isSuperseded
+					);
+
+					// TODO remove this isEnglish check once we have translations for the new strings
+					const amountSaved = item.productsIncluded?.length ? (
+						<AmountSaved
+							siteId={ siteId }
+							product={ item }
+							onClickMoreInfo={ onClickMoreInfoFactory( item ) }
+						/>
+					) : null;
 
 					return (
-						<div key={ item.productSlug } className="jetpack-product-store__most-popular--item">
+						<li key={ item.productSlug } className="jetpack-product-store__most-popular--item">
 							<FeaturedItemCard
+								amountSaved={ amountSaved }
 								ctaAsPrimary={ ctaAsPrimary }
 								ctaHref={ getCheckoutURL( item ) }
 								ctaLabel={ ctaLabel }
+								ctaAriaLabel={ ctaAriaLabel }
 								description={ description }
 								hero={ <HeroImage item={ item } /> }
 								isCtaDisabled={ isCtaDisabled }
 								isCtaExternal={ isExternal }
+								isProductInCart={ isProductInCart }
 								onClickCta={ getOnClickPurchase( item ) }
 								price={ price }
 								title={ item.displayName }
 							/>
-							<FeaturesList item={ item } />
-						</div>
+						</li>
 					);
 				} ) }
-			</div>
+			</ul>
 		</div>
 	);
 };

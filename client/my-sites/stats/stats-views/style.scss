@@ -28,6 +28,11 @@
 .stats-views__key-item {
 	background-color: none;
 
+	&.is-total {
+		background: none;
+		cursor: text;
+	}
+
 	&.is-year {
 		background: none;
 		text-align: left;

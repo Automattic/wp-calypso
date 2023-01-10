@@ -33,6 +33,7 @@ describe( 'Theme', () => {
 		translate: ( string ) => string,
 		setThemesBookmark: () => {},
 		onScreenshotClick: () => {},
+		isPremiumTheme: true,
 	};
 
 	function renderWithState( content ) {

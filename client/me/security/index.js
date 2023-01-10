@@ -35,7 +35,5 @@ export default function () {
 
 	page( '/me/security/account-recovery', sidebar, accountRecovery, makeLayout, clientRender );
 
-	if ( isEnabled( 'hosting/ssh-keys' ) ) {
-		page( '/me/security/ssh-key', sidebar, sshKey, makeLayout, clientRender );
-	}
+	page( '/me/security/ssh-key', sidebar, sshKey, makeLayout, clientRender );
 }

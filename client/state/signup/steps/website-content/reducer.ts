@@ -1,46 +1,45 @@
 import {
 	SIGNUP_STEPS_WEBSITE_CONTENT_UPDATE_CURRENT_INDEX,
 	SIGNUP_COMPLETE_RESET,
-	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_UPLOAD_COMPLETED,
+	SIGNUP_STEPS_WEBSITE_CONTENT_MEDIA_UPLOAD_COMPLETED,
 	SIGNUP_STEPS_WEBSITE_FIELD_CHANGED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_INITIALIZE_PAGES,
-	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_UPLOAD_STARTED,
+	SIGNUP_STEPS_WEBSITE_CONTENT_MEDIA_UPLOAD_STARTED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_LOGO_UPLOAD_COMPLETED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_LOGO_UPLOAD_STARTED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_LOGO_UPLOAD_FAILED,
-	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_UPLOAD_FAILED,
-	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_REMOVED,
+	SIGNUP_STEPS_WEBSITE_CONTENT_MEDIA_UPLOAD_FAILED,
+	SIGNUP_STEPS_WEBSITE_CONTENT_MEDIA_REMOVED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_REMOVE_LOGO_URL,
+	SIGNUP_STEPS_WEBSITE_CONTENT_FEEDBACK_CHANGE,
 } from 'calypso/state/action-types';
 import { withSchemaValidation } from 'calypso/state/utils';
-import { schema, initialState, WebsiteContentCollection, PageData } from './schema';
+import { getSingleMediaPlaceholder, MediaUploadedData } from './actions';
+import {
+	schema,
+	initialState,
+	WebsiteContentCollection,
+	MEDIA_UPLOAD_STATES,
+	LOGO_SECTION_ID,
+} from './schema';
 import type { AnyAction } from 'redux';
-
-export const IMAGE_UPLOAD_STATES = {
-	UPLOAD_STARTED: 'UPLOAD_STARTED',
-	UPLOAD_COMPLETED: 'UPLOAD_COMPLETED',
-	UPLOAD_FAILED: 'UPLOAD_FAILED',
-	UPLOAD_REMOVED: 'UPLOAD_REMOVED',
-};
-
-export const LOGO_SECTION_ID = 'logo_section';
 
 export default withSchemaValidation(
 	schema,
 	( state = initialState, action: AnyAction ): WebsiteContentCollection => {
 		switch ( action.type ) {
 			case SIGNUP_STEPS_WEBSITE_CONTENT_INITIALIZE_PAGES: {
-				// When initializing page we need to leave pages that already exist alone
-				// so that persisted state can load correctly
-				const newPages = action.payload.map( ( page: PageData ) => ( {
-					...page,
-					...state.websiteContent.pages.find( ( oldPage ) => oldPage.id === page.id ),
-				} ) );
+				const { pages, siteId } = action.payload;
+
+				// If the persisted siteId is same as the siteId in the action, do nothing.
+				if ( siteId === state.siteId ) {
+					return state;
+				}
 
 				return {
-					...state,
-					websiteContent: { ...state.websiteContent, pages: newPages },
-					imageUploadStates: {},
+					...initialState,
+					websiteContent: { ...initialState.websiteContent, pages },
+					siteId,
 				};
 			}
 			case SIGNUP_STEPS_WEBSITE_CONTENT_UPDATE_CURRENT_INDEX:
@@ -52,14 +51,14 @@ export default withSchemaValidation(
 			case SIGNUP_STEPS_WEBSITE_CONTENT_LOGO_UPLOAD_STARTED: {
 				return {
 					...state,
-					imageUploadStates: {
-						...state.imageUploadStates,
+					mediaUploadStates: {
+						...state.mediaUploadStates,
 						[ LOGO_SECTION_ID ]: {
-							...state.imageUploadStates[ LOGO_SECTION_ID ],
+							...state.mediaUploadStates[ LOGO_SECTION_ID ],
 							[ 0 ]:
 								action.type === SIGNUP_STEPS_WEBSITE_CONTENT_LOGO_UPLOAD_STARTED
-									? IMAGE_UPLOAD_STATES.UPLOAD_STARTED
-									: IMAGE_UPLOAD_STATES.UPLOAD_FAILED,
+									? MEDIA_UPLOAD_STATES.UPLOAD_STARTED
+									: MEDIA_UPLOAD_STATES.UPLOAD_FAILED,
 						},
 					},
 				};
@@ -72,14 +71,27 @@ export default withSchemaValidation(
 					...state,
 					websiteContent: {
 						...state.websiteContent,
-						siteLogoUrl: url,
+						siteLogoSection: { siteLogoUrl: url },
 					},
-					imageUploadStates: {
-						...state.imageUploadStates,
+					mediaUploadStates: {
+						...state.mediaUploadStates,
 						[ LOGO_SECTION_ID ]: {
-							...state.imageUploadStates[ LOGO_SECTION_ID ],
-							[ 0 ]: IMAGE_UPLOAD_STATES.UPLOAD_COMPLETED,
+							...state.mediaUploadStates[ LOGO_SECTION_ID ],
+							[ 0 ]: MEDIA_UPLOAD_STATES.UPLOAD_COMPLETED,
 						},
+					},
+				};
+			}
+
+			case SIGNUP_STEPS_WEBSITE_CONTENT_FEEDBACK_CHANGE: {
+				const {
+					payload: { feedback },
+				} = action;
+				return {
+					...state,
+					websiteContent: {
+						...state.websiteContent,
+						feedbackSection: { genericFeedback: feedback },
 					},
 				};
 			}
@@ -89,50 +101,51 @@ export default withSchemaValidation(
 					...state,
 					websiteContent: {
 						...state.websiteContent,
-						siteLogoUrl: '',
+						siteLogoSection: { siteLogoUrl: '' },
 					},
-					imageUploadStates: {
-						...state.imageUploadStates,
+					mediaUploadStates: {
+						...state.mediaUploadStates,
 						[ LOGO_SECTION_ID ]: {
-							...state.imageUploadStates[ LOGO_SECTION_ID ],
-							[ 0 ]: IMAGE_UPLOAD_STATES.UPLOAD_REMOVED,
+							...state.mediaUploadStates[ LOGO_SECTION_ID ],
+							[ 0 ]: MEDIA_UPLOAD_STATES.UPLOAD_REMOVED,
 						},
 					},
 				};
 			}
 
-			case SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_UPLOAD_STARTED: {
+			case SIGNUP_STEPS_WEBSITE_CONTENT_MEDIA_UPLOAD_STARTED: {
 				const { payload } = action;
 
 				return {
 					...state,
-					imageUploadStates: {
-						...state.imageUploadStates,
+					mediaUploadStates: {
+						...state.mediaUploadStates,
 						[ payload.pageId ]: {
-							...state.imageUploadStates[ payload.pageId ],
-							[ payload.mediaIndex ]: IMAGE_UPLOAD_STATES.UPLOAD_STARTED,
+							...state.mediaUploadStates[ payload.pageId ],
+							[ payload.mediaIndex ]: MEDIA_UPLOAD_STATES.UPLOAD_STARTED,
 						},
 					},
 				};
 			}
 
-			case SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_UPLOAD_COMPLETED: {
-				const { payload } = action;
+			case SIGNUP_STEPS_WEBSITE_CONTENT_MEDIA_UPLOAD_COMPLETED: {
+				const payload = action.payload as MediaUploadedData;
 				const { pageId } = payload;
 
-				const imageUploadStates = {
-					...state.imageUploadStates,
+				const mediaUploadStates = {
+					...state.mediaUploadStates,
 					[ pageId ]: {
-						...state.imageUploadStates[ pageId ],
-						[ payload.mediaIndex ]: IMAGE_UPLOAD_STATES.UPLOAD_COMPLETED,
+						...state.mediaUploadStates[ pageId ],
+						[ payload.mediaIndex ]: MEDIA_UPLOAD_STATES.UPLOAD_COMPLETED,
 					},
 				};
 
 				const pageIndex = state.websiteContent.pages.findIndex( ( page ) => page.id === pageId );
 
 				const changedPage = state.websiteContent.pages[ pageIndex ];
-				const newImages = [ ...changedPage.images ];
-				newImages.splice( payload.mediaIndex, 1, payload.image );
+				const newMediaItems = [ ...changedPage.media ];
+				const removedItem = changedPage.media[ payload.mediaIndex ];
+				newMediaItems.splice( payload.mediaIndex, 1, { ...removedItem, ...payload.media } );
 
 				return {
 					...state,
@@ -142,40 +155,45 @@ export default withSchemaValidation(
 							...state.websiteContent.pages.slice( 0, pageIndex ),
 							{
 								...changedPage,
-								images: newImages,
+								media: newMediaItems,
 							},
 							...state.websiteContent.pages.slice( pageIndex + 1 ),
 						],
 					},
 
-					imageUploadStates: imageUploadStates,
+					mediaUploadStates: mediaUploadStates,
 				};
 			}
 
-			case SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_UPLOAD_FAILED: {
+			case SIGNUP_STEPS_WEBSITE_CONTENT_MEDIA_UPLOAD_FAILED: {
 				const { payload } = action;
 
 				return {
 					...state,
-					imageUploadStates: {
-						...state.imageUploadStates,
+					mediaUploadStates: {
+						...state.mediaUploadStates,
 						[ payload.pageId ]: {
-							...state.imageUploadStates[ payload.pageId ],
-							[ payload.mediaIndex ]: IMAGE_UPLOAD_STATES.UPLOAD_FAILED,
+							...state.mediaUploadStates[ payload.pageId ],
+							[ payload.mediaIndex ]: MEDIA_UPLOAD_STATES.UPLOAD_FAILED,
 						},
 					},
 				};
 			}
 
-			case SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_REMOVED: {
+			case SIGNUP_STEPS_WEBSITE_CONTENT_MEDIA_REMOVED: {
 				const { payload } = action;
 				const { pageId } = payload;
 
 				const pageIndex = state.websiteContent.pages.findIndex( ( page ) => page.id === pageId );
 
 				const changedPage = state.websiteContent.pages[ pageIndex ];
-				const newImages = [ ...changedPage.images ];
-				newImages.splice( payload.mediaIndex, 1, { caption: '', url: '' } );
+				const newMediaItems = [ ...changedPage.media ];
+				const removedMedia = newMediaItems[ payload.mediaIndex ];
+				newMediaItems.splice(
+					payload.mediaIndex,
+					1,
+					getSingleMediaPlaceholder( removedMedia.mediaType )
+				);
 
 				return {
 					...state,
@@ -185,16 +203,16 @@ export default withSchemaValidation(
 							...state.websiteContent.pages.slice( 0, pageIndex ),
 							{
 								...changedPage,
-								images: newImages,
+								media: newMediaItems,
 							},
 							...state.websiteContent.pages.slice( pageIndex + 1 ),
 						],
 					},
-					imageUploadStates: {
-						...state.imageUploadStates,
+					mediaUploadStates: {
+						...state.mediaUploadStates,
 						[ payload.pageId ]: {
-							...state.imageUploadStates[ payload.pageId ],
-							[ payload.mediaIndex ]: IMAGE_UPLOAD_STATES.UPLOAD_REMOVED,
+							...state.mediaUploadStates[ payload.pageId ],
+							[ payload.mediaIndex ]: MEDIA_UPLOAD_STATES.UPLOAD_REMOVED,
 						},
 					},
 				};

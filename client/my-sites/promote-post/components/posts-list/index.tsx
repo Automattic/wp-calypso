@@ -1,6 +1,6 @@
 import { translate } from 'i18n-calypso';
+import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import EmptyContent from 'calypso/components/empty-content';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import PostItem, { Post } from 'calypso/my-sites/promote-post/components/post-item';
 import './style.scss';
 
@@ -15,7 +15,7 @@ export default function PostsList( { content, isLoading }: Props ) {
 		<>
 			{ isLoading && (
 				<div className="posts-list__loading-container">
-					<LoadingEllipsis />
+					<SitePlaceholder />
 				</div>
 			) }
 			{ ! isLoading && isEmpty && (

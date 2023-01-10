@@ -7,7 +7,6 @@ import CaptureStep from 'calypso/blocks/import/capture';
 import CaptureStepRetired from 'calypso/blocks/import/capture-retired';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useCurrentRoute } from 'calypso/landing/stepper/hooks/use-current-route';
-import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { BASE_ROUTE } from './config';
 import { generateStepPath } from './helper';
@@ -18,11 +17,21 @@ const isEnabledImportLight = isEnabled( 'onboarding/import-light-url-screen' );
 
 export const ImportWrapper: Step = function ( props ) {
 	const { __ } = useI18n();
-	const { navigation, children, stepName } = props;
-	const flowName = useFlowParam();
+	const { navigation, children, stepName, flow } = props;
 	const currentRoute = useCurrentRoute();
-	const shouldHideSkipBtn = currentRoute !== BASE_ROUTE;
-	const shouldHideBackBtn = flowName === IMPORT_FOCUSED_FLOW && currentRoute === BASE_ROUTE;
+	const shouldHideBackBtn = currentRoute === `${ IMPORT_FOCUSED_FLOW }/${ BASE_ROUTE }`;
+	const skipLabelText =
+		flow === IMPORT_FOCUSED_FLOW ? __( 'Skip to dashboard' ) : __( "I don't have a site address" );
+
+	const shouldHideSkipBtn = () => {
+		switch ( flow ) {
+			case IMPORT_FOCUSED_FLOW:
+				return currentRoute !== `${ flow }/${ BASE_ROUTE }`;
+
+			default:
+				return currentRoute !== `${ flow }/${ BASE_ROUTE }` || isEnabledImportLight;
+		}
+	};
 
 	return (
 		<>
@@ -32,12 +41,12 @@ export const ImportWrapper: Step = function ( props ) {
 				stepName={ stepName || 'import-step' }
 				flowName="importer"
 				className="import__onboarding-page"
-				hideSkip={ isEnabledImportLight || shouldHideSkipBtn }
+				hideSkip={ shouldHideSkipBtn() }
 				hideBack={ shouldHideBackBtn }
 				hideFormattedHeader={ true }
 				goBack={ navigation.goBack }
 				goNext={ navigation.goNext }
-				skipLabelText={ __( "I don't have a site address" ) }
+				skipLabelText={ skipLabelText }
 				isFullLayout={ true }
 				stepContent={ children as ReactElement }
 				recordTracksEvent={ recordTracksEvent }

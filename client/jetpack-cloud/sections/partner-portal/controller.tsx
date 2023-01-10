@@ -121,7 +121,11 @@ export function paymentMethodListContext( context: PageJS.Context, next: () => v
 export function paymentMethodAddContext( context: PageJS.Context, next: () => void ): void {
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
-	context.primary = <PaymentMethodAdd />;
+	const { site_id: siteId } = context.query;
+	const state = context.store.getState();
+	const sites = getSites( state );
+	const selectedSite = siteId ? sites?.find( ( site ) => site?.ID === parseInt( siteId ) ) : null;
+	context.primary = <PaymentMethodAdd selectedSite={ selectedSite } />;
 	next();
 }
 

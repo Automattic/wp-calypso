@@ -10,7 +10,9 @@ import type { Header } from '../types';
 
 export function ArticleTitle() {
 	const location = useLocation();
-	const { title } = location.state;
+	const { search } = useLocation();
+	const params = new URLSearchParams( search );
+	const title = location.state?.title || params.get( 'title' ) || '';
 
 	return (
 		<>
@@ -82,6 +84,7 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 							<Route path="/inline-chat">{ __( 'Live Chat', __i18n_text_domain__ ) }</Route>
 							<Route path="/contact-form" component={ SupportModeTitle }></Route>
 							<Route path="/post" component={ ArticleTitle }></Route>
+							<Route path="/success">{ __( 'Message Submitted', __i18n_text_domain__ ) }</Route>
 						</Switch>
 					) : (
 						__( 'Help Center', __i18n_text_domain__ )
@@ -93,28 +96,31 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 				<div>
 					{ isMinimized ? (
 						<Button
-							className={ 'help-center-header__maximize' }
+							className="help-center-header__maximize"
 							label={ __( 'Maximize Help Center', __i18n_text_domain__ ) }
 							icon={ chevronUp }
 							tooltipPosition="top left"
 							onClick={ onMaximize }
+							onTouchStart={ onMaximize }
 						/>
 					) : (
 						<Button
-							className={ 'help-center-header__minimize' }
+							className="help-center-header__minimize"
 							label={ __( 'Minimize Help Center', __i18n_text_domain__ ) }
 							icon={ lineSolid }
 							tooltipPosition="top left"
 							onClick={ onMinimize }
+							onTouchStart={ onMinimize }
 						/>
 					) }
 
 					<Button
-						className={ 'help-center-header__close' }
+						className="help-center-header__close"
 						label={ __( 'Close Help Center', __i18n_text_domain__ ) }
 						tooltipPosition="top left"
 						icon={ closeSmall }
 						onClick={ onDismiss }
+						onTouchStart={ onDismiss }
 					/>
 				</div>
 			</Flex>

@@ -11,6 +11,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import StatsCommentFollows from './comment-follows';
 import StatsOverview from './overview';
 import StatsSite from './site';
+import StatsEmailOpenDetail from './stats-email-open-detail';
 import StatsInsights from './stats-insights';
 import StatsPostDetail from './stats-post-detail';
 import StatsSummary from './summary';
@@ -61,7 +62,9 @@ function getNumPeriodAgo( momentSiteZone, date, period ) {
 }
 
 function getSiteFilters( siteId ) {
-	const filters = [
+	return [
+		//TODO: This Insights route could be removed since it has been set routing as below.
+		// statsPage( '/stats/insights/:site', insights );
 		{
 			title: i18n.translate( 'Insights' ),
 			path: '/stats/insights/' + siteId,
@@ -92,6 +95,35 @@ function getSiteFilters( siteId ) {
 			period: 'year',
 		},
 		{
+			title: i18n.translate( 'Days' ),
+			path: '/stats/email/open/' + siteId + '/day',
+			id: 'stats-email-opens-day',
+			period: 'day',
+		},
+		{
+			title: i18n.translate( 'Weeks' ),
+			path: '/stats/email/open/' + siteId + '/week',
+			id: 'stats-email-opens-week',
+			period: 'week',
+		},
+		{
+			title: i18n.translate( 'Months' ),
+			path: '/stats/email/open/' + siteId + '/month',
+			id: 'stats-email-opens-month',
+			period: 'month',
+		},
+		{
+			title: i18n.translate( 'Years' ),
+			path: '/stats/email/open/' + siteId + '/year',
+			id: 'stats-email-opens-year',
+			period: 'year',
+		},
+	];
+}
+
+function getWordAdsFilters( siteId ) {
+	return [
+		{
 			title: i18n.translate( 'WordAds - Days' ),
 			path: '/stats/ads/day/' + siteId,
 			period: 'day',
@@ -112,8 +144,6 @@ function getSiteFilters( siteId ) {
 			period: 'year',
 		},
 	];
-
-	return filters;
 }
 
 function getMomentSiteZone( state, siteId ) {
@@ -168,7 +198,6 @@ export function overview( context, next ) {
 			{
 				title: i18n.translate( 'Days' ),
 				path: '/stats/day',
-				altPaths: [ '/stats' ],
 				id: 'stats-day',
 				period: 'day',
 			},
@@ -186,11 +215,7 @@ export function overview( context, next ) {
 	window.scrollTo( 0, 0 );
 
 	const activeFilter = find( filters(), ( filter ) => {
-		return (
-			context.params.period === filter.period ||
-			context.pathname === filter.path ||
-			( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) )
-		);
+		return context.params.period === filter.period || context.path.includes( filter.path );
 	} );
 
 	// Validate that date filter is legit
@@ -213,15 +238,15 @@ export function site( context, next ) {
 
 	const filters = getSiteFilters( givenSiteId );
 	const state = store.getState();
+
+	// Why empty??
 	const currentSite = getSite( state, givenSiteId );
 	const siteId = currentSite ? currentSite.ID || 0 : 0;
 
-	const activeFilter = find(
-		filters,
-		( filter ) =>
-			context.pathname === filter.path ||
-			( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) )
-	);
+	const activeFilter = find( filters, ( filter ) => {
+		return context.path.includes( filter.path );
+	} );
+
 	if ( ! activeFilter ) {
 		return next();
 	}
@@ -265,8 +290,7 @@ export function summary( context, next ) {
 	const contextModule = context.params.module;
 	const filters = [
 		{
-			path: '/stats/' + contextModule + '/' + siteId,
-			altPaths: [ '/stats/day/' + contextModule + '/' + siteId ],
+			path: '/stats/day/' + contextModule + '/' + siteId,
 			id: 'stats-day',
 			period: 'day',
 		},
@@ -293,10 +317,7 @@ export function summary( context, next ) {
 	siteId = selectedSite ? selectedSite.ID || 0 : 0;
 
 	const activeFilter = find( filters, ( filter ) => {
-		return (
-			context.pathname === filter.path ||
-			( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) )
-		);
+		return context.path.includes( filter.path );
 	} );
 
 	if ( siteFragment && 0 === siteId ) {
@@ -304,7 +325,7 @@ export function summary( context, next ) {
 		return ( window.location = '/stats' );
 	}
 
-	if ( ! activeFilter || -1 === validModules.indexOf( context.params.module ) ) {
+	if ( ! activeFilter || ! validModules.includes( context.params.module ) ) {
 		return next();
 	}
 
@@ -401,7 +422,7 @@ export function wordAds( context, next ) {
 
 	const state = store.getState();
 	const siteId = getSelectedSiteId( state );
-	const filters = getSiteFilters( siteId );
+	const filters = getWordAdsFilters( siteId );
 
 	const activeFilter = find( filters, ( filter ) => context.params.period === filter.period );
 
@@ -432,6 +453,52 @@ export function wordAds( context, next ) {
 			chartTab={ queryOptions.tab || 'impressions' }
 			context={ context }
 			period={ rangeOfPeriod( activeFilter.period, date ) }
+		/>
+	);
+
+	next();
+}
+
+export function emailOpen( context, next ) {
+	const givenSiteId = context.params.site;
+	const queryOptions = context.query;
+	const state = context.store.getState();
+	const postId = parseInt( context.params.email_id, 10 );
+	const selectedSite = getSite( context.store.getState(), givenSiteId );
+	const siteId = selectedSite ? selectedSite.ID || 0 : 0;
+
+	const momentSiteZone = getMomentSiteZone( state, siteId );
+	const filters = getSiteFilters( givenSiteId );
+
+	const activeFilter = find( filters, ( filter ) => {
+		return (
+			context.path.indexOf( filter.path ) >= 0 ||
+			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )
+		);
+	} );
+
+	const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
+
+	const date = isValidStartDate
+		? moment( queryOptions.startDate ).locale( 'en' )
+		: rangeOfPeriod( activeFilter.period, momentSiteZone.locale( 'en' ) ).startOf;
+
+	if ( 0 === siteId ) {
+		window.location = '/stats';
+		return next();
+	}
+
+	const validTabs = [ 'opens_count', 'unique_opens_count' ];
+	const chartTab = validTabs.includes( queryOptions.tab ) ? queryOptions.tab : 'opens_count';
+
+	context.primary = (
+		<StatsEmailOpenDetail
+			path={ context.path }
+			postId={ postId }
+			chartTab={ chartTab }
+			context={ context }
+			period={ rangeOfPeriod( activeFilter.period, date ) }
+			date={ date }
 		/>
 	);
 

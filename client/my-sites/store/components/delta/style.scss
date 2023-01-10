@@ -11,11 +11,13 @@
 			}
 		}
 		.delta__labels {
-			.delta__value {
+			.delta__value,
+			.delta__suffix {
 				color: var(--color-success);
 			}
 		}
 	}
+
 	&.is-unfavorable {
 		.delta__icon {
 			&.gridicon {
@@ -23,11 +25,13 @@
 			}
 		}
 		.delta__labels {
-			.delta__value {
+			.delta__value,
+			.delta__suffix {
 				color: var(--color-error);
 			}
 		}
 	}
+
 	&.is-neutral {
 		.delta__icon {
 			&.gridicon {
@@ -55,10 +59,10 @@
 	}
 
 	.delta__labels {
-		align-items: left;
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
+		justify-content: flex-start;
 
 		.delta__suffix,
 		.delta__value {

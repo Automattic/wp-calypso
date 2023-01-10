@@ -49,7 +49,7 @@ export class BlockWidgetEditorComponent {
 				if ( ( await locator.count() ) === 0 ) {
 					return;
 				}
-				await locator.click( { timeout: 10 * 1000 } );
+				await locator.click();
 			} catch {
 				//noop
 			}

@@ -161,6 +161,7 @@ export const ThankYou = ( props: ThankYouProps ) => {
 		thankYouSubtitle,
 		thankYouImage,
 		thankYouNotice,
+		thankYouHeaderBody = null,
 	} = props;
 
 	const ThankYouTitleContainer = styled.div`
@@ -216,6 +217,7 @@ export const ThankYou = ( props: ThankYouProps ) => {
 						{ thankYouSubtitle && (
 							<h2 className="thank-you__header-subtitle">{ thankYouSubtitle }</h2>
 						) }
+						{ thankYouHeaderBody }
 					</ThankYouTitleContainer>
 				) }
 			</ThankYouHeader>

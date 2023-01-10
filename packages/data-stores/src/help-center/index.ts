@@ -1,6 +1,7 @@
 import { plugins, registerStore, use } from '@wordpress/data';
 import { controls } from '@wordpress/data-controls';
 import persistOptions from '../one-week-persistence-config';
+import { controls as wpcomRequestControls } from '../wpcom-request-controls';
 import * as actions from './actions';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
@@ -17,7 +18,7 @@ export function register(): typeof STORE_KEY {
 		registerStore< State >( STORE_KEY, {
 			actions,
 			reducer: reducer as any, // eslint-disable-line @typescript-eslint/no-explicit-any
-			controls,
+			controls: { ...controls, ...wpcomRequestControls } as any,
 			selectors,
 			persist: [ 'site', 'message', 'userDeclaredSite', 'userDeclaredSiteUrl', 'subject' ],
 		} );
@@ -31,3 +32,5 @@ declare module '@wordpress/data' {
 	function dispatch( key: typeof STORE_KEY ): DispatchFromMap< typeof actions >;
 	function select( key: typeof STORE_KEY ): SelectFromMap< typeof selectors >;
 }
+
+export type { HelpCenterSite } from './types';

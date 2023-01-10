@@ -4,6 +4,7 @@
 
 import {
 	DataHelper,
+	ElementHelper,
 	EditorPage,
 	PublishedPostPage,
 	TestAccount,
@@ -66,12 +67,17 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		} );
 
 		it( 'Like post', async function () {
-			publishedPostPage = new PublishedPostPage( page );
-			await publishedPostPage.likePost();
+			await ElementHelper.reloadAndRetry( page, async () => {
+				publishedPostPage = new PublishedPostPage( page );
+				await publishedPostPage.likePost();
+			} );
 		} );
 
 		it( 'Unlike post', async function () {
-			await publishedPostPage.unlikePost();
+			await ElementHelper.reloadAndRetry( page, async () => {
+				publishedPostPage = new PublishedPostPage( page );
+				await publishedPostPage.unlikePost();
+			} );
 		} );
 	} );
 
@@ -89,8 +95,10 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 				await likeUser.logInViaPopupPage( popup );
 			} );
 
-			publishedPostPage = new PublishedPostPage( page );
-			await publishedPostPage.likePost();
+			await ElementHelper.reloadAndRetry( page, async () => {
+				publishedPostPage = new PublishedPostPage( page );
+				await publishedPostPage.likePost();
+			} );
 		} );
 	} );
 } );

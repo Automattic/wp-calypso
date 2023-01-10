@@ -1,5 +1,5 @@
 import { safeImageUrl } from '@automattic/calypso-url';
-import { CompactCard } from '@automattic/components';
+import { CompactCard, Gridicon } from '@automattic/components';
 import './style.scss';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -33,18 +33,10 @@ type Props = {
 };
 
 export default function PostItem( { post }: Props ) {
-	const [ loading, setLoading ] = useState( false );
+	const [ loading ] = useState( false );
 	const dispatch = useDispatch();
 	const keyValue = 'post-' + post.ID;
-	const { isModalOpen, value, openModal, closeModal } = useRouteModal(
-		'blazepress-widget',
-		keyValue
-	);
-
-	const onCloseWidget = () => {
-		setLoading( false );
-		closeModal();
-	};
+	const { isModalOpen, value, openModal } = useRouteModal( 'blazepress-widget', keyValue );
 
 	const onClickPromote = async () => {
 		openModal();
@@ -53,15 +45,14 @@ export default function PostItem( { post }: Props ) {
 
 	const safeUrl = safeImageUrl( post.featured_image );
 	const featuredImage = safeUrl && resizeImageUrl( safeUrl, { h: 80 }, 0 );
+
 	return (
 		<CompactCard className="post-item__panel">
 			<div className="post-item__detail">
 				<h1 // eslint-disable-line
 					className="post-item__title"
 				>
-					<a href={ post.URL } className="post-item__title-link">
-						{ post.title || __( 'Untitled' ) }
-					</a>
+					<span className="post-item__title-link">{ post.title || __( 'Untitled' ) }</span>
 				</h1>
 				<div className="post-item__meta">
 					<span className="post-item__meta-time-status">
@@ -76,7 +67,8 @@ export default function PostItem( { post }: Props ) {
 					<span className="post-item__post-type">{ getPostType( post.type ) }</span>
 					<span className="post-item__post-type">
 						<a href={ post.URL } className="post-item__title-view">
-							{ __( 'View' ) }
+							{ __( 'View' ) }{ ' ' }
+							<Gridicon icon="external" size={ 12 } className="post-item__external-icon" />
 						</a>
 					</span>
 				</div>
@@ -93,7 +85,7 @@ export default function PostItem( { post }: Props ) {
 					isVisible={ isModalOpen && value === keyValue }
 					siteId={ post.site_ID }
 					postId={ post.ID }
-					onClose={ onCloseWidget }
+					keyValue={ keyValue }
 				/>
 				<Button
 					isPrimary={ true }

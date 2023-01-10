@@ -55,12 +55,12 @@ export class TimelineBlockFlow implements BlockFlow {
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		const expectedFirstTextLocator = context.page.locator(
-			`text=${ this.configurationData.firstEntry }`
+			`main :text("${ this.configurationData.firstEntry }")` // 'main' needs to be specified due to the debug elements
 		);
 		await expectedFirstTextLocator.waitFor();
 
 		const expectedSecondTextLocator = context.page.locator(
-			`text=${ this.configurationData.secondEntry }`
+			`main :text("${ this.configurationData.secondEntry }")` // 'main' needs to be specified due to the debug elements
 		);
 		await expectedSecondTextLocator.waitFor();
 	}

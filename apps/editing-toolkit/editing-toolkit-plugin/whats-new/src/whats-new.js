@@ -1,9 +1,9 @@
 /*** THIS MUST BE THE FIRST THING EVALUATED IN THIS SCRIPT *****/
 import './public-path';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
 import WhatsNewGuide from '@automattic/whats-new';
 import { Fill, MenuItem } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
@@ -13,11 +13,12 @@ import { whatsNewQueryClient } from '../../common/what-new-query-client';
 
 function WhatsNewMenuItem() {
 	const [ showGuide, setShowGuide ] = useState( false );
-	const { setHasSeenWhatsNewModal } = useHasSeenWhatsNewModalQuery( window._currentSiteId );
+	const { setHasSeenWhatsNewModal } = useDispatch( 'automattic/help-center' );
 
 	const openWhatsNew = () => {
 		setHasSeenWhatsNewModal( true ).finally( () => setShowGuide( true ) );
 	};
+
 	const closeWhatsNew = () => setShowGuide( false );
 
 	// Record Tracks event if user opens What's New

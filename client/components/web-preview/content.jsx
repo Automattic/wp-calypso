@@ -348,7 +348,13 @@ export default class WebPreviewContent extends Component {
 	}
 
 	render() {
-		const { translate, toolbarComponent: ToolbarComponent, fetchpriority, autoHeight } = this.props;
+		const {
+			translate,
+			toolbarComponent: ToolbarComponent,
+			fetchpriority,
+			autoHeight,
+			disableTabbing,
+		} = this.props;
 		const isLoaded = this.state.loaded && ( ! autoHeight || this.state.viewport !== null );
 
 		const className = classNames( this.props.className, 'web-preview__inner', {
@@ -413,6 +419,7 @@ export default class WebPreviewContent extends Component {
 								title={ this.props.iframeTitle || translate( 'Preview' ) }
 								fetchpriority={ fetchpriority ? fetchpriority : undefined }
 								scrolling={ autoHeight ? 'no' : undefined }
+								tabIndex={ disableTabbing ? -1 : 0 }
 							/>
 						</div>
 					) }
@@ -431,6 +438,8 @@ export default class WebPreviewContent extends Component {
 WebPreviewContent.propTypes = {
 	// Additional elements to display below the toolbar
 	belowToolbar: PropTypes.element,
+	// Prevents tabbing into the iframe.
+	disableTabbing: PropTypes.bool,
 	// Display the preview
 	showPreview: PropTypes.bool,
 	// Show external link button

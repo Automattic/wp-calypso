@@ -6,17 +6,14 @@ import {
 	ABOUT_PAGE,
 	PHOTO_GALLERY_PAGE,
 	VIDEO_GALLERY_PAGE,
-	PODCAST_PAGE,
 	PORTFOLIO_PAGE,
 	FAQ_PAGE,
-	SITEMAP_PAGE,
-	PROFILE_PAGE,
-	MENU_PAGE,
 	SERVICES_PAGE,
 	TESTIMONIALS_PAGE,
 	PRICING_PAGE,
 	TEAM_PAGE,
 } from 'calypso/signup/difm/constants';
+import type { PageId } from 'calypso/signup/difm/constants';
 import type { TranslateResult } from 'i18n-calypso';
 
 /**
@@ -26,19 +23,15 @@ import type { TranslateResult } from 'i18n-calypso';
  */
 export function useTranslatedPageTitles() {
 	const translate = useTranslate();
-	const pages: Record< string, TranslateResult > = {
+	const pages: Record< PageId, TranslateResult > = {
 		[ HOME_PAGE ]: translate( 'Home' ),
 		[ BLOG_PAGE ]: translate( 'Blog' ),
 		[ CONTACT_PAGE ]: translate( 'Contact' ),
 		[ ABOUT_PAGE ]: translate( 'About' ),
 		[ PHOTO_GALLERY_PAGE ]: translate( 'Photo Gallery' ),
 		[ VIDEO_GALLERY_PAGE ]: translate( 'Video Gallery' ),
-		[ PODCAST_PAGE ]: translate( 'Podcast' ),
 		[ PORTFOLIO_PAGE ]: translate( 'Portfolio' ),
 		[ FAQ_PAGE ]: translate( 'FAQ' ),
-		[ SITEMAP_PAGE ]: translate( 'Sitemap' ),
-		[ PROFILE_PAGE ]: translate( 'Profile' ),
-		[ MENU_PAGE ]: translate( 'Menu' ),
 		[ SERVICES_PAGE ]: translate( 'Services' ),
 		[ TESTIMONIALS_PAGE ]: translate( 'Testimonials' ),
 		[ PRICING_PAGE ]: translate( 'Pricing' ),
@@ -47,9 +40,19 @@ export function useTranslatedPageTitles() {
 	return pages;
 }
 
-export function useTranslatedPageDescriptions() {
+// Requesting Contexts
+export const BBE_ONBOARDING_PAGE_PICKER_STEP = 'BBE_ONBOARDING_PAGE_PICKER_STEP';
+export const BBE_WEBSITE_CONTENT_FILLING_STEP = 'BBE_WEBSITE_CONTENT_FILLING_STEP';
+type TranslationContext =
+	| typeof BBE_ONBOARDING_PAGE_PICKER_STEP
+	| typeof BBE_WEBSITE_CONTENT_FILLING_STEP;
+
+export function useTranslatedPageDescriptions(
+	pageId: PageId,
+	context?: TranslationContext
+): TranslateResult {
 	const translate = useTranslate();
-	const descriptions: Record< string, TranslateResult > = {
+	const defaultDescriptions: Record< PageId, TranslateResult > = {
 		[ HOME_PAGE ]: translate(
 			'An overview of you, your writing, or your business. What phrases would someone search on Google to find you? What can visitors expect on this site?'
 		),
@@ -62,6 +65,7 @@ export function useTranslatedPageDescriptions() {
 		[ BLOG_PAGE ]: translate(
 			'Blog posts can be news stories, journal entries, or even recipes! We will set up the blog page and explain how you can add posts to your new site.'
 		),
+
 		[ PHOTO_GALLERY_PAGE ]: translate(
 			'A visual space to share pictures with your website visitors. Add a text summary to describe the gallery to your visitors.'
 		),
@@ -87,5 +91,23 @@ export function useTranslatedPageDescriptions() {
 			'Showcase a mini profile of each member of your business, with an image, name, and role description.'
 		),
 	};
-	return descriptions;
+
+	const contextualDescriptions: Record< TranslationContext, typeof defaultDescriptions > = {
+		[ BBE_ONBOARDING_PAGE_PICKER_STEP ]: {
+			...defaultDescriptions,
+		},
+		[ BBE_WEBSITE_CONTENT_FILLING_STEP ]: {
+			...defaultDescriptions,
+			[ BLOG_PAGE ]: translate(
+				'Add a short description to explain what type of posts will appear on your blog. We will set up the page so this description appears above your posts; you can add the posts later with the editor.'
+			),
+			[ CONTACT_PAGE ]: translate(
+				'This page will include a contact form. Optionally provide text to appear above the form to let visitors know other ways they can reach you.'
+			),
+		},
+	};
+	if ( ! context ) {
+		return defaultDescriptions[ pageId ];
+	}
+	return contextualDescriptions[ context ][ pageId ];
 }

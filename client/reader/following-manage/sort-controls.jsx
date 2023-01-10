@@ -8,7 +8,7 @@ const noop = () => {};
 class FollowingManageSortControls extends Component {
 	static propTypes = {
 		onSortChange: PropTypes.func,
-		sortOrder: PropTypes.oneOf( [ 'date-followed', 'alpha' ] ),
+		sortOrder: PropTypes.oneOf( [ 'date-followed', 'alpha', 'date-updated' ] ),
 	};
 
 	static defaultProps = {
@@ -30,6 +30,7 @@ class FollowingManageSortControls extends Component {
 				value={ sortOrder }
 			>
 				<option value="date-followed">{ this.props.translate( 'Sort by date followed' ) }</option>
+				<option value="date-updated">{ this.props.translate( 'Sort by date updated' ) }</option>
 				<option value="alpha">{ this.props.translate( 'Sort by site name' ) }</option>
 			</FormSelect>
 		);

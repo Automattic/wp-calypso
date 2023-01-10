@@ -92,6 +92,69 @@ describe( 'getSite', () => {
 		);
 	} );
 
+	it( 'resolves the state when called with ID', async () => {
+		const ID = 1;
+		const apiResponse = {
+			ID: 1,
+			name: 'My test site',
+			description: '',
+			URL: 'http://mytestsite12345.wordpress.com',
+		};
+
+		( wpcomRequest as jest.Mock ).mockResolvedValue( apiResponse );
+
+		const listenForStateUpdate = () => {
+			return new Promise( ( resolve ) => {
+				const unsubscribe = subscribe( () => {
+					unsubscribe();
+					resolve();
+				} );
+			} );
+		};
+
+		// First call returns undefined
+		expect( select( store ).getSite( ID ) ).toEqual( undefined );
+
+		// In first state update, the resolver starts resolving
+		// In the second update, the resolver is finished and we can read the result in state
+		await listenForStateUpdate();
+		await listenForStateUpdate();
+		expect( select( store ).getSite( ID ) ).toEqual( apiResponse );
+	} );
+
+	it( 'resolves the state when called with secondary wordpress domain', async () => {
+		const slug = 'mytestsite123456.wordpress.com';
+		const apiResponse = {
+			ID: 1,
+			name: 'My test site',
+			description: '',
+			URL: 'http://customdomain.com',
+			options: {
+				unmapped_url: 'http://mytestsite123456.wordpress.com',
+			},
+		};
+
+		( wpcomRequest as jest.Mock ).mockResolvedValue( apiResponse );
+
+		const listenForStateUpdate = () => {
+			return new Promise( ( resolve ) => {
+				const unsubscribe = subscribe( () => {
+					unsubscribe();
+					resolve();
+				} );
+			} );
+		};
+
+		// First call returns undefined
+		expect( select( store ).getSite( slug ) ).toEqual( undefined );
+
+		// In first state update, the resolver starts resolving
+		// In the second update, the resolver is finished and we can read the result in state
+		await listenForStateUpdate();
+		await listenForStateUpdate();
+		expect( select( store ).getSite( slug ) ).toEqual( apiResponse );
+	} );
+
 	it( 'resolves the state via an API call and caches the resolver on fail', async () => {
 		const slug = 'mytestsite12345.wordpress.com';
 		const apiResponse = {

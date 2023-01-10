@@ -462,6 +462,7 @@ module.exports = {
 					'__unstableInserterMenuExtension',
 					'__experimentalInserterMenuExtension',
 				],
+				'@wordpress/compose': [ '__experimentalUseFocusOutside' ],
 				'@wordpress/date': [ '__experimentalGetSettings' ],
 				'@wordpress/edit-post': [ '__experimentalMainDashboardButton' ],
 				'@wordpress/components': [ '__experimentalNavigationBackButton' ],

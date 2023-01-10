@@ -12,9 +12,9 @@ export const JetpackFree: React.FC< JetpackFreeProps > = ( { urlQueryArgs, siteI
 
 	return (
 		<div className="jetpack-product-store__jetpack-free">
-			<h3 className="jetpack-product-store__jetpack-free--headline">
+			<h2 className="jetpack-product-store__jetpack-free--headline">
 				{ translate( 'Still not sure?' ) }
-			</h3>
+			</h2>
 			<p className="jetpack-product-store__jetpack-free--info">
 				{ translate( 'Start with the free version and try out our premium products later.' ) }
 			</p>

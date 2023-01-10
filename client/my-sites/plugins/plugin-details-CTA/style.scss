@@ -35,11 +35,12 @@
 	@extend %placeholder;
 }
 
-.plugin-details-cta__period {
+.plugin-details-cta__period,
+.plugin-details-cta__notice {
 	font-family: $sans;
 	font-size: $font-body-extra-small;
 	color: var(--studio-gray-50);
-	padding-left: 3px;
+	padding-left: 8px;
 }
 
 .plugin-details-cta__uprade-required {
@@ -59,6 +60,10 @@
 	.plugin-details-cta__install-button {
 		width: 100%;
 		padding: 12px 16px;
+
+		.gridicon {
+			margin: 0 0 0 5px;
+		}
 	}
 }
 
@@ -80,6 +85,19 @@
 	}
 }
 
+.plugin-details-cta__upgrade-required-card {
+	padding: 2em;
+	background-color: var(--color-surface);
+	display: flex;
+	flex-direction: column;
+	border: 1px solid var(--color-neutral-10);
+	border-radius: 4px;
+
+	.button {
+		margin-top: 1rem;
+		padding: 12px 0;
+	}
+}
 .plugin-details-cta__upgrade-required {
 	display: flex;
 
@@ -102,6 +120,12 @@
 
 .plugin-details-cta__manage-plugin-menu {
 	margin-top: -12px;
+}
+
+.plugin-details-cta__manage-plugin-menu-new-purchase {
+	position: absolute;
+	right: 40px;
+	top: 40px;
 }
 
 .plugin-details-cta__installed-text {
@@ -141,3 +165,4 @@
 		@extend %placeholder;
 	}
 }
+

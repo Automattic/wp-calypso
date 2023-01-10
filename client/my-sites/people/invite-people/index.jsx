@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -375,9 +376,10 @@ class InvitePeople extends Component {
 
 	goBack = () => {
 		const siteSlug = get( this.props, 'site.slug' );
-		const fallback = siteSlug ? '/people/team/' + siteSlug : '/people/team';
+		const route = isEnabled( 'user-management-revamp' ) ? 'team' : 'team-members';
+		const fallback = siteSlug ? `/people/${ route }/${ siteSlug }` : `/people/${ route }`;
 
-		// Go back to last route with /people/team/$site as the fallback
+		// Go back to last route with provided route as the fallback
 		page.back( fallback );
 	};
 
@@ -407,17 +409,20 @@ class InvitePeople extends Component {
 			site,
 			translate,
 			needsVerification,
+			isAtomic,
 			isJetpack,
+			isPrivateSite: isPrivate,
 			showSSONotice,
 			includeSubscriberImporter,
 		} = this.props;
-		let includeFollower;
-		const includeSubscriber = ! includeSubscriberImporter;
+
+		let includeFollower = isPrivate && ! isAtomic;
+		const includeSubscriber = isAtomic;
 
 		if ( ! includeSubscriberImporter ) {
 			// Atomic private sites don't support Viewers/Followers.
 			// @see https://github.com/Automattic/wp-calypso/issues/43919
-			includeFollower = ! this.props.isAtomic;
+			includeFollower = ! isAtomic;
 		}
 
 		const inviteForm = (

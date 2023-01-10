@@ -8,6 +8,8 @@ export interface SubscriberState {
 	};
 	import?: {
 		inProgress: boolean;
+		file?: File;
+		emails?: string[];
 		job?: ImportJob;
 		error?: ImportSubscribersError;
 	};
@@ -41,8 +43,6 @@ export type ImportSubscribersError = Record< string, unknown > | GenericError;
 
 export type ImportSubscribersResponse = {
 	upload_id: number;
-	errors: string[];
-	subscribed: number;
 };
 
 export type GetSubscribersImportResponse = ImportJob;

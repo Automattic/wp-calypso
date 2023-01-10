@@ -1,8 +1,10 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
 import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { getQueryArg } from '@wordpress/url';
 import type { WpcomStep } from '@automattic/tour-kit';
 
 interface TourAsset {
@@ -46,6 +48,12 @@ function getTourAssets( key: string ): TourAsset | undefined {
 				type: 'image/gif',
 			},
 		},
+		videomakerWelcome: {
+			desktop: { src: `${ CDN_PREFIX }/slide-videomaker-welcome.png`, type: 'image/png' },
+		},
+		videomakerEdit: {
+			desktop: { src: `${ CDN_PREFIX }/slide-videomaker-edit.png`, type: 'image/png' },
+		},
 	} as { [ key: string ]: TourAsset };
 
 	return tourAssets[ key ];
@@ -54,26 +62,70 @@ function getTourAssets( key: string ): TourAsset | undefined {
 function getTourSteps(
 	localeSlug: string,
 	referencePositioning = false,
-	isSiteEditor = false
+	isSiteEditor = false,
+	themeName: string | null = null
 ): WpcomStep[] {
+	const completedFlow = getQueryArg( window.location.href, 'completedFlow' );
+	const isVideoMaker = 'videomaker' === ( themeName ?? '' );
+	const isPatternAssemblerFlow = 'pattern_assembler' === completedFlow;
+	const siteEditorCourseUrl = `https://wordpress.com/home/${ window.location.hostname }?courseSlug=site-editor-quick-start`;
+	const onSiteEditorCourseLinkClick = () => {
+		recordTracksEvent( 'calypso_editor_wpcom_tour_site_editor_course_link_click', {
+			is_pattern_assembler: isPatternAssemblerFlow,
+		} );
+	};
+
 	return [
 		{
 			slug: 'welcome',
 			meta: {
-				heading: __( 'Welcome to WordPress!', 'full-site-editing' ),
+				heading: isPatternAssemblerFlow
+					? __( 'Nice job! Your new page is set up.', 'full-site-editing' )
+					: __( 'Welcome to WordPress!', 'full-site-editing' ),
 				descriptions: {
-					desktop: __(
-						'Take this short, interactive tour to learn the fundamentals of the WordPress editor.',
-						'full-site-editing'
-					),
+					desktop: ( () => {
+						if ( isPatternAssemblerFlow ) {
+							return createInterpolateElement(
+								__(
+									'This is the Site Editor, where you can change everything about your site, including adding content to your homepage. <link_to_site_editor_course>Watch these short videos</link_to_site_editor_course> and take this tour to get started.',
+									'full-site-editing'
+								),
+								{
+									link_to_site_editor_course: (
+										<ExternalLink
+											href={ siteEditorCourseUrl }
+											onClick={ onSiteEditorCourseLinkClick }
+										/>
+									),
+								}
+							);
+						}
+
+						return isSiteEditor
+							? __(
+									'Take this short, interactive tour to learn the fundamentals of the WordPress Site Editor.',
+									'full-site-editing'
+							  )
+							: __(
+									'Take this short, interactive tour to learn the fundamentals of the WordPress editor.',
+									'full-site-editing'
+							  );
+					} )(),
 					mobile: null,
 				},
-				imgSrc: getTourAssets( 'welcome' ),
+				imgSrc: getTourAssets( isVideoMaker ? 'videomakerWelcome' : 'welcome' ),
+				imgLink: isPatternAssemblerFlow
+					? {
+							href: siteEditorCourseUrl,
+							playable: true,
+							onClick: onSiteEditorCourseLinkClick,
+					  }
+					: undefined,
 			},
 			options: {
 				classNames: {
 					desktop: 'wpcom-editor-welcome-tour__step',
-					mobile: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+					mobile: [ 'is-with-extra-padding', 'calypso_editor_wpcom_draft_post_modal_show' ],
 				},
 			},
 		},
@@ -133,13 +185,18 @@ function getTourSteps(
 			meta: {
 				heading: __( 'Click a block to change it', 'full-site-editing' ),
 				descriptions: {
-					desktop: __(
-						'Use the toolbar to change the appearance of a selected block. Try making it bold.',
-						'full-site-editing'
-					),
+					desktop: isVideoMaker
+						? __(
+								'Use the toolbar to change the appearance of a selected block. Try replacing a video!',
+								'full-site-editing'
+						  )
+						: __(
+								'Use the toolbar to change the appearance of a selected block. Try making it bold.',
+								'full-site-editing'
+						  ),
 					mobile: null,
 				},
-				imgSrc: getTourAssets( 'makeBold' ),
+				imgSrc: getTourAssets( isVideoMaker ? 'videomakerEdit' : 'makeBold' ),
 			},
 			options: {
 				classNames: {
@@ -286,12 +343,24 @@ function getTourSteps(
 						meta: {
 							heading: __( 'Edit your site', 'full-site-editing' ),
 							descriptions: {
-								desktop: __(
-									'Design everything on your site - from the header right down to the footer - using blocks.',
-									'full-site-editing'
+								desktop: createInterpolateElement(
+									__(
+										'Design everything on your site - from the header right down to the footer - in the Site Editor. <link_to_fse_docs>Learn more</link_to_fse_docs>',
+										'full-site-editing'
+									),
+									{
+										link_to_fse_docs: (
+											<ExternalLink
+												href={ localizeUrl(
+													'https://wordpress.com/support/full-site-editing/',
+													localeSlug
+												) }
+											/>
+										),
+									}
 								),
 								mobile: __(
-									'Design everything on your site - from the header right down to the footer - using blocks.',
+									'Design everything on your site - from the header right down to the footer - in the Site Editor.',
 									'full-site-editing'
 								),
 							},

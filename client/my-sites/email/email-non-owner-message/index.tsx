@@ -96,7 +96,7 @@ export const EmailNonOwnerMessage = ( props: EmailNonOwnerMessageProps ) => {
 				eventName="calypso_email_providers_nonowner_impression"
 				eventProperties={ { source, context: 'email-different-owner' } }
 			/>
-			<p className="email-non-owner-message__non-owner-message">{ reasonText }</p>
+			<p className="email-non-owner-message__text">{ reasonText }</p>
 		</>
 	);
 };

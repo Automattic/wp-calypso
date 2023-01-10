@@ -38,11 +38,6 @@ describe( 'login', () => {
 		expect( url ).toBe( '/log-in/jetpack?from=potato' );
 	} );
 
-	test( 'should return the login url for Gutenboarding specific login', () => {
-		const url = login( { isGutenboarding: true } );
-		expect( url ).toBe( '/log-in/new' );
-	} );
-
 	test( 'should return the login url with WooCommerce.com handler', () => {
 		const url = login( { oauth2ClientId: 12345, wccomFrom: 'testing' } );
 		expect( url ).toBe( '/log-in?client_id=12345&wccom-from=testing' );

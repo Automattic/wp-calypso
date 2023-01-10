@@ -66,7 +66,7 @@ export const LAST_REASON: CancellationReason = {
 		return translate( 'Another reason…' );
 	},
 	get textPlaceholder() {
-		return translate( 'Can you please specify?' );
+		return translate( 'Why do you want to cancel?' );
 	},
 };
 
@@ -127,6 +127,12 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 				value: 'cannotFindWhatIWanted',
 				get label() {
 					return translate( 'Couldn’t find what I wanted.' );
+				},
+			},
+			{
+				value: 'tooComplicated',
+				get label() {
+					return translate( 'It’s too complicated for me.' );
 				},
 			},
 		],
@@ -354,4 +360,24 @@ export function getExtraJetpackReasons(
 			selectOptions,
 		},
 	];
+}
+
+export function getReasonLabelByValue( value: string ) {
+	for ( const first of CANCELLATION_REASONS ) {
+		if ( first.value === value ) {
+			return first.label;
+		}
+
+		if ( ! first.selectOptions ) {
+			continue;
+		}
+
+		for ( const second of first.selectOptions ) {
+			if ( second.value === value ) {
+				return second.label;
+			}
+		}
+	}
+
+	return 'Unknown';
 }

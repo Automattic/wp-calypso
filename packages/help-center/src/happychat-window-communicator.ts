@@ -2,16 +2,14 @@
 /**
  * External Dependencies
  */
-import { useHappychatAuth } from '@automattic/happychat-connection';
+import { useHappychatAuth, happychatAuthQueryKey } from '@automattic/happychat-connection';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import { useQueryClient } from 'react-query';
-import { useSelector } from 'react-redux';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
-import { HELP_CENTER_STORE, SITE_STORE } from './stores';
+import { HELP_CENTER_STORE } from './stores';
 
 /**
  * This hook is the bridge between HappyChat and Help Center.
@@ -23,10 +21,9 @@ import { HELP_CENTER_STORE, SITE_STORE } from './stores';
  */
 
 export function useHCWindowCommunicator( isMinimized: boolean ) {
-	const { selectedSite, subject, message, userDeclaredSite, iframe } = useSelect( ( select ) => {
+	const { supportSite, subject, message, iframe } = useSelect( ( select ) => {
 		return {
-			selectedSite: select( HELP_CENTER_STORE ).getSite(),
-			userDeclaredSite: select( HELP_CENTER_STORE ).getUserDeclaredSite(),
+			supportSite: select( HELP_CENTER_STORE ).getSite(),
 			subject: select( HELP_CENTER_STORE ).getSubject(),
 			message: select( HELP_CENTER_STORE ).getMessage(),
 			iframe: select( HELP_CENTER_STORE ).getIframe(),
@@ -35,14 +32,11 @@ export function useHCWindowCommunicator( isMinimized: boolean ) {
 	const queryClient = useQueryClient();
 	const [ unreadCount, setUnreadCount ] = useState( 0 );
 	const [ chatStatus, setChatStatus ] = useState( '' );
-	const siteId = useSelector( getSelectedSiteId );
-	const currentSite = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ), [ siteId ] );
 	const chatWindow = iframe?.contentWindow;
 	function happyChatPostMessage( message: Record< string, string > ) {
 		chatWindow?.postMessage( message, '*' );
 	}
 
-	const supportSite = selectedSite || userDeclaredSite || currentSite;
 	const { resetStore } = useDispatch( HELP_CENTER_STORE );
 	useHappychatAuth();
 
@@ -98,7 +92,7 @@ export function useHCWindowCommunicator( isMinimized: boolean ) {
 						break;
 
 					case 'happy-chat-authentication-data':
-						queryClient.fetchQuery( 'getHappychatAuth' ).then( ( auth ) => {
+						queryClient.fetchQuery( happychatAuthQueryKey ).then( ( auth ) => {
 							event.source?.postMessage(
 								{
 									type: 'happy-chat-authentication-data',

@@ -52,6 +52,8 @@ export interface Props {
 	disabledLabel?: string;
 	CTAVariation?: CTAVariation;
 	popularBadgeVariation?: PopularBadgeVariation;
+	popularBadgeText?: string;
+	CTAButtonLabel?: string;
 }
 
 // NOTE: there is some duplicate markup between this plan item (used in the
@@ -76,6 +78,8 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	CTAVariation = 'NORMAL',
 	popularBadgeVariation = 'ON_TOP',
 	isSelected,
+	popularBadgeText,
+	CTAButtonLabel,
 } ) => {
 	const { __, hasTranslation } = useI18n();
 	const locale = useLocale();
@@ -97,7 +101,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 
 	const isOpen = allPlansExpanded || isDesktop || isPopular || isOpenInternalState;
 
-	const normalCtaLabelFallback = __( 'Choose', __i18n_text_domain__ );
+	const normalCtaLabelFallback = CTAButtonLabel ?? __( 'Choose', __i18n_text_domain__ );
 	const fullWidthCtaLabelSelected = __( 'Current Selection', __i18n_text_domain__ );
 	// translators: %s is a WordPress.com plan name (eg: Free, Personal)
 	const fullWidthCtaLabelUnselected = __( 'Select %s', __i18n_text_domain__ );
@@ -117,6 +121,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 
 	const expandToggleLabelExpanded = __( 'Collapse all plans', __i18n_text_domain__ );
 	const expandToggleLabelCollapsed = __( 'Expand all plans', __i18n_text_domain__ );
+	const displayedPopularBadgeText = popularBadgeText ?? __( 'Popular', __i18n_text_domain__ );
 
 	return (
 		<div
@@ -127,7 +132,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 			} ) }
 		>
 			{ isPopular && popularBadgeVariation === 'ON_TOP' && (
-				<span className="plan-item__badge">{ __( 'Popular', __i18n_text_domain__ ) }</span>
+				<span className="plan-item__badge">{ displayedPopularBadgeText }</span>
 			) }
 			<div className={ classNames( 'plan-item__viewport', { 'is-popular': isPopular } ) }>
 				<div className="plan-item__details">

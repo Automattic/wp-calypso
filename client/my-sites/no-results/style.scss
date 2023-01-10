@@ -4,6 +4,22 @@
 	color: var(--color-neutral-50);
 	font-size: $font-body;
 	line-height: 56px;
+
+	.no-results__titles {
+		margin-bottom: 4px; // +20 from elements = 24 gap
+		color: var(--color-text);
+		line-height: 1.5;
+
+		.no-results__title {
+			@extend .wp-brand-font;
+			font-size: $font-title-medium;
+			font-weight: 500;
+		}
+
+		.no-results__subtitle {
+			font-size: $font-body-small;
+		}
+	}
 }
 
 .no-results__img {

@@ -32,6 +32,7 @@ export const siteColumns = [
 	{
 		key: 'monitor',
 		title: translate( 'Monitor' ),
+		className: 'min-width-100px',
 	},
 	{
 		key: 'plugin',
@@ -163,7 +164,7 @@ const getRowEventName = (
 const backupTooltips: StatusTooltip = {
 	failed: translate( 'Latest backup failed' ),
 	warning: translate( 'Latest backup completed with warnings' ),
-	inactive: translate( 'Add Jetpack Backup to this site' ),
+	inactive: translate( 'Add Jetpack VaultPress Backup to this site' ),
 	progress: translate( 'Backup in progress' ),
 	success: translate( 'Latest backup completed successfully' ),
 };
@@ -213,8 +214,7 @@ const getLinks = (
 	type: AllowedTypes,
 	status: string,
 	siteUrl: string,
-	siteUrlWithScheme: string,
-	siteId: number
+	siteUrlWithScheme: string
 ): {
 	link: string;
 	isExternalLink: boolean;
@@ -226,17 +226,13 @@ const getLinks = (
 
 	switch ( type ) {
 		case 'backup': {
-			if ( status === 'inactive' ) {
-				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-backup-t2&source=dashboard`;
-			} else {
+			if ( status !== 'inactive' ) {
 				link = `/backup/${ siteUrlWithMultiSiteSupport }`;
 			}
 			break;
 		}
 		case 'scan': {
-			if ( status === 'inactive' ) {
-				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-scan&source=dashboard`;
-			} else {
+			if ( status !== 'inactive' ) {
 				link = `/scan/${ siteUrlWithMultiSiteSupport }`;
 			}
 			break;
@@ -282,7 +278,7 @@ export const getRowMetaData = (
 	const siteUrlWithScheme = rows.site?.value?.url_with_scheme;
 	const siteError = rows.site.error;
 	const siteId = rows.site?.value?.blog_id;
-	const { link, isExternalLink } = getLinks( type, row.status, siteUrl, siteUrlWithScheme, siteId );
+	const { link, isExternalLink } = getLinks( type, row.status, siteUrl, siteUrlWithScheme );
 	const tooltip = getTooltip( type, row.status );
 	const eventName = getRowEventName( type, row.status, isLargeScreen );
 	return {
@@ -366,6 +362,7 @@ const formatMonitorData = ( site: Site ) => {
 		status: '',
 		type: 'monitor',
 		error: false,
+		settings: site.monitor_settings,
 	};
 	if ( ! site.monitor_active ) {
 		monitor.status = 'disabled';
@@ -405,3 +402,40 @@ export const formatSites = ( sites: Array< Site > = [] ): Array< SiteData > | []
 		};
 	} );
 };
+
+/**
+ * Returns the product slug that can be purchased from the dashboard.
+ */
+export const getProductSlugFromProductType = ( type: string ): string | undefined => {
+	const slugs: Record< string, string > = {
+		backup: 'jetpack-backup-t2',
+		scan: 'jetpack-scan',
+	};
+
+	return slugs[ type ];
+};
+
+export const availableNotificationDurations = [
+	{
+		time: 5,
+		label: translate( 'After 5 minutes' ),
+	},
+	{
+		time: 15,
+		label: translate( 'After 15 minutes' ),
+	},
+	{
+		time: 30,
+		label: translate( 'After 30 minutes' ),
+	},
+	{
+		time: 45,
+		label: translate( 'After 45 minutes' ),
+	},
+	{
+		time: 60,
+		label: translate( 'After 1 hour' ),
+	},
+];
+
+export const mobileAppLink = 'https://jetpack.com/mobile/';

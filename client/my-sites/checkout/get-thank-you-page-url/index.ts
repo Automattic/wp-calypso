@@ -143,6 +143,7 @@ export default function getThankYouPageUrl( {
 			debug( 'has a redirectTo that is not external, so returning that', redirectTo );
 			return redirectTo;
 		}
+
 		// We cannot simply compare `hostname` to `siteSlug`, since the latter
 		// might contain a path in the case of Jetpack subdirectory installs.
 		if ( adminUrl && redirectTo.startsWith( `${ adminUrl }post.php?` ) ) {
@@ -231,6 +232,18 @@ export default function getThankYouPageUrl( {
 	if ( noPurchaseMade ) {
 		debug( 'there was no purchase, so returning calypso root' );
 		return '/';
+	}
+
+	// Gift purchases need to bypass everything below, especially the updateUrlInCookie
+	// redirection to the ecommerce thank you page for ecommerce plan checkouts.
+	if ( cart?.is_gift_purchase ) {
+		debug( 'gift purchase cart.gift_details', cart?.gift_details );
+		// Missing receiver_blog_slug should never happen but if it's missing we incorrectly
+		// show a purchase thank you page for the users primary site instead.
+		if ( ! cart?.gift_details?.receiver_blog_slug ) {
+			throw new Error( 'Expected receiver_blog_slug in cart.gift_details, slug not found.' );
+		}
+		return `/checkout/gift/thank-you/${ cart?.gift_details?.receiver_blog_slug }`;
 	}
 
 	// Manual renewals usually have a `redirectTo` but if they do not, return to

@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import { string, node } from 'prop-types';
+import { node, string } from 'prop-types';
 import ExternalLink from 'calypso/components/external-link';
 
 import './style.scss';
@@ -43,6 +43,8 @@ export function DevDocsLink( { url } ) {
 }
 
 function EnvironmentBadge( { badge, feedbackURL, children } ) {
+	// Static HTML only is produced here. Event listeners get added in
+	// load-dev-helpers/index.js
 	return (
 		<div className="environment-badge">
 			{ children }

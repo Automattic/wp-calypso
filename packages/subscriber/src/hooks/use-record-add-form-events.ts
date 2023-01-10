@@ -29,6 +29,13 @@ export function useRecordAddFormEvents( recordTracksEvent?: RecordTrackEvents, f
 	}, [ addSelector?.inProgress ] );
 
 	useEffect( () => {
+		importSelector?.emails?.length &&
+			recordTracksEvent?.( `${ trackEventPrefix }_individual_subscribers`, {
+				flow_name: flowName,
+			} );
+	}, [ importSelector?.emails?.length ] );
+
+	useEffect( () => {
 		importSelector?.inProgress &&
 			recordTracksEvent?.( `${ trackEventPrefix }_csv_subscribers`, {
 				flow_name: flowName,

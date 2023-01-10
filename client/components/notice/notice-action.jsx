@@ -25,6 +25,7 @@ export default class extends Component {
 			className: 'notice__action',
 			href: this.props.href,
 			onClick: this.props.onClick,
+			tabIndex: 0,
 		};
 
 		if ( this.props.external ) {

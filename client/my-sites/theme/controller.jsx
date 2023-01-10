@@ -9,7 +9,7 @@ import ThemeNotFoundError from './theme-not-found-error';
 const debug = debugFactory( 'calypso:themes' );
 
 export function fetchThemeDetailsData( context, next ) {
-	if ( ! context.isServerSide ) {
+	if ( ! context.isServerSide || context.cachedMarkup ) {
 		return next();
 	}
 

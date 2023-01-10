@@ -1,4 +1,5 @@
 import { isDomainRegistration, isPlan } from '@automattic/calypso-products';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -17,6 +18,8 @@ class PrecancellationChatButton extends Component {
 		surveyStep: PropTypes.string,
 		onClick: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
+		atBottom: PropTypes.bool,
+		className: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -38,7 +41,7 @@ class PrecancellationChatButton extends Component {
 	};
 
 	render() {
-		const { isAvailable, icon, translate } = this.props;
+		const { isAvailable, icon, translate, atBottom, className } = this.props;
 
 		if ( ! isAvailable ) {
 			return null;
@@ -46,7 +49,9 @@ class PrecancellationChatButton extends Component {
 
 		return (
 			<HappychatButton
-				className="precancellation-chat-button__main-button"
+				className={ classNames( 'precancellation-chat-button__main-button', className, {
+					'at-bottom': atBottom,
+				} ) }
 				onClick={ this.handleClick }
 			>
 				{ icon && <MaterialIcon icon={ icon } /> }

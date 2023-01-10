@@ -1,12 +1,12 @@
 import { translate } from 'i18n-calypso';
 
-/* eslint-disable jsdoc/require-param */
 /**
  * Menu items that support all sites screen.
+ *
+ * @param {object} options
+ * @param {boolean} options.showManagePlugins Includes menu items that can manage plugins across all sites.
  */
-/* eslint-enable jsdoc/require-param */
-
-export default function allSitesMenu() {
+export default function allSitesMenu( { showManagePlugins = false } = {} ) {
 	return [
 		{
 			icon: 'dashicons-chart-bar',
@@ -41,20 +41,30 @@ export default function allSitesMenu() {
 			url: '/pages',
 		},
 		{
-			icon: 'dashicons-admin-appearance',
-			slug: 'themes-php',
-			title: translate( 'Themes' ),
-			navigationLabel: translate( 'View themes for all sites' ),
-			type: 'menu-item',
-			url: '/themes',
-		},
-		{
 			icon: 'dashicons-admin-plugins',
 			slug: 'plugins',
 			title: translate( 'Plugins' ),
 			navigationLabel: translate( 'View plugins for all sites' ),
 			type: 'menu-item',
 			url: '/plugins',
+			...( showManagePlugins && {
+				children: [
+					{
+						parent: 'plugins',
+						slug: 'all-sites-plugins-add-new',
+						title: translate( 'Add New' ),
+						type: 'submenu-item',
+						url: '/plugins',
+					},
+					{
+						parent: 'plugins',
+						slug: 'all-sites-plugins-installed-plugins',
+						title: translate( 'Installed Plugins' ),
+						type: 'submenu-item',
+						url: '/plugins/manage',
+					},
+				],
+			} ),
 		},
 	];
 }

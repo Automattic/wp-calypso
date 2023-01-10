@@ -37,6 +37,7 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 				resultCount={ resultCount }
 				plugins={ plugins }
 				listName={ category }
+				listType="browse"
 				site={ siteSlug }
 				showPlaceholders={ isFetching }
 				currentSites={ sites }

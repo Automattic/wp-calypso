@@ -1,16 +1,5 @@
+import { mayWeInitTracker, mayWeTrackByTracker } from '../tracker-buckets';
 import {
-	isAdRollEnabled,
-	isBingEnabled,
-	isCriteoEnabled,
-	isFacebookEnabled,
-	isFloodlightEnabled,
-	isLinkedinEnabled,
-	isOutbrainEnabled,
-	isPinterestEnabled,
-	isQuantcastEnabled,
-	isQuoraEnabled,
-	isTwitterEnabled,
-	isWpcomGoogleAdsGtagEnabled,
 	ADROLL_PAGEVIEW_PIXEL_URL_1,
 	ADROLL_PAGEVIEW_PIXEL_URL_2,
 	ADROLL_PURCHASE_PIXEL_URL_1,
@@ -19,64 +8,66 @@ import {
 } from './constants';
 
 if ( typeof window !== 'undefined' ) {
-	setupGtag();
+	if ( mayWeInitTracker( 'ga' ) ) {
+		setupGtag();
+	}
 
 	// Facebook
-	if ( isFacebookEnabled ) {
+	if ( mayWeInitTracker( 'facebook' ) ) {
 		setupFacebookGlobal();
 	}
 
 	// Bing
-	if ( isBingEnabled && ! window.uetq ) {
+	if ( mayWeInitTracker( 'bing' ) && ! window.uetq ) {
 		window.uetq = [];
 	}
 
 	// Criteo
-	if ( isCriteoEnabled && ! window.criteo_q ) {
+	if ( mayWeInitTracker( 'criteo' ) && ! window.criteo_q ) {
 		window.criteo_q = [];
 	}
 
 	// Quantcast
-	if ( isQuantcastEnabled && ! window._qevents ) {
+	if ( mayWeInitTracker( 'quantcast' ) && ! window._qevents ) {
 		window._qevents = [];
 	}
 
 	// Google Ads Gtag for wordpress.com
-	if ( isWpcomGoogleAdsGtagEnabled ) {
+	if ( mayWeInitTracker( 'googleAds' ) ) {
 		setupWpcomGoogleAdsGtag();
 	}
 
-	if ( isFloodlightEnabled ) {
+	if ( mayWeInitTracker( 'floodlight' ) ) {
 		setupWpcomFloodlightGtag();
 	}
 
 	// Twitter
-	if ( isTwitterEnabled ) {
+	if ( mayWeInitTracker( 'twitter' ) ) {
 		setupTwitterGlobal();
 	}
 
 	// Linkedin
-	if ( isLinkedinEnabled ) {
+	if ( mayWeInitTracker( 'linkedin' ) ) {
 		setupLinkedinGlobal();
 	}
 
 	// Quora
-	if ( isQuoraEnabled ) {
+	if ( mayWeInitTracker( 'quora' ) ) {
 		setupQuoraGlobal();
 	}
 
 	// Outbrain
-	if ( isOutbrainEnabled ) {
+	if ( mayWeInitTracker( 'outbrain' ) ) {
 		setupOutbrainGlobal();
 	}
 
 	// Pinterest
-	if ( isPinterestEnabled ) {
+	if ( mayWeInitTracker( 'pinterest' ) ) {
 		setupPinterestGlobal();
 	}
 
 	// AdRoll
-	if ( isAdRollEnabled ) {
+	if ( mayWeInitTracker( 'adroll' ) ) {
 		setupAdRollGlobal();
 	}
 }
@@ -208,9 +199,17 @@ function setupGtag() {
 }
 
 function setupWpcomGoogleAdsGtag() {
-	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAdsGtag );
+	setupGtag();
+
+	if ( mayWeTrackByTracker( 'googleAds' ) ) {
+		window.gtag( 'config', TRACKING_IDS.wpcomGoogleAdsGtag );
+	}
 }
 
 function setupWpcomFloodlightGtag() {
-	window.gtag( 'config', TRACKING_IDS.wpcomFloodlightGtag );
+	setupGtag();
+
+	if ( mayWeTrackByTracker( 'floodlight' ) ) {
+		window.gtag( 'config', TRACKING_IDS.wpcomFloodlightGtag );
+	}
 }

@@ -137,6 +137,7 @@ class ReaderInfiniteStream extends Component {
 								scrollTop={ scrollTop }
 								width={ width }
 								items={ this.props.items } // passthrough-prop unused by the component except to signal a rerender
+								aria-readonly={ false }
 							/>
 						) }
 					</WindowScroller>

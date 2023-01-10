@@ -62,7 +62,7 @@ class ThanksModal extends Component {
 			// Redirect to plugin-bundle flow for themes including software (like woocommerce)
 			const { siteSlug, doesThemeBundleUsableSoftware } = this.props;
 			if ( doesThemeBundleUsableSoftware ) {
-				const dest = `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle`;
+				const dest = `/setup/plugin-bundle?siteSlug=${ siteSlug }`;
 				window.location.replace( dest );
 			}
 		}
@@ -181,7 +181,7 @@ class ThanksModal extends Component {
 				{ this.props.isFSEActive && (
 					<p className="themes__thanks-modal-fse-notice">
 						{ this.props.translate(
-							'This theme uses Full Site Editing to allow you to edit every aspect of your site all in one place, making it easier than ever to create exactly what you want!'
+							'This theme uses the Site Editor, which lets you edit every aspect of your site with blocks, making it easier than ever to create exactly what you want.'
 						) }
 					</p>
 				) }

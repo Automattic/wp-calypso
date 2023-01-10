@@ -4,6 +4,7 @@ import nock from 'nock';
 import 'jest-fetch-mock';
 import { READER_THUMBNAIL_RECEIVE } from 'calypso/state/reader/action-types';
 import { receiveThumbnail, requestThumbnail } from '../actions';
+import sampleVideoPressResponse from './fixtures/sample-videopress-response.js';
 import sampleVimeoResponse from './fixtures/sample-vimeo-response.js';
 
 describe( 'actions', () => {
@@ -32,6 +33,9 @@ describe( 'actions', () => {
 		const successfulEmbedUrl = 'https://vimeo.com/6999927';
 		const youtubeEmbedUrl = 'https://youtube.com/?v=UoOCrbV3ZQ';
 		const youtubeThumbnailUrl = 'https://img.youtube.com/vi/UoOCrbV3ZQ/mqdefault.jpg';
+		const videopressEmbedUrl = 'https://videopress.com/v/ABCDabcd';
+		const videopressThumbnailUrl =
+			'https://videos.files.wordpress.com/ABCDabcd/filename.original.jpg';
 
 		beforeAll( () => {
 			nock( 'https://vimeo.com' )
@@ -40,6 +44,9 @@ describe( 'actions', () => {
 			nock( 'https://vimeo.com' )
 				.get( '/api/v2/video/6999928.json' )
 				.reply( 500, deepFreeze( {} ) );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.1/videos/ABCDabcd/poster' )
+				.reply( 200, deepFreeze( sampleVideoPressResponse ) );
 		} );
 
 		afterAll( () => {
@@ -54,6 +61,19 @@ describe( 'actions', () => {
 				type: READER_THUMBNAIL_RECEIVE,
 				embedUrl: successfulEmbedUrl,
 				thumbnailUrl,
+			} );
+
+			expect( dispatchSpy ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		test( 'videopress: should dispatch properly when receiving a valid response', async () => {
+			const dispatchSpy = jest.fn();
+			await requestThumbnail( videopressEmbedUrl )( dispatchSpy );
+
+			expect( dispatchSpy ).toHaveBeenCalledWith( {
+				type: READER_THUMBNAIL_RECEIVE,
+				embedUrl: videopressEmbedUrl,
+				thumbnailUrl: videopressThumbnailUrl,
 			} );
 
 			expect( dispatchSpy ).toHaveBeenCalledTimes( 1 );

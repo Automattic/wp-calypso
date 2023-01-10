@@ -26,14 +26,22 @@
 
 Prior to running any tests, transpile TypeScript code:
 
-```
-yarn workspace @automattic/calypso-e2e build
+```bash
+# If within test/e2e directory
+yarn build
+
+# If at repo root
+yarn workspace wp-e2e-tests build
 ```
 
 Alternatively, open a separate Terminal window:
 
-```
-yarn workspace @automattic/calypso-e2e build --watch
+```bash
+# If within test/e2e directory
+yarn build --watch
+
+# If at repo root
+yarn workspace wp-e2e-tests build --watch
 ```
 
 ## Running tests
@@ -42,8 +50,8 @@ yarn workspace @automattic/calypso-e2e build --watch
 
 Specify the file(s) directly:
 
-```
-yarn jest <path_to-File_1> <path_to_file_2>
+```bash
+yarn test -- <path_to-File_1> <path_to_file_2>
 ```
 
 ### Test Group
@@ -52,8 +60,12 @@ We use [jest-runner-groups](https://github.com/eugene-manuilov/jest-runner-group
 
 Use the `--group` arg to provide a suite to test `Jest`. For example, to run all specs that are executed on CI for a commit:
 
-```
-yarn jest --group=calypso-pr
+```bash
+# If within test/e2e directory
+yarn test --group=calypso-pr
+
+# If at repo root
+yarn workspace wp-e2e-tests test --group=calypso-pr
 ```
 
 See the [list of groups](tests_ci.md#featuretest-groups).
@@ -66,7 +78,7 @@ Specified accounts will be pre-authenticated prior to the main test suite execut
 
 Specify a list of user accounts found in [Secret Manager](packages/calypso-e2e/src/secrets/secrets-manager.ts), separated by commas:
 
-```test/e2e/docs/tests_local.md
+```bash
 export AUTHENTICATE_ACCOUNTS=simpleSitePersonalPlanUser,eCommerceUser,defaultUser
 ```
 
@@ -77,15 +89,17 @@ By default, tests run against the `desktop` viewport size, approximately 1920x10
 - mobile
 - desktop
 
-To specify the viewport size:
+To launch a spec with mobile viewport:
+
+```bash
+yarn test:mobile -- <path_to_spec>
+```
+
+To use the manual method, either:
 
 a. set the viewport size to persist in the shell: `export VIEWPORT_NAME=<viewport>`
 
 b. set the viewport size for the command only: `VIEWPORT_NAME=<viewport> yarn jest <test_path>`
-
-```bash
-VIEWPORT_NAME=mobile yarn jest ...
-```
 
 ### Target a different environment
 

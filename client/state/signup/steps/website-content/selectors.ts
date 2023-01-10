@@ -1,6 +1,5 @@
 import 'calypso/state/signup/init';
-import { IMAGE_UPLOAD_STATES } from './reducer';
-import { initialState, WebsiteContentCollection } from './schema';
+import { initialState, WebsiteContentCollection, MEDIA_UPLOAD_STATES } from './schema';
 
 export interface WebsiteContentStateModel {
 	signup: {
@@ -15,21 +14,22 @@ export function getWebsiteContent( state: WebsiteContentStateModel ) {
 		state.signup?.steps?.websiteContentCollection?.websiteContent || initialState.websiteContent
 	);
 }
+
 export function getWebsiteContentDataCollectionIndex( state: WebsiteContentStateModel ) {
 	return state.signup?.steps?.websiteContentCollection?.currentIndex || initialState.currentIndex;
 }
 
-export function getImageUploadStates( state: WebsiteContentStateModel ) {
+export function getMediaUploadStates( state: WebsiteContentStateModel ) {
 	return (
-		state.signup?.steps?.websiteContentCollection?.imageUploadStates ||
-		initialState.imageUploadStates
+		state.signup?.steps?.websiteContentCollection?.mediaUploadStates ||
+		initialState.mediaUploadStates
 	);
 }
 
-export function isImageUploadInProgress( state: WebsiteContentStateModel ) {
-	const imageUploadStates = getImageUploadStates( state );
-	const allStates = Object.values( imageUploadStates ).flatMap( ( pageImages ) =>
+export function isMediaUploadInProgress( state: WebsiteContentStateModel ) {
+	const mediaUploadStates = getMediaUploadStates( state );
+	const allStates = Object.values( mediaUploadStates ).flatMap( ( pageImages ) =>
 		Object.values( pageImages )
 	);
-	return allStates.some( ( s ) => IMAGE_UPLOAD_STATES.UPLOAD_STARTED === s );
+	return allStates.some( ( s ) => MEDIA_UPLOAD_STATES.UPLOAD_STARTED === s );
 }

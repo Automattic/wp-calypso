@@ -28,7 +28,6 @@ export function generateSteps( {
 	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
-	createVideoPressSite = noop,
 	setDesignOnSite = noop,
 	setThemeOnSite = noop,
 	setOptionsOnSite = noop,
@@ -42,7 +41,7 @@ export function generateSteps( {
 	isSiteTypeFulfilled = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
 	isNewOrExistingSiteFulfilled = noop,
-	setDIFMLiteDesign = noop,
+	createSiteAndAddDIFMToCart = noop,
 	excludeStepIfEmailVerified = noop,
 	excludeStepIfProfileComplete = noop,
 	submitWebsiteContent = noop,
@@ -102,6 +101,52 @@ export function generateSteps( {
 				showSkipButton: true,
 			},
 			dependencies: [ 'siteSlug' ],
+		},
+
+		'domains-link-in-bio': {
+			stepName: 'domains-link-in-bio',
+			apiRequestFunction: createSiteWithCart,
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+				'shouldHideFreePlan',
+				'isManageSiteFlow',
+			],
+			optionalDependencies: [ 'shouldHideFreePlan', 'isManageSiteFlow' ],
+			props: {
+				isDomainOnly: false,
+				includeWordPressDotCom: true,
+				// the .link tld comes with the w.link subdomain from our partnership.
+				// see pau2Xa-4tC-p2#comment-12869 for more details
+				otherManagedSubdomains: [ 'link' ],
+			},
+			delayApiRequestUntilComplete: true,
+		},
+
+		'domains-link-in-bio-tld': {
+			stepName: 'domains-link-in-bio-tld',
+			apiRequestFunction: createSiteWithCart,
+			dependencies: [ 'tld' ],
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+				'shouldHideFreePlan',
+				'isManageSiteFlow',
+			],
+			optionalDependencies: [ 'shouldHideFreePlan', 'isManageSiteFlow' ],
+			props: {
+				isDomainOnly: false,
+				includeWordPressDotCom: false,
+				// the .link tld comes with the w.link subdomain from our partnership.
+				// see pau2Xa-4tC-p2#comment-12869 for more details
+				otherManagedSubdomains: [ 'link' ],
+				otherManagedSubdomainsCountOverride: 2,
+			},
+			delayApiRequestUntilComplete: true,
 		},
 
 		'plans-site-selected': {
@@ -205,7 +250,7 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
-		// the only unique thing about plans-newsletter is that it provides themeSlugWithRepo and comingSoon dependencies
+
 		'plans-newsletter': {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
@@ -213,9 +258,12 @@ export function generateSteps( {
 			optionalDependencies: [ 'emailItem' ],
 			providesDependencies: [ 'cartItem', 'themeSlugWithRepo', 'comingSoon' ],
 			fulfilledStepCallback: isPlanFulfilled,
+			props: {
+				themeSlugWithRepo: 'pub/lettre',
+				launchSite: true,
+			},
 		},
 
-		// the only unique thing about plans-link-in-bio is that it provides themeSlugWithRepo dependency
 		'plans-link-in-bio': {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
@@ -223,6 +271,9 @@ export function generateSteps( {
 			optionalDependencies: [ 'emailItem' ],
 			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
+			props: {
+				themeSlugWithRepo: 'pub/lynx',
+			},
 		},
 
 		'plans-new': {
@@ -709,8 +760,8 @@ export function generateSteps( {
 			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
 			optionalDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
 			props: {
-				showDesignPickerCategories: config.isEnabled( 'signup/design-picker-categories' ),
-				showDesignPickerCategoriesAllFilter: config.isEnabled( 'signup/design-picker-categories' ),
+				showDesignPickerCategories: true,
+				showDesignPickerCategoriesAllFilter: true,
 			},
 		},
 
@@ -753,7 +804,7 @@ export function generateSteps( {
 
 		'difm-design-setup-site': {
 			stepName: 'difm-design-setup-site',
-			apiRequestFunction: setDIFMLiteDesign,
+			apiRequestFunction: createSiteAndAddDIFMToCart,
 			delayApiRequestUntilComplete: true,
 			providesDependencies: [
 				'selectedDesign',
@@ -825,12 +876,6 @@ export function generateSteps( {
 		transfer: {
 			stepName: 'transfer',
 			dependencies: [ 'siteSlug', 'siteConfirmed' ],
-		},
-
-		'videopress-site': {
-			stepName: 'videopress-site',
-			apiRequestFunction: createVideoPressSite,
-			providesDependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
 		},
 	};
 }

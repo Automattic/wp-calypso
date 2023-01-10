@@ -223,7 +223,7 @@
 	.gridicon {
 		margin-top: 3px;
 		margin-right: 6px;
-		border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		border-radius: 50%;
 	}
 
 	.gridicon.checkmark--active {
@@ -239,6 +239,7 @@
 
 .plugins-browser-item__footer {
 	margin-top: auto;
+	margin-bottom: auto;
 	display: flex;
 	justify-content: space-between;
 }

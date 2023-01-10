@@ -1,5 +1,7 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
+import { Icon, close } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
@@ -93,7 +95,7 @@ class StatsActionFollow extends Component {
 						{ label }
 					</span>
 					<span className="module-content-list-item-action-label unfollow">
-						<Gridicon icon="cross" size={ 18 } />
+						<Icon className="stats-icon" icon={ close } size={ 18 } />
 						{ this.props.translate( 'Unfollow', {
 							context: 'Stats ARIA label: Unfollow action',
 						} ) }

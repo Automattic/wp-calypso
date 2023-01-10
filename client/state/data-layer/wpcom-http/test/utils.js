@@ -20,6 +20,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			const data = { utterance: 'Bork bork' };
 
 			expect( getData( withData( data ) ) ).toEqual( data );
+			expect( getData( withData( [] ) ) ).toEqual( [] );
 		} );
 
 		test( 'should return undefined if no response data available', () => {
@@ -155,17 +156,29 @@ describe( 'WPCOM HTTP Data Layer', () => {
 		} );
 
 		const data = { count: 5 };
+		const dataEmptyString = '';
+		const dataEmptyArray = [];
 		const error = { message: 'oh no!' };
 		const progress = { loaded: 45, total: 80 };
 
 		const fetchHttpAction = { type: 'REFILL' };
 		const successHttpAction = { type: 'REFILL', meta: { dataLayer: { data } } };
+		const successEmptyStringHttpAction = {
+			type: 'REFILL',
+			meta: { dataLayer: { data: dataEmptyString } },
+		};
+		const successEmptyArrayHttpAction = {
+			type: 'REFILL',
+			meta: { dataLayer: { data: dataEmptyArray } },
+		};
 		const failureHttpAction = { type: 'REFILL', meta: { dataLayer: { error } } };
 		const progressHttpAction = { type: 'REFILL', meta: { dataLayer: { progress } } };
 		const bothHttpAction = { type: 'REFILL', meta: { dataLayer: { data, error } } };
 
 		const fetchAction = { type: 'REQUEST' };
 		const successAction = { type: 'SUCCESS', data };
+		const successEmptyStringAction = { type: 'SUCCESS', data: dataEmptyString };
+		const successEmptyArrayAction = { type: 'SUCCESS', data: dataEmptyArray };
 		const failureAction = { type: 'FAILURE', error };
 		const progressAction = { type: 'PROGRESS', progress };
 
@@ -185,6 +198,16 @@ describe( 'WPCOM HTTP Data Layer', () => {
 		test( 'should call onSuccess if meta includes response data', () => {
 			dispatcher( store, successHttpAction );
 			expect( dispatch ).toHaveBeenCalledWith( successAction );
+		} );
+
+		test( 'should call onSuccess if meta includes empty string response data', () => {
+			dispatcher( store, successEmptyStringHttpAction );
+			expect( dispatch ).toHaveBeenCalledWith( successEmptyStringAction );
+		} );
+
+		test( 'should call onSuccess if meta includes empty array response data', () => {
+			dispatcher( store, successEmptyArrayHttpAction );
+			expect( dispatch ).toHaveBeenCalledWith( successEmptyArrayAction );
 		} );
 
 		test( 'should call onError if meta includes error data', () => {

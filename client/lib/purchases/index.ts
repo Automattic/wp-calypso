@@ -6,7 +6,6 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isGSuiteOrGoogleWorkspace,
-	isJetpackPlan,
 	isMonthlyProduct,
 	isPlan,
 	isThemePurchase,
@@ -16,6 +15,7 @@ import {
 	isWpComPlan,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
+	TERM_TRIENNIALLY,
 	TYPE_PRO,
 	isDIFMProduct,
 	isJetpackSearchFree,
@@ -640,7 +640,6 @@ export function isRemovable( purchase: Purchase ): boolean {
 	}
 
 	return (
-		isJetpackPlan( purchase ) ||
 		isExpiring( purchase ) ||
 		isExpired( purchase ) ||
 		( isDomainTransfer( purchase ) && isPurchaseCancelable( purchase ) ) ||
@@ -877,7 +876,7 @@ export function shouldRenderMonthlyRenewalOption( purchase: Purchase ) {
 
 	const plan = getPlan( purchase.productSlug );
 
-	if ( ! [ TERM_ANNUALLY, TERM_BIENNIALLY ].includes( plan?.term ?? '' ) ) {
+	if ( ! [ TERM_ANNUALLY, TERM_BIENNIALLY, TERM_TRIENNIALLY ].includes( plan?.term ?? '' ) ) {
 		return false;
 	}
 

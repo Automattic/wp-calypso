@@ -36,6 +36,17 @@
 	padding-left: 25px;
 }
 
+.theme__sheet-bar-soft-launched {
+	color: var(--color-warning-80);
+	font-size: 0.75rem;
+	font-weight: bold;
+	text-transform: uppercase;
+	background-color: var(--color-warning-20);
+	margin-left: 1rem;
+	padding: 2px 4px;
+	border-radius: 2px;
+}
+
 .theme__sheet-columns {
 	display: flex;
 	flex-direction: row;
@@ -45,6 +56,9 @@
 	@include breakpoint-deprecated( "<960px" ) {
 		flex-direction: column-reverse;
 	}
+}
+.theme__sheet-columns.is-removed {
+	justify-content: center;
 }
 
 .theme__sheet-column-left,
@@ -75,7 +89,7 @@
 	position: absolute;
 	top: 5px;
 	right: 50%;
-	margin-right: 20px;
+	margin-right: 20px !important;
 
 	.theme__sheet-badge-beta {
 		background-color: var(--color-surface);
@@ -528,6 +542,11 @@
 	@include breakpoint-deprecated( "<960px" ) {
 		width: 100%;
 	}
+}
+
+.banner.theme__page-upsell-disabled {
+	pointer-events: none;
+	opacity: 0.5;
 }
 
 .banner.theme__preview-upsell-banner {

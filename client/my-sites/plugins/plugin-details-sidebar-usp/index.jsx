@@ -23,12 +23,20 @@ const Container = styled( FoldableCard )`
 		padding-right: 0;
 		${ ( props ) => ! props.showAsAccordion && 'display: none' };
 	}
-
-	&.is-expanded .foldable-card__content {
+	// Increase specificity to avoid conflicts with foldable-card styles
+	&&.is-expanded .foldable-card__content {
 		${ ( props ) => props.first && 'border-top: 0' };
 		${ ( props ) => props.showAsAccordion && 'border: 0' };
 		padding: ${ ( props ) => ( props.first ? '0 0 32px' : '32px 0' ) };
 		${ ( props ) => props.showAsAccordion && 'padding: 0' };
+	}
+
+	&:last-child.is-expanded {
+		margin-bottom: 0;
+
+		&.is-expanded .foldable-card__content {
+			padding-bottom: 0;
+		}
 	}
 `;
 
@@ -40,13 +48,18 @@ const Icon = styled.img`
 `;
 const Title = styled.div`
 	color: var( --studio-gray-100 );
-	font-size: 16px;
+	font-size: 14px;
 	${ ( props ) => ! props.showAsAccordion && 'font-weight: 600' };
-	${ ( props ) => ! props.showAsAccordion && 'margin-bottom: 4px;' };
+	${ ( props ) => ! props.showAsAccordion && 'margin-bottom: 8px;' };
 `;
 const Description = styled.div`
-	color: var( --studio-gray-60 );
+	color: var( --studio-gray-80 );
 	margin-bottom: 12px;
+	font-size: 14px;
+`;
+
+const Link = styled( ExternalLink )`
+	font-size: 14px;
 `;
 
 const PluginDetailsSidebarUSP = ( {
@@ -86,9 +99,9 @@ const PluginDetailsSidebarUSP = ( {
 				links.map( ( link, idx ) => {
 					return (
 						<Fragment key={ idx }>
-							<ExternalLink icon href={ link.href }>
+							<Link icon href={ link.href } onClick={ link.onClick }>
 								{ link.label }
-							</ExternalLink>
+							</Link>
 							<br />
 						</Fragment>
 					);

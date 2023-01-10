@@ -25,6 +25,10 @@ export function recordSubmitStep(
 				propValue = ( propValue as { slug: string } ).slug;
 			}
 
+			if ( propName === 'current_plan' ) {
+				propValue = ( propValue as { product_slug: string } ).product_slug;
+			}
+
 			return {
 				...props,
 				[ propName ]: propValue,

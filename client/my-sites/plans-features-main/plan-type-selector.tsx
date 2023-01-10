@@ -38,6 +38,7 @@ type Props = {
 	isInSignup: boolean;
 	plans: string[];
 	eligibleForWpcomMonthlyPlans?: boolean;
+	isPlansInsideStepper: boolean;
 };
 
 interface PathArgs {
@@ -113,7 +114,7 @@ export const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 
 type IntervalTypeProps = Pick<
 	Props,
-	'intervalType' | 'plans' | 'isInSignup' | 'eligibleForWpcomMonthlyPlans'
+	'intervalType' | 'plans' | 'isInSignup' | 'eligibleForWpcomMonthlyPlans' | 'isPlansInsideStepper'
 >;
 
 export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
@@ -139,6 +140,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 				<SegmentedControl.Item
 					selected={ intervalType === 'monthly' }
 					path={ generatePath( props, { intervalType: 'monthly' } ) }
+					isPlansInsideStepper={ props.isPlansInsideStepper }
 				>
 					<span>{ translate( 'Pay monthly' ) }</span>
 				</SegmentedControl.Item>
@@ -146,6 +148,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 				<SegmentedControl.Item
 					selected={ intervalType === 'yearly' }
 					path={ generatePath( props, { intervalType: 'yearly' } ) }
+					isPlansInsideStepper={ props.isPlansInsideStepper }
 				>
 					<span ref={ ( ref ) => ref && setSpanRef( ref ) }>{ translate( 'Pay annually' ) }</span>
 					<PopupMessages context={ spanRef } isVisible={ popupIsVisible }>

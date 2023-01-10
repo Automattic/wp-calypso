@@ -69,6 +69,7 @@ export interface CreateSiteParams {
 		wpcom_public_coming_soon?: number;
 		anchor_fm_podcast_id?: string;
 		is_blank_canvas?: boolean;
+		is_videopress_initial_purchase?: boolean;
 	};
 }
 
@@ -271,6 +272,7 @@ export interface Cart {
 	messages: Record< 'errors' | 'success', unknown >;
 }
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface Domain {
 	a_records_required_for_mapping?: string[];
 	primary_domain: boolean;
@@ -326,6 +328,7 @@ export interface Domain {
 export interface SiteSettings {
 	[ key: string ]: any;
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 export interface SiteLaunchState {
 	status: SiteLaunchStatus;
@@ -454,6 +457,8 @@ export interface LaunchPadCheckListTasksStatuses {
 	first_post_published?: boolean;
 	links_edited?: boolean;
 	site_launched?: boolean;
+	site_edited?: boolean;
+	video_uploaded?: boolean;
 }
 
 export interface ThemeSetupOptions {
@@ -462,5 +467,4 @@ export interface ThemeSetupOptions {
 	pattern_ids?: number[] | string[];
 	header_pattern_ids?: number[] | string[];
 	footer_pattern_ids?: number[] | string[];
-	page_template?: string;
 }

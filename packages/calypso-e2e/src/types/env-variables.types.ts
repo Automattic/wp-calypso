@@ -18,6 +18,7 @@ export interface SupportedEnvVariables extends EnvVariables {
 	ARTIFACTS_PATH: string;
 	HEADLESS: boolean;
 	SLOW_MO: number;
+	TIMEOUT: number;
 	TEST_ON_ATOMIC: boolean;
 	TEST_ON_JETPACK: boolean;
 	CALYPSO_BASE_URL: string;

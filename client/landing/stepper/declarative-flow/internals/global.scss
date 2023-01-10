@@ -11,7 +11,8 @@
  * General onboarding styling
  */
 body {
-	background-color: #fdfdfd;
+	--color-body-background: #fdfdfd;
+	background-color: var(--color-body-background);
 }
 
 body,
@@ -58,12 +59,19 @@ button {
 .plugin-bundle,
 .newsletter-setup,
 .newsletter-post-setup,
+.plans,
+.domains,
 .patterns,
 .link-in-bio-setup,
 .link-in-bio-post-setup,
 .anchor-fm,
 .subscribers,
-.intro {
+.ecommerce,
+.wooexpress,
+.intro,
+.free-setup,
+.free-post-setup,
+.free {
 	padding: 60px 0 0;
 	box-sizing: border-box;
 
@@ -141,7 +149,8 @@ button {
  * Tailored flow stylings
  */
 .newsletter,
-.link-in-bio {
+.link-in-bio:not(.domains),
+.link-in-bio-tld:not(.domains) {
 	&:not(.launchpad):not(.subscribers) {
 		@include onboarding-break-mobile-landscape {
 			padding: 40px 0 0;
@@ -161,8 +170,10 @@ button {
 	}
 }
 
+.store-profiler__form,
 .newsletter,
 .link-in-bio,
+.link-in-bio-tld,
 .setup-form__form {
 	button {
 		&[type="submit"] {
@@ -171,12 +182,12 @@ button {
 			font-weight: 500;
 		}
 
-		&.components-button {
+		&.site-icon-with-picker__upload-button {
 			border-radius: 4px;
 			border: 1px solid rgba($color: #000, $alpha: 0.2);
 
 			&.site-icon-with-picker__upload-button {
-				border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				border-radius: 50%;
 				font-family: "SF Pro Text", $sans;
 				transition: ease 300ms;
 
@@ -226,17 +237,7 @@ button {
 		label {
 			font-size: $font-body;
 			color: var(--studio-gray-60);
-		}
-
-		input[type="text"].form-text-input,
-		textarea.form-textarea {
-			font-size: $font-body-small;
-			border-radius: 4px;
-			border: 1px solid var(--studio-gray-10);
-
-			&:focus {
-				box-shadow: 0 0 0 2px #e2eaf1;
-			}
+			font-weight: 400;
 		}
 	}
 
@@ -270,6 +271,12 @@ button {
 	}
 }
 
+.free {
+	.signup-header h1 {
+		display: none;
+	}
+}
+
 /**
  * Global notices
  */
@@ -291,5 +298,15 @@ button {
 		.inline-help {
 			bottom: 74px;
 		}
+	}
+}
+
+.wooexpress,
+.ecommerce {
+	.step-container.processing-step {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-top: 25vh;
 	}
 }

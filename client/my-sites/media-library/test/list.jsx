@@ -3,9 +3,10 @@
  */
 
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["expectSelectedItems", "expect"] }] */
-import { mount } from 'enzyme';
-import { defer } from 'lodash';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import moment from 'moment';
+import { useState } from 'react';
 import { MediaLibraryList as MediaList } from '../list';
 import fixtures from './fixtures';
 
@@ -13,199 +14,290 @@ import fixtures from './fixtures';
  * Module variables
  */
 const DUMMY_SITE_ID = 2916284;
-const mockSelectedItems = [];
 
-jest.mock( 'calypso/components/infinite-list', () =>
-	require( 'calypso/components/empty-component' )
-);
-jest.mock( 'calypso/my-sites/media-library/list-item', () =>
-	require( 'calypso/components/empty-component' )
-);
-jest.mock( 'calypso/my-sites/media-library/list-plan-upgrade-nudge', () =>
-	require( 'calypso/components/empty-component' )
-);
+jest.mock( 'calypso/my-sites/media-library/list-item', () => ( { media: mediaItem, onToggle } ) => (
+	<button
+		data-testid={ `list-item-${ mediaItem.ID }` }
+		onClick={ ( event ) => onToggle( mediaItem, event.shiftKey ) }
+	/>
+) );
+jest.mock( 'calypso/my-sites/media-library/list-plan-upgrade-nudge', () => () => null );
+
+const { media } = fixtures;
+const selectMediaItems = jest.fn();
+
+// Some tests depend on persisting `selectedItems` between renders
+// which is why this small HOC exists to mimic the Redux store
+const withSelectedItems = ( Component ) => ( props ) => {
+	const [ selectedItems, setSelectedItems ] = useState( [] );
+
+	selectMediaItems.mockImplementation( ( siteId, mediaItems ) => {
+		setSelectedItems( mediaItems );
+	} );
+
+	return (
+		<Component { ...props } selectedItems={ selectedItems } selectMediaItems={ selectMediaItems } />
+	);
+};
 
 describe( 'MediaLibraryList item selection', () => {
-	let wrapper;
-	let mediaList;
+	let originalScrollTo;
 
-	const selectMediaItems = jest.fn();
+	beforeAll( () => {
+		originalScrollTo = window.scrollTo;
+		window.scrollTo = () => null;
+	} );
 
-	function toggleItem( itemIndex, shiftClick ) {
-		mediaList.toggleItem( fixtures.media[ itemIndex ], shiftClick );
-	}
+	afterAll( () => {
+		window.scrollTo = originalScrollTo;
+	} );
 
-	function expectSelectedItems( ...args ) {
-		defer( function () {
-			expect( mockSelectedItems ).toContain(
-				args.map( function ( arg ) {
-					return fixtures.media[ arg ];
-				} )
-			);
-		} );
-	}
-
-	beforeEach( () => {
-		mockSelectedItems.length = 0;
+	afterEach( () => {
+		selectMediaItems.mockClear();
 	} );
 
 	describe( 'multiple selection', () => {
-		beforeEach( () => {
-			wrapper = mount(
-				<MediaList
-					filterRequiresUpgrade={ false }
-					site={ { ID: DUMMY_SITE_ID } }
-					media={ fixtures.media }
-					mediaScale={ 0.24 }
-					moment={ moment }
-					selectedItems={ [] }
-					selectMediaItems={ selectMediaItems }
-				/>
-			);
-			mediaList = wrapper.find( MediaList ).instance();
+		const props = {
+			filterRequiresUpgrade: false,
+			media,
+			mediaScale: 0.24,
+			moment,
+			selectMediaItems,
+			selectedItems: [],
+			site: { ID: DUMMY_SITE_ID },
+		};
+
+		test( 'allows selecting single items', async () => {
+			const user = userEvent.setup();
+			render( <MediaList { ...props } /> );
+			const [ item1, item2 ] = media;
+
+			await user.click( screen.getByTestId( `list-item-${ item1.ID }` ) );
+			expect( selectMediaItems ).toHaveBeenCalledWith( DUMMY_SITE_ID, [ item1 ] );
+
+			await user.click( screen.getByTestId( `list-item-${ item2.ID }` ) );
+			expect( selectMediaItems ).toHaveBeenCalledWith( DUMMY_SITE_ID, [ item2 ] );
 		} );
 
-		afterEach( () => {
-			wrapper.unmount();
+		test( 'allows selecting multiple items at once by Shift+clicking', async () => {
+			const user = userEvent.setup();
+			render( <MediaList { ...props } /> );
+
+			await user.click( screen.getByTestId( `list-item-${ media[ 1 ].ID }` ) );
+			await user.keyboard( '{Shift>}' ); // `>` means keep the `Shift` key pressed
+			await user.click( screen.getByTestId( `list-item-${ media[ 4 ].ID }` ) );
+			await user.keyboard( '{/Shift}' );
+
+			expect( selectMediaItems ).toHaveBeenNthCalledWith( 2, DUMMY_SITE_ID, media.slice( 1, 5 ) );
 		} );
 
-		test( 'allows selecting single items', () => {
-			toggleItem( 0 );
-			expectSelectedItems( 0 );
-			toggleItem( 2 );
-			expectSelectedItems( 0, 2 );
+		test( 'allows selecting single and multiple items', async () => {
+			const user = userEvent.setup();
+			const WrappedMediaList = withSelectedItems( MediaList );
+			render( <WrappedMediaList { ...props } /> );
+
+			await user.click( screen.getByTestId( `list-item-${ media[ 1 ].ID }` ) );
+			await user.click( screen.getByTestId( `list-item-${ media[ 5 ].ID }` ) );
+			await user.keyboard( '{Shift>}' );
+			await user.click( screen.getByTestId( `list-item-${ media[ 9 ].ID }` ) );
+			await user.keyboard( '{/Shift}' );
+
+			expect( selectMediaItems ).toHaveBeenNthCalledWith( 3, DUMMY_SITE_ID, [
+				media[ 1 ],
+				...media.slice( 5, 10 ),
+			] );
 		} );
 
-		test( 'allows selecting multiple items at once by Shift+clicking', () => {
-			toggleItem( 0 );
-			toggleItem( 4, true ); // Shift+click to select items 0 through 4
-			expectSelectedItems( 0, 1, 2, 3, 4 );
+		test( 'allows chaining Shift+click selections from first item', async () => {
+			const user = userEvent.setup();
+			const WrappedMediaList = withSelectedItems( MediaList );
+			render( <WrappedMediaList { ...props } /> );
+
+			await user.click( screen.getByTestId( `list-item-${ media[ 0 ].ID }` ) );
+			await user.keyboard( '{Shift>}' );
+			await user.click( screen.getByTestId( `list-item-${ media[ 3 ].ID }` ) );
+
+			expect( selectMediaItems ).toHaveBeenNthCalledWith( 2, DUMMY_SITE_ID, media.slice( 0, 4 ) );
+
+			// Shift is still being pressed because of the `>` above
+			await user.click( screen.getByTestId( `list-item-${ media[ 6 ].ID }` ) );
+
+			await user.keyboard( '{/Shift}' );
+
+			expect( selectMediaItems ).toHaveBeenNthCalledWith( 3, DUMMY_SITE_ID, media.slice( 0, 7 ) );
 		} );
 
-		test( 'allows selecting single and multiple items', () => {
-			toggleItem( 1 );
-			expectSelectedItems( 1 );
-			toggleItem( 5 );
-			toggleItem( 9, true );
-			expectSelectedItems( 1, 5, 6, 7, 8, 9 );
+		test( 'allows chaining Shift+click selections to last item', async () => {
+			const user = userEvent.setup();
+			const WrappedMediaList = withSelectedItems( MediaList );
+			render( <WrappedMediaList { ...props } /> );
+
+			await user.click( screen.getByTestId( `list-item-${ media[ 3 ].ID }` ) );
+			await user.keyboard( '{Shift>}' );
+			await user.click( screen.getByTestId( `list-item-${ media[ 6 ].ID }` ) );
+
+			expect( selectMediaItems ).toHaveBeenNthCalledWith( 2, DUMMY_SITE_ID, media.slice( 3, 7 ) );
+
+			// Shift is still being pressed because of the `>` above
+			await user.click( screen.getByTestId( `list-item-${ media[ 9 ].ID }` ) );
+
+			await user.keyboard( '{/Shift}' );
+
+			expect( selectMediaItems ).toHaveBeenNthCalledWith( 3, DUMMY_SITE_ID, media.slice( 3 ) );
 		} );
 
-		test( 'allows chaining Shift+click selections from first item', () => {
-			toggleItem( 0 );
-			toggleItem( 3, true );
-			expectSelectedItems( 0, 1, 2, 3 );
-			toggleItem( 6, true );
-			expectSelectedItems( 0, 1, 2, 3, 4, 5, 6 );
+		test( 'allows chaining Shift+click deselections', async () => {
+			const user = userEvent.setup();
+			const WrappedMediaList = withSelectedItems( MediaList );
+			render( <WrappedMediaList { ...props } /> );
+
+			await user.click( screen.getByTestId( `list-item-${ media[ 0 ].ID }` ) );
+			await user.keyboard( '{Shift>}' );
+			await user.click( screen.getByTestId( `list-item-${ media[ 9 ].ID }` ) );
+			await user.keyboard( '{/Shift}' );
+
+			expect( selectMediaItems ).toHaveBeenNthCalledWith( 2, DUMMY_SITE_ID, media );
+
+			await user.click( screen.getByTestId( `list-item-${ media[ 1 ].ID }` ) );
+			await user.keyboard( '{Shift>}' );
+			await user.click( screen.getByTestId( `list-item-${ media[ 4 ].ID }` ) );
+
+			expect( selectMediaItems ).toHaveBeenNthCalledWith( 4, DUMMY_SITE_ID, [
+				media[ 0 ],
+				...media.slice( 5 ),
+			] );
+
+			// Shift is still being pressed because of the `>`
+			await user.click( screen.getByTestId( `list-item-${ media[ 6 ].ID }` ) );
+
+			await user.keyboard( '{/Shift}' );
+
+			expect( selectMediaItems ).toHaveBeenNthCalledWith( 5, DUMMY_SITE_ID, [
+				media[ 0 ],
+				...media.slice( 7 ),
+			] );
 		} );
 
-		test( 'allows chaining Shift+click selections to last item', () => {
-			toggleItem( 3 );
-			toggleItem( 6, true );
-			expectSelectedItems( 3, 4, 5, 6 );
-			toggleItem( 9, true );
-			expectSelectedItems( 3, 4, 5, 6, 7, 8, 9 );
+		test( 'allows selecting then deselecting multiple items', async () => {
+			const user = userEvent.setup();
+			const WrappedMediaList = withSelectedItems( MediaList );
+			render( <WrappedMediaList { ...props } /> );
+
+			await user.click( screen.getByTestId( `list-item-${ media[ 1 ].ID }` ) );
+			await user.keyboard( '{Shift>}' );
+			await user.click( screen.getByTestId( `list-item-${ media[ 6 ].ID }` ) );
+
+			expect( selectMediaItems ).toHaveBeenNthCalledWith( 2, DUMMY_SITE_ID, media.slice( 1, 7 ) );
+
+			// Shift is still being pressed because of the `>`
+			await user.click( screen.getByTestId( `list-item-${ media[ 1 ].ID }` ) );
+
+			await user.keyboard( '{/Shift}' );
+
+			expect( selectMediaItems ).toHaveBeenNthCalledWith( 3, DUMMY_SITE_ID, [] );
 		} );
 
-		test( 'allows chaining Shift+click deselections', () => {
-			// first select all items
-			toggleItem( 0 );
-			toggleItem( 9, true );
-			expectSelectedItems( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 );
-			toggleItem( 1 );
-			expectSelectedItems( 0, 2, 3, 4, 5, 6, 7, 8, 9 );
-			toggleItem( 4, true );
-			expectSelectedItems( 0, 5, 6, 7, 8, 9 );
-			toggleItem( 7, true );
-			expectSelectedItems( 0, 8, 9 );
-		} );
+		test( 'selects the previously and currently clicked items when Shift+clicking', async () => {
+			const user = userEvent.setup();
+			const WrappedMediaList = withSelectedItems( MediaList );
+			render( <WrappedMediaList { ...props } /> );
 
-		test( 'allows selecting then deselecting multiple items', () => {
-			toggleItem( 1 );
-			toggleItem( 6, true );
-			expectSelectedItems( 1, 2, 3, 4, 5, 6 );
-			toggleItem( 1, true );
-			expectSelectedItems();
-		} );
+			await user.click( screen.getByTestId( `list-item-${ media[ 1 ].ID }` ) );
+			await user.keyboard( '{Shift>}' );
+			await user.click( screen.getByTestId( `list-item-${ media[ 4 ].ID }` ) );
+			await user.keyboard( '{/Shift}' );
 
-		test( 'selects the previously and currently clicked items when Shift+clicking', () => {
-			toggleItem( 1 );
-			toggleItem( 4, true );
-			expectSelectedItems( 1, 2, 3, 4 );
-			toggleItem( 5 );
-			toggleItem( 0, true );
-			expectSelectedItems( 0, 1, 2, 3, 4, 5 );
+			expect( selectMediaItems ).toHaveBeenNthCalledWith( 2, DUMMY_SITE_ID, media.slice( 1, 5 ) );
+
+			await user.click( screen.getByTestId( `list-item-${ media[ 5 ].ID }` ) );
+			await user.keyboard( '{Shift>}' );
+			await user.click( screen.getByTestId( `list-item-${ media[ 0 ].ID }` ) );
+
+			await user.keyboard( '{/Shift}' );
+
+			expect( selectMediaItems ).toHaveBeenNthCalledWith( 4, DUMMY_SITE_ID, [
+				...media.slice( 1, 5 ),
+				media[ 5 ],
+				media[ 0 ],
+			] );
 		} );
 	} );
 
 	describe( 'single selection', () => {
-		beforeEach( () => {
-			wrapper = mount(
-				<MediaList
-					filterRequiresUpgrade={ false }
-					site={ { ID: DUMMY_SITE_ID } }
-					media={ fixtures.media }
-					mediaScale={ 0.24 }
-					moment={ moment }
-					single
-					selectedItems={ [] }
-					selectMediaItems={ selectMediaItems }
-				/>
-			);
-			mediaList = wrapper.find( MediaList ).instance();
+		const props = {
+			filterRequiresUpgrade: false,
+			media,
+			mediaScale: 0.24,
+			moment,
+			selectMediaItems,
+			selectedItems: [],
+			single: true,
+			site: { ID: DUMMY_SITE_ID },
+		};
+
+		test( 'allows selecting a single item', async () => {
+			const user = userEvent.setup();
+			render( <MediaList { ...props } /> );
+
+			await user.click( screen.getByTestId( `list-item-${ media[ 0 ].ID }` ) );
+			expect( selectMediaItems ).toHaveBeenNthCalledWith( 1, DUMMY_SITE_ID, [ media[ 0 ] ] );
+
+			await user.click( screen.getByTestId( `list-item-${ media[ 2 ].ID }` ) );
+			expect( selectMediaItems ).toHaveBeenNthCalledWith( 2, DUMMY_SITE_ID, [ media[ 2 ] ] );
 		} );
 
-		afterEach( () => {
-			wrapper.unmount();
+		test( 'allows deselecting a single item', async () => {
+			const user = userEvent.setup();
+			const WrappedMediaList = withSelectedItems( MediaList );
+			render( <WrappedMediaList { ...props } /> );
+
+			await user.click( screen.getByTestId( `list-item-${ media[ 0 ].ID }` ) );
+			expect( selectMediaItems ).toHaveBeenNthCalledWith( 1, DUMMY_SITE_ID, [ media[ 0 ] ] );
+
+			await user.click( screen.getByTestId( `list-item-${ media[ 0 ].ID }` ) );
+			expect( selectMediaItems ).toHaveBeenNthCalledWith( 2, DUMMY_SITE_ID, [] );
 		} );
 
-		test( 'allows selecting a single item', () => {
-			toggleItem( 0 );
-			expectSelectedItems( 0 );
-			toggleItem( 2 );
-			expectSelectedItems( 2 );
-		} );
+		test( 'only selects a single item when selecting multiple via Shift+click', async () => {
+			const user = userEvent.setup();
+			render( <MediaList { ...props } /> );
 
-		test( 'allows deselecting a single item', () => {
-			toggleItem( 0 );
-			expectSelectedItems( 0 );
-			toggleItem( 0 );
-			expectSelectedItems();
-		} );
+			await user.click( screen.getByTestId( `list-item-${ media[ 0 ].ID }` ) );
+			expect( selectMediaItems ).toHaveBeenNthCalledWith( 1, DUMMY_SITE_ID, [ media[ 0 ] ] );
 
-		test( 'only selects a single item when selecting multiple via Shift+click', () => {
-			toggleItem( 0 );
-			toggleItem( 4, true ); // Shift+click to select items 0 through 4
-			expectSelectedItems( 4 );
+			await user.keyboard( '{Shift>}' );
+			await user.click( screen.getByTestId( `list-item-${ media[ 4 ].ID }` ) );
+			expect( selectMediaItems ).toHaveBeenNthCalledWith( 2, DUMMY_SITE_ID, [ media[ 4 ] ] );
 		} );
 	} );
 
 	describe( 'ungrouped sources', () => {
-		const getList = ( media, source ) => {
-			return mount(
-				<MediaList
-					filterRequiresUpgrade={ false }
-					site={ { ID: DUMMY_SITE_ID } }
-					media={ media }
-					mediaScale={ 0.24 }
-					moment={ moment }
-					source={ source }
-					single
-					selectedItems={ [] }
-					selectMediaItems={ selectMediaItems }
-				/>
-			)
-				.find( MediaList )
-				.instance();
+		const props = {
+			filterRequiresUpgrade: false,
+			media,
+			mediaScale: 0.24,
+			moment,
+			selectMediaItems,
+			selectedItems: [],
+			single: true,
+			site: { ID: DUMMY_SITE_ID },
 		};
 
 		test( 'should have no group label for an ungrouped source', () => {
-			const grid = getList( fixtures.media, 'pexels' ).render();
-			expect( grid.props.getGroupLabel() ).toEqual( '' );
+			render( <MediaList { ...props } source="pexels" /> );
+			expect( screen.queryAllByText( /September/ ) ).toHaveLength( 0 );
 		} );
 
-		test( 'should use the source name as the item group for an ungrouped source', () => {
-			const grid = getList( fixtures.media, 'pexels' ).render();
-			expect( grid.props.getItemGroup() ).toEqual( 'pexels' );
+		test( 'should use group labels if source is not `pexels`', () => {
+			// This test is added to enhance the previous one by testing the
+			// reverse case because testing the absence of an element is prone
+			// to failure if we don't test cases where it should be visible.
+			// Ideally though we should:
+			// @TODO: add tests for grid visible labels
+			render( <MediaList { ...props } /> );
+			const gridLabels = screen.getAllByText( /September/ );
+			expect( gridLabels ).toHaveLength( 8 );
+			gridLabels.forEach( ( el ) => expect( el ).toBeVisible() );
 		} );
 	} );
 } );

@@ -14,7 +14,6 @@ export const PluginPrice = ( { plugin, billingPeriod, children } ) => {
 	const productList = useSelector( getProductsList );
 	const variation = plugin?.variations?.[ variationPeriod ];
 	const priceSlug = getProductSlugByPeriodVariation( variation, productList );
-
 	const price = useSelector( ( state ) => getProductDisplayCost( state, priceSlug ) );
 	const isFetching = useSelector( isProductsListFetching );
 

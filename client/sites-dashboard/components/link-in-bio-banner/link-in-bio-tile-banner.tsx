@@ -30,7 +30,6 @@ const Details = styled( 'div' )( {
 export const LinkInBioTileBanner = () => {
 	return (
 		<Root data-testid="tile-banner">
-			<Banner.DismissButton />
 			<Banner.Image src={ image } />
 			<Details>
 				<Banner.Title />

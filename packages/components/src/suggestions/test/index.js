@@ -1,6 +1,10 @@
-import { shallow } from 'enzyme';
+/**
+ * @jest-environment jsdom
+ */
+
+import '@testing-library/jest-dom';
+import { render, screen } from '@testing-library/react';
 import Suggestions from '..';
-import Item from '../item';
 
 const defaultProps = {
 	suggest: jest.fn(),
@@ -23,32 +27,42 @@ describe( '<Suggestions>', () => {
 	} );
 
 	test( 'render basic list of suggestions', () => {
-		const wrapper = shallow( <Suggestions { ...defaultProps } /> );
-		expect( wrapper.find( Item ) ).toHaveLength( 3 );
-		expect( wrapper ).toMatchSnapshot();
+		const { container } = render( <Suggestions { ...defaultProps } /> );
+
+		expect( screen.getAllByRole( 'button' ) ).toHaveLength( 3 );
+
+		expect( container.firstChild ).toMatchSnapshot();
 	} );
 
 	test( 'highlights the query inside the suggestions', () => {
-		const wrapper = shallow( <Suggestions { ...defaultProps } query="LE" /> );
-		expect( wrapper.find( { label: 'Pear' } ).prop( 'hasHighlight' ) ).toBe( false );
-		expect( wrapper.find( { label: 'Orange' } ).prop( 'hasHighlight' ) ).toBe( false );
-		expect( wrapper.find( { label: 'Apple' } ).prop( 'hasHighlight' ) ).toBe( true );
-		expect( wrapper.find( { label: 'Apple' } ).prop( 'query' ) ).toBe( 'LE' );
+		render( <Suggestions { ...defaultProps } query="LE" /> );
+
+		const suggestions = screen.getAllByRole( 'button' );
+
+		expect( suggestions[ 0 ] ).toHaveTextContent( 'Apple' );
+		expect( suggestions[ 1 ] ).toHaveTextContent( 'Pear' );
+		expect( suggestions[ 2 ] ).toHaveTextContent( 'Orange' );
+
+		expect( suggestions[ 0 ] ).toHaveClass( 'has-highlight' );
+		expect( suggestions[ 1 ] ).not.toHaveClass( 'has-highlight' );
+		expect( suggestions[ 2 ] ).not.toHaveClass( 'has-highlight' );
+
+		expect( screen.getByText( 'le' ) ).toHaveClass( 'is-emphasized' );
 	} );
 
 	test( 'uncategorized suggestions always appear first', () => {
-		const wrapper = shallow(
+		render(
 			<Suggestions
 				{ ...defaultProps }
 				suggestions={ [ { label: 'Carrot', category: 'Vegetable' }, ...defaultProps.suggestions ] }
 			/>
 		);
 
-		const suggestions = wrapper.find( Item );
+		const suggestions = screen.getAllByRole( 'button' );
 
-		expect( suggestions.at( 0 ).prop( 'label' ) ).toBe( 'Apple' );
-		expect( suggestions.at( 1 ).prop( 'label' ) ).toBe( 'Pear' );
-		expect( suggestions.at( 2 ).prop( 'label' ) ).toBe( 'Orange' );
-		expect( suggestions.at( 3 ).prop( 'label' ) ).toBe( 'Carrot' );
+		expect( suggestions[ 0 ] ).toHaveTextContent( 'Apple' );
+		expect( suggestions[ 1 ] ).toHaveTextContent( 'Pear' );
+		expect( suggestions[ 2 ] ).toHaveTextContent( 'Orange' );
+		expect( suggestions[ 3 ] ).toHaveTextContent( 'Carrot' );
 	} );
 } );

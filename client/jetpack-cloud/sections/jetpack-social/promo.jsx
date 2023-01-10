@@ -13,7 +13,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './promo.scss';
 
 export const Promo = ( { isSocialActive, adminUrl, translate } ) => {
-	const titleHeader = translate( 'Social' );
+	const titleHeader = translate( 'Social', { context: 'Jetpack product name' } );
 	const features = [
 		translate( 'Connect with Twitter, Facebook, LinkedIn and Tumblr' ),
 		translate( 'Select the social media to share posts while publishing' ),

@@ -16,13 +16,20 @@ import 'calypso/state/themes/init';
  * on a given site. Careful, this action is different from most others here in that
  * expects a theme stylesheet string (not just a theme ID).
  *
- * @param  {string}   themeStylesheet Theme stylesheet string (*not* just a theme ID!)
- * @param  {number}   siteId          Site ID
- * @param  {string}   source          The source that is requesting theme activation, e.g. 'showcase'
- * @param  {boolean}  purchased       Whether the theme has been purchased prior to activation
- * @returns {Function}                 Action thunk
+ * @param  {string}   themeStylesheet    Theme stylesheet string (*not* just a theme ID!)
+ * @param  {number}   siteId             Site ID
+ * @param  {string}   source             The source that is requesting theme activation, e.g. 'showcase'
+ * @param  {boolean}  purchased          Whether the theme has been purchased prior to activation
+ * @param  {string}   styleVariationSlug The theme style slug
+ * @returns {Function}                   Action thunk
  */
-export function themeActivated( themeStylesheet, siteId, source = 'unknown', purchased = false ) {
+export function themeActivated(
+	themeStylesheet,
+	siteId,
+	source = 'unknown',
+	purchased = false,
+	styleVariationSlug
+) {
 	const themeActivatedThunk = ( dispatch, getState ) => {
 		const action = {
 			type: THEME_ACTIVATE_SUCCESS,
@@ -40,6 +47,7 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 			purchased: purchased,
 			search_term: search_term || null,
 			search_taxonomies,
+			style_variation_slug: styleVariationSlug || '',
 		} );
 		dispatch( withAnalytics( trackThemeActivation, action ) );
 

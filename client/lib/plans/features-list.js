@@ -10,8 +10,7 @@ import {
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_ACTIVITY_LOG,
 	FEATURE_ACTIVITY_LOG_1_YEAR_V2,
-	FEATURE_ADVANCED_CUSTOMIZATION,
-	FEATURE_ADVANCED_DESIGN,
+	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 	FEATURE_ADVANCED_SEO,
 	FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
 	FEATURE_ADVANCED_SEO_TOOLS,
@@ -33,7 +32,6 @@ import {
 	FEATURE_BACKUP_DAILY_V2,
 	FEATURE_BACKUP_REALTIME_V2,
 	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
-	FEATURE_BASIC_DESIGN,
 	FEATURE_BLANK,
 	FEATURE_BLOG_DOMAIN,
 	FEATURE_CLOUDFLARE_ANALYTICS,
@@ -169,15 +167,56 @@ import {
 	FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
 	FEATURE_UNLIMITED_TRAFFIC,
 	FEATURE_MANAGED_HOSTING,
-	/* START - PLAN TAGLINE EXPERIMENT */
-	FEATURE_STORAGE_BANDWIDTH,
-	FEATURE_EMAIL_SUPPORT_SIGNUP_V2,
-	FEATURE_UNLTD_LIVE_CHAT_SUPPORT,
-	FEATURE_INSTALL_THEMES_PLUGINS,
-	FEATURE_DEVELOPER_TOOLS_V1,
-	FEATURE_PRODUCT_LISTINGS,
-	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
-	/* END - PLAN TAGLINE EXPERIMENT */
+	WPCOM_FEATURES_NO_ADVERTS,
+	FEATURE_BEAUTIFUL_THEMES,
+	FEATURE_PAGES,
+	FEATURE_USERS,
+	FEATURE_NEWSLETTERS_RSS,
+	FEATURE_POST_EDITS_HISTORY,
+	FEATURE_SECURITY_BRUTE_FORCE,
+	FEATURE_SMART_REDIRECTS,
+	FEATURE_ALWAYS_ONLINE,
+	FEATURE_FAST_DNS,
+	FEATURE_STYLE_CUSTOMIZATION,
+	FEATURE_SUPPORT_EMAIL,
+	FEATURE_DESIGN_TOOLS,
+	FEATURE_PREMIUM_THEMES_V2,
+	FEATURE_WORDADS,
+	FEATURE_PLUGINS_THEMES,
+	FEATURE_BANDWIDTH,
+	FEATURE_BURST,
+	FEATURE_WAF_V2,
+	FEATURE_CDN,
+	FEATURE_CPUS,
+	FEATURE_DATACENTRE_FAILOVER,
+	FEATURE_ISOLATED_INFRA,
+	FEATURE_SECURITY_MALWARE,
+	FEATURE_SECURITY_DDOS,
+	FEATURE_DEV_TOOLS,
+	FEATURE_WP_UPDATES,
+	FEATURE_MULTI_SITE,
+	FEATURE_SELL_SHIP,
+	FEATURE_CUSTOM_STORE,
+	FEATURE_INVENTORY,
+	FEATURE_CHECKOUT,
+	FEATURE_ACCEPT_PAYMENTS_V2,
+	FEATURE_SALES_REPORTS,
+	FEATURE_EXTENSIONS,
+	FEATURE_STATS_JP,
+	FEATURE_SPAM_JP,
+	FEATURE_LTD_SOCIAL_MEDIA_JP,
+	FEATURE_CONTACT_FORM_JP,
+	FEATURE_PAID_SUBSCRIBERS_JP,
+	FEATURE_VIDEOPRESS_JP,
+	FEATURE_UNLTD_SOCIAL_MEDIA_JP,
+	FEATURE_SEO_JP,
+	FEATURE_BRUTE_PROTECT_JP,
+	FEATURE_REALTIME_BACKUPS_JP,
+	FEATURE_UPTIME_MONITOR_JP,
+	FEATURE_ES_SEARCH_JP,
+	FEATURE_PLUGIN_AUTOUPDATE_JP,
+	FEATURE_PREMIUM_CONTENT_JP,
+	FEATURE_SITE_ACTIVITY_LOG_JP,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -287,9 +326,9 @@ export const FEATURES_LIST = {
 		},
 	},
 
-	[ FEATURE_ADVANCED_CUSTOMIZATION ]: {
-		getSlug: () => FEATURE_ADVANCED_CUSTOMIZATION,
-		getTitle: () => i18n.translate( 'Advanced customization' ),
+	[ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION ]: {
+		getSlug: () => FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+		getTitle: () => i18n.translate( 'Advanced design customization' ),
 		getDescription: () =>
 			i18n.translate(
 				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
@@ -602,34 +641,8 @@ export const FEATURES_LIST = {
 		getStoreSlug: () => 'videopress',
 	},
 
-	[ FEATURE_BASIC_DESIGN ]: {
-		getSlug: () => FEATURE_BASIC_DESIGN,
-		getTitle: () => i18n.translate( 'Basic design customization' ),
-		getDescription: () =>
-			i18n.translate(
-				'Customize your selected theme with pre-set color schemes, ' +
-					'background designs, and font styles.'
-			),
-		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
-	},
-
-	[ FEATURE_ADVANCED_DESIGN ]: {
-		getSlug: () => FEATURE_ADVANCED_DESIGN,
-		getTitle: () =>
-			i18n.translate( '{{strong}}Advanced{{/strong}} design customization', {
-				components: {
-					strong: <strong />,
-				},
-			} ),
-		getDescription: () =>
-			i18n.translate(
-				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
-			),
-		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
-	},
-
 	[ FEATURE_NO_ADS ]: {
-		getSlug: () => FEATURE_NO_ADS,
+		getSlug: () => WPCOM_FEATURES_NO_ADVERTS,
 		getTitle: () => i18n.translate( 'Remove WordPress.com ads' ),
 		getDescription: () =>
 			i18n.translate(
@@ -849,7 +862,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_SITE_STATS ]: {
 		getSlug: () => FEATURE_SITE_STATS,
-		getTitle: () => i18n.translate( 'Site Stats and Analytics' ),
+		getTitle: () => i18n.translate( 'Jetpack Stats' ),
 		getDescription: () => i18n.translate( 'The most important metrics for your site.' ),
 	},
 	[ FEATURE_TRAFFIC_TOOLS ]: {
@@ -1064,12 +1077,12 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_BACKUP_REALTIME_V2 ]: {
 		getSlug: () => FEATURE_BACKUP_REALTIME_V2,
-		getTitle: () => i18n.translate( 'Backup (real-time, off-site)' ),
+		getTitle: () => i18n.translate( 'VaultPress Backup (real-time, off-site)' ),
 	},
 	[ FEATURE_PRODUCT_BACKUP_DAILY_V2 ]: {
 		getSlug: () => FEATURE_PRODUCT_BACKUP_DAILY_V2,
 		getIcon: () => 'cloud-upload',
-		getTitle: () => i18n.translate( 'All Backup Daily features' ),
+		getTitle: () => i18n.translate( 'All VaultPress Backup Daily features' ),
 		getDescription: () =>
 			i18n.translate(
 				'Automatic daily backups of your entire site, with unlimited, WordPress-optimized secure storage. {{link}}Learn more{{/link}}.',
@@ -1084,7 +1097,7 @@ export const FEATURES_LIST = {
 	[ FEATURE_PRODUCT_BACKUP_REALTIME_V2 ]: {
 		getSlug: () => FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 		getIcon: () => 'cloud-upload',
-		getTitle: () => i18n.translate( 'Backup Real-time (off-site)' ),
+		getTitle: () => i18n.translate( 'VaultPress Backup Real-time (off-site)' ),
 		getDescription: () =>
 			i18n.translate(
 				'Real-time backups of your entire site and database with unlimited secure storage. {{link}}Learn more{{/link}}.',
@@ -1158,7 +1171,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Activity log: 1-year archive' ),
 		getDescription: () =>
 			i18n.translate(
-				'View every change to your site in the last year. Pairs with Backup to restore your site to any earlier version. {{link}}Learn more.{{/link}}',
+				'View every change to your site in the last year. Pairs with VaultPress Backup to restore your site to any earlier version. {{link}}Learn more.{{/link}}',
 				{
 					components: {
 						link: <ExternalLink icon href="https://jetpack.com/features/security/activity-log/" />,
@@ -1407,7 +1420,19 @@ export const FEATURES_LIST = {
 	[ FEATURE_SFTP_DATABASE ]: {
 		getSlug: () => FEATURE_SFTP_DATABASE,
 		getTitle: () => i18n.translate( 'SFTP, SSH, WP-CLI, and Database access' ),
-		getDescription: () => {},
+		getDescription: () => {
+			const hasTranslation =
+				config( 'english_locales' ).includes( i18n.getLocaleSlug() ) ||
+				i18n.hasTranslation(
+					'A set of developer tools that give you more control over your site, simplify debugging, and make it easier to integrate with each step of your workflow.'
+				);
+
+			return hasTranslation
+				? i18n.translate(
+						'A set of developer tools that give you more control over your site, simplify debugging, and make it easier to integrate with each step of your workflow.'
+				  )
+				: '';
+		},
 	},
 
 	[ PREMIUM_DESIGN_FOR_STORES ]: {
@@ -1467,7 +1492,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_JETPACK_PRODUCT_BACKUP ]: {
 		getSlug: () => FEATURE_JETPACK_PRODUCT_BACKUP,
-		getTitle: () => i18n.translate( 'All Backup features' ),
+		getTitle: () => i18n.translate( 'All VaultPress Backup features' ),
 	},
 	[ FEATURE_JETPACK_PRODUCT_VIDEOPRESS ]: {
 		getSlug: () => FEATURE_JETPACK_PRODUCT_VIDEOPRESS,
@@ -1475,7 +1500,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_JETPACK_ALL_BACKUP_SECURITY_FEATURES ]: {
 		getSlug: () => FEATURE_JETPACK_ALL_BACKUP_SECURITY_FEATURES,
-		getTitle: () => i18n.translate( 'All Backup & Security features' ),
+		getTitle: () => i18n.translate( 'All VaultPress Backup & Security features' ),
 	},
 	[ FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS ]: {
 		getSlug: () => FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS,
@@ -1593,47 +1618,206 @@ export const FEATURES_LIST = {
 				'All plans include world-class managed hosting, including automatic updates, security, backups, and more.'
 			),
 	},
-	/* START - PLAN TAGLINE EXPERIMENT */
-	[ FEATURE_STORAGE_BANDWIDTH ]: {
-		getSlug: () => FEATURE_STORAGE_BANDWIDTH,
-		getTitle: () => 'Increased storage and unlimited bandwidth',
-		getDescription: () => {},
+
+	/* START: 2023 Pricing Grid Features */
+	[ FEATURE_BEAUTIFUL_THEMES ]: {
+		getSlug: () => FEATURE_BEAUTIFUL_THEMES,
+		getTitle: () => i18n.translate( 'Beautiful themes and patterns' ),
 	},
-	[ FEATURE_EMAIL_SUPPORT_SIGNUP_V2 ]: {
-		getSlug: () => FEATURE_EMAIL_SUPPORT_SIGNUP_V2,
-		getTitle: () => 'Unlimited email support',
-		getDescription: () => {},
+	[ FEATURE_PAGES ]: {
+		getSlug: () => FEATURE_PAGES,
+		getTitle: () => i18n.translate( 'Unlimited pages' ),
 	},
-	[ FEATURE_UNLTD_LIVE_CHAT_SUPPORT ]: {
-		getSlug: () => FEATURE_UNLTD_LIVE_CHAT_SUPPORT,
-		getTitle: () => 'Unlimited live chat support',
-		getDescription: () =>
-			i18n.translate( 'Live chat is available 24 hours a day from Monday through Friday.' ),
+	[ FEATURE_USERS ]: {
+		getSlug: () => FEATURE_USERS,
+		getTitle: () => i18n.translate( 'Unlimited users' ),
 	},
-	[ FEATURE_INSTALL_THEMES_PLUGINS ]: {
-		getSlug: () => FEATURE_INSTALL_THEMES_PLUGINS,
-		getTitle: () => 'Install plugins and custom themes',
-		getDescription: () => i18n.translate( 'Upload custom themes and plugins on your site.' ),
+	[ FEATURE_NEWSLETTERS_RSS ]: {
+		getSlug: () => FEATURE_NEWSLETTERS_RSS,
+		getTitle: () => i18n.translate( 'Built-in newsletters & RSS' ),
 	},
-	[ FEATURE_DEVELOPER_TOOLS_V1 ]: {
-		getSlug: () => FEATURE_DEVELOPER_TOOLS_V1,
-		getTitle: () => 'SFTP, SSH, and WP-CLI access',
-		getDescription: () => {},
+	[ FEATURE_POST_EDITS_HISTORY ]: {
+		getSlug: () => FEATURE_POST_EDITS_HISTORY,
+		getTitle: () => i18n.translate( 'Time machine for post edits' ),
 	},
-	[ FEATURE_PRODUCT_LISTINGS ]: {
-		getSlug: () => FEATURE_PRODUCT_LISTINGS,
-		getTitle: () => 'Unlimited product listings',
-		getDescription: () => {},
+	[ FEATURE_SECURITY_BRUTE_FORCE ]: {
+		getSlug: () => FEATURE_SECURITY_BRUTE_FORCE,
+		getTitle: () => i18n.translate( 'Brute-force protection' ),
 	},
-	[ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION ]: {
-		getSlug: () => FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
-		getTitle: () => i18n.translate( 'Advanced design customization' ),
-		getDescription: () =>
-			i18n.translate(
-				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
-			),
+	[ FEATURE_SMART_REDIRECTS ]: {
+		getSlug: () => FEATURE_SMART_REDIRECTS,
+		getTitle: () => i18n.translate( 'Smart redirects' ),
 	},
-	/* END - PLAN TAGLINE EXPERIMENT */
+	[ FEATURE_ALWAYS_ONLINE ]: {
+		getSlug: () => FEATURE_ALWAYS_ONLINE,
+		getTitle: () => i18n.translate( 'Online forever' ),
+	},
+	[ FEATURE_FAST_DNS ]: {
+		getSlug: () => FEATURE_FAST_DNS,
+		getTitle: () => i18n.translate( 'Extremely fast DNS with SSL' ),
+	},
+	[ FEATURE_STYLE_CUSTOMIZATION ]: {
+		getSlug: () => FEATURE_STYLE_CUSTOMIZATION,
+		getTitle: () => i18n.translate( 'Style customization' ),
+	},
+	[ FEATURE_SUPPORT_EMAIL ]: {
+		getSlug: () => FEATURE_SUPPORT_EMAIL,
+		getTitle: () => i18n.translate( 'Support via email' ),
+	},
+	[ FEATURE_DESIGN_TOOLS ]: {
+		getSlug: () => FEATURE_DESIGN_TOOLS,
+		getTitle: () => i18n.translate( 'Avant-garde design tools' ),
+	},
+	[ FEATURE_PREMIUM_THEMES_V2 ]: {
+		getSlug: () => FEATURE_PREMIUM_THEMES_V2,
+		getTitle: () => i18n.translate( 'Premium themes' ),
+	},
+	[ FEATURE_WORDADS ]: {
+		getSlug: () => FEATURE_WORDADS,
+		getTitle: () => i18n.translate( 'Earn with WordAds' ),
+	},
+	[ FEATURE_PLUGINS_THEMES ]: {
+		getSlug: () => FEATURE_PLUGINS_THEMES,
+		getTitle: () => i18n.translate( 'Install plugins & themes' ),
+	},
+	[ FEATURE_BANDWIDTH ]: {
+		getSlug: () => FEATURE_BANDWIDTH,
+		getTitle: () => i18n.translate( 'Unrestricted bandwidth' ),
+	},
+	[ FEATURE_BURST ]: {
+		getSlug: () => FEATURE_BURST,
+		getTitle: () => i18n.translate( 'High-burst capacity' ),
+	},
+	[ FEATURE_WAF_V2 ]: {
+		getSlug: () => FEATURE_WAF_V2,
+		getTitle: () => i18n.translate( 'Web application firewall (WAF)' ),
+	},
+	[ FEATURE_CDN ]: {
+		getSlug: () => FEATURE_CDN,
+		getTitle: () => i18n.translate( 'Global CDN with 28+ locations' ),
+	},
+	[ FEATURE_CPUS ]: {
+		getSlug: () => FEATURE_CPUS,
+		getTitle: () => i18n.translate( 'High-frequency CPUs' ),
+	},
+	[ FEATURE_DATACENTRE_FAILOVER ]: {
+		getSlug: () => FEATURE_DATACENTRE_FAILOVER,
+		getTitle: () => i18n.translate( 'Automatic datacenter fail-over' ),
+	},
+	[ FEATURE_ISOLATED_INFRA ]: {
+		getSlug: () => FEATURE_ISOLATED_INFRA,
+		getTitle: () => i18n.translate( 'Isolated site infrastructure' ),
+	},
+	[ FEATURE_SECURITY_MALWARE ]: {
+		getSlug: () => FEATURE_SECURITY_MALWARE,
+		getTitle: () => i18n.translate( 'Managed malware protection' ),
+	},
+	[ FEATURE_SECURITY_DDOS ]: {
+		getSlug: () => FEATURE_SECURITY_DDOS,
+		getTitle: () => i18n.translate( 'DDOS mitigation' ),
+	},
+	[ FEATURE_DEV_TOOLS ]: {
+		getSlug: () => FEATURE_DEV_TOOLS,
+		getTitle: () => i18n.translate( 'SFTP-SSH, WP-CLI, Git tools' ),
+	},
+	[ FEATURE_WP_UPDATES ]: {
+		getSlug: () => FEATURE_WP_UPDATES,
+		getTitle: () => i18n.translate( 'Automated WordPress updates' ),
+	},
+	[ FEATURE_MULTI_SITE ]: {
+		getSlug: () => FEATURE_MULTI_SITE,
+		getTitle: () => i18n.translate( 'Multi-site management' ),
+	},
+	[ FEATURE_SELL_SHIP ]: {
+		getSlug: () => FEATURE_SELL_SHIP,
+		getTitle: () => i18n.translate( 'Sell and ship products' ),
+	},
+	[ FEATURE_CUSTOM_STORE ]: {
+		getSlug: () => FEATURE_CUSTOM_STORE,
+		getTitle: () => i18n.translate( 'Store customization' ),
+	},
+	[ FEATURE_INVENTORY ]: {
+		getSlug: () => FEATURE_INVENTORY,
+		getTitle: () => i18n.translate( 'Inventory management' ),
+	},
+	[ FEATURE_CHECKOUT ]: {
+		getSlug: () => FEATURE_CHECKOUT,
+		getTitle: () => i18n.translate( 'Easy checkout experience' ),
+	},
+	[ FEATURE_ACCEPT_PAYMENTS_V2 ]: {
+		getSlug: () => FEATURE_ACCEPT_PAYMENTS_V2,
+		getTitle: () => i18n.translate( 'Payments in 60+ countries' ),
+	},
+	[ FEATURE_SALES_REPORTS ]: {
+		getSlug: () => FEATURE_SALES_REPORTS,
+		getTitle: () => i18n.translate( 'Sales reports' ),
+	},
+	[ FEATURE_EXTENSIONS ]: {
+		getSlug: () => FEATURE_EXTENSIONS,
+		getTitle: () => i18n.translate( 'Extensions marketplace' ),
+	},
+	// FOLLOWING ARE JETPACK FEATURES BUNDLED IN WPCOM
+	[ FEATURE_STATS_JP ]: {
+		getSlug: () => FEATURE_STATS_JP,
+		getTitle: () => i18n.translate( 'Visitor stats' ),
+	},
+	[ FEATURE_SPAM_JP ]: {
+		getSlug: () => FEATURE_SPAM_JP,
+		getTitle: () => i18n.translate( 'Spam protection with Akismet' ),
+	},
+	[ FEATURE_LTD_SOCIAL_MEDIA_JP ]: {
+		getSlug: () => FEATURE_LTD_SOCIAL_MEDIA_JP,
+		getTitle: () => i18n.translate( 'Limited social media sharing' ),
+	},
+	[ FEATURE_CONTACT_FORM_JP ]: {
+		getSlug: () => FEATURE_CONTACT_FORM_JP,
+		getTitle: () => i18n.translate( 'Contact form' ),
+	},
+	[ FEATURE_PAID_SUBSCRIBERS_JP ]: {
+		getSlug: () => FEATURE_PAID_SUBSCRIBERS_JP,
+		getTitle: () => i18n.translate( 'Paid subscribers' ),
+	},
+	[ FEATURE_PREMIUM_CONTENT_JP ]: {
+		getSlug: () => FEATURE_PREMIUM_CONTENT_JP,
+		getTitle: () => i18n.translate( 'Premium content gating' ),
+	},
+	[ FEATURE_VIDEOPRESS_JP ]: {
+		getSlug: () => FEATURE_VIDEOPRESS_JP,
+		getTitle: () => i18n.translate( '4K Video with VideoPress' ),
+	},
+	[ FEATURE_UNLTD_SOCIAL_MEDIA_JP ]: {
+		getSlug: () => FEATURE_UNLTD_SOCIAL_MEDIA_JP,
+		getTitle: () => i18n.translate( 'Unlimited shares in social media' ),
+	},
+	[ FEATURE_SEO_JP ]: {
+		getSlug: () => FEATURE_SEO_JP,
+		getTitle: () => i18n.translate( 'Tools for SEO' ),
+	},
+	[ FEATURE_BRUTE_PROTECT_JP ]: {
+		getSlug: () => FEATURE_CONTACT_FORM_JP,
+		getTitle: () => i18n.translate( 'BruteProtect' ),
+	},
+	[ FEATURE_REALTIME_BACKUPS_JP ]: {
+		getSlug: () => FEATURE_REALTIME_BACKUPS_JP,
+		getTitle: () => i18n.translate( 'Real-time backups' ),
+	},
+	[ FEATURE_UPTIME_MONITOR_JP ]: {
+		getSlug: () => FEATURE_UPTIME_MONITOR_JP,
+		getTitle: () => i18n.translate( 'Uptime monitor' ),
+	},
+	[ FEATURE_ES_SEARCH_JP ]: {
+		getSlug: () => FEATURE_ES_SEARCH_JP,
+		getTitle: () => i18n.translate( 'Built-in Elastic Search' ),
+	},
+	[ FEATURE_PLUGIN_AUTOUPDATE_JP ]: {
+		getSlug: () => FEATURE_PLUGIN_AUTOUPDATE_JP,
+		getTitle: () => i18n.translate( 'Plugin auto-updates' ),
+	},
+	[ FEATURE_SITE_ACTIVITY_LOG_JP ]: {
+		getSlug: () => FEATURE_SITE_ACTIVITY_LOG_JP,
+		getTitle: () => i18n.translate( 'Site activity log' ),
+	},
+	/* END: 2023 Pricing Grid Features */
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList ) => {

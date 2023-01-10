@@ -165,6 +165,8 @@ export default function PaymentMethodSelector( {
 				paypal: ( data: unknown ) => assignPayPalProcessor( purchase, reduxDispatch, data ),
 				'existing-card': ( data: unknown ) =>
 					assignExistingCardProcessor( purchase, reduxDispatch, data ),
+				'existing-card-ebanx': ( data: unknown ) =>
+					assignExistingCardProcessor( purchase, reduxDispatch, data ),
 				card: ( data: unknown ) =>
 					assignNewCardProcessor(
 						{

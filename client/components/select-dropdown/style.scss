@@ -244,6 +244,13 @@ $compact-header-height: 35;
 		}
 	}
 
+	.extra-gridicon {
+		fill: var(--color-neutral);
+		position: absolute;
+		top: #{( $option-height - 18 ) * 0.5}px;
+		right: #{$side-margin - 8 }px;
+	}
+
 	.gridicon {
 		margin-right: #{( $side-margin * 0.5 )}px;
 		vertical-align: text-bottom;

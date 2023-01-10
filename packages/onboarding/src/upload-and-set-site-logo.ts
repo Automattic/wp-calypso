@@ -29,6 +29,7 @@ export async function uploadAndSetSiteLogo( siteId: string | number | undefined,
 			apiNamespace: 'wp/v2',
 			// we know the site doesn't have a logo nor an icon, let's set both
 			body: { site_logo: imageID, site_icon: imageID },
+			query: 'source=onboarding',
 			method: 'POST',
 		} );
 		return { logoResult, uploadResult };

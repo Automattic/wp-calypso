@@ -69,6 +69,7 @@ export const UpsellNudge = ( {
 	tracksDismissProperties,
 	tracksImpressionName,
 	tracksImpressionProperties,
+	displayAsLink,
 } ) => {
 	const shouldNotDisplay =
 		isVip ||
@@ -148,6 +149,7 @@ export const UpsellNudge = ( {
 			tracksDismissProperties={ tracksDismissProperties }
 			tracksImpressionName={ tracksImpressionName }
 			tracksImpressionProperties={ tracksImpressionProperties }
+			displayAsLink={ displayAsLink }
 		/>
 	);
 };

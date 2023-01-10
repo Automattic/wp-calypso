@@ -167,8 +167,13 @@ const PrePurchaseNotices = () => {
 	}
 
 	// We're attempting to buy Jetpack Backup individually,
-	// but this site already has a plan that includes it
-	if ( currentSitePlan && cartProductThatOverlapsSitePlan ) {
+	// but this site already has a plan that includes it.
+	// ignore the error on free plans as they do not include any paid features
+	if (
+		currentSitePlan &&
+		cartProductThatOverlapsSitePlan &&
+		currentSitePlan.product_slug !== 'jetpack_free'
+	) {
 		return (
 			<SitePlanIncludesCartProductNotice
 				plan={ currentSitePlan }

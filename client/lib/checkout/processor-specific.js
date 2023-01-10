@@ -17,8 +17,7 @@ export function isEbanxCreditCardProcessingEnabledForCountry( countryCode, cart 
 		typeof PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ countryCode ] !== 'undefined' &&
 		isPaymentMethodEnabled(
 			'ebanx',
-			cart.allowed_payment_methods?.map( translateWpcomPaymentMethodToCheckoutPaymentMethod ),
-			countryCode
+			cart.allowed_payment_methods?.map( translateWpcomPaymentMethodToCheckoutPaymentMethod )
 		)
 	);
 }

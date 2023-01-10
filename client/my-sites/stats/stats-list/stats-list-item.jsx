@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { Icon, moreHorizontalMobile, tag, file, chevronDown } from '@wordpress/icons';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -213,7 +214,6 @@ class StatsListItem extends Component {
 		const wrapperClassSet = classNames( {
 			'module-content-list-item-label-section': labelData.length > 1,
 		} );
-
 		const label = labelData.map( function ( labelItem, i ) {
 			const iconClassSetOptions = { avatar: true };
 			let icon;
@@ -221,7 +221,17 @@ class StatsListItem extends Component {
 			let itemLabel;
 
 			if ( labelItem.labelIcon ) {
-				gridiconSpan = <Gridicon icon={ labelItem.labelIcon } />;
+				switch ( labelItem.labelIcon ) {
+					case 'tag':
+						gridiconSpan = <Icon className="stats-icon" icon={ tag } size={ 22 } />;
+						break;
+					case 'folder':
+						gridiconSpan = <Icon className="stats-icon" icon={ file } size={ 22 } />;
+						break;
+					default:
+						// fallback to an old icon
+						gridiconSpan = <Gridicon icon={ labelItem.labelIcon } />;
+				}
 			}
 
 			if ( labelItem.icon ) {
@@ -328,7 +338,9 @@ class StatsListItem extends Component {
 			show: data.actionMenu && ! this.state.disabled,
 		};
 		const actions = this.buildActions();
-		const toggleGridicon = <Gridicon icon="chevron-down" />;
+		const toggleGridicon = (
+			<Icon className="stats-icon chevron-down" icon={ chevronDown } size={ 24 } />
+		);
 		const toggleIcon = this.props.children ? toggleGridicon : null;
 		let mobileActionToggle;
 
@@ -353,7 +365,7 @@ class StatsListItem extends Component {
 						context: 'Label for hidden menu in a list on the Stats page.',
 					} ) }
 				>
-					<Gridicon icon="ellipsis" />
+					<Icon className="stats-icon" icon={ moreHorizontalMobile } size={ 22 } />
 				</button>
 			);
 			rightClassOptions[ 'is-expanded' ] = this.state.actionMenuOpen;

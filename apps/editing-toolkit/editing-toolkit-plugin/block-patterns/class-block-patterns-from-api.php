@@ -46,11 +46,6 @@ class Block_Patterns_From_API {
 	public function __construct( Block_Patterns_Utils $utils = null ) {
 		$this->patterns_sources = array( 'block_patterns' );
 
-		// Switch the patterns source based on whether we're using a block-based theme.
-		if ( apply_filters( 'a8c_enable_fse_block_patterns_api', false ) ) {
-			$this->patterns_sources[] = 'fse_block_patterns';
-		}
-
 		$this->utils = empty( $utils ) ? new \A8C\FSE\Block_Patterns_Utils() : $utils;
 
 		// Add categories to this array using the core pattern name as the key for core patterns we wish to "recategorize".

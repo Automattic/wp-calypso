@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -12,6 +11,7 @@ import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import GetCurrentThemeSoftwareSets from './internals/steps-repository/get-current-theme-software-sets';
 import { redirect } from './internals/steps-repository/import/util';
 import { ProcessingResult } from './internals/steps-repository/processing-step';
 import {
@@ -19,16 +19,16 @@ import {
 	AssertConditionState,
 	Flow,
 	ProvidedDependencies,
+	StepperStep,
 } from './internals/types';
 import pluginBundleData from './plugin-bundle-data';
-import type { StepPath } from './internals/steps-repository';
 import type { BundledPlugin } from './plugin-bundle-data';
 
 const WRITE_INTENT_DEFAULT_THEME = 'livro';
 const WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION = 'white';
 const SiteIntent = Onboard.SiteIntent;
 
-export const pluginBundleFlow: Flow = {
+const pluginBundleFlow: Flow = {
 	name: 'plugin-bundle',
 
 	useSteps() {
@@ -41,11 +41,17 @@ export const pluginBundleFlow: Flow = {
 			window.location.replace( `/home/${ siteSlugParam }` );
 		}
 
-		const steps: StepPath[] = [ 'getCurrentThemeSoftwareSets' ];
-		let bundlePluginSteps: StepPath[] = [];
+		const steps = [
+			{
+				slug: 'getCurrentThemeSoftwareSets',
+				component: GetCurrentThemeSoftwareSets,
+			},
+		];
+
+		let bundlePluginSteps: StepperStep[] = [];
 
 		if ( pluginSlug && pluginBundleData.hasOwnProperty( pluginSlug ) ) {
-			bundlePluginSteps = pluginBundleData[ pluginSlug ] as StepPath[];
+			bundlePluginSteps = pluginBundleData[ pluginSlug ];
 		}
 		return steps.concat( bundlePluginSteps );
 	},
@@ -58,8 +64,6 @@ export const pluginBundleFlow: Flow = {
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
 		const currentUser = useSelector( getCurrentUser );
-		const isEnglishLocale = useIsEnglishLocale();
-		const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 
 		let siteSlug: string | null = null;
 		if ( siteSlugParam ) {
@@ -79,7 +83,6 @@ export const pluginBundleFlow: Flow = {
 			useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
-		const goalsStepEnabled = isEnabled( 'signup/goals-step' ) && isEnabledFTM;
 
 		// Since we're mimicking a subset of the site-setup-flow, we're safe to use the siteSetupProgress.
 		const flowProgress = useSiteSetupFlowProgress( currentStep, intent, storeType );
@@ -103,11 +106,10 @@ export const pluginBundleFlow: Flow = {
 						return;
 					}
 
-					const pendingActions = [ setIntentOnSite( siteSlug, intent ) ];
-
-					if ( goalsStepEnabled ) {
-						pendingActions.push( setGoalsOnSite( siteSlug, goals ) );
-					}
+					const pendingActions = [
+						setIntentOnSite( siteSlug, intent ),
+						setGoalsOnSite( siteSlug, goals ),
+					];
 					if ( intent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
 						pendingActions.push(
 							setThemeOnSite(
@@ -215,7 +217,7 @@ export const pluginBundleFlow: Flow = {
 			}
 		};
 
-		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
+		const goToStep = ( step: string ) => {
 			navigate( step );
 		};
 
@@ -272,3 +274,5 @@ export const pluginBundleFlow: Flow = {
 		return result;
 	},
 };
+
+export default pluginBundleFlow;

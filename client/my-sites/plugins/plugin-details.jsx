@@ -1,4 +1,5 @@
 import { useBreakpoint } from '@automattic/viewport-react';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -9,9 +10,11 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import MainComponent from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { useESPlugin } from 'calypso/data/marketplace/use-es-query';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
@@ -22,7 +25,11 @@ import PluginDetailsSidebar from 'calypso/my-sites/plugins/plugin-details-sideba
 import PluginDetailsV2 from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details-v2';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
-import { siteObjectsToSiteIds, useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
+import {
+	siteObjectsToSiteIds,
+	useLocalizedPlugins,
+	useServerEffect,
+} from 'calypso/my-sites/plugins/utils';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -45,9 +52,11 @@ import {
 import {
 	isMarketplaceProduct as isMarketplaceProductSelector,
 	getProductsList,
+	isSaasProduct as isSaasProductSelector,
 } from 'calypso/state/products-list/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
@@ -64,8 +73,6 @@ function PluginDetails( props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const breadcrumbs = useSelector( getBreadcrumbs );
-
 	// Site information.
 	const selectedSite = useSelector( getSelectedSite );
 	const sitesWithPlugins = useSelector( getSelectedOrAllSitesWithPlugins );
@@ -79,6 +86,8 @@ function PluginDetails( props ) {
 	const { localizePath } = useLocalizedPlugins();
 
 	// Plugin information.
+	const PREMIUM_SLUG_FIELD = 'plugin.premium_slug';
+	const { data: esPlugin = {} } = useESPlugin( props.pluginSlug, [ PREMIUM_SLUG_FIELD ] );
 	const plugin = useSelector( ( state ) => getPluginOnSites( state, siteIds, props.pluginSlug ) );
 	const wporgPlugin = useSelector( ( state ) => getWporgPluginSelector( state, props.pluginSlug ) );
 	const isWporgPluginFetching = useSelector( ( state ) =>
@@ -124,6 +133,10 @@ function PluginDetails( props ) {
 		isMarketplaceProductSelector( state, props.pluginSlug )
 	);
 
+	const isSaasProduct = useSelector( ( state ) =>
+		isSaasProductSelector( state, props.pluginSlug )
+	);
+
 	// Fetch WPorg plugin data if needed
 	useEffect( () => {
 		if ( isProductListFetched && ! isMarketplaceProduct && ! isWporgPluginFetched ) {
@@ -151,15 +164,24 @@ function PluginDetails( props ) {
 			...wpComPluginData,
 			fetched: isWpComPluginFetched,
 		};
-
 		return {
+			...esPlugin,
 			...wpcomPlugin,
 			...wporgPlugin,
 			...plugin,
 			fetched: wpcomPlugin?.fetched || wporgPlugin?.fetched,
 			isMarketplaceProduct,
+			isSaasProduct,
 		};
-	}, [ plugin, wporgPlugin, wpComPluginData, isWpComPluginFetched, isMarketplaceProduct ] );
+	}, [
+		plugin,
+		esPlugin,
+		wporgPlugin,
+		wpComPluginData,
+		isWpComPluginFetched,
+		isMarketplaceProduct,
+		isSaasProduct,
+	] );
 
 	const existingPlugin = useMemo( () => {
 		if (
@@ -193,7 +215,7 @@ function PluginDetails( props ) {
 		requestingPluginsForSites,
 	] );
 
-	useEffect( () => {
+	const setBreadcrumbs = ( breadcrumbs = [] ) => {
 		if ( breadcrumbs?.length === 0 ) {
 			dispatch(
 				appendBreadcrumb( {
@@ -201,7 +223,12 @@ function PluginDetails( props ) {
 					href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
 					id: 'plugins',
 					helpBubble: translate(
-						'Add new functionality and integrations to your site with plugins.'
+						'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="plugins" showIcon={ false } />,
+							},
+						}
 					),
 				} )
 			);
@@ -216,7 +243,26 @@ function PluginDetails( props ) {
 				} )
 			);
 		}
-	}, [ fullPlugin.name, props.pluginSlug, selectedSite, dispatch, translate, localizePath ] );
+	};
+
+	const previousRoute = useSelector( getPreviousRoute );
+	useEffect( () => {
+		/* If translatations change, reset and update the breadcrumbs */
+		if ( ! previousRoute ) {
+			setBreadcrumbs();
+		}
+	}, [ translate ] );
+
+	useServerEffect( () => {
+		setBreadcrumbs();
+	} );
+
+	/* We need to get the breadcrumbs after the server has set them */
+	const breadcrumbs = useSelector( getBreadcrumbs );
+
+	useEffect( () => {
+		setBreadcrumbs( breadcrumbs );
+	}, [ fullPlugin.name, props.pluginSlug, selectedSite, dispatch, localizePath ] );
 
 	const getPageTitle = () => {
 		return translate( '%(pluginName)s Plugin', {
@@ -287,7 +333,7 @@ function PluginDetails( props ) {
 				</Notice>
 			) }
 			<div className="plugin-details__page">
-				<div className="plugin-details__layout">
+				<div className={ classnames( 'plugin-details__layout', { 'is-logged-in': isLoggedIn } ) }>
 					<div className="plugin-details__header">
 						<PluginDetailsHeader plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
 					</div>

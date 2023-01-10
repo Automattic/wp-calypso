@@ -51,15 +51,15 @@ const InlineHelpSearchCard = ( {
 		if ( location === 'help-center' ) {
 			if ( inputQuery?.length > 2 ) {
 				recordTracksEvent( 'calypso_inlinehelp_search', {
-					search_query: searchQuery,
+					search_query: query,
 					location: location,
 					section: sectionName,
 				} );
 			}
 		} else if ( inputQuery?.length ) {
-			debug( 'search query received: ', searchQuery );
+			debug( 'search query received: ', query );
 			recordTracksEvent( 'calypso_inlinehelp_search', {
-				search_query: searchQuery,
+				search_query: query,
 				location: location,
 				section: sectionName,
 			} );

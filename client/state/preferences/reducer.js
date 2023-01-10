@@ -6,6 +6,7 @@ import {
 	PREFERENCES_FETCH_SUCCESS,
 	PREFERENCES_FETCH_FAILURE,
 	PREFERENCES_SAVE_SUCCESS,
+	PREFERENCES_SAVE_FAILURE,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { remoteValuesSchema } from './schema';
@@ -72,6 +73,17 @@ export const fetching = ( state = false, action ) => {
 	return state;
 };
 
+export const saving = ( state = false, action ) => {
+	switch ( action.type ) {
+		case PREFERENCES_SET:
+			return true;
+		case PREFERENCES_SAVE_SUCCESS:
+		case PREFERENCES_SAVE_FAILURE:
+			return false;
+	}
+	return state;
+};
+
 const lastFetchedTimestamp = ( state = false, action ) => {
 	switch ( action.type ) {
 		case PREFERENCES_FETCH_SUCCESS:
@@ -85,6 +97,7 @@ const combinedReducer = combineReducers( {
 	localValues,
 	remoteValues,
 	fetching,
+	saving,
 	lastFetchedTimestamp,
 } );
 const preferencesReducer = withStorageKey( 'preferences', combinedReducer );

@@ -28,6 +28,7 @@ export const HelpCenterEmbedResult: React.FC = () => {
 	useEffect( () => {
 		const tracksData = {
 			search_query: query,
+			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
 			result_url: link,

@@ -2,6 +2,7 @@ import { getDesignPreviewUrl } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+import { Icon, layout } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -11,6 +12,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
 import { ONBOARD_STORE } from '../../../../stores';
 import PreviewToolbar from '../design-setup/preview-toolbar';
+import { SITE_TAGLINE } from './constants';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
 import type { Design } from '@automattic/design-picker';
@@ -20,31 +22,34 @@ interface Props {
 	header: Pattern | null;
 	sections: Pattern[];
 	footer: Pattern | null;
-	scrollToSelector: string | null;
+	activePosition: number;
 }
 
-const PatternAssemblerPreview = ( { header, sections = [], footer, scrollToSelector }: Props ) => {
+const PatternAssemblerPreview = ( { header, sections = [], footer, activePosition }: Props ) => {
 	const locale = useLocale();
 	const translate = useTranslate();
 	const site = useSite();
 	const [ webPreviewFrameContainer, setWebPreviewFrameContainer ] = useState< Element | null >(
 		null
 	);
-	const hasSelectedPatterns = header || sections.length > 0 || footer;
+	const totalPatterns = [ header, ...sections, footer ].filter( Boolean );
+	const hasSelectedPatterns = totalPatterns.length > 1;
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 
 	const mergedDesign = {
 		...selectedDesign,
 		recipe: {
 			...selectedDesign?.recipe,
-			// The blank canvas blocks demo site doesn't have the header, so we inject the header into the first pattern
+			// The blank canvas demo site doesn't have the header and footer, so we inject them into the first and last
 			// of the content.
-			pattern_ids: [ header, ...sections ]
+			pattern_ids: [ header, ...sections, footer ]
 				.filter( Boolean )
 				.map( ( pattern ) => encodePatternId( pattern!.id ) ),
-			footer_pattern_ids: footer ? [ encodePatternId( footer.id ) ] : undefined,
 		},
 	} as Design;
+
+	const targetPosition = Math.min( activePosition + 1, totalPatterns.length );
+	const scrollToSelector = `.wp-site-blocks > .wp-block-group > :nth-child( ${ targetPosition } )`;
 
 	useEffect( () => {
 		setWebPreviewFrameContainer( document.querySelector( '.web-preview__frame-wrapper' ) );
@@ -65,7 +70,15 @@ const PatternAssemblerPreview = ( { header, sections = [], footer, scrollToSelec
 						) }
 					>
 						{ ! hasSelectedPatterns && (
-							<span>{ translate( 'Your page is blank. Start adding content on the left.' ) }</span>
+							<>
+								<Icon className="pattern-assembler-preview__icon" icon={ layout } size={ 72 } />
+								<h2>{ translate( 'Welcome to your blank canvas' ) }</h2>
+								<span>
+									{ translate(
+										"It's time to get creative. Add your first pattern to get started."
+									) }
+								</span>
+							</>
 						) }
 					</div>,
 					webPreviewFrameContainer
@@ -79,6 +92,9 @@ const PatternAssemblerPreview = ( { header, sections = [], footer, scrollToSelec
 						? getDesignPreviewUrl( mergedDesign, {
 								language: locale,
 								disable_viewport_height: true,
+								site_title: site?.name,
+								site_tagline: SITE_TAGLINE,
+								remove_assets: true,
 						  } )
 						: 'about:blank'
 				}
@@ -93,7 +109,7 @@ const PatternAssemblerPreview = ( { header, sections = [], footer, scrollToSelec
 				recordTracksEvent={ recordTracksEvent }
 				scrollToSelector={ scrollToSelector }
 				onDeviceUpdate={ ( device: string ) => {
-					recordTracksEvent( 'calypso_signup_bcpa_preview_device_click', { device } );
+					recordTracksEvent( 'calypso_signup_pattern_assembler_preview_device_click', { device } );
 				} }
 			/>
 		</div>

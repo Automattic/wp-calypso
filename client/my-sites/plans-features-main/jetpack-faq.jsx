@@ -70,7 +70,7 @@ const JetpackFAQ = () => {
 				question={ translate( 'Does this work with a multisite network?' ) }
 				answer={ translate(
 					'Jetpack’s free features are compatible with WordPress Multisite networks. Paid features' +
-						' also work with Multisite networks, but each site requires its own subscription. Jetpack Backup' +
+						' also work with Multisite networks, but each site requires its own subscription. Jetpack VaultPress Backup' +
 						' and Jetpack Scan are not currently compatible with Multisite networks.'
 				) }
 			/>

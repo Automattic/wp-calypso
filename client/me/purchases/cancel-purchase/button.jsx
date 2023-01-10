@@ -13,7 +13,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import CancelJetpackForm from 'calypso/components/marketing-survey/cancel-jetpack-form';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
-import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import {
 	getName,
 	getSubscriptionEndDate,
@@ -27,6 +26,7 @@ import {
 	cancelPurchaseAsync,
 	extendPurchaseWithFreeMonth,
 } from 'calypso/lib/purchases/actions';
+import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { confirmCancelDomain, purchasesRoot } from 'calypso/me/purchases/paths';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
@@ -55,12 +55,6 @@ class CancelPurchaseButton extends Component {
 		disabled: false,
 		showDialog: false,
 		isShowingMarketplaceSubscriptionsDialog: false,
-	};
-
-	getCancellationFlowType = () => {
-		return hasAmountAvailableToRefund( this.props.purchase )
-			? CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
-			: CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
 	};
 
 	handleCancelPurchaseClick = () => {
@@ -342,7 +336,7 @@ class CancelPurchaseButton extends Component {
 						onClickFinalConfirm={ this.submitCancelAndRefundPurchase }
 						downgradeClick={ this.downgradeClick }
 						freeMonthOfferClick={ this.freeMonthOfferClick }
-						flowType={ this.getCancellationFlowType() }
+						flowType={ getPurchaseCancellationFlowType( purchase ) }
 						cancelBundledDomain={ cancelBundledDomain }
 						includedDomainPurchase={ includedDomainPurchase }
 					/>
@@ -356,7 +350,7 @@ class CancelPurchaseButton extends Component {
 						isVisible={ this.state.showDialog }
 						onClose={ this.closeDialog }
 						onClickFinalConfirm={ this.submitCancelAndRefundPurchase }
-						flowType={ this.getCancellationFlowType() }
+						flowType={ getPurchaseCancellationFlowType( purchase ) }
 					/>
 				) }
 

@@ -34,7 +34,7 @@ export default function WPCOMScanUpsellPage() {
 
 	const promos = [
 		{
-			title: translate( 'Jetpack Backup' ),
+			title: translate( 'Jetpack VaultPress Backup' ),
 			body: translate(
 				'Granular control over your site, with the ability ' +
 					'to restore it to any previous state, and export it at any time.'

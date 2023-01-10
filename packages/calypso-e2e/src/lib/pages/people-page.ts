@@ -20,7 +20,7 @@ const selectors = {
 
 	// Invites
 	invitedUser: ( email: string ) => `[title="${ email }"]`,
-	revokeInviteButton: 'button:text("Revoke invite")',
+	revokeInviteButton: 'button:text("Revoke")',
 	inviteRevokedMessage: 'span:text("Invite deleted.")',
 };
 
@@ -82,7 +82,7 @@ export class PeoplePage {
 	 * Delete the user from site.
 	 */
 	async deleteUser(): Promise< void > {
-		await this.page.waitForLoadState( 'networkidle' );
+		await this.page.waitForLoadState( 'networkidle', { timeout: 20 * 1000 } );
 
 		const elementHandle = await this.page.waitForSelector(
 			selectors.deletedUserContentAction( 'delete' )

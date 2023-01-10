@@ -6,6 +6,7 @@ import {
 	PREFERENCES_FETCH_SUCCESS,
 	PREFERENCES_FETCH_FAILURE,
 	PREFERENCES_SAVE_SUCCESS,
+	PREFERENCES_SAVE_FAILURE,
 } from 'calypso/state/action-types';
 import { USER_SETTING_KEY } from './constants';
 
@@ -90,5 +91,10 @@ export const savePreference = ( key, value ) => ( dispatch ) => {
 				value,
 			} );
 		} )
-		.catch( () => {} );
+		.catch( ( __, error ) => {
+			dispatch( {
+				type: PREFERENCES_SAVE_FAILURE,
+				error,
+			} );
+		} );
 };

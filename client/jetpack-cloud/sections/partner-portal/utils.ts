@@ -187,8 +187,17 @@ export function selectProductOptions( families: APIProductFamily[] ): APIProduct
 	return families.flatMap( ( family ) => family.products );
 }
 
-export function selectAlphaticallySortedProductOptions(
+export function selectAlphabeticallySortedProductOptions(
 	families: APIProductFamily[]
 ): APIProductFamilyProduct[] {
 	return sortBy( selectProductOptions( families ), ( product ) => product.name );
+}
+
+export const JETPACK_BUNDLES = [ 'jetpack-complete', 'jetpack-security-t1', 'jetpack-security-t2' ];
+
+export function isJetpackBundle( product: APIProductFamilyProduct | string ) {
+	if ( typeof product === 'string' ) {
+		return JETPACK_BUNDLES.includes( product );
+	}
+	return product.family_slug === 'jetpack-packs';
 }

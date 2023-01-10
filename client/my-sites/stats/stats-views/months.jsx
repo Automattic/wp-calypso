@@ -64,7 +64,7 @@ class Month extends PureComponent {
 }
 
 const StatsViewsMonths = ( props ) => {
-	const { translate, dataKey, data, numberFormat, moment, siteSlug } = props;
+	const { translate, dataKey, data, numberFormat, moment, siteSlug, showYearTotal = false } = props;
 	const dataEntries = data ? Object.entries( data ) : [];
 	const isAverageChart = dataKey === 'average';
 	let earliestDate = moment();
@@ -106,6 +106,8 @@ const StatsViewsMonths = ( props ) => {
 		monthsCount: { ...monthsObject },
 	};
 
+	let totalValue = 0;
+
 	const years = dataEntries.map( ( [ year, item ] ) => {
 		const cells = monthsArray.map( ( month ) => {
 			let value = item[ month ]?.[ dataKey ] ?? null;
@@ -132,6 +134,9 @@ const StatsViewsMonths = ( props ) => {
 				totals.monthsCount[ month ] += 1;
 				displayValue = formatNumberMetric( value );
 			}
+
+			totalValue += value;
+
 			return (
 				<Month
 					href={ `/stats/month/${ siteSlug }?startDate=${ year }-${ month + 1 }-1` }
@@ -143,6 +148,7 @@ const StatsViewsMonths = ( props ) => {
 				</Month>
 			);
 		} );
+
 		const yearTotal = isAverageChart
 			? Math.round( totals.years[ year ] / totals.yearsCount[ year ] )
 			: totals.years[ year ];
@@ -156,6 +162,14 @@ const StatsViewsMonths = ( props ) => {
 				{ year }
 			</Month>
 		);
+		if ( showYearTotal ) {
+			cells.push(
+				<td key={ `label-${ year }-total` } className="stats-views__month is-total">
+					{ numberFormat( yearTotal ) }
+				</td>
+			);
+		}
+
 		return <tr key={ `year-${ year }` }>{ cells }</tr>;
 	} );
 
@@ -200,6 +214,11 @@ const StatsViewsMonths = ( props ) => {
 					<Month value={ numberFormat( getMonthTotal( totals, 11 ) ) } isHeader>
 						{ translate( 'Dec' ) }
 					</Month>
+					{ showYearTotal && (
+						<Month value={ numberFormat( totalValue ) } isHeader>
+							{ translate( 'Totals' ) }
+						</Month>
+					) }
 				</tr>
 			</thead>
 			<tbody>{ years }</tbody>

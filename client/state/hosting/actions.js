@@ -1,5 +1,6 @@
 import {
 	HOSTING_RESTORE_DATABASE_PASSWORD,
+	HOSTING_GEO_AFFINITY_REQUEST,
 	HOSTING_SFTP_USER_CREATE,
 	HOSTING_SFTP_USERS_REQUEST,
 	HOSTING_SFTP_PASSWORD_RESET,
@@ -17,6 +18,7 @@ import {
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/sites/hosting/restore-database-password';
+import 'calypso/state/data-layer/wpcom/sites/hosting/geo-affinity';
 import 'calypso/state/data-layer/wpcom/sites/hosting/sftp-user';
 import 'calypso/state/data-layer/wpcom/sites/hosting/ssh-access';
 import 'calypso/state/data-layer/wpcom/sites/hosting/php-version';
@@ -101,6 +103,11 @@ export const clearWordPressCache = ( siteId, reason ) => ( {
 			requestKey: `${ HOSTING_CLEAR_CACHE_REQUEST }-${ siteId }`,
 		},
 	},
+} );
+
+export const getAtomicGeoAffinity = ( siteId ) => ( {
+	type: HOSTING_GEO_AFFINITY_REQUEST,
+	siteId,
 } );
 
 export const getAtomicPhpVersion = ( siteId ) => ( {

@@ -1,0 +1,189 @@
+@use "sass:math";
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/components/src/highlight-cards/variables.scss";
+
+$custom-stats-tab-mobile-break: $break-small;
+
+.stats > .stats-content {
+	padding-top: $vertical-margin;
+}
+
+// For modernized main charts with tabs inside the Traffic, Store, and Ads pages
+.is-chart-tabs {
+	margin-bottom: $vertical-margin;
+
+	&.is-loading {
+		// Extract .stats-module.is-loading from StatsModulePlaceholder
+		.chart {
+			display: none;
+		}
+	}
+
+	// Chart Tabs
+	.stats-tabs {
+		width: 100%;
+		padding: 24px 0 16px;
+		border: 0;
+		box-sizing: border-box;
+
+		display: flex;
+		align-items: center;
+
+		@media (max-width: $custom-mobile-breakpoint) {
+			padding: 24px math.div($vertical-margin, 2) 16px;
+		}
+
+		@media (max-width: $custom-stats-tab-mobile-break) {
+			display: block;
+			padding: 24px 0 16px;
+		}
+
+		&.is-enabled {
+			background-color: inherit;
+		}
+
+		// Adjust new stats-tabs styling beyond the mobile layout
+		.stats-tab {
+			flex: 1;
+			width: auto;
+			border: 0;
+
+			&:not(:first-child) {
+				margin-left: 16px;
+			}
+
+			// Keep the original mobile stats-tabs styles
+			@media ( max-width: $custom-stats-tab-mobile-break ) {
+				width: 100%;
+				float: none;
+				border-bottom: 1px solid var(--color-neutral-5);
+
+				&:first-child {
+					border-top: 1px solid var(--color-neutral-5);
+				}
+
+				&:not(:first-child) {
+					margin: 0;
+				}
+			}
+
+			.gridicon {
+				@media ( max-width: $custom-stats-tab-mobile-break ) {
+					float: left;
+					margin: 3px 8px 0 20px;
+				}
+			}
+
+			a {
+				display: block;
+				background-color: var(--color-neutral-0);
+				border: 1.5px solid transparent;
+				border-radius: 4px;
+				overflow: hidden;
+				color: var(--studio-black);
+				padding: 10px 6px;
+
+				@media ( max-width: $custom-stats-tab-mobile-break ) {
+					display: flex;
+					flex-direction: row;
+					align-items: center;
+					justify-content: space-between;
+				}
+
+				&:hover {
+					color: var(--studio-black);
+					background-color: var(--color-neutral-0);
+
+					.label,
+					.value {
+						color: var(--studio-black);
+					}
+				}
+
+				.label {
+					color: var(--color-neutral-60);
+					font-size: $font-body-small;
+					line-height: 20px;
+					text-transform: none;
+					letter-spacing: -0.15px;
+				}
+
+				.value {
+					color: var(--studio-black);
+					font-size: $font-title-small;
+					font-weight: 500;
+					line-height: 30px;
+					margin-left: 0;
+
+					@media ( max-width: $custom-stats-tab-mobile-break ) {
+						margin-left: auto;
+						padding: 0 20px 0 10px;
+						font-size: $font-body-small;
+					}
+
+					// For stats-tabs in Store page
+					&:not(.store-stats-orders-chart__value):not(:last-child) {
+						display: none;
+					}
+				}
+
+				.delta {
+					justify-content: center;
+
+					// For mobile stats-tabs in Store page
+					@media ( max-width: $custom-stats-tab-mobile-break ) {
+						display: none;
+					}
+				}
+			}
+
+			&.is-low {
+				a {
+					.value {
+						color: var(--color-neutral-60);
+					}
+				}
+			}
+
+			&.is-selected,
+			&.is-selected.is-low {
+				a {
+					color: var(--studio-black);
+					border-color: var(--color-primary);
+					background-color: var(--color-surface);
+
+					// Keep the original mobile stats-tabs border styles
+					@media ( max-width: $custom-stats-tab-mobile-break ) {
+						border-color: transparent;
+					}
+
+					.label {
+						color: var(--studio-black);
+					}
+
+					.value {
+						color: var(--studio-black);
+					}
+				}
+			}
+
+			&.is-low,
+			&.is-selected,
+			&.is-selected.is-low {
+				a {
+					&:hover {
+						color: var(--studio-black);
+
+						.label {
+							color: var(--studio-black);
+						}
+
+						.value {
+							color: var(--studio-black);
+						}
+					}
+				}
+			}
+		}
+	}
+}

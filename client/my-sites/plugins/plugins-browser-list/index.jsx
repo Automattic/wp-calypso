@@ -21,9 +21,11 @@ const PluginsBrowserList = ( {
 	site,
 	currentSites,
 	listName,
+	listType,
 	browseAllLink,
 	size,
 	search,
+	noHeader = false,
 } ) => {
 	const renderPluginsViewList = () => {
 		const pluginsViewsList = plugins.map( ( plugin, n ) => {
@@ -39,6 +41,7 @@ const PluginsBrowserList = ( {
 					plugin={ plugin }
 					currentSites={ currentSites }
 					listName={ listName }
+					listType={ listType }
 					variant={
 						extended ? PluginsBrowserElementVariant.Extended : PluginsBrowserElementVariant.Compact
 					}
@@ -84,7 +87,7 @@ const PluginsBrowserList = ( {
 
 	return (
 		<div className="plugins-browser-list">
-			{ ( title || subtitle || resultCount || browseAllLink ) && (
+			{ ! noHeader && ( title || subtitle || resultCount || browseAllLink ) && (
 				<PluginsResultsHeader
 					title={ title }
 					subtitle={ subtitle }

@@ -22,7 +22,7 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function () {
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature( features, [
-		{ gutenberg: 'edge', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
+		{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
 	] );
 
 	const postTitle = `Post Life Cycle: ${ DataHelper.getTimestamp() }`;

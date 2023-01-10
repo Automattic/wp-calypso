@@ -41,7 +41,7 @@ class StatsViews extends Component {
 		];
 
 		return (
-			<div>
+			<>
 				{ siteId && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
 				<Card className={ classNames( 'stats-views', { 'is-loading': ! viewData } ) }>
 					<StatsModulePlaceholder isLoading={ ! viewData } />
@@ -74,7 +74,7 @@ class StatsViews extends Component {
 						</span>
 					</div>
 				</Card>
-			</div>
+			</>
 		);
 	}
 }

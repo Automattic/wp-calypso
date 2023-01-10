@@ -51,11 +51,13 @@ class ThemesSelection extends Component {
 		source: PropTypes.oneOfType( [ PropTypes.number, PropTypes.oneOf( [ 'wpcom', 'wporg' ] ) ] ),
 		themes: PropTypes.array,
 		themesCount: PropTypes.number,
+		forceWpOrgSearch: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		emptyContent: null,
 		showUploadButton: true,
+		forceWpOrgSearch: false,
 	};
 
 	componentDidMount() {
@@ -66,7 +68,7 @@ class ThemesSelection extends Component {
 		}
 	}
 
-	recordSearchResultsClick = ( themeId, resultsRank, action ) => {
+	recordSearchResultsClick = ( themeId, resultsRank, action, variation = '@theme' ) => {
 		const { query, filterString } = this.props;
 		const themes = this.props.customizedThemesList || this.props.themes;
 		const search_taxonomies = filterString;
@@ -76,6 +78,7 @@ class ThemesSelection extends Component {
 			search_term: search_term || null,
 			search_taxonomies,
 			theme: themeId,
+			style_variation: variation,
 			results_rank: resultsRank + 1,
 			results: themes.map( property( 'id' ) ).join(),
 			page_number: query.page,
@@ -102,6 +105,22 @@ class ThemesSelection extends Component {
 		this.props.onScreenshotClick && this.props.onScreenshotClick( themeId );
 	};
 
+	onStyleVariationClick = ( themeId, resultsRank, variation ) => {
+		if ( ! this.props.isThemeActive( themeId ) ) {
+			this.recordSearchResultsClick( themeId, resultsRank, 'style_variation', variation?.slug );
+		}
+
+		const options = this.getOptions(
+			themeId,
+			variation,
+			`style variation: ${ variation ? variation.slug : 'show more' }`
+		);
+
+		if ( options && options.preview ) {
+			options.preview.action( themeId );
+		}
+	};
+
 	fetchNextPage = ( options ) => {
 		if ( this.props.isRequesting || this.props.isLastPage ) {
 			return;
@@ -117,7 +136,7 @@ class ThemesSelection extends Component {
 	};
 
 	//intercept preview and add primary and secondary
-	getOptions = ( themeId ) => {
+	getOptions = ( themeId, styleVariation, context ) => {
 		const options = this.props.getOptions( themeId );
 		const wrappedPreviewAction = ( action ) => {
 			let defaultOption;
@@ -133,6 +152,12 @@ class ThemesSelection extends Component {
 					secondaryOption = null;
 				} else if ( this.props.isThemeActive( themeId ) ) {
 					defaultOption = options.customize;
+				} else if ( options.upgradePlanForExternallyManagedThemes ) {
+					defaultOption = options.upgradePlanForExternallyManagedThemes;
+					secondaryOption = null;
+				} else if ( options.upgradePlanForBundledThemes ) {
+					defaultOption = options.upgradePlanForBundledThemes;
+					secondaryOption = null;
 				} else if ( options.purchase ) {
 					defaultOption = options.purchase;
 				} else if ( options.upgradePlan ) {
@@ -141,8 +166,13 @@ class ThemesSelection extends Component {
 				} else {
 					defaultOption = options.activate;
 				}
-				this.props.setThemePreviewOptions( defaultOption, secondaryOption );
-				return action( t );
+				this.props.setThemePreviewOptions(
+					themeId,
+					defaultOption,
+					secondaryOption,
+					styleVariation
+				);
+				return action( t, context );
 			};
 		};
 
@@ -159,14 +189,19 @@ class ThemesSelection extends Component {
 		return (
 			<div className="themes__selection">
 				<QueryThemes query={ query } siteId={ source } />
+				{ this.props.forceWpOrgSearch && source !== 'wporg' && (
+					<QueryThemes query={ query } siteId="wporg" />
+				) }
 				<ThemesList
 					upsellUrl={ upsellUrl }
 					themes={ this.props.customizedThemesList || this.props.themes }
+					wpOrgThemes={ this.props.wpOrgThemes }
 					fetchNextPage={ this.fetchNextPage }
 					recordTracksEvent={ this.props.recordTracksEvent }
 					onMoreButtonClick={ this.recordSearchResultsClick }
 					getButtonOptions={ this.getOptions }
 					onScreenshotClick={ this.onScreenshotClick }
+					onStyleVariationClick={ this.onStyleVariationClick }
 					getScreenshotUrl={ this.props.getScreenshotUrl }
 					getActionLabel={ this.props.getActionLabel }
 					isActive={ this.props.isThemeActive }
@@ -209,6 +244,7 @@ export const ConnectedThemesSelection = connect(
 			vertical,
 			siteId,
 			source,
+			forceWpOrgSearch,
 			isLoading: isCustomizedThemeListLoading,
 		}
 	) => {
@@ -246,6 +282,10 @@ export const ConnectedThemesSelection = connect(
 		};
 
 		const themes = getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [];
+		const wpOrgThemes =
+			forceWpOrgSearch && sourceSiteId !== 'wporg'
+				? getThemesForQueryIgnoringPage( state, 'wporg', query ) || []
+				: [];
 
 		return {
 			query,
@@ -267,6 +307,7 @@ export const ConnectedThemesSelection = connect(
 			// redundant AJAX requests, we're not rendering these query components locally.
 			getPremiumThemePrice: bindGetPremiumThemePrice( state, siteId ),
 			filterString: prependThemeFilterKeys( state, query.filter ),
+			wpOrgThemes,
 		};
 	},
 	{ setThemePreviewOptions, recordGoogleEvent, recordTracksEvent }
@@ -284,6 +325,7 @@ class ThemesSelectionWithPage extends React.Component {
 
 	componentDidUpdate( nextProps ) {
 		if (
+			nextProps.siteId !== this.props.siteId ||
 			nextProps.search !== this.props.search ||
 			nextProps.tier !== this.props.tier ||
 			nextProps.filter !== this.props.filter ||

@@ -1,6 +1,12 @@
+import { HelpCenter } from '@automattic/data-stores';
+import { dispatch as dataStoreDispatch } from '@wordpress/data';
 import { get } from 'lodash';
-import { JITM_DISMISS, JITM_FETCH, JITM_SET } from 'calypso/state/action-types';
-
+import {
+	JITM_DISMISS,
+	JITM_FETCH,
+	JITM_SET,
+	JITM_OPEN_HELP_CENTER,
+} from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/sites/jitm';
 import 'calypso/state/jitm/init';
 
@@ -78,3 +84,22 @@ export const fetchJITM = ( siteId, messagePath, locale ) => ( {
 	messagePath,
 	locale,
 } );
+
+/**
+ * Returns an action thunk that opens the help center from a JITM CTA
+ *
+ * @param {Object} payload The payload coming from the JITM CTA
+ * @param {Location[]} payload.history The history to pass in, allowing users to go back to the previous page
+ * @param {number} payload.index The index of where we are in the history
+ * @returns {Function} The action thunk
+ */
+export const openHelpCenterFromJITM =
+	( { history = {}, index = 0 } ) =>
+	( dispatch ) => {
+		const HELP_CENTER_STORE = HelpCenter.register();
+		dataStoreDispatch( HELP_CENTER_STORE ).setRouterState( history, index );
+		dataStoreDispatch( HELP_CENTER_STORE ).setShowHelpCenter( true );
+		dispatch( {
+			type: JITM_OPEN_HELP_CENTER,
+		} );
+	};

@@ -1,4 +1,5 @@
 import { useDebounce } from 'use-debounce';
+import { HelpCenterSite } from '../help-center';
 import { SiteDetails } from '../site';
 import { useIsWpOrgSite } from './use-is-wporg-site';
 import { useUserSites } from './use-user-sites';
@@ -15,7 +16,7 @@ type ResultType =
 
 export type AnalysisReport = {
 	result: ResultType;
-	site?: SiteDetails;
+	site?: SiteDetails | HelpCenterSite;
 	siteURL: string | undefined;
 	isWpcom: boolean;
 };

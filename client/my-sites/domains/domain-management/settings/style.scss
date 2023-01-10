@@ -177,4 +177,30 @@ body.edit__body-white.theme-default.color-scheme {
 		margin-top: 4px;
 		margin-bottom: 0;
 	}
+
+	.set-as-primary__notice {
+		flex-basis: 100%;
+		background-color: var(--studio-gray-0);
+		display: flex;
+		align-items: center;
+		padding: 5px;
+		margin-top: 12px;
+		margin-bottom: 24px;
+		gap: 8px;
+		border-radius: 2px;
+
+		.set-as-primary__notice-icon.gridicon {
+			align-self: flex-start;
+			min-width: 18px;
+			fill: var(--studio-orange-40);
+			transform: rotate(180deg);
+			position: relative;
+		}
+
+		.set-as-primary__notice-message {
+			font-weight: 400;
+			font-size: $font-body-small;
+			color: var(--studio-gray-80);
+		}
+	}
 }

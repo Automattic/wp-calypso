@@ -9,8 +9,10 @@ import {
 	PaymentMethodChangedCallback,
 } from '../types';
 
-interface CheckoutContext {
+export interface CheckoutContextInterface {
 	allPaymentMethods: PaymentMethod[];
+	disabledPaymentMethodIds: string[];
+	setDisabledPaymentMethodIds: ( methods: string[] ) => void;
 	paymentMethodId: string | null;
 	setPaymentMethodId: ( id: string ) => void;
 	formStatus: FormStatus;
@@ -22,8 +24,10 @@ interface CheckoutContext {
 	onPaymentMethodChanged?: PaymentMethodChangedCallback;
 }
 
-const defaultCheckoutContext: CheckoutContext = {
+const defaultCheckoutContext: CheckoutContextInterface = {
 	allPaymentMethods: [],
+	disabledPaymentMethodIds: [],
+	setDisabledPaymentMethodIds: noop,
 	paymentMethodId: null,
 	setPaymentMethodId: noop,
 	formStatus: FormStatus.LOADING,

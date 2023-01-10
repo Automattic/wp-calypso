@@ -4,11 +4,22 @@ import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import DesignSetup from './internals/steps-repository/design-setup';
+import ErrorStep from './internals/steps-repository/error-step';
 import { redirect } from './internals/steps-repository/import/util';
-import type { StepPath } from './internals/steps-repository';
+import LoginStep from './internals/steps-repository/login';
+import PodcastTitleStep from './internals/steps-repository/podcast-title';
+import ProcessingStep from './internals/steps-repository/processing-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
-export const anchorFmFlow: Flow = {
+export function isAnchorFmFlow() {
+	const sanitizePodcast = ( id: string ) => id.replace( /[^a-zA-Z0-9]/g, '' );
+	const anchorPodcast = new URLSearchParams( window.location.search ).get( 'anchor_podcast' );
+
+	return Boolean( sanitizePodcast( anchorPodcast || '' ) );
+}
+
+const anchorFmFlow: Flow = {
 	name: 'anchor-fm',
 
 	useSteps() {
@@ -16,7 +27,13 @@ export const anchorFmFlow: Flow = {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 		}, [] );
 
-		return [ 'login', 'podcastTitle', 'designSetup', 'processing', 'error' ] as StepPath[];
+		return [
+			{ slug: 'login', component: LoginStep },
+			{ slug: 'podcastTitle', component: PodcastTitleStep },
+			{ slug: 'designSetup', component: DesignSetup },
+			{ slug: 'processing', component: ProcessingStep },
+			{ slug: 'error', component: ErrorStep },
+		];
 	},
 
 	useStepNavigation( currentStep, navigate ) {
@@ -66,10 +83,12 @@ export const anchorFmFlow: Flow = {
 			}
 		};
 
-		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
+		const goToStep = ( step: string ) => {
 			navigate( step );
 		};
 
 		return { goNext, goBack, goToStep, submit };
 	},
 };
+
+export default anchorFmFlow;

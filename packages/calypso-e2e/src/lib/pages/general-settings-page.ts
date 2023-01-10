@@ -41,6 +41,7 @@ export class GeneralSettingsPage {
 	async visit( siteSlug: string ): Promise< void > {
 		await this.page.goto( getCalypsoURL( `settings/general/${ siteSlug }` ), {
 			waitUntil: 'networkidle',
+			timeout: 20 * 1000,
 		} );
 	}
 

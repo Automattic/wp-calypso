@@ -1,9 +1,7 @@
 import {
-	PRODUCT_NO_ADS,
 	PRODUCT_WPCOM_CUSTOM_DESIGN,
 	PRODUCT_WPCOM_UNLIMITED_THEMES,
 } from '@automattic/calypso-products';
-import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import {
 	getProductBySlug,
@@ -11,7 +9,6 @@ import {
 	getProductName,
 } from 'calypso/state/products-list/selectors';
 import customDesignIcon from '../icons/custom-design';
-import noAdsIcon from '../icons/no-ads';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
 import useAddOnDisplayCost from './use-add-on-display-cost';
 import useAddOnFeatureSlugs from './use-add-on-feature-slugs';
@@ -28,7 +25,6 @@ export interface AddOnMeta {
 
 // some memoization. executes far too many times
 const useAddOns = (): ( AddOnMeta | null )[] => {
-	const translate = useTranslate();
 	const addOnsActive = [
 		{
 			productSlug: PRODUCT_WPCOM_UNLIMITED_THEMES,
@@ -37,17 +33,6 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 			overrides: null,
 			displayCost: useAddOnDisplayCost( PRODUCT_WPCOM_UNLIMITED_THEMES ),
 			featured: true,
-		},
-		{
-			productSlug: PRODUCT_NO_ADS,
-			featureSlugs: useAddOnFeatureSlugs( PRODUCT_NO_ADS ),
-			icon: noAdsIcon,
-			overrides: {
-				// override API-fetched metadata
-				name: translate( 'Remove Ads' ),
-			},
-			displayCost: useAddOnDisplayCost( PRODUCT_NO_ADS ),
-			featured: false,
 		},
 		{
 			productSlug: PRODUCT_WPCOM_CUSTOM_DESIGN,
@@ -73,7 +58,7 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 
 			return {
 				...addOn,
-				name: addOn.overrides?.name ?? name,
+				name,
 				description,
 			};
 		} );

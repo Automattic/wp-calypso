@@ -5,6 +5,7 @@ import {
 	isGoogleWorkspaceExtraLicence,
 	isMonthlyProduct,
 	isPlan,
+	isTriennially,
 	isYearly,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -19,7 +20,12 @@ export enum RefundPolicy {
 	DomainNameRegistration = 1,
 	DomainNameRegistrationBundled,
 	DomainNameRenewal,
+	GiftBiennialPurchase,
+	GiftMonthlyPurchase,
+	GiftYearlyPurchase,
+	GiftDomainPurchase,
 	GenericBiennial,
+	GenericTriennial,
 	GenericMonthly,
 	GenericYearly,
 	NonRefundable,
@@ -27,13 +33,35 @@ export enum RefundPolicy {
 	PlanBiennialRenewal,
 	PlanMonthlyBundle,
 	PlanMonthlyRenewal,
+	PlanTriennialBundle,
+	PlanTriennialRenewal,
 	PlanYearlyBundle,
 	PlanYearlyRenewal,
 	PremiumTheme,
 }
 
 export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
+	const isGiftPurchase = cart.is_gift_purchase;
+
 	const refundPolicies: Array< RefundPolicy | undefined > = cart.products.map( ( product ) => {
+		if ( isGiftPurchase ) {
+			if ( isDomainRegistration( product ) ) {
+				return RefundPolicy.GiftDomainPurchase;
+			}
+
+			if ( isMonthlyProduct( product ) ) {
+				return RefundPolicy.GiftMonthlyPurchase;
+			}
+
+			if ( isYearly( product ) ) {
+				return RefundPolicy.GiftYearlyPurchase;
+			}
+
+			if ( isBiennially( product ) ) {
+				return RefundPolicy.GiftBiennialPurchase;
+			}
+		}
+
 		if ( isGoogleWorkspaceExtraLicence( product ) ) {
 			return RefundPolicy.NonRefundable;
 		}
@@ -46,7 +74,6 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 			if ( isRenewal( product ) ) {
 				return RefundPolicy.DomainNameRenewal;
 			}
-
 			return RefundPolicy.DomainNameRegistration;
 		}
 
@@ -70,6 +97,10 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 				if ( isBiennially( product ) ) {
 					return RefundPolicy.PlanBiennialBundle;
 				}
+
+				if ( isTriennially( product ) ) {
+					return RefundPolicy.PlanTriennialBundle;
+				}
 			}
 
 			if ( isRenewal( product ) ) {
@@ -83,6 +114,10 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 
 				if ( isBiennially( product ) ) {
 					return RefundPolicy.PlanBiennialRenewal;
+				}
+
+				if ( isTriennially( product ) ) {
+					return RefundPolicy.PlanTriennialRenewal;
 				}
 			}
 		}
@@ -99,6 +134,10 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 			return RefundPolicy.GenericBiennial;
 		}
 
+		if ( isTriennially( product ) ) {
+			return RefundPolicy.GenericTriennial;
+		}
+
 		return RefundPolicy.NonRefundable;
 	} );
 
@@ -106,7 +145,8 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 		( refundPolicy ) =>
 			refundPolicy === RefundPolicy.PlanMonthlyBundle ||
 			refundPolicy === RefundPolicy.PlanYearlyBundle ||
-			refundPolicy === RefundPolicy.PlanBiennialBundle
+			refundPolicy === RefundPolicy.PlanBiennialBundle ||
+			refundPolicy === RefundPolicy.PlanTriennialBundle
 	);
 
 	const cartHasDomainBundleProduct = cart.products.some(
@@ -139,10 +179,13 @@ export function getRefundWindows( refundPolicies: RefundPolicy[] ): RefundWindow
 				return 7;
 
 			case RefundPolicy.PlanBiennialBundle:
+			case RefundPolicy.PlanTriennialBundle:
 			case RefundPolicy.PlanYearlyBundle:
 			case RefundPolicy.PlanBiennialRenewal:
+			case RefundPolicy.PlanTriennialRenewal:
 			case RefundPolicy.PlanYearlyRenewal:
 			case RefundPolicy.GenericBiennial:
+			case RefundPolicy.GenericTriennial:
 			case RefundPolicy.GenericYearly:
 			case RefundPolicy.PremiumTheme:
 				return 14;
@@ -198,10 +241,31 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 			);
 			break;
 
+		case RefundPolicy.GiftDomainPurchase:
+			text = translate(
+				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} for a domain gift are limited to 96 hours after purchase.',
+				{ components: { refundsSupportPage } }
+			);
+			break;
+
 		case RefundPolicy.GenericBiennial:
 		case RefundPolicy.PlanBiennialRenewal:
 			text = translate(
 				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase or renewal for non-domain products with two year subscriptions.',
+				{ components: { refundsSupportPage } }
+			);
+			break;
+
+		case RefundPolicy.GiftBiennialPurchase:
+			text = translate(
+				'You understand that gift {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase for non-domain products with two year subscriptions.',
+				{ components: { refundsSupportPage } }
+			);
+			break;
+		case RefundPolicy.GenericTriennial:
+		case RefundPolicy.PlanTriennialRenewal:
+			text = translate(
+				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase or renewal for non-domain products with three year subscriptions.',
 				{ components: { refundsSupportPage } }
 			);
 			break;
@@ -214,6 +278,13 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 			);
 			break;
 
+		case RefundPolicy.GiftMonthlyPurchase:
+			text = translate(
+				'You understand that gift {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 7 days after purchase for non-domain products with monthly subscriptions.',
+				{ components: { refundsSupportPage } }
+			);
+			break;
+
 		case RefundPolicy.GenericYearly:
 		case RefundPolicy.PlanYearlyRenewal:
 			text = translate(
@@ -222,9 +293,23 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 			);
 			break;
 
+		case RefundPolicy.GiftYearlyPurchase:
+			text = translate(
+				'You understand that gift {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase for non-domain products with yearly subscriptions.',
+				{ components: { refundsSupportPage } }
+			);
+			break;
+
 		case RefundPolicy.PlanBiennialBundle:
 			text = translate(
 				'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 96 hours after registration and {{refundsSupportPage}}two year plan refunds{{/refundsSupportPage}} are limited to 14 days after purchase. Refunds of paid plans will deduct the standard cost of any domain name registered within a plan.',
+				{ components: { refundsSupportPage } }
+			);
+			break;
+
+		case RefundPolicy.PlanTriennialBundle:
+			text = translate(
+				'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 96 hours after registration and {{refundsSupportPage}}three year plan refunds{{/refundsSupportPage}} are limited to 14 days after purchase. Refunds of paid plans will deduct the standard cost of any domain name registered within a plan.',
 				{ components: { refundsSupportPage } }
 			);
 			break;
@@ -265,7 +350,8 @@ export default function RefundPolicies( { cart }: { cart: ResponseCart } ) {
 			refundPolicy === RefundPolicy.DomainNameRegistrationBundled ||
 			refundPolicy === RefundPolicy.PlanBiennialBundle ||
 			refundPolicy === RefundPolicy.PlanMonthlyBundle ||
-			refundPolicy === RefundPolicy.PlanYearlyBundle
+			refundPolicy === RefundPolicy.PlanYearlyBundle ||
+			refundPolicy === RefundPolicy.PlanTriennialBundle
 	);
 
 	if ( hasBundleRefundPolicy ) {

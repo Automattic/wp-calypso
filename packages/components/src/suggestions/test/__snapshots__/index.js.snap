@@ -2,34 +2,130 @@
 
 exports[`<Suggestions> render basic list of suggestions 1`] = `
 <div
-  className="suggestions"
+  class="suggestions"
 >
-  <Memo(ForwardRef(Item))
-    hasHighlight={true}
-    key="0"
-    label="Apple"
-    onMount={[Function]}
-    onMouseDown={[Function]}
-    onMouseOver={[Function]}
-    query=""
-  />
-  <Memo(ForwardRef(Item))
-    hasHighlight={false}
-    key="1"
-    label="Pear"
-    onMount={[Function]}
-    onMouseDown={[Function]}
-    onMouseOver={[Function]}
-    query=""
-  />
-  <Memo(ForwardRef(Item))
-    hasHighlight={false}
-    key="2"
-    label="Orange"
-    onMount={[Function]}
-    onMouseDown={[Function]}
-    onMouseOver={[Function]}
-    query=""
-  />
+  <button
+    class="suggestions__item has-highlight"
+  >
+    <span
+      class="suggestions__label"
+    >
+      A
+    </span>
+    <span
+      class="suggestions__label is-emphasized"
+    />
+    <span
+      class="suggestions__label"
+    >
+      p
+    </span>
+    <span
+      class="suggestions__label is-emphasized"
+    />
+    <span
+      class="suggestions__label"
+    >
+      p
+    </span>
+    <span
+      class="suggestions__label is-emphasized"
+    />
+    <span
+      class="suggestions__label"
+    >
+      l
+    </span>
+    <span
+      class="suggestions__label is-emphasized"
+    />
+    <span
+      class="suggestions__label"
+    >
+      e
+    </span>
+  </button>
+  <button
+    class="suggestions__item"
+  >
+    <span
+      class="suggestions__label"
+    >
+      P
+    </span>
+    <span
+      class="suggestions__label is-emphasized"
+    />
+    <span
+      class="suggestions__label"
+    >
+      e
+    </span>
+    <span
+      class="suggestions__label is-emphasized"
+    />
+    <span
+      class="suggestions__label"
+    >
+      a
+    </span>
+    <span
+      class="suggestions__label is-emphasized"
+    />
+    <span
+      class="suggestions__label"
+    >
+      r
+    </span>
+  </button>
+  <button
+    class="suggestions__item"
+  >
+    <span
+      class="suggestions__label"
+    >
+      O
+    </span>
+    <span
+      class="suggestions__label is-emphasized"
+    />
+    <span
+      class="suggestions__label"
+    >
+      r
+    </span>
+    <span
+      class="suggestions__label is-emphasized"
+    />
+    <span
+      class="suggestions__label"
+    >
+      a
+    </span>
+    <span
+      class="suggestions__label is-emphasized"
+    />
+    <span
+      class="suggestions__label"
+    >
+      n
+    </span>
+    <span
+      class="suggestions__label is-emphasized"
+    />
+    <span
+      class="suggestions__label"
+    >
+      g
+    </span>
+    <span
+      class="suggestions__label is-emphasized"
+    />
+    <span
+      class="suggestions__label"
+    >
+      e
+    </span>
+  </button>
 </div>
 `;

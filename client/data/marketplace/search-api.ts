@@ -1,5 +1,5 @@
 import wpcom from 'calypso/lib/wp';
-import { categories } from 'calypso/my-sites/plugins/categories/use-categories';
+import { getCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import { RETURNABLE_FIELDS } from './constants';
 import type { SearchParams } from './types';
 
@@ -114,6 +114,27 @@ export function search( options: SearchParams ) {
 	);
 }
 
+export function searchBySlug(
+	slug: string,
+	locale: string,
+	options?: { fields?: Array< string > | undefined; group_id?: string }
+) {
+	const params = {
+		lang: locale,
+		filter: getFilterbySlug( slug ),
+		fields: options?.fields ?? RETURNABLE_FIELDS,
+		group_id: options?.group_id ?? 'wporg',
+	};
+	const queryString = params;
+
+	return wpcom.req.get(
+		{
+			path: marketplaceSearchApiBase,
+		},
+		{ ...queryString, apiVersion }
+	);
+}
+
 function getFilterbyAuthor( author: string ): {
 	bool: {
 		must: { term: object }[];
@@ -126,10 +147,22 @@ function getFilterbyAuthor( author: string ): {
 	};
 }
 
+function getFilterbySlug( slug: string ): {
+	bool: {
+		must: { term: object }[];
+	};
+} {
+	return {
+		bool: {
+			must: [ { term: { slug } } ],
+		},
+	};
+}
+
 function getFilterByCategory( category: string ): {
 	bool: object;
 } {
-	const categoryTags = categories[ category ]?.tags;
+	const categoryTags = getCategories()[ category ]?.tags;
 
 	return {
 		bool: {

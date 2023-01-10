@@ -1,44 +1,23 @@
-import { Button, CompactCard } from '@automattic/components';
-import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import i18n from 'i18n-calypso';
+import * as SSHKeyCard from 'calypso/components/ssh-key-card';
 import accept from 'calypso/lib/accept';
 import { SSHKeyData } from './use-ssh-key-query';
 
 type SSHKeyProps = { sshKey: SSHKeyData } & Pick<
 	ManageSSHKeyProps,
-	'userLogin' | 'onDelete' | 'keyBeingDeleted'
+	'userLogin' | 'onDelete' | 'keyBeingDeleted' | 'onUpdate' | 'keyBeingUpdated'
 >;
 
-const SSHKeyItemCard = styled( CompactCard )( {
-	display: 'flex',
-	alignItems: 'center',
-} );
-
-const SSHKeyName = styled.span( {
-	display: 'block',
-	fontWeight: 'bold',
-	overflow: 'hidden',
-	textOverflow: 'ellipsis',
-} );
-
-const SSHPublicKey = styled.code( {
-	flex: 1,
-	position: 'relative',
-	overflow: 'hidden',
-	textOverflow: 'ellipsis',
-	whiteSpace: 'nowrap',
-} );
-
-const SSHKeyAddedDate = styled.span( {
-	display: 'block',
-	fontStyle: 'italic',
-	fontSize: '0.875rem',
-	color: 'var( --color-text-subtle )',
-} );
-
-const SSHKey = ( { userLogin, sshKey, onDelete, keyBeingDeleted }: SSHKeyProps ) => {
+const SSHKey = ( {
+	userLogin,
+	sshKey,
+	onDelete,
+	onUpdate,
+	keyBeingDeleted,
+	keyBeingUpdated,
+}: SSHKeyProps ) => {
 	const { __ } = useI18n();
 	const handleDeleteClick = () => {
 		accept(
@@ -53,14 +32,20 @@ const SSHKey = ( { userLogin, sshKey, onDelete, keyBeingDeleted }: SSHKeyProps )
 		);
 	};
 
+	const handleUpdateClick = () => {
+		onUpdate( sshKey.name, sshKey.sha256 );
+	};
+
+	const areButtonsDisabled = !! keyBeingDeleted || !! keyBeingUpdated;
+
 	return (
-		<SSHKeyItemCard>
-			<div style={ { marginRight: '1rem' } }>
-				<SSHKeyName>
+		<SSHKeyCard.Root>
+			<SSHKeyCard.Details>
+				<SSHKeyCard.KeyName>
 					{ userLogin }-{ sshKey.name }
-				</SSHKeyName>
-				<SSHPublicKey>{ sshKey.sha256 }</SSHPublicKey>
-				<SSHKeyAddedDate>
+				</SSHKeyCard.KeyName>
+				<SSHKeyCard.PublicKey>{ sshKey.sha256 }</SSHKeyCard.PublicKey>
+				<SSHKeyCard.Date>
 					{ sprintf(
 						// translators: addedOn is when the SSH key was added.
 						__( 'Added on %(addedOn)s' ),
@@ -71,25 +56,35 @@ const SSHKey = ( { userLogin, sshKey, onDelete, keyBeingDeleted }: SSHKeyProps )
 							} ).format( new Date( sshKey.created_at ) ),
 						}
 					) }
-				</SSHKeyAddedDate>
-			</div>
-			<Button
+				</SSHKeyCard.Date>
+			</SSHKeyCard.Details>
+			<SSHKeyCard.Button
+				primary={ true }
+				scary={ false }
+				disabled={ areButtonsDisabled }
+				onClick={ handleUpdateClick }
+				style={ { marginInlineStart: 'auto' } }
+			>
+				{ __( 'Update SSH key' ) }
+			</SSHKeyCard.Button>
+			<SSHKeyCard.Button
+				style={ { marginInlineStart: '10px' } }
 				busy={ keyBeingDeleted === sshKey.name }
-				disabled={ !! keyBeingDeleted }
-				scary
+				disabled={ areButtonsDisabled }
 				onClick={ handleDeleteClick }
-				style={ { marginLeft: 'auto' } }
 			>
 				{ __( 'Remove SSH key' ) }
-			</Button>
-		</SSHKeyItemCard>
+			</SSHKeyCard.Button>
+		</SSHKeyCard.Root>
 	);
 };
 
 interface ManageSSHKeyProps {
 	sshKeys: SSHKeyData[];
 	onDelete( name: string ): void;
+	onUpdate( name: string, keyFingerprint: string ): void;
 	keyBeingDeleted: string | null;
+	keyBeingUpdated: boolean | null;
 	userLogin: string;
 }
 
@@ -97,7 +92,9 @@ export const ManageSSHKeys = ( {
 	userLogin,
 	sshKeys,
 	onDelete,
+	onUpdate,
 	keyBeingDeleted,
+	keyBeingUpdated,
 }: ManageSSHKeyProps ) => {
 	return (
 		<>
@@ -106,8 +103,10 @@ export const ManageSSHKeys = ( {
 					key={ sshKey.key }
 					userLogin={ userLogin }
 					sshKey={ sshKey }
+					onUpdate={ onUpdate }
 					onDelete={ onDelete }
 					keyBeingDeleted={ keyBeingDeleted }
+					keyBeingUpdated={ keyBeingUpdated }
 				/>
 			) ) }
 		</>

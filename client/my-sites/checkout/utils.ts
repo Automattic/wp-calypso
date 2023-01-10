@@ -1,4 +1,5 @@
 import { untrailingslashit } from 'calypso/lib/route';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 /**
@@ -24,13 +25,30 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
  * 5. `/checkout/example.com::blog/pro` (path contains a domain followed by a product)
  * 6. `/checkout/pro/example.com::blog` (path contains a product followed by a domain)
  */
-export function getProductSlugFromContext( { params, store }: PageJS.Context ): string {
+export function getProductSlugFromContext( context: PageJS.Context ): string | undefined {
+	const { params, store, pathname } = context;
 	const {
 		domainOrProduct,
 		product,
-	}: { domainOrProduct: string | undefined; product: string | undefined } = params;
+		productSlug,
+	}: {
+		domainOrProduct: string | undefined;
+		product: string | undefined;
+		productSlug: string | undefined;
+	} = params;
 	const state = store.getState();
 	const selectedSite = getSelectedSite( state );
+	const isGiftPurchase = pathname.includes( '/gift/' );
+
+	// Jetpack siteless checkout routes always use `:productSlug` in the path.
+	if ( isContextJetpackSitelessCheckout( context ) ) {
+		return productSlug;
+	}
+
+	// Gift purchase routes always use `:product` in the path.
+	if ( isGiftPurchase ) {
+		return product;
+	}
 
 	if ( ! domainOrProduct && ! product ) {
 		return '';
@@ -110,4 +128,26 @@ export function addHttpIfMissing( inputUrl: string, httpsIsDefault = true ): str
 		url = `${ scheme }://` + url;
 	}
 	return untrailingslashit( url );
+}
+
+export function isContextJetpackSitelessCheckout( context: PageJS.Context ): boolean {
+	const hasJetpackPurchaseToken = Boolean( context.query.purchasetoken );
+	const hasJetpackPurchaseNonce = Boolean( context.query.purchaseNonce );
+	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
+	const isUserComingFromPlansPage = [ 'jetpack-plans', 'jetpack-connect-plans' ].includes(
+		context.query?.source
+	);
+	const state = context.store.getState();
+	const isLoggedOut = ! isUserLoggedIn( state );
+
+	if ( ! context.pathname.includes( '/checkout/jetpack' ) ) {
+		return false;
+	}
+	if ( ! isLoggedOut && ! isUserComingFromLoginForm && ! isUserComingFromPlansPage ) {
+		return false;
+	}
+	if ( ! hasJetpackPurchaseToken && ! hasJetpackPurchaseNonce ) {
+		return false;
+	}
+	return true;
 }

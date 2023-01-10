@@ -23,6 +23,7 @@ class WPCOM_Block_Editor_Nav_Sidebar {
 	 */
 	public function __construct() {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script_and_style' ), 100 );
+		add_filter( 'block_editor_settings_all', array( $this, 'add_wpcom_dashboard_link' ) );
 	}
 
 	/**
@@ -84,6 +85,18 @@ class WPCOM_Block_Editor_Nav_Sidebar {
 			array(),
 			filemtime( plugin_dir_path( __FILE__ ) . $style_path )
 		);
+	}
+
+	/**
+	 * Point the dashboard link to wordpress.com in the editor sidebar for Gutenberg 14.5 compat
+	 *
+	 * @param array $settings Editor settings.
+	 * @return array Updated Editor settings.
+	 */
+	public function add_wpcom_dashboard_link( $settings ) {
+		$site_slug                               = preg_replace( '|^https?:\/\/|', '', home_url() );
+		$settings['__experimentalDashboardLink'] = 'https://wordpress.com/home/' . $site_slug;
+		return $settings;
 	}
 }
 add_action( 'init', array( __NAMESPACE__ . '\WPCOM_Block_Editor_Nav_Sidebar', 'init' ) );

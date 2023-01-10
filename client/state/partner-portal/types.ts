@@ -95,6 +95,7 @@ export interface APIProductFamilyProduct {
 	currency: string;
 	amount: number;
 	price_interval: string;
+	family_slug: string;
 }
 
 export interface APIProductFamily {
@@ -230,9 +231,14 @@ export interface LicensesStore {
 	hasFetchedLicenseCounts: boolean;
 }
 
+export interface ProductsStore {
+	selectedProductSlugs: string[];
+}
+
 interface CombinedStore {
 	partner: PartnerStore;
 	licenses: LicensesStore;
+	products: ProductsStore;
 }
 
 /**

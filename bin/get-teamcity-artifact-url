@@ -7,7 +7,7 @@ const yargs = require( 'yargs' );
 
 const args = yargs
 	.default( 'branch', 'trunk' )
-	.default( 'buildType', 'calypso_Translate' )
+	.default( 'buildType', 'calypso_calypso_WebApp_Translate' )
 	.required( 'artifact', 'Set the artifact file path.' ).argv;
 
 const url = `https://teamcity.a8c.com/repository/download/${ args.buildType }/.lastSuccessful/${ args.artifact }?guest=1&branch=${ args.branch }`;

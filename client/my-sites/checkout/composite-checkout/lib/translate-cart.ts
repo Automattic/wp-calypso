@@ -35,7 +35,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 
 	const totalItem = getTotalLineItemFromCart( serverCart );
 
-	const alwaysEnabledPaymentMethods = [ 'full-credits', 'free-purchase' ];
+	const alwaysEnabledPaymentMethods = [ 'free-purchase' ];
 
 	const allowedPaymentMethods = [ ...allowed_payment_methods, ...alwaysEnabledPaymentMethods ]
 		.map( readWPCOMPaymentMethodClass )

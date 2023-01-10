@@ -1,8 +1,6 @@
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
-import Clipboard from 'clipboard';
-import { useRef, useEffect, forwardRef } from 'react';
-import ReactDom from 'react-dom';
+import { forwardRef } from 'react';
 
 interface ClipboardButtonProps {
 	className?: string;
@@ -26,34 +24,18 @@ const ClipboardButton = forwardRef<
 	HTMLButtonElement,
 	React.PropsWithChildren< ClipboardButtonProps >
 >( ( { className, text, onCopy = noop, ...rest }, ref ) => {
-	let buttonRef = useRef< HTMLButtonElement >( null );
-
-	if ( ref ) {
-		buttonRef = ref as React.RefObject< HTMLButtonElement >;
+	function onCopyHandler() {
+		if ( text ) {
+			navigator.clipboard.writeText( text );
+			onCopy();
+		}
 	}
-
-	const textCallback = useRef< () => string | null >( () => '' );
-	const successCallback = useRef< () => void >( noop );
-
-	// update the callbacks on rerenders that change `text` or `onCopy`
-	useEffect( () => {
-		textCallback.current = () => text;
-		successCallback.current = onCopy;
-	}, [ text, onCopy ] );
-
-	// create the `Clipboard` object on mount and destroy on unmount
-	useEffect( () => {
-		const buttonEl = ReactDom.findDOMNode( buttonRef.current ) as Element;
-		const clipboard = new Clipboard( buttonEl, { text: () => textCallback.current() as string } );
-		clipboard.on( 'success', () => successCallback.current() );
-
-		return () => clipboard.destroy();
-	}, [] );
 
 	return (
 		<Button
 			{ ...rest }
-			ref={ buttonRef }
+			onClick={ onCopyHandler }
+			ref={ ref }
 			className={ classNames( 'clipboard-button', className ) }
 		/>
 	);

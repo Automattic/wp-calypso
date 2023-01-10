@@ -10,6 +10,7 @@ import {
 	SET_FILTER,
 	ENABLE_KEYBOARD_SHORTCUTS,
 	DISABLE_KEYBOARD_SHORTCUTS,
+	ANSWER_PROMPT,
 } from '../action-types';
 
 export const closePanel = () => ( {
@@ -58,6 +59,12 @@ export const editComment = ( siteId, postId, commentId, href ) => ( {
 	href,
 } );
 
+export const answerPrompt = ( siteId, href ) => ( {
+	type: ANSWER_PROMPT,
+	siteId,
+	href,
+} );
+
 export const enableKeyboardShortcuts = () => ( { type: ENABLE_KEYBOARD_SHORTCUTS } );
 
 export const disableKeyboardShortcuts = () => ( { type: DISABLE_KEYBOARD_SHORTCUTS } );
@@ -75,4 +82,5 @@ export default {
 	editComment,
 	enableKeyboardShortcuts,
 	disableKeyboardShortcuts,
+	answerPrompt,
 };

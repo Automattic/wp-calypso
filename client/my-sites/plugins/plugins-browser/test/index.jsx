@@ -54,6 +54,7 @@ jest.mock( 'calypso/state/purchases/selectors', () => ( {
 } ) );
 
 import {
+	FEATURE_INSTALL_PLUGINS,
 	PLAN_FREE,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
@@ -108,7 +109,7 @@ describe( 'Search view', () => {
 
 	test( 'should show NoResults when there are no results', () => {
 		render( <PluginsBrowser { ...myProps } /> );
-		expect( screen.getByText( /no plugins match your search/i ) ).toBeVisible();
+		expect( screen.getByText( /no matches found/i ) ).toBeVisible();
 	} );
 	test( 'should show plugin list when there are results', () => {
 		mockPlugins = [ {} ];
@@ -122,7 +123,10 @@ describe( 'Upsell Nudge should get appropriate plan constant', () => {
 		`Business 1 year for (%s)`,
 		( product_slug ) => {
 			const initialState = {
-				sites: { items: { 1: { jetpack: false, plan: { product_slug } } } },
+				sites: {
+					items: { 1: { jetpack: false, plan: { product_slug } } },
+					features: { 1: { data: [ FEATURE_INSTALL_PLUGINS ] } },
+				},
 			};
 			render( <PluginsBrowser />, { initialState } );
 			const nudge = screen.getByTestId( 'upsell-nudge' );

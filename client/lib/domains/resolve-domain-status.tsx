@@ -4,6 +4,7 @@ import moment from 'moment';
 import { modeType, stepSlug } from 'calypso/components/domains/connect-domain-step/constants';
 import { isSubdomain } from 'calypso/lib/domains';
 import { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
+import { isRecentlyRegistered } from 'calypso/lib/domains/utils/is-recently-registered';
 import { shouldRenderExpiringCreditCard, handleRenewNowClick } from 'calypso/lib/purchases';
 import {
 	SETTING_PRIMARY_DOMAIN,
@@ -434,7 +435,7 @@ export function resolveDomainStatus(
 				};
 			}
 
-			if ( domain.pendingRegistration ) {
+			if ( isRecentlyRegistered( domain.registrationDate ) || domain.pendingRegistration ) {
 				let noticeText;
 				if ( domain.isPrimary ) {
 					noticeText = translate(

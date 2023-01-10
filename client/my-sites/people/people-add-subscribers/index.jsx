@@ -33,7 +33,11 @@ class PeopleInvites extends PureComponent {
 
 	goBack = () => {
 		const siteSlug = get( this.props, 'site.slug' );
-		const fallback = siteSlug ? '/people/team/' + siteSlug : '/people/team';
+		let fallback = siteSlug ? '/people/team/' + siteSlug : '/people/team';
+
+		if ( isEnabled( 'user-management-revamp' ) ) {
+			fallback = '/people/subscribers/' + siteSlug;
+		}
 
 		// Go back to last route with /people/team/$site as the fallback
 		page.back( fallback );
@@ -42,6 +46,7 @@ class PeopleInvites extends PureComponent {
 	render() {
 		const { site, canViewPeople, translate } = this.props;
 		const siteId = site && site.ID;
+		const isSiteOnFreePlan = site && site.plan.is_free;
 
 		if ( siteId && ! canViewPeople ) {
 			return (
@@ -75,13 +80,13 @@ class PeopleInvites extends PureComponent {
 					>
 						<AddSubscriberForm
 							siteId={ this.props.site.ID }
+							isSiteOnFreePlan={ isSiteOnFreePlan }
 							flowName="people"
 							showTitle={ false }
 							showFormManualListLabel={ true }
 							showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
 							recordTracksEvent={ recordTracksEvent }
 							onImportFinished={ () => {
-								page.redirect( `/people/email-followers/${ this.props.site.slug }` );
 								defer( () => {
 									this.props.successNotice(
 										this.props.translate(

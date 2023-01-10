@@ -9,7 +9,7 @@
 	margin-bottom: rem(24px);
 	font-size: $font-title-small;
 	font-weight: 700;
-	line-height: rem(29px);
+	line-height: 1.2;
 
 	@include break-medium {
 		margin-bottom: rem(32px);
@@ -23,6 +23,7 @@
 	display: grid;
 	grid-template-columns: 1fr;
 	grid-gap: 24px;
+	margin: 0;
 
 	@media only screen and (min-width: 821px) {
 		grid-template-columns: 1fr 1fr;
@@ -70,4 +71,35 @@
 	font-size: $font-body;
 	line-height: 24px;
 	font-weight: 600;
+}
+
+.featured-item-card--amount-saved {
+	margin-top: -4px;
+	margin-bottom: 8px;
+
+	.amount-saved--text {
+		font-weight: 600;
+		color: var(--studio-gray-70);
+		display: flex;
+		align-items: center;
+		gap: 4px;
+	}
+
+	.amount-saved--text button {
+		display: flex;
+	}
+
+	.plan-price {
+		font-size: inherit;
+	}
+}
+
+.amount-saved--popover {
+	.plan-price {
+		font-size: inherit;
+		color: inherit;
+	}
+	hr {
+		margin-bottom: 1rem;
+	}
 }

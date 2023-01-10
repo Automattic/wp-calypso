@@ -30,8 +30,6 @@ import {
 	getStepUrl,
 	isP2Flow,
 	isVideoPressFlow,
-	getVideoPressOnboardingTotalSteps,
-	getVideoPressOnboardingStepNumber,
 } from 'calypso/signup/utils';
 import VideoPressStepWrapper from 'calypso/signup/videopress-step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -209,6 +207,17 @@ export class UserStep extends Component {
 					}
 				);
 			}
+		} else if ( 'videopress-account' === flowName ) {
+			subHeaderText = translate(
+				"First, you'll need a WordPress.com account. Already have one? {{a}}Log in{{/a}}",
+				{
+					components: {
+						a: <a href={ loginUrl } />,
+					},
+					comment:
+						'Link displayed on the VideoPress signup page for users to log in with a WordPress.com account',
+				}
+			);
 		} else if ( 1 === getFlowSteps( flowName, userLoggedIn ).length ) {
 			// Displays specific sub header if users only want to create an account, without a site
 			subHeaderText = translate( 'Welcome to the WordPress.com community.' );
@@ -477,15 +486,12 @@ export class UserStep extends Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
-				headerText={ this.props.translate( "Let's get started" ) }
-				subHeaderText={ this.props.translate(
-					"We'll build your site with Videomaker, our premium theme for video creators. First, let's create your account.",
-					{}
-				) }
+				headerText={ this.props.translate( 'Let’s get you signed up' ) }
+				subHeaderText={ this.getSubHeaderText() }
 				stepIndicator={ this.props.translate( 'Step %(currentStep)s of %(totalSteps)s', {
 					args: {
-						currentStep: getVideoPressOnboardingStepNumber( this.props.stepName ),
-						totalSteps: getVideoPressOnboardingTotalSteps(),
+						currentStep: 1,
+						totalSteps: 1,
 					},
 				} ) }
 			>
@@ -532,6 +538,7 @@ export class UserStep extends Component {
 			return null; // return nothing so that we don't see the error message and the sign up form.
 		}
 
+		// TODO: decouple hideBack flag from the flow name.
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }

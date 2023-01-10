@@ -7,6 +7,11 @@ import { setup, firePageView, Ga4PropertyGtag } from '../ad-tracking/google-anal
 
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
 
+jest.mock( 'calypso/lib/analytics/tracker-buckets', () => ( {
+	mayWeTrackByTracker: () => true,
+	mayWeInitTracker: () => true,
+} ) );
+
 describe( 'Google Analytics 4 implementation', () => {
 	beforeEach( () => {
 		jest.spyOn( window, 'gtag' ).mockImplementation( () => [] );

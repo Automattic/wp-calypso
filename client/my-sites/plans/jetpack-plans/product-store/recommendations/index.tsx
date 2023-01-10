@@ -30,9 +30,9 @@ export const Recommendations: React.FC = () => {
 
 	return (
 		<div className="jetpack-product-store__recommendations">
-			<p className="jetpack-product-store__recommendations--title">
+			<h2 className="jetpack-product-store__recommendations--title">
 				{ translate( 'Recommended by the biggest names in WordPress' ) }
-			</p>
+			</h2>
 			<ul className="jetpack-product-store__recommendations--logos">
 				{ details.map( ( { logo, alt } ) => (
 					<li key={ alt }>

@@ -55,7 +55,7 @@ const GlobalStylesModal = () => {
 				</h1>
 				<p className="wpcom-global-styles-modal__description">
 					{ __(
-						"Change all of your site's fonts, colors and more. Available on any paid plan.",
+						"Change all of your site's fonts, colors and more. Available on the Premium plan.",
 						'full-site-editing'
 					) }
 				</p>

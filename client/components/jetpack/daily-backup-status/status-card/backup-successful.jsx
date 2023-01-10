@@ -76,7 +76,7 @@ const BackupSuccessful = ( { backup, selectedDate, lastBackupAttemptOnDate } ) =
 					<p className="status-card__multisite-warning-info">
 						{ preventWidows(
 							translate(
-								'Jetpack Backup for Multisite installations provides downloadable backups, no one-click restores. ' +
+								'Jetpack VaultPress Backup for Multisite installations provides downloadable backups, no one-click restores. ' +
 									'For more information {{ExternalLink}}visit our documentation page{{/ExternalLink}}.',
 								{
 									components: {

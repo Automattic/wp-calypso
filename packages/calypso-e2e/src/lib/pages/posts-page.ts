@@ -56,7 +56,7 @@ export class PostsPage {
 	async clickTab( name: PostsPageTabs ): Promise< void > {
 		// Without waiting for the `networkidle` event to fire, the clicks on the
 		// mobile navbar dropdowns are swallowed up.
-		await this.page.waitForLoadState( 'networkidle' );
+		await this.page.waitForLoadState( 'networkidle', { timeout: 20 * 1000 } );
 
 		await clickNavTab( this.page, name );
 		await this.waitUntilLoaded();
@@ -102,7 +102,10 @@ export class PostsPage {
 	 */
 	async newPost(): Promise< void > {
 		const locator = this.page.locator( selectors.addNewPostButton );
-		await locator.click();
+		await Promise.all( [
+			this.page.waitForNavigation( { url: /post/, timeout: 20 * 1000 } ),
+			locator.click(),
+		] );
 	}
 
 	/* Post actions */

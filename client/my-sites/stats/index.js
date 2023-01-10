@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
@@ -13,6 +14,7 @@ import {
 	redirectToDefaultModulePage,
 	redirectToDefaultSitePage,
 	redirectToDefaultWordAdsPeriod,
+	emailOpen,
 } from './controller';
 
 import './style.scss';
@@ -75,6 +77,11 @@ export default function () {
 	// Anything else should redirect to default WordAds stats page
 	page( '/stats/wordads/(.*)', redirectToDefaultWordAdsPeriod );
 	page( '/stats/ads/(.*)', redirectToDefaultWordAdsPeriod );
+
+	// Email stats Pages
+	if ( config.isEnabled( 'newsletter/stats' ) ) {
+		statsPage( `/stats/email/open/:site/:period(${ validPeriods })/:email_id`, emailOpen );
+	}
 
 	// Anything else should redirect to default stats page
 	page( '/stats/(.*)', redirectToDefaultSitePage );

@@ -29,7 +29,9 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 		};
 	} );
 
-	// Parametrized test.
+	// If any of the tests start failing unexpectedly and permanently, check the following:
+	// - ensure that plans, where appropriate, are enabled for the users;
+	// - ensure with MarTech that nothing with plans have changed;
 	describe.each`
 		siteType       | accountName
 		${ 'Simple' }  | ${ 'defaultUser' }

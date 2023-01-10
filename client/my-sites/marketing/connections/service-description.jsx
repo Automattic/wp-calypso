@@ -124,6 +124,17 @@ class SharingServiceDescription extends Component {
 					comment: 'Description for Google Photos when no accounts are connected',
 				} );
 			},
+			google_drive: function () {
+				if ( this.props.numberOfConnections > 0 ) {
+					return this.props.translate( 'Create and access files in your Google Drive', {
+						comment: 'Description for Google Drive when one or more accounts are connected',
+					} );
+				}
+
+				return this.props.translate( 'Create and access files stored in your Google Drive', {
+					comment: 'Description for Google Drive when no accounts are connected',
+				} );
+			},
 			google_my_business: function () {
 				if ( this.props.numberOfConnections > 0 ) {
 					return this.props.translate( 'Connected to your Google My Business account.', {

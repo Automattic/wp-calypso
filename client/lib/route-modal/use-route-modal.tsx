@@ -18,16 +18,19 @@ export interface RouteModalData {
 
 /**
  * React hook providing utils to control opening and closing modal via query string.
+ *
+ * @param queryKey The key from the query string to control the modal.
+ * @param targetValue If specified, the modal shows only when the value from the query string equals to it.
  */
-const useRouteModal = ( queryKey: string, defaultValue = '' ): RouteModalData => {
+const useRouteModal = ( queryKey: string, targetValue = '' ): RouteModalData => {
 	const currentQuery = useSelector( getCurrentQueryArguments );
 	const previousRoute = useSelector( getPreviousRoute );
 
 	const value = currentQuery?.[ queryKey ];
 
-	const isModalOpen = value != null;
+	const isModalOpen = value != null && ( ! targetValue || value === targetValue );
 
-	const openModal = ( currentValue: string = defaultValue ) => {
+	const openModal = ( currentValue: string = targetValue ) => {
 		const url = window.location.href.replace( window.location.origin, '' );
 		const queryParams = {
 			[ queryKey ]: currentValue,

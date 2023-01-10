@@ -240,6 +240,15 @@ export class Notifications extends Component {
 					page( `/comment/${ siteId }/${ commentId }?action=edit` );
 				},
 			],
+			ANSWER_PROMPT: [
+				( store, { siteId, href } ) => {
+					this.props.checkToggle();
+					this.props.recordTracksEventAction( 'calypso_notifications_answer_prompt', {
+						site_id: siteId,
+					} );
+					window.open( href, '_blank' );
+				},
+			],
 		};
 
 		return (

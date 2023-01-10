@@ -27,6 +27,7 @@ export interface WPComPlan extends Plan {
 	getBlogAudience?: () => TranslateResult;
 	getPortfolioAudience?: () => TranslateResult;
 	getStoreAudience?: () => TranslateResult;
+	getPlanTagline?: () => string;
 	getSubTitle?: () => TranslateResult;
 	getPlanCompareFeatures?: (
 		experiment?: string,
@@ -41,7 +42,6 @@ export interface WPComPlan extends Plan {
 	getLinkInBioDescription?: () => string;
 	getLinkInBioSignupFeatures?: () => Feature[];
 	getLinkInBioHighlightedFeatures?: () => Feature[];
-	getOnboardingHighlightedFeatures?: () => Feature[];
 	getPromotedFeatures?: () => Feature[];
 	getPathSlug: () => string;
 	getAnnualPlansOnlyFeatures?: () => string[];
@@ -124,6 +124,9 @@ export type Plan = BillingTerm & {
 	type: string;
 	availableFor?: ( plan: PlanSlug ) => boolean;
 	getSignupCompareAvailableFeatures?: () => string[];
+	get2023PricingGridSignupWpcomFeatures?: () => Feature[];
+	get2023PricingGridSignupJetpackFeatures?: () => Feature[];
+	get2023PricingGridSignupStorageOptions?: () => Feature[];
 	getProductId: () => number;
 	getPathSlug?: () => string;
 	getStoreSlug: () => PlanSlug;
@@ -132,12 +135,13 @@ export type Plan = BillingTerm & {
 	getShortDescription?: () => TranslateResult;
 	getFeaturedDescription?: () => TranslateResult;
 	getLightboxDescription?: () => TranslateResult;
+	getProductsIncluded?: () => ReadonlyArray< string >;
 	getWhatIsIncluded?: () => Array< TranslateResult >;
 	getBenefits?: () => Array< TranslateResult >;
 	getRecommendedFor?: () => Array< JetpackTag >;
 	getTagline?: () => TranslateResult;
 	getPlanCardFeatures?: () => Feature[];
-
+	getCancellationFeatureList?: () => CancellationFeatureLists;
 	/**
 	 * Features that are included as part of this plan.
 	 *
@@ -163,4 +167,15 @@ export interface PlanMatchesQuery {
 	term?: string;
 	group?: string;
 	type?: string;
+}
+
+export interface CancellationFeatureLists {
+	monthly: CancellationFeatureList;
+	yearly: CancellationFeatureList;
+	withDomain: CancellationFeatureList;
+}
+
+export interface CancellationFeatureList {
+	featureList: string[];
+	andMore: boolean;
 }

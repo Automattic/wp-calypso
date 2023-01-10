@@ -326,7 +326,10 @@ function recurse_convert( text, ranges, options ) {
 
 export function convert( blob, options ) {
 	let ranges = new Array();
-	options = options || {};
+	//options can be an integer, not sure why... something something recursion
+	if ( typeof options !== 'object' ) {
+		options = {};
+	}
 	options.links = 'undefined' === typeof options.links ? true : options.links;
 	ranges = ranges.concat( blob.ranges || [] );
 	ranges = ranges.concat( blob.media || [] );

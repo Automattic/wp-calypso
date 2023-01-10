@@ -42,7 +42,7 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 			const loginPage = new LoginPage( page );
 			for ( const locale of [ 'en', ...magnificientNonEnLocales ] ) {
 				page.setViewportSize( { width: 1280, height: 720 } );
-				await loginPage.visit( { path: `new/${ locale }` } );
+				await loginPage.visit( { path: locale } );
 				page.waitForSelector( selectors.isWhiteLogin );
 				await page.screenshot( {
 					path: `tos_white_login_desktop_${ locale }.png`,

@@ -37,9 +37,10 @@ const sshKeyFormReducer = ( state = initialState, action: ReducerAction ): typeo
 interface AddSSHKeyFormProps {
 	addSSHKey( args: { name: string; key: string } ): void;
 	isAdding: boolean;
+	saveText?: string;
 }
 
-export const AddSSHKeyForm = ( { addSSHKey, isAdding }: AddSSHKeyFormProps ) => {
+export const AddSSHKeyForm = ( { addSSHKey, isAdding, saveText }: AddSSHKeyFormProps ) => {
 	const [ { isValid, touched, value }, dispatch ] = useReducer( sshKeyFormReducer, initialState );
 
 	const { __ } = useI18n();
@@ -90,7 +91,7 @@ export const AddSSHKeyForm = ( { addSSHKey, isAdding }: AddSSHKeyFormProps ) => 
 				) }
 			</FormFieldset>
 			<Button busy={ isAdding } primary type="submit" disabled={ ! isValid || isAdding }>
-				{ __( 'Save SSH key' ) }
+				{ saveText || __( 'Save SSH Key' ) }
 			</Button>
 		</form>
 	);

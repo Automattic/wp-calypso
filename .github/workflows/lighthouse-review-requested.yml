@@ -31,7 +31,7 @@ jobs:
         if: ${{ contains(github.event.pull_request.requested_teams.*.name, 'Lighthouse') }}
         run: |
           curl --request POST \
-            --url 'https://api.github.com/projects/columns/8374542/cards' \
+            --url 'https://api.github.com/projects/columns/19237220/cards' \
             --header 'Accept: application/vnd.github.inertia-preview+json' \
             --header 'Authorization: token ${{ secrets.AUTOMATTIC_FINANCE }}' \
             --header 'Content-Type: application/json; charset=utf-8' \

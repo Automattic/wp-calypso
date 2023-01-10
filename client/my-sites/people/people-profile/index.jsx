@@ -16,9 +16,10 @@ import isPrivateSite from 'calypso/state/selectors/is-private-site';
 
 import './style.scss';
 
-const PeopleProfile = ( { siteId, type, user, invite } ) => {
+const PeopleProfile = ( { siteId, type, user, invite, showDate, showRole = true } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+
 	const { data: externalContributors } = useExternalContributorsQuery( siteId );
 	const { data: p2Guests } = useP2GuestsQuery( siteId );
 
@@ -75,7 +76,7 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 				} );
 				break;
 			case 'subscriber':
-				text = translate( 'Subscriber', {
+				text = translate( 'Viewer', {
 					context: 'Noun: A user role displayed in a badge',
 				} );
 				break;
@@ -268,6 +269,26 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 		);
 	};
 
+	const renderSubscribedRole = () => {
+		if ( ! user || ! user.date_subscribed ) {
+			return null;
+		}
+
+		return (
+			<div className="people-profile__badges">
+				<div
+					className={ classNames(
+						'people-profile__role-badge',
+						getRoleBadgeClass( 'subscriber' )
+					) }
+				>
+					{ user.login && translate( 'Follower' ) }
+					{ ! user.login && translate( 'Email subscriber' ) }
+				</div>
+			</div>
+		);
+	};
+
 	const isFollowerType = () => {
 		return user && ! user.roles && user.date_subscribed;
 	};
@@ -284,7 +305,8 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 			<div className="people-profile__detail">
 				{ renderNameOrEmail() }
 				{ renderLogin() }
-				{ isFollowerType() ? renderSubscribedDate() : renderRole() }
+				{ showDate && renderSubscribedDate() }
+				{ showRole && isFollowerType() ? renderSubscribedRole() : renderRole() }
 			</div>
 		</div>
 	);

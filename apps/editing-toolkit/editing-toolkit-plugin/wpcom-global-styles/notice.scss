@@ -8,4 +8,12 @@
 	a {
 		display: inline;
 	}
+
+	.components-button.is-link {
+		color: var(--color-link);
+
+		&:hover {
+			color: var(--color-link-light);
+		}
+	}
 }

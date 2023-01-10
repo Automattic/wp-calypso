@@ -1,8 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import { useViewportMatch } from '@wordpress/compose';
+import { Design } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
@@ -18,62 +16,94 @@ import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import StartingPointStep from './internals/steps-repository/blogger-starting-point';
+import BusinessInfo from './internals/steps-repository/business-info';
+import CoursesStep from './internals/steps-repository/courses';
+import DesignSetup from './internals/steps-repository/design-setup';
+import DIFMStartingPoint from './internals/steps-repository/difm-starting-point';
+import EditEmail from './internals/steps-repository/edit-email';
+import ErrorStep from './internals/steps-repository/error-step';
+import GoalsStep from './internals/steps-repository/goals';
+import ImportStep from './internals/steps-repository/import';
+import ImportLight from './internals/steps-repository/import-light';
+import ImportList from './internals/steps-repository/import-list';
+import ImportReady from './internals/steps-repository/import-ready';
+import ImportReadyNot from './internals/steps-repository/import-ready-not';
+import ImportReadyPreview from './internals/steps-repository/import-ready-preview';
+import ImportReadyWpcom from './internals/steps-repository/import-ready-wpcom';
 import { redirect } from './internals/steps-repository/import/util';
-import { ProcessingResult } from './internals/steps-repository/processing-step';
+import ImporterBlogger from './internals/steps-repository/importer-blogger';
+import ImporterMedium from './internals/steps-repository/importer-medium';
+import ImporterSquarespace from './internals/steps-repository/importer-squarespace';
+import ImporterWix from './internals/steps-repository/importer-wix';
+import ImporterWordpress from './internals/steps-repository/importer-wordpress';
+import IntentStep from './internals/steps-repository/intent-step';
+import PatternAssembler from './internals/steps-repository/pattern-assembler';
+import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
+import SiteOptions from './internals/steps-repository/site-options';
+import SiteVertical from './internals/steps-repository/site-vertical';
+import StoreAddress from './internals/steps-repository/store-address';
+import StoreFeatures from './internals/steps-repository/store-features';
+import WooConfirm from './internals/steps-repository/woo-confirm';
+import WooInstallPlugins from './internals/steps-repository/woo-install-plugins';
+import WooTransfer from './internals/steps-repository/woo-transfer';
+import WooVerifyEmail from './internals/steps-repository/woo-verify-email';
 import {
 	AssertConditionResult,
 	AssertConditionState,
 	Flow,
 	ProvidedDependencies,
 } from './internals/types';
-import type { StepPath } from './internals/steps-repository';
 
 const WRITE_INTENT_DEFAULT_THEME = 'livro';
 const WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION = 'white';
 const SiteIntent = Onboard.SiteIntent;
 const SiteGoal = Onboard.SiteGoal;
 
-export const siteSetupFlow: Flow = {
+const siteSetupFlow: Flow = {
 	name: 'site-setup',
 
 	useSteps() {
-		const isEnglishLocale = useIsEnglishLocale();
-		const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
-
 		return [
-			...( isEnabled( 'signup/goals-step' ) && isEnabledFTM ? [ 'goals' ] : [] ),
-			...( isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM ? [ 'vertical' ] : [] ),
-			'intent',
-			'options',
-			'designSetup',
-			'patternAssembler',
-			'bloggerStartingPoint',
-			'courses',
-			'storeFeatures',
-			'import',
-			...( isEnabled( 'onboarding/import-light' ) ? [ 'importLight' ] : [] ),
-			'importList',
-			'importReady',
-			'importReadyNot',
-			'importReadyWpcom',
-			'importReadyPreview',
-			'importerWix',
-			'importerBlogger',
-			'importerMedium',
-			'importerSquarespace',
-			'importerWordpress',
-			'businessInfo',
-			'storeAddress',
-			'processing',
-			'error',
-			'wooTransfer',
-			'wooInstallPlugins',
-			...( isEnabled( 'signup/woo-verify-email' ) ? [ 'wooVerifyEmail' ] : [] ),
-			'wooConfirm',
-			'editEmail',
-			...( isEnabled( 'signup/woo-verify-email' ) ? [ 'editEmail' ] : [] ),
-			'difmStartingPoint',
-		] as StepPath[];
+			{ slug: 'goals', component: GoalsStep },
+			{ slug: 'vertical', component: SiteVertical },
+			{ slug: 'intent', component: IntentStep },
+			{ slug: 'options', component: SiteOptions },
+			{ slug: 'designSetup', component: DesignSetup },
+			{ slug: 'patternAssembler', component: PatternAssembler },
+			{ slug: 'bloggerStartingPoint', component: StartingPointStep },
+			{ slug: 'courses', component: CoursesStep },
+			{ slug: 'storeFeatures', component: StoreFeatures },
+			{ slug: 'import', component: ImportStep },
+			...( isEnabled( 'onboarding/import-light' )
+				? [ { slug: 'importLight', component: ImportLight } ]
+				: [] ),
+			{ slug: 'importList', component: ImportList },
+			{ slug: 'importReady', component: ImportReady },
+			{ slug: 'importReadyNot', component: ImportReadyNot },
+			{ slug: 'importReadyWpcom', component: ImportReadyWpcom },
+			{ slug: 'importReadyPreview', component: ImportReadyPreview },
+			{ slug: 'importerWix', component: ImporterWix },
+			{ slug: 'importerBlogger', component: ImporterBlogger },
+			{ slug: 'importerMedium', component: ImporterMedium },
+			{ slug: 'importerSquarespace', component: ImporterSquarespace },
+			{ slug: 'importerWordpress', component: ImporterWordpress },
+			{ slug: 'businessInfo', component: BusinessInfo },
+			{ slug: 'storeAddress', component: StoreAddress },
+			{ slug: 'processing', component: ProcessingStep },
+			{ slug: 'error', component: ErrorStep },
+			{ slug: 'wooTransfer', component: WooTransfer },
+			{ slug: 'wooInstallPlugins', component: WooInstallPlugins },
+			...( isEnabled( 'signup/woo-verify-email' )
+				? [ { slug: 'wooVerifyEmail', component: WooVerifyEmail } ]
+				: [] ),
+			{ slug: 'wooConfirm', component: WooConfirm },
+			{ slug: 'editEmail', component: EditEmail },
+			...( isEnabled( 'signup/woo-verify-email' )
+				? [ { slug: 'editEmail', component: EditEmail } ]
+				: [] ),
+			{ slug: 'difmStartingPoint', component: DIFMStartingPoint },
+		];
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
@@ -89,11 +119,8 @@ export const siteSetupFlow: Flow = {
 			getCanonicalTheme( state, site?.ID || -1, currentThemeId )
 		);
 
-		const isEnglishLocale = useIsEnglishLocale();
-		const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 		const urlQueryParams = useQuery();
 		const isPluginBundleEligible = useIsPluginBundleEligible();
-		const isDesktop = useViewportMatch( 'large' );
 
 		let siteSlug: string | null = null;
 		if ( siteSlugParam ) {
@@ -113,8 +140,6 @@ export const siteSetupFlow: Flow = {
 			useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
-		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM;
-		const goalsStepEnabled = isEnabled( 'signup/goals-step' ) && isEnabledFTM;
 
 		const flowProgress = useSiteSetupFlowProgress( currentStep, intent, storeType );
 
@@ -137,11 +162,10 @@ export const siteSetupFlow: Flow = {
 						return;
 					}
 
-					const pendingActions = [ setIntentOnSite( siteSlug, intent ) ];
-
-					if ( goalsStepEnabled ) {
-						pendingActions.push( setGoalsOnSite( siteSlug, goals ) );
-					}
+					const pendingActions = [
+						setIntentOnSite( siteSlug, intent ),
+						setGoalsOnSite( siteSlug, goals ),
+					];
 					if ( intent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
 						pendingActions.push(
 							setThemeOnSite(
@@ -182,16 +206,14 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'bloggerStartingPoint' );
 				}
 
-				case 'designSetup':
-					if (
-						isDesktop &&
-						isBlankCanvasDesign( providedDependencies?.selectedDesign as Design )
-					) {
+				case 'designSetup': {
+					const _selectedDesign = providedDependencies?.selectedDesign as Design;
+					if ( _selectedDesign?.design_type === 'assembler' ) {
 						return navigate( 'patternAssembler' );
 					}
 
 					return navigate( 'processing' );
-
+				}
 				case 'patternAssembler':
 					return navigate( 'processing' );
 
@@ -203,10 +225,8 @@ export const siteSetupFlow: Flow = {
 					}
 
 					// End of Pattern Assembler flow
-					if (
-						isEnabled( 'signup/design-picker-pattern-assembler' ) &&
-						isBlankCanvasDesign( selectedDesign as Design )
-					) {
+					if ( selectedDesign?.design_type === 'assembler' ) {
+						window.sessionStorage.setItem( 'wpcom_signup_completed_flow', 'pattern_assembler' );
 						return exitFlow( `/site-editor/${ siteSlug }` );
 					}
 
@@ -243,7 +263,7 @@ export const siteSetupFlow: Flow = {
 						isPluginBundleEligible &&
 						siteSlug
 					) {
-						return exitFlow( `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle` );
+						return exitFlow( `/setup/plugin-bundle/?siteSlug=${ siteSlug }` );
 					}
 
 					return exitFlow( `/home/${ siteSlug }` );
@@ -262,7 +282,7 @@ export const siteSetupFlow: Flow = {
 							return exitFlow( `/home/${ siteSlug }` );
 						}
 						default: {
-							return navigate( intent as StepPath );
+							return navigate( intent );
 						}
 					}
 				}
@@ -278,18 +298,7 @@ export const siteSetupFlow: Flow = {
 						return navigate( 'difmStartingPoint' );
 					}
 
-					if ( verticalsStepEnabled ) {
-						return navigate( 'vertical' );
-					}
-
-					switch ( intent ) {
-						case SiteIntent.Write:
-						case SiteIntent.Sell:
-							return navigate( 'options' );
-						case SiteIntent.Build:
-						default:
-							return navigate( 'designSetup' );
-					}
+					return navigate( 'vertical' );
 				}
 
 				case 'intent': {
@@ -314,7 +323,7 @@ export const siteSetupFlow: Flow = {
 							return navigate( 'difmStartingPoint' );
 						}
 						default: {
-							return navigate( submittedIntent as StepPath );
+							return navigate( submittedIntent );
 						}
 					}
 				}
@@ -378,21 +387,17 @@ export const siteSetupFlow: Flow = {
 				}
 
 				case 'vertical': {
-					if ( goalsStepEnabled ) {
-						if ( goals.includes( SiteGoal.Import ) ) {
-							return navigate( 'import' );
-						}
-
-						switch ( intent ) {
-							case SiteIntent.Write:
-							case SiteIntent.Sell:
-								return navigate( 'options' );
-							default:
-								return navigate( 'designSetup' );
-						}
+					if ( goals.includes( SiteGoal.Import ) ) {
+						return navigate( 'import' );
 					}
 
-					return navigate( 'intent' );
+					switch ( intent ) {
+						case SiteIntent.Write:
+						case SiteIntent.Sell:
+							return navigate( 'options' );
+						default:
+							return navigate( 'designSetup' );
+					}
 				}
 
 				case 'importReady': {
@@ -407,10 +412,10 @@ export const siteSetupFlow: Flow = {
 						return exitFlow( providedDependencies?.url as string );
 					}
 
-					return navigate( providedDependencies?.url as StepPath );
+					return navigate( providedDependencies?.url as string );
 				}
 				case 'importReadyPreview': {
-					return navigate( providedDependencies?.url as StepPath );
+					return navigate( providedDependencies?.url as string );
 				}
 
 				case 'importerWix':
@@ -422,7 +427,7 @@ export const siteSetupFlow: Flow = {
 						return exitFlow( providedDependencies?.url as string );
 					}
 
-					return navigate( providedDependencies?.url as StepPath );
+					return navigate( providedDependencies?.url as string );
 				}
 
 				case 'difmStartingPoint': {
@@ -437,7 +442,7 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'options' );
 
 				case 'intent':
-					return navigate( verticalsStepEnabled ? 'vertical' : 'intent' );
+					return navigate( 'vertical' );
 
 				case 'storeFeatures':
 					return navigate( 'options' );
@@ -471,14 +476,7 @@ export const siteSetupFlow: Flow = {
 						return navigate( 'goals' );
 					}
 
-					if ( goalsStepEnabled ) {
-						if ( verticalsStepEnabled ) {
-							return navigate( 'vertical' );
-						}
-						return navigate( 'goals' );
-					}
-
-					return navigate( 'intent' );
+					return navigate( 'vertical' );
 
 				case 'patternAssembler':
 					return navigate( 'designSetup' );
@@ -491,7 +489,7 @@ export const siteSetupFlow: Flow = {
 					const backToStep = urlQueryParams.get( 'backToStep' );
 
 					if ( backToStep ) {
-						return navigate( `${ backToStep as StepPath }?siteSlug=${ siteSlug }` );
+						return navigate( `${ backToStep }?siteSlug=${ siteSlug }` );
 					}
 
 					return navigate( 'import' );
@@ -513,27 +511,16 @@ export const siteSetupFlow: Flow = {
 					if ( intent === 'difm' ) {
 						return navigate( 'difmStartingPoint' );
 					}
-					if ( goalsStepEnabled ) {
-						return navigate( 'goals' );
-					}
+					return navigate( 'goals' );
 
 				case 'options':
-					if ( goalsStepEnabled ) {
-						if ( verticalsStepEnabled ) {
-							return navigate( 'vertical' );
-						}
-						return navigate( 'goals' );
-					}
+					return navigate( 'vertical' );
 
 				case 'import':
-					if ( goalsStepEnabled ) {
-						return navigate( 'goals' );
-					}
+					return navigate( 'goals' );
 
 				case 'difmStartingPoint':
-					if ( goalsStepEnabled ) {
-						return navigate( 'goals' );
-					}
+					return navigate( 'goals' );
 
 				default:
 					return navigate( 'intent' );
@@ -562,11 +549,7 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'importList' );
 
 				case 'difmStartingPoint': {
-					if ( verticalsStepEnabled ) {
-						return navigate( 'vertical' );
-					}
-
-					return navigate( 'designSetup' );
+					return navigate( 'vertical' );
 				}
 
 				default:
@@ -574,7 +557,7 @@ export const siteSetupFlow: Flow = {
 			}
 		};
 
-		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
+		const goToStep = ( step: string ) => {
 			navigate( step );
 		};
 
@@ -631,3 +614,5 @@ export const siteSetupFlow: Flow = {
 		return result;
 	},
 };
+
+export default siteSetupFlow;

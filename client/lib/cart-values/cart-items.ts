@@ -32,6 +32,7 @@ import {
 	isSiteRedirect,
 	isSpaceUpgrade,
 	isStarter,
+	isTriennially,
 	isTitanMail,
 	isUnlimitedSpace,
 	isUnlimitedThemes,
@@ -133,6 +134,10 @@ export function hasMonthlyCartItem( cart: ObjectWithProducts ): boolean {
 
 export function hasBiennialCartItem( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isBiennially );
+}
+
+export function hasTriennialCartItem( cart: ObjectWithProducts ): boolean {
+	return getAllCartItems( cart ).some( isTriennially );
 }
 
 /**
@@ -276,6 +281,18 @@ export function themeItem( themeSlug: string, source?: string ): MinimalRequestC
 		extra: {
 			source: source,
 		},
+	};
+}
+
+/**
+ * Creates a new shopping cart item for a marketplace theme subscription.
+ *
+ * @param productSlug the unique string that identifies the product
+ * @returns {MinimalRequestCartProduct} the new item
+ */
+export function marketplaceThemeProduct( productSlug: string ): MinimalRequestCartProduct {
+	return {
+		product_slug: productSlug,
 	};
 }
 

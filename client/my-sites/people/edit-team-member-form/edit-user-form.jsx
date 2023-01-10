@@ -1,6 +1,7 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
+import { defer } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
@@ -148,7 +149,7 @@ class EditUserForm extends Component {
 	}
 
 	updateUser = ( event ) => {
-		event.preventDefault();
+		event && event.preventDefault();
 
 		const { siteId, user, markSaved } = this.props;
 		const changedSettings = this.getChangedSettings();
@@ -201,6 +202,7 @@ class EditUserForm extends Component {
 				returnField = (
 					<RoleSelect
 						key="role-select"
+						formControlType="select"
 						id={ fieldKeys.roles }
 						name={ fieldKeys.roles }
 						siteId={ this.props.siteId }
@@ -219,7 +221,7 @@ class EditUserForm extends Component {
 						key="isExternalContributor"
 						id={ fieldKeys.isExternalContributor }
 						onChange={ this.handleExternalChange }
-						checked={ this.state.isExternalContributor }
+						checked={ !! this.state.isExternalContributor }
 						disabled={ isDisabled || this.state.isExternalContributor === undefined }
 					/>
 				);
@@ -286,6 +288,14 @@ class EditUserForm extends Component {
 		return returnField;
 	};
 
+	onFormChange() {
+		this.props.markChanged();
+		if ( this.props.autoSave ) {
+			// defer to pick up the most recent form values
+			defer( () => this.updateUser() );
+		}
+	}
+
 	render() {
 		if ( ! this.props.user.ID ) {
 			return null;
@@ -297,14 +307,14 @@ class EditUserForm extends Component {
 			return null;
 		}
 
-		const { translate, hasWPCOMAccountLinked, disabled, markChanged, isUpdating } = this.props;
+		const { autoSave, translate, hasWPCOMAccountLinked, disabled, isUpdating } = this.props;
 
 		return (
 			<form
 				className="edit-team-member-form__form" // eslint-disable-line
 				disabled={ disabled }
 				onSubmit={ this.updateUser }
-				onChange={ markChanged }
+				onChange={ () => this.onFormChange() }
 			>
 				{ editableFields.map( ( fieldId ) => this.renderField( fieldId, isUpdating ) ) }
 				{ hasWPCOMAccountLinked && (
@@ -314,13 +324,15 @@ class EditUserForm extends Component {
 						) }
 					</p>
 				) }
-				<FormButtonsBar>
-					<FormButton disabled={ ! this.hasUnsavedSettings() || isUpdating }>
-						{ this.props.translate( 'Save changes', {
-							context: 'Button label that prompts user to save form',
-						} ) }
-					</FormButton>
-				</FormButtonsBar>
+				{ ! autoSave && (
+					<FormButtonsBar>
+						<FormButton disabled={ ! this.hasUnsavedSettings() || isUpdating }>
+							{ this.props.translate( 'Save changes', {
+								context: 'Button label that prompts user to save form',
+							} ) }
+						</FormButton>
+					</FormButtonsBar>
+				) }
 			</form>
 		);
 	}

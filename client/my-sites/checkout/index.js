@@ -11,14 +11,14 @@ import { loggedInSiteSelection, noSite, siteSelection } from 'calypso/my-sites/c
 import {
 	checkout,
 	checkoutPending,
-	checkoutSiteless,
+	checkoutJetpackSiteless,
 	checkoutThankYou,
-	licensingThankYouManualActivation,
 	licensingThankYouManualActivationInstructions,
 	licensingThankYouManualActivationLicenseKey,
 	licensingThankYouAutoActivation,
 	licensingThankYouAutoActivationCompleted,
 	jetpackCheckoutThankYou,
+	giftThankYou,
 	redirectJetpackLegacyPlans,
 	redirectToSupportSession,
 	upsellNudge,
@@ -28,11 +28,12 @@ import {
 export default function () {
 	page( '/checkout*', recordSiftScienceUser );
 
+	// Jetpack siteless checkout works logged-out, so do not include redirectLoggedOut or siteSelection.
 	page(
 		`/checkout/jetpack/:productSlug`,
 		setLocaleMiddleware(),
 		noSite,
-		checkoutSiteless,
+		checkoutJetpackSiteless,
 		makeLayout,
 		clientRender
 	);
@@ -56,7 +57,7 @@ export default function () {
 	page(
 		'/checkout/jetpack/thank-you/licensing-manual-activate/:product',
 		noSite,
-		licensingThankYouManualActivation,
+		licensingThankYouManualActivationInstructions,
 		makeLayout,
 		clientRender
 	);
@@ -93,15 +94,20 @@ export default function () {
 		clientRender
 	);
 
+	// The no-site post-checkout route is for purchases not tied to a site so do
+	// not include the `siteSelection` middleware.
+	page( '/checkout/gift/thank-you/:site', giftThankYou, makeLayout, clientRender );
+
 	page(
 		'/checkout/thank-you/no-site/pending/:orderId',
 		redirectLoggedOut,
-		siteSelection,
 		checkoutPending,
 		makeLayout,
 		clientRender
 	);
 
+	// The no-site post-checkout route is for purchases not tied to a site so do
+	// not include the `siteSelection` middleware.
 	page(
 		'/checkout/thank-you/no-site/:receiptId?',
 		redirectLoggedOut,
@@ -249,6 +255,10 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	// Gift purchases work without a site, so do not include the `siteSelection`
+	// middleware.
+	page( '/checkout/:product/gift/:purchaseId', noSite, checkout, makeLayout, clientRender );
 
 	page(
 		'/checkout/:site/with-gsuite/:domain/:receiptId?',

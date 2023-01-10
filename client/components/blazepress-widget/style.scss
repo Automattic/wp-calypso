@@ -7,7 +7,6 @@ $headerHeight: 72px;
 	display: flex;
 	flex-direction: column;
 	z-index: 1001;
-	height: 100%;
 
 	.blazepress-widget__header-bar {
 		align-items: center;
@@ -15,6 +14,14 @@ $headerHeight: 72px;
 		justify-content: space-between;
 		min-height: $headerHeight;
 		padding: 0 rem(24px);
+		position: fixed;
+		width: calc(100% - 3rem);
+		background: var(--theme-text-color);
+		z-index: 1000;
+
+		@include break-large {
+			border-bottom: 1px solid var(--studio-gray-20);
+		}
 
 		h2 {
 			@include onboarding-font-recoleta;
@@ -44,6 +51,7 @@ $headerHeight: 72px;
 		display: flex;
 		flex-direction: column;
 		height: calc(100% - #{$headerHeight});
+		margin-top: 72px;
 	}
 	.blazepress-widget__content.loading {
 		justify-content: center;
@@ -57,4 +65,8 @@ $headerHeight: 72px;
 			height: 100%;
 		}
 	}
+}
+
+.blazepress-widget.dialog__backdrop {
+	background-color: rgba(var(--color-neutral-100-rgb), 0.6);
 }

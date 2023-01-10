@@ -26,14 +26,13 @@ class StatsTabs extends Component {
 
 		if ( data && ! children ) {
 			const activeData = find( data, { [ activeKey ]: activeIndex } );
-
 			statsTabs = tabs.map( ( tab ) => {
 				const hasData =
 					activeData && activeData[ tab.attr ] >= 0 && activeData[ tab.attr ] !== null;
 
 				const tabOptions = {
 					attr: tab.attr,
-					gridicon: tab.gridicon,
+					icon: tab.icon,
 					className: tab.className,
 					label: tab.label,
 					loading: ! hasData,

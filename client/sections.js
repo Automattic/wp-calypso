@@ -144,6 +144,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'settings-reading',
+		paths: [ '/settings/reading' ],
+		module: 'calypso/my-sites/site-settings/settings-reading',
+		group: 'sites',
+	},
+	{
 		name: 'settings-discussion',
 		paths: [ '/settings/discussion' ],
 		module: 'calypso/my-sites/site-settings/settings-discussion',
@@ -497,6 +503,13 @@ const sections = [
 				href: 'https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap',
 			},
 		],
+	},
+	{
+		name: 'jetpack-cloud-features-comparison',
+		paths: [ '/features/comparison', '/[^\\/]+/features/comparison' ],
+		module: 'calypso/jetpack-cloud/sections/comparison',
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
 	},
 	{
 		name: 'jetpack-search',

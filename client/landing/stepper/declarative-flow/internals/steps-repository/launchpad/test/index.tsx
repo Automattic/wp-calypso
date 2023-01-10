@@ -31,6 +31,13 @@ jest.mock( 'calypso/data/domains/use-get-domains-query', () => ( {
 	} ),
 } ) );
 
+jest.mock( 'calypso/state/sites/hooks/use-premium-global-styles', () => ( {
+	usePremiumGlobalStyles: () => ( {
+		shouldLimitGlobalStyles: false,
+		globalStylesInUse: false,
+	} ),
+} ) );
+
 // JSDOM doesn't support browser navigation, so we temporarily mock the
 // window.location object
 const replaceMock = jest.fn();
@@ -64,9 +71,7 @@ function renderLaunchpad( props = {}, siteDetails = defaultSiteDetails ): void {
 
 		return (
 			<Provider store={ reduxStore }>
-				<MemoryRouter
-					initialEntries={ [ `/setup/launchpad?flow=link-in-bio&siteSlug=${ siteSlug }` ] }
-				>
+				<MemoryRouter initialEntries={ [ `/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }` ] }>
 					<Launchpad { ...props } />
 				</MemoryRouter>
 			</Provider>

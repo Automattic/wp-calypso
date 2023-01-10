@@ -1,0 +1,6 @@
+@import "@automattic/typography/styles/variables";
+
+$vertical-margin: 32px;
+// From client/assets/stylesheets/shared/mixins/_breakpoints.scss.
+// Technically deprecated, but majority of Calypso still uses this.
+$custom-mobile-breakpoint: 660px;

@@ -3,14 +3,20 @@ import { handleRequestError, handleRequestSuccess } from './callback-handler';
 
 const debug = debugFactory( 'lib/load-script/dom-operations' );
 
-export function createScriptElement( url ) {
+export function createScriptElement( url, args ) {
 	debug( `Creating script element for "${ url }"` );
 	const script = document.createElement( 'script' );
+
 	script.src = url;
 	script.type = 'text/javascript';
-	script.async = true;
 	script.onload = handleRequestSuccess;
 	script.onerror = handleRequestError;
+	script.async = true;
+
+	if ( args ) {
+		Object.entries( args ).forEach( ( [ key, value ] ) => ( script[ key ] = value ) );
+	}
+
 	return script;
 }
 

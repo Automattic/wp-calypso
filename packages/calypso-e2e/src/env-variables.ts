@@ -11,6 +11,7 @@ const defaultEnvVariables: SupportedEnvVariables = {
 	TEST_LOCALES: [ ...MAG16_LOCALES ],
 	HEADLESS: false,
 	SLOW_MO: 0,
+	TIMEOUT: 10000,
 	GUTENBERG_EDGE: false,
 	COBLOCKS_EDGE: false,
 	AUTHENTICATE_ACCOUNTS: [ 'simpleSitePersonalPlanUser', 'eCommerceUser', 'defaultUser' ],
@@ -23,6 +24,16 @@ const defaultEnvVariables: SupportedEnvVariables = {
 	ALLURE_RESULTS_PATH: '',
 };
 
+/**
+ * Captures and performs type check on all known environment variables.
+ *
+ * When a new environment variable is to be added, make sure to add the variable to
+ * both the definition above and the `SupportedEnvVariables` interface.
+ *
+ * @param {string} name Name of the environment variable.
+ * @param {string} value Value of the environment variable.
+ * @returns {EnvVariableValue} Cast and type-checked environment variable value.
+ */
 const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue => {
 	let output: EnvVariableValue = value;
 

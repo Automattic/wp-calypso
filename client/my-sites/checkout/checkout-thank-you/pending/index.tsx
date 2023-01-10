@@ -22,6 +22,7 @@ import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
 import type { RedirectInstructions } from 'calypso/my-sites/checkout/composite-checkout/lib/pending-page';
+import type { ReceiptState } from 'calypso/state/receipts/types';
 import type {
 	OrderTransaction,
 	OrderTransactionSuccess,
@@ -121,6 +122,18 @@ function performRedirect( url: string ): void {
 	window.location.href = url;
 }
 
+function getSaaSProductRedirectUrl( receipt: ReceiptState ) {
+	let saasRedirectUrl;
+
+	( receipt?.data?.purchases || [] ).forEach( ( purchase ) => {
+		if ( purchase.saasRedirectUrl ) {
+			saasRedirectUrl = purchase.saasRedirectUrl;
+		}
+	} );
+
+	return saasRedirectUrl;
+}
+
 function useRedirectOnTransactionSuccess( {
 	orderId,
 	receiptId,
@@ -153,6 +166,7 @@ function useRedirectOnTransactionSuccess( {
 	const isRenewal = firstPurchase?.isRenewal ?? false;
 	const productName = firstPurchase?.productName ?? '';
 	const willAutoRenew = firstPurchase?.willAutoRenew ?? false;
+	const saasRedirectUrl = getSaaSProductRedirectUrl( receipt );
 
 	// Fetch receipt data once we have a receipt Id.
 	const didFetchReceipt = useRef( false );
@@ -192,6 +206,7 @@ function useRedirectOnTransactionSuccess( {
 			receiptId,
 			redirectTo,
 			siteSlug,
+			saasRedirectUrl,
 		} );
 
 		if ( ! redirectInstructions ) {
