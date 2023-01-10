@@ -1,6 +1,6 @@
 import { FEATURE_VIDEO_UPLOADS, planHasFeature } from '@automattic/calypso-products';
 import { DEVICE_TYPES } from '@automattic/components';
-import { NEWSLETTER_FLOW } from '@automattic/onboarding';
+import { FREE_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import WebPreview from 'calypso/components/web-preview/component';
@@ -24,7 +24,7 @@ const LaunchpadSitePreview = ( {
 
 	let previewUrl = siteSlug ? 'https://' + siteSlug : null;
 	const devicesToShow: Device[] = [ DEVICE_TYPES.COMPUTER, DEVICE_TYPES.PHONE ];
-	let defaultDevice = flow === NEWSLETTER_FLOW ? DEVICE_TYPES.COMPUTER : DEVICE_TYPES.PHONE;
+	let defaultDevice = getSitePreviewDefaultDevice( flow );
 	let loadingMessage = translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
 		components: { strong: <strong /> },
 	} );
@@ -68,6 +68,17 @@ const LaunchpadSitePreview = ( {
 			do_preview_no_interactions: ! isVideoPressFlow,
 			...( globalStylesInUse && shouldLimitGlobalStyles && { 'preview-global-styles': true } ),
 		} );
+	}
+
+	function getSitePreviewDefaultDevice( flow: string | null ) {
+		switch ( flow ) {
+			case NEWSLETTER_FLOW:
+				return DEVICE_TYPES.COMPUTER;
+			case FREE_FLOW:
+				return DEVICE_TYPES.COMPUTER;
+			default:
+				return DEVICE_TYPES.PHONE;
+		}
 	}
 
 	return (
