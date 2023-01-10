@@ -6,6 +6,7 @@ export * from './types';
 let defaultLocale: string | undefined = undefined;
 const formatterCache = new Map< string, Intl.NumberFormat >();
 const fallbackLocale = 'en';
+const fallbackCurrency = 'USD';
 
 /**
  * Set a default locale for use by `formatCurrency` and `getCurrencyObject`.
@@ -80,6 +81,10 @@ function getCachedFormatter( {
 		return formatter;
 	} catch ( error ) {
 		// If the locale is invalid, creating the NumberFormat will throw.
+		// eslint-disable-next-line no-console
+		console.warn(
+			`formatCurrency was called with a non-existent locale "${ locale }"; falling back to ${ fallbackLocale }`
+		);
 		return getCachedFormatter( { locale: fallbackLocale, currency, noDecimals } );
 	}
 }
@@ -200,7 +205,11 @@ export function formatCurrency(
 ): string {
 	const locale = options.locale ?? defaultLocale ?? getLocaleFromBrowser();
 	if ( ! doesCurrencyExist( code ) ) {
-		code = 'USD';
+		// eslint-disable-next-line no-console
+		console.warn(
+			`formatCurrency was called with a non-existent currency "${ code }"; falling back to ${ fallbackCurrency }`
+		);
+		code = fallbackCurrency;
 	}
 	const currencyOverride = getCurrencyOverride( code );
 	const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );
@@ -267,7 +276,11 @@ export function getCurrencyObject(
 ): CurrencyObject {
 	const locale = options.locale ?? defaultLocale ?? getLocaleFromBrowser();
 	if ( ! doesCurrencyExist( code ) ) {
-		code = 'USD';
+		// eslint-disable-next-line no-console
+		console.warn(
+			`getCurrencyObject was called with a non-existent currency "${ code }"; falling back to ${ fallbackCurrency }`
+		);
+		code = fallbackCurrency;
 	}
 	const currencyOverride = getCurrencyOverride( code );
 	const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );
