@@ -33,6 +33,7 @@ const selectors = {
 	editorRoot: 'body.block-editor-page',
 	editorCanvasIframe: 'iframe[name="editor-canvas"]',
 	editorCanvasRoot: '.wp-site-blocks',
+	viewEditorButtonMobile: 'button:has-text("View Editor")',
 	editButton: '.edit-site-layout__edit-button',
 	templateLoadingSpinner: '[aria-label="Block: Template Part"] .components-spinner',
 	closeStylesWelcomeGuideButton:
@@ -155,6 +156,11 @@ export class FullSiteEditorPage {
 			leaveWithoutSaving?: boolean;
 		} = { leaveWithoutSaving: true }
 	): Promise< void > {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			const viewEditorButton = this.editor.locator( selectors.viewEditorButtonMobile );
+			await viewEditorButton.click();
+		}
+
 		await this.waitUntilLoaded();
 
 		const editButton = this.editor.locator( selectors.editButton );
