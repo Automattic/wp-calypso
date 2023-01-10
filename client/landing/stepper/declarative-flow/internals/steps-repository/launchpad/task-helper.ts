@@ -172,7 +172,7 @@ export function getEnhancedTasks(
 						completed: linkInBioLinksEditCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, linkInBioLinksEditCompleted, task.id );
-							window.location.assign( `/site-editor/${ siteSlug }` );
+							window.location.assign( `/page/${ siteSlug }/${ homePageId }` );
 						},
 					};
 					break;
