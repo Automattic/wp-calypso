@@ -106,8 +106,11 @@ function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
 
-function getChecklistThemeDestination( dependencies ) {
-	return `/home/${ dependencies.siteSlug }`;
+function getChecklistThemeDestination( { siteSlug, themeParameter } ) {
+	if ( themeParameter === 'blank-canvas-3' ) {
+		return `/setup/site-setup/patternAssembler?siteSlug=${ siteSlug }`;
+	}
+	return `/home/${ siteSlug }`;
 }
 
 function getEditorDestination( dependencies ) {

@@ -23,6 +23,7 @@ import {
 	TERM_MONTHLY,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
+	TERM_TRIENNIALLY,
 	GROUP_WPCOM,
 	PLAN_PERSONAL,
 	TITAN_MAIL_MONTHLY_SLUG,
@@ -334,6 +335,7 @@ export class PlansFeaturesMain extends Component {
 			monthly: TERM_MONTHLY,
 			yearly: TERM_ANNUALLY,
 			'2yearly': TERM_BIENNIALLY,
+			'3yearly': TERM_TRIENNIALLY,
 		};
 
 		return plans[ intervalType ] || defaultValue || TERM_ANNUALLY;
@@ -369,6 +371,7 @@ export class PlansFeaturesMain extends Component {
 				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_PREMIUM } )[ 0 ],
 				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_BUSINESS } )[ 0 ],
 				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_ECOMMERCE } )[ 0 ],
+
 				isEnabled( 'onboarding/2023-pricing-grid' ) &&
 				isInSignup &&
 				flowName === 'onboarding-2023-pricing-grid'
@@ -402,7 +405,6 @@ export class PlansFeaturesMain extends Component {
 		if ( showTreatmentPlansReorderTest ) {
 			return plans.reverse();
 		}
-
 		return plans;
 	}
 

@@ -34,17 +34,21 @@ function TeamInvites() {
 	return (
 		<>
 			<QuerySiteInvites siteId={ siteId } />
-			<PeopleListSectionHeader
-				label={ _(
-					'You have a pending invite for %(number)d user',
-					'You have a pending invite for %(number)d users',
-					{
-						args: { number: pendingInvites?.length },
-						count: pendingInvites?.length as number,
-					}
-				) }
-			/>
-			<Card className="people-team-invites-list">{ pendingInvites?.map( renderInvite ) }</Card>
+			{ !! pendingInvites?.length && (
+				<>
+					<PeopleListSectionHeader
+						label={ _(
+							'You have a pending invite for %(number)d user',
+							'You have a pending invite for %(number)d users',
+							{
+								args: { number: pendingInvites?.length },
+								count: pendingInvites?.length as number,
+							}
+						) }
+					/>
+					<Card className="people-team-invites-list">{ pendingInvites?.map( renderInvite ) }</Card>
+				</>
+			) }
 		</>
 	);
 }

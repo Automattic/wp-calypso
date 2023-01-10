@@ -42,7 +42,14 @@ function Subscribers( props: Props ) {
 	}
 
 	function renderFollower( follower: Follower ) {
-		return <PeopleListItem key={ follower?.ID } user={ follower } site={ site } type="email" />;
+		return (
+			<PeopleListItem
+				key={ follower?.ID }
+				user={ follower }
+				site={ site }
+				type="subscriber-details"
+			/>
+		);
 	}
 
 	function renderPlaceholders() {

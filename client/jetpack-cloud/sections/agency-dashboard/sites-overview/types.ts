@@ -127,7 +127,7 @@ export type AgencyDashboardFilterOption =
 	| 'backup_failed'
 	| 'backup_warning'
 	| 'threats_found'
-	| 'site_down'
+	| 'site_disconnected'
 	| 'plugin_updates';
 
 export type AgencyDashboardFilter = {

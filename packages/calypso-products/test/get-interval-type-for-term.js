@@ -1,4 +1,4 @@
-import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from '../src/constants';
+import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY, TERM_TRIENNIALLY } from '../src/constants';
 import { getIntervalTypeForTerm } from '../src/get-interval-type-for-term';
 
 describe( 'getIntervalTypeForTerm', () => {
@@ -16,5 +16,9 @@ describe( 'getIntervalTypeForTerm', () => {
 
 	test( 'should return null intervalType if no product can be identified', () => {
 		expect( getIntervalTypeForTerm( 'fake' ) ).toBeNull();
+	} );
+
+	test( 'should return 3-year intervalType if current plan is a 3-year plan', () => {
+		expect( getIntervalTypeForTerm( TERM_TRIENNIALLY ) ).toBe( '3yearly' );
 	} );
 } );

@@ -51,4 +51,7 @@ export const RETURNABLE_FIELDS = [
 
 	// Marketplace premium slug
 	'plugin.premium_slug',
+
+	// Marketplace plugin slug for Calypso url
+	'plugin.product_slug',
 ] as const;
