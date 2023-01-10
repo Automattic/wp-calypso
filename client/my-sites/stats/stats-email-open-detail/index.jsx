@@ -10,6 +10,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
+import DocumentHead from 'calypso/components/data/document-head';
 import QueryEmailStats from 'calypso/components/data/query-email-stats';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
@@ -221,6 +222,8 @@ class StatsEmailOpenDetail extends Component {
 						date={ query.date }
 						period={ query.period }
 					/>
+					<DocumentHead title={ translate( 'Jetpack Stats' ) } />
+
 					<PageViewTracker
 						path="/stats/email/open/:site/:period/:email_id"
 						title="Stats > Single Email"
