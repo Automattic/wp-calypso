@@ -104,7 +104,7 @@ class Hosting extends Component {
 					} }
 				/>
 				<UpsellNudge
-					title={ translate( 'Upgrade your plan to access hosting features' ) }
+					title={ translate( 'Upgrade your plan to access all hosting features' ) }
 					event="calypso_hosting_configuration_upgrade_click"
 					href={ `/plans/${ siteSlug }/` }
 					feature={ FEATURE_SFTP }
