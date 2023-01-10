@@ -1,25 +1,22 @@
-@import "../style";
+@import "@automattic/typography/styles/variables";
+@import "@automattic/onboarding/styles/mixins";
 
-$font-family: "SF Pro Text", $sans;
 
-.link-in-bio-setup,
-.free-setup {
-	.step-container__content {
+.wooexpress.assign-trial-plan {
+	padding: 1em;
+	max-width: 540px;
+	text-align: center;
+	margin: 16vh auto 0;
+
+	.step-container {
 		display: flex;
-		justify-content: center;
-		margin-bottom: 30px;
-		min-height: unset;
 	}
 
-	.link-in-bio-setup .step-container__header {
-		margin-bottom: 32px;
+	.step-container__content {
+		width: 100%;
 
-		h1.formatted-header__title {
-			font-size: $font-title-medium;
-
-			@include break-medium {
-				font-size: $font-headline-medium;
-			}
+		h1 {
+			@include onboarding-font-recoleta;
 		}
 	}
 }
