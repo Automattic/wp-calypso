@@ -29,11 +29,11 @@ const PromotePost = () => {
 		<>
 			{ showPromotePost && (
 				<Task
-					title={ translate( 'Reach new readers and customers with Blaze' ) }
+					title={ translate( 'Promote your content with Blaze' ) }
 					description={ translate(
-						'For as low as $5, use WordPress Blaze to increase your reach by promoting your pages or posts to the larger WordPress.com community of blogs and sites.'
+						'Grow your audience by promoting your content with Blaze campaigns. Reach interested users across millions of sites on Tumblr and WordPress.com.'
 					) }
-					actionText={ translate( 'Get started' ) }
+					actionText={ translate( 'Create campaign' ) }
 					actionUrl={ `/advertising/${ selectedSiteSlug }` }
 					actionOnClick={ trackDspAction }
 					completeOnStart={ false }
