@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import promoteMenuIllustration from 'calypso/assets/images/customer-home/illustration--promote-menu.svg';
+import promoteMenuIllustration from 'calypso/assets/images/customer-home/illustration--blaze.svg';
 import './style.scss';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 
