@@ -25,7 +25,7 @@ const dialogContent = (
 	return acceptDialog( content, action, heading, null, options );
 };
 
-export function useHandleToggleMonitor( selectedSites: Array< { blog_id: number; url: string } > ) {
+export function useHandleToggleMonitor( selectedSites: Array< Site > ) {
 	const translate = useTranslate();
 
 	const toggleActivateMonitor = useToggleActivateMonitor( selectedSites );
@@ -43,13 +43,7 @@ export function useHandleToggleMonitor( selectedSites: Array< { blog_id: number;
 		( activate: boolean ) => {
 			const heading = activate ? translate( 'Resume Monitor' ) : translate( 'Pause Monitor' );
 			const monitorAction = activate ? translate( 'resume' ) : translate( 'pause' );
-			const siteCountText =
-				selectedSites.length > 1
-					? translate( '%(siteCount)d sites', {
-							args: { siteCount: selectedSites.length },
-							comment: '%(siteCount) is no of sites, e.g. "2 sites"',
-					  } )
-					: selectedSites[ 0 ].url;
+			const siteCountText = getSiteCountText( selectedSites );
 			const content =
 				selectedSites.length > 1
 					? translate( 'You are about to %(monitorAction)s the monitor for %(siteCountText)s.', {
