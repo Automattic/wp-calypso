@@ -15,6 +15,7 @@ import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
+import { isE2ETest } from 'calypso/lib/e2e';
 import { preventWidows } from 'calypso/lib/formatting';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
@@ -79,7 +80,7 @@ const Home = ( {
 
 	// Ecommerce Plan's Home redirects to WooCommerce Home, so we show a placeholder
 	// while doing the redirection.
-	if ( isEcommerce( sitePlan ) ) {
+	if ( ! isE2ETest() && isEcommerce( sitePlan ) ) {
 		return <WooCommerceHomePlaceholder />;
 	}
 
