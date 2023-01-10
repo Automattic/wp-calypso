@@ -1,4 +1,4 @@
-import { WPCOM_FEATURES_WORDADS } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_WORDADS, PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import deepFreeze from 'deep-freeze';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
@@ -44,6 +44,7 @@ import {
 	getCustomizerUrl,
 	getJetpackComputedAttributes,
 	getSiteComputedAttributes,
+	isSiteOnWooExpressTrailPeriod,
 } from '../selectors';
 
 jest.mock( '@automattic/calypso-config', () => {
@@ -3640,6 +3641,44 @@ describe( 'selectors', () => {
 					createState( { created_at: '2020-01-01', jetpack: true, atomic: true } )
 				)
 			).toBe( true );
+		} );
+	} );
+
+	describe( 'isSiteOnWooExpressTrailPeriod()', () => {
+		test( 'Should return true when the e-commerce trail is in the purchases list', () => {
+			const initialPurchases = Object.freeze( [
+				{ ID: 1, product_slug: PLAN_ECOMMERCE_TRIAL_MONTHLY, blog_id: 1337 },
+			] );
+
+			const state = {
+				purchases: {
+					data: initialPurchases,
+					error: null,
+					isFetchingSitePurchases: false,
+					isFetchingUserPurchases: false,
+					hasLoadedSitePurchasesFromServer: false,
+					hasLoadedUserPurchasesFromServer: true,
+				},
+			};
+
+			expect( isSiteOnWooExpressTrailPeriod( state ) ).toBeTruthy();
+		} );
+
+		test( 'Should return false when the e-commerce trail is not in the purchases list', () => {
+			const initialPurchases = Object.freeze( [] );
+
+			const state = {
+				purchases: {
+					data: initialPurchases,
+					error: null,
+					isFetchingSitePurchases: false,
+					isFetchingUserPurchases: false,
+					hasLoadedSitePurchasesFromServer: false,
+					hasLoadedUserPurchasesFromServer: true,
+				},
+			};
+
+			expect( isSiteOnWooExpressTrailPeriod( state ) ).toBeFalsy();
 		} );
 	} );
 } );
