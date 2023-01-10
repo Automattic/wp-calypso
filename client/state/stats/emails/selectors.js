@@ -117,3 +117,17 @@ export function getEmailStatsNormalizedData( state, siteId, postId, period, date
 		? get( state.stats.emails.items, [ siteId, postId, period, statType, date, path ], null )
 		: null;
 }
+
+/**
+ * Returns the email stats for the specified site ID, post ID
+ * This is for alltime stats
+ *
+ * @param  {object}  state   Global state tree
+ * @param  {number}  siteId  Site ID
+ * @param  {number}  postId  Email Id
+ */
+export function getAlltimeStats( state, siteId, postId ) {
+	return state.stats.emails.items
+		? get( state.stats.emails.items, [ siteId, postId, 'alltime', 'opens' ], null )
+		: {};
+}
