@@ -2,6 +2,7 @@ import { ConfettiAnimation } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
+import { Icon, table } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useState, useMemo } from 'react';
@@ -41,7 +42,8 @@ const ThankYouContainer = styled.div`
 	.thank-you__container-header {
 		min-height: auto;
 		padding: 0px;
-		padding-top: 15px;
+		/* padding-top: 15px; */
+		padding-top: 60px;
 	}
 
 	.thank-you__body {
@@ -52,6 +54,10 @@ const ThankYouContainer = styled.div`
 			display: flex;
 			flex-direction: column;
 			align-items: center;
+		}
+
+		div {
+			min-width: auto;
 		}
 	}
 
@@ -75,15 +81,38 @@ const ThankYouContainer = styled.div`
 
 	.thank-you__footer {
 		width: 1072px;
+		padding: 40px;
 		display: flex;
+		justify-content: space-between;
 
 		.thank-you__step {
 			display: flex;
 			flex-direction: column;
+			flex-wrap: wrap;
+			width: 270px;
+			justify-content: space-between;
+
+			h3 {
+				line-height: 24px;
+				font-weight: 500;
+				font-size: 16px;
+				color: var( --studio-gray-100 );
+			}
+
+			p {
+				line-height: 20px;
+				font-size: 14px;
+				color: var( --studio-gray-60 );
+			}
 		}
 
 		.thank-you__step-cta {
 			margin: 0;
+		}
+
+		.thank-you__step-icon {
+			width: 50px;
+			flex-basis: 100%;
 		}
 	}
 `;
@@ -266,6 +295,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		nextStepsClassName: 'thank-you__footer',
 		nextSteps: [
 			{
+				stepIcon: <Icon icon={ table } size={ 20 } />,
 				stepKey: 'thank_you_footer_support_guides',
 				stepTitle: translate( 'Support guides' ),
 				stepDescription: translate(
@@ -278,6 +308,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 				),
 			},
 			{
+				stepIcon: <Icon icon={ table } size={ 20 } />,
 				stepKey: 'thank_you_footer_explore',
 				stepTitle: translate( 'Keep growing' ),
 				stepDescription: translate(
@@ -290,6 +321,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 				),
 			},
 			{
+				stepIcon: <Icon icon={ table } size={ 20 } />,
 				stepKey: 'thank_you_footer_support',
 				stepTitle: translate( 'How can we support?' ),
 				stepDescription: translate(

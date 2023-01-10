@@ -87,14 +87,14 @@ export const ThankYouPluginSection = ( { plugin }: { plugin: any } ) => {
 				) }
 			</PluginSectionContent>
 			<PluginSectionButtons>
+				<Button isPrimary href={ setupURL }>
+					{ translate( 'Manage plugin' ) }
+				</Button>
 				{ documentationURL && (
 					<Button isSecondary href={ documentationURL }>
 						{ translate( 'Plugin guide' ) }
 					</Button>
 				) }
-				<Button isPrimary href={ setupURL }>
-					{ translate( 'Manage plugin' ) }
-				</Button>
 			</PluginSectionButtons>
 		</PluginSectionContainer>
 	);
