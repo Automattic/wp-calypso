@@ -13,7 +13,7 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
-		"directory": "packages/js-utils"
+		"directory": "packages/generate-password"
 	},
 	"files": [
 		"dist",
