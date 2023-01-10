@@ -6,7 +6,7 @@ import { NavbarComponent } from './navbar-component';
 type FocusType = 'Sites' | 'Sidebar';
 
 const selectors = {
-	sidebar: '.sidebar',
+	sidebar: '[role=navigation]',
 	collapsedSidebar: '.is-sidebar-collapsed',
 	focusedLayout: ( focus: FocusType ) => `.layout.focus-${ focus.toLowerCase() }`,
 
