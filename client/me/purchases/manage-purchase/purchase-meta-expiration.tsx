@@ -18,6 +18,23 @@ import {
 } from 'calypso/lib/purchases';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import AutoRenewToggle from './auto-renew-toggle';
+import type {
+	Purchase,
+	GetChangePaymentMethodUrlFor,
+	RenderRenewsOrExpiresOn,
+	RenderRenewsOrExpiresOnLabel,
+	GetManagePurchaseUrlFor,
+} from 'calypso/lib/purchases/types';
+
+interface ExpirationProps {
+	purchase: Purchase;
+	site?: string;
+	siteSlug?: string;
+	getChangePaymentMethodUrlFor: GetChangePaymentMethodUrlFor;
+	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
+	renderRenewsOrExpiresOn: RenderRenewsOrExpiresOn;
+	renderRenewsOrExpiresOnLabel: RenderRenewsOrExpiresOnLabel;
+}
 
 function PurchaseMetaExpiration( {
 	purchase,
@@ -27,9 +44,10 @@ function PurchaseMetaExpiration( {
 	getManagePurchaseUrlFor,
 	renderRenewsOrExpiresOn,
 	renderRenewsOrExpiresOnLabel,
-} ) {
+}: ExpirationProps ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+
 	const isProductOwner = purchase?.userId === useSelector( getCurrentUserId );
 	const isJetpackPurchase = isJetpackPlan( purchase ) || isJetpackProduct( purchase );
 	const isAutorenewalEnabled = purchase?.isAutoRenewEnabled ?? false;
@@ -140,16 +158,16 @@ function PurchaseMetaExpiration( {
 	return (
 		<li>
 			<em className="manage-purchase__detail-label">
-				{ renderRenewsOrExpiresOnLabel( { purchase, translate } ) }
+				{ renderRenewsOrExpiresOnLabel( purchase, translate ) }
 			</em>
 			<span className="manage-purchase__detail">
-				{ renderRenewsOrExpiresOn( {
+				{ renderRenewsOrExpiresOn(
 					moment,
 					purchase,
 					siteSlug,
 					translate,
-					getManagePurchaseUrlFor,
-				} ) }
+					getManagePurchaseUrlFor
+				) }
 			</span>
 		</li>
 	);
