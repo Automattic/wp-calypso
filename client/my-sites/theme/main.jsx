@@ -243,7 +243,11 @@ class ThemeSheet extends Component {
 		this.props.recordTracksEvent( 'calypso_theme_live_demo_preview_click', { type } );
 
 		const { preview } = this.props.options;
-		this.props.setThemePreviewOptions( this.props.defaultOption, this.props.secondaryOption );
+		this.props.setThemePreviewOptions(
+			this.props.themeId,
+			this.props.defaultOption,
+			this.props.secondaryOption
+		);
 		return preview.action( this.props.themeId );
 	};
 
