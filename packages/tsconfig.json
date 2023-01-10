@@ -7,6 +7,7 @@
 	// Reference all TS packages
 	"references": [
 		{ "path": "./accessible-focus" },
+		{ "path": "./block-renderer" },
 		{ "path": "./browser-data-collector" },
 		{ "path": "./calypso-analytics" },
 		{ "path": "./calypso-config" },
@@ -37,6 +38,7 @@
 		{ "path": "./pattern-picker" },
 		{ "path": "./photon" },
 		{ "path": "./plans-grid" },
+		{ "path": "./privacy-toolset" },
 		{ "path": "./search" },
 		{ "path": "./sites" },
 		{ "path": "./shopping-cart" },

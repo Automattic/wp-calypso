@@ -33,6 +33,7 @@ const wpcomV1Endpoints = {
 	statsInsights: 'stats/insights',
 	statsFileDownloads: 'stats/file-downloads',
 	statsAds: 'wordads/stats',
+	statsEmailsOpen: 'stats/opens/emails/summary',
 };
 
 const wpcomV2Endpoints = {

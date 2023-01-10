@@ -589,7 +589,9 @@ class MembershipsSection extends Component {
 					<div>
 						<h3>{ translate( 'Join thousands of others' ) }</h3>
 						{ preventWidows(
-							'Sites that actively promoted their businesses and causes on social media, email, and other platforms have collected tens of thousands of dollars through these blocks.'
+							translate(
+								'Sites that actively promoted their businesses and causes on social media, email, and other platforms have collected tens of thousands of dollars through these blocks.'
+							)
 						) }
 					</div>
 				</div>

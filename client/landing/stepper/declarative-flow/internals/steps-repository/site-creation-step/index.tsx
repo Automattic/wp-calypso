@@ -1,9 +1,11 @@
 import { Site } from '@automattic/data-stores';
 import {
 	ECOMMERCE_FLOW,
-	LINK_IN_BIO_FLOW,
+	WOOEXPRESS_FLOW,
+	isLinkInBioFlow,
 	addPlanToCart,
 	createSiteWithCart,
+	isFreeFlow,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
@@ -23,29 +25,33 @@ import './styles.scss';
 const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } ) {
 	const { submit } = navigation;
 
-	const { domainCartItem, planCartItem, siteAccentColor } = useSelect( ( select ) => ( {
-		domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
-		siteAccentColor: select( ONBOARD_STORE ).getSelectedSiteAccentColor(),
-		planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
-	} ) );
+	const { domainCartItem, planCartItem, siteAccentColor, getSelectedSiteTitle } = useSelect(
+		( select ) => ( {
+			domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
+			siteAccentColor: select( ONBOARD_STORE ).getSelectedSiteAccentColor(),
+			planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
+			getSelectedSiteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
+		} )
+	);
 
 	const username = useSelector( ( state ) => getCurrentUserName( state ) );
 
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
-	const theme = flow === LINK_IN_BIO_FLOW ? 'pub/lynx' : 'pub/lettre';
+	const theme = isLinkInBioFlow( flow ) ? 'pub/lynx' : 'pub/lettre';
 	const isPaidDomainItem = Boolean( domainCartItem?.product_slug );
 
 	// Default visibility is public
 	let siteVisibility = Site.Visibility.PublicIndexed;
 
 	// Link-in-bio flow defaults to "Coming Soon"
-	if ( flow === LINK_IN_BIO_FLOW ) {
+	if ( isLinkInBioFlow( flow ) || isFreeFlow( flow ) ) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
 	}
 
-	// Ecommerce flow defaults to Private
-	if ( flow === ECOMMERCE_FLOW ) {
+	// Certain flows should default to private.
+	const privateFlows = [ ECOMMERCE_FLOW, WOOEXPRESS_FLOW ];
+	if ( privateFlows.includes( flow || '' ) ) {
 		siteVisibility = Site.Visibility.Private;
 	}
 
@@ -56,6 +62,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 	const isManageSiteFlow = Boolean(
 		wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow
 	);
+	const blogTitle = isFreeFlow( 'free' ) ? getSelectedSiteTitle : '';
 
 	async function createSite() {
 		if ( isManageSiteFlow ) {
@@ -71,7 +78,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 			isPaidDomainItem,
 			theme,
 			siteVisibility,
-			'',
+			blogTitle,
 			siteAccentColor,
 			true,
 			username,

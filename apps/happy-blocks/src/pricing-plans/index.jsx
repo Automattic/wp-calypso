@@ -19,11 +19,14 @@ const blockAttributes = {
 	domain: {
 		type: 'string',
 	},
+	planTypeOptions: {
+		type: 'array',
+		default: [],
+	},
 };
 
 function registerBlocks() {
 	registerBlockType( 'happy-blocks/pricing-plans', {
-		apiVersion: 2,
 		title: __( 'Upgrade Pricing Plan', 'happy-blocks' ),
 		icon: 'money-alt',
 		category: 'embed',

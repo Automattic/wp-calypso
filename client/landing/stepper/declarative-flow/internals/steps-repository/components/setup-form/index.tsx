@@ -114,7 +114,7 @@ const SetupForm = ( {
 				/>
 			</FormFieldset>
 			{ children }
-			<Button className="setup-form__submit" disabled={ isLoading } primary type="submit">
+			<Button className="setup-form__submit" disabled={ isLoading } type="submit">
 				{ isLoading ? __( 'Loading' ) : __( 'Continue' ) }
 			</Button>
 			{ isSubmitError && (

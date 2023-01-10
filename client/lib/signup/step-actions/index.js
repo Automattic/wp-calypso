@@ -324,7 +324,7 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 		.catch( ( error ) => callback( [ error ] ) );
 }
 
-function addDIFMLiteToCart( callback, dependencies, step, reduxStore ) {
+function addDIFMLiteProductToCart( callback, dependencies, step, reduxStore ) {
 	const { selectedDesign, selectedSiteCategory, isLetUsChooseSelected, siteSlug } = dependencies;
 	const extra = buildDIFMCartExtrasObject( dependencies );
 	const cartItem = {
@@ -346,13 +346,12 @@ function addDIFMLiteToCart( callback, dependencies, step, reduxStore ) {
 }
 
 /**
- * If the user chooses DIFM Lite for a new site, then
- * create a new site, call the `setDesignOnSite` function (see below)
- * and add the DIFM Lite product to the cart.
- * If the user chooses DIFM Lite for an existing site, then
- * just add the DIFM Lite product to the cart.
+ * If the user chooses DIFM Lite (BBE) for a new site, then
+ * create a new site, and add the DIFM Lite (BBE) product to the cart.
+ * If the user chooses DIFM Lite (BBE) for an existing site, then
+ * just add the DIFM Lite (BBE) product to the cart.
  */
-export function setDIFMLiteDesign( callback, dependencies, step, reduxStore ) {
+export function createSiteAndAddDIFMToCart( callback, dependencies, step, reduxStore ) {
 	const signupDependencies = getSignupDependencyStore( reduxStore.getState() );
 	const { newOrExistingSiteChoice } = signupDependencies;
 
@@ -361,26 +360,18 @@ export function setDIFMLiteDesign( callback, dependencies, step, reduxStore ) {
 	if ( 'new-site' === newOrExistingSiteChoice ) {
 		let siteSlug = null;
 
-		const setDesignOnSiteCallback = ( error ) => {
-			if ( error ) {
-				callback( error );
-				return;
-			}
-			addDIFMLiteToCart( callback, { ...providedDependencies, siteSlug }, step, reduxStore );
-		};
-
 		const createSiteWithCartCallback = ( error, result ) => {
 			if ( error ) {
 				callback( error );
 				return;
 			}
 			siteSlug = result.siteSlug;
-			setDesignOnSite( setDesignOnSiteCallback, { ...providedDependencies, siteSlug } );
+			addDIFMLiteProductToCart( callback, { ...providedDependencies, siteSlug }, step, reduxStore );
 		};
 
 		createSiteWithCart( createSiteWithCartCallback, providedDependencies, step, reduxStore );
 	} else {
-		addDIFMLiteToCart( callback, providedDependencies, step, reduxStore );
+		addDIFMLiteProductToCart( callback, providedDependencies, step, reduxStore );
 	}
 }
 
@@ -931,65 +922,6 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 			fetchSitesAndUser( siteSlug, () => callback( undefined, providedDependencies ), reduxStore );
 		} else {
 			callback( isEmpty( errors ) ? undefined : [ errors ], providedDependencies );
-		}
-	} );
-}
-
-// Similar to createSite but also sets the site title and description
-export function createVideoPressSite( callback, dependencies, stepData, reduxStore ) {
-	const { site, siteTitle = '', siteDescription = '' } = stepData;
-	const locale = getLocaleSlug();
-
-	const data = {
-		blog_name: site,
-		blog_title: siteTitle,
-		public: Visibility.PublicNotIndexed,
-		options: {
-			theme: 'pub/twentytwentytwo',
-			site_vertical_name: 'videomaker',
-			timezone_string: guessTimezone(),
-			wpcom_public_coming_soon: 1,
-		},
-		validate: false,
-		locale,
-		lang_id: getLanguage( locale ).value,
-		client_id: config( 'wpcom_signup_id' ),
-		client_secret: config( 'wpcom_signup_key' ),
-	};
-
-	wpcom.req.post( '/sites/new', data, function ( errors, response ) {
-		let providedDependencies;
-		let siteSlug;
-
-		if ( !! response && response.blog_details ) {
-			const parsedBlogURL = getUrlParts( response.blog_details.url );
-			siteSlug = parsedBlogURL.hostname;
-
-			providedDependencies = { siteSlug };
-		}
-
-		const callbackWithErrorChecking = ( e ) =>
-			callback( isEmpty( e ) ? undefined : [ e ], providedDependencies );
-
-		if ( isUserLoggedIn( reduxStore.getState() ) && isEmpty( errors ) ) {
-			fetchSitesAndUser(
-				siteSlug,
-				() => {
-					if ( siteDescription ) {
-						wpcom.req.post(
-							`/sites/${ siteSlug }/settings`,
-							{ apiVersion: '1.4' },
-							{ blogdescription: siteDescription },
-							callbackWithErrorChecking
-						);
-					} else {
-						callbackWithErrorChecking( undefined );
-					}
-				},
-				reduxStore
-			);
-		} else {
-			callbackWithErrorChecking( errors );
 		}
 	} );
 }

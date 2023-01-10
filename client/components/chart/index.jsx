@@ -110,11 +110,11 @@ function Chart( {
 	// Memoize data calculations to avoid performing them too often.
 	const { chartData, isEmptyChart, yMax } = useMemo( () => {
 		const nextData = data.length <= maxBars ? data : data.slice( 0 - maxBars );
-		const nextVals = data.map( ( { value } ) => value );
+		const nextVals = nextData.map( ( { value } ) => value );
 
 		return {
 			chartData: nextData,
-			isEmptyChart: Boolean( nextVals.length && ! nextVals.some( ( a ) => a > 0 ) ),
+			isEmptyChart: Boolean( ! nextVals.some( ( a ) => a > 0 ) ),
 			yMax: getYAxisMax( nextVals ),
 		};
 	}, [ data, maxBars, hasResized ] );

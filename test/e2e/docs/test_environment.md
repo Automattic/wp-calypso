@@ -28,7 +28,7 @@ For example:
 VIEWPORT_NAME=mobile yarn jest specs/<etc>
 ```
 
-The list of supported environment variables are found in [`env-variables.ts`](../../../packages/calypso-e2e//src/env-variables.ts). This file also adds static type checking and is the most up-to-date resource. The [Envionment Variables](./environment_variables.md) page may be out of date but will contain explanations of what the individual variables mean.
+The list of supported environment variables are found in [`env-variables.ts`](../../../packages/calypso-e2e//src/env-variables.ts). This file also adds static type checking and is the most up-to-date resource. The [Environment Variables](./environment_variables.md) page may be out of date but will contain explanations of what the individual variables mean.
 
 To use:
 
@@ -48,19 +48,27 @@ if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 
 Within `@automattic/calypso-e2e/src/secrets` is an encrypted file that holds various sensitive secrets, such as API keys and test account information. This must be decrypted prior to use.
 
-To decrypt the secrets, set the environment variable `E2E_SECRETS_KEY` to the "Calypso E2E Config decode key" from the Automattic secret store.
+**Automatticians**: please refer to the [Field Guide page](PCYsg-vnR-p2) for more information.
 
-```
+**Trialmatticians**: please contact a team member in your Slack chat for the decryption key.
+
+First set the environment variable `E2E_SECRETS_KEY` to the "Calypso E2E Config decode key" from the Automattic secret store.
+
+```bash
 export E2E_SECRETS_KEY='<Calypso E2E Config decode key from the secret store>'
 ```
 
-Then, either here or in the `@automattic/calypso-e2e` workspace, run `yarn decrypt-secrets`.
+Then run the following command to decrypt the secrets:
 
-The decrypted version of these secrets must **NEVER be committed.** There are .gitignore rules to protect against this, but be vigilant nonetheless!
+```bash
+# If within test/e2e directory
+yarn decrypt-secrets
 
-**Automatticians**: please refer to the Field Guide page for instructions on decrypting/encrypting this file.
+# If at repo root
+yarn workspace wp-e2e-tests decrypt-secrets
+```
 
-**Trialmatticians**: please contact a team member in your Slack chat for the decryption key.
+The decrypted file must **NEVER be committed.** There are `.gitignore` rules to protect against this, but be vigilant nonetheless!
 
 ### Using the Secrets
 
@@ -71,7 +79,8 @@ To use:
 ```typescript
 import { SecretsManager } from '@automattic/calypso-e2e';
 
-// Later
+// Later in the spec
 
-const x = SecretsManager.secrets.keyName;
+const credentials = SecretsManager.secrets.testAccounts.<test_account_name>;
+
 ```

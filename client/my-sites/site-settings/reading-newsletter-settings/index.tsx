@@ -1,10 +1,17 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { EmailsTextSetting } from './EmailsTextSetting';
+import { ExcerptSetting } from './ExcerptSetting';
 import { FeaturedImageEmailSetting } from './FeaturedImageEmailSetting';
 
 type Fields = {
-	featured_image_email_enabled?: boolean;
+	wpcom_featured_image_in_email?: boolean;
+	wpcom_subscription_emails_use_excerpt?: boolean;
+	subscription_options?: {
+		invitation: string;
+		comment_follow: string;
+	};
 };
 
 type NewsletterSettingsSectionProps = {
@@ -13,6 +20,7 @@ type NewsletterSettingsSectionProps = {
 	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
 	disabled?: boolean;
 	isSavingSettings: boolean;
+	updateFields: ( fields: Fields ) => void;
 };
 
 export const NewsletterSettingsSection = ( {
@@ -21,9 +29,14 @@ export const NewsletterSettingsSection = ( {
 	handleSubmitForm,
 	disabled,
 	isSavingSettings,
+	updateFields,
 }: NewsletterSettingsSectionProps ) => {
 	const translate = useTranslate();
-	const { featured_image_email_enabled } = fields;
+	const {
+		wpcom_featured_image_in_email,
+		wpcom_subscription_emails_use_excerpt,
+		subscription_options,
+	} = fields;
 
 	return (
 		<>
@@ -35,10 +48,24 @@ export const NewsletterSettingsSection = ( {
 				disabled={ disabled }
 				isSaving={ isSavingSettings }
 			/>
-			<Card>
+			<Card className="site-settings__card">
+				<EmailsTextSetting
+					value={ subscription_options }
+					updateFields={ updateFields }
+					disabled={ disabled }
+				/>
+			</Card>
+			<Card className="site-settings__card">
 				<FeaturedImageEmailSetting
-					value={ featured_image_email_enabled }
+					value={ wpcom_featured_image_in_email }
 					handleToggle={ handleToggle }
+					disabled={ disabled }
+				/>
+			</Card>
+			<Card className="site-settings__card">
+				<ExcerptSetting
+					value={ wpcom_subscription_emails_use_excerpt }
+					updateFields={ updateFields }
 					disabled={ disabled }
 				/>
 			</Card>

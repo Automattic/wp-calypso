@@ -26,11 +26,16 @@ const severityClassNames = ( severity: number ) => {
 // This should be temporary since this data should be coming from the api
 // and not something that we should change to accommodate the results.
 const getThreatMessage = ( threat: Threat ) => {
-	const { filename, extension = { slug: 'unknown', version: 'n/a' } } = threat;
+	const { filename, extension = { slug: 'unknown', version: 'n/a' }, version } = threat;
 	const basename = filename ? filename.replace( /.*\//, '' ) : '';
 
 	switch ( getThreatType( threat ) ) {
 		case 'core':
+			return translate( 'Vulnerable WordPress version: %s', {
+				args: [ version ],
+			} );
+
+		case 'core_file':
 			return translate( 'Infected core file: %s', {
 				args: [ basename ],
 			} );

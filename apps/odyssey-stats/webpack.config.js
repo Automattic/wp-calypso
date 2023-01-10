@@ -110,7 +110,25 @@ module.exports = {
 			useDefaults: false,
 			requestToHandle: defaultRequestToHandle,
 			requestToExternal: ( request ) => {
-				if ( request !== 'react' && request !== 'react-dom' ) {
+				if (
+					! [
+						'lodash',
+						'lodash-es',
+						'react',
+						'react-dom',
+						'@wordpress/api-fetch',
+						'@wordpress/components',
+						'@wordpress/compose',
+						'@wordpress/element',
+						'@wordpress/html-entities',
+						'@wordpress/i18n',
+						'@wordpress/is-shallow-equal',
+						'@wordpress/polyfill',
+						'@wordpress/primitives',
+						'@wordpress/url',
+						'@wordpress/warning',
+					].includes( request )
+				) {
 					return;
 				}
 				return defaultRequestToExternal( request );
@@ -125,7 +143,8 @@ module.exports = {
 		),
 		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
 		new ExtensiveLodashReplacementPlugin(),
-		new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
+		new InlineConstantExportsPlugin( /\/client\/state\/action-types.[tj]s$/ ),
+		new InlineConstantExportsPlugin( /\/client\/state\/themes\/action-types.[tj]s$/ ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 		// Repalce the `packages/components/src/gridicon/index.tsx` with a replacement that does not enqueue the SVG sprite.
 		// The sprite is loaded separately in Jetpack.

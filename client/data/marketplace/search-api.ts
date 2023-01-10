@@ -114,6 +114,27 @@ export function search( options: SearchParams ) {
 	);
 }
 
+export function searchBySlug(
+	slug: string,
+	locale: string,
+	options?: { fields?: Array< string > | undefined; group_id?: string }
+) {
+	const params = {
+		lang: locale,
+		filter: getFilterbySlug( slug ),
+		fields: options?.fields ?? RETURNABLE_FIELDS,
+		group_id: options?.group_id ?? 'wporg',
+	};
+	const queryString = params;
+
+	return wpcom.req.get(
+		{
+			path: marketplaceSearchApiBase,
+		},
+		{ ...queryString, apiVersion }
+	);
+}
+
 function getFilterbyAuthor( author: string ): {
 	bool: {
 		must: { term: object }[];
@@ -122,6 +143,18 @@ function getFilterbyAuthor( author: string ): {
 	return {
 		bool: {
 			must: [ { term: { 'plugin.author.raw': author } } ],
+		},
+	};
+}
+
+function getFilterbySlug( slug: string ): {
+	bool: {
+		must: { term: object }[];
+	};
+} {
+	return {
+		bool: {
+			must: [ { term: { slug } } ],
 		},
 	};
 }

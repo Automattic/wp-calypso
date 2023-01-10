@@ -1,7 +1,9 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/fonts";
 @import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/breakpoints";
 
 @mixin screen-reader-text() {
 	border: 0;
@@ -111,96 +113,38 @@ $sidebar-width-desktop: 324px;
 	.components-base-control__label {
 		@include screen-reader-text();
 	}
-}
 
-.pattern-selector-control__options {
-	display: grid;
-	grid-template-columns: 1fr;
-	column-gap: 1.5em;
-	row-gap: 3em;
+	.block-editor-block-patterns-list {
+		column-count: 1;
+		column-gap: 1.5em;
+		row-gap: 3em;
+		margin-top: 20px;
 
-	@media screen and ( min-width: $breakpoint-mobile ) {
-		margin-top: 0;
-		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); // allow grid to take over number of cols on large screens
-	}
+		@include break-small {
+			margin-top: 0;
+		}
 
-	@media screen and ( min-width: $breakpoint-huge ) {
-		grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-	}
-	@media screen and ( min-width: $breakpoint-xhuge ) {
-		grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-	}
-}
+		@include break-large {
+			column-count: 2;
+		}
 
-.pattern-selector-item__label {
-	display: block;
-	width: 100%;
-	text-align: center;
-	border: none;
-	cursor: pointer;
-	appearance: none;
-	padding: 0;
-	overflow: hidden;
-	background-color: $pattern-selector-empty-background;
-	position: relative;
-	transform: translateZ(0); // Fix for Safari rounded border overflow (1/2).
-	color: $pattern-selector-link-text;
-
-	&:focus {
-		box-shadow:
-			0 0 0 1px $pattern-selector-empty-background,
-			0 0 0 3px $pattern-selector-focus-color;
-		// Windows High Contrast mode will show this outline, but not the box-shadow.
-		outline: 2px solid transparent;
-	}
-
-	&:hover {
-		color: $pattern-selector-link-hover-text;
-
-		.pattern-selector-item__preview-wrap {
-			border: solid 1px $pattern-selector-hover-border-color;
+		@include break-huge {
+			column-count: 3;
 		}
 	}
-}
 
-.pattern-selector-item__preview-wrap {
-	width: 100%;
-	display: block;
-	margin: 0 auto;
-	background: $pattern-selector-empty-background;
-	border-radius: 0;
-	overflow: hidden;
-	height: 0;
-	// Aspect ratio of boxes. Height will be 65% of width.
-	padding-top: 65%;
-	position: relative;
-	opacity: 1;
-	transform: translateZ(0); // Fix for Safari rounded border overflow (2/2).
-	border: solid 1px $pattern-selector-border-color;
-	margin-bottom: 1em;
-
-	&.is-rendering {
-		opacity: 0.5;
+	.block-editor-block-patterns-list__list-item {
+		break-inside: avoid-column;
 	}
-}
 
-// Correct position for child elements inside preview-wrap
-.pattern-selector-item__preview-wrap-inner-position {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-}
+	.block-editor-block-preview__container {
+		min-height: 100px;
+		border: solid 1px #dcdcde;
+	}
 
-.pattern-selector-item__media {
-	width: 100%;
-	height: 100%;
-	display: block;
-	position: absolute;
-	top: 0;
-	left: 0;
-	object-fit: cover;
+	.block-editor-block-preview__content {
+		width: 100%;
+	}
 }
 
 .page-pattern-modal__sidebar {

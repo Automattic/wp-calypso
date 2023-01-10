@@ -15,7 +15,6 @@
 		justify-content: center;
 		align-items: center;
 		opacity: 1;
-		-webkit-animation: delay-fade-in 2s 1; // Animating in this silly way to have the graphic actually be visible once the animation is completed
 	}
 
 	&.is-chart {
@@ -24,18 +23,6 @@
 }
 
 // Module Placeholder
-
-@keyframes delay-fade-in {
-	0%,
-	66% {
-		opacity: 0;
-	}
-
-	100% {
-		opacity: 1;
-	}
-}
-
 .stats-module.is-loading {
 	// Hide elements
 	.module-header .site-icon,

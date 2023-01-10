@@ -28,7 +28,7 @@
 			{
 				"/^font-size$|^font$/": [ "rem" ],
 				"line-height": [ "px" ],
-				"/radius$/": [ "px" ]
+				"/radius$/": [ "px", "%" ]
 			},
 			{ "ignore": [ "inside-function" ] }
 		],

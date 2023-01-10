@@ -64,7 +64,9 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 
 	it( 'Post a comment', async function () {
 		commentsComponent = new CommentsComponent( page );
-		await commentsComponent.postComment( comment );
+		// Same as the Like button below, the comment box is sometimes not
+		// available initially. Let's retry if that happens.
+		await ElementHelper.reloadAndRetry( page, () => commentsComponent.postComment( comment ) );
 	} );
 
 	it( 'Like the comment', async function () {

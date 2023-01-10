@@ -32,6 +32,7 @@ export const siteColumns = [
 	{
 		key: 'monitor',
 		title: translate( 'Monitor' ),
+		className: 'min-width-100px',
 	},
 	{
 		key: 'plugin',
@@ -361,6 +362,7 @@ const formatMonitorData = ( site: Site ) => {
 		status: '',
 		type: 'monitor',
 		error: false,
+		settings: site.monitor_settings,
 	};
 	if ( ! site.monitor_active ) {
 		monitor.status = 'disabled';
@@ -412,3 +414,28 @@ export const getProductSlugFromProductType = ( type: string ): string | undefine
 
 	return slugs[ type ];
 };
+
+export const availableNotificationDurations = [
+	{
+		time: 5,
+		label: translate( 'After 5 minutes' ),
+	},
+	{
+		time: 15,
+		label: translate( 'After 15 minutes' ),
+	},
+	{
+		time: 30,
+		label: translate( 'After 30 minutes' ),
+	},
+	{
+		time: 45,
+		label: translate( 'After 45 minutes' ),
+	},
+	{
+		time: 60,
+		label: translate( 'After 1 hour' ),
+	},
+];
+
+export const mobileAppLink = 'https://jetpack.com/mobile/';

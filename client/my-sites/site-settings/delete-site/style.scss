@@ -58,3 +58,8 @@ h1.delete-site__confirm-header {
 .delete-site__target-domain {
 	color: var(--color-error);
 }
+
+.delete-site__cannot-delete-message {
+	font-size: $font-body-small;
+	color: var(--color-error);
+}

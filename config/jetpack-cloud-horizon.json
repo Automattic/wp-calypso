@@ -41,11 +41,11 @@
 		"jetpack/pricing-add-boost-social": true,
 		"jetpack/pricing-page": true,
 		"jetpack/pricing-page-annual-only": true,
-		"jetpack/pricing-page-rework-v1": true,
 		"jetpack/search-product": true,
 		"jetpack/server-credentials-advanced-flow": true,
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack/standalone-plugin-onboarding-update-v1": true,
+		"jetpack/zendesk-chat-for-logged-in-users": true,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/query-selected-editor": false,
@@ -55,7 +55,8 @@
 		"oauth": false,
 		"purchases/new-payment-methods": true,
 		"site-indicator": false,
-		"upgrades/redirect-payments": true
+		"upgrades/redirect-payments": true,
+		"jetpack/pricing-page-cart": false
 	},
 	"enable_all_sections": false,
 	"sections": {
@@ -65,6 +66,7 @@
 		"jetpack-cloud-agency-dashboard": true,
 		"jetpack-cloud-agency-signup": true,
 		"jetpack-cloud-auth": false,
+		"jetpack-cloud-features-comparison": true,
 		"jetpack-cloud-partner-portal": true,
 		"jetpack-cloud-plugin-management": true,
 		"jetpack-cloud-pricing": true,

@@ -41,7 +41,7 @@ const WebServerSettingsCard = ( {
 	const [ selectedStaticFile404, setSelectedStaticFile404 ] = useState( '' );
 
 	const getGeoAffinityContent = () => {
-		if ( isGettingGeoAffinity || 'auto' === geoAffinity ) {
+		if ( isGettingGeoAffinity || ! geoAffinity ) {
 			return;
 		}
 

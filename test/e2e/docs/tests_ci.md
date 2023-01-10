@@ -64,8 +64,9 @@ The Pre-Release E2E tests are connected directly to the Calypso Deploy page and 
 
 In addition to build configurations that are automatically triggered based on branch workflow, there exists build configurations that run on a regular schedule though **only on `trunk`**!
 
-| Build configuration name            | Frequency  |
-| ----------------------------------- | ---------- |
-| WPCOM/Gutenberg E2E Tests (mobile)  | once a day |
-| WPCOM/Gutenberg E2E Tests (desktop) | once a day |
-| Quarantined E2E                     | once a day |
+| Build configuration name            | Frequency          |
+| ----------------------------------- | ------------------ |
+| WPCOM/Gutenberg E2E Tests (mobile)  | once a day         |
+| WPCOM/Gutenberg E2E Tests (desktop) | once a day         |
+| Quarantined E2E                     | once a day         |
+| Authentication E2E                  | once every 6 hours |

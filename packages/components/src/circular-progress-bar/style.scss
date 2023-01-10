@@ -1,0 +1,36 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.circular__progress-bar {
+	position: relative;
+
+	@include break-mobile {
+		// mobile: 40px, desktop: 48px (1.2x scale)
+		transform: scale(1.2);
+	}
+
+	&-empty-circle {
+		stroke: var(--studio-gray-5);
+	}
+
+	&-fill-circle {
+		stroke: var(--studio-blue-50);
+		transform-origin: center;
+		transform: rotate(-90deg);
+		stroke-linecap: round;
+	}
+
+	&-text {
+		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		font-size: 0.75rem;
+		letter-spacing: 0.05em;
+
+		// center the text inside the circle
+		position: absolute;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		top: 50%;
+
+	}
+}

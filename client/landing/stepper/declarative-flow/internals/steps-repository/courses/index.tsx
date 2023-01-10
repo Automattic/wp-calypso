@@ -2,6 +2,7 @@ import { StepContainer } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
+import DocumentHead from 'calypso/components/data/document-head';
 import VideosUi from 'calypso/components/videos-ui';
 import { COURSE_SLUGS, useCourseData } from 'calypso/data/courses';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -23,35 +24,38 @@ const CoursesStep: Step = function CoursesStep( { navigation } ) {
 	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 
 	return (
-		<StepContainer
-			stepName="courses"
-			goBack={ goBack }
-			goNext={ () => submit?.() }
-			isFullLayout
-			hideFormattedHeader
-			skipLabelText={ translate( 'Draft your first post' ) }
-			nextLabelText={ translate( 'Start writing' ) }
-			hideSkip={ hideSkip }
-			hideNext={ ! hideSkip }
-			skipButtonAlign="top"
-			stepContent={
-				<VideosUi
-					courseSlug={ courseSlug }
-					areVideosTranslated={ false }
-					HeaderBar={ () => null }
-					FooterBar={ () => (
-						<CoursesFooter
-							isCourseComplete={ isCourseComplete }
-							onStartWriting={ () => submit?.() }
-						/>
-					) }
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-ignore - It's not recognizing the property as optional
-					intent={ getIntent() }
-				/>
-			}
-			recordTracksEvent={ recordTracksEvent }
-		/>
+		<>
+			<DocumentHead title={ translate( 'Watch Blogging videos' ) } />
+			<StepContainer
+				stepName="courses"
+				goBack={ goBack }
+				goNext={ () => submit?.() }
+				isFullLayout
+				hideFormattedHeader
+				skipLabelText={ translate( 'Draft your first post' ) }
+				nextLabelText={ translate( 'Start writing' ) }
+				hideSkip={ hideSkip }
+				hideNext={ ! hideSkip }
+				skipButtonAlign="top"
+				stepContent={
+					<VideosUi
+						courseSlug={ courseSlug }
+						areVideosTranslated={ false }
+						HeaderBar={ () => null }
+						FooterBar={ () => (
+							<CoursesFooter
+								isCourseComplete={ isCourseComplete }
+								onStartWriting={ () => submit?.() }
+							/>
+						) }
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						// @ts-ignore - It's not recognizing the property as optional
+						intent={ getIntent() }
+					/>
+				}
+				recordTracksEvent={ recordTracksEvent }
+			/>
+		</>
 	);
 };
 

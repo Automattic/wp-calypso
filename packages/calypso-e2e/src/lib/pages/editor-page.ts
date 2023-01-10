@@ -527,7 +527,7 @@ export class EditorPage {
 			this.editorSettingsSidebarComponent.clickTab( 'Page' ),
 			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
 		] );
-		await this.editorSettingsSidebarComponent.expandSection( 'Permalink' );
+		await this.editorSettingsSidebarComponent.expandSection( 'Summary' );
 		await this.editorSettingsSidebarComponent.enterUrlSlug( slug );
 	}
 

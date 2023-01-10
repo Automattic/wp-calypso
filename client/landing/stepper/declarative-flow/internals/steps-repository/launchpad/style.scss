@@ -136,6 +136,7 @@
 
 .newsletter,
 .link-in-bio:not(.domains),
+.link-in-bio-tld:not(.domains),
 .free {
 	.step-container {
 		.step-container__content h1,
@@ -278,35 +279,6 @@
 	@include break-large {
 		display: block;
 	}
-}
-
-// Launchpad - Progress Bar
-
-.launchpad__progress-bar-container {
-	margin-bottom: 32px;
-
-	.launchpad__progress-bar.progress-bar.is-compact {
-		.progress-bar__progress {
-			/* stylelint-disable-next-line scales/radii */
-			border-radius: 4.5px;
-		}
-	}
-}
-
-.launchpad__progress-value {
-	font-size: $font-body-extra-small;
-	font-weight: 700;
-	margin-right: 10px;
-}
-
-.launchpad__progress-bar {
-	width: 120px;
-	vertical-align: middle;
-}
-
-.launchpad__progress-bar.progress-bar.is-compact {
-	background-color: #dcdcde;
-	position: relative;
 }
 
 // Launchpad - Checklist
@@ -598,5 +570,21 @@
 		@include break-medium {
 			font-size: $font-title-large;
 		}
+	}
+}
+
+.launchpad__progress-bar-container {
+	margin-bottom: 32px;
+}
+
+// Free flow
+.free.launchpad {
+	padding: 0;
+	.signup-header {
+		display: none;
+	}
+
+	.launchpad__sidebar-header-flow-name {
+		display: none;
 	}
 }

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	JETPACK_LEGACY_PLANS_MAX_PLUGIN_VERSION,
 	PLAN_JETPACK_FREE,
@@ -39,11 +38,7 @@ const StandardPlansHeader = ( { shouldShowPlanRecommendation, siteId }: Standard
 		) }
 		{ ! shouldShowPlanRecommendation && (
 			<h2 className="jetpack-plans__pricing-header">
-				{ preventWidows(
-					! isEnabled( 'jetpack/pricing-page-rework-v1' )
-						? translate( 'Security, performance, and marketing tools made for WordPress' )
-						: translate( 'Best-in-class products for your WordPress site' )
-				) }
+				{ preventWidows( translate( 'Best-in-class products for your WordPress site' ) ) }
 			</h2>
 		) }
 	</>

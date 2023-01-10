@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import domainOnlyFallbackMenu from 'calypso/my-sites/sidebar/static-data/domain-only-fallback-menu';
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
+import { canAnySiteHavePlugins } from 'calypso/state/selectors/can-any-site-have-plugins';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -54,11 +55,13 @@ const useSiteMenuItems = () => {
 
 	const shouldShowAddOnsInFallbackMenu = isEnabled( 'my-sites/add-ons' ) && ! isAtomic;
 
+	const hasSiteWithPlugins = useSelector( canAnySiteHavePlugins );
+
 	/**
 	 * When no site domain is provided, lets show only menu items that support all sites screens.
 	 */
 	if ( ! siteDomain ) {
-		return allSitesMenu();
+		return allSitesMenu( { showManagePlugins: hasSiteWithPlugins } );
 	}
 
 	/**

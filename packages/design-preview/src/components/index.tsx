@@ -13,7 +13,7 @@ interface PreviewProps {
 	onSelectVariation: ( variation: StyleVariation ) => void;
 	actionButtons: React.ReactNode;
 	recordDeviceClick: ( device: string ) => void;
-	showGlobalStylesPremiumBadge: () => React.ReactNode;
+	showGlobalStylesPremiumBadge: boolean;
 }
 
 const INJECTED_CSS = `body{ transition: background-color 0.2s linear, color 0.2s linear; };`;

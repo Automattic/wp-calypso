@@ -161,7 +161,7 @@ describe(
 				it( 'Add "Two column about me layout" page template', async function () {
 					const editorFrame = await editorPage.getEditorHandle();
 					const pageTemplateModalComponent = new PageTemplateModalComponent( editorFrame, page );
-					await pageTemplateModalComponent.selectTemplateCatagory( 'About' );
+					await pageTemplateModalComponent.selectTemplateCategory( 'About' );
 					await pageTemplateModalComponent.selectTemplate( 'Two column about me layout' );
 				} );
 
