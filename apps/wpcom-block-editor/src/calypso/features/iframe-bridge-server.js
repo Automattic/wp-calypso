@@ -482,15 +482,13 @@ function handleCloseEditor( calypsoPort ) {
 					return null;
 				}
 
-				const { pathname } = new URL( closeUrl );
-
 				return (
 					<SiteEditorDashboardFill>
 						<NavigationBackButton
 							backButtonLabel={ __( 'Dashboard' ) }
 							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 							className="edit-site-navigation-panel__back-to-dashboard"
-							href={ pathname ? pathname : closeUrl }
+							href={ closeUrl }
 							onClick={ dispatchAction }
 						/>
 					</SiteEditorDashboardFill>
