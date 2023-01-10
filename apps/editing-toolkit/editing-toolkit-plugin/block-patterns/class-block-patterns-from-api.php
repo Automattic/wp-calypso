@@ -117,26 +117,20 @@ class Block_Patterns_From_API {
 					$viewport_width = $viewport_width < 320 ? 320 : $viewport_width;
 					$pattern_name   = self::PATTERN_NAMESPACE . $pattern['name'];
 					$block_types    = $this->utils->maybe_get_pattern_block_types_from_pattern_meta( $pattern );
-					$pattern_props  = array(
-						'title'         => $pattern['title'],
-						'description'   => $pattern['description'],
-						'content'       => $pattern['html'],
-						'viewportWidth' => $viewport_width,
-						'categories'    => array_keys(
-							$pattern['categories']
-						),
-						'isPremium'     => $is_premium,
-						'blockTypes'    => $block_types,
-					);
-
-					$post_types = $this->utils->get_pattern_post_types_from_pattern( $pattern_props );
-					if ( $post_types ) {
-						$pattern_props['postTypes'] = $post_types;
-					}
 
 					$results[ $pattern_name ] = register_block_pattern(
 						$pattern_name,
-						$pattern_props
+						array(
+							'title'         => $pattern['title'],
+							'description'   => $pattern['description'],
+							'content'       => $pattern['html'],
+							'viewportWidth' => $viewport_width,
+							'categories'    => array_keys(
+								$pattern['categories']
+							),
+							'isPremium'     => $is_premium,
+							'blockTypes'    => $block_types,
+						)
 					);
 				}
 			}
