@@ -407,20 +407,27 @@ export default class WebPreviewContent extends Component {
 					) }
 					{ 'seo' !== this.state.device && (
 						<div
-							onMouseEnter={ () => this.setState( { showIFrameOverlay: true } ) }
-							onMouseLeave={ () => this.setState( { showIFrameOverlay: false } ) }
+							onMouseEnter={ () => {
+								if ( this.props.isLaunchpad ) {
+									this.setState( { showIFrameOverlay: true } );
+								}
+							} }
+							onMouseLeave={ () => {
+								if ( this.props.isLaunchpad ) {
+									this.setState( { showIFrameOverlay: false } );
+								}
+							} }
 							className={ classNames( 'web-preview__frame-wrapper', {
 								'is-resizable': ! this.props.isModalWindow,
 							} ) }
 						>
-							{ /* eslint-disable jsx-a11y/mouse-events-have-key-events */ }
 							<iframe
 								ref={ this.setIframeInstance }
 								className="web-preview__frame"
 								style={ {
 									...this.state.iframeStyle,
 									height: this.state.viewport?.height,
-									pointerEvents: 'none',
+									pointerEvents: this.props.isLaunchpad ? 'none' : 'all',
 								} }
 								src="about:blank"
 								onLoad={ () => this.setLoaded( 'iframe-onload' ) }
@@ -527,6 +534,10 @@ WebPreviewContent.propTypes = {
 	inlineCss: PropTypes.string,
 	// Uses the CSS selector to scroll to it
 	scrollToSelector: PropTypes.string,
+	// Allow specific functionality for Launchpad
+	isLaunchpad: PropTypes.bool,
+	// Show Edit button on hover
+	showIFrameOverlay: PropTypes.bool,
 };
 
 WebPreviewContent.defaultProps = {

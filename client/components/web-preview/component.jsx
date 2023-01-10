@@ -63,6 +63,8 @@ export class WebPreviewModal extends Component {
 		fixedViewportWidth: PropTypes.number,
 		// Prevents tabbing into the iframe.
 		disableTabbing: PropTypes.bool,
+		// Allow specific functionality for Launchpad
+		isLaunchpad: PropTypes.bool,
 	};
 
 	static defaultProps = {
