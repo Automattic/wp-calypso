@@ -96,15 +96,7 @@ export async function recordOrder( cart, orderId ) {
 
 	// Twitter
 	if ( mayWeTrackByTracker( 'twitter' ) ) {
-		const params = [
-			'event',
-			'tw-nvzbs-ode0u',
-			{
-				value: cart.total_cost.toString(),
-				currency: cart.currency,
-				order_id: orderId,
-			},
-		];
+		const params = [ 'event', 'tw-nvzbs-ode0u', { value: usdTotalCost } ];
 		debug( 'recordOrder: [Twitter]', params );
 		window.twq( ...params );
 	}
