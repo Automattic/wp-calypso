@@ -44,7 +44,7 @@ import {
 	getCustomizerUrl,
 	getJetpackComputedAttributes,
 	getSiteComputedAttributes,
-	isSiteOnWooExpressTrailPeriod,
+	isSiteOnWooExpressTrialPeriod,
 } from '../selectors';
 
 jest.mock( '@automattic/calypso-config', () => {
@@ -3644,8 +3644,8 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'isSiteOnWooExpressTrailPeriod()', () => {
-		test( 'Should return true when the e-commerce trail is in the purchases list', () => {
+	describe( 'isSiteOnWooExpressTrialPeriod()', () => {
+		test( 'Should return true when the e-commerce trial is in the purchases list', () => {
 			const initialPurchases = Object.freeze( [
 				{ ID: 1, product_slug: PLAN_ECOMMERCE_TRIAL_MONTHLY, blog_id: 1337 },
 			] );
@@ -3661,10 +3661,10 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isSiteOnWooExpressTrailPeriod( state ) ).toBeTruthy();
+			expect( isSiteOnWooExpressTrialPeriod( state ) ).toBeTruthy();
 		} );
 
-		test( 'Should return false when the e-commerce trail is not in the purchases list', () => {
+		test( 'Should return false when the e-commerce trial is not in the purchases list', () => {
 			const initialPurchases = Object.freeze( [] );
 
 			const state = {
@@ -3678,7 +3678,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isSiteOnWooExpressTrailPeriod( state ) ).toBeFalsy();
+			expect( isSiteOnWooExpressTrialPeriod( state ) ).toBeFalsy();
 		} );
 	} );
 } );

@@ -3,12 +3,12 @@ import { getPurchases } from 'calypso/state/purchases/selectors';
 import type { AppState } from 'calypso/types';
 
 /**
- * Checks whether the current site is on the Woo Trail period.
+ * Checks whether the current site is on the Woo Trial period.
  *
  * @param {AppState} state Global state tree
- * @returns {?boolean} Returns true if the site is on the trail period
+ * @returns {?boolean} Returns true if the site is on the trial period
  */
-export default function isSiteOnWooExpressTrailPeriod( state: AppState ) {
+export default function isSiteOnWooExpressTrialPeriod( state: AppState ) {
 	return !! getPurchases( state ).find(
 		( purchase ) => purchase.productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY
 	);
