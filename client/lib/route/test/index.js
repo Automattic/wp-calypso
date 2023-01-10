@@ -154,13 +154,6 @@ describe( 'route', function () {
 					route.getSiteFragment( '/checkout/thank-you/example.wordpress.com/75806534' )
 				).toEqual( 'example.wordpress.com' );
 			} );
-			test( 'should return the correct site fragment during upsell', function () {
-				expect(
-					route.getSiteFragment(
-						'/checkout/example.wordpress.com/offer-plan-upgrade/business-monthly/75806534'
-					)
-				).toEqual( 'example.wordpress.com' );
-			} );
 		} );
 		describe( 'for jetpack paths', function () {
 			test( 'should return correct site fragment when site_url is trailing slashed', function () {
@@ -175,7 +168,7 @@ describe( 'route', function () {
 					'example.wpcomstaging.com'
 				);
 			} );
-			test( 'should return false when plugin name starts with a number', function () {
+			test( 'should return false when plugin name ends a number', function () {
 				expect( route.getSiteFragment( '/plugins/404-to-301' ) ).toEqual( false );
 			} );
 		} );

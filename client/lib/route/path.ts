@@ -1,4 +1,4 @@
-import { SiteId, SiteSlug, URL as URLString } from 'calypso/types';
+import { URL as URLString, SiteSlug, SiteId } from 'calypso/types';
 import { trailingslashit, untrailingslashit } from './index';
 
 /**
@@ -17,47 +17,46 @@ export function getSiteFragment( path: URLString ): SiteSlug | SiteId | false {
 	const basePath = path.split( '?' )[ 0 ];
 	const pieces = basePath.split( '/' );
 
-	// Some paths include a receipt or subscription ID that can be mistaken for a site ID.
-	// Always return false for these specific paths.
-	if (
-		// Avoid confusing the receipt ID for the site ID in domain-only checkouts.
-		0 === basePath.indexOf( '/checkout/thank-you/no-site/' ) ||
-		// Avoid confusing the subscription ID for the site ID in gifting checkouts.
-		( basePath.includes( '/gift/' ) && basePath.startsWith( '/checkout/' ) )
-	) {
+	// There are 2 URL positions where we should look for the site fragment:
+	// last (most sections) and second-to-last (post ID is last in editor)
+
+	// Avoid confusing the receipt ID for the site ID in domain-only checkouts.
+	if ( 0 === basePath.indexOf( '/checkout/thank-you/no-site/' ) ) {
 		return false;
 	}
 
-	// By default there are two URL positions where we should look for the site fragment:
-	// last (most sections) and second-to-last (post ID is last in editor).
-	// searchPositions defines the second-to-last and last index positions to search. Order matters.
-	let searchPositions = [ pieces.length - 2, pieces.length - 1 ];
+	// Avoid confusing the subscription ID for the site ID in gifting checkouts.
+	if ( basePath.includes( '/gift/' ) && basePath.startsWith( '/checkout/' ) ) {
+		return false;
+	}
 
-	// There are exceptions. In some paths the site fragment is in the third position.
+	// In some paths, the site fragment could also be in third position.
 	// e.g. /me/purchases/example.wordpress.com/foo/bar
 	if (
 		0 === basePath.indexOf( '/me/purchases/' ) ||
 		0 === basePath.indexOf( '/checkout/thank-you/' )
 	) {
-		searchPositions = [ 3 ];
-	}
-	// In other paths the site fragment is in the second position.
-	// e.g. /checkout/example.wordpress.com/offer-plan-upgrade/business-monthly/75806534
-	else if ( basePath.includes( '/offer-plan-upgrade/' ) && basePath.startsWith( '/checkout/' ) ) {
-		searchPositions = [ 2 ];
-	}
-
-	// Search for site slug or ID in the URL positions defined above in searchPositions.
-	for ( let i = 0; i < searchPositions.length; i++ ) {
-		const piece = pieces[ searchPositions[ i ] ];
-
-		// Check for site slug.
+		const piece = pieces[ 3 ]; // 0 is the empty string before the first `/`
 		if ( piece && -1 !== piece.indexOf( '.' ) ) {
-			// There is a special Jetpack case for site slugs that end with '::'.
+			return piece;
+		}
+		const numericPiece = parseInt( piece, 10 );
+		if ( Number.isSafeInteger( numericPiece ) ) {
+			return numericPiece;
+		}
+	}
+
+	// Check last and second-to-last piece for site slug
+	for ( let i = 2; i > 0; i-- ) {
+		const piece = pieces[ pieces.length - i ];
+		if ( piece && -1 !== piece.indexOf( '.' ) ) {
 			return piece.endsWith( '::' ) ? piece.replace( /::$/, '' ) : piece;
 		}
+	}
 
-		// Check for site ID.
+	// Check last and second-to-last piece for numeric site ID
+	for ( let i = 2; i > 0; i-- ) {
+		const piece = pieces[ pieces.length - i ];
 		// We can't just do parseInt because some strings look like numbers, eg: '404-hello'
 		const isNumber = /^\d+$/.test( piece );
 		const intPiece = parseInt( piece, 10 );
@@ -66,7 +65,7 @@ export function getSiteFragment( path: URLString ): SiteSlug | SiteId | false {
 		}
 	}
 
-	// No site fragment found.
+	// No site fragment here
 	return false;
 }
 
