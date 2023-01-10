@@ -3,7 +3,7 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { preventWidows } from 'calypso/lib/formatting';
 import iconCloud from './icons/icon-cloud.svg';
 import iconComments from './icons/icon-comments.svg';
-import iconPHP from './icons/icon-php.svg';
+import iconDatabase from './icons/icon-database.svg';
 import iconServerRacks from './icons/icon-server-racks.svg';
 import iconSSH from './icons/icon-ssh.svg';
 import iconTerminal from './icons/icon-terminal.svg';
@@ -79,7 +79,7 @@ function useFeatureList(): FeatureListItem[] {
 		{
 			title: translate( 'Database Access' ),
 			description: translate( `Inspect your website's tables and run SQL queries via phpMyAdmin` ),
-			icon: iconPHP,
+			icon: iconDatabase,
 		},
 		{
 			title: translate( 'Live Support' ),
