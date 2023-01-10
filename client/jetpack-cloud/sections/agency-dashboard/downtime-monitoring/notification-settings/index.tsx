@@ -103,10 +103,8 @@ export default function NotificationSettings( { onClose, sites, settings }: Prop
 				placeholder={ translate( 'Enter email addresses' ) }
 				value={ addedEmailAddresses }
 				onChange={ handleAddEmail }
+				disabled={ true }
 			/>
-			<div className="notification-settings__email-condition">
-				{ translate( 'Separate with commas or the Enter key.' ) }
-			</div>
 		</div>
 	);
 
