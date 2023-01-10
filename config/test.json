@@ -60,7 +60,12 @@
 		"legal-updates-banner": true,
 		"limit-global-styles": true,
 		"mailchimp": true,
+<<<<<<< HEAD
 		"marketplace-jetpack-plugin-search": false,
+=======
+		"marketplace-fetch-dynamic-plugin-details": false,
+		"marketplace-jetpack-plugin-search": true,
+>>>>>>> f062e34f4e (Add new feature flag)
 		"marketplace-personal-premium": false,
 		"me/account-close": true,
 		"me/vat-details": true,

@@ -73,7 +73,12 @@
 		"login/react-lost-password-screen": true,
 		"mailchimp": true,
 		"marketplace-domain-bundle": false,
+<<<<<<< HEAD
 		"marketplace-jetpack-plugin-search": false,
+=======
+		"marketplace-fetch-dynamic-plugin-details": false,
+		"marketplace-jetpack-plugin-search": true,
+>>>>>>> f062e34f4e (Add new feature flag)
 		"marketplace-personal-premium": false,
 		"marketplace-test": false,
 		"me/account-close": true,
