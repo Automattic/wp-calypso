@@ -1,8 +1,7 @@
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import Main from 'calypso/components/main';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import { TableWithStoreContext } from './table';
+import { TableWithStoreAccess } from './table';
 import { ContentProps } from './types';
 
 export const Content: React.FC< ContentProps > = ( {
@@ -21,13 +20,7 @@ export const Content: React.FC< ContentProps > = ( {
 			<QueryIntroOffers />
 			<Main>
 				{ header }
-				<CalypsoShoppingCartProvider>
-					<TableWithStoreContext
-						locale={ locale }
-						rootUrl={ rootUrl }
-						urlQueryArgs={ urlQueryArgs }
-					/>
-				</CalypsoShoppingCartProvider>
+				<TableWithStoreAccess locale={ locale } rootUrl={ rootUrl } urlQueryArgs={ urlQueryArgs } />
 			</Main>
 			{ footer }
 		</>

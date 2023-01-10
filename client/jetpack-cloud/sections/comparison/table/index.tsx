@@ -3,6 +3,7 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import ProductLightbox from 'calypso/my-sites/plans/jetpack-plans/product-lightbox';
 import StoreItemInfoContext, {
 	useStoreItemInfoContext,
@@ -19,6 +20,7 @@ import { links } from './links';
 import { useComparisonData } from './useComparisonData';
 import { useProductsToCompare } from './useProductsToCompare';
 import type { SelectorProduct, PurchaseCallback } from 'calypso/my-sites/plans/jetpack-plans/types';
+
 import './style.scss';
 
 export const Table: React.FC = () => {
@@ -155,7 +157,7 @@ export const Table: React.FC = () => {
 	);
 };
 
-export const TableWithStoreContext: React.FC< TableWithStoreContextProps > = ( {
+const TableWithStoreContext: React.FC< TableWithStoreContextProps > = ( {
 	locale,
 	rootUrl,
 	urlQueryArgs,
@@ -190,5 +192,17 @@ export const TableWithStoreContext: React.FC< TableWithStoreContextProps > = ( {
 		<StoreItemInfoContext.Provider value={ storeItemInfo }>
 			<Table />
 		</StoreItemInfoContext.Provider>
+	);
+};
+
+export const TableWithStoreAccess: React.FC< TableWithStoreContextProps > = ( {
+	locale,
+	rootUrl,
+	urlQueryArgs,
+} ) => {
+	return (
+		<CalypsoShoppingCartProvider>
+			<TableWithStoreContext locale={ locale } rootUrl={ rootUrl } urlQueryArgs={ urlQueryArgs } />
+		</CalypsoShoppingCartProvider>
 	);
 };
