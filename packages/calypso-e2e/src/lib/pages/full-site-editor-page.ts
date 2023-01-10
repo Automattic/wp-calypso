@@ -374,13 +374,15 @@ export class FullSiteEditorPage {
 	 * Save the changes in the full site editor (equivalent of publish).
 	 */
 	async save(
-		{ preSaveSelectors }: { preSaveSelectors: string[] } = { preSaveSelectors: [] }
+		{ expectedPreSaveElement }: { expectedPreSaveElement: string | null } = {
+			expectedPreSaveElement: null,
+		}
 	): Promise< void > {
 		await this.clearExistingSaveConfirmationToast();
 		await this.editorToolbarComponent.saveSiteEditor();
-		for ( const selector of preSaveSelectors ) {
-			const locator = this.editor.locator( selector );
-			await locator.waitFor();
+		if ( expectedPreSaveElement ) {
+			const preSaveElement = this.editor.locator( expectedPreSaveElement );
+			await preSaveElement.waitFor();
 		}
 		await this.fullSiteEditorSavePanelComponent.confirmSave();
 		await this.waitForConfirmationToast( 'Site updated.' );
