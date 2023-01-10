@@ -284,18 +284,18 @@ export interface Owner {
 export type GetChangePaymentMethodUrlFor = ( siteSlug: string, purchase: Purchase ) => string;
 export type GetManagePurchaseUrlFor = ( siteSlug: string, attachedToPurchaseId: string ) => string;
 
-export type RenderRenewsOrExpiresOn = (
-	moment: ReturnType< typeof useLocalizedMoment >,
-	purchase: Purchase,
-	siteSlug: string | undefined,
-	translate: ReturnType< typeof useTranslate >,
-	getManagePurchaseUrlFor: GetManagePurchaseUrlFor
-) => string;
+export type RenderRenewsOrExpiresOn = ( args: {
+	moment: ReturnType< typeof useLocalizedMoment >;
+	purchase: Purchase;
+	siteSlug: string | undefined;
+	translate: ReturnType< typeof useTranslate >;
+	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
+} ) => string;
 
-export type RenderRenewsOrExpiresOnLabel = (
-	purchase: Purchase,
-	translate: ReturnType< typeof useTranslate >
-) => string;
+export type RenderRenewsOrExpiresOnLabel = ( args: {
+	purchase: Purchase;
+	translate: ReturnType< typeof useTranslate >;
+} ) => string;
 
 export interface Site {
 	ID?: number;

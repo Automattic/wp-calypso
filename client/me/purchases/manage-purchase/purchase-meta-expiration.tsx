@@ -160,16 +160,16 @@ function PurchaseMetaExpiration( {
 	return (
 		<li>
 			<em className="manage-purchase__detail-label">
-				{ renderRenewsOrExpiresOnLabel( purchase, translate ) }
+				{ renderRenewsOrExpiresOnLabel( { purchase, translate } ) }
 			</em>
 			<span className="manage-purchase__detail">
-				{ renderRenewsOrExpiresOn(
+				{ renderRenewsOrExpiresOn( {
 					moment,
 					purchase,
 					siteSlug,
 					translate,
-					getManagePurchaseUrlFor
-				) }
+					getManagePurchaseUrlFor,
+				} ) }
 			</span>
 		</li>
 	);
