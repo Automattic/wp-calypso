@@ -1,4 +1,5 @@
-import { Icon, megaphone } from '@wordpress/icons';
+import { blaze } from '@automattic/components/src/icons';
+import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import BlazePressWidget from 'calypso/components/blazepress-widget';
@@ -63,7 +64,7 @@ const PromotePost = ( props ) => {
 							context: 'Stats ARIA label: Opens a pop-out post promotion tool',
 						} ) }
 					>
-						<Icon className="stats-icon" icon={ megaphone } size={ 22 } />
+						<Icon className="stats-icon" icon={ blaze } size={ 18 } />
 						<span className="stats-list__item-action-label module-content-list-item-action-label module-content-list-item-action-label-view">
 							{ translate( 'Promote', { context: 'Stats: List item action to view content' } ) }
 						</span>
