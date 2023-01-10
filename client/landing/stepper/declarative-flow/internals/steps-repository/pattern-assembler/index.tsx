@@ -24,6 +24,26 @@ import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import './style.scss';
 
 const PatternAssembler: Step = ( { navigation, flow } ) => {
+	const hardcodeDesign = {
+		slug: 'blank-canvas-3',
+		title: 'Blank Canvas',
+		description:
+			'Blank Canvas is a barebones starter theme, stripped off of content templates but only a footer and a header.',
+		recipe: {
+			stylesheet: 'pub/blank-canvas-3',
+		},
+		verticalizable: false,
+		categories: [],
+		is_premium: false,
+		is_bundled_with_woo_commerce: false,
+		software_sets: [],
+		design_type: 'assembler',
+		style_variations: [],
+		features: [],
+		template: '',
+		theme: '',
+	};
+
 	const translate = useTranslate();
 	const [ showPatternSelectorType, setShowPatternSelectorType ] = useState< string | null >( null );
 	const [ header, setHeader ] = useState< Pattern | null >( null );
@@ -36,7 +56,8 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 	const { setThemeOnSite, runThemeSetupOnSite, createCustomTemplate } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
-	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+	const selectedDesign =
+		useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() ) || hardcodeDesign;
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
