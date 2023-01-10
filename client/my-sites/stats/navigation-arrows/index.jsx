@@ -6,22 +6,16 @@ import './style.scss';
 function NavigationArrows( {
 	disableNextArrow,
 	disablePreviousArrow,
-	onArrowNext,
-	onArrowPrevious,
+	onClickNext,
+	onClickPrevious,
 } ) {
-	const handleClickNext = () => {
-		onArrowNext();
-	};
-	const handleClickPrevious = () => {
-		onArrowPrevious();
-	};
 	return (
 		<div className="stats-navigation-arrows">
 			<button
 				className={ classNames( 'stats-navigation-arrows__previous', {
 					'is-disabled': disablePreviousArrow,
 				} ) }
-				onClick={ disablePreviousArrow ? undefined : () => handleClickPrevious() }
+				onClick={ disablePreviousArrow ? undefined : onClickPrevious }
 				tabIndex={ ! disablePreviousArrow ? 0 : -1 }
 			>
 				<Icon className="gridicon" icon={ arrowLeft } />
@@ -30,7 +24,7 @@ function NavigationArrows( {
 				className={ classNames( 'stats-navigation-arrows__next', {
 					'is-disabled': disableNextArrow,
 				} ) }
-				onClick={ disableNextArrow ? undefined : () => handleClickNext() }
+				onClick={ disableNextArrow ? undefined : onClickNext }
 				tabIndex={ ! disableNextArrow ? 0 : -1 }
 			>
 				<Icon className="gridicon" icon={ arrowRight } />

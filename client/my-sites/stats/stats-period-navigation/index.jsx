@@ -84,8 +84,8 @@ class StatsPeriodNavigation extends PureComponent {
 					<NavigationArrows
 						disableNextArrow={ disableNextArrow || isToday }
 						disablePreviousArrow={ disablePreviousArrow }
-						onArrowNext={ this.handleArrowNext }
-						onArrowPrevious={ this.handleArrowPrevious }
+						onClickNext={ this.handleArrowNext }
+						onClickPrevious={ this.handleArrowPrevious }
 					/>
 				) }
 			</div>

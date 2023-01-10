@@ -30,8 +30,8 @@ const YearNavigation = ( {
 		<NavigationArrows
 			disableNextArrow={ disableNextArrow }
 			disablePreviousArrow={ disablePreviousArrow }
-			onArrowNext={ handleArrowNext }
-			onArrowPrevious={ handleArrowPrevious }
+			onClickNext={ handleArrowNext }
+			onClickPrevious={ handleArrowPrevious }
 		/>
 	);
 };
