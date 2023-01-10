@@ -1,6 +1,10 @@
+<<<<<<< HEAD
 import { PLAN_BUSINESS, FEATURE_SFTP } from '@automattic/calypso-products';
 import { englishLocales } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
+=======
+import { FEATURE_SFTP } from '@automattic/calypso-products';
+>>>>>>> ea1876e34c (Update Hosting Config upsell message to be less specific about plan name)
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
@@ -80,24 +84,33 @@ class Hosting extends Component {
 		} = this.props;
 
 		const getUpgradeBanner = () => (
-			<Experiment
-				name="calypso_hosting_configuration_upsell_list_features"
-				defaultExperience={
-					<UpsellNudge
-						title={ translate( 'Upgrade to the Business plan to access all hosting features' ) }
-						event="calypso_hosting_configuration_upgrade_click"
-						href={ `/checkout/${ siteId }/business` }
-						plan={ PLAN_BUSINESS }
-						feature={ FEATURE_SFTP }
-						showIcon={ true }
-					/>
-				}
-				treatmentExperience={ <HostingUpsellNudge siteId={ siteId } /> }
-				loadingExperience={ <Spinner className="hosting__upsell-experiment-spinner" /> }
-				options={ {
-					isEligible: englishLocales.includes( locale ),
-				} }
-			/>
+			<>
+				<Experiment
+					name="calypso_hosting_configuration_upsell_list_features"
+					defaultExperience={
+						<UpsellNudge
+							title={ translate( 'Upgrade to the Business plan to access all hosting features' ) }
+							event="calypso_hosting_configuration_upgrade_click"
+							href={ `/checkout/${ siteId }/business` }
+							plan={ PLAN_BUSINESS }
+							feature={ FEATURE_SFTP }
+							showIcon={ true }
+						/>
+					}
+					treatmentExperience={ <HostingUpsellNudge siteId={ siteId } /> }
+					loadingExperience={ <Spinner className="hosting__upsell-experiment-spinner" /> }
+					options={ {
+						isEligible: englishLocales.includes( locale ),
+					} }
+				/>
+				<UpsellNudge
+					title={ translate( 'Upgrade your plan to access hosting features' ) }
+					event="calypso_hosting_configuration_upgrade_click"
+					href={ `/plans/${ siteSlug }/` }
+					feature={ FEATURE_SFTP }
+					showIcon={ true }
+				/>
+			</>
 		);
 
 		const getAtomicActivationNotice = () => {
