@@ -1,4 +1,5 @@
 export { default } from './components';
+export { default as GeneratedDesignPicker } from './components/generated-design-picker';
 export { default as FeaturedPicksButtons } from './components/featured-picks-buttons';
 export { default as PremiumBadge } from './components/premium-badge';
 export { default as BadgeContainer } from './components/badge-container';

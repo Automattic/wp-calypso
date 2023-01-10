@@ -1,6 +1,8 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import AnchorFmDesignPicker from './anchor-fm-design-picker';
+import SiteSetupDesignPicker from './site-setup-design-picker';
 import UnifiedDesignPicker from './unified-design-picker';
 import type { Step } from '../../types';
 
@@ -20,10 +22,20 @@ const DesignSetup: Step = ( props ) => {
 			</>
 		);
 	}
+
+	if ( isEnabled( 'signup/design-picker-unified' ) ) {
+		return (
+			<>
+				<DocumentHead title={ headerText } />
+				<UnifiedDesignPicker { ...props } />
+			</>
+		);
+	}
+
 	return (
 		<>
 			<DocumentHead title={ headerText } />
-			<UnifiedDesignPicker { ...props } />
+			<SiteSetupDesignPicker { ...props } />
 		</>
 	);
 };
