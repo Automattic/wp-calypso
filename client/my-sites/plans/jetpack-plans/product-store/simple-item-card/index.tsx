@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { SimpleItemCardProps } from '../types';
 
 import './style.scss';
@@ -12,7 +12,6 @@ export const SimpleItemCard: React.FC< SimpleItemCardProps > = ( {
 	icon,
 	isCtaDisabled,
 	isCtaExternal,
-	isProductInCart,
 	onClickCta,
 	price,
 	title,
@@ -35,7 +34,6 @@ export const SimpleItemCard: React.FC< SimpleItemCardProps > = ( {
 						primary={ ctaAsPrimary }
 						aria-label={ ctaAriaLabel }
 					>
-						{ isProductInCart && <Gridicon icon="checkmark" /> }
 						{ ctaLabel }
 					</Button>
 				</div>

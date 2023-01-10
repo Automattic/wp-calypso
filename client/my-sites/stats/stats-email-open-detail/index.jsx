@@ -8,6 +8,7 @@ import { parse as parseQs, stringify as stringifyQs } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
+import { emailIntervals } from 'calypso/blocks/stats-navigation/constants';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryEmailStats from 'calypso/components/data/query-email-stats';
@@ -37,7 +38,6 @@ import ChartTabs from '../stats-email-chart-tabs';
 import { StatsNoContentBanner } from '../stats-no-content-banner';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
-
 import './style.scss';
 
 function getPageUrl() {
@@ -260,7 +260,12 @@ class StatsEmailOpenDetail extends Component {
 									showQueryDate
 								/>
 							</StatsPeriodNavigation>
-							<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
+							<Intervals
+								selected={ period }
+								pathTemplate={ pathTemplate }
+								intervalValues={ emailIntervals }
+								compact={ false }
+							/>
 						</StatsPeriodHeader>
 
 						<ChartTabs

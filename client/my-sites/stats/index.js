@@ -26,6 +26,7 @@ const statsPage = ( url, controller ) => {
 
 export default function () {
 	const validPeriods = [ 'day', 'week', 'month', 'year' ].join( '|' );
+	const validEmailPeriods = [ 'hour', 'day', 'week', 'month', 'year' ].join( '|' );
 
 	const validModules = [
 		'posts',
@@ -80,7 +81,7 @@ export default function () {
 
 	// Email stats Pages
 	if ( config.isEnabled( 'newsletter/stats' ) ) {
-		statsPage( `/stats/email/open/:site/:period(${ validPeriods })/:email_id`, emailOpen );
+		statsPage( `/stats/email/open/:site/:period(${ validEmailPeriods })/:email_id`, emailOpen );
 	}
 
 	// Anything else should redirect to default stats page

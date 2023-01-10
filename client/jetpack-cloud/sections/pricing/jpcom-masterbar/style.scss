@@ -30,11 +30,6 @@
 		min-width: 0;
 	}
 
-	.header__jetpack-masterbar-cart {
-		display: inline-flex;
-		margin-right: 40px;
-	}
-
 	.header__sections-list,
 	.header__actions-list,
 	.header__submenu-links-list,
@@ -156,20 +151,6 @@
 		fill: #101517;
 	}
 
-	.header__content-wrapper {
-		position: absolute;
-		width: 100%;
-		height: 195px;
-	}
-
-	.header__content-background-wrapper {
-		width: 100%;
-		background-color: #fff;
-		top: 0;
-		max-width: 100%;
-		position: sticky;
-	}
-
 	.header__content {
 		width: 85%;
 		max-width: 1200px;
@@ -181,51 +162,21 @@
 		.header__content {
 			width: 90%;
 		}
-		.header__content-wrapper {
-			height: 225px;
-		}
 	}
 	@media ( max-width: 1100px ) {
 		.header__content {
 			width: 95%;
 		}
-		.header__content-wrapper {
-			height: 195px;
+	}
+	@media ( max-width: 782px ) {
+		.header__content {
+			padding: 0 2rem;
+			width: 100%;
 		}
 	}
 	@media ( max-width: 900px ) {
 		.header__content {
 			justify-content: space-between;
-		}
-
-		.header__content-wrapper {
-			height: 400px;
-		}
-	}
-	@media ( max-width: 782px ) {
-		.header__content {
-			width: 90%;
-		}
-		.header__content-wrapper {
-			height: 445px;
-		}
-	}
-
-	@media ( max-width: 600px ) {
-		.header__content-wrapper {
-			height: 520px;
-		}
-	}
-
-	@media ( max-width: 480px ) {
-		.header__content-wrapper {
-			height: 570px;
-		}
-	}
-
-	@media ( max-width: 336px ) {
-		.header__content-wrapper {
-			height: 690px;
 		}
 	}
 
@@ -302,10 +253,6 @@
 		width: 100%;
 		margin-inline-end: 3rem;
 		padding: 0.5rem 0;
-
-		& ~ .header__jetpack-masterbar-cart {
-			display: none;
-		}
 	}
 	@media ( max-width: 900px ) {
 		.header__sections-list {
@@ -1196,71 +1143,4 @@
 			margin: 1rem 0;
 		}
 	}
-
-
-	@media ( min-width: 900px ) {
-		//show desktop cart
-		.header__sections-list {
-			& ~ .header__jetpack-masterbar-cart {
-				display: flex;
-			}
-		}
-
-		.header {
-			&.is-sticky {
-				padding: 56px;
-			}
-		}
-
-		//hide mobile cart
-		.header__content {
-			& > .header__jetpack-masterbar-cart {
-				display: none;
-			}
-		}
-	}
-
-	@media (max-width: 900px) {
-		.header__content {
-			& > .header__jetpack-masterbar-cart {
-				justify-content: flex-end;
-				flex: unset;
-				margin-right: 16px;
-			}
-			.header__home-link {
-				flex: 1;
-			}
-		}
-	}
-	@media (max-width: 480px) {
-		.header__content > .masterbar__item.header__jetpack-masterbar-cart {
-			flex: unset;
-			justify-content: flex-end;
-			margin-left: 7px;
-			margin-right: 10px;
-		}
-		.header__home-link {
-			margin-right: 6px;
-			flex: 1;
-		}
-
-	}
-
 }
-
-//open the cart to full width and height of viewport
-@media (max-width: 480px) {
-	.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing {
-		.masterbar-cart-button__popover .mini-cart {
-			top: 0;
-			bottom: unset;
-			box-shadow: rgb(99 99 99 / 20%) 0 2px 8px 0;
-			max-height: 100%;
-		}
-		.masterbar-cart-button__popover {
-			//display mobile cart at the top most layer
-			z-index: 9999999;
-		}
-	}
-}
-

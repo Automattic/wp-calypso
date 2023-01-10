@@ -166,7 +166,12 @@ class ThemesSelection extends Component {
 				} else {
 					defaultOption = options.activate;
 				}
-				this.props.setThemePreviewOptions( defaultOption, secondaryOption, styleVariation );
+				this.props.setThemePreviewOptions(
+					themeId,
+					defaultOption,
+					secondaryOption,
+					styleVariation
+				);
 				return action( t, context );
 			};
 		};

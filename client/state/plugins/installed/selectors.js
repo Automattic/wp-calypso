@@ -142,6 +142,10 @@ export function getPluginOnSite( state, siteId, pluginSlug ) {
 	return find( pluginList, ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) );
 }
 
+export function getPluginsOnSite( state, siteId, pluginSlugs ) {
+	return pluginSlugs.map( ( pluginSlug ) => getPluginOnSite( state, siteId, pluginSlug ) );
+}
+
 export function getSitesWithPlugin( state, siteIds, pluginSlug ) {
 	const pluginList = getPlugins( state, siteIds );
 	const plugin = find( pluginList, ( pluginItem ) => isEqualSlugOrId( pluginSlug, pluginItem ) );

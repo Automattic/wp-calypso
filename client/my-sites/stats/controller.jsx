@@ -71,6 +71,12 @@ function getSiteFilters( siteId ) {
 			id: 'stats-insights',
 		},
 		{
+			title: i18n.translate( 'Hours' ),
+			path: '/stats/hour/' + siteId,
+			id: 'stats-hour',
+			period: 'hour',
+		},
+		{
 			title: i18n.translate( 'Days' ),
 			path: '/stats/day/' + siteId,
 			id: 'stats-day',
@@ -93,6 +99,12 @@ function getSiteFilters( siteId ) {
 			path: '/stats/year/' + siteId,
 			id: 'stats-year',
 			period: 'year',
+		},
+		{
+			title: i18n.translate( 'Hours' ),
+			path: '/stats/email/open/' + siteId + '/hour',
+			id: 'stats-email-opens-hour',
+			period: 'hour',
 		},
 		{
 			title: i18n.translate( 'Days' ),

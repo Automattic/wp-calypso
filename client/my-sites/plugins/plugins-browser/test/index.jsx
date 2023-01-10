@@ -22,7 +22,7 @@ jest.mock( 'calypso/data/marketplace/use-wporg-plugin-query', () => ( {
 } ) );
 
 jest.mock( 'calypso/data/marketplace/use-wpcom-plugins-query', () => ( {
-	useWPCOMPlugins: () => ( { data: [] } ),
+	useWPCOMPluginsList: () => ( { data: [] } ),
 	useWPCOMFeaturedPlugins: () => ( { data: [] } ),
 } ) );
 

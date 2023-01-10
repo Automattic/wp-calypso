@@ -5,6 +5,7 @@ import {
 	getBillingTermForMonths,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
+	TERM_TRIENNIALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
@@ -135,6 +136,9 @@ function getTermText( term: string, translate: ReturnType< typeof useTranslate >
 	switch ( term ) {
 		case TERM_BIENNIALLY:
 			return String( translate( 'Two years' ) );
+
+		case TERM_TRIENNIALLY:
+			return String( translate( 'Three years' ) );
 
 		case TERM_ANNUALLY:
 			return String( translate( 'One year' ) );

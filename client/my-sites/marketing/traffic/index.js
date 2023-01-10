@@ -21,6 +21,7 @@ import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form'
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isBlazeEnabled from 'calypso/state/ui/selectors/is-blaze-enabled';
 
 import './style.scss';
 
@@ -37,6 +38,7 @@ const SiteSettingsTraffic = ( {
 	setFieldValue,
 	siteId,
 	siteSlug,
+	shouldShowAdvertisingOption,
 	translate,
 } ) => (
 	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -49,7 +51,7 @@ const SiteSettingsTraffic = ( {
 			/>
 		) }
 		<JetpackDevModeNotice />
-		{ isAdmin && (
+		{ isAdmin && shouldShowAdvertisingOption && (
 			<PromoCardBlock
 				productSlug="blaze"
 				impressionEvent="calypso_marketing_traffic_blaze_banner_view"
@@ -121,6 +123,7 @@ const connectComponent = connect( ( state ) => {
 	const isAdmin = canCurrentUser( state, siteId, 'manage_options' );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isJetpackAdmin = isJetpack && isAdmin;
+	const shouldShowAdvertisingOption = isBlazeEnabled( state );
 
 	return {
 		siteId,
@@ -128,6 +131,7 @@ const connectComponent = connect( ( state ) => {
 		isAdmin,
 		isJetpack,
 		isJetpackAdmin,
+		shouldShowAdvertisingOption,
 	};
 } );
 

@@ -9,6 +9,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import ElementChart from 'calypso/components/chart';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
@@ -65,6 +66,10 @@ class StatsSummaryChart extends Component {
 		return icon;
 	}
 
+	renderEmptyState() {
+		return <StatsEmptyState stateType={ this.props.tabLabel } />;
+	}
+
 	buildChartData() {
 		const { data, chartType, numberFormat, sectionClass, selected, tabLabel } = this.props;
 
@@ -117,14 +122,18 @@ class StatsSummaryChart extends Component {
 				className={ classNames( 'stats-module', 'is-summary-chart', { 'is-loading': isLoading } ) }
 			>
 				<StatsModulePlaceholder className="is-chart" isLoading={ isLoading } />
-				<ElementChart data={ this.buildChartData() } barClick={ this.barClick } />
+				<ElementChart data={ this.buildChartData() } barClick={ this.barClick }>
+					{ this.renderEmptyState() }
+				</ElementChart>
 			</div>
 		) : (
 			<Card
 				className={ classNames( 'stats-module', 'is-summary-chart', { 'is-loading': isLoading } ) }
 			>
 				<StatsModulePlaceholder className="is-chart" isLoading={ isLoading } />
-				<ElementChart data={ this.buildChartData() } barClick={ this.barClick } />
+				<ElementChart data={ this.buildChartData() } barClick={ this.barClick }>
+					{ this.renderEmptyState() }
+				</ElementChart>
 				<StatsTabs>
 					<StatsTab { ...tabOptions } />
 				</StatsTabs>

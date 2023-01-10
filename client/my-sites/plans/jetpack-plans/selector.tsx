@@ -17,7 +17,6 @@ import { JPC_PATH_PLANS } from 'calypso/jetpack-connect/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useExperiment } from 'calypso/lib/explat';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -125,7 +124,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 				dispatch( showMasterbar() );
 			}
 		},
-		[ dispatch ]
+		[]
 	);
 
 	const createProductURL = useMemo(
@@ -202,17 +201,15 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 					options={ { useJetpackGoogleAnalytics: isJetpackCloud() } }
 				/>
 
-				<CalypsoShoppingCartProvider>
-					<ProductStore
-						createCheckoutURL={ createProductURL }
-						duration={ currentDuration }
-						enableUserLicensesDialog={ enableUserLicensesDialog }
-						onClickPurchase={ selectProduct }
-						urlQueryArgs={ urlQueryArgs }
-						header={ header }
-						planRecommendation={ planRecommendation }
-					/>
-				</CalypsoShoppingCartProvider>
+				<ProductStore
+					createCheckoutURL={ createProductURL }
+					duration={ currentDuration }
+					enableUserLicensesDialog={ enableUserLicensesDialog }
+					onClickPurchase={ selectProduct }
+					urlQueryArgs={ urlQueryArgs }
+					header={ header }
+					planRecommendation={ planRecommendation }
+				/>
 
 				<QueryProductsList type="jetpack" />
 				<QueryIntroOffers siteId={ siteId ?? 'none' } />
