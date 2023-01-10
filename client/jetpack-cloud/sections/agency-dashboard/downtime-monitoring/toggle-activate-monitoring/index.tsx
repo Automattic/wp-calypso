@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { getSiteMonitorStatus } from 'calypso/state/jetpack-agency-dashboard/selectors';
+import { getSiteMonitorStatuses } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { useToggleActivateMonitor } from '../../hooks';
 import NotificationSettings from '../notification-settings';
 import type { AllowedStatusTypes, MonitorSettings } from '../../sites-overview/types';
@@ -22,7 +22,7 @@ export default function ToggleActivateMonitoring( { site, status, settings }: Pr
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 	const toggleActivateMonitor = useToggleActivateMonitor( [ site ] );
-	const statuses = useSelector( getSiteMonitorStatus );
+	const statuses = useSelector( getSiteMonitorStatuses );
 	const [ showNotificationSettings, setShowNotificationSettings ] = useState< boolean >( false );
 
 	const ToggleControl = OriginalToggleControl as React.ComponentType<

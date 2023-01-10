@@ -60,6 +60,6 @@ export function hasSelectedLicensesOfType(
 	);
 }
 
-export function getSiteMonitorStatus( state: AppState ): SiteMonitorStatus {
+export function getSiteMonitorStatuses( state: AppState ): SiteMonitorStatus {
 	return state.agencyDashboard?.siteMonitorStatus?.statuses;
 }

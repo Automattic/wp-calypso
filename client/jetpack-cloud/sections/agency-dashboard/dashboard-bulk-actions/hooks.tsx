@@ -3,7 +3,7 @@ import { ReactChild, useCallback } from 'react';
 import acceptDialog from 'calypso/lib/accept';
 import { useToggleActivateMonitor } from '../hooks';
 
-const dailogContent = (
+const dialogContent = (
 	heading: ReactChild,
 	description: ReactChild,
 	action: ( accepted: boolean ) => void
@@ -64,7 +64,7 @@ export function useHandleToggleMonitor( selectedSites: Array< { blog_id: number;
 							}
 					  );
 
-			return dailogContent( heading, content, ( accepted: boolean ) =>
+			return dialogContent( heading, content, ( accepted: boolean ) =>
 				toggleMonitor( accepted, activate )
 			);
 		},
