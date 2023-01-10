@@ -9,7 +9,6 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import compareProps from 'calypso/lib/compare-props';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSiteStatsPostStreakData } from 'calypso/state/stats/lists/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Month from './month';
 
 import './style.scss';
@@ -43,34 +42,36 @@ class PostTrends extends Component {
 
 		/* eslint-disable jsx-a11y/click-events-have-key-events, wpcalypso/jsx-classname-namespace */
 		return (
-			<div className="post-trends">
-				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsStreak" query={ query } /> }
+			<div className="post-trends-section">
+				<div className="post-trends">
+					{ siteId && <QuerySiteStats siteId={ siteId } statType="statsStreak" query={ query } /> }
 
-				<div className="post-trends__heading">
-					<h1 className="post-trends__title">{ translate( 'Posting activity' ) }</h1>
-				</div>
-				<div ref={ this.wrapperRef } className="post-trends__wrapper">
-					<div ref={ this.yearRef } className="post-trends__year">
-						{ this.getMonthComponents() }
+					<div className="post-trends__heading">
+						<h1 className="post-trends__title">{ translate( 'Posting activity' ) }</h1>
 					</div>
-					<div className="post-trends__key-container">
-						<span className="post-trends__key-label">
-							{ translate( 'Fewer Posts', {
-								context: 'Legend label in stats post trends visualization',
-							} ) }
-						</span>
-						<ul className="post-trends__key">
-							<li className="post-trends__key-day is-today" />
-							<li className="post-trends__key-day is-level-1" />
-							<li className="post-trends__key-day is-level-2" />
-							<li className="post-trends__key-day is-level-3" />
-							<li className="post-trends__key-day is-level-4" />
-						</ul>
-						<span className="post-trends__key-label">
-							{ translate( 'More Posts', {
-								context: 'Legend label in stats post trends visualization',
-							} ) }
-						</span>
+					<div ref={ this.wrapperRef } className="post-trends__wrapper">
+						<div ref={ this.yearRef } className="post-trends__year">
+							{ this.getMonthComponents() }
+						</div>
+						<div className="post-trends__key-container">
+							<span className="post-trends__key-label">
+								{ translate( 'Fewer Posts', {
+									context: 'Legend label in stats post trends visualization',
+								} ) }
+							</span>
+							<ul className="post-trends__key">
+								<li className="post-trends__key-day is-today" />
+								<li className="post-trends__key-day is-level-1" />
+								<li className="post-trends__key-day is-level-2" />
+								<li className="post-trends__key-day is-level-3" />
+								<li className="post-trends__key-day is-level-4" />
+							</ul>
+							<span className="post-trends__key-label">
+								{ translate( 'More Posts', {
+									context: 'Legend label in stats post trends visualization',
+								} ) }
+							</span>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -78,8 +79,7 @@ class PostTrends extends Component {
 	}
 }
 
-const mapStateToProps = ( state ) => {
-	const siteId = getSelectedSiteId( state );
+const mapStateToProps = ( state, { siteId } ) => {
 	const query = {
 		startDate: moment()
 			.locale( 'en' )
@@ -94,7 +94,6 @@ const mapStateToProps = ( state ) => {
 	return {
 		streakData: getSiteStatsPostStreakData( state, siteId, query ),
 		query,
-		siteId,
 	};
 };
 
