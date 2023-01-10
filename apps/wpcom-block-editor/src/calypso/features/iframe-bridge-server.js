@@ -1103,7 +1103,6 @@ function handleSiteEditorBackButton( calypsoPort ) {
 			event.preventDefault();
 			calypsoPort.postMessage( {
 				action: 'openLinkInParentFrame',
-
 				payload: { postUrl },
 			} );
 		}
