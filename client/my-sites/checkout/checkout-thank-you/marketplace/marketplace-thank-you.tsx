@@ -1,14 +1,14 @@
-import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import { ConfettiAnimation } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ThankYou } from 'calypso/components/thank-you';
+import { ThankYouSectionProps } from 'calypso/components/thank-you/types';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
-import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import MasterbarStyled from 'calypso/my-sites/marketplace/components/masterbar-styled';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-plugin-install/use-marketplace-additional-steps';
@@ -29,11 +29,36 @@ import { getPluginsOnSite, isRequesting } from 'calypso/state/plugins/installed/
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { areFetched, getPlugins } from 'calypso/state/plugins/wporg/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { ThankYouPluginSection } from './marketplace-thank-you-plugin-section';
 
 const ThankYouContainer = styled.div`
+	.thank-you__container {
+		padding-top: var( --masterbar-height );
+	}
+
+	.thank-you__container-header {
+		min-height: auto;
+		padding: 0px;
+		padding-top: 15px;
+	}
+
+	.thank-you__body {
+		margin: 40px 0;
+
+		> div {
+			width: auto;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+	}
+
+	.thank-you__step div > p {
+		margin-bottom: 16px;
+	}
+
 	.thank-you__header-title {
 		font-family: Recoleta;
 		font-size: 48px;
@@ -46,6 +71,20 @@ const ThankYouContainer = styled.div`
 		line-height: 24px;
 		font-size: 16px;
 		color: var( --studio-gray-60 );
+	}
+
+	.thank-you__footer {
+		width: 1072px;
+		display: flex;
+
+		.thank-you__step {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.thank-you__step-cta {
+			margin: 0;
+		}
 	}
 `;
 
@@ -62,6 +101,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const currentUser = useSelector( getCurrentUser );
 	const isRequestingPlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
 
 	// retrieve WPCom plugin data
@@ -69,7 +109,6 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const wpComPluginsData = wpComPluginsDataResults.map(
 		( wpComPluginData ) => wpComPluginData.data
 	);
-	const foundWPcomData = wpComPluginsData.every( Boolean );
 	const softwareSlugs = wpComPluginsData.map( ( wpComPluginData, i ) =>
 		wpComPluginData ? wpComPluginData.software_slug || wpComPluginData.org_slug : productSlugs[ i ]
 	);
@@ -90,14 +129,10 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	);
 	const areWporgPluginsFetched = useSelector( ( state ) => areFetched( state, productSlugs ) );
 	const areAllWporgPluginsFetched = areWporgPluginsFetched.every( Boolean );
-	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 	const isFetchingTransferStatus = useSelector( ( state ) =>
 		isFetchingAutomatedTransferStatus( state, siteId )
 	);
 	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
-	const hasManagePluginsFeature = useSelector( ( state ) =>
-		siteHasFeature( state, siteId, WPCOM_FEATURES_MANAGE_PLUGINS )
-	);
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isJetpackSelfHosted = isJetpack && ! isAtomic;
@@ -110,7 +145,20 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const areAllPluginsOnSite =
 		!! pluginsOnSite.length && pluginsOnSite.every( ( pluginOnSite ) => !! pluginOnSite );
 
-	const currentUser = useSelector( getCurrentUser );
+	// Consolidate the plugin information from the .org and .com sources in a single list
+	const pluginInformationList = useMemo( () => {
+		return pluginsOnSite.reduce( ( pluginsList: Array< any >, pluginOnSite: Plugin ) => {
+			if ( typeof pluginOnSite?.slug === 'string' ) {
+				pluginsList.push( {
+					...wpComPluginsData.find( ( wpComPlugin ) => wpComPlugin?.slug === pluginOnSite.slug ),
+					...wporgPlugins.find( ( wpOrgPlugin ) => wpOrgPlugin?.slug === pluginOnSite.slug ),
+					...pluginOnSite,
+				} );
+			}
+
+			return pluginsList;
+		}, [] );
+	}, [ pluginsOnSite, wpComPluginsData, wporgPlugins ] );
 
 	// Site is transferring to Atomic.
 	// Poll the transfer status.
@@ -205,80 +253,56 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	);
 	const additionalSteps = useMarketplaceAdditionalSteps();
 
-	// Cast pluginOnSite's type because the return type of getPluginOnSite is
-	// wrong and I don't know how to fix it. Remove this cast if the return type
-	// can be made correct.
-	const pluginsOnSiteData = pluginsOnSite as Array<
-		undefined | { action_links?: { Settings?: string }; name?: string }
-	>;
+	const pluginsSection: ThankYouSectionProps = {
+		sectionKey: 'plugin_information',
+		nextSteps: pluginInformationList.map( ( plugin: any ) => ( {
+			stepKey: `plugin_information_${ plugin.slug }`,
+			stepDescription: <ThankYouPluginSection plugin={ plugin } />,
+		} ) ),
+	};
 
-	const fallbackSetupUrls = wpComPluginsData.map(
-		( wpComPluginData ) => wpComPluginData?.setup_url && siteAdminUrl + wpComPluginData?.setup_url
-	);
-	const managePluginsUrls = productSlugs.map( ( productSlug ) =>
-		hasManagePluginsFeature
-			? `${ siteAdminUrl }plugins.php`
-			: `/plugins/${ productSlug }/${ siteSlug } `
-	);
-
-	const setupURLs = pluginsOnSiteData.map(
-		( pluginOnSiteData, i ) =>
-			pluginOnSiteData?.action_links?.Settings || fallbackSetupUrls[ i ] || managePluginsUrls[ i ]
-	);
-
-	const documentationURLs = wpComPluginsData.map(
-		( wpComPluginData ) => wpComPluginData?.documentation_url
-	);
-
-	const setupSection = {
-		sectionKey: 'setup_whats_next',
-		sectionTitle: translate( 'What’s next?' ),
+	const footerSection: ThankYouSectionProps = {
+		sectionKey: 'thank_you_footer',
+		nextStepsClassName: 'thank-you__footer',
 		nextSteps: [
 			{
-				stepKey: 'whats_next_plugin_setup',
-				stepTitle: translate( 'Plugin setup' ),
+				stepKey: 'thank_you_footer_support_guides',
+				stepTitle: translate( 'Support guides' ),
 				stepDescription: translate(
-					'Get to know your plugin and customize it, so you can hit the ground running.'
+					'Our guides will show you everything you need to know about plugins.'
 				),
 				stepCta: (
-					<FullWidthButton href={ setupURLs[ 0 ] } primary busy={ ! areAllPluginsOnSite }>
-						{ translate( 'Manage plugin' ) }
-					</FullWidthButton>
+					<Button isSecondary href="https://wordpress.com/support/plugins/" target="_blank">
+						{ translate( 'Plugin Support' ) }
+					</Button>
 				),
 			},
-			...( documentationURLs[ 0 ]
-				? [
-						{
-							stepKey: 'whats_next_documentation',
-							stepTitle: translate( 'Documentation' ),
-							stepDescription: translate(
-								'Visit the step-by-step guide to learn how to use this plugin.'
-							),
-							stepCta: (
-								<FullWidthButton href={ documentationURLs[ 0 ] }>
-									{ translate( 'Visit guide' ) }
-								</FullWidthButton>
-							),
-						},
-				  ]
-				: [] ),
 			{
-				stepKey: 'whats_next_grow',
+				stepKey: 'thank_you_footer_explore',
 				stepTitle: translate( 'Keep growing' ),
 				stepDescription: translate(
-					'Take your site to the next level. We have all the solutions to help you grow and thrive.'
+					'Take your site to the next level. We have all the solutions to help you.'
 				),
 				stepCta: (
-					<FullWidthButton href={ `/plugins/${ siteSlug }` }>
+					<Button isPrimary href={ `/plugins/${ siteSlug }` } target="_blank">
 						{ translate( 'Explore plugins' ) }
-					</FullWidthButton>
+					</Button>
+				),
+			},
+			{
+				stepKey: 'thank_you_footer_support',
+				stepTitle: translate( 'How can we support?' ),
+				stepDescription: translate(
+					'Our team is here if you need help, or if you have any questions.'
+				),
+				stepCta: (
+					<Button isSecondary href="https://wordpress.com/help/contact" target="_blank">
+						{ translate( 'Ask a question' ) }
+					</Button>
 				),
 			},
 		],
 	};
-
-	const purchase = translate( 'purchase' );
-	const download = translate( 'download' );
 
 	return (
 		<ThemeProvider theme={ theme }>
@@ -310,20 +334,15 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 					<ConfettiAnimation />
 					<ThankYou
 						containerClassName="marketplace-thank-you"
-						sections={ [ setupSection ] }
-						showSupportSection={ true }
+						sections={ [ pluginsSection, footerSection ] }
+						showSupportSection={ false }
 						thankYouTitle={ translate( "You're all set %(username)s!", {
 							args: {
 								username: currentUser?.display_name || currentUser?.username,
 							},
 						} ) }
 						thankYouSubtitle={ translate(
-							'Congratulations on your %(action)s. You can now extend the possibilities of your site with your WordPress.com plugins.',
-							{
-								args: {
-									action: foundWPcomData ? purchase : download,
-								},
-							}
+							'Congratulations on your installation. You can now extend the possibilities of your site.'
 						) }
 						headerBackgroundColor="#fff"
 						headerTextColor="#000"

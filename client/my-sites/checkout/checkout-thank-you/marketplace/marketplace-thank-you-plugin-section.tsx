@@ -24,8 +24,22 @@ const PluginSectionContainer = styled.div`
 
 const PluginSectionContent = styled.div`
 	display: flex;
+	flex-direction: column;
 	flex-grow: 1;
 	margin: 0 16px;
+`;
+
+const PluginSectionName = styled.div`
+	font-size: 16px;
+	font-weight: 500;
+	line-height: 24px;
+	color: var( --studio-gray-100 );
+`;
+
+const PluginSectionExpirationDate = styled.div`
+	font-size: 14px;
+	line-height: 22px;
+	color: var( --studio-gray-60 );
 `;
 
 const PluginSectionButtons = styled.div`
@@ -65,7 +79,13 @@ export const ThankYouPluginSection = ( { plugin }: { plugin: any } ) => {
 					} ) as string
 				}
 			/>
-			<PluginSectionContent>{ plugin.name }</PluginSectionContent>
+			<PluginSectionContent>
+				<PluginSectionName>{ plugin.name }</PluginSectionName>
+				{ /* TODO: Implement expiration date logic, the prop expiration date doesn't exists */ }
+				{ plugin.expirationDate && (
+					<PluginSectionExpirationDate>{ plugin.expirationDate }</PluginSectionExpirationDate>
+				) }
+			</PluginSectionContent>
 			<PluginSectionButtons>
 				{ documentationURL && (
 					<Button isSecondary href={ documentationURL }>
