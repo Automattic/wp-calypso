@@ -20,6 +20,7 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import AutoRenewToggle from './auto-renew-toggle';
 import type {
 	Purchase,
+	Site,
 	GetChangePaymentMethodUrlFor,
 	RenderRenewsOrExpiresOn,
 	RenderRenewsOrExpiresOnLabel,
@@ -28,7 +29,7 @@ import type {
 
 interface ExpirationProps {
 	purchase: Purchase;
-	site?: string;
+	site?: Site;
 	siteSlug?: string;
 	getChangePaymentMethodUrlFor: GetChangePaymentMethodUrlFor;
 	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
@@ -64,9 +65,10 @@ function PurchaseMetaExpiration( {
 		const dateSpan = <span className="manage-purchase__detail-date-span" />;
 		// If a jetpack site has been disconnected, the "site" prop will be null here.
 		const shouldRenderToggle = site && isProductOwner;
+
 		const autoRenewToggle = shouldRenderToggle ? (
 			<AutoRenewToggle
-				planName={ site.plan.product_name_short }
+				planName={ site.plan?.product_name_short }
 				siteDomain={ site.domain }
 				siteSlug={ site.slug }
 				purchase={ purchase }
