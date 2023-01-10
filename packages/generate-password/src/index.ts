@@ -1,5 +1,9 @@
 type CharacterPoolOptions = {
 	/**
+	 * Define the length of the generated random password
+	 */
+	length?: number;
+	/**
 	 * Use digits 0-9 in character pool
 	 */
 	useNumbers?: boolean;
@@ -17,18 +21,13 @@ type CharacterPoolOptions = {
  * Forked from https://github.com/WordPress/wporg-two-factor/blob/trunk/settings/src/components/password.js#L139-L167
  *
  * Generate a cryptographically secure random password.
- *
- * This is just as secure as using the `generate-password` AJAX endpoint, but faster, and avoids introducing the
- * possibility of XHR failures, etc.
  */
-export function generatePassword(
+export function generatePassword( {
 	length = 24,
-	{
-		useNumbers = true,
-		useSpecialChars = true,
-		useExtraSpecialChars = false,
-	}: CharacterPoolOptions = {}
-) {
+	useNumbers = true,
+	useSpecialChars = true,
+	useExtraSpecialChars = false,
+}: CharacterPoolOptions = {} ) {
 	let characterPool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 	if ( useNumbers ) {
