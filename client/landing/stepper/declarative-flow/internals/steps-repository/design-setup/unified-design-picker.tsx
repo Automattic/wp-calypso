@@ -10,7 +10,6 @@ import {
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
-import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -19,7 +18,6 @@ import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
-import PremiumBadge from 'calypso/components/premium-badge';
 import WebPreview from 'calypso/components/web-preview/content';
 import { useSiteVerticalQueryById } from 'calypso/data/site-verticals';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -34,6 +32,12 @@ import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
+import {
+	getDesignEventProps,
+	getDesignTypeProps,
+	recordPreviewedDesign,
+	recordSelectedDesign,
+} from '../../analytics/record-design';
 import { getCategorizationOptions } from './categories';
 import { DEFAULT_VARIATION_SLUG, STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
@@ -213,19 +217,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		setSelectedStyleVariation,
 	] );
 
-	function getEventPropsByDesign( design: Design, variation?: StyleVariation ) {
-		const variationSlugSuffix =
-			variation && variation.slug !== 'default' ? `-${ variation.slug }` : '';
-
+	function getEventPropsByDesign( design: Design, styleVariation?: StyleVariation ) {
 		return {
-			flow,
-			intent,
+			...getDesignEventProps( { flow, intent, design, styleVariation } ),
 			category: categorization.selection,
-			slug: design.slug + variationSlugSuffix,
-			theme: design.recipe?.stylesheet,
-			theme_style: design.recipe?.stylesheet + variationSlugSuffix,
-			design_type: design.design_type,
-			is_premium: design.is_premium,
 			...( design.recipe?.pattern_ids && { pattern_ids: design.recipe.pattern_ids.join( ',' ) } ),
 			...( design.recipe?.header_pattern_ids && {
 				header_pattern_ids: design.recipe.header_pattern_ids.join( ',' ),
@@ -233,23 +228,19 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			...( design.recipe?.footer_pattern_ids && {
 				footer_pattern_ids: design.recipe.footer_pattern_ids.join( ',' ),
 			} ),
-			has_style_variations: ( design.style_variations || [] ).length > 0,
 		};
 	}
 
-	function previewDesign( design: Design, variation?: StyleVariation ) {
-		recordTracksEvent(
-			'calypso_signup_design_preview_select',
-			getEventPropsByDesign( design, variation )
-		);
+	function previewDesign( design: Design, styleVariation?: StyleVariation ) {
+		recordPreviewedDesign( { flow, intent, design, styleVariation } );
 		setSelectedDesign( design );
 
-		if ( variation ) {
+		if ( styleVariation ) {
 			recordTracksEvent(
 				'calypso_signup_design_picker_style_variation_button_click',
-				getEventPropsByDesign( design, variation )
+				getEventPropsByDesign( design, styleVariation )
 			);
-			setSelectedStyleVariation( variation );
+			setSelectedStyleVariation( styleVariation );
 		}
 
 		setIsPreviewingDesign( true );
@@ -453,37 +444,57 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					verticalId: siteVerticalId,
 				} ).then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
 			);
-			recordTracksEvent( 'calypso_signup_select_design', {
-				...getEventPropsByDesign( _selectedDesign, selectedStyleVariation ),
-				...( positionIndex >= 0 && { position_index: positionIndex } ),
-				device: resolveDeviceTypeByViewPort(),
+
+			handleSubmit(
+				{
+					selectedDesign: _selectedDesign,
+					selectedSiteCategory: categorization.selection,
+				},
+				{ ...( positionIndex >= 0 && { position_index: positionIndex } ) }
+			);
+		}
+	}
+
+	function pickBlankCanvasDesign( blankCanvasDesign: Design, shouldGoToAssemblerStep: boolean ) {
+		if ( shouldGoToAssemblerStep ) {
+			const _selectedDesign = {
+				...blankCanvasDesign,
+				design_type: 'assembler',
+			} as Design;
+
+			recordPreviewedDesign( {
+				flow,
+				intent,
+				design: _selectedDesign,
 			} );
 
-			if ( _selectedDesign.verticalizable ) {
-				recordTracksEvent(
-					'calypso_signup_select_verticalized_design',
-					getEventPropsByDesign( _selectedDesign, selectedStyleVariation )
-				);
-			}
+			setSelectedDesign( _selectedDesign );
 
 			handleSubmit( {
 				selectedDesign: _selectedDesign,
 				selectedSiteCategory: categorization.selection,
 			} );
+		} else {
+			pickDesign( blankCanvasDesign );
 		}
 	}
 
-	function handleSubmit( providedDependencies?: ProvidedDependencies ) {
+	function handleSubmit( providedDependencies?: ProvidedDependencies, optionalProps?: object ) {
 		const _selectedDesign = providedDependencies?.selectedDesign as Design;
+		if ( _selectedDesign?.design_type !== 'assembler' ) {
+			recordSelectedDesign( {
+				flow,
+				intent,
+				design: _selectedDesign,
+				styleVariation: selectedStyleVariation,
+				optionalProps,
+			} );
+		}
 
-		recordTracksEvent( 'calypso_signup_design_type_submit', {
-			flow,
-			intent,
-			design_type: _selectedDesign?.design_type ?? 'default',
-			has_style_variations: ( _selectedDesign?.style_variations || [] ).length > 0,
+		submit?.( {
+			...providedDependencies,
+			...getDesignTypeProps( _selectedDesign ),
 		} );
-
-		submit?.( providedDependencies );
 	}
 
 	function handleBackClick() {
@@ -513,22 +524,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		};
 
 		recordTracksEvent( eventName, tracksProps );
-	}
-
-	function showGlobalStylesPremiumBadge() {
-		if ( ! shouldLimitGlobalStyles ) {
-			return null;
-		}
-
-		return (
-			<PremiumBadge
-				className="design-picker__premium-badge"
-				labelText={ translate( 'Upgrade' ) }
-				tooltipText={ translate(
-					'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
-				) }
-			/>
-		);
 	}
 
 	function getPrimaryActionButton( pickDesignText: ReactChild ) {
@@ -621,7 +616,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 						onSelectVariation={ previewDesignVariation }
 						actionButtons={ actionButtons }
 						recordDeviceClick={ recordDeviceClick }
-						showGlobalStylesPremiumBadge={ showGlobalStylesPremiumBadge }
+						showGlobalStylesPremiumBadge={ shouldLimitGlobalStyles }
 					/>
 				) : (
 					<WebPreview
@@ -698,6 +693,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			verticalId={ siteVerticalId }
 			locale={ locale }
 			onSelect={ pickDesign }
+			onSelectBlankCanvas={ pickBlankCanvasDesign }
 			onPreview={ previewDesign }
 			onViewAllDesigns={ trackAllDesignsView }
 			onCheckout={ goToCheckout }

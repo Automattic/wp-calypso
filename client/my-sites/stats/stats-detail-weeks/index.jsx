@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import config from '@automattic/calypso-config';
 import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -102,7 +103,7 @@ const StatsPostDetailWeeks = ( props ) => {
 			// If there are fewer than 7 days in the last week, append blank days
 			if ( week.days.length < 7 && 0 !== index ) {
 				for ( let j = 0; j < 7 - week.days.length; j++ ) {
-					cells.push( <td key={ 'w' + index + 'e' + j } /> );
+					cells.push( <td className="has-no-data" key={ 'w' + index + 'e' + j } /> );
 				}
 			}
 
@@ -150,14 +151,20 @@ const StatsPostDetailWeeks = ( props ) => {
 		tableBody = <tbody>{ tableRows }</tbody>;
 	}
 
+	const isFeatured = config.isEnabled( 'stats/enhance-post-detail' );
+	const tableWrapperClasses = classNames( {
+		'module-content-table': ! isFeatured,
+	} );
+
 	return (
-		<Card className={ classNames( 'stats-module', 'is-expanded', 'is-post-weeks', classes ) }>
+		<Card className={ classNames( 'stats-module', 'is-expanded', 'is-detail-weeks', classes ) }>
 			<QueryPostStats siteId={ siteId } postId={ postId } />
 			<QueryPosts siteId={ siteId } postId={ postId } />
 			<div className="module-header">
 				<h4 className="module-header-title">{ translate( 'Recent Weeks' ) }</h4>
 				<ul className="module-header-actions">
 					<li className="module-header-action toggle-info">
+						{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
 						<a
 							href="#"
 							className="module-header-action-link"
@@ -190,7 +197,7 @@ const StatsPostDetailWeeks = ( props ) => {
 				</span>
 			</StatsModuleContent>
 			<StatsModulePlaceholder isLoading={ isLoading } />
-			<div className="module-content-table">
+			<div className={ tableWrapperClasses }>
 				<div className="module-content-table-scroll">
 					<table cellPadding="0" cellSpacing="0">
 						{ tableHeader }

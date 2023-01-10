@@ -32,6 +32,7 @@ import {
 	isSiteRedirect,
 	isSpaceUpgrade,
 	isStarter,
+	isTriennially,
 	isTitanMail,
 	isUnlimitedSpace,
 	isUnlimitedThemes,
@@ -133,6 +134,10 @@ export function hasMonthlyCartItem( cart: ObjectWithProducts ): boolean {
 
 export function hasBiennialCartItem( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isBiennially );
+}
+
+export function hasTriennialCartItem( cart: ObjectWithProducts ): boolean {
+	return getAllCartItems( cart ).some( isTriennially );
 }
 
 /**

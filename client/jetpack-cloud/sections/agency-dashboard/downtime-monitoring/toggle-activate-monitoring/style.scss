@@ -1,14 +1,41 @@
+@import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
 .components-form-toggle.is-checked .components-form-toggle__track {
 	background-color: var(--studio-jetpack-green-50);
 }
 
-.components-toggle-control .components-base-control__field {
-	margin-bottom: 0;
+.inline-flex-align-centre {
+	display: inline-flex;
+	align-items: center;
 }
 
 .toggle-activate-monitoring__toggle-button {
-	display: inline-flex;
-	align-items: center;
+	@extend .inline-flex-align-centre;
+
+	.components-toggle-control .components-base-control__field {
+		margin-bottom: 0;
+
+		.components-form-toggle {
+			@include break-large {
+				margin-right: 4px;
+			}
+
+			@include break-xlarge {
+				margin-right: 12px;
+			}
+		}
+	}
+}
+
+.toggle-activate-monitoring__duration {
+	button {
+		@extend .inline-flex-align-centre;
+	}
+
+	span {
+		margin-inline-start: 1px;
+		font-size: 0.75rem;
+		font-weight: 500;
+	}
 }

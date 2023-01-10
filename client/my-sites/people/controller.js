@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -11,7 +12,9 @@ import PeopleList from './main';
 import PeopleAddSubscribers from './people-add-subscribers';
 import PeopleInviteDetails from './people-invite-details';
 import PeopleInvites from './people-invites';
+import SubscriberDetails from './subscriber-details';
 import SubscribersTeam from './subscribers-team';
+import TeamInvite from './team-invite';
 
 export default {
 	redirectToTeam,
@@ -52,6 +55,10 @@ export default {
 
 	subscribers( context, next ) {
 		renderSubscribers( context, next );
+	},
+
+	subscriberDetails( context, next ) {
+		renderSubscribersDetails( context, next );
 	},
 
 	peopleAddSubscribers( context, next ) {
@@ -97,7 +104,8 @@ function renderInvitePeople( context, next ) {
 	context.primary = (
 		<>
 			<InvitePeopleTitle />
-			<InvitePeople key={ site.ID } site={ site } />
+			{ ! isEnabled( 'user-management-revamp' ) && <InvitePeople key={ site.ID } site={ site } /> }
+			{ isEnabled( 'user-management-revamp' ) && <TeamInvite key={ site.ID } site={ site } /> }
 		</>
 	);
 	next();
@@ -151,6 +159,22 @@ function renderSubscribers( context, next ) {
 	next();
 }
 
+function renderSubscribersDetails( context, next ) {
+	const SubscriberDetailsTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'User Details', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<SubscriberDetailsTitle />
+			<SubscriberDetails subscriberId={ context.params.id } />
+		</>
+	);
+	next();
+}
+
 function renderPeopleAddSubscribers( context, next ) {
 	const PeopleAddSubscribersTitle = () => {
 		const translate = useTranslate();
@@ -171,7 +195,7 @@ function renderPeopleInviteDetails( context, next ) {
 	const PeopleInviteDetailsTitle = () => {
 		const translate = useTranslate();
 
-		return <DocumentHead title={ translate( 'Invite Details', { textOnly: true } ) } />;
+		return <DocumentHead title={ translate( 'User Details', { textOnly: true } ) } />;
 	};
 
 	context.primary = (

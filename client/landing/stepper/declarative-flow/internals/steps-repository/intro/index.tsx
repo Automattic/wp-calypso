@@ -95,6 +95,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			stepContent={ <IntroStep introContent={ introContent } onSubmit={ handleSubmit } /> }
 			recordTracksEvent={ recordTracksEvent }
 			showHeaderJetpackPowered={ flow === NEWSLETTER_FLOW }
+			showHeaderWooCommercePowered={ flow === ECOMMERCE_FLOW }
 			showVideoPressPowered={ isVideoPressFlow }
 		/>
 	);

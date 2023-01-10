@@ -48,12 +48,3 @@ The post ID for which the email stat should be requested.
 
 The stats fields being requested.
 
-### `heartbeat`
-
-<table>
-	<tr><th>Type</th><td>Number</td></tr>
-	<tr><th>Required</th><td>No</td></tr>
-</table>
-
-The interval in milliseconds before refreshing the stat.
-By default the stat will be fetched once and never refreshed.

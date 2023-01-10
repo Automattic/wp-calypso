@@ -291,7 +291,7 @@ class StatsSite extends Component {
 								period={ this.props.period }
 								query={ query }
 								statType="statsEmailsOpen"
-								showSummaryLink
+								hideSummaryLink
 								showNewModules
 							/>
 						) }
@@ -378,7 +378,12 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
-				<PromoCards isJetpack={ isJetpack } isOdysseyStats={ isOdysseyStats } slug={ slug } />
+				<PromoCards
+					isJetpack={ isJetpack }
+					isOdysseyStats={ isOdysseyStats }
+					pageSlug="traffic"
+					slug={ slug }
+				/>
 				<JetpackColophon />
 			</div>
 		);
@@ -411,11 +416,8 @@ class StatsSite extends Component {
 		// Necessary to properly configure the fixed navigation headers.
 		sessionStorage.setItem( 'jp-stats-last-tab', 'traffic' );
 
-		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
-		const mainWrapperClass = classNames( { 'stats--new-wrapper': isNewMainChart } );
-
 		return (
-			<Main className={ mainWrapperClass } fullWidthLayout>
+			<Main fullWidthLayout>
 				{ /* Odyssey: Google My Business pages are currently unsupported. */ }
 				{ ! isOdysseyStats && (
 					<>

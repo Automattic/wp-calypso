@@ -85,12 +85,10 @@
 	}
 }
 
-.people-list-item__invite-resend {
-	display: inline-block;
-	min-width: 95px;
-	height: 30px;
-	margin-left: 12px;
+.people-list-item__invite-resend.button,
+.people-list-item__invite-revoke.button {
 	vertical-align: baseline;
+	margin-left: 0.75rem;
 
 	&.is-success {
 		background-color: var(--color-neutral-0);

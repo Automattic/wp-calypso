@@ -67,6 +67,7 @@ button {
 .anchor-fm,
 .subscribers,
 .ecommerce,
+.wooexpress,
 .intro,
 .free-setup,
 .free-post-setup,
@@ -169,6 +170,7 @@ button {
 	}
 }
 
+.store-profiler__form,
 .newsletter,
 .link-in-bio,
 .link-in-bio-tld,
@@ -235,6 +237,7 @@ button {
 		label {
 			font-size: $font-body;
 			color: var(--studio-gray-60);
+			font-weight: 400;
 		}
 	}
 
@@ -298,6 +301,7 @@ button {
 	}
 }
 
+.wooexpress,
 .ecommerce {
 	.step-container.processing-step {
 		display: flex;

@@ -42,9 +42,9 @@ const flows: Record< string, { [ step: string ]: number } > = {
 	},
 	videopress: {
 		intro: 0,
-		user: 1,
-		options: 2,
-		videomakerSetup: 3,
+		videomakerSetup: 1,
+		user: 2,
+		options: 3,
 		chooseADomain: 4,
 		chooseAPlan: 5,
 		processing: 6,

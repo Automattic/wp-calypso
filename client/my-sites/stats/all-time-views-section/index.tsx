@@ -33,11 +33,11 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 	};
 
 	return (
-		<div className="stats__all-time-views-section">
+		<div className="stats__all-time-views-section stats__modernized-stats-table">
 			{ siteId && <QuerySiteStats statType="statsVisits" siteId={ siteId } query={ query } /> }
 
 			<div className="highlight-cards">
-				<h1 className="highlight-cards-heading">{ translate( 'All-time Insights' ) }</h1>
+				<h1 className="highlight-cards-heading">{ translate( 'All-time insights' ) }</h1>
 
 				<div className="highlight-cards-list">
 					<Card className="highlight-card">
@@ -48,7 +48,7 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 							) }
 						</div>
 
-						<div className="stats__all-time-views-table-wrapper">
+						<div className="stats__table-wrapper">
 							<StatsModulePlaceholder isLoading={ ! viewData } />
 							<Months dataKey={ chartOption } data={ viewData } siteSlug={ slug } showYearTotal />
 						</div>

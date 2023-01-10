@@ -27,6 +27,8 @@ import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
+import { isWcMobileApp } from 'calypso/lib/mobile-app';
+import { getQueryArgs } from 'calypso/lib/query-args';
 import { getCurrentUserEmail, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
@@ -244,7 +246,6 @@ export const HelpCenterContactForm = () => {
 	);
 
 	const showingSibylResults = params.get( 'show-results' ) === 'true';
-
 	function handleCTA() {
 		if ( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
 			params.set( 'show-results', 'true' );
@@ -288,6 +289,14 @@ export const HelpCenterContactForm = () => {
 						'Site I need help with: ' + supportSite.URL,
 						`Plan: ${ productId } - ${ productName } (${ productTerm })`,
 					];
+
+					if ( getQueryArgs()?.ref === 'woocommerce-com' ) {
+						ticketMeta.push(
+							`Created during store setup on ${
+								isWcMobileApp() ? 'Woo mobile app' : 'Woo browser'
+							}`
+						);
+					}
 
 					const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
 

@@ -61,7 +61,6 @@ const SiteSettingsTraffic = ( {
 				ctaText={ translate( 'Get started' ) }
 				image={ blazeDropDownIllustration }
 				href={ `/advertising/${ siteSlug || '' }` }
-				showOnJetpackNonAtomic={ true }
 			/>
 		) }
 		{ isAdmin && <SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } /> }
@@ -75,7 +74,7 @@ const SiteSettingsTraffic = ( {
 		{ isAdmin && (
 			<RelatedPosts
 				onSubmitForm={ handleSubmitForm }
-				handleAutosavingToggle={ handleAutosavingToggle }
+				handleToggle={ handleAutosavingToggle }
 				isSavingSettings={ isSavingSettings }
 				isRequestingSettings={ isRequestingSettings }
 				fields={ fields }

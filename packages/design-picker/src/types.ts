@@ -76,7 +76,8 @@ export type DesignType =
 	| 'premium'
 	| 'standard' // The design is free.
 	| 'default' // The default design and it means user skipped the step and didn't select any design.
-	| 'anchor-fm';
+	| 'anchor-fm'
+	| 'assembler';
 
 export interface Design {
 	slug: string;

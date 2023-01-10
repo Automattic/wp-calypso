@@ -243,7 +243,11 @@ class ThemeSheet extends Component {
 		this.props.recordTracksEvent( 'calypso_theme_live_demo_preview_click', { type } );
 
 		const { preview } = this.props.options;
-		this.props.setThemePreviewOptions( this.props.defaultOption, this.props.secondaryOption );
+		this.props.setThemePreviewOptions(
+			this.props.themeId,
+			this.props.defaultOption,
+			this.props.secondaryOption
+		);
 		return preview.action( this.props.themeId );
 	};
 
@@ -771,6 +775,7 @@ class ThemeSheet extends Component {
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes,
 			isMarketplaceThemeSubscribed,
+			isLoading,
 		} = this.props;
 
 		const analyticsPath = `/theme/${ themeId }${ section ? '/' + section : '' }${
@@ -846,6 +851,10 @@ class ThemeSheet extends Component {
 			onClick = launchPricing;
 		}
 
+		const upsellNudgeClasses = classNames( 'theme__page-upsell-banner', {
+			'theme__page-upsell-disabled': isLoading,
+		} );
+
 		if ( hasWpComThemeUpsellBanner ) {
 			const forceDisplay =
 				( isBundledSoftwareSet && ! isSiteBundleEligible ) ||
@@ -854,7 +863,7 @@ class ThemeSheet extends Component {
 			pageUpsellBanner = (
 				<UpsellNudge
 					plan={ PLAN_PREMIUM }
-					className="theme__page-upsell-banner"
+					className={ upsellNudgeClasses }
 					title={ this.getBannerUpsellTitle() }
 					description={ preventWidows( this.getBannerUpsellDescription() ) }
 					event="themes_plan_particular_free_with_plan"

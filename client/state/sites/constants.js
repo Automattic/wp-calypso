@@ -57,6 +57,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'podcasting_archive',
 	'podcasting_category_id',
 	'publicize_permanently_disabled',
+	'restricted_tld',
 	'show_on_front',
 	'site_segment',
 	'software_version',

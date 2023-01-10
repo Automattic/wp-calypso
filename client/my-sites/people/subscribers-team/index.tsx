@@ -8,6 +8,9 @@ import useUsersQuery from 'calypso/data/users/use-users-query';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleSectionNavCompact from '../people-section-nav-compact';
 import Subscribers from '../subscribers';
+import TeamInvites from '../team-invites';
+import TeamInvitesAccepted from '../team-invites-accepted';
+import TeamMembers from '../team-members';
 import type { FollowersQuery } from '../subscribers/types';
 import type { UsersQuery } from '../team-members/types';
 
@@ -22,10 +25,13 @@ function SubscribersTeam( props: Props ) {
 
 	// fetching data config
 	const followersFetchOptions = { search };
-	const teamFetchOptions = {
-		...followersFetchOptions,
-		search_columns: [ 'display_name', 'user_login' ],
-	};
+	const teamFetchOptions = search
+		? {
+				search: `*${ search }*`,
+				search_columns: [ 'display_name', 'user_login' ],
+		  }
+		: {};
+
 	const followersQuery = useFollowersQuery(
 		site?.ID,
 		'all',
@@ -66,6 +72,15 @@ function SubscribersTeam( props: Props ) {
 									search={ search }
 									followersQuery={ followersQuery }
 								/>
+							);
+
+						case 'team-members':
+							return (
+								<>
+									<TeamMembers search={ search } usersQuery={ usersQuery } />
+									<TeamInvites />
+									<TeamInvitesAccepted />
+								</>
 							);
 					}
 				} )() }

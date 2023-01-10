@@ -4,6 +4,6 @@ export const QUERY_FIELDS = [
 	'likes',
 	'comments',
 	'post_titles',
-	'opens',
-	'unique_opens',
+	'opens_count',
+	'unique_opens_count',
 ];
