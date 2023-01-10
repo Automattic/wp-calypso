@@ -101,7 +101,7 @@
 		"sign-in-with-apple": false,
 		"signup/design-picker-pattern-assembler": true,
 		"signup/design-picker-generated-designs": true,
-		"signup/design-picker-unified": true,
+		"signup/design-picker-unified": false,
 		"signup/free-flow": true,
 		"signup/inline-help": false,
 		"signup/professional-email-step": false,
