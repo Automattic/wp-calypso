@@ -154,6 +154,13 @@ describe( 'route', function () {
 					route.getSiteFragment( '/checkout/thank-you/example.wordpress.com/75806534' )
 				).toEqual( 'example.wordpress.com' );
 			} );
+			test( 'should return the correct site fragment during upsell', function () {
+				expect(
+					route.getSiteFragment(
+						'/checkout/example.wordpress.com/offer-plan-upgrade/business-monthly/75806534'
+					)
+				).toEqual( 'example.wordpress.com' );
+			} );
 			test( 'should return the correct site fragment on domain renewals', function () {
 				expect(
 					route.getSiteFragment(
