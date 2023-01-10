@@ -1,5 +1,6 @@
 import { isEcommerce } from '@automattic/calypso-products/src';
 import page from 'page';
+import { isE2ETest } from 'calypso/lib/e2e';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
 	canCurrentUserUseCustomerHome,
@@ -61,7 +62,8 @@ export async function maybeRedirect( context, next ) {
 
 	// Ecommerce Plan's Home redirects to WooCommerce Home.
 	// Temporary redirection until we create a dedicated Home for Ecommerce.
-	if ( isEcommerce( getSitePlan( state, siteId ) ) ) {
+	// Temporary disable redirection during e2e tests.
+	if ( ! isE2ETest() && isEcommerce( getSitePlan( state, siteId ) ) ) {
 		const siteUrl = getSiteUrl( state, siteId );
 		if ( siteUrl !== null ) {
 			window.location.replace( siteUrl + '/wp-admin/admin.php?page=wc-admin' );
