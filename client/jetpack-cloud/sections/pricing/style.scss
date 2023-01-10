@@ -15,23 +15,4 @@
 			border: solid 2px var(--studio-pink-50);
 		}
 	}
-
-	.layout__content {
-		overflow: clip;
-	}
-	.global-notices {
-		z-index: 100201;
-	}
-}
-
-html {
-	overflow-y: initial;
-}
-body.is-section-jetpack-cloud-pricing {
-	//hide scroll for body when cart is open in mobile view
-	&.body--masterbar-cart-visible {
-		@media ( max-width: $break-mobile ) {
-			overflow-y: hidden;
-		}
-	}
 }

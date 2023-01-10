@@ -20,12 +20,6 @@
 		@include break-large {
 			height: 52px;
 		}
-
-
-		@media (max-width: $break-mobile) {
-			justify-content: flex-start;
-			padding-left: 15px;
-		}
 	}
 }
 
@@ -89,22 +83,6 @@
 .is-group-jetpack-cloud.is-section-jetpack-cloud-pricing .intro-pricing-banner.is-sticky {
 	top: 0;
 }
-
-.is-section-jetpack-connect .intro-pricing-banner.is-sticky,
-.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing .intro-pricing-banner.is-sticky .header__jetpack-masterbar-cart {
-	position: absolute;
-	display: inline-flex;
-
-	@media (max-width: 660px) {
-		right: 11%;
-	}
-
-	@media (max-width: 960px) {
-		top: 14px;
-	}
-
-}
-
 
 // target Calypso pricing filter bar, not jetpack cloud
 .is-group-sites.is-section-plans .intro-pricing-banner.is-sticky {

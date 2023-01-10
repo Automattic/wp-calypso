@@ -13,8 +13,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { trailingslashit } from 'calypso/lib/route';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
-import { isJetpackCloudCartEnabled } from 'calypso/state/sites/selectors';
-import CloudCart from './cloud-cart';
 import useMobileBtn from './use-mobile-btn';
 import useSubmenuBtn from './use-submenu-btn';
 import useUserMenu from './use-user-menu';
@@ -41,7 +39,6 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 	const jetpackSaleCoupon = useSelector( getJetpackSaleCoupon );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const user = useSelector( getCurrentUser );
-
 	const sections = useMemo(
 		() => [
 			{
@@ -131,8 +128,6 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		[ translate ]
 	);
 
-	const shouldShowCart = useSelector( isJetpackCloudCartEnabled );
-
 	const onLinkClick = useCallback( ( e ) => {
 		recordTracksEvent( 'calypso_jetpack_nav_item_click', {
 			nav_item: e.currentTarget
@@ -154,154 +149,144 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 
 			<div className="jpcom-masterbar">
 				<header className="header js-header force-opaque">
-					<div className="header__content-wrapper">
-						<div className="header__content-background-wrapper">
-							<nav className="header__content is-sticky">
-								<a className="header__skip" href={ `#${ MAIN_CONTENT_ID }` }>
-									{ translate( 'Skip to main content' ) }
-								</a>
-								<ExternalLink
-									className="header__home-link"
-									href={ localizeUrl( JETPACK_COM_BASE_URL, locale ) }
-									aria-label={ translate( 'Jetpack home' ) }
-									onClick={ () => recordTracksEvent( 'calypso_jetpack_nav_logo_click' ) }
-								>
-									<JetpackLogo full size={ 38 } />
-								</ExternalLink>
-								{ shouldShowCart && <CloudCart /> }
-								<a
-									className="header__mobile-btn mobile-btn js-mobile-btn"
-									href="#mobile-menu"
-									aria-expanded="false"
-								>
-									<span className="mobile-btn__icon" aria-hidden="true">
-										<span className="mobile-btn__inner"></span>
-									</span>
-									<span className="mobile-btn__label">{ translate( 'Menu' ) }</span>
-								</a>
-								<div className="header__nav-wrapper js-mobile-menu" id="mobile-menu">
-									<ul className="header__sections-list js-nav-list">
-										{ sections.map( ( { label, id, href, items } ) => {
-											const hasChildren = Array.isArray( items );
-											const Tag = hasChildren ? 'a' : ExternalLink;
+					<nav className="header__content">
+						<a className="header__skip" href={ `#${ MAIN_CONTENT_ID }` }>
+							{ translate( 'Skip to main content' ) }
+						</a>
+						<ExternalLink
+							className="header__home-link"
+							href={ localizeUrl( JETPACK_COM_BASE_URL, locale ) }
+							aria-label={ translate( 'Jetpack home' ) }
+							onClick={ () => recordTracksEvent( 'calypso_jetpack_nav_logo_click' ) }
+						>
+							<JetpackLogo full size={ 38 } />
+						</ExternalLink>
+						<a
+							className="header__mobile-btn mobile-btn js-mobile-btn"
+							href="#mobile-menu"
+							aria-expanded="false"
+						>
+							<span className="mobile-btn__icon" aria-hidden="true">
+								<span className="mobile-btn__inner"></span>
+							</span>
+							<span className="mobile-btn__label">{ translate( 'Menu' ) }</span>
+						</a>
+						<div className="header__nav-wrapper js-mobile-menu" id="mobile-menu">
+							<ul className="header__sections-list js-nav-list">
+								{ sections.map( ( { label, id, href, items } ) => {
+									const hasChildren = Array.isArray( items );
+									const Tag = hasChildren ? 'a' : ExternalLink;
 
-											return (
-												<li
-													className={ classNames( {
-														'is-active':
-															pathname &&
-															href &&
-															new URL( trailingslashit( href ) ).pathname ===
-																trailingslashit( pathname ),
-													} ) }
-													key={ href || id }
-												>
-													<Tag
-														className={ hasChildren ? 'header__menu-btn js-menu-btn' : '' }
-														href={ href ? localizeUrl( href, locale ) : `#${ id }` }
-														aria-expanded={ hasChildren ? false : undefined }
-														onClick={ href ? onLinkClick : undefined }
-													>
-														{ label }
-														{ hasChildren && <Gridicon icon="chevron-down" size={ 18 } /> }
-													</Tag>
-													{ hasChildren && (
-														<div id={ id } className="header__submenu js-menu" tabIndex={ -1 }>
-															<div className="header__submenu-content">
-																<button className="header__back-btn js-menu-back">
-																	<Gridicon icon="chevron-left" size={ 18 } />
-																	{ translate( 'Back' ) }
-																</button>
-																<ul className="header__submenu-categories-list">
-																	{ items.map( ( { label, tagline, href, items } ) => (
-																		<li key={ href }>
-																			<ExternalLink
-																				className="header__submenu-category header__submenu-link"
-																				href={ localizeUrl( href, locale ) }
-																				onClick={ onLinkClick }
-																			>
-																				<span className="header__submenu-label">
-																					<span className="header__submenu-chevron">
-																						<Gridicon icon="chevron-right" size={ 18 } />
-																					</span>
-																					{ label }
-																				</span>
-																				<span className="header__submenu-tagline">{ tagline }</span>
-																			</ExternalLink>
-																			<ul className="header__submenu-links-list">
-																				{ items.map( ( { label, tagline, href } ) => (
-																					<li key={ href }>
-																						<ExternalLink
-																							className="header__submenu-link"
-																							href={ localizeUrl( href, locale ) }
-																							onClick={ onLinkClick }
-																						>
-																							<span className="header__submenu-label">
-																								{ label }
-																							</span>
-																							<span className="header__submenu-tagline">
-																								{ tagline }
-																							</span>
-																						</ExternalLink>
-																					</li>
-																				) ) }
-																			</ul>
-																		</li>
-																	) ) }
-																</ul>
-															</div>
-														</div>
-													) }
-												</li>
-											);
-										} ) }
-									</ul>
-									{ shouldShowCart && <CloudCart /> }
-									<ul className="header__actions-list">
+									return (
 										<li
-											className={ classNames( 'header__user-menu user-menu ', {
-												'is-logged-in': isLoggedIn,
+											className={ classNames( {
+												'is-active':
+													pathname &&
+													href &&
+													new URL( trailingslashit( href ) ).pathname ===
+														trailingslashit( pathname ),
 											} ) }
+											key={ href || id }
 										>
-											{ isLoggedIn ? (
-												<>
-													<a className="user-menu__btn js-user-menu-btn" href="#profile">
-														<Gravatar user={ user } className="user-menu__avatar" />
-													</a>
-													<div id="profile" className="user-menu__tooltip js-user-menu">
-														<div className="tooltip">
-															<span className="user-menu__greetings">
-																{ translate( 'Hi, %s!', {
-																	args: user?.display_name || user?.username,
-																} ) }
-															</span>
-															<ul className="user-menu__list">
-																<li>
-																	<a
-																		className="js-manage-sites"
-																		href={ localizeUrl( '/', locale ) }
+											<Tag
+												className={ hasChildren ? 'header__menu-btn js-menu-btn' : '' }
+												href={ href ? localizeUrl( href, locale ) : `#${ id }` }
+												aria-expanded={ hasChildren ? false : undefined }
+												onClick={ href ? onLinkClick : undefined }
+											>
+												{ label }
+												{ hasChildren && <Gridicon icon="chevron-down" size={ 18 } /> }
+											</Tag>
+											{ hasChildren && (
+												<div id={ id } className="header__submenu js-menu" tabIndex={ -1 }>
+													<div className="header__submenu-content">
+														<button className="header__back-btn js-menu-back">
+															<Gridicon icon="chevron-left" size={ 18 } />
+															{ translate( 'Back' ) }
+														</button>
+														<ul className="header__submenu-categories-list">
+															{ items.map( ( { label, tagline, href, items } ) => (
+																<li key={ href }>
+																	<ExternalLink
+																		className="header__submenu-category header__submenu-link"
+																		href={ localizeUrl( href, locale ) }
+																		onClick={ onLinkClick }
 																	>
-																		{ translate( 'Manage your sites' ) }
-																	</a>
+																		<span className="header__submenu-label">
+																			<span className="header__submenu-chevron">
+																				<Gridicon icon="chevron-right" size={ 18 } />
+																			</span>
+																			{ label }
+																		</span>
+																		<span className="header__submenu-tagline">{ tagline } </span>
+																	</ExternalLink>
+																	<ul className="header__submenu-links-list">
+																		{ items.map( ( { label, tagline, href } ) => (
+																			<li key={ href }>
+																				<ExternalLink
+																					className="header__submenu-link"
+																					href={ localizeUrl( href, locale ) }
+																					onClick={ onLinkClick }
+																				>
+																					<span className="header__submenu-label">{ label }</span>
+																					<span className="header__submenu-tagline">
+																						{ tagline }
+																					</span>
+																				</ExternalLink>
+																			</li>
+																		) ) }
+																	</ul>
 																</li>
-															</ul>
-														</div>
+															) ) }
+														</ul>
 													</div>
-												</>
-											) : (
-												<a
-													className="header__action-link js-login"
-													href={ localizeUrl( '/login/', locale ) }
-												>
-													{ translate( 'Log in' ) }
-												</a>
+												</div>
 											) }
 										</li>
-									</ul>
-								</div>
-							</nav>
+									);
+								} ) }
+							</ul>
+
+							<ul className="header__actions-list">
+								<li
+									className={ classNames( 'header__user-menu user-menu ', {
+										'is-logged-in': isLoggedIn,
+									} ) }
+								>
+									{ isLoggedIn ? (
+										<>
+											<a className="user-menu__btn js-user-menu-btn" href="#profile">
+												<Gravatar user={ user } className="user-menu__avatar" />
+											</a>
+											<div id="profile" className="user-menu__tooltip js-user-menu">
+												<div className="tooltip">
+													<span className="user-menu__greetings">
+														{ translate( 'Hi, %s!', {
+															args: user?.display_name || user?.username,
+														} ) }
+													</span>
+													<ul className="user-menu__list">
+														<li>
+															<a className="js-manage-sites" href={ localizeUrl( '/', locale ) }>
+																{ translate( 'Manage your sites' ) }
+															</a>
+														</li>
+													</ul>
+												</div>
+											</div>
+										</>
+									) : (
+										<a
+											className="header__action-link js-login"
+											href={ localizeUrl( '/login/', locale ) }
+										>
+											{ translate( 'Log in' ) }
+										</a>
+									) }
+								</li>
+							</ul>
 						</div>
-					</div>
+					</nav>
 				</header>
 			</div>
 		</>

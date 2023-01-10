@@ -83,7 +83,7 @@ export { isPlan } from './is-plan';
 export { isPremium } from './is-premium';
 export { isSiteRedirect } from './is-site-redirect';
 export { isSpaceUpgrade } from './is-space-upgrade';
-export { default as isSupersedingJetpackItem } from './is-superseding-jetpack-item';
+export * from './is-superseding-jetpack-item';
 export { isSecurityDaily } from './is-security-daily';
 export { isSecurityRealTime } from './is-security-realtime';
 export { isSecurityT1 } from './is-security-t1';
