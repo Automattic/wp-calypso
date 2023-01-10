@@ -1,0 +1,16 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.stats-list__item-action-promote-icon-container {
+	.blaze-gradient-icon {
+		display: none;
+	}
+
+	@media ( max-width: $break-mobile ) {
+		.blaze-gradient-icon {
+			display: inline;
+		}
+		.blaze-monochrome-icon {
+			display: none;
+		}
+	}
+}

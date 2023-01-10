@@ -1,4 +1,4 @@
-import { blaze } from '@automattic/components/src/icons';
+import { blaze, blazeColored } from '@automattic/components/src/icons';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
@@ -11,6 +11,7 @@ import {
 } from 'calypso/lib/promote-post';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import './actions-promote.scss';
 
 const PromotePost = ( props ) => {
 	const { moduleName, postId, onToggleVisibility } = props;
@@ -64,7 +65,10 @@ const PromotePost = ( props ) => {
 							context: 'Stats ARIA label: Opens a pop-out post promotion tool',
 						} ) }
 					>
-						<Icon className="stats-icon" icon={ blaze } size={ 18 } />
+						<span className="stats-list__item-action-promote-icon-container">
+							<Icon className="stats-icon blaze-monochrome-icon" icon={ blaze } size={ 18 } />
+							<Icon className="stats-icon blaze-gradient-icon" icon={ blazeColored } size={ 18 } />
+						</span>
 						<span className="stats-list__item-action-label module-content-list-item-action-label module-content-list-item-action-label-view">
 							{ translate( 'Promote', { context: 'Stats: List item action to view content' } ) }
 						</span>
