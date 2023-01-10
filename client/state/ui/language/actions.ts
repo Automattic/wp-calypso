@@ -7,7 +7,10 @@ import 'calypso/state/ui/init';
 /**
  * Set the ui locale
  */
-export const setLocale = ( localeSlug: string, localeVariant?: string ) => {
+export const setLocale = (
+	localeSlug: string,
+	localeVariant: string | null | undefined = null
+) => {
 	/**
 	 * Also change the translation and currency locale.
 	 *
