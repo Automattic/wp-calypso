@@ -50,13 +50,15 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: impact_level
+    id: users-affected
     attributes:
-      label: Impact
+      label: Severity
+      description: Approximately how many users are impacted?
       options:
-        - Low
-        - Normal
-        - High
+        - One
+        - Some (< 50%)
+        - Most (> 50%)
+        - All
     validations:
       required: true
   - type: dropdown
