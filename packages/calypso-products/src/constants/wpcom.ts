@@ -15,18 +15,22 @@ export const WPCOM_PRODUCTS = <const>[ ...WPCOM_SEARCH_PRODUCTS ];
 export const PLAN_BUSINESS_MONTHLY = 'business-bundle-monthly';
 export const PLAN_BUSINESS = 'business-bundle';
 export const PLAN_BUSINESS_2_YEARS = 'business-bundle-2y';
+export const PLAN_BUSINESS_3_YEARS = 'business-bundle-3y';
 export const PLAN_PREMIUM_MONTHLY = 'value_bundle_monthly';
 export const PLAN_PREMIUM = 'value_bundle';
 export const PLAN_PREMIUM_2_YEARS = 'value_bundle-2y';
+export const PLAN_PREMIUM_3_YEARS = 'value_bundle-3y';
 export const PLAN_PERSONAL_MONTHLY = 'personal-bundle-monthly';
 export const PLAN_PERSONAL = 'personal-bundle';
 export const PLAN_PERSONAL_2_YEARS = 'personal-bundle-2y';
+export const PLAN_PERSONAL_3_YEARS = 'personal-bundle-3y';
 export const PLAN_BLOGGER = 'blogger-bundle';
 export const PLAN_BLOGGER_2_YEARS = 'blogger-bundle-2y';
 export const PLAN_ECOMMERCE_MONTHLY = 'ecommerce-bundle-monthly';
 export const PLAN_ECOMMERCE = 'ecommerce-bundle';
 export const PLAN_ECOMMERCE_2_YEARS = 'ecommerce-bundle-2y';
 export const PLAN_ECOMMERCE_TRIAL_MONTHLY = 'ecommerce-trial-bundle-monthly';
+export const PLAN_ECOMMERCE_3_YEARS = 'ecommerce-bundle-3y';
 export const PLAN_FREE = 'free_plan';
 export const PLAN_HOST_BUNDLE = 'host-bundle';
 export const PLAN_WPCOM_ENTERPRISE = 'wpcom-enterprise';
@@ -44,18 +48,22 @@ export const WPCOM_PLANS = <const>[
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
+	PLAN_BUSINESS_3_YEARS,
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
+	PLAN_PREMIUM_3_YEARS,
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
+	PLAN_PERSONAL_3_YEARS,
 	PLAN_BLOGGER,
 	PLAN_BLOGGER_2_YEARS,
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_ECOMMERCE_3_YEARS,
 	PLAN_FREE,
 	PLAN_HOST_BUNDLE,
 	PLAN_WPCOM_ENTERPRISE,
