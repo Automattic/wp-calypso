@@ -244,7 +244,7 @@ export const SftpCard = ( {
 
 	return (
 		<Card className="sftp-card">
-			<MaterialIcon icon="cloud" size={ 32 } />
+			<MaterialIcon icon="key" size={ 32 } />
 			<CardHeading>
 				{ siteHasSshFeature
 					? translate( 'SFTP/SSH credentials' )
