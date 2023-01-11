@@ -15,6 +15,7 @@ import { requestChartCounts } from 'calypso/state/stats/chart-tabs/actions';
 import { QUERY_FIELDS } from 'calypso/state/stats/chart-tabs/constants';
 import { getCountRecords, getLoadingTabs } from 'calypso/state/stats/chart-tabs/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatTabs from '../stats-tabs';
 import { buildChartData, getQueryDate } from './utility';
@@ -111,7 +112,9 @@ class StatModuleChartTabs extends Component {
 				/>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
-				<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 } />
+				<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 }>
+					<StatsEmptyState stateType={ this.props.activeTab && this.props.activeTab.label } />
+				</Chart>
 				<StatTabs
 					data={ this.props.counts }
 					tabs={ this.props.charts }

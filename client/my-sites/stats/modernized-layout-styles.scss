@@ -35,8 +35,9 @@ $sidebar-appearance-break-point: 783px;
 		}
 	}
 
-	> .stats-banner-wrapper {
-		padding-bottom: 1em;
+	> .stats-banner-wrapper .jetpack-backup-creds-banner {
+		// .jetpack-backup-creds-banner has a bottom margin of 16px. This overrides it since we want it to be 32px
+		margin-bottom: 32px;
 	}
 
 	&.has-fixed-nav {

@@ -2,6 +2,7 @@ import {
 	Card,
 	PercentCalculator as percentCalculator,
 	ShortenedNumber,
+	formattedNumber,
 } from '@automattic/components';
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -31,11 +32,6 @@ type MostPopularData = {
 	hour: string;
 	hourPercent: number;
 };
-
-const FORMATTER = new Intl.NumberFormat();
-function formatNumber( number: number | null ) {
-	return Number.isFinite( number ) ? FORMATTER.format( number as number ) : '-';
-}
 
 export default function AllTimeHighlightsSection( { siteId }: { siteId: number } ) {
 	const translate = useTranslate();
@@ -182,7 +178,7 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 												className="highlight-card-info-item-count"
 												title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
 											>
-												{ formatNumber( info.count ) }
+												{ formattedNumber( info.count ) }
 											</span>
 										</div>
 									);
@@ -233,7 +229,7 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 												className="highlight-card-info-item-count"
 												title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
 											>
-												{ formatNumber( info.count ) }
+												{ formattedNumber( info.count ) }
 											</span>
 										</div>
 									);

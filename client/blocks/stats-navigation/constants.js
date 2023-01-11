@@ -3,12 +3,14 @@ import { translate } from 'i18n-calypso';
 /**
  * Intervals
  */
+const hour = { value: 'hour', label: translate( 'Hours' ) };
 const day = { value: 'day', label: translate( 'Days' ) };
 const week = { value: 'week', label: translate( 'Weeks' ) };
 const month = { value: 'month', label: translate( 'Months' ) };
 const year = { value: 'year', label: translate( 'Years' ) };
 
 export const intervals = [ day, week, month, year ];
+export const emailIntervals = [ hour, day, week, month, year ];
 
 /**
  * Nav items
@@ -50,6 +52,7 @@ export const navItems = {
 /**
  * Define properties with translatable strings getters
  */
+Object.defineProperty( hour, 'label', { get: () => translate( 'Hours' ) } );
 Object.defineProperty( day, 'label', { get: () => translate( 'Days' ) } );
 Object.defineProperty( week, 'label', { get: () => translate( 'Weeks' ) } );
 Object.defineProperty( month, 'label', { get: () => translate( 'Months' ) } );

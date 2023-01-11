@@ -150,12 +150,14 @@ export default function SiteStatusContent( {
 		'jetpack/partner-portal-downtime-monitoring-updates'
 	);
 
-	if ( isDownTimeMonitorEnabled && type === 'monitor' ) {
+	// We will show "Site Down" when the site is down which is handled differently.
+	if ( isDownTimeMonitorEnabled && type === 'monitor' && ! siteDown ) {
 		return (
 			<ToggleActivateMonitoring
 				site={ rows.site.value }
 				settings={ rows.monitor.settings }
 				status={ status }
+				siteError={ siteError }
 			/>
 		);
 	}

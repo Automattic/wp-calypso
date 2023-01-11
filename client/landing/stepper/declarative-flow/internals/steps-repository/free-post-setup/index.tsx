@@ -20,8 +20,8 @@ const FreePostSetup: Step = ( { navigation } ) => {
 	const formText = {
 		titlePlaceholder: translate( 'My Website' ),
 		titleMissing: translate( `Oops. Looks like your website doesn't have a name yet.` ),
-		taglinePlaceholder: translate( 'Add a short description here' ),
-		iconPlaceholder: translate( 'Upload a profile image' ),
+		taglinePlaceholder: translate( 'Describe your website in a line or two' ),
+		iconPlaceholder: translate( 'Add a site icon' ),
 	};
 
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = useState( false );
@@ -82,7 +82,7 @@ const FreePostSetup: Step = ( { navigation } ) => {
 			formattedHeader={
 				<FormattedHeader
 					id="free-setup-header"
-					headerText={ createInterpolateElement( translate( 'Personalize your<br />Website' ), {
+					headerText={ createInterpolateElement( translate( 'Personalize your Site' ), {
 						br: <br />,
 					} ) }
 					align="center"

@@ -2,7 +2,6 @@ import {
 	HorizontalBarList,
 	HorizontalBarListItem,
 	StatsCard,
-	// eslint-disable-next-line import/named
 	StatsCardAvatar,
 } from '@automattic/components';
 import debugFactory from 'debug';

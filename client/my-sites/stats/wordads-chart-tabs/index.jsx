@@ -16,6 +16,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { formatDate, getQueryDate } from '../stats-chart-tabs/utility';
+import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatTabs from '../stats-tabs';
 
@@ -131,7 +132,7 @@ class WordAdsChartTabs extends Component {
 	}
 
 	render() {
-		const { siteId, query, isDataLoading } = this.props;
+		const { siteId, query, isDataLoading, activeTab } = this.props;
 		const classes = [
 			'is-chart-tabs',
 			{
@@ -146,11 +147,9 @@ class WordAdsChartTabs extends Component {
 				<div className={ classNames( ...classes ) }>
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<StatsModulePlaceholder className="is-chart" isLoading={ isDataLoading } />
-					<Chart
-						barClick={ this.props.barClick }
-						data={ this.buildChartData() }
-						minBarWidth={ 35 }
-					/>
+					<Chart barClick={ this.props.barClick } data={ this.buildChartData() } minBarWidth={ 35 }>
+						<StatsEmptyState stateType={ activeTab && activeTab.label } />
+					</Chart>
 					<StatTabs
 						data={ this.props.data }
 						tabs={ this.props.charts }

@@ -26,6 +26,9 @@ describe( '<SiteContent>', () => {
 		{
 			blog_id: 1234,
 			url: 'test.jurassic.ninja',
+			monitor_settings: {
+				monitor_active: true,
+			},
 		},
 	];
 	let props = {

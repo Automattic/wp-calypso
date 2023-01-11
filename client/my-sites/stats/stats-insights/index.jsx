@@ -13,7 +13,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AllTimelHighlightsSection from '../all-time-highlights-section';
-import AllTimelViewsSection from '../all-time-views-section';
+import AllTimeViewsSection from '../all-time-views-section';
 import AnnualHighlightsSection from '../annual-highlights-section';
 import LatestPostSummary from '../post-performance';
 import PostingActivity from '../post-trends';
@@ -49,10 +49,8 @@ const StatsInsights = ( props ) => {
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 				<AnnualHighlightsSection siteId={ siteId } />
 				<AllTimelHighlightsSection siteId={ siteId } />
-				<AllTimelViewsSection siteId={ siteId } slug={ siteSlug } />
-				<div className="stats__module--insights-posting-activity">
-					<PostingActivity />
-				</div>
+				<PostingActivity siteId={ siteId } />
+				<AllTimeViewsSection siteId={ siteId } slug={ siteSlug } />
 				{ siteId && (
 					<DomainTip
 						siteId={ siteId }
@@ -69,6 +67,8 @@ const StatsInsights = ( props ) => {
 								path="tags-categories"
 								moduleStrings={ moduleStrings.tags }
 								statType="statsTags"
+								hideSummaryLink
+								hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
 							/>
 							{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for Odyssey for now. */ }
 							{ ! isOdysseyStats && <StatShares siteId={ siteId } /> }
@@ -83,6 +83,8 @@ const StatsInsights = ( props ) => {
 								path="publicize"
 								moduleStrings={ moduleStrings.publicize }
 								statType="statsPublicize"
+								hideSummaryLink
+								hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
 							/>
 						</div>
 					</div>

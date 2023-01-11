@@ -1,4 +1,11 @@
-import { useQuery, UseQueryResult, UseQueryOptions, QueryKey, QueryFunction } from 'react-query';
+import {
+	useQuery,
+	UseQueryResult,
+	UseQueryOptions,
+	QueryKey,
+	QueryFunction,
+	useQueries,
+} from 'react-query';
 import {
 	extractSearchInformation,
 	normalizePluginsList,
@@ -59,7 +66,7 @@ export const getWPCOMPluginsQueryParams = (
  * @param {{enabled: boolean, staleTime: number, refetchOnMount: boolean}} {} Optional options to pass to the underlying query engine
  * @returns {{ data, error, isLoading: boolean ...}} Returns various parameters piped from `useQuery`
  */
-export const useWPCOMPlugins = (
+export const useWPCOMPluginsList = (
 	type: Type,
 	searchTerm?: string,
 	tag?: string,
@@ -105,6 +112,16 @@ export const useWPCOMPlugin = (
 		staleTime: staleTime,
 		refetchOnMount: refetchOnMount,
 	} );
+};
+
+export const useWPCOMPlugins = ( slugs: Array< string > ): Array< UseQueryResult< any > > => {
+	return useQueries(
+		slugs.map( ( slug ) => {
+			const [ cacheKey, fetchFn ] = getWPCOMPluginQueryParams( slug );
+
+			return { queryKey: cacheKey, queryFn: fetchFn };
+		} )
+	);
 };
 
 export const getWPCOMFeaturedPluginsQueryParams = (): [ QueryKey, QueryFunction< any[] > ] => {

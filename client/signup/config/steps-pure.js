@@ -838,6 +838,17 @@ export function generateSteps( {
 				hideSkip: true,
 			},
 		},
+		'difm-store-options': {
+			stepName: 'site-options',
+			providesDependencies: [ 'siteTitle', 'tagline', 'newOrExistingSiteChoice' ],
+			optionalDependencies: [ 'newOrExistingSiteChoice' ],
+			defaultDependencies: {
+				newOrExistingSiteChoice: 'existing-site',
+			},
+			props: {
+				hideSkip: true,
+			},
+		},
 		'difm-page-picker': {
 			stepName: 'difm-page-picker',
 			providesDependencies: [ 'selectedPageTitles' ],

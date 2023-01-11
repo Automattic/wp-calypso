@@ -107,7 +107,7 @@ function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditCard ): 
 		taxText: purchase.tax_text,
 		purchaseRenewalQuantity: purchase.renewal_price_tier_usage_quantity || null,
 		userId: Number( purchase.user_id ),
-		isAutoRenewEnabled: purchase.auto_renew === '1',
+		isAutoRenewEnabled: parseInt( purchase.auto_renew ?? '' ) === 1,
 	};
 
 	if ( isCreditCardPurchase( purchase ) ) {

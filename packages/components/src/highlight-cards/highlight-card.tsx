@@ -1,7 +1,7 @@
 import { arrowDown, arrowUp, Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
-import { Card, ShortenedNumber } from '../';
+import { Card, ShortenedNumber, formattedNumber } from '../';
 import Popover from '../popover';
 
 export type HighlightCardProps = {
@@ -28,11 +28,6 @@ export function percentCalculator( part: number | null, whole: number | null ) {
 	const answer = ( part / whole ) * 100;
 	// Handle Infinities.
 	return Math.abs( answer ) === Infinity ? 100 : Math.round( answer );
-}
-
-const FORMATTER = new Intl.NumberFormat();
-function formatNumber( number: number | null ) {
-	return Number.isFinite( number ) ? FORMATTER.format( number as number ) : '-';
 }
 
 export default function HighlightCard( {
@@ -98,7 +93,7 @@ export default function HighlightCard( {
 								<span className="highlight-card-tooltip-icon">{ icon }</span>
 								<span>{ heading }</span>
 							</span>
-							<span>{ formatNumber( count ) }</span>
+							<span>{ formattedNumber( count ) }</span>
 						</div>
 					</Popover>
 				) }

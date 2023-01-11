@@ -16,6 +16,8 @@ import type {
 	MonitorNode,
 } from './types';
 
+const INITIAL_UNIX_EPOCH = '1970-01-01 00:00:00';
+
 export const siteColumns = [
 	{
 		key: 'site',
@@ -364,9 +366,15 @@ const formatMonitorData = ( site: Site ) => {
 		error: false,
 		settings: site.monitor_settings,
 	};
-	if ( ! site.monitor_active ) {
+	const monitorStatus = site.monitor_settings.monitor_active;
+	if ( ! monitorStatus ) {
 		monitor.status = 'disabled';
-	} else if ( ! site.monitor_site_status ) {
+	} else if (
+		! site.monitor_site_status &&
+		// This check is needed because monitor_site_status is false by default
+		// and we don't want to show the site down status when the site is first connected and the monitor is enabled
+		INITIAL_UNIX_EPOCH !== site.monitor_last_status_change
+	) {
 		monitor.status = 'failed';
 		monitor.value = translate( 'Site Down' );
 		monitor.error = true;

@@ -149,9 +149,16 @@ describe( 'route', function () {
 			test( 'should return false for domain checkouts', function () {
 				expect( route.getSiteFragment( '/checkout/thank-you/no-site/75806534' ) ).toEqual( false );
 			} );
-			test( 'should return the correct site fragment when checking out', function () {
+			test( 'should return the correct site fragment on the checkout thank you page', function () {
 				expect(
 					route.getSiteFragment( '/checkout/thank-you/example.wordpress.com/75806534' )
+				).toEqual( 'example.wordpress.com' );
+			} );
+			test( 'should return the correct site fragment on domain renewals', function () {
+				expect(
+					route.getSiteFragment(
+						'/checkout/dotin_domain:example.in/renew/17254842/example.wordpress.com'
+					)
 				).toEqual( 'example.wordpress.com' );
 			} );
 		} );

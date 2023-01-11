@@ -298,7 +298,7 @@ function PurchaseMetaExpiration( {
 		const shouldRenderToggle = site && isProductOwner;
 		const autoRenewToggle = shouldRenderToggle ? (
 			<AutoRenewToggle
-				planName={ site.plan.product_name_short }
+				planName={ site.plan?.product_name_short ?? '' }
 				siteDomain={ site.domain }
 				siteSlug={ site.slug }
 				purchase={ purchase }

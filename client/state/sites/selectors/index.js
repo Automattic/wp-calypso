@@ -46,7 +46,6 @@ export { default as hasStaticFrontPage } from './has-static-front-page';
 export { default as isBackupPluginActive } from './is-backup-plugin-active';
 export { default as isCurrentPlanPaid } from './is-current-plan-paid';
 export { default as isCurrentSitePlan } from './is-current-site-plan';
-export { default as isJetpackCloudCartEnabled } from './is-jetpack-cloud-cart-enabled';
 export { default as isJetpackConnectionPluginActive } from './is-jetpack-connection-plugin-active';
 export { default as isJetpackMinimumVersion } from './is-jetpack-minimum-version';
 export { default as isJetpackModuleActive } from './is-jetpack-module-active';
