@@ -1,6 +1,6 @@
 import { getCurrencyObject } from '@automattic/format-currency';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import { Component, createElement } from 'react';
 import Badge from 'calypso/components/badge';
 import type { CurrencyObject } from '@automattic/format-currency';
@@ -74,19 +74,13 @@ export class PlanPrice extends Component< PlanPriceProps & LocalizeProps > {
 		};
 
 		if ( displayFlatPrice ) {
-			const smallerPrice = renderPrice( priceRange[ 0 ] );
-			const higherPrice = priceRange[ 1 ] && renderPrice( priceRange[ 1 ] );
-
 			return (
-				<span className={ classes }>
-					{ priceRange[ 0 ].price.symbol }
-					{ ! higherPrice && renderPrice( priceRange[ 0 ] ) }
-					{ higherPrice &&
-						translate( '%(smallerPrice)s-%(higherPrice)s', {
-							args: { smallerPrice, higherPrice },
-							comment: 'The price range for a particular product',
-						} ) }
-				</span>
+				<FlatPriceDisplay
+					smallerPrice={ rawPriceRange[ 0 ] }
+					higherPrice={ rawPriceRange[ 1 ] }
+					currencyCode={ currencyCode }
+					className={ classes }
+				/>
 			);
 		}
 
@@ -252,4 +246,51 @@ export interface PlanPriceProps {
 interface PriceRangeData {
 	price: CurrencyObject;
 	raw: number;
+}
+
+function renderBasicPrice( price: number, currencyCode: string ): string {
+	const priceObj = getCurrencyObject( price, currencyCode );
+	if ( ! Number.isInteger( price ) ) {
+		return `${ priceObj.integer }${ priceObj.fraction }`;
+	}
+	return priceObj.integer;
+}
+
+function FlatPriceDisplay( {
+	smallerPrice,
+	higherPrice,
+	currencyCode,
+	className,
+}: {
+	smallerPrice: number;
+	higherPrice?: number;
+	currencyCode: string;
+	className?: string;
+} ) {
+	const { symbol: currencySymbol } = getCurrencyObject( smallerPrice, currencyCode );
+	const translate = useTranslate();
+
+	// TODO: render currencySymbol on the localized side (before or after) of
+	// the price. We can use `symbolPosition` from `getCurrencyObject`.
+	if ( ! higherPrice ) {
+		return (
+			<span className={ className }>
+				{ currencySymbol }
+				{ renderBasicPrice( smallerPrice, currencyCode ) }
+			</span>
+		);
+	}
+
+	return (
+		<span className={ className }>
+			{ currencySymbol }
+			{ translate( '%(smallerPrice)s-%(higherPrice)s', {
+				args: {
+					smallerPrice: renderBasicPrice( smallerPrice, currencyCode ),
+					higherPrice: renderBasicPrice( higherPrice, currencyCode ),
+				},
+				comment: 'The price range for a particular product',
+			} ) }
+		</span>
+	);
 }
