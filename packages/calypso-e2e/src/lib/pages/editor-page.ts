@@ -27,6 +27,7 @@ import type {
 const selectors = {
 	// iframe and editor
 	editorFrame: 'iframe.is-loaded',
+	editorInnerFrame: '[name="editor-canvas"]',
 	editor: 'body.block-editor-page',
 	editorTitle: '.editor-post-title__input',
 
@@ -67,14 +68,22 @@ export class EditorPage {
 	 * @param param0.target Target editor type. Defaults to 'simple'.
 	 */
 	constructor( page: Page, { target = 'simple' }: { target?: SiteType } = {} ) {
+		// There's a difference between simple and AT in that in AT, the editor is not
+		// contained within an iframe (aka Gutenframe) in test sites. However, starting in
+		// Gutenberg 14.9, the editor does have an inner iframe is a block-based theme is
+		// used (which should be the case for all test sites). This is common across AT and
+		// simple, so in both scenarios extract it.
 		if ( target === 'atomic' ) {
-			// For Atomic editors, there is no iFrame - the editor is
+			// For Atomic editors, there is iFrame wrapping the editor - the editor is
 			// part of the page DOM and is thus accessible directly.
-			this.editor = page.locator( selectors.editor );
+			this.editor = page.frameLocator( selectors.editorInnerFrame ).locator( selectors.editor );
 		} else {
 			// For Simple editors, the editor is located within an iFrame
 			// and thus it must first be extracted.
-			this.editor = page.frameLocator( selectors.editorFrame ).locator( selectors.editor );
+			this.editor = page
+				.frameLocator( selectors.editorFrame )
+				.frameLocator( selectors.editorInnerFrame )
+				.locator( selectors.editor );
 		}
 
 		this.page = page;
