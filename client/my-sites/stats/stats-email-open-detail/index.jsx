@@ -29,7 +29,7 @@ import {
 	isJetpackSite,
 	isSitePreviewable,
 } from 'calypso/state/sites/selectors';
-import { getEmailStat, isRequestingEmailStats } from 'calypso/state/stats/emails/selectors';
+import { getEmailStat, isRequestingPeriodEmailStats } from 'calypso/state/stats/emails/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DatePicker from '../stats-date-picker';
 import ChartTabs from '../stats-email-chart-tabs';
@@ -339,7 +339,7 @@ const connectComponent = connect(
 			emailFallback: getEmailStat( state, siteId, postId, 'email' ),
 			isLatestEmailsHomepage,
 			countViews: getEmailStat( state, siteId, postId, period, statType ),
-			isRequestingStats: isRequestingEmailStats( state, siteId, postId, period, statType ),
+			isRequestingStats: isRequestingPeriodEmailStats( state, siteId, postId, period, statType ),
 			siteSlug: getSiteSlug( state, siteId ),
 			showViewLink: ! isJetpack && ! isLatestEmailsHomepage && isPreviewable,
 			slug: getSelectedSiteSlug( state ),

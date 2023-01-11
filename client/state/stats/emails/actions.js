@@ -39,6 +39,7 @@ export function receiveEmailStats( siteId, postId, period, statType, stats ) {
  * Transforms the received API response to Redux state
  *
  * @param {object} stats The incoming stats
+ * @param {string} period The period for the stats
  * @returns {object}
  */
 function emailOpenStatsPeriodTransform( stats, period ) {
