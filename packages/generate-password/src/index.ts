@@ -2,19 +2,19 @@ export type CharacterPoolOptions = {
 	/**
 	 * Define the length of the generated random password
 	 */
-	length?: number;
+	length: number;
 	/**
 	 * Use digits 0-9 in character pool
 	 */
-	useNumbers?: boolean;
+	useNumbers: boolean;
 	/**
 	 * Use characters !@#$%^&*() in character pool
 	 */
-	useSpecialChars?: boolean;
+	useSpecialChars: boolean;
 	/**
 	 * Use characters -_ []{}<>~`+=,.;:/?| in character pool
 	 */
-	useExtraSpecialChars?: boolean;
+	useExtraSpecialChars: boolean;
 };
 
 export const ALPHABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -32,7 +32,7 @@ export function generatePassword( {
 	useNumbers = true,
 	useSpecialChars = true,
 	useExtraSpecialChars = false,
-}: CharacterPoolOptions = {} ) {
+}: Partial< CharacterPoolOptions > = {} ) {
 	let characterPool = ALPHABET;
 
 	if ( useNumbers ) {
