@@ -158,7 +158,7 @@ const importFlow: Flow = {
 				case 'importerSquarespace':
 				case 'importerWordpress':
 				case 'designSetup':
-					return navigate( `import?siteSlug=${ siteSlugParam }` );
+					return navigate( 'import' );
 			}
 		};
 
