@@ -1,4 +1,5 @@
 import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
+import { ConfettiAnimation } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -323,6 +324,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			) }
 			{ ! showProgressBar && (
 				<ThankYouContainer>
+					<ConfettiAnimation />
 					<ThankYou
 						containerClassName="marketplace-thank-you"
 						sections={ [ setupSection ] }
