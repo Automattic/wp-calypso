@@ -43,4 +43,4 @@ export {
 export { default as MobilePromoCard } from './mobile-promo-card';
 export { default as ShortenedNumber } from './shortened-number';
 export { default as PostStatsCard } from './post-stats-card';
-export { default as ConfettiAnimation, wpConfetti } from './confetti';
+export { default as ConfettiAnimation } from './confetti';
