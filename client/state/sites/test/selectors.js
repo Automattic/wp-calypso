@@ -45,9 +45,9 @@ import {
 	getCustomizerUrl,
 	getJetpackComputedAttributes,
 	getSiteComputedAttributes,
-	getWooExpressTrialExpiration,
-	getWooExpressTrialDaysLeft,
-	isWooExpressTrialExpired,
+	getECommerceTrialExpiration,
+	getECommerceTrialDaysLeft,
+	isECommerceTrialExpired,
 } from '../selectors';
 
 jest.mock( '@automattic/calypso-config', () => {
@@ -3647,7 +3647,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'getWooExpressTrialExpiration()', () => {
+	describe( 'getECommerceTrialExpiration()', () => {
 		test( 'Returns the expiracy date', () => {
 			const expiracyDate = '2022-02-10T00:00:00+00:00';
 
@@ -3679,7 +3679,7 @@ describe( 'selectors', () => {
 			} );
 
 			expect(
-				getWooExpressTrialExpiration( state, siteId ).isSame( moment( expiracyDate ) )
+				getECommerceTrialExpiration( state, siteId ).isSame( moment( expiracyDate ) )
 			).toBeTruthy();
 		} );
 
@@ -3705,11 +3705,11 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getWooExpressTrialExpiration( state, siteId ) ).toBeNull();
+			expect( getECommerceTrialExpiration( state, siteId ) ).toBeNull();
 		} );
 	} );
 
-	describe( 'getWooExpressTrialDaysLeft()', () => {
+	describe( 'getECommerceTrialDaysLeft()', () => {
 		jest.useFakeTimers().setSystemTime( new Date( '2022-01-10T00:00:00+00:00' ) );
 
 		test( 'Should return the correct number of days left before the trial expires', () => {
@@ -3742,11 +3742,11 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getWooExpressTrialDaysLeft( state, siteId ) ).toBe( 31 );
+			expect( getECommerceTrialDaysLeft( state, siteId ) ).toBe( 31 );
 		} );
 	} );
 
-	describe( 'isWooExpressTrialExpired()', () => {
+	describe( 'isECommerceTrialExpired()', () => {
 		jest.useFakeTimers().setSystemTime( new Date( '2022-01-10T00:00:00+00:00' ) );
 
 		test( 'The trial period should be expired', () => {
@@ -3779,7 +3779,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( isWooExpressTrialExpired( state, siteId ) ).toBeTruthy();
+			expect( isECommerceTrialExpired( state, siteId ) ).toBeTruthy();
 		} );
 
 		test( 'The trial period should not be expired if is the same day', () => {
@@ -3811,7 +3811,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( isWooExpressTrialExpired( state, siteId ) ).toBeFalsy();
+			expect( isECommerceTrialExpired( state, siteId ) ).toBeFalsy();
 		} );
 	} );
 } );

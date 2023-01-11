@@ -15,12 +15,12 @@ function isECommerceTrialPlan( plan: SitePlanData ): boolean {
 }
 
 /**
- * Returns the expiration date of the Woo Express trial. If the trial is not active, returns null.
+ * Returns the expiration date of the ECommerce trial. If the trial is not active, returns null.
  *
  * @param {AppState} state - Global state tree
  * @returns {Moment|null} Expiration date of the trial, or null if the trial is not active.
  */
-export default function getWooExpressTrialExpiration(
+export default function getECommerceTrialExpiration(
 	state: AppState,
 	siteId: number
 ): Moment | null {

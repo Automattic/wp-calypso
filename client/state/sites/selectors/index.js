@@ -63,7 +63,7 @@ export { default as isSingleUserSite } from './is-single-user-site';
 export { default as isSiteConflicting } from './is-site-conflicting';
 export { default as isSitePreviewable } from './is-site-previewable';
 export { default as isSSOEnabled } from './is-sso-enabled';
-export { default as isWooExpressTrialExpired } from './is-woo-express-trial-expired';
+export { default as isECommerceTrialExpired } from './is-ecommerce-trial-expired';
 export { default as verifyJetpackModulesActive } from './verify-jetpack-modules-active';
 export { default as getSelectedSiteWithFallback } from './get-site-with-fallback';
 export { default as getSiteWooCommerceUrl } from './get-site-woocommerce-url';
@@ -71,6 +71,6 @@ export { default as getSiteWooCommerceWizardUrl } from './get-site-woocommerce-w
 export { default as getJetpackSearchCustomizeUrl } from './get-jetpack-search-customize-url';
 export { default as getJetpackSearchDashboardUrl } from './get-jetpack-search-dashboard-url';
 export { default as getJetpackVersion } from './get-jetpack-version';
-export { default as getWooExpressTrialDaysLeft } from './get-woo-express-trial-days-left';
-export { default as getWooExpressTrialExpiration } from './get-woo-express-trial-expiration';
+export { default as getECommerceTrialDaysLeft } from './get-ecommerce-trial-days-left';
+export { default as getECommerceTrialExpiration } from './get-ecommerce-trial-expiration';
 export { default as isSimpleSite } from './is-simple-site';
