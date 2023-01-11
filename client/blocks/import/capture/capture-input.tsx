@@ -34,7 +34,9 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	const showValidationMsg = hasError || ( submitted && ! isValid );
 	const { search } = useLocation();
 
-	useEffect( () => {
+	useEffect( () => checkInitSubmissionState(), [] );
+
+	function checkInitSubmissionState() {
 		const urlValue = new URLSearchParams( search ).get( 'from' ) || '';
 		if ( urlValue ) {
 			const isValid = CAPTURE_URL_RGX.test( urlValue );
@@ -45,7 +47,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 				setUrlValue( urlValue );
 			}
 		}
-	}, [] );
+	}
 
 	function validateUrl( url: string ) {
 		const isValid = CAPTURE_URL_RGX.test( url );
