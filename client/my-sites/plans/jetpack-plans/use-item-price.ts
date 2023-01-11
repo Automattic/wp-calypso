@@ -1,4 +1,5 @@
 import {
+	JETPACK_BACKUP_T1_PRODUCTS,
 	JETPACK_CRM_PRODUCTS,
 	JETPACK_SOCIAL_PRODUCTS,
 	TERM_MONTHLY,
@@ -166,10 +167,12 @@ const useItemPrice = (
 				? getMonthlyPrice( introductoryOfferPrices.introOfferCost )
 				: undefined;
 
-			// Override Jetpack Social price by hard-coding it for now
+			// Override Jetpack Social and Jetpack Backup Tier 1 price by hard-coding it for now
 			if (
-				JETPACK_SOCIAL_PRODUCTS.includes(
-					item?.productSlug as typeof JETPACK_SOCIAL_PRODUCTS[ number ]
+				[ ...JETPACK_SOCIAL_PRODUCTS, ...JETPACK_BACKUP_T1_PRODUCTS ].includes(
+					item?.productSlug as
+						| typeof JETPACK_SOCIAL_PRODUCTS[ number ]
+						| typeof JETPACK_BACKUP_T1_PRODUCTS[ number ]
 				)
 			) {
 				discountedPrice = introductoryOfferPrices.introOfferCost || undefined;
