@@ -41,7 +41,7 @@
 		"@automattic/format-currency": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
 		"@emotion/styled": "^11.3.0",
-		"@stripe/stripe-js": "^1.17.1",
+		"@stripe/stripe-js": "1.17.1",
 		"@wordpress/compose": "^5.7.0",
 		"@wordpress/data": "^6.9.0",
 		"@wordpress/i18n": "^4.9.0",
