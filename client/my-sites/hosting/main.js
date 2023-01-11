@@ -1,10 +1,14 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { PLAN_BUSINESS, FEATURE_SFTP } from '@automattic/calypso-products';
 import { englishLocales } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
 =======
 import { FEATURE_SFTP } from '@automattic/calypso-products';
 >>>>>>> ea1876e34c (Update Hosting Config upsell message to be less specific about plan name)
+=======
+import { FEATURE_SFTP, FEATURE_SFTP_DATABASE } from '@automattic/calypso-products';
+>>>>>>> a874b7a809 (Update feature constant; add as query param for highlighting)
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
