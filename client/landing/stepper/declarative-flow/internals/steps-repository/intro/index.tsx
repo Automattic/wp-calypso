@@ -4,6 +4,7 @@ import {
 	VIDEOPRESS_FLOW,
 	FREE_FLOW,
 	isLinkInBioFlow,
+	isCopySiteFlow,
 } from '@automattic/onboarding';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -18,6 +19,16 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 	const { __ } = useI18n();
 
 	return useMemo( () => {
+		if ( isCopySiteFlow( flowName ) ) {
+			return {
+				title: createInterpolateElement(
+					__( 'You’re 5 minutes away from<br />creating a new copy site.<br />Ready? ' ),
+					{ br: <br /> }
+				),
+				buttonText: __( 'Start copying' ),
+			};
+		}
+
 		if ( isLinkInBioFlow( flowName ) ) {
 			return {
 				title: createInterpolateElement(

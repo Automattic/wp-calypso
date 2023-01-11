@@ -45,6 +45,8 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 			/* webpackChunkName: "trial-wooexpress-flow" */ '../declarative-flow/trial-wooexpress-flow'
 		),
 
+	'copy-site': () => import( /* webpackChunkName: "copy-site" */ '../declarative-flow/copy-site' ),
+
 	free: () => import( /* webpackChunkName: "free-flow" */ '../declarative-flow/free' ),
 
 	'free-post-setup': () =>

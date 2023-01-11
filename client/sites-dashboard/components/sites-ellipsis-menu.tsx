@@ -189,7 +189,7 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 		return null;
 	}
 
-	const copySiteHref = `/setup/wooexpress`; // TODO: Update this to the correct URL
+	const copySiteHref = `/setup/copy-site`;
 	return (
 		<MenuItemLink
 			href={ copySiteHref }
