@@ -1,4 +1,4 @@
-type CharacterPoolOptions = {
+export type CharacterPoolOptions = {
 	/**
 	 * Define the length of the generated random password
 	 */
