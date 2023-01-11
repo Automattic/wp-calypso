@@ -492,7 +492,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		}
 
 		if ( EditorActions.NavigateToHome === action ) {
-			window.open( `/home/${ this.props.siteSlug }`, '_top' );
+			page( `/home/${ this.props.siteSlug }` );
 		}
 	};
 
