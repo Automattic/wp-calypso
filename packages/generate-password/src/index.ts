@@ -17,6 +17,11 @@ export type CharacterPoolOptions = {
 	useExtraSpecialChars?: boolean;
 };
 
+export const ALPHABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+export const DIGITS = '0123456789';
+export const SPECIAL_CHARS = '!@#$%^&*()';
+export const EXTRA_SPECIAL_CHARS = '-_ []{}<>~`+=,.;:/?|';
+
 /**
  * Forked from https://github.com/WordPress/wporg-two-factor/blob/trunk/settings/src/components/password.js#L139-L167
  *
@@ -28,18 +33,18 @@ export function generatePassword( {
 	useSpecialChars = true,
 	useExtraSpecialChars = false,
 }: CharacterPoolOptions = {} ) {
-	let characterPool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	let characterPool = ALPHABET;
 
 	if ( useNumbers ) {
-		characterPool += '0123456789';
+		characterPool += DIGITS;
 	}
 
 	if ( useSpecialChars ) {
-		characterPool += '!@#$%^&*()';
+		characterPool += SPECIAL_CHARS;
 	}
 
 	if ( useExtraSpecialChars ) {
-		characterPool += '-_ []{}<>~`+=,.;:/?|';
+		characterPool += EXTRA_SPECIAL_CHARS;
 	}
 
 	const randomNumber = new Uint8Array( 1 );
