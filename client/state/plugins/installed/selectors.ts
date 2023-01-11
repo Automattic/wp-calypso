@@ -243,7 +243,7 @@ export function getPluginOnSite( state: AppState, siteId: number, pluginSlug: st
 		: undefined;
 }
 
-export function getPluginsOnSite( state, siteId, pluginSlugs ) {
+export function getPluginsOnSite( state: AppState, siteId: number, pluginSlugs: string[] ) {
 	return pluginSlugs.map( ( pluginSlug ) => getPluginOnSite( state, siteId, pluginSlug ) );
 }
 
