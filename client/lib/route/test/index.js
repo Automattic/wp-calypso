@@ -161,7 +161,7 @@ describe( 'route', function () {
 					)
 				).toEqual( 'example.wordpress.com' );
 			} );
-			test( 'should return the correct site fragment when site fragment is not found in 3rd position', function () {
+			test( 'should return the correct site fragment when it is found outside the 3rd position', function () {
 				expect(
 					route.getSiteFragment(
 						'/checkout/thank-you/features/all-free-features/example.wordpress.com/12345678'
