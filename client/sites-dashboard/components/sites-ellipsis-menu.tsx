@@ -9,6 +9,7 @@ import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem, Modal } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { ComponentType, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SitePreviewLink from 'calypso/components/site-preview-link';
@@ -189,7 +190,10 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 		return null;
 	}
 
-	const copySiteHref = `/setup/copy-site`;
+	const copySiteHref = addQueryArgs( `/setup/copy-site`, {
+		sourceSite: site.ID,
+		sourceUrl: site.URL,
+	} );
 	return (
 		<MenuItemLink
 			href={ copySiteHref }
