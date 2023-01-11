@@ -23,7 +23,7 @@ export const SPECIAL_CHARS = '!@#$%^&*()';
 export const EXTRA_SPECIAL_CHARS = '-_ []{}<>~`+=,.;:/?|';
 
 /**
- * Forked from https://github.com/WordPress/wporg-two-factor/blob/trunk/settings/src/components/password.js#L139-L167
+ * Forked from https://github.com/WordPress/wporg-two-factor/blob/11597d28228d599f9fafe6f69a81375569f6d0e7/settings/src/components/password.js#L139-L167
  *
  * Generate a cryptographically secure random password.
  */
