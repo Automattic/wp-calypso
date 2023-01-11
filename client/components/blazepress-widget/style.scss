@@ -32,7 +32,7 @@ $headerHeight: 72px;
 			padding-top: 3px; // helps align with the logo
 		}
 
-		.wordpress-logo {
+		.blaze-logo {
 			width: 1.5rem;
 			height: 1.5rem;
 			fill: var(--color-text);
@@ -45,6 +45,7 @@ $headerHeight: 72px;
 			font-style: normal;
 			font-weight: 500;
 			font-size: $font-body-small;
+			padding-top: 5px;
 		}
 	}
 	.blazepress-widget__content {
