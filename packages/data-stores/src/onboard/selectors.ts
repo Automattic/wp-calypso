@@ -61,3 +61,4 @@ export const getEditEmail = ( state: State ) => state.editEmail;
 export const getDomainForm = ( state: State ) => state.domainForm;
 export const getDomainCartItem = ( state: State ) => state.domainCartItem;
 export const getHideFreePlan = ( state: State ) => state.hideFreePlan;
+export const getIsMigrateFromWp = ( state: State ) => state.isMigrateFromWp;
