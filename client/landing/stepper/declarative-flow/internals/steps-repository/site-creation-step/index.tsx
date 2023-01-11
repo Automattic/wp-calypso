@@ -51,7 +51,6 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 	let siteVisibility = Site.Visibility.PublicIndexed;
 
 	// Link-in-bio flow defaults to "Coming Soon"
-
 	if ( isLinkInBioFlow( flow ) || isFreeFlow( flow ) || isMigrationFlow( flow ) ) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
 	}
