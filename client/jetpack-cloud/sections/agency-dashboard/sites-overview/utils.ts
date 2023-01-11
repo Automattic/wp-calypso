@@ -371,9 +371,9 @@ const formatMonitorData = ( site: Site ) => {
 		monitor.status = 'disabled';
 	} else if (
 		! site.monitor_site_status &&
-		INITIAL_UNIX_EPOCH !== site.monitor_last_status_change
 		// This check is needed because monitor_site_status is false by default
 		// and we don't want to show the site down status when the site is first connected and the monitor is enabled
+		INITIAL_UNIX_EPOCH !== site.monitor_last_status_change
 	) {
 		monitor.status = 'failed';
 		monitor.value = translate( 'Site Down' );
