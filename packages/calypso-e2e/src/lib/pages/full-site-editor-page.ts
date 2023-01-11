@@ -91,7 +91,7 @@ export class FullSiteEditorPage {
 			.frameLocator( selectors.editorCanvasIframe )
 			.locator( selectors.editorCanvasRoot );
 
-		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editor );
+		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editor, 'site-editor' );
 		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editor );
 		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, this.editor );
 		this.editorSiteStylesComponent = new EditorSiteStylesComponent( page, this.editor );
