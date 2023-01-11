@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import SectionNav from 'calypso/components/section-nav';
 import useFollowersQuery from 'calypso/data/followers/use-followers-query';
 import useUsersQuery from 'calypso/data/users/use-users-query';
@@ -44,6 +45,7 @@ function SubscribersTeam( props: Props ) {
 
 	return (
 		<Main>
+			<ScreenOptionsTab wpAdminPath="users.php" />
 			<FormattedHeader
 				brandFont
 				className="people__page-heading"
