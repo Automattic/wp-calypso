@@ -176,7 +176,10 @@ const useItemPrice = (
 				)
 			) {
 				discountedPrice = introductoryOfferPrices.introOfferCost || undefined;
-				discountedPriceDuration = 1;
+
+				if ( discountedPrice ) {
+					discountedPriceDuration = 1;
+				}
 			}
 		}
 	}
