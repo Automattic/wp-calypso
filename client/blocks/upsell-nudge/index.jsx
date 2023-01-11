@@ -28,12 +28,16 @@ import './style.scss';
 
 const debug = debugFactory( 'calypso:upsell-nudge' );
 
+/**
+ * @param {any} props Props declared as `any` to prevent errors in TSX files that use this component.
+ */
 export const UpsellNudge = ( {
 	callToAction,
 	canManageSite,
 	canUserUpgrade,
 	className,
 	compact,
+	compactButton,
 	customerType,
 	description,
 	disableHref,
@@ -51,6 +55,7 @@ export const UpsellNudge = ( {
 	isVip,
 	siteIsWPForTeams,
 	list,
+	renderListItem,
 	onClick,
 	onDismissClick,
 	plan,
@@ -122,6 +127,7 @@ export const UpsellNudge = ( {
 			callToAction={ callToAction }
 			className={ classes }
 			compact={ compact }
+			compactButton={ compactButton }
 			description={ description }
 			disableHref={ disableHref }
 			dismissPreferenceName={ dismissPreferenceName }
@@ -135,6 +141,7 @@ export const UpsellNudge = ( {
 			jetpack={ isJetpack || isJetpackDevDocs } //Force show Jetpack example in Devdocs
 			isAtomic={ isAtomic }
 			list={ list }
+			renderListItem={ renderListItem }
 			onClick={ onClick }
 			onDismiss={ onDismissClick }
 			plan={ plan }
@@ -156,6 +163,7 @@ export const UpsellNudge = ( {
 
 UpsellNudge.defaultProps = {
 	primaryButton: true,
+	compactButton: true,
 };
 
 export default connect( ( state, ownProps ) => {
