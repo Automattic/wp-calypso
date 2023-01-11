@@ -8,10 +8,7 @@ import getECommerceTrialDaysLeft from './get-ecommerce-trial-days-left';
  * @param {number} siteId - Site ID
  * @returns {boolean|null}
  */
-export default function isECommerceTrialExpired(
-	state: AppState,
-	siteId: number
-): boolean | null {
+export default function isECommerceTrialExpired( state: AppState, siteId: number ): boolean | null {
 	const trialDaysLeft = getECommerceTrialDaysLeft( state, siteId );
 
 	if ( trialDaysLeft === null ) {
