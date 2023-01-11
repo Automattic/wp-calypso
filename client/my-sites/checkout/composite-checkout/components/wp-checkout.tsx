@@ -23,7 +23,7 @@ import { styled } from '@automattic/wpcom-checkout';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
 import {
@@ -253,6 +253,12 @@ export default function WPCheckout( {
 
 	const isWcMobile = isWcMobileApp();
 
+	useEffect( () => {
+		if ( hasPremiumPlan( responseCart ) ) {
+			loadExperimentAssignment( 'calypso_plans_postpurchasepage_newdesign_202301_v1' );
+		}
+	}, [ responseCart ] );
+
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
 		debug( 'rendering post-checkout redirecting page' );
 		return (
@@ -298,10 +304,6 @@ export default function WPCheckout( {
 	}
 
 	const isDIFMInCart = hasDIFMProduct( responseCart );
-
-	if ( hasPremiumPlan( responseCart ) ) {
-		loadExperimentAssignment( 'calypso_plans_postpurchasepage_newdesign_202301_v1' );
-	}
 
 	return (
 		<CheckoutStepGroup
