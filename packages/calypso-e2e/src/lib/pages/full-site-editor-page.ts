@@ -34,7 +34,7 @@ const selectors = {
 	editorCanvasIframe: 'iframe[name="editor-canvas"]',
 	editorCanvasRoot: '.wp-site-blocks',
 	viewEditorButtonMobile: 'button:has-text("View Editor")',
-	editButton: '.edit-site-layout__edit-button',
+	editButton: '.edit-site-site-hub__edit-button',
 	templateLoadingSpinner: '[aria-label="Block: Template Part"] .components-spinner',
 	closeStylesWelcomeGuideButton:
 		'[aria-label="Welcome to styles"] button[aria-label="Close dialog"]',
