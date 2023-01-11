@@ -115,8 +115,7 @@ const connectComponent = connect(
 			return NO_SITE_STATE;
 		}
 
-		let quantity = 'year' === period ? 10 : 30;
-		quantity = 'hour' === period ? 24 : quantity;
+		const quantity = 'hour' === period ? 24 : 30;
 		const counts = getCountRecords( state, siteId, postId, period, statType );
 		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
 		const isActiveTabLoading = isLoadingTabs( state, siteId, postId, period, statType );
