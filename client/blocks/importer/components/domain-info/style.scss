@@ -8,13 +8,13 @@
 	align-items: flex-start;
 	justify-content: space-between;
 	padding: 16px;
+	margin: 24px auto;
 	background-color: var(--studio-gray-0);
 	font-size: $font-body-small;
 	color: var(--studio-gray-80);
 	max-width: 486px;
 
 	@include break-mobile {
-		margin: 24px auto;
 		align-items: start;
 		padding: 24px;
 	}
