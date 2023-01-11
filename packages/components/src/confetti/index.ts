@@ -1,22 +1,7 @@
 import confetti from 'canvas-confetti';
 import { useEffect } from 'react';
 
-const COLORS = [
-	'#F2D76B',
-	'#31CC9F',
-	'#E34C84',
-	'#31CC9F',
-	'#31CC9F',
-	'#B35EB1',
-	'#FAA754',
-	'#6AB3D0',
-	'#618DF2',
-	'#6AB3D0',
-	'#618DF2',
-	'#B35EB1',
-	'#F2D76B',
-	'#FAA754',
-];
+const COLORS = [ '#31CC9F', '#618DF2', '#6AB3D0', '#B35EB1', '#F2D76B', '#FAA754', '#E34C84' ];
 
 type FireOptions = {
 	spread: number;
@@ -26,16 +11,23 @@ type FireOptions = {
 };
 
 function fireConfetti() {
-	const count = 200;
+	const count = 60;
+	const scale = 2;
 	const defaults = {
-		origin: { y: 0.7 },
+		origin: { y: 0.4 },
 		colors: COLORS,
+		scalar: scale,
+		spread: 180,
+		gravity: 6,
 	};
 
 	function fire( particleRatio: number, opts: FireOptions ) {
 		confetti(
 			Object.assign( {}, defaults, opts, {
 				particleCount: Math.floor( count * particleRatio ),
+				startVelocity: opts.startVelocity ? scale * opts.startVelocity : undefined,
+				spread: scale * opts.spread,
+				scalar: opts.scalar ? scale * opts.scalar : scale,
 			} )
 		);
 	}
