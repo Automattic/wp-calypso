@@ -4,7 +4,7 @@ import { useState } from 'react';
 import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import PostMonths from '../stats-detail-months';
 import PostWeeks from '../stats-detail-weeks';
-import StatsHeatMapTableLegends from '../stats-heap-map/legends';
+import StatsHeatMapLegend from '../stats-heap-map/legend';
 
 import './style.scss';
 
@@ -59,7 +59,7 @@ export default function PostDetailTableSection( {
 							) }
 						</div>
 
-						<StatsHeatMapTableLegends levels={ 2 } />
+						<StatsHeatMapLegend levels={ 2 } />
 					</Card>
 				</div>
 			</div>

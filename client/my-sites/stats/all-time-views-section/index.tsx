@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import { getSiteStatsViewSummary } from 'calypso/state/stats/lists/selectors';
-import StatsHeatMapTableLegends from '../stats-heap-map/legends';
+import StatsHeatMapLegend from '../stats-heap-map/legend';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import Months from '../stats-views/months';
 
@@ -54,7 +54,7 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 							<Months dataKey={ chartOption } data={ viewData } siteSlug={ slug } showYearTotal />
 						</div>
 
-						<StatsHeatMapTableLegends />
+						<StatsHeatMapLegend />
 					</Card>
 				</div>
 			</div>
