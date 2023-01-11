@@ -24,6 +24,7 @@ import {
 	getSelectedLicensesSiteId,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
+import DashboardBulkActions from '../dashboard-bulk-actions';
 import SitesOverviewContext from './context';
 import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
@@ -50,6 +51,7 @@ export default function SitesOverview() {
 	const highlightFavoriteTab = getQueryArg( window.location.href, 'highlight' ) === 'favorite-tab';
 
 	const [ highlightTab, setHighlightTab ] = useState( false );
+	const [ selectedSites, setSelectedSites ] = useState< number[] >( [] );
 
 	const { search, currentPage, filter } = useContext( SitesOverviewContext );
 
@@ -59,6 +61,24 @@ export default function SitesOverview() {
 		currentPage,
 		filter
 	);
+
+	function handleSetSelectedSites( id: number ) {
+		if ( selectedSites.includes( id ) ) {
+			setSelectedSites( selectedSites.filter( ( siteId ) => siteId !== id ) );
+		} else {
+			setSelectedSites( [ ...selectedSites, id ] );
+		}
+	}
+
+	if ( data?.sites ) {
+		data.sites = data.sites.map( ( site: any ) => {
+			return {
+				...site,
+				isSelected: selectedSites.includes( site.blog_id ),
+				onSelect: () => handleSetSelectedSites( site.blog_id ),
+			};
+		} );
+	}
 
 	useEffect( () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_agency_dashboard_visit' ) );
@@ -255,6 +275,13 @@ export default function SitesOverview() {
 								isLoading={ isLoading }
 							/>
 						) }
+
+						<DashboardBulkActions
+							selectedSites={ data?.sites.filter( ( site: { blog_id: number } ) =>
+								selectedSites.includes( site.blog_id )
+							) }
+						/>
+
 						{ showEmptyState ? (
 							<div className="sites-overview__no-sites">{ emptyStateMessage }</div>
 						) : (

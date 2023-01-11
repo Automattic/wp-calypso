@@ -1,0 +1,38 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+input.site-select-checkbox {
+	position: absolute;
+	inset-block-start: 15px;
+	inset-inline-start: 14px;
+	color: var(--studio-gray-20) !important;
+
+	&:checked::before {
+		content: url(/calypso/images/checkbox-icons/checkmark-jetpack.svg);
+	}
+
+	&::after {
+		// Making tap area larger
+		content: "";
+		position: absolute;
+		inset-block-start: -1px;
+		inset-inline-start: -1px;
+		width: 50px;
+		height: 50px;
+	}
+	+ span {
+		margin-inline-start: 8px;
+	}
+
+	@include break-large() {
+		position: static;
+		margin-block-start: 6px;
+		color: var(--color-primary) !important;
+
+		&::after {
+			inset-block-start: -18px;
+			inset-inline-start: -15px;
+			width: 40px;
+		}
+	}
+}

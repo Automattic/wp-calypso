@@ -40,6 +40,8 @@ export interface Site {
 	is_favorite: boolean;
 	monitor_settings: MonitorSettings;
 	monitor_last_status_change: string;
+	isSelected?: boolean;
+	onSelect?: ( value: boolean ) => void;
 }
 export interface SiteNode {
 	value: Site;
@@ -123,6 +125,8 @@ export interface SitesOverviewContextInterface {
 	search: string;
 	currentPage: number;
 	filter: { issueTypes: Array< AgencyDashboardFilterOption >; showOnlyFavorites: boolean };
+	isBulkManagementActive?: boolean;
+	setIsBulkManagementActive?: ( value: boolean ) => void;
 }
 
 export type AgencyDashboardFilterOption =

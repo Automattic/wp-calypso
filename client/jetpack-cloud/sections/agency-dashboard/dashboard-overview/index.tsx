@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import SelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/primary/select-partner-key';
@@ -20,6 +21,7 @@ export default function DashboardOverview( {
 	const hasFetched = useSelector( hasFetchedPartner );
 	const isFetching = useSelector( isFetchingPartner );
 	const hasActiveKey = useSelector( hasActivePartnerKey );
+	const [ isBulkManagementActive, setIsBulkManagementActive ] = useState( true );
 
 	if ( hasFetched && ! hasActiveKey ) {
 		return <SelectPartnerKey />;
@@ -30,6 +32,8 @@ export default function DashboardOverview( {
 			search,
 			currentPage,
 			filter,
+			isBulkManagementActive,
+			setIsBulkManagementActive,
 		};
 		return (
 			<SitesOverviewContext.Provider value={ context }>
