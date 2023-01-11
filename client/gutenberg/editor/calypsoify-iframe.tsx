@@ -125,6 +125,7 @@ enum EditorActions {
 	GetCalypsoUrlInfo = 'getCalypsoUrlInfo',
 	TrackPerformance = 'trackPerformance',
 	GetIsAppBannerVisible = 'getIsAppBannerVisible',
+	NavigateToHome = 'navigateToHome',
 }
 
 type ComponentProps = Props &
@@ -488,6 +489,10 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			if ( isAppBannerVisible ) {
 				this.appBannerPort = ports[ 0 ];
 			}
+		}
+
+		if ( EditorActions.NavigateToHome === action ) {
+			window.open( `/home/${ this.props.siteSlug }`, '_top' );
 		}
 	};
 
