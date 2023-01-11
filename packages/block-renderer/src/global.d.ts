@@ -8,3 +8,5 @@ declare module '@wordpress/block-editor' {
 	export const __unstableEditorStyles: React.ComponentType< Props >;
 	export const __unstablePresetDuotoneFilter: React.ComponentType< Props >;
 }
+
+declare module '@wordpress/edit-site/build-module/components/global-styles/use-global-styles-output';

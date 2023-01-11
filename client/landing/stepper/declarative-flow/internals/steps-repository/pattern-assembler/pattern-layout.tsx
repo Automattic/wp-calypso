@@ -3,6 +3,8 @@ import { Icon, header, footer, group } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
+import ColorPaletteSelector from './color-palette-selector';
+import FontPairingSelector from './font-pairing-selector';
 import PatternActionBar from './pattern-action-bar';
 import type { Pattern } from './types';
 
@@ -45,6 +47,24 @@ const PatternLayout = ( {
 
 	return (
 		<div className="pattern-layout">
+			<div className="pattern-layout__header">
+				<h2>{ translate( 'Colours' ) }</h2>
+				<p>{ translate( 'Foreground and background colours used throughout your site.' ) }</p>
+			</div>
+			<div className="pattern-layout__body">
+				<ColorPaletteSelector />
+			</div>
+			<div className="pattern-layout__header">
+				<h2>{ translate( 'Fonts' ) }</h2>
+				<p>
+					{ translate(
+						'We’ve hand picked a selection of font pairings that you can customise later.'
+					) }
+				</p>
+			</div>
+			<div className="pattern-layout__body">
+				<FontPairingSelector />
+			</div>
 			<div className="pattern-layout__header">
 				<h2>{ translate( 'Design your home' ) }</h2>
 				<p>
