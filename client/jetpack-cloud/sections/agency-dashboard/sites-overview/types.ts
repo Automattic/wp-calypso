@@ -19,6 +19,7 @@ export type AllowedStatusTypes =
 	| 'disabled';
 
 export interface MonitorSettings {
+	monitor_active: boolean;
 	last_down_time: string;
 	monitor_deferment_time: number;
 	monitor_notify_users_emails: Array< string >;
@@ -38,6 +39,7 @@ export interface Site {
 	awaiting_plugin_updates: Array< string >;
 	is_favorite: boolean;
 	monitor_settings: MonitorSettings;
+	monitor_last_status_change: string;
 }
 export interface SiteNode {
 	value: Site;
@@ -173,3 +175,7 @@ export interface UpdateMonitorSettingsArgs {
 	siteId: number;
 	params: UpdateMonitorSettingsParams;
 }
+
+export type SiteMonitorStatus = {
+	[ siteId: number ]: 'loading' | 'completed';
+};

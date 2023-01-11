@@ -54,7 +54,6 @@ const useFetchDashboardSites = (
 					errorNotice( translate( 'Failed to retrieve your sites. Please try again later.' ) )
 				),
 			enabled: isPartnerOAuthTokenLoaded,
-			staleTime: 1000 * 60,
 		}
 	);
 };
