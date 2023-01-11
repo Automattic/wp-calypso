@@ -18,7 +18,7 @@ import {
 } from 'calypso/lib/purchases';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import AutoRenewToggle from './auto-renew-toggle';
-import type { SiteDetails } from '@automattic/data-stores/src/site/types';
+import type { SiteDetails } from '@automattic/data-stores';
 import type {
 	Purchase,
 	GetChangePaymentMethodUrlFor,

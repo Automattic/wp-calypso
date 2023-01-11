@@ -100,36 +100,6 @@ PurchaseMeta.propTypes = {
 	getChangePaymentMethodUrlFor: PropTypes.func,
 };
 
-function renderRenewsOrExpiresOn( {
-	moment,
-	purchase,
-	siteSlug,
-	translate,
-	getManagePurchaseUrlFor,
-} ) {
-	if ( isIncludedWithPlan( purchase ) ) {
-		const attachedPlanUrl = getManagePurchaseUrlFor( siteSlug, purchase.attachedToPurchaseId );
-
-		return (
-			<span>
-				<a href={ attachedPlanUrl }>{ translate( 'Renews with Plan' ) }</a>
-			</span>
-		);
-	}
-
-	if ( isExpiring( purchase ) || isExpired( purchase ) ) {
-		return moment( purchase.expiryDate ).format( 'LL' );
-	}
-
-	if ( isRenewing( purchase ) ) {
-		return moment( purchase.renewDate ).format( 'LL' );
-	}
-
-	if ( isOneTimePurchase( purchase ) ) {
-		return translate( 'Never Expires' );
-	}
-}
-
 function renderRenewsOrExpiresOnLabel( { purchase, translate } ) {
 	if ( isExpiring( purchase ) ) {
 		if ( isDomainRegistration( purchase ) ) {
@@ -176,6 +146,36 @@ function renderRenewsOrExpiresOnLabel( { purchase, translate } ) {
 	}
 
 	return null;
+}
+
+function renderRenewsOrExpiresOn( {
+	moment,
+	purchase,
+	siteSlug,
+	translate,
+	getManagePurchaseUrlFor,
+} ) {
+	if ( isIncludedWithPlan( purchase ) ) {
+		const attachedPlanUrl = getManagePurchaseUrlFor( siteSlug, purchase.attachedToPurchaseId );
+
+		return (
+			<span>
+				<a href={ attachedPlanUrl }>{ translate( 'Renews with Plan' ) }</a>
+			</span>
+		);
+	}
+
+	if ( isExpiring( purchase ) || isExpired( purchase ) ) {
+		return moment( purchase.expiryDate ).format( 'LL' );
+	}
+
+	if ( isRenewing( purchase ) ) {
+		return moment( purchase.renewDate ).format( 'LL' );
+	}
+
+	if ( isOneTimePurchase( purchase ) ) {
+		return translate( 'Never Expires' );
+	}
 }
 
 function PurchaseMetaPlaceholder() {
