@@ -28,6 +28,17 @@ function getLocaleFromBrowser() {
 	return window.navigator?.language ?? fallbackLocale;
 }
 
+function getValidCurrency( code: string ): string {
+	if ( ! doesCurrencyExist( code ) ) {
+		// eslint-disable-next-line no-console
+		console.warn(
+			`getCurrencyObject was called with a non-existent currency "${ code }"; falling back to ${ fallbackCurrency }`
+		);
+		return fallbackCurrency;
+	}
+	return code;
+}
+
 function getFormatterCacheKey( {
 	locale,
 	currency,
@@ -204,13 +215,7 @@ export function formatCurrency(
 	options: CurrencyObjectOptions = {}
 ): string {
 	const locale = options.locale ?? defaultLocale ?? getLocaleFromBrowser();
-	if ( ! doesCurrencyExist( code ) ) {
-		// eslint-disable-next-line no-console
-		console.warn(
-			`formatCurrency was called with a non-existent currency "${ code }"; falling back to ${ fallbackCurrency }`
-		);
-		code = fallbackCurrency;
-	}
+	code = getValidCurrency( code );
 	const currencyOverride = getCurrencyOverride( code );
 	const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );
 
@@ -275,13 +280,7 @@ export function getCurrencyObject(
 	options: CurrencyObjectOptions = {}
 ): CurrencyObject {
 	const locale = options.locale ?? defaultLocale ?? getLocaleFromBrowser();
-	if ( ! doesCurrencyExist( code ) ) {
-		// eslint-disable-next-line no-console
-		console.warn(
-			`getCurrencyObject was called with a non-existent currency "${ code }"; falling back to ${ fallbackCurrency }`
-		);
-		code = fallbackCurrency;
-	}
+	code = getValidCurrency( code );
 	const currencyOverride = getCurrencyOverride( code );
 	const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );
 
