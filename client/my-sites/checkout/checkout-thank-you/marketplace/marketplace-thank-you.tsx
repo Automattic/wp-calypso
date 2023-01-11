@@ -62,6 +62,7 @@ const ThankYouContainer = styled.div`
 	}
 
 	.thank-you__step div > p {
+		padding: 0;
 		margin-bottom: 16px;
 	}
 
@@ -72,7 +73,7 @@ const ThankYouContainer = styled.div`
 	}
 
 	.thank-you__header-subtitle {
-		margin-top: 16px;
+		margin: 16px auto;
 		width: 500px;
 		line-height: 24px;
 		font-size: 16px;
