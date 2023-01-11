@@ -46,13 +46,7 @@ export interface Purchase {
 	productDisplayPrice: string;
 	productId: number;
 	productName: string;
-	productSlug:
-		| 'jetpack_personal'
-		| 'jetpack_personal_monthly'
-		| 'jetpack_business'
-		| 'jetpack_business_monthly'
-		| 'jetpack_premium'
-		| 'jetpack_premium_monthly';
+	productSlug: string;
 	productType: string;
 	purchaseRenewalQuantity: number | null;
 	refundAmount: number;
@@ -296,84 +290,3 @@ export type RenderRenewsOrExpiresOnLabel = ( args: {
 	purchase: Purchase;
 	translate: ReturnType< typeof useTranslate >;
 } ) => string;
-
-export interface Site {
-	ID?: number;
-	name?: string;
-	description?: string;
-	URL?: string;
-	capabilities?: { [ key: string ]: boolean };
-	jetpack?: boolean;
-	is_multisite?: boolean;
-	site_owner?: number;
-	lang?: string;
-	visible?: boolean;
-	is_private?: boolean;
-	is_coming_soon?: boolean;
-	single_user_site?: boolean;
-	is_vip?: boolean;
-	options?: Options;
-	plan?: Plan;
-
-	jetpack_modules?: null;
-	launch_status?: string;
-	site_migration?: null;
-	is_core_site_editor_enabled?: boolean;
-	is_wpcom_atomic?: boolean;
-	user_interactions?: Date[];
-	domain?: string;
-	slug?: string;
-	title?: string;
-}
-
-export interface Options {
-	timezone?: string;
-	gmt_offset?: number;
-	videopress_enabled?: boolean;
-	upgraded_filetypes_enabled?: boolean;
-	admin_url?: string;
-	is_mapped_domain?: boolean;
-	is_redirect?: boolean;
-	unmapped_url?: string;
-	default_post_format?: string;
-	allowed_file_types?: string[];
-	show_on_front?: string;
-	default_comment_status?: boolean;
-	default_ping_status?: boolean;
-	software_version?: string;
-	created_at?: Date;
-	updated_at?: Date;
-	wordads?: boolean;
-	publicize_permanently_disabled?: boolean;
-	frame_nonce?: string;
-	jetpack_frame_nonce?: string;
-	page_on_front?: number;
-	page_for_posts?: number;
-	advanced_seo_front_page_description?: string;
-	verification_services_codes?: null;
-	podcasting_archive?: null;
-	is_domain_only?: boolean;
-	is_automated_transfer?: boolean;
-	is_wpcom_atomic?: boolean;
-	is_wpcom_store?: boolean;
-	woocommerce_is_active?: boolean;
-	editing_toolkit_is_active?: boolean;
-	design_type?: null;
-	site_segment?: null;
-	is_wpforteams_site?: boolean;
-	p2_hub_blog_id?: null;
-	is_cloud_eligible?: boolean;
-	anchor_podcast?: boolean;
-	is_difm_lite_in_progress?: boolean;
-	site_intent?: string;
-	launchpad_screen?: boolean;
-}
-
-export interface Plan {
-	product_id?: number;
-	product_slug?: string;
-	product_name_short?: string;
-	expired?: boolean;
-	user_is_owner?: boolean;
-	is_free?: boolean;
-}

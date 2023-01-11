@@ -18,9 +18,9 @@ import {
 } from 'calypso/lib/purchases';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import AutoRenewToggle from './auto-renew-toggle';
+import type { SiteDetails } from '@automattic/data-stores/src/site/types';
 import type {
 	Purchase,
-	Site,
 	GetChangePaymentMethodUrlFor,
 	RenderRenewsOrExpiresOn,
 	RenderRenewsOrExpiresOnLabel,
@@ -29,7 +29,7 @@ import type {
 
 interface ExpirationProps {
 	purchase: Purchase;
-	site?: Site;
+	site?: SiteDetails;
 	siteSlug?: string;
 	getChangePaymentMethodUrlFor: GetChangePaymentMethodUrlFor;
 	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
@@ -55,7 +55,9 @@ function PurchaseMetaExpiration( {
 	const isJetpackPurchaseUsingPrimaryCancellationFlow =
 		isJetpackPurchase && config.isEnabled( 'jetpack/cancel-through-main-flow' );
 	const hideAutoRenew =
-		purchase && JETPACK_LEGACY_PLANS.includes( purchase.productSlug ) && ! isRenewable( purchase );
+		purchase &&
+		JETPACK_LEGACY_PLANS.some( ( plan ) => plan === purchase.productSlug ) &&
+		! isRenewable( purchase );
 
 	if ( ! purchase || isDomainTransfer( purchase ) || purchase?.isInAppPurchase ) {
 		return null;
