@@ -9,6 +9,7 @@ import {
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import IntroStep, { IntroContent } from './intro';
 import type { Step } from '../../types';
@@ -17,13 +18,19 @@ import './styles.scss';
 
 const useIntroContent = ( flowName: string | null ): IntroContent => {
 	const { __ } = useI18n();
-
+	const urlQueryParams = useQuery();
 	return useMemo( () => {
 		if ( isCopySiteFlow( flowName ) ) {
 			return {
-				title: createInterpolateElement(
-					__( 'You’re 5 minutes away from<br />creating a new copy site.<br />Ready? ' ),
-					{ br: <br /> }
+				title: __( 'Copy Site' ),
+				text: createInterpolateElement(
+					__(
+						'You’re 5 minutes away from<br />creating a new copy site from <SourceUrl/>.<br />Ready?'
+					),
+					{
+						br: <br />,
+						SourceUrl: <span>{ urlQueryParams.get( 'sourceUrl' ) }</span>,
+					}
 				),
 				buttonText: __( 'Start copying' ),
 			};
@@ -85,7 +92,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 			),
 			buttonText: __( 'Get started' ),
 		};
-	}, [ flowName, __ ] );
+	}, [ flowName, __, urlQueryParams ] );
 };
 
 const Intro: Step = function Intro( { navigation, flow } ) {
