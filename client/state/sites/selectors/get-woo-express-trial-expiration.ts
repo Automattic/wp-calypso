@@ -1,22 +1,33 @@
 import { PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import moment, { Moment } from 'moment';
-import { getPurchases } from 'calypso/state/purchases/selectors';
+import { SitePlanData } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
+import { getCurrentPlan } from '../plans/selectors';
 import type { AppState } from 'calypso/types';
+
+/**
+ * Checks if the plan is an ecommerce trial.
+ *
+ * @param {SitePlanData} plan - Plan object
+ * @returns {boolean} returns true if the plan is an ecommerce trial
+ */
+function isECommerceTrialPlan( plan: SitePlanData ): boolean {
+	return plan.productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+}
 
 /**
  * Returns the expiration date of the Woo Express trial. If the trial is not active, returns null.
  *
  * @param {AppState} state - Global state tree
- * @returns {Moment|null}
+ * @returns {Moment|null} Expiration date of the trial, or null if the trial is not active.
  */
-export default function getWooExpressTrialExpiration( state: AppState ): Moment | null {
-	const trialPurchase = getPurchases( state ).find(
-		( purchase ) => purchase.productSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY
-	);
-
-	if ( ! trialPurchase ) {
+export default function getWooExpressTrialExpiration(
+	state: AppState,
+	siteId: number
+): Moment | null {
+	const currentPlan = getCurrentPlan( state, siteId );
+	if ( ! currentPlan || ! isECommerceTrialPlan( currentPlan as SitePlanData ) ) {
 		return null;
 	}
 
-	return moment.utc( trialPurchase.expiryDate );
+	return moment.utc( currentPlan.expiryDate );
 }

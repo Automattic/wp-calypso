@@ -3650,44 +3650,62 @@ describe( 'selectors', () => {
 	describe( 'getWooExpressTrialExpiration()', () => {
 		test( 'Returns the expiracy date', () => {
 			const expiracyDate = '2022-02-10T00:00:00+00:00';
-			const initialPurchases = Object.freeze( [
-				{
-					ID: 1,
-					product_slug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
-					blog_id: 1337,
-					expiry_date: expiracyDate,
-				},
-			] );
 
-			const state = {
-				purchases: {
-					data: initialPurchases,
-					error: null,
-					isFetchingSitePurchases: false,
-					isFetchingUserPurchases: false,
-					hasLoadedSitePurchasesFromServer: false,
-					hasLoadedUserPurchasesFromServer: true,
-				},
+			const plan = {
+				ID: 1,
+				productSlug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
+				blogId: siteId,
+				expiryDate: expiracyDate,
+				currentPlan: true,
 			};
 
-			expect( getWooExpressTrialExpiration( state ).isSame( moment( expiracyDate ) ) ).toBeTruthy();
+			const state = deepFreeze( {
+				...userState,
+				sites: {
+					plans: {
+						[ siteId ]: {
+							data: [ plan ],
+						},
+					},
+					items: {
+						[ siteId ]: {
+							URL: 'https://example.wordpress.com',
+						},
+					},
+				},
+				siteSettings: {
+					items: {},
+				},
+			} );
+
+			expect(
+				getWooExpressTrialExpiration( state, siteId ).isSame( moment( expiracyDate ) )
+			).toBeTruthy();
 		} );
 
 		test( 'Returns null when the trial purchase is not present', () => {
-			const initialPurchases = Object.freeze( [] );
+			const plan = {};
 
-			const state = {
-				purchases: {
-					data: initialPurchases,
-					error: null,
-					isFetchingSitePurchases: false,
-					isFetchingUserPurchases: false,
-					hasLoadedSitePurchasesFromServer: false,
-					hasLoadedUserPurchasesFromServer: true,
+			const state = deepFreeze( {
+				...userState,
+				sites: {
+					plans: {
+						[ siteId ]: {
+							data: [ plan ],
+						},
+					},
+					items: {
+						[ siteId ]: {
+							URL: 'https://example.wordpress.com',
+						},
+					},
 				},
-			};
+				siteSettings: {
+					items: {},
+				},
+			} );
 
-			expect( getWooExpressTrialExpiration( state ) ).toBeNull();
+			expect( getWooExpressTrialExpiration( state, siteId ) ).toBeNull();
 		} );
 	} );
 
@@ -3696,27 +3714,35 @@ describe( 'selectors', () => {
 
 		test( 'Should return the correct number of days left before the trial expires', () => {
 			const expiracyDate = '2022-02-10T00:00:00+00:00';
-			const initialPurchases = Object.freeze( [
-				{
-					ID: 1,
-					product_slug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
-					blog_id: 1337,
-					expiry_date: expiracyDate,
-				},
-			] );
 
-			const state = {
-				purchases: {
-					data: initialPurchases,
-					error: null,
-					isFetchingSitePurchases: false,
-					isFetchingUserPurchases: false,
-					hasLoadedSitePurchasesFromServer: false,
-					hasLoadedUserPurchasesFromServer: true,
-				},
+			const plan = {
+				ID: 1,
+				productSlug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
+				blogId: siteId,
+				expiryDate: expiracyDate,
+				currentPlan: true,
 			};
 
-			expect( getWooExpressTrialDaysLeft( state ) ).toBe( 31 );
+			const state = deepFreeze( {
+				...userState,
+				sites: {
+					plans: {
+						[ siteId ]: {
+							data: [ plan ],
+						},
+					},
+					items: {
+						[ siteId ]: {
+							URL: 'https://example.wordpress.com',
+						},
+					},
+				},
+				siteSettings: {
+					items: {},
+				},
+			} );
+
+			expect( getWooExpressTrialDaysLeft( state, siteId ) ).toBe( 31 );
 		} );
 	} );
 
@@ -3725,52 +3751,67 @@ describe( 'selectors', () => {
 
 		test( 'The trial period should be expired', () => {
 			const expiracyDate = '2022-01-09T00:00:00+00:00';
-			const initialPurchases = Object.freeze( [
-				{
-					ID: 1,
-					product_slug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
-					blog_id: 1337,
-					expiry_date: expiracyDate,
-				},
-			] );
 
-			const state = {
-				purchases: {
-					data: initialPurchases,
-					error: null,
-					isFetchingSitePurchases: false,
-					isFetchingUserPurchases: false,
-					hasLoadedSitePurchasesFromServer: false,
-					hasLoadedUserPurchasesFromServer: true,
-				},
+			const plan = {
+				ID: 1,
+				productSlug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
+				blogId: siteId,
+				expiryDate: expiracyDate,
+				currentPlan: true,
 			};
 
-			expect( isWooExpressTrialExpired( state ) ).toBeTruthy();
+			const state = deepFreeze( {
+				...userState,
+				sites: {
+					plans: {
+						[ siteId ]: {
+							data: [ plan ],
+						},
+					},
+					items: {
+						[ siteId ]: {
+							URL: 'https://example.wordpress.com',
+						},
+					},
+				},
+				siteSettings: {
+					items: {},
+				},
+			} );
+
+			expect( isWooExpressTrialExpired( state, siteId ) ).toBeTruthy();
 		} );
 
 		test( 'The trial period should not be expired if is the same day', () => {
 			const expiracyDate = '2022-01-10T23:59:59+00:00';
-			const initialPurchases = Object.freeze( [
-				{
-					ID: 1,
-					product_slug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
-					blog_id: 1337,
-					expiry_date: expiracyDate,
-				},
-			] );
-
-			const state = {
-				purchases: {
-					data: initialPurchases,
-					error: null,
-					isFetchingSitePurchases: false,
-					isFetchingUserPurchases: false,
-					hasLoadedSitePurchasesFromServer: false,
-					hasLoadedUserPurchasesFromServer: true,
-				},
+			const plan = {
+				ID: 1,
+				productSlug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
+				blogId: siteId,
+				expiryDate: expiracyDate,
+				currentPlan: true,
 			};
 
-			expect( isWooExpressTrialExpired( state ) ).toBeFalsy();
+			const state = deepFreeze( {
+				...userState,
+				sites: {
+					plans: {
+						[ siteId ]: {
+							data: [ plan ],
+						},
+					},
+					items: {
+						[ siteId ]: {
+							URL: 'https://example.wordpress.com',
+						},
+					},
+				},
+				siteSettings: {
+					items: {},
+				},
+			} );
+
+			expect( isWooExpressTrialExpired( state, siteId ) ).toBeFalsy();
 		} );
 	} );
 } );
