@@ -1,5 +1,6 @@
 import { WPCOM_FEATURES_WORDADS, PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import deepFreeze from 'deep-freeze';
+import moment from 'moment';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
 	canAccessWordAds,
@@ -3669,7 +3670,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getWooExpressTrialExpiration( state ) ).toBe( expiracyDate );
+			expect( getWooExpressTrialExpiration( state ).isSame( moment( expiracyDate ) ) ).toBeTruthy();
 		} );
 
 		test( 'Returns null when the trial purchase is not present', () => {
