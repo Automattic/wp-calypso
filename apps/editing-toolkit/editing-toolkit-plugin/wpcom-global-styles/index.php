@@ -12,6 +12,16 @@
  * @return bool Whether Global Styles are limited.
  */
 function wpcom_should_limit_global_styles( $blog_id = 0 ) {
+	/**
+	 * Filter to force a limited Global Styles scenario. Useful for unit testing.
+	 *
+	 * @param bool $force_limit_global_styles Whether Global Styles are forced to be limited.
+	 */
+	$force_limit_global_styles = apply_filters( 'wpcom_force_limit_global_styles', false );
+	if ( $force_limit_global_styles ) {
+		return true;
+	}
+
 	if ( ! $blog_id ) {
 		if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
 			$blog_id = get_current_blog_id();
@@ -194,7 +204,7 @@ function wpcom_track_global_styles( $blog_id, $post, $updated ) {
 	// Invoke the correct function based on the underlying infrastructure.
 	if ( function_exists( 'wpcomsh_record_tracks_event' ) ) {
 		wpcomsh_record_tracks_event( $event_name, $event_props );
-	} else {
+	} elseif ( function_exists( 'require_lib' ) && function_exists( 'tracks_record_event' ) ) {
 		require_lib( 'tracks/client' );
 		tracks_record_event( get_current_user_id(), $event_name, $event_props );
 	}

@@ -25,7 +25,7 @@ import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
 import './style.scss';
 
 const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
-	const { goNext, goBack, submit } = navigation;
+	const { goNext, goBack, submit, goToStep } = navigation;
 	const isVideoPressFlow = 'videopress' === flow;
 
 	const [ billingPeriod, setBillingPeriod ] =
@@ -241,7 +241,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 													getPlanProduct( plan.periodAgnosticSlug, billingPeriod )?.productId
 											}
 											onSelect={ ( id ) => onPlanSelect( id, plan ) }
-											onPickDomainClick={ undefined }
+											onPickDomainClick={ () => goToStep && goToStep( 'chooseADomain' ) }
 											onToggleExpandAll={ () => setAllPlansExpanded( ( expand ) => ! expand ) }
 											// translators: Placeholder refers to the name of a WordPress.com plan.
 											CTAButtonLabel={ __( 'Get %s' ).replace( '%s', plan.title ) }

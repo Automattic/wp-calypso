@@ -8,6 +8,8 @@ import {
 	TestAccount,
 	PluginsPage,
 	NoticeComponent,
+	RestAPIClient,
+	SecretsManager,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -21,31 +23,33 @@ describe( DataHelper.createSuiteTitle( 'Jetpack: Plugin' ), function () {
 	let pluginsPage: PluginsPage;
 	let noticeComponent: NoticeComponent;
 	let siteURL: string;
+	let restAPIClient: RestAPIClient;
 
 	beforeAll( async function () {
+		// Ensure known good state by removing the plugin if already installed.
+		restAPIClient = new RestAPIClient( SecretsManager.secrets.testAccounts.jetpackUser );
+		const siteID = SecretsManager.secrets.testAccounts.jetpackUser.testSites?.primary.id as number;
+		const response = await restAPIClient.removePluginIfInstalled( siteID, pluginName );
+
+		if ( response ) {
+			console.log( `Successfully removed the plugin '${ pluginName }'.` );
+		} else {
+			console.log( `Unable to remove the plugin '${ pluginName }'; no action performed.` );
+		}
+
 		page = await browser.newPage();
 
 		const testAccount = new TestAccount( 'jetpackUser' );
 		await testAccount.authenticate( page );
-		// This is bit of a hacky workaround to avoid committing
-		// in plain text the URL of our test sites.
-		// @TODO We really ought to make a function in DataHelper
-		// to somehow extract the user's site.
 		await page.waitForLoadState( 'networkidle' );
-		siteURL = page.url().split( 'stats/day/' ).slice( -1 )[ 0 ];
-
+		siteURL = SecretsManager.secrets.testAccounts.jetpackUser.testSites?.primary.url as string;
 		pluginsPage = new PluginsPage( page );
 		await pluginsPage.visit( siteURL );
-		// Ensure known good state by removing the plugin
-		// if already installed.
-		await pluginsPage.visitPage( pluginName.replace( ' ', '-' ).toLowerCase(), siteURL );
-		if ( await pluginsPage.pluginIsInstalled() ) {
-			await pluginsPage.clickRemovePlugin();
-		}
 	} );
 
 	describe( 'Plugin: Install', function () {
 		it( 'Install plugin', async function () {
+			await pluginsPage.visitPage( pluginName.replace( ' ', '-' ).toLowerCase(), siteURL );
 			await pluginsPage.clickInstallPlugin();
 		} );
 
@@ -60,7 +64,7 @@ describe( DataHelper.createSuiteTitle( 'Jetpack: Plugin' ), function () {
 
 	describe( 'Plugin: Deactivate', function () {
 		it( 'Deactivate plugin', async function () {
-			await pluginsPage.togglePluginAttribute( 'Active', 'off' );
+			await pluginsPage.setPluginAttribute( 'off' );
 		} );
 	} );
 

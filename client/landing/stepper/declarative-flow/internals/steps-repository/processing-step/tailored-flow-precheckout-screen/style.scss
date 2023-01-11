@@ -9,6 +9,7 @@
 	}
 	.newsletter,
 	.link-in-bio,
+	.link-in-bio-tld,
 	.free {
 		.signup-header {
 			.signup-header__right {
@@ -96,7 +97,8 @@
 		}
 	}
 
-	.link-in-bio {
+	.link-in-bio,
+	.link-in-bio-tld {
 		.processing-step__container {
 			background-color: #d0cce3;
 			background-image:

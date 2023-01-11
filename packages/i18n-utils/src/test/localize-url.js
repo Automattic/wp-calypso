@@ -351,6 +351,36 @@ describe( '#localizeUrl', () => {
 		).toEqual( 'https://wordpress.com/de/themes/free/filter/example-filter/' );
 	} );
 
+	test( 'start', () => {
+		expect( localizeUrl( 'https://wordpress.com/start/', 'en', true ) ).toEqual(
+			'https://wordpress.com/start/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/', 'de', true ) ).toEqual(
+			'https://wordpress.com/start/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/', 'pl', true ) ).toEqual(
+			'https://wordpress.com/start/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/', 'en', false ) ).toEqual(
+			'https://wordpress.com/start/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/', 'de', false ) ).toEqual(
+			'https://wordpress.com/start/de/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/', 'pl', false ) ).toEqual(
+			'https://wordpress.com/start/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/user/', 'de', true ) ).toEqual(
+			'https://wordpress.com/start/user/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/user/', 'de', false ) ).toEqual(
+			'https://wordpress.com/start/user/de/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/user/', 'pl', false ) ).toEqual(
+			'https://wordpress.com/start/user/'
+		);
+	} );
+
 	test( 'tos', () => {
 		expect( localizeUrl( 'https://wordpress.com/tos/', 'en' ) ).toEqual(
 			'https://wordpress.com/tos/'

@@ -39,7 +39,11 @@ Launch Playwright with the following parameters to:
 - output verbose logs to the command line
 
 ```bash
-PWDEBUG=1 DEBUG=pw:api yarn jest <path_to_spec>
+# If within test/e2e directory
+yarn debug <path_to_spec>
+
+# If at repo root
+yarn workspace wp-e2e-tests debug -- <path_to_spec>
 ```
 
 ## Playwright Developer Console and Gutenberg iFrame

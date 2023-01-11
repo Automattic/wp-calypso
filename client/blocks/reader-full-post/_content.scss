@@ -65,12 +65,12 @@
 		border-radius: 6px; /* stylelint-disable-line scales/radii */
 		display: inherit;
 	}
+
 	.wp-block-gallery .wp-block-image,
-	.image-wrapper.two-three,
-	.image-wrapper.three-two,
-	.image-wrapper.wide {
+	.image-wrapper {
 		position: relative;
-		&::after {
+
+		.image-border {
 			content: "";
 			position: absolute;
 			pointer-events: none;
@@ -80,10 +80,8 @@
 			right: 0;
 			box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
 			border-radius: 6px; /* stylelint-disable-line scales/radii */
-		}
-
-		img {
-			width: 100%;
+			margin: auto;
+			max-width: 100%;
 		}
 
 		figcaption {

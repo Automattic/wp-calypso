@@ -293,7 +293,6 @@ class Pages extends Component {
 				type={ blockEditorSettings?.home_template?.postType }
 				/** We'd prefer to call it Homepage no matter which template is in use */
 				title={ translate( 'Homepage' ) }
-				description={ translate( 'The front page of your site' ) }
 				previewUrl={ site.URL }
 				isHomepage
 			/>
@@ -393,9 +392,11 @@ class Pages extends Component {
 	render() {
 		const { hasSites, loading, areBlockEditorSettingsLoading, isFSEActiveLoading } = this.props;
 		const { pages } = this.state;
-		const isLoading = loading || areBlockEditorSettingsLoading || isFSEActiveLoading;
+		const hasPage = pages.length > 0;
+		const isInitialLoad =
+			( loading || areBlockEditorSettingsLoading || isFSEActiveLoading ) && ! hasPage;
 
-		if ( ! isLoading && hasSites ) {
+		if ( ! isInitialLoad && hasSites ) {
 			return pages.length > 0 || this.showVirtualHomepage()
 				? this.renderPagesList( { pages } )
 				: this.renderNoContent();

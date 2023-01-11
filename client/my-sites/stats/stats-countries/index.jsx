@@ -16,7 +16,7 @@ class StatCountries extends Component {
 	};
 
 	render() {
-		const { summary, query, period, showNewModules } = this.props;
+		const { summary, query, period } = this.props;
 		const moduleStrings = statsStrings();
 
 		return (
@@ -29,7 +29,6 @@ class StatCountries extends Component {
 				summary={ summary }
 				moduleStrings={ moduleStrings.countries }
 				statType="statsCountryViews"
-				showNewModules={ showNewModules }
 			>
 				<Geochart query={ query } />
 			</StatsModule>

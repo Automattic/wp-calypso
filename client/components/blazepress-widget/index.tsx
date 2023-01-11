@@ -122,7 +122,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 				<BlankCanvas className="blazepress-widget">
 					<div className="blazepress-widget__header-bar">
 						<WordPressLogo />
-						<h2>{ translate( 'Advertising' ) }</h2>
+						<h2>{ translate( 'Blaze' ) }</h2>
 						{ showCancelButton && (
 							<span
 								role="button"

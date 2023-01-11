@@ -3,7 +3,7 @@ import { ToggleControl as OriginalToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 
-export const FEATURED_IMAGE_EMAIL_OPTION = 'featured_image_email_enabled';
+export const FEATURED_IMAGE_IN_EMAIL_OPTION = 'wpcom_featured_image_in_email';
 
 const ToggleControl = OriginalToggleControl as React.ComponentType<
 	OriginalToggleControl.Props & {
@@ -28,7 +28,7 @@ export const FeaturedImageEmailSetting = ( {
 		<>
 			<ToggleControl
 				checked={ !! value }
-				onChange={ handleToggle( FEATURED_IMAGE_EMAIL_OPTION ) }
+				onChange={ handleToggle( FEATURED_IMAGE_IN_EMAIL_OPTION ) }
 				disabled={ disabled }
 				label={ translate( 'Enable featured image on your new post emails' ) }
 			/>

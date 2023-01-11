@@ -28,7 +28,7 @@ export const getSite = ( state: State, siteId: number | string ) => {
 		// Then try matching second domain
 		Object.values( state.sites ).find(
 			( site ) =>
-				site && site.options.unmapped_url && new URL( site.options.unmapped_url ).host === siteId
+				site?.options?.unmapped_url && new URL( site.options.unmapped_url ).host === siteId
 		)
 	);
 };

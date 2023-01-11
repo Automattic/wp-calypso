@@ -157,7 +157,7 @@ private object OdysseyStats : WPComPluginBuild(
 	buildName = "Odyssey Stats",
 	pluginSlug = "odyssey-stats",
 	archiveDir = "./dist/",
-	docsLink = "PCYsg-elI-p2",
+	docsLink = "PejTkB-3N-p2",
 )
 
 private object O2Blocks : WPComPluginBuild(

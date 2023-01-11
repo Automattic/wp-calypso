@@ -28,7 +28,6 @@ export function generateSteps( {
 	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
-	createVideoPressSite = noop,
 	setDesignOnSite = noop,
 	setThemeOnSite = noop,
 	setOptionsOnSite = noop,
@@ -42,7 +41,7 @@ export function generateSteps( {
 	isSiteTypeFulfilled = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
 	isNewOrExistingSiteFulfilled = noop,
-	setDIFMLiteDesign = noop,
+	createSiteAndAddDIFMToCart = noop,
 	excludeStepIfEmailVerified = noop,
 	excludeStepIfProfileComplete = noop,
 	submitWebsiteContent = noop,
@@ -805,7 +804,7 @@ export function generateSteps( {
 
 		'difm-design-setup-site': {
 			stepName: 'difm-design-setup-site',
-			apiRequestFunction: setDIFMLiteDesign,
+			apiRequestFunction: createSiteAndAddDIFMToCart,
 			delayApiRequestUntilComplete: true,
 			providesDependencies: [
 				'selectedDesign',
@@ -829,6 +828,17 @@ export function generateSteps( {
 			},
 		},
 		'difm-options': {
+			stepName: 'site-options',
+			providesDependencies: [ 'siteTitle', 'tagline', 'newOrExistingSiteChoice' ],
+			optionalDependencies: [ 'newOrExistingSiteChoice' ],
+			defaultDependencies: {
+				newOrExistingSiteChoice: 'existing-site',
+			},
+			props: {
+				hideSkip: true,
+			},
+		},
+		'difm-store-options': {
 			stepName: 'site-options',
 			providesDependencies: [ 'siteTitle', 'tagline', 'newOrExistingSiteChoice' ],
 			optionalDependencies: [ 'newOrExistingSiteChoice' ],
@@ -877,12 +887,6 @@ export function generateSteps( {
 		transfer: {
 			stepName: 'transfer',
 			dependencies: [ 'siteSlug', 'siteConfirmed' ],
-		},
-
-		'videopress-site': {
-			stepName: 'videopress-site',
-			apiRequestFunction: createVideoPressSite,
-			providesDependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
 		},
 	};
 }

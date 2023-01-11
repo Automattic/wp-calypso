@@ -7,6 +7,7 @@ import { Component } from 'react';
 import ElementChart from 'calypso/components/chart';
 import Legend from 'calypso/components/chart/legend';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import StatsEmptyState from '../../../../stats/stats-empty-state';
 import { recordTrack } from '../../../lib/analytics';
 import { UNITS } from '../constants';
 import { getWidgetPath, formatValue } from '../utils';
@@ -165,7 +166,9 @@ class StoreStatsChart extends Component {
 					data={ chartData }
 					barClick={ this.barClick }
 					minBarWidth={ 35 }
-				/>
+				>
+					<StatsEmptyState stateType={ selectedTab.label } />
+				</ElementChart>
 				{ ! isLoading &&
 					renderTabs( {
 						chartData,

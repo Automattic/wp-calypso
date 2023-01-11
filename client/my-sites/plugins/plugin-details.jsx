@@ -14,6 +14,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import MainComponent from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { useESPlugin } from 'calypso/data/marketplace/use-es-query';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
@@ -85,6 +86,8 @@ function PluginDetails( props ) {
 	const { localizePath } = useLocalizedPlugins();
 
 	// Plugin information.
+	const PREMIUM_SLUG_FIELD = 'plugin.premium_slug';
+	const { data: esPlugin = {} } = useESPlugin( props.pluginSlug, [ PREMIUM_SLUG_FIELD ] );
 	const plugin = useSelector( ( state ) => getPluginOnSites( state, siteIds, props.pluginSlug ) );
 	const wporgPlugin = useSelector( ( state ) => getWporgPluginSelector( state, props.pluginSlug ) );
 	const isWporgPluginFetching = useSelector( ( state ) =>
@@ -162,6 +165,7 @@ function PluginDetails( props ) {
 			fetched: isWpComPluginFetched,
 		};
 		return {
+			...esPlugin,
 			...wpcomPlugin,
 			...wporgPlugin,
 			...plugin,
@@ -171,6 +175,7 @@ function PluginDetails( props ) {
 		};
 	}, [
 		plugin,
+		esPlugin,
 		wporgPlugin,
 		wpComPluginData,
 		isWpComPluginFetched,

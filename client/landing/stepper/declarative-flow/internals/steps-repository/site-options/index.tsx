@@ -7,6 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import siteOptionsUrl from 'calypso/assets/images/onboarding/site-options.svg';
 import storeImageUrl from 'calypso/assets/images/onboarding/store-onboarding.svg';
+import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -201,27 +202,30 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 	);
 
 	return (
-		<StepContainer
-			stepName="site-options"
-			shouldHideNavButtons={ isVideoPressFlow }
-			className={ `is-step-${ intent }` }
-			headerImageUrl={ headerImage }
-			skipButtonAlign="top"
-			goBack={ goBack }
-			goNext={ goNext }
-			isHorizontalLayout={ ! isVideoPressFlow }
-			formattedHeader={
-				<FormattedHeader
-					id="site-options-header"
-					headerText={ headerText }
-					align="left"
-					subHeaderText={ subHeaderText }
-				/>
-			}
-			stepContent={ stepContent }
-			recordTracksEvent={ recordTracksEvent }
-			showVideoPressPowered={ isVideoPressFlow }
-		/>
+		<>
+			<DocumentHead title={ headerText } />
+			<StepContainer
+				stepName="site-options"
+				shouldHideNavButtons={ isVideoPressFlow }
+				className={ `is-step-${ intent }` }
+				headerImageUrl={ headerImage }
+				skipButtonAlign="top"
+				goBack={ goBack }
+				goNext={ goNext }
+				isHorizontalLayout={ ! isVideoPressFlow }
+				formattedHeader={
+					<FormattedHeader
+						id="site-options-header"
+						headerText={ headerText }
+						align="left"
+						subHeaderText={ subHeaderText }
+					/>
+				}
+				stepContent={ stepContent }
+				recordTracksEvent={ recordTracksEvent }
+				showVideoPressPowered={ isVideoPressFlow }
+			/>
+		</>
 	);
 };
 

@@ -7,6 +7,7 @@ export const SimpleItemCard: React.FC< SimpleItemCardProps > = ( {
 	ctaAsPrimary,
 	ctaHref,
 	ctaLabel,
+	ctaAriaLabel,
 	description,
 	icon,
 	isCtaDisabled,
@@ -31,6 +32,7 @@ export const SimpleItemCard: React.FC< SimpleItemCardProps > = ( {
 						href={ isCtaDisabled ? '#' : ctaHref }
 						target={ isCtaExternal ? '_blank' : undefined }
 						primary={ ctaAsPrimary }
+						aria-label={ ctaAriaLabel }
 					>
 						{ ctaLabel }
 					</Button>

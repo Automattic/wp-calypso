@@ -3,20 +3,17 @@ import type {
 	ResponseCart,
 	ResponseCartMessages,
 	ResponseCartMessage,
-	ClearCartMessages,
 } from '@automattic/shopping-cart';
 
 export type ShowMessages = ( messages: ResponseCartMessage[] ) => void;
 
 export default function useDisplayCartMessages( {
 	cart,
-	clearMessages,
 	isLoadingCart,
 	showErrorMessages,
 	showSuccessMessages,
 }: {
 	cart: ResponseCart;
-	clearMessages: ClearCartMessages;
 	isLoadingCart: boolean;
 	showSuccessMessages: ShowMessages;
 	showErrorMessages: ShowMessages;
@@ -24,28 +21,28 @@ export default function useDisplayCartMessages( {
 	const previousCart = useRef< ResponseCart | null >( null );
 
 	useEffect( () => {
+		if ( previousCart.current === cart ) {
+			return;
+		}
 		displayCartMessages( {
 			cart,
-			clearMessages,
 			isLoadingCart,
 			previousCart: previousCart.current,
 			showErrorMessages,
 			showSuccessMessages,
 		} );
 		previousCart.current = cart;
-	}, [ cart, clearMessages, isLoadingCart, showErrorMessages, showSuccessMessages ] );
+	}, [ cart, isLoadingCart, showErrorMessages, showSuccessMessages ] );
 }
 
 function displayCartMessages( {
 	cart,
-	clearMessages,
 	isLoadingCart,
 	previousCart,
 	showErrorMessages,
 	showSuccessMessages,
 }: {
 	cart: ResponseCart;
-	clearMessages: ClearCartMessages;
 	isLoadingCart: boolean;
 	previousCart: ResponseCart | null;
 	showErrorMessages: ShowMessages;
@@ -72,10 +69,6 @@ function displayCartMessages( {
 	if ( successMessages && successMessageCount > 0 ) {
 		showSuccessMessages( successMessages );
 	}
-
-	// Clear messages from the cart so that other components that might call this
-	// function don't cause a message to be displayed more than once.
-	clearMessages();
 }
 
 // Compare two different cart objects and get the messages of newest one

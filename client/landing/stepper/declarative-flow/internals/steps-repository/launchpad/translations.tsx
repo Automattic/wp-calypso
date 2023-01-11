@@ -1,5 +1,6 @@
 import {
 	LINK_IN_BIO_FLOW,
+	LINK_IN_BIO_TLD_FLOW,
 	NEWSLETTER_FLOW,
 	VIDEOPRESS_FLOW,
 	FREE_FLOW,
@@ -23,6 +24,7 @@ export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunc
 			);
 			break;
 		case LINK_IN_BIO_FLOW:
+		case LINK_IN_BIO_TLD_FLOW:
 			translatedStrings.flowName = translate( 'Link in Bio' );
 			translatedStrings.title = translate( "You're ready to link and launch" );
 			translatedStrings.launchTitle = translate( "You're ready to link and launch" );

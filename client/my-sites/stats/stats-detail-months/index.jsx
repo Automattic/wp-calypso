@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -101,6 +102,11 @@ const StatsPostDetailMonths = ( props ) => {
 		tableBody = <tbody>{ tableRows }</tbody>;
 	}
 
+	const isFeatured = config.isEnabled( 'stats/enhance-post-detail' );
+	const tableWrapperClasses = classNames( {
+		'module-content-table': ! isFeatured,
+	} );
+
 	return (
 		<Card className={ classNames( 'stats-module', 'is-expanded', 'is-post-months', classes ) }>
 			<QueryPostStats siteId={ siteId } postId={ postId } />
@@ -109,6 +115,7 @@ const StatsPostDetailMonths = ( props ) => {
 				<h4 className="module-header-title">{ title }</h4>
 				<ul className="module-header-actions">
 					<li className="module-header-action toggle-info">
+						{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
 						<a
 							href="#"
 							className="module-header-action-link"
@@ -142,7 +149,7 @@ const StatsPostDetailMonths = ( props ) => {
 				</span>
 			</StatsModuleContent>
 			<StatsModulePlaceholder isLoading={ isLoading } />
-			<div className="module-content-table">
+			<div className={ tableWrapperClasses }>
 				<div className="module-content-table-scroll">
 					<table cellPadding="0" cellSpacing="0">
 						{ tableHeader }

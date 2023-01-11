@@ -30,6 +30,7 @@ export type Plugin = {
 		monthly: { product_slug?: string; product_id?: number };
 		yearly: { product_slug?: string; product_id?: number };
 	};
+	premium_slug?: string;
 };
 
 export type ESIndexResult = {
@@ -62,14 +63,8 @@ export type ESIndexResult = {
 		rating: number;
 		num_ratings: number;
 		active_installs: number;
+		premium_slug: string;
 	};
-};
-
-export type Icon = {
-	filename: string;
-	revision: string;
-	resolution: string;
-	location: string;
 };
 
 export type Railcar = Record< string, string | number >;

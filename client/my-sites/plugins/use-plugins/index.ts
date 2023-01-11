@@ -5,7 +5,7 @@ import { Plugin } from 'calypso/data/marketplace/types';
 import { useESPluginsInfinite } from 'calypso/data/marketplace/use-es-query';
 import {
 	useWPCOMFeaturedPlugins,
-	useWPCOMPlugins,
+	useWPCOMPluginsList,
 } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { useCategories } from '../categories/use-categories';
 
@@ -93,7 +93,7 @@ const usePlugins = ( {
 			!! ( search || ! WPORG_CATEGORIES_BLOCKLIST.includes( category || '' ) ) && wporgEnabled,
 	} ) as WPORGResponse;
 
-	const { data: wpcomPluginsRaw = [], isLoading: isFetchingDotCom } = useWPCOMPlugins(
+	const { data: wpcomPluginsRaw = [], isLoading: isFetchingDotCom } = useWPCOMPluginsList(
 		'all',
 		search,
 		tag,

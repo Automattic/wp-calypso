@@ -98,7 +98,7 @@ export function buildExportArray( data, parent = null ) {
 		return [];
 	}
 	const label = parent ? parent + ' > ' + data.label : data.label;
-	const escapedLabel = label.replace( /\"/, '""' ); // eslint-disable-line no-useless-escape
+	const escapedLabel = label.replace( /\"/, '""' ); // eslint-disable-line
 	let exportData = [ [ '"' + escapedLabel + '"', data.value ] ];
 
 	// Includes the URL for content data, but not for "Countries" data where it doesn't exist.
@@ -175,6 +175,10 @@ export function getChartLabels( unit, date, localizedDate ) {
 		const isWeekend = 'day' === unit && ( 6 === dayOfWeek || 0 === dayOfWeek );
 		const labelName = `label${ unit.charAt( 0 ).toUpperCase() + unit.slice( 1 ) }`;
 		const formats = {
+			hour: translate( 'MMM D HH:mm', {
+				context: 'momentjs format string (hour)',
+				comment: 'This specifies an hour for the stats x-axis label.',
+			} ),
 			day: translate( 'MMM D', {
 				context: 'momentjs format string (day)',
 				comment: 'This specifies a day for the stats x-axis label.',
@@ -893,11 +897,6 @@ export const normalizers = {
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const dataPath = query.summarize ? [ 'summary' ] : [ 'days', startOf ];
 		const searchTerms = get( data, dataPath.concat( [ 'search_terms' ] ), [] );
-		const encryptedSearchTerms = get(
-			data,
-			dataPath.concat( [ 'encrypted_search_terms' ] ),
-			false
-		);
 
 		const result = searchTerms.map( ( day ) => {
 			return {
@@ -906,15 +905,6 @@ export const normalizers = {
 				value: day.views,
 			};
 		} );
-
-		if ( encryptedSearchTerms ) {
-			result.push( {
-				label: translate( 'Unknown Search Terms' ),
-				value: encryptedSearchTerms,
-				link: 'https://wordpress.com/support/stats/#search-engine-terms',
-				labelIcon: 'external',
-			} );
-		}
 
 		return result;
 	},
@@ -946,4 +936,143 @@ export const normalizers = {
 			};
 		} );
 	},
+
+	/**
+	 * Returns a normalized statsEmailsOpen array, ready for use in stats-module
+	 *
+	 * @param   {object} data   Stats data
+	 * @param   {object} query  Stats query
+	 * @param   {number} siteId  Site ID
+	 * @param   {object} site    Site object
+	 * @returns {Array}       Normalized stats data
+	 */
+	statsEmailsOpen( data, query = {}, siteId, site ) {
+		if ( ! data || ! query.period || ! query.date ) {
+			return [];
+		}
+
+		const emailsData = get( data, [ 'posts' ], [] );
+
+		return emailsData.map( ( { id, href, date, title, type, opens } ) => {
+			const detailPage = site ? `/stats/email/open/${ site.slug }/${ query.period }/${ id }` : null;
+			return {
+				id,
+				href,
+				date,
+				label: title,
+				type,
+				value: opens || '0',
+				page: detailPage,
+				actions: [
+					{
+						type: 'link',
+						data: href,
+					},
+				],
+			};
+		} );
+	},
 };
+
+/**
+ * Return data in a format used by 'components/chart` for email stats. The fields array is matched to
+ * the data in a single object.
+ *
+ * @param {object} payload - response
+ * @param {Array} nullAttributes - properties on data objects to be initialized with
+ * a null value
+ * @returns {Array} - Array of data objects
+ */
+export function parseEmailChartData( payload, nullAttributes = [] ) {
+	if ( ! payload || ! payload.data ) {
+		return [];
+	}
+
+	return payload.data.map( function ( record ) {
+		// Initialize data
+		const dataRecord = nullAttributes.reduce( ( memo, attribute ) => {
+			memo[ attribute ] = null;
+			return memo;
+		}, {} );
+
+		// Fill Field Values
+		record.forEach( function ( value, i ) {
+			// Remove W from weeks
+			if ( 'date' === payload.fields[ i ] ) {
+				value = value.replace( /W/g, '-' );
+				dataRecord.period = value;
+			} else {
+				dataRecord[ payload.fields[ i ] ] = value;
+			}
+		} );
+
+		if ( dataRecord.period ) {
+			const date = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( 'en' );
+			const localeSlug = getLocaleSlug();
+			const localizedDate = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( localeSlug );
+			if ( dataRecord.hour ) {
+				localizedDate.add( dataRecord.hour, 'hours' );
+			}
+			Object.assign( dataRecord, getChartLabels( payload.unit, date, localizedDate ) );
+		}
+		return dataRecord;
+	} );
+}
+
+/**
+ * Return data in a format used by 'components/stats/geochart` for email stats. The fields array is matched to
+ * the data in a single object.
+ *
+ * @param {Array} countries - the array of countries for the given data
+ * @param {object} countriesInfo - an object containing information about the countries
+ * @returns {Array} - Array of data objects
+ */
+export function parseEmailCountriesData( countries, countriesInfo ) {
+	if ( ! countries || ! countriesInfo ) {
+		return [];
+	}
+
+	return countries.map( function ( country ) {
+		const info = countriesInfo[ country[ 0 ] ];
+		if ( ! info ) {
+			return {};
+		}
+
+		const { country_full, map_region } = info;
+
+		return {
+			countryCode: country[ 0 ],
+			label: country_full,
+			region: map_region,
+			value: parseInt( country[ 1 ], 10 ),
+		};
+	} );
+}
+
+/**
+ * Return data in a format used by lists for email stats. The fields array is matched to
+ * the data in a single object.
+ *
+ * @param {Array} list - the array of devices for the given data
+ * @returns {Array} - Array of data objects
+ */
+export function parseEmailListData( list ) {
+	if ( ! list ) {
+		return [];
+	}
+
+	const result = list.map( function ( item ) {
+		return {
+			label: item[ 0 ],
+			value: parseInt( item[ 1 ], 10 ),
+		};
+	} );
+
+	// Add item with label == Other to end of the list
+	const otherItem = result.find( ( item ) => item.label === 'Other' );
+	if ( otherItem ) {
+		result.splice( result.indexOf( otherItem ), 1 );
+		result.push( otherItem );
+	}
+	return result;
+}

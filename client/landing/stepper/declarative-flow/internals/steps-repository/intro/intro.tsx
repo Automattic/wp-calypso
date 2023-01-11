@@ -8,7 +8,7 @@ interface Props {
 
 export interface IntroContent {
 	title: WPElement | string;
-	text?: WPElement;
+	text?: WPElement | string;
 	buttonText: string;
 }
 
