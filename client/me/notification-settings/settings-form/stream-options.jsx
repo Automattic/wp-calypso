@@ -2,7 +2,6 @@ import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import { NOTIFICATIONS_EXCEPTIONS } from './constants';
 
 export default class extends PureComponent {
 	static displayName = 'NotificationSettingsFormStreamOptions';
@@ -24,10 +23,7 @@ export default class extends PureComponent {
 		return (
 			<ul className="notification-settings-form-stream-options">
 				{ this.props.settingKeys.map( ( setting, index ) => {
-					const isException =
-						( this.props.stream in NOTIFICATIONS_EXCEPTIONS &&
-							NOTIFICATIONS_EXCEPTIONS[ this.props.stream ].indexOf( setting ) >= 0 ) ||
-						( setting === 'blogging_prompt' && this.isDeviceStream() );
+					const isException = setting === 'blogging_prompt' && this.isDeviceStream();
 					return (
 						<li className="notification-settings-form-stream-options__item" key={ index }>
 							{ isException ? null : (
