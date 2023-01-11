@@ -9,11 +9,8 @@ $common-border-radius: 4px;
 $mobile-container-margin: 16px;
 
 .post-trends {
-	display: inline-block;
-	user-select: none;
-	position: relative;
-	width: 100%;
-
+	border-bottom: 1px solid var(--studio-gray-5);
+	border-top: 1px solid var(--studio-gray-5);
 }
 
 .post-trends__heading,

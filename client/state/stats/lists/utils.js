@@ -175,6 +175,10 @@ export function getChartLabels( unit, date, localizedDate ) {
 		const isWeekend = 'day' === unit && ( 6 === dayOfWeek || 0 === dayOfWeek );
 		const labelName = `label${ unit.charAt( 0 ).toUpperCase() + unit.slice( 1 ) }`;
 		const formats = {
+			hour: translate( 'MMM D HH:mm', {
+				context: 'momentjs format string (hour)',
+				comment: 'This specifies an hour for the stats x-axis label.',
+			} ),
 			day: translate( 'MMM D', {
 				context: 'momentjs format string (day)',
 				comment: 'This specifies a day for the stats x-axis label.',
@@ -1006,6 +1010,9 @@ export function parseEmailChartData( payload, nullAttributes = [] ) {
 			const date = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( 'en' );
 			const localeSlug = getLocaleSlug();
 			const localizedDate = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( localeSlug );
+			if ( dataRecord.hour ) {
+				localizedDate.add( dataRecord.hour, 'hours' );
+			}
 			Object.assign( dataRecord, getChartLabels( payload.unit, date, localizedDate ) );
 		}
 		return dataRecord;

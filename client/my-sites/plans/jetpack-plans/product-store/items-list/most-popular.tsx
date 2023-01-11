@@ -1,4 +1,3 @@
-import { isJetpackPlanSlug } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useStoreItemInfoContext } from '../context/store-item-info-context';
 import { FeaturedItemCard } from '../featured-item-card';
@@ -30,7 +29,6 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 		getIsMultisiteCompatible,
 		getIsOwned,
 		getIsPlanFeature,
-		getIsProductInCart,
 		getIsSuperseded,
 		getIsUserPurchaseOwner,
 		getOnClickPurchase,
@@ -44,8 +42,6 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 				{ items.map( ( item ) => {
 					const isOwned = getIsOwned( item );
 					const isSuperseded = getIsSuperseded( item );
-					const isProductInCart =
-						! isJetpackPlanSlug( item.productSlug ) && getIsProductInCart( item );
 					const isDeprecated = getIsDeprecated( item );
 					const isExternal = getIsExternal( item );
 					const isIncludedInPlanOrSuperseded = getIsIncludedInPlanOrSuperseded( item );
@@ -86,12 +82,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 						</p>
 					);
 
-					const ctaAsPrimary = ! (
-						isProductInCart ||
-						isOwned ||
-						getIsPlanFeature( item ) ||
-						isSuperseded
-					);
+					const ctaAsPrimary = ! ( isOwned || getIsPlanFeature( item ) || isSuperseded );
 
 					// TODO remove this isEnglish check once we have translations for the new strings
 					const amountSaved = item.productsIncluded?.length ? (
@@ -114,7 +105,6 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 								hero={ <HeroImage item={ item } /> }
 								isCtaDisabled={ isCtaDisabled }
 								isCtaExternal={ isExternal }
-								isProductInCart={ isProductInCart }
 								onClickCta={ getOnClickPurchase( item ) }
 								price={ price }
 								title={ item.displayName }

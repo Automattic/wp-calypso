@@ -41,12 +41,14 @@ export function receiveEmailStats( siteId, postId, period, statType, stats ) {
  * @param {object} stats The incoming stats
  * @returns {object}
  */
-function emailOpenStatsPeriodTransform( stats ) {
+function emailOpenStatsPeriodTransform( stats, period ) {
 	const emailChartData = parseEmailChartData( stats.timeline, [] );
 
 	// create an object from emailStats with period as the key
 	return emailChartData.reduce( ( obj, item ) => {
-		obj[ item.period ] = {
+		const filter = 'hour' === period ? item.labelHour : item.period;
+
+		obj[ filter ] = {
 			chart: item,
 			countries: parseEmailCountriesData(
 				stats.countries[ item.period ],
@@ -89,7 +91,18 @@ function requestEmailOpensStats( siteId, postId, period, date, quantity ) {
 			statType: 'opens',
 		} );
 
-		const query = period === 'alltime' ? {} : { period, quantity, date };
+		// set defaults for year and hour
+		const queryQuantity = ( () => {
+			if ( period === 'year' ) {
+				return 10;
+			}
+			if ( period === 'hour' ) {
+				return 24;
+			}
+			return quantity;
+		} )();
+
+		const query = period === 'alltime' ? {} : { period, quantity: queryQuantity, date };
 
 		return wpcom
 			.site( siteId )
@@ -98,7 +111,7 @@ function requestEmailOpensStats( siteId, postId, period, date, quantity ) {
 				// create an object from emailStats with period as the key
 				const emailPeriodStatsObject =
 					period !== 'alltime'
-						? emailOpenStatsPeriodTransform( stats )
+						? emailOpenStatsPeriodTransform( stats, period )
 						: emailOpenStatsAlltimeTransform( stats );
 
 				dispatch( receiveEmailStats( siteId, postId, period, 'opens', emailPeriodStatsObject ) );

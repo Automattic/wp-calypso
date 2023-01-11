@@ -4,6 +4,9 @@ import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress'
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import AssignTrialPlanStep, {
+	AssignTrialResult,
+} from './internals/steps-repository/assign-trial-plan';
 import ErrorStep from './internals/steps-repository/error-step';
 import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
@@ -17,6 +20,7 @@ const wooexpress: Flow = {
 		return [
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'processing', component: ProcessingStep },
+			{ slug: 'assignTrialPlan', component: AssignTrialPlanStep },
 			{ slug: 'error', component: ErrorStep },
 		];
 	},
@@ -94,6 +98,16 @@ const wooexpress: Flow = {
 					const processingResult = params[ 0 ] as ProcessingResult;
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
+						return navigate( 'error' );
+					}
+
+					return navigate( 'assignTrialPlan', { siteSlug } );
+				}
+
+				case 'assignTrialPlan': {
+					const assignTrialResult = params[ 0 ] as AssignTrialResult;
+
+					if ( assignTrialResult === AssignTrialResult.FAILURE ) {
 						return navigate( 'error' );
 					}
 

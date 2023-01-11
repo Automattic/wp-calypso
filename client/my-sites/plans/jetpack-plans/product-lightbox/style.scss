@@ -475,9 +475,6 @@
 .product-lightbox__checkout-button {
 	margin-block-start: 1rem;
 	margin-block-end: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
 }
 
 .ReactModal__Html--open.lightbox-mode .layout__content {
@@ -532,16 +529,4 @@ p.product-lightbox__included-product-list-item-description span {
 .product-lightbox__included-product-list-item-icon img {
 	width: 45%;
 	height: auto;
-}
-
-.product-lightbox__checkout-button .gridicon.gridicons-checkmark {
-	transform: rotate(-8.37deg);
-	margin-right: 11.46px;
-	margin-bottom: 4px;
-	color: #008710;
-}
-
-.product-lightbox__checkout-button.button:not([disabled], :disabled, .is-primary) {
-	color: var(--color-neutral-100);
-	border: 1px solid var(--color-neutral-100);
 }
