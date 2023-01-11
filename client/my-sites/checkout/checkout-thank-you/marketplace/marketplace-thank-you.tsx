@@ -1,10 +1,11 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { ConfettiAnimation } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
 import { Button } from '@wordpress/components';
 import { Icon, table } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ThankYou } from 'calypso/components/thank-you';
 import { ThankYouSectionProps } from 'calypso/components/thank-you/types';
@@ -207,6 +208,16 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		} ) ),
 	};
 
+	const sendTrackEvent = useCallback(
+		( name: string ) => {
+			recordTracksEvent( name, {
+				site_id: siteId,
+				plugins: productSlugs.join( '/' ),
+			} );
+		},
+		[ siteId, productSlugs ]
+	);
+
 	const footerSection: ThankYouSectionProps = {
 		sectionKey: 'thank_you_footer',
 		nextStepsClassName: 'thank-you__footer',
@@ -219,7 +230,12 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 					'Our guides will show you everything you need to know about plugins.'
 				),
 				stepCta: (
-					<Button isSecondary href="https://wordpress.com/support/plugins/" target="_blank">
+					<Button
+						isSecondary
+						href="https://wordpress.com/support/plugins/"
+						target="_blank"
+						onClick={ () => sendTrackEvent( 'calypso_plugin_thank_you_plugin_support_click' ) }
+					>
 						{ translate( 'Plugin Support' ) }
 					</Button>
 				),
@@ -232,7 +248,12 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 					'Take your site to the next level. We have all the solutions to help you.'
 				),
 				stepCta: (
-					<Button isPrimary href={ `/plugins/${ siteSlug }` } target="_blank">
+					<Button
+						isPrimary
+						href={ `/plugins/${ siteSlug }` }
+						target="_blank"
+						onClick={ () => sendTrackEvent( 'calypso_plugin_thank_you_explore_plugins_click' ) }
+					>
 						{ translate( 'Explore plugins' ) }
 					</Button>
 				),
@@ -245,7 +266,12 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 					'Our team is here if you need help, or if you have any questions.'
 				),
 				stepCta: (
-					<Button isSecondary href="https://wordpress.com/help/contact" target="_blank">
+					<Button
+						isSecondary
+						href="https://wordpress.com/help/contact"
+						target="_blank"
+						onClick={ () => sendTrackEvent( 'calypso_plugin_thank_you_ask_question_click' ) }
+					>
 						{ translate( 'Ask a question' ) }
 					</Button>
 				),
