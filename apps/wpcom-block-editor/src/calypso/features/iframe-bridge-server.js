@@ -1093,11 +1093,14 @@ function handleSiteEditorBackButton( calypsoPort ) {
 			clickedElement.attributes?.href?.value === dashboardLink;
 
 		// Since the clicked element may not have an href (as noted by internal SVG and path woes above).
-		const returnHref = clickedElement.href || dashboardLink;
+		let postUrl = clickedElement.href || dashboardLink;
 
-		// The URL constructor cannot handle relative paths, so, if returnHref becomes a relative path in
-		// thefuture, fall back to returnHref
-		const postUrl = new URL( returnHref )?.pathname || returnHref;
+		// Use relative path instead of absolute path when possible
+		try {
+			postUrl = new URL( postUrl )?.pathname;
+		} catch ( e ) {
+			// Do nothing
+		}
 
 		if ( isOldDashboardButton || isNewDashboardButton ) {
 			event.preventDefault();
