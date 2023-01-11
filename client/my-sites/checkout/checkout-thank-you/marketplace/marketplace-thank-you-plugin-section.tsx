@@ -1,7 +1,9 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
@@ -76,8 +78,18 @@ export const ThankYouPluginSection = ( { plugin }: { plugin: any } ) => {
 	const fallbackSetupUrl =
 		plugin?.setup_url && siteAdminUrl ? siteAdminUrl + plugin.setup_url : null;
 	const setupURL = plugin?.action_links?.Settings || fallbackSetupUrl || managePluginsUrl;
-
 	const documentationURL = plugin?.documentation_url;
+
+	const sendTrackEvent = useCallback(
+		( name: string, link: string ) => {
+			recordTracksEvent( name, {
+				site_id: siteId,
+				plugin: plugin.slug,
+				link,
+			} );
+		},
+		[ siteId, plugin ]
+	);
 
 	return (
 		<PluginSectionContainer>
@@ -101,11 +113,23 @@ export const ThankYouPluginSection = ( { plugin }: { plugin: any } ) => {
 				) }
 			</PluginSectionContent>
 			<PluginSectionButtons>
-				<Button isPrimary href={ setupURL }>
+				<Button
+					isPrimary
+					href={ setupURL }
+					onClick={ () =>
+						sendTrackEvent( 'calypso_plugin_thank_you_manage_plugin_click', setupURL )
+					}
+				>
 					{ translate( 'Manage plugin' ) }
 				</Button>
 				{ documentationURL && (
-					<Button isSecondary href={ documentationURL }>
+					<Button
+						isSecondary
+						href={ documentationURL }
+						onClick={ () =>
+							sendTrackEvent( 'calypso_plugin_thank_you_plugin_guide_click', documentationURL )
+						}
+					>
 						{ translate( 'Plugin guide' ) }
 					</Button>
 				) }
