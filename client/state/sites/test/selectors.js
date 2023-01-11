@@ -1,4 +1,4 @@
-import { WPCOM_FEATURES_WORDADS } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_WORDADS, PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import deepFreeze from 'deep-freeze';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
@@ -44,6 +44,9 @@ import {
 	getCustomizerUrl,
 	getJetpackComputedAttributes,
 	getSiteComputedAttributes,
+	getWooExpressTrialExpiration,
+	getWooExpressTrialDaysLeft,
+	isWooExpressTrialExpired,
 } from '../selectors';
 
 jest.mock( '@automattic/calypso-config', () => {
@@ -3640,6 +3643,133 @@ describe( 'selectors', () => {
 					createState( { created_at: '2020-01-01', jetpack: true, atomic: true } )
 				)
 			).toBe( true );
+		} );
+	} );
+
+	describe( 'getWooExpressTrialExpiration()', () => {
+		test( 'Returns the expiracy date', () => {
+			const expiracyDate = '2022-02-10T00:00:00+00:00';
+			const initialPurchases = Object.freeze( [
+				{
+					ID: 1,
+					product_slug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
+					blog_id: 1337,
+					expiry_date: expiracyDate,
+				},
+			] );
+
+			const state = {
+				purchases: {
+					data: initialPurchases,
+					error: null,
+					isFetchingSitePurchases: false,
+					isFetchingUserPurchases: false,
+					hasLoadedSitePurchasesFromServer: false,
+					hasLoadedUserPurchasesFromServer: true,
+				},
+			};
+
+			expect( getWooExpressTrialExpiration( state ) ).toBe( expiracyDate );
+		} );
+
+		test( 'Returns null when the trial purchase is not present', () => {
+			const initialPurchases = Object.freeze( [] );
+
+			const state = {
+				purchases: {
+					data: initialPurchases,
+					error: null,
+					isFetchingSitePurchases: false,
+					isFetchingUserPurchases: false,
+					hasLoadedSitePurchasesFromServer: false,
+					hasLoadedUserPurchasesFromServer: true,
+				},
+			};
+
+			expect( getWooExpressTrialExpiration( state ) ).toBeNull();
+		} );
+	} );
+
+	describe( 'getWooExpressTrialDaysLeft()', () => {
+		jest.useFakeTimers().setSystemTime( new Date( '2022-01-10T00:00:00+00:00' ) );
+
+		test( 'Should return the correct number of days left before the trial expires', () => {
+			const expiracyDate = '2022-02-10T00:00:00+00:00';
+			const initialPurchases = Object.freeze( [
+				{
+					ID: 1,
+					product_slug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
+					blog_id: 1337,
+					expiry_date: expiracyDate,
+				},
+			] );
+
+			const state = {
+				purchases: {
+					data: initialPurchases,
+					error: null,
+					isFetchingSitePurchases: false,
+					isFetchingUserPurchases: false,
+					hasLoadedSitePurchasesFromServer: false,
+					hasLoadedUserPurchasesFromServer: true,
+				},
+			};
+
+			expect( getWooExpressTrialDaysLeft( state ) ).toBe( 31 );
+		} );
+	} );
+
+	describe( 'isWooExpressTrialExpired()', () => {
+		jest.useFakeTimers().setSystemTime( new Date( '2022-01-10T00:00:00+00:00' ) );
+
+		test( 'The trial period should be expired', () => {
+			const expiracyDate = '2022-01-09T00:00:00+00:00';
+			const initialPurchases = Object.freeze( [
+				{
+					ID: 1,
+					product_slug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
+					blog_id: 1337,
+					expiry_date: expiracyDate,
+				},
+			] );
+
+			const state = {
+				purchases: {
+					data: initialPurchases,
+					error: null,
+					isFetchingSitePurchases: false,
+					isFetchingUserPurchases: false,
+					hasLoadedSitePurchasesFromServer: false,
+					hasLoadedUserPurchasesFromServer: true,
+				},
+			};
+
+			expect( isWooExpressTrialExpired( state ) ).toBeTruthy();
+		} );
+
+		test( 'The trial period should not be expired if is the same day', () => {
+			const expiracyDate = '2022-01-10T23:59:59+00:00';
+			const initialPurchases = Object.freeze( [
+				{
+					ID: 1,
+					product_slug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
+					blog_id: 1337,
+					expiry_date: expiracyDate,
+				},
+			] );
+
+			const state = {
+				purchases: {
+					data: initialPurchases,
+					error: null,
+					isFetchingSitePurchases: false,
+					isFetchingUserPurchases: false,
+					hasLoadedSitePurchasesFromServer: false,
+					hasLoadedUserPurchasesFromServer: true,
+				},
+			};
+
+			expect( isWooExpressTrialExpired( state ) ).toBeFalsy();
 		} );
 	} );
 } );
