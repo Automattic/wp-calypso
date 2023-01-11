@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .site-content__mobile-view {
 	margin-bottom: 1.5rem;
 }
@@ -17,43 +20,71 @@
 
 .edit-all__bulk-actions {
 	margin: 10px;
-	padding-right: 5px;
-}
-.edit-all__bulk-actions button {
-	border: 1px solid var(--color-neutral-20);
-}
-button.edit-all__bulk-actions-close {
-	border: none;
-	padding: 4px 8px 4px 10px;
-}
-
-th.edit-all-buttons {
-	text-align: right;
-}
-
-.edit-all__bulk-actions-custom-notifications {
-	padding: 0 10px;
-}
-
-.button-group {
-	margin-top: 6px;
-}
-
-.site-bulk-edit-menu-container {
-	background-color: #fff;
-	text-align: right;
-}
-
-.select-dropdown__item-text {
-	text-align: left;
+	padding-inline-end: 11px;
+	button {
+		border: 1px solid var(--studio-gray-80);
+		padding-inline-end: 10px;
+	}
 }
 
 .edit-all__bulk-actions-close {
-	text-align: right;
+	text-align: end;
 	justify-content: flex-end;
 	float: right;
 }
 
-.site-bulk-edit-menu-container.card {
-	padding: 10px;
+button.edit-all__bulk-actions-close {
+	border: none;
+	padding: 4px 8px 4px 10px;
+	&:hover {
+		background-color: transparent;
+	}
+}
+
+th.edit-all-buttons {
+	text-align: end;
+}
+
+.site-bulk-edit-menu-container {
+	background-color: #fff;
+	text-align: end;
+	&.card {
+		padding: 10px;
+	}
+	& .select-dropdown__container {
+		display: inline-block;
+	}
+}
+
+.button .gridicon {
+	color: var(--color-neutral-80);
+	width: 24px;
+	height: 24px;
+}
+
+.select-dropdown__item-text {
+	text-align: start;
+}
+
+button.button.dashboard-list-header__bulk-action-buttons.is-compact {
+	margin-block-start: 4px;
+}
+
+// Bulk Edit Menu
+.dashboard-list-header {
+	height: 60px;
+	margin-block-start: 8px;
+	.button-group {
+		margin-inline-start: 14px;
+		.button {
+			&:first-child {
+				border-top-left-radius: 4px;
+				border-bottom-left-radius: 4px;
+			}
+			&:last-child {
+				border-top-right-radius: 4px;
+				border-bottom-right-radius: 4px;
+			}
+		}
+	}
 }
