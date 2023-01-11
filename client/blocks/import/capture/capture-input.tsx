@@ -35,7 +35,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	const { search } = useLocation();
 
 	useEffect( () => {
-		const urlValue = new URLSearchParams( search ).get( 'from' );
+		const urlValue = new URLSearchParams( search ).get( 'from' ) || '';
 		if ( urlValue ) {
 			const isValid = CAPTURE_URL_RGX.test( urlValue );
 			if ( isValid ) {
