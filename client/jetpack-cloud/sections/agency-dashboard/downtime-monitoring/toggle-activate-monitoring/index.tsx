@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { ToggleControl as OriginalToggleControl } from '@wordpress/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
@@ -14,9 +15,10 @@ interface Props {
 	site: { blog_id: number; url: string };
 	status: AllowedStatusTypes | string;
 	settings: MonitorSettings | undefined;
+	siteError: boolean;
 }
 
-export default function ToggleActivateMonitoring( { site, status, settings }: Props ) {
+export default function ToggleActivateMonitoring( { site, status, settings, siteError }: Props ) {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 	const [ toggleActivateMonitor, isLoading ] = useToggleActivateMonitor( site );
@@ -104,11 +106,15 @@ export default function ToggleActivateMonitoring( { site, status, settings }: Pr
 
 	return (
 		<>
-			<span className="toggle-activate-monitoring__toggle-button">
+			<span
+				className={ classNames( 'toggle-activate-monitoring__toggle-button', {
+					[ 'sites-overview__disabled' ]: siteError,
+				} ) }
+			>
 				<ToggleControl
 					onChange={ handleToggleActivateMonitoring }
 					checked={ isChecked }
-					disabled={ isLoading }
+					disabled={ isLoading || siteError }
 					label={ isChecked && currentSettings() }
 				/>
 			</span>
