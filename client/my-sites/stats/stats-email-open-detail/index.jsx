@@ -23,12 +23,7 @@ import StatsEmailModule from 'calypso/my-sites/stats/stats-email-module';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSitePost } from 'calypso/state/posts/selectors';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import {
-	getSiteOption,
-	getSiteSlug,
-	isJetpackSite,
-	isSitePreviewable,
-} from 'calypso/state/sites/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getEmailStat, isRequestingPeriodEmailStats } from 'calypso/state/stats/emails/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DatePicker from '../stats-date-picker';
@@ -163,18 +158,10 @@ class StatsEmailOpenDetail extends Component {
 	}
 
 	getTitle() {
-		const { isLatestEmailsHomepage, email, emailFallback } = this.props;
+		const { post } = this.props;
 
-		if ( isLatestEmailsHomepage ) {
-			return this.props.translate( 'Home page / Archives' );
-		}
-
-		if ( typeof email?.title === 'string' && email.title.length ) {
-			return decodeEntities( stripHTML( email.title ) );
-		}
-
-		if ( typeof emailFallback?.email_title === 'string' && emailFallback.email_title.length ) {
-			return decodeEntities( stripHTML( emailFallback.email_title ) );
+		if ( typeof post?.title === 'string' && post.title.length ) {
+			return decodeEntities( stripHTML( post.title ) );
 		}
 
 		return null;
@@ -246,7 +233,7 @@ class StatsEmailOpenDetail extends Component {
 					{ post ? (
 						<>
 							<div>
-								<h1>{ post?.title }</h1>
+								<h1>{ this.getTitle() }</h1>
 								<StatsEmailOpenTopRow siteId={ siteId } postId={ postId } />
 
 								<StatsPeriodHeader>
@@ -330,18 +317,11 @@ class StatsEmailOpenDetail extends Component {
 const connectComponent = connect(
 	( state, { postId, period: { period } } ) => {
 		const siteId = getSelectedSiteId( state );
-		const isJetpack = isJetpackSite( state, siteId );
-		const isPreviewable = isSitePreviewable( state, siteId );
-		const isLatestEmailsHomepage =
-			getSiteOption( state, siteId, 'show_on_front' ) === 'email' && postId === 0;
 
 		return {
-			emailFallback: getEmailStat( state, siteId, postId, 'email' ),
-			isLatestEmailsHomepage,
 			countViews: getEmailStat( state, siteId, postId, period, statType ),
 			isRequestingStats: isRequestingPeriodEmailStats( state, siteId, postId, period, statType ),
 			siteSlug: getSiteSlug( state, siteId ),
-			showViewLink: ! isJetpack && ! isLatestEmailsHomepage && isPreviewable,
 			slug: getSelectedSiteSlug( state ),
 			post: getSitePost( state, siteId, postId ),
 			isSitePrivate: isPrivateSite( state, siteId ),
