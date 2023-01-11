@@ -244,6 +244,7 @@ class StatsSummary extends Component {
 				<FixedNavigationHeader navigationItems={ navigationItems } />
 
 				<div id="my-stats-content" className=" stats-summary-view">
+					{ /* TODO: move the header <AllTimeNav /> here when modernising summary detail page */ }
 					{ summaryViews }
 				</div>
 				<JetpackColophon />

@@ -1,0 +1,20 @@
+@import "../modernized-mixins";
+
+.stats-summary-nav {
+	display: flex;
+	justify-content: space-between;
+
+	@include navigation-segment-control-buttons( "auto" );
+}
+
+.stats-summary-nav__header {
+	@include section-header-with-siblings;
+
+	h3 {
+		@include section-header;
+	}
+}
+
+.stats-summary-nav__intervals {
+	align-items: center;
+}

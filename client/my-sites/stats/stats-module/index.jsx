@@ -173,12 +173,13 @@ class StatsModule extends Component {
 				) }
 				{ shouldShowNewModule && (
 					<>
+						{ /* TODO: Move this header to the summary page when modernising it */ }
 						{ isAllTime && <AllTimeNav path={ path } query={ query } period={ period } /> }
 						<StatsListCard
 							moduleType={ path }
 							data={ data }
 							useShortLabel={ useShortLabel }
-							title={ this.getModuleLabel() }
+							title={ this.props.moduleStrings?.title }
 							emptyMessage={ moduleStrings.empty }
 							showMore={
 								displaySummaryLink && ! summary
@@ -250,6 +251,7 @@ class StatsModule extends Component {
 							{ this.props.showSummaryLink && data?.length >= 10 && (
 								<StatsModuleExpand href={ summaryLink } />
 							) }
+							{ /* TODO: Move this to the summary page when modernising it */ }
 							{ summary && 'countryviews' === path && (
 								<UpsellNudge
 									title={ translate( 'Add Google Analytics' ) }
