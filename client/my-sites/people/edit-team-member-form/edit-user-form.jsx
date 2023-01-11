@@ -202,7 +202,8 @@ class EditUserForm extends Component {
 				returnField = (
 					<RoleSelect
 						key="role-select"
-						formControlType="select"
+						formControlType={ this.props.roleSelectControlType }
+						explanation={ true }
 						id={ fieldKeys.roles }
 						name={ fieldKeys.roles }
 						siteId={ this.props.siteId }

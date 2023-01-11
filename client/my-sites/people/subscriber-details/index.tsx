@@ -96,7 +96,7 @@ export default function SubscriberDetails( props: Props ) {
 	function removeSubscriber( subscriber: Follower ) {
 		const listType = 'email' === subscriberType ? 'Email Follower' : 'Follower';
 		dispatch(
-			recordGoogleEvent( 'People', 'Clicked Remove Follower Button On' + listType + ' list' )
+			recordGoogleEvent( 'People', 'Clicked Remove Follower Button On ' + listType + ' list' )
 		);
 
 		accept(
