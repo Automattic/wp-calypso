@@ -9,7 +9,7 @@ import 'calypso/state/plans/init';
  * @param {object} state - current state object
  * @returns {Array} WordPress plans
  */
-export const getPlans = ( state ) => {
+export const getPlans = ( state: any ) => {
 	return state.plans.items;
 };
 
@@ -19,7 +19,7 @@ export const getPlans = ( state ) => {
  * @param {object} state - current state object
  * @returns {boolean} is plans requesting?
  */
-export const isRequestingPlans = ( state ) => {
+export const isRequestingPlans = ( state: any ) => {
 	return state.plans.requesting;
 };
 
@@ -54,7 +54,7 @@ export const getPlanBySlug = createSelector(
  * @param  {number}  productId the plan productId
  * @returns {string}  plan product_slug
  */
-export function getPlanSlug( state, productId ) {
+export function getPlanSlug( state: any, productId: any ) {
 	const plan = getPlan( state, productId );
 
 	return get( plan, 'product_slug', null );
