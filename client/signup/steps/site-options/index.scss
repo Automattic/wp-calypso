@@ -2,6 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 
 .signup__step .is-site-options,
+.signup__step .is-difm-store-options
 .signup__step .is-difm-options {
 	.step-wrapper__header {
 		@include break-small {

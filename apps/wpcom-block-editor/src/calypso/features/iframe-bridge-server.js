@@ -1095,15 +1095,11 @@ function handleSiteEditorBackButton( calypsoPort ) {
 		// Since the clicked element may not have an href (as noted by internal SVG and path woes above).
 		const returnHref = clickedElement.href || dashboardLink;
 
-		// The URL constructor cannot handle relative paths, so, if returnHref becomes a relative path in
-		// thefuture, fall back to returnHref
-		const postUrl = new URL( returnHref )?.pathname || returnHref;
-
 		if ( isOldDashboardButton || isNewDashboardButton ) {
 			event.preventDefault();
 			calypsoPort.postMessage( {
 				action: 'openLinkInParentFrame',
-				payload: { postUrl },
+				payload: { postUrl: returnHref },
 			} );
 		}
 	} );

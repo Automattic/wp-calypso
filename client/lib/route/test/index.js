@@ -161,6 +161,13 @@ describe( 'route', function () {
 					)
 				).toEqual( 'example.wordpress.com' );
 			} );
+			test( 'should return the correct site fragment when it is found outside the 3rd position', function () {
+				expect(
+					route.getSiteFragment(
+						'/checkout/thank-you/features/all-free-features/example.wordpress.com/12345678'
+					)
+				).toEqual( 'example.wordpress.com' );
+			} );
 		} );
 		describe( 'for jetpack paths', function () {
 			test( 'should return correct site fragment when site_url is trailing slashed', function () {

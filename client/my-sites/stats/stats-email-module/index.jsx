@@ -7,7 +7,7 @@ import statsStrings from 'calypso/my-sites/stats/stats-strings';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	getEmailStatsNormalizedData,
-	isRequestingEmailStats,
+	isRequestingPeriodEmailStats,
 } from 'calypso/state/stats/emails/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Geochart from '../geochart';
@@ -92,7 +92,7 @@ export default connect( ( state, ownProps ) => {
 	const { postId, period, date, statType, path } = ownProps;
 
 	return {
-		requesting: isRequestingEmailStats( state, siteId, postId, period, statType ),
+		requesting: isRequestingPeriodEmailStats( state, siteId, postId, period, statType ),
 		data: getEmailStatsNormalizedData( state, siteId, postId, period, date, statType, path ),
 		siteId,
 		postId,

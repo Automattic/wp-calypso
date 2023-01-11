@@ -1,4 +1,4 @@
-import { BLOG_PAGE, CONTACT_PAGE } from 'calypso/signup/difm/constants';
+import { BLOG_PAGE, CONTACT_PAGE, SHOP_PAGE } from 'calypso/signup/difm/constants';
 import {
 	ContactPageDetails,
 	FeedbackSection,
@@ -68,11 +68,12 @@ const generateWebsiteContentSections = (
 	params: SectionGeneratorReturnType< WebsiteContent >,
 	elapsedSections = 0
 ): SectionProcessedResult => {
-	const { translate, formValues, formErrors, onChangeField } = params;
+	const { translate, formValues, formErrors, context, onChangeField } = params;
 
 	const OPTIONAL_PAGES: Partial< Record< PageId, boolean > > = {
 		[ CONTACT_PAGE ]: true,
 		[ BLOG_PAGE ]: true,
+		[ SHOP_PAGE ]: true,
 	};
 
 	const websiteContentSections = formValues.pages.map( ( page, index ) => {
@@ -101,6 +102,7 @@ const generateWebsiteContentSections = (
 					page={ page }
 					formErrors={ formErrors }
 					onChangeField={ onChangeField }
+					context={ context }
 				/>
 			),
 			showSkip: !! OPTIONAL_PAGES[ page.id ],

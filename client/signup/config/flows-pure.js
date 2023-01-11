@@ -459,6 +459,23 @@ export function generateFlows( {
 			enableBranchSteps: true,
 		},
 		{
+			name: 'do-it-for-me-store',
+			steps: [
+				'user',
+				'new-or-existing-site',
+				'difm-site-picker',
+				'difm-store-options',
+				'social-profiles',
+				'difm-design-setup-site',
+				'difm-page-picker',
+			],
+			destination: getDIFMSignupDestination,
+			description: 'The BBE store flow',
+			excludeFromManageSiteFlows: true,
+			lastModified: '2023-03-01',
+			enableBranchSteps: true,
+		},
+		{
 			name: 'website-design-services',
 			steps: [ 'difm-options', 'social-profiles', 'difm-design-setup-site', 'difm-page-picker' ],
 			destination: getDIFMSignupDestination,

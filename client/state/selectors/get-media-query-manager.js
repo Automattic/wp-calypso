@@ -7,5 +7,5 @@ import 'calypso/state/media/init';
  * @param {number} siteId The site ID
  */
 export default function getMediaQueryManager( state, siteId ) {
-	return state.media.queries?.[ siteId ] ?? null;
+	return state.media?.queries?.[ siteId ] ?? null;
 }

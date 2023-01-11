@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	useQuery,
 	UseQueryResult,
@@ -16,7 +17,8 @@ import { BASE_STALE_TIME } from 'calypso/state/initial-state';
 
 type Type = 'all' | 'featured';
 
-const plugisApiBase = '/marketplace/products';
+const pluginsApiBase = '/marketplace/products';
+const dynamicPluginsApiBase = '/marketplace/products-dynamic';
 const featuredPluginsApiBase = '/plugins/featured';
 const pluginsApiNamespace = 'wpcom/v2';
 
@@ -32,7 +34,7 @@ const fetchWPCOMPlugins = ( type: Type, searchTerm?: string, tag?: string ) => {
 
 	return wpcom.req.get(
 		{
-			path: plugisApiBase,
+			path: pluginsApiBase,
 			apiNamespace: pluginsApiNamespace,
 		},
 		{
@@ -80,8 +82,13 @@ export const useWPCOMPluginsList = (
 };
 
 const fetchWPCOMPlugin = ( slug: string ) => {
+	// eslint-disable-next-line no-constant-condition
+	const pluginBase = config.isEnabled( 'marketplace-fetch-dynamic-plugin-details' )
+		? dynamicPluginsApiBase
+		: pluginsApiBase;
+
 	return wpcom.req.get( {
-		path: `${ plugisApiBase }/${ slug }`,
+		path: `${ pluginBase }/${ slug }`,
 		apiNamespace: pluginsApiNamespace,
 	} );
 };
