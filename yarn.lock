@@ -6739,6 +6739,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/canvas-confetti@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "@types/canvas-confetti@npm:1.6.0"
+  checksum: 54e43781be2928233b6babfc0962fe30c625011cb91bd0826bceb7ddc2a3eb2c2333e4cc7e08c3bd52641e7fc2df5e1cc104ae905ff221625273375a7ae5e36d
+  languageName: node
+  linkType: hard
+
 "@types/classnames@npm:^2.3.1":
   version: 2.3.1
   resolution: "@types/classnames@npm:2.3.1"
@@ -12886,6 +12893,13 @@ __metadata:
   version: 1.0.30001387
   resolution: "caniuse-lite@npm:1.0.30001387"
   checksum: 4da02e20c3932632a6fd9d0bfef172da8edc2936c524e47877746e4028d5a22f41994f9749b64b4ee23ac864fdbf5e3dc8664bd874ad016bdda018428545d38d
+  languageName: node
+  linkType: hard
+
+"canvas-confetti@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "canvas-confetti@npm:1.6.0"
+  checksum: aac924eef354af1436a270a2f914eb2e127cf4afef908f3204e94016714043743305755207dfb8cd07bfb191f0684e1d1cd53a8bb20846f896d0a7b4270e534f
   languageName: node
   linkType: hard
 
@@ -35613,6 +35627,7 @@ swiper@4.5.1:
     "@bartekbp/typescript-checkstyle": ^5.0.0
     "@signal-noise/stylelint-scales": ^2.0.3
     "@testing-library/jest-dom": ^5.16.2
+    "@types/canvas-confetti": ^1.6.0
     "@types/cookie": ^0.4.1
     "@types/debug": ^4.1.7
     "@types/fast-json-stable-stringify": ^2.0.0
@@ -35659,6 +35674,7 @@ swiper@4.5.1:
     bunyan: ^1.8.15
     calypso: "workspace:^"
     calypso-codemods: "workspace:^"
+    canvas-confetti: ^1.6.0
     capture-website: ^1.0.0
     chalk: ^4.1.2
     check-node-version: ^4.0.2

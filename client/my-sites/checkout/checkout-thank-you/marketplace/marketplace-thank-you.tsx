@@ -1,5 +1,5 @@
 import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
-import { Confetti } from '@automattic/onboarding';
+import { ConfettiAnimation } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -34,21 +34,6 @@ import { getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const ThankYouContainer = styled.div`
-	svg {
-		position: absolute;
-		animation: hooray-fade 0.9s ease-in-out forwards;
-	}
-
-	@keyframes hooray-fade {
-		from {
-			opacity: 0;
-		}
-
-		to {
-			opacity: 0.5;
-		}
-	}
-
 	.marketplace-thank-you {
 		margin-top: 72px;
 		img {
@@ -305,7 +290,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			) }
 			{ ! showProgressBar && (
 				<ThankYouContainer>
-					<Confetti />
+					<ConfettiAnimation />
 					<ThankYou
 						containerClassName="marketplace-thank-you"
 						sections={ [ setupSection ] }
