@@ -1,4 +1,4 @@
-import { isPremium, isDIFMProduct } from '@automattic/calypso-products';
+import { isDIFMProduct, isPlan } from '@automattic/calypso-products';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 
 /**
@@ -9,10 +9,10 @@ function hasDIFMProduct( cart: ResponseCart ): boolean {
 }
 
 /**
- * Check if the given item is the premium plan product and the DIFM product exists in the provided shopping cart object
+ * Check if the given item is a plan product and the DIFM product exists in the provided shopping cart object
  */
-function isPremiumPlanWithDIFMInTheCart( item: ResponseCartProduct, responseCart: ResponseCart ) {
-	return isPremium( item ) && hasDIFMProduct( responseCart );
+function isPlanWithDIFMInTheCart( item: ResponseCartProduct, responseCart: ResponseCart ) {
+	return isPlan( item ) && hasDIFMProduct( responseCart );
 }
 
 /**
@@ -36,8 +36,8 @@ export function canItemBeRemovedFromCart(
 		return false;
 	}
 
-	// The Premium plan cannot be removed from the cart when in combination with the DIFM lite product
-	if ( isPremiumPlanWithDIFMInTheCart( item, responseCart ) ) {
+	// The plan cannot be removed from the cart when in combination with the DIFM lite product
+	if ( isPlanWithDIFMInTheCart( item, responseCart ) ) {
 		return false;
 	}
 
