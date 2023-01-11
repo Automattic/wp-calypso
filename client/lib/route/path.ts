@@ -33,13 +33,13 @@ export function getSiteFragment( path: URLString ): SiteSlug | SiteId | false {
 	// searchPositions defines the second-to-last and last index positions to search. Order matters.
 	let searchPositions = [ pieces.length - 2, pieces.length - 1 ];
 
-	// There are exceptions. In some paths the site fragment is in the third position.
+	// There are exceptions. In some paths the site fragment could also be in the third position.
 	// e.g. /me/purchases/example.wordpress.com/foo/bar
 	if (
 		0 === basePath.indexOf( '/me/purchases/' ) ||
 		0 === basePath.indexOf( '/checkout/thank-you/' )
 	) {
-		searchPositions = [ 3 ];
+		searchPositions = [ 3, pieces.length - 2, pieces.length - 1 ];
 	}
 	// In other paths the site fragment is in the second position.
 	// e.g. /checkout/example.wordpress.com/offer-plan-upgrade/business-monthly/75806534
