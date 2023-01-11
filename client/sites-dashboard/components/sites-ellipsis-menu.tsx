@@ -184,13 +184,19 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 	const hasAtomicFeature = useSafeSiteHasFeature( site.ID, WPCOM_FEATURES_ATOMIC );
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const plan = site.plan;
 	const isSiteOwner = site.site_owner === userId;
 
-	if ( ! hasAtomicFeature || ! isSiteOwner ) {
+	if ( ! hasAtomicFeature || ! isSiteOwner || ! plan ) {
 		return null;
 	}
 
+	const planId = plan.product_id;
+	const billingPeriod = plan.billing_period || 'ANNUALLY';
+
 	const copySiteHref = addQueryArgs( `/setup/copy-site`, {
+		billingPeriod,
+		planId,
 		sourceSite: site.ID,
 		sourceUrl: site.URL,
 	} );
