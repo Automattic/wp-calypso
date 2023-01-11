@@ -45,7 +45,7 @@ module.exports = {
 			terserOptions: {
 				ecma: 5,
 				safari10: true,
-				mangle: { reserved: [ '__', '_n', '_nx', '_x' ] },
+				mangle: { reserved: [ '__', '_n', '_nx', '_x', 'translate' ] },
 			},
 		} ),
 		splitChunks: false,

@@ -25,7 +25,7 @@ import 'calypso/assets/stylesheets/style.scss';
 import './app.scss';
 
 const getLanguageFile = ( localeSlug ) => {
-	const url = `https://widgets.wp.com/languages/calypso/${ localeSlug }-v1.1.json`;
+	const url = `https://widgets.wp.com/odyssey-stats/v1/languages/${ localeSlug }-v1.1.json`;
 
 	return globalThis.fetch( url ).then( ( response ) => {
 		if ( response.ok ) {
