@@ -44,6 +44,12 @@ export interface Purchase {
 	priceText: string;
 	priceTierList?: Array< PurchasePriceTier >;
 	productDisplayPrice: string;
+
+	/**
+	 * The renewal price of the purchase in the currency's smallest unit.
+	 */
+	priceInteger: number;
+
 	productId: number;
 	productName: string;
 	productSlug: string;
@@ -140,6 +146,7 @@ export interface RawPurchase {
 	product_slug: string;
 	product_type: string;
 	product_display_price: string;
+	price_integer: number;
 	total_refund_amount: number | undefined;
 	total_refund_text: string;
 	refund_amount: number;
