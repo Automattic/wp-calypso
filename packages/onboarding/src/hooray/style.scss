@@ -17,9 +17,15 @@
 		margin-bottom: 1.5em;
 	}
 
-	.components-button.action-buttons__next.is-primary {
+	.components-button.action_buttons__button.action-buttons__next.is-primary {
 		min-width: 100px;
-		padding: 0;
+		padding: 10px 24px;
+	}
+
+	.components-button.action-buttons__next.is-secondary {
+		min-width: 100px;
+		margin-left: 24px;
+		padding: 10px 24px;
 	}
 }
 
