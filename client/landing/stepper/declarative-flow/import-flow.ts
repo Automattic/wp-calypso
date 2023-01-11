@@ -158,7 +158,7 @@ const importFlow: Flow = {
 				case 'importerSquarespace':
 				case 'importerWordpress':
 				case 'designSetup':
-					return navigate( 'import' );
+					return navigate( `import?siteSlug=${ siteSlugParam }` );
 			}
 		};
 
@@ -175,6 +175,8 @@ const importFlow: Flow = {
 			switch ( step ) {
 				case 'goals':
 					return exitFlow( `/setup/site-setup/goals?siteSlug=${ siteSlugParam }` );
+				case 'import':
+					return navigate( `import?siteSlug=${ siteSlugParam }` );
 				default:
 					return navigate( step );
 			}
