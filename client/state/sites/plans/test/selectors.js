@@ -1,4 +1,8 @@
-import { PLAN_PREMIUM } from '@automattic/calypso-products';
+import {
+	PLAN_PREMIUM,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_ECOMMERCE_MONTHLY,
+} from '@automattic/calypso-products';
 import deepFreeze from 'deep-freeze';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
@@ -14,6 +18,7 @@ import {
 	isRequestingSitePlans,
 	isSitePlanDiscounted,
 	getSitePlanSlug,
+	isSiteOnECommerceTrial,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -693,6 +698,92 @@ describe( 'selectors', () => {
 					2916284
 				)
 			).toEqual( PLAN_PREMIUM );
+		} );
+	} );
+
+	describe( 'isSiteOnECommerceTrial()', () => {
+		const siteId = 1337;
+		test( 'Should return true when the e-commerce trial is in the purchases list', () => {
+			const plan = {
+				ID: 1,
+				productSlug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
+				blogId: siteId,
+				currentPlan: true,
+			};
+
+			const state = deepFreeze( {
+				...userState,
+				sites: {
+					plans: {
+						[ siteId ]: {
+							data: [ plan ],
+						},
+					},
+					items: {
+						[ siteId ]: {
+							URL: 'https://example.wordpress.com',
+						},
+					},
+				},
+				siteSettings: {
+					items: {},
+				},
+			} );
+
+			expect( isSiteOnECommerceTrial( state, siteId ) ).toBeTruthy();
+		} );
+
+		test( 'Should return false when the e-commerce trial is not in the purchases list', () => {
+			const state = deepFreeze( {
+				...userState,
+				sites: {
+					plans: {
+						[ siteId ]: {
+							data: [],
+						},
+					},
+					items: {
+						[ siteId ]: {
+							URL: 'https://example.wordpress.com',
+						},
+					},
+				},
+				siteSettings: {
+					items: {},
+				},
+			} );
+
+			expect( isSiteOnECommerceTrial( state, siteId ) ).toBeFalsy();
+		} );
+
+		test( 'Should return false when the site has a regular e-commerce plan', () => {
+			const plan = {
+				ID: 1,
+				productSlug: PLAN_ECOMMERCE_MONTHLY,
+				blogId: siteId,
+				currentPlan: true,
+			};
+
+			const state = deepFreeze( {
+				...userState,
+				sites: {
+					plans: {
+						[ siteId ]: {
+							data: [ plan ],
+						},
+					},
+					items: {
+						[ siteId ]: {
+							URL: 'https://example.wordpress.com',
+						},
+					},
+				},
+				siteSettings: {
+					items: {},
+				},
+			} );
+
+			expect( isSiteOnECommerceTrial( state, siteId ) ).toBeFalsy();
 		} );
 	} );
 } );

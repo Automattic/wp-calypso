@@ -60,7 +60,6 @@ export { default as isRequestingSites } from './is-requesting-sites';
 export { default as isSearchPluginActive } from './is-search-plugin-active';
 export { default as isSingleUserSite } from './is-single-user-site';
 export { default as isSiteConflicting } from './is-site-conflicting';
-export { default as isSiteOnWooExpressTrialPeriod } from './is-site-on-woo-express-trial-period';
 export { default as isSitePreviewable } from './is-site-previewable';
 export { default as isSSOEnabled } from './is-sso-enabled';
 export { default as verifyJetpackModulesActive } from './verify-jetpack-modules-active';
