@@ -6,12 +6,16 @@ $break-large-stats-countries: 1280px;
 .stats__module-list--traffic {
 	.stats__module-wrapper--countryviews .stats-module,
 	.list-countryviews {
-		display: grid;
 		gap: 0 24px;
 		grid-template-columns: 7fr 5fr;
 		grid-template-areas:
 			"map list"
 			"more more";
+
+		// only applies this statement if there's data to show
+		&:has(.stats-card--hero .stats-geochart:not(.has-no-data)) {
+			display: grid;
+		}
 
 		@media ( max-width: $break-large-stats-countries ) {
 			grid-template-columns: 100%;
