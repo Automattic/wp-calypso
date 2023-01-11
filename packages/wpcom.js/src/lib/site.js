@@ -389,12 +389,14 @@ class Site {
 	 *
 	 * @param {string} postId - id of the post which email we are querying
 	 * @param {object} [query] - query object parameter
-	 * @param {Function} fn - callback function
+	 * @param {Function?} fn - callback function
 	 * @returns {Function} request handler
 	 */
 	statsEmailOpens( postId, query, fn ) {
 		const path = `${ this.path }/stats/opens/emails/${ postId }`;
-		const statFields = [ 'timeline', 'country', 'device', 'client' ];
+		const statFields = query.period
+			? [ 'timeline', 'country', 'device', 'client' ]
+			: [ 'opens_rate' ];
 		return Promise.all(
 			statFields.map( ( field ) =>
 				this.wpcom.req.get( path, { ...query, stats_fields: field }, fn )

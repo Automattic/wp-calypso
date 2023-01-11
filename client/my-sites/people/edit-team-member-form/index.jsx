@@ -81,6 +81,7 @@ export const EditTeamMemberForm = ( {
 						disabled={ false } // @TODO added when added mutation to remove user
 						siteId={ siteId }
 						autoSave={ isEnabled( 'user-management-revamp' ) }
+						roleSelectControlType={ isEnabled( 'user-management-revamp' ) ? 'select' : 'radio' }
 						isJetpack={ isJetpack }
 						markChanged={ markChanged }
 						markSaved={ markSaved }

@@ -14,7 +14,7 @@ const defaultEnvVariables: SupportedEnvVariables = {
 	TIMEOUT: 10000,
 	GUTENBERG_EDGE: false,
 	COBLOCKS_EDGE: false,
-	AUTHENTICATE_ACCOUNTS: [ 'simpleSitePersonalPlanUser', 'eCommerceUser', 'defaultUser' ],
+	AUTHENTICATE_ACCOUNTS: [ 'simpleSitePersonalPlanUser', 'atomicUser', 'defaultUser' ],
 	COOKIES_PATH: path.join( process.cwd(), 'cookies' ),
 	ARTIFACTS_PATH: path.join( process.cwd(), 'results' ),
 	TEST_ON_ATOMIC: false,

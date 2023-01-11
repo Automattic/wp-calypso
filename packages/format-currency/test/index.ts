@@ -5,10 +5,12 @@ describe( 'formatCurrency', () => {
 		const money = formatCurrency( 99.32, 'USD' );
 		expect( money ).toBe( '$99.32' );
 	} );
+
 	test( 'adds a localized thousands separator', () => {
 		const money = formatCurrency( 9800900.32, 'USD' );
 		expect( money ).toBe( '$9,800,900.32' );
 	} );
+
 	test( 'handles zero', () => {
 		const money = formatCurrency( 0, 'USD' );
 		expect( money ).toBe( '$0.00' );
@@ -22,12 +24,19 @@ describe( 'formatCurrency', () => {
 		const money4 = formatCurrency( 0, 'EUR', { stripZeros: true } );
 		expect( money4 ).toBe( '€0' );
 	} );
+
 	test( 'handles negative values', () => {
 		const money = formatCurrency( -1234.56789, 'USD' );
 		expect( money ).toBe( '-$1,234.57' );
 	} );
+
 	test( 'unknown currency codes return default', () => {
 		const money = formatCurrency( 9800900.32, '' );
+		expect( money ).toBe( '$9,800,900.32' );
+	} );
+
+	test( 'unknown locale codes return default', () => {
+		const money = formatCurrency( 9800900.32, 'USD', { locale: 'foo-bar' } );
 		expect( money ).toBe( '$9,800,900.32' );
 	} );
 

@@ -4,7 +4,7 @@ import 'calypso/state/stats/init';
 
 /**
  * Returns true if current requesting email stat for the specified site ID,
- * email ID and stat key, or * false otherwise.
+ * email ID, period and stat key, or * false otherwise.
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
@@ -13,9 +13,29 @@ import 'calypso/state/stats/init';
  * @param  {string}  statType The type of stat we are working with. For example: 'opens' for Email Open stats
  * @returns {boolean}        Whether email stat is being requested
  */
-export function isRequestingEmailStats( state, siteId, postId, period, statType ) {
+export function isRequestingPeriodEmailStats( state, siteId, postId, period, statType ) {
 	return state.stats.emails
 		? get( state.stats.emails.requests, [ siteId, postId, period, statType, 'requesting' ], false )
+		: false;
+}
+
+/**
+ * Returns true if current requesting all time email stat for the specified site ID,
+ * email ID, period and stat key, or * false otherwise.
+ *
+ * @param  {object}  state  Global state tree
+ * @param  {number}  siteId Site ID
+ * @param  {number}  postId Post Id
+ * @param  {string}  statType The type of stat we are working with. For example: 'opens' for Email Open stats
+ * @returns {boolean}        Whether email stat is being requested
+ */
+export function isRequestingAlltimeEmailStats( state, siteId, postId, statType ) {
+	return state.stats.emails
+		? get(
+				state.stats.emails.requests,
+				[ siteId, postId, 'alltime', statType, 'requesting' ],
+				false
+		  )
 		: false;
 }
 
@@ -116,4 +136,19 @@ export function getEmailStatsNormalizedData( state, siteId, postId, period, date
 	return state.stats.emails.items
 		? get( state.stats.emails.items, [ siteId, postId, period, statType, date, path ], null )
 		: null;
+}
+
+/**
+ * Returns the email stats for the specified site ID, post ID
+ * This is for alltime stats
+ *
+ * @param  {object}  state   Global state tree
+ * @param  {number}  siteId  Site ID
+ * @param  {number}  postId  Email Id
+ * @param  {string} statType Stat type
+ */
+export function getAlltimeStats( state, siteId, postId, statType ) {
+	return state.stats.emails.items
+		? get( state.stats.emails.items, [ siteId, postId, 'alltime', statType ], null )
+		: {};
 }

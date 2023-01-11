@@ -157,38 +157,4 @@ $common-border-radius: 4px;
 			}
 		}
 	}
-
-	.stats-views__key-container {
-		padding-top: 16px;
-		float: none;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-
-		@media ( max-width: $break-large ) {
-			margin-bottom: 0;
-		}
-	}
-
-	.stats-views__key-label {
-		font-weight: 400;
-		font-size: $font-body-small;
-		line-height: 18px;
-		color: #000;
-		text-transform: none;
-		letter-spacing: normal;
-	}
-
-	.stats-views__key {
-		border-radius: $common-border-radius;
-		overflow: hidden;
-		padding: 0;
-		margin: 0 16px;
-
-		.stats-views__key-item {
-			width: 25px;
-			height: 25px;
-			margin: 0;
-		}
-	}
 }
