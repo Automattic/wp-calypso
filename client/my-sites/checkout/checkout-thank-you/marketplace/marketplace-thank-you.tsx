@@ -10,6 +10,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { ThankYou } from 'calypso/components/thank-you';
 import { ThankYouSectionProps } from 'calypso/components/thank-you/types';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MasterbarStyled from 'calypso/my-sites/marketplace/components/masterbar-styled';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-plugin-install/use-marketplace-additional-steps';
@@ -281,6 +282,10 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 
 	return (
 		<ThemeProvider theme={ theme }>
+			<PageViewTracker
+				path="/marketplace/thank-you/:productSlug/:site"
+				title="Marketplace > Thank you"
+			/>
 			{ /* Using Global to override Global masterbar height */ }
 			<Global
 				styles={ css`
