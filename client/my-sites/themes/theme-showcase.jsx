@@ -36,7 +36,7 @@ import {
 	isUpsellCardDisplayed as isUpsellCardDisplayedSelector,
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
-import { addTracking, trackClick, localizeThemesPath } from './helpers';
+import { addTracking, getSubjectsFromTermTable, trackClick, localizeThemesPath } from './helpers';
 import InstallThemeButton from './install-theme-button';
 import ThemePreview from './theme-preview';
 import ThemesHeader from './themes-header';
@@ -74,7 +74,7 @@ class ThemeShowcase extends Component {
 		};
 
 		this.subjectFilters = this.getSubjectFilters( props );
-		this.subjectTermTable = this.getSubjectTermTable( props );
+		this.subjectTermTable = getSubjectsFromTermTable( props.filterToTermTable );
 
 		this.tiers = [
 			{ value: 'all', label: props.translate( 'All' ) },
@@ -166,15 +166,6 @@ class ThemeShowcase extends Component {
 			ALL: this.staticFilters.ALL,
 			...this.subjectFilters,
 		};
-	};
-
-	getSubjectTermTable = ( { filterToTermTable } ) => {
-		return Object.keys( filterToTermTable )
-			.filter( ( key ) => key.indexOf( 'subject:' ) !== -1 )
-			.reduce( ( obj, key ) => {
-				obj[ key ] = filterToTermTable[ key ];
-				return obj;
-			}, {} );
 	};
 
 	findTabFilter = ( tabFilters, filterKey ) =>
