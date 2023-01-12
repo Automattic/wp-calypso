@@ -8,8 +8,8 @@ import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-
 import { resetPluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import PluginsList from './plugins-list';
 import UpdatePlugins from './update-plugins';
-import type { Plugin } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { Plugin } from 'calypso/state/plugins/installed/types';
 
 import './style.scss';
 
