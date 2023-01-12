@@ -63,7 +63,7 @@ export async function adTrackRegistration() {
 
 	// Twitter
 
-	if ( mayWeTrackByTracker( 'pinterest' ) ) {
+	if ( mayWeTrackByTracker( 'twitter' ) ) {
 		const params = [ 'event', 'tw-nvzbs-odfz8' ];
 		debug( 'adTrackRegistration: [Twitter]', params );
 		window.twq( ...params );
