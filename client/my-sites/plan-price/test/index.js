@@ -228,4 +228,35 @@ describe( 'PlanPrice', () => {
 		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
 		expect( document.querySelector( 'h4' ) ).toBeFalsy();
 	} );
+
+	it( 'renders a price without an outer div if is2023OnboardingPricingGrid is not set', () => {
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" /> );
+		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		expect( document.querySelector( 'div.plan-price__integer-fraction' ) ).toBeFalsy();
+	} );
+
+	it( 'renders a price with an outer div if is2023OnboardingPricingGrid is set', () => {
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" is2023OnboardingPricingGrid /> );
+		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		expect( document.querySelector( 'div.plan-price__integer-fraction' ) ).toBeTruthy();
+	} );
+
+	it( 'renders a price without an outer div if productDisplayPrice is set and is2023OnboardingPricingGrid is set', () => {
+		render( <PlanPrice productDisplayPrice="$45" is2023OnboardingPricingGrid /> );
+		expect( document.body ).toHaveTextContent( '$45' );
+		expect( document.querySelector( 'div.plan-price__integer-fraction' ) ).toBeFalsy();
+	} );
+
+	it( 'renders a price without an outer div if displayFlatPrice is set and is2023OnboardingPricingGrid is set', () => {
+		render(
+			<PlanPrice
+				rawPrice={ 44700.5 }
+				currencyCode="IDR"
+				displayFlatPrice
+				is2023OnboardingPricingGrid
+			/>
+		);
+		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		expect( document.querySelector( 'div.plan-price__integer-fraction' ) ).toBeFalsy();
+	} );
 } );
