@@ -1,9 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { CompactCard, Gridicon } from '@automattic/components';
 import { useTemplate } from '@automattic/data-stores';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
 import { decodeEntities } from '@wordpress/html-entities';
+import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import pageRouter from 'page';
 import { connect } from 'react-redux';
@@ -19,8 +20,67 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { setPreviewUrl } from 'calypso/state/ui/preview/actions';
 import Placeholder from '../placeholder';
-import type { SiteDetails } from '@automattic/data-stores';
+import type { SiteDetails, Template } from '@automattic/data-stores';
 import './style.scss';
+
+interface HomepagePopoverProps {
+	isAdmin: boolean;
+	template?: Template;
+}
+
+const HomepagePopover = ( { isAdmin, template }: HomepagePopoverProps ) => {
+	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
+	const learnMoreLink = (
+		<ExternalLink
+			href={ localizeUrl( 'https://wordpress.com/support/templates/#template-hierarchy' ) }
+			target="_blank"
+			rel="noopener noreferrer"
+		/>
+	);
+
+	let msg = null;
+	if ( ! isAdmin ) {
+		msg = translate(
+			'Administrators can change the content of this page using the Site Editor. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+			{
+				components: {
+					learnMoreLink,
+				},
+			}
+		);
+	} else if ( template ) {
+		msg = translate(
+			'You can change the content of this page by editing the %(templateTitle)s template using the Site Editor. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+			{
+				components: {
+					learnMoreLink,
+				},
+				args: {
+					templateTitle: decodeEntities( template.title.rendered || template.slug ),
+				},
+			}
+		);
+	} else if (
+		isEnglishLocale ||
+		hasTranslation(
+			'You can change the content of this page using the Site Editor. {{learnMoreLink}}Learn more{{/learnMoreLink}}.'
+		)
+	) {
+		msg = translate(
+			'You can change the content of this page using the Site Editor. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+			{
+				components: {
+					learnMoreLink,
+				},
+			}
+		);
+	} else {
+		return null;
+	}
+
+	return <InfoPopover position="right">{ msg }</InfoPopover>;
+};
 
 interface Props {
 	site: SiteDetails;
@@ -54,7 +114,7 @@ const VirtualPage = ( {
 		? addQueryArgs( { templateId: id, templateType: type }, defaultEditorUrl )
 		: defaultEditorUrl;
 
-	const { data: template } = useTemplate( site.ID, id, { enabled: isAdmin } );
+	const { data: template, isLoading } = useTemplate( site.ID, id, { enabled: isAdmin && !! id } );
 
 	const recordGoogleEvent = ( action: string ) => {
 		props.recordGoogleEvent( 'Pages', action );
@@ -118,17 +178,9 @@ const VirtualPage = ( {
 		props.recordGoogleEvent( 'Pages', 'Clicked Copy Page Link' );
 	};
 
-	if ( isAdmin && ! template ) {
+	if ( isAdmin && isLoading ) {
 		return <Placeholder.Page key={ id } multisite={ ! site } />;
 	}
-
-	const homepageLearnMoreLink = (
-		<ExternalLink
-			href={ localizeUrl( 'https://wordpress.com/support/templates/#template-hierarchy' ) }
-			target="_blank"
-			rel="noopener noreferrer"
-		/>
-	);
 
 	return (
 		<CompactCard key={ id } className="page is-virtual">
@@ -145,30 +197,7 @@ const VirtualPage = ( {
 					onClick={ clickPageTitle }
 				>
 					<span>{ title }</span>
-					{ isHomepage && (
-						<InfoPopover position="right">
-							{ isAdmin && template
-								? translate(
-										'You can change the content of this page by editing the %(templateTitle)s template using the Site Editor. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-										{
-											components: {
-												learnMoreLink: homepageLearnMoreLink,
-											},
-											args: {
-												templateTitle: decodeEntities( template.title.rendered || template.slug ),
-											},
-										}
-								  )
-								: translate(
-										'Administrators can change the content of this page using the Site Editor. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-										{
-											components: {
-												learnMoreLink: homepageLearnMoreLink,
-											},
-										}
-								  ) }
-						</InfoPopover>
-					) }
+					{ isHomepage && <HomepagePopover isAdmin={ isAdmin } template={ template } /> }
 				</a>
 				{ isHomepage && template && (
 					<div className="page-card-info">

@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import anchorLogoIcon from 'calypso/assets/images/customer-home/anchor-logo-grey.svg';
 import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
+import blazeIcon from 'calypso/assets/images/icons/blaze-icon.svg';
 import FoldableCard from 'calypso/components/foldable-card';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
@@ -108,8 +109,8 @@ export const QuickLinks = ( {
 					href={ `/advertising/${ siteSlug }` }
 					hideLinkIndicator
 					onClick={ trackPromotePostAction }
-					label={ translate( 'Promote post or page' ) }
-					gridicon="speaker"
+					label={ translate( 'Promote with Blaze' ) }
+					iconSrc={ blazeIcon }
 				/>
 			) }
 			{ ! isStaticHomePage && canModerateComments && (

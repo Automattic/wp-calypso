@@ -271,3 +271,8 @@ export interface MembershipSubscriptionsSite {
 }
 
 export type GetChangePaymentMethodUrlFor = ( siteSlug: string, purchase: Purchase ) => string;
+
+export interface Owner {
+	ID: string;
+	display_name: string;
+}

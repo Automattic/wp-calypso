@@ -1,5 +1,5 @@
 import { AnnualHighlightCards } from '@automattic/components';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -59,6 +59,11 @@ export default function AnnualHighlightsSection( { siteId }: { siteId: number } 
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const viewMoreHref = siteSlug ? `/stats/annualstats/${ siteSlug }` : null;
+
+	useEffect( () => {
+		// Restart selected year when navigating to another page.
+		setYear( currentYear );
+	}, [ siteId, currentYear ] );
 
 	const oldestYear = useMemo(
 		() =>

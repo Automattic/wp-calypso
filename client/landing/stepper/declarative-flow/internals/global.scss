@@ -67,6 +67,7 @@ button {
 .anchor-fm,
 .subscribers,
 .ecommerce,
+.wooexpress,
 .intro,
 .free-setup,
 .free-post-setup,
@@ -270,7 +271,8 @@ button {
 	}
 }
 
-.free {
+.free,
+.free-post-setup {
 	.signup-header h1 {
 		display: none;
 	}
@@ -300,6 +302,7 @@ button {
 	}
 }
 
+.wooexpress,
 .ecommerce {
 	.step-container.processing-step {
 		display: flex;

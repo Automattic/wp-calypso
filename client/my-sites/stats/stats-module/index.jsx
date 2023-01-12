@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
@@ -128,7 +129,7 @@ class StatsModule extends Component {
 			period,
 			translate,
 			useShortLabel,
-			showNewModules,
+			hideNewModule, // remove when cleaning 'stats/horizontal-bars-everywhere' FF
 		} = this.props;
 
 		const noData = data && this.state.loaded && ! data.length;
@@ -156,7 +157,14 @@ class StatsModule extends Component {
 			'is-refreshing': requesting && ! isLoading,
 		} );
 
-		const shouldShowNewModule = showNewModules && ! summary;
+		const isHorizontalBarComponentEnabledEverywhere = config.isEnabled(
+			'stats/horizontal-bars-everywhere'
+		);
+
+		// the first part of the condition keeps the bars on the Traffic page but not on the Insights page or details summary pages
+		// the second is a FF enabling the bars everywhere. Delete this comment when cleaning 'stats/horizontal-bars-everywhere' FF (and probably the whole variable)
+		const shouldShowNewModule =
+			( ! summary && ! hideNewModule ) || isHorizontalBarComponentEnabledEverywhere;
 
 		return (
 			<>
@@ -164,31 +172,45 @@ class StatsModule extends Component {
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
 				{ shouldShowNewModule && (
-					<StatsListCard
-						moduleType={ path }
-						data={ data }
-						useShortLabel={ useShortLabel }
-						title={ this.getModuleLabel() }
-						emptyMessage={ moduleStrings.empty }
-						showMore={
-							displaySummaryLink
-								? {
-										url: this.getHref(),
-										label:
-											data.length >= 10
-												? this.props.translate( 'View all', {
-														context: 'Stats: Button link to show more detailed stats information',
-												  } )
-												: this.props.translate( 'View details', {
-														context: 'Stats: Button label to see the detailed content of a panel',
-												  } ),
-								  }
-								: undefined
-						}
-						error={ hasError && <ErrorPanel /> }
-						loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
-						heroElement={ path === 'countryviews' && <Geochart query={ query } /> }
-					/>
+					<>
+						{ isAllTime && <AllTimeNav path={ path } query={ query } period={ period } /> }
+						<StatsListCard
+							moduleType={ path }
+							data={ data }
+							useShortLabel={ useShortLabel }
+							title={ this.getModuleLabel() }
+							emptyMessage={ moduleStrings.empty }
+							showMore={
+								displaySummaryLink && ! summary
+									? {
+											url: this.getHref(),
+											label:
+												data.length >= 10
+													? this.props.translate( 'View all', {
+															context: 'Stats: Button link to show more detailed stats information',
+													  } )
+													: this.props.translate( 'View details', {
+															context: 'Stats: Button label to see the detailed content of a panel',
+													  } ),
+									  }
+									: undefined
+							}
+							error={ hasError && <ErrorPanel /> }
+							loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
+							heroElement={ path === 'countryviews' && <Geochart query={ query } /> }
+						/>
+						{ isAllTime && (
+							<div className="stats-module__footer-actions">
+								<DownloadCsv
+									statType={ statType }
+									query={ query }
+									path={ path }
+									borderless
+									period={ period }
+								/>
+							</div>
+						) }
+					</>
 				) }
 
 				{ ! shouldShowNewModule && (

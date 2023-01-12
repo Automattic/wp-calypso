@@ -9,7 +9,6 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import compareProps from 'calypso/lib/compare-props';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSiteStatsPostStreakData } from 'calypso/state/stats/lists/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Month from './month';
 
 import './style.scss';
@@ -78,8 +77,7 @@ class PostTrends extends Component {
 	}
 }
 
-const mapStateToProps = ( state ) => {
-	const siteId = getSelectedSiteId( state );
+const mapStateToProps = ( state, { siteId } ) => {
 	const query = {
 		startDate: moment()
 			.locale( 'en' )
@@ -94,7 +92,6 @@ const mapStateToProps = ( state ) => {
 	return {
 		streakData: getSiteStatsPostStreakData( state, siteId, query ),
 		query,
-		siteId,
 	};
 };
 

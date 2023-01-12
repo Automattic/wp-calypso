@@ -7,7 +7,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import successImage from 'calypso/assets/images/marketplace/check-circle.svg';
 import { ThankYou } from 'calypso/components/thank-you';
-import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
+import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import MasterbarStyled from 'calypso/my-sites/marketplace/components/masterbar-styled';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
@@ -24,9 +24,9 @@ import {
 import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
-import { getPluginOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
+import { getPluginsOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
-import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
+import { areFetched, getPlugins } from 'calypso/state/plugins/wporg/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -50,7 +50,15 @@ const ThankYouContainer = styled.div`
 	}
 `;
 
+type Plugin = {
+	slug: string;
+	fetched: boolean;
+	wporg: boolean;
+	icon: string;
+};
+
 const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
+	const [ productSlugs ] = useState< Array< string > >( productSlug.split( ',' ) );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -58,14 +66,30 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const isRequestingPlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
 
 	// retrieve WPCom plugin data
-	const { data: wpComPluginData } = useWPCOMPlugin( productSlug );
-	const softwareSlug = wpComPluginData
-		? wpComPluginData.software_slug || wpComPluginData.org_slug
-		: productSlug;
+	const wpComPluginsDataResults = useWPCOMPlugins( productSlugs );
+	const wpComPluginsData = wpComPluginsDataResults.map(
+		( wpComPluginData ) => wpComPluginData.data
+	);
+	const softwareSlugs = wpComPluginsData.map( ( wpComPluginData, i ) =>
+		wpComPluginData ? wpComPluginData.software_slug || wpComPluginData.org_slug : productSlugs[ i ]
+	);
 
-	const pluginOnSite = useSelector( ( state ) => getPluginOnSite( state, siteId, softwareSlug ) );
-	const wporgPlugin = useSelector( ( state ) => getPlugin( state, productSlug ) );
-	const isWporgPluginFetched = useSelector( ( state ) => isFetched( state, productSlug ) );
+	const pluginsOnSite: [] = useSelector( ( state ) =>
+		getPluginsOnSite( state, siteId, softwareSlugs )
+	);
+	const wporgPlugins = useSelector(
+		( state ) => getPlugins( state, productSlugs ),
+		( newPluginsValue: Array< Plugin >, oldPluginsValue: Array< Plugin > ) =>
+			oldPluginsValue.length === newPluginsValue.length &&
+			oldPluginsValue.every( ( oldPluginValue, i ) => {
+				return (
+					oldPluginValue?.slug === newPluginsValue[ i ]?.slug &&
+					Boolean( oldPluginValue ) === Boolean( newPluginsValue[ i ] )
+				);
+			} )
+	);
+	const areWporgPluginsFetched = useSelector( ( state ) => areFetched( state, productSlugs ) );
+	const areAllWporgPluginsFetched = areWporgPluginsFetched.every( Boolean );
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 	const isFetchingTransferStatus = useSelector( ( state ) =>
 		isFetchingAutomatedTransferStatus( state, siteId )
@@ -84,7 +108,8 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		! new URLSearchParams( document.location.search ).has( 'hide-progress-bar' )
 	);
 
-	const isPluginOnSite = !! pluginOnSite;
+	const areAllPluginsOnSite =
+		!! pluginsOnSite.length && pluginsOnSite.every( ( pluginOnSite ) => !! pluginOnSite );
 
 	// Site is transferring to Atomic.
 	// Poll the transfer status.
@@ -108,21 +133,21 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 
 	// retrieve wporg plugin data if not available
 	useEffect( () => {
-		if ( ! isWporgPluginFetched ) {
-			dispatch( wporgFetchPluginData( productSlug ) );
+		if ( ! areAllWporgPluginsFetched ) {
+			productSlugs.forEach( ( productSlug ) => dispatch( wporgFetchPluginData( productSlug ) ) );
 		}
-		if ( isWporgPluginFetched ) {
+		if ( areAllWporgPluginsFetched ) {
 			// wporgPlugin exists in the wporg directory.
-			setPluginIcon( wporgPlugin?.icon || successImage );
+			setPluginIcon( wporgPlugins?.[ 0 ]?.icon || successImage );
 		}
-	}, [ isWporgPluginFetched, productSlug, setPluginIcon, dispatch, wporgPlugin?.icon ] );
+	}, [ areAllWporgPluginsFetched, productSlugs, dispatch, wporgPlugins ] );
 
 	useEffect( () => {
-		if ( wporgPlugin?.wporg === false ) {
+		if ( wporgPlugins?.[ 0 ]?.wporg === false ) {
 			// wporgPlugin exists and plugin doesn't exist in wporg directory.
 			setPluginIcon( successImage );
 		}
-	}, [ wporgPlugin ] );
+	}, [ wporgPlugins ] );
 
 	// Site is already Atomic (or just transferred).
 	// Poll the plugin installation status.
@@ -132,7 +157,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		}
 
 		// Update the menu after the plugin has been installed, since that might change some menu items.
-		if ( isPluginOnSite ) {
+		if ( areAllPluginsOnSite ) {
 			dispatch( requestAdminMenu( siteId ) );
 			return;
 		}
@@ -142,7 +167,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		}
 	}, [
 		isRequestingPlugins,
-		isPluginOnSite,
+		areAllPluginsOnSite,
 		dispatch,
 		siteId,
 		transferStatus,
@@ -156,7 +181,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			return;
 		}
 
-		setShowProgressBar( ! isPluginOnSite );
+		setShowProgressBar( ! areAllPluginsOnSite );
 
 		// Sites already transferred to Atomic or self-hosted Jetpack sites no longer need to change the current step.
 		if ( isJetpack ) {
@@ -172,7 +197,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		} else if ( transferStatus === transferStates.COMPLETE ) {
 			setCurrentStep( 3 );
 		}
-	}, [ transferStatus, isPluginOnSite, showProgressBar, isJetpack ] );
+	}, [ transferStatus, areAllPluginsOnSite, showProgressBar, isJetpack ] );
 
 	const steps = useMemo(
 		() =>
@@ -198,18 +223,27 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	// Cast pluginOnSite's type because the return type of getPluginOnSite is
 	// wrong and I don't know how to fix it. Remove this cast if the return type
 	// can be made correct.
-	const pluginOnSiteData = pluginOnSite as
-		| undefined
-		| { action_links?: { Settings?: string }; name?: string };
+	const pluginsOnSiteData = pluginsOnSite as Array<
+		undefined | { action_links?: { Settings?: string }; name?: string }
+	>;
 
-	const fallbackSetupUrl = wpComPluginData?.setup_url && siteAdminUrl + wpComPluginData?.setup_url;
-	const managePluginsUrl = hasManagePluginsFeature
-		? `${ siteAdminUrl }plugins.php`
-		: `/plugins/${ productSlug }/${ siteSlug } `;
+	const fallbackSetupUrls = wpComPluginsData.map(
+		( wpComPluginData ) => wpComPluginData?.setup_url && siteAdminUrl + wpComPluginData?.setup_url
+	);
+	const managePluginsUrls = productSlugs.map( ( productSlug ) =>
+		hasManagePluginsFeature
+			? `${ siteAdminUrl }plugins.php`
+			: `/plugins/${ productSlug }/${ siteSlug } `
+	);
 
-	const setupURL = pluginOnSiteData?.action_links?.Settings || fallbackSetupUrl || managePluginsUrl;
+	const setupURLs = pluginsOnSiteData.map(
+		( pluginOnSiteData, i ) =>
+			pluginOnSiteData?.action_links?.Settings || fallbackSetupUrls[ i ] || managePluginsUrls[ i ]
+	);
 
-	const documentationURL = wpComPluginData?.documentation_url;
+	const documentationURLs = wpComPluginsData.map(
+		( wpComPluginData ) => wpComPluginData?.documentation_url
+	);
 
 	const setupSection = {
 		sectionKey: 'setup_whats_next',
@@ -222,12 +256,12 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 					'Get to know your plugin and customize it, so you can hit the ground running.'
 				),
 				stepCta: (
-					<FullWidthButton href={ setupURL } primary busy={ ! isPluginOnSite }>
+					<FullWidthButton href={ setupURLs[ 0 ] } primary busy={ ! areAllPluginsOnSite }>
 						{ translate( 'Manage plugin' ) }
 					</FullWidthButton>
 				),
 			},
-			...( documentationURL
+			...( documentationURLs[ 0 ]
 				? [
 						{
 							stepKey: 'whats_next_documentation',
@@ -236,7 +270,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 								'Visit the step-by-step guide to learn how to use this plugin.'
 							),
 							stepCta: (
-								<FullWidthButton href={ documentationURL }>
+								<FullWidthButton href={ documentationURLs[ 0 ] }>
 									{ translate( 'Visit guide' ) }
 								</FullWidthButton>
 							),
@@ -259,7 +293,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	};
 
 	const thankYouSubtitle = translate( '%(pluginName)s has been installed.', {
-		args: { pluginName: pluginOnSiteData?.name },
+		args: { pluginName: pluginsOnSiteData?.[ 0 ]?.name },
 	} );
 
 	return (
@@ -275,7 +309,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			<MasterbarStyled
 				onClick={ () => page( `/plugins/${ siteSlug }` ) }
 				backText={ translate( 'Back to plugins' ) }
-				canGoBack={ isPluginOnSite }
+				canGoBack={ areAllPluginsOnSite }
 			/>
 			{ showProgressBar && (
 				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -295,7 +329,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 						showSupportSection={ true }
 						thankYouImage={ thankYouImage }
 						thankYouTitle={ translate( 'All ready to go!' ) }
-						thankYouSubtitle={ isPluginOnSite ? thankYouSubtitle : '' }
+						thankYouSubtitle={ areAllPluginsOnSite ? thankYouSubtitle : '' }
 						headerBackgroundColor="#fff"
 						headerTextColor="#000"
 					/>

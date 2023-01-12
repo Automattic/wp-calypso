@@ -6,14 +6,16 @@ $font-recoleta: Recoleta, $sans;
 $font-label: "SF Pro Text", $sans;
 $mobile-layout-breakpoint: $break-small;
 $common-border-radius: 4px;
-$tooltip-box-shadow-color: #0000000d;
+$mobile-container-margin: 16px;
 
 .post-trends {
-	display: inline-block;
-	user-select: none;
-	position: relative;
-	width: 100%;
-	margin: 0 0.875rem;
+	border-bottom: 1px solid var(--studio-gray-5);
+	border-top: 1px solid var(--studio-gray-5);
+}
+
+.post-trends__heading,
+.post-trends__wrapper {
+	margin: 0 $mobile-container-margin;
 
 	@media (min-width: 660px) {
 		margin: 0;
@@ -52,7 +54,6 @@ $tooltip-box-shadow-color: #0000000d;
 
 .post-trends__wrapper {
 	position: relative;
-	margin: 0 auto;
 	overflow: hidden;
 }
 
@@ -197,45 +198,29 @@ $tooltip-box-shadow-color: #0000000d;
 	}
 }
 
-
-.tooltip.popover.post-trends-day__tooltip {
-	&.is-top .popover__arrow {
-		border-top-color: var(--color-neutral-100);
-		box-shadow: 0 1px 2px $tooltip-box-shadow-color;
+.post-trends__tooltip-content {
+	.post-date,
+	.post-count {
+		font-family: var(--p2-font-inter);
+		font-size: 14px; // stylelint-disable-line declaration-property-unit-allowed-list
+		line-height: 20px;
+		letter-spacing: -0.24px;
+		color: var(--studio-white);
 	}
 
-	.popover__inner {
-		background-color: var(--color-neutral-100);
-		box-shadow: 0 1px 2px $tooltip-box-shadow-color;
-		border-radius: 4px;
-		padding: 16px 24px;
+	.post-date {
+		font-weight: 600;
+	}
 
-		.post-trends__tooltip-content {
-			.post-date,
-			.post-count {
-				font-family: var(--p2-font-inter);
-				font-size: 14px; // stylelint-disable-line declaration-property-unit-allowed-list
-				line-height: 20px;
-				letter-spacing: -0.24px;
-				color: var(--studio-white);
-			}
+	.post-count {
+		margin-top: 14px;
+		display: flex;
+		align-items: center;
+		font-weight: 500;
+		fill: var(--studio-white);
 
-			.post-date {
-				font-weight: 600;
-			}
-
-
-			.post-count {
-				margin-top: 14px;
-				display: flex;
-				align-items: center;
-				font-weight: 500;
-				fill: var(--studio-white);
-
-				.post-count-icon {
-					margin-right: 12px;
-				}
-			}
+		.post-count-icon {
+			margin-right: 12px;
 		}
 	}
 }

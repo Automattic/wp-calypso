@@ -1,5 +1,6 @@
 import { get, includes, reject } from 'lodash';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
+import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs } from 'calypso/lib/url';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
 import stepConfig from './steps';
@@ -15,6 +16,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 	return addQueryArgs(
 		{
 			signup: 1,
+			ref: getQueryArgs()?.ref,
 			...( [ 'domain', 'add-domain' ].includes( flowName ) && { isDomainOnly: 1 } ),
 		},
 		checkoutURL
@@ -104,8 +106,11 @@ function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
 
-function getChecklistThemeDestination( dependencies ) {
-	return `/home/${ dependencies.siteSlug }`;
+function getChecklistThemeDestination( { siteSlug, themeParameter } ) {
+	if ( themeParameter === 'blank-canvas-3' ) {
+		return `/setup/site-setup/patternAssembler?siteSlug=${ siteSlug }`;
+	}
+	return `/home/${ siteSlug }`;
 }
 
 function getEditorDestination( dependencies ) {

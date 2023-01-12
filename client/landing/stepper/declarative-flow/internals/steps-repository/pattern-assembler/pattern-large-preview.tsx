@@ -2,6 +2,7 @@ import { PatternRenderer } from '@automattic/block-renderer';
 import { DeviceSwitcher } from '@automattic/components';
 import { Icon, layout } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useRef, useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
@@ -11,11 +12,52 @@ interface Props {
 	header: Pattern | null;
 	sections: Pattern[];
 	footer: Pattern | null;
+	activePosition: number;
 }
 
-const PatternLargePreview = ( { header, sections, footer }: Props ) => {
+// The pattern renderer element has 1px min height before the pattern is loaded
+const PATTERN_RENDERER_MIN_HEIGHT = 1;
+
+const PatternLargePreview = ( { header, sections, footer, activePosition }: Props ) => {
 	const translate = useTranslate();
 	const hasSelectedPattern = header || sections.length || footer;
+	const containerRef = useRef< HTMLUListElement | null >( null );
+
+	const renderPattern = ( key: string, pattern: Pattern ) => (
+		<li key={ key }>
+			<PatternRenderer patternId={ encodePatternId( pattern.id ) } />
+		</li>
+	);
+
+	useEffect( () => {
+		let timerId: number;
+		const scrollIntoView = () => {
+			const element = containerRef.current?.children[ activePosition ];
+			if ( ! element ) {
+				return;
+			}
+
+			const { height } = element.getBoundingClientRect();
+
+			// Use the height to determine whether the newly added pattern is loaded.
+			// If it's not loaded, try to delay the behavior of scrolling into view.
+			if ( height && height > PATTERN_RENDERER_MIN_HEIGHT ) {
+				// Note that Firefox has an issue related to "smooth" behavior, so we leave it as default
+				// See https://github.com/Automattic/wp-calypso/pull/71527#issuecomment-1370522634
+				element.scrollIntoView();
+			} else {
+				timerId = window.setTimeout( () => scrollIntoView(), 100 );
+			}
+		};
+
+		scrollIntoView();
+
+		return () => {
+			if ( timerId ) {
+				window.clearTimeout( timerId );
+			}
+		};
+	}, [ activePosition, header, sections, footer ] );
 
 	return (
 		<DeviceSwitcher
@@ -27,22 +69,10 @@ const PatternLargePreview = ( { header, sections, footer }: Props ) => {
 			}
 		>
 			{ hasSelectedPattern ? (
-				<ul className="pattern-large-preview__patterns">
-					{ header && (
-						<li key="header">
-							<PatternRenderer patternId={ encodePatternId( header.id ) } />
-						</li>
-					) }
-					{ sections.map( ( pattern ) => (
-						<li key={ pattern.key }>
-							<PatternRenderer patternId={ encodePatternId( pattern.id ) } />
-						</li>
-					) ) }
-					{ footer && (
-						<li key="footer">
-							<PatternRenderer patternId={ encodePatternId( footer.id ) } />
-						</li>
-					) }
+				<ul className="pattern-large-preview__patterns" ref={ containerRef }>
+					{ header && renderPattern( 'header', header ) }
+					{ sections.map( ( pattern ) => renderPattern( pattern.key!, pattern ) ) }
+					{ footer && renderPattern( 'footer', footer ) }
 				</ul>
 			) : (
 				<div className="pattern-large-preview__placeholder">

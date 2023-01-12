@@ -19,9 +19,11 @@ import {
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
+	TYPE_ENTERPRISE_GRID_WPCOM,
 	TERM_MONTHLY,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
+	TERM_TRIENNIALLY,
 	GROUP_WPCOM,
 	PLAN_PERSONAL,
 	TITAN_MAIL_MONTHLY_SLUG,
@@ -154,6 +156,9 @@ export class PlansFeaturesMain extends Component {
 				siteId,
 				isReskinned,
 				isPlansInsideStepper,
+				is2023OnboardingPricingGrid:
+					isEnabled( 'onboarding/2023-pricing-grid' ) &&
+					flowName === 'onboarding-2023-pricing-grid',
 			};
 			const asyncPlanFeatures2023Grid = (
 				<AsyncLoad require="calypso/my-sites/plan-features-2023-grid" { ...asyncProps } />
@@ -164,6 +169,7 @@ export class PlansFeaturesMain extends Component {
 						'plans-features-main__group',
 						'is-wpcom',
 						`is-customer-${ customerType }`,
+						'is-2023-pricing-grid',
 						{
 							'is-scrollable': plansWithScroll,
 						}
@@ -329,6 +335,7 @@ export class PlansFeaturesMain extends Component {
 			monthly: TERM_MONTHLY,
 			yearly: TERM_ANNUALLY,
 			'2yearly': TERM_BIENNIALLY,
+			'3yearly': TERM_TRIENNIALLY,
 		};
 
 		return plans[ intervalType ] || defaultValue || TERM_ANNUALLY;
@@ -344,6 +351,7 @@ export class PlansFeaturesMain extends Component {
 			sitePlanSlug,
 			showTreatmentPlansReorderTest,
 			flowName,
+			isInSignup,
 		} = this.props;
 
 		const hideBloggerPlan = ! isBloggerPlan( selectedPlan ) && ! isBloggerPlan( sitePlanSlug );
@@ -363,6 +371,12 @@ export class PlansFeaturesMain extends Component {
 				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_PREMIUM } )[ 0 ],
 				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_BUSINESS } )[ 0 ],
 				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_ECOMMERCE } )[ 0 ],
+
+				isEnabled( 'onboarding/2023-pricing-grid' ) &&
+				isInSignup &&
+				flowName === 'onboarding-2023-pricing-grid'
+					? findPlansKeys( { group: GROUP_WPCOM, type: TYPE_ENTERPRISE_GRID_WPCOM } )[ 0 ]
+					: null,
 			].filter( ( el ) => el !== null );
 		}
 
@@ -391,7 +405,6 @@ export class PlansFeaturesMain extends Component {
 		if ( showTreatmentPlansReorderTest ) {
 			return plans.reverse();
 		}
-
 		return plans;
 	}
 
@@ -424,6 +437,7 @@ export class PlansFeaturesMain extends Component {
 			isAllPaidPlansShown,
 			isInMarketplace,
 			sitePlanSlug,
+			flowName,
 		} = this.props;
 
 		const isPlanOneOfType = ( plan, types ) =>
@@ -442,6 +456,22 @@ export class PlansFeaturesMain extends Component {
 					}
 			  } )
 			: availablePlans;
+
+		if (
+			isEnabled( 'onboarding/2023-pricing-grid' ) &&
+			flowName === 'onboarding-2023-pricing-grid'
+		) {
+			return plans.filter( ( plan ) =>
+				isPlanOneOfType( plan, [
+					TYPE_FREE,
+					TYPE_PERSONAL,
+					TYPE_PREMIUM,
+					TYPE_BUSINESS,
+					TYPE_ECOMMERCE,
+					TYPE_ENTERPRISE_GRID_WPCOM,
+				] )
+			);
+		}
 
 		if ( plansWithScroll ) {
 			return plans.filter( ( plan ) =>
@@ -534,13 +564,21 @@ export class PlansFeaturesMain extends Component {
 		return props.planTypeSelector;
 	}
 
+	renderPlansGrid() {
+		const { shouldShowPlansFeatureComparison, flowName } = this.props;
+
+		if (
+			isEnabled( 'onboarding/2023-pricing-grid' ) &&
+			flowName === 'onboarding-2023-pricing-grid'
+		) {
+			return this.showFeatureComparison();
+		}
+
+		return shouldShowPlansFeatureComparison ? this.showFeatureComparison() : this.getPlanFeatures();
+	}
+
 	render() {
-		const {
-			siteId,
-			redirectToAddDomainFlow,
-			domainAndPlanPackage,
-			shouldShowPlansFeatureComparison,
-		} = this.props;
+		const { siteId, redirectToAddDomainFlow, domainAndPlanPackage } = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
@@ -570,7 +608,7 @@ export class PlansFeaturesMain extends Component {
 						plans={ visiblePlans }
 					/>
 				) }
-				{ shouldShowPlansFeatureComparison ? this.showFeatureComparison() : this.getPlanFeatures() }
+				{ this.renderPlansGrid() }
 				{ this.mayRenderFAQ() }
 			</div>
 		);

@@ -449,13 +449,13 @@ ul.module-header-actions {
 	@include breakpoint-deprecated( ">480px" ) {
 		.stats-module & td.has-no-data:hover, // 1
 		tbody tr:hover td,
-		tbody tr:hover th {
-			background: var(--color-neutral-0);
+		.stats-module & tbody tr:hover th:first-child {
+			background: var(--color-primary-0);
 		}
 
 		.stats-module & td.highest-count:hover,
 		tbody tr td:hover {
-			background: var(--color-neutral-0);
+			background: var(--color-primary-0);
 			color: var(--color-neutral-70);
 		}
 	}
@@ -609,12 +609,6 @@ ul.module-header-actions {
 		font-size: 20px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		line-height: 26px;
 	}
-}
-
-.stats__module--insights-posting-activity {
-	border-top: 1px solid var(--studio-gray-5);
-	border-bottom: 1px solid var(--studio-gray-5);
-	margin-bottom: 32px;
 }
 
 .stats__module--unified {

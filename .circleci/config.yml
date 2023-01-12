@@ -1,7 +1,6 @@
 version: 2.1
 
 orbs:
-  slack: circleci/slack@3.4.2
   win: circleci/windows@5.0.0
 
 references:
@@ -122,11 +121,6 @@ references:
     name: Notify Github Failure
     when: on_fail
     command: cd desktop && yarn ci:github:add-review
-  desktop-notify-slack-failure: &desktop-notify-slack-failure
-    webhook: '$SLACK_WP_DESKTOP_E2E'
-    fail_only: true
-    mentions: '$CIRCLE_USERNAME'
-    failure_message: ':red_circle: wp-desktop tests for $CIRCLE_BRANCH have failed.\n\nCalypso PR: $CIRCLE_PULL_REQUEST'
 
 commands:
   store-artifacts-and-test-results:
@@ -163,7 +157,6 @@ jobs:
           root: ~/wp-calypso
           paths: *desktop-cache-paths
       - run: *desktop-notify-github-failure
-      - slack/status: *desktop-notify-slack-failure
 
   wp-desktop-mac:
     macos:
@@ -239,7 +232,6 @@ jobs:
             - desktop/release
       - run: *desktop-notify-github-success
       - run: *desktop-notify-github-failure
-      - slack/status: *desktop-notify-slack-failure
 
   wp-desktop-linux:
     docker:

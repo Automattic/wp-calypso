@@ -20,7 +20,7 @@ import {
 	getName,
 	purchaseType,
 	hasAmountAvailableToRefund,
-	isCancelable,
+	canAutoRenewBeTurnedOff,
 	isOneTimePurchase,
 	isRefundable,
 	isSubscription,
@@ -98,14 +98,18 @@ class CancelPurchase extends Component {
 		// For domain transfers, we only allow cancel if it's also refundable
 		const isDomainTransferCancelable = isRefundable( purchase ) || ! isDomainTransfer( purchase );
 
-		return isCancelable( purchase ) && isDomainTransferCancelable;
+		return canAutoRenewBeTurnedOff( purchase ) && isDomainTransferCancelable;
 	};
 
 	redirect = () => {
 		const { purchase, siteSlug } = this.props;
 		let redirectPath = this.props.purchaseListUrl;
 
-		if ( siteSlug && purchase && ( ! isCancelable( purchase ) || isDomainTransfer( purchase ) ) ) {
+		if (
+			siteSlug &&
+			purchase &&
+			( ! canAutoRenewBeTurnedOff( purchase ) || isDomainTransfer( purchase ) )
+		) {
 			redirectPath = this.props.getManagePurchaseUrlFor( siteSlug, purchase.id );
 		}
 
