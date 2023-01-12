@@ -1,9 +1,4 @@
-import {
-	findFirstSimilarPlanKey,
-	TYPE_PREMIUM,
-	TERM_ANNUALLY,
-	TYPE_SECURITY_T1,
-} from '@automattic/calypso-products';
+import { findFirstSimilarPlanKey, TYPE_PREMIUM } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -51,12 +46,9 @@ const getDiscountedOrRegularPrice = ( state, siteId, plan ) =>
 	getSitePlanRawPrice( state, siteId, plan, { isMonthly: true } );
 
 export const UpgradeToPremiumNudge = connect( ( state, ownProps ) => {
-	const { isJetpack, siteId } = ownProps;
+	const { siteId } = ownProps;
 	const currentPlanSlug = ( getSitePlan( state, getSelectedSiteId( state ) ) || {} ).product_slug;
-	const proposedPlan = findFirstSimilarPlanKey( currentPlanSlug, {
-		type: isJetpack ? TYPE_SECURITY_T1 : TYPE_PREMIUM,
-		...( isJetpack ? { term: TERM_ANNUALLY } : {} ),
-	} );
+	const proposedPlan = findFirstSimilarPlanKey( currentPlanSlug, { type: TYPE_PREMIUM } );
 
 	return {
 		planSlug: proposedPlan,
