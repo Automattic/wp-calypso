@@ -28,13 +28,16 @@ function createLanguagesDir() {
 	return mkdirp.sync( TEMP_PATH ) && mkdirp.sync( OUTPUT_PATH );
 }
 // Get module reference
-function getModuleReference( module ) {
-	// Rewrite module from `packages/` to match references in POT
-	if ( module.indexOf( 'packages/' ) === 0 ) {
-		return module.replace( '/dist/esm/', '/src/' ).replace( /\.\w+/, '' );
+function getModuleReference( ref ) {
+	// References need to be relative to the root of the project
+	ref = ref.replace( /^\.\.\/\.\.\//, '' );
+
+	// Rewrite ref from `packages/` to match references in POT
+	if ( ref.indexOf( 'packages/' ) === 0 ) {
+		return ref.replace( '/dist/esm/', '/src/' ).replace( /\.\w+/, '' );
 	}
 
-	return module;
+	return ref;
 }
 
 function cleanUp() {
@@ -149,39 +152,30 @@ function buildLanguages( downloadedLanguages, languageRevisions ) {
 		// CHUNKS_MAP_PATTERN is relative to the project root, while require is relative to current dir. Hence the `../`
 		const chunksMap = require( '../' + CHUNKS_MAP_PATTERN );
 
-		// Merge all source references into the main `build.min.js` chunk
-		const merged = Object.keys( chunksMap ).reduce( ( acc, key ) => {
-			acc[ 'build.min.js' ] = ( acc[ 'build.min.js' ] || [] ).concat(
-				// filepaths need to be relative to the root of the project
-				chunksMap[ key ].map( ( filepath ) => filepath.replace( /^\.\.\/\.\.\//, '' ) )
-			);
+		// Get only the strings that are relevant to the modules for the odyssey-stats app
+		const allModulesReferences = Object.values( chunksMap ).flat();
+		const allModulesStrings = [
+			...new Set(
+				allModulesReferences
+					.map( ( modulePath ) => {
+						modulePath = getModuleReference( modulePath );
+						const key = /\.\w+/.test( modulePath )
+							? modulePath
+							: Object.keys( translationsByRef ).find( ( ref ) => ref.indexOf( modulePath ) === 0 );
 
-			return acc;
-		}, {} );
+						if ( ! key ) {
+							return [];
+						}
 
-		const chunks = _.mapValues( merged, ( modules ) => {
-			const strings = new Set();
-
-			modules.forEach( ( modulePath ) => {
-				modulePath = getModuleReference( modulePath );
-				const key = /\.\w+/.test( modulePath )
-					? modulePath
-					: Object.keys( translationsByRef ).find( ( ref ) => ref.indexOf( modulePath ) === 0 );
-
-				if ( ! key ) {
-					return;
-				}
-
-				const stringsFromModule = translationsByRef[ key ] || [];
-				stringsFromModule.forEach( ( string ) => strings.add( string ) );
-			} );
-
-			return [ ...strings ];
-		} );
+						return translationsByRef[ key ] || [];
+					} )
+					.flat()
+			),
+		];
 
 		const languageRevisionsHashes = {};
 		successfullyDownloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
-			const odysseyLanguageTranslations = _.pick( languageTranslations, chunks[ 'build.min.js' ] );
+			const odysseyLanguageTranslations = _.pick( languageTranslations, allModulesStrings );
 			odysseyLanguageTranslations[ DECIMAL_POINT_KEY ] =
 				languageTranslations[ DECIMAL_POINT_TRANSLATION ];
 			odysseyLanguageTranslations[ THOUSANDS_SEPARATOR_KEY ] =
