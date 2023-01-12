@@ -65,7 +65,12 @@ type PlanRowOptions = {
 	previousProductNameShort?: string;
 };
 
-const Container = ( props: any ): any => {
+const Container = (
+	props: (
+		| React.HTMLAttributes< HTMLDivElement >
+		| React.HTMLAttributes< HTMLTableCellElement >
+	 ) & { isMobile?: boolean; scope?: string }
+) => {
 	const { children, isMobile, ...otherProps } = props;
 	return isMobile ? (
 		<div { ...otherProps }>{ children }</div>
