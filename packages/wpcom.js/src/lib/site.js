@@ -417,8 +417,7 @@ class Site {
 	 */
 	statsEmailOpensAlltime( postId, fn ) {
 		const basePath = `${ this.path }/stats/opens/emails/${ postId }`;
-		// add opens_rate when endpoint becomes available
-		const statFields = [ 'client', 'device', 'country' ];
+		const statFields = [ 'client', 'device', 'country', 'rate' ];
 		return Promise.all(
 			statFields.map( ( field ) => this.wpcom.req.get( `${ basePath }/${ field }`, fn ) )
 		).then( ( statsArray ) =>

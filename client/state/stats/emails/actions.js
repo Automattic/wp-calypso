@@ -69,6 +69,11 @@ function emailOpenStatsAlltimeTransform( stats ) {
 		countries: parseEmailCountriesData( stats.countries?.data, stats[ 'countries-info' ] ),
 		devices: parseEmailListData( stats.devices?.data ),
 		clients: parseEmailListData( stats.clients?.data ),
+		rate: {
+			opens_rate: stats.opens_rate,
+			total_opens: stats.total_opens,
+			total_sends: stats.total_sends,
+		},
 	};
 }
 

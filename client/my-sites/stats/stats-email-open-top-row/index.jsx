@@ -15,7 +15,7 @@ export default function StatsEmailOpenTopRow( { siteId, postId, className } ) {
 	const translate = useTranslate();
 
 	const counts = useSelector( ( state ) =>
-		getEmailStatsNormalizedData( state, siteId, postId, 'alltime', 'opens', null, 'open_rate' )
+		getEmailStatsNormalizedData( state, siteId, postId, 'alltime', 'opens', null, 'rate' )
 	);
 	const isRequesting = useSelector( ( state ) =>
 		isRequestingEmailStats( state, siteId, postId, 'alltime', 'opens' )
