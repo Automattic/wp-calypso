@@ -2,8 +2,8 @@ import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import type { Plugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { Plugin } from 'calypso/state/plugins/installed/types';
 import type { AppState } from 'calypso/types';
 
 export const getAllowedPluginActions = (

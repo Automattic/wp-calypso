@@ -19,7 +19,7 @@ import {
 	handleUpdatePlugins,
 	siteObjectsToSiteIds,
 } from '../../utils';
-import type { Plugin } from '../types';
+import type { Plugin } from 'calypso/state/plugins/installed/types';
 import type { ReactElement } from 'react';
 
 import '../style.scss';

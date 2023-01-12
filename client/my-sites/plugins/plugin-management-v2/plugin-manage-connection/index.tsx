@@ -2,8 +2,8 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useTranslate } from 'i18n-calypso';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { getManageConnectionHref } from 'calypso/lib/plugins/utils';
-import type { Plugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { Plugin } from 'calypso/state/plugins/installed/types';
 
 import '../style.scss';
 

@@ -1,6 +1,6 @@
 import PluginRemoveButton from '../../plugin-remove-button';
-import type { Plugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { Plugin } from 'calypso/state/plugins/installed/types';
 
 import '../style.scss';
 

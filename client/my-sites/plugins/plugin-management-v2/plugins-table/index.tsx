@@ -1,5 +1,6 @@
 import PluginCommonTable from '../plugin-common/plugin-common-table';
-import type { Columns, PluginRowFormatterArgs, Plugin } from '../types';
+import type { Columns, PluginRowFormatterArgs } from '../types';
+import type { Plugin } from 'calypso/state/plugins/installed/types';
 import type { ReactNode } from 'react';
 
 interface Props {
