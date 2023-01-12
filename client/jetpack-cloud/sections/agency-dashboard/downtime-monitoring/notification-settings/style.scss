@@ -184,3 +184,15 @@
 	color: var(--color-scary-40);
 	margin-block-end: 16px;
 }
+
+.notification-settings__warning {
+	font-weight: 500;
+	color: var(--color-scary-40);
+	padding: 10px 0;
+
+	.gridicon {
+		position: relative;
+		top: 2px;
+		margin-right: 7px;
+	}
+}

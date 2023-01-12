@@ -11,14 +11,14 @@ import {
 	availableNotificationDurations as durations,
 	mobileAppLink,
 } from '../../sites-overview/utils';
-import type { MonitorSettings } from '../../sites-overview/types';
+import type { MonitorSettings, Site } from '../../sites-overview/types';
 
 import './style.scss';
 
 type Duration = { label: string; time: number };
 
 interface Props {
-	sites: Array< { blog_id: number; url: string } >;
+	sites: Array< Site >;
 	onClose: () => void;
 	settings?: MonitorSettings;
 }
@@ -110,13 +110,15 @@ export default function NotificationSettings( { onClose, sites, settings }: Prop
 		</div>
 	);
 
-	const siteSubTitle =
-		sites.length > 1
-			? translate( '%(siteCount)d Sites', {
-					args: { siteCount: sites.length },
-					comment: '%(siteCount) is no of sites selected, e.g. "2 Sites"',
-			  } )
-			: sites[ 0 ].url;
+	const getSiteCountTitle = ( sites: Array< Site > ) => {
+		if ( sites.length === 1 ) {
+			return sites[ 0 ].url;
+		}
+		return translate( '%(siteCount)d sites', {
+			args: { siteCount: sites.length },
+			comment: '%(siteCount) is no of sites selected, e.g. "2 sites"',
+		} );
+	};
 
 	return (
 		<Modal
@@ -125,7 +127,8 @@ export default function NotificationSettings( { onClose, sites, settings }: Prop
 			title={ translate( 'Set custom notification' ) }
 			className="notification-settings__modal"
 		>
-			<div className="notification-settings__sub-title">{ siteSubTitle }</div>
+			<div className="notification-settings__sub-title">{ getSiteCountTitle( sites ) }</div>
+
 			<form onSubmit={ onSave }>
 				<div className="notification-settings__content">
 					<div className="notification-settings__content-block">
@@ -202,6 +205,7 @@ export default function NotificationSettings( { onClose, sites, settings }: Prop
 					</div>
 					<div className="notification-settings__small-screen">{ addEmailsContent }</div>
 				</div>
+
 				<div className="notification-settings__footer">
 					{ validationError && (
 						<div className="notification-settings__footer-validation-error">

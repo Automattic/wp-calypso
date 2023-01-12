@@ -9,12 +9,12 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getSiteMonitorStatuses } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { useToggleActivateMonitor } from '../../hooks';
 import NotificationSettings from '../notification-settings';
-import type { AllowedStatusTypes, MonitorSettings } from '../../sites-overview/types';
+import type { AllowedStatusTypes, MonitorSettings, Site } from '../../sites-overview/types';
 
 import './style.scss';
 
 interface Props {
-	site: { blog_id: number; url: string };
+	site: Site;
 	status: AllowedStatusTypes | string;
 	settings: MonitorSettings | undefined;
 	siteError: boolean;
