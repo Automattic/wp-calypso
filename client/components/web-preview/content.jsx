@@ -450,7 +450,6 @@ export default class WebPreviewContent extends Component {
 									style={ {
 										position: 'relative',
 										top: this.state.showIFrameOverlay ? '0' : '15px',
-										// top: '200px',
 										transition: 'all 0.2s ease',
 									} }
 									className="web-preview__frame-edit-button"
