@@ -22,3 +22,11 @@ export type PlanProperties = {
 	tagline: any;
 	storageOptions: any;
 };
+
+export interface PlanFeature {
+	availableForCurrentPlan?: boolean;
+	availableOnlyForAnnualPlans?: boolean;
+	getSlug: () => React.ReactNode;
+	getTitle: ( name?: string ) => React.ReactNode;
+	getDescription: () => React.ReactNode;
+}

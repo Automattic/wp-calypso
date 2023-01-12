@@ -2,14 +2,15 @@ import { getPlanClass, FEATURE_CUSTOM_DOMAIN } from '@automattic/calypso-product
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import { PlanFeaturesItem } from './item';
+import type { PlanFeature } from './types';
 
 const PlanFeatures2023GridFeatures: React.FC< {
-	features: Array< any >;
+	features: Array< PlanFeature >;
 	planName: string;
 	domainName: string;
 } > = ( { features, planName, domainName } ) => {
 	const translate = useTranslate();
-	const annualPlansFeatureNotice = ( feature: any ) => {
+	const annualPlansFeatureNotice = ( feature: PlanFeature ) => {
 		if ( ! feature.availableOnlyForAnnualPlans || feature.availableForCurrentPlan ) {
 			return '';
 		}
