@@ -18,7 +18,7 @@ export const ErrorIcon = styled( UnstyledErrorIcon )`
 `;
 
 export const Title = styled.h1`
-	font-family: 'Recoleta';
+	font-family: Recoleta, sans-serif;
 	font-size: 32px;
 	line-height: 40px;
 	margin: 40px;

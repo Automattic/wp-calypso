@@ -25,7 +25,7 @@ export const Title = styled.h1`
 	margin-left: 8px;
 	font-size: 18px;
 	line-height: 24px;
-	font-family: 'Recoleta';
+	font-family: Recoleta, sans-serif;
 `;
 
 export const Footer = styled.div`

@@ -24,7 +24,7 @@ export const Content = styled.div`
 `;
 
 export const Text = styled.div`
-	font-family: 'Recoleta';
+	font-family: Recoleta, sans-serif;
 	font-size: 32px;
 	line-height: 40px;
 	position: relative;

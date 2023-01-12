@@ -5,7 +5,7 @@ import {
 } from 'calypso/../packages/plans-grid/src';
 
 export const Title = styled.h1`
-	font-family: 'Recoleta';
+	font-family: Recoleta, sans-serif;
 	font-size: 36px;
 	line-height: 40px;
 	text-align: center;

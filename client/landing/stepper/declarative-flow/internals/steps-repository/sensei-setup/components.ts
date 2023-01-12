@@ -4,7 +4,7 @@ export const Title = styled.h1`
 	margin-top: 16px;
 	font-size: 36px;
 	line-height: 40px;
-	font-family: 'Recoleta';
+	font-family: Recoleta, sans-serif;
 `;
 
 export const Label = styled.label`
