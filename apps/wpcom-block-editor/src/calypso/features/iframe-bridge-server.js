@@ -1092,15 +1092,9 @@ function handleSiteEditorBackButton( calypsoPort ) {
 			clickedElement.attributes?.href?.value &&
 			clickedElement.attributes?.href?.value === dashboardLink;
 
-		// Since the clicked element may not have an href (as noted by internal SVG and path woes above).
-		const returnHref = clickedElement.href || dashboardLink;
-
 		if ( isOldDashboardButton || isNewDashboardButton ) {
 			event.preventDefault();
-			calypsoPort.postMessage( {
-				action: 'openLinkInParentFrame',
-				payload: { postUrl: returnHref },
-			} );
+			calypsoPort.postMessage( { action: 'navigateToHome' } );
 		}
 	} );
 }
