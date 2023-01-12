@@ -25,8 +25,6 @@ interface Props {
 
 export default function NotificationSettings( { onClose, sites, settings }: Props ) {
 	const translate = useTranslate();
-
-	// Filter out the sites with monitor disabled
 	const { updateMonitorSettings, isLoading, isComplete } = useUpdateMonitorSettings( sites );
 
 	const defaultDuration = durations.find( ( duration ) => duration.time === 5 );
