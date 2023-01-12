@@ -88,6 +88,17 @@ describe( 'PlanPrice', () => {
 		expect( screen.queryByTitle( 'United States Dollars' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'ignores currencyCode when productDisplayPrice is set', () => {
+		render(
+			<PlanPrice
+				productDisplayPrice={ '<abbr title="United States Dollars">$</abbr>96.00' }
+				currencyCode="IDR"
+			/>
+		);
+		expect( document.body ).toHaveTextContent( '$96.00' );
+		expect( screen.getByTitle( 'United States Dollars' ) ).toBeInTheDocument();
+	} );
+
 	it( 'renders a currency when set', () => {
 		render( <PlanPrice rawPrice={ 5.05 } currencyCode="EUR" /> );
 		expect( document.body ).toHaveTextContent( '€5.05' );
@@ -120,8 +131,77 @@ describe( 'PlanPrice', () => {
 	it( 'renders a decimal section when price is not integer', () => {
 		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" /> );
 		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
-		expect( screen.queryByText( 'Rp44,700' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Rp 44,700' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( '44,700' ) ).toBeInTheDocument();
 		expect( screen.getByText( '.50' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders a price without html when displayFlatPrice is set', () => {
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" displayFlatPrice /> );
+		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		expect( screen.getByText( 'Rp44,700.50' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders a price without sale text when displayFlatPrice is set', () => {
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" displayFlatPrice isOnSale /> );
+		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		expect( screen.getByText( 'Rp44,700.50' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Sale' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders a price without sale text when productDisplayPrice is set', () => {
+		render(
+			<PlanPrice
+				productDisplayPrice={ '<abbr title="United States Dollars">$</abbr>96.00' }
+				isOnSale
+			/>
+		);
+		expect( document.body ).toHaveTextContent( '$96.00' );
+		expect( screen.queryByText( 'Sale' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders a price with sale text when using rawPrice and isOnSale', () => {
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" isOnSale /> );
+		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		expect( screen.getByText( 'Sale' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders a price with monthly text when using rawPrice and displayPerMonthNotation', () => {
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" displayPerMonthNotation /> );
+		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		// Note: there is a newline between "per" and "month" but testing-library cannot detect those.
+		expect( screen.getByText( 'permonth' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders a price without monthly text when using productDisplayPrice and displayPerMonthNotation', () => {
+		render( <PlanPrice productDisplayPrice="$96.00" currencyCode="IDR" displayPerMonthNotation /> );
+		expect( document.body ).toHaveTextContent( '$96.00' );
+		expect( screen.queryByText( /per/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders a price without monthly text when using displayFlatPrice and displayPerMonthNotation', () => {
+		render(
+			<PlanPrice rawPrice={ 96.05 } currencyCode="USD" displayFlatPrice displayPerMonthNotation />
+		);
+		expect( document.body ).toHaveTextContent( '$96.05' );
+		expect( screen.queryByText( /per/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders a price with tax text when using rawPrice and taxText', () => {
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" taxText="25" /> );
+		expect( document.body ).toHaveTextContent( 'Rp44,700.50(+25 tax)' );
+		expect( screen.getByText( '(+25 tax)' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders a price without tax text when using productDisplayPrice and taxText', () => {
+		render( <PlanPrice productDisplayPrice="$96.00" currencyCode="IDR" taxText="25" /> );
+		expect( document.body ).toHaveTextContent( '$96.00' );
+		expect( screen.queryByText( '(+25 tax)' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders a price without tax text when using displayFlatPrice and taxText', () => {
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" displayFlatPrice taxText="25" /> );
+		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		expect( screen.queryByText( '(+25 tax)' ) ).not.toBeInTheDocument();
 	} );
 } );
