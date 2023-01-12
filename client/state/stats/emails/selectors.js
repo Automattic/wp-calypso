@@ -11,11 +11,16 @@ import 'calypso/state/stats/init';
  * @param  {number}  postId Post Id
  * @param  {number}  period The period (eg day, week, month, year)
  * @param  {string}  statType The type of stat we are working with. For example: 'opens' for Email Open stats
+ * @param  {string}  date The date of the stat
  * @returns {boolean}        Whether email stat is being requested
  */
-export function isRequestingPeriodEmailStats( state, siteId, postId, period, statType ) {
+export function isRequestingPeriodEmailStats( state, siteId, postId, period, statType, date ) {
 	return state.stats.emails
-		? get( state.stats.emails.requests, [ siteId, postId, period, statType, 'requesting' ], false )
+		? get(
+				state.stats.emails.requests,
+				[ siteId, postId, period, statType, date, 'requesting' ],
+				false
+		  )
 		: false;
 }
 
@@ -37,6 +42,32 @@ export function isRequestingAlltimeEmailStats( state, siteId, postId, statType )
 				false
 		  )
 		: false;
+}
+
+/**
+ * Returns true if we should show a loading indicator
+ * Returns false if we have data or if we are requesting data
+ *
+ * @param  {object}  state  Global state tree
+ * @param  {number}  siteId Site ID
+ * @param  {number}  postId Post Id
+ * @param  {number}  period The period (eg day, week, month, year)
+ * @param  {string}  statType The type of stat we are working with. For example: 'opens' for Email Open stats
+ * @param  {string}  date The date of the stat
+ * @param {string}   path The path of the stat
+ * @returns {boolean}        Whether email stat is being requested
+ */
+export function shouldShowLoadingIndicator( state, siteId, postId, period, statType, date, path ) {
+	const stats = get(
+		state.stats.emails.items,
+		[ siteId, postId, period, statType, date, path ],
+		null
+	);
+	// if we have redux stats ready return false
+	if ( stats ) {
+		return false;
+	}
+	return isRequestingPeriodEmailStats( state, siteId, postId, period, statType, date );
 }
 
 /**
@@ -125,14 +156,14 @@ export function getEmailStat( state, siteId, postId, period, statType ) {
  *
  * @param  {object}  state   Global state tree
  * @param  {number}  siteId  Site ID
- * @param  {number}  postId  Email Id
+ * @param  {number}  postId  Email
  * @param  {string} period   Period
+ * @param  {string} statType Stat typeId
  * @param  {string} date     Date
- * @param  {string} statType Stat type
  * @param {string} path      Path
  * @returns {*}              Normalized data
  */
-export function getEmailStatsNormalizedData( state, siteId, postId, period, date, statType, path ) {
+export function getEmailStatsNormalizedData( state, siteId, postId, period, statType, date, path ) {
 	return state.stats.emails.items
 		? get( state.stats.emails.items, [ siteId, postId, period, statType, date, path ], null )
 		: null;

@@ -2,7 +2,7 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Spinner } from '@automattic/components';
 import { Icon, people } from '@wordpress/icons';
 import { localize, translate } from 'i18n-calypso';
-import { flowRight } from 'lodash';
+import { find, flowRight } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { parse as parseQs, stringify as stringifyQs } from 'qs';
@@ -315,12 +315,19 @@ class StatsEmailOpenDetail extends Component {
 }
 
 const connectComponent = connect(
-	( state, { postId, period: { period } } ) => {
+	( state, { postId, period: { period, endOf } } ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
 			countViews: getEmailStat( state, siteId, postId, period, statType ),
-			isRequestingStats: isRequestingPeriodEmailStats( state, siteId, postId, period, statType ),
+			isRequestingStats: isRequestingPeriodEmailStats(
+				state,
+				siteId,
+				postId,
+				period,
+				statType,
+				endOf.format( 'YYYY-MM-DD' )
+			),
 			siteSlug: getSiteSlug( state, siteId ),
 			slug: getSelectedSiteSlug( state ),
 			post: getSitePost( state, siteId, postId ),
