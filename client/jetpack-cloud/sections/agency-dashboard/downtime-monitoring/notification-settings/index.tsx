@@ -100,14 +100,13 @@ export default function NotificationSettings( { onClose, sites, settings }: Prop
 	const addEmailsContent = enableEmailNotification && (
 		<div className="notification-settings__email-container">
 			<TokenField
+				isBorderless={ true }
 				tokenizeOnSpace
 				placeholder={ translate( 'Enter email addresses' ) }
 				value={ addedEmailAddresses }
 				onChange={ handleAddEmail }
+				disabled={ true }
 			/>
-			<div className="notification-settings__email-condition">
-				{ translate( 'Separate with commas or the Enter key.' ) }
-			</div>
 		</div>
 	);
 
@@ -184,7 +183,7 @@ export default function NotificationSettings( { onClose, sites, settings }: Prop
 						<div className="notification-settings__toggle-content">
 							<div className="notification-settings__content-heading">{ translate( 'Email' ) }</div>
 							<div className="notification-settings__content-sub-heading">
-								{ translate( 'Receive email notifications with one or more recipients.' ) }
+								{ translate( 'Receive email notifications with this email address.' ) }
 							</div>
 							{
 								// We are using CSS to hide/show add email content on mobile/large screen view instead of the breakpoint
