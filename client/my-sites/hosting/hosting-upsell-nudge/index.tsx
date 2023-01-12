@@ -1,3 +1,4 @@
+import { FEATURE_SFTP, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -28,6 +29,8 @@ export function HostingUpsellNudge( { siteId }: { siteId: number | null } ) {
 			event="calypso_hosting_configuration_upgrade_click"
 			href={ `/checkout/${ siteId }/business` }
 			callToAction={ translate( 'Upgrade to Business Plan' ) }
+			plan={ PLAN_BUSINESS }
+			feature={ FEATURE_SFTP }
 			showIcon={ true }
 			list={ features }
 			renderListItem={ ( { icon, title, description }: FeatureListItem ) => (
