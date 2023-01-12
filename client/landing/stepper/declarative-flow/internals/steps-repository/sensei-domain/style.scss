@@ -1,9 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
-
-$sensei-mobile-layout-width: 1200px;
-$sensei-color: #43af99;
+@import "../../../sensei-variables";
 
 .sensei.sensei-domain {
 	.step-container__content > div {

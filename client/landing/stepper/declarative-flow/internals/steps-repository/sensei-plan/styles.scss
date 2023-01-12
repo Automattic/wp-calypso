@@ -1,6 +1,5 @@
 @import "@automattic/onboarding/styles/mixins";
-
-$sensei-color: #43af99;
+@import "../../../sensei-variables";
 
 .sensei .progress-bar__progress {
 	background-color: $sensei-color;
