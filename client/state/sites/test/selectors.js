@@ -1,6 +1,5 @@
-import { WPCOM_FEATURES_WORDADS, PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_WORDADS } from '@automattic/calypso-products';
 import deepFreeze from 'deep-freeze';
-import moment from 'moment';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
 	canAccessWordAds,
@@ -45,9 +44,6 @@ import {
 	getCustomizerUrl,
 	getJetpackComputedAttributes,
 	getSiteComputedAttributes,
-	getECommerceTrialExpiration,
-	getECommerceTrialDaysLeft,
-	isECommerceTrialExpired,
 } from '../selectors';
 
 jest.mock( '@automattic/calypso-config', () => {
@@ -3644,174 +3640,6 @@ describe( 'selectors', () => {
 					createState( { created_at: '2020-01-01', jetpack: true, atomic: true } )
 				)
 			).toBe( true );
-		} );
-	} );
-
-	describe( 'getECommerceTrialExpiration()', () => {
-		test( 'Returns the expiracy date', () => {
-			const expiracyDate = '2022-02-10T00:00:00+00:00';
-
-			const plan = {
-				ID: 1,
-				productSlug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
-				blogId: siteId,
-				expiryDate: expiracyDate,
-				currentPlan: true,
-			};
-
-			const state = deepFreeze( {
-				...userState,
-				sites: {
-					plans: {
-						[ siteId ]: {
-							data: [ plan ],
-						},
-					},
-					items: {
-						[ siteId ]: {
-							URL: 'https://example.wordpress.com',
-						},
-					},
-				},
-				siteSettings: {
-					items: {},
-				},
-			} );
-
-			expect(
-				getECommerceTrialExpiration( state, siteId ).isSame( moment( expiracyDate ) )
-			).toBeTruthy();
-		} );
-
-		test( 'Returns null when the trial purchase is not present', () => {
-			const plan = {};
-
-			const state = deepFreeze( {
-				...userState,
-				sites: {
-					plans: {
-						[ siteId ]: {
-							data: [ plan ],
-						},
-					},
-					items: {
-						[ siteId ]: {
-							URL: 'https://example.wordpress.com',
-						},
-					},
-				},
-				siteSettings: {
-					items: {},
-				},
-			} );
-
-			expect( getECommerceTrialExpiration( state, siteId ) ).toBeNull();
-		} );
-	} );
-
-	describe( 'getECommerceTrialDaysLeft()', () => {
-		jest.useFakeTimers().setSystemTime( new Date( '2022-01-10T00:00:00+00:00' ) );
-
-		test( 'Should return the correct number of days left before the trial expires', () => {
-			const expiracyDate = '2022-02-10T00:00:00+00:00';
-
-			const plan = {
-				ID: 1,
-				productSlug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
-				blogId: siteId,
-				expiryDate: expiracyDate,
-				currentPlan: true,
-			};
-
-			const state = deepFreeze( {
-				...userState,
-				sites: {
-					plans: {
-						[ siteId ]: {
-							data: [ plan ],
-						},
-					},
-					items: {
-						[ siteId ]: {
-							URL: 'https://example.wordpress.com',
-						},
-					},
-				},
-				siteSettings: {
-					items: {},
-				},
-			} );
-
-			expect( getECommerceTrialDaysLeft( state, siteId ) ).toBe( 31 );
-		} );
-	} );
-
-	describe( 'isECommerceTrialExpired()', () => {
-		jest.useFakeTimers().setSystemTime( new Date( '2022-01-10T00:00:00+00:00' ) );
-
-		test( 'The trial period should be expired', () => {
-			const expiracyDate = '2022-01-09T00:00:00+00:00';
-
-			const plan = {
-				ID: 1,
-				productSlug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
-				blogId: siteId,
-				expiryDate: expiracyDate,
-				currentPlan: true,
-			};
-
-			const state = deepFreeze( {
-				...userState,
-				sites: {
-					plans: {
-						[ siteId ]: {
-							data: [ plan ],
-						},
-					},
-					items: {
-						[ siteId ]: {
-							URL: 'https://example.wordpress.com',
-						},
-					},
-				},
-				siteSettings: {
-					items: {},
-				},
-			} );
-
-			expect( isECommerceTrialExpired( state, siteId ) ).toBeTruthy();
-		} );
-
-		test( 'The trial period should not be expired if is the same day', () => {
-			const expiracyDate = '2022-01-10T23:59:59+00:00';
-			const plan = {
-				ID: 1,
-				productSlug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
-				blogId: siteId,
-				expiryDate: expiracyDate,
-				currentPlan: true,
-			};
-
-			const state = deepFreeze( {
-				...userState,
-				sites: {
-					plans: {
-						[ siteId ]: {
-							data: [ plan ],
-						},
-					},
-					items: {
-						[ siteId ]: {
-							URL: 'https://example.wordpress.com',
-						},
-					},
-				},
-				siteSettings: {
-					items: {},
-				},
-			} );
-
-			expect( isECommerceTrialExpired( state, siteId ) ).toBeFalsy();
 		} );
 	} );
 } );
