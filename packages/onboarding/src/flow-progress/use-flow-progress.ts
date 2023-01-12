@@ -72,6 +72,7 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		siteCreationStep: 1,
 		processing: 1,
 		automatedCopy: 3,
+		processingCopy: 3,
 	},
 };
 

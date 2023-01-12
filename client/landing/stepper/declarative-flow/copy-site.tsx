@@ -1,5 +1,5 @@
 import { useFlowProgress, COPY_SITE_FLOW } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -13,7 +13,6 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { useSiteSlug } from '../hooks/use-site-slug';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import AutomatedCopySite from './internals/steps-repository/automated-copy-site';
 import Intro from './internals/steps-repository/intro';
@@ -39,6 +38,7 @@ const copySite: Flow = {
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'automatedCopy', component: AutomatedCopySite },
+			{ slug: 'processingCopy', component: ProcessingStep },
 		];
 	},
 
@@ -46,10 +46,10 @@ const copySite: Flow = {
 		const flowName = this.name;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
-		const siteSlug = useSiteSlug();
 		const urlQueryParams = useQuery();
 
 		const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
+		const { getPlanCartItem } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 
 		setStepProgress( flowProgress );
 
@@ -57,6 +57,16 @@ const copySite: Flow = {
 			providedDependencies: ProvidedDependencies = {},
 			...params: string[]
 		) => {
+			// We need to do this here to avoid any race conditions
+			// due to dispatch and window.assign
+			const productSlug = urlQueryParams.get( 'productSlug' );
+			if ( productSlug && ! getPlanCartItem() ) {
+				const productToAdd = {
+					product_slug: productSlug,
+				};
+				setPlanCartItem( productToAdd );
+			}
+
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
 
 			switch ( _currentStepSlug ) {
@@ -70,25 +80,6 @@ const copySite: Flow = {
 				}
 
 				case 'processing': {
-					if ( providedDependencies?.finishedWaitingForAtomic ) {
-						return window.location.assign( `/home/${ siteSlug }` );
-					}
-					const processingResult = params[ 0 ] as ProcessingResult;
-
-					if ( processingResult === ProcessingResult.FAILURE ) {
-						return navigate( 'error' );
-					}
-
-					const productSlug = urlQueryParams.get( 'productSlug' );
-					if ( ! productSlug ) {
-						throw new Error( 'Plan product not found' );
-					}
-					const productToAdd = {
-						product_slug: productSlug,
-					};
-
-					setPlanCartItem( productToAdd );
-
 					const destination = addQueryArgs( `/setup/${ this.name }/automatedCopy`, {
 						sourceSlug: urlQueryParams.get( 'sourceSlug' ),
 						siteSlug: providedDependencies?.siteSlug,
@@ -105,11 +96,19 @@ const copySite: Flow = {
 				}
 
 				case 'automatedCopy': {
+					return navigate( 'processingCopy' );
+				}
+
+				case 'processingCopy': {
+					const processingResult = params[ 0 ] as ProcessingResult;
+
+					if ( processingResult === ProcessingResult.FAILURE ) {
+						// Create a retry step here.
+						return navigate( 'retry' );
+					}
 					clearSignupDestinationCookie();
 					return window.location.assign( `/home/${ providedDependencies?.siteSlug }` );
 				}
-				case 'waitForAtomic':
-					return navigate( 'processing' );
 			}
 			return providedDependencies;
 		};
@@ -119,13 +118,7 @@ const copySite: Flow = {
 		};
 
 		const goNext = () => {
-			switch ( _currentStepSlug ) {
-				case 'launchpad':
-					return window.location.assign( `/view/${ siteSlug }` );
-
-				default:
-					return navigate( 'intro' );
-			}
+			return;
 		};
 
 		const goToStep = ( step: string ) => {
