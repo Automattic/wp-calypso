@@ -186,8 +186,8 @@ export const getFilteredAndSortedPlugins = createSelector(
 
 		return sortBy( pluginList, ( plugin: Plugin ) => plugin.slug.toLowerCase() ) as Plugin[];
 	},
-	( state ) => [ getAllPluginsIndexedBySiteId( state ) ],
-	( state, siteIds, pluginFilter ) => {
+	( state: AppState ) => [ getAllPluginsIndexedBySiteId( state ) ],
+	( state: AppState, siteIds: number[], pluginFilter?: PluginFilter ) => {
 		return [ siteIds, pluginFilter ].flat().join( '-' );
 	}
 );
@@ -375,5 +375,5 @@ export const getPluginStatusesByType = createSelector(
 
 		return statuses;
 	},
-	( state ) => state.plugins.installed.status
+	( state: AppState ) => state.plugins.installed.status
 );
