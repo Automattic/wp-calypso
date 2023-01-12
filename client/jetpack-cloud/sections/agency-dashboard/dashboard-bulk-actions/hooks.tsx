@@ -117,7 +117,7 @@ export function useHandleResetNotification( selectedSites: Array< Site > ) {
 						}
 				  );
 
-		return dailogContent( heading, content, resetMonitorDuration );
+		return dialogContent( heading, content, resetMonitorDuration );
 	}, [ resetMonitorDuration, selectedSites, translate ] );
 
 	return handleResetNotification;
