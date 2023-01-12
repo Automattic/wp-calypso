@@ -1,5 +1,7 @@
 .masterbar__oauth-client {
 	background-color: var(--color-surface);
+	border: 1px solid var(--studio-gray-5);
+	height: unset;
 
 	nav {
 		display: flex;
@@ -26,14 +28,22 @@
 
 .masterbar__oauth-client-main-nav {
 	width: 100%;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
 }
 
 .masterbar__oauth-client-current {
 	float: left;
 }
 
-.masterbar__oauth-client-logo img {
-	max-height: 47px;
+.masterbar__oauth-client-logo {
+	padding: 14px 0;
+	line-height: normal;
+
+	img {
+		max-height: 47px;
+	}
 }
 
 .masterbar__oauth-client-wpcc-sign-in {
@@ -81,14 +91,15 @@
 		vertical-align: middle;
 	}
 }
-
+/*
 .dops {
 	.locale-suggestions {
 		margin-top: 0;
 	}
 }
+*/
 
-.crowdsignal {
+.layout__crowdsignal {
 	background: var(--color-surface);
 	color: var(--studio-gray-100);
 
@@ -428,7 +439,7 @@
 	}
 }
 
-.jetpack-cloud {
+.layout__jetpack-cloud {
 	background: var(--studio-gray-0);
 	min-height: 100%;
 
@@ -528,23 +539,6 @@
 			width: 100%;
 			z-index: 1;
 		}
-	}
-
-	.masterbar__oauth-client {
-		height: unset;
-		.masterbar__oauth-client-main-nav {
-			display: flex;
-			flex-direction: row;
-			justify-content: center;
-			.masterbar__oauth-client-logo {
-				padding: 14px 0;
-				line-height: normal;
-			}
-		}
-	}
-
-	.masterbar.masterbar__oauth-client {
-		border: 1px solid var(--studio-gray-5);
 	}
 
 	.signup__step.is-oauth-2-user {
@@ -697,18 +691,5 @@
 		&:focus {
 			color: var(--studio-jetpack-green-60);
 		}
-	}
-}
-
-// Adding some CSS to cover the --color-primary
-// background color in the signup flow for Akismet.
-.layout.dops.akismet {
-	background: var(--color-neutral-0);
-	min-height: 100%;
-
-	// When completing the Akismet signup flow
-	// ensure the text color is legible.
-	.signup-processing__content {
-		color: var(--color-text);
 	}
 }
