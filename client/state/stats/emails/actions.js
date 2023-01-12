@@ -21,16 +21,18 @@ import 'calypso/state/stats/init';
  * @param  {number} postId Email Id
  * @param  {string} period Unit for each element of the returned array (ie: 'year', 'month', ...)
  * @param  {string} statType The type of stat we are working with. For example: 'opens' for Email Open stats
+ * @param  {string?} date A date in YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss format
  * @param  {object}  stats  The received stats
  * @returns {object}        Action object
  */
-export function receiveEmailStats( siteId, postId, period, statType, stats ) {
+export function receiveEmailStats( siteId, postId, period, statType, date, stats ) {
 	return {
 		type: EMAIL_STATS_RECEIVE,
 		siteId,
 		postId,
 		period,
 		statType,
+		date,
 		stats,
 	};
 }
@@ -116,7 +118,7 @@ function requestEmailOpensStats( siteId, postId, period, date, quantity ) {
 						? emailOpenStatsPeriodTransform( stats, period )
 						: emailOpenStatsAlltimeTransform( stats );
 
-				dispatch( receiveEmailStats( siteId, postId, period, 'opens', emailStatsObject ) );
+				dispatch( receiveEmailStats( siteId, postId, period, 'opens', date, emailStatsObject ) );
 
 				dispatch( {
 					type: EMAIL_STATS_REQUEST_SUCCESS,

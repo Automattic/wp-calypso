@@ -17,48 +17,47 @@ import { items as itemSchemas } from './schema';
  */
 export const requests = ( state = {}, action ) => {
 	switch ( action.type ) {
-		case EMAIL_STATS_REQUEST: {
+		case EMAIL_STATS_REQUEST:
+		case EMAIL_STATS_RECEIVE:
+		case EMAIL_STATS_REQUEST_FAILURE:
+			// eslint-disable-next-line no-case-declarations
 			const { siteId, postId, period, statType, date } = action;
+			// eslint-disable-next-line no-case-declarations
+			const status = ( () => {
+				switch ( action.type ) {
+					case EMAIL_STATS_REQUEST:
+						return { requesting: true, status: 'pending' };
+					case EMAIL_STATS_RECEIVE:
+						return { requesting: false, status: 'success' };
+					case EMAIL_STATS_REQUEST_FAILURE:
+						return { requesting: true, status: 'error' };
+				}
+			} )();
+
+			// don't set data key when period is alltime
+			if ( period === 'alltime' ) {
+				return merge( {}, state, {
+					[ siteId ]: {
+						[ postId ]: {
+							[ period ]: {
+								[ statType ]: status,
+							},
+						},
+					},
+				} );
+			}
+
 			return merge( {}, state, {
 				[ siteId ]: {
 					[ postId ]: {
 						[ period ]: {
 							[ statType ]: {
-								[ date ]: { requesting: true, status: 'pending' },
+								[ date ]: status,
 							},
 						},
 					},
 				},
 			} );
-		}
-		case EMAIL_STATS_RECEIVE: {
-			const { siteId, postId, period, statType, date } = action;
-			return merge( {}, state, {
-				[ siteId ]: {
-					[ postId ]: {
-						[ period ]: {
-							[ statType ]: {
-								[ date ]: { requesting: false, status: 'success' },
-							},
-						},
-					},
-				},
-			} );
-		}
-		case EMAIL_STATS_REQUEST_FAILURE: {
-			const { siteId, postId, period, statType, date } = action;
-			return merge( {}, state, {
-				[ siteId ]: {
-					[ postId ]: {
-						[ period ]: {
-							[ statType ]: {
-								[ date ]: { requesting: false, status: 'error' },
-							},
-						},
-					},
-				},
-			} );
-		}
 	}
 
 	return state;
