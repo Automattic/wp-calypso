@@ -4,15 +4,15 @@ export type CharacterPoolOptions = {
 	 */
 	length: number;
 	/**
-	 * Use digits 0-9 in character pool
+	 * Use digits 0-9 in the character pool
 	 */
 	useNumbers: boolean;
 	/**
-	 * Use characters !@#$%^&*() in character pool
+	 * Use characters !@#$%^&*() in the character pool
 	 */
 	useSpecialChars: boolean;
 	/**
-	 * Use characters -_ []{}<>~`+=,.;:/?| in character pool
+	 * Use characters -_ []{}<>~`+=,.;:/?| in the character pool
 	 */
 	useExtraSpecialChars: boolean;
 };
