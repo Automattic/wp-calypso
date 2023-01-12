@@ -1,5 +1,7 @@
 .masterbar__oauth-client {
 	background-color: var(--color-surface);
+	border: 1px solid var(--studio-gray-5);
+	height: unset;
 
 	nav {
 		display: flex;
@@ -26,14 +28,22 @@
 
 .masterbar__oauth-client-main-nav {
 	width: 100%;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
 }
 
 .masterbar__oauth-client-current {
 	float: left;
 }
 
-.masterbar__oauth-client-logo img {
-	max-height: 47px;
+.masterbar__oauth-client-logo {
+	padding: 14px 0;
+	line-height: normal;
+
+	img {
+		max-height: 47px;
+	}
 }
 
 .masterbar__oauth-client-wpcc-sign-in {
@@ -528,23 +538,6 @@
 			width: 100%;
 			z-index: 1;
 		}
-	}
-
-	.masterbar__oauth-client {
-		height: unset;
-		.masterbar__oauth-client-main-nav {
-			display: flex;
-			flex-direction: row;
-			justify-content: center;
-			.masterbar__oauth-client-logo {
-				padding: 14px 0;
-				line-height: normal;
-			}
-		}
-	}
-
-	.masterbar.masterbar__oauth-client {
-		border: 1px solid var(--studio-gray-5);
 	}
 
 	.signup__step.is-oauth-2-user {
