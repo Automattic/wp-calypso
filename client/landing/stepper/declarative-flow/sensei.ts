@@ -13,7 +13,7 @@ import SenseiLaunch from './internals/steps-repository/sensei-launch';
 import SenseiPlan from './internals/steps-repository/sensei-plan';
 import SenseiSetup from './internals/steps-repository/sensei-setup';
 import { AssertConditionState, Flow } from './internals/types';
-import './internals/sensei.scss';
+import './sensei.scss';
 
 const sensei: Flow = {
 	name: SENSEI_FLOW,
