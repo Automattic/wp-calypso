@@ -62,6 +62,7 @@ export interface Purchase {
 	regularPriceText: string;
 	renewDate: string;
 	saleAmount?: number;
+	saleAmountInteger?: number;
 	siteId: number;
 	siteName: string;
 	subscribedDate: string;
@@ -157,6 +158,7 @@ export interface RawPurchase {
 	regular_price_text: string;
 	renew_date: string;
 	sale_amount: number | undefined;
+	sale_amount_integer: number | undefined;
 	blog_id: number | string;
 	blogname: string;
 	subscribed_date: string;

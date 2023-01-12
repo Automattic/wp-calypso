@@ -99,6 +99,7 @@ function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditCard ): 
 		regularPriceText: purchase.regular_price_text,
 		renewDate: purchase.renew_date,
 		saleAmount: purchase.sale_amount,
+		saleAmountInteger: purchase.sale_amount_integer,
 		siteId: Number( purchase.blog_id ),
 		siteName: purchase.blogname,
 		subscribedDate: purchase.subscribed_date,
