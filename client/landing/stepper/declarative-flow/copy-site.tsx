@@ -51,6 +51,16 @@ const copySite: Flow = {
 
 		const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
 
+		// We need to do this here to avoid any race conditions
+		// due to dispatch adn window.assign
+		const productSlug = urlQueryParams.get( 'productSlug' );
+		if ( productSlug ) {
+			const productToAdd = {
+				product_slug: productSlug,
+			};
+			setPlanCartItem( productToAdd );
+		}
+
 		setStepProgress( flowProgress );
 
 		const submit = async (
@@ -78,16 +88,6 @@ const copySite: Flow = {
 					if ( processingResult === ProcessingResult.FAILURE ) {
 						return navigate( 'error' );
 					}
-
-					const productSlug = urlQueryParams.get( 'productSlug' );
-					if ( ! productSlug ) {
-						throw new Error( 'Plan product not found' );
-					}
-					const productToAdd = {
-						product_slug: productSlug,
-					};
-
-					setPlanCartItem( productToAdd );
 
 					const destination = addQueryArgs( `/setup/${ this.name }/automatedCopy`, {
 						sourceSlug: urlQueryParams.get( 'sourceSlug' ),
