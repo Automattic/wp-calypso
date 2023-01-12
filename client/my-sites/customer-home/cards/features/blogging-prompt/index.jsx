@@ -13,6 +13,7 @@ import { getEditorUrl } from 'calypso/state/selectors/get-editor-url';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import BellOffIcon from './bell-off-icon';
 import LightbulbIcon from './lightbulb-icon';
+import { PromptsNavigation } from './prompts-navigation';
 
 import './style.scss';
 
@@ -57,7 +58,9 @@ const BloggingPromptCard = () => {
 			<Card className={ classnames( 'customer-home__card', 'blogging-prompt__card' ) }>
 				<CardHeading>
 					<LightbulbIcon />
-					<span className="blogging-prompt__heading-text">{ translate( 'Daily Prompt' ) }</span>
+					<span className="blogging-prompt__heading-text">
+						{ translate( 'Daily writing prompt' ) }
+					</span>
 					{ /* `key` is necessary due to behavior of preventWidows function in CardHeading component. */ }
 					<EllipsisMenu
 						className="blogging-prompt__menu"
@@ -74,7 +77,19 @@ const BloggingPromptCard = () => {
 						</Button>
 					</EllipsisMenu>
 				</CardHeading>
+				<PromptsNavigation
+					direction="back"
+					flowName="writing-prompt-back"
+					stepName={ prompt.id.toString() }
+					translate={ translate }
+				/>
 				<div className="blogging-prompt__prompt-text">{ prompt.text }</div>
+				<PromptsNavigation
+					direction="forward"
+					flowName="writing-prompt-forward"
+					stepName={ prompt.id.toString() }
+					translate={ translate }
+				/>
 				<Button href={ newPostLink } onClick={ trackBloggingPromptClick } target="_blank">
 					{ translate( 'Post Answer', {
 						comment:
