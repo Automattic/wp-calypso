@@ -1,26 +1,29 @@
+import { applyTestFiltersToPlansList } from '@automattic/calypso-products';
+import type { PricedAPIPlan } from '@automattic/data-stores';
+
 export type PlanProperties = {
 	cartItemForPlan: {
 		product_slug: string;
 	} | null;
 	currencyCode: string | null;
 	discountPrice: number | null;
-	features: any;
-	jpFeatures: any;
+	features: PlanFeature[];
+	jpFeatures: PlanFeature[];
 	isLandingPage?: boolean;
 	isPlaceholder?: boolean;
-	planConstantObj: any;
+	planConstantObj: ReturnType< typeof applyTestFiltersToPlansList >;
 	planName: string;
-	planObject: any;
+	planObject: PricedAPIPlan | undefined;
 	product_name_short: string;
 	hideMonthly?: boolean;
 	rawPrice: number | null;
 	rawPriceAnnual: number | null;
 	rawPriceForMonthlyPlan: number | null;
-	relatedMonthlyPlan: any;
+	relatedMonthlyPlan: null | PricedAPIPlan | undefined;
 	annualPricePerMonth: number | null;
 	isMonthlyPlan: boolean;
 	tagline: string;
-	storageOptions: any;
+	storageOptions: string[];
 };
 
 export interface PlanFeature {

@@ -92,8 +92,6 @@ type PlanFeatures2023GridConnectedProps = {
 	translate: LocalizeProps[ 'translate' ];
 	recordTracksEvent: ( slug: string ) => void;
 	planProperties: Array< PlanProperties >;
-	planName: string;
-	tagline: string;
 };
 
 type PlanFeatures2023GridType = PlanFeatures2023GridProps &
