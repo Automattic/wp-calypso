@@ -1,6 +1,14 @@
 /**
- * Build single language file for each language to the `dist/languages` folder.
+ * Build a single language file for each language to `dist/languages` folder.
+ *
+ * The script,
+ * - Depends on `CALYPSO_STRINGS` and `CHUNKS_MAP_PATTERN`
+ * - Pulls full translations from `https://widgets.wp.com/languages/calypso`
+ * - Merges all referenced strings together
+ * - Picks only the necessary translations from the full translations files
+ * - Creates the target language files in `dist/languages` for Odyssey
  */
+
 const fs = require( 'fs' );
 const { writeFile } = require( 'fs' ).promises;
 const languages = require( '@automattic/languages' );
