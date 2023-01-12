@@ -4,38 +4,29 @@ $break-large-stats-countries: 1280px;
 
 // Countries
 .stats__module-list--traffic {
-	.stats__module-wrapper--countryviews .stats-module,
-	.list-countryviews {
-		gap: 0 24px;
-		grid-template-columns: 7fr 5fr;
-		grid-template-areas:
-			"map list"
-			"more more";
-
-		// only applies this statement if there's data to show
-		&:has(.stats-card--hero .stats-geochart:not(.has-no-data)) {
-			display: grid;
+	@media ( min-width: $break-large-stats-countries ) {
+		.stats__module-wrapper--countryviews .stats-module,
+		.list-countryviews {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
 		}
 
-		@media ( max-width: $break-large-stats-countries ) {
-			grid-template-columns: 100%;
-			grid-template-areas:
-				"map"
-				"list"
-				"more";
-		}
-	}
+		.list-countryviews {
+			.stats-card--hero {
+				grid-area: map;
+				padding-bottom: 0;
 
-	.list-countryviews {
-		.stats-card--hero {
-			grid-area: map;
-			padding-bottom: 0;
-		}
-		.stats-card--header-and-body {
-			grid-area: list;
-		}
-		.stats-card--footer {
-			grid-area: more;
+				.stats-geochart.stats-module__placeholder {
+					min-width: 550px;
+				}
+			}
+			.stats-card--header-and-body {
+				flex: 1;
+			}
+			.stats-card--footer {
+				flex-basis: 100%;
+			}
 		}
 	}
 
