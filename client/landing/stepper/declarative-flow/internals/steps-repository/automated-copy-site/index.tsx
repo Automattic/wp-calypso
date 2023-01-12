@@ -56,9 +56,10 @@ const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 	const urlQueryParams = useQuery();
 	const siteSlug = urlQueryParams.get( 'siteSlug' );
 	const sourceSlug = urlQueryParams.get( 'sourceSlug' );
-	const sourceSiteId = useSelect(
-		( select ) => sourceSlug && select( SITE_STORE ).getSiteIdBySlug( sourceSlug )
+	const sourceSite = useSelect(
+		( select ) => sourceSlug && select( SITE_STORE ).getSite( sourceSlug )
 	);
+	const sourceSiteId = sourceSite?.ID;
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
 	const { getSiteLatestAtomicTransfer, getSiteLatestAtomicTransferError } = useSelect( ( select ) =>
 		select( SITE_STORE )
