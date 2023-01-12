@@ -1,4 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import { get, includes, reject } from 'lodash';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -110,7 +110,7 @@ function getThankYouNoSiteDestination() {
 function getChecklistThemeDestination( { siteSlug, themeParameter } ) {
 	if (
 		themeParameter === 'blank-canvas-3' &&
-		isEnabled( 'pattern-assembler/logged-out-showcase' )
+		config.isEnabled( 'pattern-assembler/logged-out-showcase' )
 	) {
 		return `/setup/site-setup/patternAssembler?siteSlug=${ siteSlug }`;
 	}
