@@ -8,8 +8,10 @@ const fetch = require( 'node-fetch' );
 
 const LANGUAGES_BASE_URL = 'https://widgets.wp.com/languages/calypso';
 const LANGUAGES_REVISIONS_FILENAME = 'lang-revisions.json';
-const CALYPSO_STRINGS = './dist/odyssey-strings.pot';
 const TEMP_PATH = './dist/temp-languages';
+const CALYPSO_STRINGS = './dist/odyssey-strings.pot';
+const CHUNKS_MAP_PATTERN = './dist/chunks-map.json';
+const STRINGS_PATH = './dist/strings';
 const OUTPUT_PATH = './dist/languages';
 const langSlugs = languages.default.map( ( { langSlug } ) => langSlug );
 
@@ -21,6 +23,23 @@ const THOUSANDS_SEPARATOR_TRANSLATION = 'number_format_thousands_sep';
 // Create languages directory
 function createLanguagesDir() {
 	return mkdirp.sync( TEMP_PATH ) && mkdirp.sync( OUTPUT_PATH );
+}
+// Get module reference
+function getModuleReference( module ) {
+	// Rewrite module from `packages/` to match references in POT
+	if ( module.indexOf( 'packages/' ) === 0 ) {
+		return module.replace( '/dist/esm/', '/src/' ).replace( /\.\w+/, '' );
+	}
+
+	return module;
+}
+
+function cleanUp() {
+	console.log( `Cleaning up...` );
+	fs.rmSync( TEMP_PATH, { recursive: true, force: true } );
+	fs.rmSync( STRINGS_PATH, { recursive: true, force: true } );
+	fs.unlinkSync( CHUNKS_MAP_PATTERN );
+	fs.unlinkSync( CALYPSO_STRINGS );
 }
 
 // Download languages revisions
@@ -105,16 +124,66 @@ function buildLanguages( downloadedLanguages, languageRevisions ) {
 			{}
 		);
 
+		const translationsByRef = Object.keys( translationsFlatten ).reduce( ( acc, key ) => {
+			const originalRef = translationsFlatten[ key ].comments.reference;
+
+			if ( ! originalRef ) {
+				return acc;
+			}
+
+			const refs = originalRef.split( '\n' ).map( ( ref ) => ref.replace( /:\d+/, '' ) );
+
+			refs.forEach( ( ref ) => {
+				if ( typeof acc[ ref ] === 'undefined' ) {
+					acc[ ref ] = [];
+				}
+
+				acc[ ref ].push( key );
+			} );
+			return acc;
+		}, {} );
+
+		// CHUNKS_MAP_PATTERN is relative to the project root, while require is relative to current dir. Hence the `../`
+		const chunksMap = require( '../' + CHUNKS_MAP_PATTERN );
+
+		// merge all source references into the main `build.min.js` chunk
+		const merged = Object.keys( chunksMap ).reduce( ( acc, key ) => {
+			acc[ 'build.min.js' ] = ( acc[ 'build.min.js' ] || [] ).concat(
+				// filepaths need to be relative to the root of the project
+				chunksMap[ key ].map( ( filepath ) => filepath.replace( /^\.\.\/\.\.\//, '' ) )
+			);
+
+			return acc;
+		}, {} );
+
+		const chunks = _.mapValues( merged, ( modules ) => {
+			const strings = new Set();
+
+			modules.forEach( ( modulePath ) => {
+				modulePath = getModuleReference( modulePath );
+				const key = /\.\w+/.test( modulePath )
+					? modulePath
+					: Object.keys( translationsByRef ).find( ( ref ) => ref.indexOf( modulePath ) === 0 );
+
+				if ( ! key ) {
+					return;
+				}
+
+				const stringsFromModule = translationsByRef[ key ] || [];
+				stringsFromModule.forEach( ( string ) => strings.add( string ) );
+			} );
+
+			return [ ...strings ];
+		} );
+
 		const languageRevisionsHashes = {};
 		successfullyDownloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
-			const odysseyLanguageTranslations = _.pick(
-				languageTranslations,
-				Object.keys( translationsFlatten )
-			);
+			const odysseyLanguageTranslations = _.pick( languageTranslations, chunks[ 'build.min.js' ] );
 			odysseyLanguageTranslations[ DECIMAL_POINT_KEY ] =
 				languageTranslations[ DECIMAL_POINT_TRANSLATION ];
 			odysseyLanguageTranslations[ THOUSANDS_SEPARATOR_KEY ] =
 				languageTranslations[ THOUSANDS_SEPARATOR_TRANSLATION ];
+			odysseyLanguageTranslations[ '' ] = languageTranslations[ '' ];
 
 			const output = `${ OUTPUT_PATH }/${ langSlug }-v1.1.json`;
 			console.log( `Writing ${ output }...` );
@@ -131,8 +200,9 @@ function buildLanguages( downloadedLanguages, languageRevisions ) {
 			} )
 		);
 
-		console.log( `Removing temp path ${ TEMP_PATH }...` );
-		fs.rmSync( TEMP_PATH, { recursive: true, force: true } );
+		cleanUp();
+	} else {
+		console.error( `${ CALYPSO_STRINGS } is missing` );
 	}
 
 	console.log( 'Building language completed.' );
