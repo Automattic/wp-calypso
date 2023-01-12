@@ -191,13 +191,9 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 		return null;
 	}
 
-	const planId = plan.product_id;
-	const billingPeriod = plan.billing_period || 'ANNUALLY';
-
 	const copySiteHref = addQueryArgs( `/setup/copy-site`, {
-		billingPeriod,
-		planId,
-		sourceSite: site.ID,
+		productSlug: plan.product_slug,
+		sourceSlug: site.slug,
 		sourceUrl: site.URL,
 	} );
 	return (
