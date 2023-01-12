@@ -237,9 +237,15 @@ export function getPluginOnSite( state: AppState, siteId: number, pluginSlug: st
 	const plugin = getAllPluginsIndexedByPluginSlug( state )[ pluginSlug ];
 
 	return plugin && plugin.sites[ siteId ]
-		? // Because this is a plugin for a single site context omit the "sites"
-		  // property and move the site specific properties onto the main object.
-		  { ...omit( plugin, [ 'sites' ] ), ...plugin.sites[ siteId ] }
+		? // Because this is a plugin for a single site context only the data for the selected
+		  // site is included. When I changed this file to TypeScript I found that some code
+		  // assumes it will be on the plugin object, while other code assumes it will be on the
+		  // sites object, so I included both.
+		  {
+				...omit( plugin, [ 'sites' ] ),
+				...plugin.sites[ siteId ],
+				...{ sites: { [ siteId ]: plugin.sites[ siteId ] } },
+		  }
 		: undefined;
 }
 
