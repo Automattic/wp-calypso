@@ -59,6 +59,7 @@ export interface PricedAPIPlan {
 	product_name_short: string;
 	bill_period: -1 | 31 | 365;
 	raw_price: number;
+	orig_cost?: number | null;
 	currency_code: string;
 }
 export interface PricedAPIPlanFree extends PricedAPIPlan {
