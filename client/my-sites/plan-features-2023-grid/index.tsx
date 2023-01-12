@@ -56,6 +56,7 @@ import { PlanFeaturesItem } from './item';
 import { PlanComparison2023Grid } from './plan-comparison-grid';
 import { PlanProperties } from './types';
 import { getStorageStringFromFeature } from './util';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 import './style.scss';
 
@@ -73,21 +74,29 @@ const Container = ( props: any ): any => {
 	);
 };
 
-type PlanFeatures2023GridType = {
-	isInSignup: boolean;
-	isLaunchPage: boolean;
-	isReskinned: boolean;
-	is2023OnboardingPricingGrid: boolean;
-	translate: LocalizeProps[ 'translate' ];
-	recordTracksEvent: ( slug: string ) => void;
-	onUpgradeClick: ( cartItem: any ) => void;
-	// either you specify the plans prop or isPlaceholder prop
+type PlanFeatures2023GridProps = {
+	isInSignup?: boolean;
+	isLaunchPage?: boolean;
+	isReskinned?: boolean;
+	is2023OnboardingPricingGrid?: boolean;
+	onUpgradeClick: ( cartItem: MinimalRequestCartProduct ) => void;
 	plans: Array< string >;
 	visiblePlans: Array< string >;
-	planProperties: Array< PlanProperties >;
 	flowName: string;
 	domainName: string;
+	placeholder?: boolean;
+	isLandingPage?: boolean;
 };
+
+type PlanFeatures2023GridConnectedProps = {
+	translate: LocalizeProps[ 'translate' ];
+	recordTracksEvent: ( slug: string ) => void;
+	planProperties: Array< PlanProperties >;
+};
+
+type PlanFeatures2023GridType = PlanFeatures2023GridProps &
+	PlanFeatures2023GridConnectedProps & { children?: React.ReactNode };
+
 export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > {
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
@@ -177,7 +186,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 
 	renderMobileView() {
 		const { planProperties, translate } = this.props;
-		const CardContainer = ( props: any ) => {
+		const CardContainer = ( props: PlanFeatures2023GridType ) => {
 			const { children, planName, ...otherProps } = props;
 			return isWpcomEnterpriseGridPlan( planName ) ? (
 				<div { ...otherProps }>{ children }</div>
@@ -449,7 +458,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 		options?: PlanRowOptions
 	) {
 		const { translate } = this.props;
-		let previousPlanShortNameFromProperties: any;
+		let previousPlanShortNameFromProperties: string;
 
 		return planPropertiesObj.map( ( properties: PlanProperties ) => {
 			const { planName, product_name_short } = properties;
@@ -554,12 +563,12 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 export default connect(
-	( state, ownProps: any ) => {
+	( state, ownProps: PlanFeatures2023GridProps ) => {
 		const { placeholder, plans, isLandingPage, visiblePlans } = ownProps;
 
 		let planProperties: PlanProperties[] = plans.map( ( plan: string ) => {
 			let isPlaceholder = false;
-			const planConstantObj: any = applyTestFiltersToPlansList( plan, undefined );
+			const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
 			const planProductId = planConstantObj.getProductId();
 			const planObject = getPlan( state, planProductId );
 			const isMonthlyPlan = isMonthly( plan );
@@ -609,7 +618,7 @@ export default connect(
 			const rawPriceForMonthlyPlan = getPlanRawPrice( state, monthlyPlanProductId ?? 0, true );
 			const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
 			if ( annualPlansOnlyFeatures.length > 0 ) {
-				planFeatures = planFeatures.map( ( feature: any ) => {
+				planFeatures = planFeatures.map( ( feature ) => {
 					const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes( feature.getSlug() );
 
 					return {
@@ -620,7 +629,7 @@ export default connect(
 				} );
 			}
 
-			jetpackFeatures = jetpackFeatures.map( ( feature: any ) => {
+			jetpackFeatures = jetpackFeatures.map( ( feature ) => {
 				const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes( feature.getSlug() );
 
 				return {
