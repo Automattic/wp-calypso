@@ -563,7 +563,7 @@ export function applyTestFiltersToPlansList(
 	planName: string | Plan,
 	abtest: string | undefined,
 	extraArgs: Record< string, string | boolean[] > = {}
-): Plan & Pick< WPComPlan, 'getPlanCompareFeatures' > {
+): Plan & Pick< WPComPlan, 'getPlanCompareFeatures' | 'getAnnualPlansOnlyFeatures' > {
 	const plan = getPlan( planName );
 	if ( ! plan ) {
 		throw new Error( `Unknown plan: ${ planName }` );
