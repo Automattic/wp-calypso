@@ -701,7 +701,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'isSiteOnECommerceTrial()', () => {
+	describe( '#isSiteOnECommerceTrial()', () => {
 		const siteId = 1337;
 		test( 'Should return true when the e-commerce trial is in the purchases list', () => {
 			const plan = {
