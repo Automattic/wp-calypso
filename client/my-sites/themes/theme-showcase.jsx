@@ -153,8 +153,6 @@ class ThemeShowcase extends Component {
 	};
 
 	getStaticFilters = () => {
-		// As the values of these filter is static and won't be changed, we use it to check a filter
-		// is a static filter directly in the `isStaticFilter` function.
 		return {
 			MYTHEMES: {
 				key: 'my-themes',
