@@ -1,3 +1,6 @@
+/**
+ * Build single language file for each language to the `dist/languages` folder.
+ */
 const fs = require( 'fs' );
 const { writeFile } = require( 'fs' ).promises;
 const languages = require( '@automattic/languages' );
@@ -146,7 +149,7 @@ function buildLanguages( downloadedLanguages, languageRevisions ) {
 		// CHUNKS_MAP_PATTERN is relative to the project root, while require is relative to current dir. Hence the `../`
 		const chunksMap = require( '../' + CHUNKS_MAP_PATTERN );
 
-		// merge all source references into the main `build.min.js` chunk
+		// Merge all source references into the main `build.min.js` chunk
 		const merged = Object.keys( chunksMap ).reduce( ( acc, key ) => {
 			acc[ 'build.min.js' ] = ( acc[ 'build.min.js' ] || [] ).concat(
 				// filepaths need to be relative to the root of the project
