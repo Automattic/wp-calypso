@@ -94,10 +94,15 @@ export default function useAddProductsFromUrl( {
 		if ( couponCodeFromUrl ) {
 			cartPromises.push( applyCoupon( couponCodeFromUrl ) );
 		}
-		Promise.allSettled( cartPromises ).then( () => {
-			debug( 'initial cart requests have completed' );
-			isMounted.current && setIsLoading( false );
-		} );
+		Promise.allSettled( cartPromises )
+			.then( () => {
+				debug( 'initial cart requests have completed' );
+				isMounted.current && setIsLoading( false );
+			} )
+			.catch( () => {
+				debug( 'initial cart requests have failed' );
+				isMounted.current && setIsLoading( false );
+			} );
 		hasRequestedInitialProducts.current = true;
 	}, [
 		isLoading,

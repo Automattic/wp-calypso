@@ -284,6 +284,16 @@ class StatsSite extends Component {
 					</>
 
 					<div className="stats__module-list stats__module-list--traffic is-events stats__module--unified">
+						{ config.isEnabled( 'newsletter/stats' ) && (
+							<StatsModule
+								path="emails-open"
+								moduleStrings={ moduleStrings.emailsOpenStats }
+								period={ this.props.period }
+								query={ query }
+								statType="statsEmailsOpen"
+								hideSummaryLink
+							/>
+						) }
 						<StatsModule
 							path="posts"
 							moduleStrings={ moduleStrings.posts }
@@ -291,7 +301,6 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsTopPosts"
 							showSummaryLink
-							showNewModules
 						/>
 						<StatsModule
 							path="referrers"
@@ -300,7 +309,6 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsReferrers"
 							showSummaryLink
-							showNewModules
 						/>
 
 						<Countries
@@ -308,7 +316,6 @@ class StatsSite extends Component {
 							period={ this.props.period }
 							query={ query }
 							summary={ false }
-							showNewModules
 						/>
 
 						<StatsModule
@@ -319,7 +326,6 @@ class StatsSite extends Component {
 							statType="statsTopAuthors"
 							className="stats__author-views"
 							showSummaryLink
-							showNewModules
 						/>
 						<StatsModule
 							path="searchterms"
@@ -328,7 +334,6 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsSearchTerms"
 							showSummaryLink
-							showNewModules
 						/>
 
 						<StatsModule
@@ -338,7 +343,6 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsClicks"
 							showSummaryLink
-							showNewModules
 						/>
 						<StatsModule
 							path="videoplays"
@@ -347,7 +351,6 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsVideoPlays"
 							showSummaryLink
-							showNewModules
 						/>
 						{
 							// File downloads are not yet supported in Jetpack Stats
@@ -361,13 +364,17 @@ class StatsSite extends Component {
 									statType="statsFileDownloads"
 									showSummaryLink
 									useShortLabel={ true }
-									showNewModules
 								/>
 							)
 						}
 					</div>
 				</div>
-				<PromoCards isJetpack={ isJetpack } isOdysseyStats={ isOdysseyStats } slug={ slug } />
+				<PromoCards
+					isJetpack={ isJetpack }
+					isOdysseyStats={ isOdysseyStats }
+					pageSlug="traffic"
+					slug={ slug }
+				/>
 				<JetpackColophon />
 			</div>
 		);
@@ -400,11 +407,8 @@ class StatsSite extends Component {
 		// Necessary to properly configure the fixed navigation headers.
 		sessionStorage.setItem( 'jp-stats-last-tab', 'traffic' );
 
-		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
-		const mainWrapperClass = classNames( { 'stats--new-wrapper': isNewMainChart } );
-
 		return (
-			<Main className={ mainWrapperClass } fullWidthLayout>
+			<Main fullWidthLayout>
 				{ /* Odyssey: Google My Business pages are currently unsupported. */ }
 				{ ! isOdysseyStats && (
 					<>

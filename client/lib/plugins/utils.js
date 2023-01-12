@@ -240,7 +240,8 @@ export function normalizePluginData( plugin, pluginData ) {
 						item[ '2x' ] ||
 						item[ '1x' ] ||
 						item.svg ||
-						item.default;
+						item.default ||
+						item;
 				}
 				break;
 			case 'homepage':

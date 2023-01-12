@@ -18,13 +18,12 @@ jest.mock( 'calypso/lib/analytics/page-view-tracker', () =>
 jest.mock( 'calypso/my-sites/themes/theme-preview', () =>
 	require( 'calypso/components/empty-component' )
 );
-jest.mock( 'calypso/my-sites/themes/themes-magic-search-card', () =>
-	require( 'calypso/components/empty-component' )
-);
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useSelector: () => false,
 } ) );
+
+window.IntersectionObserver = jest.fn( () => ( { observe: jest.fn(), disconnect: jest.fn() } ) );
 
 const themes = [
 	{

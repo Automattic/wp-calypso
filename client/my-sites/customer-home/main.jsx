@@ -1,3 +1,4 @@
+import { isEcommerce, isFreePlanProduct } from '@automattic/calypso-products/src';
 import { Button } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -18,6 +19,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
+import WooCommerceHomePlaceholder from 'calypso/my-sites/customer-home/wc-home-placeholder';
 import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
@@ -25,7 +27,7 @@ import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import {
 	canCurrentUserUseCustomerHome,
-	getSitePlanSlug,
+	getSitePlan,
 	getSiteOption,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -37,7 +39,7 @@ const Home = ( {
 	site,
 	siteId,
 	trackViewSiteAction,
-	sitePlanSlug,
+	sitePlan,
 	isNew7DUser,
 } ) => {
 	const translate = useTranslate();
@@ -46,7 +48,7 @@ const Home = ( {
 
 	const detectedCountryCode = useSelector( getCurrentUserCountryCode );
 	useEffect( () => {
-		if ( 'free_plan' !== sitePlanSlug ) {
+		if ( ! isFreePlanProduct( sitePlan ) ) {
 			return;
 		}
 
@@ -63,7 +65,7 @@ const Home = ( {
 		if ( window && window.hj ) {
 			window.hj( 'trigger', 'pnp_survey_1' );
 		}
-	}, [ detectedCountryCode, sitePlanSlug, isNew7DUser ] );
+	}, [ detectedCountryCode, sitePlan, isNew7DUser ] );
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
@@ -73,6 +75,12 @@ const Home = ( {
 				illustration="/calypso/images/illustrations/error.svg"
 			/>
 		);
+	}
+
+	// Ecommerce Plan's Home redirects to WooCommerce Home, so we show a placeholder
+	// while doing the redirection.
+	if ( isEcommerce( sitePlan ) ) {
+		return <WooCommerceHomePlaceholder />;
 	}
 
 	const header = (
@@ -147,7 +155,7 @@ const mapStateToProps = ( state ) => {
 
 	return {
 		site: getSelectedSite( state ),
-		sitePlanSlug: getSitePlanSlug( state, siteId ),
+		sitePlan: getSitePlan( state, siteId ),
 		siteId,
 		isNew7DUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),

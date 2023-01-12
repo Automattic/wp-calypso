@@ -230,7 +230,6 @@ export function deleteSite( siteId ) {
 					);
 					return;
 				}
-
 				dispatch( errorNotice( error.message, siteDeletionNoticeOptions ) );
 			} );
 	};

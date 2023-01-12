@@ -2,13 +2,12 @@ import {
 	HorizontalBarList,
 	HorizontalBarListItem,
 	StatsCard,
-	// eslint-disable-next-line import/named
 	StatsCardAvatar,
 } from '@automattic/components';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import titlecase from 'to-title-case';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import OpenLink from './action-link';
@@ -29,6 +28,7 @@ const StatsListCard = ( {
 	const translate = useTranslate();
 	const moduleNameTitle = titlecase( moduleType );
 	const debug = debugFactory( `calypso:stats:list:${ moduleType }` );
+	const [ visibleRightItemKey, setVisibleRightItemKey ] = useState( undefined );
 
 	const localClickHandler = ( event, listItemData ) => {
 		debug( 'clickHandler' );
@@ -44,11 +44,30 @@ const StatsListCard = ( {
 		}
 	};
 
-	const outputRightItem = ( item, index ) => {
+	const toggleMobileMenu = useCallback( ( event, isVisible, key ) => {
+		event.stopPropagation();
+		event.preventDefault();
+
+		if ( isVisible ) {
+			setVisibleRightItemKey( undefined );
+		} else {
+			setVisibleRightItemKey( key );
+		}
+	}, [] );
+
+	const outputRightItem = ( item, key ) => {
+		const isVisible = key === visibleRightItemKey;
+
 		return (
-			<StatsListActions data={ item } moduleName={ moduleType } inStatsListCard>
+			<StatsListActions
+				data={ item }
+				moduleName={ moduleType }
+				isMobileMenuVisible={ isVisible }
+				inStatsListCard
+				onMobileMenuClick={ ( event ) => toggleMobileMenu( event, isVisible, key ) }
+			>
 				{ item?.link && (
-					<OpenLink href={ item.link } key={ `link-${ index }` } moduleName={ moduleType } />
+					<OpenLink href={ item.link } key={ `link-${ key }` } moduleName={ moduleType } />
 				) }
 			</StatsListActions>
 		);
@@ -89,6 +108,7 @@ const StatsListCard = ( {
 				{ sortedData?.map( ( item, index ) => {
 					let leftSideItem;
 					const isInteractive = item?.link || item?.page || item?.children;
+					const key = item?.id || index; // not every item has an id
 
 					// left icon visible only for Author avatars and Contry flags.
 					if ( item?.countryCode ) {
@@ -99,13 +119,13 @@ const StatsListCard = ( {
 
 					return (
 						<HorizontalBarListItem
-							key={ item?.id || index } // not every item has an id
+							key={ key }
 							data={ item }
 							maxValue={ barMaxValue }
 							hasIndicator={ item?.className?.includes( 'published' ) }
 							onClick={ localClickHandler }
 							leftSideItem={ leftSideItem }
-							renderRightSideItem={ ( incomingItem ) => outputRightItem( incomingItem, index ) }
+							renderRightSideItem={ ( incomingItem ) => outputRightItem( incomingItem, key ) }
 							useShortLabel={ useShortLabel }
 							isStatic={ ! isInteractive }
 							barMaxValue={ barMaxValue }

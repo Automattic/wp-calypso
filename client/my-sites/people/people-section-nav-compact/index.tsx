@@ -8,22 +8,23 @@ import PeopleSearch from '../people-section-nav/people-search';
 interface Props {
 	selectedFilter: string;
 	searchTerm?: string;
+	filterCount?: { [ key: string ]: undefined | number };
 }
 function PeopleSectionNavCompact( props: Props ) {
 	const _ = useTranslate();
-	const { selectedFilter, searchTerm } = props;
+	const { selectedFilter, searchTerm, filterCount } = props;
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 
 	const filters = [
 		{
+			id: 'subscribers',
 			title: _( 'Subscribers' ),
 			path: '/people/subscribers/' + site?.slug,
-			id: 'subscribers',
 		},
 		{
+			id: 'team-members',
 			title: _( 'Team' ),
 			path: '/people/team-members/' + site?.slug,
-			id: 'team-members',
 		},
 	];
 
@@ -36,6 +37,9 @@ function PeopleSectionNavCompact( props: Props ) {
 							key={ filterItem.id }
 							path={ filterItem.path }
 							selected={ filterItem.id === selectedFilter }
+							count={
+								filterCount && !! filterCount[ filterItem.id ] && filterCount[ filterItem.id ]
+							}
 						>
 							{ filterItem.title }
 						</NavItem>

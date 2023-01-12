@@ -114,6 +114,27 @@ export function search( options: SearchParams ) {
 	);
 }
 
+export function searchBySlug(
+	slug: string,
+	locale: string,
+	options?: { fields?: Array< string > | undefined; group_id?: string }
+) {
+	const params = {
+		lang: locale,
+		filter: getFilterbySlug( slug ),
+		fields: options?.fields ?? RETURNABLE_FIELDS,
+		group_id: options?.group_id ?? 'wporg',
+	};
+	const queryString = params;
+
+	return wpcom.req.get(
+		{
+			path: marketplaceSearchApiBase,
+		},
+		{ ...queryString, apiVersion }
+	);
+}
+
 function getFilterbyAuthor( author: string ): {
 	bool: {
 		must: { term: object }[];
@@ -126,6 +147,18 @@ function getFilterbyAuthor( author: string ): {
 	};
 }
 
+function getFilterbySlug( slug: string ): {
+	bool: {
+		must: { term: object }[];
+	};
+} {
+	return {
+		bool: {
+			must: [ { term: { slug } } ],
+		},
+	};
+}
+
 function getFilterByCategory( category: string ): {
 	bool: object;
 } {
@@ -134,8 +167,12 @@ function getFilterByCategory( category: string ): {
 	return {
 		bool: {
 			should: [
+				// matching wp.org categories and tags
 				{ term: { 'taxonomy.plugin_category.slug': category } },
 				{ terms: { 'taxonomy.plugin_tags.slug': categoryTags } },
+				// matching wc.com categories and tags
+				{ term: { 'taxonomy.wpcom_marketplace_categories.slug': category } },
+				{ terms: { 'taxonomy.plugin_tag.slug': categoryTags } },
 			],
 		},
 	};

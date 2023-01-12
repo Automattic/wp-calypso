@@ -81,6 +81,13 @@ export function useStepNavigator(
 		return addQueryArgs( queryParams, path );
 	}
 
+	function goToAddDomainPage() {
+		navigation.submit?.( {
+			type: 'redirect',
+			url: `/domains/add/${ siteSlug }`,
+		} );
+	}
+
 	return {
 		supportLinkModal: false,
 		goToIntentPage,
@@ -89,6 +96,7 @@ export function useStepNavigator(
 		goToCheckoutPage,
 		goToWpAdminImportPage,
 		goToWpAdminWordPressPluginPage,
+		goToAddDomainPage,
 		navigate: ( path ) => navigator( path ),
 	};
 }

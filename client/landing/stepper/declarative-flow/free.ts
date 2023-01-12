@@ -16,12 +16,10 @@ import {
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import DomainsStep from './internals/steps-repository/domains';
+import DesignSetup from './internals/steps-repository/design-setup';
 import FreeSetup from './internals/steps-repository/free-setup';
 import Intro from './internals/steps-repository/intro';
 import LaunchPad from './internals/steps-repository/launchpad';
-import PatternsStep from './internals/steps-repository/patterns';
-import PlansStep from './internals/steps-repository/plans';
 import Processing from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
@@ -32,10 +30,13 @@ const free: Flow = {
 		return translate( 'Free' );
 	},
 	useSteps() {
+		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
+
 		useEffect( () => {
 			if ( ! isEnabled( 'signup/free-flow' ) ) {
 				return window.location.assign( '/start/free' );
 			}
+			resetOnboardStore();
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 			recordFullStoryEvent( 'calypso_signup_start_free', { flow: this.name } );
 		}, [] );
@@ -43,12 +44,10 @@ const free: Flow = {
 		return [
 			{ slug: 'intro', component: Intro },
 			{ slug: 'freeSetup', component: FreeSetup },
-			{ slug: 'domains', component: DomainsStep },
-			{ slug: 'plans', component: PlansStep },
-			{ slug: 'patterns', component: PatternsStep },
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'processing', component: Processing },
 			{ slug: 'launchpad', component: LaunchPad },
+			{ slug: 'designSetup', component: DesignSetup },
 		];
 	},
 
@@ -60,6 +59,7 @@ const free: Flow = {
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const locale = useLocale();
+		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 
 		// trigger guides on step movement, we don't care about failures or response
 		wpcom.req.post(
@@ -84,14 +84,10 @@ const free: Flow = {
 			switch ( _currentStep ) {
 				case 'intro':
 					clearSignupDestinationCookie();
-
 					if ( userIsLoggedIn ) {
-						return navigate( 'patterns' );
+						return navigate( 'freeSetup' );
 					}
 					return window.location.assign( logInUrl );
-
-				case 'patterns':
-					return navigate( 'freeSetup' );
 
 				case 'freeSetup':
 					return navigate( 'siteCreationStep' );
@@ -100,6 +96,12 @@ const free: Flow = {
 					return navigate( 'processing' );
 
 				case 'processing':
+					if ( selectedDesign ) {
+						return navigate( `launchpad?siteSlug=${ siteSlug }` );
+					}
+					return navigate( `designSetup?siteSlug=${ providedDependencies?.siteSlug }` );
+
+				case 'designSetup':
 					if ( providedDependencies?.goToCheckout ) {
 						const destination = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
 						persistSignupDestination( destination );
@@ -115,7 +117,7 @@ const free: Flow = {
 							) }?redirect_to=${ returnUrl }&signup=1`
 						);
 					}
-					return navigate( `launchpad?siteSlug=${ providedDependencies?.siteSlug }` );
+					return navigate( `processing?siteSlug=${ siteSlug }` );
 
 				case 'launchpad': {
 					return navigate( 'processing' );

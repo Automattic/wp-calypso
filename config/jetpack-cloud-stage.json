@@ -44,7 +44,6 @@
 		"jetpack/pricing-add-boost-social": true,
 		"jetpack/pricing-page": true,
 		"jetpack/pricing-page-annual-only": true,
-		"jetpack/pricing-page-rework-v1": true,
 		"jetpack/search-product": true,
 		"jetpack/server-credentials-advanced-flow": true,
 		"jetpack/simplify-pricing-structure": false,
@@ -60,7 +59,8 @@
 		"purchases/new-payment-methods": true,
 		"realtime-site-count": true,
 		"site-indicator": false,
-		"upgrades/redirect-payments": true
+		"upgrades/redirect-payments": true,
+		"jetpack/pricing-page-cart": true
 	},
 	"enable_all_sections": false,
 	"sections": {
@@ -70,6 +70,7 @@
 		"jetpack-cloud-agency-dashboard": true,
 		"jetpack-cloud-agency-signup": true,
 		"jetpack-cloud-auth": true,
+		"jetpack-cloud-features-comparison": true,
 		"jetpack-cloud-partner-portal": true,
 		"jetpack-cloud-plugin-management": true,
 		"jetpack-cloud-pricing": true,

@@ -234,7 +234,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 										<PlanPrice
 											className="jetpack-upsell__price"
 											rawPrice={ priceDelta }
-											currency={ currencyCode }
+											currencyCode={ currencyCode }
 										/>
 										<span className="jetpack-upsell__price-timeframe">
 											{ translate( '/month, paid yearly' ) }

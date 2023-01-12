@@ -1,7 +1,7 @@
 {
 	"name": "wp-calypso",
 	"author": "Automattic Inc.",
-	"version": "0.17.0",
+	"version": "16.17.0",
 	"description": "A pure REST-API and JS based version of the WordPress.com admin.",
 	"private": true,
 	"workspaces": {
@@ -292,9 +292,11 @@
 	},
 	"resolutions": {
 		"react-dates": "17.1.1",
-		"@automattic/newspack-blocks/swiper@4.5.1": "patch:swiper@4.5.1#.patches/swiper@4.5.1.diff",
-		"@automattic/newspack-blocks/prettier": "npm:wp-prettier@2.6.2-beta-1",
 		"@types/react": "^17.0.39",
+		"newspack-components/@wordpress/base-styles": "4.5.0",
+		"newspack-components/@wordpress/components": "19.15.0",
+		"newspack-components/@wordpress/element": "4.7.0",
+		"newspack-components/@wordpress/i18n": "4.9.0",
 		"keytar@npm:7.7.0/node-addon-api": "3.1.0",
 		"lzma-native": "^8.0.5"
 	},

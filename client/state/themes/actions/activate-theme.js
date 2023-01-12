@@ -5,18 +5,19 @@ import wpcom from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { THEME_ACTIVATE, THEME_ACTIVATE_FAILURE } from 'calypso/state/themes/action-types';
 import { themeActivated } from 'calypso/state/themes/actions/theme-activated';
+import { getThemePreviewThemeOptions } from 'calypso/state/themes/selectors';
 
 import 'calypso/state/themes/init';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
  *
- * @param {string} themeId   Theme ID
- * @param {number} siteId    Site ID
- * @param {string} source    The source that is requesting theme activation, e.g. 'showcase'
- * @param {boolean} purchased Whether the theme has been purchased prior to activation
+ * @param {string}  themeId            Theme ID
+ * @param {number}  siteId             Site ID
+ * @param {string}  source             The source that is requesting theme activation, e.g. 'showcase'
+ * @param {boolean} purchased          Whether the theme has been purchased prior to activation
  * @param {boolean} dontChangeHomepage Prevent theme from switching homepage content if this is what it'd normally do when activated
- * @returns {Function}           Action thunk
+ * @returns {Function}                 Action thunk
  */
 export function activateTheme(
 	themeId,
@@ -25,7 +26,13 @@ export function activateTheme(
 	purchased = false,
 	dontChangeHomepage = false
 ) {
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
+		const themeOptions = getThemePreviewThemeOptions( getState() );
+		const styleVariationSlug =
+			themeOptions && themeOptions.themeId === themeId
+				? themeOptions.styleVariation?.slug
+				: undefined;
+
 		dispatch( {
 			type: THEME_ACTIVATE,
 			themeId,
@@ -39,11 +46,14 @@ export function activateTheme(
 				...( isEnabled( 'themes/theme-switch-persist-template' ) && {
 					persist_homepage_template: true,
 				} ),
+				...( styleVariationSlug && { style_variation_slug: styleVariationSlug } ),
 			} )
 			.then( ( theme ) => {
 				// Fall back to ID for Jetpack sites which don't return a stylesheet attr.
 				const themeStylesheet = theme.stylesheet || themeId;
-				dispatch( themeActivated( themeStylesheet, siteId, source, purchased ) );
+				dispatch(
+					themeActivated( themeStylesheet, siteId, source, purchased, styleVariationSlug )
+				);
 			} )
 			.catch( ( error ) => {
 				dispatch( {

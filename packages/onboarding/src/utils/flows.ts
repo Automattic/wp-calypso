@@ -6,8 +6,10 @@ export const LINK_IN_BIO_POST_SETUP_FLOW = 'link-in-bio-post-setup';
 export const VIDEOPRESS_FLOW = 'videopress';
 export const IMPORT_FOCUSED_FLOW = 'import-focused';
 export const ECOMMERCE_FLOW = 'ecommerce';
+export const WOOEXPRESS_FLOW = 'wooexpress';
 export const FREE_FLOW = 'free';
 export const FREE_POST_SETUP_FLOW = 'free-post-setup';
+export const MIGRATION_FLOW = 'import-focused';
 
 export const isLinkInBioFlow = ( flowName: string | null ) => {
 	return Boolean(
@@ -41,6 +43,10 @@ export const isTailoredSignupFlow = ( flowName: string | null ) => {
 				ECOMMERCE_FLOW === flowName ||
 				FREE_FLOW === flowName )
 	);
+};
+
+export const isMigrationFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ MIGRATION_FLOW ].includes( flowName ) );
 };
 
 export const ecommerceFlowRecurTypes = {

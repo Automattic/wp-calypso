@@ -1,4 +1,4 @@
-import { isJetpackPurchasableItem, isPremium } from '@automattic/calypso-products';
+import { isJetpackPurchasableItem } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import {
 	canItemBeRemovedFromCart,
@@ -13,7 +13,6 @@ import {
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
 import { useExperiment } from 'calypso/lib/explat';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
@@ -181,11 +180,7 @@ function LineItemWrapper( {
 	const isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
 
 	const shouldShowVariantSelector =
-		onChangePlanLength &&
-		! isWooMobile &&
-		! isRenewal &&
-		! isPremiumPlanWithDIFMInTheCart( product, responseCart ) &&
-		! hasPartnerCoupon;
+		onChangePlanLength && ! isWooMobile && ! isRenewal && ! hasPartnerCoupon;
 	const isJetpack = responseCart.products.some( ( product ) =>
 		isJetpackPurchasableItem( product.product_slug )
 	);
@@ -242,11 +237,4 @@ function LineItemWrapper( {
 			</LineItem>
 		</WPOrderReviewListItem>
 	);
-}
-
-/**
- * Checks if the given item is the premium plan product and the DIFM product exists in the provided shopping cart object
- */
-function isPremiumPlanWithDIFMInTheCart( item: ResponseCartProduct, responseCart: ResponseCart ) {
-	return isPremium( item ) && hasDIFMProduct( responseCart );
 }

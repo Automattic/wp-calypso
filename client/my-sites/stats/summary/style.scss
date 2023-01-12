@@ -1,0 +1,13 @@
+.stats-summary-view {
+	.highlight-cards-heading {
+		@media ( min-width: 661px ) and ( max-width: 1380px ) {
+			margin-left: 32px;
+			margin-right: 32px;
+		}
+	}
+
+	tbody tr:nth-child(odd),
+	.is-fixed-row-header tbody > tr:nth-child(odd) > th {
+		background-color: var(--studio-gray-0);
+	}
+}

@@ -7,30 +7,33 @@ $grid-vertical-gutters: 32px;
 	align-items: stretch;
 	display: grid;
 	grid-template-columns: repeat(12, 1fr);
-	grid-template-rows: repeat(4, min-content);
+	grid-template-rows: repeat(5, min-content);
 	gap: $grid-vertical-gutters $grid-horizontal-gutters;
 	grid-template-areas:
 		"posts posts posts posts posts posts posts referrers referrers referrers referrers referrers"
 		"country country country country country country country country country country country country"
 		"authors authors authors authors search search search search clicks clicks clicks clicks"
-		"videos videos videos videos videos videos downloads downloads downloads downloads downloads downloads";
+		"videos videos videos videos videos videos downloads downloads downloads downloads downloads downloads"
+		"emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open";
 
 	// Tablets
 	@media ( max-width: $break-large ) {
 		grid-template-columns: repeat(8, 1fr);
-		grid-template-rows: repeat(5, min-content);
+		grid-template-rows: repeat(6, min-content);
 		grid-template-areas:
 			"posts posts posts posts referrers referrers referrers referrers"
 			"country country country country country country country country"
 			"authors authors authors authors search search search search"
 			"clicks clicks clicks clicks videos videos videos videos"
-			"downloads downloads downloads downloads downloads downloads downloads downloads";
+			"downloads downloads downloads downloads downloads downloads downloads downloads"
+			"emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open";
+
 	}
 
 	// Mobile
 	@media ( max-width: $break-medium ) {
 		grid-template-columns: repeat(4, 1fr);
-		grid-template-rows: repeat(8, min-content);
+		grid-template-rows: repeat(9, min-content);
 		gap: 0;
 		grid-template-areas:
 			"posts posts posts posts"
@@ -40,7 +43,9 @@ $grid-vertical-gutters: 32px;
 			"search search search search"
 			"clicks clicks clicks clicks"
 			"videos videos videos videos"
-			"downloads downloads downloads downloads";
+			"downloads downloads downloads downloads"
+			"emails-open emails-open emails-open emails-open";
+
 	}
 
 	.card.stats-module {
@@ -106,5 +111,9 @@ $grid-vertical-gutters: 32px;
 	.stats__module-wrapper--filedownloads,
 	.list-filedownloads {
 		grid-area: downloads;
+	}
+	.stats__module-wrapper--emails,
+	.list-emails-open {
+		grid-area: emails-open;
 	}
 }

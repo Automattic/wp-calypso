@@ -1,7 +1,6 @@
 import { isPlan } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
-import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -26,8 +25,7 @@ export function CheckoutSidebarPlanUpsell() {
 	const { formStatus } = useFormStatus();
 	const reduxDispatch = useDispatch();
 	const isFormLoading = FormStatus.READY !== formStatus;
-	const { __, hasTranslation } = useI18n();
-	const locale = useLocale();
+	const { __ } = useI18n();
 	const cartKey = useCartKey();
 	const { responseCart, replaceProductInCart } = useShoppingCart( cartKey );
 	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
@@ -39,6 +37,7 @@ export function CheckoutSidebarPlanUpsell() {
 	}
 
 	const biennialVariant = variants?.find( ( product ) => product.termIntervalInMonths === 24 );
+	const triennialVariant = variants?.find( ( product ) => product.termIntervalInMonths === 36 );
 	const currentVariant = variants?.find( ( product ) => product.productId === plan.product_id );
 
 	if ( ! biennialVariant ) {
@@ -53,6 +52,12 @@ export function CheckoutSidebarPlanUpsell() {
 
 	if ( biennialVariant.productId === plan.product_id ) {
 		debug( 'plan in cart is already biennial' );
+		return null;
+	}
+
+	// If the current plan is a triennial plan, we don't want to show an upsell.
+	if ( triennialVariant?.productId === plan.product_id ) {
+		debug( 'plan is triennial. hide upsell.' );
 		return null;
 	}
 
@@ -93,14 +98,6 @@ export function CheckoutSidebarPlanUpsell() {
 		),
 		{ strong: createElement( 'strong' ) }
 	);
-
-	if (
-		'en' !== locale &&
-		! hasTranslation( '<strong>Save %(percentSavings)d%%</strong> by paying for two years' )
-	) {
-		debug( "not 'en' and does not have translation", locale );
-		return null;
-	}
 
 	return (
 		<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell">

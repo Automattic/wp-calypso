@@ -200,7 +200,7 @@ open class WPComPluginBuild(
 							payload="commit=%build.vcs.number%&plugin=$pluginSlug"
 							# Note: openssl adds the prefix `(stdin)= `, which is removed with sed.
 							signature=`echo -n "${'$'}payload" | openssl sha256 -hmac "%mc_auth_secret%" | sed 's/^.* //'`
-							ping_response=`curl -s -d "${'$'}payload" -X POST -H "TEAMCITY_SIGNATURE: ${'$'}signature" %mc_post_root%?plugin-deploy-reminder`
+							ping_response=`curl -s -d "${'$'}payload" -X POST -H "TEAMCITY-SIGNATURE: ${'$'}signature" %mc_post_root%?plugin-deploy-reminder`
 							echo -e "Slack ping status: ${'$'}ping_response\n"
 						fi
 					else

@@ -3,6 +3,7 @@ import {
 	isNewsletterOrLinkInBioFlow,
 	isLinkInBioFlow,
 	isFreeFlow,
+	ECOMMERCE_FLOW,
 } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -55,29 +56,27 @@ const ProcessingStep: Step = function ( props ) {
 	const captureFlowException = useCaptureFlowException( props.flow, 'ProcessingStep' );
 
 	useEffect( () => {
-		if ( action ) {
-			( async () => {
-				if ( typeof action === 'function' ) {
-					try {
-						const destination = await action();
-						// Don't call submit() directly; instead, turn on a flag that signals we should call submit() next.
-						// This allows us to call the newest submit() created. Otherwise, we would be calling a submit()
-						// that is frozen from before we called action().
-						// We can now get the most up to date values from hooks inside the flow creating submit(),
-						// including the values that were updated during the action() running.
-						setDestinationState( destination );
-						setHasActionSuccessfullyRun( true );
-					} catch ( e ) {
-						// eslint-disable-next-line no-console
-						console.error( 'ProcessingStep failed:', e );
-						captureFlowException( e );
-						submit?.( {}, ProcessingResult.FAILURE );
-					}
-				} else {
-					submit?.( {}, ProcessingResult.NO_ACTION );
+		( async () => {
+			if ( typeof action === 'function' ) {
+				try {
+					const destination = await action();
+					// Don't call submit() directly; instead, turn on a flag that signals we should call submit() next.
+					// This allows us to call the newest submit() created. Otherwise, we would be calling a submit()
+					// that is frozen from before we called action().
+					// We can now get the most up to date values from hooks inside the flow creating submit(),
+					// including the values that were updated during the action() running.
+					setDestinationState( destination );
+					setHasActionSuccessfullyRun( true );
+				} catch ( e ) {
+					// eslint-disable-next-line no-console
+					console.error( 'ProcessingStep failed:', e );
+					captureFlowException( e );
+					submit?.( {}, ProcessingResult.FAILURE );
 				}
-			} )();
-		}
+			} else {
+				submit?.( {}, ProcessingResult.NO_ACTION );
+			}
+		} )();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ action ] );
 
@@ -117,6 +116,7 @@ const ProcessingStep: Step = function ( props ) {
 
 	const flowName = props.flow || '';
 	const isJetpackPowered = isNewsletterOrLinkInBioFlow( flowName );
+	const isWooCommercePowered = flowName === ECOMMERCE_FLOW;
 
 	// Currently we have the Domains and Plans only for link in bio
 	if ( isLinkInBioFlow( flowName ) || isFreeFlow( flowName ) ) {
@@ -132,27 +132,30 @@ const ProcessingStep: Step = function ( props ) {
 				stepName="processing-step"
 				isHorizontalLayout={ true }
 				stepContent={
-					<div className="processing-step">
-						<h1 className="processing-step__progress-step">{ getCurrentMessage() }</h1>
-						{ progress >= 0 ? (
-							<div className="processing-step__content woocommerce-install__content">
-								<div
-									className="processing-step__progress-bar"
-									style={
-										{
-											'--progress': simulatedProgress > 1 ? 1 : simulatedProgress,
-										} as React.CSSProperties
-									}
-								/>
-							</div>
-						) : (
-							<LoadingEllipsis />
-						) }
-					</div>
+					<>
+						<div className="processing-step">
+							<h1 className="processing-step__progress-step">{ getCurrentMessage() }</h1>
+							{ progress >= 0 ? (
+								<div className="processing-step__content woocommerce-install__content">
+									<div
+										className="processing-step__progress-bar"
+										style={
+											{
+												'--progress': simulatedProgress > 1 ? 1 : simulatedProgress,
+											} as React.CSSProperties
+										}
+									/>
+								</div>
+							) : (
+								<LoadingEllipsis />
+							) }
+						</div>
+					</>
 				}
 				stepProgress={ stepProgress }
 				recordTracksEvent={ recordTracksEvent }
 				showJetpackPowered={ isJetpackPowered }
+				showFooterWooCommercePowered={ isWooCommercePowered }
 			/>
 		</>
 	);
