@@ -145,6 +145,14 @@
 		display: none;
 	}
 
+	.token-field__remove-token {
+		display: none;
+	}
+
+	.token-field__input-container {
+		cursor: default;
+	}
+
 	@include break-mobile {
 		margin-block-start: 4px;
 	}
