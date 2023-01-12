@@ -5,6 +5,8 @@ export * from './types';
 
 let defaultLocale: string | undefined = undefined;
 const formatterCache = new Map< string, Intl.NumberFormat >();
+const fallbackLocale = 'en';
+const fallbackCurrency = 'USD';
 
 /**
  * Set a default locale for use by `formatCurrency` and `getCurrencyObject`.
@@ -18,12 +20,23 @@ export function setDefaultLocale( locale: string | undefined ): void {
 
 function getLocaleFromBrowser() {
 	if ( typeof window === 'undefined' ) {
-		return 'en';
+		return fallbackLocale;
 	}
 	if ( window.navigator?.languages?.length > 0 ) {
 		return window.navigator.languages[ 0 ];
 	}
-	return window.navigator?.language ?? 'en';
+	return window.navigator?.language ?? fallbackLocale;
+}
+
+function getValidCurrency( code: string ): string {
+	if ( ! doesCurrencyExist( code ) ) {
+		// eslint-disable-next-line no-console
+		console.warn(
+			`getCurrencyObject was called with a non-existent currency "${ code }"; falling back to ${ fallbackCurrency }`
+		);
+		return fallbackCurrency;
+	}
+	return code;
 }
 
 function getFormatterCacheKey( {
@@ -65,17 +78,26 @@ function getCachedFormatter( {
 		}
 	}
 
-	const formatter = new Intl.NumberFormat( addNumberingSystemToLocale( locale ), {
-		style: 'currency',
-		currency,
-		// There's an option called `trailingZeroDisplay` but it does not yet work
-		// in FF so we have to strip zeros manually.
-		...( noDecimals ? { maximumFractionDigits: 0, minimumFractionDigits: 0 } : {} ),
-	} );
+	try {
+		const formatter = new Intl.NumberFormat( addNumberingSystemToLocale( locale ), {
+			style: 'currency',
+			currency,
+			// There's an option called `trailingZeroDisplay` but it does not yet work
+			// in FF so we have to strip zeros manually.
+			...( noDecimals ? { maximumFractionDigits: 0, minimumFractionDigits: 0 } : {} ),
+		} );
 
-	formatterCache.set( cacheKey, formatter );
+		formatterCache.set( cacheKey, formatter );
 
-	return formatter;
+		return formatter;
+	} catch ( error ) {
+		// If the locale is invalid, creating the NumberFormat will throw.
+		// eslint-disable-next-line no-console
+		console.warn(
+			`formatCurrency was called with a non-existent locale "${ locale }"; falling back to ${ fallbackLocale }`
+		);
+		return getCachedFormatter( { locale: fallbackLocale, currency, noDecimals } );
+	}
 }
 
 /**
@@ -193,9 +215,7 @@ export function formatCurrency(
 	options: CurrencyObjectOptions = {}
 ): string {
 	const locale = options.locale ?? defaultLocale ?? getLocaleFromBrowser();
-	if ( ! doesCurrencyExist( code ) ) {
-		code = 'USD';
-	}
+	code = getValidCurrency( code );
 	const currencyOverride = getCurrencyOverride( code );
 	const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );
 
@@ -260,9 +280,7 @@ export function getCurrencyObject(
 	options: CurrencyObjectOptions = {}
 ): CurrencyObject {
 	const locale = options.locale ?? defaultLocale ?? getLocaleFromBrowser();
-	if ( ! doesCurrencyExist( code ) ) {
-		code = 'USD';
-	}
+	code = getValidCurrency( code );
 	const currencyOverride = getCurrencyOverride( code );
 	const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );
 

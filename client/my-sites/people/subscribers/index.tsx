@@ -1,13 +1,14 @@
 import { Card, Button } from '@automattic/components';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import InfiniteList from 'calypso/components/infinite-list';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { addQueryArgs } from 'calypso/lib/url';
 import NoResults from 'calypso/my-sites/no-results';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleListSectionHeader from '../people-list-section-header';
 import type { Follower, FollowersQuery } from './types';
@@ -21,6 +22,7 @@ interface Props {
 }
 function Subscribers( props: Props ) {
 	const _ = useTranslate();
+	const dispatch = useDispatch();
 	const { search, followersQuery } = props;
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 
@@ -36,6 +38,15 @@ function Subscribers( props: Props ) {
 		{ page: 'stats', blog: site?.ID, blog_subscribers: 'csv', type: 'email' },
 		'https://dashboard.wordpress.com/wp-admin/index.php'
 	);
+
+	function onDownloadCsvClick() {
+		dispatch(
+			recordGoogleEvent(
+				'People',
+				'Clicked Download email subscribers as CSV menu item on Subscribers'
+			)
+		);
+	}
 
 	function getFollowerRef( follower: Follower ) {
 		return 'follower-' + follower.ID;
@@ -83,7 +94,7 @@ function Subscribers( props: Props ) {
 							{ _( 'Add subscribers' ) }
 						</Button>
 						<EllipsisMenu compact position="bottom">
-							<PopoverMenuItem href={ downloadCsvLink }>
+							<PopoverMenuItem href={ downloadCsvLink } onClick={ onDownloadCsvClick }>
 								{ _( 'Download email subscribers as CSV' ) }
 							</PopoverMenuItem>
 						</EllipsisMenu>

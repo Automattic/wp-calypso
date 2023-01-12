@@ -1,4 +1,8 @@
-import { JetpackTag, JETPACK_RELATED_PRODUCTS_MAP } from '@automattic/calypso-products';
+import {
+	isJetpackPlanSlug,
+	JetpackTag,
+	JETPACK_RELATED_PRODUCTS_MAP,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
@@ -67,8 +71,14 @@ const ProductLightbox: React.FC< Props > = ( {
 		[ onChangeProduct, dispatch, siteId ]
 	);
 
-	const { getCheckoutURL, getIsMultisiteCompatible, isMultisite, getOnClickPurchase } =
-		useStoreItemInfoContext();
+	const {
+		getCheckoutURL,
+		getIsMultisiteCompatible,
+		isMultisite,
+		getOnClickPurchase,
+		getLightBoxCtaLabel,
+		getIsProductInCart,
+	} = useStoreItemInfoContext();
 
 	const onCheckoutClick = useCallback( () => {
 		getOnClickPurchase( product )();
@@ -107,6 +117,9 @@ const ProductLightbox: React.FC< Props > = ( {
 	const isLargeScreen = useBreakpoint( '>782px' );
 
 	const showPricingBreakdown = includedProductSlugs?.length;
+
+	const isProductInCart =
+		! isJetpackPlanSlug( product.productSlug ) && getIsProductInCart( product );
 
 	return (
 		<Modal
@@ -180,13 +193,13 @@ const ProductLightbox: React.FC< Props > = ( {
 								product={ product }
 							/>
 							<Button
-								primary
+								primary={ ! isProductInCart }
 								onClick={ onCheckoutClick }
 								className="jetpack-product-card__button product-lightbox__checkout-button"
 								href={ isMultiSiteIncompatible ? '#' : getCheckoutURL( product ) }
 								disabled={ isMultiSiteIncompatible }
 							>
-								{ translate( 'Proceed to checkout' ) }
+								{ getLightBoxCtaLabel( product ) }
 							</Button>
 						</div>
 					</div>

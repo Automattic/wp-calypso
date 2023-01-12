@@ -1,5 +1,6 @@
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ChangeEvent, ReactNode } from 'react';
+import { BBETranslationContext } from '../difm/translation-hooks';
 
 export type ValidationErrors = Record< string, TranslateResult | null >;
 
@@ -22,5 +23,6 @@ export interface SectionGeneratorReturnType< T > {
 	translate: ReturnType< typeof useTranslate >;
 	formValues: T;
 	formErrors: ValidationErrors;
+	context: BBETranslationContext;
 	onChangeField: ( { target: { name, value } }: ChangeEvent< HTMLInputElement > ) => void;
 }

@@ -50,7 +50,7 @@ export default function SiteStatusContent( {
 	);
 
 	// Disable clicks/hover when there is a site error &
-	// when the row it is not monitor and monitor status is down
+	// when the row is not monitor and monitor status is down
 	// since monitor is clickable when site is down.
 	const disabledStatus = siteError || ( type !== 'monitor' && siteDown );
 

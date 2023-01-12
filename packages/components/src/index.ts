@@ -44,3 +44,4 @@ export { default as MobilePromoCard } from './mobile-promo-card';
 export { default as ShortenedNumber } from './number-formatters';
 export { default as formattedNumber } from './number-formatters/formatted-number';
 export { default as PostStatsCard } from './post-stats-card';
+export { default as ConfettiAnimation } from './confetti';

@@ -1,7 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
 import { ReactChild, useCallback } from 'react';
 import acceptDialog from 'calypso/lib/accept';
-import { useToggleActivateMonitor } from '../hooks';
+import { useToggleActivateMonitor, useUpdateMonitorSettings } from '../hooks';
+import {
+	availableNotificationDurations as durations,
+	getSiteCountText,
+} from '../sites-overview/utils';
+import type { Site } from '../sites-overview/types';
 
 const dialogContent = (
 	heading: ReactChild,
@@ -20,7 +25,7 @@ const dialogContent = (
 	return acceptDialog( content, action, heading, null, options );
 };
 
-export function useHandleToggleMonitor( selectedSites: Array< { blog_id: number; url: string } > ) {
+export function useHandleToggleMonitor( selectedSites: Array< Site > ) {
 	const translate = useTranslate();
 
 	const toggleActivateMonitor = useToggleActivateMonitor( selectedSites );
@@ -38,13 +43,7 @@ export function useHandleToggleMonitor( selectedSites: Array< { blog_id: number;
 		( activate: boolean ) => {
 			const heading = activate ? translate( 'Resume Monitor' ) : translate( 'Pause Monitor' );
 			const monitorAction = activate ? translate( 'resume' ) : translate( 'pause' );
-			const siteCountText =
-				selectedSites.length > 1
-					? translate( '%(siteCount)d sites', {
-							args: { siteCount: selectedSites.length },
-							comment: '%(siteCount) is no of sites, e.g. "2 sites"',
-					  } )
-					: selectedSites[ 0 ].url;
+			const siteCountText = getSiteCountText( selectedSites );
 			const content =
 				selectedSites.length > 1
 					? translate( 'You are about to %(monitorAction)s the monitor for %(siteCountText)s.', {
@@ -72,4 +71,54 @@ export function useHandleToggleMonitor( selectedSites: Array< { blog_id: number;
 	);
 
 	return handleToggleActivateMonitor;
+}
+
+export function useHandleResetNotification( selectedSites: Array< Site > ) {
+	const translate = useTranslate();
+	const { updateMonitorSettings } = useUpdateMonitorSettings( selectedSites );
+
+	const resetMonitorDuration = useCallback(
+		( accepted: boolean ) => {
+			if ( accepted ) {
+				const defaultDuration = durations.find( ( duration ) => duration.time === 5 );
+				const params = {
+					jetmon_defer_status_down_minutes: defaultDuration?.time,
+				};
+				updateMonitorSettings( params );
+			}
+		},
+		[ updateMonitorSettings ]
+	);
+
+	const handleResetNotification = useCallback( () => {
+		const heading = translate( 'Reset Notification' );
+		const components = {
+			em: <em />,
+			strong: <strong />,
+		};
+
+		const siteCountText = getSiteCountText( selectedSites );
+
+		const content =
+			selectedSites.length > 1
+				? translate(
+						'You are about to reset the monitor schedule to {{strong}}5 minutes{{/strong}} for %(siteCountText)s.',
+						{
+							args: { siteCountText },
+							comment: "%(siteCountText) is no of sites, e.g. '2 sites'",
+							components,
+						}
+				  )
+				: translate(
+						'You are about to reset the monitor schedule to {{strong}}5 minutes{{/strong}} for {{em}}%(siteUrl)s{{/em}}.',
+						{
+							args: { siteUrl: siteCountText },
+							components,
+						}
+				  );
+
+		return dialogContent( heading, content, resetMonitorDuration );
+	}, [ resetMonitorDuration, selectedSites, translate ] );
+
+	return handleResetNotification;
 }

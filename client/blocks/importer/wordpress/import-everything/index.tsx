@@ -1,5 +1,6 @@
 import { ProgressBar } from '@automattic/components';
 import { Hooray, Progress, SubTitle, Title, NextButton } from '@automattic/onboarding';
+import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -14,11 +15,13 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { receiveSite, requestSite, updateSiteMigrationMeta } from 'calypso/state/sites/actions';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import DomainInfo from '../../components/domain-info';
 import DoneButton from '../../components/done-button';
 import GettingStartedVideo from '../../components/getting-started-video';
 import NotAuthorized from '../../components/not-authorized';
 import { isTargetSitePlanCompatible } from '../../util';
 import { MigrationStatus } from '../types';
+import { retrieveMigrateSource, clearMigrateSource } from '../utils';
 import { Confirm } from './confirm';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { StepNavigator } from 'calypso/blocks/importer/types';
@@ -77,6 +80,10 @@ export class ImportEverything extends SectionMigrate {
 		this.props.requestSite( targetSiteId );
 
 		this.requestMigrationReset( targetSiteId );
+		// Clear the isMigrateFromWP flag
+		if ( retrieveMigrateSource() ) {
+			clearMigrateSource();
+		}
 	};
 
 	recordMigrationStatusChange = ( prevState: State ) => {
@@ -174,22 +181,13 @@ export class ImportEverything extends SectionMigrate {
 	}
 
 	renderMigrationComplete() {
-		const { translate, stepNavigator } = this.props;
-
+		const { isMigrateFromWp } = this.props;
 		return (
 			<>
 				<Hooray>
-					<Title>{ translate( 'Hooray!' ) }</Title>
-					<SubTitle>
-						{ translate( 'Congratulations. Your content was successfully imported.' ) }
-					</SubTitle>
-					<DoneButton
-						label={ translate( 'View site' ) }
-						onSiteViewClick={ () => {
-							this.props.recordTracksEvent( 'calypso_site_importer_view_site' );
-							stepNavigator?.goToSiteViewPage?.();
-						} }
-					/>
+					{ ! isMigrateFromWp
+						? this.renderDefaultHoorayScreen()
+						: this.renderHoorayScreenWithDomainInfo() }
 				</Hooray>
 				<GettingStartedVideo />
 			</>
@@ -213,6 +211,60 @@ export class ImportEverything extends SectionMigrate {
 					</div>
 				</div>
 			</div>
+		);
+	}
+
+	renderDefaultHoorayScreen() {
+		const { translate, stepNavigator } = this.props;
+		return (
+			<>
+				<Title>{ translate( 'Hooray!' ) }</Title>
+				<SubTitle>
+					{ translate( 'Congratulations. Your content was successfully imported.' ) }
+				</SubTitle>
+				<DoneButton
+					label={ translate( 'View site' ) }
+					onSiteViewClick={ () => {
+						this.props.recordTracksEvent( 'calypso_site_importer_view_site' );
+						stepNavigator?.goToSiteViewPage?.();
+					} }
+				/>
+			</>
+		);
+	}
+
+	renderHoorayScreenWithDomainInfo() {
+		const { translate, stepNavigator, targetSiteSlug } = this.props;
+		return (
+			<>
+				<Title>{ translate( "Migration done! You're all set!" ) }</Title>
+				<SubTitle>
+					{ createInterpolateElement(
+						translate(
+							'You have a temporary domain name on WordPress.com.<br />We recommend updating your domain name.'
+						),
+						{ br: createElement( 'br' ) }
+					) }
+				</SubTitle>
+				<DomainInfo domain={ targetSiteSlug } />
+				<DoneButton
+					className="is-normal-width"
+					label={ translate( 'Update domain name' ) }
+					onSiteViewClick={ () => {
+						this.props.recordTracksEvent( 'calypso_site_importer_click_add_domain' );
+						stepNavigator?.goToAddDomainPage?.();
+					} }
+				/>
+				<DoneButton
+					className="is-normal-width"
+					label={ translate( 'View your dashboard' ) }
+					isPrimary={ false }
+					onSiteViewClick={ () => {
+						this.props.recordTracksEvent( 'calypso_site_importer_view_site' );
+						stepNavigator?.goToSiteViewPage?.();
+					} }
+				/>
+			</>
 		);
 	}
 
