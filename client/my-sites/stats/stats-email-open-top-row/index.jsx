@@ -4,8 +4,8 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import {
-	getAlltimeStats,
-	isRequestingAlltimeEmailStats,
+	getEmailStatsNormalizedData,
+	isRequestingEmailStats,
 } from 'calypso/state/stats/emails/selectors';
 import { eye } from './icons';
 import TopCard from './top-card';
@@ -14,9 +14,11 @@ import './style.scss';
 export default function StatsEmailOpenTopRow( { siteId, postId, className } ) {
 	const translate = useTranslate();
 
-	const counts = useSelector( ( state ) => getAlltimeStats( state, siteId, postId, 'opens' ) );
+	const counts = useSelector( ( state ) =>
+		getEmailStatsNormalizedData( state, siteId, postId, 'alltime', 'opens', null, 'open_rate' )
+	);
 	const isRequesting = useSelector( ( state ) =>
-		isRequestingAlltimeEmailStats( state, siteId, postId, 'opens' )
+		isRequestingEmailStats( state, siteId, postId, 'alltime', 'opens' )
 	);
 
 	return (

@@ -24,7 +24,7 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSitePost } from 'calypso/state/posts/selectors';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { getEmailStat, isRequestingPeriodEmailStats } from 'calypso/state/stats/emails/selectors';
+import { getEmailStat, isRequestingEmailStats } from 'calypso/state/stats/emails/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DatePicker from '../stats-date-picker';
 import ChartTabs from '../stats-email-chart-tabs';
@@ -282,7 +282,7 @@ class StatsEmailOpenDetail extends Component {
 									statType="opens"
 									postId={ postId }
 									siteId={ siteId }
-									period={ period }
+									period="alltime"
 									date={ queryDate }
 								/>
 
@@ -291,7 +291,7 @@ class StatsEmailOpenDetail extends Component {
 									statType="opens"
 									postId={ postId }
 									siteId={ siteId }
-									period={ period }
+									period="alltime"
 									date={ queryDate }
 								/>
 
@@ -300,7 +300,7 @@ class StatsEmailOpenDetail extends Component {
 									statType="opens"
 									postId={ postId }
 									siteId={ siteId }
-									period={ period }
+									period="alltime"
 									date={ queryDate }
 								/>
 							</div>
@@ -320,7 +320,7 @@ const connectComponent = connect(
 
 		return {
 			countViews: getEmailStat( state, siteId, postId, period, statType ),
-			isRequestingStats: isRequestingPeriodEmailStats(
+			isRequestingStats: isRequestingEmailStats(
 				state,
 				siteId,
 				postId,

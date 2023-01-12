@@ -53,12 +53,6 @@ function emailOpenStatsPeriodTransform( stats, period ) {
 
 		obj[ filter ] = {
 			chart: item,
-			countries: parseEmailCountriesData(
-				stats.countries[ item.period ],
-				stats[ 'countries-info' ]
-			),
-			devices: parseEmailListData( stats.devices[ item.period ] ),
-			clients: parseEmailListData( stats.clients[ item.period ] ),
 		};
 		return obj;
 	}, {} );
@@ -71,7 +65,11 @@ function emailOpenStatsPeriodTransform( stats, period ) {
  * @returns {object}
  */
 function emailOpenStatsAlltimeTransform( stats ) {
-	return stats.opens_rate;
+	return {
+		countries: parseEmailCountriesData( stats.countries?.data, stats[ 'countries-info' ] ),
+		devices: parseEmailListData( stats.devices?.data ),
+		clients: parseEmailListData( stats.clients?.data ),
+	};
 }
 
 /**
@@ -108,15 +106,19 @@ function requestEmailOpensStats( siteId, postId, period, date, quantity ) {
 
 		const query = period === 'alltime' ? {} : { period, quantity: queryQuantity, date };
 
-		return wpcom
-			.site( siteId )
-			.statsEmailOpens( postId, query )
+		const site = wpcom.site( siteId );
+		const statsPromise =
+			period === 'alltime'
+				? site.statsEmailOpensAlltime( postId )
+				: site.statsEmailOpensForPeriod( postId, query );
+
+		return statsPromise
 			.then( ( stats ) => {
 				// create an object from emailStats with period as the key
 				const emailStatsObject =
-					period !== 'alltime'
-						? emailOpenStatsPeriodTransform( stats, period )
-						: emailOpenStatsAlltimeTransform( stats );
+					period === 'alltime'
+						? emailOpenStatsAlltimeTransform( stats )
+						: emailOpenStatsPeriodTransform( stats, period );
 
 				dispatch( receiveEmailStats( siteId, postId, period, 'opens', date, emailStatsObject ) );
 
