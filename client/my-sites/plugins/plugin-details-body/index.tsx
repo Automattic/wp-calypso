@@ -4,15 +4,14 @@ import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custo
 
 interface Props {
 	fullPlugin: any;
-	isMarketplaceProduct: boolean;
 	isWpcom: boolean;
 }
 
-export default function PluginDetailsBody( { fullPlugin, isMarketplaceProduct, isWpcom }: Props ) {
+export default function PluginDetailsBody( { fullPlugin, isWpcom }: Props ) {
 	return (
 		<div className="plugin-details__layout plugin-details__body">
 			<div className="plugin-details__layout-col-left">
-				{ fullPlugin.wporg || isMarketplaceProduct ? (
+				{ fullPlugin.wporg || fullPlugin.isMarketplaceProduct ? (
 					<PluginSections plugin={ fullPlugin } isWpcom={ isWpcom } addBanner />
 				) : (
 					<PluginSectionsCustom plugin={ fullPlugin } />

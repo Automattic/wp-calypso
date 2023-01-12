@@ -21,7 +21,6 @@ import { useLocalizedPlugins, siteObjectsToSiteIds } from 'calypso/my-sites/plug
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin, getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
-import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -50,10 +49,7 @@ const PluginsBrowserListElement = ( props ) => {
 
 	const selectedSite = useSelector( getSelectedSite );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
-	const isMarketplaceProduct = useSelector( ( state ) =>
-		isMarketplaceProductSelector( state, plugin.slug || '' )
-	);
-	const softwareSlug = getSoftwareSlug( plugin, isMarketplaceProduct );
+	const softwareSlug = getSoftwareSlug( plugin, plugin.isMarketplaceProduct );
 	const sitesWithPlugin = useSelector( ( state ) =>
 		currentSites
 			? getSitesWithPlugin( state, siteObjectsToSiteIds( currentSites ), softwareSlug )
@@ -230,7 +226,7 @@ const PluginsBrowserListElement = ( props ) => {
 						/>
 					) }
 					<div className="plugins-browser-item__additional-info">
-						{ !! plugin.rating && ! isMarketplaceProduct && (
+						{ !! plugin.rating && ! plugin.isMarketplaceProduct && (
 							<div className="plugins-browser-item__ratings">
 								<PluginRatings
 									rating={ plugin.rating }
@@ -266,10 +262,9 @@ const InstalledInOrPricing = ( {
 } ) => {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const isMarketplaceProduct = useSelector( ( state ) =>
-		isMarketplaceProductSelector( state, plugin.slug )
-	);
-	const softwareSlug = isMarketplaceProduct ? plugin.software_slug || plugin.org_slug : plugin.slug;
+	const softwareSlug = plugin.isMarketplaceProduct
+		? plugin.software_slug || plugin.org_slug
+		: plugin.slug;
 	const isPluginActive = useSelector( ( state ) =>
 		getPluginOnSites( state, [ selectedSiteId ], softwareSlug )
 	)?.active;
@@ -277,9 +272,9 @@ const InstalledInOrPricing = ( {
 	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( plugin.slug );
 	const active = isWpcomPreinstalled || isPluginActive;
 	const isPluginActiveOnsiteWithSubscription =
-		active && ! isMarketplaceProduct
+		active && ! plugin.isMarketplaceProduct
 			? true
-			: getPluginPurchased( plugin, purchases, isMarketplaceProduct )?.active;
+			: getPluginPurchased( plugin, purchases, plugin.isMarketplaceProduct )?.active;
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	let checkmarkColorClass = 'checkmark--active';
 

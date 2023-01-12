@@ -18,10 +18,7 @@ import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/ac
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import {
-	isMarketplaceProduct as isMarketplaceProductSelector,
-	getProductsList,
-} from 'calypso/state/products-list/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -41,17 +38,13 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 
 	const billingPeriod = useSelector( getBillingInterval );
 
-	const isMarketplaceProduct = useSelector( ( state ) =>
-		isMarketplaceProductSelector( state, plugin.slug )
-	);
-
 	// Site type
 	const selectedSite = useSelector( getSelectedSite );
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
-	const pluginFeature = isMarketplaceProduct
+	const pluginFeature = plugin.isMarketplaceProduct
 		? WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
 		: FEATURE_INSTALL_PLUGINS;
 	const isSiteConnected = useSelector( ( state ) =>
@@ -114,7 +107,6 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 						selectedSite,
 						plugin,
 						upgradeAndInstall: shouldUpgrade,
-						isMarketplaceProduct,
 						billingPeriod,
 						productsList,
 					} );
@@ -134,7 +126,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 			>
 				<EligibilityWarnings
 					currentContext="plugin-details"
-					isMarketplace={ isMarketplaceProduct }
+					isMarketplace={ plugin.isMarketplaceProduct }
 					standaloneProceed
 					onProceed={ () =>
 						onClickInstallPlugin( {
@@ -142,7 +134,6 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 							selectedSite,
 							plugin,
 							upgradeAndInstall: shouldUpgrade,
-							isMarketplaceProduct,
 							billingPeriod,
 							productsList,
 						} )
@@ -167,7 +158,6 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 						selectedSite,
 						plugin,
 						upgradeAndInstall: shouldUpgrade,
-						isMarketplaceProduct,
 						billingPeriod,
 						isPreinstalledPremiumPlugin,
 						preinstalledPremiumPluginProduct,
@@ -175,19 +165,21 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 					} );
 				} }
 				disabled={
-					( isJetpackSelfHosted && isMarketplaceProduct ) || isSiteConnected === false || disabled
+					( isJetpackSelfHosted && plugin.isMarketplaceProduct ) ||
+					isSiteConnected === false ||
+					disabled
 				}
 			>
 				{
 					// eslint-disable-next-line no-nested-ternary
-					isMarketplaceProduct || isPreinstalledPremiumPlugin
+					plugin.isMarketplaceProduct || isPreinstalledPremiumPlugin
 						? translate( 'Purchase and activate' )
 						: shouldUpgrade
 						? translate( 'Upgrade and activate' )
 						: translate( 'Install and activate' )
 				}
 			</Button>
-			{ isJetpackSelfHosted && isMarketplaceProduct && (
+			{ isJetpackSelfHosted && plugin.isMarketplaceProduct && (
 				<div className="plugin-details-cta__not-available">
 					<p className="plugin-details-cta__not-available-text">
 						{ translate( 'Thanks for your interest. ' ) }
@@ -214,7 +206,6 @@ function onClickInstallPlugin( {
 	selectedSite,
 	plugin,
 	upgradeAndInstall,
-	isMarketplaceProduct,
 	billingPeriod,
 	isPreinstalledPremiumPlugin,
 	preinstalledPremiumPluginProduct,
@@ -235,14 +226,14 @@ function onClickInstallPlugin( {
 		recordTracksEvent( 'calypso_plugin_install_activate_click', {
 			plugin: plugin.slug,
 			blog_id: selectedSite?.ID,
-			marketplace_product: isMarketplaceProduct,
+			marketplace_product: plugin.isMarketplaceProduct,
 			needs_plan_upgrade: upgradeAndInstall,
 		} )
 	);
 
 	dispatch( productToBeInstalled( plugin.slug, selectedSite.slug ) );
 
-	if ( isMarketplaceProduct ) {
+	if ( plugin.isMarketplaceProduct ) {
 		// We need to add the product to the  cart.
 		// Plugin install is handled on the backend by activating the subscription.
 		const variationPeriod = getPeriodVariationValue( billingPeriod );
