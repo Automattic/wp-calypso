@@ -436,18 +436,21 @@ export default class WebPreviewContent extends Component {
 								scrolling={ autoHeight ? 'no' : undefined }
 								tabIndex={ disableTabbing ? -1 : 0 }
 							/>
-							{ this.state.showIFrameOverlay && (
-								<div className="web-preview__frame-edit-overlay">
-									<button
-										className="web-preview__frame-edit-button"
-										onClick={ () => {
-											window.location.assign( `/site-editor/${ this.props.externalUrl }` );
-										} }
-									>
-										Edit
-									</button>
-								</div>
-							) }
+							<div
+								className="web-preview__frame-edit-overlay"
+								style={ { opacity: this.state.showIFrameOverlay ? '1' : '0' } }
+							>
+								<button
+									className="web-preview__frame-edit-button"
+									onClick={ () => {
+										window.location.assign( `/site-editor/${ this.props.externalUrl }` );
+									} }
+									onFocus={ () => this.setState( { showIFrameOverlay: true } ) }
+									onBlur={ () => this.setState( { showIFrameOverlay: false } ) }
+								>
+									Edit
+								</button>
+							</div>
 						</div>
 					) }
 					{ 'seo' === this.state.device && (
