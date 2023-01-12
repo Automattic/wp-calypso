@@ -120,7 +120,11 @@ class ThemeShowcase extends Component {
 		}
 	}
 
-	isStaticFilter = ( tabFilter ) => Object.values( this.getStaticFilters() ).includes( tabFilter );
+	isStaticFilter = ( tabFilter ) => {
+		return Object.values( this.getStaticFilters() ).some(
+			( staticFilter ) => tabFilter.key === staticFilter.key
+		);
+	};
 
 	getSubjectFilters = ( props ) => {
 		const { subjects } = props;
