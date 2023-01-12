@@ -11,6 +11,8 @@ import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPlugins } from 'calypso/state/plugins/installed/selectors';
 import { Progress, SenseiStepProgress } from '../sensei-setup/sensei-step-progress';
 
+import './style.scss';
+
 interface InstalledPlugin {
 	id: string;
 	slug: string;
