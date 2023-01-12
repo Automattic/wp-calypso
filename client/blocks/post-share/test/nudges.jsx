@@ -77,7 +77,7 @@ describe( 'UpgradeToPremiumNudgePure.render()', () => {
 		PLAN_ECOMMERCE_2_YEARS,
 	].forEach( ( plan ) => {
 		test( `Should pass 2-years wp.com premium plan for 2-years plans ${ plan }`, () => {
-			render( <UpgradeToPremiumNudgePure { ...props } isJetpack={ false } planSlug={ plan } /> );
+			render( <UpgradeToPremiumNudgePure { ...props } planSlug={ plan } /> );
 			expect( screen.getByTestId( 'upsell-nudge-plan' ) ).toHaveTextContent( plan );
 		} );
 	} );
