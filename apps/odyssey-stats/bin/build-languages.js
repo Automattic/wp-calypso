@@ -202,8 +202,6 @@ function buildLanguages( downloadedLanguages, languageRevisions ) {
 				hashes: languageRevisionsHashes,
 			} )
 		);
-
-		cleanUp();
 	} else {
 		console.error( `${ CALYPSO_STRINGS } is missing` );
 	}
@@ -221,6 +219,7 @@ async function run() {
 	const languageRevisions = await downloadLanguagesRevions();
 	const downloadedLanguages = await downloadLanguages( languageRevisions );
 	buildLanguages( downloadedLanguages, languageRevisions );
+	cleanUp();
 }
 
 run();
