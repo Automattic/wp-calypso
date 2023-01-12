@@ -11,6 +11,7 @@ export class PlanPrice extends Component< PlanPriceProps > {
 		const {
 			currencyCode = 'USD',
 			rawPrice,
+			isSmallestUnit,
 			original,
 			discounted,
 			className,
@@ -63,6 +64,7 @@ export class PlanPrice extends Component< PlanPriceProps > {
 					higherPrice={ rawPriceRange[ 1 ] }
 					currencyCode={ currencyCode }
 					className={ classes }
+					isSmallestUnit={ isSmallestUnit }
 				/>
 			);
 		}
@@ -78,6 +80,7 @@ export class PlanPrice extends Component< PlanPriceProps > {
 				displayPerMonthNotation={ displayPerMonthNotation }
 				isOnSale={ isOnSale }
 				is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+				isSmallestUnit={ isSmallestUnit }
 			/>
 		);
 	}
@@ -99,6 +102,14 @@ export interface PlanPriceProps {
 	 * it is an array, in which case `productDisplayPrice` will be ignored.
 	 */
 	rawPrice?: number | [ number, number ];
+
+	/**
+	 * If true, the number(s) in `rawPrice` will be interpreted as integers in
+	 * the currency's smallest unit rather than floating point numbers.
+	 *
+	 * Has no effect if `productDisplayPrice` is being used.
+	 */
+	isSmallestUnit?: boolean;
 
 	/**
 	 * Adds the `is-original` CSS class.
@@ -184,8 +195,8 @@ export interface PlanPriceProps {
 	is2023OnboardingPricingGrid?: boolean;
 }
 
-function renderBasicPrice( price: number, currencyCode: string ): string {
-	const priceObj = getCurrencyObject( price, currencyCode );
+function renderBasicPrice( price: number, currencyCode: string, isSmallestUnit?: boolean ): string {
+	const priceObj = getCurrencyObject( price, currencyCode, { isSmallestUnit } );
 	if ( ! Number.isInteger( price ) ) {
 		return `${ priceObj.integer }${ priceObj.fraction }`;
 	}
@@ -197,11 +208,13 @@ function FlatPriceDisplay( {
 	higherPrice,
 	currencyCode,
 	className,
+	isSmallestUnit,
 }: {
 	smallerPrice: number;
 	higherPrice?: number;
 	currencyCode: string;
 	className?: string;
+	isSmallestUnit?: boolean;
 } ) {
 	const { symbol: currencySymbol } = getCurrencyObject( smallerPrice, currencyCode );
 	const translate = useTranslate();
@@ -212,7 +225,7 @@ function FlatPriceDisplay( {
 		return (
 			<span className={ className }>
 				{ currencySymbol }
-				{ renderBasicPrice( smallerPrice, currencyCode ) }
+				{ renderBasicPrice( smallerPrice, currencyCode, isSmallestUnit ) }
 			</span>
 		);
 	}
@@ -222,8 +235,8 @@ function FlatPriceDisplay( {
 			{ currencySymbol }
 			{ translate( '%(smallerPrice)s-%(higherPrice)s', {
 				args: {
-					smallerPrice: renderBasicPrice( smallerPrice, currencyCode ),
-					higherPrice: renderBasicPrice( higherPrice, currencyCode ),
+					smallerPrice: renderBasicPrice( smallerPrice, currencyCode, isSmallestUnit ),
+					higherPrice: renderBasicPrice( higherPrice, currencyCode, isSmallestUnit ),
 				},
 				comment: 'The price range for a particular product',
 			} ) }
@@ -241,6 +254,7 @@ function MultiPriceDisplay( {
 	displayPerMonthNotation,
 	isOnSale,
 	is2023OnboardingPricingGrid,
+	isSmallestUnit,
 }: {
 	tagName: 'h4' | 'span';
 	className?: string;
@@ -251,6 +265,7 @@ function MultiPriceDisplay( {
 	displayPerMonthNotation?: boolean;
 	isOnSale?: boolean;
 	is2023OnboardingPricingGrid?: boolean;
+	isSmallestUnit?: boolean;
 } ) {
 	const { symbol: currencySymbol } = getCurrencyObject( smallerPrice, currencyCode );
 	const translate = useTranslate();
@@ -267,6 +282,7 @@ function MultiPriceDisplay( {
 					price={ smallerPrice }
 					currencyCode={ currencyCode }
 					is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+					isSmallestUnit={ isSmallestUnit }
 				/>
 			) }
 			{ higherPrice &&
@@ -277,6 +293,7 @@ function MultiPriceDisplay( {
 								price={ smallerPrice }
 								currencyCode={ currencyCode }
 								is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+								isSmallestUnit={ isSmallestUnit }
 							/>
 						),
 						higherPrice: (
@@ -284,6 +301,7 @@ function MultiPriceDisplay( {
 								price={ higherPrice }
 								currencyCode={ currencyCode }
 								is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+								isSmallestUnit={ isSmallestUnit }
 							/>
 						),
 					},
@@ -318,13 +336,15 @@ function HtmlPriceDisplay( {
 	price,
 	currencyCode,
 	is2023OnboardingPricingGrid,
+	isSmallestUnit,
 }: {
 	price: number;
 	currencyCode: string;
 	is2023OnboardingPricingGrid?: boolean;
+	isSmallestUnit?: boolean;
 } ) {
 	const hasFraction = ! Number.isInteger( price );
-	const priceObj = getCurrencyObject( price, currencyCode );
+	const priceObj = getCurrencyObject( price, currencyCode, { isSmallestUnit } );
 
 	if ( is2023OnboardingPricingGrid ) {
 		return (
