@@ -99,8 +99,7 @@ export const openHelpCenterFromJITM =
 		const HELP_CENTER_STORE = HelpCenter.register();
 		dataStoreDispatch( HELP_CENTER_STORE ).setRouterState( history, index );
 		dataStoreDispatch( HELP_CENTER_STORE ).setShowHelpCenter( true );
-		// TODO: change this to the correct tag
-		dataStoreDispatch( HELP_CENTER_STORE ).setChatTag( 'cancelation_chat_prompt' );
+		dataStoreDispatch( HELP_CENTER_STORE ).setChatTag( 'churn_chat_prompt' );
 		dispatch( {
 			type: JITM_OPEN_HELP_CENTER,
 		} );
