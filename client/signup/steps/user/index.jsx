@@ -138,22 +138,10 @@ export class UserStep extends Component {
 		}
 	}
 
-	getSubHeaderText() {
-		const {
-			flowName,
-			oauth2Client,
-			positionInFlow,
-			translate,
-			userLoggedIn,
-			wccomFrom,
-			isReskinned,
-			sectionName,
-			from,
-			locale,
-		} = this.props;
+	getLoginUrl() {
+		const { oauth2Client, wccomFrom, isReskinned, sectionName, from, locale } = this.props;
 
-		let subHeaderText = this.props.subHeaderText;
-		const loginUrl = login( {
+		return login( {
 			isJetpack: 'jetpack-connect' === sectionName,
 			from,
 			redirectTo: getRedirectToAfterLoginUrl( this.props ),
@@ -163,6 +151,22 @@ export class UserStep extends Component {
 			isWhiteLogin: isReskinned,
 			signupUrl: window.location.pathname + window.location.search,
 		} );
+	}
+
+	getSubHeaderText() {
+		const {
+			flowName,
+			oauth2Client,
+			positionInFlow,
+			translate,
+			userLoggedIn,
+			wccomFrom,
+			isReskinned,
+		} = this.props;
+
+		const loginUrl = this.getLoginUrl();
+
+		let subHeaderText = this.props.subHeaderText;
 
 		if ( [ 'wpcc', 'crowdsignal' ].includes( flowName ) && oauth2Client ) {
 			if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
@@ -237,6 +241,21 @@ export class UserStep extends Component {
 		}
 
 		return subHeaderText;
+	}
+
+	getFallbackSubHeaderText() {
+		const { isReskinned, positionInFlow, translate, userLoggedIn } = this.props;
+
+		if ( isReskinned && positionInFlow !== 0 && ! userLoggedIn ) {
+			return translate(
+				"Let's create your WordPress.com account. Have an account? {{a}}Log in{{/a}}",
+				{
+					components: { a: <a href={ this.getLoginUrl() } rel="noopener noreferrer" /> },
+				}
+			);
+		}
+
+		return undefined;
 	}
 
 	initGoogleRecaptcha() {
@@ -547,6 +566,7 @@ export class UserStep extends Component {
 				subHeaderText={ this.getSubHeaderText() }
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
+				fallbackSubHeaderText={ this.getFallbackSubHeaderText() }
 				stepContent={ this.renderSignupForm() }
 			/>
 		);
