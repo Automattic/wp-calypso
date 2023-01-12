@@ -1822,7 +1822,7 @@ export const FEATURES_LIST = {
 
 /**
  * @param {string[]} planFeaturesList
- * @returns {import('calypso/my-sites/plan-features-2023-grid/types').PlanFeature} PlanFeature
+ * @returns {import('calypso/my-sites/plan-features-2023-grid/types').PlanFeature[]} PlanFeature
  */
 export const getPlanFeaturesObject = ( planFeaturesList ) => {
 	return planFeaturesList.map( ( featuresConst ) => FEATURES_LIST[ featuresConst ] );
