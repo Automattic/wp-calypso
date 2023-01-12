@@ -12,6 +12,16 @@ $lowestLevelColor: var(--color-neutral-5);
 .post-trends {
 	border-bottom: 1px solid var(--studio-gray-5);
 	border-top: 1px solid var(--studio-gray-5);
+
+	.stats-heat-map__legend {
+		margin-bottom: 48px;
+	}
+
+	.stats-heat-map__legend-item {
+		&.level-1 {
+			background-color: $lowestLevelColor;
+		}
+	}
 }
 
 .post-trends__heading,
@@ -187,15 +197,5 @@ $lowestLevelColor: var(--color-neutral-5);
 		.post-count-icon {
 			margin-right: 12px;
 		}
-	}
-}
-
-.stats-heat-map__legend {
-	margin-bottom: 48px;
-}
-
-.stats-heat-map__legend-item {
-	&.level-1 {
-		background-color: $lowestLevelColor;
 	}
 }
