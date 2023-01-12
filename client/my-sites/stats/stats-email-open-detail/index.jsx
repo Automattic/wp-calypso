@@ -2,7 +2,7 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Spinner } from '@automattic/components';
 import { Icon, people } from '@wordpress/icons';
 import { localize, translate } from 'i18n-calypso';
-import { flowRight } from 'lodash';
+import { find, flowRight } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { parse as parseQs, stringify as stringifyQs } from 'qs';

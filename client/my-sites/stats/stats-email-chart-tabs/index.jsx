@@ -42,9 +42,13 @@ class StatModuleChartTabs extends Component {
 		),
 		isActiveTabLoading: PropTypes.bool,
 		onChangeLegend: PropTypes.func.isRequired,
+		barClick: PropTypes.func,
+		chartData: PropTypes.array,
+		chartTab: PropTypes.string,
+		switchTab: PropTypes.func,
+		queryDate: PropTypes.string,
+		recordGoogleEvent: PropTypes.func,
 	};
-
-	intervalId = null;
 
 	onLegendClick = ( chartItem ) => {
 		const activeLegend = this.props.activeLegend.slice();

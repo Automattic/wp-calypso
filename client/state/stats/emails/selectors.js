@@ -157,8 +157,8 @@ export function getEmailStat( state, siteId, postId, period, statType ) {
  * @param  {object}  state   Global state tree
  * @param  {number}  siteId  Site ID
  * @param  {number}  postId  Email
- * @param  {string} statType Stat typeId
  * @param  {string} period   Period
+ * @param  {string} statType Stat typeId
  * @param  {string} date     Date
  * @param {string} path      Path
  * @returns {*}              Normalized data
