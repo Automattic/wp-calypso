@@ -191,7 +191,9 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 
 	renderMobileView() {
 		const { planProperties, translate } = this.props;
-		const CardContainer = ( props: React.ComponentProps< typeof FoldableCard > ) => {
+		const CardContainer = (
+			props: React.ComponentProps< typeof FoldableCard > & { planName: string }
+		) => {
 			const { children, planName, ...otherProps } = props;
 			return isWpcomEnterpriseGridPlan( planName ) ? (
 				<div { ...otherProps }>{ children }</div>
