@@ -13,7 +13,6 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { useSiteSlug } from '../hooks/use-site-slug';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import AutomatedCopySite from './internals/steps-repository/automated-copy-site';
 import Intro from './internals/steps-repository/intro';
@@ -39,6 +38,7 @@ const copySite: Flow = {
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'automatedCopy', component: AutomatedCopySite },
+			{ slug: 'processingCopy', component: ProcessingStep },
 		];
 	},
 
@@ -46,7 +46,6 @@ const copySite: Flow = {
 		const flowName = this.name;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
-		const siteSlug = useSiteSlug();
 		const urlQueryParams = useQuery();
 
 		const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
@@ -81,15 +80,6 @@ const copySite: Flow = {
 				}
 
 				case 'processing': {
-					if ( providedDependencies?.finishedWaitingForAtomic ) {
-						return window.location.assign( `/home/${ siteSlug }` );
-					}
-					const processingResult = params[ 0 ] as ProcessingResult;
-
-					if ( processingResult === ProcessingResult.FAILURE ) {
-						return navigate( 'error' );
-					}
-
 					const destination = addQueryArgs( `/setup/${ this.name }/automatedCopy`, {
 						sourceSlug: urlQueryParams.get( 'sourceSlug' ),
 						siteSlug: providedDependencies?.siteSlug,
@@ -106,11 +96,19 @@ const copySite: Flow = {
 				}
 
 				case 'automatedCopy': {
+					return navigate( 'processingCopy' );
+				}
+
+				case 'processingCopy': {
+					const processingResult = params[ 0 ] as ProcessingResult;
+
+					if ( processingResult === ProcessingResult.FAILURE ) {
+						// Create a retry step here.
+						return navigate( 'retry' );
+					}
 					clearSignupDestinationCookie();
 					return window.location.assign( `/home/${ providedDependencies?.siteSlug }` );
 				}
-				case 'waitForAtomic':
-					return navigate( 'processing' );
 			}
 			return providedDependencies;
 		};
@@ -120,13 +118,7 @@ const copySite: Flow = {
 		};
 
 		const goNext = () => {
-			switch ( _currentStepSlug ) {
-				case 'launchpad':
-					return window.location.assign( `/view/${ siteSlug }` );
-
-				default:
-					return navigate( 'intro' );
-			}
+			return;
 		};
 
 		const goToStep = ( step: string ) => {
