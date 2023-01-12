@@ -1,3 +1,4 @@
+import assert from 'assert';
 import { Locator, Page } from 'playwright';
 import {
 	BlockInserter,
@@ -43,6 +44,7 @@ const selectors = {
 	confirmationToast: ( text: string ) => `.components-snackbar:has-text('${ text }')`,
 	focusedBlock: ( blockSelector: string ) => `${ blockSelector }.is-selected`,
 	parentOfFocusedBlock: ( blockSelector: string ) => `${ blockSelector }.has-child-selected`,
+	limitedGlobalStylesPreSaveNotice: '.wpcom-global-styles-notice',
 };
 
 /**
@@ -66,6 +68,8 @@ export class FullSiteEditorPage {
 	private templatePartModalComponent: TemplatePartModalComponent;
 	private templatePartListComponent: TemplatePartListComponent;
 	private cookieBannerComponent: CookieBannerComponent;
+
+	private hasCustomStyles = false;
 
 	/**
 	 * Constructs an instance of the page POM class.
@@ -372,17 +376,25 @@ export class FullSiteEditorPage {
 
 	/**
 	 * Save the changes in the full site editor (equivalent of publish).
+	 *
+	 * @param {object} param0 Keyed options parameter.
+	 * @param {boolean} param0.checkPreSaveNotices Whether the presence of the pre-save notices should be checked.
 	 */
 	async save(
-		{ expectedPreSaveElement }: { expectedPreSaveElement: string | null } = {
-			expectedPreSaveElement: null,
-		}
+		{ checkPreSaveNotices }: { checkPreSaveNotices: boolean } = { checkPreSaveNotices: false }
 	): Promise< void > {
 		await this.clearExistingSaveConfirmationToast();
 		await this.editorToolbarComponent.saveSiteEditor();
-		if ( expectedPreSaveElement ) {
-			const preSaveElement = this.editor.locator( expectedPreSaveElement );
-			await preSaveElement.waitFor();
+		if ( checkPreSaveNotices ) {
+			const limitedGlobalStylesPreSaveNotice = this.editor.locator(
+				selectors.limitedGlobalStylesPreSaveNotice
+			);
+			if ( this.hasCustomStyles ) {
+				await limitedGlobalStylesPreSaveNotice.waitFor();
+			} else {
+				const count = await limitedGlobalStylesPreSaveNotice.count();
+				assert.equal( count, 0 );
+			}
 		}
 		await this.fullSiteEditorSavePanelComponent.confirmSave();
 		await this.waitForConfirmationToast( 'Site updated.' );
@@ -558,6 +570,7 @@ export class FullSiteEditorPage {
 	 */
 	async setStyleVariation( styleVariation: StyleVariation ): Promise< void > {
 		await this.editorSiteStylesComponent.setStyleVariation( styleVariation );
+		this.hasCustomStyles = styleVariation !== 'Default';
 	}
 
 	//#endregion
