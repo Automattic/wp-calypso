@@ -362,7 +362,7 @@ export function disableAutoupdatePlugin( siteId, plugin ) {
 			pluginId,
 		};
 
-		if ( siteId && ! plugin[ siteId ]?.autoupdate ) {
+		if ( siteId && ! plugin.sites[ siteId ]?.autoupdate ) {
 			return dispatch( {
 				...defaultAction,
 				type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS,

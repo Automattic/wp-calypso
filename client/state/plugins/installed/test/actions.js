@@ -301,10 +301,11 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when triggered', () => {
-			deactivatePlugin( 2916284, { slug: 'akismet', id: 'akismet/akismet', active: true } )(
-				spy,
-				getState
-			);
+			deactivatePlugin( 2916284, {
+				slug: 'akismet',
+				id: 'akismet/akismet',
+				sites: { [ 2916284 ]: { active: true } },
+			} )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
 				type: PLUGIN_DEACTIVATE_REQUEST,
@@ -315,10 +316,11 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch plugin deactivate request success action when request completes', async () => {
-			await deactivatePlugin( 2916284, { slug: 'akismet', id: 'akismet/akismet', active: true } )(
-				spy,
-				getState
-			);
+			await deactivatePlugin( 2916284, {
+				slug: 'akismet',
+				id: 'akismet/akismet',
+				sites: { [ 2916284 ]: { active: true } },
+			} )( spy, getState );
 			expect( spy ).toHaveBeenCalledWith( {
 				type: PLUGIN_DEACTIVATE_REQUEST_SUCCESS,
 				action: DEACTIVATE_PLUGIN,
@@ -329,10 +331,11 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', async () => {
-			await deactivatePlugin( 2916284, { slug: 'fake', id: 'fake/fake', active: true } )(
-				spy,
-				getState
-			);
+			await deactivatePlugin( 2916284, {
+				slug: 'fake',
+				id: 'fake/fake',
+				sites: { [ 2916284 ]: { active: true } },
+			} )( spy, getState );
 			expect( spy ).toHaveBeenCalledWith( {
 				type: PLUGIN_DEACTIVATE_REQUEST_FAILURE,
 				action: DEACTIVATE_PLUGIN,
@@ -477,10 +480,11 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when triggered', () => {
-			enableAutoupdatePlugin( site.ID, { slug: 'akismet', id: 'akismet/akismet' } )(
-				spy,
-				getState
-			);
+			enableAutoupdatePlugin( site.ID, {
+				slug: 'akismet',
+				id: 'akismet/akismet',
+				sites: { [ site.ID ]: { autoupdate: false } },
+			} )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
 				type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST,
@@ -494,6 +498,7 @@ describe( 'actions', () => {
 			await enableAutoupdatePlugin( site.ID, {
 				slug: 'akismet',
 				id: 'akismet/akismet',
+				sites: { [ site.ID ]: { autoupdate: false } },
 			} )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
@@ -506,7 +511,11 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', async () => {
-			await enableAutoupdatePlugin( site.ID, { slug: 'fake', id: 'fake/fake' } )( spy, getState );
+			await enableAutoupdatePlugin( site.ID, {
+				slug: 'fake',
+				id: 'fake/fake',
+				sites: { [ site.ID ]: { autoupdate: false } },
+			} )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
 				type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_FAILURE,
@@ -522,6 +531,7 @@ describe( 'actions', () => {
 				slug: 'jetpack',
 				id: 'jetpack/jetpack',
 				update: {},
+				sites: { [ site.ID ]: { autoupdate: false } },
 			} )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
@@ -564,7 +574,7 @@ describe( 'actions', () => {
 			disableAutoupdatePlugin( site.ID, {
 				slug: 'akismet',
 				id: 'akismet/akismet',
-				autoupdate: true,
+				sites: { [ site.ID ]: { autoupdate: true } },
 			} )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
@@ -579,7 +589,7 @@ describe( 'actions', () => {
 			await disableAutoupdatePlugin( site.ID, {
 				slug: 'akismet',
 				id: 'akismet/akismet',
-				autoupdate: true,
+				sites: { [ site.ID ]: { autoupdate: true } },
 			} )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
@@ -592,10 +602,11 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', async () => {
-			await disableAutoupdatePlugin( site.ID, { slug: 'fake', id: 'fake/fake', autoupdate: true } )(
-				spy,
-				getState
-			);
+			await disableAutoupdatePlugin( site.ID, {
+				slug: 'fake',
+				id: 'fake/fake',
+				sites: { [ site.ID ]: { autoupdate: true } },
+			} )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
 				type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST_FAILURE,
