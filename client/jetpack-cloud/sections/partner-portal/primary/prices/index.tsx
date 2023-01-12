@@ -43,7 +43,8 @@ export default function Prices() {
 				</td>
 				<td>
 					<div className="prices__mobile-description">
-						{ translate( 'Jetpack.com Pricing, purchased Monthly (USD)' ) }
+						<div>{ translate( 'Jetpack.com Pricing' ) }</div>
+						<span className="prices__th-detail">{ translate( 'billed monthly' ) }</span>
 					</div>
 					<div>
 						{ translate( '%(price)s/day', {
@@ -64,7 +65,8 @@ export default function Prices() {
 				</td>
 				<td>
 					<div className="prices__mobile-description">
-						{ translate( 'Jetpack.com Pricing, purchased Yearly (USD)' ) }
+						<div>{ translate( 'Jetpack.com Pricing' ) }</div>
+						<span className="prices__th-detail">{ translate( 'billed yearly' ) }</span>
 					</div>
 					<div>
 						{ translate( '%(price)s/day', {
@@ -85,7 +87,8 @@ export default function Prices() {
 				</td>
 				<td>
 					<div className="prices__mobile-description">
-						{ translate( 'Agency/Pro Pricing, purchased daily (USD)' ) }
+						<div>{ translate( 'Agency/Pro Pricing' ) }</div>
+						<span className="prices__th-detail">{ translate( 'daily price' ) }</span>
 					</div>
 					{ translate( '%(price)s/day', {
 						args: {
@@ -123,15 +126,24 @@ export default function Prices() {
 			</div>
 
 			<table className="prices__table">
-				<tbody>
+				<thead>
 					<tr>
-						<td></td>
-						<td>{ translate( 'Jetpack.com Pricing, purchased Monthly (USD)' ) }</td>
-						<td>{ translate( 'Jetpack.com Pricing, purchased Yearly (USD)' ) }</td>
-						<td>{ translate( 'Agency/Pro Pricing, purchased daily (USD)' ) }</td>
+						<th></th>
+						<th>
+							<div>{ translate( 'Jetpack.com Pricing' ) }</div>
+							<span className="prices__th-detail">{ translate( 'billed monthly' ) }</span>
+						</th>
+						<th>
+							<div>{ translate( 'Jetpack.com Pricing' ) }</div>
+							<span className="prices__th-detail">{ translate( 'billed yearly' ) }</span>
+						</th>
+						<th>
+							<div>{ translate( 'Agency/Pro Pricing' ) }</div>
+							<span className="prices__th-detail">{ translate( 'daily pricing' ) }</span>
+						</th>
 					</tr>
-					{ productRows }
-				</tbody>
+				</thead>
+				<tbody>{ productRows }</tbody>
 			</table>
 		</Main>
 	);
