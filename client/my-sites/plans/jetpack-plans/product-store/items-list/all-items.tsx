@@ -26,6 +26,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 		getIsIncludedInPlanOrSuperseded,
 		getIsMultisiteCompatible,
 		getIsOwned,
+		getIsExpired,
 		getIsPlanFeature,
 		getIsSuperseded,
 		getIsUserPurchaseOwner,
@@ -43,6 +44,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 			<ul className="jetpack-product-store__all-items--grid">
 				{ items.map( ( item ) => {
 					const isOwned = getIsOwned( item );
+					const isExpired = getIsExpired( item );
 					const isProductInCart =
 						! isJetpackPlanSlug( item.productSlug ) && getIsProductInCart( item );
 					const isSuperseded = getIsSuperseded( item );
@@ -66,6 +68,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 							isMultiSiteIncompatible={ isMultiSiteIncompatible }
 							isIncludedInPlan={ isIncludedInPlan }
 							isOwned={ isOwned }
+							isExpired={ isExpired }
 							item={ item }
 							siteId={ siteId }
 						/>

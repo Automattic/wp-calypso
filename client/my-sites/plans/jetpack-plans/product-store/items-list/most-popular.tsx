@@ -35,6 +35,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 		getIsUserPurchaseOwner,
 		getOnClickPurchase,
 		isMultisite,
+		getIsExpired,
 	} = useStoreItemInfoContext();
 
 	return (
@@ -43,6 +44,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 			<ul className="jetpack-product-store__most-popular--items">
 				{ items.map( ( item ) => {
 					const isOwned = getIsOwned( item );
+					const isExpired = getIsExpired( item );
 					const isSuperseded = getIsSuperseded( item );
 					const isProductInCart =
 						! isJetpackPlanSlug( item.productSlug ) && getIsProductInCart( item );
@@ -66,6 +68,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 							isMultiSiteIncompatible={ isMultiSiteIncompatible }
 							isIncludedInPlan={ isIncludedInPlan }
 							isOwned={ isOwned }
+							isExpired={ isExpired }
 							item={ item }
 							siteId={ siteId }
 						/>
