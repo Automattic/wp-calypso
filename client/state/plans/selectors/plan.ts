@@ -1,38 +1,31 @@
 import { createSelector } from '@automattic/state-utils';
 import { get, find } from 'lodash';
+import type { PricedAPIPlan } from '@automattic/data-stores';
+import type { AppState } from 'calypso/types';
 
 import 'calypso/state/plans/init';
 
 /**
  * Return WordPress plans getting from state object
- *
- * @param {object} state - current state object
- * @returns {Array} WordPress plans
  */
-export const getPlans = ( state: any ) => {
+export const getPlans = ( state: AppState ): PricedAPIPlan[] => {
 	return state.plans.items;
 };
 
 /**
  * Return requesting state
- *
- * @param {object} state - current state object
- * @returns {boolean} is plans requesting?
  */
-export const isRequestingPlans = ( state: any ) => {
+export const isRequestingPlans = ( state: AppState ): boolean => {
 	return state.plans.requesting;
 };
 
 /**
  * Returns a plan
- *
- * @param  {object} state      global state
- * @param  {number} productId  the plan productId
- * @returns {object} the matching plan
  */
 export const getPlan = createSelector(
-	( state, productId ) => find( getPlans( state ), { product_id: productId } ),
-	( state ) => getPlans( state )
+	( state: AppState, productId: string | number ): PricedAPIPlan | undefined =>
+		getPlans( state ).find( ( plan ) => plan.product_id === productId ),
+	( state: AppState ) => getPlans( state )
 );
 
 /**
@@ -54,7 +47,7 @@ export const getPlanBySlug = createSelector(
  * @param  {number}  productId the plan productId
  * @returns {string}  plan product_slug
  */
-export function getPlanSlug( state: any, productId: any ) {
+export function getPlanSlug( state: AppState, productId: string | number ): string | null {
 	const plan = getPlan( state, productId );
 
 	return get( plan, 'product_slug', null );
