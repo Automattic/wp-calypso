@@ -1,15 +1,11 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
-@import "../../../sensei-variables";
+@import "../../../sensei";
 
 .sensei.sensei-domain {
 	.step-container__content > div {
 		height: auto;
-	}
-
-	.progress-bar__progress {
-		background-color: $sensei-color;
 	}
 
 	.sensei-domain.is-wide-layout {

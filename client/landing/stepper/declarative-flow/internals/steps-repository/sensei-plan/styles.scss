@@ -1,9 +1,5 @@
 @import "@automattic/onboarding/styles/mixins";
-@import "../../../sensei-variables";
-
-.sensei .progress-bar__progress {
-	background-color: $sensei-color;
-}
+@import "../../../sensei";
 
 .step-container.senseiPlan {
 	.plan-item {
