@@ -1,5 +1,5 @@
 import { useFlowProgress, COPY_SITE_FLOW } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -50,16 +50,7 @@ const copySite: Flow = {
 		const urlQueryParams = useQuery();
 
 		const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
-
-		// We need to do this here to avoid any race conditions
-		// due to dispatch adn window.assign
-		const productSlug = urlQueryParams.get( 'productSlug' );
-		if ( productSlug ) {
-			const productToAdd = {
-				product_slug: productSlug,
-			};
-			setPlanCartItem( productToAdd );
-		}
+		const { getPlanCartItem } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 
 		setStepProgress( flowProgress );
 
@@ -67,6 +58,16 @@ const copySite: Flow = {
 			providedDependencies: ProvidedDependencies = {},
 			...params: string[]
 		) => {
+			// We need to do this here to avoid any race conditions
+			// due to dispatch and window.assign
+			const productSlug = urlQueryParams.get( 'productSlug' );
+			if ( productSlug && ! getPlanCartItem() ) {
+				const productToAdd = {
+					product_slug: productSlug,
+				};
+				setPlanCartItem( productToAdd );
+			}
+
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
 
 			switch ( _currentStepSlug ) {
