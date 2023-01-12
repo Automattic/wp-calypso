@@ -79,12 +79,12 @@ type PlanFeatures2023GridProps = {
 	isLaunchPage?: boolean;
 	isReskinned?: boolean;
 	is2023OnboardingPricingGrid?: boolean;
-	onUpgradeClick: ( cartItem: MinimalRequestCartProduct ) => void;
+	onUpgradeClick: ( cartItem: MinimalRequestCartProduct | null ) => void;
 	plans: Array< string >;
 	visiblePlans: Array< string >;
 	flowName: string;
 	domainName: string;
-	placeholder?: boolean;
+	placeholder?: string;
 	isLandingPage?: boolean;
 };
 
@@ -92,6 +92,8 @@ type PlanFeatures2023GridConnectedProps = {
 	translate: LocalizeProps[ 'translate' ];
 	recordTracksEvent: ( slug: string ) => void;
 	planProperties: Array< PlanProperties >;
+	planName: string;
+	tagline: string;
 };
 
 type PlanFeatures2023GridType = PlanFeatures2023GridProps &
@@ -186,7 +188,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 
 	renderMobileView() {
 		const { planProperties, translate } = this.props;
-		const CardContainer = ( props: PlanFeatures2023GridType ) => {
+		const CardContainer = ( props: React.ComponentProps< typeof FoldableCard > ) => {
 			const { children, planName, ...otherProps } = props;
 			return isWpcomEnterpriseGridPlan( planName ) ? (
 				<div { ...otherProps }>{ children }</div>
@@ -584,10 +586,10 @@ export default connect(
 			}
 
 			let planFeatures = getPlanFeaturesObject(
-				planConstantObj?.get2023PricingGridSignupWpcomFeatures?.()
+				planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
 			);
 			let jetpackFeatures = getPlanFeaturesObject(
-				planConstantObj.get2023PricingGridSignupJetpackFeatures?.()
+				planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? []
 			);
 
 			const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );
@@ -651,18 +653,18 @@ export default connect(
 					? discountPrice * 12
 					: getPlanRawPrice( state, planProductId, false );
 
-			const tagline = planConstantObj.getPlanTagline?.();
+			const tagline = planConstantObj.getPlanTagline?.() ?? '';
 			const product_name_short =
 				isWpcomEnterpriseGridPlan( plan ) && planConstantObj.getPathSlug
 					? planConstantObj.getPathSlug()
-					: planObject.product_name_short;
+					: planObject?.product_name_short ?? '';
 			const storageOptions =
 				( planConstantObj.get2023PricingGridSignupStorageOptions &&
 					planConstantObj.get2023PricingGridSignupStorageOptions() ) ||
 				[];
 
 			return {
-				cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ),
+				cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ?? '' ),
 				currencyCode: getCurrentUserCurrencyCode( state ),
 				discountPrice,
 				features: planFeatures,
