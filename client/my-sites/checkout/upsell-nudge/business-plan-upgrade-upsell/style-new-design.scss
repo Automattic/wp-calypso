@@ -54,6 +54,7 @@ main.business-plan-upgrade-upsell-new-design.main {
 	}
 
 	&__image-container {
+		min-width: 200px;
 		grid-area: images;
 		text-align: center;
 		@include breakpoint-deprecated( "<660px" ) {
@@ -63,21 +64,6 @@ main.business-plan-upgrade-upsell-new-design.main {
 		img {
 			max-width: 60%;
 		}
-	}
-
-	&__discount {
-		position: relative;
-		top: 65px;
-		text-align: right;
-		right: 5%;
-		height: 0;
-	}
-
-	&__discount-badge {
-		background: rgba(245, 245, 245, 0.5) !important;
-		border-radius: 10px !important; /* stylelint-disable-line scales/radii */
-		padding: 5px 15px !important;
-		backdrop-filter: blur(10px);
 	}
 
 	&__body {
