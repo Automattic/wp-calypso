@@ -36,24 +36,25 @@
 
 	.thank-you__header-subtitle {
 		margin: 16px auto;
-		width: 500px;
+		max-width: 500px;
 		line-height: 24px;
 		font-size: $font-body;
 		color: var(--studio-gray-60);
 	}
 
 	.thank-you__footer {
-		width: 1072px;
+		max-width: 1072px;
 		padding: 40px;
 		display: flex;
-		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 75px;
+		justify-content: center;
 
 		.thank-you__step {
 			display: flex;
 			flex-direction: column;
 			flex-wrap: wrap;
-			width: 270px;
-			justify-content: space-between;
+			min-width: 280px;
 
 			h3 {
 				line-height: 24px;
@@ -76,6 +77,10 @@
 		.thank-you__step-icon {
 			width: 50px;
 			flex-basis: 100%;
+		}
+
+		div {
+			max-width: 240px;
 		}
 	}
 }

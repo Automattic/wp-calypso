@@ -10,6 +10,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 const PluginSectionContainer = styled.div`
 	display: flex;
 	flex-direction: row;
+	flex-wrap: wrap;
 	width: 720px;
 	padding: 24px;
 	box-sizing: border-box;
@@ -20,6 +21,15 @@ const PluginSectionContainer = styled.div`
 	div {
 		min-width: auto;
 	}
+
+	@media ( max-width: 740px ) {
+		width: 500px;
+		gap: 16px;
+	}
+
+	@media ( max-width: 520px ) {
+		width: 280px;
+	}
 `;
 
 const PluginSectionContent = styled.div`
@@ -27,6 +37,10 @@ const PluginSectionContent = styled.div`
 	flex-direction: column;
 	flex-grow: 1;
 	margin: 0 16px;
+
+	@media ( max-width: 740px ) {
+		margin: 0;
+	}
 `;
 
 const PluginSectionName = styled.div`
