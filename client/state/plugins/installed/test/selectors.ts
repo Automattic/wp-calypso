@@ -439,7 +439,7 @@ describe( 'Installed plugin selectors', () => {
 		test( 'Should return a list of all plugin statuses, and add siteId and pluginId to each status.', () => {
 			expect( selectors.getPluginStatusesByType( state, 'completed' ) ).toEqual( [
 				{
-					siteId: String( siteOneId ),
+					siteId: siteOneId,
 					pluginId: 'jetpack/jetpack',
 					action: DEACTIVATE_PLUGIN,
 					status: 'completed',
