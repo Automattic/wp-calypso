@@ -9,6 +9,7 @@ import TokenField from 'calypso/components/token-field';
 import { useUpdateMonitorSettings } from '../../hooks';
 import {
 	availableNotificationDurations as durations,
+	getSiteCountText,
 	mobileAppLink,
 } from '../../sites-overview/utils';
 import type { MonitorSettings, Site } from '../../sites-overview/types';
@@ -110,16 +111,6 @@ export default function NotificationSettings( { onClose, sites, settings }: Prop
 		</div>
 	);
 
-	const getSiteCountTitle = ( sites: Array< Site > ) => {
-		if ( sites.length === 1 ) {
-			return sites[ 0 ].url;
-		}
-		return translate( '%(siteCount)d sites', {
-			args: { siteCount: sites.length },
-			comment: '%(siteCount) is no of sites selected, e.g. "2 sites"',
-		} );
-	};
-
 	return (
 		<Modal
 			open={ true }
@@ -127,7 +118,7 @@ export default function NotificationSettings( { onClose, sites, settings }: Prop
 			title={ translate( 'Set custom notification' ) }
 			className="notification-settings__modal"
 		>
-			<div className="notification-settings__sub-title">{ getSiteCountTitle( sites ) }</div>
+			<div className="notification-settings__sub-title">{ getSiteCountText( sites ) }</div>
 
 			<form onSubmit={ onSave }>
 				<div className="notification-settings__content">

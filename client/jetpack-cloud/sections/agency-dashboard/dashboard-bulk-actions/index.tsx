@@ -5,7 +5,7 @@ import { useState } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import NotificationSettings from '../downtime-monitoring/notification-settings';
-import { useHandleToggleMonitor } from './hooks';
+import { useHandleToggleMonitor, useHandleResetNotification } from './hooks';
 import type { Site } from '../sites-overview/types';
 
 import './style.scss';
@@ -20,6 +20,7 @@ export default function DashboardBulkActions( { selectedSites }: Props ) {
 	const isMobile = useMobileBreakpoint();
 
 	const handleToggleActivateMonitor = useHandleToggleMonitor( selectedSites );
+	const handleResetNotification = useHandleResetNotification( selectedSites );
 
 	const [ showNotificationSettingsPopup, setShowNotificationSettingsPopup ] = useState( false );
 
@@ -42,6 +43,10 @@ export default function DashboardBulkActions( { selectedSites }: Props ) {
 		{
 			label: translate( 'Custom Notification' ),
 			action: () => toggleNotificationSettingsPopup(),
+		},
+		{
+			label: translate( 'Reset Notification' ),
+			action: () => handleResetNotification(),
 		},
 	];
 
