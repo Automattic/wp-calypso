@@ -1,6 +1,5 @@
 import { ConfettiAnimation } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
-import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { Icon, table } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -33,90 +32,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { ThankYouPluginSection } from './marketplace-thank-you-plugin-section';
-
-const ThankYouContainer = styled.div`
-	.thank-you__container {
-		padding-top: var( --masterbar-height );
-	}
-
-	.thank-you__container-header {
-		min-height: auto;
-		padding: 0px;
-		/* padding-top: 15px; */
-		padding-top: 60px;
-	}
-
-	.thank-you__body {
-		margin: 40px 0;
-
-		> div {
-			width: auto;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-		}
-
-		div {
-			min-width: auto;
-		}
-	}
-
-	.thank-you__step div > p {
-		padding: 0;
-		margin-bottom: 16px;
-	}
-
-	.thank-you__header-title {
-		font-family: Recoleta;
-		font-size: 48px;
-		line-height: 24px;
-	}
-
-	.thank-you__header-subtitle {
-		margin: 16px auto;
-		width: 500px;
-		line-height: 24px;
-		font-size: 16px;
-		color: var( --studio-gray-60 );
-	}
-
-	.thank-you__footer {
-		width: 1072px;
-		padding: 40px;
-		display: flex;
-		justify-content: space-between;
-
-		.thank-you__step {
-			display: flex;
-			flex-direction: column;
-			flex-wrap: wrap;
-			width: 270px;
-			justify-content: space-between;
-
-			h3 {
-				line-height: 24px;
-				font-weight: 500;
-				font-size: 16px;
-				color: var( --studio-gray-100 );
-			}
-
-			p {
-				line-height: 20px;
-				font-size: 14px;
-				color: var( --studio-gray-60 );
-			}
-		}
-
-		.thank-you__step-cta {
-			margin: 0;
-		}
-
-		.thank-you__step-icon {
-			width: 50px;
-			flex-basis: 100%;
-		}
-	}
-`;
+import './style.scss';
 
 type Plugin = {
 	slug: string;
@@ -363,7 +279,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 				</div>
 			) }
 			{ ! showProgressBar && (
-				<ThankYouContainer>
+				<div className="marketplace-thank-you__container">
 					<ConfettiAnimation />
 					<ThankYou
 						containerClassName="marketplace-thank-you"
@@ -380,7 +296,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 						headerBackgroundColor="#fff"
 						headerTextColor="#000"
 					/>
-				</ThankYouContainer>
+				</div>
 			) }
 		</ThemeProvider>
 	);
