@@ -438,9 +438,21 @@ export default class WebPreviewContent extends Component {
 							/>
 							<div
 								className="web-preview__frame-edit-overlay"
-								style={ { opacity: this.state.showIFrameOverlay ? '1' : '0' } }
+								style={ {
+									opacity: this.state.showIFrameOverlay ? '1' : '0',
+									background: this.state.showIFrameOverlay
+										? `rgba(16, 21, 23, 0.5)`
+										: 'rgba(16, 21, 23, 0)',
+									transition: 'background 0.2s ease',
+								} }
 							>
 								<button
+									style={ {
+										position: 'relative',
+										top: this.state.showIFrameOverlay ? '0' : '15px',
+										// top: '200px',
+										transition: 'all 0.2s ease',
+									} }
 									className="web-preview__frame-edit-button"
 									onClick={ () => {
 										window.location.assign( `/site-editor/${ this.props.externalUrl }` );
