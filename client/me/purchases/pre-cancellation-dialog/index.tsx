@@ -2,6 +2,8 @@ import { Dialog, Gridicon } from '@automattic/components';
 import cx from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getCancellationFeatureByKey } from 'calypso/lib/plans/cancellation-features-list';
@@ -39,10 +41,10 @@ export const FeaturesList = ( { productSlug, hasDomain, domainFeature }: Feature
 	return (
 		<>
 			<ul
-				className={
-					'pre-cancellation-dialog__list-plan-features' +
-					( domainFeature ? ' --with-domain-feature' : '' )
-				}
+				className={ cx( {
+					'pre-cancellation-dialog__list-plan-features': true,
+					'--with-domain-feature': domainFeature !== null,
+				} ) }
 			>
 				{ domainFeature && (
 					<li key="redirect-domain">
@@ -150,25 +152,58 @@ export const PreCancellationDialog = ( {
 	/**
 	 * Instantiate purchase variables.
 	 */
-	const isPurchaseRefundable = isRefundable( purchase );
+	const isPurchaseRefundable = isRefundable( purchase ) && hasAmountAvailableToRefund( purchase );
 	const isPurchaseAutoRenewing = purchase.isAutoRenewEnabled;
+	const isRefundableBundle = isPurchaseRefundable && hasDomain;
+	const planCostText = purchase.totalRefundText;
+	const cancelBundledDomain = true;
 
 	/**
 	 * Determine dialog subtitle.
 	 */
 	const { refundText } = purchase;
-	const subTitle =
-		isPurchaseRefundable && hasAmountAvailableToRefund( purchase ) ? (
-			<div className="pre-cancellation-dialog--refund">
-				{ hasAmountAvailableToRefund( purchase ) &&
-					translate( '%(refundText)s to be refunded', {
-						args: { refundText },
-						context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
-					} ) }
-			</div>
-		) : (
-			<>Subtitle</>
-		);
+	const subTitle = () => {
+		if ( isRefundableBundle ) {
+			return (
+				<div className="pre-cancellation-dialog--cancellation-domain-bundle">
+					<p className="pre-cancellation-dialog--cancellation-domain-bundle--warning">
+						{ translate(
+							'Amongst other features, your plan included the custom domain %(domain)s.',
+							{
+								args: {
+									domain: primaryDomain,
+								},
+							}
+						) }
+					</p>
+					<p className="pre-cancellation-dialog--cancellation-domain-bundle--text">
+						{ translate(
+							'With the plan and domain cancelation, visitors to yout site, may experience difficulties finding and using it. Also, by canceling the domain, you risk losing it forever.',
+							{
+								args: {
+									domain: primaryDomain,
+								},
+							}
+						) }
+					</p>
+				</div>
+			);
+		}
+
+		if ( isPurchaseRefundable ) {
+			return (
+				<div className="pre-cancellation-dialog--refund">
+					{ hasAmountAvailableToRefund( purchase ) &&
+						translate( '%(refundText)s to be refunded', {
+							args: { refundText },
+							context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
+						} ) }
+				</div>
+			);
+		}
+
+		return <>Subtitle</>;
+	};
 
 	/**
 	 * Click events, buttons tracking and action.
@@ -198,7 +233,7 @@ export const PreCancellationDialog = ( {
 	 * Domain redirect copy
 	 */
 	const domainFeature =
-		hasDomain && primaryDomain && wpcomURL ? (
+		hasDomain && primaryDomain && wpcomURL && ! isRefundableBundle ? (
 			<p>Warning: domain traffic will be redirected</p>
 		) : null;
 
@@ -229,6 +264,7 @@ export const PreCancellationDialog = ( {
 				'pre-cancellation-dialog': true,
 				'--with-domain-feature': domainFeature !== null,
 				'--with-screenshot': shouldUseSiteThumbnail,
+				'--with-refundable-bundle': isRefundableBundle,
 			} ) }
 			isVisible={ isDialogVisible }
 			onClose={ closeDialog }
@@ -242,23 +278,86 @@ export const PreCancellationDialog = ( {
 					/>
 				</button>
 				<div className="pre-cancellation-dialog__grid">
-					<div className="pre-cancellation-dialog__grid-colmn">
-						<FormattedHeader
-							brandFont
-							headerText={ translate( 'Are you sure you want to cancel your %(label)s plan?', {
-								args: { label: planLabel },
-							} ) }
-							align="left"
-						/>
-						<h2>{ subTitle }</h2>
-						<FeaturesList
-							productSlug={ productSlug }
-							domainFeature={ domainFeature }
-							hasDomain={ hasDomain }
-							wpcomURL={ wpcomURL }
-							primaryDomain={ primaryDomain }
-						/>
-					</div>
+					{ isRefundableBundle && (
+						<div className="pre-cancellation-dialog__grid-colmn">
+							<FormattedHeader
+								brandFont
+								headerText={ translate( 'Cancellation options' ) }
+								align="left"
+							/>
+							<h2>{ subTitle() }</h2>
+							<h2>{ translate( 'What would you like to do?' ) }</h2>
+							<FormLabel key="keep_bundled_domain">
+								<FormRadio
+									className="pre-cancellation-dialog-form-radio-1"
+									name="keep_bundled_domain_false"
+									value="keep"
+									checked={ ! cancelBundledDomain }
+									onChange={ onCancelBundledDomainChange }
+									label={
+										<>
+											{ translate(
+												"Cancel the plan, {{strong}}but{{/strong}} keep %(domain)s. You'll receive a partial refund of %(refundAmount)s",
+												{
+													args: {
+														domain: primaryDomain,
+														refundAmount: purchase.refundText,
+													},
+													components: {
+														strong: <strong />,
+													},
+												}
+											) }
+										</>
+									}
+								/>
+							</FormLabel>
+							<FormLabel key="cancel_bundled_domain">
+								<FormRadio
+									className="pre-cancellation-dialog-form-radio-2"
+									name="cancel_bundled_domain_false"
+									value="cancel"
+									checked={ cancelBundledDomain }
+									onChange={ onCancelBundledDomainChange }
+									label={
+										<>
+											{ translate(
+												"Cancel the plan {{strong}}and{{/strong}} the domain. You'll receive a full refund of %(planCost)s",
+												{
+													args: {
+														planCost: planCostText,
+													},
+													components: {
+														strong: <strong />,
+													},
+												}
+											) }
+										</>
+									}
+								/>
+							</FormLabel>
+						</div>
+					) }
+					{ ! isRefundableBundle ||
+						( ! hasDomain && (
+							<div className="pre-cancellation-dialog__grid-colmn">
+								<FormattedHeader
+									brandFont
+									headerText={ translate( 'Are you sure you want to cancel your %(label)s plan?', {
+										args: { label: planLabel },
+									} ) }
+									align="left"
+								/>
+								<h2>{ subTitle }</h2>
+								<FeaturesList
+									productSlug={ productSlug }
+									domainFeature={ domainFeature }
+									hasDomain={ hasDomain }
+									wpcomURL={ wpcomURL }
+									primaryDomain={ primaryDomain }
+								/>
+							</div>
+						) ) }
 					{ shouldUseSiteThumbnail && (
 						<div className="pre-cancellation-dialog__grid-colmn">
 							<SiteScreenshot
@@ -278,3 +377,8 @@ export const PreCancellationDialog = ( {
 		</Dialog>
 	);
 };
+
+export function onCancelBundledDomainChange() {
+	alert( 'onCancelBundledDomainChange' );
+	return;
+}
