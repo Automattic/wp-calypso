@@ -158,6 +158,17 @@ private object OdysseyStats : WPComPluginBuild(
 	pluginSlug = "odyssey-stats",
 	archiveDir = "./dist/",
 	docsLink = "PejTkB-3N-p2",
+	buildSteps = {
+		bashNodeScript {
+			name = "Translate Odyssey Stats"
+			scriptContent = """
+				cd apps/odyssey-stats
+
+				# generate language files
+				yarn translate
+			"""
+		}
+	}
 )
 
 private object O2Blocks : WPComPluginBuild(
