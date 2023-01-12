@@ -259,4 +259,40 @@ describe( 'PlanPrice', () => {
 		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
 		expect( document.querySelector( 'div.plan-price__integer-fraction' ) ).toBeFalsy();
 	} );
+
+	it( 'renders a price without the "is-discounted" tag if discounted is not set', () => {
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" /> );
+		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		expect( document.querySelector( '.is-discounted' ) ).toBeFalsy();
+	} );
+
+	it( 'renders a price with the "is-discounted" tag if discounted is set', () => {
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" discounted /> );
+		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		expect( document.querySelector( '.is-discounted' ) ).toBeTruthy();
+	} );
+
+	it( 'renders a price with the "is-discounted" tag if using productDisplayPrice and discounted is set', () => {
+		render( <PlanPrice productDisplayPrice="$45" discounted /> );
+		expect( document.body ).toHaveTextContent( '$45' );
+		expect( document.querySelector( '.is-discounted' ) ).toBeTruthy();
+	} );
+
+	it( 'renders a price without the "is-original" tag if original is not set', () => {
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" /> );
+		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		expect( document.querySelector( '.is-discounted' ) ).toBeFalsy();
+	} );
+
+	it( 'renders a price with the "is-original" tag if original is set', () => {
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" original /> );
+		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		expect( document.querySelector( '.is-original' ) ).toBeTruthy();
+	} );
+
+	it( 'renders a price with the "is-original" tag if using productDisplayPrice and original is set', () => {
+		render( <PlanPrice productDisplayPrice="$45" original /> );
+		expect( document.body ).toHaveTextContent( '$45' );
+		expect( document.querySelector( '.is-original' ) ).toBeTruthy();
+	} );
 } );
