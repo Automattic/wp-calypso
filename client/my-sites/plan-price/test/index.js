@@ -204,4 +204,28 @@ describe( 'PlanPrice', () => {
 		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
 		expect( screen.queryByText( '(+25 tax)' ) ).not.toBeInTheDocument();
 	} );
+
+	it( 'renders a price with a heading tag if omitHeading is false', () => {
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" /> );
+		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		expect( document.querySelector( 'h4' ) ).toBeTruthy();
+	} );
+
+	it( 'renders a price with a non-heading tag if omitHeading is true', () => {
+		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" omitHeading /> );
+		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		expect( document.querySelector( 'h4' ) ).toBeFalsy();
+	} );
+
+	it( 'renders a price with a heading tag if productDisplayPrice is set and omitHeading is false', () => {
+		render( <PlanPrice productDisplayPrice="Rp44,700.50" currencyCode="IDR" /> );
+		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		expect( document.querySelector( 'h4' ) ).toBeTruthy();
+	} );
+
+	it( 'renders a price with a non-heading tag if productDisplayPrice is set and omitHeading is true', () => {
+		render( <PlanPrice productDisplayPrice="Rp44,700.50" currencyCode="IDR" omitHeading /> );
+		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		expect( document.querySelector( 'h4' ) ).toBeFalsy();
+	} );
 } );
