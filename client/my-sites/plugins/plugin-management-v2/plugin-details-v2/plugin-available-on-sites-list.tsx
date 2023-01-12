@@ -2,7 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { getSitesWithSecondarySites } from 'calypso/my-sites/plugins/plugin-management-v2/utils/get-sites-with-secondary-sites';
 import SitesList from '../sites-list';
-import type { Plugin } from '../types';
+import type { ExtendedPlugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
@@ -11,7 +11,7 @@ interface Props {
 	sites: Array< SiteDetails | null | undefined >;
 	selectedSite: SiteDetails;
 	isLoading: boolean;
-	plugin: Plugin;
+	plugin: ExtendedPlugin;
 }
 
 export default function PluginAvailableOnSitesList( props: Props ) {

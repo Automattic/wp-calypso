@@ -30,8 +30,8 @@ export const JetpackPluginUpdatesTour = makeTour(
 		{ ...meta }
 		when={ ( state: AppState ) => {
 			const site = getSelectedSite( state );
-			const isRequestingPlugins = isRequesting( state, site?.ID );
-			const sitePlugin = getPluginOnSite( state, site?.ID, 'jetpack' );
+			const isRequestingPlugins = site ? isRequesting( state, site.ID ) : false;
+			const sitePlugin = site ? getPluginOnSite( state, site.ID, 'jetpack' ) : undefined;
 			const res = ! isRequestingPlugins && !! sitePlugin;
 			return res;
 		} }

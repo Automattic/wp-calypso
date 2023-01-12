@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { getPluginPurchased } from 'calypso/lib/plugins/utils';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
-import type { Plugin } from '../types';
+import type { ExtendedPlugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
@@ -11,7 +11,7 @@ import '../style.scss';
 
 interface Props {
 	site: SiteDetails;
-	plugin: Plugin;
+	plugin: ExtendedPlugin;
 }
 
 type Purchase = {
@@ -25,7 +25,7 @@ export default function PluginManageSubcription( { site, plugin }: Props ): Reac
 	const currentPurchase: Purchase = getPluginPurchased(
 		plugin,
 		purchases,
-		plugin.isMarketplaceProduct
+		!! plugin.isMarketplaceProduct
 	);
 
 	return currentPurchase?.id ? (

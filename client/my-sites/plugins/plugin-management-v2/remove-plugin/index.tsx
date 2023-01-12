@@ -1,12 +1,12 @@
 import PluginRemoveButton from '../../plugin-remove-button';
+import type { ExtendedPlugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { Plugin } from 'calypso/state/plugins/installed/types';
 
 import '../style.scss';
 
 interface Props {
 	site: SiteDetails;
-	plugin: Plugin;
+	plugin: ExtendedPlugin;
 }
 
 export default function RemovePlugin( { site, plugin }: Props ) {

@@ -19,7 +19,7 @@ import {
 } from 'calypso/state/plugins/installed/selectors';
 import { resetPluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { isFetching as isWporgPluginFetchingSelector } from 'calypso/state/plugins/wporg/selectors';
-import type { Plugin } from '../types';
+import type { ExtendedPlugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
@@ -27,7 +27,7 @@ import './style.scss';
 interface Props {
 	selectedSite: SiteDetails;
 	pluginSlug: string;
-	fullPlugin: Plugin;
+	fullPlugin: ExtendedPlugin;
 	sitesWithPlugins: Array< SiteDetails >;
 	showPlaceholder: boolean;
 	isMarketplaceProduct: boolean;

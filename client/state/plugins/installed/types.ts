@@ -6,31 +6,34 @@ export type InstalledPlugins = {
 };
 
 export type InstalledPluginData = {
-	id: string;
-	slug: string;
 	active: boolean;
-	name: string;
-	plugin_url: string;
-	version: string;
-	description: string;
 	author: string;
 	author_url: string;
-	network: boolean;
 	autoupdate: boolean;
+	description: string;
+	id: string;
+	name: string;
+	network: boolean;
+	plugin_url: string;
+	slug: string;
 	uninstallable: boolean;
 	update?: PluginUpdate;
+	version: string;
 };
 
 // This is the plugin as it is exposed by the selectors
 export type Plugin = {
-	id: string;
-	slug: string;
-	last_updated: MomentInput;
-	sites: PluginSites;
+	action_links?: { Settings?: string; name?: string };
+	fetched: boolean;
 	icon: string;
+	id: string;
+	last_updated: MomentInput;
 	name: string;
-	wporg?: boolean;
+	sites: PluginSites;
+	slug: string;
 	statusRecentlyChanged?: boolean;
+	update?: PluginUpdate;
+	wporg?: boolean;
 };
 
 export type PluginSites = {
@@ -44,19 +47,19 @@ export type PluginSites = {
 
 export type PluginUpdate = {
 	id: string;
-	slug: string;
 	new_version: string;
-	url: string;
 	package: string;
-	tested: string;
 	recentlyUpdated?: boolean;
+	slug: string;
+	tested: string;
+	url: string;
 };
 
 export type PluginFilter = 'none' | 'all' | 'active' | 'inactive' | 'updates';
 
 export type PluginStatus = {
-	siteId: number;
-	pluginId: string;
-	status: string;
 	action: string;
+	pluginId: string;
+	siteId: number;
+	status: string;
 };

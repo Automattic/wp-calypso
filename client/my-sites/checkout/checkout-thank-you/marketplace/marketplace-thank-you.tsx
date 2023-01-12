@@ -49,7 +49,9 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const currentUser = useSelector( getCurrentUser );
-	const isRequestingPlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
+	const isRequestingPlugins = useSelector( ( state ) =>
+		siteId ? isRequesting( state, siteId ) : false
+	);
 
 	// retrieve WPCom plugin data
 	const wpComPluginsDataResults = useWPCOMPlugins( productSlugs );
@@ -60,8 +62,8 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		wpComPluginData ? wpComPluginData.software_slug || wpComPluginData.org_slug : productSlugs[ i ]
 	);
 
-	const pluginsOnSite: [] = useSelector( ( state ) =>
-		getPluginsOnSite( state, siteId, softwareSlugs )
+	const pluginsOnSite = useSelector( ( state ) =>
+		siteId ? getPluginsOnSite( state, siteId, softwareSlugs ) : []
 	);
 	const wporgPlugins = useSelector(
 		( state ) => getPlugins( state, productSlugs ),
@@ -95,7 +97,11 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	// Consolidate the plugin information from the .org and .com sources in a single list
 	const pluginInformationList = useMemo( () => {
 		return pluginsOnSite.reduce(
-			( pluginsList: Array< any >, pluginOnSite: Plugin, index: number ) => {
+			(
+				pluginsList: Array< ReturnType< getPluginsOnSite > >,
+				pluginOnSite: Plugin,
+				index: number
+			) => {
 				pluginsList.push( {
 					...wpComPluginsData[ index ],
 					...wporgPlugins[ index ],

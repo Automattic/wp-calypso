@@ -13,6 +13,7 @@ import {
 	PLUGIN_INSTALLATION_UP_TO_DATE,
 } from 'calypso/state/plugins/installed/status/constants';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { Plugin } from 'calypso/state/plugins/installed/types';
 import type { ReactNode } from 'react';
 
 export type Columns = Array< {
@@ -32,7 +33,7 @@ export interface RowFormatterArgs {
 	selectedSite?: SiteDetails;
 }
 export interface PluginRowFormatterArgs extends RowFormatterArgs {
-	item: Plugin;
+	item: ExtendedPlugin;
 }
 export interface SiteRowFormatterArgs extends RowFormatterArgs {
 	item: SiteDetails;
@@ -65,4 +66,11 @@ export type PluginActionStatusMessage = {
 		[ PLUGIN_INSTALLATION_ERROR ]: ReactNode;
 		[ PLUGIN_INSTALLATION_UP_TO_DATE ]?: ReactNode;
 	};
+};
+
+export type ExtendedPlugin = Plugin & {
+	isSelectable?: boolean;
+	isSelected: boolean;
+	isMarketplaceProduct?: boolean;
+	onClick: () => void;
 };

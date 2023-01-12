@@ -11,7 +11,7 @@ import './style.scss';
 
 interface Props {
 	item: any;
-	selectedSite: SiteDetails;
+	selectedSite?: SiteDetails;
 	rowFormatter: ( args: RowFormatterArgs ) => ReactNode;
 	columns: Columns;
 	renderActions?: ( args: any ) => ReactElement;

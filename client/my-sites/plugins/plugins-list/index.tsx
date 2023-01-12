@@ -265,18 +265,18 @@ export class PluginsList extends Component< Props, State > {
 	doActionOverSelected(
 		actionName: Action,
 		action: ( siteId: number, plugin: Plugin ) => void,
-		selectedPlugins?: { [ pluginSlug: string ]: Plugin } | Plugin[] // TODO: is the type correct?
+		selectedPlugins?: Plugin[]
 	) {
 		if ( ! selectedPlugins ) {
 			selectedPlugins = this.props.plugins.filter( this.isSelected );
 		}
-		const isDeactivatingOrRemovingAndJetpackSelected = ( { slug }: { slug: string } ) =>
+		const isDeactivatingOrRemovingAndJetpackSelected = ( slug: string ) =>
 			[ 'deactivating', 'activating', 'removing' ].includes( actionName ) && 'jetpack' === slug;
 
 		const flattenArrays = ( full: any[], partial: any[] ) => [ ...full, ...partial ];
 		this.removePluginStatuses();
 		const pluginAndSiteObjects = selectedPlugins
-			.filter( ( plugin: Plugin ) => ! isDeactivatingOrRemovingAndJetpackSelected( plugin ) ) // ignore sites that are deactivating, activating or removing jetpack
+			.filter( ( plugin: Plugin ) => ! isDeactivatingOrRemovingAndJetpackSelected( plugin.slug ) ) // ignore sites that are deactivating, activating or removing jetpack
 			.map( ( p: Plugin ) => {
 				return Object.keys( p.sites ).map( ( siteId ) => {
 					const site = this.props.allSites.find( ( s ) => s && s.ID === parseInt( siteId ) );

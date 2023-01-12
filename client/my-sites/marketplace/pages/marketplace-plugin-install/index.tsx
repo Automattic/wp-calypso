@@ -48,11 +48,6 @@ import './style.scss';
 import { MarketplacePluginInstallProps } from './types';
 import type { IAppState } from 'calypso/state/types';
 
-interface InstalledPlugin {
-	slug?: string;
-	id?: number;
-}
-
 const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProps ) => {
 	const isUploadFlow = ! productSlug;
 	const [ currentStep, setCurrentStep ] = useState( 0 );
@@ -77,7 +72,7 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 		getUploadedPluginId( state, siteId )
 	) as string;
 	const pluginUploadComplete = useSelector( ( state ) => isPluginUploadComplete( state, siteId ) );
-	const installedPlugin = useSelector( ( state: DefaultRootState ): InstalledPlugin | undefined =>
+	const installedPlugin = useSelector( ( state: DefaultRootState ) =>
 		getPluginOnSite( state, siteId, isUploadFlow ? uploadedPluginSlug : productSlug )
 	);
 	const pluginActive = useSelector( ( state ) =>

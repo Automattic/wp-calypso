@@ -9,16 +9,16 @@ import getSites from 'calypso/state/selectors/get-sites';
 import PluginActionStatus from '../plugin-action-status';
 import { getAllowedPluginActions } from '../utils/get-allowed-plugin-actions';
 import { getPluginActionStatuses } from '../utils/get-plugin-action-statuses';
+import type { ExtendedPlugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { Plugin } from 'calypso/state/plugins/installed/types';
 
 import './style.scss';
 
 interface Props {
-	plugin: Plugin;
+	plugin: ExtendedPlugin;
 	selectedSite?: SiteDetails;
 	className?: string;
-	updatePlugin?: ( plugin: Plugin ) => void;
+	updatePlugin?: ( plugin: ExtendedPlugin ) => void;
 }
 
 export default function UpdatePlugin( { plugin, selectedSite, className, updatePlugin }: Props ) {

@@ -5,20 +5,19 @@ import PluginCommonList from '../plugin-common/plugin-common-list';
 import PluginManageConnection from '../plugin-manage-connection';
 import PluginRowFormatter from '../plugin-row-formatter';
 import RemovePlugin from '../remove-plugin';
-import type { Columns, PluginRowFormatterArgs } from '../types';
+import type { Columns, PluginRowFormatterArgs, ExtendedPlugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { Plugin } from 'calypso/state/plugins/installed/types';
 
 import '../style.scss';
 
 interface Props {
-	selectedSite: SiteDetails;
-	items: Array< Plugin >;
+	selectedSite?: SiteDetails;
+	items: Array< ExtendedPlugin >;
 	isLoading: boolean;
 	columns: Columns;
 	className?: string;
-	removePluginNotice: ( plugin: Plugin ) => void;
-	updatePlugin: ( plugin: Plugin ) => void;
+	removePluginNotice: ( plugin: ExtendedPlugin ) => void;
+	updatePlugin: ( plugin: ExtendedPlugin ) => void;
 }
 
 export default function PluginsList( {
@@ -52,12 +51,12 @@ export default function PluginsList( {
 		} );
 	};
 
-	const onRemoveClick = ( plugin: Plugin ) => () => {
+	const onRemoveClick = ( plugin: ExtendedPlugin ) => () => {
 		removePluginNotice( plugin );
 		trackRemovePlugin( plugin.slug );
 	};
 
-	const renderActions = ( plugin: Plugin ) => {
+	const renderActions = ( plugin: ExtendedPlugin ) => {
 		return (
 			<>
 				<PopoverMenuItem

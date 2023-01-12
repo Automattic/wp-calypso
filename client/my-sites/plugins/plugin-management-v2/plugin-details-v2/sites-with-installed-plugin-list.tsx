@@ -7,7 +7,7 @@ import PluginManageConnection from '../plugin-manage-connection';
 import PluginManageSubcription from '../plugin-manage-subscription';
 import RemovePlugin from '../remove-plugin';
 import SitesList from '../sites-list';
-import type { Plugin } from '../types';
+import type { ExtendedPlugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
@@ -16,7 +16,7 @@ interface Props {
 	sites: Array< SiteDetails | null | undefined >;
 	selectedSite: SiteDetails;
 	isLoading: boolean;
-	plugin: Plugin;
+	plugin: ExtendedPlugin;
 	isWpCom?: boolean;
 }
 
