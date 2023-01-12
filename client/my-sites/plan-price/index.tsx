@@ -3,11 +3,10 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { Component, createElement } from 'react';
 import Badge from 'calypso/components/badge';
-import type { LocalizeProps } from 'i18n-calypso';
 
 import './style.scss';
 
-export class PlanPrice extends Component< PlanPriceProps & LocalizeProps > {
+export class PlanPrice extends Component< PlanPriceProps > {
 	render() {
 		const {
 			currencyCode = 'USD',
