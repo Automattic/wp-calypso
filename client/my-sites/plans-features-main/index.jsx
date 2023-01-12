@@ -123,6 +123,7 @@ export class PlansFeaturesMain extends Component {
 			isFAQCondensedExperiment,
 			isPlansInsideStepper,
 			is2023OnboardingPricingGrid,
+			intervalType,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -154,6 +155,7 @@ export class PlansFeaturesMain extends Component {
 				siteId,
 				isReskinned,
 				isPlansInsideStepper,
+				intervalType,
 			};
 			const asyncPlanFeatures2023Grid = (
 				<AsyncLoad require="calypso/my-sites/plan-features-2023-grid" { ...asyncProps } />
