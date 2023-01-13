@@ -25,11 +25,11 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 				title: __( 'Copy Site' ),
 				text: createInterpolateElement(
 					__(
-						'You’re 5 minutes away from<br />creating a new copy site from <SourceUrl/>.<br />Ready?'
+						'You’re 5 minutes away from<br />creating a new copy site from <SourceSlug/>.<br />Ready?'
 					),
 					{
 						br: <br />,
-						SourceUrl: <span>{ urlQueryParams.get( 'sourceUrl' ) }</span>,
+						SourceSlug: <span>{ urlQueryParams.get( 'sourceSlug' ) }</span>,
 					}
 				),
 				buttonText: __( 'Start copying' ),

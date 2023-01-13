@@ -197,7 +197,6 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 
 	const copySiteHref = addQueryArgs( `/setup/copy-site`, {
 		sourceSlug: site.slug,
-		sourceUrl: site.URL,
 	} );
 	return (
 		<MenuItemLink
