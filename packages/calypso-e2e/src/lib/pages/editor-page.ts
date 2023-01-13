@@ -159,7 +159,7 @@ export class EditorPage {
 	 *
 	 * @returns A pointer to frame-safe, top-level locator within the editor.
 	 */
-	getEditorLocator(): Locator {
+	getEditorWindowLocator(): Locator {
 		return this.editor;
 	}
 
