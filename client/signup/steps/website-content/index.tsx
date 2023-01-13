@@ -10,7 +10,11 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import wpcom from 'calypso/lib/wp';
 import AccordionForm from 'calypso/signup/accordion-form/accordion-form';
 import { ValidationErrors } from 'calypso/signup/accordion-form/types';
-import { useTranslatedPageTitles } from 'calypso/signup/difm/translation-hooks';
+import {
+	BBE_STORE_WEBSITE_CONTENT_FILLING_STEP,
+	BBE_WEBSITE_CONTENT_FILLING_STEP,
+	useTranslatedPageTitles,
+} from 'calypso/signup/difm/translation-hooks';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
 import {
@@ -79,6 +83,7 @@ interface WebsiteContentStepProps {
 	positionInFlow: string;
 	pageTitles: PageId[];
 	siteId: SiteId | null;
+	isStoreFlow: boolean;
 }
 
 function WebsiteContentStep( {
@@ -88,6 +93,7 @@ function WebsiteContentStep( {
 	goToNextStep,
 	pageTitles,
 	siteId,
+	isStoreFlow,
 }: WebsiteContentStepProps ) {
 	const [ formErrors, setFormErrors ] = useState< ValidationErrors >( {} );
 	const dispatch = useDispatch();
@@ -97,9 +103,11 @@ function WebsiteContentStep( {
 	const isImageUploading = useSelector( ( state ) =>
 		isMediaUploadInProgress( state as WebsiteContentStateModel )
 	);
-
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
 	const translatedPageTitles = useTranslatedPageTitles();
+	const context = isStoreFlow
+		? BBE_STORE_WEBSITE_CONTENT_FILLING_STEP
+		: BBE_WEBSITE_CONTENT_FILLING_STEP;
 
 	useEffect( () => {
 		if ( siteId && pageTitles && pageTitles.length > 0 ) {
@@ -137,9 +145,10 @@ function WebsiteContentStep( {
 				translate,
 				formValues: websiteContent,
 				formErrors: formErrors,
+				context,
 				onChangeField,
 			} ),
-		[ translate, websiteContent, formErrors, onChangeField ]
+		[ translate, websiteContent, formErrors, context, onChangeField ]
 	);
 	const generatedSections = generatedSectionsCallback();
 
@@ -172,7 +181,7 @@ function WebsiteContentStep( {
 			<AccordionForm
 				generatedSections={ generatedSections }
 				onErrorUpdates={ ( errors ) => setFormErrors( errors ) }
-				formValuesInitialState={ websiteContent }
+				formValues={ websiteContent }
 				currentIndex={ currentIndex }
 				updateCurrentIndex={ ( currentIndex ) => {
 					dispatch( updateWebsiteContentCurrentIndex( currentIndex ) );
@@ -207,26 +216,36 @@ export default function WrapperWebsiteContent(
 ) {
 	const { flowName, stepName, positionInFlow, queryObject } = props;
 	const translate = useTranslate();
-	const headerText = translate( 'Website Content' );
-	const subHeaderText = translate(
-		'Provide content for your website build. You will be able to edit all content later using the WordPress editor.'
-	);
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 
 	const [ pageTitles, setPageTitles ] = useState< PageId[] >( [] );
 	const [ isLoading, setIsLoading ] = useState( true );
+	const [ isStoreFlow, setIsStoreFlow ] = useState( false );
+
+	const headerText = translate( 'Website Content' );
+	const subHeaderText = isStoreFlow
+		? translate(
+				'Provide content for your website build. You can add products later with the WordPress editor.'
+		  )
+		: translate(
+				'Provide content for your website build. You will be able to edit all content later using the WordPress editor.'
+		  );
 
 	useEffect( () => {
 		async function fetchSelectedPageTitles() {
 			try {
-				const response: { selected_page_titles: PageId[]; is_website_content_submitted: boolean } =
-					await wpcom.req.get( {
-						path: `/sites/${ queryObject.siteSlug }/do-it-for-me/website-content`,
-						apiNamespace: 'wpcom/v2',
-					} );
+				const response: {
+					selected_page_titles: PageId[];
+					is_website_content_submitted: boolean;
+					is_store_flow: boolean;
+				} = await wpcom.req.get( {
+					path: `/sites/${ queryObject.siteSlug }/do-it-for-me/website-content`,
+					apiNamespace: 'wpcom/v2',
+				} );
 
 				setIsLoading( false );
 				setPageTitles( response.selected_page_titles );
+				setIsStoreFlow( response.is_store_flow );
 
 				if ( response.is_website_content_submitted ) {
 					debug( 'Website content content already submitted, redirecting to home' );
@@ -274,7 +293,12 @@ export default function WrapperWebsiteContent(
 			stepName={ stepName }
 			positionInFlow={ positionInFlow }
 			stepContent={
-				<WebsiteContentStep { ...props } pageTitles={ pageTitles } siteId={ siteId } />
+				<WebsiteContentStep
+					{ ...props }
+					pageTitles={ pageTitles }
+					isStoreFlow={ isStoreFlow }
+					siteId={ siteId }
+				/>
 			}
 			goToNextStep={ false }
 			hideFormattedHeader={ false }

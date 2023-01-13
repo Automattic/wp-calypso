@@ -1,10 +1,18 @@
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { requestEmailStats } from 'calypso/state/stats/emails/actions';
+import { requestSitePost } from 'calypso/state/posts/actions';
+import {
+	requestEmailPeriodStats,
+	requestEmailAlltimeStats,
+} from 'calypso/state/stats/emails/actions';
 
-const request = ( siteId, postId, period, date, statType, quantity ) => ( dispatch ) => {
-	dispatch( requestEmailStats( siteId, postId, period, date, statType, quantity ) );
+const requestPeriodStats = ( siteId, postId, period, date, statType, quantity ) => ( dispatch ) => {
+	dispatch( requestEmailPeriodStats( siteId, postId, period, date, statType, quantity ) );
+};
+
+const requestAlltimeStats = ( siteId, postId, statType, quantity ) => ( dispatch ) => {
+	dispatch( requestEmailAlltimeStats( siteId, postId, statType, quantity ) );
 };
 
 function QueryEmailStats( { siteId, postId, period, date, quantity } ) {
@@ -12,10 +20,20 @@ function QueryEmailStats( { siteId, postId, period, date, quantity } ) {
 	const statType = 'opens';
 
 	useEffect( () => {
+		dispatch( requestSitePost( siteId, postId ) );
+	}, [ dispatch, siteId, postId ] );
+
+	useEffect( () => {
 		if ( siteId && postId > -1 ) {
-			dispatch( request( siteId, postId, period, date, statType, quantity ) );
+			dispatch( requestAlltimeStats( siteId, postId, statType ) );
 		}
-	}, [ dispatch, date, siteId, postId, period ] );
+	}, [ dispatch, siteId, postId, statType ] );
+
+	useEffect( () => {
+		if ( siteId && postId > -1 ) {
+			dispatch( requestPeriodStats( siteId, postId, period, date, statType, quantity ) );
+		}
+	}, [ dispatch, siteId, postId, period, date, statType, quantity ] );
 
 	return null;
 }

@@ -1,6 +1,12 @@
+import { isEcommerce } from '@automattic/calypso-products/src';
 import page from 'page';
 import { requestSite } from 'calypso/state/sites/actions';
-import { canCurrentUserUseCustomerHome, getSiteOptions } from 'calypso/state/sites/selectors';
+import {
+	canCurrentUserUseCustomerHome,
+	getSiteOptions,
+	getSiteUrl,
+	getSitePlan,
+} from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { redirectToLaunchpad } from 'calypso/utils';
 import CustomerHome from './main';
@@ -52,5 +58,15 @@ export async function maybeRedirect( context, next ) {
 		redirectToLaunchpad( slug, refetchedOptions?.site_intent, verifiedParam );
 		return;
 	}
+
+	// Ecommerce Plan's Home redirects to WooCommerce Home.
+	// Temporary redirection until we create a dedicated Home for Ecommerce.
+	if ( isEcommerce( getSitePlan( state, siteId ) ) ) {
+		const siteUrl = getSiteUrl( state, siteId );
+		if ( siteUrl !== null ) {
+			window.location.replace( siteUrl + '/wp-admin/admin.php?page=wc-admin' );
+		}
+	}
+
 	next();
 }

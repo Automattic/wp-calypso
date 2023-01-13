@@ -39,7 +39,7 @@ import {
 	recordSelectedDesign,
 } from '../../analytics/record-design';
 import { getCategorizationOptions } from './categories';
-import { DEFAULT_VARIATION_SLUG, STEP_NAME } from './constants';
+import { DEFAULT_VARIATION_SLUG, RETIRING_DESIGN_SLUGS, STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
 import PremiumGlobalStylesUpgradeModal from './premium-global-styles-upgrade-modal';
 import PreviewToolbar from './preview-toolbar';
@@ -94,10 +94,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	// ********** Logic for fetching designs
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
-		// Before we retire the old blank canvas, we have both blank-canvas-blocks and blank-canvas-3.
-		// We need to remove the old one first
 		allDesigns.static.designs = allDesigns.static.designs.filter(
-			( design ) => design.slug !== 'blank-canvas-blocks'
+			( design ) => RETIRING_DESIGN_SLUGS.indexOf( design.slug ) === -1
 		);
 
 		const blankCanvasDesignOffset = allDesigns.static.designs.findIndex( isBlankCanvasDesign );

@@ -6,8 +6,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
+import BlazeLogo from 'calypso/components/blaze-logo';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { showDSP, usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import './style.scss';
 import { useRouteModal } from 'calypso/lib/route-modal';
@@ -121,7 +121,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 			{ isVisible && (
 				<BlankCanvas className="blazepress-widget">
 					<div className="blazepress-widget__header-bar">
-						<WordPressLogo />
+						<BlazeLogo />
 						<h2>{ translate( 'Blaze' ) }</h2>
 						{ showCancelButton && (
 							<span

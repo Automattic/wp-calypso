@@ -1029,7 +1029,7 @@ export function parseEmailChartData( payload, nullAttributes = [] ) {
  */
 export function parseEmailCountriesData( countries, countriesInfo ) {
 	if ( ! countries || ! countriesInfo ) {
-		return [];
+		return null;
 	}
 
 	return countries.map( function ( country ) {
@@ -1058,7 +1058,7 @@ export function parseEmailCountriesData( countries, countriesInfo ) {
  */
 export function parseEmailListData( list ) {
 	if ( ! list ) {
-		return [];
+		return null;
 	}
 
 	const result = list.map( function ( item ) {
