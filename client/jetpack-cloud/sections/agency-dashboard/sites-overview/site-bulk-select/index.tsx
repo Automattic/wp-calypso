@@ -17,6 +17,7 @@ export default function SiteBulkSelect( { sites }: Props ) {
 	const { selectedSites, setSelectedSites } = useContext( SitesOverviewContext );
 
 	const handleToggleSelect = () => {
+		// Filter sites with site error as they are not selectable.
 		const filteredSites = sites.filter( ( site ) => ! site.site.error );
 
 		if ( selectedSites.length === filteredSites.length ) {

@@ -35,7 +35,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 
 	const toggleIsExpanded = useCallback(
 		( event: MouseEvent< HTMLSpanElement > | KeyboardEvent< HTMLSpanElement > ) => {
-			// Don't toogle the card when clicked on set/remove favorite
+			// Don't toogle the card when clicked on actions like set/remove favorite or select site.
 			if ( ( event?.target as HTMLElement )?.closest( '.disable-card-expand' ) ) {
 				return;
 			}
