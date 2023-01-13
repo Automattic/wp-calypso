@@ -29,11 +29,13 @@ interface Props {
 export default function SiteContent( { data, isLoading, currentPage, isFavoritesTab }: Props ) {
 	const isMobile = useMobileBreakpoint();
 	const isDesktop = useDesktopBreakpoint();
-	const { isBulkManagementActive } = useContext( SitesOverviewContext );
+	const { isBulkManagementActive, setSelectedSites } = useContext( SitesOverviewContext );
 
 	const sites = formatSites( data?.sites );
 
 	const handlePageClick = ( pageNumber: number ) => {
+		// Reset selected sites when there is a page change
+		setSelectedSites( [] );
 		addPageArgs( pageNumber );
 	};
 
