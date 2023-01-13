@@ -52,6 +52,8 @@ const plugin = {
 		[ `${ siteId }` ]: {
 			ID: siteId,
 			canUpdateFiles: true,
+			update: { new_version: '11.5', canUpdateFiles: true },
+			version: '11.3',
 		},
 	},
 	version: '11.3',
