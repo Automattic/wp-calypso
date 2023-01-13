@@ -1,4 +1,5 @@
-import { isJetpackPlanSlug } from '@automattic/calypso-products';
+import config from '@automattic/calypso-config';
+import { isJetpackPlanSlug, PRODUCT_JETPACK_SOCIAL_BASIC } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useStoreItemInfoContext } from '../context/store-item-info-context';
 import { ItemPrice } from '../item-price';
@@ -95,14 +96,24 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 						<li key={ item.productSlug }>
 							<SimpleItemCard
 								ctaAsPrimary={ ctaAsPrimary }
-								ctaHref={ getCheckoutURL( item ) }
+								ctaHref={
+									item.productSlug === PRODUCT_JETPACK_SOCIAL_BASIC &&
+									config.isEnabled( 'jetpack-social/advanced-plan' )
+										? '#'
+										: getCheckoutURL( item )
+								}
 								ctaLabel={ ctaLabel }
 								ctaAriaLabel={ ctaAriaLabel }
 								description={ description }
 								icon={ <img alt="" src={ getProductIcon( { productSlug: item.productSlug } ) } /> }
 								isCtaDisabled={ isCtaDisabled }
 								isCtaExternal={ isExternal }
-								onClickCta={ getOnClickPurchase( item ) }
+								onClickCta={
+									item.productSlug === PRODUCT_JETPACK_SOCIAL_BASIC &&
+									config.isEnabled( 'jetpack-social/advanced-plan' )
+										? onClickMoreInfoFactory( item )
+										: getOnClickPurchase( item )
+								}
 								isProductInCart={ isProductInCart }
 								price={ price }
 								title={ item.displayName }
