@@ -1,13 +1,21 @@
 import './style.scss';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 
 export function GiftingCheckoutBanner( { siteSlug }: { siteSlug: string } ) {
+	const { __ } = useI18n();
 	return (
 		<div className="gifting-checkout-banner">
 			<div>
-				<h2>Spread the love! 23</h2>
+				<h2>{ __( 'Spread the love!' ) }</h2>
 				<p>
-					With this gift, you are helping { siteSlug } the content that you and many others
-					appreciate and enjoy.
+					{ sprintf(
+						/* translators: %s is the site domain name. */
+						__(
+							'With this gift, you are helping %s provide the content that you and many others appreciate and enjoy.'
+						),
+						siteSlug
+					) }
 				</p>
 			</div>
 		</div>
