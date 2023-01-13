@@ -1,7 +1,9 @@
+import config from '@automattic/calypso-config';
 import {
 	isJetpackPlanSlug,
 	JetpackTag,
 	JETPACK_RELATED_PRODUCTS_MAP,
+	PRODUCT_JETPACK_SOCIAL_ADVANCED,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -108,7 +110,10 @@ const ProductLightbox: React.FC< Props > = ( {
 		} ) );
 	}, [ product.productSlug ] );
 
-	const shouldShowOptions = variantOptions.length > 1;
+	const shouldShowOptions =
+		product.productSlug !== PRODUCT_JETPACK_SOCIAL_ADVANCED
+			? variantOptions.length > 1
+			: variantOptions.length > 1 && config.isEnabled( 'jetpack-social/advanced-plan' );
 
 	const isMultiSiteIncompatible = isMultisite && ! getIsMultisiteCompatible( product );
 
