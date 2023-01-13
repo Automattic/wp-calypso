@@ -480,21 +480,23 @@ class ThemeShowcase extends Component {
 					title={ this.props.analyticsPageTitle }
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
-				<ThemesHeader
-					description={ translate(
-						'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-						{
-							components: {
-								learnMoreLink: <InlineSupportLink supportContext="themes" showIcon={ false } />,
-							},
-						}
-					) }
-				>
-					<div className="themes__install-theme-button-container">
-						<InstallThemeButton />
-					</div>
-					<ScreenOptionsTab wpAdminPath="themes.php" />
-				</ThemesHeader>
+				{ isLoggedIn && (
+					<ThemesHeader
+						description={ translate(
+							'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: <InlineSupportLink supportContext="themes" showIcon={ false } />,
+								},
+							}
+						) }
+					>
+						<div className="themes__install-theme-button-container">
+							<InstallThemeButton />
+						</div>
+						<ScreenOptionsTab wpAdminPath="themes.php" />
+					</ThemesHeader>
+				) }
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
 					<SearchThemes
