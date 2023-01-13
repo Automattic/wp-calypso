@@ -33,6 +33,13 @@ const copySite: Flow = {
 			recordFullStoryEvent( 'calypso_signup_start_copy_site', { flow: this.name } );
 		}, [] );
 
+		const urlQueryParams = useQuery();
+		const sourceSlug = urlQueryParams.get( 'sourceSlug' );
+		if ( ! sourceSlug ) {
+			window.location.assign( `/sites` );
+			return [];
+		}
+
 		return [
 			{ slug: 'intro', component: Intro },
 			{ slug: 'site-creation-step', component: SiteCreationStep },
