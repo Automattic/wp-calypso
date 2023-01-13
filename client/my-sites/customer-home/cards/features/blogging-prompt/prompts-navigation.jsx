@@ -55,23 +55,16 @@ export class PromptsNavigation extends Component {
 	recordClick() {}
 
 	render() {
-		const { translate, labelText, borderless, primary, backIcon, forwardIcon } = this.props;
+		const { borderless, primary, backIcon, forwardIcon } = this.props;
 		let backGridicon;
 		let forwardGridicon;
-		let text;
 
 		if ( this.props.direction === 'back' ) {
 			backGridicon = backIcon ? <Gridicon icon={ backIcon } size={ 18 } /> : null;
-			if ( labelText ) {
-				text = labelText;
-			} else {
-				text = translate( 'Back' );
-			}
 		}
 
 		if ( this.props.direction === 'forward' ) {
 			forwardGridicon = forwardIcon ? <Gridicon icon={ forwardIcon } size={ 18 } /> : null;
-			text = labelText ? labelText : translate( 'Skip for now' );
 		}
 
 		const buttonClasses = classnames(
@@ -92,7 +85,6 @@ export class PromptsNavigation extends Component {
 				rel={ this.props.rel }
 			>
 				{ backGridicon }
-				{ text }
 				{ forwardGridicon }
 			</Button>
 		);

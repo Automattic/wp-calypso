@@ -16,6 +16,7 @@ import LightbulbIcon from './lightbulb-icon';
 import { PromptsNavigation } from './prompts-navigation';
 
 import './style.scss';
+import { useState } from 'react';
 
 const BloggingPromptCard = () => {
 	const dispatch = useDispatch();
@@ -23,6 +24,7 @@ const BloggingPromptCard = () => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 	const editorUrl = useSelector( ( state ) => getEditorUrl( state, siteId ) );
+	const [ promptIndex ] = useState( 0 );
 	const { data: prompt } = useBloggingPrompt( siteId );
 	const { skipCard } = useSkipCurrentViewMutation( siteId );
 
@@ -77,25 +79,33 @@ const BloggingPromptCard = () => {
 						</Button>
 					</EllipsisMenu>
 				</CardHeading>
-				<PromptsNavigation
-					direction="back"
-					flowName="writing-prompt-back"
-					stepName={ prompt.id.toString() }
-					translate={ translate }
-				/>
-				<div className="blogging-prompt__prompt-text">{ prompt.text }</div>
-				<PromptsNavigation
-					direction="forward"
-					flowName="writing-prompt-forward"
-					stepName={ prompt.id.toString() }
-					translate={ translate }
-				/>
-				<Button href={ newPostLink } onClick={ trackBloggingPromptClick } target="_blank">
-					{ translate( 'Post Answer', {
-						comment:
-							'"Post" here is a verb meaning "to publish", as in "post an answer to this writing prompt"',
-					} ) }
-				</Button>
+				<div className="blogging-prompt__prompt-container">
+					<PromptsNavigation
+						direction="back"
+						flowName="writing-prompt-back"
+						stepName={ prompt.id.toString() }
+						translate={ translate }
+						borderless={ false }
+						//goToPreviousStep={}
+					/>
+					<div className="blogging-prompt__prompt-text">{ prompt.text }</div>
+					<PromptsNavigation
+						direction="forward"
+						flowName="writing-prompt-forward"
+						stepName={ prompt.id.toString() }
+						translate={ translate }
+						borderless={ false }
+						//goToNextStep={}
+					/>
+				</div>
+				<div className="blogging-prompt__prompt-answers">
+					<Button href={ newPostLink } onClick={ trackBloggingPromptClick } target="_blank">
+						{ translate( 'Post Answer', {
+							comment:
+								'"Post" here is a verb meaning "to publish", as in "post an answer to this writing prompt"',
+						} ) }
+					</Button>
+				</div>
 			</Card>
 		</div>
 	);

@@ -21,10 +21,33 @@
 	.blogging-prompt__menu {
 		margin-top: -8px;
 	}
+
+	.blogging-prompt__prompt-container,
+	.blogging-prompt__prompt-answers {
+		float:left;
+		width: 100%;
+	}
+	.blogging-prompt__prompt-container {
+	}
+	.blogging-prompt__prompt-answers {
+		.button {
+			float: right;
+		}
+	}
 	.blogging-prompt__prompt-text {
 		font-size: $font-title-small;
 		font-weight: 500;
 		padding-bottom: 20px;
+		float: left;
+		text-align: center;
+		width: 88%;
+	}
+
+	button.navigation-link {
+		border-radius: 50%;
+		padding: 8px;
+		margin: 0px;
+		float: left;
 	}
 }
 

@@ -20,13 +20,14 @@ const selectPrompt = ( response: any ): BloggingPrompt | null => {
 
 export const useBloggingPrompt = ( siteId: string ): UseQueryResult< BloggingPrompt | null > => {
 	const today = moment().format( 'YYYY-MM-DD' );
+	const page = 100;
 
 	return useQuery(
 		// Blogging prompts are the same for all sites, so can be cached only by date.
 		[ 'blogging-prompts', today ],
 		() =>
 			wp.req.get( {
-				path: `/sites/${ siteId }/blogging-prompts?number=1&from=${ today }`,
+				path: `/sites/${ siteId }/blogging-prompts?number=${ page }&from=${ today }`,
 				apiNamespace: 'wpcom/v2',
 			} ),
 		{
