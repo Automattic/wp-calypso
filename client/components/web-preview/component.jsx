@@ -83,6 +83,7 @@ export class WebPreviewModal extends Component {
 		hasSidebar: false,
 		overridePost: null,
 		autoHeight: false,
+		isLaunchpad: false,
 	};
 
 	constructor( props ) {
