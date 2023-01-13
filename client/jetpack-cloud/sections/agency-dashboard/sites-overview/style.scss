@@ -263,7 +263,7 @@
 	inset-block-start: 50%;
 	transform: translateY(-50%);
 	display: inline-flex;
-	@include break-large() {
+	@include break-xlarge() {
 		display: none;
 	}
 }
@@ -281,7 +281,7 @@
 	font-size: 0.75rem;
 	line-height: 20px;
 	box-sizing: border-box;
-	@include break-large() {
+	@include break-xlarge() {
 		display: none;
 	}
 }

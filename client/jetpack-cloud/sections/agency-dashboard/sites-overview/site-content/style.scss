@@ -68,6 +68,11 @@ button.button.dashboard-list-header__bulk-action-buttons.is-compact {
 	margin-block-start: 4px;
 }
 
+button.button.dashboard-list-header__bulk-action-buttons.is-compact:active {
+	background: var(--color-accent-5);
+	border-color: var(--color-accent-40);
+	border-width: 1px;
+}
 // Bulk Edit Menu
 .dashboard-list-header {
 	height: 60px;
