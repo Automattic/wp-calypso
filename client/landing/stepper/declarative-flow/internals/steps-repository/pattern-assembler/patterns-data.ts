@@ -183,13 +183,44 @@ const useSectionPatterns = () => {
 	const about = translate( 'About' );
 	const testimonials = translate( 'Testimonials' );
 	const links = translate( 'Links' );
+	const posts = translate( 'Posts' );
 
 	const sectionPatterns: Pattern[] = useMemo(
 		() => [
 			{
-				id: 7156,
-				name: 'Media and text with image on the right',
-				category: callToAction,
+				id: 8437,
+				name: 'List of posts',
+				category: posts,
+			},
+			{
+				id: 8435,
+				name: 'Grid of Posts 3x2',
+				category: posts,
+			},
+			{
+				id: 8421,
+				name: 'Grid of posts 2x3',
+				category: posts,
+			},
+			{
+				id: 7996,
+				name: 'Grid of Posts 4x2',
+				category: posts,
+			},
+			{
+				id: 3685, // Only mobile
+				name: 'Blog',
+				category: posts,
+			},
+			{
+				id: 3681,
+				name: 'Blog',
+				category: posts,
+			},
+			{
+				id: 3395, // Only mobile
+				name: 'Blog',
+				category: posts,
 			},
 			{
 				id: 7153,
