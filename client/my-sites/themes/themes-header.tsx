@@ -1,30 +1,20 @@
 import { translate } from 'i18n-calypso';
-import InlineSupportLink from 'calypso/components/inline-support-link';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import InstallThemeButton from './install-theme-button';
 
 import './themes-header.scss';
 
-const ThemesHeader = () => {
+interface Props {
+	description: string;
+	children: any;
+}
+
+const ThemesHeader = ( { description, children }: Props ) => {
 	return (
 		<div className="themes__header">
-			<ScreenOptionsTab wpAdminPath="themes.php" />
 			<div className="themes__page-heading">
 				<h1>{ translate( 'Themes' ) }</h1>
-				<p className="page-sub-header">
-					{ translate(
-						'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-						{
-							components: {
-								learnMoreLink: <InlineSupportLink supportContext="themes" showIcon={ false } />,
-							},
-						}
-					) }
-				</p>
+				<p className="page-sub-header">{ description }</p>
 			</div>
-			<div className="themes__install-theme-button-container">
-				<InstallThemeButton />
-			</div>
+			{ children }
 		</div>
 	);
 };
