@@ -273,8 +273,9 @@ export class RestAPIClient {
 			return null;
 		}
 
-		const targetDomain = targetSite.domain.startsWith( 'http' )
-			? targetSite.domain.replace( 'https://', '' )
+		const scheme = 'http://';
+		const targetDomain = targetSite.domain.startsWith( scheme )
+			? targetSite.domain.replace( scheme, '' )
 			: targetSite.domain;
 
 		const mySites: AllDomainsResponse = await this.getAllDomains();
