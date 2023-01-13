@@ -1,4 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
+import {
+	getGlobalStylesId,
+	getGlobalStylesVariations,
+	updateGlobalStyles,
+} from '@automattic/data-stores';
 import { translate } from 'i18n-calypso';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
@@ -46,7 +51,24 @@ export function activateTheme(
 				...( isEnabled( 'themes/theme-switch-persist-template' ) && {
 					persist_homepage_template: true,
 				} ),
-				...( styleVariationSlug && { style_variation_slug: styleVariationSlug } ),
+			} )
+			.then( async ( theme ) => {
+				if ( styleVariationSlug ) {
+					const themeStylesheet = theme.stylesheet || themeId;
+					const globalStylesId = await getGlobalStylesId( siteId, themeStylesheet );
+					const variations = await getGlobalStylesVariations( siteId, themeStylesheet );
+					const currentVariation = variations.find(
+						( variation ) =>
+							variation.title &&
+							variation.title.split( ' ' ).join( '_' ).toLowerCase() === styleVariationSlug
+					);
+
+					if ( currentVariation ) {
+						await updateGlobalStyles( siteId, globalStylesId, currentVariation );
+					}
+				}
+
+				return theme;
 			} )
 			.then( ( theme ) => {
 				// Fall back to ID for Jetpack sites which don't return a stylesheet attr.
