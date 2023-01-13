@@ -1,9 +1,10 @@
 import { createSelector } from '@automattic/state-utils';
 import { get } from 'lodash';
+import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
 import 'calypso/state/stats/init';
 
 function getDataPath( siteId, postId, period, statType, date ) {
-	if ( period === 'alltime' ) {
+	if ( period === PERIOD_ALL_TIME ) {
 		return [ siteId, postId, period, statType ];
 	}
 	return [ siteId, postId, period, statType, date ];
@@ -45,7 +46,7 @@ export function isRequestingAlltimeEmailStats( state, siteId, postId, statType )
 	return state.stats.emails
 		? get(
 				state.stats.emails.requests,
-				[ ...getDataPath( siteId, postId, 'alltime', statType, null ), 'requesting' ],
+				[ ...getDataPath( siteId, postId, PERIOD_ALL_TIME, statType, null ), 'requesting' ],
 				false
 		  )
 		: false;
@@ -191,6 +192,6 @@ export function getEmailStatsNormalizedData( state, siteId, postId, period, stat
  */
 export function getAlltimeStats( state, siteId, postId, statType ) {
 	return state.stats.emails.items
-		? get( state.stats.emails.items, [ siteId, postId, 'alltime', statType ], null )
+		? get( state.stats.emails.items, [ siteId, postId, PERIOD_ALL_TIME, statType ], null )
 		: {};
 }

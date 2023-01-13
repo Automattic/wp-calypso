@@ -5,6 +5,7 @@ import {
 	EMAIL_STATS_REQUEST_FAILURE,
 	EMAIL_STATS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
+import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
 import {
 	parseEmailChartData,
 	parseEmailCountriesData,
@@ -109,11 +110,11 @@ function requestEmailOpensStats( siteId, postId, period, date, quantity ) {
 			return quantity;
 		} )();
 
-		const query = period === 'alltime' ? {} : { period, quantity: queryQuantity, date };
+		const query = period === PERIOD_ALL_TIME ? {} : { period, quantity: queryQuantity, date };
 
 		const site = wpcom.site( siteId );
 		const statsPromise =
-			period === 'alltime'
+			period === PERIOD_ALL_TIME
 				? site.statsEmailOpensAlltime( postId )
 				: site.statsEmailOpensForPeriod( postId, query );
 
@@ -121,7 +122,7 @@ function requestEmailOpensStats( siteId, postId, period, date, quantity ) {
 			.then( ( stats ) => {
 				// create an object from emailStats with period as the key
 				const emailStatsObject =
-					period === 'alltime'
+					period === PERIOD_ALL_TIME
 						? emailOpenStatsAlltimeTransform( stats )
 						: emailOpenStatsPeriodTransform( stats, period );
 
@@ -184,6 +185,6 @@ export function requestEmailAlltimeStats( siteId, postId, statType, quantity = 3
 	switch ( statType ) {
 		case 'opens':
 			// request stats bound by period ( chart, countries, devices & clients )
-			return requestEmailOpensStats( siteId, postId, 'alltime', null, quantity );
+			return requestEmailOpensStats( siteId, postId, PERIOD_ALL_TIME, null, quantity );
 	}
 }
