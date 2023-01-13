@@ -195,12 +195,20 @@ export interface PlanPriceProps {
 	is2023OnboardingPricingGrid?: boolean;
 }
 
-function renderBasicPrice( price: number, currencyCode: string, isSmallestUnit?: boolean ): string {
+function PriceWithoutHtml( {
+	price,
+	currencyCode,
+	isSmallestUnit,
+}: {
+	price: number;
+	currencyCode: string;
+	isSmallestUnit?: boolean;
+} ) {
 	const priceObj = getCurrencyObject( price, currencyCode, { isSmallestUnit } );
 	if ( ! Number.isInteger( price ) ) {
-		return `${ priceObj.integer }${ priceObj.fraction }`;
+		return <>{ `${ priceObj.integer }${ priceObj.fraction }` }</>;
 	}
-	return priceObj.integer;
+	return <>{ priceObj.integer }</>;
 }
 
 function FlatPriceDisplay( {
@@ -225,7 +233,11 @@ function FlatPriceDisplay( {
 		return (
 			<span className={ className }>
 				{ currencySymbol }
-				{ renderBasicPrice( smallerPrice, currencyCode, isSmallestUnit ) }
+				<PriceWithoutHtml
+					price={ smallerPrice }
+					currencyCode={ currencyCode }
+					isSmallestUnit={ isSmallestUnit }
+				/>
 			</span>
 		);
 	}
@@ -235,8 +247,20 @@ function FlatPriceDisplay( {
 			{ currencySymbol }
 			{ translate( '%(smallerPrice)s-%(higherPrice)s', {
 				args: {
-					smallerPrice: renderBasicPrice( smallerPrice, currencyCode, isSmallestUnit ),
-					higherPrice: renderBasicPrice( higherPrice, currencyCode, isSmallestUnit ),
+					smallerPrice: (
+						<PriceWithoutHtml
+							price={ smallerPrice }
+							currencyCode={ currencyCode }
+							isSmallestUnit={ isSmallestUnit }
+						/>
+					),
+					higherPrice: (
+						<PriceWithoutHtml
+							price={ higherPrice }
+							currencyCode={ currencyCode }
+							isSmallestUnit={ isSmallestUnit }
+						/>
+					),
 				},
 				comment: 'The price range for a particular product',
 			} ) }
