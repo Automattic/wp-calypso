@@ -140,7 +140,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 						) }
 					</div>
 					{ sidebarDomain?.isWPCOMDomain && (
-						<a href={ `/domains/add/${ siteSlug }` }>
+						<a href={ `/domains/add/${ siteSlug }?is-launchpad-step=true` }>
 							<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
 								{ translate( 'Customize' ) }
 							</Badge>

@@ -409,7 +409,7 @@ export default withCurrentRoute(
 			'plugins',
 			'comments',
 		].includes( sectionName );
-		const sidebarIsHidden = ! secondary || isWcMobileApp();
+		const sidebarIsHidden = ! secondary || isWcMobileApp() || currentQuery?.[ 'is-launchpad-step' ];
 		const chatIsDocked = ! [ 'reader', 'theme' ].includes( sectionName ) && ! sidebarIsHidden;
 
 		const userAllowedToHelpCenter =

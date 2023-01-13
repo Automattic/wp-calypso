@@ -23,6 +23,7 @@ import {
 	updatePrivacyForDomain,
 } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { getQueryArgs } from 'calypso/lib/query-args';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 import {
@@ -208,6 +209,10 @@ class DomainSearch extends Component {
 		const { domainRegistrationMaintenanceEndTime } = this.state;
 
 		const hasPlanInCart = hasPlan( cart );
+		// When the sidebar is hidden by launchpad, go back to Launchpad
+		const backButtonUrl = getQueryArgs()?.[ 'is-launchpad-step' ]
+			? 'javascript:history.back()'
+			: domainManagementList( selectedSiteSlug );
 
 		let content;
 
@@ -236,10 +241,7 @@ class DomainSearch extends Component {
 			content = (
 				<span>
 					<div className="domain-search__content">
-						<BackButton
-							className="domain-search__go-back"
-							href={ domainManagementList( selectedSiteSlug ) }
-						>
+						<BackButton className="domain-search__go-back" href={ backButtonUrl }>
 							<Gridicon icon="arrow-left" size={ 18 } />
 							{ translate( 'Back' ) }
 						</BackButton>
