@@ -7,6 +7,7 @@ import {
 	createSiteWithCart,
 	isFreeFlow,
 	isMigrationFlow,
+	isCopySiteFlow,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
@@ -39,9 +40,10 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 
 	const { setPendingAction, setIsMigrateFromWp } = useDispatch( ONBOARD_STORE );
 
+	const defaultWPSiteTheme = 'pub/zoologist';
 	let theme: string;
-	if ( isMigrationFlow( flow ) ) {
-		theme = 'pub/zoologist';
+	if ( isMigrationFlow( flow ) || isCopySiteFlow( flow ) ) {
+		theme = defaultWPSiteTheme;
 	} else {
 		theme = isLinkInBioFlow( flow ) ? 'pub/lynx' : 'pub/lettre';
 	}
