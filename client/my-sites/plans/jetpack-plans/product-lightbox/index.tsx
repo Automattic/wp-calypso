@@ -4,6 +4,7 @@ import {
 	JetpackTag,
 	JETPACK_RELATED_PRODUCTS_MAP,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED,
+	PRODUCT_JETPACK_SOCIAL_BASIC,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -111,7 +112,8 @@ const ProductLightbox: React.FC< Props > = ( {
 	}, [ product.productSlug ] );
 
 	const shouldShowOptions =
-		product.productSlug !== PRODUCT_JETPACK_SOCIAL_ADVANCED
+		product.productSlug !== PRODUCT_JETPACK_SOCIAL_ADVANCED ||
+		product.productSlug !== PRODUCT_JETPACK_SOCIAL_BASIC
 			? variantOptions.length > 1
 			: variantOptions.length > 1 && config.isEnabled( 'jetpack-social/advanced-plan' );
 
