@@ -67,8 +67,12 @@ button {
 .anchor-fm,
 .subscribers,
 .ecommerce,
+.wooexpress,
+.copy-site,
 .intro,
-.free-setup {
+.free-setup,
+.free-post-setup,
+.free {
 	padding: 60px 0 0;
 	box-sizing: border-box;
 
@@ -146,7 +150,8 @@ button {
  * Tailored flow stylings
  */
 .newsletter,
-.link-in-bio:not(.domains) {
+.link-in-bio:not(.domains),
+.link-in-bio-tld:not(.domains) {
 	&:not(.launchpad):not(.subscribers) {
 		@include onboarding-break-mobile-landscape {
 			padding: 40px 0 0;
@@ -166,8 +171,10 @@ button {
 	}
 }
 
+.store-profiler__form,
 .newsletter,
 .link-in-bio,
+.link-in-bio-tld,
 .setup-form__form {
 	button {
 		&[type="submit"] {
@@ -181,7 +188,7 @@ button {
 			border: 1px solid rgba($color: #000, $alpha: 0.2);
 
 			&.site-icon-with-picker__upload-button {
-				border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				border-radius: 50%;
 				font-family: "SF Pro Text", $sans;
 				transition: ease 300ms;
 
@@ -231,6 +238,7 @@ button {
 		label {
 			font-size: $font-body;
 			color: var(--studio-gray-60);
+			font-weight: 400;
 		}
 	}
 
@@ -264,6 +272,13 @@ button {
 	}
 }
 
+.free,
+.free-post-setup {
+	.signup-header h1 {
+		display: none;
+	}
+}
+
 /**
  * Global notices
  */
@@ -288,11 +303,19 @@ button {
 	}
 }
 
+.wooexpress,
+.copy-site,
 .ecommerce {
 	.step-container.processing-step {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		margin-top: 25vh;
+	}
+}
+
+.wooexpress {
+	.flow-progress.progress-bar {
+		display: none;
 	}
 }

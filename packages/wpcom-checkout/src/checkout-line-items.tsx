@@ -5,6 +5,7 @@ import {
 	isMonthlyProduct,
 	isYearly,
 	isBiennially,
+	isTriennially,
 	isP2Plus,
 	isWpComPlan,
 	isJetpackSearch,
@@ -606,7 +607,11 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 	if ( isPlan( product ) || isAddOn( product ) || isJetpackProductSlug( productSlug ) ) {
 		if ( isP2Plus( product ) ) {
 			// This is the price for one item for products with a quantity (eg. seats in a license).
-			const itemPrice = product.item_original_cost_for_quantity_one_display;
+			const itemPrice = formatCurrency(
+				product.item_original_cost_for_quantity_one_integer,
+				product.currency,
+				{ isSmallestUnit: true, stripZeros: true }
+			);
 			const members = product?.current_quantity || 1;
 			const p2Options = {
 				args: {
@@ -630,7 +635,10 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 		const options = {
 			args: {
 				sublabel,
-				price: product.item_original_subtotal_display,
+				price: formatCurrency( product.item_original_subtotal_integer, product.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ),
 			},
 		};
 
@@ -644,6 +652,10 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 
 		if ( isBiennially( product ) ) {
 			return <>{ translate( '%(sublabel)s: %(price)s per two years', options ) }</>;
+		}
+
+		if ( isTriennially( product ) ) {
+			return <>{ translate( '%(sublabel)s: %(price)s per three years', options ) }</>;
 		}
 	}
 
@@ -700,7 +712,11 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 				<>
 					{ translate( 'Service: %(productCost)s one-time fee', {
 						args: {
-							productCost: product.item_original_cost_for_quantity_one_display,
+							productCost: formatCurrency(
+								product.item_original_cost_for_quantity_one_integer,
+								product.currency,
+								{ isSmallestUnit: true, stripZeros: true }
+							),
 						},
 					} ) }
 					<br></br>
@@ -781,7 +797,7 @@ function FirstTermDiscountCallout( { product }: { product: ResponseCartProduct }
 		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
 	}
 
-	if ( isBiennially( product ) ) {
+	if ( isBiennially( product ) || isTriennially( product ) ) {
 		return <DiscountCallout>{ translate( 'Discount for first term' ) }</DiscountCallout>;
 	}
 
@@ -893,7 +909,9 @@ function WPLineItem( {
 			product.is_bundled
 	);
 	const hasMarketplaceProductsInCart = responseCart.products.some(
-		( product ) => product.extra.is_marketplace_product === true
+		( product ) =>
+			product.extra.is_marketplace_product === true ||
+			product.product_slug.startsWith( 'wp_mp_theme' )
 	);
 	const { formStatus } = useFormStatus();
 	const itemSpanId = `checkout-line-item-${ id }`;
@@ -914,10 +932,17 @@ function WPLineItem( {
 
 	const label = getLabel( product );
 
-	const originalAmountDisplay = product.item_original_subtotal_display;
+	const originalAmountDisplay = formatCurrency(
+		product.item_original_subtotal_integer,
+		product.currency,
+		{ isSmallestUnit: true, stripZeros: true }
+	);
 	const originalAmountInteger = product.item_original_subtotal_integer;
 
-	const actualAmountDisplay = product.item_subtotal_display;
+	const actualAmountDisplay = formatCurrency( product.item_subtotal_integer, product.currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
 	const isDiscounted = Boolean(
 		product.item_subtotal_integer < originalAmountInteger && originalAmountDisplay
 	);

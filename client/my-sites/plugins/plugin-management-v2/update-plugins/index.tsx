@@ -32,7 +32,15 @@ export default function UpdatePlugins( { plugins, isWpCom }: Props ): ReactEleme
 
 	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
 	const siteIds = useSelector( () => siteObjectsToSiteIds( sites ) ) ?? [];
-	const pluginsWithUpdates = useSelector( ( state ) => getPlugins( state, siteIds, 'updates' ) );
+	const pluginsWithUpdates = useSelector( ( state ) =>
+		// The types of the getPlugins properties are being inferred incorrectly, so here they are casted
+		// to "any" while the return type is preserved.
+		( getPlugins as ( ...any: any ) => ReturnType< typeof getPlugins > )(
+			state,
+			siteIds,
+			'updates'
+		)
+	);
 	const allSites = useSelector( getSites );
 
 	const pluginsOnSites = useSelector( ( state ) => getPluginsOnSites( state, plugins ) );

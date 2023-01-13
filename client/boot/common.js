@@ -159,15 +159,19 @@ function authorizePath() {
 	return authUri.toString();
 }
 
+const JP_CLOUD_PUBLIC_ROUTES = [ '/pricing', '/plans', '/features/comparison' ];
+
 const oauthTokenMiddleware = () => {
 	if ( config.isEnabled( 'oauth' ) ) {
 		const loggedOutRoutes = [ '/start', '/api/oauth/token', '/connect' ];
 
-		if ( isJetpackCloud() && config.isEnabled( 'jetpack/pricing-page' ) ) {
-			loggedOutRoutes.push( '/pricing', '/plans' );
-			getLanguageSlugs().forEach( ( slug ) =>
-				loggedOutRoutes.push( `/${ slug }/pricing`, `/${ slug }/plans` )
-			);
+		if ( isJetpackCloud() ) {
+			loggedOutRoutes.push( ...JP_CLOUD_PUBLIC_ROUTES );
+			getLanguageSlugs().forEach( ( slug ) => {
+				loggedOutRoutes.push(
+					...JP_CLOUD_PUBLIC_ROUTES.map( ( route ) => `/${ slug }${ route }` )
+				);
+			} );
 		}
 
 		// Forces OAuth users to the /login page if no token is present

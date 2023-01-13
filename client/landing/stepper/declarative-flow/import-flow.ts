@@ -1,7 +1,5 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
+import { Design } from '@automattic/design-picker';
 import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
-import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -22,6 +20,7 @@ import ImporterWix from './internals/steps-repository/importer-wix';
 import ImporterWordpress from './internals/steps-repository/importer-wordpress';
 import PatternAssembler from './internals/steps-repository/pattern-assembler';
 import ProcessingStep from './internals/steps-repository/processing-step';
+import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import { Flow, ProvidedDependencies } from './internals/types';
 
 const importFlow: Flow = {
@@ -43,6 +42,7 @@ const importFlow: Flow = {
 			{ slug: 'designSetup', component: DesignSetup },
 			{ slug: 'patternAssembler', component: PatternAssembler },
 			{ slug: 'processing', component: ProcessingStep },
+			{ slug: 'siteCreationStep', component: SiteCreationStep },
 		];
 	},
 
@@ -50,7 +50,6 @@ const importFlow: Flow = {
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const urlQueryParams = useQuery();
 		const siteSlugParam = useSiteSlugParam();
-		const isDesktop = useViewportMatch( 'large' );
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 		const flowProgress = useSiteSetupFlowProgress( _currentStep, 'import', '' );
@@ -106,10 +105,8 @@ const importFlow: Flow = {
 				}
 
 				case 'designSetup': {
-					if (
-						isDesktop &&
-						isBlankCanvasDesign( providedDependencies?.selectedDesign as Design )
-					) {
+					const _selectedDesign = providedDependencies?.selectedDesign as Design;
+					if ( _selectedDesign?.design_type === 'assembler' ) {
 						return navigate( 'patternAssembler' );
 					}
 
@@ -119,12 +116,16 @@ const importFlow: Flow = {
 				case 'patternAssembler':
 					return navigate( 'processing' );
 
+				case 'siteCreationStep':
+					return navigate( 'processing' );
+
 				case 'processing': {
+					if ( providedDependencies?.siteSlug ) {
+						const from = urlQueryParams.get( 'from' );
+						return navigate( `import?siteSlug=${ providedDependencies?.siteSlug }&from=${ from }` );
+					}
 					// End of Pattern Assembler flow
-					if (
-						isEnabled( 'signup/design-picker-pattern-assembler' ) &&
-						isBlankCanvasDesign( selectedDesign as Design )
-					) {
+					if ( selectedDesign?.design_type === 'assembler' ) {
 						return exitFlow( `/site-editor/${ siteSlugParam }` );
 					}
 
@@ -157,7 +158,7 @@ const importFlow: Flow = {
 				case 'importerSquarespace':
 				case 'importerWordpress':
 				case 'designSetup':
-					return navigate( 'import' );
+					return navigate( `import?siteSlug=${ siteSlugParam }` );
 			}
 		};
 
@@ -174,6 +175,8 @@ const importFlow: Flow = {
 			switch ( step ) {
 				case 'goals':
 					return exitFlow( `/setup/site-setup/goals?siteSlug=${ siteSlugParam }` );
+				case 'import':
+					return navigate( `import?siteSlug=${ siteSlugParam }` );
 				default:
 					return navigate( step );
 			}

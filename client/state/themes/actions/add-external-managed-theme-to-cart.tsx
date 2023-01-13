@@ -3,7 +3,11 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { addQueryArgs } from '@wordpress/url';
 import page from 'page';
 import 'calypso/state/themes/init';
+import { marketplaceThemeProduct } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
+import { marketplaceThemeBillingProductSlug } from 'calypso/my-sites/themes/helpers';
+import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
+import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
@@ -20,6 +24,23 @@ const isLoadingCart = ( isLoading: boolean ) => ( dispatch: CalypsoDispatch ) =>
 		isLoading,
 	} );
 };
+
+/**
+ * Get the preferred product slug from the products list.
+ *
+ * @param products list of products
+ * @returns string
+ */
+function getPreferredBillingCycleProductSlug( products: Array< ProductListItem > ): string {
+	if ( products.length === 0 ) {
+		throw new Error( 'No products available' );
+	}
+	const preferredBillingCycle = 'month';
+	const preferredProduct = products.find(
+		( product ) => product.product_term === preferredBillingCycle
+	);
+	return preferredProduct?.product_slug ?? products[ 0 ].product_slug;
+}
 
 /**
  * Add the business plan and/or the external theme to the cart and redirect to checkout.
@@ -50,10 +71,18 @@ export function addExternalManagedThemeToCart( themeId: string, siteId: number )
 			throw new Error( 'Site could not be found matching id ' + siteId );
 		}
 
-		// TODO: use the marketplaceThemeProduct function from #69831
-		const externalManagedThemeProduct = {
-			product_slug: themeId,
-		};
+		const products = getProductsByBillingSlug(
+			getState(),
+			marketplaceThemeBillingProductSlug( themeId )
+		);
+
+		if ( undefined === products || products.length === 0 ) {
+			throw new Error( 'No products available' );
+		}
+
+		const productSlug = getPreferredBillingCycleProductSlug( products );
+
+		const externalManagedThemeProduct = marketplaceThemeProduct( productSlug );
 
 		/**
 		 * This holds the products that will be added to the cart. We always want to add the

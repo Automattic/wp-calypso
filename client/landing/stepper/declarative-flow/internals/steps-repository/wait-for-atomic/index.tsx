@@ -32,13 +32,17 @@ export const transferStates = {
 
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
-const WaitForAtomic: Step = function WaitForAtomic( { navigation } ) {
+const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 	const { submit } = navigation;
 	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
 	const site = useSite();
 
-	const siteId = site?.ID;
+	let siteId = site?.ID as number;
+	// In some cases, we get the siteId from the navigation extra data rather than the SITE_STORE.
+	if ( data?.siteId ) {
+		siteId = data?.siteId as number;
+	}
 
 	const { getSiteLatestAtomicTransfer, getSiteLatestAtomicTransferError } = useSelect( ( select ) =>
 		select( SITE_STORE )
@@ -130,7 +134,7 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation } ) {
 
 			setProgress( 1 );
 
-			return { finishedWaitingForAtomic: true };
+			return { finishedWaitingForAtomic: true, siteSlug: data?.siteSlug };
 		} );
 
 		submit?.();

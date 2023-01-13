@@ -201,7 +201,12 @@ class GoogleMyBusinessStats extends Component {
 
 				<DocumentHead title={ translate( 'Stats' ) } />
 
-				<StatsNavigation selectedItem="googleMyBusiness" siteId={ siteId } slug={ siteSlug } />
+				<StatsNavigation
+					selectedItem="googleMyBusiness"
+					siteId={ siteId }
+					slug={ siteSlug }
+					isLegacy
+				/>
 
 				<QuerySiteKeyrings siteId={ siteId } />
 				<QueryKeyringConnections forceRefresh />

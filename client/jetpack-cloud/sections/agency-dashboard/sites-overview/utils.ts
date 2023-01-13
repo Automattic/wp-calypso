@@ -16,6 +16,8 @@ import type {
 	MonitorNode,
 } from './types';
 
+const INITIAL_UNIX_EPOCH = '1970-01-01 00:00:00';
+
 export const siteColumns = [
 	{
 		key: 'site',
@@ -32,6 +34,7 @@ export const siteColumns = [
 	{
 		key: 'monitor',
 		title: translate( 'Monitor' ),
+		className: 'min-width-100px',
 	},
 	{
 		key: 'plugin',
@@ -361,10 +364,17 @@ const formatMonitorData = ( site: Site ) => {
 		status: '',
 		type: 'monitor',
 		error: false,
+		settings: site.monitor_settings,
 	};
-	if ( ! site.monitor_active ) {
+	const monitorStatus = site.monitor_settings.monitor_active;
+	if ( ! monitorStatus ) {
 		monitor.status = 'disabled';
-	} else if ( ! site.monitor_site_status ) {
+	} else if (
+		! site.monitor_site_status &&
+		// This check is needed because monitor_site_status is false by default
+		// and we don't want to show the site down status when the site is first connected and the monitor is enabled
+		INITIAL_UNIX_EPOCH !== site.monitor_last_status_change
+	) {
 		monitor.status = 'failed';
 		monitor.value = translate( 'Site Down' );
 		monitor.error = true;
@@ -411,4 +421,42 @@ export const getProductSlugFromProductType = ( type: string ): string | undefine
 	};
 
 	return slugs[ type ];
+};
+
+export const availableNotificationDurations = [
+	{
+		time: 5,
+		label: translate( 'After 5 minutes' ),
+	},
+	{
+		time: 15,
+		label: translate( 'After 15 minutes' ),
+	},
+	{
+		time: 30,
+		label: translate( 'After 30 minutes' ),
+	},
+	{
+		time: 45,
+		label: translate( 'After 45 minutes' ),
+	},
+	{
+		time: 60,
+		label: translate( 'After 1 hour' ),
+	},
+];
+
+export const mobileAppLink = 'https://jetpack.com/mobile/';
+
+export const getSiteCountText = ( sites: Array< Site > ) => {
+	if ( ! sites?.length ) {
+		return null;
+	}
+	if ( sites.length === 1 ) {
+		return sites[ 0 ].url;
+	}
+	return translate( '%(siteCount)d sites', {
+		args: { siteCount: sites.length },
+		comment: '%(siteCount) is no of sites selected, e.g. "2 sites"',
+	} );
 };

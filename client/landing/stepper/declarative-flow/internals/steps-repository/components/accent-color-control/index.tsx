@@ -18,6 +18,7 @@ import {
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import SelectDropdown from 'calypso/components/select-dropdown';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import './style.scss';
@@ -92,7 +93,17 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 		[ shouldLimitGlobalStyles ]
 	);
 
-	const handlePredefinedColorSelect = ( { value }: { value: string } ) => {
+	const isCustomColorPremium = useCallback( () => {
+		return !! getColorOptions().find( ( { value } ) => value === 'custom' )?.isPremium;
+	}, [ getColorOptions ] );
+
+	const handlePredefinedColorSelect = ( {
+		value,
+		isPremium,
+	}: {
+		value: string;
+		isPremium: boolean;
+	} ) => {
 		if ( value === 'custom' ) {
 			/**
 			 * Color picker is opened with the current accentColor selected by default
@@ -111,6 +122,11 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 		// Hence ensure the color picker is closed after predefined color selection
 		setColorPickerOpen( false );
 
+		recordTracksEvent( 'calypso_signup_accent_color_select', {
+			color: value,
+			is_premium: isPremium,
+		} );
+
 		setAccentColor( {
 			hex: value,
 			rgb: hexToRgb( value ),
@@ -118,6 +134,11 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 	};
 
 	const handleCustomColorSelect = ( { hex, rgb }: ColorPicker.OnChangeCompleteValue ) => {
+		recordTracksEvent( 'calypso_signup_accent_color_select', {
+			color: 'custom',
+			is_premium: isCustomColorPremium(),
+		} );
+
 		setCustomColor( { hex, rgb: rgb as unknown as RGB } );
 		setAccentColor( { hex, rgb: rgb as unknown as RGB } );
 	};
@@ -150,7 +171,9 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 			<SelectDropdown.Item
 				key={ option.label }
 				icon={ option.icon }
-				onClick={ () => handlePredefinedColorSelect( { value: option.value } ) }
+				onClick={ () =>
+					handlePredefinedColorSelect( { value: option.value, isPremium: option.isPremium } )
+				}
 				selected={ option.value === accentColor.hex }
 				secondaryIcon={
 					shouldLimitGlobalStyles && option.isPremium ? (

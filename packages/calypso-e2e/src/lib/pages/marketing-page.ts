@@ -32,7 +32,6 @@ export class MarketingPage {
 	 */
 	async clickTab( name: string ): Promise< void > {
 		await clickNavTab( this.page, name );
-		await this.page.waitForLoadState( 'networkidle', { timeout: 20 * 1000 } );
 	}
 
 	/* SEO Preview Methods */

@@ -1,6 +1,6 @@
 import { getPlans, getPlanClass } from '@automattic/calypso-products';
 import { getCurrencyObject } from '@automattic/format-currency';
-import { NEWSLETTER_FLOW, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
+import { NEWSLETTER_FLOW, LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -22,6 +22,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 			case NEWSLETTER_FLOW:
 				return translate( 'Best for Newsletters' );
 			case LINK_IN_BIO_FLOW:
+			case LINK_IN_BIO_TLD_FLOW:
 				return translate( 'Best for Link in Bio' );
 			default:
 				return translate( 'Popular' );

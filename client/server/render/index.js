@@ -83,6 +83,7 @@ function render( element, key, req ) {
 
 		// If the cached layout was stored earlier in the request, no need to get it again.
 		let renderedLayout = req.context.cachedMarkup ?? markupCache.get( key );
+		const markupFromCache = !! renderedLayout; // Store this before updating renderedLayout.
 		if ( ! renderedLayout ) {
 			bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
 			debug( 'cache miss for key', key );
@@ -110,7 +111,7 @@ function render( element, key, req ) {
 
 		logServerEvent( req.context.sectionName, [
 			{
-				name: `ssr.markup_cache.${ renderedLayout ? 'hit' : 'miss' }`,
+				name: `ssr.markup_cache.${ markupFromCache ? 'hit' : 'miss' }`,
 				type: 'counting',
 			},
 			{

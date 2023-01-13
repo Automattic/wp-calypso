@@ -1,4 +1,5 @@
 import {
+	JETPACK_SITES_FEATURES_RECEIVE,
 	SITE_FEATURES_FETCH,
 	SITE_FEATURES_FETCH_COMPLETED,
 	SITE_FEATURES_FETCH_FAILED,
@@ -25,6 +26,25 @@ function updateSiteState( state, siteId, attributes ) {
 	} );
 }
 
+/**
+ * Given an object of features keyed by siteId, updates all features at once.
+ *
+ * @param {object} state The current features state
+ * @param {object} features An object containing feature arrays keyed by siteId
+ * @returns The new state
+ */
+function updateBulkFeatures( state, features ) {
+	const newState = {};
+	for ( const siteId in features ) {
+		newState[ siteId ] = {
+			...initialSiteState,
+			hasLoadedFromServer: true,
+			data: features,
+		};
+	}
+	return { ...state, ...newState };
+}
+
 export function featuresReducer( state = {}, { type, siteId, features, error } ) {
 	switch ( type ) {
 		case SITE_FEATURES_FETCH:
@@ -46,6 +66,8 @@ export function featuresReducer( state = {}, { type, siteId, features, error } )
 				error: error,
 				isRequesting: false,
 			} );
+		case JETPACK_SITES_FEATURES_RECEIVE:
+			return updateBulkFeatures( state, features );
 	}
 
 	return state;

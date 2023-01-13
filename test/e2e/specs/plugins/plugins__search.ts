@@ -2,7 +2,13 @@
  * @group calypso-pr
  */
 
-import { DataHelper, TestAccount, PluginsPage, envVariables } from '@automattic/calypso-e2e';
+import {
+	DataHelper,
+	TestAccount,
+	PluginsPage,
+	envVariables,
+	SidebarComponent,
+} from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
@@ -22,19 +28,20 @@ describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 		}
 	} );
 
-	it( 'Visit plugins page', async function () {
-		pluginsPage = new PluginsPage( page );
-		await pluginsPage.visit();
+	it( 'Navigate to the plugins page', async function () {
+		const sidebarCompoonent = new SidebarComponent( page );
+		await sidebarCompoonent.navigate( 'Plugins' );
 	} );
 
-	it( 'Search for "shipping"', async function () {
-		await pluginsPage.search( 'shipping' );
-		await pluginsPage.validateExpectedSearchResultFound( 'Royal Mail' );
+	it( 'Search for "jetpack"', async function () {
+		pluginsPage = new PluginsPage( page );
+		await pluginsPage.search( 'jetpack' );
+		await pluginsPage.validateExpectedSearchResultFound( 'Jetpack Protect' );
 	} );
 
 	it( 'Click on a search result', async function () {
-		await pluginsPage.clickSearchResult( 'Royal Mail' );
-		await pluginsPage.validatePluginDetailsHasHeaderTitle( 'Royal Mail' );
+		await pluginsPage.clickSearchResult( 'Jetpack Protect' );
+		await pluginsPage.validatePluginDetailsHasHeaderTitle( 'Jetpack Protect' );
 	} );
 
 	it( 'Click on breadcrumbs "Search Results"', async function () {
@@ -43,17 +50,17 @@ describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 		} else {
 			await pluginsPage.clickBackBreadcrumb();
 		}
-		await pluginsPage.validateExpectedSearchResultFound( 'Royal Mail' );
+		await pluginsPage.validateExpectedSearchResultFound( 'Jetpack Protect' );
 	} );
 
 	it( 'Click on breadcrumbs "Plugins"', async function () {
-		await pluginsPage.clickSearchResult( 'Royal Mail' );
+		await pluginsPage.clickSearchResult( 'Jetpack Protect' );
 		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 			await pluginsPage.clickPluginsBreadcrumb();
 			await pluginsPage.validateHasSection( PluginsPage.paidSection );
 		} else {
 			await pluginsPage.clickBackBreadcrumb();
-			await pluginsPage.validateExpectedSearchResultFound( 'Royal Mail' );
+			await pluginsPage.validateExpectedSearchResultFound( 'Jetpack Protect' );
 		}
 	} );
 } );

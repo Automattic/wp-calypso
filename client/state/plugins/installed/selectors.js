@@ -66,7 +66,7 @@ export function requestPluginsError( state ) {
 	return state.plugins.installed.requestError;
 }
 
-export function getPlugins( state, siteIds, pluginFilter ) {
+function getPluginsSelector( state, siteIds, pluginFilter ) {
 	let pluginList = reduce(
 		siteIds,
 		( memo, siteId ) => {
@@ -105,6 +105,18 @@ export function getPlugins( state, siteIds, pluginFilter ) {
 	return sortBy( pluginList, ( item ) => item.slug.toLowerCase() );
 }
 
+export const getPlugins = createSelector(
+	getPluginsSelector,
+	( state, siteIds ) => [
+		state.plugins.installed.plugins,
+		isRequestingForAllSites( state ),
+		...siteIds.map( ( siteId ) => isRequesting( state, siteId ) ),
+	],
+	( state, siteIds, pluginFilter ) => {
+		return [ siteIds, pluginFilter ].flat().join( '-' );
+	}
+);
+
 export function getPluginsWithUpdates( state, siteIds ) {
 	return filter( getPlugins( state, siteIds ), _filters.updates ).map( ( plugin ) => ( {
 		...plugin,
@@ -128,6 +140,10 @@ export function getPluginOnSites( state, siteIds, pluginSlug ) {
 export function getPluginOnSite( state, siteId, pluginSlug ) {
 	const pluginList = getPlugins( state, [ siteId ] );
 	return find( pluginList, ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) );
+}
+
+export function getPluginsOnSite( state, siteId, pluginSlugs ) {
+	return pluginSlugs.map( ( pluginSlug ) => getPluginOnSite( state, siteId, pluginSlug ) );
 }
 
 export function getSitesWithPlugin( state, siteIds, pluginSlug ) {

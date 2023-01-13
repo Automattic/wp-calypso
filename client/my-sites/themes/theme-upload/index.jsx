@@ -22,7 +22,6 @@ import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import FeatureExample from 'calypso/components/feature-example';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -67,6 +66,7 @@ import {
 	getSelectedSite,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import ThemesHeader from '../themes-header';
 
 import './style.scss';
 
@@ -329,10 +329,8 @@ class Upload extends Component {
 				<ThanksModal source="upload" />
 				<AutoLoadingHomepageModal source="upload" />
 
-				<FormattedHeader
-					brandFont
-					headerText={ translate( 'Themes' ) }
-					subHeaderText={ translate(
+				<ThemesHeader
+					description={ translate(
 						'If you have a theme in .zip format, you may install or update it by uploading it here. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
@@ -342,7 +340,6 @@ class Upload extends Component {
 							},
 						}
 					) }
-					align="left"
 				/>
 				<HeaderCake backHref={ backPath }>{ translate( 'Install theme' ) }</HeaderCake>
 

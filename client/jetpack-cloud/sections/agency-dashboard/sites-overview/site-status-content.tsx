@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
@@ -10,6 +11,7 @@ import Tooltip from 'calypso/components/tooltip';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboard/selectors';
+import ToggleActivateMonitoring from '../downtime-monitoring/toggle-activate-monitoring';
 import SiteSetFavorite from './site-set-favorite';
 import { getRowMetaData, getProductSlugFromProductType } from './utils';
 import type { AllowedTypes, SiteData } from './types';
@@ -41,14 +43,14 @@ export default function SiteStatusContent( {
 	} = getRowMetaData( rows, type, isLargeScreen );
 
 	const siteId = rows.site.value.blog_id;
-	const siteUrl = value?.url;
+	const siteUrl = rows.site.value.url;
 
 	const isLicenseSelected = useSelector( ( state ) =>
 		hasSelectedLicensesOfType( state, siteId, type )
 	);
 
 	// Disable clicks/hover when there is a site error &
-	// when the row it is not monitor and monitor status is down
+	// when the row is not monitor and monitor status is down
 	// since monitor is clickable when site is down.
 	const disabledStatus = siteError || ( type !== 'monitor' && siteDown );
 
@@ -141,6 +143,22 @@ export default function SiteStatusContent( {
 				<span className="sites-overview__overlay"></span>
 				{ errorContent }
 			</>
+		);
+	}
+
+	const isDownTimeMonitorEnabled = isEnabled(
+		'jetpack/partner-portal-downtime-monitoring-updates'
+	);
+
+	// We will show "Site Down" when the site is down which is handled differently.
+	if ( isDownTimeMonitorEnabled && type === 'monitor' && ! siteDown ) {
+		return (
+			<ToggleActivateMonitoring
+				site={ rows.site.value }
+				settings={ rows.monitor.settings }
+				status={ status }
+				siteError={ siteError }
+			/>
 		);
 	}
 

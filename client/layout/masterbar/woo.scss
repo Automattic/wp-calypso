@@ -144,6 +144,7 @@
 	}
 
 	.button.is-primary,
+	.button.is-primary[disabled],
 	.login .button.is-primary {
 		background: $woo-purple-60;
 		border: none;
@@ -421,7 +422,7 @@
 
 			.continue-as-user__username {
 				font-size: 1rem;
-				font-weight: 500;
+				font-weight: 600;
 				line-height: 24px;
 				color: var(--color-gray-100);
 				grid-area: username;

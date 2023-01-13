@@ -1,10 +1,11 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { Plugin } from 'calypso/data/marketplace/types';
 import { useESPluginsInfinite } from 'calypso/data/marketplace/use-es-query';
 import {
 	useWPCOMFeaturedPlugins,
-	useWPCOMPlugins,
+	useWPCOMPluginsList,
 } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { useCategories } from '../categories/use-categories';
 
@@ -92,7 +93,7 @@ const usePlugins = ( {
 			!! ( search || ! WPORG_CATEGORIES_BLOCKLIST.includes( category || '' ) ) && wporgEnabled,
 	} ) as WPORGResponse;
 
-	const { data: wpcomPluginsRaw = [], isLoading: isFetchingDotCom } = useWPCOMPlugins(
+	const { data: wpcomPluginsRaw = [], isLoading: isFetchingDotCom } = useWPCOMPluginsList(
 		'all',
 		search,
 		tag,
@@ -133,9 +134,16 @@ const usePlugins = ( {
 			results = featuredPlugins?.length ?? 0;
 			break;
 		default:
-			plugins = [ ...dotComPlugins, ...ESPlugins ];
-			isFetching = isFetchingDotCom || isFetchingES;
-			results = ( ESPagination?.results ?? 0 ) + dotComPlugins.length;
+			plugins = config.isEnabled( 'marketplace-jetpack-plugin-search' )
+				? ESPlugins
+				: [ ...dotComPlugins, ...ESPlugins ];
+			isFetching = config.isEnabled( 'marketplace-jetpack-plugin-search' )
+				? isFetchingES
+				: isFetchingDotCom || isFetchingES;
+			results = config.isEnabled( 'marketplace-jetpack-plugin-search' )
+				? ESPagination?.results ?? 0
+				: ( ESPagination?.results ?? 0 ) + dotComPlugins.length;
+
 			break;
 	}
 

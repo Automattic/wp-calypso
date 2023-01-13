@@ -2,9 +2,13 @@ import cookie from 'cookie';
 import { getTrackingPrefs, TRACKING_PREFS_COOKIE_V2 } from '.';
 import type { TrackingPrefs } from '.';
 
+type TrackingPrefsData = Partial<
+	Omit< TrackingPrefs, 'buckets' > & { buckets: Partial< TrackingPrefs[ 'buckets' ] > }
+>;
+
 const COOKIE_MAX_AGE = 60 * 60 * 24 * ( 365.25 / 2 ); /* six months; 365.25 -> avg days in year */
 
-const setTrackingPrefs = ( newPrefs: Partial< TrackingPrefs > ): TrackingPrefs => {
+const setTrackingPrefs = ( newPrefs: TrackingPrefsData ): TrackingPrefs => {
 	const { ok, buckets } = getTrackingPrefs();
 
 	const newOptions = {

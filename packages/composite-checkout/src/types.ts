@@ -120,6 +120,7 @@ export interface CheckoutProviderProps {
 	paymentProcessors: PaymentProcessorProp;
 	isValidating?: boolean;
 	initiallySelectedPaymentMethodId?: string | null;
+	selectFirstAvailablePaymentMethod?: boolean;
 	children: React.ReactNode;
 }
 
@@ -313,3 +314,5 @@ export interface CheckoutStepGroupActions {
 	getStepCompleteCallback: ( stepNumber: number ) => StepCompleteCallback;
 	setTotalSteps: ( totalSteps: number ) => void;
 }
+
+export type TogglePaymentMethod = ( paymentMethodId: string, available: boolean ) => void;

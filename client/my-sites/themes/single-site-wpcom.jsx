@@ -14,7 +14,6 @@ import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import Main from 'calypso/components/main';
 import { useRequestSiteChecklistTaskUpdate } from 'calypso/data/site-checklist';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import CurrentTheme from 'calypso/my-sites/themes/current-theme';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
@@ -22,13 +21,12 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
-import ThemesHeader from './themes-header';
 
 const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 	const { currentPlan, currentThemeId, isVip, requestingSitePlans, siteId, siteSlug, translate } =
 		props;
 
-	const isNewSearchAndFilter = isEnabled( 'themes/showcase-i4/search-and-filter' );
+	const isNewDetailsAndPreview = isEnabled( 'themes/showcase-i4/details-and-preview' );
 	const displayUpsellBanner = ! requestingSitePlans && currentPlan && ! isVip;
 	const upsellUrl = `/plans/${ siteSlug }`;
 	let upsellBanner = null;
@@ -80,16 +78,11 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 
 	return (
 		<Main fullWidthLayout className="themes">
-			{ isNewSearchAndFilter && <BodySectionCssClass bodyClass={ [ 'is-section-themes-i4' ] } /> }
-			<ThemesHeader isReskinned={ isNewSearchAndFilter } />
-			{ ! isNewSearchAndFilter ? (
-				<CurrentTheme siteId={ siteId } />
-			) : (
-				<>
-					<QueryActiveTheme siteId={ siteId } />
-					{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
-				</>
+			{ isNewDetailsAndPreview && (
+				<BodySectionCssClass bodyClass={ [ 'is-section-themes-i4-2' ] } />
 			) }
+			<QueryActiveTheme siteId={ siteId } />
+			{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
 
 			<ThemeShowcase
 				{ ...props }

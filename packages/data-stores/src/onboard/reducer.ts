@@ -460,6 +460,16 @@ const domainCartItem: Reducer< MinimalRequestCartProduct | undefined, OnboardAct
 	return state;
 };
 
+const isMigrateFromWp: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_IS_MIGRATE_FROM_WP' ) {
+		return action.isMigrateFromWp;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	anchorPodcastId,
 	anchorEpisodeId,
@@ -501,6 +511,7 @@ const reducer = combineReducers( {
 	storeLocationCountryCode,
 	ecommerceFlowRecurType,
 	planCartItem,
+	isMigrateFromWp,
 } );
 
 export type State = ReturnType< typeof reducer >;

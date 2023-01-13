@@ -161,9 +161,14 @@ class Signup extends Component {
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
-		let providedDependencies = this.getCurrentFlowSupportedQueryParams();
+		let providedDependencies = this.getDependenciesInQuery();
 
 		// Prevent duplicate sites, check pau2Xa-1Io-p2#comment-6759.
+		// Note that there are in general three ways of touching this code that can be obscured:
+		// 1. signup as a new user through any of the /start/* flows.
+		// 2. log in and go through a /start/* flow to add a new site under the logged-in account.
+		// 3. signup as a new user, and then navigate back by the browser's back button.
+		// *Only* in the 3rd conditon will isManageSiteFlow be true.
 		if ( this.props.isManageSiteFlow ) {
 			providedDependencies = {
 				...providedDependencies,
@@ -201,7 +206,13 @@ class Signup extends Component {
 			this.setState( { resumingStep: destinationStep } );
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
 			return page.redirect(
-				getStepUrl( this.props.flowName, destinationStep, undefined, locale, providedDependencies )
+				getStepUrl(
+					this.props.flowName,
+					destinationStep,
+					undefined,
+					locale,
+					this.getCurrentFlowSupportedQueryParams()
+				)
 			);
 		}
 	}
@@ -578,25 +589,42 @@ class Signup extends Component {
 		return window.location.origin + path;
 	};
 
-	getCurrentFlowSupportedQueryParams = () => {
+	getDependenciesInQuery = () => {
 		const queryObject = this.props.initialContext?.query ?? {};
-		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
-		const supportedParams = [
-			'siteId',
-			'siteSlug',
-			'flags', // for the feature flags
-			...( flow?.providesDependenciesInQuery ?? [] ),
-		];
+		const dependenciesInQuery =
+			flows.getFlow( this.props.flowName, this.props.isLoggedIn )?.providesDependenciesInQuery ??
+			[];
 
 		const result = {};
-		for ( const param of supportedParams ) {
-			const value = queryObject[ param ];
+		for ( const dependencyKey of dependenciesInQuery ) {
+			const value = queryObject[ dependencyKey ];
 			if ( value != null ) {
-				result[ param ] = value;
+				result[ dependencyKey ] = value;
 			}
 		}
 
 		return result;
+	};
+
+	getCurrentFlowSupportedQueryParams = () => {
+		const queryObject = this.props.initialContext?.query ?? {};
+		const dependenciesInQuery = this.getDependenciesInQuery( queryObject );
+
+		// TODO
+		// siteSlug and siteId are currently both being used as either just a query parameter in some area or dependencies data recognized by the signup framework.
+		// The confusion caused by this naming conflict could lead to the breakage that first introduced by
+		// https://github.com/Automattic/wp-calypso/commit/1d5968a3df62f849c58ea1d0854f472021214ff3 and then fixed by https://github.com/Automattic/wp-calypso/pull/70760
+		// For now, we simply make sure they are considered as dependency data when they are explicitly designated.
+		// It works, but the code could have been cleaner if there is no naming conflict.
+		// We should do a query parameter audit to make sure each query parameter means one and only one thing, and then seek for a future-proof solution.
+		const { siteId, siteSlug, flags } = queryObject;
+
+		return {
+			siteId,
+			siteSlug,
+			flags,
+			...dependenciesInQuery,
+		};
 	};
 
 	// `flowName` is an optional parameter used to redirect to another flow, i.e., from `main`
@@ -624,10 +652,7 @@ class Signup extends Component {
 	// `nextFlowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToNextStep = ( nextFlowName = this.props.flowName ) => {
-		const { steps: flowSteps, middleDestination } = flows.getFlow(
-			nextFlowName,
-			this.props.isLoggedIn
-		);
+		const { steps: flowSteps } = flows.getFlow( nextFlowName, this.props.isLoggedIn );
 		const currentStepIndex = flowSteps.indexOf( this.props.stepName );
 		const nextStepName = flowSteps[ currentStepIndex + 1 ];
 		const nextProgressItem = get( this.props.progress, nextStepName );
@@ -635,15 +660,6 @@ class Signup extends Component {
 
 		if ( nextFlowName !== this.props.flowName ) {
 			this.setState( { previousFlowName: this.props.flowName } );
-		}
-
-		const midPoint = middleDestination ? middleDestination[ this.props.stepName ] : null;
-
-		if ( midPoint ) {
-			// save the resuming point and then navigate away.
-			this.setState( { resumingStep: nextStepName } );
-			page( midPoint( this.props.signupDependencies ) );
-			return;
 		}
 
 		this.goToStep( nextStepName, nextStepSection, nextFlowName );
@@ -746,7 +762,12 @@ class Signup extends Component {
 
 		// Hide the free option in the signup flow
 		const selectedHideFreePlan = get( this.props, 'signupDependencies.shouldHideFreePlan', false );
-		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
+
+		const hideFreePlan =
+			config.isEnabled( 'onboarding/2023-pricing-grid' ) &&
+			this.props.flowName === 'onboarding-2023-pricing-grid'
+				? false
+				: planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		let propsForCurrentStep = propsFromConfig;

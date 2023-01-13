@@ -1,13 +1,15 @@
 import {
-	LINK_IN_BIO_FLOW,
 	NEWSLETTER_FLOW,
 	ECOMMERCE_FLOW,
 	VIDEOPRESS_FLOW,
 	FREE_FLOW,
+	isLinkInBioFlow,
+	isCopySiteFlow,
 } from '@automattic/onboarding';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import IntroStep, { IntroContent } from './intro';
 import type { Step } from '../../types';
@@ -16,9 +18,25 @@ import './styles.scss';
 
 const useIntroContent = ( flowName: string | null ): IntroContent => {
 	const { __ } = useI18n();
-
+	const urlQueryParams = useQuery();
 	return useMemo( () => {
-		if ( flowName === LINK_IN_BIO_FLOW ) {
+		if ( isCopySiteFlow( flowName ) ) {
+			return {
+				title: __( 'Copy Site' ),
+				text: createInterpolateElement(
+					__(
+						'You’re 5 minutes away from<br />creating a new copy site from <SourceSlug/>.<br />Ready?'
+					),
+					{
+						br: <br />,
+						SourceSlug: <span>{ urlQueryParams.get( 'sourceSlug' ) }</span>,
+					}
+				),
+				buttonText: __( 'Start copying' ),
+			};
+		}
+
+		if ( isLinkInBioFlow( flowName ) ) {
 			return {
 				title: createInterpolateElement(
 					__( 'You’re 3 minutes away from<br />a stand-out Link in Bio site.<br />Ready? ' ),
@@ -40,11 +58,8 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 		if ( flowName === NEWSLETTER_FLOW ) {
 			return {
 				title: __( 'Sign in. Set up. Send out.' ),
-				text: createInterpolateElement(
-					__(
-						`You’re a few steps away from launching a beautiful Newsletter with<br />everything you’ll ever need to grow your audience.`
-					),
-					{ br: <br /> }
+				text: __(
+					`You’re a few steps away from launching a beautiful Newsletter with everything you’ll ever need to grow your audience.`
 				),
 				buttonText: __( 'Start building your Newsletter' ),
 			};
@@ -77,7 +92,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 			),
 			buttonText: __( 'Get started' ),
 		};
-	}, [ flowName, __ ] );
+	}, [ flowName, __, urlQueryParams ] );
 };
 
 const Intro: Step = function Intro( { navigation, flow } ) {
@@ -98,6 +113,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			stepContent={ <IntroStep introContent={ introContent } onSubmit={ handleSubmit } /> }
 			recordTracksEvent={ recordTracksEvent }
 			showHeaderJetpackPowered={ flow === NEWSLETTER_FLOW }
+			showHeaderWooCommercePowered={ flow === ECOMMERCE_FLOW }
 			showVideoPressPowered={ isVideoPressFlow }
 		/>
 	);

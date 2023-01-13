@@ -15,7 +15,7 @@ export default function WaitingTwoFactorNotificationApproval( { switchTwoFactorA
 			<Card compact>
 				<p className="two-factor-authentication__info">
 					{ translate(
-						'Notification sent! Confirm in your {{strong}}WordPress\u00A0mobile\u00A0app{{/strong}} to\u00A0continue.',
+						'Notification sent! Confirm in your Jetpack or WordPress {{strong}}\u00A0mobile\u00A0app{{/strong}} to\u00A0continue.',
 						{ components: { strong: <strong /> } }
 					) }
 				</p>

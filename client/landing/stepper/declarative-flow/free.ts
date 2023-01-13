@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, FREE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -15,37 +16,38 @@ import {
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import DomainsStep from './internals/steps-repository/domains';
+import DesignSetup from './internals/steps-repository/design-setup';
+import FreeSetup from './internals/steps-repository/free-setup';
 import Intro from './internals/steps-repository/intro';
 import LaunchPad from './internals/steps-repository/launchpad';
-import LinkInBioSetup from './internals/steps-repository/link-in-bio-setup';
-import PatternsStep from './internals/steps-repository/patterns';
-import PlansStep from './internals/steps-repository/plans';
 import Processing from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
 const free: Flow = {
 	name: FREE_FLOW,
-	title: 'Free',
+	get title() {
+		return translate( 'Free' );
+	},
 	useSteps() {
+		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
+
 		useEffect( () => {
 			if ( ! isEnabled( 'signup/free-flow' ) ) {
 				return window.location.assign( '/start/free' );
 			}
+			resetOnboardStore();
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 			recordFullStoryEvent( 'calypso_signup_start_free', { flow: this.name } );
 		}, [] );
 
 		return [
 			{ slug: 'intro', component: Intro },
-			{ slug: 'freeSetup', component: LinkInBioSetup },
-			{ slug: 'domains', component: DomainsStep },
-			{ slug: 'plans', component: PlansStep },
-			{ slug: 'patterns', component: PatternsStep },
+			{ slug: 'freeSetup', component: FreeSetup },
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'processing', component: Processing },
 			{ slug: 'launchpad', component: LaunchPad },
+			{ slug: 'designSetup', component: DesignSetup },
 		];
 	},
 
@@ -57,6 +59,7 @@ const free: Flow = {
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const locale = useLocale();
+		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 
 		// trigger guides on step movement, we don't care about failures or response
 		wpcom.req.post(
@@ -81,28 +84,24 @@ const free: Flow = {
 			switch ( _currentStep ) {
 				case 'intro':
 					clearSignupDestinationCookie();
-
 					if ( userIsLoggedIn ) {
-						return navigate( 'patterns' );
+						return navigate( 'freeSetup' );
 					}
 					return window.location.assign( logInUrl );
 
-				case 'patterns':
-					return navigate( 'freeSetup' );
-
 				case 'freeSetup':
-					return navigate( 'domains' );
-
-				case 'domains':
-					return navigate( 'plans' );
-
-				case 'plans':
 					return navigate( 'siteCreationStep' );
 
 				case 'siteCreationStep':
 					return navigate( 'processing' );
 
 				case 'processing':
+					if ( selectedDesign ) {
+						return navigate( `launchpad?siteSlug=${ siteSlug }` );
+					}
+					return navigate( `designSetup?siteSlug=${ providedDependencies?.siteSlug }` );
+
+				case 'designSetup':
 					if ( providedDependencies?.goToCheckout ) {
 						const destination = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
 						persistSignupDestination( destination );
@@ -118,7 +117,7 @@ const free: Flow = {
 							) }?redirect_to=${ returnUrl }&signup=1`
 						);
 					}
-					return navigate( `launchpad?siteSlug=${ providedDependencies?.siteSlug }` );
+					return navigate( `processing?siteSlug=${ siteSlug }` );
 
 				case 'launchpad': {
 					return navigate( 'processing' );

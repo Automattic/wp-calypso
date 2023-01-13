@@ -31,13 +31,8 @@ const selectors = {
 
 	// Schedule
 	scheduleButton: `button.edit-post-post-schedule__toggle`,
-	scheduleInput: ( attribute: string ) => `role=spinbutton[name="${ attribute }"i]`,
+	scheduleInput: ( name: string ) => `.edit-post-post-schedule__dialog label:has-text("${ name }")`,
 	scheduleMeridianButton: ( meridian: 'am' | 'pm' ) => `role=button[name="${ meridian }"i]`,
-	scheduleMonthSelect: `role=combobox[name="month"i]`,
-
-	// Permalink
-	permalinkInput: '.components-base-control__field:has-text("URL Slug") input',
-	permalinkGeneratedURL: 'a.edit-post-post-link__link',
 
 	// Category
 	categoryCheckbox: ( categoryName: string ) =>
@@ -274,8 +269,8 @@ export class EditorSettingsSidebarComponent {
 			if ( key === 'month' ) {
 				// For month numbers less than 10, pad the digit to be
 				// 2 digits as required by the select.
-				const monthSelectLocator = this.editor.locator( selectors.scheduleMonthSelect );
-				await monthSelectLocator.selectOption( date[ key ].toString().padStart( 2, '0' ) );
+				const monthSelectLocator = this.editor.locator( selectors.scheduleInput( 'month' ) );
+				await monthSelectLocator.selectOption( ( date[ key ] + 1 ).toString().padStart( 2, '0' ) );
 				continue;
 			}
 			if ( key === 'date' ) {
@@ -341,16 +336,9 @@ export class EditorSettingsSidebarComponent {
 	 * @param {string} slug URL slug to set.
 	 */
 	async enterUrlSlug( slug: string ) {
-		const inputLocator = this.editor.locator( selectors.permalinkInput );
-		await inputLocator.fill( slug );
-		// Hit the Tab key to confirm URL slug input and update the Post URL
-		// shown in this section.
-		await this.page.keyboard.press( 'Tab' );
-
-		const generatedURL = this.editor.locator(
-			`${ selectors.permalinkGeneratedURL } > text=/${ slug }`
-		);
-		await generatedURL.waitFor();
+		await this.editor.getByRole( 'button', { name: /Change URL:/ } ).click();
+		await this.editor.getByLabel( 'Permalink' ).fill( slug );
+		await this.editor.getByRole( 'button', { name: 'Close', exact: true } ).click();
 	}
 
 	/**

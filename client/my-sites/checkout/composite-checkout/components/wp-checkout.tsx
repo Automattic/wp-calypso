@@ -193,7 +193,7 @@ export default function WPCheckout( {
 	} = useDispatch( 'wpcom-checkout' );
 
 	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
-		useState( false );
+		useState( true );
 
 	// The "Summary" view is displayed in the sidebar at desktop (wide) widths
 	// and before the first step at mobile (smaller) widths. At smaller widths it
@@ -349,7 +349,6 @@ export default function WPCheckout( {
 						couponFieldStateProps={ couponFieldStateProps }
 						onChangePlanLength={ changePlanLength }
 						siteUrl={ siteUrl }
-						siteId={ siteId }
 						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					/>
 				}
@@ -359,9 +358,8 @@ export default function WPCheckout( {
 				<CheckoutStep
 					stepId="contact-form"
 					isCompleteCallback={ async () => {
-						setShouldShowContactDetailsValidationErrors( true );
 						// Touch the fields so they display validation errors
-						touchContactFields();
+						shouldShowContactDetailsValidationErrors && touchContactFields();
 						const validationResponse = await validateContactDetails(
 							contactInfo,
 							isLoggedOutCart,
@@ -371,16 +369,23 @@ export default function WPCheckout( {
 							clearDomainContactErrorMessages,
 							reduxDispatch,
 							translate,
-							true
+							shouldShowContactDetailsValidationErrors
 						);
 						if ( validationResponse ) {
 							// When the contact details change, update the cart's tax location to match.
-							await updateCartContactDetailsForCheckout(
-								countriesList,
-								responseCart,
-								updateLocation,
-								contactInfo
-							);
+							try {
+								await updateCartContactDetailsForCheckout(
+									countriesList,
+									responseCart,
+									updateLocation,
+									contactInfo
+								);
+							} catch {
+								// If updating the cart fails, we should not continue. No need
+								// to do anything else, though, because CartMessages will
+								// display the error.
+								return false;
+							}
 
 							// When the contact details change, update the cached contact details on
 							// the server. This can fail if validation fails but we will silently
@@ -405,6 +410,9 @@ export default function WPCheckout( {
 							shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
 							contactDetailsType={ contactDetailsType }
 							isLoggedOutCart={ isLoggedOutCart }
+							setShouldShowContactDetailsValidationErrors={
+								setShouldShowContactDetailsValidationErrors
+							}
 						/>
 					}
 					completeStepContent={
@@ -542,6 +550,12 @@ const CheckoutSummaryBody = styled.div`
 		max-width: 328px;
 		position: fixed;
 		width: 100%;
+		overflow-y: auto;
+		height: 100vh;
+		& .card {
+			border-left: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+			border-right: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+		}
 	}
 `;
 

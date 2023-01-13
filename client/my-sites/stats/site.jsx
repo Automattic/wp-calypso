@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
+import { eye } from '@automattic/components/src/icons';
 import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
@@ -11,9 +12,7 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import rocketImage from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
-import wordpressSeoIllustration from 'calypso/assets/images/illustrations/wordpress-seo-premium.svg';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
-import PromoCardBlock from 'calypso/blocks/promo-card-block';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import Banner from 'calypso/components/banner';
@@ -41,6 +40,7 @@ import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HighlightsSection from './highlights-section';
+import PromoCards from './promo-cards';
 import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
@@ -73,16 +73,7 @@ const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
 const CHART_VIEWS = {
 	attr: 'views',
 	legendOptions: [ 'visitors' ],
-	icon: (
-		<svg className="gridicon" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
-			<path
-				fillRule="evenodd"
-				clipRule="evenodd"
-				d="m4 13 .67.336.003-.005a2.42 2.42 0 0 1 .094-.17c.071-.122.18-.302.329-.52.298-.435.749-1.017 1.359-1.598C7.673 9.883 9.498 8.75 12 8.75s4.326 1.132 5.545 2.293c.61.581 1.061 1.163 1.36 1.599a8.29 8.29 0 0 1 .422.689l.002.005L20 13l.67-.336v-.003l-.003-.005-.008-.015-.028-.052a9.752 9.752 0 0 0-.489-.794 11.6 11.6 0 0 0-1.562-1.838C17.174 8.617 14.998 7.25 12 7.25S6.827 8.618 5.42 9.957c-.702.669-1.22 1.337-1.563 1.839a9.77 9.77 0 0 0-.516.845l-.008.015-.002.005-.001.002v.001L4 13Zm8 3a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"
-				fill="#00101C"
-			/>
-		</svg>
-	),
+	icon: <Icon className="gridicon" icon={ eye } />,
 	label: translate( 'Views', { context: 'noun' } ),
 };
 const CHART_VISITORS = {
@@ -197,8 +188,6 @@ class StatsSite extends Component {
 
 		const query = memoizedQuery( period, endOf );
 
-		const showNewModules = config.isEnabled( 'stats/new-stats-module-component' );
-
 		// For period option links
 		const traffic = {
 			label: translate( 'Traffic' ),
@@ -221,7 +210,7 @@ class StatsSite extends Component {
 
 				<FormattedHeader
 					brandFont
-					className="stats__section-header"
+					className="stats__section-header modernized-header"
 					headerText={ translate( 'Jetpack Stats' ) }
 					align="left"
 					subHeaderText={ translate(
@@ -263,6 +252,7 @@ class StatsSite extends Component {
 									query={ query }
 									statsType="statsTopPosts"
 									showQueryDate
+									isShort
 								/>
 							</StatsPeriodNavigation>
 							<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
@@ -286,6 +276,16 @@ class StatsSite extends Component {
 					</>
 
 					<div className="stats__module-list stats__module-list--traffic is-events stats__module--unified">
+						{ config.isEnabled( 'newsletter/stats' ) && (
+							<StatsModule
+								path="emails-open"
+								moduleStrings={ moduleStrings.emailsOpenStats }
+								period={ this.props.period }
+								query={ query }
+								statType="statsEmailsOpen"
+								hideSummaryLink
+							/>
+						) }
 						<StatsModule
 							path="posts"
 							moduleStrings={ moduleStrings.posts }
@@ -293,7 +293,6 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsTopPosts"
 							showSummaryLink
-							showNewModules={ showNewModules }
 						/>
 						<StatsModule
 							path="referrers"
@@ -302,7 +301,6 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsReferrers"
 							showSummaryLink
-							showNewModules={ showNewModules }
 						/>
 
 						<Countries
@@ -310,7 +308,6 @@ class StatsSite extends Component {
 							period={ this.props.period }
 							query={ query }
 							summary={ false }
-							showNewModules={ showNewModules }
 						/>
 
 						<StatsModule
@@ -321,7 +318,6 @@ class StatsSite extends Component {
 							statType="statsTopAuthors"
 							className="stats__author-views"
 							showSummaryLink
-							showNewModules={ showNewModules }
 						/>
 						<StatsModule
 							path="searchterms"
@@ -330,7 +326,6 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsSearchTerms"
 							showSummaryLink
-							showNewModules={ showNewModules }
 						/>
 
 						<StatsModule
@@ -340,7 +335,6 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsClicks"
 							showSummaryLink
-							showNewModules={ showNewModules }
 						/>
 						<StatsModule
 							path="videoplays"
@@ -349,7 +343,6 @@ class StatsSite extends Component {
 							query={ query }
 							statType="statsVideoPlays"
 							showSummaryLink
-							showNewModules={ showNewModules }
 						/>
 						{
 							// File downloads are not yet supported in Jetpack Stats
@@ -363,29 +356,17 @@ class StatsSite extends Component {
 									statType="statsFileDownloads"
 									showSummaryLink
 									useShortLabel={ true }
-									showNewModules={ showNewModules }
 								/>
 							)
 						}
 					</div>
 				</div>
-				{ /** Promo Card is disabled for Odyssey because it doesn't make much sense in the context, which also removes an API call to `plugins`. */ }
-				{ ! isOdysseyStats && (
-					<div className="stats-content-promo">
-						<PromoCardBlock
-							productSlug="wordpress-seo-premium"
-							impressionEvent="calypso_stats_wordpress_seo_premium_banner_view"
-							clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
-							headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
-							contentText={ translate(
-								'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
-							) }
-							ctaText={ translate( 'Learn more' ) }
-							image={ wordpressSeoIllustration }
-							href={ `/plugins/wordpress-seo-premium/${ slug }` }
-						/>
-					</div>
-				) }
+				<PromoCards
+					isJetpack={ isJetpack }
+					isOdysseyStats={ isOdysseyStats }
+					pageSlug="traffic"
+					slug={ slug }
+				/>
 				<JetpackColophon />
 			</div>
 		);
@@ -418,11 +399,8 @@ class StatsSite extends Component {
 		// Necessary to properly configure the fixed navigation headers.
 		sessionStorage.setItem( 'jp-stats-last-tab', 'traffic' );
 
-		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
-		const mainWrapperClass = classNames( { 'stats--new-wrapper': isNewMainChart } );
-
 		return (
-			<Main className={ mainWrapperClass } fullWidthLayout>
+			<Main fullWidthLayout>
 				{ /* Odyssey: Google My Business pages are currently unsupported. */ }
 				{ ! isOdysseyStats && (
 					<>

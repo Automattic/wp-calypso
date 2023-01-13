@@ -15,6 +15,7 @@ import {
 	isWpComPlan,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
+	TERM_TRIENNIALLY,
 	TYPE_PRO,
 	isDIFMProduct,
 	isJetpackSearchFree,
@@ -417,6 +418,29 @@ export function isCancelable( purchase: Purchase ) {
 	}
 
 	return purchase.canDisableAutoRenew;
+}
+
+/**
+ * Similar to isCancelable, but doesn't rely on the purchase's cancelability
+ * Checks if auto-renew is enabled for purchase, returns true if auto-renew is ON
+ * Returns false if purchase is included in plan, purchases included with a plan can't be cancelled
+ * Returns false if purchase is expired
+ */
+
+export function canAutoRenewBeTurnedOff( purchase: Purchase ) {
+	if ( isIncludedWithPlan( purchase ) ) {
+		return false;
+	}
+
+	if ( isExpired( purchase ) ) {
+		return false;
+	}
+
+	if ( hasAmountAvailableToRefund( purchase ) ) {
+		return true;
+	}
+
+	return purchase.isAutoRenewEnabled;
 }
 
 export function isExpired( purchase: Purchase ) {
@@ -875,7 +899,7 @@ export function shouldRenderMonthlyRenewalOption( purchase: Purchase ) {
 
 	const plan = getPlan( purchase.productSlug );
 
-	if ( ! [ TERM_ANNUALLY, TERM_BIENNIALLY ].includes( plan?.term ?? '' ) ) {
+	if ( ! [ TERM_ANNUALLY, TERM_BIENNIALLY, TERM_TRIENNIALLY ].includes( plan?.term ?? '' ) ) {
 		return false;
 	}
 

@@ -139,10 +139,14 @@ const LayoutLoggedOut = ( {
 			{ config.isEnabled( 'cookie-banner' ) && (
 				<CookieBannerContainerSSR serverShow={ showGdprBanner } />
 			) }
+
 			{ sectionName === 'plugins' && (
 				<>
 					<UniversalNavbarFooter />
 					<UniversalNavbarFooterAutomattic />
+					{ config.isEnabled( 'layout/support-article-dialog' ) && (
+						<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
+					) }
 				</>
 			) }
 		</div>

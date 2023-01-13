@@ -1,11 +1,9 @@
-import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import { preventWidows } from 'calypso/lib/formatting';
-import { getPluginAuthorKeyword } from 'calypso/lib/plugins/utils';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -132,11 +130,7 @@ function PluginDetailsHeaderPlaceholder() {
 }
 
 function getPluginAuthor( plugin ) {
-	if ( config.isEnabled( 'marketplace-jetpack-plugin-search' ) ) {
-		return plugin.author_name;
-	}
-
-	return getPluginAuthorKeyword( plugin );
+	return plugin.author_name;
 }
 
 export default PluginDetailsHeader;

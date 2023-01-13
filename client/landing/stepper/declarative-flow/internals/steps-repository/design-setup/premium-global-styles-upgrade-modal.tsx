@@ -10,14 +10,14 @@ interface PremiumGlobalStylesUpgradeModalProps {
 	checkout: () => void;
 	closeModal: () => void;
 	isOpen: boolean;
-	pickDesign: () => void;
+	tryStyle: () => void;
 }
 
 export default function PremiumGlobalStylesUpgradeModal( {
 	checkout,
 	closeModal,
 	isOpen,
-	pickDesign,
+	tryStyle,
 }: PremiumGlobalStylesUpgradeModalProps ) {
 	const translate = useTranslate();
 	const premiumPlanProduct = useSelect( ( select ) =>
@@ -55,7 +55,7 @@ export default function PremiumGlobalStylesUpgradeModal( {
 							) }
 						</p>
 						<div className="upgrade-modal__actions bundle">
-							<Button className="upgrade-modal__cancel" onClick={ () => pickDesign() }>
+							<Button className="upgrade-modal__cancel" onClick={ () => tryStyle() }>
 								{ translate( 'Try it out first' ) }
 							</Button>
 							<Button className="upgrade-modal__upgrade-plan" primary onClick={ () => checkout() }>

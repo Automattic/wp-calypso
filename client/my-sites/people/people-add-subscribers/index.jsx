@@ -33,7 +33,11 @@ class PeopleInvites extends PureComponent {
 
 	goBack = () => {
 		const siteSlug = get( this.props, 'site.slug' );
-		const fallback = siteSlug ? '/people/team/' + siteSlug : '/people/team';
+		let fallback = siteSlug ? '/people/team/' + siteSlug : '/people/team';
+
+		if ( isEnabled( 'user-management-revamp' ) ) {
+			fallback = '/people/subscribers/' + siteSlug;
+		}
 
 		// Go back to last route with /people/team/$site as the fallback
 		page.back( fallback );

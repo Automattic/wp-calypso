@@ -17,6 +17,7 @@ import {
 	PLUGIN_INSTALL_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 	PLUGIN_ACTION_STATUS_UPDATE,
+	PLUGINS_ALL_RECEIVE,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { pluginsSchema } from './schema';
@@ -100,6 +101,8 @@ export const plugins = withSchemaValidation( pluginsSchema, ( state = {}, action
 		case PLUGINS_RECEIVE: {
 			return { ...state, [ action.siteId ]: action.data };
 		}
+		case PLUGINS_ALL_RECEIVE:
+			return { ...action.allSitesPlugins };
 		case PLUGIN_ACTIVATE_REQUEST_SUCCESS:
 		case PLUGIN_DEACTIVATE_REQUEST_SUCCESS:
 		case PLUGIN_UPDATE_REQUEST_SUCCESS:

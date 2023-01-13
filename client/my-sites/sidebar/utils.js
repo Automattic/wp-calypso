@@ -6,6 +6,9 @@ const pathIncludes = ( currentPath, term, position ) =>
 const fragmentIsEqual = ( path, currentPath, position ) =>
 	currentPath.split( /[/,?]/ )?.[ position ] === path.split( /[/,?]/ )?.[ position ];
 
+const isManageAllSitesPluginsPath = ( path ) =>
+	path.match( /^\/plugins\/(?:manage|active|inactive|updates)/ ) !== null;
+
 /**
  * Checks if `currentPath` starts with the first fragment of `path`
  *
@@ -21,6 +24,16 @@ export const itemLinkMatches = ( path, currentPath ) => {
 	// Account for taxonomies, eg. tags, categories
 	if ( pathIncludes( currentPath, 'taxonomies', 2 ) ) {
 		return fragmentIsEqual( path, currentPath, 3 );
+	}
+
+	if ( pathIncludes( currentPath, 'people', 1 ) ) {
+		if ( pathIncludes( currentPath, 'new', 2 ) ) {
+			return fragmentIsEqual( path, currentPath, 2 );
+		}
+
+		if ( pathIncludes( currentPath, 'team-members', 2 ) ) {
+			return fragmentIsEqual( path, currentPath, 2 );
+		}
 	}
 
 	if ( pathIncludes( currentPath, 'settings', 1 ) ) {
@@ -48,6 +61,11 @@ export const itemLinkMatches = ( path, currentPath ) => {
 	// second position (i.e., compare whatever comes after partner-portal/).
 	if ( isJetpackCloud() && pathIncludes( currentPath, 'partner-portal', 1 ) ) {
 		return fragmentIsEqual( path, currentPath, 2 );
+	}
+
+	// Account for plugins in all-sites view where '/plugins/manage' isn't a child view of '/plugins'.
+	if ( isManageAllSitesPluginsPath( currentPath ) ) {
+		return isManageAllSitesPluginsPath( path );
 	}
 
 	return fragmentIsEqual( path, currentPath, 1 );

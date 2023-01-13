@@ -40,6 +40,13 @@ describe( 'utils', () => {
 			is_connection_healthy: true,
 			awaiting_plugin_updates: [],
 			is_favorite: false,
+			monitor_last_status_change: '2020-12-01T00:00:00+00:00',
+			monitor_settings: {
+				monitor_active: true,
+				last_down_time: '',
+				monitor_deferment_time: 5,
+				monitor_notify_users_emails: [],
+			},
 		};
 		const rows: SiteData = {
 			site: {
@@ -157,6 +164,9 @@ describe( 'utils', () => {
 					latest_scan_threats_found: [ 'threat-1', 'threat-2' ],
 					monitor_active: true,
 					monitor_site_status: true,
+					monitor_settings: {
+						monitor_active: true,
+					},
 				},
 			];
 			expect( formatSites( sites ) ).toEqual( [
@@ -183,6 +193,9 @@ describe( 'utils', () => {
 						status: 'success',
 						type: 'monitor',
 						value: '',
+						settings: {
+							monitor_active: true,
+						},
 					},
 					plugin: {
 						status: 'warning',

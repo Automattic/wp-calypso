@@ -38,7 +38,7 @@ const VideomakerSetup: Step = function VideomakerSetup( { navigation } ) {
 					onClick={ () => onSelectTheme( 'premium/videomaker' ) }
 				>
 					<img
-						src="https://videopress2.files.wordpress.com/2022/10/videomaker-theme-dark.jpg"
+						src="https://videopress2.files.wordpress.com/2022/12/videomaker-dark.jpg"
 						alt={ __( 'Videomaker dark' ) }
 					/>
 				</button>
@@ -47,7 +47,7 @@ const VideomakerSetup: Step = function VideomakerSetup( { navigation } ) {
 					onClick={ () => onSelectTheme( 'premium/videomaker-white' ) }
 				>
 					<img
-						src="https://videopress2.files.wordpress.com/2022/10/videomaker-theme-light.jpg"
+						src="https://videopress2.files.wordpress.com/2022/12/videomaker-light.jpg"
 						alt={ __( 'Videomaker white' ) }
 					/>
 				</button>

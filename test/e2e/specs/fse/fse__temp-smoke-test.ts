@@ -48,11 +48,6 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	it( 'Editor canvas loads', async function () {
-		// Because this is a temporary smoke test, adding the needed FSE selectors here instead of
-		// spinning up a POM class that we will later needed to redo.
-		// This should ensure the editor hasn't done a WSoD.
-		await page.waitForLoadState( 'networkidle', { timeout: 30 * 1000 } );
-
 		fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
 		await fullSiteEditorPage.waitUntilLoaded();
 	} );

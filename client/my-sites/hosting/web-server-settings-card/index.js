@@ -41,7 +41,7 @@ const WebServerSettingsCard = ( {
 	const [ selectedStaticFile404, setSelectedStaticFile404 ] = useState( '' );
 
 	const getGeoAffinityContent = () => {
-		if ( isGettingGeoAffinity || 'auto' === geoAffinity ) {
+		if ( isGettingGeoAffinity || ! geoAffinity ) {
 			return;
 		}
 
@@ -89,32 +89,28 @@ const WebServerSettingsCard = ( {
 	const getPhpVersions = () => {
 		return [
 			{
-				label: translate( '7.3', {
-					comment: 'PHP Version for a version switcher',
-				} ),
+				label: '7.3',
 				value: '7.3',
 				disabled: true, // EOL 6th December, 2021
 			},
 			{
-				label: translate( '7.4', {
-					comment: 'PHP Version for a version switcher',
-				} ),
+				label: '7.4',
 				value: '7.4',
 			},
 			{
-				label: translate( '8.0 (recommended)', {
+				label: translate( '%s (recommended)', {
+					args: '8.0',
 					comment: 'PHP Version for a version switcher',
 				} ),
 				value: recommendedValue,
 			},
 			{
-				label: translate( '8.1', {
-					comment: 'PHP Version for a version switcher',
-				} ),
+				label: '8.1',
 				value: '8.1',
 			},
 			{
-				label: translate( '8.2', {
+				label: translate( '%s (experimental)', {
+					args: '8.2',
 					comment: 'PHP Version for a version switcher',
 				} ),
 				value: '8.2',

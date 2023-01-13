@@ -43,7 +43,7 @@ The steps can contain any sort of data, but one of the steps should typically be
 
 ### The list of payment method options
 
-The [PaymentMethodStep](#PaymentMethodStep) is a pre-built [CheckoutStep](#CheckoutStep) which lists all the available payment methods passed to the [CheckoutProvider](#CheckoutProvider) as radio buttons.
+The [PaymentMethodStep](#PaymentMethodStep) is a pre-built [CheckoutStep](#CheckoutStep) which lists all the available payment methods passed to the [CheckoutProvider](#CheckoutProvider) as radio buttons (unless they have been disabled by [useTogglePaymentMethod](#useTogglePaymentMethod)).
 
 ### The transaction system
 
@@ -124,12 +124,13 @@ It has the following props.
 - `onPageLoadError?: ( errorType: string, errorMessage: string, errorData?: Record< string, string | number | undefined > ) => void`. A function to call when an internal error boundary triggered.
 - `onStepChanged?: ({ stepNumber: number | null; previousStepNumber: number; paymentMethodId: string }) => void`. A function to call when the active checkout step is changed.
 - `onPaymentMethodChanged?: (method: string) => void`. A function to call when the active payment method is changed. The argument will be the method's id.
-- `paymentMethods: object[]`. An array of [Payment Method objects](#payment-methods).
+- `paymentMethods: object[]`. An array of [Payment Method objects](#payment-methods). Can be disabled by [useTogglePaymentMethod](#useTogglePaymentMethod).
 - `paymentProcessors: object`. A key-value map of payment processor functions (see [Payment Methods](#payment-methods)).
 - `isLoading?: boolean`. If set and true, the form will be replaced with a loading placeholder and the form status will be set to [`.LOADING`](#FormStatus) (see [useFormStatus](#useFormStatus)).
 - `isValidating?: boolean`. If set and true, the form status will be set to [`.VALIDATING`](#FormStatus) (see [useFormStatus](#useFormStatus)).
 - `redirectToUrl?: (url: string) => void`. Will be used by [useTransactionStatus](#useTransactionStatus) if it needs to redirect. If not set, it will change `window.location.href`.
-- `initiallySelectedPaymentMethodId?: string | null`. If set, is used to preselect a payment method when the `paymentMethods` array changes. Default is `null`, which yields no initial selection. To change the selection in code, see the [`usePaymentMethodId`](#usePaymentMethodId) hook.
+- `initiallySelectedPaymentMethodId?: string | null`. If set, is used to preselect a payment method on first load or when the `paymentMethods` array changes. Default is `null`, which yields no initial selection. To change the selection in code, see the [`usePaymentMethodId`](#usePaymentMethodId) hook. If a disabled payment method is chosen, it will appear that no payment method is selected.
+- `selectFirstAvailablePaymentMethod?: boolean`. If set and `initiallySelectedPaymentMethodId` is _not_ set, this is used to preselect a payment method on first load or when the `paymentMethods` array changes.
 
 The line items are for display purposes only. They should also include subtotals, discounts, and taxes. No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `total`, which is another line item.
 
@@ -407,6 +408,12 @@ A React Hook that will return a function to set a step to "complete". Only works
 ### useTotal
 
 A React Hook that returns the `total` property provided to the [CheckoutProvider](#checkoutprovider). This is the same as the second return value of [useLineItems](#useLineItems) but may be more semantic in some cases. Only works within `CheckoutProvider`.
+
+### useTogglePaymentMethod
+
+A React Hook that returns a function which can be called to enable or disable a payment method from the list of payment methods provided to [CheckoutProvider](#CheckoutProvider). Only works within `CheckoutProvider`.
+
+The signature of the function returned by this hook is: `( paymentMethodId: string, available: boolean ) => void`.
 
 ### useTransactionStatus
 

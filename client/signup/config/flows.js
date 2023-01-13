@@ -1,5 +1,7 @@
+import config from '@automattic/calypso-config';
 import { get, includes, reject } from 'lodash';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
+import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs } from 'calypso/lib/url';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
 import stepConfig from './steps';
@@ -15,6 +17,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 	return addQueryArgs(
 		{
 			signup: 1,
+			ref: getQueryArgs()?.ref,
 			...( [ 'domain', 'add-domain' ].includes( flowName ) && { isDomainOnly: 1 } ),
 		},
 		checkoutURL
@@ -104,8 +107,14 @@ function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
 
-function getChecklistThemeDestination( dependencies ) {
-	return `/home/${ dependencies.siteSlug }`;
+function getChecklistThemeDestination( { siteSlug, themeParameter } ) {
+	if (
+		themeParameter === 'blank-canvas-3' &&
+		config.isEnabled( 'pattern-assembler/logged-out-showcase' )
+	) {
+		return `/setup/site-setup/patternAssembler?siteSlug=${ siteSlug }`;
+	}
+	return `/home/${ siteSlug }`;
 }
 
 function getEditorDestination( dependencies ) {
@@ -164,27 +173,12 @@ function removeUserStepFromFlow( flow ) {
 		return;
 	}
 
-	// TODO: A more general middle destination fallback mechanism is needed
-	// The `midDestination` mechanism is tied to a specific step in the flow configuration.
-	// If it happens to be the user step, then we the middle destination is also removed.
-	// For addressing Automattic/martech#1260, here we introduce a limited fallback mechanism that only works
-	// for the user step. Whenever a step that provides an auth token is removed, we simply tie the middle destination
-	// to its previous step. If it's the first step, then it will be removed all together atm.
 	const steps = [];
-	let prevStep = flow.steps[ 0 ];
-
 	for ( const curStep of flow.steps ) {
 		if ( stepConfig[ curStep ].providesToken ) {
-			const curStepMiddleDestination = flow.middleDestination && flow.middleDestination[ curStep ];
-			if ( curStepMiddleDestination ) {
-				flow.middleDestination[ prevStep ] = curStepMiddleDestination;
-			}
-			prevStep = curStep;
 			continue;
 		}
-
 		steps.push( curStep );
-		prevStep = curStep;
 	}
 
 	return {
@@ -243,9 +237,12 @@ const Flows = {
 		if ( isUserLoggedIn ) {
 			const urlParams = new URLSearchParams( window.location.search );
 			const param = urlParams.get( 'user_completed' );
+			const isUserStepOnly = flow.steps.length === 1 && stepConfig[ flow.steps[ 0 ] ].providesToken;
+
 			// Remove the user step unless the user has just completed the step
 			// and then clicked the back button.
-			if ( ! param && ! detectHistoryNavigation.loadedViaHistory() ) {
+			// If the user step is the only step in the whole flow, e.g. /start/account, don't remove it as well.
+			if ( ! param && ! detectHistoryNavigation.loadedViaHistory() && ! isUserStepOnly ) {
 				flow = removeUserStepFromFlow( flow );
 			}
 		}

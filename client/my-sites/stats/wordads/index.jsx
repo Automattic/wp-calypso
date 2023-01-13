@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Icon, chartBar, trendingUp } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, translate, numberFormat } from 'i18n-calypso';
@@ -161,18 +160,13 @@ class WordAds extends Component {
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ wordads.path }/{{ interval }}${ slugPath }`;
 
-		// New feature gate
-		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
 		const statsWrapperClass = classNames( 'wordads stats-content', {
 			'is-period-year': period === 'year',
-		} );
-		const mainWrapperClass = classNames( {
-			'stats--new-wrapper': isNewMainChart,
 		} );
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<Main className={ mainWrapperClass } fullWidthLayout>
+			<Main fullWidthLayout>
 				<DocumentHead title={ translate( 'WordAds Stats' ) } />
 				<PageViewTracker
 					path={ `/stats/ads/${ period }/:site` }
@@ -182,7 +176,7 @@ class WordAds extends Component {
 				<div className="stats">
 					<FormattedHeader
 						brandFont
-						className="stats__section-header"
+						className="stats__section-header modernized-header"
 						headerText={ translate( 'Jetpack Stats' ) }
 						subHeaderText={ translate( 'See how ads are performing on your site.' ) }
 						align="left"

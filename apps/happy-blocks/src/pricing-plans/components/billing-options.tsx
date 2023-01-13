@@ -12,7 +12,7 @@ const Promo: FunctionComponent = ( { children } ) => (
 interface Props {
 	plans: BlockPlan[];
 	value: string;
-	onChange: ( value?: string ) => void;
+	onChange: ( value: string ) => void;
 }
 
 const BillingOptions: FunctionComponent< Props > = ( { plans, value, onChange } ) => {

@@ -1,24 +1,34 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { BlogsPostsSetting, BLOGS_POST_OPTION } from './BlogPostSetting';
+import { BlogPagesSetting, BLOG_PAGES_OPTION } from './BlogPagesSetting';
+import { RelatedPostsSetting } from './RelatedPostsSetting';
 
 type Fields = {
 	posts_per_page?: number;
+	jetpack_relatedposts_enabled?: boolean;
+	jetpack_relatedposts_show_headline?: boolean;
+	jetpack_relatedposts_show_thumbnails?: boolean;
 };
 
 type SiteSettingsSectionProps = {
 	fields: Fields;
 	onChangeField: ( field: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => void;
 	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
+	handleToggle?: ( field: string ) => ( ( isChecked: boolean ) => void ) | undefined;
 	disabled?: boolean;
+	isRequestingSettings?: boolean;
+	isSavingSettings?: boolean;
 };
 
 export const SiteSettingsSection = ( {
 	fields,
 	onChangeField,
+	handleToggle,
 	handleSubmitForm,
 	disabled,
+	isRequestingSettings,
+	isSavingSettings,
 }: SiteSettingsSectionProps ) => {
 	const translate = useTranslate();
 	const { posts_per_page } = fields;
@@ -31,12 +41,21 @@ export const SiteSettingsSection = ( {
 				showButton
 				onButtonClick={ handleSubmitForm }
 				disabled={ disabled }
+				isSaving={ isSavingSettings }
 			/>
-			<Card>
-				<BlogsPostsSetting
+			<Card className="site-settings__card">
+				<BlogPagesSetting
 					value={ posts_per_page }
-					onChange={ onChangeField( BLOGS_POST_OPTION ) }
+					onChange={ onChangeField( BLOG_PAGES_OPTION ) }
 					disabled={ disabled }
+				/>
+			</Card>
+			<Card className="site-settings__card">
+				<RelatedPostsSetting
+					fields={ fields }
+					handleToggle={ handleToggle }
+					isRequestingSettings={ isRequestingSettings }
+					isSavingSettings={ isSavingSettings }
 				/>
 			</Card>
 		</>

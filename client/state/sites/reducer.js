@@ -4,6 +4,9 @@ import {
 	SITE_DELETE_RECEIVE,
 	JETPACK_DISCONNECT_RECEIVE,
 	JETPACK_SITE_DISCONNECT_REQUEST,
+	JETPACK_SITES_FEATURES_FETCH,
+	JETPACK_SITES_FEATURES_FETCH_FAILURE,
+	JETPACK_SITES_FEATURES_FETCH_SUCCESS,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -357,6 +360,18 @@ export const jetpackSiteDisconnected = ( state = false, action ) => {
 	return state;
 };
 
+export const isRequestingJetpackSitesFeatures = ( state = false, action ) => {
+	switch ( action.type ) {
+		case JETPACK_SITES_FEATURES_FETCH:
+			return true;
+		case JETPACK_SITES_FEATURES_FETCH_SUCCESS:
+		case JETPACK_SITES_FEATURES_FETCH_FAILURE:
+			return false;
+	}
+
+	return state;
+};
+
 export default combineReducers( {
 	connection,
 	domains,
@@ -369,4 +384,5 @@ export default combineReducers( {
 	requesting,
 	hasAllSitesList,
 	jetpackSiteDisconnected,
+	isRequestingJetpackSitesFeatures,
 } );

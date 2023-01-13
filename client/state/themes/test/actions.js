@@ -1,5 +1,6 @@
 // Importing `jest-fetch-mock` adds a jest-friendly `fetch` polyfill to the global scope.
 import 'jest-fetch-mock';
+import config from '@automattic/calypso-config';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
 	ACTIVE_THEME_REQUEST,
@@ -192,8 +193,16 @@ describe( 'actions', () => {
 		describe( 'with a wpcom site', () => {
 			let nockScope;
 			useNock( ( nock ) => {
+				const url =
+					'/rest/v1.2/themes' +
+					( config.isEnabled( 'pattern-assembler/logged-out-showcase' )
+						? '?include_blankcanvas_theme=true'
+						: '?include_blankcanvas_theme=' ) +
+					( config.isEnabled( 'themes/third-party-premium' )
+						? '&include_marketplace_themes=true'
+						: '&include_marketplace_themes=' );
 				nockScope = nock( 'https://public-api.wordpress.com:443' )
-					.get( '/rest/v1.2/themes' )
+					.get( url )
 					.reply( 200, {
 						found: 2,
 						themes: [
@@ -531,6 +540,7 @@ describe( 'actions', () => {
 									search_taxonomies: '',
 									search_term: 'simple, white',
 									source: 'unknown',
+									style_variation_slug: '',
 									theme: 'twentysixteen',
 								},
 								service: 'tracks',
@@ -559,6 +569,17 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#activateTheme()', () => {
+		const getState = () => ( {
+			themes: {
+				queries: {
+					wpcom: new ThemeQueryManager(),
+				},
+			},
+			sites: {
+				items: {},
+			},
+		} );
+
 		const trackingData = {
 			theme: 'twentysixteen',
 			previous_theme: 'twentyfifteen',
@@ -580,7 +601,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when thunk is triggered', () => {
-			activateTheme( 'twentysixteen', 2211667 )( spy );
+			activateTheme( 'twentysixteen', 2211667 )( spy, getState );
 
 			expect( spy ).toBeCalledWith( {
 				type: THEME_ACTIVATE,
@@ -594,7 +615,7 @@ describe( 'actions', () => {
 				'twentysixteen',
 				2211667,
 				trackingData
-			)( spy ).then( () => {
+			)( spy, getState ).then( () => {
 				expect( spy.mock.calls[ 1 ][ 0 ].name ).toEqual( 'themeActivatedThunk' );
 			} );
 		} );
@@ -611,7 +632,7 @@ describe( 'actions', () => {
 				'badTheme',
 				2211667,
 				trackingData
-			)( spy ).then( () => {
+			)( spy, getState ).then( () => {
 				expect( spy ).toBeCalledWith( themeActivationFailure );
 			} );
 		} );

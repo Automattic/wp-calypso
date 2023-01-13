@@ -289,21 +289,16 @@ function useCreateApplePay( {
 	stripeLoadingError,
 	stripeConfiguration,
 	stripe,
-	isApplePayAvailable,
-	isWebPayLoading,
 	cartKey,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
 	stripeConfiguration: StripeConfiguration | null;
 	stripe: Stripe | null;
-	isApplePayAvailable: boolean;
-	isWebPayLoading: boolean;
 	cartKey: CartKey | undefined;
 } ): PaymentMethod | null {
 	const isStripeReady = ! isStripeLoading && ! stripeLoadingError && stripe && stripeConfiguration;
-
-	const shouldCreateApplePayMethod = isStripeReady && ! isWebPayLoading && isApplePayAvailable;
+	const shouldCreateApplePayMethod = isStripeReady;
 
 	const applePayMethod = useMemo( () => {
 		return shouldCreateApplePayMethod && stripe && stripeConfiguration && cartKey
@@ -319,25 +314,19 @@ function useCreateGooglePay( {
 	stripeLoadingError,
 	stripeConfiguration,
 	stripe,
-	isGooglePayAvailable,
-	isWebPayLoading,
 	cartKey,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
 	stripeConfiguration: StripeConfiguration | null;
 	stripe: Stripe | null;
-	isGooglePayAvailable: boolean;
-	isWebPayLoading: boolean;
 	cartKey: CartKey | undefined;
 } ): PaymentMethod | null {
 	const isStripeReady =
 		! isStripeLoading &&
 		! stripeLoadingError &&
-		! isWebPayLoading &&
 		stripe &&
 		stripeConfiguration &&
-		isGooglePayAvailable &&
 		isEnabled( 'checkout/google-pay' );
 
 	return useMemo( () => {
@@ -352,9 +341,6 @@ export default function useCreatePaymentMethods( {
 	stripeLoadingError,
 	stripeConfiguration,
 	stripe,
-	isApplePayAvailable,
-	isGooglePayAvailable,
-	isWebPayLoading,
 	storedCards,
 	siteSlug,
 }: {
@@ -362,9 +348,6 @@ export default function useCreatePaymentMethods( {
 	stripeLoadingError: StripeLoadingError;
 	stripeConfiguration: StripeConfiguration | null;
 	stripe: Stripe | null;
-	isApplePayAvailable: boolean;
-	isGooglePayAvailable: boolean;
-	isWebPayLoading: boolean;
 	storedCards: StoredCard[];
 	siteSlug: string | undefined;
 } ): PaymentMethod[] {
@@ -434,8 +417,6 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
-		isApplePayAvailable,
-		isWebPayLoading,
 		cartKey,
 	} );
 
@@ -444,8 +425,6 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
-		isGooglePayAvailable,
-		isWebPayLoading,
 		cartKey,
 	} );
 

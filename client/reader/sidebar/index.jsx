@@ -215,7 +215,9 @@ export class ReaderSidebar extends Component {
 
 				<SidebarSeparator />
 
-				<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
+				<li>
+					<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
+				</li>
 
 				{ isAutomatticTeamMember( teams ) && (
 					<SidebarItem

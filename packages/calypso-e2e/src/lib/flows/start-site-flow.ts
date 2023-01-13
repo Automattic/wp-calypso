@@ -27,6 +27,7 @@ const selectors = {
 	selectedGoalButton: ( goal: string ) => `.select-card__container.selected:has-text("${ goal }")`,
 
 	// Step containers
+	contentAgnosticContainer: '.step-container',
 	themePickerContainer: '.design-picker',
 	goalsStepContainer: '.goals-step',
 	verticalsStepContainer: '.site-vertical',
@@ -62,7 +63,8 @@ export class StartSiteFlow {
 	 * Returns the step name of the current page
 	 */
 	async getCurrentStep(): Promise< StepName > {
-		await this.page.waitForLoadState( 'networkidle' );
+		// Make sure the container is loaded first, then we can see which it is.
+		await this.page.waitForSelector( selectors.contentAgnosticContainer );
 		if ( ( await this.page.locator( selectors.goalsStepContainer ).count() ) > 0 ) {
 			return 'goals';
 		}
@@ -97,8 +99,6 @@ export class StartSiteFlow {
 	 * @param {string} vertical Name of the vertical to select
 	 */
 	async enterVertical( vertical: string ): Promise< void > {
-		await this.page.waitForLoadState( 'networkidle', { timeout: 30 * 1000 } );
-
 		const input = this.page.locator( selectors.verticalInput );
 		await input.fill( vertical );
 
@@ -117,7 +117,6 @@ export class StartSiteFlow {
 	 * @param {string} name Name for the blog.
 	 */
 	async enterBlogName( name: string ): Promise< void > {
-		await this.page.waitForLoadState( 'networkidle' );
 		const defaultInputlocator = this.page.locator( selectors.blogNameInput );
 
 		await defaultInputlocator.fill( name );
@@ -136,7 +135,6 @@ export class StartSiteFlow {
 	 * @param {string} tagline Tagline for the blog.
 	 */
 	async enterTagline( tagline: string ): Promise< void > {
-		await this.page.waitForLoadState( 'networkidle' );
 		const locator = this.page.locator( selectors.taglineInput );
 		await locator.fill( tagline );
 
