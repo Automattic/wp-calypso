@@ -138,7 +138,7 @@ const InPageCTASection = () => {
 				) }
 				dark={ true }
 			>
-				<Button className="is-primary marketplace-cta" href={ startUrl }>
+				<Button className="is-primary marketplace-cta in-page-cta" href={ startUrl }>
 					{ __( 'Get Started' ) }
 				</Button>
 			</Section>
