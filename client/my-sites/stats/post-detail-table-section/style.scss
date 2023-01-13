@@ -69,6 +69,11 @@ $common-border-radius: 4px;
 	}
 
 	table {
+		th,
+		td {
+			cursor: auto;
+		}
+
 		th {
 			&.spacer {
 				color: var(--studio-white);
@@ -80,16 +85,7 @@ $common-border-radius: 4px;
 		td {
 			background-color: var(--color-primary-5);
 
-			&.stats-detail__row-label {
-				background: none;
-				text-align: left;
-			}
-
-			&:last-child {
-				font-weight: 600;
-				text-align: right;
-			}
-
+			&.stats-detail__row-label,
 			&.has-no-data,
 			&:last-child {
 				background-color: var(--studio-white);
@@ -97,7 +93,15 @@ $common-border-radius: 4px;
 
 			&.highest-count {
 				background-color: var(--color-primary-10);
-				color: var(--color-neutral-60);
+			}
+
+			&.stats-detail__row-label {
+				text-align: left;
+			}
+
+			&:last-child {
+				font-weight: 600;
+				text-align: right;
 			}
 
 			.stats-detail-weeks__date {
