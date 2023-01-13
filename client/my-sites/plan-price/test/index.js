@@ -23,6 +23,14 @@ describe( 'PlanPrice', () => {
 		expect( screen.getByText( '.01' ) ).toBeInTheDocument();
 	} );
 
+	it( 'renders a rawPrice if isSmallestUnit is set', () => {
+		render( <PlanPrice rawPrice={ 5001 } isSmallestUnit /> );
+		expect( document.body ).toHaveTextContent( '$50.01' );
+		expect( screen.queryByText( '50.01' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( '50' ) ).toBeInTheDocument();
+		expect( screen.getByText( '.01' ) ).toBeInTheDocument();
+	} );
+
 	it( 'renders a range of prices', () => {
 		render( <PlanPrice rawPrice={ [ 10, 50 ] } /> );
 		expect( document.body ).toHaveTextContent( '$10-50' );
@@ -138,6 +146,12 @@ describe( 'PlanPrice', () => {
 
 	it( 'renders a price without html when displayFlatPrice is set', () => {
 		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" displayFlatPrice /> );
+		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
+		expect( screen.getByText( 'Rp44,700.50' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders a price without html when displayFlatPrice and isSmallestUnit are set', () => {
+		render( <PlanPrice rawPrice={ 4470050 } currencyCode="IDR" isSmallestUnit displayFlatPrice /> );
 		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
 		expect( screen.getByText( 'Rp44,700.50' ) ).toBeInTheDocument();
 	} );
