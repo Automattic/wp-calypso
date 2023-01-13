@@ -180,21 +180,18 @@ export class RestAPIClient {
 	/* Sites */
 
 	/**
-	 * Gets the list of users's sites.
+	 * Gets the list of domains belonging to the user.
 	 *
-	 * This method returns an array of Site objects, where
-	 * each Site object exposes a few key pieces of data from
+	 * This method returns an array of DomainData objects, where
+	 * each object exposes a few key pieces of data from
 	 * the response JSON:
-	 * 	- ID
-	 * 	- name
-	 * 	- site description
-	 * 	- URL
-	 * 	- site owner
+	 * 	- domain
+	 * 	- blog id
 	 *
 	 * @returns {Promise<AllDomainsResponse>} JSON array of sites.
 	 * @throws {Error} If API responded with an error.
 	 */
-	async getAllSites(): Promise< AllDomainsResponse > {
+	async getAllDomains(): Promise< AllDomainsResponse > {
 		const params: RequestParams = {
 			method: 'get',
 			headers: {
@@ -281,7 +278,7 @@ export class RestAPIClient {
 			? targetSite.domain.replace( 'https://', '' )
 			: targetSite.domain;
 
-		const mySites: AllDomainsResponse = await this.getAllSites();
+		const mySites: AllDomainsResponse = await this.getAllDomains();
 
 		const match = mySites.domains.filter( ( site: DomainsMetadata ) => {
 			site.blog_id === targetSite.id && site.domain === targetDomain;

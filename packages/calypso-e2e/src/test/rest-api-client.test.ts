@@ -81,7 +81,7 @@ describe( 'RestAPIClient: getMyAccountInformation', function () {
 	} );
 } );
 
-describe( 'RestAPIClient: getAllSites', function () {
+describe( 'RestAPIClient: getAllDomains', function () {
 	const restAPIClient = new RestAPIClient( {
 		username: 'fake_user',
 		password: 'fake_password',
@@ -104,7 +104,7 @@ describe( 'RestAPIClient: getAllSites', function () {
 
 		nock( requestURL.origin ).get( requestURL.pathname ).reply( 200, testData );
 
-		const response = await restAPIClient.getAllSites();
+		const response = await restAPIClient.getAllDomains();
 		expect( response.domains.length ).toBe( 2 );
 		expect( response.domains[ 0 ].blog_id ).toBe( 5420 );
 		expect( response.domains[ 1 ].blog_id ).toBe( 8799 );
@@ -120,7 +120,7 @@ describe( 'RestAPIClient: getAllSites', function () {
 			.get( requestURL.pathname )
 			.reply( 400, { error: code, message: message } );
 
-		await expect( restAPIClient.getAllSites() ).rejects.toThrowError( `${ code }: ${ message }` );
+		await expect( restAPIClient.getAllDomains() ).rejects.toThrowError( `${ code }: ${ message }` );
 	} );
 } );
 

@@ -43,13 +43,13 @@ export interface BearerTokenResponse {
 	};
 }
 
-export interface DomainsMetadata {
+export interface DomainData {
 	blog_id: number;
 	domain: string;
 }
 
 export interface AllDomainsResponse {
-	domains: Array< DomainsMetadata >;
+	domains: Array< DomainData >;
 }
 
 export interface CalypsoPreferencesResponse {
