@@ -79,7 +79,7 @@ const ProductLightbox: React.FC< Props > = ( {
 	);
 
 	const onChangeSocialProductOption = useCallback(
-		( productSlug: string ) => {
+		( productSlug ) => {
 			onChangeProduct( slugToSelectorProduct( productSlug ) );
 
 			// Tracking when variant selected inside the lightbox
@@ -222,7 +222,9 @@ const ProductLightbox: React.FC< Props > = ( {
 							{ isSocialProduct ? (
 								<div>
 									<FormFieldset className="multiple-choice-question">
-										<FormLegend>{ PRODUCT_OPTIONS_HEADER[ product?.productSlug ] }</FormLegend>
+										<FormLegend className="multiple-choice-question-title">
+											{ PRODUCT_OPTIONS_HEADER[ product?.productSlug ] }
+										</FormLegend>
 									</FormFieldset>
 									<div
 										onClick={ () =>
@@ -235,14 +237,14 @@ const ProductLightbox: React.FC< Props > = ( {
 											product={ JETPACK_SOCIAL_BASIC_PRODUCT }
 											hideTitle={ true }
 											showBorder={
-												product?.productSlug === JETPACK_SOCIAL_BASIC_PRODUCT.productSlug
+												product?.productSlug === JETPACK_SOCIAL_BASIC_PRODUCT?.productSlug
 											}
 										/>
 									</div>
 									<p />
 									<div
 										onClick={ () =>
-											onChangeSocialProductOption( JETPACK_SOCIAL_ADVANCED_PRODUCT.productSlug )
+											onChangeSocialProductOption( JETPACK_SOCIAL_ADVANCED_PRODUCT?.productSlug )
 										}
 									>
 										<PaymentPlan
@@ -251,7 +253,7 @@ const ProductLightbox: React.FC< Props > = ( {
 											product={ JETPACK_SOCIAL_ADVANCED_PRODUCT }
 											hideTitle={ true }
 											showBorder={
-												product?.productSlug === JETPACK_SOCIAL_ADVANCED_PRODUCT.productSlug
+												product?.productSlug === JETPACK_SOCIAL_ADVANCED_PRODUCT?.productSlug
 											}
 										/>
 									</div>
