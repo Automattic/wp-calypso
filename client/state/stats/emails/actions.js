@@ -5,6 +5,7 @@ import {
 	EMAIL_STATS_REQUEST_FAILURE,
 	EMAIL_STATS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
+import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
 import {
 	parseEmailChartData,
 	parseEmailCountriesData,
@@ -53,12 +54,6 @@ function emailOpenStatsPeriodTransform( stats, period ) {
 
 		obj[ filter ] = {
 			chart: item,
-			countries: parseEmailCountriesData(
-				stats.countries[ item.period ],
-				stats[ 'countries-info' ]
-			),
-			devices: parseEmailListData( stats.devices[ item.period ] ),
-			clients: parseEmailListData( stats.clients[ item.period ] ),
 		};
 		return obj;
 	}, {} );
@@ -71,7 +66,16 @@ function emailOpenStatsPeriodTransform( stats, period ) {
  * @returns {object}
  */
 function emailOpenStatsAlltimeTransform( stats ) {
-	return stats.opens_rate;
+	return {
+		countries: parseEmailCountriesData( stats.countries?.data, stats[ 'countries-info' ] ),
+		devices: parseEmailListData( stats.devices?.data ),
+		clients: parseEmailListData( stats.clients?.data ),
+		rate: {
+			opens_rate: stats.opens_rate,
+			total_opens: stats.total_opens,
+			total_sends: stats.total_sends,
+		},
+	};
 }
 
 /**
@@ -103,17 +107,21 @@ function requestEmailOpensStats( siteId, postId, period, date, quantity ) {
 			return quantity;
 		} )();
 
-		const query = period === 'alltime' ? {} : { period, quantity: queryQuantity, date };
+		const query = period === PERIOD_ALL_TIME ? {} : { period, quantity: queryQuantity, date };
 
-		return wpcom
-			.site( siteId )
-			.statsEmailOpens( postId, query )
+		const site = wpcom.site( siteId );
+		const statsPromise =
+			period === PERIOD_ALL_TIME
+				? site.statsEmailOpensAlltime( postId )
+				: site.statsEmailOpensForPeriod( postId, query );
+
+		return statsPromise
 			.then( ( stats ) => {
 				// create an object from emailStats with period as the key
 				const emailStatsObject =
-					period !== 'alltime'
-						? emailOpenStatsPeriodTransform( stats, period )
-						: emailOpenStatsAlltimeTransform( stats );
+					period === PERIOD_ALL_TIME
+						? emailOpenStatsAlltimeTransform( stats )
+						: emailOpenStatsPeriodTransform( stats, period );
 
 				dispatch( receiveEmailStats( siteId, postId, period, 'opens', date, emailStatsObject ) );
 
@@ -174,6 +182,6 @@ export function requestEmailAlltimeStats( siteId, postId, statType, quantity = 3
 	switch ( statType ) {
 		case 'opens':
 			// request stats bound by period ( chart, countries, devices & clients )
-			return requestEmailOpensStats( siteId, postId, 'alltime', null, quantity );
+			return requestEmailOpensStats( siteId, postId, PERIOD_ALL_TIME, null, quantity );
 	}
 }
