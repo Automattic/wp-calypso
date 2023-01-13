@@ -93,17 +93,18 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 
 	// Consolidate the plugin information from the .org and .com sources in a single list
 	const pluginInformationList = useMemo( () => {
-		return pluginsOnSite.reduce( ( pluginsList: Array< any >, pluginOnSite: Plugin ) => {
-			if ( typeof pluginOnSite?.slug === 'string' ) {
+		return pluginsOnSite.reduce(
+			( pluginsList: Array< any >, pluginOnSite: Plugin, index: number ) => {
 				pluginsList.push( {
-					...wpComPluginsData.find( ( wpComPlugin ) => wpComPlugin?.slug === pluginOnSite.slug ),
-					...wporgPlugins.find( ( wpOrgPlugin ) => wpOrgPlugin?.slug === pluginOnSite.slug ),
+					...wpComPluginsData[ index ],
+					...wporgPlugins[ index ],
 					...pluginOnSite,
 				} );
-			}
 
-			return pluginsList;
-		}, [] );
+				return pluginsList;
+			},
+			[]
+		);
 	}, [ pluginsOnSite, wpComPluginsData, wporgPlugins ] );
 
 	// Site is transferring to Atomic.
