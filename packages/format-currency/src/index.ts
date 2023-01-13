@@ -140,7 +140,7 @@ function prepareNumberForFormatting(
 	// of what precision is requested for display!
 	currencyPrecision: number,
 	options: CurrencyObjectOptions
-) {
+): number {
 	if ( isNaN( number ) ) {
 		// eslint-disable-next-line no-console
 		console.warn( 'formatCurrency was called with NaN' );
@@ -159,7 +159,8 @@ function prepareNumberForFormatting(
 		number = convertPriceForSmallestUnit( number, currencyPrecision );
 	}
 
-	return number;
+	const scale = Math.pow( 10, currencyPrecision );
+	return Math.round( number * scale ) / scale;
 }
 
 function getFormatter(
@@ -219,9 +220,9 @@ export function formatCurrency(
 	const currencyOverride = getCurrencyOverride( code );
 	const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );
 
-	number = prepareNumberForFormatting( number, currencyPrecision, options );
-	const formatter = getFormatter( number, code, options );
-	const parts = formatter.formatToParts( number );
+	const numberAsFloat = prepareNumberForFormatting( number, currencyPrecision, options );
+	const formatter = getFormatter( numberAsFloat, code, options );
+	const parts = formatter.formatToParts( numberAsFloat );
 
 	return parts.reduce( ( formatted, part ) => {
 		switch ( part.type ) {
@@ -284,16 +285,18 @@ export function getCurrencyObject(
 	const currencyOverride = getCurrencyOverride( code );
 	const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );
 
-	number = prepareNumberForFormatting( number, currencyPrecision, options );
-	const formatter = getFormatter( number, code, options );
-	const parts = formatter.formatToParts( number );
+	const numberAsFloat = prepareNumberForFormatting( number, currencyPrecision, options );
+	const formatter = getFormatter( numberAsFloat, code, options );
+	const parts = formatter.formatToParts( numberAsFloat );
 
 	let sign = '' as CurrencyObject[ 'sign' ];
 	let symbol = '$';
 	let symbolPosition = 'before' as CurrencyObject[ 'symbolPosition' ];
 	let hasAmountBeenSet = false;
+	let hasDecimalBeenSet = false;
 	let integer = '';
 	let fraction = '';
+
 	parts.forEach( ( part ) => {
 		switch ( part.type ) {
 			case 'currency':
@@ -309,6 +312,7 @@ export function getCurrencyObject(
 			case 'decimal':
 				fraction += part.value;
 				hasAmountBeenSet = true;
+				hasDecimalBeenSet = true;
 				return;
 			case 'integer':
 				integer += part.value;
@@ -317,6 +321,7 @@ export function getCurrencyObject(
 			case 'fraction':
 				fraction += part.value;
 				hasAmountBeenSet = true;
+				hasDecimalBeenSet = true;
 				return;
 			case 'minusSign':
 				sign = '-' as CurrencyObject[ 'sign' ];
@@ -324,12 +329,15 @@ export function getCurrencyObject(
 		}
 	} );
 
+	const hasNonZeroFraction = ! Number.isInteger( numberAsFloat ) && hasDecimalBeenSet;
+
 	return {
 		sign,
 		symbol,
 		symbolPosition,
 		integer,
 		fraction,
+		hasNonZeroFraction,
 	};
 }
 

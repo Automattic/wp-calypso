@@ -70,4 +70,9 @@ export interface CurrencyObject {
 	 * include symbols like spaces, commas, or periods as the decimal separator.
 	 */
 	fraction: string;
+
+	/**
+	 * True if the formatted number has a non-0 decimal part.
+	 */
+	hasNonZeroFraction: boolean;
 }
