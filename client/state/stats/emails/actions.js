@@ -19,7 +19,7 @@ import 'calypso/state/stats/init';
  *
  * @param  {number} siteId Site ID
  * @param  {number} postId Email Id
- * @param  {string} period Unit for each element of the returned array (ie: 'year', 'month', ...)
+ * @param  {string} period Unit for each element of the returned array (ie: 'hour' or 'day')
  * @param  {string} statType The type of stat we are working with. For example: 'opens' for Email Open stats
  * @param  {string?} date A date in YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss format
  * @param  {object}  stats  The received stats
@@ -80,7 +80,7 @@ function emailOpenStatsAlltimeTransform( stats ) {
  *
  * @param  {number} siteId Site ID
  * @param  {number} postId Email Id
- * @param  {string} period Unit for each element of the returned array (ie: 'year', 'month', ...)
+ * @param  {string} period Unit for each element of the returned array (ie: 'hour' or 'day')
  * @param  {string?} date A date in YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss format
  * @param  {number} quantity The number of elements retrieved in the array
  */
@@ -95,11 +95,8 @@ function requestEmailOpensStats( siteId, postId, period, date, quantity ) {
 			statType: 'opens',
 		} );
 
-		// set defaults for year and hour
+		// set defaults for hour
 		const queryQuantity = ( () => {
-			if ( period === 'year' ) {
-				return 10;
-			}
 			if ( period === 'hour' ) {
 				return 24;
 			}
@@ -149,7 +146,7 @@ function requestEmailOpensStats( siteId, postId, period, date, quantity ) {
  *
  * @param  {number} siteId Site ID
  * @param  {number} postId Email Id
- * @param  {string} period Unit for each element of the returned array (ie: 'year', 'month', ...)
+ * @param  {string} period Unit for each element of the returned array (ie: 'hour' or 'day')
  * @param  {string} date A date in YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss format
  * @param  {string} statType The type of stat we are working with. For example: 'opens' for Email Open stats
  * @param  {number} quantity The number of elements retrieved in the array

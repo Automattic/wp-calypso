@@ -10,7 +10,7 @@ const month = { value: 'month', label: translate( 'Months' ) };
 const year = { value: 'year', label: translate( 'Years' ) };
 
 export const intervals = [ day, week, month, year ];
-export const emailIntervals = [ hour, day, week, month, year ];
+export const emailIntervals = [ hour, day ];
 
 /**
  * Nav items
