@@ -9,7 +9,9 @@ interface AccordionFormSectionProps< T > extends AccordionSectionProps< T > {
 	showSubmit: boolean;
 	onOpen: () => void;
 	onNext: () => void;
+	onSave: () => void;
 	blockNavigation?: boolean;
+	isSaving: boolean;
 }
 
 interface SectionHeaderProps {
@@ -88,10 +90,10 @@ const SummaryLabel = styled( RequiredLabel )`
 	text-align: right;
 `;
 
-const NextButton = styled( Button )`
+const ActionButton = styled( Button )`
 	box-shadow: 0px 1px 2px rgba( 0, 0, 0, 0.05 );
 	border-radius: 5px;
-	padding: 10px 50px;
+	padding: 10px 0;
 	width: 177px;
 	.gridicon {
 		margin-left: 10px;
@@ -120,14 +122,20 @@ export default function AccordionFormSection< T >( props: AccordionFormSectionPr
 				<SectionContent>
 					{ props.component ? props.component : props.children }
 					<ButtonsContainer>
-						<NextButton
+						<ActionButton
+							onClick={ props.onSave }
+							disabled={ props.blockNavigation || props.isSaving }
+						>
+							{ props.isSaving ? translate( 'Saving' ) : translate( 'Save Changes' ) }
+						</ActionButton>
+						<ActionButton
 							primary={ props.showSubmit }
 							onClick={ props.onNext }
-							disabled={ props.blockNavigation }
+							disabled={ props.blockNavigation || props.isSaving }
 						>
 							{ props.showSubmit ? translate( 'Submit' ) : translate( 'Next' ) }
 							{ ! props.showSubmit && <Gridicon icon={ isRTL ? 'arrow-left' : 'arrow-right' } /> }
-						</NextButton>
+						</ActionButton>
 						{ props.showSkip && ! props.showSubmit && (
 							<SkipLink
 								disabled={ props.blockNavigation }

@@ -5,12 +5,20 @@ import {
 	HOME_PAGE,
 	PORTFOLIO_PAGE,
 	VIDEO_GALLERY_PAGE,
+	BLOG_PAGE,
+	FAQ_PAGE,
+	PHOTO_GALLERY_PAGE,
+	PRICING_PAGE,
+	SERVICES_PAGE,
+	SHOP_PAGE,
+	TEAM_PAGE,
+	TESTIMONIALS_PAGE,
 } from '../../../../../signup/difm/constants';
 import {
 	updateWebsiteContentCurrentIndex,
 	mediaUploaded,
 	websiteContentFieldChanged,
-	initializePages,
+	initializeWebsiteContentForm,
 	mediaUploadInitiated,
 	mediaUploadFailed,
 	logoUploadStarted,
@@ -20,15 +28,11 @@ import {
 	logoRemoved,
 	getSingleMediaPlaceholder,
 } from '../actions';
+import { initialState, LOGO_SECTION_ID, MEDIA_UPLOAD_STATES } from '../constants';
 import websiteContentCollectionReducer from '../reducer';
-import {
-	initialState,
-	LOGO_SECTION_ID,
-	MEDIA_UPLOAD_STATES,
-	WebsiteContentCollection,
-} from '../schema';
+import type { WebsiteContentCollectionState } from '../types';
 
-const initialTestState: WebsiteContentCollection = {
+const initialTestState: WebsiteContentCollectionState = {
 	currentIndex: 0,
 	mediaUploadStates: {},
 	websiteContent: {
@@ -70,7 +74,22 @@ const initialTestState: WebsiteContentCollection = {
 			},
 		],
 	},
-	siteId: null,
+};
+
+const translatedPageTitles = {
+	[ HOME_PAGE ]: 'Home',
+	[ BLOG_PAGE ]: 'Blog',
+	[ CONTACT_PAGE ]: 'Contact',
+	[ ABOUT_PAGE ]: 'About',
+	[ PHOTO_GALLERY_PAGE ]: 'Photo Gallery',
+	[ VIDEO_GALLERY_PAGE ]: 'Video Gallery',
+	[ PORTFOLIO_PAGE ]: 'Portfolio',
+	[ FAQ_PAGE ]: 'FAQ',
+	[ SERVICES_PAGE ]: 'Services',
+	[ TESTIMONIALS_PAGE ]: 'Testimonials',
+	[ PRICING_PAGE ]: 'Pricing',
+	[ TEAM_PAGE ]: 'Team',
+	[ SHOP_PAGE ]: 'Shop',
 };
 
 describe( 'reducer', () => {
@@ -86,26 +105,20 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	test( 'Initial page data should  be generated correctly', () => {
+	test( 'State should be initialized correctly with no page content', () => {
 		expect(
 			websiteContentCollectionReducer(
 				{ ...initialState },
-				initializePages(
-					[
-						{
-							id: CONTACT_PAGE,
-							name: 'Page 1',
-						},
-						{
-							id: VIDEO_GALLERY_PAGE,
-							name: 'Page 2',
-						},
-						{
-							id: PORTFOLIO_PAGE,
-							name: 'Page 3',
-						},
-					],
-					1234
+				initializeWebsiteContentForm(
+					{
+						selectedPageTitles: [ CONTACT_PAGE, VIDEO_GALLERY_PAGE, PORTFOLIO_PAGE ],
+						isWebsiteContentSubmitted: false,
+						isStoreFlow: false,
+						pages: [],
+						siteLogoUrl: '',
+						genericFeedback: '',
+					},
+					translatedPageTitles
 				)
 			)
 		).toEqual( {
@@ -115,7 +128,7 @@ describe( 'reducer', () => {
 				pages: [
 					{
 						id: CONTACT_PAGE,
-						title: 'Page 1',
+						title: 'Contact',
 						content: '',
 						media: [
 							getSingleMediaPlaceholder( 'IMAGE' ),
@@ -126,7 +139,7 @@ describe( 'reducer', () => {
 					},
 					{
 						id: VIDEO_GALLERY_PAGE,
-						title: 'Page 2',
+						title: 'Video Gallery',
 						content: '',
 						media: [
 							getSingleMediaPlaceholder( 'VIDEO' ),
@@ -137,7 +150,7 @@ describe( 'reducer', () => {
 					},
 					{
 						id: PORTFOLIO_PAGE,
-						title: 'Page 3',
+						title: 'Portfolio',
 						content: '',
 						media: [
 							getSingleMediaPlaceholder( 'IMAGE' ),
@@ -152,105 +165,42 @@ describe( 'reducer', () => {
 					},
 				],
 			},
-			siteId: 1234,
 		} );
 	} );
 
-	test( 'When initializing page data existing page data should not be overwritten if the site id is same', () => {
-		const existingState = {
-			...initialState,
-			siteId: 1234,
-		};
+	test( 'State should be initialized correctly with saved page content', () => {
 		expect(
 			websiteContentCollectionReducer(
-				existingState,
-				initializePages(
-					[
-						{
-							id: CONTACT_PAGE,
-							name: 'Page 1',
-						},
-						{
-							id: VIDEO_GALLERY_PAGE,
-							name: 'Page 2',
-						},
-						{
-							id: PORTFOLIO_PAGE,
-							name: 'Page 3',
-						},
-					],
-					1234
-				)
-			)
-		).toEqual( existingState );
-	} );
-
-	test( 'When initializing page data existing page data should be overwritten if the site id is different', () => {
-		const existingState = {
-			...initialState,
-			websiteContent: {
-				...initialTestState.websiteContent,
-				pages: [
+				{ ...initialState },
+				initializeWebsiteContentForm(
 					{
-						id: CONTACT_PAGE,
-						title: 'Page 1',
-						content: 'Some existing Page 1 content',
-						media: [
-							{ ...getSingleMediaPlaceholder( 'IMAGE' ), caption: 'sample.jpg', url: 'sample.jpg' },
-							getSingleMediaPlaceholder( 'IMAGE' ),
-							getSingleMediaPlaceholder( 'IMAGE' ),
-							getSingleMediaPlaceholder( 'IMAGE' ),
+						selectedPageTitles: [ CONTACT_PAGE, VIDEO_GALLERY_PAGE, PORTFOLIO_PAGE ],
+						isWebsiteContentSubmitted: false,
+						isStoreFlow: false,
+						pages: [
+							{
+								id: CONTACT_PAGE,
+								title: 'Contact',
+								content: 'test contact page content',
+								media: [ { url: 'test media url 1', mediaType: 'IMAGE' } ],
+							},
+							{
+								id: VIDEO_GALLERY_PAGE,
+								title: 'Video Gallery',
+								content: 'test video gallery page content',
+								media: [ { url: 'test media url 2', mediaType: 'VIDEO' } ],
+							},
+							{
+								id: PORTFOLIO_PAGE,
+								title: 'Portfolio',
+								content: 'test portfolio page content',
+								media: [ { url: 'test media url 3', mediaType: 'IMAGE' } ],
+							},
 						],
+						siteLogoUrl: '',
+						genericFeedback: '',
 					},
-					{
-						id: VIDEO_GALLERY_PAGE,
-						title: 'Page 2',
-						content: 'Some existing Page 2 content',
-						media: [
-							{ ...getSingleMediaPlaceholder( 'IMAGE' ), caption: 'sample.vid', url: 'sample.vid' },
-							getSingleMediaPlaceholder( 'VIDEO' ),
-							getSingleMediaPlaceholder( 'VIDEO' ),
-							getSingleMediaPlaceholder( 'VIDEO' ),
-						],
-					},
-					{
-						id: PORTFOLIO_PAGE,
-						title: 'Page 3',
-						content: 'Some existing Page 3 content',
-						media: [
-							{ caption: 'sample.jpg', url: 'sample.jpg' },
-							getSingleMediaPlaceholder( 'IMAGE' ),
-							getSingleMediaPlaceholder( 'IMAGE' ),
-							getSingleMediaPlaceholder( 'IMAGE' ),
-							getSingleMediaPlaceholder( 'IMAGE' ),
-							getSingleMediaPlaceholder( 'IMAGE' ),
-							getSingleMediaPlaceholder( 'IMAGE' ),
-							getSingleMediaPlaceholder( 'IMAGE' ),
-						],
-					},
-				],
-			},
-			siteId: 1234,
-		};
-		expect(
-			websiteContentCollectionReducer(
-				existingState,
-				initializePages(
-					[
-						{
-							id: CONTACT_PAGE,
-							name: 'Page 1',
-						},
-						{
-							id: VIDEO_GALLERY_PAGE,
-							name: 'Page 2',
-						},
-						{
-							id: PORTFOLIO_PAGE,
-							name: 'Page 3',
-						},
-					],
-					1337
+					translatedPageTitles
 				)
 			)
 		).toEqual( {
@@ -260,10 +210,10 @@ describe( 'reducer', () => {
 				pages: [
 					{
 						id: CONTACT_PAGE,
-						title: 'Page 1',
-						content: '',
+						title: 'Contact',
+						content: 'test contact page content',
 						media: [
-							getSingleMediaPlaceholder( 'IMAGE' ),
+							{ url: 'test media url 1', mediaType: 'IMAGE' },
 							getSingleMediaPlaceholder( 'IMAGE' ),
 							getSingleMediaPlaceholder( 'IMAGE' ),
 							getSingleMediaPlaceholder( 'IMAGE' ),
@@ -271,10 +221,10 @@ describe( 'reducer', () => {
 					},
 					{
 						id: VIDEO_GALLERY_PAGE,
-						title: 'Page 2',
-						content: '',
+						title: 'Video Gallery',
+						content: 'test video gallery page content',
 						media: [
-							getSingleMediaPlaceholder( 'VIDEO' ),
+							{ url: 'test media url 2', mediaType: 'VIDEO' },
 							getSingleMediaPlaceholder( 'VIDEO' ),
 							getSingleMediaPlaceholder( 'VIDEO' ),
 							getSingleMediaPlaceholder( 'VIDEO' ),
@@ -282,10 +232,10 @@ describe( 'reducer', () => {
 					},
 					{
 						id: PORTFOLIO_PAGE,
-						title: 'Page 3',
-						content: '',
+						title: 'Portfolio',
+						content: 'test portfolio page content',
 						media: [
-							getSingleMediaPlaceholder( 'IMAGE' ),
+							{ url: 'test media url 3', mediaType: 'IMAGE' },
 							getSingleMediaPlaceholder( 'IMAGE' ),
 							getSingleMediaPlaceholder( 'IMAGE' ),
 							getSingleMediaPlaceholder( 'IMAGE' ),
@@ -297,7 +247,6 @@ describe( 'reducer', () => {
 					},
 				],
 			},
-			siteId: 1337,
 		} );
 	} );
 

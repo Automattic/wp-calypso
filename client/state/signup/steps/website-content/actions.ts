@@ -28,9 +28,8 @@ import {
 	SIGNUP_STEPS_WEBSITE_FIELD_CHANGED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_FEEDBACK_CHANGE,
 } from 'calypso/state/action-types';
-import { Media, MediaUploadType } from './schema';
+import { Media, MediaUploadType, WebsiteContentServerState } from './types';
 import 'calypso/state/signup/init';
-import type { SiteId } from 'calypso/types';
 
 export type MediaUploadedData = {
 	pageId: PageId;
@@ -140,22 +139,59 @@ function getMediaPlaceholders( pageId: PageId ): Array< Media > {
 	}
 }
 
-export function initializePages(
-	pageNames: Array< { id: PageId; name: TranslateResult } >,
-	siteId: SiteId
+/**
+ * Return the initial state for the page-wise media state.
+ * Each page type supports a different number of media uploads (@see getMediaPlaceholders).
+ */
+function getInitialMediaState( pageId: PageId, savedMedia: Media[] | null | undefined ): Media[] {
+	const mediaPlaceholders = getMediaPlaceholders( pageId );
+
+	// Return placeholders if server state does not contain any media
+	if ( ! savedMedia?.length ) {
+		return mediaPlaceholders;
+	}
+
+	// Return server state if the number of items matches or exceeds the number of placeholders
+	if ( savedMedia.length >= mediaPlaceholders.length ) {
+		return savedMedia;
+	}
+
+	// If the number of items does not match the number of placeholders,
+	// use server state and placeholders to return the correct number of items.
+	return [
+		...savedMedia,
+		...mediaPlaceholders.slice( 0, mediaPlaceholders.length - savedMedia.length ),
+	];
+}
+
+/**
+ * This action essentially maps server state to local state.
+ * Page titles are currently picked from client app translations, but
+ * they will be a part of local & server state in the future.
+ */
+export function initializeWebsiteContentForm(
+	websiteContentServerState: WebsiteContentServerState,
+	translatedPageTitles: Record< PageId, TranslateResult >
 ) {
-	const generatedPages = pageNames.map( ( { id, name } ) => ( {
-		id,
-		title: name,
-		content: '',
-		media: getMediaPlaceholders( id ),
-	} ) );
+	const { selectedPageTitles, pages, siteLogoUrl, genericFeedback } = websiteContentServerState;
+
+	const generatedPages = selectedPageTitles.map( ( pageId ) => {
+		const savedContent = pages.find( ( page ) => page.id === pageId );
+
+		return {
+			id: pageId,
+			title: translatedPageTitles[ pageId ],
+			content: savedContent?.content ?? '',
+			media: getInitialMediaState( pageId, savedContent?.media ),
+		};
+	} );
 
 	return {
 		type: SIGNUP_STEPS_WEBSITE_CONTENT_INITIALIZE_PAGES,
 		payload: {
 			pages: generatedPages,
-			siteId,
+			siteLogoSection: { siteLogoUrl },
+			feedbackSection: { genericFeedback },
 		},
 	};
 }
