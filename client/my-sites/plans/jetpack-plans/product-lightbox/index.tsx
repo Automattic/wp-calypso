@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import config from '@automattic/calypso-config';
 import {
 	isJetpackPlanSlug,
@@ -12,6 +14,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo } from 'react';
 import Modal from 'react-modal';
 import { useDispatch } from 'react-redux';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLegend from 'calypso/components/forms/form-legend';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { useStoreItemInfoContext } from '../product-store/context/store-item-info-context';
@@ -74,6 +78,24 @@ const ProductLightbox: React.FC< Props > = ( {
 		[ onChangeProduct, dispatch, siteId ]
 	);
 
+	const onChangeSocialProductOption = useCallback(
+		( productSlug: string ) => {
+			onChangeProduct( slugToSelectorProduct( productSlug ) );
+
+			// Tracking when variant selected inside the lightbox
+			dispatch(
+				recordTracksEvent( 'calypso_product_lightbox_variant_select', {
+					site_id: siteId,
+					product_slug: productSlug,
+				} )
+			);
+		},
+		[ onChangeProduct, dispatch, siteId ]
+	);
+
+	const JETPACK_SOCIAL_ADVANCED_PRODUCT = slugToSelectorProduct( PRODUCT_JETPACK_SOCIAL_ADVANCED );
+	const JETPACK_SOCIAL_BASIC_PRODUCT = slugToSelectorProduct( PRODUCT_JETPACK_SOCIAL_BASIC );
+
 	const {
 		getCheckoutURL,
 		getIsMultisiteCompatible,
@@ -111,10 +133,12 @@ const ProductLightbox: React.FC< Props > = ( {
 		} ) );
 	}, [ product.productSlug ] );
 
-	const shouldShowOptions = [
+	const isSocialProduct = [
 		PRODUCT_JETPACK_SOCIAL_ADVANCED,
 		PRODUCT_JETPACK_SOCIAL_BASIC,
-	].includes( product.productSlug )
+	].includes( product.productSlug );
+
+	const shouldShowOptions = isSocialProduct
 		? variantOptions.length > 1 && config.isEnabled( 'jetpack-social/advanced-plan' )
 		: variantOptions.length > 1;
 
@@ -184,7 +208,7 @@ const ProductLightbox: React.FC< Props > = ( {
 				<div className="product-lightbox__sidebar">
 					<div className="product-lightbox__variants">
 						<div className="product-lightbox__variants-content">
-							{ shouldShowOptions && (
+							{ shouldShowOptions && ! isSocialProduct && (
 								<div className="product-lightbox__variants-options">
 									<MultipleChoiceQuestion
 										question={ PRODUCT_OPTIONS_HEADER[ product?.productSlug ] }
@@ -195,11 +219,51 @@ const ProductLightbox: React.FC< Props > = ( {
 									/>
 								</div>
 							) }
-							<PaymentPlan
-								isMultiSiteIncompatible={ isMultiSiteIncompatible }
-								siteId={ siteId }
-								product={ product }
-							/>
+							{ isSocialProduct ? (
+								<div>
+									<FormFieldset className="multiple-choice-question">
+										<FormLegend>{ PRODUCT_OPTIONS_HEADER[ product?.productSlug ] }</FormLegend>
+									</FormFieldset>
+									<div
+										onClick={ () =>
+											onChangeSocialProductOption( JETPACK_SOCIAL_BASIC_PRODUCT.productSlug )
+										}
+									>
+										<PaymentPlan
+											isMultiSiteIncompatible={ isMultiSiteIncompatible }
+											siteId={ siteId }
+											product={ JETPACK_SOCIAL_BASIC_PRODUCT }
+											hideTitle={ true }
+											showBorder={
+												product?.productSlug === JETPACK_SOCIAL_BASIC_PRODUCT.productSlug
+											}
+										/>
+									</div>
+									<p />
+									// eslint-disable-next-line jsx-a11y/click-events-have-key-events
+									<div
+										onClick={ () =>
+											onChangeSocialProductOption( JETPACK_SOCIAL_ADVANCED_PRODUCT.productSlug )
+										}
+									>
+										<PaymentPlan
+											isMultiSiteIncompatible={ isMultiSiteIncompatible }
+											siteId={ siteId }
+											product={ JETPACK_SOCIAL_ADVANCED_PRODUCT }
+											hideTitle={ true }
+											showBorder={
+												product?.productSlug === JETPACK_SOCIAL_ADVANCED_PRODUCT.productSlug
+											}
+										/>
+									</div>
+								</div>
+							) : (
+								<PaymentPlan
+									isMultiSiteIncompatible={ isMultiSiteIncompatible }
+									siteId={ siteId }
+									product={ product }
+								/>
+							) }
 							<Button
 								primary={ ! isProductInCart }
 								onClick={ onCheckoutClick }

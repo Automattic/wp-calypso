@@ -34,6 +34,6 @@ export const PRODUCT_OPTIONS_HEADER: Record< string, string > = {
 	[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: translate( 'Choose a storage option:' ),
 	[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: translate( 'Choose a storage option:' ),
 	[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: translate( 'Choose a storage option:' ),
-	[ PRODUCT_JETPACK_SOCIAL_BASIC ]: translate( 'Choose a social plan:' ),
-	[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: translate( 'Choose a social plan:' ),
+	[ PRODUCT_JETPACK_SOCIAL_BASIC ]: translate( 'Select your plan:' ),
+	[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: translate( 'Select your plan:' ),
 };
