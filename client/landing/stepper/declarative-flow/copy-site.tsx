@@ -97,7 +97,7 @@ const copySite: Flow = {
 					const processingResult = params[ 0 ] as ProcessingResult;
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
-						// Create a retry step here.
+						// @TODO:Create a retry step
 						return navigate( 'retry' );
 					}
 					clearSignupDestinationCookie();
