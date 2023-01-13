@@ -223,6 +223,21 @@ const useSectionPatterns = () => {
 				category: posts,
 			},
 			{
+				id: 3213,
+				name: 'Latest podcast episodes',
+				category: posts,
+			},
+			{
+				id: 1784,
+				name: 'Recent Posts',
+				category: posts,
+			},
+			{
+				id: 1593,
+				name: 'Heading and Three Images',
+				category: posts,
+			},
+			{
 				id: 7153,
 				name: 'Media and text with image on the left',
 				category: callToAction,
