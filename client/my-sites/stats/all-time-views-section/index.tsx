@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -33,6 +34,10 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 		setChartOption( option?.value || 'total' );
 	};
 
+	const tableWrapperClass = classNames( 'stats__table-wrapper', {
+		'is-loading': ! viewData,
+	} );
+
 	return (
 		<div className="stats__all-time-views-section stats__modernized-stats-table">
 			{ siteId && <QuerySiteStats statType="statsVisits" siteId={ siteId } query={ query } /> }
@@ -49,7 +54,7 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 							) }
 						</div>
 
-						<div className="stats__table-wrapper">
+						<div className={ tableWrapperClass }>
 							<StatsModulePlaceholder isLoading={ ! viewData } />
 							<Months dataKey={ chartOption } data={ viewData } siteSlug={ slug } showYearTotal />
 						</div>
