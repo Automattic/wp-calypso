@@ -13,7 +13,6 @@ import {
 import type { Roles } from './lib';
 import type {
 	AccountDetails,
-	SiteDetails,
 	BearerTokenResponse,
 	MyAccountInformationResponse,
 	AccountClosureResponse,
@@ -262,7 +261,7 @@ export class RestAPIClient {
 	 * Otherwise the active subscription must be first cancelled
 	 * or else the REST API will throw a HTTP 403 status.
 	 *
-	 * @param {SiteDetails} expectedSiteDetails Expected details for the site to be deleted.
+	 * @param { {id: number, domain: string}} targetSite Details for the target site to be deleted.
 	 * @returns {SiteDeletionResponse | null} Null if deletion was unsuccessful or not performed. SiteDeletionResponse otherwise.
 	 */
 	async deleteSite( targetSite: {
