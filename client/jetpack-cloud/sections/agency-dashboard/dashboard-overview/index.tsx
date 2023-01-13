@@ -21,7 +21,7 @@ export default function DashboardOverview( {
 	const hasFetched = useSelector( hasFetchedPartner );
 	const isFetching = useSelector( isFetchingPartner );
 	const hasActiveKey = useSelector( hasActivePartnerKey );
-	const [ isBulkManagementActive, setIsBulkManagementActive ] = useState( true );
+	const [ isBulkManagementActive, setIsBulkManagementActive ] = useState( false );
 	const [ selectedSites, setSelectedSites ] = useState< number[] >( [] );
 
 	if ( hasFetched && ! hasActiveKey ) {
