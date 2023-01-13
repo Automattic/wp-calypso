@@ -8,7 +8,7 @@ import {
 	SettingsParams,
 	PluginParams,
 	AllDomainsResponse,
-	DomainsMetadata,
+	DomainData,
 } from './types';
 import type { Roles } from './lib';
 import type {
@@ -279,7 +279,7 @@ export class RestAPIClient {
 
 		const mySites: AllDomainsResponse = await this.getAllDomains();
 
-		const match = mySites.domains.filter( ( site: DomainsMetadata ) => {
+		const match = mySites.domains.filter( ( site: DomainData ) => {
 			site.blog_id === targetSite.id && site.domain === targetDomain;
 		} );
 
