@@ -157,7 +157,7 @@ const StatsViewsMonths = ( props ) => {
 				className="stats-views__month is-year"
 				position="left"
 				key={ `label-${ year }` }
-				value={ yearTotal }
+				value={ numberFormat( yearTotal ) }
 			>
 				{ year }
 			</Month>
