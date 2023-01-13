@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import videoImage from 'calypso/assets/images/marketplace/plugins-video.jpg';
 import WPLogo from 'calypso/assets/images/marketplace/wp-logo.svg';
@@ -9,6 +10,7 @@ import Section, {
 	SectionHeaderContainer,
 	SectionHeader,
 } from 'calypso/components/section';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getSectionName } from 'calypso/state/ui/selectors';
@@ -119,6 +121,11 @@ const InPageCTASection = () => {
 		},
 		'/start/business'
 	);
+
+	const trackCTAClick = useCallback( () => {
+		recordTracksEvent( 'calypso_plugin_in_page_cta_click' );
+	}, [] );
+
 	return (
 		<InPagetCTAContainer>
 			<Illustration>
@@ -138,7 +145,11 @@ const InPageCTASection = () => {
 				) }
 				dark={ true }
 			>
-				<Button className="is-primary marketplace-cta in-page-cta" href={ startUrl }>
+				<Button
+					className="is-primary marketplace-cta in-page-cta"
+					href={ startUrl }
+					onClick={ trackCTAClick }
+				>
 					{ __( 'Get Started' ) }
 				</Button>
 			</Section>
