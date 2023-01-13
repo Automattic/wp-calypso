@@ -8,11 +8,13 @@ import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem, Modal } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { ComponentType, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import SitePreviewLink from 'calypso/components/site-preview-link';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -51,7 +53,7 @@ const MenuItemLink = MenuItem as ComponentType< MenuItemLinkProps >;
 
 const LaunchItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
-	const dispatch = useDispatch();
+	const dispatch = useReduxDispatch();
 
 	return (
 		<MenuItem
@@ -186,13 +188,14 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const plan = site.plan;
 	const isSiteOwner = site.site_owner === userId;
+	const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
 
 	if ( ! hasAtomicFeature || ! isSiteOwner || ! plan ) {
 		return null;
 	}
+	setPlanCartItem( { product_slug: plan.product_slug } );
 
 	const copySiteHref = addQueryArgs( `/setup/copy-site`, {
-		productSlug: plan.product_slug,
 		sourceSlug: site.slug,
 		sourceUrl: site.URL,
 	} );
