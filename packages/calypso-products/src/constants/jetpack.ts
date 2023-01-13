@@ -27,6 +27,8 @@ export const PRODUCT_JETPACK_VIDEOPRESS = 'jetpack_videopress';
 export const PRODUCT_JETPACK_VIDEOPRESS_MONTHLY = 'jetpack_videopress_monthly';
 export const PRODUCT_JETPACK_SOCIAL_BASIC = 'jetpack_social_basic_yearly';
 export const PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY = 'jetpack_social_basic_monthly';
+export const PRODUCT_JETPACK_SOCIAL_ADVANCED = 'jetpack_social_advanced_yearly';
+export const PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY = 'jetpack_social_advanced_monthly';
 
 //add-on products
 export const PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY =
@@ -410,6 +412,14 @@ export const JETPACK_RELATED_PRODUCTS_MAP: Record< string, string[] > = {
 	[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: [
 		PLAN_JETPACK_SECURITY_T1_YEARLY,
 		PLAN_JETPACK_SECURITY_T2_YEARLY,
+	],
+	[ PRODUCT_JETPACK_SOCIAL_BASIC ]: [
+		PRODUCT_JETPACK_SOCIAL_BASIC,
+		PRODUCT_JETPACK_SOCIAL_ADVANCED,
+	],
+	[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: [
+		PRODUCT_JETPACK_SOCIAL_BASIC,
+		PRODUCT_JETPACK_SOCIAL_ADVANCED,
 	],
 };
 
