@@ -24,6 +24,8 @@ import type { Step } from '../../types';
 
 import './styles.scss';
 
+const DEFAULT_WP_SITE_THEME = 'pub/zoologist';
+
 const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } ) {
 	const { submit } = navigation;
 
@@ -40,10 +42,9 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 
 	const { setPendingAction, setIsMigrateFromWp } = useDispatch( ONBOARD_STORE );
 
-	const defaultWPSiteTheme = 'pub/zoologist';
 	let theme: string;
 	if ( isMigrationFlow( flow ) || isCopySiteFlow( flow ) ) {
-		theme = defaultWPSiteTheme;
+		theme = DEFAULT_WP_SITE_THEME;
 	} else {
 		theme = isLinkInBioFlow( flow ) ? 'pub/lynx' : 'pub/lettre';
 	}
