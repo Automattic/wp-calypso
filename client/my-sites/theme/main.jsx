@@ -797,11 +797,11 @@ class ThemeSheet extends Component {
 
 		const { canonicalUrl, description, name: themeName, seo_title, seo_description } = this.props;
 
-		const title =
-			( seo_title || themeName ) &&
-			translate( '%(themeName)s Theme', {
-				args: { themeName },
-			} );
+		const title = seo_title
+			? seo_title
+			: translate( '%(themeName)s Theme', {
+					args: { themeName },
+			  } );
 
 		const metas = [
 			{ property: 'og:title', content: title },

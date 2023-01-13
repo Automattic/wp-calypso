@@ -53,8 +53,6 @@ export function normalizeJetpackTheme( theme = {} ) {
  */
 export function normalizeWpcomTheme( theme ) {
 	const attributesMap = {
-		seo_title: 'seoTitle',
-		seo_description: 'seoDescription',
 		description_long: 'descriptionLong',
 		support_documentation: 'supportDocumentation',
 		download_uri: 'download',
