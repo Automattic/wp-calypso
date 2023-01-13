@@ -205,7 +205,7 @@ function PriceWithoutHtml( {
 	isSmallestUnit?: boolean;
 } ) {
 	const priceObj = getCurrencyObject( price, currencyCode, { isSmallestUnit } );
-	if ( ! Number.isInteger( price ) ) {
+	if ( priceObj.hasNonZeroFraction ) {
 		return <>{ `${ priceObj.integer }${ priceObj.fraction }` }</>;
 	}
 	return <>{ priceObj.integer }</>;
@@ -367,14 +367,15 @@ function HtmlPriceDisplay( {
 	is2023OnboardingPricingGrid?: boolean;
 	isSmallestUnit?: boolean;
 } ) {
-	const hasFraction = ! Number.isInteger( price );
 	const priceObj = getCurrencyObject( price, currencyCode, { isSmallestUnit } );
 
 	if ( is2023OnboardingPricingGrid ) {
 		return (
 			<div className="plan-price__integer-fraction">
 				<span className="plan-price__integer">{ priceObj.integer }</span>
-				<sup className="plan-price__fraction">{ hasFraction && priceObj.fraction }</sup>
+				<sup className="plan-price__fraction">
+					{ priceObj.hasNonZeroFraction && priceObj.fraction }
+				</sup>
 			</div>
 		);
 	}
@@ -382,7 +383,9 @@ function HtmlPriceDisplay( {
 	return (
 		<>
 			<span className="plan-price__integer">{ priceObj.integer }</span>
-			<sup className="plan-price__fraction">{ hasFraction && priceObj.fraction }</sup>
+			<sup className="plan-price__fraction">
+				{ priceObj.hasNonZeroFraction && priceObj.fraction }
+			</sup>
 		</>
 	);
 }
