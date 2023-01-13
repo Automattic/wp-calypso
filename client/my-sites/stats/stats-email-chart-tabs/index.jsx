@@ -48,6 +48,7 @@ class StatModuleChartTabs extends Component {
 		switchTab: PropTypes.func,
 		queryDate: PropTypes.string,
 		recordGoogleEvent: PropTypes.func,
+		sliceFromBeginning: PropTypes.bool,
 	};
 
 	onLegendClick = ( chartItem ) => {
@@ -92,7 +93,12 @@ class StatModuleChartTabs extends Component {
 				/>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
-				<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 35 } />
+				<Chart
+					barClick={ this.props.barClick }
+					data={ chartData }
+					minBarWidth={ 35 }
+					sliceFromBeginning={ false }
+				/>
 				<StatTabs
 					data={ this.props.counts }
 					tabs={ this.props.charts }

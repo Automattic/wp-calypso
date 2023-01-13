@@ -57,7 +57,7 @@ export function isRequestingAlltimeEmailStats( state, siteId, postId, statType )
 	return state.stats.emails
 		? get(
 				state.stats.emails.requests,
-				[ ...getDataPath( siteId, postId, PERIOD_ALL_TIME, statType, null ), 'requesting' ],
+				[ ...getDataPath( siteId, postId, PERIOD_ALL_TIME, statType ), 'requesting' ],
 				false
 		  )
 		: false;
@@ -90,7 +90,7 @@ export function shouldShowLoadingIndicator( state, siteId, postId, period, statT
 }
 
 /**
- * Returns the stats for the for the specified site ID, postId
+ * Returns the stats for the specified site ID, postId
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
