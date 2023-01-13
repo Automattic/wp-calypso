@@ -36,7 +36,7 @@ export const SenseiStepContainer: React.FC< SenseiStepContainerProps > = ( {
 					<Footer>
 						<FooterText>
 							{ createInterpolateElement( __( 'Hosted by <a>WordPress.com</a>' ), {
-								a: <ExternalLink href="https://wordpress.com" target="_blank" />,
+								a: <ExternalLink href="https://wordpress.com" />,
 							} ) }
 						</FooterText>
 						<FooterText>{ __( 'Course creation and LMS tools powered by SenseiLMS' ) }</FooterText>
