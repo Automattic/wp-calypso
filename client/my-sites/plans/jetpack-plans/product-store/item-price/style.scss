@@ -77,6 +77,8 @@
 }
 
 .item-price .display-price.is-placeholder {
+	display: inline-flex;
+	align-items: center;
 	max-height: 24px;
 
 	.plan-price {
@@ -84,7 +86,8 @@
 	}
 
 	.display-price__billing-time-frame {
-		line-height: 20px;
+		max-height: 40px;
+		margin-top: 0;
 	}
 }
 
