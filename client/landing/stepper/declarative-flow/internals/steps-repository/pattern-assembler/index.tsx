@@ -1,5 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { StepContainer, SITE_SETUP_FLOW, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
+import {
+	__experimentalNavigatorProvider as NavigatorProvider,
+	__experimentalNavigatorScreen as NavigatorScreen,
+} from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
@@ -14,9 +18,12 @@ import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
 import { SITE_TAGLINE, PLACEHOLDER_SITE_ID } from './constants';
-import PatternLayout from './pattern-layout';
-import PatternSelectorLoader from './pattern-selector-loader';
 import { useAllPatterns } from './patterns-data';
+import ScreenFooter from './screen-footer';
+import ScreenHeader from './screen-header';
+import ScreenHomepage from './screen-homepage';
+import ScreenMain from './screen-main';
+import ScreenPatternList from './screen-pattern-list';
 import { encodePatternId, createCustomHomeTemplateContent } from './utils';
 import type { Pattern } from './types';
 import type { Step } from '../../types';
@@ -280,45 +287,87 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		submit?.();
 	};
 
-	const getSelectedPattern = () => {
-		if ( 'header' === showPatternSelectorType ) {
-			return header;
-		}
-		if ( 'footer' === showPatternSelectorType ) {
-			return footer;
-		}
-		if ( 'section' === showPatternSelectorType && sectionPosition !== null ) {
-			return sections[ sectionPosition ];
-		}
+	const onDoneClick = () => {
+		const patterns = getPatterns( showPatternSelectorType );
+		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_done_click', {
+			...commonEventProps,
+			pattern_type: showPatternSelectorType,
+			pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
+			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
+		} );
 
-		return null;
+		setShowPatternSelectorType( null );
+	};
+
+	const onContinueClick = () => {
+		trackEventContinue();
+		onSubmit();
+	};
+
+	const onMainItemSelect = ( name: string ) => {
+		if ( name === 'header' ) {
+			trackEventPatternAdd( 'header' );
+		} else if ( name === 'footer' ) {
+			trackEventPatternAdd( 'footer' );
+		} else if ( name === 'homepage' ) {
+			trackEventPatternAdd( 'footer' );
+		}
 	};
 
 	const stepContent = (
 		<div className="pattern-assembler__wrapper">
-			<div className="pattern-assembler__sidebar">
-				<PatternSelectorLoader
+			<NavigatorProvider className="pattern-assembler__sidebar" initialPath="/">
+				<NavigatorScreen path="/">
+					<ScreenMain onSelect={ onMainItemSelect } onContinueClick={ onContinueClick } />
+				</NavigatorScreen>
+
+				<NavigatorScreen path="/header">
+					<ScreenHeader
+						selectedPattern={ header }
+						onSelect={ onSelect }
+						onDoneClick={ onDoneClick }
+					/>
+				</NavigatorScreen>
+
+				<NavigatorScreen path="/footer">
+					<ScreenFooter
+						selectedPattern={ footer }
+						onSelect={ onSelect }
+						onDoneClick={ onDoneClick }
+					/>
+				</NavigatorScreen>
+
+				<NavigatorScreen path="/homepage">
+					<ScreenHomepage
+						patterns={ sections }
+						onDoneClick={ onDoneClick }
+						onReplaceSection={ ( position: number ) => {
+							setSectionPosition( position );
+							setShowPatternSelectorType( 'section' );
+						} }
+						onDeleteSection={ ( position: number ) => {
+							deleteSection( position );
+						} }
+						onMoveUpSection={ ( position: number ) => {
+							moveUpSection( position );
+						} }
+						onMoveDownSection={ ( position: number ) => {
+							moveDownSection( position );
+						} }
+					/>
+				</NavigatorScreen>
+				<NavigatorScreen path="/homepage/patterns">
+					<ScreenPatternList
+						selectedPattern={ sectionPosition ? sections[ sectionPosition ] : null }
+						onSelect={ onSelect }
+						onDoneClick={ onDoneClick }
+					/>
+				</NavigatorScreen>
+
+				{ /* <PatternSelectorLoader
 					showPatternSelectorType={ showPatternSelectorType }
 					onSelect={ onSelect }
-					onDoneClick={ () => {
-						const patterns = getPatterns( showPatternSelectorType );
-						recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_done_click', {
-							...commonEventProps,
-							pattern_type: showPatternSelectorType,
-							pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
-							pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
-						} );
-
-						setShowPatternSelectorType( null );
-					} }
-					onBack={ () => {
-						recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_back_click', {
-							...commonEventProps,
-							pattern_type: showPatternSelectorType,
-						} );
-
-						setShowPatternSelectorType( null );
-					} }
+					onDoneClick={ onDoneClick }
 					selectedPattern={ getSelectedPattern() }
 				/>
 				{ ! showPatternSelectorType && (
@@ -369,8 +418,8 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 							onSubmit();
 						} }
 					/>
-				) }
-			</div>
+				) } */ }
+			</NavigatorProvider>
 			{ isEnabled( 'pattern-assembler/client-side-render' ) ? (
 				<AsyncLoad require="./pattern-large-preview" { ...largePreviewProps } />
 			) : (
