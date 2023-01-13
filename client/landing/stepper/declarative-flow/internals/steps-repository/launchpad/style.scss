@@ -493,8 +493,7 @@
 		max-width: 95%;
 
 		@include break-large {
-			min-height: 585px;
-			height: calc(100% - 120px);
+			height: 880px;
 		}
 
 		.web-preview__frame-edit-overlay {
