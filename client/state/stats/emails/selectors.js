@@ -3,7 +3,18 @@ import { get } from 'lodash';
 import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
 import 'calypso/state/stats/init';
 
-function getDataPath( siteId, postId, period, statType, date ) {
+/**
+ * Returns an array containing the path the data is to be found at.
+ * Omits the date key when period is all time
+ *
+ * @param  {number}  siteId Site ID
+ * @param  {number}  postId Post Id
+ * @param  {string}  period The period (eg day, week, month, year)
+ * @param  {string}  statType The type of stat we are working with. For example: 'opens' for Email Open stats
+ * @param  {string|null?}  date The date of the stat
+ * @returns {Array}  The path to the data
+ */
+function getDataPath( siteId, postId, period, statType, date = null ) {
 	if ( period === PERIOD_ALL_TIME ) {
 		return [ siteId, postId, period, statType ];
 	}
@@ -17,7 +28,7 @@ function getDataPath( siteId, postId, period, statType, date ) {
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {number}  postId Post Id
- * @param  {number}  period The period (eg day, week, month, year)
+ * @param  {string}  period The period (eg day, week, month, year)
  * @param  {string}  statType The type of stat we are working with. For example: 'opens' for Email Open stats
  * @param  {string?}  date The date of the stat
  * @returns {boolean}        Whether email stat is being requested
@@ -59,7 +70,7 @@ export function isRequestingAlltimeEmailStats( state, siteId, postId, statType )
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {number}  postId Post Id
- * @param  {number}  period The period (eg day, week, month, year)
+ * @param  {string}  period The period (eg day, week, month, year)
  * @param  {string}  statType The type of stat we are working with. For example: 'opens' for Email Open stats
  * @param  {string}  date The date of the stat
  * @param {string}   path The path of the stat
