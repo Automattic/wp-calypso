@@ -111,11 +111,12 @@ const ProductLightbox: React.FC< Props > = ( {
 		} ) );
 	}, [ product.productSlug ] );
 
-	const shouldShowOptions =
-		product.productSlug !== PRODUCT_JETPACK_SOCIAL_ADVANCED ||
-		product.productSlug !== PRODUCT_JETPACK_SOCIAL_BASIC
-			? variantOptions.length > 1
-			: variantOptions.length > 1 && config.isEnabled( 'jetpack-social/advanced-plan' );
+	const shouldShowOptions = [
+		PRODUCT_JETPACK_SOCIAL_ADVANCED,
+		PRODUCT_JETPACK_SOCIAL_BASIC,
+	].includes( product.productSlug )
+		? variantOptions.length > 1 && config.isEnabled( 'jetpack-social/advanced-plan' )
+		: variantOptions.length > 1;
 
 	const isMultiSiteIncompatible = isMultisite && ! getIsMultisiteCompatible( product );
 
