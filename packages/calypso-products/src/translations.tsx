@@ -158,7 +158,8 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		},
 	} );
 	const boost = translate( 'Boost' );
-	const social = translate( 'Social', { context: 'Jetpack product name' } );
+	const socialBasic = translate( 'Social Basic', { context: 'Jetpack product name' } );
+	const socialAdvanced = translate( 'Social Advanced', { context: 'Jetpack product name' } );
 
 	const text10gb = translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
 		comment:
@@ -215,10 +216,10 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPress,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: social,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: social,
-		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: social,
-		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: social,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialBasic,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBasic,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvanced,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvanced,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ]: backupAddon10gb,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY ]: backupAddon100gb,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY ]: backupAddon1tb,

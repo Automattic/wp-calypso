@@ -240,7 +240,6 @@ const ProductLightbox: React.FC< Props > = ( {
 										/>
 									</div>
 									<p />
-									// eslint-disable-next-line jsx-a11y/click-events-have-key-events
 									<div
 										onClick={ () =>
 											onChangeSocialProductOption( JETPACK_SOCIAL_ADVANCED_PRODUCT.productSlug )
