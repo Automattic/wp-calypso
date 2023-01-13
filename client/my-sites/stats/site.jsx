@@ -40,6 +40,7 @@ import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HighlightsSection from './highlights-section';
+import MiniCarousel from './mini-carousel';
 import PromoCards from './promo-cards';
 import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
@@ -274,6 +275,8 @@ class StatsSite extends Component {
 						{ isSitePrivate ? this.renderPrivateSiteBanner( siteId, slug ) : null }
 						{ ! isSitePrivate && <StatsNoContentBanner siteId={ siteId } siteSlug={ slug } /> }
 					</>
+
+					{ config.isEnabled( 'stats-mini-carousel' ) && <MiniCarousel slug={ slug } /> }
 
 					<div className="stats__module-list stats__module-list--traffic is-events stats__module--unified">
 						{ config.isEnabled( 'newsletter/stats' ) && (
