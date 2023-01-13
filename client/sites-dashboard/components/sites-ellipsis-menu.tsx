@@ -134,7 +134,7 @@ const modalOverlayClassName = css( {
 } );
 
 function useSafeSiteHasFeature( siteId: number, feature: string ) {
-	const dispatch = useDispatch();
+	const dispatch = useReduxDispatch();
 	useEffect( () => {
 		dispatch( fetchSiteFeatures( siteId ) );
 	}, [ dispatch, siteId ] );
@@ -255,7 +255,7 @@ export const SitesEllipsisMenu = ( {
 	className?: string;
 	site: SiteExcerptData;
 } ) => {
-	const dispatch = useDispatch();
+	const dispatch = useReduxDispatch();
 	const { __ } = useI18n();
 	const props: SitesMenuItemProps = {
 		site,
