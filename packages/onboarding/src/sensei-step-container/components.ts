@@ -10,6 +10,11 @@ export const Container = styled.div`
 	align-items: center;
 	padding-top: 10px;
 	overflow-y: auto;
+	box-sizing: border-box;
+
+	* {
+		box-sizing: border-box;
+	}
 `;
 
 export const TitleContainer = styled.div`
