@@ -99,6 +99,9 @@ const linkInBio: Flow = {
 					return navigate( 'processing' );
 
 				case 'processing':
+					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
+						return window.location.replace( `/home/${ providedDependencies?.siteSlug }` );
+					}
 					if ( providedDependencies?.goToCheckout ) {
 						const destination = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
 						persistSignupDestination( destination );
@@ -114,6 +117,7 @@ const linkInBio: Flow = {
 							) }?redirect_to=${ returnUrl }&signup=1`
 						);
 					}
+
 					return navigate( `launchpad?siteSlug=${ providedDependencies?.siteSlug }` );
 
 				case 'launchpad': {
