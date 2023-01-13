@@ -284,15 +284,20 @@ describe( 'I18N: Editor', function () {
 			} );
 
 			it( 'Translations for Welcome Guide', async function () {
-				const frame = await editorPage.getEditorHandle();
+				const editorWindowLocator = editorPage.getEditorWindowLocator();
+
 				// We know these are all defined because of the filtering above. Non-null asserting is safe here.
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 				const etkTranslations = translations[ locale ]!.etkPlugin!;
 
 				await editorPage.openEditorOptionsMenu();
-				await frame.locator( etkTranslations.welcomeGuide.openGuideSelector ).click();
-				await frame.waitForSelector( etkTranslations.welcomeGuide.welcomeTitleSelector );
-				await frame.locator( etkTranslations.welcomeGuide.closeButtonSelector ).click();
+				await editorWindowLocator.locator( etkTranslations.welcomeGuide.openGuideSelector ).click();
+				await editorWindowLocator.locator(
+					etkTranslations.welcomeGuide.welcomeTitleSelector
+				).waitFor;
+				await editorWindowLocator
+					.locator( etkTranslations.welcomeGuide.closeButtonSelector )
+					.click();
 			} );
 		} );
 
@@ -311,11 +316,11 @@ describe( 'I18N: Editor', function () {
 				} );
 
 				it( 'Render block content translations', async function () {
-					frame = await editorPage.getEditorHandle();
+					const editorWindowLocator = editorPage.getEditorWindowLocator();
 					// Ensure block contents are translated as expected.
 					await Promise.all(
 						block.blockEditorContent.map( ( content ) =>
-							frame.waitForSelector( `${ block.blockEditorSelector } ${ content }` )
+							editorWindowLocator.locator( `${ block.blockEditorSelector } ${ content }` ).waitFor()
 						)
 					);
 				} );
