@@ -318,7 +318,7 @@ export default function WPCheckout( {
 									{ total.amount.displayValue }
 								</CheckoutSummaryTitlePrice>
 							</CheckoutSummaryTitleLink>
-							<CheckoutSummaryBody>
+							<CheckoutSummaryBody className="checkout__summary-body">
 								<WPCheckoutOrderSummary
 									siteId={ siteId }
 									onChangePlanLength={ changePlanLength }

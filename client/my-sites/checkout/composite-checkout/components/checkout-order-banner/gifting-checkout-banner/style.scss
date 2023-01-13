@@ -4,15 +4,27 @@
 
 .gifting-checkout-banner {
 	margin: 0 auto 32px;
-	height: 154px;
-	width: 905px;
 	background: url(calypso/assets/images/gifting/gifting-checkout-banner.jpg) no-repeat top left;
 	background-size: 905px 154px;
+	@media ( min-width: 700px ) {
+		height: 154px;
+		width: 554px;
+	}
+	@include break-large {
+		height: 154px;
+		width: 905px;
+	}
 }
 
 .gifting-checkout-banner div {
-	padding: 26px 52px;
-	width: 514px;
+	padding: 5px 20px;
+	@media ( min-width: 700px ) {
+		padding: 18px 26px;
+	}
+	@include break-large {
+		padding: 26px 52px;
+		width: 514px;
+	}
 }
 
 .gifting-checkout-banner h2 {
@@ -32,4 +44,14 @@
 	line-height: 24px;
 	color: var(--studio-gray-80);
 	letter-spacing: -0.32px;
+}
+
+body .gifting-checkout-banner + .composite-checkout .checkout__summary-area {
+	position: -webkit-sticky; /* Legacy Browsers */
+	position: sticky;
+	top: 79px;
+}
+body .gifting-checkout-banner + .composite-checkout .checkout__summary-body {
+	position: initial;
+	height: initial;
 }
