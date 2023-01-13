@@ -159,12 +159,10 @@ button {
 	}
 
 	.step-container {
-
 		.step-container__content h1,
 		.step-container__header h1.formatted-header__title {
 			font-size: $font-title-medium;
-			line-height: 1.2em;
-			/* stylelint-disable-line declaration-property-unit-allowed-list */
+			line-height: 1.2em; /* stylelint-disable-line declaration-property-unit-allowed-list */
 
 			@include break-medium {
 				font-size: $font-headline-medium;
@@ -222,15 +220,12 @@ button {
 						}
 					}
 				}
-
 				&:focus {
 					background-color: var(--studio-blue-50);
 					box-shadow: none;
-
 					svg {
 						fill: #fff;
 					}
-
 					span {
 						color: var(--studio-blue-50);
 					}
@@ -300,7 +295,7 @@ button {
 }
 
 
-@media (max-width: 660px) {
+@media ( max-width: 660px ) {
 	body.is-section-stepper .wpcom-site {
 		.inline-help {
 			bottom: 74px;

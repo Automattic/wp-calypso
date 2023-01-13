@@ -34,8 +34,8 @@ const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 	const urlQueryParams = useQuery();
 	const siteSlug = urlQueryParams.get( 'siteSlug' );
 	const sourceSlug = urlQueryParams.get( 'sourceSlug' );
-	const sourceSite = useSelect(
-		( select ) => sourceSlug && select( SITE_STORE ).getSite( sourceSlug )
+	const sourceSite = useSelect( ( select ) =>
+		sourceSlug ? select( SITE_STORE ).getSite( sourceSlug ) : undefined
 	);
 	const sourceSiteId = sourceSite?.ID;
 	const { setPendingAction, setProgress, setProgressTitle } = useDispatch( ONBOARD_STORE );

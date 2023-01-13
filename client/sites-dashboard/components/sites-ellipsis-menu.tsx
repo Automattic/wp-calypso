@@ -201,7 +201,7 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 			href={ copySiteHref }
 			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_copy_site' ) }
 		>
-			{ __( 'Create a copy of this site' ) }
+			{ __( 'Copy site' ) }
 		</MenuItemLink>
 	);
 };
