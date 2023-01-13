@@ -182,14 +182,19 @@ class DomainsStep extends Component {
 		return this.props.queryObject ? this.props.queryObject.theme : undefined;
 	};
 
+	getThemeStyle = () => {
+		return this.props.queryObject ? this.props.queryObject.style : undefined;
+	};
+
 	getThemeArgs = () => {
 		const themeSlug = this.getThemeSlug();
+		const themeStyle = this.getThemeStyle();
 		const themeSlugWithRepo = this.getThemeSlugWithRepo( themeSlug );
 		const theme = this.isPurchasingTheme()
 			? themeItem( themeSlug, 'signup-with-theme' )
 			: undefined;
 
-		return { themeSlug, themeSlugWithRepo, themeItem: theme };
+		return { themeSlug, themeSlugWithRepo, themeStyle, themeItem: theme };
 	};
 
 	getThemeSlugWithRepo = ( themeSlug ) => {
