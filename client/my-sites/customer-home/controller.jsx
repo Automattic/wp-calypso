@@ -1,5 +1,7 @@
 import { isEcommerce } from '@automattic/calypso-products/src';
 import page from 'page';
+import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
+import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
 	canCurrentUserUseCustomerHome,
@@ -63,8 +65,17 @@ export async function maybeRedirect( context, next ) {
 	// Temporary redirection until we create a dedicated Home for Ecommerce.
 	if ( isEcommerce( getSitePlan( state, siteId ) ) ) {
 		const siteUrl = getSiteUrl( state, siteId );
+
 		if ( siteUrl !== null ) {
-			window.location.replace( siteUrl + '/wp-admin/admin.php?page=wc-admin' );
+			// We need to make sure that sites on the eCommerce plan actually have WooCommerce installed before we redirect to the WooCommerce Home
+			// So we need to trigger a fetch of site plugins
+			await context.store.dispatch( fetchSitePlugins( siteId ) );
+
+			const refetchedState = context.store.getState();
+			const installedWooCommercePlugin = getPluginOnSite( refetchedState, siteId, 'woocommerce' );
+			if ( installedWooCommercePlugin && installedWooCommercePlugin.active ) {
+				window.location.replace( siteUrl + '/wp-admin/admin.php?page=wc-admin' );
+			}
 		}
 	}
 
