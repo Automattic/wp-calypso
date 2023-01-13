@@ -318,9 +318,14 @@ describe( 'I18N: Editor', function () {
 				it( 'Render block content translations', async function () {
 					editorWindowLocator = editorPage.getEditorWindowLocator();
 					// Ensure block contents are translated as expected.
+					// To deal with multiple potential matches (eg. Jetpack/Business Hours > Add Hours)
+					// the first locator is matched.
 					await Promise.all(
 						block.blockEditorContent.map( ( content ) =>
-							editorWindowLocator.locator( `${ block.blockEditorSelector } ${ content }` ).waitFor()
+							editorWindowLocator
+								.locator( `${ block.blockEditorSelector } ${ content }` )
+								.first()
+								.waitFor()
 						)
 					);
 				} );
