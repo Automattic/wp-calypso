@@ -10,7 +10,10 @@ import Gravatar from 'calypso/components/gravatar';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import JetpackSaleBanner from 'calypso/jetpack-cloud/sections/pricing/sale-banner';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { trailingslashit } from 'calypso/lib/route';
+import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 import { isJetpackCloudCartEnabled } from 'calypso/state/sites/selectors';
@@ -133,6 +136,22 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 
 	const shouldShowCart = useSelector( isJetpackCloudCartEnabled );
 
+	const windowBoundaryOffset = useMemo( () => {
+		if ( isJetpackCloud() || isConnectStore() ) {
+			return 0;
+		}
+
+		return 47;
+	}, [] );
+
+	const [ barRef, hasCrossed ] = useDetectWindowBoundary( windowBoundaryOffset );
+
+	const outerDivProps = barRef ? { ref: barRef as React.RefObject< HTMLDivElement > } : {};
+
+	const classes = classNames( 'header__content-background-wrapper', {
+		'header__content-background-wrapper--sticky': shouldShowCart && hasCrossed,
+	} );
+
 	const onLinkClick = useCallback( ( e ) => {
 		recordTracksEvent( 'calypso_jetpack_nav_item_click', {
 			nav_item: e.currentTarget
@@ -155,7 +174,8 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 			<div className="jpcom-masterbar">
 				<header className="header js-header force-opaque">
 					<div className="header__content-wrapper">
-						<div className="header__content-background-wrapper">
+						<div className="header__content-background-wrapper-sentinal" { ...outerDivProps }></div>
+						<div className={ classes }>
 							<nav className="header__content is-sticky">
 								<a className="header__skip" href={ `#${ MAIN_CONTENT_ID }` }>
 									{ translate( 'Skip to main content' ) }

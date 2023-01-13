@@ -24,7 +24,8 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSitePost } from 'calypso/state/posts/selectors';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { getEmailStat, isRequestingPeriodEmailStats } from 'calypso/state/stats/emails/selectors';
+import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
+import { getEmailStat, isRequestingEmailStats } from 'calypso/state/stats/emails/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DatePicker from '../stats-date-picker';
 import ChartTabs from '../stats-email-chart-tabs';
@@ -71,6 +72,7 @@ const CHART_UNIQUE_OPENS = {
 	label: translate( 'Unique opens', { context: 'noun' } ),
 };
 const CHARTS = [ CHART_OPENS, CHART_UNIQUE_OPENS ];
+
 Object.defineProperty( CHART_OPENS, 'label', {
 	get: () => translate( 'Opens', { context: 'noun' } ),
 } );
@@ -282,7 +284,7 @@ class StatsEmailOpenDetail extends Component {
 									statType="opens"
 									postId={ postId }
 									siteId={ siteId }
-									period={ period }
+									period={ PERIOD_ALL_TIME }
 									date={ queryDate }
 								/>
 
@@ -291,7 +293,7 @@ class StatsEmailOpenDetail extends Component {
 									statType="opens"
 									postId={ postId }
 									siteId={ siteId }
-									period={ period }
+									period={ PERIOD_ALL_TIME }
 									date={ queryDate }
 								/>
 
@@ -300,7 +302,7 @@ class StatsEmailOpenDetail extends Component {
 									statType="opens"
 									postId={ postId }
 									siteId={ siteId }
-									period={ period }
+									period={ PERIOD_ALL_TIME }
 									date={ queryDate }
 								/>
 							</div>
@@ -320,7 +322,7 @@ const connectComponent = connect(
 
 		return {
 			countViews: getEmailStat( state, siteId, postId, period, statType ),
-			isRequestingStats: isRequestingPeriodEmailStats(
+			isRequestingStats: isRequestingEmailStats(
 				state,
 				siteId,
 				postId,

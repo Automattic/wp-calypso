@@ -1,6 +1,14 @@
 import { createSelector } from '@automattic/state-utils';
 import { get } from 'lodash';
+import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
 import 'calypso/state/stats/init';
+
+function getDataPath( siteId, postId, period, statType, date ) {
+	if ( period === PERIOD_ALL_TIME ) {
+		return [ siteId, postId, period, statType ];
+	}
+	return [ siteId, postId, period, statType, date ];
+}
 
 /**
  * Returns true if current requesting email stat for the specified site ID,
@@ -11,14 +19,14 @@ import 'calypso/state/stats/init';
  * @param  {number}  postId Post Id
  * @param  {number}  period The period (eg day, week, month, year)
  * @param  {string}  statType The type of stat we are working with. For example: 'opens' for Email Open stats
- * @param  {string}  date The date of the stat
+ * @param  {string?}  date The date of the stat
  * @returns {boolean}        Whether email stat is being requested
  */
-export function isRequestingPeriodEmailStats( state, siteId, postId, period, statType, date ) {
+export function isRequestingEmailStats( state, siteId, postId, period, statType, date ) {
 	return state.stats.emails
 		? get(
 				state.stats.emails.requests,
-				[ siteId, postId, period, statType, date, 'requesting' ],
+				[ ...getDataPath( siteId, postId, period, statType, date ), 'requesting' ],
 				false
 		  )
 		: false;
@@ -38,7 +46,7 @@ export function isRequestingAlltimeEmailStats( state, siteId, postId, statType )
 	return state.stats.emails
 		? get(
 				state.stats.emails.requests,
-				[ siteId, postId, 'alltime', statType, 'requesting' ],
+				[ ...getDataPath( siteId, postId, PERIOD_ALL_TIME, statType, null ), 'requesting' ],
 				false
 		  )
 		: false;
@@ -60,14 +68,14 @@ export function isRequestingAlltimeEmailStats( state, siteId, postId, statType )
 export function shouldShowLoadingIndicator( state, siteId, postId, period, statType, date, path ) {
 	const stats = get(
 		state.stats.emails.items,
-		[ siteId, postId, period, statType, date, path ],
+		getDataPath( siteId, postId, period, statType, date, path ),
 		null
 	);
 	// if we have redux stats ready return false
 	if ( stats ) {
 		return false;
 	}
-	return isRequestingPeriodEmailStats( state, siteId, postId, period, statType, date );
+	return isRequestingEmailStats( state, siteId, postId, period, statType, date );
 }
 
 /**
@@ -165,7 +173,11 @@ export function getEmailStat( state, siteId, postId, period, statType ) {
  */
 export function getEmailStatsNormalizedData( state, siteId, postId, period, statType, date, path ) {
 	return state.stats.emails.items
-		? get( state.stats.emails.items, [ siteId, postId, period, statType, date, path ], null )
+		? get(
+				state.stats.emails.items,
+				[ ...getDataPath( siteId, postId, period, statType ), path ],
+				null
+		  )
 		: null;
 }
 
@@ -180,6 +192,6 @@ export function getEmailStatsNormalizedData( state, siteId, postId, period, stat
  */
 export function getAlltimeStats( state, siteId, postId, statType ) {
 	return state.stats.emails.items
-		? get( state.stats.emails.items, [ siteId, postId, 'alltime', statType ], null )
+		? get( state.stats.emails.items, [ siteId, postId, PERIOD_ALL_TIME, statType ], null )
 		: {};
 }

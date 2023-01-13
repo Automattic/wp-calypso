@@ -21,6 +21,7 @@ const LaunchpadSitePreview = ( {
 	const translate = useTranslate();
 	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 	const site = useSite();
+	const isInVideoPressFlow = isVideoPressFlow( flow );
 
 	let previewUrl = siteSlug ? 'https://' + siteSlug : null;
 	const devicesToShow: Device[] = [ DEVICE_TYPES.COMPUTER, DEVICE_TYPES.PHONE ];
@@ -29,7 +30,7 @@ const LaunchpadSitePreview = ( {
 		components: { strong: <strong /> },
 	} );
 
-	if ( isVideoPressFlow( flow ) ) {
+	if ( isInVideoPressFlow ) {
 		const windowWidth = window.innerWidth;
 		defaultDevice = windowWidth >= 1000 ? DEVICE_TYPES.COMPUTER : DEVICE_TYPES.PHONE;
 		const productSlug = site?.plan?.product_slug;
@@ -65,7 +66,7 @@ const LaunchpadSitePreview = ( {
 			hide_banners: true,
 			// hide cookies popup
 			preview: true,
-			do_preview_no_interactions: ! isVideoPressFlow,
+			do_preview_no_interactions: ! isInVideoPressFlow,
 			...( globalStylesInUse && shouldLimitGlobalStyles && { 'preview-global-styles': true } ),
 		} );
 	}

@@ -4,6 +4,7 @@ import {
 	EMAIL_STATS_REQUEST,
 	EMAIL_STATS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { items as itemSchemas } from './schema';
 
@@ -35,7 +36,7 @@ export const requests = ( state = {}, action ) => {
 			} )();
 
 			// don't set data key when period is alltime
-			if ( period === 'alltime' ) {
+			if ( period === PERIOD_ALL_TIME ) {
 				return merge( {}, state, {
 					[ siteId ]: {
 						[ postId ]: {

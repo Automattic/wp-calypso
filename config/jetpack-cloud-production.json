@@ -59,7 +59,7 @@
 		"realtime-site-count": true,
 		"site-indicator": false,
 		"upgrades/redirect-payments": false,
-		"jetpack/pricing-page-cart": false
+		"jetpack/pricing-page-cart": true
 	},
 	"enable_all_sections": false,
 	"sections": {

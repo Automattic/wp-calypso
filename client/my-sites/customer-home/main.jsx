@@ -23,6 +23,10 @@ import WooCommerceHomePlaceholder from 'calypso/my-sites/customer-home/wc-home-p
 import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
+import {
+	getPluginOnSite,
+	isRequesting as isRequestingInstalledPlugins,
+} from 'calypso/state/plugins/installed/selectors';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import {
@@ -36,6 +40,8 @@ import './style.scss';
 
 const Home = ( {
 	canUserUseCustomerHome,
+	hasWooCommerceInstalled,
+	isRequestingSitePlugins,
 	site,
 	siteId,
 	trackViewSiteAction,
@@ -79,7 +85,7 @@ const Home = ( {
 
 	// Ecommerce Plan's Home redirects to WooCommerce Home, so we show a placeholder
 	// while doing the redirection.
-	if ( isEcommerce( sitePlan ) ) {
+	if ( isEcommerce( sitePlan ) && ( isRequestingSitePlugins || hasWooCommerceInstalled ) ) {
 		return <WooCommerceHomePlaceholder />;
 	}
 
@@ -143,7 +149,9 @@ const Home = ( {
 
 Home.propTypes = {
 	canUserUseCustomerHome: PropTypes.bool.isRequired,
+	hasWooCommerceInstalled: PropTypes.bool.isRequired,
 	isStaticHomePage: PropTypes.bool.isRequired,
+	isRequestingSitePlugins: PropTypes.bool.isRequired,
 	site: PropTypes.object.isRequired,
 	siteId: PropTypes.number.isRequired,
 	trackViewSiteAction: PropTypes.func.isRequired,
@@ -152,6 +160,7 @@ Home.propTypes = {
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
+	const installedWooCommercePlugin = getPluginOnSite( state, siteId, 'woocommerce' );
 
 	return {
 		site: getSelectedSite( state ),
@@ -161,6 +170,8 @@ const mapStateToProps = ( state ) => {
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 		isStaticHomePage:
 			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
+		hasWooCommerceInstalled: !! ( installedWooCommercePlugin && installedWooCommercePlugin.active ),
+		isRequestingSitePlugins: isRequestingInstalledPlugins( state, siteId ),
 	};
 };
 
