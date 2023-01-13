@@ -50,7 +50,7 @@ export default function SiteStatusContent( {
 	);
 
 	// Disable clicks/hover when there is a site error &
-	// when the row it is not monitor and monitor status is down
+	// when the row is not monitor and monitor status is down
 	// since monitor is clickable when site is down.
 	const disabledStatus = siteError || ( type !== 'monitor' && siteDown );
 
@@ -150,12 +150,14 @@ export default function SiteStatusContent( {
 		'jetpack/partner-portal-downtime-monitoring-updates'
 	);
 
-	if ( isDownTimeMonitorEnabled && type === 'monitor' ) {
+	// We will show "Site Down" when the site is down which is handled differently.
+	if ( isDownTimeMonitorEnabled && type === 'monitor' && ! siteDown ) {
 		return (
 			<ToggleActivateMonitoring
 				site={ rows.site.value }
 				settings={ rows.monitor.settings }
 				status={ status }
+				siteError={ siteError }
 			/>
 		);
 	}

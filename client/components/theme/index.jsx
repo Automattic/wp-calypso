@@ -471,6 +471,24 @@ export class Theme extends Component {
 		);
 	};
 
+	renderMoreButton = () => {
+		const { active, buttonContents, index, theme, onMoreButtonClick } = this.props;
+		if ( isEmpty( buttonContents ) ) {
+			return null;
+		}
+
+		return (
+			<ThemeMoreButton
+				index={ index }
+				themeId={ theme.id }
+				themeName={ theme.name }
+				active={ active }
+				onMoreButtonClick={ onMoreButtonClick }
+				options={ buttonContents }
+			/>
+		);
+	};
+
 	softLaunchedBanner = () => {
 		const { translate } = this.props;
 
@@ -572,7 +590,11 @@ export class Theme extends Component {
 
 					{ this.softLaunchedBanner() }
 
-					<div className="theme__info">
+					<div
+						className={ classNames( 'theme__info', {
+							'has-pricing': !! upsellUrl,
+						} ) }
+					>
 						<h2 className="theme__info-title">{ name }</h2>
 						{ active && (
 							<span className="theme__badge-active">
@@ -592,16 +614,7 @@ export class Theme extends Component {
 										<span className="theme__info-upsell-description">{ translate( 'Free' ) }</span>
 								  ) ) }
 						{ isNewDetailsAndPreview && ! active && this.renderStyleVariations() }
-						{ ! isNewDetailsAndPreview && ! isEmpty( this.props.buttonContents ) ? (
-							<ThemeMoreButton
-								index={ this.props.index }
-								themeId={ this.props.theme.id }
-								themeName={ this.props.theme.name }
-								active={ this.props.active }
-								onMoreButtonClick={ this.props.onMoreButtonClick }
-								options={ this.props.buttonContents }
-							/>
-						) : null }
+						{ this.renderMoreButton() }
 					</div>
 				</div>
 			</Card>

@@ -31,9 +31,8 @@ const selectors = {
 
 	// Schedule
 	scheduleButton: `button.edit-post-post-schedule__toggle`,
-	scheduleInput: ( attribute: string ) => `role=spinbutton[name="${ attribute }"i]`,
+	scheduleInput: ( name: string ) => `.edit-post-post-schedule__dialog label:has-text("${ name }")`,
 	scheduleMeridianButton: ( meridian: 'am' | 'pm' ) => `role=button[name="${ meridian }"i]`,
-	scheduleMonthSelect: `role=combobox[name="month"i]`,
 
 	// Category
 	categoryCheckbox: ( categoryName: string ) =>
@@ -270,8 +269,8 @@ export class EditorSettingsSidebarComponent {
 			if ( key === 'month' ) {
 				// For month numbers less than 10, pad the digit to be
 				// 2 digits as required by the select.
-				const monthSelectLocator = this.editor.locator( selectors.scheduleMonthSelect );
-				await monthSelectLocator.selectOption( date[ key ].toString().padStart( 2, '0' ) );
+				const monthSelectLocator = this.editor.locator( selectors.scheduleInput( 'month' ) );
+				await monthSelectLocator.selectOption( ( date[ key ] + 1 ).toString().padStart( 2, '0' ) );
 				continue;
 			}
 			if ( key === 'date' ) {

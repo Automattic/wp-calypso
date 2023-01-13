@@ -173,20 +173,16 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 		// automatically. See: https://github.com/WordPress/gutenberg/pull/40195.
 		// This ends up triggering a `blur` event on the Modal that causes it
 		// to close just after the editor loads. To circumvent this, we check if
-		// the `blur` event is related to the title auto-focus and if so,
-		// we ignore it so that the Modal stays open. It's important to note
-		// that this callback handles more than the  event, though. See the
-		// `CloseModalEvent` type for more info.
-
-		// Let's narrow-down the types to be able to safely handle the `blur` scenario
-		// `KeyboardEvent` doesn't have a `relatedTarget` property, and the `MouseEvent`'s
-		// `relatedTarget` type doesn't have a `className` property, though for those events
-		// the Modal can just close and we don't need the piece of logic below:
-		if ( 'relatedTarget' in event && event.relatedTarget && 'className' in event.relatedTarget ) {
-			if ( event.relatedTarget?.className?.match( /wp-block-post-title/ ) ) {
-				event.stopPropagation();
-				return;
-			}
+		// the event is a `blur`, and if that's the case, we return before the
+		// function is able to close the modal. Originally, you can't click outside
+		// the modal to close it, meaning it doesn't respond to the `blur` event
+		// anyways, so it's safe to use this simpler approach instead of trying to
+		// check what element triggered the `blur` (which doesn't work when the
+		// theme is block-based, as the title block DOM element is not directly
+		// accessible as it's inside the `editor-canvas` iframe).
+		if ( event.type === 'blur' ) {
+			event.stopPropagation();
+			return;
 		}
 
 		trackDismiss();

@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import { compact, omit, pickBy } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -13,6 +13,8 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import SearchThemes from 'calypso/components/search-themes';
 import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -35,7 +37,9 @@ import {
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import { addTracking, trackClick, localizeThemesPath } from './helpers';
+import InstallThemeButton from './install-theme-button';
 import ThemePreview from './theme-preview';
+import ThemesHeader from './themes-header';
 import ThemesSelection from './themes-selection';
 import ThemesToolbarGroup from './themes-toolbar-group';
 
@@ -476,6 +480,21 @@ class ThemeShowcase extends Component {
 					title={ this.props.analyticsPageTitle }
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
+				<ThemesHeader
+					description={ translate(
+						'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="themes" showIcon={ false } />,
+							},
+						}
+					) }
+				>
+					<div className="themes__install-theme-button-container">
+						<InstallThemeButton />
+					</div>
+					<ScreenOptionsTab wpAdminPath="themes.php" />
+				</ThemesHeader>
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
 					<SearchThemes

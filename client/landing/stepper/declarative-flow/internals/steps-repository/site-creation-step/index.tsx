@@ -1,10 +1,12 @@
 import { Site } from '@automattic/data-stores';
 import {
 	ECOMMERCE_FLOW,
+	WOOEXPRESS_FLOW,
 	isLinkInBioFlow,
 	addPlanToCart,
 	createSiteWithCart,
 	isFreeFlow,
+	isMigrationFlow,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
@@ -35,21 +37,27 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 
 	const username = useSelector( ( state ) => getCurrentUserName( state ) );
 
-	const { setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction, setIsMigrateFromWp } = useDispatch( ONBOARD_STORE );
 
-	const theme = isLinkInBioFlow( flow ) ? 'pub/lynx' : 'pub/lettre';
+	let theme: string;
+	if ( isMigrationFlow( flow ) ) {
+		theme = 'pub/zoologist';
+	} else {
+		theme = isLinkInBioFlow( flow ) ? 'pub/lynx' : 'pub/lettre';
+	}
 	const isPaidDomainItem = Boolean( domainCartItem?.product_slug );
 
 	// Default visibility is public
 	let siteVisibility = Site.Visibility.PublicIndexed;
 
 	// Link-in-bio flow defaults to "Coming Soon"
-	if ( isLinkInBioFlow( flow ) || isFreeFlow( flow ) ) {
+	if ( isLinkInBioFlow( flow ) || isFreeFlow( flow ) || isMigrationFlow( flow ) ) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
 	}
 
-	// Ecommerce flow defaults to Private
-	if ( flow === ECOMMERCE_FLOW ) {
+	// Certain flows should default to private.
+	const privateFlows = [ ECOMMERCE_FLOW, WOOEXPRESS_FLOW ];
+	if ( privateFlows.includes( flow || '' ) ) {
 		siteVisibility = Site.Visibility.Private;
 	}
 
@@ -94,6 +102,10 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 	}
 
 	useEffect( () => {
+		if ( isMigrationFlow( flow ) ) {
+			setIsMigrateFromWp( true );
+		}
+
 		if ( submit ) {
 			setPendingAction( createSite );
 			submit();

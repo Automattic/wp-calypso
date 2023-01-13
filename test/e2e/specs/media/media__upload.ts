@@ -35,7 +35,7 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 	describe.each`
 		siteType       | accountName
 		${ 'Simple' }  | ${ 'defaultUser' }
-		${ 'Atomic' }  | ${ 'eCommerceUser' }
+		${ 'Atomic' }  | ${ 'atomicUser' }
 		${ 'Jetpack' } | ${ 'jetpackUser' }
 	`( 'Upload media files ($siteType)', ( { accountName } ) => {
 		let mediaPage: MediaPage;

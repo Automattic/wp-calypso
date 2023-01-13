@@ -14,9 +14,7 @@ const render = ( el, options ) =>
 
 const mockGoBack = jest.fn();
 jest.mock( 'page', () => ( { back: mockGoBack } ) );
-jest.mock( 'calypso/my-sites/people/people-list-item', () => ( { user } ) => (
-	<div data-testid="people-list-item">{ user?.ID }</div>
-) );
+jest.mock( 'calypso/data/external-contributors/use-external-contributors', () => () => false );
 
 describe( 'PeopleInviteDetails', () => {
 	let PeopleInviteDetails;
@@ -95,7 +93,7 @@ describe( 'PeopleInviteDetails', () => {
 			/>
 		);
 
-		const revokeInviteButton = screen.getByRole( 'button', { name: /^Revoke invite$/i } );
+		const revokeInviteButton = screen.getByRole( 'button', { name: /^Revoke$/i } );
 		expect( revokeInviteButton ).toBeVisible();
 
 		expect( mockDeleteInvite ).not.toHaveBeenCalled();
@@ -122,7 +120,7 @@ describe( 'PeopleInviteDetails', () => {
 			/>
 		);
 
-		const clearInviteButton = screen.getByRole( 'button', { name: /^Clear invite$/i } );
+		const clearInviteButton = screen.getByRole( 'button', { name: /^Clear$/i } );
 		expect( clearInviteButton ).toBeVisible();
 
 		expect( mockDeleteInvite ).not.toHaveBeenCalled();
@@ -154,8 +152,8 @@ describe( 'PeopleInviteDetails', () => {
 
 		// Verify that a placeholder is rendered while waiting for `page.back`
 		// to take effect.
-		const peopleListItem = screen.queryByTestId( 'people-list-item' );
-		expect( peopleListItem ).toBeEmptyDOMElement();
+		const loadingUsersEl2 = screen.queryByText( 'Loading Users' );
+		expect( loadingUsersEl2 ).toBeInTheDocument();
 
 		// Change another prop and verify that `page.back` isn't called again.
 		rerender( <PeopleInviteDetails { ...props } invite={ { ...acceptedInviteObject } } /> );

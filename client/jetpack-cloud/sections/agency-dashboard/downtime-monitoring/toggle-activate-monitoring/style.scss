@@ -26,6 +26,13 @@
 			}
 		}
 	}
+
+	&.sites-overview__disabled {
+		.components-form-toggle__input {
+			cursor: not-allowed;
+		}
+	}
+
 }
 
 .toggle-activate-monitoring__duration {

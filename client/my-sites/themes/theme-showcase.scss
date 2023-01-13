@@ -11,7 +11,6 @@ body.is-section-themes {
 	.layout:not(.has-no-sidebar) .layout__content {
 		padding-top: var(--masterbar-height);
 	}
-
 }
 
 .theme-showcase {
@@ -100,6 +99,22 @@ body.is-section-themes {
 			}
 		}
 	}
+
+	.themes__install-theme-button-container {
+		margin: 0;
+
+		.button {
+			border-radius: 4px;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+			box-sizing: border-box;
+			color: var(--color-neutral-100);
+			display: block;
+			font-size: 0.875rem;
+			line-height: 20px;
+			padding: 8px 16px;
+			white-space: nowrap;
+		}
+	}
 }
 
 body.is-section-themes-i4-2 {
@@ -118,12 +133,17 @@ body.is-section-themes-i4-2 {
 				border-bottom-right-radius: 2px;
 				box-sizing: content-box;
 				flex-direction: row;
-				gap: 0;
+				gap: 16px;
+				margin-top: 0;
 				padding: 4px 24px;
 			}
 
 			.theme__info-title {
 				color: var(--color-text-inverted);
+			}
+
+			.theme__more-button {
+				position: relative;
 			}
 		}
 
@@ -153,8 +173,14 @@ body.is-section-themes-i4-2 {
 			flex-wrap: wrap;
 			height: 48px;
 			gap: 4px;
-			padding-top: 16px;
+			margin-top: 16px;
 			position: relative;
+
+			&:not(.has-pricing) {
+				.theme__more-button {
+					top: 0;
+				}
+			}
 		}
 
 		.theme__info-title {
@@ -183,8 +209,18 @@ body.is-section-themes-i4-2 {
 			line-height: 24px;
 		}
 
+		.theme__badge-active {
+			background-color: var(--color-primary-0);
+			border-radius: 20px; /* stylelint-disable-line scales/radii */
+			color: var(--color-neutral-100);
+			font-size: 0.75rem;
+			line-height: 20px;
+			padding: 0 10px;
+			text-transform: none;
+		}
+
 		.theme__info-style-variations {
-			align-self: center;
+			align-content: center;
 			display: flex;
 			flex-basis: 100%;
 			font-size: 0;
@@ -195,14 +231,21 @@ body.is-section-themes-i4-2 {
 			}
 		}
 
-		.theme__badge-active {
-			background-color: var(--color-primary-0);
-			border-radius: 20px; /* stylelint-disable-line scales/radii */
-			color: var(--color-neutral-100);
-			font-size: 0.75rem;
-			line-height: 20px;
-			padding: 0 10px;
-			text-transform: none;
+		.theme__more-button {
+			bottom: 0;
+			border: 0;
+			height: 20px;
+			position: absolute;
+			right: 0;
+
+			&:hover {
+				background-color: transparent;
+			}
+
+			button {
+				font-size: 0;
+				padding: 0;
+			}
 		}
 	}
 
@@ -363,7 +406,6 @@ body.is-section-themes-i4-2 {
 }
 
 .theme-showcase__all-themes-title,
-.themes__themes-selection-header h2,
 .theme-showcase__all-themes-description {
 	margin-left: 16px;
 	margin-right: 16px;

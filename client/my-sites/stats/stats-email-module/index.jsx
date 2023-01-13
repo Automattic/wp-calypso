@@ -1,4 +1,3 @@
-import isShallowEqual from '@wordpress/is-shallow-equal';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -7,7 +6,7 @@ import statsStrings from 'calypso/my-sites/stats/stats-strings';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	getEmailStatsNormalizedData,
-	isRequestingEmailStats,
+	shouldShowLoadingIndicator,
 } from 'calypso/state/stats/emails/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Geochart from '../geochart';
@@ -26,7 +25,7 @@ class StatsEmailModule extends Component {
 		data: PropTypes.array,
 		query: PropTypes.object,
 		statType: PropTypes.string,
-		requesting: PropTypes.bool,
+		isLoading: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -34,34 +33,9 @@ class StatsEmailModule extends Component {
 		query: {},
 	};
 
-	state = {
-		loaded: false,
-	};
-
-	constructor( props ) {
-		super( props );
-
-		if ( ! props.requesting ) {
-			this.state.loaded = true;
-		}
-	}
-
-	componentDidUpdate( prevProps ) {
-		if ( ! this.props.requesting && prevProps.requesting ) {
-			// eslint-disable-next-line react/no-did-update-set-state
-			this.setState( { loaded: true } );
-		}
-
-		if ( ! isShallowEqual( this.props.query, prevProps.query ) && this.state.loaded ) {
-			// eslint-disable-next-line react/no-did-update-set-state
-			this.setState( { loaded: false } );
-		}
-	}
-
 	render() {
-		const { path, data, postId, statType, query } = this.props;
+		const { path, data, postId, statType, query, isLoading } = this.props;
 		// Only show loading indicators when nothing is in state tree, and request in-flight
-		const isLoading = ! this.state.loaded && ! ( data && data.length );
 		const moduleStrings = statsStrings()[ path ];
 		// TODO: Support error state in redux store
 		const hasError = false;
@@ -92,8 +66,8 @@ export default connect( ( state, ownProps ) => {
 	const { postId, period, date, statType, path } = ownProps;
 
 	return {
-		requesting: isRequestingEmailStats( state, siteId, postId, period, statType ),
-		data: getEmailStatsNormalizedData( state, siteId, postId, period, date, statType, path ),
+		isLoading: shouldShowLoadingIndicator( state, siteId, postId, period, statType, date, path ),
+		data: getEmailStatsNormalizedData( state, siteId, postId, period, statType, date, path ),
 		siteId,
 		postId,
 		siteSlug,

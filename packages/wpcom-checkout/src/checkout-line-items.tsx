@@ -5,6 +5,7 @@ import {
 	isMonthlyProduct,
 	isYearly,
 	isBiennially,
+	isTriennially,
 	isP2Plus,
 	isWpComPlan,
 	isJetpackSearch,
@@ -652,6 +653,10 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 		if ( isBiennially( product ) ) {
 			return <>{ translate( '%(sublabel)s: %(price)s per two years', options ) }</>;
 		}
+
+		if ( isTriennially( product ) ) {
+			return <>{ translate( '%(sublabel)s: %(price)s per three years', options ) }</>;
+		}
 	}
 
 	if (
@@ -792,7 +797,7 @@ function FirstTermDiscountCallout( { product }: { product: ResponseCartProduct }
 		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
 	}
 
-	if ( isBiennially( product ) ) {
+	if ( isBiennially( product ) || isTriennially( product ) ) {
 		return <DiscountCallout>{ translate( 'Discount for first term' ) }</DiscountCallout>;
 	}
 

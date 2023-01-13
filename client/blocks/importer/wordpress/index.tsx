@@ -1,8 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useSelect, useDispatch } from '@wordpress/data';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -12,6 +14,7 @@ import { ContentChooser } from './content-chooser';
 import ImportContentOnly from './import-content-only';
 import ImportEverything from './import-everything';
 import { WPImportOption } from './types';
+import { storeMigrateSource, retrieveMigrateSource } from './utils';
 
 import './style.scss';
 
@@ -40,12 +43,22 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	const isSiteAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isSiteJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const fromSiteAnalyzedData = useSelector( getUrlData );
+	const { setIsMigrateFromWp } = useDispatch( ONBOARD_STORE );
+	const isMigrateFromWp = useSelect( ( select ) => select( ONBOARD_STORE ).getIsMigrateFromWp() );
 
 	/**
 	 ↓ Effects
 	 */
 	useEffect( checkOptionQueryParam );
 	useEffect( checkImporterAvailability, [ siteId ] );
+	useEffect( () => {
+		if ( isMigrateFromWp ) {
+			storeMigrateSource();
+		}
+		if ( 'true' === retrieveMigrateSource() ) {
+			setIsMigrateFromWp( true );
+		}
+	}, [] );
 
 	/**
 	 ↓ Methods
@@ -131,6 +144,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 							targetSiteId={ siteId }
 							targetSiteSlug={ siteSlug }
 							stepNavigator={ stepNavigator }
+							isMigrateFromWp={ isMigrateFromWp }
 						/>
 					);
 				} else if ( WPImportOption.CONTENT_ONLY === option ) {

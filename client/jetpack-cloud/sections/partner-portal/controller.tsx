@@ -10,6 +10,7 @@ import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/lice
 import PartnerAccess from 'calypso/jetpack-cloud/sections/partner-portal/primary/partner-access';
 import PaymentMethodAdd from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-add';
 import PaymentMethodList from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-list';
+import Prices from 'calypso/jetpack-cloud/sections/partner-portal/primary/prices';
 import TermsOfServiceConsent from 'calypso/jetpack-cloud/sections/partner-portal/primary/terms-of-service-consent';
 import PartnerPortalSidebar from 'calypso/jetpack-cloud/sections/partner-portal/sidebar';
 import {
@@ -140,6 +141,13 @@ export function companyDetailsDashboardContext( context: PageJS.Context, next: (
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	context.primary = <CompanyDetailsDashboard />;
+	next();
+}
+
+export function pricesContext( context: PageJS.Context, next: () => void ): void {
+	context.header = <Header />;
+	context.secondary = <PartnerPortalSidebar path={ context.path } />;
+	context.primary = <Prices />;
 	next();
 }
 

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -43,9 +42,13 @@ class StatModuleChartTabs extends Component {
 		),
 		isActiveTabLoading: PropTypes.bool,
 		onChangeLegend: PropTypes.func.isRequired,
+		barClick: PropTypes.func,
+		chartData: PropTypes.array,
+		chartTab: PropTypes.string,
+		switchTab: PropTypes.func,
+		queryDate: PropTypes.string,
+		recordGoogleEvent: PropTypes.func,
 	};
-
-	intervalId = null;
 
 	onLegendClick = ( chartItem ) => {
 		const activeLegend = this.props.activeLegend.slice();
@@ -66,16 +69,12 @@ class StatModuleChartTabs extends Component {
 	};
 
 	render() {
-		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
-
 		const { isActiveTabLoading } = this.props;
 
-		//TODO Try to retire `.stats-module` and replace it with `.is-chart-tabs`.
 		const classes = [
 			'is-chart-tabs',
 			{
 				'is-loading': isActiveTabLoading,
-				'stats-module': ! isNewFeatured,
 			},
 		];
 
@@ -114,16 +113,23 @@ const NO_SITE_STATE = {
 };
 
 const connectComponent = connect(
-	( state, { activeLegend, period: { period }, chartTab, queryDate, postId, statType } ) => {
+	( state, { activeLegend, period: { period, endOf }, chartTab, queryDate, postId, statType } ) => {
 		const siteId = getSelectedSiteId( state );
 		if ( ! siteId ) {
 			return NO_SITE_STATE;
 		}
 
-		const quantity = 'year' === period ? 10 : 30;
+		const quantity = 'hour' === period ? 24 : 30;
 		const counts = getCountRecords( state, siteId, postId, period, statType );
 		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
-		const isActiveTabLoading = isLoadingTabs( state, siteId, postId, period, statType );
+		const isActiveTabLoading = isLoadingTabs(
+			state,
+			siteId,
+			postId,
+			period,
+			statType,
+			endOf.format( 'YYYY-MM-DD' )
+		);
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
 		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;

@@ -34,6 +34,7 @@ export class Banner extends Component {
 	static propTypes = {
 		callToAction: PropTypes.string,
 		className: PropTypes.string,
+		compactButton: PropTypes.bool,
 		description: PropTypes.node,
 		forceHref: PropTypes.bool,
 		disableCircle: PropTypes.bool,
@@ -81,6 +82,7 @@ export class Banner extends Component {
 		disableHref: false,
 		dismissTemporary: false,
 		compact: false,
+		compactButton: true,
 		horizontal: false,
 		jetpack: false,
 		isAtomic: false,
@@ -190,6 +192,7 @@ export class Banner extends Component {
 			renderListItem,
 			price,
 			primaryButton,
+			compactButton,
 			title,
 			target,
 			tracksImpressionName,
@@ -240,12 +243,12 @@ export class Banner extends Component {
 						) }
 						{ callToAction &&
 							( forceHref ? (
-								<Button compact primary={ primaryButton } target={ target }>
+								<Button compact={ compactButton } primary={ primaryButton } target={ target }>
 									{ preventWidows( callToAction ) }
 								</Button>
 							) : (
 								<Button
-									compact
+									compact={ compactButton }
 									href={ this.getHref() }
 									onClick={ this.handleClick }
 									primary={ primaryButton }

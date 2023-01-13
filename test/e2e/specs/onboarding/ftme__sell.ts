@@ -160,7 +160,7 @@ describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
 	} );
 
 	describe( 'Sell', function () {
-		const themeName = 'Dorna';
+		const themeName = 'Winkel';
 		let startSiteFlow: StartSiteFlow;
 
 		beforeAll( async function () {

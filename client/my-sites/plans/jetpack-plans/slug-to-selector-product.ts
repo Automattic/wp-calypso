@@ -28,6 +28,7 @@ import {
 	getJetpackProductWhatIsIncluded,
 	getJetpackProductBenefits,
 	getJetpackProductRecommendedFor,
+	TERM_TRIENNIALLY,
 } from '@automattic/calypso-products';
 import buildCardFeaturesFromItem from './build-card-features-from-item';
 import {
@@ -141,8 +142,8 @@ function itemToSelectorProduct(
 			yearlyProductSlug = PRODUCTS_LIST[ item.product_slug as JetpackProductSlug ].type;
 		}
 
-		// We do not support TERM_BIENNIALLY for Jetpack plans
-		if ( item.term === TERM_BIENNIALLY ) {
+		// We do not support TERM_BIENNIALLY or TERM_TRIENIALLY for Jetpack plans
+		if ( [ TERM_BIENNIALLY, TERM_TRIENNIALLY ].includes( item.term ) ) {
 			return null;
 		}
 
@@ -210,7 +211,7 @@ function itemToSelectorProduct(
 				? getForCurrentCROIteration( item.getRecommendedFor )
 				: [],
 			monthlyProductSlug,
-			term: item.term === TERM_BIENNIALLY ? TERM_ANNUALLY : item.term,
+			term: [ TERM_BIENNIALLY, TERM_TRIENNIALLY ].includes( item.term ) ? TERM_ANNUALLY : item.term,
 			features: {
 				items: buildCardFeaturesFromItem( item ),
 			},

@@ -7,6 +7,7 @@ import blazeDropDownIllustration from 'calypso/assets/images/illustrations/blaze
 import wordpressSeoIllustration from 'calypso/assets/images/illustrations/wordpress-seo-premium.svg';
 import PromoCardBlock from 'calypso/blocks/promo-card-block';
 import DotPager from 'calypso/components/dot-pager';
+import { PromoteWidgetStatus, usePromoteWidget } from 'calypso/lib/promote-post';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -29,9 +30,10 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 	const jetpackNonAtomic = useSelector(
 		( state ) => isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId )
 	);
+	const shouldShowAdvertisingOption = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 
 	// Blaze promo is disabled for Odyssey.
-	const showBlazePromo = ! isOdysseyStats;
+	const showBlazePromo = ! isOdysseyStats && shouldShowAdvertisingOption;
 	// Yoast promo is disabled for Odyssey & self-hosted & non-traffic pages.
 	const showYoastPromo = ! isOdysseyStats && ! jetpackNonAtomic && pageSlug === 'traffic';
 

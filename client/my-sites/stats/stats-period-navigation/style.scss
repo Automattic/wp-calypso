@@ -17,24 +17,6 @@
 		text-align: left;
 	}
 
-	.stats-period-navigation__previous,
-	.stats-period-navigation__next {
-		width: 24px;
-		height: 24px;
-		color: var(--color-neutral-90);
-		cursor: pointer;
-
-		&.is-disabled {
-			visibility: visible;
-			opacity: 0.2;
-			pointer-events: none;
-		}
-	}
-
-	.stats-period-navigation__next {
-		margin-left: 4px;
-	}
-
 	.stats-date-picker__refresh-status {
 		font-size: $font-body-small;
 		line-height: 16px;

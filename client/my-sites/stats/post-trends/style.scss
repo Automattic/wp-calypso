@@ -7,13 +7,21 @@ $font-label: "SF Pro Text", $sans;
 $mobile-layout-breakpoint: $break-small;
 $common-border-radius: 4px;
 $mobile-container-margin: 16px;
+$lowestLevelColor: var(--color-neutral-5);
 
 .post-trends {
-	display: inline-block;
-	user-select: none;
-	position: relative;
-	width: 100%;
+	border-bottom: 1px solid var(--studio-gray-5);
+	border-top: 1px solid var(--studio-gray-5);
 
+	.stats-heat-map__legend {
+		margin-bottom: 48px;
+	}
+
+	.stats-heat-map__legend-item {
+		&.level-1 {
+			background-color: $lowestLevelColor;
+		}
+	}
 }
 
 .post-trends__heading,
@@ -101,22 +109,19 @@ $mobile-container-margin: 16px;
 	width: 10px;
 	height: 10px;
 	border-radius: 2px;
-	background-color: var(--color-neutral-5);
+	background-color: $lowestLevelColor;
 
 	&:not(:first-child) {
 		margin-left: 2px;
 	}
-}
 
-.post-trends__day,
-.post-trends__key-day {
 	&.is-outside-month {
 		visibility: hidden;
 		border-color: var(--color-border-inverted);
 	}
 
 	&.is-today {
-		background-color: var(--color-neutral-5);
+		background-color: $lowestLevelColor;
 	}
 
 	&.is-after-today {
@@ -145,39 +150,6 @@ $mobile-container-margin: 16px;
 
 	.is-loading & {
 		animation: loading-fade 1.6s ease-in-out infinite;
-	}
-}
-
-.post-trends__key-container {
-	margin-top: 16px;
-	margin-bottom: 48px;
-	float: none;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.post-trends__key-label {
-	font-weight: 400;
-	font-size: $font-body-small;
-	line-height: 18px;
-	color: var(--color-text);
-	text-transform: none;
-	letter-spacing: normal;
-}
-
-.post-trends__key {
-	border-radius: $common-border-radius;
-	overflow: hidden;
-	padding: 0;
-	margin: 0 16px;
-	list-style-type: none;
-	display: flex;
-
-	.post-trends__key-day {
-		width: 25px;
-		height: 25px;
-		margin: 0;
 	}
 }
 

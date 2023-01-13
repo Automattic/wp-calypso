@@ -231,6 +231,8 @@ export const SitesEllipsisMenu = ( {
 		},
 	};
 
+	const showHosting = ! isNotAtomicJetpack( site ) && ! site.options?.is_wpforteams_site;
+
 	return (
 		<SiteDropdownMenu
 			icon={ <Gridicon icon="ellipsis" /> }
@@ -242,7 +244,7 @@ export const SitesEllipsisMenu = ( {
 					{ site.launch_status === 'unlaunched' && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
 					<ManagePluginsItem { ...props } />
-					{ ! isNotAtomicJetpack( site ) && <HostingConfigItem { ...props } /> }
+					{ showHosting && <HostingConfigItem { ...props } /> }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
 					<WpAdminItem { ...props } />
 				</SiteMenuGroup>

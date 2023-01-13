@@ -2,11 +2,15 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
-import { USER_STORE, ONBOARD_STORE } from '../stores';
+import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import AssignTrialPlanStep, {
+	AssignTrialResult,
+} from './internals/steps-repository/assign-trial-plan';
 import ErrorStep from './internals/steps-repository/error-step';
 import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
+import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 
@@ -17,6 +21,8 @@ const wooexpress: Flow = {
 		return [
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'processing', component: ProcessingStep },
+			{ slug: 'assignTrialPlan', component: AssignTrialPlanStep },
+			{ slug: 'waitForAtomic', component: WaitForAtomic },
 			{ slug: 'error', component: ErrorStep },
 		];
 	},
@@ -72,10 +78,9 @@ const wooexpress: Flow = {
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
 
 		const flowProgress = useSiteSetupFlowProgress( currentStep, intent, storeType );
+		setStepProgress( flowProgress );
 
-		if ( flowProgress ) {
-			setStepProgress( flowProgress );
-		}
+		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) );
 
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );
@@ -84,6 +89,7 @@ const wooexpress: Flow = {
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
 			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
+			const siteId = getSiteIdBySlug( siteSlug );
 
 			switch ( currentStep ) {
 				case 'siteCreationStep': {
@@ -97,7 +103,25 @@ const wooexpress: Flow = {
 						return navigate( 'error' );
 					}
 
-					return exitFlow( `/home/${ siteSlug }` );
+					if ( providedDependencies?.finishedWaitingForAtomic ) {
+						return exitFlow( `/home/${ siteSlug }` );
+					}
+
+					return navigate( 'assignTrialPlan', { siteSlug } );
+				}
+
+				case 'assignTrialPlan': {
+					const assignTrialResult = params[ 0 ] as AssignTrialResult;
+
+					if ( assignTrialResult === AssignTrialResult.FAILURE ) {
+						return navigate( 'error' );
+					}
+
+					return navigate( 'waitForAtomic', { siteId, siteSlug } );
+				}
+
+				case 'waitForAtomic': {
+					return navigate( 'processing' );
 				}
 			}
 		}

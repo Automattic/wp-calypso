@@ -271,7 +271,8 @@ button {
 	}
 }
 
-.free {
+.free,
+.free-post-setup {
 	.signup-header h1 {
 		display: none;
 	}
@@ -308,5 +309,11 @@ button {
 		flex-direction: column;
 		align-items: center;
 		margin-top: 25vh;
+	}
+}
+
+.wooexpress {
+	.flow-progress.progress-bar {
+		display: none;
 	}
 }

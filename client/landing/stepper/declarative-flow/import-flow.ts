@@ -20,6 +20,7 @@ import ImporterWix from './internals/steps-repository/importer-wix';
 import ImporterWordpress from './internals/steps-repository/importer-wordpress';
 import PatternAssembler from './internals/steps-repository/pattern-assembler';
 import ProcessingStep from './internals/steps-repository/processing-step';
+import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import { Flow, ProvidedDependencies } from './internals/types';
 
 const importFlow: Flow = {
@@ -41,6 +42,7 @@ const importFlow: Flow = {
 			{ slug: 'designSetup', component: DesignSetup },
 			{ slug: 'patternAssembler', component: PatternAssembler },
 			{ slug: 'processing', component: ProcessingStep },
+			{ slug: 'siteCreationStep', component: SiteCreationStep },
 		];
 	},
 
@@ -114,7 +116,14 @@ const importFlow: Flow = {
 				case 'patternAssembler':
 					return navigate( 'processing' );
 
+				case 'siteCreationStep':
+					return navigate( 'processing' );
+
 				case 'processing': {
+					if ( providedDependencies?.siteSlug ) {
+						const from = urlQueryParams.get( 'from' );
+						return navigate( `import?siteSlug=${ providedDependencies?.siteSlug }&from=${ from }` );
+					}
 					// End of Pattern Assembler flow
 					if ( selectedDesign?.design_type === 'assembler' ) {
 						return exitFlow( `/site-editor/${ siteSlugParam }` );
@@ -149,7 +158,7 @@ const importFlow: Flow = {
 				case 'importerSquarespace':
 				case 'importerWordpress':
 				case 'designSetup':
-					return navigate( 'import' );
+					return navigate( `import?siteSlug=${ siteSlugParam }` );
 			}
 		};
 
@@ -166,6 +175,8 @@ const importFlow: Flow = {
 			switch ( step ) {
 				case 'goals':
 					return exitFlow( `/setup/site-setup/goals?siteSlug=${ siteSlugParam }` );
+				case 'import':
+					return navigate( `import?siteSlug=${ siteSlugParam }` );
 				default:
 					return navigate( step );
 			}
