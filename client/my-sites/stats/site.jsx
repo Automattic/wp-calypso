@@ -202,6 +202,7 @@ class StatsSite extends Component {
 
 		return (
 			<div className="stats">
+				{ isOdysseyStats && <h1>This is Odyssey Stats!</h1> }
 				{ ! isOdysseyStats && (
 					<div className="stats-banner-wrapper">
 						<JetpackBackupCredsBanner event="stats-backup-credentials" />
