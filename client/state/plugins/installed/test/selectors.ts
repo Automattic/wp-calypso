@@ -229,9 +229,12 @@ describe( 'Installed plugin selectors', () => {
 
 		test( 'Should get the plugin if the it exists on the requested site', () => {
 			const plugin = selectors.getPluginOnSite( state, siteOneId, 'akismet' );
-			const siteWithPlugin = pick( akismet, [ 'active', 'autoupdate', 'update', 'version' ] );
-			const pluginProperties = omit( akismet, [ 'active', 'autoupdate', 'update', 'version' ] );
-			expect( plugin ).toEqual( { ...pluginProperties, ...siteWithPlugin } );
+			const siteProperties = pick( akismet, [ 'active', 'autoupdate', 'update', 'version' ] );
+			const expectedPlugin = {
+				...akismet,
+				...{ sites: { [ siteOneId ]: siteProperties } },
+			};
+			expect( plugin ).toEqual( expectedPlugin );
 		} );
 	} );
 
