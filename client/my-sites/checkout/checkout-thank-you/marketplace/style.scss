@@ -32,10 +32,12 @@
 	.thank-you__header-title {
 		font-size: $font-headline-medium;
 		line-height: 40px;
+		padding: 0 16px;
 	}
 
 	.thank-you__header-subtitle {
 		margin: 16px auto;
+		padding: 0 16px;
 		max-width: 500px;
 		line-height: 24px;
 		font-size: $font-body;
