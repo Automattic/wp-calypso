@@ -27,6 +27,7 @@ import type {
 	AtomicSoftwareStatus,
 	SiteSettings,
 	ThemeSetupOptions,
+	ActiveTheme,
 } from './types';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
@@ -208,6 +209,52 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		return globalStyles;
 	}
 
+	function* setGlobalStyles( siteSlug: string, globalStyleId: number, globalStyles: GlobalStyles ) {
+		const updatedGlobalStyles: GlobalStyles = yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent( siteSlug ) }/global-styles/${ globalStyleId }`,
+			apiNamespace: 'wp/v2',
+			method: 'POST',
+			body: {
+				id: globalStyleId,
+				settings: globalStyles.settings ?? {},
+				styles: globalStyles.styles ?? {},
+			},
+		} );
+
+		return updatedGlobalStyles;
+	}
+
+	function* getGlobalStylesId( siteSlug: string, stylesheet: string ) {
+		const theme: ActiveTheme = yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent( siteSlug ) }/themes/${ stylesheet }`,
+			method: 'GET',
+			apiNamespace: 'wp/v2',
+		} );
+
+		const globalStylesUrl = theme?._links?.[ 'wp:user-global-styles' ]?.[ 0 ]?.href;
+		if ( globalStylesUrl ) {
+			// eslint-disable-next-line no-useless-escape
+			const match = globalStylesUrl.match( /global-styles\/(?<id>[\/\w-]+)/ );
+			if ( match && match.groups ) {
+				return match.groups.id;
+			}
+		}
+
+		return null;
+	}
+
+	function* getGlobalStylesVariations( siteSlug: string, stylesheet: string ) {
+		const variations: GlobalStyles[] = yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent(
+				siteSlug
+			) }/global-styles/themes/${ stylesheet }/variations`,
+			method: 'GET',
+			apiNamespace: 'wp/v2',
+		} );
+
+		return variations;
+	}
+
 	function* saveSiteSettings(
 		siteId: number,
 		settings: {
@@ -299,16 +346,29 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		styleVariationSlug?: string,
 		keepHomepage = true
 	) {
-		yield wpcomRequest( {
+		const { stylesheet }: { stylesheet: string } = yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/themes/mine`,
 			apiVersion: '1.1',
 			body: {
 				theme: theme,
-				style_variation_slug: styleVariationSlug,
 				dont_change_homepage: keepHomepage,
 			},
 			method: 'POST',
 		} );
+
+		if ( styleVariationSlug ) {
+			const globalStylesId: number = yield getGlobalStylesId( siteSlug, stylesheet );
+			const variations: GlobalStyles[] = yield getGlobalStylesVariations( siteSlug, stylesheet );
+			const currentVariation = variations.find(
+				( variation ) =>
+					variation.title &&
+					variation.title.split( ' ' ).join( '_' ).toLowerCase() === styleVariationSlug
+			);
+
+			if ( currentVariation ) {
+				yield setGlobalStyles( siteSlug, globalStylesId, currentVariation );
+			}
+		}
 	}
 
 	function* runThemeSetupOnSite(
