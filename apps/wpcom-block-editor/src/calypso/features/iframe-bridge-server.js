@@ -1,15 +1,11 @@
 /* global calypsoifyGutenberg, Image, requestAnimationFrame */
 
 import { parse } from '@wordpress/blocks';
-import {
-	Button,
-	__experimentalNavigationBackButton as NavigationBackButton,
-} from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { dispatch, select, subscribe, use } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
 import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
-import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
@@ -25,12 +21,6 @@ import {
 	isEditorReadyWithBlocks,
 	sendMessage,
 } from '../../utils';
-/**
- * Conditional dependency.  We cannot use the standard 'import' since this package is
- * not available in the post editor and causes WSOD in that case.  Instead, we can
- * define it from 'require' and conditionally check if it is available for use.
- */
-const editSitePackage = require( '@wordpress/edit-site' );
 
 const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
 
@@ -456,46 +446,6 @@ function handleCloseEditor( calypsoPort ) {
 	};
 
 	handleCloseInLegacyEditors( dispatchAction );
-
-	// Add back to dashboard fill for Site Editor when edit-site package is available.
-	if ( editSitePackage ) {
-		registerPlugin( 'a8c-wpcom-block-editor-site-editor-back-to-dashboard-override', {
-			render: function SiteEditorCloseFill() {
-				const [ closeUrl, setCloseUrl ] = useState( calypsoifyGutenberg.closeUrl );
-
-				useEffect( () => {
-					addAction(
-						'updateCloseButtonOverrides',
-						'a8c/wpcom-block-editor/SiteEditorCloseFill',
-						( data ) => {
-							setCloseUrl( data.closeUrl );
-						}
-					);
-					return () =>
-						removeAction(
-							'updateCloseButtonOverrides',
-							'a8c/wpcom-block-editor/SiteEditorCloseFill'
-						);
-				} );
-				const SiteEditorDashboardFill = editSitePackage?.__experimentalMainDashboardButton;
-				if ( ! SiteEditorDashboardFill || ! NavigationBackButton ) {
-					return null;
-				}
-
-				return (
-					<SiteEditorDashboardFill>
-						<NavigationBackButton
-							backButtonLabel={ __( 'Dashboard' ) }
-							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-							className="edit-site-navigation-panel__back-to-dashboard"
-							href={ closeUrl }
-							onClick={ dispatchAction }
-						/>
-					</SiteEditorDashboardFill>
-				);
-			},
-		} );
-	}
 
 	if ( ! MainDashboardButton ) {
 		return;

@@ -3,7 +3,8 @@ import * as React from 'react';
 
 export type ThankYouNextStepProps = {
 	stepCta?: React.ReactNode | React.ReactFragment;
-	stepDescription: TranslateResult | React.ReactElement;
+	stepSection?: TranslateResult | React.ReactElement;
+	stepDescription?: TranslateResult | React.ReactElement;
 	stepKey: string;
 	stepTitle?: TranslateResult;
 	stepIcon?: React.ReactNode;

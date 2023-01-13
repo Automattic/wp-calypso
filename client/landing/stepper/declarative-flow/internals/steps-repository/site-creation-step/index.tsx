@@ -7,6 +7,7 @@ import {
 	createSiteWithCart,
 	isFreeFlow,
 	isMigrationFlow,
+	isCopySiteFlow,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
@@ -22,6 +23,8 @@ import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import type { Step } from '../../types';
 
 import './styles.scss';
+
+const DEFAULT_WP_SITE_THEME = 'pub/zoologist';
 
 const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } ) {
 	const { submit } = navigation;
@@ -40,8 +43,8 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 	const { setPendingAction, setIsMigrateFromWp } = useDispatch( ONBOARD_STORE );
 
 	let theme: string;
-	if ( isMigrationFlow( flow ) ) {
-		theme = 'pub/zoologist';
+	if ( isMigrationFlow( flow ) || isCopySiteFlow( flow ) ) {
+		theme = DEFAULT_WP_SITE_THEME;
 	} else {
 		theme = isLinkInBioFlow( flow ) ? 'pub/lynx' : 'pub/lettre';
 	}
