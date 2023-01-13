@@ -3,6 +3,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import {
+	isExternallyManagedTheme,
 	isPremiumThemeAvailable,
 	isThemeActive,
 	isThemeGutenbergFirst,
@@ -25,6 +26,15 @@ export function shouldShowTryAndCustomize( state, themeId, siteId ) {
 	 * If we're viewing a specific site and user does not have permissions, bail
 	 */
 	if ( siteId && ! canCurrentUser( state, siteId, 'edit_theme_options' ) ) {
+		return false;
+	}
+
+	/*
+	 * If this is a Marketplace theme, i.e. externally managed,
+	 * we can only show the customizer if the site is Atomic and has purchased the theme
+	 */
+	if ( isExternallyManagedTheme( state, themeId ) ) {
+		// TODO: isThemePurchased() only supports standard themes
 		return false;
 	}
 
