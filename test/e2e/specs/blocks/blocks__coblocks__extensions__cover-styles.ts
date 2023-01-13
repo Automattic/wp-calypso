@@ -13,7 +13,7 @@ import {
 	getTestAccountByFeature,
 	envToFeatureKey,
 } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
+import { Page, Browser, Locator } from 'playwright';
 import { skipDescribeIf } from '../../jest-helpers';
 import { TEST_IMAGE_PATH } from '../constants';
 
@@ -31,6 +31,7 @@ skipDescribeIf( features.siteType === 'atomic' )(
 		let editorPage: EditorPage;
 		let imageFile: TestFile;
 		let coverBlock: CoverBlock;
+		let editorWindowLocator: Locator;
 
 		beforeAll( async () => {
 			page = await browser.newPage();
@@ -57,8 +58,8 @@ skipDescribeIf( features.siteType === 'atomic' )(
 			await coverBlock.upload( imageFile.fullpath );
 			// After uploading the image the focus is switched to the inner
 			// paragraph block (Cover title), so we need to switch it back outside.
-			const editorFrame = await editorPage.getEditorHandle();
-			await editorFrame.click( '.wp-block-cover', { position: { x: 1, y: 1 } } );
+			editorWindowLocator = editorPage.getEditorWindowLocator();
+			await editorWindowLocator.locator( '.wp-block-cover' ).click( { position: { x: 1, y: 1 } } );
 		} );
 
 		it( 'Open settings sidebar', async function () {
@@ -66,8 +67,7 @@ skipDescribeIf( features.siteType === 'atomic' )(
 		} );
 
 		it.each( CoverBlock.coverStyles )( 'Verify "%s" style is available', async ( style ) => {
-			const editorFrame = await editorPage.getEditorHandle();
-			await editorFrame.waitForSelector( `button[aria-label="${ style }"]` );
+			await editorWindowLocator.locator( `button[aria-label="${ style }"]` ).waitFor();
 		} );
 
 		it( 'Set "Bottom Wave" style', async () => {

@@ -55,8 +55,8 @@ skipDescribeIf( features.siteType === 'atomic' )(
 		it.each( PricingTableBlock.gutterValues )(
 			'Verify "%s" gutter button is present',
 			async ( value ) => {
-				const editorFrame = await editorPage.getEditorHandle();
-				await editorFrame.waitForSelector( `button[aria-label="${ value }"]` );
+				const editorWindowLocator = editorPage.getEditorWindowLocator();
+				await editorWindowLocator.locator( `button[aria-label="${ value }"]` ).waitFor();
 			}
 		);
 
