@@ -1,7 +1,7 @@
-import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
+import ReaderAddIcon from 'calypso/reader/components/icons/add-icon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import ReaderSidebarHelper from '../helper';
@@ -25,7 +25,7 @@ const ReaderSidebarListsListItemCreateLink = ( props ) => {
 		<li className={ classes }>
 			<a className="sidebar__menu-link" href="/read/list/new" onClick={ handleListSidebarClick }>
 				<div className="sidebar__menu-item-title">
-					<Gridicon icon="add-outline" />{ ' ' }
+					<ReaderAddIcon />
 					<span className="sidebar__menu-item-title-text">
 						{ props.translate( 'Create new list' ) }
 					</span>
