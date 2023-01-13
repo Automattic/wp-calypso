@@ -69,10 +69,10 @@ const flows: Record< string, { [ step: string ]: number } > = {
 	},
 	[ COPY_SITE_FLOW ]: {
 		intro: 0,
-		siteCreationStep: 1,
+		'site-creation-step': 1,
 		processing: 1,
-		automatedCopy: 3,
-		processingCopy: 3,
+		'automated-copy': 3,
+		'processing-copy': 3,
 	},
 };
 

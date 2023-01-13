@@ -35,10 +35,10 @@ const copySite: Flow = {
 
 		return [
 			{ slug: 'intro', component: Intro },
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
+			{ slug: 'site-creation-step', component: SiteCreationStep },
 			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'automatedCopy', component: AutomatedCopySite },
-			{ slug: 'processingCopy', component: ProcessingStep },
+			{ slug: 'automated-copy', component: AutomatedCopySite },
+			{ slug: 'processing-copy', component: ProcessingStep },
 		];
 	},
 
@@ -72,15 +72,15 @@ const copySite: Flow = {
 			switch ( _currentStepSlug ) {
 				case 'intro': {
 					clearSignupDestinationCookie();
-					return navigate( 'siteCreationStep' );
+					return navigate( 'site-creation-step' );
 				}
 
-				case 'siteCreationStep': {
+				case 'site-creation-step': {
 					return navigate( 'processing' );
 				}
 
 				case 'processing': {
-					const destination = addQueryArgs( `/setup/${ this.name }/automatedCopy`, {
+					const destination = addQueryArgs( `/setup/${ this.name }/automated-copy`, {
 						sourceSlug: urlQueryParams.get( 'sourceSlug' ),
 						siteSlug: providedDependencies?.siteSlug,
 					} );
@@ -95,11 +95,11 @@ const copySite: Flow = {
 					);
 				}
 
-				case 'automatedCopy': {
-					return navigate( 'processingCopy' );
+				case 'automated-copy': {
+					return navigate( 'processing-copy' );
 				}
 
-				case 'processingCopy': {
+				case 'processing-copy': {
 					const processingResult = params[ 0 ] as ProcessingResult;
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
