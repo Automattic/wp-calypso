@@ -56,4 +56,9 @@ if ( config.isEnabled( 'themes/plugin-bundling' ) ) {
 		import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' );
 }
 
+if ( config.isEnabled( 'sites/copy-site' ) ) {
+	availableFlows[ 'copy-site' ] = () =>
+		import( /* webpackChunkName: "copy-site" */ '../declarative-flow/copy-site' );
+}
+
 export default availableFlows;

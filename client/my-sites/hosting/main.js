@@ -1,4 +1,5 @@
 import { PLAN_BUSINESS, FEATURE_SFTP } from '@automattic/calypso-products';
+import { englishLocales } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
@@ -70,6 +71,7 @@ class Hosting extends Component {
 			hasSftpFeature,
 			isDisabled,
 			isTransferring,
+			locale,
 			requestSiteById,
 			siteId,
 			siteSlug,
@@ -92,6 +94,9 @@ class Hosting extends Component {
 				}
 				treatmentExperience={ <HostingUpsellNudge siteId={ siteId } /> }
 				loadingExperience={ <Spinner className="hosting__upsell-experiment-spinner" /> }
+				options={ {
+					isEligible: englishLocales.includes( locale ),
+				} }
 			/>
 		);
 

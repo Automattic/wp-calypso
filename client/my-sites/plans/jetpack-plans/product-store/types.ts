@@ -79,6 +79,7 @@ export type StoreItemInfo = ReturnType< typeof useStoreItemInfo >;
 export type ItemPriceProps = ProductStoreBaseProps &
 	HeroImageProps & {
 		isOwned?: boolean;
+		isExpired?: boolean;
 		isIncludedInPlan?: boolean;
 		isMultiSiteIncompatible?: boolean;
 	};

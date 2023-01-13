@@ -21,7 +21,6 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
-import ThemesHeader from './themes-header';
 
 const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 	const { currentPlan, currentThemeId, isVip, requestingSitePlans, siteId, siteSlug, translate } =
@@ -82,7 +81,6 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 			{ isNewDetailsAndPreview && (
 				<BodySectionCssClass bodyClass={ [ 'is-section-themes-i4-2' ] } />
 			) }
-			<ThemesHeader />
 			<QueryActiveTheme siteId={ siteId } />
 			{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
 

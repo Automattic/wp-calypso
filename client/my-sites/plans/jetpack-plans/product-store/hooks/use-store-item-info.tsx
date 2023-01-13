@@ -91,10 +91,20 @@ export const useStoreItemInfo = ( {
 			if ( sitePlan && sitePlan.product_slug === item.productSlug ) {
 				return true;
 			} else if ( siteProducts ) {
-				return siteProducts
-					.filter( ( product ) => ! product.expired )
-					.map( ( product ) => product.productSlug )
-					.includes( item.productSlug );
+				return siteProducts.map( ( product ) => product.productSlug ).includes( item.productSlug );
+			}
+			return false;
+		},
+		[ sitePlan, siteProducts ]
+	);
+
+	const getIsExpired = useCallback(
+		( item: SelectorProduct ) => {
+			if ( sitePlan && sitePlan.product_slug === item.productSlug ) {
+				return !! sitePlan.expired;
+			} else if ( siteProducts ) {
+				return !! siteProducts.find( ( product ) => product.productSlug === item.productSlug )
+					?.expired;
 			}
 			return false;
 		},
@@ -333,6 +343,7 @@ export const useStoreItemInfo = ( {
 			getIsIncludedInPlanOrSuperseded,
 			getIsMultisiteCompatible,
 			getIsOwned,
+			getIsExpired,
 			getIsPlanFeature,
 			getIsSuperseded,
 			getIsUpgradeableToYearly,
@@ -350,6 +361,7 @@ export const useStoreItemInfo = ( {
 			getIsIncludedInPlan,
 			getIsIncludedInPlanOrSuperseded,
 			getIsOwned,
+			getIsExpired,
 			getIsPlanFeature,
 			getIsSuperseded,
 			getIsUpgradeableToYearly,

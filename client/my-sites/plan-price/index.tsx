@@ -1,14 +1,12 @@
 import { getCurrencyObject } from '@automattic/format-currency';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { Component, createElement } from 'react';
 import Badge from 'calypso/components/badge';
-import type { CurrencyObject } from '@automattic/format-currency';
-import type { LocalizeProps } from 'i18n-calypso';
 
 import './style.scss';
 
-export class PlanPrice extends Component< PlanPriceProps & LocalizeProps > {
+export class PlanPrice extends Component< PlanPriceProps > {
 	render() {
 		const {
 			currencyCode = 'USD',
@@ -21,7 +19,6 @@ export class PlanPrice extends Component< PlanPriceProps & LocalizeProps > {
 			productDisplayPrice,
 			isOnSale,
 			taxText,
-			translate,
 			omitHeading,
 			is2023OnboardingPricingGrid,
 		} = this.props;
@@ -59,96 +56,34 @@ export class PlanPrice extends Component< PlanPriceProps & LocalizeProps > {
 			return null;
 		}
 
-		const priceRange: PriceRangeData[] = rawPriceRange.map( ( item ) => {
-			return {
-				price: getCurrencyObject( item, currencyCode ),
-				raw: item,
-			};
-		} );
-
-		const renderPrice = ( priceObj: PriceRangeData ) => {
-			if ( ! Number.isInteger( priceObj.raw ) ) {
-				return `${ priceObj.price.integer }${ priceObj.price.fraction }`;
-			}
-			return priceObj.price.integer;
-		};
-
 		if ( displayFlatPrice ) {
-			const smallerPrice = renderPrice( priceRange[ 0 ] );
-			const higherPrice = priceRange[ 1 ] && renderPrice( priceRange[ 1 ] );
-
 			return (
-				<span className={ classes }>
-					{ priceRange[ 0 ].price.symbol }
-					{ ! higherPrice && renderPrice( priceRange[ 0 ] ) }
-					{ higherPrice &&
-						translate( '%(smallerPrice)s-%(higherPrice)s', {
-							args: { smallerPrice, higherPrice },
-							comment: 'The price range for a particular product',
-						} ) }
-				</span>
+				<FlatPriceDisplay
+					smallerPrice={ rawPriceRange[ 0 ] }
+					higherPrice={ rawPriceRange[ 1 ] }
+					currencyCode={ currencyCode }
+					className={ classes }
+				/>
 			);
 		}
 
-		const renderPriceHtml = ( priceObj: PriceRangeData ) => {
-			const hasFraction = ! Number.isInteger( priceObj.raw );
-
-			if ( is2023OnboardingPricingGrid ) {
-				return (
-					<div className="plan-price__integer-fraction">
-						<span className="plan-price__integer">{ priceObj.price.integer }</span>
-						<sup className="plan-price__fraction">{ hasFraction && priceObj.price.fraction }</sup>
-					</div>
-				);
-			}
-
-			return (
-				<>
-					<span className="plan-price__integer">{ priceObj.price.integer }</span>
-					<sup className="plan-price__fraction">{ hasFraction && priceObj.price.fraction }</sup>
-				</>
-			);
-		};
-
-		const saleBadgeText = translate( 'Sale', {
-			comment: 'Shown next to a domain that has a special discounted sale price',
-		} );
-
-		const smallerPriceHtml = renderPriceHtml( priceRange[ 0 ] );
-		const higherPriceHtml = priceRange[ 1 ] && renderPriceHtml( priceRange[ 1 ] );
-
-		return createElement(
-			tagName,
-			{ className: classes },
-			<>
-				<sup className="plan-price__currency-symbol">{ priceRange[ 0 ].price.symbol }</sup>
-				{ ! higherPriceHtml && renderPriceHtml( priceRange[ 0 ] ) }
-				{ higherPriceHtml &&
-					translate( '{{smallerPrice/}}-{{higherPrice/}}', {
-						components: { smallerPrice: smallerPriceHtml, higherPrice: higherPriceHtml },
-						comment: 'The price range for a particular product',
-					} ) }
-				{ taxText && (
-					<sup className="plan-price__tax-amount">
-						{ translate( '(+%(taxText)s tax)', { args: { taxText } } ) }
-					</sup>
-				) }
-				{ displayPerMonthNotation && (
-					<span className="plan-price__term">
-						{ translate( 'per{{newline/}}month', {
-							components: { newline: <br /> },
-							comment:
-								'Displays next to the price. You can remove the "{{newline/}}" if it is not proper for your language.',
-						} ) }
-					</span>
-				) }
-				{ isOnSale && <Badge>{ saleBadgeText }</Badge> }
-			</>
+		return (
+			<MultiPriceDisplay
+				className={ classes }
+				tagName={ tagName }
+				smallerPrice={ rawPriceRange[ 0 ] }
+				higherPrice={ rawPriceRange[ 1 ] }
+				currencyCode={ currencyCode }
+				taxText={ taxText }
+				displayPerMonthNotation={ displayPerMonthNotation }
+				isOnSale={ isOnSale }
+				is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+			/>
 		);
 	}
 }
 
-export default localize( PlanPrice );
+export default PlanPrice;
 
 export interface PlanPriceProps {
 	/**
@@ -249,7 +184,161 @@ export interface PlanPriceProps {
 	is2023OnboardingPricingGrid?: boolean;
 }
 
-interface PriceRangeData {
-	price: CurrencyObject;
-	raw: number;
+function renderBasicPrice( price: number, currencyCode: string ): string {
+	const priceObj = getCurrencyObject( price, currencyCode );
+	if ( ! Number.isInteger( price ) ) {
+		return `${ priceObj.integer }${ priceObj.fraction }`;
+	}
+	return priceObj.integer;
+}
+
+function FlatPriceDisplay( {
+	smallerPrice,
+	higherPrice,
+	currencyCode,
+	className,
+}: {
+	smallerPrice: number;
+	higherPrice?: number;
+	currencyCode: string;
+	className?: string;
+} ) {
+	const { symbol: currencySymbol } = getCurrencyObject( smallerPrice, currencyCode );
+	const translate = useTranslate();
+
+	// TODO: render currencySymbol on the localized side (before or after) of
+	// the price. We can use `symbolPosition` from `getCurrencyObject`.
+	if ( ! higherPrice ) {
+		return (
+			<span className={ className }>
+				{ currencySymbol }
+				{ renderBasicPrice( smallerPrice, currencyCode ) }
+			</span>
+		);
+	}
+
+	return (
+		<span className={ className }>
+			{ currencySymbol }
+			{ translate( '%(smallerPrice)s-%(higherPrice)s', {
+				args: {
+					smallerPrice: renderBasicPrice( smallerPrice, currencyCode ),
+					higherPrice: renderBasicPrice( higherPrice, currencyCode ),
+				},
+				comment: 'The price range for a particular product',
+			} ) }
+		</span>
+	);
+}
+
+function MultiPriceDisplay( {
+	tagName,
+	className,
+	smallerPrice,
+	higherPrice,
+	currencyCode,
+	taxText,
+	displayPerMonthNotation,
+	isOnSale,
+	is2023OnboardingPricingGrid,
+}: {
+	tagName: 'h4' | 'span';
+	className?: string;
+	smallerPrice: number;
+	higherPrice?: number;
+	currencyCode: string;
+	taxText?: string;
+	displayPerMonthNotation?: boolean;
+	isOnSale?: boolean;
+	is2023OnboardingPricingGrid?: boolean;
+} ) {
+	const { symbol: currencySymbol } = getCurrencyObject( smallerPrice, currencyCode );
+	const translate = useTranslate();
+
+	// TODO: render currencySymbol on the localized side (before or after) of
+	// the price. We can use `symbolPosition` from `getCurrencyObject`.
+	return createElement(
+		tagName,
+		{ className },
+		<>
+			<sup className="plan-price__currency-symbol">{ currencySymbol }</sup>
+			{ ! higherPrice && (
+				<HtmlPriceDisplay
+					price={ smallerPrice }
+					currencyCode={ currencyCode }
+					is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+				/>
+			) }
+			{ higherPrice &&
+				translate( '{{smallerPrice/}}-{{higherPrice/}}', {
+					components: {
+						smallerPrice: (
+							<HtmlPriceDisplay
+								price={ smallerPrice }
+								currencyCode={ currencyCode }
+								is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+							/>
+						),
+						higherPrice: (
+							<HtmlPriceDisplay
+								price={ higherPrice }
+								currencyCode={ currencyCode }
+								is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+							/>
+						),
+					},
+					comment: 'The price range for a particular product',
+				} ) }
+			{ taxText && (
+				<sup className="plan-price__tax-amount">
+					{ translate( '(+%(taxText)s tax)', { args: { taxText } } ) }
+				</sup>
+			) }
+			{ displayPerMonthNotation && (
+				<span className="plan-price__term">
+					{ translate( 'per{{newline/}}month', {
+						components: { newline: <br /> },
+						comment:
+							'Displays next to the price. You can remove the "{{newline/}}" if it is not proper for your language.',
+					} ) }
+				</span>
+			) }
+			{ isOnSale && (
+				<Badge>
+					{ translate( 'Sale', {
+						comment: 'Shown next to a domain that has a special discounted sale price',
+					} ) }
+				</Badge>
+			) }
+		</>
+	);
+}
+
+function HtmlPriceDisplay( {
+	price,
+	currencyCode,
+	is2023OnboardingPricingGrid,
+}: {
+	price: number;
+	currencyCode: string;
+	is2023OnboardingPricingGrid?: boolean;
+} ) {
+	const hasFraction = ! Number.isInteger( price );
+	const priceObj = getCurrencyObject( price, currencyCode );
+
+	if ( is2023OnboardingPricingGrid ) {
+		return (
+			<div className="plan-price__integer-fraction">
+				<span className="plan-price__integer">{ priceObj.integer }</span>
+				<sup className="plan-price__fraction">{ hasFraction && priceObj.fraction }</sup>
+			</div>
+		);
+	}
+
+	return (
+		<>
+			<span className="plan-price__integer">{ priceObj.integer }</span>
+			<sup className="plan-price__fraction">{ hasFraction && priceObj.fraction }</sup>
+		</>
+	);
 }
