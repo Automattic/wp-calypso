@@ -82,9 +82,10 @@ class ThemePreview extends Component {
 	renderPrimaryButton = () => {
 		const primaryOption = this.getPrimaryOption();
 		const styleVariationOption = this.getStyleVariationOption();
-		const buttonHref = primaryOption.getUrl
-			? primaryOption.getUrl( this.props.themeId, styleVariationOption )
-			: null;
+		let buttonHref = primaryOption.getUrl ? primaryOption.getUrl( this.props.themeId ) : null;
+		if ( buttonHref && styleVariationOption ) {
+			buttonHref += `&style=${ styleVariationOption.slug }`;
+		}
 
 		return (
 			<Button primary onClick={ this.onPrimaryButtonClick } href={ buttonHref }>
@@ -95,14 +96,15 @@ class ThemePreview extends Component {
 
 	renderSecondaryButton = () => {
 		const secondaryButton = this.getSecondaryOption();
-		const styleVariationOption = this.getStyleVariationOption();
 		if ( ! secondaryButton ) {
 			return;
 		}
 
-		const buttonHref = secondaryButton.getUrl
-			? secondaryButton.getUrl( this.props.themeId, styleVariationOption )
-			: null;
+		const styleVariationOption = this.getStyleVariationOption();
+		let buttonHref = secondaryButton.getUrl ? secondaryButton.getUrl( this.props.themeId ) : null;
+		if ( buttonHref && styleVariationOption ) {
+			buttonHref += `&style=${ styleVariationOption.slug }`;
+		}
 
 		return (
 			<Button onClick={ this.onSecondaryButtonClick } href={ buttonHref }>
