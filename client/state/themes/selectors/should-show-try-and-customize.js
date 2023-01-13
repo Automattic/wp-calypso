@@ -4,6 +4,7 @@ import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import {
 	isExternallyManagedTheme,
+	isFullSiteEditingTheme,
 	isMarketplaceThemeSubscribed,
 	isPremiumThemeAvailable,
 	isThemeActive,
@@ -13,6 +14,10 @@ import {
 } from 'calypso/state/themes/selectors';
 
 import 'calypso/state/themes/init';
+
+function shouldShowSiteEditor( state, themeId ) {
+	return isThemeGutenbergFirst( state, themeId ) || isFullSiteEditingTheme( state, themeId );
+}
 
 /**
  * Returns whether we should hide the "Try & Customize" action for a theme.
@@ -32,13 +37,19 @@ export function shouldShowTryAndCustomize( state, themeId, siteId ) {
 
 	/*
 	 * If this is a Marketplace theme, i.e. externally managed,
-	 * we can only show the customizer if the site is Atomic and has purchased the theme
+	 * we should only show the customizer if _all_ of the following are true:
+	 *  - the site is Atomic
+	 *  - the site has a subscription for the theme
+	 *  - the theme is not Gutenberg-first
+	 *  - the theme is not the currently active theme
 	 */
 	if ( isExternallyManagedTheme( state, themeId ) ) {
 		return (
 			siteId &&
 			isSiteWpcomAtomic( state, siteId ) &&
-			isMarketplaceThemeSubscribed( state, themeId, siteId )
+			isMarketplaceThemeSubscribed( state, themeId, siteId ) &&
+			! shouldShowSiteEditor( state, themeId ) &&
+			! isThemeActive( state, themeId, siteId )
 		);
 	}
 
@@ -64,7 +75,7 @@ export function shouldShowTryAndCustomize( state, themeId, siteId ) {
 
 	return (
 		isUserLoggedIn( state ) && // User is logged in
-		! isThemeGutenbergFirst( state, themeId ) && // Theme is not Gutenberg first
+		! shouldShowSiteEditor( state, themeId ) && // We shouldn't show the site editor for the theme
 		! isThemeActive( state, themeId, siteId ) // Theme is not currently active
 	);
 }
