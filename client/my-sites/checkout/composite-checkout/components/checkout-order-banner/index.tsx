@@ -1,5 +1,4 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
-import * as React from 'react';
 import { GiftingCheckoutBanner } from 'calypso/my-sites/checkout/composite-checkout/components/checkout-order-banner/gifting-checkout-banner';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 
