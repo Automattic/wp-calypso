@@ -96,9 +96,14 @@ const free: Flow = {
 					return navigate( 'processing' );
 
 				case 'processing':
+					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
+						return window.location.replace( `/home/${ providedDependencies?.siteSlug }` );
+					}
+
 					if ( selectedDesign ) {
 						return navigate( `launchpad?siteSlug=${ siteSlug }` );
 					}
+
 					return navigate( `designSetup?siteSlug=${ providedDependencies?.siteSlug }` );
 
 				case 'designSetup':
