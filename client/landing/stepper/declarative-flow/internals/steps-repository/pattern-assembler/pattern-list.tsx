@@ -12,7 +12,6 @@ interface Props {
 	stylesheet: string;
 	patterns: Pattern[];
 	selectedPattern: Pattern | null;
-	show: boolean;
 	activeClassName: string;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 }
@@ -21,7 +20,6 @@ const PatternList = ( {
 	stylesheet,
 	patterns,
 	selectedPattern,
-	show,
 	activeClassName,
 	onSelect,
 }: Props ) => {
@@ -43,7 +41,6 @@ const PatternList = ( {
 				patternName={ pattern.category }
 			>
 				<Button
-					tabIndex={ show ? 0 : -1 }
 					title={ pattern.category }
 					className={ classnames( 'pattern-list__pattern', {
 						[ activeClassName ]: pattern.id === selectedPattern?.id,
