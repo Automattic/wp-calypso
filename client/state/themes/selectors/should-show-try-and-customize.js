@@ -4,6 +4,7 @@ import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import {
 	isExternallyManagedTheme,
+	isMarketplaceThemeSubscribed,
 	isPremiumThemeAvailable,
 	isThemeActive,
 	isThemeGutenbergFirst,
@@ -34,8 +35,11 @@ export function shouldShowTryAndCustomize( state, themeId, siteId ) {
 	 * we can only show the customizer if the site is Atomic and has purchased the theme
 	 */
 	if ( isExternallyManagedTheme( state, themeId ) ) {
-		// TODO: isThemePurchased() only supports standard themes
-		return false;
+		return (
+			siteId &&
+			isSiteWpcomAtomic( state, siteId ) &&
+			isMarketplaceThemeSubscribed( state, themeId, siteId )
+		);
 	}
 
 	/*
