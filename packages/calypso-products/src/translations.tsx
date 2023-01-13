@@ -794,6 +794,11 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Manage all of your channels from a single hub' ),
 		translate( 'Scheduled posts' ),
 		translate( 'Share to Twitter, Facebook, LinkedIn, and Tumblr' ),
+		translate( 'Engagement Optimizer' ),
+		translate( 'Recycle content' ),
+		translate( 'Image generator' ),
+		translate( 'Multi-image sharing' ),
+		translate( 'Video sharing' ),
 	];
 
 	return {
@@ -884,6 +889,13 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Unlock your growth potential by building a following on social media' ),
 		translate( 'Easy-to-use interface' ),
 		translate( 'No developer required' ),
+		translate( 'Enhance social media engagement with personalized posts' ),
+		translate( 'Repurpose, reuse or republish already published content' ),
+		translate(
+			'Coming soon: Automatically create custom images, saving you hours of tedious work'
+		),
+		translate( 'Coming soon: share multiple images at once on social media platforms' ),
+		translate( 'Coming soon: Upload and share videos to your social platforms' ),
 	];
 
 	return {
