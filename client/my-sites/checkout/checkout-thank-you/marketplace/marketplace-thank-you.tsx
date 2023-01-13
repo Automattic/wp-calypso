@@ -203,7 +203,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		sectionKey: 'plugin_information',
 		nextSteps: pluginInformationList.map( ( plugin: any ) => ( {
 			stepKey: `plugin_information_${ plugin.slug }`,
-			stepDescription: <ThankYouPluginSection plugin={ plugin } />,
+			stepSection: <ThankYouPluginSection plugin={ plugin } />,
 		} ) ),
 	};
 

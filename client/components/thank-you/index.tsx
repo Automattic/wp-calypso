@@ -88,15 +88,18 @@ const ThankYouNotice = ( props: ThankYouNoticeProps ) => {
 };
 
 const ThankYouNextStep = ( props: ThankYouNextStepProps ) => {
-	const { stepIcon, stepCta, stepDescription, stepKey, stepTitle } = props;
+	const { stepIcon, stepCta, stepDescription, stepSection, stepKey, stepTitle } = props;
 
 	return (
 		<div className="thank-you__step" key={ stepKey }>
 			{ stepIcon && <div className="thank-you__step-icon">{ stepIcon }</div> }
-			<div>
-				<h3>{ stepTitle }</h3>
-				<p>{ stepDescription }</p>
-			</div>
+			{ ( stepTitle || stepDescription ) && (
+				<div>
+					<h3>{ stepTitle }</h3>
+					<p>{ stepDescription }</p>
+				</div>
+			) }
+			{ stepSection && <div className="thank-you__step-section">{ stepSection }</div> }
 			{ stepCta && <div className="thank-you__step-cta">{ stepCta }</div> }
 		</div>
 	);
