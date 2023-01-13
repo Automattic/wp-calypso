@@ -45,7 +45,6 @@ export const TRACKING_IDS = {
 	facebookJetpackInit: '919484458159593',
 	fullStory: '120RG4',
 	fullStoryJetpack: '181XXV',
-	linkedInPartnerId: '195308',
 	outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e',
 	pinterestInit: '2613194105266',
 	quantcast: 'p-3Ma3jHaQMB_bS',
@@ -63,6 +62,7 @@ export const TRACKING_IDS = {
 	jetpackGoogleAnalyticsGtag: 'UA-52447-43', // Jetpack Gtag (Analytics) for use in Jetpack x WordPress.com Flows
 	jetpackGoogleGA4Gtag: 'G-YELRMVV4YG',
 	jetpackGoogleAdsGtagPurchase: 'AW-946162814/kIF1CL3ApfsBEP6YlcMD',
+	jetpackLinkedinId: '4537722',
 };
 // This name is something we created to store a session id for DCM Floodlight session tracking
 export const DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid';
