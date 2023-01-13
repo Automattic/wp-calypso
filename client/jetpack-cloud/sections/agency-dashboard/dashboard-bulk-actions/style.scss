@@ -24,7 +24,9 @@
 }
 
 .dashboard-bulk-actions {
+	width: 100%;
 	text-align: right;
+	display: inline-block;
 
 	.button-group {
 		margin-inline-start: 14px;

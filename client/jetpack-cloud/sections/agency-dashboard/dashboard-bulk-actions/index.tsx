@@ -51,20 +51,23 @@ export default function DashboardBulkActions( { selectedSites }: Props ) {
 	];
 
 	let content = null;
+	const disabled = selectedSites.length === 0;
 
 	if ( ! isMobile ) {
 		content = (
 			<>
 				<ButtonGroup>
 					{ toggleMonitorActions.map( ( { label, action } ) => (
-						<Button key={ label } onClick={ action }>
+						<Button key={ label } disabled={ disabled } onClick={ action }>
 							{ label }
 						</Button>
 					) ) }
 				</ButtonGroup>
 				{ otherMonitorActions.map( ( { label, action } ) => (
 					<ButtonGroup key={ label }>
-						<Button onClick={ action }>{ label }</Button>
+						<Button disabled={ disabled } onClick={ action }>
+							{ label }
+						</Button>
 					</ButtonGroup>
 				) ) }
 			</>
@@ -73,7 +76,7 @@ export default function DashboardBulkActions( { selectedSites }: Props ) {
 		content = (
 			<SelectDropdown compact selectedText={ translate( 'Actions' ) }>
 				{ [ ...toggleMonitorActions, ...otherMonitorActions ].map( ( { label, action } ) => (
-					<SelectDropdown.Item key={ label } onClick={ action }>
+					<SelectDropdown.Item key={ label } disabled={ disabled } onClick={ action }>
 						{ label }
 					</SelectDropdown.Item>
 				) ) }

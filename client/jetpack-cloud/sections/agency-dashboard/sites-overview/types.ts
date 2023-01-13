@@ -121,12 +121,18 @@ export type AllowedActionTypes = 'issue_license' | 'view_activity' | 'view_site'
 export type ActionEventNames = {
 	[ key in AllowedActionTypes ]: { small_screen: string; large_screen: string };
 };
-export interface SitesOverviewContextInterface {
+
+export interface DashboardOverviewContextInterface {
 	search: string;
 	currentPage: number;
 	filter: { issueTypes: Array< AgencyDashboardFilterOption >; showOnlyFavorites: boolean };
-	isBulkManagementActive?: boolean;
-	setIsBulkManagementActive?: ( value: boolean ) => void;
+}
+
+export interface SitesOverviewContextInterface extends DashboardOverviewContextInterface {
+	isBulkManagementActive: boolean;
+	setIsBulkManagementActive: ( value: boolean ) => void;
+	selectedSites: Array< number >;
+	setSelectedSites: ( value: Array< number > ) => void;
 }
 
 export type AgencyDashboardFilterOption =

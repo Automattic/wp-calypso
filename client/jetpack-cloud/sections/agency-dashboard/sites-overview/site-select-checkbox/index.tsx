@@ -10,13 +10,15 @@ interface Props {
 
 export default function SiteSelectCheckbox( { item, siteError }: Props ) {
 	return (
-		<FormInputCheckbox
-			className="site-select-checkbox disable-card-expand"
-			id={ item.blog_id }
-			onClick={ item.onSelect }
-			checked={ item.isSelected }
-			readOnly={ true }
-			disabled={ siteError }
-		/>
+		<span className="site-select-checkbox">
+			<FormInputCheckbox
+				className="disable-card-expand"
+				id={ item.blog_id }
+				onClick={ item.onSelect }
+				checked={ item.isSelected }
+				readOnly={ true }
+				disabled={ siteError }
+			/>
+		</span>
 	);
 }

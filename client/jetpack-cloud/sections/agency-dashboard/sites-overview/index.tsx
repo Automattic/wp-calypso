@@ -24,7 +24,6 @@ import {
 	getSelectedLicensesSiteId,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
-import DashboardBulkActions from '../dashboard-bulk-actions';
 import SitesOverviewContext from './context';
 import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
@@ -51,9 +50,9 @@ export default function SitesOverview() {
 	const highlightFavoriteTab = getQueryArg( window.location.href, 'highlight' ) === 'favorite-tab';
 
 	const [ highlightTab, setHighlightTab ] = useState( false );
-	const [ selectedSites, setSelectedSites ] = useState< number[] >( [] );
 
-	const { search, currentPage, filter } = useContext( SitesOverviewContext );
+	const { search, currentPage, filter, selectedSites, setSelectedSites } =
+		useContext( SitesOverviewContext );
 
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
 		isPartnerOAuthTokenLoaded,
@@ -275,12 +274,6 @@ export default function SitesOverview() {
 								isLoading={ isLoading }
 							/>
 						) }
-
-						<DashboardBulkActions
-							selectedSites={ data?.sites.filter( ( site: { blog_id: number } ) =>
-								selectedSites.includes( site.blog_id )
-							) }
-						/>
 
 						{ showEmptyState ? (
 							<div className="sites-overview__no-sites">{ emptyStateMessage }</div>
