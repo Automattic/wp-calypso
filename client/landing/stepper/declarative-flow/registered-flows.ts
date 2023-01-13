@@ -42,11 +42,14 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	free: () => import( /* webpackChunkName: "free-flow" */ '../declarative-flow/free' ),
 
-	sensei: () => import( /* webpackChunkName: "sensei-flow" */ '../declarative-flow/sensei' ),
-
 	'free-post-setup': () =>
 		import( /* webpackChunkName: "free-post-setup-flow" */ '../declarative-flow/free-post-setup' ),
 };
+
+if ( config.isEnabled( 'sensei/onboarding' ) ) {
+	availableFlows[ 'sensei' ] = () =>
+		import( /* webpackChunkName: "sensei-flow" */ '../declarative-flow/sensei' );
+}
 
 if ( config.isEnabled( 'themes/plugin-bundling' ) ) {
 	availableFlows[ 'plugin-bundle' ] = () =>
