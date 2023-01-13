@@ -408,12 +408,12 @@ export default class WebPreviewContent extends Component {
 					{ 'seo' !== this.state.device && (
 						<div
 							onMouseEnter={ () => {
-								if ( this.props.isLaunchpad ) {
+								if ( this.props.enableEditOverlay ) {
 									this.setState( { showIFrameOverlay: true } );
 								}
 							} }
 							onMouseLeave={ () => {
-								if ( this.props.isLaunchpad ) {
+								if ( this.props.enableEditOverlay ) {
 									this.setState( { showIFrameOverlay: false } );
 								}
 							} }
@@ -427,7 +427,7 @@ export default class WebPreviewContent extends Component {
 								style={ {
 									...this.state.iframeStyle,
 									height: this.state.viewport?.height,
-									pointerEvents: this.props.isLaunchpad ? 'auto' : 'all',
+									pointerEvents: this.props.enableEditOverlay ? 'auto' : 'all',
 								} }
 								src="about:blank"
 								onLoad={ () => this.setLoaded( 'iframe-onload' ) }
@@ -436,7 +436,7 @@ export default class WebPreviewContent extends Component {
 								scrolling={ autoHeight ? 'no' : undefined }
 								tabIndex={ disableTabbing ? -1 : 0 }
 							/>
-							{ this.props.isLaunchpad && (
+							{ this.props.enableEditOverlay && (
 								<div
 									className="web-preview__frame-edit-overlay"
 									style={ {
@@ -453,6 +453,7 @@ export default class WebPreviewContent extends Component {
 											top: this.state.showIFrameOverlay ? '0' : '15px',
 											transition: 'all 0.2s ease',
 										} }
+										aria-label="Edit your new site"
 										className="web-preview__frame-edit-button"
 										onClick={ () => {
 											window.location.assign( `/site-editor/${ this.props.externalUrl }` );
@@ -550,8 +551,8 @@ WebPreviewContent.propTypes = {
 	inlineCss: PropTypes.string,
 	// Uses the CSS selector to scroll to it
 	scrollToSelector: PropTypes.string,
-	// Allow specific functionality for Launchpad
-	isLaunchpad: PropTypes.bool,
+	// Edit overlay that redirects to the Site Editor
+	enableEditOverlay: PropTypes.bool,
 };
 
 WebPreviewContent.defaultProps = {
@@ -577,5 +578,5 @@ WebPreviewContent.defaultProps = {
 	autoHeight: false,
 	inlineCss: null,
 	scrollToSelector: null,
-	isLaunchpad: false,
+	enableEditOverlay: false,
 };
