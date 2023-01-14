@@ -564,7 +564,10 @@ export class EditorPage {
 	//#region Publish, Draft & Schedule
 
 	/**
-	 * Publishes the post or page.
+	 * Publishes the post or page and returns the resulting URL.
+	 *
+	 * If the optional parameter `visit` parameter is specified, the page is navigated
+	 * to the published article.
 	 *
 	 * @param {boolean} visit Whether to then visit the page.
 	 * @returns {URL} Published article's URL.
