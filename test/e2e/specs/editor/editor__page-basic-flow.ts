@@ -61,8 +61,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		editorPage = new EditorPage( page, { target: features.siteType } );
 		await editorPage.waitUntilLoaded();
 
-		const editorIframe = await editorPage.getEditorHandle();
-		const pageTemplateModalComponent = new PageTemplateModalComponent( editorIframe, page );
+		const editorWindowLocator = editorPage.getEditorWindowLocator();
+		const pageTemplateModalComponent = new PageTemplateModalComponent( page, editorWindowLocator );
 
 		await pageTemplateModalComponent.selectTemplateCategory( 'About' );
 		await pageTemplateModalComponent.selectTemplate( 'About me' );
