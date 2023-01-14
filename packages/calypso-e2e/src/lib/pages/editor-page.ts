@@ -621,13 +621,10 @@ export class EditorPage {
 	async unpublish(): Promise< void > {
 		await this.editorToolbarComponent.switchToDraft();
 
-		const frame = await this.getEditorHandle();
 		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
-		await frame.click( `div[role="dialog"] button:has-text("OK")` );
+		await this.editor.getByRole( 'button' ).getByText( 'OK' ).click();
 		// @TODO: eventually refactor this out to a EditorToastNotificationComponent.
-		await frame.waitForSelector(
-			'.components-editor-notices__snackbar :has-text("Post reverted to draft.")'
-		);
+		await this.editor.getByRole( 'button', { name: 'Dismiss this notice' } ).waitFor();
 	}
 
 	/**
