@@ -80,7 +80,7 @@ const YourHomepageDisplaysSetting = ( {
 		}
 	};
 
-	const handlePageForPosts: React.FormEventHandler = ( { target } ) => {
+	const handlePageForPostsChange: React.FormEventHandler = ( { target } ) => {
 		const selectedPageId: string = ( target as HTMLSelectElement ).value;
 		onChange?.( { page_for_posts: selectedPageId } );
 	};
@@ -121,7 +121,7 @@ const YourHomepageDisplaysSetting = ( {
 					name="page_for_posts"
 					disabled={ disabled || isLoading || ! pages?.length }
 					value={ page_for_posts }
-					onChange={ handlePageForPosts }
+					onChange={ handlePageForPostsChange }
 				>
 					<option value="">{ translate( '—— Select ——' ) }</option>
 					{ pages?.map( ( page ) => {
