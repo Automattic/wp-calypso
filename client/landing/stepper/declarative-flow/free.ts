@@ -20,6 +20,7 @@ import DesignSetup from './internals/steps-repository/design-setup';
 import FreeSetup from './internals/steps-repository/free-setup';
 import Intro from './internals/steps-repository/intro';
 import LaunchPad from './internals/steps-repository/launchpad';
+import { launchpadFlowTasks } from './internals/steps-repository/launchpad/tasks';
 import Processing from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
@@ -54,7 +55,12 @@ const free: Flow = {
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
+		const flowProgress = useFlowProgress( {
+			stepName: _currentStep,
+			flowName,
+			launchpadTasks: launchpadFlowTasks[ flowName ],
+		} );
+
 		setStepProgress( flowProgress );
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );

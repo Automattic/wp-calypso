@@ -10,6 +10,7 @@ import {
 interface FlowProgress {
 	stepName?: string;
 	flowName?: string;
+	launchpadTasks?: string[];
 }
 
 const flows: Record< string, { [ step: string ]: number } > = {
@@ -76,17 +77,24 @@ const flows: Record< string, { [ step: string ]: number } > = {
 	},
 };
 
-export const useFlowProgress = ( { stepName, flowName }: FlowProgress = {} ) => {
+export const useFlowProgress = ( {
+	stepName,
+	flowName,
+	launchpadTasks = [],
+}: FlowProgress = {} ) => {
 	if ( ! stepName || ! flowName ) {
 		return;
 	}
 
 	const flow = flows[ flowName ];
+	const flowCount = Math.max( ...Object.values( flow ) );
+	const tasksCount = launchpadTasks.length;
+	const totalCount = flowCount + tasksCount;
 
 	return (
 		flow && {
 			progress: flow[ stepName ],
-			count: Math.max( ...Object.values( flow ) ),
+			count: totalCount,
 		}
 	);
 };

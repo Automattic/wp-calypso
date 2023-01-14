@@ -11,6 +11,7 @@ import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import Intro from './internals/steps-repository/intro';
 import Launchpad from './internals/steps-repository/launchpad';
+import { launchpadFlowTasks } from './internals/steps-repository/launchpad/tasks';
 import NewsletterSetup from './internals/steps-repository/newsletter-setup';
 import Subscribers from './internals/steps-repository/subscribers';
 import { ProvidedDependencies } from './internals/types';
@@ -43,6 +44,7 @@ const newsletter: Flow = {
 		const flowProgress = useFlowProgress( {
 			stepName: _currentStep,
 			flowName,
+			launchpadTasks: launchpadFlowTasks[ flowName ],
 		} );
 		setStepProgress( flowProgress );
 		const locale = useLocale();

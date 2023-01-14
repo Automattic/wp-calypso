@@ -17,6 +17,7 @@ import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import DomainsStep from './internals/steps-repository/domains';
 import LaunchPad from './internals/steps-repository/launchpad';
+import { launchpadFlowTasks } from './internals/steps-repository/launchpad/tasks';
 import LinkInBioSetup from './internals/steps-repository/link-in-bio-setup';
 import PatternsStep from './internals/steps-repository/patterns';
 import PlansStep from './internals/steps-repository/plans';
@@ -49,7 +50,11 @@ const linkInBio: Flow = {
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
+		const flowProgress = useFlowProgress( {
+			stepName: _currentStepSlug,
+			flowName,
+			launchpadTasks: launchpadFlowTasks[ flowName ],
+		} );
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const locale = useLocale();
