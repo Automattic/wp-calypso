@@ -6,16 +6,10 @@ import {
 	getPlanFeatureAccessor,
 } from 'calypso/my-sites/plan-features-comparison/util';
 
-interface Feature {
-	getSlug: () => string;
-	getTitle: () => string;
-	isHighlightedFeature: boolean;
-}
-
 export default function getFlowPlanFeatures(
 	flowName: string,
 	plan: ResponseCartProduct | undefined
-): Feature[] {
+) {
 	const productSlug = plan?.product_slug;
 
 	if ( ! productSlug ) {
@@ -39,7 +33,7 @@ export default function getFlowPlanFeatures(
 	}
 
 	const highlightedFeatures = getHighlightedFeatures( flowName, planConstantObj );
-	return getPlanFeaturesObject( featureAccessor() ).map( ( feature: Feature ) => {
+	return getPlanFeaturesObject( featureAccessor() ).map( ( feature ) => {
 		return {
 			...feature,
 			isHighlightedFeature: highlightedFeatures.includes( feature.getSlug() ),
