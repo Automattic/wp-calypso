@@ -154,7 +154,7 @@ const ReadingSettings = () => {
 	}
 
 	return (
-		<Main className="site-settings">
+		<Main className="site-settings site-settings__reading-settings">
 			<DocumentHead title={ translate( 'Reading Settings' ) } />
 			<FormattedHeader brandFont headerText={ translate( 'Reading Settings' ) } align="left" />
 			<ReadingSettingsForm />
