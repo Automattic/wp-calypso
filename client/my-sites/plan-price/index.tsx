@@ -231,7 +231,10 @@ function FlatPriceDisplay( {
 	className?: string;
 	isSmallestUnit?: boolean;
 } ) {
-	const { symbol: currencySymbol } = getCurrencyObject( smallerPrice, currencyCode );
+	const { symbol: currencySymbol, symbolPosition } = getCurrencyObject(
+		smallerPrice,
+		currencyCode
+	);
 	const translate = useTranslate();
 
 	// TODO: render currencySymbol on the localized side (before or after) of
@@ -239,12 +242,13 @@ function FlatPriceDisplay( {
 	if ( ! higherPrice ) {
 		return (
 			<span className={ className }>
-				{ currencySymbol }
+				{ symbolPosition === 'before' ? currencySymbol : null }
 				<PriceWithoutHtml
 					price={ smallerPrice }
 					currencyCode={ currencyCode }
 					isSmallestUnit={ isSmallestUnit }
 				/>
+				{ symbolPosition === 'after' ? currencySymbol : null }
 			</span>
 		);
 	}
@@ -298,16 +302,21 @@ function MultiPriceDisplay( {
 	is2023OnboardingPricingGrid?: boolean;
 	isSmallestUnit?: boolean;
 } ) {
-	const { symbol: currencySymbol } = getCurrencyObject( smallerPrice, currencyCode );
+	const { symbol: currencySymbol, symbolPosition } = getCurrencyObject(
+		smallerPrice,
+		currencyCode
+	);
 	const translate = useTranslate();
-
 	// TODO: render currencySymbol on the localized side (before or after) of
 	// the price. We can use `symbolPosition` from `getCurrencyObject`.
 	return createElement(
 		tagName,
 		{ className },
 		<>
-			<sup className="plan-price__currency-symbol">{ currencySymbol }</sup>
+			{ symbolPosition === 'before' ? (
+				<sup className="plan-price__currency-symbol">{ currencySymbol }</sup>
+			) : null }
+
 			{ ! higherPrice && (
 				<HtmlPriceDisplay
 					price={ smallerPrice }
@@ -338,6 +347,11 @@ function MultiPriceDisplay( {
 					},
 					comment: 'The price range for a particular product',
 				} ) }
+
+			{ symbolPosition === 'after' ? (
+				<sup className="plan-price__currency-symbol">{ currencySymbol }</sup>
+			) : null }
+
 			{ taxText && (
 				<sup className="plan-price__tax-amount">
 					{ translate( '(+%(taxText)s tax)', { args: { taxText } } ) }
