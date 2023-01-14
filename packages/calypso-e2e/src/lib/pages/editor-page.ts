@@ -2,6 +2,7 @@ import { Page, Frame, ElementHandle, Response, Locator } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry } from '../../element-helper';
 import envVariables from '../../env-variables';
+import { NewPostResponse } from '../../types';
 import {
 	EditorPublishPanelComponent,
 	EditorNavSidebarComponent,
@@ -569,33 +570,42 @@ export class EditorPage {
 	 * @returns {URL} Published article's URL.
 	 */
 	async publish( { visit = false }: { visit?: boolean } = {} ): Promise< URL > {
-		// Click on the main publish action button on the toolbar.
-		await this.editorToolbarComponent.clickPublish();
+		const publishButtonText = await this.editorToolbarComponent.getPublishButtonText();
+		const actionsArray = [];
 
-		if ( await this.editorPublishPanelComponent.panelIsOpen() ) {
-			// Invoke the second stage of the publish step which handles the
-			// publish checklist panel if it is present.
-			await this.editorPublishPanelComponent.publish();
+		// Intercept the response from the WordPress.com REST API.
+		actionsArray.push( this.page.waitForResponse( /sites.*\/(posts|pages)\/.*/ ) );
+
+		// Every publish action requires at least one click on the EditorToolbarComponent.
+		actionsArray.push( this.editorToolbarComponent.clickPublish() );
+
+		// Determine whether the post/page is yet to be published or the post/page
+		// is merely being updated.
+		// If not yet published, a second click on the EditorPublishPanelComponent
+		// is added to the array of actions.
+		if ( publishButtonText.toLowerCase() === 'publish' ) {
+			actionsArray.push( this.editorPublishPanelComponent.publish() );
 		}
 
-		// In some cases the post may be published but the EditorPublishPanelComponent
-		// is either not present or forcibly dismissed due to a bug.
-		// eg. publishing a post with some of the Jetpack Earn blocks.
-		// By racing the two methods of obtaining the published article's URL, we can
-		// guarantee that one or the other works.
-		const publishedURL: URL = await Promise.race( [
-			this.editorPublishPanelComponent.getPublishedURL(),
-			this.getPublishedURLFromToast(),
-		] );
+		// Resolve the promises.
+		const [ response ] = await Promise.all( actionsArray );
+
+		if ( ! response ) {
+			throw new Error( 'No response received from `publish` method.' );
+		}
+
+		const json: NewPostResponse = await response.json();
+		const publishedURL = json.body.link;
 
 		if ( ! publishedURL ) {
-			throw new Error( 'Could not retrieve published post URL' );
+			throw new Error( 'Could not retrieve published post URL.' );
 		}
 
 		if ( visit ) {
-			await this.visitPublishedPost( publishedURL.href );
+			await this.visitPublishedPost( publishedURL );
 		}
-		return publishedURL;
+
+		return new URL( publishedURL );
 	}
 
 	/**
@@ -625,23 +635,6 @@ export class EditorPage {
 		await this.editor.getByRole( 'button' ).getByText( 'OK' ).click();
 		// @TODO: eventually refactor this out to a EditorToastNotificationComponent.
 		await this.editor.getByRole( 'button', { name: 'Dismiss this notice' } ).waitFor();
-	}
-
-	/**
-	 * Obtains the published article's URL from post-publish panels.
-	 *
-	 * This method is only able to obtain the published article's URL if immediately
-	 * preceded by the action of publishing the article *and* the post-publish panel
-	 * being visible.
-	 *
-	 * @returns {URL} Published article's URL.
-	 */
-	async getPublishedURLFromToast(): Promise< URL > {
-		const frame = await this.getEditorHandle();
-
-		const toastLocator = frame.locator( selectors.toastViewPostLink );
-		const publishedURL = ( await toastLocator.getAttribute( 'href' ) ) as string;
-		return new URL( publishedURL );
 	}
 
 	/**

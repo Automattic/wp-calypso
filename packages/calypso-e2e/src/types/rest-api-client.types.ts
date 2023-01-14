@@ -90,6 +90,12 @@ export interface NewSiteResponse {
 	};
 }
 
+export interface NewPostResponse {
+	body: {
+		link: string;
+	};
+}
+
 export interface SiteDeletionResponse {
 	ID: number;
 	name: string;

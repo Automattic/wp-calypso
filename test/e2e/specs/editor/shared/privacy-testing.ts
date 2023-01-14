@@ -79,14 +79,10 @@ export function createPrivacyTests( { visibility }: { visibility: ArticlePrivacy
 			} );
 
 			it( 'Publish page', async function () {
-				// Private articles are published immediately as the option is
-				// selected. In other words, for Private articles the publish
-				// action happened in previous step.
-				if ( visibility === 'Private' ) {
-					url = await editorPage.getPublishedURLFromToast();
-				} else {
-					url = await editorPage.publish();
-				}
+				// Note, private articles are published immediately when the option is
+				// selected. In other words, the publish action and call to API
+				// occurs as soon as the Private radio button is clicked.
+				url = await editorPage.publish();
 			} );
 
 			it( `View published page`, async function () {
