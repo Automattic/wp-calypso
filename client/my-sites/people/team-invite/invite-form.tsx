@@ -23,9 +23,14 @@ import { useValidationNotifications } from './hooks/use-validation-notifications
 
 const TOKEN_CONTROL_MAX_NUM = 10;
 
-function InviteForm() {
+interface Props {
+	onInviteSuccess?: () => void;
+}
+
+function InviteForm( props: Props ) {
 	const _ = useTranslate();
 	const dispatch = useDispatch();
+	const { onInviteSuccess } = props;
 
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const siteId = site?.ID as number;
@@ -52,9 +57,18 @@ function InviteForm() {
 	useEffect( extendTokenFormControls, [ tokenValues ] );
 	useEffect( toggleShowContractorCb, [ role ] );
 	useEffect( checkSubmitReadiness, [ tokenErrors, validationProgress ] );
-	useEffect( () => invitingSuccess && resetFormValues(), [ invitingSuccess ] );
+	useEffect( reactOnInvitationSuccess, [ invitingSuccess ] );
 	useValidationNotifications();
 	useInvitingNotifications( tokenValues );
+
+	function reactOnInvitationSuccess() {
+		if ( ! invitingSuccess ) {
+			return;
+		}
+
+		resetFormValues();
+		onInviteSuccess?.();
+	}
 
 	function onFormSubmit( e: FormEvent ) {
 		e.preventDefault();

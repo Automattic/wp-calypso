@@ -85,7 +85,7 @@ function TeamInvite( props: Props ) {
 							{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
 							{ /* @ts-ignore */ }
 							<EmailVerificationGate>
-								<InviteForm />
+								<InviteForm onInviteSuccess={ goBack } />
 							</EmailVerificationGate>
 						</Card>
 					);
@@ -93,7 +93,7 @@ function TeamInvite( props: Props ) {
 					return (
 						<SsoNotice siteId={ siteId }>
 							<Card>
-								<InviteForm />
+								<InviteForm onInviteSuccess={ goBack } />
 							</Card>
 						</SsoNotice>
 					);
