@@ -2,7 +2,7 @@ import { Button, FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, ChangeEvent, useEffect, FormEvent } from 'react';
+import { useState, ChangeEvent, useEffect, FormEvent, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -37,6 +37,7 @@ function InviteForm( props: Props ) {
 	const defaultUserRole = useInitialRole( siteId );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isSiteForTeams = useSelector( ( state ) => isSiteWPForTeams( state, siteId ) );
+	const prevInvitingProgress = useRef();
 	const { errors: tokenErrors, progress: validationProgress } = useSelector( getTokenValidation );
 	const { progress: invitingProgress, success: invitingSuccess } =
 		useSelector( getSendInviteState );
@@ -58,17 +59,9 @@ function InviteForm( props: Props ) {
 	useEffect( toggleShowContractorCb, [ role ] );
 	useEffect( checkSubmitReadiness, [ tokenErrors, validationProgress ] );
 	useEffect( reactOnInvitationSuccess, [ invitingSuccess ] );
+	useEffect( () => ( prevInvitingProgress.current = invitingProgress ), [ invitingProgress ] );
 	useValidationNotifications();
 	useInvitingNotifications( tokenValues );
-
-	function reactOnInvitationSuccess() {
-		if ( ! invitingSuccess ) {
-			return;
-		}
-
-		resetFormValues();
-		onInviteSuccess?.();
-	}
 
 	function onFormSubmit( e: FormEvent ) {
 		e.preventDefault();
@@ -97,6 +90,15 @@ function InviteForm( props: Props ) {
 		setTokenValues( [ '' ] );
 		setContractor( false );
 		setMessage( '' );
+	}
+
+	function reactOnInvitationSuccess() {
+		if ( ! invitingSuccess || ! prevInvitingProgress.current ) {
+			return;
+		}
+
+		resetFormValues();
+		onInviteSuccess?.();
 	}
 
 	function extendTokenFormControls() {
