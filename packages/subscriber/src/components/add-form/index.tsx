@@ -33,6 +33,7 @@ interface Props {
 	showCsvUpload?: boolean;
 	showFormManualListLabel?: boolean;
 	submitBtnName?: string;
+	submitBtnAlwaysEnable?: boolean;
 	allowEmptyFormSubmit?: boolean;
 	manualListEmailInviting?: boolean;
 	recordTracksEvent?: RecordTrackEvents;
@@ -55,6 +56,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		showCsvUpload,
 		showFormManualListLabel,
 		submitBtnName = __( 'Add subscribers' ),
+		submitBtnAlwaysEnable,
 		allowEmptyFormSubmit,
 		manualListEmailInviting,
 		recordTracksEvent,
@@ -112,7 +114,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	}, [ inProgress ] );
 	useEffect( () => {
 		setIsSubmitBtnReady( isSubmitButtonReady() );
-	}, [ isValidEmails, selectedFile, allowEmptyFormSubmit ] );
+	}, [ isValidEmails, selectedFile, allowEmptyFormSubmit, submitBtnAlwaysEnable ] );
 
 	useRecordAddFormEvents( recordTracksEvent, flowName );
 
@@ -209,7 +211,12 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	}
 
 	function isSubmitButtonReady(): boolean {
-		return !! allowEmptyFormSubmit || !! getValidEmails().length || !! selectedFile;
+		return (
+			submitBtnAlwaysEnable ||
+			!! allowEmptyFormSubmit ||
+			!! getValidEmails().length ||
+			!! selectedFile
+		);
 	}
 
 	function resetFormState(): void {
