@@ -32,6 +32,13 @@ function InviteForm( props: Props ) {
 	const dispatch = useDispatch();
 	const { onInviteSuccess } = props;
 
+	const emailControlPlaceholder = [
+		_( 'sibling@example.com' ),
+		_( 'parents@example.com' ),
+		_( 'friend@example.com' ),
+	];
+	const defaultEmailControlPlaceholder = _( 'Add another email or username' );
+
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const siteId = site?.ID as number;
 	const defaultUserRole = useInitialRole( siteId );
@@ -167,6 +174,7 @@ function InviteForm( props: Props ) {
 							name={ `token-${ i }` }
 							value={ tokenValues[ i ] || '' }
 							isError={ tokenErrors && !! tokenErrors[ tokenValues[ i ] ] }
+							placeholder={ emailControlPlaceholder[ i ] || defaultEmailControlPlaceholder }
 							onBlur={ () => onTokenBlur( i ) }
 							onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
 								onTokenChange( e.target.value, i )
