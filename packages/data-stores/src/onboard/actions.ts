@@ -125,6 +125,7 @@ export function* createSenseiSite( {
 				font_headings: selectedFonts.headings,
 			} ),
 			use_patterns: true,
+			site_intent: 'sensei',
 			selected_features: selectedFeatures,
 			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),
 		},
