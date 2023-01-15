@@ -10,6 +10,8 @@ interface Props {
 	label?: string;
 	resetImport?: ( siteId: number, importerId: string ) => void;
 	onSiteViewClick?: () => void;
+	className?: string;
+	isPrimary?: boolean;
 }
 const DoneButton: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
@@ -21,14 +23,27 @@ const DoneButton: React.FunctionComponent< Props > = ( props ) => {
 			: __( 'View site' ),
 		resetImport,
 		onSiteViewClick,
+		className,
+		isPrimary = true,
 	} = props;
+
+	const isSecondary = isPrimary ? false : true;
 
 	function onButtonClick() {
 		onSiteViewClick?.();
 		job && siteId && resetImport && resetImport( siteId, job?.importerId );
 	}
 
-	return <NextButton onClick={ onButtonClick }>{ label }</NextButton>;
+	return (
+		<NextButton
+			isPrimary={ isPrimary }
+			isSecondary={ isSecondary }
+			className={ className }
+			onClick={ onButtonClick }
+		>
+			{ label }
+		</NextButton>
+	);
 };
 
 export default DoneButton;

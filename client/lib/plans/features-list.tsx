@@ -219,13 +219,28 @@ import {
 	FEATURE_SITE_ACTIVITY_LOG_JP,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
-import i18n from 'i18n-calypso';
+import i18n, { TranslateResult } from 'i18n-calypso';
+import { MemoExoticComponent } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import MaterialIcon from 'calypso/components/material-icon';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
 
-export const FEATURES_LIST = {
+export type FeatureObject = {
+	getSlug: () => string;
+	getTitle: ( domainName?: string ) => TranslateResult;
+	getHeader?: () => TranslateResult;
+	getDescription?: ( domainName?: string ) => TranslateResult;
+	getStoreSlug?: () => string;
+	getCompareTitle?: () => TranslateResult;
+	getIcon?: () => string | { icon: string; component: MemoExoticComponent< any > };
+	isPlan?: boolean;
+};
+export type FeatureList = {
+	[ key: string ]: FeatureObject;
+};
+
+export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_BLANK ]: {
 		getSlug: () => FEATURE_BLANK,
 		getTitle: () => '',
@@ -379,8 +394,9 @@ export const FEATURES_LIST = {
 	[ FEATURE_PREMIUM_THEMES ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES,
 		getTitle: () => {
+			const localeSlug = i18n.getLocaleSlug();
 			const shouldShowNewString =
-				config( 'english_locales' ).includes( i18n.getLocaleSlug() ) ||
+				( localeSlug && config< string >( 'english_locales' ).includes( localeSlug ) ) ||
 				i18n.hasTranslation( 'Unlimited premium themes' );
 
 			return shouldShowNewString
@@ -388,8 +404,9 @@ export const FEATURES_LIST = {
 				: i18n.translate( 'Premium themes' );
 		},
 		getDescription: () => {
+			const localeSlug = i18n.getLocaleSlug();
 			const shouldShowNewString =
-				config( 'english_locales' ).includes( i18n.getLocaleSlug() ) ||
+				( localeSlug && config< string >( 'english_locales' ).includes( localeSlug ) ) ||
 				i18n.hasTranslation(
 					'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses.'
 				);
@@ -416,7 +433,6 @@ export const FEATURES_LIST = {
 	[ FEATURE_EARN_AD ]: {
 		getSlug: () => FEATURE_EARN_AD,
 		getTitle: () => i18n.translate( 'Earn ad revenue' ),
-		getDescription: () => {},
 	},
 
 	[ FEATURE_UPLOAD_THEMES_PLUGINS ]: {
@@ -465,7 +481,6 @@ export const FEATURES_LIST = {
 	[ FEATURE_ADVANCED_SEO_EXPANDED_ABBR ]: {
 		getSlug: () => FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
 		getTitle: () => i18n.translate( 'Advanced SEO (Search Engine Optimisation) tools' ),
-		getDescription: () => {},
 	},
 	[ FEATURE_FREE_WORDPRESS_THEMES ]: {
 		getSlug: () => FEATURE_FREE_WORDPRESS_THEMES,
@@ -519,7 +534,7 @@ export const FEATURES_LIST = {
 			i18n.translate( 'Free .blog Domain for one year', {
 				context: 'title',
 			} ),
-		getDescription: ( abtest, domainName ) => {
+		getDescription: ( domainName?: string ) => {
 			if ( domainName ) {
 				return i18n.translate( 'Your domain (%s) is included with this plan.', {
 					args: domainName,
@@ -534,7 +549,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_CUSTOM_DOMAIN ]: {
 		getSlug: () => FEATURE_CUSTOM_DOMAIN,
-		getTitle: ( domainName ) => {
+		getTitle: ( domainName?: string ) => {
 			if ( domainName ) {
 				return i18n.translate( 'The domain %(domainName)s is free for the first year', {
 					args: { domainName },
@@ -545,7 +560,7 @@ export const FEATURES_LIST = {
 				context: 'title',
 			} );
 		},
-		getDescription: ( abtest, domainName ) => {
+		getDescription: ( domainName?: string ) => {
 			if ( domainName ) {
 				return i18n.translate( 'Your domain (%s) is included with this plan.', {
 					args: domainName,
@@ -992,7 +1007,6 @@ export const FEATURES_LIST = {
 	[ FEATURE_SITE_BACKUPS_AND_RESTORE ]: {
 		getSlug: () => FEATURE_SITE_BACKUPS_AND_RESTORE,
 		getTitle: () => i18n.translate( 'Automated site backups and one-click restore' ),
-		getDescription: () => {},
 	},
 	[ FEATURE_ACCEPT_PAYMENTS ]: {
 		getSlug: () => FEATURE_ACCEPT_PAYMENTS,
@@ -1187,7 +1201,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_PRODUCT_SEARCH_V2 ]: {
 		getSlug: () => FEATURE_PRODUCT_SEARCH_V2,
-		getTitle: () => i18n.translate( 'Site Search up to 100k records' ),
+		getTitle: () => i18n.translate( 'Site Search up to 100k records and 100k requests/mo.' ),
 
 		getDescription: () =>
 			i18n.translate(
@@ -1421,8 +1435,9 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_SFTP_DATABASE,
 		getTitle: () => i18n.translate( 'SFTP, SSH, WP-CLI, and Database access' ),
 		getDescription: () => {
+			const localeSlug = i18n.getLocaleSlug();
 			const hasTranslation =
-				config( 'english_locales' ).includes( i18n.getLocaleSlug() ) ||
+				( localeSlug && config< string >( 'english_locales' ).includes( localeSlug ) ) ||
 				i18n.hasTranslation(
 					'A set of developer tools that give you more control over your site, simplify debugging, and make it easier to integrate with each step of your workflow.'
 				);
@@ -1438,7 +1453,6 @@ export const FEATURES_LIST = {
 	[ PREMIUM_DESIGN_FOR_STORES ]: {
 		getSlug: () => PREMIUM_DESIGN_FOR_STORES,
 		getTitle: () => i18n.translate( 'Premium design options customized for online stores' ),
-		getDescription: () => {},
 	},
 
 	[ FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS ]: {
@@ -1820,14 +1834,17 @@ export const FEATURES_LIST = {
 	/* END: 2023 Pricing Grid Features */
 };
 
-export const getPlanFeaturesObject = ( planFeaturesList ) => {
+export const getPlanFeaturesObject = ( planFeaturesList?: Array< string > ) => {
+	if ( ! planFeaturesList ) {
+		return [];
+	}
 	return planFeaturesList.map( ( featuresConst ) => FEATURES_LIST[ featuresConst ] );
 };
 
-export function isValidFeatureKey( feature ) {
+export function isValidFeatureKey( feature: string ) {
 	return !! FEATURES_LIST[ feature ];
 }
 
-export function getFeatureByKey( feature ) {
+export function getFeatureByKey( feature: string ) {
 	return FEATURES_LIST[ feature ];
 }

@@ -3,9 +3,10 @@ import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
 import {
-	getAlltimeStats,
-	isRequestingAlltimeEmailStats,
+	getEmailStatsNormalizedData,
+	isRequestingEmailStats,
 } from 'calypso/state/stats/emails/selectors';
 import { eye } from './icons';
 import TopCard from './top-card';
@@ -14,9 +15,11 @@ import './style.scss';
 export default function StatsEmailOpenTopRow( { siteId, postId, className } ) {
 	const translate = useTranslate();
 
-	const counts = useSelector( ( state ) => getAlltimeStats( state, siteId, postId, 'opens' ) );
+	const counts = useSelector( ( state ) =>
+		getEmailStatsNormalizedData( state, siteId, postId, PERIOD_ALL_TIME, 'opens', null, 'rate' )
+	);
 	const isRequesting = useSelector( ( state ) =>
-		isRequestingAlltimeEmailStats( state, siteId, postId, 'opens' )
+		isRequestingEmailStats( state, siteId, postId, PERIOD_ALL_TIME, 'opens' )
 	);
 
 	return (

@@ -11,10 +11,12 @@
 	font-weight: 400;
 	font-size: $font-body-small;
 	line-height: 18px;
-	color: #000;
+	color: var(--studio-black);
+	text-align: center;
 }
 
 .stats-heat-map__legend-item-list {
+	display: flex;
 	list-style-type: none;
 	border-radius: 4px;
 	overflow: hidden;
@@ -22,7 +24,6 @@
 }
 
 .stats-heat-map__legend-item {
-	float: left;
 	width: 25px;
 	height: 25px;
 

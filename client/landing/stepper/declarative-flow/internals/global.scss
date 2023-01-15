@@ -68,6 +68,7 @@ button {
 .subscribers,
 .ecommerce,
 .wooexpress,
+.copy-site,
 .intro,
 .free-setup,
 .free-post-setup,
@@ -303,11 +304,18 @@ button {
 }
 
 .wooexpress,
+.copy-site,
 .ecommerce {
 	.step-container.processing-step {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		margin-top: 25vh;
+	}
+}
+
+.wooexpress {
+	.flow-progress.progress-bar {
+		display: none;
 	}
 }
