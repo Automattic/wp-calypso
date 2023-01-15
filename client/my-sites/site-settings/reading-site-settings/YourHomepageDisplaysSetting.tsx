@@ -140,13 +140,13 @@ const YourHomepageDisplaysSetting = ( {
 
 			<FormSettingExplanation>
 				{ translate(
-					'Default homepage and posts page content and layout are determined by your active theme. {{aboutTemplatesLink}}Learn More{{/aboutTemplatesLink}}.',
+					'Default homepage and posts page content and layout are determined by your active theme. {{aboutTemplatesLink}}Learn more{{/aboutTemplatesLink}}.',
 					{
 						components: {
 							aboutTemplatesLink: (
 								<a
 									className="learn-more-link"
-									href={ localizeUrl( 'https://wordpress.com/support/templates/' ) } // todo: update link to doc from https://github.com/Automattic/en.support-docs-content/issues/1805 once complete
+									href={ localizeUrl( 'https://wordpress.com/support/pages/front-page/' ) }
 									target="_blank"
 									rel="noreferrer"
 								/>
