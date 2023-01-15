@@ -85,6 +85,7 @@ class PeopleInvites extends PureComponent {
 							showTitle={ false }
 							showFormManualListLabel={ true }
 							showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
+							submitBtnAlwaysEnable={ true }
 							recordTracksEvent={ recordTracksEvent }
 							onImportFinished={ () => {
 								defer( () => {

@@ -119,7 +119,13 @@ function Subscribers( props: Props ) {
 		case 'empty':
 			return (
 				<Card>
-					{ site && <AddSubscriberForm siteId={ site?.ID } onImportFinished={ refetch } /> }
+					{ site && (
+						<AddSubscriberForm
+							siteId={ site?.ID }
+							submitBtnAlwaysEnable={ true }
+							onImportFinished={ refetch }
+						/>
+					) }
 				</Card>
 			);
 

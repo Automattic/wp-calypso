@@ -208,7 +208,6 @@ function InviteForm() {
 				primary
 				busy={ invitingProgress }
 				className="team-invite-form__submit-btn"
-				disabled={ ! readyForSubmit }
 			>
 				{ _( 'Send invitation' ) }
 			</Button>
