@@ -92,28 +92,30 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 						isSuperseded
 					);
 
+					// Go to the checkout page for all products when they click on the 'GET' CTA, except for Jetpack Social where we open a modal.
+					const ctaHref =
+						item.productSlug === PRODUCT_JETPACK_SOCIAL_BASIC &&
+						config.isEnabled( 'jetpack-social/advanced-plan' )
+							? '#'
+							: getCheckoutURL( item );
+					const onClickCtaUrl =
+						item.productSlug === PRODUCT_JETPACK_SOCIAL_BASIC &&
+						config.isEnabled( 'jetpack-social/advanced-plan' )
+							? onClickMoreInfoFactory( item )
+							: getOnClickPurchase( item );
+
 					return (
 						<li key={ item.productSlug }>
 							<SimpleItemCard
 								ctaAsPrimary={ ctaAsPrimary }
-								ctaHref={
-									item.productSlug === PRODUCT_JETPACK_SOCIAL_BASIC &&
-									config.isEnabled( 'jetpack-social/advanced-plan' )
-										? '#'
-										: getCheckoutURL( item )
-								}
+								ctaHref={ ctaHref }
 								ctaLabel={ ctaLabel }
 								ctaAriaLabel={ ctaAriaLabel }
 								description={ description }
 								icon={ <img alt="" src={ getProductIcon( { productSlug: item.productSlug } ) } /> }
 								isCtaDisabled={ isCtaDisabled }
 								isCtaExternal={ isExternal }
-								onClickCta={
-									item.productSlug === PRODUCT_JETPACK_SOCIAL_BASIC &&
-									config.isEnabled( 'jetpack-social/advanced-plan' )
-										? onClickMoreInfoFactory( item )
-										: getOnClickPurchase( item )
-								}
+								onClickCta={ onClickCtaUrl }
 								isProductInCart={ isProductInCart }
 								price={ price }
 								title={ item.displayName }
