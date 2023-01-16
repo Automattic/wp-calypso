@@ -2,7 +2,6 @@ import { Page, Frame, ElementHandle, Response, Locator } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry } from '../../element-helper';
 import envVariables from '../../env-variables';
-import { NewPostResponse } from '../../types';
 import {
 	EditorPublishPanelComponent,
 	EditorNavSidebarComponent,
@@ -554,7 +553,11 @@ export class EditorPage {
 		const actionsArray = [];
 
 		// Intercept the response from the WordPress.com REST API.
-		actionsArray.push( this.page.waitForResponse( /sites.*\/(posts|pages)\/.*/ ) );
+		if ( this.target === 'atomic' ) {
+			actionsArray.push( this.page.waitForResponse( /v2\/(posts|pages).*/ ) );
+		} else {
+			actionsArray.push( this.page.waitForResponse( /sites.*\/(posts|pages)\/.*/ ) );
+		}
 
 		// Every publish action requires at least one click on the EditorToolbarComponent.
 		actionsArray.push( this.editorToolbarComponent.clickPublish() );
@@ -574,8 +577,14 @@ export class EditorPage {
 			throw new Error( 'No response received from `publish` method.' );
 		}
 
-		const json: NewPostResponse = await response.json();
-		const publishedURL = json.body.link;
+		const json = await response.json();
+		let publishedURL: string;
+
+		if ( this.target === 'atomic' ) {
+			publishedURL = json.link;
+		} else {
+			publishedURL = json.body.link;
+		}
 
 		if ( ! publishedURL ) {
 			throw new Error( 'Could not retrieve published post URL.' );
