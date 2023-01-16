@@ -68,7 +68,7 @@ class ThemeShowcase extends Component {
 			},
 			ALL: {
 				key: 'all',
-				text: props.translate( 'All' ),
+				text: props.translate( 'Recommended' ),
 				order: 4,
 			},
 		};
