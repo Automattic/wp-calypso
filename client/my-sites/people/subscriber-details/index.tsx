@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { find } from 'lodash';
 import page from 'page';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,19 +8,20 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
-import useFollowersQuery from 'calypso/data/followers/use-followers-query';
+import useFollowerQuery from 'calypso/data/followers/use-follower-query';
 import useRemoveFollowerMutation from 'calypso/data/followers/use-remove-follower-mutation';
 import accept from 'calypso/lib/accept';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { Follower, FollowersQuery } from 'calypso/my-sites/people/subscribers/types';
+import type { Follower } from 'calypso/my-sites/people/subscribers/types';
 
 import './style.scss';
 
 interface Props {
 	subscriberId: string;
+	subscriberType: string;
 }
 export default function SubscriberDetails( props: Props ) {
 	const _ = useTranslate();
@@ -30,37 +30,18 @@ export default function SubscriberDetails( props: Props ) {
 	const { removeFollower, isSuccess: isRemoveFollowerSuccess } = useRemoveFollowerMutation();
 
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
-	const { subscriberId } = props;
-	const [ subscriber, setSubscriber ] = useState< Follower >();
-	const [ subscriberType, setSubscriberType ] = useState< 'wpcom' | 'email' >();
+	const { subscriberId, subscriberType } = props;
 	const [ templateState, setTemplateState ] = useState( 'loading' );
+	const { data: subscriber, isLoading } = useFollowerQuery(
+		site?.ID,
+		subscriberId,
+		subscriberType
+	);
 
-	const followersQuery = useFollowersQuery( site?.ID, 'all' ) as unknown as FollowersQuery;
-	useEffect( () => checkCurrentSubscriber(), [ followersQuery ] );
-	useEffect( () => checkSubscriberType(), [ subscriber ] );
-	useEffect( () => checkTemplateState(), [ subscriber, followersQuery.isLoading ] );
+	useEffect( () => checkTemplateState(), [ subscriber, isLoading ] );
 	useEffect( () => checkRemoveCompletion(), [ isRemoveFollowerSuccess ] );
 
-	function checkCurrentSubscriber() {
-		// eslint-disable-next-line
-		const _subscriber = find( followersQuery.data?.followers, ( s ) => s.ID == subscriberId );
-
-		// eslint-disable-next-line
-		subscriber?.ID != _subscriber?.ID && setSubscriber( _subscriber );
-	}
-
-	function checkSubscriberType() {
-		if ( ! subscriber ) {
-			return;
-		}
-		const type = subscriber.login ? 'wpcom' : 'email';
-
-		setSubscriberType( type );
-	}
-
 	function checkTemplateState() {
-		const { isLoading } = followersQuery;
-
 		if ( isLoading ) {
 			setTemplateState( 'loading' );
 		} else if ( ! subscriber ) {
