@@ -550,7 +550,7 @@ function processItemCart(
 	callback,
 	reduxStore,
 	siteSlug,
-	{ isFreeThemePreselected, themeSlugWithRepo, themeStyleVariation, lastKnownFlow } = {}
+	{ isFreeThemePreselected, themeSlugWithRepo, themeStyleVariation, lastKnownFlow }
 ) {
 	const addToCartAndProceed = async () => {
 		debug( 'preparing to add cart items (if any) from', newCartItems );
