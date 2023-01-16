@@ -21,8 +21,10 @@ export function fetchThemeDetailsData( context, next ) {
 		return next();
 	}
 
-	context.store
-		.dispatch( requestTheme( themeSlug, 'wpcom', context.lang ) )
+	Promise.all(
+		context.store.dispatch( requestTheme( themeSlug, 'wpcom', context.lang ) ),
+		context.store.dispatch( requestTheme( themeSlug, 'wporg', context.lang ) )
+	)
 		.then( () => {
 			const themeDetails = getTheme( context.store.getState(), 'wpcom', themeSlug );
 			if ( ! themeDetails ) {
