@@ -51,6 +51,17 @@ $font-family: "SF Pro Text", $sans;
 		width: 100%;
 		margin: 0;
 
+		button {
+			display: flex;
+			align-items: center;
+			border: 0;
+			padding: 0;
+			font-family: inherit;
+			color: var(--color-link);
+			transition: color 0.2s ease-in;
+			background-color: transparent;
+		}
+
 		.pattern-action-bar {
 			display: flex;
 			opacity: 0;
@@ -122,26 +133,11 @@ $font-family: "SF Pro Text", $sans;
 				white-space: nowrap;
 			}
 
-			button {
-				display: flex;
-				align-items: center;
-				border: 0;
-				padding: 0;
-				font-family: inherit;
-				color: var(--color-link);
-				transition: color 0.2s ease-in;
-				background-color: transparent;
-			}
-
 			&:hover,
 			&:focus,
 			&:focus-within {
 				button {
 					color: var(--color-link-dark);
-				}
-
-				.pattern-layout__add-icon {
-					background-color: var(--color-link-dark);
 				}
 
 				.pattern-layout__list-item-text {
@@ -168,20 +164,27 @@ $font-family: "SF Pro Text", $sans;
 			height: 100%;
 		}
 
-		.pattern-layout__icon {
-			margin-right: 16px;
-		}
-
-		.pattern-layout__icon-add {
+		.pattern-layout__button {
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			padding: 6px;
 			border-radius: 2px;
-			box-sizing: border-box;
+			margin-right: auto;
+			color: var(--studio-white);
 			background-color: var(--color-link);
-			fill: var(--studio-white);
 			transition: background-color 0.2s ease-in;
+
+			.pattern-layout__button-icon {
+				padding: 6px;
+				box-sizing: border-box;
+				fill: currentColor;
+			}
+
+			&:hover,
+			&:focus,
+			&:focus-within {
+				background-color: var(--color-link-dark);
+			}
 		}
 	}
 

@@ -24,6 +24,7 @@ const PatternSelector = ( {
 	const translate = useTranslate();
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
 	const patternListProps = {
+		placeholder: null,
 		patterns,
 		selectedPattern,
 		activeClassName: 'pattern-selector__block-list--selected-pattern',
