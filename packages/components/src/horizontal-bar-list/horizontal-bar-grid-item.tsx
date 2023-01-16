@@ -51,7 +51,15 @@ const HorizontalBarListItem = ( {
 	};
 
 	const TagName = isLink ? 'a' : 'div'; // group parents and countries don't use anchors.
-	const labelText = decodeEntities( useShortLabel ? shortLabel || '' : label ); // shortLabel as an empty string to make TS happy
+
+	let labelText;
+
+	// tags use an array for a label(s)
+	if ( Array.isArray( label ) ) {
+		labelText = label.length > 1 ? 'Tags' : label[ 0 ].label;
+	} else {
+		labelText = decodeEntities( useShortLabel ? shortLabel || '' : label ); // shortLabel as an empty string to make TS happy
+	}
 
 	let rowClick;
 	let rowKeyPress;

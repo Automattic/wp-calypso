@@ -163,3 +163,21 @@ export function isDeletingAnyInvite( state, siteId ) {
 		Object.values( get( state, [ 'invites', 'deleting', siteId ], {} ) ).indexOf( 'requesting' )
 	);
 }
+
+/**
+ * Returns token validation object
+ *
+ * @param {object} 	state	Global state tree
+ */
+export function getTokenValidation( state ) {
+	return state.invites.validation;
+}
+
+/**
+ * Returns send invite state object
+ *
+ * @param {object} 	state	Global state tree
+ */
+export function getSendInviteState( state ) {
+	return state.invites.inviting;
+}

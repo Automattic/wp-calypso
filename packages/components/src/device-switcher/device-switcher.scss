@@ -22,6 +22,9 @@
 	transition: max-width 0.2s ease-out, max-height 0.2s ease-out;
 	max-width: 100%;
 	max-height: 100%;
+	// Create a new stacking context to fix border-radius with overflow hidden issue on safari
+	// See https://github.com/Automattic/wp-calypso/issues/71440
+	isolation: isolate;
 
 	.device-switcher__container--frame-bordered & {
 		$frame-border-width: 10px;

@@ -79,6 +79,7 @@ export type StoreItemInfo = ReturnType< typeof useStoreItemInfo >;
 export type ItemPriceProps = ProductStoreBaseProps &
 	HeroImageProps & {
 		isOwned?: boolean;
+		isExpired?: boolean;
 		isIncludedInPlan?: boolean;
 		isMultiSiteIncompatible?: boolean;
 	};
@@ -88,10 +89,12 @@ export type FeaturedItemCardProps = {
 	ctaAsPrimary?: boolean;
 	ctaHref?: string;
 	ctaLabel: React.ReactNode;
+	ctaAriaLabel?: string;
 	description: React.ReactNode;
 	hero: React.ReactNode;
 	isCtaDisabled?: boolean;
 	isCtaExternal?: boolean;
+	isProductInCart?: boolean;
 	onClickCta?: VoidFunction;
 	price: React.ReactNode;
 	title: React.ReactNode;

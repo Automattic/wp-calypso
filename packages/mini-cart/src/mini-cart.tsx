@@ -1,4 +1,5 @@
 import { CheckoutProvider, Button } from '@automattic/composite-checkout';
+import { formatCurrency } from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
@@ -81,7 +82,12 @@ function MiniCartTotal( { responseCart }: { responseCart: ResponseCart } ) {
 	return (
 		<MiniCartTotalWrapper className="mini-cart__total">
 			<span>{ __( 'Total' ) }</span>
-			<span>{ responseCart.total_cost_display }</span>
+			<span>
+				{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ) }
+			</span>
 		</MiniCartTotalWrapper>
 	);
 }
@@ -104,6 +110,8 @@ export function MiniCart( {
 	closeCart,
 	onRemoveProduct,
 	onRemoveCoupon,
+	checkoutLabel,
+	emptyCart,
 }: {
 	selectedSiteSlug: string;
 	cartKey: number | undefined;
@@ -111,10 +119,14 @@ export function MiniCart( {
 	closeCart: () => void;
 	onRemoveProduct?: ( uuid: string ) => void;
 	onRemoveCoupon?: () => void;
+	checkoutLabel?: string;
+	emptyCart?: React.ReactNode;
 } ) {
 	const { responseCart, removeCoupon, removeProductFromCart, isLoading, isPendingUpdate } =
 		useShoppingCart( cartKey ? cartKey : undefined );
 	const { __ } = useI18n();
+
+	const shouldRenderEmptyCart = emptyCart && responseCart.products.length <= 0;
 	const isDisabled = isLoading || isPendingUpdate;
 
 	const handleRemoveCoupon = () => {
@@ -156,18 +168,21 @@ export function MiniCart( {
 					removeProductFromCart={ handleRemoveProduct }
 					responseCart={ responseCart }
 				/>
-				<MiniCartTotal responseCart={ responseCart } />
+				{ shouldRenderEmptyCart && emptyCart }
+				{ ! shouldRenderEmptyCart && <MiniCartTotal responseCart={ responseCart } /> }
 				<MiniCartFooter className="mini-cart__footer">
-					<Button
-						className="mini-cart__checkout"
-						buttonType="primary"
-						fullWidth
-						disabled={ isDisabled }
-						isBusy={ isDisabled }
-						onClick={ () => goToCheckout( selectedSiteSlug ) }
-					>
-						{ __( 'Checkout' ) }
-					</Button>
+					{ ! shouldRenderEmptyCart && (
+						<Button
+							className="mini-cart__checkout"
+							buttonType="primary"
+							fullWidth
+							disabled={ isDisabled }
+							isBusy={ isDisabled }
+							onClick={ () => goToCheckout( selectedSiteSlug ) }
+						>
+							{ checkoutLabel || __( 'Checkout' ) }
+						</Button>
+					) }
 				</MiniCartFooter>
 			</MiniCartWrapper>
 		</CheckoutProvider>

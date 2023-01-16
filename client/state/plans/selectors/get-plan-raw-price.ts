@@ -23,7 +23,9 @@ export function getPlanRawPrice(
 	if ( rawPrice < 0 ) {
 		return null;
 	}
-	const price = origCost || plan.raw_price;
+	const price = origCost || plan?.raw_price;
 
-	return isMonthly ? calculateMonthlyPriceForPlan( plan.product_slug, price ) : price;
+	return isMonthly
+		? calculateMonthlyPriceForPlan( plan?.product_slug ?? '', price ?? 0 )
+		: price ?? null;
 }

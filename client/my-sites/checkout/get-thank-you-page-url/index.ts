@@ -516,6 +516,16 @@ function getFallbackDestination( {
 		}
 	}
 
+	const marketplaceProductSlugs =
+		cart?.products
+			?.filter( ( product ) => product?.extra?.is_marketplace_product )
+			?.map( ( product ) => product?.extra?.plugin_slug ) || [];
+
+	if ( marketplaceProductSlugs.length > 0 ) {
+		debug( 'site with marketplace products' );
+		return `/marketplace/thank-you/${ marketplaceProductSlugs.join( ',' ) }/${ siteSlug }`;
+	}
+
 	debug( 'simple thank-you page' );
 	return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }`;
 }

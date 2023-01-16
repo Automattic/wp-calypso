@@ -1,0 +1,22 @@
+@import "@automattic/typography/styles/variables";
+@import "@automattic/onboarding/styles/mixins";
+
+
+.wooexpress.assign-trial-plan {
+	padding: 1em;
+	max-width: 540px;
+	text-align: center;
+	margin: 16vh auto 0;
+
+	.step-container {
+		display: flex;
+	}
+
+	.step-container__content {
+		width: 100%;
+
+		h1 {
+			@include onboarding-font-recoleta;
+		}
+	}
+}

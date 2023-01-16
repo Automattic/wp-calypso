@@ -13,20 +13,48 @@ import wrapSettingsForm from '../wrap-settings-form';
 
 const isEnabled = config.isEnabled( 'settings/modernize-reading-settings' );
 
-// Settings are not typed yet, so we need to use `unknown` for now.
-type Settings = unknown;
+type Settings = {
+	jetpack_relatedposts_enabled?: boolean;
+	jetpack_relatedposts_show_headline?: boolean;
+	jetpack_relatedposts_show_thumbnails?: boolean;
+	posts_per_page?: boolean;
+	posts_per_rss?: boolean;
+	rss_use_excerpt?: boolean;
+	wpcom_featured_image_in_email?: boolean;
+	wpcom_subscription_emails_use_excerpt?: boolean;
+	subscription_options?: {
+		invitation: string;
+		comment_follow: string;
+	};
+};
 
-const getFormSettings = ( settings: Settings = {} ) => {
+const getFormSettings = ( settings: Settings ) => {
 	if ( ! settings ) {
 		return {};
 	}
 
-	// @ts-expect-error Settings are not typed yet, so we need to use `unknown` for now.
-	const { posts_per_page, posts_per_rss, wpcom_featured_image_in_email } = settings;
+	const {
+		jetpack_relatedposts_enabled,
+		jetpack_relatedposts_show_headline,
+		jetpack_relatedposts_show_thumbnails,
+		posts_per_page,
+		posts_per_rss,
+		rss_use_excerpt,
+		wpcom_featured_image_in_email,
+		wpcom_subscription_emails_use_excerpt,
+		subscription_options,
+	} = settings;
+
 	return {
+		...( jetpack_relatedposts_enabled && { jetpack_relatedposts_enabled } ),
+		...( jetpack_relatedposts_show_headline && { jetpack_relatedposts_show_headline } ),
+		...( jetpack_relatedposts_show_thumbnails && { jetpack_relatedposts_show_thumbnails } ),
 		...( posts_per_page && { posts_per_page } ),
 		...( posts_per_rss && { posts_per_rss } ),
+		...( rss_use_excerpt && { rss_use_excerpt } ),
 		...( wpcom_featured_image_in_email && { wpcom_featured_image_in_email } ),
+		...( wpcom_subscription_emails_use_excerpt && { wpcom_subscription_emails_use_excerpt } ),
+		...( subscription_options && { subscription_options } ),
 	};
 };
 
@@ -41,7 +69,13 @@ const connectComponent = connect( ( state ) => {
 type Fields = {
 	posts_per_page?: number;
 	posts_per_rss?: number;
+	rss_use_excerpt?: boolean;
 	wpcom_featured_image_in_email?: boolean;
+	wpcom_subscription_emails_use_excerpt?: boolean;
+	subscription_options?: {
+		invitation: string;
+		comment_follow: string;
+	};
 };
 
 type ReadingSettingsFormProps = {
@@ -52,6 +86,7 @@ type ReadingSettingsFormProps = {
 	isRequestingSettings: boolean;
 	isSavingSettings: boolean;
 	siteUrl?: string;
+	updateFields: ( fields: Fields ) => void;
 };
 
 const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
@@ -64,6 +99,7 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 			isRequestingSettings,
 			isSavingSettings,
 			siteUrl,
+			updateFields,
 		}: ReadingSettingsFormProps ) => {
 			const disabled = isRequestingSettings || isSavingSettings;
 			return (
@@ -71,14 +107,17 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 					<SiteSettingsSection
 						fields={ fields }
 						onChangeField={ onChangeField }
+						handleToggle={ handleToggle }
 						handleSubmitForm={ handleSubmitForm }
 						disabled={ disabled }
+						isRequestingSettings={ isRequestingSettings }
 						isSavingSettings={ isSavingSettings }
 					/>
 					<RssFeedSettingsSection
 						fields={ fields }
 						onChangeField={ onChangeField }
 						handleSubmitForm={ handleSubmitForm }
+						updateFields={ updateFields }
 						disabled={ disabled }
 						isSavingSettings={ isSavingSettings }
 						siteUrl={ siteUrl }
@@ -89,6 +128,7 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						handleSubmitForm={ handleSubmitForm }
 						disabled={ disabled }
 						isSavingSettings={ isSavingSettings }
+						updateFields={ updateFields }
 					/>
 				</form>
 			);

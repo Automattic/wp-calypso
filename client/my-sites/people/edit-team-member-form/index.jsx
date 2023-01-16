@@ -1,7 +1,10 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
+import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import useUserQuery from 'calypso/data/users/use-user-query';
@@ -29,18 +32,22 @@ export const EditTeamMemberForm = ( {
 	previousRoute,
 	siteSlug,
 	recordGoogleEvent,
+	translate,
 } ) => {
 	const goBack = () => {
 		recordGoogleEvent( 'People', 'Clicked Back Button on User Edit' );
+
+		const teamRoute = isEnabled( 'user-management-revamp' ) ? 'team-members' : 'team';
+
 		if ( previousRoute ) {
 			page.back( previousRoute );
 			return;
 		}
 		if ( siteSlug ) {
-			page( '/people/team/' + siteSlug );
+			page( `/people/${ teamRoute }/${ siteSlug }` );
 			return;
 		}
-		page( '/people/team' );
+		page( `/people/${ teamRoute }` );
 	};
 
 	const { markChanged, markSaved } = useProtectForm();
@@ -53,7 +60,19 @@ export const EditTeamMemberForm = ( {
 	return (
 		<Main className="edit-team-member-form">
 			<PageViewTracker path="people/edit/:site/:user" title="People > View Team Member" />
-			<HeaderCake onClick={ goBack } isCompact />
+			{ isEnabled( 'user-management-revamp' ) && (
+				<FormattedHeader
+					brandFont
+					className="people__page-heading"
+					headerText={ translate( 'Users' ) }
+					subHeaderText={ translate( 'People who have subscribed to your site and team members.' ) }
+					align="left"
+					hasScreenOptions
+				/>
+			) }
+			<HeaderCake onClick={ goBack } isCompact>
+				{ translate( 'User Details' ) }
+			</HeaderCake>
 			<Card className="edit-team-member-form__user-profile">
 				<PeopleProfile siteId={ siteId } user={ user } />
 				{ user && (
@@ -61,6 +80,8 @@ export const EditTeamMemberForm = ( {
 						user={ user }
 						disabled={ false } // @TODO added when added mutation to remove user
 						siteId={ siteId }
+						autoSave={ isEnabled( 'user-management-revamp' ) }
+						roleSelectControlType={ isEnabled( 'user-management-revamp' ) ? 'select' : 'radio' }
 						isJetpack={ isJetpack }
 						markChanged={ markChanged }
 						markSaved={ markSaved }
@@ -99,4 +120,4 @@ export default connect(
 		};
 	},
 	{ recordGoogleEvent: recordGoogleEventAction }
-)( EditTeamMemberForm );
+)( localize( EditTeamMemberForm ) );

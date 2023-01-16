@@ -66,6 +66,7 @@ ThemesList.propTypes = {
 	getButtonOptions: PropTypes.func,
 	getScreenshotUrl: PropTypes.func,
 	onScreenshotClick: PropTypes.func.isRequired,
+	onStyleVariationClick: PropTypes.func,
 	onMoreButtonClick: PropTypes.func,
 	getActionLabel: PropTypes.func,
 	isActive: PropTypes.func,
@@ -113,6 +114,7 @@ function ThemeBlock( props ) {
 			buttonContents={ props.getButtonOptions( theme.id ) }
 			screenshotClickUrl={ props.getScreenshotUrl && props.getScreenshotUrl( theme.id ) }
 			onScreenshotClick={ props.onScreenshotClick }
+			onStyleVariationClick={ props.onStyleVariationClick }
 			onMoreButtonClick={ props.onMoreButtonClick }
 			actionLabel={ props.getActionLabel( theme.id ) }
 			index={ index }
@@ -169,16 +171,18 @@ function Empty( props ) {
 					{ ...props }
 				/>
 			) : (
-				<div className="themes-list__not-found-text">
-					{ translate( 'No themes match your search' ) }
-				</div>
+				<>
+					<div className="themes-list__not-found-text">
+						{ translate( 'No themes match your search' ) }
+					</div>
+					<PlanUpgradeCTA
+						selectedSite={ selectedSite }
+						searchTerm={ searchTerm }
+						translate={ translate }
+						recordTracksEvent={ props.recordTracksEvent }
+					/>
+				</>
 			) }
-			<PlanUpgradeCTA
-				selectedSite={ selectedSite }
-				searchTerm={ searchTerm }
-				translate={ translate }
-				recordTracksEvent={ props.recordTracksEvent }
-			/>
 		</div>
 	) : (
 		<>

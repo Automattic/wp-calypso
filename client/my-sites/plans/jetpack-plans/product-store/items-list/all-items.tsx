@@ -1,3 +1,4 @@
+import { isJetpackPlanSlug } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useStoreItemInfoContext } from '../context/store-item-info-context';
 import { ItemPrice } from '../item-price';
@@ -18,17 +19,20 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 	const {
 		getCheckoutURL,
 		getCtaLabel,
+		getCtaAriaLabel,
 		getIsDeprecated,
 		getIsExternal,
 		getIsIncludedInPlan,
 		getIsIncludedInPlanOrSuperseded,
 		getIsMultisiteCompatible,
 		getIsOwned,
+		getIsExpired,
 		getIsPlanFeature,
 		getIsSuperseded,
 		getIsUserPurchaseOwner,
 		getOnClickPurchase,
 		isMultisite,
+		getIsProductInCart,
 	} = useStoreItemInfoContext();
 
 	const wrapperClassName = classNames( 'jetpack-product-store__all-items', className );
@@ -40,6 +44,9 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 			<ul className="jetpack-product-store__all-items--grid">
 				{ items.map( ( item ) => {
 					const isOwned = getIsOwned( item );
+					const isExpired = getIsExpired( item );
+					const isProductInCart =
+						! isJetpackPlanSlug( item.productSlug ) && getIsProductInCart( item );
 					const isSuperseded = getIsSuperseded( item );
 					const isDeprecated = getIsDeprecated( item );
 					const isExternal = getIsExternal( item );
@@ -52,6 +59,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 						( ( isOwned || isIncludedInPlan ) && ! getIsUserPurchaseOwner( item ) );
 
 					const ctaLabel = getCtaLabel( item );
+					const ctaAriaLabel = getCtaAriaLabel( item );
 
 					const hideMoreInfoLink = isDeprecated || isOwned || isIncludedInPlanOrSuperseded;
 
@@ -60,6 +68,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 							isMultiSiteIncompatible={ isMultiSiteIncompatible }
 							isIncludedInPlan={ isIncludedInPlan }
 							isOwned={ isOwned }
+							isExpired={ isExpired }
 							item={ item }
 							siteId={ siteId }
 						/>
@@ -78,7 +87,12 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 						</>
 					);
 
-					const ctaAsPrimary = ! ( isOwned || getIsPlanFeature( item ) || isSuperseded );
+					const ctaAsPrimary = ! (
+						isProductInCart ||
+						isOwned ||
+						getIsPlanFeature( item ) ||
+						isSuperseded
+					);
 
 					return (
 						<li key={ item.productSlug }>
@@ -86,11 +100,13 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 								ctaAsPrimary={ ctaAsPrimary }
 								ctaHref={ getCheckoutURL( item ) }
 								ctaLabel={ ctaLabel }
+								ctaAriaLabel={ ctaAriaLabel }
 								description={ description }
 								icon={ <img alt="" src={ getProductIcon( { productSlug: item.productSlug } ) } /> }
 								isCtaDisabled={ isCtaDisabled }
 								isCtaExternal={ isExternal }
 								onClickCta={ getOnClickPurchase( item ) }
+								isProductInCart={ isProductInCart }
 								price={ price }
 								title={ item.displayName }
 							/>

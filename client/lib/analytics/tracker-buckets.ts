@@ -6,6 +6,7 @@ import {
 	getTrackingPrefs,
 } from 'calypso/lib/analytics/utils';
 import { isE2ETest } from 'calypso/lib/e2e';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 const allAdTrackers = [
 	'bing',
@@ -54,12 +55,14 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	twitter: Bucket.ADVERTISING,
 	facebook: Bucket.ADVERTISING,
 
+	// Advertising trackers (only Jetpack Cloud):
+	linkedin: isJetpackCloud() ? Bucket.ADVERTISING : null,
+
 	// Disabled trackers:
 	quantcast: null,
 	gemini: null,
 	experian: null,
 	iconMedia: null,
-	linkedin: null,
 	criteo: null,
 	pandora: null,
 	quora: null,
@@ -80,7 +83,7 @@ export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolea
 	pinterest: () => 'pintrk' in window,
 	twitter: () => 'twq' in window,
 	facebook: () => 'fbq' in window,
-	linkedin: () => '_linkedin_data_partner_id' in window,
+	linkedin: () => '_linkedin_data_partner_ids' in window && 'lintrk' in window,
 	criteo: () => 'criteo_q' in window,
 	quora: () => 'qp' in window,
 	adroll: () => 'adRoll' in window,

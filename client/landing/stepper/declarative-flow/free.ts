@@ -30,10 +30,13 @@ const free: Flow = {
 		return translate( 'Free' );
 	},
 	useSteps() {
+		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
+
 		useEffect( () => {
 			if ( ! isEnabled( 'signup/free-flow' ) ) {
 				return window.location.assign( '/start/free' );
 			}
+			resetOnboardStore();
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 			recordFullStoryEvent( 'calypso_signup_start_free', { flow: this.name } );
 		}, [] );
@@ -93,9 +96,14 @@ const free: Flow = {
 					return navigate( 'processing' );
 
 				case 'processing':
+					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
+						return window.location.replace( `/home/${ providedDependencies?.siteSlug }` );
+					}
+
 					if ( selectedDesign ) {
 						return navigate( `launchpad?siteSlug=${ siteSlug }` );
 					}
+
 					return navigate( `designSetup?siteSlug=${ providedDependencies?.siteSlug }` );
 
 				case 'designSetup':

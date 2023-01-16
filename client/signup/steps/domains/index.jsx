@@ -182,14 +182,19 @@ class DomainsStep extends Component {
 		return this.props.queryObject ? this.props.queryObject.theme : undefined;
 	};
 
+	getThemeStyleVariation = () => {
+		return this.props.queryObject ? this.props.queryObject.style_variation : undefined;
+	};
+
 	getThemeArgs = () => {
 		const themeSlug = this.getThemeSlug();
+		const themeStyleVariation = this.getThemeStyleVariation();
 		const themeSlugWithRepo = this.getThemeSlugWithRepo( themeSlug );
 		const theme = this.isPurchasingTheme()
 			? themeItem( themeSlug, 'signup-with-theme' )
 			: undefined;
 
-		return { themeSlug, themeSlugWithRepo, themeItem: theme };
+		return { themeSlug, themeSlugWithRepo, themeStyleVariation, themeItem: theme };
 	};
 
 	getThemeSlugWithRepo = ( themeSlug ) => {
@@ -525,7 +530,7 @@ class DomainsStep extends Component {
 		}
 
 		const includeWordPressDotCom = this.props.includeWordPressDotCom ?? ! this.props.isDomainOnly;
-		const promoTlds = this.props?.queryObject?.tld?.split( ',' ) ?? [];
+		const promoTlds = this.props?.queryObject?.tld?.split( ',' ) ?? null;
 
 		return (
 			<CalypsoShoppingCartProvider>

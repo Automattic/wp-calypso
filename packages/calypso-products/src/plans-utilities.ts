@@ -7,6 +7,8 @@ import {
 	PLAN_ANNUAL_PERIOD,
 	TERM_BIENNIALLY,
 	PLAN_BIENNIAL_PERIOD,
+	TERM_TRIENNIALLY,
+	PLAN_TRIENNIAL_PERIOD,
 } from './constants';
 
 export function isBestValue( plan: string ): boolean {
@@ -29,6 +31,9 @@ export function getTermDuration( term: string ): number | undefined {
 
 		case TERM_BIENNIALLY:
 			return PLAN_BIENNIAL_PERIOD;
+
+		case TERM_TRIENNIALLY:
+			return PLAN_TRIENNIAL_PERIOD;
 	}
 }
 

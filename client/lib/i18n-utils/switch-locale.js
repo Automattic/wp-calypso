@@ -366,15 +366,11 @@ export default async function switchLocale( localeSlug ) {
 			);
 
 			// Add preloaded translation chunks
-			Promise.all(
-				preloadedTranslatedInstalledChunks.map( ( chunkId ) =>
-					getTranslationChunkFile( chunkId, localeSlug )
-				)
-			).then( ( allTranslations ) =>
-				addTranslations(
-					allTranslations.reduce( ( acc, translations ) => Object.assign( acc, translations ), {} )
-				)
+			const preloadedTranslations = preloadedTranslatedInstalledChunks.reduce(
+				( acc, chunkId ) => Object.assign( acc, window.i18nTranslationChunks?.[ chunkId ] ),
+				{}
 			);
+			addTranslations( preloadedTranslations );
 
 			// Load individual translation chunks
 			translatedInstalledChunksToBeLoaded.forEach( ( chunkId ) =>

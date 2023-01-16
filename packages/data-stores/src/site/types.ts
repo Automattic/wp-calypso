@@ -69,6 +69,7 @@ export interface CreateSiteParams {
 		wpcom_public_coming_soon?: number;
 		anchor_fm_podcast_id?: string;
 		is_blank_canvas?: boolean;
+		is_videopress_initial_purchase?: boolean;
 	};
 }
 

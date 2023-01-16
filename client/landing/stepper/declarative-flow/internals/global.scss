@@ -67,6 +67,8 @@ button {
 .anchor-fm,
 .subscribers,
 .ecommerce,
+.wooexpress,
+.copy-site,
 .intro,
 .free-setup,
 .free-post-setup,
@@ -169,6 +171,7 @@ button {
 	}
 }
 
+.store-profiler__form,
 .newsletter,
 .link-in-bio,
 .link-in-bio-tld,
@@ -235,6 +238,7 @@ button {
 		label {
 			font-size: $font-body;
 			color: var(--studio-gray-60);
+			font-weight: 400;
 		}
 	}
 
@@ -268,7 +272,8 @@ button {
 	}
 }
 
-.free {
+.free,
+.free-post-setup {
 	.signup-header h1 {
 		display: none;
 	}
@@ -298,11 +303,19 @@ button {
 	}
 }
 
+.wooexpress,
+.copy-site,
 .ecommerce {
 	.step-container.processing-step {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		margin-top: 25vh;
+	}
+}
+
+.wooexpress {
+	.flow-progress.progress-bar {
+		display: none;
 	}
 }

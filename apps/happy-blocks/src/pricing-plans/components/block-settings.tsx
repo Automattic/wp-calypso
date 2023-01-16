@@ -6,14 +6,12 @@ import {
 	PanelBody,
 	RadioControl,
 	CheckboxControl,
-	SelectControl,
 	TextControl,
 } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { FunctionComponent } from 'react';
-import config from '../config';
 import usePlanOptions from '../hooks/plan-options';
 import { BlockPlan } from '../hooks/pricing-plans';
 import { BlockAttributes } from '../types';
@@ -58,10 +56,6 @@ const BlockSettings: FunctionComponent<
 		}
 	};
 
-	const onPlanTypeChange = ( newPlanType: string ) => {
-		setPlan( newPlanType, currentPlan?.term ?? plans[ 0 ].term );
-	};
-
 	const isDisabled = ( value: string ) =>
 		planTypeOptions.includes( value ) && planTypeOptions.length === 1;
 
@@ -89,27 +83,18 @@ const BlockSettings: FunctionComponent<
 				initialOpen={ true }
 			>
 				<PanelRow>
-					{ ! config.features.planTabs && (
-						<SelectControl
-							label={ __( 'Plan', 'happy-blocks' ) }
-							value={ currentPlan?.type }
-							options={ planOptions }
-							onChange={ onPlanTypeChange }
+					{ planOptions.map( ( option ) => (
+						<CheckboxControl
+							className={ classNames( {
+								'hb-pricing-plans-embed__settings-checkbox--disabled': isDisabled( option.value ),
+							} ) }
+							key={ option.value }
+							label={ option.label }
+							checked={ isChecked( option.value ) }
+							disabled={ isDisabled( option.value ) }
+							onChange={ ( checked ) => onPlanTypeToggle( option.value, checked ) }
 						/>
-					) }
-					{ config.features.planTabs &&
-						planOptions.map( ( option ) => (
-							<CheckboxControl
-								className={ classNames( {
-									'hb-pricing-plans-embed__settings-checkbox--disabled': isDisabled( option.value ),
-								} ) }
-								key={ option.value }
-								label={ option.label }
-								checked={ isChecked( option.value ) }
-								disabled={ isDisabled( option.value ) }
-								onChange={ ( checked ) => onPlanTypeToggle( option.value, checked ) }
-							/>
-						) ) }
+					) ) }
 					<TextControl
 						className="hb-pricing-plans-embed__settings-domain"
 						label={ __( 'Domain', 'happy-blocks' ) }

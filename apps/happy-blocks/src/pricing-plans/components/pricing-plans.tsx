@@ -1,7 +1,6 @@
 import { BlockEditProps } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import { FunctionComponent } from 'react';
-import config from '../config';
 import { BlockPlan } from '../hooks/pricing-plans';
 import { BlockAttributes } from '../types';
 import PricingPlanDetail from './pricing-plan-detail';
@@ -25,7 +24,7 @@ const PricingPlans: FunctionComponent<
 
 	return (
 		<div className="hb-pricing-plans-embed">
-			{ config.features.planTabs && attributes.planTypeOptions.length > 1 && (
+			{ attributes.planTypeOptions.length > 1 && (
 				<PricingPlansTabs
 					attributes={ attributes }
 					plans={ plans }

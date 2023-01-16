@@ -43,16 +43,13 @@ export interface BearerTokenResponse {
 	};
 }
 
-interface SiteMetadata {
-	ID: number;
-	name: string;
-	description: string;
-	URL: string;
-	site_owner: number;
+export interface DomainData {
+	blog_id: number;
+	domain: string;
 }
 
-export interface AllSitesResponse {
-	sites: Array< SiteMetadata >;
+export interface AllDomainsResponse {
+	domains: Array< DomainData >;
 }
 
 export interface CalypsoPreferencesResponse {

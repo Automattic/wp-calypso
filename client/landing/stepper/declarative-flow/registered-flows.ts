@@ -40,6 +40,11 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 			/* webpackChunkName: "tailored-ecommerce-flow" */ '../declarative-flow/tailored-ecommerce-flow'
 		),
 
+	wooexpress: () =>
+		import(
+			/* webpackChunkName: "trial-wooexpress-flow" */ '../declarative-flow/trial-wooexpress-flow'
+		),
+
 	free: () => import( /* webpackChunkName: "free-flow" */ '../declarative-flow/free' ),
 
 	'free-post-setup': () =>
@@ -55,4 +60,10 @@ if ( config.isEnabled( 'themes/plugin-bundling' ) ) {
 	availableFlows[ 'plugin-bundle' ] = () =>
 		import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' );
 }
+
+if ( config.isEnabled( 'sites/copy-site' ) ) {
+	availableFlows[ 'copy-site' ] = () =>
+		import( /* webpackChunkName: "copy-site" */ '../declarative-flow/copy-site' );
+}
+
 export default availableFlows;

@@ -4,8 +4,8 @@ import {
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
-
 import 'calypso/state/stats/init';
+import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
 
 /**
  * Returns an action object to be used in signalling that stats for a given type of stats and query
@@ -33,7 +33,7 @@ const wpcomV1Endpoints = {
 	statsInsights: 'stats/insights',
 	statsFileDownloads: 'stats/file-downloads',
 	statsAds: 'wordads/stats',
-	statsEmailsOpen: 'stats/opens/emails',
+	statsEmailsOpen: 'stats/opens/emails/summary',
 };
 
 const wpcomV2Endpoints = {
@@ -71,7 +71,17 @@ export function requestSiteStats( siteId, statType, query ) {
 			apiNamespace = 'wpcom/v2';
 		}
 
-		const options = 'statsVideo' === statType ? query.postId : query;
+		const options = ( () => {
+			switch ( statType ) {
+				case 'statsVideo':
+					return query.postId;
+				case 'statsEmailsOpen':
+					return { period: PERIOD_ALL_TIME, quantity: 20 };
+				default:
+					return query;
+			}
+		} )();
+
 		const requestStats = subpath
 			? wpcom.req.get(
 					{

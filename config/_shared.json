@@ -155,6 +155,7 @@
 	"sections": {
 		"jetpack-cloud": false,
 		"jetpack-cloud-agency-dashboard": false,
+		"jetpack-cloud-features-comparison": false,
 		"jetpack-cloud-plugin-management": false,
 		"jetpack-cloud-agency-signup": false,
 		"jetpack-cloud-auth": false,
@@ -180,11 +181,10 @@
 		"onboarding-with-email",
 		"with-add-ons",
 		"newsletter",
-		"link-in-bio",
-		"link-in-bio-tld",
 		"setup-site",
 		"account",
 		"do-it-for-me",
+		"do-it-for-me-store",
 		"website-design-services",
 		"desktop",
 		"developer",
@@ -209,7 +209,8 @@
 		"ecommerce-monthly",
 		"pro",
 		"starter",
-		"domain"
+		"domain",
+		"onboarding-2023-pricing-grid"
 	],
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js"
 }

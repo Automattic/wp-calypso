@@ -16,9 +16,9 @@ function appendActionTracking( option, name ) {
 	const { action } = option;
 
 	return Object.assign( {}, option, {
-		action: ( t ) => {
+		action: ( t, context ) => {
 			action && action( t );
-			trackClick( 'more button', name );
+			context && trackClick( context, name );
 		},
 	} );
 }
@@ -77,4 +77,13 @@ export function localizeThemesPath( path, locale, isLoggedOut = true ) {
  */
 export function marketplaceThemeBillingProductSlug( themeId ) {
 	return `wp-mp-theme-${ themeId }`;
+}
+
+export function getSubjectsFromTermTable( filterToTermTable ) {
+	return Object.keys( filterToTermTable )
+		.filter( ( key ) => key.indexOf( 'subject:' ) !== -1 )
+		.reduce( ( obj, key ) => {
+			obj[ key ] = filterToTermTable[ key ];
+			return obj;
+		}, {} );
 }

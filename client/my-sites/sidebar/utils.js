@@ -26,6 +26,16 @@ export const itemLinkMatches = ( path, currentPath ) => {
 		return fragmentIsEqual( path, currentPath, 3 );
 	}
 
+	if ( pathIncludes( currentPath, 'people', 1 ) ) {
+		if ( pathIncludes( currentPath, 'new', 2 ) ) {
+			return fragmentIsEqual( path, currentPath, 2 );
+		}
+
+		if ( pathIncludes( currentPath, 'team-members', 2 ) ) {
+			return fragmentIsEqual( path, currentPath, 2 );
+		}
+	}
+
 	if ( pathIncludes( currentPath, 'settings', 1 ) ) {
 		// Jetpack Cloud uses a simpler /settings/:site pattern for the settings page.
 		if ( isJetpackCloud() ) {

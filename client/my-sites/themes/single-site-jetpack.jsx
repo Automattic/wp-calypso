@@ -8,7 +8,6 @@ import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import Main from 'calypso/components/main';
 import { useRequestSiteChecklistTaskUpdate } from 'calypso/data/site-checklist';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import CurrentTheme from 'calypso/my-sites/themes/current-theme';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
@@ -17,7 +16,6 @@ import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { addTracking } from './helpers';
 import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
-import ThemesHeader from './themes-header';
 import ThemesSelection from './themes-selection';
 
 const ConnectedThemesSelection = connectOptions( ( props ) => {
@@ -52,7 +50,6 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 	} = props;
 
 	const isNewDetailsAndPreview = isEnabled( 'themes/showcase-i4/details-and-preview' );
-	const isNewSearchAndFilter = isEnabled( 'themes/showcase-i4/search-and-filter' );
 	const displayUpsellBanner = isAtomic && ! requestingSitePlans && currentPlan;
 	const upsellUrl =
 		isAtomic && `/plans/${ siteId }?feature=${ FEATURE_UPLOAD_THEMES }&plan=${ PLAN_BUSINESS }`;
@@ -75,19 +72,11 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 
 	return (
 		<Main fullWidthLayout className="themes">
-			{ isNewSearchAndFilter && <BodySectionCssClass bodyClass={ [ 'is-section-themes-i4' ] } /> }
 			{ isNewDetailsAndPreview && (
 				<BodySectionCssClass bodyClass={ [ 'is-section-themes-i4-2' ] } />
 			) }
-			<ThemesHeader isReskinned={ isNewSearchAndFilter } />
-			{ ! isNewSearchAndFilter ? (
-				<CurrentTheme siteId={ siteId } />
-			) : (
-				<>
-					<QueryActiveTheme siteId={ siteId } />
-					{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
-				</>
-			) }
+			<QueryActiveTheme siteId={ siteId } />
+			{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
 
 			<ThemeShowcase
 				{ ...props }

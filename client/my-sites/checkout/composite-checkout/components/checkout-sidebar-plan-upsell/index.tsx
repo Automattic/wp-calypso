@@ -37,6 +37,7 @@ export function CheckoutSidebarPlanUpsell() {
 	}
 
 	const biennialVariant = variants?.find( ( product ) => product.termIntervalInMonths === 24 );
+	const triennialVariant = variants?.find( ( product ) => product.termIntervalInMonths === 36 );
 	const currentVariant = variants?.find( ( product ) => product.productId === plan.product_id );
 
 	if ( ! biennialVariant ) {
@@ -51,6 +52,12 @@ export function CheckoutSidebarPlanUpsell() {
 
 	if ( biennialVariant.productId === plan.product_id ) {
 		debug( 'plan in cart is already biennial' );
+		return null;
+	}
+
+	// If the current plan is a triennial plan, we don't want to show an upsell.
+	if ( triennialVariant?.productId === plan.product_id ) {
+		debug( 'plan is triennial. hide upsell.' );
 		return null;
 	}
 

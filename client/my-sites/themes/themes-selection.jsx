@@ -68,7 +68,7 @@ class ThemesSelection extends Component {
 		}
 	}
 
-	recordSearchResultsClick = ( themeId, resultsRank, action ) => {
+	recordSearchResultsClick = ( themeId, resultsRank, action, variation = '@theme' ) => {
 		const { query, filterString } = this.props;
 		const themes = this.props.customizedThemesList || this.props.themes;
 		const search_taxonomies = filterString;
@@ -78,6 +78,7 @@ class ThemesSelection extends Component {
 			search_term: search_term || null,
 			search_taxonomies,
 			theme: themeId,
+			style_variation: variation,
 			results_rank: resultsRank + 1,
 			results: themes.map( property( 'id' ) ).join(),
 			page_number: query.page,
@@ -104,6 +105,22 @@ class ThemesSelection extends Component {
 		this.props.onScreenshotClick && this.props.onScreenshotClick( themeId );
 	};
 
+	onStyleVariationClick = ( themeId, resultsRank, variation ) => {
+		if ( ! this.props.isThemeActive( themeId ) ) {
+			this.recordSearchResultsClick( themeId, resultsRank, 'style_variation', variation?.slug );
+		}
+
+		const options = this.getOptions(
+			themeId,
+			variation,
+			`style variation: ${ variation ? variation.slug : 'show more' }`
+		);
+
+		if ( options && options.preview ) {
+			options.preview.action( themeId );
+		}
+	};
+
 	fetchNextPage = ( options ) => {
 		if ( this.props.isRequesting || this.props.isLastPage ) {
 			return;
@@ -119,7 +136,7 @@ class ThemesSelection extends Component {
 	};
 
 	//intercept preview and add primary and secondary
-	getOptions = ( themeId ) => {
+	getOptions = ( themeId, styleVariation, context ) => {
 		const options = this.props.getOptions( themeId );
 		const wrappedPreviewAction = ( action ) => {
 			let defaultOption;
@@ -149,8 +166,13 @@ class ThemesSelection extends Component {
 				} else {
 					defaultOption = options.activate;
 				}
-				this.props.setThemePreviewOptions( defaultOption, secondaryOption );
-				return action( t );
+				this.props.setThemePreviewOptions(
+					themeId,
+					defaultOption,
+					secondaryOption,
+					styleVariation
+				);
+				return action( t, context );
 			};
 		};
 
@@ -179,6 +201,7 @@ class ThemesSelection extends Component {
 					onMoreButtonClick={ this.recordSearchResultsClick }
 					getButtonOptions={ this.getOptions }
 					onScreenshotClick={ this.onScreenshotClick }
+					onStyleVariationClick={ this.onStyleVariationClick }
 					getScreenshotUrl={ this.props.getScreenshotUrl }
 					getActionLabel={ this.props.getActionLabel }
 					isActive={ this.props.isThemeActive }

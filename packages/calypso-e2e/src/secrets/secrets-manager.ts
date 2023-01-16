@@ -5,6 +5,7 @@ import type { Secrets } from '.';
 
 export const TEST_ACCOUNT_NAMES = [
 	'defaultUser',
+	'atomicUser',
 	'eCommerceUser',
 	'simpleSiteFreePlanUser',
 	'simpleSitePersonalPlanUser',
@@ -24,6 +25,7 @@ export const TEST_ACCOUNT_NAMES = [
 	'jetpackUser',
 	'jetpackUserPREMIUM',
 	'jetpackUserJN',
+	'desktopAppUser',
 	'commentingUser',
 	'notificationsUser',
 	'googleLoginUser',
@@ -131,7 +133,6 @@ export class SecretsManager {
 		};
 
 		return {
-			passwordForNewTestSignUps: 'FAKE_VALUE',
 			storeSandboxCookieValue: 'FAKE_VALUE',
 			testCouponCode: 'FAKE_VALUE',
 			wpccAuthPath: 'FAKE_VALUE',
@@ -152,6 +153,12 @@ export class SecretsManager {
 			},
 			testAccounts: {
 				defaultUser: {
+					...fakeAccount,
+					userID: 0,
+					testSites: { primary: { id: 0, url: 'FAKE_VALUE' } },
+					email: 'FAKE_VALUE',
+				},
+				atomicUser: {
 					...fakeAccount,
 					userID: 0,
 					testSites: { primary: { id: 0, url: 'FAKE_VALUE' } },
@@ -178,6 +185,7 @@ export class SecretsManager {
 				jetpackUser: { ...fakeAccount },
 				jetpackUserPREMIUM: { ...fakeAccount },
 				jetpackUserJN: { ...fakeAccount },
+				desktopAppUser: { ...fakeAccount },
 				commentingUser: { ...fakeAccount },
 				notificationsUser: { ...fakeAccount },
 				googleLoginUser: {

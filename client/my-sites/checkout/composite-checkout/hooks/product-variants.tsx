@@ -5,6 +5,7 @@ import {
 	getBillingTermForMonths,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
+	TERM_TRIENNIALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
@@ -84,6 +85,7 @@ export function useGetProductVariants(
 			.map( ( variant ): WPCOMProductVariant | undefined => {
 				try {
 					const term = getBillingTermForMonths( variant.bill_period_in_months );
+					const introductoryTerms = variant.introductory_offer_terms;
 					return {
 						variantLabel: getTermText( term, translate ),
 						productSlug: variant.product_slug,
@@ -91,7 +93,11 @@ export function useGetProductVariants(
 						priceInteger: variant.price_integer,
 						termIntervalInMonths: getBillingMonthsForTerm( term ),
 						termIntervalInDays: getTermDuration( term ) ?? 0,
+						introductoryInterval: introductoryTerms?.interval_count,
+						introductoryTerm: introductoryTerms?.interval_unit,
+						priceBeforeDiscounts: variant.price_before_discounts_integer,
 						currency: variant.currency,
+						productBillingTermInMonths: variant.bill_period_in_months,
 					};
 				} catch ( error ) {
 					// Three-year plans are not yet fully supported, so we need to guard
@@ -130,6 +136,9 @@ function getTermText( term: string, translate: ReturnType< typeof useTranslate >
 	switch ( term ) {
 		case TERM_BIENNIALLY:
 			return String( translate( 'Two years' ) );
+
+		case TERM_TRIENNIALLY:
+			return String( translate( 'Three years' ) );
 
 		case TERM_ANNUALLY:
 			return String( translate( 'One year' ) );

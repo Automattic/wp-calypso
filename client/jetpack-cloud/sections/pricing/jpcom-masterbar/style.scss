@@ -5,8 +5,8 @@
  * Some overwrites are necessary to make both this and Jetpack.com headers look
  * similar.
  */
-
-.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing .jpcom-masterbar {
+.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing .jpcom-masterbar,
+.is-group-jetpack-cloud.is-section-jetpack-cloud-features-comparison .jpcom-masterbar {
 	// ============================================================================
 	// Overwrites
 	// ============================================================================
@@ -28,6 +28,11 @@
 		justify-content: space-between;
 		flex: 1;
 		min-width: 0;
+	}
+
+	.header__jetpack-masterbar-cart {
+		display: inline-flex;
+		margin-right: 40px;
 	}
 
 	.header__sections-list,
@@ -128,8 +133,6 @@
 	@media ( max-width: 900px ) {
 		.header {
 			position: relative;
-			display: flex;
-			align-items: center;
 			padding: 0;
 			height: 80px;
 			background-color: var(--studio-white);
@@ -151,6 +154,22 @@
 		fill: #101517;
 	}
 
+	.header__content-wrapper {
+		position: absolute;
+		width: 100%;
+	}
+
+	.header__content-background-wrapper {
+		width: 100%;
+		background-color: #fff;
+		top: 0;
+		max-width: 100%;
+		&--sticky {
+			position: fixed;
+		}
+
+	}
+
 	.header__content {
 		width: 85%;
 		max-width: 1200px;
@@ -168,17 +187,18 @@
 			width: 95%;
 		}
 	}
-	@media ( max-width: 782px ) {
-		.header__content {
-			padding: 0 2rem;
-			width: 100%;
-		}
-	}
 	@media ( max-width: 900px ) {
 		.header__content {
 			justify-content: space-between;
 		}
+
 	}
+	@media ( max-width: 782px ) {
+		.header__content {
+			width: 90%;
+		}
+	}
+
 
 	@media ( max-width: 900px ) {
 		.header__nav-wrapper {
@@ -192,6 +212,11 @@
 			padding: 1rem 0 2rem;
 			background-color: var(--studio-white);
 			box-shadow: 0 12px 12px 0 rgba(0, 0, 0, 0.15);
+		}
+		.header__content-background-wrapper--sticky {
+			.header__nav-wrapper {
+				top: 48px;
+			}
 		}
 		.header__nav-wrapper.is-expanded,
 		.header__nav-wrapper:target {
@@ -253,6 +278,10 @@
 		width: 100%;
 		margin-inline-end: 3rem;
 		padding: 0.5rem 0;
+
+		& ~ .header__jetpack-masterbar-cart {
+			display: none;
+		}
 	}
 	@media ( max-width: 900px ) {
 		.header__sections-list {
@@ -1143,4 +1172,71 @@
 			margin: 1rem 0;
 		}
 	}
+
+
+	@media ( min-width: 900px ) {
+		//show desktop cart
+		.header__sections-list {
+			& ~ .header__jetpack-masterbar-cart {
+				display: flex;
+			}
+		}
+
+		.header {
+			&.is-sticky {
+				padding: 56px;
+			}
+		}
+
+		//hide mobile cart
+		.header__content {
+			& > .header__jetpack-masterbar-cart {
+				display: none;
+			}
+		}
+	}
+
+	@media (max-width: 900px) {
+		.header__content {
+			& > .header__jetpack-masterbar-cart {
+				justify-content: flex-end;
+				flex: unset;
+				margin-right: 16px;
+			}
+			.header__home-link {
+				flex: 1;
+			}
+		}
+	}
+	@media (max-width: 480px) {
+		.header__content > .masterbar__item.header__jetpack-masterbar-cart {
+			flex: unset;
+			justify-content: flex-end;
+			margin-left: 7px;
+			margin-right: 10px;
+		}
+		.header__home-link {
+			margin-right: 6px;
+			flex: 1;
+		}
+
+	}
+
 }
+
+//open the cart to full width and height of viewport
+@media (max-width: 480px) {
+	.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing {
+		.masterbar-cart-button__popover .mini-cart {
+			top: 0;
+			bottom: unset;
+			box-shadow: rgb(99 99 99 / 20%) 0 2px 8px 0;
+			max-height: 100%;
+		}
+		.masterbar-cart-button__popover {
+			//display mobile cart at the top most layer
+			z-index: 9999999;
+		}
+	}
+}
+

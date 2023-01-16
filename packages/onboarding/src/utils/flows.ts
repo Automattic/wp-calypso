@@ -7,8 +7,11 @@ export const VIDEOPRESS_FLOW = 'videopress';
 export const IMPORT_FOCUSED_FLOW = 'import-focused';
 export const SENSEI_FLOW = 'sensei';
 export const ECOMMERCE_FLOW = 'ecommerce';
+export const WOOEXPRESS_FLOW = 'wooexpress';
 export const FREE_FLOW = 'free';
 export const FREE_POST_SETUP_FLOW = 'free-post-setup';
+export const MIGRATION_FLOW = 'import-focused';
+export const COPY_SITE_FLOW = 'copy-site';
 
 export const isLinkInBioFlow = ( flowName: string | null ) => {
 	return Boolean(
@@ -42,6 +45,14 @@ export const isTailoredSignupFlow = ( flowName: string | null ) => {
 				ECOMMERCE_FLOW === flowName ||
 				FREE_FLOW === flowName )
 	);
+};
+
+export const isMigrationFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ MIGRATION_FLOW ].includes( flowName ) );
+};
+
+export const isCopySiteFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ COPY_SITE_FLOW ].includes( flowName ) );
 };
 
 export const ecommerceFlowRecurTypes = {
