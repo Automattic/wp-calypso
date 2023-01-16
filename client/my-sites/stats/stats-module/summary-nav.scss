@@ -13,8 +13,11 @@
 
 	// break title and navigation into separate rows
 	@media ( max-width: 1160px ) {
-		padding-bottom: 24px;
 		display: block;
+	}
+
+	@media ( min-width: $break-medium ) and ( max-width: 1160px ) {
+		padding-bottom: 24px;
 	}
 
 	@media ( max-width: $break-small ) {
