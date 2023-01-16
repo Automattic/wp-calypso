@@ -30,15 +30,17 @@ export const getUsageLevel = (
 		return null;
 	}
 
-	// if current allowed days of backups is equal to the minimum, return storage full.
-	if ( minDaysOfBackupsAllowed === daysOfBackupsAllowed ) {
-		return StorageUsageLevels.Full;
-	}
+	if ( !! minDaysOfBackupsAllowed && !! daysOfBackupsAllowed && !! planRetentionDays ) {
+		// if current allowed days of backups is equal to the minimum, return storage full.
+		if ( minDaysOfBackupsAllowed === daysOfBackupsAllowed ) {
+			return StorageUsageLevels.Full;
+		}
 
-	// if current allowed days of backups is less than plan's retention days, that means
-	// we discarded some backups to make other fit in current storage limit.
-	if ( daysOfBackupsAllowed < planRetentionDays ) {
-		return StorageUsageLevels.BackupsDiscarded;
+		// if current allowed days of backups is less than plan's retention days, that means
+		// we discarded some backups to make other fit in current storage limit.
+		if ( daysOfBackupsAllowed < planRetentionDays ) {
+			return StorageUsageLevels.BackupsDiscarded;
+		}
 	}
 
 	// Guard against divide-by-zero
