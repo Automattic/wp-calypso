@@ -79,12 +79,23 @@ class ThemePreview extends Component {
 		return this.props.themeOptions.styleVariation;
 	};
 
+	appendStyleVariationOptionToUrl = ( url ) => {
+		const styleVariationOption = this.getStyleVariationOption();
+		if ( ! styleVariationOption ) {
+			return url;
+		}
+
+		const [ base, query ] = url.split( '?' );
+		const params = new URLSearchParams( query );
+		params.set( 'style_variation', styleVariationOption.slug );
+		return `${ base }?${ params.toString() }`;
+	};
+
 	renderPrimaryButton = () => {
 		const primaryOption = this.getPrimaryOption();
-		const styleVariationOption = this.getStyleVariationOption();
 		let buttonHref = primaryOption.getUrl ? primaryOption.getUrl( this.props.themeId ) : null;
-		if ( buttonHref && styleVariationOption ) {
-			buttonHref += `&style=${ styleVariationOption.slug }`;
+		if ( buttonHref ) {
+			buttonHref = this.appendStyleVariationOptionToUrl( buttonHref );
 		}
 
 		return (
@@ -100,10 +111,9 @@ class ThemePreview extends Component {
 			return;
 		}
 
-		const styleVariationOption = this.getStyleVariationOption();
 		let buttonHref = secondaryButton.getUrl ? secondaryButton.getUrl( this.props.themeId ) : null;
-		if ( buttonHref && styleVariationOption ) {
-			buttonHref += `&style=${ styleVariationOption.slug }`;
+		if ( buttonHref ) {
+			buttonHref = this.appendStyleVariationOptionToUrl( buttonHref );
 		}
 
 		return (

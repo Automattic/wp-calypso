@@ -225,7 +225,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		isPurchasingItem: isPurchasingDomainItem,
 		siteUrl,
 		themeSlugWithRepo,
-		themeStyle,
+		themeStyleVariation,
 		themeItem,
 		siteAccentColor,
 	} = stepData;
@@ -298,7 +298,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 				themeItem,
 			};
 
-			processItemCart(
+			processItemCart( {
 				providedDependencies,
 				newCartItems,
 				callback,
@@ -306,14 +306,13 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 				siteSlug,
 				isFreeThemePreselected,
 				themeSlugWithRepo,
-				themeStyle,
-				null
-			);
+				themeStyleVariation,
+			} );
 		}
 	);
 }
 
-export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo, themeStyle } ) {
+export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo, themeStyleVariation } ) {
 	if ( isEmpty( themeSlugWithRepo ) ) {
 		defer( callback );
 		return;
@@ -324,7 +323,7 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo, themeSt
 	wpcom.req
 		.post( `/sites/${ siteSlug }/themes/mine`, {
 			theme,
-			...( themeStyle && { style_variation_slug: themeStyle } ),
+			...( themeStyleVariation && { style_variation_slug: themeStyleVariation } ),
 		} )
 		.then( () => callback() )
 		.catch( ( error ) => callback( [ error ] ) );
@@ -351,17 +350,13 @@ function addDIFMLiteProductToCart( callback, dependencies, step, reduxStore ) {
 		cartItem,
 	};
 	const newCartItems = [ cartItem ];
-	processItemCart(
+	processItemCart( {
 		providedDependencies,
 		newCartItems,
 		callback,
 		reduxStore,
 		siteSlug,
-		null,
-		null,
-		null,
-		null
-	);
+	} );
 }
 
 /**
@@ -516,17 +511,14 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 	const providedDependencies = { cartItem };
 	const newCartItems = [ cartItem, emailItem ].filter( ( item ) => item );
 
-	processItemCart(
+	processItemCart( {
 		providedDependencies,
 		newCartItems,
 		callback,
 		reduxStore,
 		siteSlug,
-		null,
-		null,
-		null,
-		lastKnownFlow
-	);
+		lastKnownFlow,
+	} );
 }
 export function addAddOnsToCart(
 	callback,
@@ -548,17 +540,13 @@ export function addAddOnsToCart(
 	}
 
 	const newCartItems = cartItem.filter( ( item ) => item );
-	processItemCart(
+	processItemCart( {
 		providedDependencies,
 		newCartItems,
 		callback,
 		reduxStore,
 		slug,
-		null,
-		null,
-		null,
-		null
-	);
+	} );
 }
 
 export function addDomainToCart(
@@ -575,20 +563,16 @@ export function addDomainToCart(
 
 	const newCartItems = [ domainItem, googleAppsCartItem ].filter( ( item ) => item );
 
-	processItemCart(
+	processItemCart( {
 		providedDependencies,
 		newCartItems,
 		callback,
 		reduxStore,
 		slug,
-		null,
-		null,
-		null,
-		null
-	);
+	} );
 }
 
-function processItemCart(
+function processItemCart( {
 	providedDependencies,
 	newCartItems,
 	callback,
@@ -596,9 +580,9 @@ function processItemCart(
 	siteSlug,
 	isFreeThemePreselected,
 	themeSlugWithRepo,
-	themeStyle,
-	lastKnownFlow
-) {
+	themeStyleVariation,
+	lastKnownFlow,
+} ) {
 	const addToCartAndProceed = async () => {
 		debug( 'preparing to add cart items (if any) from', newCartItems );
 		const reduxState = reduxStore.getState();
@@ -630,11 +614,15 @@ function processItemCart(
 	const userLoggedIn = isUserLoggedIn( reduxStore.getState() );
 
 	if ( ! userLoggedIn && isFreeThemePreselected ) {
-		setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo, themeStyle } );
+		setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo, themeStyleVariation } );
 	} else if ( userLoggedIn && isFreeThemePreselected ) {
 		fetchSitesAndUser(
 			siteSlug,
-			setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo, themeStyle } ),
+			setThemeOnSite.bind( null, addToCartAndProceed, {
+				siteSlug,
+				themeSlugWithRepo,
+				themeStyleVariation,
+			} ),
 			reduxStore
 		);
 	} else if ( userLoggedIn && siteSlug ) {
