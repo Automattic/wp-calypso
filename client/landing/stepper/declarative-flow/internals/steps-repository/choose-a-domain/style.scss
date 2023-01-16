@@ -299,14 +299,14 @@ $videopress-background: #010101;
 			.token-field__token-text {
 				background: none;
 				color: #fff;
-				border: 1px solid #ffffff70;
+				border: 1px solid rgba(255, 255, 255, 0.2);
 				border-right: none;
 			}
 
 			.token-field__remove-token {
 				background: none;
 				fill: #fff;
-				border: 1px solid #ffffff70;
+				border: 1px solid rgba(255, 255, 255, 0.2);
 				border-left: none;
 			}
 		}
