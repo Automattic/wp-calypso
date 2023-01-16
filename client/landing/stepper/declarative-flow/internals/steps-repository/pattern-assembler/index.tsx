@@ -32,7 +32,7 @@ import './style.scss';
 
 const PatternAssembler: Step = ( { navigation, flow } ) => {
 	const translate = useTranslate();
-	const [ navigatorLocation, setNavigatorLocation ] = useState( '/' );
+	const [ navigatorPath, setNavigatorPath ] = useState( '/' );
 	const [ header, setHeader ] = useState< Pattern | null >( null );
 	const [ footer, setFooter ] = useState< Pattern | null >( null );
 	const [ sections, setSections ] = useState< Pattern[] >( [] );
@@ -345,7 +345,9 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 					/>
 				</NavigatorScreen>
 
-				<NavigatorListener onLocationChange={ setNavigatorLocation } />
+				<NavigatorListener
+					onLocationChange={ ( navigatorLocation ) => setNavigatorPath( navigatorLocation.path ) }
+				/>
 			</NavigatorProvider>
 			{ isEnabled( 'pattern-assembler/client-side-render' ) ? (
 				<AsyncLoad require="./pattern-large-preview" { ...largePreviewProps } />
@@ -362,7 +364,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 	return (
 		<StepContainer
 			stepName="pattern-assembler"
-			hideBack={ navigatorLocation !== '/' }
+			hideBack={ navigatorPath !== '/' }
 			goBack={ onBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
@@ -385,7 +387,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 				)
 			}
 			recordTracksEvent={ recordTracksEvent }
-			stepSectionName={ navigatorLocation !== '/' ? 'pattern-selector' : undefined }
+			stepSectionName={ navigatorPath !== '/' ? 'pattern-selector' : undefined }
 		/>
 	);
 };
