@@ -220,8 +220,8 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		if ( type ) {
 			trackEventPatternSelect( {
 				patternType: type,
-				patternId: selectedPattern.id,
-				patternName: selectedPattern.name,
+				patternId: selectedPattern?.id,
+				patternName: selectedPattern?.name,
 			} );
 		}
 
