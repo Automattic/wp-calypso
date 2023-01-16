@@ -99,7 +99,7 @@ class ThemePreview extends Component {
 
 		this.props.recordTracksEvent( 'calypso_theme_preview_primary_button_click', {
 			theme: themeId,
-			...( option.key && { action: option.key } ),
+			...( option.action && { action: option.action.key } ),
 		} );
 
 		option.action && option.action( themeId );
@@ -112,7 +112,7 @@ class ThemePreview extends Component {
 
 		this.props.recordTracksEvent( 'calypso_theme_preview_secondary_button_click', {
 			theme: themeId,
-			...( secondary.key && { action: secondary.key } ),
+			...( secondary.action && { action: secondary.action.key } ),
 		} );
 
 		secondary.action && secondary.action( themeId );
