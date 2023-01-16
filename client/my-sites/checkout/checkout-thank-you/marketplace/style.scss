@@ -59,6 +59,15 @@
 			flex-wrap: wrap;
 			min-width: 280px;
 
+			@media ( max-width: 740px ) {
+				min-width: auto;
+				max-width: 420px;
+			}
+
+			@media ( max-width: 520px ) {
+				max-width: 200px;
+			}
+
 			h3 {
 				line-height: 24px;
 				font-weight: 500;
@@ -84,6 +93,11 @@
 
 		div {
 			max-width: 240px;
+
+			@media ( max-width: 740px ) {
+				min-width: auto;
+				max-width: 100%;
+			}
 		}
 	}
 }
