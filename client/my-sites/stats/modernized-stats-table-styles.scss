@@ -65,11 +65,17 @@ $common-border-radius: 4px;
 		}
 
 		.segmented-control__item {
+			&:not(:first-of-type) {
+				margin-left: -1px;
+			}
+
 			&.is-selected {
 				.segmented-control__link {
 					background-color: var(--color-primary);
 					border-color: var(--color-primary);
 					color: var(--studio-white);
+					position: relative;
+					z-index: 1;
 				}
 			}
 
@@ -82,7 +88,6 @@ $common-border-radius: 4px;
 			&:last-of-type .segmented-control__link {
 				border-top-right-radius: $common-border-radius;
 				border-bottom-right-radius: $common-border-radius;
-				border-left: 0;
 			}
 		}
 
