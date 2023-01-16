@@ -26,8 +26,9 @@ import './styles.scss';
 
 const DEFAULT_WP_SITE_THEME = 'pub/zoologist';
 
-const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } ) {
+const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, data } ) {
 	const { submit } = navigation;
+	const siteBlogName: string = data?.siteBlogName ? ( data?.siteBlogName as string ) : '';
 
 	const { domainCartItem, planCartItem, siteAccentColor, getSelectedSiteTitle } = useSelect(
 		( select ) => ( {
@@ -91,6 +92,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 			siteAccentColor,
 			true,
 			username,
+			siteBlogName,
 			domainCartItem
 		);
 

@@ -66,7 +66,14 @@ const copySite: Flow = {
 			switch ( _currentStepSlug ) {
 				case 'intro': {
 					clearSignupDestinationCookie();
-					return navigate( 'site-creation-step' );
+					const sourceSlug = urlQueryParams.get( 'sourceSlug' );
+					// The name of the blog, is used from the API
+					// as a base to create a new WordPress
+					// domain.
+					const siteBlogName = sourceSlug?.split( '.' )[ 0 ] ?? '';
+					return navigate( 'site-creation-step', {
+						siteBlogName,
+					} );
 				}
 
 				case 'site-creation-step': {
