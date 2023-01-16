@@ -22,7 +22,7 @@ export interface MonitorSettings {
 	monitor_active: boolean;
 	last_down_time: string;
 	monitor_deferment_time: number;
-	monitor_notify_users_emails: Array< string >;
+	monitor_user_emails: Array< string >;
 }
 
 export interface Site {
