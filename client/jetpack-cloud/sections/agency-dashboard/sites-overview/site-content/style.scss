@@ -1,6 +1,19 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.site-content__large-screen-view {
+	display: none;
+	@include break-xlarge {
+		display: block;
+	}
+}
+
+.site-content__small-screen-view {
+	@include break-xlarge {
+		display: none;
+	}
+}
+
 .site-content__mobile-view {
 	margin-bottom: 1.5rem;
 }
