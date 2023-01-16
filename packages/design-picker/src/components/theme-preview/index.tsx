@@ -39,7 +39,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 } ) => {
 	const { __ } = useI18n();
 	const iframeRef = useRef< HTMLIFrameElement >( null );
-	const [ isLoaded, setIsLoaded ] = useState( false );
+	const [ isLoaded, setIsLoaded ] = useState( ! isUrlWpcomApi( url ) );
 	const [ viewport, setViewport ] = useState< Viewport >();
 	const [ containerResizeListener, { width: containerWidth } ] = useResizeObserver();
 	const calypso_token = useMemo( () => uuid(), [] );
@@ -91,12 +91,6 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 			);
 		}
 	}, [ inlineCss, isLoaded ] );
-
-	useEffect( () => {
-		if ( ! isUrlWpcomApi( url ) ) {
-			setIsLoaded( true );
-		}
-	}, [ url, setIsLoaded ] );
 
 	return (
 		<DeviceSwitcher
