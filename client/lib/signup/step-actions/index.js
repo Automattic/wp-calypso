@@ -298,12 +298,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 				themeItem,
 			};
 
-			processItemCart( {
-				providedDependencies,
-				newCartItems,
-				callback,
-				reduxStore,
-				siteSlug,
+			processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, {
 				isFreeThemePreselected,
 				themeSlugWithRepo,
 				themeStyleVariation,
@@ -350,13 +345,7 @@ function addDIFMLiteProductToCart( callback, dependencies, step, reduxStore ) {
 		cartItem,
 	};
 	const newCartItems = [ cartItem ];
-	processItemCart( {
-		providedDependencies,
-		newCartItems,
-		callback,
-		reduxStore,
-		siteSlug,
-	} );
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug );
 }
 
 /**
@@ -511,12 +500,7 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 	const providedDependencies = { cartItem };
 	const newCartItems = [ cartItem, emailItem ].filter( ( item ) => item );
 
-	processItemCart( {
-		providedDependencies,
-		newCartItems,
-		callback,
-		reduxStore,
-		siteSlug,
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, {
 		lastKnownFlow,
 	} );
 }
@@ -540,13 +524,7 @@ export function addAddOnsToCart(
 	}
 
 	const newCartItems = cartItem.filter( ( item ) => item );
-	processItemCart( {
-		providedDependencies,
-		newCartItems,
-		callback,
-		reduxStore,
-		slug,
-	} );
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug );
 }
 
 export function addDomainToCart(
@@ -563,26 +541,17 @@ export function addDomainToCart(
 
 	const newCartItems = [ domainItem, googleAppsCartItem ].filter( ( item ) => item );
 
-	processItemCart( {
-		providedDependencies,
-		newCartItems,
-		callback,
-		reduxStore,
-		slug,
-	} );
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug );
 }
 
-function processItemCart( {
+function processItemCart(
 	providedDependencies,
 	newCartItems,
 	callback,
 	reduxStore,
 	siteSlug,
-	isFreeThemePreselected,
-	themeSlugWithRepo,
-	themeStyleVariation,
-	lastKnownFlow,
-} ) {
+	{ isFreeThemePreselected, themeSlugWithRepo, themeStyleVariation, lastKnownFlow }
+) {
 	const addToCartAndProceed = async () => {
 		debug( 'preparing to add cart items (if any) from', newCartItems );
 		const reduxState = reduxStore.getState();
