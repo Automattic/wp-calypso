@@ -6,14 +6,9 @@
 }
 
 @media (min-width: 1281px) {
-	.github-authorize-card {
-		padding-left: 72px;
-
-		.github-icon {
-			display: block;
-			position: absolute;
-			left: 24px;
-		}
+	.github-authorize-card .github-icon {
+		display: block;
+		position: absolute;
+		left: 24px;
 	}
 }
-
