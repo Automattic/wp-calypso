@@ -26,8 +26,10 @@ import type {
 
 const selectors = {
 	// iframe and editor
-	editorFrame: 'iframe.is-loaded',
+	editorFrame: 'iframe.is-loaded', // Gutenframe/Calypsofy iframe, only on Simple sites.
 	editor: 'body.block-editor-page',
+	editorCanvasFrame: 'iframe[name="editor-canvas"]', // Editor canvas (inner) iframe introduced in Gutenberg 14.9.1 for block-based themes.
+
 	editorTitle: '.editor-post-title__input',
 
 	// Within the editor body.
@@ -47,6 +49,7 @@ const EXTENDED_TIMEOUT = 30 * 1000;
 export class EditorPage {
 	private page: Page;
 	private editor: Locator;
+	private editorCanvas: Locator;
 	private target: SiteType;
 	private editorPublishPanelComponent: EditorPublishPanelComponent;
 	private editorNavSidebarComponent: EditorNavSidebarComponent;
@@ -65,16 +68,35 @@ export class EditorPage {
 	 * @param {Page} page The underlying page.
 	 * @param param0 Keyed object parameter.
 	 * @param param0.target Target editor type. Defaults to 'simple'.
+	 * @param param0.blockTheme Whether block-based theme is used. Defaults to 'false'.
 	 */
-	constructor( page: Page, { target = 'simple' }: { target?: SiteType } = {} ) {
+	constructor(
+		page: Page,
+		{ target = 'simple', blockTheme = false }: { target?: SiteType; blockTheme?: boolean } = {}
+	) {
+		// The first step is to determine whether the test site is running a
+		// Gutenframe, otherwise known as a Calypsofy iframe.
+		// Typically, a Gutenframe is found on Simple sites and encapsulates the
+		// entire editor window.
+		// Atomic sites typically do not feature a Gutenframe and thus the editor
+		// window is exposed in the DOM.
+		// For both Simple and Atomic, the relevant `body` root element is used when resolving
+		// the Locator. This is to present a unified behavior when other methods reference the
+		// `editorWindow`.
 		if ( target === 'atomic' ) {
-			// For Atomic editors, there is no iFrame - the editor is
-			// part of the page DOM and is thus accessible directly.
 			this.editor = page.locator( selectors.editor );
 		} else {
-			// For Simple editors, the editor is located within an iFrame
-			// and thus it must first be extracted.
 			this.editor = page.frameLocator( selectors.editorFrame ).locator( selectors.editor );
+		}
+
+		// The second step is to locate the iframe that exists within the
+		// editor canvas as of Gutenberg 14.9.1 when using newer block-based themes.
+		// If the parameter `blockTheme` is true, the editor canvas is hidden inside a new
+		// iframe and must be pierced to be visible.
+		if ( blockTheme ) {
+			this.editorCanvas = this.editor.frameLocator( selectors.editorCanvasFrame ).locator( 'body' );
+		} else {
+			this.editorCanvas = this.editor;
 		}
 
 		this.page = page;
