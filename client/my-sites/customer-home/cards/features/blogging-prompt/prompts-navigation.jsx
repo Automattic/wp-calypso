@@ -82,8 +82,8 @@ export class PromptsNavigation extends Component {
 		this.setPromptIndex( nextIndex );
 	};
 
-	render() {
-		const { editorUrl, backIcon, forwardIcon } = this.props;
+	renderPromptNavigation = () => {
+		const { backIcon, forwardIcon } = this.props;
 
 		const buttonClasses = classnames(
 			'navigation-link',
@@ -91,43 +91,82 @@ export class PromptsNavigation extends Component {
 			this.props.cssClass
 		);
 
-		const newPostLink = addQueryArgs( editorUrl, {
+		return (
+			<div className="blogging-prompt__prompt-navigation">
+				<Button
+					borderless={ false }
+					className={ buttonClasses }
+					onClick={ () => this.navigatePrompts( 'back' ) }
+					disabled={ this.state.promptIndex === 0 }
+				>
+					<Gridicon icon={ backIcon } size={ 18 } />
+				</Button>
+				<div className="blogging-prompt__prompt-text">{ this.getPrompt().text }</div>
+				<Button
+					borderless={ false }
+					className={ buttonClasses }
+					onClick={ () => this.navigatePrompts( 'forward' ) }
+					disabled={ this.state.promptIndex >= this.props.prompts?.length - 1 }
+				>
+					<Gridicon icon={ forwardIcon } size={ 18 } />
+				</Button>
+			</div>
+		);
+	};
+
+	renderPromptAnswer = () => {
+		const newPostLink = addQueryArgs( this.props.editorUrl, {
 			answer_prompt: this.getPrompt().id,
 		} );
+		return (
+			<div className="blogging-prompt__prompt-answers">
+				{ this.renderResponses() }
+				<Button
+					href={ newPostLink }
+					onClick={ () => this.trackBloggingPromptClick() }
+					target="_blank"
+				>
+					{ this.props.translate( 'Post Answer', {
+						comment:
+							'"Post" here is a verb meaning "to publish", as in "post an answer to this writing prompt"',
+					} ) }
+				</Button>
+			</div>
+		);
+	};
 
+	renderResponses = () => {
+		const prompt = this.getPrompt();
+		let responses = (
+			<div className="blogging-prompt__prompt-no-response">
+				<Gridicon icon="star-outline" size={ 12 } />
+				{ this.props.translate( 'Be the first to respond' ) }
+			</div>
+		);
+
+		const promptReaderURL = 'http://wordpress.com/tag/dailyprompts-' + prompt.id;
+
+		if ( prompt.answered_users_sample.length > 0 ) {
+			responses = (
+				<div className="blogging-prompt__prompt-responses">
+					{ prompt.answered_users_sample.map( ( sample ) => {
+						return <img alt="answered-users" src={ sample.avatar } />;
+					} ) }
+					<a href={ promptReaderURL } target="_blank" rel="noreferrer">
+						{ this.props.translate( 'View All Responses' ) }
+					</a>
+				</div>
+			);
+		}
+
+		return responses;
+	};
+
+	render() {
 		return (
 			<div className="blogging-prompt__prompt-container">
-				<div className="blogging-prompt__prompt-navigation">
-					<Button
-						borderless={ false }
-						className={ buttonClasses }
-						onClick={ () => this.navigatePrompts( 'back' ) }
-						disabled={ this.state.promptIndex === 0 }
-					>
-						<Gridicon icon={ backIcon } size={ 18 } />
-					</Button>
-					<div className="blogging-prompt__prompt-text">{ this.getPrompt().text }</div>
-					<Button
-						borderless={ false }
-						className={ buttonClasses }
-						onClick={ () => this.navigatePrompts( 'forward' ) }
-						disabled={ this.state.promptIndex >= this.props.prompts?.length - 1 }
-					>
-						<Gridicon icon={ forwardIcon } size={ 18 } />
-					</Button>
-				</div>
-				<div className="blogging-prompt__prompt-answers">
-					<Button
-						href={ newPostLink }
-						onClick={ () => this.trackBloggingPromptClick() }
-						target="_blank"
-					>
-						{ this.props.translate( 'Post Answer', {
-							comment:
-								'"Post" here is a verb meaning "to publish", as in "post an answer to this writing prompt"',
-						} ) }
-					</Button>
-				</div>
+				{ this.renderPromptNavigation() }
+				{ this.renderPromptAnswer() }
 			</div>
 		);
 	}

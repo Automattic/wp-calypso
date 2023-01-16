@@ -24,29 +24,57 @@
 
 	.blogging-prompt__prompt-container,
 	.blogging-prompt__prompt-answers {
-		float:left;
+		float: left;
 		width: 100%;
 	}
-	.blogging-prompt__prompt-container {
-	}
 	.blogging-prompt__prompt-answers {
+		padding-top: 20px;
 		.button {
 			float: right;
+		}
+	}
+	.blogging-prompt__prompt-responses {
+		img {
+			border-radius: 50%;
+			height: 20px;
+			border: 1px solid #fff;
+			position: relative;
+			float: left;
+			margin-right: -5px;
+		}
+		a {
+			padding-left: 10px;
+			float: left;
+			color: var(--studio-gray-80);
+			text-decoration-line: underline;
+		}
+	}
+	.blogging-prompt__prompt-no-response {
+		float: left;
+		color: var(--color-text-subtle);
+
+		.gridicon {
+			padding-right: 10px;
 		}
 	}
 	.blogging-prompt__prompt-text {
 		font-size: $font-title-small;
 		font-weight: 500;
-		padding-bottom: 20px;
+		padding: 10px 5px 0 5px;
 		float: left;
 		text-align: center;
-		width: 88%;
+		width: 80%;
+	}
+	.blogging-prompt__prompt-navigation {
+		.gridicon {
+			padding: 18px;
+		}
 	}
 
 	button.navigation-link {
 		border-radius: 50%;
-		padding: 8px;
-		margin: 0px;
+		margin: 0;
+		padding: 0;
 		float: left;
 	}
 }

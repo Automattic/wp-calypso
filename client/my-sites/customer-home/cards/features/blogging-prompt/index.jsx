@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import { useBloggingPrompt } from 'calypso/data/blogging-prompt/use-blogging-prompt';
+import { useBloggingPrompts } from 'calypso/data/blogging-prompt/use-blogging-prompt';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { SECTION_BLOGGING_PROMPT } from 'calypso/my-sites/customer-home/cards/constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -21,7 +21,7 @@ const BloggingPromptCard = () => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 	const maxNumberOfPrompts = 10;
-	const { data: prompts } = useBloggingPrompt( siteId, maxNumberOfPrompts );
+	const { data: prompts } = useBloggingPrompts( siteId, maxNumberOfPrompts );
 	const { skipCard } = useSkipCurrentViewMutation( siteId );
 
 	if ( prompts === undefined ) {
