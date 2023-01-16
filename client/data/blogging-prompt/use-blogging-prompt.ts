@@ -7,24 +7,29 @@ export interface BloggingPrompt {
 	text: string;
 }
 
-const selectPrompt = ( response: any ): BloggingPrompt | null => {
-	const prompt = response && response.prompts && response.prompts[ 0 ];
-	if ( ! prompt ) {
+const selectPrompts = ( response: any ): [ BloggingPrompt ] | null => {
+	const prompts = response && response.prompts;
+	if ( ! prompts ) {
 		return null;
 	}
-	return {
-		id: prompt.id,
-		text: prompt.text,
-	};
+	const r = prompts.map(
+		( prompt: any ): BloggingPrompt => ( {
+			id: prompt.id,
+			text: prompt.text,
+		} )
+	);
+	return r;
 };
 
-export const useBloggingPrompt = ( siteId: string ): UseQueryResult< BloggingPrompt | null > => {
+export const useBloggingPrompt = (
+	siteId: string,
+	page: number
+): UseQueryResult< [ BloggingPrompt ] | null > => {
 	const today = moment().format( 'YYYY-MM-DD' );
-	const page = 100;
 
 	return useQuery(
 		// Blogging prompts are the same for all sites, so can be cached only by date.
-		[ 'blogging-prompts', today ],
+		[ 'blogging-prompts', today + '-' + page ],
 		() =>
 			wp.req.get( {
 				path: `/sites/${ siteId }/blogging-prompts?number=${ page }&from=${ today }`,
@@ -33,7 +38,7 @@ export const useBloggingPrompt = ( siteId: string ): UseQueryResult< BloggingPro
 		{
 			enabled: !! siteId,
 			staleTime: 86400000, // 1 day
-			select: selectPrompt,
+			select: selectPrompts,
 		}
 	);
 };
