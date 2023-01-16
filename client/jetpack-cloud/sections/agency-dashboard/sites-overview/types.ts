@@ -131,8 +131,8 @@ export interface DashboardOverviewContextInterface {
 export interface SitesOverviewContextInterface extends DashboardOverviewContextInterface {
 	isBulkManagementActive: boolean;
 	setIsBulkManagementActive: ( value: boolean ) => void;
-	selectedSites: Array< number >;
-	setSelectedSites: ( value: Array< number > ) => void;
+	selectedSites: Array< Site >;
+	setSelectedSites: ( value: Array< Site > ) => void;
 }
 
 export type AgencyDashboardFilterOption =

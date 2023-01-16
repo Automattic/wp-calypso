@@ -29,13 +29,11 @@ interface Props {
 export default function SiteContent( { data, isLoading, currentPage, isFavoritesTab }: Props ) {
 	const isMobile = useMobileBreakpoint();
 	const isDesktop = useDesktopBreakpoint();
-	const { isBulkManagementActive, setSelectedSites } = useContext( SitesOverviewContext );
+	const { isBulkManagementActive } = useContext( SitesOverviewContext );
 
 	const sites = formatSites( data?.sites );
 
 	const handlePageClick = ( pageNumber: number ) => {
-		// Reset selected sites when there is a page change
-		setSelectedSites( [] );
 		addPageArgs( pageNumber );
 	};
 
@@ -49,7 +47,7 @@ export default function SiteContent( { data, isLoading, currentPage, isFavorites
 						<>
 							{ isBulkManagementActive && (
 								<Card className="site-content__bulk-select">
-									<SiteBulkSelect sites={ sites } />
+									<SiteBulkSelect sites={ sites } isLoading={ isLoading } />
 								</Card>
 							) }
 							{ isLoading ? (

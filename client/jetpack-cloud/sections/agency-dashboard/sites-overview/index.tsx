@@ -30,6 +30,7 @@ import SiteContent from './site-content';
 import SiteSearchFilterContainer from './site-search-filter-container/SiteSearchFilterContainer';
 import SiteWelcomeBanner from './site-welcome-banner';
 import { getProductSlugFromProductType } from './utils';
+import type { Site } from '../sites-overview/types';
 
 import './style.scss';
 
@@ -61,11 +62,13 @@ export default function SitesOverview() {
 		filter
 	);
 
-	function handleSetSelectedSites( id: number ) {
-		if ( selectedSites.includes( id ) ) {
-			setSelectedSites( selectedSites.filter( ( siteId ) => siteId !== id ) );
+	const selectedSiteIds = selectedSites.map( ( site ) => site.blog_id );
+
+	function handleSetSelectedSites( selectedSite: Site ) {
+		if ( selectedSiteIds.includes( selectedSite.blog_id ) ) {
+			setSelectedSites( selectedSites.filter( ( site ) => site.blog_id !== selectedSite.blog_id ) );
 		} else {
-			setSelectedSites( [ ...selectedSites, id ] );
+			setSelectedSites( [ ...selectedSites, selectedSite ] );
 		}
 	}
 
@@ -73,8 +76,8 @@ export default function SitesOverview() {
 		data.sites = data.sites.map( ( site: any ) => {
 			return {
 				...site,
-				isSelected: selectedSites.includes( site.blog_id ),
-				onSelect: () => handleSetSelectedSites( site.blog_id ),
+				isSelected: selectedSiteIds.includes( site.blog_id ),
+				onSelect: () => handleSetSelectedSites( site ),
 			};
 		} );
 	}

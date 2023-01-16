@@ -9,7 +9,7 @@ import {
 } from 'calypso/state/partner-portal/partner/selectors';
 import SitesOverview from '../sites-overview';
 import SitesOverviewContext from '../sites-overview/context';
-import type { DashboardOverviewContextInterface } from '../sites-overview/types';
+import type { DashboardOverviewContextInterface, Site } from '../sites-overview/types';
 
 import '../style.scss';
 
@@ -21,8 +21,8 @@ export default function DashboardOverview( {
 	const hasFetched = useSelector( hasFetchedPartner );
 	const isFetching = useSelector( isFetchingPartner );
 	const hasActiveKey = useSelector( hasActivePartnerKey );
-	const [ isBulkManagementActive, setIsBulkManagementActive ] = useState( false );
-	const [ selectedSites, setSelectedSites ] = useState< number[] >( [] );
+	const [ isBulkManagementActive, setIsBulkManagementActive ] = useState( true );
+	const [ selectedSites, setSelectedSites ] = useState< Site[] >( [] );
 
 	if ( hasFetched && ! hasActiveKey ) {
 		return <SelectPartnerKey />;
