@@ -291,6 +291,8 @@ export class JetpackAuthorize extends Component {
 		} else if ( this.isFromJetpackBackupPlugin() && ! siteHasBackups ) {
 			debug( `Redirecting directly to cart with ${ PRODUCT_JETPACK_BACKUP_T1_YEARLY } in cart.` );
 			navigate( `/checkout/${ urlToSlug( homeUrl ) }/${ PRODUCT_JETPACK_BACKUP_T1_YEARLY }` );
+		} else if ( this.isFromJetpackMigration() ) {
+			navigate( `/setup/import-focused/siteCreationStep?from=${ urlToSlug( homeUrl ) }` );
 		} else {
 			const redirectionTarget = this.getRedirectionTarget();
 			debug( `Redirecting to: ${ redirectionTarget }` );
@@ -414,6 +416,11 @@ export class JetpackAuthorize extends Component {
 	isJetpackPartnerCoupon( props = this.props ) {
 		const { from } = props.authQuery;
 		return startsWith( from, 'jetpack-partner-coupon' );
+	}
+
+	isFromJetpackMigration( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'jetpack-migration' );
 	}
 
 	shouldRedirectJetpackStart( props = this.props ) {

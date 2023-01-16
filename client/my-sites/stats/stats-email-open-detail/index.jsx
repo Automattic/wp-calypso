@@ -26,6 +26,7 @@ import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
 import { getEmailStat, isRequestingEmailStats } from 'calypso/state/stats/emails/selectors';
+import { getPeriodWithFallback } from 'calypso/state/stats/emails/utils';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DatePicker from '../stats-date-picker';
 import ChartTabs from '../stats-email-chart-tabs';
@@ -102,6 +103,7 @@ class StatsEmailOpenDetail extends Component {
 		showViewLink: PropTypes.bool,
 		previewUrl: PropTypes.string,
 		post: PropTypes.object,
+		hasValidDate: PropTypes.bool,
 	};
 
 	state = {
@@ -188,8 +190,17 @@ class StatsEmailOpenDetail extends Component {
 	};
 
 	render() {
-		const { isRequestingStats, countViews, postId, siteId, date, slug, isSitePrivate, post } =
-			this.props;
+		const {
+			isRequestingStats,
+			countViews,
+			postId,
+			siteId,
+			date,
+			slug,
+			isSitePrivate,
+			post,
+			hasValidDate,
+		} = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const noViewsLabel = translate( 'Your email has not received any views yet!' );
@@ -202,7 +213,6 @@ class StatsEmailOpenDetail extends Component {
 		const query = memoizedQuery( period, endOf );
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ traffic.path }${ slugPath }/{{ interval }}/${ postId }`;
-
 		return (
 			<>
 				<Main className="has-fixed-nav stats__email-opens" wideLayout>
@@ -211,7 +221,9 @@ class StatsEmailOpenDetail extends Component {
 						postId={ postId }
 						date={ query.date }
 						period={ query.period }
+						hasValidDate={ hasValidDate }
 					/>
+
 					<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 
 					<PageViewTracker
@@ -221,7 +233,7 @@ class StatsEmailOpenDetail extends Component {
 					<FixedNavigationHeader
 						navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }
 					/>
-					{ ! isRequestingStats && ! countViews && (
+					{ ! isRequestingStats && ! countViews && post && (
 						<EmptyContent
 							title={ noViewsLabel }
 							line={ translate( 'Learn some tips to attract more visitors' ) }
@@ -317,8 +329,18 @@ class StatsEmailOpenDetail extends Component {
 }
 
 const connectComponent = connect(
-	( state, { postId, period: { period, endOf } } ) => {
+	( state, ownProps ) => {
+		const { postId, isValidStartDate } = ownProps;
 		const siteId = getSelectedSiteId( state );
+		const post = getSitePost( state, siteId, postId );
+
+		// set start date to date of our post
+		// we show a loading indicator until post is loaded
+		const {
+			period: { period, endOf },
+			date,
+			hasValidDate,
+		} = getPeriodWithFallback( ownProps.period, ownProps.date, isValidStartDate, post?.date );
 
 		return {
 			countViews: getEmailStat( state, siteId, postId, period, statType ),
@@ -332,9 +354,12 @@ const connectComponent = connect(
 			),
 			siteSlug: getSiteSlug( state, siteId ),
 			slug: getSelectedSiteSlug( state ),
-			post: getSitePost( state, siteId, postId ),
+			post,
 			isSitePrivate: isPrivateSite( state, siteId ),
 			siteId,
+			period: { period, endOf },
+			date,
+			hasValidDate,
 		};
 	},
 	{ recordGoogleEvent }

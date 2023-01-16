@@ -481,7 +481,6 @@ export function emailOpen( context, next ) {
 
 	const momentSiteZone = getMomentSiteZone( state, siteId );
 	const filters = getSiteFilters( givenSiteId );
-
 	const activeFilter = find( filters, ( filter ) => {
 		return (
 			context.path.indexOf( filter.path ) >= 0 ||
@@ -511,6 +510,7 @@ export function emailOpen( context, next ) {
 			context={ context }
 			period={ rangeOfPeriod( activeFilter.period, date ) }
 			date={ date }
+			isValidStartDate={ isValidStartDate }
 		/>
 	);
 

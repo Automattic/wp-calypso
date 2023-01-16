@@ -1035,7 +1035,10 @@ export function parseEmailCountriesData( countries, countriesInfo ) {
 	return countries.map( function ( country ) {
 		const info = countriesInfo[ country[ 0 ] ];
 		if ( ! info ) {
-			return {};
+			return {
+				label: translate( 'Unknown' ),
+				value: parseInt( country[ 1 ], 10 ),
+			};
 		}
 
 		const { country_full, map_region } = info;

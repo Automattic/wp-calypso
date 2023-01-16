@@ -54,6 +54,7 @@ function Chart( {
 	numberFormat,
 	translate,
 	chartXPadding,
+	sliceFromBeginning,
 } ) {
 	const [ tooltip, setTooltip ] = useState( { isTooltipVisible: false } );
 	const [ sizing, setSizing ] = useState( { clientWidth: 650, hasResized: false } );
@@ -106,10 +107,18 @@ function Chart( {
 
 	const width = isTouch && sizing.clientWidth <= 0 ? 350 : sizing.clientWidth - chartXPadding; // mobile safari bug with zero width
 	const maxBars = Math.floor( width / minWidth );
-
 	// Memoize data calculations to avoid performing them too often.
 	const { chartData, isEmptyChart, yMax } = useMemo( () => {
-		const nextData = data.length <= maxBars ? data : data.slice( 0 - maxBars );
+		const nextData = ( () => {
+			if ( data.length > maxBars ) {
+				if ( sliceFromBeginning ) {
+					return data.slice( 0 - maxBars );
+				}
+				return data.slice( 0, maxBars );
+			}
+			return data;
+		} )();
+
 		const nextVals = nextData.map( ( { value } ) => value );
 
 		return {
@@ -117,7 +126,7 @@ function Chart( {
 			isEmptyChart: Boolean( ! nextVals.some( ( a ) => a > 0 ) ),
 			yMax: getYAxisMax( nextVals ),
 		};
-	}, [ data, maxBars, hasResized ] );
+	}, [ data, maxBars, hasResized, sliceFromBeginning ] );
 
 	// Recover the chart with data even if no sizing is updated on the first loading.
 	// If we don't have any sizing info yet, render an empty chart with the ref.
@@ -199,6 +208,7 @@ Chart.propTypes = {
 	numberFormat: PropTypes.func,
 	translate: PropTypes.func,
 	chartXPadding: PropTypes.number,
+	sliceFromBeginning: PropTypes.bool,
 };
 
 Chart.defaultProps = {
@@ -207,6 +217,7 @@ Chart.defaultProps = {
 	minBarWidth: 15,
 	minTouchBarWidth: 42,
 	chartXPadding: 20,
+	sliceFromBeginning: true,
 };
 
 export default withRtl( localize( Chart ) );

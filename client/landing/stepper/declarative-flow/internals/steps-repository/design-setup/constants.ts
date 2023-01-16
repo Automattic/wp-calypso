@@ -13,6 +13,8 @@ export const RETIRING_DESIGN_SLUGS = [
 	'calvin',
 	'dorna',
 	'farrow',
+	'hari',
 	'heiwa',
 	'meraki',
+	'quadrat',
 ];
