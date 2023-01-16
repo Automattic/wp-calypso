@@ -82,7 +82,7 @@ class Hosting extends Component {
 		} = this.props;
 
 		const getUpgradeBanner = () => {
-			//Adding a comment to fix some weirdness with this diff
+			//eCommerce Trial should not see the experiment
 			if ( isECommerceTrial ) {
 				return (
 					<UpsellNudge
