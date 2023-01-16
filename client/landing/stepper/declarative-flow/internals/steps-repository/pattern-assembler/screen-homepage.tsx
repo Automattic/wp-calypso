@@ -27,6 +27,7 @@ const ScreenHomepage = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const navigator = useNavigator();
+	const goToPatternList = () => navigator.goTo( '/homepage/patterns' );
 
 	return (
 		<>
@@ -39,8 +40,11 @@ const ScreenHomepage = ( {
 			<div className="screen-container__body">
 				<PatternLayout
 					patterns={ patterns }
-					onAddSection={ () => navigator.goTo( '/homepage/patterns' ) }
-					onReplaceSection={ onReplaceSection }
+					onAddSection={ goToPatternList }
+					onReplaceSection={ ( position ) => {
+						onReplaceSection( position );
+						goToPatternList();
+					} }
 					onDeleteSection={ onDeleteSection }
 					onMoveUpSection={ onMoveUpSection }
 					onMoveDownSection={ onMoveDownSection }

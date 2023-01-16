@@ -9,7 +9,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { useSite } from '../../../../hooks/use-site';
@@ -18,6 +17,7 @@ import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
 import { SITE_TAGLINE, PLACEHOLDER_SITE_ID } from './constants';
+import NavigatorListener from './navigator-listener';
 import { useAllPatterns } from './patterns-data';
 import ScreenFooter from './screen-footer';
 import ScreenHeader from './screen-header';
@@ -32,7 +32,7 @@ import './style.scss';
 
 const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const translate = useTranslate();
-	const [ showPatternSelectorType, setShowPatternSelectorType ] = useState< string | null >( null );
+	const [ navigatorLocation, setNavigatorLocation ] = useState( '/' );
 	const [ header, setHeader ] = useState< Pattern | null >( null );
 	const [ footer, setFooter ] = useState< Pattern | null >( null );
 	const [ sections, setSections ] = useState< Pattern[] >( [] );
@@ -216,22 +216,22 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		updateActivePatternPosition( position - 1 );
 	};
 
-	const onSelect = ( selectedPattern: Pattern ) => {
-		if ( showPatternSelectorType ) {
+	const onSelect = ( type: string, selectedPattern: Pattern ) => {
+		if ( type ) {
 			trackEventPatternSelect( {
-				patternType: showPatternSelectorType,
+				patternType: type,
 				patternId: selectedPattern.id,
 				patternName: selectedPattern.name,
 			} );
 		}
 
-		if ( 'header' === showPatternSelectorType ) {
+		if ( 'header' === type ) {
 			updateHeader( selectedPattern );
 		}
-		if ( 'footer' === showPatternSelectorType ) {
+		if ( 'footer' === type ) {
 			updateFooter( selectedPattern );
 		}
-		if ( 'section' === showPatternSelectorType ) {
+		if ( 'section' === type ) {
 			if ( sectionPosition !== null ) {
 				replaceSection( selectedPattern );
 			} else {
@@ -287,16 +287,14 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		submit?.();
 	};
 
-	const onDoneClick = () => {
-		const patterns = getPatterns( showPatternSelectorType );
+	const onDoneClick = ( type: string ) => {
+		const patterns = getPatterns( type );
 		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_done_click', {
 			...commonEventProps,
-			pattern_type: showPatternSelectorType,
+			pattern_type: type,
 			pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
 		} );
-
-		setShowPatternSelectorType( null );
 	};
 
 	const onContinueClick = () => {
@@ -324,26 +322,25 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 				<NavigatorScreen path="/header">
 					<ScreenHeader
 						selectedPattern={ header }
-						onSelect={ onSelect }
-						onDoneClick={ onDoneClick }
+						onSelect={ ( selectedPattern ) => onSelect( 'header', selectedPattern ) }
+						onDoneClick={ () => onDoneClick( 'header' ) }
 					/>
 				</NavigatorScreen>
 
 				<NavigatorScreen path="/footer">
 					<ScreenFooter
 						selectedPattern={ footer }
-						onSelect={ onSelect }
-						onDoneClick={ onDoneClick }
+						onSelect={ ( selectedPattern ) => onSelect( 'footer', selectedPattern ) }
+						onDoneClick={ () => onDoneClick( 'footer' ) }
 					/>
 				</NavigatorScreen>
 
 				<NavigatorScreen path="/homepage">
 					<ScreenHomepage
 						patterns={ sections }
-						onDoneClick={ onDoneClick }
+						onDoneClick={ () => onDoneClick( 'section' ) }
 						onReplaceSection={ ( position: number ) => {
 							setSectionPosition( position );
-							setShowPatternSelectorType( 'section' );
 						} }
 						onDeleteSection={ ( position: number ) => {
 							deleteSection( position );
@@ -359,66 +356,12 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 				<NavigatorScreen path="/homepage/patterns">
 					<ScreenPatternList
 						selectedPattern={ sectionPosition ? sections[ sectionPosition ] : null }
-						onSelect={ onSelect }
-						onDoneClick={ onDoneClick }
+						onSelect={ ( selectedPattern ) => onSelect( 'section', selectedPattern ) }
+						onDoneClick={ () => onDoneClick( 'section' ) }
 					/>
 				</NavigatorScreen>
 
-				{ /* <PatternSelectorLoader
-					showPatternSelectorType={ showPatternSelectorType }
-					onSelect={ onSelect }
-					onDoneClick={ onDoneClick }
-					selectedPattern={ getSelectedPattern() }
-				/>
-				{ ! showPatternSelectorType && (
-					<PatternLayout
-						header={ header }
-						sections={ sections }
-						footer={ footer }
-						onAddHeader={ () => {
-							trackEventPatternAdd( 'header' );
-							setShowPatternSelectorType( 'header' );
-						} }
-						onReplaceHeader={ () => {
-							setShowPatternSelectorType( 'header' );
-						} }
-						onDeleteHeader={ () => {
-							updateHeader( null );
-						} }
-						onAddSection={ () => {
-							trackEventPatternAdd( 'section' );
-							setSectionPosition( null );
-							setShowPatternSelectorType( 'section' );
-						} }
-						onReplaceSection={ ( position: number ) => {
-							setSectionPosition( position );
-							setShowPatternSelectorType( 'section' );
-						} }
-						onDeleteSection={ ( position: number ) => {
-							deleteSection( position );
-						} }
-						onMoveUpSection={ ( position: number ) => {
-							moveUpSection( position );
-						} }
-						onMoveDownSection={ ( position: number ) => {
-							moveDownSection( position );
-						} }
-						onAddFooter={ () => {
-							trackEventPatternAdd( 'footer' );
-							setShowPatternSelectorType( 'footer' );
-						} }
-						onReplaceFooter={ () => {
-							setShowPatternSelectorType( 'footer' );
-						} }
-						onDeleteFooter={ () => {
-							updateFooter( null );
-						} }
-						onContinueClick={ () => {
-							trackEventContinue();
-							onSubmit();
-						} }
-					/>
-				) } */ }
+				<NavigatorListener onLocationChange={ setNavigatorLocation } />
 			</NavigatorProvider>
 			{ isEnabled( 'pattern-assembler/client-side-render' ) ? (
 				<AsyncLoad require="./pattern-large-preview" { ...largePreviewProps } />
@@ -433,36 +376,33 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	}
 
 	return (
-		<>
-			<DocumentHead title={ translate( 'Design your home' ) } />
-			<StepContainer
-				stepName="pattern-assembler"
-				hideBack={ showPatternSelectorType !== null || flow === WITH_THEME_ASSEMBLER_FLOW }
-				goBack={ onBack }
-				goNext={ goNext }
-				isHorizontalLayout={ false }
-				isFullLayout={ true }
-				hideSkip={ true }
-				stepContent={
-					isEnabled( 'pattern-assembler/client-side-render' ) ? (
-						<AsyncLoad
-							require="./pattern-assembler-container"
-							placeholder={ null }
-							siteId={ site?.ID }
-							stylesheet={ selectedDesign?.recipe?.stylesheet }
-							patternIds={ allPatterns.map( ( pattern ) => encodePatternId( pattern.id ) ) }
-							siteInfo={ siteInfo }
-						>
-							{ stepContent }
-						</AsyncLoad>
-					) : (
-						stepContent
-					)
-				}
-				recordTracksEvent={ recordTracksEvent }
-				stepSectionName={ showPatternSelectorType ? 'pattern-selector' : undefined }
-			/>
-		</>
+		<StepContainer
+			stepName="pattern-assembler"
+			hideBack={ navigatorLocation !== '/' || flow === WITH_THEME_ASSEMBLER_FLOW }
+			goBack={ onBack }
+			goNext={ goNext }
+			isHorizontalLayout={ false }
+			isFullLayout={ true }
+			hideSkip={ true }
+			stepContent={
+				isEnabled( 'pattern-assembler/client-side-render' ) ? (
+					<AsyncLoad
+						require="./pattern-assembler-container"
+						placeholder={ null }
+						siteId={ site?.ID }
+						stylesheet={ selectedDesign?.recipe?.stylesheet }
+						patternIds={ allPatterns.map( ( pattern ) => encodePatternId( pattern.id ) ) }
+						siteInfo={ siteInfo }
+					>
+						{ stepContent }
+					</AsyncLoad>
+				) : (
+					stepContent
+				)
+			}
+			recordTracksEvent={ recordTracksEvent }
+			stepSectionName={ navigatorLocation !== '/' ? 'pattern-selector' : undefined }
+		/>
 	);
 };
 
