@@ -15,7 +15,8 @@ import DatePicker from '../stats-date-picker';
 import './summary-nav.scss';
 
 export const StatsModuleSummaryLinks = ( props ) => {
-	const { translate, path, siteSlug, query, period, children } = props;
+	const { translate, path, siteSlug, query, period, children, hideNavigation, navigationSwap } =
+		props;
 
 	const getSummaryPeriodLabel = () => {
 		switch ( period.period ) {
@@ -69,23 +70,26 @@ export const StatsModuleSummaryLinks = ( props ) => {
 							summary={ false }
 						/>
 					</div>
-					<SegmentedControl
-						primary
-						className={ classnames( 'stats-summary-nav__intervals' ) }
-						compact={ false }
-					>
-						{ options.map( ( i ) => {
-							return (
-								<SegmentedControl.Item
-									key={ i.value }
-									path={ i.path }
-									selected={ i.value === selected.value }
-								>
-									{ i.label }
-								</SegmentedControl.Item>
-							);
-						} ) }
-					</SegmentedControl>
+					{ ! hideNavigation && (
+						<SegmentedControl
+							primary
+							className={ classnames( 'stats-summary-nav__intervals' ) }
+							compact={ false }
+						>
+							{ options.map( ( i ) => {
+								return (
+									<SegmentedControl.Item
+										key={ i.value }
+										path={ i.path }
+										selected={ i.value === selected.value }
+									>
+										{ i.label }
+									</SegmentedControl.Item>
+								);
+							} ) }
+						</SegmentedControl>
+					) }
+					{ hideNavigation && navigationSwap }
 				</div>
 			) }
 			{ ! isHorizontalBarComponentEnabledEverywhere && (

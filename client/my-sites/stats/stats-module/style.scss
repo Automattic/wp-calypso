@@ -741,3 +741,13 @@ ul.module-header-actions {
 		line-height: normal;
 	}
 }
+
+.stats-module__footer-actions--summary {
+	padding-top: 24px;
+}
+
+.stats-module__heaver-nav-button {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+}

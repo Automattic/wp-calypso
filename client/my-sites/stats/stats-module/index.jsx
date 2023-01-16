@@ -156,15 +156,23 @@ class StatsModule extends Component {
 		const headerClass = classNames( 'stats-module__header', {
 			'is-refreshing': requesting && ! isLoading,
 		} );
+		const footerClass = classNames( 'stats-module__footer-actions', {
+			'stats-module__footer-actions--summary': summary,
+		} );
 
 		const isHorizontalBarComponentEnabledEverywhere = config.isEnabled(
 			'stats/horizontal-bars-everywhere'
 		);
 
-		// the first part of the condition keeps the bars on the Traffic page but not on the Insights page or details summary pages
-		// the second is a FF enabling the bars everywhere. Delete this comment when cleaning 'stats/horizontal-bars-everywhere' FF (and probably the whole variable)
+		// always hide for `hideNewModule` but show on the summary page with FF enabled
 		const shouldShowNewModule =
-			( ! summary && ! hideNewModule ) || isHorizontalBarComponentEnabledEverywhere;
+			! hideNewModule && ( ! summary || isHorizontalBarComponentEnabledEverywhere );
+
+		const headerCSVButton = (
+			<div className="stats-module__heaver-nav-button">
+				<DownloadCsv statType={ statType } query={ query } path={ path } period={ period } />
+			</div>
+		);
 
 		return (
 			<>
@@ -174,7 +182,16 @@ class StatsModule extends Component {
 				{ shouldShowNewModule && (
 					<>
 						{ /* TODO: Move this header to the summary page when modernising it */ }
-						{ isAllTime && <AllTimeNav path={ path } query={ query } period={ period } /> }
+						{ /* TODO: Remove hideNavigation and navigationSwap when unifying headers for all summary pages */ }
+						{ summary && (
+							<AllTimeNav
+								path={ path }
+								query={ query }
+								period={ period }
+								hideNavigation={ summary && ! isAllTime }
+								navigationSwap={ headerCSVButton }
+							/>
+						) }
 						<StatsListCard
 							moduleType={ path }
 							data={ data }
@@ -201,7 +218,7 @@ class StatsModule extends Component {
 							heroElement={ path === 'countryviews' && <Geochart query={ query } /> }
 						/>
 						{ isAllTime && (
-							<div className="stats-module__footer-actions">
+							<div className={ footerClass }>
 								<DownloadCsv
 									statType={ statType }
 									query={ query }
