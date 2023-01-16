@@ -115,7 +115,6 @@
 		"subscriber-importer": true,
 		"subscription-gifting": true,
 		"themes/atomic-homepage-replace": true,
-		"themes/plugin-bundling": true,
 		"themes/premium": true,
 		"themes/showcase-i4/cards-only": false,
 		"themes/showcase-i4/details-and-preview": false,
