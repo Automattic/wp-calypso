@@ -13,7 +13,7 @@ import wrapSettingsForm from '../wrap-settings-form';
 
 const isEnabled = config.isEnabled( 'settings/modernize-reading-settings' );
 
-type Settings = {
+type Fields = {
 	jetpack_relatedposts_enabled?: boolean;
 	jetpack_relatedposts_show_headline?: boolean;
 	jetpack_relatedposts_show_thumbnails?: boolean;
@@ -31,7 +31,7 @@ type Settings = {
 	wpcom_subscription_emails_use_excerpt?: boolean;
 };
 
-const getFormSettings = ( settings: Settings ) => {
+const getFormSettings = ( settings: unknown & Fields ) => {
 	if ( ! settings ) {
 		return {};
 	}
@@ -74,18 +74,6 @@ const connectComponent = connect( ( state ) => {
 		...( siteUrl && { siteUrl } ),
 	};
 } );
-
-type Fields = {
-	posts_per_page?: number;
-	posts_per_rss?: number;
-	rss_use_excerpt?: boolean;
-	subscription_options?: {
-		invitation: string;
-		comment_follow: string;
-	};
-	wpcom_featured_image_in_email?: boolean;
-	wpcom_subscription_emails_use_excerpt?: boolean;
-};
 
 type ReadingSettingsFormProps = {
 	fields: Fields;
