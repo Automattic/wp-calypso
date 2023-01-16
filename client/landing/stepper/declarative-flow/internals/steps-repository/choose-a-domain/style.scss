@@ -233,15 +233,15 @@ $videopress-background: #010101;
 .is-videopress-stepper {
 	#search-filters-dropdown-filters {
 		.token-field__suggestions-list {
-			background-color: #000;
-			border-color: #272727;
+			background-color: #111;
+			border-color: #333;
 		}
 
 		.token-field {
-			border-color: #272727;
+			border-color: #333;
 			color: #fff;
 			outline: none;
-			background-color: #000;
+			background-color: #111;
 			box-shadow: none;
 
 			.token-field__input {
@@ -266,13 +266,14 @@ $videopress-background: #010101;
 		.popover__arrow {
 			border: none;
 			&::before {
-				border-bottom-color: #272727;
+				border-bottom-color: #161616;
 			}
 		}
 
 		.popover__inner {
-			background-color: #272727;
-			border-color: #000;
+			background-color: #111;
+			border-color: #333;
+			box-shadow: 0 0 12px #ffffff20;
 		}
 
 		.search-filters__buttons {
@@ -296,12 +297,16 @@ $videopress-background: #010101;
 		.token-field__token {
 			.token-field__token-text {
 				background: none;
-				color: #ffffffa0;
+				color: #fff;
+				border: 1px solid #ffffff70;
+				border-right: none;
 			}
 
 			.token-field__remove-token {
 				background: none;
-				fill: #ffffffa0;
+				fill: #fff;
+				border: 1px solid #ffffff70;
+				border-left: none;
 			}
 		}
 	}
