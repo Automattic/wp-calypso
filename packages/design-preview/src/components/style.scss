@@ -54,7 +54,9 @@ $break-design-preview: 1024px;
 
 		@include break-design-preview {
 			bottom: 8px;
-			display: block;
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
 			margin: 2rem 0 0;
 		}
 	}

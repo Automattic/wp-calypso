@@ -68,6 +68,7 @@ ThemesList.propTypes = {
 	onScreenshotClick: PropTypes.func.isRequired,
 	onStyleVariationClick: PropTypes.func,
 	onMoreButtonClick: PropTypes.func,
+	onMoreButtonItemClick: PropTypes.func,
 	getActionLabel: PropTypes.func,
 	isActive: PropTypes.func,
 	getPrice: PropTypes.func,
@@ -116,6 +117,7 @@ function ThemeBlock( props ) {
 			onScreenshotClick={ props.onScreenshotClick }
 			onStyleVariationClick={ props.onStyleVariationClick }
 			onMoreButtonClick={ props.onMoreButtonClick }
+			onMoreButtonItemClick={ props.onMoreButtonItemClick }
 			actionLabel={ props.getActionLabel( theme.id ) }
 			index={ index }
 			theme={ theme }

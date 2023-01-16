@@ -240,7 +240,10 @@ class ThemeSheet extends Component {
 		}
 		event.preventDefault();
 
-		this.props.recordTracksEvent( 'calypso_theme_live_demo_preview_click', { type } );
+		this.props.recordTracksEvent( 'calypso_theme_live_demo_preview_click', {
+			theme: this.props.themeId,
+			type,
+		} );
 
 		const { preview } = this.props.options;
 		this.props.setThemePreviewOptions(
