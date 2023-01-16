@@ -171,16 +171,18 @@ function Empty( props ) {
 					{ ...props }
 				/>
 			) : (
-				<div className="themes-list__not-found-text">
-					{ translate( 'No themes match your search' ) }
-				</div>
+				<>
+					<div className="themes-list__not-found-text">
+						{ translate( 'No themes match your search' ) }
+					</div>
+					<PlanUpgradeCTA
+						selectedSite={ selectedSite }
+						searchTerm={ searchTerm }
+						translate={ translate }
+						recordTracksEvent={ props.recordTracksEvent }
+					/>
+				</>
 			) }
-			<PlanUpgradeCTA
-				selectedSite={ selectedSite }
-				searchTerm={ searchTerm }
-				translate={ translate }
-				recordTracksEvent={ props.recordTracksEvent }
-			/>
 		</div>
 	) : (
 		<>
