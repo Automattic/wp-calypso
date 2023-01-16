@@ -11,8 +11,10 @@ export const GithubAuthorizeCard = () => {
 	const siteId = useSelector( getSelectedSiteId );
 	return (
 		<Card className="github-authorize-card">
-			<img className="github-icon" src={ iconGitHub } alt="" />
-			<CardHeading>{ translate( 'Connect GitHub' ) }</CardHeading>
+			<div className="github-authorize-card__header">
+				<img className="github-icon" src={ iconGitHub } alt="" />
+				<CardHeading>{ translate( 'Connect GitHub' ) }</CardHeading>
+			</div>
 			<div>
 				<p>{ translate( 'Connect to a GitHub repository and branch and deploy directly.' ) }</p>
 			</div>
