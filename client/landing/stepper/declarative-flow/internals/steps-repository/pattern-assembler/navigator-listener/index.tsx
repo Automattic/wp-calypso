@@ -1,8 +1,9 @@
 import { __experimentalUseNavigator as useNavigator } from '@wordpress/components';
 import { useEffect } from 'react';
+import type { NavigatorLocation } from '../types';
 
 interface Props {
-	onLocationChange: ( location: string ) => void;
+	onLocationChange: ( location: NavigatorLocation ) => void;
 }
 
 const NavigatorListener = ( { onLocationChange }: Props ) => {
