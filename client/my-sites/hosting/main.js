@@ -17,6 +17,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { Experiment } from 'calypso/lib/explat';
+import { GithubAuthorizeCard } from 'calypso/my-sites/hosting/github-authorize-card';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -173,6 +174,7 @@ class Hosting extends Component {
 						<Column type="main" className="hosting__main-layout-col">
 							<SFTPCard disabled={ isDisabled } />
 							<PhpMyAdminCard disabled={ isDisabled } />
+							<GithubAuthorizeCard />
 							<WebServerSettingsCard disabled={ isDisabled } />
 							<RestorePlanSoftwareCard disabled={ isDisabled } />
 							<MiscellaneousCard disabled={ isDisabled } />

@@ -1,0 +1,11 @@
+.github-authorize-card {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+
+	.github-icon {
+		display: block;
+		position: absolute;
+		left: 24px;
+	}
+}
