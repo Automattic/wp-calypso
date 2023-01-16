@@ -94,8 +94,10 @@ export class EditorPage {
 		// If the parameter `blockTheme` is true, the editor canvas is hidden inside a new
 		// iframe and must be pierced to be visible.
 		if ( blockTheme ) {
+			console.log( 'klwejr' );
 			this.editorCanvas = this.editor.frameLocator( selectors.editorCanvasFrame ).locator( 'body' );
 		} else {
+			console.log( 'wkljre' );
 			this.editorCanvas = this.editor;
 		}
 
@@ -103,7 +105,11 @@ export class EditorPage {
 		this.target = target;
 
 		// Instantiate the subcomponent classes that build up the editor experience.
-		this.editorGutenbergComponent = new EditorGutenbergComponent( page, this.editor );
+		this.editorGutenbergComponent = new EditorGutenbergComponent(
+			page,
+			this.editor,
+			this.editorCanvas
+		);
 		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editor );
 		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( page, this.editor );
 		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editor );
