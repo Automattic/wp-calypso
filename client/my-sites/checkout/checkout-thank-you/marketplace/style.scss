@@ -1,4 +1,9 @@
 .marketplace-thank-you__container {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
 	.thank-you__container {
 		padding-top: var(--masterbar-height);
 	}
