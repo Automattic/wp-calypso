@@ -1,14 +1,6 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-import { PLAN_BUSINESS, FEATURE_SFTP } from '@automattic/calypso-products';
+import { PLAN_BUSINESS, FEATURE_SFTP, FEATURE_SFTP_DATABASE } from '@automattic/calypso-products';
 import { englishLocales } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
-=======
-import { FEATURE_SFTP } from '@automattic/calypso-products';
->>>>>>> ea1876e34c (Update Hosting Config upsell message to be less specific about plan name)
-=======
-import { FEATURE_SFTP, FEATURE_SFTP_DATABASE } from '@automattic/calypso-products';
->>>>>>> a874b7a809 (Update feature constant; add as query param for highlighting)
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
@@ -35,6 +27,7 @@ import {
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
+import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { HostingUpsellNudge } from './hosting-upsell-nudge';
 import MiscellaneousCard from './miscellaneous-card';
@@ -78,6 +71,7 @@ class Hosting extends Component {
 			clickActivate,
 			hasSftpFeature,
 			isDisabled,
+			isECommerceTrial,
 			isTransferring,
 			locale,
 			requestSiteById,
@@ -87,8 +81,20 @@ class Hosting extends Component {
 			transferState,
 		} = this.props;
 
-		const getUpgradeBanner = () => (
-			<>
+		const getUpgradeBanner = () => {
+			if ( isECommerceTrial ) {
+				return (
+					<UpsellNudge
+						title={ translate( 'Upgrade your plan to access all hosting features' ) }
+						event="calypso_hosting_configuration_upgrade_click"
+						href={ `/plans/${ siteSlug }/` }
+						feature={ FEATURE_SFTP_DATABASE }
+						showIcon={ true }
+					/>
+				);
+			}
+
+			return (
 				<Experiment
 					name="calypso_hosting_configuration_upsell_list_features"
 					defaultExperience={
@@ -107,15 +113,8 @@ class Hosting extends Component {
 						isEligible: englishLocales.includes( locale ),
 					} }
 				/>
-				<UpsellNudge
-					title={ translate( 'Upgrade your plan to access all hosting features' ) }
-					event="calypso_hosting_configuration_upgrade_click"
-					href={ `/plans/${ siteSlug }/` }
-					feature={ FEATURE_SFTP }
-					showIcon={ true }
-				/>
-			</>
-		);
+			);
+		};
 
 		const getAtomicActivationNotice = () => {
 			const { COMPLETE, FAILURE } = transferStates;
@@ -232,6 +231,7 @@ export default connect(
 		const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
 
 		return {
+			isECommerceTrial: isSiteOnECommerceTrial( state, siteId ),
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
 			isDisabled: ! hasSftpFeature || ! isSiteAutomatedTransfer( state, siteId ),
