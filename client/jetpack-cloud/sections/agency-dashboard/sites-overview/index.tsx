@@ -73,7 +73,7 @@ export default function SitesOverview() {
 	}
 
 	if ( data?.sites ) {
-		data.sites = data.sites.map( ( site: any ) => {
+		data.sites = data.sites.map( ( site: Site ) => {
 			return {
 				...site,
 				isSelected: selectedSiteIds.includes( site.blog_id ),

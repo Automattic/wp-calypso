@@ -22,9 +22,7 @@ export default function SiteBulkSelect( { sites, isLoading }: Props ) {
 	const isAllChecked = ( sites: Array< SiteData > ) => {
 		return (
 			selectedSites.length > 0 &&
-			sites
-				.map( ( site ) => site.site.value.blog_id )
-				.every( ( item ) => selectedSiteIds.includes( item ) )
+			sites.every( ( item ) => selectedSiteIds.includes( item.site.value.blog_id ) )
 		);
 	};
 
@@ -56,9 +54,7 @@ export default function SiteBulkSelect( { sites, isLoading }: Props ) {
 	const isHalfChecked =
 		! isChecked &&
 		selectedSites.length > 0 &&
-		sites
-			.map( ( site ) => site.site.value.blog_id )
-			.some( ( item ) => selectedSiteIds.includes( item ) );
+		sites.some( ( item ) => selectedSiteIds.includes( item.site.value.blog_id ) );
 
 	return (
 		<div className="site-bulk-select">

@@ -45,7 +45,7 @@ export class BulkSelect extends Component {
 	};
 
 	render() {
-		const { translate, ariaLabel = translate( 'Select All' ), disabled } = this.props;
+		const { translate, ariaLabel = translate( 'Select All' ), disabled = false } = this.props;
 		const isChecked = this.hasAllElementsSelected();
 		const inputClasses = classNames( 'bulk-select__box', {
 			// TODO: We might be able to remove this class in favor of the :checked pseudoselector.
