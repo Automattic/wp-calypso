@@ -13,6 +13,7 @@ type OwnProps = {
 	storage: React.ReactChild;
 	onClick?: React.MouseEventHandler;
 	price: JSX.Element;
+	minDaysOfBackupsAllowed: number;
 };
 
 const ActionButton: React.FC< OwnProps > = ( {
@@ -22,8 +23,9 @@ const ActionButton: React.FC< OwnProps > = ( {
 	storage,
 	onClick,
 	price,
+	minDaysOfBackupsAllowed,
 } ) => {
-	const storageStatusText = useStorageStatusText( usageLevel );
+	const storageStatusText = useStorageStatusText( usageLevel, minDaysOfBackupsAllowed );
 
 	const hasClickableAction = Boolean( href || onClick );
 	const translate = useTranslate();

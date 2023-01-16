@@ -8,6 +8,9 @@ import {
 	getRewindBytesAvailable,
 	getRewindBytesUsed,
 	isRequestingRewindSize,
+	getActivityLogVisibleDays,
+	getRewindMinimumDaysOfBackupsAllowed,
+	getRewindDaysOfBackupsAllowed,
 } from 'calypso/state/rewind/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
@@ -25,7 +28,20 @@ const BackupStorageSpace: React.FC = () => {
 
 	const bytesUsed = useSelector( ( state ) => getRewindBytesUsed( state, siteId ) );
 	const bytesAvailable = useSelector( ( state ) => getRewindBytesAvailable( state, siteId ) );
-	const usageLevel = getUsageLevel( bytesUsed, bytesAvailable ) ?? StorageUsageLevels.Normal;
+	const planRetentionDays =
+		useSelector( ( state ) => getActivityLogVisibleDays( state, siteId ) ) || 0;
+	const minDaysOfBackupsAllowed =
+		useSelector( ( state ) => getRewindMinimumDaysOfBackupsAllowed( state, siteId ) ) || 0;
+	const daysOfBackupsAllowed =
+		useSelector( ( state ) => getRewindDaysOfBackupsAllowed( state, siteId ) ) || 0;
+	const usageLevel =
+		getUsageLevel(
+			bytesUsed,
+			bytesAvailable,
+			minDaysOfBackupsAllowed,
+			daysOfBackupsAllowed,
+			planRetentionDays
+		) ?? StorageUsageLevels.Normal;
 
 	const showUpsell = usageLevel !== StorageUsageLevels.Normal;
 	const requestingSize = useSelector( ( state ) => isRequestingRewindSize( state, siteId ) );
@@ -46,6 +62,7 @@ const BackupStorageSpace: React.FC = () => {
 					usageLevel={ usageLevel }
 					bytesUsed={ bytesUsed as number }
 					siteId={ siteId }
+					minDaysOfBackupsAllowed={ minDaysOfBackupsAllowed }
 				/>
 			) }
 		</Card>

@@ -1,13 +1,68 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .backup-storage-space {
 	margin-top: 1rem;
-	padding: 16px 32px;
+	padding: 32px 24px;
 	background: #fff;
 	box-shadow: 0 0 0 1px var(--color-neutral-5);
 
 	&__loading {
-		@include placeholder( --color-neutral-10 );
+		@include placeholder(--color-neutral-10);
 		height: 24px;
 		box-shadow: none;
+	}
+
+	&__help-text-tooltip.popover {
+		&.is-right .popover__arrow {
+			border-right-color: #fff;
+		}
+
+		.popover__inner {
+			padding: 16px 58px 16px 16px;
+			color: var(--studio-gray-70);
+			background: #fff;
+			border-radius: 2px;
+			box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+
+			p {
+				font-size: 1rem;
+				margin: 0;
+			}
+
+			hr {
+				margin-bottom: 0.25rem;
+			}
+		}
+
+		@include break-mobile() {
+			max-width: 200px;
+		}
+	}
+
+	&__open-help-text-tooltip {
+		margin-right: 8px;
+		vertical-align: middle;
+
+		&.button {
+			padding: 0;
+
+			.gridicon {
+				top: 4px;
+			}
+		}
+	}
+
+	&__close-help-text-tooltip {
+		position: absolute;
+		right: 16px;
+		top: 16px;
+		color: var(--studio-gray-40);
+
+		&.button {
+			height: 18px;
+			padding: 0;
+		}
 	}
 }
 
@@ -83,22 +138,38 @@
 }
 
 .backup-storage-space__progress-heading {
-	margin-block-end: 12px;
+	margin-block-end: 24px;
 	white-space: nowrap;
 
 	font-weight: 600;
-	font-size: $font-body-small;
+	font-size: $font-title-small;
+
+	span {
+		vertical-align: middle;
+	}
 }
 
 .backup-storage-space__progress-usage-text {
-	margin-block-start: 8px;
+	margin-block-start: 16px;
 	white-space: nowrap;
-
-	font-size: $font-body-extra-small;
-	color: var(--studio-green-50);
-	font-weight: 500;
+	display: flex;
+	font-size: $font-body-small;
+	font-weight: 400;
 
 	a {
 		text-decoration: underline;
 	}
+
+	.used-space__span {
+		font-weight: 700;
+	}
+
+	.backups-saved__container {
+		margin-left: auto;
+	}
+}
+
+.backup-storage-space-help-text__tooltip {
+	padding: 10px;
+	max-width: 200px;
 }

@@ -6,3 +6,7 @@ export { default as getRewindSizeRequestStatus } from './get-rewind-size-request
 export { default as isRequestingRewindPolicies } from './is-requesting-rewind-policies';
 export { default as isRequestingRewindSize } from './is-requesting-rewind-size';
 export { default as siteHasBackupInProgress } from './site-has-backup-in-progress';
+export { default as getRewindMinimumDaysOfBackupsAllowed } from './get-rewind-minimum-days-of-backups-allowed';
+export { default as getRewindDaysOfBackupsAllowed } from './get-rewind-days-of-backups-allowed';
+export { default as getRewindDaysOfBackupsSaved } from './get-rewind-days-of-backups-saved';
+export { default as getActivityLogVisibleDays } from './get-activity-log-visible-days';
