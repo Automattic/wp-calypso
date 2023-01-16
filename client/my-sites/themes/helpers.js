@@ -78,3 +78,12 @@ export function localizeThemesPath( path, locale, isLoggedOut = true ) {
 export function marketplaceThemeBillingProductSlug( themeId ) {
 	return `wp-mp-theme-${ themeId }`;
 }
+
+export function getSubjectsFromTermTable( filterToTermTable ) {
+	return Object.keys( filterToTermTable )
+		.filter( ( key ) => key.indexOf( 'subject:' ) !== -1 )
+		.reduce( ( obj, key ) => {
+			obj[ key ] = filterToTermTable[ key ];
+			return obj;
+		}, {} );
+}

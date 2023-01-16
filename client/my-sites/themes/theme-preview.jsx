@@ -9,12 +9,14 @@ import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import ThemePreviewModal from 'calypso/components/theme-preview-modal';
 import WebPreview from 'calypso/components/web-preview';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { hideThemePreview, setThemePreviewOptions } from 'calypso/state/themes/actions';
 import {
 	getCanonicalTheme,
 	getThemeDemoUrl,
+	getThemeFilterToTermTable,
 	getThemePreviewThemeOptions,
 	themePreviewVisibility,
 	isThemeActive,
@@ -22,6 +24,7 @@ import {
 	isActivatingTheme,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSubjectsFromTermTable, localizeThemesPath } from './helpers';
 import { connectOptions } from './theme-options';
 
 class ThemePreview extends Component {
@@ -117,6 +120,17 @@ class ThemePreview extends Component {
 		this.props.setThemePreviewOptions( themeId, primary, secondary, variation );
 	};
 
+	onClickCategory = ( category ) => {
+		const { filterToTermTable, isLoggedIn, locale, siteSlug } = this.props;
+		const subjectTermTable = getSubjectsFromTermTable( filterToTermTable );
+		const subject = subjectTermTable[ `subject:${ category.slug }` ];
+
+		if ( subject ) {
+			const path = `/themes/filter/${ subject }/${ siteSlug ?? '' }`;
+			window.location.href = localizeThemesPath( path, locale, ! isLoggedIn );
+		}
+	};
+
 	render() {
 		const { theme, themeId, siteId, demoUrl, children, isWPForTeamsSite } = this.props;
 		const { showActionIndicator } = this.state;
@@ -138,6 +152,7 @@ class ThemePreview extends Component {
 							selectedVariation={ this.getStyleVariationOption() }
 							actionButtons={ this.renderPrimaryButton() }
 							onSelectVariation={ this.onSelectVariation }
+							onClickCategory={ this.onClickCategory }
 							onClose={ this.props.hideThemePreview }
 						/>
 					) : (
@@ -177,13 +192,16 @@ export default connect(
 			theme: getCanonicalTheme( state, siteId, themeId ),
 			themeId,
 			siteId,
+			siteSlug: getSiteSlug( state, siteId ),
 			isJetpack,
 			themeOptions,
+			filterToTermTable: getThemeFilterToTermTable( state ),
 			isInstalling: isInstallingTheme( state, themeId, siteId ),
 			isActive: isThemeActive( state, themeId, siteId ),
 			isActivating: isActivatingTheme( state, siteId ),
 			demoUrl: getThemeDemoUrl( state, themeId, siteId ),
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
+			isLoggedIn: isUserLoggedIn( state ),
 			options: [
 				'activate',
 				'preview',

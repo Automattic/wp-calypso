@@ -638,7 +638,9 @@ $break-design-preview: 1024px;
 		.step-container__content {
 			// 156px = .design-preview__sidebar + step-container__navigation.action-buttons
 			height: calc(100vh - 156px);
-			margin-top: 36px;
+			margin: 36px -8px 0;
+			overflow: hidden;
+			padding: 0 8px;
 			position: relative;
 			z-index: 1;
 		}
@@ -659,7 +661,8 @@ $break-design-preview: 1024px;
 			}
 
 			.design-preview__sidebar {
-				margin-top: 72px;
+				margin: 72px -16px 0 -8px;
+				padding: 0 16px 96px 8px;
 			}
 		}
 	}
