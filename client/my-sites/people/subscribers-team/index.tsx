@@ -72,8 +72,8 @@ function SubscribersTeam( props: Props ) {
 						selectedFilter={ filter }
 						searchTerm={ search }
 						filterCount={ {
+							team: usersQuery.data?.total,
 							subscribers: followersQuery.data?.total,
-							'team-members': usersQuery.data?.total,
 						} }
 					/>
 				</SectionNav>
@@ -93,11 +93,11 @@ function SubscribersTeam( props: Props ) {
 								</>
 							);
 
-						case 'team-members':
+						case 'team':
 							return (
 								<>
 									<PageViewTracker
-										path="/people/team-members/:site"
+										path="/people/team/:site"
 										title="People > Team Members / Invites"
 									/>
 

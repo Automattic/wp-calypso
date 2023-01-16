@@ -85,7 +85,12 @@ function renderPeopleList( context, next ) {
 	context.primary = (
 		<>
 			<PeopleListTitle />
-			<PeopleList filter={ context.params.filter } search={ context.query.s } />
+			{ ! isEnabled( 'user-management-revamp' ) && (
+				<PeopleList filter={ context.params.filter } search={ context.query.s } />
+			) }
+			{ isEnabled( 'user-management-revamp' ) && (
+				<SubscribersTeam filter={ context.params.filter } search={ context.query.s } />
+			) }
 		</>
 	);
 	next();

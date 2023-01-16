@@ -22,9 +22,9 @@ function PeopleSectionNavCompact( props: Props ) {
 			path: '/people/subscribers/' + site?.slug,
 		},
 		{
-			id: 'team-members',
+			id: 'team',
 			title: _( 'Team' ),
-			path: '/people/team-members/' + site?.slug,
+			path: '/people/team/' + site?.slug,
 		},
 	];
 
