@@ -1,5 +1,7 @@
-import { Button } from '@automattic/components';
+import { Button, Popover } from '@automattic/components';
 import { Icon, plus } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
+import { useState, useRef } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import PatternActionBar from './pattern-action-bar';
 import type { Pattern } from './types';
@@ -21,6 +23,10 @@ const PatternLayout = ( {
 	onMoveUpSection,
 	onMoveDownSection,
 }: PatternLayoutProps ) => {
+	const translate = useTranslate();
+	const [ isPopoverVisible, setIsPopoverVisible ] = useState( false );
+	const addButtonContainerRef = useRef< HTMLDivElement | null >( null );
+
 	return (
 		<div className="pattern-layout">
 			{ patterns.length > 0 && (
@@ -55,9 +61,25 @@ const PatternLayout = ( {
 					</AsyncLoad>
 				</ul>
 			) }
-			<Button className="pattern-layout__button" onClick={ () => onAddSection() }>
-				<Icon className="pattern-layout__button-icon" icon={ plus } size={ 32 } />
-			</Button>
+			<div
+				className="pattern-layout__add-button-container"
+				ref={ addButtonContainerRef }
+				onMouseEnter={ () => setIsPopoverVisible( true ) }
+				onMouseLeave={ () => setIsPopoverVisible( false ) }
+			>
+				<Button className="pattern-layout__add-button" onClick={ () => onAddSection() }>
+					<Icon icon={ plus } size={ 32 } />
+				</Button>
+				<Popover
+					className="pattern-layout__add-button-popover"
+					context={ addButtonContainerRef.current }
+					isVisible={ isPopoverVisible }
+					position="right"
+					focusOnShow
+				>
+					{ translate( 'Add your next pattern' ) }
+				</Popover>
+			</div>
 		</div>
 	);
 };

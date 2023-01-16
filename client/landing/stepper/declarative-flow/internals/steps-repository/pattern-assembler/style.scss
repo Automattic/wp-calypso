@@ -164,17 +164,18 @@ $font-family: "SF Pro Text", $sans;
 			height: 100%;
 		}
 
-		.pattern-layout__button {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			border-radius: 2px;
+		.pattern-layout__add-button-container {
+			position: relative;
 			margin-right: auto;
+		}
+
+		.pattern-layout__add-button {
+			border-radius: 2px;
 			color: var(--studio-white);
 			background-color: var(--color-link);
 			transition: background-color 0.2s ease-in;
 
-			.pattern-layout__button-icon {
+			svg {
 				padding: 6px;
 				box-sizing: border-box;
 				fill: currentColor;
@@ -294,5 +295,28 @@ $font-family: "SF Pro Text", $sans;
 	.components-navigator-screen {
 		display: flex;
 		flex-direction: column;
+	}
+}
+
+.popover.is-right.pattern-layout__add-button-popover {
+	margin-left: 6px;
+	outline: none;
+
+	.popover__arrow {
+		border-right-color: transparent;
+
+		&::before {
+			border-width: 10px 16px;
+			border-right-color: #000;
+		}
+	}
+
+	.popover__inner {
+		line-height: 20px;
+		padding: 4px 8px;
+		border-radius: 4px;
+		border: 0;
+		color: #eee;
+		background-color: #000;
 	}
 }
