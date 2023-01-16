@@ -8,6 +8,7 @@ export function useInvitingNotifications( tokenValues: string[] ) {
 	const _ = useTranslate();
 	const dispatch = useDispatch();
 	const { error, errorType, success, failure } = useSelector( getSendInviteState );
+	const noticeConfig = { displayOnNextPage: true };
 
 	useEffect( () => error && showInvitingErrorNotice(), [ error ] );
 	useEffect( () => success && showInvitingSuccessNotice(), [ success ] );
@@ -24,18 +25,18 @@ export function useInvitingNotifications( tokenValues: string[] ) {
 				context: 'Displayed in a notice when all invitations failed to send.',
 			} );
 		}
-		dispatch( errorNotice( msg ) );
+		dispatch( errorNotice( msg, noticeConfig ) );
 	}
 
 	function showInvitingFailureNotice() {
 		const msg = _( "Sorry, we couldn't process your invitations. Please try again later." );
-		dispatch( errorNotice( msg ) );
+		dispatch( errorNotice( msg, noticeConfig ) );
 	}
 
 	function showInvitingSuccessNotice() {
 		const msg = _( 'Invitation sent successfully', 'Invitations sent successfully', {
 			count: tokenValues.length,
 		} );
-		dispatch( successNotice( msg ) );
+		dispatch( successNotice( msg, noticeConfig ) );
 	}
 }

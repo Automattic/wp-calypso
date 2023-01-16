@@ -76,7 +76,9 @@ function InviteForm( props: Props ) {
 			return;
 		}
 
-		dispatch( sendInvites( siteId, tokenValues, role, message, contractor ) );
+		const _tokenValues = tokenValues.filter( ( x ) => !! x );
+
+		dispatch( sendInvites( siteId, _tokenValues, role, message, contractor ) );
 		dispatch( recordTracksEvent( 'calypso_invite_people_form_submit' ) );
 	}
 
