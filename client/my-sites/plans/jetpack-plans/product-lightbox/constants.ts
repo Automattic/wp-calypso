@@ -22,7 +22,7 @@ export const PRODUCT_OPTIONS: Record< string, TranslateResult > = {
 		comment: 'GB here is the abbreviation for Gigabyte, and TB is abbreviation for Terabyte',
 	} ),
 	[ PRODUCT_JETPACK_SOCIAL_BASIC ]: translate( 'Social Basic', {
-		comment: 'Get upto 1000 shares',
+		comment: 'Get up to 1000 shares',
 	} ),
 	[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: translate( 'Social Advanced', {
 		comment: 'Get unlimited shares',

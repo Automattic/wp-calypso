@@ -64,21 +64,6 @@ const ProductLightbox: React.FC< Props > = ( {
 	const translate = useTranslate();
 
 	const onChangeOption = useCallback(
-		( productSlug: string ) => {
-			onChangeProduct( slugToSelectorProduct( productSlug ) );
-
-			// Tracking when variant selected inside the lightbox
-			dispatch(
-				recordTracksEvent( 'calypso_product_lightbox_variant_select', {
-					site_id: siteId,
-					product_slug: productSlug,
-				} )
-			);
-		},
-		[ onChangeProduct, dispatch, siteId ]
-	);
-
-	const onChangeSocialProductOption = useCallback(
 		( productSlug ) => {
 			onChangeProduct( slugToSelectorProduct( productSlug ) );
 
@@ -138,6 +123,7 @@ const ProductLightbox: React.FC< Props > = ( {
 		PRODUCT_JETPACK_SOCIAL_BASIC,
 	].includes( product.productSlug );
 
+	// The social advanced plan is not available yet, so don't show it till the time it's ready.
 	const shouldShowOptions = isSocialProduct
 		? variantOptions.length > 1 && config.isEnabled( 'jetpack-social/advanced-plan' )
 		: variantOptions.length > 1;
@@ -227,9 +213,7 @@ const ProductLightbox: React.FC< Props > = ( {
 										</FormLegend>
 									</FormFieldset>
 									<div
-										onClick={ () =>
-											onChangeSocialProductOption( JETPACK_SOCIAL_BASIC_PRODUCT?.productSlug )
-										}
+										onClick={ () => onChangeOption( JETPACK_SOCIAL_BASIC_PRODUCT?.productSlug ) }
 									>
 										<PaymentPlan
 											isMultiSiteIncompatible={ isMultiSiteIncompatible }
@@ -243,9 +227,7 @@ const ProductLightbox: React.FC< Props > = ( {
 									</div>
 									<p />
 									<div
-										onClick={ () =>
-											onChangeSocialProductOption( JETPACK_SOCIAL_ADVANCED_PRODUCT?.productSlug )
-										}
+										onClick={ () => onChangeOption( JETPACK_SOCIAL_ADVANCED_PRODUCT?.productSlug ) }
 									>
 										<PaymentPlan
 											isMultiSiteIncompatible={ isMultiSiteIncompatible }
