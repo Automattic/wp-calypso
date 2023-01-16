@@ -79,7 +79,7 @@ $common-border-radius: 4px;
 				border-right: 0;
 			}
 
-			&:nth-of-type(2):last-of-type .segmented-control__link {
+			&:last-of-type .segmented-control__link {
 				border-top-right-radius: $common-border-radius;
 				border-bottom-right-radius: $common-border-radius;
 				border-left: 0;
