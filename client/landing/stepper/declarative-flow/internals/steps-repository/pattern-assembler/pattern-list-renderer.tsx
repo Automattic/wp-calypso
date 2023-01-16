@@ -1,6 +1,7 @@
 import { PatternRenderer } from '@automattic/block-renderer';
 import { Button } from '@automattic/components';
 import classnames from 'classnames';
+import EmptyPattern from './empty-pattern';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
 import './pattern-list-renderer.scss';
@@ -15,6 +16,7 @@ interface PatternListRendererProps {
 	patterns: Pattern[];
 	selectedPattern: Pattern | null;
 	activeClassName: string;
+	emptyPatternText?: string;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 }
 
@@ -40,10 +42,20 @@ const PatternListRenderer = ( {
 	patterns,
 	selectedPattern,
 	activeClassName,
+	emptyPatternText,
 	onSelect,
 }: PatternListRendererProps ) => {
 	return (
 		<>
+			{ emptyPatternText && (
+				<EmptyPattern
+					className={ classnames( 'pattern-list-renderer__pattern-list-item', {
+						[ activeClassName ]: ! selectedPattern,
+					} ) }
+					text={ emptyPatternText }
+					onSelect={ () => onSelect( null ) }
+				/>
+			) }
 			{ patterns.map( ( pattern, index ) => (
 				<PatternListItem
 					key={ `${ index }-${ pattern.id }` }

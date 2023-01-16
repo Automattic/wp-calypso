@@ -12,6 +12,7 @@ type PatternSelectorProps = {
 	onSelect: ( selectedPattern: Pattern ) => void;
 	onDoneClick: () => void;
 	selectedPattern: Pattern | null;
+	emptyPatternText?: string;
 };
 
 const PatternSelector = ( {
@@ -19,6 +20,7 @@ const PatternSelector = ( {
 	onSelect,
 	onDoneClick,
 	selectedPattern,
+	emptyPatternText,
 }: PatternSelectorProps ) => {
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const translate = useTranslate();
@@ -27,6 +29,7 @@ const PatternSelector = ( {
 		placeholder: null,
 		patterns,
 		selectedPattern,
+		emptyPatternText,
 		activeClassName: 'pattern-selector__block-list--selected-pattern',
 		onSelect,
 	};

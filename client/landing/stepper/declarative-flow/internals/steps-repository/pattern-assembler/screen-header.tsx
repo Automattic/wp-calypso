@@ -28,6 +28,7 @@ const ScreenHeader = ( { selectedPattern, onSelect, onDoneClick }: Props ) => {
 					onSelect={ onSelect }
 					onDoneClick={ onDoneClick }
 					selectedPattern={ selectedPattern }
+					emptyPatternText={ translate( 'No Header' ) }
 				/>
 			</div>
 		</>
