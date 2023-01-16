@@ -40,7 +40,7 @@ const selectors = {
 	// Welcome tour
 	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
 };
-const EXTENDED_TIMEOUT = 90 * 1000;
+const EXTENDED_TIMEOUT = 30 * 1000;
 
 /**
  * Represents an instance of the WPCOM's Gutenberg editor page.
@@ -121,36 +121,13 @@ export class EditorPage {
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async waitUntilLoaded(): Promise< void > {
-		// Once https://github.com/Automattic/wp-calypso/issues/57660 is resolved,
-		// the next line should be removed.
-		const editor = await this.getEditorHandle();
+		// In a typical loading scenario, this request is one of the last to fire.
+		// Lacking a perfect cross-site type (Simple/Atomic) way to check the loading state,
+		// it is a fairly good stand-in.
+		await this.page.waitForResponse( /.*posts.*/, { timeout: EXTENDED_TIMEOUT } );
 
-		const titleLocator = editor.locator( selectors.editorTitle );
-		await titleLocator.waitFor( { timeout: EXTENDED_TIMEOUT } );
-
+		// Dismiss the Welcome Tour.
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
-	}
-
-	/**
-	 * Return the editor frame. Could be the top-level frame (i.e WPAdmin).
-	 * an iframe (Calypso/Gutenframe).
-	 *
-	 * @returns {Promise<Frame>} frame holding the editor.
-	 */
-	async getEditorHandle(): Promise< Frame | Page > {
-		// Return the page object as Atomic editor permits direct
-		// access.
-		if ( this.target === 'atomic' ) {
-			return this.page;
-		}
-
-		// Framed editors need to extract the Frame.
-		const calypsoEditorLocator = this.page.locator( selectors.editorFrame );
-		const elementHandle = await calypsoEditorLocator.elementHandle( { timeout: EXTENDED_TIMEOUT } );
-		if ( ! elementHandle ) {
-			throw new Error( 'Could not locate editor iFrame.' );
-		}
-		return ( await elementHandle?.contentFrame() ) as Frame;
 	}
 
 	// TODO: in the future, this should replace the handle method above, as everything should be based on locators.
