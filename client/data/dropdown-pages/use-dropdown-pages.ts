@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery } from 'react-query';
 import wpcom from 'calypso/lib/wp';
 
 type Response = PageNode[];
@@ -9,12 +9,7 @@ export type PageNode = {
 	children?: PageNode[];
 };
 
-type QueryOptions = Omit<
-	UseQueryOptions< Response, unknown, Response, ( string | number | undefined )[] >,
-	'queryKey' | 'queryFn'
->;
-
-const useDropdownPagesQuery = ( siteId?: number, queryOptions: QueryOptions = {} ) => {
+const useDropdownPagesQuery = ( siteId?: number, queryOptions = {} ) => {
 	return useQuery(
 		[ 'sites', siteId, 'dropdown-pages' ],
 		(): Promise< Response > => wpcom.req.get( `/sites/${ siteId }/dropdown-pages` ),

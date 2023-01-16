@@ -9,11 +9,11 @@ import useDropdownPagesQuery, { PageNode } from 'calypso/data/dropdown-pages/use
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const PAGE_TITLE_DEPTH_PADDING = '—'; // em dash
+const SPACE = ' ';
 
 const toDropdownPageTitle = ( pageTitle: string, depth = 0 ) => {
 	const padding = `${ PAGE_TITLE_DEPTH_PADDING.repeat( depth ) }`;
-	padding !== '' && padding.concat( ' ' );
-	return `${ padding }${ pageTitle }`;
+	return `${ padding }${ padding ? SPACE : '' }${ pageTitle }`;
 };
 
 type DropdownPage = {
