@@ -41,6 +41,7 @@ describe( '<SitesOverview>', () => {
 		currentPage: 1,
 		search: '',
 		filter: { issueTypes: [], showOnlyFavorites: false },
+		selectedSites: [],
 	};
 
 	const queryClient = new QueryClient();

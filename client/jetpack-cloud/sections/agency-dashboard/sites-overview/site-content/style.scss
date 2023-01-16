@@ -1,3 +1,16 @@
 .site-content__mobile-view {
 	margin-bottom: 1.5rem;
 }
+
+.site-content__bulk-select {
+	.dashboard-bulk-actions {
+		display: flex;
+		justify-content: end;
+		.select-dropdown.is-compact {
+			width: 70%;
+		}
+	}
+	.site-bulk-select__bulk-select-label {
+		margin-inline-start: 12px;
+	}
+}
