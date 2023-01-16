@@ -3,6 +3,7 @@ import { AddSubscriberForm } from '@automattic/subscriber';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import InfiniteList from 'calypso/components/infinite-list';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -119,7 +120,22 @@ function Subscribers( props: Props ) {
 		case 'empty':
 			return (
 				<Card>
-					{ site && <AddSubscriberForm siteId={ site?.ID } onImportFinished={ refetch } /> }
+					{ site && (
+						<>
+							{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
+							{ /* @ts-ignore */ }
+							<EmailVerificationGate
+								noticeText={ _( 'You must verify your email to add subscribers.' ) }
+								noticeStatus="is-info"
+							>
+								<AddSubscriberForm
+									siteId={ site?.ID }
+									submitBtnAlwaysEnable={ true }
+									onImportFinished={ refetch }
+								/>
+							</EmailVerificationGate>
+						</>
+					) }
 				</Card>
 			);
 
