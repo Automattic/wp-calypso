@@ -25,6 +25,8 @@ import type { Step } from '../../types';
 import './styles.scss';
 
 const DEFAULT_WP_SITE_THEME = 'pub/zoologist';
+const DEFAULT_LINK_IN_BIO_THEME = 'pub/lynx';
+const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 
 const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } ) {
 	const { submit } = navigation;
@@ -46,7 +48,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 	if ( isMigrationFlow( flow ) || isCopySiteFlow( flow ) ) {
 		theme = DEFAULT_WP_SITE_THEME;
 	} else {
-		theme = isLinkInBioFlow( flow ) ? 'pub/lynx' : 'pub/lettre';
+		theme = isLinkInBioFlow( flow ) ? DEFAULT_LINK_IN_BIO_THEME : DEFAULT_NEWSLETTER_THEME;
 	}
 	const isPaidDomainItem = Boolean( domainCartItem?.product_slug );
 
