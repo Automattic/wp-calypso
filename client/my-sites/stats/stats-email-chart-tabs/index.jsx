@@ -47,6 +47,7 @@ class StatModuleChartTabs extends Component {
 		chartTab: PropTypes.string,
 		switchTab: PropTypes.func,
 		queryDate: PropTypes.string,
+		queryHour: PropTypes.string,
 		recordGoogleEvent: PropTypes.func,
 		sliceFromBeginning: PropTypes.bool,
 	};
@@ -119,7 +120,10 @@ const NO_SITE_STATE = {
 };
 
 const connectComponent = connect(
-	( state, { activeLegend, period: { period, endOf }, chartTab, queryDate, postId, statType } ) => {
+	(
+		state,
+		{ activeLegend, period: { period, endOf }, chartTab, queryDate, queryHour, postId, statType }
+	) => {
 		const siteId = getSelectedSiteId( state );
 		if ( ! siteId ) {
 			return NO_SITE_STATE;
@@ -127,7 +131,14 @@ const connectComponent = connect(
 
 		const quantity = 'hour' === period ? 24 : 30;
 		const counts = getCountRecords( state, siteId, postId, period, statType );
-		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
+		const chartData = buildChartData(
+			activeLegend,
+			chartTab,
+			counts,
+			period,
+			queryDate,
+			queryHour
+		);
 		const isActiveTabLoading = isLoadingTabs(
 			state,
 			siteId,

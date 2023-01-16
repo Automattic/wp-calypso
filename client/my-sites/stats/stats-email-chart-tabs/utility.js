@@ -31,34 +31,47 @@ export function getQueryDate( queryDate, timezoneOffset, period, quantity ) {
 	return endOfPeriodDate;
 }
 
-const EMPTY_RESULT = [];
-export const buildChartData = memoizeLast( ( activeLegend, chartTab, data, period, queryDate ) => {
-	if ( ! data ) {
-		return EMPTY_RESULT;
+const checkIsSelected = ( record, queryDate, queryHour ) => {
+	let isSelected = record.period === queryDate;
+
+	if ( isSelected && record.hour ) {
+		isSelected = record.hour && record.hour.toString() === queryHour;
 	}
 
-	return data.map( ( record ) => {
-		const nestedValue = activeLegend.length ? record[ activeLegend[ 0 ] ] : null;
+	return isSelected;
+};
 
-		const recordClassName =
-			record.classNames && record.classNames.length ? record.classNames.join( ' ' ) : null;
-		const className = classNames( recordClassName, {
-			'is-selected': record.period === queryDate,
+const EMPTY_RESULT = [];
+export const buildChartData = memoizeLast(
+	( activeLegend, chartTab, data, period, queryDate, queryHour ) => {
+		if ( ! data ) {
+			return EMPTY_RESULT;
+		}
+
+		return data.map( ( record ) => {
+			const nestedValue = activeLegend.length ? record[ activeLegend[ 0 ] ] : null;
+
+			const recordClassName =
+				record.classNames && record.classNames.length ? record.classNames.join( ' ' ) : null;
+
+			const className = classNames( recordClassName, {
+				'is-selected': checkIsSelected( record, queryDate, queryHour ),
+			} );
+
+			return addTooltipData(
+				chartTab,
+				{
+					label: record[ `label${ capitalize( period ) }` ],
+					value: record[ chartTab ],
+					data: record,
+					nestedValue,
+					className,
+				},
+				period
+			);
 		} );
-
-		return addTooltipData(
-			chartTab,
-			{
-				label: record[ `label${ capitalize( period ) }` ],
-				value: record[ chartTab ],
-				data: record,
-				nestedValue,
-				className,
-			},
-			period
-		);
-	} );
-} );
+	}
+);
 
 function addTooltipData( chartTab, item, period ) {
 	const tooltipData = [];

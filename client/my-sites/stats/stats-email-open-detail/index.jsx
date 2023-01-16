@@ -203,6 +203,7 @@ class StatsEmailOpenDetail extends Component {
 		} = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
+		const queryHour = date.format( 'H' );
 		const noViewsLabel = translate( 'Your email has not received any views yet!' );
 
 		const { period, endOf } = this.props.period;
@@ -281,6 +282,7 @@ class StatsEmailOpenDetail extends Component {
 									switchTab={ this.switchChart }
 									charts={ CHARTS }
 									queryDate={ queryDate }
+									queryHour={ queryHour }
 									period={ this.props.period }
 									chartTab={ this.props.chartTab }
 									postId={ postId }
