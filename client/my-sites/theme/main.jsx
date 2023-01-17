@@ -885,7 +885,7 @@ class ThemeSheet extends Component {
 				<UpsellNudge
 					plan={ PLAN_BUSINESS }
 					className="theme__page-upsell-banner"
-					title={ translate( 'Access this theme for FREE with a Business plan!' ) }
+					title={ translate( 'Upgrade your plan to install third-party themes' ) }
 					description={ preventWidows(
 						translate(
 							'Instantly unlock thousands of different themes and install your own when you upgrade.'
