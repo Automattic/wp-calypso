@@ -84,3 +84,30 @@ export const useStorageUsageText = (
 		);
 	}, [ translate, bytesUsed, bytesAvailable ] );
 };
+
+export const useDaysOfBackupsSavedText = (
+	daysOfBackupsSaved: number | undefined,
+	siteSlug: string
+): TranslateResult | null => {
+	const translate = useTranslate();
+
+	return useMemo( () => {
+		if ( undefined === daysOfBackupsSaved || 0 === daysOfBackupsSaved ) {
+			return null;
+		}
+
+		const daysOfBackupsSavedLinkTarget = `/activity-log/${ siteSlug }?group=rewind`;
+
+		return translate(
+			'{{a}}%(daysOfBackupsSaved)d day of backup saved{{/a}}',
+			'{{a}}%(daysOfBackupsSaved)d days of backups saved{{/a}}',
+			{
+				count: daysOfBackupsSaved,
+				args: { daysOfBackupsSaved },
+				components: {
+					a: <a href={ daysOfBackupsSavedLinkTarget } />,
+				},
+			}
+		);
+	}, [ translate, daysOfBackupsSaved, siteSlug ] );
+};

@@ -12,58 +12,6 @@
 		height: 24px;
 		box-shadow: none;
 	}
-
-	&__help-text-tooltip.popover {
-		&.is-right .popover__arrow {
-			border-right-color: #fff;
-		}
-
-		.popover__inner {
-			padding: 16px 58px 16px 16px;
-			color: var(--studio-gray-70);
-			background: #fff;
-			border-radius: 2px;
-			box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
-
-			p {
-				font-size: 1rem;
-				margin: 0;
-			}
-
-			hr {
-				margin-bottom: 0.25rem;
-			}
-		}
-
-		@include break-mobile() {
-			max-width: 200px;
-		}
-	}
-
-	&__open-help-text-tooltip {
-		margin-right: 8px;
-		vertical-align: middle;
-
-		&.button {
-			padding: 0;
-
-			.gridicon {
-				top: 4px;
-			}
-		}
-	}
-
-	&__close-help-text-tooltip {
-		position: absolute;
-		right: 16px;
-		top: 16px;
-		color: var(--studio-gray-40);
-
-		&.button {
-			height: 18px;
-			padding: 0;
-		}
-	}
 }
 
 .backup-storage-space__progress-bar-container {
@@ -147,9 +95,13 @@
 	span {
 		vertical-align: middle;
 	}
+
+	.gridicons-info-outline {
+		color: var(--studio-gray-60);
+	}
 }
 
-.backup-storage-space__progress-usage-text {
+.backup-storage-space__progress-usage-container {
 	margin-block-start: 16px;
 	white-space: nowrap;
 	display: flex;
@@ -159,17 +111,81 @@
 	a {
 		text-decoration: underline;
 	}
+}
 
+.backup-storage-space__progress-storage-usage-text {
 	.used-space__span {
 		font-weight: 700;
 	}
+}
 
-	.backups-saved__container {
-		margin-left: auto;
-	}
+.backup-storage-space__progress-backups-saved-text {
+	margin-left: auto;
 }
 
 .backup-storage-space-help-text__tooltip {
 	padding: 10px;
 	max-width: 200px;
+}
+
+.storage-usage-help-tooltip {
+
+	&__tooltip.popover {
+		&.is-right .popover__arrow {
+			border-right-color: #fff;
+		}
+
+		.popover__inner {
+			padding: 16px;
+			color: var(--studio-gray-70);
+			background: #fff;
+			border-radius: 2px;
+			box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+
+			p {
+				padding-right: 24px;
+				font-size: $font-body;
+				color: var(--studio-gray-60);
+				margin: 0;
+			}
+
+			hr {
+				margin-bottom: 0.25rem;
+			}
+
+			a {
+				font-size: $font-body;
+				text-decoration: underline;
+			}
+		}
+
+		@include break-mobile() {
+			max-width: 270px;
+		}
+	}
+
+	&__toggle-tooltip {
+		margin-right: 8px;
+		vertical-align: middle;
+
+		&.button {
+			padding: 0;
+
+			.gridicon {
+				top: 4px;
+			}
+		}
+	}
+
+	&__close-tooltip {
+		position: absolute;
+		right: 16px;
+		top: 16px;
+		color: var(--studio-gray-40);
+
+		&.button {
+			height: 18px;
+			padding: 0;
+		}
+	}
 }
