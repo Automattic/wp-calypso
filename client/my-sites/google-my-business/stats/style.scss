@@ -11,6 +11,10 @@
 	display: inline-block;
 	margin-top: 1px; // Fixes shadow truncated at the top of the second column
 	width: 100%;
+
+	.stats .card-heading {
+		margin-left: 0;
+	}
 }
 
 .gmb-stats__chart {
