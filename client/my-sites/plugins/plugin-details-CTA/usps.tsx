@@ -4,6 +4,7 @@ import {
 	PLAN_BUSINESS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_MONTHLY,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
@@ -14,6 +15,7 @@ import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sid
 import usePluginsSupportText from 'calypso/my-sites/plugins/use-plugins-support-text/';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
+import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -50,6 +52,10 @@ const GreenGridicon = styled( Gridicon )`
 `;
 
 const useRequiredPlan = ( shouldUpgrade: boolean ) => {
+	const siteId = useSelector( getSelectedSite )?.ID;
+	const isECommerceTrial = useSelector(
+		( state: IAppState ) => siteId && isSiteOnECommerceTrial( state, siteId )
+	);
 	return useSelector( ( state: IAppState ) => {
 		if ( ! shouldUpgrade ) {
 			return '';
@@ -58,6 +64,10 @@ const useRequiredPlan = ( shouldUpgrade: boolean ) => {
 		const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
 		if ( config.isEnabled( 'marketplace-personal-premium' ) ) {
 			return isAnnualPeriod ? PLAN_PERSONAL : PLAN_PERSONAL_MONTHLY;
+		}
+
+		if ( isECommerceTrial ) {
+			return PLAN_ECOMMERCE_TRIAL_MONTHLY;
 		}
 
 		return isAnnualPeriod ? PLAN_BUSINESS : PLAN_BUSINESS_MONTHLY;
@@ -150,6 +160,9 @@ export const PlanUSPS: React.FC< Props > = ( {
 					periodicity: periodicityLabel,
 				},
 			} );
+			break;
+		case PLAN_ECOMMERCE_TRIAL_MONTHLY:
+			planText = translate( 'Included in eCommerce plans:' );
 			break;
 	}
 
