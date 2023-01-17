@@ -32,9 +32,9 @@ export const ItemPrice: React.FC< ItemPriceProps > = ( {
 		);
 	} else if ( isOwned ) {
 		const message = isExpired ? translate( 'Expired' ) : translate( 'Active on your site' );
-		return <ItemPriceMessage expired={ isExpired } message={ message } />;
+		return <ItemPriceMessage active error={ isExpired } message={ message } />;
 	} else if ( isIncludedInPlan ) {
-		return <ItemPriceMessage message={ translate( 'Part of the current plan' ) } />;
+		return <ItemPriceMessage active message={ translate( 'Part of the current plan' ) } />;
 	}
 
 	return (

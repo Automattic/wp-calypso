@@ -73,7 +73,10 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 									'is-compact': isCompact,
 								} ) }
 							>
-								<TimeFrame billingTerm={ billingTerm } />
+								<TimeFrame
+									billingTerm={ billingTerm }
+									discountedPriceDuration={ discountedPriceDuration }
+								/>
 							</div>
 						</div>
 						{ discountedPrice && (

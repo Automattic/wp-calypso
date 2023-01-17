@@ -138,6 +138,8 @@ class Block_Patterns_From_API {
 
 		$this->update_core_patterns_with_wpcom_categories();
 
+		$this->update_pattern_post_types();
+
 		return $results;
 	}
 
@@ -252,5 +254,28 @@ class Block_Patterns_From_API {
 			}
 		}
 	}
-}
 
+	/**
+	 * Ensure that all patterns with a blockType property are registered with appropriate postTypes.
+	 */
+	private function update_pattern_post_types() {
+		if ( ! class_exists( 'WP_Block_Patterns_Registry' ) ) {
+			return;
+		}
+		foreach ( \WP_Block_Patterns_Registry::get_instance()->get_all_registered() as $pattern ) {
+			if ( array_key_exists( 'postTypes', $pattern ) && $pattern['postTypes'] ) {
+				continue;
+			}
+
+			$post_types = $this->utils->get_pattern_post_types_from_pattern( $pattern );
+			if ( $post_types ) {
+				unregister_block_pattern( $pattern['name'] );
+
+				$pattern['postTypes'] = $post_types;
+				$pattern_name         = $pattern['name'];
+				unset( $pattern['name'] );
+				register_block_pattern( $pattern_name, $pattern );
+			}
+		}
+	}
+}

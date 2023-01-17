@@ -114,11 +114,16 @@ function render( element, key, req ) {
 				name: `ssr.markup_cache.${ markupFromCache ? 'hit' : 'miss' }`,
 				type: 'counting',
 			},
-			{
-				name: 'ssr.react_render.duration',
-				type: 'timing',
-				value: rtsTimeMs,
-			},
+			// Only log the render time if we didn't get it from the cache.
+			...( markupFromCache
+				? []
+				: [
+						{
+							name: 'ssr.react_render.duration',
+							type: 'timing',
+							value: rtsTimeMs,
+						},
+				  ] ),
 		] );
 
 		if ( rtsTimeMs > 100 ) {

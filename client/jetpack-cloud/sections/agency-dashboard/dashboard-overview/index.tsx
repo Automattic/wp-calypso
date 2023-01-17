@@ -28,13 +28,20 @@ export default function DashboardOverview( {
 		return <SelectPartnerKey />;
 	}
 
+	const handleSetBulkManagementActive = ( isActive: boolean ) => {
+		setIsBulkManagementActive( isActive );
+		if ( ! isActive ) {
+			setSelectedSites( [] );
+		}
+	};
+
 	if ( hasFetched ) {
 		const context = {
 			search,
 			currentPage,
 			filter,
 			isBulkManagementActive,
-			setIsBulkManagementActive,
+			setIsBulkManagementActive: handleSetBulkManagementActive,
 			selectedSites,
 			setSelectedSites,
 		};

@@ -46,9 +46,12 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		await postsPage.newPost();
 	} );
 
+	beforeAll( async function () {
+		editorPage = new EditorPage( page, { target: features.siteType } );
+	} );
+
 	describe( 'Publish post', function () {
 		it( 'Enter post title', async function () {
-			editorPage = new EditorPage( page, { target: features.siteType } );
 			await editorPage.enterTitle( postTitle );
 		} );
 
@@ -88,7 +91,6 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		} );
 
 		it( 'Editor is shown', async function () {
-			editorPage = new EditorPage( page, { target: features.siteType } );
 			await editorPage.waitUntilLoaded();
 		} );
 

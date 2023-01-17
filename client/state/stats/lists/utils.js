@@ -988,6 +988,10 @@ export function parseEmailChartData( payload, nullAttributes = [] ) {
 		return [];
 	}
 
+	if ( 'hour' === payload.unit ) {
+		payload.fields.push( 'hour' );
+	}
+
 	return payload.data.map( function ( record ) {
 		// Initialize data
 		const dataRecord = nullAttributes.reduce( ( memo, attribute ) => {

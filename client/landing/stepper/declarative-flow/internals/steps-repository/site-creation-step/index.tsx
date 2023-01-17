@@ -8,6 +8,7 @@ import {
 	isFreeFlow,
 	isMigrationFlow,
 	isCopySiteFlow,
+	isWooExpressFlow,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
@@ -26,6 +27,7 @@ import './styles.scss';
 
 const DEFAULT_WP_SITE_THEME = 'pub/zoologist';
 const DEFAULT_LINK_IN_BIO_THEME = 'pub/lynx';
+const DEFAULT_WOOEXPRESS_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 
 const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } ) {
@@ -47,6 +49,8 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 	let theme: string;
 	if ( isMigrationFlow( flow ) || isCopySiteFlow( flow ) ) {
 		theme = DEFAULT_WP_SITE_THEME;
+	} else if ( isWooExpressFlow( flow ) ) {
+		theme = DEFAULT_WOOEXPRESS_FLOW;
 	} else {
 		theme = isLinkInBioFlow( flow ) ? DEFAULT_LINK_IN_BIO_THEME : DEFAULT_NEWSLETTER_THEME;
 	}
