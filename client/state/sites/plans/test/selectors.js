@@ -793,14 +793,14 @@ describe( 'selectors', () => {
 
 	describe( '#getECommerceTrialExpiration()', () => {
 		const siteId = 1337;
-		test( 'Returns the expiracy date', () => {
-			const expiracyDate = '2022-02-10T00:00:00+00:00';
+		test( 'Returns the expiration date', () => {
+			const expiryDate = '2022-02-10T00:00:00+00:00';
 
 			const plan = {
 				ID: 1,
 				productSlug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
 				blogId: siteId,
-				expiryDate: expiracyDate,
+				expiryDate: expiryDate,
 				currentPlan: true,
 			};
 
@@ -824,7 +824,7 @@ describe( 'selectors', () => {
 			} );
 
 			expect(
-				getECommerceTrialExpiration( state, siteId ).isSame( moment( expiracyDate ) )
+				getECommerceTrialExpiration( state, siteId ).isSame( moment( expiryDate ) )
 			).toBeTruthy();
 		} );
 
@@ -859,13 +859,13 @@ describe( 'selectors', () => {
 		jest.useFakeTimers().setSystemTime( new Date( '2022-01-10T00:00:00+00:00' ) );
 
 		test( 'Should return the correct number of days left before the trial expires', () => {
-			const expiracyDate = '2022-02-10T00:00:00+00:00';
+			const expiryDate = '2022-02-10T00:00:00+00:00';
 
 			const plan = {
 				ID: 1,
 				productSlug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
 				blogId: siteId,
-				expiryDate: expiracyDate,
+				expiryDate: expiryDate,
 				currentPlan: true,
 			};
 
@@ -897,13 +897,13 @@ describe( 'selectors', () => {
 		jest.useFakeTimers().setSystemTime( new Date( '2022-01-10T00:00:00+00:00' ) );
 
 		test( 'The trial period should be expired', () => {
-			const expiracyDate = '2022-01-09T00:00:00+00:00';
+			const expiryDate = '2022-01-09T00:00:00+00:00';
 
 			const plan = {
 				ID: 1,
 				productSlug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
 				blogId: siteId,
-				expiryDate: expiracyDate,
+				expiryDate: expiryDate,
 				currentPlan: true,
 			};
 
@@ -930,12 +930,12 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'The trial period should not be expired if is the same day', () => {
-			const expiracyDate = '2022-01-10T23:59:59+00:00';
+			const expiryDate = '2022-01-10T23:59:59+00:00';
 			const plan = {
 				ID: 1,
 				productSlug: PLAN_ECOMMERCE_TRIAL_MONTHLY,
 				blogId: siteId,
-				expiryDate: expiracyDate,
+				expiryDate: expiryDate,
 				currentPlan: true,
 			};
 
