@@ -9,6 +9,7 @@ import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
 import SetupForm from '../components/setup-form';
+import useSetupFormInitialValues from '../components/setup-form/hooks/use-setup-form-initial-values';
 import type { Step } from '../../types';
 
 import '../link-in-bio-setup/styles.scss';
@@ -24,23 +25,14 @@ const LinkInBioPostSetup: Step = function LinkInBioPostSetup( { navigation } ) {
 		taglinePlaceholder: translate( 'Add a short biography here' ),
 	};
 
-	const [ siteTitle, setComponentSiteTitle ] = useState( '' );
-	const [ tagline, setTagline ] = useState( '' );
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = useState( false );
 	const [ selectedFile, setSelectedFile ] = useState< File | undefined >();
 	const [ base64Image, setBase64Image ] = useState< string | null >();
 	const [ isLoading, setIsLoading ] = useState< boolean >( false );
 	const [ isSubmitError, setIsSubmitError ] = useState< boolean >( false );
-	const [ siteDataFetched, setSiteDataFetched ] = useState( false );
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 
-	useEffect( () => {
-		if ( site && ! siteDataFetched ) {
-			setComponentSiteTitle( site?.name || '' );
-			setTagline( site?.description || '' );
-			setSiteDataFetched( true );
-		}
-	}, [ site, siteDataFetched, setSiteDataFetched ] );
+	const { siteTitle, setComponentSiteTitle, tagline, setTagline } = useSetupFormInitialValues();
 
 	useEffect( () => {
 		setIsSubmitError( false );
