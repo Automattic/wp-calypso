@@ -237,7 +237,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
     "@types/cookie": ^0.4.1
-    "@types/node": ^16.11.26
+    "@types/node": ^18.11.18
     cookie: ^0.4.1
     tslib: ^2.3.0
     typescript: ^4.7.4
@@ -266,7 +266,7 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@jest/globals": ^27.3.1
     "@types/jest": ^27.4.0
-    "@types/node": ^16.17.0
+    "@types/node": ^18.11.18
     "@types/node-fetch": ^2.6.1
     "@types/totp-generator": ^0.0.3
     "@wordpress/i18n": ^4.9.0
@@ -940,7 +940,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@types/allure-js-commons": ^0.0.1
     "@types/jest": ^27.4.0
-    "@types/node": ^16.11.26
+    "@types/node": ^18.11.18
     allure-js-commons: 2.0.0-beta.9
     typescript: ^4.7.4
   languageName: unknown
@@ -1804,7 +1804,7 @@ __metadata:
     "@sentry/browser": ^7.11.1
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
-    "@types/node": ^15.0.2
+    "@types/node": ^18.11.18
     "@types/wordpress__plugins": ^3.0.0
     "@wordpress/a11y": ^3.9.0
     "@wordpress/api-fetch": ^6.6.0
@@ -6845,10 +6845,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^16.11.26, @types/node@npm:^16.17.0":
-  version: 16.18.11
-  resolution: "@types/node@npm:16.18.11"
-  checksum: 7bdf5e865a7959a72881ede19a882219f9d0baadf9ef8fdf24523291d401a7fc43bf91aa3223b1961ca54e1363f542cc4d60c8b00a70b457b2e9439b82adac70
+"@types/node@npm:*, @types/node@npm:^18.11.18":
+  version: 18.11.18
+  resolution: "@types/node@npm:18.11.18"
+  checksum: 1a308a03a7c1cfced411fc3187e49a507ab2b3ce7cdf0794b7511c8843aae5a8dbe52b16ba4217d2da1c8e3c50920c272b45fecff4cccc26606be7f42c33f4f5
   languageName: node
   linkType: hard
 
@@ -6863,13 +6863,6 @@ __metadata:
   version: 14.17.14
   resolution: "@types/node@npm:14.17.14"
   checksum: 52d8d863fb771dbd667176b3c7c4bf6a2d55e4b4196ee0df4f36383584f2466794ed30da2b030d993d0aeb6fac0a39a4d373105ade6169c320028dfa3718b617
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:^15.0.2":
-  version: 15.14.9
-  resolution: "@types/node@npm:15.14.9"
-  checksum: fe5b69cffd20f97c814d568c1d791b3c367f9efa6567a18d2c15cd73c5437f47bcff73a2e10bdfe59f90ce7df47e6cc3c6d431c76d2213bf6099e8ab5d16d355
   languageName: node
   linkType: hard
 
@@ -33631,7 +33624,7 @@ resolve@^2.0.0-next.3:
     "@types/fast-json-stable-stringify": ^2.0.0
     "@types/gtag.js": ^0.0.10
     "@types/lodash": ^4.14.179
-    "@types/node": ^16.11.26
+    "@types/node": ^18.11.18
     "@types/page": ^1.11.5
     "@types/qs": ^6.9.7
     "@types/react": ^17.0.39
