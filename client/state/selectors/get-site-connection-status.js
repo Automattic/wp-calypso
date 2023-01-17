@@ -1,3 +1,5 @@
+import 'calypso/state/site-connection/init';
+
 import { get } from 'lodash';
 
 /**
@@ -9,5 +11,5 @@ import { get } from 'lodash';
  * @returns {?boolean}          Whether site is connected to WordPress.com.
  */
 export default function getSiteConnectionStatus( state, siteId ) {
-	return get( state.sites.connection.items, siteId, null );
+	return get( state.siteConnection.items, siteId, null );
 }

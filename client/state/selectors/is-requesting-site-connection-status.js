@@ -1,3 +1,5 @@
+import 'calypso/state/site-connection/init';
+
 import { get } from 'lodash';
 
 /**
@@ -9,5 +11,5 @@ import { get } from 'lodash';
  * @returns {boolean}             Whether connection status is currently being requested for that site.
  */
 export default function isRequestingSiteConnectionStatus( state, siteId ) {
-	return get( state.sites.connection.requesting, siteId, false );
+	return get( state.siteConnection.requesting, siteId, false );
 }
