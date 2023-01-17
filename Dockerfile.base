@@ -18,9 +18,9 @@ ENV HOME=/calypso
 
 COPY . .
 
-# RUN yarn \
+ RUN yarn \
 	# Prime webpack caches, including sourcemaps.
-	# && NODE_ENV=production SOURCEMAP=hidden-source-map yarn build-client
+	&& NODE_ENV=production SOURCEMAP=hidden-source-map yarn build-client
 
 ENTRYPOINT [ "/bin/bash" ]
 
@@ -56,7 +56,7 @@ RUN apt-get update \
 	&& ln -s /bin/bash /bin/sh
 
 # Copy all other caches (webpack, babel, yarn...)
-# COPY --from=cache --chown=$UID /calypso/.cache /calypso/.cache
+COPY --from=cache --chown=$UID /calypso/.cache /calypso/.cache
 COPY --from=cache --chown=$UID /calypso/.yarn /calypso/.yarn
 
 ENTRYPOINT [ "/bin/bash" ]
@@ -76,6 +76,7 @@ RUN apt-get update \
 		# Install non-Latin fonts
 		fonts-noto-cjk \
 		fonts-noto-core \
+		# Other required packages
 		git-restore-mtime \
 		libasound2 \
 		libatspi2.0-0 \
