@@ -3,20 +3,30 @@
 @import "@wordpress/base-styles/mixins";
 
 .gifting-checkout-banner {
+	display: flex;
 	margin: 0 auto 32px;
-	background: url(calypso/assets/images/gifting/gifting-checkout-banner.jpg) no-repeat top left;
-	background-size: 905px 154px;
+	background: url(calypso/assets/images/gifting/pink-background.jpg) no-repeat top left;
+	background-size: cover;
 	@media ( min-width: 700px ) {
-		height: 154px;
 		width: 554px;
 	}
 	@include break-large {
-		height: 154px;
 		width: 905px;
 	}
 }
 
+.gifting-checkout-banner img {
+	display: none;
+	align-self: flex-end;
+	height: 144px;
+	width: 234px;
+	@include break-large {
+		display: inline-block;
+	}
+}
+
 .gifting-checkout-banner div {
+	display: inline-block;
 	padding: 5px 20px;
 	@media ( min-width: 700px ) {
 		padding: 18px 26px;
