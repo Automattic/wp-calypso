@@ -165,6 +165,8 @@ export default function SiteStatusContent( {
 				site={ rows.site.value }
 				settings={ rows.monitor.settings }
 				status={ status }
+				tooltip={ tooltip }
+				tooltipId={ tooltipId }
 				siteError={ siteError }
 			/>
 		);
