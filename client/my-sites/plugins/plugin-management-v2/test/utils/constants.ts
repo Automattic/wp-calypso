@@ -3,7 +3,7 @@ import type { SiteDetails } from '@automattic/data-stores';
 const siteId = 12345678;
 const pluginId = 'test';
 
-const site: SiteDetails = {
+export const site: SiteDetails = {
 	ID: siteId,
 	name: 'test',
 	description: 'test site',
@@ -45,7 +45,7 @@ const site: SiteDetails = {
 	visible: true,
 };
 
-const plugin = {
+export const plugin = {
 	id: pluginId,
 	last_updated: '2021-09-16 12:40am GMT',
 	sites: {
@@ -66,5 +66,3 @@ const plugin = {
 	slug: pluginId,
 	wporg: true,
 };
-
-export { site, plugin };
