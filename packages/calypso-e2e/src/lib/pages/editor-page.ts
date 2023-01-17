@@ -552,11 +552,15 @@ export class EditorPage {
 		const publishButtonText = await this.editorToolbarComponent.getPublishButtonText();
 		const actionsArray = [];
 
-		// Intercept the response from the WordPress.com REST API.
+		// Playwright does not have a way to differentiate
+		// between GET and POST requests. However, a new post
+		// has a post number following the article type.
+		// By matching on the regex we can filter out
+		// GET requests to the endpoint, focusing only on POST requests.
 		if ( this.target === 'atomic' ) {
-			actionsArray.push( this.page.waitForResponse( /v2\/(posts|pages).*/ ) );
+			actionsArray.push( this.page.waitForResponse( /v2\/(posts|pages)\/[\d]+/ ) );
 		} else {
-			actionsArray.push( this.page.waitForResponse( /sites.*\/(posts|pages)\/.*/ ) );
+			actionsArray.push( this.page.waitForResponse( /sites\/[\d]+\/(posts|pages)\/[\d]+.*/ ) );
 		}
 
 		// Every publish action requires at least one click on the EditorToolbarComponent.
@@ -578,8 +582,8 @@ export class EditorPage {
 		}
 
 		const json = await response.json();
-		let publishedURL: string;
 
+		let publishedURL: string;
 		if ( this.target === 'atomic' ) {
 			publishedURL = json.link;
 		} else {
@@ -587,7 +591,7 @@ export class EditorPage {
 		}
 
 		if ( ! publishedURL ) {
-			throw new Error( 'Could not retrieve published post URL.' );
+			throw new Error( 'No published article URL found in response.' );
 		}
 
 		if ( visit ) {
