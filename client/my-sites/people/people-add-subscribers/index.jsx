@@ -63,7 +63,9 @@ class PeopleInvites extends PureComponent {
 							},
 						} ) }
 					</HeaderCake>
-					<PeopleSectionAddNav selectedFilter="subscribers" />
+					{ isEnabled( 'user-management-revamp' ) && (
+						<PeopleSectionAddNav selectedFilter="subscribers" />
+					) }
 					<EmptyContent
 						title={ translate( 'You are not authorized to view this page' ) }
 						illustration="/calypso/images/illustrations/illustration-404.svg"
@@ -75,14 +77,16 @@ class PeopleInvites extends PureComponent {
 		return (
 			<Main>
 				<PageViewTracker path="/people/add-subscribers/:site_id" title="People > Add Subscribers" />
-				<HeaderCake onClick={ this.goBack }>
+				<HeaderCake isCompact={ ! isEnabled( 'user-management-revamp' ) } onClick={ this.goBack }>
 					{ translate( 'Add subscribers to %(sitename)s', {
 						args: {
 							sitename: site.name,
 						},
 					} ) }
 				</HeaderCake>
-				<PeopleSectionAddNav selectedFilter="subscribers" />
+				{ isEnabled( 'user-management-revamp' ) && (
+					<PeopleSectionAddNav selectedFilter="subscribers" />
+				) }
 				<Card>
 					<EmailVerificationGate
 						noticeText={ this.props.translate( 'You must verify your email to add subscribers.' ) }
