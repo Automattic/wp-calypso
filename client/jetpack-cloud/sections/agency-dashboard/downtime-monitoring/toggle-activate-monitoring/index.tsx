@@ -2,10 +2,11 @@ import { Button } from '@automattic/components';
 import { ToggleControl as OriginalToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { ReactChild, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import Tooltip from 'calypso/components/tooltip';
 import { getSiteMonitorStatuses } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { useToggleActivateMonitor } from '../../hooks';
 import NotificationSettings from '../notification-settings';
@@ -17,15 +18,32 @@ interface Props {
 	site: Site;
 	status: AllowedStatusTypes | string;
 	settings: MonitorSettings | undefined;
+	tooltip: ReactChild | undefined;
+	tooltipId: string;
 	siteError: boolean;
 }
 
-export default function ToggleActivateMonitoring( { site, status, settings, siteError }: Props ) {
+export default function ToggleActivateMonitoring( {
+	site,
+	status,
+	settings,
+	tooltip,
+	tooltipId,
+	siteError,
+}: Props ) {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 	const toggleActivateMonitor = useToggleActivateMonitor( [ site ] );
 	const statuses = useSelector( getSiteMonitorStatuses );
 	const [ showNotificationSettings, setShowNotificationSettings ] = useState< boolean >( false );
+	const [ showTooltip, setShowTooltip ] = useState( false );
+
+	const handleShowTooltip = () => {
+		setShowTooltip( true );
+	};
+	const handleHideTooltip = () => {
+		setShowTooltip( false );
+	};
 
 	const ToggleControl = OriginalToggleControl as React.ComponentType<
 		OriginalToggleControl.Props & {
@@ -40,6 +58,8 @@ export default function ToggleActivateMonitoring( { site, status, settings, site
 	function handleToggleNotificationSettings() {
 		setShowNotificationSettings( ( isOpen ) => ! isOpen );
 	}
+
+	const statusContentRef = useRef< HTMLSpanElement | null >( null );
 
 	const isChecked = status !== 'disabled';
 	const isLoading = statuses?.[ site.blog_id ] === 'loading';
@@ -112,6 +132,9 @@ export default function ToggleActivateMonitoring( { site, status, settings, site
 	return (
 		<>
 			<span
+				ref={ statusContentRef }
+				onMouseEnter={ handleShowTooltip }
+				onMouseLeave={ handleHideTooltip }
 				className={ classNames( 'toggle-activate-monitoring__toggle-button', {
 					[ 'sites-overview__disabled' ]: siteError,
 				} ) }
@@ -129,6 +152,17 @@ export default function ToggleActivateMonitoring( { site, status, settings, site
 					sites={ [ site ] }
 					settings={ settings }
 				/>
+			) }
+			{ tooltip && (
+				<Tooltip
+					id={ tooltipId }
+					context={ statusContentRef.current }
+					isVisible={ showTooltip }
+					position="bottom"
+					className="sites-overview__tooltip"
+				>
+					{ tooltip }
+				</Tooltip>
 			) }
 		</>
 	);

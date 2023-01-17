@@ -194,7 +194,9 @@ class StatsSite extends Component {
 			path: '/stats',
 		};
 		const slugPath = slug ? `/${ slug }` : '';
-		const pathTemplate = `${ traffic.path }/{{ interval }}${ slugPath }`;
+		const pathTemplate = `${ traffic.path }/{{ interval }}${ slugPath }?tab=${
+			this.state.activeTab ? this.state.activeTab.attr : 'views'
+		}`;
 
 		const wrapperClass = classNames( 'stats-content', {
 			'is-period-year': period === 'year',

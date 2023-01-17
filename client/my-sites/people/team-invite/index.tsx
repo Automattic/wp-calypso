@@ -40,7 +40,7 @@ function TeamInvite( props: Props ) {
 	useEffect( checkPermission, [ site ] );
 
 	function goBack() {
-		const fallback = site?.slug ? '/people/team-members/' + site?.slug : '/people/team-members';
+		const fallback = site?.slug ? '/people/team/' + site?.slug : '/people/team';
 
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore: There are no type definitions for page.back.
@@ -85,7 +85,7 @@ function TeamInvite( props: Props ) {
 							{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
 							{ /* @ts-ignore */ }
 							<EmailVerificationGate>
-								<InviteForm />
+								<InviteForm onInviteSuccess={ goBack } />
 							</EmailVerificationGate>
 						</Card>
 					);
@@ -93,7 +93,7 @@ function TeamInvite( props: Props ) {
 					return (
 						<SsoNotice siteId={ siteId }>
 							<Card>
-								<InviteForm />
+								<InviteForm onInviteSuccess={ goBack } />
 							</Card>
 						</SsoNotice>
 					);

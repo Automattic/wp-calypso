@@ -13,6 +13,7 @@ import {
 	sendTyping,
 	sendUserInfo,
 	setChatCustomFields,
+	setChatTag,
 } from 'calypso/state/happychat/connection/actions';
 import {
 	HAPPYCHAT_CONNECTION_STATUS_CONNECTING,
@@ -59,6 +60,7 @@ function ParentConnection( { chatStatus, timeline, geoLocation } ) {
 								...( message.extraFields || {} ),
 							} )
 						);
+						dispatch( setChatTag( message.chatTag ) );
 						dispatch(
 							sendUserInfo(
 								getUserInfo(

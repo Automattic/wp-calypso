@@ -511,7 +511,7 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 	const backupT1ShortDescription = translate( 'Real-time cloud backups with one-click restores.' );
 	const backupT2ShortDescription = translate( 'Real-time cloud backups with one-click restores.' );
 	const boostShortDescription = translate(
-		'Essential tools to speed up your site - no developer required.'
+		'Speed up your site and improve SEO - no developer required.'
 	);
 	const searchShortDescription = translate( 'Help your site visitors find answers instantly.' );
 	const scanShortDescription = translate( 'Automatic malware scanning with one-click fixes.' );

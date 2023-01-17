@@ -45,7 +45,7 @@ describe( 'utils', () => {
 				monitor_active: true,
 				last_down_time: '',
 				monitor_deferment_time: 5,
-				monitor_notify_users_emails: [],
+				monitor_user_emails: [],
 			},
 		};
 		const rows: SiteData = {

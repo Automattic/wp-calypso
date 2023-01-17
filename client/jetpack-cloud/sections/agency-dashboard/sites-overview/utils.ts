@@ -407,6 +407,8 @@ export const formatSites = ( sites: Array< Site > = [] ): Array< SiteData > | []
 				updates: pluginUpdates?.length,
 			},
 			isFavorite: site.is_favorite,
+			isSelected: site.isSelected,
+			onSelect: site.onSelect,
 		};
 	} );
 };

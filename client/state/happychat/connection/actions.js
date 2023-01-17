@@ -24,6 +24,7 @@ import {
 	HAPPYCHAT_IO_SEND_PREFERENCES,
 	HAPPYCHAT_IO_SEND_TYPING,
 	HAPPYCHAT_IO_SET_CUSTOM_FIELDS,
+	HAPPYCHAT_IO_SET_CHAT_TAG,
 } from 'calypso/state/action-types';
 import { HAPPYCHAT_MESSAGE_TYPES } from 'calypso/state/happychat/constants';
 
@@ -336,4 +337,17 @@ export const setChatCustomFields = ( fieldData ) => ( {
 	type: HAPPYCHAT_IO_SET_CUSTOM_FIELDS,
 	event: 'chat.setFields',
 	payload: fieldData,
+} );
+
+/**
+ * Returns an action object that will send the given chat tag to be
+ * set on the current chat.
+ *
+ * @param {string} tag tag to be set
+ * @returns {object} Action object
+ */
+export const setChatTag = ( tag ) => ( {
+	type: HAPPYCHAT_IO_SET_CHAT_TAG,
+	event: 'chat.tag',
+	payload: tag,
 } );

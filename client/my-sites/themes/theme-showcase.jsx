@@ -58,29 +58,8 @@ class ThemeShowcase extends Component {
 		this.scrollRef = createRef();
 		this.bookmarkRef = createRef();
 
-		// As the values of these filter is static and won't be changed, we use it to check a filter
-		// is a static filter directly in the `isStaticFilter` function.
-		this.staticFilters = {
-			MYTHEMES: {
-				key: 'my-themes',
-				text: props.translate( 'My Themes' ),
-				order: 3,
-			},
-			ALL: {
-				key: 'all',
-				text: props.translate( 'Recommended' ),
-				order: 4,
-			},
-		};
-
 		this.subjectFilters = this.getSubjectFilters( props );
 		this.subjectTermTable = getSubjectsFromTermTable( props.filterToTermTable );
-
-		this.tiers = [
-			{ value: 'all', label: props.translate( 'All' ) },
-			{ value: 'free', label: props.translate( 'Free' ) },
-			{ value: 'premium', label: props.translate( 'Premium' ) },
-		];
 
 		this.state = {
 			tabFilter: this.getTabFilterFromUrl( props.filter ),
@@ -141,7 +120,11 @@ class ThemeShowcase extends Component {
 		}
 	}
 
-	isStaticFilter = ( tabFilter ) => Object.values( this.staticFilters ).includes( tabFilter );
+	isStaticFilter = ( tabFilter ) => {
+		return Object.values( this.getStaticFilters() ).some(
+			( staticFilter ) => tabFilter.key === staticFilter.key
+		);
+	};
 
 	getSubjectFilters = ( props ) => {
 		const { subjects } = props;
@@ -159,18 +142,42 @@ class ThemeShowcase extends Component {
 			( this.props.isJetpackSite && ! this.props.isAtomicSite ) ||
 			( this.props.isAtomicSite && this.props.siteCanInstallThemes );
 
+		const staticFilters = this.getStaticFilters();
 		return {
 			...( shouldShowMyThemesFilter && {
-				MYTHEMES: this.staticFilters.MYTHEMES,
+				MYTHEMES: staticFilters.MYTHEMES,
 			} ),
-			ALL: this.staticFilters.ALL,
+			ALL: staticFilters.ALL,
 			...this.subjectFilters,
 		};
 	};
 
+	getStaticFilters = () => {
+		return {
+			MYTHEMES: {
+				key: 'my-themes',
+				text: this.props.translate( 'My Themes' ),
+				order: 3,
+			},
+			ALL: {
+				key: 'all',
+				text: this.props.translate( 'All' ),
+				order: 4,
+			},
+		};
+	};
+
+	getTiers = () => {
+		return [
+			{ value: 'all', label: this.props.translate( 'All' ) },
+			{ value: 'free', label: this.props.translate( 'Free' ) },
+			{ value: 'premium', label: this.props.translate( 'Premium' ) },
+		];
+	};
+
 	findTabFilter = ( tabFilters, filterKey ) =>
 		Object.values( tabFilters ).find( ( filter ) => filter.key === filterKey ) ||
-		this.staticFilters.ALL;
+		this.getStaticFilters().ALL;
 
 	getTabFilterFromUrl = ( filterString = '' ) => {
 		const filterArray = filterString.split( '+' );
@@ -179,7 +186,7 @@ class ThemeShowcase extends Component {
 		);
 
 		if ( ! matches.length ) {
-			return this.findTabFilter( this.staticFilters, this.state?.tabFilter.key );
+			return this.findTabFilter( this.getStaticFilters(), this.state?.tabFilter.key );
 		}
 
 		const filterKey = matches[ matches.length - 1 ].split( ':' ).pop();
@@ -260,12 +267,13 @@ class ThemeShowcase extends Component {
 	onTierSelect = ( { value: tier } ) => {
 		// Due to the search backend limitation, static filters other than "All"
 		// can only have "All" tier.
+		const staticFilters = this.getStaticFilters();
 		if (
 			tier !== 'all' &&
 			this.isStaticFilter( this.state.tabFilter ) &&
-			this.state.tabFilter.key !== this.staticFilters.ALL.key
+			this.state.tabFilter.key !== staticFilters.ALL.key
 		) {
-			this.setState( { tabFilter: this.staticFilters.ALL } );
+			this.setState( { tabFilter: staticFilters.ALL } );
 		}
 
 		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
@@ -285,7 +293,7 @@ class ThemeShowcase extends Component {
 		// can only have "All" tier.
 		if (
 			this.isStaticFilter( tabFilter ) &&
-			tabFilter.key !== this.staticFilters.ALL.key &&
+			tabFilter.key !== this.getStaticFilters().ALL.key &&
 			this.props.tier !== 'all'
 		) {
 			callback = () => {
@@ -360,8 +368,9 @@ class ThemeShowcase extends Component {
 
 		const tabKey = this.state.tabFilter.key;
 
+		const staticFilters = this.getStaticFilters();
 		if (
-			tabKey !== this.staticFilters.MYTHEMES?.key &&
+			tabKey !== staticFilters.MYTHEMES?.key &&
 			! isExpertBannerDissmissed &&
 			! loggedOutComponent
 		) {
@@ -372,7 +381,7 @@ class ThemeShowcase extends Component {
 
 			// See p2-pau2Xa-4nq#comment-12458 for the context regarding the utm campaign value.
 			switch ( tabKey ) {
-				case this.staticFilters.ALL.key:
+				case staticFilters.ALL.key:
 					location = 'all-theme-banner';
 					utmCampaign = 'theme-all';
 			}
@@ -386,7 +395,7 @@ class ThemeShowcase extends Component {
 	renderThemes = ( themeProps ) => {
 		const tabKey = this.state.tabFilter.key;
 		switch ( tabKey ) {
-			case this.staticFilters.MYTHEMES?.key:
+			case this.getStaticFilters().MYTHEMES?.key:
 				return <ThemesSelection { ...themeProps } />;
 			default:
 				return this.allThemes( { themeProps } );
@@ -461,6 +470,7 @@ class ThemeShowcase extends Component {
 		};
 
 		const tabFilters = this.getTabFilters();
+		const tiers = this.getTiers();
 
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
@@ -510,7 +520,7 @@ class ThemeShowcase extends Component {
 								<SimplifiedSegmentedControl
 									key={ tier }
 									initialSelected={ tier || 'all' }
-									options={ this.tiers }
+									options={ tiers }
 									onSelect={ this.onTierSelect }
 								/>
 							) }

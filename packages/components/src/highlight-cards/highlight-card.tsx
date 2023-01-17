@@ -17,8 +17,8 @@ function subtract( a: number | null, b: number | null | undefined ): number | nu
 	return a === null || b === null || b === undefined ? null : a - b;
 }
 
-export function percentCalculator( part: number | null, whole: number | null ) {
-	if ( part === null || whole === null ) {
+export function percentCalculator( part: number | null, whole: number | null | undefined ) {
+	if ( part === null || whole === null || whole === undefined ) {
 		return null;
 	}
 	// Handle NaN case.
@@ -39,7 +39,7 @@ export default function HighlightCard( {
 }: HighlightCardProps ) {
 	const difference = subtract( count, previousCount );
 	const percentage = Number.isFinite( difference )
-		? percentCalculator( Math.abs( difference as number ), count )
+		? percentCalculator( Math.abs( difference as number ), previousCount )
 		: null;
 	const textRef = useRef( null );
 	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
