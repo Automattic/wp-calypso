@@ -13,7 +13,11 @@ export const GithubAuthorizeCard = () => {
 		<Card className="github-authorize-card">
 			<img className="github-icon" src={ iconGitHub } alt="" />
 			<CardHeading>{ translate( 'Connect GitHub' ) }</CardHeading>
-			<p>{ translate( 'Connect to a GitHub repository and branch and deploy directly.' ) }</p>
+			<p>
+				{ translate(
+					'Connect this site to a GitHub repository, choose a branch, and deploy with each push.'
+				) }
+			</p>
 			<Button
 				className="is-primary"
 				href={ `https://public-api.wordpress.com/rest/v1.2/github-authorize-redirect?siteId=${ siteId }` }
