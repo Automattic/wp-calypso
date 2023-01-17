@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { LINK_IN_BIO_FLOW, setupSiteAfterCreation } from '@automattic/onboarding';
+import { setupSiteAfterCreation } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 
 const noop = () => {};
@@ -129,19 +129,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 			get pageTitle() {
 				return translate( 'Newsletter' );
-			},
-			postCompleteCallback: setupSiteAfterCreation,
-		},
-		{
-			name: LINK_IN_BIO_FLOW,
-			steps: [ 'domains-link-in-bio', 'plans-link-in-bio' ],
-			destination: ( dependencies ) =>
-				`/setup/link-in-bio/launchpad?siteSlug=${ encodeURIComponent( dependencies.siteSlug ) }`,
-			description: 'Beginning of the flow to create a link in bio',
-			lastModified: '2022-11-01',
-			showRecaptcha: true,
-			get pageTitle() {
-				return translate( 'Link in Bio' );
 			},
 			postCompleteCallback: setupSiteAfterCreation,
 		},
@@ -456,6 +443,23 @@ export function generateFlows( {
 			description: 'A flow for DIFM Lite leads',
 			excludeFromManageSiteFlows: true,
 			lastModified: '2022-03-10',
+			enableBranchSteps: true,
+		},
+		{
+			name: 'do-it-for-me-store',
+			steps: [
+				'user',
+				'new-or-existing-site',
+				'difm-site-picker',
+				'difm-store-options',
+				'social-profiles',
+				'difm-design-setup-site',
+				'difm-page-picker',
+			],
+			destination: getDIFMSignupDestination,
+			description: 'The BBE store flow',
+			excludeFromManageSiteFlows: true,
+			lastModified: '2023-03-01',
 			enableBranchSteps: true,
 		},
 		{

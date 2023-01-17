@@ -58,7 +58,7 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 			} ) }
 			aria-labelledby={ makeOptionId( design ) }
 			alt=""
-			options={ getMShotOptions( { scrollable: false, highRes: false, isMobile } ) }
+			options={ getMShotOptions( { scrollable: false, highRes: ! isMobile, isMobile } ) }
 			scrollable={ false }
 		/>
 	);

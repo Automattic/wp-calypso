@@ -1,3 +1,4 @@
+import { isJetpackPlan, isJetpackProduct } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { styled } from '@automattic/wpcom-checkout';
@@ -105,6 +106,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 	compareTo?: WPCOMProductVariant;
 } > = ( { variant, compareTo } ) => {
 	const isMobile = useMobileBreakpoint();
+	const isJetpack = isJetpackPlan( variant ) || isJetpackProduct( variant );
 	const compareToPriceForVariantTerm = getItemVariantCompareToPrice( variant, compareTo );
 	const discountPercentage = getItemVariantDiscountPercentage( variant, compareTo );
 	const formattedCurrentPrice = formatCurrency( variant.priceInteger, variant.currency, {
@@ -224,15 +226,15 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 		<Variant>
 			<Label>
 				{ variant.variantLabel }
-				{ discountPercentage > 0 && isMobile && (
+				{ discountPercentage > 0 && ! isJetpack && isMobile && (
 					<DiscountPercentage percent={ discountPercentage } />
 				) }
 			</Label>
 			<PriceTextContainer>
-				{ discountPercentage > 0 && ! isMobile && ! isIntroductoryOffer && (
+				{ discountPercentage > 0 && ! isJetpack && ! isMobile && ! isIntroductoryOffer && (
 					<DiscountPercentage percent={ discountPercentage } />
 				) }
-				{ discountPercentage > 0 && ! isIntroductoryOffer && (
+				{ discountPercentage > 0 && ! isJetpack && ! isIntroductoryOffer && (
 					<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
 				) }
 				<Price aria-hidden={ isIntroductoryOffer }>{ formattedCurrentPrice }</Price>

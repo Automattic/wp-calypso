@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { get, includes, reject } from 'lodash';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -106,8 +107,14 @@ function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
 
-function getChecklistThemeDestination( dependencies ) {
-	return `/home/${ dependencies.siteSlug }`;
+function getChecklistThemeDestination( { siteSlug, themeParameter } ) {
+	if (
+		themeParameter === 'blank-canvas-3' &&
+		config.isEnabled( 'pattern-assembler/logged-out-showcase' )
+	) {
+		return `/setup/site-setup/patternAssembler?siteSlug=${ siteSlug }`;
+	}
+	return `/home/${ siteSlug }`;
 }
 
 function getEditorDestination( dependencies ) {
@@ -166,17 +173,9 @@ function removeUserStepFromFlow( flow ) {
 		return;
 	}
 
-	const steps = [];
-	for ( const curStep of flow.steps ) {
-		if ( stepConfig[ curStep ].providesToken ) {
-			continue;
-		}
-		steps.push( curStep );
-	}
-
 	return {
 		...flow,
-		steps,
+		steps: flow.steps.filter( ( stepName ) => ! stepConfig[ stepName ].providesToken ),
 	};
 }
 

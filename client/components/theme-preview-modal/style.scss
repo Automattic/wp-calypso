@@ -119,7 +119,8 @@ $break-design-preview: 1024px;
 		max-height: none;
 
 		.design-preview__sidebar {
-			margin-top: 72px;
+			margin: 72px -16px 0 -8px;
+			padding: 0 16px 96px 8px;
 		}
 	}
 
@@ -142,6 +143,7 @@ $break-design-preview: 1024px;
 		.premium-badge,
 		.woocommerce-bundled-badge {
 			font-family: $default-font;
+			margin: 0;
 		}
 	}
 }

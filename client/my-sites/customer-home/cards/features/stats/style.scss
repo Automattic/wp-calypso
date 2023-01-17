@@ -1,3 +1,5 @@
+@import "calypso/my-sites/stats/theme-override-mixin.scss";
+
 .stats .customer-home__card.stats__with-chart {
 	box-shadow: none;
 	border-bottom: none;
@@ -15,6 +17,10 @@
 
 	@include breakpoint-deprecated( ">480px" ) {
 		margin: 0 -24px;
+	}
+
+	.color-scheme.is-classic-dark.is-section-home & {
+		@include apply-improved-classic-dark-colors();
 	}
 
 	.chart__bar:hover {

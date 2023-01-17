@@ -16,7 +16,6 @@ import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { addTracking } from './helpers';
 import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
-import ThemesHeader from './themes-header';
 import ThemesSelection from './themes-selection';
 
 const ConnectedThemesSelection = connectOptions( ( props ) => {
@@ -76,7 +75,6 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 			{ isNewDetailsAndPreview && (
 				<BodySectionCssClass bodyClass={ [ 'is-section-themes-i4-2' ] } />
 			) }
-			<ThemesHeader />
 			<QueryActiveTheme siteId={ siteId } />
 			{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
 

@@ -1,15 +1,12 @@
 @import "@automattic/typography/styles/variables";
+@import "@automattic/components/src/highlight-cards/variables.scss";
 
-.stats-period-navigation.stats-year-navigation {
-	.stats-period-navigation__previous,
-	.stats-period-navigation__next {
-		&:focus,
-		&:active {
-			outline: thin dotted;
+.highlight-year-navigation {
+	.stats-navigation-arrows {
+		margin: 0 0 16px;
+
+		@media ( max-width: $custom-mobile-breakpoint ) {
+			margin-right: 16px;
 		}
-	}
-
-	@media ( min-width: 661px ) {
-		padding-right: 0;
 	}
 }

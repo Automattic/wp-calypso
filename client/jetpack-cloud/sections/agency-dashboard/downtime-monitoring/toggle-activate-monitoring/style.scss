@@ -17,7 +17,7 @@
 		margin-bottom: 0;
 
 		.components-form-toggle {
-			@include break-large {
+			@include break-xlarge {
 				margin-right: 4px;
 			}
 
@@ -26,6 +26,13 @@
 			}
 		}
 	}
+
+	&.sites-overview__disabled {
+		.components-form-toggle__input {
+			cursor: not-allowed;
+		}
+	}
+
 }
 
 .toggle-activate-monitoring__duration {

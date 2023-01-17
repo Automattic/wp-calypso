@@ -23,6 +23,11 @@ interface ThemePreviewProps {
 	recordDeviceClick?: ( device: string ) => void;
 }
 
+// Determine whether the preview URL is from the WPCOM site preview endpoint.
+// This endpoint allows more preview capabilities via window.postMessage().
+const isUrlWpcomApi = ( url: string ) =>
+	url.indexOf( 'public-api.wordpress.com/wpcom/v2/block-previews/site' ) >= 0;
+
 const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	url,
 	inlineCss,
@@ -34,7 +39,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 } ) => {
 	const { __ } = useI18n();
 	const iframeRef = useRef< HTMLIFrameElement >( null );
-	const [ isLoaded, setIsLoaded ] = useState( false );
+	const [ isLoaded, setIsLoaded ] = useState( ! isUrlWpcomApi( url ) );
 	const [ viewport, setViewport ] = useState< Viewport >();
 	const [ containerResizeListener, { width: containerWidth } ] = useResizeObserver();
 	const calypso_token = useMemo( () => uuid(), [] );

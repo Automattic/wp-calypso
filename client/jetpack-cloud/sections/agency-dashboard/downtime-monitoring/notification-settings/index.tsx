@@ -9,16 +9,17 @@ import TokenField from 'calypso/components/token-field';
 import { useUpdateMonitorSettings } from '../../hooks';
 import {
 	availableNotificationDurations as durations,
+	getSiteCountText,
 	mobileAppLink,
 } from '../../sites-overview/utils';
-import type { MonitorSettings } from '../../sites-overview/types';
+import type { MonitorSettings, Site } from '../../sites-overview/types';
 
 import './style.scss';
 
 type Duration = { label: string; time: number };
 
 interface Props {
-	sites: Array< { blog_id: number; url: string } >;
+	sites: Array< Site >;
 	onClose: () => void;
 	settings?: MonitorSettings;
 }
@@ -67,11 +68,11 @@ export default function NotificationSettings( { onClose, sites, settings }: Prop
 	}, [ settings?.monitor_deferment_time ] );
 
 	useEffect( () => {
-		if ( settings?.monitor_notify_users_emails ) {
-			setAddedEmailAddresses( settings.monitor_notify_users_emails );
+		if ( settings?.monitor_user_emails ) {
+			setAddedEmailAddresses( settings.monitor_user_emails );
 			setEnableEmailNotification( true );
 		}
-	}, [ settings?.monitor_notify_users_emails ] );
+	}, [ settings?.monitor_user_emails ] );
 
 	useEffect( () => {
 		if ( enableMobileNotification || enableEmailNotification ) {
@@ -99,24 +100,15 @@ export default function NotificationSettings( { onClose, sites, settings }: Prop
 	const addEmailsContent = enableEmailNotification && (
 		<div className="notification-settings__email-container">
 			<TokenField
+				isBorderless={ true }
 				tokenizeOnSpace
 				placeholder={ translate( 'Enter email addresses' ) }
 				value={ addedEmailAddresses }
 				onChange={ handleAddEmail }
+				disabled={ true }
 			/>
-			<div className="notification-settings__email-condition">
-				{ translate( 'Separate with commas or the Enter key.' ) }
-			</div>
 		</div>
 	);
-
-	const siteSubTitle =
-		sites.length > 1
-			? translate( '%(siteCount)d Sites', {
-					args: { siteCount: sites.length },
-					comment: '%(siteCount) is no of sites selected, e.g. "2 Sites"',
-			  } )
-			: sites[ 0 ].url;
 
 	return (
 		<Modal
@@ -125,7 +117,8 @@ export default function NotificationSettings( { onClose, sites, settings }: Prop
 			title={ translate( 'Set custom notification' ) }
 			className="notification-settings__modal"
 		>
-			<div className="notification-settings__sub-title">{ siteSubTitle }</div>
+			<div className="notification-settings__sub-title">{ getSiteCountText( sites ) }</div>
+
 			<form onSubmit={ onSave }>
 				<div className="notification-settings__content">
 					<div className="notification-settings__content-block">
@@ -190,7 +183,7 @@ export default function NotificationSettings( { onClose, sites, settings }: Prop
 						<div className="notification-settings__toggle-content">
 							<div className="notification-settings__content-heading">{ translate( 'Email' ) }</div>
 							<div className="notification-settings__content-sub-heading">
-								{ translate( 'Receive email notifications with one or more recipients.' ) }
+								{ translate( 'Receive email notifications with this email address.' ) }
 							</div>
 							{
 								// We are using CSS to hide/show add email content on mobile/large screen view instead of the breakpoint
@@ -202,6 +195,7 @@ export default function NotificationSettings( { onClose, sites, settings }: Prop
 					</div>
 					<div className="notification-settings__small-screen">{ addEmailsContent }</div>
 				</div>
+
 				<div className="notification-settings__footer">
 					{ validationError && (
 						<div className="notification-settings__footer-validation-error">

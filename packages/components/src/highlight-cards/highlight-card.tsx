@@ -1,7 +1,7 @@
 import { arrowDown, arrowUp, Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
-import { Card, ShortenedNumber } from '../';
+import { Card, ShortenedNumber, formattedNumber } from '../';
 import Popover from '../popover';
 
 export type HighlightCardProps = {
@@ -17,8 +17,8 @@ function subtract( a: number | null, b: number | null | undefined ): number | nu
 	return a === null || b === null || b === undefined ? null : a - b;
 }
 
-export function percentCalculator( part: number | null, whole: number | null ) {
-	if ( part === null || whole === null ) {
+export function percentCalculator( part: number | null, whole: number | null | undefined ) {
+	if ( part === null || whole === null || whole === undefined ) {
 		return null;
 	}
 	// Handle NaN case.
@@ -30,11 +30,6 @@ export function percentCalculator( part: number | null, whole: number | null ) {
 	return Math.abs( answer ) === Infinity ? 100 : Math.round( answer );
 }
 
-const FORMATTER = new Intl.NumberFormat();
-function formatNumber( number: number | null ) {
-	return Number.isFinite( number ) ? FORMATTER.format( number as number ) : '-';
-}
-
 export default function HighlightCard( {
 	count,
 	previousCount,
@@ -44,7 +39,7 @@ export default function HighlightCard( {
 }: HighlightCardProps ) {
 	const difference = subtract( count, previousCount );
 	const percentage = Number.isFinite( difference )
-		? percentCalculator( Math.abs( difference as number ), count )
+		? percentCalculator( Math.abs( difference as number ), previousCount )
 		: null;
 	const textRef = useRef( null );
 	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
@@ -98,7 +93,7 @@ export default function HighlightCard( {
 								<span className="highlight-card-tooltip-icon">{ icon }</span>
 								<span>{ heading }</span>
 							</span>
-							<span>{ formatNumber( count ) }</span>
+							<span>{ formattedNumber( count ) }</span>
 						</div>
 					</Popover>
 				) }

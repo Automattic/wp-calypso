@@ -13,7 +13,7 @@ import {
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ThemePreviewModalNavigation from './navigation';
-import type { StyleVariation } from '@automattic/design-picker/src/types';
+import type { Category, StyleVariation } from '@automattic/design-picker/src/types';
 import type { Theme } from 'calypso/types';
 
 import './style.scss';
@@ -27,6 +27,8 @@ interface ThemePreviewModalProps {
 	previewUrl: string;
 	actionButtons: React.ReactNode;
 	selectedVariation?: StyleVariation;
+	onSelectVariation: ( variation: StyleVariation ) => void;
+	onClickCategory: ( category: Category ) => void;
 	onClose: () => void;
 }
 
@@ -35,6 +37,8 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 	previewUrl,
 	actionButtons,
 	selectedVariation,
+	onSelectVariation,
+	onClickCategory,
 	onClose,
 } ) => {
 	const siteId = useSelector( getSelectedSiteId ) || -1;
@@ -96,6 +100,7 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 
 	function previewDesignVariation( variation: StyleVariation ) {
 		setSelectedStyleVariation( variation );
+		onSelectVariation( variation );
 	}
 
 	return (
@@ -120,13 +125,17 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 						title={
 							<div className="theme-preview-modal__content-title design-picker-design-title__container">
 								{ theme.name }
-								{ badge }
 							</div>
 						}
-						description={ shortDescription }
+						author={ theme.author }
+						categories={ theme.taxonomies?.theme_subject }
+						description={ theme.description }
+						shortDescription={ shortDescription }
+						pricingBadge={ badge }
 						variations={ theme.style_variations }
 						selectedVariation={ selectedStyleVariation }
 						onSelectVariation={ previewDesignVariation }
+						onClickCategory={ onClickCategory }
 						actionButtons={ actionButtons }
 						showGlobalStylesPremiumBadge={ shouldLimitGlobalStyles }
 					/>

@@ -549,7 +549,10 @@ export interface ResponseCartProductExtra {
 
 	afterPurchaseUrl?: string;
 	isJetpackCheckout?: boolean;
+
+	// Marketplace properties
 	is_marketplace_product?: boolean;
+	plugin_slug?: boolean;
 }
 
 export interface ResponseCartGiftDetails {

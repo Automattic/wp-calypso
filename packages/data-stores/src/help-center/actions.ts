@@ -92,6 +92,12 @@ export const setMessage = ( message: string ) =>
 		message,
 	} as const );
 
+export const setChatTag = ( chatTag: string ) =>
+	( {
+		type: 'HELP_CENTER_SET_CHAT_TAG',
+		chatTag,
+	} as const );
+
 export const setIframe = ( iframe: null | HTMLIFrameElement ) =>
 	( {
 		type: 'HELP_CENTER_SET_IFRAME',
@@ -136,6 +142,7 @@ export type HelpCenterAction =
 			| typeof resetStore
 			| typeof receiveHasSeenWhatsNewModal
 			| typeof setMessage
+			| typeof setChatTag
 			| typeof setUserDeclaredSite
 			| typeof setUserDeclaredSiteUrl
 			| typeof resetIframe

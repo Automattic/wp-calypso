@@ -148,9 +148,11 @@ import {
 	PLAN_BLOGGER_2_YEARS,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
+	PLAN_BUSINESS_3_YEARS,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_ECOMMERCE_3_YEARS,
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_FREE,
@@ -175,9 +177,11 @@ import {
 	PLAN_P2_PLUS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
+	PLAN_PERSONAL_3_YEARS,
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
+	PLAN_PREMIUM_3_YEARS,
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_WPCOM_FLEXIBLE,
 	PLAN_WPCOM_STARTER,
@@ -186,6 +190,7 @@ import {
 	PREMIUM_DESIGN_FOR_STORES,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
+	TERM_TRIENNIALLY,
 	TERM_MONTHLY,
 	TYPE_ALL,
 	TYPE_BLOGGER,
@@ -335,6 +340,8 @@ const WPComGetBillingTimeframe = (): TranslateResult =>
 	i18n.translate( 'per month, billed annually' );
 const WPComGetBiennialBillingTimeframe = (): TranslateResult =>
 	i18n.translate( '/month, billed every two years' );
+const WPComGetTriennialBillingTimeframe = (): TranslateResult =>
+	i18n.translate( '/month, billed every three years' );
 
 const getAnnualTimeframe = (): BillingTerm => ( {
 	term: TERM_ANNUALLY,
@@ -1798,6 +1805,24 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getPathSlug: () => 'personal-2-years',
 	},
 
+	[ PLAN_PERSONAL_3_YEARS ]: {
+		...getPlanPersonalDetails(),
+		term: TERM_TRIENNIALLY,
+		getBillingTimeFrame: WPComGetTriennialBillingTimeframe,
+		availableFor: ( plan ) =>
+			[
+				PLAN_FREE,
+				PLAN_BLOGGER,
+				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_MONTHLY,
+				PLAN_PERSONAL,
+				PLAN_PERSONAL_2_YEARS,
+			].includes( plan ),
+		getProductId: () => 1049,
+		getStoreSlug: () => PLAN_PERSONAL_3_YEARS,
+		getPathSlug: () => 'personal-3-years',
+	},
+
 	[ PLAN_PREMIUM_MONTHLY ]: {
 		...getPlanPremiumDetails(),
 		...getMonthlyTimeframe(),
@@ -1853,6 +1878,28 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 1023,
 		getStoreSlug: () => PLAN_PREMIUM_2_YEARS,
 		getPathSlug: () => 'premium-2-years',
+	},
+
+	[ PLAN_PREMIUM_3_YEARS ]: {
+		...getPlanPremiumDetails(),
+		term: TERM_TRIENNIALLY,
+		getBillingTimeFrame: WPComGetTriennialBillingTimeframe,
+		availableFor: ( plan ) =>
+			[
+				PLAN_FREE,
+				PLAN_BLOGGER,
+				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_MONTHLY,
+				PLAN_PERSONAL,
+				PLAN_PERSONAL_2_YEARS,
+				PLAN_PERSONAL_3_YEARS,
+				PLAN_PREMIUM_MONTHLY,
+				PLAN_PREMIUM,
+				PLAN_PREMIUM_2_YEARS,
+			].includes( plan ),
+		getProductId: () => 1043,
+		getStoreSlug: () => PLAN_PREMIUM_3_YEARS,
+		getPathSlug: () => 'premium-3-years',
 	},
 
 	[ PLAN_BUSINESS_MONTHLY ]: {
@@ -1926,6 +1973,35 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 1028,
 		getStoreSlug: () => PLAN_BUSINESS_2_YEARS,
 		getPathSlug: () => 'business-2-years',
+	},
+
+	[ PLAN_BUSINESS_3_YEARS ]: {
+		...getPlanBusinessDetails(),
+		term: TERM_TRIENNIALLY,
+		getBillingTimeFrame: WPComGetTriennialBillingTimeframe,
+		availableFor: ( plan ) =>
+			[
+				PLAN_FREE,
+				PLAN_WPCOM_STARTER,
+				PLAN_WPCOM_PRO,
+				PLAN_BLOGGER,
+				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_MONTHLY,
+				PLAN_PERSONAL,
+				PLAN_PERSONAL_2_YEARS,
+				PLAN_PERSONAL_3_YEARS,
+				PLAN_PREMIUM_MONTHLY,
+				PLAN_PREMIUM,
+				PLAN_PREMIUM_2_YEARS,
+				PLAN_PREMIUM_3_YEARS,
+				PLAN_BUSINESS,
+				PLAN_BUSINESS_MONTHLY,
+				PLAN_BUSINESS_2_YEARS,
+				PLAN_WPCOM_PRO_MONTHLY,
+			].includes( plan ),
+		getProductId: () => 1048,
+		getStoreSlug: () => PLAN_BUSINESS_3_YEARS,
+		getPathSlug: () => 'business-3-years',
 	},
 
 	[ PLAN_ECOMMERCE_MONTHLY ]: {
@@ -2018,6 +2094,39 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 0,
 		getStoreSlug: () => PLAN_ENTERPRISE_GRID_WPCOM,
 		getPathSlug: () => 'enterprise',
+	},
+
+	[ PLAN_ECOMMERCE_3_YEARS ]: {
+		...getPlanEcommerceDetails(),
+		term: TERM_TRIENNIALLY,
+		getBillingTimeFrame: WPComGetTriennialBillingTimeframe,
+		availableFor: ( plan ) =>
+			[
+				PLAN_FREE,
+				PLAN_WPCOM_STARTER,
+				PLAN_WPCOM_PRO,
+				PLAN_BLOGGER,
+				PLAN_BLOGGER_2_YEARS,
+				PLAN_PERSONAL_MONTHLY,
+				PLAN_PERSONAL,
+				PLAN_PERSONAL_2_YEARS,
+				PLAN_PERSONAL_3_YEARS,
+				PLAN_PREMIUM_MONTHLY,
+				PLAN_PREMIUM,
+				PLAN_PREMIUM_2_YEARS,
+				PLAN_PREMIUM_3_YEARS,
+				PLAN_BUSINESS_MONTHLY,
+				PLAN_BUSINESS,
+				PLAN_BUSINESS_2_YEARS,
+				PLAN_BUSINESS_3_YEARS,
+				PLAN_ECOMMERCE_MONTHLY,
+				PLAN_ECOMMERCE,
+				PLAN_ECOMMERCE_2_YEARS,
+				PLAN_WPCOM_PRO_MONTHLY,
+			].includes( plan ),
+		getProductId: () => 1051,
+		getStoreSlug: () => PLAN_ECOMMERCE_3_YEARS,
+		getPathSlug: () => 'ecommerce-3-years',
 	},
 
 	[ PLAN_JETPACK_FREE ]: {
@@ -2190,7 +2299,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			translate( 'Akismet: Comment and form spam protection (60k API calls/mo)' ),
 			translate( 'VideoPress: 1TB of ad-free video hosting' ),
 			translate( 'Boost: Automatic CSS generation' ),
-			translate( 'Site Search: Up to 100k records' ),
+			translate( 'Site Search: Up to 100k records and 100k requests/mo.' ),
 			translate( 'Social: Basic with unlimited shares' ),
 			translate( 'CRM: Entrepreneur with 30 extensions' ),
 		],
@@ -2221,7 +2330,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			translate( 'Akismet: Comment and form spam protection (60k API calls/mo)' ),
 			translate( 'VideoPress: 1TB of ad-free video hosting' ),
 			translate( 'Boost: Automatic CSS generation' ),
-			translate( 'Site Search: Up to 100k records' ),
+			translate( 'Site Search: Up to 100k records and 100k requests/mo.' ),
 			translate( 'Social: Basic with unlimited shares' ),
 			translate( 'CRM: Entrepreneur with 30 extensions' ),
 		],

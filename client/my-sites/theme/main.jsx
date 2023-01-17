@@ -243,7 +243,11 @@ class ThemeSheet extends Component {
 		this.props.recordTracksEvent( 'calypso_theme_live_demo_preview_click', { type } );
 
 		const { preview } = this.props.options;
-		this.props.setThemePreviewOptions( this.props.defaultOption, this.props.secondaryOption );
+		this.props.setThemePreviewOptions(
+			this.props.themeId,
+			this.props.defaultOption,
+			this.props.secondaryOption
+		);
 		return preview.action( this.props.themeId );
 	};
 
@@ -791,12 +795,13 @@ class ThemeSheet extends Component {
 
 		const launchPricing = () => window.open( plansUrl, '_blank' );
 
-		const { canonicalUrl, description, name: themeName } = this.props;
-		const title =
-			themeName &&
-			translate( '%(themeName)s Theme', {
-				args: { themeName },
-			} );
+		const { canonicalUrl, description, name: themeName, seo_title, seo_description } = this.props;
+
+		const title = seo_title
+			? seo_title
+			: translate( '%(themeName)s Theme', {
+					args: { themeName },
+			  } );
 
 		const metas = [
 			{ property: 'og:title', content: title },
@@ -806,11 +811,11 @@ class ThemeSheet extends Component {
 			{ property: 'og:site_name', content: 'WordPress.com' },
 		];
 
-		if ( description ) {
+		if ( seo_description || description ) {
 			metas.push( {
 				name: 'description',
 				property: 'og:description',
-				content: decodeEntities( description ),
+				content: decodeEntities( seo_description || description ),
 			} );
 		}
 

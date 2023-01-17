@@ -9,7 +9,7 @@ Environment Variables control much of the runtime configuration for E2E tests.
 | Name                  | Description                                                         | Default                                              |
 | --------------------- | ------------------------------------------------------------------- | ---------------------------------------------------- |
 | ARTIFACTS_PATH        | Path on disk to test artifacts (screenshots, logs, etc).            | ./results/                                           |
-| AUTHENTICATE_ACCOUNTS | Comma-delimited list of accounts to pre-authenticate for later use. | simpleSitePersonalPlanUser,eCommerceUser,defaultUser |
+| AUTHENTICATE_ACCOUNTS | Comma-delimited list of accounts to pre-authenticate for later use. | simpleSitePersonalPlanUser,atomicUser,defaultUser    |
 | CALYPSO_BASE_URL      | The base URL to use for Calypso                                     | <https://wordpress.com>                              |
 | COBLOCKS_EDGE         | Use the bleeding edge CoBlocks build.                               | false                                                |
 | COOKIES_PATH          | Path on disk to the saved authenticated cookies.                    | ./cookies/                                           |

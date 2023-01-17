@@ -1,10 +1,14 @@
 import { Site } from '@automattic/data-stores';
 import {
 	ECOMMERCE_FLOW,
+	WOOEXPRESS_FLOW,
 	isLinkInBioFlow,
 	addPlanToCart,
 	createSiteWithCart,
 	isFreeFlow,
+	isMigrationFlow,
+	isCopySiteFlow,
+	isWooExpressFlow,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
@@ -21,6 +25,11 @@ import type { Step } from '../../types';
 
 import './styles.scss';
 
+const DEFAULT_WP_SITE_THEME = 'pub/zoologist';
+const DEFAULT_LINK_IN_BIO_THEME = 'pub/lynx';
+const DEFAULT_WOOEXPRESS_FLOW = 'pub/twentytwentytwo';
+const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
+
 const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } ) {
 	const { submit } = navigation;
 
@@ -35,21 +44,29 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 
 	const username = useSelector( ( state ) => getCurrentUserName( state ) );
 
-	const { setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction, setIsMigrateFromWp } = useDispatch( ONBOARD_STORE );
 
-	const theme = isLinkInBioFlow( flow ) ? 'pub/lynx' : 'pub/lettre';
+	let theme: string;
+	if ( isMigrationFlow( flow ) || isCopySiteFlow( flow ) ) {
+		theme = DEFAULT_WP_SITE_THEME;
+	} else if ( isWooExpressFlow( flow ) ) {
+		theme = DEFAULT_WOOEXPRESS_FLOW;
+	} else {
+		theme = isLinkInBioFlow( flow ) ? DEFAULT_LINK_IN_BIO_THEME : DEFAULT_NEWSLETTER_THEME;
+	}
 	const isPaidDomainItem = Boolean( domainCartItem?.product_slug );
 
 	// Default visibility is public
 	let siteVisibility = Site.Visibility.PublicIndexed;
 
 	// Link-in-bio flow defaults to "Coming Soon"
-	if ( isLinkInBioFlow( flow ) || isFreeFlow( flow ) ) {
+	if ( isLinkInBioFlow( flow ) || isFreeFlow( flow ) || isMigrationFlow( flow ) ) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
 	}
 
-	// Ecommerce flow defaults to Private
-	if ( flow === ECOMMERCE_FLOW ) {
+	// Certain flows should default to private.
+	const privateFlows = [ ECOMMERCE_FLOW, WOOEXPRESS_FLOW ];
+	if ( privateFlows.includes( flow || '' ) ) {
 		siteVisibility = Site.Visibility.Private;
 	}
 
@@ -94,6 +111,10 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 	}
 
 	useEffect( () => {
+		if ( isMigrationFlow( flow ) ) {
+			setIsMigrateFromWp( true );
+		}
+
 		if ( submit ) {
 			setPendingAction( createSite );
 			submit();

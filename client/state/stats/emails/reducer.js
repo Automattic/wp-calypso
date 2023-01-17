@@ -4,6 +4,7 @@ import {
 	EMAIL_STATS_REQUEST,
 	EMAIL_STATS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { items as itemSchemas } from './schema';
 
@@ -17,42 +18,47 @@ import { items as itemSchemas } from './schema';
  */
 export const requests = ( state = {}, action ) => {
 	switch ( action.type ) {
-		case EMAIL_STATS_REQUEST: {
-			const { siteId, postId, period, statType } = action;
+		case EMAIL_STATS_REQUEST:
+		case EMAIL_STATS_RECEIVE:
+		case EMAIL_STATS_REQUEST_FAILURE:
+			// eslint-disable-next-line no-case-declarations
+			const { siteId, postId, period, statType, date } = action;
+			// eslint-disable-next-line no-case-declarations
+			const status = ( () => {
+				switch ( action.type ) {
+					case EMAIL_STATS_REQUEST:
+						return { requesting: true, status: 'pending' };
+					case EMAIL_STATS_RECEIVE:
+						return { requesting: false, status: 'success' };
+					case EMAIL_STATS_REQUEST_FAILURE:
+						return { requesting: true, status: 'error' };
+				}
+			} )();
+
+			// don't set data key when period is alltime
+			if ( period === PERIOD_ALL_TIME ) {
+				return merge( {}, state, {
+					[ siteId ]: {
+						[ postId ]: {
+							[ period ]: {
+								[ statType ]: status,
+							},
+						},
+					},
+				} );
+			}
+
 			return merge( {}, state, {
 				[ siteId ]: {
 					[ postId ]: {
 						[ period ]: {
-							[ statType ]: { requesting: true, status: 'pending' },
+							[ statType ]: {
+								[ date ]: status,
+							},
 						},
 					},
 				},
 			} );
-		}
-		case EMAIL_STATS_RECEIVE: {
-			const { siteId, postId, period, statType } = action;
-			return merge( {}, state, {
-				[ siteId ]: {
-					[ postId ]: {
-						[ period ]: {
-							[ statType ]: { requesting: false, status: 'success' },
-						},
-					},
-				},
-			} );
-		}
-		case EMAIL_STATS_REQUEST_FAILURE: {
-			const { siteId, postId, period, statType } = action;
-			return merge( {}, state, {
-				[ siteId ]: {
-					[ postId ]: {
-						[ period ]: {
-							[ statType ]: { requesting: false, status: 'error' },
-						},
-					},
-				},
-			} );
-		}
 	}
 
 	return state;
@@ -67,12 +73,14 @@ export const requests = ( state = {}, action ) => {
  * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( itemSchemas, ( state = {}, action ) => {
+	const checkState = ( actualState, period ) => ( 'hour' === period ? {} : actualState );
+
 	switch ( action.type ) {
 		case EMAIL_STATS_RECEIVE:
 			// eslint-disable-next-line no-case-declarations
 			const { siteId, postId, period, statType } = action;
 
-			return merge( {}, state, {
+			return merge( {}, checkState( state, period ), {
 				[ siteId ]: {
 					[ postId ]: {
 						[ period ]: {

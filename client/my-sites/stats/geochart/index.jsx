@@ -200,11 +200,12 @@ export default connect( ( state, ownProps ) => {
 					siteId,
 					postId,
 					query.period,
-					query.date,
 					statType,
+					query.date,
 					'countries'
 			  )
 			: getSiteStatsNormalizedData( state, siteId, statType, query );
+
 	return {
 		currentUserCountryCode: getCurrentUserCountryCode( state ),
 		data,

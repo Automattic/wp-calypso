@@ -27,11 +27,11 @@
 			position: relative;
 			width: initial;
 
-			@include break-large() {
+			@include break-xlarge {
 				max-width: 200px;
 			}
 
-			@include break-huge() {
+			@include break-huge {
 				max-width: 300px;
 			}
 		}
@@ -53,11 +53,11 @@
 		border-collapse: collapse;
 		vertical-align: middle;
 
-		@include break-large() {
+		@include break-xlarge {
 			padding: 0 8px;
 		}
 
-		@include break-wide() {
+		@include break-wide {
 			padding: 0 16px;
 		}
 	}

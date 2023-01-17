@@ -1735,6 +1735,40 @@ describe( 'getThankYouPageUrl', () => {
 			expect( url ).toBe( '/checkout/gift/thank-you/foo.bar' );
 		} );
 
+		it( '/marketplace/than-you/:productSlug/:site when purchasing a marketplace product', () => {
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart: {
+					...getEmptyResponseCart(),
+					products: [
+						{
+							...getEmptyResponseCartProduct(),
+							extra: {
+								is_marketplace_product: true,
+								plugin_slug: 'slug1',
+							},
+						},
+						{
+							...getEmptyResponseCartProduct(),
+							extra: {
+								is_marketplace_product: true,
+								plugin_slug: 'slug2',
+							},
+						},
+						{
+							...getEmptyResponseCartProduct(),
+							extra: {
+								is_marketplace_product: false,
+								plugin_slug: 'not_marketplace',
+							},
+						},
+					],
+				},
+				siteSlug: 'site.slug',
+			} );
+			expect( url ).toBe( '/marketplace/thank-you/slug1,slug2/site.slug' );
+		} );
+
 		it( 'Error when gift purchase missing blog_slug', () => {
 			expect( () =>
 				getThankYouPageUrl( {

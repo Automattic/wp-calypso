@@ -50,6 +50,9 @@ export function requestThemes( siteId, query = {}, locale ) {
 						{
 							...query,
 							apiVersion: '1.2',
+							include_blankcanvas_theme: config.isEnabled( 'pattern-assembler/logged-out-showcase' )
+								? 'true'
+								: null,
 							include_marketplace_themes: config.isEnabled( 'themes/third-party-premium' )
 								? 'true'
 								: null,

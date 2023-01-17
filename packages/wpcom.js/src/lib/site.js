@@ -385,20 +385,41 @@ class Site {
 	}
 
 	/**
-	 * Get detailed stats about a specific email
+	 * Get detailed stats about a specific email and period
+	 * This fetches the timeline, according to the query passed
 	 *
 	 * @param {string} postId - id of the post which email we are querying
 	 * @param {object} [query] - query object parameter
-	 * @param {Function} fn - callback function
+	 * @param {Function?} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	statsEmailOpens( postId, query, fn ) {
+	statsEmailOpensForPeriod( postId, query, fn ) {
 		const path = `${ this.path }/stats/opens/emails/${ postId }`;
-		const statFields = [ 'timeline', 'country', 'device', 'client' ];
+		const statFields = [ 'timeline' ];
 		return Promise.all(
 			statFields.map( ( field ) =>
 				this.wpcom.req.get( path, { ...query, stats_fields: field }, fn )
 			)
+		).then( ( statsArray ) =>
+			statsArray.reduce( ( result, item ) => {
+				return { ...result, ...item };
+			}, {} )
+		);
+	}
+
+	/**
+	 * Get detailed all time stats about a specific email and period
+	 * This fetchesthe clients, devices & countries
+	 *
+	 * @param {string} postId - id of the post which email we are querying
+	 * @param {Function?} fn - callback function
+	 * @returns {Function} request handler
+	 */
+	statsEmailOpensAlltime( postId, fn ) {
+		const basePath = `${ this.path }/stats/opens/emails/${ postId }`;
+		const statFields = [ 'client', 'device', 'country', 'rate' ];
+		return Promise.all(
+			statFields.map( ( field ) => this.wpcom.req.get( `${ basePath }/${ field }`, fn ) )
 		).then( ( statsArray ) =>
 			statsArray.reduce( ( result, item ) => {
 				return { ...result, ...item };

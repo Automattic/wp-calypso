@@ -81,7 +81,7 @@ object BuildDockerImage : BuildType({
 				)
 				signature=`echo -n "%teamcity.build.id%" | openssl sha256 -hmac "%mc_auth_secret%" | sed 's/^.* //'`
 
-				curl -s -X POST -d "${'$'}payload" -H "TEAMCITY_SIGNATURE: ${'$'}signature" "%mc_teamcity_webhook%calypso/?build_id=%teamcity.build.id%"
+				curl -s -X POST -d "${'$'}payload" -H "TEAMCITY-SIGNATURE: ${'$'}signature" "%mc_teamcity_webhook%calypso/?build_id=%teamcity.build.id%"
 			"""
 		}
 
@@ -178,7 +178,7 @@ object BuildDockerImage : BuildType({
 				)
 				signature=`echo -n "%teamcity.build.id%" | openssl sha256 -hmac "%mc_auth_secret%" | sed 's/^.* //'`
 
-				curl -s -X POST -d "${'$'}payload" -H "TEAMCITY_SIGNATURE: ${'$'}signature" "%mc_teamcity_webhook%calypso/?build_id=%teamcity.build.id%"
+				curl -s -X POST -d "${'$'}payload" -H "TEAMCITY-SIGNATURE: ${'$'}signature" "%mc_teamcity_webhook%calypso/?build_id=%teamcity.build.id%"
 			"""
 		}
 
@@ -742,7 +742,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 		""".trimIndent(),
 		testGroup = "calypso-pr",
 		buildParams = {
-			param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,defaultUser,eCommerceUser")
+			param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,defaultUser,atomicUser")
 			param("env.LIVEBRANCHES", "true")
 			param("env.VIEWPORT_NAME", "$targetDevice")
 		},

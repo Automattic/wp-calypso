@@ -12,5 +12,7 @@ import 'calypso/state/jetpack-connect/init';
 export const isSiteBlockedError = function ( state ) {
 	const authorizeData = getAuthorizationData( state );
 
-	return get( authorizeData, [ 'authorizeError', 'error' ] ) === 'site_blacklisted';
+	return [ 'site_blacklisted', 'connection_disabled' ].includes(
+		get( authorizeData, [ 'authorizeError', 'error' ] )
+	);
 };

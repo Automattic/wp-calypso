@@ -4,7 +4,7 @@ import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import { useRef, useState, useMemo } from 'react';
+import { useRef, useState, useMemo, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import Tooltip from 'calypso/components/tooltip';
@@ -12,6 +12,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import ToggleActivateMonitoring from '../downtime-monitoring/toggle-activate-monitoring';
+import SitesOverviewContext from './context';
+import SiteSelectCheckbox from './site-select-checkbox';
 import SiteSetFavorite from './site-set-favorite';
 import { getRowMetaData, getProductSlugFromProductType } from './utils';
 import type { AllowedTypes, SiteData } from './types';
@@ -42,6 +44,8 @@ export default function SiteStatusContent( {
 		eventName,
 	} = getRowMetaData( rows, type, isLargeScreen );
 
+	const { isBulkManagementActive } = useContext( SitesOverviewContext );
+
 	const siteId = rows.site.value.blog_id;
 	const siteUrl = rows.site.value.url;
 
@@ -50,7 +54,7 @@ export default function SiteStatusContent( {
 	);
 
 	// Disable clicks/hover when there is a site error &
-	// when the row it is not monitor and monitor status is down
+	// when the row is not monitor and monitor status is down
 	// since monitor is clickable when site is down.
 	const disabledStatus = siteError || ( type !== 'monitor' && siteDown );
 
@@ -123,11 +127,15 @@ export default function SiteStatusContent( {
 
 		return (
 			<>
-				<SiteSetFavorite
-					isFavorite={ isFavorite }
-					siteId={ rows.site.value.blog_id }
-					siteUrl={ siteUrl }
-				/>
+				{ isBulkManagementActive ? (
+					<SiteSelectCheckbox item={ rows } siteError={ siteError } />
+				) : (
+					<SiteSetFavorite
+						isFavorite={ isFavorite }
+						siteId={ rows.site.value.blog_id }
+						siteUrl={ siteUrl }
+					/>
+				) }
 				{ isLargeScreen ? (
 					<Button
 						className="sites-overview__row-text"
@@ -150,12 +158,16 @@ export default function SiteStatusContent( {
 		'jetpack/partner-portal-downtime-monitoring-updates'
 	);
 
-	if ( isDownTimeMonitorEnabled && type === 'monitor' ) {
+	// We will show "Site Down" when the site is down which is handled differently.
+	if ( isDownTimeMonitorEnabled && type === 'monitor' && ! siteDown ) {
 		return (
 			<ToggleActivateMonitoring
 				site={ rows.site.value }
 				settings={ rows.monitor.settings }
 				status={ status }
+				tooltip={ tooltip }
+				tooltipId={ tooltipId }
+				siteError={ siteError }
 			/>
 		);
 	}

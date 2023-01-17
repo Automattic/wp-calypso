@@ -676,3 +676,30 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 		padding-left: 5px;
 	}
 }
+
+.site-settings__emails-test-settings-container {
+	legend {
+		font-weight: 400;
+		margin-bottom: 0;
+	}
+	legend + label {
+		font-weight: 700;
+	}
+	label {
+		margin-top: 24px;
+	}
+}
+
+.site-settings__reading-settings {
+	.select-homepage-setting {
+		margin-bottom: 12px;
+	}
+
+	.default-posts-page-setting {
+		margin-bottom: 12px;
+	}
+
+	.learn-more-link {
+		white-space: nowrap;
+	}
+}
