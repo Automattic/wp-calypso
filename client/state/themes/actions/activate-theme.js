@@ -1,12 +1,12 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { translate } from 'i18n-calypso';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import wpcom from 'calypso/lib/wp';
 import {
 	getGlobalStylesId,
 	getGlobalStylesVariations,
 	updateGlobalStyles,
-} from '@automattic/data-stores';
-import { translate } from 'i18n-calypso';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import wpcom from 'calypso/lib/wp';
+} from 'calypso/state/global-styles/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { THEME_ACTIVATE, THEME_ACTIVATE_FAILURE } from 'calypso/state/themes/action-types';
 import { themeActivated } from 'calypso/state/themes/actions/theme-activated';
@@ -55,8 +55,8 @@ export function activateTheme(
 			.then( async ( theme ) => {
 				if ( styleVariationSlug ) {
 					const themeStylesheet = theme.stylesheet || themeId;
-					const globalStylesId = await getGlobalStylesId( siteId, themeStylesheet );
-					const variations = await getGlobalStylesVariations( siteId, themeStylesheet );
+					const globalStylesId = await dispatch( getGlobalStylesId( siteId, themeStylesheet ) );
+					const variations = await dispatch( getGlobalStylesVariations( siteId, themeStylesheet ) );
 					const currentVariation = variations.find(
 						( variation ) =>
 							variation.title &&
@@ -64,7 +64,7 @@ export function activateTheme(
 					);
 
 					if ( currentVariation ) {
-						await updateGlobalStyles( siteId, globalStylesId, currentVariation );
+						await dispatch( updateGlobalStyles( siteId, globalStylesId, currentVariation ) );
 					}
 				}
 
