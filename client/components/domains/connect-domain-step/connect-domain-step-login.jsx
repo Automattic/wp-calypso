@@ -90,40 +90,46 @@ export default function ConnectDomainStepLogin( {
 					text={ __( 'This domain cannot be connected.' ) }
 				></Notice>
 			) }
-			{ rootDomainProvider === 'wpcom' ? (
-				<p className={ className + '__text' }>
-					{ createInterpolateElement(
-						__(
-							"Open a new browser tab, switch to the site the domain is added to and go to <em>Upgrades → Domains</em>. Then click on the domain name to access the domain's settings page (alternatively click on the 3 vertical dots on the domain row and select <em>View Settings</em>). If the domain is under another WordPress.com account, use a different browser, log in to that account and follow the previous instructions. <a>More info here</a>."
-						),
-						{
-							em: createElement( 'em' ),
-							a: createElement( 'a', { href: supportUrl, target: '_blank' } ),
-						}
-					) }
-				</p>
-			) : (
+			{ ! isFetching && (
 				<>
-					<p className={ className + '__text' }>
-						{ createInterpolateElement(
-							__(
-								'Log into your domain provider account (like GoDaddy, NameCheap, 1&1, etc.). If you can’t remember who this is: go to <a>this link</a>, enter your domain and look at <em>Reseller Information</em> or <em>Registrar</em> to see the name of your provider.'
-							),
-							{
-								em: createElement( 'em' ),
-								a: createElement( 'a', { href: 'https://lookup.icann.org', target: '_blank' } ),
-							}
-						) }
-					</p>
-					<p className={ className + '__text' }>
-						{ sprintf(
-							/* translators: %s: the domain name that the user is connecting to WordPress.com (ex.: example.com) */
-							__(
-								'On your domain provider’s site go to the domains page. Find %s and go to its settings page.'
-							),
-							domain
-						) }
-					</p>
+					{ rootDomainProvider === 'wpcom' && (
+						<p className={ className + '__text' }>
+							{ createInterpolateElement(
+								__(
+									"Open a new browser tab, switch to the site the domain is added to and go to <em>Upgrades → Domains</em>. Then click on the domain name to access the domain's settings page (alternatively click on the 3 vertical dots on the domain row and select <em>View Settings</em>).<br/><br/> If the domain is under another WordPress.com account, use a different browser, log in to that account and follow the previous instructions. <a>More info can be found here</a>."
+								),
+								{
+									br: createElement( 'br' ),
+									em: createElement( 'em' ),
+									a: createElement( 'a', { href: supportUrl, target: '_blank' } ),
+								}
+							) }
+						</p>
+					) }
+					{ rootDomainProvider === 'unkwown' && (
+						<>
+							<p className={ className + '__text' }>
+								{ createInterpolateElement(
+									__(
+										'Log into your domain provider account (like GoDaddy, NameCheap, 1&1, etc.). If you can’t remember who this is: go to <a>this link</a>, enter your domain and look at <em>Reseller Information</em> or <em>Registrar</em> to see the name of your provider.'
+									),
+									{
+										em: createElement( 'em' ),
+										a: createElement( 'a', { href: 'https://lookup.icann.org', target: '_blank' } ),
+									}
+								) }
+							</p>
+							<p className={ className + '__text' }>
+								{ sprintf(
+									/* translators: %s: the domain name that the user is connecting to WordPress.com (ex.: example.com) */
+									__(
+										'On your domain provider’s site go to the domains page. Find %s and go to its settings page.'
+									),
+									domain
+								) }
+							</p>
+						</>
+					) }
 				</>
 			) }
 
