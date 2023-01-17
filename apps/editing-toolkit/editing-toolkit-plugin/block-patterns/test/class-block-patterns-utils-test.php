@@ -21,7 +21,7 @@ class Block_Patterns_Utils_Test extends TestCase {
 	/**
 	 * Block_Patterns_Utils
 	 *
-	 * @var object
+	 * @var Block_Patterns_Utils
 	 */
 	protected $utils;
 
@@ -57,6 +57,40 @@ class Block_Patterns_Utils_Test extends TestCase {
 		$block_types  = $this->utils->maybe_get_pattern_block_types_from_pattern_meta( $test_pattern );
 
 		$this->assertEquals( array( 'core/template-part/footer' ), $block_types );
+	}
+
+	/**
+	 * Tests that template-based post types are generated from block types
+	 */
+	public function test_should_return_post_types_from_pattern() {
+		$pattern = array( 'blockTypes' => array( 'core/template-part/header' ) );
+
+		$post_types = $this->utils->get_pattern_post_types_from_pattern( $pattern );
+
+		$this->assertEquals( array( 'wp_template', 'wp_template_part', 'page' ), $post_types );
+	}
+
+	/**
+	 * Tests that template-based post types are not generated without block types
+	 */
+	public function test_should_return_empty_array_if_nothing_to_parse() {
+		$post_types = $this->utils->get_pattern_post_types_from_pattern( array() );
+
+		$this->assertEquals( array(), $post_types );
+	}
+
+	/**
+	 * Tests that existing postTypes are preserved without modification
+	 */
+	public function test_should_not_modify_existing_post_types() {
+		$pattern = array(
+			'blockTypes' => array( 'core/template-part/header' ),
+			'postTypes'  => array( 'post' ),
+		);
+
+		$post_types = $this->utils->get_pattern_post_types_from_pattern( $pattern );
+
+		$this->assertEquals( array( 'post' ), $post_types );
 	}
 
 	/**
