@@ -1,13 +1,14 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { useQuery } from '../../../../hooks/use-query';
 import StepContent from './step-content';
@@ -27,6 +28,15 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const site = useSite();
 	const launchpadScreenOption = site?.options?.launchpad_screen;
 	const dispatch = useDispatch();
+	const isLoggedIn = useSelector( isUserLoggedIn );
+
+	if ( ! isLoggedIn ) {
+		window.location.replace( `/home/${ siteSlug }` );
+	}
+
+	if ( ! siteSlug ) {
+		window.location.replace( '/home' );
+	}
 
 	useEffect( () => {
 		if ( verifiedParam ) {
