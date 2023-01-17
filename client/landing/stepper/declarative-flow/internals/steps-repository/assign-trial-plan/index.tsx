@@ -48,7 +48,7 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 	}, [] );
 
 	const getCurrentMessage = () => {
-		return __( 'Setting up your trial' );
+		return __( "Woo! We're creating your store" );
 	};
 
 	return (
