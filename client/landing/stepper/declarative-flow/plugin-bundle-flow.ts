@@ -195,9 +195,6 @@ const pluginBundleFlow: Flow = {
 
 		const goBack = () => {
 			switch ( currentStep ) {
-				case 'storeAddress':
-					return navigate( 'storeFeatures' );
-
 				case 'businessInfo':
 					return navigate( 'storeAddress' );
 
