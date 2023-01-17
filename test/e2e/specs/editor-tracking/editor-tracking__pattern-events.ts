@@ -43,8 +43,12 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Pattern-related events'
 		} );
 
 		it( 'Select blank template from modal', async function () {
-			const editorFrame = await editorPage.getEditorHandle();
-			const pageTemplateModalComponent = new PageTemplateModalComponent( editorFrame, page );
+			// @TODO Consider moving this to EditorPage.
+			const editorWindowLocator = editorPage.getEditorWindowLocator();
+			const pageTemplateModalComponent = new PageTemplateModalComponent(
+				page,
+				editorWindowLocator
+			);
 			await pageTemplateModalComponent.selectBlankPage();
 		} );
 

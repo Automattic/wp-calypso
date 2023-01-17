@@ -159,8 +159,12 @@ describe(
 
 			describe( 'From adding a page template', function () {
 				it( 'Add "Two column about me layout" page template', async function () {
-					const editorFrame = await editorPage.getEditorHandle();
-					const pageTemplateModalComponent = new PageTemplateModalComponent( editorFrame, page );
+					// @TODO Consider moving this to EditorPage.
+					const editorWindowLocator = editorPage.getEditorWindowLocator();
+					const pageTemplateModalComponent = new PageTemplateModalComponent(
+						page,
+						editorWindowLocator
+					);
 					await pageTemplateModalComponent.selectTemplateCategory( 'About' );
 					await pageTemplateModalComponent.selectTemplate( 'Two column about me layout' );
 				} );

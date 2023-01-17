@@ -213,6 +213,17 @@ export class EditorToolbarComponent {
 	/* Publish and unpublish */
 
 	/**
+	 * Returns the text present for the save/publish button.
+	 *
+	 * @returns {Promise<string>} String found on the button.
+	 */
+	async getPublishButtonText(): Promise< string > {
+		const publishButtonLocator = this.editor.locator( selectors.publishButton( 'enabled' ) );
+
+		return await publishButtonLocator.innerText();
+	}
+
+	/**
 	 * Clicks on the primary button to publish the article.
 	 *
 	 * This is applicable for the following scenarios:

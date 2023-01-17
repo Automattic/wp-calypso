@@ -39,7 +39,7 @@ const selectors = {
 	// Welcome tour
 	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
 };
-const EXTENDED_TIMEOUT = 90 * 1000;
+const EXTENDED_TIMEOUT = 30 * 1000;
 
 /**
  * Represents an instance of the WPCOM's Gutenberg editor page.
@@ -120,36 +120,13 @@ export class EditorPage {
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async waitUntilLoaded(): Promise< void > {
-		// Once https://github.com/Automattic/wp-calypso/issues/57660 is resolved,
-		// the next line should be removed.
-		const editor = await this.getEditorHandle();
+		// In a typical loading scenario, this request is one of the last to fire.
+		// Lacking a perfect cross-site type (Simple/Atomic) way to check the loading state,
+		// it is a fairly good stand-in.
+		await this.page.waitForResponse( /.*posts.*/, { timeout: EXTENDED_TIMEOUT } );
 
-		const titleLocator = editor.locator( selectors.editorTitle );
-		await titleLocator.waitFor( { timeout: EXTENDED_TIMEOUT } );
-
+		// Dismiss the Welcome Tour.
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
-	}
-
-	/**
-	 * Return the editor frame. Could be the top-level frame (i.e WPAdmin).
-	 * an iframe (Calypso/Gutenframe).
-	 *
-	 * @returns {Promise<Frame>} frame holding the editor.
-	 */
-	async getEditorHandle(): Promise< Frame | Page > {
-		// Return the page object as Atomic editor permits direct
-		// access.
-		if ( this.target === 'atomic' ) {
-			return this.page;
-		}
-
-		// Framed editors need to extract the Frame.
-		const calypsoEditorLocator = this.page.locator( selectors.editorFrame );
-		const elementHandle = await calypsoEditorLocator.elementHandle( { timeout: EXTENDED_TIMEOUT } );
-		if ( ! elementHandle ) {
-			throw new Error( 'Could not locate editor iFrame.' );
-		}
-		return ( await elementHandle?.contentFrame() ) as Frame;
 	}
 
 	// TODO: in the future, this should replace the handle method above, as everything should be based on locators.
@@ -159,7 +136,7 @@ export class EditorPage {
 	 *
 	 * @returns A pointer to frame-safe, top-level locator within the editor.
 	 */
-	getEditorLocator(): Locator {
+	getEditorWindowLocator(): Locator {
 		return this.editor;
 	}
 
@@ -563,39 +540,65 @@ export class EditorPage {
 	//#region Publish, Draft & Schedule
 
 	/**
-	 * Publishes the post or page.
+	 * Publishes the post or page and returns the resulting URL.
+	 *
+	 * If the optional parameter `visit` parameter is specified, the page is navigated
+	 * to the published article.
 	 *
 	 * @param {boolean} visit Whether to then visit the page.
 	 * @returns {URL} Published article's URL.
 	 */
 	async publish( { visit = false }: { visit?: boolean } = {} ): Promise< URL > {
-		// Click on the main publish action button on the toolbar.
-		await this.editorToolbarComponent.clickPublish();
+		const publishButtonText = await this.editorToolbarComponent.getPublishButtonText();
+		const actionsArray = [];
 
-		if ( await this.editorPublishPanelComponent.panelIsOpen() ) {
-			// Invoke the second stage of the publish step which handles the
-			// publish checklist panel if it is present.
-			await this.editorPublishPanelComponent.publish();
+		// Playwright does not have a way to differentiate
+		// between GET and POST requests. However, a new post
+		// has a post number following the article type.
+		// By matching on the regex we can filter out
+		// GET requests to the endpoint, focusing only on POST requests.
+		if ( this.target === 'atomic' ) {
+			actionsArray.push( this.page.waitForResponse( /v2\/(posts|pages)\/[\d]+/ ) );
+		} else {
+			actionsArray.push( this.page.waitForResponse( /sites\/[\d]+\/(posts|pages)\/[\d]+.*/ ) );
 		}
 
-		// In some cases the post may be published but the EditorPublishPanelComponent
-		// is either not present or forcibly dismissed due to a bug.
-		// eg. publishing a post with some of the Jetpack Earn blocks.
-		// By racing the two methods of obtaining the published article's URL, we can
-		// guarantee that one or the other works.
-		const publishedURL: URL = await Promise.race( [
-			this.editorPublishPanelComponent.getPublishedURL(),
-			this.getPublishedURLFromToast(),
-		] );
+		// Every publish action requires at least one click on the EditorToolbarComponent.
+		actionsArray.push( this.editorToolbarComponent.clickPublish() );
+
+		// Determine whether the post/page is yet to be published or the post/page
+		// is merely being updated.
+		// If not yet published, a second click on the EditorPublishPanelComponent
+		// is added to the array of actions.
+		if ( publishButtonText.toLowerCase() !== 'update' ) {
+			actionsArray.push( this.editorPublishPanelComponent.publish() );
+		}
+
+		// Resolve the promises.
+		const [ response ] = await Promise.all( actionsArray );
+
+		if ( ! response ) {
+			throw new Error( 'No response received from `publish` method.' );
+		}
+
+		const json = await response.json();
+
+		let publishedURL: string;
+		if ( this.target === 'atomic' ) {
+			publishedURL = json.link;
+		} else {
+			publishedURL = json.body.link;
+		}
 
 		if ( ! publishedURL ) {
-			throw new Error( 'Could not retrieve published post URL' );
+			throw new Error( 'No published article URL found in response.' );
 		}
 
 		if ( visit ) {
-			await this.visitPublishedPost( publishedURL.href );
+			await this.visitPublishedPost( publishedURL );
 		}
-		return publishedURL;
+
+		return new URL( publishedURL );
 	}
 
 	/**
@@ -621,28 +624,23 @@ export class EditorPage {
 	async unpublish(): Promise< void > {
 		await this.editorToolbarComponent.switchToDraft();
 
-		const frame = await this.getEditorHandle();
 		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
-		await frame.click( `div[role="dialog"] button:has-text("OK")` );
+		await this.editor.getByRole( 'button' ).getByText( 'OK' ).click();
 		// @TODO: eventually refactor this out to a EditorToastNotificationComponent.
-		await frame.waitForSelector(
-			'.components-editor-notices__snackbar :has-text("Post reverted to draft.")'
-		);
+		await this.editor.getByRole( 'button', { name: 'Dismiss this notice' } ).waitFor();
 	}
 
 	/**
-	 * Obtains the published article's URL from post-publish panels.
+	 * Obtains the published article's URL from the post-publish toast.
 	 *
-	 * This method is only able to obtain the published article's URL if immediately
-	 * preceded by the action of publishing the article *and* the post-publish panel
-	 * being visible.
+	 * This method is only able to obtain the published article's URL if the
+	 * post-publish toast is still visible on the page.
 	 *
+	 * @deprecated Please use the return value from `EditorPage.publish` where possible.
 	 * @returns {URL} Published article's URL.
 	 */
 	async getPublishedURLFromToast(): Promise< URL > {
-		const frame = await this.getEditorHandle();
-
-		const toastLocator = frame.locator( selectors.toastViewPostLink );
+		const toastLocator = this.editor.locator( selectors.toastViewPostLink );
 		const publishedURL = ( await toastLocator.getAttribute( 'href' ) ) as string;
 		return new URL( publishedURL );
 	}
