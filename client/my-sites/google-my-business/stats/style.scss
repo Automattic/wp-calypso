@@ -1,3 +1,5 @@
+@import "calypso/my-sites/stats/modernized-layout-styles.scss";
+
 .stats__metrics {
 	.pie-chart__chart-drawing,
 	.pie-chart__placeholder-drawing {
@@ -43,5 +45,11 @@
 
 	@include breakpoint-deprecated( "<480px" ) {
 		width: 100%;
+	}
+}
+
+.stats__gmb-location-wrapper {
+	.gmb-location {
+		margin-bottom: 0;
 	}
 }
