@@ -51,6 +51,15 @@ export const RelatedPostsSetting = ( {
 					onChange={ handleToggle( 'jetpack_relatedposts_show_thumbnails' ) }
 					label={ translate( 'Show a thumbnail image where available' ) }
 				/>
+
+				<ToggleControl
+					checked={ !! fields.jetpack_relatedposts_show_date }
+					disabled={
+						isRequestingSettings || isSavingSettings || ! fields.jetpack_relatedposts_enabled
+					}
+					onChange={ handleToggle( 'jetpack_relatedposts_show_date' ) }
+					label={ translate( 'Show post publish date' ) }
+				/>
 			</div>
 
 			<FormSettingExplanation>

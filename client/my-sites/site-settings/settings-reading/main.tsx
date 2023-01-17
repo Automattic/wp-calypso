@@ -15,6 +15,7 @@ const isEnabled = config.isEnabled( 'settings/modernize-reading-settings' );
 
 type Fields = {
 	jetpack_relatedposts_enabled?: boolean;
+	jetpack_relatedposts_show_date?: boolean;
 	jetpack_relatedposts_show_headline?: boolean;
 	jetpack_relatedposts_show_thumbnails?: boolean;
 	page_for_posts?: string;
@@ -38,6 +39,7 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 
 	const {
 		jetpack_relatedposts_enabled,
+		jetpack_relatedposts_show_date,
 		jetpack_relatedposts_show_headline,
 		jetpack_relatedposts_show_thumbnails,
 		page_for_posts,
@@ -53,6 +55,7 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 
 	return {
 		...( jetpack_relatedposts_enabled && { jetpack_relatedposts_enabled } ),
+		...( jetpack_relatedposts_show_date && { jetpack_relatedposts_show_date } ),
 		...( jetpack_relatedposts_show_headline && { jetpack_relatedposts_show_headline } ),
 		...( jetpack_relatedposts_show_thumbnails && { jetpack_relatedposts_show_thumbnails } ),
 		...( page_for_posts && { page_for_posts } ),

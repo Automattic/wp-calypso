@@ -9,6 +9,7 @@ type Fields = {
 	jetpack_relatedposts_enabled?: boolean;
 	jetpack_relatedposts_show_headline?: boolean;
 	jetpack_relatedposts_show_thumbnails?: boolean;
+	jetpack_relatedposts_show_date?: boolean;
 	page_for_posts?: string;
 	page_on_front?: string;
 	posts_per_page?: number;
