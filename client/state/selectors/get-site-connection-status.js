@@ -1,7 +1,5 @@
 import 'calypso/state/site-connection/init';
 
-import { get } from 'lodash';
-
 /**
  * Returns the WordPress.com connection status of a site.
  * Returns null if the site is unknown, or connection status hasn't been received yet.
@@ -11,5 +9,5 @@ import { get } from 'lodash';
  * @returns {?boolean}          Whether site is connected to WordPress.com.
  */
 export default function getSiteConnectionStatus( state, siteId ) {
-	return get( state.siteConnection.items, siteId, null );
+	return state.siteConnection.items[ siteId ] ?? null;
 }
