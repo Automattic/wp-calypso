@@ -159,7 +159,7 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 	} );
 	const boost = translate( 'Boost' );
 	const socialBasic = translate( 'Social Basic', { context: 'Jetpack product name' } );
-	const socialAdvanced = translate( 'Social Advanced', { context: 'Jetpack product name' } );
+	const socialAdvanced = translate( 'Social Advanced Beta', { context: 'Jetpack product name' } );
 
 	const text10gb = translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
 		comment:
@@ -797,9 +797,9 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Share to Twitter, Facebook, LinkedIn, and Tumblr' ),
 		translate( 'Engagement Optimizer' ),
 		translate( 'Recycle content' ),
-		translate( 'Image generator' ),
-		translate( 'Multi-image sharing' ),
-		translate( 'Video sharing' ),
+		translate( 'Coming soon: Image generator' ),
+		translate( 'Coming soon: Multi-image sharing' ),
+		translate( 'Coming soon: Video sharing' ),
 	];
 
 	return {
@@ -895,7 +895,7 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate(
 			'Coming soon: Automatically create custom images, saving you hours of tedious work'
 		),
-		translate( 'Coming soon: share multiple images at once on social media platforms' ),
+		translate( 'Coming soon: Share multiple images at once on social media platforms' ),
 		translate( 'Coming soon: Upload and share videos to your social platforms' ),
 	];
 
