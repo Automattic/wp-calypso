@@ -16,7 +16,7 @@ export const GithubAuthorizeCard = () => {
 	}
 	return (
 		<Card className="github-authorize-card">
-			<img className="github-icon" src={ iconGitHub } alt="" />
+			<img className="github-authorize-icon" src={ iconGitHub } alt="" />
 			<CardHeading>{ translate( 'Connect GitHub' ) }</CardHeading>
 			<p>
 				{ translate(
