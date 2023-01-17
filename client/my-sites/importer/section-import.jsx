@@ -1,4 +1,9 @@
 import { CompactCard } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { once } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import EmptyContent from 'calypso/components/empty-content';
@@ -7,8 +12,8 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import SectionHeader from 'calypso/components/section-header';
-import { getImporterByKey, getImporters } from 'calypso/lib/importer/importer-config';
-import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
+import { getImporters, getImporterByKey } from 'calypso/lib/importer/importer-config';
+import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import memoizeLast from 'calypso/lib/memoize-last';
 import BloggerImporter from 'calypso/my-sites/importer/importer-blogger';
 import MediumImporter from 'calypso/my-sites/importer/importer-medium';
@@ -16,8 +21,9 @@ import SquarespaceImporter from 'calypso/my-sites/importer/importer-squarespace'
 import SubstackImporter from 'calypso/my-sites/importer/importer-substack';
 import WixImporter from 'calypso/my-sites/importer/importer-wix';
 import WordPressImporter from 'calypso/my-sites/importer/importer-wordpress';
+import JetpackImporter from 'calypso/my-sites/importer/jetpack-importer';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { cancelImport, fetchImporterState, startImport } from 'calypso/state/imports/actions';
+import { fetchImporterState, startImport, cancelImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import {
 	getImporterStatusForSiteId,
@@ -27,17 +33,10 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteTitle } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
-	getSelectedSiteId,
 	getSelectedSiteSlug,
+	getSelectedSiteId,
 } from 'calypso/state/ui/selectors';
-import { localize } from 'i18n-calypso';
-import { once } from 'lodash';
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
 
-import { Button } from '@automattic/components';
-import wpcom from 'calypso/lib/wp';
 import './section-import.scss';
 
 /**
@@ -144,11 +143,11 @@ class SectionImport extends Component {
 	 */
 	renderIdleImporters( importerState ) {
 		const { site, siteTitle } = this.props;
-		const importers = getImporters();
+		let importers = getImporters();
 
 		// Filter out all importers except the WordPress ones for Atomic sites.
 		if ( site.options.is_wpcom_atomic ) {
-			// importers = importers.filter( ( importer ) => importer.engine === 'wordpress' );
+			importers = importers.filter( ( importer ) => importer.engine === 'wordpress' );
 		}
 
 		const importerElements = importers.map( ( { engine } ) => {
@@ -244,15 +243,6 @@ class SectionImport extends Component {
 		this.props.siteId && this.props.fetchImporterState( this.props.siteId );
 	};
 
-	dangerous = async () => {
-		const { siteId } = this.props;
-
-		await wpcom.req.post( {
-			path: `/sites/${ siteId }/debug-imports`,
-			formData: [],
-		} );
-	};
-
 	renderImportersList() {
 		const { translate } = this.props;
 		const isSpecificImporter = this.props.siteImports.length > 0;
@@ -275,7 +265,7 @@ class SectionImport extends Component {
 	}
 
 	render() {
-		const { /*site, */ translate, canImport } = this.props;
+		const { site, translate, canImport } = this.props;
 
 		if ( ! canImport ) {
 			return (
@@ -288,10 +278,10 @@ class SectionImport extends Component {
 			);
 		}
 
-		/*const {
+		const {
 			jetpack: isJetpack,
 			options: { is_wpcom_atomic: isAtomic },
-		} = site;*/
+		} = site;
 
 		return (
 			<Main>
@@ -312,12 +302,8 @@ class SectionImport extends Component {
 					align="left"
 					hasScreenOptions
 				/>
-				<Button primary className="is-scary" onClick={ this.dangerous }>
-					Debug import
-				</Button>
-				<div style={ { paddingBottom: '20px' } }></div>
 				<EmailVerificationGate allowUnlaunched>
-					{ this.renderImportersList() }
+					{ isJetpack && ! isAtomic ? <JetpackImporter /> : this.renderImportersList() }
 				</EmailVerificationGate>
 			</Main>
 		);
