@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { captureException } from 'calypso/lib/sentry';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { CheckoutOrderBanner } from 'calypso/my-sites/checkout/composite-checkout/components/checkout-order-banner';
 import Recaptcha from 'calypso/signup/recaptcha';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -103,6 +104,7 @@ export default function CheckoutMainWrapper( {
 			>
 				<CalypsoShoppingCartProvider>
 					<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
+						<CheckoutOrderBanner />
 						<CheckoutMain
 							siteSlug={ siteSlug }
 							siteId={ selectedSiteId }
