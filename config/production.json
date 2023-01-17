@@ -90,7 +90,7 @@
 		"onboarding/import-light-url-screen": true,
 		"onboarding/import-redirect-to-themes": true,
 		"p2/p2-plus": true,
-		"pattern-assembler/client-side-render": true,
+		"pattern-assembler/client-side-render": false,
 		"pattern-assembler/logged-out-showcase": false,
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
