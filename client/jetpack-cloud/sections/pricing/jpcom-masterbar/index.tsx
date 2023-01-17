@@ -133,6 +133,21 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		],
 		[ translate ]
 	);
+	const bundles = useMemo(
+		() => [
+			{
+				label: translate( 'Complete' ),
+				tagline: translate( 'The ultimate toolkit' ),
+				href: `${ JETPACK_COM_BASE_URL }/complete/`,
+			},
+			{
+				label: translate( 'Security' ),
+				tagline: translate( 'Comprehensive site security' ),
+				href: `${ JETPACK_COM_BASE_URL }/features/security/`,
+			},
+		],
+		[ translate ]
+	);
 
 	const shouldShowCart = useSelector( isJetpackCloudCartEnabled );
 
@@ -269,6 +284,33 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 																		</li>
 																	) ) }
 																</ul>
+
+																<div className="header__submenu-bundles">
+																	<hr />
+
+																	<p className="header__submenu-bundles-heading">
+																		{ translate( 'Bundles' ) }
+																	</p>
+
+																	<ul className="header__submenu-links-list">
+																		{ bundles.map( ( { label, tagline, href } ) => {
+																			return (
+																				<li key={ `bundles-${ href }` }>
+																					<ExternalLink
+																						className="header__submenu-link"
+																						href={ localizeUrl( href, locale ) }
+																						onClick={ onLinkClick }
+																					>
+																						<span className="header__submenu-label">{ label }</span>
+																						<span className="header__submenu-tagline">
+																							{ tagline }
+																						</span>
+																					</ExternalLink>
+																				</li>
+																			);
+																		} ) }
+																	</ul>
+																</div>
 															</div>
 														</div>
 													) }
