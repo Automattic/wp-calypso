@@ -25,6 +25,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import PeopleSectionAddNav from '../people-section-add-nav';
 
 class PeopleInvites extends PureComponent {
 	static propTypes = {
@@ -55,6 +56,14 @@ class PeopleInvites extends PureComponent {
 						path="/people/add-subscribers/:site_id"
 						title="People > Add Subscribers"
 					/>
+					<HeaderCake onClick={ this.goBack }>
+						{ translate( 'Add subscribers to %(sitename)s', {
+							args: {
+								sitename: site.name,
+							},
+						} ) }
+					</HeaderCake>
+					<PeopleSectionAddNav selectedFilter="subscribers" />
 					<EmptyContent
 						title={ translate( 'You are not authorized to view this page' ) }
 						illustration="/calypso/images/illustrations/illustration-404.svg"
@@ -66,13 +75,14 @@ class PeopleInvites extends PureComponent {
 		return (
 			<Main>
 				<PageViewTracker path="/people/add-subscribers/:site_id" title="People > Add Subscribers" />
-				<HeaderCake isCompact onClick={ this.goBack }>
+				<HeaderCake onClick={ this.goBack }>
 					{ translate( 'Add subscribers to %(sitename)s', {
 						args: {
 							sitename: site.name,
 						},
 					} ) }
 				</HeaderCake>
+				<PeopleSectionAddNav selectedFilter="subscribers" />
 				<Card>
 					<EmailVerificationGate
 						noticeText={ this.props.translate( 'You must verify your email to add subscribers.' ) }

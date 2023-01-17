@@ -14,6 +14,7 @@ import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { userCan } from 'calypso/lib/site/utils';
 import P2TeamBanner from 'calypso/my-sites/people/p2-team-banner';
+import PeopleSectionAddNav from 'calypso/my-sites/people/people-section-add-nav';
 import { InviteLinkForm } from 'calypso/my-sites/people/team-invite/invite-link-form';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -55,9 +56,12 @@ function TeamInvite( props: Props ) {
 		return (
 			<Main>
 				<PageViewTracker path="/people/new/:site" title="People > Invite People" />
-				<HeaderCake isCompact onClick={ goBack }>
-					{ _( 'Add team members' ) }
+				<HeaderCake onClick={ goBack }>
+					{ _( 'Add team members to %(sitename)s', {
+						args: { sitename: site.name },
+					} ) }
 				</HeaderCake>
+				<PeopleSectionAddNav selectedFilter="team" />
 				<EmptyContent
 					title={ _( 'Oops, only administrators can invite other people' ) }
 					illustration="/calypso/images/illustrations/illustration-empty-results.svg"
@@ -72,9 +76,13 @@ function TeamInvite( props: Props ) {
 			{ siteId && <QuerySiteInvites siteId={ siteId } /> }
 			{ siteId && isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
-			<HeaderCake isCompact onClick={ goBack }>
-				{ _( 'Add team members' ) }
+			<HeaderCake onClick={ goBack }>
+				{ _( 'Add team members to %(sitename)s', {
+					args: { sitename: site.name },
+				} ) }
 			</HeaderCake>
+
+			<PeopleSectionAddNav selectedFilter="team" />
 
 			{ isSiteForTeams && <P2TeamBanner context="invite" site={ site } /> }
 
