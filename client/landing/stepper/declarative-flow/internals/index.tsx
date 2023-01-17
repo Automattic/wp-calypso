@@ -1,5 +1,5 @@
 import { ProgressBar } from '@automattic/components';
-import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import { isNewsletterOrLinkInBioFlow, isWooExpressFlow } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { useEffect, useState } from 'react';
@@ -106,6 +106,14 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		}
 	};
 
+	const getShowWooLogo = () => {
+		if ( isWooExpressFlow( flow.name ) ) {
+			return true;
+		}
+
+		return false;
+	};
+
 	let progressBarExtraStyle: React.CSSProperties = {};
 	if ( 'videopress' === flow.name ) {
 		progressBarExtraStyle = {
@@ -132,7 +140,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 									total={ 100 }
 									style={ progressBarExtraStyle }
 								/>
-								<SignupHeader pageTitle={ flow.title } />
+
+								<SignupHeader pageTitle={ flow.title } showWooLogo={ getShowWooLogo() } />
 								{ renderStep( step ) }
 							</div>
 						</Route>

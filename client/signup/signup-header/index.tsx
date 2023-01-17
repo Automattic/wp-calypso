@@ -1,4 +1,4 @@
-import { ProgressBar } from '@automattic/components';
+import { ProgressBar, WooCommerceWooLogo } from '@automattic/components';
 import {
 	useFlowProgress,
 	FREE_FLOW,
@@ -21,6 +21,7 @@ interface Props {
 	isReskinned?: boolean;
 	rightComponent?: Node;
 	pageTitle?: string;
+	showWooLogo?: boolean;
 }
 
 const SignupHeader = ( {
@@ -29,6 +30,7 @@ const SignupHeader = ( {
 	rightComponent,
 	progressBar = {},
 	pageTitle,
+	showWooLogo = false,
 }: Props ) => {
 	const logoClasses = classnames( 'wordpress-logo', {
 		'is-large': shouldShowLoadingScreen && ! isReskinned,
@@ -59,7 +61,10 @@ const SignupHeader = ( {
 					total={ flowProgress.count }
 				/>
 			) }
-			<WordPressLogo size={ 120 } className={ logoClasses } />
+			{ ! showWooLogo && <WordPressLogo size={ 120 } className={ logoClasses } /> }
+			{ showWooLogo && (
+				<WooCommerceWooLogo width={ 120 } height={ 120 } className={ logoClasses } />
+			) }
 			{ showPageTitle && <h1>{ variablePageTitle }</h1> }
 			{ /* This should show a sign in link instead of
 			   the progressIndicator on the account step. */ }
