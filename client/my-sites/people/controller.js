@@ -171,10 +171,13 @@ function renderSubscribersDetails( context, next ) {
 		return <DocumentHead title={ translate( 'User Details', { textOnly: true } ) } />;
 	};
 
+	// typeId is in the format "{type}-{id}
+	const [ type, id ] = context.params.typeId.split( '-' );
+
 	context.primary = (
 		<>
 			<SubscriberDetailsTitle />
-			<SubscriberDetails subscriberId={ context.params.id } />
+			<SubscriberDetails subscriberId={ id } subscriberType={ type } />
 		</>
 	);
 	next();

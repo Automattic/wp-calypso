@@ -55,7 +55,7 @@ export default function () {
 	);
 
 	page(
-		'/people/:filter(subscribers)/:site_id/:id',
+		'/people/:filter(subscribers)/:site_id/:typeId',
 		peopleController.enforceSiteEnding,
 		siteSelection,
 		navigation,
