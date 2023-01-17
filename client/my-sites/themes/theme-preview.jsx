@@ -77,15 +77,6 @@ class ThemePreview extends Component {
 		return this.props.themeOptions?.styleVariation;
 	};
 
-	getPreviewUrl = () => {
-		const { demoUrl, locale, theme } = this.props;
-		if ( isEnabled( 'themes/showcase-i4/details-and-preview' ) ) {
-			return getDesignPreviewUrl( { slug: theme.id, recipe: theme }, { language: locale } );
-		}
-
-		return demoUrl + '?demo=true&iframe=true&theme_preview=true';
-	};
-
 	shouldShowUnlockStyleButton = () => {
 		const { options, shouldLimitGlobalStyles, themeOptions } = this.props;
 		if ( ! themeOptions ) {
@@ -195,11 +186,6 @@ class ThemePreview extends Component {
 		}
 
 		return demoUrl + '?demo=true&iframe=true&theme_preview=true';
-	};
-
-	onSelectVariation = ( variation ) => {
-		const { themeId, primary, secondary } = this.props.themeOptions;
-		this.props.setThemePreviewOptions( themeId, primary, secondary, variation );
 	};
 
 	onClickCategory = ( category ) => {
