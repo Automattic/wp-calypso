@@ -128,7 +128,7 @@ class ThemePreview extends Component {
 
 	getPreviewUrl = () => {
 		const { demoUrl, locale, theme } = this.props;
-		if ( isEnabled( 'themes/showcase-i4/details-and-preview' ) ) {
+		if ( isEnabled( 'themes/showcase-i4/details-and-preview' ) && theme.stylesheet ) {
 			return getDesignPreviewUrl( { slug: theme.id, recipe: theme }, { language: locale } );
 		}
 
