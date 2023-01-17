@@ -68,11 +68,11 @@ const SenseiLaunch = () => {
 
 	const progress: Progress = {
 		percentage: ( retries * 100 ) / expectedRetries,
-		title: __( 'Installing Sensei' ),
+		title: __( 'Creating your blazing fast new site' ),
 	};
 
 	if ( retries > expectedRetries / 2 || retries < 0 ) {
-		progress.title = __( 'Setting up your new Sensei Home' );
+		progress.title = __( 'Last step, optimizing Sensei LMS settings' );
 	}
 
 	// Slow down progress bar increase during the last steps.
