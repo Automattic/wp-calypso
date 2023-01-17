@@ -75,8 +75,15 @@ export const buildChartData = memoizeLast(
 
 function addTooltipData( chartTab, item, period ) {
 	const tooltipData = [];
+	const label = ( () => {
+		if ( 'hour' === period ) {
+			return item.label;
+		}
+		return formatDate( item.data.period, period );
+	} )();
+
 	tooltipData.push( {
-		label: formatDate( item.data.period, period ),
+		label,
 		className: 'is-date-label',
 		value: null,
 	} );
