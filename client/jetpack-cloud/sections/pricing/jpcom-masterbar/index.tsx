@@ -110,6 +110,11 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 								tagline: translate( 'Connect with your people' ),
 								href: 'https://jetpackcrm.com/?utm_medium=automattic_referred&utm_source=jpcom_header',
 							},
+							{
+								label: translate( 'Blaze' ),
+								tagline: translate( 'Advertise your best content' ),
+								href: `${ JETPACK_COM_BASE_URL }/blaze/`,
+							},
 						],
 					},
 				],
