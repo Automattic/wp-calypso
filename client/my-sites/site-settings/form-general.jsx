@@ -44,6 +44,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import { launchSite } from 'calypso/state/sites/launch/actions';
+import { isSiteOnECommerceTrial as getIsSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteOption,
 	isJetpackSite,
@@ -575,6 +576,7 @@ export class SiteSettingsFormGeneral extends Component {
 			fields,
 			hasSitePreviewLink,
 			site,
+			isSiteOnECommerceTrial,
 		} = this.props;
 
 		const launchSiteClasses = classNames( 'site-settings__general-settings-launch-site-button', {
@@ -583,12 +585,17 @@ export class SiteSettingsFormGeneral extends Component {
 		const btnText = translate( 'Launch site' );
 		let querySiteDomainsComponent;
 		let btnComponent;
+		const isLaunchable = ! isSiteOnECommerceTrial;
 
 		if ( 0 === siteDomains.length ) {
 			querySiteDomainsComponent = <QuerySiteDomains siteId={ siteId } />;
 			btnComponent = <Button>{ btnText }</Button>;
 		} else if ( isPaidPlan && siteDomains.length > 1 ) {
-			btnComponent = <Button onClick={ this.props.launchSite }>{ btnText }</Button>;
+			btnComponent = (
+				<Button onClick={ this.props.launchSite } disabled={ ! isLaunchable }>
+					{ btnText }
+				</Button>
+			);
 			querySiteDomainsComponent = '';
 		} else {
 			btnComponent = (
@@ -869,6 +876,7 @@ const connectComponent = connect( ( state ) => {
 		siteSlug: getSelectedSiteSlug( state ),
 		hasSubscriptionGifting: siteHasFeature( state, siteId, WPCOM_FEATURES_SUBSCRIPTION_GIFTING ),
 		hasSitePreviewLink: siteHasFeature( state, siteId, WPCOM_FEATURES_SITE_PREVIEW_LINKS ),
+		isSiteOnECommerceTrial: getIsSiteOnECommerceTrial( state, siteId ),
 	};
 }, mapDispatchToProps );
 
