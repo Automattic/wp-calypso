@@ -77,7 +77,7 @@ export class EditorSidebarBlockInserterComponent {
 			locator = this.editor.locator( selectors.blockResultItem( name ) ).first();
 		}
 
-		await Promise.all( [ locator.hover(), locator.focus() ] );
-		await locator.click();
+		await locator.hover();
+		await locator.click( { force: true, noWaitAfter: true } );
 	}
 }

@@ -398,6 +398,7 @@ export class EditorPage {
 		await this.editorGutenbergComponent.resetSelectedBlock();
 		await this.editorToolbarComponent.openBlockInserter();
 		await this.addPatternFromInserter( patternName, this.editorSidebarBlockInserterComponent );
+		await this.editorSidebarBlockInserterComponent.closeBlockInserter();
 	}
 
 	/**
