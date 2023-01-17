@@ -52,7 +52,9 @@ class StatsPeriodNavigation extends PureComponent {
 
 	handleArrowNext = () => {
 		const { date, moment, period, url, queryParams } = this.props;
-		const nextDay = moment( date ).add( 1, period ).format( 'YYYY-MM-DD' );
+
+		const usedPeriod = 'hour' === period ? 'day' : period;
+		const nextDay = moment( date ).add( 1, usedPeriod ).format( 'YYYY-MM-DD' );
 		const nextDayQuery = qs.stringify( Object.assign( {}, queryParams, { startDate: nextDay } ), {
 			addQueryPrefix: true,
 		} );

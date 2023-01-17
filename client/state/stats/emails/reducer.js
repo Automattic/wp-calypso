@@ -73,12 +73,14 @@ export const requests = ( state = {}, action ) => {
  * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( itemSchemas, ( state = {}, action ) => {
+	const checkState = ( actualState, period ) => ( 'hour' === period ? {} : actualState );
+
 	switch ( action.type ) {
 		case EMAIL_STATS_RECEIVE:
 			// eslint-disable-next-line no-case-declarations
 			const { siteId, postId, period, statType } = action;
 
-			return merge( {}, state, {
+			return merge( {}, checkState( state, period ), {
 				[ siteId ]: {
 					[ postId ]: {
 						[ period ]: {
