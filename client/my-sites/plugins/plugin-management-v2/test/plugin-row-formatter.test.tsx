@@ -13,7 +13,8 @@ import PluginRowFormatter from '../plugin-row-formatter';
 import { site, plugin } from './utils/constants';
 
 const initialState = {
-	sites: { items: { [ site.ID ]: site }, connection: { items: { [ site.ID ]: true } } },
+	siteConnection: { items: { [ site.ID ]: true } },
+	sites: { items: { [ site.ID ]: site } },
 	currentUser: {
 		capabilities: {},
 	},
