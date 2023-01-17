@@ -1,12 +1,19 @@
 import classNames from 'classnames';
 
-const ItemPriceMessage: React.FC< { message: React.ReactNode; expired?: boolean } > = ( {
+export type ItemPriceMessageProps = {
+	active?: boolean;
+	error?: boolean;
+	message: React.ReactNode;
+};
+
+const ItemPriceMessage: React.FC< ItemPriceMessageProps > = ( {
+	active = false,
+	error = false,
 	message,
-	expired = false,
 } ) => {
 	const messageClass = classNames( 'item-price__message', {
-		'item-price__message--expired': expired,
-		'item-price__message--active': ! expired,
+		'item-price__message--active': active && ! error,
+		'item-price__message--error': error,
 	} );
 
 	return (
