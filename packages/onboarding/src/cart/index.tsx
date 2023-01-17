@@ -99,9 +99,10 @@ export const createSiteWithCart = async (
 	siteAccentColor: string,
 	useThemeHeadstart: boolean,
 	username: string,
+	siteUri: string,
 	domainItem?: MinimalRequestCartProduct
 ) => {
-	const siteUrl = domainItem?.meta;
+	const siteUrl = siteUri || domainItem?.meta;
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );
 
 	const newSiteParams = getNewSiteParams( {

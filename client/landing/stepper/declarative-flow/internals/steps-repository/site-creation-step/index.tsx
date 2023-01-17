@@ -30,8 +30,9 @@ const DEFAULT_LINK_IN_BIO_THEME = 'pub/lynx';
 const DEFAULT_WOOEXPRESS_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 
-const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } ) {
+const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, data } ) {
 	const { submit } = navigation;
+	const siteUrl: string = data?.siteUrl ? ( data?.siteUrl as string ) : '';
 
 	const { domainCartItem, planCartItem, siteAccentColor, getSelectedSiteTitle } = useSelect(
 		( select ) => ( {
@@ -102,6 +103,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 			siteAccentColor,
 			true,
 			username,
+			siteUrl,
 			domainCartItem
 		);
 

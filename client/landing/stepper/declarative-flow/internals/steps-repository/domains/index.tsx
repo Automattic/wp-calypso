@@ -1,6 +1,10 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-
-import { StepContainer, LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
+import {
+	StepContainer,
+	LINK_IN_BIO_FLOW,
+	LINK_IN_BIO_TLD_FLOW,
+	COPY_SITE_FLOW,
+} from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -200,6 +204,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 					),
 					decideLaterComponent
 				);
+			case COPY_SITE_FLOW:
+				return __( 'Set your Link in Bio apart with a custom domain.' );
 			default:
 				return createInterpolateElement(
 					__(
