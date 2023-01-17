@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { once } from 'lodash';
@@ -147,7 +147,7 @@ class SectionImport extends Component {
 		let importers = getImporters();
 
 		// Filter out all importers except the WordPress ones for Atomic sites.
-		if ( site.options.is_wpcom_atomic ) {
+		if ( ! isEnabled( 'importer/unified' ) && site.options.is_wpcom_atomic ) {
 			importers = importers.filter( ( importer ) => importer.engine === 'wordpress' );
 		}
 
@@ -304,7 +304,7 @@ class SectionImport extends Component {
 					hasScreenOptions
 				/>
 				<EmailVerificationGate allowUnlaunched>
-					{ isJetpack && ! isAtomic && ! config.isEnabled( 'importer/unified' ) ? (
+					{ isJetpack && ! isAtomic && ! isEnabled( 'importer/unified' ) ? (
 						<JetpackImporter />
 					) : (
 						this.renderImportersList()
