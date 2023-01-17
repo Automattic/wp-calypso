@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { once } from 'lodash';
@@ -12,8 +13,8 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import SectionHeader from 'calypso/components/section-header';
-import { getImporters, getImporterByKey } from 'calypso/lib/importer/importer-config';
-import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
+import { getImporterByKey, getImporters } from 'calypso/lib/importer/importer-config';
+import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import memoizeLast from 'calypso/lib/memoize-last';
 import BloggerImporter from 'calypso/my-sites/importer/importer-blogger';
 import MediumImporter from 'calypso/my-sites/importer/importer-medium';
@@ -23,7 +24,7 @@ import WixImporter from 'calypso/my-sites/importer/importer-wix';
 import WordPressImporter from 'calypso/my-sites/importer/importer-wordpress';
 import JetpackImporter from 'calypso/my-sites/importer/jetpack-importer';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { fetchImporterState, startImport, cancelImport } from 'calypso/state/imports/actions';
+import { cancelImport, fetchImporterState, startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import {
 	getImporterStatusForSiteId,
@@ -33,8 +34,8 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteTitle } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
-	getSelectedSiteSlug,
 	getSelectedSiteId,
+	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 
 import './section-import.scss';
@@ -303,7 +304,11 @@ class SectionImport extends Component {
 					hasScreenOptions
 				/>
 				<EmailVerificationGate allowUnlaunched>
-					{ isJetpack && ! isAtomic ? <JetpackImporter /> : this.renderImportersList() }
+					{ isJetpack && ! isAtomic && ! config.isEnabled( 'importer/unified' ) ? (
+						<JetpackImporter />
+					) : (
+						this.renderImportersList()
+					) }
 				</EmailVerificationGate>
 			</Main>
 		);
