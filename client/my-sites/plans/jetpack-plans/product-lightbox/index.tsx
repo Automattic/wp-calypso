@@ -118,13 +118,13 @@ const ProductLightbox: React.FC< Props > = ( {
 		} ) );
 	}, [ product.productSlug ] );
 
-	const isSocialProduct = [
+	const showVariantsWithoutRadioButtons = [
 		PRODUCT_JETPACK_SOCIAL_ADVANCED,
 		PRODUCT_JETPACK_SOCIAL_BASIC,
 	].includes( product.productSlug );
 
 	// The social advanced plan is not available yet, so don't show it till the time it's ready.
-	const shouldShowOptions = isSocialProduct
+	const shouldShowOptions = showVariantsWithoutRadioButtons
 		? variantOptions.length > 1 && config.isEnabled( 'jetpack-social/advanced-plan' )
 		: variantOptions.length > 1;
 
@@ -194,7 +194,7 @@ const ProductLightbox: React.FC< Props > = ( {
 				<div className="product-lightbox__sidebar">
 					<div className="product-lightbox__variants">
 						<div className="product-lightbox__variants-content">
-							{ shouldShowOptions && ! isSocialProduct && (
+							{ shouldShowOptions && ! showVariantsWithoutRadioButtons && (
 								<div className="product-lightbox__variants-options">
 									<MultipleChoiceQuestion
 										question={ PRODUCT_OPTIONS_HEADER[ product?.productSlug ] }
@@ -205,7 +205,7 @@ const ProductLightbox: React.FC< Props > = ( {
 									/>
 								</div>
 							) }
-							{ isSocialProduct ? (
+							{ shouldShowOptions && showVariantsWithoutRadioButtons ? (
 								<div>
 									<FormFieldset className="multiple-choice-question">
 										<FormLegend className="multiple-choice-question-title">
