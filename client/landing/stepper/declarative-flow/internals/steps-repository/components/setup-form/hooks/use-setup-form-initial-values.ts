@@ -5,15 +5,13 @@ const useSetupFormInitialValues = () => {
 	const site = useSite();
 	const [ siteTitle, setComponentSiteTitle ] = useState( '' );
 	const [ tagline, setTagline ] = useState( '' );
-	const [ siteDataFetched, setSiteDataFetched ] = useState( false );
 
 	useEffect( () => {
-		if ( site && ! siteDataFetched ) {
+		if ( site?.name || site?.description ) {
 			setComponentSiteTitle( site?.name || '' );
 			setTagline( site?.description || '' );
-			setSiteDataFetched( true );
 		}
-	}, [ site, siteDataFetched, setSiteDataFetched ] );
+	}, [ site?.name, site?.description ] );
 
 	return {
 		siteTitle,
