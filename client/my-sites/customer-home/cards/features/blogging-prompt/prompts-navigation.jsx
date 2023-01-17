@@ -126,7 +126,7 @@ export class PromptsNavigation extends Component {
 					onClick={ () => this.trackBloggingPromptClick() }
 					target="_blank"
 				>
-					{ this.props.translate( 'Post Answer', {
+					{ this.props.translate( 'Post answer', {
 						comment:
 							'"Post" here is a verb meaning "to publish", as in "post an answer to this writing prompt"',
 					} ) }
@@ -148,14 +148,21 @@ export class PromptsNavigation extends Component {
 
 		if ( prompt.answered_users_sample.length > 0 ) {
 			responses = (
-				<div className="blogging-prompt__prompt-responses">
-					{ prompt.answered_users_sample.map( ( sample ) => {
-						return <img alt="answered-users" src={ sample.avatar } />;
-					} ) }
-					<a href={ promptReaderURL } target="_blank" rel="noreferrer">
-						{ this.props.translate( 'View All Responses' ) }
+				<>
+					<div className="blogging-prompt__prompt-responses">
+						{ prompt.answered_users_sample.map( ( sample ) => {
+							return <img alt="answered-users" src={ sample.avatar } />;
+						} ) }
+					</div>
+					<a
+						href={ promptReaderURL }
+						target="_blank"
+						rel="noreferrer"
+						className="blogging-prompt__prompt-responses-link"
+					>
+						{ this.props.translate( 'View all responses' ) }
 					</a>
-				</div>
+				</>
 			);
 		}
 
