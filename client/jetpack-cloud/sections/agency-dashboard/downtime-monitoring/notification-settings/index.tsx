@@ -68,11 +68,12 @@ export default function NotificationSettings( { onClose, sites, settings }: Prop
 	}, [ settings?.monitor_deferment_time ] );
 
 	useEffect( () => {
-		if ( settings?.monitor_user_emails ) {
-			setAddedEmailAddresses( settings.monitor_user_emails );
-			setEnableEmailNotification( true );
+		if ( settings ) {
+			setAddedEmailAddresses( settings.monitor_user_emails || [] );
+			setEnableEmailNotification( !! settings.monitor_user_email_notifications );
+			setEnableMobileNotification( !! settings.monitor_user_wp_note_notifications );
 		}
-	}, [ settings?.monitor_user_emails ] );
+	}, [ settings ] );
 
 	useEffect( () => {
 		if ( enableMobileNotification || enableEmailNotification ) {
