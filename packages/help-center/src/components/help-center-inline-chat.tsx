@@ -16,6 +16,9 @@ theIframe.style.display = 'none';
 theIframe.style.position = 'fixed';
 theIframe.style.zIndex = '100000';
 
+// cache for a day
+const cacheBuster = Math.floor( Date.now() / 1000 / 60 / 60 / 24 );
+
 /**
  * This is a pretty novel way to keep the iframe state when the Help Center is closed.
  * It creates and appends an iframe into the body. And only set it's src when a chat is started.
@@ -97,7 +100,7 @@ const InlineChat: React.FC = () => {
 
 	return (
 		<PersistentIframe
-			src={ `https://widgets.wp.com/calypso-happychat/?session=${ session }&ref=${ ref }` }
+			src={ `https://widgets.wp.com/calypso-happychat/?session=${ session }&ref=${ ref }&accessTime=${ cacheBuster }` }
 		/>
 	);
 };
