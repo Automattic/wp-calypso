@@ -7,6 +7,7 @@ import { useDispatch as useReduxDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getSignupSelectedThemeSlug } from 'calypso/signup/storageUtils';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
@@ -24,24 +25,16 @@ import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import './style.scss';
 
 const PatternAssembler: Step = ( { navigation, flow } ) => {
-	const hardcodeDesign = {
+	const blankCanvasDesign = {
 		slug: 'blank-canvas-3',
 		title: 'Blank Canvas',
-		description:
-			'Blank Canvas is a barebones starter theme, stripped off of content templates but only a footer and a header.',
 		recipe: {
 			stylesheet: 'pub/blank-canvas-3',
 		},
 		verticalizable: false,
-		categories: [],
 		is_premium: false,
 		is_bundled_with_woo_commerce: false,
-		software_sets: [],
 		design_type: 'assembler',
-		style_variations: [],
-		features: [],
-		template: '',
-		theme: '',
 	};
 
 	const translate = useTranslate();
@@ -52,11 +45,12 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
 	const incrementIndexRef = useRef( 0 );
 	const [ activePosition, setActivePosition ] = useState( -1 );
-	const { goBack, goNext, submit } = navigation;
+	const { goBack, goNext, goToStep, submit } = navigation;
 	const { setThemeOnSite, runThemeSetupOnSite, createCustomTemplate } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+	const signupSelectedThemeSlug = getSignupSelectedThemeSlug();
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const site = useSite();
@@ -81,9 +75,11 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 	useEffect( () => {
 		// Require to start the flow from the first step
 		if ( ! selectedDesign ) {
-			// Should get the persisted theme param from signup
-			setSelectedDesign( hardcodeDesign as Design );
-			// goToStep?.( 'goals' );
+			if ( signupSelectedThemeSlug !== 'blank-canvas-3' ) {
+				goToStep?.( 'goals' );
+			}
+			// User has selected blank-canvas-3 theme from theme showcase
+			setSelectedDesign( blankCanvasDesign as Design );
 		}
 	}, [] );
 

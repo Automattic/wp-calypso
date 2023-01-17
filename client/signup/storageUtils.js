@@ -20,6 +20,10 @@ export const clearSignupDestinationCookie = () => {
 	document.cookie = cookie.serialize( 'wpcom_signup_complete_destination', '', options );
 };
 
+export const getSignupSelectedThemeSlug = () =>
+	sessionStorage.getItem( 'wpcom_signup_selected_theme_slug' );
+export const setSignupSelectedThemeSlug = ( value ) =>
+	sessionStorage.setItem( 'wpcom_signup_selected_theme_slug', value );
 export const getSignupCompleteSlug = () =>
 	sessionStorage.getItem( 'wpcom_signup_complete_site_slug' );
 export const setSignupCompleteSlug = ( value ) =>

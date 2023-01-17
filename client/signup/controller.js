@@ -26,6 +26,7 @@ import {
 	clearSignupDestinationCookie,
 	getSignupCompleteFlowName,
 	wasSignupCheckoutPageUnloaded,
+	setSignupSelectedThemeSlug,
 } from './storageUtils';
 import {
 	getStepUrl,
@@ -294,6 +295,11 @@ export default {
 		};
 		if ( ! isEmpty( additionalDependencies ) ) {
 			context.store.dispatch( updateDependencies( additionalDependencies ) );
+		}
+		if ( themeParameter ) {
+			setSignupSelectedThemeSlug( query.theme );
+		} else {
+			setSignupSelectedThemeSlug( null );
 		}
 
 		context.primary = createElement( SignupComponent, {
