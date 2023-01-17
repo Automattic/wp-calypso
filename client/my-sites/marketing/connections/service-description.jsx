@@ -180,6 +180,22 @@ class SharingServiceDescription extends Component {
 					comment: 'Embed GitHub Issues in P2 posts.',
 				} );
 			},
+			mastodon: function () {
+				if ( this.props.numberOfConnections > 0 ) {
+					return this.props.translate(
+						'Sharing posts to your Mastodon feed.',
+						'Sharing posts to your Mastodon feeds.',
+						{
+							count: this.props.numberOfConnections,
+							comment: 'Description for Mastodon Publicize when one or more accounts are connected',
+						}
+					);
+				}
+
+				return this.props.translate( 'Share posts to your Mastodon feed.', {
+					comment: 'Description for Mastodon Publicize when no accounts are connected',
+				} );
+			},
 		} ),
 		numberOfConnections: 0,
 	};
