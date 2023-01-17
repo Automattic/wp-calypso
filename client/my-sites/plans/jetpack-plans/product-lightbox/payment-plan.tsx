@@ -13,15 +13,15 @@ type PaymentPlanProps = {
 	isMultiSiteIncompatible?: boolean;
 	siteId: number | null;
 	product: SelectorProduct;
-	hideTitle?: boolean;
-	showBorder?: boolean;
+	showPlansOneBelowTheOther?: boolean;
+	isActive?: boolean;
 };
 const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 	isMultiSiteIncompatible,
 	siteId,
 	product,
-	hideTitle = false,
-	showBorder = false,
+	showPlansOneBelowTheOther = false,
+	isActive = true,
 } ) => {
 	const translate = useTranslate();
 	const { containerRef, isCompact } = useItemPriceCompact();
@@ -65,14 +65,13 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 				/>
 			) : (
 				<>
-					{ ! hideTitle && <p>{ translate( 'Payment plan:' ) }</p> }
+					{ ! showPlansOneBelowTheOther && <p>{ translate( 'Payment plan:' ) }</p> }
 
 					<div
-						className={
-							showBorder
-								? 'product-lightbox__variants-plan-card'
-								: 'product-lightbox__variants-plan-card noborder'
-						}
+						className={ classNames(
+							'product-lightbox__variants-plan-card',
+							! isActive && 'product-lightbox__variants-plan-card inactive'
+						) }
 					>
 						<div className={ labelClass } ref={ containerRef }>
 							<span className="product-lightbox__variants-plan-card-price">

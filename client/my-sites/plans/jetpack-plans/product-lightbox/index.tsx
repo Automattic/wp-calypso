@@ -219,8 +219,8 @@ const ProductLightbox: React.FC< Props > = ( {
 											isMultiSiteIncompatible={ isMultiSiteIncompatible }
 											siteId={ siteId }
 											product={ JETPACK_SOCIAL_BASIC_PRODUCT as SelectorProduct }
-											hideTitle={ true }
-											showBorder={
+											showPlansOneBelowTheOther={ true }
+											isActive={
 												product?.productSlug === JETPACK_SOCIAL_BASIC_PRODUCT?.productSlug
 											}
 										/>
@@ -233,8 +233,8 @@ const ProductLightbox: React.FC< Props > = ( {
 											isMultiSiteIncompatible={ isMultiSiteIncompatible }
 											siteId={ siteId }
 											product={ JETPACK_SOCIAL_ADVANCED_PRODUCT as SelectorProduct }
-											hideTitle={ true }
-											showBorder={
+											showPlansOneBelowTheOther={ true }
+											isActive={
 												product?.productSlug === JETPACK_SOCIAL_ADVANCED_PRODUCT?.productSlug
 											}
 										/>
