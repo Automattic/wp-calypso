@@ -25,7 +25,7 @@ export const GithubAuthorizeCard = () => {
 			</p>
 			<Button
 				className="is-primary"
-				href={ `https://public-api.wordpress.com/rest/v1.2/github-authorize-redirect?siteId=${ siteId }` }
+				href={ `https://public-api.wordpress.com/wpcom/v2/sites/${ siteId }/hosting/github-authorize` }
 			>
 				{ translate( 'Authorize' ) }
 			</Button>
