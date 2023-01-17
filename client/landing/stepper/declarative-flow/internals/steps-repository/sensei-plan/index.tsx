@@ -37,9 +37,9 @@ enum Status {
 	Error,
 }
 
-const siteProgressTitle: string = __( 'Laying out the foundations' );
-const cartProgressTitle: string = __( 'Preparing Your Bundle' );
-const styleProgressTitle: string = __( 'Applying your site styles' );
+const siteProgressTitle: string = __( 'Building your custom Sensei Bundle in the cart' );
+const cartProgressTitle: string = __( 'Applying the Bundle discounts (nice savings for you!)' );
+const styleProgressTitle: string = __( 'Double checking local currency pricing' );
 
 const getStyleVariations = ( siteId: number, stylesheet: string ): Promise< StyleVariation[] > =>
 	wpcomProxyRequest( {
