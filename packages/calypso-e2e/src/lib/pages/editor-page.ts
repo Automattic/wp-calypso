@@ -570,7 +570,7 @@ export class EditorPage {
 		// is merely being updated.
 		// If not yet published, a second click on the EditorPublishPanelComponent
 		// is added to the array of actions.
-		if ( publishButtonText.toLowerCase() === 'publish' ) {
+		if ( publishButtonText.toLowerCase() !== 'update' ) {
 			actionsArray.push( this.editorPublishPanelComponent.publish() );
 		}
 
@@ -628,6 +628,21 @@ export class EditorPage {
 		await this.editor.getByRole( 'button' ).getByText( 'OK' ).click();
 		// @TODO: eventually refactor this out to a EditorToastNotificationComponent.
 		await this.editor.getByRole( 'button', { name: 'Dismiss this notice' } ).waitFor();
+	}
+
+	/**
+	 * Obtains the published article's URL from the post-publish toast.
+	 *
+	 * This method is only able to obtain the published article's URL if the
+	 * post-publish toast is still visible on the page.
+	 *
+	 * @deprecated Please use the return value from `EditorPage.publish` where possible.
+	 * @returns {URL} Published article's URL.
+	 */
+	async getPublishedURLFromToast(): Promise< URL > {
+		const toastLocator = this.editor.locator( selectors.toastViewPostLink );
+		const publishedURL = ( await toastLocator.getAttribute( 'href' ) ) as string;
+		return new URL( publishedURL );
 	}
 
 	/**
