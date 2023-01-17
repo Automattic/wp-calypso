@@ -22,48 +22,27 @@
 	.dashboard-bulk-actions {
 		display: flex;
 		justify-content: end;
+
 		.select-dropdown.is-compact {
-			width: 70%;
+			width: 65%;
+
+			@include break-small {
+				width: auto;
+			}
 		}
 	}
+
+	.dashboard-bulk-actions__edit-button {
+		float: right;
+	}
+
 	.site-bulk-select__bulk-select-label {
 		margin-inline-start: 12px;
 	}
-}
 
-.edit-all__bulk-actions {
-	button {
-		border: 1px solid var(--studio-gray-80);
-		padding-inline-end: 10px;
-	}
-}
-
-.edit-all__bulk-actions-close {
-	text-align: end;
-	justify-content: flex-end;
-	float: right;
-}
-
-button.edit-all__bulk-actions-close {
-	border: none;
-	padding: 4px 8px 4px 10px;
-	&:hover {
-		background-color: transparent;
-	}
-}
-
-th.edit-all-buttons {
-	text-align: end;
-}
-
-.site-bulk-edit-menu-container {
-	background-color: #fff;
-	text-align: end;
-	&.card {
-		padding: 10px;
-	}
-	& .select-dropdown__container {
-		display: inline-block;
+	.site-content__bulk-select-label {
+		color: var(--color-neutral-70);
+		font-size: 0.875rem;
 	}
 }
 
@@ -75,33 +54,4 @@ th.edit-all-buttons {
 
 .select-dropdown__item-text {
 	text-align: start;
-}
-
-button.button.dashboard-list-header__bulk-action-buttons.is-compact {
-	margin-block-start: 4px;
-}
-
-button.button.dashboard-list-header__bulk-action-buttons.is-compact:active {
-	background: var(--color-accent-5);
-	border-color: var(--color-accent-40);
-	border-width: 1px;
-}
-// Bulk Edit Menu
-.dashboard-list-header {
-	height: 60px;
-	margin-block-start: 8px;
-	.button-group {
-		margin-inline-start: 14px;
-		.button {
-			&:first-child {
-				border-top-left-radius: 4px;
-				border-bottom-left-radius: 4px;
-			}
-			&:last-child {
-				border-top-right-radius: 4px;
-				border-bottom-right-radius: 4px;
-			}
-			white-space: nowrap;
-		}
-	}
 }

@@ -1,8 +1,10 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Icon, starFilled } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useContext } from 'react';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import './style.scss';
+import EditButton from '../../dashboard-bulk-actions/edit-button';
 import SitesOverviewContext from '../context';
 import SiteBulkSelect from '../site-bulk-select';
 import SiteTableRow from '../site-table-row';
@@ -10,7 +12,6 @@ import type { SiteData, SiteColumns } from '../types';
 
 interface Props {
 	isLoading: boolean;
-	isSmallScreen?: boolean;
 	columns: SiteColumns;
 	items: Array< SiteData >;
 }
@@ -39,7 +40,15 @@ export default function SiteTable( { isLoading, columns, items }: Props ) {
 									</span>
 								</th>
 							) ) }
-							<th></th>
+							{ isEnabled( 'jetpack/partner-portal-downtime-monitoring-updates' ) ? (
+								<th>
+									<div className="plugin-common-table__bulk-actions">
+										<EditButton sites={ items } />
+									</div>
+								</th>
+							) : (
+								<th></th>
+							) }
 						</>
 					) }
 				</tr>
