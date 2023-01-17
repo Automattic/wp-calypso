@@ -12,6 +12,12 @@
 		height: 24px;
 		box-shadow: none;
 	}
+
+	&__storage-full-icon {
+		color: var(--studio-red-50);
+		margin-right: 4px;
+		vertical-align: middle;
+	}
 }
 
 .backup-storage-space__progress-bar-container {
@@ -88,16 +94,12 @@
 .backup-storage-space__progress-heading {
 	margin-block-end: 24px;
 	white-space: nowrap;
-
+	line-height: 1;
 	font-weight: 600;
 	font-size: $font-title-small;
 
 	span {
 		vertical-align: middle;
-	}
-
-	.gridicons-info-outline {
-		color: var(--studio-gray-60);
 	}
 }
 
@@ -107,6 +109,7 @@
 	display: flex;
 	font-size: $font-body-small;
 	font-weight: 400;
+	line-height: 20px;
 
 	a {
 		text-decoration: underline;
@@ -114,6 +117,10 @@
 }
 
 .backup-storage-space__progress-storage-usage-text {
+	&.is-storage-full {
+		color: var(--studio-red-50);
+	}
+
 	.used-space__span {
 		font-weight: 700;
 	}
@@ -123,16 +130,19 @@
 	margin-left: auto;
 }
 
-.backup-storage-space-help-text__tooltip {
-	padding: 10px;
-	max-width: 200px;
-}
-
 .storage-usage-help-tooltip {
 
 	&__tooltip.popover {
 		&.is-right .popover__arrow {
 			border-right-color: #fff;
+		}
+
+		&.is-top-right .popover__arrow {
+			border-top-color: #fff;
+		}
+
+		&.is-bottom-right .popover__arrow {
+			border-bottom-color: #fff;
 		}
 
 		.popover__inner {
@@ -165,14 +175,15 @@
 	}
 
 	&__toggle-tooltip {
-		margin-right: 8px;
 		vertical-align: middle;
 
 		&.button {
 			padding: 0;
+			height: 20px;
 
 			.gridicon {
-				top: 4px;
+				top: 0;
+				color: var(--studio-gray-60);
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-import { ProgressBar } from '@automattic/components';
+import { Gridicon, ProgressBar } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
@@ -50,6 +50,9 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 			} ) }
 		>
 			<div className="backup-storage-space__progress-heading">
+				<span hidden={ StorageUsageLevels.Full !== usageLevel }>
+					<Gridicon className="backup-storage-space__storage-full-icon" icon="notice" size={ 24 } />
+				</span>
 				<span>{ translate( 'Cloud storage space' ) } </span>
 				<StorageHelpTooltip
 					className="backup-storage-space__help-tooltip"
@@ -64,8 +67,12 @@ const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) =
 				/>
 			</div>
 			<div className="backup-storage-space__progress-usage-container">
-				<div className="backup-storage-space__progress-storage-usage-text">
-					{ loading ? loadingText : storageUsageText }{ ' ' }
+				<div
+					className={ classnames( 'backup-storage-space__progress-storage-usage-text', {
+						'is-storage-full': StorageUsageLevels.Full === usageLevel,
+					} ) }
+				>
+					{ loading ? loadingText : storageUsageText }
 				</div>
 				<div className="backup-storage-space__progress-backups-saved-text">
 					{ ! loading && daysOfBackupsSavedText }
