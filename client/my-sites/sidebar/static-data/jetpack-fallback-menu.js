@@ -190,7 +190,7 @@ export default function jetpackMenu( { siteDomain } ) {
 					slug: 'tools-export',
 					title: translate( 'Export' ),
 					type: 'submenu-item',
-					url: `https://${ siteDomain }/wp-admin/import.php?calypsoify=0`,
+					url: `https://${ siteDomain }/wp-admin/export.php?calypsoify=0`,
 				},
 			],
 		},
