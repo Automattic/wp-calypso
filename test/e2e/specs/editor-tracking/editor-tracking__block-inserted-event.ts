@@ -280,7 +280,7 @@ describe(
 							matchingProperties: {
 								block_name: 'core/page-list',
 								entity_context: 'core/template-part',
-								template_part_id: `pub/blockbase//${ templatePartName.toLowerCase() }`,
+								template_part_id: `pub/twentytwentytwo//${ templatePartName.toLowerCase() }`,
 							},
 						}
 					);
