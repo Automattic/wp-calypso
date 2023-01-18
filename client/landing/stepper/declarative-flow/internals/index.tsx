@@ -8,8 +8,10 @@ import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from '
 import DocumentHead from 'calypso/components/data/document-head';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
+import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import SignupHeader from 'calypso/signup/signup-header';
+import { recordSignupStart } from '../../../../lib/analytics/signup';
 import { ONBOARD_STORE } from '../../stores';
 import recordStepStart from './analytics/record-step-start';
 import VideoPressIntroBackground from './steps-repository/intro/videopress-intro-background';
@@ -74,6 +76,14 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	useEffect( () => {
 		window.scrollTo( 0, 0 );
 	}, [ location ] );
+
+	useEffect( () => {
+		if ( flow && stepProgress !== undefined && stepProgress?.progress === 0 ) {
+			const ref = new URLSearchParams( window.location.search ).get( 'ref' ) || '';
+			recordSignupStart( flow.name, ref );
+			recordFullStoryEvent( `calypso_signup_start_${ flow.name }`, { flow: flow.name } );
+		}
+	}, [ flow, stepProgress ] );
 
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
