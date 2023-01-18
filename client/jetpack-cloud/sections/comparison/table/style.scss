@@ -18,6 +18,36 @@
 		gap: 1rem;
 		align-items: center;
 
+		.item-price {
+			margin: 0.5rem 0;
+
+			.display-price:not(.is-placeholder) {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				max-height: 2rem;
+
+				.display-price__details,
+				.display-price__billing-time-frame {
+					line-height: 0.5;
+				}
+
+				.display-price__prices {
+					.plan-price__currency-symbol,
+					.plan-price__integer,
+					.plan-price__fraction {
+						font-size: 1.5rem;
+					}
+				}
+			}
+		}
+
+		@media (max-width: $break-medium) {
+			.item-price > .display-price:not(.is-placeholder) {
+				align-items: flex-start;
+			}
+		}
+
 		@media (max-width: $break-large) {
 			align-items: normal;
 		}
@@ -39,6 +69,19 @@
 			font-size: 1rem;
 			white-space: nowrap;
 			margin-bottom: -0.5rem;
+		}
+
+		&--cta-mobile {
+			display: none;
+		}
+
+		@media (max-width: $break-medium) {
+			&--cta-mobile {
+				display: initial;
+			}
+			&--cta-desktop {
+				display: none;
+			}
 		}
 	}
 
@@ -75,6 +118,7 @@
 			font-weight: normal;
 			padding: 0.5em;
 			text-align: center;
+			white-space: nowrap;
 
 			&:nth-of-type(1) {
 				border-bottom: none;
