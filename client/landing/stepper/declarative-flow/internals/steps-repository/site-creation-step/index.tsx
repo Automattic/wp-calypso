@@ -63,6 +63,8 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 	}
 	const isPaidDomainItem = Boolean( domainCartItem?.product_slug );
 
+	const { setProgress } = useDispatch( ONBOARD_STORE );
+
 	// Default visibility is public
 	let siteVisibility = Site.Visibility.PublicIndexed;
 
@@ -123,6 +125,10 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 	}
 
 	useEffect( () => {
+		if ( isWooExpressFlow( flow ) ) {
+			setProgress( 0.2 );
+		}
+
 		if ( isMigrationFlow( flow ) ) {
 			setIsMigrateFromWp( true );
 		}

@@ -4,11 +4,13 @@ import {
 	isLinkInBioFlow,
 	isFreeFlow,
 	ECOMMERCE_FLOW,
+	isWooExpressFlow,
 } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import { LoadingBar } from 'calypso/components/loading-bar';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -94,31 +96,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ hasActionSuccessfullyRun ] );
 
-	// Progress smoothing, works out to be around 40seconds unless step polling dictates otherwise
-	const [ simulatedProgress, setSimulatedProgress ] = useState( 0 );
-
-	useEffect( () => {
-		let timeoutReference: NodeJS.Timeout;
-		if ( progress >= 0 ) {
-			timeoutReference = setTimeout( () => {
-				if ( progress > simulatedProgress || progress === 1 ) {
-					setSimulatedProgress( progress );
-				} else if ( simulatedProgress < 1 ) {
-					setSimulatedProgress( ( previousProgress ) => {
-						let newProgress = previousProgress + Math.random() * 0.04;
-						// Stall at 95%, allow complete to finish up
-						if ( newProgress >= 0.95 ) {
-							newProgress = 0.95;
-						}
-						return newProgress;
-					} );
-				}
-			}, 1000 );
-		}
-
-		return () => clearTimeout( timeoutReference );
-	}, [ simulatedProgress, progress, __ ] );
-
 	const flowName = props.flow || '';
 	const isJetpackPowered = isNewsletterOrLinkInBioFlow( flowName );
 	const isWooCommercePowered = flowName === ECOMMERCE_FLOW;
@@ -140,17 +117,11 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 					<>
 						<div className="processing-step">
 							<h1 className="processing-step__progress-step">{ getCurrentMessage() }</h1>
-							{ progress >= 0 ? (
-								<div className="processing-step__content woocommerce-install__content">
-									<div
-										className="processing-step__progress-bar"
-										style={
-											{
-												'--progress': simulatedProgress > 1 ? 1 : simulatedProgress,
-											} as React.CSSProperties
-										}
-									/>
-								</div>
+							{ progress >= 0 || isWooExpressFlow( flow ) ? (
+								<LoadingBar
+									progress={ progress }
+									className="processing-step__content woocommerce-install__content"
+								/>
 							) : (
 								<LoadingEllipsis />
 							) }
