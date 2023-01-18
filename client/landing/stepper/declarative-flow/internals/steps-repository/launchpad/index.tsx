@@ -1,4 +1,5 @@
 import { StepContainer } from '@automattic/onboarding';
+import { useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,12 +8,14 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { useQuery } from '../../../../hooks/use-query';
 import StepContent from './step-content';
 import type { Step } from '../../types';
+
 import './style.scss';
 
 type LaunchpadProps = {
@@ -30,11 +33,13 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const dispatch = useDispatch();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
+	const fetchingSiteError = useSelect( ( select ) => select( SITE_STORE ).getFetchingSiteError() );
+
 	if ( ! isLoggedIn ) {
 		window.location.replace( `/home/${ siteSlug }` );
 	}
 
-	if ( ! siteSlug ) {
+	if ( ! siteSlug || fetchingSiteError?.error === 'unknown_blog' ) {
 		window.location.replace( '/home' );
 	}
 
