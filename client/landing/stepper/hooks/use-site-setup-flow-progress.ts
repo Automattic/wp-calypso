@@ -76,7 +76,7 @@ export function useSiteSetupFlowProgress( currentStep: string, intent: string, s
 						break;
 					case 'wooConfirm':
 					case 'wooInstallPlugins':
-						middleProgress = { progress: 5, count: 8 };
+						middleProgress = { progress: 6, count: 8 };
 						break;
 					case 'wooTransfer':
 					case 'editEmail':
