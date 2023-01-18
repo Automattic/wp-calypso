@@ -4,6 +4,7 @@ import { StorageUsageLevelName, StorageUsageLevels } from '../storage-usage-leve
 
 const useStorageStatusText = (
 	usageLevel: StorageUsageLevelName,
+	daysOfBackupsSaved: number,
 	minDaysOfBackupsAllowed: number
 ): TranslateResult | null => {
 	const translate = useTranslate();
@@ -22,9 +23,9 @@ const useStorageStatusText = (
 				);
 			case StorageUsageLevels.Full:
 				return translate(
-					'You have reached your storage limit with %(minDaysOfBackupsAllowed)d days of backups saved. Backups have been stopped. Please upgrade your storage to resume backups.',
+					'You have reached your storage limit with %(daysOfBackupsSaved)d days of backups saved. Backups have been stopped. Please upgrade your storage to resume backups.',
 					{
-						args: { minDaysOfBackupsAllowed },
+						args: { daysOfBackupsSaved },
 					}
 				);
 			case StorageUsageLevels.BackupsDiscarded:

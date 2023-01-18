@@ -16,6 +16,7 @@ type UpsellProps = {
 	bytesUsed: number;
 	usageLevel: StorageUsageLevelName;
 	siteId: number;
+	daysOfBackupsSaved: number;
 	minDaysOfBackupsAllowed: number;
 };
 
@@ -49,6 +50,7 @@ const UsageWarningUpsell: React.FC< UpsellProps > = ( {
 	bytesUsed,
 	usageLevel,
 	siteId,
+	daysOfBackupsSaved,
 	minDaysOfBackupsAllowed,
 } ) => {
 	const dispatch = useDispatch();
@@ -84,6 +86,7 @@ const UsageWarningUpsell: React.FC< UpsellProps > = ( {
 			onClick={ onClick }
 			price={ price }
 			storage={ upsellSlug.storage }
+			daysOfBackupsSaved={ daysOfBackupsSaved }
 			minDaysOfBackupsAllowed={ minDaysOfBackupsAllowed }
 		/>
 	);

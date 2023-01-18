@@ -11,6 +11,7 @@ import {
 	getActivityLogVisibleDays,
 	getRewindMinimumDaysOfBackupsAllowed,
 	getRewindDaysOfBackupsAllowed,
+	getRewindDaysOfBackupsSaved,
 } from 'calypso/state/rewind/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
@@ -30,6 +31,8 @@ const BackupStorageSpace: React.FC = () => {
 	const bytesAvailable = useSelector( ( state ) => getRewindBytesAvailable( state, siteId ) );
 	const planRetentionDays =
 		useSelector( ( state ) => getActivityLogVisibleDays( state, siteId ) ) || 0;
+	const daysOfBackupsSaved =
+		useSelector( ( state ) => getRewindDaysOfBackupsSaved( state, siteId ) ) || 0;
 	const minDaysOfBackupsAllowed =
 		useSelector( ( state ) => getRewindMinimumDaysOfBackupsAllowed( state, siteId ) ) || 0;
 	const daysOfBackupsAllowed =
@@ -62,6 +65,7 @@ const BackupStorageSpace: React.FC = () => {
 					usageLevel={ usageLevel }
 					bytesUsed={ bytesUsed as number }
 					siteId={ siteId }
+					daysOfBackupsSaved={ daysOfBackupsSaved }
 					minDaysOfBackupsAllowed={ minDaysOfBackupsAllowed }
 				/>
 			) }
