@@ -60,7 +60,7 @@ export default function NotificationSettings( {
 			email_notifications: enableEmailNotification,
 			jetmon_defer_status_down_minutes: selectedDuration?.time,
 		};
-		recordEvent( 'notification_save_click' );
+		recordEvent( 'notification_save_click', params );
 		updateMonitorSettings( params );
 	}
 
