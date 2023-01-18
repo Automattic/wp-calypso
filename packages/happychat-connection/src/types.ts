@@ -59,6 +59,7 @@ export interface HappychatAuth {
 	url: string | Socket;
 	user: {
 		jwt: string;
+		zendesk_jwt: string;
 	} & HappychatUser;
 	fullUser: User;
 }
