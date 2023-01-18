@@ -54,9 +54,13 @@ export const buildChartData = memoizeLast(
 			const recordClassName =
 				record.classNames && record.classNames.length ? record.classNames.join( ' ' ) : null;
 
-			const className = classNames( recordClassName, {
-				'is-selected': checkIsSelected( record, queryDate, queryHour ),
-			} );
+			const className = ( () => {
+				if ( 'hour' !== period ) {
+					return classNames( recordClassName, {
+						'is-selected': checkIsSelected( record, queryDate, queryHour ),
+					} );
+				}
+			} )();
 
 			return addTooltipData(
 				chartTab,
