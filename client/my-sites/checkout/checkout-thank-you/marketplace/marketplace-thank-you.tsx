@@ -263,7 +263,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			{
 				stepIcon: <Icon icon={ table } size={ 20 } />,
 				stepKey: 'thank_you_footer_support',
-				stepTitle: translate( 'How can we support?' ),
+				stepTitle: translate( 'How can we support you?' ),
 				stepDescription: translate(
 					'Our team is here if you need help, or if you have any questions.'
 				),
