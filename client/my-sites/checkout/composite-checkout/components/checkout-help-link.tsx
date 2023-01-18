@@ -175,7 +175,7 @@ export default function CheckoutHelpLink() {
 		);
 	};
 
-	const zendeskPresalesChatKey: string | false = config( 'zendesk_presales_chat_key' );
+	const zendeskPresalesChatKey: string | false = '2557984c-0291-4d3a-93a8-3be4035d9010'; //config( 'zendesk_presales_chat_key' );
 	const isPresalesZendeskChatEligible =
 		presalesZendeskChatAvailable && isEnglishLocale && zendeskPresalesChatKey;
 
