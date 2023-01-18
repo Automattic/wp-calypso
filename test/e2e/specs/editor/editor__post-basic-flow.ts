@@ -34,11 +34,10 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 	beforeAll( async () => {
 		page = await browser.newPage();
+		editorPage = new EditorPage( page, { target: features.siteType } );
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
-
-		editorPage = new EditorPage( page, { target: features.siteType, blockTheme: false } );
 	} );
 
 	it( 'Go to the new post page', async function () {
