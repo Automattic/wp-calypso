@@ -193,16 +193,18 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	if ( ! hasAtomicFeature || ! isSiteOwner || ! plan ) {
 		return null;
 	}
-	const onClick = () => {
-		setPlanCartItem( { product_slug: plan.product_slug } );
-		recordTracks( 'calypso_sites_dashboard_site_action_copy_site' );
-	};
 
 	const copySiteHref = addQueryArgs( `/setup/copy-site`, {
 		sourceSlug: site.slug,
 	} );
 	return (
-		<MenuItemLink href={ copySiteHref } onClick={ onClick }>
+		<MenuItemLink
+			href={ copySiteHref }
+			onClick={ () => {
+				setPlanCartItem( { product_slug: plan.product_slug } );
+				recordTracks( 'calypso_sites_dashboard_site_action_copy_site_click' );
+			} }
+		>
 			{ __( 'Copy site' ) }
 		</MenuItemLink>
 	);
