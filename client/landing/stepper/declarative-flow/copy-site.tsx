@@ -15,6 +15,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import AutomatedCopySite from './internals/steps-repository/automated-copy-site';
+import DomainsStep from './internals/steps-repository/domains';
 import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
@@ -40,6 +41,7 @@ const copySite: Flow = {
 		}
 
 		return [
+			{ slug: 'domains', component: DomainsStep },
 			{ slug: 'site-creation-step', component: SiteCreationStep },
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'automated-copy', component: AutomatedCopySite },
@@ -61,6 +63,7 @@ const copySite: Flow = {
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+
 		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
 		const urlQueryParams = useQuery();
 
@@ -73,6 +76,10 @@ const copySite: Flow = {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
 
 			switch ( _currentStepSlug ) {
+				case 'domains': {
+					return navigate( 'site-creation-step' );
+				}
+
 				case 'site-creation-step': {
 					return navigate( 'processing' );
 				}
