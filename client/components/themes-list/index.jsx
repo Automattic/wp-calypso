@@ -1,16 +1,15 @@
-import { FEATURE_INSTALL_THEMES, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { useViewportMatch } from '@wordpress/compose';
+import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { useCallback, useEffect, useMemo } from 'react';
 import { connect, useSelector } from 'react-redux';
-import proThemesBanner from 'calypso/assets/images/themes/pro-themes-banner.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { upsellCardDisplayed as upsellCardDisplayedAction } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
@@ -29,10 +28,23 @@ export const ThemesList = ( props ) => {
 		[ props.fetchNextPage ]
 	);
 
+	const matchingWpOrgThemes = useMemo(
+		() =>
+			props.wpOrgThemes?.filter(
+				( wpOrgTheme ) =>
+					wpOrgTheme?.name?.toLowerCase() === props.searchTerm.toLowerCase() ||
+					wpOrgTheme?.id?.toLowerCase() === props.searchTerm.toLowerCase()
+			) || [],
+		[ props.wpOrgThemes, props.searchTerm ]
+	);
+
 	if ( ! props.loading && props.themes.length === 0 ) {
+		if ( matchingWpOrgThemes.length ) {
+			return <WPOrgMatchingThemes matchingThemes={ matchingWpOrgThemes } { ...props } />;
+		}
+
 		return (
 			<Empty
-				emptyContent={ props.emptyContent }
 				searchTerm={ props.searchTerm }
 				translate={ props.translate }
 				recordTracksEvent={ props.recordTracksEvent }
@@ -59,7 +71,6 @@ export const ThemesList = ( props ) => {
 ThemesList.propTypes = {
 	themes: PropTypes.array.isRequired,
 	wpOrgThemes: PropTypes.array,
-	emptyContent: PropTypes.element,
 	loading: PropTypes.bool.isRequired,
 	recordTracksEvent: PropTypes.func.isRequired,
 	fetchNextPage: PropTypes.func.isRequired,
@@ -131,24 +142,16 @@ function ThemeBlock( props ) {
 }
 
 function Empty( props ) {
-	const { wpOrgThemes, emptyContent, searchTerm, upsellCardDisplayed, translate } = props;
+	const { upsellCardDisplayed, translate } = props;
 	const selectedSite = useSelector( getSelectedSite );
-	const shouldUpgradeToInstallThemes = useSelector(
-		( state ) => ! siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_THEMES )
+	const canInstallTheme = useSelector( ( state ) =>
+		siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_THEMES )
 	);
+	const canGoToPatternAssembler = useViewportMatch( 'large' );
 
-	const matchingThemes = useMemo(
-		() =>
-			wpOrgThemes?.filter(
-				( wpOrgTheme ) =>
-					wpOrgTheme?.name?.toLowerCase() === searchTerm.toLowerCase() ||
-					wpOrgTheme?.id?.toLowerCase() === searchTerm.toLowerCase()
-			) || [],
-		[ wpOrgThemes, searchTerm ]
-	);
-
+	// Prevents the Upwork upsell from being visible, so it doesn't conflict with the actions below.
 	useEffect( () => {
-		if ( shouldUpgradeToInstallThemes && ! emptyContent ) {
+		if ( selectedSite ) {
 			upsellCardDisplayed( true );
 		} else {
 			upsellCardDisplayed( false );
@@ -156,45 +159,117 @@ function Empty( props ) {
 		return () => {
 			upsellCardDisplayed( false );
 		};
-	}, [ emptyContent, shouldUpgradeToInstallThemes, upsellCardDisplayed ] );
+	}, [ selectedSite, upsellCardDisplayed ] );
 
-	if ( emptyContent ) {
-		return emptyContent;
+	if ( ! selectedSite ) {
+		return (
+			<EmptyContent
+				title={ translate( 'Sorry, no themes found.' ) }
+				line={ translate( 'Try a different search or more filters?' ) }
+			/>
+		);
 	}
 
-	return shouldUpgradeToInstallThemes ? (
-		<div className="themes-list__empty-container">
-			{ matchingThemes.length ? (
-				<WPOrgMatchingThemes
-					matchingThemes={ matchingThemes }
-					selectedSite={ selectedSite }
-					{ ...props }
-				/>
-			) : (
-				<>
-					<div className="themes-list__not-found-text">
-						{ translate( 'No themes match your search' ) }
-					</div>
-					<PlanUpgradeCTA
-						selectedSite={ selectedSite }
-						searchTerm={ searchTerm }
-						translate={ translate }
-						recordTracksEvent={ props.recordTracksEvent }
+	return (
+		<div className="themes-list__empty-search">
+			<div className="themes-list__empty-search-text">
+				{ translate( 'No themes match your search' ) }
+			</div>
+			<div className="themes-list__empty-search-actions">
+				<div className="themes-list__empty-search-heading">
+					{ translate( "Can't find what you're looking for?" ) }
+				</div>
+				<div className="themes-list__empty-search-subheading">
+					{ translate( 'Here are a few more options' ) }
+				</div>
+				<div className="themes-list__empty-search-action">
+					<Icon
+						className="themes-list__empty-search-action-icon"
+						icon={ addTemplate }
+						size={ 28 }
 					/>
-				</>
-			) }
+					<div className="themes-list__empty-search-action-content">
+						<div className="themes-list__empty-search-action-text">
+							<div className="themes-list__empty-search-action-title">
+								{ translate( 'Create your own theme from scratch' ) }
+							</div>
+							<div className="themes-list__empty-search-action-description">
+								{ canGoToPatternAssembler
+									? translate(
+											'Start with a blank canvas and design your own homepage using our library of patterns.'
+									  )
+									: translate(
+											'Jump right into the editor to design your homepage from scratch.'
+									  ) }
+							</div>
+						</div>
+						<Button
+							primary
+							className="themes-list__empty-search-action-button"
+							href={
+								canGoToPatternAssembler
+									? `/setup/site-setup/patternAssembler?siteSlug=${ selectedSite.slug }&backTo=/themes/${ selectedSite.slug }`
+									: `/site-editor/${ selectedSite.slug }`
+							}
+						>
+							{ canGoToPatternAssembler
+								? translate( 'Start designing' )
+								: translate( 'Open the editor' ) }
+						</Button>
+					</div>
+				</div>
+				<div className="themes-list__empty-search-action">
+					<Icon className="themes-list__empty-search-action-icon" icon={ brush } size={ 28 } />
+					<div className="themes-list__empty-search-action-content">
+						<div className="themes-list__empty-search-action-text">
+							<div className="themes-list__empty-search-action-title">
+								{ translate( 'Hire our team of experts to design one for you' ) }
+							</div>
+							<div className="themes-list__empty-search-action-description">
+								{ translate(
+									'A WordPress.com professional will create layouts for up to 5 pages of your site.'
+								) }
+							</div>
+						</div>
+						<Button
+							className="themes-list__empty-search-action-button"
+							href="https://wordpress.com/do-it-for-me/"
+						>
+							{ translate( 'Hire an expert' ) }
+						</Button>
+					</div>
+				</div>
+				<div className="themes-list__empty-search-action">
+					<Icon
+						className="themes-list__empty-search-action-icon"
+						icon={ cloudUpload }
+						size={ 28 }
+					/>
+					<div className="themes-list__empty-search-action-content">
+						<div className="themes-list__empty-search-action-text">
+							<div className="themes-list__empty-search-action-title">
+								{ translate( 'Upload your theme' ) }
+							</div>
+							<div className="themes-list__empty-search-action-description">
+								{ canInstallTheme
+									? translate(
+											'You can upload third-party themes to your site, including themes from WordPress.org, and even themes you have custom-made for your website.'
+									  )
+									: translate(
+											'Upgrade your plan to unlock the ability to upload and install your own theme.'
+									  ) }
+							</div>
+						</div>
+						<Button
+							className="themes-list__empty-search-action-button"
+							href={ `/themes/upload/${ selectedSite.slug }` }
+						>
+							{ translate( 'Upload theme' ) }
+						</Button>
+					</div>
+				</div>
+			</div>
 		</div>
-	) : (
-		<>
-			{ matchingThemes.length ? (
-				<WPOrgMatchingThemes matchingThemes={ matchingThemes } { ...props } />
-			) : (
-				<EmptyContent
-					title={ translate( 'Sorry, no themes found.' ) }
-					line={ translate( 'Try a different search or more filters?' ) }
-				/>
-			) }
-		</>
 	);
 }
 
@@ -225,65 +300,6 @@ function WPOrgMatchingThemes( props ) {
 				</div>
 			) ) }
 			<TrailingItems />
-		</div>
-	);
-}
-
-function PlanUpgradeCTA( { selectedSite, searchTerm, translate, recordTracksEvent } ) {
-	const isLoggedIn = useSelector( isUserLoggedIn );
-
-	const onUpgradeClick = useCallback( () => {
-		recordTracksEvent( 'calypso_themeshowcase_search_empty_results_upgrade_plan', {
-			site_plan: selectedSite?.plan?.product_slug,
-			search_term: searchTerm,
-		} );
-
-		if ( ! selectedSite?.slug ) {
-			return page( `/checkout/${ PLAN_BUSINESS }?redirect_to=/themes` );
-		}
-
-		return page(
-			`/checkout/${ selectedSite.slug }/${ PLAN_BUSINESS }?redirect_to=/themes/${ selectedSite.slug }`
-		);
-	}, [ selectedSite, searchTerm, recordTracksEvent ] );
-
-	const onGetStartedClick = useCallback( () => {
-		recordTracksEvent( 'calypso_themeshowcase_search_empty_results_get_started', {
-			search_term: searchTerm,
-		} );
-
-		return page( `/start/business` );
-	}, [ searchTerm, recordTracksEvent ] );
-
-	return (
-		<div className="themes-list__upgrade-section-wrapper">
-			<div className="themes-list__upgrade-section-title">
-				{ translate( 'Use any theme on WordPress.com' ) }
-			</div>
-			<div className="themes-list__upgrade-section-subtitle">
-				{ translate(
-					'Have a theme in mind that we don’t show here? Unlock the ability to use any theme, including Astra, with a Business plan.'
-				) }
-			</div>
-
-			{ isLoggedIn ? (
-				<Button primary className="themes-list__upgrade-section-cta" onClick={ onUpgradeClick }>
-					{ translate( 'Upgrade your plan' ) }
-				</Button>
-			) : (
-				<Button primary className="themes-list__upgrade-section-cta" onClick={ onGetStartedClick }>
-					{ translate( 'Get started' ) }
-				</Button>
-			) }
-
-			<div className="themes-list__themes-images">
-				<img
-					src={ proThemesBanner }
-					alt={ translate(
-						'Themes banner featuring Astra, Neve, GeneratePress, and Hestia theme'
-					) }
-				/>
-			</div>
 		</div>
 	);
 }

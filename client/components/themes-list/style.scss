@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .themes-list {
 	display: flex;
 	flex-flow: row wrap;
@@ -18,12 +21,111 @@
 	flex-grow: 1;
 }
 
-.themes-list__empty-container {
-	.themes-list__not-found-text {
+.themes-list__empty-search {
+	.themes-list__empty-search-text {
 		color: var(--studio-gray-60);
 		margin-top: 48px;
 		margin-bottom: 32px;
 	}
+
+	.themes-list__empty-search-actions {
+		background-color: var(--studio-white);
+		border-radius: 4px;
+		padding: 20px;
+		border: 1px solid var(--studio-gray-5);
+		text-align: center;
+
+		@include break-small {
+			padding: 40px;
+		}
+	}
+
+	.themes-list__empty-search-heading {
+		font-size: 1.25rem;
+		font-weight: 500;
+		margin-bottom: 12px;
+	}
+
+	.themes-list__empty-search-subheading {
+		color: var(--studio-gray-60);
+		margin-bottom: 20px;
+
+		@include break-small {
+			margin-bottom: 60px;
+		}
+	}
+
+	.themes-list__empty-search-action {
+		display: block;
+		margin: 20px auto;
+		width: 100%;
+
+		@include break-small {
+			display: flex;
+			max-width: 600px;
+			margin-top: 40px;
+			margin-bottom: 40px;
+		}
+	}
+
+	.themes-list__empty-search-action-icon {
+		display: none;
+		margin-right: 16px;
+
+		@include break-small {
+			display: block;
+		}
+	}
+
+	.themes-list__empty-search-action-content {
+		display: flex;
+		border-bottom: 1px solid var(--studio-gray-5);
+		padding-bottom: 20px;
+
+		@include break-small {
+			padding-bottom: 40px;
+		}
+	}
+
+	.themes-list__empty-search-action-text {
+		text-align: left;
+	}
+
+	.themes-list__empty-search-action-button {
+		white-space: nowrap;
+		height: fit-content;
+		overflow: visible;
+		align-self: center;
+		display: inline-block;
+		margin-left: 16px;
+	}
+
+	.themes-list__empty-search-action-title {
+		font-weight: 500;
+		margin-bottom: 8px;
+	}
+
+	.themes-list__empty-search-action-description {
+		color: var(--studio-gray-60);
+		font-size: 0.875rem;
+	}
+
+	.themes-list__empty-search-action:last-child {
+		margin-bottom: 0;
+
+		.themes-list__empty-search-action-content {
+			border-bottom: none;
+			padding-bottom: 0;
+
+			@include break-small {
+				padding-bottom: 20px;
+			}
+		}
+	}
+}
+
+.themes-list__empty-container {
+
 
 	.themes-list__upgrade-section-wrapper {
 		display: flex;
