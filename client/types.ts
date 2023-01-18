@@ -25,7 +25,7 @@ export interface Theme {
 	cost: ThemeCost;
 	date_launched: string;
 	date_updated: string;
-	demo_uri: string;
+	demo_uri?: string;
 	description: string;
 	descriptionLong: string;
 	download: string;

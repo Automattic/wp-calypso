@@ -15,7 +15,7 @@ const themesSchema = {
 				author_uri: { type: 'string' },
 				autoupdate: { type: 'boolean' },
 				autoupdate_translation: { type: 'boolean' },
-				demo_uri: { type: 'string' },
+				demo_uri: { type: 'string', required: false },
 				description: { type: 'string' },
 				id: { type: 'string' },
 				name: { type: 'string' },
