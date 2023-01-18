@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import NoResponsesIcon from './no-responses-icon';
 import './style.scss';
 
 const PromptsNavigation = ( { prompts } ) => {
@@ -98,7 +99,7 @@ const PromptsNavigation = ( { prompts } ) => {
 		const prompt = getPrompt();
 		let responses = (
 			<div className="blogging-prompt__prompt-no-response">
-				<Gridicon icon="star-outline" size={ 16 } />
+				<NoResponsesIcon />
 				{ translate( 'Be the first to respond' ) }
 			</div>
 		);

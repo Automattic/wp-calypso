@@ -56,10 +56,11 @@
 		gap: 10px;
 		margin-top: 30px;
 		width: 100%;
-		justify-content: space-between;
 
 		.blogging-prompt__prompt-responses {
+			align-items: center;
 			display: flex;
+			flex: 1;
 			gap: 10px;
 		}
 		.blogging-prompt__prompt-responses img {
@@ -85,8 +86,12 @@
 			}
 		}
 		.blogging-prompt__prompt-no-response {
+			align-items: center;
+			display: flex;
 			color: var(--color-text-subtle);
+			flex: 1;
 			font-size: $font-body-small;
+			gap: 10px;
 		}
 	}
 	/* Blogging Prompt Menu ------------------------ */
