@@ -38,7 +38,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 
-		editorPage = new EditorPage( page, { target: 'atomic', blockTheme: true } );
+		editorPage = new EditorPage( page, { target: features.siteType, blockTheme: false } );
 	} );
 
 	it( 'Go to the new post page', async function () {
