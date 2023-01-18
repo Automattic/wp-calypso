@@ -137,9 +137,9 @@ describe(
 				headerBlock = new HeaderBlock( page, block );
 			} );
 
-			it( 'Choose an existing template ("header-minimal")', async function () {
+			it( 'Choose an existing template ("Header (Dark, small)")', async function () {
 				await headerBlock.clickChoose();
-				await fullSiteEditorPage.selectExistingTemplatePartFromModal( 'header-minimal' );
+				await fullSiteEditorPage.selectExistingTemplatePartFromModal( 'Header (Dark, small)' );
 			} );
 
 			it( '"wpcom_block_editor_template_part_choose_existing" event fires', async function () {
@@ -160,14 +160,14 @@ describe(
 				await editorTracksEventManager.clearEvents();
 			} );
 
-			it( 'Replace template with a different template ("header-linear")', async function () {
+			it( 'Replace template with a different template ("Header (Dark, large)")', async function () {
 				// First, let's make sure we have the right block focused!
 				const blockId = await ElementHelper.getIdFromBlock( headerBlock.block );
 				await fullSiteEditorPage.focusBlock( `#${ blockId }` );
 
 				// Then we can take block toolbar actions.
-				await fullSiteEditorPage.clickBlockToolbarOption( 'Replace header-minimal' );
-				await fullSiteEditorPage.selectExistingTemplatePartFromModal( 'header-linear' );
+				await fullSiteEditorPage.clickBlockToolbarOption( 'Replace Header (Dark, small)' );
+				await fullSiteEditorPage.selectExistingTemplatePartFromModal( 'Header (Dark, large)' );
 			} );
 
 			it( '"wpcom_block_editor_template_part_replace" event fires', async function () {
@@ -239,7 +239,7 @@ describe(
 					'wpcom_block_editor_convert_to_template_part',
 					{
 						matchingProperties: {
-							block_names: 'core/page-list,core/page-list-item',
+							block_names: 'core/page-list',
 						},
 					}
 				);
@@ -256,9 +256,9 @@ describe(
 					'wpcom_block_editor_template_part_detach_blocks',
 					{
 						matchingProperties: {
-							block_names: 'core/page-list,core/page-list-item',
+							block_names: 'core/page-list',
 							// Event property values are always lower case.
-							template_part_id: `pub/blockbase//${ templatePartName.toLowerCase() }`,
+							template_part_id: `pub/twentytwentytwo//${ templatePartName.toLowerCase() }`,
 						},
 					}
 				);
