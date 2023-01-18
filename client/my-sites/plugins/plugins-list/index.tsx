@@ -642,8 +642,8 @@ export class PluginsList extends Component< Props, State > {
 
 		// Plugins which require an update sort first, otherwise the original order is kept.
 		plugins.sort( ( a, b ) => {
-			const updateA = !! a.update;
-			const updateB = !! b.update;
+			const updateA = Object.values( a.sites ).some( ( site ) => !! site.update );
+			const updateB = Object.values( b.sites ).some( ( site ) => !! site.update );
 			return Number( updateB ) - Number( updateA );
 		} );
 
