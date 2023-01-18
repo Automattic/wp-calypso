@@ -50,7 +50,7 @@ const copySite: Flow = {
 						{ ...props }
 						title={ translate( 'We’re copying your site' ) }
 						subtitle={ translate(
-							'This may take a few minutes. We’ll notify you by email when it’s done.'
+							'This may take a few minutes. Feel free to close this window and we will email you when the process is complete.'
 						) }
 					/>
 				),
