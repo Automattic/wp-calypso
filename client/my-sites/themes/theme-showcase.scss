@@ -145,6 +145,11 @@ body.is-section-themes-i4-2 {
 
 			.theme__more-button {
 				position: relative;
+
+				button {
+					color: var(--color-primary-10);
+					margin-top: -2px;
+				}
 			}
 		}
 
