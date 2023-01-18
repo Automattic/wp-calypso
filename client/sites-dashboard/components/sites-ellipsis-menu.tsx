@@ -194,6 +194,7 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	const isSiteOwner = site.site_owner === userId;
 	const { setPlanCartItem, addProductCartItem } = useDispatch( ONBOARD_STORE );
 
+	// @TODO preload this data, and make sure the link doesn't appear until loading is complete.
 	const purchases = useSelector( ( state ) => getSitePurchases( state, site.ID ) );
 
 	if ( ! hasCopySiteFeature || ! isSiteOwner || ! plan ) {
