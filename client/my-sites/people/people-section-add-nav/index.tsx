@@ -1,57 +1,49 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import PeopleSearch from '../people-section-nav/people-search';
+import './style.scss';
 
 interface Props {
 	selectedFilter: string;
-	searchTerm?: string;
-	filterCount?: { [ key: string ]: undefined | number };
 }
-function PeopleSectionNavCompact( props: Props ) {
+function PeopleSectionAddNav( props: Props ) {
 	const _ = useTranslate();
-	const { selectedFilter, searchTerm, filterCount } = props;
+	const { selectedFilter } = props;
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
-	const searchPlaceholder =
-		selectedFilter === 'subscribers' ? _( 'Search by email...' ) : undefined;
 
 	const filters = [
 		{
 			id: 'team',
-			title: _( 'Team' ),
-			path: '/people/team/' + site?.slug,
+			title: _( 'Add to team' ),
+			path: '/people/new/' + site?.slug,
 		},
 		{
 			id: 'subscribers',
-			title: _( 'Subscribers' ),
-			path: '/people/subscribers/' + site?.slug,
+			title: _( 'Add subscribers' ),
+			path: '/people/add-subscribers/' + site?.slug,
 		},
 	];
 
 	return (
-		<>
-			<NavTabs>
+		<SectionNav className="people-section-add-nav">
+			<NavTabs selectedText={ selectedFilter }>
 				{ filters.map( function ( filterItem ) {
 					return (
 						<NavItem
 							key={ filterItem.id }
 							path={ filterItem.path }
 							selected={ filterItem.id === selectedFilter }
-							count={
-								filterCount && !! filterCount[ filterItem.id ] && filterCount[ filterItem.id ]
-							}
 						>
 							{ filterItem.title }
 						</NavItem>
 					);
 				} ) }
 			</NavTabs>
-
-			<PeopleSearch search={ searchTerm } placeholder={ searchPlaceholder } />
-		</>
+		</SectionNav>
 	);
 }
 
-export default PeopleSectionNavCompact;
+export default PeopleSectionAddNav;

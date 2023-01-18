@@ -145,13 +145,6 @@ class StatsEmailDetail extends Component {
 
 	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
 
-	barClick = ( bar ) => {
-		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
-		const parsed = getPageUrl();
-		const updatedQs = stringifyQs( updateQueryString( parsed, { startDate: bar.data.period } ) );
-		page.redirect( `${ parsed.pathname }?${ updatedQs }` );
-	};
-
 	switchChart = ( tab ) => {
 		if ( ! tab.loading && tab.attr !== this.props.chartTab ) {
 			this.props.recordGoogleEvent( 'Stats', 'Clicked ' + titlecase( tab.attr ) + ' Tab' );
@@ -180,7 +173,6 @@ class StatsEmailDetail extends Component {
 		} = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
-		const queryHour = date.format( 'H' );
 		const noViewsLabel = translate( 'Your email has not received any views yet!' );
 
 		const { period, endOf } = this.props.period;
@@ -256,11 +248,9 @@ class StatsEmailDetail extends Component {
 									activeLegend={ this.state.activeLegend }
 									availableLegend={ this.getAvailableLegend() }
 									onChangeLegend={ this.onChangeLegend }
-									barClick={ this.barClick }
 									switchTab={ this.switchChart }
 									charts={ this.getCharts() }
 									queryDate={ queryDate }
-									queryHour={ queryHour }
 									period={ this.props.period }
 									chartTab={ this.props.chartTab }
 									postId={ postId }

@@ -1,5 +1,4 @@
 import { Icon, people, starEmpty, chevronRight, postContent } from '@wordpress/icons';
-import classNames from 'classnames';
 import { numberFormat, translate } from 'i18n-calypso';
 import { capitalize } from 'lodash';
 import moment from 'moment';
@@ -31,52 +30,39 @@ export function getQueryDate( queryDate, timezoneOffset, period, quantity ) {
 	return endOfPeriodDate;
 }
 
-const checkIsSelected = ( record, queryDate, queryHour ) => {
-	let isSelected = record.period === queryDate;
-
-	if ( isSelected && record.hour ) {
-		isSelected = record.hour && record.hour.toString() === queryHour;
-	}
-
-	return isSelected;
-};
-
 const EMPTY_RESULT = [];
-export const buildChartData = memoizeLast(
-	( activeLegend, chartTab, data, period, queryDate, queryHour ) => {
-		if ( ! data ) {
-			return EMPTY_RESULT;
-		}
-
-		return data.map( ( record ) => {
-			const nestedValue = activeLegend.length ? record[ activeLegend[ 0 ] ] : null;
-
-			const recordClassName =
-				record.classNames && record.classNames.length ? record.classNames.join( ' ' ) : null;
-
-			const className = classNames( recordClassName, {
-				'is-selected': checkIsSelected( record, queryDate, queryHour ),
-			} );
-
-			return addTooltipData(
-				chartTab,
-				{
-					label: record[ `label${ capitalize( period ) }` ],
-					value: record[ chartTab ],
-					data: record,
-					nestedValue,
-					className,
-				},
-				period
-			);
-		} );
+export const buildChartData = memoizeLast( ( activeLegend, chartTab, data, period ) => {
+	if ( ! data ) {
+		return EMPTY_RESULT;
 	}
-);
+
+	return data.map( ( record ) => {
+		const nestedValue = activeLegend.length ? record[ activeLegend[ 0 ] ] : null;
+
+		return addTooltipData(
+			chartTab,
+			{
+				label: record[ `label${ capitalize( period ) }` ],
+				value: record[ chartTab ],
+				data: record,
+				nestedValue,
+			},
+			period
+		);
+	} );
+} );
 
 function addTooltipData( chartTab, item, period ) {
 	const tooltipData = [];
+	const label = ( () => {
+		if ( 'hour' === period ) {
+			return item.label;
+		}
+		return formatDate( item.data.period, period );
+	} )();
+
 	tooltipData.push( {
-		label: formatDate( item.data.period, period ),
+		label,
 		className: 'is-date-label',
 		value: null,
 	} );

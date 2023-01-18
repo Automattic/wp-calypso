@@ -13,11 +13,15 @@ type PaymentPlanProps = {
 	isMultiSiteIncompatible?: boolean;
 	siteId: number | null;
 	product: SelectorProduct;
+	showPlansOneBelowTheOther?: boolean;
+	isActive?: boolean;
 };
 const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 	isMultiSiteIncompatible,
 	siteId,
 	product,
+	showPlansOneBelowTheOther = false,
+	isActive = true,
 } ) => {
 	const translate = useTranslate();
 	const { containerRef, isCompact } = useItemPriceCompact();
@@ -61,9 +65,14 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 				/>
 			) : (
 				<>
-					<p>{ translate( 'Payment plan:' ) }</p>
+					{ ! showPlansOneBelowTheOther && <p>{ translate( 'Payment plan:' ) }</p> }
 
-					<div className="product-lightbox__variants-plan-card">
+					<div
+						className={ classNames(
+							'product-lightbox__variants-plan-card',
+							! isActive && 'product-lightbox__variants-plan-card inactive'
+						) }
+					>
 						<div className={ labelClass } ref={ containerRef }>
 							<span className="product-lightbox__variants-plan-card-price">
 								<PlanPrice rawPrice={ currentPrice } currencyCode={ currencyCode } />
