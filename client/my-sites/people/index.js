@@ -22,6 +22,16 @@ export default function () {
 		clientRender
 	);
 
+	page(
+		'/people/:filter(viewers)/:site_id/:user_id',
+		peopleController.enforceSiteEnding,
+		siteSelection,
+		navigation,
+		peopleController.viewerTeamMember,
+		makeLayout,
+		clientRender
+	);
+
 	page( '/people/invites', siteSelection, sites, makeLayout, clientRender );
 
 	page(
