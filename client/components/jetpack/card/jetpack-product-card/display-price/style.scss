@@ -128,6 +128,11 @@
 		background-color: rgba(var(--studio-jetpack-green-10-rgb), 0.2);
 	}
 
+	&__prices {
+		display: flex;
+		flex-wrap: nowrap;
+	}
+
 	&__from {
 		margin-right: 12px;
 		color: var(--studio-gray-40);
