@@ -5,6 +5,7 @@ import { useState, createRef, useContext } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import NotificationSettings from '../downtime-monitoring/notification-settings';
+import { useJetpackAgencyDashboardRecordTrackEvent } from '../hooks';
 import SitesOverviewContext from '../sites-overview/context';
 import {
 	useHandleToggleMonitor,
@@ -35,6 +36,7 @@ export default function DashboardBulkActions( {
 	const handleToggleActivateMonitor = useHandleToggleMonitor( selectedSites );
 	const handleResetNotification = useHandleResetNotification( selectedSites );
 	const { actionBarVisible } = useHandleShowHideActionBar( actionBarRef );
+	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( selectedSites, isLargeScreen );
 
 	const [ showNotificationSettingsPopup, setShowNotificationSettingsPopup ] = useState( false );
 
@@ -46,10 +48,12 @@ export default function DashboardBulkActions( {
 		{
 			label: translate( 'Pause Monitor' ),
 			action: () => handleToggleActivateMonitor( false ),
+			actionName: 'pause_monitor_click',
 		},
 		{
 			label: translate( 'Resume Monitor' ),
 			action: () => handleToggleActivateMonitor( true ),
+			actionName: 'resume_monitor_click',
 		},
 	];
 
@@ -57,27 +61,43 @@ export default function DashboardBulkActions( {
 		{
 			label: translate( 'Custom Notification' ),
 			action: () => toggleNotificationSettingsPopup(),
+			actionName: 'custom_notification_click',
 		},
 		{
 			label: translate( 'Reset Notification' ),
 			action: () => handleResetNotification(),
+			actionName: 'reset_notification_click',
 		},
 	];
 
 	const disabled = selectedSites.length === 0;
 
+	const handleAction = ( action: () => void, actionName: string ) => {
+		recordEvent( actionName );
+		action();
+	};
+
 	const desktopContent = (
 		<>
 			<ButtonGroup>
-				{ toggleMonitorActions.map( ( { label, action } ) => (
-					<Button compact key={ label } disabled={ disabled } onClick={ action }>
+				{ toggleMonitorActions.map( ( { label, action, actionName } ) => (
+					<Button
+						compact
+						key={ label }
+						disabled={ disabled }
+						onClick={ () => handleAction( action, actionName ) }
+					>
 						{ label }
 					</Button>
 				) ) }
 			</ButtonGroup>
-			{ otherMonitorActions.map( ( { label, action } ) => (
+			{ otherMonitorActions.map( ( { label, action, actionName } ) => (
 				<ButtonGroup key={ label }>
-					<Button compact disabled={ disabled } onClick={ action }>
+					<Button
+						compact
+						disabled={ disabled }
+						onClick={ () => handleAction( action, actionName ) }
+					>
 						{ label }
 					</Button>
 				</ButtonGroup>
@@ -87,11 +107,17 @@ export default function DashboardBulkActions( {
 
 	const mobileContent = (
 		<SelectDropdown compact selectedText={ translate( 'Actions' ) }>
-			{ [ ...toggleMonitorActions, ...otherMonitorActions ].map( ( { label, action } ) => (
-				<SelectDropdown.Item key={ label } disabled={ disabled } onClick={ action }>
-					{ label }
-				</SelectDropdown.Item>
-			) ) }
+			{ [ ...toggleMonitorActions, ...otherMonitorActions ].map(
+				( { label, action, actionName } ) => (
+					<SelectDropdown.Item
+						key={ label }
+						disabled={ disabled }
+						onClick={ () => handleAction( action, actionName ) }
+					>
+						{ label }
+					</SelectDropdown.Item>
+				)
+			) }
 		</SelectDropdown>
 	);
 
