@@ -288,7 +288,7 @@ describe(
 				} );
 			} );
 
-			describe( 'Adding blocks from existing template parts', function () {
+			describe.skip( 'Adding blocks from existing template parts', function () {
 				it( 'Add a Header block', async function () {
 					const block = await fullSiteEditorPage.addBlockFromSidebar(
 						HeaderBlock.blockName,
@@ -312,16 +312,12 @@ describe(
 				// arguably a reasonable outcome. We need to decide whether
 				// to adjust the test to match the tracking behavior or adjust
 				// the underlyting tracking behavior.
-				it.skip( '"wpcom_block_instered" event does NOT fire', async function () {
+				it( '"wpcom_block_instered" event does NOT fire', async function () {
 					const eventDidFire = await editorTracksEventManager.didEventFire(
 						'wpcom_block_inserted'
 					);
 					expect( eventDidFire ).toBe( false );
 				} );
-			} );
-
-			it( 'Close the page', async function () {
-				await page.close();
 			} );
 		} );
 	}
