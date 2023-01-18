@@ -4,14 +4,14 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import { useBloggingPrompts } from 'calypso/data/blogging-prompt/use-blogging-prompt';
+import { useBloggingPrompts } from 'calypso/data/blogging-prompt/use-blogging-prompts';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { SECTION_BLOGGING_PROMPT } from 'calypso/my-sites/customer-home/cards/constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import BellOffIcon from './bell-off-icon';
 import LightbulbIcon from './lightbulb-icon';
-import { PromptsNavigation } from './prompts-navigation';
+import PromptsNavigation from './prompts-navigation';
 
 import './style.scss';
 
@@ -22,6 +22,7 @@ const BloggingPromptCard = () => {
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 	const maxNumberOfPrompts = 10;
 	const { data: prompts } = useBloggingPrompts( siteId, maxNumberOfPrompts );
+
 	const { skipCard } = useSkipCurrentViewMutation( siteId );
 
 	if ( prompts === undefined ) {
@@ -62,7 +63,7 @@ const BloggingPromptCard = () => {
 						</Button>
 					</EllipsisMenu>
 				</CardHeading>
-				<PromptsNavigation prompts={ prompts } translate={ translate } />
+				<PromptsNavigation prompts={ prompts } />
 			</Card>
 		</div>
 	);
