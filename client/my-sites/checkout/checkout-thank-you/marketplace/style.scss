@@ -77,7 +77,7 @@
 		}
 
 		.thank-you__step-icon {
-			width: 50px;
+			width: calc(18px + 25px); // icon size + padding
 			flex-basis: 100%;
 		}
 
