@@ -350,7 +350,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		styleVariationSlug?: string,
 		keepHomepage = true
 	) {
-		const { stylesheet }: { stylesheet: string } = yield wpcomRequest( {
+		const activatedTheme: { stylesheet: string } = yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/themes/mine`,
 			apiVersion: '1.1',
 			body: {
@@ -361,7 +361,10 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} );
 
 		if ( styleVariationSlug ) {
-			const variations: GlobalStyles[] = yield getGlobalStylesVariations( siteSlug, stylesheet );
+			const variations: GlobalStyles[] = yield getGlobalStylesVariations(
+				siteSlug,
+				activatedTheme.stylesheet
+			);
 			const currentVariation = variations.find(
 				( variation ) =>
 					variation.title &&
@@ -369,7 +372,10 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			);
 
 			if ( currentVariation ) {
-				const globalStylesId: number = yield getGlobalStylesId( siteSlug, stylesheet );
+				const globalStylesId: number = yield getGlobalStylesId(
+					siteSlug,
+					activatedTheme.stylesheet
+				);
 				yield setGlobalStyles( siteSlug, globalStylesId, currentVariation );
 			}
 		}
