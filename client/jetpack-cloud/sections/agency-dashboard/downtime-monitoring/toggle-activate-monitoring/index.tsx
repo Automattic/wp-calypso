@@ -159,6 +159,7 @@ export default function ToggleActivateMonitoring( {
 					onClose={ handleToggleNotificationSettings }
 					sites={ [ site ] }
 					settings={ settings }
+					isLargeScreen={ isLargeScreen }
 				/>
 			) }
 			{ tooltip && (

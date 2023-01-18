@@ -10,9 +10,10 @@ import './style.scss';
 interface Props {
 	sites: Array< SiteData >;
 	isLoading: boolean;
+	isLargeScreen?: boolean;
 }
 
-export default function SiteBulkSelect( { sites, isLoading }: Props ) {
+export default function SiteBulkSelect( { sites, isLoading, isLargeScreen }: Props ) {
 	const translate = useTranslate();
 
 	const { selectedSites, setSelectedSites } = useContext( SitesOverviewContext );
@@ -83,6 +84,7 @@ export default function SiteBulkSelect( { sites, isLoading }: Props ) {
 			<DashboardBulkActions
 				selectedSites={ selectedSites }
 				monitorUserEmails={ sites[ 0 ].monitor.settings?.monitor_user_emails ?? [] }
+				isLargeScreen={ isLargeScreen }
 			/>
 		</div>
 	);

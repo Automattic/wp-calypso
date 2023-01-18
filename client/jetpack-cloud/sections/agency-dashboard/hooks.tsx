@@ -335,12 +335,12 @@ export function useJetpackAgencyDashboardRecordTrackEvent(
 
 			if ( sites?.length ) {
 				siteProperties = {
-					siteCount: sites.length,
+					selected_site_count: sites.length,
 				};
 				if ( sites.length === 1 ) {
 					siteProperties = {
-						siteId: sites[ 0 ].blog_id,
-						siteUrl: sites[ 0 ].url,
+						selected_site_id: sites[ 0 ].blog_id,
+						selected_site_url: sites[ 0 ].url,
 					};
 				}
 			}

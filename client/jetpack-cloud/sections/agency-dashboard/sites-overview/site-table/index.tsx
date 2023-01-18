@@ -26,7 +26,7 @@ export default function SiteTable( { isLoading, columns, items }: Props ) {
 					{ isBulkManagementActive ? (
 						// Take full-width of the table
 						<th colSpan={ 100 }>
-							<SiteBulkSelect sites={ items } isLoading={ isLoading } />
+							<SiteBulkSelect isLargeScreen sites={ items } isLoading={ isLoading } />
 						</th>
 					) : (
 						<>

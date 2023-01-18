@@ -20,9 +20,14 @@ import './style.scss';
 interface Props {
 	selectedSites: Array< Site >;
 	monitorUserEmails: Array< string >;
+	isLargeScreen?: boolean;
 }
 
-export default function DashboardBulkActions( { selectedSites, monitorUserEmails }: Props ) {
+export default function DashboardBulkActions( {
+	selectedSites,
+	monitorUserEmails,
+	isLargeScreen,
+}: Props ) {
 	const actionBarRef = createRef< HTMLDivElement >();
 	const translate = useTranslate();
 	const { setIsBulkManagementActive } = useContext( SitesOverviewContext );
@@ -110,9 +115,10 @@ export default function DashboardBulkActions( { selectedSites, monitorUserEmails
 			</div>
 			{ showNotificationSettingsPopup && (
 				<NotificationSettings
-					monitorUserEmails={ monitorUserEmails }
 					sites={ selectedSites }
+					monitorUserEmails={ monitorUserEmails }
 					onClose={ toggleNotificationSettingsPopup }
+					isLargeScreen={ isLargeScreen }
 				/>
 			) }
 		</>
