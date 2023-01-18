@@ -47,7 +47,15 @@ const PromptsNavigation = ( { prompts } ) => {
 		}
 	};
 
-	const trackSkippedBloggingPrompt = () => {
+	const trackBloggingPromptClick = () => {
+		dispatch(
+			recordTracksEvent( `calypso_customer_home_answer_prompt`, {
+				site_id: siteId,
+				prompt_id: getPrompt().id,
+			} )
+		);
+
+		// Track if a user skipped todays prompt and choose to answer another prompt
 		const todayPromptId = prompts[ 0 ].id;
 		const skippedPromptId = getPrompt().id;
 		if ( todayPromptId !== skippedPromptId ) {
@@ -58,16 +66,6 @@ const PromptsNavigation = ( { prompts } ) => {
 				} )
 			);
 		}
-	};
-
-	const trackBloggingPromptClick = () => {
-		dispatch(
-			recordTracksEvent( `calypso_customer_home_answer_prompt`, {
-				site_id: siteId,
-				prompt_id: getPrompt().id,
-			} )
-		);
-		trackSkippedBloggingPrompt();
 	};
 
 	const renderPromptNavigation = () => {
@@ -138,7 +136,7 @@ const PromptsNavigation = ( { prompts } ) => {
 			<div className="blogging-prompt__prompt-answers">
 				{ renderResponses() }
 				<Button href={ newPostLink } onClick={ trackBloggingPromptClick() } target="_blank">
-					{ translate( 'Post answer', {
+					{ translate( 'Post Answer', {
 						comment:
 							'"Post" here is a verb meaning "to publish", as in "post an answer to this writing prompt"',
 					} ) }
