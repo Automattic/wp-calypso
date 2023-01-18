@@ -41,6 +41,11 @@ jest.mock( 'calypso/state/sites/hooks/use-premium-global-styles', () => ( {
 // JSDOM doesn't support browser navigation, so we temporarily mock the
 // window.location object
 const replaceMock = jest.fn();
+declare global {
+	interface Window {
+		initialReduxState: object;
+	}
+}
 const savedWindow = window;
 global.window = Object.create( window );
 Object.defineProperty( window, 'location', {
@@ -58,7 +63,7 @@ function renderLaunchpad(
 	props = {},
 	siteDetails = defaultSiteDetails,
 	initialReduxState = {},
-	siteSlug
+	siteSlug = ''
 ): void {
 	function TestLaunchpad( props ) {
 		window.initialReduxState = initialReduxState;
