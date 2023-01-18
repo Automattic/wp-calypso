@@ -45,8 +45,6 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
-
-		editorPage = new EditorPage( page, { target: features.siteType, blockTheme: false } );
 	} );
 
 	it( 'Visit Pages page', async function () {
@@ -60,6 +58,9 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 	it( 'Select page template', async function () {
 		// @TODO Consider moving this to EditorPage.
+		editorPage = new EditorPage( page, { target: features.siteType } );
+		await editorPage.waitUntilLoaded();
+
 		const editorWindowLocator = editorPage.getEditorWindowLocator();
 		const pageTemplateModalComponent = new PageTemplateModalComponent( page, editorWindowLocator );
 
