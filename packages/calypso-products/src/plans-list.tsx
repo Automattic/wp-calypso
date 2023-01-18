@@ -154,6 +154,7 @@ import {
 	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_ECOMMERCE_3_YEARS,
 	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_FREE,
 	PLAN_JETPACK_BUSINESS,
@@ -2598,4 +2599,18 @@ PLANS_LIST[ PLAN_WPCOM_PRO_MONTHLY ] = {
 	getProductId: () => 1034,
 	getStoreSlug: () => PLAN_WPCOM_PRO_MONTHLY,
 	getPathSlug: () => 'pro-monthly',
+};
+
+PLANS_LIST[ PLAN_ECOMMERCE_TRIAL_MONTHLY ] = {
+	...getDotcomPlanDetails(),
+	type: TYPE_FREE,
+	group: GROUP_WPCOM,
+	getProductId: () => 1052,
+	getPathSlug: () => PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	term: TERM_MONTHLY,
+	getBillingTimeFrame: () => i18n.translate( 'free trial' ),
+	getStoreSlug: () => PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	getTitle: () => i18n.translate( 'eCommerce free trial' ),
+	getDescription: () => i18n.translate( 'eCommerce free trial' ),
+	getTagline: () => i18n.translate( 'Get a taste of the world’s most popular eCommerce software.' ),
 };
