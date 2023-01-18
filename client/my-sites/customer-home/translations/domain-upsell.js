@@ -8,7 +8,7 @@ translate( 'Search a domain' );
 translate( 'Get your custom domain' );
 translate( 'Free for the first year!' );
 translate(
-	'With an annual plan, you can get {{strong}}%(domainName)s{{/strong}} for free for the first year, Jetpack essential features, live chat support, and all the features that will take your site to the next level.',
+	'With an annual plan, you can get {{strong}}%(domainName)s for free{{/strong}} for the first year, Jetpack essential features, live chat support, and all the features that will take your site to the next level.',
 	{
 		args: {
 			domainName: 'example.blog',
