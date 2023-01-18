@@ -362,6 +362,7 @@ button {
 	}
 	.processing-step__progress-bar {
 		width: 520px;
+		max-width: 100%;
 	}
 	.processing-step__progress-bar::before {
 		background: var(--wooexpress-purple);
