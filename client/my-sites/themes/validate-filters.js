@@ -42,7 +42,7 @@ export function validateFilters( context, next ) {
 
 export function validateVertical( context, next ) {
 	performanceMark( context, 'validateVertical' );
-	const { vertical, tier, filter, site } = context.params;
+	const { vertical, tier, filter, site_id } = context.params;
 	const { store } = context;
 
 	if ( ! vertical ) {
@@ -62,7 +62,7 @@ export function validateVertical( context, next ) {
 		 * We need this because we cannot implement a redirect route like in express.
 		 */
 		if ( ! tier && ! filter ) {
-			redirectToThemeDetails( page.redirect, site, vertical, null, next );
+			redirectToThemeDetails( page.redirect, site_id, vertical, null, next );
 		}
 
 		// Client-side: Terminate routing, rely on server-side rendered markup.

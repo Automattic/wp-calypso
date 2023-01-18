@@ -135,10 +135,7 @@ export function redirectToThemeDetails( redirect, site, theme, section, next ) {
 	if ( theme.includes( '.' ) || Number.isInteger( parseInt( theme, 10 ) ) ) {
 		return next();
 	}
-	let redirectedSection;
-	if ( section === 'support' ) {
-		redirectedSection = 'setup';
-	}
-	const path = '/theme/' + [ theme, redirectedSection, site ].filter( Boolean ).join( '/' );
+
+	const path = '/theme/' + [ theme, section, site ].filter( Boolean ).join( '/' );
 	redirect( path );
 }

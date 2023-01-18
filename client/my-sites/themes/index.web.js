@@ -74,9 +74,12 @@ export default function ( router ) {
 	 * Although we redirect /themes/:theme from validateVerticals, we still need to redirect users from /themes/:theme/support.
 	 */
 	router(
-		[ '/themes/:theme/:section(support)?', '/themes/:site/:theme/:section(support)?' ],
-		( { params: { site, theme, section } }, next ) =>
-			redirectToThemeDetails( page.redirect, site, theme, section, next )
+		[
+			'/themes/:theme/:section(support)?',
+			`/themes/:theme/:section(support)?/:site_id(${ siteId })`,
+		],
+		( { params: { site_id, theme, section } }, next ) =>
+			redirectToThemeDetails( page.redirect, site_id, theme, section, next )
 	);
 
 	router( '/themes/*', fetchThemeData, loggedOut, makeLayout );
