@@ -28,12 +28,14 @@ function SubscribersTeam( props: Props ) {
 
 	// fetching data config
 	const followersFetchOptions = { search };
+	const defaultTeamFetchOptions = { include_viewers: true };
 	const teamFetchOptions = search
 		? {
 				search: `*${ search }*`,
-				search_columns: [ 'display_name', 'user_login' ],
+				search_columns: [ 'display_name', 'user_login', 'user_email' ],
+				...defaultTeamFetchOptions,
 		  }
-		: {};
+		: defaultTeamFetchOptions;
 
 	const followersQuery = useFollowersQuery(
 		site?.ID,
