@@ -80,6 +80,7 @@ export const RelatedPostsSetting = ( {
 			</FormSettingExplanation>
 
 			<RelatedContentPreview
+				showDate={ fields.jetpack_relatedposts_show_date }
 				showHeadline={ fields.jetpack_relatedposts_show_headline }
 				showThumbnails={ fields.jetpack_relatedposts_show_thumbnails }
 			/>

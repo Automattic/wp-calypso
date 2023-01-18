@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import FormLabel from 'calypso/components/forms/form-label';
 
-const RelatedContentPreview = ( { showHeadline, showThumbnails, translate } ) => {
+const RelatedContentPreview = ( { showDate, showHeadline, showThumbnails, translate } ) => {
 	const posts = [
 		{
 			image: '/calypso/images/related-posts/cat-blog.png',
@@ -12,6 +12,7 @@ const RelatedContentPreview = ( { showHeadline, showThumbnails, translate } ) =>
 			topic: translate( 'In "Mobile"', {
 				context: 'topic post is located in',
 			} ),
+			date: 'August 8, 2005',
 		},
 		{
 			image: '/calypso/images/related-posts/devices.jpg',
@@ -22,6 +23,7 @@ const RelatedContentPreview = ( { showHeadline, showThumbnails, translate } ) =>
 			topic: translate( 'In "Mobile"', {
 				context: 'topic post is located in',
 			} ),
+			date: 'August 8, 2005',
 		},
 		{
 			image: '/calypso/images/related-posts/mobile-wedding.jpg',
@@ -32,6 +34,7 @@ const RelatedContentPreview = ( { showHeadline, showThumbnails, translate } ) =>
 			topic: translate( 'In "Upgrade"', {
 				context: 'topic post is located in',
 			} ),
+			date: 'August 8, 2005',
 		},
 	];
 
@@ -57,6 +60,7 @@ const RelatedContentPreview = ( { showHeadline, showThumbnails, translate } ) =>
 								<h4 className="related-posts__preview-post-title">
 									<a className="related-posts__preview-post-a">{ post.title }</a>
 								</h4>
+								{ showDate && <span>{ post.date }</span> }
 								<p className="related-posts__preview-post-context">{ post.topic }</p>
 							</div>
 						);
