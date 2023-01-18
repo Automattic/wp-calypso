@@ -1,7 +1,11 @@
 import { useTranslate } from 'i18n-calypso';
 import { ReactChild, useCallback, useEffect, useState, useContext, RefObject } from 'react';
 import acceptDialog from 'calypso/lib/accept';
-import { useToggleActivateMonitor, useUpdateMonitorSettings } from '../hooks';
+import {
+	useJetpackAgencyDashboardRecordTrackEvent,
+	useToggleActivateMonitor,
+	useUpdateMonitorSettings,
+} from '../hooks';
 import SitesOverviewContext from '../sites-overview/context';
 import {
 	availableNotificationDurations as durations,
@@ -26,18 +30,20 @@ const dialogContent = (
 	return acceptDialog( content, action, heading, null, options );
 };
 
-export function useHandleToggleMonitor( selectedSites: Array< Site > ) {
+export function useHandleToggleMonitor( selectedSites: Array< Site >, isLargeScreen?: boolean ) {
 	const translate = useTranslate();
 
 	const toggleActivateMonitor = useToggleActivateMonitor( selectedSites );
+	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( selectedSites, isLargeScreen );
 
 	const toggleMonitor = useCallback(
 		( accepted: boolean, activate: boolean ) => {
 			if ( accepted ) {
 				toggleActivateMonitor( activate );
+				recordEvent( activate ? 'resume_monitor_save' : 'pause_monitor_save' );
 			}
 		},
-		[ toggleActivateMonitor ]
+		[ recordEvent, toggleActivateMonitor ]
 	);
 
 	const handleToggleActivateMonitor = useCallback(
@@ -74,9 +80,13 @@ export function useHandleToggleMonitor( selectedSites: Array< Site > ) {
 	return handleToggleActivateMonitor;
 }
 
-export function useHandleResetNotification( selectedSites: Array< Site > ) {
+export function useHandleResetNotification(
+	selectedSites: Array< Site >,
+	isLargeScreen?: boolean
+) {
 	const translate = useTranslate();
 	const { updateMonitorSettings } = useUpdateMonitorSettings( selectedSites );
+	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( selectedSites, isLargeScreen );
 
 	const resetMonitorDuration = useCallback(
 		( accepted: boolean ) => {
@@ -86,9 +96,10 @@ export function useHandleResetNotification( selectedSites: Array< Site > ) {
 					jetmon_defer_status_down_minutes: defaultDuration?.time,
 				};
 				updateMonitorSettings( params );
+				recordEvent( 'reset_notification_save' );
 			}
 		},
-		[ updateMonitorSettings ]
+		[ recordEvent, updateMonitorSettings ]
 	);
 
 	const handleResetNotification = useCallback( () => {

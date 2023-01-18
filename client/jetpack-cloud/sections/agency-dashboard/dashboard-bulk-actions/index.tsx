@@ -33,8 +33,8 @@ export default function DashboardBulkActions( {
 	const translate = useTranslate();
 	const { setIsBulkManagementActive } = useContext( SitesOverviewContext );
 
-	const handleToggleActivateMonitor = useHandleToggleMonitor( selectedSites );
-	const handleResetNotification = useHandleResetNotification( selectedSites );
+	const handleToggleActivateMonitor = useHandleToggleMonitor( selectedSites, isLargeScreen );
+	const handleResetNotification = useHandleResetNotification( selectedSites, isLargeScreen );
 	const { actionBarVisible } = useHandleShowHideActionBar( actionBarRef );
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( selectedSites, isLargeScreen );
 
