@@ -62,11 +62,6 @@ const copySite: Flow = {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
 
 			switch ( _currentStepSlug ) {
-				case 'intro': {
-					clearSignupDestinationCookie();
-					return navigate( 'site-creation-step' );
-				}
-
 				case 'site-creation-step': {
 					return navigate( 'processing' );
 				}
