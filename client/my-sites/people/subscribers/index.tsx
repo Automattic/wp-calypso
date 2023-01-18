@@ -12,7 +12,8 @@ import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleListSectionHeader from '../people-list-section-header';
-import type { Follower, FollowersQuery } from './types';
+import type { Member } from '../types';
+import type { FollowersQuery } from './types';
 
 import './style.scss';
 
@@ -49,11 +50,11 @@ function Subscribers( props: Props ) {
 		);
 	}
 
-	function getFollowerRef( follower: Follower ) {
+	function getFollowerRef( follower: Member ) {
 		return 'follower-' + follower.ID;
 	}
 
-	function renderFollower( follower: Follower ) {
+	function renderFollower( follower: Member ) {
 		return (
 			<PeopleListItem
 				key={ follower?.ID }

@@ -2,11 +2,11 @@ import { Card, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import InfiniteList from 'calypso/components/infinite-list';
-import { UserData as User } from 'calypso/lib/user/user';
 import NoResults from 'calypso/my-sites/no-results';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleListSectionHeader from '../people-list-section-header';
+import type { Member } from '../types';
 import type { UsersQuery } from './types';
 
 import './style.scss';
@@ -28,7 +28,7 @@ function TeamMembers( props: Props ) {
 
 	const addTeamMemberLink = `/people/new/${ site?.slug }`;
 
-	function getPersonRef( user: User ) {
+	function getPersonRef( user: Member ) {
 		return 'user-' + user?.ID;
 	}
 
