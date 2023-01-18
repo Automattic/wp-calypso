@@ -585,7 +585,7 @@ export class SiteSettingsFormGeneral extends Component {
 		const btnText = translate( 'Launch site' );
 		let querySiteDomainsComponent;
 		let btnComponent;
-		let eCommerceTrailUpsell;
+		let eCommerceTrialUpsell;
 		const isLaunchable = ! isSiteOnECommerceTrial;
 
 		if ( 0 === siteDomains.length ) {
@@ -618,7 +618,7 @@ export class SiteSettingsFormGeneral extends Component {
 		const LaunchCard = showPreviewLink ? CompactCard : Card;
 
 		if ( isSiteOnECommerceTrial ) {
-			eCommerceTrailUpsell = (
+			eCommerceTrialUpsell = (
 				<a href={ `/plans/${ siteSlug }?plan=business-bundle-monthly` }>
 					<Notice
 						icon="info"
@@ -636,7 +636,7 @@ export class SiteSettingsFormGeneral extends Component {
 			<>
 				<SettingsSectionHeader title={ translate( 'Launch site' ) } />
 				<LaunchCard>
-					{ eCommerceTrailUpsell }
+					{ eCommerceTrialUpsell }
 					<div className="site-settings__general-settings-launch-site">
 						<div className="site-settings__general-settings-launch-site-text">
 							<p>
