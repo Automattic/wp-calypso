@@ -45,8 +45,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const allPatterns = useAllPatterns();
 	const { data: theme } = useThemeDetails( selectedDesign?.slug );
-	const themeDemoSiteSlug =
-		theme && theme.demo_uri.replace( /^https?:\/\//, '' ).replace( '/', '' );
+	const themeDemoSiteSlug = theme?.demo_uri?.replace( /^https?:\/\//, '' ).replace( '/', '' );
 
 	const largePreviewProps = {
 		placeholder: null,
