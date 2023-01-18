@@ -84,6 +84,9 @@ class PeopleListItem extends PureComponent {
 				);
 			}
 
+			case 'viewer':
+				return `/people/viewers/${ site.slug }/${ user.ID }`;
+
 			default:
 				return this.canLinkToProfile() && `/people/edit/${ site.slug }/${ user.login }`;
 		}

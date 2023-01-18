@@ -49,8 +49,10 @@ function TeamMembers( props: Props ) {
 		return _( 'You have %(number)d team member', 'You have %(number)d team members', options );
 	}
 
-	function renderPerson( user: User ) {
-		return <PeopleListItem key={ user?.ID } user={ user } site={ site } type="email" />;
+	function renderPerson( user: Member ) {
+		const type = user.roles ? 'email' : 'viewer';
+
+		return <PeopleListItem key={ user?.ID } user={ user } site={ site } type={ type } />;
 	}
 
 	function renderLoadingPeople() {
