@@ -96,9 +96,9 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 					const ctaHref =
 						item.productSlug === PRODUCT_JETPACK_SOCIAL_BASIC &&
 						config.isEnabled( 'jetpack-social/advanced-plan' )
-							? '#'
+							? '#${item.productSlug}'
 							: getCheckoutURL( item );
-					const onClickCtaUrl =
+					const onClickCta =
 						item.productSlug === PRODUCT_JETPACK_SOCIAL_BASIC &&
 						config.isEnabled( 'jetpack-social/advanced-plan' )
 							? onClickMoreInfoFactory( item )
@@ -115,7 +115,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 								icon={ <img alt="" src={ getProductIcon( { productSlug: item.productSlug } ) } /> }
 								isCtaDisabled={ isCtaDisabled }
 								isCtaExternal={ isExternal }
-								onClickCta={ onClickCtaUrl }
+								onClickCta={ onClickCta }
 								isProductInCart={ isProductInCart }
 								price={ price }
 								title={ item.displayName }

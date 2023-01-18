@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import config from '@automattic/calypso-config';
 import {
 	isJetpackPlanSlug,
@@ -14,8 +12,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo } from 'react';
 import Modal from 'react-modal';
 import { useDispatch } from 'react-redux';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLegend from 'calypso/components/forms/form-legend';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { useStoreItemInfoContext } from '../product-store/context/store-item-info-context';
@@ -29,6 +25,7 @@ import { Icons } from './icons/icons';
 import { Tags } from './icons/tags';
 import PaymentPlan from './payment-plan';
 import ProductDetails from './product-details';
+import ProductWithVariants from './product-with-variants';
 
 import './style.scss';
 
@@ -78,9 +75,6 @@ const ProductLightbox: React.FC< Props > = ( {
 		[ onChangeProduct, dispatch, siteId ]
 	);
 
-	const JETPACK_SOCIAL_ADVANCED_PRODUCT = slugToSelectorProduct( PRODUCT_JETPACK_SOCIAL_ADVANCED );
-	const JETPACK_SOCIAL_BASIC_PRODUCT = slugToSelectorProduct( PRODUCT_JETPACK_SOCIAL_BASIC );
-
 	const {
 		getCheckoutURL,
 		getIsMultisiteCompatible,
@@ -110,21 +104,26 @@ const ProductLightbox: React.FC< Props > = ( {
 		);
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
-	const variantOptions = useMemo( () => {
-		const variants = JETPACK_RELATED_PRODUCTS_MAP[ product.productSlug ] || [];
-		return variants.map( ( itemSlug ) => ( {
-			id: itemSlug,
-			answerText: PRODUCT_OPTIONS[ itemSlug ].toString(),
-		} ) );
-	}, [ product.productSlug ] );
-
-	const showVariantsWithoutRadioButtons = [
+	// Jetpack Social is the first plan which has variants that we want to display one below the other.
+	// Add more such products to this array, if you want to display them one below the other.
+	const showVariantsOneBelowTheOther = [
 		PRODUCT_JETPACK_SOCIAL_ADVANCED,
 		PRODUCT_JETPACK_SOCIAL_BASIC,
 	].includes( product.productSlug );
 
+	const variantOptions = useMemo( () => {
+		const variants = JETPACK_RELATED_PRODUCTS_MAP[ product.productSlug ] || [];
+		if ( showVariantsOneBelowTheOther ) {
+			return variants.map( ( itemSlug ) => slugToSelectorProduct( itemSlug ) );
+		}
+		return variants.map( ( itemSlug ) => ( {
+			id: itemSlug,
+			answerText: PRODUCT_OPTIONS[ itemSlug ].toString(),
+		} ) );
+	}, [ product.productSlug, showVariantsOneBelowTheOther ] );
+
 	// The social advanced plan is not available yet, so don't show it till the time it's ready.
-	const shouldShowOptions = showVariantsWithoutRadioButtons
+	const shouldShowOptions = showVariantsOneBelowTheOther
 		? variantOptions.length > 1 && config.isEnabled( 'jetpack-social/advanced-plan' )
 		: variantOptions.length > 1;
 
@@ -194,57 +193,31 @@ const ProductLightbox: React.FC< Props > = ( {
 				<div className="product-lightbox__sidebar">
 					<div className="product-lightbox__variants">
 						<div className="product-lightbox__variants-content">
-							{ shouldShowOptions && ! showVariantsWithoutRadioButtons && (
-								<div className="product-lightbox__variants-options">
-									<MultipleChoiceQuestion
-										question={ PRODUCT_OPTIONS_HEADER[ product?.productSlug ] }
-										answers={ variantOptions }
-										selectedAnswerId={ product?.productSlug }
-										onAnswerChange={ onChangeOption }
-										shouldShuffleAnswers={ false }
+							{ shouldShowOptions && ! showVariantsOneBelowTheOther && (
+								<div>
+									<div className="product-lightbox__variants-options">
+										<MultipleChoiceQuestion
+											question={ PRODUCT_OPTIONS_HEADER[ product?.productSlug ] }
+											answers={ variantOptions }
+											selectedAnswerId={ product?.productSlug }
+											onAnswerChange={ onChangeOption }
+											shouldShuffleAnswers={ false }
+										/>
+									</div>
+									<PaymentPlan
+										isMultiSiteIncompatible={ isMultiSiteIncompatible }
+										siteId={ siteId }
+										product={ product }
 									/>
 								</div>
 							) }
-							{ shouldShowOptions && showVariantsWithoutRadioButtons ? (
-								<div>
-									<FormFieldset className="multiple-choice-question">
-										<FormLegend className="multiple-choice-question-title">
-											{ PRODUCT_OPTIONS_HEADER[ product?.productSlug ] }
-										</FormLegend>
-									</FormFieldset>
-									<div
-										onClick={ () => onChangeOption( JETPACK_SOCIAL_BASIC_PRODUCT?.productSlug ) }
-									>
-										<PaymentPlan
-											isMultiSiteIncompatible={ isMultiSiteIncompatible }
-											siteId={ siteId }
-											product={ JETPACK_SOCIAL_BASIC_PRODUCT as SelectorProduct }
-											showPlansOneBelowTheOther={ true }
-											isActive={
-												product?.productSlug === JETPACK_SOCIAL_BASIC_PRODUCT?.productSlug
-											}
-										/>
-									</div>
-									<p />
-									<div
-										onClick={ () => onChangeOption( JETPACK_SOCIAL_ADVANCED_PRODUCT?.productSlug ) }
-									>
-										<PaymentPlan
-											isMultiSiteIncompatible={ isMultiSiteIncompatible }
-											siteId={ siteId }
-											product={ JETPACK_SOCIAL_ADVANCED_PRODUCT as SelectorProduct }
-											showPlansOneBelowTheOther={ true }
-											isActive={
-												product?.productSlug === JETPACK_SOCIAL_ADVANCED_PRODUCT?.productSlug
-											}
-										/>
-									</div>
-								</div>
-							) : (
-								<PaymentPlan
+							{ shouldShowOptions && showVariantsOneBelowTheOther && (
+								<ProductWithVariants
+									product={ product }
 									isMultiSiteIncompatible={ isMultiSiteIncompatible }
 									siteId={ siteId }
-									product={ product }
+									onChangeProductVariant={ onChangeOption }
+									variants={ variantOptions }
 								/>
 							) }
 							<Button
