@@ -14,9 +14,6 @@
 
 	.step-container__content {
 		width: 100%;
-
-		h1 {
-			@include onboarding-font-recoleta;
-		}
+		margin-top: 16vh;
 	}
 }
