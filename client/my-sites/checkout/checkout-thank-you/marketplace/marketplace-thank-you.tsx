@@ -96,22 +96,15 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 
 	// Consolidate the plugin information from the .org and .com sources in a single list
 	const pluginInformationList = useMemo( () => {
-		return pluginsOnSite.reduce(
-			(
-				pluginsList: Array< ReturnType< getPluginsOnSite > >,
-				pluginOnSite: Plugin,
-				index: number
-			) => {
-				pluginsList.push( {
-					...wpComPluginsData[ index ],
-					...wporgPlugins[ index ],
-					...pluginOnSite,
-				} );
+		return pluginsOnSite.reduce( ( pluginsList, pluginOnSite, index ) => {
+			pluginsList.push( {
+				...wpComPluginsData[ index ],
+				...wporgPlugins[ index ],
+				...pluginOnSite,
+			} );
 
-				return pluginsList;
-			},
-			[]
-		);
+			return pluginsList;
+		}, [] as any[] );
 	}, [ pluginsOnSite, wpComPluginsData, wporgPlugins ] );
 
 	// Site is transferring to Atomic.
