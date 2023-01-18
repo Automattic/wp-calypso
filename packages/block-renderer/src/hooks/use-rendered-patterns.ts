@@ -4,8 +4,6 @@ import type { RenderedPatterns, SiteInfo } from '../types';
 
 const PAGE_SIZE = 20;
 
-const HOUR_IN_MS = 3600000;
-
 const fetchRenderedPatterns = (
 	siteId: number | string,
 	stylesheet: string,
@@ -40,7 +38,7 @@ const useRenderedPatterns = (
 	stylesheet: string,
 	patternIds: string[],
 	siteInfo: SiteInfo = {},
-	{ staleTime = HOUR_IN_MS, refetchOnMount = true }: UseQueryOptions = {}
+	{ staleTime = Infinity, refetchOnMount = 'always' }: UseQueryOptions = {}
 ) => {
 	// If we query too many patterns at once, the endpoint will be very slow.
 	// Hence, do local pagination to ensure the performance.
