@@ -15,6 +15,7 @@ import { ComponentType, useEffect, useState } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -201,6 +202,7 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 		<MenuItemLink
 			href={ copySiteHref }
 			onClick={ () => {
+				clearSignupDestinationCookie();
 				setPlanCartItem( { product_slug: plan.product_slug } );
 				recordTracks( 'calypso_sites_dashboard_site_action_copy_site_click' );
 			} }
