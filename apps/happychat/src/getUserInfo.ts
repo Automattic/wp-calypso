@@ -20,13 +20,13 @@ type UserInfo = {
 		region: string;
 		city: string;
 	};
-	cameThrough: string | null;
+	requestSource: string | null;
 };
 
 /**
  * Returns the source where the user came from.
  */
-function getUserCameThrough() {
+function getRequestSource() {
 	const queryArgs = getQueryArgs();
 	const isWCCOM = queryArgs?.ref === 'woocommerce-com';
 
@@ -59,7 +59,7 @@ export function getUserInfo(
 		// add user agent
 		userAgent: window.navigator.userAgent,
 		geoLocation,
-		cameThrough: getUserCameThrough(),
+		requestSource: getRequestSource(),
 	};
 	return info;
 }
