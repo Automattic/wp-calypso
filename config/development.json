@@ -189,6 +189,6 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
-		"newsletter/stats": false
+		"newsletter/stats": true
 	}
 }
