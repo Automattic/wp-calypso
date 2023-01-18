@@ -27,6 +27,7 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 	useEffect( () => {
 		setProgress( 0.4 );
 		if ( submit ) {
+			setProgress( 0.4 );
 			const assignTrialPlan = async () => {
 				try {
 					if ( ! data?.siteSlug ) {
