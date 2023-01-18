@@ -19,14 +19,17 @@
 }
 
 .site-content__bulk-select {
+	margin-block-end: 8px;
+
 	.dashboard-bulk-actions {
 		display: flex;
 		justify-content: end;
 
 		.select-dropdown.is-compact {
-			width: 65%;
+			width: 95%;
+			float: right;
 
-			@include break-small {
+			@include break-mobile {
 				width: auto;
 			}
 		}
@@ -43,6 +46,22 @@
 	.site-content__bulk-select-label {
 		color: var(--color-neutral-70);
 		font-size: 0.875rem;
+	}
+
+	@include break-mobile {
+		padding: 12px 16px;
+	}
+
+}
+
+.dashboard-bulk-actions {
+	.select-dropdown.is-compact {
+		width: 95%;
+		float: right;
+
+		@include break-mobile {
+			width: auto;
+		}
 	}
 }
 

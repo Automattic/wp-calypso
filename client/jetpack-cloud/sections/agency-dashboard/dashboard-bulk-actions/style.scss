@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .dashboard-bulk-actions-modal {
 	.dashboard-bulk-actions-modal-heading {
 		font-size: 1rem;
@@ -26,7 +29,9 @@
 .dashboard-bulk-actions {
 	width: 100%;
 	text-align: right;
-	display: inline-block;
+	display: inline-flex;
+	justify-content: flex-end;
+
 	.button-group {
 		margin-inline-start: 14px;
 		.button {
@@ -64,3 +69,25 @@ button.dashboard-bulk-actions__edit-button {
 		border-width: 1px !important;
 	}
 }
+
+.dashboard-bulk-actions__large-screen {
+	display: none;
+}
+
+.dashboard-bulk-actions__content {
+	width: 70%;
+}
+
+
+.dashboard-bulk-actions__is-action-bar-visible {
+	@include break-xlarge {
+		.dashboard-bulk-actions__small-screen {
+			display: none;
+		}
+
+		.dashboard-bulk-actions__large-screen {
+			display: block;
+		}
+	}
+}
+
