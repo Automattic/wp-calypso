@@ -94,10 +94,8 @@ export class EditorPage {
 		// If the parameter `blockTheme` is true, the editor canvas is hidden inside a new
 		// iframe and must be pierced to be visible.
 		if ( blockTheme ) {
-			console.log( 'klwejr' );
 			this.editorCanvas = this.editor.frameLocator( selectors.editorCanvasFrame ).locator( 'body' );
 		} else {
-			console.log( 'wkljre' );
 			this.editorCanvas = this.editor;
 		}
 
@@ -166,6 +164,45 @@ export class EditorPage {
 	 */
 	getEditorWindowLocator(): Locator {
 		return this.editor;
+	}
+
+	/**
+	 * Returns the locator to the editor canvas.
+	 *
+	 * Editor canvas here refers only to the visible block editor portion.
+	 * The editor canvas may be accessible directly (non-block-based theme) or
+	 * may be wrapped inside an iframe (block-based theme).
+	 *
+	 * @returns {Locator} Locator to the Editor Canvas.
+	 */
+	getEditorCanvasLocator(): Locator {
+		return this.editorCanvas;
+	}
+
+	/**
+	 * Returns a locator to the element specified by the selector.
+	 *
+	 * This method first looks into the editor window for a matching element
+	 * to the selector. If no elements are found, this method then looks into
+	 * the editor canvas.
+	 *
+	 * If no elements matching the selector is found anywhere, this method
+	 * returns null.
+	 *
+	 * The distinction of editor window and editor canvas exists due to the
+	 * presence of inner iframes for block-based themes as of Gutenberg 14.9.1.
+	 *
+	 * @param {string} selector Selector to an element.
+	 * @returns {Promise<Locator|null>} Locator if this method finds a match. null otherwise.
+	 */
+	async getLocatorToSelector( selector: string ): Promise< Locator | null > {
+		if ( await this.editor.locator( selector ).count() ) {
+			return this.editor.locator( selector );
+		}
+		if ( await this.editorCanvas.locator( selector ).count() ) {
+			return this.editorCanvas.locator( selector );
+		}
+		return null;
 	}
 
 	/**
@@ -361,24 +398,22 @@ export class EditorPage {
 	/**
 	 * Adds a pattern from the inline block inserter panel.
 	 *
-	 * Because there are so many different ways to open the inline inserter, this function accepts a function to run first
-	 * that should open the inserter. This allows specs to get to the inserter in the way they need.
+	 * Because there are so many different ways to open the inline inserter,
+	 * this function accepts a Locator to the element that should open the inserter.
 	 *
-	 * The name is expected to be formatted in the same manner as it
-	 * appears on the label when visible in the block inserter panel.
+	 * The name is expected to be formatted identically (including case) to how it
+	 * appears on the label when viewing in the block inserter panel.
 	 *
-	 * Example:
-	 * 		- Two images side by side
-	 *
+	 * @example
+	 * 	- About Me Card
+	 * 	- Contact Info with Map
 	 * @param {string} patternName Name of the pattern to insert as it matches the label in the inserter.
-	 * @param {OpenInlineInserter} openInlineInserter Function to open the inline inserter.
+	 * @param {Locator} inserterLocator Locator to the element that will open the pattern/block inserter when clicked.
 	 */
-	async addPatternInline(
-		patternName: string,
-		openInlineInserter: OpenInlineInserter
-	): Promise< void > {
-		// First, launch the inline inserter in the way expected by the script.
-		await openInlineInserter( this.editor );
+	async addPatternInline( patternName: string, inserterLocator: Locator ): Promise< void > {
+		// Perform a click action on the locator.
+		await inserterLocator.click();
+		// Add the specified pattern from the inserter.
 		await this.addPatternFromInserter( patternName, this.editorInlineBlockInserterComponent );
 	}
 
