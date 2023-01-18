@@ -112,7 +112,7 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 				finalPrice={ finalPrice }
 				isDiscounted={ isDiscounted }
 			/>
-			<span aria-hidden="true">
+			<span className="display-price__prices" aria-hidden="true">
 				{ displayFrom && <span className="display-price__from">from</span> }
 				{ isDiscounted ? (
 					<DiscountedPrice { ...props } finalPrice={ finalPrice } />
@@ -125,7 +125,7 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 					{ tooltipText }
 				</InfoPopover>
 			) }
-			<span aria-hidden="true">
+			<span className="display-price__details" aria-hidden="true">
 				<TimeFrame
 					billingTerm={ billingTerm }
 					discountedPriceDuration={ discountedPriceDuration }

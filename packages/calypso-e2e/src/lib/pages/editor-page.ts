@@ -366,11 +366,6 @@ export class EditorPage {
 	): Promise< void > {
 		await inserter.searchBlockInserter( patternName );
 		await inserter.selectBlockInserterResult( patternName, { type: 'pattern' } );
-
-		const insertConfirmationToastLocator = this.editor.locator(
-			`.components-snackbar__content:text('Block pattern "${ patternName }" inserted.')`
-		);
-		await insertConfirmationToastLocator.waitFor();
 	}
 
 	/**
@@ -795,13 +790,6 @@ export class EditorPage {
 		this.page.once( 'dialog', async ( dialog ) => {
 			await dialog.accept();
 		} );
-	}
-
-	/**
-	 * Opens the post details popover (i.e. number of character, words, etc.).
-	 */
-	async openDetailsPopover(): Promise< void > {
-		await this.editorToolbarComponent.openDetailsPopover();
 	}
 
 	/**
