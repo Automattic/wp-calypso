@@ -113,14 +113,11 @@ const ProductLightbox: React.FC< Props > = ( {
 
 	const variantOptions = useMemo( () => {
 		const variants = JETPACK_RELATED_PRODUCTS_MAP[ product.productSlug ] || [];
-		if ( showVariantsOneBelowTheOther ) {
-			return variants.map( ( itemSlug ) => slugToSelectorProduct( itemSlug ) );
-		}
 		return variants.map( ( itemSlug ) => ( {
 			id: itemSlug,
 			answerText: PRODUCT_OPTIONS[ itemSlug ].toString(),
 		} ) );
-	}, [ product.productSlug, showVariantsOneBelowTheOther ] );
+	}, [ product.productSlug ] );
 
 	// The social advanced plan is not available yet, so don't show it till the time it's ready.
 	const shouldShowOptions = showVariantsOneBelowTheOther
@@ -217,7 +214,6 @@ const ProductLightbox: React.FC< Props > = ( {
 									isMultiSiteIncompatible={ isMultiSiteIncompatible }
 									siteId={ siteId }
 									onChangeProductVariant={ onChangeOption }
-									variants={ variantOptions }
 								/>
 							) }
 							<Button

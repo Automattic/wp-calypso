@@ -1,15 +1,16 @@
+import { JETPACK_RELATED_PRODUCTS_MAP } from '@automattic/calypso-products';
 import { useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
+import slugToSelectorProduct from '../slug-to-selector-product';
 import { SelectorProduct } from '../types';
 import { PRODUCT_OPTIONS_HEADER } from './constants';
 import PaymentPlan from './payment-plan';
 
 type Props = {
 	product: SelectorProduct;
-	variants: Array< SelectorProduct >;
 	onChangeProductVariant: ( product: string ) => void;
 	siteId: number | null;
 	isMultiSiteIncompatible: boolean;
@@ -20,9 +21,11 @@ const ProductWithVariants: React.FC< Props > = ( {
 	product,
 	isMultiSiteIncompatible,
 	siteId,
-	variants,
 } ) => {
 	const [ selectedVariant, setSelectedVariant ] = useState( product );
+	const variants = JETPACK_RELATED_PRODUCTS_MAP[ product.productSlug ].map( ( slug ) => {
+		return slugToSelectorProduct( slug ) as SelectorProduct;
+	} );
 
 	return (
 		<div>
@@ -32,9 +35,8 @@ const ProductWithVariants: React.FC< Props > = ( {
 				</FormLegend>
 			</FormFieldset>
 			{ variants.map( ( variant ) => (
-				<FormLabel>
+				<FormLabel key={ variant.productSlug }>
 					<FormRadio
-						id={ variant?.productSlug }
 						value={ variant }
 						onChange={ () => {
 							onChangeProductVariant( variant.productSlug );
@@ -49,7 +51,7 @@ const ProductWithVariants: React.FC< Props > = ( {
 						siteId={ siteId }
 						product={ variant }
 						showPlansOneBelowTheOther={ true }
-						isActive={ selectedVariant?.productSlug === variant?.productSlug }
+						isActive={ selectedVariant?.productSlug === variant.productSlug }
 					/>
 					<p />
 				</FormLabel>
