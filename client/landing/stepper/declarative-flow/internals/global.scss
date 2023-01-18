@@ -12,6 +12,7 @@
  */
 body {
 	--color-body-background: #fdfdfd;
+	--wooexpress-purple: #7f54b3;
 	background-color: var(--color-body-background);
 }
 
@@ -314,17 +315,6 @@ button {
 	}
 }
 
-.wooexpress {
-	.flow-progress.progress-bar {
-		display: none;
-	}
-
-	.signup-header .wordpress-logo {
-		display: block;
-		width: 500px;
-	}
-}
-
 .assign-trial-plan,
 .processing {
 	&.wooexpress,
@@ -359,4 +349,27 @@ button {
 				url(calypso/assets/images/onboarding/ecommerce-intro-3.jpg);
 		}
 	}
+}
+
+.wooexpress {
+	.step-container .step-container__content h1 {
+		font-family: proxima-nova, sans-serif;
+		font-weight: 600;
+		font-size: $font-title-large;
+	}
+	.flow-progress.progress-bar {
+		display: none;
+	}
+	.processing-step__progress-bar {
+		width: 520px;
+		max-width: 100%;
+	}
+	.processing-step__progress-bar::before {
+		background: var(--wooexpress-purple);
+	}
+	.signup-header .wordpress-logo {
+		display: block;
+		width: 500px;
+	}
+
 }
