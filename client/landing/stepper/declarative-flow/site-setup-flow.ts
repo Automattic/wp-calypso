@@ -190,6 +190,11 @@ const siteSetupFlow: Flow = {
 			switch ( currentStep ) {
 				case 'options': {
 					if ( intent === 'sell' ) {
+						/**
+						 * Part of the theme/plugin bundling is simplyfing the seller flow.
+						 *
+						 * Instead of having the user manually choose between "Start simple" and "More power", we let them select a theme and use the theme choice to determine which path to take.
+						 */
 						return navigate( 'designSetup' );
 					}
 					return navigate( 'bloggerStartingPoint' );
