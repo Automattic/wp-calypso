@@ -43,7 +43,7 @@ export default function SiteTable( { isLoading, columns, items }: Props ) {
 							{ isEnabled( 'jetpack/partner-portal-downtime-monitoring-updates' ) ? (
 								<th>
 									<div className="plugin-common-table__bulk-actions">
-										<EditButton sites={ items } />
+										<EditButton isLargeScreen sites={ items } />
 									</div>
 								</th>
 							) : (
