@@ -209,13 +209,17 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		return globalStyles;
 	}
 
-	function* setGlobalStyles( siteSlug: string, globalStyleId: number, globalStyles: GlobalStyles ) {
+	function* setGlobalStyles(
+		siteIdOrSlug: number | string,
+		globalStylesId: number,
+		globalStyles: GlobalStyles
+	) {
 		const updatedGlobalStyles: GlobalStyles = yield wpcomRequest( {
-			path: `/sites/${ encodeURIComponent( siteSlug ) }/global-styles/${ globalStyleId }`,
+			path: `/sites/${ encodeURIComponent( siteIdOrSlug ) }/global-styles/${ globalStylesId }`,
 			apiNamespace: 'wp/v2',
 			method: 'POST',
 			body: {
-				id: globalStyleId,
+				id: globalStylesId,
 				settings: globalStyles.settings ?? {},
 				styles: globalStyles.styles ?? {},
 			},
@@ -224,9 +228,9 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		return updatedGlobalStyles;
 	}
 
-	function* getGlobalStylesId( siteSlug: string, stylesheet: string ) {
+	function* getGlobalStylesId( siteIdOrSlug: number | string, stylesheet: string ) {
 		const theme: ActiveTheme = yield wpcomRequest( {
-			path: `/sites/${ encodeURIComponent( siteSlug ) }/themes/${ stylesheet }`,
+			path: `/sites/${ encodeURIComponent( siteIdOrSlug ) }/themes/${ stylesheet }`,
 			method: 'GET',
 			apiNamespace: 'wp/v2',
 		} );
@@ -243,10 +247,10 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		return null;
 	}
 
-	function* getGlobalStylesVariations( siteSlug: string, stylesheet: string ) {
+	function* getGlobalStylesVariations( siteIdOrSlug: number | string, stylesheet: string ) {
 		const variations: GlobalStyles[] = yield wpcomRequest( {
 			path: `/sites/${ encodeURIComponent(
-				siteSlug
+				siteIdOrSlug
 			) }/global-styles/themes/${ stylesheet }/variations`,
 			method: 'GET',
 			apiNamespace: 'wp/v2',
@@ -357,7 +361,6 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} );
 
 		if ( styleVariationSlug ) {
-			const globalStylesId: number = yield getGlobalStylesId( siteSlug, stylesheet );
 			const variations: GlobalStyles[] = yield getGlobalStylesVariations( siteSlug, stylesheet );
 			const currentVariation = variations.find(
 				( variation ) =>
@@ -366,6 +369,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			);
 
 			if ( currentVariation ) {
+				const globalStylesId: number = yield getGlobalStylesId( siteSlug, stylesheet );
 				yield setGlobalStyles( siteSlug, globalStylesId, currentVariation );
 			}
 		}

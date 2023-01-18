@@ -1,10 +1,10 @@
 import wpcom from 'calypso/lib/wp';
 import type { ActiveTheme, GlobalStyles } from '@automattic/data-stores';
 
-export function getGlobalStylesId( siteSlug: string, stylesheet: string ) {
+export function getGlobalStylesId( siteIdOrSlug: number | string, stylesheet: string ) {
 	return async () => {
 		const theme: ActiveTheme = await wpcom.req.get( {
-			path: `/sites/${ encodeURIComponent( siteSlug ) }/themes/${ stylesheet }`,
+			path: `/sites/${ encodeURIComponent( siteIdOrSlug ) }/themes/${ stylesheet }`,
 			apiNamespace: 'wp/v2',
 		} );
 
@@ -21,11 +21,11 @@ export function getGlobalStylesId( siteSlug: string, stylesheet: string ) {
 	};
 }
 
-export function getGlobalStylesVariations( siteSlug: string, stylesheet: string ) {
+export function getGlobalStylesVariations( siteIdOrSlug: number | string, stylesheet: string ) {
 	return async () => {
 		const variations: GlobalStyles[] = await wpcom.req.get( {
 			path: `/sites/${ encodeURIComponent(
-				siteSlug
+				siteIdOrSlug
 			) }/global-styles/themes/${ stylesheet }/variations`,
 			apiNamespace: 'wp/v2',
 		} );
@@ -35,16 +35,16 @@ export function getGlobalStylesVariations( siteSlug: string, stylesheet: string 
 }
 
 export function updateGlobalStyles(
-	siteSlug: string,
-	globalStyleId: number,
+	siteIdOrSlug: number | string,
+	globalStylesId: number,
 	globalStyles: GlobalStyles
 ) {
 	return async () => {
 		const updatedGlobalStyles: GlobalStyles = await wpcom.req.post( {
-			path: `/sites/${ encodeURIComponent( siteSlug ) }/global-styles/${ globalStyleId }`,
+			path: `/sites/${ encodeURIComponent( siteIdOrSlug ) }/global-styles/${ globalStylesId }`,
 			apiNamespace: 'wp/v2',
 			body: {
-				id: globalStyleId,
+				id: globalStylesId,
 				settings: globalStyles.settings ?? {},
 				styles: globalStyles.styles ?? {},
 			},

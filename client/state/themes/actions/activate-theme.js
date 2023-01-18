@@ -55,7 +55,6 @@ export function activateTheme(
 			.then( async ( theme ) => {
 				if ( styleVariationSlug ) {
 					const themeStylesheet = theme.stylesheet || themeId;
-					const globalStylesId = await dispatch( getGlobalStylesId( siteId, themeStylesheet ) );
 					const variations = await dispatch( getGlobalStylesVariations( siteId, themeStylesheet ) );
 					const currentVariation = variations.find(
 						( variation ) =>
@@ -64,6 +63,7 @@ export function activateTheme(
 					);
 
 					if ( currentVariation ) {
+						const globalStylesId = await dispatch( getGlobalStylesId( siteId, themeStylesheet ) );
 						await dispatch( updateGlobalStyles( siteId, globalStylesId, currentVariation ) );
 					}
 				}
