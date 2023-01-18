@@ -20,6 +20,7 @@ const MiniCarousel = ( { slug, isOdysseyStats } ) => {
 
 	const shouldShowAdvertisingOption = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 
+	// Blaze promo is disabled for Odyssey.
 	const showBlazePromo = ! isOdysseyStats && shouldShowAdvertisingOption;
 	// Yoast promo is disabled for Odyssey & self-hosted & non-traffic pages.
 	const showYoastPromo = ! isOdysseyStats && ! jetpackNonAtomic;
