@@ -39,7 +39,7 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		window.location.replace( `/home/${ siteSlug }` );
 	}
 
-	if ( ! siteSlug || fetchingSiteError?.error === 'unknown_blog' ) {
+	if ( ! siteSlug || fetchingSiteError?.error ) {
 		window.location.replace( '/home' );
 	}
 
