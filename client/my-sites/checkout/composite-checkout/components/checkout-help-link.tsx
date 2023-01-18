@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
+import { useHappychatAuth } from '@automattic/happychat-connection';
 import { SUPPORT_FORUM, shouldShowHelpCenterToUser } from '@automattic/help-center';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { keyframes } from '@emotion/react';
@@ -179,6 +180,11 @@ export default function CheckoutHelpLink() {
 		presalesZendeskChatAvailable && isEnglishLocale && zendeskPresalesChatKey;
 
 	const hasDirectSupport = supportVariation !== SUPPORT_FORUM;
+	const { data: dataAuth, isLoading: isLoadingAuth } = useHappychatAuth();
+
+	if ( isLoadingAuth ) {
+		return null;
+	}
 
 	// If pre-sales chat isn't available, use the inline help button instead.
 	return (
@@ -189,6 +195,7 @@ export default function CheckoutHelpLink() {
 				<AsyncLoad
 					require="calypso/components/presales-zendesk-chat"
 					chatKey={ zendeskPresalesChatKey }
+					zendeskdJwt={ dataAuth?.user?.zendesk_jwt }
 				/>
 			) : (
 				supportVariationDetermined && (
