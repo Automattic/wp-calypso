@@ -71,9 +71,8 @@ class StatsPeriodNavigation extends PureComponent {
 
 	handleArrowPrevious = () => {
 		const { date, moment, period, url, queryParams } = this.props;
+		const tabValue = queryParams.tab;
 		const previousDay = moment( date ).subtract( 1, period ).format( 'YYYY-MM-DD' );
-		const getQueryParams = new URLSearchParams( window.location.search );
-		const tabValue = getQueryParams.get( 'tab' );
 		const previousDayQuery = qs.stringify(
 			Object.assign(
 				{},
