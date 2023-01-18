@@ -13,7 +13,6 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleSectionNavCompact from '../people-section-nav-compact';
 import Subscribers from '../subscribers';
 import TeamInvites from '../team-invites';
-import TeamInvitesAccepted from '../team-invites-accepted';
 import TeamMembers from '../team-members';
 import type { FollowersQuery } from '../subscribers/types';
 import type { UsersQuery } from '../team-members/types';
@@ -103,7 +102,6 @@ function SubscribersTeam( props: Props ) {
 
 									<TeamMembers search={ search } usersQuery={ usersQuery } />
 									<TeamInvites />
-									<TeamInvitesAccepted />
 								</>
 							);
 					}
