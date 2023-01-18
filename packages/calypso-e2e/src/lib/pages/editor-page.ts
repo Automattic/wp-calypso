@@ -48,7 +48,7 @@ const EXTENDED_TIMEOUT = 30 * 1000;
  */
 export class EditorPage {
 	private page: Page;
-	private editor: Locator;
+	private editorWindow: Locator;
 	private editorCanvas: Locator;
 	private target: SiteType;
 	private editorPublishPanelComponent: EditorPublishPanelComponent;
@@ -84,9 +84,9 @@ export class EditorPage {
 		// the Locator. This is to present a unified behavior when other methods reference the
 		// `editorWindow`.
 		if ( target === 'atomic' ) {
-			this.editor = page.locator( selectors.editor );
+			this.editorWindow = page.locator( selectors.editor );
 		} else {
-			this.editor = page.frameLocator( selectors.editorFrame ).locator( selectors.editor );
+			this.editorWindow = page.frameLocator( selectors.editorFrame ).locator( selectors.editor );
 		}
 
 		// The second step is to locate the iframe that exists within the
@@ -94,9 +94,11 @@ export class EditorPage {
 		// If the parameter `blockTheme` is true, the editor canvas is hidden inside a new
 		// iframe and must be pierced to be visible.
 		if ( blockTheme ) {
-			this.editorCanvas = this.editor.frameLocator( selectors.editorCanvasFrame ).locator( 'body' );
+			this.editorCanvas = this.editorWindow
+				.frameLocator( selectors.editorCanvasFrame )
+				.locator( 'body' );
 		} else {
-			this.editorCanvas = this.editor;
+			this.editorCanvas = this.editorWindow;
 		}
 
 		this.page = page;
@@ -105,23 +107,26 @@ export class EditorPage {
 		// Instantiate the subcomponent classes that build up the editor experience.
 		this.editorGutenbergComponent = new EditorGutenbergComponent(
 			page,
-			this.editor,
+			this.editorWindow,
 			this.editorCanvas
 		);
-		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editor );
-		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( page, this.editor );
-		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editor );
-		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editor );
-		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page, this.editor );
-		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editor );
-		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page, this.editor );
+		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editorWindow );
+		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent(
+			page,
+			this.editorWindow
+		);
+		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editorWindow );
+		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editorWindow );
+		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page, this.editorWindow );
+		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editorWindow );
+		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page, this.editorWindow );
 		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent(
 			page,
-			this.editor
+			this.editorWindow
 		);
 		this.editorInlineBlockInserterComponent = new EditorInlineBlockInserterComponent(
 			page,
-			this.editor
+			this.editorWindow
 		);
 	}
 
@@ -163,7 +168,7 @@ export class EditorPage {
 	 * @returns A pointer to frame-safe, top-level locator within the editor.
 	 */
 	getEditorWindowLocator(): Locator {
-		return this.editor;
+		return this.editorWindow;
 	}
 
 	/**
@@ -196,8 +201,8 @@ export class EditorPage {
 	 * @returns {Promise<Locator|null>} Locator if this method finds a match. null otherwise.
 	 */
 	async getLocatorToSelector( selector: string ): Promise< Locator | null > {
-		if ( await this.editor.locator( selector ).count() ) {
-			return this.editor.locator( selector );
+		if ( await this.editorWindow.locator( selector ).count() ) {
+			return this.editorWindow.locator( selector );
 		}
 		if ( await this.editorCanvas.locator( selector ).count() ) {
 			return this.editorCanvas.locator( selector );
@@ -228,7 +233,7 @@ export class EditorPage {
 	 * @returns {Locator} Locator corresponding to the selector.
 	 */
 	getLocator( selector: string ): Locator {
-		return this.editor.locator( selector );
+		return this.editorWindow.locator( selector );
 	}
 
 	//#endregion
@@ -353,7 +358,7 @@ export class EditorPage {
 		openInlineInserter: OpenInlineInserter
 	): Promise< ElementHandle > {
 		// First, launch the inline inserter in the way expected by the script.
-		await openInlineInserter( this.editor );
+		await openInlineInserter( this.editorWindow );
 		await this.addBlockFromInserter( blockName, this.editorInlineBlockInserterComponent );
 
 		const blockHandle = await this.editorGutenbergComponent.getSelectedBlockElementHandle(
@@ -429,6 +434,10 @@ export class EditorPage {
 	): Promise< void > {
 		await inserter.searchBlockInserter( patternName );
 		await inserter.selectBlockInserterResult( patternName, { type: 'pattern' } );
+		const insertConfirmationToastLocator = this.editorWindow.locator(
+			`.components-snackbar__content:text('Block pattern "${ patternName }" inserted.')`
+		);
+		await insertConfirmationToastLocator.waitFor();
 	}
 
 	/**
@@ -683,9 +692,9 @@ export class EditorPage {
 		await this.editorToolbarComponent.switchToDraft();
 
 		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
-		await this.editor.getByRole( 'button' ).getByText( 'OK' ).click();
+		await this.editorWindow.getByRole( 'button' ).getByText( 'OK' ).click();
 		// @TODO: eventually refactor this out to a EditorToastNotificationComponent.
-		await this.editor.getByRole( 'button', { name: 'Dismiss this notice' } ).waitFor();
+		await this.editorWindow.getByRole( 'button', { name: 'Dismiss this notice' } ).waitFor();
 	}
 
 	/**
@@ -698,7 +707,7 @@ export class EditorPage {
 	 * @returns {URL} Published article's URL.
 	 */
 	async getPublishedURLFromToast(): Promise< URL > {
-		const toastLocator = this.editor.locator( selectors.toastViewPostLink );
+		const toastLocator = this.editorWindow.locator( selectors.toastViewPostLink );
 		const publishedURL = ( await toastLocator.getAttribute( 'href' ) ) as string;
 		return new URL( publishedURL );
 	}
