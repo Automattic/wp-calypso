@@ -1,5 +1,4 @@
-import { useEffect, useMemo } from 'react';
-import { useInfiniteQuery, UseQueryOptions } from 'react-query';
+import { useEffect, useState } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { RenderedPatterns, SiteInfo } from '../types';
 
@@ -10,9 +9,9 @@ const fetchRenderedPatterns = (
 	stylesheet: string,
 	patternIds: string[],
 	siteInfo: SiteInfo,
-	page: number
+	page = 0
 ): Promise< RenderedPatterns > => {
-	const pattern_ids = patternIds.slice( ( page - 1 ) * PAGE_SIZE, page * PAGE_SIZE ).join( ',' );
+	const pattern_ids = patternIds.slice( page * PAGE_SIZE, ( page + 1 ) * PAGE_SIZE ).join( ',' );
 	const { title, tagline } = siteInfo;
 	const params = new URLSearchParams( {
 		stylesheet,
@@ -38,37 +37,26 @@ const useRenderedPatterns = (
 	siteId: number | string,
 	stylesheet: string,
 	patternIds: string[],
-	siteInfo: SiteInfo = {},
-	{ staleTime = Infinity, refetchOnMount = 'always' }: UseQueryOptions = {}
+	siteInfo: SiteInfo = {}
 ) => {
+	const [ renderedPatterns, setRenderedPatterns ] = useState( {} );
+
 	// If we query too many patterns at once, the endpoint will be very slow.
 	// Hence, do local pagination to ensure the performance.
 	const totalPage = Math.ceil( patternIds.length / PAGE_SIZE );
-	const { data, fetchNextPage } = useInfiniteQuery(
-		[ siteId, stylesheet, 'block-renderer/patterns/render', patternIds, siteInfo ],
-		( { pageParam } ) =>
-			fetchRenderedPatterns( siteId, stylesheet, patternIds, siteInfo, pageParam ),
-		{
-			refetchOnMount,
-			staleTime,
-			// We want to fetch rendered patterns manually
-			enabled: false,
-		}
-	);
-
-	const renderedPatterns = useMemo(
-		() =>
-			data?.pages
-				? data.pages.reduce( ( previous, current ) => ( { ...previous, ...current } ), {} )
-				: {},
-		[ data?.pages ]
-	);
 
 	useEffect( () => {
+		const promises = [];
 		for ( let i = 0; i < totalPage; i++ ) {
-			fetchNextPage( { pageParam: i + 1 } );
+			promises.push( fetchRenderedPatterns( siteId, stylesheet, patternIds, siteInfo, i ) );
 		}
-	}, [ totalPage, fetchNextPage ] );
+
+		Promise.all( promises ).then( ( pages ) => {
+			setRenderedPatterns(
+				pages.reduce( ( previous, current ) => ( { ...previous, ...current } ), {} )
+			);
+		} );
+	}, [] );
 
 	return renderedPatterns;
 };
