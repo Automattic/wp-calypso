@@ -15,7 +15,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { Follower } from 'calypso/my-sites/people/subscribers/types';
+import type { Member } from '../types';
 
 import './style.scss';
 
@@ -74,7 +74,7 @@ export default function SubscriberDetails( props: Props ) {
 		page.back( fallback );
 	}
 
-	function removeSubscriber( subscriber: Follower ) {
+	function removeSubscriber( subscriber: Member ) {
 		const listType = 'email' === subscriberType ? 'Email Follower' : 'Follower';
 		dispatch(
 			recordGoogleEvent( 'People', 'Clicked Remove Follower Button On ' + listType + ' list' )
