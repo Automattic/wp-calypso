@@ -106,7 +106,7 @@ export default function ConnectDomainStepLogin( {
 							) }
 						</p>
 					) }
-					{ rootDomainProvider === 'unkwown' && (
+					{ rootDomainProvider !== 'wpcom' && (
 						<>
 							<p className={ className + '__text' }>
 								{ createInterpolateElement(
