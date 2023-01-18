@@ -1,3 +1,8 @@
+@import "@wordpress/base-styles/breakpoints";
+
+$grid-horizontal-gutters: 24px;
+$grid-vertical-gutters: 32px;
+
 .stats-module {
 	.upsell-nudge.card {
 		margin: 16px;
@@ -26,6 +31,50 @@
 // Site sections
 .stats__module-list {
 	@include clear-fix;
+}
+
+.stats__module-list.stats__module--unified.is-insights-page-enabled {
+	align-items: stretch;
+	display: grid;
+	grid-template-columns: repeat(12, 1fr);
+	grid-template-rows: repeat(5, min-content);
+	gap: $grid-vertical-gutters $grid-horizontal-gutters;
+	grid-template-areas:
+		"tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories comments comments comments comments comments comments"
+		"shares shares shares shares followers followers followers followers publicize publicize publicize publicize"
+		"latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary social-followers social-followers social-followers social-followers social-followers social-followers";
+
+	@media (max-width: 660px) {
+		padding: 0 16px;
+	}
+
+	.list-tags-categories {
+		grid-area: tags-categories;
+	}
+
+	.list-comments {
+		grid-area: comments;
+	}
+
+	.list-shares {
+		grid-area: shares;
+	}
+
+	.list-followers {
+		grid-area: followers;
+	}
+
+	.list-total-followers {
+		grid-area: social-followers;
+	}
+
+	.list-latest-post-summary {
+		grid-area: latest-post-summary;
+	}
+
+	.list-publicize {
+		grid-area: publicize;
+	}
 }
 
 .stats-insights__nonperiodic {

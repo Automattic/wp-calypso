@@ -31,7 +31,7 @@ const StatShares = ( { siteId } ) => {
 	];
 
 	return (
-		<div>
+		<div className="list-shares">
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="stats" /> }
 			<SectionHeader label={ translate( 'Shares' ) } />
 			<Card className={ classNames( ...classes ) }>
