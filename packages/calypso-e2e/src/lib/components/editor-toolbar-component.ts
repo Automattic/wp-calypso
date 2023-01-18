@@ -3,7 +3,7 @@ import envVariables from '../../env-variables';
 import { translateFromPage } from '../utils';
 import type { EditorPreviewOptions } from './types';
 
-const panel = 'div.interface-interface-skeleton__header';
+const panel = '.interface-navigable-region[class*="header"]';
 const settingsButtonLabel = 'Settings';
 const moreOptionsLabel = 'Options';
 const selectors = {
@@ -27,8 +27,8 @@ const selectors = {
 		return `${ panel } button.editor-post-publish-button__button[aria-disabled="${ buttonState }"]`;
 	},
 
-	// List view
-	listViewButton: `${ panel } button[aria-label="List View"]`,
+	// Document overview
+	documentOverviewButton: `${ panel } button[aria-label="Document Overview"]`,
 
 	// Details popover
 	detailsButton: `${ panel } button[aria-label="Details"]`,
@@ -213,6 +213,17 @@ export class EditorToolbarComponent {
 	/* Publish and unpublish */
 
 	/**
+	 * Returns the text present for the save/publish button.
+	 *
+	 * @returns {Promise<string>} String found on the button.
+	 */
+	async getPublishButtonText(): Promise< string > {
+		const publishButtonLocator = this.editor.locator( selectors.publishButton( 'enabled' ) );
+
+		return await publishButtonLocator.innerText();
+	}
+
+	/**
 	 * Clicks on the primary button to publish the article.
 	 *
 	 * This is applicable for the following scenarios:
@@ -301,11 +312,11 @@ export class EditorToolbarComponent {
 			return;
 		}
 
-		if ( await this.targetIsOpen( selectors.listViewButton ) ) {
+		if ( await this.targetIsOpen( selectors.documentOverviewButton ) ) {
 			return;
 		}
 
-		const locator = this.editor.locator( selectors.listViewButton );
+		const locator = this.editor.locator( selectors.documentOverviewButton );
 		await locator.click();
 	}
 
@@ -318,30 +329,11 @@ export class EditorToolbarComponent {
 			return;
 		}
 
-		if ( ! ( await this.targetIsOpen( selectors.listViewButton ) ) ) {
+		if ( ! ( await this.targetIsOpen( selectors.documentOverviewButton ) ) ) {
 			return;
 		}
 
-		const locator = this.editor.locator( selectors.listViewButton );
-		await locator.click();
-	}
-
-	/* Details popover */
-
-	/**
-	 * Opens the post details popover (i.e. number of character, words, etc.).
-	 */
-	async openDetailsPopover(): Promise< void > {
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			// Details are not available on mobile!
-			return;
-		}
-
-		if ( await this.targetIsOpen( selectors.detailsButton ) ) {
-			return;
-		}
-
-		const locator = this.editor.locator( selectors.detailsButton );
+		const locator = this.editor.locator( selectors.documentOverviewButton );
 		await locator.click();
 	}
 

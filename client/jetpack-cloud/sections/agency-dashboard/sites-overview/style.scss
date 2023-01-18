@@ -12,14 +12,14 @@
 	// The -123px is to undo the padding of .layout__content (79px + 32px) and .sites-overview_container ( 8px + 8px )
 	min-height: calc(100vh - 123px);
 	padding: 16px 0;
-	@include break-large() {
+	@include break-xlarge {
 		padding: 6px 0;
 	}
 }
 .sites-overview__content-wrapper {
 	max-width: 1500px;
 	margin: auto;
-	@include break-large() {
+	@include break-xlarge {
 		padding: 0;
 	}
 }
@@ -161,7 +161,7 @@
 		margin-inline-end: 5px;
 		font-size: 1rem !important;
 	}
-	@include break-large() {
+	@include break-xlarge {
 		width: calc(100% - 55px);
 		margin-inline-start: 55px;
 		font-size: 0.875rem !important;
@@ -175,7 +175,7 @@
 	background: linear-gradient(to right, rgba(255, 255, 255, 0.8) 30%, rgba(255, 255, 255, 1) 100%);
 	inset-block-start: 0;
 	inset-inline-end: 75px;
-	@include break-large() {
+	@include break-xlarge {
 		inset-inline-end: 0;
 	}
 }
@@ -188,7 +188,7 @@
 	display: flex;
 	align-items: center;
 	height: 40px;
-	@include break-large() {
+	@include break-xlarge {
 		margin: 8px;
 	}
 }
@@ -200,7 +200,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	@include break-large() {
+	@include break-xlarge {
 		width: auto;
 	}
 }
@@ -212,13 +212,13 @@
 }
 .sites-overview__error-message-large-screen {
 	display: none;
-	@include break-large() {
+	@include break-xlarge {
 		display: inline-block;
 	}
 }
 .sites-overview__error-message-small-screen {
 	display: inline-block;
-	@include break-large() {
+	@include break-xlarge {
 		display: none;
 	}
 }
@@ -235,7 +235,7 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	vertical-align: middle;
-	@include break-large() {
+	@include break-xlarge {
 		max-width: 70px;
 	}
 	@include break-wide() {
@@ -263,7 +263,7 @@
 	inset-block-start: 50%;
 	transform: translateY(-50%);
 	display: inline-flex;
-	@include break-large() {
+	@include break-xlarge {
 		display: none;
 	}
 }
@@ -281,7 +281,7 @@
 	font-size: 0.75rem;
 	line-height: 20px;
 	box-sizing: border-box;
-	@include break-large() {
+	@include break-xlarge {
 		display: none;
 	}
 }

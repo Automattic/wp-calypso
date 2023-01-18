@@ -70,6 +70,7 @@ import { merge } from 'lodash';
 import documentHead from 'calypso/state/document-head/reducer';
 import plugins from 'calypso/state/plugins/reducer';
 import productsList from 'calypso/state/products-list/reducer';
+import siteConnection from 'calypso/state/site-connection/reducer';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import PluginsBrowser from '../';
@@ -83,9 +84,9 @@ const initialReduxState = {
 		},
 	},
 	ui: { selectedSiteId: 1 },
+	siteConnection: { items: { 1: true } },
 	sites: {
 		items: { 1: { ID: 1, title: 'Test Site', plan: { productSlug: PLAN_FREE } } },
-		connection: { items: { 1: true } },
 	},
 	currentUser: { capabilities: { 1: { manage_options: true } } },
 	documentHead: {},
@@ -96,7 +97,7 @@ const render = ( el, options = {} ) =>
 	renderWithProvider( el, {
 		...options,
 		initialState: merge( initialReduxState, options.initialState ),
-		reducers: { ui, plugins, documentHead, productsList },
+		reducers: { ui, plugins, documentHead, productsList, siteConnection },
 	} );
 
 window.__i18n_text_domain__ = JSON.stringify( 'default' );
@@ -195,9 +196,9 @@ describe( 'PluginsBrowser basic tests', () => {
 	test( 'should show notice if site is not connected to wpcom', () => {
 		const initialState = {
 			ui: { selectedSiteId: 1 },
+			siteConnection: { items: { 1: false } },
 			sites: {
 				items: { 1: { jetpack: false } },
-				connection: { items: { 1: false } },
 			},
 		};
 		render( <PluginsBrowser />, { initialState } );

@@ -21,11 +21,12 @@ import { HELP_CENTER_STORE } from './stores';
  */
 
 export function useHCWindowCommunicator( isMinimized: boolean ) {
-	const { supportSite, subject, message, iframe } = useSelect( ( select ) => {
+	const { supportSite, subject, message, chatTag, iframe } = useSelect( ( select ) => {
 		return {
 			supportSite: select( HELP_CENTER_STORE ).getSite(),
 			subject: select( HELP_CENTER_STORE ).getSubject(),
 			message: select( HELP_CENTER_STORE ).getMessage(),
+			chatTag: select( HELP_CENTER_STORE ).getChatTag(),
 			iframe: select( HELP_CENTER_STORE ).getIframe(),
 		};
 	} );
@@ -84,6 +85,7 @@ export function useHCWindowCommunicator( isMinimized: boolean ) {
 									message,
 									planSlug: supportSite?.plan?.product_slug,
 									siteUrl: supportSite?.URL,
+									chatTag,
 								},
 								{ targetOrigin: event.origin }
 							);

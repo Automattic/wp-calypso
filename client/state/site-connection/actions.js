@@ -1,3 +1,5 @@
+import 'calypso/state/site-connection/init';
+
 import wp from 'calypso/lib/wp';
 import {
 	SITE_CONNECTION_STATUS_RECEIVE,

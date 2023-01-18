@@ -118,7 +118,9 @@ export class FullSiteEditorPage {
 	 * @param {string} siteHostName Host name of the site, without scheme. (e.g. testsite.wordpress.com)
 	 */
 	async visit( siteHostName: string ): Promise< void > {
-		await this.page.goto( getCalypsoURL( `site-editor/${ siteHostName }` ) );
+		await this.page.goto( getCalypsoURL( `site-editor/${ siteHostName }` ), {
+			timeout: 60 * 1000,
+		} );
 	}
 
 	/**
@@ -362,6 +364,26 @@ export class FullSiteEditorPage {
 	}
 
 	/**
+	 * Open the navigation sidebar.
+	 */
+	async openNavSidebar(): Promise< void > {
+		const openButton = this.editor.locator( 'button[aria-label="Open Navigation Sidebar"]' );
+		const closeButton = this.editor.locator( 'button[aria-label="Open the editor"]' );
+
+		await Promise.race( [ closeButton.waitFor(), openButton.click() ] );
+	}
+
+	/**
+	 * Close the navigation sidebar.
+	 */
+	async closeNavSidebar(): Promise< void > {
+		const openButton = this.editor.locator( 'button[aria-label="Open Navigation Sidebar"]' );
+		const closeButton = this.editor.locator( 'button[aria-label="Open the editor"]' );
+
+		await Promise.race( [ openButton.waitFor(), closeButton.click() ] );
+	}
+
+	/**
 	 * Click the editor document actions icon.
 	 */
 	async openDocumentActionsDropdown(): Promise< void > {
@@ -527,15 +549,15 @@ export class FullSiteEditorPage {
 	/**
 	 * Delete a template part in the site editor.
 	 *
-	 * @param {string} name Name of the template part.
+	 * @param {string[]} names Name of the template part.
 	 */
-	async deleteTemplatePart( name: string ): Promise< void > {
-		if ( ! ( await this.templatePartListComponent.isOpen() ) ) {
-			await this.editorToolbarComponent.openNavSidebar();
-			await this.fullSiteEditorNavSidebarComponent.navigateToTemplateParts();
+	async deleteTemplateParts( names: string[] ): Promise< void > {
+		await this.openNavSidebar();
+		await this.fullSiteEditorNavSidebarComponent.navigateToTemplatePartsManager();
+		for ( const name of names ) {
+			await this.templatePartListComponent.deleteTemplatePart( name );
+			await this.waitForConfirmationToast( `"${ name }" deleted.` );
 		}
-		await this.templatePartListComponent.deleteTemplatePart( name );
-		await this.waitForConfirmationToast( `"${ name }" deleted.` );
 	}
 
 	//#endregion

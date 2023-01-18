@@ -43,14 +43,18 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Pattern-related events'
 		} );
 
 		it( 'Select blank template from modal', async function () {
-			const editorFrame = await editorPage.getEditorHandle();
-			const pageTemplateModalComponent = new PageTemplateModalComponent( editorFrame, page );
+			// @TODO Consider moving this to EditorPage.
+			const editorWindowLocator = editorPage.getEditorWindowLocator();
+			const pageTemplateModalComponent = new PageTemplateModalComponent(
+				page,
+				editorWindowLocator
+			);
 			await pageTemplateModalComponent.selectBlankPage();
 		} );
 
 		describe( 'From the sidebar inserter', function () {
-			const patternName = 'Two columns of text and title'; // This is distinct and returns one result.
-			const patternNameInEventProperty = 'core/two-columns-of-text-and-title';
+			const patternName = 'Simple Two Column Layout'; // This is distinct and returns one result.
+			const patternNameInEventProperty = 'a8c/simple-two-column-layout';
 
 			it( 'Add pattern from sidebar inserter', async function () {
 				await editorPage.addPatternFromSidebar( patternName );
@@ -69,8 +73,8 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Pattern-related events'
 		describe( 'From the inline inserter', function () {
 			// We use a different pattern here for distinction.
 			// This especially helps distinguish the toast popups that confirm patter insertion.
-			const patternName = 'Pricing table'; // This returns one result.
-			const patternNameInEventProperty = 'pricing-table';
+			const patternName = 'Two column food menu'; // This returns one result.
+			const patternNameInEventProperty = 'a8c/two-column-food-menu';
 
 			it( 'Clear event stack for clean slate', async function () {
 				await eventManager.clearEvents();

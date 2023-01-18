@@ -15,7 +15,6 @@ import {
 } from 'calypso/signup/storageUtils';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import AutomatedCopySite from './internals/steps-repository/automated-copy-site';
-import Intro from './internals/steps-repository/intro';
 import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
@@ -41,7 +40,6 @@ const copySite: Flow = {
 		}
 
 		return [
-			{ slug: 'intro', component: Intro },
 			{ slug: 'site-creation-step', component: SiteCreationStep },
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'automated-copy', component: AutomatedCopySite },
@@ -64,11 +62,6 @@ const copySite: Flow = {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
 
 			switch ( _currentStepSlug ) {
-				case 'intro': {
-					clearSignupDestinationCookie();
-					return navigate( 'site-creation-step' );
-				}
-
 				case 'site-creation-step': {
 					return navigate( 'processing' );
 				}

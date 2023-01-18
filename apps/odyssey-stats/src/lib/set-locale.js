@@ -21,6 +21,10 @@ export default ( dispatch ) => {
 	const siteLocale = config( 'i18n_locale_slug' );
 	const localeSlug = siteLocale || defaultLocale;
 
+	if ( localeSlug === defaultLocale ) {
+		return;
+	}
+
 	getLanguageFile( localeSlug ).then(
 		// Success.
 		( body ) => {

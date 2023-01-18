@@ -1,7 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactChild, useCallback } from 'react';
+import { ReactChild, useCallback, useEffect, useState, useContext, RefObject } from 'react';
 import acceptDialog from 'calypso/lib/accept';
 import { useToggleActivateMonitor, useUpdateMonitorSettings } from '../hooks';
+import SitesOverviewContext from '../sites-overview/context';
 import {
 	availableNotificationDurations as durations,
 	getSiteCountText,
@@ -121,4 +122,44 @@ export function useHandleResetNotification( selectedSites: Array< Site > ) {
 	}, [ resetMonitorDuration, selectedSites, translate ] );
 
 	return handleResetNotification;
+}
+
+const MAX_ACTIONBAR_HEIGHT = 30;
+const MIN_ACTIONBAR_WIDTH = 400;
+
+export function useHandleShowHideActionBar( node: RefObject< HTMLDivElement > ) {
+	const [ actionBarVisible, setActionBarVisible ] = useState( true );
+	const { isBulkManagementActive } = useContext( SitesOverviewContext );
+
+	const maybeMakeActionBarVisible = useCallback( () => {
+		const actionBarDomElement = node ? node.current : null;
+
+		if ( actionBarDomElement ) {
+			if ( actionBarDomElement.offsetWidth < MIN_ACTIONBAR_WIDTH ) {
+				return;
+			}
+
+			setTimeout( () => {
+				const actionBarVisible = actionBarDomElement.offsetHeight <= MAX_ACTIONBAR_HEIGHT;
+				setActionBarVisible( actionBarVisible );
+			}, 1 );
+		}
+	}, [ node ] );
+
+	useEffect( () => {
+		window.addEventListener( 'resize', maybeMakeActionBarVisible );
+		return () => {
+			window.removeEventListener( 'resize', maybeMakeActionBarVisible );
+		};
+	}, [ maybeMakeActionBarVisible ] );
+
+	useEffect( () => {
+		if ( isBulkManagementActive ) {
+			maybeMakeActionBarVisible();
+		}
+		// Do not add maybeMakeActionBarVisible to the dependency array as it will cause an infinite loop
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ isBulkManagementActive ] );
+
+	return { actionBarVisible };
 }

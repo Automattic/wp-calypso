@@ -173,13 +173,6 @@ class StatsEmailOpenDetail extends Component {
 
 	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
 
-	barClick = ( bar ) => {
-		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
-		const parsed = getPageUrl();
-		const updatedQs = stringifyQs( updateQueryString( parsed, { startDate: bar.data.period } ) );
-		page.redirect( `${ parsed.pathname }?${ updatedQs }` );
-	};
-
 	switchChart = ( tab ) => {
 		if ( ! tab.loading && tab.attr !== this.props.chartTab ) {
 			this.props.recordGoogleEvent( 'Stats', 'Clicked ' + titlecase( tab.attr ) + ' Tab' );
@@ -277,7 +270,6 @@ class StatsEmailOpenDetail extends Component {
 									activeLegend={ this.state.activeLegend }
 									availableLegend={ this.getAvailableLegend() }
 									onChangeLegend={ this.onChangeLegend }
-									barClick={ this.barClick }
 									switchTab={ this.switchChart }
 									charts={ CHARTS }
 									queryDate={ queryDate }

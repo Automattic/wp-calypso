@@ -65,11 +65,17 @@ $common-border-radius: 4px;
 		}
 
 		.segmented-control__item {
+			&:not(:first-of-type) {
+				margin-left: -1px;
+			}
+
 			&.is-selected {
 				.segmented-control__link {
 					background-color: var(--color-primary);
 					border-color: var(--color-primary);
 					color: var(--studio-white);
+					position: relative;
+					z-index: 1;
 				}
 			}
 
@@ -79,10 +85,9 @@ $common-border-radius: 4px;
 				border-right: 0;
 			}
 
-			&:nth-of-type(2):last-of-type .segmented-control__link {
+			&:last-of-type .segmented-control__link {
 				border-top-right-radius: $common-border-radius;
 				border-bottom-right-radius: $common-border-radius;
-				border-left: 0;
 			}
 		}
 
@@ -95,8 +100,7 @@ $common-border-radius: 4px;
 		}
 	}
 
-	table,
-	table.stats-views__months {
+	table {
 		table-layout: fixed;
 		min-width: 900px;
 
@@ -107,19 +111,46 @@ $common-border-radius: 4px;
 			font-weight: 400;
 			font-size: $font-body-small;
 			line-height: 20px;
-			text-transform: none;
 			text-align: center;
 			letter-spacing: -0.15px;
 			border: 0;
 
+			cursor: pointer;
+			user-select: none;
+		}
+
+		td {
 			&.is-total {
 				font-weight: 600;
 				text-align: right;
+
+				cursor: text;
 			}
 
-			&.level-3,
-			&.level-4,
+			&.level-0 {
+				background-color: var(--color-neutral-0);
+			}
+
+			&.level-1 {
+				background-color: var(--color-primary-5);
+			}
+
+			&.level-2 {
+				background-color: var(--color-primary-10);
+			}
+
+			&.level-3 {
+				background-color: var(--color-primary-light);
+				color: var(--studio-white);
+			}
+
+			&.level-4 {
+				background-color: var(--color-primary);
+				color: var(--studio-white);
+			}
+
 			&.level-5 {
+				background-color: var(--color-primary-dark);
 				color: var(--studio-white);
 			}
 		}
@@ -156,5 +187,12 @@ $common-border-radius: 4px;
 				border-bottom-right-radius: $common-border-radius;
 			}
 		}
+	}
+}
+
+// StatsViews Months styles
+.stats-views__months {
+	.is-loading & {
+		display: none;
 	}
 }

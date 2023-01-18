@@ -42,6 +42,10 @@ describe(
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 
+			it( 'Close the navigation sidebar', async function () {
+				await fullSiteEditorPage.closeNavSidebar();
+			} );
+
 			it( 'Open the document actions dropdown', async function () {
 				await fullSiteEditorPage.openDocumentActionsDropdown();
 			} );
@@ -51,6 +55,10 @@ describe(
 					'wpcom_site_editor_document_actions_dropdown_open'
 				);
 				expect( eventDidFire ).toBe( true );
+			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
 			} );
 		} );
 
@@ -74,6 +82,10 @@ describe(
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 
+			it( 'Close the navigation sidebar', async function () {
+				await fullSiteEditorPage.closeNavSidebar();
+			} );
+
 			it( 'Open the document actions dropdown', async function () {
 				await fullSiteEditorPage.openDocumentActionsDropdown();
 			} );
@@ -95,6 +107,10 @@ describe(
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
+			} );
 		} );
 
 		describe( 'wpcom_site_editor_document_actions_revert_click', function () {
@@ -115,6 +131,10 @@ describe(
 			it( 'Visit the site editor', async function () {
 				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+			} );
+
+			it( 'Close the navigation sidebar', async function () {
+				await fullSiteEditorPage.closeNavSidebar();
 			} );
 
 			it( 'Customize the current template', async function () {
@@ -144,6 +164,10 @@ describe(
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
+			} );
 		} );
 
 		describe( 'wpcom_site_editor_document_actions_show_all_click', function () {
@@ -166,6 +190,10 @@ describe(
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 
+			it( 'Close the navigation sidebar', async function () {
+				await fullSiteEditorPage.closeNavSidebar();
+			} );
+
 			it( 'Open the document actions dropdown', async function () {
 				await fullSiteEditorPage.openDocumentActionsDropdown();
 			} );
@@ -181,6 +209,10 @@ describe(
 					'wpcom_site_editor_document_actions_show_all_click'
 				);
 				expect( eventDidFire ).toBe( true );
+			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
 			} );
 		} );
 	}

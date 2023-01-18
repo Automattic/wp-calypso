@@ -1,4 +1,9 @@
 .marketplace-thank-you__container {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
 	.thank-you__container {
 		padding-top: var(--masterbar-height);
 	}
@@ -6,7 +11,7 @@
 	.thank-you__container-header {
 		min-height: auto;
 		padding: 0;
-		padding-top: 60px;
+		padding-top: 10px;
 	}
 
 	.thank-you__body {
@@ -55,8 +60,18 @@
 		.thank-you__step {
 			display: flex;
 			flex-direction: column;
+			justify-content: space-between;
 			flex-wrap: wrap;
 			min-width: 280px;
+
+			@media ( max-width: 740px ) {
+				min-width: auto;
+				max-width: 420px;
+			}
+
+			@media ( max-width: 520px ) {
+				max-width: 200px;
+			}
 
 			h3 {
 				line-height: 24px;
@@ -83,6 +98,11 @@
 
 		div {
 			max-width: 240px;
+
+			@media ( max-width: 740px ) {
+				min-width: auto;
+				max-width: 100%;
+			}
 		}
 	}
 }
