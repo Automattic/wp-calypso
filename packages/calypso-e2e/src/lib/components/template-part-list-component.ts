@@ -3,9 +3,9 @@ import { Locator, Page } from 'playwright';
 const parentSelector = '[aria-label="Template parts list - Content"]';
 
 const selectors = {
-	deleteButton: `${ parentSelector } button:has-text("Delete")`,
+	deleteButton: '[aria-label="Actions"] button :text("Delete")',
 	actionsButtonForPart: ( partName: string ) =>
-		`${ parentSelector } .edit-site-list-table-row:has-text("${ partName }") button[aria-label="Actions"]`,
+		`.edit-site-list-table-row:has-text("${ partName }") button[aria-label="Actions"]`,
 };
 
 /**
