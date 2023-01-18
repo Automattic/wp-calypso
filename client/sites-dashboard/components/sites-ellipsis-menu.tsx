@@ -13,11 +13,13 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { ComponentType, useEffect, useState } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
+import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
@@ -185,11 +187,14 @@ const PreviewSiteModalItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 
 const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
+	useQuerySitePurchases( site.ID );
 	const hasCopySiteFeature = useSafeSiteHasFeature( site.ID, WPCOM_FEATURES_COPY_SITE );
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const plan = site.plan;
 	const isSiteOwner = site.site_owner === userId;
 	const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
+
+	const purchases = useSelector( ( state ) => getSitePurchases( state, site.ID ) );
 
 	if ( ! hasCopySiteFeature || ! isSiteOwner || ! plan ) {
 		return null;
@@ -204,6 +209,11 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 			onClick={ () => {
 				clearSignupDestinationCookie();
 				setPlanCartItem( { product_slug: plan.product_slug } );
+				purchases.map( ( purchase ) => {
+					if ( 'marketplace_plugin' === purchase.productType ) {
+						// setPlanCartItem( { product_slug: purchase.productSlug } );
+					}
+				} );
 				recordTracks( 'calypso_sites_dashboard_site_action_copy_site_click' );
 			} }
 		>
