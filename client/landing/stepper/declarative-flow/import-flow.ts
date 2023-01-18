@@ -52,7 +52,7 @@ const importFlow: Flow = {
 		const siteSlugParam = useSiteSlugParam();
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
-		const flowProgress = useSiteSetupFlowProgress( _currentStep, 'import', '' );
+		const flowProgress = useSiteSetupFlowProgress( _currentStep, 'import' );
 
 		if ( flowProgress ) {
 			setStepProgress( flowProgress );
