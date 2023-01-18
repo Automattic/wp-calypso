@@ -186,7 +186,7 @@ class StatsEmailDetail extends Component {
 		const { period, endOf } = this.props.period;
 		const traffic = {
 			label: translate( 'Traffic' ),
-			path: '/stats/email/open',
+			path: `/stats/email/${ statType }`,
 		};
 		const query = memoizedQuery( period, endOf );
 		const slugPath = slug ? `/${ slug }` : '';
@@ -206,7 +206,7 @@ class StatsEmailDetail extends Component {
 					<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 
 					<PageViewTracker
-						path="/stats/email/open/:site/:period/:email_id"
+						path="/stats/email/:statType/:site/:period/:email_id"
 						title="Stats > Single Email"
 					/>
 					<FixedNavigationHeader
@@ -233,7 +233,7 @@ class StatsEmailDetail extends Component {
 									<StatsPeriodNavigation
 										date={ date }
 										period={ period }
-										url={ `/stats/email/open/${ slug }/${ period }/${ postId }` }
+										url={ `/stats/email/${ statType }/${ slug }/${ period }/${ postId }` }
 									>
 										<DatePicker
 											period={ period }

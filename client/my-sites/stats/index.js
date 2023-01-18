@@ -82,12 +82,8 @@ export default function () {
 	// Email stats Pages
 	if ( config.isEnabled( 'newsletter/stats' ) ) {
 		statsPage(
-			`/stats/email/open/:site/:period(${ validEmailPeriods })/:email_id`,
-			emailStats( 'opens' )
-		);
-		statsPage(
-			`/stats/email/click/:site/:period(${ validEmailPeriods })/:email_id`,
-			emailStats( 'clicks' )
+			`/stats/email/:statType/:site/:period(${ validEmailPeriods })/:email_id`,
+			emailStats
 		);
 	}
 

@@ -102,25 +102,25 @@ function getSiteFilters( siteId ) {
 		},
 		{
 			title: i18n.translate( 'Hours' ),
-			path: '/stats/email/open/' + siteId + '/hour',
+			path: '/stats/email/opens/' + siteId + '/hour',
 			id: 'stats-email-opens-hour',
 			period: 'hour',
 		},
 		{
 			title: i18n.translate( 'Days' ),
-			path: '/stats/email/open/' + siteId + '/day',
+			path: '/stats/email/opens/' + siteId + '/day',
 			id: 'stats-email-opens-day',
 			period: 'day',
 		},
 		{
 			title: i18n.translate( 'Hours' ),
-			path: '/stats/email/click/' + siteId + '/hour',
+			path: '/stats/email/clicks/' + siteId + '/hour',
 			id: 'stats-email-clicks-hour',
 			period: 'hour',
 		},
 		{
 			title: i18n.translate( 'Days' ),
-			path: '/stats/email/click/' + siteId + '/day',
+			path: '/stats/email/clicks/' + siteId + '/day',
 			id: 'stats-email-clicks-day',
 			period: 'day',
 		},
@@ -465,10 +465,11 @@ export function wordAds( context, next ) {
 	next();
 }
 
-export const emailStats = ( statType ) => ( context, next ) => {
+export function emailStats( context, next ) {
 	const givenSiteId = context.params.site;
 	const queryOptions = context.query;
 	const state = context.store.getState();
+	const statType = context.params.statType;
 	const postId = parseInt( context.params.email_id, 10 );
 	const selectedSite = getSite( context.store.getState(), givenSiteId );
 	const siteId = selectedSite ? selectedSite.ID || 0 : 0;
@@ -510,4 +511,4 @@ export const emailStats = ( statType ) => ( context, next ) => {
 	);
 
 	next();
-};
+}
