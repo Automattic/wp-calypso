@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
-	WPCOM_FEATURES_ATOMIC,
+	WPCOM_FEATURES_COPY_SITE,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 } from '@automattic/calypso-products';
@@ -184,13 +184,13 @@ const PreviewSiteModalItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 
 const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
-	const hasAtomicFeature = useSafeSiteHasFeature( site.ID, WPCOM_FEATURES_ATOMIC );
+	const hasCopySiteFeature = useSafeSiteHasFeature( site.ID, WPCOM_FEATURES_COPY_SITE );
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const plan = site.plan;
 	const isSiteOwner = site.site_owner === userId;
 	const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
 
-	if ( ! hasAtomicFeature || ! isSiteOwner || ! plan ) {
+	if ( ! hasCopySiteFeature || ! isSiteOwner || ! plan ) {
 		return null;
 	}
 	setPlanCartItem( { product_slug: plan.product_slug } );
