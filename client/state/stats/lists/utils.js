@@ -98,7 +98,8 @@ export function buildExportArray( data, parent = null ) {
 		return [];
 	}
 	const label = parent ? parent + ' > ' + data.label : data.label;
-	const escapedLabel = label.replace( /\"/, '""' ); // eslint-disable-line
+	// eslint-disable-next-line
+	const escapedLabel = label.replace( /\"/, '""' );
 	let exportData = [ [ '"' + escapedLabel + '"', data.value ] ];
 
 	// Includes the URL for content data, but not for "Countries" data where it doesn't exist.
@@ -304,7 +305,7 @@ export const normalizers = {
 	 * Returns a normalized payload from `/sites/{ site }/stats`
 	 *
 	 * @param   {object} data    Stats data
-	 * @returns {object?}        Normalized stats data
+	 * @returns {object|null}        Normalized stats data
 	 */
 	stats( data ) {
 		if ( ! data || ! data.stats ) {
@@ -318,7 +319,7 @@ export const normalizers = {
 	 * Returns a normalized payload from `/sites/{ site }/stats/insights`
 	 *
 	 * @param   {object} data    Stats query
-	 * @returns {object?}        Normalized stats data
+	 * @returns {object|null}        Normalized stats data
 	 */
 	statsInsights: ( data ) => {
 		if ( ! data || typeof data.highest_day_of_week !== 'number' ) {
@@ -359,7 +360,7 @@ export const normalizers = {
 	 * @param   {object} query   Stats query
 	 * @param   {number} siteId  Site ID
 	 * @param   {object} site    Site object
-	 * @returns {object?}        Normalized stats data
+	 * @returns {object|null}        Normalized stats data
 	 */
 	statsTopPosts: ( data, query, siteId, site ) => {
 		if ( ! data || ! query.period || ! query.date ) {
@@ -412,7 +413,7 @@ export const normalizers = {
 	 *
 	 * @param   {object} data    Stats data
 	 * @param   {object} query   Stats query
-	 * @returns {object?}        Normalized stats data
+	 * @returns {object|null}        Normalized stats data
 	 */
 	statsCountryViews: ( data, query = {} ) => {
 		// parsing a country-views response requires a period and date
@@ -898,15 +899,13 @@ export const normalizers = {
 		const dataPath = query.summarize ? [ 'summary' ] : [ 'days', startOf ];
 		const searchTerms = get( data, dataPath.concat( [ 'search_terms' ] ), [] );
 
-		const result = searchTerms.map( ( day ) => {
+		return searchTerms.map( ( day ) => {
 			return {
 				label: day.term,
 				className: 'user-selectable',
 				value: day.views,
 			};
 		} );
-
-		return result;
 	},
 
 	/*
@@ -1036,24 +1035,35 @@ export function parseEmailCountriesData( countries, countriesInfo ) {
 		return null;
 	}
 
-	return countries.map( function ( country ) {
-		const info = countriesInfo[ country[ 0 ] ];
-		if ( ! info ) {
+	const result = countries
+		.map( function ( country ) {
+			const info = countriesInfo[ country[ 0 ] ];
+			if ( ! info ) {
+				return {
+					label: translate( 'Unknown' ),
+					value: parseInt( country[ 1 ], 10 ),
+				};
+			}
+
+			const { country_full, map_region } = info;
+
 			return {
-				label: translate( 'Unknown' ),
+				countryCode: country[ 0 ],
+				label: country_full,
+				region: map_region,
 				value: parseInt( country[ 1 ], 10 ),
 			};
-		}
+		} )
+		.sort( ( a, b ) => b.value - a.value );
 
-		const { country_full, map_region } = info;
+	// Add item with label == Other to end of the list
+	const otherItem = result.find( ( item ) => item.label === translate( 'Unknown' ) );
+	if ( otherItem ) {
+		result.splice( result.indexOf( otherItem ), 1 );
+		result.push( otherItem );
+	}
 
-		return {
-			countryCode: country[ 0 ],
-			label: country_full,
-			region: map_region,
-			value: parseInt( country[ 1 ], 10 ),
-		};
-	} );
+	return result;
 }
 
 /**
@@ -1068,12 +1078,16 @@ export function parseEmailListData( list ) {
 		return null;
 	}
 
-	const result = list.map( function ( item ) {
-		return {
-			label: item[ 0 ],
-			value: parseInt( item[ 1 ], 10 ),
-		};
-	} );
+	const result = list
+		.map( function ( item ) {
+			return {
+				label: item[ 0 ],
+				value: parseInt( item[ 1 ], 10 ),
+			};
+		} )
+		.sort( function ( a, b ) {
+			return b.value - a.value;
+		} );
 
 	// Add item with label == Other to end of the list
 	const otherItem = result.find( ( item ) => item.label === 'Other' );
