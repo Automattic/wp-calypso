@@ -15,7 +15,7 @@ export function LoadingBar( { className, progress }: LoadingBar ) {
 		if ( progress >= 0 ) {
 			timeoutReference = setTimeout( () => {
 				if ( progress > simulatedProgress || progress === 1 ) {
-					setSimulatedProgress( () => progress );
+					setSimulatedProgress( progress );
 				} else if ( simulatedProgress < 1 ) {
 					setSimulatedProgress( ( previousProgress: number ) => {
 						let newProgress = previousProgress + Math.random() * 0.04;

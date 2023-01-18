@@ -21,12 +21,12 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const progress = useSelect( ( select ) => select( ONBOARD_STORE ).getProgress() );
-	const { setProgress } = useDispatch( ONBOARD_STORE );
 	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
+	const { setProgress } = useDispatch( ONBOARD_STORE );
 
 	useEffect( () => {
+		setProgress( 0.4 );
 		if ( submit ) {
-			setProgress( 0.4 );
 			const assignTrialPlan = async () => {
 				try {
 					if ( ! data?.siteSlug ) {
