@@ -16,6 +16,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
 import AccentColorControl, { AccentColor } from '../components/accent-color-control';
 import SetupForm from '../components/setup-form';
+import useSetupFormInitialValues from '../components/setup-form/hooks/use-setup-form-initial-values';
 import { defaultAccentColor } from '../newsletter-setup';
 import type { Step } from '../../types';
 
@@ -35,20 +36,14 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 	};
 
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = useState( false );
-	const [ siteTitle, setComponentSiteTitle ] = useState( '' );
-	const [ tagline, setTagline ] = useState( '' );
 	const [ accentColor, setAccentColor ] = useState< AccentColor >( defaultAccentColor );
 	const [ base64Image, setBase64Image ] = useState< string | null >();
 	const [ selectedFile, setSelectedFile ] = useState< File | undefined >();
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isSubmitError, setIsSubmitError ] = useState( false );
-
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 
-	useEffect( () => {
-		setComponentSiteTitle( site?.name || '' );
-		setTagline( site?.description || '' );
-	}, [ site ] );
+	const { siteTitle, setComponentSiteTitle, tagline, setTagline } = useSetupFormInitialValues();
 
 	useEffect( () => {
 		if ( fetchedAccentColor ) {

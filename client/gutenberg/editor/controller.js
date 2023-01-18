@@ -13,10 +13,10 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import shouldLoadGutenframe from 'calypso/state/selectors/should-load-gutenframe';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
-	getSiteUrl,
 	getSiteOption,
 	isJetpackSite,
 	isSSOEnabled,
+	getSiteAdminUrl,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoifyIframe from './calypsoify-iframe';
@@ -158,8 +158,11 @@ export const authenticate = ( context, next ) => {
 		`${ origin }${ context.path }`
 	);
 
-	const siteUrl = getSiteUrl( state, siteId );
-	const wpAdminLoginUrl = addQueryArgs( { redirect_to: returnUrl }, `${ siteUrl }/wp-login.php` );
+	const siteAdminUrl = getSiteAdminUrl( state, siteId );
+	const wpAdminLoginUrl = addQueryArgs(
+		{ redirect_to: returnUrl },
+		`${ siteAdminUrl }../wp-login.php`
+	);
 
 	window.location.replace( wpAdminLoginUrl );
 };
@@ -198,7 +201,6 @@ export const redirect = async ( context, next ) => {
 		// pass along parameters, for example press-this
 		return window.location.replace( addQueryArgs( context.query, url ) );
 	}
-
 	return next();
 };
 
