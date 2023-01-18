@@ -1,7 +1,6 @@
 import { Card } from '@automattic/components';
 
 function HighlightCardSimple( { heading, icon, value } ) {
-	// typeof myVar === 'string'
 	const displayValue = typeof value === 'string' ? value : '-';
 	return (
 		<Card className="highlight-card">

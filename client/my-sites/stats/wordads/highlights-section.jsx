@@ -21,17 +21,17 @@ export default function HighlightsSection( props ) {
 				<HighlightCardSimple
 					heading={ translate( 'Earnings' ) }
 					icon={ <Icon icon={ starEmpty } /> }
-					value="0"
+					value="$563.76"
 				/>
 				<HighlightCardSimple
 					heading={ translate( 'Paid' ) }
 					icon={ <Icon icon={ starEmpty } /> }
-					value="hi"
+					value="$500.35"
 				/>
 				<HighlightCardSimple
 					heading={ translate( 'Outstanding amount' ) }
 					icon={ <Icon icon={ starEmpty } /> }
-					value="bye!"
+					value="$63.41"
 				/>
 			</div>
 		</div>
