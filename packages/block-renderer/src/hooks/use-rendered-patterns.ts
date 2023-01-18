@@ -1,3 +1,4 @@
+import { useEffect, useMemo } from 'react';
 import { useInfiniteQuery, UseQueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { RenderedPatterns, SiteInfo } from '../types';
@@ -42,21 +43,34 @@ const useRenderedPatterns = (
 ) => {
 	// If we query too many patterns at once, the endpoint will be very slow.
 	// Hence, do local pagination to ensure the performance.
-	return useInfiniteQuery(
+	const totalPage = Math.ceil( patternIds.length / PAGE_SIZE );
+	const { data, fetchNextPage } = useInfiniteQuery(
 		[ siteId, stylesheet, 'block-renderer/patterns/render', patternIds, siteInfo ],
-		( { pageParam = 1 } ) =>
+		( { pageParam } ) =>
 			fetchRenderedPatterns( siteId, stylesheet, patternIds, siteInfo, pageParam ),
 		{
-			getNextPageParam: ( lastPage, allPages ) => {
-				if ( allPages.length * PAGE_SIZE >= patternIds.length ) {
-					return;
-				}
-				return allPages.length + 1;
-			},
 			refetchOnMount,
 			staleTime,
+			// We want to fetch rendered patterns manually
+			enabled: false,
 		}
 	);
+
+	const renderedPatterns = useMemo(
+		() =>
+			data?.pages
+				? data.pages.reduce( ( previous, current ) => ( { ...previous, ...current } ), {} )
+				: {},
+		[ data?.pages ]
+	);
+
+	useEffect( () => {
+		for ( let i = 0; i < totalPage; i++ ) {
+			fetchNextPage( { pageParam: i + 1 } );
+		}
+	}, [ totalPage, fetchNextPage ] );
+
+	return renderedPatterns;
 };
 
 export default useRenderedPatterns;
