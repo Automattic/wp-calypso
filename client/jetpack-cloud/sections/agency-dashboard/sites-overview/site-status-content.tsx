@@ -168,6 +168,7 @@ export default function SiteStatusContent( {
 				tooltip={ tooltip }
 				tooltipId={ tooltipId }
 				siteError={ siteError }
+				isLargeScreen={ isLargeScreen }
 			/>
 		);
 	}
