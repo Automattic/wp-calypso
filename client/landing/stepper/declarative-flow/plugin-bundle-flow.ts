@@ -85,7 +85,7 @@ const pluginBundleFlow: Flow = {
 		const dispatch = reduxDispatch();
 
 		// Since we're mimicking a subset of the site-setup-flow, we're safe to use the siteSetupProgress.
-		const flowProgress = useSiteSetupFlowProgress( currentStep, intent, storeType );
+		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
 
 		if ( flowProgress ) {
 			setStepProgress( flowProgress );
