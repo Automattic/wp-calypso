@@ -9,10 +9,10 @@ const RelatedContentPreview = ( { showDate, showHeadline, showThumbnails, transl
 				textOnly: true,
 				context: 'Demo content for related posts',
 			} ),
+			date: 'August 8, 2005',
 			topic: translate( 'In "Mobile"', {
 				context: 'topic post is located in',
 			} ),
-			date: 'August 8, 2005',
 		},
 		{
 			image: '/calypso/images/related-posts/devices.jpg',
@@ -20,10 +20,10 @@ const RelatedContentPreview = ( { showDate, showHeadline, showThumbnails, transl
 				textOnly: true,
 				context: 'Demo content for related posts',
 			} ),
+			date: 'August 8, 2005',
 			topic: translate( 'In "Mobile"', {
 				context: 'topic post is located in',
 			} ),
-			date: 'August 8, 2005',
 		},
 		{
 			image: '/calypso/images/related-posts/mobile-wedding.jpg',
@@ -31,10 +31,10 @@ const RelatedContentPreview = ( { showDate, showHeadline, showThumbnails, transl
 				textOnly: true,
 				context: 'Demo content for related posts',
 			} ),
+			date: 'August 8, 2005',
 			topic: translate( 'In "Upgrade"', {
 				context: 'topic post is located in',
 			} ),
-			date: 'August 8, 2005',
 		},
 	];
 
