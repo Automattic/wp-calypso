@@ -360,6 +360,9 @@ button {
 	.flow-progress.progress-bar {
 		display: none;
 	}
+	.processing-step__progress-bar {
+		width: 520px;
+	}
 	.processing-step__progress-bar::before {
 		background: var(--wooexpress-purple);
 	}
