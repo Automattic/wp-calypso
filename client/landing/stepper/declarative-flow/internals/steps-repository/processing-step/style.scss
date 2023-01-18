@@ -79,3 +79,19 @@ $progress-duration: 800ms;
 	}
 }
 
+.processing-step__subtitle {
+	font-size: 14px;
+	line-height: 21px;
+	letter-spacing: -0.02em;
+	color: #646970;
+	color: var(--studio-gray-50);
+	margin-top: 24px;
+}
+
+// Processing Copy Site Styles
+.copy-site.processing-copy {
+	.processing-step__progress-step {
+		font-size: 3rem;
+		margin-bottom: 24px;
+	}
+}
