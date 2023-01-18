@@ -55,12 +55,7 @@ class StatsPeriodNavigation extends PureComponent {
 		const tabValue = queryParams.tab;
 		const nextDay = moment( date ).add( 1, period ).format( 'YYYY-MM-DD' );
 		const nextDayQuery = qs.stringify(
-			Object.assign(
-				{},
-				queryParams,
-				{ startDate: nextDay },
-				{ tab: tabValue ? tabValue : 'views' }
-			),
+			Object.assign( {}, queryParams, { startDate: nextDay }, tabValue && { tab: tabValue } ),
 			{
 				addQueryPrefix: true,
 			}
@@ -74,12 +69,7 @@ class StatsPeriodNavigation extends PureComponent {
 		const tabValue = queryParams.tab;
 		const previousDay = moment( date ).subtract( 1, period ).format( 'YYYY-MM-DD' );
 		const previousDayQuery = qs.stringify(
-			Object.assign(
-				{},
-				queryParams,
-				{ startDate: previousDay },
-				{ tab: tabValue ? tabValue : 'views' }
-			),
+			Object.assign( {}, queryParams, { startDate: previousDay }, tabValue && { tab: tabValue } ),
 			{ addQueryPrefix: true }
 		);
 		const href = `${ url }${ previousDayQuery }`;
