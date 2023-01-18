@@ -48,30 +48,37 @@ $grid-vertical-gutters: 32px;
 		padding: 0 16px;
 	}
 
+	.stats__module-wrapper--tags-categories,
 	.list-tags-categories {
 		grid-area: tags-categories;
 	}
 
+	.stats__module-wrapper--comments,
 	.list-comments {
 		grid-area: comments;
 	}
 
+	.stats__module-wrapper--shares,
 	.list-shares {
 		grid-area: shares;
 	}
 
+	.stats__module-wrapper--followers,
 	.list-followers {
 		grid-area: followers;
 	}
 
+	.stats__module-wrapper--total-followers,
 	.list-total-followers {
 		grid-area: social-followers;
 	}
 
+	.stats__module-wrapper--latest-post-summary,
 	.list-latest-post-summary {
 		grid-area: latest-post-summary;
 	}
 
+	.stats__module-wrapper--publicize,
 	.list-publicize {
 		grid-area: publicize;
 	}
