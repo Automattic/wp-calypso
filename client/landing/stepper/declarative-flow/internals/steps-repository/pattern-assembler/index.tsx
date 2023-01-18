@@ -362,7 +362,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 		</div>
 	);
 
-	if ( ! selectedDesign ) {
+	if ( ! site?.ID || ! selectedDesign ) {
 		return null;
 	}
 
@@ -382,7 +382,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 						<AsyncLoad
 							require="./pattern-assembler-container"
 							placeholder={ null }
-							siteId={ site.ID }
+							siteId={ site?.ID }
 							stylesheet={ selectedDesign?.recipe?.stylesheet }
 							patternIds={ allPatterns.map( ( pattern ) => encodePatternId( pattern.id ) ) }
 							siteInfo={ siteInfo }
