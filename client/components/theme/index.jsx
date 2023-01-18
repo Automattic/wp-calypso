@@ -409,6 +409,7 @@ export class Theme extends Component {
 		 * and the theme isn't the active theme.
 		 */
 		const showPremiumBadge = isPremiumTheme && isPremiumThemeAvailable && ! active;
+		const isNewCardsOnly = isEnabled( 'themes/showcase-i4/cards-only' );
 		const isNewDetailsAndPreview = isEnabled( 'themes/showcase-i4/details-and-preview' );
 		const popoverContent = this.getUpsellPopoverContent();
 
@@ -418,7 +419,7 @@ export class Theme extends Component {
 					eventName="calypso_upgrade_nudge_impression"
 					eventProperties={ { cta_name: 'theme-upsell', theme: theme.id } }
 				/>
-				{ isNewDetailsAndPreview ? (
+				{ isNewCardsOnly || isNewDetailsAndPreview ? (
 					<>
 						{ ( ! doesThemeBundleSoftwareSet || isExternallyManagedTheme ) && (
 							<PremiumBadge
@@ -515,6 +516,7 @@ export class Theme extends Component {
 			didPurchaseTheme,
 		} = this.props;
 		const { name, description, screenshot } = theme;
+		const isNewCardsOnly = isEnabled( 'themes/showcase-i4/cards-only' );
 		const isNewDetailsAndPreview = isEnabled( 'themes/showcase-i4/details-and-preview' );
 		const isActionable = this.props.screenshotClickUrl || this.props.onScreenshotClick;
 		const themeClass = classNames( 'theme', {
@@ -603,13 +605,13 @@ export class Theme extends Component {
 								} ) }
 							</span>
 						) }
-						{ ! isNewDetailsAndPreview && active && (
+						{ ! isNewCardsOnly && ! isNewDetailsAndPreview && active && (
 							<span className={ priceClass }>{ price }</span>
 						) }
 						{ upsellUrl && // Do not show any pricing related infomation if there's no upsell action link.
 							( showUpsell
 								? this.renderUpsell()
-								: isNewDetailsAndPreview &&
+								: ( isNewCardsOnly || isNewDetailsAndPreview ) &&
 								  ! active && (
 										<span className="theme__info-upsell-description">{ translate( 'Free' ) }</span>
 								  ) ) }

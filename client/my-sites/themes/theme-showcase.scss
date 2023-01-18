@@ -117,6 +117,7 @@ body.is-section-themes {
 	}
 }
 
+body.is-section-themes-i4-cards-only,
 body.is-section-themes-i4-2 {
 	.themes__selection .themes-list .theme {
 		background: none;
@@ -135,7 +136,7 @@ body.is-section-themes-i4-2 {
 				flex-direction: row;
 				gap: 16px;
 				margin-top: 0;
-				padding: 4px 24px;
+				padding: 8px 24px;
 			}
 
 			.theme__info-title {
