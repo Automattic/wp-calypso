@@ -31,13 +31,13 @@
 				.display-price__billing-time-frame {
 					line-height: 0.5;
 				}
-			}
 
-			.display-price__prices {
-				.plan-price__currency-symbol,
-				.plan-price__integer,
-				.plan-price__fraction {
-					font-size: 1.5rem;
+				.display-price__prices {
+					.plan-price__currency-symbol,
+					.plan-price__integer,
+					.plan-price__fraction {
+						font-size: 1.5rem;
+					}
 				}
 			}
 		}
@@ -69,6 +69,19 @@
 			font-size: 1rem;
 			white-space: nowrap;
 			margin-bottom: -0.5rem;
+		}
+
+		&--cta-mobile {
+			display: none;
+		}
+
+		@media (max-width: $break-medium) {
+			&--cta-mobile {
+				display: initial;
+			}
+			&--cta-desktop {
+				display: none;
+			}
 		}
 	}
 
