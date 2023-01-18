@@ -68,8 +68,7 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		storeAddress: 5,
 	},
 	[ COPY_SITE_FLOW ]: {
-		intro: 0,
-		'site-creation-step': 1,
+		'site-creation-step': 0,
 		processing: 1,
 		'automated-copy': 3,
 		'processing-copy': 3,
