@@ -192,7 +192,7 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const plan = site.plan;
 	const isSiteOwner = site.site_owner === userId;
-	const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
+	const { setPlanCartItem, addProductCartItem } = useDispatch( ONBOARD_STORE );
 
 	const purchases = useSelector( ( state ) => getSitePurchases( state, site.ID ) );
 
@@ -211,7 +211,8 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 				setPlanCartItem( { product_slug: plan.product_slug } );
 				purchases.map( ( purchase ) => {
 					if ( 'marketplace_plugin' === purchase.productType ) {
-						// setPlanCartItem( { product_slug: purchase.productSlug } );
+						// @TODO create a addProductCartItem( { product_slug: purchase.productSlug } )
+						// that writes to the stepper store
 					}
 				} );
 				recordTracks( 'calypso_sites_dashboard_site_action_copy_site_click' );

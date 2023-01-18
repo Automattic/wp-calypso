@@ -226,6 +226,11 @@ export const setPlanCartItem = ( planCartItem: MinimalRequestCartProduct | null 
 	planCartItem,
 } );
 
+export const addProductCartItem = ( productCartItem: MinimalRequestCartProduct | null ) => ( {
+	type: 'ADD_PRODUCT_CART_ITEM' as const,
+	productCartItem,
+} );
+
 export const setRandomizedDesigns = ( randomizedDesigns: { featured: Design[] } ) => ( {
 	type: 'SET_RANDOMIZED_DESIGNS' as const,
 	randomizedDesigns,

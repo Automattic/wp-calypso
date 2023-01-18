@@ -227,6 +227,14 @@ const addToCartAndProceed = async (
 	}
 };
 
+export async function addProductToCart(
+	siteSlug: string,
+	flowName: string,
+	cartItem: MinimalRequestCartProduct
+) {
+	await addToCartAndProceed( cartItem, siteSlug, flowName );
+}
+
 export async function setThemeOnSite( siteSlug: string, themeSlugWithRepo: string ) {
 	if ( isEmpty( themeSlugWithRepo ) ) {
 		return;

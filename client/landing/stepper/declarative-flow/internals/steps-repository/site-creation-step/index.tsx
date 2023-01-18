@@ -4,6 +4,7 @@ import {
 	WOOEXPRESS_FLOW,
 	isLinkInBioFlow,
 	addPlanToCart,
+	addProductToCart,
 	createSiteWithCart,
 	isFreeFlow,
 	isMigrationFlow,
@@ -33,6 +34,7 @@ const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } ) {
 	const { submit } = navigation;
 
+	// @TODO fetch all productCartItems too
 	const { domainCartItem, planCartItem, siteAccentColor, getSelectedSiteTitle } = useSelect(
 		( select ) => ( {
 			domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
@@ -108,6 +110,11 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 		if ( planCartItem ) {
 			await addPlanToCart( site?.siteSlug as string, flow as string, true, theme, planCartItem );
 		}
+
+		// @TODO update to iterate through productCartItems
+		await addProductToCart( site?.siteSlug as string, flow as string, {
+			product_slug: 'wordpress_seo_premium_monthly',
+		} );
 
 		return {
 			siteSlug: site?.siteSlug,
