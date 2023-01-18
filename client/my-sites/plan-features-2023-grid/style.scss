@@ -348,6 +348,17 @@ $plan-features-sidebar-width: 272px;
 		.plan-price.is-discounted .plan-price__integer-fraction {
 			color: var(--color-success);
 		}
+
+		.plan-price.is-large-currency {
+			.plan-price__integer {
+				font-size: rem(38px);
+			}
+			&.is-discounted {
+				.plan-price__integer {
+					font-size: $font-body-small;
+				}
+			}
+		}
 	}
 
 	.plan-features-2023-grid__header-annual-discount {
