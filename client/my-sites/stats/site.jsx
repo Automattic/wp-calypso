@@ -278,7 +278,9 @@ class StatsSite extends Component {
 						{ ! isSitePrivate && <StatsNoContentBanner siteId={ siteId } siteSlug={ slug } /> }
 					</>
 
-					{ config.isEnabled( 'stats-mini-carousel' ) && <MiniCarousel slug={ slug } /> }
+					{ config.isEnabled( 'stats-mini-carousel' ) && (
+						<MiniCarousel isOdysseyStats={ isOdysseyStats } slug={ slug } />
+					) }
 
 					<div className="stats__module-list stats__module-list--traffic is-events stats__module--unified">
 						{ config.isEnabled( 'newsletter/stats' ) && (
