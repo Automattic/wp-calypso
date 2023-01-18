@@ -115,7 +115,7 @@ export default function SubscriberDetails( props: Props ) {
 	}
 
 	return (
-		<Main className="people-subscriber-details">
+		<Main className="people-member-details">
 			<PageViewTracker path="/people/subscribers/:site/:id" title="People > User Details" />
 
 			<FormattedHeader
@@ -142,19 +142,19 @@ export default function SubscriberDetails( props: Props ) {
 			) }
 
 			{ templateState === 'default' && (
-				<Card className="subscriber-details">
+				<Card className="member-details">
 					<PeopleListItem
 						key={ `subscriber-details-${ subscriberId }` }
 						site={ site }
 						user={ subscriber }
 						onRemove={ onRemove }
 					/>
-					<div className="people-subscriber-details__meta">
+					<div className="people-member-details__meta">
 						{ subscriber?.date_subscribed && (
-							<div className="people-subscriber-details__meta-item">
+							<div className="people-member-details__meta-item">
 								<strong>{ _( 'Status' ) }</strong>
 								<div>
-									<span className="people-subscriber-details__meta-status-active">
+									<span className="people-member-details__meta-status-active">
 										{ _( 'Active' ) }
 									</span>
 								</div>
@@ -162,7 +162,7 @@ export default function SubscriberDetails( props: Props ) {
 						) }
 
 						{ subscriber?.date_subscribed && (
-							<div className="people-subscriber-details__meta-item">
+							<div className="people-member-details__meta-item">
 								<strong>{ _( 'Subscriber since' ) }</strong>
 								<div>
 									<span>{ moment( subscriber?.date_subscribed ).format( 'LLL' ) }</span>
@@ -171,7 +171,7 @@ export default function SubscriberDetails( props: Props ) {
 						) }
 
 						{ subscriber?.url && (
-							<div className="people-subscriber-details__meta-item">
+							<div className="people-member-details__meta-item">
 								<strong>{ _( 'Source' ) }</strong>
 								<div>
 									<span>{ subscriber.url }</span>
