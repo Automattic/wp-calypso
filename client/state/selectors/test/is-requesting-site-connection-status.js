@@ -5,11 +5,9 @@ describe( 'isRequestingSiteConnectionStatus()', () => {
 
 	test( 'should return true if connection status is currently being requested for that site', () => {
 		const state = {
-			sites: {
-				connection: {
-					requesting: {
-						[ siteId ]: true,
-					},
+			siteConnection: {
+				requesting: {
+					[ siteId ]: true,
 				},
 			},
 		};
@@ -19,11 +17,9 @@ describe( 'isRequestingSiteConnectionStatus()', () => {
 
 	test( 'should return false if connection status is currently not being requested for that site', () => {
 		const state = {
-			sites: {
-				connection: {
-					requesting: {
-						[ siteId ]: false,
-					},
+			siteConnection: {
+				requesting: {
+					[ siteId ]: false,
 				},
 			},
 		};
@@ -33,11 +29,9 @@ describe( 'isRequestingSiteConnectionStatus()', () => {
 
 	test( 'should return false if connection status has never been requested for that site', () => {
 		const state = {
-			sites: {
-				connection: {
-					requesting: {
-						77203074: true,
-					},
+			siteConnection: {
+				requesting: {
+					77203074: true,
 				},
 			},
 		};

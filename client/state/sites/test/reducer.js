@@ -32,7 +32,6 @@ describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
 		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
 			expect.arrayContaining( [
-				'connection',
 				'domains',
 				'requestingAll',
 				'items',

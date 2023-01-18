@@ -8,6 +8,7 @@ import deepFreeze from 'deep-freeze';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
 import happychatReducer from 'calypso/state/happychat/reducer';
 import purchasesReducer from 'calypso/state/purchases/reducer';
+import siteConnectionReducer from 'calypso/state/site-connection/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from '../../../client/test-helpers/testing-library';
 import { JetpackAuthorize } from '../authorize';
@@ -83,6 +84,7 @@ function renderWithRedux( ui ) {
 			documentHead: documentHeadReducer,
 			purchases: purchasesReducer,
 			happychat: happychatReducer,
+			siteConnection: siteConnectionReducer,
 		},
 	} );
 }

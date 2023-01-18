@@ -24,7 +24,6 @@ import {
 } from 'calypso/state/action-types';
 import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import connection from './connection/reducer';
 import domains from './domains/reducer';
 import { featuresReducer as features } from './features/reducer';
 import introOffers from './intro-offers/reducer';
@@ -373,7 +372,6 @@ export const isRequestingJetpackSitesFeatures = ( state = false, action ) => {
 };
 
 export default combineReducers( {
-	connection,
 	domains,
 	requestingAll,
 	introOffers,
