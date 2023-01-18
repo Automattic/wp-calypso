@@ -61,7 +61,7 @@ const ProductLightbox: React.FC< Props > = ( {
 	const translate = useTranslate();
 
 	const onChangeOption = useCallback(
-		( productSlug ) => {
+		( productSlug: string ) => {
 			onChangeProduct( slugToSelectorProduct( productSlug ) );
 
 			// Tracking when variant selected inside the lightbox
