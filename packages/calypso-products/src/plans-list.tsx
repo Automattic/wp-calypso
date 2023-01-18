@@ -2605,7 +2605,7 @@ PLANS_LIST[ PLAN_WPCOM_PRO_MONTHLY ] = {
 
 PLANS_LIST[ PLAN_ECOMMERCE_TRIAL_MONTHLY ] = {
 	...getDotcomPlanDetails(),
-	type: TYPE_ECOMMERCE,
+	type: TYPE_FREE,
 	group: GROUP_WPCOM,
 	getProductId: () => 1052,
 	getPathSlug: () => PLAN_ECOMMERCE_TRIAL_MONTHLY,
