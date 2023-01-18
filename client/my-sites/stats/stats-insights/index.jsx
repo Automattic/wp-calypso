@@ -72,6 +72,7 @@ const StatsInsights = ( props ) => {
 							statType="statsTags"
 							hideSummaryLink
 							hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
+							className="list-tags-categories"
 						/>
 						<Comments path="comments" />
 
@@ -85,6 +86,7 @@ const StatsInsights = ( props ) => {
 							statType="statsPublicize"
 							hideSummaryLink
 							hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
+							className="list-publicize"
 						/>
 
 						<LatestPostSummary />
