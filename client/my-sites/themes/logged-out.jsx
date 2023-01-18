@@ -8,9 +8,16 @@ const ConnectedThemeShowcase = connectOptions( ThemeShowcase );
 
 export default ( props ) => (
 	<Main fullWidthLayout className="themes">
-		{ isEnabled( 'themes/showcase-i4/details-and-preview' ) && (
-			<BodySectionCssClass bodyClass={ [ 'is-section-themes-i4-2' ] } />
-		) }
+		<BodySectionCssClass
+			bodyClass={ [
+				...( isEnabled( 'themes/showcase-i4/cards-only' )
+					? [ 'is-section-themes-i4-cards-only' ]
+					: [] ),
+				...( isEnabled( 'themes/showcase-i4/details-and-preview' )
+					? [ 'is-section-themes-i4-2' ]
+					: [] ),
+			] }
+		/>
 		<ConnectedThemeShowcase
 			{ ...props }
 			origin="wpcom"
