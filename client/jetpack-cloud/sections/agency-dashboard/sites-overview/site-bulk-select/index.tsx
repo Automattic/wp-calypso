@@ -31,21 +31,20 @@ export default function SiteBulkSelect( { sites, isLoading, isLargeScreen }: Pro
 
 	const handleToggleSelect = () => {
 		// Filter sites with site error as they are not selectable.
-		const filteredSites = sites.filter( ( site ) => ! site.site.error );
+		const filteredSites = sites.filter( ( { site: { error } } ) => ! error );
 		const isChecked = isAllChecked( filteredSites );
 
 		const allSelectedSites = isChecked
 			? selectedSites.filter(
-					( selectedSite ) =>
-						! filteredSites.find( ( site ) => site.site.value.blog_id === selectedSite.blog_id )
+					( { blog_id } ) =>
+						! filteredSites.find( ( { site: { value } } ) => value.blog_id === blog_id )
 			  )
-			: [ ...selectedSites, ...filteredSites.map( ( site ) => site.site.value ) ].filter(
+			: [ ...selectedSites, ...filteredSites.map( ( { site: { value } } ) => value ) ].filter(
 					( element, index, array ) =>
-						array.map( ( selectedSite ) => selectedSite.blog_id ).indexOf( element.blog_id ) ===
-						index
+						array.map( ( { blog_id } ) => blog_id ).indexOf( element.blog_id ) === index
 			  );
 		setSelectedSites( allSelectedSites );
-		recordEvent( isChecked ? 'site_bulk_unselect_all' : 'site_bulk_select_select_all', {
+		recordEvent( isChecked ? 'site_bulk_unselect_all' : 'site_bulk_select_all', {
 			...( allSelectedSites.length && { selected_site_count: allSelectedSites.length } ),
 		} );
 	};
