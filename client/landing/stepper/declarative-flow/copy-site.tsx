@@ -45,7 +45,18 @@ const copySite: Flow = {
 			{ slug: 'site-creation-step', component: SiteCreationStep },
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'automated-copy', component: AutomatedCopySite },
-			{ slug: 'processing-copy', component: ProcessingStep },
+			{
+				slug: 'processing-copy',
+				component: ( props ) => (
+					<ProcessingStep
+						{ ...props }
+						title={ translate( 'We’re copying your site' ) }
+						subtitle={ translate(
+							'This may take a few minutes. Feel free to close this window and we will email you when the process is complete.'
+						) }
+					/>
+				),
+			},
 		];
 	},
 

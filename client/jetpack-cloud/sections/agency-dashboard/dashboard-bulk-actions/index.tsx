@@ -19,9 +19,10 @@ import './style.scss';
 
 interface Props {
 	selectedSites: Array< Site >;
+	monitorUserEmails: Array< string >;
 }
 
-export default function DashboardBulkActions( { selectedSites }: Props ) {
+export default function DashboardBulkActions( { selectedSites, monitorUserEmails }: Props ) {
 	const actionBarRef = createRef< HTMLDivElement >();
 	const translate = useTranslate();
 	const { setIsBulkManagementActive } = useContext( SitesOverviewContext );
@@ -108,7 +109,11 @@ export default function DashboardBulkActions( { selectedSites }: Props ) {
 				</ButtonGroup>
 			</div>
 			{ showNotificationSettingsPopup && (
-				<NotificationSettings sites={ selectedSites } onClose={ toggleNotificationSettingsPopup } />
+				<NotificationSettings
+					monitorUserEmails={ monitorUserEmails }
+					sites={ selectedSites }
+					onClose={ toggleNotificationSettingsPopup }
+				/>
 			) }
 		</>
 	);

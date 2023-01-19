@@ -3,10 +3,6 @@ import { Page, Locator } from 'playwright';
 const popoverParentSelector = '.block-editor-inserter__quick-inserter';
 const selectors = {
 	searchInput: `${ popoverParentSelector } input[type=search]`,
-	blockResultItem: ( blockName: string ) =>
-		`${ popoverParentSelector } [aria-label=Blocks] button:has-text("${ blockName }")`,
-	patternResultItem: ( patternName: string ) =>
-		`${ popoverParentSelector } [aria-label="Block Patterns"] [aria-label="${ patternName }"]`,
 };
 
 /**
@@ -40,24 +36,10 @@ export class EditorInlineBlockInserterComponent {
 	/**
 	 * Selects the maching result from the block inserter.
 	 *
-	 * By default, this method considers only the Block-type results
-	 * (including Resuable blocks).
-	 * In order to select from Pattern-type results, set the `type`
-	 * optional flag in the parameter to `'pattern'`.
-	 *
-	 * Where mulltiple matches exist (eg. due to partial matching), the first result will be chosen.
+	 * Where mulltiple matches exist (eg. due to partial matching), the first
+	 * result will be chosen.
 	 */
-	async selectBlockInserterResult(
-		name: string,
-		{ type = 'block' }: { type?: 'block' | 'pattern' } = {}
-	): Promise< void > {
-		let locator;
-
-		if ( type === 'pattern' ) {
-			locator = this.editor.locator( selectors.patternResultItem( name ) );
-		} else {
-			locator = this.editor.locator( selectors.blockResultItem( name ) );
-		}
-		await locator.first().click();
+	async selectBlockInserterResult( name: string ): Promise< void > {
+		await this.editor.getByRole( 'option', { name, exact: true } ).first().click();
 	}
 }

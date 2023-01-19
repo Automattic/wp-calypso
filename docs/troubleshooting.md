@@ -7,7 +7,7 @@ If you have a problem when running `yarn` or `yarn start` - this is the proper s
 
 ### Puppeteer throws a fatal error
 
-If running `yarn` fails and the log file for `Puppeteer` show an error like this: 
+If running `yarn` fails and the log file for `Puppeteer` show an error like this:
 
 ```
 The chromium binary is not available for arm64:
