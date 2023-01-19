@@ -59,7 +59,9 @@ const StepNavigationLink: React.FC< Props > = ( {
 			primary={ primary }
 			borderless={ borderless }
 			className={ buttonClasses }
-			onClick={ onClick }
+			// Use onMouseDown here to prevent onClick blocked by onBlur
+			// if any exists in adjacent elements
+			onMouseDown={ onClick }
 			rel={ rel }
 		>
 			{ backGridicon }
