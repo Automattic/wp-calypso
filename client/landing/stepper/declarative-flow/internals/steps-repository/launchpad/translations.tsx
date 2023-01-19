@@ -36,7 +36,9 @@ export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunc
 			translatedStrings.flowName = translate( 'Free Website' );
 			translatedStrings.title = translate( 'Your website is almost ready!' );
 			translatedStrings.launchTitle = translate( 'Your website is almost ready!' );
-			translatedStrings.subtitle = translate( 'Keep the momentum going with these final steps.' );
+			translatedStrings.subtitle = translate(
+				'What would you like to do next? You can come back to these steps anytime.'
+			);
 			break;
 		case VIDEOPRESS_FLOW:
 			translatedStrings.flowName = translate( 'Video' );
