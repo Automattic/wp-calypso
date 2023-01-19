@@ -25,6 +25,7 @@ const maybeRenderLegacyPlanNotice = ( eligibleForProPlan, { plan } ) => {
 			></Notice>
 		);
 	}
+	return null;
 };
 
 export default maybeRenderLegacyPlanNotice;
