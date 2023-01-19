@@ -35,7 +35,7 @@ function getHighlights( earnings ) {
 			amount: paid,
 		},
 		{
-			heading: translate( 'Outstanding' ),
+			heading: translate( 'Outstanding amount' ),
 			amount: owed,
 		},
 	];
