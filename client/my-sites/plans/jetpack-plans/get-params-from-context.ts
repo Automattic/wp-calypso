@@ -18,7 +18,6 @@ type Params = {
  * /pricing/example.com        > { duration: undefined, site: 'example.com' }
  * /pricing/annual/example.com > { duration: 'annual', site: 'example.com' }
  * /pricing/weekly/example.com > { duration: undefined, site: 'example.com' }
- *
  * @param {PageJS.Context} context Page context
  * @returns {Params} Parameters
  */

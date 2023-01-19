@@ -149,6 +149,8 @@ function makeDoubleQuoted( literal ) {
  * @returns {string}        - universal representation of string or input unchanged
  */
 function encapsulateString( input ) {
-	if ( 'string' !== typeof input ) return input;
+	if ( 'string' !== typeof input ) {
+		return input;
+	}
 	return '"' + input.replace( /(\\|")/g, '\\$1' ) + '"';
 }

@@ -45,7 +45,7 @@ function MyNotice() {
 	return (
 		<Notice status="is-error" icon="mention" text="This is an error notice with a custom icon.">
 			<NoticeAction href="#" external>
-				{ 'Update' }
+				Update
 			</NoticeAction>
 		</Notice>
 	);

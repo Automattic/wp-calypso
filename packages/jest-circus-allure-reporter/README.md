@@ -4,24 +4,23 @@
 
 A Jest Circus compatible reporter for Allure.
 
-Most of the code is forked from  [ryparker/jest-circus-allure-environment](https://github.com/ryparker/jest-circus-allure-environment) under MIT license.
+Most of the code is forked from [ryparker/jest-circus-allure-environment](https://github.com/ryparker/jest-circus-allure-environment) under MIT license.
 
 <!-- TOC -->
 
 - [Jest Circus Allure Reporter](#jest-circus-allure-reporter)
-    - [❗️ Requirements](#%EF%B8%8F-requirements)
-    - [:rocket: How to use](#rocket-how-to-use)
-    - [:camera_flash: Allure reporting in your tests](#camera_flash-allure-reporting-in-your-tests)
-    - [:gear: Options](#gear-options)
-    - [📈 DocBlocks](#-docblocks)
-        - [🔍 Pragmas](#-pragmas)
-        - [🏷 Tag](#%F0%9F%8F%B7-tag)
-        - [👥 Owner](#-owner)
-        - [:part_alternation_mark: Severity](#part_alternation_mark-severity)
-        - [📇 Behaviors epics, features, stories](#-behaviors-epics-features-stories)
+  - [❗️ Requirements](#%EF%B8%8F-requirements)
+  - [:rocket: How to use](#rocket-how-to-use)
+  - [:camera_flash: Allure reporting in your tests](#camera_flash-allure-reporting-in-your-tests)
+  - [:gear: Options](#gear-options)
+  - [📈 DocBlocks](#-docblocks)
+    - [🔍 Pragmas](#-pragmas)
+    - [🏷 Tag](#%F0%9F%8F%B7-tag)
+    - [👥 Owner](#-owner)
+    - [:part_alternation_mark: Severity](#part_alternation_mark-severity)
+    - [📇 Behaviors epics, features, stories](#-behaviors-epics-features-stories)
 
 <!-- /TOC -->
-
 
 ---
 
@@ -50,10 +49,10 @@ allure serve ./allure-results
 
 Options that can be passed into the `environmentOptions` property of your `jest.config.js`
 
-| Parameter       | Description                                                                                                      | Default               |
-| --------------- | ---------------------------------------------------------------------------------------------------------------- | --------------------- |
-| resultsDir      | Path where Allure result files will be written.                                                                  | `"allure-results"`    |
-| environmentInfo | Key value pairs that will appear under the environment section of the Allure report                              | `{}`                  |
+| Parameter       | Description                                                                         | Default            |
+| --------------- | ----------------------------------------------------------------------------------- | ------------------ |
+| resultsDir      | Path where Allure result files will be written.                                     | `"allure-results"` |
+| environmentInfo | Key value pairs that will appear under the environment section of the Allure report | `{}`               |
 
 ## 📈 DocBlocks
 
