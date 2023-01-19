@@ -4,7 +4,7 @@
  * @param {string} [slug] - tag slug
  * @param {string} sid - site id
  * @param {WPCOM} wpcom - wpcom instance
- * @returns {null} null
+ * @returns {Tag|undefined}
  */
 export default function Tag( slug, sid, wpcom ) {
 	if ( ! sid ) {

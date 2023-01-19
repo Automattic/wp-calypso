@@ -67,6 +67,8 @@ export function renderJsx( view, props ) {
 	return doctype + ReactDomServer.renderToStaticMarkup( createElement( component, props ) );
 }
 
+// JSdoc rule can't handle the function throwing an Error instead of returning.
+// eslint-disable-next-line jsdoc/require-returns-check
 /**
  * Render and cache supplied React element to a markup string.
  * Cache is keyed by stringified element by default.

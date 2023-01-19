@@ -5,7 +5,7 @@ const exported = {
 	 * Remove the starting https, www. and trailing slash from a URL string
 	 *
 	 * @param {string} url URL to format
-	 * @returns {string} Formatted URL e.g. "https://www.wordpress.com/" --> "wordpress.com"
+	 * @returns {string|undefined} Formatted URL e.g. "https://www.wordpress.com/" --> "wordpress.com"
 	 */
 	formatUrlForDisplay: function ( url ) {
 		if ( ! url ) {

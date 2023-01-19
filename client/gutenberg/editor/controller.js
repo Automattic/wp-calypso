@@ -109,7 +109,7 @@ function waitForPreferredEditorView( context ) {
  *
  * @param {object} context  Shared context in the route.
  * @param {Function} next   Next registered callback for the route.
- * @returns {*}             Whatever the next callback returns.
+ * @returns {undefined}             Whatever the next callback returns.
  */
 export const authenticate = ( context, next ) => {
 	const state = context.store.getState();

@@ -7,7 +7,7 @@ const root = '/me/settings/profile-links';
  * `ProfileLinks` constructor.
  *
  * @param {WPCOM} wpcom - wpcom instance
- * @returns {null} null
+ * @returns {ProfileLinks|undefined}
  */
 export default function ProfileLinks( wpcom ) {
 	if ( ! ( this instanceof ProfileLinks ) ) {

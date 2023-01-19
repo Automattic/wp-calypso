@@ -9,7 +9,7 @@
  *  - wraps quotes and backslashes for php consumption
  *
  * @param  {object} match - parser matching object
- * @returns {object} data object combining the strings and options passed into translate();
+ * @returns {object|undefined} data object combining the strings and options passed into translate();
  */
 module.exports = function preProcessXGettextJSMatch( match ) {
 	const finalProps = { line: match.line };
