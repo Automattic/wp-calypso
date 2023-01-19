@@ -19,3 +19,14 @@
 		min-width: 280px;
 	}
 }
+
+.tooltip-wordads {
+	.highlight-card-tooltip-content {
+		display: block;
+		max-width: 260px;
+
+		p:last-child {
+			margin: 0;
+		}
+	}
+}

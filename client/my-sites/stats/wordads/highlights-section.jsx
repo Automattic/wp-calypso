@@ -1,6 +1,7 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, Popover } from '@automattic/components';
 import { Icon, starEmpty } from '@wordpress/icons';
 import { numberFormat, translate } from 'i18n-calypso';
+import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getWordAdsEarnings } from 'calypso/state/wordads/earnings/selectors';
 import HighlightCardSimple from './highlight-card-simple';
@@ -52,17 +53,72 @@ function getHighlights( earnings ) {
 	} ) );
 }
 
+function payoutNotices( earnings ) {
+	const owed =
+		earnings && earnings.total_amount_owed ? numberFormat( earnings.total_amount_owed, 2 ) : '0.00';
+	const notice = {
+		id: 'notice',
+		value: translate(
+			'Outstanding amount of $%(amountOwed)s does not exceed the minimum $100 needed to make the payment.',
+			{
+				comment: 'WordAds: Insufficient balance for payout.',
+				args: { amountOwed: owed },
+			}
+		),
+	};
+	const limit = {
+		id: 'limit',
+		value: translate(
+			'Payment will be made as soon as the total outstanding amount has reached $100.',
+			{
+				comment: 'WordAds: Payout limit description.',
+			}
+		),
+	};
+	const payout = {
+		id: 'payout',
+		value: translate(
+			'Outstanding amount of $%(amountOwed)s will be paid approximately 45 days following the end of the month in which it was earned.',
+			{
+				comment: 'WordAds: Payout will proceed.',
+				args: { amountOwed: owed },
+			}
+		),
+	};
+	return owed < 100 ? [ notice, limit ] : [ payout ];
+}
+
 function HighlightsSectionHeader( props ) {
-	// TODO: Add support for popup.
+	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
+	const iconReference = useRef( null );
 	const localizedTitle = translate( 'Totals', {
 		context: 'Heading for WordAds earnings highlights section',
 	} );
-	return props.showInfoIcon ? (
+	if ( ! props.notices || props.notices.length === 0 ) {
+		return <h1 className="highlight-cards-heading">{ localizedTitle }</h1>;
+	}
+	return (
 		<h1 className="highlight-cards-heading">
-			{ localizedTitle } <Gridicon icon="info-outline" />
+			{ localizedTitle }{ ' ' }
+			<Gridicon
+				icon="info-outline"
+				ref={ iconReference }
+				onMouseEnter={ () => setTooltipVisible( true ) }
+				onMouseLeave={ () => setTooltipVisible( false ) }
+			/>
+			<Popover
+				className="tooltip tooltip--darker tooltip-wordads highlight-card-tooltip"
+				isVisible={ isTooltipVisible }
+				position="bottom right"
+				context={ iconReference.current }
+			>
+				<div className="highlight-card-tooltip-content">
+					{ props.notices.map( ( notice ) => (
+						<p key={ notice.id }>{ notice.value }</p>
+					) ) }
+				</div>
+			</Popover>
 		</h1>
-	) : (
-		<h1 className="highlight-cards-heading">{ localizedTitle }</h1>
 	);
 }
 
@@ -87,9 +143,10 @@ export default function HighlightsSection( props ) {
 		return null;
 	}
 	const highlights = getHighlights( earningsData );
+	const notices = payoutNotices( earningsData );
 	return (
 		<div className="highlight-cards wordads">
-			<HighlightsSectionHeader showInfoIcon={ false } />
+			<HighlightsSectionHeader notices={ notices } />
 			<HighlightsListing highlights={ highlights } />
 		</div>
 	);
