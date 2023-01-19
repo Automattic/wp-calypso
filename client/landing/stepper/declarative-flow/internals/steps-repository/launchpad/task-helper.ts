@@ -11,6 +11,7 @@ import { translate } from 'i18n-calypso';
 import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list';
 import { SiteDetails } from 'calypso/../packages/data-stores/src';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { recordSignupComplete } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
@@ -23,12 +24,16 @@ export function getEnhancedTasks(
 	site: SiteDetails | null,
 	submit: NavigationControls[ 'submit' ],
 	displayGlobalStylesWarning: boolean,
+	themeId: string | null,
+	siteCount: number,
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow?: string | null
 ) {
 	const enhancedTaskList: Task[] = [];
 	const productSlug = site?.plan?.product_slug;
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
+
+	const siteIntent = site?.options?.site_intent || null;
 
 	const linkInBioLinksEditCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.links_edited || false;
@@ -66,6 +71,19 @@ export function getEnhancedTasks(
 	}
 
 	const shouldDisplayWarning = displayGlobalStylesWarning || isVideoPressFlowWithUnsupportedPlan;
+
+	const launchpadRecordSignupComplete = () =>
+		recordSignupComplete( {
+			flow,
+			siteId: site?.ID,
+			isNewUser: siteCount <= 1,
+			hasCartItems: false,
+			isNew7DUserSite: '',
+			theme: themeId,
+			intent: siteIntent,
+			startingPoint: flow,
+			isBlankCanvas: themeId?.includes( 'blank-canvas' ),
+		} );
 
 	tasks &&
 		tasks.map( ( task ) => {
@@ -196,6 +214,7 @@ export function getEnhancedTasks(
 							if ( site?.ID ) {
 								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
 								const { launchSite } = dispatch( SITE_STORE );
+								launchpadRecordSignupComplete();
 
 								setPendingAction( async () => {
 									setProgressTitle( __( 'Launching Link in bio' ) );
@@ -221,6 +240,7 @@ export function getEnhancedTasks(
 							if ( site?.ID ) {
 								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
 								const { launchSite } = dispatch( SITE_STORE );
+								launchpadRecordSignupComplete();
 
 								setPendingAction( async () => {
 									setProgressTitle( __( 'Launching Website' ) );
