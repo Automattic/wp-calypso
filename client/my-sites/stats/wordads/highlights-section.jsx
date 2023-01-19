@@ -9,7 +9,7 @@ import HighlightCardSimple from './highlight-card-simple';
 
 function getHighlights( translate ) {
 	// TODO: Get data from API.
-	return [
+	const highlights = [
 		{
 			heading: translate( 'Earnings' ),
 			icon: <Icon icon={ starEmpty } />,
@@ -31,6 +31,11 @@ function getHighlights( translate ) {
 			amount: '$9.99',
 		},
 	];
+	// Index the data for use with React.
+	return highlights.map( ( highlight, i ) => ( {
+		id: i,
+		...highlight,
+	} ) );
 }
 
 function HighlightsSectionHeader( props ) {
@@ -54,6 +59,7 @@ function HighlightsListing( props ) {
 		<div className="highlight-cards-list">
 			{ props.highlights.map( ( highlight ) => (
 				<HighlightCardSimple
+					key={ highlight.id }
 					heading={ highlight.heading }
 					icon={ <Icon icon={ starEmpty } /> }
 					value={ highlight.amount }
