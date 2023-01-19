@@ -80,7 +80,10 @@ export default function SiteBulkSelect( { sites, isLoading }: Props ) {
 					} ) }
 				</div>
 			</div>
-			<DashboardBulkActions selectedSites={ selectedSites } />
+			<DashboardBulkActions
+				selectedSites={ selectedSites }
+				monitorUserEmails={ sites[ 0 ].monitor.settings?.monitor_user_emails ?? [] }
+			/>
 		</div>
 	);
 }
