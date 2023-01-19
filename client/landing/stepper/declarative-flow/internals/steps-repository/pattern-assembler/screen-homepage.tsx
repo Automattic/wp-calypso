@@ -32,7 +32,7 @@ const ScreenHomepage = ( {
 	return (
 		<>
 			<NavigatorHeader
-				title={ translate( 'Design your home' ) }
+				title={ translate( 'Create your home' ) }
 				description={ translate(
 					'Add new patterns or re-arrange existing ones to create the structure of your page.'
 				) }
