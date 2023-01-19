@@ -48,7 +48,7 @@ export function getEnhancedTasks(
 	// send user to Home page editor, fallback to FSE if page id is not known
 	const launchpadUploadVideoLink = homePageId
 		? `/page/${ siteSlug }/${ homePageId }`
-		: `/site-editor/${ siteSlug }?canvas=edit`;
+		: `/site-editor/${ siteSlug }`;
 
 	let planWarningText = displayGlobalStylesWarning
 		? translate(
@@ -99,7 +99,7 @@ export function getEnhancedTasks(
 						completed: siteEditCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, siteEditCompleted, task.id );
-							window.location.assign( `/site-editor/${ siteSlug }?canvas=edit` );
+							window.location.assign( `/site-editor/${ siteSlug }` );
 						},
 					};
 					break;
@@ -172,7 +172,7 @@ export function getEnhancedTasks(
 						completed: linkInBioLinksEditCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, linkInBioLinksEditCompleted, task.id );
-							window.location.assign( `/site-editor/${ siteSlug }?canvas=edit` );
+							window.location.assign( `/site-editor/${ siteSlug }` );
 						},
 					};
 					break;
