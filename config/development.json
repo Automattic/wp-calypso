@@ -167,6 +167,7 @@
 		"sites/copy-site": true,
 		"ssr/prefetch-timebox": false,
 		"stats/horizontal-bars-everywhere": true,
+		"stats/insights-page-grid": true,
 		"stepper-woocommerce-poc": true,
 		"subscriber-csv-upload": true,
 		"subscriber-importer": true,
