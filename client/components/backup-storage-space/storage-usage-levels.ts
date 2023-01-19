@@ -24,15 +24,26 @@ export const getUsageLevel = (
 	available: number | undefined,
 	minDaysOfBackupsAllowed: number,
 	daysOfBackupsAllowed: number,
-	planRetentionDays: number
+	planRetentionDays: number,
+	daysOfBackupsSaved: number
 ): StorageUsageLevelName | null => {
 	if ( available === undefined || used === undefined ) {
 		return null;
 	}
 
-	if ( !! minDaysOfBackupsAllowed && !! daysOfBackupsAllowed && !! planRetentionDays ) {
+	if (
+		!! minDaysOfBackupsAllowed &&
+		!! daysOfBackupsAllowed &&
+		!! planRetentionDays &&
+		!! daysOfBackupsSaved
+	) {
 		// if current allowed days of backups is equal to the minimum, return storage full.
-		if ( minDaysOfBackupsAllowed === daysOfBackupsAllowed ) {
+		if (
+			minDaysOfBackupsAllowed >= daysOfBackupsSaved &&
+			used > 0 &&
+			available > 0 &&
+			used >= available
+		) {
 			return StorageUsageLevels.Full;
 		}
 

@@ -43,7 +43,8 @@ const BackupStorageSpace: React.FC = () => {
 			bytesAvailable,
 			minDaysOfBackupsAllowed,
 			daysOfBackupsAllowed,
-			planRetentionDays
+			planRetentionDays,
+			daysOfBackupsSaved
 		) ?? StorageUsageLevels.Normal;
 
 	const showUpsell = usageLevel !== StorageUsageLevels.Normal;
