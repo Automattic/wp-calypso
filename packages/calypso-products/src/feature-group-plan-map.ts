@@ -1,0 +1,30 @@
+import i18n from 'i18n-calypso';
+import {
+	FEATURE_LIVE_CHAT_SUPPORT,
+	FEATURE_PAGES,
+	FEATURE_USERS,
+	FEATURE_POST_EDITS_HISTORY,
+	FEATURE_ALWAYS_ONLINE,
+	FEATURE_STATS_JP,
+	FEATURE_CONTACT_FORM_JP,
+	FEATURE_GROUP_GENERAL_FEATURES,
+	FEATURE_CUSTOM_DOMAIN,
+} from './constants';
+import { FeatureGroupMap } from './types';
+
+export const featureGroups: Partial< FeatureGroupMap > = {
+	[ FEATURE_GROUP_GENERAL_FEATURES ]: {
+		slug: FEATURE_GROUP_GENERAL_FEATURES,
+		getTitle: () => i18n.translate( 'General Features' ),
+		get2023PricingGridSignupWpcomFeatures: () => [
+			FEATURE_PAGES,
+			FEATURE_USERS,
+			FEATURE_POST_EDITS_HISTORY,
+			FEATURE_ALWAYS_ONLINE,
+			FEATURE_CONTACT_FORM_JP,
+			FEATURE_STATS_JP,
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_LIVE_CHAT_SUPPORT,
+		],
+	},
+};
