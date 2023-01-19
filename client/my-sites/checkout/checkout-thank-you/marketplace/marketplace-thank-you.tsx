@@ -262,7 +262,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			{
 				stepIcon: <FooterIcon icon="help-outline" />,
 				stepKey: 'thank_you_footer_support',
-				stepTitle: translate( 'How can we support?' ),
+				stepTitle: translate( 'How can we support you?' ),
 				stepDescription: translate(
 					'Our team is here if you need help, or if you have any questions.'
 				),
