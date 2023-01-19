@@ -184,14 +184,13 @@ class ThemesSelection extends Component {
 	};
 
 	render() {
-		const { source, query, upsellUrl, siteId } = this.props;
+		const { source, query, upsellUrl, siteId, forceWpOrgSearch } = this.props;
+
+		const querySource = forceWpOrgSearch && source !== 'wporg' ? 'all' : source;
 
 		return (
 			<div className="themes__selection">
-				<QueryThemes query={ query } siteId={ source } />
-				{ this.props.forceWpOrgSearch && source !== 'wporg' && (
-					<QueryThemes query={ query } siteId="wporg" />
-				) }
+				<QueryThemes query={ query } siteId={ querySource } />
 				<ThemesList
 					upsellUrl={ upsellUrl }
 					themes={ this.props.customizedThemesList || this.props.themes }

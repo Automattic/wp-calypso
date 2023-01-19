@@ -14,10 +14,81 @@ import {
 
 import 'calypso/state/themes/init';
 
+const requestWporgThemes = ( query = {} ) =>
+	fetchWporgThemesList( query ).then( ( response ) => {
+		const themes = map( response?.themes || [], normalizeWporgTheme );
+		const found = response?.info?.results || 0;
+		return { themes, found };
+	} );
+
+const requestWpcomThemes = ( query = {}, locale ) =>
+	wpcom.req
+		.get(
+			'/themes',
+			Object.assign(
+				{
+					...query,
+					apiVersion: '1.2',
+					include_blankcanvas_theme: config.isEnabled( 'pattern-assembler/logged-out-showcase' )
+						? 'true'
+						: null,
+					include_marketplace_themes: config.isEnabled( 'themes/third-party-premium' )
+						? 'true'
+						: null,
+				},
+				locale ? { locale } : null
+			)
+		)
+		.then( ( response ) => {
+			const themes = map( response?.themes || [], normalizeWpcomTheme );
+			const found = response?.found || 0;
+			return { themes, found };
+		} );
+
+const requestJetpackSitethemes = ( siteId, query = {} ) =>
+	wpcom.req
+		.get( `/sites/${ siteId }/themes`, { ...query, apiVersion: '1' } )
+		.then( ( response ) => {
+			const themes = map( response?.themes || [], normalizeJetpackTheme );
+			const found = response?.found || 0;
+			return { themes, found };
+		} );
+
+const recordSearchEvents = ( { dispatch, found, getState, query, startTime, themes } ) => {
+	if ( ( query.search || query.filter ) && query.page === 1 ) {
+		const responseTime = new Date().getTime() - startTime;
+		const search_taxonomies = prependThemeFilterKeys( getState(), query.filter );
+		const search_term = search_taxonomies + ( query.search || '' );
+		const trackShowcaseSearch = recordTracksEvent( 'calypso_themeshowcase_search', {
+			search_term: search_term || null,
+			search_taxonomies,
+			tier: query.tier,
+			response_time_in_ms: responseTime,
+			result_count: found,
+			results_first_page: themes.map( property( 'id' ) ).join(),
+		} );
+		dispatch( trackShowcaseSearch );
+
+		if ( found === 0 ) {
+			const trackShowcaseEmptySearch = recordTracksEvent(
+				'calypso_themeshowcase_search_empty_results',
+				{
+					search_term: search_term || null,
+					response_time_in_ms: responseTime,
+				}
+			);
+			dispatch( trackShowcaseEmptySearch );
+		}
+	}
+};
+
 /**
  * Triggers a network request to fetch themes for the specified site and query.
  *
- * @param  {number|string} siteId        Jetpack site ID or 'wpcom' for any WPCOM site
+ * @param  {number|string} siteId        Jetpack site ID,
+ *                                       or 'wpcom' for any WPCOM themes,
+ *                                       or 'wporg' for any WPORG themes,
+ *                                       or 'all' for any WPCOM and WPORG themes.
  * @param  {object}        query         Theme query
  * @param  {string}        query.search  Search string
  * @param  {string}        query.tier    Theme tier: 'free', 'premium', or '' (either)
@@ -38,75 +109,62 @@ export function requestThemes( siteId, query = {}, locale ) {
 			query,
 		} );
 
-		let request;
+		if ( siteId !== 'all' ) {
+			let request;
+			if ( siteId === 'wporg' ) {
+				request = () => requestWporgThemes( query );
+			} else if ( siteId === 'wpcom' ) {
+				request = () => requestWpcomThemes( query, locale );
+			} else {
+				request = () => requestJetpackSitethemes( siteId, query );
+			}
 
-		if ( siteId === 'wporg' ) {
-			request = () => fetchWporgThemesList( query );
-		} else if ( siteId === 'wpcom' ) {
-			request = () =>
-				wpcom.req.get(
-					'/themes',
-					Object.assign(
-						{
-							...query,
-							apiVersion: '1.2',
-							include_blankcanvas_theme: config.isEnabled( 'pattern-assembler/logged-out-showcase' )
-								? 'true'
-								: null,
-							include_marketplace_themes: config.isEnabled( 'themes/third-party-premium' )
-								? 'true'
-								: null,
-						},
-						locale ? { locale } : null
-					)
-				);
-		} else {
-			request = () => wpcom.req.get( `/sites/${ siteId }/themes`, { ...query, apiVersion: '1' } );
+			return request()
+				.then( ( { themes, found } ) => {
+					recordSearchEvents( { dispatch, found, getState, query, startTime, themes } );
+					dispatch( receiveThemes( themes, siteId, query, found ) );
+				} )
+				.catch( ( error ) => {
+					dispatch( {
+						type: THEMES_REQUEST_FAILURE,
+						siteId,
+						query,
+						error,
+					} );
+				} );
 		}
 
-		// WP.com returns the number of results in a `found` attr, so we can use that right away.
-		// WP.org returns an `info` object containing a `results` number, so we destructure that
-		// and use it as default value for `found`.
-		return request()
-			.then( ( { themes: rawThemes, info: { results } = {}, found = results } ) => {
-				let themes;
-				if ( siteId === 'wporg' ) {
-					themes = map( rawThemes, normalizeWporgTheme );
-				} else if ( siteId === 'wpcom' ) {
-					themes = map( rawThemes, normalizeWpcomTheme );
-				} else {
-					// Jetpack Site
-					themes = map( rawThemes, normalizeJetpackTheme );
-				}
+		return requestWpcomThemes( query, locale )
+			.then( ( wpcomResponse ) => {
+				let allThemes = wpcomResponse.themes;
+				let allFound = wpcomResponse.found;
 
-				if ( ( query.search || query.filter ) && query.page === 1 ) {
-					const responseTime = new Date().getTime() - startTime;
-					const search_taxonomies = prependThemeFilterKeys( getState(), query.filter );
-					const search_term = search_taxonomies + ( query.search || '' );
-					const trackShowcaseSearch = recordTracksEvent( 'calypso_themeshowcase_search', {
-						search_term: search_term || null,
-						search_taxonomies,
-						tier: query.tier,
-						response_time_in_ms: responseTime,
-						result_count: found,
-						results_first_page: themes.map( property( 'id' ) ).join(),
+				dispatch( receiveThemes( wpcomResponse.themes, 'wpcom', query, wpcomResponse.found ) );
+
+				return requestWporgThemes( query )
+					.then( ( wporgResponse ) => {
+						allThemes = [ ...wporgResponse.themes, ...allThemes ];
+						allFound += wporgResponse.found;
+
+						dispatch( receiveThemes( wporgResponse.themes, 'wporg', query, wporgResponse.found ) );
+
+						recordSearchEvents( {
+							dispatch,
+							found: allFound,
+							getState,
+							query,
+							startTime,
+							themes: allThemes,
+						} );
+					} )
+					.catch( ( error ) => {
+						dispatch( {
+							type: THEMES_REQUEST_FAILURE,
+							siteId,
+							query,
+							error,
+						} );
 					} );
-					dispatch( trackShowcaseSearch );
-
-					if ( found === 0 ) {
-						const trackShowcaseEmptySearch = recordTracksEvent(
-							'calypso_themeshowcase_search_empty_results',
-							{
-								search_term: search_term || null,
-								response_time_in_ms: responseTime,
-							}
-						);
-
-						dispatch( trackShowcaseEmptySearch );
-					}
-				}
-
-				dispatch( receiveThemes( themes, siteId, query, found ) );
 			} )
 			.catch( ( error ) => {
 				dispatch( {

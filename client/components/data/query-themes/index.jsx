@@ -7,8 +7,10 @@ import { getThemesForQuery, isRequestingThemesForQuery } from 'calypso/state/the
 
 class QueryThemes extends Component {
 	static propTypes = {
-		siteId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.oneOf( [ 'wpcom', 'wporg' ] ) ] )
-			.isRequired,
+		siteId: PropTypes.oneOfType( [
+			PropTypes.number,
+			PropTypes.oneOf( [ 'wpcom', 'wporg', 'all' ] ),
+		] ).isRequired,
 		// A theme query. Note that on Jetpack sites, only the `search` argument is supported.
 		query: PropTypes.shape( {
 			// The search string
