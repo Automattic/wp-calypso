@@ -139,18 +139,21 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		[ translate ]
 	);
 	const bundles = useMemo(
-		() => [
-			{
-				label: translate( 'Complete' ),
-				tagline: translate( 'The ultimate toolkit' ),
-				href: `${ JETPACK_COM_BASE_URL }/complete/`,
-			},
-			{
-				label: translate( 'Security' ),
-				tagline: translate( 'Comprehensive site security' ),
-				href: `${ JETPACK_COM_BASE_URL }/features/security/`,
-			},
-		],
+		() => ( {
+			label: translate( 'Bundles' ),
+			items: [
+				{
+					label: translate( 'Complete' ),
+					tagline: translate( 'The ultimate toolkit' ),
+					href: `${ JETPACK_COM_BASE_URL }/complete/`,
+				},
+				{
+					label: translate( 'Security' ),
+					tagline: translate( 'Comprehensive site security' ),
+					href: `${ JETPACK_COM_BASE_URL }/features/security/`,
+				},
+			],
+		} ),
 		[ translate ]
 	);
 
@@ -294,11 +297,11 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 																	<hr />
 
 																	<p className="header__submenu-bundles-heading">
-																		{ translate( 'Bundles' ) }
+																		{ bundles.label }
 																	</p>
 
 																	<ul className="header__submenu-links-list">
-																		{ bundles.map( ( { label, tagline, href } ) => {
+																		{ bundles.items.map( ( { label, tagline, href } ) => {
 																			return (
 																				<li key={ `bundles-${ href }` }>
 																					<ExternalLink
