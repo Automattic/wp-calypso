@@ -1,7 +1,7 @@
 {
-	"name": "@automattic/generators",
+	"name": "@automattic/calypso-package-generator",
 	"version": "1.0.0",
-	"description": "Generate a sub-package under wp-calypso",
+	"description": "Generate a sub-package under the Calypso monorepo",
 	"main": "index.js",
 	"repository": {
 		"type": "git",

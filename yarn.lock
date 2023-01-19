@@ -318,6 +318,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/calypso-package-generator@workspace:^, @automattic/calypso-package-generator@workspace:packages/calypso-package-generator":
+  version: 0.0.0-use.local
+  resolution: "@automattic/calypso-package-generator@workspace:packages/calypso-package-generator"
+  dependencies:
+    "@automattic/calypso-eslint-overrides": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    plop: ^3.1.1
+  bin:
+    generate-calypso-package: cli.js
+  languageName: unknown
+  linkType: soft
+
 "@automattic/calypso-polyfills@workspace:^, @automattic/calypso-polyfills@workspace:packages/calypso-polyfills":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-polyfills@workspace:packages/calypso-polyfills"
@@ -774,18 +786,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     typescript: ^4.7.4
-  languageName: unknown
-  linkType: soft
-
-"@automattic/generators@workspace:^, @automattic/generators@workspace:packages/generators":
-  version: 0.0.0-use.local
-  resolution: "@automattic/generators@workspace:packages/generators"
-  dependencies:
-    "@automattic/calypso-eslint-overrides": "workspace:^"
-    "@automattic/calypso-typescript-config": "workspace:^"
-    plop: ^3.1.1
-  bin:
-    generate-calypso-package: cli.js
   languageName: unknown
   linkType: soft
 
@@ -34069,12 +34069,12 @@ resolve@^2.0.0-next.3:
     "@automattic/calypso-doctor": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-jest": "workspace:^"
+    "@automattic/calypso-package-generator": "workspace:^"
     "@automattic/color-studio": 2.5.0
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/design-carousel": "workspace:^"
     "@automattic/eslint-plugin-json": "workspace:^"
-    "@automattic/generators": "workspace:^"
     "@automattic/happychat-connection": "workspace:^"
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"

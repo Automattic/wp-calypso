@@ -213,8 +213,8 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-jest": "workspace:^",
+		"@automattic/calypso-package-generator": "workspace:^",
 		"@automattic/eslint-plugin-json": "workspace:^",
-		"@automattic/generators": "workspace:^",
 		"@babel/core": "^7.17.5",
 		"@babel/eslint-parser": "^7.17.0",
 		"@babel/register": "^7.17.0",
