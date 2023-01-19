@@ -137,6 +137,13 @@ class WordAds extends Component {
 		);
 	};
 
+	isLocal3000() {
+		return window.location.host === 'calypso.localhost:3000';
+	}
+	isCalypsoLive() {
+		return window.location.host.endsWith( '.calypso.live' );
+	}
+
 	render() {
 		const { canAccessAds, canUpgradeToUseWordAds, date, site, siteId, slug } = this.props;
 
@@ -164,6 +171,9 @@ class WordAds extends Component {
 		const statsWrapperClass = classNames( 'wordads stats-content', {
 			'is-period-year': period === 'year',
 		} );
+
+		// TODO: Put behind feature flag as needed.
+		const showNewHighlights = this.isLocal3000() || this.isCalypsoLive();
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
@@ -205,7 +215,7 @@ class WordAds extends Component {
 								slug={ slug }
 							/>
 
-							<HighlightsSection isVisible={ true } siteId={ siteId } />
+							<HighlightsSection isVisible={ showNewHighlights } siteId={ siteId } />
 
 							<div id="my-stats-content" className={ statsWrapperClass }>
 								<>
