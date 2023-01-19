@@ -251,7 +251,6 @@ const siteSetupFlow: Flow = {
 					// If so, send them to the plugin-bundle flow.
 					const theme_software_set = currentTheme?.taxonomies?.theme_software_set;
 					if (
-						isEnabled( 'themes/plugin-bundling' ) &&
 						theme_software_set &&
 						theme_software_set.length > 0 &&
 						isPluginBundleEligible &&

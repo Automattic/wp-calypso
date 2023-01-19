@@ -37,10 +37,6 @@ const pluginBundleFlow: Flow = {
 			select( SITE_STORE ).getBundledPluginSlug( siteSlugParam || '' )
 		) as BundledPlugin;
 
-		if ( ! isEnabled( 'themes/plugin-bundling' ) ) {
-			window.location.replace( `/home/${ siteSlugParam }` );
-		}
-
 		const steps = [
 			{
 				slug: 'getCurrentThemeSoftwareSets',
