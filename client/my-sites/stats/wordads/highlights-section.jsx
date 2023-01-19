@@ -13,7 +13,11 @@ function getAmountAsFormattedString( amount ) {
 	// Takes a Number, formats it to 2 decimal places, and prepends a "$".
 	// This mimics the existing behaviour. I'm assuming we only view/report
 	// on earnings in USD.
-	return '$' + numberFormat( amount, 2 );
+	const formattedAmount = '$' + numberFormat( amount, 2 );
+	// Differs from previous behaviour in that we don't want "$0.00" as a result.
+	// Per design spec we'll return "$0" in this scenario.
+	// https://github.com/Automattic/wp-calypso/issues/72045
+	return formattedAmount === '$0.00' ? '$0' : formattedAmount;
 }
 
 function getHighlights( earnings ) {
