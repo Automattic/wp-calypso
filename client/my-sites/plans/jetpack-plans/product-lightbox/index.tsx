@@ -216,6 +216,13 @@ const ProductLightbox: React.FC< Props > = ( {
 									onChangeProductVariant={ onChangeOption }
 								/>
 							) }
+							{ ! shouldShowOptions && (
+								<PaymentPlan
+									isMultiSiteIncompatible={ isMultiSiteIncompatible }
+									siteId={ siteId }
+									product={ product }
+								/>
+							) }
 							<Button
 								primary={ ! isProductInCart }
 								onClick={ onCheckoutClick }
