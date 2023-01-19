@@ -19,31 +19,55 @@ function HighlightsSectionHeader( props ) {
 	);
 }
 
+function HighlightsListing( props ) {
+	// TODO: Adjust min-width as needed.
+	// Current styling defaults to 180px which is not wide enough for more than 5 figures.
+	// Should check the longest display string and update CSS class based on that.
+	return (
+		<div className="highlight-cards-list">
+			{ props.highlights.map( ( highlight ) => (
+				<HighlightCardSimple
+					heading={ highlight.heading }
+					icon={ <Icon icon={ starEmpty } /> }
+					value={ highlight.amount }
+				/>
+			) ) }
+		</div>
+	);
+}
+
 export default function HighlightsSection( props ) {
 	const translate = useTranslate();
 	if ( ! props.isVisible ) {
 		return null;
 	}
+	// TODO: Get data from API.
+	const highlights = [
+		{
+			heading: translate( 'Earnings' ),
+			icon: <Icon icon={ starEmpty } />,
+			amount: '$153,841.29',
+		},
+		{
+			heading: translate( 'Paid' ),
+			icon: <Icon icon={ starEmpty } />,
+			amount: '$153,841.29',
+		},
+		{
+			heading: translate( 'Outstanding' ),
+			icon: <Icon icon={ starEmpty } />,
+			amount: '$0',
+		},
+		{
+			heading: translate( 'Other' ),
+			icon: <Icon icon={ starEmpty } />,
+			amount: '$9.99',
+		},
+	];
 	return (
 		<div className="highlight-cards">
 			<HighlightsSectionHeader showInfoIcon={ false } />
-			<div className="highlight-cards-list">
-				<HighlightCardSimple
-					heading={ translate( 'Earnings' ) }
-					icon={ <Icon icon={ starEmpty } /> }
-					value="$563.76"
-				/>
-				<HighlightCardSimple
-					heading={ translate( 'Paid' ) }
-					icon={ <Icon icon={ starEmpty } /> }
-					value="$500.35"
-				/>
-				<HighlightCardSimple
-					heading={ translate( 'Outstanding amount' ) }
-					icon={ <Icon icon={ starEmpty } /> }
-					value="$63.41"
-				/>
-			</div>
+			<HighlightsListing highlights={ highlights } />
 		</div>
 	);
 }
