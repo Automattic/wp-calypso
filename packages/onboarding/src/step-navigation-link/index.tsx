@@ -36,14 +36,14 @@ const StepNavigationLink: React.FC< Props > = ( {
 	let forwardGridicon;
 
 	if ( direction === 'back' ) {
-		backGridicon = hasBackIcon ? <Gridicon icon={ 'chevron-left' } size={ 18 } /> : null;
+		backGridicon = hasBackIcon ? <Gridicon icon="chevron-left" size={ 18 } /> : null;
 		if ( label ) {
 			text = label;
 		} else {
 			text = translate( 'Back' );
 		}
 	} else if ( direction === 'forward' ) {
-		forwardGridicon = hasForwardIcon ? <Gridicon icon={ 'chevron-right' } size={ 18 } /> : null;
+		forwardGridicon = hasForwardIcon ? <Gridicon icon="chevron-right" size={ 18 } /> : null;
 		text = label ? label : translate( 'Skip for now' );
 	}
 

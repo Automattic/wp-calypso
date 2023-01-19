@@ -1,4 +1,5 @@
 @import "@wordpress/base-styles/breakpoints";
+@import "../modernized-mixins";
 
 .stats__period-header {
 	display: flex;
@@ -12,69 +13,16 @@
 	}
 
 	.stats-period-navigation {
-		flex: 1;
-		min-width: 320px;
-		padding: 0 24px 0 0;
-		margin: 0;
-
-		@media ( max-width: $break-mobile ) {
-			margin: 16px 0;
-			min-width: unset;
-		}
+		@include section-header-with-siblings;
 	}
 
-	.segmented-control {
-		&.is-primary {
-			.segmented-control__item.is-selected {
-				.segmented-control__link {
-					border-color: var(--color-primary);
-					background-color: var(--color-primary);
-
-					&:hover {
-						background-color: var(--color-primary);
-					}
-				}
-			}
-		}
-
-		.segmented-control__item {
-			&:first-of-type .segmented-control__link {
-				border-top-left-radius: 4px;
-				border-bottom-left-radius: 4px;
-			}
-
-			&:last-of-type .segmented-control__link {
-				border-top-right-radius: 4px;
-				border-bottom-right-radius: 4px;
-			}
-		}
-	}
-
-	.segmented-control__link {
-		font-weight: 500;
-		line-height: 20px;
-		color: var(--studio-black);
-		width: 100px;
-		box-sizing: border-box;
-
-		@media ( max-width: $break-mobile ) {
-			width: auto;
-		}
-	}
+	@include navigation-segment-control-buttons;
 
 	// Make the content break line earlier than 660px
 	@media ( max-width: $break-large ) {
 		.stats-period-navigation {
 			margin: 0 0 24px 0;
 			padding: 0;
-		}
-
-		.segmented-control {
-			width: 100%;
-		}
-
-		.segmented-control__link {
-			width: unset;
 		}
 	}
 

@@ -23,7 +23,7 @@ export default function SiteWordAds( sid, wpcom ) {
 /**
  * Return a `SiteWordAdsSettings` instance.
  *
- * *Example:*
+ * Example:*
  *    // Create a SiteWordAdsSettings instance
  *
  *    var wordAds = wpcom
@@ -40,7 +40,7 @@ SiteWordAds.prototype.settings = function () {
 /**
  * Return a `SiteWordAdsEarnings` instance.
  *
- * *Example:*
+ * Example:*
  *    // Create a SiteWordAdsEarnings instance
  *
  *    var wordAds = wpcom
@@ -57,7 +57,7 @@ SiteWordAds.prototype.earnings = function () {
 /**
  * Return a `SiteWordAdsTOS` instance.
  *
- * *Example:*
+ * Example:*
  *    // Create a SiteWordAdsTOS instance
  *
  *    var wordAds = wpcom

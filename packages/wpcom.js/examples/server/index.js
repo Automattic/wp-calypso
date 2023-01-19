@@ -24,11 +24,15 @@ app.get( '/', function ( req, res ) {
 
 	// get site info
 	site.get( function ( err, info ) {
-		if ( err ) return console.log( err );
+		if ( err ) {
+			return console.log( err );
+		}
 
 		// get lastest posts
 		site.postsList( { number: 10 }, function ( error, posts ) {
-			if ( error ) return console.log( error );
+			if ( error ) {
+				return console.log( error );
+			}
 
 			res.render( 'layout', { site: info, posts: posts } );
 		} );

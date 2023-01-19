@@ -26,9 +26,13 @@ export class StatusBar extends Component {
 	 */
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( '' == nextProps.statusMessage ) return;
+		if ( '' === nextProps.statusMessage ) {
+			return;
+		}
 
-		if ( nextProps.statusMessage == this.props.statusMessage ) return;
+		if ( nextProps.statusMessage === this.props.statusMessage ) {
+			return;
+		}
 
 		const component = this;
 
@@ -49,7 +53,7 @@ export class StatusBar extends Component {
 		const visibility = this.state.isVisible ? { display: 'flex' } : { display: 'none' };
 
 		const classes = [ 'wpnc__status-bar' ];
-		if ( 'undefined' != typeof this.props.statusClasses && this.props.statusClasses.length > 0 ) {
+		if ( 'undefined' !== typeof this.props.statusClasses && this.props.statusClasses.length > 0 ) {
 			classes.push.apply( classes, this.props.statusClasses );
 		}
 
@@ -57,6 +61,7 @@ export class StatusBar extends Component {
 			<div className={ classes.join( ' ' ) } style={ visibility }>
 				<span />
 				<span
+					// eslint-disable-next-line react/no-danger
 					dangerouslySetInnerHTML={ {
 						__html: this.props.statusMessage,
 					} }

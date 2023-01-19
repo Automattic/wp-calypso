@@ -54,7 +54,7 @@ import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridFeatures from './features';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { PlanFeaturesItem } from './item';
-import { PlanComparison2023Grid } from './plan-comparison-grid';
+import { PlanComparisonGrid } from './plan-comparison-grid';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
 
@@ -92,6 +92,7 @@ type PlanFeatures2023GridProps = {
 	domainName: string;
 	placeholder?: string;
 	isLandingPage?: boolean;
+	intervalType: string;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -135,7 +136,10 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						</div>
 					</div>
 				</div>
-				<PlanComparison2023Grid planProperties={ this.props.planProperties } />
+				<PlanComparisonGrid
+					planProperties={ this.props.planProperties }
+					intervalType={ this.props.intervalType }
+				/>
 			</div>
 		);
 	}

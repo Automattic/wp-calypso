@@ -25,6 +25,7 @@ import {
 	TYPE_P2_PLUS,
 	TYPE_ENTERPRISE_GRID_WPCOM,
 } from './constants';
+import { featureGroups } from './feature-group-plan-map';
 import { PLANS_LIST } from './plans-list';
 import {
 	isJetpackBusiness,
@@ -44,11 +45,16 @@ import type {
 	PlanSlug,
 	WithCamelCaseSlug,
 	WithSnakeCaseSlug,
+	FeatureGroupMap,
 } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
 export function getPlans(): Record< string, Plan > {
 	return PLANS_LIST;
+}
+
+export function getPlanFeaturesGrouped(): Partial< FeatureGroupMap > {
+	return featureGroups;
 }
 
 export function getPlansSlugs(): string[] {

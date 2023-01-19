@@ -2,6 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
 import BulkSelect from 'calypso/components/bulk-select';
 import DashboardBulkActions from '../../dashboard-bulk-actions';
+import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import SitesOverviewContext from '../context';
 import type { SiteData } from '../types';
 
@@ -10,10 +11,12 @@ import './style.scss';
 interface Props {
 	sites: Array< SiteData >;
 	isLoading: boolean;
+	isLargeScreen?: boolean;
 }
 
-export default function SiteBulkSelect( { sites, isLoading }: Props ) {
+export default function SiteBulkSelect( { sites, isLoading, isLargeScreen }: Props ) {
 	const translate = useTranslate();
+	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( null, isLargeScreen );
 
 	const { selectedSites, setSelectedSites } = useContext( SitesOverviewContext );
 
@@ -28,25 +31,22 @@ export default function SiteBulkSelect( { sites, isLoading }: Props ) {
 
 	const handleToggleSelect = () => {
 		// Filter sites with site error as they are not selectable.
-		const filteredSites = sites.filter( ( site ) => ! site.site.error );
+		const filteredSites = sites.filter( ( { site: { error } } ) => ! error );
 		const isChecked = isAllChecked( filteredSites );
 
-		if ( isChecked ) {
-			setSelectedSites(
-				selectedSites.filter(
-					( selectedSite ) =>
-						! filteredSites.find( ( site ) => site.site.value.blog_id === selectedSite.blog_id )
-				)
-			);
-		} else {
-			setSelectedSites(
-				[ ...selectedSites, ...filteredSites.map( ( site ) => site.site.value ) ].filter(
+		const allSelectedSites = isChecked
+			? selectedSites.filter(
+					( { blog_id } ) =>
+						! filteredSites.find( ( { site: { value } } ) => value.blog_id === blog_id )
+			  )
+			: [ ...selectedSites, ...filteredSites.map( ( { site: { value } } ) => value ) ].filter(
 					( element, index, array ) =>
-						array.map( ( selectedSite ) => selectedSite.blog_id ).indexOf( element.blog_id ) ===
-						index
-				)
-			);
-		}
+						array.map( ( { blog_id } ) => blog_id ).indexOf( element.blog_id ) === index
+			  );
+		setSelectedSites( allSelectedSites );
+		recordEvent( isChecked ? 'site_bulk_unselect_all' : 'site_bulk_select_all', {
+			...( allSelectedSites.length && { selected_site_count: allSelectedSites.length } ),
+		} );
 	};
 
 	const isChecked = isAllChecked( sites );
@@ -80,7 +80,11 @@ export default function SiteBulkSelect( { sites, isLoading }: Props ) {
 					} ) }
 				</div>
 			</div>
-			<DashboardBulkActions selectedSites={ selectedSites } />
+			<DashboardBulkActions
+				selectedSites={ selectedSites }
+				monitorUserEmails={ sites[ 0 ].monitor.settings?.monitor_user_emails ?? [] }
+				isLargeScreen={ isLargeScreen }
+			/>
 		</div>
 	);
 }

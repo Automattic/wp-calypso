@@ -14,7 +14,7 @@ function onChange( newValue, isNavigating ) {
 function render() {
 	return (
 		<SuggestionSearch
-			placeholder={ 'Type here to search' }
+			placeholder="Type here to search"
 			onChange={ onChange }
 			suggestions={ [ { label: 'foo' }, { label: 'bar' } ] }
 		/>

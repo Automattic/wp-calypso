@@ -1,3 +1,5 @@
+import config from '@automattic/calypso-config';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight, find, get } from 'lodash';
 import moment from 'moment';
@@ -5,13 +7,16 @@ import { connect } from 'react-redux';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import SegmentedControl from 'calypso/components/segmented-control';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import DatePicker from '../stats-date-picker';
+import './summary-nav.scss';
 
 export const StatsModuleSummaryLinks = ( props ) => {
-	const { translate, path, siteSlug, query, period, children } = props;
+	const { translate, path, siteSlug, query, period, children, hideNavigation, navigationSwap } =
+		props;
 
 	const getSummaryPeriodLabel = () => {
 		switch ( period.period ) {
@@ -48,36 +53,77 @@ export const StatsModuleSummaryLinks = ( props ) => {
 	const numberDays = get( query, 'num', '0' );
 	const selected = find( options, { value: numberDays } );
 
+	const isHorizontalBarComponentEnabledEverywhere = config.isEnabled(
+		'stats/horizontal-bars-everywhere'
+	);
+
 	return (
-		<div className="stats-module__all-time-nav">
-			<SectionNav selectedText={ selected.label }>
-				<NavTabs label={ translate( 'Summary' ) }>
-					{ options.map( ( item ) => {
-						const onClick = () => {
-							recordStats( item );
-						};
-						return (
-							<NavItem
-								path={ item.path }
-								selected={ item.value === selected.value }
-								key={ item.value }
-								onClick={ onClick }
-							>
-								{ item.label }
-							</NavItem>
-						);
-					} ) }
-				</NavTabs>
-				{ children }
-			</SectionNav>
-			<DatePicker
-				period={ period.period }
-				date={ period.startOf }
-				path={ path }
-				query={ query }
-				summary={ false }
-			/>
-		</div>
+		<>
+			{ isHorizontalBarComponentEnabledEverywhere && (
+				<div className="stats-summary-nav">
+					<div className="stats-summary-nav__header">
+						<DatePicker
+							period={ period.period }
+							date={ period.startOf }
+							path={ path }
+							query={ query }
+							summary={ false }
+						/>
+					</div>
+					{ ! hideNavigation && (
+						<SegmentedControl
+							primary
+							className={ classnames( 'stats-summary-nav__intervals' ) }
+							compact={ false }
+						>
+							{ options.map( ( i ) => {
+								return (
+									<SegmentedControl.Item
+										key={ i.value }
+										path={ i.path }
+										selected={ i.value === selected.value }
+									>
+										{ i.label }
+									</SegmentedControl.Item>
+								);
+							} ) }
+						</SegmentedControl>
+					) }
+					{ hideNavigation && navigationSwap }
+				</div>
+			) }
+			{ ! isHorizontalBarComponentEnabledEverywhere && (
+				<div className="stats-module__all-time-nav">
+					<SectionNav selectedText={ selected.label }>
+						<NavTabs label={ translate( 'Summary' ) }>
+							{ options.map( ( item ) => {
+								const onClick = () => {
+									recordStats( item );
+								};
+								return (
+									<NavItem
+										path={ item.path }
+										selected={ item.value === selected.value }
+										key={ item.value }
+										onClick={ onClick }
+									>
+										{ item.label }
+									</NavItem>
+								);
+							} ) }
+						</NavTabs>
+						{ children }
+					</SectionNav>
+					<DatePicker
+						period={ period.period }
+						date={ period.startOf }
+						path={ path }
+						query={ query }
+						summary={ false }
+					/>
+				</div>
+			) }
+		</>
 	);
 };
 
