@@ -572,6 +572,13 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 	white-space: nowrap;
 }
 
+.site-settings__ecommerce-trial-notice {
+	.notice__action {
+		display: inline-block;
+		padding: 0;
+	}
+}
+
 .site-settings__disable-privacy-settings {
 	opacity: 0.33;
 	pointer-events: none;

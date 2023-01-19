@@ -618,17 +618,24 @@ export class SiteSettingsFormGeneral extends Component {
 		const LaunchCard = showPreviewLink ? CompactCard : Card;
 
 		if ( isSiteOnECommerceTrial ) {
+			const eCommerceTrialUpsellText = translate(
+				'Before you can share your store with the world, you need to {{NoticeAction}}pick a plan{{/NoticeAction}}.',
+				{
+					components: {
+						NoticeAction: (
+							<NoticeAction href={ `/plans/${ siteSlug }?plan=ecommerce-bundle-monthly` } />
+						),
+					},
+				}
+			);
 			eCommerceTrialUpsell = (
-				<a href={ `/plans/${ siteSlug }?plan=business-bundle-monthly` }>
-					<Notice
-						icon="info"
-						showDismiss={ false }
-						text={ translate(
-							'In order for everyone to see your store, you just need to subscribe to a eCommerce plan. Subscribe'
-						) }
-						isCompact={ false }
-					></Notice>
-				</a>
+				<Notice
+					className="site-settings__ecommerce-trial-notice"
+					icon="info"
+					showDismiss={ false }
+					text={ eCommerceTrialUpsellText }
+					isCompact={ false }
+				></Notice>
 			);
 		}
 
