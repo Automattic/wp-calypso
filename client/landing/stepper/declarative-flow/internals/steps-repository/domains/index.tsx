@@ -4,6 +4,7 @@ import {
 	LINK_IN_BIO_FLOW,
 	LINK_IN_BIO_TLD_FLOW,
 	COPY_SITE_FLOW,
+	isCopySiteFlow,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -461,7 +462,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		<StepContainer
 			stepName="domains"
 			isWideLayout={ true }
-			hideBack={ true }
+			shouldStickyNavButtons={ isCopySiteFlow( flow ) }
+			hideBack={ ! isCopySiteFlow( flow ) }
 			hideSkip={ true }
 			flowName="linkInBio"
 			stepContent={
@@ -471,6 +473,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				</div>
 			}
 			recordTracksEvent={ recordTracksEvent }
+			goBack={ () => submit?.( { previousStep: true } ) }
 			goNext={ () => submit?.() }
 			formattedHeader={
 				<FormattedHeader
