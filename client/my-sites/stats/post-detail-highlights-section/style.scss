@@ -38,7 +38,6 @@
 
 			& > * {
 				padding: 24px;
-				min-width: unset;
 			}
 
 			.post-stats-card {
@@ -48,6 +47,7 @@
 			}
 
 			.highlight-card {
+				min-width: unset;
 				height: 180px;
 				margin: math.div($vertical-margin, 2) 0;
 				border-left: 0;
