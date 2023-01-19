@@ -791,7 +791,6 @@ const mapStateToProps = (
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
 	const siteOption = isJetpackSite( state, siteId ) ? 'jetpack_frame_nonce' : 'frame_nonce';
-	const canvasEditMode = getQueryArg( window.location.href, 'canvas' ) === 'edit' ? 'edit' : null;
 
 	let queryArgs = pickBy( {
 		post: postId,
@@ -812,7 +811,7 @@ const mapStateToProps = (
 		...pressThisData,
 		answer_prompt: getQueryArg( window.location.href, 'answer_prompt' ),
 		completedFlow,
-		...( canvasEditMode && { canvas: canvasEditMode } ),
+		canvas: 'edit', // Load side editor in edit mode instead of displaying sidebar by default (Gutenberg v15.0.0)
 	} );
 
 	// needed for loading the editor in SU sessions
