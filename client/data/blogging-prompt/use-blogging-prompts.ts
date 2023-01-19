@@ -5,16 +5,22 @@ import wp from 'calypso/lib/wp';
 export interface BloggingPrompt {
 	id: string;
 	text: string;
-	answered_users_sample: [ string ];
+	answered_users_sample: Array< string >;
 }
 
-const selectPrompts = ( response: any ): BloggingPrompt[] | null => {
+const selectPrompts = ( response: {
+	prompts: Array< { id: string; text: string; answered_users_sample: Array< string > } >;
+} ): BloggingPrompt[] | null => {
 	const prompts = response && response.prompts;
 	if ( ! prompts ) {
 		return null;
 	}
 	return prompts.map(
-		( prompt: any ): BloggingPrompt => ( {
+		( prompt: {
+			id: string;
+			text: string;
+			answered_users_sample: Array< string >;
+		} ): BloggingPrompt => ( {
 			id: prompt.id,
 			text: prompt.text,
 			answered_users_sample: prompt.answered_users_sample,
