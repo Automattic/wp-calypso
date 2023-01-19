@@ -44,27 +44,23 @@ export const ThemesList = ( props ) => {
 		}
 
 		return (
-			<Empty
-				searchTerm={ props.searchTerm }
-				translate={ props.translate }
-				recordTracksEvent={ props.recordTracksEvent }
-				upsellCardDisplayed={ props.upsellCardDisplayed }
-				wpOrgThemes={ props.wpOrgThemes }
-				{ ...props }
-			/>
+			<Empty translate={ props.translate } upsellCardDisplayed={ props.upsellCardDisplayed } />
 		);
 	}
 
 	return (
-		<div className="themes-list">
-			{ props.themes.map( ( theme, index ) => (
-				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
-			) ) }
-			{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
-			{ /* Invisible trailing items keep all elements same width in flexbox grid. */ }
-			<TrailingItems />
-			<InfiniteScroll nextPageMethod={ fetchNextPage } />
-		</div>
+		<>
+			<div className="themes-list">
+				{ props.themes.map( ( theme, index ) => (
+					<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
+				) ) }
+				{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
+				{ /* Invisible trailing items keep all elements same width in flexbox grid. */ }
+				<TrailingItems />
+				<InfiniteScroll nextPageMethod={ fetchNextPage } />
+			</div>
+			<Footer translate={ props.translate } upsellCardDisplayed={ props.upsellCardDisplayed } />
+		</>
 	);
 };
 
@@ -141,7 +137,7 @@ function ThemeBlock( props ) {
 	);
 }
 
-function Empty( props ) {
+function Footer( props ) {
 	const { upsellCardDisplayed, translate } = props;
 	const selectedSite = useSelector( getSelectedSite );
 	const canInstallTheme = useSelector( ( state ) =>
@@ -162,6 +158,102 @@ function Empty( props ) {
 	}, [ selectedSite, upsellCardDisplayed ] );
 
 	if ( ! selectedSite ) {
+		return null;
+	}
+
+	return (
+		<div className="themes-list__footer">
+			<div className="themes-list__footer-heading">
+				{ translate( "Can't find what you're looking for?" ) }
+			</div>
+			<div className="themes-list__footer-subheading">
+				{ translate( 'Here are a few more options' ) }
+			</div>
+			<div className="themes-list__footer-action">
+				<Icon className="themes-list__footer-action-icon" icon={ addTemplate } size={ 28 } />
+				<div className="themes-list__footer-action-content">
+					<div className="themes-list__footer-action-text">
+						<div className="themes-list__footer-action-title">
+							{ translate( 'Create your own theme from scratch' ) }
+						</div>
+						<div className="themes-list__footer-action-description">
+							{ canGoToPatternAssembler
+								? translate(
+										'Start with a blank canvas and design your own homepage using our library of patterns.'
+								  )
+								: translate( 'Jump right into the editor to design your homepage from scratch.' ) }
+						</div>
+					</div>
+					<Button
+						primary
+						className="themes-list__footer-action-button"
+						href={
+							canGoToPatternAssembler
+								? `/setup/site-setup/patternAssembler?siteSlug=${ selectedSite.slug }&backTo=/themes/${ selectedSite.slug }`
+								: `/site-editor/${ selectedSite.slug }`
+						}
+					>
+						{ canGoToPatternAssembler
+							? translate( 'Start designing' )
+							: translate( 'Open the editor' ) }
+					</Button>
+				</div>
+			</div>
+			<div className="themes-list__footer-action">
+				<Icon className="themes-list__footer-action-icon" icon={ brush } size={ 28 } />
+				<div className="themes-list__footer-action-content">
+					<div className="themes-list__footer-action-text">
+						<div className="themes-list__footer-action-title">
+							{ translate( 'Hire our team of experts to design one for you' ) }
+						</div>
+						<div className="themes-list__footer-action-description">
+							{ translate(
+								'A WordPress.com professional will create layouts for up to 5 pages of your site.'
+							) }
+						</div>
+					</div>
+					<Button
+						className="themes-list__footer-action-button"
+						href="https://wordpress.com/do-it-for-me/"
+					>
+						{ translate( 'Hire an expert' ) }
+					</Button>
+				</div>
+			</div>
+			<div className="themes-list__footer-action">
+				<Icon className="themes-list__footer-action-icon" icon={ cloudUpload } size={ 28 } />
+				<div className="themes-list__footer-action-content">
+					<div className="themes-list__footer-action-text">
+						<div className="themes-list__footer-action-title">
+							{ translate( 'Upload your theme' ) }
+						</div>
+						<div className="themes-list__footer-action-description">
+							{ canInstallTheme
+								? translate(
+										'You can upload third-party themes to your site, including themes from WordPress.org, and even themes you have custom-made for your website.'
+								  )
+								: translate(
+										'Upgrade your plan to unlock the ability to upload and install your own theme.'
+								  ) }
+						</div>
+					</div>
+					<Button
+						className="themes-list__footer-action-button"
+						href={ `/themes/upload/${ selectedSite.slug }` }
+					>
+						{ translate( 'Upload theme' ) }
+					</Button>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+function Empty( props ) {
+	const { translate, upsellCardDisplayed } = props;
+	const selectedSite = useSelector( getSelectedSite );
+
+	if ( ! selectedSite ) {
 		return (
 			<EmptyContent
 				title={ translate( 'Sorry, no themes found.' ) }
@@ -171,105 +263,12 @@ function Empty( props ) {
 	}
 
 	return (
-		<div className="themes-list__empty-search">
+		<>
 			<div className="themes-list__empty-search-text">
 				{ translate( 'No themes match your search' ) }
 			</div>
-			<div className="themes-list__empty-search-actions">
-				<div className="themes-list__empty-search-heading">
-					{ translate( "Can't find what you're looking for?" ) }
-				</div>
-				<div className="themes-list__empty-search-subheading">
-					{ translate( 'Here are a few more options' ) }
-				</div>
-				<div className="themes-list__empty-search-action">
-					<Icon
-						className="themes-list__empty-search-action-icon"
-						icon={ addTemplate }
-						size={ 28 }
-					/>
-					<div className="themes-list__empty-search-action-content">
-						<div className="themes-list__empty-search-action-text">
-							<div className="themes-list__empty-search-action-title">
-								{ translate( 'Create your own theme from scratch' ) }
-							</div>
-							<div className="themes-list__empty-search-action-description">
-								{ canGoToPatternAssembler
-									? translate(
-											'Start with a blank canvas and design your own homepage using our library of patterns.'
-									  )
-									: translate(
-											'Jump right into the editor to design your homepage from scratch.'
-									  ) }
-							</div>
-						</div>
-						<Button
-							primary
-							className="themes-list__empty-search-action-button"
-							href={
-								canGoToPatternAssembler
-									? `/setup/site-setup/patternAssembler?siteSlug=${ selectedSite.slug }&backTo=/themes/${ selectedSite.slug }`
-									: `/site-editor/${ selectedSite.slug }`
-							}
-						>
-							{ canGoToPatternAssembler
-								? translate( 'Start designing' )
-								: translate( 'Open the editor' ) }
-						</Button>
-					</div>
-				</div>
-				<div className="themes-list__empty-search-action">
-					<Icon className="themes-list__empty-search-action-icon" icon={ brush } size={ 28 } />
-					<div className="themes-list__empty-search-action-content">
-						<div className="themes-list__empty-search-action-text">
-							<div className="themes-list__empty-search-action-title">
-								{ translate( 'Hire our team of experts to design one for you' ) }
-							</div>
-							<div className="themes-list__empty-search-action-description">
-								{ translate(
-									'A WordPress.com professional will create layouts for up to 5 pages of your site.'
-								) }
-							</div>
-						</div>
-						<Button
-							className="themes-list__empty-search-action-button"
-							href="https://wordpress.com/do-it-for-me/"
-						>
-							{ translate( 'Hire an expert' ) }
-						</Button>
-					</div>
-				</div>
-				<div className="themes-list__empty-search-action">
-					<Icon
-						className="themes-list__empty-search-action-icon"
-						icon={ cloudUpload }
-						size={ 28 }
-					/>
-					<div className="themes-list__empty-search-action-content">
-						<div className="themes-list__empty-search-action-text">
-							<div className="themes-list__empty-search-action-title">
-								{ translate( 'Upload your theme' ) }
-							</div>
-							<div className="themes-list__empty-search-action-description">
-								{ canInstallTheme
-									? translate(
-											'You can upload third-party themes to your site, including themes from WordPress.org, and even themes you have custom-made for your website.'
-									  )
-									: translate(
-											'Upgrade your plan to unlock the ability to upload and install your own theme.'
-									  ) }
-							</div>
-						</div>
-						<Button
-							className="themes-list__empty-search-action-button"
-							href={ `/themes/upload/${ selectedSite.slug }` }
-						>
-							{ translate( 'Upload theme' ) }
-						</Button>
-					</div>
-				</div>
-			</div>
-		</div>
+			<Footer translate={ translate } upsellCardDisplayed={ upsellCardDisplayed } />
+		</>
 	);
 }
 
@@ -287,19 +286,22 @@ function WPOrgMatchingThemes( props ) {
 	);
 
 	return (
-		<div className="themes-list">
-			{ matchingThemes.map( ( theme, index ) => (
-				<div
-					onClick={ () => onWPOrgCardClick( theme ) }
-					key={ 'theme-block' + index }
-					role="button"
-					tabIndex={ 0 }
-					onKeyUp={ () => onWPOrgCardClick( theme ) }
-				>
-					<ThemeBlock theme={ theme } index={ index } { ...props } />
-				</div>
-			) ) }
-			<TrailingItems />
+		<div>
+			<div className="themes-list">
+				{ matchingThemes.map( ( theme, index ) => (
+					<div
+						onClick={ () => onWPOrgCardClick( theme ) }
+						key={ 'theme-block' + index }
+						role="button"
+						tabIndex={ 0 }
+						onKeyUp={ () => onWPOrgCardClick( theme ) }
+					>
+						<ThemeBlock theme={ theme } index={ index } { ...props } />
+					</div>
+				) ) }
+				<TrailingItems />
+			</div>
+			<Footer translate={ props.translate } upsellCardDisplayed={ props.upsellCardDisplayed } />
 		</div>
 	);
 }

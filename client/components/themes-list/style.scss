@@ -21,32 +21,30 @@
 	flex-grow: 1;
 }
 
-.themes-list__empty-search {
-	.themes-list__empty-search-text {
-		color: var(--studio-gray-60);
-		margin-top: 48px;
-		margin-bottom: 32px;
+.themes-list__empty-search-text {
+	color: var(--studio-gray-60);
+	margin-top: 48px;
+	margin-bottom: 32px;
+}
+
+.themes-list__footer {
+	background-color: var(--studio-white);
+	border-radius: 4px;
+	padding: 20px;
+	border: 1px solid var(--studio-gray-5);
+	text-align: center;
+
+	@include break-small {
+		padding: 40px;
 	}
 
-	.themes-list__empty-search-actions {
-		background-color: var(--studio-white);
-		border-radius: 4px;
-		padding: 20px;
-		border: 1px solid var(--studio-gray-5);
-		text-align: center;
-
-		@include break-small {
-			padding: 40px;
-		}
-	}
-
-	.themes-list__empty-search-heading {
+	.themes-list__footer-heading {
 		font-size: 1.25rem;
 		font-weight: 500;
 		margin-bottom: 12px;
 	}
 
-	.themes-list__empty-search-subheading {
+	.themes-list__footer-subheading {
 		color: var(--studio-gray-60);
 		margin-bottom: 20px;
 
@@ -55,7 +53,7 @@
 		}
 	}
 
-	.themes-list__empty-search-action {
+	.themes-list__footer-action {
 		display: block;
 		margin: 20px auto;
 		width: 100%;
@@ -68,7 +66,7 @@
 		}
 	}
 
-	.themes-list__empty-search-action-icon {
+	.themes-list__footer-action-icon {
 		display: none;
 		margin-right: 16px;
 
@@ -77,7 +75,7 @@
 		}
 	}
 
-	.themes-list__empty-search-action-content {
+	.themes-list__footer-action-content {
 		display: flex;
 		border-bottom: 1px solid var(--studio-gray-5);
 		padding-bottom: 20px;
@@ -87,11 +85,11 @@
 		}
 	}
 
-	.themes-list__empty-search-action-text {
+	.themes-list__footer-action-text {
 		text-align: left;
 	}
 
-	.themes-list__empty-search-action-button {
+	.themes-list__footer-action-button {
 		white-space: nowrap;
 		height: fit-content;
 		overflow: visible;
@@ -100,20 +98,20 @@
 		margin-left: 16px;
 	}
 
-	.themes-list__empty-search-action-title {
+	.themes-list__footer-action-title {
 		font-weight: 500;
 		margin-bottom: 8px;
 	}
 
-	.themes-list__empty-search-action-description {
+	.themes-list__footer-action-description {
 		color: var(--studio-gray-60);
 		font-size: 0.875rem;
 	}
 
-	.themes-list__empty-search-action:last-child {
+	.themes-list__footer-action:last-child {
 		margin-bottom: 0;
 
-		.themes-list__empty-search-action-content {
+		.themes-list__footer-action-content {
 			border-bottom: none;
 			padding-bottom: 0;
 
