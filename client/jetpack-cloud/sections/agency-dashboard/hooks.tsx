@@ -325,33 +325,42 @@ export function useJetpackAgencyDashboardRecordTrackEvent(
 ) {
 	const dispatch = useDispatch();
 
-	const dispatchEvent = useCallback(
-		( action, args = {} ) => {
-			const name = `calypso_jetpack_agency_dashboard_${ action }_${
+	const buildEventName = useCallback(
+		( action: string ) =>
+			`calypso_jetpack_agency_dashboard_${ action }_${
 				isLargeScreen ? 'large_screen' : 'small_screen'
-			}`;
+			}`,
+		[ isLargeScreen ]
+	);
 
-			let siteProperties = {};
+	const buildSiteProperties = useCallback( () => {
+		if ( ! sites?.length ) {
+			return {};
+		}
+		if ( sites.length === 1 ) {
+			const { blog_id, url } = sites[ 0 ];
+			return {
+				selected_site_id: blog_id,
+				selected_site_url: url,
+			};
+		}
+		return {
+			selected_site_count: sites.length,
+		};
+	}, [ sites ] );
 
-			if ( sites?.length ) {
-				siteProperties = {
-					selected_site_count: sites.length,
-				};
-				if ( sites.length === 1 ) {
-					siteProperties = {
-						selected_site_id: sites[ 0 ].blog_id,
-						selected_site_url: sites[ 0 ].url,
-					};
-				}
-			}
+	const dispatchTrackingEvent = useCallback(
+		( action, args = {} ) => {
+			const name = buildEventName( action );
+
 			const properties = {
-				...siteProperties,
+				...buildSiteProperties(),
 				...args,
 			};
 			dispatch( recordTracksEvent( name, properties ) );
 		},
-		[ dispatch, isLargeScreen, sites ]
+		[ buildEventName, buildSiteProperties, dispatch ]
 	);
 
-	return dispatchEvent;
+	return dispatchTrackingEvent;
 }
