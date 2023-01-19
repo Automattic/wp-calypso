@@ -129,17 +129,14 @@ function SiteDeleteConfirmationDialog( {
 					</ul>
 				</Subtitle>
 				<FormLabel htmlFor="confirmTextChangeInput">
-					{ translate(
-						'Type {{strong}}%(deleteWord)s{{/strong}} to confirm to confirm and continue.',
-						{
-							components: {
-								strong: <strong />,
-							},
-							args: {
-								deleteWord: TRANSLATED_DELETE_WORD,
-							},
-						}
-					) }
+					{ translate( 'Type {{strong}}%(deleteWord)s{{/strong}} to confirm and continue.', {
+						components: {
+							strong: <strong />,
+						},
+						args: {
+							deleteWord: TRANSLATED_DELETE_WORD,
+						},
+					} ) }
 				</FormLabel>
 
 				<FormTextInput
