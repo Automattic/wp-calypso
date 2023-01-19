@@ -15819,9 +15819,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:^39.6.7":
-  version: 39.6.7
-  resolution: "eslint-plugin-jsdoc@npm:39.6.7"
+"eslint-plugin-jsdoc@npm:^39.6.8":
+  version: 39.6.8
+  resolution: "eslint-plugin-jsdoc@npm:39.6.8"
   dependencies:
     "@es-joy/jsdoccomment": ~0.36.1
     comment-parser: 1.3.1
@@ -15832,7 +15832,7 @@ __metadata:
     spdx-expression-parse: ^3.0.1
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0
-  checksum: c0973999454d5bd3827d669eb2d88a33dea81e4d282312535188d7982684f401b1db7116214438e30edb5c61f6c72ff7c3a07f0b97ed3d3147b1f5eb8df2eeb9
+  checksum: 4d0e366b908e977be3c4b3ed0d6e73ebf965ac853018ad63ea9b4aa2dda3ad7a9aa4503df8c2c9c359317ba4ca101ee23ac5abd71022798cfb47a3494594e356
   languageName: node
   linkType: hard
 
@@ -15973,7 +15973,7 @@ __metadata:
     "@babel/core": ">=7.17.5"
     eslint: ">=8.6.0"
     eslint-plugin-inclusive-language: ^2.2.0
-    eslint-plugin-jsdoc: ^39.6.7
+    eslint-plugin-jsdoc: ^39.6.8
     eslint-plugin-react: ^7.28.0
     eslint-plugin-react-hooks: ^4.3.0
   peerDependenciesMeta:
@@ -33680,7 +33680,7 @@ resolve@^2.0.0-next.3:
     eslint-plugin-import: ^2.25.4
     eslint-plugin-inclusive-language: ^2.2.0
     eslint-plugin-jest: ^25.3.4
-    eslint-plugin-jsdoc: ^39.6.7
+    eslint-plugin-jsdoc: ^39.6.8
     eslint-plugin-jsx-a11y: ^6.5.1
     eslint-plugin-md: ^1.0.19
     eslint-plugin-mocha: ^10.0.3

@@ -1,4 +1,4 @@
-import { parse } from 'calypso/lib/shortcode';
+import { parse as parseShortcode } from 'calypso/lib/shortcode';
 import { deserialize as _recurse } from '../';
 import createElementFromString from '../create-element-from-string';
 
@@ -13,7 +13,7 @@ import createElementFromString from '../create-element-from-string';
 function parseAsShortcode( node, _parsed ) {
 	// Attempt to convert string element into DOM node. If successful, recurse
 	// to trigger the shortcode strategy
-	const shortcode = parse( node );
+	const shortcode = parseShortcode( node );
 	if ( shortcode ) {
 		return _recurse( shortcode, _parsed );
 	}
