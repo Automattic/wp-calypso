@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -52,23 +53,27 @@ export const RelatedPostsSetting = ( {
 					label={ translate( 'Show a thumbnail image where available' ) }
 				/>
 
-				<ToggleControl
-					checked={ !! fields.jetpack_relatedposts_show_date }
-					disabled={
-						isRequestingSettings || isSavingSettings || ! fields.jetpack_relatedposts_enabled
-					}
-					onChange={ handleToggle( 'jetpack_relatedposts_show_date' ) }
-					label={ translate( 'Show post publish date' ) }
-				/>
+				{ config.isEnabled( 'settings/modernize-reading-settings' ) && (
+					<>
+						<ToggleControl
+							checked={ !! fields.jetpack_relatedposts_show_date }
+							disabled={
+								isRequestingSettings || isSavingSettings || ! fields.jetpack_relatedposts_enabled
+							}
+							onChange={ handleToggle( 'jetpack_relatedposts_show_date' ) }
+							label={ translate( 'Show post publish date' ) }
+						/>
 
-				<ToggleControl
-					checked={ !! fields.jetpack_relatedposts_show_context }
-					disabled={
-						isRequestingSettings || isSavingSettings || ! fields.jetpack_relatedposts_enabled
-					}
-					onChange={ handleToggle( 'jetpack_relatedposts_show_context' ) }
-					label={ translate( 'Show post category or tags' ) }
-				/>
+						<ToggleControl
+							checked={ !! fields.jetpack_relatedposts_show_context }
+							disabled={
+								isRequestingSettings || isSavingSettings || ! fields.jetpack_relatedposts_enabled
+							}
+							onChange={ handleToggle( 'jetpack_relatedposts_show_context' ) }
+							label={ translate( 'Show post category or tags' ) }
+						/>
+					</>
+				) }
 			</div>
 
 			<FormSettingExplanation>
