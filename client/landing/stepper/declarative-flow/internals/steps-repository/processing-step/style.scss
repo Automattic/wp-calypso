@@ -91,10 +91,16 @@ $progress-duration: 800ms;
 .copy-site.processing-copy {
 	.processing-step {
 		margin: 5vh auto 0;
+		max-width: 660px;
 	}
 
 	.processing-step__progress-step {
 		font-size: 3rem;
 		margin-bottom: 24px;
+	}
+
+	.processing-step__progress-bar {
+		max-width: 540px;
+		margin: 0 auto;
 	}
 }
