@@ -56,12 +56,12 @@ function fireConfetti() {
 	} );
 }
 
-const ConfettiAnimation = ( { trigger = true } ) => {
+const ConfettiAnimation = ( { trigger = true, delay = 0 } ) => {
 	useEffect( () => {
 		if ( trigger ) {
-			fireConfetti();
+			setTimeout( () => fireConfetti(), delay );
 		}
-	}, [ trigger ] );
+	}, [ trigger, delay ] );
 
 	return null;
 };
