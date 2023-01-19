@@ -11,7 +11,6 @@ import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
-import { useThemeDetails } from '../../../../hooks/use-theme-details';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
 import { SITE_TAGLINE } from './constants';
@@ -44,8 +43,6 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const allPatterns = useAllPatterns();
-	const { data: theme } = useThemeDetails( selectedDesign?.slug );
-	const themeDemoSiteSlug = theme?.demo_uri?.replace( /^https?:\/\//, '' ).replace( '/', '' );
 
 	const largePreviewProps = {
 		placeholder: null,
@@ -365,7 +362,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 		</div>
 	);
 
-	if ( ! selectedDesign || ! themeDemoSiteSlug ) {
+	if ( ! site?.ID || ! selectedDesign ) {
 		return null;
 	}
 
@@ -385,7 +382,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 						<AsyncLoad
 							require="./pattern-assembler-container"
 							placeholder={ null }
-							siteId={ themeDemoSiteSlug }
+							siteId={ site?.ID }
 							stylesheet={ selectedDesign?.recipe?.stylesheet }
 							patternIds={ allPatterns.map( ( pattern ) => encodePatternId( pattern.id ) ) }
 							siteInfo={ siteInfo }
