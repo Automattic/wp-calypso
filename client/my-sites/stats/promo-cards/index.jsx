@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { MobilePromoCard } from '@automattic/components';
 import { translate } from 'i18n-calypso';
+import page from 'page';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import blazeDropDownIllustration from 'calypso/assets/images/illustrations/blaze-drop-down.svg';
@@ -21,7 +22,7 @@ const EVENT_YOAST_PROMO_VIEW = 'calypso_stats_wordpress_seo_premium_banner_view'
 const EVENT_ANNUAL_BLAZE_PROMO_VIEW = 'calypso_stats_annual_insights_blaze_banner_view';
 const EVENT_ANNUAL_MOBILE_PROMO_VIEW = 'calypso_stats_annual_insights_mobile_cta_jetpack_view';
 
-export default function PromoCards( { isOdysseyStats, slug, pageSlug, isSecondaryBanner } ) {
+export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 	// Keep a replica of the pager index state.
 	// TODO: Figure out an approach that doesn't require replicating state value from DotPager.
 	const [ dotPagerIndex, setDotPagerIndex ] = useState( 0 );
@@ -32,11 +33,14 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug, isSecondar
 	);
 	const shouldShowAdvertisingOption = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 
+	// This is used to show some banner only on annual stats page.
+	const isAnnualStatsPage = page.current.includes( 'annualstats' );
+
 	// Blaze promo is disabled for Odyssey.
-	const showBlazePromo = ! isSecondaryBanner && ! isOdysseyStats && shouldShowAdvertisingOption;
+	const showBlazePromo = isAnnualStatsPage && ! isOdysseyStats && shouldShowAdvertisingOption;
 	// Yoast promo is disabled for Odyssey & self-hosted & non-traffic pages.
 	const showYoastPromo =
-		! isSecondaryBanner && ! isOdysseyStats && ! jetpackNonAtomic && pageSlug === 'traffic';
+		isAnnualStatsPage && ! isOdysseyStats && ! jetpackNonAtomic && pageSlug === 'traffic';
 
 	const viewEvents = useMemo( () => {
 		const events = [];
