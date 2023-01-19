@@ -1,46 +1,51 @@
 import { Gridicon } from '@automattic/components';
 import { Icon, starEmpty } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { numberFormat, translate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
+import { getWordAdsEarnings } from 'calypso/state/wordads/earnings/selectors';
 import HighlightCardSimple from './highlight-card-simple';
 
 // TODO: HighlightCard does not accept string values.
 // Should refactor to accept strings and move the business logic into the callers.
 // Then refactor this Comp to use HighlightCard again.
 
-function getHighlights( translate ) {
-	// TODO: Get data from API.
+function getAmountAsFormattedString( amount ) {
+	// Takes a Number, formats it to 2 decimal places, and prepends a "$".
+	// This mimics the existing behaviour. I'm assuming we only view/report
+	// on earnings in USD.
+	return '$' + numberFormat( amount, 2 );
+}
+
+function getHighlights( earnings ) {
+	const total = earnings && earnings.total_earnings ? Number( earnings.total_earnings ) : 0;
+	const owed = earnings && earnings.total_amount_owed ? Number( earnings.total_amount_owed ) : 0;
+	const paid = total - owed;
+
 	const highlights = [
 		{
 			heading: translate( 'Earnings' ),
-			icon: <Icon icon={ starEmpty } />,
-			amount: '$153,841.29',
+			amount: total,
 		},
 		{
 			heading: translate( 'Paid' ),
-			icon: <Icon icon={ starEmpty } />,
-			amount: '$153,841.29',
+			amount: paid,
 		},
 		{
 			heading: translate( 'Outstanding' ),
-			icon: <Icon icon={ starEmpty } />,
-			amount: '$0',
-		},
-		{
-			heading: translate( 'Other' ),
-			icon: <Icon icon={ starEmpty } />,
-			amount: '$9.99',
+			amount: owed,
 		},
 	];
-	// Index the data for use with React.
+	// Transform/index the data for use with React.
 	return highlights.map( ( highlight, i ) => ( {
 		id: i,
+		formattedAmount: getAmountAsFormattedString( highlight.amount ),
+		icon: <Icon icon={ starEmpty } />,
 		...highlight,
 	} ) );
 }
 
 function HighlightsSectionHeader( props ) {
 	// TODO: Add support for popup.
-	const translate = useTranslate();
 	const localizedTitle = translate( 'Totals' );
 	return props.showInfoIcon ? (
 		<h1 className="highlight-cards-heading">
@@ -61,8 +66,8 @@ function HighlightsListing( props ) {
 				<HighlightCardSimple
 					key={ highlight.id }
 					heading={ highlight.heading }
-					icon={ <Icon icon={ starEmpty } /> }
-					value={ highlight.amount }
+					icon={ highlight.icon }
+					value={ highlight.formattedAmount }
 				/>
 			) ) }
 		</div>
@@ -70,11 +75,11 @@ function HighlightsListing( props ) {
 }
 
 export default function HighlightsSection( props ) {
-	const translate = useTranslate();
+	const earningsData = useSelector( ( state ) => getWordAdsEarnings( state, props.siteId ) );
 	if ( ! props.isVisible ) {
 		return null;
 	}
-	const highlights = getHighlights( translate );
+	const highlights = getHighlights( earningsData );
 	return (
 		<div className="highlight-cards">
 			<HighlightsSectionHeader showInfoIcon={ false } />
