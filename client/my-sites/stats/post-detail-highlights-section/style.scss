@@ -63,7 +63,7 @@
 		min-width: 770px;
 
 		@media ( max-width: $break-small ) {
-			gap: 12px;
+			gap: 24px 12px;
 		}
 
 		&::after {
