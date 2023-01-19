@@ -7,6 +7,18 @@ import HighlightCardSimple from './highlight-card-simple';
 // Should refactor to accept strings and move the business logic into the callers.
 // Then refactor this Comp to use HighlightCard again.
 
+function HighlightsSectionHeader( props ) {
+	const translate = useTranslate();
+	const localizedTitle = translate( 'Totals' );
+	return props.showInfoIcon ? (
+		<h1 className="highlight-cards-heading">
+			{ localizedTitle } <Gridicon icon="info-outline" />
+		</h1>
+	) : (
+		<h1 className="highlight-cards-heading">{ localizedTitle }</h1>
+	);
+}
+
 export default function HighlightsSection( props ) {
 	const translate = useTranslate();
 	if ( ! props.isVisible ) {
@@ -14,9 +26,7 @@ export default function HighlightsSection( props ) {
 	}
 	return (
 		<div className="highlight-cards">
-			<h1 className="highlight-cards-heading">
-				{ translate( 'Totals' ) } <Gridicon icon="info-outline" />
-			</h1>
+			<HighlightsSectionHeader showInfoIcon={ false } />
 			<div className="highlight-cards-list">
 				<HighlightCardSimple
 					heading={ translate( 'Earnings' ) }
