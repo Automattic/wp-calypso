@@ -154,6 +154,7 @@ $break-wpcom-smallest: 320px;
 	}
 
 	.post-stats-card__count-value {
+		font-family: inherit;
 		font-size: $font-body-small;
 		font-weight: 500;
 		line-height: 30px;
