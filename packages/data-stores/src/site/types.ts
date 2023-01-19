@@ -443,6 +443,7 @@ interface PaletteColor {
 }
 
 export interface GlobalStyles {
+	title?: string;
 	settings: {
 		color: {
 			palette: {
@@ -450,6 +451,9 @@ export interface GlobalStyles {
 				theme: PaletteColor[];
 			};
 		};
+	};
+	styles: {
+		[ key: string ]: unknown;
 	};
 }
 
@@ -467,4 +471,11 @@ export interface ThemeSetupOptions {
 	pattern_ids?: number[] | string[];
 	header_pattern_ids?: number[] | string[];
 	footer_pattern_ids?: number[] | string[];
+}
+
+export interface ActiveTheme {
+	stylesheet: string;
+	_links: {
+		'wp:user-global-styles': { href: string }[];
+	};
 }
