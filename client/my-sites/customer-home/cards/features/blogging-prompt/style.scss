@@ -34,12 +34,13 @@
 		.blogging-prompt__prompt-navigation {
 			align-items: center;
 			display: flex;
-			gap: 24px;
+			gap: 20px;
 		}
 		.blogging-prompt__prompt-text {
 			flex: 1;
 			font-size: $font-title-small;
 			font-weight: 500;
+			line-height: 1.6rem;
 		}
 		button.navigation-link {
 			border-radius: 50%;
@@ -54,7 +55,7 @@
 		align-items: center;
 		display: flex;
 		gap: 10px;
-		margin-top: 30px;
+		margin-top: 24px;
 		width: 100%;
 
 		.blogging-prompt__prompt-responses {
@@ -62,6 +63,11 @@
 			display: flex;
 			flex: 1;
 			gap: 10px;
+
+			&-users {
+				position: relative;
+				top: 4px;
+			}
 		}
 		.blogging-prompt__prompt-responses img {
 			border-radius: 100%;
@@ -91,7 +97,7 @@
 			color: var(--color-text-subtle);
 			flex: 1;
 			font-size: $font-body-small;
-			gap: 10px;
+			gap: 6px;
 		}
 	}
 	/* Blogging Prompt Menu ------------------------ */
