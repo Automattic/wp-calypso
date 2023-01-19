@@ -5,7 +5,7 @@ import {
 	PLAN_PREMIUM,
 	WPCOM_FEATURES_PREMIUM_THEMES,
 } from '@automattic/calypso-products';
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Card, Dialog, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
@@ -15,6 +15,7 @@ import PropTypes from 'prop-types';
 import { cloneElement, Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
+import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import AsyncLoad from 'calypso/components/async-load';
 import Badge from 'calypso/components/badge';
@@ -891,10 +892,12 @@ class ThemeSheet extends Component {
 							'Instantly unlock thousands of different themes and install your own when you upgrade.'
 						)
 					) }
-					forceHref
+					forceHref={ false }
+					disableHref={ true }
+					onClick={ () => this.setState( { upgradeDialogVisible: true } ) }
+					displayAsLink={ true }
 					feature={ FEATURE_UPLOAD_THEMES }
 					forceDisplay
-					href={ ! siteId ? '/plans' : null }
 					showIcon
 					event="theme_upsell_plan_click"
 					tracksClickName="calypso_theme_upsell_plan_click"
@@ -938,6 +941,18 @@ class ThemeSheet extends Component {
 				<ThanksModal source="details" />
 				<AutoLoadingHomepageModal source="details" />
 				{ pageUpsellBanner }
+				<Dialog
+					isVisible={ this.state?.upgradeDialogVisible }
+					onClose={ () => this.setState( { upgradeDialogVisible: false } ) }
+					shouldCloseOnEsc={ true }
+					showCloseIcon={ true }
+				>
+					<EligibilityWarnings
+						currentContext="themes"
+						siteId={ siteId }
+						feature={ FEATURE_UPLOAD_THEMES }
+					/>
+				</Dialog>
 				<HeaderCake
 					className="theme__sheet-action-bar"
 					backText={ translate( 'All Themes' ) }
