@@ -29,5 +29,6 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^"
-	}
+	},
+	"private": true
 }
