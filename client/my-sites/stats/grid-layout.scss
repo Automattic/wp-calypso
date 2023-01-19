@@ -3,27 +3,27 @@
 $grid-horizontal-gutters: 24px;
 $grid-vertical-gutters: 32px;
 
-@mixin stats-desktop-grid($grid-template-areas ) {
+@mixin stats-desktop-grid($grid-template-areas, $grid-template-rows) {
 	align-items: stretch;
 	display: grid;
 	grid-template-columns: repeat(12, 1fr);
-	grid-template-rows: repeat(5, min-content);
+	grid-template-rows: repeat($grid-template-rows, min-content);
 	gap: $grid-vertical-gutters $grid-horizontal-gutters;
 	grid-template-areas: $grid-template-areas;
 }
 
-@mixin stats-tablet-grid($grid-template-areas ) {
+@mixin stats-tablet-grid($grid-template-areas, $grid-template-rows) {
 	@media (max-width: $break-large ) {
 		grid-template-columns: repeat(8, 1fr);
-		grid-template-rows: repeat(6, min-content);
+		grid-template-rows: repeat($grid-template-rows, min-content);
 		grid-template-areas: $grid-template-areas;
 	}
 }
 
-@mixin stats-mobile-grid($grid-template-areas ) {
+@mixin stats-mobile-grid($grid-template-areas, $grid-template-rows) {
 	@media (max-width: $break-medium ) {
 		grid-template-columns: repeat(4, 1fr);
-		grid-template-rows: repeat(9, min-content);
+		grid-template-rows: repeat($grid-template-rows, min-content);
 		gap: 0;
 		grid-template-areas: $grid-template-areas;
 	}
@@ -34,14 +34,16 @@ $grid-vertical-gutters: 32px;
 	@include stats-desktop-grid(
 		"tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories comments comments comments comments comments comments"
 		"shares shares shares shares followers followers followers followers publicize publicize publicize publicize"
-		"latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary social-followers social-followers social-followers social-followers social-followers social-followers"
+		"latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary social-followers social-followers social-followers social-followers social-followers social-followers",
+		3
 	);
 
 	@include stats-tablet-grid(
 		"tags-categories tags-categories tags-categories tags-categories comments comments comments comments"
 		"shares shares shares shares followers followers followers followers"
 		"publicize publicize publicize publicize latest-post-summary latest-post-summary latest-post-summary latest-post-summary"
-		"social-followers social-followers social-followers social-followers social-followers social-followers social-followers social-followers"
+		"social-followers social-followers social-followers social-followers social-followers social-followers social-followers social-followers",
+		4
 	);
 
 	@include stats-mobile-grid(
@@ -51,7 +53,8 @@ $grid-vertical-gutters: 32px;
 		"followers followers followers followers"
 		"publicize publicize publicize publicize"
 		"latest-post-summary latest-post-summary latest-post-summary latest-post-summary"
-		"social-followers social-followers social-followers social-followers"
+		"social-followers social-followers social-followers social-followers",
+		7
 	);
 
 	@media (max-width: 660px) {
@@ -100,7 +103,8 @@ $grid-vertical-gutters: 32px;
 		"country country country country country country country country country country country country"
 		"authors authors authors authors search search search search clicks clicks clicks clicks"
 		"videos videos videos videos videos videos downloads downloads downloads downloads downloads downloads"
-		"emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open"
+		"emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open",
+		5
 	);
 
 	@include stats-tablet-grid(
@@ -109,7 +113,8 @@ $grid-vertical-gutters: 32px;
 		"authors authors authors authors search search search search"
 		"clicks clicks clicks clicks videos videos videos videos"
 		"downloads downloads downloads downloads downloads downloads downloads downloads"
-		"emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open"
+		"emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open",
+		6
 	);
 
 	@include stats-mobile-grid(
@@ -121,7 +126,8 @@ $grid-vertical-gutters: 32px;
 		"clicks clicks clicks clicks"
 		"videos videos videos videos"
 		"downloads downloads downloads downloads"
-		"emails-open emails-open emails-open emails-open"
+		"emails-open emails-open emails-open emails-open",
+		9
 	);
 
 	.card.stats-module {
