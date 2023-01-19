@@ -1,3 +1,5 @@
+// Must be included in root style.scss of /stats, /store, and /google-my-business/stats
+
 @use "sass:math";
 @import "@automattic/components/src/highlight-cards/variables.scss";
 
@@ -23,7 +25,8 @@ $sidebar-appearance-break-point: 783px;
 	> .stats__all-time-highlights-section,
 	> .stats__all-time-views-section,
 	> .stats__post-detail-highlights-section,
-	> .stats__post-detail-table-section {
+	> .stats__post-detail-table-section,
+	> .stats__gmb-location-wrapper {
 		padding-top: $vertical-margin;
 		padding-bottom: $vertical-margin;
 	}
@@ -45,9 +48,12 @@ $sidebar-appearance-break-point: 783px;
 	}
 }
 
-// this overrides the default .layout__content that adds unwanted padding
 .is-section-stats,
-.is-section-woocommerce {
+.is-section-woocommerce,
+.is-section-google-my-business {
+	background: var(--studio-white);
+
+	// this overrides the default .layout__content that adds unwanted padding
 	& .layout__content,
 	&.theme-default .focus-content .layout__content {
 		padding: $stats-layout-contnet-padding-top 0 0 0;
