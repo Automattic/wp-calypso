@@ -22,9 +22,15 @@ interface Props {
 	sites: Array< Site >;
 	onClose: () => void;
 	settings?: MonitorSettings;
+	monitorUserEmails?: Array< string >;
 }
 
-export default function NotificationSettings( { onClose, sites, settings }: Props ) {
+export default function NotificationSettings( {
+	onClose,
+	sites,
+	settings,
+	monitorUserEmails,
+}: Props ) {
 	const translate = useTranslate();
 	const { updateMonitorSettings, isLoading, isComplete } = useUpdateMonitorSettings( sites );
 
@@ -74,6 +80,12 @@ export default function NotificationSettings( { onClose, sites, settings }: Prop
 			setEnableMobileNotification( !! settings.monitor_user_wp_note_notifications );
 		}
 	}, [ settings ] );
+
+	useEffect( () => {
+		if ( monitorUserEmails ) {
+			setAddedEmailAddresses( monitorUserEmails );
+		}
+	}, [ monitorUserEmails ] );
 
 	useEffect( () => {
 		if ( enableMobileNotification || enableEmailNotification ) {
