@@ -15,8 +15,16 @@
 }
 
 .highlight-cards.wordads {
+	h1 {
+		display: flex;
+		align-items: center;
+	}
 	.highlight-card {
 		min-width: 280px;
+	}
+	.gridicon {
+		fill: var(--studio-gray-40);
+		margin-left: 8px;
 	}
 }
 
