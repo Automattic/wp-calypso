@@ -32,7 +32,7 @@ export const initialClientsData = {
 		id: 2665,
 		name: 'intensedebate',
 		title: 'IntenseDebate',
-		icon: 'https://app.crowdsignal.com/images/logo-white.png', // TODO: new logo
+		icon: 'https://intensedebate.com/images/intensedebate.png',
 	},
 	50019: {
 		id: 50019,
