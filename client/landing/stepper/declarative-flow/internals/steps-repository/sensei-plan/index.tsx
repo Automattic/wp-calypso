@@ -308,19 +308,16 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 		100 - Math.floor( ( annualPrice / ( monthlyPrice * 12 + domainSavings ) ) * 100 );
 
 	// translators: %s is the cost per year (e.g "billed as 96$ annually")
-	const newPlanItemPriceLabelAnnually = __(
-		'per month, billed as %s annually',
-		__i18n_text_domain__
-	);
+	const newPlanItemPriceLabelAnnually = __( 'per month, billed as %s annually' );
 
-	const fallbackPlanItemPriceLabelAnnually = __( 'billed annually', __i18n_text_domain__ );
+	const fallbackPlanItemPriceLabelAnnually = __( 'billed annually' );
 
 	const planItemPriceLabelAnnually =
 		locale === 'en' || hasTranslation?.( 'per month, billed as %s annually' )
 			? sprintf( newPlanItemPriceLabelAnnually, annualPriceStr )
 			: fallbackPlanItemPriceLabelAnnually;
 
-	const planItemPriceLabelMonthly = __( 'per month, billed monthly', __i18n_text_domain__ );
+	const planItemPriceLabelMonthly = __( 'per month, billed monthly' );
 	const title = __( 'Sensei Pro Bundle' );
 
 	return (
@@ -371,7 +368,7 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 							{ ! isLoading &&
 								sprintf(
 									// Translators: will be like "Save 30% by paying annually".  Make sure the % symbol is kept.
-									__( `You're saving %s by paying annually`, __i18n_text_domain__ ),
+									__( `You're saving %s by paying annually` ),
 									annualSavingsStr
 								) }
 						</div>
