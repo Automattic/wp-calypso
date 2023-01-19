@@ -63,6 +63,12 @@ $break-wpcom-smallest: 320px;
 	justify-content: space-between;
 }
 
+.post-stats-card__count {
+	.gridicon {
+		display: none;
+	}
+}
+
 .post-stats-card__count-header {
 	color: var(--studio-gray-100);
 	font-weight: 500;
@@ -134,13 +140,17 @@ $break-wpcom-smallest: 320px;
 		align-items: center;
 		border-bottom: 1px solid var(--color-neutral-5);
 		height: 60px;
+
+		.gridicon {
+			display: block;
+		}
 	}
 
 	.post-stats-card__count-header {
 		font-size: $font-body-small;
 		font-weight: 400;
 		line-height: 20px;
-		margin: 0 1em 0 0;
+		margin: 0 auto 0 8px;
 	}
 
 	.post-stats-card__count-value {
