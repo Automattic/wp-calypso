@@ -19,7 +19,11 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import {
+	getSitePurchases,
+	hasLoadedSitePurchasesFromServer,
+	isFetchingSitePurchases,
+} from 'calypso/state/purchases/selectors';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
@@ -188,16 +192,15 @@ const PreviewSiteModalItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 	useQuerySitePurchases( site.ID );
-	const hasCopySiteFeature = useSafeSiteHasFeature( site.ID, WPCOM_FEATURES_COPY_SITE );
-	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
-	const plan = site.plan;
-	const isSiteOwner = site.site_owner === userId;
 	const { setPlanCartItem, addProductCartItem } = useDispatch( ONBOARD_STORE );
+	const plan = site.plan;
 
-	// @TODO preload this data, and make sure the link doesn't appear until loading is complete.
 	const purchases = useSelector( ( state ) => getSitePurchases( state, site.ID ) );
+	const isLoadingPurchase = useSelector(
+		( state ) => isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state )
+	);
 
-	if ( ! hasCopySiteFeature || ! isSiteOwner || ! plan ) {
+	if ( isLoadingPurchase ) {
 		return null;
 	}
 
@@ -210,10 +213,9 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 			onClick={ () => {
 				clearSignupDestinationCookie();
 				setPlanCartItem( { product_slug: plan.product_slug } );
-				purchases.map( ( purchase ) => {
+				purchases.forEach( ( purchase ) => {
 					if ( 'marketplace_plugin' === purchase.productType ) {
-						// @TODO create a addProductCartItem( { product_slug: purchase.productSlug } )
-						// that writes to the stepper store
+						addProductCartItem( { product_slug: purchase.productSlug } );
 					}
 				} );
 				recordTracks( 'calypso_sites_dashboard_site_action_copy_site_click' );
@@ -222,6 +224,19 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 			{ __( 'Copy site' ) }
 		</MenuItemLink>
 	);
+};
+
+const CopySiteItemWrapper = ( { recordTracks, site }: SitesMenuItemProps ) => {
+	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const hasCopySiteFeature = useSafeSiteHasFeature( site.ID, WPCOM_FEATURES_COPY_SITE );
+	const plan = site.plan;
+	const isSiteOwner = site.site_owner === userId;
+
+	if ( ! hasCopySiteFeature || ! isSiteOwner || ! plan ) {
+		return null;
+	}
+
+	return <CopySiteItem recordTracks={ recordTracks } site={ site } />;
 };
 
 const ExternalGridIcon = styled( Gridicon )( {
@@ -294,7 +309,7 @@ export const SitesEllipsisMenu = ( {
 					<ManagePluginsItem { ...props } />
 					{ showHosting && <HostingConfigItem { ...props } /> }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
-					{ isEnabled( 'sites/copy-site' ) && <CopySiteItem { ...props } /> }
+					{ isEnabled( 'sites/copy-site' ) && <CopySiteItemWrapper { ...props } /> }
 					<WpAdminItem { ...props } />
 				</SiteMenuGroup>
 			) }
