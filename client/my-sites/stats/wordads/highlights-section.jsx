@@ -8,6 +8,7 @@ import HighlightCardSimple from './highlight-card-simple';
 // Then refactor this Comp to use HighlightCard again.
 
 function HighlightsSectionHeader( props ) {
+	// TODO: Add support for popup.
 	const translate = useTranslate();
 	const localizedTitle = translate( 'Totals' );
 	return props.showInfoIcon ? (
