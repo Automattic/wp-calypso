@@ -61,9 +61,6 @@ function HighlightsSectionHeader( props ) {
 }
 
 function HighlightsListing( props ) {
-	// TODO: Adjust min-width as needed.
-	// Current styling defaults to 180px which is not wide enough for more than 5 figures.
-	// Should check the longest display string and update CSS class based on that.
 	return (
 		<div className="highlight-cards-list">
 			{ props.highlights.map( ( highlight ) => (
@@ -85,7 +82,7 @@ export default function HighlightsSection( props ) {
 	}
 	const highlights = getHighlights( earningsData );
 	return (
-		<div className="highlight-cards">
+		<div className="highlight-cards wordads">
 			<HighlightsSectionHeader showInfoIcon={ false } />
 			<HighlightsListing highlights={ highlights } />
 		</div>

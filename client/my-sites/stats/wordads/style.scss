@@ -12,5 +12,10 @@
 	.earnings_history tbody tr:nth-child(odd) {
 		background-color: var(--studio-gray-0);
 	}
+}
 
+.highlight-cards.wordads {
+	.highlight-card {
+		min-width: 280px;
+	}
 }
