@@ -144,6 +144,7 @@ const getFormSettings = ( settings ) =>
 		'roles',
 		'jetpack_relatedposts_allowed',
 		'jetpack_relatedposts_enabled',
+		'jetpack_relatedposts_show_context',
 		'jetpack_relatedposts_show_date',
 		'jetpack_relatedposts_show_headline',
 		'jetpack_relatedposts_show_thumbnails',

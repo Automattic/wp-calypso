@@ -1,7 +1,13 @@
 import { localize } from 'i18n-calypso';
 import FormLabel from 'calypso/components/forms/form-label';
 
-const RelatedContentPreview = ( { showDate, showHeadline, showThumbnails, translate } ) => {
+const RelatedContentPreview = ( {
+	showContext,
+	showDate,
+	showHeadline,
+	showThumbnails,
+	translate,
+} ) => {
 	const posts = [
 		{
 			image: '/calypso/images/related-posts/cat-blog.png',
@@ -61,7 +67,9 @@ const RelatedContentPreview = ( { showDate, showHeadline, showThumbnails, transl
 									<a className="related-posts__preview-post-a">{ post.title }</a>
 								</h4>
 								{ showDate && <span>{ post.date }</span> }
-								<p className="related-posts__preview-post-context">{ post.topic }</p>
+								{ showContext && (
+									<p className="related-posts__preview-post-context">{ post.topic }</p>
+								) }
 							</div>
 						);
 					} ) }
