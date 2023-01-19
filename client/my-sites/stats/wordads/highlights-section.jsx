@@ -27,15 +27,19 @@ function getHighlights( earnings ) {
 
 	const highlights = [
 		{
-			heading: translate( 'Earnings' ),
+			heading: translate( 'Earnings', { context: 'Total WordAds earnings to date' } ),
 			amount: total,
 		},
 		{
-			heading: translate( 'Paid' ),
+			heading: translate( 'Paid', {
+				context: 'Total WordAds earnings that have been paid out',
+			} ),
 			amount: paid,
 		},
 		{
-			heading: translate( 'Outstanding amount' ),
+			heading: translate( 'Outstanding amount', {
+				context: 'Total WordAds earnings currently unpaid',
+			} ),
 			amount: owed,
 		},
 	];
@@ -50,7 +54,9 @@ function getHighlights( earnings ) {
 
 function HighlightsSectionHeader( props ) {
 	// TODO: Add support for popup.
-	const localizedTitle = translate( 'Totals' );
+	const localizedTitle = translate( 'Totals', {
+		context: 'Heading for WordAds earnings highlights section',
+	} );
 	return props.showInfoIcon ? (
 		<h1 className="highlight-cards-heading">
 			{ localizedTitle } <Gridicon icon="info-outline" />
