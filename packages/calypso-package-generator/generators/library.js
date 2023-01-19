@@ -1,7 +1,7 @@
 import { actions, prompts } from './constants.js';
 
 const libraryGenerator = {
-	description: 'Add a library package',
+	description: 'Add a new library of js designed for use in Automattic products.',
 	prompts,
 	actions: () => [
 		...actions,

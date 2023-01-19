@@ -4,7 +4,7 @@ export const prompts = [
 	{
 		type: 'input',
 		name: 'name',
-		message: 'What should it be called?',
+		message: 'What should the package be called?',
 		default: '',
 		validate: ( value ) => {
 			if ( /.+/.test( value ) ) {
@@ -19,6 +19,12 @@ export const prompts = [
 		name: 'description',
 		message: 'Type a short description',
 		default: '',
+	},
+	{
+		type: 'confirm',
+		name: 'public',
+		message: 'Do you want to publish this package?',
+		default: true,
 	},
 ];
 

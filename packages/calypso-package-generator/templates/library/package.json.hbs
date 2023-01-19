@@ -36,5 +36,9 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"typescript": "^4.7.4"
 	},
+{{#if public}}
+	"private": false
+{{else}}
 	"private": true
+{{/if}}
 }

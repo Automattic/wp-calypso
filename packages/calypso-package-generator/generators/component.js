@@ -1,7 +1,7 @@
 import { actions, prompts } from './constants.js';
 
 const componentGenerator = {
-	description: 'Add a component package',
+	description: 'Add a new library of React components designed for use in Automattic products.',
 	prompts,
 	actions: () => [
 		...actions,
