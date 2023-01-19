@@ -60,9 +60,11 @@ const encloses =
 	/**
 	 * Indicates if the given range encloses the first "inner" range
 	 *
-	 * @param {number} outerStart start of possibly-outer range
-	 * @param {number} outerEnd end of possibly-outer range
-	 * @returns {boolean} whether the "outer" range encloses the "inner" range
+	 * @param {object} range                      Range
+	 * @param {Array}  range.indices              Start and end of the range
+	 * @param {number} range.indices.0 innerStart Start index of the range
+	 * @param {number} range.indices.1 innerEnd   End index of the range
+	 * @returns {Function({indices: Number[]}): boolean} performs the check
 	 */
 	( { indices: [ outerStart, outerEnd ] = [ 0, 0 ] } ) =>
 		innerStart !== 0 && innerEnd !== 0 && outerStart <= innerStart && outerEnd >= innerEnd;
