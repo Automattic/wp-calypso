@@ -7,6 +7,32 @@ import HighlightCardSimple from './highlight-card-simple';
 // Should refactor to accept strings and move the business logic into the callers.
 // Then refactor this Comp to use HighlightCard again.
 
+function getHighlights( translate ) {
+	// TODO: Get data from API.
+	return [
+		{
+			heading: translate( 'Earnings' ),
+			icon: <Icon icon={ starEmpty } />,
+			amount: '$153,841.29',
+		},
+		{
+			heading: translate( 'Paid' ),
+			icon: <Icon icon={ starEmpty } />,
+			amount: '$153,841.29',
+		},
+		{
+			heading: translate( 'Outstanding' ),
+			icon: <Icon icon={ starEmpty } />,
+			amount: '$0',
+		},
+		{
+			heading: translate( 'Other' ),
+			icon: <Icon icon={ starEmpty } />,
+			amount: '$9.99',
+		},
+	];
+}
+
 function HighlightsSectionHeader( props ) {
 	// TODO: Add support for popup.
 	const translate = useTranslate();
@@ -42,29 +68,7 @@ export default function HighlightsSection( props ) {
 	if ( ! props.isVisible ) {
 		return null;
 	}
-	// TODO: Get data from API.
-	const highlights = [
-		{
-			heading: translate( 'Earnings' ),
-			icon: <Icon icon={ starEmpty } />,
-			amount: '$153,841.29',
-		},
-		{
-			heading: translate( 'Paid' ),
-			icon: <Icon icon={ starEmpty } />,
-			amount: '$153,841.29',
-		},
-		{
-			heading: translate( 'Outstanding' ),
-			icon: <Icon icon={ starEmpty } />,
-			amount: '$0',
-		},
-		{
-			heading: translate( 'Other' ),
-			icon: <Icon icon={ starEmpty } />,
-			amount: '$9.99',
-		},
-	];
+	const highlights = getHighlights( translate );
 	return (
 		<div className="highlight-cards">
 			<HighlightsSectionHeader showInfoIcon={ false } />
