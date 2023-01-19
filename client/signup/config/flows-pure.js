@@ -120,6 +120,15 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
+			name: 'onboarding-pm',
+			steps: [ 'user-pm', 'domains-pm', 'plans-pm' ],
+			destination: getSignupDestination,
+			description:
+				'Paid media version of the onboarding flow. Read more in https://wp.me/pau2Xa-4Kk.',
+			lastModified: '2023-01-10',
+			showRecaptcha: true,
+		},
+		{
 			name: 'newsletter',
 			steps: [ 'domains', 'plans-newsletter' ],
 			destination: ( dependencies ) =>

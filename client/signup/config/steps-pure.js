@@ -830,6 +830,48 @@ export function generateSteps( {
 			stepName: 'transfer',
 			dependencies: [ 'siteSlug', 'siteConfirmed' ],
 		},
+		// Independent signup flow optimized for paid media conversions
+		'user-pm': {
+			stepName: 'user-pm',
+			apiRequestFunction: createAccount,
+			providesToken: true,
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'marketing_price_group',
+				'plans_reorder_abtest_variation',
+				'redirect',
+			],
+			optionalDependencies: [ 'plans_reorder_abtest_variation', 'redirect' ],
+			props: {
+				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+			},
+		},
+		'domains-pm': {
+			stepName: 'domains-pm',
+			apiRequestFunction: createSiteWithCart,
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+				'shouldHideFreePlan',
+				'isManageSiteFlow',
+			],
+			optionalDependencies: [ 'shouldHideFreePlan', 'isManageSiteFlow' ],
+			props: {
+				isDomainOnly: false,
+			},
+			delayApiRequestUntilComplete: true,
+		},
+		'plans-pm': {
+			stepName: 'plans-pm',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			fulfilledStepCallback: isPlanFulfilled,
+		},
 	};
 }
 
