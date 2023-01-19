@@ -52,6 +52,7 @@
 	.thank-you__footer {
 		max-width: 1072px;
 		padding: 40px;
+		padding-top: 5px;
 		display: flex;
 		flex-wrap: wrap;
 		gap: 75px;
@@ -97,7 +98,7 @@
 		}
 
 		div {
-			max-width: 240px;
+			max-width: 260px;
 
 			@media ( max-width: 740px ) {
 				min-width: auto;
