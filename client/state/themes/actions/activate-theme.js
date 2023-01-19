@@ -59,7 +59,7 @@ export function activateTheme(
 					const currentVariation = variations.find(
 						( variation ) =>
 							variation.title &&
-							variation.title.split( ' ' ).join( '_' ).toLowerCase() === styleVariationSlug
+							variation.title.split( ' ' ).join( '-' ).toLowerCase() === styleVariationSlug
 					);
 
 					if ( currentVariation ) {
