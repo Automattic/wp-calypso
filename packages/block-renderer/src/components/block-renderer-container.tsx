@@ -17,6 +17,7 @@ interface BlockRendererContainerProps {
 	styles?: RenderedStyle[];
 	inlineCss?: string;
 	viewportWidth?: number;
+	viewportHeight?: number;
 	maxHeight?: number;
 	minHeight?: number;
 }
@@ -30,6 +31,7 @@ const ScaledBlockRendererContainer = ( {
 	styles: customStyles,
 	inlineCss = '',
 	viewportWidth = 1200,
+	viewportHeight,
 	containerWidth,
 	maxHeight = BLOCK_MAX_HEIGHT,
 	minHeight,
@@ -105,7 +107,7 @@ const ScaledBlockRendererContainer = ( {
 				style={ {
 					position: 'absolute',
 					width: viewportWidth,
-					height: contentHeight as number,
+					height: ( contentHeight as number ) || viewportHeight,
 					pointerEvents: 'none',
 					// This is a catch-all max-height for patterns.
 					// See: https://github.com/WordPress/gutenberg/pull/38175.

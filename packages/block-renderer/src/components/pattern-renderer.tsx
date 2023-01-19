@@ -6,10 +6,11 @@ import { usePatternsRendererContext } from './patterns-renderer-context';
 interface Props {
 	patternId: string;
 	viewportWidth?: number;
+	viewportHeight?: number;
 	minHeight?: number;
 }
 
-const PatternRenderer = ( { patternId, viewportWidth, minHeight }: Props ) => {
+const PatternRenderer = ( { patternId, viewportWidth, viewportHeight, minHeight }: Props ) => {
 	const renderedPatterns = usePatternsRendererContext();
 	const pattern = renderedPatterns[ patternId ];
 
@@ -17,6 +18,7 @@ const PatternRenderer = ( { patternId, viewportWidth, minHeight }: Props ) => {
 		<BlockRendererContainer
 			styles={ pattern?.styles ?? [] }
 			viewportWidth={ viewportWidth }
+			viewportHeight={ viewportHeight }
 			maxHeight={ BLOCK_MAX_HEIGHT }
 			minHeight={ minHeight }
 		>

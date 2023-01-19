@@ -21,18 +21,22 @@ const PATTERN_RENDERER_MIN_HEIGHT = 1;
 const PatternLargePreview = ( { header, sections, footer, activePosition }: Props ) => {
 	const translate = useTranslate();
 	const hasSelectedPattern = header || sections.length || footer;
-	const containerRef = useRef< HTMLUListElement | null >( null );
+	const frameRef = useRef< HTMLDivElement | null >( null );
+	const listRef = useRef< HTMLUListElement | null >( null );
 
 	const renderPattern = ( key: string, pattern: Pattern ) => (
 		<li key={ key }>
-			<PatternRenderer patternId={ encodePatternId( pattern.id ) } />
+			<PatternRenderer
+				patternId={ encodePatternId( pattern.id ) }
+				viewportHeight={ frameRef.current?.clientHeight }
+			/>
 		</li>
 	);
 
 	useEffect( () => {
 		let timerId: number;
 		const scrollIntoView = () => {
-			const element = containerRef.current?.children[ activePosition ];
+			const element = listRef.current?.children[ activePosition ];
 			if ( ! element ) {
 				return;
 			}
@@ -64,12 +68,13 @@ const PatternLargePreview = ( { header, sections, footer, activePosition }: Prop
 			className="pattern-large-preview"
 			isShowDeviceSwitcherToolbar
 			isShowFrameBorder
+			frameRef={ frameRef }
 			onDeviceChange={ ( device ) =>
 				recordTracksEvent( 'calypso_signup_pattern_assembler_preview_device_click', { device } )
 			}
 		>
 			{ hasSelectedPattern ? (
-				<ul className="pattern-large-preview__patterns" ref={ containerRef }>
+				<ul className="pattern-large-preview__patterns" ref={ listRef }>
 					{ header && renderPattern( 'header', header ) }
 					{ sections.map( ( pattern ) => renderPattern( pattern.key!, pattern ) ) }
 					{ footer && renderPattern( 'footer', footer ) }
