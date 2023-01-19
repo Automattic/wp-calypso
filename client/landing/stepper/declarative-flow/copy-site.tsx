@@ -77,6 +77,9 @@ const copySite: Flow = {
 
 			switch ( _currentStepSlug ) {
 				case 'domains': {
+					if ( providedDependencies.previousStep === true ) {
+						return window.location.assign( `/sites` );
+					}
 					return navigate( 'site-creation-step' );
 				}
 
