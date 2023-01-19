@@ -962,6 +962,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_FREE,
 			PLAN_JETPACK_FREE,
 			PLAN_P2_FREE,
+			PLAN_ECOMMERCE_TRIAL_MONTHLY,
 		] );
 		expect( findPlansKeys( { type: TYPE_BLOGGER } ) ).toEqual( [
 			PLAN_BLOGGER,
