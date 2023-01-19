@@ -51,11 +51,11 @@ const ScreenMain = ( { onSelect, onContinueClick }: Props ) => {
 					<NavigationButtonAsItem
 						path="/homepage"
 						icon={ layout }
-						aria-label={ translate( 'Design your homepage' ) }
+						aria-label={ translate( 'Create your homepage' ) }
 						onClick={ () => onSelect( 'homepage' ) }
 					>
 						<span className="pattern-layout__list-item-text">
-							{ translate( 'Design your homepage' ) }
+							{ translate( 'Create your homepage' ) }
 						</span>
 					</NavigationButtonAsItem>
 				</ItemGroup>
