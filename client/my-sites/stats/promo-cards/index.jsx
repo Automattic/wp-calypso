@@ -21,7 +21,7 @@ const EVENT_YOAST_PROMO_VIEW = 'calypso_stats_wordpress_seo_premium_banner_view'
 const EVENT_ANNUAL_BLAZE_PROMO_VIEW = 'calypso_stats_annual_insights_blaze_banner_view';
 const EVENT_ANNUAL_MOBILE_PROMO_VIEW = 'calypso_stats_annual_insights_mobile_cta_jetpack_view';
 
-export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
+export default function PromoCards( { isOdysseyStats, slug, pageSlug, isSecondaryBanner } ) {
 	// Keep a replica of the pager index state.
 	// TODO: Figure out an approach that doesn't require replicating state value from DotPager.
 	const [ dotPagerIndex, setDotPagerIndex ] = useState( 0 );
@@ -33,9 +33,10 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 	const shouldShowAdvertisingOption = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 
 	// Blaze promo is disabled for Odyssey.
-	const showBlazePromo = ! isOdysseyStats && shouldShowAdvertisingOption;
+	const showBlazePromo = ! isSecondaryBanner && ! isOdysseyStats && shouldShowAdvertisingOption;
 	// Yoast promo is disabled for Odyssey & self-hosted & non-traffic pages.
-	const showYoastPromo = ! isOdysseyStats && ! jetpackNonAtomic && pageSlug === 'traffic';
+	const showYoastPromo =
+		! isSecondaryBanner && ! isOdysseyStats && ! jetpackNonAtomic && pageSlug === 'traffic';
 
 	const viewEvents = useMemo( () => {
 		const events = [];

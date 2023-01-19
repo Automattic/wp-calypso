@@ -372,6 +372,7 @@ class StatsSite extends Component {
 				<PromoCards
 					isJetpack={ isJetpack }
 					isOdysseyStats={ isOdysseyStats }
+					isSecondaryBanner={ true }
 					pageSlug="traffic"
 					slug={ slug }
 				/>
