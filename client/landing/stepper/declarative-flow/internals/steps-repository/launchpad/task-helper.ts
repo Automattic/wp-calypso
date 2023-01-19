@@ -24,7 +24,6 @@ export function getEnhancedTasks(
 	site: SiteDetails | null,
 	submit: NavigationControls[ 'submit' ],
 	displayGlobalStylesWarning: boolean,
-	themeId: string | null,
 	siteCount: number,
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow?: string | null
@@ -33,7 +32,9 @@ export function getEnhancedTasks(
 	const productSlug = site?.plan?.product_slug;
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
-	const siteIntent = site?.options?.site_intent || null;
+	const siteIntent = site?.options?.site_intent || '';
+
+	const themeSlug = site?.options?.theme_slug || '';
 
 	const linkInBioLinksEditCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.links_edited || false;
@@ -79,10 +80,10 @@ export function getEnhancedTasks(
 			isNewUser: siteCount <= 1,
 			hasCartItems: false,
 			isNew7DUserSite: '',
-			theme: themeId,
+			theme: themeSlug,
 			intent: siteIntent,
 			startingPoint: flow,
-			isBlankCanvas: themeId?.includes( 'blank-canvas' ),
+			isBlankCanvas: themeSlug?.includes( 'blank-canvas' ),
 		} );
 
 	tasks &&
