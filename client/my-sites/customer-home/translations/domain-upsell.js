@@ -19,13 +19,13 @@ translate(
 	}
 );
 translate( 'You need a plan to have a primary custom domain' );
+translate( 'Any domain you purchase without a plan will get redirected to %(domainName)s.', {
+	args: {
+		domainName: 'example.blog',
+	},
+} );
 translate(
-	'Any domain you purchase without a plan will get redirected to %(domainName)s. If you upgrade to a plan, you can use your custom domain name instead of having WordPress.com in your URL.',
-	{
-		args: {
-			domainName: 'example.blog',
-		},
-	}
+	'If you upgrade to a plan, you can use your custom domain name instead of having WordPress.com in your URL.'
 );
 translate( 'I want my domain as primary' );
 translate( 'That works for me' );
