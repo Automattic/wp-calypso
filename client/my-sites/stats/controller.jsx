@@ -102,33 +102,15 @@ function getSiteFilters( siteId ) {
 		},
 		{
 			title: i18n.translate( 'Hours' ),
-			path: '/stats/email/open/' + siteId + '/hour',
+			path: '/stats/email/opens/' + siteId + '/hour',
 			id: 'stats-email-opens-hour',
 			period: 'hour',
 		},
 		{
-			title: i18n.translate( 'Days' ),
-			path: '/stats/email/open/' + siteId + '/day',
+			title: i18n.translate( 'Hours' ),
+			path: '/stats/email/opens/' + siteId + '/day',
 			id: 'stats-email-opens-day',
 			period: 'day',
-		},
-		{
-			title: i18n.translate( 'Weeks' ),
-			path: '/stats/email/open/' + siteId + '/week',
-			id: 'stats-email-opens-week',
-			period: 'week',
-		},
-		{
-			title: i18n.translate( 'Months' ),
-			path: '/stats/email/open/' + siteId + '/month',
-			id: 'stats-email-opens-month',
-			period: 'month',
-		},
-		{
-			title: i18n.translate( 'Years' ),
-			path: '/stats/email/open/' + siteId + '/year',
-			id: 'stats-email-opens-year',
-			period: 'year',
 		},
 	];
 }

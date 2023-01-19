@@ -81,7 +81,7 @@ export default function () {
 
 	// Email stats Pages
 	if ( config.isEnabled( 'newsletter/stats' ) ) {
-		statsPage( `/stats/email/open/:site/:period(${ validEmailPeriods })/:email_id`, emailOpen );
+		statsPage( `/stats/email/opens/:site/:period(${ validEmailPeriods })/:email_id`, emailOpen );
 	}
 
 	// Anything else should redirect to default stats page
