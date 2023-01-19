@@ -223,7 +223,7 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 
 	return (
 		<>
-			{ ! isPlaceholder && context !== 'plugin-details' && (
+			{ ! isPlaceholder && context !== 'plugin-details' && context !== 'themes' && (
 				<HardBlockingNotice
 					holds={ holds }
 					translate={ translate }
@@ -258,9 +258,11 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 						! isKnownHoldType( hold, holdMessages ) ? null : (
 							<div className="eligibility-warnings__hold" key={ hold }>
 								<div className="eligibility-warnings__message">
-									<div className="eligibility-warnings__message-title">
-										{ holdMessages[ hold ].title }
-									</div>
+									{ holds.length > 1 && (
+										<div className="eligibility-warnings__message-title">
+											{ holdMessages[ hold ].title }
+										</div>
+									) }
 									<div className="eligibility-warnings__message-description">
 										{ holdMessages[ hold ].description }
 									</div>

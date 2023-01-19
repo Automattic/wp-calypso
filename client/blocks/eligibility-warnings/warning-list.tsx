@@ -29,7 +29,7 @@ export const WarningList = ( { context, translate, warnings, showContact = true 
 		{ warnings.map( ( { name, description, supportUrl, domainNames }, index ) => (
 			<div className="eligibility-warnings__warning" key={ index }>
 				<div className="eligibility-warnings__message">
-					{ context !== 'plugin-details' && (
+					{ context !== 'plugin-details' && context !== 'themes' && (
 						<Fragment>
 							<span className="eligibility-warnings__message-title">{ name }</span>:&nbsp;
 						</Fragment>
@@ -97,14 +97,7 @@ function getWarningDescription(
 			return '';
 
 		case 'themes':
-			return translate(
-				'By installing a theme the following change will be made to the site:',
-				'By installing a theme the following changes will be made to the site:',
-				{
-					count: warningCount,
-					args: warningCount,
-				}
-			);
+			return '';
 
 		case 'hosting':
 			return translate(

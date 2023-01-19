@@ -96,7 +96,7 @@ export const EligibilityWarnings = ( {
 			'eligibility-warnings__placeholder': isPlaceholder,
 			'eligibility-warnings--with-indent': showWarnings,
 			'eligibility-warnings--blocking-hold': hasBlockingHold( listHolds ),
-			'eligibility-warnings--without-title': context !== 'plugin-details',
+			'eligibility-warnings--without-title': context !== 'plugin-details' && context !== 'themes',
 		},
 		className
 	);
@@ -135,7 +135,7 @@ export const EligibilityWarnings = ( {
 	const blockingMessages = getBlockingMessages( translate );
 
 	let filteredHolds = listHolds;
-	if ( context === 'plugin-details' ) {
+	if ( context === 'plugin-details' || context === 'themes' ) {
 		filteredHolds = listHolds.filter( ( hold ) => hold !== 'NO_BUSINESS_PLAN' );
 	}
 
@@ -150,15 +150,17 @@ export const EligibilityWarnings = ( {
 				eventName="calypso_automated_transfer_eligibility_show_warnings"
 				eventProperties={ { context } }
 			/>
-			{ ! isPlaceholder && context === 'plugin-details' && hasBlockingHold( listHolds ) && (
-				<CompactCard>
-					<HardBlockingNotice
-						holds={ listHolds }
-						translate={ translate }
-						blockingMessages={ blockingMessages }
-					/>
-				</CompactCard>
-			) }
+			{ ! isPlaceholder &&
+				( context === 'plugin-details' || context === 'themes' ) &&
+				hasBlockingHold( listHolds ) && (
+					<CompactCard>
+						<HardBlockingNotice
+							holds={ listHolds }
+							translate={ translate }
+							blockingMessages={ blockingMessages }
+						/>
+					</CompactCard>
+				) }
 			{ ! isPlaceholder && context === 'plugin-details' && (
 				<CompactCard>
 					<div className="eligibility-warnings__header">
@@ -171,6 +173,25 @@ export const EligibilityWarnings = ( {
 							{ listHolds.indexOf( 'NO_BUSINESS_PLAN' ) !== -1
 								? translate(
 										'Installing plugins is a premium feature. Unlock the ability to install this and 50,000 other plugins by upgrading to the Business plan for %(monthlyCost)s/month.',
+										{ args: { monthlyCost } }
+								  )
+								: '' }
+						</div>
+					</div>
+				</CompactCard>
+			) }
+			{ ! isPlaceholder && context === 'themes' && (
+				<CompactCard>
+					<div className="eligibility-warnings__header">
+						<div className="eligibility-warnings__title">
+							{ listHolds.indexOf( 'NO_BUSINESS_PLAN' ) !== -1
+								? translate( 'Upgrade to install third party themes' )
+								: translate( 'Before you continue' ) }
+						</div>
+						<div className="eligibility-warnings__primary-text">
+							{ listHolds.indexOf( 'NO_BUSINESS_PLAN' ) !== -1
+								? translate(
+										'Installing third party themes is a premium feature. Unlock the ability to install this theme and get access to lots of other features by upgrading to the Business plan for %(monthlyCost)s per month.',
 										{ args: { monthlyCost } }
 								  )
 								: '' }
@@ -415,7 +436,7 @@ function mergeProps(
 		context = 'plugins';
 		feature = FEATURE_UPLOAD_PLUGINS;
 		ctaName = 'calypso-plugin-eligibility-upgrade-nudge';
-	} else if ( includes( ownProps.backUrl, 'themes' ) ) {
+	} else if ( ownProps.currentContext === 'themes' || includes( ownProps.backUrl, 'themes' ) ) {
 		context = 'themes';
 		feature = FEATURE_UPLOAD_THEMES;
 		ctaName = 'calypso-theme-eligibility-upgrade-nudge';
