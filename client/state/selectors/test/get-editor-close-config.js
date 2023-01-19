@@ -11,8 +11,8 @@ const siteSlug = 'fake.url.wordpress.com';
 const siteUrl = `https://${ siteSlug }`;
 const customerHomeUrl = `/home/${ siteSlug }`;
 const themesUrl = `/themes/${ siteSlug }`;
-const launchpadSiteIntent = 'free';
-const launchpadUrl = `/setup/${ launchpadSiteIntent }/launchpad?siteSlug=${ siteSlug }`;
+const launchpadFreeSiteIntent = 'free';
+const launchpadUrl = `/setup/${ launchpadFreeSiteIntent }/launchpad?siteSlug=${ siteSlug }`;
 
 describe( 'getEditorCloseConfig()', () => {
 	test( 'should return URL for customer home as default when no previous route is given', () => {
@@ -137,7 +137,7 @@ describe( 'getEditorCloseConfig()', () => {
 					[ siteId ]: {
 						URL: siteUrl,
 						options: {
-							site_intent: 'free',
+							site_intent: launchpadFreeSiteIntent,
 							launchpad_screen: 'full',
 						},
 					},
