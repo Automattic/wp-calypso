@@ -157,6 +157,7 @@ private object OdysseyStats : WPComPluginBuild(
 	buildName = "Odyssey Stats",
 	pluginSlug = "odyssey-stats",
 	archiveDir = "./dist/",
+	withPRNotify = "false",
 	docsLink = "PejTkB-3N-p2",
 	buildSteps = {
 		bashNodeScript {
