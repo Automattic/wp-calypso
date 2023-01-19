@@ -3,7 +3,7 @@ import { Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
@@ -16,7 +16,6 @@ import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
-import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { useLocalizedPlugins, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
@@ -232,12 +231,21 @@ const PluginsBrowserListElement = ( props ) => {
 					<div className="plugins-browser-item__additional-info">
 						{ !! plugin.rating && ! isMarketplaceProduct && (
 							<div className="plugins-browser-item__ratings">
-								<PluginRatings
-									rating={ plugin.rating }
-									numRatings={ plugin.num_ratings }
-									inlineNumRatings
-									hideRatingNumber
+								<Gridicon
+									size={ 18 }
+									icon="star"
+									color="#f0b849" // alert-yellow
 								/>
+								<span className="plugins-browser-item__rating-value">{ plugin.rating / 20 } </span>
+								{ Number.isInteger( plugin.num_ratings ) && (
+									<span className="plugins-browser-item__rating-value">
+										{ translate( '(%(number_of_ratings)s)', {
+											args: {
+												number_of_ratings: plugin.num_ratings.toLocaleString( getLocaleSlug() ),
+											},
+										} ) }
+									</span>
+								) }
 							</div>
 						) }
 						{ !! plugin.active_installs && (
