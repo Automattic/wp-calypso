@@ -420,6 +420,9 @@ class Site {
 	emailStatsAlltime( postId, statType, fn ) {
 		const basePath = `${ this.path }/stats/${ statType }/emails/${ postId }`;
 		const statFields = [ 'client', 'device', 'country', 'rate' ];
+		if ( statType === 'clicks' ) {
+			statFields.push( 'link' );
+		}
 		return Promise.all(
 			statFields.map( ( field ) => this.wpcom.req.get( `${ basePath }/${ field }`, fn ) )
 		).then( ( statsArray ) =>

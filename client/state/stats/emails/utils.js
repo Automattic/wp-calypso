@@ -1,5 +1,6 @@
-import { translate } from 'i18n-calypso';
-import moment from 'moment/moment';
+import { getLocaleSlug, translate } from 'i18n-calypso';
+import moment from 'moment';
+import { getChartLabels } from 'calypso/state/stats/lists/utils';
 
 export function rangeOfPeriod( period, date ) {
 	const periodRange = {
@@ -86,4 +87,176 @@ export function getCharts( statType ) {
 	};
 
 	return charts[ statType ];
+}
+
+/**
+ * Return data in a format used by 'components/chart` for email stats. The fields array is matched to
+ * the data in a single object.
+ *
+ * @param {object} payload - response
+ * @param {Array} nullAttributes - properties on data objects to be initialized with
+ * a null value
+ * @returns {Array} - Array of data objects
+ */
+export function parseEmailChartData( payload, nullAttributes = [] ) {
+	if ( ! payload || ! payload.data ) {
+		return [];
+	}
+
+	if ( 'hour' === payload.unit ) {
+		payload.fields.push( 'hour' );
+	}
+
+	return payload.data.map( function ( record ) {
+		// Initialize data
+		const dataRecord = nullAttributes.reduce( ( memo, attribute ) => {
+			memo[ attribute ] = null;
+			return memo;
+		}, {} );
+
+		// Fill Field Values
+		record.forEach( function ( value, i ) {
+			// Remove W from weeks
+			if ( 'date' === payload.fields[ i ] ) {
+				value = value.replace( /W/g, '-' );
+				dataRecord.period = value;
+			} else {
+				dataRecord[ payload.fields[ i ] ] = value;
+			}
+		} );
+
+		if ( dataRecord.period ) {
+			const date = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( 'en' );
+			const localeSlug = getLocaleSlug();
+			const localizedDate = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( localeSlug );
+			if ( dataRecord.hour ) {
+				localizedDate.add( dataRecord.hour, 'hours' );
+			}
+			Object.assign( dataRecord, getChartLabels( payload.unit, date, localizedDate ) );
+		}
+		return dataRecord;
+	} );
+}
+
+/**
+ * Return data in a format used by 'components/stats/geochart` for email stats. The fields array is matched to
+ * the data in a single object.
+ *
+ * @param {Array} countries - the array of countries for the given data
+ * @param {object} countriesInfo - an object containing information about the countries
+ * @returns {Array} - Array of data objects
+ */
+export function parseEmailCountriesData( countries, countriesInfo ) {
+	if ( ! countries || ! countriesInfo ) {
+		return null;
+	}
+
+	const result = countries
+		.map( function ( country ) {
+			const info = countriesInfo[ country[ 0 ] ];
+			if ( ! info ) {
+				return {
+					label: translate( 'Unknown' ),
+					value: parseInt( country[ 1 ], 10 ),
+				};
+			}
+
+			const { country_full, map_region } = info;
+
+			return {
+				countryCode: country[ 0 ],
+				label: country_full,
+				region: map_region,
+				value: parseInt( country[ 1 ], 10 ),
+			};
+		} )
+		.sort( ( a, b ) => b.value - a.value );
+
+	// Add item with label == Other to end of the list
+	const otherItem = result.find( ( item ) => item.label === translate( 'Unknown' ) );
+	if ( otherItem ) {
+		result.splice( result.indexOf( otherItem ), 1 );
+		result.push( otherItem );
+	}
+
+	return result;
+}
+
+/**
+ * Return data in a format used by lists for email stats. The fields array is matched to
+ * the data in a single object.
+ *
+ * @param {Array} list - the array of devices/clients for the given data
+ * @returns {Array} - Array of data objects
+ */
+export function parseEmailListData( list ) {
+	if ( ! list ) {
+		return null;
+	}
+
+	const result = list
+		.map( function ( item ) {
+			return {
+				label: item[ 0 ],
+				value: parseInt( item[ 1 ], 10 ),
+			};
+		} )
+		.sort( function ( a, b ) {
+			return b.value - a.value;
+		} );
+
+	// Add item with label == Other to end of the list
+	const otherItem = result.find( ( item ) => item.label === 'Other' );
+	if ( otherItem ) {
+		result.splice( result.indexOf( otherItem ), 1 );
+		result.push( otherItem );
+	}
+	return result;
+}
+
+/**
+ * Return link data in a format used by lists for email stats. The fields array is matched to
+ * the data in a single object.
+ *
+ * @param {Array} links - the array of links for the given data
+ * @returns {Array|null} - Array of data objects
+ */
+export function parseEmailLinksData( links ) {
+	if ( ! links ) {
+		return null;
+	}
+
+	const stringMap = {
+		'post-url': translate( 'Post URL', { context: 'Email link type' } ),
+		'like-post': translate( 'Like', { context: 'Email link type' } ),
+		'comment-post': translate( 'Comment', { context: 'Email link type' } ),
+		'remove-subscription': translate( 'Unsubscribe', { context: 'Email link type' } ),
+	};
+
+	// filter out links that are not in the stringMap
+	const filteredLinks = links
+		.filter( ( link ) => stringMap[ link[ 0 ] ] )
+		.sort( ( a, b ) => b[ 1 ] - a[ 1 ] );
+	// Get count of all links where the first element is not a key of stringMap
+	const otherCount = links.reduce( ( count, link ) => {
+		if ( ! stringMap[ link[ 0 ] ] ) {
+			count += parseInt( link[ 1 ], 10 );
+		}
+		return count;
+	}, 0 );
+
+	return [
+		...filteredLinks.map( ( link ) => {
+			return {
+				label: stringMap[ link[ 0 ] ],
+				value: parseInt( link[ 1 ], 10 ),
+			};
+		} ),
+		otherCount
+			? {
+					label: translate( 'Other', { context: 'Email link type' } ),
+					value: otherCount,
+			  }
+			: null,
+	];
 }
