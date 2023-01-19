@@ -608,6 +608,7 @@ export class Theme extends Component {
 						{ ! isNewCardsOnly && ! isNewDetailsAndPreview && active && (
 							<span className={ priceClass }>{ price }</span>
 						) }
+						{ isNewDetailsAndPreview && ! active && this.renderStyleVariations() }
 						{ upsellUrl && // Do not show any pricing related infomation if there's no upsell action link.
 							( showUpsell
 								? this.renderUpsell()
@@ -615,7 +616,6 @@ export class Theme extends Component {
 								  ! active && (
 										<span className="theme__info-upsell-description">{ translate( 'Free' ) }</span>
 								  ) ) }
-						{ isNewDetailsAndPreview && ! active && this.renderStyleVariations() }
 						{ this.renderMoreButton() }
 					</div>
 				</div>
