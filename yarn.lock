@@ -12471,14 +12471,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cli-spinners@npm:^2.2.0, cli-spinners@npm:^2.5.0":
-  version: 2.6.1
-  resolution: "cli-spinners@npm:2.6.1"
-  checksum: 6abcdfef59aa68e6b51376d87d257f9120a0a7120a39dd21633702d24797decb6dc747dff2217c88732710db892b5053c5c672d221b6c4d13bbcb5372e203596
-  languageName: node
-  linkType: hard
-
-"cli-spinners@npm:^2.6.1":
+"cli-spinners@npm:^2.2.0, cli-spinners@npm:^2.5.0, cli-spinners@npm:^2.6.1":
   version: 2.7.0
   resolution: "cli-spinners@npm:2.7.0"
   checksum: 5c781ace5c8f304ae4d138837f19cf88f03a97de3c3e388f9d1d6434146f06f6ce2a161d6237b3bb86448a05fbcbb20084f3fea96077e42a655b273e39c6f08d
@@ -23455,14 +23448,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"minimist@npm:^1.2.0, minimist@npm:^1.2.3, minimist@npm:^1.2.5":
-  version: 1.2.5
-  resolution: "minimist@npm:1.2.5"
-  checksum: c143b0c199af4df7a55c7a37b6465cdd438acdc6a3a345ba0fe9d94dfcc2042263f650879bc73be607c843deeaeaadf39c864e55bc6d80b36a025eca1a062ee7
-  languageName: node
-  linkType: hard
-
-"minimist@npm:^1.2.6":
+"minimist@npm:^1.2.0, minimist@npm:^1.2.3, minimist@npm:^1.2.5, minimist@npm:^1.2.6":
   version: 1.2.7
   resolution: "minimist@npm:1.2.7"
   checksum: 8808da67ca50ee19ab2d69051d77ee78572e67297fd8a1635ecc757a15106ccdfb5b8c4d11d84750120142f1684e5329a141295728c755e5d149eedd73cc6572
