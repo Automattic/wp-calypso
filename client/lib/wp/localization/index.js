@@ -16,7 +16,7 @@ export function addLocaleQueryParam( params ) {
 	}
 
 	let localeQueryParam;
-	const query = parse( params.query );
+	const query = parse( params.query, { depth: 10 } );
 
 	if ( params.apiNamespace ) {
 		// v2 api request
