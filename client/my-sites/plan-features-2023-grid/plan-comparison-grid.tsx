@@ -8,9 +8,7 @@ import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { BrowserRouter } from 'react-router-dom';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
-import { IntervalTypeToggle } from 'calypso/my-sites/plans-features-main/plan-type-selector';
 import { PlanProperties } from './types';
 
 const PlanComparisonHeader = styled.h1`
@@ -33,13 +31,15 @@ const Row = styled.div`
 	justify-content: space-between;
 	padding: 14px 0px;
 	border-bottom: 1px solid #eee;
-	.plan-comparison-grid__feature-feature-name {
-		width: 250px;
-	}
 `;
 
 const Cell = styled.div< { textAlign?: string } >`
 	text-align: ${ ( props ) => props.textAlign ?? 'left' };
+	width: 150px;
+`;
+
+const RowHead = styled.div`
+	width: 300px;
 `;
 
 type FeatureAvailabilityForPlansProps = {
@@ -55,19 +55,16 @@ const FeatureAvailabilityForPlans: React.FC< FeatureAvailabilityForPlansProps > 
 } ) => {
 	return (
 		<>
-			{ ( displayedPlans ?? [] ).map( ( { planName } ) => {
-				if ( planFeatureMap[ planName ].has( featureSlug ) ) {
-					return (
-						<Cell
-							key={ planName }
-							className={ `plan-comparison-grid__plan ${ planName }` }
-							textAlign="center"
-						>
-							<Gridicon icon="checkmark" color="#0675C4" />
-						</Cell>
-					);
-				}
-				return (
+			{ ( displayedPlans ?? [] ).map( ( { planName } ) =>
+				planFeatureMap[ planName ].has( featureSlug ) ? (
+					<Cell
+						key={ planName }
+						className={ `plan-comparison-grid__plan ${ planName }` }
+						textAlign="center"
+					>
+						<Gridicon icon="checkmark" color="#0675C4" />
+					</Cell>
+				) : (
 					<Cell
 						key={ planName }
 						className={ `plan-comparison-grid__plan ${ planName }` }
@@ -75,8 +72,8 @@ const FeatureAvailabilityForPlans: React.FC< FeatureAvailabilityForPlansProps > 
 					>
 						<Gridicon icon="minus-small" />
 					</Cell>
-				);
-			} ) }
+				)
+			) }
 		</>
 	);
 };
@@ -135,7 +132,9 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 			</PlanComparisonHeader>
 			<Grid>
 				<Row key="feature-group-title" className="plan-comparison-grid__plan-row">
-					<Cell key="feature-name" className="plan-comparison-grid__interval-toggle">
+					<RowHead key="feature-name" className="plan-comparison-grid__interval-toggle">
+						{ /* 
+						// This component was breaking scroll and the click was not working to be picked up later
 						<BrowserRouter>
 							<IntervalTypeToggle
 								eligibleForWpcomMonthlyPlans={ true }
@@ -144,8 +143,8 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 								isInSignup={ true }
 								isPlansInsideStepper={ true }
 							/>
-						</BrowserRouter>
-					</Cell>
+						</BrowserRouter> */ }
+					</RowHead>
 					{ displayedPlansProperties.map( ( { planName, planConstantObj } ) => (
 						<Cell key={ planName } className="plan-comparison-grid__plan-title" textAlign="center">
 							{ planConstantObj.getTitle() }
@@ -170,12 +169,12 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 										key={ featureSlug }
 										className={ `plan-comparison-grid__feature-row ${ feature.getTitle() }` }
 									>
-										<Cell
+										<RowHead
 											key="feature-name"
 											className={ `plan-comparison-grid__feature-feature-name ${ feature.getTitle() }` }
 										>
 											{ feature.getTitle() }
-										</Cell>
+										</RowHead>
 										<FeatureAvailabilityForPlans
 											displayedPlans={ displayedPlansProperties }
 											featureSlug={ featureSlug }

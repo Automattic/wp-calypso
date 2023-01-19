@@ -627,7 +627,7 @@ PlansFeaturesMain.propTypes = {
 	hidePremiumPlan: PropTypes.bool,
 	customerType: PropTypes.string,
 	flowName: PropTypes.string,
-	intervalType: PropTypes.string,
+	intervalType: PropTypes.oneOf( [ 'monthly', 'yearly' ] ),
 	isChatAvailable: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
