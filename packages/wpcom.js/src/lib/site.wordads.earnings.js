@@ -17,7 +17,7 @@ export default function SiteWordAdsEarnings( sid, wpcom ) {
 /**
  * Get detailed WordAds earnings information about the site.
  *
- * *Example:*
+ * Example:*
  *    // Get site earnings information
  *    wpcom
  *    .site( 'my-blog.wordpress.com' )

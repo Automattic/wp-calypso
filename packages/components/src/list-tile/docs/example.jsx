@@ -15,12 +15,12 @@ export default function ListTileExample() {
 			} }
 		>
 			<ListTile
-				title={ 'This is a title' }
-				subtitle={ 'This is a subtitle' }
+				title="This is a title"
+				subtitle="This is a subtitle"
 				leading={ <Gravatar user={ data } size={ 42 } /> }
 				trailing={
 					<div style={ { marginTop: '-20px', marginRight: '-20px' } }>
-						<Gridicon icon={ 'info' } size={ 24 } />{ ' ' }
+						<Gridicon icon="info" size={ 24 } />{ ' ' }
 					</div>
 				}
 			/>

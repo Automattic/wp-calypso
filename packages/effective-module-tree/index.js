@@ -99,7 +99,9 @@ const findTree = ( packageJson, packagePath, parents, cache ) => {
 	);
 
 	const result = { [ name ]: dependencies };
-	if ( treeIsCacheable ) cache.set( packagePath, result );
+	if ( treeIsCacheable ) {
+		cache.set( packagePath, result );
+	}
 	return { tree: result, isCacheable: treeIsCacheable };
 };
 
