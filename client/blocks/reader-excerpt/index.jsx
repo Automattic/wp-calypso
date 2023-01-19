@@ -1,6 +1,8 @@
-import { trim } from 'lodash';
+import { trim, escapeRegExp } from 'lodash';
 import PropTypes from 'prop-types';
 import AutoDirection from 'calypso/components/auto-direction';
+import { domForHtml } from 'calypso/lib/post-normalizer/utils';
+
 import './style.scss';
 
 // Excerpt is set to use webkit-line-clamp to limit number of lines of text to show inside container
@@ -40,6 +42,25 @@ const convertExcerptNewlinesToBreaks = ( excerpt ) => {
 const chooseExcerpt = ( post ) => {
 	// Need to figure out if custom excerpt is different to better_excerpt
 	if ( post.excerpt.length > 0 ) {
+		// If the post is a dailyprompt, attempt to replace the prompt text with a pullquote.
+		if ( post.tags && post.hasOwnPromperty( 'dailyprompt' ) ) {
+			const dom = domForHtml( post.content );
+			const promptQuote = dom.querySelector( '.is-reader > .wp-block-pullquote:first-child' );
+
+			if ( promptQuote ) {
+				const promptText = promptQuote.textContent;
+				if ( promptText ) {
+					// Remove the prompt text from start of the excerpt
+					const excerpt = post.excerpt.replace(
+						new RegExp( '^' + escapeRegExp( promptText ) ),
+						''
+					);
+					// And insert a blockquote with the prompt text
+					return `<blockquote class="wp-block-pullquote"> ${ promptText } </blockquote> ${ excerpt }`;
+				}
+				return post.excerpt;
+			}
+		}
 		if ( post.short_excerpt === undefined ) {
 			// If there is no short_excerpt, then there is no better_excerpt
 			return post.excerpt;
@@ -51,6 +72,7 @@ const chooseExcerpt = ( post ) => {
 		const custom_excerpt_chars = trim(
 			post.excerpt.substring( 0, short_excerpt.length ).replace( /\W/g, '' )
 		);
+
 		if ( short_excerpt_chars !== custom_excerpt_chars ) {
 			// In this case, the post excerpt is different to the short excerpt (which is a shortened version of the better_excerpt)
 			// This is an indication of a custom excerpt which we should default to when display excerpts in the reader
