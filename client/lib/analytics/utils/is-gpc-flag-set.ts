@@ -17,18 +17,19 @@ declare global {
  *
  * @returns {boolean} - True if the GPC flag is set, false otherwise (flag is undefined or false).
  */
-export const isGpcFlagSet = (): boolean => {
+export const isGpcFlagSetOptOut = (): boolean => {
 	return window.navigator?.globalPrivacyControl === true;
 };
 
 /**
  * May we track the user with GPC flag in CCPA region?
  *
- * @returns {boolean} - True if the user is in the CCPA region and the GPC flag is set, false otherwise.
+ * @returns {boolean} - False if the user is in the CCPA region and the GPC flag is set, true otherwise.
  */
-const mayWeTrackUserGpcInCCPARegion = (): boolean => {
+export const mayWeTrackUserGpcInCCPARegion = (): boolean => {
 	const cookies = cookie.parse( document.cookie );
-	return isRegionInCcpaZone( cookies.country_code, cookies.region ) && isGpcFlagSet();
+	if ( isRegionInCcpaZone( cookies.country_code, cookies.region ) && isGpcFlagSetOptOut() ) {
+		return false;
+	}
+	return true;
 };
-
-export default mayWeTrackUserGpcInCCPARegion;

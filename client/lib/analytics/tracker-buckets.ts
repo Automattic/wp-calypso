@@ -104,14 +104,15 @@ export const mayWeTrackByBucket = ( bucket: Bucket ) => {
 		return false;
 	}
 
-	// Disable advertising trackers on specific urls
-	if ( Bucket.ADVERTISING === bucket && isUrlExcludedForPerformance() ) {
-		return false;
-	}
-
-	// Disable advertising trackers if GPC browser flag is set, and the user location pertains to CCPA.
-	if ( Bucket.ADVERTISING && mayWeTrackUserGpcInCCPARegion() ) {
-		return false;
+	if ( Bucket.ADVERTISING === bucket ) {
+		// Disable advertising trackers on specific urls
+		if ( isUrlExcludedForPerformance() ) {
+			return false;
+		}
+		// Disable advertising trackers if GPC browser flag is set, and the user location pertains to CCPA.
+		if ( ! mayWeTrackUserGpcInCCPARegion() ) {
+			return false;
+		}
 	}
 
 	const prefs = getTrackingPrefs();
