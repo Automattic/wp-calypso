@@ -19,6 +19,11 @@ jest.mock( 'react-redux', () => ( {
 	useSelector: () => false,
 } ) );
 
+jest.mock( '@wordpress/compose', () => ( {
+	...jest.requireActual( '@wordpress/compose' ),
+	useViewportMatch: jest.fn( () => true ),
+} ) );
+
 const defaultProps = deepFreeze( {
 	themes: [
 		{
