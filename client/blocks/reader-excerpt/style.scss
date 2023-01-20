@@ -2,6 +2,9 @@
 	blockquote {
 		margin: 0;
 		padding-top: 0;
+		border-left: 1px solid var(--studio-gray-0);
+		color: var(--studio-gray);
+		background: none;
 	}
 	sup,
 	sub {
