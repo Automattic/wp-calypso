@@ -46,17 +46,20 @@ const MiniCarousel = ( { slug, isOdysseyStats, isSitePrivate } ) => {
 
 	// Write a Post banner.
 	const showWriteAPostBanner =
-		! isSitePrivate && hasNeverPublishedPost && ! isHasNeverPublishedPostLoading;
+		! useSelector( isBlockDismissed( EVENT_NO_CONTENT_BANNER_DISMISS ) ) &&
+		! isSitePrivate &&
+		hasNeverPublishedPost &&
+		! isHasNeverPublishedPostLoading;
 
 	// Blaze promo is disabled for Odyssey.
 	const showBlazePromo =
-		! useSelector( isBlockDismissed( 'calypso_stats_traffic_blaze_banner_dismiss' ) ) &&
+		! useSelector( isBlockDismissed( EVENT_TRAFFIC_BLAZE_PROMO_DISMISS ) ) &&
 		! isOdysseyStats &&
 		shouldShowAdvertisingOption;
 
 	// Yoast promo is disabled for Odyssey & self-hosted & non-traffic pages.
 	const showYoastPromo =
-		! useSelector( isBlockDismissed( 'calypso_stats_wordpress_seo_premium_banner_dismiss' ) ) &&
+		! useSelector( isBlockDismissed( EVENT_YOAST_PROMO_DISMISS ) ) &&
 		! isOdysseyStats &&
 		! jetpackNonAtomic;
 
@@ -105,6 +108,7 @@ const MiniCarousel = ( { slug, isOdysseyStats, isSitePrivate } ) => {
 		blocks.push(
 			<MiniCarouselBlock
 				clickEvent={ EVENT_TRAFFIC_BLAZE_PROMO_CLICK }
+				dismissEvent={ EVENT_TRAFFIC_BLAZE_PROMO_DISMISS }
 				image={ <BlazeLogo className="mini-carousel-blaze" size={ 45 } /> }
 				headerText={ translate( 'Promote your content with Blaze' ) }
 				contentText={ translate(
@@ -112,7 +116,6 @@ const MiniCarousel = ( { slug, isOdysseyStats, isSitePrivate } ) => {
 				) }
 				ctaText={ translate( 'Create campaign' ) }
 				href={ `/advertising/${ slug || '' }` }
-				dismissEvent={ EVENT_TRAFFIC_BLAZE_PROMO_DISMISS }
 				key="blaze"
 			/>
 		);
@@ -122,6 +125,7 @@ const MiniCarousel = ( { slug, isOdysseyStats, isSitePrivate } ) => {
 		blocks.push(
 			<MiniCarouselBlock
 				clickEvent={ EVENT_YOAST_PROMO_CLICK }
+				dismissEvent={ EVENT_YOAST_PROMO_DISMISS }
 				image={ <img src={ YoastLogo } alt="" width={ 45 } height={ 45 } /> }
 				headerText={ translate( 'Increase your site visitors with Yoast SEO Premium' ) }
 				contentText={ translate(
@@ -129,7 +133,6 @@ const MiniCarousel = ( { slug, isOdysseyStats, isSitePrivate } ) => {
 				) }
 				ctaText={ translate( 'Get Yoast' ) }
 				href={ `/plugins/wordpress-seo-premium/${ slug || '' }` }
-				dismissEvent={ EVENT_YOAST_PROMO_DISMISS }
 				key="yoast"
 			/>
 		);
