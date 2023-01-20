@@ -1,5 +1,6 @@
 export const ACTION_QUICK_LINKS = 'home-action-quick-links';
 export const ACTION_WP_FOR_TEAMS_QUICK_LINKS = 'home-action-wp-for-teams-quick-links';
+export const DOMAIN_UPSELL = 'home-feature-domain-upsell';
 export const EDUCATION_FREE_PHOTO_LIBRARY = 'home-education-free-photo-library';
 export const EDUCATION_EARN = 'home-education-earn';
 export const EDUCATION_STORE = 'home-education-store';
