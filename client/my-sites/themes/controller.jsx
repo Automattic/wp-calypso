@@ -47,7 +47,7 @@ export function loggedOut( context, next ) {
 }
 
 export function fetchThemeData( context, next ) {
-	if ( ! context.isServerSide || context.cachedMarkup ) {
+	if ( context.cachedMarkup ) {
 		debug( 'Skipping theme data fetch' );
 		return next();
 	}
