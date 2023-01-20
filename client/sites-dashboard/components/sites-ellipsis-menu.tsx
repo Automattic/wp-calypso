@@ -192,15 +192,15 @@ const PreviewSiteModalItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 	useQuerySitePurchases( site.ID );
-	const { setPlanCartItem, addProductCartItem } = useDispatch( ONBOARD_STORE );
-	const plan = site.plan;
+	const { setPlanCartItem, setProductCartItems } = useDispatch( ONBOARD_STORE );
+	const plan = site?.plan;
 
 	const purchases = useSelector( ( state ) => getSitePurchases( state, site.ID ) );
 	const isLoadingPurchase = useSelector(
 		( state ) => isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state )
 	);
 
-	if ( isLoadingPurchase ) {
+	if ( isLoadingPurchase || ! plan ) {
 		return null;
 	}
 
@@ -213,11 +213,16 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 			onClick={ () => {
 				clearSignupDestinationCookie();
 				setPlanCartItem( { product_slug: plan.product_slug } );
-				purchases.forEach( ( purchase ) => {
-					if ( 'marketplace_plugin' === purchase.productType ) {
-						addProductCartItem( { product_slug: purchase.productSlug } );
-					}
+				const marketplacePluginProducts = purchases
+					.filter( ( purchase ) => purchase.productType === 'marketplace_plugin' )
+					.map( ( purchase ) => ( { product_slug: purchase.productSlug } ) );
+
+				//Toy example
+				marketplacePluginProducts.push( {
+					product_slug: 'wordpress_seo_premium_monthly',
 				} );
+
+				setProductCartItems( marketplacePluginProducts );
 				recordTracks( 'calypso_sites_dashboard_site_action_copy_site_click' );
 			} }
 		>
