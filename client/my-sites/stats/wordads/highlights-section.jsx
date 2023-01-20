@@ -28,18 +28,18 @@ function getHighlights( earnings ) {
 
 	const highlights = [
 		{
-			heading: translate( 'Earnings', { context: 'Total WordAds earnings to date' } ),
+			heading: translate( 'Earnings', { comment: 'Total WordAds earnings to date' } ),
 			amount: total,
 		},
 		{
 			heading: translate( 'Paid', {
-				context: 'Total WordAds earnings that have been paid out',
+				comment: 'Total WordAds earnings that have been paid out',
 			} ),
 			amount: paid,
 		},
 		{
 			heading: translate( 'Outstanding amount', {
-				context: 'Total WordAds earnings currently unpaid',
+				comment: 'Total WordAds earnings currently unpaid',
 			} ),
 			amount: owed,
 		},
@@ -92,7 +92,7 @@ function HighlightsSectionHeader( props ) {
 	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
 	const iconReference = useRef( null );
 	const localizedTitle = translate( 'Totals', {
-		context: 'Heading for WordAds earnings highlights section',
+		comment: 'Heading for WordAds earnings highlights section',
 	} );
 	if ( ! props.notices || props.notices.length === 0 ) {
 		return <h1 className="highlight-cards-heading">{ localizedTitle }</h1>;
