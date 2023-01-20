@@ -3,8 +3,10 @@ import { translate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import YoastLogo from 'calypso/assets/images/icons/yoast-logo.svg';
+import writePost from 'calypso/assets/images/onboarding/site-options.svg';
 import BlazeLogo from 'calypso/components/blaze-logo';
 import DotPager from 'calypso/components/dot-pager';
+import { useHasNeverPublishedPost } from 'calypso/data/stats/use-has-never-published-post';
 import { PromoteWidgetStatus, usePromoteWidget } from 'calypso/lib/promote-post';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -20,25 +22,36 @@ const EVENT_TRAFFIC_BLAZE_PROMO_DISMISS = 'calypso_stats_traffic_blaze_banner_di
 const EVENT_YOAST_PROMO_VIEW = 'calypso_stats_wordpress_seo_premium_banner_view';
 const EVENT_YOAST_PROMO_CLICK = 'calypso_stats_wordpress_seo_premium_banner_click';
 const EVENT_YOAST_PROMO_DISMISS = 'calypso_stats_wordpress_seo_premium_banner_dismiss';
+const EVENT_NO_CONTENT_BANNER_VIEW = 'calypso_stats_no_content_banner_view';
 
-const MiniCarousel = ( { slug, isOdysseyStats } ) => {
+const MiniCarousel = ( { slug, isOdysseyStats, isSitePrivate } ) => {
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+
+	const { data: hasNeverPublishedPost, isLoading: isHasNeverPublishedPostLoading } =
+		useHasNeverPublishedPost( selectedSiteId ?? null, true, {
+			retry: false,
+		} );
 
 	const jetpackNonAtomic = useSelector(
 		( state ) => isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId )
 	);
 
-	const shouldShowAdvertisingOption = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
-
 	// Keep a replica of the pager index state.
 	// TODO: Figure out an approach that doesn't require replicating state value from DotPager.
 	const [ dotPagerIndex, setDotPagerIndex ] = useState( 0 );
+
+	const shouldShowAdvertisingOption = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
+
+	// Write a Post banner.
+	const showWriteAPostBanner =
+		! isSitePrivate && hasNeverPublishedPost && ! isHasNeverPublishedPostLoading;
 
 	// Blaze promo is disabled for Odyssey.
 	const showBlazePromo =
 		! useSelector( isBlockDismissed( 'calypso_stats_traffic_blaze_banner_dismiss' ) ) &&
 		! isOdysseyStats &&
 		shouldShowAdvertisingOption;
+
 	// Yoast promo is disabled for Odyssey & self-hosted & non-traffic pages.
 	const showYoastPromo =
 		! useSelector( isBlockDismissed( 'calypso_stats_wordpress_seo_premium_banner_dismiss' ) ) &&
@@ -48,9 +61,10 @@ const MiniCarousel = ( { slug, isOdysseyStats } ) => {
 	const viewEvents = useMemo( () => {
 		const events = [];
 		showBlazePromo && events.push( EVENT_TRAFFIC_BLAZE_PROMO_VIEW );
+		showWriteAPostBanner && events.push( EVENT_NO_CONTENT_BANNER_VIEW );
 		showYoastPromo && events.push( EVENT_YOAST_PROMO_VIEW );
 		return events;
-	}, [ showBlazePromo, showYoastPromo ] );
+	}, [ showBlazePromo, showWriteAPostBanner, showYoastPromo ] );
 
 	// Handle view events upon initial mount and upon paging DotPager.
 	useEffect( () => {
@@ -67,6 +81,22 @@ const MiniCarousel = ( { slug, isOdysseyStats } ) => {
 	const pagerDidSelectPage = ( index ) => setDotPagerIndex( index );
 
 	const blocks = [];
+
+	if ( showWriteAPostBanner ) {
+		blocks.push(
+			<MiniCarouselBlock
+				clickEvent="calypso_stats_no_content_banner_click"
+				dismissEvent="calypso_stats_no_content_banner_dismiss"
+				image={ <img src={ writePost } alt="" width={ 45 } height={ 45 } /> }
+				headerText={ translate( 'Start writing your first post to get more views' ) }
+				contentText={ translate(
+					'Sites with content get more visitors. We’ve found that adding some personality and introducing yourself is a great start to click with your audience.'
+				) }
+				ctaText={ translate( 'Write a post' ) }
+				href={ `/post/${ slug }` }
+			/>
+		);
+	}
 
 	if ( showBlazePromo ) {
 		blocks.push(
