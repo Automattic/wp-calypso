@@ -23,6 +23,8 @@ const EVENT_YOAST_PROMO_VIEW = 'calypso_stats_wordpress_seo_premium_banner_view'
 const EVENT_YOAST_PROMO_CLICK = 'calypso_stats_wordpress_seo_premium_banner_click';
 const EVENT_YOAST_PROMO_DISMISS = 'calypso_stats_wordpress_seo_premium_banner_dismiss';
 const EVENT_NO_CONTENT_BANNER_VIEW = 'calypso_stats_no_content_banner_view';
+const EVENT_NO_CONTENT_BANNER_CLICK = 'calypso_stats_no_content_banner_click';
+const EVENT_NO_CONTENT_BANNER_DISMISS = 'calypso_stats_no_content_banner_dismiss';
 
 const MiniCarousel = ( { slug, isOdysseyStats, isSitePrivate } ) => {
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -85,8 +87,8 @@ const MiniCarousel = ( { slug, isOdysseyStats, isSitePrivate } ) => {
 	if ( showWriteAPostBanner ) {
 		blocks.push(
 			<MiniCarouselBlock
-				clickEvent="calypso_stats_no_content_banner_click"
-				dismissEvent="calypso_stats_no_content_banner_dismiss"
+				clickEvent={ EVENT_NO_CONTENT_BANNER_CLICK }
+				dismissEvent={ EVENT_NO_CONTENT_BANNER_DISMISS }
 				image={ <img src={ writePost } alt="" width={ 45 } height={ 45 } /> }
 				headerText={ translate( 'Start writing your first post to get more views' ) }
 				contentText={ translate(
@@ -94,6 +96,7 @@ const MiniCarousel = ( { slug, isOdysseyStats, isSitePrivate } ) => {
 				) }
 				ctaText={ translate( 'Write a post' ) }
 				href={ `/post/${ slug }` }
+				key="write-a-post"
 			/>
 		);
 	}
