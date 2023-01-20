@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { mayWeTrackUserGpcInCCPARegion, isGpcFlagSetOptOut } from '../utils';
+import { mayWeTrackUserGpcInCCPARegion } from '../utils';
 import isRegionInCcpaZone from '../utils/is-region-in-ccpa-zone';
 
 // Return a predictable value for whether the user is in a CCPA region.
@@ -61,23 +61,6 @@ describe( 'global privacy control', () => {
 			isRegionInCcpaZone.mockReturnValue( false );
 
 			expect( mayWeTrackUserGpcInCCPARegion() ).toBe( true );
-		} );
-	} );
-
-	describe( 'isGpcFlagSetOptOut', () => {
-		test( 'if GPC is set to true in browser, return true', () => {
-			setMockGPCValue( true );
-			expect( mayWeTrackUserGpcInCCPARegion() ).toBe( true );
-		} );
-
-		test( 'if GPC is set to false in browser, return false', () => {
-			setMockGPCValue( false );
-			expect( isGpcFlagSetOptOut() ).toBe( false );
-		} );
-
-		test( 'if GPC is undefined in browser, return false', () => {
-			setMockGPCValue( undefined );
-			expect( isGpcFlagSetOptOut() ).toBe( false );
 		} );
 	} );
 } );
