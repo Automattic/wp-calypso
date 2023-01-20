@@ -34,7 +34,7 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 	const featuresHeading = translate( 'Theme features' ) as string;
 	// Check current theme: Does it have a plugin bundled?
 	const theme_software_set = theme?.data?.taxonomies?.theme_software_set?.length;
-	const showBundleVersion = isEnabled( 'themes/plugin-bundling' ) && theme_software_set;
+	const showBundleVersion = theme_software_set;
 
 	const premiumPlanProduct = useSelect( ( select ) =>
 		select( PRODUCTS_LIST_STORE ).getProductBySlug( 'value_bundle' )

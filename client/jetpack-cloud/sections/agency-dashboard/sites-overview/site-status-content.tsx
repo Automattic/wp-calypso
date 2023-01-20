@@ -128,7 +128,11 @@ export default function SiteStatusContent( {
 		return (
 			<>
 				{ isBulkManagementActive ? (
-					<SiteSelectCheckbox item={ rows } siteError={ siteError } />
+					<SiteSelectCheckbox
+						isLargeScreen={ isLargeScreen }
+						item={ rows }
+						siteError={ siteError }
+					/>
 				) : (
 					<SiteSetFavorite
 						isFavorite={ isFavorite }
@@ -168,6 +172,7 @@ export default function SiteStatusContent( {
 				tooltip={ tooltip }
 				tooltipId={ tooltipId }
 				siteError={ siteError }
+				isLargeScreen={ isLargeScreen }
 			/>
 		);
 	}

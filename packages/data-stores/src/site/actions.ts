@@ -27,6 +27,7 @@ import type {
 	AtomicSoftwareStatus,
 	SiteSettings,
 	ThemeSetupOptions,
+	ActiveTheme,
 } from './types';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
@@ -208,6 +209,56 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		return globalStyles;
 	}
 
+	function* setGlobalStyles(
+		siteIdOrSlug: number | string,
+		globalStylesId: number,
+		globalStyles: GlobalStyles
+	) {
+		const updatedGlobalStyles: GlobalStyles = yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent( siteIdOrSlug ) }/global-styles/${ globalStylesId }`,
+			apiNamespace: 'wp/v2',
+			method: 'POST',
+			body: {
+				id: globalStylesId,
+				settings: globalStyles.settings ?? {},
+				styles: globalStyles.styles ?? {},
+			},
+		} );
+
+		return updatedGlobalStyles;
+	}
+
+	function* getGlobalStylesId( siteIdOrSlug: number | string, stylesheet: string ) {
+		const theme: ActiveTheme = yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent( siteIdOrSlug ) }/themes/${ stylesheet }`,
+			method: 'GET',
+			apiNamespace: 'wp/v2',
+		} );
+
+		const globalStylesUrl = theme?._links?.[ 'wp:user-global-styles' ]?.[ 0 ]?.href;
+		if ( globalStylesUrl ) {
+			// eslint-disable-next-line no-useless-escape
+			const match = globalStylesUrl.match( /global-styles\/(?<id>[\/\w-]+)/ );
+			if ( match && match.groups ) {
+				return match.groups.id;
+			}
+		}
+
+		return null;
+	}
+
+	function* getGlobalStylesVariations( siteIdOrSlug: number | string, stylesheet: string ) {
+		const variations: GlobalStyles[] = yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent(
+				siteIdOrSlug
+			) }/global-styles/themes/${ stylesheet }/variations`,
+			method: 'GET',
+			apiNamespace: 'wp/v2',
+		} );
+
+		return variations;
+	}
+
 	function* saveSiteSettings(
 		siteId: number,
 		settings: {
@@ -299,16 +350,35 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		styleVariationSlug?: string,
 		keepHomepage = true
 	) {
-		yield wpcomRequest( {
+		const activatedTheme: { stylesheet: string } = yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/themes/mine`,
 			apiVersion: '1.1',
 			body: {
 				theme: theme,
-				style_variation_slug: styleVariationSlug,
 				dont_change_homepage: keepHomepage,
 			},
 			method: 'POST',
 		} );
+
+		if ( styleVariationSlug ) {
+			const variations: GlobalStyles[] = yield getGlobalStylesVariations(
+				siteSlug,
+				activatedTheme.stylesheet
+			);
+			const currentVariation = variations.find(
+				( variation ) =>
+					variation.title &&
+					variation.title.split( ' ' ).join( '-' ).toLowerCase() === styleVariationSlug
+			);
+
+			if ( currentVariation ) {
+				const globalStylesId: number = yield getGlobalStylesId(
+					siteSlug,
+					activatedTheme.stylesheet
+				);
+				yield setGlobalStyles( siteSlug, globalStylesId, currentVariation );
+			}
+		}
 	}
 
 	function* runThemeSetupOnSite(

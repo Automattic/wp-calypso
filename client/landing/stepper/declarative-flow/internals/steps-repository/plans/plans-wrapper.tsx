@@ -20,6 +20,7 @@ import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import './style.scss';
 
+type IntervalType = 'yearly' | 'monthly';
 interface Props {
 	flowName: string | null;
 	onSubmit: () => void;
@@ -83,16 +84,16 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		);
 	};
 
-	const getIntervalType = () => {
+	const getIntervalType: () => IntervalType = () => {
 		const urlParts = getUrlParts( typeof window !== 'undefined' ? window.location?.href : '' );
-		const intervalType = urlParts?.searchParams.get( 'intervalType' ) as string;
-
-		if ( [ 'yearly', 'monthly' ].includes( intervalType ) ) {
-			return intervalType;
+		const intervalType = urlParts?.searchParams.get( 'intervalType' );
+		switch ( intervalType ) {
+			case 'monthly':
+			case 'yearly':
+				return intervalType as IntervalType;
+			default:
+				return 'yearly';
 		}
-
-		// Default value
-		return 'yearly';
 	};
 
 	const plansFeaturesList = () => {

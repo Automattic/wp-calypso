@@ -21,9 +21,11 @@ import {
 	isJetpackPlanSlug,
 	isJetpackScanSlug,
 	isJetpackSearchSlug,
+	isJetpackBoostSlug,
 	planHasAtLeastOneFeature,
 	PRODUCT_JETPACK_VIDEOPRESS,
 	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
+	FEATURE_CLOUD_CRITICAL_CSS,
 } from '@automattic/calypso-products';
 
 export const productHasBackups = ( productSlug: string ): boolean => {
@@ -107,5 +109,18 @@ export const productHasVideoPress = ( productSlug: string ): boolean => {
 			FEATURE_JETPACK_VIDEOPRESS_MONTHLY,
 		] ) ||
 		[ PRODUCT_JETPACK_VIDEOPRESS, PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ].includes( productSlug )
+	);
+};
+
+/**
+ * Checks if the product has Boost features
+ */
+export const productHasBoost = ( productSlug: string ): boolean => {
+	return (
+		// If the product is a standalone Boost product
+		isJetpackBoostSlug( productSlug ) ||
+		// If Boost is included in the plan
+		( isJetpackPlanSlug( productSlug ) &&
+			planHasAtLeastOneFeature( productSlug, [ FEATURE_CLOUD_CRITICAL_CSS ] ) )
 	);
 };

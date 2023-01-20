@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/design-picker';
 import { useSelect } from '@wordpress/data';
@@ -24,8 +23,7 @@ const DesignPickerDesignTitle: FC< Props > = ( { designTitle, selectedDesign } )
 		)
 	);
 
-	const showBundledBadge =
-		isEnabled( 'themes/plugin-bundling' ) && selectedDesign.is_bundled_with_woo_commerce;
+	const showBundledBadge = selectedDesign.is_bundled_with_woo_commerce;
 
 	let badge: React.ReactNode = null;
 	if ( showBundledBadge ) {

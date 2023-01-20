@@ -15,7 +15,7 @@ import { getTheme } from 'calypso/state/themes/selectors';
 function MyTheme( { theme } ) {
 	return (
 		<div>
-			<QueryTheme siteId={ 3584907 } themeId={ 'twentysixteen' } />
+			<QueryTheme siteId={ 3584907 } themeId="twentysixteen" />
 			<Theme theme={ theme } />
 		</div>
 	);

@@ -91,7 +91,7 @@ class StatsPostPerformance extends Component {
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<div>
+			<div className="list-latest-post-summary">
 				{ siteId && <QueryPosts siteId={ siteId } query={ query } /> }
 				{ siteId && post && (
 					<QueryPostStats siteId={ siteId } postId={ post.ID } fields={ [ 'views' ] } />

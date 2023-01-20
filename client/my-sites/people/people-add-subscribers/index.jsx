@@ -38,10 +38,11 @@ class PeopleInvites extends PureComponent {
 
 		if ( isEnabled( 'user-management-revamp' ) ) {
 			fallback = '/people/subscribers/' + siteSlug;
+			page.redirect( fallback );
+		} else {
+			// Go back to last route with /people/team/$site as the fallback
+			page.back( fallback );
 		}
-
-		// Go back to last route with /people/team/$site as the fallback
-		page.back( fallback );
 	};
 
 	render() {

@@ -114,7 +114,7 @@ class StatModuleFollowers extends Component {
 		summaryPageLink = ! isOdysseyStats ? summaryPageLink : null;
 
 		return (
-			<div>
+			<div className="list-followers">
 				{ siteId && (
 					<QuerySiteStats statType="statsFollowers" siteId={ siteId } query={ wpcomQuery } />
 				) }

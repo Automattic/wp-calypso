@@ -52,7 +52,6 @@ class StatsPeriodNavigation extends PureComponent {
 
 	handleArrowNext = () => {
 		const { date, moment, period, url, queryParams } = this.props;
-
 		const usedPeriod = 'hour' === period ? 'day' : period;
 		const nextDay = moment( date ).add( 1, usedPeriod ).format( 'YYYY-MM-DD' );
 		const nextDayQuery = qs.stringify( Object.assign( {}, queryParams, { startDate: nextDay } ), {
@@ -64,7 +63,8 @@ class StatsPeriodNavigation extends PureComponent {
 
 	handleArrowPrevious = () => {
 		const { date, moment, period, url, queryParams } = this.props;
-		const previousDay = moment( date ).subtract( 1, period ).format( 'YYYY-MM-DD' );
+		const usedPeriod = 'hour' === period ? 'day' : period;
+		const previousDay = moment( date ).subtract( 1, usedPeriod ).format( 'YYYY-MM-DD' );
 		const previousDayQuery = qs.stringify(
 			Object.assign( {}, queryParams, { startDate: previousDay } ),
 			{ addQueryPrefix: true }

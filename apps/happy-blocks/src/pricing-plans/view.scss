@@ -27,6 +27,7 @@ $brand-display: "SF Pro Display", $sans;
 	border-radius: 2px;
 	gap: 22px;
 	background-color: $studio-white;
+	word-break: initial;
 
 
 	&__settings {
