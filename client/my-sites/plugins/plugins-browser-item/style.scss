@@ -196,7 +196,9 @@
 
 .plugins-browser-item__pricing,
 .plugins-browser-item__installed {
-	font-size: $font-body;
+	font-size: $font-body-extra-small;
+	font-weight: 500;
+	line-height: 20px;
 	color: $studio-black;
 }
 
@@ -258,6 +260,8 @@
 .plugins-browser-item__period,
 .plugins-browser-item__requires-plan-upgrade {
 	color: var(--studio-gray-60);
+	font-family: "SF Pro Text", $sans;
+	font-weight: 400;
 	font-size: $font-body-extra-small;
 }
 
