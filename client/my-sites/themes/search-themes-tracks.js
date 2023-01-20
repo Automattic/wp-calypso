@@ -6,7 +6,7 @@ import { isRequestingThemesForQuery, prependThemeFilterKeys } from 'calypso/stat
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 function useThemeSearchDetails( query ) {
-	const search = query.search;
+	const search = query.search || '';
 	const searchTaxonomies = useSelector( ( state ) =>
 		prependThemeFilterKeys( state, query.filter )
 	);
@@ -68,8 +68,8 @@ export default function SearchThemesTracks( { query = {}, themes = [], wporgThem
 
 	const recordSearchEvent = recordTracksEvent( 'calypso_themes_search_results', {
 		search,
-		search_term: searchTerm?.trim(),
-		search_taxonomies: searchTaxonomies?.trim(),
+		search_term: searchTerm.trim(),
+		search_taxonomies: searchTaxonomies.trim(),
 		tier: query.tier,
 		result_count: totalCount,
 		actual_count: actualCount,
