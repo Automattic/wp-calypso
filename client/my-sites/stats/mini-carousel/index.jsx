@@ -62,11 +62,11 @@ const MiniCarousel = ( { slug, isOdysseyStats, isSitePrivate } ) => {
 
 	const viewEvents = useMemo( () => {
 		const events = [];
-		showBlazePromo && events.push( EVENT_TRAFFIC_BLAZE_PROMO_VIEW );
 		showWriteAPostBanner && events.push( EVENT_NO_CONTENT_BANNER_VIEW );
+		showBlazePromo && events.push( EVENT_TRAFFIC_BLAZE_PROMO_VIEW );
 		showYoastPromo && events.push( EVENT_YOAST_PROMO_VIEW );
 		return events;
-	}, [ showBlazePromo, showWriteAPostBanner, showYoastPromo ] );
+	}, [ showWriteAPostBanner, showBlazePromo, showYoastPromo ] );
 
 	// Handle view events upon initial mount and upon paging DotPager.
 	useEffect( () => {
