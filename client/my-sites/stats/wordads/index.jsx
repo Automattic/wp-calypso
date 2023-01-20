@@ -137,11 +137,8 @@ class WordAds extends Component {
 		);
 	};
 
-	isLocal3000() {
-		return window.location.host === 'calypso.localhost:3000';
-	}
-	isCalypsoLive() {
-		return window.location.host.endsWith( '.calypso.live' );
+	isProduction() {
+		return window.location.host === 'wordpress.com';
 	}
 
 	render() {
@@ -172,8 +169,9 @@ class WordAds extends Component {
 			'is-period-year': period === 'year',
 		} );
 
-		// TODO: Put behind feature flag as needed.
-		const showNewHighlights = this.isLocal3000() || this.isCalypsoLive();
+		// TODO: Enable on production.
+		// And remove isProduction helper.
+		const showNewHighlights = ! this.isProduction();
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
