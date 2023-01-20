@@ -75,7 +75,9 @@ const UsageWarningUpsell: React.FC< UpsellProps > = ( {
 	}, [ dispatch, usageLevel, bytesUsed ] );
 
 	const price = <UpsellPrice { ...priceInfo } upsellSlug={ upsellSlug } />;
-	const storageUpgradeUrl = buildCheckoutURL( siteSlug, upsellSlug.productSlug, {} );
+	const storageUpgradeUrl = buildCheckoutURL( siteSlug, upsellSlug.productSlug, {
+		source: 'backup-storage-purchase-not-renewal',
+	} );
 
 	return (
 		<ActionButton
