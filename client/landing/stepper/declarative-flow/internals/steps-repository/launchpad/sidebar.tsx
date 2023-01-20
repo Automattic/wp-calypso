@@ -1,5 +1,4 @@
 import { Gridicon, CircularProgressBar } from '@automattic/components';
-import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
@@ -9,7 +8,6 @@ import Tooltip from 'calypso/components/tooltip';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
@@ -64,10 +62,6 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 
 	const { flowName, title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
-
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
-	const siteCount = currentUser?.site_count ?? 0;
-
 	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
 	const enhancedTasks =
 		site &&
@@ -77,7 +71,6 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 			site,
 			submit,
 			globalStylesInUse && shouldLimitGlobalStyles,
-			siteCount,
 			goToStep,
 			flow
 		);
