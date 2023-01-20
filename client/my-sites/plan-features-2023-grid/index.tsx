@@ -271,11 +271,19 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	renderPlanPrice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
 		const { isReskinned, is2023OnboardingPricingGrid } = this.props;
 
+		const isLargeCurrency = planPropertiesObj.some(
+			( properties ) => properties?.rawPrice && properties?.rawPrice > 99000
+		);
+
 		return planPropertiesObj.map( ( properties ) => {
 			const { currencyCode, discountPrice, planName, rawPrice } = properties;
 			const classes = classNames( 'plan-features-2023-grid__table-item', {
 				'has-border-top': ! isReskinned,
 			} );
+
+			if ( rawPrice === undefined || rawPrice === null ) {
+				return;
+			}
 
 			return (
 				<Container
@@ -290,6 +298,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						rawPrice={ rawPrice }
 						planName={ planName }
 						is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+						isLargeCurrency={ isLargeCurrency }
 					/>
 				</Container>
 			);
