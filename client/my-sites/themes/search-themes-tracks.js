@@ -68,8 +68,8 @@ export default function SearchThemesTracks( { query = {}, themes = [], wporgThem
 
 	const recordSearchEvent = recordTracksEvent( 'calypso_themes_search_results', {
 		search,
-		search_term: searchTerm.trim(),
-		search_taxonomies: searchTaxonomies.trim(),
+		search_term: searchTerm?.trim(),
+		search_taxonomies: searchTaxonomies?.trim(),
 		tier: query.tier,
 		result_count: totalCount,
 		actual_count: actualCount,
