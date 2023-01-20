@@ -19,7 +19,9 @@ type NewsletterSettingsSectionProps = {
 	handleToggle: ( field: string ) => ( ( isChecked: boolean ) => void ) | undefined;
 	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
 	disabled?: boolean;
+	isSaveRequestSuccessful?: boolean;
 	isSavingSettings: boolean;
+	subscriptionOptions?: { invitation?: string; comment_follow?: string };
 	updateFields: ( fields: Fields ) => void;
 };
 
@@ -28,7 +30,9 @@ export const NewsletterSettingsSection = ( {
 	handleToggle,
 	handleSubmitForm,
 	disabled,
+	isSaveRequestSuccessful,
 	isSavingSettings,
+	subscriptionOptions,
 	updateFields,
 }: NewsletterSettingsSectionProps ) => {
 	const translate = useTranslate();
@@ -38,6 +42,10 @@ export const NewsletterSettingsSection = ( {
 		subscription_options,
 	} = fields;
 
+	/* eslint-disable no-console */
+	console.log( 'subscription_options', subscription_options ); // value in the form field
+	console.log( 'subscriptionOptions', subscriptionOptions ); // current value
+	console.log( 'isSaveRequestSuccessful', isSaveRequestSuccessful );
 	return (
 		<>
 			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }

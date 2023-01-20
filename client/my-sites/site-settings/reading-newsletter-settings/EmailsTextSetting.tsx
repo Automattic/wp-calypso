@@ -7,8 +7,8 @@ import FormTextarea from 'calypso/components/forms/form-textarea';
 
 type EmailsTextSettingProps = {
 	value?: {
-		invitation: string;
-		comment_follow: string;
+		invitation?: string;
+		comment_follow?: string;
 	};
 	disabled?: boolean;
 	updateFields: ( fields: { [ key: string ]: unknown } ) => void;
