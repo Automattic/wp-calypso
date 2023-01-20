@@ -217,11 +217,6 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 					.filter( ( purchase ) => purchase.productType === 'marketplace_plugin' )
 					.map( ( purchase ) => ( { product_slug: purchase.productSlug } ) );
 
-				//Toy example
-				marketplacePluginProducts.push( {
-					product_slug: 'wordpress_seo_premium_monthly',
-				} );
-
 				setProductCartItems( marketplacePluginProducts );
 				recordTracks( 'calypso_sites_dashboard_site_action_copy_site_click' );
 			} }
