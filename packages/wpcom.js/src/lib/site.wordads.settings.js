@@ -3,7 +3,7 @@
  *
  * @param {string} sid - site identifier
  * @param {WPCOM} wpcom - wpcom instance
- * @returns {null} null
+ * @returns {SiteWordAdsSettings|undefined}
  */
 export default function SiteWordAdsSettings( sid, wpcom ) {
 	if ( ! ( this instanceof SiteWordAdsSettings ) ) {

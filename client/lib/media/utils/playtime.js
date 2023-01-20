@@ -5,7 +5,7 @@
  * @example
  * playtime( 7 ); // -> "0:07"
  * @param  {number} duration Duration in seconds
- * @returns {string}          Human-readable duration
+ * @returns {string|undefined}          Human-readable duration
  */
 export function playtime( duration ) {
 	if ( isNaN( duration ) ) {

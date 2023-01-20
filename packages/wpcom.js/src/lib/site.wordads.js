@@ -9,7 +9,7 @@ import SiteWordAdsTOS from './site.wordads.tos';
  *
  * @param {string} sid - site identifier
  * @param {WPCOM} wpcom - wpcom instance
- * @returns {null} null
+ * @returns {SiteWordAds|undefined}
  */
 export default function SiteWordAds( sid, wpcom ) {
 	if ( ! ( this instanceof SiteWordAds ) ) {

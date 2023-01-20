@@ -11,7 +11,7 @@ import { isUri } from 'valid-url';
  * getFileExtension( new window.File( [''], 'example.gif' ) );
  * // All examples return 'gif'
  * @param  {(string|window.File|object)} media Media object or string
- * @returns {string}                     File extension
+ * @returns {string|undefined}                     File extension
  */
 export function getFileExtension( media ) {
 	let extension;

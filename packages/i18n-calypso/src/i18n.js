@@ -357,7 +357,7 @@ I18N.prototype.hasTranslation = function () {
  * Exposes single translation method.
  * See sibling README
  *
- * @returns {string|object} translated text or an object containing React children that can be inserted into a parent component
+ * @returns {string|object|undefined} translated text or an object containing React children that can be inserted into a parent component
  */
 I18N.prototype.translate = function () {
 	const options = normalizeTranslateArguments( arguments );
