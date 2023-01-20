@@ -111,12 +111,13 @@ Hack to fix line-through not showing in the middle of the text in firefox browse
 
 .item-price__message {
 	font-size: $font-body-extra-small;
-	color: var(--studio-jetpack-green-50);
+	color: var(--studio-gray-30);
 	font-weight: 600;
 	display: flex;
 	align-items: center;
 
 	.item-price__message--dot {
+		background: var(--studio-gray-30);
 		display: inline-block;
 		width: 8px;
 		height: 8px;
@@ -129,14 +130,13 @@ Hack to fix line-through not showing in the middle of the text in firefox browse
 		.item-price__message--dot {
 			background: var(--studio-jetpack-green-50);
 		}
-
 	}
-	&--expired {
+
+	&--error {
 		color: var(--color-error-50);
 		.item-price__message--dot {
 			background: var(--color-error-50);
 		}
-
 	}
 }
 

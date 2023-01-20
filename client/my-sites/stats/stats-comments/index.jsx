@@ -122,7 +122,7 @@ class StatsComments extends Component {
 		} );
 
 		return (
-			<div>
+			<div className="list-comments">
 				{ siteId && <QuerySiteStats statType="statsComments" siteId={ siteId } /> }
 				{ siteId && (
 					<QuerySiteStats statType="statsCommentFollowers" siteId={ siteId } query={ { max: 7 } } />

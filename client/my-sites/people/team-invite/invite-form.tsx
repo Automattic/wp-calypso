@@ -2,7 +2,7 @@ import { Button, FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, ChangeEvent, useEffect, FormEvent } from 'react';
+import { useState, ChangeEvent, useEffect, FormEvent, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -23,15 +23,28 @@ import { useValidationNotifications } from './hooks/use-validation-notifications
 
 const TOKEN_CONTROL_MAX_NUM = 10;
 
-function InviteForm() {
+interface Props {
+	onInviteSuccess?: () => void;
+}
+
+function InviteForm( props: Props ) {
 	const _ = useTranslate();
 	const dispatch = useDispatch();
+	const { onInviteSuccess } = props;
+
+	const emailControlPlaceholder = [
+		_( 'sibling@example.com' ),
+		_( 'parents@example.com' ),
+		_( 'friend@example.com' ),
+	];
+	const defaultEmailControlPlaceholder = _( 'Add another email or username' );
 
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const siteId = site?.ID as number;
 	const defaultUserRole = useInitialRole( siteId );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isSiteForTeams = useSelector( ( state ) => isSiteWPForTeams( state, siteId ) );
+	const prevInvitingProgress = useRef();
 	const { errors: tokenErrors, progress: validationProgress } = useSelector( getTokenValidation );
 	const { progress: invitingProgress, success: invitingSuccess } =
 		useSelector( getSendInviteState );
@@ -52,7 +65,8 @@ function InviteForm() {
 	useEffect( extendTokenFormControls, [ tokenValues ] );
 	useEffect( toggleShowContractorCb, [ role ] );
 	useEffect( checkSubmitReadiness, [ tokenErrors, validationProgress ] );
-	useEffect( () => invitingSuccess && resetFormValues(), [ invitingSuccess ] );
+	useEffect( reactOnInvitationSuccess, [ invitingSuccess ] );
+	useEffect( () => ( prevInvitingProgress.current = invitingProgress ), [ invitingProgress ] );
 	useValidationNotifications();
 	useInvitingNotifications( tokenValues );
 
@@ -62,7 +76,9 @@ function InviteForm() {
 			return;
 		}
 
-		dispatch( sendInvites( siteId, tokenValues, role, message, contractor ) );
+		const _tokenValues = tokenValues.filter( ( x ) => !! x );
+
+		dispatch( sendInvites( siteId, _tokenValues, role, message, contractor ) );
 		dispatch( recordTracksEvent( 'calypso_invite_people_form_submit' ) );
 	}
 
@@ -83,6 +99,15 @@ function InviteForm() {
 		setTokenValues( [ '' ] );
 		setContractor( false );
 		setMessage( '' );
+	}
+
+	function reactOnInvitationSuccess() {
+		if ( ! invitingSuccess || ! prevInvitingProgress.current ) {
+			return;
+		}
+
+		resetFormValues();
+		onInviteSuccess?.();
 	}
 
 	function extendTokenFormControls() {
@@ -151,6 +176,7 @@ function InviteForm() {
 							name={ `token-${ i }` }
 							value={ tokenValues[ i ] || '' }
 							isError={ tokenErrors && !! tokenErrors[ tokenValues[ i ] ] }
+							placeholder={ emailControlPlaceholder[ i ] || defaultEmailControlPlaceholder }
 							onBlur={ () => onTokenBlur( i ) }
 							onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
 								onTokenChange( e.target.value, i )
@@ -208,7 +234,6 @@ function InviteForm() {
 				primary
 				busy={ invitingProgress }
 				className="team-invite-form__submit-btn"
-				disabled={ ! readyForSubmit }
 			>
 				{ _( 'Send invitation' ) }
 			</Button>

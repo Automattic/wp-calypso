@@ -76,7 +76,7 @@ const Dialog = ( {
 		>
 			{ showCloseIcon && (
 				<button className="dialog__action-buttons-close" onClick={ () => onClose( this ) }>
-					<Gridicon icon={ 'cross' } size={ 24 } />
+					<Gridicon icon="cross" size={ 24 } />
 				</button>
 			) }
 			<div className={ contentClassName } tabIndex={ -1 }>

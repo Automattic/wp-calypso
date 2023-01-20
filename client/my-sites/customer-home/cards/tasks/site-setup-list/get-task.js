@@ -223,6 +223,13 @@ export const getTask = (
 				),
 				actionText: isFSEActive ? translate( 'Edit site' ) : translate( 'Edit homepage' ),
 				actionUrl: taskUrls?.front_page_updated,
+				// Mark the task as completed upon clicking on the action button when redirecting to the site editor
+				// since we don't have any good way to track changes within the site editor.
+				...( ! task.isCompleted &&
+					isFSEActive && {
+						actionDispatch: requestSiteChecklistTaskUpdate,
+						actionDispatchArgs: [ siteId, task.id ],
+					} ),
 			};
 			break;
 		case CHECKLIST_KNOWN_TASKS.SITE_MENU_UPDATED:

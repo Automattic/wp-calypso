@@ -28,33 +28,31 @@ const PlanItemPlaceholder: React.FunctionComponent< Props > = ( { isOpen, isPrim
 					<div tabIndex={ 0 } role="button" className="plans-accordion-item__header">
 						<div className="plans-accordion-item__heading">
 							<div className="plans-accordion-item__name">
-								<span className="plans-accordion-item__placeholder">{ '' }</span>
+								<span className="plans-accordion-item__placeholder"></span>
 							</div>
 							<div className="plans-accordion-item__description">
-								<span className="plans-accordion-item__placeholder plans-accordion-item__placeholder--wide">
-									{ '' }
-								</span>
+								<span className="plans-accordion-item__placeholder plans-accordion-item__placeholder--wide"></span>
 							</div>
 						</div>
 						<div className="plans-accordion-item__price">
 							<div className="plans-accordion-item__price-amount">
-								<span className="plans-accordion-item__placeholder">{ '' }</span>
+								<span className="plans-accordion-item__placeholder"></span>
 							</div>
 							<div className="plans-accordion-item__price-note">
-								<span className="plans-accordion-item__placeholder plans-accordion-item__placeholder--wide">
-									{ '' }
-								</span>
+								<span className="plans-accordion-item__placeholder plans-accordion-item__placeholder--wide"></span>
 							</div>
 						</div>
-						<div className="plans-accordion-item__disabled-label">{ '' }</div>
+						<div className="plans-accordion-item__disabled-label"></div>
 						{ ! isOpen && (
 							<div className="plans-accordion-item__dropdown-chevron">{ ChevronDown }</div>
 						) }
 					</div>
 					<div className="plans-accordion-item__actions" hidden={ ! isOpen }>
-						{ <NextButton disabled>{ <span>{ '' }</span> }</NextButton> }
+						<NextButton disabled>
+							<span></span>
+						</NextButton>
 					</div>
-					{ <PlansFeatureListPlaceholder isOpen={ isOpen } multiColumn /> }
+					<PlansFeatureListPlaceholder isOpen={ isOpen } multiColumn />
 				</div>
 			</div>
 		</div>

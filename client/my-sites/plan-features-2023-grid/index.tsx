@@ -54,7 +54,7 @@ import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridFeatures from './features';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { PlanFeaturesItem } from './item';
-import { PlanComparison2023Grid } from './plan-comparison-grid';
+import { PlanComparisonGrid } from './plan-comparison-grid';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
 
@@ -92,6 +92,7 @@ type PlanFeatures2023GridProps = {
 	domainName: string;
 	placeholder?: string;
 	isLandingPage?: boolean;
+	intervalType: string;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -135,7 +136,10 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						</div>
 					</div>
 				</div>
-				<PlanComparison2023Grid planProperties={ this.props.planProperties } />
+				<PlanComparisonGrid
+					planProperties={ this.props.planProperties }
+					intervalType={ this.props.intervalType }
+				/>
 			</div>
 		);
 	}
@@ -267,11 +271,19 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	renderPlanPrice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
 		const { isReskinned, is2023OnboardingPricingGrid } = this.props;
 
+		const isLargeCurrency = planPropertiesObj.some(
+			( properties ) => properties?.rawPrice && properties?.rawPrice > 99000
+		);
+
 		return planPropertiesObj.map( ( properties ) => {
 			const { currencyCode, discountPrice, planName, rawPrice } = properties;
 			const classes = classNames( 'plan-features-2023-grid__table-item', {
 				'has-border-top': ! isReskinned,
 			} );
+
+			if ( rawPrice === undefined || rawPrice === null ) {
+				return;
+			}
 
 			return (
 				<Container
@@ -286,6 +298,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						rawPrice={ rawPrice }
 						planName={ planName }
 						is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+						isLargeCurrency={ isLargeCurrency }
 					/>
 				</Container>
 			);

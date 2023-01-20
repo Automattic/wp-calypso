@@ -17,7 +17,7 @@ export default function SiteWordAdsSettings( sid, wpcom ) {
 /**
  * Get detailed WordAds settings information about the site.
  *
- * *Example:*
+ * Example:*
  *    // Get site settings information
  *    wpcom
  *    .site( 'my-blog.wordpress.com' )
@@ -38,7 +38,7 @@ SiteWordAdsSettings.prototype.get = function ( query, fn ) {
 /**
  * Update WordAds settings for the site.
  *
- * *Example:*
+ * Example:*
  *    var settings = {}; // your settings here
  *
  *    // Get site settings information

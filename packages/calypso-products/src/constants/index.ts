@@ -7,3 +7,4 @@ export * from './terms';
 export * from './titan';
 export * from './types';
 export * from './wpcom';
+export * from './feature-group';

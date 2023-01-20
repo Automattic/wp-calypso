@@ -5,6 +5,7 @@ import {
 	sendMessage,
 	sendUserInfo,
 	setChatCustomFields,
+	setChatTag,
 } from 'calypso/state/happychat/connection/actions';
 import getHappychatUserInfo from 'calypso/state/happychat/selectors/get-happychat-userinfo';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
@@ -39,6 +40,7 @@ export default function useHappyChat() {
 		sendMessage: ( message: object, meta?: object ) => dispatch( sendMessage( message, meta ) ),
 		sendUserInfo: ( info: object ) => dispatch( sendUserInfo( info ) ),
 		setChatCustomFields: ( fields: object ) => dispatch( setChatCustomFields( fields ) ),
+		setChatTag: ( tag: string ) => dispatch( setChatTag( tag ) ),
 		getUserInfo,
 	};
 }

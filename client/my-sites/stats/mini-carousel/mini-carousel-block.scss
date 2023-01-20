@@ -1,0 +1,26 @@
+.mini-carousel-block {
+	display: flex;
+	align-items: center;
+	margin-top: 16px;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		flex-direction: column;
+		align-items: start;
+	}
+
+	&__content {
+		flex: 1;
+		margin: 0 1rem;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			margin: 16px 0;
+		}
+	}
+
+	&__content-text {
+		margin: 0;
+		@include breakpoint-deprecated( "<660px" ) {
+			margin-top: 16px;
+		}
+	}
+}

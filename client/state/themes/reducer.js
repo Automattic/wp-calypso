@@ -312,6 +312,13 @@ function fromApi( theme ) {
 		return theme;
 	}
 
+	// When a theme has no demo URI, it's set to false. Many components work when
+	// this is falsey, so we'll convert it to undefined here. This allows schema
+	// validation to succeed, since demo_uri is not a required property there.
+	if ( typeof theme.demo_uri !== 'string' ) {
+		theme.demo_uri = undefined;
+	}
+
 	return { ...theme, description: decodeEntities( theme.description ) };
 }
 

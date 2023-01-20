@@ -58,12 +58,12 @@ skipDescribeIf( features.siteType === 'atomic' )(
 		} );
 
 		it( `Replace uploaded image`, async () => {
-			const editorFrame = await editorPage.getEditorHandle();
-			await editorFrame.click( 'button:text("Replace")' );
-			await editorFrame.setInputFiles(
-				'.components-form-file-upload input[type="file"]',
-				imageFile.fullpath
-			);
+			const editorWindowLocator = editorPage.getEditorWindowLocator();
+			await editorWindowLocator.locator( 'button:text("Replace")' ).click();
+			await editorWindowLocator
+				.locator( '.components-form-file-upload input[type="file"]' )
+				.setInputFiles( imageFile.fullpath );
+
 			await imageBlock.waitUntilUploaded();
 
 			const newImage = await imageBlock.getImage();

@@ -13,7 +13,6 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleSectionNavCompact from '../people-section-nav-compact';
 import Subscribers from '../subscribers';
 import TeamInvites from '../team-invites';
-import TeamInvitesAccepted from '../team-invites-accepted';
 import TeamMembers from '../team-members';
 import type { FollowersQuery } from '../subscribers/types';
 import type { UsersQuery } from '../team-members/types';
@@ -29,12 +28,14 @@ function SubscribersTeam( props: Props ) {
 
 	// fetching data config
 	const followersFetchOptions = { search };
+	const defaultTeamFetchOptions = { include_viewers: true };
 	const teamFetchOptions = search
 		? {
 				search: `*${ search }*`,
-				search_columns: [ 'display_name', 'user_login' ],
+				search_columns: [ 'display_name', 'user_login', 'user_email' ],
+				...defaultTeamFetchOptions,
 		  }
-		: {};
+		: defaultTeamFetchOptions;
 
 	const followersQuery = useFollowersQuery(
 		site?.ID,
@@ -72,8 +73,8 @@ function SubscribersTeam( props: Props ) {
 						selectedFilter={ filter }
 						searchTerm={ search }
 						filterCount={ {
+							team: usersQuery.data?.total,
 							subscribers: followersQuery.data?.total,
-							'team-members': usersQuery.data?.total,
 						} }
 					/>
 				</SectionNav>
@@ -93,17 +94,16 @@ function SubscribersTeam( props: Props ) {
 								</>
 							);
 
-						case 'team-members':
+						case 'team':
 							return (
 								<>
 									<PageViewTracker
-										path="/people/team-members/:site"
+										path="/people/team/:site"
 										title="People > Team Members / Invites"
 									/>
 
 									<TeamMembers search={ search } usersQuery={ usersQuery } />
 									<TeamInvites />
-									<TeamInvitesAccepted />
 								</>
 							);
 					}

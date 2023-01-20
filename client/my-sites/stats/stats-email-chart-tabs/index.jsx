@@ -127,7 +127,7 @@ const connectComponent = connect(
 
 		const quantity = 'hour' === period ? 24 : 30;
 		const counts = getCountRecords( state, siteId, postId, period, statType );
-		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
+		const chartData = buildChartData( activeLegend, chartTab, counts, period );
 		const isActiveTabLoading = isLoadingTabs(
 			state,
 			siteId,

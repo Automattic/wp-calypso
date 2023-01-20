@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
@@ -27,6 +28,11 @@ import statsStrings from '../stats-strings';
 const StatsInsights = ( props ) => {
 	const { siteId, siteSlug, translate, isOdysseyStats } = props;
 	const moduleStrings = statsStrings();
+	const isInsightsPageGridEnabled = config.isEnabled( 'stats/insights-page-grid' );
+
+	const statsModuleListClass = classNames( 'stats__module-list stats__module--unified', {
+		'is-insights-page-enabled': isInsightsPageGridEnabled,
+	} );
 
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
@@ -58,37 +64,66 @@ const StatsInsights = ( props ) => {
 						vendor={ getSuggestionsVendor() }
 					/>
 				) }
-				<div className="stats-insights__nonperiodic has-recent">
-					<div className="stats__module-list stats__module--unified">
-						<div className="stats__module-column">
-							<LatestPostSummary />
+				{ isInsightsPageGridEnabled ? (
+					<div className={ statsModuleListClass }>
+						<StatsModule
+							path="tags-categories"
+							moduleStrings={ moduleStrings.tags }
+							statType="statsTags"
+							hideSummaryLink
+							hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
+						/>
+						<Comments path="comments" />
 
-							<StatsModule
-								path="tags-categories"
-								moduleStrings={ moduleStrings.tags }
-								statType="statsTags"
-								hideSummaryLink
-								hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
-							/>
-							{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for Odyssey for now. */ }
-							{ ! isOdysseyStats && <StatShares siteId={ siteId } /> }
-						</div>
-						<div className="stats__module-column">
-							<Reach />
-							<Followers path="followers" />
-						</div>
-						<div className="stats__module-column">
-							<Comments path="comments" />
-							<StatsModule
-								path="publicize"
-								moduleStrings={ moduleStrings.publicize }
-								statType="statsPublicize"
-								hideSummaryLink
-								hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
-							/>
+						{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for Odyssey for now. */ }
+						{ ! isOdysseyStats && <StatShares siteId={ siteId } /> }
+
+						<Followers path="followers" />
+						<StatsModule
+							path="publicize"
+							moduleStrings={ moduleStrings.publicize }
+							statType="statsPublicize"
+							hideSummaryLink
+							hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
+						/>
+
+						<LatestPostSummary />
+						<Reach />
+					</div>
+				) : (
+					// remove all this section when cleaning 'stats/insights-page-grid'
+					<div className="stats-insights__nonperiodic has-recent">
+						<div className={ statsModuleListClass }>
+							<div className="stats__module-column">
+								<LatestPostSummary />
+
+								<StatsModule
+									path="tags-categories"
+									moduleStrings={ moduleStrings.tags }
+									statType="statsTags"
+									hideSummaryLink
+									hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
+								/>
+								{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for Odyssey for now. */ }
+								{ ! isOdysseyStats && <StatShares siteId={ siteId } /> }
+							</div>
+							<div className="stats__module-column">
+								<Reach />
+								<Followers path="followers" />
+							</div>
+							<div className="stats__module-column">
+								<Comments path="comments" />
+								<StatsModule
+									path="publicize"
+									moduleStrings={ moduleStrings.publicize }
+									statType="statsPublicize"
+									hideSummaryLink
+									hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
+								/>
+							</div>
 						</div>
 					</div>
-				</div>
+				) }
 				<JetpackColophon />
 			</div>
 		</Main>

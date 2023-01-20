@@ -15,7 +15,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import AutomatedCopySite from './internals/steps-repository/automated-copy-site';
-import Intro from './internals/steps-repository/intro';
+import DomainsStep from './internals/steps-repository/domains';
 import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
@@ -41,17 +41,29 @@ const copySite: Flow = {
 		}
 
 		return [
-			{ slug: 'intro', component: Intro },
+			{ slug: 'domains', component: DomainsStep },
 			{ slug: 'site-creation-step', component: SiteCreationStep },
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'automated-copy', component: AutomatedCopySite },
-			{ slug: 'processing-copy', component: ProcessingStep },
+			{
+				slug: 'processing-copy',
+				component: ( props ) => (
+					<ProcessingStep
+						{ ...props }
+						title={ translate( 'We’re copying your site' ) }
+						subtitle={ translate(
+							'This may take a few minutes. Feel free to close this window, we’ll email you when it’s done.'
+						) }
+					/>
+				),
+			},
 		];
 	},
 
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+
 		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
 		const urlQueryParams = useQuery();
 
@@ -64,8 +76,7 @@ const copySite: Flow = {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
 
 			switch ( _currentStepSlug ) {
-				case 'intro': {
-					clearSignupDestinationCookie();
+				case 'domains': {
 					return navigate( 'site-creation-step' );
 				}
 

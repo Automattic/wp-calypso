@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import TokenField from 'calypso/components/token-field';
-import { useUpdateMonitorSettings } from '../../hooks';
+import { useUpdateMonitorSettings, useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import {
 	availableNotificationDurations as durations,
 	getSiteCountText,
@@ -22,11 +22,20 @@ interface Props {
 	sites: Array< Site >;
 	onClose: () => void;
 	settings?: MonitorSettings;
+	monitorUserEmails?: Array< string >;
+	isLargeScreen?: boolean;
 }
 
-export default function NotificationSettings( { onClose, sites, settings }: Props ) {
+export default function NotificationSettings( {
+	onClose,
+	sites,
+	settings,
+	monitorUserEmails,
+	isLargeScreen,
+}: Props ) {
 	const translate = useTranslate();
 	const { updateMonitorSettings, isLoading, isComplete } = useUpdateMonitorSettings( sites );
+	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( sites, isLargeScreen );
 
 	const defaultDuration = durations.find( ( duration ) => duration.time === 5 );
 
@@ -51,10 +60,12 @@ export default function NotificationSettings( { onClose, sites, settings }: Prop
 			email_notifications: enableEmailNotification,
 			jetmon_defer_status_down_minutes: selectedDuration?.time,
 		};
+		recordEvent( 'notification_save_click', params );
 		updateMonitorSettings( params );
 	}
 
 	function selectDuration( duration: Duration ) {
+		recordEvent( 'duration_select', { duration: duration.time } );
 		setSelectedDuration( duration );
 	}
 
@@ -68,11 +79,18 @@ export default function NotificationSettings( { onClose, sites, settings }: Prop
 	}, [ settings?.monitor_deferment_time ] );
 
 	useEffect( () => {
-		if ( settings?.monitor_notify_users_emails ) {
-			setAddedEmailAddresses( settings.monitor_notify_users_emails );
-			setEnableEmailNotification( true );
+		if ( settings ) {
+			setAddedEmailAddresses( settings.monitor_user_emails || [] );
+			setEnableEmailNotification( !! settings.monitor_user_email_notifications );
+			setEnableMobileNotification( !! settings.monitor_user_wp_note_notifications );
 		}
-	}, [ settings?.monitor_notify_users_emails ] );
+	}, [ settings ] );
+
+	useEffect( () => {
+		if ( monitorUserEmails ) {
+			setAddedEmailAddresses( monitorUserEmails );
+		}
+	}, [ monitorUserEmails ] );
 
 	useEffect( () => {
 		if ( enableMobileNotification || enableEmailNotification ) {
@@ -126,6 +144,11 @@ export default function NotificationSettings( { onClose, sites, settings }: Prop
 							{ translate( 'Notify me about downtime:' ) }
 						</div>
 						<SelectDropdown
+							onToggle={ ( { open: isOpen }: { open: boolean } ) => {
+								if ( isOpen ) {
+									recordEvent( 'notification_duration_toggle' );
+								}
+							} }
 							selectedIcon={
 								<img
 									className="notification-settings__duration-icon"
@@ -149,7 +172,12 @@ export default function NotificationSettings( { onClose, sites, settings }: Prop
 					<div className="notification-settings__toggle-container">
 						<div className="notification-settings__toggle">
 							<ToggleControl
-								onChange={ setEnableMobileNotification }
+								onChange={ ( isEnabled ) => {
+									recordEvent(
+										isEnabled ? 'mobile_notification_enable' : 'mobile_notification_disable'
+									);
+									setEnableMobileNotification( isEnabled );
+								} }
 								checked={ enableMobileNotification }
 							/>
 						</div>
@@ -176,7 +204,12 @@ export default function NotificationSettings( { onClose, sites, settings }: Prop
 					<div className="notification-settings__toggle-container">
 						<div className="notification-settings__toggle">
 							<ToggleControl
-								onChange={ setEnableEmailNotification }
+								onChange={ ( isEnabled ) => {
+									recordEvent(
+										isEnabled ? 'email_notification_enable' : 'email_notification_disable'
+									);
+									setEnableEmailNotification( isEnabled );
+								} }
 								checked={ enableEmailNotification }
 							/>
 						</div>

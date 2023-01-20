@@ -6,7 +6,7 @@
 
 ## 3.0.0
 
-- Add dependency node-fetch and export `LinksForSection` & `getContextResults`  (#64092)
+- Add dependency node-fetch and export `LinksForSection` & `getContextResults` (#64092)
 - Fix the Static Design Picker shows immediately when changing the vertical (#64140)
 - Add query params as query keys to useStarterDesignsGenerated() (#64108)
 - Pass vertical_id to the generated designs endpoint to get vertical title (#64108)
@@ -78,8 +78,8 @@
 - Update dependency redux to ^4.1.2 (#57688)
 - Add connection mode information to the domains state (#55595)
 - Refactor packages/data-stores to use import/order (#54486)
-- Add reader store to enable enable font smoothing on wpcom interfaces  (#52230)
-- Add `is_blank_canvas` optional type to CreateSiteParams interface  (#52288)
+- Add reader store to enable enable font smoothing on wpcom interfaces (#52230)
+- Add `is_blank_canvas` optional type to CreateSiteParams interface (#52288)
 - Add dependency tslib (#52146)
 - Add `subdomain_part` to Domain interface (#51251)
 

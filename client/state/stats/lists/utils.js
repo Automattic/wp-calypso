@@ -954,7 +954,9 @@ export const normalizers = {
 		const emailsData = get( data, [ 'posts' ], [] );
 
 		return emailsData.map( ( { id, href, date, title, type, opens } ) => {
-			const detailPage = site ? `/stats/email/open/${ site.slug }/${ query.period }/${ id }` : null;
+			const detailPage = site
+				? `/stats/email/opens/${ site.slug }/${ query.period }/${ id }`
+				: null;
 			return {
 				id,
 				href,
@@ -986,6 +988,10 @@ export const normalizers = {
 export function parseEmailChartData( payload, nullAttributes = [] ) {
 	if ( ! payload || ! payload.data ) {
 		return [];
+	}
+
+	if ( 'hour' === payload.unit ) {
+		payload.fields.push( 'hour' );
 	}
 
 	return payload.data.map( function ( record ) {

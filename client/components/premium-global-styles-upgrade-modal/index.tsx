@@ -1,10 +1,12 @@
+import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Button, Gridicon, Dialog, ScreenReaderText } from '@automattic/components';
-import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { PRODUCTS_LIST_STORE } from 'calypso/landing/stepper/stores';
-import './upgrade-modal.scss';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
+
+import './style.scss';
 
 interface PremiumGlobalStylesUpgradeModalProps {
 	checkout: () => void;
@@ -20,14 +22,8 @@ export default function PremiumGlobalStylesUpgradeModal( {
 	tryStyle,
 }: PremiumGlobalStylesUpgradeModalProps ) {
 	const translate = useTranslate();
-	const premiumPlanProduct = useSelect( ( select ) =>
-		select( PRODUCTS_LIST_STORE ).getProductBySlug( 'value_bundle' )
-	);
-
-	//Wait until we have product data to show content
+	const premiumPlanProduct = useSelector( ( state ) => getProductBySlug( state, PLAN_PREMIUM ) );
 	const isLoading = ! premiumPlanProduct;
-
-	const planName = premiumPlanProduct?.product_name;
 
 	return (
 		<Dialog
@@ -48,7 +44,7 @@ export default function PremiumGlobalStylesUpgradeModal( {
 									components: {
 										strong: <strong />,
 									},
-									args: planName,
+									args: premiumPlanProduct?.product_name,
 									comment:
 										'The variable is the plan name: "...by upgrading to WordPress.com Premium."',
 								}

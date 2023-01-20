@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
@@ -30,6 +29,7 @@ import SiteContent from './site-content';
 import SiteSearchFilterContainer from './site-search-filter-container/SiteSearchFilterContainer';
 import SiteWelcomeBanner from './site-welcome-banner';
 import { getProductSlugFromProductType } from './utils';
+import type { Site } from '../sites-overview/types';
 
 import './style.scss';
 
@@ -51,7 +51,8 @@ export default function SitesOverview() {
 
 	const [ highlightTab, setHighlightTab ] = useState( false );
 
-	const { search, currentPage, filter } = useContext( SitesOverviewContext );
+	const { search, currentPage, filter, selectedSites, setSelectedSites } =
+		useContext( SitesOverviewContext );
 
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
 		isPartnerOAuthTokenLoaded,
@@ -59,6 +60,26 @@ export default function SitesOverview() {
 		currentPage,
 		filter
 	);
+
+	const selectedSiteIds = selectedSites.map( ( site ) => site.blog_id );
+
+	function handleSetSelectedSites( selectedSite: Site ) {
+		if ( selectedSiteIds.includes( selectedSite.blog_id ) ) {
+			setSelectedSites( selectedSites.filter( ( site ) => site.blog_id !== selectedSite.blog_id ) );
+		} else {
+			setSelectedSites( [ ...selectedSites, selectedSite ] );
+		}
+	}
+
+	if ( data?.sites ) {
+		data.sites = data.sites.map( ( site: Site ) => {
+			return {
+				...site,
+				isSelected: selectedSiteIds.includes( site.blog_id ),
+				onSelect: () => handleSetSelectedSites( site ),
+			};
+		} );
+	}
 
 	useEffect( () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_agency_dashboard_visit' ) );
@@ -78,8 +99,6 @@ export default function SitesOverview() {
 	}, [ refetch, jetpackSiteDisconnected ] );
 
 	const pageTitle = translate( 'Dashboard' );
-
-	const downTimeMonitoringUpdates = 'Dashboard - Down Time Monitoring Updates Enabled';
 
 	const basePath = '/dashboard';
 
@@ -211,11 +230,7 @@ export default function SitesOverview() {
 								} ) }
 							>
 								<div className="sites-overview__page-heading">
-									{ isEnabled( 'jetpack/partner-portal-downtime-monitoring-updates' ) ? (
-										<h2 className="sites-overview__page-title">{ downTimeMonitoringUpdates }</h2>
-									) : (
-										<h2 className="sites-overview__page-title">{ pageTitle }</h2>
-									) }
+									<h2 className="sites-overview__page-title">{ pageTitle }</h2>
 									<div className="sites-overview__page-subtitle">
 										{ translate( 'Manage all your Jetpack sites from one location' ) }
 									</div>
@@ -255,6 +270,7 @@ export default function SitesOverview() {
 								isLoading={ isLoading }
 							/>
 						) }
+
 						{ showEmptyState ? (
 							<div className="sites-overview__no-sites">{ emptyStateMessage }</div>
 						) : (

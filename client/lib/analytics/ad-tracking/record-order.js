@@ -96,19 +96,7 @@ export async function recordOrder( cart, orderId ) {
 
 	// Twitter
 	if ( mayWeTrackByTracker( 'twitter' ) ) {
-		const params = [
-			'track',
-			'Purchase',
-			{
-				value: cart.total_cost.toString(),
-				currency: cart.currency,
-				content_name: cart.products.map( ( product ) => product.product_name ).join( ',' ),
-				content_type: 'product',
-				content_ids: cart.products.map( ( product ) => product.product_slug ),
-				num_items: cart.products.length,
-				order_id: orderId,
-			},
-		];
+		const params = [ 'event', 'tw-nvzbs-ode0u', { value: usdTotalCost } ];
 		debug( 'recordOrder: [Twitter]', params );
 		window.twq( ...params );
 	}

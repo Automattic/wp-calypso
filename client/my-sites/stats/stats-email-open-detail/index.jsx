@@ -173,13 +173,6 @@ class StatsEmailOpenDetail extends Component {
 
 	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
 
-	barClick = ( bar ) => {
-		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
-		const parsed = getPageUrl();
-		const updatedQs = stringifyQs( updateQueryString( parsed, { startDate: bar.data.period } ) );
-		page.redirect( `${ parsed.pathname }?${ updatedQs }` );
-	};
-
 	switchChart = ( tab ) => {
 		if ( ! tab.loading && tab.attr !== this.props.chartTab ) {
 			this.props.recordGoogleEvent( 'Stats', 'Clicked ' + titlecase( tab.attr ) + ' Tab' );
@@ -208,7 +201,7 @@ class StatsEmailOpenDetail extends Component {
 		const { period, endOf } = this.props.period;
 		const traffic = {
 			label: translate( 'Traffic' ),
-			path: '/stats/email/open',
+			path: `/stats/email/${ statType }`,
 		};
 		const query = memoizedQuery( period, endOf );
 		const slugPath = slug ? `/${ slug }` : '';
@@ -227,7 +220,7 @@ class StatsEmailOpenDetail extends Component {
 					<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 
 					<PageViewTracker
-						path="/stats/email/open/:site/:period/:email_id"
+						path="/stats/email/opens/:site/:period/:email_id"
 						title="Stats > Single Email"
 					/>
 					<FixedNavigationHeader
@@ -254,7 +247,7 @@ class StatsEmailOpenDetail extends Component {
 									<StatsPeriodNavigation
 										date={ date }
 										period={ period }
-										url={ `/stats/email/open/${ slug }/${ period }/${ postId }` }
+										url={ `/stats/email/${ statType }/${ slug }/${ period }/${ postId }` }
 									>
 										<DatePicker
 											period={ period }
@@ -277,7 +270,6 @@ class StatsEmailOpenDetail extends Component {
 									activeLegend={ this.state.activeLegend }
 									availableLegend={ this.getAvailableLegend() }
 									onChangeLegend={ this.onChangeLegend }
-									barClick={ this.barClick }
 									switchTab={ this.switchChart }
 									charts={ CHARTS }
 									queryDate={ queryDate }

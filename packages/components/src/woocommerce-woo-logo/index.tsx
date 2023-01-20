@@ -1,11 +1,17 @@
 type WooCommerceWooLogoProps = {
+	className?: string;
 	height?: number;
 	width?: number;
 };
 
-const WooCommerceWooLogo = ( { height = 35, width = 20 }: WooCommerceWooLogoProps ) => {
+const WooCommerceWooLogo = ( {
+	className = 'woocommerce-logo',
+	height = 35,
+	width = 20,
+}: WooCommerceWooLogoProps ) => {
 	return (
 		<svg
+			className={ className }
 			width={ width }
 			height={ height }
 			viewBox="0 0 35 20"
