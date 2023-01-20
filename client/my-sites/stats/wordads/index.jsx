@@ -258,7 +258,7 @@ class WordAds extends Component {
 								</>
 
 								<div className="stats__module-list stats__module-headerless--unified">
-									<WordAdsEarnings site={ site } />
+									<WordAdsEarnings site={ site } showTotalsSection={ ! showNewHighlights } />
 								</div>
 							</div>
 
