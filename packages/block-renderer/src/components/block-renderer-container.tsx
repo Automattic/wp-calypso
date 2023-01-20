@@ -18,8 +18,10 @@ interface BlockRendererContainerProps {
 	inlineCss?: string;
 	viewportWidth?: number;
 	viewportHeight?: number;
-	maxHeight?: number;
+	maxHeight?: string | number;
 	minHeight?: number;
+	isMinHeight100vh?: boolean;
+	maxHeightFor100vh?: number;
 }
 
 interface ScaledBlockRendererContainerProps extends BlockRendererContainerProps {
@@ -35,6 +37,8 @@ const ScaledBlockRendererContainer = ( {
 	containerWidth,
 	maxHeight = BLOCK_MAX_HEIGHT,
 	minHeight,
+	isMinHeight100vh,
+	maxHeightFor100vh,
 }: ScaledBlockRendererContainerProps ) => {
 	const [ contentResizeListener, { height: contentHeight } ] = useResizeObserver();
 	const { styles, assets, duotone } = useSelect( ( select ) => {
@@ -85,13 +89,30 @@ const ScaledBlockRendererContainer = ( {
 
 	const scale = containerWidth / viewportWidth;
 
+	let scaledHeight = ( contentHeight as number ) * scale || minHeight;
+	if ( isMinHeight100vh && maxHeightFor100vh && ! viewportHeight ) {
+		scaledHeight = maxHeightFor100vh * scale;
+	}
+
+	let iframeHeight = ( contentHeight as number ) || minHeight;
+	if ( isMinHeight100vh ) {
+		if ( viewportHeight ) {
+			iframeHeight = viewportHeight;
+		} else if ( maxHeightFor100vh ) {
+			iframeHeight = maxHeightFor100vh;
+		}
+	}
+
 	return (
 		<div
 			className="scaled-block-renderer"
 			style={ {
 				transform: `scale(${ scale })`,
-				height: ( contentHeight as number ) * scale || minHeight,
-				maxHeight: ( contentHeight as number ) > maxHeight ? maxHeight * scale : undefined,
+				height: scaledHeight,
+				maxHeight:
+					maxHeight !== 'none' && ( contentHeight as number ) > maxHeight
+						? ( maxHeight as number ) * scale
+						: undefined,
 				minHeight: '1px',
 				// Try to avoid showing the content when the styles are not ready
 				opacity: contentHeight ? 1 : 0,
@@ -107,7 +128,7 @@ const ScaledBlockRendererContainer = ( {
 				style={ {
 					position: 'absolute',
 					width: viewportWidth,
-					height: viewportHeight || ( contentHeight as number ),
+					height: iframeHeight,
 					pointerEvents: 'none',
 					// This is a catch-all max-height for patterns.
 					// See: https://github.com/WordPress/gutenberg/pull/38175.
