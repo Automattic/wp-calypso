@@ -2,7 +2,7 @@
  * Create a `Users` instance
  *
  * @param {WPCOM} wpcom - wpcom instance
- * @returns {null} null
+ * @returns {Users|undefined}
  */
 export default function Users( wpcom ) {
 	if ( ! ( this instanceof Users ) ) {

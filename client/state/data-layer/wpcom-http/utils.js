@@ -10,7 +10,7 @@ const identity = ( data ) => data;
  * Returns response data from an HTTP request success action if available
  *
  * @param {object} action may contain HTTP response data
- * @returns {*|undefined} response data if available
+ * @returns {*} response data if available
  */
 export const getData = ( action ) => get( action, 'meta.dataLayer.data', undefined );
 
@@ -18,7 +18,7 @@ export const getData = ( action ) => get( action, 'meta.dataLayer.data', undefin
  * Returns error data from an HTTP request failure action if available
  *
  * @param {object} action may contain HTTP response error data
- * @returns {*|undefined} error data if available
+ * @returns {*} error data if available
  */
 export const getError = ( action ) => get( action, 'meta.dataLayer.error', undefined );
 
@@ -26,7 +26,7 @@ export const getError = ( action ) => get( action, 'meta.dataLayer.error', undef
  * Returns (response) headers data from an HTTP request action if available
  *
  * @param   {object}      action Request action for which to retrieve HTTP response headers
- * @returns {*|undefined}        Headers data if available
+ * @returns {*} Headers data if available
  */
 export const getHeaders = ( action ) => get( action, 'meta.dataLayer.headers', undefined );
 
@@ -48,7 +48,7 @@ export const getProgress = ( action ) => get( action, 'meta.dataLayer.progress',
  * Returns stream record from an HTTP request action if available
  *
  * @param {object} action may contain stream record
- * @returns {*|undefined} response data if available
+ * @returns {*} response data if available
  */
 export const getStreamRecord = ( action ) =>
 	get( action, 'meta.dataLayer.streamRecord', undefined );

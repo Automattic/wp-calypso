@@ -74,7 +74,7 @@ export function renderJsx( view, props ) {
  * @param {object} element - React element to be rendered to html
  * @param {string} key - cache key
  * @param {object} req - Request object
- * @returns {string} The rendered Layout
+ * @returns {string|undefined} The rendered Layout
  */
 function render( element, key, req ) {
 	try {
