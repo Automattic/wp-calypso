@@ -893,8 +893,9 @@ class ThemeSheet extends Component {
 						)
 					) }
 					forceHref={ false }
-					disableHref={ true }
-					onClick={ () => this.setState( { upgradeDialogVisible: true } ) }
+					disableHref={ !! siteId }
+					href={ ! siteId ? '/plans' : null }
+					onClick={ siteId ? () => this.setState( { upgradeDialogVisible: true } ) : null }
 					displayAsLink={ true }
 					feature={ FEATURE_UPLOAD_THEMES }
 					forceDisplay
