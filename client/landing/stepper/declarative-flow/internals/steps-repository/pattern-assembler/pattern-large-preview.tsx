@@ -34,6 +34,10 @@ const PatternLargePreview = ( { header, sections, footer, activePosition }: Prop
 		</li>
 	);
 
+	const updateViewportHeight = () => {
+		setViewportHeight( frameRef.current?.clientHeight );
+	};
+
 	useEffect( () => {
 		let timerId: number;
 		const scrollIntoView = () => {
@@ -64,6 +68,13 @@ const PatternLargePreview = ( { header, sections, footer, activePosition }: Prop
 		};
 	}, [ activePosition, header, sections, footer ] );
 
+	useEffect( () => {
+		const handleResize = () => updateViewportHeight();
+		window.addEventListener( 'resize', handleResize );
+
+		return () => window.removeEventListener( 'resize', handleResize );
+	} );
+
 	return (
 		<DeviceSwitcher
 			className="pattern-large-preview"
@@ -71,8 +82,9 @@ const PatternLargePreview = ( { header, sections, footer, activePosition }: Prop
 			isShowFrameBorder
 			frameRef={ frameRef }
 			onDeviceChange={ ( device ) => {
-				window.setTimeout( () => setViewportHeight( frameRef.current?.clientHeight ), 205 );
 				recordTracksEvent( 'calypso_signup_pattern_assembler_preview_device_click', { device } );
+				// Wait for the animation to end in 200ms
+				window.setTimeout( updateViewportHeight, 205 );
 			} }
 		>
 			{ hasSelectedPattern ? (
