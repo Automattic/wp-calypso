@@ -16,7 +16,7 @@ export function addLocaleQueryParam( params ) {
 	}
 
 	let localeQueryParam;
-	const query = parse( params.query );
+	const query = parse( params.query, { depth: 10 } );
 
 	if ( params.apiNamespace ) {
 		// v2 api request
@@ -26,7 +26,7 @@ export function addLocaleQueryParam( params ) {
 	}
 
 	return Object.assign( params, {
-		query: stringify( Object.assign( localeQueryParam, query ) ),
+		query: stringify( Object.assign( localeQueryParam, query ), { arrayFormat: 'brackets' } ),
 	} );
 }
 
