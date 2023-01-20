@@ -184,7 +184,7 @@ const useSectionPatterns = () => {
 	const testimonials = translate( 'Testimonials' );
 	const links = translate( 'Links' );
 	const services = translate( 'Services' );
-	const portfolio = translate( 'CV/Portfolio' );
+	const portfolio = translate( 'Portfolio' );
 
 	const sectionPatterns: Pattern[] = useMemo(
 		() => [
