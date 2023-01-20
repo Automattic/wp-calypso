@@ -7,9 +7,8 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 function useThemeSearchDetails( query ) {
 	const search = query.search || '';
-	const searchTaxonomies = useSelector( ( state ) =>
-		prependThemeFilterKeys( state, query.filter )
-	);
+	const searchTaxonomies =
+		useSelector( ( state ) => prependThemeFilterKeys( state, query.filter ) ) || '';
 	const searchTerm = searchTaxonomies + search;
 	const prevSearchTerm = usePrevious( searchTerm );
 	const searchTermHasChanged = prevSearchTerm !== searchTerm && !! searchTerm && searchTerm !== '';
