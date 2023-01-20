@@ -73,7 +73,8 @@ export const requests = ( state = {}, action ) => {
  * @returns {object}        Updated state
  */
 export const items = withSchemaValidation( itemSchemas, ( state = {}, action ) => {
-	const checkState = ( actualState, period ) => ( 'hour' === period ? {} : actualState );
+	const checkState = ( actualState, period ) =>
+		[ 'hour', 'day' ].includes( period ) ? {} : actualState;
 
 	switch ( action.type ) {
 		case EMAIL_STATS_RECEIVE:
