@@ -241,7 +241,11 @@ function Footer( props ) {
 					</div>
 					<Button
 						className="themes-list__footer-action-button"
-						href={ `/themes/upload/${ selectedSite.slug }` }
+						href={
+							canInstallTheme
+								? `https://${ selectedSite.slug }/wp-admin/theme-install.php`
+								: `/themes/upload/${ selectedSite.slug }`
+						}
 					>
 						{ translate( 'Upload theme' ) }
 					</Button>

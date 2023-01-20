@@ -69,6 +69,7 @@
 	.themes-list__footer-action-icon {
 		display: none;
 		margin-right: 16px;
+		flex-shrink: 0;
 
 		@include break-small {
 			display: block;
