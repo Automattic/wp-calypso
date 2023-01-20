@@ -36,6 +36,31 @@
 		margin-left: calc(60px + 16px); // icon width + margin
 	}
 
+	.plugins-browser-item__ratings {
+		display: flex;
+		justify-content: flex-end;
+
+		.plugins-browser-item__rating-star {
+			margin-right: 4px;
+			margin-left: 16px;
+		}
+
+		.plugins-browser-item__rating-value {
+			font-size: $font-body-extra-small;
+			line-height: 20px;
+			font-weight: 500;
+			color: var(--studio-gray-80);
+			margin-right: 5px;
+		}
+
+		.plugins-browser-item__number-of-ratings {
+			font-size: $font-body-extra-small;
+			line-height: 20px;
+			font-weight: 400;
+			color: var(--studio-gray-60);
+		}
+	}
+
 	.plugins-browser-item__description {
 		margin: 16px 0;
 		font-size: $font-body-small;

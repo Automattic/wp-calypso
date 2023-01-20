@@ -234,11 +234,14 @@ const PluginsBrowserListElement = ( props ) => {
 								<Gridicon
 									size={ 18 }
 									icon="star"
+									className="plugins-browser-item__rating-star"
 									color="#f0b849" // alert-yellow
 								/>
-								<span className="plugins-browser-item__rating-value">{ plugin.rating / 20 } </span>
+								<span className="plugins-browser-item__rating-value">
+									{ ( plugin.rating / 20 ).toFixed( 1 ) }
+								</span>
 								{ Number.isInteger( plugin.num_ratings ) && (
-									<span className="plugins-browser-item__rating-value">
+									<span className="plugins-browser-item__number-of-ratings">
 										{ translate( '(%(number_of_ratings)s)', {
 											args: {
 												number_of_ratings: plugin.num_ratings.toLocaleString( getLocaleSlug() ),
