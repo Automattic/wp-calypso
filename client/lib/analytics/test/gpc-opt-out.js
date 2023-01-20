@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { mayWeTrackUserGpcInCCPARegion } from '../utils';
+import { mayWeTrackUserGpcInCcpaRegion } from '../utils';
 import isRegionInCcpaZone from '../utils/is-region-in-ccpa-zone';
 
 // Return a predictable value for whether the user is in a CCPA region.
@@ -10,7 +10,7 @@ jest.mock( '../utils/is-region-in-ccpa-zone' );
 let windowSpy = jest.SpyInstance;
 
 // Return a predictable value for window.navigator.globalPrivacyControl.
-const setMockGPCValue = ( gpcValue ) => {
+const setMockGpcValue = ( gpcValue ) => {
 	windowSpy.mockImplementation( () => ( {
 		navigator: {
 			globalPrivacyControl: gpcValue,
@@ -27,40 +27,40 @@ describe( 'global privacy control', () => {
 		windowSpy.mockRestore();
 	} );
 
-	describe( 'mayWeTrackUserGpcInCCPARegion', () => {
+	describe( 'mayWeTrackUserGpcInCcpaRegion', () => {
 		test( 'we may track a user in CCPA if GPC is not set', () => {
-			setMockGPCValue( undefined );
+			setMockGpcValue( undefined );
 			isRegionInCcpaZone.mockReturnValue( true );
 
-			expect( mayWeTrackUserGpcInCCPARegion() ).toBe( true );
+			expect( mayWeTrackUserGpcInCcpaRegion() ).toBe( true );
 		} );
 
 		test( 'we may track a user in CCPA if GPC is set to false', () => {
-			setMockGPCValue( false );
+			setMockGpcValue( false );
 			isRegionInCcpaZone.mockReturnValue( true );
 
-			expect( mayWeTrackUserGpcInCCPARegion() ).toBe( true );
+			expect( mayWeTrackUserGpcInCcpaRegion() ).toBe( true );
 		} );
 
 		test( 'we may not track a user in CCPA if GPC is set', () => {
-			setMockGPCValue( true );
+			setMockGpcValue( true );
 			isRegionInCcpaZone.mockReturnValue( true );
 
-			expect( mayWeTrackUserGpcInCCPARegion() ).toBe( false );
+			expect( mayWeTrackUserGpcInCcpaRegion() ).toBe( false );
 		} );
 
 		test( 'we may track a user outside CCPA if GPC is set', () => {
-			setMockGPCValue( true );
+			setMockGpcValue( true );
 			isRegionInCcpaZone.mockReturnValue( false );
 
-			expect( mayWeTrackUserGpcInCCPARegion() ).toBe( true );
+			expect( mayWeTrackUserGpcInCcpaRegion() ).toBe( true );
 		} );
 
 		test( 'we may track a user outside CCPA if GPC is undefined', () => {
-			setMockGPCValue( undefined );
+			setMockGpcValue( undefined );
 			isRegionInCcpaZone.mockReturnValue( false );
 
-			expect( mayWeTrackUserGpcInCCPARegion() ).toBe( true );
+			expect( mayWeTrackUserGpcInCcpaRegion() ).toBe( true );
 		} );
 	} );
 } );

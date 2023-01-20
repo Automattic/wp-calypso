@@ -4,7 +4,7 @@ import {
 	isPiiUrl,
 	isUrlExcludedForPerformance,
 	getTrackingPrefs,
-	mayWeTrackUserGpcInCCPARegion,
+	mayWeTrackUserGpcInCcpaRegion,
 } from 'calypso/lib/analytics/utils';
 import { isE2ETest } from 'calypso/lib/e2e';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -110,7 +110,7 @@ export const mayWeTrackByBucket = ( bucket: Bucket ) => {
 			return false;
 		}
 		// Disable advertising trackers if GPC browser flag is set, and the user location pertains to CCPA.
-		if ( ! mayWeTrackUserGpcInCCPARegion() ) {
+		if ( ! mayWeTrackUserGpcInCcpaRegion() ) {
 			return false;
 		}
 	}

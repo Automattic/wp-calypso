@@ -26,7 +26,7 @@ export const isGpcFlagSetOptOut = (): boolean => {
  *
  * @returns {boolean} - False if the user is in the CCPA region and the GPC flag is set, true otherwise.
  */
-export const mayWeTrackUserGpcInCCPARegion = (): boolean => {
+export const mayWeTrackUserGpcInCcpaRegion = (): boolean => {
 	const cookies = cookie.parse( document.cookie );
 	if ( isRegionInCcpaZone( cookies.country_code, cookies.region ) && isGpcFlagSetOptOut() ) {
 		return false;
