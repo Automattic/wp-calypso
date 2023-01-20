@@ -1,5 +1,4 @@
 import React from 'react';
-import { BLOCK_MAX_HEIGHT } from '../constants';
 import BlockRendererContainer from './block-renderer-container';
 import { usePatternsRendererContext } from './patterns-renderer-context';
 
@@ -8,9 +7,16 @@ interface Props {
 	viewportWidth?: number;
 	viewportHeight?: number;
 	minHeight?: number;
+	maxHeight?: string | number;
 }
 
-const PatternRenderer = ( { patternId, viewportWidth, viewportHeight, minHeight }: Props ) => {
+const PatternRenderer = ( {
+	patternId,
+	viewportWidth,
+	viewportHeight,
+	minHeight,
+	maxHeight,
+}: Props ) => {
 	const renderedPatterns = usePatternsRendererContext();
 	const pattern = renderedPatterns[ patternId ];
 
@@ -19,7 +25,7 @@ const PatternRenderer = ( { patternId, viewportWidth, viewportHeight, minHeight 
 			styles={ pattern?.styles ?? [] }
 			viewportWidth={ viewportWidth }
 			viewportHeight={ viewportHeight }
-			maxHeight={ BLOCK_MAX_HEIGHT }
+			maxHeight={ maxHeight }
 			minHeight={ minHeight }
 		>
 			<div

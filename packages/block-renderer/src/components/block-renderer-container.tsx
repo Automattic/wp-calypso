@@ -18,7 +18,7 @@ interface BlockRendererContainerProps {
 	inlineCss?: string;
 	viewportWidth?: number;
 	viewportHeight?: number;
-	maxHeight?: number;
+	maxHeight?: string | number;
 	minHeight?: number;
 }
 
@@ -84,6 +84,10 @@ const ScaledBlockRendererContainer = ( {
 	}, [] );
 
 	const scale = containerWidth / viewportWidth;
+	let iframeHeight = contentHeight as number;
+	if ( viewportHeight && ( contentHeight as number ) < viewportHeight ) {
+		iframeHeight = viewportHeight;
+	}
 
 	return (
 		<div
@@ -91,7 +95,10 @@ const ScaledBlockRendererContainer = ( {
 			style={ {
 				transform: `scale(${ scale })`,
 				height: ( contentHeight as number ) * scale || minHeight,
-				maxHeight: ( contentHeight as number ) > maxHeight ? maxHeight * scale : undefined,
+				maxHeight:
+					maxHeight !== 'none' && ( contentHeight as number ) > maxHeight
+						? ( maxHeight as number ) * scale
+						: undefined,
 				minHeight: '1px',
 				// Try to avoid showing the content when the styles are not ready
 				opacity: contentHeight ? 1 : 0,
@@ -107,7 +114,7 @@ const ScaledBlockRendererContainer = ( {
 				style={ {
 					position: 'absolute',
 					width: viewportWidth,
-					height: viewportHeight || ( contentHeight as number ),
+					height: iframeHeight,
 					pointerEvents: 'none',
 					// This is a catch-all max-height for patterns.
 					// See: https://github.com/WordPress/gutenberg/pull/38175.
