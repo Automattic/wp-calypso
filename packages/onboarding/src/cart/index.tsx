@@ -227,12 +227,29 @@ const addToCartAndProceed = async (
 	}
 };
 
-export async function addProductToCart(
+export async function addProductsToCart(
 	siteSlug: string,
 	flowName: string,
-	cartItem: MinimalRequestCartProduct
+	cartItems: MinimalRequestCartProduct[] | null
 ) {
-	await addToCartAndProceed( cartItem, siteSlug, flowName );
+	if ( Array.isArray( cartItems ) ) {
+		const cartItemsToAdd = cartItems.map( ( cartItem ) =>
+			prepareItemForAddingToCart( cartItem, flowName )
+		);
+
+		debug( 'adding products to cart', cartItems );
+		const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug );
+
+		try {
+			const updatedCart = await cartManagerClient
+				.forCartKey( cartKey )
+				.actions.addProductsToCart( cartItemsToAdd );
+
+			debug( 'product add request complete', updatedCart );
+		} catch ( error ) {
+			debug( 'product add request had an error', error );
+		}
+	}
 }
 
 export async function setThemeOnSite( siteSlug: string, themeSlugWithRepo: string ) {
