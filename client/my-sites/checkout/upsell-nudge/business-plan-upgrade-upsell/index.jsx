@@ -1,7 +1,7 @@
-import { CompactCard, Button, Gridicon } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
+import { Button, Gridicon } from '@automattic/components';
 import { PureComponent } from 'react';
-import premiumThemesImage from 'calypso/assets/images/illustrations/themes.svg';
+import formatCurrency from 'calypso/../packages/format-currency/src';
+import upsellImage from 'calypso/assets/images/checkout-upsell/upsell-rocket.png';
 import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
@@ -23,19 +23,19 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 					properties={ { upgrade_item: 'business' } }
 				/>
 				<DocumentHead title={ title } />
-				{ receiptId ? (
-					<CompactCard className="business-plan-upgrade-upsell__card-header">
-						{ this.header() }
-					</CompactCard>
-				) : (
-					''
-				) }
-				<CompactCard className="business-plan-upgrade-upsell__card-body">
-					{ this.body() }
-				</CompactCard>
-				<CompactCard className="business-plan-upgrade-upsell__card-footer">
-					{ this.footer() }
-				</CompactCard>
+				<div className="business-plan-upgrade-upsell-new-design__header">
+					{ receiptId ? this.header() : '' }
+					<div className="business-plan-upgrade-upsell-new-design__header-title">
+						{ this.title() }
+					</div>
+				</div>
+				<div className="business-plan-upgrade-upsell-new-design__container">
+					<div className="business-plan-upgrade-upsell-new-design__body">{ this.body() }</div>
+					<div className="business-plan-upgrade-upsell-new-design__image-container">
+						{ this.image() }
+					</div>
+					<div className="business-plan-upgrade-upsell-new-design__footer">{ this.footer() }</div>
+				</div>
 			</>
 		);
 	}
@@ -44,11 +44,28 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 		const { translate } = this.props;
 
 		return (
-			<header className="business-plan-upgrade-upsell__small-header">
-				<h2 className="business-plan-upgrade-upsell__title">
-					{ translate( "Hold tight, we're getting your site ready." ) }
-				</h2>
+			<header className="business-plan-upgrade-upsell-new-design__small-header">
+				<h1 className="business-plan-upgrade-upsell-new-design__small-header-title">
+					{ translate( 'Limited time offer' ) }
+				</h1>
 			</header>
+		);
+	}
+
+	image() {
+		return (
+			<img className="business-plan-upgrade-upsell-new-design__image" src={ upsellImage } alt="" />
+		);
+	}
+
+	title() {
+		const { translate } = this.props;
+		return (
+			<>
+				<h2 className="business-plan-upgrade-upsell-new-design__title">
+					{ translate( 'Upgrade your site to the most powerful plan ever' ) }
+				</h2>
+			</>
 		);
 	}
 
@@ -62,187 +79,67 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 		} = this.props;
 		return (
 			<>
-				<h2 className="business-plan-upgrade-upsell__header">
-					{ translate( 'Upgrade your account to our most powerful plan ever' ) }
-				</h2>
-
-				<div className="business-plan-upgrade-upsell__column-pane">
-					<div className="business-plan-upgrade-upsell__column-content">
-						<p>
-							<b>
+				<div className="business-plan-upgrade-upsell-new-design__column-pane">
+					<p>{ translate( 'Unlock the power of the Business Plan and gain access to:' ) }</p>
+					<ul className="business-plan-upgrade-upsell-new-design__checklist">
+						<li className="business-plan-upgrade-upsell-new-design__checklist-item">
+							<Gridicon
+								icon="checkmark"
+								className="business-plan-upgrade-upsell-new-design__checklist-item-icon"
+							/>
+							<span className="business-plan-upgrade-upsell-new-design__checklist-item-text">
 								{ translate(
-									'Did you know that WordPress.com Business plan customers can now upload any WordPress plugins they want?'
+									'Using any WordPress plugins and extending the functionality of your website.'
 								) }
-							</b>
-						</p>
-						<p>
-							{ translate(
-								'If you’re familiar with WordPress plugins, you know why that’s exciting. Installing plugins on your site is like downloading an app on your phone. Except, instead of getting a new game or productivity tool, you get new features and functionality for your site.'
-							) }
-						</p>
-						<p>
-							{ translate(
-								'There are more than 50,000 WordPress plugins available to help turn your site into any powerful platform you imagine.'
-							) }
-						</p>
-						<p>{ translate( 'With the power of plugins you can:' ) }</p>
-						<ul className="business-plan-upgrade-upsell__checklist">
-							<li className="business-plan-upgrade-upsell__checklist-item">
-								<Gridicon
-									icon="checkmark"
-									className="business-plan-upgrade-upsell__checklist-item-icon"
-								/>
-								<span className="business-plan-upgrade-upsell__checklist-item-text">
-									{ translate(
-										'Transform your site into a mobile app, a job board, a wiki, or a coupon site.',
-										{
-											comment: "This is a benefit listed on a 'Upgrade your plan' page",
-										}
-									) }
-								</span>
-							</li>
-							<li className="business-plan-upgrade-upsell__checklist-item">
-								<Gridicon
-									icon="checkmark"
-									className="business-plan-upgrade-upsell__checklist-item-icon"
-								/>
-								<span className="business-plan-upgrade-upsell__checklist-item-text">
-									{ translate( 'Create a private, customer-only section.', {
-										comment: "This is a benefit listed on a 'Upgrade your plan' page",
-									} ) }
-								</span>
-							</li>
-							<li className="business-plan-upgrade-upsell__checklist-item">
-								<Gridicon
-									icon="checkmark"
-									className="business-plan-upgrade-upsell__checklist-item-icon"
-								/>
-								<span className="business-plan-upgrade-upsell__checklist-item-text">
-									{ translate( 'Let your customers book and pay for appointments by themselves.', {
-										comment: "This is a benefit listed on a 'Upgrade your plan' page",
-									} ) }
-								</span>
-							</li>
-							<li className="business-plan-upgrade-upsell__checklist-item">
-								<Gridicon
-									icon="checkmark"
-									className="business-plan-upgrade-upsell__checklist-item-icon"
-								/>
-								<span className="business-plan-upgrade-upsell__checklist-item-text">
-									{ translate(
-										'Fully optimize your site for search engines with advanced options.',
-										{
-											comment: "This is a benefit listed on a 'Upgrade your plan' page",
-										}
-									) }
-								</span>
-							</li>
-							<li className="business-plan-upgrade-upsell__checklist-item">
-								<Gridicon
-									icon="checkmark"
-									className="business-plan-upgrade-upsell__checklist-item-icon"
-								/>
-								<span className="business-plan-upgrade-upsell__checklist-item-text">
-									{ translate(
-										'Build a professional photography site with beautiful photo galleries.',
-										{
-											comment: "This is a benefit listed on a 'Upgrade your plan' page",
-										}
-									) }
-								</span>
-							</li>
-							<li className="business-plan-upgrade-upsell__checklist-item">
-								<Gridicon
-									icon="checkmark"
-									className="business-plan-upgrade-upsell__checklist-item-icon"
-								/>
-								<span className="business-plan-upgrade-upsell__checklist-item-text">
-									{ translate( 'Turn your site into a lead-generation powerhouse.', {
-										comment: "This is a benefit listed on a 'Upgrade your plan' page",
-									} ) }
-								</span>
-							</li>
-							<li className="business-plan-upgrade-upsell__checklist-item">
-								<Gridicon
-									icon="checkmark"
-									className="business-plan-upgrade-upsell__checklist-item-icon"
-								/>
-								<span className="business-plan-upgrade-upsell__checklist-item-text">
-									{ translate( 'Grow your email list with opt-in forms on your site.', {
-										comment: "This is a benefit listed on a 'Upgrade your plan' page",
-									} ) }
-								</span>
-							</li>
-						</ul>
-						<p>
-							{ translate(
-								'And access to the plugin library is just one of many benefits included with the Business plan.'
-							) }
-						</p>
-						<p>
-							{ translate(
-								'With our Business plan you can upload any custom theme you want, have full access to your site with SFTP, and have full control of your data directly with phpMyAdmin.'
-							) }
-						</p>
-						<p>
-							{ translate(
-								'You’ll also get automated backups and one-click rewind for your site. Those powerful tools mean you’ll never need to worry about losing data, or breaking your site during updates.'
-							) }
-						</p>
-						<p>
-							{ translate(
-								'{{b}}But please note:{{/b}} you don’t currently have access to all these amazing features because they are only available to Business plan customers and you haven’t upgraded yet.',
-								{
-									components: { b: <b /> },
-								}
-							) }
-						</p>
-						<p>
+							</span>
+						</li>
+						<li className="business-plan-upgrade-upsell-new-design__checklist-item">
+							<Gridicon
+								icon="checkmark"
+								className="business-plan-upgrade-upsell-new-design__checklist-item-icon"
+							/>
+							<span className="business-plan-upgrade-upsell-new-design__checklist-item-text">
+								{ translate( 'Uploading any WordPress themes purchased or downloaded elsewhere.' ) }
+							</span>
+						</li>
+						<li className="business-plan-upgrade-upsell-new-design__checklist-item">
+							<Gridicon
+								icon="checkmark"
+								className="business-plan-upgrade-upsell-new-design__checklist-item-icon"
+							/>
+							<span className="business-plan-upgrade-upsell-new-design__checklist-item-text">
+								{ translate( 'Enjoying automated Jetpack backups & one-click website restores.' ) }
+							</span>
+						</li>
+						<li className="business-plan-upgrade-upsell-new-design__checklist-item">
+							<Gridicon
+								icon="checkmark"
+								className="business-plan-upgrade-upsell-new-design__checklist-item-icon"
+							/>
+							<span className="business-plan-upgrade-upsell-new-design__checklist-item-text">
+								{ translate( 'Setting up SFTP and database credentials.' ) }
+							</span>
+						</li>
+					</ul>
+					<p>
+						{ translate(
+							'The great news is that you can upgrade today and try the Business Plan risk-free thanks to our 14-day money-back guarantee. Simply click below to upgrade. You’ll only have to pay the difference to the Premium Plan ({{del}}%(fullPrice)s{{/del}} %(discountPrice)s).',
 							{
-								// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
-								translate(
-									'The good news is that you can upgrade your plan today and try the Business plan risk-free thanks to our {{b}}%(days)d-day money-back guarantee{{/b}}.',
-									'The good news is that you can upgrade your plan today and try the Business plan risk-free thanks to our {{b}}%(days)d-day money-back guarantee{{/b}}.',
-									{
-										count: hasSevenDayRefundPeriod ? 7 : 14,
-										components: { b: <b /> },
-										args: { days: hasSevenDayRefundPeriod ? 7 : 14 },
-									}
-								)
+								components: {
+									del: <del />,
+									b: <b />,
+								},
+								args: {
+									days: hasSevenDayRefundPeriod ? 7 : 14,
+									fullPrice: formatCurrency( planRawPrice, currencyCode, { stripZeros: true } ),
+									discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
+										stripZeros: true,
+									} ),
+									comment: 'A monetary value at the end, e.g. $25',
+								},
 							}
-						</p>
-						<p>
-							{
-								// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
-								translate(
-									'Simply click the link below and select the Business plan option to upgrade today {{b}}for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more{{/b}}. Once you upgrade, you’ll have %(days)d day to evaluate the plan and decide if it’s right for you.',
-									'Simply click the link below and select the Business plan option to upgrade today {{b}}for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more{{/b}}. Once you upgrade, you’ll have %(days)d days to evaluate the plan and decide if it’s right for you.',
-									{
-										count: hasSevenDayRefundPeriod ? 7 : 14,
-										components: {
-											del: <del />,
-											b: <b />,
-										},
-										args: {
-											days: hasSevenDayRefundPeriod ? 7 : 14,
-											fullPrice: formatCurrency( planRawPrice, currencyCode, { stripZeros: true } ),
-											discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
-												stripZeros: true,
-											} ),
-										},
-									}
-								)
-							}
-						</p>
-						<p>{ translate( 'So are you ready to explore our most powerful plan ever?' ) }</p>
-					</div>
-					<div className="business-plan-upgrade-upsell__column-doodle">
-						<img
-							className="business-plan-upgrade-upsell__doodle"
-							alt="Website expert offering a support session"
-							src={ premiumThemesImage }
-						/>
-					</div>
+						) }
+					</p>
 				</div>
 			</>
 		);
@@ -251,20 +148,20 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 	footer() {
 		const { translate, handleClickAccept, handleClickDecline } = this.props;
 		return (
-			<footer className="business-plan-upgrade-upsell__footer">
+			<footer className="business-plan-upgrade-upsell-new-design__footer">
 				<Button
 					data-e2e-button="decline"
-					className="business-plan-upgrade-upsell__decline-offer-button"
+					className="business-plan-upgrade-upsell-new-design__decline-offer-button"
 					onClick={ handleClickDecline }
 				>
-					{ translate( "No thanks, I don't need plugins" ) }
+					{ translate( 'No Thanks' ) }
 				</Button>
 				<Button
 					primary
-					className="business-plan-upgrade-upsell__accept-offer-button"
+					className="business-plan-upgrade-upsell-new-design__accept-offer-button"
 					onClick={ () => handleClickAccept( 'accept' ) }
 				>
-					{ translate( 'Yes, I need plugins for my site!' ) }
+					{ translate( 'Upgrade Now' ) }
 				</Button>
 			</footer>
 		);
