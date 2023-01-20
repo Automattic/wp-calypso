@@ -50,9 +50,6 @@ export default function NotificationSettings( {
 		if ( ! enableMobileNotification && ! enableEmailNotification ) {
 			return setValidationError( translate( 'Please select at least one contact method.' ) );
 		}
-		if ( enableEmailNotification && ! addedEmailAddresses.length ) {
-			return setValidationError( translate( 'Please add at least one email recipient' ) );
-		}
 		const params = {
 			wp_note_notifications: enableMobileNotification,
 			email_notifications: enableEmailNotification,
