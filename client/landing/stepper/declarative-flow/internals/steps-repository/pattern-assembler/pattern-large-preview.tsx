@@ -30,6 +30,8 @@ const PatternLargePreview = ( { header, sections, footer, activePosition }: Prop
 			<PatternRenderer
 				patternId={ encodePatternId( pattern.id ) }
 				viewportHeight={ viewportHeight || frameRef.current?.clientHeight }
+				// Disable default max-height
+				maxHeight="none"
 			/>
 		</li>
 	);
