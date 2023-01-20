@@ -2,7 +2,7 @@ import { PatternRenderer } from '@automattic/block-renderer';
 import { DeviceSwitcher } from '@automattic/components';
 import { Icon, layout } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
@@ -23,12 +23,13 @@ const PatternLargePreview = ( { header, sections, footer, activePosition }: Prop
 	const hasSelectedPattern = header || sections.length || footer;
 	const frameRef = useRef< HTMLDivElement | null >( null );
 	const listRef = useRef< HTMLUListElement | null >( null );
+	const [ viewportHeight, setViewportHeight ] = useState< number | undefined >( 0 );
 
 	const renderPattern = ( key: string, pattern: Pattern ) => (
 		<li key={ key }>
 			<PatternRenderer
 				patternId={ encodePatternId( pattern.id ) }
-				viewportHeight={ frameRef.current?.clientHeight }
+				viewportHeight={ viewportHeight || frameRef.current?.clientHeight }
 			/>
 		</li>
 	);
@@ -69,9 +70,10 @@ const PatternLargePreview = ( { header, sections, footer, activePosition }: Prop
 			isShowDeviceSwitcherToolbar
 			isShowFrameBorder
 			frameRef={ frameRef }
-			onDeviceChange={ ( device ) =>
-				recordTracksEvent( 'calypso_signup_pattern_assembler_preview_device_click', { device } )
-			}
+			onDeviceChange={ ( device ) => {
+				window.setTimeout( () => setViewportHeight( frameRef.current?.clientHeight ), 205 );
+				recordTracksEvent( 'calypso_signup_pattern_assembler_preview_device_click', { device } );
+			} }
 		>
 			{ hasSelectedPattern ? (
 				<ul className="pattern-large-preview__patterns" ref={ listRef }>
