@@ -69,6 +69,15 @@ const PromptsNavigation = ( { prompts } ) => {
 		}
 	};
 
+	const trackClickViewAllResponses = () => {
+		dispatch(
+			recordTracksEvent( `calypso_customer_home_view_all_responses`, {
+				site_id: siteId,
+				prompt_id: getPrompt().id,
+			} )
+		);
+	};
+
 	const renderPromptNavigation = () => {
 		const buttonClasses = classnames( 'navigation-link' );
 
@@ -104,7 +113,7 @@ const PromptsNavigation = ( { prompts } ) => {
 			</div>
 		);
 
-		const promptReaderURL = 'http://wordpress.com/tag/dailyprompts-' + prompt.id;
+		const promptReaderURL = 'http://wordpress.com/tag/dailyprompt-' + prompt.id;
 
 		if ( prompt.answered_users_sample.length > 0 ) {
 			responses = (
@@ -119,6 +128,7 @@ const PromptsNavigation = ( { prompts } ) => {
 						target="_blank"
 						rel="noreferrer"
 						className="blogging-prompt__prompt-responses-link"
+						onClick={ trackClickViewAllResponses }
 					>
 						{ translate( 'View all responses' ) }
 					</a>
