@@ -181,7 +181,7 @@ class StatsSite extends Component {
 	}
 
 	renderStats() {
-		const { date, siteId, slug, isJetpack, isSitePrivate, isOdysseyStats } = this.props;
+		const { date, siteId, slug, isJetpack, isSitePrivate, isOdysseyStats, context } = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -248,6 +248,7 @@ class StatsSite extends Component {
 								date={ date }
 								period={ period }
 								url={ `/stats/${ period }/${ slug }` }
+								queryParams={ context.query }
 							>
 								<DatePicker
 									period={ period }
