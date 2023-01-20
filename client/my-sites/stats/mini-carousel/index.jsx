@@ -10,11 +10,16 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import MiniCarouselBlock from './mini-carousel-block';
+import { isBlockDismissed } from './selectors';
 
 import './style.scss';
 
 const EVENT_TRAFFIC_BLAZE_PROMO_VIEW = 'calypso_stats_traffic_blaze_banner_view';
+const EVENT_TRAFFIC_BLAZE_PROMO_CLICK = 'calypso_stats_traffic_blaze_banner_click';
+const EVENT_TRAFFIC_BLAZE_PROMO_DISMISS = 'calypso_stats_traffic_blaze_banner_dismiss';
 const EVENT_YOAST_PROMO_VIEW = 'calypso_stats_wordpress_seo_premium_banner_view';
+const EVENT_YOAST_PROMO_CLICK = 'calypso_stats_wordpress_seo_premium_banner_click';
+const EVENT_YOAST_PROMO_DISMISS = 'calypso_stats_wordpress_seo_premium_banner_dismiss';
 
 const MiniCarousel = ( { slug, isOdysseyStats } ) => {
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -30,9 +35,15 @@ const MiniCarousel = ( { slug, isOdysseyStats } ) => {
 	const [ dotPagerIndex, setDotPagerIndex ] = useState( 0 );
 
 	// Blaze promo is disabled for Odyssey.
-	const showBlazePromo = ! isOdysseyStats && shouldShowAdvertisingOption;
+	const showBlazePromo =
+		! useSelector( isBlockDismissed( 'calypso_stats_traffic_blaze_banner_dismiss' ) ) &&
+		! isOdysseyStats &&
+		shouldShowAdvertisingOption;
 	// Yoast promo is disabled for Odyssey & self-hosted & non-traffic pages.
-	const showYoastPromo = ! isOdysseyStats && ! jetpackNonAtomic;
+	const showYoastPromo =
+		! useSelector( isBlockDismissed( 'calypso_stats_wordpress_seo_premium_banner_dismiss' ) ) &&
+		! isOdysseyStats &&
+		! jetpackNonAtomic;
 
 	const viewEvents = useMemo( () => {
 		const events = [];
@@ -60,7 +71,7 @@ const MiniCarousel = ( { slug, isOdysseyStats } ) => {
 	if ( showBlazePromo ) {
 		blocks.push(
 			<MiniCarouselBlock
-				clickEvent="calypso_stats_traffic_blaze_banner_click"
+				clickEvent={ EVENT_TRAFFIC_BLAZE_PROMO_CLICK }
 				image={ <BlazeLogo className="mini-carousel-blaze" size={ 45 } /> }
 				headerText={ translate( 'Promote your content with Blaze' ) }
 				contentText={ translate(
@@ -68,6 +79,8 @@ const MiniCarousel = ( { slug, isOdysseyStats } ) => {
 				) }
 				ctaText={ translate( 'Create campaign' ) }
 				href={ `/advertising/${ slug || '' }` }
+				dismissEvent={ EVENT_TRAFFIC_BLAZE_PROMO_DISMISS }
+				key="blaze"
 			/>
 		);
 	}
@@ -75,7 +88,7 @@ const MiniCarousel = ( { slug, isOdysseyStats } ) => {
 	if ( showYoastPromo ) {
 		blocks.push(
 			<MiniCarouselBlock
-				clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
+				clickEvent={ EVENT_YOAST_PROMO_CLICK }
 				image={ <img src={ YoastLogo } alt="" width={ 45 } height={ 45 } /> }
 				headerText={ translate( 'Increase your site visitors with Yoast SEO Premium' ) }
 				contentText={ translate(
@@ -83,6 +96,8 @@ const MiniCarousel = ( { slug, isOdysseyStats } ) => {
 				) }
 				ctaText={ translate( 'Get Yoast' ) }
 				href={ `/plugins/wordpress-seo-premium/${ slug || '' }` }
+				dismissEvent={ EVENT_YOAST_PROMO_DISMISS }
+				key="yoast"
 			/>
 		);
 	}
