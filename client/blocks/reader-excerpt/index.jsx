@@ -43,7 +43,7 @@ const chooseExcerpt = ( post ) => {
 	// Need to figure out if custom excerpt is different to better_excerpt
 	if ( post.excerpt.length > 0 ) {
 		// If the post is a dailyprompt, attempt to replace the prompt text with a pullquote.
-		if ( post.tags && post.hasOwnPromperty( 'dailyprompt' ) ) {
+		if ( post.tags && post.tags.hasOwnProperty( 'dailyprompt' ) ) {
 			const dom = domForHtml( post.content );
 			const promptQuote = dom.querySelector( '.is-reader > .wp-block-pullquote:first-child' );
 
