@@ -126,6 +126,7 @@ export class AppBanner extends Component {
 
 		if ( this.isAndroid() ) {
 			const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
+			const scheme = displayJetpackAppBranding ? 'jetpack' : 'wordpress';
 			const packageName = displayJetpackAppBranding
 				? 'com.jetpack.android'
 				: 'org.wordpress.android';
@@ -134,15 +135,15 @@ export class AppBanner extends Component {
 			//TODO: update when section deep links are available.
 			switch ( currentSection ) {
 				case GUTENBERG:
-					return `intent://details?id=${ packageName }&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
+					return `intent://details?id=${ packageName }&url=${ scheme }://post&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case HOME:
-					return `intent://details?id=${ packageName }&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
+					return `intent://details?id=${ packageName }&url=${ scheme }://home&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case NOTES:
-					return `intent://details?id=${ packageName }&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
+					return `intent://details?id=${ packageName }&url=${ scheme }://notifications&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case READER:
-					return `intent://details?id=${ packageName }&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
+					return `intent://details?id=${ packageName }&url=${ scheme }://read&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case STATS:
-					return `intent://details?id=${ packageName }&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
+					return `intent://details?id=${ packageName }&url=${ scheme }://stats&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 			}
 		}
 
