@@ -11,6 +11,7 @@ interface Props {
 	defaultDevice?: Device;
 	isShowDeviceSwitcherToolbar?: boolean;
 	isShowFrameBorder?: boolean;
+	frameRef?: React.MutableRefObject< HTMLDivElement | null >;
 	onDeviceChange?: ( device: Device ) => void;
 }
 
@@ -20,6 +21,7 @@ const DeviceSwitcher = ( {
 	defaultDevice = DEVICE_TYPES.COMPUTER,
 	isShowDeviceSwitcherToolbar,
 	isShowFrameBorder,
+	frameRef,
 	onDeviceChange,
 }: Props ) => {
 	const [ device, setDevice ] = useState< Device >( defaultDevice );
@@ -41,7 +43,9 @@ const DeviceSwitcher = ( {
 			{ isShowDeviceSwitcherToolbar && (
 				<DeviceSwitcherToolbar device={ device } onDeviceClick={ handleDeviceClick } />
 			) }
-			<div className="device-switcher__frame">{ children }</div>
+			<div className="device-switcher__frame" ref={ frameRef }>
+				{ children }
+			</div>
 		</div>
 	);
 };
