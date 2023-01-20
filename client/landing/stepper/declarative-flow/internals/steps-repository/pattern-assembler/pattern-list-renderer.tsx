@@ -21,6 +21,7 @@ interface PatternListRendererProps {
 }
 
 const PLACEHOLDER_HEIGHT = 100;
+const MAX_HEIGHT_FOR_100VH = 500;
 
 const PatternListItem = ( { pattern, className, show, onSelect }: PatternListItemProps ) => {
 	return (
@@ -34,6 +35,7 @@ const PatternListItem = ( { pattern, className, show, onSelect }: PatternListIte
 				patternId={ encodePatternId( pattern.id ) }
 				viewportWidth={ 1060 }
 				minHeight={ PLACEHOLDER_HEIGHT }
+				maxHeightFor100vh={ MAX_HEIGHT_FOR_100VH }
 			/>
 		</Button>
 	);

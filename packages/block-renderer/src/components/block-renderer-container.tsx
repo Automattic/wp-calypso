@@ -20,6 +20,8 @@ interface BlockRendererContainerProps {
 	viewportHeight?: number;
 	maxHeight?: string | number;
 	minHeight?: number;
+	isMinHeight100vh?: boolean;
+	maxHeightFor100vh?: number;
 }
 
 interface ScaledBlockRendererContainerProps extends BlockRendererContainerProps {
@@ -35,6 +37,8 @@ const ScaledBlockRendererContainer = ( {
 	containerWidth,
 	maxHeight = BLOCK_MAX_HEIGHT,
 	minHeight,
+	isMinHeight100vh,
+	maxHeightFor100vh,
 }: ScaledBlockRendererContainerProps ) => {
 	const [ contentResizeListener, { height: contentHeight } ] = useResizeObserver();
 	const { styles, assets, duotone } = useSelect( ( select ) => {
@@ -84,9 +88,19 @@ const ScaledBlockRendererContainer = ( {
 	}, [] );
 
 	const scale = containerWidth / viewportWidth;
-	let iframeHeight = contentHeight as number;
-	if ( viewportHeight && ( contentHeight as number ) < viewportHeight ) {
-		iframeHeight = viewportHeight;
+
+	let scaledHeight = ( contentHeight as number ) * scale || minHeight;
+	if ( isMinHeight100vh && maxHeightFor100vh && ! viewportHeight ) {
+		scaledHeight = maxHeightFor100vh * scale;
+	}
+
+	let iframeHeight = ( contentHeight as number ) || minHeight;
+	if ( isMinHeight100vh ) {
+		if ( viewportHeight ) {
+			iframeHeight = viewportHeight;
+		} else if ( maxHeightFor100vh ) {
+			iframeHeight = maxHeightFor100vh;
+		}
 	}
 
 	return (
@@ -94,7 +108,7 @@ const ScaledBlockRendererContainer = ( {
 			className="scaled-block-renderer"
 			style={ {
 				transform: `scale(${ scale })`,
-				height: ( contentHeight as number ) * scale || minHeight,
+				height: scaledHeight,
 				maxHeight:
 					maxHeight !== 'none' && ( contentHeight as number ) > maxHeight
 						? ( maxHeight as number ) * scale
