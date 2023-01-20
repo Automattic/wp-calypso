@@ -183,6 +183,8 @@ const useSectionPatterns = () => {
 	const about = translate( 'About' );
 	const testimonials = translate( 'Testimonials' );
 	const links = translate( 'Links' );
+	const services = translate( 'Services' );
+	const portfolio = translate( 'Portfolio' );
 
 	const sectionPatterns: Pattern[] = useMemo(
 		() => [
@@ -210,6 +212,51 @@ const useSectionPatterns = () => {
 				id: 7159,
 				name: 'Cover image with centered text and a button',
 				category: callToAction,
+			},
+			{
+				id: 3741,
+				name: 'Large CTA',
+				category: callToAction,
+			},
+			{
+				id: 6303,
+				name: 'Two Buttons Centered CTA',
+				category: callToAction,
+			},
+			{
+				id: 6304,
+				name: 'Centered Heading with CTA',
+				category: callToAction,
+			},
+			{
+				id: 6311,
+				name: 'Portfolio Project',
+				category: callToAction,
+			},
+			{
+				id: 3747,
+				name: 'Hero with CTA',
+				category: callToAction,
+			},
+			{
+				id: 6308,
+				name: 'Cover Image with CTA',
+				category: callToAction,
+			},
+			{
+				id: 6310,
+				name: 'Gallery with description on the left',
+				category: callToAction,
+			},
+			{
+				id: 6312,
+				name: 'Two Column CTA',
+				category: callToAction,
+			},
+			{
+				id: 6305,
+				name: 'Heading with Image Grid',
+				category: images,
 			},
 			{
 				id: 7149,
@@ -262,6 +309,16 @@ const useSectionPatterns = () => {
 				category: numbers,
 			},
 			{
+				id: 6309,
+				name: '6309',
+				category: about,
+			},
+			{
+				id: 6306,
+				name: 'Names List',
+				category: about,
+			},
+			{
 				id: 5663,
 				name: 'Large headline',
 				category: about,
@@ -282,9 +339,84 @@ const useSectionPatterns = () => {
 				category: testimonials,
 			},
 			{
+				id: 6307,
+				name: '3 Column Testimonials',
+				category: testimonials,
+			},
+			{
+				id: 6324,
+				name: 'Two Column Testimonials',
+				category: testimonials,
+			},
+			{
 				id: 1600,
 				name: 'Three column text and links',
 				category: links,
+			},
+			{
+				id: 6323,
+				name: "FAQ's",
+				category: services,
+			},
+			{
+				id: 3743,
+				name: 'Simple Two Column Layout',
+				category: services,
+			},
+			{
+				id: 39,
+				name: 'Topics with Image',
+				category: services,
+			},
+			{
+				id: 6313,
+				name: 'Portfolio Intro',
+				category: portfolio,
+			},
+			{
+				id: 6314,
+				name: 'Centered Intro',
+				category: portfolio,
+			},
+			{
+				id: 6315,
+				name: 'Large Intro Text',
+				category: portfolio,
+			},
+			{
+				id: 6316,
+				name: 'Squared Media & Text',
+				category: portfolio,
+			},
+			{
+				id: 6317,
+				name: 'Horizontal Media & Text',
+				category: portfolio,
+			},
+			{
+				id: 6318,
+				name: 'Offset Projects',
+				category: portfolio,
+			},
+			{
+				id: 6319,
+				name: 'Case Study',
+				category: portfolio,
+			},
+			{
+				id: 6320,
+				name: 'Heading with two images and descriptions',
+				category: portfolio,
+			},
+			{
+				id: 6321,
+				name: 'CV Text Grid',
+				category: portfolio,
+			},
+			{
+				id: 6322,
+				name: 'Tall Item One Column',
+				category: portfolio,
 			},
 		],
 		[]
