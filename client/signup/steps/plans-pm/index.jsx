@@ -45,7 +45,7 @@ import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import './style.scss';
 
-export class PlansStep extends Component {
+export class PlansStepPaidMedia extends Component {
 	state = {
 		isDesktop: isDesktop(),
 	};
@@ -441,7 +441,7 @@ export class PlansStep extends Component {
 	}
 }
 
-PlansStep.propTypes = {
+PlansStepPaidMedia.propTypes = {
 	additionalStepData: PropTypes.object,
 	disableBloggerPlanWithNonBlogDomain: PropTypes.bool,
 	goToNextStep: PropTypes.func.isRequired,
@@ -500,4 +500,4 @@ export default connect(
 			isEnabled( 'onboarding/2023-pricing-grid' ) && flowName === 'onboarding-2023-pricing-grid',
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
-)( localize( PlansStep ) );
+)( localize( PlansStepPaidMedia ) );
