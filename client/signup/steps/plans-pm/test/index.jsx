@@ -26,7 +26,7 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
-import { PlansStep, isDotBlogDomainRegistration } from '../index';
+import { PlansStepPaidMedia, isDotBlogDomainRegistration } from '../index';
 
 const noop = () => {};
 const props = {
@@ -42,7 +42,7 @@ const props = {
 
 describe( 'Plans basic tests', () => {
 	test( 'should not blow up and have proper CSS class', () => {
-		render( <PlansStep { ...props } /> );
+		render( <PlansStepPaidMedia { ...props } /> );
 		const stepWrapper = screen.getByTestId( 'step-wrapper' );
 		expect( stepWrapper ).toBeVisible();
 		expect( stepWrapper.parentNode ).toHaveClass( 'plans-step' );
@@ -61,7 +61,7 @@ describe( 'Plans.onSelectPlan', () => {
 			...tplProps,
 			goToNextStep: jest.fn(),
 		};
-		const comp = new PlansStep( myProps );
+		const comp = new PlansStepPaidMedia( myProps );
 		comp.onSelectPlan( { product_slug: PLAN_FREE } );
 		expect( myProps.goToNextStep ).toHaveBeenCalled();
 	} );
@@ -69,7 +69,7 @@ describe( 'Plans.onSelectPlan', () => {
 	test( 'Should call submitSignupStep with step details', () => {
 		const submitSignupStep = jest.fn();
 
-		const comp = new PlansStep( { ...tplProps, submitSignupStep } );
+		const comp = new PlansStepPaidMedia( { ...tplProps, submitSignupStep } );
 		const cartItem = { product_slug: PLAN_FREE };
 		comp.onSelectPlan( cartItem );
 		expect( submitSignupStep ).toHaveBeenCalled();
@@ -90,7 +90,7 @@ describe( 'Plans.onSelectPlan', () => {
 			submitSignupStep,
 		};
 
-		const comp = new PlansStep( myProps );
+		const comp = new PlansStepPaidMedia( myProps );
 		const cartItem = { product_slug: PLAN_FREE };
 		comp.onSelectPlan( cartItem );
 		expect( submitSignupStep ).toHaveBeenCalled();
@@ -102,7 +102,7 @@ describe( 'Plans.onSelectPlan', () => {
 
 	test( 'Should call submitSignupStep with correct providedDependencies', () => {
 		const submitSignupStep = jest.fn();
-		const comp = new PlansStep( { ...tplProps, submitSignupStep } );
+		const comp = new PlansStepPaidMedia( { ...tplProps, submitSignupStep } );
 		const cartItem = { product_slug: PLAN_FREE };
 		comp.onSelectPlan( cartItem );
 		expect( submitSignupStep ).toHaveBeenCalled();
@@ -114,7 +114,7 @@ describe( 'Plans.onSelectPlan', () => {
 
 	test( 'Should call recordEvent when cartItem is specified', () => {
 		const recordTracksEvent = jest.fn();
-		const comp = new PlansStep( { ...tplProps, recordTracksEvent } );
+		const comp = new PlansStepPaidMedia( { ...tplProps, recordTracksEvent } );
 		const cartItem = { product_slug: PLAN_FREE, free_trial: false };
 		comp.onSelectPlan( cartItem );
 
@@ -144,7 +144,7 @@ describe( 'Plans.onSelectPlan', () => {
 				goToNextStep: jest.fn(),
 			};
 			const cartItem = { product_slug: plan };
-			const comp = new PlansStep( myProps );
+			const comp = new PlansStepPaidMedia( myProps );
 			comp.onSelectPlan( cartItem );
 			expect( myProps.goToNextStep ).toHaveBeenCalled();
 			expect( cartItem.extra ).toEqual( {
@@ -168,7 +168,7 @@ describe( 'Plans.onSelectPlan', () => {
 				goToNextStep: jest.fn(),
 			};
 			const cartItem = { product_slug: plan };
-			const comp = new PlansStep( myProps );
+			const comp = new PlansStepPaidMedia( myProps );
 			comp.onSelectPlan( cartItem );
 			expect( myProps.goToNextStep ).toHaveBeenCalled();
 			expect( cartItem.extra ).toEqual( undefined );
@@ -184,7 +184,7 @@ describe( 'Plans.onSelectPlan', () => {
 			},
 		};
 		const cartItem = { product_slug: PLAN_FREE };
-		const comp = new PlansStep( myProps );
+		const comp = new PlansStepPaidMedia( myProps );
 		comp.onSelectPlan( cartItem );
 		expect( cartItem.extra ).toEqual( undefined );
 	} );
@@ -206,7 +206,7 @@ describe( 'Plans.onSelectPlan', () => {
 		`Should not add is_store_signup to cartItem.extra when processing non-wp.com non-business plan (%s)`,
 		( plan ) => {
 			const cartItem = { product_slug: plan };
-			const comp = new PlansStep( tplProps );
+			const comp = new PlansStepPaidMedia( tplProps );
 			comp.onSelectPlan( cartItem );
 			expect( cartItem.extra ).toEqual( undefined );
 		}
@@ -215,11 +215,11 @@ describe( 'Plans.onSelectPlan', () => {
 
 describe( 'Plans.getCustomerType', () => {
 	test( 'Should return site type property is siteType is provided', () => {
-		const comp = new PlansStep( { ...props, siteType: 'online-store' } );
+		const comp = new PlansStepPaidMedia( { ...props, siteType: 'online-store' } );
 		expect( comp.getCustomerType() ).toEqual( 'business' );
 	} );
 	test( "Should return customerType prop when it's provided", () => {
-		const comp = new PlansStep( { ...props, customerType: 'personal' } );
+		const comp = new PlansStepPaidMedia( { ...props, customerType: 'personal' } );
 		expect( comp.getCustomerType() ).toEqual( 'personal' );
 	} );
 } );
