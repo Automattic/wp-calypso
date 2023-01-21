@@ -14,6 +14,7 @@ import {
 	JETPACK_VIDEOPRESS_PRODUCTS,
 	isFreeJetpackPlan,
 	isFreePlanProduct,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { Dialog } from '@automattic/components';
 import classNames from 'classnames';
@@ -154,6 +155,39 @@ class CurrentPlan extends Component {
 		return <PaidPlanThankYou />;
 	}
 
+	renderEcommerceTrialPage() {
+		const { path, selectedSiteId, translate } = this.props;
+		const isLoading = this.isLoading();
+
+		return (
+			<Main className="current-plan" wideLayout>
+				<DocumentHead title={ translate( 'My Plan' ) } />
+				<FormattedHeader
+					brandFont
+					className="current-plan__page-heading"
+					headerText={ translate( 'Plans' ) }
+					subHeaderText={ translate(
+						'Learn about the features included in your WordPress.com plan.'
+					) }
+					align="left"
+				/>
+				<div className="current-plan__content">
+					<QuerySites siteId={ selectedSiteId } />
+					<QuerySitePlans siteId={ selectedSiteId } />
+					<QuerySitePurchases siteId={ selectedSiteId } />
+					<QuerySiteProducts siteId={ selectedSiteId } />
+					<PlansNavigation path={ path } />
+					<PurchasesListing />
+					<div
+						className={ classNames( 'current-plan__header-text current-plan__text', {
+							'is-placeholder': { isLoading },
+						} ) }
+					></div>
+				</div>
+			</Main>
+		);
+	}
+
 	render() {
 		const {
 			domains,
@@ -170,6 +204,7 @@ class CurrentPlan extends Component {
 		} = this.props;
 
 		const currentPlanSlug = selectedSite.plan.product_slug;
+		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 		const isLoading = this.isLoading();
 		const planTitle = getPlan( currentPlanSlug ).getTitle();
 
@@ -193,6 +228,10 @@ class CurrentPlan extends Component {
 			page.redirect( `/plans/${ selectedSite.slug }` );
 
 			return null;
+		}
+
+		if ( isEcommerceTrial ) {
+			return this.renderEcommerceTrialPage();
 		}
 
 		return (
