@@ -99,6 +99,7 @@ type PlanFeatures2023GridConnectedProps = {
 	translate: LocalizeProps[ 'translate' ];
 	recordTracksEvent: ( slug: string ) => void;
 	planProperties: Array< PlanProperties >;
+	allParentProps: any;
 };
 
 type PlanFeatures2023GridType = PlanFeatures2023GridProps &
@@ -111,7 +112,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	}
 
 	render() {
-		const { isInSignup } = this.props;
+		const { isInSignup, allParentProps } = this.props;
 		const planClasses = classNames( 'plan-features', {
 			'plan-features--signup': isInSignup,
 		} );
@@ -137,6 +138,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 					</div>
 				</div>
 				<PlanComparisonGrid
+					allParentProps={ allParentProps }
 					planProperties={ this.props.planProperties }
 					intervalType={ this.props.intervalType }
 				/>

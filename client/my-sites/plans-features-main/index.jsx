@@ -158,7 +158,11 @@ export class PlansFeaturesMain extends Component {
 				intervalType,
 			};
 			const asyncPlanFeatures2023Grid = (
-				<AsyncLoad require="calypso/my-sites/plan-features-2023-grid" { ...asyncProps } />
+				<AsyncLoad
+					require="calypso/my-sites/plan-features-2023-grid"
+					{ ...asyncProps }
+					allParentProps={ this.props }
+				/>
 			);
 			return (
 				<div
@@ -687,9 +691,7 @@ export default connect(
 		) {
 			customerType = 'business';
 		}
-		const is2023OnboardingPricingGrid =
-			isEnabled( 'onboarding/2023-pricing-grid' ) &&
-			props.flowName === 'onboarding-2023-pricing-grid';
+		const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
 		return {
 			isCurrentPlanRetired: isProPlan( sitePlanSlug ) || isStarterPlan( sitePlanSlug ),
 			currentPurchaseIsInAppPurchase: currentPurchase?.isInAppPurchase,

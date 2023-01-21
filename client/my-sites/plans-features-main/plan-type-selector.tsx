@@ -39,6 +39,7 @@ type Props = {
 	plans: string[];
 	eligibleForWpcomMonthlyPlans?: boolean;
 	isPlansInsideStepper: boolean;
+	hideDiscountLabel: boolean;
 };
 
 interface PathArgs {
@@ -114,12 +115,17 @@ export const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 
 type IntervalTypeProps = Pick<
 	Props,
-	'intervalType' | 'plans' | 'isInSignup' | 'eligibleForWpcomMonthlyPlans' | 'isPlansInsideStepper'
+	| 'intervalType'
+	| 'plans'
+	| 'isInSignup'
+	| 'eligibleForWpcomMonthlyPlans'
+	| 'isPlansInsideStepper'
+	| 'hideDiscountLabel'
 >;
 
 export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
 	const translate = useTranslate();
-	const { intervalType, isInSignup, eligibleForWpcomMonthlyPlans } = props;
+	const { intervalType, isInSignup, eligibleForWpcomMonthlyPlans, hideDiscountLabel } = props;
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
 	const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle', {
 		'is-signup': isInSignup,
@@ -151,15 +157,17 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 					isPlansInsideStepper={ props.isPlansInsideStepper }
 				>
 					<span ref={ ( ref ) => ref && setSpanRef( ref ) }>{ translate( 'Pay annually' ) }</span>
-					<PopupMessages context={ spanRef } isVisible={ popupIsVisible }>
-						{ translate(
-							'Save up to %(maxDiscount)d%% by paying annually and get a free domain for one year',
-							{
-								args: { maxDiscount },
-								comment: 'Will be like "Save up to 30% by paying annually..."',
-							}
-						) }
-					</PopupMessages>
+					{ hideDiscountLabel ? null : (
+						<PopupMessages context={ spanRef } isVisible={ popupIsVisible }>
+							{ translate(
+								'Save up to %(maxDiscount)d%% by paying annually and get a free domain for one year',
+								{
+									args: { maxDiscount },
+									comment: 'Will be like "Save up to 30% by paying annually..."',
+								}
+							) }
+						</PopupMessages>
+					) }
 				</SegmentedControl.Item>
 			</SegmentedControl>
 		</IntervalTypeToggleWrapper>

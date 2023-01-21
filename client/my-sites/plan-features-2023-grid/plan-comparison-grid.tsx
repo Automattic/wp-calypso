@@ -11,8 +11,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
+import PlanTypeSelector from '../plans-features-main/plan-type-selector';
 import { PlanProperties } from './types';
-
 const JetpackIconContainer = styled.div`
 	padding-left: 6px;
 `;
@@ -67,11 +67,13 @@ const StorageButton = styled.div`
 type PlanComparisonGridProps = {
 	planProperties?: Array< PlanProperties >;
 	intervalType: string;
+	allParentProps: any;
 };
 
 export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	planProperties,
 	intervalType,
+	allParentProps,
 } ) => {
 	const translate = useTranslate();
 	const featureGroupMap = getPlanFeaturesGrouped();
@@ -136,19 +138,19 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 				{ translate( 'Compare our plans and find yours' ) }
 			</PlanComparisonHeader>
 			<Grid>
-				<Row key="feature-group-title" className="plan-comparison-grid__plan-row">
+				<Row key="feature-group-header-row" className="plan-comparison-grid__plan-row">
 					<RowHead key="feature-name" className="plan-comparison-grid__interval-toggle">
-						{ /* 
-						// This component was breaking scroll and the click was not working to be picked up later
-						<BrowserRouter>
-							<IntervalTypeToggle
-								eligibleForWpcomMonthlyPlans={ true }
-								intervalType={ intervalType }
-								plans={ [] }
-								isInSignup={ true }
-								isPlansInsideStepper={ true }
-							/>
-						</BrowserRouter> */ }
+						<PlanTypeSelector
+							kind="interval"
+							plans={ displayedPlansProperties.map( ( { planName } ) => planName ) }
+							isInSignup={ allParentProps.isInSignup }
+							eligibleForWpcomMonthlyPlans={ allParentProps.eligibleForWpcomMonthlyPlans }
+							isPlansInsideStepper={ allParentProps.isPlansInsideStepper }
+							intervalType={ allParentProps.intervalType }
+							customerType={ allParentProps.customerType }
+							hidePersonalPlan={ allParentProps.hidePersonalPlan }
+							hideDiscountLabel={ true }
+						/>
 					</RowHead>
 					{ displayedPlansProperties.map( ( { planName, planConstantObj } ) => (
 						<Cell key={ planName } className="plan-comparison-grid__plan-title" textAlign="center">
@@ -161,8 +163,11 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					const features = featureGroup.get2023PricingGridSignupWpcomFeatures();
 					const featureObjects = getPlanFeaturesObject( features );
 					return (
-						<>
-							<Row key="feature-group-title" className="plan-comparison-grid__group-title-row">
+						<div key={ `feature-group-title-${ featureGroup.slug }` }>
+							<Row
+								key={ `feature-group-title-${ featureGroup.slug }` }
+								className="plan-comparison-grid__group-title-row"
+							>
 								<Title className={ `plan-comparison-grid__group-${ featureGroup.slug }` }>
 									{ featureGroup.getTitle() }
 								</Title>
@@ -236,7 +241,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									} ) }
 								</Row>
 							) : null }
-						</>
+						</div>
 					);
 				} ) }
 			</Grid>
