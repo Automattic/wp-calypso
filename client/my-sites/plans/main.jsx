@@ -1,5 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { getPlan, getIntervalTypeForTerm, PLAN_FREE } from '@automattic/calypso-products';
+import {
+	getPlan,
+	getIntervalTypeForTerm,
+	PLAN_FREE,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+} from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -157,9 +162,53 @@ class Plans extends Component {
 		);
 	}
 
+	renderEcommerceTrialPage() {
+		const { selectedSite, translate, canAccessPlans, domainAndPlanPackage } = this.props;
+		const description = translate(
+			'See and compare the features available on each WordPress.com plan.'
+		);
+
+		return (
+			<div>
+				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
+				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
+				<PageViewTracker path="/plans/:site" title="Plans" />
+				<QueryContactDetailsCache />
+				<QueryPlans />
+				<TrackComponentView eventName="calypso_plans_view" />
+				<Main wideLayout>
+					{ ! canAccessPlans && (
+						<EmptyContent
+							illustration="/calypso/images/illustrations/illustration-404.svg"
+							title={ translate( 'You are not authorized to view this page' ) }
+						/>
+					) }
+					{ canAccessPlans && (
+						<>
+							<FormattedHeader
+								brandFont
+								headerText={ translate( 'Plans' ) }
+								subHeaderText={ description }
+								align="left"
+							/>
+							{ domainAndPlanPackage && <DomainAndPlanUpsellNotice /> }
+							<div id="plans" className="plans plans__has-sidebar">
+								<PlansNavigation path={ this.props.context.path } />
+								<div>eCommerce Trial special content</div>
+							</div>
+						</>
+					) }
+				</Main>
+			</div>
+		);
+	}
+
 	render() {
 		const { selectedSite, translate, canAccessPlans, currentPlan, domainAndPlanPackage } =
 			this.props;
+
+		const currentPlanSlug = selectedSite.plan.product_slug;
+		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
 			return this.renderPlaceholder();
