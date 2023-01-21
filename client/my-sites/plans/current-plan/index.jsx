@@ -183,6 +183,7 @@ class CurrentPlan extends Component {
 							'is-placeholder': { isLoading },
 						} ) }
 					></div>
+					<div>eCommerce Trial special content</div>
 				</div>
 			</Main>
 		);
