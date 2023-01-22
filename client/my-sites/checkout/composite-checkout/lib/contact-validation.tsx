@@ -48,12 +48,18 @@ const getEmailTakenLoginRedirectMessage = (
 
 	// Users with a WP.com account should return to the checkout page
 	// once they are logged in to complete the process. The flow for them is
+
 	// checkout -> login -> checkout.
 	const currentURLQueryParameters = Object.fromEntries( new URL( href ).searchParams.entries() );
 
+	if ( currentURLQueryParameters.source ) {
+		currentURLQueryParameters.from = currentURLQueryParameters.source;
+		delete currentURLQueryParameters.source;
+	}
+
 	const redirectTo =
 		isJetpackCheckout || isGiftingCheckout
-			? addQueryArgs( { currentURLQueryParameters, flow: 'coming_from_login' }, pathname )
+			? addQueryArgs( { ...currentURLQueryParameters, flow: 'coming_from_login' }, pathname )
 			: '/checkout/no-site?cart=no-user';
 
 	const loginUrl = login( { isJetpack: isJetpackCheckout, redirectTo, emailAddress } );
