@@ -25,7 +25,7 @@ import {
 	getDiscountedRawPrice,
 } from 'calypso/state/plans/selectors';
 
-type Props = {
+export type PlanTypeSelectorProps = {
 	kind: 'interval' | 'customer';
 	basePlansPath?: string | null;
 	intervalType: string;
@@ -46,7 +46,7 @@ interface PathArgs {
 	[ key: string ]: Primitive;
 }
 
-type GeneratePathFunction = ( props: Partial< Props >, args: PathArgs ) => string;
+type GeneratePathFunction = ( props: Partial< PlanTypeSelectorProps >, args: PathArgs ) => string;
 
 export const generatePath: GeneratePathFunction = ( props, additionalArgs = {} ) => {
 	const { intervalType = '' } = additionalArgs;
@@ -113,8 +113,8 @@ export const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 	);
 };
 
-type IntervalTypeProps = Pick<
-	Props,
+export type IntervalTypeProps = Pick<
+	PlanTypeSelectorProps,
 	| 'intervalType'
 	| 'plans'
 	| 'isInSignup'
@@ -194,7 +194,7 @@ export const ExperimentalIntervalTypeToggle: React.FunctionComponent< IntervalTy
 	);
 };
 
-type CustomerTypeProps = Pick< Props, 'customerType' | 'isInSignup' >;
+type CustomerTypeProps = Pick< PlanTypeSelectorProps, 'customerType' | 'isInSignup' >;
 
 export const CustomerTypeToggle: React.FunctionComponent< CustomerTypeProps > = ( props ) => {
 	const translate = useTranslate();
@@ -220,7 +220,10 @@ export const CustomerTypeToggle: React.FunctionComponent< CustomerTypeProps > = 
 	);
 };
 
-const PlanTypeSelector: React.FunctionComponent< Props > = ( { kind, ...props } ) => {
+const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
+	kind,
+	...props
+} ) => {
 	if ( kind === 'interval' ) {
 		return <IntervalTypeToggle { ...props } />;
 	}

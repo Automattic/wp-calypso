@@ -40,6 +40,7 @@ import PlanPill from 'calypso/components/plans/plan-pill';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
+import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/plan-type-selector';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import {
@@ -99,7 +100,7 @@ type PlanFeatures2023GridConnectedProps = {
 	translate: LocalizeProps[ 'translate' ];
 	recordTracksEvent: ( slug: string ) => void;
 	planProperties: Array< PlanProperties >;
-	allParentProps: any;
+	planTypeSelectorProps: PlanTypeSelectorProps;
 };
 
 type PlanFeatures2023GridType = PlanFeatures2023GridProps &
@@ -112,7 +113,8 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	}
 
 	render() {
-		const { isInSignup, allParentProps } = this.props;
+		const { isInSignup, planTypeSelectorProps, planProperties, intervalType } = this.props;
+
 		const planClasses = classNames( 'plan-features', {
 			'plan-features--signup': isInSignup,
 		} );
@@ -138,9 +140,9 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 					</div>
 				</div>
 				<PlanComparisonGrid
-					allParentProps={ allParentProps }
-					planProperties={ this.props.planProperties }
-					intervalType={ this.props.intervalType }
+					planTypeSelectorProps={ planTypeSelectorProps }
+					planProperties={ planProperties }
+					intervalType={ intervalType }
 				/>
 			</div>
 		);

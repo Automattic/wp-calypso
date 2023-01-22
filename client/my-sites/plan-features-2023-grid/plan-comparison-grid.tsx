@@ -11,7 +11,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
-import PlanTypeSelector from '../plans-features-main/plan-type-selector';
+import PlanTypeSelector, {
+	PlanTypeSelectorProps,
+} from 'calypso/my-sites/plans-features-main/plan-type-selector';
 import { PlanProperties } from './types';
 const JetpackIconContainer = styled.div`
 	padding-left: 6px;
@@ -67,13 +69,13 @@ const StorageButton = styled.div`
 type PlanComparisonGridProps = {
 	planProperties?: Array< PlanProperties >;
 	intervalType: string;
-	allParentProps: any;
+	planTypeSelectorProps: PlanTypeSelectorProps;
 };
 
 export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	planProperties,
 	intervalType,
-	allParentProps,
+	planTypeSelectorProps,
 } ) => {
 	const translate = useTranslate();
 	const featureGroupMap = getPlanFeaturesGrouped();
@@ -143,12 +145,12 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 						<PlanTypeSelector
 							kind="interval"
 							plans={ displayedPlansProperties.map( ( { planName } ) => planName ) }
-							isInSignup={ allParentProps.isInSignup }
-							eligibleForWpcomMonthlyPlans={ allParentProps.eligibleForWpcomMonthlyPlans }
-							isPlansInsideStepper={ allParentProps.isPlansInsideStepper }
-							intervalType={ allParentProps.intervalType }
-							customerType={ allParentProps.customerType }
-							hidePersonalPlan={ allParentProps.hidePersonalPlan }
+							isInSignup={ planTypeSelectorProps.isInSignup }
+							eligibleForWpcomMonthlyPlans={ planTypeSelectorProps.eligibleForWpcomMonthlyPlans }
+							isPlansInsideStepper={ planTypeSelectorProps.isPlansInsideStepper }
+							intervalType={ planTypeSelectorProps.intervalType }
+							customerType={ planTypeSelectorProps.customerType }
+							hidePersonalPlan={ planTypeSelectorProps.hidePersonalPlan }
 							hideDiscountLabel={ true }
 						/>
 					</RowHead>
