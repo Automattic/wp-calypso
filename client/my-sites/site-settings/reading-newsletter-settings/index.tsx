@@ -2,6 +2,7 @@ import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { SubscriptionOptions } from '../settings-reading/main';
 import { EmailsTextSetting } from './EmailsTextSetting';
 import { ExcerptSetting } from './ExcerptSetting';
 import { FeaturedImageEmailSetting } from './FeaturedImageEmailSetting';
@@ -9,10 +10,7 @@ import { FeaturedImageEmailSetting } from './FeaturedImageEmailSetting';
 type Fields = {
 	wpcom_featured_image_in_email?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
-	subscription_options?: {
-		invitation: string;
-		comment_follow: string;
-	};
+	subscription_options?: SubscriptionOptions;
 };
 
 type NewsletterSettingsSectionProps = {
@@ -21,7 +19,7 @@ type NewsletterSettingsSectionProps = {
 	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
 	disabled?: boolean;
 	isSavingSettings: boolean;
-	savedSubscriptionOptions?: { invitation: string; comment_follow: string };
+	savedSubscriptionOptions?: SubscriptionOptions;
 	updateFields: ( fields: Fields ) => void;
 };
 

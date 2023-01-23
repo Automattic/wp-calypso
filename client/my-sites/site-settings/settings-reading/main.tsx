@@ -13,6 +13,11 @@ import wrapSettingsForm from '../wrap-settings-form';
 
 const isEnabled = config.isEnabled( 'settings/modernize-reading-settings' );
 
+export type SubscriptionOptions = {
+	invitation: string;
+	comment_follow: string;
+};
+
 type Fields = {
 	jetpack_relatedposts_enabled?: boolean;
 	jetpack_relatedposts_show_context?: boolean;
@@ -25,10 +30,7 @@ type Fields = {
 	posts_per_rss?: number;
 	rss_use_excerpt?: boolean;
 	show_on_front?: 'posts' | 'page';
-	subscription_options?: {
-		invitation: string;
-		comment_follow: string;
-	};
+	subscription_options?: SubscriptionOptions;
 	wpcom_featured_image_in_email?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
 };
@@ -88,7 +90,7 @@ type ReadingSettingsFormProps = {
 	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
 	isRequestingSettings: boolean;
 	isSavingSettings: boolean;
-	settings: { subscription_options?: { invitation: string; comment_follow: string } };
+	settings: { subscription_options?: SubscriptionOptions };
 	siteUrl?: string;
 	updateFields: ( fields: Fields ) => void;
 };
