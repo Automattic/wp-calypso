@@ -163,44 +163,7 @@ class Plans extends Component {
 	}
 
 	renderEcommerceTrialPage() {
-		const { selectedSite, translate, canAccessPlans, domainAndPlanPackage } = this.props;
-		const description = translate(
-			'See and compare the features available on each WordPress.com plan.'
-		);
-
-		return (
-			<div>
-				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
-				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
-				<PageViewTracker path="/plans/:site" title="Plans" />
-				<QueryContactDetailsCache />
-				<QueryPlans />
-				<TrackComponentView eventName="calypso_plans_view" />
-				<Main wideLayout>
-					{ ! canAccessPlans && (
-						<EmptyContent
-							illustration="/calypso/images/illustrations/illustration-404.svg"
-							title={ translate( 'You are not authorized to view this page' ) }
-						/>
-					) }
-					{ canAccessPlans && (
-						<>
-							<FormattedHeader
-								brandFont
-								headerText={ translate( 'Plans' ) }
-								subHeaderText={ description }
-								align="left"
-							/>
-							{ domainAndPlanPackage && <DomainAndPlanUpsellNotice /> }
-							<div id="plans" className="plans plans__has-sidebar">
-								<PlansNavigation path={ this.props.context.path } />
-								<div>eCommerce Trial special content</div>
-							</div>
-						</>
-					) }
-				</Main>
-			</div>
-		);
+		return this.renderPlansMain();
 	}
 
 	render() {
@@ -236,7 +199,7 @@ class Plans extends Component {
 							{ domainAndPlanPackage && <DomainAndPlanUpsellNotice /> }
 							<div id="plans" className="plans plans__has-sidebar">
 								<PlansNavigation path={ this.props.context.path } />
-								{ this.renderPlansMain() }
+								{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderPlansMain() }
 								<PerformanceTrackerStop />
 							</div>
 						</>
