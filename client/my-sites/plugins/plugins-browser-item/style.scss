@@ -78,7 +78,7 @@
 			&:nth-of-type(2) {
 				margin-top: 24px;
 			}
-			width: calc(50% - 10px); // 2 column grid with 20px gutter
+			width: calc(50% - 9px); // 2 column grid with 18px gutter
 		}
 
 		@include break-wide {
@@ -94,7 +94,7 @@
 
 	&.extended {
 		@include break-large {
-			width: calc(50% - 10px); // 2 column grid with 20px gutter
+			width: calc(50% - 9px); // 2 column grid with 18px gutter
 		}
 	}
 
