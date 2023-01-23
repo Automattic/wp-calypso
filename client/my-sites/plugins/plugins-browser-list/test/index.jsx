@@ -8,10 +8,6 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import PluginsBrowserList from '../';
 import { PluginsBrowserListVariant } from '../types';
 
-jest.mock( 'calypso/my-sites/plugins/use-preinstalled-premium-plugin', () =>
-	jest.fn( () => ( { usePreinstalledPremiumPlugin: jest.fn() } ) )
-);
-
 const render = ( el, options ) =>
 	renderWithProvider( el, { ...options, reducers: { ui, productsList } } );
 
