@@ -153,7 +153,6 @@ const PluginsBrowserListElement = ( props ) => {
 		) || jetpackNonAtomic;
 
 	if ( isPlaceholder ) {
-		// eslint-disable-next-line no-use-before-define
 		return <Placeholder />;
 	}
 
@@ -208,7 +207,6 @@ const PluginsBrowserListElement = ( props ) => {
 				) }
 				<div className="plugins-browser-item__footer">
 					{ variant === PluginsBrowserElementVariant.Extended && (
-						// eslint-disable-next-line no-use-before-define
 						<InstalledInOrPricing
 							sitesWithPlugin={ sitesWithPlugin }
 							isWpcomPreinstalled={ isWpcomPreinstalled }
@@ -239,14 +237,14 @@ const PluginsBrowserListElement = ( props ) => {
 	);
 };
 
-const InstalledInOrPricing = ( {
+function InstalledInOrPricing( {
 	sitesWithPlugin,
 	isWpcomPreinstalled,
 	plugin,
 	shouldUpgrade,
 	canInstallPlugins,
 	currentSites,
-} ) => {
+} ) {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const isMarketplaceProduct = useSelector( ( state ) =>
@@ -341,9 +339,9 @@ const InstalledInOrPricing = ( {
 			</PluginPrice>
 		</div>
 	);
-};
+}
 
-const Placeholder = () => {
+function Placeholder() {
 	return (
 		<li className="plugins-browser-item is-placeholder">
 			<span className="plugins-browser-item__link">
@@ -356,6 +354,6 @@ const Placeholder = () => {
 			</span>
 		</li>
 	);
-};
+}
 
 export default PluginsBrowserListElement;
