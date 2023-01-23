@@ -5,17 +5,53 @@ body .customer-home__layout .domain-upsell__card {
 	padding: 40px 46px;
 }
 
-.domain-upsell__card h3 {
-	font-family: $brand-serif;
-	font-style: normal;
-	font-weight: 400;
-	font-size: rem(32px);
-	line-height: 40px;
-	letter-spacing: -0.32px;
-	color: #101517;
-}
+.domain-upsell__card {
+	h3 {
+		font-family: $brand-serif;
+		font-style: normal;
+		font-weight: 400;
+		font-size: rem(32px);
+		line-height: 40px;
+		color: var(--studio-gray-100);
+	}
 
-.domain-upsell__card p {
-	margin-top: 10px;
-}
+	p {
+		margin-top: 8px;
+	}
 
+	.suggested-domain-name {
+		span {
+			font-size: rem(14px);
+			color: var(--studio-gray-80);
+			line-height: 20px;
+		}
+
+		.badge {
+			position: absolute;
+			right: 20px;
+			border-radius: 4px;
+			font-size: rem(12px);
+			color: var(--studio-gray-80);
+			font-weight: 500;
+		}
+
+		.card {
+			margin-bottom: 5px;
+			box-shadow: none;
+			padding: 8px 16px;
+			height: 36px;
+		}
+
+		.badge--success {
+			background-color: var(--studio-green-5);
+		}
+	}
+
+	.domain-upsell-actions {
+		display: flex;
+		flex-direction: row;
+		justify-content: right;
+		padding: 28px 0 0;
+		gap: 16px;
+	}
+}

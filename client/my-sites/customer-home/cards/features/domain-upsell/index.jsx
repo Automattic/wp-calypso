@@ -16,22 +16,27 @@ export default function DomainUpsell() {
 					) }
 				</p>
 
-				<div className="eligibility-warnings__domain-names">
-					<div className="card is-compact">
-						<span>simplefree512.wordpress.com</span>
-						<div className="badge badge--info">current</div>
+				<div className="suggested-domain-name">
+					<div className="card">
+						<span>
+							<strike>simplefree512.wordpress.com</strike>
+						</span>
+						<div className="badge badge--info">Current</div>
 					</div>
-					<div className="card is-compact">
+					<div className="card">
 						<span>simplefree512.wpcomstaging.com</span>
-						<div className="badge badge--success">new</div>
+						<div className="badge badge--success">Available</div>
 					</div>
 				</div>
-				<button type="button" className="button">
-					{ translate( 'Search a domain' ) }
-				</button>
-				<button type="button" className="button is-primary">
-					{ translate( 'Get your custom domain' ) }
-				</button>
+
+				<div className="domain-upsell-actions">
+					<button type="button" className="button">
+						{ translate( 'Search a domain' ) }
+					</button>
+					<button type="button" className="button is-primary">
+						{ translate( 'Get your custom domain' ) }
+					</button>
+				</div>
 			</div>
 		</Card>
 	);
