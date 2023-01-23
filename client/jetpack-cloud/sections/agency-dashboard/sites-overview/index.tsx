@@ -23,6 +23,7 @@ import {
 	getSelectedLicensesSiteId,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
+import OnboardingWidget from '../../partner-portal/primary/onboarding-widget';
 import SitesOverviewContext from './context';
 import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
@@ -145,14 +146,14 @@ export default function SitesOverview() {
 	const hasAppliedFilter = !! search || filter?.issueTypes?.length > 0;
 	const showEmptyState = ! isLoading && ! isError && ! data?.sites?.length;
 
-	let emptyStateMessage = '';
+	let emptyState;
 	if ( showEmptyState ) {
-		emptyStateMessage = translate( 'No active sites' );
+		emptyState = <OnboardingWidget />;
 		if ( filter.showOnlyFavorites ) {
-			emptyStateMessage = translate( "You don't have any favorites yet." );
+			emptyState = translate( "You don't have any favorites yet." );
 		}
 		if ( hasAppliedFilter ) {
-			emptyStateMessage = translate( 'No results found. Please try refining your search.' );
+			emptyState = translate( 'No results found. Please try refining your search.' );
 		}
 	}
 
@@ -272,7 +273,7 @@ export default function SitesOverview() {
 						) }
 
 						{ showEmptyState ? (
-							<div className="sites-overview__no-sites">{ emptyStateMessage }</div>
+							<div className="sites-overview__no-sites">{ emptyState }</div>
 						) : (
 							<SiteContent
 								data={ data }
