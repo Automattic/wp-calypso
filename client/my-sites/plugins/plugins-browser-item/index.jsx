@@ -251,23 +251,16 @@ const InstalledInOrPricing = ( {
 			? true
 			: getPluginPurchased( plugin, purchases, isMarketplaceProduct )?.active;
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	let checkmarkColorClass = 'checkmark--active';
 
 	if ( isPreinstalledPremiumPlugin ) {
 		return <PreinstalledPremiumPluginBrowserItemPricing plugin={ plugin } />;
 	}
 
 	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
-		/* eslint-disable wpcalypso/jsx-gridicon-size */
-		if ( selectedSiteId ) {
-			checkmarkColorClass = isPluginActiveOnsiteWithSubscription
-				? 'checkmark--active'
-				: 'checkmark--inactive';
-		}
 		return (
 			<div className="plugins-browser-item__installed-and-active-container">
 				<div className="plugins-browser-item__installed ">
-					<Gridicon icon="checkmark" className={ checkmarkColorClass } size={ 14 } />
+					<Gridicon icon="checkmark" className="checkmark" size={ 12 } />
 					{ isWpcomPreinstalled || currentSites?.length === 1
 						? translate( 'Installed' )
 						: translate( 'Installed on %d site', 'Installed on %d sites', {
@@ -286,7 +279,6 @@ const InstalledInOrPricing = ( {
 				) }
 			</div>
 		);
-		/* eslint-enable wpcalypso/jsx-gridicon-size */
 	}
 
 	return (
