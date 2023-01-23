@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
 import { Plugin } from 'calypso/data/marketplace/types';
 import { useESPluginsInfinite } from 'calypso/data/marketplace/use-es-query';
 import {
@@ -27,23 +26,6 @@ interface WPCOMResponse {
 	data?: Plugin[];
 	isLoading: boolean;
 	fetchNextPage?: () => void;
-}
-
-/**
- * Multiply the wpcom rating to match the wporg value.
- * wpcom rating is from 1 to 5 while wporg is from 1 to 100.
- *
- * @param plugin
- * @returns
- */
-function updateWpComRating( plugin: Plugin ) {
-	if ( ! plugin || ! plugin.rating ) {
-		return plugin;
-	}
-
-	plugin.rating *= 20;
-
-	return plugin;
 }
 
 const WPCOM_CATEGORIES_BLOCKLIST = [ 'popular' ];
@@ -107,21 +89,11 @@ const usePlugins = ( {
 			enabled: category === 'featured' && wpcomEnabled,
 		} ) as WPCOMResponse;
 
-	const featuredPlugins = useMemo(
-		() => ( featuredPluginsRaw as Plugin[] ).map( updateWpComRating ),
-		[ featuredPluginsRaw ]
-	);
-
-	const dotComPlugins = useMemo(
-		() => ( wpcomPluginsRaw as Plugin[] ).map( updateWpComRating ),
-		[ wpcomPluginsRaw ]
-	);
-
 	switch ( category ) {
 		case 'paid':
-			plugins = dotComPlugins;
+			plugins = wpcomPluginsRaw;
 			isFetching = isFetchingDotCom;
-			results = dotComPlugins?.length ?? 0;
+			results = wpcomPluginsRaw?.length ?? 0;
 			break;
 		case 'popular':
 			plugins = ESPlugins;
@@ -129,9 +101,9 @@ const usePlugins = ( {
 			results = ESPagination?.results ?? 0;
 			break;
 		case 'featured':
-			plugins = featuredPlugins;
+			plugins = featuredPluginsRaw;
 			isFetching = isFetchingDotComFeatured;
-			results = featuredPlugins?.length ?? 0;
+			results = featuredPluginsRaw?.length ?? 0;
 			break;
 		default:
 			plugins = config.isEnabled( 'marketplace-jetpack-plugin-search' )

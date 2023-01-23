@@ -209,7 +209,7 @@ const PluginsBrowserListElement = ( props ) => {
 						/>
 					) }
 					<div className="plugins-browser-item__additional-info">
-						{ !! plugin.rating && ! isMarketplaceProduct && (
+						{ !! plugin.rating && (
 							<div className="plugins-browser-item__ratings">
 								<PluginRatings
 									rating={ plugin.rating }
