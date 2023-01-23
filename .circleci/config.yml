@@ -236,7 +236,7 @@ jobs:
     docker:
     # Important: the build fails on 18.13.0, so we pin it to a slightly older
     # version to keep this one working for now.
-      - image: cimg/node:18.7.0-browsers
+      - image: cimg/node:18.10.0-browsers
     <<: *desktop_defaults
     shell: /bin/bash --login
     environment:
