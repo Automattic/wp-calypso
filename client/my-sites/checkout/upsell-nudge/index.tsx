@@ -14,7 +14,6 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import Main from 'calypso/components/main';
-import { Experiment } from 'calypso/lib/explat';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from 'calypso/lib/titan/constants';
 import {
@@ -55,7 +54,6 @@ import {
 } from 'calypso/state/stored-cards/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
-import { BusinessPlanUpgradeUpsellNewDesign } from './business-plan-upgrade-upsell/new-design-202301';
 import PurchaseModal from './purchase-modal';
 import { extractStoredCardMetaValue } from './purchase-modal/util';
 import { QuickstartSessionsRetirement } from './quickstart-sessions-retirement';
@@ -195,41 +193,20 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 
 	render() {
 		const { selectedSiteId, hasProductsList, hasSitePlans, upsellType } = this.props;
-		const treatmentClass =
+		const styleClass =
 			BUSINESS_PLAN_UPGRADE_UPSELL === upsellType
 				? 'business-plan-upgrade-upsell-new-design is-wide-layout'
 				: upsellType;
 		return (
-			<Experiment
-				name="calypso_plans_postpurchasepage_newdesign_202301_v1"
-				defaultExperience={
-					<Main className={ upsellType }>
-						<QuerySites siteId={ selectedSiteId } />
-						<QueryStoredCards />
-						{ ! hasProductsList && <QueryProductsList /> }
-						{ ! hasSitePlans && (
-							<QuerySitePlans siteId={ parseInt( String( selectedSiteId ), 10 ) } />
-						) }
-						{ this.renderContent() }
-						{ this.state.showPurchaseModal && this.renderPurchaseModal() }
-						{ this.preloadIconsForPurchaseModal() }
-					</Main>
-				}
-				treatmentExperience={
-					<Main className={ treatmentClass }>
-						<QuerySites siteId={ selectedSiteId } />
-						<QueryStoredCards />
-						{ ! hasProductsList && <QueryProductsList /> }
-						{ ! hasSitePlans && (
-							<QuerySitePlans siteId={ parseInt( String( selectedSiteId ), 10 ) } />
-						) }
-						{ this.renderContent() }
-						{ this.state.showPurchaseModal && this.renderPurchaseModal() }
-						{ this.preloadIconsForPurchaseModal() }
-					</Main>
-				}
-				loadingExperience={ null }
-			/>
+			<Main className={ styleClass }>
+				<QuerySites siteId={ selectedSiteId } />
+				<QueryStoredCards />
+				{ ! hasProductsList && <QueryProductsList /> }
+				{ ! hasSitePlans && <QuerySitePlans siteId={ parseInt( String( selectedSiteId ), 10 ) } /> }
+				{ this.renderContent() }
+				{ this.state.showPurchaseModal && this.renderPurchaseModal() }
+				{ this.preloadIconsForPurchaseModal() }
+			</Main>
 		);
 	}
 
@@ -314,33 +291,15 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 				return isLoading ? (
 					this.renderGenericPlaceholder()
 				) : (
-					<Experiment
-						name="calypso_plans_postpurchasepage_newdesign_202301_v1"
-						defaultExperience={
-							<BusinessPlanUpgradeUpsell
-								currencyCode={ currencyCode }
-								planRawPrice={ planRawPrice }
-								planDiscountedRawPrice={ planDiscountedRawPrice }
-								receiptId={ receiptId }
-								translate={ translate }
-								handleClickAccept={ this.handleClickAccept }
-								handleClickDecline={ this.handleClickDecline }
-								hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
-							/>
-						}
-						treatmentExperience={
-							<BusinessPlanUpgradeUpsellNewDesign
-								currencyCode={ currencyCode }
-								planRawPrice={ planRawPrice }
-								planDiscountedRawPrice={ planDiscountedRawPrice }
-								receiptId={ receiptId }
-								translate={ translate }
-								handleClickAccept={ this.handleClickAccept }
-								handleClickDecline={ this.handleClickDecline }
-								hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
-							/>
-						}
-						loadingExperience={ this.renderGenericPlaceholder() }
+					<BusinessPlanUpgradeUpsell
+						currencyCode={ currencyCode }
+						planRawPrice={ planRawPrice }
+						planDiscountedRawPrice={ planDiscountedRawPrice }
+						receiptId={ receiptId }
+						translate={ translate }
+						handleClickAccept={ this.handleClickAccept }
+						handleClickDecline={ this.handleClickDecline }
+						hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
 					/>
 				);
 

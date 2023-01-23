@@ -1,6 +1,5 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import { Spinner } from '@automattic/components';
-import { Icon, people } from '@wordpress/icons';
 import { localize, translate } from 'i18n-calypso';
 import { find, flowRight } from 'lodash';
 import page from 'page';
@@ -26,11 +25,11 @@ import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
 import { getEmailStat, isRequestingEmailStats } from 'calypso/state/stats/emails/selectors';
-import { getPeriodWithFallback } from 'calypso/state/stats/emails/utils';
+import { getPeriodWithFallback, getCharts } from 'calypso/state/stats/emails/utils';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DatePicker from '../stats-date-picker';
 import ChartTabs from '../stats-email-chart-tabs';
-import StatsEmailOpenTopRow from '../stats-email-open-top-row';
+import StatsEmailTopRow from '../stats-email-top-row';
 import { StatsNoContentBanner } from '../stats-no-content-banner';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
@@ -52,49 +51,22 @@ function updateQueryString( url = null, query = {} ) {
 	};
 }
 
-const CHART_OPENS = {
-	attr: 'opens_count',
-	legendOptions: [],
-	icon: (
-		<svg className="gridicon" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
-			<path
-				fillRule="evenodd"
-				clipRule="evenodd"
-				d="m4 13 .67.336.003-.005a2.42 2.42 0 0 1 .094-.17c.071-.122.18-.302.329-.52.298-.435.749-1.017 1.359-1.598C7.673 9.883 9.498 8.75 12 8.75s4.326 1.132 5.545 2.293c.61.581 1.061 1.163 1.36 1.599a8.29 8.29 0 0 1 .422.689l.002.005L20 13l.67-.336v-.003l-.003-.005-.008-.015-.028-.052a9.752 9.752 0 0 0-.489-.794 11.6 11.6 0 0 0-1.562-1.838C17.174 8.617 14.998 7.25 12 7.25S6.827 8.618 5.42 9.957c-.702.669-1.22 1.337-1.563 1.839a9.77 9.77 0 0 0-.516.845l-.008.015-.002.005-.001.002v.001L4 13Zm8 3a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"
-				fill="#00101C"
-			/>
-		</svg>
-	),
-	label: translate( 'Opens', { context: 'noun' } ),
+const getActiveTab = ( chartTab, statType ) => {
+	const charts = getCharts( statType );
+	return find( charts, { attr: chartTab } ) || charts[ 0 ];
 };
-const CHART_UNIQUE_OPENS = {
-	attr: 'unique_opens_count',
-	icon: <Icon className="gridicon" icon={ people } />,
-	label: translate( 'Unique opens', { context: 'noun' } ),
-};
-const CHARTS = [ CHART_OPENS, CHART_UNIQUE_OPENS ];
-
-Object.defineProperty( CHART_OPENS, 'label', {
-	get: () => translate( 'Opens', { context: 'noun' } ),
-} );
-Object.defineProperty( CHART_UNIQUE_OPENS, 'label', {
-	get: () => translate( 'Unique opens', { context: 'noun' } ),
-} );
-
-const getActiveTab = ( chartTab ) => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
 
 const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
 	period,
 	date: endOf.format( 'YYYY-MM-DD' ),
 } ) );
 
-const statType = 'opens';
-
-class StatsEmailOpenDetail extends Component {
+class StatsEmailDetail extends Component {
 	static propTypes = {
 		path: PropTypes.string,
 		siteId: PropTypes.number,
 		postId: PropTypes.number,
+		statType: PropTypes.string,
 		translate: PropTypes.func,
 		context: PropTypes.object,
 		isRequestingStats: PropTypes.bool,
@@ -117,8 +89,8 @@ class StatsEmailOpenDetail extends Component {
 		// when switching from one tab to another or when initializing the component,
 		// reset the active legend charts to the defaults for that tab. The legends
 		// can be then toggled on and off by the user in `onLegendClick`.
-		const activeTab = getActiveTab( props.chartTab );
-		if ( activeTab !== state.activeTab ) {
+		const activeTab = getActiveTab( props.chartTab, props.statType );
+		if ( props.chartTab !== state.activeTab ) {
 			return {
 				activeTab,
 				activeLegend: activeTab.legendOptions || [],
@@ -128,7 +100,7 @@ class StatsEmailOpenDetail extends Component {
 	}
 
 	getAvailableLegend() {
-		const activeTab = getActiveTab( this.props.chartTab );
+		const activeTab = getActiveTab( this.props.chartTab, this.props.statType );
 		return activeTab.legendOptions || [];
 	}
 
@@ -185,6 +157,10 @@ class StatsEmailOpenDetail extends Component {
 		}
 	};
 
+	getCharts() {
+		return getCharts( this.props.statType );
+	}
+
 	render() {
 		const {
 			isRequestingStats,
@@ -195,6 +171,7 @@ class StatsEmailOpenDetail extends Component {
 			slug,
 			isSitePrivate,
 			post,
+			statType,
 			hasValidDate,
 		} = this.props;
 		const { maxBars } = this.state;
@@ -212,12 +189,13 @@ class StatsEmailOpenDetail extends Component {
 		const pathTemplate = `${ traffic.path }${ slugPath }/{{ interval }}/${ postId }`;
 		return (
 			<>
-				<Main className="has-fixed-nav stats__email-opens" wideLayout>
+				<Main className="has-fixed-nav stats__email-detail" wideLayout>
 					<QueryEmailStats
 						siteId={ siteId }
 						postId={ postId }
 						date={ query.date }
 						period={ query.period }
+						statType={ statType }
 						hasValidDate={ hasValidDate }
 						quantity={ maxBars }
 						isRequesting={ isRequestingStats }
@@ -226,7 +204,7 @@ class StatsEmailOpenDetail extends Component {
 					<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 
 					<PageViewTracker
-						path="/stats/email/opens/:site/:period/:email_id"
+						path="/stats/email/:statType/:site/:period/:email_id"
 						title="Stats > Single Email"
 					/>
 					<FixedNavigationHeader
@@ -247,7 +225,7 @@ class StatsEmailOpenDetail extends Component {
 						<>
 							<div>
 								<h1>{ this.getTitle() }</h1>
-								<StatsEmailOpenTopRow siteId={ siteId } postId={ postId } />
+								<StatsEmailTopRow siteId={ siteId } postId={ postId } statType={ statType } />
 
 								<StatsPeriodHeader>
 									<StatsPeriodNavigation
@@ -274,12 +252,12 @@ class StatsEmailOpenDetail extends Component {
 								</StatsPeriodHeader>
 
 								<ChartTabs
-									activeTab={ getActiveTab( this.props.chartTab ) }
+									activeTab={ getActiveTab( this.props.chartTab, statType ) }
 									activeLegend={ this.state.activeLegend }
 									availableLegend={ this.getAvailableLegend() }
 									onChangeLegend={ this.onChangeLegend }
 									switchTab={ this.switchChart }
-									charts={ CHARTS }
+									charts={ this.getCharts() }
 									queryDate={ queryDate }
 									period={ this.props.period }
 									chartTab={ this.props.chartTab }
@@ -294,7 +272,7 @@ class StatsEmailOpenDetail extends Component {
 							<div className="stats__module-list">
 								<StatsEmailModule
 									path="countries"
-									statType="opens"
+									statType={ statType }
 									postId={ postId }
 									siteId={ siteId }
 									period={ PERIOD_ALL_TIME }
@@ -303,7 +281,7 @@ class StatsEmailOpenDetail extends Component {
 
 								<StatsEmailModule
 									path="devices"
-									statType="opens"
+									statType={ statType }
 									postId={ postId }
 									siteId={ siteId }
 									period={ PERIOD_ALL_TIME }
@@ -312,7 +290,7 @@ class StatsEmailOpenDetail extends Component {
 
 								<StatsEmailModule
 									path="clients"
-									statType="opens"
+									statType={ statType }
 									postId={ postId }
 									siteId={ siteId }
 									period={ PERIOD_ALL_TIME }
@@ -331,7 +309,7 @@ class StatsEmailOpenDetail extends Component {
 
 const connectComponent = connect(
 	( state, ownProps ) => {
-		const { postId, isValidStartDate } = ownProps;
+		const { postId, statType, isValidStartDate } = ownProps;
 		const siteId = getSelectedSiteId( state );
 		const post = getSitePost( state, siteId, postId );
 
@@ -366,4 +344,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent }
 );
 
-export default flowRight( connectComponent, localize )( StatsEmailOpenDetail );
+export default flowRight( connectComponent, localize )( StatsEmailDetail );

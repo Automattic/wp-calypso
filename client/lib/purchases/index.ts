@@ -875,6 +875,10 @@ export function getRenewalPrice( purchase: Purchase ) {
 	return purchase.saleAmount || purchase.amount;
 }
 
+export function getRenewalPriceInSmallestUnit( purchase: Purchase ) {
+	return purchase.saleAmountInteger || purchase.priceInteger;
+}
+
 export function showCreditCardExpiringWarning( purchase: Purchase ) {
 	return (
 		! isIncludedWithPlan( purchase ) &&

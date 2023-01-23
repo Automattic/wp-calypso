@@ -65,7 +65,7 @@ export const getSubscribedLists = createSelector(
  * @param  {object}  state  Global state tree
  * @param  {string}  owner  List owner
  * @param  {string}  slug  List slug
- * @returns {?object}        Reader list
+ * @returns {object|undefined} Reader list
  */
 export function getListByOwnerAndSlug( state, owner, slug ) {
 	if ( ! owner || ! slug ) {

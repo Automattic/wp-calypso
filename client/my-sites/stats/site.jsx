@@ -27,7 +27,6 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import memoizeLast from 'calypso/lib/memoize-last';
-import { StatsNoContentBanner } from 'calypso/my-sites/stats/stats-no-content-banner';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,
@@ -276,12 +275,13 @@ class StatsSite extends Component {
 						/>
 
 						{ isSitePrivate ? this.renderPrivateSiteBanner( siteId, slug ) : null }
-						{ ! isSitePrivate && <StatsNoContentBanner siteId={ siteId } siteSlug={ slug } /> }
 					</>
 
-					{ config.isEnabled( 'stats-mini-carousel' ) && (
-						<MiniCarousel isOdysseyStats={ isOdysseyStats } slug={ slug } />
-					) }
+					<MiniCarousel
+						isOdysseyStats={ isOdysseyStats }
+						slug={ slug }
+						isSitePrivate={ isSitePrivate }
+					/>
 
 					<div className="stats__module-list stats__module-list--traffic is-events stats__module--unified">
 						{ config.isEnabled( 'newsletter/stats' ) && (

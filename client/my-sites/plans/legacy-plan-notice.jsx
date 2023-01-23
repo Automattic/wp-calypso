@@ -8,7 +8,7 @@ import Notice from 'calypso/components/notice';
  * @param {boolean} eligibleForProPlan - Is the user eligible for pro plan?
  * @param {object} selectedSite - Site object from store.
  * @param {object} selectedSite.plan - The plan object nested inside the selectedSite object.
- * @returns - Legacy plan Notice component.
+ * @returns {import('react').Element} - Legacy plan Notice component.
  */
 const maybeRenderLegacyPlanNotice = ( eligibleForProPlan, { plan } ) => {
 	const eligibleLegacyPlan = isBlogger( plan ) || isPersonal( plan ) || isPremium( plan );
@@ -25,6 +25,7 @@ const maybeRenderLegacyPlanNotice = ( eligibleForProPlan, { plan } ) => {
 			></Notice>
 		);
 	}
+	return null;
 };
 
 export default maybeRenderLegacyPlanNotice;

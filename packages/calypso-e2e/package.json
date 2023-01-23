@@ -32,7 +32,7 @@
 		"@automattic/languages": "workspace:^",
 		"@jest/globals": "^27.3.1",
 		"@types/jest": "^27.4.0",
-		"@types/node": "^16.17.0",
+		"@types/node": "^18.11.18",
 		"@types/node-fetch": "^2.6.1",
 		"@wordpress/i18n": "^4.9.0",
 		"asana-phrase": "^0.0.8",

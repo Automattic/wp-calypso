@@ -21,6 +21,19 @@ export default function getEditorCloseConfig( state, siteId, postType ) {
 
 	const doesRouteMatch = ( matcher ) => lastNonEditorRoute.match( matcher );
 
+	const currentSiteId = state?.ui?.selectedSiteId;
+	const currentSite = state?.sites?.items[ currentSiteId ];
+
+	// Redirect user to Launchpad screen if launchpad is enabled
+	if ( currentSite?.options?.launchpad_screen === 'full' ) {
+		const siteSlug = getSiteSlug( state, currentSiteId );
+		const flow = currentSite?.options?.site_intent;
+		return {
+			url: `/setup/${ flow }/launchpad?siteSlug=${ siteSlug }`,
+			label: translate( 'Next steps' ),
+		};
+	}
+
 	// Back to the themes list.
 	if ( doesRouteMatch( /^\/themes\/?/ ) ) {
 		return {
