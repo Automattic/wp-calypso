@@ -23,9 +23,12 @@
 	.highlight-card {
 		min-width: 280px;
 	}
-	.gridicon {
-		fill: var(--studio-gray-40);
+	.info-wrapper {
+		display: flex;
 		margin-left: 8px;
+	}
+	.info-icon {
+		fill: var(--studio-gray-40);
 	}
 }
 

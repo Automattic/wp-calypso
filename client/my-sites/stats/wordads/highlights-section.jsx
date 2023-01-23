@@ -1,5 +1,5 @@
-import { Gridicon, Popover } from '@automattic/components';
-import { Icon, payment, receipt, tip } from '@wordpress/icons';
+import { Popover } from '@automattic/components';
+import { Icon, info, payment, receipt, tip } from '@wordpress/icons';
 import { numberFormat, translate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -92,7 +92,7 @@ function payoutNotices( earnings ) {
 
 function HighlightsSectionHeader( props ) {
 	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
-	const iconReference = useRef( null );
+	const infoReferenceElement = useRef( null );
 	const localizedTitle = translate( 'Totals', {
 		comment: 'Heading for WordAds earnings highlights section',
 	} );
@@ -102,17 +102,19 @@ function HighlightsSectionHeader( props ) {
 	return (
 		<h1 className="highlight-cards-heading">
 			{ localizedTitle }{ ' ' }
-			<Gridicon
-				icon="info-outline"
-				ref={ iconReference }
+			<span
+				className="info-wrapper"
+				ref={ infoReferenceElement }
 				onMouseEnter={ () => setTooltipVisible( true ) }
 				onMouseLeave={ () => setTooltipVisible( false ) }
-			/>
+			>
+				<Icon className="info-icon" icon={ info } />
+			</span>
 			<Popover
 				className="tooltip tooltip--darker tooltip-wordads highlight-card-tooltip"
 				isVisible={ isTooltipVisible }
 				position="bottom right"
-				context={ iconReference.current }
+				context={ infoReferenceElement.current }
 			>
 				<div className="highlight-card-tooltip-content">
 					{ props.notices.map( ( notice ) => (
