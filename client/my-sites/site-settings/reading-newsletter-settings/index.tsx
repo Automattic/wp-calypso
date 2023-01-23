@@ -39,11 +39,8 @@ export const NewsletterSettingsSection = ( {
 		subscription_options,
 	} = fields;
 
-	/* eslint-disable no-console */
-	console.log( 'subscription_options', subscription_options ); // value in the form field
-	console.log( 'savedSubscriptionOptions', savedSubscriptionOptions ); // current value
-
-	// useEffect to update subscription_options when subscriptionOptions changes
+	// Update subscription_options form fields when savedSubscriptionOptions changes.
+	// This makes sure the form fields hold the current value after saving.
 	useEffect( () => {
 		updateFields( { subscription_options: savedSubscriptionOptions } );
 	}, [ savedSubscriptionOptions ] );
