@@ -4,7 +4,7 @@
  * @param {string} [slug] - category slug
  * @param {string} sid - site id
  * @param {WPCOM} wpcom - wpcom instance
- * @returns {null} null
+ * @returns {Category|undefined}
  */
 export default function Category( slug, sid, wpcom ) {
 	if ( ! sid ) {

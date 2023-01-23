@@ -15,7 +15,16 @@ const requestAlltimeStats = ( siteId, postId, statType, quantity ) => ( dispatch
 	dispatch( requestEmailAlltimeStats( siteId, postId, statType, quantity ) );
 };
 
-function QueryEmailStats( { siteId, postId, period, statType, date, quantity, hasValidDate } ) {
+function QueryEmailStats( {
+	siteId,
+	postId,
+	period,
+	date,
+	quantity,
+	hasValidDate,
+	statType,
+	isRequesting = false,
+} ) {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
@@ -30,7 +39,7 @@ function QueryEmailStats( { siteId, postId, period, statType, date, quantity, ha
 
 	useEffect( () => {
 		// if hasValidatedDate is false, the date was not set we don't have a post publish date yet
-		if ( siteId && postId > -1 && hasValidDate ) {
+		if ( siteId && postId > -1 && hasValidDate && ! isRequesting ) {
 			dispatch( requestPeriodStats( siteId, postId, period, date, statType, quantity ) );
 		}
 	}, [ dispatch, siteId, postId, hasValidDate, period, date, statType, quantity ] );
@@ -46,6 +55,7 @@ QueryEmailStats.propTypes = {
 	date: PropTypes.string,
 	quantity: PropTypes.number,
 	hasValidDate: PropTypes.bool,
+	isRequesting: PropTypes.bool,
 };
 
 export default QueryEmailStats;

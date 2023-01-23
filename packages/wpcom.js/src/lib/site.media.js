@@ -60,7 +60,7 @@ function buildFormData( files ) {
  * @param {string} id - media id
  * @param {string} sid site id
  * @param {WPCOM} wpcom - wpcom instance
- * @returns {null} null
+ * @returns {Media|undefined}
  */
 export default function Media( id, sid, wpcom ) {
 	if ( ! ( this instanceof Media ) ) {

@@ -82,6 +82,7 @@ class StatsEmailDetail extends Component {
 		showPreview: false,
 		activeTab: null,
 		activeLegend: null,
+		maxBars: 0,
 	};
 
 	static getDerivedStateFromProps( props, state ) {
@@ -145,6 +146,8 @@ class StatsEmailDetail extends Component {
 
 	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
 
+	onChangeMaxBars = ( maxBars ) => this.setState( { maxBars } );
+
 	switchChart = ( tab ) => {
 		if ( ! tab.loading && tab.attr !== this.props.chartTab ) {
 			this.props.recordGoogleEvent( 'Stats', 'Clicked ' + titlecase( tab.attr ) + ' Tab' );
@@ -171,6 +174,7 @@ class StatsEmailDetail extends Component {
 			statType,
 			hasValidDate,
 		} = this.props;
+		const { maxBars } = this.state;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const noViewsLabel = translate( 'Your email has not received any views yet!' );
@@ -193,6 +197,8 @@ class StatsEmailDetail extends Component {
 						period={ query.period }
 						statType={ statType }
 						hasValidDate={ hasValidDate }
+						quantity={ maxBars }
+						isRequesting={ isRequestingStats }
 					/>
 
 					<DocumentHead title={ translate( 'Jetpack Stats' ) } />
@@ -226,6 +232,8 @@ class StatsEmailDetail extends Component {
 										date={ date }
 										period={ period }
 										url={ `/stats/email/${ statType }/${ slug }/${ period }/${ postId }` }
+										maxBars={ maxBars }
+										isEmailStats
 									>
 										<DatePicker
 											period={ period }
@@ -255,6 +263,7 @@ class StatsEmailDetail extends Component {
 									chartTab={ this.props.chartTab }
 									postId={ postId }
 									statType={ statType }
+									onChangeMaxBars={ this.onChangeMaxBars }
 								/>
 
 								{ isSitePrivate ? this.renderPrivateSiteBanner( siteId, slug ) : null }

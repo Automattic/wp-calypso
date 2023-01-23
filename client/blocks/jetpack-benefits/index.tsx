@@ -15,6 +15,7 @@ import {
 	productHasScan,
 	productHasAntiSpam,
 	productHasVideoPress,
+	productHasBoost,
 } from 'calypso/blocks/jetpack-benefits/feature-checks';
 import JetpackBenefitsScanHistory from 'calypso/blocks/jetpack-benefits/scan-history';
 import JetpackBenefitsSiteBackups from 'calypso/blocks/jetpack-benefits/site-backups';
@@ -55,6 +56,14 @@ const JetpackBenefits: React.FC< Props > = ( { siteId, productSlug } ) => {
 					headline={ translate( 'Search' ) }
 					description={ translate(
 						'Jetpack Search helps your visitors instantly find the right content – right when they need it.'
+					) }
+				/>
+			) }
+			{ productHasBoost( productSlug ) && (
+				<JetpackBenefitsCard
+					headline={ translate( 'Boost' ) }
+					description={ translate(
+						'Jetpack Boost improves your site performance and automatically generates critical CSS.'
 					) }
 				/>
 			) }

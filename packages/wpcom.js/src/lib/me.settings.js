@@ -7,7 +7,7 @@ import MeProfileLinks from './me.settings.profile-links';
  * Use a `WPCOM#Me` instance to create a new `MeSettings` instance.
  *
  * @param {WPCOM} wpcom - wpcom instance
- * @returns {null} null
+ * @returns {MeSettings|undefined}
  */
 export default function MeSettings( wpcom ) {
 	if ( ! ( this instanceof MeSettings ) ) {

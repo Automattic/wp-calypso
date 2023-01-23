@@ -29,6 +29,19 @@ type Post = {
 	discussion: PostDiscussion;
 };
 
+const POST_STATS_CARD_TITLE_LIMIT = 48;
+
+// Use ellipsis when characters count over the limit
+const textTruncator = ( text: string, limit = 48 ) => {
+	if ( ! text ) {
+		return '';
+	}
+
+	const truncatedText = text.substring( 0, limit );
+
+	return `${ truncatedText }${ text.length > limit ? '...' : '' } `;
+};
+
 export default function PostDetailHighlightsSection( {
 	siteId,
 	postId,
@@ -45,7 +58,7 @@ export default function PostDetailHighlightsSection( {
 	const postData = {
 		date: post?.date,
 		post_thumbnail: post?.post_thumbnail?.URL || null,
-		title: post?.title,
+		title: textTruncator( post?.title, POST_STATS_CARD_TITLE_LIMIT ),
 	};
 
 	return (

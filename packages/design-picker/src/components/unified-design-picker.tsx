@@ -1,7 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_WOOP } from '@automattic/calypso-products';
 import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
@@ -167,8 +166,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 	const currentSiteCanInstallWoo = currentPlanFeatures?.includes( FEATURE_WOOP ) ?? false;
 
-	const designIsBundledWithWoo =
-		isEnabled( 'themes/plugin-bundling' ) && design.is_bundled_with_woo_commerce;
+	const designIsBundledWithWoo = design.is_bundled_with_woo_commerce;
 
 	function getPricingDescription() {
 		let text: React.ReactNode = null;

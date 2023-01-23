@@ -3,7 +3,7 @@
  *
  * @param {string} site_id - site id
  * @param {WPCOM} wpcom - wpcom instance
- * @returns {null} null
+ * @returns {Follow|undefined}
  */
 export default function Follow( site_id, wpcom ) {
 	if ( ! site_id ) {

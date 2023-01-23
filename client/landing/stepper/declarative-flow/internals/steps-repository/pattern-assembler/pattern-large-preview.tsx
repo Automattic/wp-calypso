@@ -2,7 +2,7 @@ import { PatternRenderer } from '@automattic/block-renderer';
 import { DeviceSwitcher } from '@automattic/components';
 import { Icon, layout } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
@@ -21,18 +21,29 @@ const PATTERN_RENDERER_MIN_HEIGHT = 1;
 const PatternLargePreview = ( { header, sections, footer, activePosition }: Props ) => {
 	const translate = useTranslate();
 	const hasSelectedPattern = header || sections.length || footer;
-	const containerRef = useRef< HTMLUListElement | null >( null );
+	const frameRef = useRef< HTMLDivElement | null >( null );
+	const listRef = useRef< HTMLUListElement | null >( null );
+	const [ viewportHeight, setViewportHeight ] = useState< number | undefined >( 0 );
 
 	const renderPattern = ( key: string, pattern: Pattern ) => (
 		<li key={ key }>
-			<PatternRenderer patternId={ encodePatternId( pattern.id ) } />
+			<PatternRenderer
+				patternId={ encodePatternId( pattern.id ) }
+				viewportHeight={ viewportHeight || frameRef.current?.clientHeight }
+				// Disable default max-height
+				maxHeight="none"
+			/>
 		</li>
 	);
+
+	const updateViewportHeight = () => {
+		setViewportHeight( frameRef.current?.clientHeight );
+	};
 
 	useEffect( () => {
 		let timerId: number;
 		const scrollIntoView = () => {
-			const element = containerRef.current?.children[ activePosition ];
+			const element = listRef.current?.children[ activePosition ];
 			if ( ! element ) {
 				return;
 			}
@@ -59,17 +70,27 @@ const PatternLargePreview = ( { header, sections, footer, activePosition }: Prop
 		};
 	}, [ activePosition, header, sections, footer ] );
 
+	useEffect( () => {
+		const handleResize = () => updateViewportHeight();
+		window.addEventListener( 'resize', handleResize );
+
+		return () => window.removeEventListener( 'resize', handleResize );
+	} );
+
 	return (
 		<DeviceSwitcher
 			className="pattern-large-preview"
 			isShowDeviceSwitcherToolbar
 			isShowFrameBorder
-			onDeviceChange={ ( device ) =>
-				recordTracksEvent( 'calypso_signup_pattern_assembler_preview_device_click', { device } )
-			}
+			frameRef={ frameRef }
+			onDeviceChange={ ( device ) => {
+				recordTracksEvent( 'calypso_signup_pattern_assembler_preview_device_click', { device } );
+				// Wait for the animation to end in 200ms
+				window.setTimeout( updateViewportHeight, 205 );
+			} }
 		>
 			{ hasSelectedPattern ? (
-				<ul className="pattern-large-preview__patterns" ref={ containerRef }>
+				<ul className="pattern-large-preview__patterns" ref={ listRef }>
 					{ header && renderPattern( 'header', header ) }
 					{ sections.map( ( pattern ) => renderPattern( pattern.key!, pattern ) ) }
 					{ footer && renderPattern( 'footer', footer ) }

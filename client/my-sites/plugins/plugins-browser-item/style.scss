@@ -41,6 +41,12 @@
 		font-size: $font-body-small;
 		font-weight: 400;
 		color: $studio-gray-60;
+
+		// limit to 2 lines
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
 	}
 
 	&.compact {

@@ -53,7 +53,8 @@ export default function ( router ) {
 	);
 	router(
 		[ '/themes/:theme/:section(support)?', '/themes/:site/:theme/:section(support)?' ],
-		redirectToThemeDetails
+		( { res, params: { site, theme, section } }, next ) =>
+			redirectToThemeDetails( res.redirect, site, theme, section, next )
 	);
 	// The following route definition is needed so direct hits on `/themes/<mysite>` don't result in a 404.
 	router( '/themes/*', fetchThemeData, loggedOut, makeLayout );
