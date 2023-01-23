@@ -57,6 +57,8 @@ const PluginsBrowserListElement = ( props ) => {
 			: []
 	);
 
+	const { isPreinstalledPremiumPluginUpgraded } = usePreinstalledPremiumPlugin( plugin.slug );
+
 	const pluginLink = useMemo( () => {
 		if ( plugin.link ) {
 			return plugin.link;
@@ -115,6 +117,14 @@ const PluginsBrowserListElement = ( props ) => {
 		return ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.slug );
 	}, [ isJetpack, site, plugin ] );
 
+	const isPluginInstalledOnSite = useMemo(
+		() =>
+			selectedSite?.ID &&
+			( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) ||
+				isWpcomPreinstalled ||
+				isPreinstalledPremiumPluginUpgraded ),
+		[ selectedSite?.ID, sitesWithPlugin, isWpcomPreinstalled, isPreinstalledPremiumPluginUpgraded ]
+	);
 	const isUntestedVersion = useMemo( () => {
 		const wpVersion = selectedSite?.options?.software_version;
 		const pluginTestedVersion = plugin?.tested;
@@ -143,7 +153,6 @@ const PluginsBrowserListElement = ( props ) => {
 		) || jetpackNonAtomic;
 
 	if ( isPlaceholder ) {
-		// eslint-disable-next-line no-use-before-define
 		return <Placeholder />;
 	}
 
@@ -198,7 +207,6 @@ const PluginsBrowserListElement = ( props ) => {
 				) }
 				<div className="plugins-browser-item__footer">
 					{ variant === PluginsBrowserElementVariant.Extended && (
-						// eslint-disable-next-line no-use-before-define
 						<InstalledInOrPricing
 							sitesWithPlugin={ sitesWithPlugin }
 							isWpcomPreinstalled={ isWpcomPreinstalled }
@@ -208,32 +216,35 @@ const PluginsBrowserListElement = ( props ) => {
 							currentSites={ currentSites }
 						/>
 					) }
-					<div className="plugins-browser-item__additional-info">
-						{ !! plugin.rating && ! isMarketplaceProduct && (
-							<div className="plugins-browser-item__ratings">
-								<PluginRatings
-									rating={ plugin.rating }
-									numRatings={ plugin.num_ratings }
-									inlineNumRatings
-									hideRatingNumber
-								/>
-							</div>
-						) }
-					</div>
+					{ /* Plugin activation information will be shown in this area if its installed */ }
+					{ ! isPluginInstalledOnSite && (
+						<div className="plugins-browser-item__additional-info">
+							{ !! plugin.rating && ! isMarketplaceProduct && (
+								<div className="plugins-browser-item__ratings">
+									<PluginRatings
+										rating={ plugin.rating }
+										numRatings={ plugin.num_ratings }
+										inlineNumRatings
+										hideRatingNumber
+									/>
+								</div>
+							) }
+						</div>
+					) }
 				</div>
 			</a>
 		</li>
 	);
 };
 
-const InstalledInOrPricing = ( {
+function InstalledInOrPricing( {
 	sitesWithPlugin,
 	isWpcomPreinstalled,
 	plugin,
 	shouldUpgrade,
 	canInstallPlugins,
 	currentSites,
-} ) => {
+} ) {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const isMarketplaceProduct = useSelector( ( state ) =>
@@ -251,23 +262,16 @@ const InstalledInOrPricing = ( {
 			? true
 			: getPluginPurchased( plugin, purchases, isMarketplaceProduct )?.active;
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	let checkmarkColorClass = 'checkmark--active';
 
 	if ( isPreinstalledPremiumPlugin ) {
 		return <PreinstalledPremiumPluginBrowserItemPricing plugin={ plugin } />;
 	}
 
 	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
-		/* eslint-disable wpcalypso/jsx-gridicon-size */
-		if ( selectedSiteId ) {
-			checkmarkColorClass = isPluginActiveOnsiteWithSubscription
-				? 'checkmark--active'
-				: 'checkmark--inactive';
-		}
 		return (
 			<div className="plugins-browser-item__installed-and-active-container">
 				<div className="plugins-browser-item__installed ">
-					<Gridicon icon="checkmark" className={ checkmarkColorClass } size={ 14 } />
+					<Gridicon icon="checkmark" className="checkmark" size={ 12 } />
 					{ isWpcomPreinstalled || currentSites?.length === 1
 						? translate( 'Installed' )
 						: translate( 'Installed on %d site', 'Installed on %d sites', {
@@ -286,7 +290,6 @@ const InstalledInOrPricing = ( {
 				) }
 			</div>
 		);
-		/* eslint-enable wpcalypso/jsx-gridicon-size */
 	}
 
 	return (
@@ -336,9 +339,9 @@ const InstalledInOrPricing = ( {
 			</PluginPrice>
 		</div>
 	);
-};
+}
 
-const Placeholder = () => {
+function Placeholder() {
 	return (
 		<li className="plugins-browser-item is-placeholder">
 			<span className="plugins-browser-item__link">
@@ -351,6 +354,6 @@ const Placeholder = () => {
 			</span>
 		</li>
 	);
-};
+}
 
 export default PluginsBrowserListElement;
