@@ -155,38 +155,45 @@ class CurrentPlan extends Component {
 		return <PaidPlanThankYou />;
 	}
 
-	renderEcommerceTrialPage() {
-		const { path, selectedSiteId, translate } = this.props;
+	renderMain() {
+		const { selectedSiteId, selectedSite, showJetpackChecklist, translate } = this.props;
 		const isLoading = this.isLoading();
+		const currentPlanSlug = selectedSite.plan.product_slug;
+		const planTitle = getPlan( currentPlanSlug ).getTitle();
+		const planFeaturesHeader = translate( '{{planName/}} plan features', {
+			components: { planName: <>{ planTitle }</> },
+		} );
 
 		return (
-			<Main className="current-plan" wideLayout>
-				<DocumentHead title={ translate( 'My Plan' ) } />
-				<FormattedHeader
-					brandFont
-					className="current-plan__page-heading"
-					headerText={ translate( 'Plans' ) }
-					subHeaderText={ translate(
-						'Learn about the features included in your WordPress.com plan.'
-					) }
-					align="left"
-				/>
-				<div className="current-plan__content">
-					<QuerySites siteId={ selectedSiteId } />
-					<QuerySitePlans siteId={ selectedSiteId } />
-					<QuerySitePurchases siteId={ selectedSiteId } />
-					<QuerySiteProducts siteId={ selectedSiteId } />
-					<PlansNavigation path={ path } />
-					<PurchasesListing />
-					<div
-						className={ classNames( 'current-plan__header-text current-plan__text', {
-							'is-placeholder': { isLoading },
-						} ) }
-					></div>
-					<div>eCommerce Trial special content</div>
+			<>
+				<PurchasesListing />
+
+				{ showJetpackChecklist && (
+					<Fragment>
+						<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
+						<JetpackChecklist />
+					</Fragment>
+				) }
+
+				<div
+					className={ classNames( 'current-plan__header-text current-plan__text', {
+						'is-placeholder': { isLoading },
+					} ) }
+				>
+					<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
 				</div>
-			</Main>
+				<AsyncLoad
+					require="calypso/blocks/product-purchase-features-list"
+					placeholder={ null }
+					plan={ currentPlanSlug }
+					isPlaceholder={ isLoading }
+				/>
+			</>
 		);
+	}
+
+	renderEcommerceTrialPage() {
+		return <div className="ecomeerce-trial">{ this.renderMain() }</div>;
 	}
 
 	render() {
@@ -198,7 +205,6 @@ class CurrentPlan extends Component {
 			selectedSite,
 			selectedSiteId,
 			shouldShowDomainWarnings,
-			showJetpackChecklist,
 			showThankYou,
 			translate,
 			eligibleForProPlan,
@@ -206,12 +212,6 @@ class CurrentPlan extends Component {
 
 		const currentPlanSlug = selectedSite.plan.product_slug;
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
-		const isLoading = this.isLoading();
-		const planTitle = getPlan( currentPlanSlug ).getTitle();
-
-		const planFeaturesHeader = translate( '{{planName/}} plan features', {
-			components: { planName: <>{ planTitle }</> },
-		} );
 
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
@@ -229,10 +229,6 @@ class CurrentPlan extends Component {
 			page.redirect( `/plans/${ selectedSite.slug }` );
 
 			return null;
-		}
-
-		if ( isEcommerceTrial ) {
-			return this.renderEcommerceTrialPage();
 		}
 
 		return (
@@ -296,28 +292,7 @@ class CurrentPlan extends Component {
 
 					{ legacyPlanNotice( eligibleForProPlan, selectedSite ) }
 
-					<PurchasesListing />
-
-					{ showJetpackChecklist && (
-						<Fragment>
-							<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
-							<JetpackChecklist />
-						</Fragment>
-					) }
-
-					<div
-						className={ classNames( 'current-plan__header-text current-plan__text', {
-							'is-placeholder': { isLoading },
-						} ) }
-					>
-						<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
-					</div>
-					<AsyncLoad
-						require="calypso/blocks/product-purchase-features-list"
-						placeholder={ null }
-						plan={ currentPlanSlug }
-						isPlaceholder={ isLoading }
-					/>
+					{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderMain() }
 
 					<TrackComponentView eventName="calypso_plans_my_plan_view" />
 				</div>
