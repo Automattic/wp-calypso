@@ -148,3 +148,30 @@
 	margin-bottom: 10px;
 	text-align: center;
 }
+
+.current-plan__trial-card {
+	display: flex;
+	padding: 30px;
+
+	.current-plan__trial-card-content {
+		flex: 1;
+		padding-right: 50px;
+		.badge {
+			border-radius: 0;
+			background-color: #000;
+			color: #fff;
+			font-size: 0.75rem;
+		}
+		h2 {
+			font-size: $font-title-medium;
+			font-weight: 400;
+			color: #2f2f2f;
+			padding: 15px 0;
+		}
+		p {
+			font-size: 1rem;
+			font-weight: 400;
+			color: #757575;
+		}
+	}
+}

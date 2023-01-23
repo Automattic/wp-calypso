@@ -16,7 +16,7 @@ import {
 	isFreePlanProduct,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
-import { Dialog } from '@automattic/components';
+import { Button, Dialog, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -24,6 +24,7 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
+import Badge from 'calypso/components/badge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
@@ -193,7 +194,33 @@ class CurrentPlan extends Component {
 	}
 
 	renderEcommerceTrialPage() {
-		return <div className="current-plan__ecommerce-trial-wrapper">{ this.renderMain() }</div>;
+		const { translate } = this.props;
+
+		return (
+			<>
+				<Card>
+					<div className="current-plan__trial-card">
+						<div className="current-plan__trial-card-content">
+							<Badge type="info">{ translate( '5 days left' ) }</Badge>
+							<h2>{ translate( 'You’re in a free trial store' ) }</h2>
+							<p>
+								{ translate(
+									'Your free trial we’ll expire in 5 days. Pick a plan by December, 13th to keep your store running.'
+								) }
+							</p>
+							<Button primary>{ translate( 'Pick a plan' ) }</Button>
+						</div>
+						<div className="current-plan__trial-ilustration">
+							<img
+								width={ 180 }
+								alt="Pick a plan"
+								src="/calypso/images/plans/wpcom/plan-ecommerce-trial.png"
+							/>
+						</div>
+					</div>
+				</Card>
+			</>
+		);
 	}
 
 	render() {
