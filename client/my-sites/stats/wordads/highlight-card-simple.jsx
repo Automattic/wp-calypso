@@ -6,7 +6,9 @@ function HighlightCardSimple( { heading, icon, value } ) {
 		<Card className="highlight-card">
 			<div className="highlight-card-icon">{ icon }</div>
 			<div className="highlight-card-heading">{ heading }</div>
-			<div className="highlight-card-count">{ displayValue }</div>
+			<div className="highlight-card-count">
+				<span className="highlight-card-count-value">{ displayValue }</span>
+			</div>
 		</Card>
 	);
 }
