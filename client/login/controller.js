@@ -217,8 +217,8 @@ export function redirectJetpack( context, next ) {
 	// 2023-01-23: For some reason (yet unknown), the path replacement below
 	// is happening twice. Until we determine and fix the root cause, this
 	// guard exists to stop it from happening.
-	const isJetpackLogin = context.path.includes( 'log-in/jetpack' );
-	if ( isJetpackLogin ) {
+	const pathAlreadyUpdated = context.path.includes( 'log-in/jetpack' );
+	if ( pathAlreadyUpdated ) {
 		next();
 		return;
 	}
