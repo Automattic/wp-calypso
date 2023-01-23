@@ -1,3 +1,4 @@
+@use "sass:math";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
@@ -62,5 +63,9 @@
 	.hosting-upsell-nudge__feature-description {
 		font-size: $font-body-small;
 		color: var(--color-neutral-50);
+
+		[lang^="en"] & {
+			letter-spacing: math.div(-0.15px, $root-font-size) * 1rem;
+		}
 	}
 }

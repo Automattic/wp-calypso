@@ -4,7 +4,7 @@
  * @param {string} cid comment id
  * @param {string} sid site id
  * @param {WPCOM} wpcom - wpcom instance
- * @returns {null} null
+ * @returns {CommentLike|undefined}
  */
 export default function CommentLike( cid, sid, wpcom ) {
 	if ( ! sid ) {

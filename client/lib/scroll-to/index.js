@@ -153,7 +153,7 @@ function circularOutEasing( val ) {
  * @param {Function} [options.onStart] - callback before start is called
  * @param {Function} [options.onComplete] - callback when scroll is finished
  * @param {HTMLElement} [options.container] - the container to scroll instead of window, if any
- * @returns {object} - the stepper
+ * @returns {object|undefined} - the stepper
  */
 export default function scrollTo( options ) {
 	const container = options.container || window;

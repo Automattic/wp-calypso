@@ -80,7 +80,7 @@ const REGEXP_TRANSLATOR_COMMENT = /^\s*translators:\s*([\s\S]+)/im;
  * @param {object} path              Traversal path.
  * @param {number} _originalNodeLine Private: In recursion, line number of
  *                                     the original node passed.
- * @returns {?string} Extracted comment.
+ * @returns {string|undefined} Extracted comment.
  */
 function getExtractedComment( path, _originalNodeLine ) {
 	const { node, parent, parentPath } = path;
