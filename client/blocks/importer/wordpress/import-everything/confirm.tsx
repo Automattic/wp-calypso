@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Title, SubTitle, NextButton, Notice } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -9,7 +8,6 @@ import React, { useState, useEffect } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
 import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
 import SiteIcon from 'calypso/blocks/site-icon';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import ConfirmModal from './confirm-modal';
 import ConfirmUpgradePlan from './confirm-upgrade-plan';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -23,6 +21,7 @@ interface Props {
 	targetSite: SiteDetails | null;
 	targetSiteSlug: string;
 	isTargetSitePlanCompatible: boolean;
+	showConfirmDialog: boolean;
 	startImport: () => void;
 }
 
@@ -39,11 +38,11 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 		targetSite,
 		targetSiteSlug,
 		isTargetSitePlanCompatible,
+		showConfirmDialog,
 		startImport,
 	} = props;
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = useState( false );
 	const [ showUpgradePlanScreen, setShowUpgradePlanScreen ] = useState( false );
-	const isMigrateFromWp = useSelect( ( select ) => select( ONBOARD_STORE ).getIsMigrateFromWp() );
 
 	/**
 	 ↓ Effects
@@ -56,10 +55,10 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 	 ↓ Functions
 	 */
 	function showConfirmDialogOrStartImport() {
-		if ( isMigrateFromWp ) {
-			startImport();
-		} else {
+		if ( showConfirmDialog ) {
 			setIsModalDetailsOpen( true );
+		} else {
+			startImport();
 		}
 	}
 
