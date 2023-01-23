@@ -1,5 +1,5 @@
 import { Gridicon, Popover } from '@automattic/components';
-import { Icon, starEmpty } from '@wordpress/icons';
+import { Icon, payment, receipt, tip } from '@wordpress/icons';
 import { numberFormat, translate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -29,18 +29,21 @@ function getHighlights( earnings ) {
 	const highlights = [
 		{
 			heading: translate( 'Earnings', { comment: 'Total WordAds earnings to date' } ),
+			icon: <Icon icon={ payment } />,
 			amount: total,
 		},
 		{
 			heading: translate( 'Paid', {
 				comment: 'Total WordAds earnings that have been paid out',
 			} ),
+			icon: <Icon icon={ receipt } />,
 			amount: paid,
 		},
 		{
 			heading: translate( 'Outstanding amount', {
 				comment: 'Total WordAds earnings currently unpaid',
 			} ),
+			icon: <Icon icon={ tip } />,
 			amount: owed,
 		},
 	];
@@ -48,7 +51,6 @@ function getHighlights( earnings ) {
 	return highlights.map( ( highlight, i ) => ( {
 		id: i,
 		formattedAmount: getAmountAsFormattedString( highlight.amount ),
-		icon: <Icon icon={ starEmpty } />,
 		...highlight,
 	} ) );
 }
