@@ -130,6 +130,7 @@ const connectComponent = connect(
 			postId,
 			statType,
 			onChangeMaxBars,
+			maxBars,
 		}
 	) => {
 		const siteId = getSelectedSiteId( state );
@@ -139,17 +140,20 @@ const connectComponent = connect(
 
 		const quantity = 'hour' === period ? 24 : 30;
 		const counts = getCountRecords( state, siteId, postId, period, statType );
-		const chartData = buildChartData( activeLegend, chartTab, counts, period );
+		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
+		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
+		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
+		const maxBarsForRequest = 'hour' === period ? quantity : maxBars;
 		const isActiveTabLoading = isLoadingTabs(
 			state,
 			siteId,
 			postId,
 			period,
 			statType,
-			endOf.format( 'YYYY-MM-DD' )
+			endOf.format( 'YYYY-MM-DD' ),
+			chartData.length,
+			maxBarsForRequest
 		);
-		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
-		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;
 
 		return {
