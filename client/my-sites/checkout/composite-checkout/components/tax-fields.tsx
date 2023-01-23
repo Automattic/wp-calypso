@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	Field,
 	tryToGuessPostalCodeFormat,
@@ -53,7 +54,9 @@ export default function TaxFields( {
 		countriesList.length && countryCode?.value
 			? getCountryPostalCodeSupport( countriesList, countryCode.value )
 			: false;
-	const isVatSupported = Boolean( countryCode?.value && isVatSupportedFor( countryCode.value ) );
+	const isVatSupported =
+		config.isEnabled( 'checkout/vat-form' ) &&
+		Boolean( countryCode?.value && isVatSupportedFor( countryCode.value ) );
 
 	return (
 		<>
