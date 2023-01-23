@@ -76,7 +76,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 	const dispatch = useReduxDispatch();
 
-	const { submit } = navigation;
+	const { submit, exitFlow } = navigation;
 	const path = '/start/link-in-bio/domains?new=test';
 	let showExampleSuggestions: boolean | undefined = undefined;
 	let includeWordPressDotCom: boolean | undefined = undefined;
@@ -473,7 +473,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				</div>
 			}
 			recordTracksEvent={ recordTracksEvent }
-			goBack={ () => submit?.( { previousStep: true } ) }
+			goBack={ () => exitFlow?.( '/sites' ) }
 			goNext={ () => submit?.() }
 			formattedHeader={
 				<FormattedHeader
