@@ -291,6 +291,10 @@ $plan-features-sidebar-width: 272px;
 		@media ( min-width: 880px ) {
 			border-right: solid 1px #e0e0e0;
 			border-left: solid 1px #e0e0e0;
+
+			&.is-bottom-aligned {
+				vertical-align: bottom;
+			}
 		}
 	}
 

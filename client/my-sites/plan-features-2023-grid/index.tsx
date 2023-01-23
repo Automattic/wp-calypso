@@ -279,6 +279,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			const { currencyCode, discountPrice, planName, rawPrice } = properties;
 			const classes = classNames( 'plan-features-2023-grid__table-item', {
 				'has-border-top': ! isReskinned,
+				'is-bottom-aligned': true,
 			} );
 
 			if ( rawPrice === undefined || rawPrice === null ) {
