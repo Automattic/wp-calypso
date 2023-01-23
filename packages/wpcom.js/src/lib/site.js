@@ -389,12 +389,13 @@ class Site {
 	 * This fetches the timeline, according to the query passed
 	 *
 	 * @param {string} postId - id of the post which email we are querying
+	 * @param  {string} statType The type of stat we are working with. For example: 'opens' for Email Open stats
 	 * @param {object} [query] - query object parameter
 	 * @param {Function?} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	statsEmailOpensForPeriod( postId, query, fn ) {
-		const path = `${ this.path }/stats/opens/emails/${ postId }`;
+	emailStatsForPeriod( postId, statType, query, fn ) {
+		const path = `${ this.path }/stats/${ statType }/emails/${ postId }`;
 		const statFields = [ 'timeline' ];
 		return Promise.all(
 			statFields.map( ( field ) =>
@@ -412,11 +413,12 @@ class Site {
 	 * This fetchesthe clients, devices & countries
 	 *
 	 * @param {string} postId - id of the post which email we are querying
+	 * @param  {string} statType The type of stat we are working with. For example: 'opens' for Email Open stats
 	 * @param {Function?} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	statsEmailOpensAlltime( postId, fn ) {
-		const basePath = `${ this.path }/stats/opens/emails/${ postId }`;
+	emailStatsAlltime( postId, statType, fn ) {
+		const basePath = `${ this.path }/stats/${ statType }/emails/${ postId }`;
 		const statFields = [ 'client', 'device', 'country', 'rate' ];
 		return Promise.all(
 			statFields.map( ( field ) => this.wpcom.req.get( `${ basePath }/${ field }`, fn ) )
