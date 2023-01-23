@@ -31,6 +31,7 @@
 		"activity-log/v2": true,
 		"always_use_logout_url": true,
 		"checkout/google-pay": false,
+		"checkout/vat-form": false,
 		"current-site/domain-warning": false,
 		"current-site/notice": false,
 		"current-site/stale-cart-notice": false,
