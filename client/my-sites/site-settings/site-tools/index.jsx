@@ -85,8 +85,8 @@ class SiteTools extends Component {
 			'Sync your site content for a faster experience, change site owner, repair or terminate your connection.'
 		);
 
-		const copyTitle = translate( 'Copy', { context: 'verb' } );
-		const copyText = translate( 'Copy your existing site and all its data to a new site.' );
+		const copyTitle = translate( 'Copy site' );
+		const copyText = translate( 'Copy this site with all of its data to a new site.' );
 
 		const cloneTitle = translate( 'Clone', { context: 'verb' } );
 		const cloneText = translate( 'Clone your existing site and all its data to a new location.' );
