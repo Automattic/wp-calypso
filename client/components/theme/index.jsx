@@ -514,6 +514,7 @@ export class Theme extends Component {
 			hasPremiumThemesFeature,
 			isPremiumTheme,
 			didPurchaseTheme,
+			isExternallyManagedTheme,
 		} = this.props;
 		const { name, description, screenshot, style_variations = [] } = theme;
 		const isNewCardsOnly = isEnabled( 'themes/showcase-i4/cards-only' );
@@ -525,7 +526,7 @@ export class Theme extends Component {
 		} );
 
 		const themeNeedsPurchase = isPremiumTheme && ! hasPremiumThemesFeature && ! didPurchaseTheme;
-		const showUpsell = upsellUrl && isPremiumTheme && ! active;
+		const showUpsell = upsellUrl && ( isPremiumTheme || isExternallyManagedTheme ) && ! active;
 		const priceClass = classNames( 'theme__badge-price', {
 			'theme__badge-price-upgrade': ! themeNeedsPurchase,
 			'theme__badge-price-upsell': showUpsell,
