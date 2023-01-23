@@ -223,6 +223,13 @@
 	@extend %placeholder;
 }
 
+.plugins-browser-item__installed-and-active-container {
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+	align-items: center;
+}
+
 .plugins-browser-item__installed {
 	display: flex;
 	animation: appear 0.15s ease-in;

@@ -57,6 +57,8 @@ const PluginsBrowserListElement = ( props ) => {
 			: []
 	);
 
+	const { isPreinstalledPremiumPluginUpgraded } = usePreinstalledPremiumPlugin( plugin.slug );
+
 	const pluginLink = useMemo( () => {
 		if ( plugin.link ) {
 			return plugin.link;
@@ -115,6 +117,14 @@ const PluginsBrowserListElement = ( props ) => {
 		return ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.slug );
 	}, [ isJetpack, site, plugin ] );
 
+	const isPluginInstalledOnSite = useMemo(
+		() =>
+			selectedSite?.ID &&
+			( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) ||
+				isWpcomPreinstalled ||
+				isPreinstalledPremiumPluginUpgraded ),
+		[ selectedSite?.ID, sitesWithPlugin, isWpcomPreinstalled, isPreinstalledPremiumPluginUpgraded ]
+	);
 	const isUntestedVersion = useMemo( () => {
 		const wpVersion = selectedSite?.options?.software_version;
 		const pluginTestedVersion = plugin?.tested;
@@ -208,18 +218,21 @@ const PluginsBrowserListElement = ( props ) => {
 							currentSites={ currentSites }
 						/>
 					) }
-					<div className="plugins-browser-item__additional-info">
-						{ !! plugin.rating && ! isMarketplaceProduct && (
-							<div className="plugins-browser-item__ratings">
-								<PluginRatings
-									rating={ plugin.rating }
-									numRatings={ plugin.num_ratings }
-									inlineNumRatings
-									hideRatingNumber
-								/>
-							</div>
-						) }
-					</div>
+					{ /* Plugin activation information will be shown in this area if its installed */ }
+					{ ! isPluginInstalledOnSite && (
+						<div className="plugins-browser-item__additional-info">
+							{ !! plugin.rating && ! isMarketplaceProduct && (
+								<div className="plugins-browser-item__ratings">
+									<PluginRatings
+										rating={ plugin.rating }
+										numRatings={ plugin.num_ratings }
+										inlineNumRatings
+										hideRatingNumber
+									/>
+								</div>
+							) }
+						</div>
+					) }
 				</div>
 			</a>
 		</li>
