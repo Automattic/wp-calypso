@@ -112,7 +112,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 				shouldHideNavButtons={ true }
 				hideFormattedHeader={ true }
 				stepName="processing-step"
-				isHorizontalLayout={ true }
 				stepContent={
 					<>
 						<div className="processing-step">
