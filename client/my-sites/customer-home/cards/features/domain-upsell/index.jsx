@@ -1,10 +1,13 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
 export default function DomainUpsell() {
 	const translate = useTranslate();
+	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 
 	return (
 		<Card className="domain-upsell__card customer-home__card">
@@ -19,23 +22,23 @@ export default function DomainUpsell() {
 				<div className="suggested-domain-name">
 					<div className="card">
 						<span>
-							<strike>simplefree512.wordpress.com</strike>
+							<strike>{ siteSlug }</strike>
 						</span>
 						<div className="badge badge--info">Current</div>
 					</div>
 					<div className="card">
-						<span>simplefree512.wpcomstaging.com</span>
+						<span>{ siteSlug }</span>
 						<div className="badge badge--success">Available</div>
 					</div>
 				</div>
 
 				<div className="domain-upsell-actions">
-					<button type="button" className="button">
+					<a className="button" href={ '/domains/add/' + siteSlug }>
 						{ translate( 'Search a domain' ) }
-					</button>
-					<button type="button" className="button is-primary">
+					</a>
+					<a className="button is-primary" href={ '/plans/' + siteSlug }>
 						{ translate( 'Get your custom domain' ) }
-					</button>
+					</a>
 				</div>
 			</div>
 		</Card>
