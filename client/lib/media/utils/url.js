@@ -8,7 +8,7 @@ import resize from 'calypso/lib/resize-image-url';
  * @param  {object} media   Media object
  * @param  {object} options Optional options, accepting a `photon` boolean,
  *                          `maxWidth` pixel value, `resize` string, or `size`.
- * @returns {string}         URL to the media
+ * @returns {string|undefined} URL to the media
  */
 export function url( media, options ) {
 	if ( ! media ) {

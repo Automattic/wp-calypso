@@ -7,6 +7,8 @@ import YourHomepageDisplaysSetting from './YourHomepageDisplaysSetting';
 
 type Fields = {
 	jetpack_relatedposts_enabled?: boolean;
+	jetpack_relatedposts_show_context?: boolean;
+	jetpack_relatedposts_show_date?: boolean;
 	jetpack_relatedposts_show_headline?: boolean;
 	jetpack_relatedposts_show_thumbnails?: boolean;
 	page_for_posts?: string;

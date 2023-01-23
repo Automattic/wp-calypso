@@ -11,7 +11,7 @@ import { stringify } from 'calypso/lib/shortcode';
  * optional set of parameters.
  *
  * @param  {object} settings Gallery settings
- * @returns {string}          Gallery shortcode
+ * @returns {string|undefined}          Gallery shortcode
  */
 export function generateGalleryShortcode( settings ) {
 	let attrs;

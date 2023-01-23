@@ -7,7 +7,7 @@ import commentLike from './site.comment.like';
  * @param {string} [pid] post id
  * @param {string} sid site id
  * @param {WPCOM} wpcom - wpcom instance
- * @returns {null} null
+ * @returns {Comment|undefined}
  */
 export default function Comment( cid, pid, sid, wpcom ) {
 	if ( ! sid ) {

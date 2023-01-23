@@ -4,7 +4,7 @@
  * @param {string} pid - post id
  * @param {string} sid - site id
  * @param {WPCOM} wpcom - wpcom instance
- * @returns {null} null
+ * @returns {Like|undefined}
  */
 export default function Like( pid, sid, wpcom ) {
 	if ( ! sid ) {

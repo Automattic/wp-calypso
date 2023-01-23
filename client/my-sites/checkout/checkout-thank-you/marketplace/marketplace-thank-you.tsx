@@ -311,7 +311,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			) }
 			{ ! showProgressBar && (
 				<div className="marketplace-thank-you__container">
-					<ConfettiAnimation />
+					<ConfettiAnimation delay={ 1000 } />
 					<ThankYou
 						containerClassName="marketplace-thank-you"
 						sections={ [ pluginsSection, footerSection ] }

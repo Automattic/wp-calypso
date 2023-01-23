@@ -19,8 +19,8 @@
 	}
 
 	.plugin-icon {
-		width: 60px;
-		height: 60px;
+		width: 47px;
+		height: 47px;
 		margin-right: 0;
 
 		&.is-placeholder {
@@ -33,7 +33,7 @@
 	.plugins-browser-item__last-updated {
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		margin-left: calc(60px + 16px); // icon width + margin
+		margin-left: calc(47px + 16px); // icon width + margin
 	}
 
 	.plugins-browser-item__description {
@@ -41,6 +41,12 @@
 		font-size: $font-body-small;
 		font-weight: 400;
 		color: $studio-gray-60;
+
+		// limit to 2 lines
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
 	}
 
 	&.compact {
@@ -148,6 +154,7 @@
 .plugins-browser-item__author {
 	color: var(--color-text-subtle);
 	font-size: $font-body-small;
+	padding-bottom: 5px;
 }
 
 .plugins-browser-item__author-name {

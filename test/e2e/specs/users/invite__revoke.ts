@@ -31,6 +31,7 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 	let page: Page;
 	let restAPIClient: RestAPIClient;
 	let revoked = false;
+	let userManagementRevampFeature = false;
 
 	describe( 'Setup', function () {
 		beforeAll( async () => {
@@ -61,6 +62,9 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 			page = await browser.newPage();
 			const testAccount = new TestAccount( 'defaultUser' );
 			await testAccount.authenticate( page );
+			userManagementRevampFeature = await page.evaluate(
+				`configData.features['user-management-revamp']`
+			);
 		} );
 
 		it( 'Navigate to User > All Users', async function () {
@@ -70,7 +74,12 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 
 		it( 'View pending invites', async function () {
 			peoplePage = new PeoplePage( page );
-			await peoplePage.clickTab( 'Invites' );
+
+			if ( userManagementRevampFeature ) {
+				await peoplePage.clickTab( 'Team' );
+			} else {
+				await peoplePage.clickTab( 'Invites' );
+			}
 		} );
 
 		it( 'Revoke the invite for test user', async function () {

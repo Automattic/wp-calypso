@@ -8,7 +8,7 @@ import MeTwoStep from './me.two-step';
  * Create `Me` instance
  *
  * @param {object} wpcom - wpcom instance
- * @returns {null} null
+ * @returns {undefined|Me} New Me instance or undefined.
  */
 export default function Me( wpcom ) {
 	if ( ! ( this instanceof Me ) ) {
