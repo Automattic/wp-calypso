@@ -181,6 +181,9 @@ export const PlanUSPS: React.FC< Props > = ( {
 		translate( 'Best-in-class hosting' ),
 		supportText,
 		...( isPreInstalledPlugin ? preInstalledPluginUSPS : [] ),
+		...( requiredPlan === PLAN_ECOMMERCE_TRIAL_MONTHLY
+			? [ translate( 'Tools for store management and growth' ) ]
+			: [] ),
 	];
 
 	return (
