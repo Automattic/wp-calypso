@@ -12,6 +12,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import DeleteSiteWarningDialog from 'calypso/my-sites/site-settings/delete-site-warning-dialog';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import {
 	hasLoadedSitePurchasesFromServer,
@@ -24,7 +25,7 @@ import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { isJetpackSite, getSitePlanSlug } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getSitePlanSlug, getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import SiteToolsLink from './link';
 
@@ -179,7 +180,10 @@ class SiteTools extends Component {
 export default compose( [
 	connect(
 		( state ) => {
+			const currentUser = getCurrentUser( state );
 			const siteId = getSelectedSiteId( state );
+			const site = getSite( state, siteId );
+			const siteOwner = site?.site_owner;
 			const siteSlug = getSelectedSiteSlug( state );
 			const isAtomic = isSiteAutomatedTransfer( state, siteId );
 			const planSlug = getSitePlanSlug( state, siteId );
@@ -189,7 +193,10 @@ export default compose( [
 			const isP2Hub = isSiteP2Hub( state, siteId );
 			const rewindState = getRewindState( state, siteId );
 			const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
-			const canSiteBeCopied = siteHasFeature( state, siteId, WPCOM_FEATURES_COPY_SITE ) && planSlug;
+			const canSiteBeCopied =
+				siteHasFeature( state, siteId, WPCOM_FEATURES_COPY_SITE ) &&
+				planSlug &&
+				currentUser?.ID === siteOwner;
 
 			const cloneUrl = `/start/clone-site/${ siteSlug }`;
 
