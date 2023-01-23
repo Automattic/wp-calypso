@@ -163,7 +163,7 @@ class Plans extends Component {
 	}
 
 	renderEcommerceTrialPage() {
-		return this.renderPlansMain();
+		return <div className="ecommerce-trial">{ this.renderPlansMain() }</div>;
 	}
 
 	render() {
