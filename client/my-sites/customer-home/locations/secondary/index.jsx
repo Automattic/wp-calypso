@@ -1,6 +1,6 @@
 import { createElement } from 'react';
 import {
-	DOMAIN_UPSELL,
+	FEATURE_DOMAIN_UPSELL,
 	FEATURE_STATS,
 	SECTION_LEARN_GROW,
 	FEATURE_SUPPORT,
@@ -13,7 +13,7 @@ import Stats from 'calypso/my-sites/customer-home/cards/features/stats';
 import LearnGrow from './learn-grow';
 
 const cardComponents = {
-	[ DOMAIN_UPSELL ]: DomainUpsell,
+	[ FEATURE_DOMAIN_UPSELL ]: DomainUpsell,
 	[ FEATURE_STATS ]: Stats,
 	[ SECTION_LEARN_GROW ]: LearnGrow,
 	[ SECTION_BLOGGING_PROMPT ]: BloggingPrompt,
@@ -27,7 +27,6 @@ const Secondary = ( { cards } ) => {
 
 	return (
 		<>
-			<DomainUpsell />
 			{ cards.map(
 				( card ) =>
 					cardComponents[ card ] &&

@@ -1,6 +1,5 @@
 export const ACTION_QUICK_LINKS = 'home-action-quick-links';
 export const ACTION_WP_FOR_TEAMS_QUICK_LINKS = 'home-action-wp-for-teams-quick-links';
-export const DOMAIN_UPSELL = 'home-feature-domain-upsell';
 export const EDUCATION_FREE_PHOTO_LIBRARY = 'home-education-free-photo-library';
 export const EDUCATION_EARN = 'home-education-earn';
 export const EDUCATION_STORE = 'home-education-store';
@@ -10,6 +9,7 @@ export const EDUCATION_FIND_SUCCESS = 'home-education-find-success';
 export const EDUCATION_RESPOND_TO_CUSTOMER_FEEDBACK = 'home-education-respond-to-customer-feedback';
 export const EDUCATION_BLOGGING_QUICK_START = 'home-education-blogging-quick-start';
 export const EDUCATION_SITE_EDITOR_QUICK_START = 'home-education-site-editor-quick-start';
+export const FEATURE_DOMAIN_UPSELL = 'home-feature-domain-upsell';
 export const FEATURE_GO_MOBILE = 'home-feature-go-mobile';
 export const FEATURE_QUICK_START = 'home-feature-quick-start';
 export const FEATURE_STATS = 'home-feature-stats';
