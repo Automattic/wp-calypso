@@ -234,7 +234,7 @@ jobs:
 
   wp-desktop-linux:
     docker:
-      - image: cimg/node:18.13.0-browsers
+      - image: cimg/node:18.0.0-browsers
     <<: *desktop_defaults
     shell: /bin/bash --login
     environment:
