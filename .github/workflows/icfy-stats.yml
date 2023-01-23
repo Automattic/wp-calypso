@@ -12,7 +12,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v1
         with:
-          node-version: '^16.17.0'
+          node-version: '^18.13.0'
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Fetch git history

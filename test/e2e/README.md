@@ -23,7 +23,7 @@ Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Au
 
 Calypso E2E requires the following:
 
-- [NodeJS 16.17.0](https://nodejs.org/en/blog/release/v16.17.0/) or higher
+- [NodeJS 18.13.0](https://nodejs.org/en/blog/release/v16.17.0/) or higher
 - [TypeScript 4.5](https://www.staging-typescript.org/docs/handbook/release-notes/typescript-4-5.html) or higher
 - [Playwright 1.28](https://playwright.dev/docs/release-notes#version-128) or higher
 - [yarn 3.1](https://github.com/yarnpkg/berry) or higher
