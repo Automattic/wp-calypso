@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_COPY_SITE } from '@automattic/calypso-products';
 import { compose } from '@wordpress/compose';
 import { withDispatch } from '@wordpress/data';
@@ -103,7 +104,7 @@ class SiteTools extends Component {
 						description={ translate( "Register a new domain or change your site's address." ) }
 					/>
 				) }
-				{ canSiteBeCopied && (
+				{ isEnabled( 'sites/copy-site' ) && canSiteBeCopied && (
 					<SiteToolsLink
 						href={ copySiteUrl }
 						onClick={ () => {
