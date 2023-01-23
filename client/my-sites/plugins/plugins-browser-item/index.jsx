@@ -7,9 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import { getPluginPurchased, getSoftwareSlug } from 'calypso/lib/plugins/utils';
 import version_compare from 'calypso/lib/version-compare';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
@@ -44,7 +42,6 @@ const PluginsBrowserListElement = ( props ) => {
 	} = props;
 
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
 	const localizeUrl = useLocalizeUrl();
 	const { localizePath } = useLocalizedPlugins();
 
@@ -58,12 +55,6 @@ const PluginsBrowserListElement = ( props ) => {
 		currentSites
 			? getSitesWithPlugin( state, siteObjectsToSiteIds( currentSites ), softwareSlug )
 			: []
-	);
-
-	const dateFromNow = useMemo(
-		() =>
-			plugin.last_updated ? moment.utc( plugin.last_updated, 'YYYY-MM-DD hh:mma' ).fromNow() : null,
-		[ plugin.last_updated ]
 	);
 
 	const pluginLink = useMemo( () => {
@@ -182,18 +173,6 @@ const PluginsBrowserListElement = ( props ) => {
 								{ translate( 'by ' ) }
 								<span className="plugins-browser-item__author-name">{ plugin.author_name }</span>
 							</div>
-
-							<div className="plugins-browser-item__last-updated">
-								{ dateFromNow &&
-									translate( 'Last updated {{span}}%(ago)s{{/span}}', {
-										args: {
-											ago: dateFromNow,
-										},
-										components: {
-											span: <span className="plugins-browser-item__last-updated-value" />,
-										},
-									} ) }
-							</div>
 						</>
 					) }
 					<div className="plugins-browser-item__description">{ plugin.short_description }</div>
@@ -238,15 +217,6 @@ const PluginsBrowserListElement = ( props ) => {
 									inlineNumRatings
 									hideRatingNumber
 								/>
-							</div>
-						) }
-						{ !! plugin.active_installs && (
-							<div className="plugins-browser-item__active-installs">
-								<span className="plugins-browser-item__active-installs-value">{ `${ formatNumberMetric(
-									plugin.active_installs,
-									0
-								) }${ plugin.active_installs > 1000 ? '+' : '' }` }</span>
-								{ translate( ' Active Installs' ) }
 							</div>
 						) }
 					</div>
