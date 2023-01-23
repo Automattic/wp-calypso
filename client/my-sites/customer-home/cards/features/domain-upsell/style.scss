@@ -1,1 +1,20 @@
-/* coming soon */
+@import "@automattic/typography/styles/fonts";
+
+body .customer-home__layout .domain-upsell__card {
+	background-color: #f6f7f7;
+	padding: 40px 46px;
+}
+
+.domain-upsell__card h3 {
+	font-family: $brand-serif;
+	font-style: normal;
+	font-weight: 400;
+	font-size: rem(32px);
+	line-height: 40px;
+	letter-spacing: -0.32px;
+	color: #101517;
+}
+
+.domain-upsell__card p {
+	margin-top: 10px;
+}
