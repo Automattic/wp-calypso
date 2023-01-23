@@ -21,7 +21,7 @@ type NewsletterSettingsSectionProps = {
 	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
 	disabled?: boolean;
 	isSavingSettings: boolean;
-	subscriptionOptions?: { invitation: string; comment_follow: string };
+	savedSubscriptionOptions?: { invitation: string; comment_follow: string };
 	updateFields: ( fields: Fields ) => void;
 };
 
@@ -31,7 +31,7 @@ export const NewsletterSettingsSection = ( {
 	handleSubmitForm,
 	disabled,
 	isSavingSettings,
-	subscriptionOptions,
+	savedSubscriptionOptions,
 	updateFields,
 }: NewsletterSettingsSectionProps ) => {
 	const translate = useTranslate();
@@ -43,12 +43,12 @@ export const NewsletterSettingsSection = ( {
 
 	/* eslint-disable no-console */
 	console.log( 'subscription_options', subscription_options ); // value in the form field
-	console.log( 'subscriptionOptions', subscriptionOptions ); // current value
+	console.log( 'savedSubscriptionOptions', savedSubscriptionOptions ); // current value
 
 	// useEffect to update subscription_options when subscriptionOptions changes
 	useEffect( () => {
-		updateFields( { subscription_options: subscriptionOptions } );
-	}, [ subscriptionOptions ] );
+		updateFields( { subscription_options: savedSubscriptionOptions } );
+	}, [ savedSubscriptionOptions ] );
 
 	return (
 		<>

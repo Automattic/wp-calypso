@@ -107,7 +107,7 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 			updateFields,
 		}: ReadingSettingsFormProps ) => {
 			const disabled = isRequestingSettings || isSavingSettings;
-			const subscriptionOptions = settings?.subscription_options;
+			const savedSubscriptionOptions = settings?.subscription_options;
 			return (
 				<form onSubmit={ handleSubmitForm }>
 					<SiteSettingsSection
@@ -135,7 +135,7 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						handleSubmitForm={ handleSubmitForm }
 						disabled={ disabled }
 						isSavingSettings={ isSavingSettings }
-						subscriptionOptions={ subscriptionOptions }
+						savedSubscriptionOptions={ savedSubscriptionOptions }
 						updateFields={ updateFields }
 					/>
 				</form>
