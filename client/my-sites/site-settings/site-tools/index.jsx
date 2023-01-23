@@ -109,7 +109,7 @@ class SiteTools extends Component {
 						onClick={ () => {
 							clearSignupDestinationCookie();
 							setPlanCartItem( { product_slug: planSlug } );
-							recordTracksEvent( 'calypso_settings_copy_site_options' );
+							recordTracksEvent( 'calypso_settings_copy_site_option_click' );
 						} }
 						title={ copyTitle }
 						description={ copyText }
