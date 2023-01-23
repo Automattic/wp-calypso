@@ -465,7 +465,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			shouldStickyNavButtons={ isCopySiteFlow( flow ) }
 			hideBack={ ! isCopySiteFlow( flow ) }
 			hideSkip={ true }
-			flowName="linkInBio"
+			flowName={ isCopySiteFlow( flow ) ? ( flow as string ) : 'linkInBio' }
 			stepContent={
 				<div className="domains__content">
 					{ isEmpty( productsList ) && <QueryProductsList /> }
