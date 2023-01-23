@@ -1,5 +1,6 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { EmailsTextSetting } from './EmailsTextSetting';
 import { ExcerptSetting } from './ExcerptSetting';
@@ -20,6 +21,7 @@ type NewsletterSettingsSectionProps = {
 	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
 	disabled?: boolean;
 	isSavingSettings: boolean;
+	subscriptionOptions?: { invitation: string; comment_follow: string };
 	updateFields: ( fields: Fields ) => void;
 };
 
@@ -29,6 +31,7 @@ export const NewsletterSettingsSection = ( {
 	handleSubmitForm,
 	disabled,
 	isSavingSettings,
+	subscriptionOptions,
 	updateFields,
 }: NewsletterSettingsSectionProps ) => {
 	const translate = useTranslate();
@@ -37,6 +40,15 @@ export const NewsletterSettingsSection = ( {
 		wpcom_subscription_emails_use_excerpt,
 		subscription_options,
 	} = fields;
+
+	/* eslint-disable no-console */
+	console.log( 'subscription_options', subscription_options ); // value in the form field
+	console.log( 'subscriptionOptions', subscriptionOptions ); // current value
+
+	// useEffect to update subscription_options when subscriptionOptions changes
+	useEffect( () => {
+		updateFields( { subscription_options: subscriptionOptions } );
+	}, [ subscriptionOptions ] );
 
 	return (
 		<>

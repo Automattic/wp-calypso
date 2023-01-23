@@ -88,6 +88,7 @@ type ReadingSettingsFormProps = {
 	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
 	isRequestingSettings: boolean;
 	isSavingSettings: boolean;
+	settings: { subscription_options?: { invitation: string; comment_follow: string } };
 	siteUrl?: string;
 	updateFields: ( fields: Fields ) => void;
 };
@@ -101,10 +102,12 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 			handleToggle,
 			isRequestingSettings,
 			isSavingSettings,
+			settings,
 			siteUrl,
 			updateFields,
 		}: ReadingSettingsFormProps ) => {
 			const disabled = isRequestingSettings || isSavingSettings;
+			const subscriptionOptions = settings?.subscription_options;
 			return (
 				<form onSubmit={ handleSubmitForm }>
 					<SiteSettingsSection
@@ -132,6 +135,7 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						handleSubmitForm={ handleSubmitForm }
 						disabled={ disabled }
 						isSavingSettings={ isSavingSettings }
+						subscriptionOptions={ subscriptionOptions }
 						updateFields={ updateFields }
 					/>
 				</form>
