@@ -577,6 +577,7 @@ export class SiteSettingsFormGeneral extends Component {
 			hasSitePreviewLink,
 			site,
 			isSiteOnECommerceTrial,
+			recordTracksEvent,
 		} = this.props;
 
 		const launchSiteClasses = classNames( 'site-settings__general-settings-launch-site-button', {
@@ -618,12 +619,17 @@ export class SiteSettingsFormGeneral extends Component {
 		const LaunchCard = showPreviewLink ? CompactCard : Card;
 
 		if ( isSiteOnECommerceTrial ) {
+			const recordTracksEventForClick = () =>
+				recordTracksEvent( 'calypso_ecommerce_trial_launch_banner_click' );
 			const eCommerceTrialUpsellText = translate(
-				'Before you can share your store with the world, you need to {{NoticeAction}}pick a plan{{/NoticeAction}}.',
+				'Before you can share your store with the world, you need to {{a}}pick a plan{{/a}}.',
 				{
 					components: {
-						NoticeAction: (
-							<NoticeAction href={ `/plans/${ siteSlug }?plan=ecommerce-bundle-monthly` } />
+						a: (
+							<a
+								href={ `/plans/${ siteSlug }?plan=ecommerce-bundle-monthly` }
+								onClick={ recordTracksEventForClick }
+							/>
 						),
 					},
 				}
@@ -635,7 +641,7 @@ export class SiteSettingsFormGeneral extends Component {
 					showDismiss={ false }
 					text={ eCommerceTrialUpsellText }
 					isCompact={ false }
-				></Notice>
+				/>
 			);
 		}
 
