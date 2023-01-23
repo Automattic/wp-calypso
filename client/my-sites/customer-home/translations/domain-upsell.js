@@ -29,3 +29,6 @@ translate(
 );
 translate( 'I want my domain as primary' );
 translate( 'That works for me' );
+
+translate( 'Customize your domain' );
+translate( 'Customize your domain name' );
