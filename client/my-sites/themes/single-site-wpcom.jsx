@@ -40,7 +40,7 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 						event="calypso_themes_list_premium_themes"
 						feature={ WPCOM_FEATURES_PREMIUM_THEMES }
 						plan={ PLAN_PREMIUM }
-						title={ translate( 'Unlock ALL premium themes with our Premium and Business plans!' ) }
+						title={ translate( 'Unlock premium themes with our Premium and Business plans!' ) }
 						callToAction={ translate( 'Upgrade now' ) }
 						showIcon={ true }
 					/>
