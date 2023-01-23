@@ -162,7 +162,7 @@ export const PlanUSPS: React.FC< Props > = ( {
 			} );
 			break;
 		case PLAN_ECOMMERCE_TRIAL_MONTHLY:
-			planText = translate( 'Included in eCommerce plans:' );
+			planText = translate( 'Included in ecommerce plans:' );
 			break;
 	}
 
