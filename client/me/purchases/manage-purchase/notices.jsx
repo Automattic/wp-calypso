@@ -1016,7 +1016,7 @@ class PurchaseNotice extends Component {
 				showDismiss={ false }
 				status="is-info"
 				text={ translate(
-					'You have %(expiry)s days remaining on your free trial. Upgrade your plan to keep your eCommerce features.',
+					'You have %(expiry)s days remaining on your free trial. Upgrade your plan to keep your ecommerce features.',
 					{
 						args: {
 							expiry: daysToExpiry,
