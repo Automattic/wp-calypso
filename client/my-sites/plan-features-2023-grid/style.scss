@@ -1,4 +1,5 @@
 @import "@automattic/onboarding/styles/mixins";
+@import "calypso/signup/steps/plans/style.scss";
 $plan-features-header-banner-height: 20px;
 $plan-features-sidebar-width: 272px;
 
@@ -498,7 +499,7 @@ $plan-features-sidebar-width: 272px;
 				padding-top: 12px;
 			}
 
-			@media ( min-width: 880px ) {
+			@media ( min-width: $plans-2023-small-breakpoint ) {
 				position: relative;
 				top: 10px;
 				padding-top: 0;
@@ -541,7 +542,7 @@ $plan-features-sidebar-width: 272px;
 				}
 			}
 
-			@media ( min-width: 1340px ) {
+			@media ( min-width: $plans-2023-medium-breakpoint ) {
 				img:nth-child(1) {
 					padding-right: 24px;
 				}
@@ -581,7 +582,7 @@ $plan-features-sidebar-width: 272px;
 				}
 			}
 
-			@media ( min-width: 1500px ) {
+			@media ( min-width: $plans-2023-large-breakpoint ) {
 				img:nth-child(1) {
 					padding-right: 24px;
 				}
