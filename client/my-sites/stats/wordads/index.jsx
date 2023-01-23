@@ -137,10 +137,6 @@ class WordAds extends Component {
 		);
 	};
 
-	isProduction() {
-		return window.location.host === 'wordpress.com';
-	}
-
 	render() {
 		const { canAccessAds, canUpgradeToUseWordAds, date, site, siteId, slug } = this.props;
 
@@ -168,10 +164,6 @@ class WordAds extends Component {
 		const statsWrapperClass = classNames( 'wordads stats-content', {
 			'is-period-year': period === 'year',
 		} );
-
-		// TODO: Enable on production.
-		// And remove isProduction helper.
-		const showNewHighlights = ! this.isProduction();
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
@@ -213,7 +205,7 @@ class WordAds extends Component {
 								slug={ slug }
 							/>
 
-							<HighlightsSection isVisible={ showNewHighlights } siteId={ siteId } />
+							<HighlightsSection siteId={ siteId } />
 
 							<div id="my-stats-content" className={ statsWrapperClass }>
 								<>
@@ -256,7 +248,7 @@ class WordAds extends Component {
 								</>
 
 								<div className="stats__module-list stats__module-headerless--unified">
-									<WordAdsEarnings site={ site } showTotalsSection={ ! showNewHighlights } />
+									<WordAdsEarnings site={ site } />
 								</div>
 							</div>
 

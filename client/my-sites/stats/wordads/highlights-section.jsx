@@ -143,9 +143,6 @@ function HighlightsListing( props ) {
 
 export default function HighlightsSection( props ) {
 	const earningsData = useSelector( ( state ) => getWordAdsEarnings( state, props.siteId ) );
-	if ( ! props.isVisible ) {
-		return null;
-	}
 	const highlights = getHighlights( earningsData );
 	const notices = payoutNotices( earningsData );
 	return (
