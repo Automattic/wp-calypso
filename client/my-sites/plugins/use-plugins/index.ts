@@ -75,7 +75,7 @@ const usePlugins = ( {
 			!! ( search || ! WPORG_CATEGORIES_BLOCKLIST.includes( category || '' ) ) && wporgEnabled,
 	} ) as WPORGResponse;
 
-	const { data: wpcomPluginsRaw = [], isLoading: isFetchingDotCom } = useWPCOMPluginsList(
+	const { data: dotComPlugins = [], isLoading: isFetchingDotCom } = useWPCOMPluginsList(
 		'all',
 		search,
 		tag,
@@ -84,16 +84,16 @@ const usePlugins = ( {
 		}
 	) as WPCOMResponse;
 
-	const { data: featuredPluginsRaw = [], isLoading: isFetchingDotComFeatured } =
+	const { data: featuredPlugins = [], isLoading: isFetchingDotComFeatured } =
 		useWPCOMFeaturedPlugins( {
 			enabled: category === 'featured' && wpcomEnabled,
 		} ) as WPCOMResponse;
 
 	switch ( category ) {
 		case 'paid':
-			plugins = wpcomPluginsRaw;
+			plugins = dotComPlugins;
 			isFetching = isFetchingDotCom;
-			results = wpcomPluginsRaw?.length ?? 0;
+			results = dotComPlugins?.length ?? 0;
 			break;
 		case 'popular':
 			plugins = ESPlugins;
@@ -101,9 +101,9 @@ const usePlugins = ( {
 			results = ESPagination?.results ?? 0;
 			break;
 		case 'featured':
-			plugins = featuredPluginsRaw;
+			plugins = featuredPlugins;
 			isFetching = isFetchingDotComFeatured;
-			results = featuredPluginsRaw?.length ?? 0;
+			results = featuredPlugins?.length ?? 0;
 			break;
 		default:
 			plugins = config.isEnabled( 'marketplace-jetpack-plugin-search' )
