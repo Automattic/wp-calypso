@@ -11,6 +11,7 @@ import {
 	isWpComPersonalPlan,
 	isWpComPlan,
 	isWpComPremiumPlan,
+	isJetpackProduct,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import {
@@ -36,6 +37,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import getFlowPlanFeatures from '../lib/get-flow-plan-features';
+import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import getPlanFeatures from '../lib/get-plan-features';
 import { getRefundPolicies, getRefundWindows, RefundPolicy } from './refund-policies';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
@@ -310,6 +312,12 @@ function CheckoutSummaryFeaturesList( props: {
 	const plans = responseCart.products.filter( ( product ) => isPlan( product ) );
 	const hasPlanInCart = plans.length > 0;
 
+	const jetpackProducts = responseCart.products.filter( ( product ) =>
+		isJetpackProduct( product )
+	);
+	const hasJetpackProduct = jetpackProducts.length > 0;
+	const hasSingleProduct = responseCart.products.length === 1;
+
 	const translate = useTranslate();
 
 	const hasNoAdsAddOn = responseCart.products.some( ( product ) => isNoAds( product ) );
@@ -320,6 +328,10 @@ function CheckoutSummaryFeaturesList( props: {
 				domains.map( ( domain ) => {
 					return <CheckoutSummaryFeaturesListDomainItem domain={ domain } key={ domain.uuid } />;
 				} ) }
+
+			{ hasSingleProduct && hasJetpackProduct && (
+				<CheckoutSummaryJetpackProductFeatures product={ jetpackProducts[ 0 ] } />
+			) }
 
 			{ hasPlanInCart && (
 				<CheckoutSummaryPlanFeatures
@@ -396,6 +408,24 @@ function CheckoutSummaryFeaturesListDomainItem( { domain }: { domain: ResponseCa
 			<WPCheckoutCheckIcon id={ `feature-list-domain-item-${ domain.meta }` } />
 			<strong>{ domain.meta }</strong>
 		</CheckoutSummaryFeaturesListItem>
+	);
+}
+
+function CheckoutSummaryJetpackProductFeatures( { product }: { product: ResponseCartProduct } ) {
+	const translate = useTranslate();
+	const productFeatures = getJetpackProductFeatures( product, translate );
+
+	return (
+		<>
+			{ productFeatures.map( ( feature ) => {
+				return (
+					<CheckoutSummaryFeaturesListItem key={ String( feature ) }>
+						<WPCheckoutCheckIcon id={ feature.replace( /[^\w]/g, '_' ) } />
+						{ feature }
+					</CheckoutSummaryFeaturesListItem>
+				);
+			} ) }
+		</>
 	);
 }
 
