@@ -1,17 +1,49 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { Button, Card, Spinner } from '@automattic/components';
 import { useDomainSuggestions } from '@automattic/domain-picker/src';
 import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { get } from 'lodash';
+import { useDispatch, useSelector } from 'react-redux';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+import { checkDomainAvailability } from 'calypso/lib/domains';
+import { domainAvailability } from 'calypso/lib/domains/constants';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
+const preCheckDomainAvailability = async ( domain, siteId ) => {
+	return new Promise( ( resolve ) => {
+		checkDomainAvailability(
+			{
+				domainName: domain,
+				blogId: siteId,
+				isCartPreCheck: true,
+			},
+			( error, result ) => {
+				const status = get( result, 'status', error );
+				const isAvailable = domainAvailability.AVAILABLE === status;
+				const isAvailableSupportedPremiumDomain =
+					config.isEnabled( 'domains/premium-domain-purchases' ) &&
+					domainAvailability.AVAILABLE_PREMIUM === status &&
+					result?.is_supported_premium_domain;
+				resolve( {
+					status: ! isAvailable && ! isAvailableSupportedPremiumDomain ? status : null,
+					trademarkClaimsNoticeInfo: get( result, 'trademark_claims_notice_info', null ),
+				} );
+			}
+		);
+	} );
+};
+
 export default function DomainUpsell() {
+	const { setDomainCartItem } = useDispatch( ONBOARD_STORE );
 	const translate = useTranslate();
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSubDomain = siteSlug.split( '.' )[ 0 ];
 	const locale = useLocale();
 	const { allDomainSuggestions } =
@@ -42,6 +74,19 @@ export default function DomainUpsell() {
 			domain_suggestion: domainSuggestionName,
 			product_slug: domainSuggestionProductSlug,
 		} );
+	};
+
+	const onClick = () => {
+		// Should show loading on button
+		preCheckDomainAvailability( domainSuggestionName, siteId )
+			.catch( () => [] )
+			.then( () => {
+				const domainCartItem = domainRegistration( {
+					domain: domainSuggestion.domain_name,
+					productSlug: domainSuggestion.product_slug || '',
+				} );
+				setDomainCartItem( domainCartItem );
+			} );
 	};
 
 	return (
