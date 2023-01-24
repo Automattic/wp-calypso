@@ -101,7 +101,7 @@ class PurchaseNotice extends Component {
 	/**
 	 * Returns appropriate warning text for a purchase that is expiring but where the expiration is not imminent.
 	 *
-	 * @param  {object} purchase  The purchase object
+	 * @param  {Object} purchase  The purchase object
 	 * @param  {Component} autoRenewingUpgradesLink  An optional link component, for linking to other purchases on the site that are auto-renewing rather than expiring
 	 * @returns  {string}  Translated text for the warning message.
 	 */
@@ -815,8 +815,8 @@ class PurchaseNotice extends Component {
 	/**
 	 * Returns an object with credit card details suitable for use as translation arguments.
 	 *
-	 * @param {object} purchase - the purchase to get credit card details from
-	 * @returns {object}  Translation arguments containing information on the card type, number, and expiry
+	 * @param {Object} purchase - the purchase to get credit card details from
+	 * @returns {Object}  Translation arguments containing information on the card type, number, and expiry
 	 */
 	creditCardDetails = ( purchase ) => {
 		const { moment } = this.props;

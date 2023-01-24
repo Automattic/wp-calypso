@@ -23,7 +23,7 @@ class SiteCreditVouchers {
 	/**
 	 * Get site vouchers list
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -36,7 +36,7 @@ class SiteCreditVouchers {
 	 * Get site voucher
 	 *
 	 * @param {string} serviceType - service type
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -49,7 +49,7 @@ class SiteCreditVouchers {
 	 * Assign a new voucher to the site
 	 *
 	 * @param {string} serviceType - service type
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */

@@ -7,7 +7,7 @@ import type { AppState } from 'calypso/types';
 /**
  * Returns true if we want to show Cart in Jetpack cloud
  *
- * @param  {object}   state  Global state tree
+ * @param  {Object}   state  Global state tree
  */
 export default function isJetpackCloudCartEnabled( state: AppState ) {
 	const siteId = getSelectedSiteId( state );

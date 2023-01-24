@@ -22,7 +22,7 @@ class Domain {
 	/**
 	 * Get the status of the domain
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -33,7 +33,7 @@ class Domain {
 	/**
 	 * Check if the given domain is available
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -45,7 +45,7 @@ class Domain {
 	 * Check if the given domain name can be mapped to
 	 * a WordPress blog.
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -57,7 +57,7 @@ class Domain {
 	 * Check if the given domain name can be used for site redirect.
 	 *
 	 * @param {string} siteId - site id of the site to check
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -69,7 +69,7 @@ class Domain {
 	/**
 	 * Get the email forwards/configuration for a domain.
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -80,7 +80,7 @@ class Domain {
 	/**
 	 * Get a list of the nameservers for the domain
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -92,7 +92,7 @@ class Domain {
 	 * Update the nameservers for the domain
 	 *
 	 * @param {Array} nameservers - nameservers list
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -104,7 +104,7 @@ class Domain {
 	/**
 	 * Get a list of the DNS records for the domain
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -115,7 +115,7 @@ class Domain {
 	/**
 	 * Get a list of all Google Apps accounts for the domain
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -126,7 +126,7 @@ class Domain {
 	/**
 	 * Resend the ICANN verification email for the domain
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -157,7 +157,7 @@ class Domain {
 	 * Gets info needed to provide mapping setup instructions for a domain.
 	 *
 	 * @param {string} siteId - site id the domain will be mapped to
-	 * @param {object} query - query object parameter
+	 * @param {Object} query - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -168,7 +168,7 @@ class Domain {
 	/**
 	 * Gets the mapping status for a domain.
 	 *
-	 * @param {object} query - query object parameter
+	 * @param {Object} query - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -180,7 +180,7 @@ class Domain {
 	 * Update the connection mode used to connect this domain and retrieve its mapping status.
 	 *
 	 * @param {string} mode - connection mode used to connect this domain (can be "suggested" or "advanced")
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */

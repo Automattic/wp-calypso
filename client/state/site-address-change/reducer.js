@@ -16,9 +16,9 @@ import { combineReducers } from 'calypso/state/utils';
  * state maps site ID keys to a boolean value. Each site is true if
  * a site-rename request is currently taking place, and false otherwise.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated rename request state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated rename request state
  */
 export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {

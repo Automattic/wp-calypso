@@ -3,7 +3,7 @@ import 'calypso/state/themes/init';
 /**
  * Returns whether the trending themes list is loading.
  *
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @returns {boolean} whether the trending themes list is loading
  */
 export function areTrendingThemesLoading( state ) {

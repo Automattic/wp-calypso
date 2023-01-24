@@ -6,9 +6,9 @@ import ticket from './ticket/reducer';
 /**
  * Tracks the site id for the selected site in the help/contact form
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const selectedSiteId = ( state = null, action ) => {
 	switch ( action.type ) {

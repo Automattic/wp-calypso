@@ -32,7 +32,7 @@ const KEY_N = 78;
 const KEY_U = 85;
 
 /**
- * @typedef {object} Notification
+ * @typedef {Object} Notification
  * @property {!number} id notification id
  */
 
