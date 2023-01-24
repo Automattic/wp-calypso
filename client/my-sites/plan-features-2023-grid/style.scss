@@ -291,6 +291,10 @@ $plan-features-sidebar-width: 272px;
 		@media ( min-width: 880px ) {
 			border-right: solid 1px #e0e0e0;
 			border-left: solid 1px #e0e0e0;
+
+			&.is-bottom-aligned {
+				vertical-align: bottom;
+			}
 		}
 	}
 
@@ -304,6 +308,7 @@ $plan-features-sidebar-width: 272px;
 			line-height: $font-title-large;
 			display: flex;
 			@include onboarding-font-recoleta;
+			padding: 3px 0 6px;
 		}
 
 		.plan-price__currency-symbol {
@@ -353,7 +358,6 @@ $plan-features-sidebar-width: 272px;
 
 		.plan-price.is-discounted {
 			color: var(--color-neutral-70);
-			line-height: 50px;
 
 			.plan-price__integer-fraction {
 				color: var(--color-success);

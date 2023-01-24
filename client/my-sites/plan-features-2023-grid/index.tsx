@@ -277,7 +277,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 
 		return planPropertiesObj.map( ( properties ) => {
 			const { currencyCode, discountPrice, planName, rawPrice } = properties;
-			const classes = classNames( 'plan-features-2023-grid__table-item', {
+			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
 				'has-border-top': ! isReskinned,
 			} );
 
