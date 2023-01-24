@@ -298,7 +298,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	/**
 	 * Return the content to display in the Premium Content Block card based on the current plan.
 	 *
-	 * @returns {Object|undefined} Object with props to render a PromoCard.
+	 * @returns {Object | undefined} Object with props to render a PromoCard.
 	 */
 	const getPremiumContentCard = () => {
 		const hasConnectionCtaTitle = translate( 'Manage Premium Content' );
@@ -360,7 +360,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	/**
 	 * Return the content to display in the Paid Newsletter card based on the current plan.
 	 *
-	 * @returns {Object|undefined} Object with props to render a PromoCard.
+	 * @returns {Object | undefined} Object with props to render a PromoCard.
 	 */
 	const getPaidNewsletterCard = () => {
 		if ( isNonAtomicJetpack ) {
@@ -410,7 +410,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	/**
 	 * Return the content to display in the Peer Referrals card.
 	 *
-	 * @returns {Object|undefined} Object with props to render a PromoCard.
+	 * @returns {Object | undefined} Object with props to render a PromoCard.
 	 */
 	const getPeerReferralsCard = () => {
 		if ( isNonAtomicJetpack ) {

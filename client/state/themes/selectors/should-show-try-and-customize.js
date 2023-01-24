@@ -22,7 +22,7 @@ function shouldShowSiteEditor( state, themeId ) {
 /**
  * Returns whether we should hide the "Try & Customize" action for a theme.
  *
- * @param {object} state   Global state tree
+ * @param {Object} state   Global state tree
  * @param {string} themeId Theme ID to activate in the site.
  * @param {string} siteId  Site ID.
  * @returns {boolean}      True if the theme should show the Try & Customize action. Otherwise, false.

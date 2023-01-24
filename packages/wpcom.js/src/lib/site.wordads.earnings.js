@@ -27,7 +27,7 @@ export default function SiteWordAdsEarnings( sid, wpcom ) {
  *      // `earnings` information object
  *    } );
  *
- * @param {object} [query] - query object parameter
+ * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */

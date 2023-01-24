@@ -6,8 +6,8 @@ import Notice from 'calypso/components/notice';
  * Renders a "You're on a legacy plan" for sites on legacy plans (excluding free, business, and ecommerce plan).
  *
  * @param {boolean} eligibleForProPlan - Is the user eligible for pro plan?
- * @param {object} selectedSite - Site object from store.
- * @param {object} selectedSite.plan - The plan object nested inside the selectedSite object.
+ * @param {Object} selectedSite - Site object from store.
+ * @param {Object} selectedSite.plan - The plan object nested inside the selectedSite object.
  * @returns {import('react').Element} - Legacy plan Notice component.
  */
 const maybeRenderLegacyPlanNotice = ( eligibleForProPlan, { plan } ) => {

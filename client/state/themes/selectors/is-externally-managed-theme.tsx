@@ -17,7 +17,7 @@ type GetThemeFunction = (
  * Check if a theme is externally managed. If true, this means that the theme is not
  * managed by Automattic, but by a third party.
  *
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @param {string} themeId Theme ID
  * @returns {boolean} True if the theme is externally managed.
  */

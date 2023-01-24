@@ -54,7 +54,7 @@ export const parseAttributes = memoize( function ( text ) {
  *
  * @see parseAttributes
  * @param  {*}      attributes An object to normalize
- * @returns {object}            An object of attributes, split as named and numeric
+ * @returns {Object}            An object of attributes, split as named and numeric
  */
 export const normalizeAttributes = function ( attributes ) {
 	let named;
@@ -82,7 +82,7 @@ export const normalizeAttributes = function ( attributes ) {
 /**
  * Given a shortcode object, returns the string value of that shortcode.
  *
- * @param  {object} shortcode A shortcode object
+ * @param  {Object} shortcode A shortcode object
  * @returns {string}           The string value of the shortcode
  */
 export const stringify = function ( shortcode ) {
@@ -199,7 +199,7 @@ export const regexp = memoize( function ( tag ) {
  * @param {string} tag - shortcode tagName (e.g. gallery)
  * @param {string} text - text to search for next shortcode
  * @param {number} index - last index
- * @returns {object|void} next match
+ * @returns {Object | void} next match
  */
 export const next = function ( tag, text, index = 0 ) {
 	const re = regexp( tag );

@@ -23,8 +23,8 @@ import 'calypso/state/stats/init';
  * @param  {string} period Unit for each element of the returned array (ie: 'hour' or 'day')
  * @param  {string} statType The type of stat we are working with. For example: 'opens' for Email Open stats
  * @param  {string?} date A date in YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss format
- * @param  {object}  stats  The received stats
- * @returns {object}        Action object
+ * @param  {Object}  stats  The received stats
+ * @returns {Object}        Action object
  */
 export function receiveEmailStats( siteId, postId, period, statType, date, stats ) {
 	return {
@@ -41,9 +41,9 @@ export function receiveEmailStats( siteId, postId, period, statType, date, stats
 /**
  * Transforms the received API response to Redux state
  *
- * @param {object} stats The incoming stats
+ * @param {Object} stats The incoming stats
  * @param {string} period The period for the stats
- * @returns {object}
+ * @returns {Object}
  */
 function emailStatsForPeriodTransform( stats, period ) {
 	const emailChartData = parseEmailChartData( stats.timeline, [] );
@@ -62,8 +62,8 @@ function emailStatsForPeriodTransform( stats, period ) {
 /**
  * Transforms the received API response to Redux state
  *
- * @param {object} stats The incoming stats
- * @returns {object}
+ * @param {Object} stats The incoming stats
+ * @returns {Object}
  */
 function emailStatsAlltimeTransform( stats ) {
 	// rate does not have its own subkey, so just adding all possible keys, the null-ones will be removed

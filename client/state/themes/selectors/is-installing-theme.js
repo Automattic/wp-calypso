@@ -10,7 +10,7 @@ import 'calypso/state/themes/init';
  * suffix if the site is jetpack and the theme is not yet
  * installed on the site.
  *
- * @param {object} state	Global state tree
+ * @param {Object} state	Global state tree
  * @param {string} themeId	Theme ID
  * @param {number} siteId	Site ID
  * @returns {string} 		Potentially suffixed theme ID
@@ -26,7 +26,7 @@ const getSuffixedThemeId = ( state, themeId, siteId ) => {
 /**
  * Whether the theme is currently being installed on the (Jetpack) site.
  *
- * @param  {object}  state   Global state tree
+ * @param  {Object}  state   Global state tree
  * @param  {string}  themeId Theme ID for which we check installing state
  * @param  {number}  siteId  Site ID
  * @returns {boolean}         True if theme installation is ongoing

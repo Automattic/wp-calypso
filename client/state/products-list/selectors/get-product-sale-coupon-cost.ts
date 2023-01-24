@@ -6,7 +6,7 @@ import 'calypso/state/products-list/init';
 /**
  * Returns the product cost with a sale coupon, or null if there is no sale coupon.
  *
- * @param {object} state - global state tree
+ * @param {Object} state - global state tree
  * @param {string} productSlug - internal product slug, eg 'jetpack_premium'
  * @returns {number|null} - the product cost with a sale coupon, or null if there is no sale coupon.
  */

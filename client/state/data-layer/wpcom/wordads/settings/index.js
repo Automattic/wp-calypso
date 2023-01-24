@@ -29,8 +29,8 @@ const receiveWordadsSettings = ( { siteId }, settings ) =>
 /**
  * Dispatches a request to fetch WordAds settings for a given site
  *
- * @param   {object}   action         Redux action
- * @returns {object}   Dispatched http action
+ * @param   {Object}   action         Redux action
+ * @returns {Object}   Dispatched http action
  */
 export const requestWordadsSettings = ( action ) => {
 	const { siteId } = action;
@@ -48,8 +48,8 @@ export const requestWordadsSettings = ( action ) => {
 /**
  * Dispatches a request to save particular settings on a site
  *
- * @param   {object} action Redux action
- * @returns {object} Dispatched http action
+ * @param   {Object} action Redux action
+ * @returns {Object} Dispatched http action
  */
 export const saveWordadsSettings = ( action ) => ( dispatch, getState ) => {
 	const { settings, siteId } = action;

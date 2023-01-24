@@ -304,7 +304,7 @@ export function offset( pos, el, target, relativePosition ) {
  *
  * @param {window.TextRectangle} box - result from a `getBoundingClientRect()` call
  * @param {window.Document} doc - Document instance to use
- * @returns {object} an object with `top` and `left` Number properties
+ * @returns {Object} an object with `top` and `left` Number properties
  * @private
  */
 function _offset( box, doc ) {
@@ -324,7 +324,7 @@ function _offset( box, doc ) {
 /**
  * Constrain a left to keep the element in the window
  *
- * @param {object} off Proposed offset before constraining
+ * @param {Object} off Proposed offset before constraining
  * @param {window.Element} el Element to be constained to viewport
  * @returns {number}    the best width
  */

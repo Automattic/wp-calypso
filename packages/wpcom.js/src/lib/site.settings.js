@@ -23,7 +23,7 @@ class SiteSettings {
 	/**
 	 * Get site-settings
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -68,8 +68,8 @@ class SiteSettings {
 	/**
 	 * Update site-settings
 	 *
-	 * @param {object} [query] - query object parameter
-	 * @param {object} body - body object parameter
+	 * @param {Object} [query] - query object parameter
+	 * @param {Object} body - body object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */

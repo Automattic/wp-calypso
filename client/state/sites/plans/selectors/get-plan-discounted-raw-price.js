@@ -5,7 +5,7 @@ import { isSitePlanDiscounted } from 'calypso/state/sites/plans/selectors/is-sit
 /**
  * Returns a plan price, including any applied discounts
  *
- * @param  {object}  state         global state
+ * @param  {Object}  state         global state
  * @param  {number|undefined}  siteId        the site id
  * @param  {string}  productSlug   the plan product slug
  * @param  {{isMonthly?: boolean}} [isMonthly]     if true, returns monthly price
