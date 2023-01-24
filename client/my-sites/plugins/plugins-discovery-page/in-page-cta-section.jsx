@@ -69,12 +69,13 @@ const InPagetCTAContainer = styled.div`
 
 const Illustration = styled.div`
 	position: relative;
+	margin: 0 40px;
 
 	& > img {
 		border-radius: 4px;
 	}
-	@media ( min-width: 480px ) {
-		margin-left: 24px;
+	@media ( min-width: 661px ) {
+		margin-right: 0;
 	}
 	@media ( min-width: 782px ) {
 		margin: 0 40px;
@@ -95,7 +96,7 @@ const Widget = styled.div`
 		font-size: 0.626rem;
 		color: var( --studio-black );
 		bottom: 48px;
-		left: -42px;
+		left: -40px;
 		font-weight: 600;
 
 		span {
