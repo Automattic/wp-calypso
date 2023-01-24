@@ -15,6 +15,9 @@ import QueryEmailStats from 'calypso/components/data/query-email-stats';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Main from 'calypso/components/main';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
@@ -184,6 +187,20 @@ class StatsEmailDetail extends Component {
 			label: translate( 'Traffic' ),
 			path: `/stats/email/${ statType }`,
 		};
+
+		const navItems = [ 'opens', 'clicks' ].map( ( item ) => {
+			const attr = {
+				key: item,
+				path: `/stats/email/${ item }`,
+				selected: statType === item,
+				count: item === 'opens' ? 58 : 24,
+			};
+
+			// uppercase first character of item
+
+			return <NavItem { ...attr }>{ item.charAt( 0 ).toUpperCase() + item.slice( 1 ) }</NavItem>;
+		} );
+
 		const query = memoizedQuery( period, endOf );
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ traffic.path }${ slugPath }/{{ interval }}/${ postId }`;
@@ -207,9 +224,11 @@ class StatsEmailDetail extends Component {
 						path="/stats/email/:statType/:site/:period/:email_id"
 						title="Stats > Single Email"
 					/>
+
 					<FixedNavigationHeader
 						navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }
-					/>
+					></FixedNavigationHeader>
+
 					{ ! isRequestingStats && ! countViews && post && (
 						<EmptyContent
 							title={ noViewsLabel }
@@ -225,6 +244,13 @@ class StatsEmailDetail extends Component {
 						<>
 							<div>
 								<h1>{ this.getTitle() }</h1>
+
+								<SectionNav>
+									<NavTabs label="Stats" selectedText="Opens">
+										{ navItems }
+									</NavTabs>
+								</SectionNav>
+
 								<StatsEmailTopRow siteId={ siteId } postId={ postId } statType={ statType } />
 
 								<StatsPeriodHeader>
