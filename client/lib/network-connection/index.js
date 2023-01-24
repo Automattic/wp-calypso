@@ -36,7 +36,7 @@ const NetworkConnectionApp = {
 	/**
 	 * Bootstraps network connection status change handler.
 	 *
-	 * @param {object} reduxStore The Redux store.
+	 * @param {Object} reduxStore The Redux store.
 	 */
 	init: function ( reduxStore ) {
 		if ( ! this.isEnabled( 'network-connection' ) ) {

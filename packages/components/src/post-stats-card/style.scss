@@ -4,6 +4,7 @@
 
 $card-padding: 24px;
 $border-radius: 5px; // stylelint-disable-line scales/radii
+$break-wpcom-smallest: 320px;
 
 @mixin header-typography {
 	font-family: $font-recoleta;
@@ -62,6 +63,12 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 	justify-content: space-between;
 }
 
+.post-stats-card__count {
+	.gridicon {
+		display: none;
+	}
+}
+
 .post-stats-card__count-header {
 	color: var(--studio-gray-100);
 	font-weight: 500;
@@ -107,13 +114,15 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 	}
 }
 
-@media ( max-width: $break-zoomed-in ) {
+@media ( max-width: $break-wpcom-smallest ) {
 	.post-stats-card {
 		grid-template-areas:
 			"heading"
 			"thumbnail"
 			"post "
 			"counts";
+
+		border-bottom: 0;
 	}
 
 	.post-stats-card__thumbnail {
@@ -128,8 +137,26 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 		display: flex;
 		flex-flow: row;
 		justify-content: space-between;
+		align-items: center;
+		border-bottom: 1px solid var(--color-neutral-5);
+		height: 60px;
+
+		.gridicon {
+			display: block;
+		}
 	}
+
 	.post-stats-card__count-header {
-		margin-right: 1em;
+		font-size: $font-body-small;
+		font-weight: 400;
+		line-height: 20px;
+		margin: 0 auto 0 8px;
+	}
+
+	.post-stats-card__count-value {
+		font-family: inherit;
+		font-size: $font-body-small;
+		font-weight: 500;
+		line-height: 30px;
 	}
 }

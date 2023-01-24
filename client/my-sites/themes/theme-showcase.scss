@@ -181,8 +181,10 @@ body.is-section-themes-i4-2 {
 			gap: 4px;
 			margin-top: 16px;
 			position: relative;
+			text-rendering: optimizeLegibility;
+			-webkit-font-smoothing: antialiased;
 
-			&:not(.has-pricing) {
+			&:not(.has-style-variations) {
 				.theme__more-button {
 					top: 0;
 				}
@@ -190,16 +192,19 @@ body.is-section-themes-i4-2 {
 		}
 
 		.theme__info-title {
-			color: var(--color-neutral-100);
+			color: var(--color-neutral-80);
 			font-size: 1rem;
+			font-weight: 500;
 			line-height: 24px;
 			margin: 0;
 			padding: 0;
 		}
 
 		.theme__upsell {
+			display: flex;
+			flex-basis: 100%;
 			font-size: 0;
-			line-height: 24px;
+			line-height: 20px;
 			padding: 0;
 
 			.premium-badge,
@@ -211,8 +216,10 @@ body.is-section-themes-i4-2 {
 
 		.theme__info-upsell-description {
 			color: var(--color-neutral-60);
+			display: flex;
+			flex-basis: 100%;
 			font-size: 0.875rem;
-			line-height: 24px;
+			line-height: 20px;
 		}
 
 		.theme__badge-active {
@@ -226,10 +233,10 @@ body.is-section-themes-i4-2 {
 		}
 
 		.theme__info-style-variations {
-			align-content: center;
+			align-items: center;
 			display: flex;
-			flex-basis: 100%;
 			font-size: 0;
+			height: 24px;
 			gap: 4px;
 
 			.style-variation__badge-more-wrapper > * {

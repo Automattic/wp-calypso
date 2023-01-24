@@ -37,10 +37,6 @@ const pluginBundleFlow: Flow = {
 			select( SITE_STORE ).getBundledPluginSlug( siteSlugParam || '' )
 		) as BundledPlugin;
 
-		if ( ! isEnabled( 'themes/plugin-bundling' ) ) {
-			window.location.replace( `/home/${ siteSlugParam }` );
-		}
-
 		const steps = [
 			{
 				slug: 'getCurrentThemeSoftwareSets',
@@ -85,7 +81,7 @@ const pluginBundleFlow: Flow = {
 		const dispatch = reduxDispatch();
 
 		// Since we're mimicking a subset of the site-setup-flow, we're safe to use the siteSetupProgress.
-		const flowProgress = useSiteSetupFlowProgress( currentStep, intent, storeType );
+		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
 
 		if ( flowProgress ) {
 			setStepProgress( flowProgress );
@@ -195,9 +191,6 @@ const pluginBundleFlow: Flow = {
 
 		const goBack = () => {
 			switch ( currentStep ) {
-				case 'storeAddress':
-					return navigate( 'storeFeatures' );
-
 				case 'businessInfo':
 					return navigate( 'storeAddress' );
 

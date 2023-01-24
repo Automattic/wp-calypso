@@ -22,7 +22,7 @@ import 'calypso/state/reader/init';
  * fetch the next page of results, but could be used to fetch arbitrary ranges.
  *
  * @param  {string} streamKey The stream to fetch posts for
- * @returns {object}          The action object
+ * @returns {Object}          The action object
  */
 export function requestPage( { streamKey, pageHandle, isPoll = false, gap = null } ) {
 	const streamType = getStreamType( streamKey );

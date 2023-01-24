@@ -269,7 +269,7 @@ export class DateRange extends Component {
 	 *
 	 * @param  {import('moment').Moment} startDate the start date for the range
 	 * @param  {import('moment').Moment} endDate   the end date for the range
-	 * @returns {object}           the date range object
+	 * @returns {Object}           the date range object
 	 */
 	toDateRange( startDate, endDate ) {
 		return {
@@ -475,7 +475,7 @@ export class DateRange extends Component {
 	 * range specified
 	 *
 	 * @param  {import('moment').Moment}  date             momentJS instance
-	 * @param  {object} options          date range
+	 * @param  {Object} options          date range
 	 * @param  {import('moment').Moment | Date}  options.dateFrom the start of the date range
 	 * @param  {import('moment').Moment | Date}  options.dateTo   the end of the date range
 	 * @returns {import('moment').Moment}                  the date clamped to be within the range

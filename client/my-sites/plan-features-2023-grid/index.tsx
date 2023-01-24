@@ -40,6 +40,7 @@ import PlanPill from 'calypso/components/plans/plan-pill';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
+import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/plan-type-selector';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import {
@@ -54,7 +55,7 @@ import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridFeatures from './features';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { PlanFeaturesItem } from './item';
-import { PlanComparison2023Grid } from './plan-comparison-grid';
+import { PlanComparisonGrid } from './plan-comparison-grid';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
 
@@ -92,12 +93,14 @@ type PlanFeatures2023GridProps = {
 	domainName: string;
 	placeholder?: string;
 	isLandingPage?: boolean;
+	intervalType: string;
 };
 
 type PlanFeatures2023GridConnectedProps = {
 	translate: LocalizeProps[ 'translate' ];
 	recordTracksEvent: ( slug: string ) => void;
 	planProperties: Array< PlanProperties >;
+	planTypeSelectorProps: PlanTypeSelectorProps;
 };
 
 type PlanFeatures2023GridType = PlanFeatures2023GridProps &
@@ -110,7 +113,8 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	}
 
 	render() {
-		const { isInSignup } = this.props;
+		const { isInSignup, planTypeSelectorProps, planProperties, intervalType } = this.props;
+
 		const planClasses = classNames( 'plan-features', {
 			'plan-features--signup': isInSignup,
 		} );
@@ -135,7 +139,11 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						</div>
 					</div>
 				</div>
-				<PlanComparison2023Grid planProperties={ this.props.planProperties } />
+				<PlanComparisonGrid
+					planTypeSelectorProps={ planTypeSelectorProps }
+					planProperties={ planProperties }
+					intervalType={ intervalType }
+				/>
 			</div>
 		);
 	}
@@ -267,11 +275,19 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	renderPlanPrice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
 		const { isReskinned, is2023OnboardingPricingGrid } = this.props;
 
+		const isLargeCurrency = planPropertiesObj.some(
+			( properties ) => properties?.rawPrice && properties?.rawPrice > 99000
+		);
+
 		return planPropertiesObj.map( ( properties ) => {
 			const { currencyCode, discountPrice, planName, rawPrice } = properties;
-			const classes = classNames( 'plan-features-2023-grid__table-item', {
+			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
 				'has-border-top': ! isReskinned,
 			} );
+
+			if ( rawPrice === undefined || rawPrice === null ) {
+				return;
+			}
 
 			return (
 				<Container
@@ -286,6 +302,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						rawPrice={ rawPrice }
 						planName={ planName }
 						is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+						isLargeCurrency={ isLargeCurrency }
 					/>
 				</Container>
 			);

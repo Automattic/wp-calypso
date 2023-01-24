@@ -168,7 +168,7 @@ export default function Happychat( { auth } ) {
 				connectionStatus={ connectionStatus }
 				timeline={ timeline }
 				chatStatus={ chatStatus }
-				geoLocation={ auth.user.geoLocation }
+				geoLocation={ auth.user.geo_location }
 			/>
 			<Timeline
 				currentUserEmail={ currentUser.email }

@@ -123,6 +123,7 @@ export class PlansFeaturesMain extends Component {
 			isFAQCondensedExperiment,
 			isPlansInsideStepper,
 			is2023OnboardingPricingGrid,
+			intervalType,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -154,9 +155,22 @@ export class PlansFeaturesMain extends Component {
 				siteId,
 				isReskinned,
 				isPlansInsideStepper,
+				intervalType,
+			};
+			const planTypeSelectorProps = {
+				isInSignup: this.props.isInSignup,
+				eligibleForWpcomMonthlyPlans: this.props.eligibleForWpcomMonthlyPlans,
+				isPlansInsideStepper: this.props.isPlansInsideStepper,
+				intervalType: this.props.intervalType,
+				customerType: this.props.customerType,
+				hidePersonalPlan: this.props.hidePersonalPlan,
 			};
 			const asyncPlanFeatures2023Grid = (
-				<AsyncLoad require="calypso/my-sites/plan-features-2023-grid" { ...asyncProps } />
+				<AsyncLoad
+					require="calypso/my-sites/plan-features-2023-grid"
+					{ ...asyncProps }
+					planTypeSelectorProps={ planTypeSelectorProps }
+				/>
 			);
 			return (
 				<div
@@ -625,7 +639,7 @@ PlansFeaturesMain.propTypes = {
 	hidePremiumPlan: PropTypes.bool,
 	customerType: PropTypes.string,
 	flowName: PropTypes.string,
-	intervalType: PropTypes.string,
+	intervalType: PropTypes.oneOf( [ 'monthly', 'yearly' ] ),
 	isChatAvailable: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,

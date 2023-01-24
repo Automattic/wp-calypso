@@ -15,7 +15,7 @@ const requestAlltimeStats = ( siteId, postId, statType, quantity ) => ( dispatch
 	dispatch( requestEmailAlltimeStats( siteId, postId, statType, quantity ) );
 };
 
-function QueryEmailStats( { siteId, postId, period, statType, date, quantity, hasValidDate } ) {
+function QueryEmailStats( { siteId, postId, period, date, quantity, hasValidDate, statType } ) {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
@@ -46,6 +46,7 @@ QueryEmailStats.propTypes = {
 	date: PropTypes.string,
 	quantity: PropTypes.number,
 	hasValidDate: PropTypes.bool,
+	isRequesting: PropTypes.bool,
 };
 
 export default QueryEmailStats;

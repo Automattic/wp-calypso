@@ -61,7 +61,7 @@ const ProviderWrappedLoggedOutLayout = ( {
 );
 
 /**
- * @param { object } context -- Middleware context
+ * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  *
  * Produce a `LayoutLoggedOut` element in `context.layout`, using

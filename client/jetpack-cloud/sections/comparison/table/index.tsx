@@ -57,13 +57,18 @@ export const Table: React.FC = () => {
 								target={ ! isFree && getIsExternal( item ) ? '_blank' : undefined }
 								href={ ! isFree ? getCheckoutURL( item ) : links.connect_free }
 							>
-								{ isFree ? translate( 'Get started' ) : getCtaLabel( item, '' ) }
+								<span className="pricing-comparison__product-header--cta-desktop">
+									{ isFree ? translate( 'Get started' ) : getCtaLabel( item, '' ) }
+								</span>
+								<span className="pricing-comparison__product-header--cta-mobile">
+									{ isFree ? translate( 'Get started for free' ) : getCtaLabel( item, '' ) }
+								</span>
 							</Button>
 
 							{ ! isFree && <ItemPrice item={ item } siteId={ null } /> }
 
 							{ isFree ? (
-								<span className="more-info-link">{ translate( 'Get started for free' ) }</span>
+								<span className="more-info-link">{ translate( 'Basic Jetpack features' ) }</span>
 							) : (
 								<MoreInfoLink onClick={ onClickMoreInfoFactory( item ) } item={ item } />
 							) }

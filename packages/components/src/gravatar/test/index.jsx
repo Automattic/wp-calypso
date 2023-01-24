@@ -149,7 +149,7 @@ describe( 'Gravatar', () => {
 			} );
 
 			test( 'should show temp image if it exists', () => {
-				const { container } = render( <Gravatar tempImage={ 'tempImage' } user={ genericUser } /> );
+				const { container } = render( <Gravatar tempImage="tempImage" user={ genericUser } /> );
 
 				// simulate the Gravatar not loading
 				const img = container.getElementsByTagName( 'img' )[ 0 ];

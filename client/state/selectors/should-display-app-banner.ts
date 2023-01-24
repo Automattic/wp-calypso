@@ -20,7 +20,7 @@ import { AppState } from 'calypso/types';
 /**
  * Returns true if the App Banner should be displayed
  *
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @returns {boolean} True if App Banner is visible
  */
 export const shouldDisplayAppBanner = ( state: AppState ): boolean | undefined => {

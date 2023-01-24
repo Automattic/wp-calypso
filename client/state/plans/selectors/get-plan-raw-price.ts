@@ -7,7 +7,7 @@ import 'calypso/state/plans/init';
 /**
  * Returns the full plan price if a discount is available and the raw price if a discount is not available
  *
- * @param  {object}  state     global state
+ * @param  {Object}  state     global state
  * @param  {number}  productId the plan productId
  * @param  {boolean} isMonthly if true, returns monthly price
  * @returns {number|null}  plan price

@@ -107,7 +107,7 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 		} );
 
 		it( 'Editor loads', async function () {
-			editorPage = new EditorPage( page, { target: 'simple' } );
+			editorPage = new EditorPage( page, { target: 'simple', blockTheme: true } );
 			await editorPage.waitUntilLoaded();
 
 			const urlRegex = `/post/${ newSiteDetails.blog_details.site_slug }`;

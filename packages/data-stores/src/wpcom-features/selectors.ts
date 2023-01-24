@@ -11,7 +11,9 @@ export const getRecommendedPlanSlug = (
 ): PlanSlug | undefined => {
 	const allFeatures = getAllFeatures( state );
 
-	if ( ! selectedFeatures.length ) return undefined;
+	if ( ! selectedFeatures.length ) {
+		return undefined;
+	}
 
 	return selectedFeatures.reduce( ( currentMinSupportedPlan, featureId ) => {
 		const featureMinSupportedPlan = allFeatures[ featureId ].minSupportedPlan;

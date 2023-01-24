@@ -8,7 +8,7 @@ import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Tooltip from 'calypso/components/tooltip';
 import { getSiteMonitorStatuses } from 'calypso/state/jetpack-agency-dashboard/selectors';
-import { useToggleActivateMonitor } from '../../hooks';
+import { useJetpackAgencyDashboardRecordTrackEvent, useToggleActivateMonitor } from '../../hooks';
 import NotificationSettings from '../notification-settings';
 import type { AllowedStatusTypes, MonitorSettings, Site } from '../../sites-overview/types';
 
@@ -21,6 +21,7 @@ interface Props {
 	tooltip: ReactChild | undefined;
 	tooltipId: string;
 	siteError: boolean;
+	isLargeScreen?: boolean;
 }
 
 export default function ToggleActivateMonitoring( {
@@ -30,10 +31,13 @@ export default function ToggleActivateMonitoring( {
 	tooltip,
 	tooltipId,
 	siteError,
+	isLargeScreen,
 }: Props ) {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
+
 	const toggleActivateMonitor = useToggleActivateMonitor( [ site ] );
+	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( [ site ], isLargeScreen );
 	const statuses = useSelector( getSiteMonitorStatuses );
 	const [ showNotificationSettings, setShowNotificationSettings ] = useState< boolean >( false );
 	const [ showTooltip, setShowTooltip ] = useState( false );
@@ -52,10 +56,14 @@ export default function ToggleActivateMonitoring( {
 	>;
 
 	function handleToggleActivateMonitoring( checked: boolean ) {
+		recordEvent( checked ? 'enable_monitor_click' : 'disable_monitor_click' );
 		toggleActivateMonitor( checked );
 	}
 
 	function handleToggleNotificationSettings() {
+		if ( ! showNotificationSettings ) {
+			recordEvent( 'notification_settings_open' );
+		}
 		setShowNotificationSettings( ( isOpen ) => ! isOpen );
 	}
 
@@ -151,6 +159,7 @@ export default function ToggleActivateMonitoring( {
 					onClose={ handleToggleNotificationSettings }
 					sites={ [ site ] }
 					settings={ settings }
+					isLargeScreen={ isLargeScreen }
 				/>
 			) }
 			{ tooltip && (

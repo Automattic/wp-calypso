@@ -1,4 +1,9 @@
 .marketplace-thank-you__container {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
 	.thank-you__container {
 		padding-top: var(--masterbar-height);
 	}
@@ -6,7 +11,7 @@
 	.thank-you__container-header {
 		min-height: auto;
 		padding: 0;
-		padding-top: 60px;
+		padding-top: 10px;
 	}
 
 	.thank-you__body {
@@ -47,6 +52,7 @@
 	.thank-you__footer {
 		max-width: 1072px;
 		padding: 40px;
+		padding-top: 5px;
 		display: flex;
 		flex-wrap: wrap;
 		gap: 75px;
@@ -55,8 +61,18 @@
 		.thank-you__step {
 			display: flex;
 			flex-direction: column;
+			justify-content: space-between;
 			flex-wrap: wrap;
 			min-width: 280px;
+
+			@media ( max-width: 740px ) {
+				min-width: auto;
+				max-width: 420px;
+			}
+
+			@media ( max-width: 520px ) {
+				max-width: 200px;
+			}
 
 			h3 {
 				line-height: 24px;
@@ -77,12 +93,17 @@
 		}
 
 		.thank-you__step-icon {
-			width: 50px;
+			width: calc(18px + 25px); // icon size + padding
 			flex-basis: 100%;
 		}
 
 		div {
-			max-width: 240px;
+			max-width: 260px;
+
+			@media ( max-width: 740px ) {
+				min-width: auto;
+				max-width: 100%;
+			}
 		}
 	}
 }

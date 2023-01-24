@@ -46,7 +46,7 @@ describe( 'withShoppingCart', () => {
 		};
 
 		render(
-			<MockProvider cartKeyOverride={ 'asjdasldjaldkjasldjsld' }>
+			<MockProvider cartKeyOverride="asjdasldjaldkjasldjsld">
 				<TestComponent />
 			</MockProvider>
 		);

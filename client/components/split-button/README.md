@@ -50,6 +50,7 @@ Whether the button is compact or not.
 </table>
 
 Whether the button is styled as a primary button.
+
 ### `whiteSeparator`
 
 <table>
@@ -81,6 +82,7 @@ Whether the button has modified styling to warn users (delete, remove, etc).es
 
 Callback that will be invoked when menu button is clicked.
 Will be passed the click event.
+
 ### `href`
 
 <table>

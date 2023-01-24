@@ -2,6 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useContext } from 'react';
 import { useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setSiteMonitorStatus } from 'calypso/state/jetpack-agency-dashboard/actions';
 import useUpdateMonitorSettingsMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-update-monitor-settings-mutation';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -316,4 +317,50 @@ export function useUpdateMonitorSettings( sites: Array< { blog_id: number; url: 
 		isLoading: status === 'loading',
 		isComplete: status === 'completed',
 	};
+}
+
+export function useJetpackAgencyDashboardRecordTrackEvent(
+	sites: Array< Site > | null,
+	isLargeScreen?: boolean
+) {
+	const dispatch = useDispatch();
+
+	const buildEventName = useCallback(
+		( action: string ) =>
+			`calypso_jetpack_agency_dashboard_${ action }_${
+				isLargeScreen ? 'large_screen' : 'small_screen'
+			}`,
+		[ isLargeScreen ]
+	);
+
+	const buildSiteProperties = useCallback( () => {
+		if ( ! sites?.length ) {
+			return {};
+		}
+		if ( sites.length === 1 ) {
+			const { blog_id, url } = sites[ 0 ];
+			return {
+				selected_site_id: blog_id,
+				selected_site_url: url,
+			};
+		}
+		return {
+			selected_site_count: sites.length,
+		};
+	}, [ sites ] );
+
+	const dispatchTrackingEvent = useCallback(
+		( action, args = {} ) => {
+			const name = buildEventName( action );
+
+			const properties = {
+				...buildSiteProperties(),
+				...args,
+			};
+			dispatch( recordTracksEvent( name, properties ) );
+		},
+		[ buildEventName, buildSiteProperties, dispatch ]
+	);
+
+	return dispatchTrackingEvent;
 }

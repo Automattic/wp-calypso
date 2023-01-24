@@ -10,10 +10,10 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 function myUpsell() {
 	return (
 		<UpsellNudge
-			tracksImpressionName={ 'calypso_domain_upsell_nudge' }
+			tracksImpressionName="calypso_domain_upsell_nudge"
 			callToAction={ translate( 'Upgrade' ) }
 			title={ translate( 'Free domain with a plan!' ) }
-			href={ '/plans' }
+			href="/plans"
 			showIcon={ true }
 			compact
 		/>

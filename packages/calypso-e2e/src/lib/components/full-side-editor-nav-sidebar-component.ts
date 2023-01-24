@@ -1,9 +1,9 @@
 import { Page, Locator } from 'playwright';
 
-const panel = '.edit-site-navigation-panel';
 const selectors = {
-	exitLink: `${ panel } a.edit-site-navigation-panel__back-to-dashboard`,
-	templatePartsLink: `${ panel } a:has-text("Template Parts")`,
+	exitButton: `a[aria-label="Go back to the dashboard"]`,
+	templatePartsItem: 'button[id="/template-parts"]',
+	manageAllTemplatePartsItem: 'button:text("Manage all template parts")',
 };
 
 /**
@@ -26,15 +26,15 @@ export class FullSiteEditorNavSidebarComponent {
 	 * Clicks the Dashboard menu link to exit the editor.
 	 */
 	async exit(): Promise< void > {
-		const exitLinkLocator = this.editor.locator( selectors.exitLink );
-		await exitLinkLocator.click();
+		const exitButtonLocator = this.editor.locator( selectors.exitButton );
+		await exitButtonLocator.click();
 	}
 
 	/**
 	 * Clicks sidebar link to open the template parts list.
 	 */
-	async navigateToTemplateParts(): Promise< void > {
-		const locator = this.editor.locator( selectors.templatePartsLink );
-		await locator.click();
+	async navigateToTemplatePartsManager(): Promise< void > {
+		await this.editor.locator( selectors.templatePartsItem ).click();
+		await this.editor.locator( selectors.manageAllTemplatePartsItem ).click();
 	}
 }

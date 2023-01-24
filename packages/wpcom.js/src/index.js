@@ -26,7 +26,7 @@ const DEFAULT_ASYNC_TIMEOUT = 30000;
  *
  * @param {string} [token] - OAuth API access token
  * @param {Function} [reqHandler] - function Request Handler
- * @returns {WPCOM} wpcom instance
+ * @returns {WPCOM|undefined} wpcom instance
  */
 export default function WPCOM( token, reqHandler ) {
 	if ( ! ( this instanceof WPCOM ) ) {
@@ -148,7 +148,7 @@ WPCOM.prototype.batch = function () {
 /**
  * List Freshly Pressed Posts
  *
- * @param {object} [query] - query object
+ * @param {Object} [query] - query object
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */

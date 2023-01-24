@@ -75,9 +75,8 @@ const wooexpress: Flow = {
 		const siteSlugParam = useSiteSlugParam();
 
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
 
-		const flowProgress = useSiteSetupFlowProgress( currentStep, intent, storeType );
+		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
 		setStepProgress( flowProgress );
 
 		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) );

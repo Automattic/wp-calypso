@@ -1,3 +1,5 @@
+import { eye } from '@automattic/components/src/icons';
+import { Icon, commentContent, starEmpty } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { Card, ShortenedNumber } from '../';
@@ -41,18 +43,21 @@ export default function PostStatsCard( {
 			</div>
 			<div className="post-stats-card__counts">
 				<div className="post-stats-card__count post-stats-card__count--view">
+					<Icon className="gridicon" icon={ eye } />
 					<div className="post-stats-card__count-header">{ translate( 'Views' ) }</div>
 					<div className="post-stats-card__count-value">
 						<ShortenedNumber value={ viewCount } />
 					</div>
 				</div>
 				<div className="post-stats-card__count post-stats-card__count--like">
+					<Icon className="gridicon" icon={ starEmpty } />
 					<div className="post-stats-card__count-header">{ translate( 'Likes' ) }</div>
 					<div className="post-stats-card__count-value">
 						<ShortenedNumber value={ likeCount } />
 					</div>
 				</div>
 				<div className="post-stats-card__count post-stats-card__count--comment">
+					<Icon className="gridicon" icon={ commentContent } />
 					<div className="post-stats-card__count-header">{ translate( 'Comments' ) }</div>
 					<div className="post-stats-card__count-value">
 						<ShortenedNumber value={ commentCount } />

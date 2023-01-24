@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, FREE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -33,9 +32,6 @@ const free: Flow = {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
 		useEffect( () => {
-			if ( ! isEnabled( 'signup/free-flow' ) ) {
-				return window.location.assign( '/start/free' );
-			}
 			resetOnboardStore();
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 			recordFullStoryEvent( 'calypso_signup_start_free', { flow: this.name } );

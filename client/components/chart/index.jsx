@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { localize, withRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import Notice from 'calypso/components/notice';
 import Tooltip from 'calypso/components/tooltip';
 import { hasTouch } from 'calypso/lib/touch-detect';
@@ -55,6 +55,7 @@ function Chart( {
 	translate,
 	chartXPadding,
 	sliceFromBeginning,
+	onChangeMaxBars,
 } ) {
 	const [ tooltip, setTooltip ] = useState( { isTooltipVisible: false } );
 	const [ sizing, setSizing ] = useState( { clientWidth: 650, hasResized: false } );
@@ -107,6 +108,13 @@ function Chart( {
 
 	const width = isTouch && sizing.clientWidth <= 0 ? 350 : sizing.clientWidth - chartXPadding; // mobile safari bug with zero width
 	const maxBars = Math.floor( width / minWidth );
+
+	useEffect( () => {
+		if ( onChangeMaxBars ) {
+			onChangeMaxBars( maxBars );
+		}
+	}, [ maxBars, onChangeMaxBars ] );
+
 	// Memoize data calculations to avoid performing them too often.
 	const { chartData, isEmptyChart, yMax } = useMemo( () => {
 		const nextData = ( () => {

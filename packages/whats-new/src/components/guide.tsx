@@ -55,7 +55,7 @@ const Guide: React.FC< Props > = ( { children, className, onFinish } ) => {
 					goForward();
 				}
 			} }
-			title={ '' }
+			title=""
 		>
 			<div className="guide__container">
 				<div className="guide__page">{ pages[ currentPage ].content }</div>

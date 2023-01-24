@@ -11,7 +11,7 @@ import productListSchema from './schema';
  * Otherwise inserts the new one at the beginning of the list.
  *
  * @param {Array} list of previous products
- * @param {object} newProduct to update list with
+ * @param {Object} newProduct to update list with
  * @returns {Array} updated array of products
  */
 function addOrEditProduct( list = [], newProduct ) {
@@ -32,9 +32,9 @@ function addOrEditProduct( list = [], newProduct ) {
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID keys to an object that contains the site roles.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const items = withSchemaValidation( productListSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

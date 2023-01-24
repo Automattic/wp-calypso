@@ -10,6 +10,7 @@ import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
+import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import WebPreview from 'calypso/components/web-preview';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -181,6 +182,8 @@ class StatsPostDetail extends Component {
 							<PostDetailTableSection siteId={ siteId } postId={ postId } />
 						</>
 					) }
+
+					<JetpackColophon />
 				</div>
 
 				<WebPreview
@@ -247,6 +250,8 @@ class StatsPostDetail extends Component {
 						<PostWeeks siteId={ siteId } postId={ postId } />
 					</div>
 				) }
+
+				<JetpackColophon />
 
 				<WebPreview
 					showPreview={ this.state.showPreview }

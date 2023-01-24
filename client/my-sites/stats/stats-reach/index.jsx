@@ -37,7 +37,7 @@ export const StatsReach = ( props ) => {
 	);
 
 	return (
-		<div>
+		<div className="list-total-followers">
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsFollowers" /> }
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsPublicize" /> }
 			<SectionHeader label={ translate( 'Follower totals' ) } />
