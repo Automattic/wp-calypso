@@ -13,9 +13,11 @@ import {
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useState } from 'react';
+import { isCopySiteFlow } from 'calypso/../packages/onboarding/src';
 import { useExperiment } from 'calypso/lib/explat';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
+import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
@@ -177,7 +179,12 @@ function LineItemWrapper( {
 } ) {
 	const isRenewal = isWpComProductRenewal( product );
 	const isWooMobile = isWcMobileApp();
-	const isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
+	let isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
+
+	const signupFlowName = getSignupCompleteFlowName();
+	if ( isCopySiteFlow( signupFlowName ) ) {
+		isDeletable = false;
+	}
 
 	const shouldShowVariantSelector =
 		onChangePlanLength && ! isWooMobile && ! isRenewal && ! hasPartnerCoupon;
