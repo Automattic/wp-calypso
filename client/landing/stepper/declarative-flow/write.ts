@@ -9,6 +9,7 @@ import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import LaunchPad from './internals/steps-repository/launchpad';
+import Processing from './internals/steps-repository/processing-step';
 import {
 	AssertConditionResult,
 	AssertConditionState,
@@ -26,7 +27,10 @@ const write: Flow = {
 			recordFullStoryEvent( 'calypso_signup_start_free', { flow: this.name } );
 		}, [] );
 
-		return [ { slug: 'launchpad', component: LaunchPad } ];
+		return [
+			{ slug: 'launchpad', component: LaunchPad },
+			{ slug: 'processing', component: Processing },
+		];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -52,11 +56,16 @@ const write: Flow = {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
 
 			switch ( _currentStep ) {
+				case 'processing':
+					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
+						return window.location.replace( `/home/${ providedDependencies?.siteSlug }` );
+					}
+
+					return navigate( `launchpad` );
 				case 'launchpad': {
 					return navigate( 'processing' );
 				}
 			}
-			return providedDependencies;
 		};
 
 		const goBack = () => {
