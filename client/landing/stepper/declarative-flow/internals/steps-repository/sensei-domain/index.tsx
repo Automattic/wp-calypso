@@ -29,8 +29,7 @@ const SenseiDomain: Step = ( { navigation } ) => {
 		submit?.( { domain: domain } );
 	};
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const onAddDomain = ( selectedDomain: any ) => {
+	const onAddDomain = ( selectedDomain: typeof domain ) => {
 		setDomain( selectedDomain );
 		submit?.( { domain: selectedDomain } );
 	};
