@@ -22,6 +22,7 @@ import Tooltip from 'calypso/components/tooltip';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getProductDisplayCost, getProductTerm } from 'calypso/state/products-list/selectors';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
@@ -309,6 +310,7 @@ export class Theme extends Component {
 			isSiteEligibleForBundledSoftware,
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes,
+			themeSubscriptionPrices,
 		} = this.props;
 
 		// Premium themes (non-bundled): Only require premium themes feature (Premium or higher plans)
@@ -317,17 +319,20 @@ export class Theme extends Component {
 		const isUsableBundledTheme =
 			doesThemeBundleSoftwareSet && hasPremiumThemesFeature && isSiteEligibleForBundledSoftware;
 
-		const parsedThemePrice = this.parseThemePrice( theme.price );
-
 		if ( didPurchaseTheme && ! isUsablePremiumTheme && ! isUsableBundledTheme ) {
-			return translate( 'You have purchased an annual subscription for this theme' );
+			return isExternallyManagedTheme
+				? translate( 'You have purchased a subscription for this theme' )
+				: translate( 'You have purchased this theme' );
 		} else if ( isExternallyManagedTheme && ! isSiteEligibleForManagedExternalThemes ) {
 			// This is a third-party theme but the user doesn't have an eligible plan.
 			return createInterpolateElement(
 				translate(
-					'This premium theme costs %(price)s per year and can only be purchased if you have the <Link>Business plan</Link> on your site.',
+					'This premium theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>Business plan</Link> on your site.',
 					{
-						args: { price: parsedThemePrice },
+						args: {
+							annualPrice: themeSubscriptionPrices?.year ?? '',
+							monthlyPrice: themeSubscriptionPrices?.month ?? '',
+						},
 					}
 				),
 				{
@@ -337,9 +342,12 @@ export class Theme extends Component {
 		} else if ( isExternallyManagedTheme && isSiteEligibleForManagedExternalThemes ) {
 			// This is a third-party theme and the user has an eligible plan.
 			return translate(
-				'This premium theme is only available while your current plan is active and costs %(price)s per year.',
+				'This premium theme is only available while your current plan is active and costs %(annualPrice)s per year or %(monthlyPrice)s per month.',
 				{
-					args: { price: parsedThemePrice },
+					args: {
+						annualPrice: themeSubscriptionPrices?.year ?? '',
+						monthlyPrice: themeSubscriptionPrices?.month ?? '',
+					},
 				}
 			);
 		} else if ( isUsablePremiumTheme ) {
@@ -359,10 +367,10 @@ export class Theme extends Component {
 			sprintf(
 				/* translators: the "price" is the price of the theme, example: U$50; */
 				translate(
-					'This premium theme is included in the <Link>Premium plan</Link>, or you can purchase individually for %(price)s a year'
+					'This premium theme is included in the <Link>Premium plan</Link>, or you can purchase individually for %(price)s'
 				),
 				{
-					price: parsedThemePrice,
+					price: this.parseThemePrice( theme.price ),
 				}
 			),
 			{
@@ -625,12 +633,34 @@ export class Theme extends Component {
 	}
 }
 
+function getMarketplaceThemePrices( state, theme ) {
+	if ( ! Array.isArray( theme?.product_details ) ) {
+		return {};
+	}
+
+	return theme.product_details.reduce( ( interimPrices, { product_slug } ) => {
+		const currentProductTerm = getProductTerm( state, product_slug );
+		const currentProductPrice = getProductDisplayCost( state, product_slug );
+
+		if ( currentProductTerm && currentProductPrice ) {
+			interimPrices[ currentProductTerm ] = currentProductPrice;
+		}
+
+		return interimPrices;
+	}, {} );
+}
+
 export default connect(
 	( state, { theme, siteId, hasPremiumThemesFeature } ) => {
 		const {
 			themes: { themesUpdate },
 		} = state;
 		const { themesUpdateFailed, themesUpdating, themesUpdated } = themesUpdate;
+		const isExternallyManagedTheme = getIsExternallyManagedTheme( state, theme.id );
+		const themeSubscriptionPrices = isExternallyManagedTheme
+			? getMarketplaceThemePrices( state, theme )
+			: {};
+
 		return {
 			errorOnUpdate: themesUpdateFailed && themesUpdateFailed.indexOf( theme.id ) > -1,
 			isUpdating: themesUpdating && themesUpdating.indexOf( theme.id ) > -1,
@@ -644,11 +674,12 @@ export default connect(
 			siteSlug: getSiteSlug( state, siteId ),
 			didPurchaseTheme: isThemePurchased( state, theme.id, siteId ),
 			isPremiumThemeAvailable: getIsPremiumThemeAvailable( state, theme.id, siteId ),
-			isExternallyManagedTheme: getIsExternallyManagedTheme( state, theme.id ),
+			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes: getIsSiteEligibleForManagedExternalThemes(
 				state,
 				siteId
 			),
+			themeSubscriptionPrices,
 		};
 	},
 	{ recordTracksEvent, setThemesBookmark, updateThemes }
