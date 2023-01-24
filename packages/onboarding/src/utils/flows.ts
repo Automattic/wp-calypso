@@ -11,6 +11,7 @@ export const FREE_FLOW = 'free';
 export const FREE_POST_SETUP_FLOW = 'free-post-setup';
 export const MIGRATION_FLOW = 'import-focused';
 export const COPY_SITE_FLOW = 'copy-site';
+export const BUILD_FLOW = 'build';
 
 export const isLinkInBioFlow = ( flowName: string | null ) => {
 	return Boolean(
@@ -56,6 +57,10 @@ export const isCopySiteFlow = ( flowName: string | null ) => {
 
 export const isWooExpressFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ WOOEXPRESS_FLOW ].includes( flowName ) );
+};
+
+export const isBuildFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ BUILD_FLOW ].includes( flowName ) );
 };
 
 export const ecommerceFlowRecurTypes = {

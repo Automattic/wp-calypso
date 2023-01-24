@@ -93,6 +93,11 @@ export function getEnhancedTasks(
 						},
 					};
 					break;
+				case 'setup_general':
+					taskData = {
+						title: translate( 'Personalize your site' ),
+					};
+					break;
 				case 'design_edited':
 					taskData = {
 						title: translate( 'Edit site design' ),
