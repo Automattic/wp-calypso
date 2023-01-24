@@ -5,6 +5,7 @@ import {
 	WPCOM_FEATURES_NO_WPCOM_BRANDING,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+	PLAN_ECOMMERCE_MONTHLY,
 } from '@automattic/calypso-products';
 import { WPCOM_FEATURES_SUBSCRIPTION_GIFTING } from '@automattic/calypso-products/src';
 import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
@@ -627,7 +628,7 @@ export class SiteSettingsFormGeneral extends Component {
 					components: {
 						a: (
 							<a
-								href={ `/plans/${ siteSlug }?plan=ecommerce-bundle-monthly` }
+								href={ `/plans/${ siteSlug }?plan=${ PLAN_ECOMMERCE_MONTHLY }` }
 								onClick={ recordTracksEventForClick }
 							/>
 						),
