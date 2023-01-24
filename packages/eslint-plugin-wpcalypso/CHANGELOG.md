@@ -11,7 +11,7 @@
   in more rule violations which were not previously detected.
 - Breaking: Require at least NodeJS 14, since dependencies dropped support for older versions.
 - Enhancement: The `jsdoc/check-types` rule now sets `unifyParentAndChildTypeChecks`
-  to true to enforce preferredTypes on unions as well (e.g. `{string | Object}`).
+  to true to enforce `preferredTypes` on unions as well (e.g. `{string | Object}`).
 
 #### v6.1.0 (2022-08-24)
 
