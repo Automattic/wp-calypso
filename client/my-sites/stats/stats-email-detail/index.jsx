@@ -68,6 +68,7 @@ class StatsEmailDetail extends Component {
 	static propTypes = {
 		path: PropTypes.string,
 		siteId: PropTypes.number,
+		givenSiteId: PropTypes.string,
 		postId: PropTypes.number,
 		statType: PropTypes.string,
 		translate: PropTypes.func,
@@ -170,6 +171,7 @@ class StatsEmailDetail extends Component {
 			countViews,
 			postId,
 			siteId,
+			givenSiteId,
 			date,
 			slug,
 			isSitePrivate,
@@ -191,9 +193,8 @@ class StatsEmailDetail extends Component {
 		const navItems = [ 'opens', 'clicks' ].map( ( item ) => {
 			const attr = {
 				key: item,
-				path: `/stats/email/${ item }`,
+				path: `/stats/email/${ item }/${ givenSiteId }/${ period }/${ postId }`,
 				selected: statType === item,
-				count: item === 'opens' ? 58 : 24,
 			};
 
 			// uppercase first character of item
