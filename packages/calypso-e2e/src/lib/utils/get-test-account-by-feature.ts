@@ -91,7 +91,9 @@ export function getTestAccountByFeature(
 
 	const accountName = accountsTable.get( stringifyKey( feature ) );
 
-	if ( ! accountName ) throw Error( 'No account found for this feature' );
+	if ( ! accountName ) {
+		throw Error( 'No account found for this feature' );
+	}
 
 	return accountName;
 }

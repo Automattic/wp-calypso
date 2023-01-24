@@ -16,7 +16,7 @@ export function hasMappedDomain( domains ) {
 /**
  * Checks if the supplied domain is a mapped domain and has WordPress.com name servers.
  *
- * @param {object} domain - domain object
+ * @param {Object} domain - domain object
  * @returns {boolean} - true if the domain is mapped and has WordPress.com name servers, false otherwise
  */
 export function isMappedDomainWithWpcomNameservers( domain ) {

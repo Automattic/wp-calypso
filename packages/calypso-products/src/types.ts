@@ -11,6 +11,15 @@ import type {
 	TERMS_LIST,
 	PERIOD_LIST,
 	JETPACK_PRODUCT_CATEGORIES,
+	FEATURE_GROUP_GENERAL_FEATURES,
+	FEATURE_GROUP_PERFORMANCE_BOOSTERS,
+	FEATURE_GROUP_HIGH_AVAILABILITY,
+	FEATURE_GROUP_DEVELOPER_TOOLS,
+	FEATURE_GROUP_SECURITY_AND_SAFETY,
+	FEATURE_GROUP_INNOVATIVE_TECHNOLOGIES,
+	FEATURE_GROUP_THEMES_AND_CUSTOMIZATION,
+	FEATURE_GROUP_MARKETING_GROWTH_AND_MONETIZATION_TOOLS,
+	FEATURE_GROUP_SUPERIOR_COMMERCE_SOLUTIONS,
 } from './constants';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactElement } from 'react';
@@ -45,6 +54,7 @@ export interface WPComPlan extends Plan {
 	getPromotedFeatures?: () => Feature[];
 	getPathSlug: () => string;
 	getAnnualPlansOnlyFeatures?: () => string[];
+	get2023PricingGridSignupWpcomFeatures?: () => Feature[];
 }
 
 export type IncompleteWPcomPlan = Partial< WPComPlan > &
@@ -118,6 +128,24 @@ export interface BillingTerm {
 	term: typeof TERMS_LIST[ number ];
 	getBillingTimeFrame: () => TranslateResult;
 }
+
+export type FeatureGroupSlug =
+	| typeof FEATURE_GROUP_GENERAL_FEATURES
+	| typeof FEATURE_GROUP_PERFORMANCE_BOOSTERS
+	| typeof FEATURE_GROUP_HIGH_AVAILABILITY
+	| typeof FEATURE_GROUP_DEVELOPER_TOOLS
+	| typeof FEATURE_GROUP_SECURITY_AND_SAFETY
+	| typeof FEATURE_GROUP_INNOVATIVE_TECHNOLOGIES
+	| typeof FEATURE_GROUP_THEMES_AND_CUSTOMIZATION
+	| typeof FEATURE_GROUP_SUPERIOR_COMMERCE_SOLUTIONS
+	| typeof FEATURE_GROUP_MARKETING_GROWTH_AND_MONETIZATION_TOOLS;
+
+export type FeatureGroup = {
+	slug: FeatureGroupSlug;
+	getTitle: () => string;
+	get2023PricingGridSignupWpcomFeatures: () => Feature[];
+};
+export type FeatureGroupMap = Record< FeatureGroupSlug, FeatureGroup >;
 
 export type Plan = BillingTerm & {
 	group: typeof GROUP_WPCOM | typeof GROUP_JETPACK;

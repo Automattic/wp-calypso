@@ -270,7 +270,7 @@ const SiteSetupList = ( {
 					aria-orientation="vertical"
 				>
 					{ tasks.map( ( task ) => {
-						const enhancedTask = getTask( task, { isBlogger, userEmail } );
+						const enhancedTask = getTask( task, { isBlogger, isFSEActive, userEmail } );
 						const isCurrent = task.id === currentTask.id;
 						const isCompleted = task.isCompleted;
 

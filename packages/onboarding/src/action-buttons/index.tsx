@@ -20,8 +20,12 @@ const ActionButtons: React.FunctionComponent< ActionButtonsProps > = ( {
 	// if true, always stick.
 	// if false, never stick.
 	let stickyClass = '';
-	if ( sticky === true ) stickyClass = 'is-sticky';
-	if ( sticky === false ) stickyClass = 'no-sticky';
+	if ( sticky === true ) {
+		stickyClass = 'is-sticky';
+	}
+	if ( sticky === false ) {
+		stickyClass = 'no-sticky';
+	}
 
 	return (
 		<div className={ classnames( 'action-buttons', className, stickyClass ) }>{ children }</div>

@@ -3,7 +3,7 @@ import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 /**
  * Returns the Jetpack version for the given site.
  *
- * @param  {object}    state  Global state tree
+ * @param  {Object}    state  Global state tree
  * @param  {?number}   siteId Site ID
  * @returns {?string}         Jetpack version
  */

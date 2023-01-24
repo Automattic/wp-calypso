@@ -67,7 +67,7 @@ const SenseiSetup: Step = ( { navigation } ) => {
 		setChecked?.( event.target.value );
 	};
 
-	const { goNext } = navigation;
+	const { submit } = navigation;
 	const dispatch = useDispatch( ONBOARD_STORE );
 	const handleSubmit = useCallback( () => {
 		dispatch.setSiteTitle( siteTitle );
@@ -76,8 +76,8 @@ const SenseiSetup: Step = ( { navigation } ) => {
 			slug: variation.name,
 			title: variation.title,
 		} as StyleVariation );
-		goNext?.();
-	}, [ siteTitle, dispatch, goNext, checked ] );
+		submit?.();
+	}, [ siteTitle, dispatch, submit, checked ] );
 
 	const preview = <ThemeStylePreviews styles={ styles } active={ checked } />;
 

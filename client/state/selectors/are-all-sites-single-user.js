@@ -5,7 +5,7 @@ import { isSingleUserSite } from 'calypso/state/sites/selectors';
 /**
  * Returns true if every site of the current user is a single user site
  *
- * @param  {object}  state Global state tree
+ * @param  {Object}  state Global state tree
  * @returns {boolean}       True if all sites are single user sites
  */
 export default createSelector( ( state ) => {

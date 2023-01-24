@@ -29,10 +29,13 @@ export const itemLinkMatches = ( path, currentPath ) => {
 	if ( pathIncludes( currentPath, 'people', 1 ) ) {
 		if ( pathIncludes( currentPath, 'new', 2 ) ) {
 			return fragmentIsEqual( path, currentPath, 2 );
-		}
-
-		if ( pathIncludes( currentPath, 'team-members', 2 ) ) {
+		} else if (
+			pathIncludes( currentPath, 'add-subscribers', 2 ) &&
+			pathIncludes( path, 'team', 2 )
+		) {
 			return fragmentIsEqual( path, currentPath, 2 );
+		} else if ( pathIncludes( currentPath, 'subscribers', 2 ) && pathIncludes( path, 'team', 2 ) ) {
+			return fragmentIsEqual( path, currentPath, 1 );
 		}
 	}
 

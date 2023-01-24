@@ -1,24 +1,10 @@
-export type Follower = {
-	ID: number | string;
-	url?: string;
-	label: string;
-	login: string;
-	avatar: string;
-	avatar_URL: string;
-	date_subscribed: string;
-	follow_data?: any;
-};
+import type { Member, UseQuery } from '../types';
 
 export type FollowersQueryData = {
-	followers: Follower[];
+	followers: Member[];
 	total: number;
 };
 
 export type FollowersQuery = {
 	data?: FollowersQueryData;
-	hasNextPage: boolean;
-	refetch: () => void;
-	fetchNextPage: () => void;
-	isLoading: boolean;
-	isFetchingNextPage: boolean;
-};
+} & UseQuery;

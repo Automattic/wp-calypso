@@ -22,7 +22,9 @@ Settings.prototype._getAll = function () {
 };
 
 Settings.prototype.isDebug = function () {
-	if ( typeof this._getAll().debug !== 'undefined' ) return this._getAll().debug;
+	if ( typeof this._getAll().debug !== 'undefined' ) {
+		return this._getAll().debug;
+	}
 	return Config.debug.enabled_by_default;
 };
 

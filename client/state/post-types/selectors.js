@@ -3,9 +3,9 @@ import 'calypso/state/post-types/init';
 /**
  * Returns the known post types for a site.
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @returns {?object}        Site post types
+ * @returns {?Object}        Site post types
  */
 export function getPostTypes( state, siteId ) {
 	return state.postTypes.items[ siteId ] || null;
@@ -14,10 +14,10 @@ export function getPostTypes( state, siteId ) {
 /**
  * Returns the known post type for a site, given the type slug.
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {string}  slug   Post type slug
- * @returns {?object}        Post type
+ * @returns {?Object}        Post type
  */
 export function getPostType( state, siteId, slug ) {
 	const postTypes = getPostTypes( state, siteId );
@@ -31,7 +31,7 @@ export function getPostType( state, siteId, slug ) {
 /**
  * Returns the label for the post type.
  *
- * @param  {object}   state   Global state tree
+ * @param  {Object}   state   Global state tree
  * @param  {number}   siteId  Site ID
  * @param  {string}   slug    Post type slug
  * @param  {string}   label   Feature label
@@ -62,7 +62,7 @@ export function getPostTypeLabel( state, siteId, slug, label, localeSlug ) {
  * post type does not support the specified feature, or null if post type
  * support cannot be determined.
  *
- * @param  {object}   state   Global state tree
+ * @param  {Object}   state   Global state tree
  * @param  {number}   siteId  Site ID
  * @param  {string}   slug    Post type slug
  * @param  {string}   feature Feature slug
@@ -103,7 +103,7 @@ export function postTypeSupports( state, siteId, slug, feature ) {
  * support the post type, or if support cannot be determined (if site is
  * not currently known).
  *
- * @param  {object}   state  Global state tree
+ * @param  {Object}   state  Global state tree
  * @param  {number}   siteId Site ID
  * @param  {string}   slug   Post type slug
  * @returns {boolean}        Whether site supports post type

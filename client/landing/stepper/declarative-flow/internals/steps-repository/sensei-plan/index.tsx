@@ -70,7 +70,7 @@ const updateGlobalStyles = (
 		method: 'POST',
 	} );
 
-const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
+const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 	const [ billingPeriod, setBillingPeriod ] = useState< Plans.PlanBillingPeriod >( 'ANNUALLY' );
 	const billingPeriodIsAnnually = billingPeriod === 'ANNUALLY';
 	const [ status, setStatus ] = useState< Status >( Status.Initial );
@@ -158,10 +158,10 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 	);
 
 	const goToDomainStep = useCallback( () => {
-		if ( goToStep ) {
-			goToStep( 'senseiDomain' );
+		if ( submit ) {
+			submit();
 		}
-	}, [ goToStep ] );
+	}, [ submit ] );
 
 	const onPlanSelect = async () => {
 		try {
@@ -189,8 +189,10 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 			const newSite = getNewSite();
 			const siteId = newSite?.blogid;
 			setSelectedSite( newSite?.blogid );
-			await setIntentOnSite( newSite?.site_slug as string, SENSEI_FLOW );
-			await saveSiteSettings( newSite?.blogid as number, { launchpad_screen: 'full' } );
+			await Promise.all( [
+				setIntentOnSite( newSite?.site_slug as string, SENSEI_FLOW ),
+				saveSiteSettings( newSite?.blogid as number, { launchpad_screen: 'full' } ),
+			] );
 
 			setProgress( {
 				percentage: 75,

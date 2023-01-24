@@ -2,7 +2,7 @@ import type { IntroOffer } from 'calypso/state/sites/intro-offers/types';
 import type { AppState } from 'calypso/types';
 
 /**
- * @param  {object}  state       Global state tree
+ * @param  {Object}  state       Global state tree
  * @param  {number}  productSlugs   The productSlugs to check for a best intro offer discount
  * @param  {number|null}  siteId      The ID of the site we're querying
  * @returns {number|null}        The best intro offer discount ( may be zero if no intro offers are found)

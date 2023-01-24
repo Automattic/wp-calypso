@@ -6,7 +6,7 @@ import { isSitePlanDiscounted } from 'calypso/state/sites/plans/selectors/is-sit
  * Returns a plan raw discount. It's the value which was subtracted from the plan's original raw price.
  * Use getPlanDiscountedRawPrice if you need a plan's raw price after applying the discount.
  *
- * @param  {object}  state        global state
+ * @param  {Object}  state        global state
  * @param  {number}  siteId       the site id
  * @param  {string}  productSlug  the plan product slug
  * @param  {boolean} isMonthly    if true, returns monthly price

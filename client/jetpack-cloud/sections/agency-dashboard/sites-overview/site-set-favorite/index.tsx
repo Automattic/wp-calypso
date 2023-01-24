@@ -149,6 +149,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 			onClick={ handleFavoriteChange }
 			className={ classNames(
 				'site-set-favorite__favorite-icon',
+				'disable-card-expand',
 				isFavorite && 'site-set-favorite__favorite-icon-active'
 			) }
 			aria-label={ translate( 'Toggle favorite site' ) }

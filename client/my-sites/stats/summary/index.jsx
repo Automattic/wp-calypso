@@ -1,3 +1,5 @@
+import config from '@automattic/calypso-config';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
 import { Component } from 'react';
@@ -235,6 +237,14 @@ class StatsSummary extends Component {
 		}
 		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
 
+		const isHorizontalBarComponentEnabledEverywhere = config.isEnabled(
+			'stats/horizontal-bars-everywhere'
+		);
+
+		const cardParentClassName = classNames( 'stats-summary-view', {
+			'stats-summary__positioned': isHorizontalBarComponentEnabledEverywhere,
+		} );
+
 		return (
 			<Main className="has-fixed-nav" wideLayout>
 				<PageViewTracker
@@ -243,7 +253,8 @@ class StatsSummary extends Component {
 				/>
 				<FixedNavigationHeader navigationItems={ navigationItems } />
 
-				<div id="my-stats-content" className=" stats-summary-view">
+				<div id="my-stats-content" className={ cardParentClassName }>
+					{ /* TODO: move the header <AllTimeNav /> here when modernising summary detail page */ }
 					{ summaryViews }
 				</div>
 				<JetpackColophon />

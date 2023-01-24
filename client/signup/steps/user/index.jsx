@@ -332,7 +332,7 @@ export class UserStep extends Component {
 	 * @param {string} access_token An OAuth2 acccess token
 	 * @param {string} id_token     (Optional) a JWT id_token which contains the signed user info
 	 *                              So our server doesn't have to request the user profile on its end.
-	 * @param {object} userData     (Optional) extra user information that can be used to create a new account
+	 * @param {Object} userData     (Optional) extra user information that can be used to create a new account
 	 */
 	handleSocialResponse = ( service, access_token, id_token = null, userData = null ) => {
 		const { translate, initialContext } = this.props;

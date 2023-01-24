@@ -38,7 +38,6 @@ interface CachedSelector< S, A extends unknown[], R = unknown > {
  *                      Must return an array which gets passed as the first arg to the selector.
  * @param selector      A standard selector for calculating cached result.
  * @param options       Options bag with additional arguments.
- *
  * @returns Cached selector
  */
 export default function treeSelect<

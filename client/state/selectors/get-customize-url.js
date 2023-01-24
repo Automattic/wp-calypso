@@ -5,7 +5,7 @@ import { getThemeCustomizeUrl } from 'calypso/state/themes/selectors';
  * Full Site Editing or if they are using the Core Site Editor. Otherwise we return the
  * Customizer URL.
  *
- * @param  {object}   state   Global state tree
+ * @param  {Object}   state   Global state tree
  * @param  {string}   themeId Theme ID
  * @param  {number}   siteId  Site ID to open the customizer or block editor for
  * @returns {string}           Customizer or Block Editor URL

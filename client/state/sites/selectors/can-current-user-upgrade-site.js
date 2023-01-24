@@ -6,7 +6,7 @@ import isCurrentPlanPaid from './is-current-plan-paid';
 /**
  * Returns true if current user can purchase upgrades for this site
  *
- * @param  {object}   state  Global state tree
+ * @param  {Object}   state  Global state tree
  * @param  {number}   siteId Site ID
  * @returns {?boolean}        Whether site is previewable
  */

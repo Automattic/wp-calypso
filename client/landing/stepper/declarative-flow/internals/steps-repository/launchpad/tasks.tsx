@@ -72,7 +72,7 @@ export const tasks: Task[] = [
 		id: 'sensei_setup',
 		completed: true,
 		taskType: 'blog',
-		disabled: false,
+		disabled: true,
 	},
 	{
 		id: 'sensei_publish_first_course',

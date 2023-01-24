@@ -17,7 +17,7 @@ import useCaptureFlowException from '../../../../hooks/use-capture-flow-exceptio
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
 import { useVideoPressLoadingMessages } from './hooks/use-videopress-loading-messages';
 import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
-import type { Step } from '../../types';
+import type { StepProps } from '../../types';
 import './style.scss';
 
 export enum ProcessingResult {
@@ -26,7 +26,12 @@ export enum ProcessingResult {
 	FAILURE = 'failure',
 }
 
-const ProcessingStep: Step = function ( props ) {
+interface ProcessingStepProps extends StepProps {
+	title?: string;
+	subtitle?: string;
+}
+
+const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	const { submit } = props.navigation;
 	const { flow } = props;
 
@@ -50,7 +55,7 @@ const ProcessingStep: Step = function ( props ) {
 	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
 
 	const getCurrentMessage = () => {
-		return progressTitle || loadingMessages[ currentMessageIndex ]?.title;
+		return props.title || progressTitle || loadingMessages[ currentMessageIndex ]?.title;
 	};
 
 	const captureFlowException = useCaptureFlowException( props.flow, 'ProcessingStep' );
@@ -149,6 +154,7 @@ const ProcessingStep: Step = function ( props ) {
 							) : (
 								<LoadingEllipsis />
 							) }
+							{ props.subtitle && <p className="processing-step__subtitle">{ props.subtitle }</p> }
 						</div>
 					</>
 				}

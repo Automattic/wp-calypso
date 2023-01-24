@@ -7,6 +7,7 @@ import {
 	isJetpackProduct,
 } from '@automattic/calypso-products';
 import { Card, CompactCard } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -135,17 +136,16 @@ class CancelPurchase extends Component {
 
 	renderFooterText = () => {
 		const { purchase } = this.props;
-		const { refundText, expiryDate, totalRefundText } = purchase;
-
+		const { currencyCode, refundAmount, expiryDate, totalRefundAmount } = purchase;
 		if ( hasAmountAvailableToRefund( purchase ) ) {
 			if ( this.state.cancelBundledDomain && this.props.includedDomainPurchase ) {
 				return this.props.translate( '%(refundText)s to be refunded', {
-					args: { refundText: totalRefundText },
+					args: { refundText: formatCurrency( totalRefundAmount, currencyCode ) },
 					context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
 				} );
 			}
 			return this.props.translate( '%(refundText)s to be refunded', {
-				args: { refundText },
+				args: { refundText: formatCurrency( refundAmount, currencyCode ) },
 				context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
 			} );
 		}

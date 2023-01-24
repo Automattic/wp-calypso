@@ -6,10 +6,10 @@ import 'calypso/state/comments/init';
 /**
  * Returns a comment for the specified site and comment ID.
  *
- * @param {object} state Redux state
+ * @param {Object} state Redux state
  * @param {number} siteId Site identifier
  * @param {number} commentId Comment identifier
- * @returns {object} The requested comment
+ * @returns {Object} The requested comment
  */
 export function getSiteComment( state, siteId, commentId ) {
 	const comments = getSiteComments( state, siteId );

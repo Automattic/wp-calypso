@@ -51,14 +51,12 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		import( /* webpackChunkName: "free-post-setup-flow" */ '../declarative-flow/free-post-setup' ),
 };
 
+availableFlows[ 'plugin-bundle' ] = () =>
+	import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' );
+
 if ( config.isEnabled( 'sensei/onboarding' ) ) {
 	availableFlows[ 'sensei' ] = () =>
 		import( /* webpackChunkName: "sensei-flow" */ '../declarative-flow/sensei' );
-}
-
-if ( config.isEnabled( 'themes/plugin-bundling' ) ) {
-	availableFlows[ 'plugin-bundle' ] = () =>
-		import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' );
 }
 
 if ( config.isEnabled( 'sites/copy-site' ) ) {

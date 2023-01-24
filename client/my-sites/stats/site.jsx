@@ -27,7 +27,6 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import memoizeLast from 'calypso/lib/memoize-last';
-import { StatsNoContentBanner } from 'calypso/my-sites/stats/stats-no-content-banner';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,
@@ -40,6 +39,7 @@ import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HighlightsSection from './highlights-section';
+import MiniCarousel from './mini-carousel';
 import PromoCards from './promo-cards';
 import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
@@ -180,7 +180,7 @@ class StatsSite extends Component {
 	}
 
 	renderStats() {
-		const { date, siteId, slug, isJetpack, isSitePrivate, isOdysseyStats } = this.props;
+		const { date, siteId, slug, isJetpack, isSitePrivate, isOdysseyStats, context } = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -194,7 +194,9 @@ class StatsSite extends Component {
 			path: '/stats',
 		};
 		const slugPath = slug ? `/${ slug }` : '';
-		const pathTemplate = `${ traffic.path }/{{ interval }}${ slugPath }`;
+		const pathTemplate = `${ traffic.path }/{{ interval }}${ slugPath }?tab=${
+			this.state.activeTab ? this.state.activeTab.attr : 'views'
+		}`;
 
 		const wrapperClass = classNames( 'stats-content', {
 			'is-period-year': period === 'year',
@@ -245,6 +247,7 @@ class StatsSite extends Component {
 								date={ date }
 								period={ period }
 								url={ `/stats/${ period }/${ slug }` }
+								queryParams={ context.query }
 							>
 								<DatePicker
 									period={ period }
@@ -272,8 +275,13 @@ class StatsSite extends Component {
 						/>
 
 						{ isSitePrivate ? this.renderPrivateSiteBanner( siteId, slug ) : null }
-						{ ! isSitePrivate && <StatsNoContentBanner siteId={ siteId } siteSlug={ slug } /> }
 					</>
+
+					<MiniCarousel
+						isOdysseyStats={ isOdysseyStats }
+						slug={ slug }
+						isSitePrivate={ isSitePrivate }
+					/>
 
 					<div className="stats__module-list stats__module-list--traffic is-events stats__module--unified">
 						{ config.isEnabled( 'newsletter/stats' ) && (

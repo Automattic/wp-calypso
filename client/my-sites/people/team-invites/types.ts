@@ -1,11 +1,11 @@
-import { UserData as User } from 'calypso/lib/user/user';
+import type { Member } from '../types';
 
 export type Invite = {
 	key: string;
-	user: User;
+	user: Member;
 	role: string;
 	isPending: boolean;
-	invitedBy: User;
+	invitedBy: Member;
 	inviteDate: string;
 	acceptedDate?: string;
 };

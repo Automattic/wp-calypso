@@ -11,9 +11,9 @@ import isSiteConflicting from './is-site-conflicting';
 /**
  * Returns computed properties of the site object.
  *
- * @param    {object}      state    Global state tree
+ * @param    {Object}      state    Global state tree
  * @param    {number}      siteId   Site ID
- * @returns  {?object}              Site computed properties or null
+ * @returns  {?Object}              Site computed properties or null
  */
 export default function getSiteComputedAttributes( state, siteId ) {
 	const site = getRawSite( state, siteId );

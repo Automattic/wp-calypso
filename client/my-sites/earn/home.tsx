@@ -121,7 +121,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	/**
 	 * Return the content to display in the Simple Payments card based on the current plan.
 	 *
-	 * @returns {object} Object with props to render a PromoCard.
+	 * @returns {Object} Object with props to render a PromoCard.
 	 */
 	const getSimplePaymentsCard = () => {
 		const supportLink = localizeUrl(
@@ -171,7 +171,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	/**
 	 * Return the content to display in the Recurring Payments card based on the current plan.
 	 *
-	 * @returns {object} Object with props to render a PromoCard.
+	 * @returns {Object} Object with props to render a PromoCard.
 	 */
 	const getRecurringPaymentsCard = () => {
 		const hasConnectionCtaTitle = translate( 'Manage Payment Button' );
@@ -234,7 +234,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	/**
 	 * Return the content to display in the Donations card based on the current plan.
 	 *
-	 * @returns {object} Object with props to render a PromoCard.
+	 * @returns {Object} Object with props to render a PromoCard.
 	 */
 	const getDonationsCard = () => {
 		const hasConnectionCtaTitle = translate( 'Manage Donations Form' );
@@ -298,7 +298,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	/**
 	 * Return the content to display in the Premium Content Block card based on the current plan.
 	 *
-	 * @returns {object} Object with props to render a PromoCard.
+	 * @returns {Object | undefined} Object with props to render a PromoCard.
 	 */
 	const getPremiumContentCard = () => {
 		const hasConnectionCtaTitle = translate( 'Manage Premium Content' );
@@ -360,7 +360,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	/**
 	 * Return the content to display in the Paid Newsletter card based on the current plan.
 	 *
-	 * @returns {object} Object with props to render a PromoCard.
+	 * @returns {Object | undefined} Object with props to render a PromoCard.
 	 */
 	const getPaidNewsletterCard = () => {
 		if ( isNonAtomicJetpack ) {
@@ -410,7 +410,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	/**
 	 * Return the content to display in the Peer Referrals card.
 	 *
-	 * @returns {object} Object with props to render a PromoCard.
+	 * @returns {Object | undefined} Object with props to render a PromoCard.
 	 */
 	const getPeerReferralsCard = () => {
 		if ( isNonAtomicJetpack ) {
@@ -459,7 +459,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	/**
 	 * Return the content to display in the Ads card based on the current plan.
 	 *
-	 * @returns {object} Object with props to render a PromoCard.
+	 * @returns {Object} Object with props to render a PromoCard.
 	 */
 	const getAdsCard = () => {
 		const cta =

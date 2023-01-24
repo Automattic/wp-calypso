@@ -3,7 +3,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Menu items that support all sites screen.
  *
- * @param {object} options
+ * @param {Object} options
  * @param {boolean} options.showManagePlugins Includes menu items that can manage plugins across all sites.
  */
 export default function allSitesMenu( { showManagePlugins = false } = {} ) {

@@ -9,15 +9,16 @@ import ThemeNotFoundError from './theme-not-found-error';
 const debug = debugFactory( 'calypso:themes' );
 
 export function fetchThemeDetailsData( context, next ) {
-	if ( ! context.isServerSide || context.cachedMarkup ) {
+	if ( context.cachedMarkup ) {
 		return next();
 	}
 
 	const themeSlug = context.params.slug;
 	const theme = getTheme( context.store.getState(), 'wpcom', themeSlug );
+	const themeDotOrg = getTheme( context.store.getState(), 'wporg', themeSlug );
 
-	if ( theme ) {
-		debug( 'found theme!', theme.id );
+	if ( theme || themeDotOrg ) {
+		debug( 'found theme!', theme?.id ?? themeDotOrg.id );
 		return next();
 	}
 
@@ -25,17 +26,31 @@ export function fetchThemeDetailsData( context, next ) {
 		.dispatch( requestTheme( themeSlug, 'wpcom', context.lang ) )
 		.then( () => {
 			const themeDetails = getTheme( context.store.getState(), 'wpcom', themeSlug );
-			if ( ! themeDetails ) {
-				const error = getThemeRequestErrors( context.store.getState(), themeSlug, 'wpcom' );
-				debug( `Error fetching theme ${ themeSlug } details: `, error.message || error );
-				const err = {
-					status: 404,
-					message: 'Theme Not Found',
-					themeSlug,
-				};
-				return next( err );
+			if ( themeDetails ) {
+				return next();
 			}
-			next();
+
+			context.store
+				.dispatch( requestTheme( themeSlug, 'wporg', context.lang ) )
+				.then( () => {
+					const themeOrgDetails = getTheme( context.store.getState(), 'wporg', themeSlug );
+					if ( ! themeOrgDetails ) {
+						const err = {
+							status: 404,
+							message: 'Theme Not Found',
+							themeSlug,
+						};
+						const error = getThemeRequestErrors( context.store.getState(), themeSlug, 'wporg' );
+						debug( `Error fetching WPORG theme ${ themeSlug } details: `, error.message || error );
+						return next( err );
+					}
+
+					next();
+				} )
+				.catch( next );
+
+			const error = getThemeRequestErrors( context.store.getState(), themeSlug, 'wpcom' );
+			debug( `Error fetching WPCOM theme ${ themeSlug } details: `, error.message || error );
 		} )
 		.catch( next );
 }

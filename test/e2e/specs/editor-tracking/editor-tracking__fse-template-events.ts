@@ -29,6 +29,23 @@ describe(
 
 		const createdTemplateParts: string[] = [];
 
+		afterAll( async function () {
+			if ( createdTemplateParts.length > 0 ) {
+				// Template part data cleanup
+				const page = await browser.newPage();
+
+				const testAccount = new TestAccount( accountName );
+				await testAccount.authenticate( page );
+
+				const fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+
+				console.info( `Deleting created template parts: ${ createdTemplateParts.join( ', ' ) }` );
+				await fullSiteEditorPage.deleteTemplateParts( createdTemplateParts );
+			}
+		} );
+
 		describe( 'wpcom_block_editor_create_template_part', function () {
 			let page: Page;
 			let testAccount: TestAccount;
@@ -55,6 +72,10 @@ describe(
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 
+			it( 'Close the navigation sidebar', async function () {
+				await fullSiteEditorPage.closeNavSidebar();
+			} );
+
 			it( 'Add a Template Part block', async function () {
 				const block = await fullSiteEditorPage.addBlockFromSidebar(
 					TemplatePartBlock.blockName,
@@ -74,6 +95,10 @@ describe(
 					'wpcom_block_editor_create_template_part'
 				);
 				expect( eventDidFire ).toBe( true );
+			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
 			} );
 		} );
 
@@ -99,6 +124,10 @@ describe(
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 
+			it( 'Close the navigation sidebar', async function () {
+				await fullSiteEditorPage.closeNavSidebar();
+			} );
+
 			it( 'Add a Header block', async function () {
 				// It's just a Template Part block with a different name in the sidebar, so we can re-use that POM class.
 				const block = await fullSiteEditorPage.addBlockFromSidebar(
@@ -108,9 +137,9 @@ describe(
 				headerBlock = new HeaderBlock( page, block );
 			} );
 
-			it( 'Choose an existing template ("header-minimal")', async function () {
+			it( 'Choose an existing template ("Header (Dark, small)")', async function () {
 				await headerBlock.clickChoose();
-				await fullSiteEditorPage.selectExistingTemplatePartFromModal( 'header-minimal' );
+				await fullSiteEditorPage.selectExistingTemplatePartFromModal( 'Header (Dark, small)' );
 			} );
 
 			it( '"wpcom_block_editor_template_part_choose_existing" event fires', async function () {
@@ -131,14 +160,14 @@ describe(
 				await editorTracksEventManager.clearEvents();
 			} );
 
-			it( 'Replace template with a different template ("header-linear")', async function () {
+			it( 'Replace template with a different template ("Header (Dark, large)")', async function () {
 				// First, let's make sure we have the right block focused!
 				const blockId = await ElementHelper.getIdFromBlock( headerBlock.block );
 				await fullSiteEditorPage.focusBlock( `#${ blockId }` );
 
 				// Then we can take block toolbar actions.
-				await fullSiteEditorPage.clickBlockToolbarOption( 'Replace header-minimal' );
-				await fullSiteEditorPage.selectExistingTemplatePartFromModal( 'header-linear' );
+				await fullSiteEditorPage.clickBlockToolbarOption( 'Replace Header (Dark, small)' );
+				await fullSiteEditorPage.selectExistingTemplatePartFromModal( 'Header (Dark, large)' );
 			} );
 
 			it( '"wpcom_block_editor_template_part_replace" event fires', async function () {
@@ -153,6 +182,10 @@ describe(
 					'wpcom_block_editor_template_part_choose_existing'
 				);
 				expect( eventDidFire ).toBe( false );
+			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
 			} );
 		} );
 
@@ -179,6 +212,10 @@ describe(
 			it( 'Visit the site editor', async function () {
 				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+			} );
+
+			it( 'Close the navigation sidebar', async function () {
+				await fullSiteEditorPage.closeNavSidebar();
 			} );
 
 			it( 'Add a Page List block', async function () {
@@ -221,31 +258,16 @@ describe(
 						matchingProperties: {
 							block_names: 'core/page-list',
 							// Event property values are always lower case.
-							template_part_id: `pub/blockbase//${ templatePartName.toLowerCase() }`,
+							template_part_id: `pub/twentytwentytwo//${ templatePartName.toLowerCase() }`,
 						},
 					}
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
-		} );
 
-		afterAll( async function () {
-			if ( createdTemplateParts.length > 0 ) {
-				// Template part data cleanup
-				const page = await browser.newPage();
-
-				const testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( page );
-
-				const fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
-				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
-
-				console.info( `Deleting created template parts: ${ createdTemplateParts.join( ', ' ) }` );
-				for ( const templatePart of createdTemplateParts ) {
-					await fullSiteEditorPage.deleteTemplatePart( templatePart );
-				}
-			}
+			it( 'Close the page', async function () {
+				await page.close();
+			} );
 		} );
 	}
 );

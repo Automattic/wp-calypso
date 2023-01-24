@@ -2,7 +2,7 @@
  * Mapping from Calypso panel slug to tuple of focus key and value.
  *
  *
- * @type {object}
+ * @type {Object}
  */
 
 export const PANEL_MAPPINGS = {
@@ -22,7 +22,7 @@ export const PANEL_MAPPINGS = {
  * not recognized.
  *
  * @param  {string}  panel Calypso panel slug
- * @returns {?object}       WordPress autofocus argument object
+ * @returns {?Object}       WordPress autofocus argument object
  */
 export function getCustomizerFocus( panel ) {
 	if ( PANEL_MAPPINGS.hasOwnProperty( panel ) ) {

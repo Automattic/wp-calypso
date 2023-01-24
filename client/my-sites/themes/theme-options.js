@@ -295,9 +295,9 @@ const connectOptionsHoc = connect(
 			mapHideForTheme = ( hideForTheme ) => ( t, s ) => hideForTheme( state, t, s, origin );
 		}
 
-		return mapValues( getAllThemeOptions( props ), ( option ) =>
+		return mapValues( getAllThemeOptions( props ), ( option, key ) =>
 			Object.assign(
-				{},
+				{ key },
 				option,
 				option.getUrl ? { getUrl: mapGetUrl( option.getUrl ) } : {},
 				option.hideForTheme ? { hideForTheme: mapHideForTheme( option.hideForTheme ) } : {}

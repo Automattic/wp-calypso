@@ -237,7 +237,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
     "@types/cookie": ^0.4.1
-    "@types/node": ^16.11.26
+    "@types/node": ^18.11.18
     cookie: ^0.4.1
     tslib: ^2.3.0
     typescript: ^4.7.4
@@ -266,7 +266,7 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@jest/globals": ^27.3.1
     "@types/jest": ^27.4.0
-    "@types/node": ^16.17.0
+    "@types/node": ^18.11.18
     "@types/node-fetch": ^2.6.1
     "@types/totp-generator": ^0.0.3
     "@wordpress/i18n": ^4.9.0
@@ -940,7 +940,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@types/allure-js-commons": ^0.0.1
     "@types/jest": ^27.4.0
-    "@types/node": ^16.11.26
+    "@types/node": ^18.11.18
     allure-js-commons: 2.0.0-beta.9
     typescript: ^4.7.4
   languageName: unknown
@@ -1804,7 +1804,7 @@ __metadata:
     "@sentry/browser": ^7.11.1
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
-    "@types/node": ^15.0.2
+    "@types/node": ^18.11.18
     "@types/wordpress__plugins": ^3.0.0
     "@wordpress/a11y": ^3.9.0
     "@wordpress/api-fetch": ^6.6.0
@@ -3950,6 +3950,17 @@ __metadata:
     esquery: ^1.4.0
     jsdoc-type-pratt-parser: ~2.2.3
   checksum: 1a4c53129e4a509714b8d92f094abafa022915678384897559827884e4b1df2b5043d681cb4819959e8ba9ec91143fd0e80011b86962e8424e4bf02c989f0eaa
+  languageName: node
+  linkType: hard
+
+"@es-joy/jsdoccomment@npm:~0.36.1":
+  version: 0.36.1
+  resolution: "@es-joy/jsdoccomment@npm:0.36.1"
+  dependencies:
+    comment-parser: 1.3.1
+    esquery: ^1.4.0
+    jsdoc-type-pratt-parser: ~3.1.0
+  checksum: 7bb082c64a1270ec2a8d604a8fcfa8a9a98745200bf4945e93835e99ab09e93ac43180e24180e7710ac3e9ba2845c0c04ba6c4ce363f1e5ea0511680b33bc2ad
   languageName: node
   linkType: hard
 
@@ -6834,10 +6845,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^16.11.26, @types/node@npm:^16.17.0":
-  version: 16.18.11
-  resolution: "@types/node@npm:16.18.11"
-  checksum: 7bdf5e865a7959a72881ede19a882219f9d0baadf9ef8fdf24523291d401a7fc43bf91aa3223b1961ca54e1363f542cc4d60c8b00a70b457b2e9439b82adac70
+"@types/node@npm:*, @types/node@npm:^18.11.18":
+  version: 18.11.18
+  resolution: "@types/node@npm:18.11.18"
+  checksum: 1a308a03a7c1cfced411fc3187e49a507ab2b3ce7cdf0794b7511c8843aae5a8dbe52b16ba4217d2da1c8e3c50920c272b45fecff4cccc26606be7f42c33f4f5
   languageName: node
   linkType: hard
 
@@ -6852,13 +6863,6 @@ __metadata:
   version: 14.17.14
   resolution: "@types/node@npm:14.17.14"
   checksum: 52d8d863fb771dbd667176b3c7c4bf6a2d55e4b4196ee0df4f36383584f2466794ed30da2b030d993d0aeb6fac0a39a4d373105ade6169c320028dfa3718b617
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:^15.0.2":
-  version: 15.14.9
-  resolution: "@types/node@npm:15.14.9"
-  checksum: fe5b69cffd20f97c814d568c1d791b3c367f9efa6567a18d2c15cd73c5437f47bcff73a2e10bdfe59f90ce7df47e6cc3c6d431c76d2213bf6099e8ab5d16d355
   languageName: node
   linkType: hard
 
@@ -7999,36 +8003,36 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webpack-cli/configtest@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@webpack-cli/configtest@npm:1.1.1"
+"@webpack-cli/configtest@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@webpack-cli/configtest@npm:1.2.0"
   peerDependencies:
     webpack: 4.x.x || 5.x.x
     webpack-cli: 4.x.x
-  checksum: 905e86d4075ac93411e1e7673060373b4a9770426a6d476aa99842399d4b6cc1a0cc3380a811a5285c012fd48ba2ee9d2153a650d842c0f3085e997e3608412d
+  checksum: 560e4dbd92fc6e4f574654fb1325b90d02c634bcdf8564c22b0e44c1ecf8db828fbea9f20d0546fa809002bd27b1b6f544f74b13bd5ccdee64e8e9368df46cc2
   languageName: node
   linkType: hard
 
-"@webpack-cli/info@npm:^1.4.1":
-  version: 1.4.1
-  resolution: "@webpack-cli/info@npm:1.4.1"
+"@webpack-cli/info@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "@webpack-cli/info@npm:1.5.0"
   dependencies:
     envinfo: ^7.7.3
   peerDependencies:
     webpack-cli: 4.x.x
-  checksum: 1381c7f8ffacc80414648a5fe38f222a27501d31f5463042ff5e9ffb24100330ea736d307502d5fcad7fecf1019691e5b4a417cda18b329d4b4327500bc6c4af
+  checksum: 3e7c7ceb30b15fecdf5b5492494fbc76accee27748445c04f2bf66d0c036793b59ae7c27f5f4f6013a500aeae82762244c51f49c1de3d046e0b2dcfe163b642b
   languageName: node
   linkType: hard
 
-"@webpack-cli/serve@npm:^1.6.1":
-  version: 1.6.1
-  resolution: "@webpack-cli/serve@npm:1.6.1"
+"@webpack-cli/serve@npm:^1.7.0":
+  version: 1.7.0
+  resolution: "@webpack-cli/serve@npm:1.7.0"
   peerDependencies:
     webpack-cli: 4.x.x
   peerDependenciesMeta:
     webpack-dev-server:
       optional: true
-  checksum: 0aca33a1a590d580a1bda87d6b9794db8725fbf5a7731997733a221e57d25bb70499429e8837755ff7c578674665fd970dde124c8e26fba41c398ad200deb816
+  checksum: a2045c6ada073c517820424f97264a99c809e8bfdef866f5af7ceaefff44580351e9713b06d68e326469bd170111e370942825adcdac7eb242b2ee4343458a81
   languageName: node
   linkType: hard
 
@@ -11794,8 +11798,8 @@ __metadata:
     mock-fs: ^5.0.0
     mockdate: ^2.0.5
     moment: ^2.26.0
-    moment-timezone: ^0.5.31
-    moment-timezone-data-webpack-plugin: ^1.3.0
+    moment-timezone: ^0.5.40
+    moment-timezone-data-webpack-plugin: ^1.5.1
     nock: ^12.0.3
     page: ^1.11.5
     path-browserify: ^1.0.1
@@ -12767,6 +12771,13 @@ __metadata:
   version: 1.3.0
   resolution: "comment-parser@npm:1.3.0"
   checksum: d7747a9527f600e9334e0d260ec9aae026bb2e3a2cfba931c55956b3b570704bccf3cc224ced7af57170c3e2bb083df07bd29bf743eb76596d48617f9b540f9c
+  languageName: node
+  linkType: hard
+
+"comment-parser@npm:1.3.1":
+  version: 1.3.1
+  resolution: "comment-parser@npm:1.3.1"
+  checksum: 848b3bbcf2eeb780831a8dd5a4cc52f914dd8c321c610403539237324c507040ea8fdca7bd1f8edb0a477e7c90138f54c4d05328a9d87fe6d651d5a2822cb14b
   languageName: node
   linkType: hard
 
@@ -15790,7 +15801,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:^37.0.3, eslint-plugin-jsdoc@npm:^37.5.1":
+"eslint-plugin-jsdoc@npm:^37.0.3":
   version: 37.9.7
   resolution: "eslint-plugin-jsdoc@npm:37.9.7"
   dependencies:
@@ -15805,6 +15816,23 @@ __metadata:
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0
   checksum: 8ea51ffc3717cd27522f6984419e17ab7eaf6c8f7ff1a5c9dafc032a7ecbb62833ca7b6af28b4dd66b8d0fcd0a725ff4716259b91583fdfa291dda0526a14f2c
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-jsdoc@npm:^39.6.8":
+  version: 39.6.8
+  resolution: "eslint-plugin-jsdoc@npm:39.6.8"
+  dependencies:
+    "@es-joy/jsdoccomment": ~0.36.1
+    comment-parser: 1.3.1
+    debug: ^4.3.4
+    escape-string-regexp: ^4.0.0
+    esquery: ^1.4.0
+    semver: ^7.3.8
+    spdx-expression-parse: ^3.0.1
+  peerDependencies:
+    eslint: ^7.0.0 || ^8.0.0
+  checksum: 4d0e366b908e977be3c4b3ed0d6e73ebf965ac853018ad63ea9b4aa2dda3ad7a9aa4503df8c2c9c359317ba4ca101ee23ac5abd71022798cfb47a3494594e356
   languageName: node
   linkType: hard
 
@@ -15945,7 +15973,7 @@ __metadata:
     "@babel/core": ">=7.17.5"
     eslint: ">=8.6.0"
     eslint-plugin-inclusive-language: ^2.2.0
-    eslint-plugin-jsdoc: ^37.5.1
+    eslint-plugin-jsdoc: ^39.6.8
     eslint-plugin-react: ^7.28.0
     eslint-plugin-react-hooks: ^4.3.0
   peerDependenciesMeta:
@@ -21184,6 +21212,13 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"jsdoc-type-pratt-parser@npm:~3.1.0":
+  version: 3.1.0
+  resolution: "jsdoc-type-pratt-parser@npm:3.1.0"
+  checksum: b55f42b59d79fe22c22369c25defaf0b13522c623e6c45e9264ecba431d7b5d98c7a1316912bc1b59938b49faadb1b6abf9ae89fbffe29e74768f59cc8e6ca8b
+  languageName: node
+  linkType: hard
+
 "jsdom@npm:^16.6.0":
   version: 16.6.0
   resolution: "jsdom@npm:16.6.0"
@@ -23287,25 +23322,25 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"moment-timezone-data-webpack-plugin@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "moment-timezone-data-webpack-plugin@npm:1.3.0"
+"moment-timezone-data-webpack-plugin@npm:^1.5.1":
+  version: 1.5.1
+  resolution: "moment-timezone-data-webpack-plugin@npm:1.5.1"
   dependencies:
     find-cache-dir: ^3.0.0
     make-dir: ^3.0.0
   peerDependencies:
     moment-timezone: ">= 0.1.0"
     webpack: 4.x.x || 5.x.x
-  checksum: f83390e29f135443e448422db3fab504bfb463ee659abe9fba46380a17f1459e088ee97038179130aefe2db5a41905d3b91120aaac9e6b1359aa18492fdf7b52
+  checksum: 2725039dc7bad7084413584d7033f43bfd77ab844a84d8ecc9c0fa544d6e8ac613ff0df897c2adcaacf7b9897fbf8d2c955ee1b2975c5eafcf1df9ea362a492a
   languageName: node
   linkType: hard
 
-"moment-timezone@npm:^0.5.31":
-  version: 0.5.31
-  resolution: "moment-timezone@npm:0.5.31"
+"moment-timezone@npm:^0.5.31, moment-timezone@npm:^0.5.40":
+  version: 0.5.40
+  resolution: "moment-timezone@npm:0.5.40"
   dependencies:
     moment: ">= 2.9.0"
-  checksum: e33b5312e6dd2b4fd093eb92fe4af746b40b8a7bd74b17a024ad9823306dcf557bf32dfe6873cac1940e9437b54ca5bda50fdea9a0618fc33adb151cf1904e1b
+  checksum: 448248744d89959f0d33640aa25493eb7d772c5e76d1e7ccd2d30d221e1a0b90bee22e9637ea3317087292500d8e28a195dfa0e6e5ecf485621abbbbe5d5fb8b
   languageName: node
   linkType: hard
 
@@ -29319,14 +29354,14 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.0.0, semver@npm:^7.2.1, semver@npm:^7.3.2, semver@npm:^7.3.4, semver@npm:^7.3.5":
-  version: 7.3.5
-  resolution: "semver@npm:7.3.5"
+"semver@npm:^7.0.0, semver@npm:^7.2.1, semver@npm:^7.3.2, semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.3.8":
+  version: 7.3.8
+  resolution: "semver@npm:7.3.8"
   dependencies:
     lru-cache: ^6.0.0
   bin:
     semver: bin/semver.js
-  checksum: d450455b2601396dbc7d9f058a6709b1c0b99d74a911f9436c77887600ffcdb5f63d5adffa0c3b8f0092937d8a41cc61c6437bcba375ef4151cb1335ebe4f1f9
+  checksum: 7e581d679530db31757301c2117721577a2bb36a301a443aac833b8efad372cda58e7f2a464fe4412ae1041cc1f63a6c1fe0ced8c57ce5aca1e0b57bb0d627b9
   languageName: node
   linkType: hard
 
@@ -33010,16 +33045,16 @@ resolve@^2.0.0-next.3:
   linkType: hard
 
 "webpack-cli@npm:^4.9.1, webpack-cli@npm:^4.9.2":
-  version: 4.9.2
-  resolution: "webpack-cli@npm:4.9.2"
+  version: 4.10.0
+  resolution: "webpack-cli@npm:4.10.0"
   dependencies:
     "@discoveryjs/json-ext": ^0.5.0
-    "@webpack-cli/configtest": ^1.1.1
-    "@webpack-cli/info": ^1.4.1
-    "@webpack-cli/serve": ^1.6.1
+    "@webpack-cli/configtest": ^1.2.0
+    "@webpack-cli/info": ^1.5.0
+    "@webpack-cli/serve": ^1.7.0
     colorette: ^2.0.14
     commander: ^7.0.0
-    execa: ^5.0.0
+    cross-spawn: ^7.0.3
     fastest-levenshtein: ^1.0.12
     import-local: ^3.0.2
     interpret: ^2.2.0
@@ -33038,7 +33073,7 @@ resolve@^2.0.0-next.3:
       optional: true
   bin:
     webpack-cli: bin/cli.js
-  checksum: 42666e258bd44f0f0374de0bff696ee7d87dbc31fb7c17fd24aab44d99ab278aafb888a3f62953362436c2d8c37274dc19e2ef36cfac00d3887ac77f92e72656
+  checksum: e144821a3eaf8c2598e80d6bc8b1b4035e6f5cb0046b3090ad0f858f87480f007127d5c5efa83c79436df3f31e0c0d6033fd9ea93526395984ef986ba5d72aa3
   languageName: node
   linkType: hard
 
@@ -33589,7 +33624,7 @@ resolve@^2.0.0-next.3:
     "@types/fast-json-stable-stringify": ^2.0.0
     "@types/gtag.js": ^0.0.10
     "@types/lodash": ^4.14.179
-    "@types/node": ^16.11.26
+    "@types/node": ^18.11.18
     "@types/page": ^1.11.5
     "@types/qs": ^6.9.7
     "@types/react": ^17.0.39
@@ -33645,7 +33680,7 @@ resolve@^2.0.0-next.3:
     eslint-plugin-import: ^2.25.4
     eslint-plugin-inclusive-language: ^2.2.0
     eslint-plugin-jest: ^25.3.4
-    eslint-plugin-jsdoc: ^37.5.1
+    eslint-plugin-jsdoc: ^39.6.8
     eslint-plugin-jsx-a11y: ^6.5.1
     eslint-plugin-md: ^1.0.19
     eslint-plugin-mocha: ^10.0.3

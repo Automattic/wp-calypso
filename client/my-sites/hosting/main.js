@@ -1,6 +1,4 @@
-import { PLAN_BUSINESS, FEATURE_SFTP } from '@automattic/calypso-products';
-import { englishLocales } from '@automattic/i18n-utils';
-import { Spinner } from '@wordpress/components';
+import { FEATURE_SFTP, FEATURE_SFTP_DATABASE } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
@@ -16,7 +14,6 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { Experiment } from 'calypso/lib/explat';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -27,6 +24,7 @@ import {
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
+import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { HostingUpsellNudge } from './hosting-upsell-nudge';
 import MiscellaneousCard from './miscellaneous-card';
@@ -70,8 +68,8 @@ class Hosting extends Component {
 			clickActivate,
 			hasSftpFeature,
 			isDisabled,
+			isECommerceTrial,
 			isTransferring,
-			locale,
 			requestSiteById,
 			siteId,
 			siteSlug,
@@ -79,26 +77,22 @@ class Hosting extends Component {
 			transferState,
 		} = this.props;
 
-		const getUpgradeBanner = () => (
-			<Experiment
-				name="calypso_hosting_configuration_upsell_list_features"
-				defaultExperience={
+		const getUpgradeBanner = () => {
+			//eCommerce Trial requires different wording because Business is not the obvious upgrade path
+			if ( isECommerceTrial ) {
+				return (
 					<UpsellNudge
-						title={ translate( 'Upgrade to the Business plan to access all hosting features' ) }
+						title={ translate( 'Upgrade your plan to access all hosting features' ) }
 						event="calypso_hosting_configuration_upgrade_click"
-						href={ `/checkout/${ siteId }/business` }
-						plan={ PLAN_BUSINESS }
-						feature={ FEATURE_SFTP }
+						href={ `/plans/${ siteSlug }?feature=${ encodeURIComponent( FEATURE_SFTP_DATABASE ) }` }
+						feature={ FEATURE_SFTP_DATABASE }
 						showIcon={ true }
 					/>
-				}
-				treatmentExperience={ <HostingUpsellNudge siteId={ siteId } /> }
-				loadingExperience={ <Spinner className="hosting__upsell-experiment-spinner" /> }
-				options={ {
-					isEligible: englishLocales.includes( locale ),
-				} }
-			/>
-		);
+				);
+			}
+
+			return <HostingUpsellNudge siteId={ siteId } />;
+		};
 
 		const getAtomicActivationNotice = () => {
 			const { COMPLETE, FAILURE } = transferStates;
@@ -215,6 +209,7 @@ export default connect(
 		const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
 
 		return {
+			isECommerceTrial: isSiteOnECommerceTrial( state, siteId ),
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
 			isDisabled: ! hasSftpFeature || ! isSiteAutomatedTransfer( state, siteId ),
