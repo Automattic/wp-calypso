@@ -130,7 +130,7 @@ const copySite: Flow = {
 			navigate( step );
 		};
 
-		const exitFlow = ( location: string ) => {
+		const exitFlow = ( location = '/sites' ) => {
 			window.location.assign( location );
 		};
 
