@@ -71,6 +71,13 @@ export function getEnhancedTasks(
 		tasks.map( ( task ) => {
 			let taskData = {};
 			switch ( task.id ) {
+				case 'setup_write':
+					taskData = {
+						title: translate( 'Personalize your site' ),
+						// eslint-disable-next-line @typescript-eslint/no-empty-function
+						actionDispatch: () => {},
+					};
+					break;
 				case 'setup_free':
 					taskData = {
 						title: translate( 'Personalize your site' ),
