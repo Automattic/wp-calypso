@@ -31,7 +31,6 @@
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
 		"checkout/google-pay": true,
-		"checkout/vat-form": true,
 		"cloudflare": true,
 		"comments/filters-in-posts": true,
 		"current-site/domain-warning": true,
