@@ -57,6 +57,7 @@
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack/standalone-plugin-onboarding-update-v1": true,
 		"jetpack-social/advanced-plan": false,
+		"jetpack/offer-complete-after-activation": false,
 		"jitms": true,
 		"lasagna": true,
 		"layout/app-banner": true,
