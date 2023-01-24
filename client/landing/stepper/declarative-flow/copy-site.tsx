@@ -117,9 +117,6 @@ const copySite: Flow = {
 
 			switch ( _currentStepSlug ) {
 				case 'domains': {
-					if ( providedDependencies.previousStep === true ) {
-						return window.location.assign( `/sites` );
-					}
 					return navigate( 'site-creation-step' );
 				}
 
@@ -173,7 +170,11 @@ const copySite: Flow = {
 			navigate( step );
 		};
 
-		return { goNext, goBack, goToStep, submit };
+		const exitFlow = ( location = '/sites' ) => {
+			window.location.assign( location );
+		};
+
+		return { goNext, goBack, goToStep, submit, exitFlow };
 	},
 
 	useAssertConditions() {
