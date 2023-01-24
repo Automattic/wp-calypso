@@ -23,10 +23,7 @@ const write: Flow = {
 		return translate( 'Write' );
 	},
 	useSteps() {
-		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
-
 		useEffect( () => {
-			resetOnboardStore();
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 			recordFullStoryEvent( 'calypso_signup_start_free', { flow: this.name } );
 		}, [] );
