@@ -24,8 +24,8 @@ const OVERFLOW_BUFFER = 4; // fairly arbitrary. feel free to tweak
  *    withDimensions( ({}) => <div> <span ref ={ this.props.setWithDimensionsRef }> </span></div> )
  *
  * @example withDimensions( Component )
- * @param {object} EnhancedComponent - react component to wrap and give the prop width/height to
- * @returns {object} the enhanced component
+ * @param {Object} EnhancedComponent - react component to wrap and give the prop width/height to
+ * @returns {Object} the enhanced component
  */
 export default ( EnhancedComponent ) =>
 	class WithWidth extends Component {

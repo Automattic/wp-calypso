@@ -50,11 +50,18 @@ class StatsPeriodNavigation extends PureComponent {
 		}
 	};
 
-	handleArrowNext = () => {
-		const { date, moment, period, url, queryParams } = this.props;
+	isHoursPeriod = ( period ) => 'hour' === period;
 
-		const usedPeriod = 'hour' === period ? 'day' : period;
-		const nextDay = moment( date ).add( 1, usedPeriod ).format( 'YYYY-MM-DD' );
+	getNumberOfDays = ( isEmailStats, period, maxBars ) =>
+		isEmailStats && ! this.isHoursPeriod( period ) ? maxBars : 1;
+
+	calculatePeriod = ( period ) => ( this.isHoursPeriod( period ) ? 'day' : period );
+
+	handleArrowNext = () => {
+		const { date, moment, period, url, queryParams, isEmailStats, maxBars } = this.props;
+		const numberOfDAys = this.getNumberOfDays( isEmailStats, period, maxBars );
+		const usedPeriod = this.calculatePeriod( period );
+		const nextDay = moment( date ).add( numberOfDAys, usedPeriod ).format( 'YYYY-MM-DD' );
 		const nextDayQuery = qs.stringify( Object.assign( {}, queryParams, { startDate: nextDay } ), {
 			addQueryPrefix: true,
 		} );
@@ -63,8 +70,10 @@ class StatsPeriodNavigation extends PureComponent {
 	};
 
 	handleArrowPrevious = () => {
-		const { date, moment, period, url, queryParams } = this.props;
-		const previousDay = moment( date ).subtract( 1, period ).format( 'YYYY-MM-DD' );
+		const { date, moment, period, url, queryParams, isEmailStats, maxBars } = this.props;
+		const numberOfDAys = this.getNumberOfDays( isEmailStats, period, maxBars );
+		const usedPeriod = this.calculatePeriod( period );
+		const previousDay = moment( date ).subtract( numberOfDAys, usedPeriod ).format( 'YYYY-MM-DD' );
 		const previousDayQuery = qs.stringify(
 			Object.assign( {}, queryParams, { startDate: previousDay } ),
 			{ addQueryPrefix: true }

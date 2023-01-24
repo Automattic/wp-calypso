@@ -7,7 +7,7 @@ const EMPTY_RESULT = [];
 /**
  * Returns the count records for a given site and period
  *
- * @param   {object}  state    Global state tree
+ * @param   {Object}  state    Global state tree
  * @param   {number}  siteId   Site ID
  * @param   {number}  postId   Post ID
  * @param   {string}  period   Type of duration to include in the query (such as daily)
@@ -16,7 +16,6 @@ const EMPTY_RESULT = [];
  */
 export function getCountRecords( state, siteId, postId, period, statType ) {
 	const stats = get( state.stats.emails.items, [ siteId, postId, period, statType ], null );
-
 	return ! stats
 		? EMPTY_RESULT
 		: sortBy(
@@ -30,7 +29,7 @@ export function getCountRecords( state, siteId, postId, period, statType ) {
 /**
  * Returns a boolean indicating if the tabs are still loading
  *
- * @param   {object}  state    Global state tree
+ * @param   {Object}  state    Global state tree
  * @param   {number}  siteId   Site ID
  * @param   {number}  postId   Site ID
  * @param   {string}  period   Type of duration to include in the query (such as daily)

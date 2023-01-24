@@ -7,7 +7,7 @@ import 'calypso/state/jetpack/init';
  * Returns an array of modules that require connection in order to work.
  * Returns null if the site is not known.
  *
- * @param  {object}  state       Global state tree
+ * @param  {Object}  state       Global state tree
  * @param  {number}  siteId      The ID of the site we're querying
  * @returns {?Array}              Slugs of modules that require connection to work.
  */

@@ -6,9 +6,23 @@
 	padding-top: $vertical-margin;
 	padding-bottom: $vertical-margin;
 
+	.stats > & {
+		@media ( max-width: $break-medium ) {
+			padding-left: 0;
+			padding-right: 0;
+		}
+	}
+
 	.highlight-cards {
 		background-color: inherit;
 		box-shadow: none;
+	}
+
+	.highlight-cards-heading {
+		@media ( max-width: $break-medium ) {
+			margin-left: 0.875rem;
+			margin-right: 0.875rem;
+		}
 	}
 
 	.highlight-cards-list {
@@ -18,16 +32,22 @@
 		column-gap: 10px;
 		overflow-x: auto;
 
-		@media ( max-width: $break-small ) {
+		@media ( max-width: $break-medium ) {
 			display: block;
 			padding: 0;
 
 			& > * {
 				padding: 24px;
+			}
+
+			.post-stats-card {
 				min-width: unset;
+				border-radius: 0;
+				border-top: 1px solid var(--color-border-subtle);
 			}
 
 			.highlight-card {
+				min-width: unset;
 				height: 180px;
 				margin: math.div($vertical-margin, 2) 0;
 				border-left: 0;
@@ -40,7 +60,11 @@
 	.post-stats-card {
 		margin: 0;
 		max-height: unset;
-		min-width: 450px;
+		min-width: 770px;
+
+		@media ( max-width: $break-small ) {
+			gap: 24px 12px;
+		}
 
 		&::after {
 			display: none;
@@ -49,7 +73,10 @@
 
 	.post-stats-card__thumbnail {
 		max-height: 300px;
-		width: 300px;
+
+		@media ( max-width: $break-medium ) {
+			max-height: unset;
+		}
 	}
 
 	.highlight-card {

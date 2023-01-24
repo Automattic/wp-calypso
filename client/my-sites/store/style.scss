@@ -1,5 +1,5 @@
 @import "client/my-sites/stats/modernized-tooltip-styles.scss";
-@import "client/my-sites/stats/modernized-layout-styles.scss";
+@import "calypso/my-sites/stats/modernized-layout-styles.scss";
 
 .woocommerce {
 	@import "app/dashboard/style";
@@ -46,8 +46,6 @@
 }
 
 .is-section-woocommerce {
-	background: var(--studio-white);
-
 	// overwrite notice styles due to sticky bar
 	.global-notices {
 		z-index: z-index("root", ".is-section-woocommerce .global-notices");

@@ -3,7 +3,7 @@
  *
  * @param {string} sid - site identifier
  * @param {WPCOM} wpcom - wpcom instance
- * @returns {null} null
+ * @returns {SiteWordAdsSettings|undefined}
  */
 export default function SiteWordAdsSettings( sid, wpcom ) {
 	if ( ! ( this instanceof SiteWordAdsSettings ) ) {
@@ -27,7 +27,7 @@ export default function SiteWordAdsSettings( sid, wpcom ) {
  *      // `settings` information object
  *    } );
  *
- * @param {object} [query] - query object parameter
+ * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
@@ -50,8 +50,8 @@ SiteWordAdsSettings.prototype.get = function ( query, fn ) {
  *      // data settings information object
  *    } );
  *
- * @param {object} [query] - query object parameter
- * @param {object} body - body object parameter
+ * @param {Object} [query] - query object parameter
+ * @param {Object} body - body object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */

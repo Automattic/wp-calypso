@@ -1,7 +1,15 @@
 import { isWpcomEnterpriseGridPlan } from '@automattic/calypso-products';
-import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import PlanPrice from 'calypso/my-sites/plan-price';
+
+interface PlanFeatures2023GridHeaderPriceProps {
+	planName: string;
+	discountPrice: number | null;
+	currencyCode: string | null;
+	rawPrice: number;
+	is2023OnboardingPricingGrid: boolean;
+	isLargeCurrency: boolean;
+}
 
 const PlanFeatures2023GridHeaderPrice = ( {
 	planName,
@@ -9,7 +17,8 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	currencyCode,
 	rawPrice,
 	is2023OnboardingPricingGrid,
-} ) => {
+	isLargeCurrency,
+}: PlanFeatures2023GridHeaderPriceProps ) => {
 	if ( isWpcomEnterpriseGridPlan( planName ) ) {
 		return null;
 	}
@@ -24,6 +33,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 							rawPrice={ rawPrice }
 							displayPerMonthNotation={ false }
 							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+							isLargeCurrency={ isLargeCurrency }
 							original
 						/>
 						<PlanPrice
@@ -31,6 +41,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 							rawPrice={ discountPrice }
 							displayPerMonthNotation={ false }
 							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+							isLargeCurrency={ isLargeCurrency }
 							discounted
 						/>
 					</div>
@@ -42,6 +53,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 					rawPrice={ rawPrice }
 					displayPerMonthNotation={ false }
 					is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+					isLargeCurrency={ isLargeCurrency }
 				/>
 			) }
 		</div>
@@ -56,4 +68,4 @@ PlanFeatures2023GridHeaderPrice.propTypes = {
 	is2023OnboardingPricingGrid: PropTypes.bool,
 };
 
-export default localize( PlanFeatures2023GridHeaderPrice );
+export default PlanFeatures2023GridHeaderPrice;

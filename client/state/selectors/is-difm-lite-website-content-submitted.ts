@@ -4,7 +4,7 @@ import type { AppState, SiteId } from 'calypso/types';
 /**
  * Returns if the DIFM Lite Website Content form has been submitted.
  *
- * @param  {object}   state  Global state tree
+ * @param  {Object}   state  Global state tree
  * @param  {number}   siteId Site ID
  * @returns {boolean}        true if submitted, false otherwise
  */

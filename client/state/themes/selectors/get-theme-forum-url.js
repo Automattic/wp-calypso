@@ -7,7 +7,7 @@ import 'calypso/state/themes/init';
  * Returns the URL for the general support forum for a free theme.
  * or the WordPress.org theme forum for a WordPress.org theme.
  *
- * @param  {object}  state   Global state tree
+ * @param  {Object}  state   Global state tree
  * @param  {string}  themeId Theme ID
  * @returns {?string}         Theme forum URL
  */

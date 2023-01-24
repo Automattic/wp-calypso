@@ -6,7 +6,7 @@ module.exports = ( { types: t } ) => {
 	 * assigned here as a shared reference for optimized path traversal.
 	 *
 	 * @see https://github.com/thejameskyle/babel-handbook/blob/HEAD/translations/en/plugin-handbook.md#optimizing-nested-visitors
-	 * @type {object}
+	 * @type {Object}
 	 */
 	const asyncAttributeVisitor = {
 		FunctionExpression( path ) {

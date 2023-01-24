@@ -5,7 +5,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
  * site cannot be upgraded, or null if upgrade ability cannot be
  * determined.
  *
- * @param  {object}   state  Global state tree
+ * @param  {Object}   state  Global state tree
  * @param  {number}   siteId Site ID
  * @returns {?boolean}        Whether site is upgradeable
  */

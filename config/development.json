@@ -158,7 +158,6 @@
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
 		"signup/design-picker-pattern-assembler": true,
-		"signup/free-flow": true,
 		"signup/inline-help": false,
 		"signup/professional-email-step": false,
 		"signup/social": true,
@@ -167,6 +166,7 @@
 		"sites/copy-site": true,
 		"ssr/prefetch-timebox": false,
 		"stats/horizontal-bars-everywhere": true,
+		"stats/insights-page-grid": true,
 		"stepper-woocommerce-poc": true,
 		"subscriber-csv-upload": true,
 		"subscriber-importer": true,
@@ -188,6 +188,6 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
-		"newsletter/stats": false
+		"newsletter/stats": true
 	}
 }

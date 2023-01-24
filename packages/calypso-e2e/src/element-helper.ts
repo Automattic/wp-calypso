@@ -162,12 +162,12 @@ export async function getIdFromBlock( block: Locator ): Promise< string > {
  * const foobarsText = await page.innerText( '.foobars' );
  * @param {Page} page Page object.
  * @param {string} selector Observer target selector.
- * @param {object} options
+ * @param {Object} options
  * @param {number} options.timeout Maximum time in milliseconds, defaults to 10
  * seconds, pass 0 to disable timeout.
  * @param {number} options.debounce Maximum time to wait between consecutive
  * mutations, defaults to 1 second.
- * @param {object} options.observe Mutation observation options.
+ * @param {Object} options.observe Mutation observation options.
  */
 export async function waitForMutations(
 	page: Page | Frame,

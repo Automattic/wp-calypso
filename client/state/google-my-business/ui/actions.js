@@ -9,7 +9,7 @@ import 'calypso/state/google-my-business/init';
  * @param  {number} siteId Site ID
  * @param  {string} statType 'QUERIES' | 'VIEWS' | 'ACTIONS'
  * @param  {string} interval 'week' | 'month' | 'quarter'
- * @returns {object} Action object
+ * @returns {Object} Action object
  */
 export const changeGoogleMyBusinessStatsInterval = ( siteId, statType, interval ) => ( {
 	type: GOOGLE_MY_BUSINESS_STATS_CHANGE_INTERVAL,

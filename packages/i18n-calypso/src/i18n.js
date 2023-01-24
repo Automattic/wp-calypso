@@ -47,7 +47,7 @@ function simpleArguments( args ) {
  * Coerce the possible arguments and normalize to a single object.
  *
  * @param   {any} args - arguments passed in from `translate()`
- * @returns {object}         - a single object describing translation needs
+ * @returns {Object}         - a single object describing translation needs
  */
 function normalizeTranslateArguments( args ) {
 	const original = args[ 0 ];
@@ -103,8 +103,8 @@ function normalizeTranslateArguments( args ) {
 /**
  * Takes translate options object and coerces to a Tannin request to retrieve translation.
  *
- * @param   {object} tannin  - tannin data object
- * @param   {object} options - object describing translation
+ * @param   {Object} tannin  - tannin data object
+ * @param   {Object} options - object describing translation
  * @returns {string}         - the returned translation from Tannin
  */
 function getTranslationFromTannin( tannin, options ) {
@@ -176,7 +176,7 @@ I18N.prototype.emit = function ( ...args ) {
  * Formats numbers using locale settings and/or passed options.
  *
  * @param   {string|number}  number to format (required)
- * @param   {number|object}  options  Number of decimal places or options object (optional)
+ * @param   {number | Object}  options  Number of decimal places or options object (optional)
  * @returns {string}         Formatted number as string
  */
 I18N.prototype.numberFormat = function ( number, options = {} ) {
@@ -332,7 +332,7 @@ I18N.prototype.isRtl = function () {
 /**
  * Adds new translations to the locale data, overwriting any existing translations with a matching key.
  *
- * @param {object} localeData Locale data
+ * @param {Object} localeData Locale data
  */
 I18N.prototype.addTranslations = function ( localeData ) {
 	for ( const prop in localeData ) {
@@ -357,7 +357,7 @@ I18N.prototype.hasTranslation = function () {
  * Exposes single translation method.
  * See sibling README
  *
- * @returns {string|object} translated text or an object containing React children that can be inserted into a parent component
+ * @returns {string | Object | undefined} translated text or an object containing React children that can be inserted into a parent component
  */
 I18N.prototype.translate = function () {
 	const options = normalizeTranslateArguments( arguments );

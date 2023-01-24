@@ -10,7 +10,7 @@
 	cursor: pointer;
 	display: block;
 	float: left;
-	margin: 16px 0 0 0;
+	margin: 18px 0 0 0;
 	position: relative;
 	overflow: hidden;
 
@@ -19,8 +19,8 @@
 	}
 
 	.plugin-icon {
-		width: 60px;
-		height: 60px;
+		width: 47px;
+		height: 47px;
 		margin-right: 0;
 
 		&.is-placeholder {
@@ -33,7 +33,7 @@
 	.plugins-browser-item__last-updated {
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		margin-left: calc(60px + 16px); // icon width + margin
+		margin-left: calc(47px + 16px); // icon width + margin
 	}
 
 	.plugins-browser-item__ratings {
@@ -66,6 +66,12 @@
 		font-size: $font-body-small;
 		font-weight: 400;
 		color: $studio-gray-60;
+
+		// limit to 2 lines
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
 	}
 
 	&.compact {
@@ -97,7 +103,7 @@
 			&:nth-of-type(2) {
 				margin-top: 24px;
 			}
-			width: calc(50% - 10px); // 2 column grid with 20px gutter
+			width: calc(50% - 9px); // 2 column grid with 18px gutter
 		}
 
 		@include break-wide {
@@ -113,7 +119,7 @@
 
 	&.extended {
 		@include break-large {
-			width: calc(50% - 10px); // 2 column grid with 20px gutter
+			width: calc(50% - 9px); // 2 column grid with 18px gutter
 		}
 	}
 
@@ -140,7 +146,7 @@
 	display: flex;
 	flex-direction: column;
 	height: 100%;
-	padding: 30px;
+	padding: 29px 30px 24px;
 	box-sizing: border-box;
 	border: 1px solid var(--studio-gray-5);
 	border-radius: 5px; /* stylelint-disable-line scales/radii */
@@ -173,6 +179,7 @@
 .plugins-browser-item__author {
 	color: var(--color-text-subtle);
 	font-size: $font-body-small;
+	padding-bottom: 5px;
 }
 
 .plugins-browser-item__author-name {

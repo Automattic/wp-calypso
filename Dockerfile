@@ -1,5 +1,5 @@
 ARG use_cache=false
-ARG node_version=16.17.0
+ARG node_version=18.13.0
 ARG base_image=registry.a8c.com/calypso/base:latest
 
 ###################

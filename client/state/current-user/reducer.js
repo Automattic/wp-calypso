@@ -18,9 +18,9 @@ import { capabilitiesSchema, flagsSchema, idSchema, lasagnaSchema } from './sche
  *
  * This is likely caused by a server-side error or stored state corruption/auth token expiry.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const id = withSchemaValidation( idSchema, ( state = null, action ) => {
 	switch ( action.type ) {
@@ -69,8 +69,8 @@ export const flags = withSchemaValidation( flagsSchema, ( state = [], action ) =
  * Capability sets are simple objects with boolean flags,
  * so comparison is as simple as comparing objects at the first level.
  *
- * @param  {object} capA First set of capabilities
- * @param  {object} capB Second set of capabilities
+ * @param  {Object} capA First set of capabilities
+ * @param  {Object} capB Second set of capabilities
  * @returns {boolean} True if capability sets are the same, false otherwise.
  */
 function areCapabilitiesEqual( capA, capB ) {
@@ -88,9 +88,9 @@ function areCapabilitiesEqual( capA, capB ) {
  * The state maps site ID keys to an object of current user capabilities for
  * that site.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const capabilities = withSchemaValidation( capabilitiesSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
