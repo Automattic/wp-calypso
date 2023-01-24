@@ -1,19 +1,28 @@
 import {
 	applyTestFiltersToPlansList,
 	FeatureGroup,
+	getPlanClass,
+	isWpcomEnterpriseGridPlan,
+	isFreePlan,
 	FEATURE_GROUP_GENERAL_FEATURES,
 	getPlanFeaturesGrouped,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import PlanTypeSelector, {
 	PlanTypeSelectorProps,
 } from 'calypso/my-sites/plans-features-main/plan-type-selector';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import PlanFeatures2023GridActions from './actions';
+import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
+import PlanFeatures2023GridHeaderPrice from './header-price';
 import { PlanProperties } from './types';
 const JetpackIconContainer = styled.div`
 	padding-left: 6px;
@@ -45,7 +54,8 @@ const Cell = styled.div< { textAlign?: string } >`
 	text-align: ${ ( props ) => props.textAlign ?? 'left' };
 	width: 150px;
 	display: flex;
-	justify-content: center;
+	justify-content: space-between;
+	flex-direction: column;
 `;
 
 const RowHead = styled.div`
@@ -70,20 +80,26 @@ type PlanComparisonGridProps = {
 	planProperties?: Array< PlanProperties >;
 	intervalType: string;
 	planTypeSelectorProps: PlanTypeSelectorProps;
+	isInSignup: boolean;
+	isLaunchPage?: boolean;
+	flowName: string;
 };
 
 export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	planProperties,
 	intervalType,
 	planTypeSelectorProps,
+	isInSignup,
+	isLaunchPage,
+	flowName,
 } ) => {
 	const translate = useTranslate();
+	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const featureGroupMap = getPlanFeaturesGrouped();
 	const displayedPlansProperties = ( planProperties ?? [] ).filter(
 		( { planName } ) => ! ( planName === PLAN_ENTERPRISE_GRID_WPCOM )
 	);
 	const isMonthly = intervalType === 'monthly';
-
 	const restructuredFeatures = useMemo( () => {
 		let previousPlan = null;
 		const planFeatureMap: Record< string, Set< string > > = {};
@@ -154,11 +170,58 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 							hideDiscountLabel={ true }
 						/>
 					</RowHead>
-					{ displayedPlansProperties.map( ( { planName, planConstantObj } ) => (
-						<Cell key={ planName } className="plan-comparison-grid__plan-title" textAlign="center">
-							{ planConstantObj.getTitle() }
-						</Cell>
-					) ) }
+					{ displayedPlansProperties.map(
+						( { planName, planConstantObj, ...planPropertiesObj } ) => {
+							const headerClasses = classNames(
+								'plan-comparison-grid__header',
+								getPlanClass( planName )
+							);
+
+							const rawPrice = planPropertiesObj.rawPrice;
+							const isLargeCurrency = rawPrice ? rawPrice > 99000 : false;
+
+							return (
+								<Cell key={ planName } className={ headerClasses } textAlign="left">
+									<header>
+										<h4 className="plan-features-2023-grid__header-title">
+											{ planConstantObj.getTitle() }
+										</h4>
+									</header>
+									{ rawPrice && (
+										<PlanFeatures2023GridHeaderPrice
+											currencyCode={ currencyCode }
+											discountPrice={ planPropertiesObj.discountPrice }
+											rawPrice={ rawPrice }
+											planName={ planName }
+											is2023OnboardingPricingGrid={ true }
+											isLargeCurrency={ isLargeCurrency }
+										/>
+									) }
+									<PlanFeatures2023GridBillingTimeframe
+										rawPrice={ rawPrice }
+										rawPriceAnnual={ planPropertiesObj.rawPriceAnnual }
+										currencyCode={ currencyCode }
+										annualPricePerMonth={ planPropertiesObj.annualPricePerMonth }
+										isMonthlyPlan={ planPropertiesObj.isMonthlyPlan }
+										planName={ planName }
+										translate={ translate }
+										billingTimeframe={ planConstantObj.getBillingTimeFrame() }
+									/>
+									<PlanFeatures2023GridActions
+										className={ getPlanClass( planName ) }
+										freePlan={ isFreePlan( planName ) }
+										isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planName ) }
+										isPlaceholder={ planPropertiesObj.isPlaceholder }
+										isInSignup={ isInSignup }
+										isLaunchPage={ isLaunchPage }
+										planName={ planConstantObj.getTitle() }
+										planType={ planName }
+										flowName={ flowName }
+									/>
+								</Cell>
+							);
+						}
+					) }
 				</Row>
 
 				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => {
