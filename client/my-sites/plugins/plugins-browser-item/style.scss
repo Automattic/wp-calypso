@@ -10,7 +10,7 @@
 	cursor: pointer;
 	display: block;
 	float: left;
-	margin: 16px 0 0 0;
+	margin: 18px 0 0 0;
 	position: relative;
 	overflow: hidden;
 
@@ -78,7 +78,7 @@
 			&:nth-of-type(2) {
 				margin-top: 24px;
 			}
-			width: calc(50% - 10px); // 2 column grid with 20px gutter
+			width: calc(50% - 9px); // 2 column grid with 18px gutter
 		}
 
 		@include break-wide {
@@ -94,7 +94,7 @@
 
 	&.extended {
 		@include break-large {
-			width: calc(50% - 10px); // 2 column grid with 20px gutter
+			width: calc(50% - 9px); // 2 column grid with 18px gutter
 		}
 	}
 
@@ -121,7 +121,7 @@
 	display: flex;
 	flex-direction: column;
 	height: 100%;
-	padding: 30px;
+	padding: 29px 30px 24px;
 	box-sizing: border-box;
 	border: 1px solid var(--studio-gray-5);
 	border-radius: 5px; /* stylelint-disable-line scales/radii */
