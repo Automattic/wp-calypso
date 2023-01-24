@@ -70,7 +70,7 @@ const updateGlobalStyles = (
 		method: 'POST',
 	} );
 
-const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
+const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 	const [ billingPeriod, setBillingPeriod ] = useState< Plans.PlanBillingPeriod >( 'ANNUALLY' );
 	const billingPeriodIsAnnually = billingPeriod === 'ANNUALLY';
 	const [ status, setStatus ] = useState< Status >( Status.Initial );
@@ -158,10 +158,10 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 	);
 
 	const goToDomainStep = useCallback( () => {
-		if ( goToStep ) {
-			goToStep( 'senseiDomain' );
+		if ( submit ) {
+			submit();
 		}
-	}, [ goToStep ] );
+	}, [ submit ] );
 
 	const onPlanSelect = async () => {
 		try {

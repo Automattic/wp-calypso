@@ -4,7 +4,6 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import Launchpad from './internals/steps-repository/launchpad';
 import ProcessingStep from './internals/steps-repository/processing-step';
@@ -38,25 +37,7 @@ const sensei: Flow = {
 		const flowName = this.name;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
-		const siteSlug = useSiteSlug();
 		setStepProgress( flowProgress );
-
-		const goBack = () => {
-			return;
-		};
-
-		const goNext = () => {
-			switch ( _currentStep ) {
-				case 'senseiSetup':
-					return navigate( 'senseiDomain' );
-				case 'senseiDomain':
-					return navigate( 'senseiPlan' );
-				case 'launchpad':
-					return window.location.assign( `/view/${ siteSlug }` );
-				default:
-					return navigate( 'launchpad' );
-			}
-		};
 
 		const submit = () => {
 			switch ( _currentStep ) {
@@ -66,16 +47,14 @@ const sensei: Flow = {
 					return navigate( 'senseiPlan' );
 				case 'launchpad':
 					return navigate( 'processing' );
+				case 'senseiPlan':
+					return navigate( 'senseiDomain' );
 				default:
 					return navigate( 'launchpad' );
 			}
 		};
 
-		const goToStep = ( step: string ) => {
-			navigate( step );
-		};
-
-		return { goNext, goBack, goToStep, submit };
+		return { submit };
 	},
 
 	useAssertConditions() {
