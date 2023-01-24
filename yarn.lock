@@ -32024,9 +32024,9 @@ resolve@^2.0.0-next.3:
   linkType: hard
 
 "ua-parser-js@npm:^0.7.18, ua-parser-js@npm:^0.7.22":
-  version: 0.7.22
-  resolution: "ua-parser-js@npm:0.7.22"
-  checksum: 4d4cf1e508e40b7cc28c86144df5dc1f1e65d27ec6916e155440f871a43aab7e9a98493d38298e06e1488b1195427fb3abaa2c00cc1b1c32bec1817b9e84c55f
+  version: 0.7.33
+  resolution: "ua-parser-js@npm:0.7.33"
+  checksum: d58bf54c91e3e80e6e086b6215fa15266791e23e6e403039179c020129940168634a5b931f65ce70c6550b05d0d62c7c944bf7378b6b42133cd4a7ccb07f1948
   languageName: node
   linkType: hard
 
