@@ -5,7 +5,7 @@ import { isUrlLikelyAnImage } from './utils';
 /**
  * Returns true if an image is large enough to be a featured asset
  *
- * @param {object} image - image must have a width and height property
+ * @param {Object} image - image must have a width and height property
  * @returns {boolean} true if large enough, false if image undefined or too small
  */
 function isImageLargeEnoughForFeature( image ) {

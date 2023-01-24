@@ -46,9 +46,9 @@ export const lastActivityTimestamp = withSchemaValidation(
  *  - HAPPYCHAT_CHAT_STATUS_ABANDONED : operator was disconnected
  *  - HAPPYCHAT_CHAT_STATUS_CLOSED : chat was closed
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const status = ( state = HAPPYCHAT_CHAT_STATUS_DEFAULT, action ) => {
 	switch ( action.type ) {
@@ -61,9 +61,9 @@ export const status = ( state = HAPPYCHAT_CHAT_STATUS_DEFAULT, action ) => {
 /**
  * Returns a timeline event from the redux action
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 const timelineEvent = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -97,9 +97,9 @@ const sortTimeline = ( timeline ) => timeline.slice().sort( timelineSortCmp );
 /**
  * Adds timeline events for happychat
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 const timelineReducer = ( state = [], action ) => {
 	switch ( action.type ) {

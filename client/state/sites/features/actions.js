@@ -93,8 +93,8 @@ function fetchJetpackSitesFeaturesReceive( features ) {
  * the features for a given site have been received.
  *
  * @param {number} siteId - identifier of the site
- * @param {object} features - list of features received from the API
- * @returns {object} the corresponding action object
+ * @param {Object} features - list of features received from the API
+ * @returns {Object} the corresponding action object
  */
 export function fetchSiteFeaturesCompleted( siteId, features ) {
 	return {

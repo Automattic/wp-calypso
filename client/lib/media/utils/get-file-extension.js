@@ -10,7 +10,7 @@ import { isUri } from 'valid-url';
  * getFileExtension( { URL: 'https://wordpress.com/example.gif' } );
  * getFileExtension( new window.File( [''], 'example.gif' ) );
  * // All examples return 'gif'
- * @param  {(string|window.File|object)} media Media object or string
+ * @param  {(string | window.File | Object)} media Media object or string
  * @returns {string|undefined}                     File extension
  */
 export function getFileExtension( media ) {

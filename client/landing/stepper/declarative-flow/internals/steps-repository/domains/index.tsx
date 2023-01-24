@@ -205,7 +205,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 					decideLaterComponent
 				);
 			case COPY_SITE_FLOW:
-				return __( 'Help your freshly copied site stand out with a custom domain.' );
+				return __( 'Make your copied site unique with a custom domain all of its own.' );
 			default:
 				return createInterpolateElement(
 					__(

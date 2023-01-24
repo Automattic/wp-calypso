@@ -11,8 +11,8 @@ const REGEXP_IMG_CLASS_ALIGN = /\balign(left|center|right|none)\b/;
  * Given an <img /> HTMLElement, returns an object of parsed attributes.
  *
  * @param  {HTMLElement} node    <img /> HTMLElement
- * @param  {object}      _parsed In recursion, the known values
- * @returns {object}              Object of all detected values
+ * @param  {Object}      _parsed In recursion, the known values
+ * @returns {Object}              Object of all detected values
  */
 function parseImage( node, _parsed ) {
 	_parsed.type = MediaTypes.IMAGE;
@@ -59,8 +59,8 @@ function parseImage( node, _parsed ) {
  * values.
  *
  * @param  {HTMLElement} node    Media object to parse
- * @param  {object}      _parsed In recursion, the known values
- * @returns {object}              Object of all detected values
+ * @param  {Object}      _parsed In recursion, the known values
+ * @returns {Object}              Object of all detected values
  */
 export function deserialize( node, _parsed = { media: {}, appearance: {} } ) {
 	switch ( node.nodeName ) {

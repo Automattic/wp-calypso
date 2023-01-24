@@ -9,10 +9,10 @@ import noticon2gridicon from '../utils/noticon2gridicon';
  *
  * @param {string} new_sub_text Plaintext on which ranges act
  * @param {Array} new_sub_range Position/applicable ranges array
- * @param {object} range_info The origin range data for this render
+ * @param {Object} range_info The origin range data for this render
  * @param {Array} range_data All range data
- * @param {object} options Options for rendering range
- * @returns {object} Computed DOM nodes for all levels at or below passed range
+ * @param {Object} options Options for rendering range
+ * @returns {Object} Computed DOM nodes for all levels at or below passed range
  */
 function render_range( new_sub_text, new_sub_range, range_info, range_data, options ) {
 	// Its time to build the outer shell of the range we're recursing into.
@@ -175,8 +175,8 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
  * @param {string} sub_text  Plain-text upon which ranges act
  * @param {Array} sub_ranges Position/applicable ranges array
  * @param {Array} range_data All range data
- * @param {object} container Destination DOM fragment for output
- * @param {object} options Options for building chunks
+ * @param {Object} container Destination DOM fragment for output
+ * @param {Object} options Options for building chunks
  */
 function build_chunks( sub_text, sub_ranges, range_data, container, options ) {
 	let text_start = null;

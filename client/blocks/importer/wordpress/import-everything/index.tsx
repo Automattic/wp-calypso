@@ -33,6 +33,7 @@ interface Props {
 	targetSiteSlug: string;
 	targetSiteEligibleForProPlan: boolean;
 	stepNavigator?: StepNavigator;
+	showConfirmDialog: boolean;
 }
 
 interface State {
@@ -128,6 +129,7 @@ export class ImportEverything extends SectionMigrate {
 			sourceUrlAnalyzedData,
 			isTargetSitePlanCompatible,
 			stepNavigator,
+			showConfirmDialog = true,
 		} = this.props;
 
 		if ( sourceSite ) {
@@ -140,6 +142,7 @@ export class ImportEverything extends SectionMigrate {
 					sourceSite={ sourceSite }
 					sourceSiteUrl={ sourceSite.URL }
 					sourceUrlAnalyzedData={ sourceUrlAnalyzedData }
+					showConfirmDialog={ showConfirmDialog }
 				/>
 			);
 		}

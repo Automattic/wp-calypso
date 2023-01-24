@@ -36,7 +36,7 @@ class SiteTaxonomyTerm {
 	/**
 	 * Get Term details
 	 *
-	 * @param {object} [query] - query parameters
+	 * @param {Object} [query] - query parameters
 	 * @param {Function} fn - callback function
 	 * @returns {Promise} Promise
 	 */
@@ -58,7 +58,7 @@ class SiteTaxonomyTerm {
 	/**
 	 * Add new Term
 	 *
-	 * @param {object} [params] - term parameters
+	 * @param {Object} [params] - term parameters
 	 * @param {Function} fn - callback function
 	 * @returns {Promise} Promise
 	 */
@@ -91,7 +91,7 @@ class SiteTaxonomyTerm {
 	/**
 	 * Update Term
 	 *
-	 * @param {object} [params] - term parameters
+	 * @param {Object} [params] - term parameters
 	 * @param {Function} fn - callback function
 	 * @returns {Promise} Promise
 	 */

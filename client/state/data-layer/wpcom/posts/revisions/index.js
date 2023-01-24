@@ -9,11 +9,11 @@ const noop = () => {};
 /**
  * Dispatches returned post revisions
  *
- * @param {object} action Redux action
+ * @param {Object} action Redux action
  * @param {string} action.siteId of the revisions
  * @param {string} action.postId of the revisions
- * @param {object} response from the server
- * @param {object} response.diffs raw data containing a set of diffs for the site & post
+ * @param {Object} response from the server
+ * @param {Object} response.diffs raw data containing a set of diffs for the site & post
  * @returns {Array} An array of Redux actions
  */
 export const receiveSuccess = ( { siteId, postId }, response ) =>
@@ -22,8 +22,8 @@ export const receiveSuccess = ( { siteId, postId }, response ) =>
 /**
  * Dispatches a request to fetch post revisions
  *
- * @param {object} action Redux action
- * @returns {object} Redux action
+ * @param {Object} action Redux action
+ * @returns {Object} Redux action
  */
 export const fetchPostRevisionsDiffs = ( action ) => {
 	const { siteId, postId, postType, comparisons } = action;

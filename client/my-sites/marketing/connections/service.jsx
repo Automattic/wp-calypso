@@ -50,7 +50,7 @@ import ServiceTip from './service-tip';
 /**
  * Check if the connection is broken or requires reauth.
  *
- * @param {object} connection Publicize connection.
+ * @param {Object} connection Publicize connection.
  * @returns {boolean} True if connection is broken or requires reauthentication.
  */
 const isConnectionInvalidOrMustReauth = ( connection ) =>
@@ -145,7 +145,7 @@ export class SharingService extends Component {
 	/**
 	 * Establishes a new connection.
 	 *
-	 * @param {object} service             Service to connect to.
+	 * @param {Object} service             Service to connect to.
 	 * @param {number} keyringConnectionId Keyring conneciton ID.
 	 * @param {number} externalUserId      Optional. User ID for the service. Default: 0.
 	 */
@@ -251,7 +251,7 @@ export class SharingService extends Component {
 	/**
 	 * Sets a connection to be site-wide or not.
 	 *
-	 * @param  {object}   connection Connection to update.
+	 * @param  {Object}   connection Connection to update.
 	 * @param  {boolean}  shared     Whether the connection can be used by other users.
 	 * @returns {Function}            Action thunk
 	 */
@@ -304,7 +304,7 @@ export class SharingService extends Component {
 	/**
 	 * Fetch connections
 	 *
-	 * @param {object} connection Connection to update.
+	 * @param {Object} connection Connection to update.
 	 * @returns {Function} Action thunk
 	 */
 	fetchConnection = ( connection ) =>
@@ -623,7 +623,7 @@ export class SharingService extends Component {
  * @param  {Component} sharingService     A SharingService component
  * @param  {Function}  mapStateToProps    Optional. A function to pick props from the state.
  *                                        It should return a plain object, which will be merged into the component's props.
- * @param  {object}    mapDispatchToProps Optional. An object that contains additional action creators. Default: {}
+ * @param  {Object}    mapDispatchToProps Optional. An object that contains additional action creators. Default: {}
  * @returns {Component} A highter-order service component
  */
 export function connectFor( sharingService, mapStateToProps, mapDispatchToProps = {} ) {

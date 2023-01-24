@@ -5,7 +5,7 @@ import 'calypso/state/happychat/init';
 /**
  * Gets the current happychat chat status
  *
- * @param {object} state - global redux state
+ * @param {Object} state - global redux state
  * @returns {"production"|"staging"} current state value
  */
 export default ( state ) => {

@@ -35,12 +35,20 @@ export function convertResponseCartToRequestCart( {
 	tax,
 }: TempResponseCart ): RequestCart {
 	let requestCartTax = null;
-	if ( tax.location.country_code || tax.location.postal_code || tax.location.subdivision_code ) {
+	if (
+		tax.location.country_code ||
+		tax.location.postal_code ||
+		tax.location.subdivision_code ||
+		tax.location.vat_id ||
+		tax.location.organization
+	) {
 		requestCartTax = {
 			location: {
 				country_code: tax.location.country_code,
 				postal_code: tax.location.postal_code,
 				subdivision_code: tax.location.subdivision_code,
+				vat_id: tax.location.vat_id,
+				organization: tax.location.organization,
 			},
 		};
 	}
@@ -108,6 +116,8 @@ export function addLocationToResponseCart(
 				country_code: location.countryCode || undefined,
 				postal_code: location.postalCode || undefined,
 				subdivision_code: location.subdivisionCode || undefined,
+				vat_id: location.vatId || undefined,
+				organization: location.organization || undefined,
 			},
 		},
 	};
@@ -121,11 +131,15 @@ export function doesCartLocationDifferFromResponseCartLocation(
 		countryCode: newCountryCode = '',
 		postalCode: newPostalCode = '',
 		subdivisionCode: newSubdivisionCode = '',
+		vatId: newVatId = '',
+		organization: newOrganization = '',
 	} = location;
 	const {
 		country_code: oldCountryCode = '',
 		postal_code: oldPostalCode = '',
 		subdivision_code: oldSubdivisionCode = '',
+		vat_id: oldVatId = '',
+		organization: oldOrganization = '',
 	} = cart.tax?.location ?? {};
 
 	if ( location.countryCode !== undefined && newCountryCode !== oldCountryCode ) {
@@ -135,6 +149,12 @@ export function doesCartLocationDifferFromResponseCartLocation(
 		return true;
 	}
 	if ( location.subdivisionCode !== undefined && newSubdivisionCode !== oldSubdivisionCode ) {
+		return true;
+	}
+	if ( location.vatId !== undefined && newVatId !== oldVatId ) {
+		return true;
+	}
+	if ( location.organization !== undefined && newOrganization !== oldOrganization ) {
 		return true;
 	}
 	return false;

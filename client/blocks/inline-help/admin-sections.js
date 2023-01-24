@@ -10,7 +10,7 @@ import { getCustomizerUrl, getSiteSlug } from 'calypso/state/sites/selectors';
  *
  * @param   {number} siteId   - The current site ID.
  * @param   {string} siteSlug - The current site slug.
- * @param   {object} state    - Global state
+ * @param   {Object} state    - Global state
  * @returns {Array}             An array of admin sections with site-specific URLs.
  */
 export const getAdminSections = createSelector(

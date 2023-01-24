@@ -130,7 +130,7 @@
 		"@automattic/calypso-jest": "workspace:^",
 		"@testing-library/jest-dom": "^5.16.2",
 		"@testing-library/react": "^12.1.3",
-		"@types/node": "^15.0.2",
+		"@types/node": "^18.11.18",
 		"@types/wordpress__plugins": "^3.0.0",
 		"@wordpress/eslint-plugin": "^12.3.0",
 		"@wordpress/jest-preset-default": "^8.2.0",

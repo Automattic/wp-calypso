@@ -21,6 +21,7 @@ interface Props {
 	targetSite: SiteDetails | null;
 	targetSiteSlug: string;
 	isTargetSitePlanCompatible: boolean;
+	showConfirmDialog: boolean;
 	startImport: () => void;
 }
 
@@ -37,6 +38,7 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 		targetSite,
 		targetSiteSlug,
 		isTargetSitePlanCompatible,
+		showConfirmDialog,
 		startImport,
 	} = props;
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = useState( false );
@@ -48,6 +50,17 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 	useEffect( () => {
 		recordTracksEvent( 'calypso_site_importer_migration_confirmation' );
 	}, [] );
+
+	/**
+	 ↓ Functions
+	 */
+	function showConfirmDialogOrStartImport() {
+		if ( showConfirmDialog ) {
+			setIsModalDetailsOpen( true );
+		} else {
+			startImport();
+		}
+	}
 
 	return (
 		<>
@@ -137,7 +150,7 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 										step: 'importerWordpress',
 										action: 'startImport',
 									} );
-									setIsModalDetailsOpen( true );
+									showConfirmDialogOrStartImport();
 								} }
 							>
 								{ __( 'Start import' ) }
@@ -149,7 +162,7 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 				{ showUpgradePlanScreen && (
 					<>
 						<ConfirmUpgradePlan sourceSite={ sourceSite } targetSite={ targetSite } />
-						<NextButton onClick={ () => setIsModalDetailsOpen( true ) }>
+						<NextButton onClick={ () => showConfirmDialogOrStartImport() }>
 							{ __( 'Upgrade and import' ) }
 						</NextButton>
 					</>

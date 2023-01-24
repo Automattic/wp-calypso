@@ -6,7 +6,7 @@ import 'calypso/state/automated-transfer/init';
 /**
  * Returns whether we are already fetching the Automated Transfer status for given siteId.
  *
- * @param {object} state global app state
+ * @param {Object} state global app state
  * @param {?number} siteId requested site for transfer info
  * @returns {?boolean} whether we are fetching transfer status for given siteId
  */

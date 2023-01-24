@@ -7,7 +7,7 @@ import 'calypso/state/automated-transfer/init';
 /**
  * Helper to get status state from local transfer state sub-tree
  *
- * @param {object} state automated transfer state sub-tree for a site
+ * @param {Object} state automated transfer state sub-tree for a site
  * @returns {string} status of transfer
  */
 export const getStatusData = ( state: AppState ): string | null => get( state, 'status', null );
@@ -15,7 +15,7 @@ export const getStatusData = ( state: AppState ): string | null => get( state, '
 /**
  * Returns status info for transfer
  *
- * @param {object} state global app state
+ * @param {Object} state global app state
  * @param {number} siteId requested site for transfer info
  * @returns {string|null} status if available else `null`
  */
