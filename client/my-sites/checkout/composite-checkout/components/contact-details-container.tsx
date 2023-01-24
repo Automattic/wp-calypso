@@ -59,13 +59,11 @@ export default function ContactDetailsContainer( {
 		return null;
 	}
 
-	const { updateDomainContactFields, updateCountryCode, updatePostalCode, updateEmail } =
-		checkoutActions;
+	const { updateDomainContactFields, updateSomeFields, updateEmail } = checkoutActions;
 	const contactDetails = prepareDomainContactDetails( contactInfo );
 	const contactDetailsErrors = prepareDomainContactDetailsErrors( contactInfo );
 	const onChangeContactInfo = ( newInfo: ManagedContactDetails ) => {
-		updateCountryCode( newInfo.countryCode?.value ?? '' );
-		updatePostalCode( newInfo.postalCode?.value ?? '' );
+		updateSomeFields( newInfo );
 	};
 
 	const updateDomainContactRelatedData = ( details: DomainContactDetailsData ) => {
