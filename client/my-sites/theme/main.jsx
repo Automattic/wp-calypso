@@ -790,8 +790,7 @@ class ThemeSheet extends Component {
 		if ( ! isLoggedIn ) {
 			plansUrl = localizeUrl( 'https://wordpress.com/pricing' );
 		} else if ( siteSlug ) {
-			const plan =
-				isExternallyManagedTheme || isBundledSoftwareSet ? 'business-bundle' : 'value_bundle';
+			const plan = isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
 			plansUrl = plansUrl + `/${ siteSlug }/?plan=${ plan }`;
 		}
 
