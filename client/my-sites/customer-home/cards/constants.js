@@ -9,6 +9,7 @@ export const EDUCATION_FIND_SUCCESS = 'home-education-find-success';
 export const EDUCATION_RESPOND_TO_CUSTOMER_FEEDBACK = 'home-education-respond-to-customer-feedback';
 export const EDUCATION_BLOGGING_QUICK_START = 'home-education-blogging-quick-start';
 export const EDUCATION_SITE_EDITOR_QUICK_START = 'home-education-site-editor-quick-start';
+export const FEATURE_DOMAIN_UPSELL = 'home-feature-domain-upsell';
 export const FEATURE_GO_MOBILE = 'home-feature-go-mobile';
 export const FEATURE_QUICK_START = 'home-feature-quick-start';
 export const FEATURE_STATS = 'home-feature-stats';
