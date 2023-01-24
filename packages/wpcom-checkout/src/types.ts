@@ -313,6 +313,7 @@ export type WpcomStoreState = {
 	recaptchaClientId: number;
 	transactionResult?: WPCOMTransactionEndpointResponse | undefined;
 	contactDetails: ManagedContactDetails;
+	vatDetails: VatDetails;
 };
 
 export interface FailedPurchase {
@@ -321,6 +322,13 @@ export interface FailedPurchase {
 	product_slug: string;
 	product_cost: string | number;
 	product_name: string;
+}
+
+export interface VatDetails {
+	country?: string | null;
+	id?: string | null;
+	name?: string | null;
+	address?: string | null;
 }
 
 /*

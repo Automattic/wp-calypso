@@ -809,5 +809,6 @@ export function getInitialWpcomStoreState(
 		recaptchaClientId: -1,
 		transactionResult: undefined,
 		contactDetails,
+		vatDetails: {},
 	};
 }
