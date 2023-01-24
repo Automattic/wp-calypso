@@ -38,12 +38,12 @@ export default function DomainUpsell() {
 						<span>
 							<strike>{ siteSlug }</strike>
 						</span>
-						<div className="badge badge--info">Current</div>
+						<div className="badge badge--info">{ translate( 'Current' ) }</div>
 					</div>
 					<div className="card">
 						<span>{ domainSuggestionName }</span>
 						{ domainSuggestion?.domain_name ? (
-							<div className="badge badge--success">Available</div>
+							<div className="badge badge--success">{ translate( 'Available' ) }</div>
 						) : (
 							<div className="badge">
 								<Spinner />
