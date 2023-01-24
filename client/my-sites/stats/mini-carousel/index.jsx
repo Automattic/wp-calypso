@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { translate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+import rocketImage from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import YoastLogo from 'calypso/assets/images/icons/yoast-logo.svg';
 import writePost from 'calypso/assets/images/onboarding/site-options.svg';
 import BlazeLogo from 'calypso/components/blaze-logo';
@@ -22,6 +23,9 @@ const EVENT_TRAFFIC_BLAZE_PROMO_DISMISS = 'calypso_stats_traffic_blaze_banner_di
 const EVENT_YOAST_PROMO_VIEW = 'calypso_stats_wordpress_seo_premium_banner_view';
 const EVENT_YOAST_PROMO_CLICK = 'calypso_stats_wordpress_seo_premium_banner_click';
 const EVENT_YOAST_PROMO_DISMISS = 'calypso_stats_wordpress_seo_premium_banner_dismiss';
+const EVENT_PRIVATE_SITE_BANNER_VIEW = 'calypso_stats_private_site_banner_view';
+const EVENT_PRIVATE_SITE_BANNER_CLICK = 'calypso_stats_private_site_banner_click';
+const EVENT_PRIVATE_SITE_BANNER_DISMISS = 'calypso_stats_private_site_banner_dismiss';
 const EVENT_NO_CONTENT_BANNER_VIEW = 'calypso_stats_no_content_banner_view';
 const EVENT_NO_CONTENT_BANNER_CLICK = 'calypso_stats_no_content_banner_click';
 const EVENT_NO_CONTENT_BANNER_DISMISS = 'calypso_stats_no_content_banner_dismiss';
@@ -44,6 +48,10 @@ const MiniCarousel = ( { slug, isOdysseyStats, isSitePrivate } ) => {
 
 	const shouldShowAdvertisingOption = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 
+	// Private site banner.
+	const showPrivateSiteBanner =
+		! useSelector( isBlockDismissed( EVENT_PRIVATE_SITE_BANNER_DISMISS ) ) && isSitePrivate;
+
 	// Write a Post banner.
 	const showWriteAPostBanner =
 		! useSelector( isBlockDismissed( EVENT_NO_CONTENT_BANNER_DISMISS ) ) &&
@@ -65,11 +73,12 @@ const MiniCarousel = ( { slug, isOdysseyStats, isSitePrivate } ) => {
 
 	const viewEvents = useMemo( () => {
 		const events = [];
+		isSitePrivate && events.push( EVENT_PRIVATE_SITE_BANNER_VIEW );
 		showWriteAPostBanner && events.push( EVENT_NO_CONTENT_BANNER_VIEW );
 		showBlazePromo && events.push( EVENT_TRAFFIC_BLAZE_PROMO_VIEW );
 		showYoastPromo && events.push( EVENT_YOAST_PROMO_VIEW );
 		return events;
-	}, [ showWriteAPostBanner, showBlazePromo, showYoastPromo ] );
+	}, [ isSitePrivate, showWriteAPostBanner, showBlazePromo, showYoastPromo ] );
 
 	// Handle view events upon initial mount and upon paging DotPager.
 	useEffect( () => {
@@ -86,6 +95,23 @@ const MiniCarousel = ( { slug, isOdysseyStats, isSitePrivate } ) => {
 	const pagerDidSelectPage = ( index ) => setDotPagerIndex( index );
 
 	const blocks = [];
+
+	if ( showPrivateSiteBanner ) {
+		blocks.push(
+			<MiniCarouselBlock
+				clickEvent={ EVENT_PRIVATE_SITE_BANNER_CLICK }
+				dismissEvent={ EVENT_PRIVATE_SITE_BANNER_DISMISS }
+				image={ <img src={ rocketImage } alt="" width={ 45 } height={ 45 } /> }
+				headerText={ translate( 'Launch your site to drive more visitors' ) }
+				contentText={ translate(
+					'Changing your site from private to public helps people find you and get more visitors. Don’t worry, you can keep working on your site.'
+				) }
+				ctaText={ translate( 'Launch your site' ) }
+				href={ `/settings/general/${ slug }` }
+				key="launch-your-site"
+			/>
+		);
+	}
 
 	if ( showWriteAPostBanner ) {
 		blocks.push(
