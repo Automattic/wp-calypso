@@ -44,9 +44,10 @@ const Title = styled.div`
 
 const Grid = styled.div`
 	display: grid;
-	margin-top: 45px;
+	margin-top: 90px;
 	background: #fff;
 	border: solid 1px #e0e0e0;
+	border-radius: 5px;
 `;
 const Row = styled.div`
 	display: flex;
@@ -58,12 +59,12 @@ const Row = styled.div`
 
 const Cell = styled.div< { textAlign?: string } >`
 	text-align: ${ ( props ) => props.textAlign ?? 'left' };
-	width: 190px;
+	width: 156px;
 	display: flex;
 	justify-content: space-between;
 	flex-direction: column;
 	align-items: center;
-	padding: 0 20px;
+	padding: 0 14px;
 
 	&:first-of-type {
 		padding-left: 0;
@@ -71,11 +72,14 @@ const Cell = styled.div< { textAlign?: string } >`
 	&:last-of-type {
 		padding-right: 0;
 	}
+	@media ( min-width: 1500px ) {
+		width: 190px;
+	}
 `;
 
 const RowHead = styled.div`
-	width: 300px;
 	display: flex;
+	flex: 1;
 `;
 
 const StorageButton = styled.div`
@@ -106,6 +110,7 @@ type PlanComparisonGridHeaderProps = {
 	isFooter?: boolean;
 	flowName: string;
 };
+
 const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 	displayedPlansProperties,
 	isInSignup,
@@ -300,25 +305,24 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 												</JetpackIconContainer>
 											) : null }
 										</RowHead>
-										{ ( displayedPlansProperties ?? [] ).map( ( { planName } ) =>
-											restructuredFeatures.featureMap[ planName ].has( featureSlug ) ? (
-												<Cell
-													key={ planName }
-													className={ `plan-comparison-grid__plan ${ planName }` }
-													textAlign="center"
-												>
-													<Gridicon icon="checkmark" color="#0675C4" />
+										{ ( displayedPlansProperties ?? [] ).map( ( { planName } ) => {
+											const cellClasses = classNames(
+												'plan-comparison-grid__plan',
+												getPlanClass( planName ),
+												{
+													'popular-plan-parent-class': isBusinessPlan( planName ),
+												}
+											);
+											return (
+												<Cell key={ planName } className={ cellClasses } textAlign="center">
+													{ restructuredFeatures.featureMap[ planName ].has( featureSlug ) ? (
+														<Gridicon icon="checkmark" color="#0675C4" />
+													) : (
+														<Gridicon icon="minus-small" color="#C3C4C7" />
+													) }
 												</Cell>
-											) : (
-												<Cell
-													key={ planName }
-													className={ `plan-comparison-grid__plan ${ planName }` }
-													textAlign="center"
-												>
-													<Gridicon icon="minus-small" />
-												</Cell>
-											)
-										) }
+											);
+										} ) }
 									</Row>
 								);
 							} ) }
@@ -333,13 +337,15 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									{ ( displayedPlansProperties ?? [] ).map( ( { planName } ) => {
 										const storageFeature = restructuredFeatures.planStorageOptionsMap[ planName ];
 										const [ featureObject ] = getPlanFeaturesObject( [ storageFeature ] );
-
+										const cellClasses = classNames(
+											'plan-comparison-grid__plan',
+											getPlanClass( planName ),
+											{
+												'popular-plan-parent-class': isBusinessPlan( planName ),
+											}
+										);
 										return (
-											<Cell
-												key={ planName }
-												className={ `plan-comparison-grid__plan ${ planName }` }
-												textAlign="center"
-											>
+											<Cell key={ planName } className={ cellClasses } textAlign="center">
 												<StorageButton
 													className="plan-features-2023-grid__storage-button"
 													key={ planName }
