@@ -34,7 +34,7 @@ const SenseiDomain: Step = ( { navigation } ) => {
 		submit?.( { domain: selectedDomain } );
 	};
 
-	const domainSuggestion = domain ? domain.domain_name : siteTitle;
+	const domainSuggestion = domain?.domain_name ?? siteTitle;
 
 	return (
 		<SenseiStepContainer stepName="senseiDomain" recordTracksEvent={ recordTracksEvent }>
