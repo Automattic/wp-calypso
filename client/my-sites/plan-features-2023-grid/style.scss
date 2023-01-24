@@ -1,4 +1,5 @@
 @import "@automattic/onboarding/styles/mixins";
+@import "calypso/signup/steps/plans/style.scss";
 $plan-features-header-banner-height: 20px;
 $plan-features-sidebar-width: 272px;
 
@@ -290,12 +291,11 @@ $plan-features-sidebar-width: 272px;
 		@media ( min-width: 880px ) {
 			border-right: solid 1px #e0e0e0;
 			border-left: solid 1px #e0e0e0;
-		}
-	}
 
-	.plan-features-2023-grid__pricing,
-	.plan-price.is-discounted {
-		color: var(--color-neutral-70);
+			&.is-bottom-aligned {
+				vertical-align: bottom;
+			}
+		}
 	}
 
 	.plan-features-2023-grid__pricing {
@@ -308,6 +308,7 @@ $plan-features-sidebar-width: 272px;
 			line-height: $font-title-large;
 			display: flex;
 			@include onboarding-font-recoleta;
+			padding: 3px 0 6px;
 		}
 
 		.plan-price__currency-symbol {
@@ -330,12 +331,14 @@ $plan-features-sidebar-width: 272px;
 			color: var(--color-neutral-light);
 
 			&::before {
-				left: 0%;
-				top: 30%;
-				right: 65%;
+				left: -1%;
+				top: 43%;
+				right: 80%;
+				transform: rotate(16deg);
+				border-color: #000;
 
 				@media ( min-width: 880px ) {
-					right: 47%;
+					right: 68%;
 				}
 			}
 
@@ -343,10 +346,22 @@ $plan-features-sidebar-width: 272px;
 			.plan-price__tax-amount {
 				color: var(--color-text-subtle);
 			}
+
+			.plan-price__integer {
+				font-size: $font-title-medium;
+			}
+			.plan-price__currency-symbol {
+				font-size: $font-body-extra-small;
+				top: -4px;
+			}
 		}
 
-		.plan-price.is-discounted .plan-price__integer-fraction {
-			color: var(--color-success);
+		.plan-price.is-discounted {
+			color: var(--color-neutral-70);
+
+			.plan-price__integer-fraction {
+				color: var(--color-success);
+			}
 		}
 
 		.plan-price.is-large-currency {
@@ -498,7 +513,7 @@ $plan-features-sidebar-width: 272px;
 				padding-top: 12px;
 			}
 
-			@media ( min-width: 880px ) {
+			@media ( min-width: $plans-2023-small-breakpoint ) {
 				position: relative;
 				top: 10px;
 				padding-top: 0;
@@ -541,7 +556,7 @@ $plan-features-sidebar-width: 272px;
 				}
 			}
 
-			@media ( min-width: 1340px ) {
+			@media ( min-width: $plans-2023-medium-breakpoint ) {
 				img:nth-child(1) {
 					padding-right: 24px;
 				}
@@ -581,7 +596,7 @@ $plan-features-sidebar-width: 272px;
 				}
 			}
 
-			@media ( min-width: 1500px ) {
+			@media ( min-width: $plans-2023-large-breakpoint ) {
 				img:nth-child(1) {
 					padding-right: 24px;
 				}

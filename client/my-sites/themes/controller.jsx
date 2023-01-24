@@ -47,7 +47,7 @@ export function loggedOut( context, next ) {
 }
 
 export function fetchThemeData( context, next ) {
-	if ( ! context.isServerSide || context.cachedMarkup ) {
+	if ( context.cachedMarkup ) {
 		debug( 'Skipping theme data fetch' );
 		return next();
 	}
@@ -130,14 +130,12 @@ export function redirectFilterAndType( { res, params: { site, filter, tier } } )
 	res.redirect( '/themes/' + parts.filter( Boolean ).join( '/' ) );
 }
 
-export function redirectToThemeDetails( { res, params: { site, theme, section } }, next ) {
+export function redirectToThemeDetails( redirect, site, theme, section, next ) {
 	// Make sure we aren't matching a site -- e.g. /themes/example.wordpress.com or /themes/1234567
 	if ( theme.includes( '.' ) || Number.isInteger( parseInt( theme, 10 ) ) ) {
 		return next();
 	}
-	let redirectedSection;
-	if ( section === 'support' ) {
-		redirectedSection = 'setup';
-	}
-	res.redirect( '/theme/' + [ theme, redirectedSection, site ].filter( Boolean ).join( '/' ) );
+
+	const path = '/theme/' + [ theme, section, site ].filter( Boolean ).join( '/' );
+	redirect( path );
 }

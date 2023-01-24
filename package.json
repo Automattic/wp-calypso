@@ -1,7 +1,7 @@
 {
 	"name": "wp-calypso",
 	"author": "Automattic Inc.",
-	"version": "16.17.0",
+	"version": "18.13.0",
 	"description": "A pure REST-API and JS based version of the WordPress.com admin.",
 	"private": true,
 	"workspaces": {
@@ -53,7 +53,7 @@
 		]
 	},
 	"engines": {
-		"node": "^16.17.0",
+		"node": "^18.13.0",
 		"yarn": "^3.1.1"
 	},
 	"scripts": {
@@ -155,7 +155,7 @@
 		"@types/debug": "^4.1.7",
 		"@types/fast-json-stable-stringify": "^2.0.0",
 		"@types/lodash": "^4.14.179",
-		"@types/node": "^16.11.26",
+		"@types/node": "^18.11.18",
 		"@types/page": "^1.11.5",
 		"@types/qs": "^6.9.7",
 		"@types/react": "^17.0.39",
@@ -240,7 +240,7 @@
 		"eslint-plugin-import": "^2.25.4",
 		"eslint-plugin-inclusive-language": "^2.2.0",
 		"eslint-plugin-jest": "^25.3.4",
-		"eslint-plugin-jsdoc": "^37.5.1",
+		"eslint-plugin-jsdoc": "^39.6.8",
 		"eslint-plugin-jsx-a11y": "^6.5.1",
 		"eslint-plugin-md": "^1.0.19",
 		"eslint-plugin-mocha": "^10.0.3",

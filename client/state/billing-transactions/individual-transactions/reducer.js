@@ -11,8 +11,8 @@ import { combineReducers, keyedReducer } from 'calypso/state/utils';
  * Returns the updated requests state after an action has been dispatched.
  * The state is a Boolean - true if a transaction is being requested
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
  * @returns {boolean}        Updated state
  */
 export const requesting = ( state = false, action ) => {
@@ -32,8 +32,8 @@ export const requesting = ( state = false, action ) => {
  * Returns the updated error state after an action has been dispatched.
  * The state is a Boolean - true if a transaction request has failed
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
  * @returns {boolean}        Updated state
  */
 export const error = ( state = false, action ) => {
@@ -53,9 +53,9 @@ export const error = ( state = false, action ) => {
  * Returns the updated data state after an action has been dispatched.
  * The state contains the transaction data after a successful fetch
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const data = ( state = null, action ) => {
 	switch ( action.type ) {

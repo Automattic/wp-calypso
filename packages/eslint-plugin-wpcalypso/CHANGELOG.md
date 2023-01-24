@@ -1,5 +1,11 @@
 #### Unreleased
 
+#### Breaking change
+
+- For jsdoc types `array` and `object`, prefer capitalized variants to match the
+  WordPress coding style. Violations are autofixable.
+- Updated peer dependency requirement `eslint-plugin-jsdoc` to v39.6.7.
+
 #### v6.1.0 (2022-08-24)
 
 - Add missing optional peer dependency on `eslint-plugin-react`.

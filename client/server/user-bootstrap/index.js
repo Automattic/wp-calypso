@@ -22,8 +22,8 @@ const getSupportSessionApiKey = () => config( 'wpcom_calypso_support_session_res
 /**
  * Requests the current user for user bootstrap.
  *
- * @param {object} request An Express request.
- * @returns {Promise<object>} A promise for a user object.
+ * @param {Object} request An Express request.
+ * @returns {Promise<Object>} A promise for a user object.
  */
 export default async function getBootstrappedUser( request ) {
 	const authCookieValue = request.cookies[ AUTH_COOKIE_NAME ];

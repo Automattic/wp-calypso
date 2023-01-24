@@ -2,9 +2,9 @@
  * Returns true if the specified user is capable of deleting the media
  * item, or false otherwise.
  *
- * @param  {object}  item Media item
- * @param  {object}  user User object
- * @param  {object}  site Site object
+ * @param  {Object}  item Media item
+ * @param  {Object}  user User object
+ * @param  {Object}  site Site object
  * @returns {boolean}      Whether user can delete item
  */
 export function canUserDeleteItem( item, user, site ) {

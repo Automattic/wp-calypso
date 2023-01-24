@@ -13,9 +13,9 @@ import { itemsSchema } from './schema';
  * root state -> state.plans.items =>
  * [ {}, {}, ... {} ]
  *
- * @param {object} state - current state
- * @param {object} action - plans action
- * @returns {object} updated state
+ * @param {Object} state - current state
+ * @param {Object} action - plans action
+ * @returns {Object} updated state
  */
 export const items = withSchemaValidation( itemsSchema, ( state = [], action ) => {
 	switch ( action.type ) {
@@ -30,9 +30,9 @@ export const items = withSchemaValidation( itemsSchema, ( state = [], action ) =
  * `Reducer` function which handles request/response actions
  * to/from WP REST-API
  *
- * @param {object} state - current state
- * @param {object} action - plans action
- * @returns {object} updated state
+ * @param {Object} state - current state
+ * @param {Object} action - plans action
+ * @returns {Object} updated state
  */
 export const requesting = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -48,9 +48,9 @@ export const requesting = ( state = false, action ) => {
 /**
  * `Reducer` function which handles ERROR REST-API response actions
  *
- * @param {object} state - current state
- * @param {object} action - plans action
- * @returns {object} updated state
+ * @param {Object} state - current state
+ * @param {Object} action - plans action
+ * @returns {Object} updated state
  */
 export const error = ( state = false, action ) => {
 	switch ( action.type ) {

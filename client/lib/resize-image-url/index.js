@@ -27,7 +27,7 @@ const SIZE_PARAMS = [ 'w', 'h', 'resize', 'fit', 's' ];
 /**
  * Mappings of supported safe services to patterns by which they can be matched
  *
- * @type {object}
+ * @type {Object}
  */
 const SERVICE_HOSTNAME_PATTERNS = {
 	photon: /(^[is]\d\.wp\.com|(^|\.)wordpress\.com)$/,
@@ -52,7 +52,7 @@ const scaleByFactor = ( value ) => value * IMAGE_SCALE_FACTOR;
  * return `null`.
  *
  * @param   {string}          imageUrl Original image url
- * @param   {(number|object)} resize   Resize pixel width, or object of query
+ * @param   {(number | Object)} resize   Resize pixel width, or object of query
  *                                     arguments (assuming Photon or Gravatar)
  * @param   {?number}         height   Pixel height if specifying resize width
  * @param   {?boolean}        makeSafe Should we make sure this is on a safe host?

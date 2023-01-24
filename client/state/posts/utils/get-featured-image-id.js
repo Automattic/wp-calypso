@@ -5,8 +5,8 @@
  * retrieving a post, the thumbnail ID is assigned in `post_thumbnail`, but
  * in creating a post, the thumbnail ID is assigned to `featured_image`.
  *
- * @param  {object} post Post object
- * @returns {*} featured image id or undefined
+ * @param  {Object} post Post object
+ * @returns {undefined|number|string} featured image id or undefined
  */
 export function getFeaturedImageId( post ) {
 	if ( ! post ) {

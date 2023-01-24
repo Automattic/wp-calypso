@@ -7,7 +7,7 @@ const DAY_IN_MILLIS = 24 * 60 * 1000 * 1000;
 /**
  * Returns true if we should fetch the site
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @param  {number}  siteId The site ID
  * @returns {boolean}        Whether site should be fetched
  */
@@ -29,9 +29,9 @@ function isStale( state, siteId ) {
 /**
  * Returns a site object
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @param  {number}  siteId The site ID
- * @returns {object}        Site
+ * @returns {Object}        Site
  */
 
 export function getSite( state, siteId ) {

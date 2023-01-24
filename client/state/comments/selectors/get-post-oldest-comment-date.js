@@ -7,7 +7,7 @@ import 'calypso/state/comments/init';
 /**
  * Get oldest comment date for a given post
  *
- * @param {object} state redux state
+ * @param {Object} state redux state
  * @param {number} siteId site identification
  * @param {number} postId site identification
  * @returns {Date} earliest comment date
