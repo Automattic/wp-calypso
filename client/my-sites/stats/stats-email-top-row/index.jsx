@@ -17,7 +17,7 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className 
 	const translate = useTranslate();
 
 	const counts = useSelector( ( state ) =>
-		getEmailStatsNormalizedData( state, siteId, postId, PERIOD_ALL_TIME, statType, null, 'rate' )
+		getEmailStatsNormalizedData( state, siteId, postId, PERIOD_ALL_TIME, statType, '', 'rate' )
 	);
 	const isRequesting = useSelector( ( state ) =>
 		isRequestingEmailStats( state, siteId, postId, PERIOD_ALL_TIME, statType )
@@ -30,13 +30,13 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className 
 					<>
 						<TopCard
 							heading={ translate( 'Recipients' ) }
-							value={ counts?.total_sends }
+							value={ counts?.total_sends ?? 0 }
 							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'total_sends' ) }
 							icon={ <Gridicon icon="mail" /> }
 						/>
 						<TopCard
 							heading={ translate( 'Total opens' ) }
-							value={ counts?.total_opens }
+							value={ counts?.total_opens ?? 0 }
 							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'total_opens' ) }
 							icon={ <Icon icon={ eye } /> }
 						/>
@@ -52,14 +52,14 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className 
 				return (
 					<>
 						<TopCard
-							heading={ translate( 'Recipients' ) }
-							value={ counts?.total_sends }
-							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'total_sends' ) }
+							heading={ translate( 'Total opens' ) }
+							value={ counts?.total_sends ?? 0 }
+							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'total_opens' ) }
 							icon={ <Gridicon icon="mail" /> }
 						/>
 						<TopCard
 							heading={ translate( 'Total clicks' ) }
-							value={ counts?.total_clicks }
+							value={ counts?.total_clicks ?? 0 }
 							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'total_clicks' ) }
 							icon={ <Icon icon={ eye } /> }
 						/>
