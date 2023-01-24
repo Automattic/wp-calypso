@@ -185,7 +185,7 @@ const setChildDirection = ( child, isRtl ) => {
 /**
  * Auto direction component that will set direction to child components according to their text content
  *
- * @param {object.children} props react element props that must contain some children
+ * @param {Object.children} props react element props that must contain some children
  * @returns {Element} returns a react element with adjusted children
  */
 export default function AutoDirection( { children } ) {

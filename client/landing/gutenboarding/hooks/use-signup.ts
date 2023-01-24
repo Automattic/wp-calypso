@@ -9,7 +9,7 @@ import { USER_STORE } from '../stores/user';
  * When a new user completes Gutenboarding, before creating a site we show signup dialog.
  * This hook that returns callback to navigate to previous and next steps in Gutenboarding flow
  *
- * @typedef { object } SignupDialog
+ * @typedef {Object} SignupDialog
  * @property { boolean } showSignupDialog use to open the Signup modal
  * @property { Function } onSignupDialogOpen call to open the modal
  * @property { Function } onSignupDialogClose call when closing the modal

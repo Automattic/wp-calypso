@@ -31,7 +31,7 @@ const removeUnwantedAttributes = ( node ) => {
  */
 const imageShouldBeRemovedFromContent = ( imageUrl ) => {
 	if ( ! imageUrl ) {
-		return;
+		return false;
 	}
 
 	const bannedUrlParts = [

@@ -12,9 +12,9 @@ type PlanObject = Optional< Pick< Plan, 'group' | 'getProductId' >, 'group' > & 
 /**
  * Computes a price based on plan slug/constant, including any discounts available.
  *
- * @param {object} state Current redux state
+ * @param {Object} state Current redux state
  * @param {number|undefined} siteId Site ID to consider
- * @param {object} planObject Plan object returned by getPlan() from @automattic/calypso-products
+ * @param {Object} planObject Plan object returned by getPlan() from @automattic/calypso-products
  * @param {boolean} isMonthly Flag - should return a monthly price?
  * @returns {number|null} Requested price
  */

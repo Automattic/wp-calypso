@@ -11,7 +11,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import StatsCommentFollows from './comment-follows';
 import StatsOverview from './overview';
 import StatsSite from './site';
-import StatsEmailOpenDetail from './stats-email-open-detail';
+import StatsEmailDetail from './stats-email-detail';
 import StatsInsights from './stats-insights';
 import StatsPostDetail from './stats-post-detail';
 import StatsSummary from './summary';
@@ -102,33 +102,27 @@ function getSiteFilters( siteId ) {
 		},
 		{
 			title: i18n.translate( 'Hours' ),
-			path: '/stats/email/open/' + siteId + '/hour',
+			path: '/stats/email/opens/' + siteId + '/hour',
 			id: 'stats-email-opens-hour',
 			period: 'hour',
 		},
 		{
 			title: i18n.translate( 'Days' ),
-			path: '/stats/email/open/' + siteId + '/day',
+			path: '/stats/email/opens/' + siteId + '/day',
 			id: 'stats-email-opens-day',
 			period: 'day',
 		},
 		{
-			title: i18n.translate( 'Weeks' ),
-			path: '/stats/email/open/' + siteId + '/week',
-			id: 'stats-email-opens-week',
-			period: 'week',
+			title: i18n.translate( 'Hours' ),
+			path: '/stats/email/clicks/' + siteId + '/hour',
+			id: 'stats-email-clicks-hour',
+			period: 'hour',
 		},
 		{
-			title: i18n.translate( 'Months' ),
-			path: '/stats/email/open/' + siteId + '/month',
-			id: 'stats-email-opens-month',
-			period: 'month',
-		},
-		{
-			title: i18n.translate( 'Years' ),
-			path: '/stats/email/open/' + siteId + '/year',
-			id: 'stats-email-opens-year',
-			period: 'year',
+			title: i18n.translate( 'Days' ),
+			path: '/stats/email/clicks/' + siteId + '/day',
+			id: 'stats-email-clicks-day',
+			period: 'day',
 		},
 	];
 }
@@ -471,10 +465,11 @@ export function wordAds( context, next ) {
 	next();
 }
 
-export function emailOpen( context, next ) {
+export function emailStats( context, next ) {
 	const givenSiteId = context.params.site;
 	const queryOptions = context.query;
 	const state = context.store.getState();
+	const statType = context.params.statType;
 	const postId = parseInt( context.params.email_id, 10 );
 	const selectedSite = getSite( context.store.getState(), givenSiteId );
 	const siteId = selectedSite ? selectedSite.ID || 0 : 0;
@@ -499,13 +494,14 @@ export function emailOpen( context, next ) {
 		return next();
 	}
 
-	const validTabs = [ 'opens_count', 'unique_opens_count' ];
-	const chartTab = validTabs.includes( queryOptions.tab ) ? queryOptions.tab : 'opens_count';
+	const validTabs = statType === 'opens' ? [ 'opens_count' ] : [ 'clicks' ];
+	const chartTab = validTabs.includes( queryOptions.tab ) ? queryOptions.tab : validTabs[ 0 ];
 
 	context.primary = (
-		<StatsEmailOpenDetail
+		<StatsEmailDetail
 			path={ context.path }
 			postId={ postId }
+			statType={ statType }
 			chartTab={ chartTab }
 			context={ context }
 			period={ rangeOfPeriod( activeFilter.period, date ) }

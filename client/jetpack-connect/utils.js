@@ -113,8 +113,8 @@ export function getRoleFromScope( scope ) {
  * Parse an authorization query
  *
  * @property {Function} parser Lazy-instatiated parser
- * @param  {object}     query  Authorization query
- * @returns {?object}           Query after transformation. Null if invalid or errored during transform.
+ * @param  {Object}     query  Authorization query
+ * @returns {?Object}           Query after transformation. Null if invalid or errored during transform.
  */
 export function parseAuthorizationQuery( query ) {
 	if ( ! parseAuthorizationQuery.parser ) {
@@ -137,7 +137,7 @@ export function parseAuthorizationQuery( query ) {
  * @param  {string}     type Redirect type
  * @param  {string}     url Site url
  * @param  {?string}    product Product slug
- * @param  {?object}    queryArgs Query parameters
+ * @param  {?Object}    queryArgs Query parameters
  * @returns {string}        Redirect url
  */
 export function redirect( type, url, product = null, queryArgs = {} ) {

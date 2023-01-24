@@ -11,6 +11,8 @@ const siteSlug = 'fake.url.wordpress.com';
 const siteUrl = `https://${ siteSlug }`;
 const customerHomeUrl = `/home/${ siteSlug }`;
 const themesUrl = `/themes/${ siteSlug }`;
+const launchpadFreeSiteIntent = 'free';
+const launchpadUrl = `/setup/${ launchpadFreeSiteIntent }/launchpad?siteSlug=${ siteSlug }`;
 
 describe( 'getEditorCloseConfig()', () => {
 	test( 'should return URL for customer home as default when no previous route is given', () => {
@@ -125,6 +127,35 @@ describe( 'getEditorCloseConfig()', () => {
 
 		expect( getEditorCloseConfig( state, siteId, siteEditorPostType, '' ).url ).toEqual(
 			themesUrl
+		);
+	} );
+
+	test( 'should return to launchpad screen and update label to "next steps" if launchpad_screen option is "full"', () => {
+		const state = {
+			sites: {
+				items: {
+					[ siteId ]: {
+						URL: siteUrl,
+						options: {
+							site_intent: launchpadFreeSiteIntent,
+							launchpad_screen: 'full',
+						},
+					},
+				},
+			},
+
+			ui: {
+				selectedSiteId: siteId,
+			},
+		};
+
+		const editorConfigResult = {
+			url: launchpadUrl,
+			label: 'Next steps',
+		};
+
+		expect( getEditorCloseConfig( state, siteId, siteEditorPostType, '' ) ).toEqual(
+			editorConfigResult
 		);
 	} );
 } );

@@ -14,42 +14,42 @@ const setChatMinimizing = ( isMinimizing ) => ( { type: HAPPYCHAT_MINIMIZING, is
 /**
  * Set the Happychat sidebar dock to display
  *
- * @returns {object} Action
+ * @returns {Object} Action
  */
 export const openChat = () => setChatOpen( true );
 
 /**
  * Set the Happychat sidebar dock to start minimizing
  *
- * @returns {object} Action
+ * @returns {Object} Action
  */
 export const minimizeChat = () => setChatMinimizing( true );
 
 /**
  * Set the Happychat sidebar dock to finish minimizing
  *
- * @returns {object} Action
+ * @returns {Object} Action
  */
 export const minimizedChat = () => setChatMinimizing( false );
 
 /**
  * Set the Happychat sidebar dock to hide
  *
- * @returns {object} Action
+ * @returns {Object} Action
  */
 export const closeChat = () => setChatOpen( false );
 
 /**
  * Indicates Happychat component lost focus
  *
- * @returns {object} Action
+ * @returns {Object} Action
  */
 export const blur = () => ( { type: HAPPYCHAT_BLUR } );
 
 /**
  * Indicates Happychat component gained focus
  *
- * @returns {object} Action
+ * @returns {Object} Action
  */
 export const focus = () => ( { type: HAPPYCHAT_FOCUS } );
 
@@ -57,7 +57,7 @@ export const focus = () => ( { type: HAPPYCHAT_FOCUS } );
  * Returns an action object that sets the current chat message
  *
  * @param  {string} message Current message to be set
- * @returns {object} Action object
+ * @returns {Object} Action object
  */
 export const setCurrentMessage = ( message ) => ( {
 	type: HAPPYCHAT_SET_CURRENT_MESSAGE,

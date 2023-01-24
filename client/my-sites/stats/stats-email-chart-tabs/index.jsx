@@ -70,7 +70,7 @@ class StatModuleChartTabs extends Component {
 	};
 
 	render() {
-		const { isActiveTabLoading } = this.props;
+		const { isActiveTabLoading, onChangeMaxBars } = this.props;
 
 		const classes = [
 			'is-chart-tabs',
@@ -98,6 +98,7 @@ class StatModuleChartTabs extends Component {
 					data={ chartData }
 					minBarWidth={ 35 }
 					sliceFromBeginning={ false }
+					onChangeMaxBars={ onChangeMaxBars }
 				/>
 				<StatTabs
 					data={ this.props.counts }
@@ -119,7 +120,18 @@ const NO_SITE_STATE = {
 };
 
 const connectComponent = connect(
-	( state, { activeLegend, period: { period, endOf }, chartTab, queryDate, postId, statType } ) => {
+	(
+		state,
+		{
+			activeLegend,
+			period: { period, endOf },
+			chartTab,
+			queryDate,
+			postId,
+			statType,
+			onChangeMaxBars,
+		}
+	) => {
 		const siteId = getSelectedSiteId( state );
 		if ( ! siteId ) {
 			return NO_SITE_STATE;
@@ -146,6 +158,7 @@ const connectComponent = connect(
 			isActiveTabLoading,
 			queryKey,
 			siteId,
+			onChangeMaxBars,
 		};
 	},
 	{ recordGoogleEvent }

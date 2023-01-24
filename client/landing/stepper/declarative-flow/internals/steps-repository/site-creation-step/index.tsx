@@ -9,11 +9,16 @@ import {
 	isMigrationFlow,
 	isCopySiteFlow,
 	isWooExpressFlow,
+	StepContainer,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import DocumentHead from 'calypso/components/data/document-head';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	retrieveSignupDestination,
 	getSignupCompleteFlowName,
@@ -32,6 +37,8 @@ const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 
 const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } ) {
 	const { submit } = navigation;
+	const { __ } = useI18n();
+	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
 
 	const { domainCartItem, planCartItem, siteAccentColor, getSelectedSiteTitle } = useSelect(
 		( select ) => ( {
@@ -127,7 +134,32 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	return null;
+	const getCurrentMessage = () => {
+		return isWooExpressFlow( flow )
+			? __( "Woo! We're creating your store" )
+			: __( 'Creating your site' );
+	};
+
+	return (
+		<>
+			<DocumentHead title={ getCurrentMessage() } />
+			<StepContainer
+				shouldHideNavButtons={ true }
+				hideFormattedHeader={ true }
+				stepName="site-creation-step"
+				isHorizontalLayout={ true }
+				recordTracksEvent={ recordTracksEvent }
+				stepContent={
+					<>
+						<h1>{ getCurrentMessage() }</h1>
+						<LoadingEllipsis />
+					</>
+				}
+				stepProgress={ stepProgress }
+				showFooterWooCommercePowered={ false }
+			/>
+		</>
+	);
 };
 
 export default SiteCreationStep;

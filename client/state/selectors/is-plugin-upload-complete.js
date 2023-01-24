@@ -5,7 +5,7 @@ import isPluginUploadInProgress from 'calypso/state/selectors/is-plugin-upload-i
  * Indicates whether a plugin upload has completed
  * for the given site.
  *
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @param {number} siteId the site ID
  * @returns {boolean} true if plugin upload is complete
  */

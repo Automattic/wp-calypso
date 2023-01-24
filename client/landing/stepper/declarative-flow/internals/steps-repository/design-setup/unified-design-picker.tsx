@@ -279,9 +279,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	const shouldUpgrade =
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
-		( isEnabled( 'themes/plugin-bundling' ) &&
-			! isPluginBundleEligible &&
-			isBundledWithWooCommerce );
+		( ! isPluginBundleEligible && isBundledWithWooCommerce );
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 
@@ -320,7 +318,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		);
 
 		let plan;
-		if ( isEnabled( 'themes/plugin-bundling' ) && themeHasWooCommerce ) {
+		if ( themeHasWooCommerce ) {
 			plan = 'business-bundle';
 		} else {
 			plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';

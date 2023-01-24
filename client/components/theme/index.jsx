@@ -515,7 +515,7 @@ export class Theme extends Component {
 			isPremiumTheme,
 			didPurchaseTheme,
 		} = this.props;
-		const { name, description, screenshot } = theme;
+		const { name, description, screenshot, style_variations = [] } = theme;
 		const isNewCardsOnly = isEnabled( 'themes/showcase-i4/cards-only' );
 		const isNewDetailsAndPreview = isEnabled( 'themes/showcase-i4/details-and-preview' );
 		const isActionable = this.props.screenshotClickUrl || this.props.onScreenshotClick;
@@ -594,7 +594,7 @@ export class Theme extends Component {
 
 					<div
 						className={ classNames( 'theme__info', {
-							'has-pricing': !! upsellUrl,
+							'has-style-variations': isNewDetailsAndPreview && style_variations.length > 0,
 						} ) }
 					>
 						<h2 className="theme__info-title">{ name }</h2>

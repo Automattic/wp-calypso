@@ -5,7 +5,7 @@ const EMPTY_SITE_DOMAINS = Object.freeze( [] );
 /**
  * Returns the list of site domains for the specified site identifier.
  *
- * @param {object} state - global state tree
+ * @param {Object} state - global state tree
  * @param {number|undefined} siteId - identifier of the site
  * @returns {import('./types').ResponseDomain[]} the list of domains
  */
@@ -20,7 +20,7 @@ export const getDomainsBySiteId = ( state, siteId ) => {
 /**
  * Returns the  wpcom domain for the provided site id.
  *
- * @param {object} state - global state tree
+ * @param {Object} state - global state tree
  * @param {number | undefined} siteId - identifier of the site
  * @returns {null|import('./types').ResponseDomain} the wpcom domain
  */
@@ -48,8 +48,8 @@ export const getFlatDomainsList = ( state ) => {
 /**
  * Returns the list of site domains for the specified site.
  *
- * @param {object} state - global state tree
- * @param {object} site - site object
+ * @param {Object} state - global state tree
+ * @param {Object} site - site object
  * @returns {Array} the list of domains
  */
 export const getDomainsBySite = ( state, site ) => {
@@ -63,7 +63,7 @@ export const getDomainsBySite = ( state, site ) => {
 /**
  * Determines whether the list of domains for the specified site has loaded.
  *
- * @param {object} state - global state tree
+ * @param {Object} state - global state tree
  * @param {?number} siteId - identifier of the site
  * @returns {boolean} true if the list of domains has loaded, false otherwise
  */
@@ -77,7 +77,7 @@ export const hasLoadedSiteDomains = ( state, siteId ) => {
 /**
  * Determines whether the list of domains is being requested via the API.
  *
- * @param {object} state - global state tree
+ * @param {Object} state - global state tree
  * @param {number} siteId - identifier of the site
  * @returns {boolean} true if the list of domains is being requested, false otherwise
  */

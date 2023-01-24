@@ -43,9 +43,7 @@ function TeamInvite( props: Props ) {
 	function goBack() {
 		const fallback = site?.slug ? '/people/team/' + site?.slug : '/people/team';
 
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore: There are no type definitions for page.back.
-		page.back( fallback );
+		page.redirect( fallback );
 	}
 
 	function checkPermission() {

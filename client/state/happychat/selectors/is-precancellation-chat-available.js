@@ -5,7 +5,7 @@ import 'calypso/state/happychat/init';
 /**
  * Returns if precancellation chat is available.
  *
- * @param   {object}  state  Global state tree
+ * @param   {Object}  state  Global state tree
  * @returns {boolean}        true, when precancellation is available
  */
 export default function isPrecancellationChatAvailable( state ) {

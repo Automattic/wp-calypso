@@ -18,9 +18,9 @@ import { countsSchema } from './schema';
  * dispatched. The state reflects a mapping of site ID, post type pairing to a
  * boolean reflecting whether a request for the post types is in progress.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export function requesting( state = {}, action ) {
 	switch ( action.type ) {
@@ -42,9 +42,9 @@ export function requesting( state = {}, action ) {
  * The state reflects a mapping of site ID, post type, [all/mine], post status
  * to the number of posts.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const counts = ( () => {
 	let currentUserId;
@@ -65,11 +65,11 @@ export const counts = ( () => {
 	 * Returns the updated post count state after transitioning a post to a new
 	 * status.
 	 *
-	 * @param  {object} state  Current state
+	 * @param  {Object} state  Current state
 	 * @param  {number} siteId Site ID
 	 * @param  {number} postId Post ID
 	 * @param  {string} status Post status
-	 * @returns {object}        Updated state
+	 * @returns {Object}        Updated state
 	 */
 	function transitionPostStateToStatus( state, siteId, postId, status ) {
 		const postStatusKey = getPostStatusKey( siteId, postId );

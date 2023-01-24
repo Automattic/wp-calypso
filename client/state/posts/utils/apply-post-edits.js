@@ -37,9 +37,9 @@ function applyMetadataEdits( metadata, edits ) {
  * except that arrays are treated as atomic values and overwritten rather than merged.
  * That's important especially for term removals.
  *
- * @param  {object} post  Destination post for merge
- * @param  {object} edits Objects with edits
- * @returns {object}       Merged post with applied edits
+ * @param  {Object} post  Destination post for merge
+ * @param  {Object} edits Objects with edits
+ * @returns {Object}       Merged post with applied edits
  */
 export function applyPostEdits( post, edits ) {
 	return mergeWith( cloneDeep( post ), edits, ( objValue, srcValue, key, obj, src, stack ) => {

@@ -28,7 +28,7 @@ class Batch {
 	/**
 	 * Run the batch request
 	 *
-	 * @param {object} [query] - optional query parameter
+	 * @param {Object} [query] - optional query parameter
 	 * @param {Function} fn - callback
 	 * @returns {Promise} Promise
 	 */

@@ -22,11 +22,13 @@ export class PlanPrice extends Component< PlanPriceProps > {
 			taxText,
 			omitHeading,
 			is2023OnboardingPricingGrid,
+			isLargeCurrency,
 		} = this.props;
 
 		const classes = classNames( 'plan-price', className, {
 			'is-original': original,
 			'is-discounted': discounted,
+			'is-large-currency': isLargeCurrency,
 		} );
 
 		const tagName = omitHeading ? 'span' : 'h4';
@@ -193,6 +195,11 @@ export interface PlanPriceProps {
 	 * Ignored if `productDisplayPrice` is set and `rawPrice` is not an array.
 	 */
 	is2023OnboardingPricingGrid?: boolean;
+
+	/**
+	 * If true, this renders the price with a smaller font size by adding the `is-large-currency` class.
+	 */
+	isLargeCurrency?: boolean;
 }
 
 function PriceWithoutHtml( {

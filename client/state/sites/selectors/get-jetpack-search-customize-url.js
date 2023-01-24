@@ -5,7 +5,7 @@ import { getSiteAdminUrl, getJetpackVersion, isJetpackSite } from 'calypso/state
  * Returns the appropriate URL for customizing the Jetpack Search experience.
  * This function supports both Jetpack and WordPress.com sites.
  *
- * @param  {object}    state  Global state tree
+ * @param  {Object}    state  Global state tree
  * @param  {?number}   siteId Site ID
  * @returns {?string}         URL for customizing Jetpack Search.
  *                            Can be the the Customizer or Customberg.
