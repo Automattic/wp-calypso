@@ -2007,7 +2007,12 @@ describe( 'themes selectors', () => {
 						},
 						queries: {
 							wpcom: new ThemeQueryManager( {
-								items: { karuna: { id: 'karuna' } },
+								items: {
+									karuna: {
+										id: 'karuna',
+										download: 'https://public-api.wordpress.com/rest/v1/themes/download/karuna.zip',
+									},
+								},
 							} ),
 						},
 					},
