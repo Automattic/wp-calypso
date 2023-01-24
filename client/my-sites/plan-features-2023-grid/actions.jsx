@@ -12,7 +12,6 @@ const PlanFeaturesActionsButton = ( {
 	freePlan = false,
 	isWpcomEnterpriseGridPlan = false,
 	isPlaceholder = false,
-	isInSignup,
 	isLaunchPage,
 	onUpgradeClick = noop,
 	planName,
@@ -59,7 +58,7 @@ const PlanFeaturesActionsButton = ( {
 		);
 	}
 
-	if ( ! isLaunchPage && isInSignup ) {
+	if ( ! isLaunchPage ) {
 		let btnText;
 
 		if ( freePlan ) {

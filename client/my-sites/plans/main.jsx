@@ -158,8 +158,14 @@ class Plans extends Component {
 	}
 
 	render() {
-		const { selectedSite, translate, canAccessPlans, currentPlan, domainAndPlanPackage } =
-			this.props;
+		const {
+			selectedSite,
+			translate,
+			canAccessPlans,
+			currentPlan,
+			domainAndPlanPackage,
+			is2023OnboardingPricingGrid,
+		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
 			return this.renderPlaceholder();
@@ -167,6 +173,7 @@ class Plans extends Component {
 		const description = translate(
 			'See and compare the features available on each WordPress.com plan.'
 		);
+
 		return (
 			<div>
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
@@ -175,7 +182,10 @@ class Plans extends Component {
 				<QueryContactDetailsCache />
 				<QueryPlans />
 				<TrackComponentView eventName="calypso_plans_view" />
-				<Main wideLayout>
+				<Main
+					fullWidthLayout={ is2023OnboardingPricingGrid }
+					wideLayout={ ! is2023OnboardingPricingGrid }
+				>
 					{ ! canAccessPlans && (
 						<EmptyContent
 							illustration="/calypso/images/illustrations/illustration-404.svg"
@@ -211,6 +221,7 @@ export default connect( ( state ) => {
 	const currentPlanIntervalType = getIntervalTypeForTerm(
 		getPlan( currentPlan?.productSlug )?.term
 	);
+	const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
 
 	return {
 		currentPlan,
@@ -222,5 +233,6 @@ export default connect( ( state ) => {
 		isSiteEligibleForMonthlyPlan: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),
 		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
+		is2023OnboardingPricingGrid,
 	};
 } )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );

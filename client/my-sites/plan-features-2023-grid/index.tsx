@@ -111,17 +111,9 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	}
 
 	render() {
-		const { isInSignup } = this.props;
-		const planClasses = classNames( 'plan-features', {
-			'plan-features--signup': isInSignup,
-		} );
-		const planWrapperClasses = classNames( {
-			'plans-wrapper': isInSignup,
-		} );
-
 		return (
-			<div className={ planWrapperClasses }>
-				<div className={ planClasses }>
+			<div className="plans-wrapper">
+				<div className="plan-features">
 					<div className="plan-features-2023-grid__content">
 						<div>
 							<div className="plan-features-2023-grid__desktop-view">
