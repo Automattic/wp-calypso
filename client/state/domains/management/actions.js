@@ -24,8 +24,8 @@ import 'calypso/state/domains/init';
  * Returns an action object to be used in signalling that a cached domains
  * contact details object has been received.
  *
- * @param   {object}   data   cached contact details object
- * @returns {object}   Action object
+ * @param   {Object}   data   cached contact details object
+ * @returns {Object}   Action object
  */
 export function receiveContactDetailsCache( data ) {
 	return {
@@ -102,8 +102,8 @@ export function updateContactDetailsCache( data ) {
  * object has been received.
  *
  * @param	{string}   domain		domain queried
- * @param   {object}   whoisData	contact details object
- * @returns {object}   Action object
+ * @param   {Object}   whoisData	contact details object
+ * @returns {Object}   Action object
  */
 export function receiveWhois( domain, whoisData ) {
 	return {
@@ -150,7 +150,7 @@ export function requestWhois( domain ) {
  * at the domain's registrar.
  *
  * @param   {string}   domain		domain to query
- * @param   {object}   whoisData	whois details object
+ * @param   {Object}   whoisData	whois details object
  * @param	  {boolean}  transferLock set 60-day transfer lock after update
  * @returns {Function}				Action thunk
  */

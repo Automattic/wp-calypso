@@ -236,7 +236,7 @@ class ThemeShowcase extends Component {
 	/**
 	 * Returns a full showcase url from current props.
 	 *
-	 * @param {object} sections fields from this object will override current props.
+	 * @param {Object} sections fields from this object will override current props.
 	 * @param {string} sections.vertical override vertical prop
 	 * @param {string} sections.tier override tier prop
 	 * @param {string} sections.filter override filter prop

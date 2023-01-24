@@ -22,8 +22,8 @@ import 'calypso/state/terms/init';
  *
  * @param  {number} siteId   Site ID
  * @param  {string} taxonomy Taxonomy Slug
- * @param  {object} term     Object of new term attributes
- * @returns {object}          Action object
+ * @param  {Object} term     Object of new term attributes
+ * @returns {Object}          Action object
  */
 export function addTerm( siteId, taxonomy, term ) {
 	return ( dispatch ) => {
@@ -62,8 +62,8 @@ export function addTerm( siteId, taxonomy, term ) {
  * @param  {string} taxonomy Taxonomy Slug
  * @param  {number} termId   term Id
  * @param  {string} termSlug term Slug
- * @param  {object} term     Object of new term attributes
- * @returns {object}          Action object
+ * @param  {Object} term     Object of new term attributes
+ * @returns {Object}          Action object
  */
 export function updateTerm( siteId, taxonomy, termId, termSlug, term ) {
 	return ( dispatch, getState ) => {
@@ -205,7 +205,7 @@ const removeTermFromState = ( { dispatch, getState, siteId, taxonomy, termId } )
  * @param  {number} siteId   Site ID
  * @param  {string} taxonomy Taxonomy Slug
  * @param  {number} termId   term Id
- * @returns {object}          Action object
+ * @returns {Object}          Action object
  */
 export function deleteTerm( siteId, taxonomy, termId ) {
 	return ( dispatch, getState ) => {
@@ -236,8 +236,8 @@ export function deleteTerm( siteId, taxonomy, termId ) {
  *
  * @param  {number} siteId   Site ID
  * @param  {string} taxonomy Taxonomy Slug
- * @param  {object} term     Term object
- * @returns {object}          Action object
+ * @param  {Object} term     Term object
+ * @returns {Object}          Action object
  */
 export function receiveTerm( siteId, taxonomy, term ) {
 	return receiveTerms( siteId, taxonomy, [ term ] );
@@ -250,9 +250,9 @@ export function receiveTerm( siteId, taxonomy, term ) {
  * @param  {number} siteId   Site ID
  * @param  {string} taxonomy Taxonomy Slug
  * @param  {Array}  terms    An array of term objects
- * @param  {object} query    Query Options
+ * @param  {Object} query    Query Options
  * @param  {number} found    Total terms found for query
- * @returns {object}          Action object
+ * @returns {Object}          Action object
  */
 export function receiveTerms( siteId, taxonomy, terms, query, found ) {
 	return {
@@ -271,7 +271,7 @@ export function receiveTerms( siteId, taxonomy, terms, query, found ) {
  * @param  {number} siteId   Site ID
  * @param  {string} taxonomy Taxonomy Slug
  * @param  {number} termId   Term ID
- * @returns {object}          Action object
+ * @returns {Object}          Action object
  */
 export function removeTerm( siteId, taxonomy, termId ) {
 	return {
@@ -288,7 +288,7 @@ export function removeTerm( siteId, taxonomy, termId ) {
  *
  * @param  {number}   siteId   Site ID
  * @param  {string}   taxonomy Taxonomy Slug
- * @param  {object}   query    Query Options
+ * @param  {Object}   query    Query Options
  * @returns {Function}        Action thunk
  */
 export function requestSiteTerms( siteId, taxonomy, query = {} ) {

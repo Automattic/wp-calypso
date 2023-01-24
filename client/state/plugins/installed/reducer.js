@@ -28,9 +28,9 @@ import status from './status/reducer';
  * Requesting state tracks whether a network request is in progress for all
  * plugins on all sites.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action object
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action object
+ * @returns {Object}        Updated state
  */
 export function isRequestingAll( state = false, action ) {
 	switch ( action.type ) {
@@ -49,9 +49,9 @@ export function isRequestingAll( state = false, action ) {
  * requestingError state tracks whether a network request is failed for all
  * plugins on all sites.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action object
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action object
+ * @returns {Object}        Updated state
  */
 export function requestError( state = false, action ) {
 	switch ( action.type ) {

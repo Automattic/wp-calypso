@@ -7,7 +7,7 @@ const EMPTY_ARRAY = [];
 /**
  * Retrieves the currently selected media library items for a specified site.
  *
- * @param {object}   state  Global state tree
+ * @param {Object}   state  Global state tree
  * @param {number}   siteId ID of the site
  * @returns {Array}         Selected media items for that site.
  */

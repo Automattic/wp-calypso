@@ -5,7 +5,7 @@ import getSiteFeatures from 'calypso/state/selectors/get-site-features';
  *
  * Used to determine which plan to upgrade to, in order for a site to gain access to a feature.
  *
- * @param  {object}  state      Global state tree
+ * @param  {Object}  state      Global state tree
  * @param  {number}  siteId     The ID of the site we're querying
  * @param  {string}  featureId  The dotcom feature to check.
  * @returns {false|string[]}    Plans array if the feature is available. Otherwise, False.

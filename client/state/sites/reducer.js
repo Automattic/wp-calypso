@@ -34,9 +34,9 @@ import { sitesSchema, hasAllSitesListSchema } from './schema';
 /**
  * Tracks all known site objects, indexed by site ID.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const items = withSchemaValidation( sitesSchema, ( state = null, action ) => {
 	if ( state === null && action.type !== SITE_RECEIVE && action.type !== SITES_RECEIVE ) {
@@ -276,9 +276,9 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
  * Requesting state tracks whether a network request is in progress for all
  * sites.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action object
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action object
+ * @returns {Object}        Updated state
  */
 export const requestingAll = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -297,9 +297,9 @@ export const requestingAll = ( state = false, action ) => {
  * Returns the updated requesting state after an action has been dispatched.
  * Requesting state tracks whether a network request is in progress for a site.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action object
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action object
+ * @returns {Object}        Updated state
  */
 export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -323,9 +323,9 @@ export const requesting = ( state = {}, action ) => {
 /**
  * Tracks whether all sites have been fetched.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action object
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action object
+ * @returns {Object}        Updated state
  */
 export const hasAllSitesList = withSchemaValidation(
 	hasAllSitesListSchema,
@@ -343,9 +343,9 @@ export const hasAllSitesList = withSchemaValidation(
  * Returns the updated disconnected state after an action has been dispatched.
  * Tracks whether a network request is completed or not.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action object
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action object
+ * @returns {Object}        Updated state
  */
 export const jetpackSiteDisconnected = ( state = false, action ) => {
 	switch ( action.type ) {
