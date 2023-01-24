@@ -290,6 +290,7 @@ class StatsEmailDetail extends Component {
 									postId={ postId }
 									statType={ statType }
 									onChangeMaxBars={ this.onChangeMaxBars }
+									maxBars={ maxBars }
 								/>
 
 								{ isSitePrivate ? this.renderPrivateSiteBanner( siteId, slug ) : null }

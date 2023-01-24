@@ -3,7 +3,6 @@ import { isMagnificentLocale } from '@automattic/i18n-utils';
 import { useTranslate, translate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { decodeEntities } from 'calypso/lib/formatting';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 export function siteObjectsToSiteIds( sites ) {
@@ -110,7 +109,7 @@ const getConfirmationText = ( sites, selectedPlugins, actionText ) => {
 export const getPluginActionDailogMessage = ( sites, selectedPlugins, heading, actionText ) => {
 	return (
 		<div>
-			<div className="plugins__confirmation-modal-heading">{ decodeEntities( heading ) }</div>
+			<div className="plugins__confirmation-modal-heading">{ heading }</div>
 			<span className="plugins__confirmation-modal-desc">
 				{ getConfirmationText( sites, selectedPlugins, actionText ) }
 			</span>
