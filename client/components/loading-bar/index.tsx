@@ -4,10 +4,10 @@ import './style.scss';
 type LoadingBar = {
 	className?: string;
 	progress: number;
+	setProgress: ( progress: number ) => void;
 };
 
-export function LoadingBar( { className, progress }: LoadingBar ) {
-	// Progress smoothing, works out to be around 40seconds unless step polling dictates otherwise
+export function LoadingBar( { className, progress, setProgress }: LoadingBar ) {
 	const [ simulatedProgress, setSimulatedProgress ] = useState( progress );
 
 	useEffect( () => {
@@ -26,11 +26,13 @@ export function LoadingBar( { className, progress }: LoadingBar ) {
 						return newProgress;
 					} );
 				}
+				// Save our simulated progress to state to persist between step changes
+				setProgress( simulatedProgress );
 			}, 1000 );
 		}
 
 		return () => clearTimeout( timeoutReference );
-	}, [ simulatedProgress, progress ] );
+	}, [ simulatedProgress, progress, setProgress ] );
 
 	return (
 		<div className={ className }>

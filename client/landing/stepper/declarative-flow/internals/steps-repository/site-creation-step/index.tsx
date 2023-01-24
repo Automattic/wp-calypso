@@ -127,9 +127,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 	}
 
 	useEffect( () => {
-		if ( isWooExpressFlow( flow ) ) {
-			setProgress( 0.2 );
-		}
+		setProgress( 0.1 );
 
 		if ( isMigrationFlow( flow ) ) {
 			setIsMigrateFromWp( true );
@@ -161,7 +159,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 					<>
 						<h1>{ getCurrentMessage() }</h1>
 						{ progress >= 0 || isWooExpressFlow( flow ) ? (
-							<LoadingBar progress={ progress } />
+							<LoadingBar progress={ progress } setProgress={ setProgress } />
 						) : (
 							<LoadingEllipsis />
 						) }

@@ -25,7 +25,6 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 	const { setProgress } = useDispatch( ONBOARD_STORE );
 
 	useEffect( () => {
-		setProgress( 0.4 );
 		if ( submit ) {
 			const assignTrialPlan = async () => {
 				try {
@@ -69,7 +68,7 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 						<div className="assign-trial-step">
 							<h1 className="assign-trial-step__progress-step">{ getCurrentMessage() }</h1>
 							{ progress >= 0 || isWooExpressFlow( flow ) ? (
-								<LoadingBar progress={ progress } />
+								<LoadingBar progress={ progress } setProgress={ setProgress } />
 							) : (
 								<LoadingEllipsis />
 							) }
