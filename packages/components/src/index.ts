@@ -45,3 +45,4 @@ export { default as ShortenedNumber } from './number-formatters';
 export { default as formattedNumber } from './number-formatters/formatted-number';
 export { default as PostStatsCard } from './post-stats-card';
 export { default as ConfettiAnimation } from './confetti';
+export { default as ComponentSwapper } from './component-swapper';
