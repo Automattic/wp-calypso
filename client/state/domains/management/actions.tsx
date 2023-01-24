@@ -1,6 +1,5 @@
 import { mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
-import { createElement } from 'react';
 import wpcom from 'calypso/lib/wp';
 import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
@@ -204,7 +203,7 @@ export const showUpdatePrimaryDomainSuccessNotice = ( domainName: string ) => {
 			successNotice(
 				translate(
 					'Primary domain changed: all domains will redirect to {{em}}%(domainName)s{{/em}}.',
-					{ args: { domainName }, components: { em: createElement( 'em' ) } }
+					{ args: { domainName }, components: { em: <em /> } }
 				),
 				{ duration: 10000, isPersistent: true }
 			)
