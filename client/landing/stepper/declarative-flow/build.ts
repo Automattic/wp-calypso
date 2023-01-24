@@ -5,6 +5,7 @@ import wpcom from 'calypso/lib/wp';
 import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import LaunchPad from './internals/steps-repository/launchpad';
+import Processing from './internals/steps-repository/processing-step';
 import { Flow, ProvidedDependencies } from './internals/types';
 
 const build: Flow = {
@@ -13,7 +14,10 @@ const build: Flow = {
 		return translate( 'Build' );
 	},
 	useSteps() {
-		return [ { slug: 'launchpad', component: LaunchPad } ];
+		return [
+			{ slug: 'launchpad', component: LaunchPad },
+			{ slug: 'processing', component: Processing },
+		];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -38,6 +42,12 @@ const build: Flow = {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
 
 			switch ( _currentStep ) {
+				case 'processing':
+					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
+						return window.location.replace( `/home/${ providedDependencies?.siteSlug }` );
+					}
+
+					return navigate( `launchpad` );
 				case 'launchpad': {
 					return navigate( 'processing' );
 				}
