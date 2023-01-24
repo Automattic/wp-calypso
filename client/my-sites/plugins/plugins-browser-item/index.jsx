@@ -143,7 +143,7 @@ const PluginsBrowserListElement = ( props ) => {
 
 	if ( isPlaceholder ) {
 		// eslint-disable-next-line no-use-before-define
-		return <Placeholder />;
+		return <Placeholder variant={ variant } />;
 	}
 
 	const classNames = classnames( 'plugins-browser-item', variant, {
@@ -349,9 +349,9 @@ const InstalledInOrPricing = ( {
 	);
 };
 
-const Placeholder = () => {
+const Placeholder = ( { variant } ) => {
 	return (
-		<li className="plugins-browser-item is-placeholder">
+		<li className={ classnames( 'plugins-browser-item is-placeholder', variant ) }>
 			<span className="plugins-browser-item__link">
 				<div className="plugins-browser-item__info">
 					<PluginIcon isPlaceholder={ true } />
