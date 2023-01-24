@@ -41,7 +41,6 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 	const { __ } = useI18n();
 	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
 
-	// @TODO fetch all productCartItems too
 	const { domainCartItem, planCartItem, siteAccentColor, getSelectedSiteTitle, productCartItems } =
 		useSelect( ( select ) => ( {
 			domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
