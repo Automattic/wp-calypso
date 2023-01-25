@@ -2,9 +2,12 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Card, Spinner } from '@automattic/components';
 import { useDomainSuggestions } from '@automattic/domain-picker/src';
 import { useLocale } from '@automattic/i18n-utils';
+import { ShoppingCartProvider, useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -16,6 +19,9 @@ export default function DomainUpsell() {
 	const locale = useLocale();
 	const { allDomainSuggestions } =
 		useDomainSuggestions( siteSubDomain, 3, undefined, locale ) || {};
+
+	const cartKey = useCartKey();
+	const shoppingCartManager = useShoppingCart( cartKey );
 
 	// Get first non-free suggested domain.
 	const domainSuggestion = allDomainSuggestions?.filter(
@@ -36,53 +42,67 @@ export default function DomainUpsell() {
 	};
 
 	const purchaseLink = '/plans/' + siteSlug;
-	const getCtaClickHandler = () => {
+	const getCtaClickHandler = async () => {
 		recordTracksEvent( 'calypso_my_home_domain_upsell_cta_click', {
 			button_url: purchaseLink,
 			domain_suggestion: domainSuggestionName,
 			product_slug: domainSuggestionProductSlug,
 		} );
+
+		try {
+			await shoppingCartManager.addProductsToCart( [
+				domainRegistration( {
+					productSlug: domainSuggestionProductSlug,
+					domain: domainSuggestionName,
+				} ),
+			] );
+		} catch {
+			// Nothing needs to be done here. CartMessages will display the error to the user.
+			return null;
+		}
 	};
 
 	return (
-		<Card className="domain-upsell__card customer-home__card">
-			<TrackComponentView eventName="calypso_my_home_domain_upsell_impression" />
-			<div>
-				<h3>{ translate( 'Own your online identity with a custom domain' ) }</h3>
-				<p>
-					{ translate(
-						"Find the perfect domain name and stake your claim on your corner of the web with a site address that's easy to find, share, and follow."
-					) }
-				</p>
-
-				<div className="suggested-domain-name">
-					<div className="card">
-						<span>
-							<strike>{ siteSlug }</strike>
-						</span>
-						<div className="badge badge--info">{ translate( 'Current' ) }</div>
-					</div>
-					<div className="card">
-						<span>{ domainSuggestionName }</span>
-						{ domainSuggestion?.domain_name ? (
-							<div className="badge badge--success">{ translate( 'Available' ) }</div>
-						) : (
-							<div className="badge">
-								<Spinner />
-							</div>
+		<ShoppingCartProvider>
+			<Card className="domain-upsell__card customer-home__card">
+				<TrackComponentView eventName="calypso_my_home_domain_upsell_impression" />
+				<div>
+					<h3>{ translate( 'Own your online identity with a custom domain' ) }</h3>
+					<p>
+						{ translate(
+							"Find the perfect domain name and stake your claim on your corner of the web with a site address that's easy to find, share, and follow."
 						) }
+					</p>
+
+					<div className="suggested-domain-name">
+						<div className="card">
+							<span>
+								<strike>{ siteSlug }</strike>
+							</span>
+							<div className="badge badge--info">{ translate( 'Current' ) }</div>
+						</div>
+						<div className="card">
+							<span>{ domainSuggestionName }</span>
+							{ domainSuggestion?.domain_name ? (
+								<div className="badge badge--success">{ translate( 'Available' ) }</div>
+							) : (
+								<div className="badge">
+									<Spinner />
+								</div>
+							) }
+						</div>
+					</div>
+
+					<div className="domain-upsell-actions">
+						<Button href={ searchLink } onClick={ getSearchClickHandler }>
+							{ translate( 'Search a domain' ) }
+						</Button>
+						<Button primary href={ purchaseLink } onClick={ getCtaClickHandler }>
+							{ translate( 'Get your custom domain' ) }
+						</Button>
 					</div>
 				</div>
-
-				<div className="domain-upsell-actions">
-					<Button href={ searchLink } onClick={ getSearchClickHandler }>
-						{ translate( 'Search a domain' ) }
-					</Button>
-					<Button primary href={ purchaseLink } onClick={ getCtaClickHandler }>
-						{ translate( 'Get your custom domain' ) }
-					</Button>
-				</div>
-			</div>
-		</Card>
+			</Card>
+		</ShoppingCartProvider>
 	);
 }
