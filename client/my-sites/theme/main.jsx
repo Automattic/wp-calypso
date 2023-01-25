@@ -865,6 +865,8 @@ class ThemeSheet extends Component {
 				( isExternallyManagedTheme &&
 					( ! isMarketplaceThemeSubscribed || ! isSiteEligibleForManagedExternalThemes ) );
 
+			const noop = () => {};
+
 			const upsellNudgePlan =
 				isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
 			pageUpsellBanner = (
@@ -877,7 +879,7 @@ class ThemeSheet extends Component {
 					feature={ WPCOM_FEATURES_PREMIUM_THEMES }
 					forceHref={ onClick === null }
 					disableHref={ onClick !== null }
-					onClick={ onClick }
+					onClick={ null === onClick ? noop : onClick }
 					href={ plansUrl }
 					showIcon={ true }
 					forceDisplay={ forceDisplay }
