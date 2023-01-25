@@ -59,7 +59,6 @@ import {
 	getDisplayName,
 	getPartnerName,
 	getRenewalPrice,
-	getRenewalPriceInSmallestUnit,
 	handleRenewMultiplePurchasesClick,
 	handleRenewNowClick,
 	hasAmountAvailableToRefund,
@@ -957,7 +956,7 @@ class ManagePurchase extends Component {
 								</div>
 							) : (
 								<PlanPrice
-									rawPrice={ getRenewalPriceInSmallestUnit( purchase ) }
+									rawPrice={ purchase.regularPriceInteger }
 									isSmallestUnit
 									currencyCode={ purchase.currencyCode }
 									taxText={ purchase.taxText }
