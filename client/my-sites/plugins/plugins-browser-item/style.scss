@@ -70,6 +70,7 @@
 		color: $studio-gray-80;
 
 		// limit to 2 lines
+		height: calc(20px * 2); // line height * number of lines
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
