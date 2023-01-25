@@ -93,7 +93,7 @@ export function getCharts( statType ) {
  * Return data in a format used by 'components/chart` for email stats. The fields array is matched to
  * the data in a single object.
  *
- * @param {object} payload - response
+ * @param {Object} payload - response
  * @param {Array} nullAttributes - properties on data objects to be initialized with
  * a null value
  * @returns {Array} - Array of data objects
@@ -143,7 +143,7 @@ export function parseEmailChartData( payload, nullAttributes = [] ) {
  * the data in a single object.
  *
  * @param {Array} countries - the array of countries for the given data
- * @param {object} countriesInfo - an object containing information about the countries
+ * @param {Object} countriesInfo - an object containing information about the countries
  * @returns {Array} - Array of data objects
  */
 export function parseEmailCountriesData( countries, countriesInfo ) {
