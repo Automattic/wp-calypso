@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { GoalsCaptureContainer } from './goals-capture-container';
@@ -119,7 +120,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 	return (
 		<>
 			<DocumentHead title={ whatAreYourGoalsText } />
-
+			<PageViewTracker path="setup/site-setup/" title="whatAreYourGoalsText" />
 			<GoalsCaptureContainer
 				welcomeText={ welcomeText }
 				whatAreYourGoalsText={ whatAreYourGoalsText }
