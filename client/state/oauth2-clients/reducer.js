@@ -32,7 +32,7 @@ export const initialClientsData = {
 		id: 2665,
 		name: 'intensedebate',
 		title: 'IntenseDebate',
-		icon: 'https://intensedebate.com/images/intensedebate.png',
+		icon: 'https://intensedebate.com/images/svg/intensedebate-logo.svg',
 	},
 	50019: {
 		id: 50019,
