@@ -22,8 +22,8 @@ function getAmountAsFormattedString( amount ) {
 }
 
 function getHighlights( earnings ) {
-	const total = earnings && earnings.total_earnings ? Number( earnings.total_earnings ) : 0;
-	const owed = earnings && earnings.total_amount_owed ? Number( earnings.total_amount_owed ) : 0;
+	const total = earnings?.total_earnings ? Number( earnings.total_earnings ) : 0;
+	const owed = earnings?.total_amount_owed ? Number( earnings.total_amount_owed ) : 0;
 	const paid = total - owed;
 
 	const highlights = [
