@@ -45,7 +45,7 @@ export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?:
 				}
 			),
 			video:
-				'https://video.wordpress.com/embed/HxIseAer?hd=1&amp;autoPlay=0&amp;permalink=1&amp;loop=0&amp;preloadContent=metadata&amp;muted=0&amp;playsinline=0&amp;controls=1&amp;cover=1',
+				'https://video.wordpress.com/embed/T6pTlPK8?hd=1&amp;autoPlay=0&amp;permalink=1&amp;loop=0&amp;preloadContent=metadata&amp;muted=0&amp;playsinline=0&amp;controls=1&amp;cover=1',
 			extraContent: (
 				<Button
 					target="_blank"
@@ -65,7 +65,7 @@ export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?:
 				'Add your first license and get up to a 60% discount on Jetpack products. Licenses can be revoked at any time, giving you the flexibility to add or remove products when it’s most convenient, meaning you only pay when you use them.'
 			),
 			video:
-				'https://video.wordpress.com/embed/HxIseAer?hd=1&amp;autoPlay=0&amp;permalink=1&amp;loop=0&amp;preloadContent=metadata&amp;muted=0&amp;playsinline=0&amp;controls=1&amp;cover=1',
+				'https://video.wordpress.com/embed/nsqG1pBO?hd=1&amp;autoPlay=0&amp;permalink=1&amp;loop=0&amp;preloadContent=metadata&amp;muted=0&amp;playsinline=0&amp;controls=1&amp;cover=1',
 			extraContent: (
 				<Button
 					href="/partner-portal/issue-license"
