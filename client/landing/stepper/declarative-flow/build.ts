@@ -2,6 +2,7 @@ import { useFlowProgress, BUILD_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
+import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import LaunchPad from './internals/steps-repository/launchpad';
@@ -23,6 +24,7 @@ const build: Flow = {
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const siteSlug = useSiteSlug();
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 		setStepProgress( flowProgress );
 
@@ -55,7 +57,16 @@ const build: Flow = {
 			return providedDependencies;
 		};
 
-		return { submit };
+		const goNext = () => {
+			switch ( _currentStep ) {
+				case 'launchpad':
+					return window.location.assign( `/view/${ siteSlug }` );
+				default:
+					return navigate( 'freeSetup' );
+			}
+		};
+
+		return { goNext, submit };
 	},
 };
 
