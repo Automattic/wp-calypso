@@ -7,9 +7,14 @@ import {
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { isWithinIntroductoryOfferPeriod } from 'calypso/lib/purchases';
-import { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from 'calypso/lib/purchases/types';
+import type { ReactNode } from 'react';
 
-function PurchaseMetaIntroductoryOfferDetail( { purchase }: { purchase: Purchase } ) {
+function PurchaseMetaIntroductoryOfferDetail( {
+	purchase,
+}: {
+	purchase: Purchase;
+} ): JSX.Element | null {
 	const translate = useTranslate();
 
 	if ( ! isWithinIntroductoryOfferPeriod( purchase ) ) {
@@ -32,19 +37,22 @@ function PurchaseMetaIntroductoryOfferDetail( { purchase }: { purchase: Purchase
 
 	if ( purchase?.introductoryOffer && purchase.introductoryOffer !== null ) {
 		const timePeriod = getPeriod();
-		let regularPriceText = null;
 
 		if ( ! timePeriod && purchase.introductoryOffer.isNextRenewalUsingOffer ) {
-			regularPriceText = translate(
-				'After the offer ends, the subscription price will be %(regularPrice)s',
-				{
-					args: {
-						regularPrice: formatCurrency( purchase.regularPriceInteger, purchase.currencyCode, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-					},
-				}
+			return (
+				<RenewalSubtext
+					text={ translate(
+						'After the offer ends, the subscription price will be %(regularPrice)s',
+						{
+							args: {
+								regularPrice: formatCurrency( purchase.regularPriceInteger, purchase.currencyCode, {
+									isSmallestUnit: true,
+									stripZeros: true,
+								} ),
+							},
+						}
+					) }
+				/>
 			);
 		}
 
@@ -53,31 +61,39 @@ function PurchaseMetaIntroductoryOfferDetail( { purchase }: { purchase: Purchase
 			! purchase.introductoryOffer.isNextRenewalUsingOffer &&
 			purchase.introductoryOffer.isNextRenewalProrated
 		) {
-			regularPriceText = translate(
-				'After the first renewal, the subscription price will be %(regularPrice)s',
-				{
-					args: {
-						regularPrice: formatCurrency( purchase.regularPriceInteger, purchase.currencyCode, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-					},
-				}
+			return (
+				<RenewalSubtext
+					text={ translate(
+						'After the first renewal, the subscription price will be %(regularPrice)s',
+						{
+							args: {
+								regularPrice: formatCurrency( purchase.regularPriceInteger, purchase.currencyCode, {
+									isSmallestUnit: true,
+									stripZeros: true,
+								} ),
+							},
+						}
+					) }
+				/>
 			);
 		}
 
 		if ( timePeriod && purchase.introductoryOffer.isNextRenewalUsingOffer ) {
-			regularPriceText = translate(
-				'After the offer ends, the subscription price will be %(regularPrice)s / %(timePeriod)s',
-				{
-					args: {
-						regularPrice: formatCurrency( purchase.regularPriceInteger, purchase.currencyCode, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-						timePeriod,
-					},
-				}
+			return (
+				<RenewalSubtext
+					text={ translate(
+						'After the offer ends, the subscription price will be %(regularPrice)s / %(timePeriod)s',
+						{
+							args: {
+								regularPrice: formatCurrency( purchase.regularPriceInteger, purchase.currencyCode, {
+									isSmallestUnit: true,
+									stripZeros: true,
+								} ),
+								timePeriod,
+							},
+						}
+					) }
+				/>
 			);
 		}
 
@@ -86,32 +102,34 @@ function PurchaseMetaIntroductoryOfferDetail( { purchase }: { purchase: Purchase
 			! purchase.introductoryOffer.isNextRenewalUsingOffer &&
 			purchase.introductoryOffer.isNextRenewalProrated
 		) {
-			regularPriceText = translate(
-				'After the first renewal, the subscription price will be %(regularPrice)s / %(timePeriod)s',
-				{
-					args: {
-						regularPrice: formatCurrency( purchase.regularPriceInteger, purchase.currencyCode, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-						timePeriod,
-					},
-				}
+			return (
+				<RenewalSubtext
+					text={ translate(
+						'After the first renewal, the subscription price will be %(regularPrice)s / %(timePeriod)s',
+						{
+							args: {
+								regularPrice: formatCurrency( purchase.regularPriceInteger, purchase.currencyCode, {
+									isSmallestUnit: true,
+									stripZeros: true,
+								} ),
+								timePeriod,
+							},
+						}
+					) }
+				/>
 			);
 		}
-
-		return (
-			<>
-				<br />
-				{ regularPriceText && (
-					<>
-						{ ' ' }
-						<br /> <small> { regularPriceText } </small>{ ' ' }
-					</>
-				) }
-			</>
-		);
 	}
+
+	return null;
+}
+
+function RenewalSubtext( { text }: { text: ReactNode } ): JSX.Element {
+	return (
+		<>
+			<br /> <br /> <small> { text } </small>{ ' ' }
+		</>
+	);
 }
 
 export default PurchaseMetaIntroductoryOfferDetail;
