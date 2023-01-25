@@ -64,7 +64,7 @@ export default function PurchaseMeta( {
 			<ul className="manage-purchase__meta">
 				<PurchaseMetaOwner owner={ owner } />
 				<li>
-					<em className="manage-purchase__detail-label">{ translate( 'Price' ) }</em>
+					<em className="manage-purchase__detail-label">{ translate( 'Renewal Price' ) }</em>
 					<span className="manage-purchase__detail">
 						<PurchaseMetaPrice purchase={ purchase } />
 						<PurchaseMetaIntroductoryOfferDetail purchase={ purchase } />
