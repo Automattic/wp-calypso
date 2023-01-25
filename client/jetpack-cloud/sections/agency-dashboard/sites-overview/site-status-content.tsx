@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
@@ -158,12 +157,8 @@ export default function SiteStatusContent( {
 		);
 	}
 
-	const isDownTimeMonitorEnabled = isEnabled(
-		'jetpack/partner-portal-downtime-monitoring-updates'
-	);
-
 	// We will show "Site Down" when the site is down which is handled differently.
-	if ( isDownTimeMonitorEnabled && type === 'monitor' && ! siteDown ) {
+	if ( type === 'monitor' && ! siteDown ) {
 		return (
 			<ToggleActivateMonitoring
 				site={ rows.site.value }
