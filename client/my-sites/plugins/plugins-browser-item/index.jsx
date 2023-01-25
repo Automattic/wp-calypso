@@ -218,7 +218,7 @@ const PluginsBrowserListElement = ( props ) => {
 					{ /* Plugin activation information will be shown in this area if its installed */ }
 					{ ! isPluginInstalledOnSite && (
 						<div className="plugins-browser-item__additional-info">
-							{ !! plugin.rating && ! isMarketplaceProduct && (
+							{ !! plugin.rating && (
 								<div className="plugins-browser-item__ratings">
 									<Gridicon
 										size={ 18 }
