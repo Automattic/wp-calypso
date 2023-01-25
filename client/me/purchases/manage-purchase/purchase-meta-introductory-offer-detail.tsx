@@ -68,7 +68,7 @@ function PurchaseMetaIntroductoryOfferDetail( { purchase }: { purchase: Purchase
 
 		if ( timePeriod && purchase.introductoryOffer.isNextRenewalUsingOffer ) {
 			regularPriceText = translate(
-				'After the offer ends, the subscription price will be %(regularPrice)s / %(timePeriod)',
+				'After the offer ends, the subscription price will be %(regularPrice)s / %(timePeriod)s',
 				{
 					args: {
 						regularPrice: formatCurrency( purchase.regularPriceInteger, purchase.currencyCode, {
@@ -87,7 +87,7 @@ function PurchaseMetaIntroductoryOfferDetail( { purchase }: { purchase: Purchase
 			purchase.introductoryOffer.isNextRenewalProrated
 		) {
 			regularPriceText = translate(
-				'After the first renewal, the subscription price will be %(regularPrice)s / %(timePeriod)',
+				'After the first renewal, the subscription price will be %(regularPrice)s / %(timePeriod)s',
 				{
 					args: {
 						regularPrice: formatCurrency( purchase.regularPriceInteger, purchase.currencyCode, {
