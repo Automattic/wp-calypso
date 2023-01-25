@@ -27,14 +27,16 @@ const selectors = {
 	activeNavigationTab: ( tabName: PlansPageTab ) =>
 		`.is-selected.section-nav-tab:has-text("${ tabName }")`,
 
-	// Legacy plans view
+	// Plans tab
 	PlansGrid: '.plans-features-main',
 	actionButton: ( { plan, buttonText }: { plan: Plans; buttonText: PlanActionButton } ) => {
 		const viewportSuffix = envVariables.VIEWPORT_NAME === 'mobile' ? 'mobile' : 'table';
 		return `.plan-features__${ viewportSuffix } >> .plan-features__actions-button.is-${ plan.toLowerCase() }-plan:has-text("${ buttonText }")`;
 	},
+	activePlan: ( plan: Plans ) =>
+		`th.plan-features__table-item:has-text("${ plan }"):has-text("Your Plan")`,
 
-	// My Plans view
+	// My Plans tab
 	myPlanTitle: ( planName: Plans ) => `.my-plan-card__title:has-text("${ planName }")`,
 };
 
@@ -91,14 +93,20 @@ export class PlansPage {
 	/* Generic */
 
 	/**
-	 * Validates that the provided plan name is the title of the active plan in the My Plan tab of the Plans page. Throws if it isn't.
+	 * Validates the expected plan is active.
+	 *
+	 * This method accepts a parameter of `Plan` type which defines the expected
+	 * plan to be active on the site. This method then compares this against the
+	 * actual text on both the My Plans and Plans tabs.
 	 *
 	 * @param {Plans} expectedPlan Name of the expected plan.
 	 * @throws If the expected plan title is not found in the timeout period.
 	 */
 	async validateActivePlan( expectedPlan: Plans ): Promise< void > {
-		const expectedPlanLocator = this.page.locator( selectors.myPlanTitle( expectedPlan ) );
-		await expectedPlanLocator.waitFor();
+		await Promise.race( [
+			this.page.locator( selectors.myPlanTitle( expectedPlan ) ).waitFor(),
+			this.page.locator( selectors.activePlan( expectedPlan ) ).waitFor(),
+		] );
 	}
 
 	/**
