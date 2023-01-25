@@ -1,4 +1,5 @@
 import { WPCOM_FEATURES_COPY_SITE } from '@automattic/calypso-products';
+import { createHigherOrderComponent } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { useEffect, useMemo, useCallback } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
@@ -26,10 +27,7 @@ function useSafeSiteHasFeature( siteId: number, feature: string ) {
 	} );
 }
 
-export const useSiteCopy = (
-	site: SiteExcerptData,
-	recordTracks: ( eventName: string, extraProps?: Record< string, any > ) => void
-) => {
+export const useSiteCopy = ( site: SiteExcerptData ) => {
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const hasCopySiteFeature = useSafeSiteHasFeature( site.ID, WPCOM_FEATURES_COPY_SITE );
 	const plan = site?.plan;
@@ -47,19 +45,22 @@ export const useSiteCopy = (
 		return hasCopySiteFeature && isSiteOwner && plan && ! isLoadingPurchase;
 	}, [ hasCopySiteFeature, isSiteOwner, plan, isLoadingPurchase ] );
 
-	const startSiteCopy = useCallback( () => {
-		if ( ! plan || ! purchases ) {
-			return;
-		}
-		clearSignupDestinationCookie();
-		setPlanCartItem( { product_slug: plan.product_slug } );
-		const marketplacePluginProducts = purchases
-			.filter( ( purchase ) => purchase.productType === 'marketplace_plugin' )
-			.map( ( purchase ) => ( { product_slug: purchase.productSlug } ) );
+	const startSiteCopy = useCallback(
+		( recordTracks: () => void ) => {
+			if ( ! plan || ! purchases ) {
+				return;
+			}
+			clearSignupDestinationCookie();
+			setPlanCartItem( { product_slug: plan.product_slug } );
+			const marketplacePluginProducts = purchases
+				.filter( ( purchase ) => purchase.productType === 'marketplace_plugin' )
+				.map( ( purchase ) => ( { product_slug: purchase.productSlug } ) );
 
-		setProductCartItems( marketplacePluginProducts );
-		recordTracks( 'calypso_sites_dashboard_site_action_copy_site_click' );
-	}, [ plan, recordTracks, setPlanCartItem, setProductCartItems, purchases ] );
+			setProductCartItems( marketplacePluginProducts );
+			recordTracks();
+		},
+		[ plan, setPlanCartItem, setProductCartItems, purchases ]
+	);
 
 	return useMemo(
 		() => ( {
@@ -69,3 +70,18 @@ export const useSiteCopy = (
 		[ shouldShowSiteCopyItem, startSiteCopy ]
 	);
 };
+
+export const withSiteCopy = createHigherOrderComponent(
+	( Wrapped ) => ( props ) => {
+		// Limit query to 1 since we are only interested in the totalItems count.
+		const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( props.site );
+		return (
+			<Wrapped
+				{ ...props }
+				shouldShowSiteCopyItem={ shouldShowSiteCopyItem }
+				startSiteCopy={ startSiteCopy }
+			/>
+		);
+	},
+	'withSiteCopy'
+);
