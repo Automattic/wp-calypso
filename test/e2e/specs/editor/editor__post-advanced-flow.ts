@@ -135,6 +135,10 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 	} );
 
 	describe( 'Trash post', function () {
+		const successMessage = 'Post successfully moved to trash.';
+
+		let noticeComponent: NoticeComponent;
+
 		beforeAll( async function () {
 			await postsPage.visit();
 		} );
@@ -145,10 +149,15 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		} );
 
 		it( 'Confirmation notice is shown', async function () {
-			const noticeComponent = new NoticeComponent( page );
-			await noticeComponent.noticeShown( 'Post successfully moved to trash.', {
+			noticeComponent = new NoticeComponent( page );
+			await noticeComponent.noticeShown( successMessage, {
 				type: 'Success',
 			} );
+		} );
+
+		it( 'Dismiss notice', async function () {
+			// On mobile viewports the notice banner overlaps with the navtab.
+			await noticeComponent.dismiss( successMessage );
 		} );
 	} );
 
