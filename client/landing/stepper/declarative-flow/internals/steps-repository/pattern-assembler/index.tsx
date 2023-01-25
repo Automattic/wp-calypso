@@ -17,8 +17,8 @@ import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
 import { SITE_TAGLINE } from './constants';
+import usePatternsFromAPI from './hooks/use-patterns-from-api';
 import NavigatorListener from './navigator-listener';
-import { useAllPatterns } from './patterns-data';
 import ScreenFooter from './screen-footer';
 import ScreenHeader from './screen-header';
 import ScreenHomepage from './screen-homepage';
@@ -49,7 +49,8 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
-	const allPatterns = useAllPatterns();
+	const patternsQueryResults = usePatternsFromAPI( site?.ID );
+	const allPatterns = ( patternsQueryResults.data as Pattern[] ) || [];
 
 	const largePreviewProps = {
 		placeholder: null,
@@ -134,7 +135,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 			recipe: {
 				...selectedDesign?.recipe,
 				header_pattern_ids: header ? [ encodePatternId( header.id ) ] : undefined,
-				pattern_ids: sections.filter( Boolean ).map( ( pattern ) => encodePatternId( pattern.id ) ),
+				pattern_ids: sections.filter( Boolean ).map( ( pattern ) => pattern.name ),
 				footer_pattern_ids: footer ? [ encodePatternId( footer.id ) ] : undefined,
 			} as DesignRecipe,
 		} as Design );
@@ -174,7 +175,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 			...( sections as Pattern[] ),
 			{
 				...pattern,
-				key: `${ incrementIndexRef.current }-${ pattern.id }`,
+				key: `${ incrementIndexRef.current }-${ pattern.id || pattern.name }`,
 			},
 		] );
 		updateActivePatternPosition( sections.length );
@@ -337,8 +338,10 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 						} }
 					/>
 				</NavigatorScreen>
+
 				<NavigatorScreen path="/homepage/patterns">
 					<ScreenPatternList
+						patterns={ allPatterns }
 						selectedPattern={ sectionPosition ? sections[ sectionPosition ] : null }
 						onSelect={ ( selectedPattern ) => onSelect( 'section', selectedPattern ) }
 						onDoneClick={ () => onDoneClick( 'section' ) }
@@ -377,7 +380,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 						placeholder={ null }
 						siteId={ site?.ID }
 						stylesheet={ selectedDesign?.recipe?.stylesheet }
-						patternIds={ allPatterns.map( ( pattern ) => encodePatternId( pattern.id ) ) }
+						patternIds={ allPatterns?.map( ( pattern ) => pattern.name ) }
 						siteInfo={ siteInfo }
 					>
 						{ stepContent }

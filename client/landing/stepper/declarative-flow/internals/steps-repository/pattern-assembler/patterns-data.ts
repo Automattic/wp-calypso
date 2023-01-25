@@ -295,10 +295,10 @@ const useSectionPatterns = () => {
 
 const useAllPatterns = () => {
 	const headerPatterns = useHeaderPatterns();
-	const sectionPatterns = useSectionPatterns();
+	//const sectionPatterns = useSectionPatterns();
 	const footerPatterns = useFooterPatterns();
 
-	return [ ...headerPatterns, ...sectionPatterns, ...footerPatterns ];
+	return [ ...headerPatterns, /*...sectionPatterns,**/ ...footerPatterns ];
 };
 
 export { useHeaderPatterns, useFooterPatterns, useSectionPatterns, useAllPatterns };

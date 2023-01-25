@@ -33,7 +33,7 @@ const PatternLayout = ( {
 				<ul className="pattern-layout__list">
 					<AsyncLoad require="./animate-list" featureName="domMax" placeholder={ <div /> }>
 						{ ( m: any ) =>
-							patterns.map( ( { category, key }: Pattern, index ) => {
+							patterns.map( ( { categories, category, key }: Pattern, index ) => {
 								return (
 									<m.li
 										key={ key }
@@ -42,7 +42,7 @@ const PatternLayout = ( {
 										className="pattern-layout__list-item"
 									>
 										<span className="pattern-layout__list-item-text" title={ category }>
-											{ `${ index + 1 }. ${ category }` }
+											{ `${ index + 1 }. ${ category || categories?.[ 0 ] }` }
 										</span>
 										<PatternActionBar
 											patternType="section"

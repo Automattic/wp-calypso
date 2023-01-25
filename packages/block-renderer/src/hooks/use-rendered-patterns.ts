@@ -36,7 +36,7 @@ const fetchRenderedPatterns = (
 const useRenderedPatterns = (
 	siteId: number | string,
 	stylesheet: string,
-	patternIds: string[],
+	patternIds: string[] = [],
 	siteInfo: SiteInfo = {}
 ) => {
 	const [ renderedPatterns, setRenderedPatterns ] = useState( {} );

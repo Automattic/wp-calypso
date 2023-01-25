@@ -10,9 +10,10 @@ import type { Pattern } from './types';
 type PatternSelectorProps = {
 	patterns: Pattern[];
 	onSelect: ( selectedPattern: Pattern ) => void;
-	onDoneClick: () => void;
+	onDoneClick?: () => void;
 	selectedPattern: Pattern | null;
 	emptyPatternText?: string;
+	hideDone?: boolean;
 };
 
 const PatternSelector = ( {
@@ -21,6 +22,7 @@ const PatternSelector = ( {
 	onDoneClick,
 	selectedPattern,
 	emptyPatternText,
+	hideDone,
 }: PatternSelectorProps ) => {
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const translate = useTranslate();
@@ -45,16 +47,18 @@ const PatternSelector = ( {
 					) }
 				</div>
 			</div>
-			<div className="pattern-selector__footer">
-				<NavigatorBackButton
-					as={ Button }
-					className="pattern-assembler__button"
-					onClick={ onDoneClick }
-					primary
-				>
-					{ translate( 'Done' ) }
-				</NavigatorBackButton>
-			</div>
+			{ ! hideDone && (
+				<div className="pattern-selector__footer">
+					<NavigatorBackButton
+						as={ Button }
+						className="pattern-assembler__button"
+						onClick={ onDoneClick }
+						primary
+					>
+						{ translate( 'Done' ) }
+					</NavigatorBackButton>
+				</div>
+			) }
 		</div>
 	);
 };

@@ -2,7 +2,6 @@ import { PatternRenderer } from '@automattic/block-renderer';
 import { Button } from '@automattic/components';
 import classnames from 'classnames';
 import EmptyPattern from './empty-pattern';
-import { encodePatternId } from './utils';
 import type { Pattern } from './types';
 import './pattern-list-renderer.scss';
 
@@ -30,7 +29,7 @@ const PatternListItem = ( { pattern, className, onSelect }: PatternListItemProps
 			onClick={ () => onSelect( pattern ) }
 		>
 			<PatternRenderer
-				patternId={ encodePatternId( pattern.id ) }
+				patternId={ pattern.id || pattern.name }
 				viewportWidth={ 1060 }
 				minHeight={ PLACEHOLDER_HEIGHT }
 			/>
@@ -58,10 +57,11 @@ const PatternListRenderer = ( {
 			) }
 			{ patterns.map( ( pattern, index ) => (
 				<PatternListItem
-					key={ `${ index }-${ pattern.id }` }
+					key={ `${ index }-${ pattern.id || pattern.name }` }
 					pattern={ pattern }
 					className={ classnames( 'pattern-list-renderer__pattern-list-item', {
-						[ activeClassName ]: pattern.id === selectedPattern?.id,
+						[ activeClassName ]:
+							pattern.id === selectedPattern?.id || pattern.name === selectedPattern?.name,
 					} ) }
 					onSelect={ onSelect }
 				/>

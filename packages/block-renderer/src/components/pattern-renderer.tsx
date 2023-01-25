@@ -4,7 +4,7 @@ import BlockRendererContainer from './block-renderer-container';
 import { usePatternsRendererContext } from './patterns-renderer-context';
 
 interface Props {
-	patternId: string;
+	patternId: string | number;
 	viewportWidth?: number;
 	minHeight?: number;
 }

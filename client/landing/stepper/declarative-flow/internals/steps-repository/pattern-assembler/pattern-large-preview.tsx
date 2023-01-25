@@ -25,7 +25,7 @@ const PatternLargePreview = ( { header, sections, footer, activePosition }: Prop
 
 	const renderPattern = ( key: string, pattern: Pattern ) => (
 		<li key={ key }>
-			<PatternRenderer patternId={ encodePatternId( pattern.id ) } />
+			<PatternRenderer patternId={ pattern.name || encodePatternId( pattern.id ) } />
 		</li>
 	);
 

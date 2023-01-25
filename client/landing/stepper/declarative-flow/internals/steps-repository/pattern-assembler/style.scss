@@ -198,6 +198,7 @@ $font-family: "SF Pro Text", $sans;
 		height: 100%;
 		width: 100%;
 		background: #fdfdfd;
+		padding-bottom: 20px;
 
 		.pattern-selector__header {
 			display: flex;
@@ -230,7 +231,6 @@ $font-family: "SF Pro Text", $sans;
 		}
 
 		.pattern-selector__body {
-			margin-bottom: 32px;
 			padding: 2px;
 			overflow-y: scroll;
 			scrollbar-width: none;
@@ -285,6 +285,24 @@ $font-family: "SF Pro Text", $sans;
 		margin-top: auto;
 	}
 
+	.screen-container__body {
+		flex-basis: 100%;
+		margin-bottom: 20px;
+	}
+
+	/**
+	 * Screen Pattern List
+	 */
+	.screen-pattern-list__category-button {
+		width: 100%;
+		margin-bottom: 7px;
+	}
+
+	.screen-pattern-list__footer {
+		position: sticky;
+		bottom: 0;
+	}
+
 	/**
 	 * Gutenberg Components
 	 */
@@ -295,6 +313,7 @@ $font-family: "SF Pro Text", $sans;
 	.components-navigator-screen {
 		display: flex;
 		flex-direction: column;
+		width: 100%;
 	}
 }
 
