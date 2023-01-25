@@ -22,19 +22,19 @@ import Tooltip from 'calypso/components/tooltip';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getProductDisplayCost, getProductTerm } from 'calypso/state/products-list/selectors';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
 import {
 	doesThemeBundleSoftwareSet as getDoesThemeBundleSoftwareSet,
-	isSiteEligibleForBundledSoftware as getIsSiteEligibleForBundledSoftware,
-	isPremiumThemeAvailable as getIsPremiumThemeAvailable,
+	getMarketplaceThemeSubscriptionPrices,
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
+	isPremiumThemeAvailable as getIsPremiumThemeAvailable,
+	isSiteEligibleForBundledSoftware as getIsSiteEligibleForBundledSoftware,
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
+	isThemePremium as getIsThemePremium,
+	isThemePurchased,
 } from 'calypso/state/themes/selectors';
-import { isThemePremium as getIsThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
-import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 import ThemeMoreButton from './more-button';
 
@@ -633,23 +633,6 @@ export class Theme extends Component {
 	}
 }
 
-function getMarketplaceThemePrices( state, theme ) {
-	if ( ! Array.isArray( theme?.product_details ) ) {
-		return {};
-	}
-
-	return theme.product_details.reduce( ( interimPrices, { product_slug } ) => {
-		const currentProductTerm = getProductTerm( state, product_slug );
-		const currentProductPrice = getProductDisplayCost( state, product_slug );
-
-		if ( currentProductTerm && currentProductPrice ) {
-			interimPrices[ currentProductTerm ] = currentProductPrice;
-		}
-
-		return interimPrices;
-	}, {} );
-}
-
 export default connect(
 	( state, { theme, siteId, hasPremiumThemesFeature } ) => {
 		const {
@@ -658,7 +641,7 @@ export default connect(
 		const { themesUpdateFailed, themesUpdating, themesUpdated } = themesUpdate;
 		const isExternallyManagedTheme = getIsExternallyManagedTheme( state, theme.id );
 		const themeSubscriptionPrices = isExternallyManagedTheme
-			? getMarketplaceThemePrices( state, theme )
+			? getMarketplaceThemeSubscriptionPrices( state, theme?.id )
 			: {};
 
 		return {
