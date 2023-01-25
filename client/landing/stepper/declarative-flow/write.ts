@@ -2,8 +2,6 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, WRITE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
-import { useEffect } from 'react';
-import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import wpcom from 'calypso/lib/wp';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -22,10 +20,6 @@ const write: Flow = {
 		return translate( 'Write' );
 	},
 	useSteps() {
-		useEffect( () => {
-			recordFullStoryEvent( 'calypso_signup_start_free', { flow: this.name } );
-		}, [] );
-
 		return [
 			{ slug: 'launchpad', component: LaunchPad },
 			{ slug: 'processing', component: Processing },
