@@ -303,6 +303,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			: __( 'The required field is to enter at least one email.' );
 
 		return (
+			!! submitAttemptCount &&
 			submitAttemptCount !== prevSubmitAttemptCount.current &&
 			! emails.filter( ( x ) => !! x ).length &&
 			! selectedFile && <FormInputValidation isError={ true } text={ validationMsg } />
