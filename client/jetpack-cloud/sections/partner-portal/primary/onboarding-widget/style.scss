@@ -39,12 +39,15 @@
 
 		&:first-child {
 			margin-inline-end: 8px;
+
 			@include break-wide {
 				margin-inline-end: 32px;
 			}
 		}
+
 		&:last-child {
 			margin-inline-start: 8px;
+
 			@include break-wide {
 				margin-inline-start: 32px;
 			}
@@ -112,6 +115,7 @@
 	line-height: 28px;
 	color: var(--studio-jetpack-green-60);
 	margin-inline-start: 16px;
+
 	@include break-large {
 		display: inline-block;
 	}
@@ -121,15 +125,21 @@
 	display: inline-block;
 	margin-inline-start: 42px;
 	margin-block-start: 16px;
+
 	@include break-large {
 		display: none;
 	}
 }
 
 .is-licenses-page {
-	margin-block-start: 64px;
+	margin-block-start: 16px;
+
 	.onboarding-widget__steps {
 		margin-inline: 0;
+	}
+
+	@include break-xlarge {
+		margin-block-start: 64px;
 	}
 }
 

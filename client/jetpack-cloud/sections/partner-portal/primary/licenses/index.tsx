@@ -23,6 +23,7 @@ import {
 	hasFetchedLicenseCounts,
 } from 'calypso/state/partner-portal/licenses/selectors';
 import { showAgencyDashboard } from 'calypso/state/partner-portal/partner/selectors';
+import OnboardingWidget from '../onboarding-widget';
 
 import './style.scss';
 
@@ -91,7 +92,7 @@ export default function Licenses( {
 					<LicenseList />
 				</LicenseListContext.Provider>
 			) : (
-				'EMPTY STATE'
+				<OnboardingWidget isLicensesPage />
 			) }
 		</Main>
 	);
