@@ -217,6 +217,19 @@ const siteLogo: Reducer< null | string, OnboardAction > = ( state = null, action
 	return state;
 };
 
+const productCartItems: Reducer< MinimalRequestCartProduct[] | null, OnboardAction > = (
+	state = [],
+	action
+) => {
+	if ( action.type === 'SET_PRODUCT_CART_ITEMS' ) {
+		return action.productCartItems;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return [];
+	}
+	return state;
+};
+
 const planCartItem: Reducer< MinimalRequestCartProduct | null, OnboardAction > = (
 	state = null,
 	action
@@ -511,6 +524,7 @@ const reducer = combineReducers( {
 	storeLocationCountryCode,
 	ecommerceFlowRecurType,
 	planCartItem,
+	productCartItems,
 	isMigrateFromWp,
 } );
 
