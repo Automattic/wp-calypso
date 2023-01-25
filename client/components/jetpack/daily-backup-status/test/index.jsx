@@ -5,6 +5,7 @@
 import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
 import moment from 'moment';
+import { StorageUsageLevels } from 'calypso/components/backup-storage-space/storage-usage-levels';
 import {
 	isSuccessfulDailyBackup,
 	isSuccessfulRealtimeBackup,
@@ -75,6 +76,36 @@ describe( 'DailyBackupStatus', () => {
 		expect( screen.queryByTestId( 'backup-scheduled' ) ).toBeVisible();
 	} );
 
+	test.each( [
+		[ StorageUsageLevels.Normal ],
+		[ StorageUsageLevels.Warning ],
+		[ StorageUsageLevels.Critical ],
+		[ StorageUsageLevels.BackupsDiscarded ],
+	] )(
+		'shows "backup scheduled" when no backup is provided and the selected date is today and storage usage level is other than Full',
+		( usageLevel ) => {
+			const now = moment();
+
+			render(
+				<DailyBackupStatus selectedDate={ now } lastBackupDate={ {} } usageLevel={ usageLevel } />
+			);
+			expect( screen.queryByTestId( 'backup-scheduled' ) ).toBeVisible();
+		}
+	);
+
+	test( 'does not shows "backup scheduled" when no backup is provided, the selected date is today, and storage usage level is full', () => {
+		const now = moment();
+
+		render(
+			<DailyBackupStatus
+				selectedDate={ now }
+				lastBackupDate={ {} }
+				usageLevel={ StorageUsageLevels.Full }
+			/>
+		);
+		expect( screen.queryByTestId( 'backup-scheduled' ) ).toBeNull();
+	} );
+
 	test( 'shows a visible limit status when the selected date does not fall within display rules', () => {
 		useIsDateVisible.mockImplementation( () => () => false );
 
@@ -87,6 +118,40 @@ describe( 'DailyBackupStatus', () => {
 
 		render( <DailyBackupStatus selectedDate={ yesterday } lastBackupDate={ {} } /> );
 		expect( screen.queryByTestId( 'no-backups-on-selected-date' ) ).toBeVisible();
+	} );
+
+	test.each( [
+		[ StorageUsageLevels.Normal ],
+		[ StorageUsageLevels.Warning ],
+		[ StorageUsageLevels.Critical ],
+		[ StorageUsageLevels.BackupsDiscarded ],
+	] )(
+		'shows "no backups on this date" when no backup is provided and the selected date is not today and storage usage level is other than Full',
+		( usageLevel ) => {
+			const yesterday = moment().subtract( 1, 'day' );
+
+			render(
+				<DailyBackupStatus
+					selectedDate={ yesterday }
+					lastBackupDate={ {} }
+					usageLevel={ usageLevel }
+				/>
+			);
+			expect( screen.queryByTestId( 'no-backups-on-selected-date' ) ).toBeVisible();
+		}
+	);
+
+	test( 'does not shows "no backups on this date" when no backup is provided, the selected date is not today and storage usage level is full', () => {
+		const yesterday = moment().subtract( 1, 'day' );
+
+		render(
+			<DailyBackupStatus
+				selectedDate={ yesterday }
+				lastBackupDate={ {} }
+				usageLevel={ StorageUsageLevels.Full }
+			/>
+		);
+		expect( screen.queryByTestId( 'no-backups-on-selected-date' ) ).toBeNull();
 	} );
 
 	test( 'shows "backup failed" for non-Backup Real-time sites when a failed daily backup is provided', () => {
