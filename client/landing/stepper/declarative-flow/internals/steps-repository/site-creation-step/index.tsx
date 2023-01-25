@@ -159,7 +159,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 					<>
 						<h1>{ getCurrentMessage() }</h1>
 						{ progress >= 0 || isWooExpressFlow( flow ) ? (
-							<LoadingBar progress={ progress } setProgress={ setProgress } />
+							<LoadingBar progress={ progress } />
 						) : (
 							<LoadingEllipsis />
 						) }

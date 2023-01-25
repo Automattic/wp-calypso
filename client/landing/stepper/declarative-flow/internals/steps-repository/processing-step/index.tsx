@@ -6,7 +6,7 @@ import {
 	ECOMMERCE_FLOW,
 	isWooExpressFlow,
 } from '@automattic/onboarding';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -53,7 +53,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 
 	const action = useSelect( ( select ) => select( ONBOARD_STORE ).getPendingAction() );
 	const progress = useSelect( ( select ) => select( ONBOARD_STORE ).getProgress() );
-	const { setProgress } = useDispatch( ONBOARD_STORE );
 	const progressTitle = useSelect( ( select ) => select( ONBOARD_STORE ).getProgressTitle() );
 	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
 
@@ -120,7 +119,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 							{ progress >= 0 || isWooExpressFlow( flow ) ? (
 								<LoadingBar
 									progress={ progress }
-									setProgress={ setProgress }
 									className="processing-step__content woocommerce-install__content"
 								/>
 							) : (

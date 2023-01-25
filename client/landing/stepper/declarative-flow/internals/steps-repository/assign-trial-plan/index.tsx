@@ -1,5 +1,5 @@
 import { isWooExpressFlow, StepContainer } from '@automattic/onboarding';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -22,7 +22,6 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 	const { __ } = useI18n();
 	const progress = useSelect( ( select ) => select( ONBOARD_STORE ).getProgress() );
 	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
-	const { setProgress } = useDispatch( ONBOARD_STORE );
 
 	useEffect( () => {
 		if ( submit ) {
@@ -68,7 +67,7 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 						<div className="assign-trial-step">
 							<h1 className="assign-trial-step__progress-step">{ getCurrentMessage() }</h1>
 							{ progress >= 0 || isWooExpressFlow( flow ) ? (
-								<LoadingBar progress={ progress } setProgress={ setProgress } />
+								<LoadingBar progress={ progress } />
 							) : (
 								<LoadingEllipsis />
 							) }

@@ -1,14 +1,16 @@
+import { useDispatch } from '@wordpress/data';
 import { useEffect, useState } from 'react';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import './style.scss';
 
 type LoadingBar = {
 	className?: string;
 	progress: number;
-	setProgress: ( progress: number ) => void;
 };
 
-export function LoadingBar( { className, progress, setProgress }: LoadingBar ) {
+export function LoadingBar( { className, progress }: LoadingBar ) {
 	const [ simulatedProgress, setSimulatedProgress ] = useState( progress );
+	const { setProgress } = useDispatch( ONBOARD_STORE );
 
 	useEffect( () => {
 		let timeoutReference: NodeJS.Timeout;

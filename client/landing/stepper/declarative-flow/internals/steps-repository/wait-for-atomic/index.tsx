@@ -34,7 +34,7 @@ const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
 const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 	const { submit } = navigation;
-	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
 	const site = useSite();
 
@@ -114,8 +114,6 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 
 				stopPollingTransfer = transferStatus === transferStates.COMPLETED;
 			}
-
-			setProgress( 1 );
 
 			return { finishedWaitingForAtomic: true, siteSlug: data?.siteSlug };
 		} );
