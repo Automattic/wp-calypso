@@ -12,5 +12,33 @@
 	.earnings_history tbody tr:nth-child(odd) {
 		background-color: var(--studio-gray-0);
 	}
+}
 
+.highlight-cards.wordads {
+	h1 {
+		display: flex;
+		flex-flow: nowrap;
+		align-items: center;
+	}
+	.highlight-card {
+		min-width: 240px;
+	}
+	.info-wrapper {
+		display: flex;
+		margin-left: 8px;
+	}
+	.info-icon {
+		fill: var(--studio-gray-40);
+	}
+}
+
+.tooltip-wordads {
+	.highlight-card-tooltip-content {
+		display: block;
+		max-width: 260px;
+
+		p:last-child {
+			margin: 0;
+		}
+	}
 }

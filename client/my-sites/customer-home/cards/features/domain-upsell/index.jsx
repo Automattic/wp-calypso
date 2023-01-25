@@ -1,8 +1,10 @@
-import { Card, Spinner } from '@automattic/components';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Button, Card, Spinner } from '@automattic/components';
 import { useDomainSuggestions } from '@automattic/domain-picker/src';
 import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -21,10 +23,30 @@ export default function DomainUpsell() {
 	)[ 0 ];
 
 	// It takes awhile to suggest a domain name. Set a default to siteSubDomain.blog.
-	const domainSuggestionName = domainSuggestion?.domain_name || siteSubDomain + '.blog';
+	const domainSuggestionName = domainSuggestion?.domain_name ?? siteSubDomain + '.blog';
+	const domainSuggestionProductSlug = domainSuggestion?.product_slug;
+
+	const searchLink = '/domains/add/' + siteSlug;
+	const getSearchClickHandler = () => {
+		recordTracksEvent( 'calypso_my_home_domain_upsell_search_click', {
+			button_url: searchLink,
+			domain_suggestion: domainSuggestionName,
+			product_slug: domainSuggestionProductSlug,
+		} );
+	};
+
+	const purchaseLink = '/plans/' + siteSlug;
+	const getCtaClickHandler = () => {
+		recordTracksEvent( 'calypso_my_home_domain_upsell_cta_click', {
+			button_url: purchaseLink,
+			domain_suggestion: domainSuggestionName,
+			product_slug: domainSuggestionProductSlug,
+		} );
+	};
 
 	return (
 		<Card className="domain-upsell__card customer-home__card">
+			<TrackComponentView eventName="calypso_my_home_domain_upsell_impression" />
 			<div>
 				<h3>{ translate( 'Own your online identity with a custom domain' ) }</h3>
 				<p>
@@ -53,12 +75,12 @@ export default function DomainUpsell() {
 				</div>
 
 				<div className="domain-upsell-actions">
-					<a className="button" href={ '/domains/add/' + siteSlug }>
+					<Button href={ searchLink } onClick={ getSearchClickHandler }>
 						{ translate( 'Search a domain' ) }
-					</a>
-					<a className="button is-primary" href={ '/plans/' + siteSlug }>
+					</Button>
+					<Button primary href={ purchaseLink } onClick={ getCtaClickHandler }>
 						{ translate( 'Get your custom domain' ) }
-					</a>
+					</Button>
 				</div>
 			</div>
 		</Card>

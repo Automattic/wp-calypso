@@ -5,6 +5,7 @@ import {
 	WPCOM_FEATURES_NO_WPCOM_BRANDING,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+	PLAN_ECOMMERCE_MONTHLY,
 } from '@automattic/calypso-products';
 import { WPCOM_FEATURES_SUBSCRIPTION_GIFTING } from '@automattic/calypso-products/src';
 import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
@@ -44,6 +45,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import { launchSite } from 'calypso/state/sites/launch/actions';
+import { isSiteOnECommerceTrial as getIsSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteOption,
 	isJetpackSite,
@@ -575,6 +577,8 @@ export class SiteSettingsFormGeneral extends Component {
 			fields,
 			hasSitePreviewLink,
 			site,
+			isSiteOnECommerceTrial,
+			recordTracksEvent,
 		} = this.props;
 
 		const launchSiteClasses = classNames( 'site-settings__general-settings-launch-site-button', {
@@ -583,12 +587,18 @@ export class SiteSettingsFormGeneral extends Component {
 		const btnText = translate( 'Launch site' );
 		let querySiteDomainsComponent;
 		let btnComponent;
+		let eCommerceTrialUpsell;
+		const isLaunchable = ! isSiteOnECommerceTrial;
 
 		if ( 0 === siteDomains.length ) {
 			querySiteDomainsComponent = <QuerySiteDomains siteId={ siteId } />;
 			btnComponent = <Button>{ btnText }</Button>;
 		} else if ( isPaidPlan && siteDomains.length > 1 ) {
-			btnComponent = <Button onClick={ this.props.launchSite }>{ btnText }</Button>;
+			btnComponent = (
+				<Button onClick={ this.props.launchSite } disabled={ ! isLaunchable }>
+					{ btnText }
+				</Button>
+			);
 			querySiteDomainsComponent = '';
 		} else {
 			btnComponent = (
@@ -609,10 +619,38 @@ export class SiteSettingsFormGeneral extends Component {
 
 		const LaunchCard = showPreviewLink ? CompactCard : Card;
 
+		if ( isSiteOnECommerceTrial ) {
+			const recordTracksEventForClick = () =>
+				recordTracksEvent( 'calypso_ecommerce_trial_launch_banner_click' );
+			const eCommerceTrialUpsellText = translate(
+				'Before you can share your store with the world, you need to {{a}}pick a plan{{/a}}.',
+				{
+					components: {
+						a: (
+							<a
+								href={ `/plans/${ siteSlug }?plan=${ PLAN_ECOMMERCE_MONTHLY }` }
+								onClick={ recordTracksEventForClick }
+							/>
+						),
+					},
+				}
+			);
+			eCommerceTrialUpsell = (
+				<Notice
+					className="site-settings__ecommerce-trial-notice"
+					icon="info"
+					showDismiss={ false }
+					text={ eCommerceTrialUpsellText }
+					isCompact={ false }
+				/>
+			);
+		}
+
 		return (
 			<>
 				<SettingsSectionHeader title={ translate( 'Launch site' ) } />
 				<LaunchCard>
+					{ eCommerceTrialUpsell }
 					<div className="site-settings__general-settings-launch-site">
 						<div className="site-settings__general-settings-launch-site-text">
 							<p>
@@ -869,6 +907,7 @@ const connectComponent = connect( ( state ) => {
 		siteSlug: getSelectedSiteSlug( state ),
 		hasSubscriptionGifting: siteHasFeature( state, siteId, WPCOM_FEATURES_SUBSCRIPTION_GIFTING ),
 		hasSitePreviewLink: siteHasFeature( state, siteId, WPCOM_FEATURES_SITE_PREVIEW_LINKS ),
+		isSiteOnECommerceTrial: getIsSiteOnECommerceTrial( state, siteId ),
 	};
 }, mapDispatchToProps );
 
