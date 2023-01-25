@@ -63,7 +63,7 @@
 			flex-direction: column;
 			justify-content: space-between;
 			flex-wrap: wrap;
-			height: 142px;
+			height: 134px;
 			min-width: 280px;
 
 			@media ( max-width: 740px ) {
@@ -76,7 +76,7 @@
 			}
 
 			h3 {
-				line-height: 24px;
+				line-height: 16px;
 				font-weight: 500;
 				font-size: $font-body;
 				color: var(--studio-gray-100);
