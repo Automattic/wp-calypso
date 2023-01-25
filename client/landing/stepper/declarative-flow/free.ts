@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, FREE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -8,7 +7,6 @@ import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import {
-	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
@@ -18,11 +16,15 @@ import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import DesignSetup from './internals/steps-repository/design-setup';
 import FreeSetup from './internals/steps-repository/free-setup';
-import Intro from './internals/steps-repository/intro';
 import LaunchPad from './internals/steps-repository/launchpad';
 import Processing from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
-import type { Flow, ProvidedDependencies } from './internals/types';
+import {
+	AssertConditionResult,
+	AssertConditionState,
+	Flow,
+	ProvidedDependencies,
+} from './internals/types';
 
 const free: Flow = {
 	name: FREE_FLOW,
@@ -33,16 +35,12 @@ const free: Flow = {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
 		useEffect( () => {
-			if ( ! isEnabled( 'signup/free-flow' ) ) {
-				return window.location.assign( '/start/free' );
-			}
 			resetOnboardStore();
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 			recordFullStoryEvent( 'calypso_signup_start_free', { flow: this.name } );
 		}, [] );
 
 		return [
-			{ slug: 'intro', component: Intro },
 			{ slug: 'freeSetup', component: FreeSetup },
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'processing', component: Processing },
@@ -57,8 +55,6 @@ const free: Flow = {
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 		setStepProgress( flowProgress );
 		const siteSlug = useSiteSlug();
-		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
-		const locale = useLocale();
 		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 
 		// trigger guides on step movement, we don't care about failures or response
@@ -74,21 +70,9 @@ const free: Flow = {
 		);
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
-			const logInUrl =
-				locale && locale !== 'en'
-					? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=/setup/${ flowName }/patterns`
-					: `/start/account/user?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=/setup/${ flowName }/patterns`;
-
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
 
 			switch ( _currentStep ) {
-				case 'intro':
-					clearSignupDestinationCookie();
-					if ( userIsLoggedIn ) {
-						return navigate( 'freeSetup' );
-					}
-					return window.location.assign( logInUrl );
-
 				case 'freeSetup':
 					return navigate( 'siteCreationStep' );
 
@@ -141,7 +125,7 @@ const free: Flow = {
 					return window.location.assign( `/view/${ siteSlug }` );
 
 				default:
-					return navigate( 'intro' );
+					return navigate( 'freeSetup' );
 			}
 		};
 
@@ -150,6 +134,54 @@ const free: Flow = {
 		};
 
 		return { goNext, goBack, goToStep, submit };
+	},
+
+	useAssertConditions(): AssertConditionResult {
+		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
+
+		const queryParams = new URLSearchParams( window.location.search );
+		const flowName = this.name;
+		const locale = useLocale();
+		const flags = queryParams.get( 'flags' );
+		const siteSlug = queryParams.get( 'siteSlug' );
+
+		const getStartUrl = () => {
+			let hasFlowParams = false;
+			const flowParams = new URLSearchParams();
+
+			if ( siteSlug ) {
+				flowParams.set( 'siteSlug', siteSlug );
+				hasFlowParams = true;
+			}
+
+			if ( locale && locale !== 'en' ) {
+				flowParams.set( 'locale', locale );
+				hasFlowParams = true;
+			}
+
+			const redirectTarget =
+				window?.location?.pathname +
+				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
+
+			const url =
+				locale && locale !== 'en'
+					? `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=${ redirectTarget }`
+					: `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
+
+			return url + ( flags ? `&flags=${ flags }` : '' );
+		};
+
+		if ( ! userIsLoggedIn ) {
+			const logInUrl = getStartUrl();
+			window.location.assign( logInUrl );
+			result = {
+				state: AssertConditionState.FAILURE,
+				message: 'free-flow requires a logged in user',
+			};
+		}
+
+		return result;
 	},
 };
 

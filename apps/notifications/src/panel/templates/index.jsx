@@ -32,7 +32,7 @@ const KEY_N = 78;
 const KEY_U = 85;
 
 /**
- * @typedef {object} Notification
+ * @typedef {Object} Notification
  * @property {!number} id notification id
  */
 
@@ -437,6 +437,11 @@ class Layout extends Component {
 		const filteredNotes = this.filterController.getFilteredNotes( this.props.notes );
 
 		return (
+			// Note: this onClick is used to intercept events from children elements.
+			// As a result, it's not really meant to be treated as a clickable
+			// element itself. There may be better ways to handle this, but
+			// let's disable eslint here for now to avoid refactoring older code.
+			// eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
 			<div onClick={ interceptLinks }>
 				{ this.props.error && <AppError error={ this.props.error } /> }
 
@@ -510,6 +515,11 @@ class Layout extends Component {
 }
 
 const mapStateToProps = ( state ) => ( {
+	/**
+	 * @todo Fixing this rule requires a larger refactor that isn't worth the time right now.
+	 * @see https://github.com/Automattic/wp-calypso/issues/14024
+	 */
+	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 	isNoteHidden: ( noteId ) => getIsNoteHidden( state, noteId ),
 	isPanelOpen: getIsPanelOpen( state ),
 	notes: getAllNotes( state ),

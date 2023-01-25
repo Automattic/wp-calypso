@@ -20,7 +20,7 @@ import { sanitizeSectionContent } from './sanitize-section-content';
 
 /**
  * @param  {number} siteId     Site Object
- * @param  {object} log        Notice log Object
+ * @param  {Object} log        Notice log Object
  * @returns {boolean} True if notice matches criteria
  */
 function isSameSiteNotice( siteId, log ) {
@@ -29,7 +29,7 @@ function isSameSiteNotice( siteId, log ) {
 
 /**
  * @param  {string} pluginId Plugin ID
- * @param  {object} log      Notice log Object
+ * @param  {Object} log      Notice log Object
  * @returns {boolean} True if notice matches criteria
  */
 function isSamePluginNotice( pluginId, log ) {
@@ -62,7 +62,7 @@ export function isSamePluginIdSlug( idOrSlug, slugOrId ) {
  *
  * @param  {number} siteId   Site Object
  * @param  {string} pluginId Plugin Id
- * @param  {object} log      Notice log Object
+ * @param  {Object} log      Notice log Object
  * @returns {boolean} True if notice matches criteria
  */
 function filterNoticesBy( siteId, pluginId, log ) {
@@ -390,12 +390,12 @@ export const getManageConnectionHref = ( siteSlug ) => {
  * Some plugins can be preinstalled on WPCOM and available as standalone on WPORG,
  * but require a paid upgrade to function.
  *
- * @typedef {object} PluginVariations
- * @property {object} monthly The plugin's monthly variation
+ * @typedef {Object} PluginVariations
+ * @property {Object} monthly The plugin's monthly variation
  * @property {string} monthly.product_slug The plugin's monthly variation's product slug
- * @property {object} yearly The plugin's yearly variation
+ * @property {Object} yearly The plugin's yearly variation
  * @property {string} yearly.product_slug The plugin's yearly variation's product slug
- * @param {object} plugin
+ * @param {Object} plugin
  * @returns {PluginVariations}
  */
 export function getPreinstalledPremiumPluginsVariations( plugin ) {
@@ -413,7 +413,7 @@ export function getPreinstalledPremiumPluginsVariations( plugin ) {
  * Returns the product slug of periodVariation passed filtering the productsList passed only if required
  *
  * @param {string} periodVariation The variation object with the shape { product_slug: string; product_id: number; }
- * @param {Record<string, object>} productsList The list of products
+ * @param {Record<string, Object>} productsList The list of products
  * @returns The product slug if it exists in the periodVariation, if it does not exist in periodVariation
  * it will find the product slug in the productsList filtering by the variation.product_id.
  * It additionally returns:
@@ -441,7 +441,7 @@ export function getProductSlugByPeriodVariation( periodVariation, productsList )
 }
 
 /**
- * @param  {object} plugin The plugin object
+ * @param  {Object} plugin The plugin object
  * @param  {boolean} isMarketplaceProduct Is this part of WP.com Marketplace or WP.org
  * @returns {string} The software slug string
  */
@@ -449,10 +449,10 @@ export const getSoftwareSlug = ( plugin, isMarketplaceProduct ) =>
 	isMarketplaceProduct ? plugin.software_slug || plugin.org_slug : plugin.slug;
 
 /**
- * @param  {object} plugin The plugin object
+ * @param  {Object} plugin The plugin object
  * @param  {Array} purchases An array of site purchases
  * @param  {boolean} isMarketplaceProduct Is this part of WP.com Marketplace or WP.org
- * @returns {object} The purchase object, if found.
+ * @returns {Object} The purchase object, if found.
  */
 export const getPluginPurchased = ( plugin, purchases, isMarketplaceProduct ) => {
 	return (

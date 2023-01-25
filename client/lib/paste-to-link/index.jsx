@@ -8,8 +8,8 @@ import { resemblesUrl } from 'calypso/lib/url';
  * in an <a> element with the href set to the URL in the clipboard.
  *
  * @example withPasteToLink( Component )
- * @param {object} WrappedComponent - React component to wrap
- * @returns {object} Enhanced component
+ * @param {Object} WrappedComponent - React component to wrap
+ * @returns {Object} Enhanced component
  */
 export default ( WrappedComponent ) => {
 	class WithPasteToLink extends Component {

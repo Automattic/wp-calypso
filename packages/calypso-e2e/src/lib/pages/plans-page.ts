@@ -152,7 +152,7 @@ export class PlansPage {
 	/**
 	 * Click a plan action button (on the plan cards on the "Plans" tab) based on expected plan name and button text.
 	 *
-	 * @param {object} param0 Object containing plan name and button text
+	 * @param {Object} param0 Object containing plan name and button text
 	 * @param {Plans} param0.plan Name of the plan (e.g. "Premium")
 	 * @param {PlanActionButton} param0.buttonText Expected action button text (e.g. "Upgrade")
 	 */

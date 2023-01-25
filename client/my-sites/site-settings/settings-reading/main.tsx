@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import { getSiteUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { NewsletterSettingsSection } from '../reading-newsletter-settings';
@@ -15,6 +16,8 @@ const isEnabled = config.isEnabled( 'settings/modernize-reading-settings' );
 
 type Fields = {
 	jetpack_relatedposts_enabled?: boolean;
+	jetpack_relatedposts_show_context?: boolean;
+	jetpack_relatedposts_show_date?: boolean;
 	jetpack_relatedposts_show_headline?: boolean;
 	jetpack_relatedposts_show_thumbnails?: boolean;
 	page_for_posts?: string;
@@ -38,6 +41,8 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 
 	const {
 		jetpack_relatedposts_enabled,
+		jetpack_relatedposts_show_context,
+		jetpack_relatedposts_show_date,
 		jetpack_relatedposts_show_headline,
 		jetpack_relatedposts_show_thumbnails,
 		page_for_posts,
@@ -53,6 +58,8 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 
 	return {
 		...( jetpack_relatedposts_enabled && { jetpack_relatedposts_enabled } ),
+		...( jetpack_relatedposts_show_context && { jetpack_relatedposts_show_context } ),
+		...( jetpack_relatedposts_show_date && { jetpack_relatedposts_show_date } ),
 		...( jetpack_relatedposts_show_headline && { jetpack_relatedposts_show_headline } ),
 		...( jetpack_relatedposts_show_thumbnails && { jetpack_relatedposts_show_thumbnails } ),
 		...( page_for_posts && { page_for_posts } ),
@@ -143,6 +150,7 @@ const ReadingSettings = () => {
 
 	return (
 		<Main className="site-settings site-settings__reading-settings">
+			<ScreenOptionsTab wpAdminPath="options-reading.php" />
 			<DocumentHead title={ translate( 'Reading Settings' ) } />
 			<FormattedHeader brandFont headerText={ translate( 'Reading Settings' ) } align="left" />
 			<ReadingSettingsForm />

@@ -3,7 +3,7 @@ import getSitePlan from './get-site-plan';
 /**
  * Returns true if the current site plan is a paid one
  *
- * @param  {object}   state         Global state tree
+ * @param  {Object}   state         Global state tree
  * @param  {number}   siteId        Site ID
  * @returns {?boolean}               Whether the current plan is paid
  */

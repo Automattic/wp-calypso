@@ -24,7 +24,7 @@ function formatDate( date ) {
 /**
  * Utility function extracting searchable strings from a single transaction
  *
- * @param {object}  transaction transaction object
+ * @param {Object}  transaction transaction object
  * @returns {Array}             list of searchable strings
  */
 function getSearchableStrings( transaction ) {
@@ -56,10 +56,10 @@ function search( transactions, searchQuery ) {
 /**
  * Returns the billing transactions filtered by the filters defined in state.billingTransactions.transactionFilters tree
  *
- * @param   {object}  state           Global state tree
+ * @param   {Object}  state           Global state tree
  * @param   {string}  transactionType Transaction type
  * @param   {string}  [siteId]        An optional siteId on which to filter results (in addition to the other filters)
- * @returns {object}                  Filtered results in format {transactions, total, pageSize}
+ * @returns {Object}                  Filtered results in format {transactions, total, pageSize}
  */
 export default createSelector(
 	( state, transactionType, siteId = null ) => {

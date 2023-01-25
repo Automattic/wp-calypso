@@ -11,6 +11,7 @@ import type {
 	WpcomStoreState,
 	ManagedContactDetails,
 	ManagedContactDetailsErrors,
+	VatDetails,
 } from '@automattic/wpcom-checkout';
 
 type WpcomStoreAction =
@@ -32,7 +33,8 @@ type WpcomStoreAction =
 	| {
 			type: 'LOAD_DOMAIN_CONTACT_DETAILS_FROM_CACHE';
 			payload: PossiblyCompleteDomainContactDetails;
-	  };
+	  }
+	| { type: 'SET_VAT_DETAILS'; payload: VatDetails };
 
 export function useWpcomStore(): void {
 	// Only register once
@@ -86,6 +88,15 @@ export function useWpcomStore(): void {
 		}
 	}
 
+	function vatDetailsReducer( state: VatDetails, action: WpcomStoreAction ): VatDetails {
+		switch ( action.type ) {
+			case 'SET_VAT_DETAILS':
+				return action.payload;
+			default:
+				return state;
+		}
+	}
+
 	registerStore( 'wpcom-checkout', {
 		reducer( state: WpcomStoreState | undefined, action: WpcomStoreAction ): WpcomStoreState {
 			const checkedState =
@@ -93,6 +104,7 @@ export function useWpcomStore(): void {
 			return {
 				contactDetails: contactReducer( checkedState.contactDetails, action ),
 				recaptchaClientId: recaptchaClientIdReducer( checkedState.recaptchaClientId, action ),
+				vatDetails: vatDetailsReducer( checkedState.vatDetails, action ),
 			};
 		},
 
@@ -152,6 +164,10 @@ export function useWpcomStore(): void {
 			): WpcomStoreAction {
 				return { type: 'LOAD_DOMAIN_CONTACT_DETAILS_FROM_CACHE', payload };
 			},
+
+			setVatDetails( payload: VatDetails ): WpcomStoreAction {
+				return { type: 'SET_VAT_DETAILS', payload };
+			},
 		},
 
 		selectors: {
@@ -161,6 +177,10 @@ export function useWpcomStore(): void {
 
 			getRecaptchaClientId( state: WpcomStoreState ): number {
 				return state.recaptchaClientId;
+			},
+
+			getVatDetails( state: WpcomStoreState ): VatDetails | undefined {
+				return state.vatDetails;
 			},
 		},
 	} );

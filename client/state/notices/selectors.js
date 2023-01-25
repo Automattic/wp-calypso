@@ -7,7 +7,7 @@ const EMPTY_ARRAY = [];
 /**
  * Returns array value of notice item state
  *
- * @param  {object} state Global state tree
+ * @param  {Object} state Global state tree
  * @returns {Array}        Notice objects as array
  */
 export const getNotices = createSelector(

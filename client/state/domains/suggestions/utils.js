@@ -3,7 +3,7 @@
  * `state.domains.suggestions` state object.
  *
  *
- * @param {object} queryObject   DomainsSuggestions query
+ * @param {Object} queryObject   DomainsSuggestions query
  * @returns {?string}              Serialized DomainsSuggestions query
  */
 

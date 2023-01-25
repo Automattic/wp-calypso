@@ -5,7 +5,7 @@ import 'calypso/state/i18n/init';
 /**
  * Returns an object of localized language names
  *
- * @param  {object}  state Global state tree
+ * @param  {Object}  state Global state tree
  * @returns {Array|null} an array of guessed locales for the user
  */
 export default function getLocaleSuggestions( state ) {

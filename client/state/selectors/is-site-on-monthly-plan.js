@@ -5,7 +5,7 @@ import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
  * Returns true if site is on a monthly plan, false if the site is not
  * or if the site or plan is unknown.
  *
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @param {number} siteId Site ID
  * @returns {boolean} Whether site is on a monthly plan
  */

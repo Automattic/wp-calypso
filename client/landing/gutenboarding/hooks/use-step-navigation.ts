@@ -11,7 +11,7 @@ import useSteps from './use-steps';
 /**
  * A React hook that returns callback to navigate to previous and next steps in Gutenboarding flow
  *
- * @typedef { object } Navigation
+ * @typedef {Object} Navigation
  * @property { string } goBack of the previous step
  * @property { string } goNext of the next step
  * @returns { Navigation } An object with callbacks to navigate to previous and next steps

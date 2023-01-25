@@ -13,8 +13,8 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
  * Make a Threat object response contain only camel-case keys and transform
  * dates represented as string to Date object.
  *
- * @param {object} threat Raw threat object from Scan endpoint
- * @returns {object} Processed threat object
+ * @param {Object} threat Raw threat object from Scan endpoint
+ * @returns {Object} Processed threat object
  */
 export const formatScanThreat = ( threat ) => ( {
 	id: threat.id,
@@ -40,12 +40,12 @@ export const formatScanThreat = ( threat ) => ( {
  * Make a Scan object response contain only camel-case keys and transform
  * dates represented as string to Date object.
  *
- * @param {object} scanState Raw Scan state object from Scan endpoint
+ * @param {Object} scanState Raw Scan state object from Scan endpoint
  * @param {string} scanState.state State of the scan. E.g. "idle"
- * @param {object[]} scanState.threats Array of active threats
- * @param {object} scanState.most_recent Info about the most recent scan
- * @param {object} scanState.current Info about the current scan
- * @returns {object} Processed Scan state
+ * @param {Object[]} scanState.threats Array of active threats
+ * @param {Object} scanState.most_recent Info about the most recent scan
+ * @param {Object} scanState.current Info about the current scan
+ * @returns {Object} Processed Scan state
  */
 const formatScanStateRawResponse = ( {
 	state,
