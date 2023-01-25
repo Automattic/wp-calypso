@@ -79,7 +79,7 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 		}
 
 		setPendingAction( async () => {
-			setProgress( 0 );
+			setProgress( 0.4 );
 
 			const startTime = new Date().getTime();
 			const totalTimeout = 1000 * 300;
@@ -98,16 +98,16 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 
 				switch ( transferStatus ) {
 					case transferStates.PENDING:
-						setProgress( 0.2 );
-						break;
-					case transferStates.ACTIVE:
-						setProgress( 0.4 );
-						break;
-					case transferStates.PROVISIONED:
 						setProgress( 0.5 );
 						break;
-					case transferStates.COMPLETED:
+					case transferStates.ACTIVE:
+						setProgress( 0.6 );
+						break;
+					case transferStates.PROVISIONED:
 						setProgress( 0.7 );
+						break;
+					case transferStates.COMPLETED:
+						setProgress( 0.8 );
 						break;
 				}
 

@@ -3,6 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import { useRef, useState, useEffect } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import { LoadingBar } from 'calypso/components/loading-bar';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 import './style.scss';
 
@@ -80,13 +81,9 @@ export default function TailoredFlowPreCheckoutScreen( { flowName }: { flowName:
 		<div className="processing-step__container">
 			<div className="processing-step">
 				<h1 className="processing-step__progress-step">{ steps.current[ currentStep ]?.title }</h1>
-				<div
+				<LoadingBar
 					className="processing-step__progress-bar"
-					style={
-						{
-							'--progress': ! hasStarted ? /* initial 10% progress */ 0.1 : progress,
-						} as React.CSSProperties
-					}
+					progress={ ! hasStarted ? /* initial 10% progress */ 0.1 : progress }
 				/>
 			</div>
 
