@@ -76,7 +76,7 @@ export default function DomainUpsell() {
 
 				<div className="domain-upsell-actions">
 					<Button href={ searchLink } onClick={ getSearchClickHandler }>
-						{ translate( 'Search a domain' ) }
+						{ translate( 'Search for a domain' ) }
 					</Button>
 					<Button primary href={ purchaseLink } onClick={ getCtaClickHandler }>
 						{ translate( 'Get your custom domain' ) }
