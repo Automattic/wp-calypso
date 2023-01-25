@@ -1,0 +1,16 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.is-section-plans .formatted-header.navigation {
+	display: flex;
+	justify-content: space-between;
+	margin: 0;
+	margin-bottom: 20px;
+
+	@media ( max-width: $break-small ) {
+		margin: 0 16px;
+	}
+}
+
+.is-section-plans .formatted-header.header-text {
+	max-width: $break-small;
+}
