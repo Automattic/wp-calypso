@@ -11,7 +11,6 @@ export enum LicenseFilter {
 	Detached = 'detached',
 	Attached = 'attached',
 	Revoked = 'revoked',
-	All = 'all',
 }
 
 export enum LicenseSortField {

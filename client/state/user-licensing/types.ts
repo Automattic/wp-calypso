@@ -6,7 +6,6 @@ export interface LicenseCounts {
 	detached: number;
 	revoked: number;
 	not_revoked: number;
-	all: number;
 }
 
 export interface PaginatedItems< T > {

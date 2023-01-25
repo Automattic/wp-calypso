@@ -47,7 +47,7 @@ export default function Licenses( {
 	const isAgencyUser = useSelector( showAgencyDashboard );
 	const counts = useSelector( getLicenseCounts );
 	const hasFetched = useSelector( hasFetchedLicenseCounts );
-	const allLicensesCount = counts[ LicenseFilter.All ];
+	const allLicensesCount = counts[ 'all' ];
 
 	const context = {
 		filter,
