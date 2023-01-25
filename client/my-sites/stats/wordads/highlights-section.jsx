@@ -56,15 +56,15 @@ function getHighlights( earnings ) {
 }
 
 function payoutNotices( earnings ) {
-	const owed =
-		earnings && earnings.total_amount_owed ? numberFormat( earnings.total_amount_owed, 2 ) : '0.00';
+	const amountOwed = earnings?.total_amount_owed || 0;
+	const amountOwedFormatted = getAmountAsFormattedString( amountOwed );
 	const notice = {
 		id: 'notice',
 		value: translate(
-			'Outstanding amount of $%(amountOwed)s does not exceed the minimum $100 needed to make the payment.',
+			'Outstanding amount of %(amountOwed)s does not exceed the minimum $100 needed to make the payment.',
 			{
 				comment: 'WordAds: Insufficient balance for payout.',
-				args: { amountOwed: owed },
+				args: { amountOwed: amountOwedFormatted },
 			}
 		),
 	};
@@ -80,14 +80,14 @@ function payoutNotices( earnings ) {
 	const payout = {
 		id: 'payout',
 		value: translate(
-			'Outstanding amount of $%(amountOwed)s will be paid approximately 45 days following the end of the month in which it was earned.',
+			'Outstanding amount of %(amountOwed)s will be paid approximately 45 days following the end of the month in which it was earned.',
 			{
 				comment: 'WordAds: Payout will proceed.',
-				args: { amountOwed: owed },
+				args: { amountOwed: amountOwedFormatted },
 			}
 		),
 	};
-	return owed < 100 ? [ notice, limit ] : [ payout ];
+	return amountOwed < 100 ? [ notice, limit ] : [ payout ];
 }
 
 function HighlightsSectionHeader( props ) {
