@@ -1,5 +1,4 @@
-import config from '@automattic/calypso-config';
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -8,7 +7,7 @@ import './header.scss';
 export default function PlansHeader() {
 	const translate = useTranslate();
 	// TODO: We need to determine if this is a domain upsell and show the domain here.
-	const domainName = 'exampledomain.com';
+	const domainName = 'somedomainverylong.com.br';
 
 	const plansDescription = translate(
 		'See and compare the features available on each WordPress.com plan.'
@@ -27,17 +26,58 @@ export default function PlansHeader() {
 	);
 
 	// TODO: We need to determine if this is a domain upsell.
-	const isDomainUpsell = config.isEnabled( 'is_domain_upsell' );
+	const isDomainUpsell = true;
 
 	const onBackClick = () => {
 		recordTracksEvent( 'calypso_upgrade_nudge_back_click' );
 		history.back();
 	};
 
+	const onCloseDialog = () => {};
+
+	function renderDeleteDialog() {
+		const buttons = [
+			{ action: 'cancel', label: translate( 'That works for me' ) },
+			{ action: 'delete', label: translate( 'I want my domain as primary' ), isPrimary: true },
+		];
+
+		return (
+			<Dialog
+				additionalClassNames="domain-upsell"
+				isVisible={ true }
+				buttons={ buttons }
+				onClose={ onCloseDialog }
+				shouldCloseOnEsc={ true }
+			>
+				<header className="domain-upsell__modal-header">
+					<button onClick={ onCloseDialog }>
+						<Gridicon icon="cross" />
+					</button>
+				</header>
+
+				<h1>{ translate( 'You need a plan to have a primary custom domain' ) }</h1>
+				<p>
+					{ translate(
+						'Any domain you purchase without a plan will get redirected to %(domainName)s.',
+						{
+							args: {
+								domainName: domainName,
+							},
+						}
+					) }
+				</p>
+				<p>
+					{ translate(
+						'If you upgrade to a plan, you can use your custom domain name instead of having WordPress.com in your URL.'
+					) }
+				</p>
+			</Dialog>
+		);
+	}
+
 	const onSkipClick = () => {
 		recordTracksEvent( 'calypso_upgrade_nudge_skip_click' );
 		// TODO: Connect this to the skip modal.
-		alert( 'Skip Clicked' );
 	};
 
 	if ( false === isDomainUpsell ) {
@@ -66,6 +106,8 @@ export default function PlansHeader() {
 					</Button>
 				) }
 			</header>
+
+			{ renderDeleteDialog() }
 
 			<FormattedHeader
 				className="header-text"
