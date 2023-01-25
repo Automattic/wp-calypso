@@ -5,7 +5,6 @@ import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import wpcom from 'calypso/lib/wp';
-import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import LaunchPad from './internals/steps-repository/launchpad';
@@ -38,7 +37,6 @@ const write: Flow = {
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 		setStepProgress( flowProgress );
-		const siteSlug = useSiteSlug();
 
 		// trigger guides on step movement, we don't care about failures or response
 		wpcom.req.post(
@@ -68,25 +66,7 @@ const write: Flow = {
 			}
 		};
 
-		const goBack = () => {
-			return;
-		};
-
-		const goNext = () => {
-			switch ( _currentStep ) {
-				case 'launchpad':
-					return window.location.assign( `/view/${ siteSlug }` );
-
-				default:
-					return navigate( 'freeSetup' );
-			}
-		};
-
-		const goToStep = ( step: string ) => {
-			navigate( step );
-		};
-
-		return { goNext, goBack, goToStep, submit };
+		return { submit };
 	},
 
 	useAssertConditions(): AssertConditionResult {
