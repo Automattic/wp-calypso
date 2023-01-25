@@ -619,17 +619,6 @@ export class EditorPage {
 		const publishButtonText = await this.editorToolbarComponent.getPublishButtonText();
 		const actionsArray = [];
 
-		// Playwright does not have a way to differentiate
-		// between GET and POST requests. However, a new post
-		// has a post number following the article type.
-		// By matching on the regex we can filter out
-		// GET requests to the endpoint, focusing only on POST requests.
-		if ( this.target === 'atomic' ) {
-			actionsArray.push( this.page.waitForResponse( /v2\/(posts|pages)\/[\d]+/ ) );
-		} else {
-			actionsArray.push( this.page.waitForResponse( /sites\/[\d]+\/(posts|pages)\/[\d]+.*/ ) );
-		}
-
 		// Every publish action requires at least one click on the EditorToolbarComponent.
 		actionsArray.push( this.editorToolbarComponent.clickPublish() );
 
@@ -642,11 +631,14 @@ export class EditorPage {
 		}
 
 		// Resolve the promises.
-		const [ response ] = await Promise.all( actionsArray );
-
-		if ( ! response ) {
-			throw new Error( 'No response received from `publish` method.' );
-		}
+		const [ response ] = await Promise.all( [
+			// First URL matches Atomic requests while the second matches Simple requests.
+			Promise.race( [
+				this.page.waitForResponse( /v2\/(posts|pages)\/[\d]+/ ),
+				this.page.waitForResponse( /.*v2\/sites\/[\d]+\/(posts|pages)\/[\d]+.*/ ),
+			] ),
+			actionsArray,
+		] );
 
 		const json = await response.json();
 
