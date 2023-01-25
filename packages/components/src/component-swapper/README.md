@@ -4,27 +4,27 @@
 
 ## Properties
 
-#### `className { string }`
+### `className { string }`
 
 CSS class to be applied to a root div.
 
-#### `breakpint { string } - default: '<660px'`
+### `breakpint { string } - default: '<660px'`
 
 A breakpoint that trigger component replacement. Only breakopints from  `mediaQueryLists` from '@automattic/viewport' are accepted.
 
-#### `onSwap { function }`
+### `onSwap { function }`
 
 A function that can be triggered when components are swapped. It uses `useEffect` hook so it's also triggered when the componnet loads.
 
-#### `breakpointActiveComponent { React component }`
+### `breakpointActiveComponent { React component }`
 
 React component rendered when the breakpoint condition is active.
 
-#### `breakpointInactiveComponent { React component }`
+### `breakpointInactiveComponent { React component }`
 
 React component rendered when the breakpoint condition is inactive.
 
-#### `children`
+### `children`
 
 The component acceprt children nodes and renders them after `breakpointActiveComponent|breakpointInactiveComponent`.
 
