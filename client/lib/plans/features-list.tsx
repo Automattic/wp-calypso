@@ -230,6 +230,7 @@ import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
 export type FeatureObject = {
 	getSlug: () => string;
 	getTitle: ( domainName?: string ) => TranslateResult;
+	getAlternativeTitle?: () => TranslateResult;
 	getHeader?: () => TranslateResult;
 	getDescription?: ( domainName?: string ) => TranslateResult;
 	getStoreSlug?: () => string;
@@ -561,6 +562,7 @@ export const FEATURES_LIST: FeatureList = {
 				context: 'title',
 			} );
 		},
+		getAlternativeTitle: () => i18n.translate( 'Free custom domain' ),
 		getDescription: ( domainName?: string ) => {
 			if ( domainName ) {
 				return i18n.translate( 'Your domain (%s) is included with this plan.', {
@@ -1646,10 +1648,12 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PAGES ]: {
 		getSlug: () => FEATURE_PAGES,
 		getTitle: () => i18n.translate( 'Unlimited pages' ),
+		getCompareTitle: () => i18n.translate( 'Add as many pages as you like.' ),
 	},
 	[ FEATURE_USERS ]: {
 		getSlug: () => FEATURE_USERS,
 		getTitle: () => i18n.translate( 'Unlimited users' ),
+		getCompareTitle: () => i18n.translate( 'Invite others to contribute to your site.' ),
 	},
 	[ FEATURE_NEWSLETTERS_RSS ]: {
 		getSlug: () => FEATURE_NEWSLETTERS_RSS,
@@ -1678,10 +1682,14 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_STYLE_CUSTOMIZATION ]: {
 		getSlug: () => FEATURE_STYLE_CUSTOMIZATION,
 		getTitle: () => i18n.translate( 'Style customization' ),
+		getCompareTitle: () =>
+			i18n.translate( 'Take control of every font, color and detail of your site' ),
 	},
 	[ FEATURE_SUPPORT_EMAIL ]: {
 		getSlug: () => FEATURE_SUPPORT_EMAIL,
 		getTitle: () => i18n.translate( 'Support via email' ),
+		getAlternativeTitle: () => i18n.translate( 'Customer support' ),
+		getCompareTitle: () => i18n.translate( 'Unlimited support via emails.' ),
 	},
 	[ FEATURE_DESIGN_TOOLS ]: {
 		getSlug: () => FEATURE_DESIGN_TOOLS,
@@ -1690,6 +1698,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PREMIUM_THEMES_V2 ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES_V2,
 		getTitle: () => i18n.translate( 'Premium themes' ),
+		getCompareTitle: () => i18n.translate( 'A collection of premium design templates' ),
 	},
 	[ FEATURE_WORDADS ]: {
 		getSlug: () => FEATURE_WORDADS,
@@ -1706,6 +1715,8 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_BURST ]: {
 		getSlug: () => FEATURE_BURST,
 		getTitle: () => i18n.translate( 'High-burst capacity' ),
+		getCompareTitle: () =>
+			i18n.translate( 'Lean on integrated resource management and instant scaling.' ),
 	},
 	[ FEATURE_WAF_V2 ]: {
 		getSlug: () => FEATURE_WAF_V2,
@@ -1714,6 +1725,9 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_CDN ]: {
 		getSlug: () => FEATURE_CDN,
 		getTitle: () => i18n.translate( 'Global CDN with 28+ locations' ),
+		getAlternativeTitle: () => i18n.translate( 'Global CDN' ),
+		getCompareTitle: () =>
+			i18n.translate( 'Rely on ultra-fast site speeds, from any location on earth.' ),
 	},
 	[ FEATURE_CPUS ]: {
 		getSlug: () => FEATURE_CPUS,
