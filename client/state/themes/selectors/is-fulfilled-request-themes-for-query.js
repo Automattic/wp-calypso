@@ -6,9 +6,9 @@ import 'calypso/state/themes/init';
  * Returns true if currently the themes query was already fullfiled, or false
  * otherwise.
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @param  {object}  query  Theme query object
+ * @param  {Object}  query  Theme query object
  * @returns {boolean}        Whether themes are being requested
  */
 export function isFulfilledThemesForQuery( state, siteId, query ) {

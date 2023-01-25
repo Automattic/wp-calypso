@@ -4,7 +4,7 @@ import getHappychatConnectionStatus from 'calypso/state/happychat/selectors/get-
 /**
  * Returns true if connection status is connected
  *
- * @param {object} state - global redux state
+ * @param {Object} state - global redux state
  * @returns {boolean} Whether Happychat connection status is connected
  */
 export default function ( state ) {

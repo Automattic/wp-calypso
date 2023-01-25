@@ -30,7 +30,7 @@ export default function ProfileLinks( wpcom ) {
  *      // profile links data
  *    } );
  *
- * @param {object} [query] - query object parameter
+ * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
@@ -57,8 +57,8 @@ ProfileLinks.prototype.mine = ProfileLinks.prototype.get;
  *      // profile has been added
  *    } );
  *
- * @param {Array|object} links - profile links
- * @param {object} [query] - query object parameter
+ * @param {Array | Object} links - profile links
+ * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
@@ -95,7 +95,7 @@ ProfileLinks.prototype.add = function ( links, query, fn ) {
  *    } );
  *
  * @param {string} slug - the URL of the profile link
- * @param {object} [query] - query object parameter
+ * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */

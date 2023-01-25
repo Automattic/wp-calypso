@@ -14,8 +14,8 @@ import { getSite } from 'calypso/state/reader/sites/selectors';
  *  1. feedId --> feedId, siteId, feed, site
  *  2. blogId --> feedId, siteId, feed, site
  *
- * @param {object} Component the component to wrap
- * @returns {object} wrapped component that hands down feed/site to its child
+ * @param {Object} Component the component to wrap
+ * @returns {Object} wrapped component that hands down feed/site to its child
  */
 const connectSite = ( Component ) => {
 	class connectSiteFetcher extends PureComponent {

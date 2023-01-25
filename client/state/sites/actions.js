@@ -45,8 +45,8 @@ export function receiveDeletedSite( siteId ) {
  * Returns an action object to be used in signalling that a site object has
  * been received.
  *
- * @param  {object} site Site received
- * @returns {object}      Action object
+ * @param  {Object} site Site received
+ * @returns {Object}      Action object
  */
 export function receiveSite( site ) {
 	return {
@@ -59,8 +59,8 @@ export function receiveSite( site ) {
  * Returns an action object to be used in signalling that site objects have
  * been received.
  *
- * @param  {object[]} sites Sites received
- * @returns {object}         Action object
+ * @param  {Object[]} sites Sites received
+ * @returns {Object}         Action object
  */
 export function receiveSites( sites ) {
 	return {
@@ -244,11 +244,11 @@ export const sitePluginUpdated = ( siteId ) => ( {
  * Returns an action object to be used to update the site front page options.
  *
  * @param  {number} siteId Site ID
- * @param  {object} frontPageOptions Object containing the three optional front page options.
+ * @param  {Object} frontPageOptions Object containing the three optional front page options.
  * @param  {string} [frontPageOptions.show_on_front] What to show in homepage. Can be 'page' or 'posts'.
  * @param  {number} [frontPageOptions.page_on_front] If `show_on_front = 'page'`, the front page ID.
  * @param  {number} [frontPageOptions.page_for_posts] If `show_on_front = 'page'`, the posts page ID.
- * @returns {object} Action object
+ * @returns {Object} Action object
  */
 export const updateSiteFrontPage = ( siteId, frontPageOptions ) => async ( dispatch ) => {
 	try {
@@ -287,7 +287,7 @@ function isPageOnFront( showOnFront ) {
  * @param  {number} siteId Site ID
  * @param  {string} migrationStatus The status of the migration.
  * @param {string} lastModified Optional timestamp from the migration DB record
- * @returns {object} Action object
+ * @returns {Object} Action object
  */
 export const updateSiteMigrationMeta = ( siteId, migrationStatus, lastModified = null ) => ( {
 	siteId,

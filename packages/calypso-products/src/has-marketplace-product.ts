@@ -1,7 +1,7 @@
 /**
  * Returns true if a list of products includes a product with a matching product or store product slug.
  *
- * @param {object} productsList - List of products
+ * @param {Object} productsList - List of products
  * @param {string} searchSlug - Either a product slug e.g. woocommerce-product-csv-import-suite or store product slug, e.g wc_product_csv_import_suite_yearly
  * @returns {boolean}
  */

@@ -40,6 +40,7 @@ import PlanPill from 'calypso/components/plans/plan-pill';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
+import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/plan-type-selector';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import {
@@ -99,6 +100,7 @@ type PlanFeatures2023GridConnectedProps = {
 	translate: LocalizeProps[ 'translate' ];
 	recordTracksEvent: ( slug: string ) => void;
 	planProperties: Array< PlanProperties >;
+	planTypeSelectorProps: PlanTypeSelectorProps;
 };
 
 type PlanFeatures2023GridType = PlanFeatures2023GridProps &
@@ -111,7 +113,15 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	}
 
 	render() {
-		const { isInSignup } = this.props;
+		const {
+			isInSignup,
+			planTypeSelectorProps,
+			planProperties,
+			intervalType,
+			isLaunchPage,
+			flowName,
+		} = this.props;
+
 		const planClasses = classNames( 'plan-features', {
 			'plan-features--signup': isInSignup,
 		} );
@@ -125,7 +135,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 					<div className="plan-features-2023-grid__content">
 						<div>
 							<div className="plan-features-2023-grid__desktop-view">
-								{ this.renderTable( this.props.planProperties ) }
+								{ this.renderTable( planProperties ) }
 							</div>
 							<div className="plan-features-2023-grid__tablet-view">
 								{ this.renderTabletView() }
@@ -137,8 +147,12 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 					</div>
 				</div>
 				<PlanComparisonGrid
-					planProperties={ this.props.planProperties }
-					intervalType={ this.props.intervalType }
+					planTypeSelectorProps={ planTypeSelectorProps }
+					planProperties={ planProperties }
+					intervalType={ intervalType }
+					isInSignup={ isInSignup }
+					isLaunchPage={ isLaunchPage }
+					flowName={ flowName }
 				/>
 			</div>
 		);
@@ -277,7 +291,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 
 		return planPropertiesObj.map( ( properties ) => {
 			const { currencyCode, discountPrice, planName, rawPrice } = properties;
-			const classes = classNames( 'plan-features-2023-grid__table-item', {
+			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
 				'has-border-top': ! isReskinned,
 			} );
 

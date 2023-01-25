@@ -15,10 +15,10 @@ export const initialSiteState = {
 /**
  * Returns a new state with the given attributes updated for the specified site.
  *
- * @param {object} state current state
+ * @param {Object} state current state
  * @param {number} siteId identifier of the site
- * @param {object} attributes list of attributes and their values
- * @returns {object} the new state
+ * @param {Object} attributes list of attributes and their values
+ * @returns {Object} the new state
  */
 function updateSiteState( state, siteId, attributes ) {
 	return Object.assign( {}, state, {
@@ -29,8 +29,8 @@ function updateSiteState( state, siteId, attributes ) {
 /**
  * Given an object of features keyed by siteId, updates all features at once.
  *
- * @param {object} state The current features state
- * @param {object} features An object containing feature arrays keyed by siteId
+ * @param {Object} state The current features state
+ * @param {Object} features An object containing feature arrays keyed by siteId
  * @returns The new state
  */
 function updateBulkFeatures( state, features ) {

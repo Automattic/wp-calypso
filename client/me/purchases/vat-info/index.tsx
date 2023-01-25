@@ -15,7 +15,8 @@ import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 import useVatDetails from './use-vat-details';
-import type { VatDetails, UpdateError } from './use-vat-details';
+import type { UpdateError } from './use-vat-details';
+import type { VatDetails } from '@automattic/wpcom-checkout';
 
 import './style.scss';
 
@@ -188,9 +189,15 @@ function CountryCodeInput( {
 		'SE',
 		'SI',
 		'SK',
-		'UK',
+		'GB',
 		'XI',
 	];
+
+	// Some historical country codes were set to 'UK', but that is not a valid
+	// country code. It should read 'GB'.
+	if ( value === 'UK' ) {
+		value = 'GB';
+	}
 
 	return (
 		<FormSelect

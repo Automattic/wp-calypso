@@ -16,6 +16,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import { LoadingBar } from 'calypso/components/loading-bar';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -62,6 +63,9 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 		theme = isLinkInBioFlow( flow ) ? DEFAULT_LINK_IN_BIO_THEME : DEFAULT_NEWSLETTER_THEME;
 	}
 	const isPaidDomainItem = Boolean( domainCartItem?.product_slug );
+
+	const progress = useSelect( ( select ) => select( ONBOARD_STORE ).getProgress() );
+	const { setProgress } = useDispatch( ONBOARD_STORE );
 
 	// Default visibility is public
 	let siteVisibility = Site.Visibility.PublicIndexed;
@@ -123,6 +127,10 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 	}
 
 	useEffect( () => {
+		if ( isWooExpressFlow( flow ) ) {
+			setProgress( 0.2 );
+		}
+
 		if ( isMigrationFlow( flow ) ) {
 			setIsMigrateFromWp( true );
 		}
@@ -152,7 +160,11 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 				stepContent={
 					<>
 						<h1>{ getCurrentMessage() }</h1>
-						<LoadingEllipsis />
+						{ progress >= 0 || isWooExpressFlow( flow ) ? (
+							<LoadingBar progress={ progress } />
+						) : (
+							<LoadingEllipsis />
+						) }
 					</>
 				}
 				stepProgress={ stepProgress }

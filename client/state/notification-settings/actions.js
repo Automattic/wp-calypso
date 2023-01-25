@@ -19,15 +19,15 @@ import 'calypso/state/notification-settings/init';
 /**
  * Returns an action object to signal the request of the current user notification settings.
  *
- * @returns {object} action object
+ * @returns {Object} action object
  */
 export const requestNotificationSettings = () => ( { type: NOTIFICATION_SETTINGS_REQUEST } );
 
 /**
  * Returns an action object to signal the arrival of the requested notification settings.
  *
- * @param  {object} settings User Notification Settings
- * @returns {object}          action object
+ * @param  {Object} settings User Notification Settings
+ * @returns {Object}          action object
  */
 export const updateNotificationSettings = ( settings ) => ( {
 	type: NOTIFICATION_SETTINGS_UPDATE,

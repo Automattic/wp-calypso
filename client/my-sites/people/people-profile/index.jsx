@@ -86,6 +86,12 @@ const PeopleProfile = ( { siteId, type, user, invite, showDate, showRole = true 
 			case 'viewer':
 				text = translate( 'Viewer' );
 				break;
+			case 'shop_manager':
+				text = translate( 'Shop manager' );
+				break;
+			case 'customer':
+				text = translate( 'Customer' );
+				break;
 			default:
 				text = role;
 		}

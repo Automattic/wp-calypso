@@ -28,8 +28,8 @@ export const notifyUpgradeNudgeClick = ( action ) =>
 /**
  * Dispatches a request to fetch the Jetpack sale coupon
  *
- * @param {object} action Redux action
- * @returns {object} WordPress.com API HTTP Request action object
+ * @param {Object} action Redux action
+ * @returns {Object} WordPress.com API HTTP Request action object
  */
 export const fetchJetpackSaleCouponHandler = ( action ) =>
 	http(

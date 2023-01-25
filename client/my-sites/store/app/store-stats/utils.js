@@ -27,7 +27,7 @@ export function getStartDate( date, unit ) {
 /**
  * Given a startDate query parameter, determine which date to send the backend on a request for data.
  *
- * @param {object} context - Object supplied by page function
+ * @param {Object} context - Object supplied by page function
  * @returns {string} - YYYY-MM-DD format of the date to be queried
  */
 export function getQueryDate( context ) {
@@ -104,8 +104,8 @@ export function getDelta( deltas, selectedDate, stat ) {
  *
  * @param {string} unit - unit/period format for the data provided
  * @param {string} baseDate - string of date in 'YYYY-MM-DD'
- * @param {object} overrides - Object of query overrides. Example: { orderQuery: { quantity: 1 }
- * @returns {object}
+ * @param {Object} overrides - Object of query overrides. Example: { orderQuery: { quantity: 1 }
+ * @returns {Object}
  */
 export function getQueries( unit, baseDate, overrides = {} ) {
 	const baseQuery = { unit };
@@ -149,7 +149,7 @@ export function getQueries( unit, baseDate, overrides = {} ) {
  *
  * @param {string} unit - day, week, month, or year
  * @param {string} slug - site slug
- * @param {object} urlQuery - url query params represented as an object
+ * @param {Object} urlQuery - url query params represented as an object
  * @returns {string} - widget path url portion
  */
 export function getWidgetPath( unit, slug, urlQuery ) {

@@ -45,7 +45,7 @@ import './section-import.scss';
  * The key is the engine, and the value is the component. To add new importers,
  * add it here and add its configuration to lib/importer/importer-config.
  *
- * @type {object}
+ * @type {Object}
  */
 const importerComponents = {
 	blogger: BloggerImporter,

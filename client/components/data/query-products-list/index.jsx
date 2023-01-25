@@ -18,7 +18,7 @@ const request =
 
 /**
  *
- * @param {object} props 			The list of component props.
+ * @param {Object} props 			The list of component props.
  * @param {string} [props.type] 	The type of products to request:
  *									"jetpack" for Jetpack products only, or undefined for all products.
  * @param {boolean} [props.persist] Set to true to persist the products list in the store.

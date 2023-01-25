@@ -3,7 +3,7 @@ import 'calypso/state/ui/init';
 /**
  * Returns true if site selection has occured, else false
  *
- * @param {object}  state Global state tree
+ * @param {Object}  state Global state tree
  * @returns {boolean}       Has site selection occurred
  */
 export default function hasInitializedSites( state ) {

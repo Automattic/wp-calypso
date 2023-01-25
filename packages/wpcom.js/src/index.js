@@ -148,7 +148,7 @@ WPCOM.prototype.batch = function () {
 /**
  * List Freshly Pressed Posts
  *
- * @param {object} [query] - query object
+ * @param {Object} [query] - query object
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */

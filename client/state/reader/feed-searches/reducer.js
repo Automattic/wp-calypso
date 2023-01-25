@@ -16,7 +16,7 @@ import { combineReducers, keyedReducer } from 'calypso/state/utils';
 	}
  *
  * @param  {Array} state  Current state
- * @param  {object} action Action payload
+ * @param  {Object} action Action payload
  * @returns {Array}        Updated state
  */
 export const items = keyedReducer( 'queryKey', ( state = null, action ) => {
@@ -44,7 +44,7 @@ export const items = keyedReducer( 'queryKey', ( state = null, action ) => {
 	}
  *
  * @param  {Array}  state  Current state
- * @param  {object} action Action payload
+ * @param  {Object} action Action payload
  * @returns {Array}         Updated state
  */
 export const total = keyedReducer( 'queryKey', ( state = null, action ) => {
