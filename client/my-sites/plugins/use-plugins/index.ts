@@ -108,13 +108,13 @@ const usePlugins = ( {
 		default:
 			plugins = config.isEnabled( 'marketplace-jetpack-plugin-search' )
 				? ESPlugins
-				: [ ...wpcomPluginsRaw, ...ESPlugins ];
+				: [ ...dotComPlugins, ...ESPlugins ];
 			isFetching = config.isEnabled( 'marketplace-jetpack-plugin-search' )
 				? isFetchingES
 				: isFetchingDotCom || isFetchingES;
 			results = config.isEnabled( 'marketplace-jetpack-plugin-search' )
 				? ESPagination?.results ?? 0
-				: ( ESPagination?.results ?? 0 ) + wpcomPluginsRaw.length;
+				: ( ESPagination?.results ?? 0 ) + dotComPlugins.length;
 
 			break;
 	}
