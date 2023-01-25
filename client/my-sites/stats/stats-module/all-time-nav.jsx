@@ -107,7 +107,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 					{ ! hideNavigation && (
 						<ComponentSwapper
 							className={ classnames( 'stats-summary-nav__intervals-container' ) }
-							breakpint="<660px"
+							breakpoint="<660px"
 							breakpointActiveComponent={ select }
 							breakpointInactiveComponent={ tabs }
 						/>

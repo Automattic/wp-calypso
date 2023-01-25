@@ -3,20 +3,20 @@ import React, { ReactChild, useEffect } from 'react';
 
 const ComponentSwapper = ( {
 	className,
-	breakpint = '<660px', // breakpoints from mediaQueryLists from '@automattic/viewport'
+	breakpoint = '<660px', // breakpoints from mediaQueryLists from '@automattic/viewport'
 	breakpointActiveComponent,
 	breakpointInactiveComponent,
 	onSwap,
 	children,
 }: {
 	children: ReactChild[];
-	breakpint: string;
+	breakpoint: string;
 	breakpointActiveComponent: React.Component;
 	breakpointInactiveComponent: React.Component;
 	onSwap?: () => void;
 	className?: string;
 } ) => {
-	const isActive = useBreakpoint( breakpint );
+	const isActive = useBreakpoint( breakpoint );
 
 	useEffect( () => {
 		onSwap?.();
