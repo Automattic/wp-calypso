@@ -201,8 +201,10 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 
 			if ( siteId ) {
 				const selectedStyleVariationTitle = getSelectedStyleVariation()?.title;
-				const styleVariations: StyleVariation[] = await getStyleVariations( siteId, 'pub/course' );
-				const theme: Theme = await getSiteTheme( siteId, 'pub/course' );
+				const [ styleVariations, theme ]: [ StyleVariation[], Theme ] = await Promise.all( [
+					getStyleVariations( siteId, 'pub/course' ),
+					getSiteTheme( siteId, 'pub/course' ),
+				] );
 				const userGlobalStylesLink: string =
 					theme?._links?.[ 'wp:user-global-styles' ]?.[ 0 ]?.href || '';
 				const userGlobalStylesId = parseInt( userGlobalStylesLink.split( '/' ).pop() || '', 10 );
