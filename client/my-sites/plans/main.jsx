@@ -1,5 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { getPlan, getIntervalTypeForTerm, PLAN_FREE } from '@automattic/calypso-products';
+import {
+	getPlan,
+	getIntervalTypeForTerm,
+	PLAN_FREE,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+} from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -157,9 +162,16 @@ class Plans extends Component {
 		);
 	}
 
+	renderEcommerceTrialPage() {
+		return <div className="plans__ecommerce-trial-wrapper">{ this.renderPlansMain() }</div>;
+	}
+
 	render() {
 		const { selectedSite, translate, canAccessPlans, currentPlan, domainAndPlanPackage } =
 			this.props;
+
+		const currentPlanSlug = selectedSite.plan.product_slug;
+		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
 			return this.renderPlaceholder();
@@ -187,7 +199,7 @@ class Plans extends Component {
 							{ domainAndPlanPackage && <DomainAndPlanUpsellNotice /> }
 							<div id="plans" className="plans plans__has-sidebar">
 								<PlansNavigation path={ this.props.context.path } />
-								{ this.renderPlansMain() }
+								{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderPlansMain() }
 								<PerformanceTrackerStop />
 							</div>
 						</>
