@@ -182,7 +182,7 @@ function LineItemWrapper( {
 	let isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
 
 	const signupFlowName = getSignupCompleteFlowName();
-	if ( isCopySiteFlow( signupFlowName ) ) {
+	if ( isCopySiteFlow( signupFlowName ) && ! product.is_domain_registration ) {
 		isDeletable = false;
 	}
 
