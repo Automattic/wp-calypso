@@ -9,8 +9,8 @@ import { updateNotificationSettings } from 'calypso/state/notification-settings/
 /**
  * Returns an action for HTTP request to fetch the current user notification settings
  *
- * @param   {object}   action   Redux action
- * @returns {object}            http action
+ * @param   {Object}   action   Redux action
+ * @returns {Object}            http action
  */
 export const requestNotificationSettings = ( action ) =>
 	http(
@@ -25,16 +25,16 @@ export const requestNotificationSettings = ( action ) =>
 /**
  * Returns a notification settings receive action then the request succeeded.
  *
- * @param   {object}   action    Redux action
- * @param   {object}   settings  raw notification settings object returned by the endpoint
- * @returns {object}             notification settings update action
+ * @param   {Object}   action    Redux action
+ * @param   {Object}   settings  raw notification settings object returned by the endpoint
+ * @returns {Object}             notification settings update action
  */
 export const updateSettings = ( action, settings ) => updateNotificationSettings( settings );
 
 /**
  * Returns an error notice action when the request fails
  *
- * @returns {object}   error notice action
+ * @returns {Object}   error notice action
  */
 export const handleError = () =>
 	errorNotice( translate( "We couldn't load your notification settings, please try again." ) );

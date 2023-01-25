@@ -1,111 +1,99 @@
-main.business-plan-upgrade-upsell.main {
+body.is-section-business-plan-upgrade-upsell-new-design {
+	--color-surface-backdrop: var(--studio-white);
+}
+
+main.business-plan-upgrade-upsell-new-design.main {
 	margin: auto;
 }
 
-.business-plan-upgrade-upsell {
-	display: flex;
-	flex-direction: column;
+.business-plan-upgrade-upsell-new-design {
+	padding: 16px;
 
 	b {
 		font-weight: 700;
 	}
 
-	.card {
-		width: 100%;
-	}
-
-	&__placeholders {
-		display: flex;
-		flex-direction: column;
-
-		.is-placeholder {
-			animation: pulse-light 800ms ease-in-out infinite;
-			background: var(--color-neutral-10);
-		}
-	}
-
-	&__placeholder-row {
-		height: 40px;
-		flex: 0 0 100%;
-		margin-bottom: 15px;
-	}
-
-	&__placeholder-button {
-		height: 50px;
-		width: 100%;
-
-		@include breakpoint-deprecated( ">480px" ) {
-			width: 80px;
-			height: 40px;
-		}
-	}
-
-	&__placeholder-button-container {
-		display: flex;
-		justify-content: space-between;
-	}
-
-	&__card-header,
-	&__card-footer {
-		width: 100%;
-	}
-
-	&__card-body {
-		overflow: auto;
-		flex: 1;
-	}
-
-	&__column-pane {
-		display: flex;
-		flex-flow: row;
-	}
-
-	&__column-content {
-		padding-right: 10px;
-		@include breakpoint-deprecated( "<480px" ) {
-			padding-right: 0;
-		}
-	}
-
-	&__column-doodle {
-		width: 120px;
-		flex-shrink: 0;
-		@include breakpoint-deprecated( "<480px" ) {
-			display: none;
-		}
-	}
-
-	&__doodle {
-		margin-top: 85px;
-	}
-
-	&__small-header {
-		font-style: italic;
-		text-align: center;
-	}
-
 	&__header {
-		font-size: $font-title-medium;
-		font-weight: 600;
 		text-align: center;
-		line-height: 1.4;
-		margin-top: 0.7em;
-		margin-bottom: 1em;
+		@extend .wp-brand-font;
+		font-size: $font-title-large;
+		font-weight: 400;
+		line-height: 40px;
+		color: var(--studio-blue-90);
+		margin-bottom: 50px;
 
 		@include breakpoint-deprecated( "<660px" ) {
 			font-size: $font-title-small;
+			margin-bottom: 0;
 		}
 	}
-	&__sub-header {
-		font-size: $font-title-small;
-		font-weight: normal;
+
+	&__small-header-title {
+		text-transform: uppercase;
+		font-family: "SF Pro Text", $sans;
+		font-size: $font-body;
+		@include breakpoint-deprecated( "<660px" ) {
+			text-align: left;
+		}
+	}
+
+	&__header-title {
 		text-align: center;
-		line-height: 1.4;
-		margin-top: 5px;
-		margin-bottom: 1.6em;
+		@extend .wp-brand-font;
+		font-size: 2.75rem;
+		font-weight: 400;
+		line-height: 40px;
+		color: var(--studio-blue-90);
+		padding: 20px 0;
 
 		@include breakpoint-deprecated( "<660px" ) {
-			font-size: $font-body;
+			font-size: $font-headline-small;
+			text-align: left;
+			padding: 0 0 20px;
+		}
+	}
+
+	&__image-container {
+		min-width: 200px;
+		grid-area: images;
+		text-align: center;
+		@include breakpoint-deprecated( "<660px" ) {
+			padding: 20px 0;
+		}
+
+		img {
+			max-width: 60%;
+		}
+	}
+
+	&__body {
+		overflow: auto;
+		flex: 1;
+		grid-area: body;
+	}
+
+	&__footer {
+		grid-area: buttons;
+	}
+
+	&__container {
+		max-width: 746px;
+		margin: 0 auto;
+		display: grid;
+		grid-auto-rows: auto 1fr;
+		grid-template-columns: minmax(0, 1fr) 50%;
+		grid-template-areas:
+			"body body images"
+			"countdown countdown images"
+			"buttons buttons images";
+		@include breakpoint-deprecated( "<660px" ) {
+			grid-auto-rows: auto;
+			grid-template-columns: 1fr;
+			grid-template-areas:
+				"body body body"
+				"countdown countdown countdown"
+				"buttons buttons buttons"
+				"images images images";
 		}
 	}
 
@@ -116,7 +104,7 @@ main.business-plan-upgrade-upsell.main {
 			display: flex;
 			width: 100%;
 			align-items: flex-start;
-			margin-bottom: 1.2em;
+			margin-bottom: 0.5em;
 
 			@include breakpoint-deprecated( "<660px" ) {
 				align-items: flex-start;
@@ -141,19 +129,16 @@ main.business-plan-upgrade-upsell.main {
 			width: 100%;
 		}
 
-		@include breakpoint-deprecated( ">480px" ) {
-			float: left;
-		}
 	}
 
 	&__footer &__accept-offer-button {
 		@include breakpoint-deprecated( "<480px" ) {
 			width: 100%;
-			margin-top: 10px;
+			margin-bottom: 20px;
 		}
 
 		@include breakpoint-deprecated( ">480px" ) {
-			float: right;
+			margin-left: 20px;
 		}
 	}
 }

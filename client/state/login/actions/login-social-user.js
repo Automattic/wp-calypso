@@ -19,7 +19,7 @@ import 'calypso/state/login/init';
 /**
  * Logs a user in from a third-party social account (Google ...).
  *
- * @param  {object}   socialInfo     Object containing { service, access_token, id_token }
+ * @param  {Object}   socialInfo     Object containing { service, access_token, id_token }
  *           {string}   service      The external social service name
  *           {string}   access_token OAuth2 access token provided by the social service
  *           {string}   id_token     JWT ID token such as the one provided by Google OpenID Connect.

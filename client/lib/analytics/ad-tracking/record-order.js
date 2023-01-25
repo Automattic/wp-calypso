@@ -27,7 +27,7 @@ import './setup';
 /**
  * Tracks a purchase conversion
  *
- * @param {object} cart - cart as `ResponseCart` object
+ * @param {Object} cart - cart as `ResponseCart` object
  * @param {number} orderId - the order id
  * @returns {void}
  */
@@ -136,9 +136,9 @@ export async function recordOrder( cart, orderId ) {
 /**
  * Records an order in Quantcast
  *
- * @param {object} cart - cart as `ResponseCart` object
+ * @param {Object} cart - cart as `ResponseCart` object
  * @param {number} orderId - the order id
- * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
+ * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
  * @returns {void}
  */
 function recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo ) {
@@ -194,9 +194,9 @@ function recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo ) {
 /**
  * Records an order in DCM Floodlight
  *
- * @param {object} cart - cart as `ResponseCart` object
+ * @param {Object} cart - cart as `ResponseCart` object
  * @param {number} orderId - the order id
- * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
+ * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
  * @returns {void}
  */
 function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
@@ -253,9 +253,9 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
 /**
  * Records an order in Facebook (a single event for the entire order)
  *
- * @param {object} cart - cart as `ResponseCart` object
+ * @param {Object} cart - cart as `ResponseCart` object
  * @param {number} orderId - the order id
- * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
+ * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
  * @returns {void}
  */
 function recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo ) {
@@ -313,9 +313,9 @@ function recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo ) {
 /**
  * Records a signup|purchase in Bing.
  *
- * @param {object} cart - cart as `ResponseCart` object.
+ * @param {Object} cart - cart as `ResponseCart` object.
  * @param {number} orderId - the order ID.
- * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
+ * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
  * @returns {void}
  */
 function recordOrderInBing( cart, orderId, wpcomJetpackCartInfo ) {
@@ -359,9 +359,9 @@ function recordOrderInBing( cart, orderId, wpcomJetpackCartInfo ) {
 /**
  * Records an order/sign_up in Google Ads Gtag
  *
- * @param {object} cart - cart as `ResponseCart` object
+ * @param {Object} cart - cart as `ResponseCart` object
  * @param {number} orderId - the order id
- * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
+ * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
  * @returns {void}
  */
 function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
@@ -464,9 +464,9 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 /**
  * Records an order in the Jetpack.com GA4 Property
  *
- * @param {object} cart - cart as `ResponseCart` object
+ * @param {Object} cart - cart as `ResponseCart` object
  * @param {number} orderId - the order id
- * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
+ * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
  * @returns {void}
  */
 function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
@@ -508,9 +508,9 @@ function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
 /**
  * Records an order in the WordPress.com GA4 Property
  *
- * @param {object} cart - cart as `ResponseCart` object
+ * @param {Object} cart - cart as `ResponseCart` object
  * @param {number} orderId - the order id
- * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
+ * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
  * @returns {void}
  */
 function recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo ) {
@@ -536,7 +536,7 @@ function recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo ) {
 /**
  * Records an order in Criteo
  *
- * @param {object} cart - cart as `ResponseCart` object
+ * @param {Object} cart - cart as `ResponseCart` object
  * @param {number} orderId - the order id
  * @returns {void}
  */

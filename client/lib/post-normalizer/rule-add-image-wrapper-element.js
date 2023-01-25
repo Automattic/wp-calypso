@@ -5,7 +5,7 @@ import { forEach } from 'lodash';
  * We can get the aspect ratio with the width and height
  * With the ratio, return a class to help with displaying images within aspect ratio ranges
  *
- * @param  {object} image - the img element
+ * @param  {Object} image - the img element
  * @returns string
  */
 const getImageAspectRatioClass = ( image ) => {

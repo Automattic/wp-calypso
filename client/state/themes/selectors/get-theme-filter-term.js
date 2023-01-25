@@ -6,10 +6,10 @@ import 'calypso/state/themes/init';
 /**
  * Returns theme filter term object.
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @param  {string}  filter The filter slug
  * @param  {string}  term   The term slug
- * @returns {object}         A filter term object
+ * @returns {Object}         A filter term object
  */
 export function getThemeFilterTerm( state, filter, term ) {
 	return get( getThemeFilterTerms( state, filter ), term );

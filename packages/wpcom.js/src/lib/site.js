@@ -48,7 +48,7 @@ class Site {
 	/**
 	 * Require site information
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -69,7 +69,7 @@ class Site {
 	/**
 	 * Add a new blog post
 	 *
-	 * @param {object} body - body object parameter
+	 * @param {Object} body - body object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -103,7 +103,7 @@ class Site {
 	/**
 	 * Add a media from a file
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Array|string} files - media files to add
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
@@ -116,7 +116,7 @@ class Site {
 	/**
 	 * Add a new media from url
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Array|string} files - media files to add
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
@@ -257,7 +257,7 @@ class Site {
 	 *    } );
 	 *
 	 * @param {string} type - post type
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -276,7 +276,7 @@ class Site {
 	 * Note: The current user must have publishing access.
 	 *
 	 * @param {string} url - shortcode url
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -302,7 +302,7 @@ class Site {
 	 * Note: The current user must have publishing access.
 	 *
 	 * @param {string} url - embed url
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -350,7 +350,7 @@ class Site {
 	 * Get detailed stats about a VideoPress video
 	 *
 	 * @param {string} videoId - video id
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -369,7 +369,7 @@ class Site {
 	 * Get detailed stats about a particular post
 	 *
 	 * @param {string} postId - post id
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -389,12 +389,13 @@ class Site {
 	 * This fetches the timeline, according to the query passed
 	 *
 	 * @param {string} postId - id of the post which email we are querying
-	 * @param {object} [query] - query object parameter
+	 * @param  {string} statType The type of stat we are working with. For example: 'opens' for Email Open stats
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function?} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	statsEmailOpensForPeriod( postId, query, fn ) {
-		const path = `${ this.path }/stats/opens/emails/${ postId }`;
+	emailStatsForPeriod( postId, statType, query, fn ) {
+		const path = `${ this.path }/stats/${ statType }/emails/${ postId }`;
 		const statFields = [ 'timeline' ];
 		return Promise.all(
 			statFields.map( ( field ) =>
@@ -412,12 +413,16 @@ class Site {
 	 * This fetchesthe clients, devices & countries
 	 *
 	 * @param {string} postId - id of the post which email we are querying
+	 * @param  {string} statType The type of stat we are working with. For example: 'opens' for Email Open stats
 	 * @param {Function?} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	statsEmailOpensAlltime( postId, fn ) {
-		const basePath = `${ this.path }/stats/opens/emails/${ postId }`;
+	emailStatsAlltime( postId, statType, fn ) {
+		const basePath = `${ this.path }/stats/${ statType }/emails/${ postId }`;
 		const statFields = [ 'client', 'device', 'country', 'rate' ];
+		if ( statType === 'clicks' ) {
+			statFields.push( 'link' );
+		}
 		return Promise.all(
 			statFields.map( ( field ) => this.wpcom.req.get( `${ basePath }/${ field }`, fn ) )
 		).then( ( statsArray ) =>

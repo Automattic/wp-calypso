@@ -12,7 +12,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  * because the admin sections are store in the admin-sections.js,
  * in the inline-block component.
  *
- * @param   {object} state      Global state tree
+ * @param   {Object} state      Global state tree
  * @param   {string} searchTerm The search term
  * @param   {number} limit      The maximum number of results to show
  * @returns {Array}             A filtered (or empty) array

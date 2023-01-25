@@ -8,10 +8,10 @@ import 'calypso/state/terms/init';
  * Returns true if currently requesting terms for the taxonomies query, or false
  * otherwise.
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {string}  taxonomy Taxonomy slug
- * @param  {object}  query  Taxonomy query object
+ * @param  {Object}  query  Taxonomy query object
  * @returns {boolean}        Whether terms are being requested
  */
 export function isRequestingTermsForQuery( state, siteId, taxonomy, query ) {
@@ -23,10 +23,10 @@ export function isRequestingTermsForQuery( state, siteId, taxonomy, query ) {
  * Returns true if currently requesting terms for a query, excluding all known
  * queried pages, or false otherwise.
  *
- * @param  {object}  state    Global state tree
+ * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
- * @param  {object}  query    Terms query object
+ * @param  {Object}  query    Terms query object
  * @returns {boolean}           Terms for the query
  */
 export function isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, query ) {
@@ -45,10 +45,10 @@ export function isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, 
  * Returns an array of terms for the taxonomies query, or null if no terms have been
  * received.
  *
- * @param  {object}  state    Global state tree
+ * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
- * @param  {object}  query    Terms query object
+ * @param  {Object}  query    Terms query object
  * @returns {?Array}           Terms for the query
  */
 export const getTermsForQuery = createSelector(
@@ -71,10 +71,10 @@ export const getTermsForQuery = createSelector(
  * Returns an array of terms for the taxonomy query, including all known
  * queried pages, or null if the number of pages is unknown.
  *
- * @param  {object}  state    Global state tree
+ * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
- * @param  {object}  query    Terms query object
+ * @param  {Object}  query    Terms query object
  * @returns {?Array}           Terms for the query
  */
 export const getTermsForQueryIgnoringPage = createSelector(
@@ -97,10 +97,10 @@ export const getTermsForQueryIgnoringPage = createSelector(
  * Returns the last queryable page of terms for the given query / taxonomy, or null if the
  * total number of queryable terms if unknown.
  *
- * @param  {object}  state    Global state tree
+ * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
- * @param  {object}  query    Terms query object
+ * @param  {Object}  query    Terms query object
  * @returns {?number}          Last terms page
  */
 export function getTermsLastPageForQuery( state, siteId, taxonomy, query ) {
@@ -120,7 +120,7 @@ export function getTermsLastPageForQuery( state, siteId, taxonomy, query ) {
 /**
  * Returns terms for a site, filtered by taxonomy.
  *
- * @param  {object} state    Global state tree
+ * @param  {Object} state    Global state tree
  * @param  {number} siteId   Site ID
  * @param  {string} taxonomy Taxonomy slug
  * @returns {?Array}          Terms
@@ -137,11 +137,11 @@ export function getTerms( state, siteId, taxonomy ) {
 /**
  * Returns a term for a site taxonomy.
  *
- * @param  {object}  state    Global state tree
+ * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
  * @param  {number}  termId   Term ID
- * @returns {?object}         Term
+ * @returns {?Object}         Term
  */
 export function getTerm( state, siteId, taxonomy, termId ) {
 	const manager = get( state.terms.queries, [ siteId, taxonomy ] );
@@ -161,10 +161,10 @@ export function getTerm( state, siteId, taxonomy, termId ) {
 /**
  * Returns the total count of terms for a specified query
  *
- * @param  {object}  state    Global state tree
+ * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  taxonomy Taxonomy slug
- * @param  {object}  query    Terms query object
+ * @param  {Object}  query    Terms query object
  * @returns {?number}          Count terms
  */
 export function countFoundTermsForQuery( state, siteId, taxonomy, query ) {

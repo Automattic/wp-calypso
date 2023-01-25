@@ -147,7 +147,7 @@ function sortSitesByLastInteractedWith< T extends SiteDetailsForSorting >(
 
 	const sortedItems = [
 		...( sortInteractedItems( interactedItems ) as T[] ),
-		...remainingItems.sort( ( a, b ) => sortAlphabetically( a, b, 'asc' ) ),
+		...remainingItems.sort( ( a, b ) => sortByLastPublish( a, b, 'desc' ) ),
 	];
 
 	return sortOrder === 'desc' ? sortedItems : sortedItems.reverse();
@@ -172,6 +172,26 @@ function sortAlphabetically< T extends SiteDetailsForSorting >(
 	return 0;
 }
 
+function sortByLastPublish< T extends SiteDetailsForSorting >(
+	a: T,
+	b: T,
+	sortOrder: SitesSortOrder
+) {
+	if ( ! a.options?.updated_at || ! b.options?.updated_at ) {
+		return 0;
+	}
+
+	if ( a.options.updated_at > b.options.updated_at ) {
+		return sortOrder === 'asc' ? 1 : -1;
+	}
+
+	if ( a.options.updated_at < b.options.updated_at ) {
+		return sortOrder === 'asc' ? -1 : 1;
+	}
+
+	return 0;
+}
+
 function sortSitesAlphabetically< T extends SiteDetailsForSorting >(
 	sites: T[],
 	sortOrder: SitesSortOrder
@@ -183,21 +203,7 @@ function sortSitesByLastPublish< T extends SiteDetailsForSorting >(
 	sites: T[],
 	sortOrder: SitesSortOrder
 ): T[] {
-	return [ ...sites ].sort( ( a, b ) => {
-		if ( ! a.options?.updated_at || ! b.options?.updated_at ) {
-			return 0;
-		}
-
-		if ( a.options.updated_at > b.options.updated_at ) {
-			return sortOrder === 'asc' ? 1 : -1;
-		}
-
-		if ( a.options.updated_at < b.options.updated_at ) {
-			return sortOrder === 'asc' ? -1 : 1;
-		}
-
-		return 0;
-	} );
+	return [ ...sites ].sort( ( a, b ) => sortByLastPublish( a, b, sortOrder ) );
 }
 
 type SitesSortingProps = {

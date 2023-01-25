@@ -139,8 +139,8 @@ export function recordSignupInvalidStep( flow, step ) {
 /**
  * Records registration event.
  *
- * @param {object} param {}
- * @param {object} param.userData User data
+ * @param {Object} param {}
+ * @param {Object} param.userData User data
  * @param {string} param.flow Registration flow
  * @param {string} param.type Registration type
  */

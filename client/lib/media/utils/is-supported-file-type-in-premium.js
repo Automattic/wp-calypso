@@ -5,8 +5,8 @@ import { isSiteAllowedFileTypesToBeTrusted } from 'calypso/lib/media/utils/is-si
  * Returns true if the specified item is a valid file in a Premium plan,
  * or false otherwise.
  *
- * @param  {object}  item Media object
- * @param  {object}  site Site object
+ * @param  {Object}  item Media object
+ * @param  {Object}  site Site object
  * @returns {boolean}      Whether the Premium plan supports the item
  */
 export function isSupportedFileTypeInPremium( item, site ) {

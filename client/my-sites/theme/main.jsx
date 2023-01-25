@@ -790,9 +790,10 @@ class ThemeSheet extends Component {
 		if ( ! isLoggedIn ) {
 			plansUrl = localizeUrl( 'https://wordpress.com/pricing' );
 		} else if ( siteSlug ) {
+			const plan = isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
 			plansUrl =
 				plansUrl +
-				`/${ siteSlug }/?plan=value_bundle&redirect_to=${ encodeURIComponent( document.URL ) }`;
+				`/${ siteSlug }/?plan=${ plan }&redirect_to=${ encodeURIComponent( document.URL ) }`;
 		}
 
 		const launchPricing = () => window.open( plansUrl, '_blank' );
@@ -863,9 +864,12 @@ class ThemeSheet extends Component {
 				( isBundledSoftwareSet && ! isSiteBundleEligible ) ||
 				( isExternallyManagedTheme &&
 					( ! isMarketplaceThemeSubscribed || ! isSiteEligibleForManagedExternalThemes ) );
+
+			const upsellNudgePlan =
+				isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
 			pageUpsellBanner = (
 				<UpsellNudge
-					plan={ PLAN_PREMIUM }
+					plan={ upsellNudgePlan }
 					className={ upsellNudgeClasses }
 					title={ this.getBannerUpsellTitle() }
 					description={ preventWidows( this.getBannerUpsellDescription() ) }
@@ -937,7 +941,7 @@ class ThemeSheet extends Component {
 				/>
 				{ this.renderBar() }
 				<QueryActiveTheme siteId={ siteId } />
-				<ThanksModal source="details" />
+				<ThanksModal source="details" themeId={ this.props.themeId } />
 				<AutoLoadingHomepageModal source="details" />
 				{ pageUpsellBanner }
 				<HeaderCake

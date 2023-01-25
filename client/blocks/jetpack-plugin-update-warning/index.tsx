@@ -16,7 +16,7 @@ interface ExternalProps {
 /**
  * Show a warning Notice if the current site has a Jetpack version prior to `minJetpackVersion`.
  *
- * @param {object} props - the id of the current site
+ * @param {Object} props - the id of the current site
  * @param {number} props.siteId – the ID of the current site
  * @param {string} props.minJetpackVersion – the minimum accepted Jetpack version
  */

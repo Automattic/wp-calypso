@@ -6,7 +6,7 @@ import 'calypso/state/stored-cards/init';
 /**
  * Return user's stored cards from state object
  *
- * @param {object} state - current state object
+ * @param {Object} state - current state object
  * @returns {import('calypso/my-sites/checkout/composite-checkout/types/stored-cards.ts').StoredCard[]} Stored Cards
  */
 export const getStoredCards = ( state ) =>
@@ -21,7 +21,7 @@ export const getStoredCards = ( state ) =>
 /**
  * Return user's stored cards including expired cards
  *
- * @param {object} state - current state object
+ * @param {Object} state - current state object
  * @returns {import('calypso/my-sites/checkout/composite-checkout/types/stored-cards.ts').StoredCard[]} Stored Cards
  */
 export const getAllStoredCards = ( state ) =>
@@ -36,7 +36,7 @@ export const getAllStoredCards = ( state ) =>
  * Return user's stored payment agreements (not cards) from state object
  *
  *
- * @param {object} state - current state object
+ * @param {Object} state - current state object
  * @returns {Array} Stored Payment Agreements
  */
 export const getStoredPaymentAgreements = ( state ) =>
@@ -51,7 +51,7 @@ export const getStoredPaymentAgreements = ( state ) =>
  * Return user's stored payment methods (not cards) from state object that share the same account
  *
  *
- * @param {object} state - current state object
+ * @param {Object} state - current state object
  * @returns {Array} Stored Payment Methods excluding cards
  */
 export const getUniquePaymentAgreements = ( state ) => {
@@ -70,7 +70,7 @@ export const getUniquePaymentAgreements = ( state ) => {
 /**
  * Returns a Stored Card
  *
- * @param  {object} state      global state
+ * @param  {Object} state      global state
  * @param  {number} cardId  the card id
  * @returns {undefined|import('calypso/my-sites/checkout/composite-checkout/types/stored-cards.ts').StoredCard} the matching card if there is one
  */

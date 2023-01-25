@@ -5,6 +5,7 @@ import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
 import { render, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
@@ -60,6 +61,7 @@ describe( 'Checkout payment methods list', () => {
 		} );
 
 		const store = createTestReduxStore();
+		const queryClient = new QueryClient();
 
 		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps, useUndefinedCartKey } ) => {
 			const managerClient = createShoppingCartManagerClient( {
@@ -69,26 +71,29 @@ describe( 'Checkout payment methods list', () => {
 			const mainCartKey = 'foo.com';
 			useCartKey.mockImplementation( () => ( useUndefinedCartKey ? undefined : mainCartKey ) );
 			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
+			nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/vat-info' ).reply( 200, {} );
 			mockMatchMediaOnWindow();
 			return (
 				<ReduxProvider store={ store }>
-					<ShoppingCartProvider
-						managerClient={ managerClient }
-						options={ {
-							defaultCartKey: useUndefinedCartKey ? undefined : mainCartKey,
-						} }
-						{ ...additionalCartProps }
-					>
-						<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-							<CheckoutMain
-								siteId={ siteId }
-								siteSlug="foo.com"
-								getStoredCards={ async () => [] }
-								overrideCountryList={ countryList }
-								{ ...additionalProps }
-							/>
-						</StripeHookProvider>
-					</ShoppingCartProvider>
+					<QueryClientProvider client={ queryClient }>
+						<ShoppingCartProvider
+							managerClient={ managerClient }
+							options={ {
+								defaultCartKey: useUndefinedCartKey ? undefined : mainCartKey,
+							} }
+							{ ...additionalCartProps }
+						>
+							<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+								<CheckoutMain
+									siteId={ siteId }
+									siteSlug="foo.com"
+									getStoredCards={ async () => [] }
+									overrideCountryList={ countryList }
+									{ ...additionalProps }
+								/>
+							</StripeHookProvider>
+						</ShoppingCartProvider>
+					</QueryClientProvider>
 				</ReduxProvider>
 			);
 		};

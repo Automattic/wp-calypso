@@ -6,7 +6,7 @@
 	flex-wrap: wrap;
 
 	.plugins-results-header__titles {
-		margin-bottom: 4px; // +20 from elements = 24 gap
+		margin-bottom: 6px; // +18 from elements = 24 gap
 
 		.plugins-results-header__title {
 			@extend .wp-brand-font;

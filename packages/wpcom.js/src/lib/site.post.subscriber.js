@@ -40,7 +40,7 @@ class SitePostSubscriber {
 	 *      // subscription data
 	 *    } );
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Promise} Promise
 	 */
@@ -61,7 +61,7 @@ class SitePostSubscriber {
 	 *      // current user has been subscribed to post
 	 *    } );
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Promise} Promise
 	 */
@@ -82,7 +82,7 @@ class SitePostSubscriber {
 	 *      // current user has been unsubscribed to post
 	 *    } );
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Promise} Promise
 	 */

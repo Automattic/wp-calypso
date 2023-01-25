@@ -3,8 +3,8 @@ import { map, xor } from 'lodash';
 /**
  * Returns truthy if local terms object is the same as the API response
  *
- * @param  {object}  localTermEdits local state of term edits
- * @param  {object}  savedTerms     term object returned from API POST
+ * @param  {Object}  localTermEdits local state of term edits
+ * @param  {Object}  savedTerms     term object returned from API POST
  * @returns {boolean}                are there differences in local edits vs saved terms
  */
 export function isTermsEqual( localTermEdits, savedTerms ) {

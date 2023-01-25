@@ -3,7 +3,7 @@ import { get } from 'lodash';
 import 'calypso/state/sharing/init';
 
 /**
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @param {number} siteId Site ID
  * @param {number} postId Post ID
  * @returns {boolean} true if we are fetching publicize share actions for a post

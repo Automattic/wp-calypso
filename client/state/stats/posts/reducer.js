@@ -12,9 +12,9 @@ import { items as itemSchemas } from './schema';
  * Returns the updated requests state after an action has been dispatched. The
  * state maps site ID, post ID and stat keys to whether a request is in progress.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export function requesting( state = {}, action ) {
 	switch ( action.type ) {
@@ -37,9 +37,9 @@ export function requesting( state = {}, action ) {
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID, post ID and stat keys to the value of the stat.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const items = withSchemaValidation( itemSchemas, ( state = {}, action ) => {
 	switch ( action.type ) {

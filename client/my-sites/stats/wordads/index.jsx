@@ -30,6 +30,7 @@ import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import WordAdsChartTabs from '../wordads-chart-tabs';
 import WordAdsEarnings from './earnings';
+import HighlightsSection from './highlights-section';
 
 import './style.scss';
 import 'calypso/my-sites/earn/ads/style.scss';
@@ -203,6 +204,8 @@ class WordAds extends Component {
 								siteId={ siteId }
 								slug={ slug }
 							/>
+
+							<HighlightsSection siteId={ siteId } />
 
 							<div id="my-stats-content" className={ statsWrapperClass }>
 								<>

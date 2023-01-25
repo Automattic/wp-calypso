@@ -96,7 +96,7 @@ debug( 'using "origin": %o', origin );
  * takes care of WordPress.com user authentication (via the currently
  * logged-in user's cookies).
  *
- * @param {object} originalParams - request parameters
+ * @param {Object} originalParams - request parameters
  * @param {Function} [fn] - callback response
  * @returns {window.XMLHttpRequest} XMLHttpRequest instance
  */
@@ -188,7 +188,7 @@ const makeRequest = ( originalParams, fn ) => {
  *
  * If no function is specified as second parameter, a promise is returned.
  *
- * @param {object} originalParams - request parameters
+ * @param {Object} originalParams - request parameters
  * @param {Function} [fn] - callback response
  * @returns {window.XMLHttpRequest|Promise} XMLHttpRequest instance or Promise
  */
@@ -217,7 +217,7 @@ export function requestAllBlogsAccess() {
 /**
  * Calls the `postMessage()` function on the <iframe>.
  *
- * @param {object} params
+ * @param {Object} params
  */
 
 function submitRequest( params ) {
@@ -461,7 +461,7 @@ function shouldProcessInStreamMode( contentType ) {
 /**
  * Handles a "progress" event being proxied back from the iframe page.
  *
- * @param {object} data
+ * @param {Object} data
  */
 
 function onprogress( data ) {
@@ -478,7 +478,7 @@ function onprogress( data ) {
  * Emits the "load" event on the `xhr`.
  *
  * @param {window.XMLHttpRequest} xhr
- * @param {object} body
+ * @param {Object} body
  */
 
 function resolve( xhr, body, headers ) {
