@@ -25,17 +25,11 @@ import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client
 import { SenseiStepError } from '../sensei-setup/sensei-step-error';
 import { SenseiStepProgress, Progress } from '../sensei-setup/sensei-step-progress';
 import { Tagline, Title, PlansIntervalToggle } from './components';
+import { Status, features } from './constants';
 import type { Step } from '../../types';
 import type { StyleVariation } from 'calypso/../packages/design-picker/src/types';
-import type { Props as PlanItemProps } from 'calypso/../packages/plans-grid/src/plans-table/plan-item';
 import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
 import './styles.scss';
-
-enum Status {
-	Initial,
-	Bundling,
-	Error,
-}
 
 const siteProgressTitle: string = __( 'Laying out the foundations' );
 const cartProgressTitle: string = __( 'Preparing Your Bundle' );
@@ -262,41 +256,6 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 			setStatus( Status.Error );
 		}
 	};
-
-	const features: PlanItemProps[ 'features' ] = [
-		{
-			name: __( 'Priority live chat support' ),
-			requiresAnnuallyBilledPlan: true,
-		},
-		{
-			name: __( 'Unlimited courses and students' ),
-			requiresAnnuallyBilledPlan: false,
-		},
-		{
-			name: __( 'Interactive videos and lessons' ),
-			requiresAnnuallyBilledPlan: false,
-		},
-		{
-			name: __( 'Quizzes and certificates' ),
-			requiresAnnuallyBilledPlan: false,
-		},
-		{
-			name: __( 'Sell courses and subscriptions' ),
-			requiresAnnuallyBilledPlan: false,
-		},
-		{
-			name: __( '200GB file and video storage' ),
-			requiresAnnuallyBilledPlan: false,
-		},
-		{
-			name: __( 'Best-in-class hosting' ),
-			requiresAnnuallyBilledPlan: false,
-		},
-		{
-			name: __( 'Advanced Jetpack features' ),
-			requiresAnnuallyBilledPlan: false,
-		},
-	];
 
 	const currencyCode = woothemesProduct.currencyCode;
 	const isLoading = ! planProduct.monthlyPrice || ! woothemesProduct.monthlyPrice;
