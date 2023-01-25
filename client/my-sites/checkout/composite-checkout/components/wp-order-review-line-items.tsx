@@ -1,5 +1,6 @@
 import { isJetpackPurchasableItem } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import { isCopySiteFlow } from '@automattic/onboarding';
 import {
 	canItemBeRemovedFromCart,
 	getCouponLineItemFromCart,
@@ -13,7 +14,6 @@ import {
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { isCopySiteFlow } from 'calypso/../packages/onboarding/src';
 import { useExperiment } from 'calypso/lib/explat';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
