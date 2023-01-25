@@ -38,7 +38,7 @@ export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?:
 			description: translate(
 				'Add your clients’ sites to your dashboard to manage features and monitor them. To add your sites to the Pro Dashboard, simply connect them to Jetpack using the same {{strong}}%(displayName)s{{/strong}} user account.',
 				{
-					args: { displayName: user.display_name },
+					args: { displayName: user?.display_name },
 					components: {
 						strong: <strong />,
 					},
