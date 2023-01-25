@@ -119,7 +119,7 @@ object YarnInstall : BuildType({
 			scriptContent = """
 				# Install modules
 				${_self.yarn_install_cmd}
-			"""
+			""".trimIndent()
 		}
 	}
 	features {
