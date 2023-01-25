@@ -120,5 +120,5 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 		'site_launched',
 	],
 	videopress: [ 'videopress_setup', 'plan_selected', 'videopress_upload', 'videopress_launched' ],
-	sensei: [ 'sensei_setup', 'plan_selected', 'sensei_publish_first_course', 'site_launched' ],
+	sensei: [ 'sensei_setup', 'plan_selected', 'sensei_publish_first_course' ],
 };

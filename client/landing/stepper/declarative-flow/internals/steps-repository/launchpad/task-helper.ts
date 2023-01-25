@@ -210,15 +210,14 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							if ( site?.ID ) {
 								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
-								const { launchSite, saveSiteSettings } = dispatch( SITE_STORE );
+								const { launchSite } = dispatch( SITE_STORE );
 
 								setPendingAction( async () => {
 									setProgressTitle( __( 'Launching Website' ) );
 									await launchSite( site.ID );
-									await saveSiteSettings( site.ID, { launchpad_screen: 'off' } );
 
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
-									await new Promise( ( res ) => setTimeout( res, 3000 ) );
+									await new Promise( ( res ) => setTimeout( res, 500 ) );
 									recordTaskClickTracksEvent( flow, siteLaunchCompleted, task.id );
 									return { goToHome: true, siteSlug };
 								} );
