@@ -193,7 +193,7 @@ class CurrentPlan extends Component {
 	}
 
 	renderEcommerceTrialPage() {
-		return <div className="ecommerce-trial">{ this.renderMain() }</div>;
+		return <div className="current-plan__ecommerce-trial-wrapper">{ this.renderMain() }</div>;
 	}
 
 	render() {
