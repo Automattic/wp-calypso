@@ -64,7 +64,7 @@ const SenseiLaunch = () => {
 		}, 3000 );
 
 		return () => clearInterval( intervalId );
-	}, [ plugins, launchpadUrl, dispatch, siteId, saveSiteSettings, launchpadScreen ] );
+	}, [ plugins, launchpadUrl, dispatch, siteId, saveSiteSettings, launchpadScreen, retries ] );
 
 	const progress: Progress = {
 		percentage: ( retries * 100 ) / expectedRetries,
