@@ -5,7 +5,6 @@ import { useCallback, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import wpcomProxyRequest from 'wpcom-proxy-request';
 import { Plans } from 'calypso/../packages/data-stores/src';
 import formatCurrency from 'calypso/../packages/format-currency/src';
 import { SENSEI_FLOW, SenseiStepContainer } from 'calypso/../packages/onboarding/src';
@@ -21,6 +20,7 @@ import {
 } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { SenseiStepError } from '../sensei-setup/sensei-step-error';
 import { SenseiStepProgress, Progress } from '../sensei-setup/sensei-step-progress';
@@ -36,7 +36,7 @@ const cartProgressTitle: string = __( 'Preparing Your Bundle' );
 const styleProgressTitle: string = __( 'Applying your site styles' );
 
 const getStyleVariations = ( siteId: number, stylesheet: string ): Promise< StyleVariation[] > =>
-	wpcomProxyRequest( {
+	wpcom.req.get( {
 		path: `/sites/${ siteId }/global-styles/themes/${ stylesheet }/variations`,
 		apiNamespace: 'wp/v2',
 	} );
@@ -47,7 +47,7 @@ type Theme = {
 	};
 };
 const getSiteTheme = ( siteId: number, stylesheet: string ): Promise< Theme > =>
-	wpcomProxyRequest( {
+	wpcom.req.get( {
 		path: `/sites/${ siteId }/themes/${ stylesheet }`,
 		apiNamespace: 'wp/v2',
 	} );
@@ -57,11 +57,10 @@ const updateGlobalStyles = (
 	globalStylesId: number,
 	styleVariation: StyleVariation
 ) =>
-	wpcomProxyRequest( {
+	wpcom.req.post( {
 		path: `/sites/${ siteId }/global-styles/${ globalStylesId }`,
 		apiNamespace: 'wp/v2',
 		body: styleVariation,
-		method: 'POST',
 	} );
 
 const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
