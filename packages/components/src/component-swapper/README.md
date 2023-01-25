@@ -3,6 +3,7 @@
 `ComponentSwapper` is a react component that can be used to swap components at a specified breakpoint. For example a buttons navigation to a dropdown for samll screens.
 
 ### Properties
+
 #### `className { string }`
 
 CSS class to be applied to a root div.
@@ -33,10 +34,10 @@ Example usage:
 
 ```jsx
 <ComponentSwapper
-    breakpoint="<660px"
-    breakpointActiveComponent={ <Button primary>Active breakpoint - primary button</Button> }
-    breakpointInactiveComponent={ <Button>Inactive breakpoint - regular button</Button> }
+	breakpoint="<660px"
+	breakpointActiveComponent={ <Button primary>Active breakpoint - primary button</Button> }
+	breakpointInactiveComponent={ <Button>Inactive breakpoint - regular button</Button> }
 >
-    <div style={ { padding: '10px 0' } }> Example child node </div>
-</ComponentSwapper>
+	<div style={ { padding: '10px 0' } }> Example child node </div>
+</ComponentSwapper>;
 ```
