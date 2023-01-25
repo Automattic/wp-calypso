@@ -74,10 +74,6 @@ export default function DomainUpsell() {
 			domain_suggestion: domainSuggestionName,
 			product_slug: domainSuggestionProductSlug,
 		} );
-	};
-
-	const onClick = () => {
-		// Should show loading on button
 		preCheckDomainAvailability( domainSuggestionName, siteId )
 			.catch( () => [] )
 			.then( () => {
