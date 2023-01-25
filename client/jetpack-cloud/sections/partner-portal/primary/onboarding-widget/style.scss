@@ -14,7 +14,10 @@
 		@include break-xlarge {
 			display: flex;
 			margin-block-start: 64px;
-			margin-inline: 93px;
+		}
+
+		@include break-huge {
+			margin-inline: 3%;
 		}
 
 	}
@@ -32,7 +35,19 @@
 
 		@include break-xlarge {
 			width: 50%;
-			margin: 0 32px 0 32px;
+		}
+
+		&:first-child {
+			margin-inline-end: 8px;
+			@include break-wide {
+				margin-inline-end: 32px;
+			}
+		}
+		&:last-child {
+			margin-inline-start: 8px;
+			@include break-wide {
+				margin-inline-start: 32px;
+			}
 		}
 
 	}
@@ -51,6 +66,7 @@
 		font-weight: 700;
 		font-size: 1.5rem;
 		line-height: 24px;
+		height: 50px;
 
 		.onboarding-widget__step-ellipse {
 			display: flex;
@@ -114,14 +130,6 @@
 	margin-block-start: 64px;
 	.onboarding-widget__steps {
 		margin-inline: 0;
-	}
-	.onboarding-widget__step {
-		&:first-child {
-			margin-inline-start: 0;
-		}
-		&:last-child {
-			margin-inline-end: 0;
-		}
 	}
 }
 
