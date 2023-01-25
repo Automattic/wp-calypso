@@ -29,6 +29,7 @@ import {
 	doesThemeBundleSoftwareSet as getDoesThemeBundleSoftwareSet,
 	getMarketplaceThemeSubscriptionPrices,
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
+	isMarketplaceThemeSubscribed,
 	isPremiumThemeAvailable as getIsPremiumThemeAvailable,
 	isSiteEligibleForBundledSoftware as getIsSiteEligibleForBundledSoftware,
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
@@ -302,11 +303,12 @@ export class Theme extends Component {
 
 	getUpsellMessage = () => {
 		const {
+			didPurchaseTheme,
+			doesThemeBundleSoftwareSet,
+			hasMarketplaceThemeSubscription,
 			hasPremiumThemesFeature,
 			theme,
-			didPurchaseTheme,
 			translate,
-			doesThemeBundleSoftwareSet,
 			isSiteEligibleForBundledSoftware,
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes,
@@ -319,13 +321,31 @@ export class Theme extends Component {
 		const isUsableBundledTheme =
 			doesThemeBundleSoftwareSet && hasPremiumThemesFeature && isSiteEligibleForBundledSoftware;
 
-		if ( didPurchaseTheme && ! isUsablePremiumTheme && ! isUsableBundledTheme ) {
-			return isExternallyManagedTheme
-				? translate( 'You have purchased a subscription for this theme' )
-				: translate( 'You have purchased this theme' );
+		if (
+			didPurchaseTheme &&
+			! isUsablePremiumTheme &&
+			! isUsableBundledTheme &&
+			! isExternallyManagedTheme
+		) {
+			return translate( 'You have purchased this theme.' );
+		} else if ( isExternallyManagedTheme && hasMarketplaceThemeSubscription ) {
+			if ( isSiteEligibleForManagedExternalThemes ) {
+				return translate(
+					'You have a subscription for this theme, and it will be usable as long as you keep a Business plan or higher on your site.'
+				);
+			}
+			return createInterpolateElement(
+				translate(
+					'You have a subscription for this theme, but it will only be usable if you have the <link>Business plan</link> on your site.'
+				),
+				{
+					link: <LinkButton isLink onClic={ () => this.goToCheckout( 'business' ) } />,
+				}
+			);
 		} else if ( isExternallyManagedTheme && ! isSiteEligibleForManagedExternalThemes ) {
 			// This is a third-party theme but the user doesn't have an eligible plan.
 			return createInterpolateElement(
+				/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
 				translate(
 					'This premium theme costs %(annualPrice)s per year or %(monthlyPrice)s per month, and can only be purchased if you have the <Link>Business plan</Link> on your site.',
 					{
@@ -341,6 +361,7 @@ export class Theme extends Component {
 			);
 		} else if ( isExternallyManagedTheme && isSiteEligibleForManagedExternalThemes ) {
 			// This is a third-party theme and the user has an eligible plan.
+			/* translators: annualPrice and monthlyPrice are prices for the theme, examples: US$50, US$7; */
 			return translate(
 				'This premium theme is only available while your current plan is active and costs %(annualPrice)s per year or %(monthlyPrice)s per month.',
 				{
@@ -365,9 +386,9 @@ export class Theme extends Component {
 
 		return createInterpolateElement(
 			sprintf(
-				/* translators: the "price" is the price of the theme, example: U$50; */
+				/* translators: the "price" is the price of the theme, example: US$50; */
 				translate(
-					'This premium theme is included in the <Link>Premium plan</Link>, or you can purchase individually for %(price)s'
+					'This premium theme is included in the <Link>Premium plan</Link>, or you can purchase individually for %(price)s.'
 				),
 				{
 					price: this.parseThemePrice( theme.price ),
@@ -643,6 +664,9 @@ export default connect(
 		const themeSubscriptionPrices = isExternallyManagedTheme
 			? getMarketplaceThemeSubscriptionPrices( state, theme?.id )
 			: {};
+		const hasMarketplaceThemeSubscription = isExternallyManagedTheme
+			? isMarketplaceThemeSubscribed( state, theme?.id, siteId )
+			: false;
 
 		return {
 			errorOnUpdate: themesUpdateFailed && themesUpdateFailed.indexOf( theme.id ) > -1,
@@ -656,6 +680,7 @@ export default connect(
 			isSiteEligibleForBundledSoftware: getIsSiteEligibleForBundledSoftware( state, siteId ),
 			siteSlug: getSiteSlug( state, siteId ),
 			didPurchaseTheme: isThemePurchased( state, theme.id, siteId ),
+			hasMarketplaceThemeSubscription,
 			isPremiumThemeAvailable: getIsPremiumThemeAvailable( state, theme.id, siteId ),
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes: getIsSiteEligibleForManagedExternalThemes(
