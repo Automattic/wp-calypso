@@ -8,7 +8,6 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
-	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
@@ -37,9 +36,7 @@ export const useSiteCopy = ( site: SiteExcerptData ) => {
 		( state ) => isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state )
 	);
 
-	const { setPlanCartItem, setProductCartItems } = useDispatch( ONBOARD_STORE );
-
-	const purchases = useSelector( ( state ) => getSitePurchases( state, site.ID ) );
+	const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
 
 	const shouldShowSiteCopyItem = useCallback( () => {
 		return hasCopySiteFeature && isSiteOwner && plan && ! isLoadingPurchase;
@@ -47,19 +44,14 @@ export const useSiteCopy = ( site: SiteExcerptData ) => {
 
 	const startSiteCopy = useCallback(
 		( recordTracks: () => void ) => {
-			if ( ! plan || ! purchases ) {
+			if ( ! plan ) {
 				return;
 			}
 			clearSignupDestinationCookie();
 			setPlanCartItem( { product_slug: plan.product_slug } );
-			const marketplacePluginProducts = purchases
-				.filter( ( purchase ) => purchase.productType === 'marketplace_plugin' )
-				.map( ( purchase ) => ( { product_slug: purchase.productSlug } ) );
-
-			setProductCartItems( marketplacePluginProducts );
 			recordTracks();
 		},
-		[ plan, setPlanCartItem, setProductCartItems, purchases ]
+		[ plan, setPlanCartItem ]
 	);
 
 	return useMemo(
