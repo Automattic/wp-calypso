@@ -2,7 +2,7 @@
 
 `ComponentSwapper` is a react component that can be used to swap components at a specified breakpoint. For example a buttons navigation to a dropdown for samll screens.
 
-### Properties
+## Properties
 
 #### `className { string }`
 
@@ -28,7 +28,7 @@ React component rendered when the breakpoint condition is inactive.
 
 The component acceprt children nodes and renders them after `breakpointActiveComponent|breakpointInactiveComponent`.
 
-### Usage notes
+## Usage notes
 
 Example usage:
 
