@@ -74,8 +74,6 @@ export function getEnhancedTasks(
 				case 'setup_write':
 					taskData = {
 						title: translate( 'Personalize your site' ),
-						// eslint-disable-next-line @typescript-eslint/no-empty-function
-						actionDispatch: () => {},
 					};
 					break;
 				case 'setup_free':
