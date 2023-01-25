@@ -34,12 +34,14 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
+import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveContactDetailsCache } from 'calypso/state/domains/management/actions';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
@@ -64,7 +66,11 @@ import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
+import type {
+	CountryListItem,
+	ManagedContactDetails,
+	VatDetails,
+} from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -185,6 +191,9 @@ export default function WPCheckout( {
 	const contactInfo: ManagedContactDetails = useSelect( ( sel ) =>
 		sel( 'wpcom-checkout' ).getContactInfo()
 	);
+
+	const vatDetails: VatDetails = useSelect( ( sel ) => sel( 'wpcom-checkout' ).getVatDetails() );
+	const { setVatDetails } = useVatDetails();
 
 	const {
 		touchContactFields,
@@ -372,13 +381,35 @@ export default function WPCheckout( {
 							shouldShowContactDetailsValidationErrors
 						);
 						if ( validationResponse ) {
+							// When the contact details change, update the VAT details on the server.
+							try {
+								if ( vatDetails.id ) {
+									await setVatDetails( vatDetails );
+								}
+							} catch ( error ) {
+								reduxDispatch( removeNotice( 'vat_info_notice' ) );
+								if ( shouldShowContactDetailsValidationErrors ) {
+									reduxDispatch(
+										errorNotice(
+											translate(
+												'Your VAT details are not valid. Please check each field and try again.'
+											),
+											{ id: 'vat_info_notice' }
+										)
+									);
+								}
+								return false;
+							}
+							reduxDispatch( removeNotice( 'vat_info_notice' ) );
+
 							// When the contact details change, update the cart's tax location to match.
 							try {
 								await updateCartContactDetailsForCheckout(
 									countriesList,
 									responseCart,
 									updateLocation,
-									contactInfo
+									contactInfo,
+									vatDetails
 								);
 							} catch {
 								// If updating the cart fails, we should not continue. No need

@@ -12,7 +12,6 @@ import QueryContactDetailsCache from 'calypso/components/data/query-contact-deta
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -29,6 +28,7 @@ import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-f
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import PlansHeader from './header';
 
 function DomainAndPlanUpsellNotice() {
 	const translate = useTranslate();
@@ -164,9 +164,7 @@ class Plans extends Component {
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
 			return this.renderPlaceholder();
 		}
-		const description = translate(
-			'See and compare the features available on each WordPress.com plan.'
-		);
+
 		return (
 			<div>
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
@@ -184,12 +182,8 @@ class Plans extends Component {
 					) }
 					{ canAccessPlans && (
 						<>
-							<FormattedHeader
-								brandFont
-								headerText={ translate( 'Plans' ) }
-								subHeaderText={ description }
-								align="left"
-							/>
+							<PlansHeader />
+
 							{ domainAndPlanPackage && <DomainAndPlanUpsellNotice /> }
 							<div id="plans" className="plans plans__has-sidebar">
 								<PlansNavigation path={ this.props.context.path } />

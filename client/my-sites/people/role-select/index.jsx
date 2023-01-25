@@ -68,7 +68,7 @@ export default function RoleSelect( {
 							</option>
 						) ) }
 				</FormSelect>
-				{ explanation && (
+				{ explanation && ROLES_LIST[ value ] && (
 					<FormSettingExplanation className="with-icon">
 						<Icon icon={ tip } /> { ROLES_LIST[ value ].getDescription( isWPForTeamsSite ) }
 						{ explanation && <>&nbsp;{ explanation }</> }

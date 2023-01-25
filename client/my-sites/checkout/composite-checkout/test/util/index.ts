@@ -74,6 +74,21 @@ export const countryList: CountryListItem[] = [
 		name: 'Australia',
 		has_postal_codes: true,
 	},
+	{
+		code: 'ES',
+		name: 'Spain',
+		has_postal_codes: true,
+	},
+	{
+		code: 'CA',
+		name: 'Canada',
+		has_postal_codes: true,
+	},
+	{
+		code: 'GB',
+		name: 'United Kingdom',
+		has_postal_codes: true,
+	},
 ];
 
 export const siteId = 13579;
