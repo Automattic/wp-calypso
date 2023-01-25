@@ -83,6 +83,34 @@ const RowHead = styled.div`
 	flex: 1;
 `;
 
+const PlanSelector = styled.header`
+	position: relative;
+
+	.plan-comparison-grid__title {
+		.gridicon {
+			margin-left: 6px;
+		}
+	}
+
+	.plan-comparison-grid__title-select {
+		appearance: none;
+		-moz-appearance: none;
+		-webkit-appearance: none;
+		background: 0 0;
+		border: none;
+		font-size: inherit;
+		color: inherit;
+		font-family: inherit;
+		opacity: 0;
+		width: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
+		cursor: pointer;
+		height: 30px;
+	}
+`;
+
 const StorageButton = styled.div`
 	background: #f2f2f2;
 	border-radius: 5px;
@@ -154,8 +182,11 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 								<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
 							</div>
 						) }
-						<header>
-							<h4 className="plan-comparison-grid__title">{ planConstantObj.getTitle() }</h4>
+						<PlanSelector>
+							<h4 className="plan-comparison-grid__title">
+								{ planConstantObj.getTitle() }
+								{ showPlanSelect && <Gridicon icon="chevron-down" size={ 12 } color="#0675C4" /> }
+							</h4>
 							{ showPlanSelect && (
 								<select
 									onChange={ ( event: ChangeEvent ) => onPlanChange( planName, event ) }
@@ -181,7 +212,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 									) }
 								</select>
 							) }
-						</header>
+						</PlanSelector>
 						<PlanFeatures2023GridHeaderPrice
 							currencyCode={ currencyCode }
 							discountPrice={ planPropertiesObj.discountPrice }
