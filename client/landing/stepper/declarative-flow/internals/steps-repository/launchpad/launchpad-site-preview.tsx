@@ -102,7 +102,6 @@ const LaunchpadSitePreview = ( {
 				defaultViewportDevice={ defaultDevice }
 				devicesToShow={ devicesToShow }
 				showSiteAddressBar={ false }
-				enableEditOverlay
 			/>
 		</div>
 	);
