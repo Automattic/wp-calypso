@@ -5,5 +5,9 @@ import { serverRouter } from 'calypso/server/isomorphic-routing';
 export default ( router: ReturnType< typeof serverRouter > ) => {
 	const lang = getLanguageRouteParam();
 
-	router( `/${ lang }/pricing/*`, setLocaleMiddleware(), makeLayout );
+	router(
+		[ `/${ lang }/pricing(/*)?`, `/${ lang }/plans(/*)?` ],
+		setLocaleMiddleware(),
+		makeLayout
+	);
 };
