@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-// eslint-disable-next-line import/named
 import { ComponentSwapper } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
