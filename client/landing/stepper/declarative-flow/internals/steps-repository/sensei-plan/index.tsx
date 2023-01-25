@@ -255,7 +255,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 				`/setup/sensei/senseiLaunch?siteSlug=${ newSite?.site_slug }&siteId=${ newSite?.blogid }`
 			);
 
-			window.location.replace(
+			return window.location.replace(
 				`/checkout/${ newSite?.site_slug }?signup=1&redirect_to=${ redirectTo }`
 			);
 		} catch ( err ) {
