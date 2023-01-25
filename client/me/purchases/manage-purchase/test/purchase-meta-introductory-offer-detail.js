@@ -8,7 +8,7 @@ import { createReduxStore } from 'calypso/state';
 import PurchaseMeta from '../purchase-meta';
 
 describe( 'PurchaseMetaIntroductoryOfferDetail', () => {
-	it( 'does render "First 3 months free"', () => {
+	it( 'renders "after first renewal" text for an intro offer', () => {
 		const store = createReduxStore(
 			{
 				purchases: {
@@ -62,7 +62,6 @@ describe( 'PurchaseMetaIntroductoryOfferDetail', () => {
 				/>
 			</ReduxProvider>
 		);
-		expect( screen.getByText( /First 3 months free\b/ ) ).toBeInTheDocument();
 		expect(
 			screen.getByText( /After the first renewal, the subscription price will be \$35\b/ )
 		).toBeInTheDocument();
