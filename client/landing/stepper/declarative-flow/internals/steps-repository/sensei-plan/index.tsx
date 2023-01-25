@@ -211,7 +211,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 				const styleVariation = styleVariations.find(
 					( variation ) => variation.title === selectedStyleVariationTitle
 				);
-				if ( styleVariation && userGlobalStylesId && ! isNaN( userGlobalStylesId ) ) {
+				if ( styleVariation && userGlobalStylesId ) {
 					await updateGlobalStyles( siteId, userGlobalStylesId, styleVariation );
 				}
 			}
