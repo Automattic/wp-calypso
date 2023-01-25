@@ -3,8 +3,8 @@ import { isEmpty, map, mapValues, reduce } from 'lodash';
 /**
  * Takes existing term post edits and updates the `terms_by_id` attribute
  *
- * @param  {object}    post  object of post edits
- * @returns {object}          normalized post edits
+ * @param  {Object}    post  object of post edits
+ * @returns {Object}          normalized post edits
  */
 export function getTermIdsFromEdits( post ) {
 	if ( ! post || ! post.terms ) {

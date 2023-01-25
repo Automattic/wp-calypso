@@ -339,7 +339,7 @@ export class JetpackAuthorize extends Component {
 	/**
 	 * Check whether this a valid authorized SSO request
 	 *
-	 * @param  {object}  props          Props to test
+	 * @param  {Object}  props          Props to test
 	 * @param  {?string} props.authQuery.from     Where is the request from
 	 * @param  {?number} props.authQuery.clientId Remote site ID
 	 * @returns {boolean}                True if it's a valid SSO request otherwise false
@@ -352,7 +352,7 @@ export class JetpackAuthorize extends Component {
 	/**
 	 * Check if the user is coming from the Jetpack upgrade flow.
 	 *
-	 * @param  {object}  props           Props to test
+	 * @param  {Object}  props           Props to test
 	 * @param  {?string} props.authQuery.redirectAfterAuth Where were we redirected after auth.
 	 * @returns {boolean}                True if the user is coming from the Jetpack upgrade flow, false otherwise.
 	 */

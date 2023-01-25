@@ -11,7 +11,7 @@ import 'calypso/state/posts/init';
  * Action creator for receiving an array of users from REST response
  *
  * @param {Array} users Users received
- * @returns {object} Action object
+ * @returns {Object} Action object
  */
 export function receivePostRevisionAuthors( users ) {
 	return {
@@ -25,7 +25,7 @@ export function receivePostRevisionAuthors( users ) {
  *
  * @param {string} siteId of the users
  * @param {Array}  ids of the users (array of integers)
- * @returns {object} action object
+ * @returns {Object} action object
  */
 export const requestPostRevisionAuthors = ( siteId, ids ) => ( {
 	type: POST_REVISIONS_AUTHORS_REQUEST,

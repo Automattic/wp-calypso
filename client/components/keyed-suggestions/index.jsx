@@ -148,7 +148,7 @@ class KeyedSuggestions extends Component {
 	 * Provides keybord support for suggestings component by managing items highlith position
 	 * and calling suggestion callback when user hits Enter
 	 *
-	 * @param  {object} event  Keybord event
+	 * @param  {Object} event  Keybord event
 	 * @returns {boolean}      true indicates suggestion was chosen and send to parent using suggest prop callback
 	 */
 	handleKeyEvent = ( event ) => {
@@ -209,7 +209,7 @@ class KeyedSuggestions extends Component {
 	 *
 	 * @param  {string}  input   text that will be matched against the taxonomies
 	 * @param  {string}  showAll taxonomy for which we want all filters
-	 * @returns {object}          filtered taxonomy:[ terms ] object
+	 * @returns {Object}          filtered taxonomy:[ terms ] object
 	 */
 	narrowDownAndSort = ( input, showAll = '' ) => {
 		const termsTable = this.props.terms;

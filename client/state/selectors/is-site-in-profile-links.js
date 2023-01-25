@@ -6,7 +6,7 @@ import getProfileLinks from 'calypso/state/selectors/get-profile-links';
  * Whether the site with the domain in question is currently in the user's profile links.
  * Will return null if profile links have not been loaded yet.
  *
- * @param {object}   state      Global state tree
+ * @param {Object}   state      Global state tree
  * @param {string}   siteDomain Site domain
  * @returns {?boolean}           True if the site is in the user's profile links, false otherwise.
  */

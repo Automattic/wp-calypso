@@ -12,7 +12,7 @@ import { isTicketSupportEligible } from 'calypso/state/help/ticket/selectors';
 import isEligibleForUpworkSupport from 'calypso/state/selectors/is-eligible-for-upwork-support';
 
 /**
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @returns {string} One of the exported support variation constants listed above
  */
 export default function getSupportVariation( state ) {

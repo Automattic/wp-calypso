@@ -5,7 +5,7 @@ import { translate } from 'i18n-calypso';
  * are related to immediate login.
  *
  * @param {string} path  - path
- * @param {object} query - query parameters
+ * @param {Object} query - query parameters
  * @returns {string}      - the URL without related params
  */
 export const createPathWithoutImmediateLoginInformation = ( path, query ) => {

@@ -14,7 +14,7 @@ function editorPathFromSite( site ) {
 /**
  * Returns a URL to the post editor for a new post on a given site.
  *
- * @param  {object|string} site Site object or site slug
+ * @param  {Object | string} site Site object or site slug
  * @returns {string}      URL to post editor
  */
 export function newPost( site ) {

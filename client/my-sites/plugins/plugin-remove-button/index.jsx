@@ -13,6 +13,7 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import accept from 'calypso/lib/accept';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { decodeEntities } from 'calypso/lib/formatting';
 import { REMOVE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
 import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
@@ -34,7 +35,7 @@ class PluginRemoveButton extends Component {
 		};
 		const heading = translate( 'Remove %(pluginName)s', {
 			args: {
-				pluginName: plugin.name,
+				pluginName: decodeEntities( plugin.name ),
 			},
 		} );
 		accept(

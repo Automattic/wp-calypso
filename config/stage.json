@@ -20,6 +20,7 @@
 		"cancellation-offers": true,
 		"catch-js-errors": true,
 		"checkout/google-pay": true,
+		"checkout/vat-form": false,
 		"cloudflare": true,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,

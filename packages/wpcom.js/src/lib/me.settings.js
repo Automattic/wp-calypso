@@ -29,7 +29,7 @@ export default function MeSettings( wpcom ) {
  *      // user settings data object
  *    } );
  *
- * @param {object} [query] - query object parameter
+ * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
@@ -40,8 +40,8 @@ MeSettings.prototype.get = function ( query, fn ) {
 /**
  * Update settings of the current user
  *
- * @param {object} [query] - query object parameter
- * @param {object} body - body object parameter
+ * @param {Object} [query] - query object parameter
+ * @param {Object} body - body object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */

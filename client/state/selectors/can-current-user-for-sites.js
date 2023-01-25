@@ -7,10 +7,10 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
  * cannot be determined (if the site is not currently known, or if specifying
  * an invalid capability).
  *
- * @param  {object}   state      Global state tree
+ * @param  {Object}   state      Global state tree
  * @param  {Array}   siteIds     List of site IDs
  * @param  {string}   capability Capability label
- * @returns {object}            Object map, keyed per site by current user capability
+ * @returns {Object}            Object map, keyed per site by current user capability
  */
 export const canCurrentUserForSites = ( state, siteIds, capability ) => {
 	return siteIds.reduce( ( map, siteId ) => {

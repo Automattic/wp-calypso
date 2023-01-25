@@ -5,9 +5,9 @@ import 'calypso/state/billing-transactions/init';
 /**
  * Returns filter for the billing transactions of the given type
  *
- * @param  {object}  state           Global state tree
+ * @param  {Object}  state           Global state tree
  * @param  {string}  transactionType Transaction type
- * @returns {object}                 Billing transaction filters
+ * @returns {Object}                 Billing transaction filters
  */
 export default ( state, transactionType ) => {
 	const filters = get( state, [ 'billingTransactions', 'ui', transactionType ], {} );

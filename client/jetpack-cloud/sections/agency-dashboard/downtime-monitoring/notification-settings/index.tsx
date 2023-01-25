@@ -1,11 +1,9 @@
 import { Button } from '@automattic/components';
 import { Modal, ToggleControl } from '@wordpress/components';
-import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import SelectDropdown from 'calypso/components/select-dropdown';
-import TokenField from 'calypso/components/token-field';
 import { useUpdateMonitorSettings, useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import {
 	availableNotificationDurations as durations,
@@ -52,9 +50,6 @@ export default function NotificationSettings( {
 		if ( ! enableMobileNotification && ! enableEmailNotification ) {
 			return setValidationError( translate( 'Please select at least one contact method.' ) );
 		}
-		if ( enableEmailNotification && ! addedEmailAddresses.length ) {
-			return setValidationError( translate( 'Please add at least one email recipient' ) );
-		}
 		const params = {
 			wp_note_notifications: enableMobileNotification,
 			email_notifications: enableEmailNotification,
@@ -98,35 +93,11 @@ export default function NotificationSettings( {
 		}
 	}, [ enableMobileNotification, enableEmailNotification ] );
 
-	function handleAddEmail( recipients: Array< string > ) {
-		if ( recipients.length ) {
-			setValidationError( '' );
-			recipients.forEach( ( recipient ) => {
-				if ( ! emailValidator.validate( recipient ) ) {
-					setValidationError( translate( 'Please enter a valid email address.' ) );
-				}
-			} );
-		}
-		setAddedEmailAddresses( recipients );
-	}
 	useEffect( () => {
 		if ( isComplete ) {
 			onClose();
 		}
 	}, [ isComplete, onClose ] );
-
-	const addEmailsContent = enableEmailNotification && (
-		<div className="notification-settings__email-container">
-			<TokenField
-				isBorderless={ true }
-				tokenizeOnSpace
-				placeholder={ translate( 'Enter email addresses' ) }
-				value={ addedEmailAddresses }
-				onChange={ handleAddEmail }
-				disabled={ true }
-			/>
-		</div>
-	);
 
 	return (
 		<Modal
@@ -216,17 +187,12 @@ export default function NotificationSettings( {
 						<div className="notification-settings__toggle-content">
 							<div className="notification-settings__content-heading">{ translate( 'Email' ) }</div>
 							<div className="notification-settings__content-sub-heading">
-								{ translate( 'Receive email notifications with this email address.' ) }
+								{ translate( 'Receive email notifications with your account email address %s.', {
+									args: addedEmailAddresses,
+								} ) }
 							</div>
-							{
-								// We are using CSS to hide/show add email content on mobile/large screen view instead of the breakpoint
-								// hook since the 'useMobileBreakpont' hook returns true only when the width is > 480px, and we have some
-								// styles applied using the CSS breakpoint where '@include break-mobile' is true for width > 479px
-							 }
-							<div className="notification-settings__large-screen">{ addEmailsContent }</div>
 						</div>
 					</div>
-					<div className="notification-settings__small-screen">{ addEmailsContent }</div>
 				</div>
 
 				<div className="notification-settings__footer">

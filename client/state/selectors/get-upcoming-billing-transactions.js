@@ -7,7 +7,7 @@ import 'calypso/state/billing-transactions/init';
  * Returns all upcoming billing transactions.
  * Returns null if the billing transactions have not been fetched yet.
  *
- * @param  {object}  state   Global state tree
+ * @param  {Object}  state   Global state tree
  * @returns {?Array}          An array of upcoming transactions
  */
 export default function getUpcomingBillingTransactions( state ) {

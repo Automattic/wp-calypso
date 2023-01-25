@@ -5,7 +5,7 @@ import 'calypso/state/themes/init';
 /**
  * Returns the URL for signing up for a new WordPress.com account with the given theme pre-selected.
  *
- * @param  {object}  state   Global state tree
+ * @param  {Object}  state   Global state tree
  * @param  {string}  themeId Theme ID
  * @returns {?string}         Signup URL
  */

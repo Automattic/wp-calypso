@@ -6,7 +6,7 @@ import 'calypso/state/plugins/init';
  * Returns a Boolean indicating if a site has a particular plugin that
  * is active. This is useful for jetpack connected sites.
  *
- * @param {object} state - Global state tree
+ * @param {Object} state - Global state tree
  * @param {number} siteId - Site ID
  * @param {string} pluginSlug - Plugin slug
  * @returns {boolean} - truthiness of a site having an active plugin

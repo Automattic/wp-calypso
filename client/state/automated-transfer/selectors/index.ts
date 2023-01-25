@@ -53,7 +53,7 @@ export const getEligibility = compose( getEligibilityData, getAutomatedTransfer 
 /**
  * Helper to infer eligibility status from local transfer state sub-tree
  *
- * @param {object} state global app state
+ * @param {Object} state global app state
  * @returns {boolean} eligibility status for site
  */
 export const getEligibilityStatus = ( state: AppState ): boolean =>
@@ -62,7 +62,7 @@ export const getEligibilityStatus = ( state: AppState ): boolean =>
 /**
  * Returns eligibility status for transfer
  *
- * @param {object} state global app state
+ * @param {Object} state global app state
  * @param {number} siteId requested site for transfer info
  * @returns {boolean} True if current site is eligible for transfer, otherwise false
  */

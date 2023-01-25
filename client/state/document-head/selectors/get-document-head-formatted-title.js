@@ -14,7 +14,7 @@ import 'calypso/state/ui/init';
  * Returns the formatted document title, based on the currently set title,
  * capped unreadCount, and selected site.
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @returns {string}         Formatted title
  */
 export const getDocumentHeadFormattedTitle = createSelector(

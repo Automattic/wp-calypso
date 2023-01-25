@@ -85,6 +85,8 @@ describe( 'addLocationToResponseCart', function () {
 			country_code: 'US',
 			postal_code: undefined,
 			subdivision_code: undefined,
+			vat_id: undefined,
+			organization: undefined,
 		} );
 	} );
 	it( 'resets existing codes not replaced', function () {
@@ -96,6 +98,8 @@ describe( 'addLocationToResponseCart', function () {
 			country_code: 'US',
 			postal_code: undefined,
 			subdivision_code: undefined,
+			vat_id: undefined,
+			organization: undefined,
 		} );
 	} );
 	it( 'adds the new location postalCode if set', function () {
@@ -104,6 +108,8 @@ describe( 'addLocationToResponseCart', function () {
 			country_code: undefined,
 			postal_code: '90210',
 			subdivision_code: undefined,
+			vat_id: undefined,
+			organization: undefined,
 		} );
 	} );
 	it( 'adds the new location subdivisionCode if set', function () {
@@ -112,6 +118,26 @@ describe( 'addLocationToResponseCart', function () {
 			country_code: undefined,
 			postal_code: undefined,
 			subdivision_code: 'CA',
+			vat_id: undefined,
+			organization: undefined,
+		} );
+	} );
+	it( 'adds the new location vatId if set', function () {
+		const result = addLocationToResponseCart( cart, { vatId: '123456' } );
+		expect( result.tax.location ).toEqual( {
+			country_code: undefined,
+			postal_code: undefined,
+			vat_id: '123456',
+			organization: undefined,
+		} );
+	} );
+	it( 'adds the new location organization if set', function () {
+		const result = addLocationToResponseCart( cart, { organization: 'Test Co.' } );
+		expect( result.tax.location ).toEqual( {
+			country_code: undefined,
+			postal_code: undefined,
+			vat_id: undefined,
+			organization: 'Test Co.',
 		} );
 	} );
 	it( 'adds all new location codes if set', function () {
@@ -119,11 +145,15 @@ describe( 'addLocationToResponseCart', function () {
 			subdivisionCode: 'CA',
 			postalCode: '90210',
 			countryCode: 'US',
+			vatId: '12345',
+			organization: 'Test Co.',
 		} );
 		expect( result.tax.location ).toEqual( {
 			country_code: 'US',
 			postal_code: '90210',
 			subdivision_code: 'CA',
+			vat_id: '12345',
+			organization: 'Test Co.',
 		} );
 	} );
 	it( 'resets all codes when no codes are set', function () {
@@ -132,7 +162,12 @@ describe( 'addLocationToResponseCart', function () {
 				...cart,
 				tax: {
 					...cart.tax,
-					location: { ...cart.tax.location, postal_code: '90210', country_code: 'US' },
+					location: {
+						...cart.tax.location,
+						postal_code: '90210',
+						country_code: 'US',
+						vat_id: '12345',
+					},
 				},
 			},
 			{}
@@ -141,6 +176,8 @@ describe( 'addLocationToResponseCart', function () {
 			country_code: undefined,
 			postal_code: undefined,
 			subdivision_code: undefined,
+			vat_id: undefined,
+			organization: undefined,
 		} );
 	} );
 } );
@@ -155,6 +192,8 @@ describe( 'doesCartLocationDifferFromResponseCartLocation', function () {
 				country_code: 'US',
 				subdivision_code: 'CA',
 				postal_code: '90210',
+				vat_id: '12345',
+				organization: 'Test Co.',
 			},
 		},
 	};
@@ -164,6 +203,8 @@ describe( 'doesCartLocationDifferFromResponseCartLocation', function () {
 			countryCode: '',
 			subdivisionCode: '',
 			postalCode: '',
+			vatId: '',
+			organization: '',
 		} );
 		expect( result ).toBe( true );
 	} );
@@ -172,6 +213,8 @@ describe( 'doesCartLocationDifferFromResponseCartLocation', function () {
 			countryCode: 'CA',
 			subdivisionCode: 'CA',
 			postalCode: '90210',
+			vatId: '12345',
+			organization: 'Test Co.',
 		} );
 		expect( result ).toBe( true );
 	} );
@@ -180,6 +223,8 @@ describe( 'doesCartLocationDifferFromResponseCartLocation', function () {
 			countryCode: 'US',
 			subdivisionCode: 'CA',
 			postalCode: '10001',
+			vatId: '12345',
+			organization: 'Test Co.',
 		} );
 		expect( result ).toBe( true );
 	} );
@@ -188,6 +233,28 @@ describe( 'doesCartLocationDifferFromResponseCartLocation', function () {
 			countryCode: 'US',
 			subdivisionCode: 'MA',
 			postalCode: '90210',
+			vatId: '12345',
+			organization: 'Test Co.',
+		} );
+		expect( result ).toBe( true );
+	} );
+	it( 'returns true if vatId differs', function () {
+		const result = doesCartLocationDifferFromResponseCartLocation( cartWithLocation, {
+			countryCode: 'US',
+			subdivisionCode: 'MA',
+			postalCode: '90210',
+			vatId: '545454',
+			organization: 'Test Co.',
+		} );
+		expect( result ).toBe( true );
+	} );
+	it( 'returns true if organization differs', function () {
+		const result = doesCartLocationDifferFromResponseCartLocation( cartWithLocation, {
+			countryCode: 'US',
+			subdivisionCode: 'MA',
+			postalCode: '90210',
+			vatId: '12345',
+			organization: 'Testers, Inc.',
 		} );
 		expect( result ).toBe( true );
 	} );
@@ -196,6 +263,8 @@ describe( 'doesCartLocationDifferFromResponseCartLocation', function () {
 			countryCode: 'US',
 			subdivisionCode: 'CA',
 			postalCode: '90210',
+			vatId: '12345',
+			organization: 'Test Co.',
 		} );
 		expect( result ).toBe( false );
 	} );
@@ -209,6 +278,8 @@ describe( 'doesCartLocationDifferFromResponseCartLocation', function () {
 						country_code: 'US',
 						subdivision_code: '',
 						postal_code: '90210',
+						vat_id: '12345',
+						organization: 'Test Co.',
 					},
 				},
 			},
@@ -216,6 +287,8 @@ describe( 'doesCartLocationDifferFromResponseCartLocation', function () {
 				countryCode: 'US',
 				subdivisionCode: '',
 				postalCode: '90210',
+				vatId: '12345',
+				organization: 'Test Co.',
 			}
 		);
 		expect( result ).toBe( false );
@@ -229,6 +302,8 @@ describe( 'doesCartLocationDifferFromResponseCartLocation', function () {
 					location: {
 						country_code: 'US',
 						postal_code: '90210',
+						vat_id: '12345',
+						organization: 'Test Co.',
 					},
 				},
 			},
@@ -236,6 +311,8 @@ describe( 'doesCartLocationDifferFromResponseCartLocation', function () {
 				countryCode: 'US',
 				subdivisionCode: '',
 				postalCode: '90210',
+				vatId: '12345',
+				organization: 'Test Co.',
 			}
 		);
 		expect( result ).toBe( false );
@@ -244,6 +321,8 @@ describe( 'doesCartLocationDifferFromResponseCartLocation', function () {
 		const result = doesCartLocationDifferFromResponseCartLocation( cartWithLocation, {
 			countryCode: 'US',
 			postalCode: '90210',
+			vatId: '12345',
+			organization: 'Test Co.',
 		} );
 		expect( result ).toBe( false );
 	} );
@@ -252,6 +331,8 @@ describe( 'doesCartLocationDifferFromResponseCartLocation', function () {
 			countryCode: undefined,
 			subdivisionCode: undefined,
 			postalCode: undefined,
+			vatId: '12345',
+			organization: 'Test Co.',
 		} );
 		expect( result ).toBe( false );
 	} );

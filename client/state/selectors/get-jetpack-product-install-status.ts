@@ -12,9 +12,9 @@ export type JetpackProductInstallStatus = {
 };
 
 /**
- * @param {object} state  Global app state.
+ * @param {Object} state  Global app state.
  * @param {number} siteId ID of the site to get Jetpack product install status of.
- * @returns {?object} An object containing the current Jetpack product install status.
+ * @returns {?Object} An object containing the current Jetpack product install status.
  */
 export default function getJetpackProductInstallStatus(
 	state: AppState,
