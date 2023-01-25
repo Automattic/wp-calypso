@@ -173,7 +173,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 				const rawPrice = planPropertiesObj.rawPrice;
 				const isLargeCurrency = rawPrice ? rawPrice > 99000 : false;
 
-				const showPlanSelect = ! allVisible && ( isInSignup || planName !== 'free_plan' );
+				const showPlanSelect = ! allVisible;
 
 				return (
 					<Cell key={ planName } className={ headerClasses } textAlign="left">
