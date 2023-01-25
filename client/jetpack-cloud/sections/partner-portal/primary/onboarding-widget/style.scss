@@ -38,7 +38,9 @@
 		}
 
 		&:first-child {
-			margin-inline-end: 8px;
+			@include break-xlarge {
+				margin-inline-end: 8px;
+			}
 
 			@include break-wide {
 				margin-inline-end: 32px;
@@ -46,7 +48,9 @@
 		}
 
 		&:last-child {
-			margin-inline-start: 8px;
+			@include break-xlarge {
+				margin-inline-start: 8px;
+			}
 
 			@include break-wide {
 				margin-inline-start: 32px;
