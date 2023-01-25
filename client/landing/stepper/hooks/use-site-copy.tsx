@@ -25,12 +25,11 @@ function useSafeSiteHasFeature( siteId: number, feature: string ) {
 		return siteHasFeature( state, siteId, feature );
 	} );
 }
-interface CopySiteProps {
-	site: SiteExcerptData;
-	recordTracks: ( eventName: string, extraProps?: Record< string, any > ) => void;
-}
 
-const useCopySite = ( { site, recordTracks }: CopySiteProps ) => {
+export const useSiteCopy = (
+	site: SiteExcerptData,
+	recordTracks: ( eventName: string, extraProps?: Record< string, any > ) => void
+) => {
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const hasCopySiteFeature = useSafeSiteHasFeature( site.ID, WPCOM_FEATURES_COPY_SITE );
 	const plan = site?.plan;
@@ -44,11 +43,11 @@ const useCopySite = ( { site, recordTracks }: CopySiteProps ) => {
 
 	const purchases = useSelector( ( state ) => getSitePurchases( state, site.ID ) );
 
-	const showCopySiteItem = useCallback( () => {
-		return ! hasCopySiteFeature || ! isSiteOwner || ! plan || isLoadingPurchase;
+	const shouldShowSiteCopyItem = useCallback( () => {
+		return hasCopySiteFeature && isSiteOwner && plan && ! isLoadingPurchase;
 	}, [ hasCopySiteFeature, isSiteOwner, plan, isLoadingPurchase ] );
 
-	const startCopySite = useCallback( () => {
+	const startSiteCopy = useCallback( () => {
 		if ( ! plan || ! purchases ) {
 			return;
 		}
@@ -64,9 +63,9 @@ const useCopySite = ( { site, recordTracks }: CopySiteProps ) => {
 
 	return useMemo(
 		() => ( {
-			showCopySiteItem,
-			startCopySite,
+			shouldShowSiteCopyItem,
+			startSiteCopy,
 		} ),
-		[ showCopySiteItem, startCopySite ]
+		[ shouldShowSiteCopyItem, startSiteCopy ]
 	);
 };
