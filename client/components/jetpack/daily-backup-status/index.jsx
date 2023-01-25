@@ -3,6 +3,7 @@ import { Card } from '@automattic/components';
 import PropTypes from 'prop-types';
 import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { StorageUsageLevels } from 'calypso/components/backup-storage-space/storage-usage-levels';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
 import BackupWarnings from 'calypso/components/jetpack/backup-warnings/backup-warnings';
@@ -37,6 +38,7 @@ const DailyBackupStatus = ( {
 	lastBackupDate,
 	backup,
 	deltas,
+	usageLevel,
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 
@@ -126,8 +128,11 @@ const DailyBackupStatus = ( {
 			<BackupFailed backup={ backup } />
 		);
 	}
-
 	if ( lastBackupDate ) {
+		// if the storage is full, don't show backup is schdeuled or delayed message to the user.
+		if ( StorageUsageLevels.Full === usageLevel ) {
+			return null;
+		}
 		const selectedToday = selectedDate.isSame( today, 'day' );
 		return selectedToday ? (
 			<BackupScheduled lastBackupDate={ lastBackupDate } />
@@ -149,6 +154,7 @@ DailyBackupStatus.propTypes = {
 	lastBackupAttemptOnDate: PropTypes.object, // Moment object
 	backup: PropTypes.object,
 	deltas: PropTypes.object,
+	usageLevel: PropTypes.string,
 };
 
 const Wrapper = ( props ) => {

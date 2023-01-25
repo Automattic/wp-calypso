@@ -15,13 +15,17 @@ import {
 } from 'calypso/state/rewind/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import { getUsageLevel, StorageUsageLevels } from './storage-usage-levels';
+import { getUsageLevel, StorageUsageLevelName, StorageUsageLevels } from './storage-usage-levels';
 import UsageDisplay from './usage-display';
 import Upsell from './usage-warning/upsell';
 
 import './style.scss';
 
-const BackupStorageSpace: React.FC = () => {
+type OwnProps = {
+	onUsageLevel: ( usageLevel: StorageUsageLevelName ) => void;
+};
+
+const BackupStorageSpace: React.FC< OwnProps > = ( { onUsageLevel } ) => {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	useQueryRewindSize( siteId );
 	useQueryRewindPolicies( siteId );
@@ -51,6 +55,10 @@ const BackupStorageSpace: React.FC = () => {
 	const requestingSize = useSelector( ( state ) => isRequestingRewindSize( state, siteId ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
 
+	// update the usage level
+	React.useEffect( () => {
+		onUsageLevel( usageLevel );
+	}, [ onUsageLevel, usageLevel ] );
 	// Sites without a storage policy don't have a notion of "bytes available,"
 	// so this value will be undefined; if so, don't render
 	if ( bytesAvailable === undefined ) {

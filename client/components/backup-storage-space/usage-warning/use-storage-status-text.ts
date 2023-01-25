@@ -9,8 +9,6 @@ const useStorageStatusText = (
 ): TranslateResult | null => {
 	const translate = useTranslate();
 
-	// TODO: For StorageUsageLevels.Warning, estimate how many days until
-	// all storage is used, and show that in the status text.
 	return useMemo( () => {
 		switch ( usageLevel ) {
 			case StorageUsageLevels.Warning:
@@ -38,7 +36,7 @@ const useStorageStatusText = (
 		}
 
 		return null;
-	}, [ translate, usageLevel ] );
+	}, [ translate, usageLevel, daysOfBackupsSaved, minDaysOfBackupsAllowed ] );
 };
 
 export default useStorageStatusText;
