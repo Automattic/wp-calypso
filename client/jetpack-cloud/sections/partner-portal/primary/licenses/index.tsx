@@ -61,7 +61,7 @@ export default function Licenses( {
 		dispatch( recordTracksEvent( 'calypso_partner_portal_license_list_issue_license_click' ) );
 	};
 
-	const showLicenseList = hasFetched && allLicensesCount > 0;
+	const showEmptyStateContent = hasFetched && allLicensesCount === 0;
 
 	return (
 		<Main wideLayout className="licenses">
@@ -78,21 +78,21 @@ export default function Licenses( {
 				<Button
 					href="/partner-portal/issue-license"
 					onClick={ onIssueNewLicenseClick }
-					primary={ showLicenseList }
+					primary={ ! showEmptyStateContent }
 					style={ { marginLeft: 'auto' } }
 				>
 					{ translate( 'Issue New License' ) }
 				</Button>
 			</div>
 
-			{ showLicenseList ? (
+			{ showEmptyStateContent ? (
+				<OnboardingWidget isLicensesPage />
+			) : (
 				<LicenseListContext.Provider value={ context }>
 					<LicenseStateFilter />
 
 					<LicenseList />
 				</LicenseListContext.Provider>
-			) : (
-				<OnboardingWidget isLicensesPage />
 			) }
 		</Main>
 	);
