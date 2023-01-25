@@ -54,12 +54,13 @@ function createReduxStoreWithPurchase( purchase ) {
 }
 
 describe( 'PurchaseMetaIntroductoryOfferDetail', () => {
-	it( 'renders "after first renewal" text for an intro offer with prorated renewal', () => {
+	it( 'renders "after first renewal" text yearly for an intro offer with prorated renewal where next renewal is not using offer', () => {
 		const purchase = {
 			...basicPurchase,
 			introductory_offer: {
 				...basicPurchase.introductory_offer,
 				is_next_renewal_prorated: true,
+				is_next_renewal_using_offer: false,
 			},
 		};
 		render(
@@ -74,6 +75,178 @@ describe( 'PurchaseMetaIntroductoryOfferDetail', () => {
 		);
 		expect(
 			screen.getByText( 'After the first renewal, the subscription price will be $35 / year' )
+		).toBeInTheDocument();
+	} );
+
+	it( 'renders "after first renewal" text monthly for an intro offer with prorated renewal where next renewal is not using offer', () => {
+		const purchase = {
+			...basicPurchase,
+			bill_period_days: 31,
+			introductory_offer: {
+				...basicPurchase.introductory_offer,
+				is_next_renewal_prorated: true,
+				is_next_renewal_using_offer: false,
+			},
+		};
+		render(
+			<ReduxProvider store={ createReduxStoreWithPurchase( purchase ) }>
+				<PurchaseMeta
+					hasLoadedPurchasesFromServer={ true }
+					purchaseId={ 1 }
+					siteSlug="test"
+					isDataLoading={ false }
+				/>
+			</ReduxProvider>
+		);
+		expect(
+			screen.getByText( 'After the first renewal, the subscription price will be $35 / month' )
+		).toBeInTheDocument();
+	} );
+
+	it( 'renders "after first renewal" text without period for an intro offer with prorated renewal where next renewal is not using offer', () => {
+		const purchase = {
+			...basicPurchase,
+			bill_period_days: 7, // A bill period not covered by the code.
+			introductory_offer: {
+				...basicPurchase.introductory_offer,
+				is_next_renewal_prorated: true,
+				is_next_renewal_using_offer: false,
+			},
+		};
+		render(
+			<ReduxProvider store={ createReduxStoreWithPurchase( purchase ) }>
+				<PurchaseMeta
+					hasLoadedPurchasesFromServer={ true }
+					purchaseId={ 1 }
+					siteSlug="test"
+					isDataLoading={ false }
+				/>
+			</ReduxProvider>
+		);
+		expect(
+			screen.getByText( 'After the first renewal, the subscription price will be $35' )
+		).toBeInTheDocument();
+	} );
+
+	it( 'renders no text for an intro offer without prorated renewal where next renewal is not using offer', () => {
+		const purchase = {
+			...basicPurchase,
+			introductory_offer: {
+				...basicPurchase.introductory_offer,
+				is_next_renewal_prorated: false,
+				is_next_renewal_using_offer: false,
+			},
+		};
+		render(
+			<ReduxProvider store={ createReduxStoreWithPurchase( purchase ) }>
+				<PurchaseMeta
+					hasLoadedPurchasesFromServer={ true }
+					purchaseId={ 1 }
+					siteSlug="test"
+					isDataLoading={ false }
+				/>
+			</ReduxProvider>
+		);
+		expect( screen.queryByText( /After the first renewal/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /After the offer ends/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders "after offer ends" text yearly for an intro offer without prorated renewal where next renewal is using offer', () => {
+		const purchase = {
+			...basicPurchase,
+			introductory_offer: {
+				...basicPurchase.introductory_offer,
+				is_next_renewal_prorated: false,
+				is_next_renewal_using_offer: true,
+			},
+		};
+		render(
+			<ReduxProvider store={ createReduxStoreWithPurchase( purchase ) }>
+				<PurchaseMeta
+					hasLoadedPurchasesFromServer={ true }
+					purchaseId={ 1 }
+					siteSlug="test"
+					isDataLoading={ false }
+				/>
+			</ReduxProvider>
+		);
+		expect(
+			screen.getByText( 'After the offer ends, the subscription price will be $35 / year' )
+		).toBeInTheDocument();
+	} );
+
+	it( 'renders "after offer ends" text monthly for an intro offer without prorated renewal where next renewal is using offer', () => {
+		const purchase = {
+			...basicPurchase,
+			bill_period_days: 31,
+			introductory_offer: {
+				...basicPurchase.introductory_offer,
+				is_next_renewal_prorated: false,
+				is_next_renewal_using_offer: true,
+			},
+		};
+		render(
+			<ReduxProvider store={ createReduxStoreWithPurchase( purchase ) }>
+				<PurchaseMeta
+					hasLoadedPurchasesFromServer={ true }
+					purchaseId={ 1 }
+					siteSlug="test"
+					isDataLoading={ false }
+				/>
+			</ReduxProvider>
+		);
+		expect(
+			screen.getByText( 'After the offer ends, the subscription price will be $35 / month' )
+		).toBeInTheDocument();
+	} );
+
+	it( 'renders "after offer ends" text without period for an intro offer without prorated renewal where next renewal is using offer', () => {
+		const purchase = {
+			...basicPurchase,
+			bill_period_days: 7, // A bill period not covered by the code.
+			introductory_offer: {
+				...basicPurchase.introductory_offer,
+				is_next_renewal_prorated: false,
+				is_next_renewal_using_offer: true,
+			},
+		};
+		render(
+			<ReduxProvider store={ createReduxStoreWithPurchase( purchase ) }>
+				<PurchaseMeta
+					hasLoadedPurchasesFromServer={ true }
+					purchaseId={ 1 }
+					siteSlug="test"
+					isDataLoading={ false }
+				/>
+			</ReduxProvider>
+		);
+		expect(
+			screen.getByText( 'After the offer ends, the subscription price will be $35' )
+		).toBeInTheDocument();
+	} );
+
+	it( 'renders "after offer ends" text without period for an intro offer with prorated renewal where next renewal is using offer', () => {
+		const purchase = {
+			...basicPurchase,
+			bill_period_days: 7, // A bill period not covered by the code.
+			introductory_offer: {
+				...basicPurchase.introductory_offer,
+				is_next_renewal_prorated: true,
+				is_next_renewal_using_offer: true,
+			},
+		};
+		render(
+			<ReduxProvider store={ createReduxStoreWithPurchase( purchase ) }>
+				<PurchaseMeta
+					hasLoadedPurchasesFromServer={ true }
+					purchaseId={ 1 }
+					siteSlug="test"
+					isDataLoading={ false }
+				/>
+			</ReduxProvider>
+		);
+		expect(
+			screen.getByText( 'After the offer ends, the subscription price will be $35' )
 		).toBeInTheDocument();
 	} );
 } );
