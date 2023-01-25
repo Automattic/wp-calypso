@@ -129,8 +129,8 @@ const PromptsNavigation = ( { prompts, showViewAllResponses = false } ) => {
 			responses = (
 				<div className="blogging-prompt__prompt-responses">
 					<div className="blogging-prompt__prompt-responses-users">
-						{ prompt.answered_users_sample.map( ( sample ) => {
-							return <img alt="answered-users" src={ sample.avatar } />;
+						{ prompt.answered_users_sample.map( ( sample, index ) => {
+							return <img key={ index } alt="answered-users" src={ sample.avatar } />;
 						} ) }
 					</div>
 					{ showViewAllResponses ? viewAllResponses : '' }
