@@ -151,6 +151,7 @@ export const getNewSiteParams = ( {
 		public: launchAsComingSoon ? Visibility.PublicNotIndexed : Visibility.PublicIndexed,
 		options: {
 			designType: designType || undefined,
+			launchpad_screen: 'new',
 			theme,
 			use_theme_annotation: get( signupDependencies, 'useThemeHeadstart', false ),
 			default_annotation_as_primary_fallback: shouldUseDefaultAnnotationAsFallback,

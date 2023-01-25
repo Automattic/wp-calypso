@@ -30,6 +30,7 @@ type NewSiteParams = {
 	blog_name: string;
 	find_available_url: boolean;
 	options: {
+		launchpad_screen: 'full' | 'off' | 'new';
 		designType: string;
 		theme: string;
 		use_theme_annotation: boolean;
@@ -70,6 +71,7 @@ export const getNewSiteParams = ( {
 		blog_title: siteTitle,
 		public: siteVisibility,
 		options: {
+			launchpad_screen: 'new',
 			designType: '',
 			theme: themeSlugWithRepo,
 			use_theme_annotation: useThemeHeadstart,
