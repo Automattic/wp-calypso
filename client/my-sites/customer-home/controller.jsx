@@ -45,7 +45,10 @@ export async function maybeRedirect( context, next ) {
 	// disabled. Because of this, we refetch site information and limit traffic by scoping down
 	// requests to launchpad enabled sites.
 	// See https://cylonp2.wordpress.com/2022/09/19/question-about-infinite-redirect/#comment-1731
-	if ( maybeStalelaunchpadScreenOption && maybeStalelaunchpadScreenOption === 'full' ) {
+	if (
+		( maybeStalelaunchpadScreenOption && maybeStalelaunchpadScreenOption === 'full' ) ||
+		( maybeStalelaunchpadScreenOption && maybeStalelaunchpadScreenOption === 'new' )
+	) {
 		await context.store.dispatch( requestSite( siteId ) );
 	}
 
