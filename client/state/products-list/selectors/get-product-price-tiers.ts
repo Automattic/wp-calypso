@@ -6,7 +6,7 @@ import 'calypso/state/products-list/init';
 /**
  * Returns the price tiers of the specified product.
  *
- * @param {Object} state - global state tree
+ * @param {object} state - global state tree
  * @param {string} productSlug - internal product slug, eg 'jetpack_premium'
  * @returns {PriceTierEntry[]} The price tiers.
  */

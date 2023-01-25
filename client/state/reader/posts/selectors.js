@@ -6,9 +6,9 @@ import 'calypso/state/reader/init';
 /**
  * Returns a single post.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {string}  postGlobalId Post global ID
- * @returns {Object} Post
+ * @returns {object} Post
  */
 export function getPostById( state, postGlobalId ) {
 	return state.reader.posts.items[ postGlobalId ];

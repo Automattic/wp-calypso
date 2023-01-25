@@ -7,7 +7,7 @@ import {
 } from 'calypso/state/help/ticket/selectors';
 
 /**
- * @param {Object} state Global state tree
+ * @param {object} state Global state tree
  * @returns {boolean} Have each of the required async checks been made?
  */
 export default function isSupportVariationDetermined( state ) {

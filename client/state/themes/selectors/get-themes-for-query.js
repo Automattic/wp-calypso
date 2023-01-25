@@ -8,9 +8,9 @@ import 'calypso/state/themes/init';
  * Returns an array of normalized themes for the themes query, or null if no
  * themes have been received.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @param  {Object}  query  Theme query object
+ * @param  {object}  query  Theme query object
  * @returns {?Array}         Themes for the theme query
  */
 export const getThemesForQuery = createSelector(

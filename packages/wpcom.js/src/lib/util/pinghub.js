@@ -5,8 +5,8 @@ const debug = debugFactory( 'wpcom:pinghub' );
 /**
  * Create a `Pinghub` instance
  *
- * @param {Object} wpcom - wpcom instance
- * @returns {Pinghub|undefined}
+ * @param {object} wpcom - wpcom instance
+ * @returns {null} null
  */
 export default function Pinghub( wpcom ) {
 	if ( ! ( this instanceof Pinghub ) ) {

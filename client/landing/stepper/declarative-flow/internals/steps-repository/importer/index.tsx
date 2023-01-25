@@ -1,6 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { StepContainer } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useEffect, useState } from 'react';
@@ -15,7 +14,6 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { fetchImporterState, resetImport } from 'calypso/state/imports/actions';
@@ -57,7 +55,6 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const siteItem = useSelector( ( state ) => getSite( state, siteId ) );
 		const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
 		const isImporterStatusHydrated = useSelector( isImporterStatusHydratedSelector );
-		const isMigrateFromWp = useSelect( ( select ) => select( ONBOARD_STORE ).getIsMigrateFromWp() );
 
 		const fromSite = currentSearchParams.get( 'from' ) || '';
 		const fromSiteData = useSelector( getUrlData );
@@ -153,7 +150,6 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 					fromSite={ fromSite }
 					urlData={ fromSiteData }
 					stepNavigator={ stepNavigator }
-					showConfirmDialog={ ! isMigrateFromWp }
 				/>
 			);
 		}

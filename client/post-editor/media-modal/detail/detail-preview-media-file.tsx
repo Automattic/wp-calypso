@@ -35,14 +35,10 @@ const EditorMediaModalDetailPreviewMediaFile: React.FC< Props & LocalizeProps > 
 		);
 	}
 
-	const mediaUrl = url( item, {} );
-	if ( ! mediaUrl ) {
-		return null;
-	}
 	return (
 		<MediaFile
 			component={ component }
-			src={ mediaUrl }
+			src={ url( item, {} ) }
 			maxSize={ 20 * 1024 * 1024 }
 			onError={ () => setPreviewUnavailable( true ) }
 			controls

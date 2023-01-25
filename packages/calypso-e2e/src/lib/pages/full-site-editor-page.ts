@@ -139,7 +139,7 @@ export class FullSiteEditorPage {
 	/**
 	 * Does all waiting and initial actions to prepare the site editor for interaction.
 	 *
-	 * @param {Object} param0 Keyed object of options.
+	 * @param {object} param0 Keyed object of options.
 	 * @param {boolean} param0.leaveWithoutSaving Set if we should auto-except dialog about unsaved changes when leaving.
 	 */
 	async prepareForInteraction(
@@ -408,7 +408,7 @@ export class FullSiteEditorPage {
 	/**
 	 * Opens the site styles sidebar in the site editor.
 	 *
-	 * @param {Object} param0 Keyed options parameter.
+	 * @param {object} param0 Keyed options parameter.
 	 * @param {boolean} param0.closeWelcomeGuide Set if should close welcome guide on opening.
 	 */
 	async openSiteStyles(

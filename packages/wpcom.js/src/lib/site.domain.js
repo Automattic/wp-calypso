@@ -23,7 +23,7 @@ class SiteDomain {
 	/**
 	 * Get the primary domain for a site
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Function} request handler
 	 */
@@ -45,7 +45,7 @@ class SiteDomain {
 	/**
 	 * Get the redirect status for a site
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Function} request handler
 	 */
@@ -56,7 +56,7 @@ class SiteDomain {
 	/**
 	 * Set the redirect location for a site
 	 *
-	 * @param {string | Object} location - location to set
+	 * @param {string|object} location - location to set
 	 * @param {Function} [fn] - callback function
 	 * @returns {Function} request handler
 	 */

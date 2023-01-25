@@ -9,8 +9,8 @@ import { getUserSuggestions } from 'calypso/state/user-suggestions/selectors';
  *
  * example: connectUserMentions( Component )
  *
- * @param {Object} WrappedComponent - React component to wrap
- * @returns {Object} the enhanced component
+ * @param {object} WrappedComponent - React component to wrap
+ * @returns {object} the enhanced component
  */
 const connectUserMentions = ( WrappedComponent ) => {
 	class connectUserMentionsFetcher extends PureComponent {

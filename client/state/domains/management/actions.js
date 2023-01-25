@@ -17,21 +17,17 @@ import {
 	DOMAIN_MANAGEMENT_WHOIS_UPDATE,
 } from 'calypso/state/action-types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import type { WhoisData } from './types';
-import type {
-	ContactValidationResponseMessages,
-	DomainContactValidationRequest,
-	PossiblyCompleteDomainContactDetails,
-} from '@automattic/wpcom-checkout';
-import type { CalypsoDispatch } from 'calypso/state/types';
 
 import 'calypso/state/domains/init';
 
 /**
  * Returns an action object to be used in signalling that a cached domains
  * contact details object has been received.
+ *
+ * @param   {object}   data   cached contact details object
+ * @returns {object}   Action object
  */
-export function receiveContactDetailsCache( data: PossiblyCompleteDomainContactDetails ) {
+export function receiveContactDetailsCache( data ) {
 	return {
 		type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
 		data,
@@ -41,29 +37,26 @@ export function receiveContactDetailsCache( data: PossiblyCompleteDomainContactD
 /**
  * Triggers a network request to query domain contact details
  * cached data (originated from last domain purchase)
+ *
+ * @returns {Function}          Action thunk
  */
 export function requestContactDetailsCache() {
-	return ( dispatch: CalypsoDispatch ) => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
 		} );
 
 		wpcom.req
 			.get( '/me/domain-contact-information' )
-			.then( ( data: ContactValidationResponseMessages ) => {
+			.then( ( data ) => {
 				dispatch(
-					receiveContactDetailsCache(
-						mapRecordKeysRecursively(
-							data,
-							snakeToCamelCase
-						) as PossiblyCompleteDomainContactDetails
-					)
+					receiveContactDetailsCache( mapRecordKeysRecursively( data, snakeToCamelCase ) )
 				);
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS,
 				} );
 			} )
-			.catch( ( error: Error ) => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE,
 					error,
@@ -72,28 +65,23 @@ export function requestContactDetailsCache() {
 	};
 }
 
-export function saveContactDetailsCache( contactInformation: DomainContactValidationRequest ) {
-	return ( dispatch: CalypsoDispatch ) => {
+export function saveContactDetailsCache( contactInformation ) {
+	return ( dispatch ) => {
 		dispatch( {
 			type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
 		} );
 
 		wpcom.req
 			.post( '/me/domain-contact-information', contactInformation )
-			.then( ( data: ContactValidationResponseMessages ) => {
+			.then( ( data ) => {
 				dispatch(
-					receiveContactDetailsCache(
-						mapRecordKeysRecursively(
-							data,
-							snakeToCamelCase
-						) as PossiblyCompleteDomainContactDetails
-					)
+					receiveContactDetailsCache( mapRecordKeysRecursively( data, snakeToCamelCase ) )
 				);
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS,
 				} );
 			} )
-			.catch( ( error: Error ) => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE,
 					error,
@@ -102,7 +90,7 @@ export function saveContactDetailsCache( contactInformation: DomainContactValida
 	};
 }
 
-export function updateContactDetailsCache( data: PossiblyCompleteDomainContactDetails ) {
+export function updateContactDetailsCache( data ) {
 	return {
 		type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
 		data,
@@ -112,8 +100,12 @@ export function updateContactDetailsCache( data: PossiblyCompleteDomainContactDe
 /**
  * Returns an action object to be used in signalling that a WHOIS details
  * object has been received.
+ *
+ * @param	{string}   domain		domain queried
+ * @param   {object}   whoisData	contact details object
+ * @returns {object}   Action object
  */
-export function receiveWhois( domain: string, whoisData: WhoisData ) {
+export function receiveWhois( domain, whoisData ) {
 	return {
 		type: DOMAIN_MANAGEMENT_WHOIS_RECEIVE,
 		domain,
@@ -123,9 +115,12 @@ export function receiveWhois( domain: string, whoisData: WhoisData ) {
 
 /**
  * Triggers a network request to query WHOIS details
+ *
+ * @param   {string}   domain	domain to query
+ * @returns {Function}          Action thunk
  */
-export function requestWhois( domain: string ) {
-	return ( dispatch: CalypsoDispatch ) => {
+export function requestWhois( domain ) {
+	return ( dispatch ) => {
 		dispatch( {
 			type: DOMAIN_MANAGEMENT_WHOIS_REQUEST,
 			domain,
@@ -133,14 +128,14 @@ export function requestWhois( domain: string ) {
 
 		return wpcom.req
 			.get( `/domains/${ domain }/whois` )
-			.then( ( whoisData: WhoisData ) => {
+			.then( ( whoisData ) => {
 				dispatch( receiveWhois( domain, whoisData ) );
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_WHOIS_REQUEST_SUCCESS,
 					domain,
 				} );
 			} )
-			.catch( ( error: Error ) => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_WHOIS_REQUEST_FAILURE,
 					domain,
@@ -155,12 +150,12 @@ export function requestWhois( domain: string ) {
  * at the domain's registrar.
  *
  * @param   {string}   domain		domain to query
- * @param   {Object}   whoisData	whois details object
+ * @param   {object}   whoisData	whois details object
  * @param	  {boolean}  transferLock set 60-day transfer lock after update
  * @returns {Function}				Action thunk
  */
-export function saveWhois( domain: string, whoisData: WhoisData, transferLock: boolean ) {
-	return ( dispatch: CalypsoDispatch ) => {
+export function saveWhois( domain, whoisData, transferLock ) {
+	return ( dispatch ) => {
 		dispatch( {
 			type: DOMAIN_MANAGEMENT_WHOIS_SAVE,
 			domain,
@@ -171,7 +166,7 @@ export function saveWhois( domain: string, whoisData: WhoisData, transferLock: b
 				whois: whoisData,
 				transfer_lock: transferLock,
 			} )
-			.then( ( data: WhoisData ) => {
+			.then( ( data ) => {
 				dispatch( updateWhois( domain, whoisData ) );
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
@@ -179,7 +174,7 @@ export function saveWhois( domain: string, whoisData: WhoisData, transferLock: b
 					data,
 				} );
 			} )
-			.catch( ( error: Error ) => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: DOMAIN_MANAGEMENT_WHOIS_SAVE_FAILURE,
 					domain,
@@ -189,7 +184,7 @@ export function saveWhois( domain: string, whoisData: WhoisData, transferLock: b
 	};
 }
 
-export function updateWhois( domain: string, whoisData: WhoisData ) {
+export function updateWhois( domain, whoisData ) {
 	return {
 		type: DOMAIN_MANAGEMENT_WHOIS_UPDATE,
 		domain,
@@ -197,8 +192,8 @@ export function updateWhois( domain: string, whoisData: WhoisData ) {
 	};
 }
 
-export const showUpdatePrimaryDomainSuccessNotice = ( domainName: string ) => {
-	return ( dispatch: CalypsoDispatch ) => {
+export const showUpdatePrimaryDomainSuccessNotice = ( domainName ) => {
+	return ( dispatch ) => {
 		dispatch(
 			successNotice(
 				translate(
@@ -211,8 +206,8 @@ export const showUpdatePrimaryDomainSuccessNotice = ( domainName: string ) => {
 	};
 };
 
-export const showUpdatePrimaryDomainErrorNotice = ( errorMessage: string ) => {
-	return ( dispatch: CalypsoDispatch ) => {
+export const showUpdatePrimaryDomainErrorNotice = ( errorMessage ) => {
+	return ( dispatch ) => {
 		dispatch(
 			errorNotice(
 				errorMessage ||

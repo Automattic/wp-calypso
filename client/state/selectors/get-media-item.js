@@ -9,7 +9,7 @@ import getTransientMediaItem from 'calypso/state/selectors/get-transient-media-i
  * returned.
  *
  * @param {number}  mediaId Media ID
- * @returns {?Object}         Media object, if known
+ * @returns {?object}         Media object, if known
  */
 
 export default function getMediaItem( state, siteId, mediaId ) {

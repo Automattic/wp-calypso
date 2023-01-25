@@ -9,8 +9,8 @@ import { errorNotice } from 'calypso/state/notices/actions';
  * Mark a specific restore record as dismissed.
  * This has the effect that subsequent calls to /sites/%site_id%/rewind/restores won't return the restore.
  *
- * @param   {Object}   action   Changeset to update state.
- * @returns {Object}          The dispatched action.
+ * @param   {object}   action   Changeset to update state.
+ * @returns {object}          The dispatched action.
  */
 export const dismissRestore = ( action ) =>
 	http(
@@ -29,8 +29,8 @@ export const dismissRestore = ( action ) =>
  * On successful dismiss, the card will be removed and we don't need to do anything further.
  * If request succeeded but restore couldn't be dismissed, a notice will be shown.
  *
- * @param {Object}   action   Changeset to update state.
- * @param {Object}     data     Description of request result.
+ * @param {object}   action   Changeset to update state.
+ * @param {object}     data     Description of request result.
  * @returns {Function} The dispatched action.
  */
 export const restoreSilentlyDismissed = ( action, data ) =>
@@ -48,8 +48,8 @@ export const restoreDismissFailed = () => null;
 /**
  * Parse and merge response data for restore dismiss result with defaults.
  *
- * @param   {Object} data   The data received from API response.
- * @returns {Object} Parsed response data.
+ * @param   {object} data   The data received from API response.
+ * @returns {object} Parsed response data.
  */
 const fromRestoreDismiss = ( data ) => ( {
 	restoreId: parseInt( data.restore_id ),

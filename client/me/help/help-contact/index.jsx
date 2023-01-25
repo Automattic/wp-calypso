@@ -529,7 +529,7 @@ class HelpContact extends Component {
 	/**
 	 * Get the view for the contact page.
 	 *
-	 * @returns {Object} A JSX object that should be rendered
+	 * @returns {object} A JSX object that should be rendered
 	 */
 	getView = () => {
 		const { confirmation } = this.state;

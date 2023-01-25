@@ -30,7 +30,7 @@ const candidates = function* ( packagePath ) {
 /**
  * Recursively finds the dependency tree for a package and its dependencies
  *
- * @param {Object} packageJson package.json content of the package
+ * @param {object} packageJson package.json content of the package
  * @param {string} packagePath Location of package.json, used to decide where to look for deps
  * @param {string[]} parents List of parent dependencies already visited, used to avoid circular loops
  * @param {Map} cache Map used to cache already resolved paths of the dependency tree

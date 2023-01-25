@@ -8,7 +8,7 @@ import 'calypso/state/posts/init';
  *
  * @param  {Array}   posts      Posts received
  * @param  {?string} saveMarker Save marker in the edits log
- * @returns {Object}             Action object
+ * @returns {object}             Action object
  */
 export function receivePosts( posts, saveMarker ) {
 	const action = { type: POSTS_RECEIVE, posts };

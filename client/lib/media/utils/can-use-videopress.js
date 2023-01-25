@@ -1,7 +1,7 @@
 /**
  * Returns whether a site can use VideoPress.
  *
- * @param {Object} site Site object
+ * @param {object} site Site object
  * @returns {boolean}
  */
 export function canUseVideoPress( site ) {

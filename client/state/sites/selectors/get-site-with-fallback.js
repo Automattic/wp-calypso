@@ -7,8 +7,8 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  * Gets currently selected site or, if that isn't available and the user has
  * just one site, returns the user's primary site as a fallback
  *
- * @param {Object} state Global state tree
- * @returns {?Object} Site
+ * @param {object} state Global state tree
+ * @returns {?object} Site
  */
 export default function getSelectedSiteWithFallback( state ) {
 	let siteId = getSelectedSiteId( state );

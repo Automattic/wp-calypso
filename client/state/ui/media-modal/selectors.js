@@ -6,7 +6,7 @@ import 'calypso/state/ui/init';
  *
  *
  * @see ./constants.js (MediaView)
- * @param {Object}    state Global state tree
+ * @param {object}    state Global state tree
  * @returns {any}       Current media view
  */
 export function getMediaModalView( state ) {

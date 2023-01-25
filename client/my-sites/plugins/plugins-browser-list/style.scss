@@ -2,7 +2,8 @@
 @import "@wordpress/base-styles/mixins";
 
 .plugins-browser-list {
-	padding-top: 40px;
+	padding-top: 32px;
+	padding-bottom: 8px; // 32 + 8 = 40 gap
 
 	.feature-example & {
 		margin: 0;

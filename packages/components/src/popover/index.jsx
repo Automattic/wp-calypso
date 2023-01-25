@@ -247,7 +247,7 @@ class PopoverInner extends Component {
 	 * Computes the position of the Popover in function
 	 * of its main container and the target.
 	 *
-	 * @returns {Object} reposition parameters
+	 * @returns {object} reposition parameters
 	 */
 	computePosition() {
 		const { position, relativePosition } = this.props;

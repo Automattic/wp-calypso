@@ -157,20 +157,8 @@ export class PlansFeaturesMain extends Component {
 				isPlansInsideStepper,
 				intervalType,
 			};
-			const planTypeSelectorProps = {
-				isInSignup: this.props.isInSignup,
-				eligibleForWpcomMonthlyPlans: this.props.eligibleForWpcomMonthlyPlans,
-				isPlansInsideStepper: this.props.isPlansInsideStepper,
-				intervalType: this.props.intervalType,
-				customerType: this.props.customerType,
-				hidePersonalPlan: this.props.hidePersonalPlan,
-			};
 			const asyncPlanFeatures2023Grid = (
-				<AsyncLoad
-					require="calypso/my-sites/plan-features-2023-grid"
-					{ ...asyncProps }
-					planTypeSelectorProps={ planTypeSelectorProps }
-				/>
+				<AsyncLoad require="calypso/my-sites/plan-features-2023-grid" { ...asyncProps } />
 			);
 			return (
 				<div

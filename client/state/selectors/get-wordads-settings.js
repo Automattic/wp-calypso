@@ -8,9 +8,9 @@ import 'calypso/state/wordads/init';
  * Returns the WordAds settings on a certain site.
  * Returns null if the site is unknown, or settings have not been fetched yet.
  *
- * @param  {Object}  state   Global state tree
+ * @param  {object}  state   Global state tree
  * @param  {number}  siteId  The ID of the site we're querying
- * @returns {?Object}        WordAds settings
+ * @returns {?object}        WordAds settings
  */
 export const getWordadsSettings = createSelector(
 	( state, siteId ) => {

@@ -31,9 +31,9 @@ export const getPlan = createSelector(
 /**
  * Returns a plan searched by its slug
  *
- * @param  {Object} state      global state
+ * @param  {object} state      global state
  * @param  {string} planSlug the plan slug
- * @returns {Object} the matching plan
+ * @returns {object} the matching plan
  */
 export const getPlanBySlug = createSelector(
 	( state, planSlug ) => find( getPlans( state ), { product_slug: planSlug } ),
@@ -43,7 +43,7 @@ export const getPlanBySlug = createSelector(
 /**
  * Returns a plan product_slug. Useful for getting a cartItem for a plan.
  *
- * @param  {Object}  state     global state
+ * @param  {object}  state     global state
  * @param  {number}  productId the plan productId
  * @returns {string}  plan product_slug
  */

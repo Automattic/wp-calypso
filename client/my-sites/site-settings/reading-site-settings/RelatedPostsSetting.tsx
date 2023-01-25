@@ -4,8 +4,6 @@ import { RelatedPostsSetting as RelatedPostsFormFieldset } from 'calypso/my-site
 
 type RelatedPostsFields = {
 	jetpack_relatedposts_enabled?: boolean;
-	jetpack_relatedposts_show_context?: boolean;
-	jetpack_relatedposts_show_date?: boolean;
 	jetpack_relatedposts_show_headline?: boolean;
 	jetpack_relatedposts_show_thumbnails?: boolean;
 };

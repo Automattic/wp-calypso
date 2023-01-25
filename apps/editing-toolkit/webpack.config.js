@@ -23,11 +23,11 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  *
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  * @see {@link https://webpack.js.org/api/cli/}
- * @param   {Object}  env                           environment options
+ * @param   {object}  env                           environment options
  * @param   {string}  env.source                    plugin slugs, comma separated list
- * @param   {Object}  argv                          options map
+ * @param   {object}  argv                          options map
  * @param   {string}  argv.entry                    entry path
- * @returns {Object}                                webpack config
+ * @returns {object}                                webpack config
  */
 function getWebpackConfig( env = { source: '' }, argv = {} ) {
 	env.WP = true;

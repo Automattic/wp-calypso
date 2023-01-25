@@ -12,7 +12,7 @@ import 'calypso/state/posts/init';
  *
  * @param  {number}   siteId Site ID
  * @param  {number}   postId Post ID
- * @param  {Object}   post   Post attributes
+ * @param  {object}   post   Post attributes
  * @param  {boolean}  silent Whether to stop related notices from appearing
  * @returns {Function}        Action thunk
  */

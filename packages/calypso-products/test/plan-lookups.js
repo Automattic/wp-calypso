@@ -61,7 +61,6 @@ import {
 	PLAN_P2_PLUS,
 	PLAN_P2_FREE,
 	PLAN_ENTERPRISE_GRID_WPCOM,
-	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 } from '../src/constants';
 import {
 	getPlan,
@@ -953,7 +952,6 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_SECURITY_T2_MONTHLY,
 			PLAN_P2_PLUS,
 			PLAN_WPCOM_PRO_MONTHLY,
-			PLAN_ECOMMERCE_TRIAL_MONTHLY,
 		] );
 	} );
 
@@ -1021,7 +1019,6 @@ describe( 'findPlansKeys', () => {
 			PLAN_WPCOM_FLEXIBLE,
 			PLAN_WPCOM_PRO,
 			PLAN_WPCOM_PRO_MONTHLY,
-			PLAN_ECOMMERCE_TRIAL_MONTHLY,
 		] );
 		expect( findPlansKeys( { group: GROUP_JETPACK } ) ).toEqual( [
 			PLAN_JETPACK_FREE,

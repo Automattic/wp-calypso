@@ -1,7 +1,7 @@
 import { Card, ShortenedNumber, Spinner } from '@automattic/components';
 
 /* This is a very stripped down version of HighlightCard
- * HighlightCard doesn't support non-numeric values
+ * HighlightCard doens't support non-numeric values
  * */
 
 const TopCardValue = ( { value, isLoading } ) => {

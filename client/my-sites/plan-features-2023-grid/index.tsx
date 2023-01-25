@@ -40,7 +40,6 @@ import PlanPill from 'calypso/components/plans/plan-pill';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
-import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/plan-type-selector';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import {
@@ -100,7 +99,6 @@ type PlanFeatures2023GridConnectedProps = {
 	translate: LocalizeProps[ 'translate' ];
 	recordTracksEvent: ( slug: string ) => void;
 	planProperties: Array< PlanProperties >;
-	planTypeSelectorProps: PlanTypeSelectorProps;
 };
 
 type PlanFeatures2023GridType = PlanFeatures2023GridProps &
@@ -113,8 +111,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	}
 
 	render() {
-		const { isInSignup, planTypeSelectorProps, planProperties, intervalType } = this.props;
-
+		const { isInSignup } = this.props;
 		const planClasses = classNames( 'plan-features', {
 			'plan-features--signup': isInSignup,
 		} );
@@ -140,9 +137,8 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 					</div>
 				</div>
 				<PlanComparisonGrid
-					planTypeSelectorProps={ planTypeSelectorProps }
-					planProperties={ planProperties }
-					intervalType={ intervalType }
+					planProperties={ this.props.planProperties }
+					intervalType={ this.props.intervalType }
 				/>
 			</div>
 		);
@@ -281,7 +277,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 
 		return planPropertiesObj.map( ( properties ) => {
 			const { currencyCode, discountPrice, planName, rawPrice } = properties;
-			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
+			const classes = classNames( 'plan-features-2023-grid__table-item', {
 				'has-border-top': ! isReskinned,
 			} );
 

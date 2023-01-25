@@ -62,7 +62,7 @@ export class Tweet extends PureComponent {
 	 *
 	 * @param {string} text The text of the tweet.
 	 * @param {Array} urls Optional. An array of URLs that are in the text.
-	 * @param {Object} card Optional. The card data for this tweet.
+	 * @param {object} card Optional. The card data for this tweet.
 	 * @returns {import('react').Element} The text section.
 	 */
 	renderText( text, urls = [], card = {} ) {
@@ -94,7 +94,7 @@ export class Tweet extends PureComponent {
 	 */
 	renderMedia( media ) {
 		if ( ! media ) {
-			return null;
+			return;
 		}
 
 		// Ensure we're only trying to show valid media, and the correct quantity.
@@ -133,7 +133,7 @@ export class Tweet extends PureComponent {
 		] );
 
 		if ( 0 === filteredMedia.length ) {
-			return null;
+			return;
 		}
 
 		return (
@@ -168,7 +168,7 @@ export class Tweet extends PureComponent {
 	 */
 	renderQuoteTweet( tweet ) {
 		if ( ! tweet ) {
-			return null;
+			return;
 		}
 
 		return (
@@ -187,12 +187,12 @@ export class Tweet extends PureComponent {
 	/**
 	 * Given card data, renders the Twitter-style card.
 	 *
-	 * @param {Object} card The card data.
+	 * @param {object} card The card data.
 	 * @returns {import('react').Element} The card tweet.
 	 */
 	renderCard( card ) {
 		if ( ! card ) {
-			return null;
+			return;
 		}
 
 		const { description, image, title, type, url } = card;

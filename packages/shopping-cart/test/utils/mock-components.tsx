@@ -11,11 +11,10 @@ import type {
 	SetCart,
 	WithShoppingCartProps,
 	ShoppingCartManagerOptions,
-	CartKey,
 } from '../../src/types';
 
 export function ProductList( { initialProducts }: { initialProducts?: RequestCartProduct[] } ) {
-	const { isPendingUpdate, responseCart, addProductsToCart } = useShoppingCart( undefined );
+	const { isPendingUpdate, responseCart, addProductsToCart } = useShoppingCart();
 	useEffect( () => {
 		initialProducts && addProductsToCart( initialProducts );
 	}, [ addProductsToCart, initialProducts ] );
@@ -82,7 +81,7 @@ export function MockProvider( {
 	setCartOverride?: SetCart;
 	getCartOverride?: GetCart;
 	options?: ShoppingCartManagerOptions;
-	cartKeyOverride?: CartKey;
+	cartKeyOverride?: string | undefined;
 	useUndefinedCartKey?: boolean;
 } > ) {
 	const managerClient = createShoppingCartManagerClient( {

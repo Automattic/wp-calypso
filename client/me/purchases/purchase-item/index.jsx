@@ -7,7 +7,6 @@ import {
 	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import { CompactCard, Gridicon } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import { ExternalLink } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -154,10 +153,7 @@ class PurchaseItem extends Component {
 					{
 						args: {
 							date: expiry.format( 'LL' ),
-							amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
-								isSmallestUnit: true,
-								stripZeros: true,
-							} ),
+							amount: purchase.priceText,
 						},
 						components: {
 							span: <span className="purchase-item__date" />,
@@ -225,10 +221,7 @@ class PurchaseItem extends Component {
 			if ( purchase.billPeriodDays ) {
 				const translateOptions = {
 					args: {
-						amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
+						amount: purchase.priceText,
 						date: renewDate.format( 'LL' ),
 					},
 					components: {
@@ -285,10 +278,7 @@ class PurchaseItem extends Component {
 
 			return translate( 'Renews at %(amount)s on {{span}}%(date)s{{/span}}', {
 				args: {
-					amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
-						isSmallestUnit: true,
-						stripZeros: true,
-					} ),
+					amount: purchase.priceText,
 					date: renewDate.format( 'LL' ),
 				},
 				components: {

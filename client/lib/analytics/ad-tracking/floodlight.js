@@ -14,7 +14,7 @@ import './setup';
 /**
  * Records Floodlight events using Gtag and automatically adds `u4`, `u5`, and `allow_custom_scripts: true`.
  *
- * @param {Object} params An object of Floodlight params.
+ * @param {object} params An object of Floodlight params.
  */
 export function recordParamsInFloodlightGtag( params ) {
 	if ( ! mayWeTrackByTracker( 'floodlight' ) ) {
@@ -38,7 +38,7 @@ export function recordParamsInFloodlightGtag( params ) {
 /**
  * Returns an object with DCM Floodlight user params
  *
- * @returns {Object} With the WordPress.com user id and/or the logged out Tracks id
+ * @returns {object} With the WordPress.com user id and/or the logged out Tracks id
  */
 function floodlightUserParams() {
 	const params = {};

@@ -6,7 +6,7 @@ import 'calypso/state/reader/init';
 /**
  * Returns a list of site IDs blocked by the user
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @returns {Array}        Blocked site IDs
  */
 export default createSelector(

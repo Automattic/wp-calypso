@@ -5,9 +5,9 @@ import 'calypso/state/reader/init';
 /**
  * Returns the all images available for a given tag.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {string}  tag 	Tag
- * @returns {Object} Image
+ * @returns {object} Image
  */
 export function getTagImages( state, tag ) {
 	const items = get( state, 'reader.tags.images.items' );
@@ -22,7 +22,7 @@ export function getTagImages( state, tag ) {
 /**
  * Returns true if we need to request tag images
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {string}  tag 	Tag
  * @returns {boolean} Whether a request is in progress or we already have tags
  */

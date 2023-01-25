@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { Key } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
-import { decodeEntities } from 'calypso/lib/formatting';
 
 const flexAligned = {
 	display: 'flex',
@@ -101,7 +100,7 @@ const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 		const [ item ] = items;
 		return (
 			<StyledItem>
-				<StyledRootLabel>{ decodeEntities( item.label ) }</StyledRootLabel>
+				<StyledRootLabel>{ item.label }</StyledRootLabel>
 				{ renderHelpBubble( item ) }
 			</StyledItem>
 		);
@@ -113,7 +112,7 @@ const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 		return (
 			<StyledBackLink href={ urlBack }>
 				<Gridicon icon="chevron-left" size={ 18 } />
-				{ decodeEntities( label ) }
+				{ label }
 			</StyledBackLink>
 		);
 	}
@@ -127,7 +126,7 @@ const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 						{ item.href && index !== items.length - 1 ? (
 							<a href={ item.href }>{ item.label }</a>
 						) : (
-							<span>{ decodeEntities( item.label ) }</span>
+							<span>{ item.label }</span>
 						) }
 						{ renderHelpBubble( item ) }
 					</StyledLi>

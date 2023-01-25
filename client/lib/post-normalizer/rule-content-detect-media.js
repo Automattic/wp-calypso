@@ -46,7 +46,7 @@ function isCandidateForContentImage( image ) {
  * Detects and returns metadata if it should be considered as a content image
  *
  * @param {image} image - the image
- * @returns {Object} metadata - regarding the image or null
+ * @returns {object} metadata - regarding the image or null
  */
 const detectImage = ( image ) => {
 	if ( isCandidateForContentImage( image ) ) {

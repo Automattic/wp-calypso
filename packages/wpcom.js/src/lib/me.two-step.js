@@ -19,7 +19,7 @@ export default class MeTwoStep {
 	/**
 	 * Get information about current user's two factor configuration.
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */

@@ -32,8 +32,8 @@ class SiteWPComPlugin {
 	/**
 	 * Update the plugin configuration
 	 *
-	 * @param {Object} [query] - query object parameter
-	 * @param {Object} body - plugin body object
+	 * @param {object} [query] - query object parameter
+	 * @param {object} body - plugin body object
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
@@ -45,7 +45,7 @@ class SiteWPComPlugin {
 	 * Activate the plugin
 	 * This method is a shorthand of update()
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
@@ -57,7 +57,7 @@ class SiteWPComPlugin {
 	 * Deactivate the plugin
 	 * This method is a shorthand of update()
 	 *
-	 * @param {Object} [query] - query object parameter
+	 * @param {object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */

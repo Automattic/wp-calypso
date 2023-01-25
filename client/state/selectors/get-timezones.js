@@ -14,7 +14,7 @@ import 'calypso/state/timezones/init';
  *
  * This structure facilitates the creation of a select element.
  *
- * @param  {Object} state - Global state tree
+ * @param  {object} state - Global state tree
  * @returns {Array} Timezones arrays
  */
 export default function getTimezones( state ) {

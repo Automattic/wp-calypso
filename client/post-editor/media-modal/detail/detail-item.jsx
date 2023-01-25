@@ -51,7 +51,7 @@ export class EditorMediaModalDetailItem extends Component {
 	/**
 	 * This function returns true if the video editor can be enabled/shown.
 	 *
-	 * @param  {Object}  item Media item
+	 * @param  {object}  item Media item
 	 * @returns {boolean} Whether the video editor can be enabled
 	 */
 	shouldShowVideoEditingButtons( item ) {
@@ -79,7 +79,7 @@ export class EditorMediaModalDetailItem extends Component {
 	 * This function returns true if the image editor can be
 	 * enabled/shown
 	 *
-	 * @param  {Object} item - media item
+	 * @param  {object} item - media item
 	 * @returns {boolean} `true` if the image-editor can be enabled.
 	 */
 	shouldShowImageEditingButtons( item ) {

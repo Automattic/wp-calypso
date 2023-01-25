@@ -10,9 +10,9 @@ import 'calypso/state/marketing/init';
 /**
  * Set the Jetpack sale coupon
  *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @returns {Object}       Updated state
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}       Updated state
  */
 export const coupon = ( state = null, action ) => {
 	switch ( action.type ) {

@@ -332,7 +332,6 @@ const webpackConfig = {
 			} ),
 		new MomentTimezoneDataPlugin( {
 			startYear: 2000,
-			endYear: 2030,
 			cacheDir: path.resolve( cachePath, 'moment-timezone' ),
 		} ),
 		new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),

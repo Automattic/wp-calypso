@@ -24,7 +24,6 @@ import {
 	prependThemeFilterKeys,
 } from 'calypso/state/themes/selectors';
 import { trackClick } from './helpers';
-import SearchThemesTracks from './search-themes-tracks';
 import './themes-selection.scss';
 
 class ThemesSelection extends Component {
@@ -187,8 +186,6 @@ class ThemesSelection extends Component {
 	render() {
 		const { source, query, upsellUrl, siteId } = this.props;
 
-		const themes = this.props.customizedThemesList || this.props.themes;
-
 		return (
 			<div className="themes__selection">
 				<QueryThemes query={ query } siteId={ source } />
@@ -197,7 +194,7 @@ class ThemesSelection extends Component {
 				) }
 				<ThemesList
 					upsellUrl={ upsellUrl }
-					themes={ themes }
+					themes={ this.props.customizedThemesList || this.props.themes }
 					wpOrgThemes={ this.props.wpOrgThemes }
 					fetchNextPage={ this.fetchNextPage }
 					recordTracksEvent={ this.props.recordTracksEvent }
@@ -216,11 +213,6 @@ class ThemesSelection extends Component {
 					bookmarkRef={ this.props.bookmarkRef }
 					siteId={ siteId }
 					searchTerm={ query.search }
-				/>
-				<SearchThemesTracks
-					query={ query }
-					themes={ themes }
-					wporgThemes={ this.props.wpOrgThemes }
 				/>
 			</div>
 		);

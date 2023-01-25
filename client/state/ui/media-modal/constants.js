@@ -3,7 +3,7 @@
  *
  *
  * @enum {string}
- * @type {Object}
+ * @type {object}
  */
 
 export const ModalViews = {

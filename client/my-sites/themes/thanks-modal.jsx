@@ -21,7 +21,6 @@ import {
 	getThemeForumUrl,
 	hasActivatedTheme,
 	isActivatingTheme,
-	isInstallingTheme,
 	isWpcomTheme,
 } from 'calypso/state/themes/selectors';
 import { themeHasAutoLoadingHomepage } from 'calypso/state/themes/selectors/theme-has-auto-loading-homepage';
@@ -52,36 +51,7 @@ class ThanksModal extends Component {
 		isThemeWpcom: PropTypes.bool.isRequired,
 		siteId: PropTypes.number,
 		isFSEActive: PropTypes.bool,
-		themeId: PropTypes.string,
 	};
-
-	constructor( props ) {
-		super( props );
-		this.state = {
-			wasInstalling: false,
-			isVisible: false,
-		};
-	}
-
-	static getDerivedStateFromProps( nextProps, prevState ) {
-		if ( nextProps.isInstalling || nextProps.isActivating || nextProps.hasActivated ) {
-			return {
-				isVisible: true,
-				wasInstalling: nextProps.isInstalling,
-			};
-		} else if ( ! nextProps.isInstalling && prevState.wasInstalling ) {
-			// There is a brief moment after installing a theme before we make the request to activate it,
-			// so let's ensure the modal is still visible in the meantime.
-			return {
-				isVisible: true,
-				wasInstalling: true,
-			};
-		}
-		return {
-			isVisible: false,
-			wasInstalling: false,
-		};
-	}
 
 	componentDidUpdate( prevProps ) {
 		// When the theme has finished activating...
@@ -306,14 +276,14 @@ class ThanksModal extends Component {
 	};
 
 	render() {
-		const { currentTheme, hasActivated, doesThemeBundleUsableSoftware } = this.props;
+		const { currentTheme, hasActivated, isActivating, doesThemeBundleUsableSoftware } = this.props;
 
 		const shouldDisplayContent = hasActivated && currentTheme && ! doesThemeBundleUsableSoftware;
 
 		return (
 			<Dialog
 				className="themes__thanks-modal"
-				isVisible={ this.state.isVisible }
+				isVisible={ isActivating || hasActivated }
 				buttons={ this.getButtons() }
 				onClose={ this.onCloseModal }
 			>
@@ -324,10 +294,10 @@ class ThanksModal extends Component {
 }
 
 const ConnectedThanksModal = connect(
-	( state, props ) => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteUrl = getSiteUrl( state, siteId );
-		const currentThemeId = props.themeId ?? getActiveTheme( state, siteId );
+		const currentThemeId = getActiveTheme( state, siteId );
 		const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
 		const isFSEActive = isFullSiteEditingTheme( currentTheme );
 
@@ -362,7 +332,6 @@ const ConnectedThanksModal = connect(
 			customizeUrl,
 			forumUrl: getThemeForumUrl( state, currentThemeId, siteId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
-			isInstalling: isInstallingTheme( state, currentThemeId, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
 			isThemeWpcom: isWpcomTheme( state, currentThemeId ),
 			isFSEActive,

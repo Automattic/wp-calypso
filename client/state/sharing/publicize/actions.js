@@ -175,11 +175,11 @@ export function createSiteConnection( siteId, keyringConnectionId, externalUserI
 /**
  * Triggers a network request to update a Publicize connection for a specific site.
  *
- * @param  {Object} connection         Connection to be updated.
+ * @param  {object} connection         Connection to be updated.
  * @param  {number} connection.site_ID Site ID for which the connection is updated.
  * @param  {number} connection.ID      ID of the connection to be updated.
  * @param  {string} connection.label   Name of the connected service.
- * @param  {Object} attributes         The update request body.
+ * @param  {object} attributes         The update request body.
  * @returns {Function}                  Action thunk
  */
 export function updateSiteConnection( connection, attributes ) {
@@ -223,7 +223,7 @@ export function updateSiteConnection( connection, attributes ) {
 /**
  * Triggers a network request to delete a Publicize connection for a specific site.
  *
- * @param  {Object} connection         Connection to be deleted.
+ * @param  {object} connection         Connection to be deleted.
  * @param  {number} connection.site_ID Site ID for which the connection is deleted.
  * @param  {number} connection.ID      ID of the connection to be deleted.
  * @param  {string} connection.label   Name of the service that was connected.
@@ -266,8 +266,8 @@ export function deleteSiteConnection( connection ) {
  * Returns an action object to be used in signalling that creating a Publicize
  * connection has failed.
  *
- * @param  {Object} error Error object
- * @returns {Object}       Action object
+ * @param  {object} error Error object
+ * @returns {object}       Action object
  */
 export function failCreateConnection( error ) {
 	return {
@@ -280,8 +280,8 @@ export function failCreateConnection( error ) {
  * Returns an action object to be used in signalling that a network request for
  * removing a Publicize connection has been received.
  *
- * @param  {Object} connection Connection to be deleted.
- * @returns {Object}            Action object
+ * @param  {object} connection Connection to be deleted.
+ * @returns {object}            Action object
  */
 export function deleteConnection( connection ) {
 	return {
@@ -293,8 +293,8 @@ export function deleteConnection( connection ) {
 /**
  * Returns an action object to be used to render a connection deletion success notice.
  *
- * @param  {Object} connection Connection that was deleted.
- * @returns {Object}            Action object
+ * @param  {object} connection Connection that was deleted.
+ * @returns {object}            Action object
  */
 function deleteConnectionSuccess( connection ) {
 	return successNotice(
@@ -311,8 +311,8 @@ function deleteConnectionSuccess( connection ) {
  * Publicize connections has been received.
  *
  * @param  {number} siteId Site ID
- * @param  {Object} data   API response
- * @returns {Object}        Action object
+ * @param  {object} data   API response
+ * @returns {object}        Action object
  */
 export function receiveConnections( siteId, data ) {
 	return {

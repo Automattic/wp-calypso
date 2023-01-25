@@ -6,7 +6,7 @@ import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 /**
  * Return true if the site is eligible for a monthly plan on WPCOM.
  *
- * @param {Object} state the global state tree
+ * @param {object} state the global state tree
  * @param {number} siteId the ID of the site to check.
  * @returns {boolean} Whether the site is eligible for a monthly plan.
  */

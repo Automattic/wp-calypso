@@ -4,11 +4,11 @@ const defaultPreset = require( './default' );
 /**
  * Extend babel base options.
  *
- * @param   {Object} options         Babel options
+ * @param   {object} options         Babel options
  * @param   {Array}  options.presets Babel presets
  * @param   {Array}  options.plugins Babel plugins
  * @param   {...any} options.rest    Other babel options
- * @returns {Object} Babel options object
+ * @returns {object} Babel options object
  */
 const extendBaseOptions = ( { presets = [], plugins = [], ...rest } ) => ( {
 	code: false,

@@ -4,7 +4,7 @@ import 'calypso/state/posts/init';
  * Returns true if an error should be shown in the video editor.
  *
  *
- * @param {Object}  state Global state tree
+ * @param {object}  state Global state tree
  * @returns {boolean} true if an error should be shown.
  */
 

@@ -3,8 +3,8 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 /**
  * Get an Intl.Collator() for the current locale to enable localized sorting.
  *
- * @param {Object} state Redux state
- * @returns {Object} Intl.Collator
+ * @param {object} state Redux state
+ * @returns {object} Intl.Collator
  */
 const getCurrentIntlCollator = ( state ) => {
 	const currentLocaleSlug = getCurrentLocaleSlug( state );

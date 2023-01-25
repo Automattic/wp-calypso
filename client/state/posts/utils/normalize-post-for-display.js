@@ -23,8 +23,8 @@ const normalizePostCache = new WeakMap();
  * Returns a normalized post object given its raw form. A normalized post
  * includes common transformations to prepare the post for display.
  *
- * @param  {Object} post Raw post object
- * @returns {Object}      Normalized post object
+ * @param  {object} post Raw post object
+ * @returns {object}      Normalized post object
  */
 export function normalizePostForDisplay( post ) {
 	if ( ! post ) {

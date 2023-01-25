@@ -15,8 +15,7 @@ import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 import useVatDetails from './use-vat-details';
-import type { UpdateError } from './use-vat-details';
-import type { VatDetails } from '@automattic/wpcom-checkout';
+import type { VatDetails, UpdateError } from './use-vat-details';
 
 import './style.scss';
 

@@ -13,8 +13,8 @@ import 'calypso/state/user-suggestions/init';
  * have been received.
  *
  * @param  {number} siteId  	Site ID
- * @param  {Object} suggestions User suggestions
- * @returns {Object}         	Action object
+ * @param  {object} suggestions User suggestions
+ * @returns {object}         	Action object
  */
 export function receiveUserSuggestions( siteId, suggestions ) {
 	return {

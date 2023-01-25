@@ -15,8 +15,8 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 /**
  * Dispatches a request to fetch all available active promotions
  *
- * @param {Object} action Redux action
- * @returns {Object} original action
+ * @param {object} action Redux action
+ * @returns {object} original action
  */
 export const requestActivePromotions = ( action ) =>
 	http(
@@ -31,10 +31,10 @@ export const requestActivePromotions = ( action ) =>
 /**
  * Dispatches returned WordPress.com active promotions data
  *
- * @param {Object} action Redux action
- * @param {Object} obj
+ * @param {object} action Redux action
+ * @param {object} obj
  * @param {Array} obj.active_promotions raw data from active promotions API
- * @returns {Array<Object>} Redux actions
+ * @returns {Array<object>} Redux actions
  */
 export const receiveActivePromotions = ( action, { active_promotions } ) => [
 	activePromotionsRequestSuccessAction(),
@@ -44,9 +44,9 @@ export const receiveActivePromotions = ( action, { active_promotions } ) => [
 /**
  * Dispatches returned error from active promotions request
  *
- * @param {Object} action Redux action
- * @param {Object} rawError raw error from HTTP request
- * @returns {Object} Redux action
+ * @param {object} action Redux action
+ * @param {object} rawError raw error from HTTP request
+ * @returns {object} Redux action
  */
 export const receiveError = ( action, rawError ) =>
 	activePromotionsRequestFailureAction( rawError instanceof Error ? rawError.message : rawError );

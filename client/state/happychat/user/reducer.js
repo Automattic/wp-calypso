@@ -11,8 +11,8 @@ import {
  * Tracks the current user geo location.
  *
  *
- * @param {Object} action Action payload
- * @returns {Object}        Updated state
+ * @param {object} action Action payload
+ * @returns {object}        Updated state
  */
 export const geoLocation = withSchemaValidation( geoLocationSchema, ( state = null, action ) => {
 	switch ( action.type ) {

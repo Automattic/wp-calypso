@@ -6,9 +6,9 @@ import getSiteChecklist from './get-site-checklist';
 /**
  * Returns the checklist for the specified site ID
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @returns {Object}        Site settings
+ * @returns {object}        Site settings
  */
 export default function getSiteTaskList( state, siteId ) {
 	const siteChecklist = getSiteChecklist( state, siteId );

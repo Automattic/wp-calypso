@@ -70,7 +70,7 @@ class StatModuleChartTabs extends Component {
 	};
 
 	render() {
-		const { isActiveTabLoading, onChangeMaxBars } = this.props;
+		const { isActiveTabLoading } = this.props;
 
 		const classes = [
 			'is-chart-tabs',
@@ -98,7 +98,6 @@ class StatModuleChartTabs extends Component {
 					data={ chartData }
 					minBarWidth={ 35 }
 					sliceFromBeginning={ false }
-					onChangeMaxBars={ onChangeMaxBars }
 				/>
 				<StatTabs
 					data={ this.props.counts }
@@ -120,19 +119,7 @@ const NO_SITE_STATE = {
 };
 
 const connectComponent = connect(
-	(
-		state,
-		{
-			activeLegend,
-			period: { period, endOf },
-			chartTab,
-			queryDate,
-			postId,
-			statType,
-			onChangeMaxBars,
-			maxBars,
-		}
-	) => {
+	( state, { activeLegend, period: { period, endOf }, chartTab, queryDate, postId, statType } ) => {
 		const siteId = getSelectedSiteId( state );
 		if ( ! siteId ) {
 			return NO_SITE_STATE;
@@ -140,20 +127,17 @@ const connectComponent = connect(
 
 		const quantity = 'hour' === period ? 24 : 30;
 		const counts = getCountRecords( state, siteId, postId, period, statType );
-		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
-		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
-		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
-		const maxBarsForRequest = 'hour' === period ? quantity : maxBars;
+		const chartData = buildChartData( activeLegend, chartTab, counts, period );
 		const isActiveTabLoading = isLoadingTabs(
 			state,
 			siteId,
 			postId,
 			period,
 			statType,
-			endOf.format( 'YYYY-MM-DD' ),
-			chartData.length,
-			maxBarsForRequest
+			endOf.format( 'YYYY-MM-DD' )
 		);
+		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
+		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;
 
 		return {
@@ -162,7 +146,6 @@ const connectComponent = connect(
 			isActiveTabLoading,
 			queryKey,
 			siteId,
-			onChangeMaxBars,
 		};
 	},
 	{ recordGoogleEvent }

@@ -5,7 +5,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 /**
  * Get all Jetpack sites
  *
- * @param {Object} state  Global state tree
+ * @param {object} state  Global state tree
  * @returns {Array}        Array of Jetpack Sites objects
  */
 export default createSelector(

@@ -83,7 +83,7 @@ const createSettingsItemsReducer = () => {
  * concerning Jetpack modules data updates
  *
  * @param  {Array}  state  Current state
- * @param  {Object} action action
+ * @param  {object} action action
  * @returns {Array}         Updated state
  */
 export const items = ( state = {}, action ) => {
@@ -107,9 +107,9 @@ export const items = ( state = {}, action ) => {
  * `Reducer` function which handles request/response actions
  * concerning Jetpack modules-related requests
  *
- * @param {Object} state - current state
- * @param {Object} action - action
- * @returns {Object} updated state
+ * @param {object} state - current state
+ * @param {object} action - action
+ * @returns {object} updated state
  */
 export const requests = ( state = {}, action ) => {
 	switch ( action.type ) {

@@ -31,13 +31,12 @@ export function getQueryDate( queryDate, timezoneOffset, period, quantity ) {
 }
 
 const EMPTY_RESULT = [];
-export const buildChartData = memoizeLast( ( activeLegend, chartTab, data, period, date ) => {
+export const buildChartData = memoizeLast( ( activeLegend, chartTab, data, period ) => {
 	if ( ! data ) {
 		return EMPTY_RESULT;
 	}
 
-	const filteredData = data.filter( ( record ) => moment( date ).isSameOrBefore( record.period ) );
-	return filteredData.map( ( record ) => {
+	return data.map( ( record ) => {
 		const nestedValue = activeLegend.length ? record[ activeLegend[ 0 ] ] : null;
 
 		return addTooltipData(

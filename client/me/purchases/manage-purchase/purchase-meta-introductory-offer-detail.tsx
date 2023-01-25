@@ -1,4 +1,3 @@
-import formatCurrency from '@automattic/format-currency';
 import { getIntroductoryOfferIntervalDisplay } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import {
@@ -29,10 +28,7 @@ function PurchaseMetaIntroductoryOfferDetail( { purchase }: { purchase: Purchase
 				'After the offer ends, the subscription price will be %(regularPrice)s',
 				{
 					args: {
-						regularPrice: formatCurrency( purchase.regularPriceInteger, purchase.currencyCode, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
+						regularPrice: purchase.regularPriceText,
 					},
 				}
 			);
@@ -41,10 +37,7 @@ function PurchaseMetaIntroductoryOfferDetail( { purchase }: { purchase: Purchase
 				'After the first renewal, the subscription price will be %(regularPrice)s',
 				{
 					args: {
-						regularPrice: formatCurrency( purchase.regularPriceInteger, purchase.currencyCode, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
+						regularPrice: purchase.regularPriceText,
 					},
 				}
 			);

@@ -7,7 +7,7 @@ references:
   defaults: &defaults
     working_directory: ~/wp-calypso
     docker:
-      - image: cimg/node:18.13.0
+      - image: cimg/node:16.17.0
     environment:
       CIRCLE_ARTIFACTS: /tmp/artifacts
       CIRCLE_TEST_REPORTS: /tmp/test_results
@@ -136,7 +136,7 @@ commands:
 jobs:
   wp-desktop-assets:
     docker:
-      - image: cimg/node:18.13.0-browsers
+      - image: cimg/node:16.17.0-browsers
     <<: *desktop_defaults
     environment:
       VERSION: << pipeline.git.tag >>
@@ -145,6 +145,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/wp-calypso
+      - run: *update-node
       - when:
           condition: << pipeline.git.tag >>
           steps:
@@ -234,9 +235,7 @@ jobs:
 
   wp-desktop-linux:
     docker:
-    # Important: the build fails on 18.13.0, so we pin it to a slightly older
-    # version to keep this one working for now.
-      - image: cimg/node:18.10.0-browsers
+      - image: cimg/node:16.17.0-browsers
     <<: *desktop_defaults
     shell: /bin/bash --login
     environment:
@@ -246,17 +245,14 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/wp-calypso
+      - run: *update-node
       - run:
           name: Install Linux deps
           command: |
             sudo apt update
             sudo apt-get install -y libsecret-1-dev
       - restore_cache: *restore-yarn-cache
-      # Since Node and Yarn are both bundled in the image, no need to add nvm and
-      # yarn ourselves. So we run the command directly here.
-      - run:
-          name: Yarn Install
-          command: yarn install --immutable --inline-builds
+      - run: *yarn-install
       - save_cache: *save-yarn-cache
       - run:
           name: Build Desktop Linux
@@ -265,6 +261,8 @@ jobs:
             USE_HARD_LINKS: 'false'
           command: |
             set +e
+            source $HOME/.nvm/nvm.sh
+            nvm use
 
             # Build all artifacts only when project config changes.
             # Otherwise only build application executable required for end-to-end testing.
@@ -275,8 +273,10 @@ jobs:
       - run:
           name: e2e Tests
           command: |
-            node --version
-            yarn --version
+            source $HOME/.nvm/nvm.sh
+            nvm use
+            npm install -g yarn
+
             cd desktop && yarn run test:e2e
       - run:
           when: always

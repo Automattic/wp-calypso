@@ -5,7 +5,7 @@ import 'calypso/state/posts/init';
  *
  * @param {any} state Redux state
  * @param {number} userId User ID
- * @returns {Object}        User object
+ * @returns {object}        User object
  */
 export function getPostRevisionAuthor( state, userId ) {
 	return state.posts.revisions.authors.items[ userId ];

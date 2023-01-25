@@ -79,7 +79,7 @@ const hideRejections = ( promise ) => promise.catch( () => null );
  * Returns an action object to signal that post objects have been received.
  *
  * @param  {Array}  posts Posts received
- * @returns {Object} Action object
+ * @returns {object} Action object
  */
 export const receivePosts = ( posts ) => ( dispatch ) => {
 	if ( ! posts ) {

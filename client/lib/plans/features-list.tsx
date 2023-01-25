@@ -217,7 +217,6 @@ import {
 	FEATURE_PLUGIN_AUTOUPDATE_JP,
 	FEATURE_PREMIUM_CONTENT_JP,
 	FEATURE_SITE_ACTIVITY_LOG_JP,
-	FEATURE_GLOBAL_EDGE_CACHING,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n, { TranslateResult } from 'i18n-calypso';
@@ -758,7 +757,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_1GB_STORAGE ]: {
 		getSlug: () => FEATURE_1GB_STORAGE,
 		getTitle: () => i18n.translate( '1GB storage space' ),
-		getCompareTitle: () => i18n.translate( '1 GB' ),
+		getCompareTitle: () => i18n.translate( '1GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
 	},
@@ -772,7 +771,6 @@ export const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_6GB_STORAGE ]: {
 		getSlug: () => FEATURE_6GB_STORAGE,
-		getCompareTitle: () => i18n.translate( '6 GB' ),
 		getTitle: () =>
 			i18n.translate( '{{strong}}6 GB{{/strong}} storage space', {
 				components: {
@@ -791,7 +789,6 @@ export const FEATURES_LIST: FeatureList = {
 					strong: <strong />,
 				},
 			} ),
-		getCompareTitle: () => i18n.translate( '13 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Upload more images, videos, audio, and documents to your website.' ),
 	},
@@ -799,7 +796,6 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_50GB_STORAGE ]: {
 		getSlug: () => FEATURE_50GB_STORAGE,
 		getTitle: () => i18n.translate( '50 GB storage space' ),
-
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
 	},
@@ -812,7 +808,6 @@ export const FEATURES_LIST: FeatureList = {
 					strong: <strong />,
 				},
 			} ),
-		getCompareTitle: () => i18n.translate( '200 GB' ),
 		getDescription: () =>
 			i18n.translate( 'Upload more images, videos, audio, and documents to your website.' ),
 	},
@@ -1823,10 +1818,6 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_UPTIME_MONITOR_JP ]: {
 		getSlug: () => FEATURE_UPTIME_MONITOR_JP,
 		getTitle: () => i18n.translate( 'Uptime monitor' ),
-	},
-	[ FEATURE_GLOBAL_EDGE_CACHING ]: {
-		getSlug: () => FEATURE_GLOBAL_EDGE_CACHING,
-		getTitle: () => i18n.translate( 'Global edge caching' ),
 	},
 	[ FEATURE_ES_SEARCH_JP ]: {
 		getSlug: () => FEATURE_ES_SEARCH_JP,

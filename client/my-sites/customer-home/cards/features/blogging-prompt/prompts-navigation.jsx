@@ -10,7 +10,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NoResponsesIcon from './no-responses-icon';
 import './style.scss';
 
-const PromptsNavigation = ( { prompts, showViewAllResponses = false } ) => {
+const PromptsNavigation = ( { prompts } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ promptIndex, setPromptIndex ] = useState( 0 );
@@ -69,15 +69,6 @@ const PromptsNavigation = ( { prompts, showViewAllResponses = false } ) => {
 		}
 	};
 
-	const trackClickViewAllResponses = () => {
-		dispatch(
-			recordTracksEvent( `calypso_customer_home_view_all_responses`, {
-				site_id: siteId,
-				prompt_id: getPrompt().id,
-			} )
-		);
-	};
-
 	const renderPromptNavigation = () => {
 		const buttonClasses = classnames( 'navigation-link' );
 
@@ -113,17 +104,7 @@ const PromptsNavigation = ( { prompts, showViewAllResponses = false } ) => {
 			</div>
 		);
 
-		const viewAllResponses = (
-			<a
-				href={ 'http://wordpress.com/tag/dailyprompt-' + prompt.id }
-				target="_blank"
-				rel="noreferrer"
-				className="blogging-prompt__prompt-responses-link"
-				onClick={ trackClickViewAllResponses }
-			>
-				{ translate( 'View all responses' ) }
-			</a>
-		);
+		const promptReaderURL = 'http://wordpress.com/tag/dailyprompts-' + prompt.id;
 
 		if ( prompt.answered_users_sample.length > 0 ) {
 			responses = (
@@ -133,7 +114,14 @@ const PromptsNavigation = ( { prompts, showViewAllResponses = false } ) => {
 							return <img alt="answered-users" src={ sample.avatar } />;
 						} ) }
 					</div>
-					{ showViewAllResponses ? viewAllResponses : '' }
+					<a
+						href={ promptReaderURL }
+						target="_blank"
+						rel="noreferrer"
+						className="blogging-prompt__prompt-responses-link"
+					>
+						{ translate( 'View all responses' ) }
+					</a>
 				</div>
 			);
 		}

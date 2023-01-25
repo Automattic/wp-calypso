@@ -7,7 +7,7 @@ import 'calypso/state/themes/init';
  * for site should be cleared
  *
  * @param  {number}   siteId    Site ID
- * @returns {Object}        Action object
+ * @returns {object}        Action object
  */
 export function clearActivated( siteId ) {
 	return {

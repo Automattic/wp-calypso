@@ -6,7 +6,6 @@ import {
 	PLAN_MONTHLY_PERIOD,
 	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
-import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import {
 	isIncludedWithPlan,
@@ -17,7 +16,7 @@ import type { Purchase } from 'calypso/lib/purchases/types';
 
 function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 	const translate = useTranslate();
-	const { priceInteger, currencyCode } = purchase;
+	const { productDisplayPrice } = purchase;
 
 	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
 		if ( isDIFMProduct( purchase ) ) {
@@ -62,12 +61,10 @@ function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 		return translate( '{{displayPrice/}} {{period}}(one-time){{/period}}', {
 			components: {
 				displayPrice: (
-					<span>
-						{ formatCurrency( priceInteger, currencyCode, {
-							stripZeros: true,
-							isSmallestUnit: true,
-						} ) }
-					</span>
+					<span
+						// eslint-disable-next-line react/no-danger
+						dangerouslySetInnerHTML={ { __html: productDisplayPrice } }
+					/>
 				),
 				period: <span className="manage-purchase__time-period" />,
 			},
@@ -106,12 +103,10 @@ function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 	const getPriceLabel = ( period: string | null ) => {
 		if ( ! period ) {
 			return (
-				<span>
-					{ formatCurrency( priceInteger, currencyCode, {
-						stripZeros: true,
-						isSmallestUnit: true,
-					} ) }
-				</span>
+				<span
+					// eslint-disable-next-line react/no-danger
+					dangerouslySetInnerHTML={ { __html: productDisplayPrice } }
+				/>
 			);
 		}
 
@@ -120,12 +115,10 @@ function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 			args: { period },
 			components: {
 				displayPrice: (
-					<span>
-						{ formatCurrency( priceInteger, currencyCode, {
-							stripZeros: true,
-							isSmallestUnit: true,
-						} ) }
-					</span>
+					<span
+						// eslint-disable-next-line react/no-danger
+						dangerouslySetInnerHTML={ { __html: productDisplayPrice } }
+					/>
 				),
 				period: <span className="manage-purchase__time-period" />,
 			},

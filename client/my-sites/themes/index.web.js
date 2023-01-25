@@ -1,5 +1,4 @@
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
-import page from 'page';
 import {
 	makeLayout,
 	redirectLoggedOut,
@@ -12,7 +11,7 @@ import {
 	siteSelection,
 	sites,
 } from 'calypso/my-sites/controller';
-import { fetchThemeData, loggedOut, redirectToThemeDetails } from './controller';
+import { loggedOut } from './controller';
 import { loggedIn, upload } from './controller-logged-in';
 import { fetchAndValidateVerticalsAndFilters } from './validate-filters';
 
@@ -63,24 +62,10 @@ export default function ( router ) {
 	router(
 		routesWithoutSites,
 		redirectWithoutLocaleParamIfLoggedIn,
+		selectSiteIfLoggedIn,
 		fetchAndValidateVerticalsAndFilters,
-		selectSiteIfLoggedIn, // This has to be after fetchAndValidateVerticalsAndFilters or else the redirect to theme/:theme will not work properly.
 		loggedOut,
 		makeLayout,
 		clientRender
 	);
-
-	/**
-	 * Although we redirect /themes/:theme from validateVerticals, we still need to redirect users from /themes/:theme/support.
-	 */
-	router(
-		[
-			'/themes/:theme/:section(support)?',
-			`/themes/:theme/:section(support)?/:site_id(${ siteId })`,
-		],
-		( { params: { site_id, theme, section } }, next ) =>
-			redirectToThemeDetails( page.redirect, site_id, theme, section, next )
-	);
-
-	router( '/themes/*', fetchThemeData, loggedOut, makeLayout );
 }

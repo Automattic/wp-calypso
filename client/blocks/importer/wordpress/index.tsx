@@ -25,7 +25,6 @@ interface Props {
 	siteId: number;
 	siteSlug: string;
 	fromSite: string;
-	showConfirmDialog?: boolean;
 	stepNavigator?: StepNavigator;
 }
 
@@ -36,7 +35,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	 ↓ Fields
 	 */
 	const [ option, setOption ] = useState< WPImportOption >();
-	const { job, fromSite, siteSlug, siteId, stepNavigator, showConfirmDialog } = props;
+	const { job, fromSite, siteSlug, siteId, stepNavigator } = props;
 	const siteItem = useSelector( ( state ) => getSite( state, siteId ) );
 	const fromSiteItem = useSelector( ( state ) =>
 		getSiteBySlug( state, fromSite ? convertToFriendlyWebsiteName( fromSite ) : '' )
@@ -146,7 +145,6 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 							targetSiteSlug={ siteSlug }
 							stepNavigator={ stepNavigator }
 							isMigrateFromWp={ isMigrateFromWp }
-							showConfirmDialog={ showConfirmDialog }
 						/>
 					);
 				} else if ( WPImportOption.CONTENT_ONLY === option ) {

@@ -23,8 +23,8 @@ import 'calypso/state/stats/init';
  * @param  {string} period Unit for each element of the returned array (ie: 'hour' or 'day')
  * @param  {string} statType The type of stat we are working with. For example: 'opens' for Email Open stats
  * @param  {string?} date A date in YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss format
- * @param  {Object}  stats  The received stats
- * @returns {Object}        Action object
+ * @param  {object}  stats  The received stats
+ * @returns {object}        Action object
  */
 export function receiveEmailStats( siteId, postId, period, statType, date, stats ) {
 	return {
@@ -41,11 +41,11 @@ export function receiveEmailStats( siteId, postId, period, statType, date, stats
 /**
  * Transforms the received API response to Redux state
  *
- * @param {Object} stats The incoming stats
+ * @param {object} stats The incoming stats
  * @param {string} period The period for the stats
- * @returns {Object}
+ * @returns {object}
  */
-function emailStatsForPeriodTransform( stats, period ) {
+function emailOpenStatsPeriodTransform( stats, period ) {
 	const emailChartData = parseEmailChartData( stats.timeline, [] );
 
 	// create an object from emailStats with period as the key
@@ -62,11 +62,10 @@ function emailStatsForPeriodTransform( stats, period ) {
 /**
  * Transforms the received API response to Redux state
  *
- * @param {Object} stats The incoming stats
- * @returns {Object}
+ * @param {object} stats The incoming stats
+ * @returns {object}
  */
-function emailStatsAlltimeTransform( stats ) {
-	// rate does not have its own subkey, so just adding all possible keys, the null-ones will be removed
+function emailOpenStatsAlltimeTransform( stats ) {
 	return {
 		countries: parseEmailCountriesData( stats.countries?.data, stats[ 'countries-info' ] ),
 		devices: parseEmailListData( stats.devices?.data ),
@@ -75,8 +74,6 @@ function emailStatsAlltimeTransform( stats ) {
 			opens_rate: stats.opens_rate,
 			total_opens: stats.total_opens,
 			total_sends: stats.total_sends,
-			total_clicks: stats.total_clicks,
-			clicks_rate: stats.clicks_rate,
 		},
 	};
 }
@@ -88,11 +85,10 @@ function emailStatsAlltimeTransform( stats ) {
  * @param  {number} siteId Site ID
  * @param  {number} postId Email Id
  * @param  {string} period Unit for each element of the returned array (ie: 'hour' or 'day')
- * @param  {string} statType The type of stat we are working with. For example: 'opens' for Email Open stats
- * @param  {string|null?} date A date in YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss format
+ * @param  {string?} date A date in YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss format
  * @param  {number} quantity The number of elements retrieved in the array
  */
-function requestEmailStats( siteId, postId, period, statType, date, quantity ) {
+function requestEmailOpensStats( siteId, postId, period, date, quantity ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: EMAIL_STATS_REQUEST,
@@ -100,7 +96,7 @@ function requestEmailStats( siteId, postId, period, statType, date, quantity ) {
 			siteId,
 			period,
 			date,
-			statType,
+			statType: 'opens',
 		} );
 
 		// set defaults for hour
@@ -116,18 +112,18 @@ function requestEmailStats( siteId, postId, period, statType, date, quantity ) {
 		const site = wpcom.site( siteId );
 		const statsPromise =
 			period === PERIOD_ALL_TIME
-				? site.emailStatsAlltime( postId, statType )
-				: site.emailStatsForPeriod( postId, statType, query );
+				? site.statsEmailOpensAlltime( postId )
+				: site.statsEmailOpensForPeriod( postId, query );
 
 		return statsPromise
 			.then( ( stats ) => {
 				// create an object from emailStats with period as the key
 				const emailStatsObject =
 					period === PERIOD_ALL_TIME
-						? emailStatsAlltimeTransform( stats )
-						: emailStatsForPeriodTransform( stats, period );
+						? emailOpenStatsAlltimeTransform( stats )
+						: emailOpenStatsPeriodTransform( stats, period );
 
-				dispatch( receiveEmailStats( siteId, postId, period, statType, date, emailStatsObject ) );
+				dispatch( receiveEmailStats( siteId, postId, period, 'opens', date, emailStatsObject ) );
 
 				dispatch( {
 					type: EMAIL_STATS_REQUEST_SUCCESS,
@@ -142,7 +138,7 @@ function requestEmailStats( siteId, postId, period, statType, date, quantity ) {
 					siteId,
 					postId,
 					period,
-					statType,
+					statType: 'opens',
 					date,
 					error,
 				} );
@@ -159,12 +155,16 @@ function requestEmailStats( siteId, postId, period, statType, date, quantity ) {
  * @param  {number} siteId Site ID
  * @param  {number} postId Email Id
  * @param  {string} period Unit for each element of the returned array (ie: 'hour' or 'day')
- * @param  {string} statType The type of stat we are working with. For example: 'opens' for Email Open stats
  * @param  {string} date A date in YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss format
+ * @param  {string} statType The type of stat we are working with. For example: 'opens' for Email Open stats
  * @param  {number} quantity The number of elements retrieved in the array
  */
-export function requestEmailPeriodStats( siteId, postId, period, statType, date, quantity = 30 ) {
-	return requestEmailStats( siteId, postId, period, statType, date, quantity );
+export function requestEmailPeriodStats( siteId, postId, period, date, statType, quantity = 30 ) {
+	switch ( statType ) {
+		case 'opens':
+			// request stats bound by period ( chart, countries, devices & clients )
+			return requestEmailOpensStats( siteId, postId, period, date, quantity );
+	}
 }
 
 /**
@@ -179,5 +179,9 @@ export function requestEmailPeriodStats( siteId, postId, period, statType, date,
  * @param  {number} quantity The number of elements retrieved in the array
  */
 export function requestEmailAlltimeStats( siteId, postId, statType, quantity = 30 ) {
-	return requestEmailStats( siteId, postId, PERIOD_ALL_TIME, statType, null, quantity );
+	switch ( statType ) {
+		case 'opens':
+			// request stats bound by period ( chart, countries, devices & clients )
+			return requestEmailOpensStats( siteId, postId, PERIOD_ALL_TIME, null, quantity );
+	}
 }

@@ -8,7 +8,7 @@ import 'calypso/state/ui/init';
  *
  * @see ./constants.js (ModalViews)
  * @param  {any} view Media view
- * @returns {Object}          Action object
+ * @returns {object}          Action object
  */
 export function setMediaModalView( view ) {
 	return {
@@ -22,7 +22,7 @@ export function setMediaModalView( view ) {
  * view should be reset to its initial value.
  *
  * @see ./constants.js (ModalViews)
- * @returns {Object}          Action object
+ * @returns {object}          Action object
  */
 export function resetMediaModalView() {
 	return setMediaModalView( null );

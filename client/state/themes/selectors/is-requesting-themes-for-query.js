@@ -6,9 +6,9 @@ import 'calypso/state/themes/init';
  * Returns true if currently requesting themes for the themes query, or false
  * otherwise.
  *
- * @param  {Object}  state  Global state tree
+ * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @param  {Object}  query  Theme query object
+ * @param  {object}  query  Theme query object
  * @returns {boolean}        Whether themes are being requested
  */
 export function isRequestingThemesForQuery( state, siteId, query ) {

@@ -15,7 +15,7 @@ import 'calypso/state/post-types/init';
  * @param  {number} siteId     Site ID
  * @param  {string} postType   Post type
  * @param  {Array}  taxonomies Taxonomies received
- * @returns {Object}            Action object
+ * @returns {object}            Action object
  */
 export function receivePostTypeTaxonomies( siteId, postType, taxonomies ) {
 	return {

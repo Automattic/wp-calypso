@@ -54,7 +54,7 @@ export function stopEditingPost( siteId, postId ) {
  * view should be updated in the context of the post editor.
  *
  * @param  {ModalViews} view Media view
- * @returns {Object}          Action object
+ * @returns {object}          Action object
  */
 export function setEditorMediaModalView( view ) {
 	const action = setMediaModalView( view );

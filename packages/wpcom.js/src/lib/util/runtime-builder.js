@@ -8,7 +8,7 @@ const debug = debugFactory( 'wpcom:runtime' );
 /**
  * Build a generic method
  *
- * @param {Object} methodParams - method methodParams
+ * @param {object} methodParams - method methodParams
  * @param {Function} buildPath - function called to build method path
  * @returns {string} method path
  */

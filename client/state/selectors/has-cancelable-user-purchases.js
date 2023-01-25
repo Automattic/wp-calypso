@@ -7,7 +7,7 @@ import 'calypso/state/purchases/init';
  *
  * Note: there is an is_cancelable flag on the purchase object, but it returns true for legacy premium theme purchases.
  *
- * @param  {Object}  state       global state
+ * @param  {object}  state       global state
  * @returns {boolean} if the user currently has any purchases that can be canceled.
  */
 export const hasCancelableUserPurchases = ( state ) => {

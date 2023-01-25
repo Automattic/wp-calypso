@@ -19,7 +19,7 @@ const debug = debugModule( 'calypso:redux:reader-tags-images' );
  *
  * @param {string} tag The tag slug the images are for
  * @param  {Array}  images Images received
- * @returns {Object} Action object
+ * @returns {object} Action object
  */
 export function receiveTagImages( tag, images ) {
 	return {

@@ -8,15 +8,16 @@ import {
 } from 'calypso/state/stats/emails/actions';
 
 const requestPeriodStats = ( siteId, postId, period, date, statType, quantity ) => ( dispatch ) => {
-	dispatch( requestEmailPeriodStats( siteId, postId, period, statType, date, quantity ) );
+	dispatch( requestEmailPeriodStats( siteId, postId, period, date, statType, quantity ) );
 };
 
 const requestAlltimeStats = ( siteId, postId, statType, quantity ) => ( dispatch ) => {
 	dispatch( requestEmailAlltimeStats( siteId, postId, statType, quantity ) );
 };
 
-function QueryEmailStats( { siteId, postId, period, date, quantity, hasValidDate, statType } ) {
+function QueryEmailStats( { siteId, postId, period, date, quantity, hasValidDate } ) {
 	const dispatch = useDispatch();
+	const statType = 'opens';
 
 	useEffect( () => {
 		dispatch( requestSitePost( siteId, postId ) );
@@ -42,11 +43,9 @@ QueryEmailStats.propTypes = {
 	siteId: PropTypes.number,
 	postId: PropTypes.number,
 	period: PropTypes.string,
-	statType: PropTypes.string,
 	date: PropTypes.string,
 	quantity: PropTypes.number,
 	hasValidDate: PropTypes.bool,
-	isRequesting: PropTypes.bool,
 };
 
 export default QueryEmailStats;

@@ -7,7 +7,7 @@ import 'calypso/state/media/init';
  * Returns media for a specified site ID and query.
  *
  *
- * @param {Object}  query  Query object
+ * @param {object}  query  Query object
  * @returns {?Array}         Media
  */
 

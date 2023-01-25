@@ -24,7 +24,7 @@ export interface AtomicSoftwareError {
  *
  * @param {string} siteId Site ID.
  * @param {string} softwareSet Software set slug.
- * @returns {Object} An action object.
+ * @returns {object} An action object.
  */
 export const requestAtomicSoftwareInstall = ( siteId: number, softwareSet: string ) =>
 	( {
@@ -38,7 +38,7 @@ export const requestAtomicSoftwareInstall = ( siteId: number, softwareSet: strin
  *
  * @param {string} siteId Site ID.
  * @param {string} softwareSet Software set slug.
- * @returns {Object} An action object.
+ * @returns {object} An action object.
  */
 export const requestAtomicSoftwareStatus = ( siteId: number, softwareSet: string ) =>
 	( {
@@ -52,8 +52,8 @@ export const requestAtomicSoftwareStatus = ( siteId: number, softwareSet: string
  *
  * @param {number} siteId The site id to which the status belongs.
  * @param {string} softwareSet The software set slug.
- * @param {Object} status The new status of the transfer.
- * @returns {Object} An action object
+ * @param {object} status The new status of the transfer.
+ * @returns {object} An action object
  */
 export const setAtomicSoftwareStatus = (
 	siteId: number,
@@ -73,7 +73,7 @@ export const setAtomicSoftwareStatus = (
  * @param {number} siteId The site id to which the status belongs.
  * @param {string} softwareSet The software set slug.*
  * @param {AtomicSoftwareError} error The error of the install.
- * @returns {Object} An action object
+ * @returns {object} An action object
  */
 export const setAtomicSoftwareError = (
 	siteId: number,
@@ -92,7 +92,7 @@ export const setAtomicSoftwareError = (
  *
  * @param {number} siteId The site id to which the status belongs.
  * @param {string} softwareSet The software set slug.*
- * @returns {Object} An action object
+ * @returns {object} An action object
  */
 export const cleanAtomicSoftwareStatus = ( siteId: number, softwareSet: string ) =>
 	( {
