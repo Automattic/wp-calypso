@@ -5,6 +5,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
@@ -52,7 +53,9 @@ export function RenderDomainUpsell() {
 	};
 
 	const purchaseLink = '/plans/' + siteSlug;
+	const [ ctaIsBusy, setCtaIsBusy ] = useState( false );
 	const getCtaClickHandler = async () => {
+		setCtaIsBusy( true );
 		recordTracksEvent( 'calypso_my_home_domain_upsell_cta_click', {
 			button_url: purchaseLink,
 			domain_suggestion: domainSuggestionName,
@@ -107,7 +110,7 @@ export function RenderDomainUpsell() {
 					<Button href={ searchLink } onClick={ getSearchClickHandler }>
 						{ translate( 'Search a domain' ) }
 					</Button>
-					<Button primary onClick={ getCtaClickHandler }>
+					<Button primary onClick={ getCtaClickHandler } busy={ ctaIsBusy }>
 						{ translate( 'Get your custom domain' ) }
 					</Button>
 				</div>
