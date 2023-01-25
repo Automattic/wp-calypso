@@ -1,4 +1,4 @@
-import { translate } from 'calypso/../packages/i18n-calypso/types';
+import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -14,6 +14,8 @@ export const Content: React.FC< ContentProps > = ( {
 	rootUrl,
 	urlQueryArgs,
 } ) => {
+	const translate = useTranslate();
+
 	return (
 		<>
 			<DocumentHead
