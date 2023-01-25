@@ -1,3 +1,4 @@
+import { translate } from 'calypso/../packages/i18n-calypso/types';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -16,7 +17,7 @@ export const Content: React.FC< ContentProps > = ( {
 	return (
 		<>
 			<DocumentHead
-				title="Full Jetpack plan listing and price comparison – Jetpack!"
+				title={ translate( 'Full Jetpack plan listing and price comparison – Jetpack!' ) }
 				skipTitleFormatting={ true }
 			/>
 			{ nav }
