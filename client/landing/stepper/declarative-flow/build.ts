@@ -11,7 +11,7 @@ import { Flow, ProvidedDependencies } from './internals/types';
 const build: Flow = {
 	name: BUILD_FLOW,
 	get title() {
-		return translate( 'Build' );
+		return translate( 'WordPress' );
 	},
 	useSteps() {
 		return [
