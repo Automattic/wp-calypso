@@ -96,32 +96,34 @@ function HighlightsSectionHeader( props ) {
 	const localizedTitle = translate( 'Totals', {
 		comment: 'Heading for WordAds earnings highlights section',
 	} );
-	if ( ! props.notices || props.notices.length === 0 ) {
-		return <h1 className="highlight-cards-heading">{ localizedTitle }</h1>;
-	}
+	const showNotices = props?.notices?.length > 0;
 	return (
 		<h1 className="highlight-cards-heading">
 			{ localizedTitle }{ ' ' }
-			<span
-				className="info-wrapper"
-				ref={ infoReferenceElement }
-				onMouseEnter={ () => setTooltipVisible( true ) }
-				onMouseLeave={ () => setTooltipVisible( false ) }
-			>
-				<Icon className="info-icon" icon={ info } />
-			</span>
-			<Popover
-				className="tooltip tooltip--darker tooltip-wordads highlight-card-tooltip"
-				isVisible={ isTooltipVisible }
-				position="bottom right"
-				context={ infoReferenceElement.current }
-			>
-				<div className="highlight-card-tooltip-content">
-					{ props.notices.map( ( notice ) => (
-						<p key={ notice.id }>{ notice.value }</p>
-					) ) }
-				</div>
-			</Popover>
+			{ showNotices && (
+				<>
+					<span
+						className="info-wrapper"
+						ref={ infoReferenceElement }
+						onMouseEnter={ () => setTooltipVisible( true ) }
+						onMouseLeave={ () => setTooltipVisible( false ) }
+					>
+						<Icon className="info-icon" icon={ info } />
+					</span>
+					<Popover
+						className="tooltip tooltip--darker tooltip-wordads highlight-card-tooltip"
+						isVisible={ isTooltipVisible }
+						position="bottom right"
+						context={ infoReferenceElement.current }
+					>
+						<div className="highlight-card-tooltip-content">
+							{ props.notices.map( ( notice ) => (
+								<p key={ notice.id }>{ notice.value }</p>
+							) ) }
+						</div>
+					</Popover>
+				</>
+			) }
 		</h1>
 	);
 }
