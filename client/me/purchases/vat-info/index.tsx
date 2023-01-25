@@ -189,9 +189,15 @@ function CountryCodeInput( {
 		'SE',
 		'SI',
 		'SK',
-		'UK',
+		'GB',
 		'XI',
 	];
+
+	// Some historical country codes were set to 'UK', but that is not a valid
+	// country code. It should read 'GB'.
+	if ( value === 'UK' ) {
+		value = 'GB';
+	}
 
 	return (
 		<FormSelect
