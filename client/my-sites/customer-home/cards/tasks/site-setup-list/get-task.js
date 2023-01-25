@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
+import { AnimatedIcon } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
-import AnimatedIcon from 'calypso/components/animated-icon';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';

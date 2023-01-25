@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Button, Card } from '@automattic/components';
+import { AnimatedIcon, Button, Card } from '@automattic/components';
 import { compose } from '@wordpress/compose';
 import classNames from 'classnames';
 import { localize, withRtl } from 'i18n-calypso';
@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import AnimatedIcon from 'calypso/components/animated-icon';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import versionCompare from 'calypso/lib/version-compare';
 import {

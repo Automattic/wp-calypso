@@ -1,5 +1,6 @@
 export { default as Button } from './button';
 export * as Animation from './animation';
+export { default as AnimatedIcon } from './animated-icon';
 export { default as Card } from './card';
 export { default as CompactCard } from './card/compact';
 export * from './device-switcher';
