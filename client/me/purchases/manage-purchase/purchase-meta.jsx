@@ -6,7 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
@@ -59,12 +59,17 @@ export default function PurchaseMeta( {
 
 	const showJetpackUserLicense = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
 
+	const renewalPriceHeader =
+		getLocaleSlug().startsWith( 'en' ) || i18n.hasTranslation( 'Renewal Price' )
+			? translate( 'Renewal Price' )
+			: translate( 'Price' );
+
 	return (
 		<>
 			<ul className="manage-purchase__meta">
 				<PurchaseMetaOwner owner={ owner } />
 				<li>
-					<em className="manage-purchase__detail-label">{ translate( 'Renewal Price' ) }</em>
+					<em className="manage-purchase__detail-label">{ renewalPriceHeader }</em>
 					<span className="manage-purchase__detail">
 						<PurchaseMetaPrice purchase={ purchase } />
 						<PurchaseMetaIntroductoryOfferDetail purchase={ purchase } />
