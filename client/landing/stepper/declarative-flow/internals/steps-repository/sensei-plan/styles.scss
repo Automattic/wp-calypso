@@ -1,5 +1,5 @@
 @import "@automattic/onboarding/styles/mixins";
-@import "../../sensei";
+@import "../../sensei/variables";
 
 .step-container.senseiPlan {
 	.plan-item {
@@ -29,10 +29,12 @@
 		&__select-button {
 			width: 100%;
 			background-color: $sensei-color;
-			border: 1px solid darken($sensei-color, 10%);
+			color: $sensei-purple-50;
+			border: none;
+			font-weight: 500;
 			&:hover:not(:disabled) {
 				background-color: darken($sensei-color, 10%);
-				border: 1px solid darken($sensei-color, 10%);
+				color: $sensei-purple-50;
 			}
 		}
 

@@ -1,0 +1,34 @@
+@import "@automattic/typography/styles/variables";
+@import "@automattic/onboarding/styles/mixins";
+@import "./variables";
+
+.sensei .progress-bar__progress {
+	background-color: $sensei-color;
+}
+
+.sensei {
+	.sensei-button {
+		margin-top: 40px;
+		padding: 10px 80px;
+		font-size: $font-body-small;
+		line-height: 20px;
+		font-weight: 500;
+		border-radius: 4px;
+		cursor: pointer;
+
+		width: 100%;
+		background-color: $sensei-color;
+		color: $sensei-purple-50;
+		border: none;
+
+		&:hover:not(:disabled) {
+			background-color: darken($sensei-color, 10%);
+		}
+
+		&:disabled {
+			background-color: #aaa;
+			cursor: not-allowed;
+		}
+	}
+
+}
