@@ -19,7 +19,7 @@ const PROGRESS_BAR_CLASS_NAMES = {
 	[ StorageUsageLevels.Critical ]: 'red-warning',
 	[ StorageUsageLevels.Warning ]: 'yellow-warning',
 	[ StorageUsageLevels.Normal ]: 'no-warning',
-	[ StorageUsageLevels.BackupsDiscarded ]: 'red-warning',
+	[ StorageUsageLevels.BackupsDiscarded ]: 'full-warning',
 };
 
 type OwnProps = {
