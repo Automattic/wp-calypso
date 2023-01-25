@@ -13,7 +13,7 @@ import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useMemo, useState, useCallback, useEffect, ChangeEvent } from 'react';
 import { useSelector } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import PlanPill from 'calypso/components/plans/plan-pill';
@@ -26,6 +26,7 @@ import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { PlanProperties } from './types';
+import { usePricingBreakpoint } from './util';
 const JetpackIconContainer = styled.div`
 	padding-left: 6px;
 `;
@@ -105,18 +106,22 @@ type PlanComparisonGridProps = {
 };
 type PlanComparisonGridHeaderProps = {
 	displayedPlansProperties: Array< PlanProperties >;
+	visiblePlansProperties: Array< PlanProperties >;
 	isInSignup: boolean;
 	isLaunchPage?: boolean;
 	isFooter?: boolean;
 	flowName: string;
+	onPlanChange: ( currentPlan: string, event: ChangeEvent ) => void;
 };
 
 const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 	displayedPlansProperties,
+	visiblePlansProperties,
 	isInSignup,
 	isLaunchPage,
 	flowName,
 	isFooter,
+	onPlanChange,
 } ) => {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
@@ -126,7 +131,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 				key="feature-name"
 				className="plan-comparison-grid__header plan-comparison-grid__interval-toggle"
 			/>
-			{ displayedPlansProperties.map( ( { planName, planConstantObj, ...planPropertiesObj } ) => {
+			{ visiblePlansProperties.map( ( { planName, planConstantObj, ...planPropertiesObj } ) => {
 				const headerClasses = classNames(
 					'plan-comparison-grid__header',
 					getPlanClass( planName ),
@@ -138,6 +143,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 
 				const rawPrice = planPropertiesObj.rawPrice;
 				const isLargeCurrency = rawPrice ? rawPrice > 99000 : false;
+				const showPlanSelect = isInSignup || planName !== 'free_plan';
 
 				return (
 					<Cell key={ planName } className={ headerClasses } textAlign="left">
@@ -148,6 +154,31 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 						) }
 						<header>
 							<h4 className="plan-comparison-grid__title">{ planConstantObj.getTitle() }</h4>
+							{ showPlanSelect && (
+								<select
+									onChange={ ( event: ChangeEvent ) => onPlanChange( planName, event ) }
+									className="plan-comparison-grid__title-select"
+									value={ planName }
+								>
+									{ displayedPlansProperties.map(
+										( { planName: otherPlan, product_name_short } ) => {
+											const isVisiblePlan = visiblePlansProperties.find(
+												( { planName } ) => planName === otherPlan
+											);
+
+											if ( isVisiblePlan && otherPlan !== planName ) {
+												return null;
+											}
+
+											return (
+												<option key={ otherPlan } value={ otherPlan }>
+													{ product_name_short }
+												</option>
+											);
+										}
+									) }
+								</select>
+							) }
 						</header>
 						<PlanFeatures2023GridHeaderPrice
 							currencyCode={ currencyCode }
@@ -186,6 +217,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 		</Row>
 	);
 };
+
 export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	planProperties,
 	intervalType,
@@ -200,6 +232,25 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		( { planName } ) => ! ( planName === PLAN_ENTERPRISE_GRID_WPCOM )
 	);
 	const isMonthly = intervalType === 'monthly';
+	const isMediumBreakpoint = usePricingBreakpoint( 1340 );
+	const isSmallBreakpoint = usePricingBreakpoint( 880 );
+
+	const [ visiblePlans, setVisiblePlans ] = useState< string[] >( [] );
+
+	useEffect( () => {
+		let newVisiblePlans = displayedPlansProperties.map( ( { planName } ) => planName );
+
+		if ( isMediumBreakpoint ) {
+			newVisiblePlans = newVisiblePlans.slice( 0, 4 );
+		}
+
+		if ( isSmallBreakpoint || ( isInSignup && isMediumBreakpoint ) ) {
+			newVisiblePlans = newVisiblePlans.slice( 0, 2 );
+		}
+
+		setVisiblePlans( newVisiblePlans );
+	}, [ isMediumBreakpoint ] );
+
 	const restructuredFeatures = useMemo( () => {
 		let previousPlan = null;
 		const planFeatureMap: Record< string, Set< string > > = {};
@@ -250,6 +301,24 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		return jetpackFeatures;
 	}, [ planProperties ] );
 
+	const onPlanChange = useCallback(
+		( currentPlan, event ) => {
+			const newPlan = event.currentTarget.value;
+
+			const newVisiblePlans = visiblePlans.map( ( plan ) =>
+				plan === currentPlan ? newPlan : plan
+			);
+			setVisiblePlans( newVisiblePlans );
+		},
+		[ visiblePlans ]
+	);
+	const visiblePlansProperties = visiblePlans.reduce< PlanProperties[] >( ( acc, planName ) => {
+		const plan = displayedPlansProperties.find( ( plan ) => plan.planName === planName );
+		if ( plan ) {
+			acc.push( plan );
+		}
+		return acc;
+	}, [] );
 	return (
 		<div className="plan-comparison-grid">
 			<PlanComparisonHeader className="wp-brand-font">
@@ -269,9 +338,11 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 			<Grid>
 				<PlanComparisonGridHeader
 					displayedPlansProperties={ displayedPlansProperties }
+					visiblePlansProperties={ visiblePlansProperties }
 					isInSignup={ isInSignup }
 					isLaunchPage={ isLaunchPage }
 					flowName={ flowName }
+					onPlanChange={ onPlanChange }
 				/>
 
 				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => {
@@ -305,7 +376,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 												</JetpackIconContainer>
 											) : null }
 										</RowHead>
-										{ ( displayedPlansProperties ?? [] ).map( ( { planName } ) => {
+										{ ( visiblePlansProperties ?? [] ).map( ( { planName } ) => {
 											const cellClasses = classNames(
 												'plan-comparison-grid__plan',
 												getPlanClass( planName ),
@@ -334,7 +405,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									>
 										{ translate( 'Storage' ) }
 									</RowHead>
-									{ ( displayedPlansProperties ?? [] ).map( ( { planName } ) => {
+									{ ( visiblePlansProperties ?? [] ).map( ( { planName } ) => {
 										const storageFeature = restructuredFeatures.planStorageOptionsMap[ planName ];
 										const [ featureObject ] = getPlanFeaturesObject( [ storageFeature ] );
 										const cellClasses = classNames(
@@ -362,10 +433,12 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 				} ) }
 				<PlanComparisonGridHeader
 					displayedPlansProperties={ displayedPlansProperties }
+					visiblePlansProperties={ visiblePlansProperties }
 					isInSignup={ isInSignup }
 					isLaunchPage={ isLaunchPage }
 					flowName={ flowName }
 					isFooter={ true }
+					onPlanChange={ onPlanChange }
 				/>
 			</Grid>
 		</div>
