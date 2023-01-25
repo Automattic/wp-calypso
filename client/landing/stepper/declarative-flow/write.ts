@@ -3,6 +3,7 @@ import { useFlowProgress, WRITE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
+import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import LaunchPad from './internals/steps-repository/launchpad';
@@ -31,6 +32,7 @@ const write: Flow = {
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 		setStepProgress( flowProgress );
+		const siteSlug = useSiteSlug();
 
 		// trigger guides on step movement, we don't care about failures or response
 		wpcom.req.post(
@@ -60,7 +62,17 @@ const write: Flow = {
 			}
 		};
 
-		return { submit };
+		const goNext = () => {
+			switch ( _currentStep ) {
+				case 'launchpad':
+					return window.location.assign( `/view/${ siteSlug }` );
+
+				default:
+					return navigate( 'freeSetup' );
+			}
+		};
+
+		return { goNext, submit };
 	},
 
 	useAssertConditions(): AssertConditionResult {
