@@ -107,7 +107,7 @@ export function* createSenseiSite( {
 	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
 	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
 
-	const success: NewSiteBlogDetails | undefined = yield dispatch( SITE_STORE, 'createSite', {
+	const success: boolean | undefined = yield dispatch( SITE_STORE, 'createSite', {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
 		blog_title: blogTitle,
 		public: visibility,
