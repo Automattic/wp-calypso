@@ -116,9 +116,20 @@ export default function () {
 	statsStrings.emailsOpenStats = {
 		title: translate( 'Email opens', { context: 'Stats: title of module' } ),
 		item: translate( 'Title', { context: 'Stats: module row header for post title.' } ),
-		value: translate( 'Views', { context: 'Stats: module row header for number of post views.' } ),
+		value: translate( 'Opens', { context: 'Stats: module row header for number of email opens.' } ),
 		empty: translate( 'No email opens', {
 			context: 'Stats: Info box label when the Email Open module is empty',
+		} ),
+	};
+
+	statsStrings.emailsClickStats = {
+		title: translate( 'Email clicks', { context: 'Stats: title of module' } ),
+		item: translate( 'Title', { context: 'Stats: module row header for post title.' } ),
+		value: translate( 'Clicks', {
+			context: 'Stats: module row header for number of email clicks.',
+		} ),
+		empty: translate( 'No email clicks', {
+			context: 'Stats: Info box label when the Email Click module is empty',
 		} ),
 	};
 

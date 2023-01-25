@@ -34,6 +34,7 @@ const wpcomV1Endpoints = {
 	statsFileDownloads: 'stats/file-downloads',
 	statsAds: 'wordads/stats',
 	statsEmailsOpen: 'stats/opens/emails/summary',
+	statsEmailsClick: 'stats/clicks/emails/summary',
 };
 
 const wpcomV2Endpoints = {
@@ -76,6 +77,7 @@ export function requestSiteStats( siteId, statType, query ) {
 				case 'statsVideo':
 					return query.postId;
 				case 'statsEmailsOpen':
+				case 'statsEmailsClick':
 					return { period: PERIOD_ALL_TIME, quantity: 10 };
 				default:
 					return query;
