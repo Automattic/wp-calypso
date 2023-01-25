@@ -151,5 +151,18 @@ describe( 'WPCheckoutOrderSummary', () => {
 				} );
 			} );
 		} );
+
+		test( 'VaultPress Backup T1 related feature list does not show up if a different Jetpack product is in cart', async () => {
+			const scan = convertProductSlugToResponseProduct( PRODUCT_JETPACK_SCAN );
+			const cartChanges = { products: [ scan ] };
+
+			render( <MyCheckoutSummary cartChanges={ cartChanges } /> );
+
+			await waitFor( async () => {
+				jetpackBackupFeatureList.map( ( feature ) => {
+					expect( screen.queryByText( feature ) ).toBeNull();
+				} );
+			} );
+		} );
 	} );
 } );
