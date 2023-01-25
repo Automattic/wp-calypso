@@ -125,6 +125,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const allVisible = visiblePlansProperties.length === displayedPlansProperties.length;
 	return (
 		<Row className="plan-comparison-grid__plan-row">
 			<RowHead
@@ -143,7 +144,8 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 
 				const rawPrice = planPropertiesObj.rawPrice;
 				const isLargeCurrency = rawPrice ? rawPrice > 99000 : false;
-				const showPlanSelect = isInSignup || planName !== 'free_plan';
+
+				const showPlanSelect = ! allVisible && ( isInSignup || planName !== 'free_plan' );
 
 				return (
 					<Cell key={ planName } className={ headerClasses } textAlign="left">
@@ -249,7 +251,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		}
 
 		setVisiblePlans( newVisiblePlans );
-	}, [ isMediumBreakpoint ] );
+	}, [ isMediumBreakpoint, intervalType ] );
 
 	const restructuredFeatures = useMemo( () => {
 		let previousPlan = null;
