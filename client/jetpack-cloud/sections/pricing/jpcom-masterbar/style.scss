@@ -674,8 +674,7 @@
 	}
 	.header__submenu-categories-list > li .header__category,
 	.header__submenu-categories-list > li .header__submenu-link,
-	.header__submenu-bundles > .header__submenu-links-list > li .header__submenu-link,
-	.header__submenu-apps-wrapper > .header__submenu-link {
+	.header__submenu-links-list > li .header__submenu-link {
 		animation-fill-mode: backwards;
 		animation-name: submenu-item;
 		animation-duration: 0.25s;
@@ -684,8 +683,7 @@
 	@media ( prefers-reduced-motion ) {
 		.header__submenu-categories-list > li .header__category,
 		.header__submenu-categories-list > li .header__submenu-link,
-		.header__submenu-bundles > .header__submenu-links-list > li .header__submenu-link,
-		.header__submenu-apps-wrapper > .header__submenu-link {
+		.header__submenu-links-list > li .header__submenu-link {
 			animation-duration: 0;
 			animation-delay: 0;
 		}
@@ -693,8 +691,7 @@
 	@media ( max-width: 900px ) {
 		.header__submenu-categories-list > li .header__category,
 		.header__submenu-categories-list > li .header__submenu-link,
-		.header__submenu-bundles > .header__submenu-links-list > li .header__submenu-link,
-		.header__submenu-apps-wrapper > .header__submenu-link {
+		.header__submenu-links-list > li .header__submenu-link {
 			animation: none;
 		}
 	}
@@ -759,7 +756,6 @@
 		flex: 1;
 
 		.header__submenu-link {
-			margin-top: 1.75rem;
 			animation-delay: calc(calc(0.085s * 9) + calc(0.35s / 1.5));
 		}
 	}

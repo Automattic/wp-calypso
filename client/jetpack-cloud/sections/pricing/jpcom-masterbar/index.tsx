@@ -334,18 +334,22 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 																			{ appsLink.categoryLabel }
 																		</p>
 
-																		<ExternalLink
-																			className="header__submenu-link"
-																			href={ localizeUrl( appsLink.href, locale ) }
-																			onClick={ onLinkClick }
-																		>
-																			<span className="header__submenu-label">
-																				{ appsLink.label }
-																			</span>
-																			<span className="header__submenu-tagline">
-																				{ appsLink.tagline }
-																			</span>
-																		</ExternalLink>
+																		<ul className="header__submenu-links-list">
+																			<li>
+																				<ExternalLink
+																					className="header__submenu-link"
+																					href={ localizeUrl( appsLink.href, locale ) }
+																					onClick={ onLinkClick }
+																				>
+																					<span className="header__submenu-label">
+																						{ appsLink.label }
+																					</span>
+																					<span className="header__submenu-tagline">
+																						{ appsLink.tagline }
+																					</span>
+																				</ExternalLink>
+																			</li>
+																		</ul>
 																	</div>
 																</div>
 															</div>
