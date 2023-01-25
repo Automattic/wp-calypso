@@ -4,6 +4,7 @@ import { useDomainSuggestions } from '@automattic/domain-picker/src';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useSelector } from 'react-redux';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
@@ -69,6 +70,7 @@ export function RenderDomainUpsell() {
 			// Nothing needs to be done here. CartMessages will display the error to the user.
 			return null;
 		}
+		page( purchaseLink );
 	};
 
 	return (
@@ -105,7 +107,7 @@ export function RenderDomainUpsell() {
 					<Button href={ searchLink } onClick={ getSearchClickHandler }>
 						{ translate( 'Search a domain' ) }
 					</Button>
-					<Button primary href={ purchaseLink } onClick={ getCtaClickHandler }>
+					<Button primary onClick={ getCtaClickHandler }>
 						{ translate( 'Get your custom domain' ) }
 					</Button>
 				</div>
