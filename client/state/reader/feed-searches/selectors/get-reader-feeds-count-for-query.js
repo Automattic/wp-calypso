@@ -5,7 +5,7 @@ import 'calypso/state/reader/init';
 /**
  * Returns the number of feed results for a given query. from 0 to 200.
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @param  {string}  query query
  * @returns {Array} list of feeds that are the result of that query
  */

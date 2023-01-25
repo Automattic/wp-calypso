@@ -8,8 +8,8 @@ import 'calypso/state/posts/init';
  *
  * @param  {number} siteId Site ID
  * @param  {number} postId Post ID
- * @param  {object} post   Post attribute updates
- * @returns {object}        Action object
+ * @param  {Object} post   Post attribute updates
+ * @returns {Object}        Action object
  */
 export function editPost( siteId, postId = null, post ) {
 	return {

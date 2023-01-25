@@ -52,7 +52,7 @@ export function getLanguagesInternalBasePath() {
  *
  * @param {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
  * @param {string} fileType The desired file type, js or json. Default to json.
- * @param {object} languageRevisions An optional language revisions map. If it exists, the function will append the revision within as cache buster.
+ * @param {Object} languageRevisions An optional language revisions map. If it exists, the function will append the revision within as cache buster.
  * @returns {string} A language file URL.
  */
 export function getLanguageFileUrl( localeSlug, fileType = 'json', languageRevisions = {} ) {
@@ -159,7 +159,7 @@ function getIsLanguageManifestPreloaded( localeSlug ) {
  * Get the language manifest file for the given locale.
  *
  * @param  {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
- * @returns {object|Promise} Language manifest json content
+ * @returns {Object | Promise} Language manifest json content
  */
 export function getLanguageManifestFile( localeSlug ) {
 	if ( getIsLanguageManifestPreloaded( localeSlug ) ) {

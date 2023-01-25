@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
-import { preventWidows } from 'calypso/lib/formatting';
+import { preventWidows, decodeEntities } from 'calypso/lib/formatting';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -25,7 +25,7 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 			<div className="plugin-details-header__main-info">
 				<img className="plugin-details-header__icon" src={ plugin.icon } alt="" />
 				<div className="plugin-details-header__title-container">
-					<h1 className="plugin-details-header__name">{ plugin.name }</h1>
+					<h1 className="plugin-details-header__name">{ decodeEntities( plugin.name ) }</h1>
 					<div className="plugin-details-header__subtitle">
 						<span className="plugin-details-header__author">
 							{ isJetpackCloud

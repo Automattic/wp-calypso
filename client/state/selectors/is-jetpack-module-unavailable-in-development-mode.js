@@ -6,7 +6,7 @@ import getJetpackModulesRequiringConnection from './get-jetpack-modules-requirin
  * Returns true if the module is unavailable in development mode. False if not.
  * Returns null if the site modules are not known yet.
  *
- * @param  {object}  state       Global state tree
+ * @param  {Object}  state       Global state tree
  * @param  {number}  siteId      The ID of the site we're querying
  * @param  {string}  moduleSlug  Module slug
  * @returns {?boolean}            Whether the module is unavailable in dev mode.

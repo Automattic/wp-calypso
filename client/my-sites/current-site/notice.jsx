@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -49,25 +49,6 @@ export class SiteNotice extends Component {
 					{ translate( 'Edit' ) }
 				</NoticeAction>
 			</Notice>
-		);
-	}
-
-	getLaunchpadNotice() {
-		const { site, translate } = this.props;
-
-		return (
-			<UpsellNudge
-				callToAction={ translate( 'Next Steps' ) }
-				className="current-site__launchpad-notice"
-				compact
-				dismissPreferenceName=""
-				dismissTemporary={ true }
-				forceHref={ true }
-				forceDisplay={ true }
-				href={ `/setup/${ site.options.site_intent }/launchpad?siteSlug=${ site.slug }` }
-				primaryButton={ false }
-				title={ translate( 'Keep setting up your site' ) }
-			/>
 		);
 	}
 
@@ -120,39 +101,22 @@ export class SiteNotice extends Component {
 
 		const discountOrFreeToPaid = this.activeDiscountNotice();
 		const siteRedirectNotice = this.getSiteRedirectNotice( site );
-		const LaunchpadNotice = this.getLaunchpadNotice();
 
 		const showJitms =
 			! this.props.isSiteWPForTeams && ( discountOrFreeToPaid || config.isEnabled( 'jitms' ) );
 
-		const isEnglish = config( 'english_locales' ).includes( i18n.getLocaleSlug() );
-		const hasNonenTranslation =
-			i18n.hasTranslation( 'Keep setting up your site' ) && i18n.hasTranslation( 'Next Steps' );
-		const showLaunchpadNotice =
-			site.options?.launchpad_screen === 'full' && ( isEnglish || hasNonenTranslation );
-
-		let SidebarNotice = null;
-
-		if ( showJitms ) {
-			if ( showLaunchpadNotice ) {
-				SidebarNotice = LaunchpadNotice;
-			} else {
-				SidebarNotice = (
+		return (
+			<div className="current-site__notices">
+				<QueryActivePromotions />
+				{ siteRedirectNotice }
+				{ showJitms && (
 					<AsyncLoad
 						require="calypso/blocks/jitm"
 						placeholder={ null }
 						messagePath="calypso:sites:sidebar_notice"
 						template="sidebar-banner"
 					/>
-				);
-			}
-		}
-
-		return (
-			<div className="current-site__notices">
-				<QueryActivePromotions />
-				{ siteRedirectNotice }
-				{ SidebarNotice }
+				) }
 				<QuerySitePlans siteId={ site.ID } />
 			</div>
 		);

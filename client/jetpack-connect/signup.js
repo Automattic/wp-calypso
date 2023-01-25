@@ -185,7 +185,7 @@ export class JetpackSignup extends Component {
 	/**
 	 * Handle user creation result
 	 *
-	 * @param {object} _             …
+	 * @param {Object} _             …
 	 * @param {string} _.username    Username
 	 * @param {string} _.bearerToken Bearer token
 	 */
@@ -200,7 +200,7 @@ export class JetpackSignup extends Component {
 	/**
 	 * Handle error on user creation
 	 *
-	 * @param {?object} error Error result
+	 * @param {?Object} error Error result
 	 */
 	handleUserCreationError = ( error ) => {
 		const { errorNotice, translate, warningNotice } = this.props;

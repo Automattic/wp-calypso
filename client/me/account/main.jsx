@@ -366,7 +366,7 @@ class Account extends Component {
 	 * We handle the username (user_login) change manually through an onChange handler
 	 * so that we can also run a debounced validation on the username.
 	 *
-	 * @param {object} event Event from onChange of user_login input
+	 * @param {Object} event Event from onChange of user_login input
 	 */
 	handleUsernameChange = ( event ) => {
 		this.validateUsername();

@@ -16,7 +16,7 @@ import 'calypso/state/jitm/init';
  * @param {number} siteId The site id to dismiss the jitm for
  * @param {string} id The id of the jitm to dismiss
  * @param {string} featureClass The feature class of the jitm to dismiss
- * @returns {object} The dismiss action
+ * @returns {Object} The dismiss action
  */
 export const dismissJITM = ( siteId, id, featureClass ) => ( {
 	type: JITM_DISMISS,
@@ -30,8 +30,8 @@ export const dismissJITM = ( siteId, id, featureClass ) => ( {
  *
  * @param {number} siteId The site identifier
  * @param {string} messagePath The path of the jitm (ex: "calypso:comments:admin_notices")
- * @param {object} jitms The objects to display
- * @returns {object} The jitm insert action
+ * @param {Object} jitms The objects to display
+ * @returns {Object} The jitm insert action
  */
 export const insertJITM = ( siteId, messagePath, jitms ) => ( {
 	type: JITM_SET,
@@ -44,7 +44,7 @@ export const insertJITM = ( siteId, messagePath, jitms ) => ( {
  *
  * @param {number} siteId The site identifier
  * @param {string} messagePath The path of the jitm (ex: "calypso:comments:admin_notices")
- * @returns {object} The action to clear out all the jitms
+ * @returns {Object} The action to clear out all the jitms
  */
 export const clearJITM = ( siteId, messagePath ) => ( {
 	type: JITM_SET,
@@ -76,7 +76,7 @@ export const setupDevTool = ( siteId, dispatch ) => {
  * @param {number} siteId The site id
  * @param {string} messagePath The jitm message path (ex: calypso:comments:admin_notices)
  * @param {?string} locale Current user locale
- * @returns {object} The action to fetch the jitms
+ * @returns {Object} The action to fetch the jitms
  */
 export const fetchJITM = ( siteId, messagePath, locale ) => ( {
 	type: JITM_FETCH,

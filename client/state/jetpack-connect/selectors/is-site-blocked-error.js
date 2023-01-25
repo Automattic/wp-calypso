@@ -6,7 +6,7 @@ import 'calypso/state/jetpack-connect/init';
 /**
  * Returns true if the authorization error indicates that site has been blocked.
  *
- * @param  {object}  state Global state tree
+ * @param  {Object}  state Global state tree
  * @returns {boolean}       True if there's a blocked site error, false otherwise
  */
 export const isSiteBlockedError = function ( state ) {

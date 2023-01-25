@@ -13,10 +13,10 @@ import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
  *
  * @param  {number} siteId   Site ID
  * @param  {string} statType Stat Key
- * @param  {object} query    Stats query
+ * @param  {Object} query    Stats query
  * @param  {Array}  data     Stat Data
- * @param  {object} date	 Date
- * @returns {object}          Action object
+ * @param  {Object} date	 Date
+ * @returns {Object}          Action object
  */
 export function receiveSiteStats( siteId, statType, query, data, date ) {
 	return {
@@ -50,7 +50,7 @@ const wpcomV2Endpoints = {
  *
  * @param  {number} siteId   Site ID
  * @param  {string} statType Type of stats
- * @param  {object} query    Stats Query
+ * @param  {Object} query    Stats Query
  * @returns {Function}        Action thunk
  */
 export function requestSiteStats( siteId, statType, query ) {
@@ -76,7 +76,7 @@ export function requestSiteStats( siteId, statType, query ) {
 				case 'statsVideo':
 					return query.postId;
 				case 'statsEmailsOpen':
-					return { period: PERIOD_ALL_TIME, quantity: 20 };
+					return { period: PERIOD_ALL_TIME, quantity: 10 };
 				default:
 					return query;
 			}

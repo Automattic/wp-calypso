@@ -100,7 +100,7 @@ const apiVersion = '1.3';
 /**
  * Perform a search.
  *
- * @param {object} options - Search options
+ * @param {Object} options - Search options
  * @returns {Promise} A promise to the JSON response object
  */
 export function search( options: SearchParams ) {

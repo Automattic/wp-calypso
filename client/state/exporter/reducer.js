@@ -85,9 +85,9 @@ export function exportingState( state = {}, { type, siteId } ) {
 /**
  * Tracks whether the advanced settings for a site are currently being fetched
  *
- * @param  {object} state  Current global state tree
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current global state tree
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export function fetchingAdvancedSettings( state = {}, action ) {
 	switch ( action.type ) {
@@ -107,9 +107,9 @@ export function fetchingAdvancedSettings( state = {}, action ) {
 /**
  * Tracks available advanced settings for sites.
  *
- * @param  {object} state  Current global state tree
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current global state tree
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export function advancedSettings( state = {}, action ) {
 	switch ( action.type ) {

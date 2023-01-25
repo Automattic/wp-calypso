@@ -44,6 +44,12 @@ export interface Purchase {
 	priceText: string;
 	priceTierList?: Array< PurchasePriceTier >;
 	productDisplayPrice: string;
+
+	/**
+	 * The renewal price of the purchase in the currency's smallest unit.
+	 */
+	priceInteger: number;
+
 	productId: number;
 	productName: string;
 	productSlug: string;
@@ -54,8 +60,16 @@ export interface Purchase {
 	refundPeriodInDays: number;
 	refundText: string;
 	regularPriceText: string;
+
+	/**
+	 * The renewal price of the purchase in the currency's smallest unit when its
+	 * introductory offer is complete.
+	 */
+	regularPriceInteger: number;
+
 	renewDate: string;
 	saleAmount?: number;
+	saleAmountInteger?: number;
 	siteId: number;
 	siteName: string;
 	subscribedDate: string;
@@ -140,6 +154,7 @@ export interface RawPurchase {
 	product_slug: string;
 	product_type: string;
 	product_display_price: string;
+	price_integer: number;
 	total_refund_amount: number | undefined;
 	total_refund_text: string;
 	refund_amount: number;
@@ -148,8 +163,10 @@ export interface RawPurchase {
 	refund_options: RefundOptions | null;
 	refund_period_in_days: number;
 	regular_price_text: string;
+	regular_price_integer: number;
 	renew_date: string;
 	sale_amount: number | undefined;
+	sale_amount_integer: number | undefined;
 	blog_id: number | string;
 	blogname: string;
 	subscribed_date: string;

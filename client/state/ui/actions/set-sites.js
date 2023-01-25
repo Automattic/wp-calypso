@@ -20,7 +20,7 @@ export function setSelectedSiteId( siteId ) {
  * Returns an action object to be used in signalling that all sites have been
  * set as selected.
  *
- * @returns {object} Action object
+ * @returns {Object} Action object
  */
 export function setAllSitesSelected() {
 	return {

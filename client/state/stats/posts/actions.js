@@ -15,7 +15,7 @@ import 'calypso/state/stats/init';
  * @param  {number} siteId Site ID
  * @param  {number} postId Post Id
  * @param  {Array}  stats  The received stats
- * @returns {object}        Action object
+ * @returns {Object}        Action object
  */
 export function receivePostStats( siteId, postId, stats ) {
 	return {

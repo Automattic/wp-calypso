@@ -1,4 +1,5 @@
 export * from './account-closed-page';
+export * from './add-people-page';
 export * from './cart-checkout-page';
 export * from './checkout-thank-you-page';
 export * from './domains-page';

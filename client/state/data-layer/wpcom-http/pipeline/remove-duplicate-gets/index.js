@@ -32,7 +32,7 @@ export const clearQueue = () => {
 /**
  * Determines if a request object specifies the GET HTTP method
  *
- * @param {object} request the HTTP request action
+ * @param {Object} request the HTTP request action
  * @returns {boolean} whether or not the method is GET
  */
 const isGetRequest = ( request ) => 'GET' === get( request, 'method', '' ).toUpperCase();
@@ -52,11 +52,11 @@ const unionWith = ( a = [], b = [] ) => [
 /**
  * Generate a deterministic key for comparing request descriptions
  *
- * @param {object}            requestOptions              Request options
+ * @param {Object}            requestOptions              Request options
  * @param {string}            requestOptions.path         API endpoint path
  * @param {string}            requestOptions.apiNamespace used for endpoint versioning
  * @param {string}            requestOptions.apiVersion   used for endpoint versioning
- * @param {object<string, *>} requestOptions.query        GET query string
+ * @param {Object<string, *>} requestOptions.query        GET query string
  * @returns {string} unique key up to duplicate request descriptions
  */
 export const buildKey = ( { path, apiNamespace, apiVersion, query = {} } ) =>
@@ -70,9 +70,9 @@ export const buildKey = ( { path, apiNamespace, apiVersion, query = {} } ) =>
 /**
  * Joins a responder action into a unique list of responder actions
  *
- * @param {object<string, object[]>} list existing responder actions
- * @param {object} item new responder action to add
- * @returns {object<string, object[]>} union of existing list and new item
+ * @param {Object<string, Object[]>} list existing responder actions
+ * @param {Object} item new responder action to add
+ * @returns {Object<string, Object[]>} union of existing list and new item
  */
 export const addResponder = ( list, item ) => ( {
 	failures: unionWith( list.failures, compact( [ item.onFailure ] ) ),
@@ -84,8 +84,8 @@ export const addResponder = ( list, item ) => ( {
  * already in transit over the network.
  *
  * @see applyDuplicateHandlers
- * @param {object} outboundData request info
- * @returns {object} filtered request info
+ * @param {Object} outboundData request info
+ * @returns {Object} filtered request info
  */
 export const removeDuplicateGets = ( outboundData ) => {
 	const { nextRequest } = outboundData;
@@ -114,8 +114,8 @@ export const removeDuplicateGets = ( outboundData ) => {
  * response stream so that each caller gets called
  *
  * @see removeDuplicateGets
- * @param {object} inboundData request info
- * @returns {object} processed request info
+ * @param {Object} inboundData request info
+ * @returns {Object} processed request info
  */
 export const applyDuplicatesHandlers = ( inboundData ) => {
 	const { originalRequest } = inboundData;

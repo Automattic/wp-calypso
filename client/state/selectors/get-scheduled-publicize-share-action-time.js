@@ -1,5 +1,5 @@
 /**
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @param {number} siteId Site ID
  * @param {number} postId Post ID
  * @returns {string|boolean} time (Unix timestamp in seconds) when newly scheduled share action will be published

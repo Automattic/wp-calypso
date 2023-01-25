@@ -9,7 +9,7 @@ export * from './recaptcha';
  * Make tracks call with embedded flow.
  *
  * @param {string} eventId The name/id of the tracks event. Must be in snake_case and prefixed with "calypso" e.g. `calypso_something_snake_case`
- * @param {object} params A set of params to pass to analytics
+ * @param {Object} params A set of params to pass to analytics
  * @param {string} flow (Optional) The id of the flow, e.g., 'gutenboarding'
  */
 export function trackEventWithFlow( eventId: string, params = {}, flow = FLOW_ID ): void {
@@ -39,7 +39,7 @@ export function recordOnboardingStart( ref = '', site_count: number, flow: strin
 /**
  * Analytics call at the completion  of a Gutenboarding flow
  *
- * @param {object} params A set of params to pass to analytics for signup completion
+ * @param {Object} params A set of params to pass to analytics for signup completion
  */
 export function recordOnboardingComplete( params: OnboardingCompleteParameters ): void {
 	const trackingParams = {
@@ -58,7 +58,7 @@ export function recordOnboardingComplete( params: OnboardingCompleteParameters )
 /**
  * A generic event for onboarding errors
  *
- * @param {object} params A set of params to pass to analytics for signup errors
+ * @param {Object} params A set of params to pass to analytics for signup errors
  */
 export function recordOnboardingError( params: ErrorParameters ): void {
 	trackEventWithFlow( 'calypso_newsite_error', {

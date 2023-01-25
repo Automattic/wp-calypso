@@ -32,9 +32,9 @@ function updateDomainState( state, domain, data ) {
  * Returns the updated state after an action has been dispatched. The
  * state maps domain to the domain's transfer object.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const items = withSchemaValidation( domainTransferSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

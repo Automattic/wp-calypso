@@ -72,8 +72,8 @@ export const clear = ( memoryStore ) => {
  * 1. Avoiding conflicts caused by shared localStorage across multiple support user sessions.
  * 2. Providing a working localStorage implementation for older Safari versions that throw errors in Private mode.
  *
- * @param {object}   [args]            An arguments object
- * @param {object}   [args.root]       Allow alternate "window" object to support tests in non-browser environments
+ * @param {Object}   [args]            An arguments object
+ * @param {Object}   [args.root]       Allow alternate "window" object to support tests in non-browser environments
  * @param {string[]} [args.allowedKeys] An array of localStorage keys that are proxied to the real localStorage
  */
 export default function ( {
