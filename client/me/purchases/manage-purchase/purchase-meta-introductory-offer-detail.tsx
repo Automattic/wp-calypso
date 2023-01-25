@@ -1,10 +1,6 @@
 import formatCurrency from '@automattic/format-currency';
-import { getIntroductoryOfferIntervalDisplay } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
-import {
-	isWithinIntroductoryOfferPeriod,
-	isIntroductoryOfferFreeTrial,
-} from 'calypso/lib/purchases';
+import { isWithinIntroductoryOfferPeriod } from 'calypso/lib/purchases';
 import { Purchase } from 'calypso/lib/purchases/types';
 
 function PurchaseMetaIntroductoryOfferDetail( { purchase }: { purchase: Purchase } ) {
@@ -14,15 +10,6 @@ function PurchaseMetaIntroductoryOfferDetail( { purchase }: { purchase: Purchase
 		return null;
 	}
 	if ( purchase?.introductoryOffer && purchase.introductoryOffer !== null ) {
-		const text = getIntroductoryOfferIntervalDisplay(
-			translate,
-			purchase.introductoryOffer.intervalUnit,
-			purchase.introductoryOffer.intervalCount,
-			isIntroductoryOfferFreeTrial( purchase ),
-			'manage-purchases',
-			purchase.introductoryOffer.remainingRenewalsUsingOffer
-		);
-
 		let regularPriceText = null;
 		if ( purchase.introductoryOffer.isNextRenewalUsingOffer ) {
 			regularPriceText = translate(
@@ -53,7 +40,6 @@ function PurchaseMetaIntroductoryOfferDetail( { purchase }: { purchase: Purchase
 		return (
 			<>
 				<br />
-				<small> { text } </small>
 				{ regularPriceText && (
 					<>
 						{ ' ' }
