@@ -9,7 +9,7 @@ const VALID_QUERY_KEYS = [ 'client_id', 'signup_flow', 'redirect_to' ];
  * validQueryKeys). Some of these parameters may need to fulfill additional formats (example: when redirect_to is
  * present, then it also needs to start with a certain prefix).
  *
- * @param {object}   context  The entire request context
+ * @param {Object}   context  The entire request context
  * @param {Function} next     Next middleware in the running sequence
  */
 export function setShouldServerSideRenderLogin( context, next ) {

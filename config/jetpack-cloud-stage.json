@@ -30,6 +30,7 @@
 		"ad-tracking": false,
 		"always_use_logout_url": true,
 		"checkout/google-pay": false,
+		"checkout/vat-form": false,
 		"current-site/domain-warning": false,
 		"current-site/notice": false,
 		"current-site/stale-cart-notice": false,
@@ -38,7 +39,7 @@
 		"jetpack/activity-log-sharing": true,
 		"jetpack/agency-dashboard": true,
 		"jetpack/backup-messaging-i3": true,
-		"jetpack/partner-portal-downtime-monitoring-updates": false,
+		"jetpack/partner-portal-downtime-monitoring-updates": true,
 		"jetpack/partner-portal-payment": true,
 		"jetpack/plugin-management": true,
 		"jetpack/pricing-add-boost-social": true,
@@ -49,6 +50,7 @@
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack/standalone-plugin-onboarding-update-v1": true,
 		"jetpack/zendesk-chat-for-logged-in-users": true,
+		"jetpack-social/advanced-plan": true,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/query-selected-editor": false,
@@ -59,7 +61,8 @@
 		"purchases/new-payment-methods": true,
 		"realtime-site-count": true,
 		"site-indicator": false,
-		"upgrades/redirect-payments": true
+		"upgrades/redirect-payments": true,
+		"jetpack/pricing-page-cart": true
 	},
 	"enable_all_sections": false,
 	"sections": {

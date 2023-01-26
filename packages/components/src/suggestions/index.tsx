@@ -66,7 +66,9 @@ class Suggestions extends Component< Props, State > {
 
 	getOriginalIndexFromPosition = ( index: number ): number =>
 		this.getCategories().reduce( ( foundIndex, category ) => {
-			if ( foundIndex !== -1 ) return foundIndex;
+			if ( foundIndex !== -1 ) {
+				return foundIndex;
+			}
 
 			const suggestion = find( category.suggestions, { index } );
 			return suggestion ? suggestion.originalIndex : -1;

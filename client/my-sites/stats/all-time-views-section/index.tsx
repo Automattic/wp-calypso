@@ -1,10 +1,12 @@
 import { Card } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import { getSiteStatsViewSummary } from 'calypso/state/stats/lists/selectors';
+import StatsHeatMapLegend from '../stats-heap-map/legend';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import Months from '../stats-views/months';
 
@@ -32,12 +34,16 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 		setChartOption( option?.value || 'total' );
 	};
 
+	const tableWrapperClass = classNames( 'stats__table-wrapper', {
+		'is-loading': ! viewData,
+	} );
+
 	return (
 		<div className="stats__all-time-views-section stats__modernized-stats-table">
 			{ siteId && <QuerySiteStats statType="statsVisits" siteId={ siteId } query={ query } /> }
 
 			<div className="highlight-cards">
-				<h1 className="highlight-cards-heading">{ translate( 'All-time Insights' ) }</h1>
+				<h1 className="highlight-cards-heading">{ translate( 'All-time insights' ) }</h1>
 
 				<div className="highlight-cards-list">
 					<Card className="highlight-card">
@@ -48,30 +54,12 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 							) }
 						</div>
 
-						<div className="stats__table-wrapper">
+						<div className={ tableWrapperClass }>
 							<StatsModulePlaceholder isLoading={ ! viewData } />
 							<Months dataKey={ chartOption } data={ viewData } siteSlug={ slug } showYearTotal />
 						</div>
 
-						<div className="stats-views__key-container">
-							<span className="stats-views__key-label">
-								{ translate( 'Fewer Views', {
-									context: 'Legend label in stats all-time views table',
-								} ) }
-							</span>
-							<ul className="stats-views__key">
-								<li className="stats-views__key-item level-1" />
-								<li className="stats-views__key-item level-2" />
-								<li className="stats-views__key-item level-3" />
-								<li className="stats-views__key-item level-4" />
-								<li className="stats-views__key-item level-5" />
-							</ul>
-							<span className="stats-views__key-label">
-								{ translate( 'More Views', {
-									context: 'Legend label in stats all-time views table',
-								} ) }
-							</span>
-						</div>
+						<StatsHeatMapLegend />
 					</Card>
 				</div>
 			</div>

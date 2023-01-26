@@ -2,7 +2,7 @@
  * Create a `Users` instance
  *
  * @param {WPCOM} wpcom - wpcom instance
- * @returns {null} null
+ * @returns {Users|undefined}
  */
 export default function Users( wpcom ) {
 	if ( ! ( this instanceof Users ) ) {
@@ -15,7 +15,7 @@ export default function Users( wpcom ) {
 /**
  * A list of @mention suggestions for the current user
  *
- * @param {object} [query] - query object parameter
+ * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */

@@ -9,6 +9,7 @@ export { default as Gridicon } from './gridicon';
 export { default as Popover } from './popover';
 export { default as ProductIcon } from './product-icon';
 export { default as ProgressBar } from './progress-bar';
+export { default as CircularProgressBar } from './circular-progress-bar';
 export { default as ResponsiveToolbarGroup } from './responsive-toolbar-group';
 export { default as Ribbon } from './ribbon';
 export { default as RootChild } from './root-child';
@@ -40,5 +41,8 @@ export {
 	percentCalculator as PercentCalculator,
 } from './highlight-cards/highlight-card';
 export { default as MobilePromoCard } from './mobile-promo-card';
-export { default as ShortenedNumber } from './shortened-number';
+export { default as ShortenedNumber } from './number-formatters';
+export { default as formattedNumber } from './number-formatters/formatted-number';
 export { default as PostStatsCard } from './post-stats-card';
+export { default as ConfettiAnimation } from './confetti';
+export { default as ComponentSwapper } from './component-swapper';

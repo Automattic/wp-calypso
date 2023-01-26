@@ -15,7 +15,7 @@ export function setupGoogleAnalyticsGtag( params ) {
 /**
  * Returns the default configuration for Google Analytics
  *
- * @returns {object} GA's default config
+ * @returns {Object} GA's default config
  */
 export function getGoogleAnalyticsDefaultConfig() {
 	const currentUser = getCurrentUser();

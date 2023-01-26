@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
@@ -128,7 +129,7 @@ class StatsModule extends Component {
 			period,
 			translate,
 			useShortLabel,
-			showNewModules,
+			hideNewModule, // remove when cleaning 'stats/horizontal-bars-everywhere' FF
 		} = this.props;
 
 		const noData = data && this.state.loaded && ! data.length;
@@ -155,8 +156,23 @@ class StatsModule extends Component {
 		const headerClass = classNames( 'stats-module__header', {
 			'is-refreshing': requesting && ! isLoading,
 		} );
+		const footerClass = classNames( 'stats-module__footer-actions', {
+			'stats-module__footer-actions--summary': summary,
+		} );
 
-		const shouldShowNewModule = showNewModules && ! summary;
+		const isHorizontalBarComponentEnabledEverywhere = config.isEnabled(
+			'stats/horizontal-bars-everywhere'
+		);
+
+		// always hide for `hideNewModule` but show on the summary page with FF enabled
+		const shouldShowNewModule =
+			! hideNewModule && ( ! summary || isHorizontalBarComponentEnabledEverywhere );
+
+		const headerCSVButton = (
+			<div className="stats-module__heaver-nav-button">
+				<DownloadCsv statType={ statType } query={ query } path={ path } period={ period } />
+			</div>
+		);
 
 		return (
 			<>
@@ -164,31 +180,55 @@ class StatsModule extends Component {
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
 				{ shouldShowNewModule && (
-					<StatsListCard
-						moduleType={ path }
-						data={ data }
-						useShortLabel={ useShortLabel }
-						title={ this.getModuleLabel() }
-						emptyMessage={ moduleStrings.empty }
-						showMore={
-							displaySummaryLink
-								? {
-										url: this.getHref(),
-										label:
-											data.length >= 10
-												? this.props.translate( 'View all', {
-														context: 'Stats: Button link to show more detailed stats information',
-												  } )
-												: this.props.translate( 'View details', {
-														context: 'Stats: Button label to see the detailed content of a panel',
-												  } ),
-								  }
-								: undefined
-						}
-						error={ hasError && <ErrorPanel /> }
-						loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
-						heroElement={ path === 'countryviews' && <Geochart query={ query } /> }
-					/>
+					<>
+						{ /* TODO: Move this header to the summary page when modernising it */ }
+						{ /* TODO: Remove hideNavigation and navigationSwap when unifying headers for all summary pages */ }
+						{ summary && (
+							<AllTimeNav
+								path={ path }
+								query={ query }
+								period={ period }
+								hideNavigation={ summary && ! isAllTime }
+								navigationSwap={ headerCSVButton }
+							/>
+						) }
+						<StatsListCard
+							moduleType={ path }
+							data={ data }
+							useShortLabel={ useShortLabel }
+							title={ this.props.moduleStrings?.title }
+							emptyMessage={ moduleStrings.empty }
+							showMore={
+								displaySummaryLink && ! summary
+									? {
+											url: this.getHref(),
+											label:
+												data.length >= 10
+													? this.props.translate( 'View all', {
+															context: 'Stats: Button link to show more detailed stats information',
+													  } )
+													: this.props.translate( 'View details', {
+															context: 'Stats: Button label to see the detailed content of a panel',
+													  } ),
+									  }
+									: undefined
+							}
+							error={ hasError && <ErrorPanel /> }
+							loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
+							heroElement={ path === 'countryviews' && <Geochart query={ query } /> }
+						/>
+						{ isAllTime && (
+							<div className={ footerClass }>
+								<DownloadCsv
+									statType={ statType }
+									query={ query }
+									path={ path }
+									borderless
+									period={ period }
+								/>
+							</div>
+						) }
+					</>
 				) }
 
 				{ ! shouldShowNewModule && (
@@ -228,6 +268,7 @@ class StatsModule extends Component {
 							{ this.props.showSummaryLink && data?.length >= 10 && (
 								<StatsModuleExpand href={ summaryLink } />
 							) }
+							{ /* TODO: Move this to the summary page when modernising it */ }
 							{ summary && 'countryviews' === path && (
 								<UpsellNudge
 									title={ translate( 'Add Google Analytics' ) }

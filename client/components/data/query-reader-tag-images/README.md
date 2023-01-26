@@ -13,7 +13,7 @@ import MyListItem from './list-item';
 export default function MyReaderTagImages( { images } ) {
 	return (
 		<div>
-			<QueryReaderTagImages tag={ 'bananas' } />
+			<QueryReaderTagImages tag="bananas" />
 			{ images.map( ( image ) => {
 				return <MyListItem key={ image.url } image={ image } />;
 			} ) }

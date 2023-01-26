@@ -22,17 +22,18 @@ interface Props {
 	header: Pattern | null;
 	sections: Pattern[];
 	footer: Pattern | null;
-	scrollToSelector: string | null;
+	activePosition: number;
 }
 
-const PatternAssemblerPreview = ( { header, sections = [], footer, scrollToSelector }: Props ) => {
+const PatternAssemblerPreview = ( { header, sections = [], footer, activePosition }: Props ) => {
 	const locale = useLocale();
 	const translate = useTranslate();
 	const site = useSite();
 	const [ webPreviewFrameContainer, setWebPreviewFrameContainer ] = useState< Element | null >(
 		null
 	);
-	const hasSelectedPatterns = header || sections.length > 0 || footer;
+	const totalPatterns = [ header, ...sections, footer ].filter( Boolean );
+	const hasSelectedPatterns = totalPatterns.length > 0;
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 
 	const mergedDesign = {
@@ -46,6 +47,9 @@ const PatternAssemblerPreview = ( { header, sections = [], footer, scrollToSelec
 				.map( ( pattern ) => encodePatternId( pattern!.id ) ),
 		},
 	} as Design;
+
+	const targetPosition = Math.min( activePosition + 1, totalPatterns.length );
+	const scrollToSelector = `.wp-site-blocks > .wp-block-group > :nth-child( ${ targetPosition } )`;
 
 	useEffect( () => {
 		setWebPreviewFrameContainer( document.querySelector( '.web-preview__frame-wrapper' ) );

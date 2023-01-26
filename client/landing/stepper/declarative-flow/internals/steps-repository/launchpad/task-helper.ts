@@ -93,6 +93,11 @@ export function getEnhancedTasks(
 						},
 					};
 					break;
+				case 'setup_general':
+					taskData = {
+						title: translate( 'Personalize your site' ),
+					};
+					break;
 				case 'design_edited':
 					taskData = {
 						title: translate( 'Edit site design' ),
@@ -194,7 +199,7 @@ export function getEnhancedTasks(
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
 									await new Promise( ( res ) => setTimeout( res, 500 ) );
 									recordTaskClickTracksEvent( flow, siteLaunchCompleted, task.id );
-									window.location.assign( `/home/${ siteSlug }` );
+									return { goToHome: true, siteSlug };
 								} );
 
 								submit?.();
@@ -219,7 +224,7 @@ export function getEnhancedTasks(
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
 									await new Promise( ( res ) => setTimeout( res, 500 ) );
 									recordTaskClickTracksEvent( flow, siteLaunchCompleted, task.id );
-									window.location.assign( `/home/${ siteSlug }` );
+									return { goToHome: true, siteSlug };
 								} );
 
 								submit?.();

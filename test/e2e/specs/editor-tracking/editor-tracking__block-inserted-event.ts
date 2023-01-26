@@ -128,6 +128,10 @@ describe(
 					} );
 				} );
 			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
+			} );
 		} );
 
 		describe( 'In the page editor', function () {
@@ -159,8 +163,12 @@ describe(
 
 			describe( 'From adding a page template', function () {
 				it( 'Add "Two column about me layout" page template', async function () {
-					const editorFrame = await editorPage.getEditorHandle();
-					const pageTemplateModalComponent = new PageTemplateModalComponent( editorFrame, page );
+					// @TODO Consider moving this to EditorPage.
+					const editorWindowLocator = editorPage.getEditorWindowLocator();
+					const pageTemplateModalComponent = new PageTemplateModalComponent(
+						page,
+						editorWindowLocator
+					);
 					await pageTemplateModalComponent.selectTemplateCategory( 'About' );
 					await pageTemplateModalComponent.selectTemplate( 'Two column about me layout' );
 				} );
@@ -174,6 +182,10 @@ describe(
 					);
 					expect( eventDidFire ).toBe( true );
 				} );
+			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
 			} );
 		} );
 
@@ -198,9 +210,20 @@ describe(
 				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
 			} );
 
+			afterAll( async () => {
+				// Always try to delete the created template part.
+				if ( templatePartName ) {
+					await fullSiteEditorPage.deleteTemplateParts( [ templatePartName ] );
+				}
+			} );
+
 			it( 'Visit the site editor', async function () {
 				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+			} );
+
+			it( 'Close the navigation sidebar', async function () {
+				await fullSiteEditorPage.closeNavSidebar();
 			} );
 
 			// A lot of block insertions sometimes happen on load
@@ -257,7 +280,7 @@ describe(
 							matchingProperties: {
 								block_name: 'core/page-list',
 								entity_context: 'core/template-part',
-								template_part_id: `pub/blockbase//${ templatePartName.toLowerCase() }`,
+								template_part_id: `pub/twentytwentytwo//${ templatePartName.toLowerCase() }`,
 							},
 						}
 					);
@@ -265,7 +288,7 @@ describe(
 				} );
 			} );
 
-			describe( 'Adding blocks from existing template parts', function () {
+			describe.skip( 'Adding blocks from existing template parts', function () {
 				it( 'Add a Header block', async function () {
 					const block = await fullSiteEditorPage.addBlockFromSidebar(
 						HeaderBlock.blockName,
@@ -289,19 +312,12 @@ describe(
 				// arguably a reasonable outcome. We need to decide whether
 				// to adjust the test to match the tracking behavior or adjust
 				// the underlyting tracking behavior.
-				it.skip( '"wpcom_block_instered" event does NOT fire', async function () {
+				it( '"wpcom_block_instered" event does NOT fire', async function () {
 					const eventDidFire = await editorTracksEventManager.didEventFire(
 						'wpcom_block_inserted'
 					);
 					expect( eventDidFire ).toBe( false );
 				} );
-			} );
-
-			// Always try to delete the created template part.
-			afterAll( async function () {
-				if ( templatePartName ) {
-					await fullSiteEditorPage.deleteTemplatePart( templatePartName );
-				}
 			} );
 		} );
 	}

@@ -7,10 +7,7 @@ import {
 	ContactInformation,
 	LabelBlock,
 } from 'calypso/signup/accordion-form/form-components';
-import {
-	BBE_WEBSITE_CONTENT_FILLING_STEP,
-	useTranslatedPageDescriptions,
-} from 'calypso/signup/difm/translation-hooks';
+import { useTranslatedPageDescriptions } from 'calypso/signup/difm/translation-hooks';
 import {
 	MediaUploadData,
 	WordpressMediaUpload,
@@ -32,6 +29,7 @@ export const IMAGE_PREFIX = 'Image';
 export function ContactPageDetails( {
 	page,
 	formErrors,
+	context,
 	onChangeField,
 }: PageDetailsParams< ContactPageData > ) {
 	const translate = useTranslate();
@@ -39,7 +37,7 @@ export function ContactPageDetails( {
 	const site = useSelector( getSelectedSite );
 	const pageTitle = page.title;
 	const pageID = page.id;
-	const description = useTranslatedPageDescriptions( pageID, BBE_WEBSITE_CONTENT_FILLING_STEP );
+	const description = useTranslatedPageDescriptions( pageID, context );
 
 	const onMediaUploadFailed = ( { mediaIndex }: MediaUploadData ) => {
 		dispatch(

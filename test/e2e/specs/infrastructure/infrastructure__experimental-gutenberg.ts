@@ -42,14 +42,17 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), fun
 	] )(
 		'Experimental package %s and feature %s are available',
 		async function ( packageName, feature, featureType ) {
-			const frame = await editorPage.getEditorHandle();
-			const packageAvailable = await frame.evaluate( `typeof window[ "wp" ]["${ packageName }"]` );
+			const editorWindowLocator = editorPage.getEditorWindowLocator();
+
+			const packageAvailable = await editorWindowLocator.evaluate(
+				`typeof window[ "wp" ]["${ packageName }"]`
+			);
 
 			expect( packageAvailable ).not.toStrictEqual( 'undefined' );
 			// It should always be an object.
 			expect( packageAvailable ).toStrictEqual( 'object' );
 
-			const featureAvailable = await frame.evaluate(
+			const featureAvailable = await editorWindowLocator.evaluate(
 				`typeof window[ "wp" ]["${ packageName }"]["${ feature }"]`
 			);
 			expect( featureAvailable ).not.toStrictEqual( 'undefined' );
@@ -59,8 +62,8 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), fun
 	);
 
 	it( 'Experimental data is available', async function () {
-		const frame = await editorPage.getEditorHandle();
-		const blockPatterns = await frame.evaluate(
+		const editorWindowLocator = editorPage.getEditorWindowLocator();
+		const blockPatterns = await editorWindowLocator.evaluate(
 			`Array.isArray( window.wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns )`
 		);
 		// If this test fails, please contact #team-ganon to update premium pattern highlighting.
@@ -79,8 +82,8 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), fun
 		// patterns will be added than removed. This also means if we see a dramatic
 		// change in the number to the lower end, then something is probably wrong.
 		const expectedBlockPatternCount = 50;
-		const frame = await editorPage.getEditorHandle();
-		const actualBlockPatternCount = await frame.evaluate(
+		const editorWindowLocator = editorPage.getEditorWindowLocator();
+		const actualBlockPatternCount = await editorWindowLocator.evaluate(
 			() =>
 				/* eslint-disable @typescript-eslint/ban-ts-comment */
 				new Promise( ( resolve ) => {

@@ -10,6 +10,7 @@ import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
+import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import WebPreview from 'calypso/components/web-preview';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -139,7 +140,63 @@ class StatsPostDetail extends Component {
 
 		const isFeatured = config.isEnabled( 'stats/enhance-post-detail' );
 
-		return (
+		return isFeatured ? (
+			<Main fullWidthLayout>
+				<PageViewTracker
+					path={ `/stats/${ postType }/:post_id/:site` }
+					title={ `Stats > Single ${ titlecase( postType ) }` }
+				/>
+				{ siteId && ! isLatestPostsHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
+				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
+
+				<div className="stats has-fixed-nav">
+					<FixedNavigationHeader
+						navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }
+					>
+						{ showViewLink && (
+							<Button onClick={ this.openPreview }>
+								<span>{ actionLabel }</span>
+							</Button>
+						) }
+					</FixedNavigationHeader>
+
+					<PostDetailHighlightsSection siteId={ siteId } postId={ postId } post={ post } />
+
+					<StatsPlaceholder isLoading={ isLoading } />
+
+					{ ! isLoading && countViews === 0 && (
+						<EmptyContent
+							title={ noViewsLabel }
+							line={ translate( 'Learn some tips to attract more visitors' ) }
+							action={ translate( 'Get more traffic!' ) }
+							actionURL="https://wordpress.com/support/getting-more-views-and-traffic/"
+							actionTarget="blank"
+							illustration="calypso/assets/images/stats/illustration-stats.svg"
+							illustrationWidth={ 150 }
+						/>
+					) }
+
+					{ ! isLoading && countViews > 0 && (
+						<>
+							<PostSummary siteId={ siteId } postId={ postId } />
+							<PostDetailTableSection siteId={ siteId } postId={ postId } />
+						</>
+					) }
+
+					<JetpackColophon />
+				</div>
+
+				<WebPreview
+					showPreview={ this.state.showPreview }
+					defaultViewportDevice="tablet"
+					previewUrl={ `${ previewUrl }?demo=true&iframe=true&theme_preview=true` }
+					externalUrl={ previewUrl }
+					onClose={ this.closePreview }
+				>
+					<Button href={ `/post/${ siteSlug }/${ postId }` }>{ translate( 'Edit' ) }</Button>
+				</WebPreview>
+			</Main>
+		) : (
 			<Main className="has-fixed-nav" wideLayout>
 				<PageViewTracker
 					path={ `/stats/${ postType }/:post_id/:site` }
@@ -158,10 +215,6 @@ class StatsPostDetail extends Component {
 					) }
 				</FixedNavigationHeader>
 
-				{ isFeatured && (
-					<PostDetailHighlightsSection siteId={ siteId } postId={ postId } post={ post } />
-				) }
-
 				<StatsPlaceholder isLoading={ isLoading } />
 
 				{ ! isLoading && countViews === 0 && (
@@ -179,36 +232,26 @@ class StatsPostDetail extends Component {
 				{ ! isLoading && countViews > 0 && (
 					<div>
 						<PostSummary siteId={ siteId } postId={ postId } />
-
-						{ ! isFeatured && !! postId && (
-							<PostLikes siteId={ siteId } postId={ postId } postType={ postType } />
-						) }
-
-						{ isFeatured && <PostDetailTableSection siteId={ siteId } postId={ postId } /> }
-
-						{ ! isFeatured && (
-							<>
-								<PostMonths
-									dataKey="years"
-									title={ translate( 'Months and years' ) }
-									total={ translate( 'Total' ) }
-									siteId={ siteId }
-									postId={ postId }
-								/>
-
-								<PostMonths
-									dataKey="averages"
-									title={ translate( 'Average per day' ) }
-									total={ translate( 'Overall' ) }
-									siteId={ siteId }
-									postId={ postId }
-								/>
-
-								<PostWeeks siteId={ siteId } postId={ postId } />
-							</>
-						) }
+						{ !! postId && <PostLikes siteId={ siteId } postId={ postId } postType={ postType } /> }
+						<PostMonths
+							dataKey="years"
+							title={ translate( 'Months and years' ) }
+							total={ translate( 'Total' ) }
+							siteId={ siteId }
+							postId={ postId }
+						/>
+						<PostMonths
+							dataKey="averages"
+							title={ translate( 'Average per day' ) }
+							total={ translate( 'Overall' ) }
+							siteId={ siteId }
+							postId={ postId }
+						/>
+						<PostWeeks siteId={ siteId } postId={ postId } />
 					</div>
 				) }
+
+				<JetpackColophon />
 
 				<WebPreview
 					showPreview={ this.state.showPreview }

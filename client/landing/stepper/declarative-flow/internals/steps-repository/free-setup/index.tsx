@@ -6,6 +6,7 @@ import React, { FormEvent, useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { useSite } from '../../../../hooks/use-site';
 import SetupForm from '../components/setup-form';
 import type { Step } from '../../types';
@@ -31,6 +32,10 @@ const FreeSetup: Step = function FreeSetup( { navigation } ) {
 	const [ tagline, setTagline ] = React.useState( '' );
 	const { setSiteTitle, setSiteDescription, setSiteLogo } = useDispatch( ONBOARD_STORE );
 	const state = useSelect( ( select ) => select( ONBOARD_STORE ) ).getState();
+
+	useEffect( () => {
+		clearSignupDestinationCookie();
+	}, [] );
 
 	useEffect( () => {
 		const { siteTitle, siteDescription, siteLogo } = state;

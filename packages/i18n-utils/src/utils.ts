@@ -120,7 +120,7 @@ export function getLanguageRouteParam( name = 'lang', optional = true ) {
  * Matches and returns language from config.languages based on the given localeSlug
  *
  * @param   {string} langSlug locale slug of the language to match
- * @returns {object|undefined} An object containing the locale data or undefined.
+ * @returns {Object | undefined} An object containing the locale data or undefined.
  */
 export function getLanguage( langSlug: string | undefined ): Language | undefined {
 	langSlug = getMappedLanguageSlug( langSlug );
@@ -186,8 +186,8 @@ export function removeLocaleFromPath( path: string ): string {
 /**
  * Filter out unexpected values from the given language revisions object.
  *
- * @param {object} languageRevisions A candidate language revisions object for filtering.
- * @returns {object} A valid language revisions object derived from the given one.
+ * @param {Object} languageRevisions A candidate language revisions object for filtering.
+ * @returns {Object} A valid language revisions object derived from the given one.
  */
 export function filterLanguageRevisions( languageRevisions: Record< string, string > ) {
 	const langSlugs = getLanguageSlugs();

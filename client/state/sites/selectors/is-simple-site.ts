@@ -7,7 +7,7 @@ import { AppState } from 'calypso/types';
 /**
  * Returns true if the current site is a simple site
  *
- * @param  {object}   state         Global state tree
+ * @param  {Object}   state         Global state tree
  * @returns {?boolean}               Whether the current site is a simple site or not
  */
 export default createSelector(

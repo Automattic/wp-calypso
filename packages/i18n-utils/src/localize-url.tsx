@@ -4,6 +4,7 @@ import { useCallback, ComponentType } from 'react';
 import { useLocale } from './locale-context';
 import {
 	localesWithBlog,
+	localesWithGoBlog,
 	localesWithPrivacyPolicy,
 	localesWithCookiePolicy,
 	localesToSubdomains,
@@ -114,6 +115,7 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 	'wordpress.com/support/': prefixLocalizedUrlPath( supportSiteLocales ),
 	'wordpress.com/forums/': prefixLocalizedUrlPath( forumLocales ),
 	'wordpress.com/blog/': prefixLocalizedUrlPath( localesWithBlog, /^\/blog\/?$/ ),
+	'wordpress.com/go/': prefixLocalizedUrlPath( localesWithGoBlog, /^\/go\/?$/ ),
 	'wordpress.com/tos/': prefixLocalizedUrlPath( magnificentNonEnLocales ),
 	'wordpress.com/wp-admin/': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
 	'wordpress.com/wp-login.php': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
@@ -152,6 +154,9 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 		return isLoggedIn ? url : prefixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
 	},
 	'wordpress.com/log-in/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
+		return isLoggedIn ? url : suffixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
+	},
+	'wordpress.com/start/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
 		return isLoggedIn ? url : suffixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
 	},
 };

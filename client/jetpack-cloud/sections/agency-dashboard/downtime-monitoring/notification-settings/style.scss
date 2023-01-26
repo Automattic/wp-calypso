@@ -55,6 +55,11 @@
 	position: absolute;
 	bottom: 0;
 
+	.notification-settings__footer-buttons {
+		display: flex;
+		flex-direction: column;
+	}
+
 	button {
 		height: 36px;
 		line-height: 18px;
@@ -71,6 +76,12 @@
 		margin-block-start: 32px;
 		margin-block-end: 0;
 		width: auto;
+
+		.notification-settings__footer-buttons {
+			justify-content: end;
+			width: 100%;
+			flex-direction: initial;
+		}
 
 		button {
 			&:nth-child(2) {
@@ -134,6 +145,14 @@
 		display: none;
 	}
 
+	.token-field__remove-token {
+		display: none;
+	}
+
+	.token-field__input-container {
+		cursor: default;
+	}
+
 	@include break-mobile {
 		margin-block-start: 4px;
 	}
@@ -165,5 +184,23 @@
 .notification-settings__small-screen {
 	@include break-mobile {
 		display: none;
+	}
+}
+
+.notification-settings__footer-validation-error {
+	@extend .notification-settings-title-light;
+	color: var(--color-scary-40);
+	margin-block-end: 16px;
+}
+
+.notification-settings__warning {
+	font-weight: 500;
+	color: var(--color-scary-40);
+	padding: 10px 0;
+
+	.gridicon {
+		position: relative;
+		top: 2px;
+		margin-right: 7px;
 	}
 }

@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { get, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -55,19 +55,11 @@ class PeopleListSectionHeader extends Component {
 		const { currentRoute, translate } = this.props;
 
 		if ( startsWith( currentRoute, '/people/followers' ) ) {
-			// Adding a dot at the end of the translation. New translation for RTL languages.
-			return i18n.hasTranslation( 'A list of people currently following your site.' )
-				? translate( 'A list of people currently following your site.' )
-				: translate( 'A list of people currently following your site' ) + '.';
+			return translate( 'A list of people currently following your site.' );
 		}
 
 		if ( startsWith( currentRoute, '/people/email-followers' ) ) {
-			// Adding a dot at the end of the translation. New translation for RTL languages.
-			return i18n.hasTranslation(
-				'A list of people who are subscribed to your blog via email only.'
-			)
-				? translate( 'A list of people who are subscribed to your blog via email only.' )
-				: translate( 'A list of people who are subscribed to your blog via email only' ) + '.';
+			return translate( 'A list of people who are subscribed to your blog via email only.' );
 		}
 
 		return null;

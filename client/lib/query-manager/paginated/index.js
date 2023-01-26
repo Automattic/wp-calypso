@@ -39,7 +39,7 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * Returns true if the specified query is an object containing one or more
 	 * query pagination keys.
 	 *
-	 * @param  {object}  query Query object to check
+	 * @param  {Object}  query Query object to check
 	 * @returns {boolean}       Whether query contains pagination key
 	 */
 	static hasQueryPaginationKeys( query ) {
@@ -50,8 +50,8 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * Returns items tracked by the instance. If a query is specified, returns
 	 * items specific to that query.
 	 *
-	 * @param  {?object}  query Optional query object
-	 * @returns {object[]}       Items tracked
+	 * @param  {?Object}  query Optional query object
+	 * @returns {Object[]}       Items tracked
 	 */
 	getItems( query ) {
 		if ( ! query ) {
@@ -77,11 +77,11 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * Returns items tracked by the instance, ignoring pagination for the given
 	 * query.
 	 *
-	 * @param  {object}   query         Query object
+	 * @param  {Object}   query         Query object
 	 * @param  {boolean}  includeFiller Whether page structure should be left
 	 *                                  intact to reflect found count, with
 	 *                                  items yet to be received as `undefined`
-	 * @returns {object[]}               Items tracked, ignoring page
+	 * @returns {Object[]}               Items tracked, ignoring page
 	 */
 	getItemsIgnoringPage( query, includeFiller = false ) {
 		if ( ! query ) {
@@ -100,7 +100,7 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * Returns the number of pages for the specified query, or null if the
 	 * query is not known.
 	 *
-	 * @param  {object}  query Query object
+	 * @param  {Object}  query Query object
 	 * @returns {?number}       Pages for query
 	 */
 	getNumberOfPages( query ) {
@@ -120,10 +120,10 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * instance state. Instead, it returns a new instance of QueryManager if
 	 * the tracked items have been modified, or the current instance otherwise.
 	 *
-	 * @param  {(Array|object)} items              Item(s) to be received
-	 * @param  {object}         options            Options for receive
+	 * @param  {(Array | Object)} items              Item(s) to be received
+	 * @param  {Object}         options            Options for receive
 	 * @param  {boolean}        options.patch      Apply changes as partial
-	 * @param  {object}         options.query      Query set to set or replace
+	 * @param  {Object}         options.query      Query set to set or replace
 	 * @param  {boolean}        options.mergeQuery Add to existing query set
 	 * @param  {number}         options.found      Total found items for query
 	 * @returns {QueryManager}                      New instance if changed, or

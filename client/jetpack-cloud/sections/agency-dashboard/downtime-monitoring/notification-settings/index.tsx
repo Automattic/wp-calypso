@@ -4,37 +4,63 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import clockIcon from 'calypso/assets/images/jetpack/clock-icon.svg';
 import SelectDropdown from 'calypso/components/select-dropdown';
-import TokenField from 'calypso/components/token-field';
+import { useUpdateMonitorSettings, useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import {
 	availableNotificationDurations as durations,
+	getSiteCountText,
 	mobileAppLink,
 } from '../../sites-overview/utils';
-import type { MonitorSettings } from '../../sites-overview/types';
+import type { MonitorSettings, Site } from '../../sites-overview/types';
 
 import './style.scss';
 
 type Duration = { label: string; time: number };
 
 interface Props {
-	site: { blog_id: number; url: string };
+	sites: Array< Site >;
 	onClose: () => void;
-	settings: MonitorSettings | undefined;
+	settings?: MonitorSettings;
+	monitorUserEmails?: Array< string >;
+	isLargeScreen?: boolean;
 }
 
-export default function NotificationSettings( { onClose, site, settings }: Props ) {
+export default function NotificationSettings( {
+	onClose,
+	sites,
+	settings,
+	monitorUserEmails,
+	isLargeScreen,
+}: Props ) {
 	const translate = useTranslate();
+	const { updateMonitorSettings, isLoading, isComplete } = useUpdateMonitorSettings( sites );
+	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( sites, isLargeScreen );
+
+	const defaultDuration = durations.find( ( duration ) => duration.time === 5 );
 
 	const [ enableMobileNotification, setEnableMobileNotification ] = useState< boolean >( false );
 	const [ enableEmailNotification, setEnableEmailNotification ] = useState< boolean >( false );
-	const [ selectedDuration, setSelectedDuration ] = useState< Duration | undefined >( undefined );
+	const [ selectedDuration, setSelectedDuration ] = useState< Duration | undefined >(
+		defaultDuration
+	);
 	const [ addedEmailAddresses, setAddedEmailAddresses ] = useState< string[] | [] >( [] );
+	const [ validationError, setValidationError ] = useState< string >( '' );
 
 	function onSave( event: React.FormEvent< HTMLFormElement > ) {
 		event.preventDefault();
-		// handle save here
+		if ( ! enableMobileNotification && ! enableEmailNotification ) {
+			return setValidationError( translate( 'Please select at least one contact method.' ) );
+		}
+		const params = {
+			wp_note_notifications: enableMobileNotification,
+			email_notifications: enableEmailNotification,
+			jetmon_defer_status_down_minutes: selectedDuration?.time,
+		};
+		recordEvent( 'notification_save_click', params );
+		updateMonitorSettings( params );
 	}
 
 	function selectDuration( duration: Duration ) {
+		recordEvent( 'duration_select', { duration: duration.time } );
 		setSelectedDuration( duration );
 	}
 
@@ -48,25 +74,30 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 	}, [ settings?.monitor_deferment_time ] );
 
 	useEffect( () => {
-		if ( settings?.monitor_notify_users_emails ) {
-			setAddedEmailAddresses( settings.monitor_notify_users_emails );
-			setEnableEmailNotification( true );
+		if ( settings ) {
+			setAddedEmailAddresses( settings.monitor_user_emails || [] );
+			setEnableEmailNotification( !! settings.monitor_user_email_notifications );
+			setEnableMobileNotification( !! settings.monitor_user_wp_note_notifications );
 		}
-	}, [ settings?.monitor_notify_users_emails ] );
+	}, [ settings ] );
 
-	const addEmailsContent = enableEmailNotification && (
-		<div className="notification-settings__email-container">
-			<TokenField
-				tokenizeOnSpace
-				placeholder={ translate( 'Enter email addresses' ) }
-				value={ addedEmailAddresses }
-				onChange={ setAddedEmailAddresses }
-			/>
-			<div className="notification-settings__email-condition">
-				{ translate( 'Separate with commas or the Enter key.' ) }
-			</div>
-		</div>
-	);
+	useEffect( () => {
+		if ( monitorUserEmails ) {
+			setAddedEmailAddresses( monitorUserEmails );
+		}
+	}, [ monitorUserEmails ] );
+
+	useEffect( () => {
+		if ( enableMobileNotification || enableEmailNotification ) {
+			setValidationError( '' );
+		}
+	}, [ enableMobileNotification, enableEmailNotification ] );
+
+	useEffect( () => {
+		if ( isComplete ) {
+			onClose();
+		}
+	}, [ isComplete, onClose ] );
 
 	return (
 		<Modal
@@ -75,7 +106,8 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 			title={ translate( 'Set custom notification' ) }
 			className="notification-settings__modal"
 		>
-			<div className="notification-settings__sub-title">{ site.url }</div>
+			<div className="notification-settings__sub-title">{ getSiteCountText( sites ) }</div>
+
 			<form onSubmit={ onSave }>
 				<div className="notification-settings__content">
 					<div className="notification-settings__content-block">
@@ -83,6 +115,11 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 							{ translate( 'Notify me about downtime:' ) }
 						</div>
 						<SelectDropdown
+							onToggle={ ( { open: isOpen }: { open: boolean } ) => {
+								if ( isOpen ) {
+									recordEvent( 'notification_duration_toggle' );
+								}
+							} }
 							selectedIcon={
 								<img
 									className="notification-settings__duration-icon"
@@ -106,7 +143,12 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 					<div className="notification-settings__toggle-container">
 						<div className="notification-settings__toggle">
 							<ToggleControl
-								onChange={ setEnableMobileNotification }
+								onChange={ ( isEnabled ) => {
+									recordEvent(
+										isEnabled ? 'mobile_notification_enable' : 'mobile_notification_disable'
+									);
+									setEnableMobileNotification( isEnabled );
+								} }
 								checked={ enableMobileNotification }
 							/>
 						</div>
@@ -133,35 +175,48 @@ export default function NotificationSettings( { onClose, site, settings }: Props
 					<div className="notification-settings__toggle-container">
 						<div className="notification-settings__toggle">
 							<ToggleControl
-								onChange={ setEnableEmailNotification }
+								onChange={ ( isEnabled ) => {
+									recordEvent(
+										isEnabled ? 'email_notification_enable' : 'email_notification_disable'
+									);
+									setEnableEmailNotification( isEnabled );
+								} }
 								checked={ enableEmailNotification }
 							/>
 						</div>
 						<div className="notification-settings__toggle-content">
 							<div className="notification-settings__content-heading">{ translate( 'Email' ) }</div>
 							<div className="notification-settings__content-sub-heading">
-								{ translate( 'Receive email notifications with one or more recipients.' ) }
+								{ translate( 'Receive email notifications with your account email address %s.', {
+									args: addedEmailAddresses,
+								} ) }
 							</div>
-							{
-								// We are using CSS to hide/show add email content on mobile/large screen view instead of the breakpoint
-								// hook since the 'useMobileBreakpont' hook returns true only when the width is > 480px, and we have some
-								// styles applied using the CSS breakpoint where '@include break-mobile' is true for width > 479px
-							 }
-							<div className="notification-settings__large-screen">{ addEmailsContent }</div>
 						</div>
 					</div>
-					<div className="notification-settings__small-screen">{ addEmailsContent }</div>
 				</div>
+
 				<div className="notification-settings__footer">
-					<Button
-						onClick={ onClose }
-						aria-label={ translate( 'Cancel and close notification settings popup' ) }
-					>
-						{ translate( 'Cancel' ) }
-					</Button>
-					<Button type="submit" primary aria-label={ translate( 'Save notification settings' ) }>
-						{ translate( 'Save' ) }
-					</Button>
+					{ validationError && (
+						<div className="notification-settings__footer-validation-error">
+							{ validationError }
+						</div>
+					) }
+					<div className="notification-settings__footer-buttons">
+						<Button
+							onClick={ onClose }
+							aria-label={ translate( 'Cancel and close notification settings popup' ) }
+						>
+							{ translate( 'Cancel' ) }
+						</Button>
+						<Button
+							disabled={ !! validationError || isLoading }
+							type="submit"
+							primary
+							aria-label={ translate( 'Save notification settings' ) }
+						>
+							{ isLoading ? translate( 'Saving Changes' ) : translate( 'Save' ) }
+						</Button>
+					</div>
 				</div>
 			</form>
 		</Modal>

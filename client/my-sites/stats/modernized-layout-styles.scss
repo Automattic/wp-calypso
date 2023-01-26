@@ -1,3 +1,5 @@
+// Must be included in root style.scss of /stats, /store, and /google-my-business/stats
+
 @use "sass:math";
 @import "@automattic/components/src/highlight-cards/variables.scss";
 
@@ -22,7 +24,9 @@ $sidebar-appearance-break-point: 783px;
 	> .highlight-cards,
 	> .stats__all-time-highlights-section,
 	> .stats__all-time-views-section,
-	> .stats__post-detail-highlights-section {
+	> .stats__post-detail-highlights-section,
+	> .stats__post-detail-table-section,
+	> .stats__gmb-location-wrapper {
 		padding-top: $vertical-margin;
 		padding-bottom: $vertical-margin;
 	}
@@ -34,14 +38,22 @@ $sidebar-appearance-break-point: 783px;
 		}
 	}
 
-	> .stats-banner-wrapper {
-		padding-bottom: 1em;
+	> .stats-banner-wrapper .jetpack-backup-creds-banner {
+		// .jetpack-backup-creds-banner has a bottom margin of 16px. This overrides it since we want it to be 32px
+		margin-bottom: 32px;
+	}
+
+	&.has-fixed-nav {
+		padding-top: 44px;
 	}
 }
 
-// this overrides the default .layout__content that adds unwanted padding
 .is-section-stats,
-.is-section-woocommerce {
+.is-section-woocommerce,
+.is-section-google-my-business {
+	background: var(--studio-white);
+
+	// this overrides the default .layout__content that adds unwanted padding
 	& .layout__content,
 	&.theme-default .focus-content .layout__content {
 		padding: $stats-layout-contnet-padding-top 0 0 0;

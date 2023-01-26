@@ -1,23 +1,28 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { MobilePromoCard } from '@automattic/components';
 import { translate } from 'i18n-calypso';
+import page from 'page';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import blazeDropDownIllustration from 'calypso/assets/images/illustrations/blaze-drop-down.svg';
 import wordpressSeoIllustration from 'calypso/assets/images/illustrations/wordpress-seo-premium.svg';
 import PromoCardBlock from 'calypso/blocks/promo-card-block';
 import DotPager from 'calypso/components/dot-pager';
+import { PromoteWidgetStatus, usePromoteWidget } from 'calypso/lib/promote-post';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-
 import './style.scss';
 
-const EVENT_BLAZE_PROMO_VIEW = 'calypso_stats_traffic_blaze_banner_view';
-const EVENT_MOBILE_PROMO_VIEW = 'calypso_stats_traffic_mobile_cta_jetpack_view';
+const EVENT_TRAFFIC_BLAZE_PROMO_VIEW = 'calypso_stats_traffic_blaze_banner_view';
+const EVENT_TRAFFIC_MOBILE_PROMO_VIEW = 'calypso_stats_traffic_mobile_cta_jetpack_view';
 const EVENT_YOAST_PROMO_VIEW = 'calypso_stats_wordpress_seo_premium_banner_view';
 
-export default function PromoCards( { isOdysseyStats, slug } ) {
+// TODO: Register the following events with Tracks to ensure they're properly tracked.
+const EVENT_ANNUAL_BLAZE_PROMO_VIEW = 'calypso_stats_annual_insights_blaze_banner_view';
+const EVENT_ANNUAL_MOBILE_PROMO_VIEW = 'calypso_stats_annual_insights_mobile_cta_jetpack_view';
+
+export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 	// Keep a replica of the pager index state.
 	// TODO: Figure out an approach that doesn't require replicating state value from DotPager.
 	const [ dotPagerIndex, setDotPagerIndex ] = useState( 0 );
@@ -26,24 +31,36 @@ export default function PromoCards( { isOdysseyStats, slug } ) {
 	const jetpackNonAtomic = useSelector(
 		( state ) => isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId )
 	);
+	const shouldShowAdvertisingOption = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
+
+	// This is used to show some banner only on annual stats page.
+	const isAnnualStatsPage = page.current.includes( 'annualstats' );
 
 	// Blaze promo is disabled for Odyssey.
-	const showBlazePromo = ! isOdysseyStats;
-	// Yoast promo is disabled for Odyssey & self-hosted.
-	const showYoastPromo = ! isOdysseyStats && ! jetpackNonAtomic;
+	const showBlazePromo = isAnnualStatsPage && ! isOdysseyStats && shouldShowAdvertisingOption;
+	// Yoast promo is disabled for Odyssey & self-hosted & non-traffic pages.
+	const showYoastPromo =
+		isAnnualStatsPage && ! isOdysseyStats && ! jetpackNonAtomic && pageSlug === 'traffic';
 
 	const viewEvents = useMemo( () => {
 		const events = [];
-		showBlazePromo && events.push( EVENT_BLAZE_PROMO_VIEW );
-		showYoastPromo && events.push( EVENT_YOAST_PROMO_VIEW );
-		events.push( EVENT_MOBILE_PROMO_VIEW );
+		if ( pageSlug === 'traffic' ) {
+			showBlazePromo && events.push( EVENT_TRAFFIC_BLAZE_PROMO_VIEW );
+			showYoastPromo && events.push( EVENT_YOAST_PROMO_VIEW );
+			events.push( EVENT_TRAFFIC_MOBILE_PROMO_VIEW );
+		} else if ( pageSlug === 'annual-insights' ) {
+			showBlazePromo && events.push( EVENT_ANNUAL_BLAZE_PROMO_VIEW );
+			events.push( EVENT_ANNUAL_MOBILE_PROMO_VIEW );
+		}
 		return events;
-	}, [ showBlazePromo, showYoastPromo ] );
+	}, [ pageSlug, showBlazePromo, showYoastPromo ] );
 
 	// Handle view events upon initial mount and upon paging DotPager.
 	useEffect( () => {
-		// Prevent out of bounds index when switching sites.
-		if ( dotPagerIndex >= viewEvents.length ) {
+		if ( viewEvents.length === 0 ) {
+			return;
+		} else if ( dotPagerIndex >= viewEvents.length ) {
+			// Prevent out of bounds index when switching sites.
 			recordTracksEvent( viewEvents[ viewEvents.length - 1 ], { site_id: selectedSiteId } );
 		} else {
 			recordTracksEvent( viewEvents[ dotPagerIndex ], { site_id: selectedSiteId } );

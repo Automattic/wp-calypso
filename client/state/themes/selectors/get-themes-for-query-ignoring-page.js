@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { createSelector } from '@automattic/state-utils';
 import { flatMap } from 'lodash';
 import {
@@ -15,9 +14,9 @@ import 'calypso/state/themes/init';
  * Returns an array of normalized themes for the themes query, including all
  * known queried pages, or null if the themes for the query are not known.
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @param  {object}  query  Theme query object
+ * @param  {Object}  query  Theme query object
  * @returns {?Array}         Themes for the theme query
  */
 export const getThemesForQueryIgnoringPage = createSelector(
@@ -52,7 +51,7 @@ export const getThemesForQueryIgnoringPage = createSelector(
 		}
 
 		// Set active theme to be the first theme in the array.
-		if ( isEnabled( 'themes/showcase-i4/search-and-filter' ) && selectedSiteId ) {
+		if ( selectedSiteId ) {
 			const currentThemeId = getActiveTheme( state, selectedSiteId );
 			const currentTheme = getCanonicalTheme( state, selectedSiteId, currentThemeId );
 			const index = themesForQueryIgnoringPage.findIndex(

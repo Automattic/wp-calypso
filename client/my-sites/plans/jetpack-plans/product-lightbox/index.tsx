@@ -1,4 +1,11 @@
-import { JetpackTag, JETPACK_RELATED_PRODUCTS_MAP } from '@automattic/calypso-products';
+import config from '@automattic/calypso-config';
+import {
+	isJetpackPlanSlug,
+	JetpackTag,
+	JETPACK_RELATED_PRODUCTS_MAP,
+	PRODUCT_JETPACK_SOCIAL_ADVANCED,
+	PRODUCT_JETPACK_SOCIAL_BASIC,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
@@ -18,6 +25,7 @@ import { Icons } from './icons/icons';
 import { Tags } from './icons/tags';
 import PaymentPlan from './payment-plan';
 import ProductDetails from './product-details';
+import ProductWithVariants from './product-with-variants';
 
 import './style.scss';
 
@@ -67,8 +75,14 @@ const ProductLightbox: React.FC< Props > = ( {
 		[ onChangeProduct, dispatch, siteId ]
 	);
 
-	const { getCheckoutURL, getIsMultisiteCompatible, isMultisite, getOnClickPurchase } =
-		useStoreItemInfoContext();
+	const {
+		getCheckoutURL,
+		getIsMultisiteCompatible,
+		isMultisite,
+		getOnClickPurchase,
+		getLightBoxCtaLabel,
+		getIsProductInCart,
+	} = useStoreItemInfoContext();
 
 	const onCheckoutClick = useCallback( () => {
 		getOnClickPurchase( product )();
@@ -90,6 +104,13 @@ const ProductLightbox: React.FC< Props > = ( {
 		);
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
+	// Jetpack Social is the first plan which has variants that we want to display one below the other.
+	// Add more such products to this array, if you want to display them one below the other.
+	const showVariantsOneBelowTheOther = [
+		PRODUCT_JETPACK_SOCIAL_ADVANCED,
+		PRODUCT_JETPACK_SOCIAL_BASIC,
+	].includes( product.productSlug );
+
 	const variantOptions = useMemo( () => {
 		const variants = JETPACK_RELATED_PRODUCTS_MAP[ product.productSlug ] || [];
 		return variants.map( ( itemSlug ) => ( {
@@ -98,7 +119,10 @@ const ProductLightbox: React.FC< Props > = ( {
 		} ) );
 	}, [ product.productSlug ] );
 
-	const shouldShowOptions = variantOptions.length > 1;
+	// The social advanced plan is not available yet, so don't show it till the time it's ready.
+	const shouldShowOptions = showVariantsOneBelowTheOther
+		? variantOptions.length > 1 && config.isEnabled( 'jetpack-social/advanced-plan' )
+		: variantOptions.length > 1;
 
 	const isMultiSiteIncompatible = isMultisite && ! getIsMultisiteCompatible( product );
 
@@ -107,6 +131,9 @@ const ProductLightbox: React.FC< Props > = ( {
 	const isLargeScreen = useBreakpoint( '>782px' );
 
 	const showPricingBreakdown = includedProductSlugs?.length;
+
+	const isProductInCart =
+		! isJetpackPlanSlug( product.productSlug ) && getIsProductInCart( product );
 
 	return (
 		<Modal
@@ -163,30 +190,47 @@ const ProductLightbox: React.FC< Props > = ( {
 				<div className="product-lightbox__sidebar">
 					<div className="product-lightbox__variants">
 						<div className="product-lightbox__variants-content">
-							{ shouldShowOptions && (
-								<div className="product-lightbox__variants-options">
-									<MultipleChoiceQuestion
-										question={ PRODUCT_OPTIONS_HEADER[ product?.productSlug ] }
-										answers={ variantOptions }
-										selectedAnswerId={ product?.productSlug }
-										onAnswerChange={ onChangeOption }
-										shouldShuffleAnswers={ false }
+							{ shouldShowOptions && ! showVariantsOneBelowTheOther && (
+								<div>
+									<div className="product-lightbox__variants-options">
+										<MultipleChoiceQuestion
+											question={ PRODUCT_OPTIONS_HEADER[ product?.productSlug ] }
+											answers={ variantOptions }
+											selectedAnswerId={ product?.productSlug }
+											onAnswerChange={ onChangeOption }
+											shouldShuffleAnswers={ false }
+										/>
+									</div>
+									<PaymentPlan
+										isMultiSiteIncompatible={ isMultiSiteIncompatible }
+										siteId={ siteId }
+										product={ product }
 									/>
 								</div>
 							) }
-							<PaymentPlan
-								isMultiSiteIncompatible={ isMultiSiteIncompatible }
-								siteId={ siteId }
-								product={ product }
-							/>
+							{ shouldShowOptions && showVariantsOneBelowTheOther && (
+								<ProductWithVariants
+									product={ product }
+									isMultiSiteIncompatible={ isMultiSiteIncompatible }
+									siteId={ siteId }
+									onChangeProductVariant={ onChangeOption }
+								/>
+							) }
+							{ ! shouldShowOptions && (
+								<PaymentPlan
+									isMultiSiteIncompatible={ isMultiSiteIncompatible }
+									siteId={ siteId }
+									product={ product }
+								/>
+							) }
 							<Button
-								primary
+								primary={ ! isProductInCart }
 								onClick={ onCheckoutClick }
 								className="jetpack-product-card__button product-lightbox__checkout-button"
 								href={ isMultiSiteIncompatible ? '#' : getCheckoutURL( product ) }
 								disabled={ isMultiSiteIncompatible }
 							>
-								{ translate( 'Proceed to checkout' ) }
+								{ getLightBoxCtaLabel( product ) }
 							</Button>
 						</div>
 					</div>

@@ -18,7 +18,7 @@ import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
-import PremiumBadge from 'calypso/components/premium-badge';
+import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import WebPreview from 'calypso/components/web-preview/content';
 import { useSiteVerticalQueryById } from 'calypso/data/site-verticals';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -40,9 +40,8 @@ import {
 	recordSelectedDesign,
 } from '../../analytics/record-design';
 import { getCategorizationOptions } from './categories';
-import { DEFAULT_VARIATION_SLUG, STEP_NAME } from './constants';
+import { DEFAULT_VARIATION_SLUG, RETIRING_DESIGN_SLUGS, STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
-import PremiumGlobalStylesUpgradeModal from './premium-global-styles-upgrade-modal';
 import PreviewToolbar from './preview-toolbar';
 import UpgradeModal from './upgrade-modal';
 import getThemeIdFromDesign from './utils/get-theme-id-from-design';
@@ -95,10 +94,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	// ********** Logic for fetching designs
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
-		// Before we retire the old blank canvas, we have both blank-canvas-blocks and blank-canvas-3.
-		// We need to remove the old one first
 		allDesigns.static.designs = allDesigns.static.designs.filter(
-			( design ) => design.slug !== 'blank-canvas-blocks'
+			( design ) => RETIRING_DESIGN_SLUGS.indexOf( design.slug ) === -1
 		);
 
 		const blankCanvasDesignOffset = allDesigns.static.designs.findIndex( isBlankCanvasDesign );
@@ -282,9 +279,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	const shouldUpgrade =
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
-		( isEnabled( 'themes/plugin-bundling' ) &&
-			! isPluginBundleEligible &&
-			isBundledWithWooCommerce );
+		( ! isPluginBundleEligible && isBundledWithWooCommerce );
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 
@@ -323,7 +318,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		);
 
 		let plan;
-		if ( isEnabled( 'themes/plugin-bundling' ) && themeHasWooCommerce ) {
+		if ( themeHasWooCommerce ) {
 			plan = 'business-bundle';
 		} else {
 			plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
@@ -527,22 +522,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		recordTracksEvent( eventName, tracksProps );
 	}
 
-	function showGlobalStylesPremiumBadge() {
-		if ( ! shouldLimitGlobalStyles ) {
-			return null;
-		}
-
-		return (
-			<PremiumBadge
-				className="design-picker__premium-badge"
-				labelText={ translate( 'Upgrade' ) }
-				tooltipText={ translate(
-					'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
-				) }
-			/>
-		);
-	}
-
 	function getPrimaryActionButton( pickDesignText: ReactChild ) {
 		if ( shouldUpgrade ) {
 			return (
@@ -633,7 +612,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 						onSelectVariation={ previewDesignVariation }
 						actionButtons={ actionButtons }
 						recordDeviceClick={ recordDeviceClick }
-						showGlobalStylesPremiumBadge={ showGlobalStylesPremiumBadge }
+						showGlobalStylesPremiumBadge={ shouldLimitGlobalStyles }
 					/>
 				) : (
 					<WebPreview

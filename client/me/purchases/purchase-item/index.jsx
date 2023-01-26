@@ -4,8 +4,10 @@ import {
 	PLAN_MONTHLY_PERIOD,
 	PLAN_ANNUAL_PERIOD,
 	PLAN_BIENNIAL_PERIOD,
+	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import { CompactCard, Gridicon } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import { ExternalLink } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -152,7 +154,10 @@ class PurchaseItem extends Component {
 					{
 						args: {
 							date: expiry.format( 'LL' ),
-							amount: purchase.priceText,
+							amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
 						},
 						components: {
 							span: <span className="purchase-item__date" />,
@@ -220,7 +225,10 @@ class PurchaseItem extends Component {
 			if ( purchase.billPeriodDays ) {
 				const translateOptions = {
 					args: {
-						amount: purchase.priceText,
+						amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
 						date: renewDate.format( 'LL' ),
 					},
 					components: {
@@ -260,12 +268,27 @@ class PurchaseItem extends Component {
 								translateOptions
 							);
 						}
+					case PLAN_TRIENNIAL_PERIOD:
+						if (
+							locale === 'en' ||
+							i18n.hasTranslation(
+								'Renews every three years at %(amount)s on {{span}}%(date)s{{/span}}'
+							)
+						) {
+							return translate(
+								'Renews every three years at %(amount)s on {{span}}%(date)s{{/span}}',
+								translateOptions
+							);
+						}
 				}
 			}
 
 			return translate( 'Renews at %(amount)s on {{span}}%(date)s{{/span}}', {
 				args: {
-					amount: purchase.priceText,
+					amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ),
 					date: renewDate.format( 'LL' ),
 				},
 				components: {

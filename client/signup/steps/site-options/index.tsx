@@ -33,6 +33,17 @@ export default function SiteOptionsStep( props: Props ) {
 					siteTitleLabel: translate( 'Store name' ),
 					taglineExplanation: translate( 'In a few words, explain what your store is about.' ),
 				};
+			case 'difm-store-options':
+				return {
+					headerText: translate( "First, let's give your store a name" ),
+					headerImage: storeImageUrl,
+					siteTitleLabel: translate( 'Store name' ),
+					siteTitleExplanation: translate(
+						'Enter the name of your business or store as it should appear on your site.'
+					),
+					taglineExplanation: translate( 'In a few words, explain what your store is about.' ),
+					isSiteTitleRequired: true,
+				};
 			case 'difm-options':
 				return {
 					headerText: translate( "First, let's give your site a name" ),

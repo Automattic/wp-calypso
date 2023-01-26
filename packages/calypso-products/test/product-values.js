@@ -8,6 +8,7 @@ import {
 	isMonthlyProduct,
 	isYearly,
 	isBiennially,
+	isTriennially,
 	isPersonal,
 	isPremium,
 	isBusiness,
@@ -23,12 +24,16 @@ import {
 	PLAN_FREE,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
+	PLAN_PERSONAL_3_YEARS,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
+	PLAN_PREMIUM_3_YEARS,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
+	PLAN_BUSINESS_3_YEARS,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_ECOMMERCE_3_YEARS,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
@@ -41,7 +46,7 @@ import {
  * Test helper to build a product object
  *
  * @param   {string} product_slug Product slug
- * @returns {object}              Object containing product_slug
+ * @returns {Object}              Object containing product_slug
  */
 const makeProductFromSlug = ( product_slug ) => ( { product_slug } );
 
@@ -50,12 +55,16 @@ describe( 'isPlan', () => {
 		[
 			PLAN_PERSONAL,
 			PLAN_PERSONAL_2_YEARS,
+			PLAN_PERSONAL_3_YEARS,
 			PLAN_PREMIUM,
 			PLAN_PREMIUM_2_YEARS,
+			PLAN_PREMIUM_3_YEARS,
 			PLAN_BUSINESS,
 			PLAN_BUSINESS_2_YEARS,
+			PLAN_BUSINESS_3_YEARS,
 			PLAN_ECOMMERCE,
 			PLAN_ECOMMERCE_2_YEARS,
+			PLAN_ECOMMERCE_3_YEARS,
 			PLAN_JETPACK_PERSONAL,
 			PLAN_JETPACK_PERSONAL_MONTHLY,
 			PLAN_JETPACK_PREMIUM,
@@ -219,7 +228,13 @@ describe( 'getJetpackProductTagline', () => {
 
 describe( 'isPersonal', () => {
 	test( 'should return true for personal products', () => {
-		[ PLAN_PERSONAL, PLAN_PERSONAL_2_YEARS, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ]
+		[
+			PLAN_PERSONAL,
+			PLAN_PERSONAL_2_YEARS,
+			PLAN_PERSONAL_3_YEARS,
+			PLAN_JETPACK_PERSONAL,
+			PLAN_JETPACK_PERSONAL_MONTHLY,
+		]
 			.map( makeProductFromSlug )
 			.forEach( ( product ) => expect( isPersonal( product ) ).toBe( true ) );
 	} );
@@ -233,7 +248,13 @@ describe( 'isPersonal', () => {
 
 describe( 'isPremium', () => {
 	test( 'should return true for premium products', () => {
-		[ PLAN_PREMIUM, PLAN_PREMIUM_2_YEARS, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ]
+		[
+			PLAN_PREMIUM,
+			PLAN_PREMIUM_2_YEARS,
+			PLAN_PREMIUM_3_YEARS,
+			PLAN_JETPACK_PREMIUM,
+			PLAN_JETPACK_PREMIUM_MONTHLY,
+		]
 			.map( makeProductFromSlug )
 			.forEach( ( product ) => expect( isPremium( product ) ).toBe( true ) );
 	} );
@@ -247,7 +268,13 @@ describe( 'isPremium', () => {
 
 describe( 'isBusiness', () => {
 	test( 'should return true for business products', () => {
-		[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS, PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ]
+		[
+			PLAN_BUSINESS,
+			PLAN_BUSINESS_2_YEARS,
+			PLAN_BUSINESS_3_YEARS,
+			PLAN_JETPACK_BUSINESS,
+			PLAN_JETPACK_BUSINESS_MONTHLY,
+		]
 			.map( makeProductFromSlug )
 			.forEach( ( product ) => expect( isBusiness( product ) ).toBe( true ) );
 	} );
@@ -261,12 +288,12 @@ describe( 'isBusiness', () => {
 
 describe( 'isEcommerce', () => {
 	test( 'should return true for eCommerce products', () => {
-		[ PLAN_ECOMMERCE, PLAN_ECOMMERCE_2_YEARS ]
+		[ PLAN_ECOMMERCE, PLAN_ECOMMERCE_2_YEARS, PLAN_ECOMMERCE_3_YEARS ]
 			.map( makeProductFromSlug )
 			.forEach( ( product ) => expect( isEcommerce( product ) ).toBe( true ) );
 	} );
 
-	test( 'should return false for non-eCommerec products', () => {
+	test( 'should return false for non-eCommerce products', () => {
 		[ PLAN_PREMIUM, PLAN_JETPACK_PERSONAL, PLAN_BUSINESS ]
 			.map( makeProductFromSlug )
 			.forEach( ( product ) => expect( isEcommerce( product ) ).toBe( false ) );
@@ -303,5 +330,16 @@ describe( 'isBiennially', () => {
 		expect( isBiennially( { bill_period: 365 } ) ).toBe( false );
 		expect( isBiennially( { bill_period: 31 } ) ).toBe( false );
 		expect( isBiennially( { bill_period: 731 } ) ).toBe( false );
+	} );
+} );
+
+describe( 'isTriennially', () => {
+	test( 'should return true for triennial products', () => {
+		expect( isTriennially( { bill_period: 1095 } ) ).toBe( true );
+	} );
+	test( 'should return true for other products', () => {
+		expect( isTriennially( { bill_period: 365 } ) ).toBe( false );
+		expect( isTriennially( { bill_period: 31 } ) ).toBe( false );
+		expect( isTriennially( { bill_period: 1096 } ) ).toBe( false );
 	} );
 } );

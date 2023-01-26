@@ -69,6 +69,7 @@ export interface CreateSiteParams {
 		wpcom_public_coming_soon?: number;
 		anchor_fm_podcast_id?: string;
 		is_blank_canvas?: boolean;
+		is_videopress_initial_purchase?: boolean;
 	};
 }
 
@@ -442,6 +443,7 @@ interface PaletteColor {
 }
 
 export interface GlobalStyles {
+	title?: string;
 	settings: {
 		color: {
 			palette: {
@@ -449,6 +451,9 @@ export interface GlobalStyles {
 				theme: PaletteColor[];
 			};
 		};
+	};
+	styles: {
+		[ key: string ]: unknown;
 	};
 }
 
@@ -466,4 +471,11 @@ export interface ThemeSetupOptions {
 	pattern_ids?: number[] | string[];
 	header_pattern_ids?: number[] | string[];
 	footer_pattern_ids?: number[] | string[];
+}
+
+export interface ActiveTheme {
+	stylesheet: string;
+	_links: {
+		'wp:user-global-styles': { href: string }[];
+	};
 }

@@ -31,15 +31,15 @@ const shouldCheckForDuplicatePackages = ! process.env.DISABLE_DUPLICATE_PACKAGE_
  *
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  * @see {@link https://webpack.js.org/api/cli/}
- * @param  {object}  env                                 environment options
- * @param  {object}  argv                                options map
- * @param  {object}  argv.entry                          Entry point(s)
+ * @param  {Object}  env                                 environment options
+ * @param  {Object}  argv                                options map
+ * @param  {Object}  argv.entry                          Entry point(s)
  * @param  {string}  argv.'output-chunk-filename'        Output chunk filename
  * @param  {string}  argv.'output-path'                  Output path
  * @param  {string}  argv.'output-filename'              Output filename pattern
  * @param  {string}  argv.'output-library-target'        Output library target
  * @param  {string}  argv.'output-chunk-loading-global'  Output chunk loading global
- * @returns {object}                                     webpack config
+ * @returns {Object}                                     webpack config
  */
 function getWebpackConfig(
 	env = {},

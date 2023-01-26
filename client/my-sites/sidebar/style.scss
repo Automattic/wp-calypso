@@ -590,10 +590,6 @@ $font-size: rem(14px);
 				&::after {
 					display: block;
 				}
-
-				.sidebar__menu-icon {
-					fill: var(--color-sidebar-menu-selected-text);
-				}
 			}
 		}
 	}

@@ -212,16 +212,17 @@ export const useComparisonData = () => {
 						url: links.videopress,
 						info: {
 							FREE: {
-								content: translate( '1 video' ),
+								content: translate( '1 video (Up to 1GB)' ),
 							},
 							BACKUP: {
-								content: translate( '1 video' ),
+								content: translate( '1 video (Up to 1GB)' ),
 							},
 							SECURITY: {
-								content: translate( '1 video' ),
+								content: translate( '1 video (Up to 1GB)' ),
 							},
 							COMPLETE: {
-								content: <CheckIcon />,
+								highlight: true,
+								content: translate( 'Unlimited Videos (Up to 1TB)' ),
 							},
 						},
 					},
@@ -280,18 +281,17 @@ export const useComparisonData = () => {
 						icon: SocialIcon,
 						info: {
 							FREE: {
-								content: translate( 'Automated posting' ),
+								content: translate( 'Social Free' ),
 							},
 							BACKUP: {
-								content: translate( 'Automated posting' ),
+								content: translate( 'Social Free' ),
 							},
 							SECURITY: {
-								highlight: true,
-								content: translate( 'Scheduled posting' ),
+								content: translate( 'Social Free' ),
 							},
 							COMPLETE: {
 								highlight: true,
-								content: translate( 'Scheduled posting' ),
+								content: translate( 'Social Basic' ),
 							},
 						},
 					},

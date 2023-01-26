@@ -3,7 +3,7 @@
  *
  * @param  {boolean} isPrivateSite    Whether site is private or not
  * @param  {Function} translate   `translate` function derived from `i18n-calypso`
- * @returns {object}         Follower role object
+ * @returns {Object}         Follower role object
  */
 const getWpcomFollowerRole = ( isPrivateSite, translate ) => {
 	const displayName = isPrivateSite

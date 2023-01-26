@@ -17,6 +17,7 @@ const autoprefixerPlugin = require( 'autoprefixer' );
 const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const cacheIdentifier = require( '../../build-tools/babel/babel-loader-cache-identifier' );
+const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
 
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -134,6 +135,10 @@ module.exports = {
 				return defaultRequestToExternal( request );
 			},
 		} ),
+		! isDevelopment &&
+			new GenerateChunksMapPlugin( {
+				output: path.resolve( outBasePath, 'dist/chunks-map.json' ),
+			} ),
 		/*
 		 * ExPlat: Don't import the server logger when we are in the browser
 		 */

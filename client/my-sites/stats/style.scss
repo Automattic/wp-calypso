@@ -2,6 +2,7 @@
 @import "calypso/my-sites/stats/modernized-tooltip-styles.scss";
 @import "calypso/my-sites/stats/modernized-chart-tabs-styles.scss";
 @import "calypso/my-sites/stats/modernized-layout-styles.scss";
+@import "calypso/my-sites/stats/theme-override-mixin.scss";
 
 // Module container
 @include breakpoint-deprecated( ">960px" ) {
@@ -39,6 +40,10 @@
 // Compensate for the fixed header.
 .is-section-stats .has-fixed-nav {
 	padding-top: 44px;
+
+	&.stats__email-detail {
+		padding: 44px 20px;
+	}
 
 	@media ( max-width: 782px ) {
 		padding-top: 65px;
@@ -227,7 +232,9 @@
 
 // Stats section scoped styles
 .is-section-stats {
-	background: var(--studio-white);
+	&.color-scheme.is-classic-dark {
+		@include apply-improved-classic-dark-colors();
+	}
 }
 
 @import "calypso/my-sites/stats/grid-layout.scss";

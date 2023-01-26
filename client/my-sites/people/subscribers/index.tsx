@@ -1,16 +1,19 @@
 import { Card, Button } from '@automattic/components';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import InfiniteList from 'calypso/components/infinite-list';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { addQueryArgs } from 'calypso/lib/url';
 import NoResults from 'calypso/my-sites/no-results';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleListSectionHeader from '../people-list-section-header';
-import type { Follower, FollowersQuery } from './types';
+import type { Member } from '../types';
+import type { FollowersQuery } from './types';
 
 import './style.scss';
 
@@ -21,6 +24,7 @@ interface Props {
 }
 function Subscribers( props: Props ) {
 	const _ = useTranslate();
+	const dispatch = useDispatch();
 	const { search, followersQuery } = props;
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 
@@ -37,12 +41,28 @@ function Subscribers( props: Props ) {
 		'https://dashboard.wordpress.com/wp-admin/index.php'
 	);
 
-	function getFollowerRef( follower: Follower ) {
+	function onDownloadCsvClick() {
+		dispatch(
+			recordGoogleEvent(
+				'People',
+				'Clicked Download email subscribers as CSV menu item on Subscribers'
+			)
+		);
+	}
+
+	function getFollowerRef( follower: Member ) {
 		return 'follower-' + follower.ID;
 	}
 
-	function renderFollower( follower: Follower ) {
-		return <PeopleListItem key={ follower?.ID } user={ follower } site={ site } type="email" />;
+	function renderFollower( follower: Member ) {
+		return (
+			<PeopleListItem
+				key={ follower?.ID }
+				user={ follower }
+				site={ site }
+				type="subscriber-details"
+			/>
+		);
 	}
 
 	function renderPlaceholders() {
@@ -76,7 +96,7 @@ function Subscribers( props: Props ) {
 							{ _( 'Add subscribers' ) }
 						</Button>
 						<EllipsisMenu compact position="bottom">
-							<PopoverMenuItem href={ downloadCsvLink }>
+							<PopoverMenuItem href={ downloadCsvLink } onClick={ onDownloadCsvClick }>
 								{ _( 'Download email subscribers as CSV' ) }
 							</PopoverMenuItem>
 						</EllipsisMenu>
@@ -101,7 +121,22 @@ function Subscribers( props: Props ) {
 		case 'empty':
 			return (
 				<Card>
-					{ site && <AddSubscriberForm siteId={ site?.ID } onImportFinished={ refetch } /> }
+					{ site && (
+						<>
+							{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
+							{ /* @ts-ignore */ }
+							<EmailVerificationGate
+								noticeText={ _( 'You must verify your email to add subscribers.' ) }
+								noticeStatus="is-info"
+							>
+								<AddSubscriberForm
+									siteId={ site?.ID }
+									submitBtnAlwaysEnable={ true }
+									onImportFinished={ refetch }
+								/>
+							</EmailVerificationGate>
+						</>
+					) }
 				</Card>
 			);
 

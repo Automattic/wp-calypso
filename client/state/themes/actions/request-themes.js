@@ -18,7 +18,7 @@ import 'calypso/state/themes/init';
  * Triggers a network request to fetch themes for the specified site and query.
  *
  * @param  {number|string} siteId        Jetpack site ID or 'wpcom' for any WPCOM site
- * @param  {object}        query         Theme query
+ * @param  {Object}        query         Theme query
  * @param  {string}        query.search  Search string
  * @param  {string}        query.tier    Theme tier: 'free', 'premium', or '' (either)
  * @param  {string}        query.filter  Filter
@@ -50,6 +50,9 @@ export function requestThemes( siteId, query = {}, locale ) {
 						{
 							...query,
 							apiVersion: '1.2',
+							include_blankcanvas_theme: config.isEnabled( 'pattern-assembler/logged-out-showcase' )
+								? 'true'
+								: null,
 							include_marketplace_themes: config.isEnabled( 'themes/third-party-premium' )
 								? 'true'
 								: null,

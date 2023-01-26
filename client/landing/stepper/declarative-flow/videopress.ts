@@ -28,8 +28,8 @@ const videopress: Flow = {
 
 		return [
 			{ slug: 'intro', component: Intro },
-			{ slug: 'options', component: SiteOptions },
 			{ slug: 'videomakerSetup', component: VideomakerSetup },
+			{ slug: 'options', component: SiteOptions },
 			{ slug: 'chooseADomain', component: ChooseADomain },
 			{ slug: 'chooseAPlan', component: ChooseAPlan },
 			{ slug: 'processing', component: ProcessingStep },
@@ -110,6 +110,9 @@ const videopress: Flow = {
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( _currentStep ) {
 				case 'intro':
+					return navigate( 'videomakerSetup' );
+
+				case 'videomakerSetup':
 					if ( userIsLoggedIn ) {
 						return navigate( 'options' );
 					}
@@ -122,10 +125,6 @@ const videopress: Flow = {
 					const { siteTitle, tagline } = providedDependencies;
 					setSiteTitle( siteTitle as string );
 					setSiteDescription( tagline as string );
-					return navigate( 'videomakerSetup' );
-				}
-
-				case 'videomakerSetup': {
 					return navigate( 'chooseADomain' );
 				}
 

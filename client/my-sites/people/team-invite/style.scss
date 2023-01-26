@@ -9,6 +9,10 @@
 
 	input[type="text"].form-text-input {
 		padding-inline-end: 2rem;
+
+		&::placeholder {
+			color: var(--studio-gray-20);
+		}
 	}
 
 	.form-input-validation {

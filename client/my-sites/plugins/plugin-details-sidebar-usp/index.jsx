@@ -99,7 +99,7 @@ const PluginDetailsSidebarUSP = ( {
 				links.map( ( link, idx ) => {
 					return (
 						<Fragment key={ idx }>
-							<Link icon href={ link.href }>
+							<Link icon href={ link.href } onClick={ link.onClick }>
 								{ link.label }
 							</Link>
 							<br />

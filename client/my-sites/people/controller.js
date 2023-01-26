@@ -12,8 +12,10 @@ import PeopleList from './main';
 import PeopleAddSubscribers from './people-add-subscribers';
 import PeopleInviteDetails from './people-invite-details';
 import PeopleInvites from './people-invites';
+import SubscriberDetails from './subscriber-details';
 import SubscribersTeam from './subscribers-team';
 import TeamInvite from './team-invite';
+import ViewerDetails from './viewer-details';
 
 export default {
 	redirectToTeam,
@@ -52,8 +54,16 @@ export default {
 		renderTeamMembers( context, next );
 	},
 
+	viewerTeamMember( context, next ) {
+		renderViewerTeamMember( context, next );
+	},
+
 	subscribers( context, next ) {
 		renderSubscribers( context, next );
+	},
+
+	subscriberDetails( context, next ) {
+		renderSubscribersDetails( context, next );
 	},
 
 	peopleAddSubscribers( context, next ) {
@@ -80,7 +90,12 @@ function renderPeopleList( context, next ) {
 	context.primary = (
 		<>
 			<PeopleListTitle />
-			<PeopleList filter={ context.params.filter } search={ context.query.s } />
+			{ ! isEnabled( 'user-management-revamp' ) && (
+				<PeopleList filter={ context.params.filter } search={ context.query.s } />
+			) }
+			{ isEnabled( 'user-management-revamp' ) && (
+				<SubscribersTeam filter={ context.params.filter } search={ context.query.s } />
+			) }
 		</>
 	);
 	next();
@@ -154,6 +169,25 @@ function renderSubscribers( context, next ) {
 	next();
 }
 
+function renderSubscribersDetails( context, next ) {
+	const SubscriberDetailsTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'User Details', { textOnly: true } ) } />;
+	};
+
+	// typeId is in the format "{type}-{id}
+	const [ type, id ] = context.params.typeId.split( '-' );
+
+	context.primary = (
+		<>
+			<SubscriberDetailsTitle />
+			<SubscriberDetails subscriberId={ id } subscriberType={ type } />
+		</>
+	);
+	next();
+}
+
 function renderPeopleAddSubscribers( context, next ) {
 	const PeopleAddSubscribersTitle = () => {
 		const translate = useTranslate();
@@ -174,7 +208,7 @@ function renderPeopleInviteDetails( context, next ) {
 	const PeopleInviteDetailsTitle = () => {
 		const translate = useTranslate();
 
-		return <DocumentHead title={ translate( 'Invite Details', { textOnly: true } ) } />;
+		return <DocumentHead title={ translate( 'User Details', { textOnly: true } ) } />;
 	};
 
 	context.primary = (
@@ -199,5 +233,22 @@ function renderSingleTeamMember( context, next ) {
 			<EditTeamMember userLogin={ context.params.user_login } />
 		</>
 	);
+	next();
+}
+
+function renderViewerTeamMember( context, next ) {
+	const SingleTeamMemberTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'View Team Member', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<SingleTeamMemberTitle />
+			<ViewerDetails userId={ context.params.user_id } />
+		</>
+	);
+
 	next();
 }

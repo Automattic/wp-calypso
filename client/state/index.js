@@ -9,7 +9,7 @@ import consoleDispatcher from './console-dispatch';
 import initialReducer from './reducer';
 
 /**
- * @typedef {object} ReduxStore
+ * @typedef {Object} ReduxStore
  * @property {!Function} dispatch dispatches actions
  * @property {!Function} getState returns the current state tree
  * @property {Function} replaceReducers replaces the state reducers

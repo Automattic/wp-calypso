@@ -1,5 +1,4 @@
 import { Icon, people, starEmpty, chevronRight, postContent } from '@wordpress/icons';
-import classNames from 'classnames';
 import { numberFormat, translate } from 'i18n-calypso';
 import { capitalize } from 'lodash';
 import moment from 'moment';
@@ -7,17 +6,13 @@ import memoizeLast from 'calypso/lib/memoize-last';
 import { rangeOfPeriod } from 'calypso/state/stats/lists/utils';
 
 export function formatDate( date, period ) {
-	// NOTE: Consider localizing the dates, especially for the 'week' case.
+	// NOTE: Consider localizing the dates.
 	const momentizedDate = moment( date );
 	switch ( period ) {
+		case 'hour':
+			return momentizedDate.format( 'HH:mm' );
 		case 'day':
 			return momentizedDate.format( 'LL' );
-		case 'week':
-			return momentizedDate.format( 'L' ) + ' - ' + momentizedDate.add( 6, 'days' ).format( 'L' );
-		case 'month':
-			return momentizedDate.format( 'MMMM YYYY' );
-		case 'year':
-			return momentizedDate.format( 'YYYY' );
 		default:
 			return null;
 	}
@@ -36,19 +31,14 @@ export function getQueryDate( queryDate, timezoneOffset, period, quantity ) {
 }
 
 const EMPTY_RESULT = [];
-export const buildChartData = memoizeLast( ( activeLegend, chartTab, data, period, queryDate ) => {
+export const buildChartData = memoizeLast( ( activeLegend, chartTab, data, period, date ) => {
 	if ( ! data ) {
 		return EMPTY_RESULT;
 	}
 
-	return data.map( ( record ) => {
+	const filteredData = data.filter( ( record ) => moment( date ).isSameOrBefore( record.period ) );
+	return filteredData.map( ( record ) => {
 		const nestedValue = activeLegend.length ? record[ activeLegend[ 0 ] ] : null;
-
-		const recordClassName =
-			record.classNames && record.classNames.length ? record.classNames.join( ' ' ) : null;
-		const className = classNames( recordClassName, {
-			'is-selected': record.period === queryDate,
-		} );
 
 		return addTooltipData(
 			chartTab,
@@ -57,7 +47,6 @@ export const buildChartData = memoizeLast( ( activeLegend, chartTab, data, perio
 				value: record[ chartTab ],
 				data: record,
 				nestedValue,
-				className,
 			},
 			period
 		);
@@ -66,8 +55,15 @@ export const buildChartData = memoizeLast( ( activeLegend, chartTab, data, perio
 
 function addTooltipData( chartTab, item, period ) {
 	const tooltipData = [];
+	const label = ( () => {
+		if ( 'hour' === period ) {
+			return item.label;
+		}
+		return formatDate( item.data.period, period );
+	} )();
+
 	tooltipData.push( {
-		label: formatDate( item.data.period, period ),
+		label,
 		className: 'is-date-label',
 		value: null,
 	} );
@@ -81,7 +77,7 @@ function addTooltipData( chartTab, item, period ) {
 				icon: <Icon className="gridicon" icon={ starEmpty } />,
 			} );
 			break;
-		case 'unique_opens':
+		case 'unique_opens_count':
 			tooltipData.push( {
 				label: translate( 'Unique opens' ),
 				value: numberFormat( item.value ),

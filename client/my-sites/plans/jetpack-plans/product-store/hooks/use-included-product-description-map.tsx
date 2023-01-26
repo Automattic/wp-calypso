@@ -68,7 +68,7 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 
 			...setTranslation(
 				JETPACK_SEARCH_PRODUCTS,
-				translate( 'Lightning-fast search up to 100k records.' )
+				translate( 'Lightning-fast search up to 100k records and 100k requests/mo.' )
 			),
 
 			...setTranslation(

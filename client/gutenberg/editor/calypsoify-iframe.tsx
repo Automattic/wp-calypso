@@ -79,6 +79,7 @@ interface Props {
 	stripeConnectSuccess: 'gutenberg' | null;
 	showDraftPostModal: boolean;
 	blockEditorSettings: BlockEditorSettings;
+	completedFlow?: string;
 }
 
 interface CheckoutModalOptions extends RequestCart {
@@ -124,6 +125,7 @@ enum EditorActions {
 	GetCalypsoUrlInfo = 'getCalypsoUrlInfo',
 	TrackPerformance = 'trackPerformance',
 	GetIsAppBannerVisible = 'getIsAppBannerVisible',
+	NavigateToHome = 'navigateToHome',
 }
 
 type ComponentProps = Props &
@@ -488,6 +490,10 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				this.appBannerPort = ports[ 0 ];
 			}
 		}
+
+		if ( EditorActions.NavigateToHome === action ) {
+			page( `/home/${ this.props.siteSlug }` );
+		}
 	};
 
 	handlePostStatusChange = ( status: string ) => {
@@ -777,6 +783,7 @@ const mapStateToProps = (
 		showDraftPostModal,
 		pressThisData,
 		blockEditorSettings,
+		completedFlow,
 	}: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
@@ -803,6 +810,8 @@ const mapStateToProps = (
 		showDraftPostModal,
 		...pressThisData,
 		answer_prompt: getQueryArg( window.location.href, 'answer_prompt' ),
+		completedFlow,
+		canvas: 'edit', // Load side editor in edit mode instead of displaying sidebar by default (Gutenberg v15.0.0)
 	} );
 
 	// needed for loading the editor in SU sessions

@@ -18,7 +18,7 @@ import { combineReducers } from 'calypso/state/utils';
  *
  *
  * @param  {Array} state  Current state
- * @param  {object} action Action payload
+ * @param  {Object} action Action payload
  * @returns {Array}        Updated state
  */
 export function items( state = {}, action ) {

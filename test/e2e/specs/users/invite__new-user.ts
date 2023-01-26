@@ -6,13 +6,15 @@ import {
 	DataHelper,
 	EmailClient,
 	SidebarComponent,
+	AddPeoplePage,
 	InvitePeoplePage,
 	PeoplePage,
 	LoginPage,
 	UserSignupPage,
-	Roles,
+	RoleValue,
 	CloseAccountFlow,
 	TestAccount,
+	Roles,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -25,6 +27,7 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 		usernamePrefix: 'invited',
 	} );
 
+	let userManagementRevampFeature = false;
 	let acceptInviteLink: string;
 	let page: Page;
 
@@ -39,6 +42,10 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 		beforeAll( async () => {
 			const testAccount = new TestAccount( invitingUser );
 			await testAccount.authenticate( page );
+
+			userManagementRevampFeature = await page.evaluate(
+				`configData.features['user-management-revamp']`
+			);
 		} );
 
 		it( 'Navigate to Users > All Users', async function () {
@@ -48,19 +55,30 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 
 		it( `Create new invite`, async function () {
 			peoplePage = new PeoplePage( page );
-			await peoplePage.clickInviteUser();
+			if ( userManagementRevampFeature ) {
+				await peoplePage.clickAddTeamMember();
+				const addPeoplePage = new AddPeoplePage( page );
 
-			const invitePeoplePage = new InvitePeoplePage( page );
-			await invitePeoplePage.invite( {
-				email: testUser.email,
-				role: role as Roles,
-				message: `Test invite for role of ${ role }`,
-			} );
+				await addPeoplePage.addTeamMember( {
+					email: testUser.email,
+					role: role.toLowerCase() as RoleValue,
+					message: `Test invite for role of ${ role }`,
+				} );
+			} else {
+				await peoplePage.clickInviteUser();
+				const invitePeoplePage = new InvitePeoplePage( page );
+
+				await invitePeoplePage.invite( {
+					email: testUser.email,
+					role: role as Roles,
+					message: `Test invite for role of ${ role }`,
+				} );
+			}
 		} );
 
 		it( 'Confirm invite is pending', async function () {
 			await sidebarComponent.navigate( 'Users', 'All Users' );
-			await peoplePage.clickTab( 'Invites' );
+			! userManagementRevampFeature && ( await peoplePage.clickTab( 'Invites' ) );
 			await peoplePage.selectInvitedUser( testUser.email );
 		} );
 	} );

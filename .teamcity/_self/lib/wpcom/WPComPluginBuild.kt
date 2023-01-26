@@ -6,6 +6,7 @@ import _self.lib.utils.mergeTrunk
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.ParametrizedWithType
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
@@ -63,6 +64,8 @@ open class WPComPluginBuild(
 		}
 
 		features {
+			perfmon {
+			}
 			pullRequests {
 				vcsRootExtId = "${Settings.WpCalypso.id}"
 				provider = github {
@@ -200,7 +203,7 @@ open class WPComPluginBuild(
 							payload="commit=%build.vcs.number%&plugin=$pluginSlug"
 							# Note: openssl adds the prefix `(stdin)= `, which is removed with sed.
 							signature=`echo -n "${'$'}payload" | openssl sha256 -hmac "%mc_auth_secret%" | sed 's/^.* //'`
-							ping_response=`curl -s -d "${'$'}payload" -X POST -H "TEAMCITY_SIGNATURE: ${'$'}signature" %mc_post_root%?plugin-deploy-reminder`
+							ping_response=`curl -s -d "${'$'}payload" -X POST -H "TEAMCITY-SIGNATURE: ${'$'}signature" %mc_post_root%?plugin-deploy-reminder`
 							echo -e "Slack ping status: ${'$'}ping_response\n"
 						fi
 					else

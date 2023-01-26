@@ -32,13 +32,17 @@ export const transferStates = {
 
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
-const WaitForAtomic: Step = function WaitForAtomic( { navigation } ) {
+const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 	const { submit } = navigation;
 	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
 	const site = useSite();
 
-	const siteId = site?.ID;
+	let siteId = site?.ID as number;
+	// In some cases, we get the siteId from the navigation extra data rather than the SITE_STORE.
+	if ( data?.siteId ) {
+		siteId = data?.siteId as number;
+	}
 
 	const { getSiteLatestAtomicTransfer, getSiteLatestAtomicTransferError } = useSelect( ( select ) =>
 		select( SITE_STORE )
@@ -75,7 +79,7 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation } ) {
 		}
 
 		setPendingAction( async () => {
-			setProgress( 0 );
+			setProgress( 0.4 );
 
 			const startTime = new Date().getTime();
 			const totalTimeout = 1000 * 300;
@@ -94,16 +98,16 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation } ) {
 
 				switch ( transferStatus ) {
 					case transferStates.PENDING:
-						setProgress( 0.2 );
-						break;
-					case transferStates.ACTIVE:
-						setProgress( 0.4 );
-						break;
-					case transferStates.PROVISIONED:
 						setProgress( 0.5 );
 						break;
-					case transferStates.COMPLETED:
+					case transferStates.ACTIVE:
+						setProgress( 0.6 );
+						break;
+					case transferStates.PROVISIONED:
 						setProgress( 0.7 );
+						break;
+					case transferStates.COMPLETED:
+						setProgress( 0.8 );
 						break;
 				}
 
@@ -130,7 +134,7 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation } ) {
 
 			setProgress( 1 );
 
-			return { finishedWaitingForAtomic: true };
+			return { finishedWaitingForAtomic: true, siteSlug: data?.siteSlug };
 		} );
 
 		submit?.();

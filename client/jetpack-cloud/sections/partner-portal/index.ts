@@ -107,7 +107,18 @@ export default function () {
 		);
 	}
 
-	// Billing Dashboard.
+	// Pricing page
+	page(
+		`/partner-portal/prices`,
+		controller.requireAccessContext,
+		controller.requireTermsOfServiceConsentContext,
+		controller.requireSelectedPartnerKeyContext,
+		controller.pricesContext,
+		makeLayout,
+		clientRender
+	);
+
+	// Billing dashboard
 	page(
 		`/partner-portal/billing`,
 		controller.requireAccessContext,

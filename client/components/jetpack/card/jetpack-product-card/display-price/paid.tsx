@@ -27,10 +27,10 @@ const Placeholder: React.FC< OwnProps > = ( { billingTerm, expiryDate } ) => {
 				original
 				className="display-price__original-price"
 				rawPrice={ 0.01 }
-				currencyCode="$"
+				currencyCode="USD"
 			/>
 			{ /* Remove this secondary <PlanPrice/> placeholder if we're not showing discounted prices */ }
-			<PlanPrice discounted rawPrice={ 0.01 } currencyCode="$" />
+			<PlanPrice discounted rawPrice={ 0.01 } currencyCode="USD" />
 			<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
 		</>
 	);
@@ -112,7 +112,7 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 				finalPrice={ finalPrice }
 				isDiscounted={ isDiscounted }
 			/>
-			<span aria-hidden="true">
+			<span className="display-price__prices" aria-hidden="true">
 				{ displayFrom && <span className="display-price__from">from</span> }
 				{ isDiscounted ? (
 					<DiscountedPrice { ...props } finalPrice={ finalPrice } />
@@ -125,7 +125,7 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 					{ tooltipText }
 				</InfoPopover>
 			) }
-			<span aria-hidden="true">
+			<span className="display-price__details" aria-hidden="true">
 				<TimeFrame
 					billingTerm={ billingTerm }
 					discountedPriceDuration={ discountedPriceDuration }

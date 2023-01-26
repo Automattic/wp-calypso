@@ -53,7 +53,7 @@ function fallbackScrollIntoViewport( element, behavior, scrollMode ) {
  * Scroll an element into the viewport.
  *
  * @param {HTMLElement} element - The element to be scrolled into view.
- * @param {object} options - Options to use for the scrolling (same as the options for Element.scrollIntoView).
+ * @param {Object} options - Options to use for the scrolling (same as the options for Element.scrollIntoView).
  */
 export default function scrollIntoViewport( element, options = {} ) {
 	const { behavior = 'auto', block = 'start', scrollMode = 'always', ...otherOptions } = options;

@@ -1,0 +1,57 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "../modernized-mixins";
+
+.stats-summary-nav {
+	display: flex;
+	justify-content: space-between;
+
+	@include navigation-segment-control-buttons( "auto" );
+
+	@media ( max-width: $break-medium ) {
+		padding: 0 32px;
+	}
+
+	// break title and navigation into separate rows
+	@media ( max-width: 1160px ) {
+		display: block;
+	}
+
+	@media ( min-width: $break-medium ) and ( max-width: 1160px ) {
+		padding-bottom: 24px;
+	}
+
+	@media ( max-width: $break-small ) {
+		padding: 0 16px;
+	}
+
+	.stats-section-title {
+		@include breakpoint-deprecated( "<660px" ) {
+			margin-left: 0;
+			margin-right: 0;
+		}
+
+		@include breakpoint-deprecated( "<480px" ) {
+			text-align: left;
+		}
+	}
+}
+
+.stats-summary-nav__header {
+	@include section-header-with-siblings;
+
+	@media ( max-width: $break-medium ) {
+		padding: 0;
+	}
+
+	h3 {
+		@include section-header;
+	}
+}
+
+.stats-summary-nav__intervals-container {
+	display: flex;
+}
+
+.stats-summary-nav__intervals {
+	align-items: center;
+}

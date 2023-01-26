@@ -3,12 +3,14 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import ProductLightbox from 'calypso/my-sites/plans/jetpack-plans/product-lightbox';
 import StoreItemInfoContext, {
 	useStoreItemInfoContext,
 } from 'calypso/my-sites/plans/jetpack-plans/product-store/context/store-item-info-context';
 import { useProductLightbox } from 'calypso/my-sites/plans/jetpack-plans/product-store/hooks/use-product-lightbox';
 import { useStoreItemInfo } from 'calypso/my-sites/plans/jetpack-plans/product-store/hooks/use-store-item-info';
+import { ItemPrice } from 'calypso/my-sites/plans/jetpack-plans/product-store/item-price';
 import { MoreInfoLink } from 'calypso/my-sites/plans/jetpack-plans/product-store/more-info-link';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -55,10 +57,18 @@ export const Table: React.FC = () => {
 								target={ ! isFree && getIsExternal( item ) ? '_blank' : undefined }
 								href={ ! isFree ? getCheckoutURL( item ) : links.connect_free }
 							>
-								{ isFree ? translate( 'Get started' ) : getCtaLabel( item, '' ) }
+								<span className="pricing-comparison__product-header--cta-desktop">
+									{ isFree ? translate( 'Get started' ) : getCtaLabel( item, '' ) }
+								</span>
+								<span className="pricing-comparison__product-header--cta-mobile">
+									{ isFree ? translate( 'Get started for free' ) : getCtaLabel( item, '' ) }
+								</span>
 							</Button>
+
+							{ ! isFree && <ItemPrice item={ item } siteId={ null } /> }
+
 							{ isFree ? (
-								<span className="more-info-link">{ translate( 'Get started for free' ) }</span>
+								<span className="more-info-link">{ translate( 'Basic Jetpack features' ) }</span>
 							) : (
 								<MoreInfoLink onClick={ onClickMoreInfoFactory( item ) } item={ item } />
 							) }
@@ -151,7 +161,7 @@ export const Table: React.FC = () => {
 	);
 };
 
-export const TableWithStoreContext: React.FC< TableWithStoreContextProps > = ( {
+const TableWithStoreContext: React.FC< TableWithStoreContextProps > = ( {
 	locale,
 	rootUrl,
 	urlQueryArgs,
@@ -186,5 +196,17 @@ export const TableWithStoreContext: React.FC< TableWithStoreContextProps > = ( {
 		<StoreItemInfoContext.Provider value={ storeItemInfo }>
 			<Table />
 		</StoreItemInfoContext.Provider>
+	);
+};
+
+export const TableWithStoreAccess: React.FC< TableWithStoreContextProps > = ( {
+	locale,
+	rootUrl,
+	urlQueryArgs,
+} ) => {
+	return (
+		<CalypsoShoppingCartProvider>
+			<TableWithStoreContext locale={ locale } rootUrl={ rootUrl } urlQueryArgs={ urlQueryArgs } />
+		</CalypsoShoppingCartProvider>
 	);
 };

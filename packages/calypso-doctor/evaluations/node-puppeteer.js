@@ -19,7 +19,9 @@ module.exports = {
 	},
 	fix: () => {
 		const shell = getShellRc();
-		if ( shell ) return `Add \`export PUPPETEER_SKIP_DOWNLOAD=true\` to ${ shell }`;
+		if ( shell ) {
+			return `Add \`export PUPPETEER_SKIP_DOWNLOAD=true\` to ${ shell }`;
+		}
 		return 'Set env variable `PUPPETEER_SKIP_DOWNLOAD` with value `true`';
 	},
 };

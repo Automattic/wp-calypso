@@ -1,0 +1,20 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.site-select-checkbox {
+	input[type="checkbox"] {
+		position: absolute;
+		margin: 0;
+		inset-block-start: 50%;
+		transform: translateY(-50%);
+		inset-inline-start: 16px;
+
+		@include break-xlarge {
+			inset-inline-start: 8px;
+		}
+
+		@include break-wide {
+			inset-inline-start: 16px;
+		}
+	}
+}

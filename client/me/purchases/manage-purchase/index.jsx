@@ -59,12 +59,13 @@ import {
 	getDisplayName,
 	getPartnerName,
 	getRenewalPrice,
+	getRenewalPriceInSmallestUnit,
 	handleRenewMultiplePurchasesClick,
 	handleRenewNowClick,
 	hasAmountAvailableToRefund,
 	hasPaymentMethod,
 	isPaidWithCredits,
-	isCancelable,
+	canAutoRenewBeTurnedOff,
 	isExpired,
 	isOneTimePurchase,
 	isPartnerPurchase,
@@ -457,7 +458,12 @@ class ManagePurchase extends Component {
 			translate,
 		} = this.props;
 
+		if ( canAutoRenewBeTurnedOff( purchase ) ) {
+			return null;
+		}
+
 		let text = translate( 'Remove subscription' );
+
 		if ( isPlan( purchase ) ) {
 			text = translate( 'Remove plan' );
 		} else if ( isDomainRegistration( purchase ) ) {
@@ -597,7 +603,7 @@ class ManagePurchase extends Component {
 		const { isAtomicSite, purchase, translate } = this.props;
 		const { id } = purchase;
 
-		if ( ! isCancelable( purchase ) ) {
+		if ( ! canAutoRenewBeTurnedOff( purchase ) ) {
 			return null;
 		}
 
@@ -951,8 +957,8 @@ class ManagePurchase extends Component {
 								</div>
 							) : (
 								<PlanPrice
-									rawPrice={ getRenewalPrice( purchase ) }
-									productDisplayPrice={ purchase.productDisplayPrice }
+									rawPrice={ getRenewalPriceInSmallestUnit( purchase ) }
+									isSmallestUnit
 									currencyCode={ purchase.currencyCode }
 									taxText={ purchase.taxText }
 									isOnSale={ !! purchase.saleAmount }
@@ -1019,6 +1025,7 @@ class ManagePurchase extends Component {
 			getChangePaymentMethodUrlFor,
 			isProductOwner,
 		} = this.props;
+
 		let changePaymentMethodPath = false;
 		if ( ! this.isDataLoading( this.props ) && site && canEditPaymentDetails( purchase ) ) {
 			changePaymentMethodPath = getChangePaymentMethodUrlFor( siteSlug, purchase );
@@ -1142,6 +1149,7 @@ function PurchasesQueryComponent( { isSiteLevel, selectedSiteId } ) {
 export default connect(
 	( state, props ) => {
 		const purchase = getByPurchaseId( state, props.purchaseId );
+
 		const purchaseAttachedTo =
 			purchase && purchase.attachedToPurchaseId
 				? getByPurchaseId( state, purchase.attachedToPurchaseId )

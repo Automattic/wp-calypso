@@ -1,5 +1,5 @@
 import { AnnualHighlightCards } from '@automattic/components';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -35,7 +35,10 @@ const FOLLOWERS_QUERY = { type: 'wpcom', max: 0 };
 
 // Meant to replace annual-site-stats section
 export default function AnnualHighlightsSection( { siteId }: { siteId: number } ) {
-	const [ year, setYear ] = useState( new Date().getFullYear() );
+	// In January show the previous year.
+	const [ year, setYear ] = useState(
+		new Date().getMonth() === 0 ? new Date().getFullYear() - 1 : new Date().getFullYear()
+	);
 	const currentYear = new Date().getFullYear();
 	const insights = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, 'statsInsights' )
@@ -59,6 +62,11 @@ export default function AnnualHighlightsSection( { siteId }: { siteId: number } 
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const viewMoreHref = siteSlug ? `/stats/annualstats/${ siteSlug }` : null;
+
+	useEffect( () => {
+		// Restart selected year when navigating to another page.
+		setYear( new Date().getMonth() === 0 ? new Date().getFullYear() - 1 : currentYear );
+	}, [ siteId, currentYear ] );
 
 	const oldestYear = useMemo(
 		() =>

@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial/index';
@@ -9,7 +9,6 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
-import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { logToLogstash } from 'calypso/lib/logstash';
@@ -162,25 +161,30 @@ export function PurchaseCancel( {
 	const logPurchasesError = useLogPurchasesError( 'site level purchase cancel load error' );
 
 	return (
-		<Fragment>
-			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-			<Main wideLayout className="purchases">
-				<DocumentHead title={ titles.cancelPurchase } />
+		<Main wideLayout className="purchases">
+			<DocumentHead title={ titles.cancelPurchase } />
+			{ ! isJetpackCloud() && (
+				<FormattedHeader
+					brandFont
+					className="purchases__page-heading"
+					headerText={ titles.sectionTitle }
+					align="left"
+				/>
+			) }
 
-				<CheckoutErrorBoundary
-					errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
-					onError={ logPurchasesError }
-				>
-					<CancelPurchase
-						purchaseId={ purchaseId }
-						siteSlug={ siteSlug }
-						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-						getConfirmCancelDomainUrlFor={ getConfirmCancelDomainUrlFor }
-						purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
-					/>
-				</CheckoutErrorBoundary>
-			</Main>
-		</Fragment>
+			<CheckoutErrorBoundary
+				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
+				onError={ logPurchasesError }
+			>
+				<CancelPurchase
+					purchaseId={ purchaseId }
+					siteSlug={ siteSlug }
+					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+					getConfirmCancelDomainUrlFor={ getConfirmCancelDomainUrlFor }
+					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
+				/>
+			</CheckoutErrorBoundary>
+		</Main>
 	);
 }
 

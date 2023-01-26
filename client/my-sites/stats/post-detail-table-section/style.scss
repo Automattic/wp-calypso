@@ -13,7 +13,7 @@ $common-border-radius: 4px;
 			display: none;
 		}
 
-		.is-post-weeks {
+		.is-detail-weeks {
 			tr:first-child {
 				td {
 					&:first-child {
@@ -22,6 +22,14 @@ $common-border-radius: 4px;
 
 					&:nth-child(2) {
 						border-top-left-radius: 0;
+					}
+
+					&:nth-last-child(2) {
+						border-top-right-radius: 0;
+					}
+
+					&:nth-last-child(3) {
+						border-top-right-radius: $common-border-radius;
 					}
 				}
 			}
@@ -35,12 +43,37 @@ $common-border-radius: 4px;
 					&:nth-child(2) {
 						border-bottom-left-radius: 0;
 					}
+
+					&:nth-last-child(2) {
+						border-bottom-right-radius: 0;
+					}
+
+					&:nth-last-child(3) {
+						border-bottom-right-radius: $common-border-radius;
+					}
 				}
+			}
+
+			th:nth-last-child(2) {
+				text-align: right;
+				width: 100px;
+			}
+
+			td:nth-last-child(2) {
+				background-color: var(--studio-white);
+				font-weight: 600;
+				text-align: right;
+				vertical-align: top;
 			}
 		}
 	}
 
 	table {
+		th,
+		td {
+			cursor: auto;
+		}
+
 		th {
 			&.spacer {
 				color: var(--studio-white);
@@ -52,24 +85,23 @@ $common-border-radius: 4px;
 		td {
 			background-color: var(--color-primary-5);
 
-			&.stats-detail__row-label {
-				background: none;
-				text-align: left;
-			}
-
+			&.stats-detail__row-label,
+			&.has-no-data,
 			&:last-child {
-				background: none;
-				font-weight: 600;
-				text-align: right;
-			}
-
-			&.has-no-data {
 				background-color: var(--studio-white);
 			}
 
 			&.highest-count {
 				background-color: var(--color-primary-10);
-				color: var(--color-neutral-60);
+			}
+
+			&.stats-detail__row-label {
+				text-align: left;
+			}
+
+			&:last-child {
+				font-weight: 600;
+				text-align: right;
 			}
 
 			.stats-detail-weeks__date {

@@ -100,7 +100,7 @@ const apiVersion = '1.3';
 /**
  * Perform a search.
  *
- * @param {object} options - Search options
+ * @param {Object} options - Search options
  * @returns {Promise} A promise to the JSON response object
  */
 export function search( options: SearchParams ) {
@@ -167,8 +167,12 @@ function getFilterByCategory( category: string ): {
 	return {
 		bool: {
 			should: [
+				// matching wp.org categories and tags
 				{ term: { 'taxonomy.plugin_category.slug': category } },
 				{ terms: { 'taxonomy.plugin_tags.slug': categoryTags } },
+				// matching wc.com categories and tags
+				{ term: { 'taxonomy.wpcom_marketplace_categories.slug': category } },
+				{ terms: { 'taxonomy.plugin_tag.slug': categoryTags } },
 			],
 		},
 	};

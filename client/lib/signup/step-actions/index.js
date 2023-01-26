@@ -225,6 +225,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		isPurchasingItem: isPurchasingDomainItem,
 		siteUrl,
 		themeSlugWithRepo,
+		themeStyleVariation,
 		themeItem,
 		siteAccentColor,
 	} = stepData;
@@ -297,20 +298,16 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 				themeItem,
 			};
 
-			processItemCart(
-				providedDependencies,
-				newCartItems,
-				callback,
-				reduxStore,
-				siteSlug,
+			processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, {
 				isFreeThemePreselected,
-				themeSlugWithRepo
-			);
+				themeSlugWithRepo,
+				themeStyleVariation,
+			} );
 		}
 	);
 }
 
-export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
+export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo, themeStyleVariation } ) {
 	if ( isEmpty( themeSlugWithRepo ) ) {
 		defer( callback );
 		return;
@@ -319,13 +316,19 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 	const theme = themeSlugWithRepo.split( '/' )[ 1 ];
 
 	wpcom.req
-		.post( `/sites/${ siteSlug }/themes/mine`, { theme } )
+		.post( `/sites/${ siteSlug }/themes/mine`, {
+			theme,
+			...( themeStyleVariation && { style_variation_slug: themeStyleVariation } ),
+		} )
 		.then( () => callback() )
 		.catch( ( error ) => callback( [ error ] ) );
 }
 
-function addDIFMLiteToCart( callback, dependencies, step, reduxStore ) {
+function addDIFMLiteProductToCart( callback, dependencies, step, reduxStore ) {
 	const { selectedDesign, selectedSiteCategory, isLetUsChooseSelected, siteSlug } = dependencies;
+	if ( step.lastKnownFlow === 'do-it-for-me-store' ) {
+		dependencies.isStoreFlow = true;
+	}
 	const extra = buildDIFMCartExtrasObject( dependencies );
 	const cartItem = {
 		product_slug: WPCOM_DIFM_LITE,
@@ -342,17 +345,16 @@ function addDIFMLiteToCart( callback, dependencies, step, reduxStore ) {
 		cartItem,
 	};
 	const newCartItems = [ cartItem ];
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug );
 }
 
 /**
- * If the user chooses DIFM Lite for a new site, then
- * create a new site, call the `setDesignOnSite` function (see below)
- * and add the DIFM Lite product to the cart.
- * If the user chooses DIFM Lite for an existing site, then
- * just add the DIFM Lite product to the cart.
+ * If the user chooses DIFM Lite (BBE) for a new site, then
+ * create a new site, and add the DIFM Lite (BBE) product to the cart.
+ * If the user chooses DIFM Lite (BBE) for an existing site, then
+ * just add the DIFM Lite (BBE) product to the cart.
  */
-export function setDIFMLiteDesign( callback, dependencies, step, reduxStore ) {
+export function createSiteAndAddDIFMToCart( callback, dependencies, step, reduxStore ) {
 	const signupDependencies = getSignupDependencyStore( reduxStore.getState() );
 	const { newOrExistingSiteChoice } = signupDependencies;
 
@@ -361,26 +363,18 @@ export function setDIFMLiteDesign( callback, dependencies, step, reduxStore ) {
 	if ( 'new-site' === newOrExistingSiteChoice ) {
 		let siteSlug = null;
 
-		const setDesignOnSiteCallback = ( error ) => {
-			if ( error ) {
-				callback( error );
-				return;
-			}
-			addDIFMLiteToCart( callback, { ...providedDependencies, siteSlug }, step, reduxStore );
-		};
-
 		const createSiteWithCartCallback = ( error, result ) => {
 			if ( error ) {
 				callback( error );
 				return;
 			}
 			siteSlug = result.siteSlug;
-			setDesignOnSite( setDesignOnSiteCallback, { ...providedDependencies, siteSlug } );
+			addDIFMLiteProductToCart( callback, { ...providedDependencies, siteSlug }, step, reduxStore );
 		};
 
 		createSiteWithCart( createSiteWithCartCallback, providedDependencies, step, reduxStore );
 	} else {
-		addDIFMLiteToCart( callback, providedDependencies, step, reduxStore );
+		addDIFMLiteProductToCart( callback, providedDependencies, step, reduxStore );
 	}
 }
 
@@ -506,16 +500,9 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 	const providedDependencies = { cartItem };
 	const newCartItems = [ cartItem, emailItem ].filter( ( item ) => item );
 
-	processItemCart(
-		providedDependencies,
-		newCartItems,
-		callback,
-		reduxStore,
-		siteSlug,
-		null,
-		null,
-		lastKnownFlow
-	);
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, {
+		lastKnownFlow,
+	} );
 }
 export function addAddOnsToCart(
 	callback,
@@ -537,16 +524,7 @@ export function addAddOnsToCart(
 	}
 
 	const newCartItems = cartItem.filter( ( item ) => item );
-	processItemCart(
-		providedDependencies,
-		newCartItems,
-		callback,
-		reduxStore,
-		slug,
-		null,
-		null,
-		null
-	);
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug );
 }
 
 export function addDomainToCart(
@@ -563,16 +541,7 @@ export function addDomainToCart(
 
 	const newCartItems = [ domainItem, googleAppsCartItem ].filter( ( item ) => item );
 
-	processItemCart(
-		providedDependencies,
-		newCartItems,
-		callback,
-		reduxStore,
-		slug,
-		null,
-		null,
-		null
-	);
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug );
 }
 
 function processItemCart(
@@ -581,9 +550,7 @@ function processItemCart(
 	callback,
 	reduxStore,
 	siteSlug,
-	isFreeThemePreselected,
-	themeSlugWithRepo,
-	lastKnownFlow
+	{ isFreeThemePreselected, themeSlugWithRepo, themeStyleVariation, lastKnownFlow } = {}
 ) {
 	const addToCartAndProceed = async () => {
 		debug( 'preparing to add cart items (if any) from', newCartItems );
@@ -616,11 +583,15 @@ function processItemCart(
 	const userLoggedIn = isUserLoggedIn( reduxStore.getState() );
 
 	if ( ! userLoggedIn && isFreeThemePreselected ) {
-		setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
+		setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo, themeStyleVariation } );
 	} else if ( userLoggedIn && isFreeThemePreselected ) {
 		fetchSitesAndUser(
 			siteSlug,
-			setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ),
+			setThemeOnSite.bind( null, addToCartAndProceed, {
+				siteSlug,
+				themeSlugWithRepo,
+				themeStyleVariation,
+			} ),
 			reduxStore
 		);
 	} else if ( userLoggedIn && siteSlug ) {

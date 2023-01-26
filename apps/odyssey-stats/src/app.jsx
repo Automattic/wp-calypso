@@ -12,19 +12,13 @@ import currentUser from 'calypso/state/current-user/reducer';
 import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
 import { setStore } from 'calypso/state/redux-store';
 import sites from 'calypso/state/sites/reducer';
-import { setLocale as setLocaleAction } from 'calypso/state/ui/language/actions';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
+import setLocale from './lib/set-locale';
 import { setupContextMiddleware } from './page-middleware/setup-context';
 import registerStatsPages from './routes';
 
 import 'calypso/assets/stylesheets/style.scss';
-import './wp-admin.scss';
-
-const setLocale = ( dispatch ) => {
-	const defaultLocale = config( 'i18n_default_locale_slug' ) || 'en';
-	const siteLocale = config( 'i18n_locale_slug' );
-	dispatch( setLocaleAction( siteLocale ? siteLocale : defaultLocale ) );
-};
+import './app.scss';
 
 async function AppBoot() {
 	const siteId = config( 'blog_id' );
@@ -55,4 +49,5 @@ async function AppBoot() {
 	}
 	registerStatsPages( config( 'admin_page_base' ) );
 }
+
 AppBoot();

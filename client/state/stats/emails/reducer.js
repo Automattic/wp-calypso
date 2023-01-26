@@ -1,69 +1,64 @@
-import { get, sortBy, merge } from 'lodash';
+import { merge } from 'lodash';
 import {
 	EMAIL_STATS_RECEIVE,
 	EMAIL_STATS_REQUEST,
 	EMAIL_STATS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { items as itemSchemas } from './schema';
-
-/**
- * Returns a serialized stats query, used as the key in the
- * `state.stats.lists.items` and `state.stats.lists.requesting` state objects.
- *
- * @param   {object} query    Stats query
- * @returns {string}          Serialized stats query
- */
-export function getSerializedStatsQuery( query = {} ) {
-	return JSON.stringify( sortBy( Object.entries( query ), ( pair ) => pair[ 0 ] ) );
-}
 
 /**
  * Returns the updated requests state after an action has been dispatched. The
  * state maps site ID, post ID and stat keys to the request stats.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const requests = ( state = {}, action ) => {
 	switch ( action.type ) {
-		case EMAIL_STATS_REQUEST: {
-			const { siteId, postId, period, statType } = action;
+		case EMAIL_STATS_REQUEST:
+		case EMAIL_STATS_RECEIVE:
+		case EMAIL_STATS_REQUEST_FAILURE:
+			// eslint-disable-next-line no-case-declarations
+			const { siteId, postId, period, statType, date } = action;
+			// eslint-disable-next-line no-case-declarations
+			const status = ( () => {
+				switch ( action.type ) {
+					case EMAIL_STATS_REQUEST:
+						return { requesting: true, status: 'pending' };
+					case EMAIL_STATS_RECEIVE:
+						return { requesting: false, status: 'success' };
+					case EMAIL_STATS_REQUEST_FAILURE:
+						return { requesting: true, status: 'error' };
+				}
+			} )();
+
+			// don't set data key when period is alltime
+			if ( period === PERIOD_ALL_TIME ) {
+				return merge( {}, state, {
+					[ siteId ]: {
+						[ postId ]: {
+							[ period ]: {
+								[ statType ]: status,
+							},
+						},
+					},
+				} );
+			}
+
 			return merge( {}, state, {
 				[ siteId ]: {
 					[ postId ]: {
 						[ period ]: {
-							[ statType ]: { requesting: true, status: 'pending' },
+							[ statType ]: {
+								[ date ]: status,
+							},
 						},
 					},
 				},
 			} );
-		}
-		case EMAIL_STATS_RECEIVE: {
-			const { siteId, postId, period, statType } = action;
-			return merge( {}, state, {
-				[ siteId ]: {
-					[ postId ]: {
-						[ period ]: {
-							[ statType ]: { requesting: false, status: 'success' },
-						},
-					},
-				},
-			} );
-		}
-		case EMAIL_STATS_REQUEST_FAILURE: {
-			const { siteId, postId, period, statType } = action;
-			return merge( {}, state, {
-				[ siteId ]: {
-					[ postId ]: {
-						[ period ]: {
-							[ statType ]: { requesting: false, status: 'error' },
-						},
-					},
-				},
-			} );
-		}
 	}
 
 	return state;
@@ -73,31 +68,25 @@ export const requests = ( state = {}, action ) => {
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID, email ID and stat keys to the value of the stat.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const items = withSchemaValidation( itemSchemas, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case EMAIL_STATS_RECEIVE:
-			return {
-				...state,
-				[ action.siteId ]: {
-					...get( state, [ action.siteId ], {} ),
-					[ action.postId ]: {
-						[ action.period ]: {
-							[ action.statType ]: {
-								...get(
-									state,
-									[ action.siteId, action.postId, action.period, action.statType ],
-									{}
-								),
-								...action.stats,
-							},
+			// eslint-disable-next-line no-case-declarations
+			const { siteId, postId, period, statType } = action;
+
+			return merge( {}, state, {
+				[ siteId ]: {
+					[ postId ]: {
+						[ period ]: {
+							[ statType ]: action.stats,
 						},
 					},
 				},
-			};
+			} );
 	}
 
 	return state;

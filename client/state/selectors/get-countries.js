@@ -9,7 +9,7 @@ import 'calypso/state/countries/init';
 /**
  * Retrieves the list of countries from the specified type.
  *
- * @param {object} state - global state tree
+ * @param {Object} state - global state tree
  * @param {string} type - type of list ('domains, 'payments', or 'sms)
  * @returns {null|CountryListItem[]} the list of countries
  */

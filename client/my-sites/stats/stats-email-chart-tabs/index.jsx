@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -10,7 +9,7 @@ import Legend from 'calypso/components/chart/legend';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteOption } from 'calypso/state/sites/selectors';
-import { getLoadingTabs, getCountRecords } from 'calypso/state/stats/email-chart-tabs/selectors';
+import { isLoadingTabs, getCountRecords } from 'calypso/state/stats/email-chart-tabs/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatTabs from '../stats-tabs';
@@ -43,9 +42,14 @@ class StatModuleChartTabs extends Component {
 		),
 		isActiveTabLoading: PropTypes.bool,
 		onChangeLegend: PropTypes.func.isRequired,
+		barClick: PropTypes.func,
+		chartData: PropTypes.array,
+		chartTab: PropTypes.string,
+		switchTab: PropTypes.func,
+		queryDate: PropTypes.string,
+		recordGoogleEvent: PropTypes.func,
+		sliceFromBeginning: PropTypes.bool,
 	};
-
-	intervalId = null;
 
 	onLegendClick = ( chartItem ) => {
 		const activeLegend = this.props.activeLegend.slice();
@@ -66,16 +70,12 @@ class StatModuleChartTabs extends Component {
 	};
 
 	render() {
-		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
+		const { isActiveTabLoading, onChangeMaxBars } = this.props;
 
-		const { isActiveTabLoading } = this.props;
-
-		//TODO Try to retire `.stats-module` and replace it with `.is-chart-tabs`.
 		const classes = [
 			'is-chart-tabs',
 			{
 				'is-loading': isActiveTabLoading,
-				'stats-module': ! isNewFeatured,
 			},
 		];
 
@@ -93,7 +93,13 @@ class StatModuleChartTabs extends Component {
 				/>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
-				<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 35 } />
+				<Chart
+					barClick={ this.props.barClick }
+					data={ chartData }
+					minBarWidth={ 35 }
+					sliceFromBeginning={ false }
+					onChangeMaxBars={ onChangeMaxBars }
+				/>
 				<StatTabs
 					data={ this.props.counts }
 					tabs={ this.props.charts }
@@ -114,19 +120,40 @@ const NO_SITE_STATE = {
 };
 
 const connectComponent = connect(
-	( state, { activeLegend, period: { period }, chartTab, queryDate, postId, statType } ) => {
+	(
+		state,
+		{
+			activeLegend,
+			period: { period, endOf },
+			chartTab,
+			queryDate,
+			postId,
+			statType,
+			onChangeMaxBars,
+			maxBars,
+		}
+	) => {
 		const siteId = getSelectedSiteId( state );
 		if ( ! siteId ) {
 			return NO_SITE_STATE;
 		}
 
-		const quantity = 'year' === period ? 10 : 30;
+		const quantity = 'hour' === period ? 24 : 30;
 		const counts = getCountRecords( state, siteId, postId, period, statType );
-		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
-		const loadingTabs = getLoadingTabs( state, siteId, postId, period );
-		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length !== quantity;
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
 		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
+		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
+		const maxBarsForRequest = 'hour' === period ? quantity : maxBars;
+		const isActiveTabLoading = isLoadingTabs(
+			state,
+			siteId,
+			postId,
+			period,
+			statType,
+			endOf.format( 'YYYY-MM-DD' ),
+			chartData.length,
+			maxBarsForRequest
+		);
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;
 
 		return {
@@ -135,6 +162,7 @@ const connectComponent = connect(
 			isActiveTabLoading,
 			queryKey,
 			siteId,
+			onChangeMaxBars,
 		};
 	},
 	{ recordGoogleEvent }

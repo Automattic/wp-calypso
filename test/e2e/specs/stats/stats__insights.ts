@@ -12,7 +12,7 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 
 	describe.each`
 		siteType      | accountName
-		${ 'Atomic' } | ${ 'eCommerceUser' }
+		${ 'Atomic' } | ${ 'atomicUser' }
 	`( 'View Insights ($siteType)', function ( { accountName } ) {
 		beforeAll( async () => {
 			page = await browser.newPage();

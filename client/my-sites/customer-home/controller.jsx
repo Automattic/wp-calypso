@@ -1,6 +1,14 @@
+import { isEcommerce } from '@automattic/calypso-products/src';
 import page from 'page';
+import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
+import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
-import { canCurrentUserUseCustomerHome, getSiteOptions } from 'calypso/state/sites/selectors';
+import {
+	canCurrentUserUseCustomerHome,
+	getSiteOptions,
+	getSiteUrl,
+	getSitePlan,
+} from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { redirectToLaunchpad } from 'calypso/utils';
 import CustomerHome from './main';
@@ -52,5 +60,24 @@ export async function maybeRedirect( context, next ) {
 		redirectToLaunchpad( slug, refetchedOptions?.site_intent, verifiedParam );
 		return;
 	}
+
+	// Ecommerce Plan's Home redirects to WooCommerce Home.
+	// Temporary redirection until we create a dedicated Home for Ecommerce.
+	if ( isEcommerce( getSitePlan( state, siteId ) ) ) {
+		const siteUrl = getSiteUrl( state, siteId );
+
+		if ( siteUrl !== null ) {
+			// We need to make sure that sites on the eCommerce plan actually have WooCommerce installed before we redirect to the WooCommerce Home
+			// So we need to trigger a fetch of site plugins
+			await context.store.dispatch( fetchSitePlugins( siteId ) );
+
+			const refetchedState = context.store.getState();
+			const installedWooCommercePlugin = getPluginOnSite( refetchedState, siteId, 'woocommerce' );
+			if ( installedWooCommercePlugin && installedWooCommercePlugin.active ) {
+				window.location.replace( siteUrl + '/wp-admin/admin.php?page=wc-admin' );
+			}
+		}
+	}
+
 	next();
 }

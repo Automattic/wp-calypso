@@ -82,6 +82,7 @@ export function* createVideoPressSite( {
 			selected_features: selectedFeatures,
 			wpcom_public_coming_soon: 1,
 			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),
+			is_videopress_initial_purchase: true,
 		},
 	};
 
@@ -407,6 +408,11 @@ export const setHideFreePlan = ( hideFreePlan: boolean ) => ( {
 	hideFreePlan,
 } );
 
+export const setIsMigrateFromWp = ( isMigrateFromWp: boolean ) => ( {
+	type: 'SET_IS_MIGRATE_FROM_WP' as const,
+	isMigrateFromWp,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -458,4 +464,5 @@ export type OnboardAction = ReturnType<
 	| typeof setEcommerceFlowRecurType
 	| typeof setHideFreePlan
 	| typeof setPlanCartItem
+	| typeof setIsMigrateFromWp
 >;

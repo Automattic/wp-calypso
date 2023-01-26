@@ -8,10 +8,10 @@ import 'calypso/state/posts/init';
 /**
  * Returns a post object by site ID post ID pairing, with editor revisions.
  *
- * @param   {object} state  Global state tree
+ * @param   {Object} state  Global state tree
  * @param   {number} siteId Site ID
  * @param   {number} postId Post ID
- * @returns {object}        Post object with revisions
+ * @returns {Object}        Post object with revisions
  */
 export const getEditedPost = createSelector(
 	( state, siteId, postId ) => {

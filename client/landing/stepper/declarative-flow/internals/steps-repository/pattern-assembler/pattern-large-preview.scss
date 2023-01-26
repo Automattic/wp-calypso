@@ -9,6 +9,14 @@
 	z-index: 1;
 }
 
+.pattern-large-preview__patterns {
+	position: relative;
+	flex-grow: 1;
+	margin: 0;
+	list-style-type: none;
+	overflow: auto;
+}
+
 .pattern-large-preview__placeholder {
 	display: flex;
 	flex-direction: column;

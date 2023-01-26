@@ -58,7 +58,7 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 					editorContext = {
 						page: page,
 						editorPage: editorPage,
-						editorLocator: editorPage.getEditorLocator(),
+						editorLocator: editorPage.getEditorWindowLocator(),
 					};
 				} );
 

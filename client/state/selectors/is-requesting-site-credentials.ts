@@ -5,7 +5,7 @@ import type { AppState } from 'calypso/types';
  * Returns true if we are currently performing a request to fetch the site credentials.
  * False otherwise.
  *
- * @param  {object}  state       Global state tree
+ * @param  {Object}  state       Global state tree
  * @param  {number}  siteId      The ID of the site we're querying
  * @returns {boolean}             Whether credentials are currently being requested for that site.
  */

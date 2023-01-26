@@ -16,6 +16,7 @@ export const SERVICES_PAGE = 'SERVICES_PAGE';
 export const TESTIMONIALS_PAGE = 'TESTIMONIALS_PAGE';
 export const PRICING_PAGE = 'PRICING_PAGE';
 export const TEAM_PAGE = 'TEAM_PAGE';
+export const SHOP_PAGE = 'SHOP_PAGE';
 
 export type PageId =
 	| typeof HOME_PAGE
@@ -29,7 +30,8 @@ export type PageId =
 	| typeof SERVICES_PAGE
 	| typeof TESTIMONIALS_PAGE
 	| typeof PRICING_PAGE
-	| typeof TEAM_PAGE;
+	| typeof TEAM_PAGE
+	| typeof SHOP_PAGE;
 
 export type DeprecatedPageIds =
 	| typeof SERVICE_SHOWCASE_PAGE

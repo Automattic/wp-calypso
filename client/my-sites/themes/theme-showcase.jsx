@@ -1,7 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import { compact, omit, pickBy } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -14,10 +13,9 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import SearchThemes from 'calypso/components/search-themes';
-import SectionNav from 'calypso/components/section-nav';
-import NavItem from 'calypso/components/section-nav/item';
-import NavTabs from 'calypso/components/section-nav/tabs';
 import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
@@ -30,24 +28,20 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	arePremiumThemesEnabled,
-	getActiveTheme,
-	getCanonicalTheme,
 	getThemeFilterTerms,
 	getThemeFilterToTermTable,
 	getThemeShowcaseDescription,
 	getThemeShowcaseTitle,
 	prependThemeFilterKeys,
-	getOutdatedThemes,
 	isUpsellCardDisplayed as isUpsellCardDisplayedSelector,
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
-import { addTracking, trackClick, localizeThemesPath } from './helpers';
-import RecommendedThemes from './recommended-themes';
+import { addTracking, getSubjectsFromTermTable, trackClick, localizeThemesPath } from './helpers';
+import InstallThemeButton from './install-theme-button';
 import ThemePreview from './theme-preview';
-import ThemesSearchCard from './themes-magic-search-card';
+import ThemesHeader from './themes-header';
 import ThemesSelection from './themes-selection';
 import ThemesToolbarGroup from './themes-toolbar-group';
-import TrendingThemes from './trending-themes';
 
 import './theme-showcase.scss';
 
@@ -64,41 +58,8 @@ class ThemeShowcase extends Component {
 		this.scrollRef = createRef();
 		this.bookmarkRef = createRef();
 
-		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
-
-		// As the values of these filter is static and won't be changed, we use it to check a filter
-		// is a static filter directly in the `isStaticFilter` function.
-		this.staticFilters = {
-			RECOMMENDED: {
-				key: 'recommended',
-				text: props.translate( 'Recommended' ),
-				order: 1,
-			},
-			TRENDING: {
-				key: 'trending',
-				text: props.translate( 'Trending' ),
-				order: 2,
-			},
-			MYTHEMES: {
-				key: 'my-themes',
-				text: props.translate( 'My Themes' ),
-				order: 3,
-			},
-			ALL: {
-				key: 'all',
-				text: isNewSearchAndFilter ? props.translate( 'All' ) : props.translate( 'All Themes' ),
-				order: 4,
-			},
-		};
-
 		this.subjectFilters = this.getSubjectFilters( props );
-		this.subjectTermTable = this.getSubjectTermTable( props );
-
-		this.tiers = [
-			{ value: 'all', label: props.translate( 'All' ) },
-			{ value: 'free', label: props.translate( 'Free' ) },
-			{ value: 'premium', label: props.translate( 'Premium' ) },
-		];
+		this.subjectTermTable = getSubjectsFromTermTable( props.filterToTermTable );
 
 		this.state = {
 			tabFilter: this.getTabFilterFromUrl( props.filter ),
@@ -106,7 +67,6 @@ class ThemeShowcase extends Component {
 	}
 
 	static propTypes = {
-		currentThemeId: PropTypes.string,
 		emptyContent: PropTypes.element,
 		tier: PropTypes.oneOf( [ '', 'free', 'premium' ] ),
 		search: PropTypes.string,
@@ -119,11 +79,9 @@ class ThemeShowcase extends Component {
 		siteCanInstallThemes: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		upsellBanner: PropTypes.any,
-		trackMoreThemesClick: PropTypes.func,
 		loggedOutComponent: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
 		isJetpackSite: PropTypes.bool,
-		outdatedThemes: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -162,7 +120,11 @@ class ThemeShowcase extends Component {
 		}
 	}
 
-	isStaticFilter = ( tabFilter ) => Object.values( this.staticFilters ).includes( tabFilter );
+	isStaticFilter = ( tabFilter ) => {
+		return Object.values( this.getStaticFilters() ).some(
+			( staticFilter ) => tabFilter.key === staticFilter.key
+		);
+	};
 
 	getSubjectFilters = ( props ) => {
 		const { subjects } = props;
@@ -176,38 +138,46 @@ class ThemeShowcase extends Component {
 			return null;
 		}
 
-		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
 		const shouldShowMyThemesFilter =
 			( this.props.isJetpackSite && ! this.props.isAtomicSite ) ||
 			( this.props.isAtomicSite && this.props.siteCanInstallThemes );
 
+		const staticFilters = this.getStaticFilters();
 		return {
-			...( ! isNewSearchAndFilter && {
-				RECOMMENDED: this.staticFilters.RECOMMENDED,
-			} ),
-			...( ! isNewSearchAndFilter && {
-				TRENDING: this.staticFilters.TRENDING,
-			} ),
 			...( shouldShowMyThemesFilter && {
-				MYTHEMES: this.staticFilters.MYTHEMES,
+				MYTHEMES: staticFilters.MYTHEMES,
 			} ),
-			ALL: this.staticFilters.ALL,
-			...( isNewSearchAndFilter && this.subjectFilters ),
+			ALL: staticFilters.ALL,
+			...this.subjectFilters,
 		};
 	};
 
-	getSubjectTermTable = ( { filterToTermTable } ) => {
-		return Object.keys( filterToTermTable )
-			.filter( ( key ) => key.indexOf( 'subject:' ) !== -1 )
-			.reduce( ( obj, key ) => {
-				obj[ key ] = filterToTermTable[ key ];
-				return obj;
-			}, {} );
+	getStaticFilters = () => {
+		return {
+			MYTHEMES: {
+				key: 'my-themes',
+				text: this.props.translate( 'My Themes' ),
+				order: 3,
+			},
+			ALL: {
+				key: 'all',
+				text: this.props.translate( 'Recommended' ),
+				order: 4,
+			},
+		};
+	};
+
+	getTiers = () => {
+		return [
+			{ value: 'all', label: this.props.translate( 'All' ) },
+			{ value: 'free', label: this.props.translate( 'Free' ) },
+			{ value: 'premium', label: this.props.translate( 'Premium' ) },
+		];
 	};
 
 	findTabFilter = ( tabFilters, filterKey ) =>
 		Object.values( tabFilters ).find( ( filter ) => filter.key === filterKey ) ||
-		this.staticFilters.ALL;
+		this.getStaticFilters().ALL;
 
 	getTabFilterFromUrl = ( filterString = '' ) => {
 		const filterArray = filterString.split( '+' );
@@ -216,7 +186,7 @@ class ThemeShowcase extends Component {
 		);
 
 		if ( ! matches.length ) {
-			return this.findTabFilter( this.staticFilters, this.state?.tabFilter.key );
+			return this.findTabFilter( this.getStaticFilters(), this.state?.tabFilter.key );
 		}
 
 		const filterKey = matches[ matches.length - 1 ].split( ':' ).pop();
@@ -266,7 +236,7 @@ class ThemeShowcase extends Component {
 	/**
 	 * Returns a full showcase url from current props.
 	 *
-	 * @param {object} sections fields from this object will override current props.
+	 * @param {Object} sections fields from this object will override current props.
 	 * @param {string} sections.vertical override vertical prop
 	 * @param {string} sections.tier override tier prop
 	 * @param {string} sections.filter override filter prop
@@ -297,12 +267,13 @@ class ThemeShowcase extends Component {
 	onTierSelect = ( { value: tier } ) => {
 		// Due to the search backend limitation, static filters other than "All"
 		// can only have "All" tier.
+		const staticFilters = this.getStaticFilters();
 		if (
 			tier !== 'all' &&
 			this.isStaticFilter( this.state.tabFilter ) &&
-			this.state.tabFilter.key !== this.staticFilters.ALL.key
+			this.state.tabFilter.key !== staticFilters.ALL.key
 		) {
-			this.setState( { tabFilter: this.staticFilters.ALL } );
+			this.setState( { tabFilter: staticFilters.ALL } );
 		}
 
 		recordTracksEvent( 'calypso_themeshowcase_filter_pricing_click', { tier } );
@@ -314,8 +285,6 @@ class ThemeShowcase extends Component {
 	};
 
 	onFilterClick = ( tabFilter ) => {
-		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
-
 		recordTracksEvent( 'calypso_themeshowcase_filter_category_click', { category: tabFilter.key } );
 		trackClick( 'section nav filter', tabFilter );
 
@@ -324,7 +293,7 @@ class ThemeShowcase extends Component {
 		// can only have "All" tier.
 		if (
 			this.isStaticFilter( tabFilter ) &&
-			tabFilter.key !== this.staticFilters.ALL.key &&
+			tabFilter.key !== this.getStaticFilters().ALL.key &&
 			this.props.tier !== 'all'
 		) {
 			callback = () => {
@@ -333,21 +302,19 @@ class ThemeShowcase extends Component {
 			};
 		}
 
-		if ( isNewSearchAndFilter ) {
-			const { filter = '', search, filterToTermTable } = this.props;
-			const subjectTerm = filterToTermTable[ `subject:${ tabFilter.key }` ];
-			const subjectFilters = Object.values( this.subjectTermTable );
-			const filterWithoutSubjects = filter
-				.split( '+' )
-				.filter( ( key ) => ! subjectFilters.includes( key ) )
-				.join( '+' );
+		const { filter = '', search, filterToTermTable } = this.props;
+		const subjectTerm = filterToTermTable[ `subject:${ tabFilter.key }` ];
+		const subjectFilters = Object.values( this.subjectTermTable );
+		const filterWithoutSubjects = filter
+			.split( '+' )
+			.filter( ( key ) => ! subjectFilters.includes( key ) )
+			.join( '+' );
 
-			const newFilter = ! this.isStaticFilter( tabFilter )
-				? [ filterWithoutSubjects, subjectTerm ].join( '+' )
-				: filterWithoutSubjects;
+		const newFilter = ! this.isStaticFilter( tabFilter )
+			? [ filterWithoutSubjects, subjectTerm ].join( '+' )
+			: filterWithoutSubjects;
 
-			page( this.constructUrl( { filter: newFilter, searchString: search } ) );
-		}
+		page( this.constructUrl( { filter: newFilter, searchString: search } ) );
 
 		this.setState( { tabFilter }, callback );
 	};
@@ -363,17 +330,6 @@ class ThemeShowcase extends Component {
 				<ThemesSelection { ...themeProps } />
 			</div>
 		);
-	};
-
-	notificationCount = ( key ) => {
-		switch ( key ) {
-			case this.staticFilters.MYTHEMES?.key:
-				return this.props.outdatedThemes.length || null;
-			case this.staticFilters.RECOMMENDED?.key:
-			case this.staticFilters.TRENDING?.key:
-			case this.staticFilters.ALL.key:
-				return null;
-		}
 	};
 
 	recordSearchThemesTracksEvent = ( action, props ) => {
@@ -412,8 +368,9 @@ class ThemeShowcase extends Component {
 
 		const tabKey = this.state.tabFilter.key;
 
+		const staticFilters = this.getStaticFilters();
 		if (
-			tabKey !== this.staticFilters.MYTHEMES?.key &&
+			tabKey !== staticFilters.MYTHEMES?.key &&
 			! isExpertBannerDissmissed &&
 			! loggedOutComponent
 		) {
@@ -424,15 +381,7 @@ class ThemeShowcase extends Component {
 
 			// See p2-pau2Xa-4nq#comment-12458 for the context regarding the utm campaign value.
 			switch ( tabKey ) {
-				case this.staticFilters.RECOMMENDED?.key:
-					location = 'recommended-theme-banner';
-					utmCampaign = 'theme-rec-tre';
-					break;
-				case this.staticFilters.TRENDING?.key:
-					location = 'trending-theme-banner';
-					utmCampaign = 'theme-rec-tre';
-					break;
-				case this.staticFilters.ALL.key:
+				case staticFilters.ALL.key:
 					location = 'all-theme-banner';
 					utmCampaign = 'theme-all';
 			}
@@ -446,12 +395,8 @@ class ThemeShowcase extends Component {
 	renderThemes = ( themeProps ) => {
 		const tabKey = this.state.tabFilter.key;
 		switch ( tabKey ) {
-			case this.staticFilters.RECOMMENDED?.key:
-				return <RecommendedThemes { ...themeProps } />;
-			case this.staticFilters.MYTHEMES?.key:
+			case this.getStaticFilters().MYTHEMES?.key:
 				return <ThemesSelection { ...themeProps } />;
-			case this.staticFilters.TRENDING?.key:
-				return <TrendingThemes { ...themeProps } />;
 			default:
 				return this.allThemes( { themeProps } );
 		}
@@ -524,37 +469,43 @@ class ThemeShowcase extends Component {
 				),
 		};
 
-		const isNewSearchAndFilter = config.isEnabled( 'themes/showcase-i4/search-and-filter' );
-
 		const tabFilters = this.getTabFilters();
+		const tiers = this.getTiers();
 
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
-			<div>
+			<div className="theme-showcase">
 				<DocumentHead title={ title } meta={ metas } />
 				<PageViewTracker
 					path={ this.props.analyticsPath }
 					title={ this.props.analyticsPageTitle }
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
+				{ isLoggedIn && (
+					<ThemesHeader
+						description={ translate(
+							'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: <InlineSupportLink supportContext="themes" showIcon={ false } />,
+								},
+							}
+						) }
+					>
+						<div className="themes__install-theme-button-container">
+							<InstallThemeButton />
+						</div>
+						<ScreenOptionsTab wpAdminPath="themes.php" />
+					</ThemesHeader>
+				) }
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
-					{ isNewSearchAndFilter ? (
-						<SearchThemes
-							query={ filterString + search }
-							onSearch={ this.doSearch }
-							recordTracksEvent={ this.recordSearchThemesTracksEvent }
-						/>
-					) : (
-						<ThemesSearchCard
-							onSearch={ this.doSearch }
-							search={ filterString + search }
-							tier={ tier }
-							showTierThemesControl={ ! isMultisite }
-							select={ this.onTierSelect }
-						/>
-					) }
-					{ isNewSearchAndFilter && tabFilters && (
+					<SearchThemes
+						query={ filterString + search }
+						onSearch={ this.doSearch }
+						recordTracksEvent={ this.recordSearchThemesTracksEvent }
+					/>
+					{ tabFilters && (
 						<div className="theme__filters">
 							<ThemesToolbarGroup
 								items={ Object.values( tabFilters ) }
@@ -569,29 +520,11 @@ class ThemeShowcase extends Component {
 								<SimplifiedSegmentedControl
 									key={ tier }
 									initialSelected={ tier || 'all' }
-									options={ this.tiers }
+									options={ tiers }
 									onSelect={ this.onTierSelect }
 								/>
 							) }
 						</div>
-					) }
-					{ isLoggedIn && ! isNewSearchAndFilter && (
-						<SectionNav className="themes__section-nav" selectedText={ this.state.tabFilter.text }>
-							<NavTabs>
-								{ Object.values( tabFilters )
-									.sort( ( a, b ) => a.order - b.order )
-									.map( ( tabFilter ) => (
-										<NavItem
-											key={ tabFilter.key }
-											onClick={ () => this.onFilterClick( tabFilter ) }
-											selected={ tabFilter.key === this.state.tabFilter.key }
-											count={ this.notificationCount( tabFilter.key ) }
-										>
-											{ tabFilter.text }
-										</NavItem>
-									) ) }
-							</NavTabs>
-						</SectionNav>
 					) }
 					{ this.renderBanner() }
 					{ this.renderThemes( themeProps ) }
@@ -608,13 +541,9 @@ class ThemeShowcase extends Component {
 }
 
 const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
-	const currentThemeId = getActiveTheme( state, siteId );
-	const currentTheme = getCanonicalTheme( state, siteId, currentThemeId );
 	const allowedSubjects = omit( getThemeFilterTerms( state, 'subject' ) || {}, [ 'newsletter' ] );
 
 	return {
-		currentThemeId,
-		currentTheme,
 		isLoggedIn: isUserLoggedIn( state ),
 		isAtomicSite: isAtomicSite( state, siteId ),
 		isExpertBannerDissmissed: isUpworkBannerDismissed( state ),
@@ -628,7 +557,6 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 		filterString: prependThemeFilterKeys( state, filter ),
 		filterToTermTable: getThemeFilterToTermTable( state ),
 		themesBookmark: getThemesBookmark( state ),
-		outdatedThemes: getOutdatedThemes( state, siteId ) || [],
 		isUpsellCardDisplayed: isUpsellCardDisplayedSelector( state ),
 	};
 };

@@ -1,0 +1,28 @@
+@import "@automattic/typography/styles/variables";
+
+.stats-navigation-arrows {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	.stats-navigation-arrows__previous,
+	.stats-navigation-arrows__next {
+		width: 24px;
+		height: 24px;
+		color: var(--color-neutral-90);
+		cursor: pointer;
+
+		&:focus,
+		&:active {
+			outline: thin dotted;
+		}
+		&.is-disabled {
+			visibility: visible;
+			opacity: 0.2;
+			pointer-events: none;
+		}
+	}
+	.stats-navigation-arrows__next {
+		margin-left: 4px;
+	}
+}
