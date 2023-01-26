@@ -360,11 +360,13 @@ button {
 	.flow-progress.progress-bar {
 		display: none;
 	}
-	.processing-step__progress-bar {
+	.loading-bar {
 		width: 520px;
 		max-width: 100%;
+		margin-left: auto;
+		margin-right: auto;
 	}
-	.processing-step__progress-bar::before {
+	.loading-bar::before {
 		background: var(--wooexpress-purple);
 	}
 	.signup-header .wordpress-logo {

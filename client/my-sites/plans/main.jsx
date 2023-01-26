@@ -1,5 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { getPlan, getIntervalTypeForTerm, PLAN_FREE } from '@automattic/calypso-products';
+import {
+	getPlan,
+	getIntervalTypeForTerm,
+	PLAN_FREE,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+} from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -12,7 +17,6 @@ import QueryContactDetailsCache from 'calypso/components/data/query-contact-deta
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -29,6 +33,7 @@ import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-f
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import PlansHeader from './header';
 
 function DomainAndPlanUpsellNotice() {
 	const translate = useTranslate();
@@ -157,16 +162,21 @@ class Plans extends Component {
 		);
 	}
 
+	renderEcommerceTrialPage() {
+		return <div className="plans__ecommerce-trial-wrapper">{ this.renderPlansMain() }</div>;
+	}
+
 	render() {
 		const { selectedSite, translate, canAccessPlans, currentPlan, domainAndPlanPackage } =
 			this.props;
 
+		const currentPlanSlug = selectedSite.plan.product_slug;
+		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
 			return this.renderPlaceholder();
 		}
-		const description = translate(
-			'See and compare the features available on each WordPress.com plan.'
-		);
+
 		return (
 			<div>
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
@@ -184,16 +194,12 @@ class Plans extends Component {
 					) }
 					{ canAccessPlans && (
 						<>
-							<FormattedHeader
-								brandFont
-								headerText={ translate( 'Plans' ) }
-								subHeaderText={ description }
-								align="left"
-							/>
+							<PlansHeader />
+
 							{ domainAndPlanPackage && <DomainAndPlanUpsellNotice /> }
 							<div id="plans" className="plans plans__has-sidebar">
 								<PlansNavigation path={ this.props.context.path } />
-								{ this.renderPlansMain() }
+								{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderPlansMain() }
 								<PerformanceTrackerStop />
 							</div>
 						</>

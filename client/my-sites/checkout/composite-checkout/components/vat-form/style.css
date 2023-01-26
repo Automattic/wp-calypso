@@ -1,0 +1,11 @@
+.vat-form__row {
+	display: -ms-grid;
+	display: grid;
+	width: 100%;
+	-ms-grid-columns: 48% 4% 48%;
+	grid-template-columns: 48% 48%;
+	grid-column-gap: 4%;
+	justify-items: stretch;
+	margin-top: 16px;
+}
+

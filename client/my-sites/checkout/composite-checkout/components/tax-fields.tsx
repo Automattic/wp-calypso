@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	Field,
 	tryToGuessPostalCodeFormat,
@@ -8,6 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 import { isValid } from '../types/wpcom-store-state';
 import CountrySelectMenu from './country-select-menu';
 import { LeftColumn, RightColumn } from './ie-fallback';
+import { VatForm, isVatSupportedFor } from './vat-form';
 import type {
 	CountryListItem,
 	ManagedContactDetails,
@@ -52,53 +54,61 @@ export default function TaxFields( {
 		countriesList.length && countryCode?.value
 			? getCountryPostalCodeSupport( countriesList, countryCode.value )
 			: false;
+	const isVatSupported =
+		config.isEnabled( 'checkout/vat-form' ) &&
+		Boolean( countryCode?.value && isVatSupportedFor( countryCode.value ) );
 
 	return (
-		<FieldRow>
-			<LeftColumn>
-				<CountrySelectMenu
-					translate={ translate }
-					onChange={ ( event: ChangeEvent< HTMLSelectElement > ) => {
-						onChange( {
-							countryCode: { value: event.target.value, errors: [], isTouched: true },
-							postalCode: updatePostalCodeForCountry( postalCode, countryCode, countriesList ),
-						} );
-					} }
-					isError={ countryCode?.isTouched && ! isValid( countryCode ) }
-					isDisabled={ isDisabled }
-					errorMessage={ countryCode?.errors[ 0 ] ?? translate( 'This field is required.' ) }
-					currentValue={ countryCode?.value }
-					countriesList={ countriesList }
-				/>
-			</LeftColumn>
-
-			{ arePostalCodesSupported && (
-				<RightColumn>
-					<Field
-						id={ section + '-postal-code' }
-						type="text"
-						label={ String( translate( 'Postal code' ) ) }
-						value={ postalCode?.value ?? '' }
-						disabled={ isDisabled }
-						onChange={ ( newValue: string ) => {
+		<>
+			<FieldRow>
+				<LeftColumn>
+					<CountrySelectMenu
+						translate={ translate }
+						onChange={ ( event: ChangeEvent< HTMLSelectElement > ) => {
 							onChange( {
-								countryCode,
-								postalCode: updatePostalCodeForCountry(
-									{ value: newValue.toUpperCase(), errors: [], isTouched: true },
-									countryCode,
-									countriesList
-								),
+								countryCode: { value: event.target.value, errors: [], isTouched: true },
+								postalCode: updatePostalCodeForCountry( postalCode, countryCode, countriesList ),
 							} );
 						} }
-						autoComplete={ section + ' postal-code' }
-						isError={ postalCode?.isTouched && ! isValid( postalCode ) }
-						errorMessage={
-							postalCode?.errors[ 0 ] ?? String( translate( 'This field is required.' ) )
-						}
+						isError={ countryCode?.isTouched && ! isValid( countryCode ) }
+						isDisabled={ isDisabled }
+						errorMessage={ countryCode?.errors[ 0 ] ?? translate( 'This field is required.' ) }
+						currentValue={ countryCode?.value }
+						countriesList={ countriesList }
 					/>
-				</RightColumn>
+				</LeftColumn>
+
+				{ arePostalCodesSupported && (
+					<RightColumn>
+						<Field
+							id={ section + '-postal-code' }
+							type="text"
+							label={ String( translate( 'Postal code' ) ) }
+							value={ postalCode?.value ?? '' }
+							disabled={ isDisabled }
+							onChange={ ( newValue: string ) => {
+								onChange( {
+									countryCode,
+									postalCode: updatePostalCodeForCountry(
+										{ value: newValue.toUpperCase(), errors: [], isTouched: true },
+										countryCode,
+										countriesList
+									),
+								} );
+							} }
+							autoComplete={ section + ' postal-code' }
+							isError={ postalCode?.isTouched && ! isValid( postalCode ) }
+							errorMessage={
+								postalCode?.errors[ 0 ] ?? String( translate( 'This field is required.' ) )
+							}
+						/>
+					</RightColumn>
+				) }
+			</FieldRow>
+			{ isVatSupported && (
+				<VatForm section={ section } isDisabled={ isDisabled } countryCode={ countryCode?.value } />
 			) }
-		</FieldRow>
+		</>
 	);
 }
 

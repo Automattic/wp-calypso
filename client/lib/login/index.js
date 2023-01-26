@@ -7,6 +7,7 @@ import {
 	isGravatarOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isWooOAuth2Client,
+	isIntenseDebateOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 
 export function getSocialServiceFromClientId( clientId ) {
@@ -74,7 +75,11 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		signupUrl += '/' + signupFlow;
 	}
 
-	if ( isAkismetOAuth2Client( oauth2Client ) || isGravatarOAuth2Client( oauth2Client ) ) {
+	if (
+		isAkismetOAuth2Client( oauth2Client ) ||
+		isGravatarOAuth2Client( oauth2Client ) ||
+		isIntenseDebateOAuth2Client( oauth2Client )
+	) {
 		const oauth2Flow = 'wpcc';
 		const oauth2Params = new URLSearchParams( {
 			oauth2_client_id: oauth2Client.id,

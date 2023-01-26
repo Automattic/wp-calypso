@@ -14,6 +14,7 @@ import {
 	JETPACK_VIDEOPRESS_PRODUCTS,
 	isFreeJetpackPlan,
 	isFreePlanProduct,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { Dialog } from '@automattic/components';
 import classNames from 'classnames';
@@ -154,6 +155,47 @@ class CurrentPlan extends Component {
 		return <PaidPlanThankYou />;
 	}
 
+	renderMain() {
+		const { selectedSiteId, selectedSite, showJetpackChecklist, translate } = this.props;
+		const isLoading = this.isLoading();
+		const currentPlanSlug = selectedSite.plan.product_slug;
+		const planTitle = getPlan( currentPlanSlug ).getTitle();
+		const planFeaturesHeader = translate( '{{planName/}} plan features', {
+			components: { planName: <>{ planTitle }</> },
+		} );
+
+		return (
+			<>
+				<PurchasesListing />
+
+				{ showJetpackChecklist && (
+					<Fragment>
+						<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
+						<JetpackChecklist />
+					</Fragment>
+				) }
+
+				<div
+					className={ classNames( 'current-plan__header-text current-plan__text', {
+						'is-placeholder': { isLoading },
+					} ) }
+				>
+					<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
+				</div>
+				<AsyncLoad
+					require="calypso/blocks/product-purchase-features-list"
+					placeholder={ null }
+					plan={ currentPlanSlug }
+					isPlaceholder={ isLoading }
+				/>
+			</>
+		);
+	}
+
+	renderEcommerceTrialPage() {
+		return <div className="current-plan__ecommerce-trial-wrapper">{ this.renderMain() }</div>;
+	}
+
 	render() {
 		const {
 			domains,
@@ -163,19 +205,13 @@ class CurrentPlan extends Component {
 			selectedSite,
 			selectedSiteId,
 			shouldShowDomainWarnings,
-			showJetpackChecklist,
 			showThankYou,
 			translate,
 			eligibleForProPlan,
 		} = this.props;
 
 		const currentPlanSlug = selectedSite.plan.product_slug;
-		const isLoading = this.isLoading();
-		const planTitle = getPlan( currentPlanSlug ).getTitle();
-
-		const planFeaturesHeader = translate( '{{planName/}} plan features', {
-			components: { planName: <>{ planTitle }</> },
-		} );
+		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
@@ -256,28 +292,7 @@ class CurrentPlan extends Component {
 
 					{ legacyPlanNotice( eligibleForProPlan, selectedSite ) }
 
-					<PurchasesListing />
-
-					{ showJetpackChecklist && (
-						<Fragment>
-							<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
-							<JetpackChecklist />
-						</Fragment>
-					) }
-
-					<div
-						className={ classNames( 'current-plan__header-text current-plan__text', {
-							'is-placeholder': { isLoading },
-						} ) }
-					>
-						<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
-					</div>
-					<AsyncLoad
-						require="calypso/blocks/product-purchase-features-list"
-						placeholder={ null }
-						plan={ currentPlanSlug }
-						isPlaceholder={ isLoading }
-					/>
+					{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderMain() }
 
 					<TrackComponentView eventName="calypso_plans_my_plan_view" />
 				</div>
