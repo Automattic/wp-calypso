@@ -486,6 +486,7 @@
 	}
 
 	.web-preview__frame-wrapper.is-resizable {
+		transition: max-width 0.2s linear;
 		margin: 0;
 		padding: 0;
 		background-color: transparent;
