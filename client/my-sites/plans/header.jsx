@@ -1,12 +1,18 @@
 import config from '@automattic/calypso-config';
 import { Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './header.scss';
 
 export default function PlansHeader() {
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSiteId ) );
 	const translate = useTranslate();
 	const [ showDomainUpsellDialog, setShowDomainUpsellDialog ] = useState( false );
 
@@ -34,23 +40,40 @@ export default function PlansHeader() {
 
 	const onBackClick = () => {
 		recordTracksEvent( 'calypso_plans_page_domain_upsell_back_click' );
-		history.back();
+		// We currently have only one flow that leads to the plans page domain upsell.
+		page( '/home/' + siteSlug );
 	};
 
 	const onCloseDialog = () => {
 		setShowDomainUpsellDialog( false );
 	};
 
-	const onSkipClick = () => {
+	const onSkipClick = ( event ) => {
 		event.preventDefault();
 		recordTracksEvent( 'calypso_plans_page_domain_upsell_skip_click' );
 		setShowDomainUpsellDialog( true );
 	};
 
+	const onCancelPlanClick = () => {
+		setShowDomainUpsellDialog( false );
+		recordTracksEvent( 'calypso_plans_page_domain_upsell_cancel_plan_click' );
+		page( '/checkout/' + siteSlug );
+	};
+
+	const onContinuePlanClick = () => {
+		setShowDomainUpsellDialog( false );
+		recordTracksEvent( 'calypso_plans_page_domain_upsell_continue_plan_click' );
+	};
+
 	function renderDeleteDialog() {
 		const buttons = [
-			{ action: 'cancel', label: translate( 'That works for me' ) },
-			{ action: 'delete', label: translate( 'I want my domain as primary' ), isPrimary: true },
+			{ action: 'cancel', label: translate( 'That works for me' ), onClick: onCancelPlanClick },
+			{
+				action: 'delete',
+				label: translate( 'I want my domain as primary' ),
+				isPrimary: true,
+				onClick: onContinuePlanClick,
+			},
 		];
 
 		return (
