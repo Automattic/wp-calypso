@@ -32,10 +32,12 @@ export const purposes = [
 	{
 		id: 'educate_students',
 		label: __( 'Educate students' ),
+		description: null,
 	},
 	{
 		id: 'train_employees',
 		label: __( 'Train employees' ),
+		description: null,
 	},
 ];
 
@@ -44,7 +46,7 @@ type FormState = {
 	other: string;
 };
 
-const SenseiPurpose: Step = ( { navigation: { goToStep } } ) => {
+const SenseiPurpose: Step = ( { navigation: { submit } } ) => {
 	const [ progress, setProgress ] = useState< number >( 0 );
 
 	// Stall for a few seconds while the atomic transfer is going on.
@@ -79,7 +81,7 @@ const SenseiPurpose: Step = ( { navigation: { goToStep } } ) => {
 	const submitPage = async () => {
 		// TODO Save user selection.
 
-		goToStep?.( 'senseiLaunch' );
+		submit?.();
 	};
 
 	const title = __( 'Choose the purpose of your site' );
