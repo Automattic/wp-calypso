@@ -8,44 +8,18 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { SenseiStepContainer } from '../components/sensei-step-container';
 import { SenseiStepProgress } from '../components/sensei-step-progress';
 import PurposeItem from './purpose-item';
+import { clearSelectedPurposes, FormState, purposes, saveSelectedPurposes } from './purposes';
 import type { Step } from '../../types';
 import './style.scss';
 
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
-export const purposeOptions = [
-	{
-		id: 'sell_courses',
-		label: __( 'Sell courses and generate income' ),
-		plugin: { slug: 'woocommerce', id: 'woocommerce/woocommerce' },
-	},
-	{
-		id: 'provide_certification',
-		label: __( 'Provide certification' ),
-		plugin: {
-			slug: 'sensei-certificates',
-			id: 'sensei-certificates/woothemes-sensei-certificates',
-		},
-	},
-	{
-		id: 'educate_students',
-		label: __( 'Educate students' ),
-		description: null,
-	},
-	{
-		id: 'train_employees',
-		label: __( 'Train employees' ),
-		description: null,
-	},
-];
-
-type PurposeFormState = {
-	selected: string[];
-	other: string;
-};
-
 const SenseiPurpose: Step = ( { navigation: { submit } } ) => {
 	const [ progress, setProgress ] = useState< number >( 0 );
+
+	useEffect( () => {
+		clearSelectedPurposes();
+	}, [] );
 
 	// Stall for a few seconds while the atomic transfer is going on.
 	useEffect( () => {
@@ -60,10 +34,11 @@ const SenseiPurpose: Step = ( { navigation: { submit } } ) => {
 
 	const waiting = progress < 110;
 
-	const [ { selected, other }, setPurpose ] = useState< PurposeFormState >( {
+	const [ formState, setPurpose ] = useState< PurposeFormState >( {
 		selected: [],
 		other: '',
 	} );
+	const { selected, other } = formState;
 
 	const isEmpty = ! selected.length;
 
@@ -79,6 +54,7 @@ const SenseiPurpose: Step = ( { navigation: { submit } } ) => {
 	};
 
 	const submitPage = async () => {
+		saveSelectedPurposes( formState );
 		submit?.();
 	};
 
@@ -112,7 +88,7 @@ const SenseiPurpose: Step = ( { navigation: { submit } } ) => {
 					<DocumentHead title={ title } />
 					<div className="sensei-setup-wizard__purpose-container">
 						<ul className="sensei-setup-wizard__purpose-list">
-							{ purposeOptions.map( ( { id, label, description } ) => (
+							{ purposes.map( ( { id, label, description } ) => (
 								<PurposeItem
 									key={ id }
 									label={ label }
