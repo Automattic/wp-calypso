@@ -90,7 +90,7 @@ export const GithubConnectCard = () => {
 				</SelectDropdown>
 
 				<Button disabled={ ! selectedRepo } primary onClick={ handleConnect }>
-					Connect
+					__( 'Connect' )
 				</Button>
 			</div>
 		</Card>
