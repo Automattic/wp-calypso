@@ -52,6 +52,7 @@ project {
 	subProject(_self.projects.WPComTests)
 	subProject(_self.projects.WebApp)
 	subProject(_self.projects.MarTech)
+	buildType(YarnInstall)
 	buildType(BuildBaseImages)
 	buildType(CheckCodeStyle)
 	buildType(ValidateRenovateConfig)
@@ -103,6 +104,29 @@ project {
 		}
 	}
 }
+
+// This build should mostly be triggered by other builds.
+object YarnInstall : BuildType({
+	name = "Install Dependencies"
+	description = "Installs dependencies, e.g. yarn install"
+	vcs {
+		root(WpCalypso)
+		cleanCheckout = true
+	}
+	steps {
+		bashNodeScript {
+			name = "Yarn Install"
+			scriptContent = """
+				# Install modules
+				${_self.yarn_install_cmd}
+			""".trimIndent()
+		}
+	}
+	features {
+		perfmon {
+		}
+	}
+})
 
 object BuildBaseImages : BuildType({
 	name = "Build base images"
