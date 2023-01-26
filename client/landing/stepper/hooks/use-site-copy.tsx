@@ -5,6 +5,7 @@ import { useEffect, useMemo, useCallback } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
@@ -43,13 +44,14 @@ export const useSiteCopy = ( site: SiteExcerptData ) => {
 	}, [ hasCopySiteFeature, isSiteOwner, plan, isLoadingPurchase ] );
 
 	const startSiteCopy = useCallback(
-		( recordTracks: () => void ) => {
+		//eslint-disable-next-line @typescript-eslint/no-explicit-any
+		( eventName: string, extraProps?: Record< string, any > ) => {
 			if ( ! plan ) {
 				return;
 			}
 			clearSignupDestinationCookie();
 			setPlanCartItem( { product_slug: plan.product_slug } );
-			recordTracks();
+			recordTracksEvent( eventName, extraProps );
 		},
 		[ plan, setPlanCartItem ]
 	);
