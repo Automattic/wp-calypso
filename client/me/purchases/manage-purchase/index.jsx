@@ -622,7 +622,7 @@ class ManagePurchase extends Component {
 				{ isReinstalling ? (
 					<>
 						<Spinner className="card__icon" />
-						{ translate( 'Reinstalling' ) }...
+						{ translate( 'Reinstalling…' ) }
 					</>
 				) : (
 					<>
