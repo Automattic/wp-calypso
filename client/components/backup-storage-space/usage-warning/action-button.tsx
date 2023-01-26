@@ -2,8 +2,8 @@ import { Button } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
+import { StorageUsageLevelName } from 'calypso/state/rewind/storage/types';
 import useStorageStatusText from './use-storage-status-text';
-import type { StorageUsageLevelName } from '../storage-usage-levels';
 
 type OwnProps = {
 	className?: string;
