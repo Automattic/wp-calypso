@@ -27,8 +27,11 @@ import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { PlanProperties } from './types';
 import { usePricingBreakpoint } from './util';
+
 const JetpackIconContainer = styled.div`
 	padding-left: 6px;
+	display: inline-block;
+	vertical-align: middle;
 `;
 
 const PlanComparisonHeader = styled.h1`
@@ -42,21 +45,21 @@ const Title = styled.div`
 	font-size: 20px;
 	padding: 14px;
 	flex: 1;
+	display: flex;
+	align-items: center;
+	column-gap: 5px;
 
 	border: solid 1px #e0e0e0;
 	border-left: none;
 	border-right: none;
 	cursor: pointer;
 
-	.gridicon {
-		margin-right: 5px;
-	}
-
 	@media ( min-width: 880px ) {
 		cursor: default;
 		padding-left: 0;
 		pointer-events: none;
 		border: none;
+		padding: 0;
 
 		.gridicon {
 			display: none;
@@ -76,11 +79,15 @@ const Grid = styled.div`
 `;
 const Row = styled.div`
 	display: flex;
-	padding: 14px 0;
 	justify-content: space-between;
+
 	@media ( min-width: 880px ) {
-		margin: 0 20px;
-		border-bottom: 1px solid #eee;
+		&,
+		&:last-of-type {
+			padding: 14px 0;
+			margin: 0 20px;
+			border-bottom: 1px solid #eee;
+		}
 	}
 `;
 
@@ -91,10 +98,28 @@ const Cell = styled.div< { textAlign?: string } >`
 	justify-content: space-between;
 	flex-direction: column;
 	align-items: center;
-	padding: 0 14px;
+	padding: 33px 20px 0;
+
+	@media ( max-width: 879px ) {
+		&.title-is-subtitle {
+			padding-top: 0;
+		}
+
+		border-right: solid 1px #e0e0e0;
+
+		&:last-of-type {
+			border-right: none;
+		}
+
+		${ Row }:last-of-type & {
+			padding-bottom: 24px;
+		}
+	}
 
 	@media ( min-width: 880px ) {
-		width: 156px;
+		max-width: 240px;
+		padding: 0 14px;
+		max-width: 200px;
 
 		&:first-of-type {
 			padding-left: 0;
@@ -103,15 +128,12 @@ const Cell = styled.div< { textAlign?: string } >`
 			padding-right: 0;
 		}
 	}
-	@media ( min-width: 1500px ) {
-		width: 190px;
-	}
 `;
 
 const RowHead = styled.div`
 	display: none;
 	@media ( min-width: 880px ) {
-		display: flex;
+		display: block;
 		flex: 1;
 	}
 `;
@@ -480,11 +502,6 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 
 											return (
 												<Cell key={ planName } className={ cellClasses } textAlign="center">
-													{ hasFeature ? (
-														<Gridicon icon="checkmark" color="#0675C4" />
-													) : (
-														<Gridicon icon="minus-small" color="#C3C4C7" />
-													) }
 													{ feature.getIcon && (
 														<span className="plan-comparison-grid__plan-image">
 															{ feature.getIcon() }
@@ -497,6 +514,11 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 														<span className="plan-comparison-grid__plan-subtitle">
 															{ feature.getCompareTitle() }
 														</span>
+													) }
+													{ hasFeature ? (
+														<Gridicon icon="checkmark" color="#0675C4" />
+													) : (
+														<Gridicon icon="minus-small" color="#C3C4C7" />
 													) }
 												</Cell>
 											);
