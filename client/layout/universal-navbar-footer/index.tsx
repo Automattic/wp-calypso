@@ -1,6 +1,6 @@
 import './style.scss';
-import { useLocalizeUrl, getRealPathName } from '@automattic/i18n-utils';
-import { useTranslate, getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useLocalizeUrl, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
+import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DoNotSellDialogContainer from 'calypso/blocks/do-not-sell-dialog';
@@ -20,7 +20,7 @@ const UniversalNavbarFooter = () => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const currentRoute = useSelector( getCurrentRoute );
-	const realPathName = getRealPathName( currentRoute.slice( 1 ) );
+	const realPathName = removeLocaleFromPathLocaleInFront( currentRoute ).slice( 1 );
 
 	const openDialog = useCallback( () => {
 		setIsDialogOpen( true );
@@ -239,7 +239,10 @@ const UniversalNavbarFooter = () => {
 								<select
 									className="lp-language-picker__content"
 									title={ translate( 'Change Language' ) }
-									onChange={ ( e ) => navigate( e.target.value ) }
+									onChange={ ( e ) => {
+										navigate( e.target.value );
+										window.location.reload();
+									} }
 									defaultValue={ currentRoute }
 								>
 									<option>{ translate( 'Change Language' ) }</option>
