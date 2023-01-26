@@ -144,5 +144,16 @@ export default function () {
 		} ),
 	};
 
+	statsStrings.links = {
+		title: translate( 'Links', { context: 'Stats: title of module' } ),
+		item: translate( 'Link', { context: 'Stats: module row header for links in posts.' } ),
+		value: translate( 'Clicks', {
+			context: 'Stats: module row header for number of clicks on a given link in a post.',
+		} ),
+		empty: translate( 'No links recorded', {
+			context: 'Stats: Info box label when the Links module is empty',
+		} ),
+	};
+
 	return statsStrings;
 }

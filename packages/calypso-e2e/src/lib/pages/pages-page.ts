@@ -1,10 +1,6 @@
 import { Page, Response } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 
-const selectors = {
-	addNewPageButton: 'a:has-text("Add new page")',
-};
-
 /**
  * Represents the Pages page
  */
@@ -34,7 +30,9 @@ export class PagesPage {
 	 * Start a new page using the 'Add new page' button.
 	 */
 	async addNewPage(): Promise< void > {
-		const locator = this.page.locator( selectors.addNewPageButton );
-		await locator.click();
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.getByRole( 'link', { name: /(Add new|Start a) page/ } ).click(),
+		] );
 	}
 }

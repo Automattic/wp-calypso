@@ -53,6 +53,10 @@ jest.mock( 'calypso/state/purchases/selectors', () => ( {
 	isFetchingSitePurchases: jest.fn( () => false ),
 } ) );
 
+jest.mock( 'calypso/my-sites/plugins/use-preinstalled-premium-plugin', () =>
+	jest.fn( () => ( { usePreinstalledPremiumPlugin: jest.fn() } ) )
+);
+
 import {
 	FEATURE_INSTALL_PLUGINS,
 	PLAN_FREE,

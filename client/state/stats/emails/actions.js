@@ -6,13 +6,13 @@ import {
 	EMAIL_STATS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
+import 'calypso/state/stats/init';
 import {
 	parseEmailChartData,
 	parseEmailCountriesData,
+	parseEmailLinksData,
 	parseEmailListData,
-} from 'calypso/state/stats/lists/utils';
-
-import 'calypso/state/stats/init';
+} from 'calypso/state/stats/emails/utils';
 
 /**
  * Returns an action object to be used in signalling that email stat for a site,
@@ -71,6 +71,7 @@ function emailStatsAlltimeTransform( stats ) {
 		countries: parseEmailCountriesData( stats.countries?.data, stats[ 'countries-info' ] ),
 		devices: parseEmailListData( stats.devices?.data ),
 		clients: parseEmailListData( stats.clients?.data ),
+		links: parseEmailLinksData( stats.links?.data ),
 		rate: {
 			opens_rate: stats.opens_rate,
 			total_opens: stats.total_opens,

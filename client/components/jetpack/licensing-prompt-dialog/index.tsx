@@ -47,7 +47,7 @@ function LicensingPromptDialog( { siteId }: Props ) {
 	}, [ dispatch ] );
 
 	let titleToRender = window.location.pathname.startsWith( JPC_PATH_PLANS )
-		? translate( 'Jetpack is successfully installed' )
+		? translate( 'Jetpack is successfully connected' )
 		: '';
 
 	if ( ! titleToRender ) {
