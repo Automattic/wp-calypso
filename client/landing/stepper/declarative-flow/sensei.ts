@@ -50,8 +50,9 @@ const sensei: Flow = {
 					return navigate( 'senseiDomain' );
 				case 'senseiDomain':
 					return navigate( 'senseiPlan' );
-				case 'launchpad':
-					return window.location.assign( `/home/${ siteSlug }` );
+				case 'senseiPurpose':
+					return navigate( 'senseiLaunch' );
+				case 'senseiLaunch':
 				default:
 					return window.location.assign( `/home/${ siteSlug }` );
 			}

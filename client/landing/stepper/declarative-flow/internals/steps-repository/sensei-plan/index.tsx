@@ -185,7 +185,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 			setSelectedSite( newSite?.blogid );
 			await Promise.all( [
 				setIntentOnSite( newSite?.site_slug as string, SENSEI_FLOW ),
-				saveSiteSettings( newSite?.blogid as number, { launchpad_screen: 'full' } ),
+				saveSiteSettings( newSite?.blogid as number, { launchpad_screen: 'off' } ),
 			] );
 
 			setProgress( {
