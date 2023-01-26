@@ -13,7 +13,7 @@ import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState, useCallback, useEffect, ChangeEvent } from 'react';
+import { useMemo, useState, ChangeEvent } from 'react';
 import { useSelector } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import PlanPill from 'calypso/components/plans/plan-pill';
@@ -26,7 +26,6 @@ import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { PlanProperties } from './types';
-import { usePricingBreakpoint } from './util';
 const JetpackIconContainer = styled.div`
 	padding-left: 6px;
 `;
@@ -44,23 +43,37 @@ const Title = styled.div`
 `;
 
 const Grid = styled.div`
-	display: grid;
 	margin-top: 90px;
 	background: #fff;
 	border: solid 1px #e0e0e0;
 	border-radius: 5px;
 `;
 const Row = styled.div`
-	display: flex;
+	display: grid;
+	grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr;
 	padding: 14px 0;
 	justify-content: space-between;
 	border-bottom: 1px solid #eee;
 	margin: 0 20px;
+	@media ( max-width: 1340px ) {
+		& > div:nth-child( 1 ) {
+			grid-column: 1/3;
+		}
+		& > div:nth-child( 2 ) {
+			grid-column: 3/5;
+		}
+		& > div:nth-child( 3 ) {
+			grid-column: 5/7;
+		}
+		& > div:nth-child( n + 4 ) {
+			display: none;
+		}
+	}
 `;
 
 const Cell = styled.div< { textAlign?: string } >`
 	text-align: ${ ( props ) => props.textAlign ?? 'left' };
-	width: 156px;
+	width: auto;
 	display: flex;
 	justify-content: space-between;
 	flex-direction: column;
@@ -85,6 +98,12 @@ const RowHead = styled.div`
 
 const PlanSelector = styled.header`
 	position: relative;
+	.chevron-down-icon {
+		display: none;
+		@media ( max-width: 1340px ) {
+			display: inline;
+		}
+	}
 
 	.plan-comparison-grid__title {
 		.gridicon {
@@ -139,7 +158,7 @@ type PlanComparisonGridHeaderProps = {
 	isLaunchPage?: boolean;
 	isFooter?: boolean;
 	flowName: string;
-	onPlanChange: ( currentPlan: string, event: ChangeEvent ) => void;
+	onPlanChange: ( currentPlan: string, newPlan: string ) => void;
 };
 
 const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
@@ -153,7 +172,6 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const allVisible = visiblePlansProperties.length === displayedPlansProperties.length;
 	return (
 		<Row className="plan-comparison-grid__plan-row">
 			<RowHead
@@ -173,8 +191,6 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 				const rawPrice = planPropertiesObj.rawPrice;
 				const isLargeCurrency = rawPrice ? rawPrice > 99000 : false;
 
-				const showPlanSelect = ! allVisible;
-
 				return (
 					<Cell key={ planName } className={ headerClasses } textAlign="left">
 						{ isBusinessPlan( planName ) && (
@@ -185,33 +201,29 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 						<PlanSelector>
 							<h4 className="plan-comparison-grid__title">
 								{ planConstantObj.getTitle() }
-								{ showPlanSelect && <Gridicon icon="chevron-down" size={ 12 } color="#0675C4" /> }
+								<Gridicon
+									className="chevron-down-icon"
+									icon="chevron-down"
+									size={ 12 }
+									color="#0675C4"
+								/>
 							</h4>
-							{ showPlanSelect && (
-								<select
-									onChange={ ( event: ChangeEvent ) => onPlanChange( planName, event ) }
-									className="plan-comparison-grid__title-select"
-									value={ planName }
-								>
-									{ displayedPlansProperties.map(
-										( { planName: otherPlan, product_name_short } ) => {
-											const isVisiblePlan = visiblePlansProperties.find(
-												( { planName } ) => planName === otherPlan
-											);
 
-											if ( isVisiblePlan && otherPlan !== planName ) {
-												return null;
-											}
-
-											return (
-												<option key={ otherPlan } value={ otherPlan }>
-													{ product_name_short }
-												</option>
-											);
-										}
-									) }
-								</select>
-							) }
+							<select
+								onChange={ ( event: ChangeEvent ) =>
+									onPlanChange( planName, ( event.target as HTMLInputElement ).value )
+								}
+								className="plan-comparison-grid__title-select"
+								value={ planName }
+							>
+								{ displayedPlansProperties.map( ( { planName: otherPlan, product_name_short } ) => {
+									return (
+										<option key={ otherPlan } value={ otherPlan }>
+											{ product_name_short }
+										</option>
+									);
+								} ) }
+							</select>
 						</PlanSelector>
 						<PlanFeatures2023GridHeaderPrice
 							currencyCode={ currencyCode }
@@ -265,24 +277,9 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		( { planName } ) => ! ( planName === PLAN_ENTERPRISE_GRID_WPCOM )
 	);
 	const isMonthly = intervalType === 'monthly';
-	const isMediumBreakpoint = usePricingBreakpoint( 1340 );
-	const isSmallBreakpoint = usePricingBreakpoint( 880 );
+	const newVisiblePlans = displayedPlansProperties.map( ( { planName } ) => planName );
 
-	const [ visiblePlans, setVisiblePlans ] = useState< string[] >( [] );
-
-	useEffect( () => {
-		let newVisiblePlans = displayedPlansProperties.map( ( { planName } ) => planName );
-
-		if ( isMediumBreakpoint ) {
-			newVisiblePlans = newVisiblePlans.slice( 0, 4 );
-		}
-
-		if ( isSmallBreakpoint || ( isInSignup && isMediumBreakpoint ) ) {
-			newVisiblePlans = newVisiblePlans.slice( 0, 2 );
-		}
-
-		setVisiblePlans( newVisiblePlans );
-	}, [ isMediumBreakpoint, intervalType ] );
+	const [ visiblePlanOrder, setVisiblePlanOrder ] = useState< string[] >( newVisiblePlans );
 
 	const restructuredFeatures = useMemo( () => {
 		let previousPlan = null;
@@ -334,18 +331,15 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		return jetpackFeatures;
 	}, [ planProperties ] );
 
-	const onPlanChange = useCallback(
-		( currentPlan, event ) => {
-			const newPlan = event.currentTarget.value;
-
-			const newVisiblePlans = visiblePlans.map( ( plan ) =>
-				plan === currentPlan ? newPlan : plan
-			);
-			setVisiblePlans( newVisiblePlans );
-		},
-		[ visiblePlans ]
-	);
-	const visiblePlansProperties = visiblePlans.reduce< PlanProperties[] >( ( acc, planName ) => {
+	const onPlanChange = ( currentPlan: string, newPlan: string ) => {
+		const newVisiblePlanOrder = [ ...visiblePlanOrder ];
+		const shownPlanIndex = newVisiblePlanOrder.indexOf( currentPlan );
+		const hiddenPlanIndex = newVisiblePlanOrder.indexOf( newPlan );
+		newVisiblePlanOrder.splice( shownPlanIndex, 1, newPlan );
+		newVisiblePlanOrder.splice( hiddenPlanIndex, 1, currentPlan );
+		setVisiblePlanOrder( newVisiblePlanOrder );
+	};
+	const visiblePlansProperties = visiblePlanOrder.reduce< PlanProperties[] >( ( acc, planName ) => {
 		const plan = displayedPlansProperties.find( ( plan ) => plan.planName === planName );
 		if ( plan ) {
 			acc.push( plan );
