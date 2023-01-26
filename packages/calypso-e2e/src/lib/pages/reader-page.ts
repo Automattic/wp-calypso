@@ -53,35 +53,21 @@ export class ReaderPage {
 	/**
 	 * Visits a post in the Reader.
 	 *
-	 * This method supports either a 1-indexed number or partial or full string matching.
+	 * This method supports partial or full string matching.
 	 *
-	 * 	index: 1-indexed value, starting from top of page.
 	 * 	text: partial or full text matching of text contained in a reader entry. If multiple
 	 * 		matches are found,  the first match is used.
 	 *
-	 * @param param0 Keyed object parameter.
-	 * @param {number} param0.index n-th post to view on the reader page. 1-indexed.
-	 * @param {string} param0.text Text string to match.
+	 * @param {string} text Text string to match.
+	 * @returns {Promise<string>} URL of the visited post.
 	 * @throws {Error} If neither index or text are specified.
 	 */
-	async visitPost( { index, text }: { index?: number; text?: string } = {} ): Promise< void > {
+	async visitPost( text: string ): Promise< string > {
 		// Wait for main reader stream to populate.
-		await this.page.waitForSelector( selectors.streamPlaceholder, { state: 'hidden' } );
+		await this.page.locator( selectors.streamPlaceholder ).waitFor( { state: 'hidden' } );
 
-		let selector = '';
-
-		if ( index ) {
-			selector = `:nth-match(${ selectors.readerCard }, ${ index })`;
-		} else if ( text ) {
-			selector = `${ selectors.readerCard }:has-text("${ text }")`;
-		} else {
-			throw new Error( 'Unable to select and visit post - specify one of index or text.' );
-		}
-
-		await Promise.all( [
-			this.page.waitForNavigation( { waitUntil: 'networkidle' } ),
-			this.page.click( selector ),
-		] );
+		await this.page.getByText( text ).click();
+		return this.page.url();
 	}
 
 	/**
