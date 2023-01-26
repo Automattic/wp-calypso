@@ -92,6 +92,12 @@ export const tasks: Task[] = [
 		disabled: false,
 		taskType: 'blog',
 	},
+	{
+		id: 'setup_write',
+		completed: true,
+		disabled: true,
+		taskType: 'blog',
+	},
 ];
 
 const linkInBioTaskList = [
@@ -115,6 +121,13 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 	],
 	build: [
 		'setup_general',
+		'design_selected',
+		'first_post_published',
+		'design_edited',
+		'site_launched',
+	],
+	write: [
+		'setup_write',
 		'design_selected',
 		'first_post_published',
 		'design_edited',

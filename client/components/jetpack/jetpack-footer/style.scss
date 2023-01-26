@@ -1,0 +1,27 @@
+.jp-dashboard-footer {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: space-between;
+	align-items: center;
+
+	padding: 32px 0;
+
+	color: #000;
+
+	a,
+	a:hover,
+	a:visited {
+		color: #000;
+		text-decoration: none;
+	}
+}
+.jp-dashboard-footer__module-name,
+.jp-dashboard-footer__jetpack-symbol {
+	vertical-align: middle;
+	display: inline-block;
+}
+.jp-dashboard-footer__module-name {
+	margin-left: 5px;
+	font-size: $font-body-extra-small;
+	font-weight: 600;
+}
