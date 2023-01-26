@@ -1,5 +1,5 @@
-import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { AutomatticBylineLogoProps } from './types';
 
@@ -10,11 +10,13 @@ import { AutomatticBylineLogoProps } from './types';
  * @returns {React.ReactNode} AutomatticBylineLogo component.
  */
 const AutomatticBylineLogo: React.FC< AutomatticBylineLogoProps > = ( {
-	title = __( 'An Automattic Airline', 'jetpack' ),
+	title,
 	height = 7,
 	className,
 	...otherProps
 } ) => {
+	const tranlate = useTranslate();
+	title = title ?? tranlate( 'An Automattic Airline' );
 	return (
 		<svg
 			role="img"
