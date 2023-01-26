@@ -228,29 +228,6 @@ export function isTranslatedIncompletely( locale: string ) {
 }
 
 /**
- * Removes the Locale from the given path and returns the real path.
- *
- * @param {string}  path  Original path
- * @returns {string} path The real path (with locale removed)
- */
-export function getRealPathName( path: string ) {
-	const availableLanguageSlugs = getLanguageSlugs().map( ( lang: string ) => lang );
-	const localeAtStartOfPath = getPathParts( path ).shift() || '';
-	const localeAtEndOfPath = getPathParts( path ).pop() || '';
-
-	if ( localeAtStartOfPath && availableLanguageSlugs.includes( localeAtStartOfPath ) ) {
-		// Replace locale prefix from beginning of the path.
-		return path.replace( `${ localeAtStartOfPath }/`, '' );
-	} else if ( localeAtEndOfPath && availableLanguageSlugs.includes( localeAtEndOfPath ) ) {
-		// Replace locale suffix at the end of the path.
-		return path.replace( `/${ localeAtEndOfPath }`, '' );
-	}
-
-	// Return path as is if no conditions matched.
-	return path;
-}
-
-/**
  * Removes the locale slug in the start of the path, if it is present.
  * '/en/themes' => '/themes', '/themes' => '/themes', '/fr/plugins' => '/plugins'
  *

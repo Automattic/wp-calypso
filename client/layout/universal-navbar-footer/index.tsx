@@ -20,7 +20,7 @@ const UniversalNavbarFooter = () => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const currentRoute = useSelector( getCurrentRoute );
-	const realPathName = removeLocaleFromPathLocaleInFront( currentRoute ).slice( 1 );
+	const pathNameWithoutLocale = removeLocaleFromPathLocaleInFront( currentRoute ).slice( 1 );
 
 	const openDialog = useCallback( () => {
 		setIsDialogOpen( true );
@@ -246,61 +246,61 @@ const UniversalNavbarFooter = () => {
 									defaultValue={ currentRoute }
 								>
 									<option>{ translate( 'Change Language' ) }</option>
-									<option lang="es" value={ `/es/${ realPathName }` }>
+									<option lang="es" value={ `/es/${ pathNameWithoutLocale }` }>
 										Español
 									</option>
-									<option lang="pt-br" value={ `/pt-br/${ realPathName }` }>
+									<option lang="pt-br" value={ `/pt-br/${ pathNameWithoutLocale }` }>
 										Português do Brasil
 									</option>
-									<option lang="de" value={ `/de/${ realPathName }` }>
+									<option lang="de" value={ `/de/${ pathNameWithoutLocale }` }>
 										Deutsch
 									</option>
-									<option lang="fr" value={ `/fr/${ realPathName }` }>
+									<option lang="fr" value={ `/fr/${ pathNameWithoutLocale }` }>
 										Français
 									</option>
-									<option lang="he" value={ `/he/${ realPathName }` }>
+									<option lang="he" value={ `/he/${ pathNameWithoutLocale }` }>
 										עִבְרִית
 									</option>
-									<option lang="ja" value={ `/ja/${ realPathName }` }>
+									<option lang="ja" value={ `/ja/${ pathNameWithoutLocale }` }>
 										日本語
 									</option>
-									<option lang="it" value={ `/it/${ realPathName }` }>
+									<option lang="it" value={ `/it/${ pathNameWithoutLocale }` }>
 										Italiano
 									</option>
-									<option lang="nl" value={ `/nl/${ realPathName }` }>
+									<option lang="nl" value={ `/nl/${ pathNameWithoutLocale }` }>
 										Nederlands
 									</option>
-									<option lang="ru" value={ `/ru/${ realPathName }` }>
+									<option lang="ru" value={ `/ru/${ pathNameWithoutLocale }` }>
 										Русский
 									</option>
-									<option lang="tr" value={ `/tr/${ realPathName }` }>
+									<option lang="tr" value={ `/tr/${ pathNameWithoutLocale }` }>
 										Türkçe
 									</option>
-									<option lang="id" value={ `/id/${ realPathName }` }>
+									<option lang="id" value={ `/id/${ pathNameWithoutLocale }` }>
 										Bahasa Indonesia
 									</option>
-									<option lang="zh-cn" value={ `/zh-cn/${ realPathName }` }>
+									<option lang="zh-cn" value={ `/zh-cn/${ pathNameWithoutLocale }` }>
 										简体中文
 									</option>
-									<option lang="zh-tw" value={ `/zh-tw/${ realPathName }` }>
+									<option lang="zh-tw" value={ `/zh-tw/${ pathNameWithoutLocale }` }>
 										繁體中文
 									</option>
-									<option lang="ko" value={ `/ko/${ realPathName }` }>
+									<option lang="ko" value={ `/ko/${ pathNameWithoutLocale }` }>
 										한국어
 									</option>
-									<option lang="ar" value={ `/ar/${ realPathName }` }>
+									<option lang="ar" value={ `/ar/${ pathNameWithoutLocale }` }>
 										العربية
 									</option>
-									<option lang="sv" value={ `/sv/${ realPathName }` }>
+									<option lang="sv" value={ `/sv/${ pathNameWithoutLocale }` }>
 										Svenska
 									</option>
-									<option lang="el" value={ `/el/${ realPathName }` }>
+									<option lang="el" value={ `/el/${ pathNameWithoutLocale }` }>
 										Ελληνικά
 									</option>
-									<option lang="en" value={ `/${ realPathName }` }>
+									<option lang="en" value={ `/${ pathNameWithoutLocale }` }>
 										English
 									</option>
-									<option lang="ro" value={ `/ro/${ realPathName }` }>
+									<option lang="ro" value={ `/ro/${ pathNameWithoutLocale }` }>
 										Română
 									</option>
 								</select>
