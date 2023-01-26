@@ -46,9 +46,9 @@ export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?:
 			stepCount: hasSites ? <Gridicon icon="checkmark" size={ 16 } /> : 1,
 			title: translate( 'Add your Jetpack sites' ),
 			description: translate(
-				'Add your clients’ sites to your dashboard to manage features and monitor them. To add your sites to the Pro Dashboard, simply connect them to Jetpack using the same {{strong}}%(displayName)s{{/strong}} user account.',
+				'Manage features and monitor your clients’ sites by adding them to your Jetpack Pro Dashboard. To do so, connect the sites to Jetpack using your {{strong}}%(userEmail)s{{/strong}} user account.',
 				{
-					args: { displayName: user?.display_name },
+					args: { userEmail: user?.email },
 					components: {
 						strong: <strong />,
 					},
@@ -73,7 +73,7 @@ export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?:
 			stepCount: 2,
 			title: translate( 'Issue product licenses' ),
 			description: translate(
-				'Add your first license and get up to a 60% discount on Jetpack products. Licenses can be revoked at any time, giving you the flexibility to add or remove products when it’s most convenient, meaning you only pay when you use them.'
+				'Save up to 60% on Jetpack products by adding your first license. You can revoke licenses anytime, allowing you to add or remove products as needed, so you only pay when using them.'
 			),
 			video:
 				'https://video.wordpress.com/embed/nsqG1pBO?hd=1&amp;autoPlay=0&amp;permalink=1&amp;loop=0&amp;preloadContent=metadata&amp;muted=0&amp;playsinline=0&amp;controls=1&amp;cover=1',
