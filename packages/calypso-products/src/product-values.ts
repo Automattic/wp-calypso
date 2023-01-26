@@ -61,7 +61,6 @@ export { isJetpackAntiSpam } from './is-jetpack-anti-spam';
 export { isJetpackAntiSpamSlug } from './is-jetpack-anti-spam-slug';
 export { isJetpackBackup } from './is-jetpack-backup';
 export { isJetpackBackupSlug } from './is-jetpack-backup-slug';
-export { isJetpackBackupT1 } from './is-jetpack-backup-t1';
 export { isJetpackBackupT1Slug } from './is-jetpack-backup-t1-slug';
 export { isJetpackBusiness } from './is-jetpack-business';
 export { isJetpackCloudProductSlug } from './is-jetpack-cloud-product-slug';
