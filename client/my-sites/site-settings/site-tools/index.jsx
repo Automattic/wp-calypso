@@ -98,7 +98,7 @@ class SiteTools extends Component {
 						description={ translate( "Register a new domain or change your site's address." ) }
 					/>
 				) }
-				{ isEnabled( 'sites/copy-site' ) && shouldShowSiteCopyItem() && (
+				{ isEnabled( 'sites/copy-site' ) && shouldShowSiteCopyItem && (
 					<SiteToolsLink
 						href={ copySiteUrl }
 						onClick={ () => {

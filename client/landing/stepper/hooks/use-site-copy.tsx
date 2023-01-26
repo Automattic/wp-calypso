@@ -39,7 +39,7 @@ export const useSiteCopy = ( site: SiteExcerptData ) => {
 
 	const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
 
-	const shouldShowSiteCopyItem = useCallback( () => {
+	const shouldShowSiteCopyItem = useMemo( () => {
 		return hasCopySiteFeature && isSiteOwner && plan && ! isLoadingPurchase;
 	}, [ hasCopySiteFeature, isSiteOwner, plan, isLoadingPurchase ] );
 
