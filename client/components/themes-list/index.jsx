@@ -4,9 +4,11 @@ import { useViewportMatch } from '@wordpress/compose';
 import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { useCallback, useEffect, useMemo } from 'react';
 import { connect, useSelector } from 'react-redux';
+import proThemesBanner from 'calypso/assets/images/themes/pro-themes-banner.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
@@ -250,15 +252,22 @@ function Footer( props ) {
 }
 
 function Empty( props ) {
-	const { translate, upsellCardDisplayed } = props;
+	const { translate, upsellCardDisplayed, searchTerm } = props;
 	const selectedSite = useSelector( getSelectedSite );
 
 	if ( ! selectedSite ) {
 		return (
-			<EmptyContent
-				title={ translate( 'Sorry, no themes found.' ) }
-				line={ translate( 'Try a different search or more filters?' ) }
-			/>
+			<>
+				<EmptyContent
+					title={ translate( 'Sorry, no themes found.' ) }
+					line={ translate( 'Try a different search or more filters?' ) }
+				/>
+				<PlanGetStartedCTA
+					searchTerm={ searchTerm }
+					translate={ translate }
+					recordTracksEvent={ props.recordTracksEvent }
+				/>
+			</>
 		);
 	}
 
@@ -302,6 +311,42 @@ function WPOrgMatchingThemes( props ) {
 				<TrailingItems />
 			</div>
 			<Footer translate={ props.translate } upsellCardDisplayed={ props.upsellCardDisplayed } />
+		</div>
+	);
+}
+
+function PlanGetStartedCTA( { searchTerm, translate, recordTracksEvent } ) {
+	const onGetStartedClick = useCallback( () => {
+		recordTracksEvent( 'calypso_themeshowcase_search_empty_results_get_started', {
+			search_term: searchTerm,
+		} );
+
+		return page( `/start/business` );
+	}, [ searchTerm, recordTracksEvent ] );
+
+	return (
+		<div className="themes-list__upgrade-section-wrapper">
+			<div className="themes-list__upgrade-section-title">
+				{ translate( 'Use any theme on WordPress.com' ) }
+			</div>
+			<div className="themes-list__upgrade-section-subtitle">
+				{ translate(
+					'Have a theme in mind that we don’t show here? Unlock the ability to use any theme, including Astra, with a Business plan.'
+				) }
+			</div>
+
+			<Button primary className="themes-list__upgrade-section-cta" onClick={ onGetStartedClick }>
+				{ translate( 'Get started' ) }
+			</Button>
+
+			<div className="themes-list__themes-images">
+				<img
+					src={ proThemesBanner }
+					alt={ translate(
+						'Themes banner featuring Astra, Neve, GeneratePress, and Hestia theme'
+					) }
+				/>
+			</div>
 		</div>
 	);
 }
