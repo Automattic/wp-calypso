@@ -77,7 +77,7 @@
 		"mailchimp": true,
 		"marketplace-domain-bundle": false,
 		"marketplace-fetch-dynamic-plugin-details": false,
-		"marketplace-jetpack-plugin-search": false,
+		"marketplace-jetpack-plugin-search": true,
 		"marketplace-personal-premium": false,
 		"marketplace-test": false,
 		"me/account-close": true,
