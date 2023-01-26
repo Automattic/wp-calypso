@@ -273,7 +273,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 	// translators: %s is the cost per year (e.g "billed as 96$ annually")
 	const newPlanItemPriceLabelAnnually = __( 'per month, billed as %s annually' );
 
-	const fallbackPlanItemPriceLabelAnnually = __( 'billed annually' );
+	const fallbackPlanItemPriceLabelAnnually = __( 'per month, billed annually' );
 
 	const planItemPriceLabelAnnually =
 		locale === 'en' || hasTranslation?.( 'per month, billed as %s annually' )
