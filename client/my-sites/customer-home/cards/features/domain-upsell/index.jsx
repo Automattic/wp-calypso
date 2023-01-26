@@ -91,9 +91,7 @@ export function RenderDomainUpsell() {
 					<div className="badge badge--info">{ translate( 'Current' ) }</div>
 					<div className="card">
 						<span>
-							<strike>
-								kasfljasasdfasdlkjfasdfasdfasdfsdfsadfsadfasdasdfasdfasdfsadfasdfasdfasdflaksdjflksjdfkl.wordpress.com
-							</strike>
+							<strike>{ siteSlug }</strike>
 						</span>
 					</div>
 					{ domainSuggestion?.domain_name ? (
