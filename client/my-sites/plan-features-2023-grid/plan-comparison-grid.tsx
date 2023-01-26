@@ -32,6 +32,7 @@ const JetpackIconContainer = styled.div`
 	padding-left: 6px;
 	display: inline-block;
 	vertical-align: middle;
+	line-height: 1;
 `;
 
 const PlanComparisonHeader = styled.h1`
@@ -82,11 +83,13 @@ const Row = styled.div`
 	justify-content: space-between;
 
 	@media ( min-width: 880px ) {
-		&,
-		&:last-of-type {
-			padding: 14px 0;
-			margin: 0 20px;
-			border-bottom: 1px solid #eee;
+		margin: 0 20px;
+		padding: 12px 0;
+		border-bottom: 1px solid #eee;
+
+		&.plan-comparison-grid__group-title-row {
+			border-bottom: none;
+			padding: 20px 0 10px;
 		}
 	}
 `;
@@ -132,6 +135,7 @@ const Cell = styled.div< { textAlign?: string } >`
 
 const RowHead = styled.div`
 	display: none;
+	font-size: 14px;
 	@media ( min-width: 880px ) {
 		display: block;
 		flex: 1;
@@ -178,6 +182,11 @@ const StorageButton = styled.div`
 	line-height: 20px;
 	color: var( --studio-gray-90 );
 	min-width: 64px;
+	margin-top: 10px;
+
+	@media ( min-width: 880px ) {
+		margin-top: 0;
+	}
 `;
 type PlanComparisonGridProps = {
 	planProperties?: Array< PlanProperties >;
