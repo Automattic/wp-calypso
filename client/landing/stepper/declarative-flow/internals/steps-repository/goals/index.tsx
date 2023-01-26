@@ -120,7 +120,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 	return (
 		<>
 			<DocumentHead title={ whatAreYourGoalsText } />
-			<PageViewTracker path="setup/site-setup/" title="whatAreYourGoalsText" />
+			<PageViewTracker path="setup/site-setup/" title="whatAreYourGoals" />
 			<GoalsCaptureContainer
 				welcomeText={ welcomeText }
 				whatAreYourGoalsText={ whatAreYourGoalsText }
