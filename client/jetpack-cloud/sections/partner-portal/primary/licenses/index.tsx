@@ -78,7 +78,7 @@ export default function Licenses( {
 				<Button
 					href="/partner-portal/issue-license"
 					onClick={ onIssueNewLicenseClick }
-					primary={ ! showEmptyStateContent }
+					primary
 					style={ { marginLeft: 'auto' } }
 				>
 					{ translate( 'Issue New License' ) }
