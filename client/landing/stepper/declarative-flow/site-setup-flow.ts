@@ -59,11 +59,8 @@ const WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION = 'white';
 const SiteIntent = Onboard.SiteIntent;
 const SiteGoal = Onboard.SiteGoal;
 
-function isLaunchpadIntent( intent: SiteIntent ) {
-	if ( intent === SiteIntent.Write || intent === SiteIntent.Build ) {
-		return true;
-	}
-	return false;
+function isLaunchpadIntent( intent: string ) {
+	return intent === SiteIntent.Write || intent === SiteIntent.Build;
 }
 
 const siteSetupFlow: Flow = {
