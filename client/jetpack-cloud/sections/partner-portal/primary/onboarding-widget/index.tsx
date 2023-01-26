@@ -29,6 +29,16 @@ export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?:
 		);
 	};
 
+	const onHowToAddNewSiteClick = () => {
+		dispatch(
+			recordTracksEvent(
+				isLicensesPage
+					? 'calypso_partner_portal_empty_state_how_to_add_site_click'
+					: 'calypso_jetpack_agency_dashboard_empty_state_how_to_add_site_click'
+			)
+		);
+	};
+
 	const hasSites = sites && sites.length > 0;
 
 	const steps = [
@@ -51,6 +61,7 @@ export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?:
 					target="_blank"
 					borderless
 					href="https://jetpack.com/support/jetpack-agency-licensing-portal-instructions/add-sites-agency-portal-dashboard/"
+					onClick={ onHowToAddNewSiteClick }
 				>
 					{ translate( 'How to add sites to the dashboard' ) } &nbsp;
 					<Gridicon icon="external" size={ 24 } />
