@@ -9,7 +9,7 @@ const CelebrateSiteCopy = () => {
 		<CelebrateNotice
 			actionText={ translate( 'Show site setup' ) }
 			description={ translate(
-				"Now it’s your turn to make it unique, but don't worry, we'll guide you through setting up and launching this site."
+				"Now it’s your turn to make it unique. Don't worry, we'll guide you through setting up and launching this site."
 			) }
 			noticeId={ NOTICE_CELEBRATE_SITE_COPY }
 			title={ translate( 'Your copy is ready!' ) }
