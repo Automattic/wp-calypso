@@ -61,8 +61,7 @@ body.is-section-signup {
 		.signup,
 		.signup__steps,
 		.signup__step,
-		.signup__step.is-user,
-		.signup__step.is-user-pm {
+		.signup__step.is-user {
 			padding: 0;
 			height: 100%;
 		}
@@ -112,8 +111,7 @@ body.is-section-signup {
 		.signup,
 		.signup__steps,
 		.signup__step,
-		.signup__step.is-user,
-		.signup__step.is-user-pm {
+		.signup__step.is-user {
 			padding: 0;
 			height: 100%;
 		}
@@ -530,8 +528,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 		}
 	}
 
-	.signup__step.is-user,
-	.signup__step.is-user-pm {
+	.signup__step.is-user {
 		.formatted-header {
 			.formatted-header__title {
 				text-align: center;
