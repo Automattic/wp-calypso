@@ -94,6 +94,7 @@
 		"ssr/prefetch-timebox": true,
 		"stats/horizontal-bars-everywhere": false,
 		"stats/insights-page-grid": false,
+		"stats/new-video-summary": false,
 		"stepper-woocommerce-poc": true,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,
