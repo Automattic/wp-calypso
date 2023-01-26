@@ -7,6 +7,7 @@ import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligible';
 import { useSite } from '../hooks/use-site';
@@ -58,6 +59,13 @@ const WRITE_INTENT_DEFAULT_THEME = 'livro';
 const WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION = 'white';
 const SiteIntent = Onboard.SiteIntent;
 const SiteGoal = Onboard.SiteGoal;
+
+const isLaunchpadIntent = ( intent: string ): boolean => {
+	if ( intent === SiteIntent.Write || intent === SiteIntent.Build ) {
+		return true;
+	}
+	return false;
+};
 
 const siteSetupFlow: Flow = {
 	name: 'site-setup',
@@ -160,6 +168,8 @@ const siteSetupFlow: Flow = {
 						return;
 					}
 
+					const siteId = site && site?.ID;
+
 					const pendingActions = [
 						setIntentOnSite( siteSlug, intent ),
 						setGoalsOnSite( siteSlug, goals ),
@@ -171,6 +181,12 @@ const siteSetupFlow: Flow = {
 								WRITE_INTENT_DEFAULT_THEME,
 								WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION
 							)
+						);
+					}
+
+					if ( isLaunchpadIntent( intent ) ) {
+						pendingActions.push(
+							dispatch( saveSiteSettings( siteId, { launchpad_screen: 'full' } ) )
 						);
 					}
 
