@@ -185,6 +185,7 @@ export type AgencyDashboardFilterOption =
 	| 'backup_warning'
 	| 'threats_found'
 	| 'site_disconnected'
+	| 'site_down'
 	| 'plugin_updates';
 
 export type AgencyDashboardFilter = {
