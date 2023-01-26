@@ -5,10 +5,10 @@ import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 const WPCourses = () => {
 	return (
 		<Task
-			title="Introducing WordPress.com Courses"
-			description="Build your skills with in-depth courses for any level, taught by WordPress experts. Enroll to access on-demand content, a private online community, office hours, and virtual meetups."
-			actionText="Enroll today!"
-			actionUrl="https://wpcourses.com/?utm_source=wordpressdotcom&utm_medium=referral&utm_campaign=courses_launch_myhome"
+			title="World-class education by WordPress&nbsp;experts"
+			description="Build your skills with access to webinars, courses, articles, support docs, a community and more! No enrollment required. No deadlines. Learn at your own pace."
+			actionText="Get started here"
+			actionUrl="https://wordpress.com/learn/?utm_source=wordpressdotcom&utm_medium=referral&utm_campaign=courses_launch_myhome"
 			actionTarget="_blank"
 			illustration={ coursesLogo }
 			completeOnStart={ true }
