@@ -306,17 +306,6 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} catch ( e ) {}
 	}
 
-	function* setLaunchpadScreenOnSite( siteSlug: string, launchpadScreen: string ) {
-		try {
-			yield wpcomRequest( {
-				path: `/sites/${ encodeURIComponent( siteSlug ) }/settings`,
-				apiVersion: '1.4',
-				body: { launchpad_screen: launchpadScreen },
-				method: 'POST',
-			} );
-		} catch ( e ) {}
-	}
-
 	function* setStaticHomepageOnSite( siteID: number, pageId: number ) {
 		try {
 			yield wpcomRequest( {
@@ -669,7 +658,6 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		saveSiteTitle,
 		saveSiteSettings,
 		setIntentOnSite,
-		setLaunchpadScreenOnSite,
 		setStaticHomepageOnSite,
 		setGoalsOnSite,
 		receiveSiteTitle,
