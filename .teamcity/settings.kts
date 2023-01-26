@@ -204,9 +204,8 @@ object BuildBaseImages : BuildType({
 
 	triggers {
 		schedule {
-			schedulingPolicy = daily {
-				// Time in UTC. Roughly EU mid day, before US starts
-				hour = 11
+			schedulingPolicy = cron {
+				hours = "*/4"
 			}
 			branchFilter = """
 				+:trunk
