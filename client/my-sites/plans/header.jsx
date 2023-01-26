@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -16,8 +15,9 @@ export default function PlansHeader() {
 	const translate = useTranslate();
 	const [ showDomainUpsellDialog, setShowDomainUpsellDialog ] = useState( false );
 
-	// TODO: We need to determine if this is a domain upsell and show the domain here.
-	const domainName = 'exampledomain.com';
+	const domainFromHomeUpsellFlow = new URLSearchParams( window.location.search ).get(
+		'get_domain'
+	);
 
 	const plansDescription = translate(
 		'See and compare the features available on each WordPress.com plan.'
@@ -27,16 +27,13 @@ export default function PlansHeader() {
 		'With an annual plan, you can get {{strong}}%(domainName)s for free{{/strong}} for the first year, Jetpack essential features, live chat support, and all the features that will take your site to the next level.',
 		{
 			args: {
-				domainName: domainName,
+				domainName: domainFromHomeUpsellFlow,
 			},
 			components: {
 				strong: <strong />,
 			},
 		}
 	);
-
-	// TODO: We need to determine if this is a domain upsell.
-	const isDomainUpsell = config.isEnabled( 'is_domain_upsell' );
 
 	const onBackClick = () => {
 		recordTracksEvent( 'calypso_plans_page_domain_upsell_back_click' );
@@ -96,7 +93,7 @@ export default function PlansHeader() {
 						'Any domain you purchase without a plan will get redirected to %(domainName)s.',
 						{
 							args: {
-								domainName: domainName,
+								domainName: domainFromHomeUpsellFlow,
 							},
 						}
 					) }
@@ -110,7 +107,7 @@ export default function PlansHeader() {
 		);
 	}
 
-	if ( false === isDomainUpsell ) {
+	if ( null === domainFromHomeUpsellFlow ) {
 		return (
 			<FormattedHeader
 				brandFont
@@ -130,12 +127,10 @@ export default function PlansHeader() {
 					{ translate( 'Back' ) }
 				</Button>
 
-				{ isDomainUpsell && (
-					<Button onClick={ onSkipClick } borderless href="/">
-						{ translate( 'Skip' ) }
-						<Gridicon icon="arrow-right" size={ 18 } />
-					</Button>
-				) }
+				<Button onClick={ onSkipClick } borderless href="/">
+					{ translate( 'Skip' ) }
+					<Gridicon icon="arrow-right" size={ 18 } />
+				</Button>
 			</header>
 
 			<FormattedHeader
