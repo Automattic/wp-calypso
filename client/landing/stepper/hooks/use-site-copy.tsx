@@ -65,7 +65,6 @@ export const useSiteCopy = ( site: SiteExcerptData ) => {
 
 export const withSiteCopy = createHigherOrderComponent(
 	( Wrapped ) => ( props ) => {
-		// Limit query to 1 since we are only interested in the totalItems count.
 		const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( props.site );
 		return (
 			<Wrapped
