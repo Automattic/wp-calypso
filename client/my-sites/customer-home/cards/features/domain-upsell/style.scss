@@ -29,20 +29,19 @@ body .customer-home__layout .domain-upsell__card {
 			font-size: rem(14px);
 			color: var(--studio-gray-80);
 			line-height: 20px;
+			word-break: break-all;
+			flex-direction: column;
+			display: flex;
+			flex: 1;
 		}
 
 		.badge {
-			position: absolute;
-			right: 27px;
 			border-radius: 4px;
 			font-size: rem(12px);
 			color: var(--studio-gray-80);
 			font-weight: 500;
-			margin-top: 9px;
-			z-index: 1;
-			@include break-small {
-				right: 63px;
-			}
+			flex-direction: column;
+			display: flex;
 		}
 
 		.card {
@@ -51,6 +50,9 @@ body .customer-home__layout .domain-upsell__card {
 			padding: 8px 16px;
 			min-height: 40px;
 			overflow-x: auto;
+			flex-direction: row;
+			display: flex;
+			align-items: center;
 		}
 
 		.badge--success {
