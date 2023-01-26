@@ -1,12 +1,12 @@
-import { isJetpackBackupT1 } from '@automattic/calypso-products';
+import { isJetpackBackupT1Slug } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import type { WithSnakeCaseSlug, WithCamelCaseSlug } from '@automattic/calypso-products';
+import type { WithSnakeCaseSlug } from '@automattic/calypso-products';
 
 export default function getJetpackProductFeatures(
-	product: WithSnakeCaseSlug | WithCamelCaseSlug,
+	product: WithSnakeCaseSlug,
 	translate: ReturnType< typeof useTranslate >
 ): string[] {
-	if ( isJetpackBackupT1( product ) ) {
+	if ( isJetpackBackupT1Slug( product.product_slug ) ) {
 		return [
 			String( translate( 'Real-time cloud backups' ) ),
 			String( translate( '10GB of backup storage' ) ),

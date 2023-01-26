@@ -312,9 +312,7 @@ function CheckoutSummaryFeaturesList( props: {
 	const plans = responseCart.products.filter( ( product ) => isPlan( product ) );
 	const hasPlanInCart = plans.length > 0;
 
-	const jetpackProducts = responseCart.products.filter( ( product ) =>
-		isJetpackProduct( product )
-	);
+	const jetpackProducts = responseCart.products.filter( isJetpackProduct );
 	const hasJetpackProduct = jetpackProducts.length > 0;
 	const hasSingleProduct = responseCart.products.length === 1;
 
@@ -419,7 +417,7 @@ function CheckoutSummaryJetpackProductFeatures( { product }: { product: Response
 		<>
 			{ productFeatures.map( ( feature ) => {
 				return (
-					<CheckoutSummaryFeaturesListItem key={ String( feature ) }>
+					<CheckoutSummaryFeaturesListItem key={ feature }>
 						<WPCheckoutCheckIcon id={ feature.replace( /[^\w]/g, '_' ) } />
 						{ feature }
 					</CheckoutSummaryFeaturesListItem>
