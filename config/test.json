@@ -65,6 +65,7 @@
 		"marketplace-fetch-dynamic-plugin-details": false,
 		"marketplace-jetpack-plugin-search": true,
 		"marketplace-personal-premium": false,
+		"mastodon": false,
 		"me/account-close": true,
 		"me/vat-details": true,
 		"my-sites/add-ons": true,
