@@ -138,7 +138,7 @@ open class E2EBuildType(
 					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=$testGroup
 				"""
 				dockerImage = "%docker_image_e2e%"
-				dockerRunParameters = "-u %env.UID% --shm-size=3g"
+				dockerRunParameters = "-u %env.UID% --shm-size=4g"
 			}
 
 			bashNodeScript {
