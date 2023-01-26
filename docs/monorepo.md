@@ -194,7 +194,7 @@ git push --tags
 
 ### Publishing a package
 
-Once the above steps (checkout `trunk`, get `@automattic` permissions and package tagging) are done, you are ready to publish the package. Depending on the name of the package (found in the package's `package.json` file), you'll need to log into a different scpoe:
+Once the above steps (checkout `trunk`, get `@automattic` permissions, and package tagging) are done, you are ready to publish the package. Depending on the name of the package (found in the package's `package.json` file), you'll need to log into a different scope:
 
 - If the package name is prefixed with `@automattic` (e.g. `@automattic/components`), run `yarn npm login --scope automattic`.
 - If the package name is not prefixed (e.g. `eslint-plugin-wpcalypso`), run `yarn npm login`.
