@@ -50,7 +50,7 @@ body .customer-home__layout .domain-upsell__card {
 			box-shadow: none;
 			padding: 8px 16px;
 			min-height: 40px;
-			overflow: scroll;
+			overflow-x: auto;
 		}
 
 		.badge--success {
