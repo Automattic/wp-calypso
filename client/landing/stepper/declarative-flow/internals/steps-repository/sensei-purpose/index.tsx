@@ -15,7 +15,7 @@ import './style.scss';
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
 const SenseiPurpose: Step = ( { navigation: { submit } } ) => {
-	const [ progress, setProgress ] = useState< number >( 0 );
+	const [ progress, setProgress ] = useState< number >( 110 );
 
 	useEffect( () => {
 		clearSelectedPurposes();

@@ -5,15 +5,22 @@ export type FormState = {
 	other: string;
 };
 
-export type Plugin = {
-	id: string;
-	slug: string;
+export type ManagedPlugin = {
+	softwareSet: string;
 };
+
+export type Plugin =
+	| {
+			id: string;
+			slug: string;
+	  }
+	| ManagedPlugin;
 
 export type Purpose = {
 	id: string;
 	label: string;
-	plugins?: Plugin[];
+	plugins?: Array< Plugin >;
+	softwareSet?: string;
 	description?: string;
 };
 
@@ -22,8 +29,9 @@ export const purposes: Purpose[] = [
 		id: 'sell_courses',
 		label: __( 'Sell courses and generate income' ),
 		plugins: [
-			{ slug: 'woocommerce', id: 'woocommerce/woocommerce' },
-			{ slug: 'woocommerce-payments', id: 'woocommerce-payments/woocommerce-payments' },
+			{
+				softwareSet: 'woo-on-plans',
+			},
 			{
 				slug: 'woocommerce-google-analytics-integration',
 				id: 'woocommerce-google-analytics-integration/woocommerce-google-analytics-integration',
