@@ -1,4 +1,4 @@
-import { PLAN_BUSINESS, FEATURE_SFTP } from '@automattic/calypso-products';
+import { FEATURE_SFTP, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { englishLocales } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
@@ -7,6 +7,7 @@ import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import FeatureExample from 'calypso/components/feature-example';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Layout from 'calypso/components/layout';
@@ -17,7 +18,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { Experiment } from 'calypso/lib/explat';
-import { GithubAuthorizeCard } from 'calypso/my-sites/hosting/github-authorize-card';
+import { GitHubCard } from 'calypso/my-sites/hosting/github';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -169,23 +170,26 @@ class Hosting extends Component {
 			const WrapperComponent = isDisabled || isTransferring ? FeatureExample : Fragment;
 
 			return (
-				<WrapperComponent>
-					<Layout className="hosting__layout">
-						<Column type="main" className="hosting__main-layout-col">
-							<SFTPCard disabled={ isDisabled } />
-							<PhpMyAdminCard disabled={ isDisabled } />
-							<GithubAuthorizeCard />
-							<WebServerSettingsCard disabled={ isDisabled } />
-							<RestorePlanSoftwareCard disabled={ isDisabled } />
-							<MiscellaneousCard disabled={ isDisabled } />
-							<WebServerLogsCard disabled={ isDisabled } />
-						</Column>
-						<Column type="sidebar">
-							<SiteBackupCard disabled={ isDisabled } />
-							<SupportCard />
-						</Column>
-					</Layout>
-				</WrapperComponent>
+				<>
+					<QueryKeyringConnections />
+					<WrapperComponent>
+						<Layout className="hosting__layout">
+							<Column type="main" className="hosting__main-layout-col">
+								<SFTPCard disabled={ isDisabled } />
+								<PhpMyAdminCard disabled={ isDisabled } />
+								<GitHubCard />
+								<WebServerSettingsCard disabled={ isDisabled } />
+								<RestorePlanSoftwareCard disabled={ isDisabled } />
+								<MiscellaneousCard disabled={ isDisabled } />
+								<WebServerLogsCard disabled={ isDisabled } />
+							</Column>
+							<Column type="sidebar">
+								<SiteBackupCard disabled={ isDisabled } />
+								<SupportCard />
+							</Column>
+						</Layout>
+					</WrapperComponent>
+				</>
 			);
 		};
 

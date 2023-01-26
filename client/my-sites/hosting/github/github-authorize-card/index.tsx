@@ -1,19 +1,15 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading/index';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors/index';
-import iconGitHub from './github.svg';
+import iconGitHub from '../github.svg';
 
 import './style.scss';
 
 export const GithubAuthorizeCard = () => {
 	const siteId = useSelector( getSelectedSiteId );
 
-	if ( ! isEnabled( 'hosting/github-integration' ) ) {
-		return null;
-	}
 	return (
 		<Card className="github-authorize-card">
 			<img className="github-authorize-icon" src={ iconGitHub } alt="" />
