@@ -34,7 +34,7 @@ const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
 const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 	const { submit } = navigation;
-	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
 	const site = useSite();
 
@@ -79,8 +79,6 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 		}
 
 		setPendingAction( async () => {
-			setProgress( 0.4 );
-
 			const startTime = new Date().getTime();
 			const totalTimeout = 1000 * 300;
 			const maxFinishTime = startTime + totalTimeout;
@@ -95,21 +93,6 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 				const transferError = getSiteLatestAtomicTransferError( siteId );
 				const transferStatus = transfer?.status;
 				const isTransferringStatusFailed = transferError && transferError?.status >= 500;
-
-				switch ( transferStatus ) {
-					case transferStates.PENDING:
-						setProgress( 0.5 );
-						break;
-					case transferStates.ACTIVE:
-						setProgress( 0.6 );
-						break;
-					case transferStates.PROVISIONED:
-						setProgress( 0.7 );
-						break;
-					case transferStates.COMPLETED:
-						setProgress( 0.8 );
-						break;
-				}
 
 				if ( isTransferringStatusFailed || transferStatus === transferStates.ERROR ) {
 					handleTransferFailure( {
@@ -131,8 +114,6 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 
 				stopPollingTransfer = transferStatus === transferStates.COMPLETED;
 			}
-
-			setProgress( 1 );
 
 			return { finishedWaitingForAtomic: true, siteSlug: data?.siteSlug };
 		} );
