@@ -15,8 +15,8 @@ const AutomatticBylineLogo: React.FC< AutomatticBylineLogoProps > = ( {
 	className,
 	...otherProps
 } ) => {
-	const tranlate = useTranslate();
-	title = title ?? tranlate( 'An Automattic Airline' );
+	const translate = useTranslate();
+	title = title ?? translate( 'An Automattic Airline' );
 	return (
 		<svg
 			role="img"
