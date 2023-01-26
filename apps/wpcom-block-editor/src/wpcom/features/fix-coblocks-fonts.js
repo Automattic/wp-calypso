@@ -9,6 +9,10 @@ import { isEditorReadyWithBlocks } from '../../utils';
  * content which includes a rule for the font-family. As wpcom doesn't use
  * the CoBlocks typography controls, we can safely remove the filter.
  *
+ * Note that this doesn't work in versions of co-blocks released from 2022
+ * onwards - all of the filters across CoBlocks were reconciled into one
+ * so we can't remove the filter for just the font styles.
+ *
  * @see https://github.com/godaddy-wordpress/coblocks/issues/2475
  */
 async function removeCoBlocksFontStyles() {
