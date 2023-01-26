@@ -6,9 +6,9 @@ import PlanPrice from 'calypso/my-sites/plan-price';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import { StorageUsageLevelName } from 'calypso/state/rewind/storage/types';
 import ActionButton from './action-button';
 import useUpsellInfo from './use-upsell-slug';
-import type { StorageUsageLevelName } from '../storage-usage-levels';
 import './style.scss';
 
 type UpsellProps = {

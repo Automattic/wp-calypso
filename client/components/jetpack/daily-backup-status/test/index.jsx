@@ -5,12 +5,13 @@
 import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
 import moment from 'moment';
-import { StorageUsageLevels } from 'calypso/components/backup-storage-space/storage-usage-levels';
 import {
 	isSuccessfulDailyBackup,
 	isSuccessfulRealtimeBackup,
 } from 'calypso/lib/jetpack/backup-utils';
 import { useIsDateVisible } from 'calypso/my-sites/backup/hooks';
+import { getRewindStorageUsageLevel } from 'calypso/state/rewind/selectors';
+import { StorageUsageLevels } from 'calypso/state/rewind/storage/types';
 import getSiteFeatures from 'calypso/state/selectors/get-site-features';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import DailyBackupStatus from '..';
@@ -28,6 +29,10 @@ jest.mock( 'calypso/state/selectors/get-site-gmt-offset' );
 
 jest.mock( 'calypso/state/selectors/get-rewind-backups' );
 jest.mock( 'calypso/state/selectors/get-site-features' );
+jest.mock( 'calypso/state/rewind/selectors', () => ( {
+	...jest.requireActual( 'calypso/state/rewind/selectors' ),
+	getRewindStorageUsageLevel: jest.fn(),
+} ) );
 
 jest.mock( 'calypso/lib/jetpack/backup-utils' );
 
@@ -62,6 +67,7 @@ describe( 'DailyBackupStatus', () => {
 		getSiteFeatures.mockReset();
 		isSuccessfulDailyBackup.mockReset();
 		isSuccessfulRealtimeBackup.mockReset();
+		getRewindStorageUsageLevel.mockImplementation( () => StorageUsageLevels.Normal );
 	} );
 
 	test( 'shows "no backups yet" when no backup or last available backup date are provided', () => {
@@ -95,14 +101,9 @@ describe( 'DailyBackupStatus', () => {
 
 	test( 'does not shows "backup scheduled" when no backup is provided, the selected date is today, and storage usage level is full', () => {
 		const now = moment();
+		getRewindStorageUsageLevel.mockImplementation( () => StorageUsageLevels.Full );
 
-		render(
-			<DailyBackupStatus
-				selectedDate={ now }
-				lastBackupDate={ {} }
-				usageLevel={ StorageUsageLevels.Full }
-			/>
-		);
+		render( <DailyBackupStatus selectedDate={ now } lastBackupDate={ {} } /> );
 		expect( screen.queryByTestId( 'backup-scheduled' ) ).toBeNull();
 	} );
 
@@ -143,14 +144,9 @@ describe( 'DailyBackupStatus', () => {
 
 	test( 'does not shows "no backups on this date" when no backup is provided, the selected date is not today and storage usage level is full', () => {
 		const yesterday = moment().subtract( 1, 'day' );
+		getRewindStorageUsageLevel.mockImplementation( () => StorageUsageLevels.Full );
 
-		render(
-			<DailyBackupStatus
-				selectedDate={ yesterday }
-				lastBackupDate={ {} }
-				usageLevel={ StorageUsageLevels.Full }
-			/>
-		);
+		render( <DailyBackupStatus selectedDate={ yesterday } lastBackupDate={ {} } /> );
 		expect( screen.queryByTestId( 'no-backups-on-selected-date' ) ).toBeNull();
 	} );
 

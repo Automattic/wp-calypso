@@ -11,7 +11,7 @@ import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { useIsDateVisible } from '../hooks';
 import { useDailyBackupStatus, useRealtimeBackupStatus } from './hooks';
 
-export const DailyStatus = ( { selectedDate, usageLevel } ) => {
+export const DailyStatus = ( { selectedDate } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 
 	const { isLoading, lastBackupBeforeDate, lastBackupAttemptOnDate, deltas } = useDailyBackupStatus(
@@ -33,13 +33,12 @@ export const DailyStatus = ( { selectedDate, usageLevel } ) => {
 				backup: lastBackupAttemptOnDate,
 				deltas,
 				lastBackupAttemptOnDate,
-				usageLevel,
 			} }
 		/>
 	);
 };
 
-export const RealtimeStatus = ( { selectedDate, usageLevel } ) => {
+export const RealtimeStatus = ( { selectedDate } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const isDateVisible = useIsDateVisible( siteId );
 
@@ -76,7 +75,6 @@ export const RealtimeStatus = ( { selectedDate, usageLevel } ) => {
 					backup: lastSuccessfulBackupOnDate || lastBackupAttemptOnDate,
 					lastBackupAttempt,
 					lastBackupAttemptOnDate,
-					usageLevel,
 				} }
 			/>
 

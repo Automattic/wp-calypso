@@ -1,6 +1,6 @@
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { StorageUsageLevelName, StorageUsageLevels } from '../storage-usage-levels';
+import { StorageUsageLevelName, StorageUsageLevels } from 'calypso/state/rewind/storage/types';
 
 const useStorageStatusText = (
 	usageLevel: StorageUsageLevelName,

@@ -3,11 +3,10 @@ import { ExternalLink } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import BackupStorageSpace from 'calypso/components/backup-storage-space';
-import { StorageUsageLevels } from 'calypso/components/backup-storage-space/storage-usage-levels';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack-credentials-status';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -182,7 +181,6 @@ function BackupStatus( {
 	areCredentialsInvalid,
 	isAtomic,
 } ) {
-	const [ usageLevel, setUsageLevel ] = useState( StorageUsageLevels.Normal );
 	const isFetchingSiteFeatures = useSelectedSiteSelector( isRequestingSiteFeatures );
 	const isPoliciesInitialized = useSelectedSiteSelector( isRewindPoliciesInitialized );
 
@@ -204,11 +202,11 @@ function BackupStatus( {
 				) }
 
 				<BackupDatePicker onDateChange={ onDateChange } selectedDate={ selectedDate } />
-				<BackupStorageSpace onUsageLevel={ setUsageLevel } />
+				<BackupStorageSpace />
 				{ hasRealtimeBackups ? (
-					<RealtimeStatus selectedDate={ selectedDate } usageLevel={ usageLevel } />
+					<RealtimeStatus selectedDate={ selectedDate } />
 				) : (
-					<DailyStatus selectedDate={ selectedDate } usageLevel={ usageLevel } />
+					<DailyStatus selectedDate={ selectedDate } />
 				) }
 			</div>
 		</div>

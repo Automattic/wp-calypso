@@ -8,11 +8,11 @@ import {
 	getRewindBytesUsed,
 	getRewindDaysOfBackupsSaved,
 } from 'calypso/state/rewind/selectors';
+import { StorageUsageLevels, StorageUsageLevelName } from 'calypso/state/rewind/storage/types';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { useDaysOfBackupsSavedText, useStorageUsageText } from './hooks';
 import StorageHelpTooltip from './storage-usage-help-tooltip';
-import { StorageUsageLevelName, StorageUsageLevels } from './storage-usage-levels';
 
 const PROGRESS_BAR_CLASS_NAMES = {
 	[ StorageUsageLevels.Full ]: 'full-warning',

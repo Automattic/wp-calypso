@@ -3,7 +3,6 @@ import { Card } from '@automattic/components';
 import PropTypes from 'prop-types';
 import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { StorageUsageLevels } from 'calypso/components/backup-storage-space/storage-usage-levels';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
 import BackupWarnings from 'calypso/components/jetpack/backup-warnings/backup-warnings';
@@ -17,7 +16,11 @@ import {
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { useIsDateVisible } from 'calypso/my-sites/backup/hooks';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
-import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
+import {
+	getInProgressBackupForSite,
+	getRewindStorageUsageLevel,
+} from 'calypso/state/rewind/selectors';
+import { StorageUsageLevels } from 'calypso/state/rewind/storage/types';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import BackupFailed from './status-card/backup-failed';
@@ -38,9 +41,9 @@ const DailyBackupStatus = ( {
 	lastBackupDate,
 	backup,
 	deltas,
-	usageLevel,
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
+	const usageLevel = useSelector( ( state ) => getRewindStorageUsageLevel( state, siteId ) );
 
 	const moment = useLocalizedMoment();
 	const today = useDateWithOffset( moment() );
@@ -154,7 +157,6 @@ DailyBackupStatus.propTypes = {
 	lastBackupAttemptOnDate: PropTypes.object, // Moment object
 	backup: PropTypes.object,
 	deltas: PropTypes.object,
-	usageLevel: PropTypes.string,
 };
 
 const Wrapper = ( props ) => {
