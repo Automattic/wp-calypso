@@ -103,8 +103,8 @@ $grid-vertical-gutters: 32px;
 		"country country country country country country country country country country country country"
 		"authors authors authors authors search search search search clicks clicks clicks clicks"
 		"videos videos videos videos videos videos downloads downloads downloads downloads downloads downloads"
-		"emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open",
-		5
+		"emails-open emails-open emails-open emails-open emails-open emails-open emails-click emails-click emails-click emails-click emails-click emails-click",
+		6
 	);
 
 	@include stats-tablet-grid(
@@ -113,8 +113,8 @@ $grid-vertical-gutters: 32px;
 		"authors authors authors authors search search search search"
 		"clicks clicks clicks clicks videos videos videos videos"
 		"downloads downloads downloads downloads downloads downloads downloads downloads"
-		"emails-open emails-open emails-open emails-open emails-open emails-open emails-open emails-open",
-		6
+		"emails-open emails-open emails-open emails-open emails-click emails-click emails-click emails-click",
+		7
 	);
 
 	@include stats-mobile-grid(
@@ -126,8 +126,9 @@ $grid-vertical-gutters: 32px;
 		"clicks clicks clicks clicks"
 		"videos videos videos videos"
 		"downloads downloads downloads downloads"
-		"emails-open emails-open emails-open emails-open",
-		9
+		"emails-open emails-open"
+		"emails-click emails-click",
+		10
 	);
 
 	.card.stats-module {
@@ -205,5 +206,10 @@ $grid-vertical-gutters: 32px;
 	.stats__module-wrapper--emails,
 	.list-emails-open {
 		grid-area: emails-open;
+	}
+
+	.stats__module-wrapper--emails,
+	.list-emails-click {
+		grid-area: emails-click;
 	}
 }

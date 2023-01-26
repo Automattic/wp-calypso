@@ -152,7 +152,7 @@ const PluginsBrowserListElement = ( props ) => {
 		) || jetpackNonAtomic;
 
 	if ( isPlaceholder ) {
-		return <Placeholder />;
+		return <Placeholder variant={ variant } />;
 	}
 
 	const classNames = classnames( 'plugins-browser-item', variant, {
@@ -218,7 +218,7 @@ const PluginsBrowserListElement = ( props ) => {
 					{ /* Plugin activation information will be shown in this area if its installed */ }
 					{ ! isPluginInstalledOnSite && (
 						<div className="plugins-browser-item__additional-info">
-							{ !! plugin.rating && ! isMarketplaceProduct && (
+							{ !! plugin.rating && (
 								<div className="plugins-browser-item__ratings">
 									<Gridicon
 										size={ 18 }
@@ -352,9 +352,9 @@ function InstalledInOrPricing( {
 	);
 }
 
-function Placeholder() {
+function Placeholder( { variant } ) {
 	return (
-		<li className="plugins-browser-item is-placeholder">
+		<li className={ classnames( 'plugins-browser-item is-placeholder', variant ) }>
 			<span className="plugins-browser-item__link">
 				<div className="plugins-browser-item__info">
 					<PluginIcon isPlaceholder={ true } />

@@ -180,16 +180,14 @@ class WordAdsEarnings extends Component {
 					<h1 className="ads__module-header-title module-header-title">{ header_text }</h1>
 					<ul className="ads__module-header-actions module-header-actions">
 						<li className="ads__module-header-action module-header-action toggle-info">
-							{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
-							<a
-								href="#"
+							<button
 								className="ads__module-header-action-link module-header-action-link"
 								aria-label={ translate( 'Show or hide panel information' ) }
 								title={ translate( 'Show or hide panel information' ) }
 								onClick={ this.handleInfoToggle( type ) }
 							>
 								<Gridicon icon={ infoIcon } />
-							</a>
+							</button>
 						</li>
 					</ul>
 				</div>

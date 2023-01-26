@@ -259,16 +259,6 @@ class StatsSite extends Component {
 					/>
 
 					<div className="stats__module-list stats__module-list--traffic is-events stats__module--unified">
-						{ config.isEnabled( 'newsletter/stats' ) && (
-							<StatsModule
-								path="emails-open"
-								moduleStrings={ moduleStrings.emailsOpenStats }
-								period={ this.props.period }
-								query={ query }
-								statType="statsEmailsOpen"
-								hideSummaryLink
-							/>
-						) }
 						<StatsModule
 							path="posts"
 							moduleStrings={ moduleStrings.posts }
@@ -327,12 +317,35 @@ class StatsSite extends Component {
 							statType="statsVideoPlays"
 							showSummaryLink
 						/>
+						{ config.isEnabled( 'newsletter/stats' ) && (
+							<>
+								<StatsModule
+									path="emails-open"
+									moduleStrings={ moduleStrings.emailsOpenStats }
+									period={ this.props.period }
+									query={ query }
+									statType="statsEmailsOpen"
+									hideSummaryLink
+									metricLabel={ translate( 'Opens' ) }
+								/>
+								<StatsModule
+									path="emails-click"
+									moduleStrings={ moduleStrings.emailsClickStats }
+									period={ this.props.period }
+									query={ query }
+									statType="statsEmailsClick"
+									hideSummaryLink
+									metricLabel={ translate( 'Clicks' ) }
+								/>
+							</>
+						) }
 						{
 							// File downloads are not yet supported in Jetpack Stats
 							// TODO: Confirm the above statement.
 							! isJetpack && (
 								<StatsModule
 									path="filedownloads"
+									metricLabel={ translate( 'Downloads' ) }
 									moduleStrings={ moduleStrings.filedownloads }
 									period={ this.props.period }
 									query={ query }

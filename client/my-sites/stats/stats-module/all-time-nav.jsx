@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { ComponentSwapper } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight, find, get } from 'lodash';
@@ -8,6 +9,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import SegmentedControl from 'calypso/components/segmented-control';
+import SelectDropdown from 'calypso/components/select-dropdown';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -57,6 +59,38 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		'stats/horizontal-bars-everywhere'
 	);
 
+	const tabs = (
+		<SegmentedControl
+			primary
+			className={ classnames( 'stats-summary-nav__intervals' ) }
+			compact={ false }
+		>
+			{ options.map( ( i ) => (
+				<SegmentedControl.Item
+					key={ i.value }
+					path={ i.path }
+					selected={ i.value === selected.value }
+				>
+					{ i.label }
+				</SegmentedControl.Item>
+			) ) }
+		</SegmentedControl>
+	);
+	const select = (
+		<SelectDropdown className="section-nav-tabs__dropdown" selectedText={ selected.label }>
+			{ options.map( ( i, index ) => (
+				<SelectDropdown.Item
+					{ ...i }
+					key={ 'navTabsDropdown-' + index }
+					path={ i.path }
+					selected={ i.value === selected.value }
+				>
+					{ i.label }
+				</SelectDropdown.Item>
+			) ) }
+		</SelectDropdown>
+	);
+
 	return (
 		<>
 			{ isHorizontalBarComponentEnabledEverywhere && (
@@ -71,23 +105,12 @@ export const StatsModuleSummaryLinks = ( props ) => {
 						/>
 					</div>
 					{ ! hideNavigation && (
-						<SegmentedControl
-							primary
-							className={ classnames( 'stats-summary-nav__intervals' ) }
-							compact={ false }
-						>
-							{ options.map( ( i ) => {
-								return (
-									<SegmentedControl.Item
-										key={ i.value }
-										path={ i.path }
-										selected={ i.value === selected.value }
-									>
-										{ i.label }
-									</SegmentedControl.Item>
-								);
-							} ) }
-						</SegmentedControl>
+						<ComponentSwapper
+							className={ classnames( 'stats-summary-nav__intervals-container' ) }
+							breakpoint="<660px"
+							breakpointActiveComponent={ select }
+							breakpointInactiveComponent={ tabs }
+						/>
 					) }
 					{ hideNavigation && navigationSwap }
 				</div>

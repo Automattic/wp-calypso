@@ -953,9 +953,7 @@ export const normalizers = {
 		const emailsData = get( data, [ 'posts' ], [] );
 
 		return emailsData.map( ( { id, href, date, title, type, opens } ) => {
-			const detailPage = site
-				? `/stats/email/opens/${ site.slug }/${ query.period }/${ id }`
-				: null;
+			const detailPage = site ? `/stats/email/opens/${ site.slug }/day/${ id }` : null;
 			return {
 				id,
 				href,
@@ -973,129 +971,40 @@ export const normalizers = {
 			};
 		} );
 	},
-};
 
-/**
- * Return data in a format used by 'components/chart` for email stats. The fields array is matched to
- * the data in a single object.
- *
- * @param {Object} payload - response
- * @param {Array} nullAttributes - properties on data objects to be initialized with
- * a null value
- * @returns {Array} - Array of data objects
- */
-export function parseEmailChartData( payload, nullAttributes = [] ) {
-	if ( ! payload || ! payload.data ) {
-		return [];
-	}
-
-	if ( 'hour' === payload.unit ) {
-		payload.fields.push( 'hour' );
-	}
-
-	return payload.data.map( function ( record ) {
-		// Initialize data
-		const dataRecord = nullAttributes.reduce( ( memo, attribute ) => {
-			memo[ attribute ] = null;
-			return memo;
-		}, {} );
-
-		// Fill Field Values
-		record.forEach( function ( value, i ) {
-			// Remove W from weeks
-			if ( 'date' === payload.fields[ i ] ) {
-				value = value.replace( /W/g, '-' );
-				dataRecord.period = value;
-			} else {
-				dataRecord[ payload.fields[ i ] ] = value;
-			}
-		} );
-
-		if ( dataRecord.period ) {
-			const date = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( 'en' );
-			const localeSlug = getLocaleSlug();
-			const localizedDate = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( localeSlug );
-			if ( dataRecord.hour ) {
-				localizedDate.add( dataRecord.hour, 'hours' );
-			}
-			Object.assign( dataRecord, getChartLabels( payload.unit, date, localizedDate ) );
+	/**
+	 * Returns a normalized statsEmailsClick array, ready for use in stats-module
+	 *
+	 * @param   {Object} data   Stats data
+	 * @param   {Object} query  Stats query
+	 * @param   {number} siteId  Site ID
+	 * @param   {Object} site    Site object
+	 * @returns {Array}       Normalized stats data
+	 */
+	statsEmailsClick( data, query = {}, siteId, site ) {
+		if ( ! data || ! query.period || ! query.date ) {
+			return [];
 		}
-		return dataRecord;
-	} );
-}
 
-/**
- * Return data in a format used by 'components/stats/geochart` for email stats. The fields array is matched to
- * the data in a single object.
- *
- * @param {Array} countries - the array of countries for the given data
- * @param {Object} countriesInfo - an object containing information about the countries
- * @returns {Array} - Array of data objects
- */
-export function parseEmailCountriesData( countries, countriesInfo ) {
-	if ( ! countries || ! countriesInfo ) {
-		return null;
-	}
+		const emailsData = get( data, [ 'posts' ], [] );
 
-	const result = countries
-		.map( function ( country ) {
-			const info = countriesInfo[ country[ 0 ] ];
-			if ( ! info ) {
-				return {
-					label: translate( 'Unknown' ),
-					value: parseInt( country[ 1 ], 10 ),
-				};
-			}
-
-			const { country_full, map_region } = info;
-
+		return emailsData.map( ( { id, href, date, title, type, clicks } ) => {
+			const detailPage = site ? `/stats/email/clicks/${ site.slug }/day/${ id }` : null;
 			return {
-				countryCode: country[ 0 ],
-				label: country_full,
-				region: map_region,
-				value: parseInt( country[ 1 ], 10 ),
+				id,
+				href,
+				date,
+				label: title,
+				type,
+				value: clicks || '0',
+				page: detailPage,
+				actions: [
+					{
+						type: 'link',
+						data: href,
+					},
+				],
 			};
-		} )
-		.sort( ( a, b ) => b.value - a.value );
-
-	// Add item with label == Other to end of the list
-	const otherItem = result.find( ( item ) => item.label === translate( 'Unknown' ) );
-	if ( otherItem ) {
-		result.splice( result.indexOf( otherItem ), 1 );
-		result.push( otherItem );
-	}
-
-	return result;
-}
-
-/**
- * Return data in a format used by lists for email stats. The fields array is matched to
- * the data in a single object.
- *
- * @param {Array} list - the array of devices for the given data
- * @returns {Array} - Array of data objects
- */
-export function parseEmailListData( list ) {
-	if ( ! list ) {
-		return null;
-	}
-
-	const result = list
-		.map( function ( item ) {
-			return {
-				label: item[ 0 ],
-				value: parseInt( item[ 1 ], 10 ),
-			};
-		} )
-		.sort( function ( a, b ) {
-			return b.value - a.value;
 		} );
-
-	// Add item with label == Other to end of the list
-	const otherItem = result.find( ( item ) => item.label === 'Other' );
-	if ( otherItem ) {
-		result.splice( result.indexOf( otherItem ), 1 );
-		result.push( otherItem );
-	}
-	return result;
-}
+	},
+};

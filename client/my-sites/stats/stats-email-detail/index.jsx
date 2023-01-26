@@ -297,6 +297,16 @@ class StatsEmailDetail extends Component {
 									period={ PERIOD_ALL_TIME }
 									date={ queryDate }
 								/>
+								{ statType === 'clicks' && (
+									<StatsEmailModule
+										path="links"
+										statType={ statType }
+										postId={ postId }
+										siteId={ siteId }
+										period={ PERIOD_ALL_TIME }
+										date={ queryDate }
+									/>
+								) }
 							</div>
 						</>
 					) : (

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
@@ -10,6 +11,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getTopLevelOfTld } from 'calypso/lib/domains';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { VatForm, isVatSupportedFor } from './vat-form';
 import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
 import type { DomainContactDetailsErrors } from '@automattic/wpcom-checkout';
 
@@ -42,6 +44,10 @@ export default function DomainContactDetails( {
 	const getIsFieldDisabled = () => isDisabled;
 	const needsAlternateEmailForGSuite = needsOnlyGoogleAppsDetails;
 	const tlds = getAllTopLevelTlds( domainNames );
+
+	const isVatSupported =
+		config.isEnabled( 'checkout/vat-form' ) &&
+		Boolean( contactDetails.countryCode && isVatSupportedFor( contactDetails.countryCode ) );
 
 	return (
 		<Fragment>
@@ -97,6 +103,13 @@ export default function DomainContactDetails( {
 					getDomainNames={ () => domainNames }
 					translate={ translate }
 					isManaged={ true }
+				/>
+			) }
+			{ isVatSupported && (
+				<VatForm
+					section="domain-contact-form"
+					isDisabled={ isDisabled }
+					countryCode={ contactDetails.countryCode }
 				/>
 			) }
 		</Fragment>
