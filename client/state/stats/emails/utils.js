@@ -63,7 +63,7 @@ export function getCharts( statType ) {
 		],
 		clicks: [
 			{
-				attr: 'clicks',
+				attr: 'clicks_count',
 				legendOptions: [],
 				icon: (
 					<svg
