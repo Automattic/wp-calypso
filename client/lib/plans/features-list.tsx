@@ -222,6 +222,8 @@ import {
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n, { TranslateResult } from 'i18n-calypso';
 import { MemoExoticComponent } from 'react';
+import SupportIcon from 'calypso/assets/images/onboarding/support.svg';
+import ThemeImage from 'calypso/assets/images/onboarding/theme.jpg';
 import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import MaterialIcon from 'calypso/components/material-icon';
@@ -235,7 +237,7 @@ export type FeatureObject = {
 	getDescription?: ( domainName?: string ) => TranslateResult;
 	getStoreSlug?: () => string;
 	getCompareTitle?: () => TranslateResult;
-	getIcon?: () => string | { icon: string; component: MemoExoticComponent< any > };
+	getIcon?: () => string | { icon: string; component: MemoExoticComponent< any > } | JSX.Element;
 	isPlan?: boolean;
 };
 export type FeatureList = {
@@ -1688,6 +1690,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_SUPPORT_EMAIL ]: {
 		getSlug: () => FEATURE_SUPPORT_EMAIL,
 		getTitle: () => i18n.translate( 'Support via email' ),
+		getIcon: () => <img src={ SupportIcon } alt={ i18n.translate( 'Customer support' ) } />,
 		getAlternativeTitle: () => i18n.translate( 'Customer support' ),
 		getCompareTitle: () => i18n.translate( 'Unlimited support via emails.' ),
 	},
@@ -1698,6 +1701,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PREMIUM_THEMES_V2 ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES_V2,
 		getTitle: () => i18n.translate( 'Premium themes' ),
+		getIcon: () => <img src={ ThemeImage } alt={ i18n.translate( 'Premium themes' ) } />,
 		getCompareTitle: () => i18n.translate( 'A collection of premium design templates' ),
 	},
 	[ FEATURE_WORDADS ]: {

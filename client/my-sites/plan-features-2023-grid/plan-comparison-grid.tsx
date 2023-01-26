@@ -48,11 +48,19 @@ const Title = styled.div`
 	border-right: none;
 	cursor: pointer;
 
+	.gridicon {
+		margin-right: 5px;
+	}
+
 	@media ( min-width: 880px ) {
 		cursor: default;
 		padding-left: 0;
 		pointer-events: none;
 		border: none;
+
+		.gridicon {
+			display: none;
+		}
 	}
 `;
 
@@ -78,8 +86,8 @@ const Row = styled.div`
 
 const Cell = styled.div< { textAlign?: string } >`
 	text-align: ${ ( props ) => props.textAlign ?? 'left' };
-	width: 50%;
 	display: flex;
+	flex: 1;
 	justify-content: space-between;
 	flex-direction: column;
 	align-items: center;
@@ -435,6 +443,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 								className="plan-comparison-grid__group-title-row"
 							>
 								<Title className={ `plan-comparison-grid__group-${ featureGroup.slug }` }>
+									<Gridicon icon="chevron-down" size={ 12 } color="#1E1E1E" />
 									{ featureGroup.getTitle() }
 								</Title>
 							</Row>
@@ -465,6 +474,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 												{
 													'popular-plan-parent-class': isBusinessPlan( planName ),
 													'has-feature': hasFeature,
+													'title-is-subtitle': 'live-chat-support' === featureSlug,
 												}
 											);
 
@@ -474,6 +484,11 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 														<Gridicon icon="checkmark" color="#0675C4" />
 													) : (
 														<Gridicon icon="minus-small" color="#C3C4C7" />
+													) }
+													{ feature.getIcon && (
+														<span className="plan-comparison-grid__plan-image">
+															{ feature.getIcon() }
+														</span>
 													) }
 													<span className="plan-comparison-grid__plan-title">
 														{ feature.getAlternativeTitle?.() || feature.getTitle() }
@@ -502,13 +517,18 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 										const [ featureObject ] = getPlanFeaturesObject( [ storageFeature ] );
 										const cellClasses = classNames(
 											'plan-comparison-grid__plan',
+											'has-feature',
 											getPlanClass( planName ),
 											{
 												'popular-plan-parent-class': isBusinessPlan( planName ),
 											}
 										);
+
 										return (
 											<Cell key={ planName } className={ cellClasses } textAlign="center">
+												<span className="plan-comparison-grid__plan-title">
+													{ translate( 'Storage' ) }
+												</span>
 												<StorageButton
 													className="plan-features-2023-grid__storage-button"
 													key={ planName }
