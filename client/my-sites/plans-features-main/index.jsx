@@ -699,7 +699,9 @@ export default connect(
 		) {
 			customerType = 'business';
 		}
-		const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+		const is2023OnboardingPricingGrid =
+			isEnabled( 'onboarding/2023-pricing-grid' ) &&
+			props.flowName === 'onboarding-2023-pricing-grid';
 		return {
 			isCurrentPlanRetired: isProPlan( sitePlanSlug ) || isStarterPlan( sitePlanSlug ),
 			currentPurchaseIsInAppPurchase: currentPurchase?.isInAppPurchase,

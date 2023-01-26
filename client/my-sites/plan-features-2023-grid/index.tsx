@@ -113,7 +113,14 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	}
 
 	render() {
-		const { isInSignup, planTypeSelectorProps, planProperties, intervalType } = this.props;
+		const {
+			isInSignup,
+			planTypeSelectorProps,
+			planProperties,
+			intervalType,
+			isLaunchPage,
+			flowName,
+		} = this.props;
 
 		const planClasses = classNames( 'plan-features', {
 			'plan-features--signup': isInSignup,
@@ -128,7 +135,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 					<div className="plan-features-2023-grid__content">
 						<div>
 							<div className="plan-features-2023-grid__desktop-view">
-								{ this.renderTable( this.props.planProperties ) }
+								{ this.renderTable( planProperties ) }
 							</div>
 							<div className="plan-features-2023-grid__tablet-view">
 								{ this.renderTabletView() }
@@ -143,6 +150,9 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 					planTypeSelectorProps={ planTypeSelectorProps }
 					planProperties={ planProperties }
 					intervalType={ intervalType }
+					isInSignup={ isInSignup }
+					isLaunchPage={ isLaunchPage }
+					flowName={ flowName }
 				/>
 			</div>
 		);

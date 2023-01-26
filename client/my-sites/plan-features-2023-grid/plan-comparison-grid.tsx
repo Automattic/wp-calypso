@@ -1,19 +1,30 @@
 import {
 	applyTestFiltersToPlansList,
 	FeatureGroup,
+	getPlanClass,
+	isWpcomEnterpriseGridPlan,
+	isFreePlan,
+	isBusinessPlan,
 	FEATURE_GROUP_GENERAL_FEATURES,
 	getPlanFeaturesGrouped,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import PlanPill from 'calypso/components/plans/plan-pill';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import PlanTypeSelector, {
 	PlanTypeSelectorProps,
 } from 'calypso/my-sites/plans-features-main/plan-type-selector';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import PlanFeatures2023GridActions from './actions';
+import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
+import PlanFeatures2023GridHeaderPrice from './header-price';
 import { PlanProperties } from './types';
 const JetpackIconContainer = styled.div`
 	padding-left: 6px;
@@ -33,24 +44,42 @@ const Title = styled.div`
 
 const Grid = styled.div`
 	display: grid;
+	margin-top: 90px;
+	background: #fff;
+	border: solid 1px #e0e0e0;
+	border-radius: 5px;
 `;
 const Row = styled.div`
 	display: flex;
+	padding: 14px 0;
 	justify-content: space-between;
-	padding: 14px 0px;
 	border-bottom: 1px solid #eee;
+	margin: 0 20px;
 `;
 
 const Cell = styled.div< { textAlign?: string } >`
 	text-align: ${ ( props ) => props.textAlign ?? 'left' };
-	width: 150px;
+	width: 156px;
 	display: flex;
-	justify-content: center;
+	justify-content: space-between;
+	flex-direction: column;
+	align-items: center;
+	padding: 0 14px;
+
+	&:first-of-type {
+		padding-left: 0;
+	}
+	&:last-of-type {
+		padding-right: 0;
+	}
+	@media ( min-width: 1500px ) {
+		width: 190px;
+	}
 `;
 
 const RowHead = styled.div`
-	width: 300px;
 	display: flex;
+	flex: 1;
 `;
 
 const StorageButton = styled.div`
@@ -70,12 +99,100 @@ type PlanComparisonGridProps = {
 	planProperties?: Array< PlanProperties >;
 	intervalType: string;
 	planTypeSelectorProps: PlanTypeSelectorProps;
+	isInSignup: boolean;
+	isLaunchPage?: boolean;
+	flowName: string;
+};
+type PlanComparisonGridHeaderProps = {
+	displayedPlansProperties: Array< PlanProperties >;
+	isInSignup: boolean;
+	isLaunchPage?: boolean;
+	isFooter?: boolean;
+	flowName: string;
 };
 
+const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
+	displayedPlansProperties,
+	isInSignup,
+	isLaunchPage,
+	flowName,
+	isFooter,
+} ) => {
+	const translate = useTranslate();
+	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	return (
+		<Row className="plan-comparison-grid__plan-row">
+			<RowHead
+				key="feature-name"
+				className="plan-comparison-grid__header plan-comparison-grid__interval-toggle"
+			/>
+			{ displayedPlansProperties.map( ( { planName, planConstantObj, ...planPropertiesObj } ) => {
+				const headerClasses = classNames(
+					'plan-comparison-grid__header',
+					getPlanClass( planName ),
+					{
+						'popular-plan-parent-class': isBusinessPlan( planName ),
+						'plan-is-footer': isFooter,
+					}
+				);
+
+				const rawPrice = planPropertiesObj.rawPrice;
+				const isLargeCurrency = rawPrice ? rawPrice > 99000 : false;
+
+				return (
+					<Cell key={ planName } className={ headerClasses } textAlign="left">
+						{ isBusinessPlan( planName ) && (
+							<div className="plan-features-2023-grid__popular-badge">
+								<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
+							</div>
+						) }
+						<header>
+							<h4 className="plan-comparison-grid__title">{ planConstantObj.getTitle() }</h4>
+						</header>
+						<PlanFeatures2023GridHeaderPrice
+							currencyCode={ currencyCode }
+							discountPrice={ planPropertiesObj.discountPrice }
+							rawPrice={ rawPrice || 0 }
+							planName={ planName }
+							is2023OnboardingPricingGrid={ true }
+							isLargeCurrency={ isLargeCurrency }
+						/>
+						<div className="plan-comparison-grid__billing-info">
+							<PlanFeatures2023GridBillingTimeframe
+								rawPrice={ rawPrice }
+								rawPriceAnnual={ planPropertiesObj.rawPriceAnnual }
+								currencyCode={ planPropertiesObj.currencyCode }
+								annualPricePerMonth={ planPropertiesObj.annualPricePerMonth }
+								isMonthlyPlan={ planPropertiesObj.isMonthlyPlan }
+								planName={ planName }
+								translate={ translate }
+								billingTimeframe={ planConstantObj.getBillingTimeFrame() }
+							/>
+						</div>
+						<PlanFeatures2023GridActions
+							className={ getPlanClass( planName ) }
+							freePlan={ isFreePlan( planName ) }
+							isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planName ) }
+							isPlaceholder={ planPropertiesObj.isPlaceholder }
+							isInSignup={ isInSignup }
+							isLaunchPage={ isLaunchPage }
+							planName={ planConstantObj.getTitle() }
+							planType={ planName }
+							flowName={ flowName }
+						/>
+					</Cell>
+				);
+			} ) }
+		</Row>
+	);
+};
 export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	planProperties,
 	intervalType,
 	planTypeSelectorProps,
+	isInSignup,
+	isLaunchPage,
+	flowName,
 } ) => {
 	const translate = useTranslate();
 	const featureGroupMap = getPlanFeaturesGrouped();
@@ -83,7 +200,6 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		( { planName } ) => ! ( planName === PLAN_ENTERPRISE_GRID_WPCOM )
 	);
 	const isMonthly = intervalType === 'monthly';
-
 	const restructuredFeatures = useMemo( () => {
 		let previousPlan = null;
 		const planFeatureMap: Record< string, Set< string > > = {};
@@ -139,27 +255,24 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 			<PlanComparisonHeader className="wp-brand-font">
 				{ translate( 'Compare our plans and find yours' ) }
 			</PlanComparisonHeader>
+			<PlanTypeSelector
+				kind="interval"
+				plans={ displayedPlansProperties.map( ( { planName } ) => planName ) }
+				isInSignup={ planTypeSelectorProps.isInSignup }
+				eligibleForWpcomMonthlyPlans={ planTypeSelectorProps.eligibleForWpcomMonthlyPlans }
+				isPlansInsideStepper={ planTypeSelectorProps.isPlansInsideStepper }
+				intervalType={ planTypeSelectorProps.intervalType }
+				customerType={ planTypeSelectorProps.customerType }
+				hidePersonalPlan={ planTypeSelectorProps.hidePersonalPlan }
+				hideDiscountLabel={ true }
+			/>
 			<Grid>
-				<Row key="feature-group-header-row" className="plan-comparison-grid__plan-row">
-					<RowHead key="feature-name" className="plan-comparison-grid__interval-toggle">
-						<PlanTypeSelector
-							kind="interval"
-							plans={ displayedPlansProperties.map( ( { planName } ) => planName ) }
-							isInSignup={ planTypeSelectorProps.isInSignup }
-							eligibleForWpcomMonthlyPlans={ planTypeSelectorProps.eligibleForWpcomMonthlyPlans }
-							isPlansInsideStepper={ planTypeSelectorProps.isPlansInsideStepper }
-							intervalType={ planTypeSelectorProps.intervalType }
-							customerType={ planTypeSelectorProps.customerType }
-							hidePersonalPlan={ planTypeSelectorProps.hidePersonalPlan }
-							hideDiscountLabel={ true }
-						/>
-					</RowHead>
-					{ displayedPlansProperties.map( ( { planName, planConstantObj } ) => (
-						<Cell key={ planName } className="plan-comparison-grid__plan-title" textAlign="center">
-							{ planConstantObj.getTitle() }
-						</Cell>
-					) ) }
-				</Row>
+				<PlanComparisonGridHeader
+					displayedPlansProperties={ displayedPlansProperties }
+					isInSignup={ isInSignup }
+					isLaunchPage={ isLaunchPage }
+					flowName={ flowName }
+				/>
 
 				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => {
 					const features = featureGroup.get2023PricingGridSignupWpcomFeatures();
@@ -192,25 +305,24 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 												</JetpackIconContainer>
 											) : null }
 										</RowHead>
-										{ ( displayedPlansProperties ?? [] ).map( ( { planName } ) =>
-											restructuredFeatures.featureMap[ planName ].has( featureSlug ) ? (
-												<Cell
-													key={ planName }
-													className={ `plan-comparison-grid__plan ${ planName }` }
-													textAlign="center"
-												>
-													<Gridicon icon="checkmark" color="#0675C4" />
+										{ ( displayedPlansProperties ?? [] ).map( ( { planName } ) => {
+											const cellClasses = classNames(
+												'plan-comparison-grid__plan',
+												getPlanClass( planName ),
+												{
+													'popular-plan-parent-class': isBusinessPlan( planName ),
+												}
+											);
+											return (
+												<Cell key={ planName } className={ cellClasses } textAlign="center">
+													{ restructuredFeatures.featureMap[ planName ].has( featureSlug ) ? (
+														<Gridicon icon="checkmark" color="#0675C4" />
+													) : (
+														<Gridicon icon="minus-small" color="#C3C4C7" />
+													) }
 												</Cell>
-											) : (
-												<Cell
-													key={ planName }
-													className={ `plan-comparison-grid__plan ${ planName }` }
-													textAlign="center"
-												>
-													<Gridicon icon="minus-small" />
-												</Cell>
-											)
-										) }
+											);
+										} ) }
 									</Row>
 								);
 							} ) }
@@ -225,13 +337,15 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									{ ( displayedPlansProperties ?? [] ).map( ( { planName } ) => {
 										const storageFeature = restructuredFeatures.planStorageOptionsMap[ planName ];
 										const [ featureObject ] = getPlanFeaturesObject( [ storageFeature ] );
-
+										const cellClasses = classNames(
+											'plan-comparison-grid__plan',
+											getPlanClass( planName ),
+											{
+												'popular-plan-parent-class': isBusinessPlan( planName ),
+											}
+										);
 										return (
-											<Cell
-												key={ planName }
-												className={ `plan-comparison-grid__plan ${ planName }` }
-												textAlign="center"
-											>
+											<Cell key={ planName } className={ cellClasses } textAlign="center">
 												<StorageButton
 													className="plan-features-2023-grid__storage-button"
 													key={ planName }
@@ -246,6 +360,13 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 						</div>
 					);
 				} ) }
+				<PlanComparisonGridHeader
+					displayedPlansProperties={ displayedPlansProperties }
+					isInSignup={ isInSignup }
+					isLaunchPage={ isLaunchPage }
+					flowName={ flowName }
+					isFooter={ true }
+				/>
 			</Grid>
 		</div>
 	);
