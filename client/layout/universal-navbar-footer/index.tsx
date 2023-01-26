@@ -172,8 +172,8 @@ const UniversalNavbarFooter = () => {
 									</a>
 								</li>
 								<li>
-									<a href={ localizeUrl( 'https://wordpress.com/courses/' ) } target="_self">
-										{ translate( 'WordPress Courses' ) }
+									<a href={ localizeUrl( 'https://wordpress.com/learn/' ) } target="_self">
+										{ translate( 'Learn WordPress' ) }
 									</a>
 								</li>
 								<li>
