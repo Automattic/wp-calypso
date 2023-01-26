@@ -88,21 +88,23 @@ export function RenderDomainUpsell() {
 				</p>
 
 				<div className="suggested-domain-name">
+					<div className="badge badge--info">{ translate( 'Current' ) }</div>
 					<div className="card">
 						<span>
-							<strike>{ siteSlug }</strike>
+							<strike>
+								kasfljasasdfasdlkjfasdfasdfasdfsdfsadfsadfasdasdfasdfasdfsadfasdfasdfasdflaksdjflksjdfkl.wordpress.com
+							</strike>
 						</span>
-						<div className="badge badge--info">{ translate( 'Current' ) }</div>
 					</div>
+					{ domainSuggestion?.domain_name ? (
+						<div className="badge badge--success">{ translate( 'Available' ) }</div>
+					) : (
+						<div className="badge">
+							<Spinner />
+						</div>
+					) }
 					<div className="card">
 						<span>{ domainSuggestionName }</span>
-						{ domainSuggestion?.domain_name ? (
-							<div className="badge badge--success">{ translate( 'Available' ) }</div>
-						) : (
-							<div className="badge">
-								<Spinner />
-							</div>
-						) }
 					</div>
 				</div>
 
