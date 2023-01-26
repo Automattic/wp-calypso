@@ -61,7 +61,10 @@ const StepNavigationLink: React.FC< Props > = ( {
 			className={ buttonClasses }
 			// Use onMouseDown here to prevent onClick blocked by onBlur
 			// if any exists in adjacent elements
-			onMouseDown={ onClick }
+			onMouseDown={ ( event: React.MouseEvent< HTMLButtonElement > ) => {
+				event.preventDefault();
+			} }
+			onClick={ onClick }
 			rel={ rel }
 		>
 			{ backGridicon }
