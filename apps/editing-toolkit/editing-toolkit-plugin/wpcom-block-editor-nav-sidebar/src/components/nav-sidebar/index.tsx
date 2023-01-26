@@ -16,6 +16,7 @@ import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { get, isEmpty, partition } from 'lodash';
 import * as React from 'react';
+import { SITE_STORE } from '../../../../editor-site-launch/src/stores';
 import { STORE_KEY, POST_IDS_TO_EXCLUDE } from '../../constants';
 import { Post } from '../../types';
 import CreatePage from '../create-page';
@@ -55,6 +56,15 @@ function WpcomBlockEditorNavSidebar() {
 			getPostType( select( 'core/editor' ).getCurrentPostType() ),
 			select( 'core/editor' ).getCurrentPostId(),
 			getSite()?.title,
+		];
+	} );
+
+	const siteId = window?._currentSiteId;
+	const siteSlug = window?.location.host;
+	const [ launchpadScreenOption, siteIntent ] = useSelect( ( select ) => {
+		return [
+			siteId && select( SITE_STORE ).getSiteOption( siteId, 'launchpad_screen' ),
+			siteId && select( SITE_STORE ).getSiteOption( siteId, 'site_intent' ),
 		];
 	} );
 
@@ -103,17 +113,27 @@ function WpcomBlockEditorNavSidebar() {
 	// (using the filter) to take the user to the customer homepage or themes gallery instance.
 	// `closeLabel` can be overridden in the same way to correctly label where the user will
 	// be taken to after closing the editor.
-	const defaultCloseUrl = addQueryArgs( 'edit.php', { post_type: postType.slug } );
+
+	let defaultCloseUrl;
+	let defaultCloseLabel;
+
+	if ( launchpadScreenOption === 'full' ) {
+		defaultCloseUrl = `http://wordpress.com/setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }`;
+		defaultCloseLabel = __( 'Next steps', 'full-site-editing' );
+	} else {
+		defaultCloseUrl = addQueryArgs( 'edit.php', { post_type: postType.slug } );
+		defaultCloseLabel = get(
+			postType,
+			[ 'labels', 'all_items' ],
+			__( 'Back', 'full-site-editing' )
+		);
+	}
+
 	const closeUrl = applyFilters(
 		'a8c.WpcomBlockEditorNavSidebar.closeUrl',
 		defaultCloseUrl
 	) as string;
 
-	const defaultCloseLabel = get(
-		postType,
-		[ 'labels', 'all_items' ],
-		__( 'Back', 'full-site-editing' )
-	);
 	const closeLabel = applyFilters(
 		'a8c.WpcomBlockEditorNavSidebar.closeLabel',
 		defaultCloseLabel
