@@ -246,7 +246,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 
 			await cartManagerClient.forCartKey( cartKey ).actions.addProductsToCart( productsToAdd );
 			const redirectTo = encodeURIComponent(
-				`/setup/sensei/senseiLaunch?siteSlug=${ newSite?.site_slug }&siteId=${ newSite?.blogid }`
+				`/setup/sensei/senseiPurpose?siteSlug=${ newSite?.site_slug }&siteId=${ newSite?.blogid }`
 			);
 
 			return window.location.replace(
