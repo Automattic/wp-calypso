@@ -1,8 +1,9 @@
-import { StepContainer } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
+import { isWooExpressFlow, StepContainer } from '@automattic/onboarding';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import { LoadingBar } from 'calypso/components/loading-bar';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -16,12 +17,15 @@ export enum AssignTrialResult {
 	FAILURE = 'failure',
 }
 
-const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, data } ) {
+const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, data, flow } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
+	const progress = useSelect( ( select ) => select( ONBOARD_STORE ).getProgress() );
 	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
+	const { setProgress } = useDispatch( ONBOARD_STORE );
 
 	useEffect( () => {
+		setProgress( 0.4 );
 		if ( submit ) {
 			const assignTrialPlan = async () => {
 				try {
@@ -48,7 +52,7 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 	}, [] );
 
 	const getCurrentMessage = () => {
-		return __( 'Setting up your trial' );
+		return __( "Woo! We're creating your store" );
 	};
 
 	return (
@@ -62,8 +66,14 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={
 					<>
-						<h1>{ getCurrentMessage() }</h1>
-						<LoadingEllipsis />
+						<div className="assign-trial-step">
+							<h1 className="assign-trial-step__progress-step">{ getCurrentMessage() }</h1>
+							{ progress >= 0 || isWooExpressFlow( flow ) ? (
+								<LoadingBar progress={ progress } />
+							) : (
+								<LoadingEllipsis />
+							) }
+						</div>
 					</>
 				}
 				stepProgress={ stepProgress }

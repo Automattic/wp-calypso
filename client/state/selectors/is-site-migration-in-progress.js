@@ -6,8 +6,8 @@ import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-s
  * We regard 'error' as 'in progress' – the user needs to dismiss that
  * state.
  *
- * @param {object} state Global state tree
- * @param {object} siteId Site ID
+ * @param {Object} state Global state tree
+ * @param {Object} siteId Site ID
  * @returns {boolean} True if site is the target of an active migration
  */
 export default function isSiteMigrationInProgress( state, siteId ) {

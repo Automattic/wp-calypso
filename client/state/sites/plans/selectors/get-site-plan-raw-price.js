@@ -5,7 +5,7 @@ import { getSitePlan } from 'calypso/state/sites/plans/selectors/get-site-plan';
 /**
  * Returns a plan price before discount
  *
- * @param  {object}  state         global state
+ * @param  {Object}  state         global state
  * @param  {number}  siteId        the site id
  * @param  {string}  productSlug   the plan product slug
  * @param  {{isMonthly?: boolean}} [isMonthly]     if true, returns monthly price

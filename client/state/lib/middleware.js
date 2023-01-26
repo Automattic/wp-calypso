@@ -19,7 +19,7 @@ import { successNotice } from 'calypso/state/notices/actions';
  * via an immediate link.
  *
  * @param {Function} dispatch - redux dispatch function
- * @param {object}   action   - the dispatched action
+ * @param {Object}   action   - the dispatched action
  * @param {Function} getState - redux getState function
  */
 const notifyAboutImmediateLoginLinkEffects = once( ( dispatch, action, getState ) => {

@@ -157,8 +157,20 @@ export class PlansFeaturesMain extends Component {
 				isPlansInsideStepper,
 				intervalType,
 			};
+			const planTypeSelectorProps = {
+				isInSignup: this.props.isInSignup,
+				eligibleForWpcomMonthlyPlans: this.props.eligibleForWpcomMonthlyPlans,
+				isPlansInsideStepper: this.props.isPlansInsideStepper,
+				intervalType: this.props.intervalType,
+				customerType: this.props.customerType,
+				hidePersonalPlan: this.props.hidePersonalPlan,
+			};
 			const asyncPlanFeatures2023Grid = (
-				<AsyncLoad require="calypso/my-sites/plan-features-2023-grid" { ...asyncProps } />
+				<AsyncLoad
+					require="calypso/my-sites/plan-features-2023-grid"
+					{ ...asyncProps }
+					planTypeSelectorProps={ planTypeSelectorProps }
+				/>
 			);
 			return (
 				<div
@@ -348,7 +360,6 @@ export class PlansFeaturesMain extends Component {
 			sitePlanSlug,
 			showTreatmentPlansReorderTest,
 			flowName,
-			isInSignup,
 			is2023OnboardingPricingGrid,
 		} = this.props;
 
@@ -361,7 +372,7 @@ export class PlansFeaturesMain extends Component {
 			plans = plansFromProps;
 		} else {
 			const isBloggerPlanVisible = hideBloggerPlan === true ? false : true;
-			const isEnterprisePlanVisible = is2023OnboardingPricingGrid && isInSignup;
+			const isEnterprisePlanVisible = is2023OnboardingPricingGrid;
 			plans = [
 				findPlansKeys( { group: GROUP_WPCOM, type: TYPE_FREE } )[ 0 ],
 				isBloggerPlanVisible &&
@@ -569,7 +580,8 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const { siteId, redirectToAddDomainFlow, domainAndPlanPackage } = this.props;
+		const { siteId, redirectToAddDomainFlow, domainAndPlanPackage, is2023OnboardingPricingGrid } =
+			this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
@@ -586,7 +598,11 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		return (
-			<div className="plans-features-main">
+			<div
+				className={ classNames( 'plans-features-main', {
+					'is-pricing-grid-2023-plans-features-main ': is2023OnboardingPricingGrid,
+				} ) }
+			>
 				<QueryPlans />
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
@@ -687,9 +703,7 @@ export default connect(
 		) {
 			customerType = 'business';
 		}
-		const is2023OnboardingPricingGrid =
-			isEnabled( 'onboarding/2023-pricing-grid' ) &&
-			props.flowName === 'onboarding-2023-pricing-grid';
+		const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
 		return {
 			isCurrentPlanRetired: isProPlan( sitePlanSlug ) || isStarterPlan( sitePlanSlug ),
 			currentPurchaseIsInAppPurchase: currentPurchase?.isInAppPurchase,
@@ -705,7 +719,7 @@ export default connect(
 			eligibleForWpcomMonthlyPlans,
 			titanMonthlyRenewalCost,
 			is2023OnboardingPricingGrid,
-			showFAQ: props.showFAQ && ! is2023OnboardingPricingGrid,
+			showFAQ: !! props.showFAQ && ! is2023OnboardingPricingGrid,
 		};
 	},
 	{

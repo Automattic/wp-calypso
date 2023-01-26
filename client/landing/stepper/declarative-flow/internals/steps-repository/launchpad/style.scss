@@ -137,7 +137,8 @@
 .newsletter,
 .link-in-bio:not(.domains),
 .link-in-bio-tld:not(.domains),
-.free {
+.free,
+.build {
 	.step-container {
 		.step-container__content h1,
 		.step-container__content h1.launchpad__sidebar-h1 {

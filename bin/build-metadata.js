@@ -174,8 +174,8 @@ function processNumberFormat( format ) {
 /**
  * Deeply iterates over the keys of an object to remove any keys that are "undefined". This method modifies the object.
  *
- * @param {object} obj
- * @returns {object} obj, with keys with value "undefined" removed.
+ * @param {Object} obj
+ * @returns {Object} obj, with keys with value "undefined" removed.
  */
 function deepRemoveUndefinedKeysFromObject( obj ) {
 	for ( const key in obj ) {
@@ -346,7 +346,7 @@ function insertCountryAliases( data ) {
 /**
  * Wraps and saves data to '../client/components/phone-input/data.js'
  *
- * @param {object} data
+ * @param {Object} data
  */
 function saveToFile( data ) {
 	const scriptStr =

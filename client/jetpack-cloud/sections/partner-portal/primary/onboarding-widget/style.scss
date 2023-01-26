@@ -1,0 +1,152 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.onboarding-widget__empty-list {
+	h2 {
+		font-size: 2rem;
+		color: var(--color-text);
+		text-align: center;
+	}
+
+	.onboarding-widget__steps {
+		margin-block-end: 32px;
+
+		@include break-xlarge {
+			display: flex;
+			margin-block-start: 64px;
+		}
+
+		@include break-huge {
+			margin-inline: 3%;
+		}
+
+	}
+
+	.onboarding-widget__step {
+		text-align: left;
+		margin-block-start: 32px;
+
+		a.is-borderless {
+			font-weight: 400;
+			font-size: 1rem;
+			text-decoration: underline;
+			padding: 0;
+		}
+
+		@include break-xlarge {
+			width: 50%;
+		}
+
+		&:first-child {
+			@include break-xlarge {
+				margin-inline-end: 8px;
+			}
+
+			@include break-wide {
+				margin-inline-end: 32px;
+			}
+		}
+
+		&:last-child {
+			@include break-xlarge {
+				margin-inline-start: 8px;
+			}
+
+			@include break-wide {
+				margin-inline-start: 32px;
+			}
+		}
+
+	}
+
+	.onboarding-widget__step-description {
+		text-align: left;
+		margin-block-end: 32px;
+		font-size: 1rem;
+		color: var(--color-text);
+		line-height: 24px;
+	}
+
+	.onboarding-widget__step-heading {
+		display: flex;
+		align-items: center;
+		font-weight: 700;
+		font-size: 1.5rem;
+		line-height: 24px;
+		height: 50px;
+
+		.onboarding-widget__step-ellipse {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 32px;
+			height: 32px;
+			border-radius: 50%;
+			background: var(--studio-jetpack-green-40);
+			color: var(--studio-white);
+			font-size: 1.25rem;
+		}
+
+		.onboarding-widget__step-title {
+			margin-inline-start: 16px;
+			font-size: 1.5rem;
+			line-height: 24px;
+		}
+	}
+
+	.onboarding-widget__video {
+		display: flex;
+		height: 280px;
+		margin: 36px 0;
+
+		iframe {
+			flex-grow: 1;
+			width: 100%;
+			height: 100%;
+		}
+	}
+}
+
+.onboarding-widget__step-completed {
+	display: none;
+	background: var(--studio-jetpack-green-5);
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 16px;
+	height: 30px;
+	padding: 1px 16px;
+	font-weight: 600;
+	font-size: 0.75rem;
+	line-height: 28px;
+	color: var(--studio-jetpack-green-60);
+	margin-inline-start: 8px;
+
+	@include break-large {
+		display: inline-block;
+	}
+}
+
+.onboarding-widget__mobile-view .onboarding-widget__step-completed {
+	display: inline-block;
+	margin-inline-start: 42px;
+	margin-block-start: 16px;
+
+	@include break-large {
+		display: none;
+	}
+}
+
+.is-licenses-page {
+	margin-block-start: 16px;
+
+	.onboarding-widget__steps {
+		margin-inline: 0;
+	}
+
+	@include break-xlarge {
+		margin-block-start: 64px;
+	}
+}
+
+.is-loading-iframe {
+	@include placeholder( --color-neutral-10 );
+}

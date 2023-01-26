@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import { getSiteUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { NewsletterSettingsSection } from '../reading-newsletter-settings';
@@ -13,8 +14,15 @@ import wrapSettingsForm from '../wrap-settings-form';
 
 const isEnabled = config.isEnabled( 'settings/modernize-reading-settings' );
 
+export type SubscriptionOptions = {
+	invitation: string;
+	comment_follow: string;
+};
+
 type Fields = {
 	jetpack_relatedposts_enabled?: boolean;
+	jetpack_relatedposts_show_context?: boolean;
+	jetpack_relatedposts_show_date?: boolean;
 	jetpack_relatedposts_show_headline?: boolean;
 	jetpack_relatedposts_show_thumbnails?: boolean;
 	page_for_posts?: string;
@@ -23,10 +31,7 @@ type Fields = {
 	posts_per_rss?: number;
 	rss_use_excerpt?: boolean;
 	show_on_front?: 'posts' | 'page';
-	subscription_options?: {
-		invitation: string;
-		comment_follow: string;
-	};
+	subscription_options?: SubscriptionOptions;
 	wpcom_featured_image_in_email?: boolean;
 	wpcom_subscription_emails_use_excerpt?: boolean;
 };
@@ -38,6 +43,8 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 
 	const {
 		jetpack_relatedposts_enabled,
+		jetpack_relatedposts_show_context,
+		jetpack_relatedposts_show_date,
 		jetpack_relatedposts_show_headline,
 		jetpack_relatedposts_show_thumbnails,
 		page_for_posts,
@@ -53,6 +60,8 @@ const getFormSettings = ( settings: unknown & Fields ) => {
 
 	return {
 		...( jetpack_relatedposts_enabled && { jetpack_relatedposts_enabled } ),
+		...( jetpack_relatedposts_show_context && { jetpack_relatedposts_show_context } ),
+		...( jetpack_relatedposts_show_date && { jetpack_relatedposts_show_date } ),
 		...( jetpack_relatedposts_show_headline && { jetpack_relatedposts_show_headline } ),
 		...( jetpack_relatedposts_show_thumbnails && { jetpack_relatedposts_show_thumbnails } ),
 		...( page_for_posts && { page_for_posts } ),
@@ -82,6 +91,7 @@ type ReadingSettingsFormProps = {
 	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
 	isRequestingSettings: boolean;
 	isSavingSettings: boolean;
+	settings: { subscription_options?: SubscriptionOptions };
 	siteUrl?: string;
 	updateFields: ( fields: Fields ) => void;
 };
@@ -95,10 +105,12 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 			handleToggle,
 			isRequestingSettings,
 			isSavingSettings,
+			settings,
 			siteUrl,
 			updateFields,
 		}: ReadingSettingsFormProps ) => {
 			const disabled = isRequestingSettings || isSavingSettings;
+			const savedSubscriptionOptions = settings?.subscription_options;
 			return (
 				<form onSubmit={ handleSubmitForm }>
 					<SiteSettingsSection
@@ -126,6 +138,7 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						handleSubmitForm={ handleSubmitForm }
 						disabled={ disabled }
 						isSavingSettings={ isSavingSettings }
+						savedSubscriptionOptions={ savedSubscriptionOptions }
 						updateFields={ updateFields }
 					/>
 				</form>
@@ -143,6 +156,7 @@ const ReadingSettings = () => {
 
 	return (
 		<Main className="site-settings site-settings__reading-settings">
+			<ScreenOptionsTab wpAdminPath="options-reading.php" />
 			<DocumentHead title={ translate( 'Reading Settings' ) } />
 			<FormattedHeader brandFont headerText={ translate( 'Reading Settings' ) } align="left" />
 			<ReadingSettingsForm />

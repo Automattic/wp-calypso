@@ -3,7 +3,8 @@
 $break-large-stats-countries: 1280px;
 
 // Countries
-.stats__email-opens {
+.stats__email-detail {
+
 	> div > h1 {
 		// stylelint-disable-next-line
 		font-size: 32px;
@@ -18,29 +19,32 @@ $break-large-stats-countries: 1280px;
 		align-items: stretch;
 		display: grid;
 		grid-template-columns: repeat(12, 1fr);
-		grid-template-rows: repeat(2, min-content);
+		grid-template-rows: repeat(3, min-content);
 		gap: 32px 24px;
 		grid-template-areas:
 			"country country country country country country country country country country country country"
-			"devices devices devices devices devices devices clients clients clients clients clients clients";
+			"devices devices devices devices devices devices clients clients clients clients clients clients"
+			"links links links links links links empty empty empty empty empty empty";
 
 		@media ( max-width: $break-large ) {
 			grid-template-columns: repeat(8, 1fr);
-			grid-template-rows: repeat(2, min-content);
+			grid-template-rows: repeat(3, min-content);
 			grid-template-areas:
 				"country country country country country country country country"
-				"devices devices devices devices clients clients clients clients";
+				"devices devices devices devices clients clients clients clients"
+				"links links links links empty empty empty empty";
 		}
 
 		// Mobile
 		@media ( max-width: $break-medium ) {
 			grid-template-columns: repeat(4, 1fr);
-			grid-template-rows: repeat(3, min-content);
+			grid-template-rows: repeat(4, min-content);
 			gap: 0;
 			grid-template-areas:
 				"country country country country"
 				"devices devices devices devices"
-				"clients clients clients clients";
+				"clients clients clients clients"
+				"links links links links";
 		}
 	}
 
@@ -79,6 +83,10 @@ $break-large-stats-countries: 1280px;
 
 	.list-clients {
 		grid-area: clients;
+	}
+
+	.list-links {
+		grid-area: links;
 	}
 
 	.stats__module-wrapper--countries {

@@ -52,6 +52,7 @@ project {
 	subProject(_self.projects.WPComTests)
 	subProject(_self.projects.WebApp)
 	subProject(_self.projects.MarTech)
+	buildType(YarnInstall)
 	buildType(BuildBaseImages)
 	buildType(CheckCodeStyle)
 	buildType(ValidateRenovateConfig)
@@ -78,7 +79,8 @@ project {
 
 		// e2e config decryption key references. See PCYsg-vnR-p2 for more info.
 		password("E2E_SECRETS_ENCRYPTION_KEY_NOV_30_22", "credentialsJSON:d9abde26-f565-4d21-bdf3-e2e00d3e45ec", display = ParameterDisplay.HIDDEN)
-		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_NOV_30_22%", display = ParameterDisplay.HIDDEN)
+		password("E2E_SECRETS_ENCRYPTION_KEY_JAN_20_23", "credentialsJSON:873582a4-c421-4647-b901-56c86abf09c8", display = ParameterDisplay.HIDDEN)
+		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_JAN_20_23%", display = ParameterDisplay.HIDDEN)
 
 		// Calypso dashboard AWS secrets for S3 bucket.
 		password("CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID", "credentialsJSON:1f324549-3795-43e5-a8c2-fb81d6e7c15d", display = ParameterDisplay.HIDDEN)
@@ -102,6 +104,29 @@ project {
 		}
 	}
 }
+
+// This build should mostly be triggered by other builds.
+object YarnInstall : BuildType({
+	name = "Install Dependencies"
+	description = "Installs dependencies, e.g. yarn install"
+	vcs {
+		root(WpCalypso)
+		cleanCheckout = true
+	}
+	steps {
+		bashNodeScript {
+			name = "Yarn Install"
+			scriptContent = """
+				# Install modules
+				${_self.yarn_install_cmd}
+			""".trimIndent()
+		}
+	}
+	features {
+		perfmon {
+		}
+	}
+})
 
 object BuildBaseImages : BuildType({
 	name = "Build base images"
@@ -179,9 +204,8 @@ object BuildBaseImages : BuildType({
 
 	triggers {
 		schedule {
-			schedulingPolicy = daily {
-				// Time in UTC. Roughly EU mid day, before US starts
-				hour = 11
+			schedulingPolicy = cron {
+				hours = "*/4"
 			}
 			branchFilter = """
 				+:trunk

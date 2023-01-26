@@ -6,7 +6,7 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Grab the group or groups for happychat based on siteId
  *
- * @param {object} state Current state
+ * @param {Object} state Current state
  * @param {number} siteId The site id, if no siteId is present primary siteId will be used
  * @returns {Array} of groups for site Id
  */

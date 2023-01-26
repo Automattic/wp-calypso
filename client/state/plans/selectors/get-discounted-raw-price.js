@@ -6,7 +6,7 @@ import 'calypso/state/plans/init';
 /**
  * Returns a plan price
  *
- * @param  {object}  state     global state
+ * @param  {Object}  state     global state
  * @param  {number}  productId the plan productId
  * @param  {boolean} isMonthly if true, returns monthly price
  * @returns {number|null}  plan price

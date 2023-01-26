@@ -18,7 +18,7 @@ export function inIframe() {
  * Sends a message object to the parent. The object is extended to include a type that
  * identifies the source as Gutenberg related.
  *
- * @param {object} message object containing the action to be performed on the parent and any require options
+ * @param {Object} message object containing the action to be performed on the parent and any require options
  */
 export function sendMessage( message ) {
 	if ( ! window || ! window.parent ) {

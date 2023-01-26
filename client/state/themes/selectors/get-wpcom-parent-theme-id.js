@@ -5,7 +5,7 @@ import 'calypso/state/themes/init';
 /**
  * Returns id of the parent theme, if any, for a wpcom theme.
  *
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @param {string} themeId Child theme ID
  * @returns {?string} Parent theme id if it exists
  */

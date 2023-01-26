@@ -56,9 +56,9 @@ import {
 /**
  * Tracks all known post objects, indexed by post global ID.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -104,9 +104,9 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
  * dispatched. The state reflects a mapping of site ID, post ID pairing to a
  * boolean reflecting whether a request for the post is in progress.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export function siteRequests( state = {}, action ) {
 	switch ( action.type ) {
@@ -128,9 +128,9 @@ export function siteRequests( state = {}, action ) {
  * dispatched. The state reflects a mapping of serialized query to whether a
  * network request is in-progress for that query.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export function queryRequests( state = {}, action ) {
 	switch ( action.type ) {
@@ -151,9 +151,9 @@ export function queryRequests( state = {}, action ) {
  * The state reflects a mapping by site ID of serialized query key to an array
  * of post IDs for the query, if a query response was successfully received.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 const queriesReducer = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -257,9 +257,9 @@ function findItemKey( state, siteId, postId ) {
  * query key to an array of post global IDs for the query, if a query response
  * was successfully received.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 const allSitesQueriesReducer = (
 	state = new PostQueryManager( {}, { itemKey: 'global_ID' } ),
@@ -326,9 +326,9 @@ export const allSitesQueries = withSchemaValidation(
  * The state maps site ID, post ID pairing to an object containing revisions
  * for the post.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export function edits( state = {}, action ) {
 	switch ( action.type ) {
