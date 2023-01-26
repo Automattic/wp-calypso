@@ -13,6 +13,7 @@ import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -20,8 +21,9 @@ import './style.scss';
 export default function DomainUpsell() {
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const isEmailVerified = useSelector( ( state ) => isCurrentUserEmailVerified( state ) );
+	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, site.ID ) );
 
-	if ( ! isEmailVerified || ! isFreePlanProduct( site.plan ) ) {
+	if ( siteDomains.length > 1 || ! isEmailVerified || ! isFreePlanProduct( site.plan ) ) {
 		return null;
 	}
 
