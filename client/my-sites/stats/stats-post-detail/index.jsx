@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import IllustrationStatsIntro from 'calypso/assets/images/stats/illustration-stats.svg';
+import IllustrationStats from 'calypso/assets/images/stats/illustration-stats.svg';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
@@ -172,7 +172,7 @@ class StatsPostDetail extends Component {
 							action={ translate( 'Get more traffic!' ) }
 							actionURL="https://wordpress.com/support/getting-more-views-and-traffic/"
 							actionTarget="blank"
-							illustration={ IllustrationStatsIntro }
+							illustration={ IllustrationStats }
 							illustrationWidth={ 150 }
 						/>
 					) }
@@ -225,7 +225,7 @@ class StatsPostDetail extends Component {
 						action={ translate( 'Get more traffic!' ) }
 						actionURL="https://wordpress.com/support/getting-more-views-and-traffic/"
 						actionTarget="blank"
-						illustration={ IllustrationStatsIntro }
+						illustration={ IllustrationStats }
 						illustrationWidth={ 150 }
 					/>
 				) }
