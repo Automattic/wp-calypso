@@ -109,6 +109,7 @@ class StatsModule extends Component {
 		const { summary, statType } = this.props;
 		const summarizedTypes = [
 			'statsCountryViews',
+			'statsTopAuthors',
 			'statsTopPosts',
 			'statsSearchTerms',
 			'statsClicks',
