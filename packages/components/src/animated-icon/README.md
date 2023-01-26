@@ -9,7 +9,7 @@ The component imports the [Lottie library](https://airbnb.io/lottie/#/), which p
 Pass with an `icon` string to the animation's path:
 
 ```jsx
-import AnimatedIcon from 'calypso/components/animated-icon';
+import AnimatedIcon from '@automattic/components';
 
 function render() {
 	return (
