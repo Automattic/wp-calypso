@@ -137,6 +137,10 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		return null;
 	}
 
+	const domainFromHomeUpsellFlow = new URLSearchParams( window.location.search ).get(
+		'get_domain'
+	);
+
 	return (
 		<IntervalTypeToggleWrapper
 			showingMonthly={ intervalType === 'monthly' }
@@ -145,7 +149,10 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 			<SegmentedControl compact className={ segmentClasses } primary={ true }>
 				<SegmentedControl.Item
 					selected={ intervalType === 'monthly' }
-					path={ generatePath( props, { intervalType: 'monthly' } ) }
+					path={ generatePath( props, {
+						intervalType: 'monthly',
+						get_domain: domainFromHomeUpsellFlow,
+					} ) }
 					isPlansInsideStepper={ props.isPlansInsideStepper }
 				>
 					<span>{ translate( 'Pay monthly' ) }</span>
@@ -153,7 +160,10 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 
 				<SegmentedControl.Item
 					selected={ intervalType === 'yearly' }
-					path={ generatePath( props, { intervalType: 'yearly' } ) }
+					path={ generatePath( props, {
+						intervalType: 'yearly',
+						get_domain: domainFromHomeUpsellFlow,
+					} ) }
 					isPlansInsideStepper={ props.isPlansInsideStepper }
 				>
 					<span ref={ ( ref ) => ref && setSpanRef( ref ) }>{ translate( 'Pay annually' ) }</span>

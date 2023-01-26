@@ -52,7 +52,7 @@ export function RenderDomainUpsell() {
 		} );
 	};
 
-	const purchaseLink = '/plans/' + siteSlug;
+	const purchaseLink = '/plans/' + siteSlug + '?get_domain=' + domainSuggestionName;
 	const [ ctaIsBusy, setCtaIsBusy ] = useState( false );
 	const getCtaClickHandler = async () => {
 		setCtaIsBusy( true );
