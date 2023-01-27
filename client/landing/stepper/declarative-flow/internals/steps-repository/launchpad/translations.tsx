@@ -34,10 +34,10 @@ export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunc
 			break;
 		case FREE_FLOW:
 			translatedStrings.flowName = translate( 'Free Website' );
-			translatedStrings.title = translate( 'Your website is almost ready!' );
-			translatedStrings.launchTitle = translate( 'Your website is almost ready!' );
+			translatedStrings.title = translate( "Your new site's ready!" );
+			translatedStrings.launchTitle = translate( "Your new site's ready!" );
 			translatedStrings.subtitle = translate(
-				'What would you like to do next? You can come back to these steps anytime.'
+				'Launch it to the world. Or add some finishing touches. (You can come back to make changes any time.)'
 			);
 			break;
 		case VIDEOPRESS_FLOW:
