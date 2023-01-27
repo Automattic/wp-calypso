@@ -115,27 +115,31 @@ object BuildDockerImage : BuildType({
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 		}
 
-		val buildImageArgs = """
-			--label com.a8c.image-builder=teamcity
-			--label com.a8c.build-id=%teamcity.build.id%
-			--build-arg workers=32
-			--build-arg node_memory=32768
-			--build-arg use_cache=true
-			--build-arg base_image=%base_image%
-			--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
-			--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
-			--build-arg is_default_branch=%teamcity.build.branch.is_default%
-			--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN%
-		""".trimIndent().replace("\n"," ");
-	
 		dockerCommand {
 			name = "Build docker image"
 			commandType = build {
 				source = file {
 					path = "Dockerfile"
 				}
-				namesAndTags = "--pull --label com.a8c.target=calypso-live $buildImageArgs"
-				commandArgs = .trimIndent().replace("\n"," ")
+				namesAndTags = """
+					registry.a8c.com/calypso/app:build-%build.number%
+					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
+					registry.a8c.com/calypso/app:latest
+				""".trimIndent()
+				commandArgs = """
+					--pull
+					--label com.a8c.image-builder=teamcity
+					--label com.a8c.target=calypso-live
+					--label com.a8c.build-id=%teamcity.build.id%
+					--build-arg workers=32
+					--build-arg node_memory=32768
+					--build-arg use_cache=true
+					--build-arg base_image=%base_image%
+					--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
+					--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
+					--build-arg is_default_branch=%teamcity.build.branch.is_default%
+					--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN%
+				""".trimIndent().replace("\n"," ")
 			}
 			param("dockerImage.platform", "linux")
 		}
@@ -151,8 +155,8 @@ object BuildDockerImage : BuildType({
 					path = "Dockerfile"
 				}
 				namesAndTags = "registry.a8c.com/calypso/base:latest"
-				commandArgs = buildImageArgs
 			}
+			commandArgs = "--target update-base-cache"
 		}
 	
 		dockerCommand {
