@@ -95,7 +95,8 @@ class WPCOM_Block_Editor_Nav_Sidebar {
 	 */
 	public function add_wpcom_dashboard_link( $settings ) {
 		$site_slug                               = preg_replace( '|^https?:\/\/|', '', home_url() );
-		$settings['__experimentalDashboardLink'] = 'https://wordpress.com/home/' . $site_slug;
+		$site_hostname                           = ! empty( $_GET['origin'] ) ? $_GET['origin'] : 'https://wordpress.com'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$settings['__experimentalDashboardLink'] = $site_hostname . '/home/' . $site_slug;
 		return $settings;
 	}
 }
