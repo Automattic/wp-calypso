@@ -2,13 +2,13 @@ import classNames from 'classnames';
 import { useTranslate, useRtl } from 'i18n-calypso';
 import './style.scss';
 import AnimatedIcon from '../animated-icon';
-import iconJetpackRtl from './animations/wp-to-jp-rtl.json';
-import iconJetpack from './animations/wp-to-jp.json';
 import iconWoo from './images/icon-woo.png';
 import qrCodeJetpack from './images/qr-code-jetpack.png';
 import qrCodeWoo from './images/qr-code-woo.png';
 import storeBadgeApple from './images/store-apple.png';
 import storeBadgeGoogle from './images/store-google.png';
+import iconJetpackRtl from './images/wp-to-jp-rtl.json';
+import iconJetpack from './images/wp-to-jp.json';
 
 // Slugs as used by Jetpack Redirects.
 // See https://jetpack.com/redirect for current URLs.
