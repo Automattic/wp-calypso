@@ -294,7 +294,6 @@ class StatsEmailDetail extends Component {
 									maxBars={ maxBars }
 								/>
 
-								{ isSitePrivate ? this.renderPrivateSiteBanner( siteId, slug ) : null }
 								{ ! isSitePrivate && <StatsNoContentBanner siteId={ siteId } siteSlug={ slug } /> }
 							</div>
 							<div className="stats__module-list">
