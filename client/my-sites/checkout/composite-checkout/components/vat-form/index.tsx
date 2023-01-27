@@ -233,6 +233,22 @@ export function VatForm( {
 					} }
 				/>
 			</div>
+			<div className="vat-form__row">
+				<Field
+					id={ section + '-address' }
+					type="text"
+					label={ String( translate( 'Address for VAT' ) ) }
+					value={ vatDetailsInForm.address ?? '' }
+					autoComplete="address"
+					disabled={ isDisabled }
+					onChange={ ( newValue: string ) => {
+						setVatDetailsInForm( {
+							...vatDetailsInForm,
+							address: newValue,
+						} );
+					} }
+				/>
+			</div>
 			{ vatDetailsFromServer.id && (
 				<div>
 					<FormSettingExplanation>
