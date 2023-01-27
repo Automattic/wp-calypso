@@ -20,6 +20,7 @@ import {
 	TASK_MARKETPLACE,
 	TASK_RENEW_EXPIRED_PLAN,
 	TASK_RENEW_EXPIRING_PLAN,
+	TASK_SITE_RESUME_COPY,
 	TASK_SITE_SETUP_CHECKLIST,
 	TASK_UPSELL_TITAN,
 	TASK_VERIFY_EMAIL,
@@ -30,7 +31,6 @@ import {
 	TASK_REACTIVATE_EXPIRED_PLAN,
 	TASK_REACTIVATE_ATOMIC_TRANSFER,
 	TASK_REACTIVATE_RESTORE_BACKUP,
-	NOTICE_SITE_RESUME_COPY,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import CelebrateSiteCopy from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-copy';
 import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-creation';
@@ -38,7 +38,6 @@ import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/ce
 import CelebrateSiteMigration from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-migration';
 import CelebrateSiteSetupComplete from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-setup-complete';
 import SiteLaunchSellerUpsell from 'calypso/my-sites/customer-home/cards/notices/site-launch-seller-upsell';
-import SiteResumeCopy from 'calypso/my-sites/customer-home/cards/notices/site-resume-copy';
 import Cloudflare from 'calypso/my-sites/customer-home/cards/tasks/cloudflare';
 import ConnectAccounts from 'calypso/my-sites/customer-home/cards/tasks/connect-accounts';
 import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-features';
@@ -49,6 +48,7 @@ import Podcasting from 'calypso/my-sites/customer-home/cards/tasks/podcasting';
 import PromotePost from 'calypso/my-sites/customer-home/cards/tasks/promote-post';
 import Renew from 'calypso/my-sites/customer-home/cards/tasks/renew';
 import { ReviveAutoRevertedAtomic } from 'calypso/my-sites/customer-home/cards/tasks/revive-auto-reverted-atomic';
+import SiteResumeCopy from 'calypso/my-sites/customer-home/cards/tasks/site-resume-copy';
 import SiteSetupList from 'calypso/my-sites/customer-home/cards/tasks/site-setup-list';
 import TitanBanner from 'calypso/my-sites/customer-home/cards/tasks/titan-banner';
 import UseBuiltBy from 'calypso/my-sites/customer-home/cards/tasks/use-built-by';
@@ -59,7 +59,6 @@ import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/ana
 
 const cardComponents = {
 	[ NOTICE_SITE_LAUNCH_SELLER_UPSELL ]: SiteLaunchSellerUpsell,
-	[ NOTICE_SITE_RESUME_COPY ]: SiteResumeCopy,
 	[ NOTICE_CELEBRATE_SITE_CREATION ]: CelebrateSiteCreation,
 	[ NOTICE_CELEBRATE_SITE_LAUNCH ]: CelebrateSiteLaunch,
 	[ NOTICE_CELEBRATE_SITE_MIGRATION ]: CelebrateSiteMigration,
@@ -79,6 +78,7 @@ const cardComponents = {
 	[ TASK_REACTIVATE_EXPIRED_PLAN ]: ReviveAutoRevertedAtomic,
 	[ TASK_REACTIVATE_ATOMIC_TRANSFER ]: ReviveAutoRevertedAtomic,
 	[ TASK_REACTIVATE_RESTORE_BACKUP ]: ReviveAutoRevertedAtomic,
+	[ TASK_SITE_RESUME_COPY ]: SiteResumeCopy,
 	[ TASK_SITE_SETUP_CHECKLIST ]: SiteSetupList,
 	[ TASK_UPSELL_TITAN ]: TitanBanner,
 	[ TASK_WEBINARS ]: Webinars,
@@ -92,6 +92,7 @@ const urgentTasks = [
 	TASK_REACTIVATE_EXPIRED_PLAN,
 	TASK_REACTIVATE_ATOMIC_TRANSFER,
 	TASK_REACTIVATE_RESTORE_BACKUP,
+	TASK_SITE_RESUME_COPY,
 ];
 
 const Primary = ( { cards, trackCard } ) => {
