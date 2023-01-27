@@ -16,7 +16,6 @@ import storeBadgeGoogle from './images/store-google.png';
 const REDIRECT_SLUGS: {
 	[ key: string ]: string | undefined;
 } = {
-	jetpackA8C: 'calypso-stats-mobile-cta-jetpack-link',
 	jetpackApple: 'calypso-stats-mobile-cta-jetpack-apple-badge',
 	jetpackGoogle: 'calypso-stats-mobile-cta-jetpack-google-badge',
 	jetpackQRCode: 'calypso-stats-mobile-cta-jetpack-qrcode',
@@ -100,13 +99,13 @@ export default function MobilePromoCard( {
 			);
 		}
 		return translate(
-			'Visit {{a}}jetpack.com/app{{/a}} or scan the QR code to download the Jetpack mobile app.',
+			'Visit {{a}}wp.com/app{{/a}} or scan the QR code to download the Jetpack mobile app.',
 			{
 				components: {
 					a: (
 						<a
 							className="jetpack"
-							href={ getRedirectUrl( 'jetpackA8C' ) ?? 'https://jetpack.com/app' }
+							href="https://apps.wordpress.com/get?campaign=calypso-stats-promo"
 							onClick={ () => onClickHandler( CLICK_EVENTS.jetpackClickA8C ) }
 						/>
 					),
@@ -117,7 +116,7 @@ export default function MobilePromoCard( {
 
 	// Returns store badges on mobile (including tablets) and QR codes on the Desktop.
 	const getPromoImage = () => {
-		const fallbackLink = isWoo ? 'https://woo.com/mobile' : 'https://jetpack.com/app';
+		const fallbackLink = isWoo ? 'https://woo.com/mobile' : 'https://wp.com/app';
 		if ( isApple ) {
 			const appStoreLink = isWoo ? getRedirectUrl( 'wooApple' ) : getRedirectUrl( 'jetpackApple' );
 			const tracksEventName = isWoo ? CLICK_EVENTS.wooClickApple : CLICK_EVENTS.jetpackClickApple;
