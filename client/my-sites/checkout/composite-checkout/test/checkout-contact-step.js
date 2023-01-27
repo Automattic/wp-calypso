@@ -509,6 +509,19 @@ describe( 'Checkout contact step', () => {
 		).toBeInTheDocument();
 	} );
 
+	it( 'hides the Northern Ireland checkbox is if the VAT checkbox is checked and the country is changed from GB to ES', async () => {
+		const user = userEvent.setup();
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MyCheckout cartChanges={ cartChanges } /> );
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'GB' );
+		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
+		expect(
+			await screen.findByLabelText( 'Is the VAT for Northern Ireland?' )
+		).toBeInTheDocument();
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'ES' );
+		expect( screen.queryByLabelText( 'Is the VAT for Northern Ireland?' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'renders the VAT fields and checks the box on load if the VAT endpoint returns data', async () => {
 		nock.cleanAll();
 		nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/vat-info' ).reply( 200, {
