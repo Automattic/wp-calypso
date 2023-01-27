@@ -115,6 +115,19 @@ object BuildDockerImage : BuildType({
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 		}
 
+		val commonArgs = """
+			--label com.a8c.image-builder=teamcity
+			--label com.a8c.build-id=%teamcity.build.id%
+			--build-arg workers=32
+			--build-arg node_memory=32768
+			--build-arg use_cache=true
+			--build-arg base_image=%base_image%
+			--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
+			--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
+			--build-arg is_default_branch=%teamcity.build.branch.is_default%
+			--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN%
+		""".trimIndent().replace("\n"," ")
+
 		dockerCommand {
 			name = "Build docker image"
 			commandType = build {
@@ -126,20 +139,7 @@ object BuildDockerImage : BuildType({
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
 					registry.a8c.com/calypso/app:latest
 				""".trimIndent()
-				commandArgs = """
-					--pull
-					--label com.a8c.image-builder=teamcity
-					--label com.a8c.target=calypso-live
-					--label com.a8c.build-id=%teamcity.build.id%
-					--build-arg workers=32
-					--build-arg node_memory=32768
-					--build-arg use_cache=true
-					--build-arg base_image=%base_image%
-					--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
-					--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
-					--build-arg is_default_branch=%teamcity.build.branch.is_default%
-					--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN%
-				""".trimIndent().replace("\n"," ")
+				commandArgs = "--pull --label com.a8c.target=calypso-live $commonArgs"
 			}
 			param("dockerImage.platform", "linux")
 		}
@@ -156,7 +156,7 @@ object BuildDockerImage : BuildType({
 				}
 				namesAndTags = "registry.a8c.com/calypso/base:latest"
 			}
-			commandArgs = "--target update-base-cache"
+			commandArgs = "--target update-base-cache $commonArgs"
 		}
 	
 		dockerCommand {
