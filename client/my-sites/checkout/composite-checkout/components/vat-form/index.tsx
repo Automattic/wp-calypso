@@ -54,21 +54,37 @@ export function VatForm( {
 }: {
 	section: string;
 	isDisabled?: boolean;
+
+	/**
+	 * This is the country code from the parent form, not necessarily from the
+	 * VAT details. They may differ. See below for more details.
+	 */
 	countryCode: string | undefined;
 } ) {
 	const translate = useTranslate();
-	const vatDetails: VatDetails = useSelect( ( select ) =>
+	const vatDetailsInForm: VatDetails = useSelect( ( select ) =>
 		select( 'wpcom-checkout' ).getVatDetails()
 	);
 	const wpcomStoreActions = useDispatch( 'wpcom-checkout' );
-	const setVatDetails = wpcomStoreActions.setVatDetails as ( vat: VatDetails ) => void;
+	const setVatDetailsInForm = wpcomStoreActions.setVatDetails as ( vat: VatDetails ) => void;
 	const { vatDetails: savedVatDetails, isLoading: isLoadingVatDetails } = useVatDetails();
 	const [ isFormActive, setIsFormActive ] = useState< boolean >( false );
 
-	// Pre-populate the fields based on the VAT details endpoint. The cached
-	// contact details endpoint _does_ store organization, but does not store
-	// vatId, and anyway we have a different endpoint for VAT details which is
-	// what this form should use.
+	// Pre-populate the fields based on the VAT details endpoint.
+	//
+	// The cached contact details endpoint _does_ store organization, but does not
+	// store vatId, and anyway we have a different endpoint for VAT details which
+	// is what this form should use.
+	//
+	// The exception is the country code because that is not part of this form
+	// and is instead part of the parent's form. Even though there is only one
+	// field, we must store two values: one for the domain contact info and one
+	// for the VAT info. This is because the VAT info sometimes needs a special
+	// country code like `XI` if the Northern Ireland checkbox is checked.
+	//
+	// We therefore must modify the VAT version of the value to match the domain
+	// contact info value any time that changes, and also modify it when the
+	// Northern Ireland checkbox is checked.
 	const didPreFill = useRef( false );
 	useEffect( () => {
 		if ( isLoadingVatDetails ) {
@@ -78,9 +94,31 @@ export function VatForm( {
 			return;
 		}
 		didPreFill.current = true;
-		setVatDetails( savedVatDetails );
+
+		setVatDetailsInForm( {
+			...savedVatDetails,
+			// Initialize the VAT country to match the country in the form, which may
+			// differ from the country in the saved VAT details.
+			country: countryCode,
+		} );
 		setIsFormActive( Boolean( savedVatDetails.id ) );
-	}, [ setVatDetails, savedVatDetails, isLoadingVatDetails ] );
+	}, [ setVatDetailsInForm, savedVatDetails, isLoadingVatDetails, countryCode ] );
+
+	// Make sure that if the parent form's country code changes, we also change
+	// the (hidden) VAT form country code to keep them in sync. This is a one-way
+	// sync though because the Northern Ireland checkbox may change the hidden
+	// VAT form country code.
+	const previousCountryCode = useRef( countryCode );
+	useEffect( () => {
+		if ( ! countryCode || countryCode === previousCountryCode.current ) {
+			return;
+		}
+		previousCountryCode.current = countryCode;
+		setVatDetailsInForm( {
+			...vatDetailsInForm,
+			country: countryCode,
+		} );
+	}, [ countryCode, vatDetailsInForm, setVatDetailsInForm ] );
 
 	const reduxDispatch = useReduxDispatch();
 
@@ -92,10 +130,10 @@ export function VatForm( {
 		if ( ! isChecked ) {
 			// Clear the VAT form when the checkbox is unchecked so that the VAT
 			// details are not sent to the server.
-			setVatDetails( {} );
+			setVatDetailsInForm( {} );
 		} else {
 			// Pre-fill the VAT form when the checkbox is checked.
-			setVatDetails( savedVatDetails );
+			setVatDetailsInForm( savedVatDetails );
 		}
 		setIsFormActive( isChecked );
 	};
@@ -104,13 +142,13 @@ export function VatForm( {
 	// registered with the special (non-ISO) 'XI' country code.
 	const toggleNorthernIreland = ( isChecked: boolean ) => {
 		if ( ! isChecked ) {
-			setVatDetails( {
-				...vatDetails,
+			setVatDetailsInForm( {
+				...vatDetailsInForm,
 				country: countryCode,
 			} );
 		} else {
-			setVatDetails( {
-				...vatDetails,
+			setVatDetailsInForm( {
+				...vatDetailsInForm,
 				country: 'XI',
 			} );
 		}
@@ -146,7 +184,7 @@ export function VatForm( {
 				{ countryCode === 'GB' && (
 					<CheckboxControl
 						className="vat-form__expand-button"
-						checked={ vatDetails.country === 'XI' }
+						checked={ vatDetailsInForm.country === 'XI' }
 						onChange={ toggleNorthernIreland }
 						label={ translate( 'Is the VAT for Northern Ireland?' ) }
 						disabled={ isDisabled }
@@ -158,13 +196,12 @@ export function VatForm( {
 					id={ section + '-organization' }
 					type="text"
 					label={ String( translate( 'Organization for VAT' ) ) }
-					value={ vatDetails.name ?? '' }
+					value={ vatDetailsInForm.name ?? '' }
 					autoComplete="organization"
 					disabled={ isDisabled }
 					onChange={ ( newValue: string ) => {
-						setVatDetails( {
-							...vatDetails,
-							country: vatDetails.country || countryCode,
+						setVatDetailsInForm( {
+							...vatDetailsInForm,
 							name: newValue,
 						} );
 					} }
@@ -173,12 +210,11 @@ export function VatForm( {
 					id={ section + '-vat-id' }
 					type="text"
 					label={ String( translate( 'VAT Number' ) ) }
-					value={ vatDetails.id ?? '' }
+					value={ vatDetailsInForm.id ?? '' }
 					disabled={ isDisabled || Boolean( savedVatDetails.id ) }
 					onChange={ ( newValue: string ) => {
-						setVatDetails( {
-							...vatDetails,
-							country: vatDetails.country || countryCode,
+						setVatDetailsInForm( {
+							...vatDetailsInForm,
 							id: newValue,
 						} );
 					} }
