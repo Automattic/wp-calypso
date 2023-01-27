@@ -72,7 +72,7 @@ RUN yarn run build
 RUN find /calypso/build /calypso/public -name "*.*.map" -exec rm {} \;
 
 ###################
-# A cache-only update can be generated with "docker build --target update_base_cache"
+# A cache-only update can be generated with "docker build --target update-base-cache"
 FROM ${base_image} as update-base-cache
 
 # Update cache in the base image so that it can be re-used in future builds.
