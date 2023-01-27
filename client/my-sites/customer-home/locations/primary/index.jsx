@@ -30,6 +30,7 @@ import {
 	TASK_REACTIVATE_EXPIRED_PLAN,
 	TASK_REACTIVATE_ATOMIC_TRANSFER,
 	TASK_REACTIVATE_RESTORE_BACKUP,
+	NOTICE_SITE_RESUME_COPY,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import CelebrateSiteCopy from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-copy';
 import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-creation';
@@ -37,6 +38,7 @@ import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/ce
 import CelebrateSiteMigration from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-migration';
 import CelebrateSiteSetupComplete from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-setup-complete';
 import SiteLaunchSellerUpsell from 'calypso/my-sites/customer-home/cards/notices/site-launch-seller-upsell';
+import SiteResumeCopy from 'calypso/my-sites/customer-home/cards/notices/site-resume-copy';
 import Cloudflare from 'calypso/my-sites/customer-home/cards/tasks/cloudflare';
 import ConnectAccounts from 'calypso/my-sites/customer-home/cards/tasks/connect-accounts';
 import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-features';
@@ -57,6 +59,7 @@ import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/ana
 
 const cardComponents = {
 	[ NOTICE_SITE_LAUNCH_SELLER_UPSELL ]: SiteLaunchSellerUpsell,
+	[ NOTICE_SITE_RESUME_COPY ]: SiteResumeCopy,
 	[ NOTICE_CELEBRATE_SITE_CREATION ]: CelebrateSiteCreation,
 	[ NOTICE_CELEBRATE_SITE_LAUNCH ]: CelebrateSiteLaunch,
 	[ NOTICE_CELEBRATE_SITE_MIGRATION ]: CelebrateSiteMigration,
