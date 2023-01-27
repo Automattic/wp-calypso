@@ -87,7 +87,7 @@ export function VatForm( {
 	// Northern Ireland checkbox is checked.
 	const didPreFill = useRef( false );
 	useEffect( () => {
-		if ( isLoadingVatDetails ) {
+		if ( isLoadingVatDetails || ! countryCode ) {
 			return;
 		}
 		if ( didPreFill.current ) {
@@ -133,7 +133,12 @@ export function VatForm( {
 			setVatDetailsInForm( {} );
 		} else {
 			// Pre-fill the VAT form when the checkbox is checked.
-			setVatDetailsInForm( savedVatDetails );
+			setVatDetailsInForm( {
+				...savedVatDetails,
+				// Initialize the VAT country to match the country in the form, which may
+				// differ from the country in the saved VAT details.
+				country: countryCode,
+			} );
 		}
 		setIsFormActive( isChecked );
 	};
