@@ -235,7 +235,10 @@ describe( 'Checkout contact step', () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 		// Wait for the cart to load
-		await screen.findByText( 'Country' );
+		const countryField = await screen.findByLabelText( 'Country' );
+
+		// Validate that fields are pre-filled
+		expect( countryField.selectedOptions[ 0 ].value ).toBe( 'US' );
 
 		// Wait for the validation to complete.
 		await screen.findAllByText( 'Please wait…' );
@@ -524,28 +527,46 @@ describe( 'Checkout contact step', () => {
 
 	it( 'renders the VAT fields and checks the box on load if the VAT endpoint returns data', async () => {
 		nock.cleanAll();
+		mockCachedContactDetailsEndpoint( {
+			country_code: 'GB',
+			postal_code: '',
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/vat-info' ).reply( 200, {
 			id: '12345',
 			name: 'Test company',
+			country: 'GB',
 		} );
-		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
-		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'GB' );
+
+		// Wait for checkout to load.
+		const countryField = await screen.findByLabelText( 'Country' );
+
+		expect( countryField.selectedOptions[ 0 ].value ).toBe( 'GB' );
 		expect( await screen.findByLabelText( 'Add VAT details' ) ).toBeChecked();
 		expect( await screen.findByLabelText( 'VAT Number' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders the VAT fields pre-filled if the VAT endpoint returns data', async () => {
 		nock.cleanAll();
+		mockCachedContactDetailsEndpoint( {
+			country_code: 'GB',
+			postal_code: '',
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/vat-info' ).reply( 200, {
 			id: '12345',
 			name: 'Test company',
+			country: 'GB',
 		} );
-		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
-		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'GB' );
+
+		// Wait for checkout to load.
+		const countryField = await screen.findByLabelText( 'Country' );
+
+		expect( countryField.selectedOptions[ 0 ].value ).toBe( 'GB' );
 		expect( await screen.findByLabelText( 'VAT Number' ) ).toHaveValue( '12345' );
 		expect( await screen.findByLabelText( 'Organization for VAT' ) ).toHaveValue( 'Test company' );
 	} );
