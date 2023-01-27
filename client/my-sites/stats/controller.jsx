@@ -504,6 +504,7 @@ export function emailStats( context, next ) {
 			statType={ statType }
 			chartTab={ chartTab }
 			context={ context }
+			givenSiteId={ givenSiteId }
 			period={ rangeOfPeriod( activeFilter.period, date ) }
 			date={ date }
 			isValidStartDate={ isValidStartDate }
