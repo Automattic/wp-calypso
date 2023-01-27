@@ -596,6 +596,60 @@ describe( 'Checkout contact step', () => {
 		expect( mockVatEndpoint.isDone() ).toBeTruthy();
 	} );
 
+	it( 'when there is a cached contact country that differs from the cached VAT country, the contact country is sent to the VAT endpoint', async () => {
+		nock.cleanAll();
+		const cachedContactCountry = 'ES';
+		mockCachedContactDetailsEndpoint( {
+			country_code: cachedContactCountry,
+			postal_code: '',
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
+		const vatId = '12345';
+		const vatName = 'Test company';
+		const vatAddress = '123 Main Street';
+		const countryCode = 'GB';
+		nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/vat-info' ).reply( 200, {
+			id: vatId,
+			name: vatName,
+			address: vatAddress,
+			country: countryCode,
+		} );
+		const user = userEvent.setup();
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MyCheckout cartChanges={ cartChanges } /> );
+
+		// Wait for the cart to load
+		const countryField = await screen.findByLabelText( 'Country' );
+
+		// Make sure the form has the autocompleted data.
+		expect( countryField.selectedOptions[ 0 ].value ).toBe( cachedContactCountry );
+		expect( await screen.findByLabelText( 'Add VAT details' ) ).toBeChecked();
+		expect( await screen.findByLabelText( 'VAT Number' ) ).toHaveValue( vatId );
+		expect( await screen.findByLabelText( 'Organization for VAT' ) ).toHaveValue( vatName );
+		expect( await screen.findByLabelText( 'Address for VAT' ) ).toHaveValue( vatAddress );
+
+		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
+		const mockVatEndpoint = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/vat-info', ( body ) => {
+				if (
+					body.id === vatId &&
+					body.name === vatName &&
+					body.country === cachedContactCountry &&
+					body.address === vatAddress
+				) {
+					return true;
+				}
+				return false;
+			} )
+			.reply( 200 );
+
+		// Submit the form.
+		await user.click( screen.getByText( 'Continue' ) );
+
+		expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
+		expect( mockVatEndpoint.isDone() ).toBeTruthy();
+	} );
+
 	it( 'sends data to the VAT endpoint with Northern Ireland country code when completing the step if the XI box is checked', async () => {
 		const vatId = '12345';
 		const vatName = 'Test company';
