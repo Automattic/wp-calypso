@@ -26,7 +26,7 @@ import { BackButton } from '..';
 import { useShouldRenderChatOption } from '../hooks/use-should-render-chat-option';
 import { useShouldRenderEmailOption } from '../hooks/use-should-render-email-option';
 import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
-import Mail from '../icons/mail';
+import { Mail, Forum } from '../icons';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
 import { SibylArticles } from './help-center-sibyl-articles';
 
@@ -95,6 +95,14 @@ export const HelpCenterContactPage: React.FC = () => {
 		}
 
 		return __( 'Email', __i18n_text_domain__ );
+	}, [ __, locale ] );
+
+	const forumtHeaderText = useMemo( () => {
+		if ( isDefaultLocale( locale ) || ! hasTranslation( 'Forum (English)' ) ) {
+			return __( 'Forum', __i18n_text_domain__ );
+		}
+
+		return __( 'Forum (English)', __i18n_text_domain__ );
 	}, [ __, locale ] );
 
 	if ( isLoading ) {
@@ -197,6 +205,21 @@ export const HelpCenterContactPage: React.FC = () => {
 							</div>
 						</Link>
 					) }
+					<Link to="/contact-form?mode=FORUM">
+						<div
+							className={ classnames( 'help-center-contact-page__box', 'forum' ) }
+							role="button"
+							tabIndex={ 0 }
+						>
+							<div className="help-center-contact-page__box-icon">
+								<Icon icon={ <Forum /> } />
+							</div>
+							<div>
+								<h2>{ forumtHeaderText }</h2>
+								<p>{ __( 'Ask our community-based support forum', __i18n_text_domain__ ) }</p>
+							</div>
+						</div>
+					</Link>
 				</div>
 			</div>
 			<SibylArticles articleCanNavigateBack />
