@@ -5,7 +5,6 @@ import {
 	StatsCardAvatar,
 } from '@automattic/components';
 import debugFactory from 'debug';
-import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React, { useState, useCallback } from 'react';
 import titlecase from 'to-title-case';
@@ -24,8 +23,8 @@ const StatsListCard = ( {
 	useShortLabel,
 	error,
 	heroElement,
+	metricLabel,
 } ) => {
-	const translate = useTranslate();
 	const moduleNameTitle = titlecase( moduleType );
 	const debug = debugFactory( `calypso:stats:list:${ moduleType }` );
 	const [ visibleRightItemKey, setVisibleRightItemKey ] = useState( undefined );
@@ -99,7 +98,7 @@ const StatsListCard = ( {
 			emptyMessage={ emptyMessage }
 			isEmpty={ ! loader && ( ! data || ! data?.length ) }
 			className={ `list-${ moduleType }` }
-			metricLabel={ moduleType === 'filedownloads' ? translate( 'Downloads' ) : undefined }
+			metricLabel={ metricLabel }
 			heroElement={ heroElement }
 		>
 			{ !! loader && loader }

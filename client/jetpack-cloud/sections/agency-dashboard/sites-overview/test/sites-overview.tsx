@@ -79,7 +79,9 @@ describe( '<SitesOverview>', () => {
 		);
 		expect( dashboardSubHeading ).toBeInTheDocument();
 
-		const [ emptyStateMessage ] = getAllByText( 'No active sites' );
+		const [ emptyStateMessage ] = getAllByText(
+			"Let's get started with the Jetpack Pro Dashboard"
+		);
 		expect( emptyStateMessage ).toBeInTheDocument();
 
 		const promise = Promise.resolve();

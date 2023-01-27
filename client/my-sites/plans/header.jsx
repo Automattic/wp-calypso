@@ -1,17 +1,23 @@
-import config from '@automattic/calypso-config';
 import { Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './header.scss';
 
 export default function PlansHeader() {
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSiteId ) );
 	const translate = useTranslate();
 	const [ showDomainUpsellDialog, setShowDomainUpsellDialog ] = useState( false );
 
-	// TODO: We need to determine if this is a domain upsell and show the domain here.
-	const domainName = 'exampledomain.com';
+	const domainFromHomeUpsellFlow = new URLSearchParams( window.location.search ).get(
+		'get_domain'
+	);
 
 	const plansDescription = translate(
 		'See and compare the features available on each WordPress.com plan.'
@@ -21,7 +27,7 @@ export default function PlansHeader() {
 		'With an annual plan, you can get {{strong}}%(domainName)s for free{{/strong}} for the first year, Jetpack essential features, live chat support, and all the features that will take your site to the next level.',
 		{
 			args: {
-				domainName: domainName,
+				domainName: domainFromHomeUpsellFlow,
 			},
 			components: {
 				strong: <strong />,
@@ -29,28 +35,42 @@ export default function PlansHeader() {
 		}
 	);
 
-	// TODO: We need to determine if this is a domain upsell.
-	const isDomainUpsell = config.isEnabled( 'is_domain_upsell' );
-
 	const onBackClick = () => {
 		recordTracksEvent( 'calypso_plans_page_domain_upsell_back_click' );
-		history.back();
+		// We currently have only one flow that leads to the plans page domain upsell.
+		page( '/home/' + siteSlug );
 	};
 
 	const onCloseDialog = () => {
 		setShowDomainUpsellDialog( false );
 	};
 
-	const onSkipClick = () => {
+	const onSkipClick = ( event ) => {
 		event.preventDefault();
 		recordTracksEvent( 'calypso_plans_page_domain_upsell_skip_click' );
 		setShowDomainUpsellDialog( true );
 	};
 
+	const onCancelPlanClick = () => {
+		setShowDomainUpsellDialog( false );
+		recordTracksEvent( 'calypso_plans_page_domain_upsell_cancel_plan_click' );
+		page( '/checkout/' + siteSlug );
+	};
+
+	const onContinuePlanClick = () => {
+		setShowDomainUpsellDialog( false );
+		recordTracksEvent( 'calypso_plans_page_domain_upsell_continue_plan_click' );
+	};
+
 	function renderDeleteDialog() {
 		const buttons = [
-			{ action: 'cancel', label: translate( 'That works for me' ) },
-			{ action: 'delete', label: translate( 'I want my domain as primary' ), isPrimary: true },
+			{ action: 'cancel', label: translate( 'That works for me' ), onClick: onCancelPlanClick },
+			{
+				action: 'delete',
+				label: translate( 'I want my domain as primary' ),
+				isPrimary: true,
+				onClick: onContinuePlanClick,
+			},
 		];
 
 		return (
@@ -73,7 +93,7 @@ export default function PlansHeader() {
 						'Any domain you purchase without a plan will get redirected to %(domainName)s.',
 						{
 							args: {
-								domainName: domainName,
+								domainName: domainFromHomeUpsellFlow,
 							},
 						}
 					) }
@@ -87,7 +107,7 @@ export default function PlansHeader() {
 		);
 	}
 
-	if ( false === isDomainUpsell ) {
+	if ( null === domainFromHomeUpsellFlow ) {
 		return (
 			<FormattedHeader
 				brandFont
@@ -107,12 +127,10 @@ export default function PlansHeader() {
 					{ translate( 'Back' ) }
 				</Button>
 
-				{ isDomainUpsell && (
-					<Button onClick={ onSkipClick } borderless href="/">
-						{ translate( 'Skip' ) }
-						<Gridicon icon="arrow-right" size={ 18 } />
-					</Button>
-				) }
+				<Button onClick={ onSkipClick } borderless href="/">
+					{ translate( 'Skip' ) }
+					<Gridicon icon="arrow-right" size={ 18 } />
+				</Button>
 			</header>
 
 			<FormattedHeader
