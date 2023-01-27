@@ -1,5 +1,4 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { SenseiStepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
@@ -8,6 +7,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE, PRODUCTS_LIST_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import { SenseiStepContainer } from '../components/sensei-step-container';
 import type { Step } from '../../types';
 
 import './style.scss';

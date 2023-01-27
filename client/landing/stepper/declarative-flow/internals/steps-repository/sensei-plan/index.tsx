@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { useLocale } from '@automattic/i18n-utils';
+import { SENSEI_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -7,7 +8,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { Plans } from 'calypso/../packages/data-stores/src';
 import formatCurrency from 'calypso/../packages/format-currency/src';
-import { SENSEI_FLOW, SenseiStepContainer } from 'calypso/../packages/onboarding/src';
 import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
 import PlanItem from 'calypso/../packages/plans-grid/src/plans-table/plan-item';
 import { useNewSiteVisibility } from 'calypso/landing/gutenboarding/hooks/use-selected-plan';
@@ -22,6 +22,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
+import { SenseiStepContainer } from '../components/sensei-step-container';
 import { SenseiStepError } from '../sensei-setup/sensei-step-error';
 import { SenseiStepProgress, Progress } from '../sensei-setup/sensei-step-progress';
 import { Tagline, Title, PlansIntervalToggle } from './components';

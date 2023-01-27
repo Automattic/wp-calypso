@@ -1,10 +1,9 @@
+import { SENSEI_FLOW, StepContainer } from '@automattic/onboarding';
 import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { Icon, wordpress } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
-import StepContainer from '../step-container';
-import { SENSEI_FLOW } from '../utils';
 import { Container, TitleContainer, Title, Footer, FooterText } from './components';
 import './styles.scss';
 

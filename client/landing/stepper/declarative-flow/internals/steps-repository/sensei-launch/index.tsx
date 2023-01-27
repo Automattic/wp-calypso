@@ -1,4 +1,3 @@
-import { SenseiStepContainer } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useCallback, useEffect, useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -9,6 +8,7 @@ import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPlugins } from 'calypso/state/plugins/installed/selectors';
+import { SenseiStepContainer } from '../components/sensei-step-container';
 import { Progress, SenseiStepProgress } from '../sensei-setup/sensei-step-progress';
 
 import './style.scss';

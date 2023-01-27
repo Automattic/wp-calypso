@@ -1,5 +1,4 @@
 import { Gridicon } from '@automattic/components';
-import { SenseiStepContainer } from '@automattic/onboarding';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
@@ -9,6 +8,7 @@ import { CSSProperties } from 'react';
 import FormRadioWithThumbnail from 'calypso/components/forms/form-radio-with-thumbnail';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ONBOARD_STORE } from '../../../../stores';
+import { SenseiStepContainer } from '../components/sensei-step-container';
 import { Title, Label, Input, Button } from './components';
 import type { StyleVariation } from 'calypso/../packages/design-picker/src/types';
 import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
