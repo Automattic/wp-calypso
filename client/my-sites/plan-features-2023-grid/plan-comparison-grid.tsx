@@ -149,7 +149,7 @@ const RowHead = styled.div`
 `;
 
 const RowContainer = styled.div`
-	&.is-hidden-mobile .plan-comparison-grid__feature-row {
+	&.is-hidden-mobile ${ Row }:not( .plan-comparison-grid__group-title-row ) {
 		display: none;
 		@media ( min-width: 880px ) {
 			display: flex;
