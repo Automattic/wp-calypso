@@ -102,7 +102,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		if ( blankCanvasDesignOffset !== -1 ) {
 			// Extract the blank canvas design first and then insert it into the last one for the build intent
 			const blankCanvasDesign = allDesigns.static.designs.splice( blankCanvasDesignOffset, 1 );
-			if ( isEnabled( 'signup/design-picker-pattern-assembler' ) && intent === SiteIntent.Build ) {
+			if ( isEnabled( 'signup/design-picker-pattern-assembler' ) ) {
 				allDesigns.static.designs.push( ...blankCanvasDesign );
 			}
 		}
