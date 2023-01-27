@@ -41,6 +41,20 @@ describe( 'setUsageLevel', () => {
 				usageLevel: StorageUsageLevels.Full,
 			},
 		},
+		{
+			state: {
+				usage: 100,
+				usageLevel: StorageUsageLevels.Critical,
+			},
+			action: {
+				type: REWIND_STORAGE_USAGE_LEVEL_SET,
+				usageLevel: StorageUsageLevels.Full,
+			},
+			expected: {
+				usage: 100,
+				usageLevel: StorageUsageLevels.Full,
+			},
+		},
 	] )(
 		'should set and return values appropriately when passed state and action type as REWIND_STORAGE_USAGE_LEVEL_SET, otherwise return the state as is',
 		( { state, action, expected } ) => {
