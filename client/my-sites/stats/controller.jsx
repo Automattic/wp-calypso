@@ -494,7 +494,7 @@ export function emailStats( context, next ) {
 		return next();
 	}
 
-	const validTabs = statType === 'opens' ? [ 'opens_count' ] : [ 'clicks' ];
+	const validTabs = statType === 'opens' ? [ 'opens_count' ] : [ 'clicks_count' ];
 	const chartTab = validTabs.includes( queryOptions.tab ) ? queryOptions.tab : validTabs[ 0 ];
 
 	context.primary = (
