@@ -123,7 +123,7 @@ const YourHomepageDisplaysSetting = ( {
 					value={ page_for_posts }
 					onChange={ handlePageForPostsChange }
 				>
-					<option value="">{ translate( '—— Select ——' ) }</option>
+					<option value="">{ translate( '—— None ——' ) }</option>
 					{ pages?.map( ( page ) => {
 						return (
 							<option
