@@ -4,7 +4,6 @@ import { StorageUsageLevels } from './types';
 
 const initialState = {
 	usageLevel: StorageUsageLevels.Normal,
-	usage: null,
 };
 
 export default ( state = initialState, { type, usageLevel }: AnyAction ) => {
