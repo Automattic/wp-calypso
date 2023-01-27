@@ -58,11 +58,6 @@ RUN bash /tmp/env-config.sh
 #
 # This layer is populated with up-to-date files from
 # Calypso development.
-#
-# We remove apps, tests and desktop because they are not needed to
-# build or run calypso, but yarn will still install their
-# dependencies which end up bloating the image.
-# /apps/notifications is not removed because it is required by Calypso
 COPY . /calypso/
 RUN yarn install --immutable --check-cache
 
@@ -77,6 +72,14 @@ RUN yarn run build
 RUN find /calypso/build /calypso/public -name "*.*.map" -exec rm {} \;
 
 ###################
+# A cache-only update can be generated with "docker build --target update_base_cache"
+FROM ${base_image} as update-base-cache
+
+# Update cache in the base image so that it can be re-used in future builds.
+COPY --from=builder /calypso/.cache /calypso/.cache
+COPY --from=builder /calypso/.yarn /calypso/.yarn
+
+###################
 FROM node:${node_version}-alpine as app
 
 ARG commit_sha="(unknown)"
@@ -85,8 +88,6 @@ ENV NODE_ENV production
 WORKDIR /calypso
 
 RUN apk add --no-cache tini
-# Publish cache so that it can be re-used in future builds app builds.
-COPY --from=builder --chown=nobody:nobody /calypso/.cache /calypso/.cache
 COPY --from=builder --chown=nobody:nobody /calypso/build /calypso/build
 COPY --from=builder --chown=nobody:nobody /calypso/public /calypso/public
 COPY --from=builder --chown=nobody:nobody /calypso/config /calypso/config

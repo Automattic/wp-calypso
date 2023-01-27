@@ -144,6 +144,21 @@ object BuildDockerImage : BuildType({
 			param("dockerImage.platform", "linux")
 		}
 
+		// Since the Docker layers from "build docker image" were done on the
+		// same agent just seconds ago, they should be available here, meaning
+		// this shouldn't take long. We shouldn't need --pull, since images were
+		// already pulled in the previous step.
+		dockerCommand {
+			name = "Update cache image"
+			commandType = build {
+				source = file {
+					path = "Dockerfile"
+				}
+				namesAndTags = "registry.a8c.com/calypso/base:latest"
+			}
+			commandArgs = "--target update-base-cache"
+		}
+	
 		dockerCommand {
 			commandType = push {
 				namesAndTags = """
