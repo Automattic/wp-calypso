@@ -85,6 +85,7 @@ ENV NODE_ENV production
 WORKDIR /calypso
 
 RUN apk add --no-cache tini
+# Publish cache so that it can be re-used in future builds app builds.
 COPY --from=builder --chown=nobody:nobody /calypso/.cache /calypso/.cache
 COPY --from=builder --chown=nobody:nobody /calypso/build /calypso/build
 COPY --from=builder --chown=nobody:nobody /calypso/public /calypso/public
