@@ -296,11 +296,7 @@ export default {
 		if ( ! isEmpty( additionalDependencies ) ) {
 			context.store.dispatch( updateDependencies( additionalDependencies ) );
 		}
-		if ( themeParameter ) {
-			setSignupSelectedThemeSlug( query.theme );
-		} else {
-			setSignupSelectedThemeSlug( null );
-		}
+		setSignupSelectedThemeSlug( themeParameter || '' );
 
 		context.primary = createElement( SignupComponent, {
 			store: context.store,

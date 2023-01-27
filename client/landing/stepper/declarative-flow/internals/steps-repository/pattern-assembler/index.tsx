@@ -14,7 +14,7 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
-import { SITE_TAGLINE } from './constants';
+import { SITE_TAGLINE, BLANK_CANVAS_DESIGN } from './constants';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
 import { useAllPatterns } from './patterns-data';
@@ -25,18 +25,6 @@ import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import './style.scss';
 
 const PatternAssembler: Step = ( { navigation, flow } ) => {
-	const blankCanvasDesign = {
-		slug: 'blank-canvas-3',
-		title: 'Blank Canvas',
-		recipe: {
-			stylesheet: 'pub/blank-canvas-3',
-		},
-		verticalizable: false,
-		is_premium: false,
-		is_bundled_with_woo_commerce: false,
-		design_type: 'assembler',
-	};
-
 	const translate = useTranslate();
 	const [ showPatternSelectorType, setShowPatternSelectorType ] = useState< string | null >( null );
 	const [ header, setHeader ] = useState< Pattern | null >( null );
@@ -77,9 +65,10 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 		if ( ! selectedDesign ) {
 			if ( signupSelectedThemeSlug !== 'blank-canvas-3' ) {
 				goToStep?.( 'goals' );
+			} else {
+				// User has selected blank-canvas-3 theme from theme showcase
+				setSelectedDesign( BLANK_CANVAS_DESIGN as Design );
 			}
-			// User has selected blank-canvas-3 theme from theme showcase
-			setSelectedDesign( blankCanvasDesign as Design );
 		}
 	}, [] );
 
