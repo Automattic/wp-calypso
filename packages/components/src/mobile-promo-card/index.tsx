@@ -170,6 +170,7 @@ export default function MobilePromoCard( {
 						<AnimatedIcon
 							className="promo-card__jetpack-app-icon"
 							icon={ isRtl ? iconJetpackRtl : iconJetpack }
+							playUponViewportEntry={ true }
 						/>
 					) }
 				</div>
