@@ -1,6 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { SENSEI_FLOW, useFlowProgress } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -16,7 +17,9 @@ import './internals/sensei.scss';
 
 const sensei: Flow = {
 	name: SENSEI_FLOW,
-	title: 'Sensei',
+	get title() {
+		return translate( 'Sensei' );
+	},
 	useSteps() {
 		useEffect( () => {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
