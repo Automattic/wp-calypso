@@ -155,8 +155,8 @@ object BuildDockerImage : BuildType({
 					path = "Dockerfile"
 				}
 				namesAndTags = "registry.a8c.com/calypso/base:latest"
+				commandArgs = "--target update-base-cache $commonArgs"
 			}
-			commandArgs = "--target update-base-cache $commonArgs"
 		}
 	
 		dockerCommand {
