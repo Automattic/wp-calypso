@@ -401,6 +401,10 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 		debug( 'recordOrderInGoogleAds: Record Jetpack Purchase', params );
 		window.gtag( ...params );
 	}
+
+	if ( mayWeTrackByTracker( 'linkedin' ) && wpcomJetpackCartInfo.containsJetpackProducts ) {
+		window.lintrk( 'track', { conversion_id: 10947410 } );
+	}
 }
 
 function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo ) {
