@@ -98,11 +98,11 @@ export const HelpCenterContactPage: React.FC = () => {
 	}, [ __, locale ] );
 
 	const forumtHeaderText = useMemo( () => {
-		if ( isDefaultLocale( locale ) || ! hasTranslation( 'Forum (English)' ) ) {
-			return __( 'Forum', __i18n_text_domain__ );
+		if ( isDefaultLocale( locale ) || ! hasTranslation( 'Public Forums (English)' ) ) {
+			return __( 'Public Forums', __i18n_text_domain__ );
 		}
 
-		return __( 'Forum (English)', __i18n_text_domain__ );
+		return __( 'Public Forums (English)', __i18n_text_domain__ );
 	}, [ __, locale ] );
 
 	if ( isLoading ) {
@@ -216,7 +216,7 @@ export const HelpCenterContactPage: React.FC = () => {
 							</div>
 							<div>
 								<h2>{ forumtHeaderText }</h2>
-								<p>{ __( 'Ask our community-based support forum', __i18n_text_domain__ ) }</p>
+								<p>{ __( 'Ask our WordPress.com community', __i18n_text_domain__ ) }</p>
 							</div>
 						</div>
 					</Link>
