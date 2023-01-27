@@ -511,6 +511,7 @@ const sections = [
 		module: 'calypso/jetpack-cloud/sections/comparison',
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,
+		isomorphic: true,
 	},
 	{
 		name: 'jetpack-search',
