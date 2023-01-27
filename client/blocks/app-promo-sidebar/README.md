@@ -1,6 +1,6 @@
 # App Promo Sidebar
 
-This component is used to suggest the desktop app to users.
+This component is used to suggest the desktop and mobile app to users.
 
 ## How to use
 
