@@ -123,12 +123,13 @@
 	// Some steps (like plans) need a larger
 	// width column.
 	&.is-wide-layout {
-		max-width: 1480px;
+		max-width: 1040px;
 	}
 
 	// Some steps (like 2023 plans) need a larger width column
 	&.is-extra-wide-layout {
-		max-width: 1040px;
+		max-width: 1480px;
+
 	}
 
 	// Some steps (like courses) have their width limitation
