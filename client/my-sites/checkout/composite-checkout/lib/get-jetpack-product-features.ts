@@ -8,11 +8,11 @@ export default function getJetpackProductFeatures(
 ): string[] {
 	if ( isJetpackBackupT1Slug( product.product_slug ) ) {
 		return [
-			String( translate( 'Real-time cloud backups' ) ),
-			String( translate( '10GB of backup storage' ) ),
-			String( translate( '30-day archive & activity log' ) ),
-			String( translate( 'One-click restores' ) ),
-			String( translate( 'Priority support' ) ),
+			translate( 'Real-time cloud backups' ),
+			translate( '10GB of backup storage' ),
+			translate( '30-day archive & activity log' ),
+			translate( 'One-click restores' ),
+			translate( 'Priority support' ),
 		];
 	}
 
