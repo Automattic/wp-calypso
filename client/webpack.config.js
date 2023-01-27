@@ -114,7 +114,7 @@ function filterEntrypoints( entrypoints ) {
  * Note this is not the same as looking for `__dirname+'/node_modules/'+pkgName`, as the package may be in a parent
  * `node_modules`
  *
- * @param {string} pkgName Name of the package to search for
+ * @param {string} pkgName Name of the package to search for.
  */
 function findPackage( pkgName ) {
 	const fullPath = require.resolve( pkgName );
