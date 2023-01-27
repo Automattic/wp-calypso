@@ -172,6 +172,7 @@ class StepWrapper extends Component {
 			hideNext,
 			isLargeSkipLayout,
 			isWideLayout,
+			isExtraWideLayout,
 			isFullLayout,
 			skipButtonAlign,
 			align,
@@ -190,6 +191,7 @@ class StepWrapper extends Component {
 		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-horizontal-layout': isHorizontalLayout,
 			'is-wide-layout': isWideLayout,
+			'is-extra-wide-layout': isExtraWideLayout,
 			'is-full-layout': isFullLayout,
 			'is-large-skip-layout': isLargeSkipLayout,
 			'has-navigation': hasNavigation,
