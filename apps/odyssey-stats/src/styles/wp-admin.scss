@@ -96,4 +96,7 @@
 		padding-left: 0;
 		padding-right: 0;
 	}
+	.stats-navigation.stats-navigation--modernized .section-nav-tab:not(:first-child) {
+		margin-left: 32px;
+	}
 }
