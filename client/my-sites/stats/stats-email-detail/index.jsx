@@ -134,6 +134,13 @@ class StatsEmailDetail extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
+	componentDidUpdate( prevProps ) {
+		// since it doesn't make sense showing the same postId on a different site, let's redirect to the stats overview page
+		if ( prevProps.siteSlug !== this.props.siteSlug ) {
+			page.redirect( `/stats/day/${ this.props.siteSlug }` );
+		}
+	}
+
 	getTitle() {
 		const { post } = this.props;
 
