@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
-	WPCOM_FEATURES_COPY_SITE,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 } from '@automattic/calypso-products';
@@ -8,22 +7,13 @@ import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem, Modal } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { ComponentType, useEffect, useState } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
-import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import SitePreviewLink from 'calypso/components/site-preview-link';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
+import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import {
-	getSitePurchases,
-	hasLoadedSitePurchasesFromServer,
-	isFetchingSitePurchases,
-} from 'calypso/state/purchases/selectors';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
@@ -38,6 +28,7 @@ import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SitesMenuItemProps {
 	site: SiteExcerptData;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	recordTracks: ( eventName: string, extraProps?: Record< string, any > ) => void;
 }
 
@@ -189,18 +180,11 @@ const PreviewSiteModalItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	);
 };
 
-const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
+const CopySiteItem = ( { site }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
-	useQuerySitePurchases( site.ID );
-	const { setPlanCartItem, setProductCartItems } = useDispatch( ONBOARD_STORE );
-	const plan = site?.plan;
+	const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site );
 
-	const purchases = useSelector( ( state ) => getSitePurchases( state, site.ID ) );
-	const isLoadingPurchase = useSelector(
-		( state ) => isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state )
-	);
-
-	if ( isLoadingPurchase || ! plan ) {
+	if ( ! shouldShowSiteCopyItem ) {
 		return null;
 	}
 
@@ -211,32 +195,12 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 		<MenuItemLink
 			href={ copySiteHref }
 			onClick={ () => {
-				clearSignupDestinationCookie();
-				setPlanCartItem( { product_slug: plan.product_slug } );
-				const marketplacePluginProducts = purchases
-					.filter( ( purchase ) => purchase.productType === 'marketplace_plugin' )
-					.map( ( purchase ) => ( { product_slug: purchase.productSlug } ) );
-
-				setProductCartItems( marketplacePluginProducts );
-				recordTracks( 'calypso_sites_dashboard_site_action_copy_site_click' );
+				startSiteCopy( 'calypso_sites_dashboard_site_action_copy_site_click' );
 			} }
 		>
 			{ __( 'Copy site' ) }
 		</MenuItemLink>
 	);
-};
-
-const CopySiteItemWrapper = ( { recordTracks, site }: SitesMenuItemProps ) => {
-	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
-	const hasCopySiteFeature = useSafeSiteHasFeature( site.ID, WPCOM_FEATURES_COPY_SITE );
-	const plan = site.plan;
-	const isSiteOwner = site.site_owner === userId;
-
-	if ( ! hasCopySiteFeature || ! isSiteOwner || ! plan ) {
-		return null;
-	}
-
-	return <CopySiteItem recordTracks={ recordTracks } site={ site } />;
 };
 
 const ExternalGridIcon = styled( Gridicon )( {
@@ -309,7 +273,7 @@ export const SitesEllipsisMenu = ( {
 					<ManagePluginsItem { ...props } />
 					{ showHosting && <HostingConfigItem { ...props } /> }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
-					{ isEnabled( 'sites/copy-site' ) && <CopySiteItemWrapper { ...props } /> }
+					{ isEnabled( 'sites/copy-site' ) && <CopySiteItem site={ site } /> }
 					<WpAdminItem { ...props } />
 				</SiteMenuGroup>
 			) }
