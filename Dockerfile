@@ -85,6 +85,7 @@ ENV NODE_ENV production
 WORKDIR /calypso
 
 RUN apk add --no-cache tini
+COPY --from=builder --chown=nobody:nobody /calypso/.cache /calypso/.cache
 COPY --from=builder --chown=nobody:nobody /calypso/build /calypso/build
 COPY --from=builder --chown=nobody:nobody /calypso/public /calypso/public
 COPY --from=builder --chown=nobody:nobody /calypso/config /calypso/config
