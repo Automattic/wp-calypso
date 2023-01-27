@@ -82,6 +82,7 @@ const Grid = styled.div`
 const Row = styled.div< { isHiddenInMobile?: boolean } >`
 	justify-content: space-between;
 	margin-bottom: -1px;
+	align-items: center;
 	display: ${ ( props ) => ( props.isHiddenInMobile ? 'none' : 'flex' ) };
 
 	@media ( min-width: 880px ) {
