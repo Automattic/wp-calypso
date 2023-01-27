@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -18,6 +19,7 @@ const SharingServiceAction = ( {
 	translate,
 	recordTracksEvent,
 	path,
+	expanded,
 } ) => {
 	let warning = false;
 	let label;
@@ -105,6 +107,29 @@ const SharingServiceAction = ( {
 		);
 	}
 
+	if ( 'mastodon' === service.ID && config.isEnabled( 'mastodon' ) ) {
+		return (
+			<Button
+				scary={ warning }
+				compact
+				onClick={
+					[ 'connected', 'must-disconnect' ].includes( status ) && removableConnections.length >= 1
+						? onClick
+						: null
+				}
+			>
+				{ expanded && removableConnections.length === 0 ? (
+					<>
+						<Gridicon icon="cross-small" size={ 16 } />
+						<span>{ translate( 'Cancel' ) }</span>
+					</>
+				) : (
+					label
+				) }
+			</Button>
+		);
+	}
+
 	return (
 		<Button scary={ warning } compact onClick={ onClick } disabled={ isPending }>
 			{ 'reconnect' === status || 'refresh-failed' === status || isRefreshing ? (
@@ -145,5 +170,7 @@ export default connect(
 			path: getCurrentRouteParameterized( state, siteId ),
 		};
 	},
-	{ recordTracksEvent: recordTracksEventAction }
+	{
+		recordTracksEvent: recordTracksEventAction,
+	}
 )( localize( SharingServiceAction ) );
