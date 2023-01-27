@@ -186,7 +186,7 @@ class StatsEmailDetail extends Component {
 		};
 		const query = memoizedQuery( period, endOf );
 		const slugPath = slug ? `/${ slug }` : '';
-		const pathTemplate = `${ traffic.path }${ slugPath }/{{ interval }}/${ postId }`;
+		const pathTemplate = `${ traffic.path }/{{ interval }}/${ postId }${ slugPath }`;
 		return (
 			<>
 				<Main className="has-fixed-nav stats__email-detail" wideLayout>
@@ -231,7 +231,7 @@ class StatsEmailDetail extends Component {
 									<StatsPeriodNavigation
 										date={ date }
 										period={ period }
-										url={ `/stats/email/${ statType }/${ slug }/${ period }/${ postId }` }
+										url={ `/stats/email/${ statType }/${ period }/${ postId }/${ slug }` }
 										maxBars={ maxBars }
 										isEmailStats
 									>
