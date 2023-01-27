@@ -52,6 +52,7 @@ open class E2EBuildType(
 	var testGroup: String,
 	var buildParams: ParametrizedWithType.() -> Unit = {},
 	var buildFeatures: BuildFeatures.() -> Unit,
+	var enableCommitStatusPublisher: Boolean = false,
 	var buildTriggers: Triggers.() -> Unit = {},
 	var buildDependencies: Dependencies.() -> Unit = {},
 
@@ -62,6 +63,7 @@ open class E2EBuildType(
 		val testGroup = testGroup
 		val buildParams = buildParams
 		val buildFeatures = buildFeatures
+		val enableCommitStatusPublisher = enableCommitStatusPublisher
 		val buildTriggers = buildTriggers
 		val buildDependencies = buildDependencies
 		val params = params
@@ -163,15 +165,19 @@ open class E2EBuildType(
 		features {
 			perfmon {
 			}
-			commitStatusPublisher {
-				vcsRootExtId = "${Settings.WpCalypso.id}"
-				publisher = github {
-					githubUrl = "https://api.github.com"
-					authType = personalToken {
-						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+
+			if (enableCommitStatusPublisher) {
+				commitStatusPublisher {
+					vcsRootExtId = "${Settings.WpCalypso.id}"
+					publisher = github {
+						githubUrl = "https://api.github.com"
+						authType = personalToken {
+							token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+						}
 					}
 				}
 			}
+
 			buildFeatures()
 		}
 
