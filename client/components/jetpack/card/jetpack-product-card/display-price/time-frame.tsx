@@ -1,4 +1,5 @@
 import { TERM_MONTHLY } from '@automattic/calypso-products';
+import { isMobile, isDesktop } from '@automattic/viewport';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -27,6 +28,8 @@ interface PartialDiscountTimeFrameProps {
 interface A11yProps {
 	forScreenReader?: boolean;
 }
+
+const isTablet = ! isMobile() && ! isDesktop();
 
 const RegularTimeFrame: React.FC< RegularTimeFrameProps & A11yProps > = ( {
 	billingTerm,
@@ -101,27 +104,43 @@ const PartialDiscountTimeFrame: React.FC< PartialDiscountTimeFrameProps & A11yPr
 		},
 	};
 
+	let billingPeriod;
 	/* eslint-disable wpcalypso/i18n-mismatched-placeholders */
-	let text = translate(
-		'for the first month, billed yearly',
-		'for the first %(months)d months, billed yearly',
+	const discountDuration = translate(
+		'for the first month',
+		'for the first %(months)d months',
 		opts
 	);
 
 	if ( billingTerm === TERM_MONTHLY ) {
-		text = translate(
-			'for the first month, billed monthly',
-			'for the first %(months)d months, billed monthly',
-			opts
-		);
+		billingPeriod = translate( 'billed monthly', opts );
+	} else {
+		billingPeriod = translate( 'billed yearly', opts );
 	}
 	/* eslint-enable wpcalypso/i18n-mismatched-placeholders */
 
 	if ( forScreenReader ) {
-		return <>{ text }</>;
+		return (
+			<>
+				{ discountDuration }, { billingPeriod }
+			</>
+		);
 	}
 
-	return <span className="display-price__billing-time-frame">{ text }</span>;
+	if ( ! isTablet ) {
+		return (
+			<span className="display-price__billing-time-frame">
+				{ discountDuration }, { billingPeriod }
+			</span>
+		);
+	}
+
+	return (
+		<span className="display-price__billing-time-frame tablet">
+			<div>{ discountDuration }</div>
+			<div>{ billingPeriod }</div>
+		</span>
+	);
 };
 
 const TimeFrame: React.FC< TimeFrameProps & A11yProps > = ( {
