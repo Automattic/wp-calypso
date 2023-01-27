@@ -30,12 +30,11 @@ function useSafeSiteHasFeature( siteId: number, feature: string ) {
 
 export const useSiteCopy = ( site: SiteExcerptData ) => {
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
-	const siteId = site.ID;
 	const hasCopySiteFeature = useSafeSiteHasFeature( site.ID, WPCOM_FEATURES_COPY_SITE );
-	const isAtomic = useSelector( ( state ) => isSiteAtomic( state, siteId ) );
+	const isAtomic = useSelector( ( state ) => isSiteAtomic( state, site.ID ) );
 	const plan = site?.plan;
 	const isSiteOwner = site.site_owner === userId;
-	useQuerySitePurchases( siteId );
+	useQuerySitePurchases( site.ID );
 	const isLoadingPurchase = useSelector(
 		( state ) => isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state )
 	);

@@ -186,9 +186,8 @@ const PreviewSiteModalItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 
 const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
-	const siteId = site.ID;
-	const hasCopySiteFeature = useSafeSiteHasFeature( siteId, WPCOM_FEATURES_COPY_SITE );
-	const isAtomic = useSelector( ( state ) => isSiteAtomic( state, siteId ) );
+	const hasCopySiteFeature = useSafeSiteHasFeature( site.ID, WPCOM_FEATURES_COPY_SITE );
+	const isAtomic = useSelector( ( state ) => isSiteAtomic( state, site.ID ) );
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const plan = site.plan;
 	const isSiteOwner = site.site_owner === userId;
