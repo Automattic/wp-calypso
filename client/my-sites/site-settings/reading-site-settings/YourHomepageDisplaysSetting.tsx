@@ -5,7 +5,10 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import useDropdownPagesQuery, { PageNode } from 'calypso/data/dropdown-pages/use-dropdown-pages';
+import useDropdownPagesQuery, {
+	DropdownPagesResponse,
+	PageNode,
+} from 'calypso/data/dropdown-pages/use-dropdown-pages';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const PAGE_TITLE_DEPTH_PADDING = '—'; // em dash
@@ -36,7 +39,9 @@ const insertPageNodeToDropdownPages = (
 	} );
 };
 
-const toFlatDropdownPages = ( pageNodes: PageNode[] ): DropdownPage[] => {
+const toFlatDropdownPages = ( {
+	dropdown_pages: pageNodes,
+}: DropdownPagesResponse ): DropdownPage[] => {
 	const dropdownPages: DropdownPage[] = [];
 	pageNodes.forEach( ( pageNode ) => {
 		insertPageNodeToDropdownPages( pageNode, dropdownPages );
@@ -66,7 +71,9 @@ const YourHomepageDisplaysSetting = ( {
 }: YourHomepageDisplaysSettingProps ) => {
 	const translate = useTranslate();
 
-	const { data: pages, isLoading } = useDropdownPagesQuery( siteId, {
+	const { data: pages, isLoading } = useDropdownPagesQuery<
+		ReturnType< typeof toFlatDropdownPages >
+	>( siteId, {
 		select: toFlatDropdownPages,
 	} );
 
