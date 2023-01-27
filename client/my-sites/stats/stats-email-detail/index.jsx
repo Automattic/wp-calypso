@@ -193,7 +193,7 @@ class StatsEmailDetail extends Component {
 		const navItems = [ 'opens', 'clicks' ].map( ( item ) => {
 			const attr = {
 				key: item,
-				path: `/stats/email/${ item }/${ givenSiteId }/${ period }/${ postId }`,
+				path: `/stats/email/${ item }/${ period }/${ postId }/${ givenSiteId }`,
 				selected: statType === item,
 			};
 
