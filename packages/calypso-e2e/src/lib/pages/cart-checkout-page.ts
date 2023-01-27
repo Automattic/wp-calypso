@@ -284,9 +284,9 @@ export class CartCheckoutPage {
 	/**
 	 * Complete the purchase by clicking on the 'Pay' button.
 	 */
-	async purchase(): Promise< void > {
+	async purchase( { timeout }: { timeout?: number } = {} ): Promise< void > {
 		await Promise.all( [
-			this.page.waitForResponse( /.*me\/transactions.*/ ),
+			this.page.waitForResponse( /.*me\/transactions.*/, { timeout: timeout } ),
 			this.page.click( selectors.purchaseButton ),
 		] );
 	}
