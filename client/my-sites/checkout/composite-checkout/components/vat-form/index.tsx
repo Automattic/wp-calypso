@@ -233,7 +233,7 @@ export function VatForm( {
 					} }
 				/>
 			</div>
-			<div className="vat-form__row">
+			<div className="vat-form__row vat-form__row--full-width">
 				<Field
 					id={ section + '-address' }
 					type="text"
