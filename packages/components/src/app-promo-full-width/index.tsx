@@ -46,17 +46,17 @@ const CLICK_EVENTS = {
 	wooClickGoogle: 'woo-click-google',
 };
 
-export type MobilePromoCardProps = {
+export type AppPromoFullWidthProps = {
 	className?: string;
 	isWoo?: boolean;
 	clickHandler?: ( eventName: string ) => void;
 };
 
-export default function MobilePromoCard( {
+export default function AppPromoFullWidth( {
 	className,
 	isWoo,
 	clickHandler,
-}: MobilePromoCardProps ) {
+}: AppPromoFullWidthProps ) {
 	const translate = useTranslate();
 	const isRtl = useRtl();
 	// Basic user agent testing so we can show app store badges on moble.

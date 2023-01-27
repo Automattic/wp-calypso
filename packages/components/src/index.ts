@@ -41,7 +41,7 @@ export {
 	default as HighlightCard,
 	percentCalculator as PercentCalculator,
 } from './highlight-cards/highlight-card';
-export { default as MobilePromoCard } from './mobile-promo-card';
+export { default as AppPromoFullWidth } from './app-promo-full-width';
 export { default as ShortenedNumber } from './number-formatters';
 export { default as formattedNumber } from './number-formatters/formatted-number';
 export { default as PostStatsCard } from './post-stats-card';
