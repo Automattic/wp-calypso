@@ -82,7 +82,7 @@ export default function () {
 	// Email stats Pages
 	if ( config.isEnabled( 'newsletter/stats' ) ) {
 		statsPage(
-			`/stats/email/:statType/:site/:period(${ validEmailPeriods })/:email_id`,
+			`/stats/email/:statType/:period(${ validEmailPeriods })/:email_id/:site`,
 			emailStats
 		);
 	}
