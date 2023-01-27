@@ -2,6 +2,8 @@ import classNames from 'classnames';
 import { useTranslate, useRtl } from 'i18n-calypso';
 import './style.scss';
 import AnimatedIcon from '../animated-icon';
+import iconJetpackRtl from './animations/wp-to-jp-rtl.json';
+import iconJetpack from './animations/wp-to-jp.json';
 import iconWoo from './images/icon-woo.png';
 import qrCodeJetpack from './images/qr-code-jetpack.png';
 import qrCodeWoo from './images/qr-code-woo.png';
@@ -167,7 +169,7 @@ export default function MobilePromoCard( {
 					{ ! isWoo && (
 						<AnimatedIcon
 							className="promo-card__jetpack-app-icon"
-							icon={ `/calypso/animations/app-promo/wp-to-jp${ isRtl ? '-rtl' : '' }.json` }
+							icon={ isRtl ? iconJetpackRtl : iconJetpack }
 						/>
 					) }
 				</div>

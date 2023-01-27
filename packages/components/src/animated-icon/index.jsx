@@ -8,12 +8,14 @@ const AnimatedIcon = ( { icon, className } ) => {
 	useEffect( () => {
 		const reducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 
+		const iconParam = typeof icon === 'string' ? { path: icon } : { animationData: icon };
+
 		const animation = lottie.loadAnimation( {
 			container: iconEl.current,
 			renderer: 'svg',
 			loop: false,
 			autoplay: ! reducedMotion,
-			path: icon,
+			...iconParam,
 			rendererSettings: {
 				viewBoxOnly: true,
 			},
