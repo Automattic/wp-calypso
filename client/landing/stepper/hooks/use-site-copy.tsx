@@ -17,24 +17,33 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
-function useSafeSiteHasFeature( siteId: number, feature: string ) {
+function useSafeSiteHasFeature( siteId: number | undefined, feature: string ) {
 	const dispatch = useReduxDispatch();
 	useEffect( () => {
+		if ( ! siteId ) {
+			return;
+		}
 		dispatch( fetchSiteFeatures( siteId ) );
 	}, [ dispatch, siteId ] );
 
 	return useSelector( ( state ) => {
+		if ( ! siteId ) {
+			return false;
+		}
 		return siteHasFeature( state, siteId, feature );
 	} );
 }
 
-export const useSiteCopy = ( site: SiteExcerptData ) => {
+export const useSiteCopy = (
+	site: Pick< SiteExcerptData, 'ID' | 'site_owner' | 'plan' > | undefined
+) => {
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
-	const hasCopySiteFeature = useSafeSiteHasFeature( site.ID, WPCOM_FEATURES_COPY_SITE );
-	const isAtomic = useSelector( ( state ) => isSiteAtomic( state, site.ID ) );
+	const hasCopySiteFeature = useSafeSiteHasFeature( site?.ID, WPCOM_FEATURES_COPY_SITE );
+	const isAtomic = useSelector( ( state ) => isSiteAtomic( state, site?.ID ) );
 	const plan = site?.plan;
-	const isSiteOwner = site.site_owner === userId;
-	useQuerySitePurchases( site.ID );
+	const isSiteOwner = site?.site_owner === userId;
+
+	useQuerySitePurchases( site?.ID );
 	const isLoadingPurchase = useSelector(
 		( state ) => isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state )
 	);
@@ -62,8 +71,9 @@ export const useSiteCopy = ( site: SiteExcerptData ) => {
 		() => ( {
 			shouldShowSiteCopyItem,
 			startSiteCopy,
+			isLoadingPurchase,
 		} ),
-		[ shouldShowSiteCopyItem, startSiteCopy ]
+		[ isLoadingPurchase, shouldShowSiteCopyItem, startSiteCopy ]
 	);
 };
 
